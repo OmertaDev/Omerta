@@ -46,8 +46,23 @@ import { fileURLToPath } from 'node:url';
 // produces `C:\C:\...`. Convert through the platform-aware URL helper before joining paths.
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const rel = (p) => path.relative(ROOT, p).replaceAll('\\', '/');
-const read = (p) => fs.readFileSync(p, 'utf8');
+// Git commonly checks this tree out with CRLF on Windows. Keep the extractor's input canonical so
+// line-anchored grammar (decision registers in particular) has identical semantics on every host.
+// Without this, `.` cannot consume the trailing CR and otherwise-valid `...$` rows disappear.
+export const normalizeText = (text) => text.replace(/\r\n?/g, '\n');
+const read = (p) => normalizeText(fs.readFileSync(p, 'utf8'));
 const sha = (s) => crypto.createHash('sha256').update(s).digest('hex').slice(0, 12);
+
+// Comparing import.meta.url with `file://${process.argv[1]}` is not portable: on Windows argv is a
+// drive-letter path while import.meta.url is a file URL. Compare platform-native absolute paths.
+export function isMainModule(moduleUrl, argvEntry) {
+  if (!argvEntry) return false;
+  try {
+    return path.resolve(argvEntry) === path.resolve(fileURLToPath(moduleUrl));
+  } catch {
+    return false;
+  }
+}
 
 // walk a directory for files matching a predicate (recursive — src/ has subdirectories, and a flat
 // listing under-reported it by 27 files the last time someone assumed otherwise)
@@ -635,7 +650,7 @@ function census(g) {
   return { byNode, byEdge, nodes: g.nodes.size, edges: g.edges.length, unparsed: g.unparsed.length };
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (isMainModule(import.meta.url, process.argv[1])) {
   const [cmd = 'build', arg] = process.argv.slice(2);
   const g = build();
   if (cmd === 'build') {

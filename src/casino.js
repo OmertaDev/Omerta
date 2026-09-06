@@ -13,7 +13,7 @@ import crypto from 'node:crypto';
 import { recordEventResult } from './events.js';
 import { fairSummary } from './fairness.js';
 import { GameError, bus, npcTier, bumpStanding, bumpMastery, masteryFx, ledger, notify, rngLog } from './game.js';
-import { CASINO, UNDERWORLD, MASTERY, POPULATION, numbersDrawOf, dayOf, weekOf, levelOf, hash01, MARKET_SEED, ACCESS_STAKE , jailed, hospitalized, usd } from './rules.js';
+import { CASINO, UNDERWORLD, MASTERY, POPULATION, numbersDrawOf, dayOf, weekOf, levelOf, hash01, MARKET_SEED, ACCESS_STAKE , jailed, hospitalized, usd , districtName } from './rules.js';
 
 const d6 = () => 1 + Math.floor(Math.random() * 6);
 const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1)); // inclusive (the stable.js form-roll)
@@ -88,12 +88,15 @@ async function bumpVolume(client, amt) {
   await client.query('UPDATE den_volume SET total = total + $1 WHERE id=1', [amt]);
 }
 
-function gateBet(ch, amount, min, max) {
+function gateBet(ch, amount, min, max, roomTerms) {
   if (jailed(ch)) throw new GameError('jailed', 'No dice in lockup — yet.');
-  if (ch.loc !== CASINO.DISTRICT) throw new GameError('district', `The den runs on the ${CASINO.DISTRICT} — the games are where the lights are.`, { district: CASINO.DISTRICT });
+  if (ch.loc !== CASINO.DISTRICT) throw new GameError('district', `The den runs on ${districtName(CASINO.DISTRICT)} — the games are where the lights are.`, { district: CASINO.DISTRICT });
   const amt = Math.floor(Number(amount));
   if (!(amt >= min)) throw new GameError('min', `Table minimum is ${usd(min)}.`);
-  if (amt > max) throw new GameError('max', `Table maximum is ${usd(max)} — the house knows variance.`);
+  // The high-stakes terms ride with the refusal (wave 75): "Table maximum is $250,000" told a
+  // player nothing about WHY the big table refused them — the seat and the access stake are the
+  // published gates, and the one refusal that enforces the ceiling named neither.
+  if (amt > max) throw new GameError('max', `Table maximum is ${usd(max)} — the house knows variance.${roomTerms?.text || ''}`, roomTerms?.data);
   if (Number(ch.cash) < amt) throw new GameError('cash', 'Not that much in pocket.');
   return amt;
 }
@@ -125,10 +128,25 @@ function tableMax(ch, h) {
   const staked = Number(h?.acct?.staked || 0) >= ACCESS_STAKE.HIGH_OMR;
   return Math.floor((seat && staked ? CASINO.HIGH_MAX : CASINO.MAX_BET) * masteryFx(h, 'gambling'));
 }
+// The way UP from the small table, stated where the ceiling refuses (wave 75). Computed beside
+// tableMax — the SAME seat/stake reads — so the refusal and the gate structurally cannot disagree
+// about what the big table wants. Null once you're at the big table (the max is then just the max).
+function highRoomTerms(ch, h) {
+  const seat = levelOf(Number(ch.respect)) >= CASINO.HIGH_LVL || npcTier(h, 'madame') >= 2;
+  const have = Math.floor(Number(h?.acct?.staked || 0));
+  const staked = have >= ACCESS_STAKE.HIGH_OMR;
+  if (seat && staked) return null;
+  return {
+    text: seat
+      ? ` The high-stakes room takes ${ACCESS_STAKE.HIGH_OMR} $OMR STAKED — you hold ${have}.`
+      : ` The high-stakes room seats level ${CASINO.HIGH_LVL}+ (or the Madame's velvet rope)${staked ? '' : `, holding ${ACCESS_STAKE.HIGH_OMR} $OMR staked`}.`,
+    data: { needStaked: ACCESS_STAKE.HIGH_OMR, haveStaked: have, seat, staked },
+  };
+}
 
 export async function playDice(ch, amount, client, h) {
   const max = tableMax(ch, h);
-  const amt = gateBet(ch, amount, CASINO.MIN_BET, max);
+  const amt = gateBet(ch, amount, CASINO.MIN_BET, max, highRoomTerms(ch, h));
   // MADAME T1: the house comps your seat — dice cost no nerve (pacing QoL, the edge still pays)
   if (npcTier(h, 'madame') < 1) {
     if (Number(ch.nerve) < CASINO.DICE_NERVE) throw new GameError('nerve', 'Even dice take nerve.');
@@ -194,7 +212,7 @@ export async function pvpDice(ch, fader, amount, client, h) {
   // duel, playTable) and this one had missed: a hospitalized player is untargetable, so without it
   // the ward is a place you can still take other people's money from. (red-team F2)
   if (hospitalized(ch)) throw new GameError('hosp', "You're in no shape for the back room — see the Doc.");
-  if (ch.loc !== CASINO.DISTRICT) throw new GameError('district', `The back room is on the ${CASINO.DISTRICT}.`, { district: CASINO.DISTRICT });
+  if (ch.loc !== CASINO.DISTRICT) throw new GameError('district', `The back room is on ${districtName(CASINO.DISTRICT)}.`, { district: CASINO.DISTRICT });
   if (fader.id === ch.id) throw new GameError('self', "You can't fade your own action."); // defense-in-depth: withTwoCharacters already throws self (one alive char/account) — explicit like every sibling
   const limit = fader.fade_limit != null ? Math.floor(Number(fader.fade_limit)) : 0;
   if (!(limit > 0)) throw new GameError('not_fading', "They're not taking action.");
@@ -293,7 +311,14 @@ export async function claimFight(ch, client, h) {
       await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: payout, reason: 'casino:win:fight' });
       await bumpProfit(client, -payout);
     }
-    results.push({ week: Number(b.week), side: b.side, winner: res.winner, hit });
+    // Name the FIGHTERS, not the side letters. `boutOf` has named both all along (it draws the
+    // card off the same week), and the TRACK twin below already ships `winnerName` — this is the
+    // forgotten sibling. A week later a bettor does not remember which fighter side 'b' was, so
+    // the backed name rides too and the line reads it on a miss.
+    const card = boutOf(Number(b.week));
+    results.push({ week: Number(b.week), side: b.side, winner: res.winner, hit,
+      winnerName: res.winner === 'a' ? card.a : card.b,
+      pickName: b.side === 'a' ? card.a : card.b });
     await client.query('DELETE FROM fight_bets WHERE character_id=$1 AND week=$2', [ch.id, b.week]);
   }
   await h.track(client, ch.account_id, 'casino', { game: 'fight_claim', settled: bets.length, won });
@@ -429,8 +454,11 @@ export async function betTrack(ch, race, runner, amount, client, h) {
 export async function claimTrack(ch, client, h) {
   const today = dayOf();
   const bets = (await client.query('SELECT * FROM track_bets WHERE character_id=$1 AND day < $2 FOR UPDATE', [ch.id, today])).rows;
-  if (!bets.length) return { ok: true, settled: 0, won: 0 };
-  let won = 0;
+  if (!bets.length) return { ok: true, settled: 0, won: 0, refunded: 0 };
+  // `won` is REAL winnings only; a scratch's stake comes back under `refunded`. One merged figure
+  // let a mixed claim (one hit, one scratch) label the refund as winnings at the window — the
+  // client's anyHit branch had no way to split a total the server had already folded.
+  let won = 0, refunded = 0;
   const results = [];
   for (const b of bets) {
     const d = Number(b.day);
@@ -446,7 +474,7 @@ export async function claimTrack(ch, client, h) {
     const nowAt = cur ? (cur.racerId || null) : null;
     if (backed !== nowAt) {
       const refund = Number(b.stake);
-      won += refund; ch.cash = Number(ch.cash) + refund;
+      refunded += refund; ch.cash = Number(ch.cash) + refund;
       await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: refund, reason: 'casino:win:track' });
       await bumpProfit(client, -refund); // the bet's profit bump is reversed → the den book nets 0 on a scratch
       results.push({ day: d, race: b.race, runner: Number(b.runner), winner, winnerName: field[winner].name, hit: false, scratched: true });
@@ -465,8 +493,8 @@ export async function claimTrack(ch, client, h) {
     results.push({ day: d, race: b.race, runner: Number(b.runner), winner, winnerName: field[winner].name, hit });
     await client.query('DELETE FROM track_bets WHERE character_id=$1 AND day=$2 AND race=$3', [ch.id, d, b.race]);
   }
-  await h.track(client, ch.account_id, 'casino', { game: 'track_claim', settled: bets.length, won });
-  return { ok: true, settled: bets.length, won, results };
+  await h.track(client, ch.account_id, 'casino', { game: 'track_claim', settled: bets.length, won, refunded });
+  return { ok: true, settled: bets.length, won, refunded, results };
 }
 
 // ── RUN IN THE CARD (step three): enter a fit racer into today's card of its kind. A cash ENTRY_FEE
@@ -474,7 +502,7 @@ export async function claimTrack(ch, client, h) {
 // can be raced/bred/sold after. The town bets on it via the normal card; the worker banks its win. ──
 export async function enterTrackRace(ch, racerId, client, h) {
   if (jailed(ch)) throw new GameError('jailed', 'No entries from lockup.');
-  if (ch.loc !== CASINO.DISTRICT) throw new GameError('district', `The track runs on the ${CASINO.DISTRICT}.`, { district: CASINO.DISTRICT });
+  if (ch.loc !== CASINO.DISTRICT) throw new GameError('district', `The track runs on ${districtName(CASINO.DISTRICT)}.`, { district: CASINO.DISTRICT });
   const r = (await client.query('SELECT * FROM racers WHERE id=$1 FOR UPDATE', [racerId])).rows[0];
   if (!r || r.character_id !== ch.id) throw new GameError('no_racer', "That's not one of your racers.");
   if (r.injured_until && new Date(r.injured_until) > new Date()) throw new GameError('injured', 'That racer is laid up — let them heal.');
@@ -548,7 +576,7 @@ const futurityMs = () => Number(process.env.FUTURITY_MS) || CASINO.FUTURITY.REGI
 // ── nominate one of your fit racers into the open futurity card. Form snapshotted; the fee burns. ──
 export async function nominateFuturity(ch, racerId, client, h) {
   if (jailed(ch)) throw new GameError('jailed', 'No nominations from lockup.');
-  if (ch.loc !== CASINO.DISTRICT) throw new GameError('district', `The futurity runs on the ${CASINO.DISTRICT}.`, { district: CASINO.DISTRICT });
+  if (ch.loc !== CASINO.DISTRICT) throw new GameError('district', `The futurity runs on ${districtName(CASINO.DISTRICT)}.`, { district: CASINO.DISTRICT });
   // materialize/find the open futurity under the state singleton lock FIRST, THEN lock the racer (LOCK
   // ORDER: char → account [withCharacter] → futurity_state → card → racer — audit v4 MED-1: resolveFuturity
   // locks state→card→racer, so nominate must lock state BEFORE the racer or it's an AB-BA on the state singleton).
@@ -639,7 +667,10 @@ export async function betFuturity(ch, racerId, amount, client, h) {
   await client.query('UPDATE futurities SET pool = pool + $2 WHERE id=$1', [g.id, amt]);
   await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -amt, reason: 'casino:futurity:bet', counterparty: g.id });
   await h.track(client, ch.account_id, 'casino', { game: 'futurity_bet', amt });
-  return { ok: true, futurity: g.id, on: runner.racer_name, amount: amt };
+  // the card row is already locked and holds both terms a bettor must be told: when the book closes
+  // and how big the pool their stake now sits in is (the enterGrandPrix idiom).
+  return { ok: true, futurity: g.id, on: runner.racer_name, amount: amt, pool: Number(g.pool) + amt,
+    closesSeconds: Math.max(0, Math.ceil((new Date(g.resolves_at) - Date.now()) / 1000)) };
 }
 
 // ── worker resolution — race the field at window close, pay the parimutuel pool (the boxing main-event
@@ -891,7 +922,7 @@ async function resolveDealer(ch, client, h, hand, player, dealer, dbl) {
 
 export async function blackjackDeal(ch, amount, client, h) {
   const max = tableMax(ch, h);
-  const amt = gateBet(ch, amount, CASINO.MIN_BET, max);
+  const amt = gateBet(ch, amount, CASINO.MIN_BET, max, highRoomTerms(ch, h));
   if ((await client.query('SELECT 1 FROM blackjack_hands WHERE character_id=$1', [ch.id])).rows[0])
     throw new GameError('hand', "Finish the hand you're in first.");
   // MADAME T1 comps the seat — a hand costs no nerve (the dice pacing perk)
@@ -1041,7 +1072,7 @@ export function setPokerLimit(ch, limit) {
 export async function playPoker(ch, dealer, amount, client, h) {
   if (jailed(ch)) throw new GameError('jailed', 'No cards in lockup.');
   if (hospitalized(ch)) throw new GameError('hosp', "You're in no shape to sit down — see the Doc."); // the sibling actor gate (red-team F2)
-  if (ch.loc !== CASINO.DISTRICT) throw new GameError('district', `The table is on the ${CASINO.DISTRICT}.`, { district: CASINO.DISTRICT });
+  if (ch.loc !== CASINO.DISTRICT) throw new GameError('district', `The table is on ${districtName(CASINO.DISTRICT)}.`, { district: CASINO.DISTRICT });
   if (dealer.id === ch.id) throw new GameError('self', "You can't play your own table."); // defense-in-depth: withTwoCharacters already throws self — explicit like every sibling
   const limit = dealer.poker_limit != null ? Math.floor(Number(dealer.poker_limit)) : 0;
   if (!(limit > 0)) throw new GameError('not_dealing', "They're not dealing a hand.");
@@ -1099,7 +1130,7 @@ function deal7() { // an independent 7-card hand from a fresh shuffle (scales to
 
 export async function enterTournament(ch, client, h, opts = {}) {
   if (jailed(ch)) throw new GameError('jailed', 'No cards in lockup.');
-  if (ch.loc !== CASINO.DISTRICT) throw new GameError('district', `The big table is on the ${CASINO.DISTRICT}.`, { district: CASINO.DISTRICT });
+  if (ch.loc !== CASINO.DISTRICT) throw new GameError('district', `The big table is on ${districtName(CASINO.DISTRICT)}.`, { district: CASINO.DISTRICT });
   const buyin = CASINO.TOURNEY.BUYIN;
   if (Number(ch.cash) < buyin) throw new GameError('cash', `The buy-in is ${usd(buyin)}.`);
   // materialize/find the open tournament under the state singleton lock (LOCK ORDER: char → poker_state → tournament)

@@ -25,7 +25,7 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { walkSrc } from './lib/srcfiles.js';
 
-const read = (p) => fs.readFileSync(p, 'utf8');
+const read = (p) => fs.readFileSync(p, 'utf8').replaceAll('\r\n', '\n');
 // Counted the way `wc -l` counts — newlines, not `split('\n').length`, which adds a phantom line for
 // every file that ends in one. The definition matters because the whole point is that a reader can
 // check the figure by hand and get the same answer; off-by-one-per-file is 100 lines across src/.
@@ -935,6 +935,72 @@ assert.deepEqual([...new Set(phantom)], [], `docs/AUDITS.md lists reports that d
   }
 }
 
+// ── and the COMPILER that consumes all of them was the one thing not held still ──────────────────
+// Same class as the fetch list above, one layer down and easier to miss because it reads as
+// configured rather than as absent: `foundry-rs/foundry-toolchain@v1` with no `version` resolves
+// `stable` AT RUN TIME. So this workflow pinned forge-std (v1.9.6), OpenZeppelin (v5.6.1), v4-core
+// (1.0.2) and solc (0.8.26, foundry.toml) by hand — and left the compiler and test runner floating.
+// The forgotten sibling. It matters most exactly when the gate is red: a moving compiler means a
+// CI failure cannot be reproduced locally, and this gate spent a session in that position with
+// three tests passing on the developer's machine and failing on the runner.
+//
+// The rule is deliberately two-sided, because half of it is not obvious: a `version` key alone is
+// not a pin. `stable` and `nightly` are CHANNELS — they satisfy "a version is declared" and still
+// resolve at run time, which is the state this guard exists to forbid wearing a version key.
+{
+  const wf = read('.github/workflows/forge.yml');
+  const step = wf.match(/uses:\s*foundry-rs\/foundry-toolchain@[^\n]*\n([\s\S]*?)(?=\n\s*-\s|$)/);
+  assert(step, ".github/workflows/forge.yml no longer installs foundry-rs/foundry-toolchain — the "
+    + 'extractor found no step to check, which reads exactly like a clean sweep. If the gate now '
+    + 'gets its compiler some other way, pin THAT and re-point this guard at it.');
+  const version = step[1].match(/^\s*version:\s*(\S+)/m);
+  assert(version, '.github/workflows/forge.yml installs foundry-toolchain with NO `version:`, so it '
+    + 'resolves `stable` at run time. Every other dependency in this workflow is pinned by hand; the '
+    + 'compiler and test runner must be too, or a red gate cannot be reproduced locally.');
+  assert(!/^(stable|nightly|latest)$/i.test(version[1]),
+    `.github/workflows/forge.yml pins the toolchain to "${version[1]}", which is a CHANNEL rather `
+    + 'than a version — it still resolves at run time. Pin the release tag (e.g. v1.7.1), which is '
+    + 'the whole point: the log and the local run must be able to name the same binary.');
+  assert(/run:\s*forge --version/.test(wf),
+    '.github/workflows/forge.yml no longer prints `forge --version`. The pin says which binary SHOULD '
+    + 'run; the banner is how the log says which one DID, without anybody having to guess at it.');
+}
+
+// ── nor one whose SIZE check can skip the suite ──────────────────────────────────────────────────
+// The same class as the dependency gap above, from a different cause. `forge build --sizes` is
+// all-or-nothing, so on 2026-08-27 a single test harness 906 bytes over EIP-170 (a typed factory,
+// whose RUNTIME code embeds its target's INITCODE) failed the build step and SKIPPED `forge test`
+// and both e2e provers with it — 19 hours of a red pre-mainnet gate in which the suite never ran,
+// on a path-filtered workflow nobody was watching. The remedy is ordering, not a bigger exception:
+// the parse gate builds, the suite and the provers run, and only THEN is the size table checked, so
+// a size regression fails on its own step with everything below it already proven.
+{
+  // COMMENTS STRIPPED FIRST, line positions preserved: the notes on these steps NAME the commands
+  // they are about (`forge build --sizes` appears in the parse gate's own comment explaining why it
+  // is not there), so a scanner reading prose finds the size gate above the suite and reports the
+  // correct ordering as a violation — a mostly-wrong advisory is the kind people route around.
+  const wf = read('.github/workflows/forge.yml')
+    .split('\n').map((line) => (/^\s*#/.test(line) ? '' : line)).join('\n');
+  const at = (needle) => {
+    const i = wf.indexOf(needle);
+    assert(i > 0, `.github/workflows/forge.yml no longer contains \`${needle}\` — the forge job's `
+      + 'step order can no longer be checked, which is the state that let a size regression skip the '
+      + 'entire contract suite for 19 hours.');
+    return i;
+  };
+  const sizes = at('forge build --sizes');
+  for (const after of ['forge test -vvv', 'npm run dexbot-e2e', 'npm run stock-e2e'])
+    assert(at(after) < sizes,
+      `.github/workflows/forge.yml runs \`forge build --sizes\` BEFORE \`${after}\`. --sizes is `
+      + 'all-or-nothing, so one over-limit contract fails that step and skips every step below it — '
+      + 'which is exactly how the pre-mainnet gate went red for 19 hours with the suite not running '
+      + 'at all. Keep the size table LAST.');
+  // and the parse gate itself must stay free of it, or the split above buys nothing
+  assert(/run:\s*forge build\s*$/m.test(wf),
+    ".github/workflows/forge.yml has no bare `forge build` step — the parse gate and the size gate "
+    + 'must be separate steps, or a size regression skips the suite again.');
+}
+
 // ── EVERY SIGNER-BEARING CONTRACT IS IN THE ROTATION RUNBOOK (red-team C1) ──────────────────────
 // One backend key (`VOUCHER_SIGNER_PK`) signs for several contracts, and each stores its own
 // `signer` that must be rotated separately. There is deliberately no shared registry on-chain, so
@@ -1208,8 +1274,140 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
   assert.equal(new Set(dates).size, 1,
     `the packet was measured on two different days at once: ${[...new Set(dates)].join(' and ')}`);
 
+  // A FROZEN test count with no compiler named is not evidence. The count is version-DEPENDENT — a
+  // suite holding only `invariant_*` functions counts as ONE test under the older aggregated reporting
+  // model and as N under 1.7.1 — and the toolchain was UNPINNED when these figures were taken
+  // (`foundry-toolchain@v1`, no `version:`, so `stable` resolved at run time). So a reader re-running
+  // the snapshot's own tree cannot tell whether the TREE changed or the COUNTER did, which is exactly
+  // the ambiguity that left the forge gate red and unreproducible for 19 hours. The packet must name
+  // the toolchain, and the version it names must be the one the workflow actually pins — two sources,
+  // one truth, or the note goes stale the first time somebody bumps the pin.
+  const pktForge = /forge v(\d+\.\d+\.\d+)/.exec(pkt);
+  assert(pktForge, 'CHAIN-AUDIT-PACKET.md freezes a Foundry test count and names no toolchain version. '
+    + 'The count is version-dependent (invariant-only suites aggregate differently), so a figure without '
+    + 'a compiler beside it cannot be reproduced — name it');
+  const wfPin = /foundry-toolchain@v1[\s\S]{0,200}?version:\s*v?(\d+\.\d+\.\d+)/
+    .exec(read('.github/workflows/forge.yml'));
+  assert(wfPin, 'the forge workflow has lost its pinned toolchain version — the packet cites one, so '
+    + 'this cross-check has nothing left to hold it to');
+  assert.equal(pktForge[1], wfPin[1],
+    `the packet says its rebuilt measurement will use forge v${pktForge[1]} while the workflow pins `
+    + `v${wfPin[1]}. A stale toolchain claim beside a frozen figure is worse than none: it tells a `
+    + 'reader the count is reproducible under a compiler that is no longer the one that runs');
+
   console.log(`✓ the audit packet agrees with itself (${tableContracts} contracts + ${tableIfaces} `
     + `interfaces, ${pairs[0]} tests/suites, measured ${dates[0]})`);
+}
+
+// The LIVE packet is a different object from the frozen one and gets a STRICTER check, because it IS
+// the current engagement scope. The frozen file is held only to itself (its figures are evidence about
+// a tree that no longer exists); this one must be held to the TREE, since "batch, not dribble" means an
+// auditor scopes from this table and a contract missing from it is one they never look at — discovered
+// mid-engagement, which is what paying to re-audit looks like. The same partial-refresh failure applies
+// on top, so every restated figure must agree with the ones beside it, and the toolchain it names must
+// be the one the workflow pins: a count without its compiler is not reproducible (an invariant-only
+// suite counts as 1 under the aggregated model and N under 1.7.1), which is exactly the ambiguity that
+// left the forge gate red and unreproducible for 19 hours.
+{
+  const pkt = read('CHAIN-AUDIT-PACKET-O1.md');
+
+  // (a) the table is the scope, and the TREE is the truth it must match
+  const rows = [...pkt.matchAll(/^\| \d+ \| `([A-Za-z0-9]+)` \|(.*)$/gm)];
+  assert(rows.length > 10, `the O1 packet's §1 batch table has stopped being readable (${rows.length} `
+    + 'rows found) — this check would be vacuous rather than clean');
+  const tableIfaces = rows.filter((r) => /interface, not a contract|interface only/.test(r[2])).length;
+  const tableContracts = rows.length - tableIfaces;
+
+  // one name per source file: its contract, or its interface where the file declares no contract
+  const srcDir = 'omerta-contracts/src';
+  const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory()
+    ? walk(`${d}/${e.name}`) : (e.name.endsWith('.sol') ? [`${d}/${e.name}`] : [])));
+  const files = walk(srcDir).sort();
+  const treeContracts = [];
+  const treeIfaces = [];
+  for (const f of files) {
+    const src = read(f);
+    const c = /^(?:abstract )?contract ([A-Za-z0-9_]+)/m.exec(src);
+    if (c) { treeContracts.push(c[1]); continue; }
+    const i = /^interface ([A-Za-z0-9_]+)/m.exec(src);
+    assert(i, `${f} declares neither a contract nor an interface — the packet's scope table is built `
+      + 'one row per source file, so a file this reader cannot name cannot be scoped');
+    treeIfaces.push(i[1]);
+  }
+  assert(treeContracts.length > 10, `read only ${treeContracts.length} contracts out of ${srcDir} — `
+    + 'this cross-check is measuring nothing');
+
+  const named = new Set(rows.map((r) => r[1]));
+  const missing = [...treeContracts, ...treeIfaces].filter((n) => !named.has(n));
+  assert.equal(missing.length, 0, `the O1 packet's scope table omits ${missing.join(', ')}. An auditor `
+    + 'scopes from that table, so a contract missing from it is one nobody reviews — and adding it after '
+    + 'the engagement means paying to re-audit, which is what "batch, not dribble" exists to prevent');
+  const inTree = new Set([...treeContracts, ...treeIfaces]);
+  const phantom = rows.map((r) => r[1]).filter((n) => !inTree.has(n));
+  assert.equal(phantom.length, 0, `the O1 packet scopes ${phantom.join(', ')}, which ${srcDir} does not `
+    + 'contain — a reviewer would go looking for source that is not there');
+  assert.equal(`${tableContracts}+${tableIfaces}`,
+    `${treeContracts.length}+${treeIfaces.length}`,
+    `the O1 packet's table marks ${tableContracts} contracts + ${tableIfaces} interfaces; the tree holds `
+    + `${treeContracts.length} + ${treeIfaces.length}`);
+
+  // (b) the heading and the file-count sentence are what a reader scopes from before reaching the table
+  const head = /## 1\. SCOPE — (\d+) contracts \+ (\d+) interfaces?/.exec(pkt);
+  assert(head, 'CHAIN-AUDIT-PACKET-O1.md §1 has lost its scope heading');
+  assert.equal(`${head[1]}+${head[2]}`, `${tableContracts}+${tableIfaces}`,
+    `the O1 packet's §1 heading sends ${head[1]} contracts + ${head[2]} interface(s) to audit while the `
+    + `table beneath it enumerates ${tableContracts} + ${tableIfaces}`);
+  const body = /(\d+)\s+Solidity files,\s+(\d+)\s+contracts and\s+(\d+)\s+interfaces/.exec(pkt);
+  assert(body, 'CHAIN-AUDIT-PACKET-O1.md §1 has lost its file-count sentence');
+  assert.equal([body[1], body[2], body[3]].join('/'), [files.length, treeContracts.length,
+    treeIfaces.length].join('/'),
+    `the O1 packet says ${body[1]} files / ${body[2]} contracts / ${body[3]} interfaces; the tree holds `
+    + `${files.length} / ${treeContracts.length} / ${treeIfaces.length}`);
+
+  // (c) a partial refresh is the failure mode, so no figure may drift from its own restatements
+  const pairs = [...pkt.matchAll(/(\d+)\s+(?:Foundry\s+)?tests?\s+(?:across|\/)\s+(\d+)\s+suites/g)]
+    .map((m) => `${m[1]}/${m[2]}`);
+  assert(pairs.length >= 2, `the O1 packet states its Foundry count in ${pairs.length} place(s); with `
+    + 'fewer than two there is nothing to hold it to and this assertion proves nothing');
+  assert.equal(new Set(pairs).size, 1,
+    `the O1 packet gives its Foundry suite two different answers: ${[...new Set(pairs)].join(' and ')}`);
+  const fuzz = [...pkt.matchAll(/(\d+)\s+parameterised 512-run fuzz/g)].map((m) => m[1]);
+  assert(fuzz.length >= 2, `the O1 packet counts its 512-run fuzz properties in ${fuzz.length} place(s)`);
+  assert.equal(new Set(fuzz).size, 1, `the O1 packet counts its 512-run fuzz properties two ways: ${
+    [...new Set(fuzz)].join(' and ')}`);
+  const dates = [...pkt.matchAll(/measured (?:on )?\*{0,2}(\d{4}-\d\d-\d\d)/g)].map((m) => m[1]);
+  assert(dates.length >= 2, `the O1 packet states its measurement date in ${dates.length} place(s)`);
+  assert.equal(new Set(dates).size, 1,
+    `the O1 packet was measured on two different days at once: ${[...new Set(dates)].join(' and ')}`);
+
+  // (d) the toolchain it names must be the one that runs — two sources, one truth
+  const pktForge = [...pkt.matchAll(/forge v(\d+\.\d+\.\d+)/g)].map((m) => m[1]);
+  assert(pktForge.length >= 2, `the O1 packet names its toolchain in ${pktForge.length} place(s); a `
+    + 'version-dependent count needs its compiler beside it wherever the count appears');
+  assert.equal(new Set(pktForge).size, 1,
+    `the O1 packet names two toolchains: ${[...new Set(pktForge)].join(' and ')}`);
+  const wfPin = /foundry-toolchain@v1[\s\S]{0,200}?version:\s*v?(\d+\.\d+\.\d+)/
+    .exec(read('.github/workflows/forge.yml'));
+  assert(wfPin, 'the forge workflow has lost its pinned toolchain version');
+  assert.equal(pktForge[0], wfPin[1],
+    `the O1 packet freezes its count under forge v${pktForge[0]} while the workflow pins v${wfPin[1]}. `
+    + 'A stale toolchain claim beside a frozen figure is worse than none: it tells a reader the count is '
+    + 'reproducible under a compiler that is no longer the one that runs');
+
+  // (e) the pointers. A superseded packet that does not name its successor is how a reviewer is handed
+  // the wrong scope — the whole failure this refresh exists to end, one document over.
+  const frozen = read('CHAIN-AUDIT-PACKET.md');
+  assert(/CHAIN-AUDIT-PACKET-O1\.md/.test(frozen),
+    'CHAIN-AUDIT-PACKET.md is superseded and does not name its successor. A reader who opens the file '
+    + 'named in three other documents must be sent onward, or the stale pre-O1 scope is what gets sent');
+  for (const doc of ['CHAIN-DEPLOY.md', 'LAUNCH-READINESS.md']) {
+    assert(/CHAIN-AUDIT-PACKET-O1\.md/.test(read(doc)),
+      `${doc} gates on the audit and does not name CHAIN-AUDIT-PACKET-O1.md as the packet to send`);
+  }
+
+  console.log(`✓ the O1 audit packet matches the tree (${tableContracts} contracts + ${tableIfaces} `
+    + `interfaces, ${files.length} files), agrees with itself (${pairs[0]} tests/suites under forge `
+    + `v${pktForge[0]}, measured ${dates[0]}), and every gate doc points at it`);
 }
 
 // The issuer-retirement answer is a value-conservation rule, not optional prose. Keep the player Codex,
@@ -3782,7 +3980,59 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
     `src/ops.js now gates ${gated.join('/')} on recency — DEPLOY.md §8's warning that smoke characters `
     + 'count in the headline figure permanently is no longer true. Delete the warning rather than this check.');
 
-  console.log('✓ DEPLOY.md §8 states the smoke-debris window the code enforces, and the asymmetry it warns about');
+  // Half three: "there is no sweep, and the obvious lever makes it worse". Both halves are
+  // decidable. If a route ever CAN remove a character, the note is stale in the worst direction —
+  // it would be telling an operator to live with debris a real remedy now clears. Comments are
+  // stripped first: the rule is cited in prose in this very file, and a scanner that reads its own
+  // explanation as a violation is the mostly-wrong advisory people route around.
+  // walkSrc, never a flat readdir — its own header records the bug a flat listing reintroduces:
+  // the guard goes QUIET when code moves into a subdirectory instead of failing.
+  const stripComments = (t) => t.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+  const removers = walkSrc('src').filter((f) => /DELETE\s+FROM\s+characters\b/i.test(stripComments(read(f))));
+  assert.equal(removers.length, 0,
+    `${removers.join(', ')} now deletes character rows — DEPLOY.md §8 tells the operator there is no `
+    + 'sweep and to subtract smoke debris by name. Rewrite the note around the new remedy.');
+  // …and the lever an operator would reach for really does add a row rather than remove one.
+  assert(/INSERT INTO characters/.test(read('src/social/estate.js')),
+    'src/social/estate.js must INSERT the heir — DEPLOY.md §8 warns that mod-kill raises `total` by one');
+  assert(/runEstate\(/.test(read('src/routes/modtools.js')),
+    'POST /v1/mod/kill must run the estate — DEPLOY.md §8 warns it creates an heir');
+
+  console.log('✓ DEPLOY.md §8 states the smoke-debris window the code enforces, the asymmetry it warns about, and that no sweep exists');
+}
+
+// ─── INVARIANT_WEBHOOK_URL is not worker-only any more, and the runbook said it was ──────────────
+// §5 told the operator "**Must be set on the WORKER process** — every automatic alarm lives there".
+// That was true until `startWorkerWatch` shipped, and then it was false in the direction that leaves
+// an outage undetected: the API now alarms on its own timer and is the ONLY process that can page
+// when the worker is GONE, because a process cannot alarm on being dead. An operator following the
+// old sentence literally sets the key on the worker, every other alarm works, and exactly the one
+// covering a dark worker is mute — the shape that hid a 17h outage.
+//
+// The same false claim lived in render.yaml's comment and was corrected there; this is the sweep of
+// that class to its second instance. Guarded two-sided: the doc must say BOTH services, and must not
+// go back to saying worker-only. If the watchdog ever moves OFF the API the right response is to
+// rewrite this note, not to widen the check — and that move is separately caught by test/gates.js,
+// which fails if `startWorkerWatch` is defined in src/server.js and never called.
+{
+  const deploy = read('DEPLOY.md');
+  assert(!/Must be set on the WORKER process/.test(deploy),
+    'DEPLOY.md §5 says INVARIANT_WEBHOOK_URL must be set on the worker — since startWorkerWatch shipped '
+    + 'the API alarms too, and it is the only process that can page when the worker is dead. Setting it '
+    + 'worker-only leaves that alarm mute while every other alarm works.');
+  assert(/Set it on BOTH processes/.test(deploy),
+    'DEPLOY.md §5 must tell the operator to set INVARIANT_WEBHOOK_URL on BOTH processes');
+
+  // …and the drill the note sends them to must exist, on the service it names.
+  assert(/send test alert/.test(deploy) && /configured: true/.test(deploy),
+    'DEPLOY.md must tell the operator to run the /admin alarm drill and require `configured: true` — '
+    + 'a dashboard that renders proves the API is up, never that the alarm can leave the building');
+  assert(/\/v1\/mod\/alert\/test/.test(read('src/routes/modtools.js')),
+    'DEPLOY.md sends the operator to the alarm drill; POST /v1/mod/alert/test must exist');
+  assert(/alert\/test/.test(read('public/admin.html')),
+    'DEPLOY.md says the drill is a button on /admin — public/admin.html must call it');
+
+  console.log('✓ DEPLOY.md states the webhook belongs on BOTH services, and the drill it names exists');
 }
 
 // ═══ THE POSTED-CLAIM LEDGER — the figures that leave the building ════════════════════════════════

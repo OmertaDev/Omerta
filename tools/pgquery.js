@@ -161,7 +161,12 @@ if (failures.length) {
 // can never disagree about what the set is. This number bounds how much SQL goes unPREPARED; the
 // ledger bounds what can be in it. Neither replaces the other, and the ceiling stays because a
 // statement that never reaches Postgres is still a statement nobody type-checked.
-const CEILING = { interpolated: 162, unreadable: 40 };
+// 162 → 165 (2026-09-05): the named-column persist — persistAccount, persistCharacter and
+// persistAccountFields generate their SET clause from the exported ACCOUNT_/CHARACTER_PERSIST_COLUMNS
+// lists (one source for the column set, every value bound). A generated fragment cannot be a literal
+// without restating the list, which is the drift the lists exist to remove; test/persist.js SELECTs
+// every column against the live schema instead.
+const CEILING = { interpolated: 165, unreadable: 40 };
 const overflow = [];
 if (interpolated.length > CEILING.interpolated)
   overflow.push(`interpolated queries grew to ${interpolated.length} (ceiling ${CEILING.interpolated}) — these are UNCHECKED by this guard`);

@@ -5724,6 +5724,293 @@ disabling the rolls branch outright fails at the SILENCE LEDGER (the static half
 driven claim, so it was re-cut to keep the branch and change only its WORDING, which fails at
 *"craps must name the come-out it threw"* with the line printed back. Driven actions 244 → 246.
 
+**PLAY WAVE 72 — THE SEALED BID'S MISSING HALF, AND A PERMANENT CHOICE THAT SAID "done."
+(2026-08-30; numbered 72 because the scarcity drop's commission receipt already claimed WAVE 71 in
+the ledger).** The sweep's surface measured honestly first — INSTRUMENTED, never regexed: the ledger's
+own run dumps 272 driven keys where a static regex reports 49, and against the 368 routes the console
+presses that leaves **165 never driven**. The first gap extractor produced FALSE gaps (it normalized
+only hex-ish segments to `:p`, so driven URLs carrying ids like `docks` never matched their pressed
+pattern — 217 "undriven" against a real 165); *a finding produced by a tool you wrote and did not
+check is not a finding*, for the eleventh session running. Four clusters driven through the REAL
+`describe()`; two findings, several clean lenses.
+**THE HEADLINE IS THE TRAIT — the once-ever level-50 capstone of a whole trade read `"done."`.**
+`chooseTrait` is the Fable moment: master a trade to level 50, choose VIRTUOSO or DYNAST, once,
+permanently, no respec — and the reply carried a raw `track` id with no display name, so no branch
+could claim it and the biggest single decision in the mastery system toasted nothing. The client
+could not have fixed it alone (describe() has no track catalog — the raw-key rule), so the server now
+sends `trackName` + the trait's own `desc`, and the line states the TERMS: *"🎖 Virtuoso — the
+Larceny die is cast, once and for good (it dies with the street). The trade's perk deepens to its
+mastered strength."* The branch keys on `trait` + `trackName` — checked against both near-collisions
+BEFORE shipping rather than after (pen.js sends `trackName` with no `trait`; the soldier hire sends
+`trait` with no `trackName` — absence is not a discriminator, so the PAIR is the key).
+**THE SEALED BID WAS FLUENT AND LEFT THE LOAD-BEARING TERMS OFF.** *"🕶 $1,000,000 on The Docks —
+1 in, 30m to go"* named neither that the stake is the family's TREASURY (the wave-55
+pocket-vs-treasury class — a boss reads a seven-figure spend with nothing saying whose pocket), nor
+`CONTEST_LOSS_BPS` — and per this file's own record that forfeiture **is what makes it a sealed bid
+rather than "always commit everything"**, i.e. the one term a player must weigh before committing.
+A RAISE also read byte-identical to a fresh stake though the reply carried `added` all along. Every
+figure was already in the reply; only the line was short — it now reads *"$1,000,000 of the treasury
+on The Docks … — lose and 50% of it is forfeit"*, and a raise leads with *"raised to $1,200,000
+(+$200,000)"*.
+**Clean lenses, recorded because a sweep that publishes only its hits cannot be audited:** blackmail
+end to end (dig / extort / pay-hush / expose all read with their terms), the feud sit-down (propose +
+accept), diplomacy pacts including the oathbreak, the Commission's weekly vote AND the daily ticker
+pick, the Law's jury buy (*"once per case"* named) and a demanded-trial acquittal, and the skills
+learn line.
+**Guarded by a WAVE 72 driven block** in `test/client.js` — its own holder character and two real
+gang foundings, a genuinely player-held district (the sealed contest's precondition — unheld ground
+falls to an outright claim and would never reach this line), and a real level-50 masteries seed, so
+every claim is asserted server-half first, line second. **Five mutations, five distinct named
+kills** — the server's `trackName` dropped; the client trait branch deleted (reproducing `"done."`
+verbatim); the forfeit term dropped from the line; the raise collapsed to a fresh stake; `lossBps`
+dropped from the server reply. No SQL moved in `src/` (checked with a diff filter, not assumed), so
+the real-Postgres gates do not apply. Driven actions → 285.
+
+**PLAY WAVES 73–74 — THE SWEEP RUN TO COMPLETION: twelve clusters in parallel, the census emptied,
+fifty-nine fixes (founder-directed 2026-08-30: "Use graph engineering and control multiple sub agents
+on Opus to run every single sweep remaining in parallel till completion").** The wave-by-wave sweep
+had been draining the pressed-but-undriven census one cluster per sitting; the directive turned the
+remainder into ONE orchestrated run — **12 parallel finder agents drove all 171 remaining routes**
+through the client's REAL `describe()` (social/combat/pen/market/shylock/world/politics/vice/freight/
+empire/chain/daily — zero undrivable, every refusal traced to a fixture rather than waved), then
+**12 SERIAL appliers fixed the 56 confirmed defects** (59 fixes counting the ones found while fixing)
+in the shared tree, one commit per cluster, each defect RE-DRIVEN and reproduced before it was
+touched, each fix guarded by a driven block asserting the SERVER half first, each mutation-verified
+with distinct named kills on scratchpad copies. **The census is now EMPTY — every route the console
+can press has been driven and read at least once.**
+**THE HEADLINE IS THE CHAIN CLUSTER: the entire extraction rail said "done."** — `/v1/withdraw` (the
+EIP-712 voucher that burns $OMR and issues the on-chain claim), the identity mint, the bond quote AND
+the bond claim, all mute on the one surface where real money moves; the bond-claim fix itself was
+corrected by DRIVING ("released X $OMR" implies tokens landed — the claim is off-chain accounting, so
+the line now says the release itself is on-chain). Beside it, the class's worst instances each in a
+new costume: **combat** — the four asset crimes fell into the casino's WIN/LOSS pair, so stealing a
+car read *"WIN — +$0 · GONE IN SIXTY"* (gambling wording plus a FALSE money figure on a verb where no
+money moves) and every loss read *"the house keeps it (−$0)"* over a JAIL SENTENCE; **shylock** — the
+loan collect stated the GROSS while the lender banked net-of-vig (a $6,000 overstatement growing with
+the debt) and said nothing about the welsher brand, the WANTED window or the broken legs the database
+showed set; **vice** — three settle systems share one byte-shape and the numbers claim's early return
+made the track's own branch UNREACHABLE DEAD CODE, so a SCRATCHED runner's refund rendered
+byte-identical to a genuine win; **pen** — a co-op break blown by its own rat read *"caught at the
+fence"*, telling a betrayed leader he was unlucky. **Freight swept a CLASS mid-fix**: 18 refusal
+sites named a district by its storage key, and nine modules each carried a private `districtName`
+copy — promoted to `rules.tail.js` beside `art`/`usd` per the sixty-nine-copies discipline.
+**THE GUARDS EARNED THEIR KEEP DURING THE FIXES THEMSELVES, which is the argument for having built
+them**: THE COLLISION LEDGER (check 13) caught two first-cut fixes before they shipped — the pen's
+`blown` branch would have claimed the heist's own truthful message, and the daily cluster's favor
+branch was a bare `npcName` catch-all that would have claimed the drill reply — and THE RAW-KEY
+LEDGER caught a correct fix written in the shorthand spelling its matcher did not know
+(`{ kind, kindName }`), which was a GUARD defect: both halves widened to the second legal spelling
+rather than the payload contorted (the extractor-only-knows-one-form class, the CATALOG LEDGER
+lesson). Orchestration mechanics recorded for the next run: appliers are FORBIDDEN from touching
+CLAUDE.md/SPEC.md (this consolidated entry replaces twelve individual ones), every source-only push
+needs a generated-only knowledge companion on the exact head (built in a linked worktree when the
+shared tree is dirty), and the SPEC client line count crossed its 2% guard band mid-sweep and was
+restated rather than the tolerance widened. Suite green at the final head; the two SQL-touching
+clusters were verified through CI's real-Postgres job per push.
+
+**THE INNERHTML LEDGER — 110 render sites, one probe, and the mutation that survived for the
+right reason (2026-09-05).** RT#8's stored-XSS lens ended with a sentence rather than a guard: *"one
+missed `cleanText` on a new field is stored XSS and nothing would catch it."* The console has no
+escape discipline enforced anywhere — ~110 `innerHTML` sites, an `esc()` helper used where somebody
+remembered, and `art()`/`goodName`/`distName`/`discName`/`styleName` returning RAW catalog names
+straight into markup — so the client's safety rested entirely on WRITE-time sanitisation of every
+player string on every route, forever. **Check L in `tools/mobile.js` turns that into a property of
+the RENDERER**: `page.route` intercepts every `/v1/**` JSON reply and appends a marker probe
+(`"><i data-xss="ZXSSMARK">ZXSSMARK</i>`) to every string under a DISPLAY key (`name`, `title`,
+`bio`, `tag`, `by`, `dynasty`, `desc`, `headline`, …, never a lookup key like `id`/`kind`/`district`),
+walks every group, tab and the cellphone modal in real Chromium, and fails once per distinct site
+where the probe CREATED AN ELEMENT rather than rendering as text — naming the screen and the nearest
+`[id]`. Two anti-vacuity floors, because they fail differently: the interceptor must have poisoned
+≥50 strings (a probe that lands nowhere finds nothing), and the marker must have rendered as literal
+text ≥10 times (the check is only meaningful on screens that actually printed a poisoned string).
+**First run: 64 sites.** A mechanical transform (`esc(` around every display-key interpolation and
+every raw-name helper on HTML lines, skipping the four text-context regions — `describe()`, the cine,
+`bragText`, `feedText` — whose consumers are `textContent`) took it to 4; ~15 hand fixes on the
+conditional shapes the transform cannot see (`x ? '<b>' + esc(g.name) + '</b>' : esc(g.name)`,
+`.map(esc).join(', ')`, `${p ? esc(p.name) : esc(me.path)}`) took it to 0 across 33 screens, 4,600
+poisoned strings, 781 text hits. `art(n, a)` is deliberately NOT changed to escape: describe() feeds it
+to toast's `textContent`, so an escaping `art` would render entities as literal text on every toast
+(the wave-11 `esc()`-corrupting-every-name class) — the innerHTML sites wrap it instead. The tour
+bodies stay unescaped by design (client-authored static HTML, the title escaped).
+**THE MUTATION THAT SURVIVED WAS RIGHT TO, and it corrected my anchor rather than the guard.** M1
+stripped `esc(` from `<b>${esc(me.name)}</b>` — the FIRST of two occurrences — and the run stayed
+green. The first occurrence is the DEATH MODAL (line 5846), which no walk renders; the `#whoami`
+masthead is the second. Re-targeted at the coach card's `${esc(next.name)}` (inside `#tab-start`,
+poisoned on every walk) it fails by name with the created element quoted verbatim. M2 (the poison
+KEYS emptied) trips the first floor — *"poisoned only 0 string(s) across 154 JSON responses"*. Honest
+scope, stated in the check: it proves every DISPLAY-keyed string the walk renders is escaped, not
+that every innerHTML site is (a field under a key not in KEYS, or a screen the walk cannot reach, is
+outside it); write-time `cleanText` stays the first wall and this is the second. Zero §10.4 (render
+markup moves no value), no SQL moved (verified on the STAGED diff — the unstaged one is empty after a
+savepoint, which reads exactly like a clean sweep).
+
+**THE MIRROR LEARNS TWO-HOP READS — the guard's own stated blind spot, closed, and the drift it found
+(2026-09-05).** `test/client.js` check 4 has said in its own words since it shipped that it covers
+top-level fields, one alias hop and list elements, and that deeper chains are out of scope — and a
+measurement two sessions earlier put the number on it: **814 distinct two-hop reads in the client
+(`b.grandPrix.pool`, `me.gang.treasury`), checked by nothing.** The report-only probe that produced
+that number ended with one drift and a decision to leave it, since the client branched on the
+parent's `open` flag; this drop makes the check permanent and, having done so, fixes the drift at
+the SOURCE rather than waiving it. **The design decision is the ABSENT-PARENT rule.** A parent that
+is missing or null on the fixture's board is the benign empty-state case — no war, no spouse, no
+champion, no decree — and a guard that reports it would be mostly waivers, which is the
+mostly-wrong advisory this file keeps naming as worse than none. So an absent parent is COUNTED
+(and printed — *"32 parent absent/null (empty-state, not a finding)"*), never reported, while a
+parent that IS an object is held to its key set. The nested map rides the same bindings check 4
+already scopes (GETBIND/RAWBIND/THENBIND — the blind-spot family the mirror has closed four times),
+so a board the first level cannot see, the second cannot either; a chain through a BUILTIN
+(`.length`, `.map`) is skipped. **Two anti-vacuity floors, because they fail differently**: >300
+chains collected (an extractor that stopped reading the client) and >100 checked (a fixture whose
+every parent went absent). Measured on the green run: **346 chains, 251 checked, 32 absent.**
+**The one drift is the `dormantView` class, one system over.** `/v1/races`' `grandPrix` carried
+`{open, buyin, minLevel, minEntrants}` when no race was open and
+`{…, id, pool, entrants, entered, closesSeconds}` when one was — and `renderRaces` reads the four
+live-only keys off it. Today the client branches on `open` first, so nothing renders `undefined`;
+it is exactly the shape `bankPosition` was fixed for (a dormant object carrying fewer keys than the
+live one leaves a client unable to tell "no race" from "no such field"), and the closed shape now
+carries the same key set at its natural zeros. Four mutations, each caught at its own named
+assertion (a bogus nested read → *"reads grandPrix.zzbogus off /v1/races|"*; the extractor blinded
+→ *"only 0 two-hop read chain(s) collected"*; the server's closed shape restored → the drift named
+by field; a bogus read under an ABSENT parent → the nested check stays silent by design, and the
+run fails at the pre-existing FIRST-LEVEL check instead, which is the correct behaviour rather than
+a hole). **And the recorded trap was hit again, by me**: `git checkout -- src/races.js` to undo the
+third mutation wiped the uncommitted races.js fix — ground rule #9's own scenario, three days after
+its last occurrence. Re-applied from context; mutations are restored only by `cp` from scratchpad
+copies. No SQL moved (`src/races.js` changed one object literal — verified on the STAGED diff).
+
+**THE PERSIST IS NAMED, NOT COUNTED — the 67-parameter positional UPDATE and its two hand-rolled
+twins (2026-09-05).** `persistCharacter` was one hand-written `UPDATE characters SET respect=$2, … $67`
+and `persistAccount` its 19-parameter sibling — the two statements EVERY authed request ends on — and
+the record shows what that shape costs: every column added to the row since M1 has had to be threaded
+by hand into a list where the ONLY thing binding a value to its column is the position it happens to
+sit at, and a slip is a silent swap between two same-typed columns that no suite sees (this log's own
+entries cite `$59`, `$62/$63`, `$64/$65`, `$67` as landmarks, which is how load-bearing the count had
+become). Worse, the estate had TWO HEADLESS COPIES of the account write — the mod-kill in
+`routes/modtools.js` and the NPC-hunter kill in `combat.js` each carried their own
+`UPDATE account_persistent SET prestige=$2, deaths=$3, omr=$4, unbonding=$5` — and the death-duty and
+unbonding drops both had to touch all three sites, which the log records as the reason those two
+fixes were found by a §10.4 drift rather than by design. **Both statements are now GENERATED from two
+exported column lists** (`CHARACTER_PERSIST_COLUMNS` 66, `ACCOUNT_PERSIST_COLUMNS` 18 — each entry a
+column name plus an optional default, so a two-element entry still applies its `0`/`false`/`null` and a
+one-element entry binds the raw value exactly as the positional list did), the SET clause is built once
+at module load, and the two headless persists collapse onto ONE `persistAccountFields(client, id, acct,
+ESTATE_ACCOUNT_FIELDS)` — a field list that is VALIDATED against the column list (an unknown field
+throws) so a copied UPDATE can never drift from the persist again. Byte-identical behaviour: the
+generated SQL was diffed against the hand-written one before the old text was deleted.
+**`test/persist.js` (the 154th suite) turns the shape into properties**, and the useful one is the
+SCHEMA check: every listed column is `SELECT`ed against the live table, so a persist column the schema
+does not carry fails BY NAME before any request runs — where a positional UPDATE would have shipped it
+as a runtime 500 on every authed request (the 2026-08-06 boot-crash class, one layer down). Its first
+cut killed the typo mutation only as a raw pg-mem `ColumnNotFound` throw — the *failure that teaches
+nothing* shape — so the SELECT is wrapped and names the column and the consequence. The estate half is
+a SOURCE scan of `runEstate`: every `acct.<field>` it assigns must be in `ESTATE_ACCOUNT_FIELDS`, or
+the next unbonding-class column is silently un-persisted on the headless paths again; **its first run
+found ZERO assignments**, because the first `{` after the function name is the `opts = {}` DEFAULT
+PARAMETER, not the body — the same trap THE GATE MATRIX hit on `npcHit` — so the parameter list is
+paren-matched before the body is brace-matched, with an anti-vacuity floor. Four mutations, four named
+kills (`unbonding` dropped from the field list; a column misspelled; the hand-rolled UPDATE restored in
+combat.js; defaults ignored — killed as a NOT NULL violation on the real write). `pgquery`'s
+interpolated ceiling rose 162 → 165 with the reason recorded at the site (the SET clauses are generated
+from the exported lists and every value is bound; the suite SELECTs every column), and the
+interpolation ledger declares the one new `${set}`. **Process note:** four mutations were run against
+`src/` while a background full-suite run was in flight — that run's green was worthless and was
+re-run; a suite reading a file another process is rewriting reports nothing about either tree.
+
+**THE ACCOUNT-ID UNIFICATION — twelve UUID columns become TEXT, the bridging casts go, and
+pgcheck boots on a database that still says UUID (2026-09-05).** The 2026-07-30 outage was a
+`uuid = text` comparison that made `loadOwned` fail to PARSE — every authed request 500'd for hours
+— and its fix was a BRIDGE (`$2` stayed text, a separate `$3` inferred uuid), with the cause left
+standing and documented at the site: `account_persistent.id` and `characters.account_id` are TEXT,
+and **12 columns across 8 tables** (eth_vault, dm_messages, dm_blocks, megaproject_contributions,
+duels, commission_proposals, career_claims, rival_events) held the SAME identifier as UUID. Every
+one of those was a place the outage class was still live, and three more bridges had grown since
+(`rivals.js` `::text`, `people.js` `$1::uuid`, `commission.js` `::text`) — a cast per site is how
+sixty-nine private copies of a gate came to exist. **The canonical type is TEXT** (the 28-column
+majority; `rival_events.id` stays UUID because it is a ROW id, not an account). The mechanism is
+**14 bare `ALTER TABLE … ALTER COLUMN … TYPE TEXT` lines in `schema.sql`** rather than a
+real-Postgres-only pass: pg-mem cannot parse the `USING` form but parses the bare one, real
+Postgres converts uuid→text without `USING` and REBUILDS the primary keys over the converted
+columns, a repeat is a no-op, and it moves neither the table nor its indexes (relfilenodes
+measured unchanged). So the suites boot through the same statement production runs, which is the
+whole point of putting it in the file the deploy applies. The four bridges are then DELETED —
+`loadOwned` is back to two params plus `$3` = today, `rivals.js` is a plain join — because a
+bridge left in place is a cast that stops being needed and starts being a lie about the type.
+**THE GUARD IS THE HALF THAT MATTERS, because a fresh database cannot see this class at all.**
+Every suite starts EMPTY, so the inline `TEXT` declarations make every test green whether or not
+the ALTERs exist — and production is the database that is never fresh (the 2026-08-06 boot-crash
+lesson). `tools/pgcheck.js` §7b now compares `data_type` beside column NAMES (an upgraded column
+surviving with the wrong type reads exactly like a present one), and **§7c** finds the newest
+`schema.sql` in git history that still DECLARES these columns UUID (an anti-vacuity throw if none
+does — the day that history is gone, the check must be rewritten rather than pass over nothing),
+applies it raw, SEEDS a row per table with real uuid literals, boots the CURRENT build on top, and
+asserts four things: every account column is TEXT (naming survivors), the seeded values came
+through intact, a cast-free `$1` TEXT parameter compares against all nine tables — the exact
+outage statement shape — and the primary keys were rebuilt rather than dropped. Today §7c resolves
+to HEAD itself, since the inline declarations still say UUID for pg-mem's sake. Mutation: delete
+one ALTER line → *"survived as uuid: rival_events.aggressor_account"*, by name. §10.4 untouched
+(a column type moves no value). pgquery 3411 statements + pgcheck 87/87 on FRESH real Postgres. **And the drop broke a guard the right way**: `test/migrate.js`'s static idempotency check — every statement in schema.sql must be safe to run a second time, since the whole file is applied at every boot — did not know an `ALTER COLUMN … TYPE TEXT` and listed all thirteen as crash loops. They are not: a widening to TEXT is a no-op the second time by the type's own definition, and pgcheck §7/§7c PROVE the re-apply on real Postgres rather than reasoning about it. So the classifier learned exactly the bare `TYPE TEXT` form and nothing wider — a conversion to a NARROWER type can fail on the second run's data and a `USING` clause can be anything, so neither classifies (self-tests pin both, and a duels column mutated to `TYPE INT` is flagged by name).
+
+**THE TWO-PHASE COMMIT — accrual settles ahead of the action, and the read path stops rolling
+the raid (#29, 2026-09-05).** The lock-free `withCharacterRead` was built once and REVERTED (the
+2026-07-25 POSTGRES SAFETY VALVES entry) on one fatal finding: with reads no longer persisting, the
+§7.1 Bureau raid could only ever fire during an ACTION — the raid sets `jail_until`, the action's
+own jail gate then threw, and the ROLLBACK undid the raid that had just rolled, so the Bureau was
+unreachable. The old design worked only because reads (whose `fn` never throws) were the ones
+committing accrual. The fix that entry prescribed is now built: `withCharacter` runs
+**`settleIfDue(pool, accountId)` FIRST** — a row-only due probe (`last_accrued_at` ≥ 1s, an
+in-transit deposit past its clear, an unbond past its window) and, only when due, its OWN
+transaction (char `FOR UPDATE` twice — the §9b death-race twin — then account, `loadOwned`,
+`accrueAndLedger`, persist, COMMIT) before the action opens its own. What the clock did commits
+whether or not the action does; `withTwoCharacters` settles both parties. On the read side
+`accrueInMemory` takes `{ preview: true }` and `accrue()` gates the raid roll on `!ctx.preview`, so
+a read can show accrued income truthfully and never PICK the outcome of a roll it cannot persist.
+**Two REAL transactions, not a savepoint — and that is what decides where it is provable.** pg-mem
+has no SAVEPOINT and its ROLLBACK is a no-op, so "a refused action still commits accrual" cannot be
+demonstrated on the suite engine at all; `tools/pgcheck.js` §5 was REWRITTEN from "a refused action
+leaves no trace" (the pre-#29 contract, now false) to "A REFUSED ACTION COMMITS THE CLOCK AND
+NOTHING ELSE" — a laundro racket, a jailed street, a 6h-old clock, a refused crime, then the
+`racket:income` row landed, the clock fresh, cash up by exactly the ledgered accrual and not one
+non-accrual row (an exact before/after count, not a loose bound). 88/88 on a fresh real Postgres.
+pg-mem covers what it can: `test/growth.js` runs 300 preview `accrue()` passes on a heat-100 chef
+with stash and asserts the raid never rolls, with a NON-preview control loop that does (a preview
+assertion with no control is vacuous), plus two source tripwires — the read path passes
+`preview: true`, and `settleIfDue` sits ahead of `pool.connect()` in `withCharacter`.
+**The consequence every fixture inherits: a REFUSED action now commits accrual.** The kitchen CUT
+block probed a refused `cut` on a stale clock and its `+~40% units` assertion read +39 — phase one
+had committed the crew's one-unit offline sale before the refusal. The fix shape is the recorded
+one: GUARANTEE the precondition (future-date the clock before the refused probe), never loosen the
+number. §10.4 untouched by construction — the same accrual rows land, one transaction earlier.
+SPEC.md D1 is ADDRESSED; the mutations are recorded in the commit.
+
+**THE MOBILE FLAKE COULD NOT NAME ITS OWN CAUSE — the first-action check, instrumented (2026-09-06).**
+CI went red on `mobile` at 320x568 with a message that says everything except what happened:
+`(first action): visible crime did not hand the player back to the ready reward —
+{"firstJobReady":false,"coach":"Claim your first-job reward",...}`. **Those two fields contradict each
+other**: the coach rung that fired (`game.js:1501`) requires `lc_crime >= 1 && !onboard.ob_crime`, and
+`onboardBoard`'s `ready` for `ob_crime` is the SAME predicate on the SAME row (`growth.js:282`) — so the
+server plainly HAD the crime and the board said it did not. **A refused `/v1/onboard` and a genuinely
+false flag read IDENTICALLY**, because the probe captured no HTTP status: *a failure that names the wrong
+thing is barely better than no failure*, and a **flaky** red is worse than a steady one, because it is
+what teaches people that red means nothing.
+**MEASURED BEFORE ANYTHING WAS CHANGED, and the measurement WEAKENED the leading hypothesis** rather
+than confirming it: a 60-iteration probe of the exact parallel pair against a booted server came back
+**0/60 bad**, and `lc_crime` is monotonic (`+= 1` in the success branch only, never reset), so a stale
+or reset counter is ruled out. So this ships as an INSTRUMENT plus an ALIGNMENT, not as a claimed fix.
+**(1) CAPTURE THE STATUS** — both evaluates now carry `meStatus`, `obStatus`, the task count, any
+`error` field and `lc_crime` itself, so the next occurrence DECIDES it: `obStatus != 200` is the
+request; `obStatus 200` with `lcCrime >= 1` and `ready` false is a real server disagreement and a
+genuine finding. **(2) SERIALIZE THE TWO READS** — they are two authed reads of ONE account, and the
+real client queues exactly these on a promise chain (`api()`) **because same-account calls serialize on
+the character row at the database and firing them together makes each wait holding a pooled
+connection**; the harness's raw `Promise.all` bypassed the product's own discipline. Both sites fixed,
+and the class swept: a scan of `tools/` found no other concurrent authed pair.
+**HONEST SCOPE, stated rather than smoothed: this ships with NO mutation kill**, because the property it
+improves — a failure naming its cause — manifests only ON failure, and asserting the shape of a
+harness's own failure string would be noise. The verification is that nothing broke (**mobile 171/171
+green, four consecutive clean runs locally, CI green on both jobs**) plus the reasoning that the
+serialization matches a documented product invariant. Four green runs after two reds is weak evidence
+and is recorded as weak evidence.
+
 ## Sensitive design notes
 *These are standing PRODUCT rules. They bind whatever else is true, and several of them exist
 because breaking one is very hard to walk back.*
@@ -14166,6 +14453,50 @@ every harvest fee books a bad amount. The name is corrected and the crossing is 
 sharp case a type comparison cannot see — a **same-typed adjacent swap** (`Bonded` has six adjacent
 non-indexed `uint256`) — fails by name instead of waiting for the next hand pass.
 
+**PLAY WAVE 81 — THE PACT WAS NAMED ON THE WAY OUT AND NOT ON THE WAY IN (2026-08-30).** Check 14
+(THE SILENCE LEDGER) proves statically that no act()-pressed handler is MUTE, and it is structurally
+blind to the class that is every tester complaint this project has ever had: a line that is FLUENT and
+simply leaves a TERM off (the pad, the nut, the Port lane). So this wave drove undriven pressed routes
+hunting withheld terms rather than silence. **The measurement had to be INSTRUMENTED rather than
+regexed** — a static scan of the ledger reports far more undriven routes than exist, because dynamic
+rows resolve their URL at drive time and are invisible to it — so the driven set was dumped from the RUN
+itself: **290 pressed routes, 100 of them never driven.** Three findings in the crew cluster, each
+reproduced before it was called anything.
+**THE HEADLINE: founding or joining a crew silently binds a FIVE-VERB NON-AGGRESSION PACT and neither
+entry line said so, while the EXIT line IN THE SAME MAP has always read *"you walked — the pact's
+off"*.** `fire`, `jump`, `npcHit`, `shank` and `postBounty` all refuse between crewmates (five sites,
+each keyed on `h.owned.crewId === h.victimOwned.crewId` with the rat/WANTED exceptions), so a player
+learnt the rule the first time the server refused them — and the game had already proven it knew how to
+say it, at the one moment the pact ENDS. Neither entry stated the **seat cap** either, and that one
+could not have been fixed on the client: **`/v1/rules.crew` is the KITCHEN crew**, and the social cap
+reaches only `/v1/crew` (`crewBoard.maxMembers`), which `describe()` never sees — so it rides on the
+reply (the `crewNextCost`/`hunterSearchMs` discipline). **THE CREW HIT never named its KIND**:
+`setCrewTarget` has been sending `kill` | `hospitalize` all along and the line rendered neither, on the
+thing the whole crew is being asked to fund — client-only, the field was in hand at the moment it was
+withheld. And the **invite** stated neither the seats left nor the outstanding-invite count, both of
+which the server enforces and already had computed (`n`, `pending`) — the withheld-figure shape at its
+plainest.
+**THE GUARD IS DRIVEN, NEVER SYNTHETIC** — wave 65's lesson applied from the start: every claim here is
+about a field the SERVER now sends, and **a literal passes straight through the mutation that stops it
+being sent**, so each assertion proves the reply CARRIES the field and then that the line NAMES it.
+**Both crew-hit kinds are driven**, because a line that reads correctly for one and not the other is
+exactly what a single drive cannot see (`setCrewTarget` DELETEs any prior target first, so both fit one
+fixture). Five mutations, **five distinct named kills** (the founding reply's shape dropped; the
+founding line reverted to *"the crew is yours — put some names in"*; the join reply's seats dropped —
+caught at the joiner-counts-themselves assertion, since `n` is the count BEFORE the insert; the invite
+reply's seats and pending dropped; the hit reverting to *"chip in on the hit"* with no kind).
+**A FIXTURE BUG WAS DIAGNOSED BEFORE IT WAS BLAMED ON THE GAME:** the invite drive refused
+`{"error":"name"}` — `mk11` returns `{token, id}` and carries **no name**, while the route reads
+`req.body?.name`, so the fixture reads the street back off `/v1/me` now. *Check before reporting*, and
+the wave number was measured too (`grep -on "WAVE [0-9]*"` — 80 was the real maximum; "wave 68" is
+already taken by the hired-gun block). **Zero SQL moved in `src/`** (checked with a diff filter, not
+assumed — the three server edits are return literals), so the real-Postgres gates do not apply. **The
+driven-action figure does NOT move**: like the Pen block, this one drives on its own tokens rather than
+adding rows to `ACTIONS`, so `describedCount` is untouched — stated because a figure that cannot move is
+exactly the kind that gets restated wrongly (my own first cut of this entry claimed 270 → 274).
+**A clean lens is recorded because a sweep that publishes only its hits cannot be audited:** jump (both
+intents), bust, the streak claim, the LFG toggle, the referral claim and seven refusals all read well.
+
 **THE PLAY SESSION — the wire could not say what happened (2026-08-19).** Not a red team: a real
 play session, driven through real routes and a real browser as a person would, plus the class sweep
 it turned into. Every finding was reproduced against a running engine before it was called one.
@@ -17390,3 +17721,958 @@ end-of-file was satisfied by an unrelated `process.exit(1)` five hundred lines a
 `/workerDarkAlerted\s*=\s*false/` matched the `let` **DECLARATION** rather than the recovery edge —
 *a declaration is not an edge*. Both regions bounded; **ten mutations kill by name**. §10.4 untouched
 (a heartbeat read and a webhook move no value).
+
+**THE PRE-MAINNET GATE WAS RED FOR 19 HOURS BECAUSE A TEST HARNESS WAS 906 BYTES OVER EIP-170
+(2026-08-29).** `forge test (contracts)` is the gate the sandboxed environment cannot run, and its last
+run on `main` (`b4e6b02e`, 01:37:56Z) had FAILED — with nothing re-running since, because the workflow
+is path-filtered and no later merge touched a contract path. **A path-filtered gate does not go quiet
+when it breaks; it goes quiet and STAYS broken**, which is the same alarm-into-nothing shape as the
+§10.4 webhook that 400'd and the WAL archiver, in a workflow's clothes.
+**THE CAUSE IS A PROPERTY OF SOLIDITY, NOT A BIG CONTRACT: a factory's RUNTIME size is its target's
+INITCODE size.** A typed `new AcquisitionVault(...)` embeds the vault's whole initcode in the calling
+contract's runtime code — and `AcquisitionVault`'s initcode is **25,120 bytes, already over EIP-170 by
+itself** (its own *runtime* clears the limit with 1,364 to spare). So `O1CreateFactory` was over the
+limit **by construction** at 25,482 runtime, margin **−906**, and no amount of trimming the factory
+would have fixed it. The remedy is to stop embedding it: deploy from CALLDATA with raw `create`
+(`bytes memory initCode` + assembly `create` + `returndatacopy` to bubble the constructor's revert),
+which costs a few hundred bytes and keeps the gate's claim true.
+**THE STRUCTURAL HALF IS WORSE THAN THE INSTANCE, AND IS WHAT MADE IT 19 HOURS.** `forge build --sizes`
+is **all-or-nothing**: one over-limit row failed that step, which **SKIPPED `forge test` and both e2e
+provers** — so for 19 hours the pre-mainnet gate was red *and the Solidity suite did not run at all*.
+Identical to the v4-core dependency gap recorded above (a parse failure skipping every suite below it),
+different cause. Split: `forge build` is the PARSE gate and **`forge build --sizes` is its own step,
+LAST**, so a size regression fails on its own row after the contracts have already been proven to work.
+**THE CLASS WAS SWEPT TO ITS EDGE (the RT#7 discipline), and the sweep needed the right population.**
+A first measurement reported **42 contracts over the limit** — every one a `*Test`/`Deploy` artifact
+that `--sizes` never counts, i.e. a mostly-wrong advisory. The precise filter is the presence of
+`IS_TEST`/`IS_SCRIPT` in the artifact **ABI**, not a name pattern. Filtered: **258 contracts counted,
+exactly ONE over — `FuzzTester`**, which is explicitly `--skip`ped (it composes every stateful handler
+into one Medusa/Echidna target, disables their code-size check, and is never deployed). Tightest legal
+margins: `O1SignatureGasBoundaryHarness` **1,232**, `A1Task5TimestampHarness` **1,297**, `AcquisitionVault`
+**1,364**. Every `new AcquisitionVault(` site was then grepped — and **the raw grep says 11 while the truth is 9**,
+because two of the hits are the fix's own COMMENT explaining the rule (the recorded strip-comments-first
+lesson, arriving inside the sweep that cites it). All 9 sit inside a `Test` contract, which `--sizes`
+excludes by design; factory-shaped helpers (`function … returns (AcquisitionVault`): **zero**. So the instance is fixed, the structural cause is fixed, and no remaining site can reopen it.
+**The policy is written AT THE SITE rather than only in a commit message** (a comment on the size step
+naming the factory/initcode rule and forbidding a second `--skip` for a harness that grew), because a
+lesson that lives only in history is one the next reader answers with `--skip`.
+**One measurement note worth keeping:** `forge build --sizes` prints **no table at all** on a warm cache
+("Nothing to compile"), so a green-looking local run can mean the gate never ran. The ground truth is
+the artifacts — `deployedBytecode.object` length in `out/**/*.json` — which is what `--sizes` reports
+anyway.
+
+**AND THE GATE WAS RED FOR A SECOND, INDEPENDENT REASON: THE COMPILER WAS THE ONE DEPENDENCY THE
+WORKFLOW DID NOT PIN (2026-08-29).** With the EIP-170 fix in, `forge build` went green and the gate
+moved down a step: **three tests failing on the runner that PASS locally at the same SHA.** Two
+hypotheses, and the discipline was to kill one by measurement rather than argue both. **(b) artifact
+population — DEAD**: the exact CI invocation, no `--match-path`, run locally end to end — **43 suites,
+896 passed, 0 failed, 1171.98s.** Dependencies ruled out the same way rather than assumed:
+`lib/forge-std` v1.9.6, `lib/openzeppelin-contracts` v5.6.1, `lib/v4-core` npm 1.0.2 — byte-identical
+to the pins in the workflow's own fetch step.
+**THE DECISIVE MEASUREMENT IS A COUNT, AND IT WAS SITTING IN BOTH LOGS ALL ALONG.** CI's summary line
+said **891** total tests where local said **896**, at a SHA with no `.sol` diff between them. Pulling
+the full **6.3 MB** CI log (`get_job_logs` without `return_content` returns a signed blob URL `curl`
+can download whole, which sidesteps the token cap) and diffing per-suite counts against a local
+`forge test --list --json` isolated the entire difference to ONE file:
+`SettlementGasPoolInvariant.t.sol` — **local 6, CI 1**. That file holds six `invariant_*` functions and
+no `test_*`, and CI printed all six nested under a single `SettlementGasPoolInvariantTest invariants:`
+heading with one shared `(runs: 512, calls: 256000, reverts: 0)` line: the older aggregated
+invariant-reporting model. **A test COUNT is a version fingerprint** — and it beat every theory about
+runner CPU, memory and gas, because it is a fact about test DISCOVERY rather than about execution.
+**THE CAUSE:** `foundry-rs/foundry-toolchain@v1` with no `version` resolves **`stable` AT RUN TIME**,
+so the one thing compiling and running the suite was the only thing in that workflow not held still —
+while forge-std, OpenZeppelin, v4-core and solc (0.8.26, `foundry.toml`) are all pinned by hand a few
+lines below. **The forgotten sibling**, on the dependency that decides what every other pin means. The
+regression had a clean boundary that made "the environment moved" the right frame from the start: forge
+runs 110–112 (2026-08-27) **green**, 113–116 (2026-08-29) **red**, on the same unpinned toolchain.
+**FIXED AND PROVEN BY A BEFORE/AFTER ON ONE SHA:** `version: v1.7.1` plus a `forge --version (what
+actually ran)` banner step. Run 117 — banner reads **1.7.1**, the invariant suite reports **6**, the
+summary reads **896 passed, 0 failed**, and all four gate steps (test, dexbot-e2e, stock-e2e, the
+EIP-170 sizes row) are green. The banner is the instrument rather than decoration: the next time local
+and CI disagree, the log ANSWERS "which forge ran this" instead of leaving it to be inferred from a
+count. **The guard is deliberately TWO-SIDED**, because a `version:` key alone is not a pin —
+`stable`/`nightly`/`latest` are CHANNELS that satisfy "a version is declared" and still resolve at run
+time — so `test/docs.js` fails on a missing pin, on a channel masquerading as one, and on the banner
+step going away.
+**A NEGATIVE RESULT WORTH KEEPING, because it nearly became a wrong conclusion.** The three tests run
+in ISOLATION under forge 1.5.1 all **PASS** — so "any older forge fails them" is not the shape, and an
+isolated repro is not a refutation of a full-suite failure. Two of the three are CREATE-address
+predictions (`vm.computeCreateAddress(address(this), vm.getNonce(address(this)))`), which depend on
+nothing but sender and nonce, so what moved between versions is nonce accounting across
+`vm.snapshotState`/`revertToState`, never initcode.
+**AND A REASONING ERROR CORRECTED MID-DIAGNOSIS:** I had been reading the CI-vs-local **gas** figures
+as an independent signal. **A failing test stops early**, so its lower gas is a CONSEQUENCE of the
+failure rather than a cause — which killed an entire line of reasoning that had looked like evidence.
+**Deliberately NOT changed:** `O1ERC1271Mock`'s absolute gas window (`entryGas < 98_000 || > 100_000`
+against a 100,000 stipend) is a genuinely version-fragile assertion — its own preamble SLOADs `mode`,
+cold **2,100** against a **2,000** allowance, so it passes only while that slot is warm. Widening it
+before a measurement supports a specific fix is the loosen-until-green antipattern, and the LOWER bound
+is already asserted version-independently one call away by `vm.expectCallMinGas`.
+
+**THE FROZEN COUNT THAT NAMED NO COMPILER, AND THE TRAP THAT MADE ONE VERSION EXPERIMENT WORTHLESS
+(2026-08-29).** Two small findings out of the same pin, and the first one's PREMISE was wrong until the
+document was actually read. `CHAIN-AUDIT-PACKET.md` quotes **387 Foundry tests across 22 suites,
+measured 2026-08-27** against a tree that now measures **896/43**, which looks like the stale-figure
+class this project keeps fixing. **It is not.** The packet's own banner declares it a **SUPERSEDED
+SNAPSHOT ... retained as historical audit evidence** and tells the reader to *rebuild and freeze a new
+packet at the release head*, and `test/docs.js`'s existing guard says in its own comment that the packet
+is deliberately **not** held to the tree. Refreshing those figures would have destroyed a record kept on
+purpose. **And they were never wrong**: measured at `18738f023` — the commit that WROTE the line — the
+tree held 21 `.t.sol` files, 21 test contracts, 384 test/invariant functions and exactly **12**
+parameterised fuzz functions, so *387 / 22 / "twelve 512-run fuzz"* was accurate the day it was written.
+It is stale, not false, and the difference decides the fix.
+**THE REAL FINDING IS NARROW AND TOUCHES NO FIGURE: the measurement names no compiler, and could not
+have.** At that commit the workflow used `foundry-rs/foundry-toolchain@v1` with **no `version:` key**,
+so `stable` resolved at run time and the compiler behind those figures **is not recoverable from the
+record**. That matters because **the count is version-DEPENDENT** — a suite holding only `invariant_*`
+functions counts as ONE test under the older aggregated model and as N under 1.7.1 — so a reader who
+checks out the 2026-08-27 tree and re-runs `forge test` today may get a different number and **cannot
+tell whether the tree changed or the counter did**, which is exactly the ambiguity that left the forge
+gate red and unreproducible for 19 hours. The packet now states that provenance beside the frozen
+figures, and the guard **crosses the version the packet names against the version the workflow actually
+pins** — two sources, one truth, so the note cannot go stale the first time somebody bumps the pin.
+**The split was MEASURED rather than guessed**, because the task said not to guess it: of the +509, **at
+most +6** is the counting change (9 invariant functions across 3 invariant-only suites), and the rest is
+real growth — 21 suites to 43, the Acquisition constellation.
+**AND A VACUOUS LOOP IN MY OWN MEASUREMENT, caught by a precondition rather than by luck.** The first
+fuzz count returned **0**, which read as a real answer. `git ls-tree -r --name-only <ref>
+omerta-contracts/test` run from *inside* `omerta-contracts/` matches nothing — git pathspecs are
+relative to CWD — so the loop iterated over an empty list and reported a confident zero. It only
+surfaced because the re-run printed `files found:` first. *A loop over an empty list reads exactly like
+a measurement of zero.*
+**THE `--out` TRAP, recorded at the site where it bites (`omerta-contracts/foundry.toml`).** The
+obvious way to run a second toolchain version without clobbering `out/` is `forge test --out out-151`.
+`fs_permissions` allows exactly `./out` and `./src`, so every artifact-reading test then fails with
+`vm.readFile: the path out-151/... is not allowed to be accessed` — a **HARNESS** failure wearing a
+compiler failure's clothes. It made one whole version experiment worthless: the run reported three red
+tests and measured nothing about the compiler at all. It was caught by reading the failure TEXT rather
+than the exit code — **it names a PERMISSION, never an assertion**. To compare toolchains, use separate
+checkouts, never `--out`.
+
+**A SILENTLY UNTESTED PR, AND THE ARTIFACT REFRESH THAT MAKES EVERY BRANCH CONFLICT BY CONSTRUCTION
+(2026-08-30).** Ground rule #8 sends you to CI after every push. **The failure mode here is that there
+was no CI to check, and nothing said so.** PR #151 sat open reporting `mergeable_state: "dirty"` with
+**zero check runs** — and a PR with no checks reads on its own page exactly like one whose checks
+passed: no red X, no failing job, nothing to click. GitHub runs **no workflows at all** on a dirty PR,
+so the whole gate was absent rather than failing. Same alarm-into-nothing shape as the §10.4 webhook
+that 400'd, the WAL archiver and the oracle keeper, in a PR page's clothes.
+**THE CAUSE IS STRUCTURAL, NOT A BAD MERGE: `main` takes an automated
+`chore(knowledge): refresh generated artifacts for <sha>` commit minutes after every merge**, so ANY
+branch carrying its own regenerated pair — which the provenance protocol REQUIRES — collides on
+`knowledge/generated/*` the moment it lands. Measured rather than assumed: all four conflicting paths
+were generated files and **not one was hand-written**, so the conflict says nothing about the branch's
+source changes.
+**AND NEITHER SIDE OF SUCH A CONFLICT IS CORRECT**, which is the part that makes "just take theirs" the
+wrong instinct: the artifacts are a function of the MERGED history, so ours describes a tree that no
+longer exists and theirs describes one that never had this branch in it. The resolution is the commit
+protocol one step on — resolve with a placeholder (either side), commit the MERGE, then regenerate on
+the clean merged tree and commit the artifacts **ALONE**, which keeps the rule that a commit whose
+changed paths are entirely under `knowledge/generated/` is read as the snapshot of its parent.
+Recorded at the site (`tools/knowledge-test.js`, beside the commit protocol it extends) rather than only
+in history, because a lesson that lives in a commit message is one the next reader answers with a
+`--strategy=theirs`.
+**TWO MEASUREMENT TRAPS PAID FOR ON THE WAY IN, both the vacuous-answer class.** A background poll had
+been looping over `gh api` for ten minutes — **`gh` is not installed here (exit 127)** — producing
+silence indistinguishable from "still running"; the API reads are `curl` with `$GITHUB_TOKEN` now, and
+the token's presence was verified before the result was believed. And a check-runs query with a
+**hand-typed SHA** returned `total_count: 0`, which reads exactly like "no CI fired" — the sha comes
+from `git rev-parse HEAD` now, and the real answer was still 0, which is what made the dirty-PR
+diagnosis trustworthy rather than an artifact of a bad query. *A confident zero is not a measurement
+until you have proven the query could ever have returned anything else.*
+
+**PLAY WAVES 72–75 — THE PARALLEL SWEEP, AND THE CRACKDOWN THAT READ AS AN EMPTY TILL
+(2026-08-30).** The sweep classes waves 45–71 hunted one cluster at a time were finally run in
+PARALLEL — twelve clusters across waves 72–74 (59 fixes) and a thirteenth pass whose fifteen findings
+are wave 75. The orchestration lesson first, because it decided the shape: **appliers commit from a
+SHARED tree**, so anything uncommitted when a workflow resumes is swept into somebody else's commit —
+my own wave-75 work was committed and pushed BEFORE the run resumed for exactly that reason. Finders
+report `clean[]` alongside `findings[]` and are told to (the sweep-that-publishes-only-its-hits rule);
+every applier RE-DRIVES its assigned finding first and **DISSOLVES** what does not reproduce.
+**THE HEADLINE IS FLUENT, CONFIDENT AND FALSE ABOUT THE FAMILY'S MONEY, and it is client-only.** A
+Bureau crackdown on a territory operation arrives on the COLLECT reply as
+`raided: [{district, seized, fine}]` — the pending take seized off the books plus a treasury fine —
+and `describe()`'s branch keyed only on `collected === 0`, so a boss who had just lost **$5.2M of
+pending income and paid a $2M fine** was told *"the operations have nothing banked yet — come back
+when the day has run"*. The reply has carried `raided` since the crackdown shipped; the line simply
+never read it. Worst class in the sweep (a silence pattern walks straight past a line that reads
+well), on the largest figures in the game.
+**AND ONE NOMINAL-VS-ACTUAL: the port's `net` was $15,000 high on every escorted run.** The escort is
+paid at LAUNCH and `collectRun` excluded it from the run's book, so the field whose whole purpose is
+the margin overstated it by exactly the escort — the wave-47 class (a number that reports what was
+asked for rather than what landed) on a figure a smuggler plans the next lane off. Fixed in the book,
+not the copy.
+**The other thirteen are the two standing classes.** WITHHELD TERMS: an INCOME asset's buy line said
+only *"is yours"* while its racket sibling has rendered an hourly figure all along (the server now
+sends `income` per-MINUTE + `spent` = price + the 2% house take); the Cathedral lab named neither its
+$10M nor its 1,200 $OMR; the estate hire named the daily wage and not the $OMR it burns to bring them
+on; a Deep Run cast off with ~$180k of cargo and an escort on the water and said only when she was
+back; **three loss lines never stated the lay-up** (a boxing exhibition, a stable circuit, a match
+race — every one sets `injured_until` and told the owner nothing, so they learned it when the next
+card refused, which is how it played too); retiring a racket at `RACKET_RETIRE_BPS` 0 omitted that
+**nothing comes back** (its shutter sibling has said so since it shipped). COSMETIC/RAW: a tune named
+no iron in a garage that holds several (its `buyNos` sibling ships the name); a burned batch named no
+drug; the rout's material read *"3 of hooch"* rather than *"3 units of"*; a race loss printed its
+figure without the minus sign.
+**THE HIGH-STAKES REFUSAL EXPLAINED ITSELF BOTH WAYS, and that is the terms class at a REFUSAL.**
+*"Table maximum is $250,000"* told a player nothing about why the big table refused them — the seat
+(level or the Madame's rope) and the held access stake are the published gates and the one refusal
+enforcing the ceiling named neither. `highRoomTerms` is computed **beside `tableMax`, off the SAME
+seat/stake reads**, so the refusal and the gate structurally cannot disagree, and it returns null once
+you are at the big table (the max is then just the max). The den card and the made card now quote the
+same two conditions off `/v1/rules`, so board and till agree.
+**Ten mutation kills, each at its own named assertion — and two of them are the MULTI-NET shape worth
+recording.** M7 and M8 were each killed by an EARLIER sibling assertion guarding the same property
+(line 8643, and wave 44's line 4700) before reaching the wave-75 assertion written for them. That is
+not a hole: the older nets are broader and fire first, and the wave-75 claim is the narrower third
+net. Every regression is DRIVEN on a real reply — the rout's `routUnits` is asserted against the
+reply AND re-read from the database, because a literal passes straight through the mutation that
+stops a field being sent.
+
+**PLAY WAVE 77 — A REFILL IS NOT A DAY: the class wave 76 fixed and never swept (2026-08-31).**
+Wave 76 found `src/exchange.js` refusing a redemption by naming its daily CEILING when the actionable
+number was the REMAINDER of a bucket that refills continuously, fixed it there, and stopped — the RT#7
+shape ("a class fixed where it was discovered, never swept to its edge"). The class is **fluent and
+false**, so no silence pattern can see it and check 14 (THE SILENCE LEDGER) is structurally blind to
+it: the line reads like an answer, states a real number, and the number is not the one the player can
+act on. Swept by enumerating every `*_used` column — **11 rolling buckets, 4 with a live refusal** —
+and the three that had never been swept were all telling players to come back tomorrow for something
+that comes back in hours.
+**The arithmetic is the finding.** Every one of these is `used = max(0, stored − elapsed/window ×
+cap)`, so at `BUST_ATTEMPTS_DAY` 5 the next jailhouse try lands **~4.8h** out — the refusal's "no more
+bust runs today" **overstated the wait by up to 19 hours**, on the daily contract the M4 pool draws.
+The vault's daily claim named its cap while a player sat on a partially-spent bucket with headroom
+they could have used immediately; the safehouse named its bound and neither the minutes of shelter
+left nor when a full stay reopens. All three figures were **already computed one line above the
+throw** and thrown away — the wave-67 shape (a branch guarding on a field it never renders).
+**The remedy is the `headroomOf` pattern, and the collapse is half the point.** Each bucket's
+arithmetic existed in the till AND (for the safehouse and the jailhouse) in the VIEW — two copies of
+one expression, identical today and free to drift the first time either side was touched, which is
+the sixty-nine-private-copies lesson. Seven helpers now live in `rules.tail.js` (the universal leaf
+both sides already import): `vaultSpentToday`/`vaultHeadroomOf`/`vaultRefillSeconds`,
+`bustSpentToday`/`bustAttemptsLeft`/`bustRefillSeconds`, `safehouseSpentToday`/`safehouseLeftMs`/
+`safehouseRefillSeconds`. Each refusal branches on whether headroom remains and carries a
+machine-readable payload (`{headroomOmr, dailyCapOmr, refillSeconds}` / `{refillSeconds, attemptsDay}`
+/ `{leftMs, stayMs, capMs, refillSeconds}`) — the `{district}`/`{lockSeconds}` rule, so a client can
+count it down rather than guess. **The terms ride with the price on the board too**: the vault card
+publishes `claimHeadroomOmr` off the SAME helper the till refuses on (a new `SELECT vault_used,
+vault_at`), and the streets roster states the jailhouse allowance and the next try above the bust
+buttons — board and till structurally cannot disagree. The ERRMAP fallback moved with it, since it is
+a fallback only (`body.message || ERRMAP[e]`) and a stale entry is a dead-but-wrong line.
+**One branch threshold is deliberate**: the safehouse names the remainder only at `>= 60000`ms,
+because "0 min of safehouse time left today" is not a remainder a player can act on.
+**THE BUCKET LEDGER** (`test/gates.js`, the thirteenth catalogue-or-declare guard) is the durable
+half: the corpus is derived from the TREE (every `*_used` in `src/`, never the lists), each bucket is
+ENFORCED or DECLARED with the property that makes it safe, an ENFORCED code's `GameError` argument
+list is walked by balanced parens and split on depth-0 commas so a refusal that carries no
+remainder-shaped payload fails by name, a mapping that matches no `GameError` at all fails (a rule
+pointing at a refusal that has moved reads exactly like a rule that holds), and an anti-vacuity floor
+catches an extractor that has stopped seeing buckets. Seven buckets refuse nobody and each says why
+in one line — the port already names its remainder; the wash and launder caps are retired; the RICO
+structuring window ADDS HEAT rather than refusing; club notoriety is an internal clamp; stat-by-use
+and the level-up refill are metered SILENTLY by design.
+**`src/chain.js`'s withdrawal cap was READ and DISSOLVED** rather than pattern-matched: it is a
+per-withdrawal flat ceiling with no consumed component, and its message already names the actionable
+number and the remedy. Not the class.
+**Two fixture errors of my own, both the recorded discipline.** The bust regression seeded
+`bust_used=99` against a cap of 5 and the wait arithmetic correctly produced ~19 days — the CODE was
+right and the fixture wrong, so every cap is now DERIVED from the server (`claimDailyOmr` off
+`/v1/vault`, `bustAttemptsLeft`/`safeCapSeconds` off a fresh `/v1/me`) rather than restating a founder
+lever. And seeding the safehouse bucket exactly AT its cap raced the milliseconds of wall-clock refill
+between the UPDATE and the read, so the wrong branch fired — fixed by GUARANTEEING the precondition
+(seed past the cap), never by loosening the assertion. Three mutations, each caught at its own named
+assertion (the vault board's headroom reverted → "THE TERMS BEFORE THE PRESS"; the jailhouse back to
+"come back tomorrow"; the safehouse back to "it refills over the day"), plus three on the ledger
+itself — including the stale-declaration check verified by ADDING a bogus bucket, since renaming a
+live one trips the main assertion first and proves something else. Suite green + pgquery 3000+
+statements + pgcheck 63/63 on a FRESH real Postgres (`src/treasury.js` gained SQL).
+
+
+**PLAY WAVE 78 — A BID IS AN ESCROW, AND TWO LENSES THAT CAME BACK CLEAN (2026-08-31).** Wave 77
+closed the rolling-bucket class; picking the next recommendation started with two candidates that were
+**MEASURED and rejected before any code was written**, which is most of this entry. **(1) Board/till
+price parity** looked promising (125 price-shaped fields) and dissolved on counting: ~30 shared
+helpers already enforce the convention (`goodPriceOf`, `bribeCostOf`, `racketUpgradeCost`,
+`labModuleCost`, `intelCost`, `territoryFortCost`, `deedCornerOwed`, `liberationCost`, `loanOwed`,
+`auctionPriceAt`, plus `upkeepOwed`/`healCostOf`/`checkinQuoteOf` in modules), so a guard would have
+been mostly waivers — *the mostly-wrong advisory people route around*. **(2) The mirror's own STATED
+nested-read gap** (`test/client.js` covers top-level fields, one alias hop and list elements, and says
+deeper chains are out of scope) — **814 distinct two-hop reads in the client, checked by nothing**. A
+report-only patched copy of the guard in the scratchpad produced **33 reports: 32 `ABSENT/null`** — the
+parent legitimately missing for the fixture (no war, no spouse, no champion, no decree), i.e. the
+benign empty-state case a guard must never report — **and exactly ONE key-set drift**:
+`/v1/races .grandPrix.{pool,entrants,closesSeconds,entered} MISSING`, the recorded `dormantView`
+two-shape class (fixed once for `bankPosition`, never swept). **It DISSOLVED on checking**: the client
+branches on `b.grandPrix.open` and the closed branch reads only keys the closed shape carries, so it is
+a latent fragility rather than a live `undefined` render, and churning it would buy nothing. **The
+landing-imagery flag from the page-weight drop is stale too** — measured, it is already fixed
+(responsive webp at 16–74 KB against the 630/732 KB jpgs, `preload="none"`, `data-lazy-src`). Three
+lenses, no hit: recorded because a sweep that publishes only its hits cannot be audited.
+**THE FINDING is the withheld-terms class on the $OMR rail — the shape check 14 is structurally blind
+to, since the line is FLUENT.** An auction bid read *"bid 500 $OMR on A Dead Don's Watch — you lead"*,
+and `bidAuction` **debits the account ON THE SPOT** (`h.acct.omr -= amt`, ledgered `auction:bid`),
+refunding only when somebody outbids you — a WIN never returns it (`auction:win` is in
+`DESK.SINK_REASONS`). So the sentence describes an escrow as an intention, which is
+**the pledge-read-like-a-deposit class (wave 66) one rail over**; and `minNext` — the figure that
+actually beats you — **was in the reply and dropped**. Both halves needed no server change: the fields
+were already sent. `bidConsignment` was checked rather than assumed and is **byte-for-byte the same
+shape and the same escrow semantics**, so it hits the same branch and one fix covers both — and the
+player-side truth is identical on both (out of your hands; back only on an outbid) even though the
+winning bid's destination differs (sunk to the desk vs. paid to the seller), which is why the line
+states the player-side term rather than branching.
+**The guard is DRIVEN, never synthetic** — both claims are about fields the SERVER sends, and a literal
+passes straight through the mutation that stops one being sent — so it asserts the escrow **from the
+DATABASE** (the account's $OMR really fell by the bid) before asserting the line, and quotes the
+server's own `minNext` through `fmtLike` rather than a restated raise. Three mutations, three distinct
+named kills (the line reverted → *"a bid that has already taken the money must SAY so"*, printing the
+original sentence verbatim; the client dropping `minNext`; the SERVER dropping `minNext` → the
+database-half assertion). One fixture error of my own, caught immediately: `mk11` returns
+`{token, id}` and not an account id, so the first run died on `bidder.acct` — the account is resolved
+from the character row the way its sibling block already does it. It rides on its own token
+(the wave-11 fixture idiom) rather than in the ACTIONS list, so check 8's driven count is unchanged at
+285 — what it adds is a claim that block cannot make, since check 8 proves a line is not MUTE and this
+one is fluent. §10.4 untouched (a display line moves no value; sim drift-0), and **no SQL moved in `src/`** — checked with a
+diff filter, not assumed — so the real-Postgres gates do not apply.
+
+**THE LOCK LEDGER'S BLIND THIRD — the widening, and the premise it refuted (2026-09-02).**
+THE LOCK LEDGER extracted only `FROM <t> … FOR UPDATE`, and refuter D had already found a real AB-BA
+through the half it could not see — so a **GREEN ledger was compatible with a known CRITICAL**, which
+is the RT#7 shape on the guard rather than in the game. **An `UPDATE … SET` and a `DELETE FROM` take a
+row-exclusive lock held to COMMIT exactly as `FOR UPDATE` does**; the ledger had never counted one.
+**THE DECIDABILITY LINE IS WHAT MADE THE WIDENING SHIPPABLE, and it is not a preference.** Admitting
+every table yields **42 candidate pairs** dominated by an ambiguity no static rule can resolve:
+`UPDATE characters SET cash = cash + $2 WHERE id=$1` is a **fresh acquisition** when `$1` is a third
+party and a **no-op re-touch** when it is the wrapper-held actor, and nothing in the text says which
+(measured: 127 `UPDATE characters SET` against 43 `FROM characters … FOR UPDATE`, so the re-touches
+dominate). Shipping that as a hard rule would violate this ledger's own founding sentence — *a
+mostly-wrong advisory is worse than none*. So write-form acquisitions are admitted **only for the
+contended rows rule 2 already enumerates**, where the question does not arise: a pot is ONE row, so
+any write to it unambiguously acquires THAT row. **Measured: 0 conflicts, and the extractor sees 104
+acquisitions it was blind to — 72 transactions / 62 pairs / 74 lock sites → 108 / 113 / 181.**
+**A CORRECTNESS BUG WAS FIXED ON THE WAY IN, and it was mine to make.** The first widening reported
+**138 conflicts — 96 of them phantom**: a row lock is held to COMMIT, so **only the FIRST acquisition
+of a table orders anything**, and counting a later re-touch emits BOTH orderings for one transaction
+and invents a conflict against itself. The dedupe is behaviour-preserving for the shipped
+FOR-UPDATE-only half (0 conflicts / 62 pairs either way), so it is a latent fix rather than a
+consequence of the widening.
+**THE OPTION'S PREMISE WAS REFUTED, and that is the more useful half.** Widening does **NOT** make the
+ledger see refuter D's CRITICAL, and **no table-granularity rule can**: `runEstate` holds a `bounties`
+row and then reaches third-party `characters` rows **through `refundPot` and `voidListingsAtDeath`**,
+so (a) the acquisition lives inside a function this transaction CALLS — invisible to a per-transaction
+TEXT scan — and (b) the distinguishing feature is **whose row**, not which table. Both are now written
+into the ledger's header as WHAT IT CANNOT SEE, because a green ledger is otherwise read as *no lock
+cycles exist*; both land as 40P01 → the `deadlockToRetry` `contention` mapping, which is the remedy
+for them rather than a reason to widen until the rule reports noise. **The planned per-cluster
+adjudication fan-out was therefore NOT run** — the 42 candidates are that ambiguity, not 42 defects.
+**Three mutations, each caught at its own named assertion** — the write-form regexes blinded → the new
+`writeLocks >= 70` floor fires (*"silently reverted to the FOR-UPDATE-only state … which looks exactly
+as clean as the widened one"*); the dedupe removed → the conflicts return; and **the load-bearing
+one: a genuine inversion written entirely in write-form** (`UPDATE den_volume` then `UPDATE street_tax`)
+is caught and named against the real canonical site `takeHouse` — **with a control proving the
+pre-widening extractor passes GREEN over that same planted AB-BA**, which demonstrates the blind third
+rather than arguing it. Suite green; **no SQL moved in `src/`** (checked with a diff filter, not
+assumed), so the real-Postgres gates do not apply.
+
+**PLAY WAVE 79 — THE COOLDOWN LEDGER: "not yet" is not a wait (2026-08-31).** Wave 78's own write-up
+ends by naming what check 14 (THE SILENCE LEDGER) is structurally blind to — a line that is FLUENT and
+leaves the actionable TERM off — and the largest untouched instance of it was measured rather than
+guessed: **39 `GameError('cooldown', …)` refusals across 23 modules, 38 carrying no machine-readable
+remainder and only 6 naming a time in prose.** In every one of them the exact expiry sits **in the
+comparison ONE LINE ABOVE the throw** and is discarded. The sharpest is the FIRE path — the most
+expensive verb in the game, a two-hour clock behind a 3h search — which said only *"Your trigger's
+still hot."*; three street-race sites said *"cool down"* with no number, and `world.js` literally said
+*"later"*. Six siblings already named their wait (the gym, the charter, the mission ladder, the shank,
+the boost, the social verify), which is what makes it the **forgotten-sibling** shape rather than a
+convention nobody had adopted — and the remedy is wave 77's rolling buckets and wave 54's `{district}`
+payload verbatim.
+**THE COST FALLS HARDEST ON AGENTS, who are first-class players here**: they read these codes, and with
+nothing to back off on they retry blind into a 1/3s throttle. So every refusal now carries
+`{ cooldownSeconds }` alongside a sentence that says WHEN.
+**ONE HELPER PAIR ON THE UNIVERSAL LEAF, never 39 inline expressions** (`coolLeft`/`coolWait` in
+`rules.tail.js`, beside `usd`/`art`) — so the number a player is TOLD, the number the payload CARRIES
+and the number the till ENFORCES cannot drift; the sixty-nine-private-copies lesson, and the
+`headroomOf` shape THE BUCKET LEDGER already uses. `coolLeft` is a **behaviour-preserving drop-in for
+both predicate forms it replaces** — `x && new Date(x) > new Date()` and `now - at < CD` — because
+`ceil((t-now)/1000) > 0` is exactly the strict comparison, and a null/undefined/garbage clock yields 0,
+which is the falsy the old guards produced. Five predicate helpers (`boxing.js:onCooldown`,
+`heists.js`/`npcwar.js`/`world.js:cooling`, `stable.js:onCooldown`) return seconds now instead of a
+boolean, truthiness unchanged. `coolWait` coarsens as it grows, because **"7231s" is not a wait a
+person can act on**.
+**THE GUARD IS THE DURABLE HALF — THE COOLDOWN LEDGER** (`test/gates.js`, the fourteenth
+catalogue-or-declare ledger): the corpus is derived from the TREE, each `GameError('cooldown')`'s
+argument list is walked by **string-aware balanced parens**, every site must carry the payload or be
+DECLARED with the property that makes it unknowable (**none is today**, and the declaration block says
+so — a site would be declared for that property "never because computing it was awkward"), plus a
+stale-declaration check and an **anti-vacuity floor**, since a scan that sees nothing reads exactly
+like a clean sweep.
+**AND THE LEDGER FOUND THE SITE MY OWN SCANNER HAD CLEARED.** The scratchpad measurement script split
+the argument list on depth-0 commas **without tracking string bodies**, so the comma inside
+*"The trainer works miracles, not shift changes"* made `growth.js`'s two-argument respec throw read as
+three and it was reported as already-carrying. The recorded lesson — *a finding produced by a tool you
+wrote and did not check is not a finding* — this time in the **inverse** direction, a false PASS rather
+than a false finding, which is the more dangerous one because nothing prompts you to look again. A
+second batch script silently skipped five identical sites (three in `races.js`, two in `skills.js`)
+because it asserts `count == 1` and never fired: **an edit that does not apply reads exactly like an
+edit that landed.**
+**The regression is DRIVEN at BOTH ends of the class** (`test/client.js` WAVE 79, on its own token):
+the headline FIRE refusal (a real search, backdated past any hunter clock, a seeded 95-minute trigger)
+and the boost — deliberately two different **clock shapes**, so the helper is proven against both
+predicate forms — each asserted in two halves, the SERVER sent the remainder and then the driven line
+NAMES it, because a synthetic literal passes straight through the mutation that stops a field being
+sent. Five mutations, each caught at its own named assertion (the fire payload dropped → *"Got
+undefined for a 95-minute clock"*; the fire line reverted to *"Your trigger's still hot."*; the boost
+payload dropped; `coolWait`'s minutes band collapsed to *"soon"*; the extractor blinded → the
+anti-vacuity floor, and a bogus declaration → the stale check). §10.4 untouched (a refusal message and
+a 400 body move no value), and **no SQL moved in `src/`** — checked with a diff filter over the whole
+diff, not assumed — so the real-Postgres gates do not apply.
+
+**THE ARENA — the adaptive-agent economy red team, and the month that killed everybody (2026-09-02).**
+Eighty audits read the economy one lens at a time and `tools/sim.js` measures faucets one at a time;
+nothing had ever run a POPULATION of EV-optimizing agents against the live economy. `tools/arena.js`
+(`npm run arena`, the 15th harness, real Postgres only — not in CI, a measurement not a gate) drives
+57 scripted strategies (whale-hunters, landlords, arbitrageurs, an alt-ring, lenders, brokers,
+gamblers, turtles, grinders) through the PUBLIC API for a warped month with the full §10.4 sweep
+asserted as a before/after DELTA of zero (agents are SQL-seeded, so only the delta is a claim — the
+scale/loadtest posture). **The headline is the signed design at a scale no lens had shown: six
+hunters killed 50 times in 30 days, every non-hunter strategy ended at the heir's stake, and
+`death:estate` burned ~$213M of ~$228M starting wealth while loot moved $21M — Gini 0.907.** Realized
+kill EV read **+$352k** where the sim's D1 probe reads −$72k, and both are right: the sim prices a
+mid mark, the arena a town of undefended whales. The concentration is death, not loot; the passive
+stack (landlords grossed $40M in a month) is worth nothing without survival; the alt-ring launders
+through the market at the house take and the shylock is structurally its bank (0 voluntary repayments —
+borrowers only borrow when broke — 66% recovered by force); the Window redeemed 700 $OMR against
+`dry×491` (extraction ≤ inflow holding by construction, i.e. shut for a town this size). No sink was
+routed around. All recorded as founder reads in BALANCE.md § THE ARENA, nothing retuned (ground rule
+#1); the arena's honest limits are stated in the report (no bodyguards/respawn tokens/contracts, a
+conservative kill cadence). **The recorded lesson arrived on schedule**: the first month printed
+"0 collected by force" because the lender strategy read a `lender` field the loans board never sends
+(it sends `role`) — a harness reading a field that does not exist reports a confident zero about the
+game, and only checking the board's shape separated the two. Four earlier harness bugs were the same
+class (cargo read as an array, the season twist and JWT refused by preflight under a real
+DATABASE_URL — pins are set post-boot, hunters firing 600 rounds at a 5,050-btk mark from the wrong
+district). Suite green; no SQL moved in `src/`.
+
+**THE DEFENDED MONTH — arena step two, and the answer to step one's question (2026-09-02).** Step one
+measured a town with NO defence (six hunters, fifty kills, `death:estate` burning 93% of the town's
+wealth, Gini 0.907) and left the founder a read: is that the design or a defect? `tools/arena.js`
+now gives every prey strategy the toolkit the harness had omitted — a bodyguard market, a safehouse
+cadence, two respawn tokens, contracts on any hunter who kills a member, a family pricing its members'
+killers, settleable vendettas — plus eight ADAPTIVE seats switching on rolling P&L
+(`ARENA_DEFENDED=off` reproduces step one on the same tree, so the pair is controlled). **Same six
+hunters, ten kills instead of thirty-eight, all before day 10; estate burn $186.5M (91%) → $39.0M (16%);
+Gini 0.856 → 0.490; landlords +165% instead of dead** — against a CONTROLLED baseline
+(`ARENA_DEFENDED=off` on the same tree; step one's 50 / 0.907 predate the per-round shuffle, so the
+only comparison that supports a conclusion is the one-variable pair). The undefended month was a HARNESS artifact. What
+did it was not the guard or the shelter but the RETALIATION RAIL: 77 personal + 3 family contracts on
+the three hunters who killed, all three died to them, their heirs could not re-arm (`cash×239
+gun×229`), and kills stopped — killing stays +EV per kill ($770k) and becomes −EV as a career once the
+town can price your head, which is the hitman-contracts thesis measured for the first time. Insurance
+worked exactly as built (two shots REVIVED, insured prey died 0× vs 3×); the shelter is a $35M tax on
+the rich; the adaptive seats converged on grinder×6 and nobody adapted INTO hunting. **The guard market
+absorbed nothing across four runs, and the reason is stated rather than smoothed**: a 24h contract sits
+exactly on the day warp, so a shot landing before the prey's daily re-hire in the shuffled order finds
+a lapsed one (5 of 12) and the rest hit unguarded marks — `bodyguardAbsorbs` is proven by
+`test/social.js`, not the arena. **Four runs to get true numbers, each a harness lesson**: hunters
+acting FIRST every round (a per-round shuffle); the vendetta notice reaching a broke heir; a diagnostic
+that counted fire ATTEMPTS (26 against 17 real shots — now tallied on a 200 with a per-shot row naming
+the guard's state); and a search-count vacuity floor that read a successful defence as an unexercised
+kill economy (a dead hunter's heir cannot search — the floor is on SHOTS now). **The den's 15% edge
+is noise, and the sim says so every run (P9.40)**: σ ≈ s·√N against 0.0141·s·N meets only at N* ≈
+5,030 rolls, so a 354-roll month has z ≈ 0.27 and a 15% month is a ~2σ draw; asserted rather than
+prose. Everything is a founder read in BALANCE.md § THE DEFENDED MONTH — nothing retuned. Also fixed
+en route: `tools/chaos.js` sized its scenario-6 boot wait by loop count, which under load reads a slow
+boot as a dead one (now wall clock).
+
+
+**THE POT/FUNDER CYCLE, DRIVEN — the CRITICAL the ledger provably cannot see (2026-09-03).** The
+lock-ledger widening ended by naming what no table-granularity rule can reach, and this measures it.
+Two comments in `src/social/contracts.js` describe the lock order and **contradict each other**:
+`refundPot` says *"everyone locks the pot BEFORE funder rows (stable order)"*, while
+`sweepExpiredBounties` says *"funder character rows locked in sorted order BEFORE the pot row — the
+global lock order every player path follows"*. The sweep's claim is false for FUNDER rows
+specifically, and both are describing the same two rows. `postBounty` on a LAPSED pot holds
+`bounties` FOR UPDATE and then blocks writing a funder's `characters` row inside `refundPot` (which
+does **no** pre-lock — checked, which is what makes the ordering real rather than theoretical), while
+the sweep — and `runEstate`, reaching third-party rows through the same helper — holds that funder and
+wants the pot. **THE LOCK LEDGER is blind to it by construction**: the acquisition lives inside a
+function the transaction CALLS, and the distinguishing feature is WHOSE row rather than which table —
+so a green ledger is compatible with the cycle being live, which is exactly why it had to be driven.
+**`tools/pgcheck.js` §9e** drives it, because pg-mem is single-caller and no suite can reach a
+two-writer race. **Driven by HOLDING the funder row, never by racing a real sweep** (the §9/§9b
+reason: a race depends on two backends overlapping inside a millisecond-wide window, and timing luck
+reads exactly like a proof) — and **the victim is made deterministic**: Postgres aborts whichever
+backend's `deadlock_timeout` (1s) expires first, i.e. whoever started waiting first, so the player is
+given a full second before the holder closes the cycle. Ten checks: a fixture precondition, the
+mechanism assertion below, and eight properties — the player is not told the server broke, the 400 is
+a retryable `contention`, the pot survived intact, the funder was not part-refunded, the next sweep
+tick settles the pot the deadlock left, the funder is made whole exactly once, **the pot resolved
+ONCE — it cannot both refund and burn**, and the `bounty escrow` §10.4 identity is where it started. **THE VACUITY GAP CLOSED BEFORE THE GREEN RUN WAS BELIEVED: a 400
+`contention` is produced by TWO mechanisms** — 40P01 and `lock_timeout` 55P03, the 8s pool valve —
+both mapped deliberately, so the ~1s elapsed time was an INFERENCE about which fired.
+`pg_stat_database.deadlocks` before/after (the `tools/loadtest.js` instrument, for the same reason)
+asserts the mechanism instead, and its failure message says so: *a 55P03 maps to `contention` too, so
+this ran but proved nothing about the pot/funder cycle*.
+**THE MUTATION SURVIVED TWICE AND CORRECTED THIS ENTRY'S OWN PROSE, which is the more useful half.**
+Neutering `deadlockToRetry` at the global error handler (`server.js:774`) left every assertion green,
+so the comment was rewritten to name `withCharacter`'s own catch (`game.js:1105`) as the load-bearing
+layer — **and neutering THAT alone left them green too.** The remedy is **DOUBLE-NETTED**: the wrapper
+maps it, and the handler maps whatever escapes, so the only honest mutation is to take both down at
+once — which fails at its own two named assertions with the raw `40P01` report naming
+`refundPot`/`postBounty` and `while updating tuple … in relation "characters"`, i.e. direct evidence
+the cycle is the one reconstructed from source. *A mutation that survives is a claim about the TEST
+before it is a claim about the code* — here it twice corrected the layer my own comment named, and the
+property it uncovered (the route is covered twice over) is worth more than the line it replaced.
+Three mutations, each caught at its own named assertion and at NO other section: both nets down → the
+two contention claims; `refundPot` leaving the pot standing → *"the funder is made whole exactly once"*
+(pot rows 1) and the escrow identity **drifting by exactly the stake**; the sweep's expired-pot
+selector narrowed → *"the next sweep tick settles the pot the deadlock left"* (refunded 0) and the
+resolved-ONCE claim. **Nothing in `src/` changed** — the remedy was already correct; what was missing
+was any proof of it. pgcheck 73/73 on a FRESH real Postgres.
+
+**THE ADAPTIVE HUNTERS — arena step three, and the last hunter standing (2026-09-02).** Step two
+left two stated limits — no adaptive seat ever adapted INTO hunting, and the guard market absorbed
+zero because a 24h contract sits on the day warp — and one question neither month could answer:
+does a town that can price heads DETER the next hunter? `tools/arena.js` now runs 90 days, gives
+the adaptive seats `hunter` as a policy (`ARENA_HUNT_SEATS`, `off` = a controlled pair on the same
+`ARENA_SEED`), and warps the clock per ROUND (`ARENA_WARP=round`), three seeded pairs, every run
+§10.4 34 checks drift 0 and no sink routed around. **The answer inverts the thesis step two
+measured: the retaliation rail deters exactly as long as somebody is left to COLLECT.** Read in
+kill order, the six career hunters contract-kill each other first in every run (five of six dead by
+kill #18–24, every seed, every arm), and then the last one standing carries every remaining pot on
+his head with nobody who can execute it — the pots expire and refund (20–23, $2.2–2.5M in every run a hunter survived; open
+pots on a living hunter at day 90: zero) — and farms the town unopposed: **60 / 60 / **50** kills
+after the 5th hunter death in the controls**, the survivor ending on 54–63 kills and a $16–26M pocket
+against a town where every landlord and lender is dead and the top decile holds 97–98%. What breaks
+it is a seat willing to take up the gun: in hunt seeds 1 and 3 **Adaptive 461 killed the last career
+hunter (kill #24 and #23) and killing stopped for the rest of the quarter** (estate 46% / 43% against
+153% / 160%, Gini 0.678 / 0.706 against 0.921 / 0.929, landlords +628% / +450% against −100%), while in
+hunt seed 2 no adaptive gun landed
+and the run ended like a control — the pair is really "was the last executor killed", and only a
+hunting seat can do it, at −$12.5k to −$212.6k a day while it holds the gun. Deterrence-vs-broke is
+answered by the same read: a hunter with no rival to collect on is broke (pockets $0–750 all
+quarter), a hunter with one is funded. The guard market now ABSORBS (26 / 37 / 14 lethal shots per hunt
+run against 0 in every step-two run), so `bodyguardAbsorbs` is proven by the arena at last.
+**Recorded, nothing retuned** — BALANCE.md § THE ADAPTIVE HUNTERS is the founder read, and the
+open question it names is a design call on the signed kill economy (whether a pot should be able to
+HIRE the NPC hitman when no player collects — the arena does not model `npcHit`, so its number is
+the worst case; only PREY retaliate, guards never re-list, heirs cannot re-arm).
+**THREE HARNESS LESSONS, each of the recorded shape.** (1) *Orphaned searches*: a hunter whose
+mark died or sheltered kept his one search open forever and could never open another, so step two's
+"kills stop at day 10" was PARTLY a stuck clock — the retaliation deaths were real (the persisted
+databases confirm hunters die to hunters), the silence after them partly the artifact; the harness
+now calls the search off on a dead/sheltered mark and prints the count (38–68 per run). (2)
+*`kill_log.id` is a UUID*: the first kill-order analysis ordered by it and produced a plausible,
+confident, WRONG story ("grinders and turtles die first"); ordering by `at` — real wall time, never
+warped, like `bloodline.died_at` — is what showed the hunters killing each other, and the whole
+finding rests on the correction. A column named `id` is not an order. (3) *The knowledge
+companion*: a source push without its generated pair fails the pg-mem job at
+`tools/knowledge-test.js:386`, and after main's automated refresh landed on top of the merge the PR
+went `dirty` with zero checks — resolved the recorded way (merge main, either side for generated
+paths, regenerate on the clean merged tree, commit artifacts alone).
+
+**THE POT THAT HIRES A GUN — refuted before it was built, and the arena cannot settle the question it
+was built for (2026-09-02).** Step three left one open design call: a contract pot on the last hunter
+standing refunds unclaimed because nobody is left who can execute it, and he farms the town. The
+proposal — let an uncollected pot **hire the NPC hitman** after a grace window — went to four
+independent adversarial refuters BEFORE any code, and **all four returned REFUTED**. Not built: no
+`src/` change, no signed lever touched. `omerta-pot-hires-a-gun-design.md` now opens with its own
+refusal banner; `BALANCE.md § THE CONTRACTOR` is the founder read.
+**THE PREMISE DIED ON A GREP, AND THE EVIDENCE WAS IN THE DOCUMENT THAT MOTIVATED IT.** `npcHit` is
+ALREADY the hunter-independent executor the mechanic was invented to supply — a fee, a 6h payer clock,
+a 24h per-target clock, a server-rolled level-scaled kill, needing no search, no gun and no rival
+hunter. What step three measured is a town that never called it, because **the harness never called
+it**: `grep -c npcHit tools/arena.js` → **0**, and step three's own write-up says so in its own words
+(*"the arena does not model it, so §1 is the ceiling of the problem, not the floor"*). The proposal
+cited that section while the section's caveat refuted it. So the task was redefined BUILD → MEASURE
+with both outcomes pre-committed: survive the contractor and there is a problem; die and it was a
+harness artifact.
+**WHAT SHIPPED IS THE MISSING CALL.** `tools/arena.js` gains `hireContractor` behind
+`ARENA_PREY_NPCHIT` (`off` reproduces step three byte-for-byte): a prey seat with a killer on its list
+withdraws from the bank if it must, buys the dearest affordable tier and stops for the round — one
+contractor per prey per round, because the 6h payer cooldown is all the game allows — with hires,
+spend, kills, absorbs and revives **counted and PRINTED**, since a counter nobody reads is the vacuity
+class. Also fixed: `NPC_HITMEN` was used and never imported (a runtime ReferenceError `node --check`
+cannot see).
+**SEVEN 90-DAY RUNS, THREE SEEDS, BOTH ARMS, every one `✓ §10.4 held: 34 checks, drift delta 0` with
+no sink routed around.** The arm is real — `off` reads **0 hires** (the vacuity control: the knob
+genuinely gates it) and `on` runs land **36 / 62 / 89 hires** killing **5–6 career hunters each**,
+through the shipped route with no game change. **And the conclusion the table looks like it supports
+is disqualified by the instrument.** `ARENA_SEED` seeds only the HARNESS's coins; the server carries
+**125 unseeded `Math.random()` calls across 36 files** (every crime roll, `npcHit` roll, `fire`
+outcome, casino roll) and `MARKET_SEED` seeds only the deterministic §7.11 price hash. Measured
+directly: **two runs at `ARENA_SEED=1`, arm `on`, same tree — 17 kills and 66 kills**, estate burn 45%
+vs 174%, Gini 0.793 vs 0.945. The arms overlap almost entirely (`on` 14–66, `off` 20–69). **My own
+preliminary read was falsified by that re-run** — after seed 1's first pair I had written the
+contractor arm up as decisive, and the second run of the SAME arm at the SAME seed landed on top of
+the control.
+**So step three's unopposed farming is a DRAW, not a property**: it appears in one of three controls
+AND in an `on` run, and what actually separates the regimes in all seven runs is whether the sixth
+career hunter dies (died 6 → kills stop in the first third; died 5 → the survivor farms to the bell),
+which happens in both arms. The pre-committed "DIES" outcome holds by a stronger route than the one it
+was written for. **A retroactive qualification is owed**: the step-two and step-three arena figures are
+single runs of a noise-dominated instrument, and `tools/arena.js` carried a comment claiming *"a pair
+at the same ARENA_SEED differs in the regime alone"* — false, corrected at the site with the
+measurement that falsifies it, and any future arena claim needs repeated runs **per arm**, never a
+seeded pair. Their directional reads survive (they rest on mechanism and repetition); their numbers do
+not.
+**TWO FINDINGS FROM THE REFUTATION ARE WORTH MORE THAN THE MECHANIC.** (a) **THE LOCK LEDGER is blind
+to a real AB-BA class.** `runEstate` reaches third-party `characters` rows (`estate.js:337` →
+`market.js:623`, `contracts.js:410`) while holding a bounty pot — a genuine cycle against
+`sweepExpiredBounties` — and it is **PRE-EXISTING** (`fire` already takes it), so the remedy is the
+40P01 → `contention` mapping rather than a reorder. `test/gates.js`'s ledger matches only
+`FROM <t> … FOR UPDATE`, and those third-party locks are `UPDATE … SET` form while `bounties` is
+absent from its SINGLETON list — **so a green ledger is compatible with the CRITICAL**, which is the
+more useful half. (b) **The accounting lens PASSED and its failed attacks are recorded** (a refutation
+that publishes only its hits cannot be audited): `bounty:hire` rides the existing `bounty:` prefix so
+there is no vocabulary collision; check (b) matches the EXACT reason `bounty:refund` with
+`character_id IS NULL`, so a distinct negative reason is invisible to it; the escrow identity
+reconciles on both the kill and the miss path; the carve arithmetic and the `death:bounty` burn are
+sound; nothing recycles to the desk. **The mechanic was accounting-clean and still wrong.**
+**One harness lesson re-paid:** two strays were launched with `env SEED=3 ARM=on` against a runner that
+reads positional `$1 $2`, so they ran with an empty seed into a shared database writing over one log —
+caught by listing the log directory rather than by a failure, since a run against the wrong database
+reports a confident, complete, meaningless result.
+
+**THE CLASS SWEPT TO ITS EDGE — six candidates, four dissolutions, two cycles (2026-09-03).** §9e
+proved ONE instance of the class THE LOCK LEDGER structurally cannot see; this is the RT#7
+discipline applied to it — *a class fixed where it was found and never taken to its edge*. The
+shape: **a helper that acquires a THIRD-PARTY `characters` row while its caller already holds an
+escrow row.** The ledger is blind twice over — the acquisition lives inside a function the
+transaction CALLS (a per-transaction text scan never reaches it) and the distinguishing feature is
+**WHOSE row rather than which table** — so a green ledger is compatible with the cycle being live,
+which is exactly why each has to be DRIVEN.
+**THE ENUMERATION, and the four dissolutions are half the result** (a sweep that publishes only its
+hits cannot be audited). Every function in `src/` holding an escrow row `FOR UPDATE` was split on
+whether the escrow lock or the character acquisition comes first: **six candidate tables, four
+DISSOLVED on reading.** `residentEnterTournament` (casino.js:1176), `residentNominateFuturity`
+(casino.js:617), `residentEnterStakes` (stable.js:279) and `residentEnterGrandPrix` (races.js:370)
+all write **`r.id` — the resident's OWN row**, which `runResidentBehaviour` already holds
+`FOR UPDATE` before calling them (`population.js:815`). Not third-party acquisitions, so not the
+class.
+**TWO SURVIVED, AND ONLY ONE IS DRIVEN — the choice is reachability, not effort.** `market_listings`:
+`cancelListing` (market.js:336) holds the listing then `UPDATE characters SET cash` on `l.bidder`,
+while `bidListing`/`buyListing`/`sweepMarket` every one lock the counterparty characters FIRST,
+sorted, then the listing (`sweepMarket` says so in its own header). It is driven because its inverted
+holder is reachable from a **PLAYER ROUTE** (`POST /v1/market/:id/cancel`) rather than only from the
+estate — the pot cycle's `voidListingsAtDeath` twin is the same shape, estate-only. The other is
+`boxing_bouts` (`cancelBout` 441 ↔ `resolveMainEvent` 479), whose inverted holder is reachable ONLY
+through `runEstate`, and whose own comment claims no AB-BA and is **right about a live bettor and
+wrong about the estate path** — the same *right about itself, wrong about its sibling* shape as
+`refundPot`/`sweepExpiredBounties`. Same remedy, same double net; not driven twice.
+**THE AUDIT-#5 RESERVE EXCEPTION IS WHAT PUTS THE PLAYER ROUTE ON THE PATH, and it took reading the
+gate to find it.** A standing bid normally BLOCKS a cancel (`bid_standing` — the hammer decides), so
+the third-party refund looks unreachable. The exception is a bid that can never clear an **unmet
+hidden reserve**, which was only ever a lock on the seller's iron: that one the seller may pull out
+from under, refunding the bidder by SQL. So a **reserved** lot is the precondition, and the section
+asserts it (`a lot with a third-party bid under an unmet reserve is on the block`) rather than
+assuming it — without the reserve the drive would be refused and read on the summary line exactly
+like coverage.
+**`tools/pgcheck.js` §9f** drives it the §9/§9b way — by **HOLDING** the bidder's row, never by racing
+a real bidder, because a race depends on two backends overlapping inside a millisecond-wide window and
+timing luck reads exactly like a proof — and gives the player a full second before closing the cycle,
+so the victim is deterministic (Postgres aborts whoever started waiting first). Ten checks: the
+precondition, not-a-500, a retryable `contention`, **the mechanism** (`pg_stat_database.deadlocks`
+moved — *a 55P03 maps to `contention` too, so this ran but proved nothing about the listing/bidder
+cycle*), the lot intact (status/bidder/bid), the bidder not part-refunded, **the iron still on the
+block** (`cars.listed` — a half-cancelled lot is the ownership half of the drift), the retry the
+contention asked for going through, the bidder made whole **exactly once**, and the `market escrow`
+§10.4 identity where it started. **83 passed, 0 failed** on a fresh real Postgres.
+**Three mutations, each caught at its own named assertion.** **M1** — both contention nets down
+(`withCharacter`'s own catch AND the global handler; **neutering either alone leaves every assertion
+green**, the §9e finding holding one system over) → `the seller is NOT told the server broke — got 500`,
+with the raw 40P01 naming `cancelListing (market.js:349)` and `while updating tuple … in relation
+"characters"`, i.e. direct evidence the cycle is the one reconstructed from source. **M2** —
+`PG_LOCK_TIMEOUT_MS=400`, below `deadlock_timeout` → the two contention assertions still PASS and only
+`and it was the CYCLE, not the lock_timeout valve` fires: exactly the ambiguity the vacuity guard
+closes. **M3** — the third-party refund dropped → seven named failures, including the escrow identity
+drifting by exactly the stake.
+**Two process lessons re-paid.** A real `DATABASE_URL` **ARMS preflight**, so a local pgcheck run
+needs CI's own env values or the server refuses to boot naming four unset vars — a harness failure
+wearing a code failure's clothes. And **M3's first anchor was not unique**: the same
+`UPDATE characters SET cash = cash + $2` line occurs twice in `market.js`, the anchor assertion fired
+(`AssertionError: 2`), and the run that followed was the **UNMUTATED** tree reading `83 passed, 0
+failed` — *a mutation that does not apply reads exactly like a fix that holds*, which is why every
+mutation asserts its own anchor landed before the result is believed. Nothing in `src/` changed —
+the remedy was already correct; what was missing was any proof of it.
+
+**THE ARENA INSTRUMENT MADE HONEST — the seed that pins nothing, and the replicate that does
+(2026-09-03).** The last arena write-up ended by naming its own instrument as broken: two runs at
+`ARENA_SEED=1`, same arm, same tree, landed on 17 and 66 kills, and the seed pins only the harness's
+coins while the server carries 128 unseeded `Math.random()` sites across 38 files. The task was the
+obvious one — seed the server under a test-only knob so an arm is reproducible, and report N runs per
+arm as a distribution. **Half of it was REFUTED by its own measurement and is shipped as a diagnostic
+only.** `tools/arena.js` now patches three LCG streams (`grnd`/`srnd`/`urnd`) over `Math.random` and
+the id/ordering helpers before `buildServer()` (`ARENA_SEED_SERVER=off` reproduces the unpatched
+harness), and the before/after is FLAT: TEN patched runs at seed 1 (4 days × 2 rounds) landed on
+kills {5,5,7,7,8,8,8,8,9,9}, estate burn 14–22%, Gini 0.307–0.382 — and FOUR unpatched controls at
+the same seed landed on kills {7,8,8,9}, estate 16–22%, Gini 0.331–0.372, i.e. INSIDE the patched
+spread on every metric. **Seeding pins the ROLLS and nothing else**: §7.1 lazy accrual reads the real
+wall-clock millisecond on every authed request, so energy and nerve drift by however long the
+previous request took, that drift changes which action a strategy can afford, and the cascade
+swallows the seeded rolls within the first round. Clock virtualization was considered and rejected
+(it would virtualize the very thing §7.1 is a contract about); two residual sites (`src/rivals.js`,
+`src/rwaregistrylifecycle.js`) destructure `randomUUID` at import and stay unreachable, stated at the
+patch. The refutation is written INTO the file with the samples, so no future arena claim can rest on
+a same-seed pair "now that the server is seeded".
+**THE SURVIVING DELIVERABLE IS `tools/arena-sweep.js` (`npm run arena-sweep`), and its own first
+verdict was false — which is why `--reps` exists.** It runs N seeds × `--reps` replicates per arm,
+each in a fresh database (a reused one reads exactly like a code defect), reports median and
+[min…max] per arm, and refuses to call two arms different unless their ranges are DISJOINT — no
+statistical test is honest at N in the single digits, and the arena had already produced one
+confident arm conclusion a re-run of the same arm falsified. Its first run, one replicate per
+(arm, seed), printed **✔ SEPARATED on kills, estate AND Gini** between two arms that are the same
+economy with the server seeded or not; at `--reps 2` all four metrics collapsed to `· overlap`
+(8 runs, 0 failed). A single draw per cell is a sample of an unsampled distribution, and a
+disjointness test over single draws is a coin flip wearing a verdict — so a `REPS === 1` run prints
+that warning under its own table, a failed replicate is reported rather than silently dropped from
+the distribution it claims to measure, and the false-verdict episode is in the file header. Nothing
+in `src/` changed and no signed lever moved: this drop makes the instrument tell the truth about its
+own resolution, and the truth is that the step-two and step-three arena FIGURES were single samples
+of a noise-dominated instrument (their directional reads survive; their numbers do not). SPEC's
+harness row carries the sweep as the 16th.
+
+**PLAY WAVE 80 — THE CLOCK THE SUCCESS REPLY NEVER NAMED, and a forgotten sibling INSIDE ONE FILE
+(2026-09-03).** Wave 79 built THE COOLDOWN LEDGER over the **REFUSAL** half — 39 `GameError('cooldown')`
+sites now carry `{cooldownSeconds}` and say when. **The other half was never swept: the SUCCESS reply
+that ARMS the clock and does not mention it.** A player who has just spent 25 energy and a $2,000 fee
+learns about the two-hour wait by pressing the button again and being refused — which is the pad, the
+nut and the Port lane in a new costume: the game knowing a term of the player's own action and saying
+nothing until it costs them. Check 14 (THE SILENCE LEDGER) is structurally blind to it, because these
+lines are FLUENT and specific (*"WON 46–35 vs them · +$900"*) and simply leave the clock off.
+**THE SHARPEST INSTANCE IS THE FORGOTTEN-SIBLING SHAPE INSIDE ONE FILE.** `grep -n race_at src/races.js`
+shows the per-driver cooldown STAMPED BY THREE FUNCTIONS — `raceNpc`, `raceChallenge`, `pinkSlipRace` —
+and only `raceNpc`'s two returns carried the field, so the wager and the **pinks** races (where losing
+hands over the car) armed a 2h clock in silence. RT#7 says sweep to the edge, so all three server halves
+and their **three distinct render sites** are fixed: the NPC circuit's own line, the SHARED `you`/`them`
+score line (gated `body.game === 'street'`, since the stable's match race hits the same branch), and the
+`forPinks` branch's own `cool` local — which needs its own clause precisely because `pinkSlipRace`
+returns raw score NUMBERS in `you`/`them` and never reaches the shared line.
+**AND THE COMMENT CLAIMED THE WORK WAS ALREADY DONE.** `src/boxing.js` asserted in its own words that
+wave 75 shipped the exhibition cooldown; only `injuredSeconds` ever rode the reply, so **the 6h rest that
+lands WIN OR LOSE was the half a WINNER never heard about at all** — a loser at least saw the lay-up.
+Corrected in the same edit (`restSeconds`), with the rest clause placed OUTSIDE the loss-only guard, and
+its twin `src/stable.js` had been sending `circuitCdSeconds` all along.
+**A BLANKET CLAUSE WAS CONSIDERED AND REJECTED BY MEASUREMENT** — 10+ successful replies already carry
+`cooldownSeconds`, so a trailing "you can go again in …" on every reply would have doubled the term on
+each of them (the echo class); the fix is two precisely-gated clauses instead.
+**THE REGRESSION'S OWN LEVER DECISION IS THE LOAD-BEARING ONE: `RACE_CD_MS` is deliberately NOT pinned.**
+It is the races TEST-ONLY knob and pinning it low collapses the asserted figure to 1 second, after which
+"the line names the wait" proves nothing about a real clock — so `race_at` is CLEARED between the three
+legs instead, and every claim is asserted in **two halves** (the SERVER sent the figure, then the LINE
+names it), because a synthetic literal passes straight through the mutation that stops a field being
+sent. The rendered duration is matched as a **token** (`/\d+\s*(s|m|h|d)\b/`) plus the phrase, never by
+re-implementing `minsTxt` in the test — a second copy of the formatter is the very class this wave is
+about. `BOXING`/`RACES` are not imported into `test/client.js`, so the expectation is derived from the
+reply (`> 0`) rather than from a lever (the F1 vault-leg discipline).
+**Eight mutations, eight distinct named kills**, each quoting the DRIVEN reply — the server field dropped
+on all three verbs (`got undefined`) and the client clause dropped on all four render sites, the last one
+reproducing the original sentence verbatim (*"🎀 PINKS — the County Auction Junker is theirs now — 30 to
+62"*). **Applied with it, eleven more findings from the same parallel sweep**: THE PEEK never naming the
+30 $OMR it burned; a fire KILL and a fire MISS both omitting the +20 law heat (DB-verified 0→20), the
+rounds and the energy; a FAILED bust silent that one of five daily attempts was spent (charged BEFORE the
+roll); the pass claim reading a stipend that did not land; PRIME TIME's value night naming neither the
+cut nor that it grows per head; THE DISPATCH claiming a digest was sent when the provider is unconfigured;
+an UNNAMED estate rendering *"you were seen at host2b9f1's place — ,"*; and the shipment take reading
+*"took 4 of Cut Swiss steel"* as though it were a fraction.
+**Flagged, NOT retuned (ground rule #1): a fire KILL never sets `shoot_cd_until`** — only a MISS does
+(verified NULL after a kill), so a killer can search and fire again immediately while a misser waits out
+the trigger. That is a signed PvP surface and a founder call, not a copy fix.
+**FOUR PROCESS LESSONS, each caught before it became a wrong conclusion.** (1) **`git diff --stat` on a
+fully-STAGED tree is empty**, so a "no SQL moved" scan run against the unstaged diff is VACUOUS and reads
+exactly like a clean bill of health — the savepoint stages everything, so the scan must read
+`--cached`. (2) **A stale line number reads exactly like a wrong diagnosis of the branch you land on**:
+the finder reports' client line numbers had drifted (4069 → 4068, "3823-3826" → 3829) and two earlier
+`sed` reads landed on unrelated code, so every mutation anchors on exact TEXT with a `count != 0`
+assertion and an "anchor is gone" assertion after the replace. (3) **`public/index.html` stores LITERAL
+UTF-8 em dashes** while `\u{1F303}`-style sequences are literal backslash escapes — a python anchor
+written `\\u2014` matches zero occurrences, which is an edit that silently does not apply. (4) **A killed
+mutation run can leave the tree mutated**, and a mutated tree reads exactly like a code defect, so the
+pristine copies are restored BEFORE any partial log is read — and an 8-mutation harness needs ~13 minutes
+at ~95s a run, so it belongs in the background with its own `EXIT=` marker rather than in a foreground
+10-minute window. **One candidate DISSOLVED on checking**: a suspected `busts` collision, because
+`withCharacter` returns `{ character, ...result }` — every `view()` field is NESTED, so it can
+never reach a top-level `body.busts` branch. (It returned `{ character, events, ...result }` when that
+was written; the dead `events` slot was removed 2026-09-06 — see THE SIX, item 2.)
+
+**THE SIX — the founder's ranked list, built (founder-directed 2026-09-06: "Do 1, 2, 3, 4, 5, and 7";
+#6, the `omerta-mcp` trusted-publisher swap, deliberately skipped).** Six items, one defect on a signed
+PvP surface, two guards widened past their own stated blind spots, and a harness that had been asserting
+against a state no player can reach.
+
+**(1) `pgcheck` §9g — the bout/bettor cycle, DRIVEN.** §9e proved one instance of the class THE LOCK
+LEDGER structurally cannot see and the sweep that followed it named `boxing_bouts` as the second survivor
+without driving it, on the argument that its inverted holder is estate-only. That is a reason to drive it
+LAST, not a reason never to: `cancelBout` holds the bout row and then writes a third-party bettor's
+`characters` row, while `resolveMainEvent` locks the bettors FIRST — and the ledger is blind twice over
+(the acquisition lives inside a function the transaction CALLS, and the distinguishing feature is WHOSE
+row rather than which table), so a green ledger is compatible with the cycle being live. Driven the
+§9/§9b way — by HOLDING the bettor row, never by racing a real settle — through `POST /v1/mod/kill`
+against a booked promoter, which is the one route that reaches the inverted holder. **The timing rule is
+the finding**: the cycle is closed the moment `pg_stat_activity` shows the estate blocked on that row and
+NEVER after a fixed sleep, because **Postgres checks for a deadlock ONCE per waiter when
+`deadlock_timeout` fires** — a sleep that lets that check run while the cycle is still open makes the
+HOLDER the victim and the test passes on the wrong outcome. Thirteen checks, including the
+`pg_stat_database.deadlocks` mechanism assertion (a 55P03 maps to `contention` too, so without it the run
+proves nothing about this cycle) and the `boxing bet escrow` §10.4 identity where it started. Three
+mutations, each caught at its own named assertion — and the load-bearing one is that **both** contention
+nets must come down together (`withCharacter`'s own catch AND the global handler), because neutering
+either alone leaves every assertion green. Nothing in `src/` changed; the remedy was already correct and
+what was missing was any proof of it.
+
+**(2) THE DEAD `events` SLOT — removed, and the guard that had covered it goes two-sided.** Every authed
+response carried `events: h.events` and **nothing in `src/` ever pushed to it** — three sites initialised
+it to `[]`, three returned it, no writer anywhere. Recorded when the Home aggregate was built: a board
+keyed `events` SHADOWED it silently, and the remedy at the time was to rename the board `cityEvents`
+rather than remove the slot, because *"removing a field from every authed response in the game is its own
+change, not a tail-end edit to an unrelated PR."* This is that change. Removing it makes `events` a legal
+board key, so `test/routes.js`'s envelope sweep is rewritten **two-sided**: the `character` half still
+asserts an envelope character, and the `events` half now asserts the OPPOSITE — a board that owns the
+name may return whatever it likes, and **no route may hand back the dead empty array**. A source tripwire
+pins the three return sites so the slot cannot come back by omission. **`test/client.js`'s own
+stale-waiver assertion then earned its keep**: with the slot gone the `withCharacter` wrapper's shape
+stopped reading as a silent reply, so its silence waiver waived nothing and had to go — *a waiver that
+waives nothing is a decision nobody is making.* **A pre-existing flake was fixed in the same run and its
+cause is a pg-mem quirk worth keeping**: `test/law.js`'s informant-collapse precondition rested on a
+seeded `heat_exposure` that §7.1 accrual BLEEDS on any authed touch, so the claim depended on how long
+the preceding requests took (the recorded deterministic-assertion-on-a-probabilistic-precondition class);
+guaranteed by re-seeding, and the base is asserted to carry no fractional residue because **pg-mem's
+`GREATEST` clamp rounds one away where real Postgres keeps it** (measured: `GREATEST(0, 1699.9977)` →
+`1700` in pg-mem, exact in Postgres) — recorded at the one clamp site it can reach.
+
+**(3) `/v1/rules` ANSWERS A REPEAT VISIT WITH A 304.** The public rulebook is the second-heaviest response
+in the game (69,008 bytes raw), fetched on boot, on every board render that resolves a catalog name, and
+again on the next cold load — with **no validator at all**. **An ETag was ruled out once before and the
+reason it is safe now is narrow**: the page-weight drop declined it because a *generic* JSON ETag would
+touch the response lifecycle EVERY money route passes through, including the idempotency `onSend` store.
+This does not — it is applied at the ONE route, computed from the serialized body, and the 304 returns
+before any of that machinery. The body is time-invariant (published catalogs plus levers, read at module
+load), which is what makes a STRONG validator honest here rather than a guess: a stale copy cannot exist
+without a deploy, and a deploy changes the hash. Guarded beside THE WIRE — first response carries an
+ETag, `If-None-Match` answers 304 with a zero-length body, a mismatched validator answers 200 with the
+full body, and the 304 still carries the header a shared cache needs. Four mutations, four named kills.
+
+**(4) A FIRE KILL ARMS THE TRIGGER COOLDOWN TOO — the wave-80 flag, signed and built.** Wave 80 flagged
+it and did not touch it (*"a signed PvP surface and a founder call, not a copy fix"*); the founder's
+instruction is that sign-off, and by the D13/D15 rule a decision made and not recorded gets made twice —
+so `SIGN-OFF.md` and `BALANCE.md` carry it, same commit. **The defect is wider than the flag said, and
+the correction is worth more than the fix**: `fire` has FOUR shot outcomes and the `shoot_cd_until` stamp
+lived in exactly ONE of them. Inside `if (effective >= btk)` there are two further early returns before
+the kill's own — the **bodyguard absorb** and the **pre-paid revive token** — so a KILL, an ABSORB and a
+REVIVE each returned above the stamp and left the trigger COLD, while a plain MISS was the one outcome
+that paid the two hours: the more successful shot carried the lighter cost. Verified against the DATABASE
+before it was called anything (`shoot_cd_until` NULL after a kill, a real timestamp after a miss). The
+stamp moves out of the MISS branch into the **common cost block**, beside the energy, the rounds and the
+law heat, so it lands on every shot the verb fires — and is deliberately absent from the pre-roll
+refusal, which spends nothing. **No lever moved** (`CONSTANTS.SHOOT_CD_MS` untouched, now pinned in the
+register) and §10.4 is untouched (a clock, not a currency). The client half is the wave-79/80 class — the
+clock a SUCCESS reply arms and never names — so all four render sites state it. **Why nothing caught it**:
+`test/social.js`'s `whack()` helper NULLs the trigger before every shot, so every kill in the file started
+from a clean clock and no assertion in the suite could ever have observed an uncooled trigger; the
+regressions read the DATABASE, never the reply under test. Three mutations kill by name.
+
+**(5) THE SEASON ROLLOVER MOVES OFF THE ALARM TICK.** `safe()` isolates a job's ERRORS and never its
+LATENCY, and `tools/workercost.js` had already measured the rollover as the one job linear in the
+population — **~2 minutes at 50,000 players** — sitting on the same hourly tick as the nightly §10.4 drift
+monitor, the WAL-archiver watchdog and the oracle-keeper watchdog. Once every 28 days, every alarm in the
+game was that late. It has its own hourly clock now, with the `setInterval` registered **BEFORE** the
+un-awaited first call so a slow first rollover cannot lose the schedule. **Neither existing guard could
+see this** — THE ISOLATION LEDGER counts isolation rather than which clock a job sits on, and the
+scheduler-ordering floor is `>= 2`, so moving a job OFF the tick does not trip it — so the new guard is
+deliberately narrow (the rollover must not be called inside the tick body) with an anti-vacuity assertion
+that the symbol exists at all, or a rename reports as clean rather than broken. Two stale citations
+amended in the same commit: the tick's longest job is now the §10.4 invariants sweep.
+
+**(7) THE MIRROR WALKS A READ TO ITS END, NOT ONE HOP.** Check 4 keyed a binding as `path|sub` and
+checked ONE level of fields off it, with `b.x.y` its own STATED out-of-scope — measured at ~814 such
+chains in the client checked by nothing. It collects the WHOLE dotted chain now and WALKS it against the
+live response, because a two-hop rule stops at the first sub-object and leaves `b.grandPrix.pool.total`
+unchecked past it. **One rule keeps it honest rather than noisy**: a parent ABSENT or null AT ANY DEPTH
+is the benign empty state (no war, no spouse, no champion for this fixture) and is COUNTED, never
+reported — reporting it would be the mostly-wrong advisory people route around. Two traps the build paid
+for: a chain is segmented with a `matchAll` over `\??\.ident` rather than `split('.')`, because
+`?.grandPrix?.pool` splits into garbage; and the walk TRUNCATES at the first builtin, since
+`me.law.stage.toUpperCase` is a two-hop DATA chain with a method on the end and reading it as three would
+report a string's own method as a missing field. **384 chains, 273 walked to the leaf, 111 parent
+absent/null — no new drift, so this is coverage rather than a fix.** Mutation-verified in BOTH directions:
+a planted depth-3 defect fails by name with the chain, the route and the real key set, and — the control —
+**the old two-hop truncation passes GREEN over that same defect**, which demonstrates the blind spot
+rather than arguing it.
+
+**AND THE HARNESS HAD BEEN ASSERTING AGAINST A STATE NO PLAYER CAN REACH.** CI came back red on `mobile`
+— one problem in 171 checks, `firstJobReady:false` sitting beside `coach:"Claim your first-job reward"`,
+which is the coach a player only gets once the job IS done. `tools/mobile.js`'s first-action probe fired
+`/v1/me` and `/v1/onboard` **CONCURRENTLY** inside `page.evaluate`; both are authed, so both run through
+`withCharacter`, which takes `SELECT … FOR UPDATE` on the character row — even a read, because §7.1 lazy
+accrual persists — and pg-mem is single-caller, so the second answers `400 contention` (the correct
+retryable mapping). Then `(ob.tasks || []).find(…)` on an ERROR BODY yields `undefined`, **which reads
+exactly like "the task is not ready"**: that is how a race arrived as a mystery instead of a reason.
+Measured against a real socket rather than re-run in a browser: **CONCURRENT 2/60 bad, SERIAL 0/60** —
+~3.3% per pair, which is why it surfaced as one problem in 171 checks, why it moved viewports between
+runs (320×568 locally, 360×780 in CI), and **why my own first read of it — "reproduces
+deterministically" — was wrong, since a control run of the same shape passed. One reproduction is not
+determinism.** The client does NOT do this: `api()` queues every authed call on `_authQueue` for exactly
+this reason (the 2026-07-25 production incident, four of one player's requests queued
+1.0s/2.1s/2.3s/4.3s on one row) — **so the probe had reintroduced inside `page.evaluate` the very pattern
+the client was fixed to remove.** Serializing is therefore not the loosen-until-green antipattern: the
+probe's job is to observe what a PLAYER sees, and a player's browser serializes. A permanent `why` field
+now names the server's own reason, so a 4xx there can never again read as a task that is not ready.
+
+**THE PACKET REBUILT AT THE RELEASE HEAD, AND TWO ASSERTIONS THAT WERE FUNCTIONS OF THE CALENDAR
+(2026-09-06).** `CHAIN-DEPLOY.md` names one prerequisite for gate 2 — a packet frozen at the head an
+auditor will actually review — and the existing one carries its own banner saying it is a
+**SUPERSEDED SNAPSHOT ... retained as historical audit evidence** with instructions to *rebuild and
+freeze a new packet at the release head*. So the work is a NEW file beside it, never an edit: its
+figures ARE the evidence, and rewriting them destroys the record it is kept for. **`CHAIN-AUDIT-PACKET-O1.md`**
+(374 lines) is that packet, and its §0 exists because the last one taught the lesson: it names the
+**COMPILER** beside every figure — head `b0a214ca`, **forge v1.7.1** (now pinned), solc 0.8.26 /
+optimizer 800 / cancun, `[fuzz] runs = 512`, invariants at forge DEFAULTS — because **a test COUNT is
+a version fingerprint** and the old packet's 387/22 is unreproducible without knowing what compiled
+it (an invariant-only suite counts as ONE test under the aggregated model and as N under 1.7.1). The
+authoritative figure is **896 tests across 43 suites, 0 failed, 19 parameterised 512-run fuzz**,
+measured from the CI job at that exact head rather than a local run — deliberately, since a local run
+would be under an unnamed compiler, which is the exact ambiguity the refresh exists to end. Three
+documents had disagreed (CHAIN-DEPLOY 305/305, the frozen packet 387/22, LAUNCH-READINESS 531/531
+across 27), and all three now point at one number with its provenance attached. **§1a is a
+contract→suite MAP rather than CHAIN-DEPLOY's true-but-unusable "every contract carries tests"**,
+because **suite name ≠ contract name**: 19 of 31 contracts have no dedicated `<Name>.t.sol`, so a
+reviewer scoping from filenames would conclude two thirds of the batch is untested.
+**THE GUARD IS DELIBERATELY STRICTER THAN THE FROZEN ONE, and the asymmetry is the point.** The old
+packet is held only to ITSELF (it describes a tree that no longer exists — holding it to today's
+would destroy it). The live packet is held to the **TREE**, because it IS the current engagement
+scope: "batch, not dribble" means an auditor scopes from that table, so a contract missing from it is
+a contract nobody reviews. `test/docs.js` walks `omerta-contracts/src`, takes one name per file (its
+`contract`, or its `interface` where no contract is declared) and fails on a missing name, a phantom
+name, a count mismatch, a disagreeing repeated figure, a forge version that drifts from the
+`foundry-toolchain` pin in `.github/workflows/forge.yml`, or any gate doc that stops pointing at the
+new packet — with six anti-vacuity floors, since an extractor that has stopped reading the tree reads
+exactly like a clean sweep. Ten mutations, ten distinct named kills.
+**AND THE FULL SUITE WAS RED ON TWO ASSERTIONS THAT WERE FUNCTIONS OF THE DATE**, in a file this
+drop does not touch — the ground-rule-8 shape, since a suite that passes for months and turns red on a
+calendar boundary reads exactly like a flake and gets re-run. Both are `test/stockballotv2.js`, both
+the recorded class (*a deterministic assertion resting on a probabilistic — here temporal —
+precondition*). (1) The no-valid-candidate close wrote `deactivated_at=now()` against a ballot closing
+at the literal `2026-09-05T00:00:00Z`, and `src/commission.js` rules — correctly — that
+`deactivated_at >= closes_at` means the asset was still live when the ballot shut, so it stays
+**eligible**: the moment real-now passed the close instant the asset qualified and the close returned
+`closed_ready`. (2) The dissolution block took a **RAW** `pool.connect()`, so `removeMember` read real
+`now()` — and it deletes a ticker vote only while its ballot day is still open (`closes_at > now()`), a
+closed day's vote being deliberately FROZEN — so the vote was preserved and the count read 1 against an
+expected 0. Both are fixed by GUARANTEEING the precondition, never by weakening the assertion, and
+**M1b is the measurement that matters**: a literal placed AFTER the close reproduces the failure
+identically, which proves the mechanism is the timestamp **RELATION** rather than `now()` itself.
+**PR #171 DIAGNOSED AND FIXED THE SAME TWO INDEPENDENTLY, and on the merge I took THEIRS and dropped
+mine** — not as a tie-break but because theirs is better: the file already carries a
+`withClockedClient(pool, wall, fn)` helper used thirty-one times, and my version reached for an inline
+`clockedPool(pool, WALL).connect()` with a hand-written `finally { client.release(); }`, which is the
+private-copy class this project spent a session collapsing sixty-nine instances of. *When two correct
+fixes meet, the one that uses the shared helper wins, and the duplicate goes.* What survives from this
+side is the SWEEP, which the other pass did not run (the RT#7 discipline — a class fixed where it was
+found and not taken to its edge): 639 `now()` uses across `test/` and `tools/` is far too broad to
+review and most have nothing to drift against, so the tractable population is a `now()` WRITE sharing a
+block with a fixed ISO instant — **4 sites, and the other two are safe by construction**
+(`rwaregistrylifecycle`'s `closed_at` is never compared; `stockdeliver`'s block asserts explicitly that
+*age does not affect* the outcome; `rwaroutes` and `stockcatalogv2` compute `now() ± interval`,
+relative to themselves). One trap re-paid: the first reproduction attempt used `sed` to insert a quoted
+timestamp into a **single-quoted JavaScript string**, which produced
+`SyntaxError: missing ) after argument list` — so both directions exited 1 for a reason other than the
+one under test, and *a mutation that does not apply reads exactly like a fix that holds*. Every edit
+since goes through a python heredoc that asserts its own anchor landed first.

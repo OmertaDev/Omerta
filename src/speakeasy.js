@@ -4,8 +4,8 @@
 // — the bodyguard-hire pattern) and bottle service (a pure-status $OMR burn), both flexed on the guest
 // list. Prestige ranks the nightlife. §10.4: `speakeasy:` is a cash SINK/FAUCET/TRANSFER vocabulary (all
 // character_id'd → the per-character cash check reconciles); bottles/naming ride `vanity:%` (no omr change).
-import { GameError, bus, skillMult, bumpMastery } from './game.js';
-import { SPEAKEASY, DISTRICTS, speakeasyTierOf, speakeasyRoundOf, speakeasyBottleOf, levelOf, renownRankOf, decorStyleOf, styleUnlockOf, assessedValueOf, effStat, SKILLS, isMade, jailed, hospitalized, safeHoused, usd, art } from './rules.js';
+import { GameError, assertStreetActor, bus, skillMult, bumpMastery } from './game.js';
+import { SPEAKEASY, DISTRICTS, speakeasyTierOf, speakeasyRoundOf, speakeasyBottleOf, levelOf, renownRankOf, decorStyleOf, styleUnlockOf, assessedValueOf, effStat, SKILLS, isMade, jailed, hospitalized, safeHoused, usd, art , coolLeft, coolWait } from './rules.js';
 import { spendOmr } from './vanity.js';
 
 const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
@@ -226,8 +226,9 @@ export async function visitSpeakeasy(ch, owner, districtId, roundId, client, h) 
   if (Number(ch.cash) < round.cost) throw new GameError('cash', `That round runs ${usd(round.cost)}.`);
   // cooldown FIRST (ch is locked by withTwoCharacters, so same-patron rounds serialize — no TOCTOU)
   const prior = (await client.query('SELECT last_at FROM speakeasy_patrons WHERE district_id=$1 AND character_id=$2', [districtId, ch.id])).rows[0];
-  if (prior && Date.now() - new Date(prior.last_at).getTime() < SPEAKEASY.VISIT_CD_MS)
-    throw new GameError('cooldown', 'You were just here — give the room a while.');
+  const roundCool = prior ? coolLeft(new Date(prior.last_at).getTime() + SPEAKEASY.VISIT_CD_MS) : 0;
+  if (roundCool)
+    throw new GameError('cooldown', `You were just here — give the room ${coolWait(roundCool)}.`, { cooldownSeconds: roundCool });
   // the standard 2% house take (1% street tax → buyback + 1% dev off-ledger), the bodyguard/exchange
   // parity — an untaxed unlimited P2P transfer is the cheapest value pipe in the game. Owner nets 98%.
   const fee = Math.ceil(round.cost * 0.01), tax = Math.ceil(round.cost * 0.01);
@@ -426,9 +427,10 @@ export async function applyDecor(ch, styleId, client, h) {
 // per-club cooldown bounds spam. §10.4: the fee is a `speakeasy:standover` SINK, the win reuses `speakeasy:buyout`.
 export async function standoverSpeakeasy(ch, owner, districtId, client, h) {
   const S = SPEAKEASY.STANDOVER;
-  if (jailed(ch)) throw new GameError('jailed', 'No muscle work from lockup.');
-  if (hospitalized(ch)) throw new GameError('hosp_self', "You're in no shape to lean on anyone.");
-  if (safeHoused(ch)) throw new GameError('safe', "You can't run a standover while you're supposed to be to ground.");
+  assertStreetActor(ch, { witpro: false, msgs: {
+    jailed: 'No muscle work from lockup.',
+    hosp: "You're in no shape to lean on anyone.",
+    safe: "You can't run a standover while you're supposed to be to ground." } });
   if (hospitalized(owner)) throw new GameError('hosp', "They're under the Doc's care — even we have rules."); // audit F1: shakedown parity
   if (levelOf(Number(ch.respect)) < SPEAKEASY.MIN_LEVEL) throw new GameError('level', `Standing over a made man's club takes level ${SPEAKEASY.MIN_LEVEL}.`);
   if (ch.loc !== districtId) throw new GameError('travel', "You're not in that district — go there to lean on the place.");
@@ -439,8 +441,9 @@ export async function standoverSpeakeasy(ch, owner, districtId, client, h) {
   const row = (await client.query('SELECT * FROM speakeasies WHERE district_id=$1 FOR UPDATE', [districtId])).rows[0];
   if (!row || row.owner_character !== owner.id) throw new GameError('gone', 'The club changed hands — try again.');
   if (isShut(row)) throw new GameError('shut', 'The place is already dark — nothing to take.');
-  if (row.standover_cd_until && new Date(row.standover_cd_until) > new Date())
-    throw new GameError('cooldown', 'Someone leaned on this place recently — let it cool off.');
+  const overCool = coolLeft(row.standover_cd_until);
+  if (overCool)
+    throw new GameError('cooldown', `Someone leaned on this place recently — let it cool off for ${coolWait(overCool)}.`, { cooldownSeconds: overCool });
   const price = assessedValueOf(row.tier);
   if (Number(ch.cash) < S.FEE + price)
     throw new GameError('cash', `A standover runs ${usd(S.FEE)} up front and you'd owe ${usd(price)} for the place on a win — bring ${usd(S.FEE + price)}.`);
@@ -464,7 +467,10 @@ export async function standoverSpeakeasy(ch, owner, districtId, client, h) {
     await h.notify(client, owner.id, 'standover_repelled', { from: ch.name, district: districtId });
     bus.emit('streets', { type: 'speakeasy_standover', by: ch.name, at: row.name || districtId, won: false });
     await h.track(client, ch.account_id, 'speakeasy_standover', { district: districtId, won: false });
-    return { ok: true, won: false, feePaid: S.FEE };
+    // `district` on BOTH branches: an UNNAMED house sends `name: null`, and the line had nothing
+    // left to place it by — "the club" with no idea which one. The district is the only other thing
+    // that identifies it, and the client resolves the display name off its own published catalog.
+    return { ok: true, won: false, feePaid: S.FEE, district: districtId };
   }
   await bumpMastery(client, h, ch, 'muscle', 'standover'); // THE TRADES — the hostile takeover of a whole club
   // WON — a forced sale at the assessed (build) value: the owner is PAID (taxed, the buyout pattern), loses the club.
@@ -481,7 +487,7 @@ export async function standoverSpeakeasy(ch, owner, districtId, client, h) {
   await h.notify(client, owner.id, 'standover_lost', { from: ch.name, district: districtId, net });
   bus.emit('streets', { type: 'speakeasy_standover', by: ch.name, from: owner.name, at: row.name || districtId, won: true });
   await h.track(client, ch.account_id, 'speakeasy_standover', { district: districtId, won: true, price });
-  return { ok: true, won: true, feePaid: S.FEE, paid: price, toOwner: net, tier: Number(row.tier), name: row.name || null };
+  return { ok: true, won: true, feePaid: S.FEE, paid: price, toOwner: net, tier: Number(row.tier), name: row.name || null, district: districtId };
 }
 
 // GET /v1/leaderboard/nightlife — the scene ranked by RENOWN (the hitmen-board full-scan precedent). Two

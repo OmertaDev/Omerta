@@ -10,18 +10,18 @@ Written 2026-07-25. Every number below was measured from the tree, not recalled.
 
 | | |
 |---|---|
-| Backend modules | **187** files, **75805** lines (`src/`, incl. `src/routes/` and `src/social/`) |
-| Test suites | **153** files, **76000** lines (`test/`) — ratio 1.00 test:src |
+| Backend modules | **187** files, **76763** lines (`src/`, incl. `src/routes/` and `src/social/`) |
+| Test suites | **154** files, **79096** lines (`test/`) — ratio 1.03 test:src |
 | HTTP routes | **746** registrations (**746** unique) |
 | Database tables | **317** (`schema.sql`, 6008 lines) |
-| Client | **11752** lines (`public/index.html`, single file, zero dependencies) |
+| Client | **12695** lines (`public/index.html`, single file, zero dependencies) |
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |
 | Smart contracts | **32** top-level Solidity files, **9794** lines, **844** declared top-level Foundry test functions; the release gate re-measures the passing suite |
-| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/bond-dials.js` (sizing the on-chain mint walls), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres) |
-| Design + audit docs | **490** markdown files, **128934** lines — indexed in `docs/AUDITS.md`, which states they are point-in-time |
+| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/bond-dials.js` (sizing the on-chain mint walls), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |
+| Design + audit docs | **492** markdown files, **130940** lines — indexed in `docs/AUDITS.md`, which states they are point-in-time |
 | Ledger invariants | **34** checks — **30** named escrow/identity checks + **4** per-currency conservation, **drift-0** |
 
-Roughly **166,000 lines** of backend code, tests, schema and top-level contracts.
+Roughly **171,000 lines** of backend code, tests, schema and top-level contracts.
 
 ---
 
@@ -225,7 +225,7 @@ with no chain configured.
 
 Ranked by risk × cost to fix. Each item states the evidence.
 
-### D1 — Reads take the write lock **(HIGH → PARTLY ADDRESSED)**
+### D1 — Reads take the write lock **(HIGH → ADDRESSED, two-phase commit 2026-09-05)**
 Every authed request, including 24 pure-read GET routes, opened `SELECT … FOR UPDATE` on the character
 row and held it for the whole request, so a player's own requests serialized against each other and
 each held a pooled connection throughout. **Observed in production:** four of one player's requests
@@ -299,6 +299,24 @@ hold (the `finally` releases before delegating); the post-commit referral hooks 
 skipping them on a clean read, because every gate they check only advances on an action — and the
 worker sweep reconciles regardless; and the raid/indictment notifications still fire, because they
 only ever exist on the dirty path that delegates.
+
+**Two-phase commit (2026-09-05, #29) — the blocker above is gone.** `withCharacter` now runs
+`settleIfDue(pool, accountId)` FIRST: a row-only probe on `last_accrued_at` / the in-transit and
+unbonding clocks, and — only when something is due — its own short transaction (character `FOR UPDATE`,
+account `FOR UPDATE`, `loadOwned`, `accrueAndLedger`, persist, COMMIT) BEFORE the action's transaction
+opens. So what the clock did commits **whether or not the action does**: a raid that rolls during a
+refused action stays rolled, which is what made "reads must persist accrual" load-bearing, and it is no
+longer true. The read path therefore runs `accrueInMemory(…, { preview: true })` and `accrue()` never
+rolls the Bureau raid under preview (`!ctx.preview` on the roll) — a read that delegates to the write
+path only when the clock moved cannot leak a raid it never rolled, and a refused action can no longer
+filter one out. Both phases are REAL transactions (pg-mem has no SAVEPOINT and its ROLLBACK is a no-op),
+so the phase-one commit is proven on real Postgres in `pgcheck` §5 ("A REFUSED ACTION COMMITS THE
+CLOCK AND NOTHING ELSE": a refused crime lands the `racket:income` row, freshens the clock, moves
+exactly the ledgered accrual and nothing else), and the preview gate + a settle non-vacuity control +
+two source tripwires live in `test/growth.js`. **Consequence worth stating:** a REFUSED action now
+commits accrual where before its persist never ran — a fixture whose clock is stale when a refused
+probe fires gets accrual side effects (the kitchen-cut block in `test/growth.js` froze its clock above
+the refused probe for exactly this reason).
 
 **Remaining:**
 1. A compare-and-swap would make even the *dirty* reads lock-free. It needs a version column: the
@@ -679,7 +697,8 @@ onboarding docs — not for retyping 55,000 lines.
 1. ~~**Wire `pgcheck` into CI** (D2).~~ **DONE** — `.github/workflows/ci.yml`.
 2. ~~**Finish the lock-free read path** (D1).~~ **DONE** — `withCharacterRead` / `readCharacter` wired
    to all 24 authed read GETs, verified against real Postgres in `pgcheck` §8, red-teamed after
-   shipping. This entry said "blocked on a design choice" for a while after D1 was already finished,
+   shipping. The two-phase commit (2026-09-05) closed the raid-rollback blocker: accrual settles in its own
+   transaction ahead of the action, and a preview read never rolls the raid (`pgcheck` §5). This entry said "blocked on a design choice" for a while after D1 was already finished,
    which would have sent the next reader off to re-do it; `test/docs.js` now fails if a debt item is
    struck through in §4 and still listed as outstanding here.
 3. ~~**Split `server.js`** into domain route modules (D3).~~ **DONE** — 220 routes into 18 modules,

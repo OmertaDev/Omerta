@@ -29,12 +29,12 @@ const mk = async (name) => {
   await call('POST', '/v1/character', { token, body: { name } });
   return token;
 };
-// readCharacter merges `{character, events, ...board}` onto every authed board it serves. The keyless
+// readCharacter merges `{character, ...board}` onto every authed board it serves. The keyless
 // price board does not go through it, so stripping the envelope there would compare the wrong thing.
 const AUTHED = (route) => route !== '/v1/market/prices';
 const bare = (body, route) => {
   const b = { ...(body || {}) };
-  if (AUTHED(route)) { delete b.character; delete b.events; }
+  if (AUTHED(route)) delete b.character;
   return b;
 };
 

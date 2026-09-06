@@ -29,9 +29,8 @@
 // filter knows about ONE kind of scenery; this is the second kind. See DISCOVERY.SEEN_DAYS for why the
 // discriminator is recency rather than level or activity — the wrong choice there hides the whole
 // launch-night cohort, who are by definition brand new and have done nothing yet.
-import { DISTRICTS, DISCOVERY, levelOf, PACING, seenSince } from './rules.js';
+import { DISTRICTS, DISCOVERY, levelOf, PACING, seenSince, districtName } from './rules.js';
 
-const districtName = (id) => (DISTRICTS.find((d) => d.id === id) || {}).name || id;
 // the respect a level costs (respect(L) = D·(L−1)²) — the inverse of levelOf, to turn a LEVEL band into a
 // respect band the SQL filters on. Kept local (rules.js does not export it — the discovery.js pattern).
 const respectAtLevel = (lvl) => PACING.LEVEL_DIVISOR * Math.max(0, lvl - 1) ** 2;

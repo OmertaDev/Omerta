@@ -8,10 +8,10 @@
 import crypto from 'node:crypto';
 import { GameError, bus, ledger, notify, rngLog, bumpStanding, bumpMastery, masteryFx, npcMult, npcTier } from './game.js';
 import { recordEventResult } from './events.js';
-import { BOXING, UNDERWORLD, boxerRankOf, boxerLegendOf, npcBoxerOf, levelOf, pathFx, jailed, hospitalized, usd, art } from './rules.js';
+import { BOXING, UNDERWORLD, boxerRankOf, boxerLegendOf, npcBoxerOf, levelOf, pathFx, jailed, hospitalized, usd, art , coolLeft, coolWait } from './rules.js';
 
 const injured = (f) => f.injured_until && new Date(f.injured_until) > new Date();
-const onCooldown = (f) => f.exhib_at && new Date(f.exhib_at) > new Date();
+const onCooldown = (f) => coolLeft(f.exhib_at);
 const booked = (f) => f.booked_until && new Date(f.booked_until) > new Date(); // (step three) on a MAIN EVENT card
 const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
 const form = (f) => Number(f.power) + Number(f.chin) + Number(f.speed);
@@ -268,7 +268,8 @@ export async function exhibitionBout(ch, fighterId, tierId, client, h) {
   const f = await myFighter(client, ch, fighterId);
   if (injured(f)) throw new GameError('injured', 'Your fighter is laid up — let them heal.');
   if (booked(f)) throw new GameError('booked', "That fighter is booked on a main event card.");
-  if (onCooldown(f)) throw new GameError('cooldown', `${f.name} needs to rest before another exhibition.`);
+  const fCool = onCooldown(f);
+  if (fCool) throw new GameError('cooldown', `${f.name} needs to rest before another exhibition — ${coolWait(fCool)} to go.`, { cooldownSeconds: fCool });
   if (Number(ch.cash) < tier.fee) throw new GameError('cash', `${art(tier.name, 'The')} card runs a ${usd(tier.fee)} sanction fee.`);
   // the sanction fee burns win or lose
   ch.cash = Number(ch.cash) - tier.fee;
@@ -283,16 +284,26 @@ export async function exhibitionBout(ch, fighterId, tierId, client, h) {
     await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: tier.purse, reason: 'boxing:purse' });
     await client.query('UPDATE fighters SET wins=$2 WHERE id=$1', [f.id, Number(f.wins) + 1]);
     await bumpLegend(client, ch.account_id);
-  } else {
+  }
+  let injuredMs = 0;
+  if (!win) {
     // TRADES perk (fists): a schooled corner patches them up faster — pacing only
-    await client.query('UPDATE fighters SET losses=$2, injured_until=$3 WHERE id=$1', [f.id, Number(f.losses) + 1, new Date(Date.now() + Math.round(BOXING.INJURY_MS * masteryFx(h, 'fists')))]);
+    injuredMs = Math.round(BOXING.INJURY_MS * masteryFx(h, 'fists'));
+    await client.query('UPDATE fighters SET losses=$2, injured_until=$3 WHERE id=$1', [f.id, Number(f.losses) + 1, new Date(Date.now() + injuredMs)]);
   }
   await bumpStanding(client, h, ch, 'cornerman', 1, { action: 'exhibition' }); // working the card is the corner's business
   await bumpMastery(client, h, ch, 'fists', 'exhibition');
   await h.rngLog(client, ch.id, `boxing:exhibition:${tier.id}`, mine, `${win ? 'win' : 'loss'} vs ${tier.name} (${mine} vs ${theirs})`);
   await h.track(client, ch.account_id, 'boxing_exhibition', { tier: tier.id, win });
+  // A loss lays the fighter up + the cutman's rest applies win or lose — TERMS the reply withheld.
+  // The manager plans the next card off exactly these two clocks, and only the server knows either
+  // (both are perk-scaled, so a restated constant is wrong for anyone the perks touch). WAVE 80: the
+  // comment here CLAIMED wave 75 shipped the rest clock and it never did — only `injuredSeconds`
+  // rode, so the 6h that lands WIN OR LOSE was the half a winner never heard about at all.
   return { ok: true, win, opponent: tier.name, fee: tier.fee, purse: win ? tier.purse : 0, net: win ? tier.purse - tier.fee : -tier.fee,
     you: { name: f.name, score: mine }, them: { name: tier.name, score: theirs },
+    injuredSeconds: win ? 0 : Math.ceil(injuredMs / 1000),
+    restSeconds: Math.ceil(cd / 1000),
     record: win ? `${Number(f.wins) + 1}-${f.losses}` : `${f.wins}-${Number(f.losses) + 1}` };
 }
 

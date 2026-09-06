@@ -15,7 +15,7 @@ import { GameError, cleanText } from './game.js';
 import { vaultHistoryFor, vaultLiveBalances } from './stockdeliver.js';
 import { DEEDS, DISTRICTS, deedRankOf, deedRenown, deedCornerOwed, deedController,
   deedNeighborhoodsOpen, deedNeighborhoodOf,
-  effStat, levelOf, jailed, hospitalized, safeHoused, SAFE_STORED, usd } from './rules.js';
+  effStat, levelOf, jailed, hospitalized, safeHoused, SAFE_STORED, usd, districtName , coolLeft, coolWait } from './rules.js';
 
 // living-player population (drives the growing map — Phase 4). NPCs/dead excluded (the ops.js count).
 async function livingPlayers(client) {
@@ -23,7 +23,6 @@ async function livingPlayers(client) {
 }
 
 // rules.js doesn't export a district-name helper (hustle.js/citymap.js keep it local), so map it here.
-const districtName = (id) => (DISTRICTS.find((d) => d.id === id) || {}).name || id;
 
 async function loadDeed(client, accountId) {
   return (await client.query('SELECT * FROM street_deeds WHERE account_id=$1', [accountId])).rows[0] || null;
@@ -271,7 +270,27 @@ export async function collectCorner(ch, client, h) {
     await client.query('UPDATE street_deeds SET corner_at=now() WHERE account_id=$1', [d.account_id]);
     total += owed; collected.push({ name: d.name, district: d.district, owed });
   }
-  if (total <= 0) throw new GameError('nothing', 'No corner take to collect yet.');
+  // A SEIZED OWNER IS NOT AN EMPTY TILL. The loop above SKIPS a deed a rival currently holds, so an
+  // owner whose corner has been muscled in on fell through to the shared `nothing` — "No corner take
+  // to collect yet", where "yet" reads as *nothing has accrued, come back later* when in fact a named
+  // rival is banking this corner for the rest of their window and the owner banks nothing until it
+  // lapses OR they take it back. Fluent and false about STATE (the F15 class): the BOARD already
+  // carries the whole truth (`seized`, `seizedForSeconds`, `canReclaim`) — only the refusal was wrong,
+  // which is why it reaches the raw API and the agents who read these lines rather than the console
+  // button (the console hides it behind `collectable > 0`). The seconds ride the payload so a client
+  // can render the countdown rather than parse it out of English (the district-refusal discipline).
+  if (total <= 0) {
+    const seized = rows.find((d) => d.account_id === ch.account_id && deedController(d, now) !== ch.account_id);
+    if (seized) {
+      const left = Math.max(0, Math.ceil((new Date(seized.control_until).getTime() - now) / 1000));
+      const hrs = Math.floor(left / 3600), mins = Math.ceil((left % 3600) / 60);
+      const when = hrs ? `${hrs}h${mins ? ` ${mins}m` : ''}` : `${Math.max(1, mins)}m`;
+      throw new GameError('seized',
+        `Somebody else is running ${seized.name} — their hold lapses in ${when}. Take it back, or wait it out.`,
+        { street: seized.name, district: seized.district, seizedForSeconds: left });
+    }
+    throw new GameError('nothing', 'No corner take to collect yet.');
+  }
   await h.track(client, ch.account_id, 'deed_corner', { total, deeds: collected.length });
   return { ok: true, total, collected };
 }
@@ -301,8 +320,9 @@ export async function shakedownCorner(ch, targetCharacterId, client, h) {
   if (controller === ch.account_id) throw new GameError('own', 'You already run this corner.');
   if (deed.account_id === ch.account_id && controller === ch.account_id)
     throw new GameError('own', 'This corner is already yours.');
-  if (deed.shakedown_at && now - new Date(deed.shakedown_at).getTime() < DEEDS.SHAKEDOWN_CD_MS)
-    throw new GameError('cooldown', 'That corner just changed hands — let the dust settle.');
+  const cornerCool = coolLeft(new Date(deed.shakedown_at).getTime() + DEEDS.SHAKEDOWN_CD_MS, now);
+  if (cornerCool)
+    throw new GameError('cooldown', `That corner just changed hands — let the dust settle for ${coolWait(cornerCool)}.`, { cooldownSeconds: cornerCool });
   // the contest — attacker's effective muscle+cunning/2 vs the incumbent controller's base (read unlocked)
   const defender = (await client.query(
     'SELECT muscle, cunning FROM characters WHERE account_id=$1 AND alive ORDER BY id LIMIT 1', [controller])).rows[0]

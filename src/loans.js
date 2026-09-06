@@ -448,7 +448,12 @@ export async function collectLoan(ch, borrower, loanId, client, h) {
   await h.notify(client, borrower.id, 'loan_collected', { by: ch.name, seized: collected, car: !!carSeized, omr: omrSeized, wanted: true });
   bus.emit('streets', { type: 'welsher', who: borrower.name, by: ch.name });
   await track(client, ch.account_id, 'loan_collect', { seized: collected, shortfall: owed - collected, car: !!carSeized });
-  return { ok: true, seized: collected, toLender, vig, shortfall: owed - collected, carSeized, omrSeized, wanted: true };
+  // the three consequences a presser is never told about ride with the receipt: the beating, the
+  // permanent welsher brand and the WANTED window. The two CLOCKS are founder levers, so they ship
+  // from here rather than being restated client-side (the crewNextCost/hunterSearchMs discipline —
+  // a restated lever is wrong for everybody the day it moves).
+  return { ok: true, seized: collected, toLender, vig, shortfall: owed - collected, carSeized, omrSeized,
+    wanted: true, wantedSeconds: Math.round(LOAN.WANTED_MS / 1000), hospSeconds: Math.round(LOAN.COLLECT_HOSP_MS / 1000) };
 }
 
 // POST /v1/loans/:id/sell — step 3 (the paper market): the current lender puts this ACTIVE loan's
@@ -467,7 +472,10 @@ export async function sellPaper(ch, loanId, body, client, h) {
   // the buyer takes over the right to collect it. The ask alone cannot say that, so the reply carries
   // what is OWED and by WHOM (the client has no loan catalog to price a claim from), plus whether a
   // car is pledged behind it, which is the whole difference between secured and unsecured paper.
-  return { ok: true, paper: 'listed', price, owed: loanOwed(loan.principal, loan.rate),
+  // WAVE 80: the ask is NOT what the seller receives — buyPaper carves PAPER_TAKE_BPS off the top,
+  // so a seller who sets $40,000 banks $39,200. The terms ride with the price, and only the server
+  // knows the rate at this moment (the client has no loan catalog), so the NET rides too.
+  return { ok: true, paper: 'listed', price, net: price - paperTake(price), owed: loanOwed(loan.principal, loan.rate),
     borrower: borrower?.name || null, secured: loan.collateral_car != null };
 }
 

@@ -359,15 +359,23 @@ export function preflight(env = process.env) {
       + "server's own origin (it is also what one-click X sign-in derives its callback from).");
   if (env.WS_ALLOW_QUERY_TOKEN === 'on')
     warnings.push('WS_ALLOW_QUERY_TOKEN=on puts player tokens in URLs, where proxies and access logs keep them.');
-  // BLUE-TEAM H5: the money-drift alarm channel. Every proactive alarm (nightly §10.4 drift,
+  // BLUE-TEAM H5: the money-drift alarm channel. Most proactive alarms (nightly §10.4 drift,
   // backup-failure, oracle-keeper, desk-dark, and the vig/bond/treasury/desk real-value invariants)
-  // fires from the WORKER and posts here; unset, it reaches only a log line nobody reads — the
+  // fire from the WORKER and post here; unset, it reaches only a log line nobody reads — the
   // "the guard worked; nobody looked" failure. A WARNING (not fatal) so it can't take a live server
   // down, matching the SOCIAL_VERIFY_MODE reasoning; /admin also surfaces the live state.
+  //
+  // This warning used to end "it must be on the WORKER process, which is where the alarms fire",
+  // which stopped being true when startWorkerWatch shipped — and preflight runs on BOTH processes,
+  // so on the API it was pointing the operator at the OTHER service while THIS one's alarm was the
+  // missing one. The API is the only process that can page when the worker is GONE (a process
+  // cannot alarm on being dead), so worker-only leaves exactly that alarm mute while every other
+  // alarm works, which is the shape that hid a 17h outage.
   if (!env.INVARIANT_WEBHOOK_URL)
     warnings.push('INVARIANT_WEBHOOK_URL is not set — the §10.4 economy-drift, backup-failure, oracle-halt '
       + 'and real-value-invariant alarms have nowhere to shout and reach only a log line. Set it (a Slack/'
-      + 'Discord webhook) — it must be on the WORKER process, which is where the alarms fire.');
+      + 'Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one '
+      + 'that can page when the WORKER is dead.');
   // BLUE-TEAM M8: the public city-drama feed and the private ops alarm must be DISTINCT channels. If
   // they collide, throttled marketing drama (up to 20 posts/10 min) buries a §10.4 drift line — the
   // exact "alarm nobody reads" failure this system exists to prevent. Fires only on the real

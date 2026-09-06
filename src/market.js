@@ -17,7 +17,7 @@
 // races fall back to the 40P01→contention mapping.
 import crypto from 'node:crypto';
 import { GameError, bus, ledger, notify, skillMult, trunkCap, npcTier, bumpStanding, bumpMastery, masteryFx } from './game.js';
-import { BLACK_MARKET as MARKET, GOODS, SKILLS, UNDERWORLD , jailed, safeHoused, usd } from './rules.js';
+import { BLACK_MARKET as MARKET, GOODS, SKILLS, UNDERWORLD , jailed, safeHoused, usd, carOf , districtName } from './rules.js';
 import { logCarCollect } from './collection.js';
 
 const uid = () => crypto.randomUUID();
@@ -157,7 +157,19 @@ export async function bidListing(ch, listingId, amount, client, h) {
       [listingId, new Date(Date.now() + MARKET.SNIPE_WINDOW_MS)]);
     extended = true;
   }
-  return { ok: true, id: listingId, bid: amt, extended };
+  // The bid named neither WHAT was bid on nor that the money had LEFT the pocket. The iron is the
+  // server's to name — the client has no listing catalog and the reply carried only an opaque
+  // listing UUID, so three car lots read three identical lines (both auction siblings send a name).
+  // `carName`, never a bare `name`: a bare one is the shape the auction bids already use. The
+  // `market` marker is what the line keys on — absence is not a discriminator.
+  const cm = (await client.query('SELECT model_id FROM cars WHERE id=$1', [l.car_id])).rows[0];
+  // `reserveMet` rides so the receipt can state the THIRD way the money comes back: a bid under an
+  // unmet hidden reserve can never take the lot, and cancelListing lets the seller pull it out from
+  // under exactly that bid (audit #5) — a receipt saying "held until outbid or the hammer" was
+  // withholding a supported refund path. The board already publishes reserveMet (never the amount),
+  // so this leaks nothing new; null = no reserve on the lot.
+  return { ok: true, market: 'bid', id: listingId, carName: cm ? (carOf(cm.model_id)?.name || cm.model_id) : null, bid: amt, extended,
+    reserveMet: l.reserve != null ? amt >= Number(l.reserve) : null };
 }
 
 // ── STEP TWO: standing BUY ORDERS (WTB) — the inverted listing ──
@@ -205,14 +217,14 @@ export async function fillOrder(ch, listingId, qty, client, h) {
     "SELECT * FROM market_listings WHERE id=$1 AND kind='order' AND status='live' FOR UPDATE", [listingId])).rows[0];
   if (!l || expired(l)) throw new GameError('no_order', 'No such order on the board.');
   if (l.seller_character === ch.id) throw new GameError('own', 'Filling your own order is just feeding the house 2%.');
-  if (ch.loc !== l.district) throw new GameError('district', `Delivery is at ${l.district} — be there.`, { district: l.district });
+  if (ch.loc !== l.district) throw new GameError('district', `Delivery is at ${districtName(l.district)} — be there.`, { district: l.district });
   const have = h.owned.cargo[l.good_id] || 0;
   const n = Math.min(Math.max(1, Math.floor(Number(qty) || have)), Number(l.qty), have);
   if (n <= 0) throw new GameError('qty', 'Nothing to deliver.');
   const gross = n * Number(l.price);
   h.owned.cargo[l.good_id] = have - n; // trunk → the order's warehouse
   await setCargo(client, ch.id, l.good_id, have - n);
-  const { net } = await paySeller(client, h, ch.id, gross, { reason: 'market:fill', inMemoryCh: ch });
+  const { net, take } = await paySeller(client, h, ch.id, gross, { reason: 'market:fill', inMemoryCh: ch });
   await bumpMastery(client, h, ch, 'commerce', 'fill');
   // absolute writes (the pg-mem INT quirk); the row stays live at qty=0 until the buyer claims
   await client.query('UPDATE market_listings SET qty=$2, filled_qty=$3 WHERE id=$1',
@@ -220,7 +232,9 @@ export async function fillOrder(ch, listingId, qty, client, h) {
   await h.notify(client, l.seller_character, 'order_filled', { listing: l.id, good: l.good_id, qty: n });
   await h.track(client, ch.account_id, 'market_fill', { good: l.good_id, qty: n });
   bus.emit('streets', { type: 'market_sale', kind: 'order' });
-  return { ok: true, delivered: n, earned: net, remaining: Number(l.qty) - n, good: l.good_id };
+  // WAVE 80: `earned` is NET of the house take, so a filler reading a $400/unit board and banking
+  // $1,176 on three units had no reason for the $24. The gross and the take ride so the line can say.
+  return { ok: true, delivered: n, earned: net, gross, take, remaining: Number(l.qty) - n, good: l.good_id };
 }
 
 // CLAIM — the buyer collects delivered goods from the warehouse, at the dock, into trunk space.
@@ -231,7 +245,7 @@ export async function claimOrder(ch, listingId, client, h) {
   const l = (await client.query(
     "SELECT * FROM market_listings WHERE id=$1 AND kind='order' AND seller_character=$2 FOR UPDATE", [listingId, ch.id])).rows[0];
   if (!l) throw new GameError('no_order', 'Not your order.');
-  if (ch.loc !== l.district) throw new GameError('district', `The warehouse is at ${l.district} — be there.`, { district: l.district });
+  if (ch.loc !== l.district) throw new GameError('district', `The warehouse is at ${districtName(l.district)} — be there.`, { district: l.district });
   const avail = Number(l.filled_qty);
   if (avail <= 0) throw new GameError('empty', 'Nothing delivered yet.');
   const space = Math.max(0, trunkCap(h) - cargoCount(h.owned.cargo));
@@ -298,7 +312,7 @@ export async function buyListing(ch, listingId, qty, client, h) {
   // filled at the dock via fillOrder, never bought.
   if (l.kind !== 'good') throw new GameError('not_for_sale', "That's a buy-order — fill it at the dock, you don't buy it.");
   // goods: stand at the dock, take what your trunk holds, pay unit price
-  if (ch.loc !== l.district) throw new GameError('district', `Pickup is at ${l.district} — be there.`, { district: l.district });
+  if (ch.loc !== l.district) throw new GameError('district', `Pickup is at ${districtName(l.district)} — be there.`, { district: l.district });
   const want = Math.max(1, Math.floor(Number(qty) || Number(l.qty)));
   const space = Math.max(0, trunkCap(h) - cargoCount(h.owned.cargo));
   const n = Math.min(want, Number(l.qty), space);
@@ -361,7 +375,10 @@ export async function cancelListing(ch, listingId, client, h) {
   await client.query("UPDATE market_listings SET status='cancelled', bid=NULL, bidder=NULL WHERE id=$1", [listingId]);
   // name what came back: a car listing is the iron, a goods lot is the freight. 'what was on it'
   // is the line a player got either way, and the row has known which all along.
-  return { ok: true, cancelled: l.id, ...(l.kind === 'good' ? { good: l.good_id, qty: Number(l.qty) } : { car: l.car_id }) };
+  const cn = l.kind === 'car' ? (await client.query('SELECT model_id FROM cars WHERE id=$1', [l.car_id])).rows[0] : null;
+  return { ok: true, cancelled: l.id,
+    ...(l.kind === 'good' ? { good: l.good_id, qty: Number(l.qty) }
+      : { car: l.car_id, carName: cn ? (carOf(cn.model_id)?.name || cn.model_id) : null }) };
 }
 
 // ── The board — public; car listings show the iron, goods show the dock ──

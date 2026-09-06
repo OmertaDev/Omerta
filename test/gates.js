@@ -37,7 +37,8 @@ const relPath = (from, to) => path.relative(from, to).replaceAll('\\', '/');
 // and a scanner that reads prose produces the mostly-wrong advisory people learn to route around —
 // this file's own recorded class. One implementation, because two copies of a rule is how the two
 // come to disagree. `//` is left alone after a colon so a URL in a string does not eat its own line.
-const decomment = (t) => t.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:])\/\/[^\n]*/g, '$1');
+const decomment = (t) => t.replaceAll('\r\n', '\n')
+  .replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:])\/\/[^\n]*/g, '$1');
 const GATES = ['jailed', 'hospitalized', 'safeHoused', 'penSafe', 'inHole', 'witproActive'];
 // The column each gate reads, so a hand-written inline check counts as enforcement. Matched as a
 // PROPERTY ACCESS (`ch.safe_until`) rather than the bare column, because the bare name also appears
@@ -118,6 +119,17 @@ function bodyOf(src, from) {
   return src.slice(from, start + 4000);               // unbalanced: fall back, never run to EOF
 }
 
+// ── every assert*/require* helper in the tree, by name → its brace-matched body ───────────────────
+const HELPER_INDEX = new Map();
+for (const f of files) {
+  const src = fs.readFileSync(f, 'utf8');
+  for (const m of src.matchAll(/function\s+((?:assert|require)\w+)\s*\(/g)) {
+    if (!HELPER_INDEX.has(m[1])) HELPER_INDEX.set(m[1], bodyOf(src, m.index));
+  }
+}
+// the assert*/require* CALLS in a body — the call form only (`assertX(`), never a definition
+const helperCalls = (body) => [...body.matchAll(/(?<![\w$])(assert\w+|require\w+)\s*\(/g)].map((m) => m[1]);
+
 // ── extract every exported function with the gates it can reach ──────────────────────────────────
 const fns = new Map();
 for (const f of files) {
@@ -138,10 +150,31 @@ for (const f of files) {
     // Measured on `assertStreetCrime`: a 2,000-char window over a 1,072-char helper carried 928
     // characters of a neighbouring function. Nothing is mis-credited today — the spill happens to
     // hold no extra gate — which is exactly why it had to be checked rather than assumed.
-    for (const hm of code.matchAll(/(?<![\w$])(assert\w+|require\w+)\s*\(/g)) {
-      const hi = src.search(new RegExp(`function\\s+${hm[1]}\\s*\\(`));
-      if (hi >= 0) { scope += bodyOf(src, hi); helpers.push(hm[1]); }
-    }
+    // A helper is resolved in the caller's own file FIRST, then across every file in the walk —
+    // `assertStreetActor` lives in game.js (the one module every street-crime file already imports
+    // GameError from, so it closes no cycle) and eleven verbs in six other files call it. A resolver
+    // that only read the caller's file would credit those verbs with NOTHING and report the shared
+    // helper — the one-core discipline — as eleven missing gates.
+    // TRANSITIVE: `assertStreetCrime` (the victim gates) delegates its actor gates to
+    // `assertStreetActor`, so a one-level follow would credit its three callers with the victim
+    // gates and none of the actor ones. Helpers are followed until no new name appears; a seen
+    // set bounds it, since two helpers that call each other would otherwise never terminate.
+    // The function's OWN name is seeded into `seen`: a helper's entry must never credit itself.
+    const seen = new Set([marks[i].name]);
+    const queue = helperCalls(code);
+    const follow = () => {
+      while (queue.length) {
+        const name = queue.shift();
+        if (seen.has(name)) continue;
+        seen.add(name);
+        const hi = src.search(new RegExp(`function\\s+${name}\\s*\\(`));
+        const hb = hi >= 0 ? bodyOf(src, hi) : HELPER_INDEX.get(name);
+        if (!hb) continue;
+        scope += hb; helpers.push(name);
+        queue.push(...helperCalls(hb));
+      }
+    };
+    follow();
     // A THIN WRAPPER delegates its gates to the one function it returns — `robBusiness` and
     // `shakedownBusiness` are both a single `return extortFront(...)`, which is the one-core
     // discipline working exactly as intended, so refusing to follow it would make the matrix report
@@ -151,7 +184,13 @@ for (const f of files) {
     const thin = code.match(/\{\s*return\s+(\w+)\s*\([^;]*\);?\s*\}\s*$/);
     if (thin) {
       const ti = src.search(new RegExp(`function\\s+${thin[1]}\\s*\\(`));
-      if (ti >= 0) { scope += bodyOf(src, ti); helpers.push(thin[1]); }
+      if (ti >= 0) {
+        const tb = bodyOf(src, ti);
+        scope += tb; helpers.push(thin[1]);
+        // the delegate's own helpers, followed the same transitive way — a wrapper over
+        // `extortFront` reaches `assertStreetActor` only through it
+        queue.push(...helperCalls(tb)); follow();
+      }
     }
     const has = (g) => new RegExp(`(?<![\\w$])${g}\\s*\\(`).test(scope) || (INLINE[g] && INLINE[g].test(scope));
     fns.set(marks[i].name, { file: path.basename(f), scope, gates: new Set(GATES.filter(has)), helpers,
@@ -213,12 +252,15 @@ for (const fam of FAMILIES) {
 console.log(`✓ ${checked} gate requirements hold across ${FAMILIES.length} families`);
 
 // ── COMPLETENESS: a new verb must not slip past the matrix by not being listed ───────────────────
-// Anything routed through assertStreetCrime IS a street crime by construction.
-const streetCrimes = [...fns].filter(([, v]) => v.helpers.includes('assertStreetCrime')).map(([k]) => k);
+// Anything routed through assertStreetCrime OR assertStreetActor IS a street crime by construction —
+// the actor helper is what makes completeness cover all fourteen verbs instead of the three that
+// happened to share the victim helper. The helpers themselves are not verbs and are excluded.
+const STREET_HELPERS = ['assertStreetCrime', 'assertStreetActor'];
+const streetCrimes = [...fns].filter(([k, v]) => !STREET_HELPERS.includes(k) && STREET_HELPERS.some((h) => v.helpers.includes(h))).map(([k]) => k);
 const declaredStreet = new Set(FAMILIES.find((f) => f.name.startsWith('street crime')).members);
 const undeclared = streetCrimes.filter((n) => !declaredStreet.has(n));
 assert.equal(undeclared.length, 0,
-  `street crime(s) routed through assertStreetCrime but absent from the matrix: ${undeclared.join(', ')} — `
+  `street crime(s) routed through assertStreetCrime/assertStreetActor but absent from the matrix: ${undeclared.join(', ')} — `
   + 'add them to the family (or the matrix silently stops covering the newest PvP verbs)');
 
 // Every collect* action must be classified. EXEMPT needs a reason, so "it was inconvenient" cannot
@@ -859,6 +901,31 @@ const SCENERY_WAIVED = {
     + `   - ${inverted.join('\n   - ')}`);
   console.log(`✓ all ${scheduled.size} guarded worker schedulers are registered before they are first run`);
 
+  // AND THE ONE JOB WHOSE COST IS LINEAR IN THE POPULATION STAYS OFF THAT TICK. safe() isolates a
+  // job's ERRORS but never its LATENCY, so a rollover folded back inline holds every alarm on the
+  // hourly tick behind it -- the §10.4 drift monitor, the archiver watchdog, the oracle keeper --
+  // for ~2 minutes at 50,000 players (tools/workercost.js), once a season, silently. Nothing else
+  // here catches that: the isolation ledger is indifferent to WHICH clock a safe() job sits on, and
+  // the scheduler floor is >= 2, so deleting the season's own schedule and inlining the call passes
+  // both. Measured: that exact mutation ran green before this check existed.
+  {
+    const ti = src.search(/const tick = async \(\) =>/);
+    assert(ti >= 0, 'the worker tick could not be located -- the extractor is broken, not the code');
+    const tickBody = decomment(bodyOf(src, ti));
+    assert(tickBody.length > 2000,
+      `the tick body read only ${tickBody.length} chars -- the extractor is broken, not the code; a `
+      + 'short slice reads exactly like a tick that calls nothing');
+    assert(/\brunSeasonRollover\s*\(/.test(decomment(src)),
+      'the worker never calls runSeasonRollover at all -- either the season rollover has been deleted '
+      + 'or this check has stopped seeing it; it is vacuous rather than clean');
+    assert(!/\brunSeasonRollover\s*\(/.test(tickBody),
+      'the season rollover is called INSIDE the hourly tick. It is the one job whose cost grows with\n'
+      + '      the PLAYERBASE rather than the ledger (~2m at 50,000, tools/workercost.js), and safe()\n'
+      + '      isolates its errors but not its latency -- so on rollover night every alarm on this tick,\n'
+      + '      the \u00a710.4 drift monitor included, is that late. Give it its own clock (guardedSeasonTick).');
+    console.log('\u2713 the season rollover -- the one job linear in the population -- runs off the alarm tick');
+  }
+
   // AND THE WATCHDOG MUST NAME WHERE IT IS STUCK. Ordering keeps the schedule alive; this is the other
   // half — what the operator reads at 3am. Measured in production 2026-08-29: the heartbeat (job 1) and
   // the fair-draw stamp (job 2) both landed and nothing among the other 119 ever did, so "a tick has
@@ -901,8 +968,12 @@ const SCENERY_WAIVED = {
     // nothing forever. Production supplied the missing half: `/health` said `stale: true` for 14.6
     // hours and nobody was polling it, so the remedy cannot be a log line. Bounded, the same hang
     // costs one restart. The window is asserted as a RELATION rather than a literal, because both
-    // ends are real: too short and a legitimately long tick (the season rollover measures ~2 min at
-    // 50,000 players) is killed on a capacity problem; too long and the remedy never arrives.
+    // ends are real: too short and a legitimately long tick is killed on a capacity problem; too long
+    // and the remedy never arrives. The citation moved when the season rollover did: it is the one job
+    // whose cost is LINEAR IN THE POPULATION (~2m at 50,000 players) and it runs on its OWN clock now,
+    // outside this watchdog's scope — the watchdog wraps `tick()` alone. What bounds THIS tick is the
+    // §10.4 invariants sweep (47 -> 87ms, tools/workercost.js), and it grows with the LEDGER rather
+    // than the playerbase, so a long-lived server is the case to re-measure before moving this.
     // BOUNDED to the watchdog's own callback, deliberately. A slice to end-of-file reads any later
     // `process.exit(1)` in worker.js (there is one at the boot-failure branch) and the claim below
     // passes with the watchdog's own exit deleted — measured: mutation M1 SURVIVED exactly that way.
@@ -924,8 +995,10 @@ const SCENERY_WAIVED = {
     const boundMin = Number(period[1]) * Number(warns[1]);
     assert(boundMin >= 15 && boundMin <= 60,
       `the hung-tick restart fires after ${boundMin}m. Under 15m it can kill a legitimately long tick `
-      + '(the season rollover measures ~2m at 50,000 players — tools/workercost.js); over 60m the '
-      + 'remedy arrives too late to be one. Re-measure the longest job before moving this.');
+      + '(the longest job on it is the §10.4 invariants sweep, 87ms at 3,000 players and growing with '
+      + 'the LEDGER — tools/workercost.js; the season rollover, which grows with the POPULATION, runs '
+      + 'on its own clock and is not inside this watchdog); over 60m the remedy arrives too late to be '
+      + 'one. Re-measure the longest job on THIS tick before moving this.');
     console.log(`✓ the worker watchdog names the job it is stuck in, across ${seen} un-nested safe() `
       + `jobs, and restarts the process after ${boundMin}m`);
   }
@@ -1238,6 +1311,20 @@ const SCENERY_WAIVED = {
 // reaches a pot, that implicit lock makes characters→singleton the universal order, and rule (1)
 // cannot see a lock the enclosing wrapper took.
 //
+// WHAT IT CANNOT SEE, stated because a green ledger is otherwise read as "no lock cycles exist".
+// (a) CROSS-MODULE ACQUISITIONS. A lock taken inside a function this transaction CALLS is invisible —
+//     `runEstate` holds a bounties row and then reaches third-party `characters` rows through
+//     `refundPot` and `voidListingsAtDeath`, an AB-BA against `sweepExpiredBounties` that a refuter
+//     found by reading and this scan structurally cannot. Following calls would need a call graph
+//     across 150 modules; the honest bound is that this is a per-transaction TEXT scan.
+// (b) WHOSE ROW, not which table. `UPDATE characters SET cash = cash + $2 WHERE id=$1` is a fresh
+//     acquisition when $1 is a third party and a no-op re-touch when it is the wrapper-held actor,
+//     and nothing in the text says which. That is why the write-form half is scoped to contended
+//     rows, where the question does not arise — and why the class in (a) is out of reach for a
+//     table-granularity rule at all, rather than merely unimplemented.
+// Both classes land as 40P01, which `deadlockToRetry` maps to a retryable `contention`. That is the
+// remedy for them, not a reason to widen this rule until it reports noise.
+//
 // SPLITTING ON TRANSACTION BOUNDARIES IS WHAT MAKES IT USABLE. A function may open several
 // independent transactions — the ring sweep has two, a route-registration function has dozens — and
 // concatenating them invents pairs no single transaction ever holds together. Without the split this
@@ -1251,15 +1338,17 @@ const SCENERY_WAIVED = {
     }
   })(SRC);
 
-  // the global pots and singletons a player path reaches while already holding its own character row
-  const SINGLETON = /^(street_tax|den_volume|desk_inventory|chain_reserve|bond_reserve|family_yield_pool|vig_prize_pool|stake_pool|event_fund|dev_fund|world_npcs|poker_state|stakes_state|futurity_state|population_state|loan_house|convoy_insurance|megaprojects|boxing_title|rwa_dividend_pool|rwa_family_dividend_pool|community_revenue|exchange_pool)$/;
+  // The contended shared rows a player path reaches while already holding its own character row.
+  // Not literally one-row tables (world_npcs is per-outfit, bounties per (target,kind)) — the property
+  // that matters is that many actors converge on the SAME row, which is what makes an inversion bite.
+  const SINGLETON = /^(street_tax|den_volume|desk_inventory|chain_reserve|bond_reserve|family_yield_pool|vig_prize_pool|stake_pool|event_fund|dev_fund|world_npcs|poker_state|stakes_state|futurity_state|population_state|loan_house|convoy_insurance|megaprojects|boxing_title|rwa_dividend_pool|rwa_family_dividend_pool|community_revenue|exchange_pool|bounties|poker_tournaments|stakes_races|futurities|boxing_bouts|market_listings|auctions|auction_consignments|loans|crew_heists|world_raids|pen_breaks|favors|district_bids|grand_prix|grand_prix_state)$/;
 
   // A pair may be waived only with a reason that is a PROPERTY of the pair — never "it's rare" or
   // "the retry catches it", which are true of every deadlock and would waive the whole ledger.
   const WAIVED = new Map([]);
 
   const order = new Map();          // "a|b" → Set(sites that lock a before b)
-  let segments = 0, singletonSites = 0, sequences = 0;
+  let segments = 0, singletonSites = 0, sequences = 0, writeLocks = 0;
   const singletonFirst = [];
 
   for (const f of files) {
@@ -1270,9 +1359,28 @@ const SCENERY_WAIVED = {
       const body = src.slice(marks[i].at, i + 1 < marks.length ? marks[i + 1].at : src.length);
       for (const part of body.split(/query\(\s*['"`]BEGIN/)) {
         const seg = part.split(/query\(\s*['"`](?:COMMIT|ROLLBACK)/)[0];
-        const locks = [];
-        for (const q of seg.matchAll(/FROM\s+([a-z_]+)[^'`"]*?FOR\s+UPDATE/gi)) locks.push(q[1].toLowerCase());
-        if (!locks.length) continue;
+        // An UPDATE/DELETE takes a row-exclusive lock held to COMMIT exactly as FOR UPDATE does, so
+        // those are acquisitions too. They are admitted ONLY for the contended rows above, and that
+        // scoping is the whole reason this half is a hard rule rather than noise: a singleton/pot is
+        // ONE row, so any write to it unambiguously acquires THAT row — while `UPDATE characters SET
+        // cash = cash + $2 WHERE id=$1` is a fresh acquisition for a THIRD PARTY and a no-op re-touch
+        // for the wrapper-held actor, and which one it is cannot be decided from the text. Measured:
+        // admitting every table yields 42 candidate pairs dominated by that ambiguity (this ledger's
+        // own "a mostly-wrong advisory is worse than none" rule forbids shipping that); admitting only
+        // contended rows yields 0 and sees 104 acquisitions the FOR-UPDATE-only half was blind to.
+        const hits = [];
+        for (const q of seg.matchAll(/FROM\s+([a-z_]+)[^'`"]*?FOR\s+UPDATE/gi)) hits.push({ i: q.index, t: q[1].toLowerCase(), w: false });
+        for (const q of seg.matchAll(/\bUPDATE\s+([a-z_]+)\s+SET\b/gi)) if (SINGLETON.test(q[1].toLowerCase())) hits.push({ i: q.index, t: q[1].toLowerCase(), w: true });
+        for (const q of seg.matchAll(/\bDELETE\s+FROM\s+([a-z_]+)/gi)) if (SINGLETON.test(q[1].toLowerCase())) hits.push({ i: q.index, t: q[1].toLowerCase(), w: true });
+        if (!hits.length) continue;
+        hits.sort((a, b) => a.i - b.i);
+        // A row lock is held to COMMIT, so only the FIRST acquisition of a table orders anything.
+        // Counting a later re-touch as a second acquisition emits BOTH orderings for one transaction
+        // and invents a conflict against itself — measured at 96 phantom pairs before this collapsed them.
+        const firstAt = new Map();
+        for (const h of hits) if (!firstAt.has(h.t)) firstAt.set(h.t, h);
+        writeLocks += [...firstAt.values()].filter((h) => h.w).length;
+        const locks = [...firstAt.keys()];
         segments++;
         singletonSites += locks.filter((t) => SINGLETON.test(t)).length;
         const site = `${relPath(SRC, f)}:${marks[i].name}`;
@@ -1308,6 +1416,10 @@ const SCENERY_WAIVED = {
   assert(singletonSites >= 30,
     `the lock scan matched only ${singletonSites} singleton lock site(s) — the SINGLETON list has drifted `
     + 'off the real table names, so rule 2 is checking nothing');
+  assert(writeLocks >= 70,
+    `the lock scan matched only ${writeLocks} write-form acquisition(s) on a contended row — the `
+    + 'UPDATE/DELETE half of the extractor has broken, and this ledger has silently reverted to the '
+    + 'FOR-UPDATE-only state it was widened out of, which looks exactly as clean as the widened one');
 
   const conflicts = [];
   for (const k of order.keys()) {
@@ -1334,7 +1446,7 @@ const SCENERY_WAIVED = {
     + `   - ${singletonFirst.join('\n   - ')}`);
 
   console.log(`✓ all ${sequences} multi-lock transactions agree on one order for each of ${order.size} pairs`
-    + `, and no singleton (${singletonSites} lock sites) is taken before a character row`);
+    + `, and no contended row (${singletonSites} lock sites, ${writeLocks} of them write-form) is taken before a character row`);
 }
 
 // ═══ THE CONNECTION-SHARING LEDGER — one client cannot run two queries at once ═══════════════════
@@ -1894,7 +2006,6 @@ const SCENERY_WAIVED = {
     'races.js:grandPrix':   'a DB row id — the open race the entry posts back to',
     'stable.js:stakes':     'a DB row id — the open stakes race',
     'port.js:boat':         'a boats row id — the vessel is named by its own catalog elsewhere',
-    'port.js:to':           'a CHARACTER id — the rendezvous partner, named by `name` on the board',
     'defense.js:guard':     'a CHARACTER id — the bodyguard hired, not a catalog rung',
     'population.js:band':   'an internal spawn return, never a player-facing reply',
     'favors.js:good':       'the client resolves it through goodName off the published /v1/rules catalog',
@@ -1948,7 +2059,13 @@ const SCENERY_WAIVED = {
         if (k === 'id' || /Id$/.test(k) || /_id$/.test(k)) continue;
         corpus++;
         const named = new RegExp(`\\b(name|title|label|${k}Name)\\s*:`).test(lit)
-          || new RegExp(`:\\s*${src}\\.(name|title|label)\\b`).test(lit);
+          || new RegExp(`:\\s*${src}\\.(name|title|label)\\b`).test(lit)
+          // the SHORTHAND spelling of the same assertion: `{ kind: r.kind, kindName }` ships the
+          // display name exactly as `kindName: kindName` would, and a matcher that only knows the
+          // colon form stops seeing a companion the moment it is written the other legal way — the
+          // extractor-only-knows-one-form class (the CATALOG LEDGER lesson). Only `<k>Name` gets
+          // the shorthand form: a bare `name`/`title` shorthand would be some unrelated variable.
+          || new RegExp(`(?<![\\w$.])${k}Name\\s*[,}]`).test(lit);
         if (named) continue;
         const key = `${base}:${k}`;
         if (WAIVED[key]) { seen.add(key); continue; }
@@ -2031,10 +2148,14 @@ const SCENERY_WAIVED = {
         if (RESOLVE[mm[1]]) raw.add(`${type}.${mm[1]} renders the raw id — resolve it with ${RESOLVE[mm[1]]}`);
       }
       for (const [f, lit] of payloads[type] || []) {
-        // (a) the template naming `d.<k>Name` is an assertion that the server sends it
+        // (a) the template naming `d.<k>Name` is an assertion that the server sends it. Both legal
+        // spellings count — `kindName: x` AND the SHORTHAND `{ kind, kindName }` — or the matcher
+        // reports correct code the moment it is written the other way (the extractor-only-knows-
+        // one-form class, the CATALOG LEDGER lesson; the server half above was widened identically).
         for (const mm of line.matchAll(/\bd\.(\w+)Name\b/g)) {
           watched++;
-          if (!new RegExp(`\\b${mm[1]}Name\\s*:`).test(lit)) {
+          if (!new RegExp(`\\b${mm[1]}Name\\s*:`).test(lit)
+              && !new RegExp(`(?<![\\w$.])${mm[1]}Name\\s*[,}]`).test(lit)) {
             raw.add(`${type}.${mm[1]}Name — the line reads it, ${f} does not send it (it falls back to the id)`);
           }
         }
@@ -2055,9 +2176,15 @@ const SCENERY_WAIVED = {
           // are untouched.
           if (!/^[\w.?]+$/.test(e) || !/\.(id|kind|\w*_id)\b|\w+Id\b/.test(e)) continue;
           watched++;
-          if (!new RegExp(`\\b(name|${k}Name)\\s*:`).test(lit)) {
+          // the shorthand `{ kind, kindName }` ships the name exactly as `kindName: kindName` would —
+          // both spellings satisfy "a display name rides beside the id" (and both arm rule (d) below).
+          const sentName = new RegExp(`\\b(name|${k}Name)\\s*:`).test(lit)
+            || new RegExp(`(?<![\\w$.])${k}Name\\s*[,}]`).test(lit);
+          const sentKName = new RegExp(`\\b${k}Name\\s*:`).test(lit)
+            || new RegExp(`(?<![\\w$.])${k}Name\\s*[,}]`).test(lit);
+          if (!sentName) {
             raw.add(`${type}.${k} — ${f} sends ${e} with no display name beside it`);
-          } else if (new RegExp(`\\b${k}Name\\s*:`).test(lit) && !new RegExp(`\\bd\\.${k}Name\\b`).test(line)) {
+          } else if (sentKName && !new RegExp(`\\bd\\.${k}Name\\b`).test(line)) {
             // (d) the INVERSE of (a): the server went and sent the name and the line still renders the
             // key. Rule (b) above cannot see it — it asks whether the payload carries a name, and it
             // does. This is the half that would have let the seven `d.kind` templates sit unfixed
@@ -2977,6 +3104,7 @@ scopedSocialContext = async function(db) {
     'src/world.js|extra': 'freeQ(extra,params) — literal predicate at both call sites; values bound',
     'src/pen.js|cols': 'break setMember/setMemberRat — literal SET clause at every call site; values bound',
     'src/wire.js|col': "claim(w,col) — three literal column names ('alerted_hunt'/'_wanted'/'_indicted')",
+    'src/game.js|set': 'persistAccountFields — SET clause generated from ACCOUNT_PERSIST_COLUMNS entries the field list was validated against (an unknown field throws); every value bound',
     'src/rwanominations.js|setClause': 'updateQueueNominationIds(...,setClause,marker) — literal at every call site',
     'src/rwanominations.js|marker': 'a literal SQL-comment tag at every call site (query attribution only)',
     'src/stockcatalogv2.js|marker': 'readState(marker) — two literal tags, inside a /* */ SQL comment',
@@ -3316,6 +3444,52 @@ scopedSocialContext = async function(db) {
       + 'INVARIANT_WEBHOOK_URL and its worker watchdog can write telemetry but never page a human.');
   }
 
+  // AND THE PUSH KEY PAIR MUST SPAN BOTH PROCESSES. Web push is the only activation switch in the
+  // game that is a KEY PAIR read by two different services — the API serves the public half on
+  // /v1/rules and stores the subscriptions, the WORKER signs and sends — so it is the one switch
+  // where "set it on the service that needs it" is the wrong instruction. Set on the API alone, or
+  // generated twice, and the failure is SILENT in the worst way: /admin → Integrations reads env
+  // presence on the API, so the panel says LIVE while every push is never attempted or is rejected,
+  // with nothing red anywhere. Declaring all three keys in the SHARED group is what makes "both
+  // services, same pair" structural rather than a thing an operator has to remember, and a
+  // per-service declaration is exactly the shape that lets the two halves diverge.
+  {
+    const group = render.match(/envVarGroups:[\s\S]*?(?=\nservices:)/);
+    const KEYS = ['VAPID_PUBLIC_KEY', 'VAPID_PRIVATE_KEY', 'VAPID_SUBJECT'];
+    for (const k of KEYS) {
+      assert(group && new RegExp(`key: ${k}\\b`).test(group[0]),
+        `${k} is not declared in render.yaml's SHARED env group. Web push is a key pair spanning the `
+        + 'API (serves the public key, stores subscriptions) and the WORKER (signs and sends): declared '
+        + 'per-service, or not at all, the two halves can differ and /admin reads LIVE while nothing sends.');
+    }
+    const web = render.slice(render.indexOf('- type: web'), render.indexOf('- type: worker'));
+    const worker = render.slice(render.indexOf('- type: worker'));
+    for (const [name, body] of [['web', web], ['worker', worker]]) {
+      assert(/fromGroup: omerta-secrets/.test(body),
+        `the ${name} service no longer pulls the shared env group, so it cannot see the VAPID pair — `
+        + 'push then reads LIVE on the panel while one half of the rail is unconfigured.');
+      for (const k of KEYS) {
+        assert(!new RegExp(`key: ${k}\\b`).test(body),
+          `${name} declares ${k} in its OWN envVars. That is the divergence vector this guard exists `
+          + 'for: two services holding two different pairs is a rail that reads LIVE and sends nothing. '
+          + 'Keep the pair in the shared group.');
+      }
+    }
+    // ...and the panel must SAY so where it matters, which is the LIVE branch. `live` is computed from
+    // the API's own env, so the one reading a founder most needs to distrust is the reassuring one.
+    const ops = fs.readFileSync(path.join(ROOT, 'src', 'ops.js'), 'utf8');
+    const push = ops.slice(ops.indexOf("{ id: 'push'"), ops.indexOf("{ id: 'x_oauth'"));
+    assert(push && /caveat:/.test(push),
+      "src/ops.js's push integration has lost its `caveat`. `live` reads env presence on the API alone, "
+      + 'so without it the panel makes a confident claim about a rail whose sending half it cannot see.');
+    const admin = fs.readFileSync(path.join(ROOT, 'public', 'admin.html'), 'utf8');
+    assert(/x\.caveat/.test(admin),
+      'public/admin.html no longer renders `caveat`, so the warning is a field on an endpoint that '
+      + 'nobody reads — the same shape as an alarm posting nowhere.');
+    console.log('  ✓ the web-push key pair is declared once, in the shared group both services pull, '
+      + 'and the panel says its LIVE reading only covers this process');
+  }
+
   const shared = found.filter((k) => POSTURE[k].startsWith('shared:')).length;
   console.log(`  ✓ all ${found.length} module-scope collections carry a single-instance posture `
     + `(${shared} shared, each named in render.yaml); numInstances stays undeclared`);
@@ -3371,7 +3545,8 @@ scopedSocialContext = async function(db) {
     // behind — my own first run flagged two sites whose only `await` was in the sentence explaining
     // why they capture at spawn, and a mostly-wrong advisory is the kind people route around. Line
     // positions are preserved so the failure still names the real line.
-    const lines = fs.readFileSync(f, 'utf8').split('\n').map((l) => l.replace(/\/\/.*$/, ''));
+    const lines = fs.readFileSync(f, 'utf8').replaceAll('\r\n', '\n')
+      .split('\n').map((l) => l.replace(/\/\/.*$/, ''));
     for (let i = 0; i < lines.length; i++) {
       const m = /(?:const|let|var)?\s*\b(\w+)\s*=\s*spawn\(/.exec(lines[i]);
       if (!m) continue;
@@ -3472,10 +3647,14 @@ scopedSocialContext = async function(db) {
 
   const missing = [];
   let walked = 0;
+  const npmCommand = process.platform === 'win32' ? process.env.ComSpec || 'cmd.exe' : 'npm';
+  const npmArgs = process.platform === 'win32'
+    ? ['/d', '/s', '/c', 'npm.cmd', 'pack', '--dry-run', '--json']
+    : ['pack', '--dry-run', '--json'];
   for (const { rel, dir, json } of pkgs) {
     let shipped;
     try {
-      const out = execFileSync('npm', ['pack', '--dry-run', '--json'], { cwd: dir, encoding: 'utf8',
+      const out = execFileSync(npmCommand, npmArgs, { cwd: dir, encoding: 'utf8',
         stdio: ['ignore', 'pipe', 'ignore'] });
       shipped = new Set(JSON.parse(out)[0].files.map((f) => f.path));
     } catch (e) {
@@ -3519,4 +3698,163 @@ scopedSocialContext = async function(db) {
     + `   - ${missing.join('\n   - ')}`);
   console.log(`✓ every relative import reachable from ${pkgs.length} publishable package `
     + `(${walked} source file${walked === 1 ? '' : 's'}) is in the tarball npm would publish`);
+}
+
+// ═══ THE COOLDOWN LEDGER — "not yet" is not a wait ════════════════════════════════════════════════
+// 38 of 39 cooldown refusals held the exact expiry IN THE COMPARISON ONE LINE ABOVE THE THROW and
+// threw it away. The FIRE path — the most expensive verb in the game, a two-hour trigger cooldown —
+// said only "Your trigger's still hot."; three street-race sites said "cool down" with no number;
+// `world.js` literally said "later". Six siblings already named their wait (the gym, the charter,
+// the mission ladder, the shank, the boost, the social verify), which is what makes this the
+// forgotten-sibling shape rather than a convention nobody had adopted.
+//
+// It is the WITHHELD-TERM class — the line is FLUENT and the actionable number is left off — so
+// check 14 (THE SILENCE LEDGER), which proves a handler is not MUTE, is structurally blind to it.
+// And it costs agents more than people: agents are first-class players here, they read these codes,
+// and with nothing machine-readable to back off on they retry blind into a 1/3s throttle.
+//
+// THE RULE: every `GameError('cooldown', …)` carries `cooldownSeconds` — the {district}/{lockSeconds}
+// discipline — so a client can count it down and an agent can sleep on it. The SENTENCE is checked by
+// the wave regression in test/client.js, which drives the real reply; this checks the payload, which
+// is the half a driven test cannot cover for 39 sites. Catalogue-or-declare, both directions.
+{
+  const DECLARED = {
+    // none today: every cooldown refusal in the tree holds its own expiry at the throw. A site that
+    // genuinely cannot (a cooldown whose end is not knowable at the refusal) is declared here WITH
+    // that property — never because computing it was awkward.
+  };
+  const sites = [];
+  for (const f of files) {
+    const src = decomment(fs.readFileSync(f, 'utf8'));
+    for (const m of src.matchAll(/\bnew GameError\(\s*'cooldown'/g)) {
+      let i = m.index + m[0].length, depth = 1, q = null;
+      const start = i;
+      while (i < src.length && depth > 0) {
+        const c = src[i];
+        if (q) { if (c === '\\') { i += 2; continue; } if (c === q) q = null; }
+        else if (c === "'" || c === '"' || c === '`') q = c;
+        else if ('([{'.includes(c)) depth++;
+        else if (')]}'.includes(c)) depth--;
+        i++;
+      }
+      const args = src.slice(start, i - 1);
+      const rel = f.replace(/^.*\/src\//, 'src/');
+      const line = src.slice(0, m.index).split('\n').length;
+      sites.push({ at: `${rel}:${line}`, args });
+    }
+  }
+  assert(sites.length >= 30, `THE COOLDOWN LEDGER found only ${sites.length} cooldown refusals — the `
+    + 'extractor is broken, not the tree. A scan that sees nothing passes for a clean sweep.');
+
+  const mute = sites.filter((s) => !/cooldownSeconds/.test(s.args) && !DECLARED[s.at]);
+  assert.deepEqual(mute.map((s) => s.at), [], 'cooldown refusal(s) that never say WHEN. The expiry is '
+    + 'in the comparison one line above the throw — pass it as `{ cooldownSeconds }` so a client can '
+    + 'count it down and an agent can back off instead of retrying blind:\n   - '
+    + mute.map((s) => s.at).join('\n   - '));
+  const stale = Object.keys(DECLARED).filter((at) => !sites.some((s) => s.at === at));
+  assert.deepEqual(stale, [], 'declaration(s) for a cooldown refusal the tree no longer has at that '
+    + `line. A stale waiver silently re-covers the next site that lands there:\n   - ${stale.join('\n   - ')}`);
+  console.log(`✓ all ${sites.length} cooldown refusals carry the remainder — none says only "not yet"`);
+}
+
+// ═══ THE BUCKET LEDGER — a refill is not a day ════════════════════════════════════════════════════
+// Eleven rolling token buckets meter this game (`*_used`/`*_at` pairs: the exchange window, the
+// vault's daily claim, jailhouse attempts, safehouse time, the public wash, the port supplier, the
+// level-up refill, stat-by-use, RICO structuring, club notoriety, the retired launder cap). They all
+// REFILL CONTINUOUSLY on the wall clock — `used = max(0, stored − elapsed/window × cap)` — which
+// makes "come back tomorrow" false in the ordinary partially-spent state, and false by a lot: at 5
+// bust attempts a day one comes back every ~4.8h, so that line overstated the wait by up to 19 hours.
+//
+// This is the fluent-but-false class, which no silence pattern can see — check 14 (THE SILENCE
+// LEDGER) proves a handler is not MUTE and is structurally blind to a handler that speaks and is
+// wrong. Wave 76 fixed it in `exchange.js` and did not sweep it; the sweep found two more (the vault
+// and the jailhouse) and a third bucket carrying the same expression in two copies (the safehouse,
+// in the till AND the sheet — the sixty-nine-private-copies shape, waiting).
+//
+// THE RULE: a bucket whose guard REFUSES must name the remainder, and must carry it as a payload —
+// the {district}/{lockSeconds} discipline, so a client can offer the ask instead of sending the
+// player to read a board that never said so. Catalogue-or-declare, both directions: a bucket in
+// neither list fails, and so does a declaration for a bucket the tree no longer has.
+{
+  const REMAINDER = /\b(headroom|left|Left|refill|Refill|remaining|pool|Pool)/;
+  // bucket → the refusal it guards. The payload is what makes it machine-readable; the sentence is
+  // checked by the wave regressions in test/client.js, which drive the real reply.
+  const ENFORCED = {
+    exchange_used: { file: 'src/exchange.js', codes: ['cap', 'dry'] },
+    vault_used: { file: 'src/treasury.js', codes: ['daily_cap'] },
+    bust_used: { file: 'src/social/combat.js', codes: ['bust_cap'] },
+    safehouse_used: { file: 'src/social/defense.js', codes: ['safe_cap'] },
+  };
+  // Declared: a bucket that REFUSES NOBODY has no remainder to name. Each reason is a property of
+  // the bucket, not a preference — meter silently and there is no sentence to get wrong.
+  const DECLARED = {
+    port_used: 'refuses, and already names the remainder — `The supplier can only move ${usd(left)} more contraband today` (this was the pattern the others should have followed)',
+    wash_used: 'the D3 public wash cap guarded swap-buy, which tokenomics v3 severed — no live refusal reads it',
+    launder_used: 'business laundering is retired (`launderAtBusiness` throws `retired`); the column and its board figure are vestigial',
+    rwa_used: 'the RICO structuring window ADDS HEAT rather than refusing — there is no refusal to name a figure in',
+    noto_used: 'an internal per-patron clamp on how much notoriety one account can put on a club — it silences a grief vector, it never refuses the player',
+    statuse_used: 'the stats-by-use drip is metered SILENTLY by design — a gift that scolds you for taking it too often is worse than one that simply stops',
+    refill_used: 'the level-up refill ceiling is metered SILENTLY for the same reason (BALANCE § THE REFILL CEILING) — the crossing still happens, only the gift is bounded',
+  };
+
+  // the corpus is every bucket the TREE has, never the two lists — a ledger that enumerates itself
+  // cannot notice a twelfth bucket landing tomorrow.
+  const found = new Set();
+  for (const f of files) for (const m of fs.readFileSync(f, 'utf8').matchAll(/\b(\w+)_used\b/g)) found.add(`${m[1]}_used`);
+  assert(found.size >= 8, `THE BUCKET LEDGER found only ${found.size} token buckets — the extractor is `
+    + 'broken, not the tree. A scan that sees nothing passes for a clean sweep.');
+
+  const undeclared = [...found].filter((b) => !ENFORCED[b] && !DECLARED[b]);
+  assert.deepEqual(undeclared, [], 'rolling token bucket(s) in neither list. A bucket that REFUSES must '
+    + 'name what is LEFT (and carry it as a payload) — "come back tomorrow" is false for anything that '
+    + 'refills on the wall clock. One that refuses nobody is declared with the property that makes it '
+    + `silent:\n   - ${undeclared.join('\n   - ')}`);
+  const stale = [...Object.keys(ENFORCED), ...Object.keys(DECLARED)].filter((b) => !found.has(b));
+  assert.deepEqual(stale, [], 'declaration(s) for a bucket the tree no longer has. A stale waiver '
+    + `silently re-covers the next bucket that takes the name:\n   - ${stale.join('\n   - ')}`);
+
+  const mute = [];
+  for (const [bucket, { file, codes }] of Object.entries(ENFORCED)) {
+    const s = fs.readFileSync(file, 'utf8');
+    for (const code of codes) {
+      const re = new RegExp(`\\bGameError\\(\\s*'${code}'`, 'g');
+      let seen = 0;
+      for (const m of s.matchAll(re)) {
+        // walk the balanced argument list (skipping string bodies so a `)` in a message cannot
+        // miscount), then split on DEPTH-0 commas: the third argument is the payload.
+        let i = m.index + m[0].length - `'${code}'`.length, depth = 1, str = null;
+        const start = i;
+        while (i < s.length && depth > 0) {
+          const c = s[i];
+          if (str) { if (c === '\\') { i += 2; continue; } if (c === str) str = null; }
+          else if (c === "'" || c === '"' || c === '`') str = c;
+          else if (c === '(' || c === '{' || c === '[') depth++;
+          else if (c === ')' || c === '}' || c === ']') depth--;
+          i++;
+        }
+        const args = s.slice(start, i - 1);
+        const parts = []; let d = 0, q = null, last = 0;
+        for (let j = 0; j < args.length; j++) {
+          const c = args[j];
+          if (q) { if (c === '\\') { j++; continue; } if (c === q) q = null; continue; }
+          if (c === "'" || c === '"' || c === '`') { q = c; continue; }
+          if ('([{'.includes(c)) d++;
+          else if (')]}'.includes(c)) d--;
+          else if (c === ',' && d === 0) { parts.push(args.slice(last, j)); last = j + 1; }
+        }
+        parts.push(args.slice(last));
+        seen++;
+        if (parts.length < 3 || !REMAINDER.test(parts.slice(2).join(',')))
+          mute.push(`${file} — GameError('${code}', …) guards ${bucket} and carries no remainder in its payload`);
+      }
+      assert(seen > 0, `THE BUCKET LEDGER found no GameError('${code}') in ${file} — the ENFORCED entry `
+        + 'for ' + bucket + ' points at a refusal that has moved or gone. A mapping that matches nothing '
+        + 'reads exactly like a rule that holds.');
+    }
+  }
+  assert.deepEqual(mute, [], 'bucket refusal(s) naming the BOUND with no machine-readable remainder. The '
+    + 'figure a capped player needs is what is LEFT (or when it reopens), and it is computed one line '
+    + 'above the throw — pass it as the third GameError argument so a client can offer the ask:\n   - '
+    + mute.join('\n   - '));
+  console.log(`✓ all ${found.size} rolling token buckets classified — ${Object.keys(ENFORCED).length} refuse and name what is left, ${Object.keys(DECLARED).length} refuse nobody`);
 }

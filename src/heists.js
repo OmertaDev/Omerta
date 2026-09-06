@@ -18,13 +18,13 @@ import { GameError, bus, bumpMastery, gainRespect } from './game.js';
 import { HEIST_JOBS, HEIST_ROLES, heistJobOf, HEIST_PLAN_TTL_MS, HEIST_RAT_BPS, HEIST_LEADER_WEIGHT,
          HEIST_INSIDE_CD_MS, HEIST_CASE_ENERGY, HEIST_CASE_STEP, HEIST_CASE_MAX, heistFenceMultOf,
          HEIST_FENCE_HEAT, HEIST_RANKS, heistRankOf, HEIST_FILL_MAX, HEIST_FILL_FEE,
-         CONSTANTS, M4, levelOf, jailed, hospitalized, safeHoused, usd, businessOf } from './rules.js';
+         CONSTANTS, M4, levelOf, jailed, hospitalized, safeHoused, usd, businessOf , coolLeft, coolWait } from './rules.js';
 import { accrued, decayedScrutiny, npcPendingScale } from './business.js';
 import { dbCaps } from './db.js';
 
 const uid = () => crypto.randomUUID();
 const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
-const cooling = (ch) => ch.heist_at && new Date(ch.heist_at) > new Date();
+const cooling = (ch) => coolLeft(ch.heist_at);
 const stale = (row) => Date.now() - new Date(row.created_at).getTime() > HEIST_PLAN_TTL_MS;
 
 async function activeMembership(client, characterId) {
@@ -38,7 +38,8 @@ function gateJoiner(ch, job, pulled = 0) {
   if (hospitalized(ch)) throw new GameError('hosp', "Not in your condition. See the Doc first.");
   // P1.3/D2 (audit H1): a safehouse is a shield, not a base of operations — no crew work from it
   if (safeHoused(ch)) throw new GameError('safe', "No jobs from a safehouse — a shield, not a bunker.");
-  if (cooling(ch)) throw new GameError('cooldown', 'Your next job lines up later — one Score per window.');
+  const jobCool = cooling(ch);
+  if (jobCool) throw new GameError('cooldown', `Your next job lines up in ${coolWait(jobCool)} — one Score per window.`, { cooldownSeconds: jobCool });
   if (levelOf(Number(ch.respect)) < job.lvl) throw new GameError('level', `${job.name} wants made players — level ${job.lvl}.`);
   // Tier-4 §D: the marquee jobs are notoriety-gated — you earn your way up to the big scores
   if (job.minPulled && Number(pulled) < job.minPulled)
@@ -184,7 +185,14 @@ export async function ratHeist(ch, heistId, client, h) {
   const upd = await client.query('UPDATE crew_heist_members SET ratted=true WHERE heist_id=$1 AND character_id=$2', [heistId, ch.id]);
   if (!upd.rowCount) throw new GameError('not_crew', "You're not on that job.");
   await h.track(client, ch.account_id, 'heist_rat', { job: row.job });
-  return { ok: true }; // the response is as quiet as the act
+  // The ANONYMITY this protects is toward the CREW — the feed only ever says "somebody talked", and
+  // nothing here names the rat to anybody else. It was never a reason to tell the RAT nothing: the
+  // terms are knowable at rat time and decide whether the tip is worth it (the job blows regardless
+  // of the roll, the WHOLE crew — the rat included — eats DOUBLE the job's jail time so the roster
+  // can't out them, and the rat's HEIST_RAT_BPS cut lands quietly; this is NOT the pen break-rat's
+  // relief-only deal, and an earlier comment here said it was — Codex P2, verified against the blown
+  // branch below). `job` is a catalog key — the display name ships from here.
+  return { ok: true, op: 'heist', ratted: true, job: row.job, name: heistJobOf(row.job)?.name || row.job };
 }
 
 // THE CASING PHASE (Tier-4 §B) — a crew member spends energy to case the job (once each); every
@@ -257,7 +265,8 @@ export async function executeHeist(ch, heistId, client, h) {
   for (const m of crewRows)
     if (jailed(m) || hospitalized(m) || safeHoused(m) || (m.id !== ch.id && cooling(m)))
       throw new GameError('crew_not_ready', 'The whole crew shows up clean, healthy, rested, and OUT of hiding — or nobody goes.');
-  if (cooling(ch)) throw new GameError('cooldown', 'Your next job lines up later.');
+  const goCool = cooling(ch);
+  if (goCool) throw new GameError('cooldown', `Your next job lines up in ${coolWait(goCool)}.`, { cooldownSeconds: goCool });
 
   // INSIDE JOB gates — validated (and the venue locked) BEFORE the job fires, so a failed gate
   // leaves the plan intact. Lock order: member characters → heist row → the business row

@@ -213,7 +213,10 @@ export async function rerollCharacter(pool, accountId) {
       [crypto.randomUUID(), ch.id, 'reroll_stats', Math.random(), `${st.muscle}/${st.cunning}/${st.speed}`]);
     await notify(client, ch.id, 'rerolled', st);
     await client.query('COMMIT');
-    return { rerolled: true, stats: st };
+    // SAY WHAT IT COST. A re-roll consumes a paid credit — the 0.01 ETH on-chain fee, which the
+    // refusal one call earlier names — and neither the reply nor the line mentioned it. Its own
+    // sibling on the SAME credit (walletforge.js `spentCredit`) has said so since it shipped.
+    return { rerolled: true, stats: st, spentCredit: true, creditsLeft: Number(acct.reroll_credits) - 1 };
   } catch (e) { await client.query('ROLLBACK'); throw deadlockToRetry(e); }
   finally { client.release(); }
 }

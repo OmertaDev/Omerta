@@ -301,12 +301,11 @@ export async function commissionBoard(pool) {
     'SELECT x.decree, g.name FROM commission_vetoes x LEFT JOIN gangs g ON g.id = x.gang_id WHERE x.week=$1', [week])).rows[0] || null;
   // step three — the week's motions on the table (public; when any exist, ONLY they are votable)
   const proposals = (await pool.query(
-    // `::text` because `commission_proposals.gang_id` is the ONE gang_id in this schema declared UUID —
-    // every sibling (commission_votes, commission_vetoes) is TEXT, like `gangs.id` itself. `text = uuid`
-    // has no operator, so this whole board 500'd from the day proposals shipped and nobody noticed,
-    // because pg-mem compares the two happily. Cast the proposals side: `gangs.id` is the PK doing the
-    // lookup, and the proposals row set is already narrowed to one week. (`tools/pgquery.js` found this.)
-    `SELECT p.decree, p.deposit, g.name, g.tag FROM commission_proposals p LEFT JOIN gangs g ON g.id = p.gang_id::text
+    // A plain join: `commission_proposals.gang_id` was the ONE gang_id in this schema declared UUID
+    // (every sibling and `gangs.id` itself are TEXT), so `text = uuid` failed to parse and this board
+    // 500'd from the day proposals shipped — pg-mem compared the two happily. THE ACCOUNT-ID
+    // UNIFICATION (2026-09-05, schema.sql) made it TEXT; the `::text` bridge went with it.
+    `SELECT p.decree, p.deposit, g.name, g.tag FROM commission_proposals p LEFT JOIN gangs g ON g.id = p.gang_id
       WHERE p.week=$1 ORDER BY p.at`, [week])).rows
     .map((p) => ({ family: p.name || '(a family now dissolved)', tag: p.tag || null, decree: p.decree, deposit: Number(p.deposit) }));
   // Tier-4 — the OVERRIDE state (only meaningful while a veto sits on the record), the RECORD (chamber

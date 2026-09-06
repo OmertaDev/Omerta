@@ -4,8 +4,13 @@
 > audit evidence. It predates the Acquisition constellation (`AcquisitionAuthority`,
 > `AcquisitionConstellationFactory`, `AcquisitionIntentExecution`, `AcquisitionReconciliation`,
 > `AcquisitionVaultCore`), `PreVoteBudgetBook` and `RwaHealthOverlay`, so it is not the current tree
-> inventory and must not be sent as a complete current engagement scope. Rebuild and freeze a new
-> packet at the exact release head; `CHAIN-DEPLOY.md` is the current operational inventory authority.
+> inventory and must not be sent as a complete current engagement scope.
+>
+> **SUPERSEDED BY [`CHAIN-AUDIT-PACKET-O1.md`](CHAIN-AUDIT-PACKET-O1.md)** — rebuilt and frozen at
+> release head `b0a214ca` under a PINNED toolchain, which is what makes its figures reproducible and
+> these ones not (see that packet's §0). Send THAT one. `CHAIN-DEPLOY.md` remains the operational
+> runbook. Nothing below this line has been edited: the figures are the evidence, stale or not, and
+> rewriting them would destroy the record this file is kept for.
 
 **At that snapshot, this was gate 2 of the three in `CHAIN-DEPLOY.md` §0.** Gate 1
 (`forge test`) was green and gate 3 (the launch review) was signed; the external audit remained
@@ -61,6 +66,18 @@ interfaces. It is no longer complete; the banner above names what has landed sin
 
 **387 Foundry tests across 22 suites, green** (measured 2026-08-27, `forge test`), including twelve
 512-run fuzz properties across token, bond, oracle, Bank, stock-delivery, hook, and guard surfaces.
+
+> **Toolchain, and why it is stated rather than assumed.** That measurement was taken with the CI
+> toolchain **UNPINNED** — `foundry-rs/foundry-toolchain@v1` carried no `version:` key until
+> 2026-08-29, so `stable` resolved at run time and the compiler behind these figures **is not
+> recoverable from the record**. It matters because the count is version-DEPENDENT: a suite holding
+> only `invariant_*` functions counts as **one** test under the older aggregated reporting model and
+> as **N** under 1.7.1. So a reader who checks out the 2026-08-27 tree and re-runs `forge test` today
+> may get a different number and **cannot tell whether the tree changed or the counter did** — the
+> exact ambiguity that left the forge gate red and unreproducible for 19 hours. The workflow pins
+> **forge v1.7.1** as of 2026-08-29 and prints `forge --version` as its own step, so the rebuilt
+> packet this banner calls for will be the first one whose count can be reproduced. **Name the
+> toolchain beside any figure you freeze.**
 
 **Deliberately NOT in the batch, and each for a reason:**
 - **ERC-6551** (`test/vendor/ERC6551Registry.sol`, `ERC6551Account.sol`) — the reference

@@ -26,6 +26,14 @@ compilation_restrictions = [
   { paths = "src/interfaces/IAcquisitionAuthorityV2.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
   { paths = "src/interfaces/IAcquisitionIntentExecutionV2.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
 ]
+# The artifact-reading tests (Task3A/3B read the compiled ABI back out of `out/`) are allowed exactly
+# these two paths. THE TRAP: `forge test --out <anywhere-else>` — the obvious way to run a second
+# toolchain version without clobbering `out/` — makes every one of them fail with
+# `vm.readFile: the path out-xxx/... is not allowed to be accessed for read operations`. That is a
+# HARNESS failure wearing a compiler failure's clothes, and it cost a whole invalid version experiment
+# here: the run reported three red tests and measured nothing about the compiler at all. Read the
+# failure TEXT, not the exit code — it names a PERMISSION, never an assertion. To compare toolchains,
+# run them in separate checkouts (or widen this list deliberately), never with `--out`.
 fs_permissions = [
   { access = "read", path = "./out" },
   { access = "read", path = "./src" },

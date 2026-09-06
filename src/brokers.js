@@ -61,7 +61,11 @@ export async function gainsFor(client, accountId, fromDay, toDay) {
 /// from the later of now and the current end, which is the retainer/envelope/Street-Wire precedent.
 export async function activate(ch, client, h, tierId) {
   const t = brokerTier(tierId);
-  if (!t) throw new GameError('bad_tier', 'No such broker tier.');
+  // The refusal ENUMERATES, off the live catalog — the `lockStake` sibling's shape, and for its
+  // reason: a caller who guessed the tier's NAME instead of its id has no way to learn that ids run
+  // 1..5 without a second round trip, and a retune that reprices a desk cannot leave this stale.
+  if (!t) throw new GameError('bad_tier', 'No such broker tier. The desks are: '
+    + BROKERS.TIERS.map((d) => `${d.id} — ${d.name} (${d.omr} $OMR, ×${d.mult})`).join(', ') + '.');
 
   const cur = (await client.query(
     'SELECT tier, until, spent_omr FROM broker_activations WHERE account_id=$1 FOR UPDATE',

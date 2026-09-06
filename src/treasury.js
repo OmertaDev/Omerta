@@ -532,6 +532,26 @@ export async function treasuryStatus(pool) {
 // jailed gate, the per-account rolling-24h CLAIM_DAILY_OMR bucket, and the RICO graduation on the
 // SAME cumulative rwa_used window as a paper invest (structuring-proof across both books) with its
 // SCRUTINY_HEAT and safehouse block.
+// The rolling-24h per-ACCOUNT claim bucket — ONE implementation, read by the till (`claimVaulted`)
+// and by the board's `claimHeadroomOmr`. It was computed inline at the refusal and nowhere else, and
+// the refusal named the CAP: "come back tomorrow" is false in the ordinary partially-spent state,
+// because the bucket refills continuously on the wall clock. A headroom a player is shown must be
+// derived from the thing that refuses them, or the two drift the first time either is touched.
+export function vaultSpentToday(acct, now) {
+  const at = acct?.vault_at ? new Date(acct.vault_at).getTime() : 0;
+  const refill = at ? Math.max(0, now - at) / TREASURY.CLAIM_WINDOW_MS * TREASURY.CLAIM_DAILY_OMR : TREASURY.CLAIM_DAILY_OMR;
+  return Math.max(0, Number(acct?.vault_used || 0) - refill);
+}
+export const vaultHeadroomOf = (acct, now) =>
+  Math.floor(Math.max(0, TREASURY.CLAIM_DAILY_OMR - vaultSpentToday(acct, now)));
+// How long until the MINIMUM claim reopens — the number a capped-out player actually needs. The
+// bucket drains by CLAIM_DAILY_OMR per CLAIM_WINDOW_MS, so the wait is the shortfall over that rate.
+export function vaultRefillSeconds(acct, now) {
+  const need = TREASURY.CLAIM_MIN_OMR - vaultHeadroomOf(acct, now);
+  if (need <= 0) return 0;
+  return Math.max(1, Math.ceil(need / TREASURY.CLAIM_DAILY_OMR * TREASURY.CLAIM_WINDOW_MS / 1000));
+}
+
 export async function claimVaulted(ch, omr, client, h) {
   if (jailed(ch))
     throw new GameError('jailed', "You can't move money into the vault from a cell.");
@@ -543,12 +563,19 @@ export async function claimVaulted(ch, omr, client, h) {
   // the D3 wash-bucket: a continuous rolling-24h per-ACCOUNT cap. The account row is FOR UPDATE'd by
   // withCharacter, so the direct UPDATE below is lock-safe; vault_used/vault_at are not in
   // persistAccount's positional list, so they cannot be clobbered.
-  const refillDaily = h.acct.vault_at
-    ? (Date.now() - new Date(h.acct.vault_at).getTime()) / TREASURY.CLAIM_WINDOW_MS * TREASURY.CLAIM_DAILY_OMR
-    : TREASURY.CLAIM_DAILY_OMR;
-  const dailyUsed = Math.max(0, Number(h.acct.vault_used || 0) - Math.max(0, refillDaily));
-  if (dailyUsed + amt > TREASURY.CLAIM_DAILY_OMR)
-    throw new GameError('daily_cap', `The vault takes ${TREASURY.CLAIM_DAILY_OMR} $OMR a day per house — come back tomorrow.`);
+  const now = Date.now();
+  const dailyUsed = vaultSpentToday(h.acct, now);
+  if (dailyUsed + amt > TREASURY.CLAIM_DAILY_OMR) {
+    // Name the REMAINDER, not the bound. The bucket refills on the wall clock, so "come back
+    // tomorrow" is only true when nothing is left — and when nothing is, the honest figure is WHEN
+    // the minimum reopens, not a day. Both ride the payload (the {district}/{lockSeconds} rule) so
+    // a client can offer the ask instead of sending the player to read a board that never said so.
+    const left = vaultHeadroomOf(h.acct, now);
+    throw new GameError('daily_cap', left >= TREASURY.CLAIM_MIN_OMR
+      ? `The vault takes ${TREASURY.CLAIM_DAILY_OMR} $OMR a day per house and you have ${left} left today — ask for that or less.`
+      : `The vault takes ${TREASURY.CLAIM_DAILY_OMR} $OMR a day per house. It refills as the day runs — ${Math.ceil(vaultRefillSeconds(h.acct, now) / 60)}m until you can claim again.`,
+    { headroomOmr: left, dailyCapOmr: TREASURY.CLAIM_DAILY_OMR, refillSeconds: vaultRefillSeconds(h.acct, now) });
+  }
   // the RICO graduation — the invest twin, SHARED window (paper + vaulted structuring counts together)
   const refill = ch.rwa_at
     ? (Date.now() - new Date(ch.rwa_at).getTime()) / PORTFOLIO.SCRUTINY_WINDOW_MS * PORTFOLIO.SCRUTINY_MIN_OMR
@@ -607,6 +634,13 @@ export async function vaultBoard(db, accountId) {
   const mine = accountId
     ? (await db.query('SELECT eth, cost_omr FROM eth_vault WHERE account_id=$1', [accountId])).rows[0]
     : null;
+  // THE DAILY BUCKET, STATED BEFORE THE PRESS. The card quoted the cap and nothing else, so a player
+  // met the limit at the till — and the refusal then named the bound rather than what was left. Read
+  // through the SAME helper the till refuses on, so the board can never advertise headroom the claim
+  // would reject (the omrPerEth rule, one field over).
+  const acct = accountId
+    ? (await db.query('SELECT vault_used, vault_at FROM account_persistent WHERE account_id=$1', [accountId])).rows[0]
+    : null;
   const px = await ethPrice(db);
   return {
     heldEth: held, allocatedEth: allocated, availableEth: available,
@@ -619,6 +653,7 @@ export async function vaultBoard(db, accountId) {
     open: !px.stale && available > 0, premiumBps: TREASURY.CLAIM_PREMIUM_BPS,
     mine: { eth: round6(Number(mine?.eth || 0)), costOmr: Number(mine?.cost_omr || 0) },
     claimMin: TREASURY.CLAIM_MIN_OMR, claimDailyOmr: TREASURY.CLAIM_DAILY_OMR,
+    claimHeadroomOmr: accountId ? vaultHeadroomOf(acct, Date.now()) : null,
     funding: { bySource, sellTaxBps: SELL_TAX.RWA_BPS, bondBps: BONDS.RWA_BPS },
     note: 'Backed by ETH the treasury actually holds — the game never owes ETH it does not have. Allocation only: nothing is delivered, and there is no sell and no cash-out.',
   };

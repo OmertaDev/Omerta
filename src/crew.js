@@ -23,10 +23,9 @@
 // shield exactly as they forfeit family omertà.
 import crypto from 'node:crypto';
 import { GameError, cleanText, notify, notifyOnce, bus } from './game.js';
-import { CREW, DISTRICTS, levelOf, weekOf, crewObjectiveOf } from './rules.js';
+import { CREW, DISTRICTS, levelOf, weekOf, crewObjectiveOf, districtName } from './rules.js';
 
 const uid = () => crypto.randomUUID();
-const districtName = (id) => (DISTRICTS.find((d) => d.id === id) || {}).name || id;
 
 // the crew this account belongs to (a plain read; null if solo). Used by the routes for gating.
 export async function crewIdOf(client, accountId) {
@@ -45,7 +44,9 @@ export async function createCrew(ch, name, client, h) {
   const id = uid();
   await client.query('INSERT INTO crews (id, name, leader_account) VALUES ($1,$2,$3)', [id, name, ch.account_id]);
   await client.query('INSERT INTO crew_members (crew_id, account_id, name) VALUES ($1,$2,$3)', [id, ch.account_id, ch.name]);
-  return { ok: true, crew: 'formed', id, name };
+  // the reply carries the SHAPE of what was just founded so the toast can state the crew's terms
+  // at the moment they bind. The cap lives on /v1/crew, which describe() cannot reach.
+  return { ok: true, crew: 'formed', id, name, members: 1, max: CREW.MAX_MEMBERS };
 }
 
 // ── INVITE — put a word in for a player BY NAME (living-name uniqueness makes a name resolve to one
@@ -72,7 +73,7 @@ export async function inviteToCrew(ch, name, client, h) {
   await client.query('INSERT INTO crew_invites (crew_id, account_id, from_name) VALUES ($1,$2,$3)', [crewId, t.account_id, ch.name]);
   // a solicitation, not an event: cancel-and-reinvite would otherwise be a free ping loop
   await notifyOnce(client, t.id, 'crew_invite', { from: ch.name, crewId }).catch(() => {});
-  return { ok: true, crew: 'invited', to: t.name };
+  return { ok: true, crew: 'invited', to: t.name, members: n, max: CREW.MAX_MEMBERS, pending: pending + 1 };
 }
 
 // ── ACCEPT — join. Lock the crew row (the joinGang discipline) so concurrent accepts can't blow the
@@ -88,7 +89,8 @@ export async function acceptInvite(ch, crewId, client, h) {
   await client.query('INSERT INTO crew_members (crew_id, account_id, name) VALUES ($1,$2,$3)', [crewId, ch.account_id, ch.name]);
   await client.query('DELETE FROM crew_invites WHERE account_id=$1', [ch.account_id]);   // one crew — drop all my offers
   bus.emit(`crew:${crewId}`, { type: 'crew_joined', who: ch.name });
-  return { ok: true, crew: 'joined', name: crew.name };
+  // `n` is the count BEFORE this insert, so the joiner is n + 1 — free, no second query.
+  return { ok: true, crew: 'joined', name: crew.name, members: n + 1, max: CREW.MAX_MEMBERS };
 }
 
 export async function declineInvite(ch, crewId, client) {

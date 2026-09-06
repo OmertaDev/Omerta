@@ -36,15 +36,16 @@ export const HOME_BOARDS = [
   ['crew',      '/v1/crew',      (ch, client) => Crew.crewBoard(ch, client)],
   ['discovery', '/v1/discovery', (ch, client, h, ctx) =>
     Discovery.discoveryBoard(ch, client, ctx.online, { district: null, nofam: false, online: false })],
-  // KEYED `cityEvents`, not `events`: the envelope owns that name (src/aggregate.js RESERVED), and a
-  // board keyed on it replaces `h.events` silently on this screen alone. The key need not match the
-  // route's last segment — several here already do not.
+  // KEYED `cityEvents`, not `events`: this key was chosen while the readCharacter envelope still
+  // carried a dead `events: []` that a board keyed `events` would silently replace (src/aggregate.js).
+  // That field is gone (2026-09-05) and `events` is a legal key now; the name stays because the client
+  // mirror and the screen already read it. A key need not match the route's last segment.
   ['cityEvents', '/v1/events',   (ch, client) => cityEventBoard(client)],
   ['streak',    '/v1/streak',    (ch, client) => Streak.streakBoard(ch, client)],
   ['results',   '/v1/results',   async (ch, client) => ({ results: await resultsBoard(client) })],
   ['explore',   '/v1/explore',   (ch, client, h, ctx) =>
     Explore.exploreBoard(client, ch, h.acct, h.owned, { onlineAccounts: ctx.onlineAccounts || [] })],
-  ['primetime', '/v1/primetime', (ch, client) => Prime.primeTimeBoard(client, ch)],
+  ['primetime', '/v1/primetime', (ch, client, h) => Prime.primeTimeBoard(client, ch, h)],
   ['day',       '/v1/day',       (ch, client, h) => Day.dayBoard(client, ch, h)],
   ['live',      '/v1/live',      (ch, client, h, ctx) => Collision.collisionBoard(client, ch, ctx.online)],
   ['payroll',   '/v1/payroll',   (ch, client, h) => Payroll.payrollBoard(ch, client, h)],

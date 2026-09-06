@@ -285,7 +285,12 @@ export async function requestWithdraw(pool, accountId, amount, toAddress) {
       'INSERT INTO vouchers (id, account_id, kind, amount, nonce, to_address, deadline, status, signed_payload) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)',
       [id, accountId, 'omr', net, nonce, getAddress(to), deadline, status, payload]);
     await client.query('COMMIT');
-    return { id, nonce, status, amount: net, gross: amt, tax, earlyTax: early.surcharge, freshSold: early.freshSold, net, ...(payload ? JSON.parse(payload) : {}),
+    // NAME THE SYSTEM, so the receipt can be read. `status` alone is a word several systems send
+    // ('signed' is also what a dynasty voucher and a gear withdrawal report), and a bare
+    // {id, nonce, status, amount} matched no branch at all — so the extraction rail's own receipt,
+    // which took a toll and may have signed NOTHING, read "done." on both paths.
+    return { withdraw: status === 'signed' ? 'signed' : 'queued',
+      id, nonce, status, amount: net, gross: amt, tax, earlyTax: early.surcharge, freshSold: early.freshSold, net, ...(payload ? JSON.parse(payload) : {}),
       queuedReason: fits ? undefined : 'reserve_insufficient' };
   } catch (e) { await client.query('ROLLBACK'); throw e; }
   finally { client.release(); }
@@ -866,7 +871,10 @@ export async function requestDynastyMint(pool, accountId, toAddress) {
       'INSERT INTO vouchers (id, account_id, kind, amount, gear_id, nonce, to_address, deadline, status, signed_payload) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',
       [id, accountId, 'dynasty', 1, null, nonce, getAddress(to), deadline, 'signed', JSON.stringify({ voucher, signature })]);
     await client.query('COMMIT');
-    return { id, nonce, status: 'signed', contract: domain.verifyingContract, chainId: domain.chainId, voucher, signature };
+    // the SYSTEM marker (dynasty.js's siblings use the same key with their own values — 'proposed',
+    // 'wed'): `nonce` + `status:'signed'` alone is the withdrawal and gear-withdrawal shape too, so
+    // without this the one-per-account-ever portrait voucher read "done."
+    return { dynasty: 'voucher', id, nonce, status: 'signed', contract: domain.verifyingContract, chainId: domain.chainId, voucher, signature };
   } catch (e) { await client.query('ROLLBACK').catch(() => {}); throw e; }
   finally { client.release(); }
 }
@@ -1331,7 +1339,11 @@ export async function walletChallenge(pool, accountId) {
     `INSERT INTO wallet_challenges (account_id, nonce, issued_at) VALUES ($1,$2,now())
        ON CONFLICT (account_id) DO UPDATE SET nonce=$2, issued_at=now()`, [accountId, nonce]);
   const message = `OMERTÀ wallet link\naccount: ${accountId}\nnonce: ${nonce}`;
-  return { message };
+  // the marker exists so the toast does not render the SIGNING PAYLOAD. describe() falls through to
+  // `body.message` when no branch matches, and this one carries the account UUID — the raw deck
+  // pressed it through act() and showed the blob (the curated flow uses the silent api() and hands
+  // the message straight to personal_sign, which is what it is for).
+  return { walletLink: 'challenge', message };
 }
 export async function walletVerify(pool, accountId, address, signature) {
   if (!isAddress(address)) throw new GameError('bad_address', 'Not a valid EVM address.');
@@ -1506,6 +1518,9 @@ export async function quoteBond(pool, accountId, principalEth) {
     // serialize the bigints for transport; the client submits { quote, signature } to OmertaBond.bond().
     const quote = Object.fromEntries(Object.entries(message).map(([k, v]) => [k, typeof v === 'bigint' ? v.toString() : v]));
     return {
+      bond: 'quote',   // the SYSTEM marker: the curated card renders its own panel through the silent
+                       // api(), but the raw deck presses this through act() and read "done." over a
+                       // signed quote carrying a payout, a discount, a vest window and a deadline.
       quote, signature,
       payoutOmr: payout, priceOmrPerEth: price, discountBps: disc, vestSeconds, nonce, deadline,
       contract: domain.verifyingContract, chainId: domain.chainId,

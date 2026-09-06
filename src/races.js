@@ -10,7 +10,7 @@
 import crypto from 'node:crypto';
 import { recordEventResult } from './events.js';
 import { GameError, bus, ledger, notify, rngLog, bumpMastery, masteryFx } from './game.js';
-import { RACES, POPULATION, REGIMEN, raceTierOf, raceRankOf, carOf, carPower, carVal, levelOf, disciplineLvlOf, jailed, hospitalized, usd } from './rules.js';
+import { RACES, POPULATION, REGIMEN, raceTierOf, raceRankOf, carOf, carPower, carVal, levelOf, disciplineLvlOf, jailed, hospitalized, usd, coolLeft, coolWait } from './rules.js';
 import { logCarCollect } from './collection.js';
 
 const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
@@ -50,7 +50,8 @@ export async function raceNpc(ch, carId, tierId, useNos, client, h) {
   if (!tier) throw new GameError('bad_tier', 'No such race on the card.');
   if (lvl < tier.minLvl) throw new GameError('tier_level', `${tier.name} runs at level ${tier.minLvl}.`);
   const now = new Date();
-  if (ch.race_at && new Date(ch.race_at) > now) throw new GameError('cooldown', 'Your ride needs to cool down before the next run.');
+  const rideCool = coolLeft(ch.race_at, now.getTime());
+  if (rideCool) throw new GameError('cooldown', `Your ride needs ${coolWait(rideCool)} to cool down before the next run.`, { cooldownSeconds: rideCool });
   const car = raceable(h, carId);
   if (Number(ch.cash) < tier.fee) throw new GameError('cash', `The buy-in is ${usd(tier.fee)}.`);
   // the fee burns (a §10.4 cash sink) win or lose; stamp the cooldown (direct SQL — outside persist)
@@ -69,14 +70,17 @@ export async function raceNpc(ch, carId, tierId, useNos, client, h) {
     await bumpWheel(client, ch.account_id);
     await h.track(client, ch.account_id, 'race', { mode: 'npc', tier: tier.id, win: true });
     bus.emit('streets', { type: 'race_win', by: ch.name, race: tier.name, purse: tier.purse });
-    return { ok: true, win: true, tier: tier.id, name: tier.name, purse: tier.purse, fee: tier.fee, net: tier.purse - tier.fee, power: mine, field, nos: nos > 0 };
+    // WAVE 80 — the per-driver cooldown lands EVERY run (stamped above, win or lose) and rode
+    // on neither reply, so the next press refused with a clock the winner had never been told about.
+    // `raceCdMs()` is a TEST-ONLY-overridable lever, so only the server can state it.
+    return { ok: true, win: true, tier: tier.id, name: tier.name, purse: tier.purse, fee: tier.fee, net: tier.purse - tier.fee, power: mine, field, nos: nos > 0, cooldownSeconds: Math.ceil(raceCdMs() / 1000) };
   }
   // a loss dings the car (the existing damage mechanic — absolute write, pg-mem-safe)
   const nd = Math.min(100, Number(car.dmg) + RACES.LOSS_DMG);
   await client.query('UPDATE cars SET dmg=$2 WHERE id=$1', [car.id, nd]);
   car.dmg = nd;
   await h.track(client, ch.account_id, 'race', { mode: 'npc', tier: tier.id, win: false });
-  return { ok: true, win: false, tier: tier.id, name: tier.name, fee: tier.fee, net: -tier.fee, dmg: nd, power: mine, field, nos: nos > 0 };
+  return { ok: true, win: false, tier: tier.id, name: tier.name, fee: tier.fee, net: -tier.fee, dmg: nd, power: mine, field, nos: nos > 0, cooldownSeconds: Math.ceil(raceCdMs() / 1000) };
 }
 
 // POST /v1/races/nos/:carId — buy a NITROUS charge for a car (a §10.4 cash sink; capped NOS_MAX).
@@ -110,7 +114,9 @@ export async function tuneCar(ch, carId, client, h) {
   await client.query('UPDATE cars SET tune=$2 WHERE id=$1', [car.id, nt]);
   car.tune = nt;
   await h.track(client, ch.account_id, 'race', { mode: 'tune', tune: nt });
-  return { ok: true, tune: nt, spent: tuneCost, power: carPower(car.model_id, car.trim_id, nt, ch.speed, car.dmg, car.rarity) };
+  // The NAME rides too (wave 75) — the buyNos sibling has shipped it all along, and a garage holds
+  // several: "tuned up" with no iron in it left the owner checking the fleet to learn which one.
+  return { ok: true, tune: nt, spent: tuneCost, car: car.model_id, name: carOf(car.model_id)?.name || car.model_id, power: carPower(car.model_id, car.trim_id, nt, ch.speed, car.dmg, car.rarity) };
 }
 
 // POST /v1/races/list/:carId {limit} — put a car on the strip to race for a wager up to `limit`
@@ -155,7 +161,8 @@ export async function raceChallenge(ch, opponent, body, client, h) {
   if (!(Number.isFinite(amt) && amt >= RACES.WAGER_MIN)) throw new GameError('min', `The minimum wager is ${usd(RACES.WAGER_MIN)}.`);
   if (amt > RACES.WAGER_MAX) throw new GameError('max', `The strip caps wagers at ${usd(RACES.WAGER_MAX)}.`);
   const now = new Date();
-  if (ch.race_at && new Date(ch.race_at) > now) throw new GameError('cooldown', 'Your ride needs to cool down before the next run.');
+  const rideCool = coolLeft(ch.race_at, now.getTime());
+  if (rideCool) throw new GameError('cooldown', `Your ride needs ${coolWait(rideCool)} to cool down before the next run.`, { cooldownSeconds: rideCool });
   // lock the two car rows in sorted id order (leaf ordering; the char rows are already locked)
   const [first, second] = [String(body?.myCar || ''), String(body?.theirCar || '')].sort();
   await client.query('SELECT 1 FROM cars WHERE id=$1 FOR UPDATE', [first]);
@@ -212,7 +219,11 @@ export async function raceChallenge(ch, opponent, body, client, h) {
   await h.notify(client, opponent.id, 'race_pvp', { from: ch.name, amount: amt, theyWon: !win });
   bus.emit('streets', { type: 'race_pvp', by: ch.name, vs: opponent.name, amount: pot, win });
   await h.track(client, ch.account_id, 'race', { mode: 'pvp', amt, win });
+  // WAVE 80 — the same per-driver clock raceNpc names: it is stamped on the CHALLENGER win or lose
+  // (two lines up), so the next press refuses with a wait this reply had never mentioned. Its sibling
+  // shipped `cooldownSeconds` and these two did not — the forgotten-sibling shape inside one file.
   return { ok: true, game: 'street', win, wager: amt, rake, net: win ? amt - rake : -amt,
+    cooldownSeconds: Math.ceil(raceCdMs() / 1000),
     you: { car: winCar === my ? my.model_id : my.model_id, score: mine }, them: { score: theirs } };
 }
 
@@ -227,7 +238,8 @@ export async function pinkSlipRace(ch, opponent, body, client, h) {
   if (h.owned.gangId && h.victimOwned.gangId === h.owned.gangId) throw new GameError('family', 'No taking family iron.');
   if (jailed(opponent) || hospitalized(opponent)) throw new GameError('unavailable', "They can't make the start line right now.");
   const now = new Date();
-  if (ch.race_at && new Date(ch.race_at) > now) throw new GameError('cooldown', 'Your ride needs to cool down before the next run.');
+  const rideCool = coolLeft(ch.race_at, now.getTime());
+  if (rideCool) throw new GameError('cooldown', `Your ride needs ${coolWait(rideCool)} to cool down before the next run.`, { cooldownSeconds: rideCool });
   const [first, second] = [String(body?.myCar || ''), String(body?.theirCar || '')].sort();
   await client.query('SELECT 1 FROM cars WHERE id=$1 FOR UPDATE', [first]);
   await client.query('SELECT 1 FROM cars WHERE id=$1 FOR UPDATE', [second]);
@@ -272,8 +284,13 @@ export async function pinkSlipRace(ch, opponent, body, client, h) {
   await h.notify(client, opponent.id, 'race_pink', { from: ch.name, theyWon: !win, car: wonCar.model_id, name: carOf(wonCar.model_id)?.name });
   bus.emit('streets', { type: 'race_pink', by: ch.name, vs: opponent.name, win });
   await h.track(client, ch.account_id, 'race', { mode: 'pink', win });
-  return { ok: true, win, forPinks: true, wonCar: win ? { id: wonCar.id, model: wonCar.model_id } : null,
-    lostCar: win ? null : { id: wonCar.id, model: wonCar.model_id }, you: mine, them: theirs };
+  // the DISPLAY name rides with the leg (the notify one line up has sent it all along): describe()
+  // has no car catalog, so without it the loudest ownership transfer in the game names the iron by
+  // its raw catalog key.
+  const slip = { id: wonCar.id, model: wonCar.model_id, name: carOf(wonCar.model_id)?.name || wonCar.model_id };
+  return { ok: true, win, forPinks: true, wonCar: win ? slip : null,
+    cooldownSeconds: Math.ceil(raceCdMs() / 1000), // stamped on the challenger win or lose (above)
+    lostCar: win ? null : slip, you: mine, them: theirs };
 }
 
 // GET /v1/races — the strip: your cars (power + tune + listing), the PvE card, the open PvP field, your legend.
@@ -346,7 +363,9 @@ export async function enterGrandPrix(ch, carId, client, h) {
   const entrants = Number((await client.query('SELECT COUNT(*) n FROM grand_prix_entries WHERE gp_id=$1', [g.id])).rows[0].n);
   await h.track(client, ch.account_id, 'race', { mode: 'gp', buyin });
   bus.emit('streets', { type: 'gp_entry', who: ch.name, entrants });
+  // the SHORT-FIELD threshold ships from here (never restated client-side — it is a founder lever).
   return { ok: true, grandPrix: g.id, buyin, power, pool: Number(g.pool) + buyin, entrants,
+    minEntrants: RACES.GP.MIN_ENTRANTS,
     closesSeconds: Math.max(0, Math.ceil((new Date(g.resolves_at) - Date.now()) / 1000)) };
 }
 
@@ -471,7 +490,11 @@ export async function sweepGrandPrix(pool) {
 async function grandPrixInfo(client, ch) {
   const st = (await client.query('SELECT current FROM grand_prix_state WHERE id=1')).rows[0];
   const g = st?.current ? (await client.query("SELECT * FROM grand_prix WHERE id=$1 AND status='open'", [st.current])).rows[0] : null;
-  if (!g) return { open: false, buyin: RACES.GP.BUYIN, minLevel: RACES.GP.MIN_LEVEL, minEntrants: RACES.GP.MIN_ENTRANTS };
+  // The CLOSED shape carries the same keys as the open one (the bankPosition `dormantView` rule):
+  // a client that reads `grandPrix.pool` off a board with no race cannot tell "no race" from "no such
+  // field", and the mirror guard (test/client.js check 4, two-hop) holds both shapes to one key set.
+  if (!g) return { open: false, id: null, buyin: RACES.GP.BUYIN, minLevel: RACES.GP.MIN_LEVEL, minEntrants: RACES.GP.MIN_ENTRANTS,
+    pool: 0, entrants: 0, entered: false, closesSeconds: 0 };
   const entrants = Number((await client.query('SELECT COUNT(*) n FROM grand_prix_entries WHERE gp_id=$1', [g.id])).rows[0].n);
   const mine = !!(await client.query('SELECT 1 FROM grand_prix_entries WHERE gp_id=$1 AND character_id=$2', [g.id, ch.id])).rows[0];
   return { open: true, id: g.id, buyin: RACES.GP.BUYIN, minLevel: RACES.GP.MIN_LEVEL, minEntrants: RACES.GP.MIN_ENTRANTS,
