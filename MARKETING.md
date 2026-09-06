@@ -88,7 +88,7 @@ compound, the collection, who owed whom blood — and your heir walks out into a
 | **The Empire** | Businesses, rackets, territory. Passive income that is genuinely at risk: the Bureau raids what earns, and a killer takes a front off your corpse. |
 | **Wet work** | Contracts, hitmen, vendettas, bodyguards, the Pen. A kill loots cash and $OMR, swears a feud that outlives the man, and the ledger remembers who owes what. |
 | **The Family** | Gangs, turf, war, the Commission — a five-seat chamber that votes weekly decrees the whole server plays under. |
-| **Vice** | A casino, a racetrack, a boxing stable, a poker room, street races. All cash. Never $OMR — that line is deliberate. |
+| **Vice** | A casino, a racetrack, a boxing stable, a poker room, street races. Every game is cash-denominated — the house never takes $OMR. |
 | **Going legit** | The Vault, the compound, the Dynasty, the estate. Where a made man puts money he intends to keep. |
 
 **Scale, re-measured 2026-08-29 (the figures `SPEC.md`'s size table carries, which `test/docs.js`
@@ -198,15 +198,26 @@ Each of these is one thread, and each is true.
    counter-positioned thing we have.
 2. **"We publish where every dollar goes."** Screenshot the router board. Nobody else does this.
 3. **"Death is real, and your bloodline remembers."** The estate, prestige, the vendetta your heir
-   inherits, the collection that survives.
+   inherits, the collection that survives. *Copy: `docs/PILLARS-MARKETING-PACK.md` ch. 6.*
 4. **"Your business can be taken off your corpse."** The Sacking — passive income as genuine risk
-   capital. This is the sharpest single mechanic we have.
-5. **"An AI ran a crew."** The agent layer. Get one running publicly and narrate it.
+   capital. This is the sharpest single mechanic we have. *Copy: `docs/PILLARS-MARKETING-PACK.md` ch. 6.*
+5. **"An AI ran a crew."** The agent layer. Get one running publicly and narrate it. *Copy:
+   `docs/AGENT-MARKETING-PACK.md`.*
 6. **"The Bureau is building a case."** Heat → RICO → indictment → the Pen → the wall → WANTED. A
-   whole antagonist arc most games don't have.
-7. **"A self-repaying loan with no liquidations."** THE BANK, for the DeFi audience.
+   whole antagonist arc most games don't have. *Copy: `docs/PILLARS-MARKETING-PACK.md` ch. 4–5.*
+7. **"A self-repaying loan with no liquidations."** THE BANK, for the DeFi audience. *Copy:
+   `docs/BANK-MARKETING-PACK.md`.*
 8. **"We wrote down what we're not sure about."** BALANCE.md and 96 indexed audit reports. Radical for the
    space, and it is the trust play.
+9. **"Five families vote. Everyone lives under it."** The Commission — a weekly election whose result
+   changes the rules for the whole server. *Copy: `docs/PILLARS-MARKETING-PACK.md` ch. 2.*
+10. **"We publish the edge, then we publish the draw."** The Den's committed daily draw, verifiable by
+    anyone. *Copy: `docs/PILLARS-MARKETING-PACK.md` ch. 3.*
+11. **"Three of the five cartels cannot be soloed."** The Living World: shared reservoirs, enraged
+    outfits, seasons, and one hour a night the whole city is in the same room. *Copy:
+    `docs/PILLARS-MARKETING-PACK.md` ch. 7.*
+12. **"The crew draws wages while the stash sits."** The Kitchen, and every earner having a bill
+    attached. *Copy: `docs/PILLARS-MARKETING-PACK.md` ch. 8.*
 
 ---
 
@@ -272,6 +283,19 @@ procedural portrait route, four shareable card types (legend / wanted / whacked 
 that unfurls with the card. Every share link carries the player's own referral code.
 
 **Lifetime art spend: $11.12.** Worth saying out loud to anyone asking about burn rate.
+
+**The written packs.** Each is self-contained and each states its own audience, so they are posted
+independently rather than as a series:
+
+| Pack | Audience | Covers |
+|---|---|---|
+| `docs/OMR-MARKETING-PACK.md` + `docs/OMR-MACHINE-CAMPAIGN.md` | Crypto / token | The severed economies, the money map, the desk |
+| `docs/GAMEPLAY-MARKETING-PACK.md` | Gamers | Paths, skills, mastery, the Career — nine research sheets |
+| `docs/PILLARS-MARKETING-PACK.md` | Gamers | The Family, the Commission, Vice, the Bureau, the Pen, death and the bloodline, the Living World, the Kitchen, Street Deeds — nine chapters |
+| `docs/BANK-MARKETING-PACK.md` | DeFi | THE BANK: no liquidation function, no oracle on the borrow path, the fee disclosure |
+| `docs/AGENT-MARKETING-PACK.md` | Builders / AI tooling | The agent layer, MCP, the arena, and the honest exclusion |
+| `docs/LAUNCH-TWEETS.md` | Everyone | Launch-day posts |
+| `HYPE.md` | Everyone | The four films |
 
 Also: the approved **money-map explainer video** (`/art/hype-money.mp4`, on the landing page), and
 the **OHM-vs-$OMR comparison graphic** (`public/art/omr-vs-ohm.png`, generator kept in the repo
