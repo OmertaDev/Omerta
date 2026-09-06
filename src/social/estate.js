@@ -306,6 +306,10 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
     // ≥ INDICT after the seed comes off — survives; the CASE reads the pre-update row). Clearing
     // the case is the marquee "kill the witness → the case collapses" mechanic (schema/design).
     const upd = await client.query(
+      // pg-mem quirk (measured 2026-09-06): GREATEST/LEAST ROUND their result to an integer there
+      // while real Postgres keeps the fraction — and heat_exposure is the one clamped column §7.1
+      // accrual writes fractions to. Harmless in production; a TEST asserting an exact fractional
+      // value through this clamp is engine-dependent (see test/law.js's informant collapse).
       `UPDATE characters SET heat_exposure = GREATEST(0, heat_exposure - $2),
          indicted_at = CASE WHEN heat_exposure - $2 < $3 THEN NULL ELSE indicted_at END,
          jury_bought = CASE WHEN heat_exposure - $2 < $3 THEN false ELSE jury_bought END

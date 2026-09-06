@@ -6500,7 +6500,10 @@ const ACTFNS = new Map();   // route path → the handler names its registration
   // right — a helper the player never sees the reply of, a shape whose own card renders it, or a
   // branch that cannot be reached with a real body.
   const MUTE_OK = new Map([
-    ['withCharacter', 'the request wrapper itself — every route unwraps it; a player never reads this shape'],
+    // `withCharacter` was here until the envelope dropped its dead `events` slot: with `events: h.events`
+    // on the literal the wrapper's own shape read as a silent reply, and `{ character, ...result }` no
+    // longer does. The stale-waiver assertion is what noticed — a waiver that waives nothing is a
+    // decision nobody is making, so it comes out rather than being kept for comfort.
     ['repairCar', 'its branches key on body.fixed === true|false; the sentinel walk cannot supply a literal'],
     ['burnerHit', 'it spreads ...await npcHit(...) — a call the static walk cannot follow; the npchit '
       + 'branch renders it live, and the WAVE 68 block below drives the burner line for real'],

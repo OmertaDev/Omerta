@@ -708,10 +708,9 @@ const AGENT_SCHEMAS = {
   },
   ContentSupplyReceipt: {
     type: 'object', additionalProperties: false,
-    required: ['character', 'events', 'ok', 'receipt', 'workshop'],
+    required: ['character', 'ok', 'receipt', 'workshop'],
     properties: {
       character: { type: ['object', 'null'], additionalProperties: true },
-      events: { type: 'array', items: { type: 'object', additionalProperties: true } },
       ok: { type: 'boolean' }, receipt: { $ref: '#/components/schemas/ContentSupplyReceiptData' },
       workshop: { $ref: '#/components/schemas/ContentWorkshop' },
     },
@@ -748,10 +747,9 @@ const AGENT_SCHEMAS = {
   },
   ContentExchangeReceipt: {
     type: 'object', additionalProperties: false,
-    required: ['character', 'events', 'ok', 'receipt', 'workshop'],
+    required: ['character', 'ok', 'receipt', 'workshop'],
     properties: {
       character: { type: ['object', 'null'], additionalProperties: true },
-      events: { type: 'array', items: { type: 'object', additionalProperties: true } },
       ok: { type: 'boolean' },
       receipt: { oneOf: [
         { $ref: '#/components/schemas/ContentExchangeListReceiptData' },
@@ -784,10 +782,9 @@ const AGENT_SCHEMAS = {
   },
   ContentToolRepairReceipt: {
     type: 'object', additionalProperties: false,
-    required: ['character', 'events', 'ok', 'receipt', 'workshop'],
+    required: ['character', 'ok', 'receipt', 'workshop'],
     properties: {
       character: { type: ['object', 'null'], additionalProperties: true },
-      events: { type: 'array', items: { type: 'object', additionalProperties: true } },
       ok: { type: 'boolean' },
       receipt: { $ref: '#/components/schemas/ContentToolRepairReceiptData' },
       workshop: { $ref: '#/components/schemas/ContentWorkshop' },
@@ -815,20 +812,18 @@ const AGENT_SCHEMAS = {
   },
   ContentWorkOrderStarted: {
     type: 'object', additionalProperties: false,
-    required: ['character', 'events', 'ok', 'run', 'workshop'],
+    required: ['character', 'ok', 'run', 'workshop'],
     properties: {
       character: { type: ['object', 'null'], additionalProperties: true },
-      events: { type: 'array', items: { type: 'object', additionalProperties: true } },
       ok: { type: 'boolean' }, run: { $ref: '#/components/schemas/ContentActiveWorkOrder' },
       workshop: { $ref: '#/components/schemas/ContentWorkshop' },
     },
   },
   ContentWorkOrderReceipt: {
     type: 'object', additionalProperties: false,
-    required: ['character', 'events', 'ok', 'receipt', 'workshop'],
+    required: ['character', 'ok', 'receipt', 'workshop'],
     properties: {
       character: { type: ['object', 'null'], additionalProperties: true },
-      events: { type: 'array', items: { type: 'object', additionalProperties: true } },
       ok: { type: 'boolean' }, receipt: { $ref: '#/components/schemas/ContentWorkOrderReceiptData' },
       workshop: { $ref: '#/components/schemas/ContentWorkshop' },
     },
@@ -843,10 +838,9 @@ const AGENT_SCHEMAS = {
   },
   ContentBoard: {
     type: 'object', additionalProperties: false,
-    required: ['character', 'events', 'experiences', 'lobbies', 'instances', 'storyFlags', 'crafting'],
+    required: ['character', 'experiences', 'lobbies', 'instances', 'storyFlags', 'crafting'],
     properties: {
       character: { type: ['object', 'null'], additionalProperties: true },
-      events: { type: 'array', items: { type: 'object', additionalProperties: true } },
       experiences: { type: 'array', items: { type: 'object', additionalProperties: false,
         required: ['namespace', 'version', 'contentHash', 'experienceId', 'title', 'location',
           'runPolicy', 'runKey', 'availableHere', 'eligible', 'blockedBy', 'season',
@@ -885,10 +879,9 @@ const AGENT_SCHEMAS = {
   },
   ContentReceipt: {
     type: 'object', additionalProperties: false,
-    required: ['character', 'events', 'instance'],
+    required: ['character', 'instance'],
     properties: {
       character: { type: ['object', 'null'], additionalProperties: true },
-      events: { type: 'array', items: { type: 'object', additionalProperties: true } },
       ok: { type: 'boolean' }, left: { type: 'boolean' },
       instance: { oneOf: [
         { $ref: '#/components/schemas/ContentInstance' },
