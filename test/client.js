@@ -7133,6 +7133,16 @@ const ACTFNS = new Map();   // route path → the handler names its registration
   assert(killLine.includes(k.matLootName), `the kill must name the scarce material it took: ${killLine}`);
   assert(/respect/.test(killLine) && /feared/.test(killLine),
     `the kill must name BOTH legends it banked — ordinary respect and the assassin's: ${killLine}`);
+  // ── and the clock the shot just armed ──────────────────────────────────────────────────────
+  // The wave-80 class: a success reply that ARMS a cooldown and never names it, so the player
+  // learns about it by pressing the button again and being refused. The trigger used to cool on a
+  // MISS alone, which is why only the miss line ever mentioned it; it cools on every shot now, so
+  // every outcome has to say so. SERVER half first — a synthetic literal passes straight through
+  // the mutation that stops the field being sent — then the LINE, and it must name HOW LONG rather
+  // than merely that the gun is hot: SHOOT_CD_MS is pinned to 1 above, so minsTxt renders "1s".
+  assert(k.shootCdSeconds > 0, 'the kill must SEND the trigger wait it just armed');
+  assert(/trigger cools/.test(killLine) && /\d+\s*(s|m|h|d)\b/.test(killLine.split('trigger cools')[1] || ''),
+    `the kill must name HOW LONG the trigger is cold, not merely that it is: ${killLine}`);
 }
 // ── WAVE 73 (vice): the Track claim, the pinks, the grid, the futurity book, the siege ──────────
 // Five entries, all DRIVEN (never synthetic — a literal passes straight through the mutation that
