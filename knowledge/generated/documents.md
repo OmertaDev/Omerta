@@ -311,11 +311,10 @@
 | [AUDIT-world-occupation.md](../../AUDIT-world-occupation.md) | audit | 71 | 2026-07-21 |
 | [AUDIT-world-uprising.md](../../AUDIT-world-uprising.md) | audit | 80 | 2026-07-22 |
 | [AUDIT.md](../../AUDIT.md) | audit | 52 | 2026-07-14 |
-| [BALANCE.md](../../BALANCE.md) | documentation | 6822 | 2026-09-02 |
-| [CHAIN-AUDIT-PACKET-O1.md](../../CHAIN-AUDIT-PACKET-O1.md) | documentation | 375 | 2026-09-06 |
-| [CHAIN-AUDIT-PACKET.md](../../CHAIN-AUDIT-PACKET.md) | documentation | 322 | 2026-09-06 |
-| [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | operations | 2006 | 2026-09-06 |
-| [CLAUDE.md](../../CLAUDE.md) | documentation | 18555 | 2026-09-06 |
+| [BALANCE.md](../../BALANCE.md) | documentation | 6855 | 2026-09-06 |
+| [CHAIN-AUDIT-PACKET.md](../../CHAIN-AUDIT-PACKET.md) | documentation | 317 | 2026-08-30 |
+| [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | operations | 2001 | 2026-08-29 |
+| [CLAUDE.md](../../CLAUDE.md) | documentation | 18545 | 2026-09-06 |
 | [content/README.md](../../content/README.md) | documentation | 281 | 2026-08-29 |
 | [DEPLOY-CHECKLIST.md](../../DEPLOY-CHECKLIST.md) | operations | 147 | 2026-08-13 |
 | [DEPLOY.md](../../DEPLOY.md) | operations | 568 | 2026-08-29 |
@@ -370,7 +369,7 @@
 | [knowledge/README.md](../../knowledge/README.md) | knowledge-base | 85 | 2026-08-24 |
 | [knowledge/taxonomy.md](../../knowledge/taxonomy.md) | knowledge-base | 75 | 2026-08-24 |
 | [LAUNCH-NIGHT.md](../../LAUNCH-NIGHT.md) | operations | 112 | 2026-08-20 |
-| [LAUNCH-READINESS.md](../../LAUNCH-READINESS.md) | operations | 286 | 2026-09-06 |
+| [LAUNCH-READINESS.md](../../LAUNCH-READINESS.md) | operations | 283 | 2026-08-27 |
 | [LAUNCH.md](../../LAUNCH.md) | operations | 232 | 2026-08-27 |
 | [MARKETING-COPY.md](../../MARKETING-COPY.md) | documentation | 432 | 2026-08-27 |
 | [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 128 | 2026-09-05 |
@@ -460,6 +459,6 @@
 | [omerta-wallet-forged-stats-design.md](../../omerta-wallet-forged-stats-design.md) | design | 140 | 2026-08-21 |
 | [PRODUCT.md](../../PRODUCT.md) | documentation | 50 | 2026-08-24 |
 | [README.md](../../README.md) | documentation | 166 | 2026-08-27 |
-| [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 882 | 2026-08-29 |
-| [SPEC.md](../../SPEC.md) | documentation | 735 | 2026-09-06 |
+| [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 918 | 2026-09-06 |
+| [SPEC.md](../../SPEC.md) | documentation | 735 | 2026-09-05 |
 | [UNISWAP-ROUTING.md](../../UNISWAP-ROUTING.md) | documentation | 37 | 2026-08-25 |

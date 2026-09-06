@@ -184,7 +184,10 @@ export async function startSearch(ch, targetCharacterId, client, h) {
 // Restating a four-way stack in a second place is the class the preflight ledger exists to catch,
 // so the formula moved to where all four of its terms already live and both readers import it.
 
-const shootCdMs = () => Number(process.env.SHOOT_CD_MS || (2 * 3600 * 1000));
+// Reads the LEVER, never a second copy of its value: `hunterSearchMs` one comment up already reads
+// CONSTANTS.SEARCH_MS, and a sibling restating 2h inline is how the two come to disagree the day
+// one of them is retuned. The env knob stays TEST-ONLY (preflight refuses it in production).
+const shootCdMs = () => Number(process.env.SHOOT_CD_MS || CONSTANTS.SHOOT_CD_MS);
 
 
 export async function callOffSearch(ch, client, h) {
@@ -309,6 +312,20 @@ export async function fire(ch, victim, client, h, rounds) {
   ch.ammo = Number(ch.ammo) - fired;
   ch.heat = Math.min(100, Number(ch.heat || 0) + M3.FIRE_HEAT); // §7 interlock: wet work draws law heat, like a deal
   await h.ledger(client, { characterId: ch.id, currency: 'ammo', amount: -fired, reason: 'fire' });
+  // THE TRIGGER COOLS ON THE SHOT, NOT ON THE OUTCOME. This stamp used to live in the MISS branch
+  // alone — so three of the four outcomes (a kill, a bodyguard absorb, a revive token) each returned
+  // above it and left the trigger cold, and a killer could re-search and fire again while a man who
+  // MISSED waited out two hours. It is not a discount anybody chose: the gate at the head of this
+  // function reads `shoot_cd_until` and the only writer sat past three early returns. It belongs
+  // here for the same reason the three lines above it do — the energy, the rounds and the law heat
+  // are all spent the moment the shot is fired, whatever it hits, and the cooldown is that same
+  // cost in time. Everything above this point is a gate that throws or a call-off that RETURNS
+  // before any of it, so nothing pays the cooldown for a shot it never took.
+  ch.shoot_cd_until = new Date(Date.now() + shootCdMs());
+  // …and every one of the four outcomes SAYS so. The wave-80 class: a success reply that arms a
+  // clock and never names it, so the player learns about it by pressing the button again and being
+  // refused. Only the miss line ever mentioned the trigger, and it was the one outcome that had it.
+  const shootCdSeconds = Math.ceil(shootCdMs() / 1000);
 
   const vicLvl = levelOf(Number(victim.respect));
   const btk = btkOf(vicLvl, victim.muscle, vestMultOf(victim.vest));
@@ -327,7 +344,7 @@ export async function fire(ch, victim, client, h, rounds) {
     const guard = await bodyguardAbsorbs(client, h, ch, victim);
     if (guard) {
       await h.notify(client, ch.id, 'target_guarded', { victim: victim.name, guard: guard.name });
-      return { ok: true, kill: false, absorbed: true, guard: guard.name, jammed };
+      return { ok: true, kill: false, absorbed: true, guard: guard.name, jammed, shootCdSeconds };
     }
     // ── PRE-PAID REVIVE INSURANCE (§11) ──
     // A killing blow lands, but the target bought a respawn on-chain (0.10 ETH → dev wallet).
@@ -345,7 +362,7 @@ export async function fire(ch, victim, client, h, rounds) {
       await h.notify(client, ch.id, 'target_revived', { victim: victim.name });
       await h.track(client, victim.account_id, 'respawn', { from: ch.id });
       bus.emit('streets', { type: 'revive', who: victim.name });
-      return { ok: true, kill: false, revived: true, jammed };
+      return { ok: true, kill: false, revived: true, jammed, shootCdSeconds };
     }
     // ── THE KILL ──
     const rep = Math.max(10, vicLvl * 2);
@@ -573,17 +590,16 @@ export async function fire(ch, victim, client, h, rounds) {
     return { ok: true, kill: true, rep, chop, loot, omrLoot, gearLoot, gearLootName: gearLoot ? (gearOf(gearLoot)?.name || gearLoot) : null,
       heat: M3.FIRE_HEAT, heatNow: Number(ch.heat || 0), fired, energy: M3.FIRE_ENERGY, lootable,
       contraLoot, matLoot, matLootName: matLoot > 0 ? SHIPMENT.MATERIAL : null,
-      orderLoot: estate.orderLoot || 0, bounty, jammed, warKill, hitman: hit,
+      orderLoot: estate.orderLoot || 0, bounty, jammed, warKill, hitman: hit, shootCdSeconds,
       ...(empireLoot ? { empireLoot } : {}), ...(ammoBack ? { ammoBack } : {}), vendetta: !!vend, ...(grudges.length ? { grudges } : {}), estate: { heirId: estate.heirId } };
   }
-  // ── THE MISS ──
-  ch.shoot_cd_until = new Date(Date.now() + shootCdMs());
+  // ── THE MISS ── (the trigger was cooled with the rest of the shot's cost, above)
   const dmg = rand(5, 15);
   victim.health = Math.max(1, Number(victim.health) - dmg);
   await h.notify(client, victim.id, 'attempt', { from: ch.name, dmg });
   // WAVE 80 — a MISS draws the same FIRE_HEAT and spends the same rounds and energy; the line named
   // only the shot. The kill twin ships the identical fields (one shape, two outcomes).
-  return { ok: true, kill: false, jammed, effective, btk, heat: M3.FIRE_HEAT, heatNow: Number(ch.heat || 0), fired, energy: M3.FIRE_ENERGY };
+  return { ok: true, kill: false, jammed, effective, btk, heat: M3.FIRE_HEAT, heatNow: Number(ch.heat || 0), fired, energy: M3.FIRE_ENERGY, shootCdSeconds };
 }
 
 // ═══════════════════ SAFEHOUSE — EARNABLE DEFENSE (M7 Phase 4) ═══════════════════

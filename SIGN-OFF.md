@@ -879,3 +879,39 @@ The NetNet set is now fully resolved: A–F built, G recorded as-is, H built.
    the regimen's own `addXp` rail. All levers tabled in BALANCE.md § THE LEDGER-BORN; four more
    named mutations (the affinity grant dropped; the variant collapsed; poise off the till;
    vigilance off the stored guards).
+
+---
+
+## THE 2026-09-06 TRIGGER (founder: "Do 1, 2, 3, 4, 5, and 7")
+
+**THE TRIGGER COOLS ON THE SHOT, NOT ON THE OUTCOME — DIRECTED + ✅ BUILT.** Wave 80 flagged this
+and deliberately did NOT touch it (*"that is a signed PvP surface and a founder call, not a copy
+fix"*); item 4 of the ranked list is that call, and the answer is that the asymmetry was never a
+decision anybody made.
+
+`fire` has FOUR shot outcomes and the `shoot_cd_until` stamp lived in exactly ONE of them. Inside
+`if (effective >= btk)` there are two further early returns before the kill's own — the bodyguard
+absorb and the pre-paid revive token — so a **kill**, an **ABSORB** and a **REVIVE** each returned
+above the stamp and left the trigger COLD, while a plain **MISS** was the one outcome that paid the
+two hours. A killer could re-search and fire again immediately; the man who missed waited it out.
+Nothing chose that: the gate at the head of the function reads `shoot_cd_until`, and its only writer
+sat past three early returns.
+
+**The stamp moves into the common cost block**, beside the energy, the rounds and the law heat —
+those are spent the moment the shot is fired, whatever it hits, and the cooldown is that same cost in
+time. Everything above that block is a gate that THROWS or the call-off that RETURNS, so nothing pays
+the cooldown for a shot it never took. **No lever moved** (`SHOOT_CD_MS` / the 2h default are
+untouched); what changed is which outcomes the existing clock covers. **§10.4-free** — a clock stamp
+moves no value.
+
+**And every outcome now SAYS so** (the wave-80 class: a success reply that arms a clock and never
+names it). Only the miss line ever mentioned the trigger — and it was the one outcome that had it;
+all four replies carry `shootCdSeconds` and all four rendered lines name the wait.
+
+**Why nothing caught it:** `test/social.js`'s `whack()` helper NULLs the trigger before every shot,
+so every kill in the file started from a clean clock and no assertion in the suite could ever have
+observed an uncooled trigger. The regression reads the DATABASE after each of the three shot shapes
+(the fix changed the replies too, so a reply-only assertion would be checking the fix against
+itself). Three mutations, each caught at its own named assertion. The one existing fixture the fix
+correctly refused (the vendetta ESCALATION block's second kill) had its cold-trigger precondition
+RESTORED the way `whack()` already does it — never the assertion weakened.

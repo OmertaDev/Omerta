@@ -6819,3 +6819,36 @@ Nothing here is a lever of the game. **Founder read:** the town can already answ
 without any new mechanic — it hires the contractor the game ships — and the arena's own inability to
 distinguish the arms is the more important finding, because it is the standard every earlier arena
 number should be read against.
+
+---
+
+## THE TRIGGER COOLS ON THE SHOT, NOT ON THE OUTCOME (founder-directed 2026-09-06, item 4)
+
+**No lever moved.** `SHOOT_CD_MS` and its 2h default are untouched; what changed is which of `fire`'s
+four outcomes the existing clock covers — and the honest description of the old behaviour is that it
+covered ONE.
+
+| Shot outcome | `shoot_cd_until` before | after |
+|---|---|---|
+| **Kill** | *(cold — free to re-search and fire again)* | 2h |
+| **Bodyguard ABSORB** | *(cold)* | 2h |
+| **REVIVE token** | *(cold)* | 2h |
+| **MISS** | 2h | 2h |
+| Call-off (`callOff`) | none | none — it RETURNS before any cost is paid |
+
+The stamp lived in the MISS branch alone, past three early returns. So the game's most expensive verb
+— a 3h search, the energy, the rounds, the law heat — charged its own cooldown only to the player who
+**failed**, and a killer's second shot was gated by nothing but the search clock. It is not a discount
+anybody signed: the gate at the head of `fire` reads `shoot_cd_until`, and its only writer was
+unreachable from three of the four ways out.
+
+**The measurable effect is on the hunter's cadence, not on any faucet.** A hunter's shots per day were
+bounded by `hunterSearchMs` alone once he started landing them; they are now bounded by
+`max(search, trigger)` on every shot, which is what the constant was written to do. §10.4 is untouched
+(a clock stamp moves no value; the sim stays drift-0), and the kill economy's own numbers — the ammo
+cost, `CASH_LOOT_RATE`, `OMR_LOOT_RATE`, the contract pots — are unchanged.
+
+**Watch in the alpha:** the arena's own read is that killing stays +EV per kill and becomes −EV as a
+career once the town can price your head; slowing a successful hunter's cadence pushes in the same
+direction, so if the kill loop ever reads too cold the dial is `SHOOT_CD_MS` itself rather than a
+per-outcome exemption — a per-outcome exemption is exactly what this was.
