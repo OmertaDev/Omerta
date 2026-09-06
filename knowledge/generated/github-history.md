@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `37de4acdf8ef`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `17a8853662a1`.
 
 ## Repository
 
@@ -9,19 +9,19 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1341 |
+| Commits in clone | 1331 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-06 — Merge origin/main into claude/game-dev-roadmap-6jtsst |
+| Latest commit | 2026-09-06 — Audit packet rebuilt at the release head, and two assertions that were functions of the calendar (#173) |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 461 |
-| Claude | 167 |
+| OmertaDev | 462 |
+| Claude | 156 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 24 |
 | claude[bot] | 1 |
@@ -30,7 +30,7 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
+| [CLAUDE.md](../../CLAUDE.md) | 514 | yes |
 | [public/index.html](../../public/index.html) | 401 | yes |
 | [src/server.js](../../src/server.js) | 352 | yes |
 | [SPEC.md](../../SPEC.md) | 281 | yes |
@@ -38,10 +38,10 @@
 | [BALANCE.md](../../BALANCE.md) | 254 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 174 | yes |
-| knowledge/generated/github-history.md | 158 | historical |
-| knowledge/generated/graph-summary.md | 158 | historical |
-| knowledge/generated/graph.json | 158 | historical |
-| knowledge/generated/inventory.md | 158 | historical |
+| knowledge/generated/github-history.md | 154 | historical |
+| knowledge/generated/graph-summary.md | 154 | historical |
+| knowledge/generated/graph.json | 154 | historical |
+| knowledge/generated/inventory.md | 154 | historical |
 | [package.json](../../package.json) | 146 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 123 | yes |
@@ -53,8 +53,8 @@
 | [test/growth.js](../../test/growth.js) | 80 | yes |
 | [public/wiki.html](../../public/wiki.html) | 80 | yes |
 | [docs/WIKI.md](../../docs/WIKI.md) | 69 | yes |
-| knowledge/generated/documents.md | 66 | historical |
 | [test/hardening.js](../../test/hardening.js) | 65 | yes |
+| knowledge/generated/documents.md | 63 | historical |
 | [tools/sim.js](../../tools/sim.js) | 59 | yes |
 | [test/gates.js](../../test/gates.js) | 57 | yes |
 | [src/preflight.js](../../src/preflight.js) | 55 | yes |
