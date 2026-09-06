@@ -9322,6 +9322,73 @@ console.log(`✅ client wiring test passed — across the console AND /admin: of
     `WAVE 80: the fill line must explain the gap between the board's price and what landed — got "${fillLine80}"`);
 
   console.log('  ✓ WAVE 80: the shared front window, the fighter who took it, the paper\'s net and the fill\'s house take all reach the player');
+
+  // ── WAVE 81 — THE PACT NAMED ON THE WAY OUT AND NOT ON THE WAY IN ────────────────────────────
+  // Check 14 (THE SILENCE LEDGER) proves statically that no act()-pressed handler is MUTE, and it is
+  // structurally blind to the class that is every tester complaint this project has had: a line that
+  // is FLUENT and simply leaves a TERM off. Founding or joining a crew silently binds a FIVE-VERB
+  // non-aggression pact — fire, jump, npcHit, shank and postBounty all refuse between crewmates — and
+  // the two ENTRY lines never said so, while the EXIT line IN THE SAME MAP has always read "you walked
+  // — the pact's off". The pact was named on the way out and not on the way in, so a player learnt it
+  // the first time the server refused. Neither entry stated the seat cap either, and the cap is
+  // unreachable from describe(): /v1/rules.crew is the KITCHEN crew, and the social cap reaches only
+  // /v1/crew (crewBoard.maxMembers), which describe() never sees — so it rides on the reply.
+  // DRIVEN, never synthetic: every claim below is about a field the SERVER now sends, and a literal
+  // passes straight through the mutation that stops it being sent.
+  const boss81 = await mk11('W81b');
+  const rec81 = await mk11('W81r');
+  const mark81 = await mk11('W81m');
+  // mk11 returns a token and an id; the invite and the crew hit both name a STREET, so read it back.
+  const nameOf81 = async (tok) => (await inj11('GET', '/v1/me', tok)).body.character.name;
+  const recName81 = await nameOf81(rec81.token);
+  const markName81 = await nameOf81(mark81.token);
+
+  const found81 = await inj11('POST', '/v1/crew', boss81.token, { name: 'Wave81 ' + Math.random().toString(36).slice(2, 6) });
+  assert.equal(found81.code, 200, `WAVE 81 fixture: the crew must be founded (${JSON.stringify(found81.body)})`);
+  assert(found81.body.members === 1 && found81.body.max > 1,
+    'WAVE 81: founding must SEND the shape of what was just bound — the seat cap is not reachable from '
+    + `describe() (rules.crew is the KITCHEN crew), so it has to ride the reply. Got ${JSON.stringify(found81.body)}`);
+  const foundLine81 = String(describeFn(found81.body, 200));
+  assert(/pact/i.test(foundLine81) && /shooting/i.test(foundLine81) && /contracts/i.test(foundLine81),
+    'WAVE 81: the ENTRY line must name the pact it just bound — the EXIT line has always said "the '
+    + `pact's off", so saying nothing on the way in is the withheld term. Got "${foundLine81}"`);
+  assert(foundLine81.includes(`${found81.body.members}/${found81.body.max}`),
+    `WAVE 81: the founding line must state the seats off the server's own figures — got "${foundLine81}"`);
+
+  const inv81 = await inj11('POST', '/v1/crew/invite', boss81.token, { name: recName81 });
+  assert.equal(inv81.code, 200, `WAVE 81 fixture: the invite must go out (${JSON.stringify(inv81.body)})`);
+  assert(inv81.body.max > 0 && inv81.body.pending > 0,
+    `WAVE 81: the invite must carry the seats AND the outstanding invites the server itself caps — got ${JSON.stringify(inv81.body)}`);
+  const invLine81 = String(describeFn(inv81.body, 200));
+  assert(invLine81.includes(`${inv81.body.members}/${inv81.body.max}`) && /invite/.test(invLine81),
+    `WAVE 81: the invite line must name how full the crew is and how many asks are out — got "${invLine81}"`);
+
+  const acc81 = await inj11('POST', `/v1/crew/accept/${found81.body.id}`, rec81.token, {});
+  assert.equal(acc81.code, 200, `WAVE 81 fixture: the invite must be accepted (${JSON.stringify(acc81.body)})`);
+  assert.equal(acc81.body.members, 2,
+    'WAVE 81: the joiner counts themselves — the reply states the crew AFTER the insert, computed from '
+    + `the count already in hand rather than a second query. Got ${JSON.stringify(acc81.body)}`);
+  const accLine81 = String(describeFn(acc81.body, 200));
+  assert(/pact/i.test(accLine81) && /shanks|shooting/i.test(accLine81),
+    `WAVE 81: the JOINER is the one who most needs to be told what just bound them — got "${accLine81}"`);
+  assert(accLine81.includes(`${acc81.body.members}/${acc81.body.max}`),
+    `WAVE 81: the join line must state the seats too — got "${accLine81}"`);
+
+  // THE CREW HIT names a kind — kill or hospitalize — on the thing the whole crew is being asked to
+  // fund, and the line rendered neither. Both kinds are driven, because a line that reads correctly
+  // for one and not the other is exactly what a single drive cannot see.
+  const kill81 = await inj11('POST', '/v1/crew/target', boss81.token, { name: markName81, kind: 'kill' });
+  assert.equal(kill81.code, 200, `WAVE 81 fixture: the hit must be called (${JSON.stringify(kill81.body)})`);
+  assert.equal(kill81.body.kind, 'kill', `WAVE 81 fixture: the reply carries the kind (${JSON.stringify(kill81.body)})`);
+  const killLine81 = String(describeFn(kill81.body, 200));
+  assert(/KILL/.test(killLine81),
+    `WAVE 81: the crew hit must say which contract the crew is funding — got "${killLine81}"`);
+  const hosp81 = await inj11('POST', '/v1/crew/target', boss81.token, { name: markName81, kind: 'hospitalize' });
+  assert.equal(hosp81.code, 200, `WAVE 81 fixture: the kind must be changeable (${JSON.stringify(hosp81.body)})`);
+  const hospLine81 = String(describeFn(hosp81.body, 200));
+  assert(/hospitalize/i.test(hospLine81) && !/KILL/.test(hospLine81),
+    `WAVE 81: a hospitalize pot must not read as a kill contract — got "${hospLine81}"`);
+  console.log('  ✓ WAVE 81: founding and joining a crew name the pact they bind and the seats; the crew hit names its kind');
 }
 
 // AND AGAIN, over everything the wave blocks above added. `said` is populated in two places separated

@@ -14424,6 +14424,50 @@ every harvest fee books a bad amount. The name is corrected and the crossing is 
 sharp case a type comparison cannot see — a **same-typed adjacent swap** (`Bonded` has six adjacent
 non-indexed `uint256`) — fails by name instead of waiting for the next hand pass.
 
+**PLAY WAVE 81 — THE PACT WAS NAMED ON THE WAY OUT AND NOT ON THE WAY IN (2026-08-30).** Check 14
+(THE SILENCE LEDGER) proves statically that no act()-pressed handler is MUTE, and it is structurally
+blind to the class that is every tester complaint this project has ever had: a line that is FLUENT and
+simply leaves a TERM off (the pad, the nut, the Port lane). So this wave drove undriven pressed routes
+hunting withheld terms rather than silence. **The measurement had to be INSTRUMENTED rather than
+regexed** — a static scan of the ledger reports far more undriven routes than exist, because dynamic
+rows resolve their URL at drive time and are invisible to it — so the driven set was dumped from the RUN
+itself: **290 pressed routes, 100 of them never driven.** Three findings in the crew cluster, each
+reproduced before it was called anything.
+**THE HEADLINE: founding or joining a crew silently binds a FIVE-VERB NON-AGGRESSION PACT and neither
+entry line said so, while the EXIT line IN THE SAME MAP has always read *"you walked — the pact's
+off"*.** `fire`, `jump`, `npcHit`, `shank` and `postBounty` all refuse between crewmates (five sites,
+each keyed on `h.owned.crewId === h.victimOwned.crewId` with the rat/WANTED exceptions), so a player
+learnt the rule the first time the server refused them — and the game had already proven it knew how to
+say it, at the one moment the pact ENDS. Neither entry stated the **seat cap** either, and that one
+could not have been fixed on the client: **`/v1/rules.crew` is the KITCHEN crew**, and the social cap
+reaches only `/v1/crew` (`crewBoard.maxMembers`), which `describe()` never sees — so it rides on the
+reply (the `crewNextCost`/`hunterSearchMs` discipline). **THE CREW HIT never named its KIND**:
+`setCrewTarget` has been sending `kill` | `hospitalize` all along and the line rendered neither, on the
+thing the whole crew is being asked to fund — client-only, the field was in hand at the moment it was
+withheld. And the **invite** stated neither the seats left nor the outstanding-invite count, both of
+which the server enforces and already had computed (`n`, `pending`) — the withheld-figure shape at its
+plainest.
+**THE GUARD IS DRIVEN, NEVER SYNTHETIC** — wave 65's lesson applied from the start: every claim here is
+about a field the SERVER now sends, and **a literal passes straight through the mutation that stops it
+being sent**, so each assertion proves the reply CARRIES the field and then that the line NAMES it.
+**Both crew-hit kinds are driven**, because a line that reads correctly for one and not the other is
+exactly what a single drive cannot see (`setCrewTarget` DELETEs any prior target first, so both fit one
+fixture). Five mutations, **five distinct named kills** (the founding reply's shape dropped; the
+founding line reverted to *"the crew is yours — put some names in"*; the join reply's seats dropped —
+caught at the joiner-counts-themselves assertion, since `n` is the count BEFORE the insert; the invite
+reply's seats and pending dropped; the hit reverting to *"chip in on the hit"* with no kind).
+**A FIXTURE BUG WAS DIAGNOSED BEFORE IT WAS BLAMED ON THE GAME:** the invite drive refused
+`{"error":"name"}` — `mk11` returns `{token, id}` and carries **no name**, while the route reads
+`req.body?.name`, so the fixture reads the street back off `/v1/me` now. *Check before reporting*, and
+the wave number was measured too (`grep -on "WAVE [0-9]*"` — 80 was the real maximum; "wave 68" is
+already taken by the hired-gun block). **Zero SQL moved in `src/`** (checked with a diff filter, not
+assumed — the three server edits are return literals), so the real-Postgres gates do not apply. **The
+driven-action figure does NOT move**: like the Pen block, this one drives on its own tokens rather than
+adding rows to `ACTIONS`, so `describedCount` is untouched — stated because a figure that cannot move is
+exactly the kind that gets restated wrongly (my own first cut of this entry claimed 270 → 274).
+**A clean lens is recorded because a sweep that publishes only its hits cannot be audited:** jump (both
+intents), bust, the streak claim, the LFG toggle, the referral claim and seven refusals all read well.
+
 **THE PLAY SESSION — the wire could not say what happened (2026-08-19).** Not a red team: a real
 play session, driven through real routes and a real browser as a person would, plus the class sweep
 it turned into. Every finding was reproduced against a running engine before it was called one.
