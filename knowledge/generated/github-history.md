@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `be85d0149f5b`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `b7b61cf82ffd`.
 
 ## Repository
 
@@ -9,11 +9,11 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1331 |
+| Commits in clone | 1333 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-06 — Merge origin/main: take main's calendar fix, keep the O1 audit packet |
+| Latest commit | 2026-09-06 — play wave 81: the crew pact was named on the way out and not on the way in |
 
 ## Commit authors
 
@@ -21,7 +21,7 @@
 |---|---:|
 | crvydev | 647 |
 | OmertaDev | 460 |
-| Claude | 159 |
+| Claude | 161 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 23 |
 | claude[bot] | 1 |
@@ -30,31 +30,31 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| [CLAUDE.md](../../CLAUDE.md) | 513 | yes |
-| [public/index.html](../../public/index.html) | 399 | yes |
+| [CLAUDE.md](../../CLAUDE.md) | 514 | yes |
+| [public/index.html](../../public/index.html) | 400 | yes |
 | [src/server.js](../../src/server.js) | 351 | yes |
 | [SPEC.md](../../SPEC.md) | 281 | yes |
 | [schema.sql](../../schema.sql) | 274 | yes |
 | [BALANCE.md](../../BALANCE.md) | 253 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 173 | yes |
-| knowledge/generated/github-history.md | 152 | historical |
-| knowledge/generated/graph-summary.md | 152 | historical |
-| knowledge/generated/graph.json | 152 | historical |
-| knowledge/generated/inventory.md | 152 | historical |
+| knowledge/generated/github-history.md | 153 | historical |
+| knowledge/generated/graph-summary.md | 153 | historical |
+| knowledge/generated/graph.json | 153 | historical |
+| knowledge/generated/inventory.md | 153 | historical |
 | [package.json](../../package.json) | 146 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 122 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 117 | yes |
 | [src/invariants.js](../../src/invariants.js) | 115 | yes |
-| [test/client.js](../../test/client.js) | 110 | yes |
+| [test/client.js](../../test/client.js) | 111 | yes |
 | [test/levers.js](../../test/levers.js) | 95 | yes |
 | [test/social.js](../../test/social.js) | 84 | yes |
 | [test/growth.js](../../test/growth.js) | 80 | yes |
 | [public/wiki.html](../../public/wiki.html) | 80 | yes |
 | [docs/WIKI.md](../../docs/WIKI.md) | 69 | yes |
 | [test/hardening.js](../../test/hardening.js) | 65 | yes |
-| knowledge/generated/documents.md | 62 | historical |
+| knowledge/generated/documents.md | 63 | historical |
 | [tools/sim.js](../../tools/sim.js) | 59 | yes |
 | [test/gates.js](../../test/gates.js) | 56 | yes |
 | [src/preflight.js](../../src/preflight.js) | 55 | yes |

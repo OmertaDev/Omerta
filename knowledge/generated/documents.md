@@ -315,7 +315,7 @@
 | [CHAIN-AUDIT-PACKET-O1.md](../../CHAIN-AUDIT-PACKET-O1.md) | documentation | 375 | 2026-09-06 |
 | [CHAIN-AUDIT-PACKET.md](../../CHAIN-AUDIT-PACKET.md) | documentation | 322 | 2026-09-06 |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | operations | 2006 | 2026-09-06 |
-| [CLAUDE.md](../../CLAUDE.md) | documentation | 18482 | 2026-09-06 |
+| [CLAUDE.md](../../CLAUDE.md) | documentation | 18526 | 2026-09-06 |
 | [content/README.md](../../content/README.md) | documentation | 281 | 2026-08-29 |
 | [DEPLOY-CHECKLIST.md](../../DEPLOY-CHECKLIST.md) | operations | 147 | 2026-08-13 |
 | [DEPLOY.md](../../DEPLOY.md) | operations | 568 | 2026-08-29 |

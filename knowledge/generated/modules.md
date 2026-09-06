@@ -44,7 +44,7 @@
 | [src/content/runtime.js](../../src/content/runtime.js) | 1095 | platform-core | 2 / 1 | 9 | 12 | 0 |
 | [src/convoy.js](../../src/convoy.js) | 582 | enterprise-logistics | 4 / 11 | 10 | 15 | 3 |
 | [src/corner.js](../../src/corner.js) | 158 | platform-core | 2 / 5 | 3 | 4 | 1 |
-| [src/crew.js](../../src/crew.js) | 400 | social-combat | 2 / 6 | 15 | 18 | 1 |
+| [src/crew.js](../../src/crew.js) | 403 | social-combat | 2 / 6 | 15 | 18 | 1 |
 | [src/day.js](../../src/day.js) | 72 | world-progression | 6 / 2 | 1 | 0 | 0 |
 | [src/db.js](../../src/db.js) | 679 | platform-core | 0 / 42 | 0 | 9 | 23 |
 | [src/dbhealth.js](../../src/dbhealth.js) | 148 | platform-core | 0 / 5 | 0 | 0 | 2 |
