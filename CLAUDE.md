@@ -5982,6 +5982,35 @@ one: GUARANTEE the precondition (future-date the clock before the refused probe)
 number. §10.4 untouched by construction — the same accrual rows land, one transaction earlier.
 SPEC.md D1 is ADDRESSED; the mutations are recorded in the commit.
 
+**THE MOBILE FLAKE COULD NOT NAME ITS OWN CAUSE — the first-action check, instrumented (2026-09-06).**
+CI went red on `mobile` at 320x568 with a message that says everything except what happened:
+`(first action): visible crime did not hand the player back to the ready reward —
+{"firstJobReady":false,"coach":"Claim your first-job reward",...}`. **Those two fields contradict each
+other**: the coach rung that fired (`game.js:1501`) requires `lc_crime >= 1 && !onboard.ob_crime`, and
+`onboardBoard`'s `ready` for `ob_crime` is the SAME predicate on the SAME row (`growth.js:282`) — so the
+server plainly HAD the crime and the board said it did not. **A refused `/v1/onboard` and a genuinely
+false flag read IDENTICALLY**, because the probe captured no HTTP status: *a failure that names the wrong
+thing is barely better than no failure*, and a **flaky** red is worse than a steady one, because it is
+what teaches people that red means nothing.
+**MEASURED BEFORE ANYTHING WAS CHANGED, and the measurement WEAKENED the leading hypothesis** rather
+than confirming it: a 60-iteration probe of the exact parallel pair against a booted server came back
+**0/60 bad**, and `lc_crime` is monotonic (`+= 1` in the success branch only, never reset), so a stale
+or reset counter is ruled out. So this ships as an INSTRUMENT plus an ALIGNMENT, not as a claimed fix.
+**(1) CAPTURE THE STATUS** — both evaluates now carry `meStatus`, `obStatus`, the task count, any
+`error` field and `lc_crime` itself, so the next occurrence DECIDES it: `obStatus != 200` is the
+request; `obStatus 200` with `lcCrime >= 1` and `ready` false is a real server disagreement and a
+genuine finding. **(2) SERIALIZE THE TWO READS** — they are two authed reads of ONE account, and the
+real client queues exactly these on a promise chain (`api()`) **because same-account calls serialize on
+the character row at the database and firing them together makes each wait holding a pooled
+connection**; the harness's raw `Promise.all` bypassed the product's own discipline. Both sites fixed,
+and the class swept: a scan of `tools/` found no other concurrent authed pair.
+**HONEST SCOPE, stated rather than smoothed: this ships with NO mutation kill**, because the property it
+improves — a failure naming its cause — manifests only ON failure, and asserting the shape of a
+harness's own failure string would be noise. The verification is that nothing broke (**mobile 171/171
+green, four consecutive clean runs locally, CI green on both jobs**) plus the reasoning that the
+serialization matches a documented product invariant. Four green runs after two reds is weak evidence
+and is recorded as weak evidence.
+
 ## Sensitive design notes
 *These are standing PRODUCT rules. They bind whatever else is true, and several of them exist
 because breaking one is very hard to walk back.*
