@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `9bbf1c2a59cf`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `bf71b6a1f945`.
 
 ## Repository
 
@@ -9,11 +9,11 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1358 |
+| Commits in clone | 1360 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-06 — record THE SIX in the log, and a sentence it made false |
+| Latest commit | 2026-09-06 — ci: the pg-mem job's timeout is a hang bound, and it was policing a runner |
 
 ## Commit authors
 
@@ -23,7 +23,7 @@
 | OmertaDev | 460 |
 | Claude | 163 |
 | CRVYDEV | 41 |
-| omerta | 23 |
+| omerta | 25 |
 | github-actions[bot] | 23 |
 | claude[bot] | 1 |
 
@@ -39,10 +39,10 @@
 | [BALANCE.md](../../BALANCE.md) | 254 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 178 | yes |
-| knowledge/generated/github-history.md | 164 | historical |
-| knowledge/generated/graph-summary.md | 164 | historical |
-| knowledge/generated/graph.json | 164 | historical |
-| knowledge/generated/inventory.md | 164 | historical |
+| knowledge/generated/github-history.md | 165 | historical |
+| knowledge/generated/graph-summary.md | 165 | historical |
+| knowledge/generated/graph.json | 165 | historical |
+| knowledge/generated/inventory.md | 165 | historical |
 | [package.json](../../package.json) | 147 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 123 | yes |
@@ -53,7 +53,7 @@
 | [test/social.js](../../test/social.js) | 85 | yes |
 | [test/growth.js](../../test/growth.js) | 81 | yes |
 | [public/wiki.html](../../public/wiki.html) | 80 | yes |
-| knowledge/generated/documents.md | 69 | historical |
+| knowledge/generated/documents.md | 70 | historical |
 | [docs/WIKI.md](../../docs/WIKI.md) | 69 | yes |
 | [test/hardening.js](../../test/hardening.js) | 65 | yes |
 | [test/gates.js](../../test/gates.js) | 59 | yes |
