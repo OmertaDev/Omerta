@@ -691,7 +691,9 @@ assert.deepEqual([...new Set(phantom)], [], `docs/AUDITS.md lists reports that d
   const SAYS_SHUT = new RegExp(`${OPENS_THE_RAIL.source}|not open|opens at launch|audit-gated`, 'i');
   const MARKETING_DOCS = ['MARKETING.md', 'MARKETING-COPY.md', 'MARKETING-POSTS.md', 'HYPE.md',
     'LAUNCH.md', 'LAUNCH-NIGHT.md', 'LAUNCH-READINESS.md', 'docs/LAUNCH-TWEETS.md',
-    'docs/OMR-MARKETING-PACK.md', 'docs/OMR-MACHINE-CAMPAIGN.md', 'docs/GAMEPLAY-MARKETING-PACK.md'];
+    'docs/OMR-MARKETING-PACK.md', 'docs/OMR-MACHINE-CAMPAIGN.md', 'docs/GAMEPLAY-MARKETING-PACK.md',
+    'docs/PILLARS-MARKETING-PACK.md', 'docs/BANK-MARKETING-PACK.md',
+    'docs/AGENT-MARKETING-PACK.md'];
   // catalogue-or-declare: a marketing doc that exists and is not listed is one nobody is checking.
   const onDisk = [...fs.readdirSync('.').filter((f) => /^(MARKETING|HYPE|LAUNCH)[A-Z-]*\.md$/.test(f)),
     ...fs.readdirSync('docs').filter((f) => /MARKETING|CAMPAIGN|TWEETS/.test(f)).map((f) => `docs/${f}`)];

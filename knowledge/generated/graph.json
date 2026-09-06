@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "17a8853662a1bb3bc1093eefc3d783367b3379fa",
+  "sourceRevision": "f439b9d004c4553272bb28cc55ea057a79cece9a",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,14 +43,14 @@
     ]
   },
   "census": {
-    "nodes": 5699,
-    "edges": 25362,
+    "nodes": 5708,
+    "edges": 25404,
     "byNodeType": {
-      "Artifact": 1831,
+      "Artifact": 1834,
       "Command": 58,
-      "Commit": 1331,
+      "Commit": 1334,
       "Contract": 49,
-      "Document": 476,
+      "Document": 479,
       "Domain": 12,
       "ExternalDependency": 24,
       "HistoricalArtifact": 306,
@@ -65,19 +65,19 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1982,
-      "CHANGED": 10280,
-      "CONTAINS": 1851,
+      "CHANGED": 10290,
+      "CONTAINS": 1854,
       "DECLARES": 58,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 206,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1331,
+      "HAS_COMMIT": 1334,
       "IMPLEMENTS": 124,
       "IMPORTS": 1653,
       "INHERITS": 12,
-      "REFERENCES": 2899,
-      "REPRESENTS": 894,
+      "REFERENCES": 2922,
+      "REPRESENTS": 897,
       "TESTS": 586,
       "TRACKS": 126,
       "USES_TABLE": 1490
@@ -11769,6 +11769,29 @@
       "lastChangedCommit": "18738f0238abac2204c0d201ea4ce93acefcd781"
     },
     {
+      "key": "Artifact:docs/AGENT-MARKETING-PACK.md",
+      "type": "Artifact",
+      "id": "docs/AGENT-MARKETING-PACK.md",
+      "label": "AGENT-MARKETING-PACK.md",
+      "path": "docs/AGENT-MARKETING-PACK.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 9582,
+      "lines": 198,
+      "version": "02d5cd983d322369",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/AGENT-MARKETING-PACK.md",
+          "line": 1,
+          "version": "02d5cd983d322369"
+        }
+      ],
+      "lastChangedAt": "2026-09-06T13:21:37.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "8dfb1eaa724067d284abe509245270c0c19b0422"
+    },
+    {
       "key": "Artifact:docs/ART.md",
       "type": "Artifact",
       "id": "docs/ART.md",
@@ -11813,6 +11836,29 @@
       "lastChangedAt": "2026-08-17T20:54:47.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "8259956826c29cf70f4e87d445d758a915e6c836"
+    },
+    {
+      "key": "Artifact:docs/BANK-MARKETING-PACK.md",
+      "type": "Artifact",
+      "id": "docs/BANK-MARKETING-PACK.md",
+      "label": "BANK-MARKETING-PACK.md",
+      "path": "docs/BANK-MARKETING-PACK.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 8665,
+      "lines": 189,
+      "version": "576c322063e7f09f",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/BANK-MARKETING-PACK.md",
+          "line": 1,
+          "version": "576c322063e7f09f"
+        }
+      ],
+      "lastChangedAt": "2026-09-06T13:21:37.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "8dfb1eaa724067d284abe509245270c0c19b0422"
     },
     {
       "key": "Artifact:docs/BULLETPROOF.md",
@@ -12710,6 +12756,29 @@
       "lastChangedAt": "2026-08-24T18:49:55.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "dee7593a66b955d677656afab4516cb68edb918d"
+    },
+    {
+      "key": "Artifact:docs/PILLARS-MARKETING-PACK.md",
+      "type": "Artifact",
+      "id": "docs/PILLARS-MARKETING-PACK.md",
+      "label": "PILLARS-MARKETING-PACK.md",
+      "path": "docs/PILLARS-MARKETING-PACK.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 29959,
+      "lines": 592,
+      "version": "0fb53724684f6081",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/PILLARS-MARKETING-PACK.md",
+          "line": 1,
+          "version": "0fb53724684f6081"
+        }
+      ],
+      "lastChangedAt": "2026-09-06T13:21:37.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "8dfb1eaa724067d284abe509245270c0c19b0422"
     },
     {
       "key": "Artifact:docs/superpowers/plans/2026-08-23-discovery-integrity.md",
@@ -13823,20 +13892,20 @@
       "path": "MARKETING.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 21791,
-      "lines": 368,
-      "version": "f2263aaa8abf4be8",
+      "bytes": 23744,
+      "lines": 392,
+      "version": "7558a6bd9b6e0fae",
       "text": true,
       "provenance": [
         {
           "file": "MARKETING.md",
           "line": 1,
-          "version": "f2263aaa8abf4be8"
+          "version": "7558a6bd9b6e0fae"
         }
       ],
-      "lastChangedAt": "2026-08-29T09:06:03.000Z",
+      "lastChangedAt": "2026-09-06T13:21:37.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "0c9cc5ffc1e7d8bb506cb02b5ccdc282ba122687"
+      "lastChangedCommit": "8dfb1eaa724067d284abe509245270c0c19b0422"
     },
     {
       "key": "Artifact:NIGHT-SESSION-LOG.md",
@@ -32817,18 +32886,18 @@
       "extension": ".md",
       "bytes": 54690,
       "lines": 735,
-      "version": "3840cd265b9bb6ac",
+      "version": "1d374bf4ca0935da",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "3840cd265b9bb6ac"
+          "version": "1d374bf4ca0935da"
         }
       ],
-      "lastChangedAt": "2026-09-06T13:01:10.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "17a8853662a1bb3bc1093eefc3d783367b3379fa"
+      "lastChangedAt": "2026-09-06T13:21:37.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "8dfb1eaa724067d284abe509245270c0c19b0422"
     },
     {
       "key": "Artifact:src/accrual.js",
@@ -38197,20 +38266,20 @@
       "path": "test/docs.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 308828,
-      "lines": 4149,
-      "version": "a8630b378740044f",
+      "bytes": 308933,
+      "lines": 4151,
+      "version": "cd245aafb8065311",
       "text": true,
       "provenance": [
         {
           "file": "test/docs.js",
           "line": 1,
-          "version": "a8630b378740044f"
+          "version": "cd245aafb8065311"
         }
       ],
-      "lastChangedAt": "2026-09-06T13:01:10.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "17a8853662a1bb3bc1093eefc3d783367b3379fa"
+      "lastChangedAt": "2026-09-06T13:21:37.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "8dfb1eaa724067d284abe509245270c0c19b0422"
     },
     {
       "key": "Artifact:test/drop.js",
@@ -53186,6 +53255,22 @@
       ]
     },
     {
+      "key": "Commit:7911060b4ea1368fcbfef42f60e862b6ecb6c57a",
+      "type": "Commit",
+      "id": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a",
+      "label": "chore(knowledge): refresh generated artifacts for 17a88536",
+      "title": "chore(knowledge): refresh generated artifacts for 17a88536",
+      "date": "2026-09-06T13:02:06.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/7911060b4ea1368fcbfef42f60e862b6ecb6c57a",
+      "provenance": [
+        {
+          "commit": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/7911060b4ea1368fcbfef42f60e862b6ecb6c57a"
+        }
+      ]
+    },
+    {
       "key": "Commit:7911d7c691f5044de52e1a283df567dab7da4ffe",
       "type": "Commit",
       "id": "7911d7c691f5044de52e1a283df567dab7da4ffe",
@@ -55070,6 +55155,22 @@
         {
           "commit": "8dec3be36d234ca9e1ed9bd98d73af722392c6e0",
           "url": "https://github.com/OmertaDev/Omerta/commit/8dec3be36d234ca9e1ed9bd98d73af722392c6e0"
+        }
+      ]
+    },
+    {
+      "key": "Commit:8dfb1eaa724067d284abe509245270c0c19b0422",
+      "type": "Commit",
+      "id": "8dfb1eaa724067d284abe509245270c0c19b0422",
+      "label": "marketing: three packs for the pillars nothing had copy for",
+      "title": "marketing: three packs for the pillars nothing had copy for",
+      "date": "2026-09-06T13:21:37.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/8dfb1eaa724067d284abe509245270c0c19b0422",
+      "provenance": [
+        {
+          "commit": "8dfb1eaa724067d284abe509245270c0c19b0422",
+          "url": "https://github.com/OmertaDev/Omerta/commit/8dfb1eaa724067d284abe509245270c0c19b0422"
         }
       ]
     },
@@ -63314,6 +63415,22 @@
       ]
     },
     {
+      "key": "Commit:f439b9d004c4553272bb28cc55ea057a79cece9a",
+      "type": "Commit",
+      "id": "f439b9d004c4553272bb28cc55ea057a79cece9a",
+      "label": "Merge remote-tracking branch 'origin/main' into claude/marketing-materials-audit-56gsby",
+      "title": "Merge remote-tracking branch 'origin/main' into claude/marketing-materials-audit-56gsby",
+      "date": "2026-09-06T13:28:25.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f439b9d004c4553272bb28cc55ea057a79cece9a",
+      "provenance": [
+        {
+          "commit": "f439b9d004c4553272bb28cc55ea057a79cece9a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f439b9d004c4553272bb28cc55ea057a79cece9a"
+        }
+      ]
+    },
+    {
       "key": "Commit:f44970d3f12c967a23a5f2f58b2a9174ffac0c40",
       "type": "Commit",
       "id": "f44970d3f12c967a23a5f2f58b2a9174ffac0c40",
@@ -70180,6 +70297,22 @@
       ]
     },
     {
+      "key": "Document:docs/AGENT-MARKETING-PACK.md",
+      "type": "Document",
+      "id": "docs/AGENT-MARKETING-PACK.md",
+      "label": "docs/AGENT-MARKETING-PACK.md",
+      "documentType": "documentation",
+      "lines": 198,
+      "version": "02d5cd983d322369",
+      "provenance": [
+        {
+          "file": "docs/AGENT-MARKETING-PACK.md",
+          "line": 1,
+          "version": "02d5cd983d322369"
+        }
+      ]
+    },
+    {
       "key": "Document:docs/ART.md",
       "type": "Document",
       "id": "docs/ART.md",
@@ -70208,6 +70341,22 @@
           "file": "docs/AUDITS.md",
           "line": 1,
           "version": "3646a16c10c8836c"
+        }
+      ]
+    },
+    {
+      "key": "Document:docs/BANK-MARKETING-PACK.md",
+      "type": "Document",
+      "id": "docs/BANK-MARKETING-PACK.md",
+      "label": "docs/BANK-MARKETING-PACK.md",
+      "documentType": "documentation",
+      "lines": 189,
+      "version": "576c322063e7f09f",
+      "provenance": [
+        {
+          "file": "docs/BANK-MARKETING-PACK.md",
+          "line": 1,
+          "version": "576c322063e7f09f"
         }
       ]
     },
@@ -70288,6 +70437,22 @@
           "file": "docs/OMR-MARKETING-PACK.md",
           "line": 1,
           "version": "73a3152e009089a4"
+        }
+      ]
+    },
+    {
+      "key": "Document:docs/PILLARS-MARKETING-PACK.md",
+      "type": "Document",
+      "id": "docs/PILLARS-MARKETING-PACK.md",
+      "label": "docs/PILLARS-MARKETING-PACK.md",
+      "documentType": "documentation",
+      "lines": 592,
+      "version": "0fb53724684f6081",
+      "provenance": [
+        {
+          "file": "docs/PILLARS-MARKETING-PACK.md",
+          "line": 1,
+          "version": "0fb53724684f6081"
         }
       ]
     },
@@ -71049,13 +71214,13 @@
       "id": "MARKETING.md",
       "label": "MARKETING.md",
       "documentType": "documentation",
-      "lines": 368,
-      "version": "f2263aaa8abf4be8",
+      "lines": 392,
+      "version": "7558a6bd9b6e0fae",
       "provenance": [
         {
           "file": "MARKETING.md",
           "line": 1,
-          "version": "f2263aaa8abf4be8"
+          "version": "7558a6bd9b6e0fae"
         }
       ]
     },
@@ -72650,12 +72815,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 735,
-      "version": "3840cd265b9bb6ac",
+      "version": "1d374bf4ca0935da",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "3840cd265b9bb6ac"
+          "version": "1d374bf4ca0935da"
         }
       ]
     },
@@ -77590,6 +77755,9 @@
           "commit": "75e712807775da240e10e81821a298f98217aa89"
         },
         {
+          "commit": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a"
+        },
+        {
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
         },
         {
@@ -78061,6 +78229,9 @@
           "commit": "75e712807775da240e10e81821a298f98217aa89"
         },
         {
+          "commit": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a"
+        },
+        {
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
         },
         {
@@ -78530,6 +78701,9 @@
         },
         {
           "commit": "75e712807775da240e10e81821a298f98217aa89"
+        },
+        {
+          "commit": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a"
         },
         {
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
@@ -79076,6 +79250,9 @@
         },
         {
           "commit": "75e712807775da240e10e81821a298f98217aa89"
+        },
+        {
+          "commit": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a"
         },
         {
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
@@ -85642,12 +85819,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "17a8853662a1bb3bc1093eefc3d783367b3379fa",
-      "currentBranch": "main",
+      "revision": "f439b9d004c4553272bb28cc55ea057a79cece9a",
+      "currentBranch": "claude/marketing-materials-audit-56gsby",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 1831,
+      "currentArtifactCount": 1834,
       "provenance": [
         {
           "file": "README.md",
@@ -109579,13 +109756,13 @@
       "type": "TestSuite",
       "id": "test/docs.js",
       "label": "test/docs.js",
-      "lines": 4149,
-      "version": "a8630b378740044f",
+      "lines": 4151,
+      "version": "cd245aafb8065311",
       "provenance": [
         {
           "file": "test/docs.js",
           "line": 1,
-          "version": "a8630b378740044f"
+          "version": "cd245aafb8065311"
         }
       ]
     },
@@ -171208,6 +171385,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:7911060b4ea1368fcbfef42f60e862b6ecb6c57a",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7911060b4ea1368fcbfef42f60e862b6ecb6c57a",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7911060b4ea1368fcbfef42f60e862b6ecb6c57a",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7911060b4ea1368fcbfef42f60e862b6ecb6c57a",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:7911d7c691f5044de52e1a283df567dab7da4ffe",
       "to": "Artifact:omerta-contracts/reference/OmertaTradeFeeHook.sol",
       "provenance": {
@@ -177124,6 +177333,54 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "commit": "8dec3be36d234ca9e1ed9bd98d73af722392c6e0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8dfb1eaa724067d284abe509245270c0c19b0422",
+      "to": "Artifact:docs/AGENT-MARKETING-PACK.md",
+      "provenance": {
+        "commit": "8dfb1eaa724067d284abe509245270c0c19b0422"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8dfb1eaa724067d284abe509245270c0c19b0422",
+      "to": "Artifact:docs/BANK-MARKETING-PACK.md",
+      "provenance": {
+        "commit": "8dfb1eaa724067d284abe509245270c0c19b0422"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8dfb1eaa724067d284abe509245270c0c19b0422",
+      "to": "Artifact:docs/PILLARS-MARKETING-PACK.md",
+      "provenance": {
+        "commit": "8dfb1eaa724067d284abe509245270c0c19b0422"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8dfb1eaa724067d284abe509245270c0c19b0422",
+      "to": "Artifact:MARKETING.md",
+      "provenance": {
+        "commit": "8dfb1eaa724067d284abe509245270c0c19b0422"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8dfb1eaa724067d284abe509245270c0c19b0422",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "8dfb1eaa724067d284abe509245270c0c19b0422"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8dfb1eaa724067d284abe509245270c0c19b0422",
+      "to": "Artifact:test/docs.js",
+      "provenance": {
+        "commit": "8dfb1eaa724067d284abe509245270c0c19b0422"
       }
     },
     {
@@ -218015,9 +218272,27 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:docs/AGENT-MARKETING-PACK.md",
+      "provenance": {
+        "file": "docs/AGENT-MARKETING-PACK.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:docs/ART.md",
       "provenance": {
         "file": "docs/ART.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/BANK-MARKETING-PACK.md",
+      "provenance": {
+        "file": "docs/BANK-MARKETING-PACK.md",
         "line": 1
       }
     },
@@ -218369,6 +218644,15 @@
       "to": "Artifact:docs/OMR-MARKETING-PACK.md",
       "provenance": {
         "file": "docs/OMR-MARKETING-PACK.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/PILLARS-MARKETING-PACK.md",
+      "provenance": {
+        "file": "docs/PILLARS-MARKETING-PACK.md",
         "line": 1
       }
     },
@@ -252764,6 +253048,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:7911060b4ea1368fcbfef42f60e862b6ecb6c57a",
+      "provenance": {
+        "commit": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:7911d7c691f5044de52e1a283df567dab7da4ffe",
       "provenance": {
         "commit": "7911d7c691f5044de52e1a283df567dab7da4ffe"
@@ -253703,6 +253995,14 @@
       "to": "Commit:8dec3be36d234ca9e1ed9bd98d73af722392c6e0",
       "provenance": {
         "commit": "8dec3be36d234ca9e1ed9bd98d73af722392c6e0"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:8dfb1eaa724067d284abe509245270c0c19b0422",
+      "provenance": {
+        "commit": "8dfb1eaa724067d284abe509245270c0c19b0422"
       }
     },
     {
@@ -257823,6 +258123,14 @@
       "to": "Commit:f42f62d3f4e8f6763ca05b71df46d42d558dd02b",
       "provenance": {
         "commit": "f42f62d3f4e8f6763ca05b71df46d42d558dd02b"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:f439b9d004c4553272bb28cc55ea057a79cece9a",
+      "provenance": {
+        "commit": "f439b9d004c4553272bb28cc55ea057a79cece9a"
       }
     },
     {
@@ -268629,7 +268937,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 4089
+        "line": 4091
       }
     },
     {
@@ -268638,7 +268946,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 4090
+        "line": 4092
       }
     },
     {
@@ -268647,7 +268955,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 1130
+        "line": 1132
       }
     },
     {
@@ -268656,7 +268964,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 3953
+        "line": 3955
       }
     },
     {
@@ -268674,7 +268982,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 730
+        "line": 732
       }
     },
     {
@@ -268683,7 +268991,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 788
+        "line": 790
       }
     },
     {
@@ -293447,6 +293755,24 @@
     },
     {
       "type": "REFERENCES",
+      "from": "Artifact:docs/BANK-MARKETING-PACK.md",
+      "to": "Artifact:omerta-contracts/src/Alchemist.sol",
+      "provenance": {
+        "file": "docs/BANK-MARKETING-PACK.md",
+        "line": 11
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/BANK-MARKETING-PACK.md",
+      "to": "Artifact:omerta-contracts/src/Alchemist.sol",
+      "provenance": {
+        "file": "docs/BANK-MARKETING-PACK.md",
+        "line": 183
+      }
+    },
+    {
+      "type": "REFERENCES",
       "from": "Artifact:docs/BULLETPROOF.md",
       "to": "Artifact:public/index.html",
       "provenance": {
@@ -293767,6 +294093,51 @@
       "provenance": {
         "file": "docs/OMR-MARKETING-PACK.md",
         "line": 326
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/PILLARS-MARKETING-PACK.md",
+      "to": "Artifact:docs/AGENT-MARKETING-PACK.md",
+      "provenance": {
+        "file": "docs/PILLARS-MARKETING-PACK.md",
+        "line": 590
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/PILLARS-MARKETING-PACK.md",
+      "to": "Artifact:docs/BANK-MARKETING-PACK.md",
+      "provenance": {
+        "file": "docs/PILLARS-MARKETING-PACK.md",
+        "line": 591
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/PILLARS-MARKETING-PACK.md",
+      "to": "Artifact:docs/GAMEPLAY-MARKETING-PACK.md",
+      "provenance": {
+        "file": "docs/PILLARS-MARKETING-PACK.md",
+        "line": 3
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/PILLARS-MARKETING-PACK.md",
+      "to": "Artifact:docs/OMR-MARKETING-PACK.md",
+      "provenance": {
+        "file": "docs/PILLARS-MARKETING-PACK.md",
+        "line": 3
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/PILLARS-MARKETING-PACK.md",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "docs/PILLARS-MARKETING-PACK.md",
+        "line": 8
       }
     },
     {
@@ -297426,10 +297797,145 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:MARKETING.md",
-      "to": "Artifact:public/art/omr-vs-ohm.png",
+      "to": "Artifact:docs/AGENT-MARKETING-PACK.md",
       "provenance": {
         "file": "MARKETING.md",
-        "line": 277
+        "line": 205
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:MARKETING.md",
+      "to": "Artifact:docs/AGENT-MARKETING-PACK.md",
+      "provenance": {
+        "file": "MARKETING.md",
+        "line": 296
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:MARKETING.md",
+      "to": "Artifact:docs/BANK-MARKETING-PACK.md",
+      "provenance": {
+        "file": "MARKETING.md",
+        "line": 209
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:MARKETING.md",
+      "to": "Artifact:docs/BANK-MARKETING-PACK.md",
+      "provenance": {
+        "file": "MARKETING.md",
+        "line": 295
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:MARKETING.md",
+      "to": "Artifact:docs/GAMEPLAY-MARKETING-PACK.md",
+      "provenance": {
+        "file": "MARKETING.md",
+        "line": 293
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:MARKETING.md",
+      "to": "Artifact:docs/LAUNCH-TWEETS.md",
+      "provenance": {
+        "file": "MARKETING.md",
+        "line": 297
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:MARKETING.md",
+      "to": "Artifact:docs/OMR-MACHINE-CAMPAIGN.md",
+      "provenance": {
+        "file": "MARKETING.md",
+        "line": 292
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:MARKETING.md",
+      "to": "Artifact:docs/OMR-MARKETING-PACK.md",
+      "provenance": {
+        "file": "MARKETING.md",
+        "line": 292
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:MARKETING.md",
+      "to": "Artifact:docs/PILLARS-MARKETING-PACK.md",
+      "provenance": {
+        "file": "MARKETING.md",
+        "line": 201
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:MARKETING.md",
+      "to": "Artifact:docs/PILLARS-MARKETING-PACK.md",
+      "provenance": {
+        "file": "MARKETING.md",
+        "line": 203
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:MARKETING.md",
+      "to": "Artifact:docs/PILLARS-MARKETING-PACK.md",
+      "provenance": {
+        "file": "MARKETING.md",
+        "line": 207
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:MARKETING.md",
+      "to": "Artifact:docs/PILLARS-MARKETING-PACK.md",
+      "provenance": {
+        "file": "MARKETING.md",
+        "line": 213
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:MARKETING.md",
+      "to": "Artifact:docs/PILLARS-MARKETING-PACK.md",
+      "provenance": {
+        "file": "MARKETING.md",
+        "line": 215
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:MARKETING.md",
+      "to": "Artifact:docs/PILLARS-MARKETING-PACK.md",
+      "provenance": {
+        "file": "MARKETING.md",
+        "line": 218
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:MARKETING.md",
+      "to": "Artifact:docs/PILLARS-MARKETING-PACK.md",
+      "provenance": {
+        "file": "MARKETING.md",
+        "line": 220
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:MARKETING.md",
+      "to": "Artifact:docs/PILLARS-MARKETING-PACK.md",
+      "provenance": {
+        "file": "MARKETING.md",
+        "line": 294
       }
     },
     {
@@ -297438,7 +297944,16 @@
       "to": "Artifact:public/art/omr-vs-ohm.png",
       "provenance": {
         "file": "MARKETING.md",
-        "line": 287
+        "line": 301
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:MARKETING.md",
+      "to": "Artifact:public/art/omr-vs-ohm.png",
+      "provenance": {
+        "file": "MARKETING.md",
+        "line": 311
       }
     },
     {
@@ -303230,6 +303745,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Document:docs/AGENT-MARKETING-PACK.md",
+      "to": "Artifact:docs/AGENT-MARKETING-PACK.md",
+      "provenance": {
+        "file": "docs/AGENT-MARKETING-PACK.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Document:docs/ART.md",
       "to": "Artifact:docs/ART.md",
       "provenance": {
@@ -303243,6 +303767,15 @@
       "to": "Artifact:docs/AUDITS.md",
       "provenance": {
         "file": "docs/AUDITS.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/BANK-MARKETING-PACK.md",
+      "to": "Artifact:docs/BANK-MARKETING-PACK.md",
+      "provenance": {
+        "file": "docs/BANK-MARKETING-PACK.md",
         "line": 1
       }
     },
@@ -303288,6 +303821,15 @@
       "to": "Artifact:docs/OMR-MARKETING-PACK.md",
       "provenance": {
         "file": "docs/OMR-MARKETING-PACK.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/PILLARS-MARKETING-PACK.md",
+      "to": "Artifact:docs/PILLARS-MARKETING-PACK.md",
+      "provenance": {
+        "file": "docs/PILLARS-MARKETING-PACK.md",
         "line": 1
       }
     },
@@ -309912,7 +310454,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 4089
+        "line": 4091
       }
     },
     {
@@ -309921,7 +310463,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 4090
+        "line": 4092
       }
     },
     {
@@ -309930,7 +310472,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 1130
+        "line": 1132
       }
     },
     {
@@ -309939,7 +310481,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 3953
+        "line": 3955
       }
     },
     {
@@ -309957,7 +310499,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 730
+        "line": 732
       }
     },
     {
@@ -309966,7 +310508,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 788
+        "line": 790
       }
     },
     {

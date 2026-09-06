@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `17a8853662a1`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `f439b9d004c4`.
 
 ## Repository
 
@@ -9,11 +9,11 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1331 |
+| Commits in clone | 1334 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-06 — Audit packet rebuilt at the release head, and two assertions that were functions of the calendar (#173) |
+| Latest commit | 2026-09-06 — Merge remote-tracking branch 'origin/main' into claude/marketing-materials-audit-56gsby |
 
 ## Commit authors
 
@@ -21,9 +21,9 @@
 |---|---:|
 | crvydev | 647 |
 | OmertaDev | 462 |
-| Claude | 156 |
+| Claude | 158 |
 | CRVYDEV | 41 |
-| github-actions[bot] | 24 |
+| github-actions[bot] | 25 |
 | claude[bot] | 1 |
 
 ## Historical hotspots
@@ -33,15 +33,15 @@
 | [CLAUDE.md](../../CLAUDE.md) | 514 | yes |
 | [public/index.html](../../public/index.html) | 401 | yes |
 | [src/server.js](../../src/server.js) | 352 | yes |
-| [SPEC.md](../../SPEC.md) | 281 | yes |
+| [SPEC.md](../../SPEC.md) | 282 | yes |
 | [schema.sql](../../schema.sql) | 274 | yes |
 | [BALANCE.md](../../BALANCE.md) | 254 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 174 | yes |
-| knowledge/generated/github-history.md | 154 | historical |
-| knowledge/generated/graph-summary.md | 154 | historical |
-| knowledge/generated/graph.json | 154 | historical |
-| knowledge/generated/inventory.md | 154 | historical |
+| knowledge/generated/github-history.md | 155 | historical |
+| knowledge/generated/graph-summary.md | 155 | historical |
+| knowledge/generated/graph.json | 155 | historical |
+| knowledge/generated/inventory.md | 155 | historical |
 | [package.json](../../package.json) | 146 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 123 | yes |
@@ -67,7 +67,7 @@
 | [src/casino.js](../../src/casino.js) | 46 | yes |
 | [test/economy.js](../../test/economy.js) | 46 | yes |
 | [src/business.js](../../src/business.js) | 43 | yes |
-| [test/docs.js](../../test/docs.js) | 41 | yes |
+| [test/docs.js](../../test/docs.js) | 42 | yes |
 | [docs/AUDITS.md](../../docs/AUDITS.md) | 41 | yes |
 | [src/chain.js](../../src/chain.js) | 38 | yes |
 
