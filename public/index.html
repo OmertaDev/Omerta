@@ -1521,7 +1521,7 @@
     <button class="act" id="btn-jump" aria-label="Jump to a screen" title="jump to any screen (press /)"><svg class="ic" aria-hidden="true"><use href="#i-glass"/></svg></button>
     <button class="act" id="btn-phone" aria-label="Open phone and messages" title="the cell — your inbox + messages" style="position:relative"><svg class="ic" aria-hidden="true"><use href="#i-phone"/></svg><span id="phone-badge" class="hidden"></span></button>
     <button class="act hidden" id="btn-alerts" aria-label="Enable notifications" title="get a phone alert when something happens to you while you're away"><svg class="ic" aria-hidden="true"><use href="#i-bell"/></svg></button>
-    <button class="act" id="btn-sfx" aria-label="Toggle sound effects" title="the soundtrack — clicks, the register, the stings. Tap to mute."></button>
+    <button class="act" id="btn-sfx" aria-label="Toggle sound" title="the soundtrack — clicks, the register, the stings, and the bed under each part of town. Tap to mute."></button>
     <button class="help" id="btn-help" type="button" aria-label="Open help and glossary" title="what does all this mean?">?</button>
     <button class="act" id="btn-logout" title="sign out of this account">sign out</button>
   </div>
@@ -1904,23 +1904,51 @@
   })();
   // THE AMBIENT ENGINE — a low generated bed under each part of town (rain over the streets, brushed
   // jazz in the den, a foghorn at the docks), crossfaded when you move. Same switch as the SFX (one
-  // "game feel" toggle), gated behind the first gesture (autoplay policy), paused with a hidden tab,
-  // and silence — never an error — when a bed didn't ship or won't play.
+  // "game feel" toggle), gated behind the first gesture (autoplay policy), and silence — never an
+  // error — when a bed didn't ship or won't play.
+  //
+  // EVERY element that is ever started goes in `live`, and its fade handle lives ON the element
+  // (a._fade) rather than in one module-scoped slot. That is the whole correctness argument, and it
+  // is what a tester's phone found: with a shared handle, start()'s fade-IN cleared the outgoing
+  // bed's fade-OUT before it had ticked once, so the only code that ever called pause() never ran
+  // and a looping <audio> was orphaned on every move — unreachable from `cur`, so neither the mute
+  // button nor a hidden tab could stop it, and the rain played on after the app was closed.
+  // `_kill` is a hard backstop no later crossfade can clear: a fade is a nicety, the pause is a
+  // contract. MUTE and the page going away halt everything NOW — somebody who taps mute wants
+  // silence now, not in 900ms — while an ordinary move keeps the graceful crossfade.
   const AMBIENT = (() => {
     const TAB_BED = { den: 'bed-den', speakeasy: 'bed-speakeasy', port: 'bed-docks', law: 'bed-law', pen: 'bed-pen', portfolio: 'bed-legit' };
     const GROUP_BED = { streets: 'bed-streets', earners: 'bed-streets', city: 'bed-streets', start: 'bed-streets',
       vice: 'bed-den', blood: 'bed-law', family: 'bed-family', legit: 'bed-legit' };
-    let cur = null, curKey = null, wantKey = null, gestured = false, fadeT = null;
+    const live = new Set();
+    let cur = null, curKey = null, wantKey = null, gestured = false;
     const VOL = 0.11;
-    const fadeTo = (a, target, ms, done) => { clearInterval(fadeT); const step = (target - a.volume) / (ms / 60);
-      fadeT = setInterval(() => { try { a.volume = Math.max(0, Math.min(1, a.volume + step)); } catch {}
-        if ((step > 0 && a.volume >= target) || (step < 0 && a.volume <= Math.max(0, target))) { clearInterval(fadeT); done?.(); } }, 60); };
-    const stop = () => { if (cur) { const dying = cur; fadeTo(dying, 0, 900, () => { dying.pause(); dying.src = ''; }); cur = null; curKey = null; } };
+    // stop it, strip it, forget it — removeAttribute rather than src='', which asks the browser to
+    // fetch the page URL as audio.
+    const halt = (a) => { if (!a) return; live.delete(a);
+      try { clearInterval(a._fade); clearTimeout(a._kill); a.pause(); a.removeAttribute('src'); a.load?.(); } catch {} };
+    const silence = () => { for (const a of [...live]) halt(a); cur = null; curKey = null; };
+    const fadeTo = (a, target, ms, done) => {
+      clearInterval(a._fade);
+      const step = (target - a.volume) / (ms / 60);
+      if (!step) { done?.(); return; }  // already there — neither exit test can ever be true, so never spin
+      a._fade = setInterval(() => {
+        try { a.volume = Math.max(0, Math.min(1, a.volume + step)); } catch {}
+        if ((step > 0 && a.volume >= target) || (step < 0 && a.volume <= Math.max(0, target))) { clearInterval(a._fade); done?.(); }
+      }, 60);
+    };
+    const stop = () => {
+      if (!cur) return;
+      const dying = cur; cur = null; curKey = null;
+      dying._kill = setTimeout(() => halt(dying), 1200);  // the contract; only halt() clears it
+      fadeTo(dying, 0, 900, () => halt(dying));
+    };
     const start = (key) => {
       const a = new Audio(`/art/hype/${key}.m4a`);
       a.loop = true; a.preload = 'auto'; a.volume = 0;
+      live.add(a);
       const p = a.play?.();
-      p?.then?.(() => fadeTo(a, VOL, 1400))?.catch?.(() => { /* pre-gesture — retried on the next pointerdown */ });
+      p?.then?.(() => fadeTo(a, VOL, 1400))?.catch?.(() => { halt(a); /* pre-gesture — retried on the next pointerdown */ });
       cur = a; curKey = key;
     };
     const sync = () => {
@@ -1930,8 +1958,15 @@
       stop(); if (key) start(key);
     };
     document.addEventListener('pointerdown', () => { if (!gestured) { gestured = true; sync(); } }, { capture: true, passive: true });
-    document.addEventListener('visibilitychange', () => { if (document.hidden) cur?.pause(); else sync(); });
-    return { set(tabId, grp) { wantKey = TAB_BED[tabId] || GROUP_BED[grp] || null; sync(); }, sync };
+    // A hidden tab holds NOTHING — not a paused element, not a pending fade. Coming back is a fresh
+    // start (the bed is in cache), and the guarantee is worth more than the 1.4s fade-in.
+    document.addEventListener('visibilitychange', () => { if (document.hidden) silence(); else sync(); });
+    // The app going away for good: an installed PWA swiped shut fires these and may never fire
+    // visibilitychange, which is how a bed outlived "I closed everything on my phone".
+    addEventListener('pagehide', silence);
+    addEventListener('freeze', silence);
+    addEventListener('pageshow', () => sync());
+    return { set(tabId, grp) { wantKey = TAB_BED[tabId] || GROUP_BED[grp] || null; sync(); }, sync, silence };
   })();
   const sfx = (n) => SFX.play(n);
   // every button press gets the felt-damped click (pointerdown so it lands on the GESTURE — which
@@ -5377,7 +5412,7 @@
   { const sb = $('#btn-sfx');
     const paint = () => { sb.innerHTML = SFX.enabled() ? ic('sndon') : ic('sndoff'); };
     paint();
-    sb.onclick = () => { const on = SFX.toggle(); paint(); AMBIENT.sync(); if (on) sfx('ok'); toast(on ? 'the city has a soundtrack again' : 'silence — the professional’s choice', false); }; }
+    sb.onclick = () => { const on = SFX.toggle(); paint(); if (on) { AMBIENT.sync(); sfx('ok'); } else AMBIENT.silence();  /* mute is IMMEDIATE — a fade is a nicety, silence is what was asked for */ toast(on ? 'the city has a soundtrack again' : 'silence — the professional’s choice', false); }; }
   $('#glossary-close').onclick = () => $('#glossary').classList.add('hidden');
   $('#glossary-tour').onclick = () => { $('#glossary').classList.add('hidden'); openTour(); };
   $('#glossary').onclick = (e) => { if (e.target.id === 'glossary') $('#glossary').classList.add('hidden'); };
