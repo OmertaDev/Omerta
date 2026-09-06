@@ -901,6 +901,31 @@ const SCENERY_WAIVED = {
     + `   - ${inverted.join('\n   - ')}`);
   console.log(`✓ all ${scheduled.size} guarded worker schedulers are registered before they are first run`);
 
+  // AND THE ONE JOB WHOSE COST IS LINEAR IN THE POPULATION STAYS OFF THAT TICK. safe() isolates a
+  // job's ERRORS but never its LATENCY, so a rollover folded back inline holds every alarm on the
+  // hourly tick behind it -- the §10.4 drift monitor, the archiver watchdog, the oracle keeper --
+  // for ~2 minutes at 50,000 players (tools/workercost.js), once a season, silently. Nothing else
+  // here catches that: the isolation ledger is indifferent to WHICH clock a safe() job sits on, and
+  // the scheduler floor is >= 2, so deleting the season's own schedule and inlining the call passes
+  // both. Measured: that exact mutation ran green before this check existed.
+  {
+    const ti = src.search(/const tick = async \(\) =>/);
+    assert(ti >= 0, 'the worker tick could not be located -- the extractor is broken, not the code');
+    const tickBody = decomment(bodyOf(src, ti));
+    assert(tickBody.length > 2000,
+      `the tick body read only ${tickBody.length} chars -- the extractor is broken, not the code; a `
+      + 'short slice reads exactly like a tick that calls nothing');
+    assert(/\brunSeasonRollover\s*\(/.test(decomment(src)),
+      'the worker never calls runSeasonRollover at all -- either the season rollover has been deleted '
+      + 'or this check has stopped seeing it; it is vacuous rather than clean');
+    assert(!/\brunSeasonRollover\s*\(/.test(tickBody),
+      'the season rollover is called INSIDE the hourly tick. It is the one job whose cost grows with\n'
+      + '      the PLAYERBASE rather than the ledger (~2m at 50,000, tools/workercost.js), and safe()\n'
+      + '      isolates its errors but not its latency -- so on rollover night every alarm on this tick,\n'
+      + '      the \u00a710.4 drift monitor included, is that late. Give it its own clock (guardedSeasonTick).');
+    console.log('\u2713 the season rollover -- the one job linear in the population -- runs off the alarm tick');
+  }
+
   // AND THE WATCHDOG MUST NAME WHERE IT IS STUCK. Ordering keeps the schedule alive; this is the other
   // half — what the operator reads at 3am. Measured in production 2026-08-29: the heartbeat (job 1) and
   // the fair-draw stamp (job 2) both landed and nothing among the other 119 ever did, so "a tick has
@@ -943,8 +968,12 @@ const SCENERY_WAIVED = {
     // nothing forever. Production supplied the missing half: `/health` said `stale: true` for 14.6
     // hours and nobody was polling it, so the remedy cannot be a log line. Bounded, the same hang
     // costs one restart. The window is asserted as a RELATION rather than a literal, because both
-    // ends are real: too short and a legitimately long tick (the season rollover measures ~2 min at
-    // 50,000 players) is killed on a capacity problem; too long and the remedy never arrives.
+    // ends are real: too short and a legitimately long tick is killed on a capacity problem; too long
+    // and the remedy never arrives. The citation moved when the season rollover did: it is the one job
+    // whose cost is LINEAR IN THE POPULATION (~2m at 50,000 players) and it runs on its OWN clock now,
+    // outside this watchdog's scope — the watchdog wraps `tick()` alone. What bounds THIS tick is the
+    // §10.4 invariants sweep (47 -> 87ms, tools/workercost.js), and it grows with the LEDGER rather
+    // than the playerbase, so a long-lived server is the case to re-measure before moving this.
     // BOUNDED to the watchdog's own callback, deliberately. A slice to end-of-file reads any later
     // `process.exit(1)` in worker.js (there is one at the boot-failure branch) and the claim below
     // passes with the watchdog's own exit deleted — measured: mutation M1 SURVIVED exactly that way.
@@ -966,8 +995,10 @@ const SCENERY_WAIVED = {
     const boundMin = Number(period[1]) * Number(warns[1]);
     assert(boundMin >= 15 && boundMin <= 60,
       `the hung-tick restart fires after ${boundMin}m. Under 15m it can kill a legitimately long tick `
-      + '(the season rollover measures ~2m at 50,000 players — tools/workercost.js); over 60m the '
-      + 'remedy arrives too late to be one. Re-measure the longest job before moving this.');
+      + '(the longest job on it is the §10.4 invariants sweep, 87ms at 3,000 players and growing with '
+      + 'the LEDGER — tools/workercost.js; the season rollover, which grows with the POPULATION, runs '
+      + 'on its own clock and is not inside this watchdog); over 60m the remedy arrives too late to be '
+      + 'one. Re-measure the longest job on THIS tick before moving this.');
     console.log(`✓ the worker watchdog names the job it is stuck in, across ${seen} un-nested safe() `
       + `jobs, and restarts the process after ${boundMin}m`);
   }
