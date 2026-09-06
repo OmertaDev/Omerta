@@ -1032,6 +1032,142 @@ for (const vp of VIEWPORTS) {
   await browser.close();
 }
 
+// ── check J: THE AMBIENT ENGINE HOLDS NOTHING IT CANNOT STOP ────────────────
+// A tester's phone found this one: "I've closed everything on my phone and it still runs the rain
+// and street sounds". The ambient beds are real <audio loop> elements, and the engine crossfades
+// them when you move — so every leaked element is a soundtrack nothing in the app can reach.
+//
+// Ground truth is a FakeAudio the probe installs on `window`, and it has to be: the whole client
+// script is an IIFE, so MOTION, AMBIENT and every other top-level name is function-scoped and
+// unreachable from page.evaluate — a probe reading one of them measures `undefined` forever and
+// reads exactly like a clean walk. Stubbing Audio is also what stops this going vacuous — headless
+// Chromium may carry no AAC decoder, so a real .m4a would never reach `playing` and the walk would
+// prove nothing — while the tab system, the mute button and the browser's own event plumbing all
+// stay real.
+{
+  const browser = await chromium.launch({ executablePath: exe });
+  const ctx = await browser.newContext({ viewport: { width: 375, height: 667 }, isMobile: true, hasTouch: true, locale: 'en-US' });
+  const page = await ctx.newPage();
+  const errs = [];
+  page.on('pageerror', (e) => errs.push(String(e).split('\n')[0]));
+  const vp = { w: 375, h: 667 };
+
+  // `new Audio` appears exactly once in the client, inside the ambient engine — so this touches
+  // nothing else. Installed before any client code runs.
+  await page.addInitScript(() => {
+    window.__beds = [];
+    window.Audio = class {
+      constructor(src) { this.src = src; this.loop = false; this.preload = 'none'; this.volume = 1; this.paused = true; window.__beds.push(this); }
+      play() { this.paused = false; return Promise.resolve(); }
+      pause() { this.paused = true; }
+      load() {}
+      removeAttribute(k) { if (k === 'src') this.src = ''; }
+    };
+  });
+
+  await page.goto(BASE, { waitUntil: 'domcontentloaded' });
+  await page.click('#btn-guest');
+  await page.waitForSelector('#screen-create:not(.hidden)', { timeout: 20000 });
+  await page.fill('#new-name', 'Ambient Probe');
+  await page.click('#btn-create');
+  await page.waitForSelector('#screen-main:not(.hidden)', { timeout: 20000 });
+  await page.evaluate(() => {
+    localStorage.setItem('omerta_tour2', '1'); localStorage.setItem('omerta_welcomed', '1');
+    localStorage.setItem('omerta_alltabs', '1');
+    localStorage.removeItem('omerta_sfx');   // the soundtrack is on by default; make sure of it
+    document.querySelectorAll('.modal-bg:not(.hidden)').forEach((m) => m.classList.add('hidden'));
+  });
+
+  const count = () => page.evaluate(() => ({
+    created: window.__beds.length,
+    playing: window.__beds.filter((a) => !a.paused).length,
+  }));
+
+  // Walk the town for real — a click is the gesture the autoplay policy wants, and each group
+  // pulls a different bed, which is exactly the crossfade the leak rode in on.
+  const groups = await page.locator('#grouprail [data-group]').evaluateAll((els) => els.map((e) => e.dataset.group));
+  if (!groups.length) fail('(ambient)', vp, 'no group rail buttons found — the ambient walk below covers nothing');
+
+  // The precondition, asserted DIRECTLY rather than through a proxy: a bed has actually started.
+  // Two things have to have happened — the bed manifest (/v1/art/motion) landed, and the first
+  // gesture reached the engine — and either failing leaves every count below a truthful zero
+  // about nothing, so the message names both.
+  if (groups.length) await page.click(`#grouprail [data-group="${groups[0]}"]`);
+  const bedsReady = await page.waitForFunction(() => window.__beds.length > 0, null, { timeout: 15000 })
+    .then(() => true).catch(() => false);
+  if (!bedsReady) fail('(ambient)', vp, 'no bed ever started — either the manifest (/v1/art/motion) never landed or the first gesture never reached the engine; either way this walk proves nothing');
+
+  if (bedsReady) {
+    // Fast, so the outgoing bed is still fading when the next one starts — which is exactly the
+    // crossfade the leak rode in on.
+    for (const g of groups) {
+      await page.click(`#grouprail [data-group="${g}"]`);
+      await page.waitForTimeout(250);
+    }
+    // Past the engine's own hard stop (1200ms) so a lingering element is a leak, not a fade.
+    await page.waitForTimeout(1600);
+
+    const walked = await count();
+    if (walked.created < 2) {
+      fail('(ambient)', vp, `the walk started only ${walked.created} bed(s) — nothing crossfaded, so a leak that only happens on a crossfade could not have shown up`);
+    }
+    // The leak property, and deliberately NOT "exactly one": not every part of town has a bed (the
+    // raw console has none), so a walk may legitimately end in silence. What can never be true is
+    // more than one — the room you are standing in has at most one bed, and anything else is an
+    // orphan nothing in the app can reach.
+    if (walked.playing > 1) {
+      fail('(ambient)', vp, `after walking ${groups.length} parts of town, ${walked.playing} beds are playing at once — a room has at most one, so the rest are orphans nothing in the app can reach (created ${walked.created})`);
+    }
+
+    // Now stand somewhere that HAS a bed, so the hide/show/mute legs below have a soundtrack to
+    // stop. Which groups carry a bed is the client's own map and this probe deliberately does not
+    // restate it — it finds one by asking, so a remapped bed cannot silently make the rest vacuous.
+    let bedded = null;
+    for (const g of groups) {
+      await page.click(`#grouprail [data-group="${g}"]`);
+      await page.waitForTimeout(1600);
+      if ((await count()).playing === 1) { bedded = g; break; }
+    }
+    if (!bedded) fail('(ambient)', vp, 'no part of town started a bed that stayed playing — the hide, return and mute checks below have nothing to stop, so they prove nothing');
+
+    // Backgrounding the tab. The pollcost precedent: redefine document.hidden and dispatch the
+    // real event, rather than a bare visibilitychange the client would read as still-visible.
+    await page.evaluate(() => {
+      Object.defineProperty(document, 'hidden', { configurable: true, get: () => true });
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
+    await page.waitForTimeout(300);
+    const hidden = await count();
+    if (hidden.playing !== 0) {
+      fail('(ambient)', vp, `${hidden.playing} bed(s) still playing with the tab hidden — this is the reported bug: "I've closed everything on my phone and it still runs the rain"`);
+    }
+
+    await page.evaluate(() => {
+      Object.defineProperty(document, 'hidden', { configurable: true, get: () => false });
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
+    await page.waitForTimeout(400);
+    const back = await count();
+    if (back.playing !== 1) {
+      fail('(ambient)', vp, `coming back to the tab left ${back.playing} bed(s) playing, not 1 — the soundtrack should return with you`);
+    }
+
+    // Mute is the button a player reaches for when they want it to stop. It stops NOW.
+    await page.click('#btn-sfx');
+    await page.waitForTimeout(150);
+    const muted = await count();
+    if (muted.playing !== 0) {
+      fail('(ambient)', vp, `${muted.playing} bed(s) still playing after tapping mute — somebody who taps mute wants silence now, not after a fade`);
+    }
+    console.log(`   ambient-leak check done (${walked.created} beds started, ${walked.playing} playing after the walk, ${hidden.playing} after hide, ${muted.playing} after mute)`);
+  }
+
+  if (errs.length) fail('(ambient)', vp, `${errs.length} page error(s): ${errs.slice(0, 3).join(' | ')}`);
+  screensChecked++;
+  await browser.close();
+}
+
+
 await app.close();
 
 if (failures.length) {
