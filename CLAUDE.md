@@ -18542,3 +18542,70 @@ this reason (the 2026-07-25 production incident, four of one player's requests q
 the client was fixed to remove.** Serializing is therefore not the loosen-until-green antipattern: the
 probe's job is to observe what a PLAYER sees, and a player's browser serializes. A permanent `why` field
 now names the server's own reason, so a 4xx there can never again read as a task that is not ready.
+
+**THE BED THAT OUTLIVED THE APP — a leaked looping `<audio>` per crossfade (tester-reported
+2026-09-06: "Now the sounds won't cancel. I've closed everything on my phone and it still runs the rain
+and street sounds").** The report also carried its own workaround — *"Got it to stop after clicking
+pause on the soundtrack and opening back discord"* — and that detail is the diagnosis: an OS
+media-session pause reaches the ONE element the browser considers current, which is exactly the symptom
+of an element the app itself can no longer reach.
+**THE FIRST PLACE TO LOOK IS THE WRONG ONE, and ruling it out is half the finding.** `THE SOUNDTRACK`
+(task #307) is WebAudio **synthesized** — seven one-shot voices through a compressor, **not one of which
+can loop** — so the tester's symptom cannot come from it at any volume. The layer that leaks is THE
+AMBIENT ENGINE beside it (`public/index.html`), which is the only `new Audio` in the entire client:
+real `<audio loop>` beds streaming per part of town (`bed-streets` rain, `bed-den` brushed jazz,
+`bed-docks` a foghorn), crossfaded on every tab/group change.
+**TWO INDEPENDENT LEAK PATHS, and the first one fires on EVERY move.** `fadeTo` kept a **single
+module-scoped `fadeT` handle shared by every element** and opened with `clearInterval(fadeT)`; `sync()`
+runs `stop(); if (key) start(key);` **synchronously**; `stop()` nulled `cur` and armed a 900 ms fade-out
+whose completion callback was **the only code in the module that ever called `pause()`**; and `start()`'s
+fade-IN then **cleared the dying element's interval before it had ticked once**. So every crossfade left
+an element at volume 0.113 with `loop = true`, still playing, **unreachable from `cur`** — which is why
+neither the mute button nor the visibility handler could stop it, and why the rain kept running. The
+second path needs no crossfade at all: at `step === 0` neither branch of the termination test can ever
+be true, so the interval spins forever and `done` never fires. On top of that, `visibilitychange` did
+only `cur?.pause()` (orphans play on through a hidden tab) and there were **no `pagehide`/`freeze`
+listeners at all** — the iOS/PWA paths that fire when an installed app is swiped shut, which is the
+literal *"closed everything on my phone"*.
+**REPRODUCED BEFORE IT WAS FIXED, AND MEASURED AFTER.** Four crossfades in a headless driver:
+`ORPHANS 3 · STILL PLAYING after MUTE 3 · after HIDDEN 3 · after CLOSE 3 — REPRODUCED: the rain is
+still running.` After: **0 / 0 / 0 / 0 — `silent.`**
+**THE FIX IS THREE INDEPENDENT MECHANISMS, deliberately**: every element that is ever started goes in a
+`live` Set and its fade handle lives **ON the element** (`a._fade`) rather than in one module slot;
+`_kill` is a hard `setTimeout` backstop no later crossfade can clear (**a fade is a nicety, the pause is
+a contract**); and `halt()`/`silence()` reach every element rather than only `cur`, so mute and the page
+going away stop everything **NOW** — somebody who taps mute wants silence now, not in 900 ms — while an
+ordinary move keeps the graceful crossfade. `stop it, strip it, forget it` uses `removeAttribute('src')`
+rather than `src=''`, which asks the browser to fetch the page URL as audio. **A hidden tab now holds
+NOTHING** — not a paused element, not a pending fade — because the reported bug is precisely "audio
+survived backgrounding"; coming back is a fresh start off the HTTP-cached bed, and that guarantee is
+worth more than the 1.4 s fade-in it costs.
+**THE GUARD IS `tools/mobile.js` CHECK J, and its ground truth had to be found the hard way: THE WHOLE
+CLIENT SCRIPT IS AN IIFE.** `MOTION`, `AMBIENT` and every other top-level name are function-scoped, so
+`typeof MOTION` inside `page.evaluate` returns `'undefined'` — an undeclared name, no throw — and a wait
+on it is **false forever**. The first cut of this guard rested on exactly that and hung; worse, the same
+scoping silently disabled its `AMBIENT._live` cross-check (`typeof … → 'undefined' → null →` assertion
+skipped), which is **the vacuity the guard's own comment was warning about**. So the probe installs a
+**FakeAudio on `window`** via `addInitScript` — reachable where an IIFE local is not — and the dead
+`_live` accessor was removed rather than left as unreachable production surface. Stubbing `Audio` is
+also what stops the walk going vacuous a second way: headless Chromium may carry no AAC decoder, so a
+real `.m4a` would never reach `playing` and the walk would prove nothing, while the tab system, the mute
+button and the browser's own event plumbing all stay real.
+**AND THE FIRST ASSERTION WAS A FIXTURE ERROR OF THE RECORDED CLASS.** It demanded *exactly one* bed
+playing after the walk and failed on the fixed tree — because **the rail has 9 groups and only 8 carry a
+bed**: the raw console has none and is **LAST**, so a walk that ends there correctly ends in silence.
+A deterministic assertion resting on a precondition nobody guaranteed. Fixed by asserting the property
+that is actually true — **more than one bed playing is impossible**, since the room you are standing in
+has at most one and the rest are orphans nothing in the app can reach — plus an empirical loop that
+FINDS a bedded group by asking, so a remapped bed cannot silently make the hide/return/mute legs
+vacuous; the harness deliberately does not restate the client's own `GROUP_BED` map. The hide leg
+dispatches a genuine `document.hidden` redefinition + event (the `tools/pollcost.js` precedent — a bare
+`visibilitychange` reads as still-visible).
+**MUTATION-VERIFIED BY REVERTING THE ENGINE WHOLE**, because the fix is three mechanisms and taking down
+only one can leave another covering the same assertion: five distinct named failures, including the
+orphan count (*"after walking 9 parts of town, 4 beds are playing at once … created 5"*) and the report
+verbatim (*"8 bed(s) still playing with the tab hidden — this is the reported bug"*), plus 0-after-mute
+and the return leg. **One syntax trap re-paid**: a `//` comment appended inside a ONE-LINE arrow body
+swallows the rest of the line — closing braces included — and surfaces as a `SyntaxError` far from the
+edit; `/* … */`, and `node --check` on the extracted script after every client edit. No `src/` change,
+no §10.4 surface (a client audio graph moves no value), no lever.
