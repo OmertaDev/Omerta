@@ -290,6 +290,11 @@ for (const vp of VIEWPORTS) {
       // (contention is the retryable mapping), and `(ob.tasks||[]).find(...)` on an error body reads
       // exactly like "the task is not ready" — which is how this arrived as a mystery instead of a
       // reason. Serial is not a loosened check: it is what a player's browser actually does.
+      // Both statuses and lc_crime ride with the verdict: this check once failed reporting only
+      // `firstJobReady:false` beside a coach label that PROVES the server had the crime, and a
+      // refused /v1/onboard and a genuinely false flag read identically without them. lc_crime is
+      // monotonic, so `obStatus 200` with `lcCrime >= 1` and the flag false is a real server
+      // disagreement — a finding — while a 4xx is a request that never landed.
       const played = await page.evaluate(async () => {
         const h = { authorization: 'Bearer ' + localStorage.omerta_token };
         const meR = await fetch('/v1/me', { headers: h });
@@ -301,6 +306,7 @@ for (const vp of VIEWPORTS) {
           coachTab: m.coach?.tab || '',
           // name the server's own reason: a 4xx here must never read as "the task is not ready"
           why: obR.ok ? null : `/v1/onboard ${obR.status} ${ob?.error || ''}`.trim(),
+          meStatus: meR.status, obStatus: obR.status, lcCrime: m.lc_crime ?? null,
           tourOpen: !document.querySelector('#welcome')?.classList.contains('hidden') };
       });
       if (!played.firstJobReady || played.coach !== 'Claim your first-job reward'
@@ -336,10 +342,13 @@ for (const vp of VIEWPORTS) {
           await page.waitForTimeout(900);
           const claimed = await page.evaluate(async () => {
             const h = { authorization: 'Bearer ' + localStorage.omerta_token };
-            const [meR, obR] = await Promise.all([fetch('/v1/me', { headers: h }), fetch('/v1/onboard', { headers: h })]);
-            const m = (await meR.json())?.character || {}, ob = await obR.json();
+            const meR = await fetch('/v1/me', { headers: h });          // serialized, as `api()` does
+            const m = (await meR.json())?.character || {};
+            const obR = await fetch('/v1/onboard', { headers: h });
+            const ob = await obR.json();
             return { claimed: !!(ob.tasks || []).find((x) => x.id === 'ob_crime')?.claimed,
-              coach: m.coach?.label || '', coachTab: m.coach?.tab || '' };
+              coach: m.coach?.label || '', coachTab: m.coach?.tab || '',
+              meStatus: meR.status, obStatus: obR.status, obError: ob.error || '' };
           });
           if (!claimed.claimed || claimed.coach !== 'Get to level 5' || claimed.coachTab !== 'streets')
             fail('(first reward)', vp, `claim did not resume the level-5 road — ${JSON.stringify(claimed)}`);

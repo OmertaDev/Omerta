@@ -2631,13 +2631,23 @@
     // THE CREW (the account-level social pact) — the lifecycle toasts. `crew` is a string status here,
     // distinct from the hired-guns branches above where it's a member count.
     if (body && typeof body.crew === 'string') {
-      const m = { formed: 'the crew is yours — put some names in', joined: `you're in — ${txt(body.name || 'the crew')}`,
-        left: 'you walked — the pact\'s off', invited: `word put in for ${txt(body.to || 'them')}`,
+      // The exit line has always said "the pact's off" and the two ENTRY lines never said it was on:
+      // founding or joining silently binds a five-verb non-aggression pact (no fire, jump, hired gun,
+      // shank or contract between crewmates), and a player learnt it the first time the server refused.
+      // The seat count is stated with it because /v1/rules.crew is the KITCHEN crew — the social cap
+      // reaches only /v1/crew, which describe() cannot see, so it rides on the reply.
+      const pact = 'no shooting, jumping, hired guns, shanks or contracts between you';
+      const seats = body.members != null && body.max != null ? ` (${body.members}/${body.max})` : '';
+      const m = { formed: `the crew is yours${seats} — put some names in. The pact binds from here: ${pact}`,
+        joined: `you're in — ${txt(body.name || 'the crew')}${seats}. The pact binds now: ${pact}`,
+        left: 'you walked — the pact\'s off', invited: `word put in for ${txt(body.to || 'them')}${seats}`
+          + (body.pending != null ? ` — ${body.pending} invite${body.pending === 1 ? '' : 's'} out` : ''),
         kicked: `${txt(body.who || 'he')}'s out of the crew`, declined: 'passed on it', pulled: '',
         recruiting: 'the doors are open — players can ask to join', closed: 'recruiting closed',
         requested: `you asked to join ${txt(body.to || 'the crew')} — the boss decides`,
         took_in: `${txt(body.who || 'they')} joined the crew`, turned_away: 'you turned them away',
-        target: `the crew's after ${txt(body.target || 'the mark')} — chip in on the hit`, target_cleared: 'the hit is called off',
+        target: `the crew's after ${txt(body.target || 'the mark')} — ${body.kind === 'hospitalize' ? 'a hospitalize pot' : 'a KILL contract'}. Chip in on the hit`,
+        target_cleared: 'the hit is called off',
         objective_claimed: `you took your cut of the week's job — $${fmt(body.reward || 0)}` };
       if (m[body.crew] !== undefined && m[body.crew] !== '') return `\u{1F465} ${m[body.crew]}`;
     }

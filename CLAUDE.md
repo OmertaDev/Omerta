@@ -5982,6 +5982,35 @@ one: GUARANTEE the precondition (future-date the clock before the refused probe)
 number. §10.4 untouched by construction — the same accrual rows land, one transaction earlier.
 SPEC.md D1 is ADDRESSED; the mutations are recorded in the commit.
 
+**THE MOBILE FLAKE COULD NOT NAME ITS OWN CAUSE — the first-action check, instrumented (2026-09-06).**
+CI went red on `mobile` at 320x568 with a message that says everything except what happened:
+`(first action): visible crime did not hand the player back to the ready reward —
+{"firstJobReady":false,"coach":"Claim your first-job reward",...}`. **Those two fields contradict each
+other**: the coach rung that fired (`game.js:1501`) requires `lc_crime >= 1 && !onboard.ob_crime`, and
+`onboardBoard`'s `ready` for `ob_crime` is the SAME predicate on the SAME row (`growth.js:282`) — so the
+server plainly HAD the crime and the board said it did not. **A refused `/v1/onboard` and a genuinely
+false flag read IDENTICALLY**, because the probe captured no HTTP status: *a failure that names the wrong
+thing is barely better than no failure*, and a **flaky** red is worse than a steady one, because it is
+what teaches people that red means nothing.
+**MEASURED BEFORE ANYTHING WAS CHANGED, and the measurement WEAKENED the leading hypothesis** rather
+than confirming it: a 60-iteration probe of the exact parallel pair against a booted server came back
+**0/60 bad**, and `lc_crime` is monotonic (`+= 1` in the success branch only, never reset), so a stale
+or reset counter is ruled out. So this ships as an INSTRUMENT plus an ALIGNMENT, not as a claimed fix.
+**(1) CAPTURE THE STATUS** — both evaluates now carry `meStatus`, `obStatus`, the task count, any
+`error` field and `lc_crime` itself, so the next occurrence DECIDES it: `obStatus != 200` is the
+request; `obStatus 200` with `lcCrime >= 1` and `ready` false is a real server disagreement and a
+genuine finding. **(2) SERIALIZE THE TWO READS** — they are two authed reads of ONE account, and the
+real client queues exactly these on a promise chain (`api()`) **because same-account calls serialize on
+the character row at the database and firing them together makes each wait holding a pooled
+connection**; the harness's raw `Promise.all` bypassed the product's own discipline. Both sites fixed,
+and the class swept: a scan of `tools/` found no other concurrent authed pair.
+**HONEST SCOPE, stated rather than smoothed: this ships with NO mutation kill**, because the property it
+improves — a failure naming its cause — manifests only ON failure, and asserting the shape of a
+harness's own failure string would be noise. The verification is that nothing broke (**mobile 171/171
+green, four consecutive clean runs locally, CI green on both jobs**) plus the reasoning that the
+serialization matches a documented product invariant. Four green runs after two reds is weak evidence
+and is recorded as weak evidence.
+
 ## Sensitive design notes
 *These are standing PRODUCT rules. They bind whatever else is true, and several of them exist
 because breaking one is very hard to walk back.*
@@ -14424,6 +14453,50 @@ every harvest fee books a bad amount. The name is corrected and the crossing is 
 sharp case a type comparison cannot see — a **same-typed adjacent swap** (`Bonded` has six adjacent
 non-indexed `uint256`) — fails by name instead of waiting for the next hand pass.
 
+**PLAY WAVE 81 — THE PACT WAS NAMED ON THE WAY OUT AND NOT ON THE WAY IN (2026-08-30).** Check 14
+(THE SILENCE LEDGER) proves statically that no act()-pressed handler is MUTE, and it is structurally
+blind to the class that is every tester complaint this project has ever had: a line that is FLUENT and
+simply leaves a TERM off (the pad, the nut, the Port lane). So this wave drove undriven pressed routes
+hunting withheld terms rather than silence. **The measurement had to be INSTRUMENTED rather than
+regexed** — a static scan of the ledger reports far more undriven routes than exist, because dynamic
+rows resolve their URL at drive time and are invisible to it — so the driven set was dumped from the RUN
+itself: **290 pressed routes, 100 of them never driven.** Three findings in the crew cluster, each
+reproduced before it was called anything.
+**THE HEADLINE: founding or joining a crew silently binds a FIVE-VERB NON-AGGRESSION PACT and neither
+entry line said so, while the EXIT line IN THE SAME MAP has always read *"you walked — the pact's
+off"*.** `fire`, `jump`, `npcHit`, `shank` and `postBounty` all refuse between crewmates (five sites,
+each keyed on `h.owned.crewId === h.victimOwned.crewId` with the rat/WANTED exceptions), so a player
+learnt the rule the first time the server refused them — and the game had already proven it knew how to
+say it, at the one moment the pact ENDS. Neither entry stated the **seat cap** either, and that one
+could not have been fixed on the client: **`/v1/rules.crew` is the KITCHEN crew**, and the social cap
+reaches only `/v1/crew` (`crewBoard.maxMembers`), which `describe()` never sees — so it rides on the
+reply (the `crewNextCost`/`hunterSearchMs` discipline). **THE CREW HIT never named its KIND**:
+`setCrewTarget` has been sending `kill` | `hospitalize` all along and the line rendered neither, on the
+thing the whole crew is being asked to fund — client-only, the field was in hand at the moment it was
+withheld. And the **invite** stated neither the seats left nor the outstanding-invite count, both of
+which the server enforces and already had computed (`n`, `pending`) — the withheld-figure shape at its
+plainest.
+**THE GUARD IS DRIVEN, NEVER SYNTHETIC** — wave 65's lesson applied from the start: every claim here is
+about a field the SERVER now sends, and **a literal passes straight through the mutation that stops it
+being sent**, so each assertion proves the reply CARRIES the field and then that the line NAMES it.
+**Both crew-hit kinds are driven**, because a line that reads correctly for one and not the other is
+exactly what a single drive cannot see (`setCrewTarget` DELETEs any prior target first, so both fit one
+fixture). Five mutations, **five distinct named kills** (the founding reply's shape dropped; the
+founding line reverted to *"the crew is yours — put some names in"*; the join reply's seats dropped —
+caught at the joiner-counts-themselves assertion, since `n` is the count BEFORE the insert; the invite
+reply's seats and pending dropped; the hit reverting to *"chip in on the hit"* with no kind).
+**A FIXTURE BUG WAS DIAGNOSED BEFORE IT WAS BLAMED ON THE GAME:** the invite drive refused
+`{"error":"name"}` — `mk11` returns `{token, id}` and carries **no name**, while the route reads
+`req.body?.name`, so the fixture reads the street back off `/v1/me` now. *Check before reporting*, and
+the wave number was measured too (`grep -on "WAVE [0-9]*"` — 80 was the real maximum; "wave 68" is
+already taken by the hired-gun block). **Zero SQL moved in `src/`** (checked with a diff filter, not
+assumed — the three server edits are return literals), so the real-Postgres gates do not apply. **The
+driven-action figure does NOT move**: like the Pen block, this one drives on its own tokens rather than
+adding rows to `ACTIONS`, so `describedCount` is untouched — stated because a figure that cannot move is
+exactly the kind that gets restated wrongly (my own first cut of this entry claimed 270 → 274).
+**A clean lens is recorded because a sweep that publishes only its hits cannot be audited:** jump (both
+intents), bust, the streak claim, the LFG toggle, the referral claim and seven refusals all read well.
+
 **THE PLAY SESSION — the wire could not say what happened (2026-08-19).** Not a red team: a real
 play session, driven through real routes and a real browser as a person would, plus the class sweep
 it turned into. Every finding was reproduced against a running engine before it was called one.
@@ -18609,3 +18682,63 @@ and the return leg. **One syntax trap re-paid**: a `//` comment appended inside 
 swallows the rest of the line — closing braces included — and surfaces as a `SyntaxError` far from the
 edit; `/* … */`, and `node --check` on the extracted script after every client edit. No `src/` change,
 no §10.4 surface (a client audio graph moves no value), no lever.
+**THE PACKET REBUILT AT THE RELEASE HEAD, AND TWO ASSERTIONS THAT WERE FUNCTIONS OF THE CALENDAR
+(2026-09-06).** `CHAIN-DEPLOY.md` names one prerequisite for gate 2 — a packet frozen at the head an
+auditor will actually review — and the existing one carries its own banner saying it is a
+**SUPERSEDED SNAPSHOT ... retained as historical audit evidence** with instructions to *rebuild and
+freeze a new packet at the release head*. So the work is a NEW file beside it, never an edit: its
+figures ARE the evidence, and rewriting them destroys the record it is kept for. **`CHAIN-AUDIT-PACKET-O1.md`**
+(374 lines) is that packet, and its §0 exists because the last one taught the lesson: it names the
+**COMPILER** beside every figure — head `b0a214ca`, **forge v1.7.1** (now pinned), solc 0.8.26 /
+optimizer 800 / cancun, `[fuzz] runs = 512`, invariants at forge DEFAULTS — because **a test COUNT is
+a version fingerprint** and the old packet's 387/22 is unreproducible without knowing what compiled
+it (an invariant-only suite counts as ONE test under the aggregated model and as N under 1.7.1). The
+authoritative figure is **896 tests across 43 suites, 0 failed, 19 parameterised 512-run fuzz**,
+measured from the CI job at that exact head rather than a local run — deliberately, since a local run
+would be under an unnamed compiler, which is the exact ambiguity the refresh exists to end. Three
+documents had disagreed (CHAIN-DEPLOY 305/305, the frozen packet 387/22, LAUNCH-READINESS 531/531
+across 27), and all three now point at one number with its provenance attached. **§1a is a
+contract→suite MAP rather than CHAIN-DEPLOY's true-but-unusable "every contract carries tests"**,
+because **suite name ≠ contract name**: 19 of 31 contracts have no dedicated `<Name>.t.sol`, so a
+reviewer scoping from filenames would conclude two thirds of the batch is untested.
+**THE GUARD IS DELIBERATELY STRICTER THAN THE FROZEN ONE, and the asymmetry is the point.** The old
+packet is held only to ITSELF (it describes a tree that no longer exists — holding it to today's
+would destroy it). The live packet is held to the **TREE**, because it IS the current engagement
+scope: "batch, not dribble" means an auditor scopes from that table, so a contract missing from it is
+a contract nobody reviews. `test/docs.js` walks `omerta-contracts/src`, takes one name per file (its
+`contract`, or its `interface` where no contract is declared) and fails on a missing name, a phantom
+name, a count mismatch, a disagreeing repeated figure, a forge version that drifts from the
+`foundry-toolchain` pin in `.github/workflows/forge.yml`, or any gate doc that stops pointing at the
+new packet — with six anti-vacuity floors, since an extractor that has stopped reading the tree reads
+exactly like a clean sweep. Ten mutations, ten distinct named kills.
+**AND THE FULL SUITE WAS RED ON TWO ASSERTIONS THAT WERE FUNCTIONS OF THE DATE**, in a file this
+drop does not touch — the ground-rule-8 shape, since a suite that passes for months and turns red on a
+calendar boundary reads exactly like a flake and gets re-run. Both are `test/stockballotv2.js`, both
+the recorded class (*a deterministic assertion resting on a probabilistic — here temporal —
+precondition*). (1) The no-valid-candidate close wrote `deactivated_at=now()` against a ballot closing
+at the literal `2026-09-05T00:00:00Z`, and `src/commission.js` rules — correctly — that
+`deactivated_at >= closes_at` means the asset was still live when the ballot shut, so it stays
+**eligible**: the moment real-now passed the close instant the asset qualified and the close returned
+`closed_ready`. (2) The dissolution block took a **RAW** `pool.connect()`, so `removeMember` read real
+`now()` — and it deletes a ticker vote only while its ballot day is still open (`closes_at > now()`), a
+closed day's vote being deliberately FROZEN — so the vote was preserved and the count read 1 against an
+expected 0. Both are fixed by GUARANTEEING the precondition, never by weakening the assertion, and
+**M1b is the measurement that matters**: a literal placed AFTER the close reproduces the failure
+identically, which proves the mechanism is the timestamp **RELATION** rather than `now()` itself.
+**PR #171 DIAGNOSED AND FIXED THE SAME TWO INDEPENDENTLY, and on the merge I took THEIRS and dropped
+mine** — not as a tie-break but because theirs is better: the file already carries a
+`withClockedClient(pool, wall, fn)` helper used thirty-one times, and my version reached for an inline
+`clockedPool(pool, WALL).connect()` with a hand-written `finally { client.release(); }`, which is the
+private-copy class this project spent a session collapsing sixty-nine instances of. *When two correct
+fixes meet, the one that uses the shared helper wins, and the duplicate goes.* What survives from this
+side is the SWEEP, which the other pass did not run (the RT#7 discipline — a class fixed where it was
+found and not taken to its edge): 639 `now()` uses across `test/` and `tools/` is far too broad to
+review and most have nothing to drift against, so the tractable population is a `now()` WRITE sharing a
+block with a fixed ISO instant — **4 sites, and the other two are safe by construction**
+(`rwaregistrylifecycle`'s `closed_at` is never compared; `stockdeliver`'s block asserts explicitly that
+*age does not affect* the outcome; `rwaroutes` and `stockcatalogv2` compute `now() ± interval`,
+relative to themselves). One trap re-paid: the first reproduction attempt used `sed` to insert a quoted
+timestamp into a **single-quoted JavaScript string**, which produced
+`SyntaxError: missing ) after argument list` — so both directions exited 1 for a reason other than the
+one under test, and *a mutation that does not apply reads exactly like a fix that holds*. Every edit
+since goes through a python heredoc that asserts its own anchor landed first.
