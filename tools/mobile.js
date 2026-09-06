@@ -281,13 +281,24 @@ for (const vp of VIEWPORTS) {
       } finally {
         Math.random = random;
       }
+      // Two authed reads of the SAME account. The real client queues these on a promise chain
+      // (`api()`), because same-account calls serialize on the character row at the database and
+      // firing them together makes each wait holding a pooled connection. A raw Promise.all here
+      // bypassed the product's own discipline — so read them the way the client does, one after the
+      // other. And capture the STATUS of each: this check once failed reporting only
+      // `firstJobReady:false` beside a coach label that proves the server had the crime, which is a
+      // failure that cannot name its own cause — a refused /v1/onboard and a genuinely false flag
+      // read identically. They do not any more.
       const played = await page.evaluate(async () => {
         const h = { authorization: 'Bearer ' + localStorage.omerta_token };
-        const [meR, obR] = await Promise.all([fetch('/v1/me', { headers: h }), fetch('/v1/onboard', { headers: h })]);
+        const meR = await fetch('/v1/me', { headers: h });
+        const obR = await fetch('/v1/onboard', { headers: h });
         const m = (await meR.json())?.character || {}, ob = await obR.json();
         const firstJob = (ob.tasks || []).find((t) => t.id === 'ob_crime');
         return { firstJobReady: !!(firstJob?.ready || firstJob?.claimed), coach: m.coach?.label || '',
           coachTab: m.coach?.tab || '',
+          meStatus: meR.status, obStatus: obR.status, obTasks: (ob.tasks || []).length,
+          obError: ob.error || '', lcCrime: m.lc_crime ?? null,
           tourOpen: !document.querySelector('#welcome')?.classList.contains('hidden') };
       });
       if (!played.firstJobReady || played.coach !== 'Claim your first-job reward'
@@ -323,10 +334,12 @@ for (const vp of VIEWPORTS) {
           await page.waitForTimeout(900);
           const claimed = await page.evaluate(async () => {
             const h = { authorization: 'Bearer ' + localStorage.omerta_token };
-            const [meR, obR] = await Promise.all([fetch('/v1/me', { headers: h }), fetch('/v1/onboard', { headers: h })]);
+            const meR = await fetch('/v1/me', { headers: h });          // serialized, as `api()` does
+            const obR = await fetch('/v1/onboard', { headers: h });
             const m = (await meR.json())?.character || {}, ob = await obR.json();
             return { claimed: !!(ob.tasks || []).find((x) => x.id === 'ob_crime')?.claimed,
-              coach: m.coach?.label || '', coachTab: m.coach?.tab || '' };
+              coach: m.coach?.label || '', coachTab: m.coach?.tab || '',
+              meStatus: meR.status, obStatus: obR.status, obError: ob.error || '' };
           });
           if (!claimed.claimed || claimed.coach !== 'Get to level 5' || claimed.coachTab !== 'streets')
             fail('(first reward)', vp, `claim did not resume the level-5 road — ${JSON.stringify(claimed)}`);
