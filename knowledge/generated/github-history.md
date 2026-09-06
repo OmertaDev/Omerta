@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `fa47955a72e6`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `9bbf1c2a59cf`.
 
 ## Repository
 
@@ -9,11 +9,11 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1356 |
+| Commits in clone | 1358 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-06 — fix(mobile): the first-action probe raced itself, and pg-mem said so |
+| Latest commit | 2026-09-06 — record THE SIX in the log, and a sentence it made false |
 
 ## Commit authors
 
@@ -23,15 +23,15 @@
 | OmertaDev | 460 |
 | Claude | 163 |
 | CRVYDEV | 41 |
+| omerta | 23 |
 | github-actions[bot] | 23 |
-| omerta | 21 |
 | claude[bot] | 1 |
 
 ## Historical hotspots
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| [CLAUDE.md](../../CLAUDE.md) | 517 | yes |
+| [CLAUDE.md](../../CLAUDE.md) | 518 | yes |
 | [public/index.html](../../public/index.html) | 401 | yes |
 | [src/server.js](../../src/server.js) | 352 | yes |
 | [SPEC.md](../../SPEC.md) | 282 | yes |
@@ -39,10 +39,10 @@
 | [BALANCE.md](../../BALANCE.md) | 254 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 178 | yes |
-| knowledge/generated/github-history.md | 163 | historical |
-| knowledge/generated/graph-summary.md | 163 | historical |
-| knowledge/generated/graph.json | 163 | historical |
-| knowledge/generated/inventory.md | 163 | historical |
+| knowledge/generated/github-history.md | 164 | historical |
+| knowledge/generated/graph-summary.md | 164 | historical |
+| knowledge/generated/graph.json | 164 | historical |
+| knowledge/generated/inventory.md | 164 | historical |
 | [package.json](../../package.json) | 147 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 123 | yes |
