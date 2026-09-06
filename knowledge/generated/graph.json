@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "56206d1a470459f7fbb94f61d617929475076aff",
+  "sourceRevision": "be85d0149f5bc456f1eb4ad5ff466a505bd8ea0b",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,14 +43,14 @@
     ]
   },
   "census": {
-    "nodes": 5693,
-    "edges": 25279,
+    "nodes": 5699,
+    "edges": 25312,
     "byNodeType": {
-      "Artifact": 1830,
+      "Artifact": 1831,
       "Command": 58,
-      "Commit": 1327,
+      "Commit": 1331,
       "Contract": 49,
-      "Document": 475,
+      "Document": 476,
       "Domain": 12,
       "ExternalDependency": 24,
       "HistoricalArtifact": 306,
@@ -65,19 +65,19 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1982,
-      "CHANGED": 10222,
-      "CONTAINS": 1850,
+      "CHANGED": 10239,
+      "CONTAINS": 1851,
       "DECLARES": 58,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 206,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1327,
+      "HAS_COMMIT": 1331,
       "IMPLEMENTS": 124,
       "IMPORTS": 1651,
       "INHERITS": 12,
-      "REFERENCES": 2882,
-      "REPRESENTS": 893,
+      "REFERENCES": 2892,
+      "REPRESENTS": 894,
       "TESTS": 586,
       "TRACKS": 126,
       "USES_TABLE": 1490
@@ -10918,6 +10918,29 @@
       "lastChangedCommit": "3cf45f7bb8a683f41586487961db185326d99395"
     },
     {
+      "key": "Artifact:CHAIN-AUDIT-PACKET-O1.md",
+      "type": "Artifact",
+      "id": "CHAIN-AUDIT-PACKET-O1.md",
+      "label": "CHAIN-AUDIT-PACKET-O1.md",
+      "path": "CHAIN-AUDIT-PACKET-O1.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 30344,
+      "lines": 375,
+      "version": "8363a94f6f593965",
+      "text": true,
+      "provenance": [
+        {
+          "file": "CHAIN-AUDIT-PACKET-O1.md",
+          "line": 1,
+          "version": "8363a94f6f593965"
+        }
+      ],
+      "lastChangedAt": "2026-09-06T05:45:06.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "98ecebe6a7a2f7b8257739360b8025e0a5b71f7d"
+    },
+    {
       "key": "Artifact:CHAIN-AUDIT-PACKET.md",
       "type": "Artifact",
       "id": "CHAIN-AUDIT-PACKET.md",
@@ -10925,20 +10948,20 @@
       "path": "CHAIN-AUDIT-PACKET.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 25699,
-      "lines": 317,
-      "version": "74fa3b56ac7c4d57",
+      "bytes": 26040,
+      "lines": 322,
+      "version": "a73e635ffc4e11c6",
       "text": true,
       "provenance": [
         {
           "file": "CHAIN-AUDIT-PACKET.md",
           "line": 1,
-          "version": "74fa3b56ac7c4d57"
+          "version": "a73e635ffc4e11c6"
         }
       ],
-      "lastChangedAt": "2026-08-30T15:07:40.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b0a214cabab9a6fd301844d88f088bd17884f4b5"
+      "lastChangedAt": "2026-09-06T05:45:06.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "98ecebe6a7a2f7b8257739360b8025e0a5b71f7d"
     },
     {
       "key": "Artifact:CHAIN-DEPLOY.md",
@@ -10948,20 +10971,20 @@
       "path": "CHAIN-DEPLOY.md",
       "kind": "operations",
       "extension": ".md",
-      "bytes": 206673,
-      "lines": 2001,
-      "version": "92d38ae51609d78f",
+      "bytes": 207131,
+      "lines": 2006,
+      "version": "46a25e1ab7728c54",
       "text": true,
       "provenance": [
         {
           "file": "CHAIN-DEPLOY.md",
           "line": 1,
-          "version": "92d38ae51609d78f"
+          "version": "46a25e1ab7728c54"
         }
       ],
-      "lastChangedAt": "2026-08-29T01:27:22.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "847991f714ef7f9d3f135b8f2eb8ebe5c3eb1cd8"
+      "lastChangedAt": "2026-09-06T05:45:06.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "98ecebe6a7a2f7b8257739360b8025e0a5b71f7d"
     },
     {
       "key": "Artifact:CLAUDE.md",
@@ -10971,20 +10994,20 @@
       "path": "CLAUDE.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 1778391,
-      "lines": 18421,
-      "version": "46b57bafb8fd0544",
+      "bytes": 1784291,
+      "lines": 18482,
+      "version": "b817d217fccda0db",
       "text": true,
       "provenance": [
         {
           "file": "CLAUDE.md",
           "line": 1,
-          "version": "46b57bafb8fd0544"
+          "version": "b817d217fccda0db"
         }
       ],
-      "lastChangedAt": "2026-09-05T21:09:41.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "56206d1a470459f7fbb94f61d617929475076aff"
+      "lastChangedAt": "2026-09-06T05:45:06.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "98ecebe6a7a2f7b8257739360b8025e0a5b71f7d"
     },
     {
       "key": "Artifact:content/packs/bad-batch/pack.json",
@@ -13708,20 +13731,20 @@
       "path": "LAUNCH-READINESS.md",
       "kind": "operations",
       "extension": ".md",
-      "bytes": 18221,
-      "lines": 283,
-      "version": "2371a971860789bd",
+      "bytes": 18486,
+      "lines": 286,
+      "version": "0b46fcfd2893763c",
       "text": true,
       "provenance": [
         {
           "file": "LAUNCH-READINESS.md",
           "line": 1,
-          "version": "2371a971860789bd"
+          "version": "0b46fcfd2893763c"
         }
       ],
-      "lastChangedAt": "2026-08-27T13:58:07.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9ea7377b01e2ae29df861880728a76a14455117a"
+      "lastChangedAt": "2026-09-06T05:45:06.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "98ecebe6a7a2f7b8257739360b8025e0a5b71f7d"
     },
     {
       "key": "Artifact:LAUNCH.md",
@@ -32794,18 +32817,18 @@
       "extension": ".md",
       "bytes": 54690,
       "lines": 735,
-      "version": "175c1dde2badaa5d",
+      "version": "3840cd265b9bb6ac",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "175c1dde2badaa5d"
+          "version": "3840cd265b9bb6ac"
         }
       ],
-      "lastChangedAt": "2026-09-05T21:09:41.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "56206d1a470459f7fbb94f61d617929475076aff"
+      "lastChangedAt": "2026-09-06T05:45:06.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "98ecebe6a7a2f7b8257739360b8025e0a5b71f7d"
     },
     {
       "key": "Artifact:src/accrual.js",
@@ -38174,20 +38197,20 @@
       "path": "test/docs.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 301058,
-      "lines": 4038,
-      "version": "dbf9a5f63f53590b",
+      "bytes": 308828,
+      "lines": 4149,
+      "version": "a8630b378740044f",
       "text": true,
       "provenance": [
         {
           "file": "test/docs.js",
           "line": 1,
-          "version": "dbf9a5f63f53590b"
+          "version": "a8630b378740044f"
         }
       ],
-      "lastChangedAt": "2026-09-03T14:14:16.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "5083748e6f5f2358440706241711e34991dbf088"
+      "lastChangedAt": "2026-09-06T05:45:06.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "98ecebe6a7a2f7b8257739360b8025e0a5b71f7d"
     },
     {
       "key": "Artifact:test/drop.js",
@@ -40278,9 +40301,9 @@
           "version": "6edd2428ca1b3208"
         }
       ],
-      "lastChangedAt": "2026-09-05T21:09:41.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "56206d1a470459f7fbb94f61d617929475076aff"
+      "lastChangedAt": "2026-09-06T05:45:06.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "98ecebe6a7a2f7b8257739360b8025e0a5b71f7d"
     },
     {
       "key": "Artifact:test/stockcatalog.js",
@@ -45195,6 +45218,22 @@
       ]
     },
     {
+      "key": "Commit:1e2877d495df94ee632afa5719513625b1f1b2ed",
+      "type": "Commit",
+      "id": "1e2877d495df94ee632afa5719513625b1f1b2ed",
+      "label": "chore(knowledge): refresh generated artifacts for 98ecebe6",
+      "title": "chore(knowledge): refresh generated artifacts for 98ecebe6",
+      "date": "2026-09-06T05:45:46.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/1e2877d495df94ee632afa5719513625b1f1b2ed",
+      "provenance": [
+        {
+          "commit": "1e2877d495df94ee632afa5719513625b1f1b2ed",
+          "url": "https://github.com/OmertaDev/Omerta/commit/1e2877d495df94ee632afa5719513625b1f1b2ed"
+        }
+      ]
+    },
+    {
       "key": "Commit:1e32720202120fad86bb38313e65f198cc81df43",
       "type": "Commit",
       "id": "1e32720202120fad86bb38313e65f198cc81df43",
@@ -49815,6 +49854,22 @@
         {
           "commit": "4f894c57ab4040adb460a0b8394e92a5fbc13cf0",
           "url": "https://github.com/OmertaDev/Omerta/commit/4f894c57ab4040adb460a0b8394e92a5fbc13cf0"
+        }
+      ]
+    },
+    {
+      "key": "Commit:4f9bf08bbdbbb7222cb68244f81e792f7eacaafa",
+      "type": "Commit",
+      "id": "4f9bf08bbdbbb7222cb68244f81e792f7eacaafa",
+      "label": "chore(knowledge): refresh generated artifacts for 56206d1a",
+      "title": "chore(knowledge): refresh generated artifacts for 56206d1a",
+      "date": "2026-09-05T21:10:31.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/4f9bf08bbdbbb7222cb68244f81e792f7eacaafa",
+      "provenance": [
+        {
+          "commit": "4f9bf08bbdbbb7222cb68244f81e792f7eacaafa",
+          "url": "https://github.com/OmertaDev/Omerta/commit/4f9bf08bbdbbb7222cb68244f81e792f7eacaafa"
         }
       ]
     },
@@ -56027,6 +56082,22 @@
       ]
     },
     {
+      "key": "Commit:98ecebe6a7a2f7b8257739360b8025e0a5b71f7d",
+      "type": "Commit",
+      "id": "98ecebe6a7a2f7b8257739360b8025e0a5b71f7d",
+      "label": "audit packet rebuilt at the release head, and two assertions that were functions of the calendar",
+      "title": "audit packet rebuilt at the release head, and two assertions that were functions of the calendar",
+      "date": "2026-09-06T05:45:06.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/98ecebe6a7a2f7b8257739360b8025e0a5b71f7d",
+      "provenance": [
+        {
+          "commit": "98ecebe6a7a2f7b8257739360b8025e0a5b71f7d",
+          "url": "https://github.com/OmertaDev/Omerta/commit/98ecebe6a7a2f7b8257739360b8025e0a5b71f7d"
+        }
+      ]
+    },
+    {
       "key": "Commit:99439d4c633a14dcdf11854903d92ea79abbb12a",
       "type": "Commit",
       "id": "99439d4c633a14dcdf11854903d92ea79abbb12a",
@@ -59335,6 +59406,22 @@
         {
           "commit": "be5876e40097937725bc188fff915e337d4f69d1",
           "url": "https://github.com/OmertaDev/Omerta/commit/be5876e40097937725bc188fff915e337d4f69d1"
+        }
+      ]
+    },
+    {
+      "key": "Commit:be85d0149f5bc456f1eb4ad5ff466a505bd8ea0b",
+      "type": "Commit",
+      "id": "be85d0149f5bc456f1eb4ad5ff466a505bd8ea0b",
+      "label": "Merge origin/main: take main's calendar fix, keep the O1 audit packet",
+      "title": "Merge origin/main: take main's calendar fix, keep the O1 audit packet",
+      "date": "2026-09-06T05:53:58.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/be85d0149f5bc456f1eb4ad5ff466a505bd8ea0b",
+      "provenance": [
+        {
+          "commit": "be85d0149f5bc456f1eb4ad5ff466a505bd8ea0b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/be85d0149f5bc456f1eb4ad5ff466a505bd8ea0b"
         }
       ]
     },
@@ -69965,18 +70052,34 @@
       ]
     },
     {
+      "key": "Document:CHAIN-AUDIT-PACKET-O1.md",
+      "type": "Document",
+      "id": "CHAIN-AUDIT-PACKET-O1.md",
+      "label": "CHAIN-AUDIT-PACKET-O1.md",
+      "documentType": "documentation",
+      "lines": 375,
+      "version": "8363a94f6f593965",
+      "provenance": [
+        {
+          "file": "CHAIN-AUDIT-PACKET-O1.md",
+          "line": 1,
+          "version": "8363a94f6f593965"
+        }
+      ]
+    },
+    {
       "key": "Document:CHAIN-AUDIT-PACKET.md",
       "type": "Document",
       "id": "CHAIN-AUDIT-PACKET.md",
       "label": "CHAIN-AUDIT-PACKET.md",
       "documentType": "documentation",
-      "lines": 317,
-      "version": "74fa3b56ac7c4d57",
+      "lines": 322,
+      "version": "a73e635ffc4e11c6",
       "provenance": [
         {
           "file": "CHAIN-AUDIT-PACKET.md",
           "line": 1,
-          "version": "74fa3b56ac7c4d57"
+          "version": "a73e635ffc4e11c6"
         }
       ]
     },
@@ -69986,13 +70089,13 @@
       "id": "CHAIN-DEPLOY.md",
       "label": "CHAIN-DEPLOY.md",
       "documentType": "operations",
-      "lines": 2001,
-      "version": "92d38ae51609d78f",
+      "lines": 2006,
+      "version": "46a25e1ab7728c54",
       "provenance": [
         {
           "file": "CHAIN-DEPLOY.md",
           "line": 1,
-          "version": "92d38ae51609d78f"
+          "version": "46a25e1ab7728c54"
         }
       ]
     },
@@ -70002,13 +70105,13 @@
       "id": "CLAUDE.md",
       "label": "CLAUDE.md",
       "documentType": "documentation",
-      "lines": 18421,
-      "version": "46b57bafb8fd0544",
+      "lines": 18482,
+      "version": "b817d217fccda0db",
       "provenance": [
         {
           "file": "CLAUDE.md",
           "line": 1,
-          "version": "46b57bafb8fd0544"
+          "version": "b817d217fccda0db"
         }
       ]
     },
@@ -70882,13 +70985,13 @@
       "id": "LAUNCH-READINESS.md",
       "label": "LAUNCH-READINESS.md",
       "documentType": "operations",
-      "lines": 283,
-      "version": "2371a971860789bd",
+      "lines": 286,
+      "version": "0b46fcfd2893763c",
       "provenance": [
         {
           "file": "LAUNCH-READINESS.md",
           "line": 1,
-          "version": "2371a971860789bd"
+          "version": "0b46fcfd2893763c"
         }
       ]
     },
@@ -72547,12 +72650,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 735,
-      "version": "175c1dde2badaa5d",
+      "version": "3840cd265b9bb6ac",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "175c1dde2badaa5d"
+          "version": "3840cd265b9bb6ac"
         }
       ]
     },
@@ -77103,6 +77206,9 @@
           "commit": "1d333b79f43c427ebc9d6733df79a124fe82fe0d"
         },
         {
+          "commit": "1e2877d495df94ee632afa5719513625b1f1b2ed"
+        },
+        {
           "commit": "24788d5e57d959ba59eb66d5b992334b18e33ec7"
         },
         {
@@ -77331,6 +77437,9 @@
           "commit": "1d868547fb310e02e7dfe7daa7a11315d85b6b29"
         },
         {
+          "commit": "1e2877d495df94ee632afa5719513625b1f1b2ed"
+        },
+        {
           "commit": "21c4575ddb731702f480cea437f04347f8e880f9"
         },
         {
@@ -77428,6 +77537,9 @@
         },
         {
           "commit": "4d78d9cad8adb025ca232f4015c2c3ae1d21fc73"
+        },
+        {
+          "commit": "4f9bf08bbdbbb7222cb68244f81e792f7eacaafa"
         },
         {
           "commit": "5342b0b5e230b68eda89ff7f78178b88b189f602"
@@ -77790,6 +77902,9 @@
           "commit": "1d868547fb310e02e7dfe7daa7a11315d85b6b29"
         },
         {
+          "commit": "1e2877d495df94ee632afa5719513625b1f1b2ed"
+        },
+        {
           "commit": "21c4575ddb731702f480cea437f04347f8e880f9"
         },
         {
@@ -77887,6 +78002,9 @@
         },
         {
           "commit": "4d78d9cad8adb025ca232f4015c2c3ae1d21fc73"
+        },
+        {
+          "commit": "4f9bf08bbdbbb7222cb68244f81e792f7eacaafa"
         },
         {
           "commit": "5342b0b5e230b68eda89ff7f78178b88b189f602"
@@ -78249,6 +78367,9 @@
           "commit": "1d868547fb310e02e7dfe7daa7a11315d85b6b29"
         },
         {
+          "commit": "1e2877d495df94ee632afa5719513625b1f1b2ed"
+        },
+        {
           "commit": "21c4575ddb731702f480cea437f04347f8e880f9"
         },
         {
@@ -78346,6 +78467,9 @@
         },
         {
           "commit": "4d78d9cad8adb025ca232f4015c2c3ae1d21fc73"
+        },
+        {
+          "commit": "4f9bf08bbdbbb7222cb68244f81e792f7eacaafa"
         },
         {
           "commit": "5342b0b5e230b68eda89ff7f78178b88b189f602"
@@ -78780,6 +78904,9 @@
           "commit": "1d868547fb310e02e7dfe7daa7a11315d85b6b29"
         },
         {
+          "commit": "1e2877d495df94ee632afa5719513625b1f1b2ed"
+        },
+        {
           "commit": "21c4575ddb731702f480cea437f04347f8e880f9"
         },
         {
@@ -78877,6 +79004,9 @@
         },
         {
           "commit": "4d78d9cad8adb025ca232f4015c2c3ae1d21fc73"
+        },
+        {
+          "commit": "4f9bf08bbdbbb7222cb68244f81e792f7eacaafa"
         },
         {
           "commit": "5342b0b5e230b68eda89ff7f78178b88b189f602"
@@ -85473,12 +85603,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "56206d1a470459f7fbb94f61d617929475076aff",
-      "currentBranch": "main",
+      "revision": "be85d0149f5bc456f1eb4ad5ff466a505bd8ea0b",
+      "currentBranch": "claude/game-dev-roadmap-6jtsst",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 1830,
+      "currentArtifactCount": 1831,
       "provenance": [
         {
           "file": "README.md",
@@ -109410,13 +109540,13 @@
       "type": "TestSuite",
       "id": "test/docs.js",
       "label": "test/docs.js",
-      "lines": 4038,
-      "version": "dbf9a5f63f53590b",
+      "lines": 4149,
+      "version": "a8630b378740044f",
       "provenance": [
         {
           "file": "test/docs.js",
           "line": 1,
-          "version": "dbf9a5f63f53590b"
+          "version": "a8630b378740044f"
         }
       ]
     },
@@ -139943,6 +140073,46 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:1e2877d495df94ee632afa5719513625b1f1b2ed",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "1e2877d495df94ee632afa5719513625b1f1b2ed"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1e2877d495df94ee632afa5719513625b1f1b2ed",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "1e2877d495df94ee632afa5719513625b1f1b2ed"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1e2877d495df94ee632afa5719513625b1f1b2ed",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "1e2877d495df94ee632afa5719513625b1f1b2ed"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1e2877d495df94ee632afa5719513625b1f1b2ed",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "1e2877d495df94ee632afa5719513625b1f1b2ed"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1e2877d495df94ee632afa5719513625b1f1b2ed",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "1e2877d495df94ee632afa5719513625b1f1b2ed"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:1e32720202120fad86bb38313e65f198cc81df43",
       "to": "Artifact:docs/superpowers/specs/2026-08-27-authored-content-runtime-design.md",
       "provenance": {
@@ -157739,6 +157909,38 @@
       "to": "Artifact:BALANCE.md",
       "provenance": {
         "commit": "4f894c57ab4040adb460a0b8394e92a5fbc13cf0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4f9bf08bbdbbb7222cb68244f81e792f7eacaafa",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "4f9bf08bbdbbb7222cb68244f81e792f7eacaafa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4f9bf08bbdbbb7222cb68244f81e792f7eacaafa",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "4f9bf08bbdbbb7222cb68244f81e792f7eacaafa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4f9bf08bbdbbb7222cb68244f81e792f7eacaafa",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "4f9bf08bbdbbb7222cb68244f81e792f7eacaafa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4f9bf08bbdbbb7222cb68244f81e792f7eacaafa",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "4f9bf08bbdbbb7222cb68244f81e792f7eacaafa"
       }
     },
     {
@@ -180259,6 +180461,70 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "98d09a2808d0ff006e77a2d9c4eefb1491fde2c3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:98ecebe6a7a2f7b8257739360b8025e0a5b71f7d",
+      "to": "Artifact:CHAIN-AUDIT-PACKET-O1.md",
+      "provenance": {
+        "commit": "98ecebe6a7a2f7b8257739360b8025e0a5b71f7d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:98ecebe6a7a2f7b8257739360b8025e0a5b71f7d",
+      "to": "Artifact:CHAIN-AUDIT-PACKET.md",
+      "provenance": {
+        "commit": "98ecebe6a7a2f7b8257739360b8025e0a5b71f7d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:98ecebe6a7a2f7b8257739360b8025e0a5b71f7d",
+      "to": "Artifact:CHAIN-DEPLOY.md",
+      "provenance": {
+        "commit": "98ecebe6a7a2f7b8257739360b8025e0a5b71f7d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:98ecebe6a7a2f7b8257739360b8025e0a5b71f7d",
+      "to": "Artifact:CLAUDE.md",
+      "provenance": {
+        "commit": "98ecebe6a7a2f7b8257739360b8025e0a5b71f7d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:98ecebe6a7a2f7b8257739360b8025e0a5b71f7d",
+      "to": "Artifact:LAUNCH-READINESS.md",
+      "provenance": {
+        "commit": "98ecebe6a7a2f7b8257739360b8025e0a5b71f7d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:98ecebe6a7a2f7b8257739360b8025e0a5b71f7d",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "98ecebe6a7a2f7b8257739360b8025e0a5b71f7d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:98ecebe6a7a2f7b8257739360b8025e0a5b71f7d",
+      "to": "Artifact:test/docs.js",
+      "provenance": {
+        "commit": "98ecebe6a7a2f7b8257739360b8025e0a5b71f7d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:98ecebe6a7a2f7b8257739360b8025e0a5b71f7d",
+      "to": "Artifact:test/stockballotv2.js",
+      "provenance": {
+        "commit": "98ecebe6a7a2f7b8257739360b8025e0a5b71f7d"
       }
     },
     {
@@ -217094,6 +217360,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:CHAIN-AUDIT-PACKET-O1.md",
+      "provenance": {
+        "file": "CHAIN-AUDIT-PACKET-O1.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:CHAIN-AUDIT-PACKET.md",
       "provenance": {
         "file": "CHAIN-AUDIT-PACKET.md",
@@ -248138,6 +248413,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:1e2877d495df94ee632afa5719513625b1f1b2ed",
+      "provenance": {
+        "commit": "1e2877d495df94ee632afa5719513625b1f1b2ed"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:1e32720202120fad86bb38313e65f198cc81df43",
       "provenance": {
         "commit": "1e32720202120fad86bb38313e65f198cc81df43"
@@ -250445,6 +250728,14 @@
       "to": "Commit:4f894c57ab4040adb460a0b8394e92a5fbc13cf0",
       "provenance": {
         "commit": "4f894c57ab4040adb460a0b8394e92a5fbc13cf0"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:4f9bf08bbdbbb7222cb68244f81e792f7eacaafa",
+      "provenance": {
+        "commit": "4f9bf08bbdbbb7222cb68244f81e792f7eacaafa"
       }
     },
     {
@@ -253554,6 +253845,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:98ecebe6a7a2f7b8257739360b8025e0a5b71f7d",
+      "provenance": {
+        "commit": "98ecebe6a7a2f7b8257739360b8025e0a5b71f7d"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:99439d4c633a14dcdf11854903d92ea79abbb12a",
       "provenance": {
         "commit": "99439d4c633a14dcdf11854903d92ea79abbb12a"
@@ -255205,6 +255504,14 @@
       "to": "Commit:be5876e40097937725bc188fff915e337d4f69d1",
       "provenance": {
         "commit": "be5876e40097937725bc188fff915e337d4f69d1"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:be85d0149f5bc456f1eb4ad5ff466a505bd8ea0b",
+      "provenance": {
+        "commit": "be85d0149f5bc456f1eb4ad5ff466a505bd8ea0b"
       }
     },
     {
@@ -267955,7 +268262,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 3978
+        "line": 4089
       }
     },
     {
@@ -267964,7 +268271,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 3979
+        "line": 4090
       }
     },
     {
@@ -267982,7 +268289,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 3842
+        "line": 3953
       }
     },
     {
@@ -280290,11 +280597,65 @@
     },
     {
       "type": "REFERENCES",
+      "from": "Artifact:CHAIN-AUDIT-PACKET-O1.md",
+      "to": "Artifact:.github/workflows/forge.yml",
+      "provenance": {
+        "file": "CHAIN-AUDIT-PACKET-O1.md",
+        "line": 30
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CHAIN-AUDIT-PACKET-O1.md",
+      "to": "Artifact:omerta-contracts/foundry.toml",
+      "provenance": {
+        "file": "CHAIN-AUDIT-PACKET-O1.md",
+        "line": 31
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CHAIN-AUDIT-PACKET-O1.md",
+      "to": "Artifact:src/dexbot.js",
+      "provenance": {
+        "file": "CHAIN-AUDIT-PACKET-O1.md",
+        "line": 253
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CHAIN-AUDIT-PACKET-O1.md",
+      "to": "Artifact:test/docs.js",
+      "provenance": {
+        "file": "CHAIN-AUDIT-PACKET-O1.md",
+        "line": 358
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CHAIN-AUDIT-PACKET-O1.md",
+      "to": "Artifact:test/gates.js",
+      "provenance": {
+        "file": "CHAIN-AUDIT-PACKET-O1.md",
+        "line": 289
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CHAIN-AUDIT-PACKET.md",
+      "to": "Artifact:CHAIN-AUDIT-PACKET-O1.md",
+      "provenance": {
+        "file": "CHAIN-AUDIT-PACKET.md",
+        "line": 9
+      }
+    },
+    {
+      "type": "REFERENCES",
       "from": "Artifact:CHAIN-AUDIT-PACKET.md",
       "to": "Artifact:src/dexbot.js",
       "provenance": {
         "file": "CHAIN-AUDIT-PACKET.md",
-        "line": 226
+        "line": 231
       }
     },
     {
@@ -280303,7 +280664,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "CHAIN-AUDIT-PACKET.md",
-        "line": 205
+        "line": 210
       }
     },
     {
@@ -280312,7 +280673,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "CHAIN-AUDIT-PACKET.md",
-        "line": 23
+        "line": 28
       }
     },
     {
@@ -280321,7 +280682,7 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "file": "CHAIN-AUDIT-PACKET.md",
-        "line": 261
+        "line": 266
       }
     },
     {
@@ -280330,7 +280691,7 @@
       "to": "Artifact:tools/bond-dials.js",
       "provenance": {
         "file": "CHAIN-AUDIT-PACKET.md",
-        "line": 111
+        "line": 116
       }
     },
     {
@@ -280339,7 +280700,7 @@
       "to": "Artifact:omerta-contracts/DEPLOYMENT.md",
       "provenance": {
         "file": "CHAIN-DEPLOY.md",
-        "line": 229
+        "line": 234
       }
     },
     {
@@ -280357,7 +280718,7 @@
       "to": "Artifact:src/dexbot.js",
       "provenance": {
         "file": "CHAIN-DEPLOY.md",
-        "line": 1871
+        "line": 1876
       }
     },
     {
@@ -280366,7 +280727,7 @@
       "to": "Artifact:src/dexbot.js",
       "provenance": {
         "file": "CHAIN-DEPLOY.md",
-        "line": 1896
+        "line": 1901
       }
     },
     {
@@ -280375,7 +280736,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "CHAIN-DEPLOY.md",
-        "line": 268
+        "line": 273
       }
     },
     {
@@ -280384,7 +280745,7 @@
       "to": "Artifact:src/rules.tail.js",
       "provenance": {
         "file": "CHAIN-DEPLOY.md",
-        "line": 243
+        "line": 248
       }
     },
     {
@@ -280393,7 +280754,7 @@
       "to": "Artifact:src/stockdeliver.js",
       "provenance": {
         "file": "CHAIN-DEPLOY.md",
-        "line": 442
+        "line": 447
       }
     },
     {
@@ -280402,7 +280763,7 @@
       "to": "Artifact:src/v4oraclekeeper.js",
       "provenance": {
         "file": "CHAIN-DEPLOY.md",
-        "line": 314
+        "line": 319
       }
     },
     {
@@ -280411,7 +280772,7 @@
       "to": "Artifact:test/watcher.js",
       "provenance": {
         "file": "CHAIN-DEPLOY.md",
-        "line": 204
+        "line": 209
       }
     },
     {
@@ -280420,7 +280781,7 @@
       "to": "Artifact:tools/chain-e2e.js",
       "provenance": {
         "file": "CHAIN-DEPLOY.md",
-        "line": 224
+        "line": 229
       }
     },
     {
@@ -280429,7 +280790,7 @@
       "to": "Artifact:tools/chain-e2e.js",
       "provenance": {
         "file": "CHAIN-DEPLOY.md",
-        "line": 230
+        "line": 235
       }
     },
     {
@@ -280439,6 +280800,15 @@
       "provenance": {
         "file": "CHAIN-DEPLOY.md",
         "line": 9
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CLAUDE.md",
+      "to": "Artifact:.github/workflows/forge.yml",
+      "provenance": {
+        "file": "CLAUDE.md",
+        "line": 18448
       }
     },
     {
@@ -282131,6 +282501,15 @@
       "provenance": {
         "file": "CLAUDE.md",
         "line": 1175
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CLAUDE.md",
+      "to": "Artifact:src/commission.js",
+      "provenance": {
+        "file": "CLAUDE.md",
+        "line": 18456
       }
     },
     {
@@ -287584,6 +287963,15 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "CLAUDE.md",
+        "line": 18445
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CLAUDE.md",
+      "to": "Artifact:test/docs.js",
+      "provenance": {
+        "file": "CLAUDE.md",
         "line": 3216
       }
     },
@@ -290897,6 +291285,15 @@
       "provenance": {
         "file": "CLAUDE.md",
         "line": 7247
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CLAUDE.md",
+      "to": "Artifact:test/stockballotv2.js",
+      "provenance": {
+        "file": "CLAUDE.md",
+        "line": 18453
       }
     },
     {
@@ -302313,6 +302710,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Document:CHAIN-AUDIT-PACKET-O1.md",
+      "to": "Artifact:CHAIN-AUDIT-PACKET-O1.md",
+      "provenance": {
+        "file": "CHAIN-AUDIT-PACKET-O1.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Document:CHAIN-AUDIT-PACKET.md",
       "to": "Artifact:CHAIN-AUDIT-PACKET.md",
       "provenance": {
@@ -309058,7 +309464,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 3978
+        "line": 4089
       }
     },
     {
@@ -309067,7 +309473,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 3979
+        "line": 4090
       }
     },
     {
@@ -309085,7 +309491,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 3842
+        "line": 3953
       }
     },
     {
