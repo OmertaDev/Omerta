@@ -29,7 +29,18 @@ jobs:
   suites:
     name: suites + sim (pg-mem)
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    # A HANG bound, never a performance budget. Measured on this job across four runs:
+    # 14.3m / 17.8m / 18.8m / 20.3m — so at 20 it was passing on runner luck, and the
+    # 20.3 was CANCELLED (a timeout-minutes expiry reports as `cancelled`, not `failure`,
+    # which reads exactly like a supersede). It was not a regression: between the last
+    # green run and that one the only diff was prose and knowledge JSON, `mobile` got
+    # FASTER (183s -> 174s), and every step grew ~9% including ones whose code is
+    # byte-identical (npm ci, checkout, the chromium install). That is a slower runner.
+    # A red that fires on runner variance is worse than no red, because it teaches people
+    # that red means nothing. 30 is ~1.6x the measured cost and still far below anything
+    # that could be a wedged browser or a spinning suite. The sibling job below stays at
+    # 20 on purpose: it measures 3.5-4.2m, so it has 5x headroom and needs nothing.
+    timeout-minutes: 30
     steps:
       # The knowledge-plane gate inventories the full Git lineage (800+ commits) and
       # compares generated artifacts at their recorded source revision. A shallow

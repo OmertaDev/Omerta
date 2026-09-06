@@ -417,6 +417,27 @@ export async function buildServer() {
     };
   };
 
+  // The same trick for a JSON body that is expensive to send and cheap to re-derive. /v1/rules is
+  // ~69 KB of catalog that every client fetches on boot and that changes only when a lever or a
+  // catalog does — so a repeat visit should cost a few hundred bytes, not 24 KB gzipped.
+  //
+  // It hashes PER REQUEST rather than once at boot, deliberately: the rulebook is not constant for
+  // the life of the process. `walletConnect` reads WALLETCONNECT_PROJECT_ID/CHAIN_ID out of the
+  // environment on every call, and test/chain.js mutates those after boot to prove the dormant
+  // surface — a hash frozen at boot would answer 304 with a body the client has never seen. The
+  // serialization was happening anyway; only the sha256 is new, and it buys the 304.
+  //
+  // Vary is set BEFORE the 304 branch, exactly as servePage does it: a shared cache validating a
+  // stored variant has to know which one it is holding, and a 304 that omits it can hand the
+  // gzipped bytes to a client that said it could not read them.
+  const jsonEtag = (req, reply, obj) => {
+    const body = JSON.stringify(obj);
+    const etag = '"' + crypto.createHash('sha256').update(body).digest('hex').slice(0, 16) + '"';
+    reply.type('application/json; charset=utf-8').header('etag', etag).header('Vary', 'Accept-Encoding');
+    if (req.headers['if-none-match'] === etag) return reply.code(304).send();
+    return reply.send(body);   // a string payload passes through fastify verbatim; the gzip hook compresses it
+  };
+
   // ── the playable console: one static file, no build step, no new deps (public/index.html) ──
   // Read once at boot; a missing file degrades to a pointer, never a crash (tests boot headless).
   let clientHtml = '<!doctype html><title>OMERTA</title><p>API up. Client file missing (public/index.html).</p>';
@@ -1624,7 +1645,7 @@ export async function buildServer() {
   // authoritative — knowing the odds table doesn't move a single roll client-side.
   app.get('/v1/rules', async (req, reply) => {
     reply.header('cache-control', 'public, max-age=300, stale-while-revalidate=3600');
-    return ({
+    return jsonEtag(req, reply, {
     crimes: CRIMES.map((c) => ({ id: c.id, name: c.name, lvl: c.lvl, nerve: c.nerve, cash: c.cash, base: c.base, jail: c.jail })),
     respecOmr: M8.RESPEC_OMR, // stat respec cost — so The Life tab can price the tradeoff before you commit
     respecStatMin: M8.RESPEC_STAT_MIN,

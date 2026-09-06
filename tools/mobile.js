@@ -281,24 +281,32 @@ for (const vp of VIEWPORTS) {
       } finally {
         Math.random = random;
       }
-      // Two authed reads of the SAME account. The real client queues these on a promise chain
-      // (`api()`), because same-account calls serialize on the character row at the database and
-      // firing them together makes each wait holding a pooled connection. A raw Promise.all here
-      // bypassed the product's own discipline — so read them the way the client does, one after the
-      // other. And capture the STATUS of each: this check once failed reporting only
-      // `firstJobReady:false` beside a coach label that proves the server had the crime, which is a
-      // failure that cannot name its own cause — a refused /v1/onboard and a genuinely false flag
-      // read identically. They do not any more.
+      // ONE AT A TIME, exactly as the client does it. api() queues every authed call on _authQueue
+      // because each runs through withCharacter, which takes `SELECT … FOR UPDATE` on the character
+      // row — so same-account calls serialize at the database whether or not we fire them together.
+      // Firing them together here reached a state no player's client can produce, and pg-mem is
+      // single-caller: measured directly, /v1/me and /v1/onboard fired concurrently for one account
+      // answer `400 contention` 2 times in 60, against 0 in 60 serial. The server is right to say so
+      // (contention is the retryable mapping), and `(ob.tasks||[]).find(...)` on an error body reads
+      // exactly like "the task is not ready" — which is how this arrived as a mystery instead of a
+      // reason. Serial is not a loosened check: it is what a player's browser actually does.
+      // Both statuses and lc_crime ride with the verdict: this check once failed reporting only
+      // `firstJobReady:false` beside a coach label that PROVES the server had the crime, and a
+      // refused /v1/onboard and a genuinely false flag read identically without them. lc_crime is
+      // monotonic, so `obStatus 200` with `lcCrime >= 1` and the flag false is a real server
+      // disagreement — a finding — while a 4xx is a request that never landed.
       const played = await page.evaluate(async () => {
         const h = { authorization: 'Bearer ' + localStorage.omerta_token };
         const meR = await fetch('/v1/me', { headers: h });
+        const m = (await meR.json())?.character || {};
         const obR = await fetch('/v1/onboard', { headers: h });
-        const m = (await meR.json())?.character || {}, ob = await obR.json();
+        const ob = await obR.json();
         const firstJob = (ob.tasks || []).find((t) => t.id === 'ob_crime');
         return { firstJobReady: !!(firstJob?.ready || firstJob?.claimed), coach: m.coach?.label || '',
           coachTab: m.coach?.tab || '',
-          meStatus: meR.status, obStatus: obR.status, obTasks: (ob.tasks || []).length,
-          obError: ob.error || '', lcCrime: m.lc_crime ?? null,
+          // name the server's own reason: a 4xx here must never read as "the task is not ready"
+          why: obR.ok ? null : `/v1/onboard ${obR.status} ${ob?.error || ''}`.trim(),
+          meStatus: meR.status, obStatus: obR.status, lcCrime: m.lc_crime ?? null,
           tourOpen: !document.querySelector('#welcome')?.classList.contains('hidden') };
       });
       if (!played.firstJobReady || played.coach !== 'Claim your first-job reward'
@@ -335,8 +343,9 @@ for (const vp of VIEWPORTS) {
           const claimed = await page.evaluate(async () => {
             const h = { authorization: 'Bearer ' + localStorage.omerta_token };
             const meR = await fetch('/v1/me', { headers: h });          // serialized, as `api()` does
+            const m = (await meR.json())?.character || {};
             const obR = await fetch('/v1/onboard', { headers: h });
-            const m = (await meR.json())?.character || {}, ob = await obR.json();
+            const ob = await obR.json();
             return { claimed: !!(ob.tasks || []).find((x) => x.id === 'ob_crime')?.claimed,
               coach: m.coach?.label || '', coachTab: m.coach?.tab || '',
               meStatus: meR.status, obStatus: obR.status, obError: ob.error || '' };

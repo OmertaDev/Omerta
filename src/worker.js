@@ -4,8 +4,11 @@
 // omr_reserve; the undistributed remainder rolls to the fund.
 //
 // Run standalone: `node src/worker.js` (checks hourly, fires when a cycle is due).
-// The hourly tick also runs the §8 season rollover and, once a day, the §10.4
-// ledger-invariant sweep. All three are exported for the tests.
+// The hourly tick also runs, once a day, the §10.4 ledger-invariant sweep. The §8
+// season rollover keeps its OWN hourly clock: it is the one job whose cost is linear
+// in the population (~2m at 50,000, tools/workercost.js), and safe() isolates a job's
+// ERRORS but never its LATENCY — inline, it held every alarm on this tick behind it.
+// All three are exported, so the tests drive them directly rather than via a tick.
 import crypto from 'node:crypto';
 import { makeDb } from './db.js';
 import { testOnlyLeaks } from './preflight.js';
@@ -360,10 +363,12 @@ if (process.argv[1] && process.argv[1].endsWith('worker.js')) {
     // and is live the moment FAMILY_YIELD.FUND_BPS is turned up (design §3).
     const fy = await safe('family yield', () => payFamilyYield(pool));
     if (fy?.paid > 0) console.log(`👑 family yield: ${fy.paid} $OMR split across ${fy.families.length} famil${fy.families.length === 1 ? 'y' : 'ies'}`);
-    const s = await safe('season rollover', () => runSeasonRollover(pool));
-    if (s?.converted > 0) console.log(`📅 season ${s.season}: converted ${s.converted} characters`);
-    if (s?.reckoning) console.log(`🏆 season ${s.reckoning.season} closed — ${s.reckoning.champion || 'nobody'} took the city` +
-      (s.reckoning.family ? `, ${s.reckoning.family} held ${s.reckoning.districts} district(s)` : ''));
+    // THE SEASON ROLLOVER MOVED TO ITS OWN CLOCK (see guardedSeasonTick, below). It is the only job
+    // on this worker whose cost is LINEAR IN THE POPULATION — ~2.3ms per character, ~7s at 3,000 and
+    // ~2 minutes at 50,000 (tools/workercost.js) — and `safe()` isolates a job's ERRORS but never its
+    // LATENCY, so on rollover night the heartbeat, the nightly §10.4 drift monitor, the backup and
+    // oracle watchdogs and every sweep below this line all ran that late, once. Nothing here waits
+    // on it now.
     // (economy v3 step 1: the daily street-wage epoch ran here. The faucet is retired — the game
     // prints no $OMR at all now, so there is nothing for a worker tick to pay. See src/emission.js.)
     const sw = await safe('bounty sweep', () => sweepExpiredBounties(pool));
@@ -787,9 +792,48 @@ if (process.argv[1] && process.argv[1].endsWith('worker.js')) {
   };
   scheduleHealthBoundary();
 
+  // ── THE SEASON CLOCK ────────────────────────────────────────────────────────────────────────
+  // The rollover is the one job whose cost grows with the playerbase, and it used to sit INLINE on
+  // the main tick, so once every 28 days it made every job below it that late — including the
+  // drift monitor, whose whole purpose is to be heard on the night something is wrong. It runs on
+  // its own hourly clock now, so a long rollover delays only itself.
+  //
+  // Isolated with safe(), like every other job in this file. It does cost the one thing a job on a
+  // CONCURRENT clock costs: safe() writes the shared `currentJob` the hang watchdog names, so a
+  // rollover can clobber the name of whatever the main tick is doing, or clear it mid-flight. That
+  // is a narrow window mis-naming a job in a WARNING LINE and never behaviour, and the health clock
+  // above already carries it — so the precedent is followed rather than a second isolation shape
+  // invented for one job, which is how two of them come to disagree about what isolation means.
+  //
+  // Plain setInterval rather than a wall-boundary chain: the season boundary derives from dayOf(),
+  // never from when we wake, so drift buys nothing. And no watchdog of its own — the main tick has
+  // one because a hang THERE is a system-wide outage; a hang here blocks only itself, the in-flight
+  // guard skips its own later fires, and the job is resumable by construction (one transaction per
+  // character, each re-checking `season < current` under FOR UPDATE), so a restart loses nothing.
+  const seasonPeriodMs = 3600 * 1000;
+  let seasonTicking = false;
+  const guardedSeasonTick = async () => {
+    if (seasonTicking) return;
+    seasonTicking = true;
+    try {
+      const s = await safe('season rollover', () => runSeasonRollover(pool));
+      if (s?.converted > 0) console.log(`📅 season ${s.season}: converted ${s.converted} characters`);
+      if (s?.reckoning) console.log(`🏆 season ${s.reckoning.season} closed — ${s.reckoning.champion || 'nobody'} took the city` +
+        (s.reckoning.family ? `, ${s.reckoning.family} held ${s.reckoning.districts} district(s)` : ''));
+    } finally {
+      seasonTicking = false;
+    }
+  };
+  setInterval(guardedSeasonTick, seasonPeriodMs);
+
+  // The season clock fires at boot too — not awaited, so a slow rollover can never hold up the
+  // first main tick, and a fresh deploy does not sit on a due season for up to an hour.
+  void guardedSeasonTick();
+
   // THE FIRST TICK IS FIRED HERE, NOT AWAITED, and both halves of that are deliberate. HERE, because
-  // both schedules it could starve (the hourly interval, the health clock) are already registered and
-  // nothing that can hang sits above it — makeViemSource() below awaits an RPC. NOT AWAITED, because
+  // all three schedules it could starve (the hourly interval, the health clock, the season clock) are
+  // already registered and nothing that can hang sits above it — makeViemSource() below awaits an
+  // RPC. NOT AWAITED, because
   // awaiting it is what let a hung tick swallow every registration after it. The in-flight guard makes
   // it safe against the hourly fire. The explicit catch keeps the old crash-and-restart semantics: a
   // first tick that THROWS ends the process, so the platform brings it back.
