@@ -320,13 +320,16 @@
 | [DEPLOY-CHECKLIST.md](../../DEPLOY-CHECKLIST.md) | operations | 147 | 2026-08-13 |
 | [DEPLOY.md](../../DEPLOY.md) | operations | 568 | 2026-08-29 |
 | [DESIGN.md](../../DESIGN.md) | design | 88 | 2026-08-27 |
+| [docs/AGENT-MARKETING-PACK.md](../../docs/AGENT-MARKETING-PACK.md) | documentation | 198 | 2026-09-06 |
 | [docs/ART.md](../../docs/ART.md) | documentation | 238 | 2026-08-14 |
 | [docs/AUDITS.md](../../docs/AUDITS.md) | audit | 120 | 2026-08-17 |
+| [docs/BANK-MARKETING-PACK.md](../../docs/BANK-MARKETING-PACK.md) | documentation | 189 | 2026-09-06 |
 | [docs/BULLETPROOF.md](../../docs/BULLETPROOF.md) | documentation | 272 | 2026-08-21 |
 | [docs/GAMEPLAY-MARKETING-PACK.md](../../docs/GAMEPLAY-MARKETING-PACK.md) | documentation | 55 | 2026-08-24 |
 | [docs/LAUNCH-TWEETS.md](../../docs/LAUNCH-TWEETS.md) | documentation | 131 | 2026-08-29 |
 | [docs/OMR-MACHINE-CAMPAIGN.md](../../docs/OMR-MACHINE-CAMPAIGN.md) | documentation | 249 | 2026-08-26 |
 | [docs/OMR-MARKETING-PACK.md](../../docs/OMR-MARKETING-PACK.md) | documentation | 346 | 2026-08-24 |
+| [docs/PILLARS-MARKETING-PACK.md](../../docs/PILLARS-MARKETING-PACK.md) | documentation | 592 | 2026-09-06 |
 | [docs/superpowers/plans/2026-08-23-discovery-integrity.md](../../docs/superpowers/plans/2026-08-23-discovery-integrity.md) | documentation | 65 | 2026-08-24 |
 | [docs/superpowers/plans/2026-08-23-first-action-onboarding.md](../../docs/superpowers/plans/2026-08-23-first-action-onboarding.md) | documentation | 311 | 2026-08-24 |
 | [docs/superpowers/plans/2026-08-24-robinhood-testnet-bank-rehearsal.md](../../docs/superpowers/plans/2026-08-24-robinhood-testnet-bank-rehearsal.md) | documentation | 142 | 2026-08-24 |
@@ -374,7 +377,7 @@
 | [LAUNCH.md](../../LAUNCH.md) | operations | 232 | 2026-08-27 |
 | [MARKETING-COPY.md](../../MARKETING-COPY.md) | documentation | 432 | 2026-08-27 |
 | [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 128 | 2026-09-05 |
-| [MARKETING.md](../../MARKETING.md) | documentation | 368 | 2026-08-29 |
+| [MARKETING.md](../../MARKETING.md) | documentation | 392 | 2026-09-06 |
 | [NIGHT-SESSION-LOG.md](../../NIGHT-SESSION-LOG.md) | documentation | 45 | 2026-08-13 |
 | [omerta-backend-spec.md](../../omerta-backend-spec.md) | documentation | 373 | 2026-07-12 |
 | [omerta-bank-protocol-design.md](../../omerta-bank-protocol-design.md) | design | 694 | 2026-08-26 |
