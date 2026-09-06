@@ -80,7 +80,12 @@ export async function chooseTrait(ch, trackId, traitId, client, h) {
   await client.query('INSERT INTO character_traits (character_id, track_id, trait_id) VALUES ($1,$2,$3)',
     [ch.id, trackId, traitId]);
   if (h.owned.traits) h.owned.traits[trackId] = traitId; // keep the returned view honest (in-txn mirror)
-  return { ok: true, track: trackId, trait: traitId, name: MASTERY.TRAITS[traitId].name };
+  // WAVE 72 — the reply carries the display halves the client cannot supply: `trackName` (describe()
+  // has no track catalog resolver — the raw-key rule, so `track` alone reads as "larceny") and the
+  // trait's own `desc` (what the once-ever choice actually bought). Without them the permanent
+  // level-50 capstone of a whole trade toasted "done.".
+  return { ok: true, track: trackId, trackName: track.name, trait: traitId,
+    name: MASTERY.TRAITS[traitId].name, desc: MASTERY.TRAITS[traitId].desc };
 }
 
 // THE TRADES legend leaderboard — lifetime XP across every track (account-level, survives death),

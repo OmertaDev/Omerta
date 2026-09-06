@@ -36,6 +36,7 @@ import { chromium } from 'playwright-core';
 import fs from 'node:fs';
 import path from 'node:path';
 import { buildServer } from '../src/server.js';
+import { compileContentPack } from '../src/content/compiler.js';
 
 const VIEWPORTS = [
   { w: 320, h: 568, name: 'small legacy phone — the hard floor' },
@@ -105,6 +106,23 @@ if (process.env.DATABASE_URL) {
 const MOD_KEY = process.env.MOD_KEY || 'mobile-harness-mod-key';
 process.env.MOD_KEY = MOD_KEY;   // check F opens /admin, which is mod-key gated client-side
 const app = await buildServer();
+// The Content Desk must be rehearsed against real compiled projections, not a hand-written network
+// stub. These activations live only in this process's pg-mem database: one playable Docks case and
+// the richest workshop bundle, including timed work, durable tools, and the sealed barter board.
+for (const pack of [
+  '../content/packs/docks-missed-tide/pack.json',
+  '../content/packs/bellini-lockbox-v4/pack.json',
+]) {
+  const source = JSON.parse(fs.readFileSync(new URL(pack, import.meta.url), 'utf8'));
+  const bundle = compileContentPack(source);
+  const activated = await app.inject({
+    method: 'POST', url: '/v1/mod/content/activate',
+    headers: { 'x-mod-key': MOD_KEY }, payload: { bundle, expectedHash: bundle.contentHash },
+  });
+  if (activated.statusCode !== 200) {
+    throw new Error(`Content Desk harness activation failed for ${pack}: ${activated.body}`);
+  }
+}
 await app.listen({ port: 0, host: '127.0.0.1' });
 const BASE = `http://127.0.0.1:${app.server.address().port}`;
 
@@ -148,7 +166,17 @@ const MEASURE = (minTap) => {
   const bodies = document.querySelector('#tabbodies');
   const bodyTop = bodies ? Math.round(bodies.getBoundingClientRect().top) : null;
 
-  return { vw, vh, over, widest: widest.slice(0, 5), smallNav, bodyTop };
+  const chrome = [];
+  for (const sel of ['#top', '#coachwrap', '#vitals', '#tabpanel', '#grouprail', '#tabs', '#tabart', '#introwrap']) {
+    const el = document.querySelector(sel);
+    if (!el) { chrome.push(sel + ':missing'); continue; }
+    const cs = getComputedStyle(el);
+    if (cs.display === 'none') { chrome.push(sel + ':none'); continue; }
+    const r = el.getBoundingClientRect();
+    chrome.push(`${sel} top${Math.round(r.top)} h${Math.round(r.height)} mb${cs.marginBottom}`);
+  }
+
+  return { vw, vh, over, widest: widest.slice(0, 5), smallNav, bodyTop, chrome };
 };
 
 const check = async (page, screen, vp, { contentMustShow = false } = {}) => {
@@ -174,7 +202,7 @@ const check = async (page, screen, vp, { contentMustShow = false } = {}) => {
   // B — picking a screen must bring that screen into view
   if (contentMustShow && m.bodyTop !== null && m.bodyTop > m.vh) {
     fail(screen, vp, `the screen's own content starts ${m.bodyTop}px down, below the ${m.vh}px fold — ` +
-      `a player who taps this tab sees none of it and nothing tells them to scroll`);
+      `a player who taps this tab sees none of it and nothing tells them to scroll [${m.chrome.join(' | ')}]`);
   }
   return m;
 };
@@ -339,6 +367,7 @@ for (const vp of VIEWPORTS) {
     // times and the screen was NAVIGATED to but never CHECKED — walked-but-unchecked is exactly
     // the silent coverage hole this harness exists to prevent. Check the landing screen directly.
     if (!subs.length) {
+      walked.push(g);
       await page.evaluate(() => window.scrollTo(0, 0));
       await check(page, g, vp, { contentMustShow: true });
     }
@@ -350,6 +379,92 @@ for (const vp of VIEWPORTS) {
       await check(page, id, vp, { contentMustShow: true });
     }
   }
+
+  // ── L — THE CONTENT DESK RENDERS REAL AUTHORED PROJECTIONS ──────────────────────────────────
+  // The ordinary walk proves the first view fits. This expands the same server-backed Desk into
+  // its three live working modes so a refactor cannot leave Cases polished while Workshop or the
+  // Exchange silently overflows, empties, or drops its exact-hash controls.
+  await page.click('#grouprail [data-group="desk"]');
+  await page.waitForSelector('#tab-desk .desk-file', { state: 'visible', timeout: 20000 });
+  const cases = await page.evaluate(() => ({
+    title: document.querySelector('#tab-desk #desk-case-title')?.textContent || '',
+    indexed: document.querySelectorAll('#tab-desk [data-desk-case]').length,
+    openers: document.querySelectorAll('#tab-desk [data-desk-create]').length,
+    views: document.querySelectorAll('#tab-desk [data-desk-view]').length,
+  }));
+  if (cases.title !== 'The Man Who Missed the Tide' || cases.indexed < 1
+    || cases.openers !== 1 || cases.views !== 4) {
+    fail('(content desk cases)', vp, `the activated Docks case is not a complete working file: ${JSON.stringify(cases)}`);
+  }
+  await check(page, 'content-desk-cases', vp, { contentMustShow: true });
+  if (cases.openers === 1) {
+    const createCase = page.waitForResponse((response) => response.request().method() === 'POST'
+      && /\/v1\/content\/[^/]+\/instances$/.test(new URL(response.url()).pathname));
+    const [, createdResponse] = await Promise.all([
+      page.click('#tab-desk [data-desk-create] button[type="submit"]'), createCase,
+    ]);
+    await page.waitForTimeout(1800);
+    const forming = await page.evaluate(async () => {
+      const h = { authorization: 'Bearer ' + localStorage.omerta_token };
+      const board = await (await fetch('/v1/content', { headers: h })).json();
+      return {
+        selected: document.querySelector('#tab-desk [data-desk-case].on .desk-stamp')?.textContent || '',
+        starts: document.querySelectorAll('#tab-desk [data-desk-instance-action]').length,
+        detail: (document.querySelector('#tab-desk .desk-detail')?.innerText || '').slice(0, 240),
+        instances: (board.instances || []).map((x) => ({ status: x.status, actions: x.actions?.map((a) => a.kind) })),
+      };
+    });
+    if (createdResponse.status() !== 200 || forming.starts !== 1) {
+      fail('(content desk forming case)', vp, `opening the issued case did not produce its start authority `
+        + `(HTTP ${createdResponse.status()}): ${JSON.stringify(forming)}`);
+    } else {
+      const startCase = page.waitForResponse((response) => response.request().method() === 'POST'
+        && /\/v1\/content\/instances\/[^/]+\/act$/.test(new URL(response.url()).pathname));
+      const [, startedResponse] = await Promise.all([
+        page.click('#tab-desk [data-desk-instance-action]'), startCase,
+      ]);
+      await page.waitForTimeout(1800);
+      const workingFile = await page.evaluate(() => ({
+        selected: document.querySelector('#tab-desk [data-desk-case].on .desk-stamp')?.textContent || '',
+        evidence: document.querySelectorAll('#tab-desk .desk-progress li').length,
+        answerForms: document.querySelectorAll('#tab-desk [data-desk-solve]').length,
+      }));
+      if (startedResponse.status() !== 200 || !/In progress/i.test(workingFile.selected)
+        || workingFile.evidence < 1 || workingFile.answerForms !== 1) {
+        fail('(content desk working case)', vp, `opening and starting the issued case did not become a playable working file `
+          + `(HTTP ${startedResponse.status()}): ${JSON.stringify(workingFile)}`);
+      }
+      await check(page, 'content-desk-working-case', vp, { contentMustShow: true });
+    }
+  }
+
+  await page.click('#tab-desk [data-desk-view="workshop"]');
+  await page.waitForSelector('#tab-desk .desk-operation', { state: 'visible', timeout: 10000 });
+  const workshop = await page.evaluate(() => ({
+    title: document.querySelector('#tab-desk #desk-work-title')?.textContent || '',
+    sources: document.querySelectorAll('#tab-desk [data-desk-work-kind="source"]').length,
+    jobs: document.querySelectorAll('#tab-desk [data-desk-work-kind="job"]').length,
+    recipes: document.querySelectorAll('#tab-desk [data-desk-work-kind="recipe"]').length,
+    tools: document.querySelectorAll('#tab-desk [data-desk-work-kind="tool"]').length,
+  }));
+  if (!/Bellini Restoration/.test(workshop.title) || workshop.sources < 1 || workshop.jobs < 1
+    || workshop.recipes < 1 || workshop.tools < 1) {
+    fail('(content desk workshop)', vp, `the activated restoration bundle lost a working section: ${JSON.stringify(workshop)}`);
+  }
+  await check(page, 'content-desk-workshop', vp, { contentMustShow: true });
+
+  await page.click('#tab-desk [data-desk-view="exchange"]');
+  await page.waitForSelector('#tab-desk [data-desk-list-exchange]', { state: 'visible', timeout: 10000 });
+  const exchange = await page.evaluate(() => ({
+    builder: document.querySelectorAll('#tab-desk [data-desk-list-exchange]').length,
+    itemChoices: document.querySelectorAll('#tab-desk [name="offeredItemId"] option').length,
+    terms: document.querySelector('#tab-desk .desk-rule')?.textContent || '',
+  }));
+  if (exchange.builder !== 1 || exchange.itemChoices < 2
+    || !/No cash\. No \$OMR\. Whole lots only\./.test(exchange.terms)) {
+    fail('(content desk exchange)', vp, `the sealed barter builder does not state or expose its compiled terms: ${JSON.stringify(exchange)}`);
+  }
+  await check(page, 'content-desk-exchange', vp, { contentMustShow: true });
 
   // the overlays, which get their own stacking and their own chance to overflow
   await page.click('#btn-help'); await check(page, 'glossary', vp);
@@ -761,6 +876,137 @@ for (const vp of VIEWPORTS) {
     screensChecked++;
     console.log(`   lockup cold-load check done (landed on ${o.lit}), ${failures.length} failure(s)`);
   }
+  await browser.close();
+}
+
+// ── L — STORED XSS: EVERY DISPLAY STRING THE SERVER SENDS, RENDERED HOSTILE ───────────────────
+// The console is one 1 MB file with ~110 innerHTML sites and ~500 esc() calls, and NOTHING guarded
+// the relation between them: safety rested on the server's write-time cleanText plus each renderer
+// remembering esc() at each site — and a static classification of "which interpolation is unescaped"
+// is mostly noise (feedText's output is esc()'d by both consumers, so its 345 bare `${d.from}`s are
+// fine). So this proves the property BEHAVIOURALLY: every JSON response on the wire has a markup
+// probe APPENDED to every string under a display-shaped key (never an id/type/tab — the client
+// BRANCHES on those and a corrupted branch key reads as a different defect), then every screen is
+// walked and asserted to contain NO element the probe could have created. Appending rather than
+// replacing keeps the real value in front, so a renderer that keys on a prefix still takes its
+// normal branch. The probe covers BOTH contexts at once: `">` closes an attribute AND a tag, so an
+// unescaped `title="${name}"` and an unescaped `<b>${name}</b>` both produce the marker element.
+//
+// Anti-vacuity: an interceptor that injects nothing sees no element and reads exactly like a clean
+// bill of health, so the run also requires (a) the probe to have landed in enough responses and (b)
+// the marker to have rendered AS TEXT inside the tab bodies on enough screens — i.e. escaping was
+// exercised, not merely absent. Server-side write-time stripping (cleanText) is deliberately
+// bypassed here: the point is what the CLIENT does with a hostile string, whatever the server did.
+{
+  const MARK = 'ZXSSMARK';
+  const PROBE = `"><i data-xss="${MARK}">${MARK}</i>`;
+  // Display-shaped keys: what a renderer prints, never what it branches on. `id`, `kind`, `tab`,
+  // `type`, `status`, `district` and `loc` are all lookup keys and stay untouched on purpose.
+  const KEYS = new Set(['name', 'title', 'bio', 'tag', 'from', 'by', 'dynasty', 'street', 'label',
+    'desc', 'text', 'body', 'message', 'hint', 'what', 'how', 'headline', 'subtitle', 'holder',
+    'winner', 'poster', 'seller', 'owner', 'reason', 'motd', 'line', 'note', 'blurb', 'story',
+    'npcName', 'kindName', 'tierName', 'routeName', 'outfit', 'trackName', 'goodName', 'taskLabel',
+    'forgedName', 'archetype', 'epithet', 'family', 'gangName', 'crewName', 'heir', 'victim',
+    'killer', 'target', 'mark', 'boss', 'steward', 'contact', 'author', 'sender', 'nick', 'plate']);
+  let injected = 0, responses = 0;
+  const poison = (v) => {
+    if (Array.isArray(v)) return v.map(poison);
+    if (v && typeof v === 'object') {
+      const o = {};
+      for (const [k, x] of Object.entries(v)) {
+        if (typeof x === 'string' && KEYS.has(k) && x.length) { o[k] = x + PROBE; injected++; }
+        else o[k] = poison(x);
+      }
+      return o;
+    }
+    return v;
+  };
+
+  const browser = await chromium.launch({ executablePath: exe });
+  const ctx = await browser.newContext({ viewport: { width: 375, height: 667 }, isMobile: true, hasTouch: true, locale: 'en-US' });
+  const page = await ctx.newPage();
+  const vp = { w: 375, h: 667 };
+  const errs = [];
+  page.on('pageerror', (e) => errs.push(String(e).split('\n')[0]));
+  await page.goto(BASE, { waitUntil: 'domcontentloaded' });
+  await page.click('#btn-guest');
+  await page.waitForSelector('#screen-create:not(.hidden)', { timeout: 20000 });
+  await page.fill('#new-name', 'Xss Probe');
+  await page.click('#btn-create');
+  await page.waitForSelector('#screen-main:not(.hidden)', { timeout: 20000 });
+  await page.evaluate(() => {
+    localStorage.setItem('omerta_tour2', '1'); localStorage.setItem('omerta_welcomed', '1');
+    localStorage.setItem('omerta_alltabs', '1');
+  });
+  // Arm the interceptor AFTER the character exists, so the create form posts a clean name and the
+  // probe reaches the client only the way hostile data would — down the wire, on every board.
+  await page.route('**/v1/**', async (route) => {
+    const response = await route.fetch();
+    const ct = response.headers()['content-type'] || '';
+    if (!/json/.test(ct)) return route.fulfill({ response });
+    let json;
+    try { json = await response.json(); } catch { return route.fulfill({ response }); }
+    responses++;
+    await route.fulfill({ response, json: poison(json) });
+  });
+  errs.length = 0;
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('#screen-main:not(.hidden)', { timeout: 20000 });
+  await page.waitForTimeout(1500);
+  if (await page.locator('#tabs-more:not(.hidden)').count()) await page.click('#tabs-more');
+  await page.waitForTimeout(300);
+
+  // Tab bodies PERSIST in the DOM once rendered, so a per-screen element count only ever grows and
+  // reports the same site thirty times. Collect distinct SITES instead — one failure per unescaped
+  // render, keyed on where it sits — and count text renders per screen for the anti-vacuity floor.
+  let textHits = 0, screens = 0;
+  const sites = new Map();
+  const probeScreen = async (id) => {
+    await page.waitForTimeout(350);
+    const o = await page.evaluate((mark) => {
+      const sig = (e) => {
+        const p = e.parentElement; const c = e.closest('[id]');
+        const cls = p?.className ? '.' + String(p.className).trim().split(/\s+/).slice(0, 2).join('.') : '';
+        return (c ? '#' + c.id : 'body') + ' ' + (p?.tagName || '?').toLowerCase() + cls;
+      };
+      const els = [...document.querySelectorAll('[data-xss]')];
+      const found = els.map((e) => [sig(e), (e.parentElement?.outerHTML || '').replace(/\s+/g, ' ').slice(0, 140)]);
+      const bodyText = document.querySelector('#tabbodies')?.innerText || '';
+      const asText = bodyText.split('data-xss="' + mark + '"').length - 1;
+      return { found, asText };
+    }, MARK);
+    screens++;
+    textHits += o.asText;
+    for (const [sig, snippet] of o.found) if (!sites.has(sig)) sites.set(sig, { screen: id, snippet });
+  };
+  await probeScreen('landing');
+  const groups = await page.locator('#grouprail [data-group]').evaluateAll((els) => els.map((e) => e.dataset.group));
+  if (!groups.length) fail('(xss)', vp, 'no group rail buttons found — the XSS walk below covers nothing');
+  for (const g of groups) {
+    await page.click(`#grouprail [data-group="${g}"]`);
+    await page.waitForTimeout(200);
+    const subs = await page.locator('#tabs [data-tab]:not(.hidden)').all();
+    if (!subs.length) await probeScreen(g);
+    for (const t of subs) {
+      const id = await t.getAttribute('data-tab');
+      await t.click();
+      await probeScreen(id);
+    }
+  }
+  // The cellphone modal renders names too (threads, the black book) and sits outside every tab.
+  if (await page.locator('#btn-phone').count()) {
+    await page.click('#btn-phone');
+    await probeScreen('the cellphone');
+  }
+  for (const [sig, { screen, snippet }] of sites)
+    fail(`(xss:${screen})`, vp, `an innerHTML site renders a display string without esc() — the server's string CREATED an element at ${sig}: ${snippet}`);
+  if (injected < 50) fail('(xss)', vp, `the interceptor poisoned only ${injected} string(s) across ${responses} JSON responses — `
+    + `a probe that lands nowhere finds nothing, and that reads exactly like a clean sweep`);
+  if (textHits < 10) fail('(xss)', vp, `the marker rendered as literal text on only ${textHits} occasion(s) across ${screens} screens — `
+    + `escaping was never exercised, so "no element created" proves nothing`);
+  if (errs.length) fail('(xss)', vp, `${errs.length} page error(s) rendering hostile strings: ${errs.slice(0, 3).join(' | ')}`);
+  screensChecked += screens;
+  console.log(`   stored-XSS sweep done (${injected} strings poisoned over ${responses} responses, marker rendered as text ${textHits}× on ${screens} screens), ${failures.length} failure(s)`);
   await browser.close();
 }
 

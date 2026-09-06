@@ -7,8 +7,8 @@
 // the character-cash check is untouched and the treasury check reconciles them. The on-chain
 // tradeable-NFT layer (minted_onchain) is dormant/deferred, the M6 pattern.
 import { postPower } from './roster.js';
-import { GameError, bus } from './game.js';
-import { DISTRICTS, TERRITORY_RACKETS, TERRITORY_TYPES, territoryTierOf, territoryTypeOf, territoryBuildCost, territoryFortCost, territoryRankOf, syndicateOf, TERRITORY_SYNDICATE_MIN, levelOf, CONSTANTS, rosterMult, charterFx, M3, jailed, hospitalized, safeHoused, usd, art } from './rules.js';
+import { GameError, assertStreetActor, bus } from './game.js';
+import { DISTRICTS, TERRITORY_RACKETS, TERRITORY_TYPES, territoryTierOf, territoryTypeOf, territoryBuildCost, territoryFortCost, territoryRankOf, syndicateOf, TERRITORY_SYNDICATE_MIN, levelOf, CONSTANTS, rosterMult, charterFx, M3, jailed, hospitalized, safeHoused, usd, art , coolLeft, coolWait } from './rules.js';
 
 const canCommand = (h) => h.owned.gangRole === 'boss' || h.owned.gangRole === 'underboss';
 
@@ -297,9 +297,10 @@ export async function raidRivalRacket(ch, districtId, client, h) {
   // you must travel to and expose yourself at the target's district) — red-team: the client always said so,
   // the server didn't enforce it, letting a raid launch from anywhere.
   if (ch.loc !== districtId) throw new GameError('district', "You have to be on their block to muscle in.", { district: districtId });
-  if (jailed(ch)) throw new GameError('jailed', 'Not from lockup.');
-  if (hospitalized(ch)) throw new GameError('hospitalized', "You're in no shape for muscle work.");
-  if (safeHoused(ch)) throw new GameError('safe', "You can't run a raid from a safehouse.");  // P1.3
+  assertStreetActor(ch, { witpro: false, hospCode: 'hospitalized', msgs: {
+    jailed: 'Not from lockup.',
+    hosp: "You're in no shape for muscle work.",
+    safe: "You can't run a raid from a safehouse." } });  // P1.3
   if (levelOf(Number(ch.respect)) < CONSTANTS.TERRITORY_RIVAL_MIN_LVL)
     throw new GameError('rookie', `Muscling a rival operation takes level ${CONSTANTS.TERRITORY_RIVAL_MIN_LVL}.`);
   if (Number(ch.energy) < CONSTANTS.TERRITORY_RIVAL_ENERGY) throw new GameError('energy', 'Not enough energy for a raid.');
@@ -308,7 +309,8 @@ export async function raidRivalRacket(ch, districtId, client, h) {
   if (!r) throw new GameError('no_racket', 'No operation runs there.');
   if (r.owner_gang === h.owned.gangId) throw new GameError('own', "That's your own family's operation.");
   const now = Date.now();
-  if (r.raid_cd_until && new Date(r.raid_cd_until) > new Date(now)) throw new GameError('cooldown', 'That operation is on alert — muscle in later.');
+  const alertCool = coolLeft(r.raid_cd_until, now);
+  if (alertCool) throw new GameError('cooldown', `That operation is on alert — muscle in again in ${coolWait(alertCool)}.`, { cooldownSeconds: alertCool });
   const pending = accrued(r);
   if (pending <= 0) throw new GameError('nothing', "There's nothing in the till to grab right now.");
   const eff = Number(ch.muscle) + Number(ch.cunning) / 2;
@@ -328,7 +330,14 @@ export async function raidRivalRacket(ch, districtId, client, h) {
     await h.track(client, ch.account_id, 'territory_raid', { district: districtId, win: false });
     // `op` names the system: without it this read as a SOV SIEGE loss — "$undefined out of the war chest",
     // a bill this raid never charges.
-    return { ok: true, op: 'racket', district: districtId, win: false, dmg: CONSTANTS.TERRITORY_RIVAL_FAIL_DMG };
+    // the ALERT window ships on BOTH branches (it is set above, win or lose, by the design's own
+    // "the owner isn't ground down" note) — the WIN line named it and the LOSS reply carried no
+    // cooldown field at all, so the loser, who is precisely the man who wants to go again, had no
+    // surface telling him he cannot: /v1/territory returns only YOUR family's operations, and the
+    // rival's raidCdSeconds is internal by territoryExploreBoard's own comment. Two returns apart
+    // in one function — the forgotten sibling. It is a LEVER, so it ships from the server.
+    return { ok: true, op: 'racket', district: districtId, win: false, dmg: CONSTANTS.TERRITORY_RIVAL_FAIL_DMG,
+      cooldownSeconds: Math.round(CONSTANTS.TERRITORY_RIVAL_CD_MS / 1000) };
   }
   const cut = Math.floor(pending * CONSTANTS.TERRITORY_RIVAL_CUT_BPS / 10000);
   // advance the owner's clock so their remaining pending = pending − cut (the shakedown/convoy pattern)
@@ -340,7 +349,8 @@ export async function raidRivalRacket(ch, districtId, client, h) {
   if (h.owned.gang) h.owned.gang.treasury = Number(g.treasury) + cut;
   bus.emit(`gang:${r.owner_gang}`, { type: 'racket_raided', district: districtId, lost: cut });
   await h.track(client, ch.account_id, 'territory_raid', { district: districtId, win: true, cut });
-  return { ok: true, op: 'racket', district: districtId, win: true, cut };
+  return { ok: true, op: 'racket', district: districtId, win: true, cut,
+    cooldownSeconds: Math.round(CONSTANTS.TERRITORY_RIVAL_CD_MS / 1000) };
 }
 
 // ── STEP FIVE — RACKET SPECIALISTS + SPECIAL OPERATIONS ──
@@ -399,8 +409,9 @@ export async function runTerritoryOp(ch, districtId, client, h) {
   if (!r || r.owner_gang !== h.owned.gangId) throw new GameError('no_racket', "Your family doesn't run that operation.");
   if (!r.specialist) throw new GameError('no_specialist', 'Assign a specialist to run a special operation.');
   const now = Date.now();
-  if (r.op_at && now - new Date(r.op_at).getTime() < CONSTANTS.TERRITORY_OP_CD_MS)
-    throw new GameError('cooldown', 'That operation just ran a special job — give it time.');
+  const opCool = coolLeft(new Date(r.op_at).getTime() + CONSTANTS.TERRITORY_OP_CD_MS, now);
+  if (opCool)
+    throw new GameError('cooldown', `That operation just ran a special job — give it ${coolWait(opCool)}.`, { cooldownSeconds: opCool });
   let op, result;
   if (r.kind === 'protection') {
     const lvl = Math.min(CONSTANTS.TERRITORY_FORT_MAX, Number(r.fortitude) + CONSTANTS.TERRITORY_OP_FORT);

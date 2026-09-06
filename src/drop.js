@@ -42,6 +42,27 @@ const windowOf = (st, now = Date.now()) => {
 };
 const parseCommunities = (s) => { try { const a = JSON.parse(s || '[]'); return Array.isArray(a) ? a : []; } catch { return []; } };
 
+// ── THE SHUT WINDOW SPEAKS THREE WAYS, NOT ONE (the ONE core — both claim legs throw through this,
+// so the sentence a player reads cannot drift between the EVM and Solana rails). "Not announced",
+// "not open YET" and "closed for good" are three different facts about a player's money, and the
+// old single sentence was written for the AFTERMATH ("what goes unclaimed stays in the vault") —
+// so somebody an hour EARLY was told, in effect, that they had missed it. The clock rides with the
+// refusal because the board already knows it (`opensSeconds`), and a player an hour out can act on
+// "in 1h" and can act on nothing at all otherwise.
+const humanWait = (s) => (s >= 86400 ? `${Math.ceil(s / 86400)}d`
+  : s >= 3600 ? `${Math.ceil(s / 3600)}h` : `${Math.max(1, Math.ceil(s / 60))}m`);
+function assertWindowOpen(w, now = Date.now()) {
+  if (w.open) return;
+  if (!w.announced) throw new GameError('closed', 'No community drop is open.');
+  if (w.opens != null && now < w.opens) {
+    const left = Math.max(1, Math.ceil((w.opens - now) / 1000));
+    throw new GameError('not_yet',
+      `The envelopes open in ${humanWait(left)}. Nothing is lost by waiting — the vault holds it until then.`,
+      { opensSeconds: left });
+  }
+  throw new GameError('closed', 'The claim window has closed. What went unclaimed stays in the vault — it never left.');
+}
+
 // ── THE BOARD (GET /v1/drop, readCharacter) — a STABLE key set in every state (the dormantView
 // lesson: a missing key and a null key are different things to a client). Your row is revealed only
 // while the window is OPEN, or after YOU claimed it (your own history); before open it stays sealed. ──
@@ -78,9 +99,7 @@ export async function claimDrop(ch, client, h) {
   const wallet = h.acct.wallet_address;
   if (!wallet) throw new GameError('wallet', 'Link your wallet first — the envelope pays the wallet the snapshot saw.');
   const w = windowOf(await state(client));
-  if (!w.open) throw new GameError('closed', w.announced
-    ? 'The claim window is not open. What goes unclaimed stays in the vault — it never left.'
-    : 'No community drop is open.');
+  assertWindowOpen(w);
   const row = (await client.query(
     `UPDATE drop_allocations SET claimed=true, claimed_by=$2, claimed_at=now()
       WHERE wallet_address=lower($1) AND NOT claimed RETURNING omr, free_mint, communities`,
@@ -143,9 +162,7 @@ export async function solanaChallenge(pool, accountId) {
 export async function claimDropSolana(ch, client, h, { address, signature } = {}) {
   if (!isSolAddress(String(address || ''))) throw new GameError('bad_address', 'Not a valid Solana address.');
   const w = windowOf(await state(client));
-  if (!w.open) throw new GameError('closed', w.announced
-    ? 'The claim window is not open. What goes unclaimed stays in the vault — it never left.'
-    : 'No community drop is open.');
+  assertWindowOpen(w);
   const chal = (await client.query(
     'SELECT nonce, issued_at FROM wallet_challenges WHERE account_id=$1', [h.accountId])).rows[0];
   if (!chal) throw new GameError('no_challenge', 'Request a challenge first.');

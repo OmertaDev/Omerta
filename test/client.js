@@ -50,7 +50,8 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { buildServer } from '../src/server.js';
 import { M3, M4, PATHS, NPC_HITMEN, HEIST_ROLES, HEIST_JOBS, DRUGS, GOODS, DISTRICTS,
   COMMISSION, CONVOY, DUELS, TERRITORY_TYPES, CARS, TRIMS, ASSETS, RACKETS, BUSINESSES, ESTATE, WIRE, SECRETS, STABLE, WORLD, WORLD_NPCS,
-  PEN, HONOR, MARRIAGE, CAMPAIGNS, LIMITED_RUNS, SHIPMENT, VANITY } from '../src/rules.js';
+  PEN, HONOR, MARRIAGE, CAMPAIGNS, LIMITED_RUNS, SHIPMENT, VANITY,
+  BUSINESS_EMPIRE, CORNER, cornerTasksOf, charterFx, CLUES, clueStepOf } from '../src/rules.js';
 import { bumpHonor } from '../src/honor.js';
 import { mintLimitedRun } from '../src/economy.js';
 
@@ -459,6 +460,9 @@ const NOT_API = new Set([
   'cls',        // heroBand()'s stat class ('neon'/'warn') — the focal-header CSS accent, never sent
   'tone',       // Operation Desk readiness state ('ready'/'caution'/'blocked') — render-only CSS modifier
   'label',      // heroBand()'s stat label — the render caption under the big number, never sent
+  'dateStyle',  // Intl.DateTimeFormat presentation option used by the Content Desk
+  'timeStyle',  // Intl.DateTimeFormat presentation option used by the Content Desk
+  'view',       // Content Desk's local cases/workshop/exchange/archive selection
 ]);
 // `field: 'value'` (deck bodies, JS objects) and `"field":"value"` (data-body attributes).
 // A TERNARY's colon looks exactly like a key's: `alt: guest ? null : 'everywhere'` contains the
@@ -1020,6 +1024,26 @@ const collectList = (src, v, key, fn) => {
 const GETBIND = /(?:(const|let|var)\s+)?([a-zA-Z_$][\w$]*)\s*=\s*\(*\(await api\(\s*'GET'\s*,\s*([`'"])([^`'"]+)\3\s*\)\)\s*\.body(\s*\?\.\s*([a-zA-Z_$][\w$]*))?/g;
 const reads = new Map(), readWhere = new Map();
 let unscoped = 0, shadowUnresolved = 0;
+// TWO-HOP READS (task #4). The mirror above keys a binding as `path|sub` and checks ONE level of
+// fields off it; `b.x.y` — the field of a sub-object the screen never aliased — was the stated
+// out-of-scope, and a measurement counted ~814 distinct such chains in the client checked by
+// nothing. This collects them per binding: nested.get(key) → Map<parentField, Set<childField>>.
+// Verified below against the live response with ONE rule that keeps it honest rather than noisy:
+// a parent that is ABSENT or null is the benign empty-state (no war, no spouse, no champion for
+// this fixture) and is COUNTED, never reported — a child is checked only when the parent is an
+// object the route actually returned, and a child it does not carry is the same defect as a
+// missing top-level field: it renders undefined with no error anywhere.
+const nested = new Map();
+const NESTED_RE = (V) => new RegExp(`(?<![\\w$.])${V}\\s*\\??\\.\\s*([a-zA-Z_$][\\w$]*)\\s*\\??\\.\\s*([a-zA-Z_$][\\w$]*)`, 'g');
+const collectNested = (src, v, key) => {
+  for (const r of src.matchAll(NESTED_RE(v.replace('$', '\\$')))) {
+    if (BUILTIN.has(r[1]) || BUILTIN.has(r[2])) continue;
+    if (!nested.has(key)) nested.set(key, new Map());
+    const m = nested.get(key);
+    if (!m.has(r[1])) m.set(r[1], new Set());
+    m.get(r[1]).add(r[2]);
+  }
+};
 for (const m of html.matchAll(/\b(?:async\s+)?function\s+([a-zA-Z_$][\w$]*)\s*\(/g)) {
   const open = html.indexOf('{', m.index + m[0].length);
   if (open < 0) continue;
@@ -1209,6 +1233,7 @@ for (const m of html.matchAll(/\b(?:async\s+)?function\s+([a-zA-Z_$][\w$]*)\s*\(
       if (!reads.has(key)) { reads.set(key, new Set()); readWhere.set(key, m[1]); }
       reads.get(key).add(r[1]);
     }
+    collectNested(nxt ? src.slice(0, nxt.index) : src, v, key);
   }
 }
 assert.equal(unscoped, 0, `${unscoped} response binding(s) could not be scoped to a block, so their reads go unchecked`);
@@ -1765,7 +1790,8 @@ const noteObligations = (where, key, have, fields) => {
   if (blind.length) undisclosed.push(`${where} renders ${key} but never reads ${blind.join(',')} — the board `
     + `states an ongoing cost the screen does not, which is how the pad and the nut both reached a tester`);
 };
-const notReturned = [], unobservable = [];
+const notReturned = [], unobservable = [], nestedMissing = [];
+let nestedChains = 0, nestedChecked = 0, nestedAbsent = 0;
 for (const [key, fields] of reads) {
   const [rawPath, sub] = key.split('|');
   let path = rawPath;
@@ -1784,7 +1810,26 @@ for (const [key, fields] of reads) {
   const gone = [...fields].filter((f) => !have.has(f));
   if (gone.length) notReturned.push(`${readWhere.get(key)} reads ${gone.join(',')} off ${key} — the route returns ${[...have].slice(0, 8).join(',')}…`);
   noteObligations(readWhere.get(key), key, have, fields);
+  // the two-hop half, against the SAME fetched body
+  for (const [parent, kids] of nested.get(key) || []) {
+    nestedChains += kids.size;
+    const po = target[parent];
+    const pt = Array.isArray(po) ? po[0] : po;
+    if (pt === undefined || pt === null || typeof pt !== 'object') { nestedAbsent++; continue; }
+    nestedChecked += kids.size;
+    const pk = new Set(Object.keys(pt));
+    const miss = [...kids].filter((k) => !pk.has(k));
+    if (miss.length) nestedMissing.push(`${readWhere.get(key)} reads ${miss.map((k) => `${parent}.${k}`).join(',')} off ${key} — `
+      + `the route's ${parent} carries ${[...pk].slice(0, 8).join(',')}…`);
+  }
 }
+assert.deepEqual(nestedMissing, [], `the client reads ${nestedMissing.length} two-hop field(s) its route's sub-object does not carry — ` +
+  `they render as undefined with no error anywhere`);
+// two floors, because they fail differently: chains COLLECTED (the extractor still sees the client)
+// and chains CHECKED (a fixture whose every parent is absent would verify nothing and read clean)
+assert(nestedChains > 300, `only ${nestedChains} two-hop read chain(s) collected — the nested extraction broke`);
+assert(nestedChecked > 100, `only ${nestedChecked} of ${nestedChains} two-hop chains had a parent to check against (${nestedAbsent} absent) — the fixture stopped reaching them`);
+console.log(`  two-hop reads: ${nestedChains} chains, ${nestedChecked} checked, ${nestedAbsent} parent absent/null (empty-state, not a finding)`);
 assert.deepEqual(notReturned, [], `the client reads ${notReturned.length} field(s) its route does not return — ` +
   `those render as undefined, or silently take a fallback, with no error anywhere`);
 assert.deepEqual(unobservable, [], `${unobservable.length} binding(s) resolved to an empty list or a non-object, ` +
@@ -3994,11 +4039,16 @@ if (traceLine) assert(/still listening/i.test(traceLine) && !/swept/i.test(trace
   const reinforceLine = String(describeFn({ ok: true, npc: 'kryl', name: 'The Kryl Syndicate', spent: 50000, garrison: 75000 }, 200));
   assert(/reinforced The Kryl Syndicate's garrison/.test(reinforceLine),
     `reinforcing your own garrison read "done." (its branch was gated on the invade field). Got: ${JSON.stringify(reinforceLine)}`);
+  // These two were written against the WORDING of a standalone hired-gun line that has since been
+  // deleted — it fired alongside the `op === 'npchit'` terms block and printed the outcome and the
+  // fee TWICE in one toast (wave 73). The wording was only ever a proxy for the property, so the
+  // property is what is asserted now: a hire must say what the contractor did, and must never be
+  // the bare catch-all. The echo itself is pinned in the WAVE 73 driven block below.
   const hitKill = String(describeFn({ ok: true, op: 'npchit', hit: true, killed: true, success: 0.5, cost: 1000000 }, 200));
-  assert(/contractor put him down/.test(hitKill) && !/^paid \$/.test(hitKill),
+  assert(/mark is gone/.test(hitKill) && !/^paid \$/.test(hitKill),
     `an npc-hire KILL read the bare "paid $N" catch-all. Got: ${JSON.stringify(hitKill)}`);
   const hitMiss = String(describeFn({ ok: true, op: 'npchit', hit: false, success: 0.5, cost: 50000 }, 200));
-  assert(/contractor missed/.test(hitMiss) && !/^paid \$/.test(hitMiss),
+  assert(/came back empty/.test(hitMiss) && !/^paid \$/.test(hitMiss),
     `an npc-hire MISS read the bare "paid $N" catch-all. Got: ${JSON.stringify(hitMiss)}`);
 
   // WAVE 20 — the MED/LOW mutes + lies across the prestige/family/pen/estate layer. Each shape below
@@ -4081,27 +4131,36 @@ for (const [key, wrong, why] of invert) {
     assert(!wrong.test(line), `${why} — got: ${JSON.stringify(line)}`);
   }
 }
-// Nothing a player reads may ever contain the literal word "undefined". Hiring staff printed it twice,
-// because the branch it landed on read two fields that shape never sends.
-for (const [url, line] of said) assert(!/undefined/.test(line),
-  `describe() rendered the literal word "undefined" to the player for ${url}: ${JSON.stringify(line)}`);
-// Nor may a line stack an article on a name that already carries one. Every secret in the game is
-// called "The <something>" (The Wash Records, The Bodies, The Kitchen Books, The Second Ledger), so
-// the hush line's own "The ${kind}" read "The The Wash Records" on every payment ever made — not an
-// edge case, and invisible to every pattern above because it is fluent. Swept rather than pinned at
-// the one site: the catalogs that start with an article are not going to stop growing.
-// NOR AN HTML ENTITY. Every consumer of describe() is toast(), which assigns to textContent — so an
-// HTML-escaped string is not safer there, it is simply WRONG, and it lands on exactly the names that
-// most need to read right: 94 catalog names carry an apostrophe or an ampersand (Motorcycle 'Wasp',
-// A Dead Don's Watch, The Doc's Friend) and the street-name charset guard allows both, so a player
-// called O'Malley was toasted as O&#39;Malley on every line that named them. Swept rather than pinned
-// at the one site that surfaced it, because the catalogs are not going to stop growing.
-for (const [url, line] of said) assert(!/&(?:amp|lt|gt|quot|#\d+);/.test(line),
-  `describe() rendered an HTML entity to the player for ${url} — its output goes to textContent, so ` +
-  `escaping corrupts the name instead of protecting anything: ${JSON.stringify(line)}`);
-for (const [url, line] of said) assert(!/\bThe The\b/i.test(line),
-  `describe() stacked an article on a name that already had one for ${url} — the catalog entry ` +
-  `already begins with "The": ${JSON.stringify(line)}`);
+// THE CLASS SWEEPS OVER EVERYTHING A PLAYER WAS SHOWN. ONE implementation, called twice — here over
+// everything driven so far, and again at the very END of the file. Wave blocks add to `said` at lines
+// far below this point, so a sweep that ran only here would RECORD those lines and never look at them:
+// a class check that silently stops covering the newest half of the corpus reads on the summary line
+// exactly like one that covers all of it. Copying the three loops down there instead is the
+// two-private-copies shape this file has paid for before.
+function sweepSaidClasses() {
+  // Nothing a player reads may ever contain the literal word "undefined". Hiring staff printed it twice,
+  // because the branch it landed on read two fields that shape never sends.
+  for (const [url, line] of said) assert(!/undefined/.test(line),
+    `describe() rendered the literal word "undefined" to the player for ${url}: ${JSON.stringify(line)}`);
+  // NOR AN HTML ENTITY. Every consumer of describe() is toast(), which assigns to textContent — so an
+  // HTML-escaped string is not safer there, it is simply WRONG, and it lands on exactly the names that
+  // most need to read right: 94 catalog names carry an apostrophe or an ampersand (Motorcycle 'Wasp',
+  // A Dead Don's Watch, The Doc's Friend) and the street-name charset guard allows both, so a player
+  // called O'Malley was toasted as O&#39;Malley on every line that named them. Swept rather than pinned
+  // at the one site that surfaced it, because the catalogs are not going to stop growing.
+  for (const [url, line] of said) assert(!/&(?:amp|lt|gt|quot|#\d+);/.test(line),
+    `describe() rendered an HTML entity to the player for ${url} — its output goes to textContent, so ` +
+    `escaping corrupts the name instead of protecting anything: ${JSON.stringify(line)}`);
+  // Nor may a line stack an article on a name that already carries one. Every secret in the game is
+  // called "The <something>" (The Wash Records, The Bodies, The Kitchen Books, The Second Ledger), so
+  // the hush line's own "The ${kind}" read "The The Wash Records" on every payment ever made — not an
+  // edge case, and invisible to every pattern above because it is fluent. Swept rather than pinned at
+  // the one site: the catalogs that start with an article are not going to stop growing.
+  for (const [url, line] of said) assert(!/\bThe The\b/i.test(line),
+    `describe() stacked an article on a name that already had one for ${url} — the catalog entry ` +
+    `already begins with "The": ${JSON.stringify(line)}`);
+}
+sweepSaidClasses();
 
 // THE PRICE IS A TERM. Six Wire actions burn $OMR and five of them named nothing, so a player pressed
 // them without ever learning what a tap or a dig had just cost — the pad-and-nut shape on a screen
@@ -6442,9 +6501,6 @@ const ACTFNS = new Map();   // route path → the handler names its registration
   // branch that cannot be reached with a real body.
   const MUTE_OK = new Map([
     ['withCharacter', 'the request wrapper itself — every route unwraps it; a player never reads this shape'],
-    ['requestWithdraw', 'the chain rail renders its own voucher card; the console never toasts it'],
-    ['requestDynastyMint', 'same rail, same card'],
-    ['quoteBond', 'the same chain rail — the bond card renders the quote it signs, never a toast'],
     ['repairCar', 'its branches key on body.fixed === true|false; the sentinel walk cannot supply a literal'],
     ['burnerHit', 'it spreads ...await npcHit(...) — a call the static walk cannot follow; the npchit '
       + 'branch renders it live, and the WAVE 68 block below drives the burner line for real'],
@@ -6554,11 +6610,18 @@ const ACTFNS = new Map();   // route path → the handler names its registration
   // field and a file-wide match is satisfied by any one of them, so dropping it from the fill left
   // the check green (a substring elsewhere proves nothing about the reply under test).
   {
+    // anchored on each reply's own DISCRIMINATOR rather than its whole literal: a reply legitimately
+    // GROWS fields (the fill gained `gross, take` when the house cut got named), and a pin that
+    // restates the entire line rots on that — reporting a rename it never checked for as a missing
+    // field it did. The scoping is what matters and is kept: the field must sit inside THIS reply.
     const mk = readFileSync(new URL('../src/market.js', import.meta.url), 'utf8');
-    for (const src of ['delivered: n, earned: net, remaining: Number(l.qty) - n, good: l.good_id',
-                       'claimed: n, awaiting: left, good: l.good_id',
-                       'cancelled: l.id, refunded: remaining, awaiting: Number(l.filled_qty), good: l.good_id'])
-      assert(mk.includes(src), `market.js reply must carry the good id — the client has no way to name the freight without it: ${src}`);
+    for (const anchor of ['delivered: n', 'claimed: n', 'cancelled: l.id']) {
+      const at = mk.indexOf(anchor);
+      assert(at > 0, `market.js no longer has the reply anchored on \`${anchor}\` — relocate this pin rather than deleting it`);
+      const lit = mk.slice(at, mk.indexOf('}', at));
+      assert(lit.includes('good: l.good_id'),
+        `market.js reply must carry the good id — the client has no way to name the freight without it: ${anchor} → ${lit}`);
+    }
   }
   // the races: four replies sent car.model_id raw, so a tune, a NOS charge, a wager listing and a
   // pinks offer all named a key. The notify one line down had sent the NAME all along.
@@ -6821,10 +6884,1048 @@ const ACTFNS = new Map();   // route path → the handler names its registration
     && new RegExp(`\\$${made71.r.body.spent.toLocaleString('en-US')}`).test(made71.line),
   `the DRIVEN commission receipt must name BOTH consumed inputs: ${made71.line}`);
 
+  // ── WAVE 72: THE SEALED BID'S TERMS + THE TRAIT ───────────────────────────────────────────────
+  // Two findings from the wave-72 sweep of the undriven surface (165 pressed routes the ledger had
+  // never driven). THE SEALED BID was fluent and left the load-bearing terms off: the stake is the
+  // family's TREASURY (the wave-55 pocket-vs-treasury class), a LOSING stake forfeits `lossBps` —
+  // the one number that makes it a sealed bid rather than "always commit everything" — and a RAISE
+  // read byte-identical to a fresh stake though the reply carried `added` all along. THE TRAIT —
+  // the once-ever level-50 capstone of a whole trade — read "done.": the reply carried a raw track
+  // id and describe() has no track catalog, so the server now sends `trackName` + the trait's own
+  // `desc` (the raw-key rule). DRIVEN throughout: every claim is about a field the SERVER sends,
+  // and a synthetic passes straight through the mutation that stops it being sent.
+  await inject('POST', '/v1/gangs', t65, { name: 'W72 Aces', tag: 'WSA' });
+  const t72 = (await inject('POST', '/v1/auth/guest')).body.token;
+  await inject('POST', '/v1/character', t72, { name: 'Holder ' + Math.random().toString(36).slice(2, 7) });
+  const id72 = (await inject('GET', '/v1/me', t72)).body.character.id;
+  await app.pool.query('UPDATE characters SET cash=2000000, respect=500000 WHERE id=$1', [id72]);
+  await inject('POST', '/v1/gangs', t72, { name: 'W72 Kings', tag: 'WSK' });
+  const g65 = (await app.pool.query('SELECT gang_id FROM gang_members WHERE character_id=$1', [id65])).rows[0].gang_id;
+  const g72 = (await app.pool.query('SELECT gang_id FROM gang_members WHERE character_id=$1', [id72])).rows[0].gang_id;
+  await app.pool.query('UPDATE gangs SET treasury=5000000 WHERE id IN ($1,$2)', [g65, g72]);
+  // a PLAYER-held district is the sealed contest's precondition (unheld ground falls to an outright
+  // claim and would never reach this line)
+  await app.pool.query(
+    "UPDATE districts SET holder_gang=$1, garrison=100000, seized_at=now(), npc_holder=NULL, contest_until=NULL WHERE id='docks'", [g72]);
+  // the STAKER runs a Fixers charter, whose hedge prices a losing stake 25% dearer — so the reply's
+  // lossBps must be the CHARTER-EFFECTIVE figure settleContest will actually charge, never the base
+  // lever (Codex A, the nominal-vs-actual class). Restated from the LIVE levers, not from the shared
+  // contestLossBpsFor — helper-vs-helper would pass a helper that returned the base.
+  await app.pool.query("UPDATE gangs SET charter='fixers' WHERE id=$1", [g65]);
+  const bid72 = await drive65('/v1/districts/docks/claim', { amount: 1000000 });
+  assert(bid72.r.body.lossBps > 0, 'the sealed bid must SEND the forfeiture share — the client cannot restate a signed lever');
+  const effLoss72 = Math.min(9999, Math.round(M3.CONTEST_LOSS_BPS * charterFx('fixers', 'contestLossMult')));
+  assert.notEqual(effLoss72, M3.CONTEST_LOSS_BPS, 'WAVE 72 precondition: the Fixers hedge must genuinely move the rate, or this pin is vacuous');
+  assert.equal(bid72.r.body.lossBps, effLoss72,
+    'the receipt must quote the CHARTER-EFFECTIVE forfeiture the settle will charge — the base lever understates a Fixers stake');
+  assert(/of the treasury/.test(bid72.line), `the stake is the FAMILY'S money and the line must say so: ${bid72.line}`);
+  assert(new RegExp(`${Math.round(bid72.r.body.lossBps / 100)}% of it is forfeit`).test(bid72.line),
+    `the line must state what a LOSING stake costs — the term that makes it a sealed bid: ${bid72.line}`);
+  const raise72 = await drive65('/v1/districts/docks/claim', { amount: 1200000 });
+  assert(raise72.r.body.added > 0 && raise72.r.body.added < raise72.r.body.staked,
+    'a second stake is a RAISE and the server must send the delta');
+  assert(/raised to/.test(raise72.line) && new RegExp(fmtLike(raise72.r.body.added)).test(raise72.line),
+    `a raise must not read byte-identical to a fresh stake: ${raise72.line}`);
+  await app.pool.query('UPDATE gangs SET charter=NULL WHERE id=$1', [g65]); // the charter was this pin's fixture — later blocks run unchartered
 
+  // THE TRAIT — driven at a real level-50 trade: the xp seed is the DATABASE, the reply is the claim.
+  await app.pool.query(
+    "INSERT INTO masteries (character_id, track_id, xp) VALUES ($1,'larceny',40000)", [id65]);
+  const trait72 = await drive65('/v1/mastery/trait/larceny', { trait: 'virtuoso' });
+  assert.equal(trait72.r.body.trackName, 'Larceny', 'the trait must SEND the trade DISPLAY name — the raw-key rule');
+  assert(trait72.r.body.desc && trait72.r.body.name, 'the trait must send what the once-ever choice bought');
+  assert(trait72.line !== 'done.' && /once and for good/.test(trait72.line) && /dies with the street/.test(trait72.line),
+    `the once-ever choice must state its permanence terms: ${trait72.line}`);
+  assert(trait72.line.includes(trait72.r.body.name) && trait72.line.includes(trait72.r.body.trackName)
+    && trait72.line.includes(trait72.r.body.desc),
+    `the trait line must name the trait, the trade and what it bought: ${trait72.line}`);
+
+  // ── WAVE 73: THE CELLPHONE — three routes the raw Console presses and none of them read ───────
+  // The curated screens call the SILENT api() and render their own wording (the thread re-render IS
+  // the feedback on a sent line; the block/unblock buttons toast their own sentence behind a terms
+  // confirm), so the curated half was never wrong. But all three are in the raw deck, whose goBtn
+  // ends in `await act(m, path, body)` — describe() — and each read "done." there. Two needed only
+  // a branch; UNBLOCK needed a SERVER field, because it returned a bare `{ok:true}` while blockLine
+  // three lines above it had named the man all along (the forgotten-sibling shape), so the client
+  // could not say whose line it had just re-opened even with a branch. DRIVEN throughout: every
+  // claim below is about a field the SERVER sends, and a synthetic passes straight through the
+  // mutation that stops it being sent.
+  //
+  // Its own token, because the line has TWO ends: a DM needs a recipient, and the black book gates
+  // dialling a number you do not hold (`no_number`) — so the contact row is seeded, which is the
+  // precondition a refused action would skip in silence, reading on the summary line as covered.
+  const t73 = (await inject('POST', '/v1/auth/guest')).body.token;
+  await inject('POST', '/v1/character', t73, { name: 'Line ' + Math.random().toString(36).slice(2, 7) });
+  const id73 = (await inject('GET', '/v1/me', t73)).body.character.id;
+  const acct = async (cid) => (await app.pool.query('SELECT account_id FROM characters WHERE id=$1', [cid])).rows[0].account_id;
+  await app.pool.query(
+    "INSERT INTO contacts (owner_account, contact_account, how) VALUES ($1,$2,'met') ON CONFLICT DO NOTHING",
+    [await acct(id65), await acct(id73)]);
+  // ground truth for the NAME is the DATABASE, not the reply that claims it
+  const name73 = (await app.pool.query('SELECT name FROM characters WHERE id=$1', [id73])).rows[0].name;
+
+  const dm73 = await drive65(`/v1/phone/dm/${id73}`, { text: 'word from the docks' });
+  assert.equal(dm73.r.body.phone, 'sent', 'the DM must name its SYSTEM — a marker, never the absence of a field');
+  assert.equal(dm73.r.body.to, name73, 'the DM must SEND the line holder it already resolved (the heir answers the phone)');
+  assert(dm73.line !== 'done.' && dm73.line.includes(name73),
+    `a sent line must name who was rung: ${dm73.line}`);
+
+  const blk73 = await drive65(`/v1/phone/block/${id73}`, {});
+  assert.equal(blk73.r.body.phone, 'blocked', 'blocking must name its system');
+  assert.equal(blk73.r.body.blocked, name73, 'blocking must SEND the name of the line it cut');
+  assert(blk73.line !== 'done.' && blk73.line.includes(name73) && /bloodline/.test(blk73.line)
+    && /game events/i.test(blk73.line),
+  `cutting a line must name the man AND the two terms the curated confirm already states: ${blk73.line}`);
+
+  // …and the unblock, whose SERVER half is the whole finding: a bare {ok:true} names nobody.
+  const ubR = await inject('DELETE', `/v1/phone/block/${id73}`, t65, {});
+  assert.equal(ubR.code, 200, `WAVE 73 could not drive the unblock (${JSON.stringify(ubR.body)})`);
+  const ubLine = String(describeFn(ubR.body, 200)); described++;
+  assert.equal(ubR.body.phone, 'unblocked', 'the unblock must name its system');
+  assert.equal(ubR.body.unblocked, name73, 'the unblock must SEND the name its own sibling has always sent');
+  assert(ubLine !== 'done.' && ubLine.includes(name73) && /open again/.test(ubLine),
+    `re-opening a line must name whose line it is: ${ubLine}`);
 }
 
+// ── WAVE 73 (combat): the four street thefts read as GAMBLING, and the kill named one thing ─────
+// Its OWN tokens, and deliberately after the main loop: the loss half of every theft is a JAIL
+// SENTENCE, and a jailed fixture refuses nearly everything — a poisoned shared fixture skips rows
+// that then read on the summary line exactly like covered ones (the Pen/club precedent).
+{
+  const mk73 = async (n) => {
+    const t = (await inject('POST', '/v1/auth/guest')).body.token;
+    await inject('POST', '/v1/character', t, { name: n + Math.random().toString(36).slice(2, 7) });
+    return { t, id: (await inject('GET', '/v1/me', t)).body.character.id };
+  };
+  const A = await mk73('Wheelman '), B = await mk73('Mark ');
+  const acctOf = async (cid) => (await app.pool.query('SELECT account_id FROM characters WHERE id=$1', [cid])).rows[0].account_id;
+  const say73 = (r) => { described++; return String(describeFn(r.body, r.code)); };
+
+  // ── THE COLLISION HALF ─────────────────────────────────────────────────────────────────────
+  // Each of the four asset crimes has its own line AND fell through to the generic casino pair,
+  // so a WIN stapled "WIN — +$0" onto a verb where no money moves and a LOSS read "the house keeps
+  // it (−$0)" over a stretch in lockup. Both halves are driven, because the loss is the sharper
+  // one and only the loss can show the arrest being narrated as a lost bet.
+  await app.pool.query("UPDATE characters SET cash=9000000, respect=900000, energy=500, health=100, loc='docks', muscle=900, cunning=900, speed=900 WHERE id=$1", [A.id]);
+  await app.pool.query("UPDATE characters SET cash=4000000, respect=900000, health=100, loc='docks', muscle=1, cunning=1, speed=1, shipment=10 WHERE id=$1", [B.id]);
+  await app.pool.query("INSERT INTO cars (id, character_id, model_id, trim_id, dmg) VALUES ('carw73', $1, 'junker', 'stock', 10)", [B.id]);
+  await app.pool.query("INSERT INTO boats (id, character_id, kind) VALUES ('boatw73', $1, 'dinghy')", [B.id]);
+  await app.pool.query("INSERT INTO character_cargo (character_id, good_id, qty) VALUES ($1,'gin',20) ON CONFLICT (character_id, good_id) DO UPDATE SET qty=20", [B.id]);
+  await app.pool.query("INSERT INTO racers (id, character_id, kind, name, speed, stamina, heart) VALUES ('racew73',$1,'dog','Blue Ruin',5,5,5)", [B.id]);
+  // BOTH sides: the attacker shares one boost/theft window across car and boat (gta_at), and the
+  // VICTIM carries a one-vehicle-a-day shield (car_stolen_at) — so a car theft shields the boat.
+  // BOTH sides, and IN (never = ANY — pg-mem returns zero rows for an array bind, so the reset
+  // would silently do nothing and every row after the first would be refused by a live shield).
+  // The attacker shares ONE boost/theft window across car and boat (gta_at); the victim carries a
+  // per-verb shield each (car_stolen_at / trunk_robbed_at / sabotaged_at), so a landed car theft
+  // shields the boat and a landed mugging shields the next one.
+  const reset73 = () => app.pool.query('UPDATE characters SET jail_until=NULL, gta_at=NULL, car_stolen_at=NULL, trunk_robbed_at=NULL, sabotaged_at=NULL, energy=500, health=100 WHERE id IN ($1,$2)', [A.id, B.id]);
+  const theft73 = async (verb) => {
+    await reset73();
+    // the mugging is refused for a FULL trunk before the roll ever happens, and the win half
+    // above filled it — so a loss drive would be skipped rather than tested.
+    await app.pool.query('DELETE FROM character_cargo WHERE character_id=$1', [A.id]);
+    const r = await inject('POST', `/v1/streets/${B.id}/${verb}`, A.t, null);
+    assert.equal(r.code, 200, `WAVE 73 could not drive ${verb} (${JSON.stringify(r.body)})`);
+    return { r, line: say73(r) };
+  };
+
+  // the two rolled verbs are PINNED win: the p-curve clamps well short of certainty, so leaving
+  // the outcome to the roll is a deterministic assertion resting on a probabilistic precondition
+  // — it passes on luck and fails a run later for no visible reason.
+  const oldWinP = process.env.CAR_THEFT_P; process.env.CAR_THEFT_P = '1';
+  const stealW = await theft73('steal');
+  assert.equal(stealW.r.body.theft, true, 'the theft must carry its own SYSTEM marker — spec keys on it, never on the absence of a field');
+  assert.equal(stealW.r.body.win, true, 'WAVE 73 needed a WIN on the steal (CAR_THEFT_P is pinned) to test the named car');
+  // the RAW-KEY half: `car.model` is a catalog id and describe() has no car resolver, so the name
+  // has to arrive from the SERVER (its own siblings stealBoat/sabotage have always sent one).
+  // Read through ?. so a server that stops sending it fails at THIS message rather than at a
+  // TypeError three lines on — a failure that names the wrong thing is barely better than none.
+  assert.equal(stealW.r.body.car?.name, 'County Auction Junker', 'the theft must SEND the display name, not the catalog id alone');
+  assert(stealW.line.includes('County Auction Junker'), `a stolen car must be NAMED: ${stealW.line}`);
+  const trunkW = await theft73('trunk'), boatW = await theft73('boat'), sabW = await theft73('sabotage');
+  process.env.CAR_THEFT_P = oldWinP === undefined ? '' : oldWinP;
+  if (oldWinP === undefined) delete process.env.CAR_THEFT_P;
+  assert.equal(trunkW.r.body.trunk, true, 'the trunk mugging must carry its own marker');
+  assert.equal(boatW.r.body.boatTheft, true, 'the boat theft must carry its own marker');
+  assert.equal(sabW.r.body.sabotage, true, 'the sabotage must carry its own marker');
+  for (const [v, d] of [['trunk', trunkW], ['boat', boatW], ['sabotage', sabW]])
+    assert.equal(d.r.body.win, true, `WAVE 73 needed a WIN on ${v} — a loss here tests the arrest line twice and the win line never`);
+  for (const [v, d] of [['steal', stealW], ['trunk', trunkW], ['boat', boatW], ['sabotage', sabW]])
+    assert(!/WIN — \+\$/.test(d.line) && !/house keeps it/.test(d.line),
+      `${v} moves no money — it must never read as a settled BET: ${d.line}`);
+
+  // the LOSS half. A is made weak so every contest fails; CAR_THEFT_P pins the two rolled ones.
+  const oldP = process.env.CAR_THEFT_P; process.env.CAR_THEFT_P = '0';
+  await app.pool.query('UPDATE characters SET muscle=1, cunning=1, speed=1 WHERE id=$1', [A.id]);
+  await app.pool.query('UPDATE characters SET muscle=900, cunning=900, speed=900 WHERE id=$1', [B.id]);
+  // the WIN half above actually TOOK these — a mark with nothing on the street is refused
+  // `no_car`/`no_boat` before the roll, and a refusal reads on the summary line as a covered row.
+  await app.pool.query("INSERT INTO cars (id, character_id, model_id, trim_id, dmg) VALUES ('carL73', $1, 'junker', 'stock', 10)", [B.id]);
+  await app.pool.query("INSERT INTO boats (id, character_id, kind) VALUES ('boatL73', $1, 'dinghy')", [B.id]);
+  await app.pool.query("INSERT INTO character_cargo (character_id, good_id, qty) VALUES ($1,'gin',20) ON CONFLICT (character_id, good_id) DO UPDATE SET qty=20", [B.id]);
+  await app.pool.query("UPDATE racers SET injured_until=NULL WHERE id='racew73'");
+  for (const v of ['steal', 'trunk', 'boat', 'sabotage']) {
+    const d = await theft73(v);
+    assert.equal(d.r.body.win, false, `WAVE 73 needed a LOSS on ${v} to test the arrest line (got ${JSON.stringify(d.r.body)})`);
+    assert(d.r.body.jailedS > 0, `a failed ${v} is a stretch in lockup — the reply must say so`);
+    assert(!/house keeps it/.test(d.line) && /lockup/.test(d.line),
+      `a failed ${v} is an ARREST, never a lost bet: ${d.line}`);
+  }
+  process.env.CAR_THEFT_P = oldP === undefined ? '' : oldP;
+  if (oldP === undefined) delete process.env.CAR_THEFT_P;
+
+  // ── THE BODYGUARD ──────────────────────────────────────────────────────────────────────────
+  // The price was named and neither TERM was: the window, and that the cover absorbs exactly ONE
+  // lethal blow before it is spent. `until` is an ISO stamp the client has no parser for, which
+  // is why the window ships as *Seconds like every other clock in a reply.
+  const G = await mk73('Shadow ');
+  await app.pool.query('UPDATE characters SET respect=900000, cash=100000 WHERE id=$1', [G.id]);
+  await inject('POST', '/v1/bodyguard/offer', G.t, { price: 25000 });
+  await app.pool.query('UPDATE characters SET cash=9000000, health=100, jail_until=NULL WHERE id=$1', [A.id]);
+  const hireR = await inject('POST', `/v1/bodyguard/hire/${G.id}`, A.t, null);
+  assert.equal(hireR.code, 200, `WAVE 73 could not drive the hire (${JSON.stringify(hireR.body)})`);
+  assert(hireR.body.guardSeconds > 0, 'the hire must SEND the window in seconds — an ISO `until` renders nothing');
+  const hireLine = say73(hireR);
+  // asserted as AGREEMENT with the seconds the server sent, never against a restated 24h: the
+  // window is a founder lever (M3.BODYGUARD_MS) and a literal here would drift the day it moves.
+  const win73 = /running\s+(\d+)([dhms])/.exec(hireLine);
+  assert(win73, `the hire must state the window the server sent: ${hireLine}`);
+  const secs73 = Number(win73[1]) * { d: 86400, h: 3600, m: 60, s: 1 }[win73[2]];
+  assert(Math.abs(secs73 - hireR.body.guardSeconds) <= 3600,
+    `the window on the line must be the window the server sent (${win73[0]} vs ${hireR.body.guardSeconds}s)`);
+  assert(/ONE lethal shot/i.test(hireLine) && /spends the contract/i.test(hireLine),
+    `the hire must state that it buys a SINGLE shot, not a shift: ${hireLine}`);
+
+  // ── THE KILL, which named ONE of the things it took ────────────────────────────────────────
+  // Ground truth is the DATABASE for the quantity claims: the reply is the thing under test.
+  const gearId = 'knuckles', gearName = 'Brass Knuckles';
+  await app.pool.query('INSERT INTO account_gear (account_id, gear_id) VALUES ($1,$2) ON CONFLICT DO NOTHING', [await acctOf(B.id), gearId]);
+  await app.pool.query('UPDATE account_persistent SET omr=5000 WHERE account_id=$1', [await acctOf(B.id)]);
+  await app.pool.query("INSERT INTO character_guns (character_id, gun_id) VALUES ($1,'undertaker') ON CONFLICT DO NOTHING", [A.id]);
+  await app.pool.query("UPDATE characters SET gun='undertaker', energy=500, health=100, ammo=100000, guarded_by=NULL, guarded_until=NULL, jail_until=NULL WHERE id=$1", [A.id]);
+  await app.pool.query('UPDATE characters SET health=100, cash=4000000, shipment=10 WHERE id=$1', [B.id]);
+  const omrBefore = Number((await app.pool.query('SELECT omr FROM account_persistent WHERE account_id=$1', [await acctOf(B.id)])).rows[0].omr);
+  const oldS = process.env.SEARCH_MS, oldC = process.env.SHOOT_CD_MS, oldG = process.env.GEAR_LOOT_CHANCE;
+  process.env.SEARCH_MS = '1'; process.env.SHOOT_CD_MS = '1'; process.env.GEAR_LOOT_CHANCE = '1';
+  await inject('POST', `/v1/streets/${B.id}/search`, A.t, null);
+  const killR = await inject('POST', `/v1/streets/${B.id}/fire`, A.t, { rounds: 100000 });
+  process.env.SEARCH_MS = oldS; process.env.SHOOT_CD_MS = oldC; process.env.GEAR_LOOT_CHANCE = oldG;
+  assert.equal(killR.code, 200, `WAVE 73 could not drive the kill (${JSON.stringify(killR.body)})`);
+  assert.equal(killR.body.kill, true, 'WAVE 73 needed a KILL to test the receipt');
+  const k = killR.body, killLine = say73(killR);
+  // the SERVER half first, and the two raw ids are the reason it is a server half at all:
+  // describe() has no gear catalog and no handle on the shipment board.
+  assert(k.omrLoot > 0, 'the fixture must strip real $OMR, or the $OMR claim below is vacuous');
+  assert.equal(k.gearLootName, gearName, 'the kill must SEND the gear NAME — `gearLoot` is a catalog id');
+  assert(k.matLoot > 0 && typeof k.matLootName === 'string' && k.matLootName.length > 0,
+    'the kill must SEND the scarce material by name, not by the id the shipment board resolves');
+  assert(k.rep > 0 && k.hitman?.repGain > 0, 'the fixture must bank BOTH respect axes, or the line below proves nothing about either');
+  // the DB is the ground truth for what actually left the body
+  const omrAfter = Number((await app.pool.query('SELECT omr FROM account_persistent WHERE account_id=$1', [await acctOf(B.id)])).rows[0].omr);
+  assert(omrBefore - omrAfter >= k.omrLoot, `the reply must not claim more $OMR than the ledger moved (${omrBefore}→${omrAfter} vs ${k.omrLoot})`);
+  assert(killLine.includes(gearName), `the kill must name the GEAR it stripped: ${killLine}`);
+  assert(new RegExp(`${k.omrLoot.toLocaleString('en-US')}\\s*\\$OMR`).test(killLine),
+    `the kill must name the $OMR it took — the premium currency, invisible at the instant it moves: ${killLine}`);
+  assert(killLine.includes(k.matLootName), `the kill must name the scarce material it took: ${killLine}`);
+  assert(/respect/.test(killLine) && /feared/.test(killLine),
+    `the kill must name BOTH legends it banked — ordinary respect and the assassin's: ${killLine}`);
+}
+// ── WAVE 73 (vice): the Track claim, the pinks, the grid, the futurity book, the siege ──────────
+// Five entries, all DRIVEN (never synthetic — a literal passes straight through the mutation that
+// stops a field being sent). The headline is the track claim: three settle systems share the
+// {ok, settled, won, results} byte-shape, and the shared ticket line fires FIRST, so a SCRATCH —
+// where the stake was merely refunded — rendered byte-identically to a genuine win.
+{
+  const mkV = async (n) => {
+    const t = (await inject('POST', '/v1/auth/guest')).body.token;
+    await inject('POST', '/v1/character', t, { name: n + Math.random().toString(36).slice(2, 7) });
+    return { t, id: (await inject('GET', '/v1/me', t)).body.character.id };
+  };
+  const sayV = (r) => { described++; return String(describeFn(r.body, r.code)); };
+  const driveV = async (url, tok, payload, what) => {
+    const r = await inject('POST', url, tok, payload);
+    assert.equal(r.code, 200, `WAVE 73 could not drive ${what} (${JSON.stringify(r.body)})`);
+    return { r, line: sayV(r) };
+  };
+  const A = await mkV('Vice ');
+  await app.pool.query("UPDATE characters SET cash=90000000, respect=900000, energy=500, health=100, loc='neon' WHERE id=$1", [A.id]);
+
+  // the shared fixture seeds a track_entries row for one race — a PLAYER entry puts a racerId at a
+  // post, so a backdated bet on that race SCRATCHES by design. Pick the race with no player entry,
+  // or the "genuine hit" leg would be measuring a scratch.
+  const taken = new Set((await app.pool.query('SELECT DISTINCT race FROM track_entries')).rows.map((r) => r.race));
+  const RACE = taken.has('dogs') ? 'horses' : 'dogs';
+  const backdate = () => app.pool.query('UPDATE track_bets SET day = day - 1 WHERE character_id=$1', [A.id]);
+
+  // trackWinnerOf is not exported, so the winning post is DISCOVERED from a probe claim rather than
+  // precomputed — the reply is the ground truth for who came in.
+  await driveV('/v1/casino/track', A.t, { race: RACE, runner: 0, amount: 500 }, 'a probe bet');
+  await backdate();
+  const c0 = await driveV('/v1/casino/track/claim', A.t, {}, 'the probe claim');
+  const W = c0.r.body.results[0].winner;
+  assert.equal(typeof W, 'number', 'WAVE 73: the probe claim must name the winning post');
+
+  // (a) A GENUINE HIT names who came in and the race, and the money is what the DATABASE moved.
+  const cashBefore = Number((await app.pool.query('SELECT cash FROM characters WHERE id=$1', [A.id])).rows[0].cash);
+  await driveV('/v1/casino/track', A.t, { race: RACE, runner: W, amount: 500 }, 'the winning bet');
+  await backdate();
+  const cHit = await driveV('/v1/casino/track/claim', A.t, {}, 'the winning claim');
+  const hitRow = cHit.r.body.results[0];
+  assert.equal(hitRow.hit, true, 'WAVE 73 precondition: the discovered post must genuinely HIT');
+  assert.ok(hitRow.winnerName, 'WAVE 73: the claim must SEND the winner\'s name');
+  const cashAfter = Number((await app.pool.query('SELECT cash FROM characters WHERE id=$1', [A.id])).rows[0].cash);
+  assert.equal(cashAfter - cashBefore, cHit.r.body.won - 500, 'WAVE 73: the claim\'s won must be what the DATABASE paid');
+  assert.ok(cHit.line.includes(hitRow.winnerName), `WAVE 73: a track HIT must name who came in — got ${cHit.line}`);
+  assert.match(cHit.line, RACE === 'dogs' ? /the dogs/ : /the ponies/, `WAVE 73: a track claim must name the race — got ${cHit.line}`);
+  assert.ok(cHit.line.includes(fmtLike(cHit.r.body.won)), `WAVE 73: a track HIT must state what came back — got ${cHit.line}`);
+
+  // (b) A LOSS names who took it and never claims money.
+  await driveV('/v1/casino/track', A.t, { race: RACE, runner: (W + 1) % 6, amount: 500 }, 'the losing bet');
+  await backdate();
+  const cLose = await driveV('/v1/casino/track/claim', A.t, {}, 'the losing claim');
+  assert.equal(cLose.r.body.results[0].hit, false, 'WAVE 73 precondition: the off post must lose');
+  assert.match(cLose.line, /tore up/, `WAVE 73: a torn-up ticket must say so — got ${cLose.line}`);
+
+  // (c) THE SCRATCH — the defect. The stake was REFUNDED and nothing was won, and the old shared
+  // line read "$500 collected", byte-identical to a win.
+  await driveV('/v1/casino/track', A.t, { race: RACE, runner: 0, amount: 500 }, 'the scratch bet');
+  await backdate();
+  await app.pool.query('UPDATE track_bets SET bet_racer_id=$2 WHERE character_id=$1', [A.id, crypto.randomUUID()]);
+  const cScr = await driveV('/v1/casino/track/claim', A.t, {}, 'the scratched claim');
+  assert.equal(cScr.r.body.results[0].scratched, true, 'WAVE 73 precondition: the swapped runner must SCRATCH');
+  // `refunded`, never `won`: a scratch's stake coming back is not winnings, and folding them into
+  // one figure let a MIXED claim label the refund "at the window" (Codex C — the split is the fix)
+  assert.equal(cScr.r.body.refunded, 500, 'WAVE 73 precondition: a scratch refunds the stake — under refunded');
+  assert.equal(cScr.r.body.won, 0, 'a scratch must contribute NOTHING to won — a refund is not a win');
+  assert.match(cScr.line, /SCRATCHED/, `WAVE 73: a scratched runner must say so — got ${cScr.line}`);
+  assert.match(cScr.line, /came back|refunded/, `WAVE 73: a scratch REFUNDS the stake — got ${cScr.line}`);
+  assert.ok(!/collected/.test(cScr.line), `WAVE 73: a refund must never read as collected winnings — got ${cScr.line}`);
+  assert.notEqual(cScr.line, cHit.line, 'WAVE 73: a scratch and a genuine win must not read the same');
+
+  // (d) THE MIXED CLAIM — Codex C's actual scenario: one ticket HITS, the other SCRATCHES, settled
+  // in ONE claim. The old server folded payout+refund into one `won` and the client's anyHit label
+  // called the whole total winnings — so the refund read as money won. Both figures must now arrive
+  // split and BOTH must be on the line, each under its own word.
+  const OTHER = RACE === 'dogs' ? 'horses' : 'dogs';
+  await driveV('/v1/casino/track', A.t, { race: RACE, runner: W, amount: 500 }, 'the mixed hit bet');
+  await driveV('/v1/casino/track', A.t, { race: OTHER, runner: 0, amount: 500 }, 'the mixed scratch bet');
+  await backdate();
+  await app.pool.query('UPDATE track_bets SET bet_racer_id=$2 WHERE character_id=$1 AND race=$3', [A.id, crypto.randomUUID(), OTHER]);
+  const cMix = await driveV('/v1/casino/track/claim', A.t, {}, 'the mixed claim');
+  assert.equal(cMix.r.body.settled, 2, 'WAVE 73 precondition: the mixed claim settles BOTH tickets at once');
+  assert.ok(cMix.r.body.won > 0 && cMix.r.body.refunded === 500,
+    `WAVE 73: a mixed claim must split winnings from the refund — got won ${cMix.r.body.won}, refunded ${cMix.r.body.refunded}`);
+  assert.ok(cMix.line.includes(`$${fmtLike(cMix.r.body.won)} at the window`),
+    `WAVE 73: the mixed line must state the real winnings as winnings — got ${cMix.line}`);
+  assert.ok(cMix.line.includes(`$${fmtLike(cMix.r.body.refunded)} refunded`),
+    `WAVE 73: the mixed line must state the refund AS a refund, never fold it into the window figure — got ${cMix.line}`);
+
+  // ── THE GRID: a $25,000 escrow into a scheduled race that refunds on a short field ─────────────
+  const carA = (await app.pool.query(
+    "INSERT INTO cars (id, character_id, model_id, trim_id, dmg) VALUES ($1,$2,'meridian','base',0) RETURNING id",
+    [crypto.randomUUID(), A.id])).rows[0].id;
+  const gp = await driveV('/v1/races/gp', A.t, { car: carA }, 'the grand prix entry');
+  assert.ok(gp.r.body.closesSeconds > 0, 'WAVE 73: the grid must SEND its close clock');
+  assert.ok(gp.r.body.minEntrants > 0, 'WAVE 73: the grid must SEND the short-field threshold (a lever — never restated client-side)');
+  assert.match(gp.line, /closes in/, `WAVE 73: the grid entry must say when it closes — got ${gp.line}`);
+  assert.ok(gp.line.includes(String(gp.r.body.minEntrants)) && /comes back/.test(gp.line),
+    `WAVE 73: the grid entry must state the short-field refund — got ${gp.line}`);
+
+  // ── PINKS: the loudest ownership transfer in the game named the iron by its raw catalog key ────
+  const B = await mkV('Rival ');
+  await app.pool.query("UPDATE characters SET cash=9000000, respect=900000, energy=500, health=100, loc='neon' WHERE id=$1", [B.id]);
+  const carB = (await app.pool.query(
+    "INSERT INTO cars (id, character_id, model_id, trim_id, dmg, pink_slip) VALUES ($1,$2,'tsarina','base',0,true) RETURNING id",
+    [crypto.randomUUID(), B.id])).rows[0].id;
+  const pk = await driveV(`/v1/races/pinks/${B.id}`, A.t, { myCar: carA, theirCar: carB }, 'the pinks race');
+  const slip = pk.r.body.win ? pk.r.body.wonCar : pk.r.body.lostCar;
+  assert.ok(slip && slip.name, 'WAVE 73: the pinks reply must SEND the car\'s display name');
+  assert.notEqual(slip.name, slip.model, 'WAVE 73 precondition: this car\'s name must genuinely differ from its catalog key');
+  assert.ok(pk.line.includes(slip.name), `WAVE 73: the pinks line must name the iron, never its catalog key — got ${pk.line}`);
+  assert.ok(!new RegExp(`\\b${slip.model}\\b`).test(pk.line), `WAVE 73: the pinks line must not print the raw key — got ${pk.line}`);
+  assert.ok(pk.line.includes(`${pk.r.body.you} to ${pk.r.body.them}`), `WAVE 73: the pinks line must state the margin — got ${pk.line}`);
+
+  // ── THE FUTURITY BOOK: cash escrowed into a parimutuel pool settling at a deadline ─────────────
+  const buy = await driveV('/v1/stable/buy', B.t, { kind: 'dog', name: 'Flash' }, 'a greyhound');
+  const racerId = buy.r.body.racer?.id || (await app.pool.query('SELECT id FROM racers WHERE character_id=$1', [B.id])).rows[0].id;
+  await driveV(`/v1/casino/futurity/nominate/${racerId}`, B.t, {}, 'the nomination');
+  const fb = await driveV('/v1/casino/futurity/bet', A.t, { racerId, amount: 2000 }, 'the futurity bet');
+  assert.ok(fb.r.body.closesSeconds > 0, 'WAVE 73: the futurity bet must SEND its close clock');
+  assert.ok(fb.r.body.pool >= 2000, 'WAVE 73: the futurity bet must SEND the pool its stake joined');
+  assert.match(fb.line, /closes in/, `WAVE 73: the futurity bet must say when the book closes — got ${fb.line}`);
+  assert.match(fb.line, /parimutuel/i, `WAVE 73: the futurity bet must say how it pays — got ${fb.line}`);
+  assert.match(fb.line, /scrapped|comes back/, `WAVE 73: the futurity bet must state the scrapped-card refund — got ${fb.line}`);
+
+  // ── THE SIEGE: the once-a-night run is all-or-nothing, and the two modes read identically ──────
+  process.env.PRIME_TIME_LIVE = 'on'; process.env.PRIME_TIME_MECH = 'siege';
+  const siegeLines = {};
+  for (const mode of ['value', 'honor']) {
+    process.env.PRIME_TIME_MODE = mode;
+    const S = await mkV('Siege ');
+    await app.pool.query('UPDATE characters SET respect=900000, energy=500, health=100 WHERE id=$1', [S.id]);
+    const sg = await driveV('/v1/primetime/siege', S.t, {}, `the ${mode} siege`);
+    assert.equal(sg.r.body.mode, mode, `WAVE 73: the siege must SEND the night's mode (${mode})`);
+    assert.ok(sg.r.body.reward !== undefined, `WAVE 73: the siege must SEND what a crack pays (${mode})`);
+    assert.match(sg.line, /uncracked siege pays nothing/, `WAVE 73: the siege must say it is all-or-nothing — got ${sg.line}`);
+    siegeLines[mode] = sg.line;
+  }
+  assert.ok(siegeLines.value.includes(fmtLike(3000)) || /\$/.test(siegeLines.value),
+    `WAVE 73: a value siege must name the cash a crack pays — got ${siegeLines.value}`);
+  assert.notEqual(siegeLines.value, siegeLines.honor, 'WAVE 73: the two siege modes must not read identically — they pay different things');
+  delete process.env.PRIME_TIME_LIVE; delete process.env.PRIME_TIME_MECH; delete process.env.PRIME_TIME_MODE;
+}
+
+// ── WAVE 73 (the Pen): a break BLOWN by a rat read as bad luck at the fence ──────────────────────
+// The Pen cannot sit in ACTIONS at all — jail refuses nearly everything, so a jailed row would
+// silence every row after it and those rows would then read on the summary line as covered (the
+// recorded vacuity class). Own tokens, after the main loop, folding the lines back through the same
+// describeFn so the sweeps above cover them too.
+{
+  const mkP = async (n) => {
+    const t = (await inject('POST', '/v1/auth/guest')).body.token;
+    await inject('POST', '/v1/character', t, { name: n + Math.random().toString(36).slice(2, 7) });
+    return { t, id: (await inject('GET', '/v1/me', t)).body.character.id };
+  };
+  const kit = (id, item, qty) => app.pool.query(
+    'INSERT INTO pen_contraband (character_id, item, qty) VALUES ($1,$2,$3) ON CONFLICT (character_id,item) DO UPDATE SET qty=$3', [id, item, qty]);
+  // every precondition seeded, or the action is REFUSED and a refusal reads on the summary line
+  // exactly like a covered row: inside, out of the hole, with the energy a break costs.
+  const jail = (id, s = 7200) => app.pool.query(
+    `UPDATE characters SET jail_until = now() + interval '${s} seconds', hole_until=NULL, energy=500, health=100 WHERE id=$1`, [id]);
+  const sayP = (r) => { described++; return String(describeFn(r.body, r.code)); };
+  const driveP = async (url, tok, payload, what) => {
+    const r = await inject('POST', url, tok, payload);
+    assert.equal(r.code, 200, `WAVE 73 could not drive ${what} (${JSON.stringify(r.body)})`);
+    return { r, line: sayP(r) };
+  };
+  // the sentence the DATABASE holds — ground truth for every quantity claimed below, because the
+  // reply is the thing under test.
+  const jailLeft = async (id) => Math.round((new Date((await app.pool.query(
+    'SELECT jail_until, health FROM characters WHERE id=$1', [id])).rows[0].jail_until) - Date.now()) / 1000);
+  const healthOf = async (id) => Number((await app.pool.query('SELECT health FROM characters WHERE id=$1', [id])).rows[0].health);
+
+  const oldBP = process.env.PEN_BREAK_P;                 // the roll is pinned: leaving the outcome to
+  const pin = (v) => { process.env.PEN_BREAK_P = v; };   // chance is a deterministic assertion on a
+  const L1 = await mkP('Leader '), M1 = await mkP('Inmate ');   // probabilistic precondition.
+
+  // ── THE RAT: a bare {ok:true} that read the mute word ────────────────────────────────────────
+  pin('1');
+  await kit(L1.id, 'cutkit', 3); await jail(L1.id); await jail(M1.id);
+  const plan73 = await driveP('/v1/pen/break/plan', L1.t, null, 'the break plan');
+  await driveP(`/v1/pen/break/${plan73.r.body.id}/join`, M1.t, null, 'joining the break');
+  const rat73 = await driveP(`/v1/pen/break/${plan73.r.body.id}/rat`, M1.t, null, 'ratting the break');
+  // the SERVER half first — the marker is what makes the line branchable at all. A bare {ok:true}
+  // can never be keyed on, and `op` names the SYSTEM rather than relying on the absence of a field.
+  assert.equal(rat73.r.body.op, 'breakout', 'the rat must name its own system — a bare {ok:true} is unbranchable');
+  assert.equal(rat73.r.body.ratted, true, 'the rat must carry the marker its line keys on');
+  assert(!/^done\.$/.test(rat73.line), `the rat read the mute word: ${rat73.line}`);
+  // the three terms, and the THIRD is the one that makes ratting a decision rather than a free win:
+  // the deal is RELIEF-ONLY (BREAK_RAT_CUT_S was retired for exactly that reason).
+  assert(/tipped|guards/i.test(rat73.line), `the rat must say the tip is registered: ${rat73.line}`);
+  assert(/blows whatever the roll|blows regardless/i.test(rat73.line),
+    `the rat must say the break now blows whatever the roll: ${rat73.line}`);
+  assert(/relief only/i.test(rat73.line) && /own sentence/i.test(rat73.line),
+    `the rat must state the deal is RELIEF-ONLY — no cut below your own sentence: ${rat73.line}`);
+
+  // ── BLOWN BY THE RAT: the sharpest of the three, because the line was FLUENT and FALSE ────────
+  const blown73 = await driveP(`/v1/pen/break/${plan73.r.body.id}/go`, L1.t, null, 'the blown go');
+  assert.equal(blown73.r.body.blown, true, 'a ratted break must SAY it was blown, not merely that nobody escaped');
+  assert(blown73.r.body.crew >= 2 && blown73.r.body.holeSeconds > 0 && blown73.r.body.sentenceSeconds > 0,
+    `the blown go must send the crew and the per-member figures the SOLO break has always sent: ${JSON.stringify(blown73.r.body)}`);
+  assert(/somebody talked/i.test(blown73.line),
+    `a leader who was SOLD OUT must be told so — the one thing he has to learn: ${blown73.line}`);
+  // and it must not read as the roll going against him, which is what it said before.
+  assert(!/^caught at the fence/.test(blown73.line),
+    `a blown break must not read as bad luck at the fence: ${blown73.line}`);
+
+  // ── CAUGHT (the roll): three figures in hand, three figures dropped ───────────────────────────
+  await jail(L1.id); await jail(M1.id); await kit(L1.id, 'cutkit', 3);
+  pin('0');
+  const p2 = await driveP('/v1/pen/break/plan', L1.t, null, 'the second plan');
+  await driveP(`/v1/pen/break/${p2.r.body.id}/join`, M1.t, null, 'joining the second break');
+  const caught73 = await driveP(`/v1/pen/break/${p2.r.body.id}/go`, L1.t, null, 'the caught go');
+  const cb = caught73.r.body;
+  assert.equal(cb.caught, true, 'WAVE 73 needed a CAUGHT co-op go (PEN_BREAK_P is pinned)');
+  assert(cb.dmg > 0 && cb.holeSeconds > 0 && cb.sentenceSeconds > 0 && cb.crew >= 2,
+    'the co-op caught shape must carry the same per-member figures the solo one does: '
+    + JSON.stringify({ crew: cb.crew, dmg: cb.dmg, holeSeconds: cb.holeSeconds, sentenceSeconds: cb.sentenceSeconds }));
+  // ground truth is the DATABASE: the reply may not claim a stretch or a beating the row does not hold.
+  const dbLeft = await jailLeft(L1.id);
+  assert(Math.abs(dbLeft - cb.sentenceSeconds) <= 5,
+    `the reply's stretch must be the stretch the row holds (${cb.sentenceSeconds} vs ${dbLeft})`);
+  assert.equal(await healthOf(L1.id), 100 - cb.dmg, 'the reply must not claim a beating the row did not take');
+  assert(caught73.line.includes(String(cb.dmg)), `a caught break must name the beating: ${caught73.line}`);
+  assert(/in the hole/.test(caught73.line) && /stretch runs/.test(caught73.line),
+    `a caught break must name the hole and the new stretch, not only that they happened: ${caught73.line}`);
+  assert(!/somebody talked/i.test(caught73.line),
+    `an honest roll must not read as a betrayal: ${caught73.line}`);
+
+  // ── OVER THE WALL: the WANTED window is the number that decides what a fugitive does next ─────
+  await jail(L1.id); await jail(M1.id); await kit(L1.id, 'cutkit', 3);
+  pin('1');
+  const p3 = await driveP('/v1/pen/break/plan', L1.t, null, 'the third plan');
+  await driveP(`/v1/pen/break/${p3.r.body.id}/join`, M1.t, null, 'joining the third break');
+  const out73 = await driveP(`/v1/pen/break/${p3.r.body.id}/go`, L1.t, null, 'the escape');
+  assert.equal(out73.r.body.escaped, true, 'WAVE 73 needed an ESCAPE (PEN_BREAK_P is pinned)');
+  assert(out73.r.body.wantedSeconds > 0, 'the escape must SEND the fugitive window in seconds');
+  // asserted as AGREEMENT with the seconds the server sent, never against a restated 48h: the
+  // window is a founder lever (PEN.FUGITIVE_MS) and a literal here would drift the day it moves.
+  const w73 = /WANTED for (\d+)([dhms])/.exec(out73.line);
+  assert(w73, `the escape must state the window the server sent: ${out73.line}`);
+  const wSecs = Number(w73[1]) * { d: 86400, h: 3600, m: 60, s: 1 }[w73[2]];
+  assert(Math.abs(wSecs - out73.r.body.wantedSeconds) <= 3600,
+    `the window on the line must be the window the server sent (${w73[0]} vs ${out73.r.body.wantedSeconds}s)`);
+  assert(out73.line.includes(String(out73.r.body.crew)), `the escape must name the crew that got out: ${out73.line}`);
+
+  // ── THE SOLO BREAK: the same two shapes, one man ──────────────────────────────────────────────
+  const S1 = await mkP('Solo ');
+  await kit(S1.id, 'cutkit', 5); await jail(S1.id);
+  pin('0');
+  const sCaught = await driveP('/v1/pen/break', S1.t, null, 'the solo caught break');
+  assert.equal(sCaught.r.body.caught, true, 'WAVE 73 needed a CAUGHT solo break');
+  assert(sCaught.line.includes(String(sCaught.r.body.dmg)) && /in the hole/.test(sCaught.line)
+    && /stretch runs/.test(sCaught.line),
+    `the solo caught line must quote the three figures it has in hand, as the shank's does: ${sCaught.line}`);
+  await jail(S1.id);
+  pin('1');
+  const sOut = await driveP('/v1/pen/break', S1.t, null, 'the solo escape');
+  assert.equal(sOut.r.body.escaped, true, 'WAVE 73 needed a solo ESCAPE');
+  assert(/WANTED for /.test(sOut.line) && /square your name/i.test(sOut.line),
+    `the solo escape must name the window AND the way out of it: ${sOut.line}`);
+  process.env.PEN_BREAK_P = oldBP === undefined ? '' : oldBP;
+  if (oldBP === undefined) delete process.env.PEN_BREAK_P;
+
+  // ── THE TRUSTY'S SHORTCUT: the shave was stated, the RESULT was not ───────────────────────────
+  // The yard character is a per-day seed draw with no override, so only the effect TODAY draws is
+  // reachable; the two other branches are not asserted here and test/pen.js owns that coverage.
+  const T1 = await mkP('Talker ');
+  await jail(T1.id, 11100);
+  const talk73 = await driveP('/v1/pen/talk', T1.t, null, 'the yard conversation');
+  if (talk73.r.body.effect === 'shortcut') {
+    assert(talk73.r.body.sentenceSeconds > 0, 'the shortcut must SEND the resulting stretch, not only what came off');
+    const tLeft = await jailLeft(T1.id);
+    assert(Math.abs(tLeft - talk73.r.body.sentenceSeconds) <= 5,
+      `the shortcut's stretch must be the stretch the row holds (${talk73.r.body.sentenceSeconds} vs ${tLeft})`);
+    assert(/left to serve/.test(talk73.line),
+      `the shortcut must state what is LEFT, as its sibling workYard does on the same screen: ${talk73.line}`);
+  }
+
+  // ── THE BURNER: the outcome and the price, each printed TWICE in one sentence ─────────────────
+  // The `op === 'npchit'` terms block states the outcome, the fee, the odds and both cooldowns; a
+  // second standalone line fired alongside it and said the outcome and the money again. A figure
+  // stated twice in one toast reads at a glance as two different figures (the wave-36 echo class).
+  const B1 = await mkP('Caller '), V1 = await mkP('Victim ');
+  await app.pool.query('UPDATE characters SET respect=900000, cash=90000000 WHERE id=$1', [B1.id]);
+  await app.pool.query('UPDATE characters SET respect=90000, health=100 WHERE id=$1', [V1.id]);
+  await kit(B1.id, 'burner', 3); await jail(B1.id);
+  const burn73 = await driveP(`/v1/pen/burner/${V1.id}`, B1.t, { tier: 'legbreaker' }, 'the burner call');
+  assert(burn73.r.body.op === 'npchit' && burn73.r.body.burner === true && burn73.r.body.cost > 0,
+    `the burner call must ride the hired-gun terms block: ${JSON.stringify(burn73.r.body)}`);
+  // the ECHO is asserted as a COUNT, not as a wording match — the failure a player saw is the
+  // number appearing twice, and a future branch that mentions the fee must not reintroduce it.
+  const money73 = `$${burn73.r.body.cost.toLocaleString('en-US')}`;
+  const echoes = (s, n) => s.split(n).length - 1;
+  assert.equal(echoes(burn73.line, money73), 1,
+    `the burner line printed its own price ${echoes(burn73.line, money73)} times: ${burn73.line}`);
+  assert.equal(echoes(burn73.line, 'contractor'), 1,
+    `the burner line stated the outcome twice: ${burn73.line}`);
+  // the KILL's own wording, on the DRIVEN reply's real fields with only the outcome flag flipped —
+  // the branch selector is client-side, and the roll has no test knob (the wave-68 precedent).
+  const burnKill = String(describeFn({ ...burn73.r.body, hit: true, killed: true }, 200));
+  assert.equal(echoes(burnKill, money73), 1, `the burner KILL printed its own price twice: ${burnKill}`);
+  assert.equal(echoes(burnKill, 'contractor'), 1, `the burner KILL stated the outcome twice: ${burnKill}`);
+  assert(/mark is gone/.test(burnKill), `the burner KILL must still say the mark is dead: ${burnKill}`);
+  // the guard's NAME was the one thing only the deleted line carried — it moved up rather than out.
+  // flip EVERY outcome flag, not just the one under test: the driven reply's roll is random, and on a
+  // CI run where the 2% burner roll KILLED, a spread carrying killed:true selects the kill arm (it
+  // precedes absorbed in the branch) — a deterministic assertion resting on a probabilistic
+  // precondition, the recorded flake class.
+  const burnGuard = String(describeFn({ ...burn73.r.body, hit: true, killed: false, revived: false, absorbed: true, guard: 'Big Sal' }, 200));
+  assert(/Big Sal/.test(burnGuard), `an absorbed hire must still NAME the man who ate it: ${burnGuard}`);
+  console.log('  ✓ wave 73: the pen — a break BLOWN by a rat read as bad luck at the fence, a tipper told nothing, and a hired gun that stated its price twice');
+}
+
+// ── WAVE 74 (daily): the everyday buttons — a burst, a wipe, a rung, a vest and a drill ─────────
+// Its OWN token, deliberately after the main loop: the wipe unlearns EVERY skill and burns the one
+// respec a day, and a shared fixture poisoned that way skips rows that then read on the summary
+// line exactly like covered ones (the Pen/club precedent).
+{
+  const t74 = (await inject('POST', '/v1/auth/guest')).body.token;
+  await inject('POST', '/v1/character', t74, { name: 'Daily ' + Math.random().toString(36).slice(2, 7) });
+  const id74 = (await inject('GET', '/v1/me', t74)).body.character.id;
+  const acc74 = (await app.pool.query('SELECT account_id FROM characters WHERE id=$1', [id74])).rows[0].account_id;
+  // every precondition SEEDED: a refused action is skipped in silence and reads as covered.
+  // level 40 buys the ten points a full branch costs, and the $OMR covers the wipe AND the vest.
+  await app.pool.query("UPDATE characters SET cash=50000000, respect=5000000, energy=500, health=100, loc='neon' WHERE id=$1", [id74]);
+  await app.pool.query('UPDATE account_persistent SET omr=100000 WHERE account_id=$1', [acc74]);
+  const omrNow = async () => Number((await app.pool.query('SELECT omr FROM account_persistent WHERE account_id=$1', [acc74])).rows[0].omr);
+  const drive74 = async (url, payload) => {
+    const r = await inject('POST', url, t74, payload || null);
+    assert.equal(r.code, 200, `WAVE 74 could not drive ${url} (${JSON.stringify(r.body)})`);
+    described++;
+    return { r, line: String(describeFn(r.body, 200)) };
+  };
+
+  // ── THE BURST: a mute line over a cooldown that shuts EVERY other active ──────────────────────
+  for (const s of ['bruiser', 'doctors_friend', 'executioner', 'made_man']) await drive74(`/v1/skills/${s}`);
+  const act74 = await drive74('/v1/skills/active/adrenaline');
+  assert.equal(act74.r.body.ability, 'adrenaline', 'the burst must name its ability');
+  assert(typeof act74.r.body.name === 'string' && act74.r.body.name.length,
+    'the burst must SEND the display name — describe() has no catalog of the actives');
+  assert(act74.r.body.cooldownSeconds > 0,
+    'the burst must SEND the shared cooldown: it is the TERM, and only the server knows it (a grandmastery halves it)');
+  // ground truth for the energy is the DATABASE, not the reply that claims it
+  const en74 = Number((await app.pool.query('SELECT energy FROM characters WHERE id=$1', [id74])).rows[0].energy);
+  assert.equal(Number(act74.r.body.energy), en74, 'the burst must report the tank the row actually holds');
+  assert(act74.line !== 'done.' && act74.line.includes(act74.r.body.name)
+    && act74.line.includes(fmtLike(en74)) && /shares the one clock/.test(act74.line),
+  `the burst must name itself, the tank AND the shared clock it shuts: ${act74.line}`);
+
+  // ── THE WIPE: the BURN reported as the balance, and the skills named by their storage keys ────
+  const omrBefore = await omrNow();
+  const wipe74 = await drive74('/v1/skills/respec');
+  const omrAfter = await omrNow();
+  assert(Array.isArray(wipe74.r.body.names) && wipe74.r.body.names.length === wipe74.r.body.unlearned.length,
+    'the wipe must SEND display names beside the ids — the client has no skill catalog (its per-skill sibling has sent one since it shipped)');
+  assert(wipe74.r.body.names.some((n) => /\s/.test(n)),
+    'the names must be the names, not the keys re-sent');
+  // the FIGURE is the burn, and the database is what proves which it is
+  assert.equal(omrBefore - omrAfter, Number(wipe74.r.body.omr),
+    `the wipe's omr field is what LEFT: ${omrBefore} → ${omrAfter} against ${wipe74.r.body.omr}`);
+  assert(/burned/.test(wipe74.line) && !/left/.test(wipe74.line),
+    `the wipe must say the $OMR was BURNED, never what is left: ${wipe74.line}`);
+  assert(wipe74.line.includes(wipe74.r.body.names[0]) && !wipe74.line.includes(wipe74.r.body.unlearned[0]),
+    `the wipe must name the skills, not their keys: ${wipe74.line}`);
+  assert(/respec a day/.test(wipe74.line),
+    `the wipe must state the shared clock its per-skill sibling already states: ${wipe74.line}`);
+
+  // ── THE FIRST WEEK: nine claims that read identically but for the figures ─────────────────────
+  // GUARANTEE the precondition: `ob_crime` reads lc_crime, which a BUSTED job does not bump — a
+  // deterministic assertion resting on the crime roll is the recorded flake class, and a refused
+  // claim is skipped in silence and reads on the summary line as covered.
+  for (let i = 0; i < 12; i++) {
+    await app.pool.query('UPDATE characters SET jail_until=NULL, nerve=100, energy=500 WHERE id=$1', [id74]);
+    await inject('POST', '/v1/crimes/pick', t74, { approach: 'standard' });
+    if (Number((await app.pool.query('SELECT lc_crime FROM characters WHERE id=$1', [id74])).rows[0].lc_crime) >= 1) break;
+  }
+  await app.pool.query('UPDATE characters SET jail_until=NULL, energy=500 WHERE id=$1', [id74]);
+  assert(Number((await app.pool.query('SELECT lc_crime FROM characters WHERE id=$1', [id74])).rows[0].lc_crime) >= 1,
+    'WAVE 74 could not land a clean job — the First Week claim would be refused and skip in silence');
+  const ob74 = await drive74('/v1/onboard/ob_crime/claim');
+  assert(typeof ob74.r.body.taskName === 'string' && ob74.r.body.taskName !== ob74.r.body.task,
+    'the claim must SEND the task NAME — `task` is a storage id the client has no catalog for');
+  assert(ob74.r.body.weekOf > 0 && ob74.r.body.weekDone >= 1,
+    'the claim must SEND the progress: the OFFERED list is the server\'s own (an unverifiable social task is not held against the player)');
+  assert(ob74.line.includes(ob74.r.body.taskName)
+    && ob74.line.includes(`${ob74.r.body.weekDone}/${ob74.r.body.weekOf}`),
+  `the claim must name WHAT was finished and HOW FAR through: ${ob74.line}`);
+
+  // ── THE VEST: a $OMR burn with no price on the line ───────────────────────────────────────────
+  const vBefore = await omrNow();
+  const vest74 = await drive74('/v1/armory/vest/lightv');
+  const vAfter = await omrNow();
+  assert(Number(vest74.r.body.omr) > 0, 'the vest must SEND its price — the client has no armory catalog');
+  assert.equal(vBefore - vAfter, Number(vest74.r.body.omr),
+    `the vest's price must be what left the account: ${vBefore} → ${vAfter} against ${vest74.r.body.omr}`);
+  assert(vest74.line.includes(`${fmtLike(vest74.r.body.omr)} $OMR`),
+    `the vest must name the bill it just charged: ${vest74.line}`);
+
+  // ── THE DRILL: the trainer named by their storage key, on the wire and on the toast ───────────
+  // TWO gym sessions with the shared clock cleared between them — a regimen session is also the
+  // career's own `ca_regimen` proof, which is the rung driven directly below.
+  for (let i = 0; i < 2; i++) {
+    await app.pool.query('UPDATE characters SET train_at=NULL, energy=500 WHERE id=$1', [id74]);
+    await drive74('/v1/regimen/stamina');
+  }
+  // WHICH job the armorer sets is a per-day seed draw with no override, so the counter it wants is
+  // seeded from the SERVER's own board — a deterministic assertion resting on today's draw is the
+  // recorded flake class, and an unmet drill is refused and would skip in silence.
+  const rb74 = (await inject('GET', '/v1/regimen', t74)).body;
+  const d74 = rb74.drills.find((d) => d.npc === 'armorer');
+  assert(d74, 'WAVE 74 found no armorer drill on the board');
+  await app.pool.query(
+    'INSERT INTO daily_progress (character_id, day, counters) VALUES ($1,$2,$3) '
+    + 'ON CONFLICT (character_id, day) DO UPDATE SET counters=$3',
+    [id74, Math.floor(Date.now() / 86400000), JSON.stringify({ [d74.kind]: d74.n })]);
+  const drill74 = await drive74('/v1/regimen/drill/armorer');
+  assert(typeof drill74.r.body.npcName === 'string' && drill74.r.body.npcName !== drill74.r.body.npc,
+    'the drill must SEND the trainer\'s NAME — the id is a storage key and the client has no catalog of the cast');
+  assert(drill74.line.includes(drill74.r.body.npcName),
+    `the drill's toast must name the trainer who ran it: ${drill74.line}`);
+  // the WIRE half's server side, read from the DATABASE rather than from the reply that claims it:
+  // the notification is the surface that rendered "armorer's drill is done", and gates.js's wire
+  // ledger holds the template to the name once the payload carries one.
+  const note74 = (await app.pool.query(
+    "SELECT payload FROM notifications WHERE character_id=$1 AND type='drill_done' ORDER BY created_at DESC LIMIT 1", [id74])).rows[0];
+  assert(note74, 'the drill must ring the wire');
+  assert.equal(JSON.parse(note74.payload).npcName, drill74.r.body.npcName,
+    'the drill\'s NOTIFY must carry the trainer\'s name too — the wire is where the raw key was read');
+
+  // ── THE RUNG: the SAME pay stated twice in one sentence ───────────────────────────────────────
+  const board74 = (await inject('GET', '/v1/career', t74)).body;
+  let ready74 = null;
+  for (const tier of board74.tiers) for (const k of tier.tasks) if (k.ready && !k.claimed && !ready74) ready74 = k.id;
+  assert(ready74, 'WAVE 74 found no claimable career rung — the precondition would skip in silence');
+  const car74 = await drive74(`/v1/career/${ready74}`);
+  assert(Number(car74.r.body.pay) > 0, 'the rung must SEND its pay');
+  const money74 = `$${fmtLike(car74.r.body.pay)}`;
+  const echo74 = (s, n) => s.split(n).length - 1;
+  assert.equal(echo74(car74.line, money74), 1,
+    `the rung printed its own pay ${echo74(car74.line, money74)} times — a figure stated twice reads as two figures: ${car74.line}`);
+  // …and the generic push must still SPEAK for a reply whose own branch says nothing about pay,
+  // or the scan has been traded for a silence (the check-in is the branch that owns that line).
+  const bare74 = String(describeFn({ ok: true, pay: 4321, streak: 3, energyGained: 0 }, 200));
+  assert(bare74.includes('$4,321'), `a reply whose branch states no pay must still have it stated: ${bare74}`);
+
+  console.log('  ✓ wave 74: the daily buttons — a burst that named no clock, a burn reported as a balance, a rung that paid twice and a drill run by a storage key');
+}
 await app.close();
+
+// ── WAVE 73 (market): four verbs on the two boards, and none named what a player needed ─────────
+// Its OWN tokens, after the main loop: a bid needs a SECOND party (bidding your own iron is refused
+// `own`), a consignment needs a won trophy, and a cancel needs a listing that this fixture posted —
+// each a precondition the shared fixture would refuse in silence, which reads on the summary line
+// exactly like a covered action. DRIVEN throughout: every claim below is about a field the SERVER
+// sends, and a synthetic passes straight through the mutation that stops it being sent.
+//
+// Why THE SILENCE LEDGER never caught the mute one: ACTPATHS collects act() presses from SINGLE-
+// QUOTED literals, data-do attributes and the raw deck's tuples. All three /v1/auction press paths
+// are TEMPLATE literals and none of them is in the deck, so the path never enters ACTPATHS and
+// `reclaimConsignment` never enters pressedFns — the ledger is structurally blind to that shape.
+{
+  const app2 = await buildServer();
+  const inj2 = async (method, url, token, payload) => {
+    const res = await app2.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload });
+    try { return { code: res.statusCode, body: res.json() }; } catch { return { code: res.statusCode, body: null }; }
+  };
+  const mk73 = async (nm) => {
+    const t = (await inj2('POST', '/v1/auth/guest')).body.token;
+    await inj2('POST', '/v1/character', t, { name: nm + Math.random().toString(36).slice(2, 7) });
+    const id = (await inj2('GET', '/v1/me', t)).body.character.id;
+    await app2.pool.query('UPDATE characters SET cash=50000000, respect=500000, loc=$2 WHERE id=$1', [id, 'docks']);
+    const account = (await app2.pool.query('SELECT account_id FROM characters WHERE id=$1', [id])).rows[0].account_id;
+    await app2.pool.query('UPDATE account_persistent SET omr=100000 WHERE account_id=$1', [account]);
+    return { t, id, account };
+  };
+  const S = await mk73('Consignor '), B = await mk73('Bidder ');
+  const drive73 = async (url, tok, payload, what) => {
+    const r = await inj2('POST', url, tok, payload || null);
+    assert.equal(r.code, 200, `WAVE 73 (market) could not drive ${what} (${JSON.stringify(r.body)})`);
+    return { r, line: String(describeFn(r.body, 200)) };
+  };
+
+  // ── THE BLOCK (RESALE): the window the listing never stated, and the pull that said nothing ───
+  await app2.pool.query(
+    "INSERT INTO auction_wins (account_id, lot_id, archetype, name, serial, price) VALUES ($1,'0:0','ring',$2,'W0-R',300)",
+    [S.account, "A Bishop's Ring"]);
+  const cons73 = await drive73('/v1/auction/consign', S.t, { lotId: '0:0', reserve: 200 }, 'the consignment');
+  assert.equal(cons73.r.body.consign, 'listed', 'the consignment must name its SYSTEM — a marker, never a bare {ok,id,name}');
+  assert(cons73.r.body.closesHours > 0, 'the consignment must SEND its window — the client has no consignment catalog');
+  assert(cons73.line.includes(String(cons73.r.body.closesHours) + 'h') && /before a bid lands/.test(cons73.line),
+    `the lot's WINDOW is the term — it is how long you can still change your mind: ${cons73.line}`);
+  const pull73 = await drive73(`/v1/auction/consign/${cons73.r.body.id}/cancel`, S.t, {}, 'pulling the lot');
+  assert.equal(pull73.r.body.consign, 'pulled', 'pulling must name its system');
+  assert.equal(pull73.r.body.name, "A Bishop's Ring", 'pulling must SEND the trophy it handed back');
+  assert(pull73.line !== 'done.' && pull73.line.includes("A Bishop's Ring") && /off the block/.test(pull73.line)
+    && /once a bid lands/.test(pull73.line),
+  `pulling a lot must name the trophy AND why it is only legal now: ${pull73.line}`);
+
+  // ── THE MARKET BID: the iron, and that the money LEFT the pocket ──────────────────────────────
+  // A REAL catalog model, so the display name genuinely differs from the id it replaced — against a
+  // made-up model_id the name assertion would pass while resolving nothing.
+  const model73 = 'junker', modelName73 = 'County Auction Junker';
+  await app2.pool.query(
+    "INSERT INTO cars (id, character_id, model_id, trim_id, dmg) VALUES ('w73m1',$1,$2,'rusted',0),('w73m2',$1,$2,'rusted',0)",
+    [S.id, model73]);
+  const lst73 = await drive73('/v1/market', S.t, { kind: 'car', carId: 'w73m1', minBid: 5000 }, 'the car listing');
+  const bid73 = await drive73(`/v1/market/${lst73.r.body.id}/bid`, B.t, { amount: 5000 }, 'the bid');
+  assert.equal(bid73.r.body.market, 'bid', 'the bid must name its SYSTEM — the branch keyed on `name === undefined` held only until the reply grew a name');
+  assert.equal(bid73.r.body.carName, modelName73, 'the bid must SEND the iron’s display name — the client has no listing catalog');
+  assert(bid73.line.includes(modelName73), `a bid must name WHAT was bid on, or three lots read three identical lines: ${bid73.line}`);
+  assert(/HELD until/.test(bid73.line),
+    `the cash left the pocket into escrow — the line must say so: ${bid73.line}`);
+  // the anti-snipe half still reads (it was the one term this line already had)
+  assert(/clock reset/.test(String(describeFn({ ...bid73.r.body, extended: true }, 200))),
+    'the snipe extension must survive the rekey');
+
+  // ── THE CANCEL: the quantity the route itself gates on, and the iron by name ──────────────────
+  await app2.pool.query(
+    "INSERT INTO character_cargo (character_id, good_id, qty) VALUES ($1,'gin',10) ON CONFLICT (character_id, good_id) DO UPDATE SET qty=10", [S.id]);
+  const gl73 = await drive73('/v1/market', S.t, { kind: 'good', goodId: 'gin', qty: 4, price: 100 }, 'the goods listing');
+  const gc73 = await drive73(`/v1/market/${gl73.r.body.id}/cancel`, S.t, {}, 'pulling the goods lot');
+  assert.equal(gc73.r.body.qty, 4, 'the goods cancel must SEND the quantity — the same call THROWS `cargo` on exactly that number');
+  // ground truth for what came back is the DATABASE, not the reply that claims it
+  const backQty = Number((await app2.pool.query(
+    'SELECT qty FROM character_cargo WHERE character_id=$1 AND good_id=$2', [S.id, 'gin'])).rows[0].qty);
+  assert.equal(backQty, 10, 'the freight must really be back in the trunk before the line is asserted');
+  assert(new RegExp(`${gc73.r.body.qty} \\u00D7`).test(gc73.line) && /Bathtub Gin/.test(gc73.line),
+    `a capacity-limited trunk needs the QUANTITY that just landed in it, not only the good: ${gc73.line}`);
+  const cl73 = await drive73('/v1/market', S.t, { kind: 'car', carId: 'w73m2', minBid: 9000 }, 'the second car listing');
+  const cc73 = await drive73(`/v1/market/${cl73.r.body.id}/cancel`, S.t, {}, 'pulling the car lot');
+  assert.equal(cc73.r.body.carName, modelName73, 'the car cancel must SEND the iron it handed back');
+  assert(cc73.line.includes(modelName73) && !/what was on it/.test(cc73.line),
+    `"what was on it" is vague where the iron's name is in hand: ${cc73.line}`);
+  await app2.close();
+  console.log('  ✓ wave 73: the market — a pulled lot said nothing, a bid named neither the iron nor the escrow, and a cancel dropped the quantity it gates on');
+}
+
+// ── WAVE 73 (shylock): the collect paid the wrong man's number, and the deadline hung off the pledge
+// Its OWN tokens, after the main loop: a loan needs TWO parties (taking your own offer is refused
+// `own`), and the collect needs an OVERDUE active loan, which means backdating a row the shared
+// fixture never creates. DRIVEN throughout, and the money claim is measured from the DATABASE rather
+// than from the reply under test — the defect was precisely that the reply's own figure and the
+// actor's banked delta are two different numbers.
+{
+  const app3 = await buildServer();
+  const inj3 = async (method, url, token, payload) => {
+    const res = await app3.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload });
+    try { return { code: res.statusCode, body: res.json() }; } catch { return { code: res.statusCode, body: null }; }
+  };
+  const mk73s = async (nm) => {
+    const t = (await inj3('POST', '/v1/auth/guest')).body.token;
+    await inj3('POST', '/v1/character', t, { name: nm + Math.random().toString(36).slice(2, 7) });
+    const id = (await inj3('GET', '/v1/me', t)).body.character.id;
+    await app3.pool.query('UPDATE characters SET cash=50000000, respect=500000 WHERE id=$1', [id]);
+    const account = (await app3.pool.query('SELECT account_id FROM characters WHERE id=$1', [id])).rows[0].account_id;
+    await app3.pool.query('UPDATE account_persistent SET omr=100000 WHERE account_id=$1', [account]);
+    return { t, id, account };
+  };
+  const cash73 = async (id) => Number((await app3.pool.query('SELECT cash FROM characters WHERE id=$1', [id])).rows[0].cash);
+  const drive73s = async (url, tok, payload, what) => {
+    const r = await inj3('POST', url, tok, payload || null);
+    assert.equal(r.code, 200, `WAVE 73 (shylock) could not drive ${what} (${JSON.stringify(r.body)})`);
+    return { r, line: String(describeFn(r.body, 200)) };
+  };
+  const Lk = await mk73s('Shark '), Mk = await mk73s('Mark ');
+
+  // ── THE TAKE: the deadline is the DEBT'S, so it must attach to the debt ────────────────────────
+  // Both shapes, because the plain one read correctly all along and the bug is in the ORDER: with the
+  // deadline trailing the pledge clause, only the pledged shape shows it. A one-shape drive here is
+  // exactly how this hid.
+  const off73 = await drive73s('/v1/loans', Lk.t, { amount: 100000, rate: 0.2, hours: 24 }, 'the plain offer');
+  const takeP = await drive73s(`/v1/loans/${off73.r.body.id}/take`, Mk.t, {}, 'taking the plain loan');
+  assert(takeP.r.body.dueSeconds > 0, 'the take must SEND its term — the client has no loan catalog');
+  assert(/owe \$120,000 inside 24h/.test(takeP.line),
+    `the deadline belongs to the DEBT: ${takeP.line}`);
+  const Mk2 = await mk73s('Mark2 ');
+  const offO = await drive73s('/v1/loans', Lk.t, { amount: 50000, rate: 0.25, hours: 24, collateralOmr: 200 }, 'the pledged offer');
+  const takeO = await drive73s(`/v1/loans/${offO.r.body.id}/take`, Mk2.t, {}, 'taking the pledged loan');
+  assert.equal(takeO.r.body.pledgedOmr, 200, 'the pledged take must send the escrowed pledge');
+  assert(/owe \$62,500 inside 24h/.test(takeO.line),
+    `with a pledge in the sentence the deadline still belongs to the debt: ${takeO.line}`);
+  assert(!/don't inside/.test(takeO.line) && !/keeps it if you don't 24h/.test(takeO.line),
+    `the deadline must not staple itself to the pledge sentence ("the shark keeps it if you don't inside 24h"): ${takeO.line}`);
+  assert(/escrowed against it/.test(takeO.line), `the pledge clause must survive the reorder: ${takeO.line}`);
+
+  // ── THE COLLECT: the shark's own take, and the three things it does to the mark ────────────────
+  await app3.pool.query("UPDATE loans SET due_at = now() - interval '1 hour' WHERE id=$1", [off73.r.body.id]);
+  const lenderBefore = await cash73(Lk.id);
+  const coll = await drive73s(`/v1/loans/${off73.r.body.id}/collect`, Lk.t, {}, 'the collect');
+  const banked = (await cash73(Lk.id)) - lenderBefore;
+  // GROUND TRUTH is the database: the reply's `seized` is what left the BORROWER, and the line had
+  // been rendering it as the actor's take. They differ by the house vig on every collect.
+  assert.equal(banked, coll.r.body.toLender, 'the reply’s toLender must be what the shark actually banked');
+  assert(coll.r.body.seized > banked, 'this block is vacuous unless the seized figure and the banked one genuinely differ (the vig)');
+  assert(new RegExp(fmtLike(banked)).test(coll.line),
+    `the line must name what the SHARK banked (${fmtLike(banked)}), not only what left the mark: ${coll.line}`);
+  assert(new RegExp(fmtLike(coll.r.body.vig)).test(coll.line) && /vig/.test(coll.line),
+    `the vig is the difference between the two figures — name it: ${coll.line}`);
+  // the withheld half: pressing collect hospitalizes the mark, brands them a welsher (until they square their name) and
+  // marks them WANTED. Measured from the DATABASE, then required on the line.
+  const markRow = (await app3.pool.query('SELECT welsher, wanted_until, hosp_until FROM characters WHERE id=$1', [Mk.id])).rows[0];
+  assert.equal(markRow.welsher, true, 'the collect must genuinely brand the mark (or the line below asserts nothing)');
+  assert(new Date(markRow.wanted_until) > new Date(), 'the collect must genuinely mark them WANTED');
+  assert(new Date(markRow.hosp_until) > new Date(), 'the collect must genuinely break their legs');
+  assert(coll.r.body.wantedSeconds > 0 && coll.r.body.hospSeconds > 0,
+    'the two CLOCKS are levers — they must ship from the server, never be restated client-side');
+  assert(/welsher/.test(coll.line) && /WANTED/.test(coll.line) && /legs/.test(coll.line),
+    `pressing collect does three things to the mark and the line named none of them: ${coll.line}`);
+  await app3.close();
+  console.log('  ✓ wave 73: the shylock — a collect paid the wrong man’s number and hid what it did to the mark; a pledged take stapled the deadline to the wrong sentence');
+}
+
+// ── WAVE 73 (world): four presses that moved a family's money, or a player's own head, in silence ──
+// Its OWN tokens, after the main loop: three of the four need a FAMILY (a boss with a treasury) and
+// one needs an NPC family, which is a WORKER artifact runPopulation founds and the worker never runs
+// here — so both are seeded, and nothing in this block is conditional. A drive that does not land is
+// a failure, not a shrug: a refused action is skipped in silence and reads on the summary line
+// exactly like a covered one. The two money claims are measured from the DATABASE rather than from
+// the reply under test.
+{
+  const app4 = await buildServer();
+  const inj4 = async (method, url, token, payload) => {
+    const res = await app4.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload });
+    try { return { code: res.statusCode, body: res.json() }; } catch { return { code: res.statusCode, body: null }; }
+  };
+  const mk73w = async (nm) => {
+    const t = (await inj4('POST', '/v1/auth/guest')).body.token;
+    await inj4('POST', '/v1/character', t, { name: nm + Math.random().toString(36).slice(2, 7) });
+    const id = (await inj4('GET', '/v1/me', t)).body.character.id;
+    await app4.pool.query('UPDATE characters SET cash=50000000, respect=5000000, energy=100, ammo=5000, health=100 WHERE id=$1', [id]);
+    const account = (await app4.pool.query('SELECT account_id FROM characters WHERE id=$1', [id])).rows[0].account_id;
+    await app4.pool.query('UPDATE account_persistent SET omr=100000 WHERE account_id=$1', [account]);
+    return { t, id, account };
+  };
+  const drive73w = async (url, tok, payload, what) => {
+    const r = await inj4('POST', url, tok, payload || null);
+    assert.equal(r.code, 200, `WAVE 73 (world) could not drive ${what} (${JSON.stringify(r.body)})`);
+    return { r, line: String(describeFn(r.body, 200)) };
+  };
+  const boss73 = await mk73w('Warboss ');
+  await inj4('POST', '/v1/gangs', boss73.t, { name: 'Wave73 Fam ' + Math.random().toString(36).slice(2, 5), tag: 'W7' + Math.random().toString(36).slice(2, 4) });
+  const myGang = (await app4.pool.query('SELECT id FROM gangs ORDER BY created_at DESC LIMIT 1')).rows[0];
+  await app4.pool.query('UPDATE gangs SET treasury=90000000 WHERE id=$1', [myGang.id]);
+  const ghost73 = await mk73w('Ghostfam ');
+  await inj4('POST', '/v1/gangs', ghost73.t, { name: 'Wave73 Syndicate ' + Math.random().toString(36).slice(2, 5), tag: 'W8' + Math.random().toString(36).slice(2, 4) });
+  const npcFam73 = (await app4.pool.query('SELECT id, name FROM gangs ORDER BY created_at DESC LIMIT 1')).rows[0];
+  await app4.pool.query('UPDATE gangs SET npc_flag=true, treasury=9000000 WHERE id=$1', [npcFam73.id]);
+
+  // ── THE MANHUNT: the raid that reads as a clean score puts a strike on your own head ────────────
+  // Pinned to the LANDED, NON-COUNTERED branch — the one the handler leaves silent. `countered` is
+  // the sibling that IS rendered; its escape twin schedules a worker-resolved hit on the raider and
+  // was reported by nothing, so the hospitalization arrived 45 minutes later unexplained.
+  process.env.FAMILY_RAID_P = '1'; process.env.FAMILY_COUNTER = 'off';
+  const raid73 = await drive73w(`/v1/npcfamily/${npcFam73.id}/raid`, boss73.t, null, 'the landed raid');
+  delete process.env.FAMILY_RAID_P; delete process.env.FAMILY_COUNTER;
+  assert.equal(raid73.r.body.countered, false,
+    'this block is vacuous unless the raid landed WITHOUT a counter — the counter branch is the one that already reads');
+  // GROUND TRUTH is the database: the strike really is scheduled, on THIS raider, or the line below
+  // would be asserting a term the game does not actually impose.
+  const aggro = (await app4.pool.query('SELECT target_character, scheduled_at FROM family_aggro WHERE gang_id=$1', [npcFam73.id])).rows;
+  assert.equal(aggro.length, 1, 'the escape branch must genuinely schedule the manhunt (or there is no term to state)');
+  assert.equal(aggro[0].target_character, boss73.id, 'the manhunt is on the RAIDER — the reply names a consequence for him');
+  assert.equal(raid73.r.body.manhunt, true, 'the reply must MARK the manhunt — the client has no way to know a row was written');
+  assert(raid73.r.body.manhuntSeconds > 0,
+    "the window is FAMILY_WAR's own lever and must ship from the server, never be restated client-side");
+  // the window is asserted from the reply's OWN figure, never a literal — a literal passes straight
+  // through the mutation that stops the field being sent
+  const mhMins = Math.round(raid73.r.body.manhuntSeconds / 60);
+  assert(/looking/i.test(raid73.line) && new RegExp(`\\b${mhMins}m\\b`).test(raid73.line),
+    `a raid that put a strike on your own head read as a clean score: ${raid73.line}`);
+  assert(/\$6,000|\$[\d,]+ off their war chest/.test(raid73.line), `the loot must survive the addition: ${raid73.line}`);
+
+  // ── THE WAR CHEST: the objective was named and the spend was not ────────────────────────────────
+  const tBefore = Number((await app4.pool.query('SELECT treasury FROM gangs WHERE id=$1', [myGang.id])).rows[0].treasury);
+  const war73 = await drive73w(`/v1/npcfamily/${npcFam73.id}/war`, boss73.t, null, 'declaring the war');
+  const tAfter = Number((await app4.pool.query('SELECT treasury FROM gangs WHERE id=$1', [myGang.id])).rows[0].treasury);
+  assert(tBefore - tAfter > 0, 'this block is vacuous unless declaring a war genuinely moves the treasury');
+  assert.equal(war73.r.body.cost, tBefore - tAfter,
+    "the reply's cost must be what actually LEFT the treasury — the client has no handle on warBoard");
+  assert(new RegExp(fmtLike(tBefore - tAfter)).test(war73.line) && /treasur/i.test(war73.line),
+    `a war burns the family's money and the receipt named only the objective: ${war73.line}`);
+  assert(/land \d+ raids/.test(war73.line), `the objective must survive the addition: ${war73.line}`);
+
+  // ── THE PLAQUE: a $OMR BURN with a no-refund displacement term, and neither was on the receipt ──
+  const lmA = await drive73w('/v1/landmarks/docks', boss73.t, { amount: 150 }, 'the fresh dedication');
+  assert.equal(lmA.r.body.took, null, 'open ground displaces nobody — the takeover clause must not fire here');
+  assert(/BURNED/.test(lmA.line) && /refund/i.test(lmA.line),
+    `the $OMR is burned and a bigger flex takes the plaque with no refund — the receipt said neither: ${lmA.line}`);
+  const bidder73 = await mk73w('Outbidder ');
+  const lmB = await drive73w('/v1/landmarks/docks', bidder73.t, { amount: 1020 }, 'the takeover');
+  assert.equal(lmB.r.body.took, lmA.r.body.name,
+    'the server must name the DISPLACED holder — the client cannot read a row it never saw');
+  assert(new RegExp(String(lmA.r.body.name).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).test(lmB.line),
+    `taking a plaque OFF somebody rendered byte-identically to planting one on open ground: ${lmB.line}`);
+  assert(/BURNED/.test(lmB.line) && /refund/i.test(lmB.line), `the takeover states the same two terms: ${lmB.line}`);
+
+  // ── THE DISMISSED GUN: the fee stays spent, and the undo said nothing about money ───────────────
+  // A hired gun is a free NPC resident meeting the outfit's level floor; the population worker never
+  // runs here, so one is seeded — without it the hire 404s `no_gun` and BOTH assertions below skip.
+  const merc73 = await mk73w('Merc ');
+  await app4.pool.query('UPDATE characters SET is_npc=true, respect=5000000 WHERE id=$1', [merc73.id]);
+  const lead73 = await mk73w('Raidleader ');
+  const plan73 = await drive73w('/v1/world/volkov/plan', lead73.t, null, 'planning the apex raid');
+  const hire73 = await drive73w(`/v1/world/raids/${plan73.r.body.id}/hire`, lead73.t, null, 'hiring a gun');
+  assert(hire73.r.body.fee > 0, 'this block is vacuous unless the hire genuinely charged a fee to forfeit');
+  const dis73 = await drive73w(`/v1/world/raids/${plan73.r.body.id}/dismiss`, lead73.t, null, 'sending the gun home');
+  assert.equal(dis73.r.body.fee, hire73.r.body.fee,
+    'the dismiss must SEND the forfeited figure — restating a lever client-side is how the two come to disagree');
+  assert(new RegExp(fmtLike(hire73.r.body.fee)).test(dis73.line) && /(spent|no refund)/i.test(dis73.line),
+    `sending a gun home forfeits the fee already paid and the toast read as tidy crew management: ${dis73.line}`);
+  await app4.close();
+  console.log('  ✓ wave 73: the world — a raid that put a strike on your own head read as a clean score, a war burned the treasury in silence, a plaque hid its burn and its displacement, and a dismissed gun hid the forfeit');
+}
+
+// ── WAVE 73 (politics): the rival raid put the block on alert win OR lose and only the WIN said so ──
+// Its OWN tokens, after the main loop: the raid needs a FAMILY on each side, a rival operation with
+// something in the till, and the raider standing on their block — none of which the shared fixture
+// has, and a refused drive is skipped in SILENCE and reads on the summary line exactly like a
+// covered one. BOTH outcomes are driven with the module's TEST-ONLY knob pinned (never one lucky
+// roll — a deterministic claim resting on a probabilistic precondition is the recorded flake shape),
+// and the window is asserted from the reply's OWN figure: a literal passes straight through the
+// mutation that stops the field being sent.
+{
+  const app5 = await buildServer();
+  const inj5 = async (method, url, token, payload) => {
+    const res = await app5.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload });
+    try { return { code: res.statusCode, body: res.json() }; } catch { return { code: res.statusCode, body: null }; }
+  };
+  const mk73p = async (nm) => {
+    const t = (await inj5('POST', '/v1/auth/guest')).body.token;
+    await inj5('POST', '/v1/character', t, { name: nm + Math.random().toString(36).slice(2, 7) });
+    const id = (await inj5('GET', '/v1/me', t)).body.character.id;
+    await app5.pool.query('UPDATE characters SET cash=50000000, respect=5000000, energy=100, health=100, loc=$2 WHERE id=$1', [id, 'canal']);
+    return { t, id };
+  };
+  const raider73 = await mk73p('Muscle ');
+  await inj5('POST', '/v1/gangs', raider73.t, { name: 'Wave73 Crew ' + Math.random().toString(36).slice(2, 5), tag: 'P7' + Math.random().toString(36).slice(2, 4) });
+  const rival73 = await mk73p('Holder ');
+  await inj5('POST', '/v1/gangs', rival73.t, { name: 'Wave73 Rivals ' + Math.random().toString(36).slice(2, 5), tag: 'P8' + Math.random().toString(36).slice(2, 4) });
+  const rivalGang73 = (await app5.pool.query('SELECT id FROM gangs ORDER BY created_at DESC LIMIT 1')).rows[0].id;
+  // the rival's operation is SEEDED: establishing it the honest way needs the family to hold canal
+  // as turf, which is a whole war away and not what this block is about. What must be real is the
+  // raid itself — the reply, the cooldown row, and the refusal that follows.
+  await app5.pool.query(
+    `INSERT INTO territory_rackets (district_id, owner_gang, tier, kind, last_income_at)
+     VALUES ('canal', $1, 3, 'numbers', now() - interval '10 hours')`, [rivalGang73]);
+  const raid73p = async (what) => {
+    const r = await inj5('POST', '/v1/territory/canal/raid', raider73.t);
+    assert.equal(r.code, 200, `WAVE 73 (politics) could not drive ${what} (${JSON.stringify(r.body)})`);
+    return { r, line: String(describeFn(r.body, 200)) };
+  };
+
+  // ── THE LOSS: the branch that carried no cooldown field at all ──────────────────────────────────
+  process.env.TERRITORY_RIVAL_RAID_P = '0';
+  const lost73 = await raid73p('the repelled raid');
+  delete process.env.TERRITORY_RIVAL_RAID_P;
+  assert.equal(lost73.r.body.win, false, 'this block is vacuous unless the raid was genuinely REPELLED (the knob is pinned)');
+  // GROUND TRUTH is the database: the alert really is stamped on the rival's operation by the LOSING
+  // branch too, or the sentence below would be stating a term the game does not impose.
+  const cdRow = (await app5.pool.query('SELECT raid_cd_until FROM territory_rackets WHERE district_id=$1', ['canal'])).rows[0];
+  const cdLeft = (new Date(cdRow.raid_cd_until).getTime() - Date.now()) / 1000;
+  assert(cdLeft > 60, 'a LOSS must still put the operation on alert — that is the term the loser could not read');
+  assert(lost73.r.body.cooldownSeconds > 0,
+    "the window is TERRITORY_RIVAL_CD_MS and must ship from the server: the raider cannot read a rival family's raidCdSeconds");
+  assert(Math.abs(lost73.r.body.cooldownSeconds - cdLeft) < 120,
+    `the reply's window must be the one actually stamped on the row (said ${lost73.r.body.cooldownSeconds}s, row has ${Math.round(cdLeft)}s)`);
+  const cdTxt = Math.round(lost73.r.body.cooldownSeconds / 3600) + 'h';
+  assert(new RegExp(`\\b${cdTxt}\\b`).test(lost73.line) && /alert/i.test(lost73.line),
+    `the loser is precisely the man who wants to go again, and the line named neither the alert nor its length: ${lost73.line}`);
+  assert(/ran you off/.test(lost73.line) && /15 damage/.test(lost73.line),
+    `the beating must survive the addition: ${lost73.line}`);
+  // the very next press is REFUSED — which is what makes the omitted term a defect rather than trivia
+  await app5.pool.query('UPDATE characters SET energy=100, health=100 WHERE id=$1', [raider73.id]);
+  const again73 = await inj5('POST', '/v1/territory/canal/raid', raider73.t);
+  assert.equal(again73.body.error, 'cooldown', 'the retry must be refused — the line has to warn him before he spends the energy');
+
+  // ── THE WIN: the same window, and the same sentence for it ─────────────────────────────────────
+  await app5.pool.query(`UPDATE territory_rackets SET raid_cd_until=NULL, last_income_at=now() - interval '10 hours' WHERE district_id='canal'`);
+  process.env.TERRITORY_RIVAL_RAID_P = '1';
+  const won73 = await raid73p('the landed raid');
+  delete process.env.TERRITORY_RIVAL_RAID_P;
+  assert.equal(won73.r.body.win, true, 'this block is vacuous unless the raid genuinely LANDED (the knob is pinned)');
+  assert.equal(won73.r.body.cooldownSeconds, lost73.r.body.cooldownSeconds,
+    'win and lose share one window — sending it on one branch only is how the two came to drift');
+  assert(new RegExp(`\\b${cdTxt}\\b`).test(won73.line) && /alert/i.test(won73.line),
+    `the WIN said "they're on alert now" and never how long: ${won73.line}`);
+  assert(won73.r.body.cut > 0 && new RegExp(fmtLike(won73.r.body.cut)).test(won73.line),
+    `the cut must survive the addition: ${won73.line}`);
+  assert.notEqual(won73.line, lost73.line, 'the two outcomes must still read differently');
+  await app5.close();
+  console.log('  ✓ wave 73: politics — a repelled raid put the block on alert for eight hours and told the loser nothing, and the win never named how long');
+}
+
 // ── WAVE 64 — the lines THE SILENCE LEDGER's first crop now produces. The ledger above proves each
 // reply is no longer mute; these pin what it SAYS, because a branch that fires and says the wrong
 // thing is the same defect one step later. Synthetic on the exact shapes the servers return (the
@@ -6931,6 +8032,823 @@ await app.close();
   console.log('  ✓ wave 70: the den — a stake taken at the deal and never named, and a whole pass line reported as one net figure');
 }
 
+// ── WAVE 73 (freight): the offshore handoff, the tip-off, and the hull that said less than its
+// tune-up ────────────────────────────────────────────────────────────────────────────────────────
+// Its OWN tokens after the main loop: the port needs a fleet standing at the docks, the handoff
+// needs a SECOND captain with an open boat, and the score needs a planned job — none of which the
+// shared fixture has, and a refused drive is skipped in SILENCE and reads on the summary line
+// exactly like a covered one. Every claim is asserted in two halves — the SERVER sent the field,
+// then the driven line reads it — because a synthetic literal passes straight through the mutation
+// that stops the field being sent.
+{
+  const app6 = await buildServer();
+  const inj6 = async (method, url, token, payload) => {
+    const res = await app6.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload });
+    try { return { code: res.statusCode, body: res.json() }; } catch { return { code: res.statusCode, body: null }; }
+  };
+  const mkF = async (nm, loc) => {
+    const t = (await inj6('POST', '/v1/auth/guest')).body.token;
+    await inj6('POST', '/v1/character', t, { name: nm + Math.random().toString(36).slice(2, 7) });
+    const id = (await inj6('GET', '/v1/me', t)).body.character.id;
+    await app6.pool.query('UPDATE characters SET cash=90000000, respect=5000000, energy=500, health=100, loc=$2 WHERE id=$1', [id, loc]);
+    return { t, id };
+  };
+  const driveF = async (url, tok, payload, what) => {
+    const r = await inj6('POST', url, tok, payload);
+    assert.equal(r.code, 200, `WAVE 73 (freight) could not drive ${what} (${JSON.stringify(r.body)})`);
+    described++;
+    return { r, line: String(describeFn(r.body, 200)) };
+  };
+
+  // ── THE HULL: six of them on one screen, and the buy said less about the boat than the TUNE-UP
+  // one route over ("She carries 35 and runs 25 knots now"). `speed` is a GATE, not a stat — a lane
+  // refuses `too_slow` below its minSpeed — so it decides which runs she can ever take.
+  const capt = await mkF('Skipper ', 'docks');
+  const buyF = await driveF('/v1/port/boat/dinghy', capt.t, {}, 'the hull');
+  const hull = buyF.r.body.boat;
+  assert.ok(hull && hull.hold > 0 && hull.speed > 0, 'WAVE 73 (freight): the buy must SEND the hold and the knots — a hull is chosen on those two numbers');
+  assert.ok(buyF.line.includes(String(hull.hold)) && buyF.line.includes(String(hull.speed)),
+    `WAVE 73 (freight): the buy must name the hold and the knots, as its own tune-up sibling does — got ${buyF.line}`);
+  assert.ok(buyF.line.includes(fmtLike(buyF.r.body.spent)), `WAVE 73 (freight): the buy must still name the price — got ${buyF.line}`);
+
+  // ── THE SALE: `fmt` is toLocaleString and adds no currency marker, and this was the ONE unmarked
+  // money figure in the client — beside a boat whose sibling line quotes hold and knots, so it read
+  // as a quantity. Ground truth is the DATABASE: the refund the reply claims is the cash that moved.
+  const spare = await driveF('/v1/port/boat/dinghy', capt.t, {}, 'a spare hull');
+  const cashPre = Number((await app6.pool.query('SELECT cash FROM characters WHERE id=$1', [capt.id])).rows[0].cash);
+  const sellF = await driveF(`/v1/port/boat/${spare.r.body.boat.id}/sell`, capt.t, {}, 'the sale');
+  const cashPost = Number((await app6.pool.query('SELECT cash FROM characters WHERE id=$1', [capt.id])).rows[0].cash);
+  assert.equal(cashPost - cashPre, sellF.r.body.refund, "WAVE 73 (freight): the reply's refund must be what the DATABASE paid");
+  assert.ok(new RegExp(`\\$${fmtLike(sellF.r.body.refund).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`).test(sellF.line),
+    `WAVE 73 (freight): a dollars-valued figure must carry its currency marker — "+24,000" reads as a quantity: ${sellF.line}`);
+
+  // ── THE OFFSHORE HANDOFF: the whole run changes vessels mid-sea and read "done.". `to` is a BOAT
+  // id and `route` a catalog key, and the client has neither a character catalog nor a route one, so
+  // both display names must ship from the server (the raw-key rule).
+  const mate = await mkF('Partner ', 'docks');
+  const mateBoat = (await driveF('/v1/port/boat/dinghy', mate.t, {}, "the partner's hull")).r.body.boat.id;
+  await driveF(`/v1/port/boat/${mateBoat}/rendezvous`, mate.t, { open: true }, 'the consent flag');
+  await driveF(`/v1/port/run/${hull.id}`, capt.t, { route: 'coastal' }, 'the run');
+  const rdv = await driveF(`/v1/port/rendezvous/${hull.id}`, capt.t, { to: mateBoat }, 'the handoff');
+  const mateName = (await app6.pool.query('SELECT name FROM characters WHERE id=$1', [mate.id])).rows[0].name;
+  assert.equal(rdv.r.body.toName, mateName, "WAVE 73 (freight): the handoff must SEND the partner's name — `to` is a boat id");
+  assert.ok(rdv.r.body.routeName && rdv.r.body.routeName !== rdv.r.body.route,
+    'WAVE 73 (freight): the handoff must SEND the route\'s display name, never only its catalog key');
+  // GROUND TRUTH: the hold the reply claims is the cargo now sitting on the partner's boat.
+  const moved = Number((await app6.pool.query('SELECT run_hold FROM boats WHERE id=$1', [mateBoat])).rows[0].run_hold);
+  assert.equal(moved, rdv.r.body.hold, 'WAVE 73 (freight): the reply must claim the hold the DATABASE actually moved');
+  assert.ok(rdv.line.includes(mateName) && rdv.line.includes(rdv.r.body.routeName),
+    `WAVE 73 (freight): the handoff must name who took it and which run — got ${rdv.line}`);
+  assert.ok(!new RegExp(`\\b${rdv.r.body.to}\\b`).test(rdv.line) && !/\bcoastal\b/.test(rdv.line),
+    `WAVE 73 (freight): the handoff must not print the raw boat id or route key — got ${rdv.line}`);
+  assert.ok(rdv.line.includes(String(moved)), `WAVE 73 (freight): the handoff must name the cargo it handed over — got ${rdv.line}`);
+
+  // ── THE FREIGHT'S REFUSAL rendered a catalog id. describe() shows body.message FIRST, so the
+  // server's own sentence IS what the player reads — and the machine-readable payload must survive,
+  // or the console loses its "go there →" affordance.
+  const hauler = await mkF('Hauler ', 'docks');
+  await driveF('/v1/goods/buy', hauler.t, { goodId: 'gin', qty: 8 }, 'the freight');
+  const conv = await driveF('/v1/convoy', hauler.t, { to: 'neon', goodId: 'gin', qty: 8 }, 'the shipment');
+  await driveF('/v1/convoy/depart', hauler.t, { guards: 'none' }, 'the departure');
+  await app6.pool.query("UPDATE convoys SET arrives_at = now() - interval '1 hour' WHERE id=$1", [conv.r.body.id]);
+  const wrongPlace = await inj6('POST', `/v1/convoy/${conv.r.body.id}/collect`, hauler.t, {});
+  assert.equal(wrongPlace.body.error, 'district', 'WAVE 73 (freight): the collect must refuse away from the destination, or this block is vacuous');
+  assert.equal(wrongPlace.body.district, 'neon', 'WAVE 73 (freight): the machine-readable district payload must survive — the console offers "go there →" off it');
+  const dest = DISTRICTS.find((d) => d.id === 'neon').name;
+  assert.notEqual(dest, 'neon', 'WAVE 73 (freight) precondition: this district must genuinely be named something other than its id');
+  const refused = String(describeFn(wrongPlace.body, wrongPlace.code)); described++;
+  assert.ok(refused.includes(dest), `WAVE 73 (freight): the refusal must name the PLACE — got ${refused}`);
+  assert.ok(!/\bneon\b/.test(refused), `WAVE 73 (freight): the refusal must not print the raw district id — got ${refused}`);
+
+  // ── THE SCORE: the hired hand named the price and not the SEAT, which is material — executeHeist
+  // reads each member's stat FOR THEIR ROLE — and the tip-off said "done." over three terms that
+  // decide whether it is worth making. The design's quiet is the FEED's, not the tipper's receipt.
+  const boss = await mkF('Fence ', 'docks');
+  const plan = await driveF('/v1/heists/plan', boss.t, { job: 'corner', role: 'muscle' }, 'the plan');
+  await app6.pool.query(
+    `INSERT INTO characters (id, account_id, name, loc, alive, is_npc, season, respect, cash)
+     VALUES ($1, $2, $3, 'docks', true, true, 1, 1000, 5000)`,
+    [crypto.randomUUID(), crypto.randomUUID(), 'Hand ' + Math.random().toString(36).slice(2, 7)]);
+  const fill = await driveF(`/v1/heists/${plan.r.body.id}/fill`, boss.t, {}, 'the hired hand');
+  assert.ok(fill.r.body.role, 'WAVE 73 (freight): the fill must SEND which seat it filled — the leader is told a seat is taken and not which');
+  assert.ok(fill.line.includes(fill.r.body.role), `WAVE 73 (freight): the hired hand must name the seat — got ${fill.line}`);
+  assert.ok(fill.line.includes(fmtLike(fill.r.body.fee)), `WAVE 73 (freight): the hired hand must still name the fee — got ${fill.line}`);
+
+  const rat = await driveF(`/v1/heists/${plan.r.body.id}/rat`, boss.t, {}, 'the tip-off');
+  assert.equal(rat.r.body.ratted, true, 'WAVE 73 (freight): the tip-off must mark itself — the reply was a bare {ok}');
+  assert.ok(rat.r.body.name && rat.r.body.name !== rat.r.body.job,
+    "WAVE 73 (freight): the tip-off must SEND the job's display name, never only its catalog key");
+  assert.ok(rat.line.includes(rat.r.body.name), `WAVE 73 (freight): the tip-off must name the job it blows — got ${rat.line}`);
+  assert.match(rat.line, /whatever the roll/, `WAVE 73 (freight): the tip-off must say the job blows regardless — got ${rat.line}`);
+  // the REAL heist-rat deal (Codex P2, verified against executeHeist's blown branch): the whole crew
+  // — the rat included — eats DOUBLE the job's stretch (jail, never the hole), and the rat's cut of
+  // the fronted stake lands quietly. The first cut of this block pinned the PEN break-rat's
+  // relief-only/hole wording here, which understated the punishment and hid the payout.
+  assert.match(rat.line, /double/i, `WAVE 73 (freight): the rat must be told the whole crew — them included — eats DOUBLE the stretch — got ${rat.line}`);
+  assert.match(rat.line, /cut/i, `WAVE 73 (freight): the rat must be told their cut lands quietly — got ${rat.line}`);
+  // \bhole\b, not /hole/ — the corrected line legitimately says "WHOLE crew" (the /rat/-matches-geneRATion class)
+  assert(!/own sentence|\bhole\b/i.test(rat.line), `WAVE 73 (freight): the heist rat must NOT be sold the break-rat's relief-only/hole deal — got ${rat.line}`);
+  assert.ok(!/\bcorner\b/.test(rat.line), `WAVE 73 (freight): the tip-off must not print the raw job key — got ${rat.line}`);
+
+  await app6.close();
+  console.log('  ✓ wave 73: freight — an offshore handoff and a tip-off that said "done.", a refund with no currency on it, a hull that said less than its own tune-up, and a refusal that named the district by its storage key');
+}
+
+// ── WAVE 73 (empire): the front that was named by its storage key, the beating nobody was told
+// about, a refusal that named one of three live specs, and the largest purchase on the screen
+// quoting only what the SELLER walked away with ─────────────────────────────────────────────────
+// Its OWN tokens after the main loop, for the same reason the freight block has them: every one of
+// these needs a second party who OWNS something (a front, a club) and a shared fixture has neither
+// — and a refused drive is skipped in SILENCE, which reads on the summary line exactly like a
+// covered one. Every claim is asserted in two halves — the SERVER sent the field, then the driven
+// line reads it — because a synthetic literal passes straight through the mutation that stops the
+// field being sent.
+{
+  const app7 = await buildServer();
+  const inj7 = async (method, url, token, payload) => {
+    const res = await app7.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload });
+    try { return { code: res.statusCode, body: res.json() }; } catch { return { code: res.statusCode, body: null }; }
+  };
+  const mkE = async (nm, loc, stats) => {
+    const t = (await inj7('POST', '/v1/auth/guest')).body.token;
+    await inj7('POST', '/v1/character', t, { name: nm + Math.random().toString(36).slice(2, 7) });
+    const id = (await inj7('GET', '/v1/me', t)).body.character.id;
+    await app7.pool.query(
+      'UPDATE characters SET cash=90000000, respect=5000000, energy=500, health=100, loc=$2, muscle=$3, cunning=$4, speed=$5 WHERE id=$1',
+      [id, loc, stats.muscle, stats.cunning, stats.speed]);
+    return { t, id };
+  };
+  const driveE = async (url, tok, payload, what) => {
+    const r = await inj7('POST', url, tok, payload);
+    assert.equal(r.code, 200, `WAVE 73 (empire) could not drive ${what} (${JSON.stringify(r.body)})`);
+    described++;
+    return { r, line: String(describeFn(r.body, 200)) };
+  };
+
+  // ── THE FRONT, EXTORTED. rob and shakedown are the SAME core (extortFront) and disagreed about
+  // which key carries the display name: the win/loss ROB branches returned `name`, the SHAKEDOWN
+  // loss `kindName`, and the client read only `kindName` — so both rob branches rendered the raw
+  // catalog KEY. It is bounded to capitalisation today only because every BUSINESSES id happens to
+  // be its own lowercased name, and it breaks the day a front is added whose id is not.
+  // The rolls are STAT contests with no test knob, so each outcome is forced by the build: a rob
+  // is cunning+speed/2 both sides, a shakedown muscle+cunning/2, and rand(25) cannot cross the gap.
+  const mark = await mkE('Mark ', 'docks', { muscle: 3, cunning: 3, speed: 3 });
+  const thief = await mkE('Thief ', 'docks', { muscle: 3, cunning: 200, speed: 200 });
+  const front = await driveE('/v1/business/laundromat/buy', mark.t, {}, "the mark's front");
+  const frontId = front.r.body.id;
+  const backdate = () => app7.pool.query(
+    "UPDATE businesses SET last_collect_at = now() - interval '20 hours', shakedown_at = NULL WHERE id=$1", [frontId]);
+  const frontName = BUSINESSES.find((b) => b.kind === 'laundromat').name;
+  assert.notEqual(frontName, 'laundromat', 'WAVE 73 (empire) precondition: this front must be named something other than its id');
+
+  await backdate();
+  const rob = await driveE(`/v1/business/${frontId}/rob`, thief.t, {}, 'the register');
+  assert.equal(rob.r.body.win, true, 'WAVE 73 (empire): the rob must LAND, or the win branch is never read');
+  assert.ok(rob.r.body.kindName === frontName, "WAVE 73 (empire): the rob must SEND the front's display name — the client has no business catalog, so a reply carrying only the catalog key can render nothing but the key");
+  assert.ok(rob.line.includes(frontName) && !/\blaundromat\b/.test(rob.line),
+    `WAVE 73 (empire): the rob must name the front, never its storage key — got ${rob.line}`);
+
+  // the SHAKEDOWN, both branches: its identical sibling names the front and it named neither — and
+  // the loss COSTS HEALTH, which is not in the reply at all, so the client could not have said it.
+  await backdate();
+  await app7.pool.query('UPDATE characters SET muscle=200 WHERE id=$1', [thief.id]);
+  const shake = await driveE(`/v1/business/${frontId}/shakedown`, thief.t, {}, 'the shakedown');
+  assert.equal(shake.r.body.win, true, 'WAVE 73 (empire): the shakedown must LAND, or its win branch is never read');
+  assert.ok(shake.line.includes(frontName) && !/\blaundromat\b/.test(shake.line),
+    `WAVE 73 (empire): a landed shakedown must name the front its rob sibling names — got ${shake.line}`);
+  assert.ok(shake.line.includes(fmtLike(shake.r.body.cut)), `WAVE 73 (empire): the shakedown must still name the cut — got ${shake.line}`);
+
+  await backdate();
+  await app7.pool.query('UPDATE characters SET muscle=3, health=100 WHERE id=$1', [thief.id]);
+  await app7.pool.query('UPDATE characters SET muscle=200 WHERE id=$1', [mark.id]);
+  const hpPre = Number((await app7.pool.query('SELECT health FROM characters WHERE id=$1', [thief.id])).rows[0].health);
+  const flop = await driveE(`/v1/business/${frontId}/shakedown`, thief.t, {}, 'the shakedown that flops');
+  assert.equal(flop.r.body.win, false, 'WAVE 73 (empire): this shakedown must FAIL, or the loss branch is never read');
+  const hpPost = Number((await app7.pool.query('SELECT health FROM characters WHERE id=$1', [thief.id])).rows[0].health);
+  // GROUND TRUTH is the DATABASE: the beating the reply claims is the health the security actually took.
+  assert.ok(hpPre - hpPost > 0, 'WAVE 73 (empire) precondition: a repelled shakedown must genuinely cost health, or the claim below is vacuous');
+  assert.equal(flop.r.body.dmg, hpPre - hpPost,
+    "WAVE 73 (empire): the flop must SEND the beating it took — 'nothing to show for it' is false about an action that costs health, and the client cannot compute a roll");
+  assert.ok(flop.line.includes(frontName), `WAVE 73 (empire): a repelled shakedown must name the front too — got ${flop.line}`);
+  assert.ok(flop.line.includes(String(flop.r.body.dmg)), `WAVE 73 (empire): the flop must state the beating — got ${flop.line}`);
+  // Codex round 3: a flopped shakedown carries win:false + dmg and no field/wager/district, so the
+  // GENERIC jump-fail line also fired — two sentences, one claiming a system the player was nowhere
+  // near (the WAVE 55/61 collision class). The jump branch now excludes `cut`/`kind` carriers.
+  assert.ok(!/jump went bad/.test(flop.line),
+    `Codex R3: a flopped SHAKEDOWN must not ALSO read as a failed JUMP — got ${flop.line}`);
+
+  // ── THE SPEC REFUSAL named ONE of three live specs. The Accountant and the Fixer were retired
+  // when laundering was severed and UN-retired when scrutiny became income-sourced; the refusal
+  // never moved with them (the copy-lags-the-lever class), so it is factually false about the
+  // game's own catalog. describe() shows body.message FIRST, so the server's sentence IS the line.
+  const specs = Object.values(BUSINESS_EMPIRE.SPECS).map((s) => s.name);
+  assert.ok(specs.length > 1, 'WAVE 73 (empire) precondition: more than one spec must be live, or this assertion is vacuous');
+  const badSpec = await inj7('POST', `/v1/business/${frontId}/specialize`, mark.t, { spec: 'nonesuch' });
+  assert.equal(badSpec.body.error, 'bad_spec', 'WAVE 73 (empire): a bogus spec must refuse, or this block is vacuous');
+  const specLine = String(describeFn(badSpec.body, badSpec.code)); described++;
+  for (const s of specs) assert.ok(specLine.includes(s),
+    `WAVE 73 (empire): the refusal must name every live spec — ${s} is on the shelf and the message left it off: ${specLine}`);
+
+  // ── THE TAKEOVER quoted only the SELLER's proceeds. The buyer's own outlay — the assessed price
+  // plus a fee that burns win or lose — is in the reply and was unrendered, so the win line
+  // understated the cost of the largest purchase on the screen while the LOSS line named that very
+  // fee: the two halves of one action disagreeing about whether the fee is worth mentioning.
+  process.env.BUSINESS_TAKEOVER_P = '1';
+  const raider = await mkE('Raider ', 'docks', { muscle: 50, cunning: 50, speed: 50 });
+  const take = await driveE(`/v1/business/${frontId}/takeover`, raider.t, {}, 'the takeover');
+  assert.equal(take.r.body.won, true, 'WAVE 73 (empire): the takeover must LAND, or its win branch is never read');
+  assert.ok(take.r.body.price > 0 && take.r.body.feeBurned > 0, 'WAVE 73 (empire): the win must SEND both halves of the outlay');
+  assert.ok(take.line.includes(fmtLike(take.r.body.price)), `WAVE 73 (empire): the win must name the price the BUYER paid — got ${take.line}`);
+  assert.ok(take.line.includes(fmtLike(take.r.body.feeBurned)), `WAVE 73 (empire): the win must name the fee that burned on top — the loss line names it — got ${take.line}`);
+  assert.ok(take.line.includes(fmtLike(take.r.body.net)), `WAVE 73 (empire): the win must keep what the seller walked away with — got ${take.line}`);
+  delete process.env.BUSINESS_TAKEOVER_P;
+
+  // ── THE STANDOVER: the same shape one system over. `feePaid` burns win OR lose and only the LOSS
+  // line named it, so a raider read $750,000 where the outlay was $1,000,000 — and an unnamed house
+  // sends `name: null`, so the line said only 'the club' with no district to place it.
+  process.env.SPEAKEASY_STANDOVER_P = '1';
+  const host = await mkE('Host ', 'neon', { muscle: 3, cunning: 3, speed: 3 });
+  const heavy = await mkE('Heavy ', 'neon', { muscle: 200, cunning: 200, speed: 200 });
+  for (const c of [host, heavy]) await app7.pool.query(
+    "UPDATE account_persistent SET made_until = now() + interval '30 days' WHERE account_id=(SELECT account_id FROM characters WHERE id=$1)", [c.id]);
+  await driveE('/v1/speakeasy/neon/open', host.t, {}, 'the club');
+  const stand = await driveE('/v1/speakeasy/neon/standover', heavy.t, {}, 'the standover');
+  assert.equal(stand.r.body.won, true, 'WAVE 73 (empire): the standover must LAND, or its win branch is never read');
+  assert.equal(stand.r.body.name, null, 'WAVE 73 (empire) precondition: this house must be UNNAMED, or the district fallback is never exercised');
+  assert.equal(stand.r.body.district, 'neon', "WAVE 73 (empire): the standover must SEND the district — an unnamed club has nothing else to place it by");
+  const clubDist = DISTRICTS.find((d) => d.id === 'neon').name;
+  assert.ok(stand.line.includes(clubDist) && !/\bneon\b/.test(stand.line),
+    `WAVE 73 (empire): an unnamed club must be placed by its district, never by its storage key — got ${stand.line}`);
+  assert.ok(stand.line.includes(fmtLike(stand.r.body.feePaid)),
+    `WAVE 73 (empire): the win must name the fee that burned — the loss line does, and the raider's outlay is price PLUS fee — got ${stand.line}`);
+  assert.ok(stand.line.includes(fmtLike(stand.r.body.paid)), `WAVE 73 (empire): the win must still name the forced sale price — got ${stand.line}`);
+  delete process.env.SPEAKEASY_STANDOVER_P;
+
+  // ── THE COMPOUND'S NAME is a $OMR burn and the line named no price, while both its siblings in
+  // the same file name theirs. The old branch was keyed on the reply having exactly ONE key besides
+  // ok/events/character (a collision guard against the soldier-assign and deed-rename replies), so
+  // sending the price BREAKS that guard: the fix has to be paired — a system marker at the source.
+  const heir = await mkE('Heir ', 'docks', { muscle: 5, cunning: 5, speed: 5 });
+  await app7.pool.query(
+    'UPDATE account_persistent SET omr=100000 WHERE account_id=(SELECT account_id FROM characters WHERE id=$1)', [heir.id]);
+  await driveE('/v1/estate/upgrade', heir.t, {}, 'the compound');
+  const named = await driveE('/v1/estate/name', heir.t, { name: 'The Quiet Room' }, 'the naming');
+  assert.equal(named.r.body.estate, 'named', 'WAVE 73 (empire): the naming must NAME ITS SYSTEM — the one-key count it was keyed on cannot survive a price being added');
+  assert.equal(named.r.body.omr, ESTATE.NAME_OMR, 'WAVE 73 (empire): the naming must SEND the burn — a $OMR spend whose two siblings both name theirs');
+  assert.ok(named.line.includes('The Quiet Room'), `WAVE 73 (empire): the naming must still name the place — got ${named.line}`);
+  assert.ok(named.line.includes(fmtLike(named.r.body.omr)), `WAVE 73 (empire): the naming must state the $OMR it burned — got ${named.line}`);
+
+  // ── THE CORNER'S STANDING JOB — three separate days of showing up on the same block — advanced,
+  // completed and folded a bonus into the envelope, and the line read neither shape: a player was
+  // never told the chain moved, never told it finished, and never told that most of a completing
+  // envelope was the bonus. The counter is bumped in the DATABASE rather than by doing the work,
+  // so the drive is deterministic whichever kind the day's seed drew for a slot.
+  const grafter = await mkE('Grafter ', 'docks', { muscle: 5, cunning: 5, speed: 5 });
+  const day = Math.floor(Date.now() / 86400000);
+  const cornerAt = async (district, slot) => {
+    await app7.pool.query('UPDATE characters SET loc=$2 WHERE id=$1', [grafter.id, district]);
+    const acc = await driveE(`/v1/corner/${slot}/accept`, grafter.t, {}, `the corner job in ${district}`);
+    const counters = JSON.stringify({ [acc.r.body.kind]: 99 });
+    await app7.pool.query(
+      `INSERT INTO daily_progress (character_id, day, counters) VALUES ($1,$2,$3)
+       ON CONFLICT (character_id, day) DO UPDATE SET counters=$3`, [grafter.id, day, counters]);
+    return { kind: acc.r.body.kind, claim: await driveE(`/v1/corner/${slot}/claim`, grafter.t, {}, `the envelope in ${district}`) };
+  };
+  // the two claims must be different KINDS of work — the corner pays one envelope per kind a day.
+  const pair = [];
+  for (const d of ['docks', 'canal', 'brick', 'neon', 'foundry', 'cathedral']) {
+    for (const s of [0, 1, 2]) {
+      const k = cornerTasksOf(d, day).find((x) => x.slot === s)?.kind;
+      if (k && !pair.some((p) => p.kind === k)) { pair.push({ district: d, slot: s, kind: k }); break; }
+    }
+    if (pair.length >= 2) break;
+  }
+  assert.ok(pair.length >= 2, 'WAVE 73 (empire) precondition: two corner jobs of different kinds must be reachable today');
+  const running = await cornerAt(pair[0].district, pair[0].slot);
+  assert.ok(running.claim.r.body.chain && running.claim.r.body.chain.of > 0,
+    'WAVE 73 (empire): a claim must SEND where the block\'s standing job now stands, or it is invisible');
+  assert.ok(running.claim.line.includes(`${running.claim.r.body.chain.step}`) && /standing job|the block/i.test(running.claim.line),
+    `WAVE 73 (empire): the envelope must say the standing job moved and how far — got ${running.claim.line}`);
+  // seed the SECOND block one step from done, so the next claim there completes and pays the bonus
+  await app7.pool.query(
+    `INSERT INTO corner_chains (character_id, district, step, last_day, started_day) VALUES ($1,$2,$3,$4,$4)`,
+    [grafter.id, pair[1].district, CORNER.CHAIN_STEPS - 1, day - 1]);
+  const done = await cornerAt(pair[1].district, pair[1].slot);
+  const ch2 = done.claim.r.body.chain;
+  assert.equal(ch2.done, true, 'WAVE 73 (empire): the seeded block must COMPLETE, or the completion line is never read');
+  assert.equal(ch2.bonus, CORNER.CHAIN_BONUS, 'WAVE 73 (empire): the completing claim must SEND the cash bonus folded into the envelope');
+  assert.equal(ch2.respectBonus, CORNER.CHAIN_RESPECT,
+    'WAVE 73 (empire): the completing claim must SEND the respect bonus too — the envelope reports a TOTAL, and a player told $1,900 has no way to know $1,500 of it was the standing job');
+  assert.ok(done.claim.line.includes(fmtLike(ch2.bonus)),
+    `WAVE 73 (empire): a completing envelope must split the bonus out of the total — got ${done.claim.line}`);
+  assert.ok(/standing job|three days|the block/i.test(done.claim.line),
+    `WAVE 73 (empire): a completing envelope must say the block's standing job is DONE — got ${done.claim.line}`);
+
+  await app7.close();
+  console.log('  ✓ wave 73: empire — a front named by its storage key, a beating nobody was told about, a refusal that named one of three live specs, and the biggest purchase on the screen quoting only what the seller walked away with');
+}
+
+// ── WAVE 73 (chain): the extraction rail issued a receipt for everything and read "done." ────────
+// Its OWN app and its own token, after the main loop, for two reasons. The chain is DORMANT in every
+// other suite and every other block here — chain.js reads its env at CALL time, so arming it is the
+// only way to drive a signature at all — and it must be disarmed again afterwards or the rest of the
+// run stops being chain-dormant. And a refused drive is SKIPPED in silence, which reads on the
+// summary line exactly like a covered one, so every precondition below is seeded: a minted account,
+// a SIWE-proven wallet, a funded reserve for the signed half and a DELIBERATELY unfunded one for the
+// queued half, a price print, the tranche, today's offering, a part-vested bond and a car.
+// Every claim is asserted in TWO halves — the SERVER sent the field, then the driven line reads it —
+// because a synthetic literal passes straight through the mutation that stops the field being sent;
+// and where a quantity is claimed the ground truth is the DATABASE, never the reply under test.
+{
+  const oldEnv = {};
+  const arm = { CHAIN_ID: '46630',
+    VOUCHER_SIGNER_PK: '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80',
+    VOUCHER_CLAIM_ADDRESS: '0x1111111111111111111111111111111111111111',
+    OMERTA_BOND_ADDRESS: '0x2222222222222222222222222222222222222222',
+    DYNASTY_NFT_ADDRESS: '0x3333333333333333333333333333333333333333' };
+  for (const [k, v] of Object.entries(arm)) { oldEnv[k] = process.env[k]; process.env[k] = v; }
+  const { privateKeyToAccount } = await import('viem/accounts');
+
+  const app8 = await buildServer();
+  const inj8 = async (method, url, token, payload) => {
+    const res = await app8.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload });
+    try { return { code: res.statusCode, body: res.json() }; } catch { return { code: res.statusCode, body: null }; }
+  };
+  // the client's own fmt, mirrored: these figures carry decimals (a 2% toll on 12 $OMR is 0.24), so
+  // fmtLike's integer rounding cannot express them. The NUMBERS are still the server's own.
+  const fmtC = (n) => { const v = Number(n);
+    if (v !== 0 && Math.abs(v) < 0.01) return Number(v.toPrecision(2)).toString();
+    return v.toLocaleString('en-US', { maximumFractionDigits: 2 }); };
+  const driveC = async (url, tok, payload, what) => {
+    const r = await inj8('POST', url, tok, payload);
+    assert.equal(r.code, 200, `WAVE 73 (chain) could not drive ${what} (${JSON.stringify(r.body)})`);
+    described++;
+    return { r, line: String(describeFn(r.body, 200)) };
+  };
+
+  const tC = (await inj8('POST', '/v1/auth/guest')).body.token;
+  await inj8('POST', '/v1/character', tC, { name: 'Chain ' + Math.random().toString(36).slice(2, 7) });
+  const idC = (await inj8('GET', '/v1/me', tC)).body.character.id;
+  const acctC = (await app8.pool.query('SELECT account_id FROM characters WHERE id=$1', [idC])).rows[0].account_id;
+  await app8.pool.query('UPDATE characters SET cash=9000000, respect=500000 WHERE id=$1', [idC]);
+  // minted, or the extraction gate refuses; the credits are what the re-roll spends.
+  await app8.pool.query('UPDATE account_persistent SET omr = omr + 5000, minted=true, reroll_credits=3 WHERE account_id=$1', [acctC]);
+  const omrOf = async () => Number((await app8.pool.query(
+    'SELECT omr FROM account_persistent WHERE account_id=$1', [acctC])).rows[0].omr);
+
+  // ── THE WALLET CHALLENGE: not a receipt at all. Without a branch describe() falls through to
+  // `body.message`, and this one IS the signing payload — the account UUID and the nonce rendered as
+  // the player's toast (the curated flow hands it straight to personal_sign, which is what it is for).
+  const player = privateKeyToAccount('0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d');
+  const chg = await driveC('/v1/wallet/challenge', tC, null, 'the wallet challenge');
+  assert.equal(chg.r.body.walletLink, 'challenge', 'WAVE 73 (chain): the challenge must NAME its system — the payload alone matched no branch');
+  assert.ok(!chg.line.includes(acctC), `WAVE 73 (chain): the toast must never render the signing payload's account id — got ${chg.line}`);
+  assert.match(chg.line, /sign the challenge/i, `WAVE 73 (chain): the challenge must say what to do with it — got ${chg.line}`);
+  const ver = await inj8('POST', '/v1/wallet/verify', tC, {
+    address: player.address, signature: await player.signMessage({ message: chg.r.body.message }) });
+  assert.equal(ver.code, 200, `WAVE 73 (chain) could not link the wallet (${JSON.stringify(ver.body)})`);
+
+  // ── THE WITHDRAWAL, QUEUED. The reserve is deliberately left unfunded here, because this is the
+  // half that most needed saying: the debit and the 2% toll are REAL and NOTHING was signed, so the
+  // player holds no claim at all until the reserve funds.
+  const omrPre = await omrOf();
+  const wq = await driveC('/v1/withdraw', tC, { amount: 12 }, 'the queued withdrawal');
+  assert.equal(wq.r.body.withdraw, 'queued',
+    'WAVE 73 (chain): the withdrawal must NAME its system and which half it took — `status:\'signed\'` alone is the dynasty voucher and the gear withdrawal too');
+  assert.equal(omrPre - await omrOf(), wq.r.body.gross,
+    'WAVE 73 (chain): the DATABASE is ground truth — the reply\'s gross must be what actually left the balance');
+  assert.ok(wq.r.body.tax > 0 && wq.r.body.net === wq.r.body.gross - wq.r.body.tax,
+    'WAVE 73 (chain): the withdrawal must SEND the toll and the net it leaves');
+  assert.match(wq.line, /QUEUED/, `WAVE 73 (chain): a queued withdrawal must say so — got ${wq.line}`);
+  assert.match(wq.line, /NOTHING was signed/i, `WAVE 73 (chain): a queued withdrawal must state that no claim exists yet — got ${wq.line}`);
+  assert.ok(wq.line.includes(fmtC(wq.r.body.gross)) && wq.line.includes(fmtC(wq.r.body.tax)),
+    `WAVE 73 (chain): a queued withdrawal must name what left and what the toll took — got ${wq.line}`);
+
+  // ── THE WITHDRAWAL, SIGNED. Same route, the other half, once the reserve can cover it.
+  await app8.pool.query('UPDATE chain_reserve SET funded_omr = funded_omr + 100000 WHERE id=1');
+  const omrPre2 = await omrOf();
+  const ws = await driveC('/v1/withdraw', tC, { amount: 12 }, 'the signed withdrawal');
+  assert.equal(ws.r.body.withdraw, 'signed', 'WAVE 73 (chain): a funded reserve must report the SIGNED half');
+  assert.equal(omrPre2 - await omrOf(), ws.r.body.gross,
+    'WAVE 73 (chain): the DATABASE is ground truth on the signed half too');
+  assert.ok(ws.r.body.nonce > 0, 'WAVE 73 (chain): a signed withdrawal must SEND the voucher nonce — it is what the player claims with');
+  assert.match(ws.line, /SIGNED/, `WAVE 73 (chain): a signed withdrawal must say the voucher exists — got ${ws.line}`);
+  assert.ok(ws.line.includes(String(ws.r.body.nonce)) && /claimable on-chain/.test(ws.line),
+    `WAVE 73 (chain): a signed withdrawal must name the voucher and that it is claimable — got ${ws.line}`);
+  assert.ok(ws.line.includes(fmtC(ws.r.body.net)) && ws.line.includes(fmtC(ws.r.body.tax)),
+    `WAVE 73 (chain): a signed withdrawal must state what rides the voucher after the toll — got ${ws.line}`);
+  assert.notEqual(ws.line, wq.line, 'WAVE 73 (chain): the signed and queued halves must not read the same — one holds a claim and one holds nothing');
+
+  // ── THE DYNASTY VOUCHER: one portrait per bloodline, ever, and it read "done."
+  const dm = await driveC('/v1/identity/mint', tC, {}, 'the dynasty mint voucher');
+  assert.equal(dm.r.body.dynasty, 'voucher',
+    'WAVE 73 (chain): the mint voucher must NAME its system — a nonce plus status:\'signed\' is the withdrawal shape too');
+  assert.ok(dm.r.body.voucher && dm.r.body.voucher.deadline, 'WAVE 73 (chain): the voucher must SEND its deadline — only the server knows when it lapses');
+  assert.match(dm.line, /signed/i, `WAVE 73 (chain): the mint voucher must say it is signed — got ${dm.line}`);
+  assert.match(dm.line, /claim it on-chain/, `WAVE 73 (chain): the mint voucher must say it must be claimed — got ${dm.line}`);
+  assert.match(dm.line, /lapses/, `WAVE 73 (chain): the mint voucher must say it expires — got ${dm.line}`);
+
+  // ── THE RE-ROLL spends a PAID credit (the 0.01 ETH on-chain fee its own refusal names one call
+  // earlier), and neither the reply nor the line mentioned it. The DATABASE is ground truth.
+  const credPre = Number((await app8.pool.query('SELECT reroll_credits FROM account_persistent WHERE account_id=$1', [acctC])).rows[0].reroll_credits);
+  const rr = await driveC('/v1/character/reroll', tC, {}, 'the paid re-roll');
+  const credPost = Number((await app8.pool.query('SELECT reroll_credits FROM account_persistent WHERE account_id=$1', [acctC])).rows[0].reroll_credits);
+  assert.equal(credPre - credPost, 1, 'WAVE 73 (chain) precondition: the re-roll must genuinely consume a credit, or the claim is vacuous');
+  assert.equal(rr.r.body.spentCredit, true, 'WAVE 73 (chain): the re-roll must SEND that it spent a paid credit — its sibling on the same credit has said so since it shipped');
+  assert.equal(rr.r.body.creditsLeft, credPost, 'WAVE 73 (chain): the re-roll\'s creditsLeft must be what the DATABASE holds');
+  assert.match(rr.line, /credit spent/, `WAVE 73 (chain): the re-roll must say what it cost — got ${rr.line}`);
+  assert.ok(rr.line.includes(String(credPost)), `WAVE 73 (chain): the re-roll must say how many are left — got ${rr.line}`);
+
+  // ── THE BOND QUOTE. The curated card renders its own panel through the silent api() and is NOT
+  // defective; the raw deck presses this same route through act() and read "done." over a signed
+  // quote carrying a payout, a discount, a vest window and a deadline.
+  await app8.pool.query(
+    `INSERT INTO vig_buyback (id, eth_spent, omr_bought, price_omr_per_eth, to_reserve, to_prize, real, created_at)
+       VALUES ('w73-vb', 1, 3000, 3000, 0, 0, true, now())`);
+  await app8.pool.query('UPDATE bond_reserve SET capacity_omr = 1000000 WHERE id=1');
+  await app8.pool.query('INSERT INTO bond_offerings (day, offered_omr, quoted_omr) VALUES ($1, 500000, 0)',
+    [Math.floor(Date.now() / 86400000)]);
+  const bq = await driveC('/v1/bond/quote', tC, { principalEth: 1 }, 'the bond quote');
+  assert.equal(bq.r.body.bond, 'quote', 'WAVE 73 (chain): the quote must NAME its system');
+  assert.ok(bq.r.body.payoutOmr > 0 && bq.r.body.discountBps > 0 && bq.r.body.vestSeconds > 0 && bq.r.body.deadline > 0,
+    'WAVE 73 (chain): the quote must SEND the payout, the discount, the vest window and the deadline — none is derivable client-side');
+  assert.ok(bq.line.includes(fmtC(bq.r.body.payoutOmr)), `WAVE 73 (chain): the quote must name what it pays — got ${bq.line}`);
+  assert.ok(bq.line.includes(String(bq.r.body.discountBps / 100)), `WAVE 73 (chain): the quote must name the discount it was signed at — got ${bq.line}`);
+  assert.match(bq.line, /vesting over/, `WAVE 73 (chain): the quote must state that the payout vests — got ${bq.line}`);
+
+  // ── THE BOND CLAIM: a five-figure vested release read "done.", with nothing saying how much of
+  // the bond is still vesting behind it. Seeded part-vested so BOTH halves of the line are exercised.
+  await app8.pool.query(
+    `INSERT INTO bonds (id, nonce, account_id, payer_address, principal_eth, payout_omr, oracle_price, discount_bps, claimed_omr, vest_ms, tx_hash, opened_at)
+       VALUES ('w73-bond', 424242, $1, $2, 1, 3300, 3000, 800, 0, 3600000, '0xw73', now() - interval '30 minutes')`,
+    [acctC, player.address]);
+  const omrPre3 = await omrOf();
+  const bc = await driveC('/v1/bonds/w73-bond/claim', tC, {}, 'the bond claim');
+  assert.equal(bc.r.body.bond, 'claimed', 'WAVE 73 (chain): the claim must NAME its system — {ok, claimed} matched no branch at all');
+  // the claim is OFF-CHAIN ACCOUNTING (the real release is the OmertaBond contract), so the ground
+  // truth is the bond row's own ledger — never the in-game balance, which correctly does not move.
+  // The preconditions read the DATABASE and not the reply, or the mutation that stops a field being
+  // sent trips the precondition and the failure names the FIXTURE instead of the defect.
+  const bondRow = (await app8.pool.query('SELECT payout_omr, claimed_omr FROM bonds WHERE id=$1', ['w73-bond'])).rows[0];
+  const claimedRow = Number(bondRow.claimed_omr);
+  const lockedRow = Number(bondRow.payout_omr) - claimedRow;
+  assert.ok(claimedRow > 0, 'WAVE 73 (chain) precondition: the seeded bond must be part-vested, or the claim proves nothing');
+  assert.ok(lockedRow > 0, 'WAVE 73 (chain) precondition: the seeded bond must still have OMR locked, or the unvested half of the line is never read');
+  assert.ok(Math.abs(Number(bc.r.body.unvested) - lockedRow) < 1e-6,
+    'WAVE 73 (chain): the claim must SEND what is still locked — the DATABASE says how much');
+  assert.ok(Math.abs(claimedRow - bc.r.body.claimed) < 1e-6,
+    'WAVE 73 (chain): the DATABASE is ground truth — the reply\'s claimed must be what the bond row actually released');
+  assert.equal(await omrOf(), omrPre3, 'WAVE 73 (chain) precondition: a bond claim moves no in-game balance — the line must not imply it did');
+  assert.match(bc.line, /on-chain/, `WAVE 73 (chain): the claim must say where the real release happens — got ${bc.line}`);
+  assert.ok(bc.line.includes(fmtC(bc.r.body.claimed)), `WAVE 73 (chain): the claim must name what it released — got ${bc.line}`);
+  assert.ok(bc.line.includes(fmtC(bc.r.body.unvested)) && /still vesting/.test(bc.line),
+    `WAVE 73 (chain): the claim must name what is STILL LOCKED behind it — got ${bc.line}`);
+  // CODEX R5: "the release is on-chain" was a FACT where a DIRECTION was owed — the refresh zeroes
+  // claimableOmr and removes the button, so a holder could read "claimed", watch the affordance
+  // vanish, and leave real OMR in the contract forever. The server names which KIND of bond it
+  // squared (only it knows), and the receipt for a REAL one directs the wallet step still owed.
+  assert.equal(bc.r.body.onchain, true, 'CODEX R5: a real bond\'s claim must SAY it has an on-chain half — the receipt branches on it');
+  assert.match(bc.line, /YOUR wallet submits claim/, `CODEX R5: a real bond's receipt must DIRECT the on-chain claim still owed, never merely state the fact — got ${bc.line}`);
+  // …and a comp/QA bond (tx_hash NULL) has NO on-chain half: directing its holder to a contract
+  // holding nothing of theirs would be the opposite lie.
+  await app8.pool.query(
+    `INSERT INTO bonds (id, nonce, account_id, principal_eth, payout_omr, oracle_price, discount_bps, claimed_omr, vest_ms, tx_hash, opened_at)
+       VALUES ('w73-comp', 424243, $1, 1, 500, 3000, 800, 0, 3600000, NULL, now() - interval '2 hours')`, [acctC]);
+  const bcc = await driveC('/v1/bonds/w73-comp/claim', tC, {}, 'the comp bond claim');
+  assert.equal(bcc.r.body.onchain, false, 'CODEX R5: a comp bond\'s claim must say it has NO on-chain half');
+  assert.ok(!/wallet submits claim/.test(bcc.line) && /no on-chain release/.test(bcc.line),
+    `CODEX R5: a comp bond's receipt must NOT send its holder to the contract — got ${bcc.line}`);
+
+  // ── THE RARITY UPGRADE named the price and the TIER and never what the tier DOES. `utility.pct`
+  // is exactly what the $OMR bought and is not derivable from the tier's NAME.
+  await app8.pool.query(
+    `INSERT INTO cars (id, character_id, model_id, trim_id, dmg) VALUES ('w73-car', $1, 'errand', 'stock', 0)`, [idC]);
+  const up = await driveC('/v1/nft/car/w73-car/upgrade', tC, {}, 'the rarity upgrade');
+  assert.ok(up.r.body.utility && up.r.body.utility.pct > 0,
+    'WAVE 73 (chain) precondition: this tier must carry real utility, or there is nothing for the line to name');
+  assert.equal(up.r.body.utility.active, true, 'WAVE 73 (chain): the upgrade must SEND whether the utility is live — it goes false the moment the item is extracted');
+  assert.ok(up.line.includes(`+${up.r.body.utility.pct}%`),
+    `WAVE 73 (chain): the upgrade must name what the tier DOES, not only what it cost — got ${up.line}`);
+  assert.match(up.line, /while it stays in play/,
+    `WAVE 73 (chain): the upgrade must state that the utility is in-play only — got ${up.line}`);
+
+  await app8.close();
+  for (const k of Object.keys(arm)) { if (oldEnv[k] === undefined) delete process.env[k]; else process.env[k] = oldEnv[k]; }
+  console.log('  ✓ wave 73: chain — a voucher signed (or not signed at all) for "done.", a one-per-bloodline portrait mint that said nothing, a vested release with no word on what stayed locked, a paid credit spent in silence, and a signing payload rendered as a toast');
+}
+
+// ── WAVE 75: THE SWEEP RUN TO COMPLETION, DRIVEN — the 15 findings the parallel finders surfaced,
+// each proven at the REAL describe() off a REAL server reply. The clusters: the personal-empire buy
+// verbs (assets/rackets — an income line and the house's cut, sell-vs-buy discrimination on
+// `earned`), the retire's honest "nothing back", the kitchen lab's per-batch capacity, the FAMILY
+// crackdown line (a Bureau raid that seized the pending and fined the treasury used to fall into the
+// empty-till fallback — "nothing banked yet" over a five-figure loss), the boxing/stable LOSS lines
+// (a laid-up clock the manager plans the next card off), the port cast-off (cargo cost + the escort's
+// own price), the tune-up naming its iron, the estate hire's $OMR terms, the high-stakes dice refusal
+// carrying its OWN terms both with and without a seat, and the two-token kryl co-op ROUT (plan/join
+// lines + routUnits round-robin with the DATABASE as ground truth on both crew members' shipment).
+// Every claim is asserted in TWO halves — the SERVER sent the field, then the driven line reads it —
+// and every precondition is SEEDED (a refused drive reads on the summary line exactly like a covered
+// one): cash/respect/energy/nerve/ammo, the district hold (npc_holder cleared — the occupation seeds
+// dockrats on the docks), a hot smuggling racket, 1/1/1 fighters and racers so the loss is forced
+// (form ≤ 25 < gatekeeper 62 / graded 40), and kryl pinned to 31,000 strength so the grab routs it.
+{
+  const oldEnv = {};
+  const arm = { TERRITORY_RAID_P: '1', WORLD_RAID_P: '1' };
+  for (const [k, v] of Object.entries(arm)) { oldEnv[k] = process.env[k]; process.env[k] = v; }
+
+  const app9 = await buildServer();
+  const inj9 = async (method, url, token, payload) => {
+    const res = await app9.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload });
+    try { return { code: res.statusCode, body: res.json() }; } catch { return { code: res.statusCode, body: null }; }
+  };
+  const fmtC = (n) => { const v = Number(n);
+    if (v !== 0 && Math.abs(v) < 0.01) return Number(v.toPrecision(2)).toString();
+    return v.toLocaleString('en-US', { maximumFractionDigits: 2 }); };
+  const driveW = async (url, tok, payload, what, method = 'POST') => {
+    const r = await inj9(method, url, tok, payload);
+    assert.equal(r.code, 200, `WAVE 75 could not drive ${what} (${JSON.stringify(r.body)})`);
+    described++;
+    return { r, line: String(describeFn(r.body, 200)) };
+  };
+  const seed9 = async (id) => app9.pool.query(
+    'UPDATE characters SET cash=90000000, respect=500000, energy=500, nerve=100, ammo=200 WHERE id=$1', [id]);
+
+  const tA = (await inj9('POST', '/v1/auth/guest')).body.token;
+  await inj9('POST', '/v1/character', tA, { name: 'WvA ' + Math.random().toString(36).slice(2, 7) });
+  const idA = (await inj9('GET', '/v1/me', tA)).body.character.id;
+  const acctA = (await app9.pool.query('SELECT account_id FROM characters WHERE id=$1', [idA])).rows[0].account_id;
+  await seed9(idA);
+  await app9.pool.query('UPDATE account_persistent SET omr = omr + 5000 WHERE account_id=$1', [acctA]);
+
+  // ── F-E1: an income ASSET names what it earns AND what it cost with the house's cut folded in;
+  // a Wheels buy (no income) must NOT invent an hourly figure. Sell-vs-buy discriminates on
+  // `earned` — absence is not a discriminator until a sibling grows the field, so both are driven.
+  const ab = await driveW('/v1/assets/grocery/buy', tA, null, 'the grocery buy');
+  assert.ok(ab.r.body.income !== undefined && ab.r.body.spent > 60000,
+    `WAVE 75: the asset buy must SEND income + spent (price + fee + tax) — got ${JSON.stringify(ab.r.body)}`);
+  assert.ok(ab.line.includes(fmtC(Math.round(ab.r.body.income * 60))) && /an hour while you're not looking/.test(ab.line),
+    `WAVE 75: the income asset's line must state the hourly take — got ${ab.line}`);
+  assert.ok(ab.line.includes(fmtC(ab.r.body.spent)) && /house's cut/.test(ab.line),
+    `WAVE 75: the buy must state the all-in price incl. the house's cut — got ${ab.line}`);
+  const wb = await driveW('/v1/assets/beater/buy', tA, null, 'the beater buy');
+  assert.equal(wb.r.body.income, undefined, 'WAVE 75 fixture: the beater must be a no-income Wheels asset');
+  assert.ok(!/an hour/.test(wb.line) && !/undefined/.test(wb.line),
+    `WAVE 75: a Wheels buy earns nothing and must not invent an hourly figure — got ${wb.line}`);
+
+  // ── F-E3: a RACKET buy states the hourly take; retiring it at RACKET_RETIRE_BPS 0 says plainly
+  // that NOTHING comes back and reports the freed seat count off the reply's own figures.
+  const rb = await driveW('/v1/rackets/laundro/buy', tA, null, 'the laundro buy');
+  assert.ok(rb.r.body.income !== undefined && /an hour while you're not looking/.test(rb.line),
+    `WAVE 75: the racket buy must state the hourly take — got ${rb.line}`);
+  const rr = await driveW('/v1/rackets/laundro', tA, null, 'the laundro retire', 'DELETE');
+  assert.ok(rr.r.body.back === 0 && rr.r.body.slotsUsed !== undefined && rr.r.body.slots !== undefined,
+    `WAVE 75: the retire must SEND back + the seat count — got ${JSON.stringify(rr.r.body)}`);
+  assert.ok(/nothing back/.test(rr.line) && rr.line.includes(`${rr.r.body.slotsUsed} of ${rr.r.body.slots}`),
+    `WAVE 75: retiring at 0 bps must say "nothing back" and name the freed seats — got ${rr.line}`);
+
+  // ── F-V1: the LAB upgrade names its per-batch capacity + the cash it cost (the bathtub's $OMR
+  // half is 0, so the $OMR clause correctly stays off this line).
+  const lb = await driveW('/v1/kitchen/lab/upgrade', tA, null, 'the lab upgrade');
+  assert.ok(lb.r.body.cap !== undefined && lb.r.body.cost > 0,
+    `WAVE 75: the lab upgrade must SEND cap + cost — got ${JSON.stringify(lb.r.body)}`);
+  assert.ok(lb.line.includes(`${lb.r.body.cap} units a batch`) && lb.line.includes(fmtC(lb.r.body.cost)) && !/undefined/.test(lb.line),
+    `WAVE 75: the lab line must state the capacity bought and the bill — got ${lb.line}`);
+
+  // ── F-W1: the FAMILY crackdown. A raided operation's collect reply carries `raided` rows and a
+  // zero take — the line must report the seizure + the treasury fine, NEVER the empty-till fallback
+  // ("nothing banked yet" over a five-figure loss was the finding).
+  const gname = 'W75 Family ' + Math.random().toString(36).slice(2, 6);
+  const gc = await inj9('POST', '/v1/gangs', tA, { name: gname, tag: 'W' + Math.random().toString(36).slice(2, 4).toUpperCase() });
+  assert.equal(gc.code, 200, `WAVE 75 could not found the family (${JSON.stringify(gc.body)})`);
+  const gid = (await app9.pool.query('SELECT id FROM gangs WHERE name=$1', [gname])).rows[0].id;
+  await app9.pool.query('UPDATE gangs SET treasury=50000000 WHERE id=$1', [gid]);
+  await app9.pool.query("UPDATE districts SET holder_gang=$1, npc_holder=NULL WHERE id='docks'", [gid]);
+  const est = await inj9('POST', '/v1/territory/docks/establish', tA, { kind: 'smuggling' });
+  assert.equal(est.code, 200, `WAVE 75 could not establish the smuggling ring (${JSON.stringify(est.body)})`);
+  await app9.pool.query(
+    "UPDATE territory_rackets SET scrutiny=100, scrutiny_at=now() - interval '3 hours', last_income_at=now() - interval '6 hours' WHERE district_id='docks'");
+  const cr = await driveW('/v1/territory/collect', tA, null, 'the raided territory collect');
+  assert.equal(cr.r.body.collect, 'territory', 'WAVE 75: the family collect must NAME its system');
+  assert.ok(Array.isArray(cr.r.body.raided) && cr.r.body.raided[0].seized > 0 && cr.r.body.raided[0].fine > 0 && !cr.r.body.collected,
+    `WAVE 75 fixture: the crackdown must have fired (seized + fined, nothing banked) — got ${JSON.stringify(cr.r.body)}`);
+  assert.ok(/CRACKED DOWN/.test(cr.line) && cr.line.includes(fmtC(cr.r.body.raided[0].seized)) && cr.line.includes(fmtC(cr.r.body.raided[0].fine)),
+    `WAVE 75: a raided collect must report the seizure and the fine — got ${cr.line}`);
+  assert.ok(!/nothing banked yet/.test(cr.line),
+    `WAVE 75: the crackdown must NOT fall into the empty-till fallback — got ${cr.line}`);
+
+  // ── F-V4 / F-R1: the LOSS lines. A 1/1/1 fighter's form is 3 + rand(0..22) ≤ 25 — guaranteed
+  // under the gatekeeper's 62 and the graded meet's 40 — so both losses are forced, not lucky.
+  await inj9('POST', '/v1/boxing/recruit', tA, { name: 'W75 Kid' });
+  const fid = (await app9.pool.query('SELECT id FROM fighters WHERE character_id=$1', [idA])).rows[0].id;
+  await app9.pool.query('UPDATE fighters SET power=1, chin=1, speed=1 WHERE id=$1', [fid]);
+  const bx = await driveW('/v1/boxing/exhibition', tA, { fighter: fid, tier: 'gatekeeper' }, 'the boxing loss');
+  assert.ok(bx.r.body.win === false && bx.r.body.injuredSeconds > 0,
+    `WAVE 75 fixture: the exhibition must be a LOSS with an injury clock — got ${JSON.stringify(bx.r.body)}`);
+  assert.ok(/dropped it/.test(bx.line) && /laid up/.test(bx.line),
+    `WAVE 75: a boxing loss must state the lay-up the manager plans around — got ${bx.line}`);
+  await inj9('POST', '/v1/stable/buy', tA, { kind: 'dog', name: 'W75 Dog' });
+  const rid = (await app9.pool.query('SELECT id FROM racers WHERE character_id=$1', [idA])).rows[0].id;
+  await app9.pool.query('UPDATE racers SET speed=1, stamina=1, heart=1 WHERE id=$1', [rid]);
+  const st = await driveW(`/v1/stable/circuit/${rid}`, tA, { meet: 'graded' }, 'the circuit loss');
+  assert.ok(st.r.body.win === false && st.r.body.injuredSeconds > 0,
+    `WAVE 75 fixture: the circuit must be a LOSS with an injury clock — got ${JSON.stringify(st.r.body)}`);
+  assert.ok(/got beat/.test(st.line) && /laid up/.test(st.line),
+    `WAVE 75: a circuit loss must state the lay-up — got ${st.line}`);
+
+  // ── F-R2: the port CAST-OFF names the lane, the cargo cost aboard and the escort's own price.
+  await app9.pool.query("UPDATE characters SET loc='docks' WHERE id=$1", [idA]);
+  await inj9('POST', '/v1/port/boat/dinghy', tA, null);
+  const bid = (await app9.pool.query('SELECT id FROM boats WHERE character_id=$1', [idA])).rows[0].id;
+  const pr = await driveW(`/v1/port/run/${bid}`, tA, { route: 'coastal', escort: true }, 'the cast-off');
+  assert.ok(pr.r.body.routeName && pr.r.body.cost > 0 && pr.r.body.escortCost > 0,
+    `WAVE 75: the cast-off must SEND routeName + cost + escortCost — got ${JSON.stringify(pr.r.body)}`);
+  assert.ok(pr.line.includes(pr.r.body.routeName) && pr.line.includes(fmtC(pr.r.body.cost)),
+    `WAVE 75: the cast-off must name the lane and the cargo aboard — got ${pr.line}`);
+  assert.ok(pr.line.includes(fmtC(pr.r.body.escortCost)) && /escort/.test(pr.line),
+    `WAVE 75: the escort's own price must ride the line — got ${pr.line}`);
+
+  // ── F-R5: the tune-up names its IRON (a garage holds several) and its bill.
+  await app9.pool.query(
+    "INSERT INTO cars (id, character_id, model_id, trim_id, dmg) VALUES ('w75-car', $1, 'errand', 'stock', 0)", [idA]);
+  const tn = await driveW('/v1/races/tune/w75-car', tA, null, 'the tune-up');
+  assert.ok(tn.r.body.name && tn.r.body.spent > 0,
+    `WAVE 75: the tune must SEND the car's name + the discounted bill — got ${JSON.stringify(tn.r.body)}`);
+  assert.ok(tn.line.includes(tn.r.body.name) && tn.line.includes(fmtC(tn.r.body.spent)),
+    `WAVE 75: the tune line must name the iron and the bill — got ${tn.line}`);
+
+  // ── F-E2: the estate HIRE states the $OMR terms — the hire fee (DATABASE ground truth: exactly
+  // what left the account) and the standing daily wage with the down-tools consequence.
+  await app9.pool.query('INSERT INTO estates (account_id, tier) VALUES ($1, 1)', [acctA]);
+  const omrPre = Number((await app9.pool.query('SELECT omr FROM account_persistent WHERE account_id=$1', [acctA])).rows[0].omr);
+  const eh = await driveW('/v1/estate/staff/groundskeeper', tA, null, 'the staff hire');
+  const omrPost = Number((await app9.pool.query('SELECT omr FROM account_persistent WHERE account_id=$1', [acctA])).rows[0].omr);
+  assert.equal(omrPre - omrPost, eh.r.body.hireOmr,
+    'WAVE 75: the DATABASE is ground truth — the reply\'s hireOmr must be what actually left the account');
+  assert.ok(eh.r.body.hireOmr > 0 && eh.line.includes(fmtC(eh.r.body.hireOmr)) && /\$OMR to bring them on/.test(eh.line),
+    `WAVE 75: the hire must state its fee — got ${eh.line}`);
+  assert.ok(/down tools/.test(eh.line),
+    `WAVE 75: the hire must state the unpaid-wages consequence — got ${eh.line}`);
+
+  // ── F-C1: the high-stakes dice refusal carries its OWN terms, both without a seat (what level
+  // buys one) and with one (the 300 $OMR STAKED the seat still wants — including what you hold).
+  const tD = (await inj9('POST', '/v1/auth/guest')).body.token;
+  await inj9('POST', '/v1/character', tD, { name: 'WvD ' + Math.random().toString(36).slice(2, 7) });
+  const idD = (await inj9('GET', '/v1/me', tD)).body.character.id;
+  await app9.pool.query("UPDATE characters SET loc='neon', cash=5000000 WHERE id=$1", [idD]);
+  const d1 = await inj9('POST', '/v1/casino/dice', tD, { amount: 300000 });
+  assert.equal(d1.code, 400, `WAVE 75 fixture: a level-1 300k bet must refuse at the table max (${JSON.stringify(d1.body)})`);
+  assert.ok(d1.body.needStaked === 300 && d1.body.seat === false,
+    `WAVE 75: the refusal must carry the machine-readable stake terms — got ${JSON.stringify(d1.body)}`);
+  assert.match(String(describeFn(d1.body, d1.code)), /seats level 30/,
+    'WAVE 75: without a seat the refusal must say what level buys one');
+  await app9.pool.query("UPDATE characters SET loc='neon' WHERE id=$1", [idA]);
+  const d2 = await inj9('POST', '/v1/casino/dice', tA, { amount: 300000 });
+  assert.equal(d2.code, 400, `WAVE 75 fixture: a seated but unstaked 300k bet must still refuse (${JSON.stringify(d2.body)})`);
+  assert.ok(d2.body.seat === true && d2.body.staked === false,
+    `WAVE 75: the seated refusal must say the seat is held and the stake is not — got ${JSON.stringify(d2.body)}`);
+  const d2line = String(describeFn(d2.body, d2.code));
+  assert.ok(/takes 300 \$OMR STAKED/.test(d2line) && /you hold 0/.test(d2line) && d2line.includes('$250,000'),
+    `WAVE 75: the seated refusal must state the stake wanted, what you hold, and the table max — got ${d2line}`);
+
+  // ── F-W2: the kryl CO-OP ROUT, two-handed. The plan line states the crew band, the join names
+  // the outfit and the count, and the go reports the rout + the material split — with the DATABASE
+  // as ground truth on BOTH crew members' shipment (ROUT_UNITS 6 round-robin over 2 = 3 each; the
+  // leader's rides the in-memory persist, the member's an absolute UPDATE — both halves must land).
+  const tB = (await inj9('POST', '/v1/auth/guest')).body.token;
+  await inj9('POST', '/v1/character', tB, { name: 'WvB ' + Math.random().toString(36).slice(2, 7) });
+  const idB = (await inj9('GET', '/v1/me', tB)).body.character.id;
+  await seed9(idB);
+  const pl = await driveW('/v1/world/kryl/plan', tA, null, 'the raid plan');
+  assert.ok(pl.r.body.op === 'raid' && pl.r.body.crewMin !== undefined,
+    `WAVE 75: the plan must NAME its system + the crew floor — got ${JSON.stringify(pl.r.body)}`);
+  assert.ok(/guns minimum/.test(pl.line), `WAVE 75: the plan line must state the crew band — got ${pl.line}`);
+  const raidId = pl.r.body.id;
+  const jn = await driveW(`/v1/world/raids/${raidId}/join`, tB, null, 'the raid join');
+  assert.ok(jn.r.body.op === 'raid' && jn.r.body.crew === 2 && jn.r.body.outfit,
+    `WAVE 75: the join must carry the outfit's NAME + the crew count — got ${JSON.stringify(jn.r.body)}`);
+  assert.ok(/you're in on the hit on The Kryl Syndicate — 2 of/.test(jn.line),
+    `WAVE 75: the join line must name the outfit (never the key) and the count — got ${jn.line}`);
+  // pin kryl to a routable strength: grab 1,550 drops 31,000 to 29,450 ≤ the 30,000 rout floor,
+  // and 31,000 > 30,000 so the fixture is above it going in. UPDATE-then-INSERT (first-touch table).
+  const up9 = await app9.pool.query(
+    "UPDATE world_npcs SET strength=31000, strength_at=now(), enraged_until=NULL WHERE npc_id='kryl'");
+  if (!up9.rowCount) await app9.pool.query(
+    "INSERT INTO world_npcs (npc_id, strength, strength_at) VALUES ('kryl', 31000, now())");
+  await seed9(idA); await seed9(idB);
+  const go = await driveW(`/v1/world/raids/${raidId}/go`, tA, null, 'the co-op rout');
+  assert.ok(go.r.body.routed === true && go.r.body.crew === 2 && go.r.body.share > 0,
+    `WAVE 75 fixture: the pinned raid must ROUT two-handed with a paid share — got ${JSON.stringify(go.r.body)}`);
+  assert.ok(go.r.body.routUnits === 3 && go.r.body.material === 'Cut Swiss steel' && go.r.body.frontier === true,
+    `WAVE 75: the rout must SEND the leader's material cut + the frontier flag — got ${JSON.stringify(go.r.body)}`);
+  for (const cid of [idA, idB]) {
+    const held = Number((await app9.pool.query('SELECT shipment FROM characters WHERE id=$1', [cid])).rows[0].shipment);
+    assert.equal(held, 3,
+      `WAVE 75: the DATABASE is ground truth — ROUT_UNITS 6 round-robins 3 to EACH of the two crew (char ${cid} holds ${held})`);
+  }
+  assert.ok(/cracked The Kryl Syndicate 2-handed/.test(go.line) && /ROUTED — the outfit is broken/.test(go.line),
+    `WAVE 75: the go line must name the outfit and the rout — got ${go.line}`);
+  assert.ok(/3 units of Cut Swiss steel/.test(go.line) && /plants its flag/.test(go.line),
+    `WAVE 75: the material cut and the frontier flag must ride the line — got ${go.line}`);
+
+  await app9.close();
+  for (const k of Object.keys(arm)) { if (oldEnv[k] === undefined) delete process.env[k]; else process.env[k] = oldEnv[k]; }
+  console.log('  ✓ wave 75: the parallel sweep\'s 15 findings driven — the buy verbs price themselves, the crackdown stopped reading as an empty till, the loss lines state the lay-up, the cast-off and the hire carry their terms, the high-stakes refusal explains itself both ways, and the co-op rout splits its material with the database agreeing');
+}
+
+// ── WAVE 76: THE SEVEN-FIGURE RECEIPT AND THE LINE THAT VANISHED ────────────────────────────────
+// Two findings, both client-side, and the second is not a silence but a DISAPPEARANCE.
+//
+// (1) Buying a Street Deed is the largest single press on that screen and the receipt named only the
+// street — the reply has carried `price` and `net` since the market shipped and the line dropped
+// both. The board's own card prints the price BEFORE the press and the LIST line states its own
+// figure; only the moment the money leaves was silent about it. Driven, never synthetic: the claim
+// is that the LINE reads the figure the SERVER sent, and a literal passes straight through the
+// mutation that stops it being sent, so the assertion is built from the reply's own number.
+//
+// (2) The crew room was the ONE api() mutation site in the whole client with no code check. It
+// discarded the reply, cleared the input UNCONDITIONALLY, and re-rendered — so on a refusal the
+// player's typed line vanished, the room was unchanged and nothing was said. api() is SILENT
+// (describe() never runs on it), so there was nothing behind it. Two of the four refusals are
+// reachable in ORDINARY play — two lines inside two seconds, or a whitespace-only line — which is
+// what the driven half proves, because a check against an unreachable refusal is vacuous. All three
+// siblings of this exact call handle it: city/family chat branches on three codes by name, and the
+// DM sender decisively NEVER clears its input on failure. That last is the rule: a cleared box with
+// nothing said is indistinguishable from a sent message.
+{
+  const app10 = await buildServer();
+  const inj10 = async (method, url, token, payload) => {
+    const res = await app10.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload });
+    try { return { code: res.statusCode, body: res.json() }; } catch { return { code: res.statusCode, body: null }; }
+  };
+  const fmtD = (n) => { const v = Number(n);
+    if (v !== 0 && Math.abs(v) < 0.01) return Number(v.toPrecision(2)).toString();
+    return v.toLocaleString('en-US', { maximumFractionDigits: 2 }); };
+  const mk10 = async (nm) => {
+    const token = (await inj10('POST', '/v1/auth/guest')).body.token;
+    await inj10('POST', '/v1/character', token, { name: nm + ' ' + Math.random().toString(36).slice(2, 7) });
+    const id = (await inj10('GET', '/v1/me', token)).body.character.id;
+    await app10.pool.query(
+      "UPDATE characters SET cash=90000000, respect=500000, loc='docks' WHERE id=$1", [id]);
+    return { token, id };
+  };
+
+  // ── F1: the deed receipt names the price the server sent.
+  const sellerW = await mk10('W76s'), buyerW = await mk10('W76b');
+  const streetW = 'Wave76 Row ' + Math.random().toString(36).slice(2, 6);
+  const clm = await inj10('POST', '/v1/deeds/claim', sellerW.token, { district: 'docks', name: streetW });
+  assert.equal(clm.code, 200, `WAVE 76 fixture: the seller must hold a street (${JSON.stringify(clm.body)})`);
+  const askW = 4321000;
+  assert.equal((await inj10('POST', '/v1/deeds/list', sellerW.token, { price: askW })).code, 200,
+    'WAVE 76 fixture: the street must be on the market before it can be bought');
+  const bought = await inj10('POST', '/v1/deeds/buy/' + sellerW.id, buyerW.token, {});
+  assert.equal(bought.code, 200, `WAVE 76 could not drive the deed buy (${JSON.stringify(bought.body)})`);
+  described++;
+  assert.equal(bought.body.price, askW,
+    `WAVE 76: the buy must SEND the price it charged — got ${JSON.stringify(bought.body)}`);
+  const lineW = String(describeFn(bought.body, 200));
+  assert.ok(lineW.includes(fmtD(bought.body.price)),
+    `WAVE 76: a seven-figure purchase must NAME what left the pocket — the reply carries ` +
+    `${bought.body.price} and the line said: ${lineW}`);
+  assert.ok(/you bought/.test(lineW) && lineW.includes(streetW) && !/undefined/.test(lineW),
+    `WAVE 76: the buy line must still name the street it bought — got ${lineW}`);
+
+  // ── F2: the crew room's refusals are REACHABLE in ordinary play, and the handler must survive them.
+  const chatW = await mk10('W76c');
+  const noCrew = await inj10('POST', '/v1/crew/chat', chatW.token, { text: 'anyone home?' });
+  assert.equal(noCrew.code, 400, 'WAVE 76: a crewless player is refused the crew room');
+  assert.equal((await inj10('POST', '/v1/crew', chatW.token,
+    { name: 'W76 Crew ' + Math.random().toString(36).slice(2, 6) })).code, 200,
+    'WAVE 76 fixture: the crew must exist before the room can be talked in');
+  assert.equal((await inj10('POST', '/v1/crew/chat', chatW.token, { text: 'first' })).code, 200,
+    'WAVE 76 fixture: the first line must land, or the flood brake below is testing nothing');
+  const flooded = await inj10('POST', '/v1/crew/chat', chatW.token, { text: 'second' });
+  assert.equal(flooded.body?.error, 'slow_down',
+    `WAVE 76: two lines inside two seconds is ORDINARY play and the server refuses it — ` +
+    `without a reachable refusal the client check below is vacuous (got ${JSON.stringify(flooded.body)})`);
+  const room = (await inj10('GET', '/v1/crew/chat', chatW.token)).body.messages;
+  assert.equal(room.length, 1,
+    'WAVE 76: the refused line never landed — which is why a cleared box with nothing said is a lie');
+  assert.ok(flooded.body.message,
+    'WAVE 76: the server writes a sentence for this refusal, so the client has something honest to say');
+  {
+    const i = html.indexOf("t.querySelector('#crew-say')");
+    assert(i > -1, 'WAVE 76: the crew-room send moved — this regression is vacuous. Find it and re-anchor.');
+    const handler = html.slice(html.lastIndexOf('sb.onclick', i), html.indexOf('};', i) + 2);
+    assert(/r\.code\s*>=\s*400/.test(handler) && /toast\(/.test(handler),
+      'WAVE 76: the crew-room send ignores the reply code — api() is SILENT, so a refused line is ' +
+      'swallowed and the player is told nothing. Its three siblings all check (family chat branches ' +
+      'on the codes by name; the DM sender toasts the server\'s own message). Got: ' + handler);
+    assert(/return\s+toast\(|toast\([^;]*\);\s*return/.test(handler),
+      'WAVE 76: the crew-room send does not RETURN on a refusal, so it clears the input anyway — the ' +
+      'player\'s typed line vanishes and the room is unchanged. The DM sender\'s rule: a refused line ' +
+      'must keep its text. Got: ' + handler);
+  }
+
+  await app10.close();
+  console.log('  ✓ wave 76: the deed receipt names the seven figures it charged, and the crew room stopped swallowing a refusal that costs a player their typed line');
+}
+
 console.log(`✅ client wiring test passed — across the console AND /admin: of ${refs.size} routes they can ` +
   `call, ${refs.size - dynamic.length} resolve to a really-mounted route (segment-wise, so ` +
   `/v1/streets/:id/jump cannot match /v1/streets/roster) and the ${dynamic.length} that build their ` +
@@ -6994,3 +8912,420 @@ console.log(`✅ client wiring test passed — across the console AND /admin: of
   + `welsher brand together; fencing a score framed money RECEIVED as money spent; and the `
   + `sovereignty pad's nothing-owed early return had dropped the one field its own branch reads, `
   + `so the line written for exactly that case was unreachable.`);
+
+// ═══ WAVE 77 — A REFILL IS NOT A DAY ══════════════════════════════════════════════════════════════
+// Wave 76 fixed one instance of a class and did not sweep it (the RT#7 shape). The class: a refusal
+// naming the BOUND when the actionable number is the REMAINDER of a rolling token bucket. Eleven
+// buckets meter this game and all of them refill CONTINUOUSLY — so "come back tomorrow" is false in
+// the ordinary partially-spent state, and false by a lot: at 5 bust attempts a day one comes back
+// every ~4.8h, which that line overstated by up to nineteen hours.
+//
+// Fluent-but-false, which is the one class no silence pattern can see — check 14 proves a handler is
+// not MUTE and is structurally blind to a handler that speaks and is wrong.
+//
+// Three fixed, each at the SOURCE on the exchange's own `headroomOf` pattern (ONE implementation read
+// by both till and board, so a card can never advertise headroom the till would reject): the vault's
+// daily claim, the jailhouse allowance, and the safehouse — whose bucket expression was living in the
+// till AND the sheet, identical today and free to drift (the sixty-nine-private-copies shape).
+//
+// DRIVEN, never synthetic: every claim here is that the LINE reads a figure the SERVER sent, and a
+// literal passes straight through the mutation that stops it being sent. THE BUCKET LEDGER in
+// test/gates.js holds the payload half and the completeness half.
+{
+  const app11 = await buildServer();
+  const inj11 = async (method, url, token, payload) => {
+    const res = await app11.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload });
+    try { return { code: res.statusCode, body: res.json() }; } catch { return { code: res.statusCode, body: null }; }
+  };
+  const mk11 = async (nm) => {
+    const token = (await inj11('POST', '/v1/auth/guest')).body.token;
+    await inj11('POST', '/v1/character', token, { name: nm + ' ' + Math.random().toString(36).slice(2, 7) });
+    const me = (await inj11('GET', '/v1/me', token)).body.character;
+    await app11.pool.query("UPDATE characters SET cash=90000000, respect=500000, loc='docks' WHERE id=$1", [me.id]);
+    return { token, id: me.id };
+  };
+
+  // ── F1: THE VAULT. A partially-spent bucket must name what is LEFT, not the day's ceiling.
+  const vw = await mk11('W77v');
+  const acctV = (await app11.pool.query('SELECT account_id FROM characters WHERE id=$1', [vw.id])).rows[0].account_id;
+  await app11.pool.query('UPDATE account_persistent SET minted=true WHERE account_id=$1', [acctV]);
+  // DERIVE the cap from the server rather than restating the lever — a literal here is a second copy
+  // of a founder dial, and the whole point of this wave is that two copies drift.
+  const capV = (await inj11('GET', '/v1/vault', vw.token)).body.claimDailyOmr;
+  const leftV = 400; // seed the bucket JUST short: the ordinary state, where "tomorrow" is a lie
+  assert(capV > leftV, `WAVE 77 fixture: the vault cap must exceed the seeded remainder (got ${capV})`);
+  await app11.pool.query('UPDATE account_persistent SET vault_used=$2, vault_at=now() WHERE account_id=$1',
+    [acctV, capV - leftV]);
+  const boardV = await inj11('GET', '/v1/vault', vw.token);
+  assert.equal(boardV.code, 200, `WAVE 77 fixture: the vault board must answer (${JSON.stringify(boardV.body)})`);
+  assert.equal(boardV.body.claimHeadroomOmr, leftV,
+    'WAVE 77: THE TERMS BEFORE THE PRESS — the card must publish what is still open TODAY, read through '
+    + `the same helper the till refuses on, or the two drift. Got ${boardV.body.claimHeadroomOmr}`);
+  const overV = await inj11('POST', '/v1/vault/claim', vw.token, { omr: 5000 });
+  assert.equal(overV.code, 400, `WAVE 77 fixture: a claim past the bucket must be refused (${JSON.stringify(overV.body)})`);
+  assert.equal(overV.body.error, 'daily_cap', `WAVE 77 fixture: expected the cap refusal, got ${overV.body.error}`);
+  assert.equal(overV.body.headroomOmr, leftV,
+    'WAVE 77: the refusal must CARRY the remainder (the {district}/{lockSeconds} rule) so a client can '
+    + `offer the ask instead of sending the player to a board that never said so. Got ${overV.body.headroomOmr}`);
+  assert(overV.body.message.includes(String(leftV)),
+    `WAVE 77: the sentence must name what is LEFT, not only the bound — got "${overV.body.message}"`);
+  // and when the bucket is genuinely SPENT, the honest figure is WHEN it reopens, never "tomorrow"
+  await app11.pool.query('UPDATE account_persistent SET vault_used=$2, vault_at=now() WHERE account_id=$1', [acctV, capV]);
+  const dryV = await inj11('POST', '/v1/vault/claim', vw.token, { omr: 200 });
+  assert.equal(dryV.body.error, 'daily_cap', `WAVE 77 fixture: a spent bucket must still refuse (${JSON.stringify(dryV.body)})`);
+  assert(dryV.body.refillSeconds > 0 && dryV.body.refillSeconds < 86400,
+    'WAVE 77: a spent bucket refills CONTINUOUSLY — the wait to the minimum claim is a fraction of a '
+    + `day, and it is the number a capped player needs. Got ${dryV.body.refillSeconds}s`);
+  assert(!/tomorrow/i.test(dryV.body.message),
+    `WAVE 77: "come back tomorrow" is false for a wall-clock bucket — got "${dryV.body.message}"`);
+
+  // ── F2: THE JAILHOUSE. 5 tries a day is one back every ~4.8h, never "today".
+  const bw = await mk11('W77b'), mark = await mk11('W77m');
+  await app11.pool.query("UPDATE characters SET jail_until=now() + interval '20 minutes' WHERE id=$1", [mark.id]);
+  // the cap comes from the SHEET (a fresh street reads the full allowance) — never a literal
+  const capB = (await inj11('GET', '/v1/me', bw.token)).body.character.bustAttemptsLeft;
+  assert(capB > 0, `WAVE 77 fixture: the jailhouse allowance must be live (got ${capB})`);
+  await app11.pool.query('UPDATE characters SET bust_used=$2, bust_at=now() WHERE id=$1', [bw.id, capB]);
+  const sheetB = (await inj11('GET', '/v1/me', bw.token)).body.character;
+  assert.equal(sheetB.bustAttemptsLeft, 0,
+    `WAVE 77 fixture: the sheet must show the spent bucket (got ${sheetB.bustAttemptsLeft}) — this is the `
+    + 'figure the roster states BEFORE the press, read through the shared helper the till refuses on');
+  assert(sheetB.bustRefillSeconds > 0 && sheetB.bustRefillSeconds < 86400,
+    `WAVE 77: the sheet must say WHEN the next try lands — got ${sheetB.bustRefillSeconds}s`);
+  const busted = await inj11('POST', `/v1/streets/${mark.id}/bust`, bw.token, {});
+  assert.equal(busted.body?.error, 'bust_cap', `WAVE 77 fixture: expected the jailhouse cap (${JSON.stringify(capB.body)})`);
+  assert(busted.body.refillSeconds > 0 && busted.body.refillSeconds < 86400,
+    'WAVE 77: the refusal carries the wait, and it is HOURS not a day — the bucket refills on the wall '
+    + `clock. Got ${busted.body.refillSeconds}s`);
+  assert(!/tomorrow/i.test(busted.body.message) && /\dm out/.test(busted.body.message),
+    `WAVE 77: the line must name the wait rather than "tomorrow" — got "${busted.body.message}"`);
+
+  // ── F3: THE SAFEHOUSE. Short of a full stay is not the same as spent, and neither is "over the day".
+  const sw = await mk11('W77s');
+  // both derived: the cap off the sheet, the stay off the server's own refusal below
+  const capS = (await inj11('GET', '/v1/me', sw.token)).body.character.safeCapSeconds * 1000;
+  assert(capS > 0, `WAVE 77 fixture: the shield cap must be live (got ${capS})`);
+  const stayS = Math.floor(capS / 3);
+  await app11.pool.query('UPDATE characters SET safehouse_used=$2, safehouse_at=now() WHERE id=$1',
+    [sw.id, capS - Math.floor(stayS / 2)]); // half a stay left: refused, but NOT empty
+  const sheetS = (await inj11('GET', '/v1/me', sw.token)).body.character;
+  assert(Math.abs(sheetS.safeCapSeconds - stayS / 2000) < 60,
+    `WAVE 77: the sheet's own bucket read must agree with the till's — got ${sheetS.safeCapSeconds}s`);
+  const shortS = await inj11('POST', '/v1/safehouse', sw.token, {});
+  assert.equal(shortS.body?.error, 'safe_cap', `WAVE 77 fixture: expected the shield cap (${JSON.stringify(shortS.body)})`);
+  assert(shortS.body.leftMs > 0 && shortS.body.refillSeconds > 0,
+    'WAVE 77: a bucket short of a full stay still has time in it — the refusal must carry BOTH what is '
+    + `left and when a whole stay reopens. Got ${JSON.stringify({ leftMs: shortS.body.leftMs, refillSeconds: shortS.body.refillSeconds })}`);
+  assert(/until a full stay/i.test(shortS.body.message),
+    `WAVE 77: "it refills over the day" is not a number — the line must say WHEN. Got "${shortS.body.message}"`);
+  // seed PAST the cap, not at it: the bucket refills on the wall clock, so a seed exactly at the cap
+  // is a race with the milliseconds between the UPDATE and the read (the recorded boundary class).
+  await app11.pool.query('UPDATE characters SET safehouse_used=$2, safehouse_at=now() WHERE id=$1', [sw.id, capS + stayS]);
+  const dryS = await inj11('POST', '/v1/safehouse', sw.token, {});
+  assert.equal(dryS.body?.leftMs, 0, `WAVE 77 fixture: the spent branch must report an empty bucket (${JSON.stringify(dryS.body)})`);
+  assert(/until a stay is open/i.test(dryS.body.message),
+    `WAVE 77: a spent shield says WHEN it reopens, not merely that it is spent — got "${dryS.body.message}"`);
+  console.log('  ✓ WAVE 77: three rolling buckets name the REMAINDER (and when they reopen), on the board and at the till');
+  // ── WAVE 78: A BID IS AN ESCROW, and the line called it a bid.
+  // auction.js debits the account ON THE SPOT and refunds only when somebody outbids you — a win never
+  // returns it. "bid 500 $OMR on X — you lead" reads like the money is still yours, which is the
+  // pledge-read-like-a-deposit class (wave 66) on the $OMR rail. `minNext` — the figure that actually
+  // beats you — was in the reply and dropped. DRIVEN, never synthetic: both halves are claims about
+  // fields the SERVER sends, and a literal passes straight through the mutation that stops one being sent.
+  const bidder = await mk11('W78a');
+  const acct78 = (await app11.pool.query('SELECT account_id FROM characters WHERE id=$1', [bidder.id])).rows[0].account_id;
+  const lots = await inj11('GET', '/v1/auction', bidder.token);
+  assert.equal(lots.code, 200, `WAVE 78 fixture: the block must answer (${JSON.stringify(lots.body)})`);
+  const lot78 = (lots.body.lots || [])[0];
+  assert(lot78 && lot78.id && lot78.minBid > 0,
+    `WAVE 78 fixture: this week's block must carry a lot with a floor (${JSON.stringify(lots.body.lots)})`);
+  await app11.pool.query('UPDATE account_persistent SET omr = omr + $2 WHERE account_id=$1',
+    [acct78, lot78.minBid + 5000]);
+  const omrBefore = Number((await app11.pool.query(
+    'SELECT omr FROM account_persistent WHERE account_id=$1', [acct78])).rows[0].omr);
+  const bid78 = await inj11('POST', `/v1/auction/${lot78.id}/bid`, bidder.token, { amount: lot78.minBid });
+  assert.equal(bid78.code, 200, `WAVE 78 fixture: the bid must land (${JSON.stringify(bid78.body)})`);
+  // the SERVER half — the escrow really happened, and the reply carries what beats it
+  const omrAfter = Number((await app11.pool.query(
+    'SELECT omr FROM account_persistent WHERE account_id=$1', [acct78])).rows[0].omr);
+  assert.equal(omrAfter, omrBefore - lot78.minBid,
+    'WAVE 78: the bid is an ESCROW — the $OMR leaves the account at the press, which is exactly what the '
+    + `line has to say. Got ${omrBefore} → ${omrAfter} against a bid of ${lot78.minBid}`);
+  assert(bid78.body.minNext > lot78.minBid,
+    `WAVE 78: the reply must carry the figure that BEATS you — got ${bid78.body.minNext}`);
+  // the LINE half — it names the escrow, the way back, and the number
+  const line78 = String(describeFn(bid78.body, 200));
+  assert(/escrow/i.test(line78),
+    `WAVE 78: a bid that has already taken the money must SAY so — got "${line78}"`);
+  assert(/outbid/i.test(line78),
+    'WAVE 78: the only way the $OMR comes back is an outbid — a win never returns it, so the line must '
+    + `name the one route home. Got "${line78}"`);
+  assert(line78.includes(fmtLike(bid78.body.minNext)),
+    `WAVE 78: the line must quote the server's own minNext (${bid78.body.minNext}), never a restated `
+    + `raise — got "${line78}"`);
+  console.log('  ✓ WAVE 78: an auction bid names the ESCROW, the one way back, and the figure that beats it');
+  // ── WAVE 79: A COOLDOWN THAT NEVER SAYS WHEN. 39 refusals across 23 modules told a player "not yet"
+  // while the exact expiry sat in the comparison ONE LINE ABOVE the throw and was discarded. Fluent, so
+  // check 14 (THE SILENCE LEDGER) is structurally blind to it — the withheld-terms class, same as wave
+  // 77's rolling buckets and wave 54's {district} payload, with the same remedy: one leaf helper pair
+  // (coolLeft/coolWait) so the number the player is TOLD, the number the payload CARRIES and the number
+  // the till ENFORCES cannot drift, plus a machine-readable {cooldownSeconds} so an agent can back off
+  // instead of retrying blind into a 1/3s throttle. THE COOLDOWN LEDGER (test/gates.js) holds the class
+  // statically over all 39; this block DRIVES the two ends of it — the headline FIRE path (the most
+  // expensive verb in the game, a 2h clock, which used to say only "Your trigger's still hot.") and the
+  // boost. Both halves asserted separately: the SERVER sent the remainder, then the line NAMES it — a
+  // synthetic literal passes straight through the mutation that stops a field being sent.
+  const hunter79 = await mk11('W79h');
+  const mark79 = await mk11('W79m');
+  const srch79 = await inj11('POST', `/v1/streets/${mark79.id}/search`, hunter79.token, {});
+  assert.equal(srch79.code, 200, `WAVE 79 fixture: the search must be placed (${JSON.stringify(srch79.body)})`);
+  // backdate the search past ANY hunter clock, and arm the trigger — the cooldown gate sits directly
+  // below the placed check, so this is the real route refusing for the real reason.
+  await app11.pool.query("UPDATE searches SET started_at = now() - interval '30 days' WHERE hunter=$1", [hunter79.id]);
+  await app11.pool.query("UPDATE characters SET shoot_cd_until = now() + interval '95 minutes' WHERE id=$1", [hunter79.id]);
+  const hot79 = await inj11('POST', `/v1/streets/${mark79.id}/fire`, hunter79.token, { rounds: 100 });
+  assert.equal(hot79.body?.error, 'cooldown',
+    `WAVE 79 fixture: the trigger gate must be what refuses (${JSON.stringify(hot79.body)})`);
+  assert(hot79.body.cooldownSeconds > 5000 && hot79.body.cooldownSeconds <= 5700,
+    'WAVE 79: the refusal must carry the remainder as DATA — an agent with nothing machine-readable to '
+    + `back off on retries blind. Got ${JSON.stringify(hot79.body.cooldownSeconds)} for a 95-minute clock`);
+  assert(/\d/.test(hot79.body.message) && /\b(h|m|s)\b|\dh|\dm|\ds/.test(hot79.body.message),
+    `WAVE 79: "not yet" is not a wait a player can act on — the line must say WHEN. Got "${hot79.body.message}"`);
+  assert(/1h|9[0-9]m/.test(hot79.body.message),
+    'WAVE 79: the wait the line quotes must be the wait the gate is enforcing, not a restated constant — '
+    + `a 95-minute clock reads as hours-and-minutes. Got "${hot79.body.message}"`);
+  // the second end of the class, on a different module and a different clock shape (now - at < CD
+  // rather than until > now), so the helper is proven against BOTH predicate forms it replaced.
+  await app11.pool.query('UPDATE characters SET gta_at = now() WHERE id=$1', [hunter79.id]);
+  const iron79 = await inj11('POST', '/v1/garage/boost', hunter79.token, {});
+  assert.equal(iron79.body?.error, 'cooldown',
+    `WAVE 79 fixture: the boost clock must be what refuses (${JSON.stringify(iron79.body)})`);
+  assert(iron79.body.cooldownSeconds > 0,
+    `WAVE 79: the boost refusal must carry its remainder too — got ${JSON.stringify(iron79.body.cooldownSeconds)}`);
+  assert(/\d+\s*(s|m|h)\b/.test(iron79.body.message),
+    `WAVE 79: the boost line must name the wait — got "${iron79.body.message}"`);
+  console.log('  ✓ WAVE 79: cooldown refusals name the wait AND carry it as data (fire + boost, both clock shapes)');
+
+  // ── WAVE 80 — THE CLOCK THAT LANDS WIN OR LOSE ────────────────────────────────────────
+  // Wave 79 fixed the REFUSAL half of the cooldown class: a 'come back later' that named no wait.
+  // This is the half that comes FIRST in play — the SUCCESS reply that armed the clock and never
+  // mentioned it, so the player learns the wait only by being turned away. Two systems, and in
+  // races it was the forgotten-sibling shape INSIDE ONE FILE: `race_at` is stamped by three
+  // functions and only `raceNpc` ever carried the field.
+  //
+  // DRIVEN, never synthetic, and asserted in TWO halves per this scope's own rule: the SERVER
+  // sent the figure, and THEN the line names it. A literal expectation passes straight through
+  // the mutation that stops the field being sent — and a re-implementation of the client's own
+  // `minsTxt` here would be a second copy of the formatter, which is the class this wave is about.
+  // The duration is matched as a TOKEN (the WAVE 79 idiom), never as a reconstructed string.
+  const dur80 = /\d+\s*(s|m|h|d)\b/;
+
+  // (a) the cutman's rest — a per-fighter clock that rides WIN OR LOSE, so the clause sits outside
+  // the loss-only lay-up guard. Only the server knows it: the Cornerman's tier scales it, so a
+  // restated constant is wrong for anyone the perk touches.
+  const mgr80 = await mk11('Manager');
+  const sign80 = await inj11('POST', '/v1/boxing/recruit', mgr80.token, { name: 'Kid Malone' });
+  assert.equal(sign80.code, 200, `WAVE 80 fixture: the fighter must be signed (${JSON.stringify(sign80.body)})`);
+  const bout80 = await inj11('POST', '/v1/boxing/exhibition', mgr80.token, { fighter: sign80.body.id, tier: 'clubfighter' });
+  assert.equal(bout80.code, 200, `WAVE 80 fixture: the exhibition must be fought (${JSON.stringify(bout80.body)})`);
+  assert(bout80.body.restSeconds > 0,
+    `WAVE 80: the exhibition reply must CARRY the rest clock it just armed — got ${JSON.stringify(bout80.body.restSeconds)}`);
+  const boutLine80 = String(describeFn(bout80.body, 200));
+  assert(/rests\s+\S+\s+before the next card/.test(boutLine80) && dur80.test(boutLine80),
+    'WAVE 80: the card must say when the fighter is next available — the rest lands win OR lose, so a '
+    + `winner heard about it least of all. Got "${boutLine80}"`);
+
+  // (b) the ride — all THREE race verbs stamp the same `characters.race_at`, and the class was swept
+  // to its edge rather than patched at the one site it was found on (the RT#7 discipline). The
+  // clock is NOT pinned low here on purpose: `RACE_CD_MS` would collapse the asserted figure to 1
+  // and the 'names the wait' half would prove nothing about a real clock. Clear the stamp instead.
+  const drv80 = await mk11('Driver'), riv80 = await mk11('Rival');
+  const car80 = async (id, owner) => app11.pool.query(
+    "INSERT INTO cars (id, character_id, model_id, trim_id, dmg) VALUES ($1,$2,'junker','stock',0)", [id, owner]);
+  await car80('w80drv', drv80.id); await car80('w80wager', riv80.id); await car80('w80pinks', riv80.id);
+  const cool80 = () => app11.pool.query('UPDATE characters SET race_at=NULL WHERE id=$1 OR id=$2', [drv80.id, riv80.id]);
+
+  const npc80 = await inj11('POST', '/v1/races/npc', drv80.token, { car: 'w80drv', tier: 'backalley' });
+  assert.equal(npc80.code, 200, `WAVE 80 fixture: the circuit run must go (${JSON.stringify(npc80.body)})`);
+  assert(npc80.body.cooldownSeconds > 0,
+    `WAVE 80: the circuit reply must carry the per-driver clock it stamped — got ${JSON.stringify(npc80.body.cooldownSeconds)}`);
+  const npcLine80 = String(describeFn(npc80.body, 200));
+  assert(/run again in \S+/.test(npcLine80) && dur80.test(npcLine80),
+    `WAVE 80: the circuit line must name when the ride is free again — got "${npcLine80}"`);
+
+  await cool80();
+  const listed80 = await inj11('POST', '/v1/races/list/w80wager', riv80.token, { limit: 5000 });
+  assert.equal(listed80.code, 200, `WAVE 80 fixture: the rival must be on the strip (${JSON.stringify(listed80.body)})`);
+  const wager80 = await inj11('POST', `/v1/races/challenge/${riv80.id}`, drv80.token, { myCar: 'w80drv', theirCar: 'w80wager', wager: 1000 });
+  assert.equal(wager80.code, 200, `WAVE 80 fixture: the wager race must run (${JSON.stringify(wager80.body)})`);
+  assert(wager80.body.cooldownSeconds > 0,
+    `WAVE 80: the wager reply must carry the same clock — got ${JSON.stringify(wager80.body.cooldownSeconds)}`);
+  const wagerLine80 = String(describeFn(wager80.body, 200));
+  assert(/the ride cools for \S+/.test(wagerLine80) && dur80.test(wagerLine80),
+    `WAVE 80: the wager line must name the wait — got "${wagerLine80}"`);
+
+  await cool80();
+  const pinked80 = await inj11('POST', '/v1/races/pinkslip/w80pinks', riv80.token, { on: true });
+  assert.equal(pinked80.code, 200, `WAVE 80 fixture: the rival must put a slip up (${JSON.stringify(pinked80.body)})`);
+  const pinks80 = await inj11('POST', `/v1/races/pinks/${riv80.id}`, drv80.token, { myCar: 'w80drv', theirCar: 'w80pinks' });
+  assert.equal(pinks80.code, 200, `WAVE 80 fixture: the pinks race must run (${JSON.stringify(pinks80.body)})`);
+  assert(pinks80.body.cooldownSeconds > 0,
+    `WAVE 80: the pinks reply must carry the clock too — got ${JSON.stringify(pinks80.body.cooldownSeconds)}`);
+  const pinksLine80 = String(describeFn(pinks80.body, 200));
+  assert(/PINKS/.test(pinksLine80) && /the ride cools for \S+/.test(pinksLine80) && dur80.test(pinksLine80),
+    `WAVE 80: the pinks line must name the wait — got "${pinksLine80}"`);
+  console.log('  ✓ WAVE 80: the SUCCESS reply names the clock it just armed (the cutman\'s rest + all three race verbs)');
+
+  // ── WAVE 80 (c1-7) — THE COST THAT LANDS WIN OR LOSE, AND THE TAKE THAT NEVER COMES BACK ──
+  // The same class one step over: a SUCCESS reply that CHARGED something and never named it. Three
+  // sites, three different reasons the player could not have known:
+  //   • the shovel is paid on COLD ground too (the handler says so in its own comment) — so a wrong
+  //     guess read as free, and a scroll ran a player's tank down with nothing on screen saying why;
+  //   • `hospMs` rode the VICTIM'S notify and never the attacker's own reply — the forgotten-sibling
+  //     shape, so the one man who put the mark in a bed was the one person not told they were there
+  //     (and therefore out of HIS reach too, which is the half that changes what he does next);
+  //   • a contract charges amt + fee + tax and the reply named the POT alone, so the take was
+  //     invisible at the moment it was charged AND at cancel, which refunds the pot share only.
+  //
+  // Asserted in TWO halves throughout, per this scope's own rule: the SERVER sent the figure, and
+  // THEN the line names it. A synthetic literal passes straight through the mutation that stops a
+  // field being sent, which is exactly the mutation these fixes exist to fail.
+
+  // (c) the shovel. The wrong district is COMPUTED off the scroll's own salt rather than guessed —
+  // `clueStepOf` is deterministic, so a hardcoded district would be right one day in six and the
+  // assertion would rest on a probabilistic precondition (the recorded flake class).
+  const dig80 = await mk11('Digger');
+  const salt80 = 'w80saltclue';
+  const right80 = clueStepOf(salt80, 1).district;
+  const wrong80 = DISTRICTS.map((d) => d.id).find((d) => d !== right80);
+  assert(wrong80, 'WAVE 80 fixture: there must be a district that is NOT the scroll\'s answer');
+  await app11.pool.query('INSERT INTO clue_scrolls (character_id, salt, step, steps) VALUES ($1,$2,1,3)', [dig80.id, salt80]);
+  await app11.pool.query('UPDATE characters SET loc=$2, energy=90 WHERE id=$1', [dig80.id, wrong80]);
+  const cold80 = await inj11('POST', '/v1/clues/dig', dig80.token, {});
+  assert.equal(cold80.code, 200, `WAVE 80 fixture: a cold dig is a 200, not a refusal (${JSON.stringify(cold80.body)})`);
+  assert.equal(cold80.body?.cold, true, `WAVE 80 fixture: the dig must land on COLD ground (${JSON.stringify(cold80.body)})`);
+  assert.equal(cold80.body.energy, CLUES.DIG_ENERGY,
+    `WAVE 80: the cold-ground reply must CARRY the energy the shovel still cost — got ${JSON.stringify(cold80.body.energy)}`);
+  const coldLine80 = String(describeFn(cold80.body, 200));
+  assert(new RegExp(`${CLUES.DIG_ENERGY} energy for the dig either way`).test(coldLine80),
+    `WAVE 80: a wrong guess must not read as free — the shovel is paid win or lose. Got "${coldLine80}"`);
+
+  // (d) the beating. The stat gap is seeded far past the contest's own noise term: BOTH sides add
+  // Math.random() * 25, so a gap under 25 would make this a coin toss dressed as an assertion.
+  const bru80 = await mk11('Bruiser'), mark80 = await mk11('Mark');
+  await app11.pool.query('UPDATE characters SET muscle=200, speed=200, energy=100, ammo=100, health=100 WHERE id=$1', [bru80.id]);
+  await app11.pool.query('UPDATE characters SET muscle=1, speed=1, cash=50000 WHERE id=$1', [mark80.id]);
+  const beat80 = await inj11('POST', `/v1/streets/${mark80.id}/jump`, bru80.token, {});
+  assert.equal(beat80.code, 200, `WAVE 80 fixture: the jump must land (${JSON.stringify(beat80.body)})`);
+  assert.equal(beat80.body?.win, true, `WAVE 80 fixture: the seeded gap must guarantee the WIN branch (${JSON.stringify(beat80.body)})`);
+  assert.equal(beat80.body.energy, M3.JUMP_ENERGY,
+    `WAVE 80: the jump reply must carry what the swing cost — got ${JSON.stringify(beat80.body.energy)}`);
+  assert(beat80.body.hospSeconds > 0,
+    `WAVE 80: the jump reply must carry the bed it just put them in — got ${JSON.stringify(beat80.body.hospSeconds)}`);
+  const beatLine80 = String(describeFn(beat80.body, 200));
+  assert(new RegExp(`${M3.JUMP_ENERGY} energy`).test(beatLine80),
+    `WAVE 80: the jump line must name the energy it spent — got "${beatLine80}"`);
+  assert(/in a bed for \S+/.test(beatLine80) && dur80.test(beatLine80) && /out of your reach too/.test(beatLine80),
+    'WAVE 80: the attacker must be told the mark is in a bed AND that it puts them beyond his own '
+    + `reach — the consequence that decides what he does next. Got "${beatLine80}"`);
+
+  // (e) the board's cut. Charged on top of the pot at post, and NOT returned at cancel — so it is
+  // stated at both ends, because a refund that quietly returns less than was charged is the shape
+  // this whole sweep is about. The take is read off the SERVER's own reply, never restated here.
+  const poster80 = await mk11('Poster'), quarry80 = await mk11('Quarry');
+  await app11.pool.query('UPDATE characters SET cash=500000 WHERE id=$1', [poster80.id]);
+  const post80 = await inj11('POST', `/v1/streets/${quarry80.id}/bounty`, poster80.token, { amount: 100000, kind: 'kill' });
+  assert.equal(post80.code, 200, `WAVE 80 fixture: the contract must go up (${JSON.stringify(post80.body)})`);
+  assert(post80.body.take > 0,
+    `WAVE 80: the post reply must carry the take charged ON TOP of the pot — got ${JSON.stringify(post80.body.take)}`);
+  const postLine80 = String(describeFn(post80.body, 200));
+  assert(/the board kept \S+ on top/.test(postLine80) && /never comes back/.test(postLine80),
+    `WAVE 80: the post line must name the cut it kept on top of the pot — got "${postLine80}"`);
+  const pull80 = await inj11('POST', `/v1/contracts/${quarry80.id}/kill/cancel`, poster80.token, {});
+  assert.equal(pull80.code, 200, `WAVE 80 fixture: the poster must be able to pull their own stake (${JSON.stringify(pull80.body)})`);
+  assert(pull80.body.refunded > 0 && pull80.body.refunded < 100000 + post80.body.take,
+    `WAVE 80 fixture: the refund is the POT share, never the whole charge (${JSON.stringify(pull80.body)})`);
+  const pullLine80 = String(describeFn(pull80.body, 200));
+  assert(/the board's take stays kept/.test(pullLine80),
+    `WAVE 80: the cancel line must say what does NOT come back — got "${pullLine80}"`);
+  console.log('  ✓ WAVE 80: the SUCCESS reply names what it CHARGED too (the shovel on cold ground, the jump\'s energy + the bed, the board\'s take at post and at cancel)');
+
+  // ── WAVE 80 (appliers) — FOUR MORE SUCCESS REPLIES THAT CHARGED OR SETTLED IN SILENCE ──
+  // Same class, four sites the coverage sweep reached that the c1-7 pass did not:
+  //   • a shakedown/rob shuts that front to BOTH verbs for a shared window — the one term that
+  //     decides whether you can come back, and the reply named neither it nor what the visit cost;
+  //   • the weekly fight settled into the shared ticket line as a bare figure, though the card names
+  //     both fighters and the TRACK twin has shipped `winnerName` since it landed (forgotten sibling);
+  //   • listing paper named the ASK and never the NET — the house take is the difference between the
+  //     number on the board and the number that reaches you;
+  //   • filling an order banked NET off a board quoting GROSS, so the missing cut had no explanation.
+  // Two halves throughout, as above: the SERVER sent the figure, and THEN the line names it.
+
+  // (f) THE SHARED WINDOW. Outcome-independent on purpose — `...terms` rides all three of
+  // extortFront's branches, so nothing here pins a roll (which would be a coin toss wearing a proof).
+  const lean80 = await mk11('Leaner');
+  const front80 = await mk11('Frontman');
+  await app11.pool.query('UPDATE characters SET energy=90, health=100 WHERE id=$1', [lean80.id]);
+  const biz80 = 'w80biz' + Math.random().toString(36).slice(2, 8);
+  await app11.pool.query('INSERT INTO businesses (id, character_id, kind) VALUES ($1,$2,$3)', [biz80, front80.id, 'laundromat']);
+  const shake80 = await inj11('POST', `/v1/business/${biz80}/shakedown`, lean80.token, {});
+  assert.equal(shake80.code, 200, `WAVE 80 fixture: the shakedown must land (${JSON.stringify(shake80.body)})`);
+  assert(shake80.body.cooldownSeconds > 0 && shake80.body.energy > 0 && shake80.body.heat > 0,
+    `WAVE 80: the shakedown reply must carry what the visit COST and how long the front is shut — got ${JSON.stringify(shake80.body)}`);
+  const shakeLine80 = String(describeFn(shake80.body, 200));
+  assert(/rob or shakedown/.test(shakeLine80) && dur80.test(shakeLine80),
+    `WAVE 80: the shakedown line must name the shared window it just armed — got "${shakeLine80}"`);
+
+  // (g) THE FIGHT. week 0 is guaranteed < weekOf(), so the claim always matures.
+  const punt80 = await mk11('Punter');
+  await app11.pool.query('INSERT INTO fight_bets (character_id, week, side, stake) VALUES ($1,0,$2,$3)', [punt80.id, 'a', 500]);
+  const fight80 = await inj11('POST', '/v1/casino/fight/claim', punt80.token, {});
+  assert.equal(fight80.code, 200, `WAVE 80 fixture: the ticket must settle (${JSON.stringify(fight80.body)})`);
+  assert.equal(fight80.body.settled, 1, `WAVE 80 fixture: exactly one matured ticket (${JSON.stringify(fight80.body)})`);
+  const r80 = fight80.body.results && fight80.body.results[0];
+  assert(r80 && typeof r80.winnerName === 'string' && r80.winnerName.length > 0 && typeof r80.pickName === 'string' && r80.pickName.length > 0,
+    `WAVE 80: the settle reply must NAME the fighters — got ${JSON.stringify(fight80.body.results)}`);
+  const fightLine80 = String(describeFn(fight80.body, 200));
+  assert(fightLine80.includes(r80.winnerName) && /took the fight/.test(fightLine80),
+    `WAVE 80: the fight line must name who took it — got "${fightLine80}"`);
+
+  // (h) THE PAPER'S NET. Asserted as a RELATION off the reply rather than against an imported lever —
+  // a restated take is a second copy of a founder dial, and the copies drift.
+  const shark80 = await mk11('Shylock');
+  const owes80 = await mk11('Debtor');
+  const loan80 = 'w80loan' + Math.random().toString(36).slice(2, 8);
+  await app11.pool.query(
+    "INSERT INTO loans (id, lender_character, borrower_character, principal, rate, hours, status, due_at) VALUES ($1,$2,$3,50000,0.25,24,'active', now() + interval '24 hours')",
+    [loan80, shark80.id, owes80.id]);
+  const sell80 = await inj11('POST', `/v1/loans/${loan80}/sell`, shark80.token, { price: 40000 });
+  assert.equal(sell80.code, 200, `WAVE 80 fixture: the lender must be able to list their own paper (${JSON.stringify(sell80.body)})`);
+  assert(sell80.body.net > 0 && sell80.body.net < sell80.body.price,
+    `WAVE 80: the listing must carry the NET the lender banks, below the ask — got ${JSON.stringify(sell80.body)}`);
+  const sellLine80 = String(describeFn(sell80.body, 200));
+  assert(/you bank/.test(sellLine80) && new RegExp(fmtLike(sell80.body.net)).test(sellLine80),
+    `WAVE 80: the listing line must say what reaches the lender, not just the ask — got "${sellLine80}"`);
+
+  // (i) THE FILL. Posted through the REAL route — a hand-seeded listing would have paySeller pay out
+  // of escrow that was never debited, which is a fixture that proves the wrong thing.
+  const buyer80 = await mk11('Buyer');
+  const seller80 = await mk11('Runner');
+  const g80 = GOODS[0].id;
+  const order80 = await inj11('POST', '/v1/market/order', buyer80.token, { goodId: g80, qty: 5, price: 4000, hours: 24 });
+  assert.equal(order80.code, 200, `WAVE 80 fixture: the order must post (${JSON.stringify(order80.body)})`);
+  await app11.pool.query('INSERT INTO character_cargo (character_id, good_id, qty) VALUES ($1,$2,5) ON CONFLICT (character_id, good_id) DO UPDATE SET qty=5', [seller80.id, g80]);
+  const fill80 = await inj11('POST', `/v1/market/${order80.body.id}/fill`, seller80.token, { qty: 3 });
+  assert.equal(fill80.code, 200, `WAVE 80 fixture: the delivery must land (${JSON.stringify(fill80.body)})`);
+  assert(fill80.body.gross > fill80.body.earned && fill80.body.take > 0 && fill80.body.gross - fill80.body.take === fill80.body.earned,
+    `WAVE 80: the fill must carry the GROSS the board quoted and the TAKE that explains the difference — got ${JSON.stringify(fill80.body)}`);
+  const fillLine80 = String(describeFn(fill80.body, 200));
+  assert(/house take/.test(fillLine80) && new RegExp(fmtLike(fill80.body.take)).test(fillLine80),
+    `WAVE 80: the fill line must explain the gap between the board's price and what landed — got "${fillLine80}"`);
+
+  console.log('  ✓ WAVE 80: the shared front window, the fighter who took it, the paper\'s net and the fill\'s house take all reach the player');
+}
+
+// AND AGAIN, over everything the wave blocks above added. `said` is populated in two places separated
+// by five thousand lines — the main ACTIONS drive near the top, and the wave blocks that run on their
+// own tokens down here — and only the first half was ever swept for these three classes. A line
+// recorded but never looked at is the vacuity shape in its quietest form: the summary line counts it.
+sweepSaidClasses();

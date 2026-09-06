@@ -56,6 +56,7 @@ const omrPre = (await meOf(don.token)).omr;
 r = await call('POST', '/v1/landmarks/neon', { token: don.token, body: { amount: DED } });
 assert.equal(r.code, 200, 'dedicated the Neon Arch');
 assert.equal(r.body.name, 'The Corleones', 'the dynasty name is borne on the plaque');
+assert.equal(r.body.took, null, 'open ground — a first dedicate displaces nobody, so took is null');
 assert.equal((await meOf(don.token)).omr, omrPre - DED, `the flex burned exactly ${DED} $OMR`);
 r = await call('GET', '/v1/landmarks');
 const neon2 = r.body.landmarks.find((l) => l.district === 'neon');
@@ -63,15 +64,23 @@ assert.equal(neon2.holder, 'The Corleones', 'the plaque bears the family');
 assert.equal(neon2.amount, DED, 'and the flex amount');
 assert.equal(neon2.nextMin, DED + 1, 'a takeover must beat it');
 
+// ── the self-raise: a bigger flex on your OWN plaque displaces nobody (Codex round 3) — the old
+// reply named the caller in `took`, and the client rendered "The Corleones's plaque comes down"
+// about a plaque that had just gone UP. A displacement marker must only ever name somebody else.
+r = await call('POST', '/v1/landmarks/neon', { token: don.token, body: { amount: DED + 5 } });
+assert.equal(r.code, 200, 'raising your own flex is a legal dedicate');
+assert.equal(r.body.took, null, 'a SELF-RAISE takes the plaque from NOBODY — took must be null, never your own name');
+
 // ── takeover: a bigger flex takes the plaque; a too-low flex is refused ──
 assert.equal((await call('POST', '/v1/landmarks/neon', { token: rival.token, body: { amount: DED } })).body.error, 'outbid', 'matching the flex is not beating it');
 r = await call('POST', '/v1/landmarks/neon', { token: rival.token, body: { amount: DED * 2 } });
 assert.equal(r.code, 200, 'the rival takes the plaque with a bigger flex');
+assert.equal(r.body.took, 'The Corleones', 'a genuine takeover NAMES the displaced holder in took');
 r = await call('GET', '/v1/landmarks');
 assert.equal(r.body.landmarks.find((l) => l.district === 'neon').holder, 'Sollozzo', 'the plaque changed hands (no dynasty name → the street)');
 assert.equal(r.body.landmarks.find((l) => l.district === 'neon').amount, DED * 2, 'to the bigger flex');
-// the ousted don is not refunded (a flex, not escrow) — he still spent his
-assert.equal((await meOf(don.token)).omr, omrPre - DED, 'the ousted holder gets no refund (a burn, not escrow)');
+// the ousted don is not refunded (a flex, not escrow) — he still spent both his dedicate AND his self-raise
+assert.equal((await meOf(don.token)).omr, omrPre - DED - (DED + 5), 'the ousted holder gets no refund (a burn, not escrow)');
 
 // ── DEATH SURVIVAL: the plaque bears the account-level dynasty, so it stands after the holder dies ──
 await app.inject({ method: 'POST', url: '/v1/mod/kill', payload: { characterId: rival.id }, headers: { 'x-mod-key': 'test-mod-key' } });

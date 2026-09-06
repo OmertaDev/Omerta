@@ -14,7 +14,7 @@
 // §10.4: one faucet, `mentor:protege` (character_id'd → the per-character cash check reconciles). The
 // legend, the seeking flag and graduation move no value. The test proves the vocabulary is closed.
 import { GameError, notify, notifyOnce } from './game.js';
-import { MENTOR, mentorRankOf, levelOf, usd } from './rules.js';
+import { MENTOR, mentorRankOf, levelOf, usd , coolLeft, coolWait } from './rules.js';
 
 const lvlOf = (respect) => levelOf(Number(respect));
 // resolve a character id → { account_id, name, respect, agent, human }. A plain read.
@@ -136,7 +136,8 @@ export async function mentorGift(ch, protege, client, h) {
   // protégé GRADUATES (level 20 — they've made it), the $5k/day rail closes; otherwise a maxed alt could
   // pull it forever, an untaxed unlimited-duration transfer inconsistent with every other P2P cash rail.
   if (ms.graduated) throw new GameError('graduated', `${protege.name} has graduated — they're on their own now.`);
-  if (ms.gift_at && Date.now() - new Date(ms.gift_at).getTime() < MENTOR.GIFT_CD_MS) throw new GameError('cooldown', 'You sent a care package recently — one a day.');
+  const giftCool = coolLeft(new Date(ms.gift_at).getTime() + MENTOR.GIFT_CD_MS);
+  if (giftCool) throw new GameError('cooldown', `You sent a care package recently — one a day, ${coolWait(giftCool)} to go.`, { cooldownSeconds: giftCool });
   const amt = MENTOR.GIFT_CASH;
   if (Number(ch.cash) < amt) throw new GameError('cash', `A care package is ${usd(amt)}.`);
   ch.cash = Number(ch.cash) - amt;

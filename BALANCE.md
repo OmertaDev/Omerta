@@ -6469,3 +6469,353 @@ NFTs remain inert until re-imported, preserving the safe-versus-useful choice.
 
 The economic boundary is unchanged: rarity never changes item book/resale value or melt yield, and
 the existing upgrade is still a known tier for a known $OMR price rather than a random paid outcome.
+
+## THE ARENA — a population of EV-optimizing agents against the live economy (2026-09-02)
+
+`tools/sim.js` measures faucets ONE AT A TIME and `tools/playthrough.js` measures ONE player;
+neither can see what happens when strategies play AGAINST each other. `tools/arena.js`
+(`npm run arena`, real Postgres only, not in CI) drives **57 scripted strategies** — six
+whale-hunters, eight passive landlords, eight arbitrageurs, an alt-ring (one boss, eight alts), six
+lenders, six brokers, four gamblers, four turtles, six grinders — through the PUBLIC API for a
+warped month (30 days × 3 rounds; a day = the worker's sweeps + two forced buybacks + the population
+tick + the clock warp), and asserts the full §10.4 sweep as a before/after DELTA of zero (agents are
+SQL-seeded with $4M, so the baseline drift is non-zero by construction — the scale/loadtest posture).
+Measured on the corrected run (the first run's lender strategy read a `lender` field the loans board
+never sends — it sends `role` — so it printed "0 collected by force" as if that were a game finding).
+
+**1. THE UNDEFENDED MONTH is the headline, and it is the signed design at a scale no lens had seen.**
+Six hunters — 10% of the town — killed **50 times in 30 days**: every non-hunter strategy ended the
+month at the heir's stake ($3k median for landlords, lenders, gamblers, turtles), and **`death:estate`
+burned ~$213M of the town's ~$228M starting wealth** while `whack:loot` moved $21M cash + 8,918 $OMR
+to the killers. Realized kill EV was **+$352k per kill** (loot $25.5M against $2.4M iron + $5.5M ammo)
+— the sim's standing D1 probe reads −$72k against a *mid* mark, and both are right: this town is all
+whales, which is the "hunt whales" economics the founder signed, landing on marks that never defended.
+Gini **0.907**, top 10% holding 82%. The concentration is not loot, it is DEATH: 90% of a victim's
+wealth leaves the world and the killer takes the rest. Two things bound it in production that the
+arena deliberately does not model: the marks bought no bodyguards, held no respawn tokens and posted
+no contracts (only the turtles sheltered — 14 stays under the 12h/day cap, and they still died 4
+times), and a warped day gives each hunter under one kill where a real 3h search + 2h trigger allows
+~4 — so the arena is CONSERVATIVE on cadence and OPTIMISTIC on defence. **Founder read, not a retune:**
+whether a 25%-loot / ~75%-burn death against a 12h/day shelter cap is the intended tempo when 10% of a
+population hunts. Hunters were also the richest marks — 5 hunter deaths, all to other hunters — so the
+winner-take-all is "who survives" (hunter median −94%, max $17.6M).
+
+**2. The passive stack is worth nothing without survival.** Landlords grossed $33.1M of front income
+plus $6.6M of racket income in a month and paid $6.7M of pad — the L1a/L1b curve working exactly as
+signed — and all eight ended at $3k because every one of them died. The sim's P9.20 "$21.6M/day maxed
+stack" is an income figure; the arena measures what a landlord KEEPS, which is what the hunters leave.
+
+**3. The alt-ring works as a laundering rail and the shylock funds it.** 18 order fills moved $745k
+alt→boss through the Black Market at the house's 2% take; the alts borrowed $400k from the lenders,
+never repaid voluntarily (the borrowers — alts, gamblers, grinders — only borrow when BROKE, so
+`cash > owed` never comes), and forced collection recovered **$1.59M of $2.4M lent (66%)** with 0
+voluntary repayments across 9 loans. The lender's real loss was death ($25M estate), not defaults —
+the signed "the lender vets their counterparties" posture holds; what the arena adds is that the
+natural borrowers are the alts, so the shylock is structurally the ring's bank.
+
+**4. The Window is the binding constraint on token→cash.** Six brokers holding 9,000 $OMR redeemed
+**700 $OMR → $350k in a month** against `dry×491` refusals — with two forced buybacks a day. The till
+holds only what sinks fed the street take, so "extraction ≤ inflow" is holding by construction and the
+rail is effectively shut for a town this size. A founder read on whether that throughput is intended.
+
+**5. Recorded, not findings:** no strategy routed around the sink its loop is priced by (every
+strategy paid it — asserted); the den's realized edge was 15.7% on $26.5M over 123 rolls (5.5% on the
+first run) against a 1.41% nominal — within variance at that roll count, but two negative runs are
+worth one sim probe; arbitrage cleared a 2.3× margin on penicillin and then died eight times.
+
+| Harness knob | Default | What it decides |
+|---|---|---|
+| `ARENA_DAYS` / `ARENA_ROUNDS` | 30 / 3 | A warped day is ROUNDS rounds of every agent acting once. Fewer rounds under-count kills. |
+| `CAST` (in the file) | 57 agents | The population mix; the hunter share is the tempo dial. |
+
+Nothing here is a lever of the game — the arena moves no signed number. It is the measurement that
+`omerta-risk-to-earn-design.md`'s "spenders fund earners" model never had: a month with everyone
+optimizing at once.
+
+## THE DEFENDED MONTH — arena step two: the toolkit, the adaptive seats, and the den's noise (2026-09-02)
+
+Step one measured a town with NO defence and called the result a founder read ("is the undefended
+month the design or a balance defect?"). Step two answers it by giving every prey strategy the whole
+defensive toolkit the harness had omitted — a bodyguard market, a safehouse cadence, two respawn
+tokens, contracts on any hunter who kills a member, a family that prices its members' killers, and
+vendettas the heirs can settle — and adding eight ADAPTIVE seats that switch strategy on their own
+rolling P&L. Same chassis, same §10.4 delta-zero assertion (34 checks), `ARENA_DEFENDED=off`
+reproduces step one on the same tree so the two months are a controlled pair. Four defended runs were
+needed before the numbers meant anything (§3 below); the figures are run 4 unless stated.
+
+| | undefended (`ARENA_DEFENDED=off`, same tree) | defended (step two, run 4) |
+|---|---|---|
+| kills in 30 days | 38 (51 searches, 40 shots) | **10** (26 searches, 12 shots — all by day 10) |
+| hunters who died | 4 of 6 | 3 of 6 |
+| `death:estate` burned | $186.5M (91% of $205.4M) | **$39.0M (16% of $237.4M)** |
+| Gini / top-10% share | 0.856 / 67% | **0.490 / 26%** |
+| richest seat | a surviving hunter ($21.1M) | the median grinder |
+| landlord median Δ | −100% (7 of 8 dead) | **+165%** |
+| hunter median Δ | −93% | −54% |
+| realized EV per kill | +$369k (per shot $350k) | +$770k (per shot $642k) |
+| contracts posted | $0 | $7.7M + 3 family |
+| gamblers, realized den edge | 5.1% (204 rolls, z −0.5) | 15.1% (360 rolls, z −2.5) |
+
+The "undefended" column is the CONTROLLED baseline — the same tree with the toolkit switched off — not
+step one's published figures (50 kills / Gini 0.907 / 93% burned). Step one predates the per-round
+shuffle (hunters acted first every round), which is why it read harsher; the pair above differs in ONE
+variable, and that is the only comparison that supports a conclusion.
+
+**1. The answer to the founder's question: the undefended month is a HARNESS artifact, not the
+design.** With the toolkit in play the same six hunters kill ten times instead of thirty-eight, and the
+concentration measure falls from 0.856 (67% in the top decile) to 0.49 (26%). What did it is not the guard and not
+the shelter — it is the RETALIATION RAIL. Marks put **77 personal contracts ($7.7M) and 3 family
+contracts ($600k, 182 tributes)** on the three hunters who killed, all three died to those contracts,
+the estate burned **$12.1M of hunter wealth**, and their heirs could not re-arm (an undertaker is
+$400k plus ammo; the hunters' own refusals read `cash×239 gun×229`) — so kills stop at day 10 and the
+hunter seat ends the month −54%. Killing is still +EV per kill (the surviving hunters banked $8.3M of
+bounties on each other and $2.6M of loot), but a career of it is −EV once the town can price your head.
+That is `omerta-hitman-contracts-design.md`'s thesis measured for the first time: the kill economy is
+CONTRACT-driven in both directions.
+
+**2. What each defence actually did.** *Insurance worked exactly as built*: 14 prey arrived with two
+respawn tokens, two lethal shots were REVIVED, and insured prey died 0× against uninsured 3×. *The
+shelter is the second-largest sink in the defended town* — 638 prey stays cost $35.0M against $34.5M
+of landlord income — so the safehouse cadence is a real tax on being rich, not a free harbour. *The
+guard market moved $7.5M across 749 hires and absorbed NOTHING*, and the reason is the harness, stated
+rather than smoothed: a 24h contract sits exactly on the day warp, so a shot that lands before the
+prey's daily re-hire in the shuffled acting order finds a lapsed contract (5 of the 12 lethal shots)
+and the other 7 landed on marks that had none. Across four runs no lethal shot ever met a live,
+available guard, so `bodyguardAbsorbs` is proven by `test/social.js`, not by the arena. *Vendettas
+were never settled* — the heirs were broke, and the hunters' own vendetta targeting fired 0 shots.
+
+**3. The adaptive seats converged, and on the boring answer.** Eight seats started as landlords and
+made 86 switches on their 3-day P&L; they ended as **grinder×6, turtle×1, arb×1**, and the policy
+table says why — grinding paid $195k/day mean over 182 seat-days while lending lost $193k/day (every
+loan the lenders made was to a broke alt) and landlording lost $59k/day once the shelter and pad are
+paid. Nobody adapted INTO hunting, because the retaliation rail makes the seat −EV. The adaptive seats
+finished +106% median with zero deaths.
+
+**4. The den's edge against its own noise (sim P9.40).** Both months read a den edge ~10× the nominal
+1.41% (15.7% on 123 rolls in step one, 15.1% on 360 in run 4, 5.1% on 204 in the baseline), and the question was whether that is a defect in the book. It
+is the noise: a pass-line stake has σ ≈ s·√N against an edge of 0.0141·s·N, so the two are equal only
+at **N* ≈ 5,030 rolls**; one arena month at ~354 rolls has z ≈ 0.27 and a ±1σ band of −3.9%..+6.7%,
+so a 15% month is a ~2σ draw — a bad month for the gamblers, not an edge. The probe prints every run
+(`tools/sim.js` P9.40, with the MAX_BET/HIGH_MAX session σ at 13× the expected loss) so a retune of
+the den's edge is re-measured against its own variance. Nothing retuned.
+
+**5. Four runs, three harness lessons, recorded because a harness that publishes only its final
+numbers cannot be audited.** Run 1: 491 hires, 0 absorbed — the hunters acted FIRST in every round, so
+every mark was hit before it could buy anything (a deterministic per-round shuffle fixed it). Run 2: 0
+absorbed again — guards were dead or jailed, and the vendetta notice went to a broke heir (turtles
+now guard too; contracts are town-wide). Run 3: 18 "guarded shots", 0 absorbed — the diagnostic
+counted every fire ATTEMPT including cooldown refusals, 26 against 17 real shots (now tallied only on a
+200, with a per-shot row naming the guard's state). Run 4 is the first whose guard numbers are true.
+The search-count vacuity floor also had to become a SHOT floor: a dead hunter's heir cannot search, so
+the assert read a successful defence as an unexercised kill economy.
+
+| Harness knob | Default | What it decides |
+|---|---|---|
+| `ARENA_DEFENDED` | `on` | `off` reproduces step one (no toolkit, no adaptive seats). |
+| `CAST.adaptive` | 8 | Seats that switch on rolling P&L; 0 removes the convergence measurement. |
+
+Nothing here is a lever of the game. **Founder read, downgraded from step one:** the tempo question
+("is 25% loot / ~75% burn against a 12h/day shelter cap the intended tempo when 10% of a population
+hunts?") stands only for a town that never buys the defences it is sold; a town that does holds its
+wealth. What the defended month leaves open is narrower — a hunter's heir cannot re-arm after the
+estate, so a career hunter has one death in them, which is the design's own "who survives" reading.
+
+
+## THE ADAPTIVE HUNTERS — arena step three: 90 days, seats that can take up the gun, and the last hunter standing (2026-09-02)
+
+Step two ended on its own stated limit: no adaptive seat ever adapted INTO hunting, and the guard
+market absorbed zero because a 24h contract sits exactly on the day warp. Step three removes both
+constraints and asks the one question the two arena months could not — **does a town that can price
+heads also DETER the next hunter?** Three changes to the chassis, all measured rather than assumed:
+the month is 90 days; the adaptive policy set gains `hunter` (`ARENA_HUNT_SEATS`, `off` = a
+controlled pair on the same seed with everything else identical); and the warp moves to the ROUND
+(`ARENA_WARP=round` — three rounds a day, so a 24h guard contract covers whole rounds instead of
+lapsing at the one boundary the shots landed on). Two harness defects were fixed on the way in and are
+recorded in §4. Every run: `EXIT=0`, §10.4 34 checks drift 0, `SINKS ROUTED AROUND: none`. The
+seeds are `ARENA_SEED=1|2|3`; the six persisted databases (`arena_hunt_{1,2,3}`, `arena_ctrl_{1,2,3}`)
+are what §1 was read from, ordered by `kill_log.at` (the id is a UUID — see §4).
+
+| | hunt seed 1 | ctrl seed 1 | hunt seed 2 | ctrl seed 2 | hunt seed 3 | ctrl seed 3 |
+|---|---|---|---|---|---|---|
+| kills in 90 days (searches / shots) | **24** (120 / 60) | 79 (193 / 125) | 46 (187 / 110) | 81 (180 / 117) | **23** (91 / 45) | 68 (190 / 120) |
+| career hunters who died | 6 of 6 | 5 of 6 | 5 of 6 | 5 of 6 | 6 of 6 | 5 of 6 |
+| the 5th hunter death lands at kill # | 24 | 19 | 19 | 21 | 19 | 18 |
+| **kills AFTER the 5th hunter death** | **4** | **60** | **27** | **60** | **4** | **50** |
+| who killed the last career hunter | **Adaptive 461** | Hunter 44 (a hunter) | Hunter 22 (a hunter) | Hunter 33 (a hunter) | **Adaptive 461** | Hunter 44 (a hunter) |
+| the survivor's kills / pocket at d90 | — (none survived) | 63 / $16.4M | 32 / $20.3M | 63 / $17.7M | — (none survived) | 54 / $25.6M |
+| `death:estate` burned (of $237.4M) | **46%** | 153% | 169% | 159% | **43%** | 160% |
+| Gini / top-10% share | **0.678 / 40%** | 0.921 / 97% | 0.871 / 76% | 0.936 / 98% | **0.706 / 48%** | 0.929 / 98% |
+| landlord median Δ (dead of 8) | **+628%** (0) | −100% (8) | +451% (3) | −100% (8) | **+450%** (0) | −100% (8) |
+| adaptive median Δ (dead of 8) | +253% (3) | −100% (9) | −99% (6) | −100% (8) | +1551% (3) | +647% (6) |
+| realized EV per kill | $442k | $230k | $428k | $268k | $495k | $348k |
+| guard hires / shots ABSORBED | 1515 / **26** | 463 / 15 | 1178 / **37** | 149 / 3 | 1591 / **14** | 607 / 17 |
+| shots REVIVED by insurance | 7 | 25 | 19 | 26 | 8 | 26 |
+| prey safehouse stays | 3285 | 2172 | 3459 | 2409 | 3449 | 2851 |
+| adaptive seats ended as | landlord×7 arb×1 | turtle×8 | grinder×7 lender×1 | grinder×3 landlord×3 lender×1 turtle×1 | grinder×6 arb×1 turtle×1 | grinder×6 landlord×1 lender×1 |
+| hunter as an adaptive policy, $/day (n) | −$12.5k (30) | — | −$55.1k (24) | — | −$212.6k (27) | — |
+
+**1. The answer, and it is not the one the retaliation rail was sold as: a town that can price heads
+deters EXACTLY as long as somebody is left to collect.** Read in kill order, every run has the same
+first act — the six career hunters contract-kill EACH OTHER. A hunter is the richest mark in town the
+moment he lands a kill (the loot on him, and the pot the marks put on his head), and in this harness
+the only executor of a contract is another hunter, so the pots do their job with brutal efficiency:
+five of six career hunters are dead by kill #18–24 in every run. Then the mechanism inverts. The last
+hunter standing carries every remaining contract on his own head with NOBODY able to execute it — the pots sit until they expire and refund (20–23 refunds, $2.2–2.5M in every run a hunter
+survived; 0 in hunt seed 3, where no hunter did; open pots on a living hunter at day 90: 0 in all six) — and he farms the town unopposed for the rest of the quarter: **the kills
+after the 5th hunter death are 60 / 60 / 50 in the controls, and the survivor ends holding 54–63 kills
+and a $16–26M pocket with $20–28M of `whack:loot` and $3.6–7.9M of `bounty:claim` behind it**, against a
+town where every landlord and every lender is dead and the top decile holds 97–98%. Deterrence was
+real for nineteen kills and then it was a formality, because a price on a head is worth exactly what
+the town can pay a gun to collect it — and the town had run out of guns. That is a property of the
+game's contract design, not of the harness: `claimBounty` pays whoever does the job, and a mark can
+only price a killer, never kill him.
+
+**2. What breaks the loop is a seat that TAKES UP THE GUN, and that is the whole difference between
+the pair.** In hunt seed 1 an adaptive seat that had switched into hunting (Adaptive 461 — one of the
+8 of 8 seats that tried the policy at some point) killed the last career hunter at kill #24, and
+**killing stopped for the remaining 66 days** (DETERRENCE per third: career 22 / 0 / 0, adaptive 1 / 1 /
+0). Everything else that reads as "hunt seats deter" is downstream of that one shot — the landlords
++628% instead of −100%, the estate at 46% instead of 153%, Gini 0.678 instead of 0.921, 1515 guard
+hires instead of 463, because there were still people alive to hire them. In hunt seed 2 no adaptive
+seat closed it (the gun policy fired 3 shots and landed 0), the last career hunter re-armed off pots he
+collected on his RIVALS (he went broke mid-run — DETERRENCE 21 / 1 / 24 — which is the BROKE half of the
+question answered: a hunter with no rival to collect on is broke, a hunter with one is funded), and the
+run ends like a control. So the controlled pair is not "hunt seats on vs off" so much as "was the
+last executor killed" — and only a seat willing to hunt can do it, which is why deterrence in the
+real game rests on the population's willingness to pick up a contract, not on the contract's size.
+The seat is a bad career in every run — **−$12.5k, −$55.1k and −$212.6k a day** while held, dropped
+24–31 times, 30 seat-days at most — and decisive anyway: the one kill that matters pays the town, not the killer.
+(Hunt seed 3: the same shape as seed 1 — Adaptive 461 killed the last career hunter at kill #23, the 5th hunter death having landed at #19, and only 4 kills followed; DETERRENCE career 20 / 0 / 0 with all six career hunters dead, the estate at 43% against the control's 160%, every landlord alive at +450%, and the town's richest seat an ADAPTIVE one — so the closer shape reproduced on two seeds of three.)
+
+**3. The rest of the toolkit, at 90 days and on the round warp.** The guard market now ABSORBS — 26 / 37 /
+14 lethal shots in the hunt runs against 0 in every step-two run — so `bodyguardAbsorbs` is finally
+proven by the arena and not only by `test/social.js`; the lapsed-contract count (13 / 22 / 8) is the
+residual of a 24h contract against a 3-round day, not the whole story it was under the day warp.
+Insurance revives 7–26 shots per run and the controls revive MORE, because the survivor keeps shooting
+insured prey. The shelter is the largest sink in every town — 2,172–3,459 stays, $237M–$564M — and
+its `SAFEHOUSE_NW_BPS` wealth scaling is what makes the landlords' +628% cost them ~$475M of cover
+over a quarter: being rich is taxed at the rate the design intends. The adaptive seats converge on
+the boring answer wherever the executor was killed (landlord×7 in hunt seed 1, grinder×6 in hunt seed 3)
+and on turtle×8 / grinder×7 / grinder×6 wherever he was not — a seat that watches its own P&L learns to hide from an unopposed
+gun, which is the same read as step two's grinder×6, from the other side.
+
+**4. Two harness defects, one measurement lesson, recorded because a harness that publishes only its
+numbers cannot be audited.** *(a) Orphaned searches* — a hunter whose target died or sheltered kept a
+search open forever and could never open another, so a run's late-game "hunters stopped searching"
+was partly a stuck clock rather than deterrence; the harness now calls the search off on a
+dead/sheltered mark (38–68 per run — the count is printed), and step two's "kills stop at day 10"
+should be read with that in mind: the retaliation deaths were REAL (the survivor analysis in §1
+confirms hunters die to hunters), the silence after them was partly the artifact. *(b) The guard
+cadence* — a 24h contract on a day warp lapsed at exactly the boundary every shot landed on, which is
+why four step-two runs absorbed nothing; `ARENA_WARP=round` is the fix, and 26 / 37 / 14 absorbs are what a
+guard market looks like when the harness does not defeat it. *(c) `kill_log.id` is a UUID*, not a
+sequence — the first kill-order analysis ordered by it and produced a plausible, confident, WRONG
+story ("the grinders and turtles die first"); ordering by `at` (real wall time, never warped, as is
+`bloodline.died_at`) is what showed the hunters killing each other first, and the whole of §1 rests on
+that correction. The honest scoping limits, stated rather than smoothed: only PREY seats retaliate
+with contracts, the prey never hire NPC hitmen (`npcHit` is a hunter-independent executor in the real
+game and would collect on the last hunter standing — the arena does not model it, so §1 is the
+ceiling of the problem, not the floor), guards list once and never re-list after a death, and a
+hunter's heir inherits $1–3k and cannot re-arm (which is why the controls' survivor is the ONLY
+hunter with a pocket).
+
+| Harness knob | Default | What it decides |
+|---|---|---|
+| `ARENA_HUNT_SEATS` | `on` | `off` removes `hunter` from the adaptive policy set — the controlled pair. |
+| `ARENA_WARP` | `day` | `round` warps the clock three times a day so a 24h guard covers whole rounds. |
+| `ARENA_SEED` | 1 | The seeded pair; §1 was read across seeds 1–3. |
+
+Nothing here is a lever of the game. **Founder read:** the retaliation rail deters a hunter while a
+rival gun exists to collect on him, and the sim's own contract break-even (~$72k pot on a mid mark)
+already prices that; what the quarter shows is the state AFTER the guns have thinned each other out,
+where a single unopposed killer is worth 60 bodies and every open pot on him refunds unclaimed. The
+game already carries the executor that does not depend on a rival hunter — the NPC hitman
+(`npcHit`, a fee that burns win or lose and a server-rolled chance at a level-scaled kill) — and the
+open question is whether a mark's contract should be able to HIRE one (a pot that pays an NPC
+contractor when no player collects inside its TTL), which is a design call on the kill economy's
+signed levers and not a harness finding. The arena models nothing of the kind, so the number it
+measured is the worst case.
+
+---
+
+## THE CONTRACTOR — arena step four: the pot that hires a gun, refuted before it was built, and the instrument that cannot settle the question (2026-09-02)
+
+Step three (§ THE ADAPTIVE HUNTERS) ended on one open design call: a contract pot on the last hunter
+standing **refunds unclaimed** because no player is left who can execute it, and he farms the town for
+the rest of the quarter. The proposal was a mechanic letting an uncollected pot **hire the NPC hitman**
+after a grace window. It went to four independent adversarial refuters before any code, and **all four
+returned REFUTED**. It is **NOT BUILT**: no `src/` change, no signed lever touched. The full record is
+`omerta-pot-hires-a-gun-design.md`, which now opens with its own refusal banner.
+
+**1. The premise was false, and the evidence was in this file.** The mechanic exists to reach an
+executor the town cannot otherwise reach — but `npcHit` is a **hunter-independent** executor that is
+already shipped: a fee, a 6h payer clock, a 24h per-target clock, a server-rolled chance at a
+level-scaled kill, and it needs no search, no gun and no rival hunter. What §1 of step three actually
+measured is a town that never called it, because **the harness never called it**: `grep -c npcHit
+tools/arena.js` returned **0**, and the step-three write-up says so in its own words — *"the prey never
+hire NPC hitmen … the arena does not model it, so §1 is the ceiling of the problem, not the floor."*
+The proposal cited that section as its motivation while the section's own caveat refuted it. So the
+task was redefined from BUILD to MEASURE, with the outcome pre-committed both ways: if a town of prey
+each entitled to a contractor still gets farmed, there is a problem to solve; if it does not, the
+finding was a harness artifact and nothing in the game moves.
+
+**2. What was built is the missing call.** `tools/arena.js` gains `hireContractor` behind
+`ARENA_PREY_NPCHIT` (`off` reproduces step three's arm byte-for-byte): a prey seat with a killer on its
+own list withdraws from the bank if it must, buys the dearest tier it can afford
+(`professional` $1M / `journeyman` $250k / `legbreaker` $50k) and stops for the round — one contractor
+per prey per round, because the 6h payer cooldown is all the game allows. Hires, spend, kills, absorbs
+and revives are **counted and PRINTED**, since a counter nobody reads is the vacuity class.
+
+**3. Seven 90-day runs, three seeds, both arms — every one `✓ §10.4 held: 34 checks, drift delta 0`
+with `SINKS ROUTED AROUND: none`.**
+
+| run | kills | hunters died | Gini | top 10% | estate burn | town at day 90 | kills per third | the contractor |
+|---|---|---|---|---|---|---|---|---|
+| s1 `on` (first) | 17 | 6 | 0.793 | 59% | 45% | $613,547,986 | 19 / 1 / 0 | ~$14.5M `npchit:hire` in the ledger |
+| s1 `on` (re-run) | **66** | 5 | 0.945 | 96% | 174% | $158,114,844 | 29 / 15 / 26 | 62 hires ($12,670,000) · killed 6 |
+| s1 `off` | 69 | 5 | 0.947 | 98% | 180% | $95,478,743 | 21 / 20 / 29 | — (no `npchit:hire` anywhere) |
+| s2 `on` | 14 | 6 | 0.744 | 48% | 36% | $838,412,010 | 16 / 0 / 0 | 36 hires ($7,150,000) · killed 6 |
+| s2 `off` | 24 | 6 | 0.724 | 46% | 63% | $656,880,131 | 20 / 6 / 0 | **0 hires ($0) · killed 0** |
+| s3 `on` | 16 | 6 | 0.761 | 53% | 46% | $688,328,170 | 17 / 1 / 0 | 89 hires ($18,315,000) · killed 5 |
+| s3 `off` | 20 | 6 | 0.710 | 48% | 40% | $898,078,811 | 22 / 0 / 0 | **0 hires ($0) · killed 0** |
+
+**The arm is real and it works.** `off` reads **0 hires** in both runs that could print it, which is
+the vacuity control — the knob genuinely gates the behaviour, so the `on` numbers are not measuring
+something the harness was doing anyway. And contractors demonstrably kill career hunters: **5–6 per
+`on` run**, at $50k–$1M a hire, through the shipped route with no game change of any kind. The
+executor the design was invented to supply was already there.
+
+**4. THE HEADLINE IS THE INSTRUMENT, and it disqualifies the conclusion the table looks like it
+supports.** `ARENA_SEED` seeds only the harness's **own** coins — the bandit's explore, the gambler's
+flip, the landlord's racket pick, the round order. The **server** carries **125 unseeded
+`Math.random()` calls across 36 files** (every crime roll, every `npcHit` roll, every `fire` outcome,
+every casino roll), and the market seed feeds the deterministic §7.11 price hash and nothing that rolls.
+So a "seeded pair" is not a controlled pair: it differs in the arm **and in every roll the game makes**.
+Measured directly — **two runs at `ARENA_SEED=1`, arm `on`, on the same tree: 17 kills and 66 kills**,
+estate burn 45% against 174%, Gini 0.793 against 0.945, town wealth $613M against $158M. The arms'
+ranges then overlap almost entirely (`on` 14–66, `off` 20–69), and the run-to-run spread at a fixed
+seed swamps any arm effect this instrument could resolve at n=1.
+
+**5. So §1's unopposed farming is a DRAW, not a property.** It appears in **one of three controls** and
+in an `on` run as well. What separates the two regimes in all seven runs is not the arm but whether the
+**sixth career hunter dies**: hunters died 6 → kills stop inside the first third (19/1/0, 16/0/0,
+17/1/0, 22/0/0); hunters died 5 → the survivor farms to the bell (29/15/26, 21/20/29). That happens in
+both arms. The pre-committed "DIES" outcome therefore holds, by a stronger route than the one it was
+written for: **nothing in `src/` changed and no signed lever moved.**
+
+**6. A retroactive qualification is owed to the two sections above.** The step-two and step-three arena
+figures are **single runs of a noise-dominated instrument**, and `tools/arena.js` carried a comment
+claiming *"a pair at the same ARENA_SEED differs in the regime alone"* — false, and now corrected at the
+site with the measurement that falsifies it. Their directional reads survive (defence changes the
+regime; a hunter with no rival to collect on is broke; retaliation deters while an executor exists),
+because those are supported by mechanism and by repeated runs. Their **numbers are draws**. Any future
+arena claim needs repeated runs **per arm**, not a seeded pair.
+
+| Harness knob | Default | What it decides |
+|---|---|---|
+| `ARENA_PREY_NPCHIT` | `on` (with `ARENA_DEFENDED`) | `off` reproduces step three's arm — prey never hire a contractor. |
+
+Nothing here is a lever of the game. **Founder read:** the town can already answer a lone hunter
+without any new mechanic — it hires the contractor the game ships — and the arena's own inability to
+distinguish the arms is the more important finding, because it is the standard every earlier arena
+number should be read against.

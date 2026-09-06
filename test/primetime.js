@@ -259,6 +259,47 @@ assert.equal(wornSiege, PRIME_TIME.SIEGE_TITLE, 'a cracked honor siege writes th
 assert.equal(await cashOf(sgh.id), sghCash, 'an honor siege pays no cash');
 assert.equal(await txnCount(), sghTx, 'and the honor siege settle wrote no ledger row');
 
+// ════════════ AGENTS — the join-time gates mirror the settle's skip (never a false receipt) ════════════
+// the CASH faucets stay agent-excluded (the recorded posture, SIGN-OFF 2026-08-16), so a value rally
+// and a value siege refuse a machine at the DOOR — a join must never buy a reply promising cash the
+// settle then skips. HONOR nights are status, and status is Sybil-inflatable by recorded posture
+// (the hitman-rep/fight-fix line): the honor RALLY grants its title at join, and the honor SIEGE now
+// admits agents too — with the settle granting the badge, because a door that admits must not settle
+// to nothing (Codex round 3: the blanket siege gate removed an ordinary loop from machines).
+const bot = await mk('Tin Man');
+await levelUp(bot.id);
+await pool.query('UPDATE account_persistent SET agent_flag=true WHERE account_id=(SELECT account_id FROM characters WHERE id=$1)', [bot.id]);
+setMode('value');
+// THE BOARD DISCLOSES THE BAR (Codex round 4): the actions refuse an agent on a value night, and a
+// board that still advertised the cash rendered an enabled button that could only fail (the check-5
+// class — the Port lane picker). One field covers all three mechanics; a human never carries it.
+assert.equal((await call('GET', '/v1/primetime', { token: bot.token })).body.agentBarred, true, 'a machine\'s board on a VALUE night says the door is shut — the card must not advertise a payout it will refuse');
+assert.equal((await call('GET', '/v1/primetime', { token: sg.token })).body.agentBarred, false, 'a human\'s board never carries the bar');
+assert.equal((await call('POST', '/v1/primetime/siege', { token: bot.token })).body.error, 'agent', 'a value siege turns a machine away at the gates');
+setMode('honor');
+assert.equal((await call('GET', '/v1/primetime', { token: bot.token })).body.agentBarred, false, 'an HONOR night opens the door — the bar lifts off the machine\'s board');
+const botToday = dayOf();
+await padSiege(botToday, PRIME_TIME.SIEGE_NEED - 1, 200);   // ghosts so the machine's night cracks
+sr = await call('POST', '/v1/primetime/siege', { token: bot.token });
+assert.equal(sr.body.joined, true, 'an HONOR siege admits a machine — the badge is status, not the faucet');
+assert.equal(sr.body.cracked, true, 'and this one cracked');
+const botTx = await txnCount();
+const botCash = await cashOf(bot.id);
+// backdate INSIDE the settle's backfill window (today-3 is its floor) — today-4 would never be scanned
+await pool.query('UPDATE primetime_rally SET day=$1 WHERE day=$2', [botToday - 3, botToday]);
+await settlePrimeTime(pool);
+assert.equal((await pool.query('SELECT title FROM characters WHERE id=$1', [await idOf(bot.id)])).rows[0].title,
+  PRIME_TIME.SIEGE_TITLE, 'the settle grants the agent the badge — a door that admits must not settle to nothing');
+assert.equal(await cashOf(bot.id), botCash, 'and no cash moved to the machine');
+assert.equal(await txnCount(), botTx, 'zero ledger rows — the badge is pure status');
+process.env.PRIME_TIME_MECH = 'rally';
+setMode('value');
+assert.equal((await call('POST', '/v1/primetime/answer', { token: bot.token })).body.error, 'agent', 'a value rally refuses an agent at answer time — never a pending that cannot pay');
+setMode('honor');
+const botHonor = await call('POST', '/v1/primetime/answer', { token: bot.token });
+assert.equal(botHonor.body.answered, true, 'an honor rally stays open to agents — the title lands at join, not at settle');
+assert.ok(typeof botHonor.body.title === 'string' && botHonor.body.title.length, 'the honor reply carries the title it granted');
+
 console.log('primetime: PRIME TIME step one (THE RALLY) + step two (HAPPY HOUR) + step three (THE SIEGE) ok');
 await app.close();
 process.exit(0);

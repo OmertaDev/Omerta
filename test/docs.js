@@ -25,7 +25,7 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { walkSrc } from './lib/srcfiles.js';
 
-const read = (p) => fs.readFileSync(p, 'utf8');
+const read = (p) => fs.readFileSync(p, 'utf8').replaceAll('\r\n', '\n');
 // Counted the way `wc -l` counts — newlines, not `split('\n').length`, which adds a phantom line for
 // every file that ends in one. The definition matters because the whole point is that a reader can
 // check the figure by hand and get the same answer; off-by-one-per-file is 100 lines across src/.

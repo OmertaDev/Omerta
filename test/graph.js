@@ -9,7 +9,27 @@
 // floor (the extractor really found the things we know are there) or a MECHANISM check on a
 // synthetic graph (the query really fires when the condition it looks for is true).
 import assert from 'node:assert';
-import { build, checkGraph, QUERIES, census, NODE_TYPES, EDGE_TYPES } from '../tools/graph.js';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { spawnSync } from 'node:child_process';
+import {
+  build,
+  checkGraph,
+  QUERIES,
+  census,
+  NODE_TYPES,
+  EDGE_TYPES,
+  isMainModule,
+  normalizeText,
+} from '../tools/graph.js';
+
+// The graph is a developer-facing CLI as well as an importable module. Pin the two Windows failure
+// modes explicitly: CRLF must not change the parser's language, and a drive-letter argv path must
+// still be recognized as the entry module.
+assert.equal(normalizeText('one\r\ntwo\rthree\n'), 'one\ntwo\nthree\n');
+const graphPath = fileURLToPath(new URL('../tools/graph.js', import.meta.url));
+assert(isMainModule(new URL('../tools/graph.js', import.meta.url).href, graphPath));
+assert(!isMainModule(import.meta.url, graphPath));
 
 const g = build();
 const c = census(g);
@@ -145,6 +165,19 @@ console.log('✓ lever trace: declaration, readers, pins and deciding documents 
   console.log(`✓ open-findings: ${rows.length} register rows across three D-namespace registers, `
     + `${rows.filter((n) => n.ambiguous).length} flagged ambiguous, audit coverage stated as `
     + `${g.auditCoverage.withMarker} of ${g.auditCoverage.reports} reports`);
+}
+
+// Exercise the actual executable boundary. This caught the silent-success regression where direct
+// commands returned status 0 but printed nothing on Windows because the entry-point guard was false.
+{
+  const cli = spawnSync(process.execPath, [graphPath, 'query', 'open-findings'], {
+    cwd: path.dirname(path.dirname(graphPath)),
+    encoding: 'utf8',
+  });
+  assert.equal(cli.status, 0, `graph CLI failed: ${cli.stderr}`);
+  assert(cli.stdout.includes('# open-findings'), 'graph CLI printed no open-findings query header');
+  assert(cli.stdout.includes('SIGN-OFF.md'), 'graph CLI silently lost the founder decision register');
+  console.log('✓ CLI boundary: direct queries execute and CRLF registers parse on this host');
 }
 
 console.log('✅ THE GRAPH PLANE test passed — the work-and-knowledge graph builds from the tree with '

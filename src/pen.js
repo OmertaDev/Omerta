@@ -7,7 +7,7 @@
 import crypto from 'node:crypto';
 import { GameError, bus, bumpMastery } from './game.js';
 import { PEN, penContrabandOf, penFactionOf, jailSecondsLeft, penSafe, inHole, levelOf, effStat, witproActive,
-         yardEventOf, yardEventById, dayOf, yardCharacterOf, MASTERY, disciplineLvlOf, usd } from './rules.js';
+         yardEventOf, yardEventById, dayOf, yardCharacterOf, MASTERY, disciplineLvlOf, usd , coolLeft, coolWait } from './rules.js';
 import { trainDiscipline, addXp } from './regimen.js';
 import { runEstate, claimBounty, npcHit } from './social.js';
 import { isWanted } from './social/shared.js';
@@ -370,7 +370,14 @@ export async function ratBreak(ch, breakId, client, h) {
   const upd = await client.query('UPDATE pen_break_members SET ratted=true WHERE break_id=$1 AND character_id=$2', [breakId, ch.id]);
   if (!upd.rowCount) throw new GameError('not_crew', "You're not on that break.");
   await h.track(client, ch.account_id, 'pen_break_rat', {});
-  return { ok: true }; // as quiet as the act
+  // The QUIET is the public FEED's — the streets line only ever says somebody talked, never who
+  // (the anonymity fix). The rat's OWN private toast is not the feed, and a bare {ok:true} left it
+  // reading the mute word "done." over the three terms that make ratting a decision rather than a
+  // free win: the tip is in, the break blows whatever the roll, and the deal is RELIEF-ONLY — you
+  // dodge the crew's added stretch and beating but never serve less than your own sentence.
+  // `op` names the SYSTEM: absence is not a discriminator, and a bare {ok:true} can never be
+  // branched on at all.
+  return { ok: true, op: 'breakout', ratted: true, relief: true };
 }
 
 export async function executeBreak(ch, breakId, client, h) {
@@ -420,6 +427,7 @@ export async function executeBreak(ch, breakId, client, h) {
     // than abstaining — a legit saboteur still dodges the crew's penalty and denies them the escape, but
     // nobody time-travels below their sentence. Everyone (incl. the rat) is holed WITH the crew so the
     // roster never outs the only free man (the anonymity fix); the feed only says "somebody talked".
+    let dmgTook = 0;
     for (const m of crewRows) {
       const isRat = rats.includes(m.id);
       const baseJail = new Date(m.jail_until).getTime();
@@ -427,13 +435,20 @@ export async function executeBreak(ch, breakId, client, h) {
         : new Date(baseJail + PEN.BREAK_CAUGHT_ADD_S * 1000);
       const hole = new Date(Math.min(Date.now() + PEN.HOLE_MS, newJail.getTime()));
       const health = isRat ? Number(m.health) : Math.max(1, Number(m.health) - rand(PEN.BREAK_FAIL_DMG[0], PEN.BREAK_FAIL_DMG[1]));
-      if (m.id === ch.id) { ch.health = health; ch.jail_until = newJail; ch.hole_until = hole; }
+      if (m.id === ch.id) { dmgTook = Number(m.health) - health; ch.health = health; ch.jail_until = newJail; ch.hole_until = hole; }
       else { await setMemberRat(m.id, 'health=$2, jail_until=$3, hole_until=$4', [health, newJail, hole]); await h.notify(client, m.id, 'break_failed', { reason: 'talked' }); }
     }
     await h.rngLog(client, ch.id, 'pen:coopbreak', 0, `blown — somebody talked (crew ${crewRows.length})`);
     bus.emit('streets', { type: 'breakout_foiled', crew: crewRows.length });
     await h.track(client, ch.account_id, 'pen_coop_break', { made: false, ratted: true, crew: crewRows.length });
-    return { ok: true, escaped: false, blown: true, message: 'The guards were waiting at the fence. Somebody talked.' };
+    // the per-member figures the SOLO break has always sent: without them a co-op caught/blown line
+    // can only name its consequences in words, while the solo one quotes all three (the shank's
+    // caught branch is the wording precedent). `blown` is what tells a leader he was SOLD OUT —
+    // `escaped:false` alone reads as bad luck at the fence, which is the opposite of what happened.
+    return { ok: true, escaped: false, blown: true, crew: crewRows.length, dmg: dmgTook,
+      holeSeconds: Math.max(0, Math.ceil((new Date(ch.hole_until) - Date.now()) / 1000)),
+      sentenceSeconds: jailSecondsLeft(ch),
+      message: 'The guards were waiting at the fence. Somebody talked.' };
   }
   // PEN_BREAK_P is a TEST-ONLY knob (the SHANK_P precedent). Odds scale with crew + a riot's chaos.
   const p = process.env.PEN_BREAK_P != null ? Number(process.env.PEN_BREAK_P)
@@ -455,16 +470,19 @@ export async function executeBreak(ch, breakId, client, h) {
     return { ok: true, escaped: true, crew: crewRows.length, wantedSeconds: Math.ceil(PEN.FUGITIVE_MS / 1000) };
   }
   // caught — the whole crew eats the hole + a longer stretch + a beating
+  let caughtDmg = 0;
   for (const m of crewRows) {
     const dmg = rand(PEN.BREAK_FAIL_DMG[0], PEN.BREAK_FAIL_DMG[1]);
     const health = Math.max(1, Number(m.health) - dmg);
     const newJail = new Date(new Date(m.jail_until).getTime() + PEN.BREAK_CAUGHT_ADD_S * 1000);
     const hole = new Date(Math.min(Date.now() + PEN.HOLE_MS, newJail.getTime())); // capped at the (extended) sentence
-    if (m.id === ch.id) { ch.health = health; ch.jail_until = newJail; ch.hole_until = hole; }
+    if (m.id === ch.id) { caughtDmg = Number(m.health) - health; ch.health = health; ch.jail_until = newJail; ch.hole_until = hole; }
     else { await setMember(m.id, 'health=$2, jail_until=$3, hole_until=$4', [health, newJail, hole]); await h.notify(client, m.id, 'break_failed', { addSeconds: PEN.BREAK_CAUGHT_ADD_S }); }
   }
   await h.track(client, ch.account_id, 'pen_coop_break', { made: false, crew: crewRows.length });
-  return { ok: true, escaped: false, caught: true, crew: crewRows.length };
+  return { ok: true, escaped: false, caught: true, crew: crewRows.length, dmg: caughtDmg,
+    holeSeconds: Math.max(0, Math.ceil((new Date(ch.hole_until) - Date.now()) / 1000)),
+    sentenceSeconds: jailSecondsLeft(ch) };
 }
 
 // GET /v1/pen/breaks — the co-op board (open plans + your active break). Pool-level (the heist precedent).
@@ -560,8 +578,9 @@ export async function shank(ch, victim, client, h) {
   // (outside persistCharacter's positional UPDATE — the active_at pattern), set win OR lose below.
   // PEN_SHANK_CD_MS is a TEST-ONLY knob (the SEARCH_MS / SHOOT_CD_MS precedent) — never in production.
   const shankCd = Number(process.env.PEN_SHANK_CD_MS ?? PEN.SHANK_CD_MS);
-  if (ch.shank_at && new Date(ch.shank_at) > new Date())
-    throw new GameError('cooldown', `Too soon — the guards are still watching you. ${Math.ceil((new Date(ch.shank_at) - Date.now()) / 60000)}m.`);
+  const shankCool = coolLeft(ch.shank_at);
+  if (shankCool)
+    throw new GameError('cooldown', `Too soon — the guards are still watching you. ${coolWait(shankCool)}.`, { cooldownSeconds: shankCool });
 
   ch.energy = Number(ch.energy) - PEN.SHANK_ENERGY;
   const shankUntil = new Date(Date.now() + shankCd);

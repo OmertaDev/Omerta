@@ -402,11 +402,20 @@ console.log('\n6. SIGTERM MID-REQUEST — the deploy drain');
   child.stdout.on('data', (d) => childOut.push(String(d)));
   child.stderr.on('data', (d) => childOut.push(String(d)));
   const cbase = `http://127.0.0.1:${port}`;
+  // A WALL-CLOCK deadline, not an iteration count. The first cut polled 100 times with a 150ms
+  // sleep on refusal — ~15s — and a cold boot applies ~2,400 ADD COLUMN IF NOT EXISTS statements
+  // plus the CREATEs before it listens: ~10s on a fast box, and past 15s on a loaded 2-core CI
+  // runner, which is exactly where this went red on main (2026-09-02) while passing everywhere
+  // else. A boot that takes 20s is not a failed drain; a wait sized by loop count instead of time
+  // is the "deterministic assertion on a timing precondition" flake shape.
+  const BOOT_DEADLINE_MS = 90_000;
+  const bootT0 = Date.now();
   let up = false;
-  for (let i = 0; i < 100 && !up; i++) {
+  while (!up && Date.now() - bootT0 < BOOT_DEADLINE_MS) {
     try { up = (await fetch(cbase + '/health')).status > 0; } catch { await sleep(150); }
   }
-  check(up, 'the child server booted and answers /health', `never came up — child said: ${childOut.join('').slice(-400)}`);
+  check(up, `the child server booted and answers /health (${Math.round((Date.now() - bootT0) / 1000)}s)`,
+    `never came up inside ${BOOT_DEADLINE_MS / 1000}s — child said: ${childOut.join('').slice(-1500)}`);
 
   if (up) {
     const g = await (await fetch(cbase + '/v1/auth/guest', { method: 'POST' })).json();

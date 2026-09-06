@@ -739,7 +739,8 @@ await pool.query(`DELETE FROM track_entries WHERE character_id IN ('${owners[0].
   assert.equal(scratchClaim.body.settled, 1, 'the scratch ticket settled');
   assert.equal(scratchClaim.body.results[0].scratched, true, 'the runner backed was replaced by a player entry → SCRATCHED');
   assert.equal(scratchClaim.body.results[0].hit, false, 'a scratch is not a hit');
-  assert.equal(scratchClaim.body.won, 500, 'the stake is REFUNDED 1:1 — never paid at the locked longshot odds');
+  assert.equal(scratchClaim.body.refunded, 500, 'the stake is REFUNDED 1:1 — never paid at the locked longshot odds');
+  assert.equal(scratchClaim.body.won, 0, 'a refund is not a win — the two quantities ride separate fields');
   assert.equal((await meOf(bTok)).cash, scratchPre + 500, 'exactly the stake came back');
   await pool.query(`DELETE FROM track_entries WHERE character_id='${sId}'`); // don't disturb the §10.4 sweep below
 }

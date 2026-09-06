@@ -51,6 +51,15 @@ function spentToday(acct, now) {
 }
 const round6 = (n) => Math.round(n * 1e6) / 1e6;   // $OMR is 6dp, same as the NUMERIC column
 
+// What is LEFT of the bucket, and what the till can actually pay — the two numbers a caller must
+// supply to succeed. Both were computed inline at the refusal AND again on the board, and both
+// refusals named the BOUND instead of the REMAINDER, so "Come back tomorrow" was false whenever any
+// headroom was left and "try again after the next take" was false whenever the till could cover a
+// smaller ask (the ordinary partially-funded state, not an edge). One implementation each, read by
+// the till and by the board, so the figure a player is shown is the figure that refuses them.
+export const headroomOf = (acct, now) => round2(Math.max(0, EXCHANGE.DAILY_CAP_OMR - spentToday(acct, now)));
+export const poolOmrOf = (balance) => Math.floor(num(balance) / EXCHANGE.RATE);
+
 // ── the pool ─────────────────────────────────────────────────────────────────────────────────────
 export async function exchangePool(db) {
   const r = (await db.query('SELECT balance, lifetime_funded, lifetime_paid FROM exchange_pool WHERE id=1')).rows[0];
@@ -104,7 +113,15 @@ export async function redeem(ch, amount, client, h) {
   const now = Date.now();
   const decayed = spentToday(h.acct, now);
   if (decayed + omr > EXCHANGE.DAILY_CAP_OMR) {
-    throw new GameError('cap', `The window moves ${EXCHANGE.DAILY_CAP_OMR} $OMR a day. Come back tomorrow.`);
+    // Name the REMAINDER, not the bound: the bucket decays on the wall clock, so "come back
+    // tomorrow" is only true when nothing is left, and the one figure the caller needs to succeed
+    // is what is still open today. Carried as a payload too (the {district}/{lockSeconds} rule) so
+    // a client can offer the ask rather than making the player go and read the board.
+    const left = headroomOf(h.acct, now);
+    throw new GameError('cap', left > 0
+      ? `The window moves ${EXCHANGE.DAILY_CAP_OMR} $OMR a day and you have ${left} left today — ask for that or less.`
+      : `The window moves ${EXCHANGE.DAILY_CAP_OMR} $OMR a day. Come back tomorrow.`,
+    { headroomOmr: left, dailyCapOmr: EXCHANGE.DAILY_CAP_OMR });
   }
 
   const p = (await client.query('SELECT balance FROM exchange_pool WHERE id=1 FOR UPDATE')).rows[0];
@@ -112,7 +129,14 @@ export async function redeem(ch, amount, client, h) {
   if (num(p?.balance) < cash) {
     // NOTHING is burned on a dry pool. The window is a claim on what was funded, not a promise —
     // burning into an empty till would be taking the token and giving nothing back.
-    throw new GameError('dry', 'The window is short today. Nothing was burned — try again after the next take.');
+    // Same rule as the cap one branch up: the till's balance is in hand here, so name what it CAN
+    // pay rather than only that it cannot pay this. "Try again after the next take" is false for
+    // every partially-funded till, which is the ordinary state.
+    const canOmr = poolOmrOf(p?.balance);
+    throw new GameError('dry', canOmr >= EXCHANGE.MIN_OMR
+      ? `The till only covers ${canOmr} $OMR today. Nothing was burned — ask for that or less, or wait for the next take.`
+      : 'The window is short today. Nothing was burned — try again after the next take.',
+    { poolOmr: canOmr });
   }
 
   // ── THE FAMILY'S CUT ────────────────────────────────────────────────────────────────────────
@@ -159,13 +183,12 @@ export async function redeem(ch, amount, client, h) {
 // The public window: the rate, what the till holds, and your own headroom.
 export async function exchangeBoard(db, h) {
   const p = await exchangePool(db);
-  const decayed = spentToday(h?.acct, Date.now());
   return {
     rate: EXCHANGE.RATE, minOmr: EXCHANGE.MIN_OMR, dailyCapOmr: EXCHANGE.DAILY_CAP_OMR,
     pool: Math.floor(p.balance),
     // what the till could pay you right now, in $OMR terms — the honest number to show
-    poolOmr: Math.floor(p.balance / EXCHANGE.RATE),
-    yourHeadroomOmr: round2(Math.max(0, EXCHANGE.DAILY_CAP_OMR - decayed)),
+    poolOmr: poolOmrOf(p.balance),
+    yourHeadroomOmr: headroomOf(h?.acct, Date.now()),
     open: exchangeOpen(),
     note: exchangeOpen()
       ? 'One way. Cash never becomes $OMR — the window only runs the other direction.'

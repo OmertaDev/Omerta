@@ -13,8 +13,7 @@
 // pure transfer). Zero new faucet.
 import crypto from 'node:crypto';
 import { GameError, notify } from './game.js';
-import { CONTACTS, GOODS, DISTRICTS, goodPriceOf, levelOf, contactRankOf, contactNextRank, contactStandingOf, jailed } from './rules.js';
-const districtName = (id) => (DISTRICTS.find((d) => d.id === id) || {}).name || id;
+import { CONTACTS, GOODS, DISTRICTS, goodPriceOf, levelOf, contactRankOf, contactNextRank, contactStandingOf, jailed, districtName } from './rules.js';
 
 const uid = () => crypto.randomUUID();
 

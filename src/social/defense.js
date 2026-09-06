@@ -6,7 +6,7 @@
 // Split out of the 2,003-line src/social.js; every function below is byte-identical to what was
 // there. Import from '../social.js' — it re-exports this package's public surface unchanged.
 import { GameError, bus, ledger } from '../game.js';
-import { M3, CONSTANTS, COMMISSION, HONOR, seasonModOf, usd } from '../rules.js';
+import { M3, CONSTANTS, COMMISSION, HONOR, seasonModOf, usd, safehouseSpentToday, safehouseLeftMs, safehouseRefillSeconds } from '../rules.js';
 import { activeDecree } from '../commission.js';
 import { isMadDog } from '../honor.js';
 import { fire, npcHit } from './combat.js';
@@ -41,11 +41,17 @@ export async function enterSafehouse(ch, client, h) {
   // the granted stay against the bucket BEFORE spending the cash (so a capped-out player pays nothing).
   const cap = M3.SAFEHOUSE_DAILY_CAP_MS;
   if (cap > 0) {
-    const refill = ch.safehouse_at ? (Date.now() - new Date(ch.safehouse_at).getTime()) / 86400000 * cap : cap;
-    const used = Math.max(0, Number(ch.safehouse_used || 0) - Math.max(0, refill));
+    // Read through the SHARED helper the sheet's `safeCapSeconds` reads: this expression lived here AND
+    // in the view, identical today and free to drift. Name the REMAINDER when there is one, and WHEN the
+    // stay reopens when there is not — "it refills over the day" is not a number a player can act on.
+    const used = safehouseSpentToday(ch);
     if (used + ms > cap) {
-      const leftMin = Math.max(0, Math.floor((cap - used) / 60000));
-      throw new GameError('safe_cap', `You've been off the grid too long — ${leftMin} min of safehouse time left today. You have to surface. It refills over the day.`);
+      const leftMs = safehouseLeftMs(ch);
+      const wait = safehouseRefillSeconds(ch, ms);
+      throw new GameError('safe_cap', leftMs >= 60000
+        ? `You've been off the grid too long — ${Math.floor(leftMs / 60000)} min of safehouse time left today, short of the ${Math.floor(ms / 60000)} min a stay takes. It refills as the day runs: ${Math.ceil(wait / 60)}m until a full stay is open again.`
+        : `You've been off the grid too long — the day's shelter is spent. It refills as the day runs: ${Math.ceil(wait / 60)}m until a stay is open again.`,
+      { leftMs, stayMs: ms, capMs: cap, refillSeconds: wait });
     }
     ch.safehouse_used = used + ms;
     ch.safehouse_at = new Date();
@@ -112,7 +118,12 @@ export async function hireBodyguard(ch, guard, client, h) {
   ch.guarded_until = new Date(Date.now() + M3.BODYGUARD_MS);
   await h.notify(client, guard.id, 'bodyguard_hired', { by: ch.name, price, hours: M3.BODYGUARD_MS / 3600000 });
   await h.track(client, ch.account_id, 'bodyguard_hire', { guard: guard.id, price });
-  return { ok: true, guard: guard.id, price, until: ch.guarded_until };
+  // `guardSeconds` is the WITHHELD-TERM half: the window was only ever sent as `until`, an ISO
+  // timestamp, and the client has minsTxt and no date parser — so the one term a principal needs
+  // (how long the cover lasts) could not be rendered at all. Every other clock in a reply ships as
+  // *Seconds for exactly that reason (guardSeconds/madeSeconds/safeSeconds). `until` stays: it is
+  // the field the board and the view already read.
+  return { ok: true, guard: guard.id, price, until: ch.guarded_until, guardSeconds: Math.ceil((ch.guarded_until.getTime() - Date.now()) / 1000) };
 }
 
 // The absorb: called at the top of every lethal kill branch. Returns the guard ({name}) if the

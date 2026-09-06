@@ -10,8 +10,7 @@
 // (`corner:job`, a small character_id'd §10.4 faucet) + CORNER.RESPECT (the XP — respect IS
 // levels). Bounded HARD by CORNER.MAX_DAY claims per street per day across all districts.
 import { GameError, gainRespect } from './game.js';
-import { CORNER, DISTRICTS, cornerTasksOf, dayOf , jailed } from './rules.js';
-const districtName = (id) => (DISTRICTS.find((d) => d.id === id) || {}).name || id;
+import { CORNER, DISTRICTS, cornerTasksOf, dayOf , jailed, districtName } from './rules.js';
 
 
 async function countersOf(client, chId, day) {
@@ -151,5 +150,8 @@ export async function claimCorner(ch, slot, client, h) {
   await h.track(client, ch.account_id, 'corner', { kind: t.kind, district: ch.loc, chain: chain?.done || false });
   return { ok: true, corner: 'claimed', kind: t.kind, cash, respect,
     claimedToday: claimedToday + 1, maxDay: CORNER.MAX_DAY,
-    ...(chain ? { chain: chain.done ? { done: true, district: ch.loc, bonus: chain.cash } : { step: chain.step, of: chain.of } } : {}) };
+    // `respectBonus` alongside the cash one: the envelope reports a TOTAL, so a player paid $1,900
+    // and 55 respect has no way to know that $1,500 and 40 of it were the block's standing job —
+    // and both figures are levers, so the client cannot derive either (the board already sends both).
+    ...(chain ? { chain: chain.done ? { done: true, district: ch.loc, bonus: chain.cash, respectBonus: chain.respect } : { step: chain.step, of: chain.of } } : {}) };
 }
