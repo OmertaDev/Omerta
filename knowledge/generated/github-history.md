@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `0c51a7991d56`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `fa47955a72e6`.
 
 ## Repository
 
@@ -9,11 +9,11 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1354 |
+| Commits in clone | 1356 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-06 — the mirror walks a read to its end, not one hop |
+| Latest commit | 2026-09-06 — fix(mobile): the first-action probe raced itself, and pg-mem said so |
 
 ## Commit authors
 
@@ -24,7 +24,7 @@
 | Claude | 163 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 23 |
-| omerta | 19 |
+| omerta | 21 |
 | claude[bot] | 1 |
 
 ## Historical hotspots
@@ -39,10 +39,10 @@
 | [BALANCE.md](../../BALANCE.md) | 254 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 178 | yes |
-| knowledge/generated/github-history.md | 162 | historical |
-| knowledge/generated/graph-summary.md | 162 | historical |
-| knowledge/generated/graph.json | 162 | historical |
-| knowledge/generated/inventory.md | 162 | historical |
+| knowledge/generated/github-history.md | 163 | historical |
+| knowledge/generated/graph-summary.md | 163 | historical |
+| knowledge/generated/graph.json | 163 | historical |
+| knowledge/generated/inventory.md | 163 | historical |
 | [package.json](../../package.json) | 147 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 123 | yes |
