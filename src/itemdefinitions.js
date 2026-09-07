@@ -158,3 +158,43 @@ export async function definitionByHash(queryable, hash) {
       definitionHash: hash, packageId: row.package_id, ...semantic, tradePolicyHash: row.trade_policy_hash });
   });
 }
+
+export async function activeDefinition(queryable, logicalItemId) {
+  if (typeof logicalItemId !== 'string' || logicalItemId.length > 258
+      || !/^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*::[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$/.test(logicalItemId)) failRegistry('bad_content_request');
+  return withPhase2Read(queryable, async (client) => {
+    // LEFT joins preserve a corrupt selection row so only actual absence returns null.
+    // All mutable generation fields are resolved by ONE statement, including for a caller's
+    // READ COMMITTED transaction. The following intrinsic lookup is immutable.
+    const row = (await client.query(`SELECT s.*, v.definition_hash AS joined_version,
+      m.definition_hash AS joined_member, e.id AS joined_event, p.last_event_id AS joined_pointer
+      FROM item_definition_activations s
+      LEFT JOIN item_definition_versions v ON v.logical_item_id=s.logical_item_id
+        AND v.definition_hash=s.definition_hash AND v.package_id=s.package_id
+      LEFT JOIN content_bundle_item_definitions m ON m.bundle_hash=s.bundle_hash
+        AND m.logical_item_id=s.logical_item_id AND m.definition_hash=s.definition_hash
+      LEFT JOIN content_activation_events e ON e.id=s.event_id AND e.namespace=s.package_id
+        AND e.bundle_hash=s.bundle_hash AND e.activation_revision=s.activation_revision
+      LEFT JOIN content_bundle_activations p ON p.namespace=s.package_id AND p.bundle_hash=s.bundle_hash
+        AND p.activation_revision=s.activation_revision AND p.last_event_id=s.event_id
+      WHERE s.logical_item_id=$1`, [logicalItemId])).rows[0];
+    if (!row) return null;
+    if (row.package_id !== logicalItemId.split('::')[0] || !row.joined_version || !row.joined_member
+        || row.joined_event == null || row.joined_pointer == null) failRegistry('definition_inactive');
+    let intrinsic, revision;
+    try {
+      validHash(row.definition_hash);
+      revision = storedNumber(row.activation_revision);
+      if ((typeof row.event_id === 'number' && !Number.isSafeInteger(row.event_id))
+          || !/^[1-9][0-9]*$/.test(String(row.event_id))) failRegistry('definition_inactive');
+    } catch { failRegistry('definition_inactive'); }
+    try {
+      intrinsic = await definitionByHash(client, row.definition_hash);
+    } catch (error) {
+      if (['definition_not_found', 'content_registry_corrupt'].includes(error?.code)) failRegistry('definition_inactive');
+      throw error; // The owning read/transaction boundary must classify operational failures after cleanup.
+    }
+    return freezeData({ ...intrinsic, bundleHash: row.bundle_hash, namespace: row.package_id,
+      activationRevision: revision, eventId: String(row.event_id) });
+  });
+}

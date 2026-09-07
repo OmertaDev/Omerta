@@ -55,6 +55,10 @@ export function deferred() {
   const promise = new Promise((yes, no) => { resolve = yes; reject = no; });
   return { promise, resolve, reject };
 }
+export function activationRequest(target, revision = 0, previous = null, operatorId = 'activation operator') {
+  return { namespace: target.identity.packageId, bundleHash: target.identity.bundleHash,
+    expectedRevision: revision, expectedPreviousBundleHash: previous?.identity?.bundleHash ?? previous, operatorId };
+}
 export function forwardPool(pool, { before = async () => {}, after = async () => {}, acquire = async () => {} } = {}) {
   const statements = [];
   async function query(q, sql, values) {
