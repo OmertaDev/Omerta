@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c",
+  "sourceRevision": "a24eea9de4eb68c1bdf5e4524834847c90413f0b",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,44 +43,44 @@
     ]
   },
   "census": {
-    "nodes": 5915,
-    "edges": 26382,
+    "nodes": 5925,
+    "edges": 26477,
     "byNodeType": {
-      "Artifact": 1897,
-      "Command": 60,
-      "Commit": 1385,
+      "Artifact": 1900,
+      "Command": 62,
+      "Commit": 1387,
       "Contract": 49,
       "Document": 492,
       "Domain": 13,
       "ExternalDependency": 24,
       "HistoricalArtifact": 306,
-      "Module": 211,
+      "Module": 212,
       "PullRequest": 126,
       "Repository": 1,
       "Route": 762,
       "Subsystem": 8,
       "Table": 335,
-      "TestSuite": 242,
+      "TestSuite": 244,
       "Workflow": 4
     },
     "byEdgeType": {
-      "BELONGS_TO": 2052,
-      "CHANGED": 10545,
-      "CONTAINS": 1918,
-      "DECLARES": 60,
+      "BELONGS_TO": 2055,
+      "CHANGED": 10562,
+      "CONTAINS": 1921,
+      "DECLARES": 62,
       "DEFINED_IN": 1146,
       "DEPENDS_ON": 64,
-      "EXECUTES": 223,
+      "EXECUTES": 229,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1385,
+      "HAS_COMMIT": 1387,
       "IMPLEMENTS": 124,
-      "IMPORTS": 1792,
+      "IMPORTS": 1817,
       "INHERITS": 12,
-      "REFERENCES": 3080,
-      "REPRESENTS": 949,
-      "TESTS": 638,
+      "REFERENCES": 3090,
+      "REPRESENTS": 952,
+      "TESTS": 655,
       "TRACKS": 126,
-      "USES_TABLE": 1566
+      "USES_TABLE": 1573
     }
   },
   "nodes": [
@@ -7521,20 +7521,20 @@
       "path": ".github/workflows/ci.yml",
       "kind": "workflow",
       "extension": ".yml",
-      "bytes": 16148,
-      "lines": 295,
-      "version": "47bb8f7846136a7a",
+      "bytes": 16383,
+      "lines": 301,
+      "version": "334fab5fbda5c920",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "47bb8f7846136a7a"
+          "version": "334fab5fbda5c920"
         }
       ],
-      "lastChangedAt": "2026-09-04T06:02:20.000Z",
+      "lastChangedAt": "2026-09-07T10:18:44.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "80bb186f2cc54e8575f1c75067106901e7295bbf"
+      "lastChangedCommit": "a24eea9de4eb68c1bdf5e4524834847c90413f0b"
     },
     {
       "key": "Artifact:.github/workflows/forge.yml",
@@ -14170,18 +14170,18 @@
       "extension": ".md",
       "bytes": 7058,
       "lines": 128,
-      "version": "87a291ec8a499458",
+      "version": "8b89b798159f7216",
       "text": true,
       "provenance": [
         {
           "file": "MARKETING-POSTS.md",
           "line": 1,
-          "version": "87a291ec8a499458"
+          "version": "8b89b798159f7216"
         }
       ],
-      "lastChangedAt": "2026-09-07T09:09:08.000Z",
+      "lastChangedAt": "2026-09-07T10:18:44.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c"
+      "lastChangedCommit": "a24eea9de4eb68c1bdf5e4524834847c90413f0b"
     },
     {
       "key": "Artifact:MARKETING.md",
@@ -20372,20 +20372,20 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 10870,
-      "lines": 88,
-      "version": "de3a5e93a7960cb2",
+      "bytes": 11183,
+      "lines": 90,
+      "version": "b73a3a7cd9c26cea",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "de3a5e93a7960cb2"
+          "version": "b73a3a7cd9c26cea"
         }
       ],
-      "lastChangedAt": "2026-09-07T09:09:08.000Z",
+      "lastChangedAt": "2026-09-07T10:18:44.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c"
+      "lastChangedCommit": "a24eea9de4eb68c1bdf5e4524834847c90413f0b"
     },
     {
       "key": "Artifact:Procfile",
@@ -33183,20 +33183,20 @@
       "path": "SPEC.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 54622,
+      "bytes": 54642,
       "lines": 735,
-      "version": "e820cdb55975a0c0",
+      "version": "746b95ee90e1f142",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "e820cdb55975a0c0"
+          "version": "746b95ee90e1f142"
         }
       ],
-      "lastChangedAt": "2026-09-07T09:09:08.000Z",
+      "lastChangedAt": "2026-09-07T10:18:44.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c"
+      "lastChangedCommit": "a24eea9de4eb68c1bdf5e4524834847c90413f0b"
     },
     {
       "key": "Artifact:src/accrual.js",
@@ -34209,6 +34209,29 @@
       "lastChangedAt": "2026-08-29T00:22:12.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
+    },
+    {
+      "key": "Artifact:src/content/definition-invariants.js",
+      "type": "Artifact",
+      "id": "src/content/definition-invariants.js",
+      "label": "definition-invariants.js",
+      "path": "src/content/definition-invariants.js",
+      "kind": "backend-module",
+      "extension": ".js",
+      "bytes": 8883,
+      "lines": 138,
+      "version": "f9107ea1f772b394",
+      "text": true,
+      "provenance": [
+        {
+          "file": "src/content/definition-invariants.js",
+          "line": 1,
+          "version": "f9107ea1f772b394"
+        }
+      ],
+      "lastChangedAt": "2026-09-07T10:18:44.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a24eea9de4eb68c1bdf5e4524834847c90413f0b"
     },
     {
       "key": "Artifact:src/content/diagnostics.js",
@@ -35345,20 +35368,20 @@
       "path": "src/invariants.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 78084,
-      "lines": 1063,
-      "version": "530184cdd2a3723c",
+      "bytes": 78139,
+      "lines": 1065,
+      "version": "db215c23e80d0216",
       "text": true,
       "provenance": [
         {
           "file": "src/invariants.js",
           "line": 1,
-          "version": "530184cdd2a3723c"
+          "version": "db215c23e80d0216"
         }
       ],
-      "lastChangedAt": "2026-09-04T04:25:27.000Z",
+      "lastChangedAt": "2026-09-07T10:18:44.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      "lastChangedCommit": "a24eea9de4eb68c1bdf5e4524834847c90413f0b"
     },
     {
       "key": "Artifact:src/itemdefinitions.js",
@@ -39715,20 +39738,20 @@
       "path": "test/gates.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 248385,
-      "lines": 3800,
-      "version": "269c7c48023c62c1",
+      "bytes": 248535,
+      "lines": 3801,
+      "version": "fa72d38cf45b41b9",
       "text": true,
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "269c7c48023c62c1"
+          "version": "fa72d38cf45b41b9"
         }
       ],
-      "lastChangedAt": "2026-09-07T09:09:08.000Z",
+      "lastChangedAt": "2026-09-07T10:18:44.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c"
+      "lastChangedCommit": "a24eea9de4eb68c1bdf5e4524834847c90413f0b"
     },
     {
       "key": "Artifact:test/genesiscca.js",
@@ -40037,20 +40060,20 @@
       "path": "test/lib/phase2-definition-fixtures.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 5681,
-      "lines": 102,
-      "version": "58f773eb51d570bd",
+      "bytes": 14590,
+      "lines": 218,
+      "version": "6a4caefad045583e",
       "text": true,
       "provenance": [
         {
           "file": "test/lib/phase2-definition-fixtures.js",
           "line": 1,
-          "version": "58f773eb51d570bd"
+          "version": "6a4caefad045583e"
         }
       ],
-      "lastChangedAt": "2026-09-07T09:09:08.000Z",
+      "lastChangedAt": "2026-09-07T10:18:44.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c"
+      "lastChangedCommit": "a24eea9de4eb68c1bdf5e4524834847c90413f0b"
     },
     {
       "key": "Artifact:test/lib/srcfiles.js",
@@ -40513,6 +40536,29 @@
       "lastChangedCommit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
     },
     {
+      "key": "Artifact:test/phase2-definition-invariants.js",
+      "type": "Artifact",
+      "id": "test/phase2-definition-invariants.js",
+      "label": "phase2-definition-invariants.js",
+      "path": "test/phase2-definition-invariants.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 15005,
+      "lines": 209,
+      "version": "c6740eb6c4ac538b",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/phase2-definition-invariants.js",
+          "line": 1,
+          "version": "c6740eb6c4ac538b"
+        }
+      ],
+      "lastChangedAt": "2026-09-07T10:18:44.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a24eea9de4eb68c1bdf5e4524834847c90413f0b"
+    },
+    {
       "key": "Artifact:test/phase2-definition-schema.js",
       "type": "Artifact",
       "id": "test/phase2-definition-schema.js",
@@ -40580,6 +40626,29 @@
       "lastChangedAt": "2026-09-04T15:28:01.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "49d3066f587652d6b9b8948a670f0ebe6cedb9f6"
+    },
+    {
+      "key": "Artifact:test/phase2-postgres.js",
+      "type": "Artifact",
+      "id": "test/phase2-postgres.js",
+      "label": "phase2-postgres.js",
+      "path": "test/phase2-postgres.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 35809,
+      "lines": 478,
+      "version": "498ff9494d70fdf2",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/phase2-postgres.js",
+          "line": 1,
+          "version": "498ff9494d70fdf2"
+        }
+      ],
+      "lastChangedAt": "2026-09-07T10:18:44.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a24eea9de4eb68c1bdf5e4524834847c90413f0b"
     },
     {
       "key": "Artifact:test/phase2-review-regressions.js",
@@ -44230,6 +44299,32 @@
       ]
     },
     {
+      "key": "Command:npm:phase2:definitions:check",
+      "type": "Command",
+      "id": "npm:phase2:definitions:check",
+      "label": "npm run phase2:definitions:check",
+      "command": "node test/phase2-definition-schema.js && node test/phase2-definitions.js && node test/phase2-activation.js && node test/phase2-definition-invariants.js",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "key": "Command:npm:phase2:definitions:postgres",
+      "type": "Command",
+      "id": "npm:phase2:definitions:postgres",
+      "label": "npm run phase2:definitions:postgres",
+      "command": "node test/phase2-postgres.js --definitions",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
       "key": "Command:npm:playthrough",
       "type": "Command",
       "id": "npm:playthrough",
@@ -44273,7 +44368,7 @@
       "type": "Command",
       "id": "npm:pretest",
       "label": "npm run pretest",
-      "command": "node test/finalizedobservation.js && node test/stockballotv2.js && node test/rwanominations.js && node test/rwaroutes.js && node test/rwahealth.js && node test/rwahealth.integration.js && node test/rwahealthclearance.js && node test/rwahealthclearancecontext.js && node test/rwahealthoverlay.readiness.js && node test/rwahealthoverlay.schema.js && node test/rwahealthoverlay.vector.js && node test/rwaregistrylifecycle.js && node test/rwaregistrylifecycle.sync.js && node test/agent-referral-cash.js && node test/phase2-discovery.js && node test/phase2-compiler.js && node test/phase2-review-regressions.js && node test/phase2-scale.js && node test/content-graph.js && node test/content-runtime.js && node test/content-social.js && node test/content-seasonal.js && node test/content-seasonal-case.js && node test/content-crafting.js && node test/content-crafting-jobs.js && node test/content-crafting-tools.js && node test/content-exchange.js && node test/content-api.js && node test/v4oraclekeeper.js && node test/genesiscca.js && node test/genesislaunch.js && node test/genesisrelease.js && node test/worldgraph.js && node test/worldgraph-validation.js && node test/items.js && node test/crafting.js && node test/mysteries.js && node test/operations.js && node test/belladonna.js && node test/worldgraph-api.js && node tools/pgcheck-belladonna.js --pg-mem && node test/phase2-definition-schema.js && node test/phase2-definitions.js && node test/phase2-activation.js",
+      "command": "node test/finalizedobservation.js && node test/stockballotv2.js && node test/rwanominations.js && node test/rwaroutes.js && node test/rwahealth.js && node test/rwahealth.integration.js && node test/rwahealthclearance.js && node test/rwahealthclearancecontext.js && node test/rwahealthoverlay.readiness.js && node test/rwahealthoverlay.schema.js && node test/rwahealthoverlay.vector.js && node test/rwaregistrylifecycle.js && node test/rwaregistrylifecycle.sync.js && node test/agent-referral-cash.js && node test/phase2-discovery.js && node test/phase2-compiler.js && node test/phase2-review-regressions.js && node test/phase2-scale.js && node test/content-graph.js && node test/content-runtime.js && node test/content-social.js && node test/content-seasonal.js && node test/content-seasonal-case.js && node test/content-crafting.js && node test/content-crafting-jobs.js && node test/content-crafting-tools.js && node test/content-exchange.js && node test/content-api.js && node test/v4oraclekeeper.js && node test/genesiscca.js && node test/genesislaunch.js && node test/genesisrelease.js && node test/worldgraph.js && node test/worldgraph-validation.js && node test/items.js && node test/crafting.js && node test/mysteries.js && node test/operations.js && node test/belladonna.js && node test/worldgraph-api.js && node tools/pgcheck-belladonna.js --pg-mem && node test/phase2-definition-schema.js && node test/phase2-definitions.js && node test/phase2-activation.js && node test/phase2-definition-invariants.js",
       "provenance": [
         {
           "file": "package.json",
@@ -58122,6 +58217,22 @@
       ]
     },
     {
+      "key": "Commit:96668503a6b926df81aca16eb748aba892b51ec6",
+      "type": "Commit",
+      "id": "96668503a6b926df81aca16eb748aba892b51ec6",
+      "label": "docs: refresh audited definition selection graph",
+      "title": "docs: refresh audited definition selection graph",
+      "date": "2026-09-07T09:10:09.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/96668503a6b926df81aca16eb748aba892b51ec6",
+      "provenance": [
+        {
+          "commit": "96668503a6b926df81aca16eb748aba892b51ec6",
+          "url": "https://github.com/OmertaDev/Omerta/commit/96668503a6b926df81aca16eb748aba892b51ec6"
+        }
+      ]
+    },
+    {
       "key": "Commit:967480ff9ef1c4a52a00c9ad204a8f3948ac75d6",
       "type": "Commit",
       "id": "967480ff9ef1c4a52a00c9ad204a8f3948ac75d6",
@@ -59094,6 +59205,22 @@
         {
           "commit": "a1d8402b1e8087044ec50ce6543a35bed150937c",
           "url": "https://github.com/OmertaDev/Omerta/commit/a1d8402b1e8087044ec50ce6543a35bed150937c"
+        }
+      ]
+    },
+    {
+      "key": "Commit:a24eea9de4eb68c1bdf5e4524834847c90413f0b",
+      "type": "Commit",
+      "id": "a24eea9de4eb68c1bdf5e4524834847c90413f0b",
+      "label": "test: close immutable definition registry invariants",
+      "title": "test: close immutable definition registry invariants",
+      "date": "2026-09-07T10:18:44.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a24eea9de4eb68c1bdf5e4524834847c90413f0b",
+      "provenance": [
+        {
+          "commit": "a24eea9de4eb68c1bdf5e4524834847c90413f0b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a24eea9de4eb68c1bdf5e4524834847c90413f0b"
         }
       ]
     },
@@ -73698,12 +73825,12 @@
       "label": "MARKETING-POSTS.md",
       "documentType": "documentation",
       "lines": 128,
-      "version": "87a291ec8a499458",
+      "version": "8b89b798159f7216",
       "provenance": [
         {
           "file": "MARKETING-POSTS.md",
           "line": 1,
-          "version": "87a291ec8a499458"
+          "version": "8b89b798159f7216"
         }
       ]
     },
@@ -75314,12 +75441,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 735,
-      "version": "e820cdb55975a0c0",
+      "version": "746b95ee90e1f142",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "e820cdb55975a0c0"
+          "version": "746b95ee90e1f142"
         }
       ]
     },
@@ -75831,6 +75958,10 @@
           "line": 3
         },
         {
+          "file": "test/phase2-postgres.js",
+          "line": 5
+        },
+        {
           "file": "test/rwahealth.postgres.js",
           "line": 4
         },
@@ -75864,7 +75995,7 @@
         },
         {
           "file": "test/lib/phase2-definition-fixtures.js",
-          "line": 4
+          "line": 6
         },
         {
           "file": "test/migrate.js",
@@ -80373,6 +80504,9 @@
           "commit": "958d4ac9b9db523560a78b400ab7060c459fc1db"
         },
         {
+          "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
+        },
+        {
           "commit": "97f69a599a1f36c52b83ef09393c7970f3738c87"
         },
         {
@@ -80875,6 +81009,9 @@
         },
         {
           "commit": "958d4ac9b9db523560a78b400ab7060c459fc1db"
+        },
+        {
+          "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
         },
         {
           "commit": "97f69a599a1f36c52b83ef09393c7970f3738c87"
@@ -81381,6 +81518,9 @@
           "commit": "958d4ac9b9db523560a78b400ab7060c459fc1db"
         },
         {
+          "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
+        },
+        {
           "commit": "97f69a599a1f36c52b83ef09393c7970f3738c87"
         },
         {
@@ -81619,6 +81759,9 @@
         },
         {
           "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5"
+        },
+        {
+          "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
         },
         {
           "commit": "9b5e1f54d084547bb33600f5934391191726a3c1"
@@ -81969,6 +82112,9 @@
           "commit": "958d4ac9b9db523560a78b400ab7060c459fc1db"
         },
         {
+          "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
+        },
+        {
           "commit": "97f69a599a1f36c52b83ef09393c7970f3738c87"
         },
         {
@@ -82245,6 +82391,9 @@
           "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5"
         },
         {
+          "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
+        },
+        {
           "commit": "982ba81b2db3f68ec4d02f1c3b6e07eceae45456"
         },
         {
@@ -82411,6 +82560,9 @@
         },
         {
           "commit": "8958d9951447d065d94daf37cdd5e820c644e64c"
+        },
+        {
+          "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
         },
         {
           "commit": "9b5e1f54d084547bb33600f5934391191726a3c1"
@@ -83189,6 +83341,21 @@
       ]
     },
     {
+      "key": "Module:src/content/definition-invariants.js",
+      "type": "Module",
+      "id": "src/content/definition-invariants.js",
+      "label": "src/content/definition-invariants.js",
+      "lines": 138,
+      "version": "f9107ea1f772b394",
+      "provenance": [
+        {
+          "file": "src/content/definition-invariants.js",
+          "line": 1,
+          "version": "f9107ea1f772b394"
+        }
+      ]
+    },
+    {
       "key": "Module:src/content/diagnostics.js",
       "type": "Module",
       "id": "src/content/diagnostics.js",
@@ -83928,13 +84095,13 @@
       "type": "Module",
       "id": "src/invariants.js",
       "label": "src/invariants.js",
-      "lines": 1063,
-      "version": "530184cdd2a3723c",
+      "lines": 1065,
+      "version": "db215c23e80d0216",
       "provenance": [
         {
           "file": "src/invariants.js",
           "line": 1,
-          "version": "530184cdd2a3723c"
+          "version": "db215c23e80d0216"
         }
       ]
     },
@@ -88848,12 +89015,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c",
+      "revision": "a24eea9de4eb68c1bdf5e4524834847c90413f0b",
       "currentBranch": "codex/world-graph-phases-2-3",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 1897,
+      "currentArtifactCount": 1900,
       "provenance": [
         {
           "file": "README.md",
@@ -115328,13 +115495,13 @@
       "type": "TestSuite",
       "id": "test/gates.js",
       "label": "test/gates.js",
-      "lines": 3800,
-      "version": "269c7c48023c62c1",
+      "lines": 3801,
+      "version": "fa72d38cf45b41b9",
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "269c7c48023c62c1"
+          "version": "fa72d38cf45b41b9"
         }
       ]
     },
@@ -115538,13 +115705,13 @@
       "type": "TestSuite",
       "id": "test/lib/phase2-definition-fixtures.js",
       "label": "test/lib/phase2-definition-fixtures.js",
-      "lines": 102,
-      "version": "58f773eb51d570bd",
+      "lines": 218,
+      "version": "6a4caefad045583e",
       "provenance": [
         {
           "file": "test/lib/phase2-definition-fixtures.js",
           "line": 1,
-          "version": "58f773eb51d570bd"
+          "version": "6a4caefad045583e"
         }
       ]
     },
@@ -115849,6 +116016,21 @@
       ]
     },
     {
+      "key": "TestSuite:test/phase2-definition-invariants.js",
+      "type": "TestSuite",
+      "id": "test/phase2-definition-invariants.js",
+      "label": "test/phase2-definition-invariants.js",
+      "lines": 209,
+      "version": "c6740eb6c4ac538b",
+      "provenance": [
+        {
+          "file": "test/phase2-definition-invariants.js",
+          "line": 1,
+          "version": "c6740eb6c4ac538b"
+        }
+      ]
+    },
+    {
       "key": "TestSuite:test/phase2-definition-schema.js",
       "type": "TestSuite",
       "id": "test/phase2-definition-schema.js",
@@ -115890,6 +116072,21 @@
           "file": "test/phase2-discovery.js",
           "line": 1,
           "version": "9fb6a75761264865"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/phase2-postgres.js",
+      "type": "TestSuite",
+      "id": "test/phase2-postgres.js",
+      "label": "test/phase2-postgres.js",
+      "lines": 478,
+      "version": "498ff9494d70fdf2",
+      "provenance": [
+        {
+          "file": "test/phase2-postgres.js",
+          "line": 1,
+          "version": "498ff9494d70fdf2"
         }
       ]
     },
@@ -116918,13 +117115,13 @@
       "type": "Workflow",
       "id": ".github/workflows/ci.yml",
       "label": ".github/workflows/ci.yml",
-      "lines": 295,
-      "version": "47bb8f7846136a7a",
+      "lines": 301,
+      "version": "334fab5fbda5c920",
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "47bb8f7846136a7a"
+          "version": "334fab5fbda5c920"
         }
       ]
     },
@@ -124879,6 +125076,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:src/content/definition-invariants.js",
+      "to": "Domain:platform-core",
+      "provenance": {
+        "file": "src/content/definition-invariants.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:src/content/diagnostics.js",
       "to": "Domain:platform-core",
       "provenance": {
@@ -127345,6 +127551,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/phase2-definition-invariants.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/phase2-definition-invariants.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/phase2-definition-schema.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -127367,6 +127582,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "test/phase2-discovery.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/phase2-postgres.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/phase2-postgres.js",
         "line": 1
       }
     },
@@ -188189,6 +188413,62 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:96668503a6b926df81aca16eb748aba892b51ec6",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:96668503a6b926df81aca16eb748aba892b51ec6",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:96668503a6b926df81aca16eb748aba892b51ec6",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:96668503a6b926df81aca16eb748aba892b51ec6",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:96668503a6b926df81aca16eb748aba892b51ec6",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:96668503a6b926df81aca16eb748aba892b51ec6",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:96668503a6b926df81aca16eb748aba892b51ec6",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:967480ff9ef1c4a52a00c9ad204a8f3948ac75d6",
       "to": "Artifact:CLAUDE.md",
       "provenance": {
@@ -191193,6 +191473,86 @@
       "to": "Artifact:tools/mobile.js",
       "provenance": {
         "commit": "a1d8402b1e8087044ec50ce6543a35bed150937c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a24eea9de4eb68c1bdf5e4524834847c90413f0b",
+      "to": "Artifact:.github/workflows/ci.yml",
+      "provenance": {
+        "commit": "a24eea9de4eb68c1bdf5e4524834847c90413f0b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a24eea9de4eb68c1bdf5e4524834847c90413f0b",
+      "to": "Artifact:MARKETING-POSTS.md",
+      "provenance": {
+        "commit": "a24eea9de4eb68c1bdf5e4524834847c90413f0b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a24eea9de4eb68c1bdf5e4524834847c90413f0b",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "a24eea9de4eb68c1bdf5e4524834847c90413f0b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a24eea9de4eb68c1bdf5e4524834847c90413f0b",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "a24eea9de4eb68c1bdf5e4524834847c90413f0b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a24eea9de4eb68c1bdf5e4524834847c90413f0b",
+      "to": "Artifact:src/content/definition-invariants.js",
+      "provenance": {
+        "commit": "a24eea9de4eb68c1bdf5e4524834847c90413f0b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a24eea9de4eb68c1bdf5e4524834847c90413f0b",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "commit": "a24eea9de4eb68c1bdf5e4524834847c90413f0b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a24eea9de4eb68c1bdf5e4524834847c90413f0b",
+      "to": "Artifact:test/gates.js",
+      "provenance": {
+        "commit": "a24eea9de4eb68c1bdf5e4524834847c90413f0b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a24eea9de4eb68c1bdf5e4524834847c90413f0b",
+      "to": "Artifact:test/lib/phase2-definition-fixtures.js",
+      "provenance": {
+        "commit": "a24eea9de4eb68c1bdf5e4524834847c90413f0b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a24eea9de4eb68c1bdf5e4524834847c90413f0b",
+      "to": "Artifact:test/phase2-definition-invariants.js",
+      "provenance": {
+        "commit": "a24eea9de4eb68c1bdf5e4524834847c90413f0b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a24eea9de4eb68c1bdf5e4524834847c90413f0b",
+      "to": "Artifact:test/phase2-postgres.js",
+      "provenance": {
+        "commit": "a24eea9de4eb68c1bdf5e4524834847c90413f0b"
       }
     },
     {
@@ -220283,6 +220643,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:backend",
+      "to": "Artifact:src/content/definition-invariants.js",
+      "provenance": {
+        "file": "src/content/definition-invariants.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:backend",
       "to": "Artifact:src/content/diagnostics.js",
       "provenance": {
         "file": "src/content/diagnostics.js",
@@ -230431,6 +230800,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/phase2-definition-invariants.js",
+      "provenance": {
+        "file": "test/phase2-definition-invariants.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/phase2-definition-schema.js",
       "provenance": {
         "file": "test/phase2-definition-schema.js",
@@ -230452,6 +230830,15 @@
       "to": "Artifact:test/phase2-discovery.js",
       "provenance": {
         "file": "test/phase2-discovery.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/phase2-postgres.js",
+      "provenance": {
+        "file": "test/phase2-postgres.js",
         "line": 1
       }
     },
@@ -237336,6 +237723,24 @@
       "type": "DECLARES",
       "from": "Artifact:package.json",
       "to": "Command:npm:pgquery",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
+      "to": "Command:npm:phase2:definitions:check",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
+      "to": "Command:npm:phase2:definitions:postgres",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -247875,7 +248280,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:economy-ledger",
-      "weight": 149
+      "weight": 153
     },
     {
       "type": "DEPENDS_ON",
@@ -247899,7 +248304,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 451
+      "weight": 462
     },
     {
       "type": "DEPENDS_ON",
@@ -247917,7 +248322,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:world-graph",
-      "weight": 32
+      "weight": 34
     },
     {
       "type": "DEPENDS_ON",
@@ -247947,7 +248352,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:economy-ledger",
       "to": "Domain:platform-core",
-      "weight": 26
+      "weight": 29
     },
     {
       "type": "DEPENDS_ON",
@@ -248563,6 +248968,51 @@
     },
     {
       "type": "EXECUTES",
+      "from": "Command:npm:phase2:definitions:check",
+      "to": "Artifact:test/phase2-activation.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:phase2:definitions:check",
+      "to": "Artifact:test/phase2-definition-invariants.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:phase2:definitions:check",
+      "to": "Artifact:test/phase2-definition-schema.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:phase2:definitions:check",
+      "to": "Artifact:test/phase2-definitions.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:phase2:definitions:postgres",
+      "to": "Artifact:test/phase2-postgres.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
       "from": "Command:npm:playthrough",
       "to": "Artifact:tools/playthrough.js",
       "provenance": {
@@ -248790,6 +249240,15 @@
       "type": "EXECUTES",
       "from": "Command:npm:pretest",
       "to": "Artifact:test/phase2-compiler.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:pretest",
+      "to": "Artifact:test/phase2-definition-invariants.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -264065,6 +264524,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:96668503a6b926df81aca16eb748aba892b51ec6",
+      "provenance": {
+        "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:967480ff9ef1c4a52a00c9ad204a8f3948ac75d6",
       "provenance": {
         "commit": "967480ff9ef1c4a52a00c9ad204a8f3948ac75d6"
@@ -264548,6 +265015,14 @@
       "to": "Commit:a1d8402b1e8087044ec50ce6543a35bed150937c",
       "provenance": {
         "commit": "a1d8402b1e8087044ec50ce6543a35bed150937c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:a24eea9de4eb68c1bdf5e4524834847c90413f0b",
+      "provenance": {
+        "commit": "a24eea9de4eb68c1bdf5e4524834847c90413f0b"
       }
     },
     {
@@ -270715,6 +271190,42 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:src/content/definition-invariants.js",
+      "to": "Artifact:src/content/activation-policy.js",
+      "provenance": {
+        "file": "src/content/definition-invariants.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/content/definition-invariants.js",
+      "to": "Artifact:src/content/artifact-storage.js",
+      "provenance": {
+        "file": "src/content/definition-invariants.js",
+        "line": 2
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/content/definition-invariants.js",
+      "to": "Artifact:src/content/phase2-transactions.js",
+      "provenance": {
+        "file": "src/content/definition-invariants.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/content/definition-invariants.js",
+      "to": "Artifact:src/itemdefinitions.js",
+      "provenance": {
+        "file": "src/content/definition-invariants.js",
+        "line": 3
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:src/content/discovery.js",
       "to": "Artifact:src/content/json-source.js",
       "provenance": {
@@ -272102,10 +272613,37 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:src/invariants.js",
-      "to": "Artifact:src/rules.js",
+      "to": "Artifact:src/content/definition-invariants.js",
+      "provenance": {
+        "file": "src/invariants.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/invariants.js",
+      "to": "Artifact:src/content/phase2-transactions.js",
+      "provenance": {
+        "file": "src/invariants.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/invariants.js",
+      "to": "Artifact:src/db.js",
       "provenance": {
         "file": "src/invariants.js",
         "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/invariants.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "src/invariants.js",
+        "line": 9
       }
     },
     {
@@ -279926,7 +280464,7 @@
       "to": "Artifact:tools/sqlscan.js",
       "provenance": {
         "file": "test/gates.js",
-        "line": 3081
+        "line": 3082
       }
     },
     {
@@ -280580,10 +281118,37 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/lib/phase2-definition-fixtures.js",
+      "to": "Artifact:src/content/activation-policy.js",
+      "provenance": {
+        "file": "test/lib/phase2-definition-fixtures.js",
+        "line": 168
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/phase2-definition-fixtures.js",
+      "to": "Artifact:src/content/compiler.js",
+      "provenance": {
+        "file": "test/lib/phase2-definition-fixtures.js",
+        "line": 121
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/phase2-definition-fixtures.js",
       "to": "Artifact:src/content/corpus.js",
       "provenance": {
         "file": "test/lib/phase2-definition-fixtures.js",
-        "line": 7
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/phase2-definition-fixtures.js",
+      "to": "Artifact:src/content/crafting.js",
+      "provenance": {
+        "file": "test/lib/phase2-definition-fixtures.js",
+        "line": 124
       }
     },
     {
@@ -280592,7 +281157,16 @@
       "to": "Artifact:src/content/discovery.js",
       "provenance": {
         "file": "test/lib/phase2-definition-fixtures.js",
-        "line": 6
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/phase2-definition-fixtures.js",
+      "to": "Artifact:src/content/exchange.js",
+      "provenance": {
+        "file": "test/lib/phase2-definition-fixtures.js",
+        "line": 125
       }
     },
     {
@@ -280601,7 +281175,16 @@
       "to": "Artifact:src/content/phase2-transactions.js",
       "provenance": {
         "file": "test/lib/phase2-definition-fixtures.js",
-        "line": 88
+        "line": 90
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/phase2-definition-fixtures.js",
+      "to": "Artifact:src/content/runtime.js",
+      "provenance": {
+        "file": "test/lib/phase2-definition-fixtures.js",
+        "line": 122
       }
     },
     {
@@ -280610,7 +281193,34 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "test/lib/phase2-definition-fixtures.js",
-        "line": 5
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/phase2-definition-fixtures.js",
+      "to": "Artifact:src/game.js",
+      "provenance": {
+        "file": "test/lib/phase2-definition-fixtures.js",
+        "line": 123
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/phase2-definition-fixtures.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "test/lib/phase2-definition-fixtures.js",
+        "line": 167
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/phase2-definition-fixtures.js",
+      "to": "Artifact:src/items.js",
+      "provenance": {
+        "file": "test/lib/phase2-definition-fixtures.js",
+        "line": 126
       }
     },
     {
@@ -280619,7 +281229,7 @@
       "to": "ExternalDependency:pg-mem",
       "provenance": {
         "file": "test/lib/phase2-definition-fixtures.js",
-        "line": 4
+        "line": 6
       }
     },
     {
@@ -281245,6 +281855,42 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:test/phase2-definition-invariants.js",
+      "to": "Artifact:src/content/activation-policy.js",
+      "provenance": {
+        "file": "test/phase2-definition-invariants.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-definition-invariants.js",
+      "to": "Artifact:src/content/artifacts.js",
+      "provenance": {
+        "file": "test/phase2-definition-invariants.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-definition-invariants.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "test/phase2-definition-invariants.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-definition-invariants.js",
+      "to": "Artifact:src/itemdefinitions.js",
+      "provenance": {
+        "file": "test/phase2-definition-invariants.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:test/phase2-definition-schema.js",
       "to": "Artifact:src/content/artifacts.js",
       "provenance": {
@@ -281340,6 +281986,60 @@
       "provenance": {
         "file": "test/phase2-discovery.js",
         "line": 17
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-postgres.js",
+      "to": "Artifact:src/content/activation-policy.js",
+      "provenance": {
+        "file": "test/phase2-postgres.js",
+        "line": 11
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-postgres.js",
+      "to": "Artifact:src/content/artifacts.js",
+      "provenance": {
+        "file": "test/phase2-postgres.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-postgres.js",
+      "to": "Artifact:src/db.js",
+      "provenance": {
+        "file": "test/phase2-postgres.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-postgres.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "test/phase2-postgres.js",
+        "line": 12
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-postgres.js",
+      "to": "Artifact:src/itemdefinitions.js",
+      "provenance": {
+        "file": "test/phase2-postgres.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-postgres.js",
+      "to": "ExternalDependency:pg",
+      "provenance": {
+        "file": "test/phase2-postgres.js",
+        "line": 5
       }
     },
     {
@@ -307715,6 +308415,24 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:src/content/definition-invariants.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 337
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:src/content/definition-invariants.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 44
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
       "to": "Artifact:src/content/discovery.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
@@ -308381,6 +309099,24 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:test/phase2-definition-invariants.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 343
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:test/phase2-definition-invariants.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 60
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
       "to": "Artifact:test/phase2-definition-schema.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
@@ -308421,6 +309157,60 @@
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
         "line": 176
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:test/phase2-postgres.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 344
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:test/phase2-postgres.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 502
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:test/phase2-postgres.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 603
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:test/phase2-postgres.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 738
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:test/phase2-postgres.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 859
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:test/phase2-postgres.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 956
       }
     },
     {
@@ -318100,6 +318890,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Module:src/content/definition-invariants.js",
+      "to": "Artifact:src/content/definition-invariants.js",
+      "provenance": {
+        "file": "src/content/definition-invariants.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Module:src/content/diagnostics.js",
       "to": "Artifact:src/content/diagnostics.js",
       "provenance": {
@@ -321142,6 +321941,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/phase2-definition-invariants.js",
+      "to": "Artifact:test/phase2-definition-invariants.js",
+      "provenance": {
+        "file": "test/phase2-definition-invariants.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/phase2-definition-schema.js",
       "to": "Artifact:test/phase2-definition-schema.js",
       "provenance": {
@@ -321164,6 +321972,15 @@
       "to": "Artifact:test/phase2-discovery.js",
       "provenance": {
         "file": "test/phase2-discovery.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/phase2-postgres.js",
+      "to": "Artifact:test/phase2-postgres.js",
+      "provenance": {
+        "file": "test/phase2-postgres.js",
         "line": 1
       }
     },
@@ -324644,10 +325461,37 @@
     {
       "type": "TESTS",
       "from": "Artifact:test/lib/phase2-definition-fixtures.js",
+      "to": "Artifact:src/content/activation-policy.js",
+      "provenance": {
+        "file": "test/lib/phase2-definition-fixtures.js",
+        "line": 168
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/lib/phase2-definition-fixtures.js",
+      "to": "Artifact:src/content/compiler.js",
+      "provenance": {
+        "file": "test/lib/phase2-definition-fixtures.js",
+        "line": 121
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/lib/phase2-definition-fixtures.js",
       "to": "Artifact:src/content/corpus.js",
       "provenance": {
         "file": "test/lib/phase2-definition-fixtures.js",
-        "line": 7
+        "line": 9
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/lib/phase2-definition-fixtures.js",
+      "to": "Artifact:src/content/crafting.js",
+      "provenance": {
+        "file": "test/lib/phase2-definition-fixtures.js",
+        "line": 124
       }
     },
     {
@@ -324656,7 +325500,16 @@
       "to": "Artifact:src/content/discovery.js",
       "provenance": {
         "file": "test/lib/phase2-definition-fixtures.js",
-        "line": 6
+        "line": 8
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/lib/phase2-definition-fixtures.js",
+      "to": "Artifact:src/content/exchange.js",
+      "provenance": {
+        "file": "test/lib/phase2-definition-fixtures.js",
+        "line": 125
       }
     },
     {
@@ -324665,7 +325518,16 @@
       "to": "Artifact:src/content/phase2-transactions.js",
       "provenance": {
         "file": "test/lib/phase2-definition-fixtures.js",
-        "line": 88
+        "line": 90
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/lib/phase2-definition-fixtures.js",
+      "to": "Artifact:src/content/runtime.js",
+      "provenance": {
+        "file": "test/lib/phase2-definition-fixtures.js",
+        "line": 122
       }
     },
     {
@@ -324674,7 +325536,34 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "test/lib/phase2-definition-fixtures.js",
-        "line": 5
+        "line": 7
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/lib/phase2-definition-fixtures.js",
+      "to": "Artifact:src/game.js",
+      "provenance": {
+        "file": "test/lib/phase2-definition-fixtures.js",
+        "line": 123
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/lib/phase2-definition-fixtures.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "test/lib/phase2-definition-fixtures.js",
+        "line": 167
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/lib/phase2-definition-fixtures.js",
+      "to": "Artifact:src/items.js",
+      "provenance": {
+        "file": "test/lib/phase2-definition-fixtures.js",
+        "line": 126
       }
     },
     {
@@ -325264,6 +326153,42 @@
     },
     {
       "type": "TESTS",
+      "from": "Artifact:test/phase2-definition-invariants.js",
+      "to": "Artifact:src/content/activation-policy.js",
+      "provenance": {
+        "file": "test/phase2-definition-invariants.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/phase2-definition-invariants.js",
+      "to": "Artifact:src/content/artifacts.js",
+      "provenance": {
+        "file": "test/phase2-definition-invariants.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/phase2-definition-invariants.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "test/phase2-definition-invariants.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/phase2-definition-invariants.js",
+      "to": "Artifact:src/itemdefinitions.js",
+      "provenance": {
+        "file": "test/phase2-definition-invariants.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "TESTS",
       "from": "Artifact:test/phase2-definition-schema.js",
       "to": "Artifact:src/content/artifacts.js",
       "provenance": {
@@ -325332,6 +326257,51 @@
       "provenance": {
         "file": "test/phase2-discovery.js",
         "line": 17
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/phase2-postgres.js",
+      "to": "Artifact:src/content/activation-policy.js",
+      "provenance": {
+        "file": "test/phase2-postgres.js",
+        "line": 11
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/phase2-postgres.js",
+      "to": "Artifact:src/content/artifacts.js",
+      "provenance": {
+        "file": "test/phase2-postgres.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/phase2-postgres.js",
+      "to": "Artifact:src/db.js",
+      "provenance": {
+        "file": "test/phase2-postgres.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/phase2-postgres.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "test/phase2-postgres.js",
+        "line": 12
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/phase2-postgres.js",
+      "to": "Artifact:src/itemdefinitions.js",
+      "provenance": {
+        "file": "test/phase2-postgres.js",
+        "line": 10
       }
     },
     {
@@ -330925,6 +331895,69 @@
     },
     {
       "type": "USES_TABLE",
+      "from": "Artifact:src/content/definition-invariants.js",
+      "to": "Table:content_activation_events",
+      "provenance": {
+        "file": "src/content/definition-invariants.js",
+        "line": 21
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/content/definition-invariants.js",
+      "to": "Table:content_bundle_activations",
+      "provenance": {
+        "file": "src/content/definition-invariants.js",
+        "line": 22
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/content/definition-invariants.js",
+      "to": "Table:content_bundle_artifacts",
+      "provenance": {
+        "file": "src/content/definition-invariants.js",
+        "line": 18
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/content/definition-invariants.js",
+      "to": "Table:content_bundle_item_definitions",
+      "provenance": {
+        "file": "src/content/definition-invariants.js",
+        "line": 20
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/content/definition-invariants.js",
+      "to": "Table:item_definition_activations",
+      "provenance": {
+        "file": "src/content/definition-invariants.js",
+        "line": 23
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/content/definition-invariants.js",
+      "to": "Table:item_definition_versions",
+      "provenance": {
+        "file": "src/content/definition-invariants.js",
+        "line": 19
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/content/definition-invariants.js",
+      "to": "Table:transactions",
+      "provenance": {
+        "file": "src/content/definition-invariants.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "USES_TABLE",
       "from": "Artifact:src/content/discovery.js",
       "to": "Table:characters",
       "provenance": {
@@ -334250,7 +335283,7 @@
       "to": "Table:account_persistent",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 272
+        "line": 273
       }
     },
     {
@@ -334259,7 +335292,7 @@
       "to": "Table:accounts",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 258
+        "line": 259
       }
     },
     {
@@ -334268,7 +335301,7 @@
       "to": "Table:agent_acquisition_budgets",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 710
+        "line": 711
       }
     },
     {
@@ -334277,7 +335310,7 @@
       "to": "Table:agent_referral_claims",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 713
+        "line": 714
       }
     },
     {
@@ -334286,7 +335319,7 @@
       "to": "Table:amm_pool",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 273
+        "line": 274
       }
     },
     {
@@ -334295,7 +335328,7 @@
       "to": "Table:auction_consignments",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 271
+        "line": 272
       }
     },
     {
@@ -334304,7 +335337,7 @@
       "to": "Table:auctions",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 268
+        "line": 269
       }
     },
     {
@@ -334313,7 +335346,7 @@
       "to": "Table:bounties",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 243
+        "line": 244
       }
     },
     {
@@ -334322,7 +335355,7 @@
       "to": "Table:boxing_bets",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 618
+        "line": 619
       }
     },
     {
@@ -334331,7 +335364,7 @@
       "to": "Table:boxing_bouts",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 618
+        "line": 619
       }
     },
     {
@@ -334340,7 +335373,7 @@
       "to": "Table:career_claims",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 64
+        "line": 67
       }
     },
     {
@@ -334349,7 +335382,7 @@
       "to": "Table:cars",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 480
+        "line": 481
       }
     },
     {
@@ -334358,7 +335391,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 37
+        "line": 40
       }
     },
     {
@@ -334367,7 +335400,7 @@
       "to": "Table:commission_proposals",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 237
+        "line": 238
       }
     },
     {
@@ -334376,7 +335409,7 @@
       "to": "Table:convoy_insurance",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 510
+        "line": 511
       }
     },
     {
@@ -334385,7 +335418,7 @@
       "to": "Table:den_volume",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 633
+        "line": 634
       }
     },
     {
@@ -334394,7 +335427,7 @@
       "to": "Table:desk_inventory",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 112
+        "line": 115
       }
     },
     {
@@ -334403,7 +335436,7 @@
       "to": "Table:dev_fund",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 277
+        "line": 278
       }
     },
     {
@@ -334412,7 +335445,7 @@
       "to": "Table:district_bids",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 587
+        "line": 588
       }
     },
     {
@@ -334421,7 +335454,7 @@
       "to": "Table:drop_allocations",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 568
+        "line": 569
       }
     },
     {
@@ -334430,7 +335463,7 @@
       "to": "Table:family_yield_pool",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 283
+        "line": 284
       }
     },
     {
@@ -334439,7 +335472,7 @@
       "to": "Table:favors",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 577
+        "line": 578
       }
     },
     {
@@ -334448,7 +335481,7 @@
       "to": "Table:futurities",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 691
+        "line": 692
       }
     },
     {
@@ -334457,7 +335490,7 @@
       "to": "Table:gangs",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 109
+        "line": 112
       }
     },
     {
@@ -334466,7 +335499,7 @@
       "to": "Table:grand_prix",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 671
+        "line": 672
       }
     },
     {
@@ -334475,7 +335508,7 @@
       "to": "Table:item_events",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 769
+        "line": 770
       }
     },
     {
@@ -334484,7 +335517,7 @@
       "to": "Table:item_instances",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 797
+        "line": 798
       }
     },
     {
@@ -334493,7 +335526,7 @@
       "to": "Table:item_mutation_guards",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 439
+        "line": 440
       }
     },
     {
@@ -334502,7 +335535,7 @@
       "to": "Table:item_stacks",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 764
+        "line": 765
       }
     },
     {
@@ -334511,7 +335544,7 @@
       "to": "Table:listings",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 501
+        "line": 502
       }
     },
     {
@@ -334520,7 +335553,7 @@
       "to": "Table:loan_house",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 602
+        "line": 603
       }
     },
     {
@@ -334529,7 +335562,7 @@
       "to": "Table:loans",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 103
+        "line": 106
       }
     },
     {
@@ -334538,7 +335571,7 @@
       "to": "Table:makings",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 25
+        "line": 28
       }
     },
     {
@@ -334547,7 +335580,7 @@
       "to": "Table:market_listings",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 521
+        "line": 522
       }
     },
     {
@@ -334556,7 +335589,7 @@
       "to": "Table:mentorships",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 71
+        "line": 74
       }
     },
     {
@@ -334565,7 +335598,7 @@
       "to": "Table:operation_escrow",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 806
+        "line": 807
       }
     },
     {
@@ -334574,7 +335607,7 @@
       "to": "Table:poker_ring_seats",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 659
+        "line": 660
       }
     },
     {
@@ -334583,7 +335616,7 @@
       "to": "Table:poker_tables",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 660
+        "line": 661
       }
     },
     {
@@ -334592,7 +335625,7 @@
       "to": "Table:poker_tournaments",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 648
+        "line": 649
       }
     },
     {
@@ -334601,7 +335634,7 @@
       "to": "Table:rng_audit",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 481
+        "line": 482
       }
     },
     {
@@ -334610,7 +335643,7 @@
       "to": "Table:rwa_dividend_pool",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 278
+        "line": 279
       }
     },
     {
@@ -334619,7 +335652,7 @@
       "to": "Table:rwa_family_dividend_pool",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 279
+        "line": 280
       }
     },
     {
@@ -334628,7 +335661,7 @@
       "to": "Table:secrets",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 47
+        "line": 50
       }
     },
     {
@@ -334637,7 +335670,7 @@
       "to": "Table:soldiers",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 43
+        "line": 46
       }
     },
     {
@@ -334646,7 +335679,7 @@
       "to": "Table:stake_pool",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 276
+        "line": 277
       }
     },
     {
@@ -334655,7 +335688,7 @@
       "to": "Table:stakes_races",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 682
+        "line": 683
       }
     },
     {
@@ -334664,7 +335697,7 @@
       "to": "Table:street_tax",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 48
+        "line": 51
       }
     },
     {
@@ -334673,7 +335706,7 @@
       "to": "Table:telemetry",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 484
+        "line": 485
       }
     },
     {

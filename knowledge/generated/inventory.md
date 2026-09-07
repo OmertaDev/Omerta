@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `58791dc87f9f`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `a24eea9de4eb`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 1,897 |
-| Text lines | 567,414 |
-| Repository bytes inventoried | 316,575,156 |
-| Backend/route modules | 211 |
+| Current artifacts | 1,900 |
+| Text lines | 568,366 |
+| Repository bytes inventoried | 316,644,535 |
+| Backend/route modules | 212 |
 | HTTP route registrations / unique routes | 762 / 762 |
 | Database tables | 335 |
 | Solidity declarations | 49 |
-| Git commits | 1,385 |
+| Git commits | 1,387 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 5,915 / 26,382 |
+| Graph nodes / edges | 5,925 / 26,477 |
 
 ## Artifact kinds
 
@@ -24,9 +24,9 @@
 |---|---:|
 | media-asset | 576 |
 | documentation | 270 |
-| backend-module | 189 |
+| backend-module | 190 |
 | artifact | 188 |
-| test-suite | 169 |
+| test-suite | 171 |
 | audit | 98 |
 | design | 91 |
 | contract-test | 73 |
@@ -60,7 +60,7 @@
 | [src/rules.tail.js](../../src/rules.tail.js) | 6,145 | backend-module | 2026-09-02 |
 | [reference-prototype-v24.jsx](../../reference-prototype-v24.jsx) | 4,235 | artifact | 2026-08-11 |
 | [test/docs.js](../../test/docs.js) | 4,093 | test-suite | 2026-09-04 |
-| [test/gates.js](../../test/gates.js) | 3,800 | test-suite | 2026-09-07 |
+| [test/gates.js](../../test/gates.js) | 3,801 | test-suite | 2026-09-07 |
 | [omerta-contracts/test/AcquisitionConstellationTask3B.t.sol](../../omerta-contracts/test/AcquisitionConstellationTask3B.t.sol) | 3,743 | contract-test | 2026-08-28 |
 | [src/server.js](../../src/server.js) | 3,488 | backend-module | 2026-09-04 |
 | [test/phase2-review-regressions.js](../../test/phase2-review-regressions.js) | 3,440 | test-suite | 2026-09-07 |
