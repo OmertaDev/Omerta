@@ -1,7 +1,7 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "2f0a75bba9b2c9a9ef7f376672fe7530b3f721cd",
-  "worktreeDirty": false,
+  "sourceRevision": "826999b6284ec2be200c4cb05e61536142ef486c",
+  "worktreeDirty": true,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
     "nodeTypes": [
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5169,
-    "edges": 22919,
+    "nodes": 5174,
+    "edges": 22931,
     "byNodeType": {
-      "Artifact": 1736,
+      "Artifact": 1740,
       "Command": 52,
-      "Commit": 1054,
+      "Commit": 1055,
       "Contract": 32,
       "Document": 457,
       "Domain": 12,
@@ -64,19 +64,19 @@
       "Workflow": 3
     },
     "byEdgeType": {
-      "BELONGS_TO": 1894,
-      "CHANGED": 8990,
-      "CONTAINS": 1756,
+      "BELONGS_TO": 1895,
+      "CHANGED": 8994,
+      "CONTAINS": 1760,
       "DECLARES": 52,
       "DEFINED_IN": 1028,
       "DEPENDS_ON": 60,
       "EXECUTES": 185,
       "HANDLED_BY": 695,
-      "HAS_COMMIT": 1054,
+      "HAS_COMMIT": 1055,
       "IMPLEMENTS": 124,
-      "IMPORTS": 1543,
+      "IMPORTS": 1544,
       "INHERITS": 8,
-      "REFERENCES": 2630,
+      "REFERENCES": 2631,
       "REPRESENTS": 822,
       "TESTS": 552,
       "TRACKS": 126,
@@ -13632,6 +13632,26 @@
       "lastChangedCommit": "18738f0238abac2204c0d201ea4ce93acefcd781"
     },
     {
+      "key": "Artifact:omerta-contracts/.gas-snapshot",
+      "type": "Artifact",
+      "id": "omerta-contracts/.gas-snapshot",
+      "label": ".gas-snapshot",
+      "path": "omerta-contracts/.gas-snapshot",
+      "kind": "contract-project",
+      "extension": "(none)",
+      "bytes": 30159,
+      "lines": 387,
+      "version": "2e459a8060e5c0d9",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/.gas-snapshot",
+          "line": 1,
+          "version": "2e459a8060e5c0d9"
+        }
+      ]
+    },
+    {
       "key": "Artifact:omerta-contracts/.gitignore",
       "type": "Artifact",
       "id": "omerta-contracts/.gitignore",
@@ -18617,6 +18637,66 @@
       "lastChangedCommit": "fa01f1c4e7da901fc2fb51080678fa743ec6ba3e"
     },
     {
+      "key": "Artifact:output/pdf/OMERTA-Marketing-Copybook.pdf",
+      "type": "Artifact",
+      "id": "output/pdf/OMERTA-Marketing-Copybook.pdf",
+      "label": "OMERTA-Marketing-Copybook.pdf",
+      "path": "output/pdf/OMERTA-Marketing-Copybook.pdf",
+      "kind": "artifact",
+      "extension": ".pdf",
+      "bytes": 235098,
+      "lines": null,
+      "version": "c60cb5704b4f6d6c",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/pdf/OMERTA-Marketing-Copybook.pdf",
+          "line": 1,
+          "version": "c60cb5704b4f6d6c"
+        }
+      ]
+    },
+    {
+      "key": "Artifact:output/share/OMERTA-Marketing-Master-Pack-2026-08-28.zip",
+      "type": "Artifact",
+      "id": "output/share/OMERTA-Marketing-Master-Pack-2026-08-28.zip",
+      "label": "OMERTA-Marketing-Master-Pack-2026-08-28.zip",
+      "path": "output/share/OMERTA-Marketing-Master-Pack-2026-08-28.zip",
+      "kind": "artifact",
+      "extension": ".zip",
+      "bytes": 141461237,
+      "lines": null,
+      "version": "e81de9c388bdea56",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/share/OMERTA-Marketing-Master-Pack-2026-08-28.zip",
+          "line": 1,
+          "version": "e81de9c388bdea56"
+        }
+      ]
+    },
+    {
+      "key": "Artifact:output/share/OMERTA-X-Phone-Pack-2026-08-28.zip",
+      "type": "Artifact",
+      "id": "output/share/OMERTA-X-Phone-Pack-2026-08-28.zip",
+      "label": "OMERTA-X-Phone-Pack-2026-08-28.zip",
+      "path": "output/share/OMERTA-X-Phone-Pack-2026-08-28.zip",
+      "kind": "artifact",
+      "extension": ".zip",
+      "bytes": 79257133,
+      "lines": null,
+      "version": "a19f936ee2be042a",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/share/OMERTA-X-Phone-Pack-2026-08-28.zip",
+          "line": 1,
+          "version": "a19f936ee2be042a"
+        }
+      ]
+    },
+    {
       "key": "Artifact:package-lock.json",
       "type": "Artifact",
       "id": "package-lock.json",
@@ -18624,15 +18704,15 @@
       "path": "package-lock.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 77047,
-      "lines": 2166,
-      "version": "c0130a0eac8c8a9a",
+      "bytes": 116142,
+      "lines": 3260,
+      "version": "d17b88654ba7bec0",
       "text": true,
       "provenance": [
         {
           "file": "package-lock.json",
           "line": 1,
-          "version": "c0130a0eac8c8a9a"
+          "version": "d17b88654ba7bec0"
         }
       ],
       "lastChangedAt": "2026-08-26T04:44:11-04:00",
@@ -18647,15 +18727,15 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 11204,
-      "lines": 80,
-      "version": "9e2e1a0ce49507bc",
+      "bytes": 11228,
+      "lines": 81,
+      "version": "a243b03a3615f008",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "9e2e1a0ce49507bc"
+          "version": "a243b03a3615f008"
         }
       ],
       "lastChangedAt": "2026-08-28T20:22:12-04:00",
@@ -31182,15 +31262,15 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1141529,
-      "lines": 11753,
-      "version": "de0fc5432ad4da82",
+      "bytes": 1190032,
+      "lines": 12247,
+      "version": "fdbbb4889ad9393c",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "de0fc5432ad4da82"
+          "version": "fdbbb4889ad9393c"
         }
       ],
       "lastChangedAt": "2026-08-27T12:35:08-04:00",
@@ -31228,15 +31308,15 @@
       "path": "public/omerta-ui.css",
       "kind": "web-surface",
       "extension": ".css",
-      "bytes": 49574,
-      "lines": 1264,
-      "version": "eb7540aa34ca3101",
+      "bytes": 71929,
+      "lines": 1563,
+      "version": "189c588a93cb6d22",
       "text": true,
       "provenance": [
         {
           "file": "public/omerta-ui.css",
           "line": 1,
-          "version": "eb7540aa34ca3101"
+          "version": "189c588a93cb6d22"
         }
       ],
       "lastChangedAt": "2026-08-27T12:35:08-04:00",
@@ -31460,13 +31540,13 @@
       "extension": ".md",
       "bytes": 52485,
       "lines": 716,
-      "version": "ba9853a33ae1dc94",
+      "version": "475c9061d7baef67",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "ba9853a33ae1dc94"
+          "version": "475c9061d7baef67"
         }
       ],
       "lastChangedAt": "2026-08-28T20:22:12-04:00",
@@ -35966,15 +36046,15 @@
       "path": "test/client.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 532096,
-      "lines": 6997,
-      "version": "0e88a21fd48eaa09",
+      "bytes": 532346,
+      "lines": 7000,
+      "version": "2f435bab39322d35",
       "text": true,
       "provenance": [
         {
           "file": "test/client.js",
           "line": 1,
-          "version": "0e88a21fd48eaa09"
+          "version": "2f435bab39322d35"
         }
       ],
       "lastChangedAt": "2026-08-26T01:34:11-04:00",
@@ -39439,15 +39519,15 @@
       "path": "tools/mobile.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 48247,
-      "lines": 778,
-      "version": "b9f20d6a7b0c461d",
+      "bytes": 54842,
+      "lines": 883,
+      "version": "7eef5116aff6bdf6",
       "text": true,
       "provenance": [
         {
           "file": "tools/mobile.js",
           "line": 1,
-          "version": "b9f20d6a7b0c461d"
+          "version": "7eef5116aff6bdf6"
         }
       ],
       "lastChangedAt": "2026-08-25T19:57:14-04:00",
@@ -49463,6 +49543,22 @@
         {
           "commit": "8259956826c29cf70f4e87d445d758a915e6c836",
           "url": "https://github.com/OmertaDev/Omerta/commit/8259956826c29cf70f4e87d445d758a915e6c836"
+        }
+      ]
+    },
+    {
+      "key": "Commit:826999b6284ec2be200c4cb05e61536142ef486c",
+      "type": "Commit",
+      "id": "826999b6284ec2be200c4cb05e61536142ef486c",
+      "label": "docs: refresh knowledge graph after authored content merge",
+      "title": "docs: refresh knowledge graph after authored content merge",
+      "date": "2026-08-28T21:10:18-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/826999b6284ec2be200c4cb05e61536142ef486c",
+      "provenance": [
+        {
+          "commit": "826999b6284ec2be200c4cb05e61536142ef486c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/826999b6284ec2be200c4cb05e61536142ef486c"
         }
       ]
     },
@@ -65373,12 +65469,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 716,
-      "version": "ba9853a33ae1dc94",
+      "version": "475c9061d7baef67",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "ba9853a33ae1dc94"
+          "version": "475c9061d7baef67"
         }
       ]
     },
@@ -65682,7 +65778,7 @@
       "provenance": [
         {
           "file": "test/client.js",
-          "line": 506
+          "line": 509
         }
       ]
     },
@@ -65694,7 +65790,7 @@
       "provenance": [
         {
           "file": "test/client.js",
-          "line": 527
+          "line": 530
         }
       ]
     },
@@ -69906,6 +70002,9 @@
           "commit": "7e65c69f800f21c3731f02aed364903989cd8c5a"
         },
         {
+          "commit": "826999b6284ec2be200c4cb05e61536142ef486c"
+        },
+        {
           "commit": "892587b0463441ef6dda39b94119e9dc588dc83e"
         },
         {
@@ -70062,6 +70161,9 @@
           "commit": "7e65c69f800f21c3731f02aed364903989cd8c5a"
         },
         {
+          "commit": "826999b6284ec2be200c4cb05e61536142ef486c"
+        },
+        {
           "commit": "892587b0463441ef6dda39b94119e9dc588dc83e"
         },
         {
@@ -70216,6 +70318,9 @@
         },
         {
           "commit": "7e65c69f800f21c3731f02aed364903989cd8c5a"
+        },
+        {
+          "commit": "826999b6284ec2be200c4cb05e61536142ef486c"
         },
         {
           "commit": "892587b0463441ef6dda39b94119e9dc588dc83e"
@@ -70411,6 +70516,9 @@
         },
         {
           "commit": "7e65c69f800f21c3731f02aed364903989cd8c5a"
+        },
+        {
+          "commit": "826999b6284ec2be200c4cb05e61536142ef486c"
         },
         {
           "commit": "892587b0463441ef6dda39b94119e9dc588dc83e"
@@ -76497,12 +76605,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "2f0a75bba9b2c9a9ef7f376672fe7530b3f721cd",
-      "currentBranch": "main",
+      "revision": "826999b6284ec2be200c4cb05e61536142ef486c",
+      "currentBranch": "codex/site-copy-ui-upgrade",
       "defaultBranch": "main",
       "visibility": "public",
-      "worktreeDirty": false,
-      "currentArtifactCount": 1736,
+      "worktreeDirty": true,
+      "currentArtifactCount": 1740,
       "provenance": [
         {
           "file": "README.md",
@@ -98532,13 +98640,13 @@
       "type": "TestSuite",
       "id": "test/client.js",
       "label": "test/client.js",
-      "lines": 6997,
-      "version": "0e88a21fd48eaa09",
+      "lines": 7000,
+      "version": "2f435bab39322d35",
       "provenance": [
         {
           "file": "test/client.js",
           "line": 1,
-          "version": "0e88a21fd48eaa09"
+          "version": "2f435bab39322d35"
         }
       ]
     },
@@ -101238,6 +101346,15 @@
       "to": "Domain:chain-economy",
       "provenance": {
         "file": "omerta-contracts/.env.mainnet.example",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/.gas-snapshot",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/.gas-snapshot",
         "line": 1
       }
     },
@@ -157186,6 +157303,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:826999b6284ec2be200c4cb05e61536142ef486c",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "826999b6284ec2be200c4cb05e61536142ef486c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:826999b6284ec2be200c4cb05e61536142ef486c",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "826999b6284ec2be200c4cb05e61536142ef486c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:826999b6284ec2be200c4cb05e61536142ef486c",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "826999b6284ec2be200c4cb05e61536142ef486c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:826999b6284ec2be200c4cb05e61536142ef486c",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "826999b6284ec2be200c4cb05e61536142ef486c"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:82c9f670c0bd836b23b231d8ab9aa36bd5e87177",
       "to": "Artifact:AUDIT-wire-step-three.md",
       "provenance": {
@@ -190997,6 +191146,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/.gas-snapshot",
+      "provenance": {
+        "file": "omerta-contracts/.gas-snapshot",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
       "to": "Artifact:omerta-contracts/.gitignore",
       "provenance": {
         "file": "omerta-contracts/.gitignore",
@@ -196846,6 +197004,33 @@
       "to": "Artifact:omerta-wallet-forged-stats-design.md",
       "provenance": {
         "file": "omerta-wallet-forged-stats-design.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/pdf/OMERTA-Marketing-Copybook.pdf",
+      "provenance": {
+        "file": "output/pdf/OMERTA-Marketing-Copybook.pdf",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/share/OMERTA-Marketing-Master-Pack-2026-08-28.zip",
+      "provenance": {
+        "file": "output/share/OMERTA-Marketing-Master-Pack-2026-08-28.zip",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/share/OMERTA-X-Phone-Pack-2026-08-28.zip",
+      "provenance": {
+        "file": "output/share/OMERTA-X-Phone-Pack-2026-08-28.zip",
         "line": 1
       }
     },
@@ -214788,7 +214973,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 377
+      "weight": 378
     },
     {
       "type": "DEPENDS_ON",
@@ -228094,6 +228279,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:826999b6284ec2be200c4cb05e61536142ef486c",
+      "provenance": {
+        "commit": "826999b6284ec2be200c4cb05e61536142ef486c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:82c9f670c0bd836b23b231d8ab9aa36bd5e87177",
       "provenance": {
         "commit": "82c9f670c0bd836b23b231d8ab9aa36bd5e87177"
@@ -241256,7 +241449,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 1250
+        "line": 1253
       }
     },
     {
@@ -241283,7 +241476,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 5990
+        "line": 5993
       }
     },
     {
@@ -241292,7 +241485,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 6093
+        "line": 6096
       }
     },
     {
@@ -241310,7 +241503,7 @@
       "to": "ExternalDependency:\\.\\/([\\w.]+)",
       "provenance": {
         "file": "test/client.js",
-        "line": 506
+        "line": 509
       }
     },
     {
@@ -241319,7 +241512,7 @@
       "to": "ExternalDependency:\\.\\/([\\w./]+)",
       "provenance": {
         "file": "test/client.js",
-        "line": 527
+        "line": 530
       }
     },
     {
@@ -246198,6 +246391,15 @@
       "provenance": {
         "file": "tools/make-brand.js",
         "line": 93
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/mobile.js",
+      "to": "Artifact:src/content/compiler.js",
+      "provenance": {
+        "file": "tools/mobile.js",
+        "line": 39
       }
     },
     {
@@ -266597,6 +266799,15 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/superpowers/plans/2026-08-27-authored-content-runtime.md",
+      "to": "Artifact:omerta-contracts/.gas-snapshot",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-27-authored-content-runtime.md",
+        "line": 268
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-27-authored-content-runtime.md",
       "to": "Artifact:src/agentgateway.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-27-authored-content-runtime.md",
@@ -278849,7 +279060,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 1250
+        "line": 1253
       }
     },
     {
@@ -278876,7 +279087,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 5990
+        "line": 5993
       }
     },
     {
@@ -278885,7 +279096,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 6093
+        "line": 6096
       }
     },
     {
