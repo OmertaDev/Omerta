@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350" viewBox="0 0 1080 1350">
+  <style>@font-face{font-family:'Omerta Display';src:url('../../source-art/display.woff2') format('woff2');font-weight:600}</style>
+  <defs>
+    <linearGradient id="shade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#08090a" stop-opacity=".72"/><stop offset=".34" stop-color="#08090a" stop-opacity=".54"/><stop offset=".57" stop-color="#08090a" stop-opacity=".86"/><stop offset="1" stop-color="#08090a" stop-opacity="1"/></linearGradient>
+    <radialGradient id="glow" cx="82%" cy="15%" r="76%"><stop offset="0" stop-color="#72aa86" stop-opacity=".17"/><stop offset="1" stop-color="#08090a" stop-opacity="0"/></radialGradient>
+    <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".74" numOctaves="2" seed="20"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="table" tableValues="0 .09"/></feComponentTransfer></filter>
+    <clipPath id="clip"><rect width="1080" height="1350"/></clipPath>
+  </defs>
+  <rect width="1080" height="1350" fill="#08090a"/>
+  <image href="../../source-art/public--art--landing-break.jpg" width="1080" height="780" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip)"/>
+  <rect width="1080" height="1350" fill="url(#shade)"/>
+  <rect width="1080" height="1350" fill="url(#glow)"/>
+  <rect width="1080" height="1350" filter="url(#grain)" opacity=".30"/>
+  <rect x="28" y="28" width="1024" height="1294" fill="none" stroke="#72aa86" stroke-opacity=".30"/>
+  <g transform="translate(58 54) scale(1)"><path d="M0 22 C1 -3 14 -18 37 -18 C60 -18 73 -3 74 22 Z" fill="#cba65c"/><ellipse cx="37" cy="22" rx="58" ry="10" fill="#cba65c"/><rect x="0" y="11" width="74" height="8" fill="#08090a"/><text x="92" y="27" fill="#e3c47d" font-family="Georgia, serif" font-size="34" letter-spacing="8">OMERTÀ</text></g>
+  <text x="1020" y="80" text-anchor="end" fill="#d0c6b6" font-family="Consolas, Menlo, monospace" font-size="17" font-weight="700" letter-spacing="1"><tspan x="1020" dy="0">POWER · 08/12</tspan></text>
+  <g><rect x="58" y="132" width="150" height="46" rx="23" fill="#08090a" fill-opacity=".82" stroke="#72aa86" stroke-width="2"/><circle cx="80" cy="155" r="5" fill="#72aa86"/><text x="96" y="162" text-anchor="start" fill="#f2eadb" font-family="Consolas, Menlo, monospace" font-size="17" font-weight="700" letter-spacing="0.7"><tspan x="96" dy="0">LIVE</tspan></text></g>
+  <text x="58" y="228" text-anchor="start" fill="#72aa86" font-family="Consolas, Menlo, monospace" font-size="18" font-weight="700" letter-spacing="3"><tspan x="58" dy="0">SOVEREIGNTY</tspan></text>
+  <text x="58" y="310" text-anchor="start" fill="#f2eadb" font-family="Omerta Display, Arial Narrow, sans-serif" font-size="71" font-weight="600" letter-spacing="0.8"><tspan x="58" dy="0">HOLD THE STRONGHOLD.</tspan><tspan x="58" dy="66.03">SURVIVE THE SIEGE.</tspan></text>
+  <rect x="58" y="474" width="170" height="4" fill="#72aa86"/>
+  <text x="58" y="534" text-anchor="start" fill="#d0c6b6" font-family="Georgia, serif" font-size="29" font-weight="400" letter-spacing="0"><tspan x="58" dy="0">Organizations can push beyond turf into income-bearing</tspan><tspan x="58" dy="38">control and city-scale resistance.</tspan></text>
+  <rect x="58" y="798" width="964" height="2" fill="#4c4541"/>
+  <g><rect x="58" y="842" width="964" height="82" rx="6" fill="#111315" fill-opacity=".90" stroke="#4c4541"/><rect x="58" y="842" width="7" height="82" rx="3" fill="#72aa86"/><text x="88" y="873" fill="#72aa86" font-family="Consolas, Menlo, monospace" font-size="17" font-weight="700">01</text><text x="132" y="892" text-anchor="start" fill="#f2eadb" font-family="Georgia, serif" font-size="22" font-weight="400" letter-spacing="0"><tspan x="132" dy="0">Strongholds and sieges</tspan></text></g><g><rect x="58" y="942" width="964" height="82" rx="6" fill="#111315" fill-opacity=".90" stroke="#4c4541"/><rect x="58" y="942" width="7" height="82" rx="3" fill="#6eafc8"/><text x="88" y="973" fill="#72aa86" font-family="Consolas, Menlo, monospace" font-size="17" font-weight="700">02</text><text x="132" y="992" text-anchor="start" fill="#f2eadb" font-family="Georgia, serif" font-size="22" font-weight="400" letter-spacing="0"><tspan x="132" dy="0">Sovereign income</tspan></text></g><g><rect x="58" y="1042" width="964" height="82" rx="6" fill="#111315" fill-opacity=".90" stroke="#4c4541"/><rect x="58" y="1042" width="7" height="82" rx="3" fill="#72aa86"/><text x="88" y="1073" fill="#72aa86" font-family="Consolas, Menlo, monospace" font-size="17" font-weight="700">03</text><text x="132" y="1092" text-anchor="start" fill="#f2eadb" font-family="Georgia, serif" font-size="22" font-weight="400" letter-spacing="0"><tspan x="132" dy="0">The Uprising contests occupation</tspan></text></g>
+  <text x="58" y="1190" text-anchor="start" fill="#72aa86" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="700" letter-spacing="2"><tspan x="58" dy="0">SOURCE / CLAIM BASIS</tspan></text>
+  <text x="58" y="1218" text-anchor="start" fill="#a79d8f" font-family="Consolas, Menlo, monospace" font-size="17" font-weight="400" letter-spacing="0"><tspan x="58" dy="0">SPEC.md §3.8 · Sovereignty / Uprising</tspan></text>
+  <rect x="58" y="1252" width="964" height="2" fill="#4c4541"/>
+  <text x="58" y="1291" text-anchor="start" fill="#e3c47d" font-family="Consolas, Menlo, monospace" font-size="18" font-weight="700" letter-spacing="2"><tspan x="58" dy="0">OMERTA.FUN</tspan></text>
+  <text x="1022" y="1291" text-anchor="end" fill="#a79d8f" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="400" letter-spacing="0"><tspan x="1022" dy="0">04-ORGANIZATIONS-08-SOVEREIGNTY</tspan></text>
+  </svg>
