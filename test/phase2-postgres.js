@@ -26,8 +26,52 @@ const policy = createActivationPolicy({ environment: 'postgres-test', allowedPro
 const concept = (id = 'note', version = 1) => ({ id, definitionVersion: version, kind: 'concept' });
 const fixture = (name,version = 1,definitions = [concept()]) => compileFixture(baseLibrary({ packageId: `omerta.pg.${name}`, version, definitions }));
 const rejects = (promise,code) => assert.rejects(promise,(error) => error.code === code,`expected ${code}`);
-const safeError = (error) => error?.code === 'ERR_ASSERTION' ? `assertion: ${error.message.split('\n')[0]}`
-  : `code: ${/^[a-zA-Z0-9_]{1,64}$/.test(error?.code ?? '') ? error.code : 'test_failed'}`;
+const safeError = (error) => {
+  if (error?.code !== 'ERR_ASSERTION') return `code: ${/^[a-zA-Z0-9_]{1,64}$/.test(error?.code ?? '') ? error.code : 'test_failed'}`;
+  const location = String(error.stack ?? '').match(/(?:test[\\/])?(phase2-[a-z-]+\.js:\d+:\d+)/)?.[1] ?? 'unknown assertion location';
+  const scalar = (value) => value === null || typeof value === 'boolean' || (typeof value === 'number' && Number.isFinite(value))
+    ? JSON.stringify(value) : '[redacted non-scalar]';
+  return `assertion at ${location}; actual=${scalar(error.actual)} expected=${scalar(error.expected)}; ${String(error.operator ?? '').replace(/[^a-zA-Z]/g, '').slice(0, 32)}`;
+};
+
+// Only the already verified native child can allocate these per-block schemas. The locally retained
+// exact name grants cleanup ownership only after CREATE is positively acknowledged. An ambiguous
+// CREATE or a pre-existing name fails without claiming/dropping that schema.
+function lotFixtureFactory(parentPool, verifiedChildUrl) {
+  return async () => {
+    const fixtureName = ownedName('p2_definitions_' + randomUUID().replaceAll('-', ''));
+    let created = false, fixturePool = null, disposed = false;
+    const dispose = async () => {
+      if (disposed) return;
+      if (fixturePool) { await fixturePool.end(); fixturePool = null; }
+      if (created) {
+        await parentPool.query(`DROP SCHEMA "${ownedName(fixtureName)}" CASCADE`);
+        created = false;
+      }
+      disposed = true;
+    };
+    try {
+      const prior = await parentPool.query('SELECT nspname FROM pg_namespace WHERE nspname=$1', [fixtureName]);
+      assert.equal(prior.rows.length, 0, 'fresh native lot fixture schema must not pre-exist');
+      await parentPool.query(`CREATE SCHEMA "${fixtureName}"`); created = true;
+      const fixtureUrl = new URL(verifiedChildUrl.toString());
+      fixtureUrl.searchParams.set('options', `-c search_path=${fixtureName} -c statement_timeout=30000 -c lock_timeout=5000 -c idle_in_transaction_session_timeout=30000`);
+      fixturePool = new pg.Pool({ connectionString: fixtureUrl.toString(), max: 12 });
+      const settings = (await fixturePool.query(`SELECT current_schema() AS schema,
+        current_setting('statement_timeout') AS timeout,current_setting('lock_timeout') AS lock_timeout,
+        current_setting('idle_in_transaction_session_timeout') AS idle_timeout,current_database() AS database,current_user AS role`)).rows[0];
+      const parentSettings = (await parentPool.query('SELECT current_database() AS database,current_user AS role')).rows[0];
+      assert.equal(settings.schema, fixtureName); assert.equal(settings.timeout, '30s');
+      assert.equal(settings.lock_timeout, '5s'); assert.equal(settings.idle_timeout, '30s');
+      assert.equal(settings.database, parentSettings.database); assert.equal(settings.role, parentSettings.role);
+      await fixturePool.query(schema);
+      return { pool: fixturePool, dispose };
+    } catch (error) {
+      try { await dispose(); } catch (cleanup) { throw new AggregateError([error, cleanup], 'native fixture setup and cleanup failed'); }
+      throw error;
+    }
+  };
+}
 
 async function parent(url) {
   // An admin connection creates/drops only names generated and retained by this invocation.
@@ -35,7 +79,7 @@ async function parent(url) {
   const admin = new pg.Client({ connectionString: url.toString() });
   await admin.connect();
   try {
-    for (const mode of process.argv[2] === '--lots' ? ['lots', 'lots-upgrade'] : ['clean','upgrade','scalar','missing-unique']) {
+    for (const mode of process.argv[2] === '--lots' ? ['lots-boundary', 'lots', 'lots-upgrade'] : ['clean','upgrade','scalar','missing-unique']) {
       const name = ownedName('p2_definitions_'+randomUUID().replaceAll('-',''));
       await admin.query(`CREATE SCHEMA "${name}"`);
       try {
@@ -110,9 +154,22 @@ async function child(url) {
       console.log('phase2-postgres: populated pre-4.1 guards survive two real boots with exact raw v1/null-ID replay; null-ID v2 SQL refused');
       return;
     }
-    if (mode === 'lots') {
+    if (mode === 'lots-boundary') {
       const { runLotBoundary } = await import('./phase2-lot-boundary.js');
       await runLotBoundary(pool);
+      console.log(`phase2-postgres: exact item boundary on ${settings.version}`);
+      return;
+    }
+    if (mode === 'lots') {
+      const { runLots } = await import('./phase2-lots.js');
+      const fixtureFactory = lotFixtureFactory(pool, url);
+      let fixtureCount = 0;
+      await runLots(async () => { fixtureCount++; return fixtureFactory(); });
+      assert.equal(fixtureCount, 6, 'every native root lot fixture block executed in its own fresh schema');
+      await lotRaces(pool);
+      const residue = (await pool.query("SELECT nspname FROM pg_namespace WHERE nspname LIKE 'p2_definitions_%' AND nspname<>$1", [name])).rows;
+      assert.equal(residue.length, 0, 'native fixture schemas leave no residue');
+      console.log(`phase2-postgres: exact lots on ${settings.version}`);
       return;
     }
     const second = await makeDb(); await second.end();
@@ -230,6 +287,87 @@ async function concurrent(pool,left,right) {
   await contender.promise;
   release.resolve();
   return Promise.all([one,two]);
+}
+async function lotRaces(pool) {
+  const { withItemFixture, lotRequest } = await import('./lib/phase2-item-fixtures.js');
+  const { withItemTransaction, withLotMutation } = await import('../src/items.js');
+  const { grantLot, consumeExactLot, withCompleteItemCandidates } = await import('../src/itemlots.js');
+  const { lotOutput, lotLeafPrivateCases } = await import('./phase2-lots.js');
+  const { createItemLockTrace } = await import('../src/item-lock-trace.js');
+  await withItemFixture(async ({ accountOwner: owner, definition, snapshot }) => {
+    const overlap = async (pattern, waitingTable, left, right) => {
+      const entered = deferred(), release = deferred(); let paused = false;
+      const first = forwardPool(pool, { after: async (sql) => {
+        if (!paused && pattern.test(sql)) { paused = true; entered.resolve(); await release.promise; }
+      } });
+      const second = forwardPool(pool);
+      const settle = (promise) => promise.then((value) => ({ ok: true, value }), (error) => ({ ok: false, code: error.code }));
+      const one = settle(left(first));
+      await Promise.race([entered.promise, one.then(() => { throw Error('first lot contender did not reach its lock barrier'); })]);
+      const two = settle(right(second));
+      let waiting = false;
+      try {
+        const deadline = Date.now() + 4000;
+        while (Date.now() < deadline) {
+          const result = await pool.query(`SELECT pid FROM pg_stat_activity WHERE datname=current_database()
+            AND pid<>pg_backend_pid() AND wait_event_type='Lock' AND query LIKE $1`, [`%${waitingTable}%`]);
+          if (result.rows.length) { waiting = true; break; }
+          await new Promise((resolve) => setTimeout(resolve, 10));
+        }
+      } finally { release.resolve(); }
+      const outcomes = await Promise.all([one, two]);
+      assert.equal(waiting, true, 'second native connection actually waits on the held SQL lock');
+      assert.equal([...first.statements, ...second.statements].filter((sql) =>
+        /^DELETE FROM item_(lots|events|mutation_inputs|mutation_outputs|mutation_guards)/.test(sql)).length, 0,
+      'native race rollback never emits compensation SQL');
+      return outcomes;
+    };
+    const grantRequest = lotRequest(owner, definition);
+    const grant = (target) => withItemTransaction(target, (q) => withLotMutation(q, grantRequest,
+      (token) => grantLot(q, token, definition, lotOutput(owner, definition))));
+    const grants = await overlap(/^INSERT INTO item_mutation_guards /, 'item_mutation_guards', grant, grant);
+    assert(grants.every((outcome) => outcome.ok)); assert.deepEqual(grants[0].value, grants[1].value);
+    assert.equal((await pool.query('SELECT * FROM item_lots')).rowCount, 1, 'same scoped key grants one physical lot');
+    const lotId = grants[0].value.lotId;
+    const consume = (target, request, quantity) => withItemTransaction(target, (q) => withLotMutation(q, request,
+      (token) => withCompleteItemCandidates(q, token, createItemLockTrace(), { root: { owner, authority: request.request.authority },
+        requirements: [{ kind: 'lot_exact', lotId, quantity }] }, () => consumeExactLot(q, token, lotId, quantity))));
+    const first = lotRequest(owner, definition), second = lotRequest(owner, definition);
+    const consumers = await overlap(/FROM item_lots WHERE lot_id=\$1 FOR UPDATE/, 'item_lots',
+      (target) => consume(target, first, 7), (target) => consume(target, second, 7));
+    assert.equal(consumers[0].ok, true); assert.equal(consumers[1].code, 'contention');
+    const afterRace = await snapshot();
+    await rejects(consume(pool, second, 7), 'materials');
+    assert.deepEqual(await snapshot(), afterRace, 'losing same-key retry recomputes shortage without a committed guard');
+    assert.equal((await pool.query('SELECT remaining_quantity FROM item_lots WHERE lot_id=$1', [lotId])).rows[0].remaining_quantity, 3);
+    const { materialSource, compileFixture } = await import('./lib/phase2-definition-fixtures.js');
+    const uniqueSource = materialSource({ kind: 'item', stackable: false, maximumLotQuantity: 1, definitionVersion: 2 });
+    uniqueSource.version = 2;
+    const uniqueArtifact = compileFixture(uniqueSource); await storeSealedBundle(pool, uniqueArtifact.request);
+    const uniqueDefinition = await definitionByHash(pool, uniqueArtifact.expectedDefinitions[0].definitionHash);
+    const lotLeaves = await import('../src/itemlots.js');
+    for (const [name, invoke] of lotLeafPrivateCases(lotLeaves, owner, definition, uniqueDefinition)) {
+      const before = await snapshot(), entered = deferred(), release = deferred(); let otherClient, otherToken;
+      const cleanup = Object.assign(new Error('Close deliberately held private root.'), { code: 'fixture_close' });
+      const held = withItemTransaction(pool, (q) => withLotMutation(q, lotRequest(owner, definition), async (token) => {
+        otherClient = q; otherToken = token; entered.resolve(); await release.promise; throw cleanup;
+      }));
+      const heldSettled = held.then(() => null, (error) => error);
+      try {
+        await Promise.race([entered.promise, heldSettled.then(() => { throw Error('private root barrier not reached'); })]);
+        await assert.rejects(() => withItemTransaction(pool, (q) => withLotMutation(q, lotRequest(owner, definition), async () => {
+          assert.notEqual(q, otherClient, 'two distinct native item clients remain active');
+          return invoke(q, otherToken);
+        })), { code: 'item_transaction_required' }, `${name}/other-active-client-token`);
+      } finally { release.resolve(); }
+      assert.equal(await heldSettled, cleanup);
+      assert.deepEqual(await snapshot(), before, `${name}/cross-client rolls back both roots without effects`);
+    }
+    console.log('phase2-postgres: five lot leaves reject another simultaneously active native client token with unchanged snapshots PASS');
+    const invariant = await runLedgerInvariants(pool, { alert: false });
+    assert.equal(invariant.ok, true, JSON.stringify(invariant.checks.filter((check) => !check.ok)));
+    console.log('phase2-postgres: lot same-key grant/replay and competing exact consumption: actual SQL lock wait, one winner, contention then materials, zero compensation PASS');
+  }, pool);
 }
 async function races(pool) {
   const cases = [

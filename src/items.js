@@ -11,6 +11,7 @@ import { dbCaps } from './db.js';
 import { GameError } from './game.js';
 import { withPhase2Read, assertPhase2Client } from './content/phase2-transactions.js';
 import { canonicalBytes } from './content/canonical.js';
+import { compareItemLockEntries } from './item-lock-trace.js';
 
 const OWNER_SCOPES = new Set(['character', 'account', 'operation']);
 const COMPOSITE_MUTATION_KINDS = new Set([
@@ -88,6 +89,49 @@ export function itemMutationContext(client, token) {
 export function nextItemMutationOrdinal(client, token) {
   return mutationState(client, token).ioOrdinal++;
 }
+export function assertLotCandidateRoot(client, token, value) {
+  const state = mutationState(client, token);
+  const root = snapshotLotRequest(value);
+  closedObject(root, ['owner', 'authority']);
+  if (state.guard.envelopeVersion !== 2 || !state.lotRoot) {
+    fail('item_transaction_required', 'Exact lots require an active Phase 2 item root.');
+  }
+  if (!canonicalBytes(root).equals(canonicalBytes(state.lotRoot))) {
+    fail('bad_item_request', 'Item candidates contradict their pinned root.');
+  }
+}
+export function assertLotDefinitionPin(client, token, value) {
+  const state = mutationState(client, token);
+  const input = snapshotLotRequest(value);
+  closedObject(input, ['owner', 'definitionHash', 'direction']);
+  closedObject(input.owner, ['scope', 'id']);
+  if (state.guard.envelopeVersion !== 2 || !state.lotRoot) {
+    fail('item_transaction_required', 'Exact lots require an active Phase 2 item root.');
+  }
+  if (!['input', 'output'].includes(input.direction)
+    || !canonicalBytes(input.owner).equals(canonicalBytes(state.lotRoot.owner))
+    || typeof input.definitionHash !== 'string'
+    || !state.lotRoot.authority[`${input.direction}DefinitionHashes`].includes(input.definitionHash)) {
+    fail('bad_item_request', 'Item identity contradicts its pinned root.');
+  }
+}
+export function assertAndUseLotTransition(client, token, transitionIndex, value) {
+  const state = mutationState(client, token);
+  try {
+    const entries = state.lotRoot?.authority.itemTransitions;
+    if (state.guard.envelopeVersion !== 2 || !Array.isArray(entries)) {
+      fail('item_mutation_authority', 'This root has no exact transition authority.');
+    }
+    if (!Number.isSafeInteger(transitionIndex) || transitionIndex < 0 || transitionIndex >= entries.length) {
+      fail('bad_item_request', 'Invalid exact transition index.');
+    }
+    if (!canonicalBytes(snapshotLotRequest(value)).equals(canonicalBytes(entries[transitionIndex]))) {
+      fail('bad_item_request', 'Exact transition contradicts its pinned root.');
+    }
+    if (state.usedLotTransitions.has(transitionIndex)) fail('contention', 'Exact transition was already used.');
+    state.usedLotTransitions.add(transitionIndex);
+  } catch (error) { state.failed ||= error; poisonItemTransaction(client, error); throw error; }
+}
 export function poisonItemTransaction(client, error) {
   const transaction = transactionClient(client);
   transaction.failed ||= error || new GameError('bad_item_request', 'Item mutation failed.');
@@ -122,7 +166,14 @@ async function compensateItemTransaction(client, transaction) {
   // because they reference both guards and permanent item rows; guards go last.
   for (const [key, reservationId] of transaction.guardReservations) {
     const row = (await client.query('SELECT reservation_id FROM item_mutation_guards WHERE idempotency_key=$1', [key])).rows[0];
-    if (row?.reservation_id === reservationId) await client.query('DELETE FROM item_events WHERE idempotency_key=$1', [key]);
+    if (row?.reservation_id === reservationId) {
+      const root = (await client.query('SELECT mutation_id FROM item_mutation_guards WHERE idempotency_key=$1', [key])).rows[0];
+      if (root.mutation_id) {
+        await client.query('DELETE FROM item_mutation_outputs WHERE mutation_id=$1', [root.mutation_id]);
+        await client.query('DELETE FROM item_mutation_inputs WHERE mutation_id=$1', [root.mutation_id]);
+      }
+      await client.query('DELETE FROM item_events WHERE idempotency_key=$1', [key]);
+    }
   }
   for (let i = transaction.undo.length - 1; i >= 0; i--) await transaction.undo[i]();
   for (const [key, reservationId] of transaction.guardReservations) {
@@ -498,11 +549,11 @@ async function withItemMutationImpl(
   return runMutation(client, guard, owner, mutationKind, () => compositeAuthority({ itemAuthority: authorityInput }), action);
 }
 
-async function runMutation(client, guard, owner, mutationKind, authority, action) {
+async function runMutation(client, guard, owner, mutationKind, authority, action, lotRoot = null) {
   const context = Object.freeze({});
   const state = {
     client, guard, rootOwner: owner, authority: null, mutationKind, transaction: transactionClient(client),
-    ordinal: 0, ioOrdinal: 0, closed: false, failed: null,
+    ordinal: 0, ioOrdinal: 0, closed: false, failed: null, lotRoot, usedLotTransitions: new Set(),
   };
   MUTATION_CONTEXTS.set(context, state);
   state.transaction.mutation = state;
@@ -510,6 +561,13 @@ async function runMutation(client, guard, owner, mutationKind, authority, action
     state.authority = authority();
     const result = await action(context);
     if (state.failed) throw state.failed;
+    if (lotRoot) {
+      if (state.usedLotTransitions.size !== (lotRoot.authority.itemTransitions?.length || 0)) {
+        fail('item_mutation_authority', 'Every declared exact transition must be applied.');
+      }
+      const { assertLotMutationParity } = await import('./itemlots.js');
+      await assertLotMutationParity(client, context);
+    }
     state.closed = true;
     return await completeMutation(client, guard, result);
   } catch (error) {
@@ -563,6 +621,73 @@ function snapshotLotRequest(value) {
   catch (error) { if (error instanceof GameError) throw error; fail('bad_item_request', 'Item authority must be inert canonical data.'); }
 }
 
+function validateLotTransitions(authority) {
+  const entries = authority.itemTransitions;
+  if (!Array.isArray(entries) || entries.length > 256) fail('bad_item_request', 'Invalid exact transition list.');
+  const bad = () => fail('bad_item_request', 'Invalid exact transition authority.');
+  const hash = (value) => { if (typeof value !== 'string' || !/^[0-9a-f]{64}$/.test(value)) bad(); };
+  const owner = (value, direct = false) => {
+    closedObject(value, ['scope', 'id']);
+    if (!(direct ? ['account', 'character'] : ['account', 'character', 'operation']).includes(value.scope)) bad();
+    boundedText(value.id, 'Transition owner', 200);
+  };
+  const opaque = (value, nullable = true) => {
+    if (nullable && value === null) return;
+    if (typeof value !== 'string' || Buffer.byteLength(value) > 128 || !/^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$/.test(value)) bad();
+  };
+  let previous;
+  for (const entry of entries) {
+    const keys = { escrow: ['kind', 'subject', 'operationId'], release: ['kind', 'subject', 'depositor'],
+      consume_unique: ['kind', 'subject', 'depositor'], consume_escrow_lot: ['kind', 'subject', 'depositor'],
+      transfer_unique: ['kind', 'subject', 'destination'] };
+    if (!entry || !Object.hasOwn(keys, entry.kind)) bad();
+    closedObject(entry, keys[entry.kind]);
+    const subject = entry.subject;
+    if (!subject || !['lot', 'unique'].includes(subject.storageKind)) bad();
+    const idName = subject.storageKind === 'lot' ? 'lotId' : 'itemId';
+    closedObject(subject, ['storageKind', idName, 'expected']);
+    boundedText(subject[idName], 'Transition subject', 200);
+    const lock = { className: 'item', subtype: subject.storageKind, key: subject[idName], id: subject[idName], generation: 0 };
+    if (previous && compareItemLockEntries(previous, lock) >= 0) bad();
+    previous = lock;
+    const expected = subject.expected;
+    closedObject(expected, subject.storageKind === 'lot'
+      ? ['logicalItemId', 'definitionHash', 'owner', 'custody', 'qualityBand', 'qualityStateDigest', 'tradePolicyHash',
+        'binding', 'transferRestriction', 'seasonId', 'runId', 'sourceCapId', 'expiresAt', 'ageBasisAt', 'provenanceCoalescingClass', 'remainingQuantity']
+      : ['definitionHash', 'owner', 'state', 'custody', 'qualityBand', 'qualityStateDigest', 'conditionSummary', 'exportPolicy']);
+    hash(expected.definitionHash);
+    if (!authority.inputDefinitionHashes.includes(expected.definitionHash)) bad();
+    owner(expected.owner);
+    closedObject(expected.custody, ['state', 'scope', 'id']);
+    const escrowed = expected.custody.state === 'escrowed';
+    if (escrowed) {
+      if (expected.custody.scope !== 'operation' || expected.owner.scope !== 'operation'
+        || expected.custody.id !== expected.owner.id) bad();
+    } else if (expected.custody.state !== 'direct' || expected.custody.scope !== null
+      || expected.custody.id !== null || expected.owner.scope === 'operation') bad();
+    if (expected.qualityBand !== null) boundedText(expected.qualityBand, 'Exact quality', 80);
+    if (expected.qualityStateDigest !== null) hash(expected.qualityStateDigest);
+    if (subject.storageKind === 'lot') {
+      boundedText(expected.logicalItemId, 'Exact logical item', 200); hash(expected.tradePolicyHash);
+      if (expected.tradePolicyHash !== expected.definitionHash) bad();
+      if (!Number.isSafeInteger(expected.remainingQuantity) || expected.remainingQuantity < 1 || expected.remainingQuantity > 1000000) {
+        fail('qty', 'Invalid pinned lot quantity.');
+      }
+      opaque(expected.binding); opaque(expected.transferRestriction); opaque(expected.provenanceCoalescingClass, false);
+      for (const name of ['seasonId', 'runId', 'sourceCapId']) if (expected[name] !== null) boundedText(expected[name], 'Exact lot identity', 200);
+      for (const name of ['expiresAt', 'ageBasisAt']) if (expected[name] !== null
+        && (typeof expected[name] !== 'string' || !Number.isFinite(Date.parse(expected[name]))
+          || new Date(expected[name]).toISOString() !== expected[name])) bad();
+    } else if (expected.state !== (escrowed ? 'escrowed' : 'active')
+      || expected.conditionSummary !== null || expected.exportPolicy !== 'ineligible') bad();
+    if (['consume_unique', 'transfer_unique'].includes(entry.kind) && subject.storageKind !== 'unique') bad();
+    if (entry.kind === 'consume_escrow_lot' && subject.storageKind !== 'lot') bad();
+    if (entry.kind === 'escrow') boundedText(entry.operationId, 'Exact operation', 200);
+    if (entry.kind === 'transfer_unique') owner(entry.destination, true);
+    if (['release', 'consume_escrow_lot'].includes(entry.kind) || (entry.kind === 'consume_unique' && entry.depositor !== null)) owner(entry.depositor, true);
+  }
+}
+
 export async function withLotMutation(client, value, action) {
   const transaction = transactionClient(client);
   try {
@@ -576,8 +701,10 @@ export async function withLotMutation(client, value, action) {
     if (!COMPOSITE_MUTATION_KINDS.has(kind) || typeof action !== 'function') fail('bad_item_request', 'Unsupported lot action.');
     closedObject(input.request, ['input', 'authority']);
     const authority = input.request.authority;
-    closedObject(authority, ['issuedActionId', 'aggregate', 'resolvedOwner', 'bundleHash', 'namespace',
-      'activationRevision', 'eventId', 'inputDefinitionHashes', 'outputDefinitionHashes']);
+    const authorityKeys = ['issuedActionId', 'aggregate', 'resolvedOwner', 'bundleHash', 'namespace',
+      'activationRevision', 'eventId', 'inputDefinitionHashes', 'outputDefinitionHashes'];
+    const extended = authority !== null && typeof authority === 'object' && Object.hasOwn(authority, 'itemTransitions');
+    closedObject(authority, extended ? [...authorityKeys, 'itemTransitions'] : authorityKeys);
     closedObject(authority.aggregate, ['kind', 'id']); closedObject(authority.resolvedOwner, ['scope', 'id']);
     itemOwner(authority.resolvedOwner);
     for (const text of [authority.issuedActionId, authority.aggregate.kind, authority.aggregate.id,
@@ -591,13 +718,19 @@ export async function withLotMutation(client, value, action) {
         fail('bad_item_request', 'Invalid exact definition pins.');
       }
       hashes.sort();
+      if (new Set(hashes).size !== hashes.length) fail('bad_item_request', 'Exact definition pins must be duplicate-free.');
     }
+    if (extended) validateLotTransitions(authority);
     const requestJson = canonicalBytes({ owner, request: input.request }).toString('utf8');
     const guard = await reserveMutation(client, { key: lotStorageKey(account, kind, externalKey), kind, owner,
       requestHash: crypto.createHash('sha256').update(requestJson).digest('hex'), envelopeVersion: 2,
       actorAccountId: account, externalKey, requestJson });
     if (guard.completed) return guard.replay;
-    return await runMutation(client, guard, owner, kind, () => ({ destinations: new Set(), operations: new Set() }), action);
+    if (!canonicalBytes(owner).equals(canonicalBytes(authority.resolvedOwner))) {
+      fail('bad_item_request', 'Exact root owner must match its resolved owner.');
+    }
+    return await runMutation(client, guard, owner, kind, () => ({ destinations: new Set(), operations: new Set() }), action,
+      { owner, authority });
   } catch (error) { poisonItemTransaction(client, error); throw error; }
 }
 
@@ -633,9 +766,12 @@ function itemProjection(row) {
 }
 
 async function lockedItem(client, itemId) {
+  // Exact attachments (including migration observations) mutate only through the exact plan/leaf.
+  // The attachment CHECK makes a null definition hash the all-null legacy branch. Filtering here
+  // preserves each legacy caller's absent-subject error and completed-receipt replay before lookup.
   return (await client.query(
     `SELECT id, template_id, owner_scope, owner_id, state, created_at, updated_at, consumed_at
-       FROM item_instances WHERE id=$1 FOR UPDATE`,
+       FROM item_instances WHERE id=$1 AND definition_hash IS NULL FOR UPDATE`,
     [itemId],
   )).rows[0];
 }

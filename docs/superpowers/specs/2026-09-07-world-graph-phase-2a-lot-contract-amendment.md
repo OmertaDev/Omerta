@@ -13,6 +13,8 @@ dormant.
 
 ## Quality ruling
 
+The adopted [exact transition amendment](2026-09-07-world-graph-phase-2a-lot-transition-amendment.md) explicitly extends the frozen v2 authority and candidate root with a byte-compatible old/new closed union, adds the unique candidate quality-state digest, and defines dormant unique/custody transitions. It supersedes only those listed shapes and exhaust-state clarifications; this document's original lot, quality and acceptance requirements otherwise remain binding.
+
 Task 4.2 shall use **exact quality representation validation plus real trusted
 producer derivation**.
 
@@ -254,6 +256,16 @@ compares the root byte-for-byte after canonical closed-data normalization with
 the v2 owner and authority frozen by `withLotMutation`. It returns no state and
 grants no leaf or quality authority. Fake, v1, raw, cross-client, expired,
 registry-transaction, or mismatched roots fail closed.
+
+The same existing boundary may expose assertion-only
+`assertLotDefinitionPin(client, mutation, {owner, definitionHash, direction})`.
+Its detached argument object has exactly those keys; `direction` is exactly
+`input` or `output`. It requires the active same-client v2 root, exact frozen
+root owner, and membership in that root's corresponding exact definition pins.
+It returns no state or capability and does not admit candidates, allocate an
+ordinal, authorize quality, or permit another owner's transition. Malformed or
+substituted owner/pin arguments are `bad_item_request`; invalid private contexts
+retain their existing failure classification.
 
 `withCompleteItemCandidates` freezes the full requirement multiset and
 candidate/FIFO plan before item locks, admits the complete item trace once,

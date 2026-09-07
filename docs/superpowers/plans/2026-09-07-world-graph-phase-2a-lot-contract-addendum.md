@@ -6,7 +6,7 @@
 
 **Architecture:** `src/itemlots.js` validates exact detached quality representation and consumes a private complete candidate plan under the existing item root. A dormant test producer derives quality from frozen server-owned fixture policy; future live producers own formula/bounds and client-forwarding rejection. Historical normalized rows reference immutable attachment/event identity, while mutable current owner/custody/state are captured in transition snapshots rather than historical FKs.
 
-**Tech Stack:** Node.js ES modules, pg-mem, PostgreSQL, the existing item/definition transaction gates, `node:assert/strict`, and the existing deterministic property-test harness.
+**Tech Stack:** Node.js ES modules, pg-mem, PostgreSQL, the existing item/definition transaction gates, `node:assert/strict`, and a test-local deterministic stateful generator in the repository-native assertion harness. There is no reusable standalone property-test framework; introduce no dependency and do not import executable simulation entry points merely to obtain their random generator.
 
 **Spec:** [Task 4.2 lot contract amendment](../specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md), read
 with the tracked
@@ -17,6 +17,8 @@ and the Task 4.2 section of the tracked
 `docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md`.
 
 ## Global constraints
+
+The [exact transition addendum](2026-09-07-world-graph-phase-2a-lot-transition-addendum.md) supplies the additional mandatory dormant unique/custody slices and their adopted contract. Execute them within this same Task 4.2 deliverable, not as a separate release.
 
 - This is an addendum, not a replacement plan. Every existing Task 4.2 test,
   implementation, regression, PostgreSQL, review, and controller-verification
@@ -44,6 +46,9 @@ touch points are:
   normalized writer/parity check, and the frozen lot leaves.
 - `src/items.js`: assertion-only candidate-root bridge and the one shared item
   comparator/context/ordinal/poison seams.
+- `src/item-lock-trace.js`: expose its existing unchanged comparator as
+  `compareItemLockEntries` for both trace assertions and candidate acquisition;
+  no second comparator or mutation authority is introduced.
 - `schema.sql`: scalar/branch constraints and immediate acyclic normalized FKs.
 - `src/invariants.js`: orphan/parity and exact per-quality reconciliation.
 - `test/lib/phase2-item-fixtures.js`: complete snapshots and closed dormant
