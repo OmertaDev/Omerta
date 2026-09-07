@@ -277,6 +277,8 @@ The server never accepts a theory that was not issued in the current safe projec
 
 The runtime follows the repository’s canonical transaction discipline:
 
+The approved [Lot Integration Amendment](2026-09-07-world-graph-phase-2a-lot-integration-amendment.md) adds an optional exact Crew-authority prefix after immutable resolution and before the first character row. Lock the complete server-resolved Crew set by Crew ID and recheck invitation/membership after account locks; drift or late Crew/participant discovery requires whole-transaction restart. This prefix leaves the numbered suffix and its organization, aggregate, role/evidence, item and singleton ordering unchanged. Complete lock traces include it when used; it creates no new content or participant authority.
+
 1. Resolve the exact bundle and server-issued action without locks.
 2. Lock affected character rows, then account rows, in canonical ID order.
 3. Lock affected organization and organizational-authority rows in canonical ID order when the action uses them.

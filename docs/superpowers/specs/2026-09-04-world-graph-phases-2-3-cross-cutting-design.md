@@ -364,9 +364,11 @@ The current `item_stacks` primary key merges by owner, template, and quality and
 
 Phase 2A must perform a one-way, verified migration to lot authority:
 
+The approved [Lot Integration Amendment](2026-09-07-world-graph-phase-2a-lot-integration-amendment.md) governs execution order for this conceptual list: only artifact admission and additive nullable-schema preparation precede the fence. Holding receipts, lot parts, unique attachments/backfill, final reconciliation and constraints, obsolete-writer rejection, and epoch publication all occur inside the same final locked cutover transaction. The list does not authorize committed provisional holdings before that fence; a failed final cutover rolls back without a stale receipt-repair phase.
+
 1. create immutable definition-version and lot tables additively;
 2. generate a deterministic compatibility manifest mapping every existing Phase 1 template to an exact Phase 1 definition hash;
-3. backfill each nonzero Phase 1 stack into a canonical lot without changing quantity or owner;
+3. backfill each nonzero Phase 1 stack into deterministic canonical parts capped by the exact compatibility definition, with source-row receipts and stable part ordinals, without changing total quantity, quality or owner, as defined by the Phase 2A lot-integration amendment;
 4. verify per-owner, per-template, per-quality totals and global totals before cutover;
 5. enter an explicit maintenance-window or deployment-epoch fence that prevents every legacy writer before final reconciliation;
 6. perform a final locked reconciliation and switch all item reads and writes to the new authority in one reviewed release boundary;
@@ -448,6 +450,8 @@ The mutation identity, digest, completion status, and stable result reference ar
 ### Canonical lock order
 
 Every Phase 2/3 value mutation follows this global lock order. A sub-phase may omit unused classes but cannot reorder them.
+
+The approved [Lot Integration Amendment](2026-09-07-world-graph-phase-2a-lot-integration-amendment.md) adds one optional precedence between immutable resolution at step 1 and the first character lock at step 2: lock the complete server-resolved set of exact Crew-authority rows in sorted Crew-ID order. Recheck the relevant invitation/membership after account locks; drift or late Crew/participant discovery aborts and restarts the whole logical transaction rather than acquiring an out-of-order row. This prefix is specific to Crew authority and leaves the numbered suffix, social mapping/subject order, organization/aggregate/item order and step references unchanged. Complete lock traces include the prefix. Task 5 converges invite acceptance through exact target-Crew hooks while preserving the production opener's `FOR NO KEY UPDATE` behavior and accrual's no-late-Crew-write rule; no new invitation or gameplay authority follows.
 
 1. Resolve package hashes, definition hashes, public IDs, and immutable configuration without locks. Client-supplied IDs are resolved to server-owned authority at this stage, but all mutable prerequisites are rechecked under lock.
 2. Lock affected character rows in canonical character-ID order.

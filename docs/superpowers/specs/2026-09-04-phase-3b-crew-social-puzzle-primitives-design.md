@@ -292,6 +292,8 @@ issued → shared
 
 The canonical lock order is:
 
+The approved [Lot Integration Amendment](2026-09-07-world-graph-phase-2a-lot-integration-amendment.md) adds an optional exact Crew-authority prefix after immutable resolution and before the first character row. Resolve all Crew IDs before the prefix, lock them in canonical Crew-ID order, and recheck invitation/membership after account locks. Drift or late Crew/participant discovery requires whole-transaction restart. The numbered suffix, including social account mappings before subject generations and the organization/aggregate/item classes, remains unchanged. Traces and races include the prefix without granting new role, invitation or participant authority.
+
 1. Resolve pinned content and issued action.
 2. Lock affected character rows, then account rows, in canonical ID order.
 3. Lock affected social-independence account-mapping rows by account ID/generation, then subject-generation rows by subject ID/generation, for every tagged minimum.

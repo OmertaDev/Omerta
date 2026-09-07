@@ -21,6 +21,7 @@ This program design is implemented through the following normative documents:
 
 - [Cross-cutting architecture and verification](2026-09-04-world-graph-phases-2-3-cross-cutting-design.md)
 - [Phase 2A — materials, versioned inventory, and salvage](2026-09-04-world-graph-phase-2a-materials-salvage-design.md)
+- [Phase 2A — lot integration amendment and exact Crew precedence](2026-09-07-world-graph-phase-2a-lot-integration-amendment.md)
 - [Phase 2B — professions, discovery, and blueprints](2026-09-04-world-graph-phase-2b-professions-blueprints-design.md)
 - [Phase 2C — facilities, crafting, quality, durability, and repair](2026-09-04-world-graph-phase-2c-workshops-crafting-durability-design.md)
 - [Phase 2D — ammunition, contraband, and equipment](2026-09-04-world-graph-phase-2d-ammunition-contraband-equipment-design.md)
@@ -99,6 +100,8 @@ The compiler emits a deterministic manifest for repository knowledge and impact 
 ## Global transaction and lock order
 
 Every Phase 2/3 mutation uses the same acquisition discipline:
+
+The approved [Lot Integration Amendment](2026-09-07-world-graph-phase-2a-lot-integration-amendment.md) inserts an optional exact Crew-authority prefix after non-locking immutable resolution and before the first character row. Resolve the complete Crew set first, lock it by canonical Crew ID, and recheck invitation/membership after account locks. Drift or late Crew/participant discovery requires whole-transaction restart. This narrow precedence preserves the numbered suffix and its social, organization, aggregate and item ordering; it is not a general organization-first exception. Task 5 applies trusted exact target-Crew hooks to invite acceptance, preserves existing Crew-first lifecycle hooks and the opener's `FOR NO KEY UPDATE`, and retains accrual's explicit no-late-Crew-write rule. Complete trace/race evidence must cover the prefix and historical-role/rejoin schedule.
 
 1. Resolve immutable IDs with non-locking reads.
 2. Lock participating character rows in canonical ID order.

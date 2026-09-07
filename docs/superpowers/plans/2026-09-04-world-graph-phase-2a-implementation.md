@@ -561,116 +561,198 @@ Capture disposition by stable codes and table/event counts, not timing guesses. 
 
 For raw schema tests, assert actual SQLSTATE/constraint directly; for repository API tests, assert safe mapped errors. Return safe current revision/hash on CAS conflict only if consistent with the existing `GameError` envelope. Never expose bytes, raw SQL, DSNs, compiler private inputs, or unbounded diagnostics.
 
-### Task 4: Add lot-authoritative mutation primitives and normalized lineage
+### Task 4: Add dormant lot-authoritative primitives and normalized lineage
 
-**Files:**
-- Modify: `schema.sql`
-- Create: `src/itemlots.js`
-- Create: `src/item-lock-trace.js`
-- Create: `test/phase2-lots.js`
-- Create: `test/phase2-lots-property.js`
-- Modify: `src/items.js`
-- Modify: `src/invariants.js`
+**Contract:** [Lot Integration Amendment](../specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md). This approved downstream contract supersedes conflicting Task 4–5 assumptions and preserves the binding Task 3 amendment. Continue this existing plan through 4.1 → 4.2 → 5.1 → 5.2 → 5.3, with no alternate implementation plan or workspace. Task 4 adds internal capabilities only; the shared legacy caller lock order and inventory authority switch together at Task 5.3.
 
-**Interfaces:**
-- Produces `withLotMutation(client, { actorAccountId, actionKind, idempotencyKey, owner, request }, action)`; `grantLot(client, mutation, definition, output)`; `consumeLotsFifo(client, mutation, selector)`; `consumeExactLot(client, mutation, lotId, quantity)`; `splitLot(client, mutation, lotId, quantity, custody)`; `lotInventoryBoard(client, owner, { cursor, limit, includeLots })`.
-- The internal storage key is `sha256(Frame('omerta:item-mutation-key:v1', actorAccountId, actionKind, externalKey))`; the existing `item_mutation_guards` row remains authoritative, gains a server-generated UUID `mutation_id`, and enforces output uniqueness as `(mutation_id, output_ordinal)`.
-- Produces test-only `createItemLockTrace()` at this shared layer; every Task 4 lock helper records class plus canonical subtype/key/ID/generation and rejects decreasing classes, unsorted members, or late discovery of a lower-sorted member.
+#### Tasks 4–5 common constraints
 
-- [ ] **Step 1: Write lot identity, FIFO, split, and overflow red tests**
+- Complete Task 3.1–3.3 and their existing review and verification gates before Task 4 execution; this plan does not assert that they have started or passed.
+- Preserve Task 3's exact public interfaces, separate brand, six-table registry, definition vocabulary, hashes and policy; do not reopen the compiler or invent definitions.
+- Every value mutation runs in one branded database transaction and stores its domain guard, normalized inputs/outputs, assets, events, and replay result atomically.
+- `item_lots` plus `item_instances` become the only generic item authority after a fenced, reconciled cutover; Bellini `content_inventory_lots` remain isolated and gameplay-inert.
+- Lots never physically coalesce; aggregate reads group only identical economic dimensions and consumption is canonical FIFO unless a server-issued action binds an exact lot.
+- OMR movement is absolutely forbidden; no cash source is introduced; normal inventory remains off-chain; no NFT transition or contract is added.
+- Exact definition `maximumLotQuantity` remains bounded by 1,000,000. Legacy aggregate compatibility remains bounded by 2,147,483,647. Migration preserves every legal quantity using deterministic chunks.
+- Preserve historical completed legacy replay before new mutable-authority resolution; permanent semantic results remain in the existing guard table.
+- No Task 4 runtime switch may expose mixed lock orders or dual writable inventory. Task 5.3 is the coherent live convergence boundary.
+- The approved lot-integration amendment selects the exact Crew prefix with targeted invite-acceptance hook convergence and binds the aligned program/cross-cutting/later-spec precedence. Broad lifecycle alternative B is not selected.
+- Do not merge, push, deploy, activate a production bundle, activate seasonal OMR, or deploy NFT contracts.
+- Each increment adds its suites to `pretest` or the explicit PostgreSQL lane immediately, updates measured census/gate declarations, passes fresh spec review then a different fresh quality/security/PostgreSQL review, and receives controller verification before a scoped commit. Design approval does not replace any of those implementation gates.
 
-Create two otherwise similar lots differing one dimension at a time across definition hash, quality state, binding, trade restriction, season/run, expiry/age basis, source cap, provenance class, owner, and custody. Assert aggregate reads never merge incompatible dimensions, source rows are never physically combined, FIFO consumes by `(created_at, lot_id)`, exact selection cannot substitute another lot, split preserves every immutable dimension/source lineage, and quantities reject zero, negative, non-integer, and overflow. Trace character/account/guard/aggregate/item/budget classes and add negative fixtures for decreasing classes, unsorted subtype/key/ID/generation order, and late lower-sorted discovery.
+#### Tasks 4–5 file ownership and responsibilities
 
-- [ ] **Step 2: Write replay and rollback red tests**
+| File | Owner and responsibility |
+|---|---|
+| `src/items.js` | 4.1: internal item brand/token/ordinal bridge, legacy/v2 replay envelopes, whole-read gate and recovery; 5.3: legacy storage delegation. |
+| `src/itemlots.js` | 4.2: exact definition admission, lot operations, normalized IO/projections; 5.3: compatibility backing. |
+| `src/item-lock-trace.js` | 4.1: dormant shared canonical trace and candidate-plan checks; 5.3: all shared caller instrumentation. |
+| `src/itemmigration.js` | 5.2: deterministic receipts/chunks, epoch/fence/schema validation and reports. |
+| `src/itemcompatibility.js` | 5.1: verified map admission; 5.3: bounded pinned holdings selection and unchanged legacy board projection. |
+| `schema.sql`, `src/db.js` | 4.1/4.2 additive schema; 5.2 staged populated-table migration, backend initialization, epoch/trigger verifier; 5.3 boot cutover integration. |
+| `src/invariants.js` | 4.2: branch-aware lineage/conservation under composed read protection; 5.2/5.3: epoch opening and migration reconciliation. |
+| `content/compatibility/phase1-item-definitions.json` | 5.1: exact legacy aliases mapped to verified qualified IDs/hashes. |
+| `content/packs/phase2-phase1-compatibility/pack.json` | 5.1: explicit production compatibility library, built with the existing corpus command. |
+| `src/crafting.js`, `src/mysteries.js`, `src/operations.js`, `src/routes/worldgraph.js` | 5.3: complete candidate selection, lock convergence, preserved replay and recovery. |
+| `src/crew.js`, `src/server.js` | 5.3: trusted target-Crew hooks for invite acceptance and existing Crew prefix integration; no unrelated lifecycle refactor. |
+| `src/game.js` | 5.3: inspect/preserve accrual's explicit no-late-Crew-write behavior; no new Crew update. |
+| `tools/backup.sh`, `tools/backup-selftest.sh` | 5.2: required authority tables, linked restoration fixtures and corruption/omission rejection. |
+| `test/lib/phase2-item-fixtures.js` | 4.1: explicit fixtures, branded callbacks, SQL boundary injection and snapshots; no runnable root-suite registration. |
+| `test/phase2-lot-boundary.js`, `test/phase2-lots.js`, `test/phase2-lots-property.js` | 4.1/4.2: envelopes, gates/recovery, primitives and stateful conservation. |
+| `test/phase2-compatibility.js`, `test/phase2-migration.js`, `test/phase2-inventory-convergence.js` | 5.1/5.2/5.3: verified compatibility, cutover, complete consumer regression. |
+| `test/phase2-postgres.js` | Extend the Task 3 suite without replacing its modes; explicit `--lots` and `--migration` lanes. |
+| `package.json`, `.github/workflows/ci.yml`, `test/gates.js`, `SPEC.md`, `MARKETING-POSTS.md` | Owned by every increment that adds suites/files/SQL declarations; preserve exactly-once runnable suite execution. |
+| `src/routes/worldgraph-phase2.js`, scoped `src/server.js` hook, `test/phase2-api.js` | **Task 8**, outside Task 4–5 execution: Phase 2 action-scoped transport and public exact-lot detail. |
 
-Assert same account/action/key/request returns one mutation/result/lot; changed request conflicts; same text for another account or action is independent; archived result replay is semantic; a simulated commit-before-transport-result crash reconciles to that same result; injected failure after guard/input/output/event writes leaves no fragment; and output ordinal uniqueness prevents duplication. For the same scoped key, change each server-resolved authority dimension independently—issued action, selected aggregate, resolved owner, active profile/bundle, and exact input/output definition hashes—and assert `idempotency_conflict` rather than replay.
+The names of new modules and fixture helpers above are downstream additions, not claims of already implemented exports. Task 3 files are consumed through their reviewed interfaces; these increments do not change them to accommodate a lot adapter.
 
-For every successful lot mutation, assert the normalized record contains source lot, amount before, amount removed, amount after, destination or consuming sink, exact definition hash, derived output lot ordinal, and matching event ordinal. For unique transitions, assert expected/next state, prior/next owner, exact definition hash, creation/output ordinal, and matching event ordinal.
+#### Task 4.1: Shared root, permanent replay, and coherent item boundary
 
-Add a deterministic property-style generator with at least 100 seeds and 250 grant/consume/split/escrow/release steps per seed. After every step, assert nonnegative quantities, opening + authorized creation + transfers in - consumption - transfers out = closing per definition hash, one custody state, event/guard/IO parity, and that recombining compatible projections never erases physical lot lineage.
+**Files:** Modify `src/items.js`, `schema.sql`, `src/invariants.js` collection wrapper and wiring/census files; create `src/item-lock-trace.js`, `test/lib/phase2-item-fixtures.js`, `test/phase2-lot-boundary.js`; extend `test/phase2-postgres.js --lots`.
 
-- [ ] **Step 3: Verify red**
+**Consumes:** Existing `withItemTransaction(pool, callback)`, `withItemMutation(client, owner, kind, key, request, callback)`, `registerItemTransactionUndo(client, inverse)`; Task 3 `withPhase2Read(queryable, callback)`; established `dbCaps`.
 
-Run: `node test/phase2-lots.js && node test/phase2-lots-property.js`
+**Produces:** Contract Section 2's `assertItemTransaction`, `itemMutationContext`, `nextItemMutationOrdinal`, `poisonItemTransaction`, `withItemRead`, and `withLotMutation` signatures. `createItemLockTrace()` records `{className, subtype, key, id, generation}` and throws on an unapproved class/subtype, decrease or late lower member. Guard envelope discriminator, immutable v2 authority snapshot, UUID identity and permanent result schema become dormant downstream capabilities.
 
-Expected: missing lot schema/module failure.
+- [ ] Add and immediately wire `test/phase2-lot-boundary.js`. Extend the existing PostgreSQL mode dispatch without executing its definition mode twice. Update measured census and justified declarations in the same increment.
+- [ ] Add explicit fixture helpers to `test/lib/phase2-item-fixtures.js`: `withItemFixture(callback)` provides `{pool, accountOwner, definition, snapshot}` from the existing disposable fixture database and verified Task 3 fixture artifact; `snapshot()` returns ordered registry/guard/legacy item/event rows available at this increment. It requires no deployment or compatibility-map type. `injectSqlFailure(pool, {table, occurrence, timing})` returns a forwarding pool plus `restore()`, with timing exactly `before` or `after`; callbacks use production entry points rather than a forged client brand. The fixture cannot infer a disposable production URL. Add lots/IO to its snapshot in 4.2 and add manifest/deployment fixtures only in 5.1/5.2 respectively.
+- [ ] Write red tests for one root/token/guard across existing legacy leaves and the new boundary/context/ordinal helpers. A v2 callback can inspect its private context and allocate an ordinal without calling not-yet-produced lot functions. Raw client, fake/expired/cross-client token, nested item transaction, registry-branded client, and swallowed legacy leaf failure all reject. Start these assertions before implementing the bridge:
 
-- [ ] **Step 4: Add lot, guard, IO, and event schema**
-
-Create `item_lots`, `item_mutation_inputs`, and `item_mutation_outputs`; extend the existing `item_mutation_guards` with nullable legacy-compatible `mutation_id`, `actor_account_id`, `action_kind`, and `external_idempotency_key` columns plus a unique non-null Phase 2 scope. Extend `item_events` additively with nullable `mutation_id`, `lot_id`, and `definition_hash` while preserving legacy rows. Add database checks for one state/owner/custody, original-versus-remaining quantity, output uniqueness, and one completed semantic result. Do not create a competing Phase 2 guard table.
-
-- [ ] **Step 5: Implement the branded lot adapter**
-
-Require an active `withItemTransaction` client. Register pg-mem undo callbacks for every external/non-lot row modified inside the boundary. Route every shared definition/guard/lot/unique lock through `item-lock-trace.js` in test mode, lock rows with canonical SQL ordering, use checked arithmetic before writes, and append normalized IO and item events before completing the guard.
-
-- [ ] **Step 6: Extend invariants and verify**
-
-Run: `node test/phase2-lots.js && node test/phase2-lots-property.js && node test/items.js && node test/crafting.js && npm run invariants`
-
-Expected: all exit 0; the lot invariant reports no negative quantity, orphan definition, duplicate output, split mismatch, invalid custody, or eventless mutation.
-
-- [ ] **Step 7: Pass both independent review gates, reverify, and commit**
-
-```bash
-git add schema.sql src/itemlots.js src/item-lock-trace.js src/items.js src/invariants.js test/phase2-lots.js test/phase2-lots-property.js
-git commit -m "feat: add authoritative item lots"
+```js
+assert.throws(() => assertItemTransaction(rawClient),
+  {code: 'item_transaction_required'});
+assert.throws(() => itemMutationContext(rawClient, {}),
+  {code: 'item_transaction_required'});
+await withItemTransaction(pool, async (client) => {
+  await assert.rejects(() => withItemTransaction(pool, async () => null),
+    {code: 'item_transaction_nested'});
+});
 ```
 
-### Task 5: Migrate Phase 1 stacks and unique items behind a one-way authority fence
+- [ ] Write legacy guard fixtures using the existing key/digest/result encoding. Verify exact replay after character death/replacement, deleted salvage car, changing operation participants and historical cancellation; the fresh callback must not run. Different raw owner/kind remains a legacy conflict. Capture baseline `item_events` and guard count before/after replay and require equality.
+- [ ] Write v2 scope tests for identical account/action/key replay, changed request and every authority dimension conflict, independent account/action scope, occupied legacy hash-key collision rejection, immutable result retention, and commit-before-transport-cache recovery. The action's side-effect counter stays one across matching retries. Do not alter historical HTTP tests or claim new HTTP independence.
+- [ ] Write controlled whole-callback read tests: pause a reader between two queries, start a writer through an alias, and prove it cannot interleave; pause a writer after a reversible write and prove a reader through another alias waits through recovery. Repeat across registry/item composed reads in both reader-first and writer-first order. A registry read callback may use item read protection; it cannot start an item transaction on the same snapshot client.
+- [ ] Write failure tests at guard insertion, event insertion, external inverse registration, COMMIT acknowledgement loss, rollback failure and inverse failure. An after-write throw must not lose the inverse. PostgreSQL runs no compensation statements; pg-mem inverse failure makes all subsequent aliases reject `item_recovery_required`, including invariant reads. Uncertain PostgreSQL commit is `item_commit_unknown`, reconciled on a fresh connection.
+- [ ] Run the new focused suite and its PostgreSQL mode in an explicitly disposable database to establish the expected missing-interface/red failures. Record which assertion fails, not just a nonzero exit.
+- [ ] Implement the minimal internal bridge in `src/items.js`. Snapshot closed v2 input before awaits; preserve legacy digest code path; reserve one guard; record newly owned reservation intent before possibly successful insertion; remove leaf-local guard cleanup; share the ordinal state. pg-mem enters `withPhase2Read(pool, callback)` then item gate and one item client/BEGIN. PostgreSQL checks out one client and owns one item BEGIN directly; never wrap it in a pool-based read-only snapshot. Exact registry reads on the item client share its existing transaction.
+- [ ] Implement the dormant lock trace and complete candidate-set admission. Include only the approved exact optional Crew prefix, followed by the unchanged suffix. Do not enable the new trace/order for old live consumers before 5.3.
+- [ ] Verify `node test/phase2-lot-boundary.js`, `node test/items.js`, `node test/crafting.js`, `node test/worldgraph-api.js`, `node test/gates.js`, and `node test/docs.js`. Verify the explicit `--lots` PostgreSQL boundary cases. No production content is activated.
+- [ ] Obtain the two independent reviews, fix all Critical/Important findings, reverify the affected evidence and have the controller create the scoped increment commit. Task 4.1 closes only the dormant boundary contract.
 
-**Files:**
-- Modify: `schema.sql`
-- Create: `content/compatibility/phase1-item-definitions.json`
-- Create: `src/itemmigration.js`
-- Create: `test/phase2-migration.js`
-- Create: `test/phase2-postgres.js`
-- Modify: `src/itemlots.js`
-- Modify: `src/items.js`
-- Modify: `src/db.js`
-- Modify: `src/invariants.js`
+#### Task 4.2: Exact lots, shared lineage, and branch-aware invariants
 
-**Interfaces:**
-- Produces `migrateLegacyInventory(client, { deploymentEpoch }): Promise<MigrationReport>`, `verifyLotAuthority(client): Promise<AuthorityReport>`, and `requireLotAuthority(client): Promise<void>`.
-- `MigrationReport` contains deterministic pre/post stack totals, unique identity/owner/state digest, migration-event digest, epoch, and replay flag.
+**Files:** Create `src/itemlots.js`, `test/phase2-lots.js`, `test/phase2-lots-property.js`; modify `schema.sql`, `src/items.js`, `src/invariants.js`, fixture helper, `test/phase2-postgres.js --lots`, and immediate wiring/census files.
 
-- [ ] **Step 1: Write pg-mem migration red tests**
+**Consumes:** 4.1's branded client/token/ordinal/read/recovery interfaces; unchanged Task 3 `definitionByHash(queryable, definitionHash)` and safe `ItemDefinition`; the complete item-key plan and trace.
 
-Seed nonzero/zero stacks, active/escrowed/consumed unique instances, and operation escrow. Assert every template is present in the source-controlled immutable compatibility manifest; one deterministic legacy lot is created per nonzero stack and none for zero; unique ID/owner/custody/state remain unchanged; and every unique row gains the exact compatibility definition hash, deterministic quality, reserved null condition summary, compact provenance digest/version, deterministic migration creation mutation/output ordinal, and deterministic `ineligible` export policy. Assert one truthful `migration_origin` event without invented crafter/source, equal aggregate totals/digests, idempotent rerun, and Bellini rows excluded.
+**Produces:** Contract Section 3's exact `grantLot`, `consumeLotsFifo`, `consumeExactLot`, `splitLot`, `lotInventoryBoard`, `LotProjection`, `LotConsumption`, and `LotBoard`. Creates `item_lots`, `item_mutation_inputs`, `item_mutation_outputs`, versioned event branches, and invariant report checks for lot definition/quantity/custody/lineage and cross-kind output uniqueness.
 
-- [ ] **Step 2: Write authority and backup/restore red tests**
+- [ ] Immediately wire both new root suites; extend the explicit PostgreSQL lot lane and measured census before review.
+- [ ] Extend the 4.1 fixture snapshot to newly created lots/IO. Add lot-specific fake/raw/cross-client/expired token and registry-brand rejection tests now that `grantLot` and the other lot leaves are produced in this increment.
+- [ ] Write admission tests that accept economic material/item definitions and reject concepts, wrong stackability, mismatched policy hash, unsupported owner/custody lifecycle, invalid quality, non-integral/unsafe quantity, zero/negative quantity, and amounts above the **exact** definition cap. Verify an intrinsic definition never needs or invents `bundleHash`.
+- [ ] Write one-dimension-at-a-time identity tests for definition hash, owner, custody, quality state, policy hash, binding, restriction, season/run, expiry/age basis, source cap and provenance class. Safe aggregate groups never combine a differing identity; underlying rows remain distinct even when every dimension matches.
+- [ ] Write a deterministic FIFO-versus-lock test with deliberately opposite order: `z-old` created before `a-new`, plus a unique input whose canonical key lies between item subtypes. Require the lock sequence to use the approved canonical comparator while allocation consumes `z-old` first. A second recipe requirement must not discover an earlier key after the first leaf. An injected candidate change yields `contention` and zero writes, then same-key retry recomputes the full set.
+- [ ] Write split and lineage checks: a parent 10 split by 3 has parent remaining 7 and child 3; immutable identity/source/age basis is unchanged; child creation timestamp is new; the source input and child output reference distinct shared ordinals linked explicitly. Lot/unique outputs cannot collide on `(mutation_id, output_ordinal)`.
 
-After cutover, assert all legacy stack mutation entry points delegate to lots; all unique create/transfer/consume/escrow/release paths require the epoch and exact compatibility definition adapter; direct legacy stack writes and old unique owner/state writes without the epoch-bound adapter are rejected; old-process epoch mismatch fails closed; compatibility reads reproduce the old response shape; and dumping/restoring critical rows reproduces totals and identity/provenance digests.
-
-- [ ] **Step 3: Write the real-PostgreSQL cutover race**
-
-Use two independent clients: one acquires the cutover advisory lock plus `ACCESS EXCLUSIVE` locks on `item_stacks` and `item_instances`, while the other attempts a legacy stack or obsolete unique-authority write. Assert an already-committed write is included by final reconciliation and an overlapping/later write waits then is rejected by the newly enabled database trigger; no committed value is lost. Capture the maintenance lock trace and assert the documented special cutover class/order independently from normal item mutations. Skip only with the repository's explicit `DATABASE_URL` unavailable marker, never report it as a pass.
-
-- [ ] **Step 4: Verify red**
-
-Run: `node test/phase2-migration.js`
-
-Expected: missing migration module/table failure.
-
-- [ ] **Step 5: Implement the migration, fence, and compatibility adapter**
-
-Stage nullable unique compatibility columns first, backfill from `content/compatibility/phase1-item-definitions.json`, validate every row and digest, then install `NOT NULL`/foreign-key/check constraints and hot-path indexes. Never rely on `src/db.js` swallowing a failed populated-table column addition. The forward-recovery path may safely resume any pre-publication stage; it never rolls back to writable dual authority.
-
-Add `item_authority_epochs` with one current epoch and migration receipts keyed by source tuple. The cutover transaction takes a transaction-scoped advisory lock, locks `item_stacks` and `item_instances` in `ACCESS EXCLUSIVE` mode, performs final reconciliation, enables the legacy-stack rejection trigger and the epoch-bound unique-mutation trigger, publishes the lot-authority epoch, and commits all four effects atomically. `makeDb` verifies or resumes the idempotent migration before the server accepts traffic, but it never treats schema-booter serialization as the gameplay-writer fence. Instrument migration/compatibility definition, epoch, unique, and lot locks through the Task 4 trace helper. Make every stack and unique mutation entry point plus `inventoryBoard` call the lot/definition adapter only after `requireLotAuthority`; retain pre-cutover support solely for migration rehearsal.
-
-- [ ] **Step 6: Verify pg-mem, real PostgreSQL, and Phase 1 regressions**
-
-Run: `node test/phase2-migration.js && node test/items.js && node test/crafting.js && node test/belladonna.js && node test/worldgraph-api.js`
-
-Run with a disposable PostgreSQL database: `node test/phase2-postgres.js --migration`
-
-Expected: pg-mem and Phase 1 scripts exit 0; PostgreSQL reports the race disposition and zero conservation mismatch.
-
-- [ ] **Step 7: Pass both independent review gates, reverify, and commit**
-
-```bash
-git add schema.sql content/compatibility/phase1-item-definitions.json src/itemmigration.js src/itemlots.js src/items.js src/db.js src/invariants.js test/phase2-migration.js test/phase2-postgres.js
-git commit -m "feat: cut over generic inventory to lots"
+```js
+assert.equal(parentAfter.remainingQuantity + child.remainingQuantity, 10);
+assert.equal(child.originalQuantity, 3);
+assert.equal(child.definitionHash, parentBefore.definitionHash);
+assert.equal(child.ageBasis, parentBefore.ageBasis);
+assert.equal(child.sourceInputOrdinal, splitInput.inputOrdinal);
+assert.notEqual(child.outputOrdinal, splitInput.inputOrdinal);
 ```
+
+- [ ] Write exact-lot insufficiency and substituted-definition rejection; no fallback to another lot. Test unique transition input/output owner-state binding. Direct schema inserts violating event branch, IO reference, quantity or cross-kind ordinal constraints must fail by named SQL constraint/SQLSTATE in PostgreSQL; repository calls expose safe game errors.
+- [ ] Write rollback probes after each lot, normalized input/output and event write; compare complete snapshots including external cash/car rows and the original root guard. Existing cash late-failure tests remain exact, including the legacy INT_MAX boundary.
+- [ ] Run focused tests red, then implement schema plus minimal primitives using conditional writes and the frozen complete input set. Define ordinal allocation once in the existing root; implement no second event counter in `itemlots.js`. Create event/IO rows before completing the guard. Register inverses before writes and unwind references before referenced rows.
+- [ ] Implement invariant branches: legacy history stays valid; lot IO conservation excludes migration observations and split transfer legs; unique `migration_origin` is an observation even after consumption; legacy unique quality remains standard. Read the full collection under Phase 2 then item protection and preserve existing cash receipt reconciliation.
+- [ ] Add the deterministic stateful generator with at least 100 seeds and 250 grant/consume/split/escrow/release steps per seed. After each action assert nonnegative balances, exact per-hash conservation, one custody state, IO/event/guard parity, output uniqueness and physical lineage retention. Generate both successful operations and deliberate failures/retries. Include the seed/action index in bounded failure output.
+- [ ] Verify both root lot suites, boundary suite, Phase 1 items/crafting/worldgraph/mysteries/operations suites, `npm run invariants`, gate/doc checks and PostgreSQL lot races/constraint tests. Record the actual local PostgreSQL version and skipped CI-runtime difference truthfully.
+- [ ] Pass both independent reviews and controller verification before its scoped commit. Task 4 remains dormant for shared legacy gameplay; HTTP scope, cutover and live global lock compliance remain unclaimed.
+
+### Task 5: Preserve legacy inventory through one fenced authority cutover
+
+**Contract:** [Lot Integration Amendment](../specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md), especially compatibility, quality, migration, epoch and backup requirements. Consume Tasks 4.1–4.2 only after their reviews pass. Continue sequentially through 5.1 → 5.2 → 5.3; new shared live ordering and authority publication are enabled only at coherent 5.3 convergence. The common constraints and file ownership above apply to every increment.
+
+#### Task 5.1: Build-verified compatibility map and exact ownership classification
+
+**Files:** Create `src/itemcompatibility.js`, `content/compatibility/phase1-item-definitions.json`, `content/packs/phase2-phase1-compatibility/pack.json`, `test/phase2-compatibility.js`; extend fixture helper and wiring/census files. Use the existing corpus build command and trusted artifact-index descriptor; no changes to Task 3 admission contracts or the concurrently reviewed artifact tool are presumed.
+
+**Consumes:** `storeSealedBundle(pool, {canonicalBytes, expectedIdentity, operatorId})`, read-only `registerItemDefinitions(pool, {bundleHash})`, `definitionByHash`, existing corpus compiled artifact/index outputs.
+
+**Produces:** Contract Section 1 `CompatibilityManifest`/`CompatibilityEntry`; `verifyCompatibilityManifest(queryable, manifest): Promise<VerifiedCompatibilityManifest>`; `compatibilityEntry(templateId, storageKind)` using that private verified snapshot. `VerifiedCompatibilityManifest` is detached/frozen and branded from exact artifact membership. It grants no registry write, activation or arbitrary operation authority.
+
+- [ ] Wire `test/phase2-compatibility.js` immediately. Inventory all source-controlled legacy templates and fixture-only identifiers with `rg`, then add explicit canonical definitions and aliases. Code must reject unknown row/template census entries rather than auto-create them.
+- [ ] Write fixtures for verified production artifact/map, foreign/missing qualified ID, wrong definition hash, map pointing to a concept, wrong stackability, fixture-authority substitution, and an unknown legacy template. Build descriptor must be selected from the trusted index's five exact identity fields; a raw JSON map is not an ingest capability.
+- [ ] Write operation-custody tests for live escrow with exact depositor, historical consumed instance without live escrow, and baseline-valid operation-owned stacks both with and without a live operation root. The latter retain exact tuple/quantity and source-row/guard/event receipt without invented depositor or new release authority; distinguish absent optional root from actual conservation/provenance corruption. Test forged caller operation/project input. A failed classification must leave the pre-publication snapshot untouched. Add paired `standard`/`pristine` stack fixtures that preserve each exact canonical label (up to 80 characters) through the trusted adapter; unique quality remains `standard` and cannot normalize stack labels.
+- [ ] Write Bellini namespace/table injection rejection and explicit test-fixture registration/rehearsal acceptance. Test arbitrary Phase 1 fixture template strings only through their declared fixture map; do not weaken production lookup for convenience.
+- [ ] Run red. Author the compatibility **source library first**, with legacy stack maxima uniformly 1,000,000. Compile it through the existing build path, then generate/pin the map's bundle/definition hashes from that verified immutable output and its exact memberships. The map is downstream semantic alias data, not a compiler input selecting its own trusted hashes. Reject a compatibility stack mapping with another cap. General definitions retain their own exact maxima. Register immutable bytes before any item transaction using the separate trusted descriptor. Do not activate the library. Verify pinned map membership on every boot admission.
+- [ ] Verify the compatibility root suite, corpus/compiler suites and `content:check`, Task 3 definition replay tests, gate/doc checks. Confirm a failed manifest/census never starts migration or writes definitions directly.
+- [ ] Pass the two independent reviews and controller verification before a scoped commit. No live-data census or production activation is required or implied by this development task.
+
+#### Task 5.2: Deterministic migration, obsolete-writer fence, and recoverable backups
+
+**Files:** Create `src/itemmigration.js`, `test/phase2-migration.js`; modify staged `schema.sql`, `src/db.js`, `src/invariants.js`, `test/phase2-postgres.js --migration`, `tools/backup.sh`, `tools/backup-selftest.sh`, fixtures and wiring/census files.
+
+**Consumes:** 5.1 verified manifest; 4.x branded transaction, mutation UUID/ordinals, lot primitives and migration observation schema; Task 3 completed artifact storage and post-DDL schema verifier.
+
+**Produces:** Contract Section 4 `createLotDeployment`, `requireLotAuthority`, `verifyLotAuthority`, `migrateLegacyInventory` signatures. `AuthorityReport` contains `{deploymentEpoch, compatibilityBundleHash, schemaVersion:1, published:boolean, verified:boolean}`. `MigrationReport` contains `{deploymentEpoch, compatibilityBundleHash, stackTotalsBefore, stackTotalsAfter, sourceReceiptDigest, orderedPartsDigest, uniqueIdentityOwnerStateDigest, migrationEventDigest, replayed}`; totals/digests use checked deterministic serialization and bounded reports. Creates `item_authority_epochs`, `item_migration_receipts`, `item_migration_parts` with exact source/part keys and FKs to normalized outputs. The migration can be rehearsed without enabling new gameplay routes.
+
+- [ ] Wire migration suite immediately and explicit PostgreSQL migration mode once. Add linked backup authority tables and fixtures in this increment, before enabling the cutover in 5.3.
+- [ ] Seed zero, one, exact-cap, cap-plus-one and INT_MAX stacks with original timestamps; active/escrowed/consumed uniques; live escrow and baseline-valid operation stacks with/without current root; old completed guards; inert Bellini rows. Add paired `standard`/`pristine` source rows, preserve label/quantity/receipt/replay exactly, and reject equal-and-opposite per-quality corruption even if global totals match. Reject compatibility definitions with a maximum other than one million; 4.2 already tests smaller general-definition caps.
+- [ ] Write deterministic chunk assertions with exact expected values:
+
+```js
+// Algorithmic test oracle, not a runtime file edit.
+function expectedParts(q, max) {
+  const result = [];
+  for (let ordinal = 0, left = q; left > 0; ordinal += 1) {
+    const quantity = Math.min(max, left);
+    result.push({ordinal, quantity});
+    left -= quantity;
+  }
+  return result;
+}
+assert.deepEqual(expectedParts(2000001, 1000000), [
+  {ordinal: 0, quantity: 1000000}, {ordinal: 1, quantity: 1000000}, {ordinal: 2, quantity: 1},
+]);
+const big = expectedParts(2147483647, 1000000);
+assert.equal(big.length, 2148);
+assert.equal(big.at(-1).quantity, 483647);
+assert.equal(big.reduce((sum, row) => sum + row.quantity, 0), 2147483647);
+```
+
+- [ ] Assert receipt/source framing cannot collide on delimiter-containing legacy values. Rerun yields identical ordered IDs, quantities, output ordinals and source digests; zero creates no lot; all positive quantity is preserved. Page source rows; no row produces more than 2,148 parts and no generic streaming framework is introduced.
+- [ ] Assert every unique retains original ID, owner/custody/state/consumed timestamp, standard quality, null condition and ineligible export policy; exact definition and migration observation are attached once. A consumed unique observation must not look like a new creation or illegal post-consumption transition. Legacy history and cash reconciliation remain unchanged.
+- [ ] Write staged boot tests against a populated pre-Phase-2 schema, partially completed additive schema/artifact staging, clean schema and exact rerun. Holding receipts/lots/unique backfill are created only inside the final locked cutover transaction, not committed provisionally while legacy writers run. Verify registry DDL verification stays in its existing seam; backend capability is initialized first; unique columns are nullable during backfill; final constraints/indexes/trigger shape verify before stamping/traffic. Native DDL failures propagate and never enter broad fallback or swallowed generic-add success.
+- [ ] Write branded deployment tests for exact immutable build epoch/hash/schema match, missing/unbranded/wrong deployment, wrong connection/transaction, no marker and stale marker. The marker is explicitly tested as an obsolete-process fence, not a defense against arbitrary malicious SQL. Published generation is read without a new normal singleton lock.
+- [ ] Write a real PostgreSQL two-client fence race: cutover takes maintenance advisory lock then ordered `ACCESS EXCLUSIVE` locks on old holdings tables; a committed earlier legacy write appears in final totals; overlapping and later legacy stack or old unique writes wait and then fail the installed triggers. Rollback before publication leaves old authority coherent; committed publication rejects all old writes. Capture the special maintenance trace separately from normal action trace.
+- [ ] Write restore checks that preserve the six definition tables, lots, IO, guard results, uniques/custody, epoch/receipts/parts and existing linked world state. Deliberately omit each new critical authority table from a test dump and require backup validation to fail. Restore recomputes holdings/identity/provenance digests and validates obsolete-writer enforcement; test rollback/replay on the restored isolated database.
+- [ ] Run the focused suite red. Implement additive staging and then final locked receipt/lot/unique backfill, exact constraint verification, transaction-local marker and triggers, reconciliation and atomic publication in one maintenance transaction. Page source rows under those locks and measure rehearsal lock duration. Failed final cutover rolls back instead of leaving stale committed source receipts to repair. Do not start runtime source compilation or public registry storage from inside the maintenance transaction.
+- [ ] Verify migration and compatibility suites, existing `test/migrate.js`, items/crafting/mysteries/operations/Belladonna/worldgraph API regressions, gate/doc checks, explicit PostgreSQL migration race and backup selftest on disposable databases. Missing PostgreSQL/restore tools remain unmet evidence, not passes.
+- [ ] Pass both independent reviews and controller verification before the scoped commit. Cutover machinery is still not enabled against live shared callers until 5.3 is coherent.
+
+#### Task 5.3: Coherent caller convergence and final authority publication path
+
+**Files:** Modify `src/items.js`, `src/itemlots.js`, `src/itemcompatibility.js`, `src/db.js`, `src/crafting.js`, `src/mysteries.js`, `src/operations.js`, `src/routes/worldgraph.js`, approved Crew-hook integration only, `src/invariants.js`, existing Phase 1 tests and `test/phase2-postgres.js`; create `test/phase2-inventory-convergence.js` and immediate wiring/census entries.
+
+**Consumes:** Reviewed 4.x primitives; 5.1 verified compatibility map; 5.2 epoch/fence/recovery; final promoted Crew precedence ruling. All existing legacy primitive argument lists and result shapes remain unchanged.
+
+**Produces:** `readCompatibilityHoldings`, `selectCompatibilityInputs`, `lockCompatibilityInputs` from contract Section 5; lot-backed legacy `grantStack`/`consumeStack` and all unique transitions; one complete caller lock protocol and the boot path that publishes only after all consumers are switched.
+
+- [ ] Wire the convergence suite immediately. Add a source inventory of direct `item_stacks` reads/writes and template-only `item_instances` selectors; allow only frozen migration/history diagnostics after cutover. A source assertion is supporting evidence; behavior tests must prove the actual calls use pinned lots.
+- [ ] Write compatibility-board fixtures that preserve scalar fields and ordering, exact original timestamps at migration, documented min/max timestamps afterward, and the INT_MAX aggregate cap. A same-template lot at another hash, quality state, restriction or custody must not inflate the legacy board or satisfy recipes. New detail remains behind Task 8, not legacy `safeInventory`. Paired `standard`/`pristine` recipe requirements count only their exact label, and completed replay cannot normalize labels or shift quantity between them; retain the existing equal-and-opposite per-quality conservation regression.
+- [ ] Write end-to-end fresh/replay tests for craft, salvage, character assignment, mystery action/recovery/cancel, operation open/join/contribute/complete/claim/cancel, and multi-destination participant reward. Assert one root guard and unchanged historical result shape; replay after death, replacement, car deletion, changed participants or activation returns the completed result without fresh side effects.
+- [ ] Write complete input-selection tests for multiple stack/unique requirements in opposite FIFO/key order. All requirements are selected before the first item lock; exact custody/depositor is rechecked. A late participant/owner/candidate change produces a safe retry/conflict rather than a lower-class lock or duplicate award.
+- [ ] Write PostgreSQL traces/races against all existing Crew lifecycle paths: operation opening versus leave, kick, recruiting and request acceptance; source account changing Crew before the prefix lock; multiple known Crew IDs; and newly discovered participants after the prefix. Add the controller-inferred rejoin schedule: a former member retains an old operation role, starts invite acceptance, and operation authority attempts to lock that historical character while holding Crew. Confirm the old inversion is exercisable, then assert the new prefix removes it. Include Crew/API invite validity, changed membership and missing-target failures. Do not update a source test to simply accept both old and new conflicting orders.
+- [ ] Write full before/after estate/death and Bellini snapshots. Estate processing cannot inherit/merge/duplicate generic lots or compatibility unique metadata into a replacement character. Bellini lots, jobs, tools, barter escrow and skills remain separate and inert.
+- [ ] Run red. Convert all named caller lock/selection paths and legacy leaves together. In `src/crew.js`, add `inviteAcceptanceLockHooks(crewId)` returning frozen trusted `beforeCharacterLock`/`afterAccountLock` hooks: lock the exact target Crew before character; after account locks, revalidate the pending invitation and current membership with the existing acceptance rules. Apply at the existing invite-accept route in `src/server.js` without changing accrual or granting invitation authority. Preserve existing Crew-first hooks, the operation opener's `FOR NO KEY UPDATE` behavior, and the no-late-Crew-write accrual rule.
+- [ ] Preserve a read-only complete-replay probe before fresh locks, then recheck the guard under the approved order. Claim the guard only after owner authority locks; acquire aggregate and complete canonical item set afterward. Enforce trusted epoch on every actual legacy unique or lot write. For v2 changed-authority tests, submit a new issued action/envelope; replaying the original action resolves its saved pins rather than today's mutable character/bundle.
+- [ ] Enable the coherent boot cutover only after compatible artifacts, schema, all consumers and backup integration are present. Before traffic, verify the exact trusted epoch and migration digest. An old process cannot write retired stacks or old unique fields. No writable mirrored stack table is retained.
+- [ ] Replace the old worldgraph guard-before-character source tripwire with the promoted complete trace assertion and retain LF/CRLF portability. Keep legacy transport key-reuse 422 expectations unchanged. Add an explicit Task 8 acceptance note for new action-scoped HTTP requests at `src/server.js`; do not weaken the global cache.
+- [ ] Verify convergence, migration, compatibility, lot/boundary/property suites; complete items/crafting/mysteries/operations/Belladonna/worldgraph API suites; invariants; PostgreSQL normal-action and cutover races; backup selftest; gate/doc checks; and the full existing repository suite once the focused checks pass. Broaden again only for new changes or unresolved evidence.
+- [ ] Obtain fresh spec then different quality/security/PostgreSQL review, resolve all Critical/Important findings, obtain controller independent verification and create the scoped commit. Report Task 4–5 acceptance precisely; material catalogs, new salvage profiles, public API scope and Phase 2A completion remain with later tasks.
 
 ### Task 6: Author the purposeful starter material library and graph reports
 
@@ -795,6 +877,8 @@ Trace the request handler and runtime through character, account, guard, salvage
 
 Assert authentication, closed bodies, required idempotency, opaque action identity, safe profile/recipe hash, exact expected output band fields, stale bundle handling, bounded cursors, no owner/private hash leakage, exact lot and exact unique detail modes, client inability to nominate outputs/quantities/quality/condition/seed/definition hash, and additive compatibility response fields.
 
+For the new Phase 2 route family, assert the same textual idempotency key is independent across authenticated accounts and server-configured action kinds, while changed normalized input/issued authority in the same scope conflicts. The original issued action resolves its persisted private envelope and permanent domain result after target consumption or transport-cache expiry; it must not re-resolve today's mutable owner/bundle into a different request. Historical routes retain their existing raw transport keys, method/URL/body hash, 422 reuse behavior and replay responses. Client body/header/route strings cannot choose an action scope. Include commit-before-transport-result recovery through the one domain guard; Task 4's domain-only tests do not satisfy this HTTP acceptance.
+
 - [ ] **Step 3: Verify red**
 
 Run: `node test/phase2-salvage.js && node test/phase2-api.js`
@@ -808,6 +892,8 @@ Create a normalized external-asset input row unique on completed `(asset_type, a
 - [ ] **Step 5: Mount safe projections and compatibility route**
 
 Issue signed/opaque action tokens bound internally to actor account, car, profile, active bundle, and expiry. Treat the token as a convenience, then revalidate all authority under lock. Route-specific internal mutation keys include authenticated account and action kind.
+
+Integrate the approved scope at `src/server.js`'s existing idempotency hook using trusted route configuration owned by `src/routes/worldgraph-phase2.js`. Only configured Phase 2 actions receive account/action-scoped transport identity; preserve the historical cache's `(account_id,key)` storage semantics and unconfigured routes' raw keys and immutable body-hash/replay behavior. Server action metadata is not caller-selected authority. This Task 8 integration owns the scoped HTTP acceptance above and does not change the legacy compatibility route's global key behavior.
 
 - [ ] **Step 6: Verify runtime, API, Phase 1, and invariants**
 

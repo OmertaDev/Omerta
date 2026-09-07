@@ -283,6 +283,8 @@ forming → active → aggregating → theory_ready → completed
 
 Child actions use the Phase 3B lock order. Parent/child operations use:
 
+The approved [Lot Integration Amendment](2026-09-07-world-graph-phase-2a-lot-integration-amendment.md) adds an optional exact Crew-authority prefix after immutable resolution and before the first character row. Lock the complete server-resolved Crew set in Crew-ID order; recheck invitation/membership after account locks and restart the whole logical transaction on drift or late Crew/participant discovery. The numbered suffix and its social, organizational membership/office, instance, output and item order remain unchanged. This is not a general Family/organization-first rule or new multi-Crew authority; complete traces include the prefix when applicable.
+
 1. Resolve pinned parent and child definitions.
 2. Lock affected character rows, then account rows, in canonical ID order.
 3. Lock affected social-independence account-mapping rows by account ID/generation, then subject-generation rows by subject ID/generation, for every tagged account minimum.

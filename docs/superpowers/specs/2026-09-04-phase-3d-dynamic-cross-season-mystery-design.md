@@ -341,6 +341,8 @@ eligible → active → recovered_fact
 
 Signal capture that occurs during an action follows the normal content lock order and reads canonical signal authorities in a registered stable order. Snapshot insertion and node advancement commit together.
 
+The approved [Lot Integration Amendment](2026-09-07-world-graph-phase-2a-lot-integration-amendment.md) adds an optional exact Crew-authority prefix to consequence application, fact materialization/import, and any signal capture using these locks. After immutable resolution and before the first character row, lock the complete server-resolved Crew set in canonical Crew-ID order; recheck invitation/membership after account locks and restart the whole logical transaction on drift or late Crew/participant discovery. The existing numbered and prose suffixes below retain their organization, aggregate, fact/item and singleton order. Complete traces include this prefix when used; it grants no new consequence or cross-season authority.
+
 Consequence application follows:
 
 1. Resolve exact bundle, consequence adapter, pending effect, and target authority without locks.

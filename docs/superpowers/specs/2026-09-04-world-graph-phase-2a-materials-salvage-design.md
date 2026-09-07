@@ -8,6 +8,8 @@ Task 3's sealed-artifact registry, immutable definition membership, definition-p
 
 Phase 2A does not add professions, recipe discovery, facilities, player markets, social production, or mystery content. It creates the safe substrate those systems use.
 
+The approved [Lot Integration Amendment](2026-09-07-world-graph-phase-2a-lot-integration-amendment.md) binds downstream Tasks 4–5 and the narrow Task 8 transport scope. Task 3's amendment remains authoritative: intrinsic definitions are bundle-independent `concept|material|item` projections; only economic `material`/`item` definitions with the required fields and matching stackability enter inventory. Legacy stack compatibility definitions use the existing maximum of 1,000,000, preserving larger INT_MAX holdings as deterministic capped parts and preserving exact canonical stack quality labels such as `standard` and `pristine`; unique compatibility alone stays `standard`. Legacy key/kind/digest/completed-result replay remains a separate versioned path, permanent semantic results stay in the existing guard table, and new HTTP account/action scope applies only to the Phase 2 route family. The optional exact Crew prefix takes precedence before the first character lock; the remaining order is unchanged. These are approved contracts, not completed migration or implementation evidence.
+
 The binding architectural choice is staged convergence:
 
 - source-controlled JSON packages are the authoring plane;
@@ -164,6 +166,8 @@ Normalized mutation input and output records must identify:
 
 Every Phase 2 value mutation follows the cross-cutting order; this local inventory copy keeps the optional social class explicit even though Phase 2A salvage does not use it:
 
+The approved [Lot Integration Amendment](2026-09-07-world-graph-phase-2a-lot-integration-amendment.md) adds an optional sorted exact Crew-authority prefix after immutable reads and before the first character lock. Resolve all Crew IDs first, recheck invitation/membership after account locks, and abort/restart on drift or late Crew/participant discovery. The numbered suffix below and its social/organization/aggregate/item order remain unchanged. Task 5's complete caller convergence includes trusted target-Crew hooks for invite acceptance, the existing opener's `FOR NO KEY UPDATE`, and accrual's no-late-Crew-write rule. The shared trace and PostgreSQL races include this prefix; it grants no new gameplay authority.
+
 1. Resolve immutable definitions without locks.
 2. Lock character rows in canonical ID order.
 3. Lock account rows in canonical ID order.
@@ -179,7 +183,7 @@ No adapter may invert this order by wrapping the item mutation inside a conflict
 
 ## Migration and compatibility
 
-The migration copies every nonzero Phase 1 `item_stacks` row into one deterministic legacy lot pinned to the corresponding immutable Phase 1 definition revision. It also backfills every legacy unique `item_instances` row to an immutable compatibility definition while preserving the canonical item ID, owner, custody, and state exactly. The unique-item quality is derived by one documented deterministic compatibility rule, and its compact provenance version truthfully records a migration-origin event; it never invents an unproven historical crafter, source, or creation event. It then verifies per-owner, per-template, per-quality stack totals plus unique-instance identity/owner/state counts and digests before the lot runtime becomes writable.
+The migration copies every nonzero Phase 1 `item_stacks` row into deterministic capped legacy parts pinned to its immutable compatibility definition: each part is at most the exact compatibility maximum of 1,000,000, and a source-row receipt plus stable part ordinals preserves the full original quantity and quality label. Quantities within that maximum still produce one lot; INT_MAX produces 2,148 parts. It also backfills every legacy unique `item_instances` row to an immutable compatibility definition while preserving the canonical item ID, owner, custody, and state exactly. Unique compatibility quality is `standard`, separately from exact legacy stack labels; compact provenance truthfully records a migration-origin observation, including for consumed instances, without inventing a crafter, source or second creation. It verifies per-owner, per-template, per-quality totals and unique identity/owner/state digests from the final locked source snapshot before publishing the lot-authority epoch. Artifact/additive-schema staging may resume beforehand, but holding receipts, lot parts, unique attachments, final constraints, obsolete-writer rejection and publication commit together as defined by the lot-integration amendment.
 
 At the Phase 2A cutover:
 

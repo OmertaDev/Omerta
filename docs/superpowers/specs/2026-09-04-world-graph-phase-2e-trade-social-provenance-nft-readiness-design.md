@@ -365,6 +365,8 @@ No Phase 2 endpoint exports an item, mints an NFT, accepts OMR, or distributes O
 
 ## Lock order and transaction boundaries
 
+The approved [Lot Integration Amendment](2026-09-07-world-graph-phase-2a-lot-integration-amendment.md) gives exact Crew authority an optional prefix after immutable resolution and before the first character row: resolve the complete Crew set, lock sorted Crew IDs, then follow the existing suffix below. Recheck invitation/membership after account locks; drift or late Crew/participant discovery requires whole-transaction restart. This precedence does not move the social-independence, other organization, aggregate, item or singleton classes, change the numbered global references, or grant new project/trade authority. Complete traces include the prefix when used.
+
 The global Phase 2 lock order remains binding. For multi-party actions, character/account IDs are sorted before locking. Cash balance authority is acquired through the applicable character/account locks at global steps 2 and 3. Any required social-independence account-mapping rows are locked next by account ID/generation, followed by subject-generation rows by subject ID/generation, before organization rows and the domain mutation guard. The listing, service, or project aggregate precedes lots/items, and shared ledger budgets or singleton rows follow inventory at global step 9. If an existing cash path would require an inverse lock edge, implementation blocks for architectural review instead of creating an exception locally.
 
 Each logical action has one domain guard and one database transaction:
