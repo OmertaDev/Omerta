@@ -37,9 +37,13 @@
 - `src/content/canonical.js`: canonical JSON bytes, typed/length-framed hashing, package qualification, and hash-domain constants.
 - `src/content/economy-profile.js`: Phase 2 economy source schema, IR normalization, capability closure, OMR/executable scans, and report input extraction.
 - `src/content/corpus.js`: the sole Phase 2 corpus compile/validate/build/activation entry point and exact dependency resolver.
-- `src/content/activation-policy.js`: trusted server-startup environment/profile allowlist used by activation; authored packages and activation requests cannot override it.
+- `src/content/phase2-transactions.js`: separate branded registry transactions, pg-mem compensation/whole-read gate, and PostgreSQL recovery boundaries.
+- `src/content/artifact-storage.js`: bounded verification of immutable stored bytes and exact dependency closures.
+- `src/content/artifacts.js`: atomic artifact/definition/membership registration and audited CAS selection.
+- `src/content/activation-policy.js`: branded trusted definition-selection policy and separate historical snapshot validation.
+- `src/content/definition-invariants.js`: coherent artifact, membership, selection, history, and policy integrity checks.
 - `src/content/compiler.js`: retains legacy `compileContentPack` while delegating Phase 2 profiles to the corpus modules.
-- `src/itemdefinitions.js`: immutable definition persistence and active-definition lookup.
+- `src/itemdefinitions.js`: intrinsic immutable definitions, exact bundle membership, verification-only registration replay, and safe intrinsic/selected lookups.
 - `src/itemlots.js`: lot grant, FIFO/exact consumption, custody-safe projection, split lineage, normalized IO, and Phase 2 replay helpers.
 - `src/itemmigration.js`: deterministic Phase 1 stack/unique backfill, verification digests, authority epoch, and cutover fence.
 - `src/item-lock-trace.js`: test-only monotonic lock-class/subrow ordering trace shared by request handlers and mutation adapters.
@@ -52,6 +56,9 @@
 - `tools/phase2-content.js`: corpus check/build/report command used by scripts and preflight.
 - `tools/phase2-economy-sim.js`: deterministic source/sink and salvage accumulation simulation.
 - `test/fixtures/phase2/`: valid and adversarial corpus roots plus the iterative 10,000-node generated fixture helper.
+- `test/lib/phase2-definition-fixtures.js`: test-only sealed registry fixtures, controlled failure/interleaving wrappers, and complete table snapshots.
+- `test/phase2-definition-schema.js`, `test/phase2-activation.js`, `test/phase2-definition-invariants.js`: Task 3 schema, policy/CAS, and coherent invariant contracts; `test/phase2-definitions.js` and `test/phase2-postgres.js --definitions` cover registration and real-backend closure.
+- `src/db.js`, `test/gates.js`, `SPEC.md`, `MARKETING-POSTS.md`, `.github/workflows/ci.yml`: Task 3 schema compatibility/verification, justified gate declarations, measured census, and immediate suite registration seams.
 - `test/phase2-{discovery,compiler,definitions,lots,migration,materials,salvage,api,postgres,simulation}.js`: focused behavior contracts.
 - `docs/superpowers/reports/phase2a-economy-pre-tuning.json` and `docs/superpowers/reports/phase2a-economy-final.json`: deterministic retained simulation evidence with exact commit/corpus/lock inputs.
 - `schema.sql`, `src/items.js`, `src/routes/worldgraph.js`, `src/server.js`, `src/agentgateway.js`, `src/invariants.js`, `tools/preflight.js`, `package.json`, `content/README.md`, and discovery docs: integration seams only.
@@ -292,63 +299,267 @@ git add src/content/canonical.js src/content/economy-profile.js src/content/corp
 git commit -m "feat: compile canonical economy corpus"
 ```
 
-### Task 3: Persist immutable item definitions and exact active bundle identity
+### Task 3: Persist and select immutable definitions on the Phase 2 plane
 
-**Files:**
-- Modify: `schema.sql`
-- Create: `src/content/artifacts.js`
-- Create: `src/content/activation-policy.js`
-- Create: `src/itemdefinitions.js`
-- Create: `test/phase2-definitions.js`
-- Modify: `src/content/runtime.js`
-- Modify: `src/invariants.js`
+**Spec:** [Phase 2A Definition Registry Amendment](../specs/2026-09-07-world-graph-phase-2a-definition-registry-amendment.md). This amendment takes precedence over conflicting Task 3 wording. All six-table schema columns, public interfaces, lifecycle, policy/CAS, and recovery contracts are defined there.
 
-**Interfaces:**
-- Produces: `storeSealedBundle(client, { canonicalBytes, operatorId }): Promise<StoredArtifact>`, `createActivationPolicy({ environment, allowedProfiles }): ActivationPolicy`, `activateStoredBundle(client, { namespace, bundleHash, operatorId }, activationPolicy): Promise<ActivationEvent>`, `registerItemDefinitions(client, bundle): Promise<void>`, `activateItemDefinitions(client, bundle): Promise<void>`, `definitionByHash(client, definitionHash): Promise<ItemDefinition>`, and `activeDefinition(client, logicalItemId): Promise<ItemDefinition | null>`.
-- `ActivationPolicy` is constructed once from trusted server configuration, is not serializable from authored content or an HTTP request, and requires an exact environment/profile allowlist match before any activation event or pointer mutation.
-- An `ItemDefinition` contains `logicalItemId`, `definitionVersion`, `definitionHash`, `packageId`, `bundleHash`, `kind`, `family`, `tags`, `rarity`, `stackable`, `tradePolicyHash`, `tradePolicy`, `ownerScopes`, `qualityMode`, `maximumLotQuantity`, `conservationClass`, and safe `metadata`.
+**Goal:** Atomically register sealed artifacts and immutable definitions, then select their complete definition set under trusted policy and explicit CAS while preserving legacy runtime authority.
 
-- [ ] **Step 1: Write schema and definition red tests**
+**Execution:** Continue this existing Phase 2A plan and SDD ledger through Tasks 3.1, 3.2, and 3.3 below; do not create a second implementation plan or workspace. Task 2's approved contract and the controller's clean full-suite baseline are prerequisites. Each increment receives TDD, fresh spec and separate quality/security/PostgreSQL reviews, controller verification, and a controller-only commit. Task 4 begins only after all three increments pass.
 
-Test clean pg-mem materialization, in-place migration, uniqueness of `(logical_item_id, definition_version)` and `(logical_item_id, definition_hash)`, positive monotonic definition registration, immutable hash reuse, closed kinds/rarities/quality modes/owner scopes, stale activation, registration replay, and direct database drift rejection. Separately test sealed-artifact ingestion, same-hash/different-bytes rejection, canonical/hash mismatch, missing exact dependency artifacts, shared validator rejection with the same stable code as check/build, same-hash activation replay, R2 activation followed by deliberate R1 rollback activation for new work, and unchanged pins on already-started state. Delete or mutate the original source after ingestion and prove activation still loads the immutable stored bytes; reject any activation call that supplies mutable source or caller-selected compiled fields. With a valid stored bundle, prove a disallowed server environment/profile fails before it appends an activation event or moves the pointer, while the same bundle succeeds under an allowed trusted policy; authored or request-supplied environment/profile allowlists must be rejected or ignored and can never broaden authority.
+#### Task 3 constraints
+
+- Authored packages are data only; reject JavaScript, SQL, shell commands, arbitrary templates/expressions, network mutation inputs, prototype-polluting keys, and unknown adapters.
+- Canonical output uses package-qualified logical IDs, stable ordering, exact dependency locks, and the seven non-self-referential framed SHA-256 domains defined by the cross-cutting spec.
+- Definition registration is monotonic and immutable. The active bundle pointer may select a previously stored, fully validated older bundle for operational rollback; exact replays append no additional event and already-started state stays pinned.
+- A committed artifact is fully registered, including zero-definition artifacts. `registerItemDefinitions(pool,{bundleHash})` verifies/replays only; it never repairs.
+- Intrinsic versions have no singular bundle owner; exact old intrinsic versions may gain new memberships after newer versions exist. Only a previously unregistered lower version is forbidden.
+- Versions are positive safe integers stored as BIGINT; concept economic fields are independently optional. `tradePolicyHash` aliases `definitionHash` when a policy is present.
+- Initial selection policy admits only production `phase2_economy` libraries/experiences. Event policy snapshot is canonical `{environment,allowedProfiles}`; current policy checks are separate.
+- PostgreSQL is authoritative. pg-mem compensation must expose equivalent atomic results without replacing required real-PostgreSQL race tests. Public pg-mem multi-query reads hold the shared gate for their entire callback. PostgreSQL never performs compensation.
+- Preserve Phase 1 world-graph, crafting, mystery, operation, Belladonna, content-runtime, and Bellini compatibility behavior.
+- No legacy runtime edits, live-source compilation, production activation routes/CLI/startup actions, item lots, OMR/cash mutation, wallet, NFT, or contract work.
+- Every subtask uses TDD and fresh spec review followed by a different fresh quality/security/PostgreSQL review. Controller verifies, resolves all Critical/Important findings, and commits only then. Task 4 waits for 3.1, 3.2, and 3.3.
+- Every subtask immediately registers its new root suites, refreshes machine-measured SPEC/MARKETING census, adds justified module-scope/SQL gate declarations where required, and passes `node test/gates.js` and `node test/docs.js` before review/commit. `test/lib` helpers are not root suites but count in SPEC's recursive census.
+- Do not merge, push, deploy, activate a production bundle, activate seasonal OMR, or deploy NFT contracts.
+
+#### File map and module seams
+
+| File | Responsibility |
+|---|---|
+| `schema.sql` | Six complete tables, named checks/uniques/composite FKs/indexes from the amendment, in dependency order. |
+| `src/db.js` | Correct pg-mem translate compatibility and named fail-closed Phase 2 schema verification at the existing boot seam. |
+| `src/content/phase2-transactions.js` (new) | Own checked-out mutation transaction; opaque active-client brand; pg-mem global gate/undo; whole-callback reads; SQLSTATE/recovery mapping. |
+| `src/content/artifact-storage.js` (new, internal) | Bounded lookup of exact stored dependencies, compiler verification, immutable artifact projection comparison; no source compiler or public transaction ownership. |
+| `src/content/artifacts.js` (new) | Public atomic store and stored activation orchestration. |
+| `src/itemdefinitions.js` (new) | Intrinsic/membership persistence helpers, verification-only register, intrinsic/selected safe reads; private selection helper requires branded activation context. |
+| `src/content/activation-policy.js` (new) | Branded/frozen trusted policy, live assertion, canonical safe snapshot, historical snapshot validation. |
+| `src/content/definition-invariants.js` (new) | Bounded complete Phase 2 checks against one coherent read context. |
+| `src/invariants.js` | Optional policy injection, gate-aware snapshot collection, append Phase 2 check results, alert after snapshot. |
+| `test/lib/phase2-definition-fixtures.js` (new) | Test-only sealed fixtures, trusted identities, complete six-table snapshots, controlled SQL pauses/failures, alias pools. |
+| `test/phase2-definition-schema.js` (new) | Clean/additive schema and literal direct-SQL constraints. |
+| `test/phase2-definitions.js` (new) | Store/definition API, immutable reuse, limits, replay, corruption, atomic failures, read isolation. |
+| `test/phase2-activation.js` (new) | Policy, exact CAS/replay, pointer replacement, rollback, isolation. |
+| `test/phase2-definition-invariants.js` (new) | Corruption matrix, current/historical policy distinction, complete-report and snapshot tests. |
+| `test/phase2-postgres.js` (new) | Explicit disposable PostgreSQL schema, migrations, named constraints, independent-client races, MVCC/rollback/SQLSTATE/EXPLAIN evidence; `--definitions` selects this task's full lane. |
+| `.github/workflows/ci.yml`, `package.json` | Add focused required local and PostgreSQL commands to existing test lanes; no production operator command. |
+| `SPEC.md`, `MARKETING-POSTS.md`, `test/gates.js` | Each subtask maintains measured file/line/runnable-suite census and justified declarations for its actual module-scope collections/SQL shapes. |
+
+These boundaries avoid circular dependencies: transaction module depends on existing `db`/`game`; artifact-storage depends on compiler/parser/canonical/transaction context; itemdefinitions depends on artifact-storage and transaction context; artifacts orchestrates itemdefinitions/artifact-storage/policy. Invariants consume these internal readers. No content module imports the legacy runtime for authority.
+
+Exact public signatures and every column/constraint are in the amendment. Internal helpers below are not public controller operations:
+
+```ts
+withPhase2Transaction(pool, action: (client: Phase2Client) => Promise<T>): Promise<T>;
+withPhase2Read(queryable, action: (queryable: Queryable) => Promise<T>): Promise<T>;
+verifyPhase2DefinitionSchema(queryable, {compatibility: 'postgres' | 'pg-mem'}): Promise<void>;
+assertPhase2Client(client): void;
+registerPhase2Undo(client, undo: () => Promise<void>): void; // branded context only
+loadVerifiedStoredArtifact(client, bundleHash): Promise<VerifiedStoredArtifact>;
+verifyIncomingArtifact(client, canonicalBytes, expectedIdentity): Promise<VerifiedStoredArtifact>;
+// VerifiedStoredArtifact is an internal opaque value carrying verified bundle,
+// exact canonical bytes, immutable row projection, and verified dependency catalog.
+registerVerifiedDefinitions(client, verifiedArtifact): Promise<void>; // new atomic store only
+verifyRegisteredDefinitions(client, verifiedArtifact): Promise<number>; // exact count or corruption
+replaceDefinitionSelections(client, selectionContext): Promise<void>;
+// selectionContext is opaque/module-branded after policy, ownership, membership,
+// CAS, and target-event validation; it includes the verified artifact and event tuple.
+activationPolicySnapshot(policy): Readonly<{environment: string; allowedProfiles: readonly string[]}>;
+assertDefinitionSelectionAllowed(policy, verifiedArtifact): void;
+validateHistoricalPolicySnapshot(canonicalSnapshotText, verifiedArtifact): void;
+collectDefinitionChecks(queryable, {activationPolicy}): Promise<InvariantCheck[]>;
+// InvariantCheck conforms to the existing {name,lhs,rhs,drift,ok,...safeDetails} shape.
+```
+
+Keep helpers that grant authority module-private where possible; where cross-module exports are necessary, require the opaque active context and never export a context constructor that arbitrary request code can forge. Return no mutable parsed bundle from a public API. Tests inspect database state or safe public output rather than relying on mutation-capable production test hooks.
+
+#### Task 3 prerequisite checkpoint
+
+- [ ] Record Task 2's approved authored commit `09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d` and the controller's completed clean-baseline verification, then reread its final `canonical.js`, `corpus.js`, `economy-profile.js`, `tools/content.js` build-index contract, and focused tests. Compare against the amendment's verifier call, owned definition preimages, numeric versions, emitted ordinals, exact catalog, seven domains, and production profile. A differing approved contract requires editing this amendment before coding.
+- [ ] Record this approved amendment, atomic lifecycle, and 3.1 → 3.2 → 3.3 dependency chain in the existing Phase 2A SDD ledger. Retain prior Task 2 review evidence and the existing plan/workspace identity.
+- [ ] Record dirty files and the start commit. Preserve Task 2 and unrelated user changes. No implementer stages the whole repository. PostgreSQL execution uses an explicit disposable database/schema or newly task-owned cluster; the existing local service is not implicitly disposable.
+
+#### Task 3.1: six-table schema and atomic registry/definitions
+
+**Files:** Create transaction boundary, internal artifact-storage, artifacts, itemdefinitions, fixture/schema/definition tests; modify schema, db compatibility/verification, `package.json`, `SPEC.md`, `MARKETING-POSTS.md`, and justified `test/gates.js` declarations. Activation implementation and invariant wiring wait for 3.2/3.3, though all six tables are created now so FKs are reviewed together.
+
+**Consumes:** Approved `verifyStoredBundleBytes`, `parseAuthoredJson`, `canonicalBytes`, `hashFrame`, `HASH_DOMAINS`, `PHASE2_LIMITS`, `dbCaps`, `makeDb`, `registerPgMemCompatibility`, and `GameError` conventions.
+
+**Produces:** `storeSealedBundle`, verification-only `registerItemDefinitions`, intrinsic `definitionByHash`, private exact membership/registration helpers, `withPhase2Transaction`, `withPhase2Read`; the full schema needed by 3.2. `activeDefinition` may be added with its actual selection behavior in 3.2; do not ship a placeholder implementation.
+
+- [ ] **1. Write fixture builders and failing clean-schema contracts.** Test fixtures compile only in tests via discovered temporary package roots. Start with an empty production library (`omerta.phase2.registry`, version 1, `phase2_economy`, definitions/nodes/edges/exports/dependencies/imports empty); a concept-only revision containing `note` definition version 1; and a production material fixture based on `test/fixtures/phase2/compiler/valid-core`. A fixture authority copy must be compiled using explicit fixture discovery, not by editing the sealed authority field. `compileFixture` returns sealed bytes, bundle, five-field trusted identity, and safe expected definitions. Assert all six exact table names and column types, exact unique/FK column order, named checks, and portable hash check behavior. For direct SQL tests, copy a fully valid row and change one field only; run each failure in its own transaction/schema.
+
+- [ ] **2. Run red schema tests.** Run `node test/phase2-definition-schema.js`. Expect a missing table/module assertion, not an unrelated fixture compiler error. Capture the first real failure in SDD evidence.
+
+- [ ] **3. Implement the six tables and translate compatibility.** Use the amendment's explicit columns/names/constraints. Store scope sets as canonical JSON TEXT constrained to the sixteen sorted subsets: `[]`, `["account"]`, `["character"]`, `["organization"]`, `["project"]`, `["account","character"]`, `["account","organization"]`, `["account","project"]`, `["character","organization"]`, `["character","project"]`, `["organization","project"]`, `["account","character","organization"]`, `["account","character","project"]`, `["account","organization","project"]`, `["character","organization","project"]`, and `["account","character","organization","project"]`. Check compiler/text/numeric and hash bounds independently. Preserve `NULL` omission versus `[]`. Test full PostgreSQL translate behavior on deletion, positional replacement, duplicate source characters, and NULL propagation; SQL strictness must match PostgreSQL. Add `verifyPhase2DefinitionSchema` immediately after schema DDL and before generic column migrations in `migrateSchemaUnderLock`, with the exact `compatibility` values already used there (`'postgres'` and `'pg-mem'`). PostgreSQL verifies six table shapes and named constraint/index catalog entries, throwing `content_registry_schema_invalid` on mismatch; pg-mem validates through clean schema/direct-constraint tests, without claiming catalog parity. Apply the full schema twice. Do not change legacy tables or rely on generic column migration to add constraints.
+
+- [ ] **4. Run green schema tests.** Run `node test/phase2-definition-schema.js`, then `node test/migrate.js`. Expect all pass; if pg-mem cannot enforce a required check/FK, fix only its compatibility layer or raise the concrete unsupported construct to the controller. Never weaken the PostgreSQL contract. Schema error mapping applies only after DDL reaches the verifier: preserve earlier native boot DDL errors and test that no startup success/stamp occurs, without an error-swallow/remapping layer.
+
+- [ ] **5. Write failing public identity and lifecycle tests.** Assert these exact outcomes:
+
+| Fixture/action | Required result and durable state |
+|---|---|
+| Store valid empty library | count 0; artifact plus revision-zero placeholder; zero definitions/memberships/events/selections; register reports replay. |
+| Store one owned concept | count 1; one intrinsic and membership; no selected definition yet. |
+| Store identical bytes again with another audit operator | replay true; byte-identical rows, original audit preserved. |
+| Missing/extra/array/accessor identity, numeric version string, invalid hash | `bad_content_request`; zero SQL writes. |
+| Valid bytes with wrong trusted ID/version | `content_artifact_conflict`; unchanged database. |
+| Mutated bytes, noncanonical whitespace, mismatched trusted hash | original verifier code; unchanged database. |
+| Same hash with corrupted existing bytes/projection | `content_registry_corrupt`; no repair. |
+| Same namespace/package version with different valid bundle hash | `content_bundle_version_conflict`; unchanged database. |
+| Store R1(definition v1), then R2(same v1, new bundle version) | two memberships, exactly one intrinsic row. |
+| Store R1(v1), R3(v3), then previously unseen R2(reuses exact v1) | success, two intrinsic rows, third bundle gets old exact v1 membership. |
+| Store R3(v3), then R2(new v2 intrinsic) | `item_definition_conflict`; no R2 artifact/partial registration. |
+| Same logical definition/version, changed immutable semantics | `item_definition_conflict`; no partial artifact. |
+| Import exact dependency definition | owned count excludes import; no membership falsely assigned to importing namespace. |
+| Delete one membership, then register/store exact artifact | `content_registry_corrupt`; missing row remains missing. |
+| Add extraneous membership or change ordinal/count/intrinsic projection | `content_registry_corrupt`; no repair. |
+| Intrinsic read absent hash / corrupt bytes | `definition_not_found` / `content_registry_corrupt`, respectively. |
+
+Use literal count assertions, for example:
 
 ```js
-await registerItemDefinitions(client, coreBundle);
-await registerItemDefinitions(client, coreBundle);
-assert.equal(Number((await client.query(
-  'SELECT count(*) AS n FROM item_definition_versions WHERE bundle_hash=$1',
-  [coreBundle.bundleHash],
-)).rows[0].n), expectedDefinitions);
-await assert.rejects(() => registerItemDefinitions(client, changedBytesSameVersion),
-  (error) => error.code === 'item_definition_conflict');
+const first = await storeSealedBundle(pool, fixture.request);
+assert.equal(first.definitionCount, 1);
+assert.equal(first.replayed, false);
+const beforeReplay = await snapshotPhase2(pool);
+assert.equal((await storeSealedBundle(pool, fixture.request)).replayed, true);
+assert.deepEqual(await snapshotPhase2(pool), beforeReplay);
+assert.deepEqual(await registerItemDefinitions(pool, {bundleHash: first.bundleHash}), {
+  bundleHash: first.bundleHash, definitionCount: 1, replayed: true,
+});
 ```
 
-- [ ] **Step 2: Verify red**
+`snapshotPhase2` reads all six tables under `withPhase2Read`, sorts rows by primary keys, normalizes timestamps/byte buffers for exact comparison, and excludes sequence counters only; counters may advance without committed rows. Tests never assert that a BIGSERIAL sequence rolls back.
 
-Run: `node test/phase2-definitions.js`
+- [ ] **6. Write admission, dependency, version, and optional-field red tests.** Pause pool acquisition immediately after public invocation, mutate caller bytes and identity/operator fields, then release it: stored bytes/hash/audit must equal the synchronous admission snapshot, with no mutation of the caller's copy. Exercise subarray view offsets and reject accessor-spoofed, shared, resizable, detached, and over-limit views before any await/SQL. Build stored A→B→C and a diamond root→B/C→D using valid exact compiler locks; store dependencies first. Assert root gets only its exact closure, one fetch per unique stored hash, root excluded, no unrelated registry bundle or active-pointer substitution. Delete D to get unresolved; corrupt D to get drift; wrong stored authority/hash/version is drift. Valid bundles with an import pin changed to another definition hash must preserve verifier drift rejection. Reject oversized bytes before parsing/SQL, excessive hint arrays before fan-out, and cumulative closure limits as `content_input_limit`. Test package and definition versions 2147483648 and 9007199254740991 round-trip without truncation; 0, -1, 1.5, negative zero, strings, and 9007199254740992 fail before persistence. For concepts, compile one fixture per optional field alone (family, tags including empty, rarity, stackable=false, trade tuple, owner scopes including empty, quality, maximum quantity, conservation, metadata), then combinations with unrelated fields omitted; assert safe output and SQL NULL match exact presence. Material/item missing any required field must fail the compiler. Test every closed vocabulary and 1000000/1000001 quantity boundary.
 
-Expected: missing table or module failure.
+- [ ] **7. Run red API tests.** Run `node test/phase2-definitions.js`; record expected missing entry point/lifecycle assertions. Keep fixtures valid at compiler boundaries so a test cannot pass because registration was never reached.
 
-- [ ] **Step 3: Add immutable definition and activation schema**
+- [ ] **8. Implement minimal atomic store and intrinsic reads.** Synchronously snapshot validated own request values and owned bounded bytes before the first await; retain that private snapshot throughout verification/store/replay. Add the branded transaction/read module; implement bounded stored verification, exact projection comparison, placeholder lock, existing intrinsic replay before maximum-version comparison, and complete insertion. Persist canonical definition preimage bytes and compare recomputed existing domain hash, semantic projection, and package ownership. `registerItemDefinitions` reloads/verifies and returns only complete replay. Internal helpers never begin/commit. Store and read return only safe projections. Do not call compiler/discovery/file/network loaders outside tests.
 
-Create `item_definition_versions`, `item_definition_activations`, immutable `content_bundle_artifacts`, append-only `content_activation_events`, and additive exact hash/profile columns on the existing content activation pointer. Each activation event stores namespace, current/previous bundle and dependency-lock hashes, compiler/IR version, profile, operator, database timestamp, and exact validation-report hashes. Use database constraints for the closed vocabulary and hash lengths. Existing legacy content rows remain readable and do not become Phase 2 definitions.
+- [ ] **9. Write controlled failure/interleaving tests before completing boundary behavior.** A test-only pool wrapper forwards normal SQL to the underlying pool, records statements, and can pause/throw before or after a chosen write occurrence. It must preserve client release and backend capabilities. Fail after placeholder, artifact, each newly inserted intrinsic, and each membership write. After rejection compare all six tables with the exact before-snapshot, including pre-existing reused versions and placeholders. Start another reader through a forwarding alias while a writer is paused: it must remain pending until compensation/commit finishes. Start a writer only after a reader's first query completes: it must remain pending through the reader's second query and callback return. Test read-inside-own-branded-context without deadlock, nested public mutation rejection, pool.query facade rejection, and gate release after ordinary failure. In a child process, inject undo failure, assert `content_registry_recovery_required`, then assert subsequent Phase 2 reads/writes fail closed; dispose that child database/process.
 
-- [ ] **Step 4: Implement registration and activation**
+- [ ] **10. Implement missing compensation/read/SQLSTATE behavior, then run green.** Use scoped inverse operations recorded before writes and rollback/recovery ordering from the amendment. No blanket snapshot restore or global pg-mem backup, because it could erase unrelated work. Test mapping synthetic 40001/40P01/55P03 and confirmed rollback 57014 to `contention`, 23503/23514/23502/25P02 to registry corruption, and ambiguous COMMIT to `content_commit_unknown`; test actual PostgreSQL semantics in 3.3. Run `node test/phase2-definitions.js`, `node test/phase2-definition-schema.js`, `node test/phase2-compiler.js`, `node test/migrate.js`, and `node test/items.js`. Capture red/green evidence.
 
-Verify canonical compiled bytes before immutable artifact insertion and compare every stored byte/hash/profile/lock field after `ON CONFLICT DO NOTHING`. Activation loads only a stored server-sealed bundle by exact hash, verifies its canonical bytes/hashes and stored exact dependencies, calls the same complete validator, then checks the injected trusted `ActivationPolicy` against the server-owned environment and compiled profile before any audit or pointer write. Only after that check may it append the audit event and update the new-work pointer transactionally. Permit an explicit rollback activation to a previously stored valid bundle while preserving existing pins; reject same logical definition version with different immutable behavior and return no author-private fields.
+- [ ] **11. Register suites and refresh measured integration declarations.** Add literal `node test/phase2-definition-schema.js` and `node test/phase2-definitions.js` once to `pretest` now; do not defer wiring to 3.3. The fixture helper under `test/lib` is not a root suite. Recompute SPEC backend/test file and line counts using the same recursive `walkSrc`/line measurement as `test/docs.js`; recompute MARKETING's runnable-suite count from the distinct test/tools paths literally present in `pretest` plus `test`. Do not conflate helper-file census, root-suite census, and runnable-chain census. Classify each new module-scope WeakMap/WeakSet using its actual per-context/DB-backed safety property; declare new SQL interpolation only when its shape comes from a fixed reviewed allowlist, otherwise use parameterized SQL. Run `node test/gates.js` and `node test/docs.js`; fix justified integration drift without gate exemptions or threshold weakening.
 
-- [ ] **Step 5: Add definition invariants and verify**
+- [ ] **12. Fresh reviews, controller verification, controller commit.** Implementer reports changed files, interface decisions, tests, and remaining risks without committing. Fresh spec reviewer checks exact amendment coverage; different fresh quality reviewer checks SQL constraints, authority boundaries, rollback/read semantics, dependency limits, and justified gate declarations. Fix and re-review all Critical/Important findings. Controller runs focused schema/definitions/compiler/migrate/items tests plus `node test/gates.js` and `node test/docs.js`, inspects diff, then explicitly stages only 3.1 files and commits `feat: atomically register sealed item definitions`. Record accepted interfaces for 3.2.
 
-Run: `node test/phase2-definitions.js && node test/phase2-compiler.js && node test/migrate.js && node test/content-runtime.js && node test/items.js`
+#### Task 3.2: trusted activation policy and exact CAS selection
 
-Expected: all exit 0 and invariant output reports zero mutable-definition or activation-drift rows.
+**Files:** Create activation-policy and activation tests; modify artifacts/itemdefinitions, fixture helper, `package.json`, `SPEC.md`, `MARKETING-POSTS.md`, and justified `test/gates.js` declarations; adjust transaction module only for a demonstrated activation requirement. No invariant production wiring yet.
 
-- [ ] **Step 6: Pass both independent review gates, reverify, and commit**
+**Consumes:** 3.1 complete stored registry, branded transaction/read context, immutable verified artifact and membership helpers, six tables.
 
-```bash
-git add schema.sql src/content/artifacts.js src/content/activation-policy.js src/itemdefinitions.js src/content/runtime.js src/invariants.js test/phase2-definitions.js
-git commit -m "feat: persist immutable item definitions"
+**Produces:** `createActivationPolicy`, `activateStoredBundle`, complete `activeDefinition`, policy snapshot/history helpers, and private branded selection replacement. No public selection mutation bypass.
+
+- [ ] **1. Write policy red tests.** A valid `{environment:'test',allowedProfiles:['phase2_economy']}` selects a complete production library even when `activatable=false` and a production experience. Factory rejects unknown keys, invalid environment/control strings, unknown/duplicate profiles, and nonarrays; empty allowlist is valid deny-all. Mutating original arrays after factory creation has no effect. Mutate the activation request's target/CAS/operator fields while acquisition is paused: execution must use the synchronous admission snapshot. Plain objects, JSON clones, fabricated brands, frozen lookalikes, and authored/request environment fields cannot authorize. Fixture artifacts and deny-all policy return `content_activation_policy_denied` without any event/pointer/selection changes. Invalid policy returns `content_activation_policy_invalid`. No library selection appears on the legacy content board.
+
+- [ ] **2. Write exact CAS table tests.** Start with stored A/B/C in one namespace and valid policy. Inspect event count, event exact fields, namespace pointer, selected definitions, and returned revision/event string after every step:
+
+| State/action | Expected |
+|---|---|
+| never selected → A with (0,null) | revision 1, one event, replay false |
+| A@1 → A with (1,A) | same event/revision, replay true |
+| A@1 → A with (0,null) | same event/revision, replay true (ambiguous initial retry) |
+| A@1 → B with (1,A) | revision 2, event prior A/its exact lock |
+| B@2 → B with (1,A) | replay true |
+| B@2 → B with (0,null) | conflict |
+| B@2 → A with (2,B) | revision 3, deliberate rollback allowed |
+| A@3 → A with old (0,null) or (1,A) | conflict (ABA) |
+| A@3 → A with (2,B) | immediate-predecessor replay true |
+| Target another namespace, wrong prior hash, invalid/null pair | request/conflict error; unchanged rows |
+| Current revision MAX_SAFE → different target | `content_activation_conflict`; no overflow/event |
+
+Representative assertion contract:
+
+```js
+const first = await activateStoredBundle(pool, requestA0, policy);
+assert.equal(first.activationRevision, 1);
+assert.equal(first.replayed, false);
+const retry = await activateStoredBundle(pool, requestA0, policy);
+assert.equal(retry.eventId, first.eventId);
+assert.equal(retry.replayed, true);
+await assert.rejects(() => activateStoredBundle(pool, staleA0AfterABA, policy),
+  error => error.code === 'content_activation_conflict');
 ```
+
+- [ ] **3. Write selection completeness and dependency-independence red tests.** B removes one A definition, adds one, and preserves another exact version. After selection, namespace set must equal B exactly; another namespace is unchanged. Selecting an empty valid bundle clears only this namespace's selections. Old exact hashes still resolve; intrinsic reads carry no arbitrary bundle hash. Inject absent membership, mismatched event/pointer/version, or foreign package selection to assert `definition_inactive` for corrupt selected reads and fail-closed activation. Missing active selection returns null. Remove/mutate temporary source directories after ingestion; activation still succeeds from stored bytes. Select another version of a dependency elsewhere; target uses its exact pinned stored dependency regardless. Missing/corrupt pinned dependency blocks even same-target replay.
+
+- [ ] **4. Run red tests.** Run `node test/phase2-activation.js`; expect absent policy/activation or incorrect CAS assertions. Record evidence.
+
+- [ ] **5. Implement policy and activation.** Factory validates/copies/freezes/brands trusted config. Store canonical snapshot of exactly `{environment,allowedProfiles}` and exact report map on every real event. Within one owned transaction, placeholder insert/lock/re-read, verify target/closure/membership, assert policy and namespace, evaluate CAS/replay, insert event, replace namespace selections, update pointer last. Verify policy on replay too. The selection helper accepts only a module-issued context associated with this active client/event; reject forged or cross-transaction context. Return event ID as string and safe revision Number. Existing audit metadata is not rewritten on replay.
+
+- [ ] **6. Write and pass every-write activation recovery tests.** Pause/fail after placeholder, event, deletion of former selections, each inserted/updated selection, and pointer update. Exact six-table snapshots must be restored before rejection, preserving original events/operator metadata. Run reader-during-paused-writer and writer-after-reader-first-query tests through different aliases for `activeDefinition` and namespace snapshots. For a COMMIT response lost after successful commit, retry the exact CAS and assert original event replay, not a second event; for a confirmed pre-commit abort, exact retry performs the one valid transition. Current-policy denial on an otherwise replayable request must remain denial. Run `node test/phase2-activation.js`, `node test/phase2-definitions.js`, `node test/content-runtime.js`, and `node test/items.js`.
+
+- [ ] **7. Register activation suite and maintain integration gates.** Add literal `node test/phase2-activation.js` once to `pretest` immediately. Recompute SPEC recursive module/test/line counts and MARKETING distinct runnable-chain suite count from the final tree and scripts. Add only justified declarations for any new module-scope policy/selection brands or fixed SQL interpolation shapes, using the existing gate classifications. Run `node test/gates.js` and `node test/docs.js`; preserve existing tests and unrelated census claims.
+
+- [ ] **8. Fresh reviews, controller verification, controller commit.** Fresh spec reviewer checks the full CAS decision table and profile/legacy boundary; different quality reviewer checks first-use locks, event FKs, no standalone mutation bypass, policy brand, state restoration, safe projections, and gate declarations. Resolve all Critical/Important findings. Controller reruns activation/definitions/schema/content-runtime/items tests plus `node test/gates.js` and `node test/docs.js`, and commits only scoped files as `feat: select stored definitions with audited CAS`. Record final API for 3.3 and Task 4.
+
+#### Task 3.3: invariants, PostgreSQL evidence, migration and compatibility closure
+
+**Files:** Create definition-invariants and invariant tests; modify invariants; create/extend `test/phase2-postgres.js`; add focused package commands and existing CI PG16 lane; update `SPEC.md`, `MARKETING-POSTS.md`, and justified `test/gates.js` declarations. Modify schema/db only for an evidenced contract defect, with targeted earlier rechecks. No production activation operator wiring.
+
+**Consumes:** Reviewed 3.1 registry and 3.2 policy/CAS plus existing `runLedgerInvariants` report shape and repeatable-read wrapper.
+
+**Produces:** Complete gated Phase 2 invariant report, explicit PostgreSQL migration/concurrency evidence, repeatable commands and Task 3 closure for Task 4.
+
+- [ ] **1. Write invariant red matrix.** A clean legacy database with no positive Phase 2 pointer succeeds with missing policy. Register-only placeholders also need no live policy. Select a valid bundle with valid policy and assert all seven new check names pass. With selected state and null/invalid policy, only the policy requirement fails if other data is coherent and the entire existing report still returns. Keep historical event snapshot valid, pass deny-all current policy, and assert history passes/current drift fails. Corrupt each of these separately: artifact bytes/hash/metadata/report map; intrinsic canonical bytes/semantic column; missing/extra/misordered membership; artifact definition_count; mismatched event target/previous lock/version/IR/profile/report; noncanonical/unknown-key historical policy; missing revision/event; wrong predecessor; current pointer/event mismatch; missing/extra/foreign/current-generation selection; fixture selected. Assert the relevant named check fails without leaking raw bytes. Bypass SQL constraints only inside a disposable deliberate-corruption harness; direct SQL check-rejection tests remain separate from invariant drift tests.
+
+- [ ] **2. Write invariant coherence tests, then run red.** Pause invariant callback after its first Phase 2 read; begin a writer through another pool alias and prove writer remains pending until all checks finish. Also start invariants during a paused writer and prove no transient violation leaks after successful commit or compensation. A nested internal read must not deadlock. Assert alert work occurs after snapshot/gate release. In a private real-backend test client, reject BEGIN REPEATABLE READ; assert the failure propagates, the client is released/rolled back, and no collection query runs through that client or a pool fallback. Run `node test/phase2-definition-invariants.js` and capture the expected missing-check/policy/signature failure.
+
+- [ ] **3. Implement bounded complete checks and optional injection.** Add `activationPolicy=null` to the wrapper, pass it to Phase 2 collector, and wrap collection in `withPhase2Read`. Replace the existing broad BEGIN fallback with explicit backend selection using established `dbCaps`: pg-mem uses the gate directly, while PostgreSQL starts repeatable-read/read-only and propagates snapshot-start errors without collecting unsnapshotted results. Collect safe named check failures instead of throwing away the report on compiler drift after a valid snapshot starts. Verify exact historical snapshot independent of today's policy. Keep the existing caller behavior with no active Phase 2 rows. No startup/route change is necessary because Task 3 exposes no production activation path; future activation integration must explicitly inject trusted policy and is not silently authorized here.
+
+- [ ] **4. Run green invariant and compatibility tests.** Run `node test/phase2-definition-invariants.js`, `node test/phase2-activation.js`, `node test/phase2-definitions.js`, `node test/content-runtime.js`, `node test/content-crafting.js`, `node test/content-crafting-jobs.js`, `node test/content-crafting-tools.js`, `node test/content-exchange.js`, `node test/items.js`, `node test/crafting.js`, `node test/mysteries.js`, `node test/operations.js`, `node test/belladonna.js`, and `node test/worldgraph-api.js`. These existing script names were resolved from the repository. Take before/after snapshots of legacy `content_bundles`, `content_activations`, pinned content instances, Bellini exact-hash inventory/skill/work-order/tool/exchange rows, generic Phase 1 inventory/replay, and all currency/ledger counts. Phase 2 store/select/invariant operations leave them equal. Execute legacy R2→R1 activation rejection through existing API and preserve its error, while Phase 2 permits correct-CAS rollback.
+
+- [ ] **5. Write a fail-closed disposable PostgreSQL harness and first red run.** `node test/phase2-postgres.js --definitions` requires `TEST_DATABASE_URL`, validates explicit postgres/postgresql scheme and nonempty database, creates a UUID-owned private schema, and drops only that exact owned schema in cleanup. Do not print the DSN. Initialize real backend capabilities via `makeDb` in a child process/environment constrained to this test schema before independent pool clients are used; assert `dbCaps.skipLocked===true`. Keep pg-mem and PostgreSQL suites in separate processes because capabilities are global. No missing-DSN success/skip path. Seed legacy schema without the six new tables, apply current schema under the boot advisory-lock path twice, and compare legacy rows/catalog constraints. Record first genuine missing matrix assertion as red; unavailable access is an explicit unpassed required gate.
+
+- [ ] **6. Implement and run PostgreSQL migration/constraint evidence.** Record exact server version in evidence. The task-owned isolated PG18.4 lane can satisfy this required real-backend gate; PG16 is the CI target, with wiring verified and runtime labeled unexecuted locally unless available. Do not require a push or claim a remote CI execution. On clean and populated upgraded schemas verify all six tables and named `pg_constraint` definitions, including exact membership FK target triple, namespace/event tuple FKs, BIGINT bounds, uppercase/nonhex hash rejection, nullable concept tuple acceptance, material tuple denial, and quantity/scope constraints. A direct invalid insert must fail with the expected SQLSTATE and named constraint. Apply upgrade twice with zero legacy hash/pointer/pin changes. Use two partial-schema regressions: a missing non-FK scalar check that allows DDL to finish must yield verifier `content_registry_schema_invalid`; a pre-existing artifact table lacking the unique target required by a newly created FK must preserve its native DDL failure (42830 for that fixture), never reach the verifier, and never report/stamp startup success. Do not add blanket DDL-error translation. Snapshot old exact definition reads across selection changes to substantiate pin persistence without pretending future lots/jobs exist.
+
+- [ ] **7. Implement and run independent-client race evidence.** Use deferred barriers on separate PostgreSQL clients, not the pg-mem serial gate. Test all of:
+
+| Race | Required committed outcome |
+|---|---|
+| First-use same artifact store | one complete artifact/definition set, second exact replay; one placeholder |
+| Same package version, different bundle bytes/hash | one winner, one bundle-version conflict; no orphan intrinsic/membership |
+| Different bundles reusing same intrinsic version | both may commit, one intrinsic row and both memberships |
+| New definition v1 versus new v2 | v1-then-v2 may both commit; v2-then-v1 rejects new lower v1; highest committed state coherent |
+| Exact old existing intrinsic membership versus newer registration | both may commit; no replay rejected solely because newer exists |
+| First selection, same target/same (0,null) | one event, one success plus one exact replay |
+| Same namespace/different targets/same expected pair | one event/winner plus one activation conflict |
+| Different namespaces | independent correct commits, no inappropriate global PostgreSQL serialization |
+| A→B→A plus stale original request | stale conflict, no extra event |
+
+Capture disposition by stable codes and table/event counts, not timing guesses. Each concurrent branch awaits its own result and every failure leaves no partial rows.
+
+- [ ] **8. Implement PostgreSQL rollback, timeout, MVCC, and recovery evidence.** Inject a client-side error after each store/activation write and a server error late in the transaction; all six table rows equal their pre-call snapshots after rollback. Record zero compensation SQL on the real backend. Hold a namespace lock on one client and force a short test-only lock_timeout on another; expect 55P03→contention after rollback. Exercise statement_timeout 57014, a real serialization failure 40001, and deterministic test-owned two-lock deadlock 40P01; assert connection released/reusable and no partial mutation. Unknown constraint errors must not become replay/contention. Force a lost COMMIT response after the server commits via a test client wrapper, then use a fresh connection and exact request to prove replay. Begin a repeatable-read invariant snapshot, commit a writer on another connection between queries, and prove coherent old-snapshot results; a subsequent run sees coherent new state. PostgreSQL writers must proceed without a JavaScript global read gate.
+
+- [ ] **9. Review query indexes with realistic cardinality.** Seed task-owned synthetic registry rows consistent with valid templates at sufficient size to distinguish scan plans; `ANALYZE`. Capture `EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON)` for bundle-hash lookup, namespace/version conflict lookup, intrinsic ID/max-version lookup, membership-by-bundle, event namespace/revision, selection-by-package, and selected-definition exact join. Assert indexes exist and predicates match their leading columns; review planner output rather than forcing index scans or asserting one fragile cost/plan node for tiny tables. No unexplained unbounded registry scan in the hot store/selection path. Full invariants may intentionally scan the registry with bounded diagnostics.
+
+- [ ] **10. Wire reproducible local/CI gates.** Add literal `node test/phase2-definition-invariants.js` once to `pretest` when creating that suite; retain the three literal suite entries already installed by 3.1/3.2. Add the optional focused convenience command `phase2:definitions:check` chaining those four scripts for direct controller runs, and `phase2:definitions:postgres` invoking `node test/phase2-postgres.js --definitions`; wire the PostgreSQL script into the existing PG16 service lane in the same subtask so no root suite is orphaned. `test/gates.js` and the MARKETING census inspect literal paths, not transitive npm-script calls: do not replace the pretest literals with only a nested convenience invocation, or invoke both and duplicate tests. Any consolidation must prove scanner coverage and exactly-once execution. Missing PostgreSQL DSN fails. Preserve later Task 5/8/10 extensions of the PostgreSQL file through explicit `--definitions` and unknown-option rejection. Refresh measured SPEC/MARKETING census (including actual returned invariant-check count) and justified module/SQL declarations. Run both focused commands, compiler/migration/compatibility tests, `node test/gates.js`, `node test/docs.js`, and `npm run invariants` with DATABASE_URL absent for the clean pg-mem fixture. Keep local/PostgreSQL modes in separate processes.
+
+- [ ] **11. Fresh closure reviews, controller verification, controller commit.** Fresh spec reviewer traces every amendment acceptance requirement to retained evidence. Different quality/security/PostgreSQL reviewer examines named constraints, actual real-backend race results, timeout mapping, compensation absence, full read-gate scope, historical/current policy separation, compatibility snapshots, and test/gate/census integration. Fix/re-review all Critical/Important findings. Controller reruns focused local/PostgreSQL commands, relevant compatibility suites, `node test/gates.js`, and `node test/docs.js`, inspects all changes and CI integration, then commits scoped files as `test: close immutable definition registry invariants`. Mark Task 3 complete and release Task 4 only after required PostgreSQL evidence is passed; retain an unavailable required environment honestly if it prevents closure.
+
+#### SQLSTATE and recovery oracle for every test lane
+
+| Condition | Stable result | Required recovery disposition |
+|---|---|---|
+| Bad closed public input | `bad_content_request` | No writes |
+| Root not stored | `content_artifact_not_found` | No writes; caller may supply the correct registered hash |
+| Missing/drifting dependency | Existing compiler unresolved/drift code | No repair or substitution |
+| Root stored metadata/membership corruption | `content_registry_corrupt` | Stop this operation; no automatic repair |
+| Definition ID/version conflict or unregistered lower version | `item_definition_conflict` | No partial artifact/membership |
+| Namespace/version conflict | `content_bundle_version_conflict` | No partial artifact/membership |
+| Incoming verified identity/hash collision | `content_artifact_conflict` | No replay of incompatible state |
+| CAS/ABA/overflow | `content_activation_conflict` | Refresh observed pair; do not silently rewrite original CAS |
+| 40001, 40P01, 55P03; 57014 with confirmed rollback | `contention` | Rollback/release first, bounded caller retry of same logical request |
+| 23505 on named artifact/definition identity unique | Exact replay or corresponding semantic conflict | Fresh read after rollback; never query through aborted transaction |
+| Other 23505; 23503, 23514, 23502, 25P02 | `content_registry_corrupt` | No broad retry/replay classification |
+| Lost COMMIT/rollback outcome | `content_commit_unknown` | Discard broken client, reconcile exact request on new connection |
+| pg-mem inverse failure | `content_registry_recovery_required` | Poison Phase 2 access until task-owned test process/database replaced |
+
+For raw schema tests, assert actual SQLSTATE/constraint directly; for repository API tests, assert safe mapped errors. Return safe current revision/hash on CAS conflict only if consistent with the existing `GameError` envelope. Never expose bytes, raw SQL, DSNs, compiler private inputs, or unbounded diagnostics.
 
 ### Task 4: Add lot-authoritative mutation primitives and normalized lineage
 

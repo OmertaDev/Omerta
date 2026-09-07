@@ -4,6 +4,8 @@
 
 This specification defines the first independently reviewable increment of the approved Phase 2 world-graph expansion. It depends on the Phase 1 world-graph and item-economy foundation and establishes the canonical definitions, inventory versioning, material catalog, salvage runtime, and static economy analysis required by all later Phase 2 work.
 
+Task 3's sealed-artifact registry, immutable definition membership, definition-plane selection, and associated transaction/read/invariant contracts are amended by [Phase 2A Definition Registry Amendment](2026-09-07-world-graph-phase-2a-definition-registry-amendment.md). That amendment takes precedence over conflicting Task 3 wording in this specification and the Phase 2A implementation plan. It preserves the remaining Phase 2A scope and legacy-runtime boundaries. Task 3 executes as three reviewable increments within the existing Phase 2A plan; Task 4 begins after all three pass their review and verification gates.
+
 Phase 2A does not add professions, recipe discovery, facilities, player markets, social production, or mystery content. It creates the safe substrate those systems use.
 
 The binding architectural choice is staged convergence:
