@@ -173,6 +173,12 @@ jobs:
           POPULATION_OFF: 'on'      # the resident worker would race the probe's own fixtures
         run: npm run pgcheck
 
+      - name: Phase 2 definition registry (real PostgreSQL)
+        if: '!cancelled()'
+        env:
+          TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check
+        run: npm run phase2:definitions:postgres
+
       - name: stock catalog v2 finalized-observation consumer (real PostgreSQL)
         if: '!cancelled()'
         env:

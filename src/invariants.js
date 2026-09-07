@@ -3,6 +3,9 @@
 // in the transactions ledger. Any drift beyond $1 (or one unit) — or any ledger
 // row with a reason outside the known vocabulary — is an alert.
 import crypto from 'node:crypto';
+import { dbCaps } from './db.js';
+import { withPhase2Read } from './content/phase2-transactions.js';
+import { collectDefinitionChecks } from './content/definition-invariants.js';
 import { DESK, DESK_RECYCLE_REASON } from './rules.js';
 import {
   PHASE1_HARDENING_CASH_COST,
@@ -143,26 +146,24 @@ const one = async (pool, q) => Number((await pool.query(q)).rows[0].s);
 // DELTA instead — but every read still fired the production alarm, burying the actual ✓/✗ lines under
 // 🚨 banners that are true and irrelevant. A harness measuring is not a production drift; the alarm's
 // job is production, so it stays on by default and only a deliberate caller turns it off.
-export async function runLedgerInvariants(pool, { alert = true } = {}) {
-  let client = pool.connect ? await pool.connect() : null;
-  if (client) {
-    // best-effort snapshot — real Postgres runs every read in one MVCC snapshot; pg-mem (single-
-    // threaded, no concurrency to tear a read) can't parse the isolation syntax, so fall back cleanly.
-    try { await client.query('BEGIN ISOLATION LEVEL REPEATABLE READ, READ ONLY'); }
-    catch { try { client.release(); } catch { /* gone */ } client = null; }
-  }
+export async function runLedgerInvariants(pool, { alert = true, activationPolicy = null } = {}) {
+  let client, res;
   try {
-    const res = await collectLedgerChecks(client || pool);
+    if (dbCaps.skipLocked) {
+      client = await pool.connect();
+      await client.query('BEGIN ISOLATION LEVEL REPEATABLE READ, READ ONLY');
+    }
+    res = await withPhase2Read(client || pool, (q) => collectLedgerChecks(q, activationPolicy));
     if (client) await client.query('COMMIT');
-    if (alert && !res.ok) await alertDrift(pool, res.checks.filter((c) => !c.ok));
-    return res;
   } catch (e) {
     if (client) { try { await client.query('ROLLBACK'); } catch { /* already gone */ } }
     throw e;
   } finally { if (client) client.release(); }
+  if (alert && !res.ok) await alertDrift(pool, res.checks.filter((c) => !c.ok));
+  return res;
 }
 
-async function collectLedgerChecks(pool) {
+async function collectLedgerChecks(pool, activationPolicy) {
   const checks = [];
   const push = (name, lhs, rhs, tolerance = 1, extra = {}) =>
     checks.push({ name, lhs: Math.round(lhs * 1e6) / 1e6, rhs: Math.round(rhs * 1e6) / 1e6,
@@ -974,6 +975,7 @@ async function collectLedgerChecks(pool) {
   }
   push('reason vocabulary', unknown.length, 0, 0, { unknown });
 
+  checks.push(...await collectDefinitionChecks(pool, activationPolicy));
   const ok = checks.every((c) => c.ok);
   return { ok, checks }; // alerting is done by the runLedgerInvariants snapshot wrapper (on the pool)
 }
