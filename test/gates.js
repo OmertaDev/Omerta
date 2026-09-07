@@ -3282,6 +3282,206 @@ scopedSocialContext = async function(db) {
     + `(${Object.keys(DECLARED).length}), and all ${invoked.size - 2} scripts the workflow calls exist`);
 }
 
+// ═══ THE CI JOB-SHAPE LEDGER — timeout headroom belongs to one measured job ══════════════════════
+// The full local suites lifecycle now takes 38m14.983s on Windows/Node 24, so its old 30-minute
+// HANG bound cannot contain the expanded property coverage. The real-Postgres sibling is a separate
+// job with a separate 20-minute bound. Check each JOB BLOCK: whole-file substring checks let the two
+// values trade places, or let a third job inherit one, while still finding both numbers somewhere.
+{
+  const ROOT = fileURLToPath(new URL('../', import.meta.url));
+  const ci = fs.readFileSync(path.join(ROOT, '.github/workflows/ci.yml'), 'utf8');
+  const jobsHeader = /^jobs:\s*$/m.exec(ci);
+  assert(jobsHeader, '.github/workflows/ci.yml has no top-level `jobs:` block');
+  const jobsText = ci.slice(jobsHeader.index + jobsHeader[0].length);
+  const headers = [...jobsText.matchAll(/^ {2}([A-Za-z0-9_-]+):\s*$/gm)];
+  const jobNames = headers.map((m) => m[1]);
+  assert.deepEqual(jobNames, ['suites', 'pgcheck'],
+    '.github/workflows/ci.yml must retain exactly the existing `suites` and `pgcheck` jobs');
+  const jobs = new Map(headers.map((header, i) => [header[1], jobsText.slice(
+    header.index, i + 1 < headers.length ? headers[i + 1].index : jobsText.length)]));
+  const suites = jobs.get('suites');
+  const pgcheck = jobs.get('pgcheck');
+
+  assert.match(suites, /^    name: suites \+ sim \(pg-mem\)\s*$/m,
+    'the `suites` job identity changed');
+  assert.match(pgcheck, /^    name: real Postgres\s*$/m,
+    'the `pgcheck` job identity changed');
+  const timeouts = (block) => [...block.matchAll(/^    timeout-minutes:\s*(\d+)\s*$/gm)]
+    .map((m) => Number(m[1]));
+  assert.deepEqual(timeouts(suites), [60],
+    'the `suites` job must have exactly one 60-minute HANG bound');
+  assert.deepEqual(timeouts(pgcheck), [20],
+    'the `pgcheck` job must retain exactly one 20-minute HANG bound');
+
+  const suitesCommands = ['npm test', 'npm run sim', 'npm run scale', 'npm run mobile'];
+  for (const command of suitesCommands) {
+    const escaped = command.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    assert.equal([...suites.matchAll(new RegExp(`^\\s+run: ${escaped}\\s*$`, 'gm'))].length, 1,
+      `the \`suites\` job must run \`${command}\` exactly once`);
+  }
+  // This is deliberately the two run-scalar shapes THIS workflow uses, not a YAML/shell parser:
+  // an unnamed `- run: command`, a named step's `run: command`, and their literal `|` bodies.
+  // Unknown block scalar syntax fails closed so a new shape cannot quietly stop being inventoried.
+  const nativeCommandsFrom = (block) => {
+    const lines = block.replaceAll('\r\n', '\n').split('\n');
+    const blank = (line) => /^[ \t]*$/.test(line);
+    const trimShellSpace = (line) => line.replace(/^[ \t]+|[ \t]+$/g, '');
+    const payloads = [];
+    for (let i = 0; i < lines.length; i++) {
+      const run = /^(?: {6}- | {8})run:[ \t]*(.*)$/.exec(lines[i]);
+      if (!run) continue;
+      const body = trimShellSpace(run[1]);
+      if (body !== '|') {
+        assert(!/^[>|]/.test(body),
+          `unsupported CI run scalar \`${body}\` — support its exact checked shape before using it`);
+        let next = i + 1;
+        while (next < lines.length && blank(lines[next])) next++;
+        assert(next === lines.length || /^ */.exec(lines[next])[0].length <= lines[i].indexOf('run:'),
+          'unsupported continued plain run scalar in pgcheck');
+        payloads.push([body]);
+        continue;
+      }
+
+      const runColumn = lines[i].indexOf('run:');
+      const content = [];
+      let j = i + 1;
+      for (; j < lines.length; j++) {
+        if (blank(lines[j])) { content.push(''); continue; }
+        const indent = /^ */.exec(lines[j])[0].length;
+        if (indent <= runColumn) break;
+        content.push(lines[j]);
+      }
+      const indents = content.filter((line) => !blank(line)).map((line) => /^ */.exec(line)[0].length);
+      assert(indents.length > 0, 'a pgcheck `run: |` scalar has no command payload');
+      const contentIndent = indents[0];
+      assert(indents.every((indent) => indent >= contentIndent),
+        'unsupported inconsistent literal run scalar indentation in pgcheck');
+      payloads.push(content.map((line) => blank(line) ? '' : line.slice(contentIndent)));
+      i = j - 1;
+    }
+    assert(payloads.length >= 10,
+      `the pgcheck run-scalar reader found only ${payloads.length} steps — its supported shape drifted`);
+
+    // Admission grammar, not shell interpretation: blank/comment lines, npm ci, npm run NAME,
+    // and node -e " on its own line through a standalone closing ". Every other form refuses.
+    // Node data is opaque, but cannot contain shell quotes, escapes or expansion characters.
+    // This checks supported command positions; it cannot prove that a command succeeds at runtime.
+    const commands = [];
+    for (const payload of payloads) {
+      let nodeBody = false;
+      for (const line of payload) {
+        const command = trimShellSpace(line);
+        if (nodeBody) {
+          if (command === '"') { nodeBody = false; continue; }
+          assert(!/["\\$`\x00-\x08\x0b-\x1f]/.test(line),
+            'unsupported shell quoting, escape or expansion in pgcheck node data');
+          continue;
+        }
+        if (!command || command.startsWith('#') || command === 'npm ci') continue;
+        if (command === 'node -e "') { nodeBody = true; continue; }
+        const npm = /^npm run ([a-zA-Z0-9:_-]+)$/.exec(command);
+        assert(npm, `unsupported pgcheck command shape: \`${command}\``);
+        commands.push(npm[1]);
+      }
+      assert(!nodeBody, 'unsupported unterminated node data in a pgcheck run scalar');
+    }
+    return commands;
+  };
+  const expectedNativeCommands = [
+    'pgquery', 'pgcheck', 'phase2:definitions:postgres', 'phase2:lots:postgres',
+    'test:stockcatalogv2:postgres', 'test:rwahealth:postgres',
+    'test:rwaregistrylifecycle:postgres', 'backup:selftest', 'chaos', 'loadtest', 'concurrency',
+  ];
+  const replacePgquery = (replacement) => {
+    const fixture = pgcheck.replace(/^([ ]*)npm run pgquery[ ]*$/m,
+      (_, indent) => replacement.map((line) => indent + line).join('\n'));
+    assert.notEqual(fixture, pgcheck, 'the fixture must replace the real pgquery command');
+    return fixture;
+  };
+  const withoutRealPgquery = replacePgquery(['# npm run pgquery']);
+  const missingNativeCommands = nativeCommandsFrom(withoutRealPgquery);
+  assert.deepEqual(missingNativeCommands, expectedNativeCommands.slice(1));
+  assert.throws(() => assert.deepEqual(missingNativeCommands, expectedNativeCommands),
+    { code: 'ERR_ASSERTION' }, 'deleting a command must fail the inventory without unsupported syntax');
+  const misleadingPgquery = withoutRealPgquery.replace('    steps:', [
+    '    steps:',
+    '      - name: npm run pgquery',
+    '        if: "npm run pgquery"',
+    '        env:',
+    '          COMMAND_NOTE: npm run pgquery',
+    '        run: npm ci',
+  ].join('\n'));
+  assert.deepEqual(nativeCommandsFrom(misleadingPgquery), expectedNativeCommands.slice(1),
+    'metadata and whole-line comments cannot stand in for a deleted command');
+  // Former echo/quote/heredoc decoys now refuse individually: no generic shell support is needed.
+  const unsupportedPgqueryForms = [
+    ['echo argument', ['echo "npm run pgquery"']],
+    ['trailing comment', ['echo harmless # npm run pgquery']],
+    ['multiline double quote', ['printf \'%s\\n\' "', 'npm run pgquery', '"']],
+    ['multiline single quote', ["echo '", 'npm run pgquery', "'"]],
+    ['heredoc', ["cat <<'COMMAND_TEXT'", 'npm run pgquery', 'COMMAND_TEXT']],
+    ['unterminated heredoc', ["cat <<'COMMAND_TEXT'", 'npm run pgquery']],
+    ['backslash continuation', ['echo \\', 'npm run pgquery']],
+    ['comment then backslash', ['echo harmless # \\', 'npm run pgquery']],
+    ['conditional block', ['if false; then', 'npm run pgquery', 'fi']],
+    ['AND with comment', ['false && # keep the native lane disabled', 'npm run pgquery']],
+    ['OR with comment', ['true || # keep the native lane disabled', 'npm run pgquery']],
+    ['input hash boundary', ['false && <# comment', 'npm run pgquery']],
+    ['word hash is not a comment', ['false && >file#name', 'npm run pgquery']],
+    ['dangling redirection', ['>', 'npm run pgquery']],
+    ['malformed quote', ['"oops', 'npm run pgquery']],
+    ['unknown command', ['exit 0', 'npm run pgquery']],
+    ['shell grouping', ['(', 'npm run pgquery', ')']],
+    ['command substitution', ['echo $(true)', 'npm run pgquery']],
+    ['escaped hash', ['echo \\#data', 'npm run pgquery']],
+    ['native suffix control', ['npm run pgquery && false']],
+    ['native suffix redirection', ['npm run pgquery >output']],
+    ['non-shell whitespace', ['\u00a0npm run pgquery']],
+    ['control character', ['\v', 'npm run pgquery']],
+    ['unterminated node body', ['node -e "', 'npm run pgquery']],
+    ['node quote escape', ['node -e "', '\\"', 'npm run pgquery', '"']],
+    ['node expansion', ['node -e "', '$(true)', '"', 'npm run pgquery']],
+    ['node backtick', ['node -e "', '`true`', '"', 'npm run pgquery']],
+    ['node inline close', ['node -e "', '" # close', 'npm run pgquery']],
+    ['node continued close', ['node -e "', '\\', '"', 'npm run pgquery']],
+  ];
+  for (const [label, replacement] of unsupportedPgqueryForms) {
+    assert.throws(() => nativeCommandsFrom(replacePgquery(replacement)), /unsupported/,
+      `${label} must refuse before admitting a misleading native command`);
+  }
+  const opaquePgquery = replacePgquery(['node -e "', 'npm run pgquery', '"']);
+  assert.deepEqual(nativeCommandsFrom(opaquePgquery), expectedNativeCommands.slice(1),
+    'an exact-looking native command inside supported node data is never inventoried');
+  const quotedHashPgquery = replacePgquery([
+    'node -e "', "console.log('&& # quoted data');", '"', 'npm run pgquery',
+  ]);
+  assert.deepEqual(nativeCommandsFrom(quotedHashPgquery), expectedNativeCommands,
+    'a quoted hash in supported opaque node data cannot change the following command position');
+  const redirectionCommentPgquery = pgcheck.replace(/^(\s*)npm run pgquery\s*$/m, (_, indent) => [
+    `${indent}false && ># keep the native lane disabled`,
+    `${indent}npm run pgquery`,
+  ].join('\n'));
+  assert.notEqual(redirectionCommentPgquery, pgcheck,
+    'the redirection-comment fixture must replace the real pgquery command');
+  assert.throws(() => nativeCommandsFrom(redirectionCommentPgquery), /unsupported/,
+    'malformed redirection before a comment must refuse before counting the next native line');
+  for (const scalar of ['>', '|-', '"npm run pgcheck"', "'npm run pgcheck'",
+    'npm run pgcheck\n          npm run pgcheck']) {
+    const fixture = pgcheck.replace('run: npm run pgcheck', `run: ${scalar}`);
+    assert.notEqual(fixture, pgcheck);
+    assert.throws(() => nativeCommandsFrom(fixture), /unsupported/,
+      'unsupported scalar quoting, folding or continuation must refuse');
+  }
+  const badIndent = pgcheck.replace('          npm run pgquery', '         npm run pgquery');
+  assert.notEqual(badIndent, pgcheck);
+  assert.throws(() => nativeCommandsFrom(badIndent), /unsupported inconsistent/,
+    'a malformed literal scalar must not invent a command position');
+  const nativeCommands = nativeCommandsFrom(pgcheck);
+  assert.deepEqual(nativeCommands, expectedNativeCommands,
+    'the `pgcheck` job must retain every current native command in order');
+  console.log('  ✓ CI keeps exactly two jobs: suites at 60m and pgcheck at 20m, with every lane intact');
+}
+
 // ═══ THE SINGLE-INSTANCE LEDGER — state that does not exist across boxes ══════════════════════════
 // render.yaml documents, at length, that this service runs exactly ONE instance because the process
 // holds state a second box would not share. That warning is prose: nothing fails when somebody adds
