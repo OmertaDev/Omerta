@@ -1,6 +1,6 @@
 # Generated database catalog
 
-> 335 tables extracted from [schema.sql](../../schema.sql). “Used by” is an exact-name source scan; dynamic SQL may add relationships not visible here.
+> 338 tables extracted from [schema.sql](../../schema.sql). “Used by” is an exact-name source scan; dynamic SQL may add relationships not visible here.
 
 | Table | Defined | Used by modules |
 |---|---:|---|
@@ -162,9 +162,12 @@
 | `invite_codes` | [L704](../../schema.sql#L704) | [auth.js](../../src/auth.js), [routes/modtools.js](../../src/routes/modtools.js) |
 | `item_definition_activations` | [L6602](../../schema.sql#L6602) | [content/artifacts.js](../../src/content/artifacts.js), [content/definition-invariants.js](../../src/content/definition-invariants.js), [db.js](../../src/db.js), [itemdefinitions.js](../../src/itemdefinitions.js) |
 | `item_definition_versions` | [L6496](../../schema.sql#L6496) | [content/definition-invariants.js](../../src/content/definition-invariants.js), [db.js](../../src/db.js), [itemdefinitions.js](../../src/itemdefinitions.js) |
-| `item_events` | [L4588](../../schema.sql#L4588) | [agentgateway.js](../../src/agentgateway.js), [invariants.js](../../src/invariants.js), [items.js](../../src/items.js) |
-| `item_instances` | [L4479](../../schema.sql#L4479) | [agentgateway.js](../../src/agentgateway.js), [crafting.js](../../src/crafting.js), [invariants.js](../../src/invariants.js), [items.js](../../src/items.js), [mysteries.js](../../src/mysteries.js), [operations.js](../../src/operations.js), [routes/worldgraph.js](../../src/routes/worldgraph.js) |
-| `item_mutation_guards` | [L4535](../../schema.sql#L4535) | [invariants.js](../../src/invariants.js), [items.js](../../src/items.js) |
+| `item_events` | [L4588](../../schema.sql#L4588) | [agentgateway.js](../../src/agentgateway.js), [invariants.js](../../src/invariants.js), [itemlots.js](../../src/itemlots.js), [items.js](../../src/items.js) |
+| `item_instances` | [L4479](../../schema.sql#L4479) | [agentgateway.js](../../src/agentgateway.js), [crafting.js](../../src/crafting.js), [invariants.js](../../src/invariants.js), [itemlots.js](../../src/itemlots.js), [items.js](../../src/items.js), [mysteries.js](../../src/mysteries.js), [operations.js](../../src/operations.js), [routes/worldgraph.js](../../src/routes/worldgraph.js) |
+| `item_lots` | [L6621](../../schema.sql#L6621) | [invariants.js](../../src/invariants.js), [itemlots.js](../../src/itemlots.js) |
+| `item_mutation_guards` | [L4535](../../schema.sql#L4535) | [invariants.js](../../src/invariants.js), [itemlots.js](../../src/itemlots.js), [items.js](../../src/items.js) |
+| `item_mutation_inputs` | [L6768](../../schema.sql#L6768) | [invariants.js](../../src/invariants.js), [itemlots.js](../../src/itemlots.js), [items.js](../../src/items.js) |
+| `item_mutation_outputs` | [L6804](../../schema.sql#L6804) | [invariants.js](../../src/invariants.js), [itemlots.js](../../src/itemlots.js), [items.js](../../src/items.js) |
 | `item_stacks` | [L4458](../../schema.sql#L4458) | [agentgateway.js](../../src/agentgateway.js), [invariants.js](../../src/invariants.js), [items.js](../../src/items.js), [mysteries.js](../../src/mysteries.js), [operations.js](../../src/operations.js) |
 | `kill_log` | [L471](../../schema.sql#L471) | [cards.js](../../src/cards.js), [circle.js](../../src/circle.js), [pen.js](../../src/pen.js), [people.js](../../src/people.js), [server.js](../../src/server.js), [social/contracts.js](../../src/social/contracts.js), [social/estate.js](../../src/social/estate.js), [vanity.js](../../src/vanity.js), [wire.js](../../src/wire.js) |
 | `landmarks` | [L528](../../schema.sql#L528) | [agentgateway.js](../../src/agentgateway.js), [engagement.js](../../src/engagement.js), [explore.js](../../src/explore.js), [landmarks.js](../../src/landmarks.js), [routes/leaderboards.js](../../src/routes/leaderboards.js), [rules.tail.js](../../src/rules.tail.js), [server.js](../../src/server.js) |
@@ -201,7 +204,7 @@
 | `npc_wars` | [L2785](../../schema.sql#L2785) | [npcwar.js](../../src/npcwar.js) |
 | `numbers_tickets` | [L1067](../../schema.sql#L1067) | [casino.js](../../src/casino.js), [social/estate.js](../../src/social/estate.js) |
 | `oauth_states` | [L2122](../../schema.sql#L2122) | [auth.js](../../src/auth.js), [worker.js](../../src/worker.js) |
-| `operation_escrow` | [L4511](../../schema.sql#L4511) | [agentgateway.js](../../src/agentgateway.js), [invariants.js](../../src/invariants.js), [items.js](../../src/items.js), [mysteries.js](../../src/mysteries.js), [operations.js](../../src/operations.js) |
+| `operation_escrow` | [L4511](../../schema.sql#L4511) | [agentgateway.js](../../src/agentgateway.js), [invariants.js](../../src/invariants.js), [itemlots.js](../../src/itemlots.js), [items.js](../../src/items.js), [mysteries.js](../../src/mysteries.js), [operations.js](../../src/operations.js) |
 | `pen_break_members` | [L1289](../../schema.sql#L1289) | [pen.js](../../src/pen.js), [social/estate.js](../../src/social/estate.js) |
 | `pen_breaks` | [L1283](../../schema.sql#L1283) | [pen.js](../../src/pen.js), [social/estate.js](../../src/social/estate.js) |
 | `pen_contraband` | [L1273](../../schema.sql#L1273) | [pen.js](../../src/pen.js), [social/estate.js](../../src/social/estate.js) |
