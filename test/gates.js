@@ -3266,6 +3266,8 @@ scopedSocialContext = async function(db) {
     'operations.js:CONTEXTS': 'cache: per-context-object authenticity marker; every box recognizes only contexts it creates',
     'worldgraph.js:WORLD_GRAPH_REGISTRIES': 'cache: per-registry-object authenticity marker; every box recognizes its own immutable registries',
     'content/discovery.js:DISCOVERED_PACKAGES': 'cache: per-descriptor authenticity marker; every box recognizes only descriptors its own walker created',
+    'content/phase2-transactions.js:CONTEXTS': 'cache: per-client active callback authority, matched to its async scope; PostgreSQL transactions and namespace row locks supply cross-process serialization',
+    'content/artifact-storage.js:VERIFIED': 'cache: per-opaque-artifact verification result tied to its active client; sealed bytes and exact memberships are persisted in PostgreSQL',
     'v4oraclekeeper.js:IN_FLIGHT_WINDOWS': 'db-backstopped: same-process guard; the DB primary key is the cross-process guard (said at the site)',
     'auth.js:guestBootstrapLocks': 'db-backstopped: a process-local queue for same-process retries; the unique index is the cross-process backstop (said at the site)',
     'ratelimit.js:buckets': 'shared: N instances = N× every limit, unless REDIS_URL is set',
