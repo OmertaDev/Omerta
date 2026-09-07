@@ -38,11 +38,12 @@
 | [src/commission.js](../../src/commission.js) | 1395 | platform-core | 5 / 16 | 9 | 17 | 4 |
 | [src/community.js](../../src/community.js) | 220 | engagement-growth | 3 / 7 | 2 | 8 | 1 |
 | [src/contacts.js](../../src/contacts.js) | 247 | engagement-growth | 2 / 9 | 3 | 10 | 2 |
-| [src/content/artifact-storage.js](../../src/content/artifact-storage.js) | 260 | platform-core | 6 / 1 | 0 | 2 | 1 |
-| [src/content/artifacts.js](../../src/content/artifacts.js) | 54 | platform-core | 3 / 2 | 0 | 3 | 2 |
+| [src/content/activation-policy.js](../../src/content/activation-policy.js) | 56 | platform-core | 2 / 2 | 0 | 0 | 1 |
+| [src/content/artifact-storage.js](../../src/content/artifact-storage.js) | 260 | platform-core | 6 / 2 | 0 | 2 | 1 |
+| [src/content/artifacts.js](../../src/content/artifacts.js) | 200 | platform-core | 5 / 3 | 0 | 6 | 3 |
 | [src/content/automotive-salvage.js](../../src/content/automotive-salvage.js) | 72 | world-graph | 0 / 4 | 0 | 0 | 2 |
 | [src/content/belladonna.js](../../src/content/belladonna.js) | 241 | world-graph | 0 / 3 | 0 | 0 | 1 |
-| [src/content/canonical.js](../../src/content/canonical.js) | 214 | platform-core | 0 / 8 | 0 | 0 | 3 |
+| [src/content/canonical.js](../../src/content/canonical.js) | 214 | platform-core | 0 / 10 | 0 | 0 | 3 |
 | [src/content/compiler.js](../../src/content/compiler.js) | 1222 | platform-core | 1 / 12 | 0 | 0 | 8 |
 | [src/content/core-materials.js](../../src/content/core-materials.js) | 39 | world-graph | 0 / 4 | 0 | 0 | 2 |
 | [src/content/corpus.js](../../src/content/corpus.js) | 2640 | platform-core | 3 / 4 | 0 | 0 | 2 |
@@ -55,7 +56,7 @@
 | [src/content/phase1-policy.js](../../src/content/phase1-policy.js) | 161 | world-graph | 0 / 3 | 0 | 0 | 1 |
 | [src/content/phase1-validation.js](../../src/content/phase1-validation.js) | 54 | world-graph | 5 / 2 | 0 | 0 | 0 |
 | [src/content/phase1.js](../../src/content/phase1.js) | 12 | world-graph | 3 / 4 | 0 | 0 | 1 |
-| [src/content/phase2-transactions.js](../../src/content/phase2-transactions.js) | 135 | platform-core | 2 / 5 | 0 | 0 | 2 |
+| [src/content/phase2-transactions.js](../../src/content/phase2-transactions.js) | 135 | platform-core | 2 / 6 | 0 | 0 | 3 |
 | [src/content/runtime.js](../../src/content/runtime.js) | 1095 | platform-core | 2 / 1 | 9 | 12 | 0 |
 | [src/convoy.js](../../src/convoy.js) | 581 | enterprise-logistics | 4 / 11 | 10 | 15 | 3 |
 | [src/corner.js](../../src/corner.js) | 158 | platform-core | 2 / 5 | 3 | 4 | 1 |
@@ -97,7 +98,7 @@
 | [src/honor.js](../../src/honor.js) | 74 | social-combat | 1 / 12 | 1 | 5 | 1 |
 | [src/hustle.js](../../src/hustle.js) | 103 | platform-core | 2 / 3 | 2 | 3 | 0 |
 | [src/invariants.js](../../src/invariants.js) | 1063 | economy-ledger | 1 / 90 | 1 | 49 | 83 |
-| [src/itemdefinitions.js](../../src/itemdefinitions.js) | 161 | platform-core | 4 / 2 | 0 | 3 | 1 |
+| [src/itemdefinitions.js](../../src/itemdefinitions.js) | 201 | platform-core | 4 / 3 | 0 | 6 | 2 |
 | [src/items.js](../../src/items.js) | 831 | world-graph | 2 / 4 | 0 | 8 | 0 |
 | [src/kitchen.js](../../src/kitchen.js) | 374 | platform-core | 3 / 3 | 13 | 8 | 0 |
 | [src/landmarks.js](../../src/landmarks.js) | 53 | world-progression | 3 / 1 | 2 | 2 | 0 |

@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "5a03f9ef049f424374ae9659fde81c8510c71e87",
+  "sourceRevision": "58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,44 +43,44 @@
     ]
   },
   "census": {
-    "nodes": 5909,
-    "edges": 26335,
+    "nodes": 5915,
+    "edges": 26382,
     "byNodeType": {
-      "Artifact": 1895,
+      "Artifact": 1897,
       "Command": 60,
-      "Commit": 1383,
+      "Commit": 1385,
       "Contract": 49,
       "Document": 492,
       "Domain": 13,
       "ExternalDependency": 24,
       "HistoricalArtifact": 306,
-      "Module": 210,
+      "Module": 211,
       "PullRequest": 126,
       "Repository": 1,
       "Route": 762,
       "Subsystem": 8,
       "Table": 335,
-      "TestSuite": 241,
+      "TestSuite": 242,
       "Workflow": 4
     },
     "byEdgeType": {
-      "BELONGS_TO": 2050,
-      "CHANGED": 10529,
-      "CONTAINS": 1916,
+      "BELONGS_TO": 2052,
+      "CHANGED": 10545,
+      "CONTAINS": 1918,
       "DECLARES": 60,
       "DEFINED_IN": 1146,
       "DEPENDS_ON": 64,
-      "EXECUTES": 222,
+      "EXECUTES": 223,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1383,
+      "HAS_COMMIT": 1385,
       "IMPLEMENTS": 124,
-      "IMPORTS": 1784,
+      "IMPORTS": 1792,
       "INHERITS": 12,
-      "REFERENCES": 3076,
-      "REPRESENTS": 947,
-      "TESTS": 634,
+      "REFERENCES": 3080,
+      "REPRESENTS": 949,
+      "TESTS": 638,
       "TRACKS": 126,
-      "USES_TABLE": 1560
+      "USES_TABLE": 1566
     }
   },
   "nodes": [
@@ -14170,18 +14170,18 @@
       "extension": ".md",
       "bytes": 7058,
       "lines": 128,
-      "version": "5695c96aecd802d9",
+      "version": "87a291ec8a499458",
       "text": true,
       "provenance": [
         {
           "file": "MARKETING-POSTS.md",
           "line": 1,
-          "version": "5695c96aecd802d9"
+          "version": "87a291ec8a499458"
         }
       ],
-      "lastChangedAt": "2026-09-07T08:34:33.000Z",
+      "lastChangedAt": "2026-09-07T09:09:08.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "5a03f9ef049f424374ae9659fde81c8510c71e87"
+      "lastChangedCommit": "58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c"
     },
     {
       "key": "Artifact:MARKETING.md",
@@ -20372,20 +20372,20 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 10840,
+      "bytes": 10870,
       "lines": 88,
-      "version": "18f38c557ff15f9c",
+      "version": "de3a5e93a7960cb2",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "18f38c557ff15f9c"
+          "version": "de3a5e93a7960cb2"
         }
       ],
-      "lastChangedAt": "2026-09-07T08:34:33.000Z",
+      "lastChangedAt": "2026-09-07T09:09:08.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "5a03f9ef049f424374ae9659fde81c8510c71e87"
+      "lastChangedCommit": "58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c"
     },
     {
       "key": "Artifact:Procfile",
@@ -33185,18 +33185,18 @@
       "extension": ".md",
       "bytes": 54622,
       "lines": 735,
-      "version": "2e5a2831d9adc8c3",
+      "version": "e820cdb55975a0c0",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "2e5a2831d9adc8c3"
+          "version": "e820cdb55975a0c0"
         }
       ],
-      "lastChangedAt": "2026-09-07T08:34:33.000Z",
+      "lastChangedAt": "2026-09-07T09:09:08.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "5a03f9ef049f424374ae9659fde81c8510c71e87"
+      "lastChangedCommit": "58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c"
     },
     {
       "key": "Artifact:src/accrual.js",
@@ -33981,6 +33981,29 @@
       "lastChangedCommit": "90a07070d3efd08fe3e70d1c78def530cf79f184"
     },
     {
+      "key": "Artifact:src/content/activation-policy.js",
+      "type": "Artifact",
+      "id": "src/content/activation-policy.js",
+      "label": "activation-policy.js",
+      "path": "src/content/activation-policy.js",
+      "kind": "backend-module",
+      "extension": ".js",
+      "bytes": 3032,
+      "lines": 56,
+      "version": "907a9bfee4d78c23",
+      "text": true,
+      "provenance": [
+        {
+          "file": "src/content/activation-policy.js",
+          "line": 1,
+          "version": "907a9bfee4d78c23"
+        }
+      ],
+      "lastChangedAt": "2026-09-07T09:09:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c"
+    },
+    {
       "key": "Artifact:src/content/artifact-storage.js",
       "type": "Artifact",
       "id": "src/content/artifact-storage.js",
@@ -34011,20 +34034,20 @@
       "path": "src/content/artifacts.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 3793,
-      "lines": 54,
-      "version": "57500e0b5240c9bd",
+      "bytes": 13882,
+      "lines": 200,
+      "version": "2b47ec473567f29c",
       "text": true,
       "provenance": [
         {
           "file": "src/content/artifacts.js",
           "line": 1,
-          "version": "57500e0b5240c9bd"
+          "version": "2b47ec473567f29c"
         }
       ],
-      "lastChangedAt": "2026-09-07T08:34:33.000Z",
+      "lastChangedAt": "2026-09-07T09:09:08.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "5a03f9ef049f424374ae9659fde81c8510c71e87"
+      "lastChangedCommit": "58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c"
     },
     {
       "key": "Artifact:src/content/automotive-salvage.js",
@@ -35345,20 +35368,20 @@
       "path": "src/itemdefinitions.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 10230,
-      "lines": 161,
-      "version": "797373b0c36b9775",
+      "bytes": 12923,
+      "lines": 201,
+      "version": "4229cb9cd1a71a8a",
       "text": true,
       "provenance": [
         {
           "file": "src/itemdefinitions.js",
           "line": 1,
-          "version": "797373b0c36b9775"
+          "version": "4229cb9cd1a71a8a"
         }
       ],
-      "lastChangedAt": "2026-09-07T08:34:33.000Z",
+      "lastChangedAt": "2026-09-07T09:09:08.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "5a03f9ef049f424374ae9659fde81c8510c71e87"
+      "lastChangedCommit": "58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c"
     },
     {
       "key": "Artifact:src/items.js",
@@ -39692,20 +39715,20 @@
       "path": "test/gates.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 248002,
-      "lines": 3798,
-      "version": "85dd1ca5ef964588",
+      "bytes": 248385,
+      "lines": 3800,
+      "version": "269c7c48023c62c1",
       "text": true,
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "85dd1ca5ef964588"
+          "version": "269c7c48023c62c1"
         }
       ],
-      "lastChangedAt": "2026-09-07T08:34:33.000Z",
+      "lastChangedAt": "2026-09-07T09:09:08.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "5a03f9ef049f424374ae9659fde81c8510c71e87"
+      "lastChangedCommit": "58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c"
     },
     {
       "key": "Artifact:test/genesiscca.js",
@@ -40014,20 +40037,20 @@
       "path": "test/lib/phase2-definition-fixtures.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 5361,
-      "lines": 98,
-      "version": "c12aefc09497b190",
+      "bytes": 5681,
+      "lines": 102,
+      "version": "58f773eb51d570bd",
       "text": true,
       "provenance": [
         {
           "file": "test/lib/phase2-definition-fixtures.js",
           "line": 1,
-          "version": "c12aefc09497b190"
+          "version": "58f773eb51d570bd"
         }
       ],
-      "lastChangedAt": "2026-09-07T08:34:33.000Z",
+      "lastChangedAt": "2026-09-07T09:09:08.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "5a03f9ef049f424374ae9659fde81c8510c71e87"
+      "lastChangedCommit": "58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c"
     },
     {
       "key": "Artifact:test/lib/srcfiles.js",
@@ -40442,6 +40465,29 @@
       "lastChangedAt": "2026-08-14T19:24:50.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "aba6c29f3c4f8bb7d2d85becd6724b016879b3f5"
+    },
+    {
+      "key": "Artifact:test/phase2-activation.js",
+      "type": "Artifact",
+      "id": "test/phase2-activation.js",
+      "label": "phase2-activation.js",
+      "path": "test/phase2-activation.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 30032,
+      "lines": 466,
+      "version": "adcdbd4ba5dc1b26",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/phase2-activation.js",
+          "line": 1,
+          "version": "adcdbd4ba5dc1b26"
+        }
+      ],
+      "lastChangedAt": "2026-09-07T09:09:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c"
     },
     {
       "key": "Artifact:test/phase2-compiler.js",
@@ -44227,7 +44273,7 @@
       "type": "Command",
       "id": "npm:pretest",
       "label": "npm run pretest",
-      "command": "node test/finalizedobservation.js && node test/stockballotv2.js && node test/rwanominations.js && node test/rwaroutes.js && node test/rwahealth.js && node test/rwahealth.integration.js && node test/rwahealthclearance.js && node test/rwahealthclearancecontext.js && node test/rwahealthoverlay.readiness.js && node test/rwahealthoverlay.schema.js && node test/rwahealthoverlay.vector.js && node test/rwaregistrylifecycle.js && node test/rwaregistrylifecycle.sync.js && node test/agent-referral-cash.js && node test/phase2-discovery.js && node test/phase2-compiler.js && node test/phase2-review-regressions.js && node test/phase2-scale.js && node test/content-graph.js && node test/content-runtime.js && node test/content-social.js && node test/content-seasonal.js && node test/content-seasonal-case.js && node test/content-crafting.js && node test/content-crafting-jobs.js && node test/content-crafting-tools.js && node test/content-exchange.js && node test/content-api.js && node test/v4oraclekeeper.js && node test/genesiscca.js && node test/genesislaunch.js && node test/genesisrelease.js && node test/worldgraph.js && node test/worldgraph-validation.js && node test/items.js && node test/crafting.js && node test/mysteries.js && node test/operations.js && node test/belladonna.js && node test/worldgraph-api.js && node tools/pgcheck-belladonna.js --pg-mem && node test/phase2-definition-schema.js && node test/phase2-definitions.js",
+      "command": "node test/finalizedobservation.js && node test/stockballotv2.js && node test/rwanominations.js && node test/rwaroutes.js && node test/rwahealth.js && node test/rwahealth.integration.js && node test/rwahealthclearance.js && node test/rwahealthclearancecontext.js && node test/rwahealthoverlay.readiness.js && node test/rwahealthoverlay.schema.js && node test/rwahealthoverlay.vector.js && node test/rwaregistrylifecycle.js && node test/rwaregistrylifecycle.sync.js && node test/agent-referral-cash.js && node test/phase2-discovery.js && node test/phase2-compiler.js && node test/phase2-review-regressions.js && node test/phase2-scale.js && node test/content-graph.js && node test/content-runtime.js && node test/content-social.js && node test/content-seasonal.js && node test/content-seasonal-case.js && node test/content-crafting.js && node test/content-crafting-jobs.js && node test/content-crafting-tools.js && node test/content-exchange.js && node test/content-api.js && node test/v4oraclekeeper.js && node test/genesiscca.js && node test/genesislaunch.js && node test/genesisrelease.js && node test/worldgraph.js && node test/worldgraph-validation.js && node test/items.js && node test/crafting.js && node test/mysteries.js && node test/operations.js && node test/belladonna.js && node test/worldgraph-api.js && node tools/pgcheck-belladonna.js --pg-mem && node test/phase2-definition-schema.js && node test/phase2-definitions.js && node test/phase2-activation.js",
       "provenance": [
         {
           "file": "package.json",
@@ -52444,6 +52490,22 @@
       ]
     },
     {
+      "key": "Commit:58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c",
+      "type": "Commit",
+      "id": "58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c",
+      "label": "feat: select stored definitions with audited CAS",
+      "title": "feat: select stored definitions with audited CAS",
+      "date": "2026-09-07T09:09:08.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c",
+      "provenance": [
+        {
+          "commit": "58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c"
+        }
+      ]
+    },
+    {
       "key": "Commit:58a1aee1116d10be2369219ff08323756498b2ff",
       "type": "Commit",
       "id": "58a1aee1116d10be2369219ff08323756498b2ff",
@@ -55800,6 +55862,22 @@
         {
           "commit": "7e65c69f800f21c3731f02aed364903989cd8c5a",
           "url": "https://github.com/OmertaDev/Omerta/commit/7e65c69f800f21c3731f02aed364903989cd8c5a"
+        }
+      ]
+    },
+    {
+      "key": "Commit:7e6e4e52ee9180b82b7813aa98c2b3f057b637fa",
+      "type": "Commit",
+      "id": "7e6e4e52ee9180b82b7813aa98c2b3f057b637fa",
+      "label": "docs: refresh sealed definition registry graph",
+      "title": "docs: refresh sealed definition registry graph",
+      "date": "2026-09-07T08:36:21.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/7e6e4e52ee9180b82b7813aa98c2b3f057b637fa",
+      "provenance": [
+        {
+          "commit": "7e6e4e52ee9180b82b7813aa98c2b3f057b637fa",
+          "url": "https://github.com/OmertaDev/Omerta/commit/7e6e4e52ee9180b82b7813aa98c2b3f057b637fa"
         }
       ]
     },
@@ -73620,12 +73698,12 @@
       "label": "MARKETING-POSTS.md",
       "documentType": "documentation",
       "lines": 128,
-      "version": "5695c96aecd802d9",
+      "version": "87a291ec8a499458",
       "provenance": [
         {
           "file": "MARKETING-POSTS.md",
           "line": 1,
-          "version": "5695c96aecd802d9"
+          "version": "87a291ec8a499458"
         }
       ]
     },
@@ -75236,12 +75314,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 735,
-      "version": "2e5a2831d9adc8c3",
+      "version": "e820cdb55975a0c0",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "2e5a2831d9adc8c3"
+          "version": "e820cdb55975a0c0"
         }
       ]
     },
@@ -80241,6 +80319,9 @@
           "commit": "7e65c69f800f21c3731f02aed364903989cd8c5a"
         },
         {
+          "commit": "7e6e4e52ee9180b82b7813aa98c2b3f057b637fa"
+        },
+        {
           "commit": "7eb3399336734357d23791d6dfa776edb2480d3f"
         },
         {
@@ -80740,6 +80821,9 @@
         },
         {
           "commit": "7e65c69f800f21c3731f02aed364903989cd8c5a"
+        },
+        {
+          "commit": "7e6e4e52ee9180b82b7813aa98c2b3f057b637fa"
         },
         {
           "commit": "7eb3399336734357d23791d6dfa776edb2480d3f"
@@ -81243,6 +81327,9 @@
           "commit": "7e65c69f800f21c3731f02aed364903989cd8c5a"
         },
         {
+          "commit": "7e6e4e52ee9180b82b7813aa98c2b3f057b637fa"
+        },
+        {
           "commit": "7eb3399336734357d23791d6dfa776edb2480d3f"
         },
         {
@@ -81514,6 +81601,9 @@
         },
         {
           "commit": "711e005409b67e48860b62656965aa6430cbcd50"
+        },
+        {
+          "commit": "7e6e4e52ee9180b82b7813aa98c2b3f057b637fa"
         },
         {
           "commit": "81583e991da50050e65c67b80120a1b2406a804f"
@@ -81825,6 +81915,9 @@
           "commit": "7e65c69f800f21c3731f02aed364903989cd8c5a"
         },
         {
+          "commit": "7e6e4e52ee9180b82b7813aa98c2b3f057b637fa"
+        },
+        {
           "commit": "7eb3399336734357d23791d6dfa776edb2480d3f"
         },
         {
@@ -82131,6 +82224,9 @@
           "commit": "711e005409b67e48860b62656965aa6430cbcd50"
         },
         {
+          "commit": "7e6e4e52ee9180b82b7813aa98c2b3f057b637fa"
+        },
+        {
           "commit": "81583e991da50050e65c67b80120a1b2406a804f"
         },
         {
@@ -82306,6 +82402,9 @@
         },
         {
           "commit": "711e005409b67e48860b62656965aa6430cbcd50"
+        },
+        {
+          "commit": "7e6e4e52ee9180b82b7813aa98c2b3f057b637fa"
         },
         {
           "commit": "83d19c0f0a798b0b59bed8d79b856659f08bba83"
@@ -82940,6 +83039,21 @@
       ]
     },
     {
+      "key": "Module:src/content/activation-policy.js",
+      "type": "Module",
+      "id": "src/content/activation-policy.js",
+      "label": "src/content/activation-policy.js",
+      "lines": 56,
+      "version": "907a9bfee4d78c23",
+      "provenance": [
+        {
+          "file": "src/content/activation-policy.js",
+          "line": 1,
+          "version": "907a9bfee4d78c23"
+        }
+      ]
+    },
+    {
       "key": "Module:src/content/artifact-storage.js",
       "type": "Module",
       "id": "src/content/artifact-storage.js",
@@ -82959,13 +83073,13 @@
       "type": "Module",
       "id": "src/content/artifacts.js",
       "label": "src/content/artifacts.js",
-      "lines": 54,
-      "version": "57500e0b5240c9bd",
+      "lines": 200,
+      "version": "2b47ec473567f29c",
       "provenance": [
         {
           "file": "src/content/artifacts.js",
           "line": 1,
-          "version": "57500e0b5240c9bd"
+          "version": "2b47ec473567f29c"
         }
       ]
     },
@@ -83829,13 +83943,13 @@
       "type": "Module",
       "id": "src/itemdefinitions.js",
       "label": "src/itemdefinitions.js",
-      "lines": 161,
-      "version": "797373b0c36b9775",
+      "lines": 201,
+      "version": "4229cb9cd1a71a8a",
       "provenance": [
         {
           "file": "src/itemdefinitions.js",
           "line": 1,
-          "version": "797373b0c36b9775"
+          "version": "4229cb9cd1a71a8a"
         }
       ]
     },
@@ -88734,12 +88848,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "5a03f9ef049f424374ae9659fde81c8510c71e87",
+      "revision": "58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c",
       "currentBranch": "codex/world-graph-phases-2-3",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 1895,
+      "currentArtifactCount": 1897,
       "provenance": [
         {
           "file": "README.md",
@@ -115214,13 +115328,13 @@
       "type": "TestSuite",
       "id": "test/gates.js",
       "label": "test/gates.js",
-      "lines": 3798,
-      "version": "85dd1ca5ef964588",
+      "lines": 3800,
+      "version": "269c7c48023c62c1",
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "85dd1ca5ef964588"
+          "version": "269c7c48023c62c1"
         }
       ]
     },
@@ -115424,13 +115538,13 @@
       "type": "TestSuite",
       "id": "test/lib/phase2-definition-fixtures.js",
       "label": "test/lib/phase2-definition-fixtures.js",
-      "lines": 98,
-      "version": "c12aefc09497b190",
+      "lines": 102,
+      "version": "58f773eb51d570bd",
       "provenance": [
         {
           "file": "test/lib/phase2-definition-fixtures.js",
           "line": 1,
-          "version": "c12aefc09497b190"
+          "version": "58f773eb51d570bd"
         }
       ]
     },
@@ -115701,6 +115815,21 @@
           "file": "test/people.js",
           "line": 1,
           "version": "34d6081a14a6b255"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/phase2-activation.js",
+      "type": "TestSuite",
+      "id": "test/phase2-activation.js",
+      "label": "test/phase2-activation.js",
+      "lines": 466,
+      "version": "adcdbd4ba5dc1b26",
+      "provenance": [
+        {
+          "file": "test/phase2-activation.js",
+          "line": 1,
+          "version": "adcdbd4ba5dc1b26"
         }
       ]
     },
@@ -124660,6 +124789,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:src/content/activation-policy.js",
+      "to": "Domain:platform-core",
+      "provenance": {
+        "file": "src/content/activation-policy.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:src/content/artifact-storage.js",
       "to": "Domain:platform-core",
       "provenance": {
@@ -127184,6 +127322,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "test/people.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/phase2-activation.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/phase2-activation.js",
         "line": 1
       }
     },
@@ -167594,6 +167741,78 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c",
+      "to": "Artifact:MARKETING-POSTS.md",
+      "provenance": {
+        "commit": "58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c",
+      "to": "Artifact:src/content/activation-policy.js",
+      "provenance": {
+        "commit": "58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c",
+      "to": "Artifact:src/content/artifacts.js",
+      "provenance": {
+        "commit": "58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c",
+      "to": "Artifact:src/itemdefinitions.js",
+      "provenance": {
+        "commit": "58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c",
+      "to": "Artifact:test/gates.js",
+      "provenance": {
+        "commit": "58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c",
+      "to": "Artifact:test/lib/phase2-definition-fixtures.js",
+      "provenance": {
+        "commit": "58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c",
+      "to": "Artifact:test/phase2-activation.js",
+      "provenance": {
+        "commit": "58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:58a1aee1116d10be2369219ff08323756498b2ff",
       "to": "Artifact:AUDIT-world-frontier.md",
       "provenance": {
@@ -180542,6 +180761,62 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "7e65c69f800f21c3731f02aed364903989cd8c5a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7e6e4e52ee9180b82b7813aa98c2b3f057b637fa",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "7e6e4e52ee9180b82b7813aa98c2b3f057b637fa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7e6e4e52ee9180b82b7813aa98c2b3f057b637fa",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "7e6e4e52ee9180b82b7813aa98c2b3f057b637fa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7e6e4e52ee9180b82b7813aa98c2b3f057b637fa",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "7e6e4e52ee9180b82b7813aa98c2b3f057b637fa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7e6e4e52ee9180b82b7813aa98c2b3f057b637fa",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "7e6e4e52ee9180b82b7813aa98c2b3f057b637fa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7e6e4e52ee9180b82b7813aa98c2b3f057b637fa",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "7e6e4e52ee9180b82b7813aa98c2b3f057b637fa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7e6e4e52ee9180b82b7813aa98c2b3f057b637fa",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "7e6e4e52ee9180b82b7813aa98c2b3f057b637fa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7e6e4e52ee9180b82b7813aa98c2b3f057b637fa",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "7e6e4e52ee9180b82b7813aa98c2b3f057b637fa"
       }
     },
     {
@@ -219918,6 +220193,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:backend",
+      "to": "Artifact:src/content/activation-policy.js",
+      "provenance": {
+        "file": "src/content/activation-policy.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:backend",
       "to": "Artifact:src/content/artifact-storage.js",
       "provenance": {
         "file": "src/content/artifact-storage.js",
@@ -230123,6 +230407,15 @@
       "to": "Artifact:test/people.js",
       "provenance": {
         "file": "test/people.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/phase2-activation.js",
+      "provenance": {
+        "file": "test/phase2-activation.js",
         "line": 1
       }
     },
@@ -247606,7 +247899,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 447
+      "weight": 451
     },
     {
       "type": "DEPENDS_ON",
@@ -248479,6 +248772,15 @@
       "type": "EXECUTES",
       "from": "Command:npm:pretest",
       "to": "Artifact:test/operations.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:pretest",
+      "to": "Artifact:test/phase2-activation.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -260947,6 +261249,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c",
+      "provenance": {
+        "commit": "58791dc87f9ff4e39d7b1d5dc485cffe85f4dc7c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:58a1aee1116d10be2369219ff08323756498b2ff",
       "provenance": {
         "commit": "58a1aee1116d10be2369219ff08323756498b2ff"
@@ -262622,6 +262932,14 @@
       "to": "Commit:7e65c69f800f21c3731f02aed364903989cd8c5a",
       "provenance": {
         "commit": "7e65c69f800f21c3731f02aed364903989cd8c5a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:7e6e4e52ee9180b82b7813aa98c2b3f057b637fa",
+      "provenance": {
+        "commit": "7e6e4e52ee9180b82b7813aa98c2b3f057b637fa"
       }
     },
     {
@@ -270208,6 +270526,24 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:src/content/activation-policy.js",
+      "to": "Artifact:src/content/artifact-storage.js",
+      "provenance": {
+        "file": "src/content/activation-policy.js",
+        "line": 2
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/content/activation-policy.js",
+      "to": "Artifact:src/content/canonical.js",
+      "provenance": {
+        "file": "src/content/activation-policy.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:src/content/artifact-storage.js",
       "to": "Artifact:src/content/canonical.js",
       "provenance": {
@@ -270263,6 +270599,24 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:src/content/artifacts.js",
+      "to": "Artifact:src/content/activation-policy.js",
+      "provenance": {
+        "file": "src/content/artifacts.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/content/artifacts.js",
+      "to": "Artifact:src/content/canonical.js",
+      "provenance": {
+        "file": "src/content/artifacts.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/content/artifacts.js",
       "to": "Artifact:src/content/phase2-transactions.js",
       "provenance": {
         "file": "src/content/artifacts.js",
@@ -270284,7 +270638,7 @@
       "to": "Artifact:src/itemdefinitions.js",
       "provenance": {
         "file": "src/content/artifacts.js",
-        "line": 5
+        "line": 6
       }
     },
     {
@@ -280247,7 +280601,7 @@
       "to": "Artifact:src/content/phase2-transactions.js",
       "provenance": {
         "file": "test/lib/phase2-definition-fixtures.js",
-        "line": 84
+        "line": 88
       }
     },
     {
@@ -280824,6 +281178,42 @@
       "provenance": {
         "file": "test/people.js",
         "line": 13
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-activation.js",
+      "to": "Artifact:src/content/activation-policy.js",
+      "provenance": {
+        "file": "test/phase2-activation.js",
+        "line": 11
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-activation.js",
+      "to": "Artifact:src/content/artifacts.js",
+      "provenance": {
+        "file": "test/phase2-activation.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-activation.js",
+      "to": "Artifact:src/content/phase2-transactions.js",
+      "provenance": {
+        "file": "test/phase2-activation.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-activation.js",
+      "to": "Artifact:src/itemdefinitions.js",
+      "provenance": {
+        "file": "test/phase2-activation.js",
+        "line": 7
       }
     },
     {
@@ -307199,6 +307589,24 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:src/content/activation-policy.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 336
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:src/content/activation-policy.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 43
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
       "to": "Artifact:src/content/artifact-storage.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
@@ -307941,6 +308349,24 @@
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
         "line": 733
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:test/phase2-activation.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 342
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:test/phase2-activation.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 60
       }
     },
     {
@@ -317584,6 +318010,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Module:src/content/activation-policy.js",
+      "to": "Artifact:src/content/activation-policy.js",
+      "provenance": {
+        "file": "src/content/activation-policy.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Module:src/content/artifact-storage.js",
       "to": "Artifact:src/content/artifact-storage.js",
       "provenance": {
@@ -320684,6 +321119,15 @@
       "to": "Artifact:test/people.js",
       "provenance": {
         "file": "test/people.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/phase2-activation.js",
+      "to": "Artifact:test/phase2-activation.js",
+      "provenance": {
+        "file": "test/phase2-activation.js",
         "line": 1
       }
     },
@@ -324221,7 +324665,7 @@
       "to": "Artifact:src/content/phase2-transactions.js",
       "provenance": {
         "file": "test/lib/phase2-definition-fixtures.js",
-        "line": 84
+        "line": 88
       }
     },
     {
@@ -324753,6 +325197,42 @@
       "provenance": {
         "file": "test/people.js",
         "line": 13
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/phase2-activation.js",
+      "to": "Artifact:src/content/activation-policy.js",
+      "provenance": {
+        "file": "test/phase2-activation.js",
+        "line": 11
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/phase2-activation.js",
+      "to": "Artifact:src/content/artifacts.js",
+      "provenance": {
+        "file": "test/phase2-activation.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/phase2-activation.js",
+      "to": "Artifact:src/content/phase2-transactions.js",
+      "provenance": {
+        "file": "test/phase2-activation.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/phase2-activation.js",
+      "to": "Artifact:src/itemdefinitions.js",
+      "provenance": {
+        "file": "test/phase2-activation.js",
+        "line": 7
       }
     },
     {
@@ -330293,10 +330773,19 @@
     {
       "type": "USES_TABLE",
       "from": "Artifact:src/content/artifacts.js",
+      "to": "Table:content_activation_events",
+      "provenance": {
+        "file": "src/content/artifacts.js",
+        "line": 82
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/content/artifacts.js",
       "to": "Table:content_bundle_activations",
       "provenance": {
         "file": "src/content/artifacts.js",
-        "line": 14
+        "line": 20
       }
     },
     {
@@ -330305,7 +330794,25 @@
       "to": "Table:content_bundle_artifacts",
       "provenance": {
         "file": "src/content/artifacts.js",
-        "line": 25
+        "line": 31
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/content/artifacts.js",
+      "to": "Table:content_bundle_item_definitions",
+      "provenance": {
+        "file": "src/content/artifacts.js",
+        "line": 86
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/content/artifacts.js",
+      "to": "Table:item_definition_activations",
+      "provenance": {
+        "file": "src/content/artifacts.js",
+        "line": 68
       }
     },
     {
@@ -334181,10 +334688,37 @@
     {
       "type": "USES_TABLE",
       "from": "Artifact:src/itemdefinitions.js",
+      "to": "Table:content_activation_events",
+      "provenance": {
+        "file": "src/itemdefinitions.js",
+        "line": 176
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/itemdefinitions.js",
+      "to": "Table:content_bundle_activations",
+      "provenance": {
+        "file": "src/itemdefinitions.js",
+        "line": 178
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/itemdefinitions.js",
       "to": "Table:content_bundle_item_definitions",
       "provenance": {
         "file": "src/itemdefinitions.js",
         "line": 115
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/itemdefinitions.js",
+      "to": "Table:item_definition_activations",
+      "provenance": {
+        "file": "src/itemdefinitions.js",
+        "line": 171
       }
     },
     {
