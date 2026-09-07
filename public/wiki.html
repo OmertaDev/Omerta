@@ -41,11 +41,18 @@
   #wrap{display:grid;grid-template-columns:296px 1fr;min-height:calc(100vh - 56px)}
   #nav{border-right:1px solid var(--line);background:linear-gradient(180deg,var(--panel),var(--bg));
     padding:16px 0 40px;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;scrollbar-width:thin}
-  #nav .search{padding:0 16px 12px}
+  #nav .search{padding:0 16px 12px;position:relative}
+  #nav .search label{display:block;margin-bottom:8px;color:var(--om-text-secondary);font:600 13px/1.4 var(--om-font-data)}
+  #nav .search-tools{display:flex;gap:8px;align-items:center}
+  #nav .search-tools input{min-width:0}
+  #clear-search{flex:none;min-height:44px;padding:8px;border:1px solid var(--line2);border-radius:2px;background:var(--panel2);color:var(--ink);font:13px var(--mono);cursor:pointer}
+  #clear-search[hidden]{display:none}
+  .search-hint{display:block;margin-top:8px;color:var(--dim);font:12px/1.4 var(--mono)}
   #nav input{width:100%;background:#0e0d0c;border:1px solid var(--line2);color:var(--ink);
     min-height:44px;padding:9px 11px;border-radius:2px;font-size:13px}
   #nav input::placeholder{color:var(--faint)}
   #search-results{padding:0 10px 10px}
+  #nav.searching #search-results{max-height:calc(100dvh - 270px);overflow-y:auto;overscroll-behavior:contain}
   #search-results:empty{display:none}
   #search-results a{display:block;min-height:44px;padding:9px 10px;border-bottom:1px solid var(--line);color:var(--ink)}
   #search-results a:hover{background:var(--panel2);text-decoration:none}
@@ -69,6 +76,10 @@
   #doc .codex-intro h1{font-family:var(--display);font-size:clamp(38px,6vw,64px);line-height:1;
     margin:8px 0 12px;color:var(--neon);letter-spacing:.08em;text-transform:uppercase;text-wrap:balance}
   #doc .codex-intro p{color:var(--dim);font-size:17px;max-width:66ch;margin:0 0 16px}
+  .codex-routes{display:flex;flex-wrap:wrap;gap:8px 24px;margin:16px 0}
+  .codex-routes a{display:inline-flex;align-items:center;min-height:44px;font:600 14px/1.4 var(--om-font-data)}
+  #doc .section-link{float:right;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;font:16px var(--om-font-data);color:var(--om-text-muted)}
+  #doc .section-link:hover{color:var(--om-action-primary)}
   #doc section{scroll-margin-top:76px;margin-bottom:56px;padding-bottom:40px;border-bottom:1px solid var(--line)}
   #doc section:last-child{border-bottom:0}
   #doc .num{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--faint);
@@ -138,6 +149,7 @@
     #nav{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line);max-height:44vh}
     #nav-toggle{display:block}
     #nav.collapsed{max-height:none;padding-bottom:4px}
+    #nav.searching #search-results{max-height:38dvh}
     #nav.collapsed #nav-content{display:none}
     #doc{padding:26px 18px 80px}
     #doc .codex-intro{margin-bottom:32px}
@@ -169,7 +181,7 @@
 </nav>
 <main id="wrap">
   <aside id="nav" class="collapsed" aria-label="Codex contents">
-    <div class="search"><input id="q" placeholder="What do you want to do?" aria-label="Search the codex" autocomplete="off"></div>
+    <div class="search"><label for="q">Find your next move</label><div class="search-tools"><input id="q" type="search" placeholder="Search the Codex" aria-label="Search the codex" aria-describedby="search-hint" autocomplete="off"><button id="clear-search" type="button" hidden>Clear</button></div><span class="search-hint" id="search-hint">Try “heal”, “travel”, or “recruit”. Press / to search.</span></div>
     <div id="search-status" role="status" aria-live="polite"></div>
     <div id="search-results" aria-label="Codex search results"></div>
     <button id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-content">Browse sections</button>
@@ -179,7 +191,7 @@
   </aside>
   <article id="doc" tabindex="-1"></article>
 </main>
-<a id="totop" href="#top">↑ top</a>
+<a id="totop" href="#top" aria-label="Back to the top of the Codex">Back to top</a>
 
 <script>
 // ── The codex content. Each section: { id, group, title, tag, html }. Rendered into #doc + #nav. ──
@@ -2040,38 +2052,39 @@ function render() {
   const doc = document.getElementById('doc');
   const nav = document.getElementById('navlist');
   doc.innerHTML = `<header class="codex-intro">
-    <span class="artifact-kicker">Human rulebook · machine truth</span>
     <h1>THE CODEX</h1>
     <p>Search the complete city: what every system does, what it costs, what can go wrong, and which route proves it.</p>
+    <nav class="codex-routes" aria-label="Start reading"><a href="#coreloop">Learn the core loop</a><a href="#paths">Choose your Path</a><a href="/agents">Read the agent guide →</a></nav>
     <div class="artifact-notice artifact-notice--status"><strong>Production status:</strong> the off-chain game and ledger are live. The on-chain extraction rail is built and devnet-proven, but dormant until the audit and launch gates clear.</div>
   </header>`;
   nav.innerHTML = '';
   const groups = {};
   for (const s of SECTIONS) (groups[s.group] = groups[s.group] || []).push(s);
   const order = [...GROUP_ORDER.filter((g) => groups[g]), ...Object.keys(groups).filter((g) => !GROUP_ORDER.includes(g))];
-  let n = 0;
   for (const g of order) {
     const gl = document.createElement('div'); gl.className = 'grp'; gl.textContent = g; nav.appendChild(gl);
     for (const s of groups[g]) {
       const a = document.createElement('a'); a.className = 'item'; a.href = '#' + s.id; a.dataset.id = s.id;
       a.textContent = s.title; nav.appendChild(a);
-      const sec = document.createElement('section'); sec.id = s.id; sec.setAttribute('aria-labelledby', s.id + '-title');
-      n += 1;
-      const num = String(n).padStart(2, '0');
-      sec.innerHTML = `<span class="num">${num} — ${g}</span><h2 id="${s.id}-title">${s.title}</h2>`
+      const sec = document.createElement('section'); sec.id = s.id; sec.setAttribute('aria-labelledby', s.id + '-title'); sec.tabIndex = -1;
+      sec.innerHTML = `<a class="section-link" href="#${s.id}" aria-label="Link to ${escText(s.title)}">#</a><h2 id="${s.id}-title">${s.title}</h2>`
         + `${s.tag ? `<div class="tag">${s.tag}</div>` : ''}${s.html}`;
       doc.appendChild(sec);
     }
   }
   for (const table of doc.querySelectorAll('table')) {
-    const scroller = document.createElement('div'); scroller.className = 'table-scroll';
+    const scroller = document.createElement('div'); scroller.className = 'table-scroll'; scroller.tabIndex = 0;
+    scroller.setAttribute('role', 'region');
+    scroller.setAttribute('aria-label', (table.closest('section')?.querySelector('h2')?.textContent || 'Codex') + ' table; scroll to see all columns');
     table.parentNode.insertBefore(scroller, table); scroller.appendChild(table);
   }
   nav.querySelectorAll('a.item').forEach((a) => a.addEventListener('click', () => {
     if (matchMedia('(max-width: 900px)').matches) {
       document.getElementById('nav').classList.add('collapsed');
       document.getElementById('nav-toggle').setAttribute('aria-expanded', 'false');
+      document.getElementById('nav-toggle').textContent = 'Browse sections';
     }
+    document.getElementById(a.dataset.id)?.focus({ preventScroll: true });
   }));
   wireScroll();
 }
@@ -2115,10 +2128,16 @@ document.getElementById('q').addEventListener('input', (e) => {
   }
   const nav = document.getElementById('nav'), results = document.getElementById('search-results');
   nav.classList.toggle('searching', !!q);
+  document.getElementById('clear-search').hidden = !q;
   results.innerHTML = q ? matches.map((hit) => `<a href="#${escText(hit.id)}" data-search-hit="${escText(hit.id)}"><strong>${escText(hit.title)}</strong><span class="search-hit__snippet">${searchExcerpt(hit.text, q)}</span></a>`).join('') : '';
   results.querySelectorAll('[data-search-hit]').forEach((link) => link.addEventListener('click', () => {
+    const target = document.getElementById(link.dataset.searchHit);
     e.target.value = '';
     e.target.dispatchEvent(new Event('input', { bubbles: true }));
+    nav.classList.add('collapsed');
+    document.getElementById('nav-toggle').setAttribute('aria-expanded', 'false');
+    document.getElementById('nav-toggle').textContent = 'Browse sections';
+    target?.focus({ preventScroll: true });
   }));
   // A search that hides everything and says nothing reads like a broken page.
   let none = document.getElementById('nohit');
@@ -2126,10 +2145,30 @@ document.getElementById('q').addEventListener('input', (e) => {
     none = document.createElement('div'); none.id = 'nohit'; none.className = 'empty';
     document.getElementById('doc').appendChild(none);
   }
-  none.innerHTML = hits ? '' : `<h2 style="color:#8d8578">Nothing matches</h2>`
+  none.innerHTML = hits ? '' : `<h2>Nothing matches</h2>`
     + `<p class="lead">The Codex has no section mentioning “${escText(q)}”. Try a task such as heal, borrow, travel, or recruit.</p>`;
   none.style.display = hits ? 'none' : '';
   document.getElementById('search-status').textContent = q ? `${hits} section${hits === 1 ? '' : 's'} found` : '';
+});
+
+const searchInput = document.getElementById('q');
+document.getElementById('clear-search').addEventListener('click', () => {
+  searchInput.value = '';
+  searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+  searchInput.focus();
+});
+document.addEventListener('keydown', (event) => {
+  const editing = event.target.closest('input, textarea, select, [contenteditable]');
+  if (event.key === '/' && !editing && !event.ctrlKey && !event.metaKey && !event.altKey) {
+    event.preventDefault(); searchInput.focus(); searchInput.select();
+  }
+  if (event.key === 'Escape' && event.target === searchInput && searchInput.value) {
+    event.preventDefault(); document.getElementById('clear-search').click();
+  }
+  if (event.key === 'Enter' && event.target === searchInput) {
+    const first = document.querySelector('#search-results a');
+    if (first) { event.preventDefault(); first.click(); }
+  }
 });
 
 document.getElementById('nav-toggle').addEventListener('click', () => {

@@ -53,10 +53,17 @@ function nav({ quiz = false } = {}) {
   return `<a class="skip-link" href="#main">Skip to content</a>
 <nav class="public-nav" aria-label="Primary">
   <a class="public-nav__brand" href="/" aria-label="OMERTÀ home">OMERTÀ</a>
+  <details class="public-nav__menu"><summary>Explore</summary><div class="public-nav__menu-list">
+    <a href="/">The city</a><a href="/wiki#paths">The Codex</a><a href="/arena">The Arena</a>
+    <a href="/path"${quiz ? ' aria-current="page"' : ''}>${quiz ? 'Path quiz' : 'Retake the quiz'}</a>
+    <a href="/play">Connect an AI</a>
+  </div></details>
   <div class="public-nav__links path-nav-links">
     <a href="/">The City</a>
     <a href="/wiki#paths">Codex</a>
     ${quiz ? '<a aria-current="page" href="/path">Path Quiz</a>' : '<a href="/path">Retake Quiz</a>'}
+    <a href="/play">Agent setup</a>
+    <a class="public-nav__cta" href="/#enter-city">Enter</a>
   </div>
 </nav>`;
 }

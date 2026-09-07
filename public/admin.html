@@ -25,16 +25,16 @@
   input,select { background:#0e0e12; border:1px solid var(--line); color:var(--ink); padding:7px 8px; border-radius:4px; font-size:12px; min-height:44px; }
   .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:12px; padding:12px 16px; }
   .panel { background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:12px; }
-  .panel h2 { margin:0 0 10px; font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--dim); font-weight:normal; }
+  .panel h2 { margin:0 0 12px; font:600 16px/1.3 var(--om-font-display); letter-spacing:.08em; text-transform:uppercase; color:var(--ink); }
   .row { display:flex; justify-content:space-between; margin:3px 0; font-size:13px; gap:10px; }
   .row .k { color:var(--dim); } .row .v { color:var(--ink); text-align:right; }
   .big { font-size:26px; color:var(--neon); margin:2px 0 8px; }
   .banner { padding:12px 16px; margin:0; text-align:center; font-size:15px; letter-spacing:2px; }
   .banner.ok { background:rgba(95,169,107,.14); color:var(--ok); border-bottom:1px solid var(--ok); }
   .banner.bad { background:rgba(192,57,43,.18); color:var(--bad); border-bottom:1px solid var(--blood); }
-  .chk { display:flex; justify-content:space-between; font-size:12px; padding:2px 0; border-bottom:1px solid #1c1c22; }
+  .chk { display:flex; justify-content:space-between; gap:12px; font-size:14px; line-height:1.5; padding:4px 0; border-bottom:1px solid var(--line); }
   .chk .g { color:var(--ok); } .chk .b { color:var(--bad); }
-  .feed { max-height:340px; overflow-y:auto; font-size:11px; }
+  .feed { max-height:340px; overflow-y:auto; font-size:14px; line-height:1.5; }
   .feed .e { padding:3px 0; border-bottom:1px solid #1a1a20; color:var(--dim); }
   .feed .e b { color:var(--ink); }
   .bar { height:6px; background:#22222a; border-radius:3px; overflow:hidden; margin:1px 0 6px; }
@@ -48,7 +48,7 @@
   .login-actions{display:flex;gap:8px;align-items:stretch}.login-actions input{min-width:0;flex:1}.login-actions button{flex:0 0 auto}
   .hidden { display:none !important; }
   #err { color:var(--bad); font-size:12px; margin-top:6px; }
-  .note { color:var(--dim); font-size:11px; margin-top:4px; }
+  .note { color:var(--dim); font-size:14px; line-height:1.5; margin-top:4px; }
   .mod-field{display:flex;flex:1 1 120px;flex-direction:column;gap:3px}
   .mod-field label{color:var(--dim);font:10px/1.3 var(--mono);letter-spacing:.08em;text-transform:uppercase}
   .danger-zone{margin-top:10px;padding-top:10px;border-top:1px solid color-mix(in srgb,var(--blood) 45%,var(--line))}
@@ -111,10 +111,16 @@
   .rwa-card details[open] summary{color:var(--neon);border-bottom:1px solid var(--line)}
   @media(max-width:980px){.rwa-metrics{grid-template-columns:repeat(3,1fr)}.rwa-pipeline{grid-template-columns:1fr}.rwa-columns{grid-template-columns:1fr}}
   @media(max-width:560px){.grid{grid-template-columns:1fr;padding:8px}.center{margin:10vh auto}.login-actions{flex-direction:column}.mod-row{align-items:stretch}.mod-field{flex-basis:100%}.rwa-head{flex-direction:column}.rwa-metrics{grid-template-columns:repeat(2,1fr)}.rwa-form,.rwa-locked{grid-template-columns:1fr}.rwa-form .wide{grid-column:auto}}
+  .operations-index{display:flex;align-items:center;gap:4px 18px;flex-wrap:wrap;padding:8px 16px;border-bottom:1px solid var(--line);background:var(--bg)}
+  .operations-index a{display:inline-flex;align-items:center;min-height:44px;color:var(--ink);font:14px/1.4 var(--om-font-data);text-underline-offset:.2em}
+  .operations-index a:hover{color:var(--neon)}
+  #dash .panel[id]{scroll-margin-top:110px;min-width:0}
+  .operator-home{display:inline-flex;align-items:center;min-height:44px;margin-top:16px;color:var(--dim);font-size:14px}
 </style>
 <link rel="stylesheet" href="/omerta-ui.css?v=20260826">
 </head>
 <body>
+<a class="skip-link" id="ops-skip" href="#login">Skip to operator access</a>
 
 <main id="login" class="center" tabindex="-1">
   <div class="artifact-kicker">Restricted operator access</div>
@@ -125,9 +131,10 @@
       <button id="enter" type="submit" style="font-size:14px;padding:8px 18px">OPEN THE LEDGER</button></div></div>
   </form>
   <div id="err" role="alert"></div>
+  <a class="operator-home" href="/">Back to the city</a>
 </main>
 
-<main id="dash" class="hidden">
+<main id="dash" class="hidden" tabindex="-1" aria-label="City operations">
   <div id="dbbanner" class="banner hidden" role="alert">…</div>
   <div id="bkbanner" class="banner hidden" role="alert">…</div>
   <div id="banner" class="banner" role="status" aria-live="polite">…</div>
@@ -138,6 +145,9 @@
     <button id="refresh">refresh</button>
     <button id="logout" class="danger">lock up</button>
   </div>
+  <nav class="operations-index" aria-label="Operations sections">
+    <a href="#p-integrity">Integrity</a><a href="#p-economy">Economy</a><a href="#p-rwa">Acquisition desk</a><a href="#p-players">Players</a><a href="#p-chain">Reserves</a><a href="#p-tokenhealth">Token health</a><a href="#p-router">Money routing</a><a href="#p-mod">Moderation</a>
+  </nav>
   <div class="grid">
     <section class="panel panel--wide" id="p-rwa" aria-labelledby="rwa-title">
       <header class="rwa-head">
@@ -260,6 +270,9 @@
 
   function showDash() {
     $('#login').classList.add('hidden'); $('#dash').classList.remove('hidden');
+    $('#ops-skip').href = '#dash'; $('#ops-skip').textContent = 'Skip to city operations';
+    $('#dash').focus({ preventScroll: true });
+    document.querySelectorAll('#dash .panel[id]').forEach((panel) => panel.setAttribute('tabindex', '-1'));
     refreshAll();
     if (timer) clearInterval(timer);
     timer = setInterval(refreshAll, 15000); // live

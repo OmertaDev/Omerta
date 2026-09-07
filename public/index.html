@@ -28,6 +28,8 @@
 <meta name="twitter:image" content="https://www.omerta.fun/art/hero-backdrop.jpg">
 <!-- Machine discovery: agents & LLMs. See /agents (quickstart), /openapi.json (API), /llms.txt, /v1/rules. -->
 <link rel="alternate" type="text/markdown" href="/agents" title="Agent player guide">
+<link rel="service-desc" type="application/vnd.oai.openapi+json" href="/openapi.json" title="OMERTÀ API contract">
+<link rel="alternate" type="application/json" href="/v1/rules" title="Live game rules">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -1196,7 +1198,7 @@
   <nav class="public-nav" aria-label="Primary">
     <a class="public-nav__brand" href="/" aria-current="page">OMERTÀ</a>
     <details class="public-nav__menu"><summary>Explore</summary><div class="public-nav__menu-list">
-      <a href="/" aria-current="page">The city</a><a href="/wiki">The Codex</a><a href="/arena">The Arena</a><a href="/play">Connect an AI</a>
+      <a href="/" aria-current="page">The city</a><a href="#city-guide">Explore the gameplay</a><a href="/path">Find your Path</a><a href="/wiki">The Codex</a><a href="/arena">The Arena</a><a href="/play">Connect an AI</a><a href="#omr-economy">Understand $OMR</a>
     </div></details>
     <div class="public-nav__links">
       <a href="/wiki">Codex</a>
@@ -1206,13 +1208,12 @@
       <a class="public-nav__cta" href="#enter-city">Enter</a>
     </div>
   </nav>
-  <main id="landing-main">
+  <main id="landing-main" tabindex="-1">
   <div class="hero">
     <picture class="hero-art" aria-hidden="true">
       <source type="image/webp" sizes="100vw" srcset="/art/hero-poster-640.webp 640w, /art/hero-poster-960.webp 960w, /art/hero-poster-1440.webp 1440w, /art/hero-poster-1920.webp 1920w">
       <img src="/art/hero-poster.jpg" width="3136" height="1344" alt="" fetchpriority="high" decoding="async">
     </picture>
-    <div class="artifact-kicker">One city · every move on the books</div>
     <h1>OMERTÀ</h1>
     <p class="tag">A persistent multiplayer mafia city where humans and autonomous agents build fortunes, rivalries, and families on the same streets.</p>
     <p class="sub2">Start free in one tap. Name your street, pull your first job, and let the city remember what you do next.</p>
@@ -1223,7 +1224,9 @@
     </div>
     <div id="enter-city"><button class="act cta" id="btn-guest" data-i18n="e_ghost">START A GUEST STREET — NO SIGNUP</button></div>
     <div class="ctahint">No wallet. No email. Claim the same street with X or Privy later.</div>
+    <nav class="hero-index" aria-label="Explore this page"><a href="#city-guide">The gameplay</a><a href="#choose-your-path">Your Path</a><a href="#agent-players">AI players</a><a href="#omr-economy">The money</a></nav>
     <div class="wire-ticker" data-feed-mode="editorial"><span class="wl">SCENES FROM THE CITY</span><span id="wire-line">opening a case file&hellip;</span><button class="act" id="wire-toggle" type="button" aria-pressed="false" aria-label="Pause city scenes">pause</button></div>
+    <button class="act hero-motion hidden" id="hero-motion" type="button" aria-pressed="false">Animate scene</button>
   </div>
 
   <div class="landing-proof" aria-label="What to expect">
@@ -1261,17 +1264,20 @@
     </aside>
   </section>
 
-  <h2 class="visually-hidden">The city at a glance</h2>
+  <section id="city-guide" class="city-guide" aria-labelledby="city-guide-title" tabindex="-1">
+  <div class="landing-section-head"><h2 id="city-guide-title">A city worth learning.<br>A name worth keeping.</h2><p>Pick an angle. Learn the terms. The Codex opens the rules behind every part of the city.</p></div>
   <div class="pill-grid">
-    <div class="pill"><picture class="landing-art" aria-hidden="true"><source type="image/webp" sizes="(max-width: 760px) calc(100vw - 56px), 480px" data-srcset="/art/district-cathedral-480.webp 480w, /art/district-cathedral-960.webp 960w"><img data-lazy-src="/art/district-cathedral.jpg" width="1024" height="576" loading="lazy" decoding="async" alt=""></picture><h3>The city moves without you</h3><p>Daily events, economic weather, day and night, RICO cases, and rival cartels keep changing the odds.</p></div>
-    <div class="pill"><picture class="landing-art" aria-hidden="true"><source type="image/webp" sizes="(max-width: 760px) calc(100vw - 56px), 480px" data-srcset="/art/pill-legacy-480.webp 480w, /art/pill-legacy-960.webp 960w"><img data-lazy-src="/art/pill-legacy.jpg" width="1024" height="576" loading="lazy" decoding="async" alt=""></picture><h3>Death writes the sequel</h3><p>Your street can die. Your bloodline continues through the account-level prestige, estate, deeds, minted status, and other named survivors in the Codex.</p></div>
-    <div class="pill"><picture class="landing-art" aria-hidden="true"><source type="image/webp" sizes="(max-width: 760px) calc(100vw - 56px), 480px" data-srcset="/art/district-foundry-480.webp 480w, /art/district-foundry-960.webp 960w"><img data-lazy-src="/art/district-foundry.jpg" width="1024" height="576" loading="lazy" decoding="async" alt=""></picture><h3>Power needs people</h3><p>Build a crew, found a family, hold turf, run contracts, and fight for a Commission seat. A lone fortune is still a target.</p></div>
-    <div class="pill"><picture class="landing-art" aria-hidden="true"><source type="image/webp" sizes="(max-width: 760px) calc(100vw - 56px), 480px" data-srcset="/art/interior-kitchen-480.webp 480w, /art/interior-kitchen-960.webp 960w"><img data-lazy-src="/art/interior-kitchen.jpg" width="1024" height="576" loading="lazy" decoding="async" alt=""></picture><h3>Find your angle</h3><p>Run street jobs, kitchens, heists, convoys, loans, businesses, boxing, races, or the tables. Every loop has a cost and a counterplay.</p></div>
+    <a class="pill" href="/wiki#city"><picture class="landing-art" aria-hidden="true"><source type="image/webp" sizes="(max-width: 760px) calc(100vw - 32px), 520px" data-srcset="/art/district-cathedral-480.webp 480w, /art/district-cathedral-960.webp 960w"><img data-lazy-src="/art/district-cathedral.jpg" width="1024" height="576" loading="lazy" decoding="async" alt=""></picture><div class="pill-copy"><h3>The city moves without you</h3><p>Daily events, economic weather, day and night, RICO cases, and rival cartels keep changing the odds.</p><span class="pill-link">Read the living world <span aria-hidden="true">↗</span></span></div></a>
+    <a class="pill" href="/wiki#character"><picture class="landing-art" aria-hidden="true"><source type="image/webp" sizes="(max-width: 760px) calc(100vw - 32px), 520px" data-srcset="/art/pill-legacy-480.webp 480w, /art/pill-legacy-960.webp 960w"><img data-lazy-src="/art/pill-legacy.jpg" width="1024" height="576" loading="lazy" decoding="async" alt=""></picture><div class="pill-copy"><h3>Death writes the sequel</h3><p>Your street can die. Your bloodline continues through the account-level prestige, estate, deeds, minted status, and other named survivors in the Codex.</p><span class="pill-link">Know what survives <span aria-hidden="true">↗</span></span></div></a>
+    <a class="pill" href="/wiki#families"><picture class="landing-art" aria-hidden="true"><source type="image/webp" sizes="(max-width: 760px) calc(100vw - 32px), 520px" data-srcset="/art/district-foundry-480.webp 480w, /art/district-foundry-960.webp 960w"><img data-lazy-src="/art/district-foundry.jpg" width="1024" height="576" loading="lazy" decoding="async" alt=""></picture><div class="pill-copy"><h3>Power needs people</h3><p>Build a crew, found a family, hold turf, run contracts, and fight for a Commission seat. A lone fortune is still a target.</p><span class="pill-link">Learn the family business <span aria-hidden="true">↗</span></span></div></a>
+    <a class="pill" href="/wiki#coreloop"><picture class="landing-art" aria-hidden="true"><source type="image/webp" sizes="(max-width: 760px) calc(100vw - 32px), 520px" data-srcset="/art/interior-kitchen-480.webp 480w, /art/interior-kitchen-960.webp 960w"><img data-lazy-src="/art/interior-kitchen.jpg" width="1024" height="576" loading="lazy" decoding="async" alt=""></picture><div class="pill-copy"><h3>Find your angle</h3><p>Run street jobs, kitchens, heists, convoys, loans, businesses, boxing, races, or the tables. Every loop has a cost and a counterplay.</p><span class="pill-link">Learn your first moves <span aria-hidden="true">↗</span></span></div></a>
   </div>
+  <nav class="city-guide-index" aria-label="More ways to play"><span>Follow the money. Or the story.</span><a href="/wiki#kitchen">Kitchens</a><a href="/wiki#heists">Heists</a><a href="/wiki#convoys">Convoys</a><a href="/wiki#business">Businesses</a><a href="/wiki#contentgraph">Cases &amp; crafting</a></nav>
+  </section>
 
   <div class="poster" aria-hidden="true"><picture><source type="image/webp" sizes="100vw" data-srcset="/art/landing-break-640.webp 640w, /art/landing-break-960.webp 960w, /art/landing-break-1440.webp 1440w"><img data-lazy-src="/art/landing-break.jpg" width="3136" height="1344" loading="lazy" decoding="async" alt=""></picture></div>
 
-  <section class="agent-showcase" id="agent-players" aria-labelledby="agent-showcase-title">
+  <section class="agent-showcase" id="agent-players" aria-labelledby="agent-showcase-title" tabindex="-1">
     <div class="agent-showcase__head">
       <div>
         <div class="artifact-kicker">Agent player stack · live</div>
@@ -1324,9 +1330,8 @@
     </div>
   </section>
 
-  <div class="band band--paths">
-    <div class="artifact-kicker">Gameplay field guide 01</div>
-    <h2>CHOOSE WHAT THE CITY MAKES OF YOU</h2>
+  <section class="band band--paths" id="choose-your-path" aria-labelledby="choose-your-path-title" tabindex="-1">
+    <h2 id="choose-your-path-title">CHOOSE WHAT THE CITY MAKES OF YOU</h2>
     <p>At level 5, declare one of six Paths: Gun, Ledger, Kitchen, Wheel, Shadow, or Ring. Each changes real clocks, payouts, risks, and mastery rates. Every edge carries a signed handicap, and no Path closes the rest of the city.</p>
     <p>Your first declaration costs $10,000. Changing later burns 150 $OMR and starts only after the seven-day switch clock clears.</p>
     <p><a class="act prime" href="/path?source=landing">TAKE THE SEVEN-DECISION PATH QUIZ →</a></p>
@@ -1336,9 +1341,9 @@
       </a>
       <figcaption>01 / 09 · SIX WAYS INTO THE CITY · CODE-ANCHORED GAMEPLAY ROUTES · <a href="/wiki#paths">OPEN THE COMPLETE NINE-SHEET FIELD GUIDE →</a></figcaption>
     </figure>
-  </div>
+  </section>
 
-  <section class="band band--omr" id="omr-economy" aria-labelledby="omr-economy-title">
+  <section class="band band--omr" id="omr-economy" aria-labelledby="omr-economy-title" tabindex="-1">
     <picture class="landing-art" aria-hidden="true"><source type="image/webp" sizes="(max-width: 760px) calc(100vw - 24px), 1024px" data-srcset="/art/interior-scores-640.webp 640w, /art/interior-scores-1024.webp 1024w"><img data-lazy-src="/art/interior-scores.jpg" width="1024" height="576" loading="lazy" decoding="async" alt=""></picture>
     <div class="artifact-kicker">$OMR systems dossier · code-anchored</div>
     <div class="omr-state" aria-label="OMR system status"><span class="is-live">GAME + AGENT API LIVE</span><span class="is-gated">CHAIN RAIL DORMANT</span><span>SIGNED ROUTING PUBLISHED</span></div>
@@ -1572,10 +1577,12 @@
 <!-- the glossary (? button) -->
 <!-- THE QUICK-JUMP — type a screen's name, go there. Solves the 24-screen wall's cost without
      restructuring the nav (that decision waits on the screen-reach data). -->
-<div id="jumpmodal" class="modal-bg hidden" data-modal-close="self" aria-hidden="true"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="jump-title" tabindex="-1" style="max-width:340px">
-  <h2 id="jump-title" style="margin-bottom:8px">FIND AN OPERATION</h2>
+<div id="jumpmodal" class="modal-bg hidden" data-modal-close="#jump-close" aria-hidden="true"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="jump-title" tabindex="-1" style="max-width:520px">
+  <div class="jump-tools"><h2 id="jump-title">FIND AN OPERATION</h2><button type="button" class="act ghostbtn" id="jump-close">close</button></div>
   <label class="visually-hidden" for="jump-q">Search by task or destination</label>
-  <input id="jump-q" placeholder="heal, sell a car, take a loan…" style="width:100%;box-sizing:border-box" autocomplete="off">
+  <input id="jump-q" type="search" aria-controls="jump-list" aria-describedby="jump-help" placeholder="heal, sell a car, take a loan…" style="width:100%;box-sizing:border-box" autocomplete="off">
+  <p id="jump-help" class="jump-help">Search by what you want to do. <span>↑ ↓ choose · Enter open · Esc close</span></p>
+  <div id="jump-count" class="dim" role="status" aria-live="polite" aria-atomic="true"></div>
   <div id="jump-list" style="max-height:46vh;overflow:auto;margin-top:8px"></div>
 </div></div>
 
@@ -1625,6 +1632,7 @@
   // Static overlays predate the Promise-based dialog helper. Give them the same baseline contract:
   // announced open/closed state, trapped focus, Escape where cancellation is safe, and focus return.
   const staticModalState = new WeakMap();
+  const topModal = () => [...document.querySelectorAll('.modal-bg:not(.hidden)')].at(-1);
   const syncStaticModal = (bg) => {
     const open = !bg.classList.contains('hidden');
     const prior = staticModalState.get(bg) || {};
@@ -1634,11 +1642,14 @@
       document.body.classList.add('modal-open');
       requestAnimationFrame(() => {
         const panel = bg.querySelector('.modal');
-        (focusableIn(panel)[0] || panel)?.focus({ preventScroll: true });
+        if (topModal() === bg && !panel.contains(document.activeElement))
+          (focusableIn(panel)[0] || panel)?.focus({ preventScroll: true });
       });
     } else if (!open && prior.open) {
       if (!document.querySelector('.modal-bg:not(.hidden)')) document.body.classList.remove('modal-open');
-      if (prior.returnFocus?.isConnected) prior.returnFocus.focus({ preventScroll: true });
+      if (prior.returnFocus?.isConnected && !prior.returnFocus.closest('.hidden, [hidden]')
+        && (!topModal() || topModal().contains(prior.returnFocus)))
+        prior.returnFocus.focus({ preventScroll: true });
     }
     prior.open = open;
     staticModalState.set(bg, prior);
@@ -1649,8 +1660,8 @@
     new MutationObserver(() => syncStaticModal(bg)).observe(bg, { attributes: true, attributeFilter: ['class'] });
   });
   document.addEventListener('keydown', (e) => {
-    const bg = [...staticModals].reverse().find((node) => !node.classList.contains('hidden'));
-    if (!bg) return;
+    const bg = topModal();
+    if (!bg || !staticModals.includes(bg)) return;
     const panel = bg.querySelector('.modal');
     if (e.key === 'Escape' && !bg.hasAttribute('data-modal-lock')) {
       e.preventDefault(); e.stopPropagation();
@@ -1663,8 +1674,8 @@
     const items = focusableIn(panel);
     if (!items.length) { e.preventDefault(); panel?.focus(); return; }
     const first = items[0], last = items[items.length - 1];
-    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    if (e.shiftKey && (document.activeElement === first || !items.includes(document.activeElement))) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && (document.activeElement === last || !items.includes(document.activeElement))) { e.preventDefault(); first.focus(); }
   }, true);
   // ═══ LANGUAGE PACKS (founder-directed): the console CHROME in the world's 15 biggest player
   // languages — toggleable (the 🌐 picker, sticky per browser), defaulting from the browser
@@ -1905,6 +1916,18 @@
     try { lastPressRect = b.getBoundingClientRect(); } catch { lastPressRect = null; }
     haptic('tap');
   }, { passive: true });
+  // Receipts follow the actual activation, including Enter/Space and form submission. Pointer
+  // history is only for visual feedback; a later programmatic move must not inherit an old label.
+  let activatedControl = null, activationRevision = 0;
+  function noteActivation(control) {
+    const revision = ++activationRevision;
+    activatedControl = control?.isConnected ? control : null;
+    setTimeout(() => { if (revision === activationRevision) activatedControl = null; }, 0);
+  }
+  document.addEventListener('click', (event) => {
+    noteActivation(event.target?.closest?.('button, [data-do], [role="button"]'));
+  }, true);
+  document.addEventListener('submit', (event) => noteActivation(event.submitter), true);
 
   // ══ GAME FEEL ═══════════════════════════════════════════════════════════════════
   // A short vocabulary of physical feedback, so a result LANDS instead of appearing.
@@ -2059,7 +2082,8 @@
   // the confirm() it replaces.
   let modalSeq = 0;
   const focusableIn = (root) => [...root.querySelectorAll('button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')]
-    .filter((node) => !node.closest('.hidden'));
+    .filter((node) => !node.closest('.hidden, [hidden], [inert]') && node.getClientRects().length
+      && getComputedStyle(node).visibility !== 'hidden');
   function dialog(inner, { wide = false } = {}) {
     const returnFocus = document.activeElement;
     const bg = el(`<div class="modal-bg" data-managed-dialog><div class="modal" role="dialog" aria-modal="true" tabindex="-1"${wide ? ' style="max-width:640px"' : ''}>${inner}</div></div>`);
@@ -2072,13 +2096,14 @@
     document.body.appendChild(bg);
     document.body.classList.add('modal-open');
     const onKey = (e) => {
+      if (topModal() !== bg) return;
       if (e.key === 'Escape') { e.preventDefault(); bg.click(); return; }
       if (e.key !== 'Tab') return;
       const items = focusableIn(panel);
       if (!items.length) { e.preventDefault(); panel.focus(); return; }
       const first = items[0], last = items[items.length - 1];
-      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      if (e.shiftKey && (document.activeElement === first || !items.includes(document.activeElement))) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && (document.activeElement === last || !items.includes(document.activeElement))) { e.preventDefault(); first.focus(); }
     };
     document.addEventListener('keydown', onKey);
     let closed = false;
@@ -2088,10 +2113,14 @@
       document.removeEventListener('keydown', onKey);
       bg.remove();
       if (!document.querySelector('.modal-bg:not(.hidden)')) document.body.classList.remove('modal-open');
-      if (returnFocus?.isConnected) returnFocus.focus({ preventScroll: true });
+      if (returnFocus?.isConnected && !returnFocus.closest('.hidden, [hidden]')
+        && (!topModal() || topModal().contains(returnFocus))) returnFocus.focus({ preventScroll: true });
     };
     bg.onclick = (e) => { if (e.target === bg) close(); };
-    requestAnimationFrame(() => (focusableIn(panel)[0] || panel).focus({ preventScroll: true }));
+    requestAnimationFrame(() => {
+      if (!closed && topModal() === bg && !panel.contains(document.activeElement))
+        (focusableIn(panel)[0] || panel).focus({ preventScroll: true });
+    });
     return { bg, close };
   }
   // a read-only sheet — the leaderboards and case files that were alert()s
@@ -2130,7 +2159,6 @@
       bg.querySelector('[data-alt]')?.addEventListener('click', () => { haptic('tap'); fin('alt'); });
       bg.querySelector('[data-no]').onclick = () => fin(false);
       bg.addEventListener('click', (e) => { if (e.target === bg) fin(false); });
-      setTimeout(() => bg.querySelector('[data-no]')?.focus(), 30);
     });
   }
   // the prompt. Numbers only — the one native prompt() in the file asked for a garrison amount.
@@ -2149,7 +2177,6 @@
       bg.querySelector('[data-no]').onclick = () => fin(null);
       bg.addEventListener('click', (e) => { if (e.target === bg) fin(null); });
       inp.onkeydown = (e) => { if (e.key === 'Enter') fin(Number(inp.value) || 0); };
-      setTimeout(() => inp.focus(), 30);
     });
   }
 
@@ -4173,7 +4200,7 @@
   function travelTo(district) {
     const place = (rules?.districts || []).find((d) => (d.id || d) === district);
     return act('POST', `/v1/travel/${district}`, {}, { label: `travel to ${place?.name || district}` })
-      .then((r) => { if (r.code < 400) renderActive(); return r; });
+      .then((r) => { if (r.code < 400) renderActive({ afterAction: true }); return r; });
   }
   function openTravel() {
     const here = me?.loc;
@@ -4414,7 +4441,8 @@
   }
   async function act(method, path, body, options = {}) {
     if (acting) { toast('easy — one move at a time', false); return { code: 429, body: {} }; }
-    const trigger = lastPressed?.isConnected ? lastPressed : null;
+    const trigger = activatedControl?.isConnected ? activatedControl : null;
+    activatedControl = null;
     const label = operationName(method, path, trigger, options.label);
     const idempotencyKey = method === 'GET' ? null : (options.idempotencyKey || uuid());
     const before = operationSnapshot(me);
@@ -4481,7 +4509,7 @@
       // which reads as "the button did nothing" — a tester reported exactly that. Debounced and
       // input-safe (renderActive skips while a field has focus), so this costs one board fetch on the
       // screen already in front of you.
-      if (r.code < 400) renderActive();
+      if (r.code < 400) renderActive({ afterAction: true });
       return r;
     } finally {
       acting = false;
@@ -4616,7 +4644,7 @@
       if (!message) { toast(describe(ch.body, ch.code), true); return; }
       const signature = await provider.request({ method: 'personal_sign', params: [message, address] });
       await act('POST', '/v1/wallet/verify', { address, signature });
-      renderActive();
+      renderActive({ afterAction: true });
     } catch (e) { toast(e?.message ? 'wallet: ' + e.message : 'wallet link cancelled', true); }
   }
 
@@ -4641,37 +4669,72 @@
   }
 
   // ── screens ──
+  const landingMenu = document.querySelector('#screen-auth .public-nav__menu');
+  landingMenu?.addEventListener('click', (event) => {
+    if (event.target.closest('a')) landingMenu.open = false;
+  });
+  landingMenu?.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape' || !landingMenu.open) return;
+    event.preventDefault();
+    landingMenu.open = false;
+    landingMenu.querySelector('summary').focus();
+  });
   function show(id) {
     for (const s of ['screen-auth', 'screen-create', 'screen-main', 'screen-down']) $('#' + s).classList.add('hidden');
     $('#' + id).classList.remove('hidden');
     if (id === 'screen-auth') { mountHeroMotion(); deferLandingArt(); }
   }
-  // THE LIVING HERO — the landing's alley breathes. Progressive enhancement over the still plate:
-  // injected only when the landing actually shows, only once, never under reduced motion or Save-Data
-  // (an ambient ~1MB loop is exactly what that setting exists to refuse). The clip fades in over the
-  // still, so a slow network / missing file / autoplay refusal all leave the photograph standing.
-  // Clips are H.264 (the web's baseline — every consumer browser incl. iOS decodes it). A browser
-  // WITHOUT the codec (the test sandbox's Playwright Chromium) fires the element's error event and
-  // the fail-safe below removes the clip — proven live: the still stands, zero page errors.
-  let heroMotionDone = false, heroMotionArmed = false;
+  // Atmosphere is optional: a deliberate Play starts the transfer; Pause stops the motion.
+  // The photograph remains the first paint and the fallback for slow or unsupported video.
+  let heroMotionArmed = false;
   function mountHeroMotion() {
-    if (heroMotionDone || heroMotionArmed || REDUCED || navigator.connection?.saveData
+    if (heroMotionArmed || REDUCED || navigator.connection?.saveData
       || !matchMedia('(min-width: 960px)').matches) return;
+    const hero = document.querySelector('#screen-auth .hero'), control = $('#hero-motion');
+    if (!hero || !control) return;
     heroMotionArmed = true;
-    // The still is the first-load design. Motion is a desktop enhancement that begins only after
-    // the visitor has interacted, so the primary threshold never silently spends a megabyte.
-    const start = () => {
-      if (heroMotionDone) return;
-      heroMotionDone = true;
-      const hero = document.querySelector('#screen-auth .hero');
-      if (!hero || hero.closest('.hidden')) return;
-      const v = el('<video class="herovid" src="/art/hype/hero-poster.mp4" muted autoplay loop playsinline preload="none"></video>');
-      v.onerror = () => v.remove();
-      v.addEventListener('playing', () => v.classList.add('live'), { once: true });
-      hero.prepend(v);
-      v.play?.()?.catch?.(() => v.remove());
+    control.classList.remove('hidden');
+    let video = null;
+    const reflect = (playing) => {
+      control.textContent = playing ? 'Pause scene' : 'Animate scene';
+      control.setAttribute('aria-pressed', String(playing));
     };
-    addEventListener('pointermove', start, { once: true, passive: true });
+    const pause = () => { video?.pause(); reflect(false); };
+    const unavailable = () => {
+      video?.remove(); video = null;
+      control.textContent = 'Scene unavailable';
+      control.setAttribute('aria-pressed', 'false');
+      control.disabled = true;
+      control.removeAttribute('aria-busy');
+    };
+    control.addEventListener('click', async () => {
+      if (video && !video.paused) { pause(); return; }
+      if (!video) {
+        video = el('<video class="herovid" src="/art/hype/hero-poster.mp4" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>');
+        video.onerror = unavailable;
+        video.addEventListener('playing', () => { video?.classList.add('live'); reflect(true); });
+        hero.prepend(video);
+      }
+      const pending = video;
+      control.disabled = true;
+      control.textContent = 'Loading scene…';
+      control.setAttribute('aria-busy', 'true');
+      try { await pending.play(); }
+      catch (error) {
+        // Leaving the scene while it loads cancels playback; the same clip can still be resumed.
+        if (error?.name === 'AbortError' && video === pending) reflect(false);
+        else unavailable();
+      }
+      finally {
+        control.removeAttribute('aria-busy');
+        if (video) control.disabled = false;
+      }
+    });
+    document.addEventListener('visibilitychange', () => { if (document.hidden) pause(); });
+    new IntersectionObserver(([entry]) => { if (!entry.isIntersecting) pause(); }).observe(hero);
+    matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', (event) => {
+      if (event.matches) { pause(); control.classList.add('hidden'); }
+    });
   }
 
   let landingArtObserver = null;
@@ -4928,7 +4991,19 @@
   function openJump() {
     const jm = $('#jumpmodal'); if (!jm) return;
     jm.classList.remove('hidden');
+    // Capture the opener before moving focus; the observer otherwise sees the search field itself.
+    syncStaticModal(jm);
     const inp = $('#jump-q'); inp.value = ''; paintJump(''); inp.focus();
+  }
+  function closeJump() {
+    const jm = $('#jumpmodal');
+    jm.classList.add('hidden');
+    syncStaticModal(jm);
+  }
+  function chooseJump(id) {
+    closeJump();
+    setTab(id);
+    $('#tab-' + id)?.focus({ preventScroll: true });
   }
   function recentTabs() {
     try { return JSON.parse(localStorage.getItem('omerta_recent_tabs') || '[]').filter((id) => TABS[id]); }
@@ -4946,11 +5021,15 @@
     if (title === needle || id === needle || aliases.includes(needle)) return 0;
     if (title.startsWith(needle) || id.startsWith(needle) || aliases.some((x) => x.startsWith(needle))) return 1;
     if (title.includes(needle) || id.includes(needle) || aliases.some((x) => x.includes(needle))) return 2;
+    // Match the plain-language examples in the field, including "sell a car" and "take a loan".
+    const words = needle.split(' ').filter((word) => !['a', 'an', 'the', 'my', 'to'].includes(word));
+    const terms = `${title} ${id} ${aliases.join(' ')}`;
+    if (words.length && words.every((word) => terms.includes(word))) return 3;
     return 99;
   }
   function paintJump(q) {
     const list = $('#jump-list'); if (!list) return;
-    const needle = q.trim().toLowerCase();
+    const needle = q.trim().toLowerCase().replace(/\s+/g, ' ');
     const recent = recentTabs();
     const ids = Object.keys(TABS).map((id, order) => ({ id, order, score: jumpScore(id, needle) }))
       .filter((x) => x.score < 99)
@@ -4961,9 +5040,12 @@
     list.innerHTML = ids.map((id, i) => {
       const group = groupOf(id);
       const hint = (TAB_SEARCH[id] || []).slice(0, 3).join(' · ');
-      return `<button class="act jump-row${i === 0 ? ' first' : ''}" data-jump="${id}" style="display:block;width:100%;text-align:left;margin:3px 0"><span>${esc(TABS[id] || id)}</span><small style="display:block;color:var(--dim);font-size:12px;margin-top:2px">${esc(group)}${hint ? ` · ${esc(hint)}` : ''}</small></button>`;
+      return `<button type="button" class="act jump-row${i === 0 ? ' first' : ''}" data-jump="${id}"${id === currentTab ? ' aria-current="page"' : ''} style="display:block;width:100%;text-align:left;margin:3px 0"><span>${esc(TABS[id] || id)}</span><small style="display:block;color:var(--dim);font-size:12px;margin-top:2px">${esc(group)}${hint ? ` · ${esc(hint)}` : ''}${id === currentTab ? ' · current operation' : ''}</small></button>`;
     }).join('') || '<div class="d" style="color:var(--dim)">No operation matches that. Try what you want to do: heal, sell a car, take a loan.</div>';
-    list.querySelectorAll('[data-jump]').forEach((b) => b.onclick = () => { $('#jumpmodal').classList.add('hidden'); setTab(b.dataset.jump); });
+    $('#jump-count').textContent = needle
+      ? `${ids.length} ${ids.length === 1 ? 'operation' : 'operations'} found`
+      : 'Recent operations first · the whole city below';
+    list.querySelectorAll('[data-jump]').forEach((b) => b.onclick = () => chooseJump(b.dataset.jump));
   }
   { const jb = $('#btn-jump'); if (jb) jb.onclick = openJump; }
   { const cb = $('#btn-capital'); if (cb) cb.onclick = () => {
@@ -4979,16 +5061,29 @@
         } else if (++attempts >= 50) clearInterval(landing);
       }, 100);
     }; }
-  $('#jumpmodal')?.addEventListener('click', (e) => { if (e.target.id === 'jumpmodal') $('#jumpmodal').classList.add('hidden'); });
+  $('#jump-close')?.addEventListener('click', closeJump);
+  $('#jumpmodal')?.addEventListener('click', (e) => { if (e.target.id === 'jumpmodal') closeJump(); });
   $('#jump-q')?.addEventListener('input', (e) => paintJump(e.target.value));
-  $('#jump-q')?.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') $('#jumpmodal').classList.add('hidden');
-    if (e.key === 'Enter') { const first = $('#jump-list .first'); if (first) { $('#jumpmodal').classList.add('hidden'); setTab(first.dataset.jump); } }
+  $('#jumpmodal')?.addEventListener('keydown', (e) => {
+    if (e.isComposing) return;
+    const input = $('#jump-q'), items = [...$('#jump-list').querySelectorAll('[data-jump]')];
+    if (e.key === 'Enter' && e.target === input) {
+      e.preventDefault(); if (items[0]) chooseJump(items[0].dataset.jump);
+      return;
+    }
+    const at = items.indexOf(e.target);
+    if (e.target !== input && at < 0) return;
+    if (!['ArrowDown', 'ArrowUp'].includes(e.key) || !items.length) return;
+    e.preventDefault();
+    const next = e.key === 'ArrowDown' ? items[(at + 1) % items.length]
+      : at === 0 ? input : items[at < 0 ? items.length - 1 : at - 1];
+    next.focus({ preventScroll: true });
+    if (next !== input) next.scrollIntoView({ block: 'nearest' });
   });
   document.addEventListener('keydown', (e) => {
     // "/" opens the jump — but never steal the key from a field the player is typing in
-    if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey) return;
-    const t = e.target; if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+    if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey || e.isComposing) return;
+    const t = e.target; if (t && (/^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName) || t.isContentEditable)) return;
     if (document.querySelector('.modal-bg:not(.hidden)')) return; // an open dialog keeps its keys
     e.preventDefault(); openJump();
   });
@@ -5866,7 +5961,7 @@
         const b = el(`<button type="button" role="tab" id="tab-control-${id}" aria-selected="false" aria-controls="tab-${id}" tabindex="-1" data-tab="${id}">${TABS[id]}</button>`);
         b.onclick = () => { setTab(id); };
         tabs.appendChild(b);
-        bodies.appendChild(el(`<div class="tab" id="tab-${id}" role="tabpanel" aria-labelledby="tab-control-${id}"></div>`));
+        bodies.appendChild(el(`<div class="tab" id="tab-${id}" role="tabpanel" aria-labelledby="tab-control-${id}" tabindex="-1"></div>`));
       }
     }
     { // the expander a simple-mode player uses to open the whole city early
@@ -5894,7 +5989,7 @@
       const at = Math.max(0, items.indexOf(document.activeElement));
       const next = e.key === 'Home' ? items[0] : e.key === 'End' ? items[items.length - 1]
         : items[(at + (e.key === 'ArrowRight' ? 1 : -1) + items.length) % items.length];
-      e.preventDefault(); next.focus(); setTab(next.dataset.tab);
+      e.preventDefault(); setTab(next.dataset.tab); next.focus({ preventScroll: true });
     });
     applyTabVisibility();
     renderStreets(); renderCity(); renderDen(); renderDeck();
@@ -5918,9 +6013,10 @@
     //     land in one place instead of three
     //   • an active same-session player with nothing new → Streets (their bread and butter)
     // A jailed player is none of these — the digest keeps until they're out.
+    const landingRevision = navigationRevision;
     if (!jailed) Promise.all([api('GET', '/v1/onboard'), api('GET', '/v1/paper')]).then(([o, p]) => {
-      if ((o.body && !o.body.allDone) || (p.body && p.body.fresh)) setTab('start');
-    });
+      if (navigationRevision === landingRevision && ((o.body && !o.body.allDone) || (p.body && p.body.fresh))) setTab('start');
+    }).catch(() => { /* the current screen remains usable if optional landing data is unavailable */ });
   }
   // one renderer per tab (deck/city/den built once at boot; the rest re-render on entry). Function
   // declarations are hoisted, so this map can name them here.
@@ -5992,6 +6088,7 @@
     }, 700);
   }
   let currentTab = 'streets';
+  let navigationRevision = 0;
   // ── SCREEN REACH ────────────────────────────────────────────────────────────────────────────────
   // Which screens a player ever finds. 25 of them behind a two-tier nav, and nothing measured it, so
   // "does the mid-game player use six or twenty" was unanswerable — and restructuring a nav that
@@ -6025,6 +6122,10 @@
   document.addEventListener('visibilitychange', () => { if (document.hidden) flushScreens(); });
 
   function setTab(id) {
+    if (!TABS[id]) return;
+    clearTimeout(_reRenderT);
+    _reRenderNeeded = false; _reRenderAfterAction = false;
+    navigationRevision++;
     // a deliberate jump to a screen simple mode hides (a coach hint, a checklist task) opens the whole city
     if (simpleMode() && !SIMPLE_TABS.includes(id)) unlockAllTabs(false);
     rememberTab(id);
@@ -6083,23 +6184,37 @@
     // focus and a mid-typing re-render is untouched (renderActive already guards fields).
     const ae = document.activeElement;
     if (ae && (ae.dataset?.tab || ae.dataset?.group || ae.dataset?.go)) {
-      // #tabbodies, not #tabpanel — the rail lives INSIDE the panel, so focusing the panel just
-      // puts the next Tab back at the start of the rail you already used.
-      const body = $('#tabbodies');
-      if (body) { body.setAttribute('tabindex', '-1'); body.focus({ preventScroll: true }); }
+      // The selected tabpanel announces the destination and puts the next Tab on its first control.
+      $('#tab-' + id)?.focus({ preventScroll: true });
     }
   }
   // re-render the OPEN tab (debounced) when live state changes — so a board a player is staring at
   // (contracts, nightlife, the market) doesn't go stale under a WS event or the 30s poll.
-  let _reRenderT = null;
-  function renderActive() {
+  let _reRenderT = null, _reRenderNeeded = false, _reRenderAfterAction = false;
+  function renderActive({ afterAction = false } = {}) {
+    _reRenderNeeded = true;
+    _reRenderAfterAction ||= afterAction;
     clearTimeout(_reRenderT);
     _reRenderT = setTimeout(() => {
       const ae = document.activeElement;
-      if (ae && /^(INPUT|SELECT|TEXTAREA)$/.test(ae.tagName)) return; // don't nuke a field mid-type
-      try { RENDERERS[currentTab]?.(); } catch { /* transient */ }
+      if (document.querySelector('.modal-bg:not(.hidden)')) return;
+      if (ae && (/^(INPUT|SELECT|TEXTAREA)$/.test(ae.tagName) || ae.isContentEditable)) return;
+      // Background updates wait for the reader. A completed action must refresh costs and outcomes,
+      // even while its button keeps focus; later background signals cannot cancel that obligation.
+      if (!_reRenderAfterAction && ae?.closest?.('#tabbodies') && ae.matches('button, a[href], [role="button"]')) return;
+      const restorePanel = _reRenderAfterAction && ae?.closest?.('#tab-' + currentTab);
+      _reRenderNeeded = false; _reRenderAfterAction = false;
+      try {
+        Promise.resolve(RENDERERS[currentTab]?.()).then(() => {
+          if (restorePanel?.isConnected && !ae.isConnected && document.activeElement === document.body)
+            restorePanel.focus({ preventScroll: true });
+        }).catch(() => { /* the next refresh may recover a transient board failure */ });
+      } catch { /* transient */ }
     }, 350);
   }
+  document.addEventListener('focusout', () => {
+    if (_reRenderNeeded) renderActive();
+  });
 
   // ── THE CONTENT DESK ──────────────────────────────────────────────────────────────────────────
   // Authored stories and exact-hash workshops used to exist only as machine surfaces. This is the
@@ -12115,22 +12230,42 @@
 
   // ── the troll box (public city chat + the family room) ──
   let wtab = 'feed';
+  const chatDrafts = { city: '', family: '' };
+  let chatSending = false;
   function chatLine(room, ev) {
     const pane = $(room === 'city' ? '#chat-city' : '#chat-family');
     if (!pane) return;
+    // Stay with the reader when they scroll back; only follow new lines from the bottom.
+    const follow = pane.scrollHeight - pane.scrollTop - pane.clientHeight < 48;
+    pane.querySelector('[data-chat-state]')?.remove();
     pane.append(el(`<div class="ev"><b style="color:${room === 'family' ? 'var(--gold, #d4af37)' : 'var(--neon)'}">${esc(ev.who)}</b> <span>${esc(ev.text)}</span></div>`));
     while (pane.childElementCount > 120) pane.firstElementChild.remove();
-    pane.scrollTop = pane.scrollHeight;
+    if (follow) pane.scrollTop = pane.scrollHeight;
   }
   async function loadChat(room) {
-    const r = await api('GET', room === 'family' ? '/v1/gangs/chat' : '/v1/chat');
     const pane = $(room === 'city' ? '#chat-city' : '#chat-family');
-    if (!pane || !r.body?.messages) return;
+    if (!pane) return;
+    pane.setAttribute('aria-busy', 'true');
+    if (!pane.childElementCount) pane.innerHTML = '<p class="dim" data-chat-state>Opening the line…</p>';
+    const r = await api('GET', room === 'family' ? '/v1/gangs/chat' : '/v1/chat');
+    pane.setAttribute('aria-busy', 'false');
+    if (r.code >= 400 || !Array.isArray(r.body?.messages)) {
+      if (!pane.querySelector('.ev')) {
+        pane.innerHTML = r.body?.error === 'no_gang'
+          ? '<p class="dim" data-chat-state>Join a family to use the family room.</p>'
+          : '<div data-chat-state><p class="dim" role="status">The line could not be loaded. Try opening it again.</p><button type="button" class="act" data-chat-retry>retry</button></div>';
+        pane.querySelector('[data-chat-retry]')?.addEventListener('click', () => loadChat(room));
+      }
+      return;
+    }
     pane.innerHTML = '';
     for (const m of r.body.messages) chatLine(room, m);
+    if (!r.body.messages.length) pane.innerHTML = '<p class="dim" data-chat-state>No messages yet. The line is open.</p>';
+    pane.scrollTop = pane.scrollHeight;
   }
   document.addEventListener('click', (e) => {
     const b = e.target?.closest?.('[data-wtab]'); if (!b) return;
+    if (wtab !== 'feed') chatDrafts[wtab] = $('#chatinput').value;
     wtab = b.dataset.wtab;
     $$('#wiretabs .wtab').forEach((t) => {
       const on = t === b;
@@ -12143,6 +12278,8 @@
     $('#chat-family').classList.toggle('hidden', wtab !== 'family');
     $('#chatform').classList.toggle('hidden', wtab === 'feed');
     $('#chatinput').placeholder = wtab === 'family' ? T('w_famonly') : T('w_sayit');
+    $('#chatinput').setAttribute('aria-label', wtab === 'family' ? 'Message to family chat' : 'Message to city chat');
+    $('#chatinput').value = chatDrafts[wtab] || '';
     if (wtab !== 'feed') loadChat(wtab);
   });
   $('#wiretabs')?.addEventListener('keydown', (e) => {
@@ -12156,13 +12293,27 @@
   });
   $('#chatform')?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const text = $('#chatinput').value.trim();
-    if (!text) return;
-    $('#chatinput').value = '';
-    const r = await api('POST', wtab === 'family' ? '/v1/gangs/chat' : '/v1/chat', { text });
-    if (r.code === 400 && r.body?.error === 'no_gang') toast('you need a family for the family room');
-    else if (r.code === 400 && r.body?.error === 'slow_down') toast('easy — one line at a time');
-    else if (r.code >= 400) toast('the line is dead — try again');
+    const input = $('#chatinput'), draft = input.value, text = draft.trim(), room = wtab;
+    if (!text || chatSending || room === 'feed') return;
+    const form = $('#chatform'), send = form.querySelector('[type="submit"]');
+    chatDrafts[room] = draft;
+    chatSending = true;
+    form.setAttribute('aria-busy', 'true'); send.disabled = true; send.textContent = 'sending…';
+    try {
+      const r = await api('POST', room === 'family' ? '/v1/gangs/chat' : '/v1/chat', { text });
+      if (r.code === 400 && r.body?.error === 'no_gang') toast('join a family before using its room — your draft is saved', true);
+      else if (r.body?.error === 'slow_down' || r.code === 429) toast('wait a moment before sending again — your draft is saved', true);
+      else if (r.code >= 400) toast('the message was not confirmed — your draft is saved; check the line before retrying', true);
+      else {
+        if (chatDrafts[room] === draft) chatDrafts[room] = '';
+        if (wtab === room && input.value === draft) input.value = '';
+      }
+    } catch {
+      toast('the message was not confirmed — your draft is saved; check the line before retrying', true);
+    } finally {
+      chatSending = false;
+      form.setAttribute('aria-busy', 'false'); send.disabled = false; send.textContent = T('b_send');
+    }
   });
 
   // ── presence: who's on the wire (polled with the sheet refresh) ──
