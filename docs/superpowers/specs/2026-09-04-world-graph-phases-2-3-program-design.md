@@ -4,7 +4,7 @@
 
 The architecture was approved in conversation on 2026-09-04, and the user subsequently explicitly approved the written designs and implementation. This document binds the Phase 2A–2E and Phase 3A–3E design specifications. Implementation is in progress; that approval does not mean Phase 2 or Phase 3 is complete. Where a sub-phase document is ambiguous, this program design and the Phase 1 design invariants take precedence.
 
-This program is prepared on branch `codex/world-graph-phases-2-3`, based on Phase 1 commit `0bdc0af79261fbbb00acab5e4516747f40cbe365`. The user has subsequently authorized pushing and merging reviewed work, subject to the existing review and verification gates. Deployment, production activation, seasonal OMR rewards, and NFT contract deployment remain separately gated; production rollout clarification is pending before a merge that would trigger deployment.
+This program is prepared on branch `codex/world-graph-phases-2-3`, based on Phase 1 commit `0bdc0af79261fbbb00acab5e4516747f40cbe365`. On 2026-09-07 the user explicitly confirmed the automatic production-deployment side effect and gave standing approval to push and merge completed, reviewed pieces into `main` going forward. Existing specification, quality, security, local-verification, and exact-head CI gates remain mandatory. Normal releases need no repeated merge/deployment approval; this supersedes earlier approval-pending wording in the program's documents. Content-package activation, seasonal OMR rewards, NFT-contract deployment, and chain activation remain separately gated and are not implied by a code release.
 
 ## Objective
 
@@ -220,4 +220,4 @@ A fresh Windows checkout currently exposes a Phase 1 test that assumes LF-only s
 
 After all sub-phases pass their gates, the strongest available whole-branch review must be performed. Every Critical and Important finding must be resolved and reverified. Final delivery reports architecture, schema, material and profession catalogs, recipes, facilities, item systems, social production, mystery systems, package counts, graph validation, simulations, security findings, tests, known deferrals, branch, and commits.
 
-The work then stops. Merging, production pushing, deployment, seasonal OMR activation, and NFT-contract deployment require separate explicit approval.
+The final whole-program delivery then stops. Incremental reviewed merges and their automatic production deployments may proceed under the user's standing 2026-09-07 approval, with verification and CI gates intact and release status reported honestly. Content-package activation, seasonal OMR activation, NFT-contract deployment, and chain activation still require separate explicit approval.
