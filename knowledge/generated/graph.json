@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "74c2662f8544576e02f179be013cc58200e941fd",
+  "sourceRevision": "1a466648a240ef0a53f38cbdb9a75d65a0d30275",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 6284,
-    "edges": 27674,
+    "nodes": 6286,
+    "edges": 27684,
     "byNodeType": {
       "Artifact": 2223,
       "Command": 64,
-      "Commit": 1412,
+      "Commit": 1414,
       "Contract": 49,
       "Document": 497,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 2060,
-      "CHANGED": 11083,
+      "CHANGED": 11091,
       "CONTAINS": 2244,
       "DECLARES": 64,
       "DEFINED_IN": 1146,
       "DEPENDS_ON": 64,
       "EXECUTES": 233,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1412,
+      "HAS_COMMIT": 1414,
       "IMPLEMENTS": 124,
       "IMPORTS": 1848,
       "INHERITS": 12,
@@ -27824,20 +27824,20 @@
       "path": "public/arena.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 16850,
+      "bytes": 16864,
       "lines": 237,
-      "version": "75f3d2fc55a2eb5f",
+      "version": "b12fcfc97a24d487",
       "text": true,
       "provenance": [
         {
           "file": "public/arena.html",
           "line": 1,
-          "version": "75f3d2fc55a2eb5f"
+          "version": "b12fcfc97a24d487"
         }
       ],
-      "lastChangedAt": "2026-09-07T23:37:29.000Z",
+      "lastChangedAt": "2026-09-07T23:48:17.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "dfd2f6ed3d0fef00beb28a7401e090e0351ad2e7"
+      "lastChangedCommit": "1a466648a240ef0a53f38cbdb9a75d65a0d30275"
     },
     {
       "key": "Artifact:public/art/agent-cover-1080.webp",
@@ -47236,20 +47236,20 @@
       "path": "test/hardening.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 138301,
-      "lines": 1803,
-      "version": "c13a9566eee98cc4",
+      "bytes": 138498,
+      "lines": 1806,
+      "version": "ece7644dee714ecc",
       "text": true,
       "provenance": [
         {
           "file": "test/hardening.js",
           "line": 1,
-          "version": "c13a9566eee98cc4"
+          "version": "ece7644dee714ecc"
         }
       ],
-      "lastChangedAt": "2026-08-29T16:52:36.000Z",
-      "lastChangedBy": "Claude",
-      "lastChangedCommit": "3dd27e1e77928f91e3209103370c847c9c4aca23"
+      "lastChangedAt": "2026-09-07T23:48:17.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "1a466648a240ef0a53f38cbdb9a75d65a0d30275"
     },
     {
       "key": "Artifact:test/heists.js",
@@ -54056,6 +54056,22 @@
       ]
     },
     {
+      "key": "Commit:1a466648a240ef0a53f38cbdb9a75d65a0d30275",
+      "type": "Commit",
+      "id": "1a466648a240ef0a53f38cbdb9a75d65a0d30275",
+      "label": "Verify the rendered Arena discovery link",
+      "title": "Verify the rendered Arena discovery link",
+      "date": "2026-09-07T23:48:17.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/1a466648a240ef0a53f38cbdb9a75d65a0d30275",
+      "provenance": [
+        {
+          "commit": "1a466648a240ef0a53f38cbdb9a75d65a0d30275",
+          "url": "https://github.com/OmertaDev/Omerta/commit/1a466648a240ef0a53f38cbdb9a75d65a0d30275"
+        }
+      ]
+    },
+    {
       "key": "Commit:1a8df2d078019f1bc605655e5843e56d2412f5bd",
       "type": "Commit",
       "id": "1a8df2d078019f1bc605655e5843e56d2412f5bd",
@@ -58708,6 +58724,22 @@
         {
           "commit": "45c139d869a8dc49b9c52bee7974af0cd653f234",
           "url": "https://github.com/OmertaDev/Omerta/commit/45c139d869a8dc49b9c52bee7974af0cd653f234"
+        }
+      ]
+    },
+    {
+      "key": "Commit:46727268799f8719a0514d4cb27cd5531d0dcc50",
+      "type": "Commit",
+      "id": "46727268799f8719a0514d4cb27cd5531d0dcc50",
+      "label": "Refresh integrated release knowledge snapshot",
+      "title": "Refresh integrated release knowledge snapshot",
+      "date": "2026-09-07T23:40:22.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/46727268799f8719a0514d4cb27cd5531d0dcc50",
+      "provenance": [
+        {
+          "commit": "46727268799f8719a0514d4cb27cd5531d0dcc50",
+          "url": "https://github.com/OmertaDev/Omerta/commit/46727268799f8719a0514d4cb27cd5531d0dcc50"
         }
       ]
     },
@@ -88015,6 +88047,9 @@
           "commit": "45b7cad2d93144433b1bf27f33dd41f7f62ba2af"
         },
         {
+          "commit": "46727268799f8719a0514d4cb27cd5531d0dcc50"
+        },
+        {
           "commit": "487872a2591dd4605c7686bb722f696e256e5aed"
         },
         {
@@ -88346,6 +88381,9 @@
         },
         {
           "commit": "45b7cad2d93144433b1bf27f33dd41f7f62ba2af"
+        },
+        {
+          "commit": "46727268799f8719a0514d4cb27cd5531d0dcc50"
         },
         {
           "commit": "487872a2591dd4605c7686bb722f696e256e5aed"
@@ -88897,6 +88935,9 @@
           "commit": "45b7cad2d93144433b1bf27f33dd41f7f62ba2af"
         },
         {
+          "commit": "46727268799f8719a0514d4cb27cd5531d0dcc50"
+        },
+        {
           "commit": "487872a2591dd4605c7686bb722f696e256e5aed"
         },
         {
@@ -89444,6 +89485,9 @@
         },
         {
           "commit": "45b7cad2d93144433b1bf27f33dd41f7f62ba2af"
+        },
+        {
+          "commit": "46727268799f8719a0514d4cb27cd5531d0dcc50"
         },
         {
           "commit": "487872a2591dd4605c7686bb722f696e256e5aed"
@@ -90097,6 +90141,9 @@
           "commit": "45b7cad2d93144433b1bf27f33dd41f7f62ba2af"
         },
         {
+          "commit": "46727268799f8719a0514d4cb27cd5531d0dcc50"
+        },
+        {
           "commit": "487872a2591dd4605c7686bb722f696e256e5aed"
         },
         {
@@ -90506,6 +90553,9 @@
         },
         {
           "commit": "45a5bb46c8900a565e0d86419e4dc0672a063012"
+        },
+        {
+          "commit": "46727268799f8719a0514d4cb27cd5531d0dcc50"
         },
         {
           "commit": "4d78d9cad8adb025ca232f4015c2c3ae1d21fc73"
@@ -97219,7 +97269,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "74c2662f8544576e02f179be013cc58200e941fd",
+      "revision": "1a466648a240ef0a53f38cbdb9a75d65a0d30275",
       "currentBranch": "codex/site-copy-ui-upgrade",
       "defaultBranch": "main",
       "visibility": "public",
@@ -123789,13 +123839,13 @@
       "type": "TestSuite",
       "id": "test/hardening.js",
       "label": "test/hardening.js",
-      "lines": 1803,
-      "version": "c13a9566eee98cc4",
+      "lines": 1806,
+      "version": "ece7644dee714ecc",
       "provenance": [
         {
           "file": "test/hardening.js",
           "line": 1,
-          "version": "c13a9566eee98cc4"
+          "version": "ece7644dee714ecc"
         }
       ]
     },
@@ -154483,6 +154533,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:1a466648a240ef0a53f38cbdb9a75d65a0d30275",
+      "to": "Artifact:public/arena.html",
+      "provenance": {
+        "commit": "1a466648a240ef0a53f38cbdb9a75d65a0d30275"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1a466648a240ef0a53f38cbdb9a75d65a0d30275",
+      "to": "Artifact:test/hardening.js",
+      "provenance": {
+        "commit": "1a466648a240ef0a53f38cbdb9a75d65a0d30275"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:1a8df2d078019f1bc605655e5843e56d2412f5bd",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -172855,6 +172921,54 @@
       "to": "Artifact:tools/chain-e2e.js",
       "provenance": {
         "commit": "45c139d869a8dc49b9c52bee7974af0cd653f234"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:46727268799f8719a0514d4cb27cd5531d0dcc50",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "46727268799f8719a0514d4cb27cd5531d0dcc50"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:46727268799f8719a0514d4cb27cd5531d0dcc50",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "46727268799f8719a0514d4cb27cd5531d0dcc50"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:46727268799f8719a0514d4cb27cd5531d0dcc50",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "46727268799f8719a0514d4cb27cd5531d0dcc50"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:46727268799f8719a0514d4cb27cd5531d0dcc50",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "46727268799f8719a0514d4cb27cd5531d0dcc50"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:46727268799f8719a0514d4cb27cd5531d0dcc50",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "46727268799f8719a0514d4cb27cd5531d0dcc50"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:46727268799f8719a0514d4cb27cd5531d0dcc50",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "46727268799f8719a0514d4cb27cd5531d0dcc50"
       }
     },
     {
@@ -274139,6 +274253,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:1a466648a240ef0a53f38cbdb9a75d65a0d30275",
+      "provenance": {
+        "commit": "1a466648a240ef0a53f38cbdb9a75d65a0d30275"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:1a8df2d078019f1bc605655e5843e56d2412f5bd",
       "provenance": {
         "commit": "1a8df2d078019f1bc605655e5843e56d2412f5bd"
@@ -276462,6 +276584,14 @@
       "to": "Commit:45c139d869a8dc49b9c52bee7974af0cd653f234",
       "provenance": {
         "commit": "45c139d869a8dc49b9c52bee7974af0cd653f234"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:46727268799f8719a0514d4cb27cd5531d0dcc50",
+      "provenance": {
+        "commit": "46727268799f8719a0514d4cb27cd5531d0dcc50"
       }
     },
     {
@@ -296411,7 +296541,7 @@
       "to": "Artifact:src/contacts.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 774
+        "line": 777
       }
     },
     {
@@ -296420,7 +296550,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1697
+        "line": 1700
       }
     },
     {
@@ -296429,7 +296559,7 @@
       "to": "Artifact:src/dbhealth.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1112
+        "line": 1115
       }
     },
     {
@@ -296438,7 +296568,7 @@
       "to": "Artifact:src/dbhealth.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1301
+        "line": 1304
       }
     },
     {
@@ -296456,7 +296586,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1510
+        "line": 1513
       }
     },
     {
@@ -296474,7 +296604,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1747
+        "line": 1750
       }
     },
     {
@@ -296510,7 +296640,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 463
+        "line": 466
       }
     },
     {
@@ -296528,7 +296658,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1676
+        "line": 1679
       }
     },
     {
@@ -296537,7 +296667,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1746
+        "line": 1749
       }
     },
     {
@@ -296546,7 +296676,7 @@
       "to": "Artifact:src/verify.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 991
+        "line": 994
       }
     },
     {
@@ -296555,7 +296685,7 @@
       "to": "Artifact:src/worker.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1711
+        "line": 1714
       }
     },
     {
@@ -343418,7 +343548,7 @@
       "to": "Artifact:src/contacts.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 774
+        "line": 777
       }
     },
     {
@@ -343427,7 +343557,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1697
+        "line": 1700
       }
     },
     {
@@ -343436,7 +343566,7 @@
       "to": "Artifact:src/dbhealth.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1112
+        "line": 1115
       }
     },
     {
@@ -343445,7 +343575,7 @@
       "to": "Artifact:src/dbhealth.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1301
+        "line": 1304
       }
     },
     {
@@ -343463,7 +343593,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1510
+        "line": 1513
       }
     },
     {
@@ -343481,7 +343611,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1747
+        "line": 1750
       }
     },
     {
@@ -343517,7 +343647,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 463
+        "line": 466
       }
     },
     {
@@ -343535,7 +343665,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1676
+        "line": 1679
       }
     },
     {
@@ -343544,7 +343674,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1746
+        "line": 1749
       }
     },
     {
@@ -343553,7 +343683,7 @@
       "to": "Artifact:src/verify.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 991
+        "line": 994
       }
     },
     {
@@ -343562,7 +343692,7 @@
       "to": "Artifact:src/worker.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1711
+        "line": 1714
       }
     },
     {

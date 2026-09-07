@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `74c2662f8544`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `1a466648a240`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1412 |
+| Commits in clone | 1414 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-07 — Add complete marketing campaign and release artifacts |
+| Latest commit | 2026-09-07 — Verify the rendered Arena discovery link |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 541 |
+| OmertaDev | 543 |
 | Claude | 156 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 26 |
@@ -37,10 +37,10 @@
 | [schema.sql](../../schema.sql) | 283 | yes |
 | [BALANCE.md](../../BALANCE.md) | 254 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
-| knowledge/generated/github-history.md | 180 | historical |
-| knowledge/generated/graph-summary.md | 180 | historical |
-| knowledge/generated/graph.json | 180 | historical |
-| knowledge/generated/inventory.md | 180 | historical |
+| knowledge/generated/github-history.md | 181 | historical |
+| knowledge/generated/graph-summary.md | 181 | historical |
+| knowledge/generated/graph.json | 181 | historical |
+| knowledge/generated/inventory.md | 181 | historical |
 | [src/game.js](../../src/game.js) | 177 | yes |
 | [package.json](../../package.json) | 158 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
@@ -52,11 +52,11 @@
 | [test/social.js](../../test/social.js) | 85 | yes |
 | [public/wiki.html](../../public/wiki.html) | 84 | yes |
 | [test/growth.js](../../test/growth.js) | 80 | yes |
-| knowledge/generated/documents.md | 73 | historical |
+| knowledge/generated/documents.md | 74 | historical |
 | [docs/WIKI.md](../../docs/WIKI.md) | 72 | yes |
-| [test/hardening.js](../../test/hardening.js) | 65 | yes |
+| [test/hardening.js](../../test/hardening.js) | 66 | yes |
 | [test/gates.js](../../test/gates.js) | 63 | yes |
-| knowledge/generated/modules.md | 59 | historical |
+| knowledge/generated/modules.md | 60 | historical |
 | [tools/sim.js](../../tools/sim.js) | 59 | yes |
 | [README.md](../../README.md) | 57 | yes |
 | [src/preflight.js](../../src/preflight.js) | 55 | yes |
