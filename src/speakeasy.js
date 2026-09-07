@@ -4,7 +4,7 @@
 // — the bodyguard-hire pattern) and bottle service (a pure-status $OMR burn), both flexed on the guest
 // list. Prestige ranks the nightlife. §10.4: `speakeasy:` is a cash SINK/FAUCET/TRANSFER vocabulary (all
 // character_id'd → the per-character cash check reconciles); bottles/naming ride `vanity:%` (no omr change).
-import { GameError, bus, skillMult, bumpMastery } from './game.js';
+import { GameError, assertStreetActor, bus, skillMult, bumpMastery } from './game.js';
 import { SPEAKEASY, DISTRICTS, speakeasyTierOf, speakeasyRoundOf, speakeasyBottleOf, levelOf, renownRankOf, decorStyleOf, styleUnlockOf, assessedValueOf, effStat, SKILLS, isMade, jailed, hospitalized, safeHoused, usd, art , coolLeft, coolWait } from './rules.js';
 import { spendOmr } from './vanity.js';
 
@@ -427,9 +427,10 @@ export async function applyDecor(ch, styleId, client, h) {
 // per-club cooldown bounds spam. §10.4: the fee is a `speakeasy:standover` SINK, the win reuses `speakeasy:buyout`.
 export async function standoverSpeakeasy(ch, owner, districtId, client, h) {
   const S = SPEAKEASY.STANDOVER;
-  if (jailed(ch)) throw new GameError('jailed', 'No muscle work from lockup.');
-  if (hospitalized(ch)) throw new GameError('hosp_self', "You're in no shape to lean on anyone.");
-  if (safeHoused(ch)) throw new GameError('safe', "You can't run a standover while you're supposed to be to ground.");
+  assertStreetActor(ch, { witpro: false, msgs: {
+    jailed: 'No muscle work from lockup.',
+    hosp: "You're in no shape to lean on anyone.",
+    safe: "You can't run a standover while you're supposed to be to ground." } });
   if (hospitalized(owner)) throw new GameError('hosp', "They're under the Doc's care — even we have rules."); // audit F1: shakedown parity
   if (levelOf(Number(ch.respect)) < SPEAKEASY.MIN_LEVEL) throw new GameError('level', `Standing over a made man's club takes level ${SPEAKEASY.MIN_LEVEL}.`);
   if (ch.loc !== districtId) throw new GameError('travel', "You're not in that district — go there to lean on the place.");

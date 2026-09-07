@@ -196,8 +196,14 @@ assert.ok(spec.components.schemas.ContentRecipe.required.includes('tools')
 for (const envelope of ['ContentBoard', 'ContentReceipt']) {
   assert.equal(spec.components.schemas[envelope].properties.character.additionalProperties, true,
     `${envelope} documents the standard character snapshot envelope`);
-  assert.equal(spec.components.schemas[envelope].properties.events.type, 'array',
-    `${envelope} documents the standard event envelope`);
+  // The envelope carried a dead `events: []` until 2026-09-05 — nothing in src/ ever wrote to it —
+  // and the contract documented it as if it were real. It is gone from both: a published field an
+  // agent can never see populated is a lie in the spec (`additionalProperties: false` means a
+  // schema-validating client REJECTS a response carrying it, so a resurrected slot fails here).
+  assert(!Object.hasOwn(spec.components.schemas[envelope].properties, 'events'),
+    `${envelope} must not document the retired \`events\` envelope slot`);
+  assert(!spec.components.schemas[envelope].required.includes('events'),
+    `${envelope} must not REQUIRE the retired \`events\` envelope slot`);
 }
 for (const field of ['nodes', 'facts', 'awards']) {
   assert(Object.hasOwn(spec.components.schemas.ContentInstance.properties, field),

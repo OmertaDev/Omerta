@@ -124,8 +124,9 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   // untouched — so death costs the bloodline its extractable hoard, never what it committed. A §10.4
   // $OMR BURN (`death:duty`); runs on EVERY death path (a respawn-token save skips the estate entirely
   // → no duty). Liquid is drained first (the loot ordering). acct.omr/unbonding are persisted by
-  // persistAccount at the end of the wrapper (the whack:loot $OMR precedent); the two hand-rolled
-  // headless persists (mod-kill, huntWanted) carry both columns for the same reason.
+  // persistAccount at the end of the wrapper (the whack:loot $OMR precedent); the two headless
+  // persists (mod-kill, huntWanted) write ESTATE_ACCOUNT_FIELDS through persistAccountFields, and
+  // test/persist.js fails if a field assigned here is missing from that list.
   const dutyLiquid = Number(acct.omr), dutyUnbond = Number(acct.unbonding || 0);
   const deathDuty = Math.floor((dutyLiquid + dutyUnbond) * (M3.DEATH_DUTY_RATE || 0));
   if (deathDuty > 0) {
@@ -305,6 +306,10 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
     // ≥ INDICT after the seed comes off — survives; the CASE reads the pre-update row). Clearing
     // the case is the marquee "kill the witness → the case collapses" mechanic (schema/design).
     const upd = await client.query(
+      // pg-mem quirk (measured 2026-09-06): GREATEST/LEAST ROUND their result to an integer there
+      // while real Postgres keeps the fraction — and heat_exposure is the one clamped column §7.1
+      // accrual writes fractions to. Harmless in production; a TEST asserting an exact fractional
+      // value through this clamp is engine-dependent (see test/law.js's informant collapse).
       `UPDATE characters SET heat_exposure = GREATEST(0, heat_exposure - $2),
          indicted_at = CASE WHEN heat_exposure - $2 < $3 THEN NULL ELSE indicted_at END,
          jury_bought = CASE WHEN heat_exposure - $2 < $3 THEN false ELSE jury_bought END

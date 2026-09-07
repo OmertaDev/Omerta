@@ -60,11 +60,16 @@ touches mainnet** until §0 is satisfied.
    different layer, and the ERC-20 path survives armed at zero as its backstop.
 
    ### THE BATCH — what goes out, and why it is drawn here
-   **`CHAIN-AUDIT-PACKET.md` is the frozen 2026-08-21 pre-O1 packet** — useful historical attack-
-   surface context, but superseded as a current engagement scope. Before sending anything externally,
-   refresh that packet against the exact release head and reconcile it with the current inventory below.
+   **`CHAIN-AUDIT-PACKET-O1.md` is the packet to send** — rebuilt and frozen at release head
+   `b0a214ca` against the tree below, under the PINNED forge v1.7.1, with every figure bound to how
+   it was measured. `CHAIN-AUDIT-PACKET.md` is its superseded pre-O1 predecessor, kept unmodified as
+   historical attack-surface context and **not** a current engagement scope.
    *"Batch, not dribble" (`omerta-dynasty-machine-design.md`) means the scope must be KNOWN before it
-   is sent. The old packet was enumerated 2026-08-11; `forge test` **305/305** was green on that old
+   is sent. The authoritative measurement is the O1 packet's §0: **896 tests across 43 suites, 0
+   failed**, under forge v1.7.1 at `b0a214ca`. The 305/305 below is the OLD packet's figure, taken
+   2026-08-21 on a smaller tree under an unpinned toolchain, and is retained only to date the batch's
+   growth — a count without its compiler is not reproducible, which is the whole reason §0 exists.
+   The old packet was enumerated 2026-08-11; `forge test` **305/305** was green on that old
    set when measured 2026-08-21
    (StreetDeed added 2026-08-14; `DynastyNFT` + `StockVault` + `OmertaFees.payForPackage` added
    2026-08-14; the count has since grown with the red-team regressions — RT#5's constructor daily

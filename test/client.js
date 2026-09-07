@@ -51,7 +51,7 @@ import { buildServer } from '../src/server.js';
 import { M3, M4, PATHS, NPC_HITMEN, HEIST_ROLES, HEIST_JOBS, DRUGS, GOODS, DISTRICTS,
   COMMISSION, CONVOY, DUELS, TERRITORY_TYPES, CARS, TRIMS, ASSETS, RACKETS, BUSINESSES, ESTATE, WIRE, SECRETS, STABLE, WORLD, WORLD_NPCS,
   PEN, HONOR, MARRIAGE, CAMPAIGNS, LIMITED_RUNS, SHIPMENT, VANITY,
-  BUSINESS_EMPIRE, CORNER, cornerTasksOf, charterFx } from '../src/rules.js';
+  BUSINESS_EMPIRE, CORNER, cornerTasksOf, charterFx, CLUES, clueStepOf } from '../src/rules.js';
 import { bumpHonor } from '../src/honor.js';
 import { mintLimitedRun } from '../src/economy.js';
 
@@ -1024,6 +1024,33 @@ const collectList = (src, v, key, fn) => {
 const GETBIND = /(?:(const|let|var)\s+)?([a-zA-Z_$][\w$]*)\s*=\s*\(*\(await api\(\s*'GET'\s*,\s*([`'"])([^`'"]+)\3\s*\)\)\s*\.body(\s*\?\.\s*([a-zA-Z_$][\w$]*))?/g;
 const reads = new Map(), readWhere = new Map();
 let unscoped = 0, shadowUnresolved = 0;
+// DEEP READS. The mirror above keys a binding as `path|sub` and checks ONE level of fields off it;
+// `b.x.y` — the field of a sub-object the screen never aliased — was the stated out-of-scope, and a
+// measurement counted ~814 distinct such chains in the client checked by nothing. This collects the
+// WHOLE dotted chain per binding (`nested.get(key)` → Set<"a.b.c">) rather than one hop, because a
+// two-hop rule stops at the first sub-object and leaves `b.grandPrix.pool.total` unchecked past it.
+// Verified below by WALKING the chain against the live response, with ONE rule that keeps it honest
+// rather than noisy: a parent that is ABSENT or null AT ANY DEPTH is the benign empty state (no war,
+// no spouse, no champion for this fixture) and is COUNTED, never reported — a leaf is checked only
+// when every parent above it is an object the route actually returned, and a leaf it does not carry
+// is the same defect as a missing top-level field: it renders undefined with no error anywhere.
+const nested = new Map();
+const NESTED_RE = (V) => new RegExp(`(?<![\\w$.])${V}((?:\\s*\\??\\.\\s*[a-zA-Z_$][\\w$]*)+)`, 'g');
+const collectNested = (src, v, key) => {
+  for (const r of src.matchAll(NESTED_RE(v.replace('$', '\\$')))) {
+    // Take the whole run of `.ident` segments and TRUNCATE at the first builtin: `me.law.stage.toUpperCase`
+    // is a two-hop DATA chain with a method on the end, and reading it as three would report the string's
+    // own method as a field the route fails to carry — a mostly-wrong advisory people route around.
+    const segs = [];
+    for (const [, seg] of r[1].matchAll(/\??\.\s*([a-zA-Z_$][\w$]*)/g)) {
+      if (BUILTIN.has(seg)) break;
+      segs.push(seg);
+    }
+    if (segs.length < 2) continue;
+    if (!nested.has(key)) nested.set(key, new Set());
+    nested.get(key).add(segs.join('.'));
+  }
+};
 for (const m of html.matchAll(/\b(?:async\s+)?function\s+([a-zA-Z_$][\w$]*)\s*\(/g)) {
   const open = html.indexOf('{', m.index + m[0].length);
   if (open < 0) continue;
@@ -1213,6 +1240,7 @@ for (const m of html.matchAll(/\b(?:async\s+)?function\s+([a-zA-Z_$][\w$]*)\s*\(
       if (!reads.has(key)) { reads.set(key, new Set()); readWhere.set(key, m[1]); }
       reads.get(key).add(r[1]);
     }
+    collectNested(nxt ? src.slice(0, nxt.index) : src, v, key);
   }
 }
 assert.equal(unscoped, 0, `${unscoped} response binding(s) could not be scoped to a block, so their reads go unchecked`);
@@ -1769,7 +1797,8 @@ const noteObligations = (where, key, have, fields) => {
   if (blind.length) undisclosed.push(`${where} renders ${key} but never reads ${blind.join(',')} — the board `
     + `states an ongoing cost the screen does not, which is how the pad and the nut both reached a tester`);
 };
-const notReturned = [], unobservable = [];
+const notReturned = [], unobservable = [], nestedMissing = [];
+let nestedChains = 0, nestedChecked = 0, nestedAbsent = 0;
 for (const [key, fields] of reads) {
   const [rawPath, sub] = key.split('|');
   let path = rawPath;
@@ -1788,7 +1817,33 @@ for (const [key, fields] of reads) {
   const gone = [...fields].filter((f) => !have.has(f));
   if (gone.length) notReturned.push(`${readWhere.get(key)} reads ${gone.join(',')} off ${key} — the route returns ${[...have].slice(0, 8).join(',')}…`);
   noteObligations(readWhere.get(key), key, have, fields);
+  // the deep half, against the SAME fetched body — WALKED segment by segment rather than one hop,
+  // so `b.grandPrix.pool.total` is checked to its end instead of stopping at the first sub-object.
+  for (const chain of nested.get(key) || []) {
+    nestedChains++;
+    const segs = chain.split('.');
+    let cur = target, ok = true;
+    for (let i = 0; i < segs.length - 1; i++) {
+      const nx = cur[segs[i]];
+      const nt = Array.isArray(nx) ? nx[0] : nx;
+      if (nt === undefined || nt === null || typeof nt !== 'object') { ok = false; break; }
+      cur = nt;
+    }
+    if (!ok) { nestedAbsent++; continue; }   // the benign empty state, at ANY depth
+    nestedChecked++;
+    const leaf = segs[segs.length - 1];
+    const pk = new Set(Object.keys(cur));
+    if (!pk.has(leaf)) nestedMissing.push(`${readWhere.get(key)} reads ${chain} off ${key} — `
+      + `the route's ${segs.slice(0, -1).join('.')} carries ${[...pk].slice(0, 8).join(',')}…`);
+  }
 }
+assert.deepEqual(nestedMissing, [], `the client reads ${nestedMissing.length} deep field(s) its route's sub-object does not carry — ` +
+  `they render as undefined with no error anywhere`);
+// two floors, because they fail differently: chains COLLECTED (the extractor still sees the client)
+// and chains CHECKED (a fixture whose every parent is absent would verify nothing and read clean)
+assert(nestedChains > 300, `only ${nestedChains} deep read chain(s) collected — the nested extraction broke`);
+assert(nestedChecked > 100, `only ${nestedChecked} of ${nestedChains} deep chains resolved every parent (${nestedAbsent} absent) — the fixture stopped reaching them`);
+console.log(`  deep reads: ${nestedChains} chains, ${nestedChecked} walked to the leaf, ${nestedAbsent} parent absent/null (empty-state, not a finding)`);
 assert.deepEqual(notReturned, [], `the client reads ${notReturned.length} field(s) its route does not return — ` +
   `those render as undefined, or silently take a fallback, with no error anywhere`);
 assert.deepEqual(unobservable, [], `${unobservable.length} binding(s) resolved to an empty list or a non-object, ` +
@@ -4090,27 +4145,36 @@ for (const [key, wrong, why] of invert) {
     assert(!wrong.test(line), `${why} — got: ${JSON.stringify(line)}`);
   }
 }
-// Nothing a player reads may ever contain the literal word "undefined". Hiring staff printed it twice,
-// because the branch it landed on read two fields that shape never sends.
-for (const [url, line] of said) assert(!/undefined/.test(line),
-  `describe() rendered the literal word "undefined" to the player for ${url}: ${JSON.stringify(line)}`);
-// Nor may a line stack an article on a name that already carries one. Every secret in the game is
-// called "The <something>" (The Wash Records, The Bodies, The Kitchen Books, The Second Ledger), so
-// the hush line's own "The ${kind}" read "The The Wash Records" on every payment ever made — not an
-// edge case, and invisible to every pattern above because it is fluent. Swept rather than pinned at
-// the one site: the catalogs that start with an article are not going to stop growing.
-// NOR AN HTML ENTITY. Every consumer of describe() is toast(), which assigns to textContent — so an
-// HTML-escaped string is not safer there, it is simply WRONG, and it lands on exactly the names that
-// most need to read right: 94 catalog names carry an apostrophe or an ampersand (Motorcycle 'Wasp',
-// A Dead Don's Watch, The Doc's Friend) and the street-name charset guard allows both, so a player
-// called O'Malley was toasted as O&#39;Malley on every line that named them. Swept rather than pinned
-// at the one site that surfaced it, because the catalogs are not going to stop growing.
-for (const [url, line] of said) assert(!/&(?:amp|lt|gt|quot|#\d+);/.test(line),
-  `describe() rendered an HTML entity to the player for ${url} — its output goes to textContent, so ` +
-  `escaping corrupts the name instead of protecting anything: ${JSON.stringify(line)}`);
-for (const [url, line] of said) assert(!/\bThe The\b/i.test(line),
-  `describe() stacked an article on a name that already had one for ${url} — the catalog entry ` +
-  `already begins with "The": ${JSON.stringify(line)}`);
+// THE CLASS SWEEPS OVER EVERYTHING A PLAYER WAS SHOWN. ONE implementation, called twice — here over
+// everything driven so far, and again at the very END of the file. Wave blocks add to `said` at lines
+// far below this point, so a sweep that ran only here would RECORD those lines and never look at them:
+// a class check that silently stops covering the newest half of the corpus reads on the summary line
+// exactly like one that covers all of it. Copying the three loops down there instead is the
+// two-private-copies shape this file has paid for before.
+function sweepSaidClasses() {
+  // Nothing a player reads may ever contain the literal word "undefined". Hiring staff printed it twice,
+  // because the branch it landed on read two fields that shape never sends.
+  for (const [url, line] of said) assert(!/undefined/.test(line),
+    `describe() rendered the literal word "undefined" to the player for ${url}: ${JSON.stringify(line)}`);
+  // NOR AN HTML ENTITY. Every consumer of describe() is toast(), which assigns to textContent — so an
+  // HTML-escaped string is not safer there, it is simply WRONG, and it lands on exactly the names that
+  // most need to read right: 94 catalog names carry an apostrophe or an ampersand (Motorcycle 'Wasp',
+  // A Dead Don's Watch, The Doc's Friend) and the street-name charset guard allows both, so a player
+  // called O'Malley was toasted as O&#39;Malley on every line that named them. Swept rather than pinned
+  // at the one site that surfaced it, because the catalogs are not going to stop growing.
+  for (const [url, line] of said) assert(!/&(?:amp|lt|gt|quot|#\d+);/.test(line),
+    `describe() rendered an HTML entity to the player for ${url} — its output goes to textContent, so ` +
+    `escaping corrupts the name instead of protecting anything: ${JSON.stringify(line)}`);
+  // Nor may a line stack an article on a name that already carries one. Every secret in the game is
+  // called "The <something>" (The Wash Records, The Bodies, The Kitchen Books, The Second Ledger), so
+  // the hush line's own "The ${kind}" read "The The Wash Records" on every payment ever made — not an
+  // edge case, and invisible to every pattern above because it is fluent. Swept rather than pinned at
+  // the one site: the catalogs that start with an article are not going to stop growing.
+  for (const [url, line] of said) assert(!/\bThe The\b/i.test(line),
+    `describe() stacked an article on a name that already had one for ${url} — the catalog entry ` +
+    `already begins with "The": ${JSON.stringify(line)}`);
+}
+sweepSaidClasses();
 
 // THE PRICE IS A TERM. Six Wire actions burn $OMR and five of them named nothing, so a player pressed
 // them without ever learning what a tap or a dig had just cost — the pad-and-nut shape on a screen
@@ -6450,7 +6514,10 @@ const ACTFNS = new Map();   // route path → the handler names its registration
   // right — a helper the player never sees the reply of, a shape whose own card renders it, or a
   // branch that cannot be reached with a real body.
   const MUTE_OK = new Map([
-    ['withCharacter', 'the request wrapper itself — every route unwraps it; a player never reads this shape'],
+    // `withCharacter` was here until the envelope dropped its dead `events` slot: with `events: h.events`
+    // on the literal the wrapper's own shape read as a silent reply, and `{ character, ...result }` no
+    // longer does. The stale-waiver assertion is what noticed — a waiver that waives nothing is a
+    // decision nobody is making, so it comes out rather than being kept for comfort.
     ['repairCar', 'its branches key on body.fixed === true|false; the sentinel walk cannot supply a literal'],
     ['burnerHit', 'it spreads ...await npcHit(...) — a call the static walk cannot follow; the npchit '
       + 'branch renders it live, and the WAVE 68 block below drives the burner line for real'],
@@ -6572,11 +6639,18 @@ const ACTFNS = new Map();   // route path → the handler names its registration
   // field and a file-wide match is satisfied by any one of them, so dropping it from the fill left
   // the check green (a substring elsewhere proves nothing about the reply under test).
   {
+    // anchored on each reply's own DISCRIMINATOR rather than its whole literal: a reply legitimately
+    // GROWS fields (the fill gained `gross, take` when the house cut got named), and a pin that
+    // restates the entire line rots on that — reporting a rename it never checked for as a missing
+    // field it did. The scoping is what matters and is kept: the field must sit inside THIS reply.
     const mk = readFileSync(new URL('../src/market.js', import.meta.url), 'utf8');
-    for (const src of ['delivered: n, earned: net, remaining: Number(l.qty) - n, good: l.good_id',
-                       'claimed: n, awaiting: left, good: l.good_id',
-                       'cancelled: l.id, refunded: remaining, awaiting: Number(l.filled_qty), good: l.good_id'])
-      assert(mk.includes(src), `market.js reply must carry the good id — the client has no way to name the freight without it: ${src}`);
+    for (const anchor of ['delivered: n', 'claimed: n', 'cancelled: l.id']) {
+      const at = mk.indexOf(anchor);
+      assert(at > 0, `market.js no longer has the reply anchored on \`${anchor}\` — relocate this pin rather than deleting it`);
+      const lit = mk.slice(at, mk.indexOf('}', at));
+      assert(lit.includes('good: l.good_id'),
+        `market.js reply must carry the good id — the client has no way to name the freight without it: ${anchor} → ${lit}`);
+    }
   }
   // the races: four replies sent car.model_id raw, so a tune, a NOS charge, a wager listing and a
   // pinks offer all named a key. The notify one line down had sent the NAME all along.
@@ -7085,6 +7159,16 @@ const ACTFNS = new Map();   // route path → the handler names its registration
   assert(killLine.includes(k.matLootName), `the kill must name the scarce material it took: ${killLine}`);
   assert(/respect/.test(killLine) && /feared/.test(killLine),
     `the kill must name BOTH legends it banked — ordinary respect and the assassin's: ${killLine}`);
+  // ── and the clock the shot just armed ──────────────────────────────────────────────────────
+  // The wave-80 class: a success reply that ARMS a cooldown and never names it, so the player
+  // learns about it by pressing the button again and being refused. The trigger used to cool on a
+  // MISS alone, which is why only the miss line ever mentioned it; it cools on every shot now, so
+  // every outcome has to say so. SERVER half first — a synthetic literal passes straight through
+  // the mutation that stops the field being sent — then the LINE, and it must name HOW LONG rather
+  // than merely that the gun is hot: SHOOT_CD_MS is pinned to 1 above, so minsTxt renders "1s".
+  assert(k.shootCdSeconds > 0, 'the kill must SEND the trigger wait it just armed');
+  assert(/trigger cools/.test(killLine) && /\d+\s*(s|m|h|d)\b/.test(killLine.split('trigger cools')[1] || ''),
+    `the kill must name HOW LONG the trigger is cold, not merely that it is: ${killLine}`);
 }
 // ── WAVE 73 (vice): the Track claim, the pinks, the grid, the futurity book, the siege ──────────
 // Five entries, all DRIVEN (never synthetic — a literal passes straight through the mutation that
@@ -9060,4 +9144,294 @@ console.log(`✅ client wiring test passed — across the console AND /admin: of
   assert(/\d+\s*(s|m|h)\b/.test(iron79.body.message),
     `WAVE 79: the boost line must name the wait — got "${iron79.body.message}"`);
   console.log('  ✓ WAVE 79: cooldown refusals name the wait AND carry it as data (fire + boost, both clock shapes)');
+
+  // ── WAVE 80 — THE CLOCK THAT LANDS WIN OR LOSE ────────────────────────────────────────
+  // Wave 79 fixed the REFUSAL half of the cooldown class: a 'come back later' that named no wait.
+  // This is the half that comes FIRST in play — the SUCCESS reply that armed the clock and never
+  // mentioned it, so the player learns the wait only by being turned away. Two systems, and in
+  // races it was the forgotten-sibling shape INSIDE ONE FILE: `race_at` is stamped by three
+  // functions and only `raceNpc` ever carried the field.
+  //
+  // DRIVEN, never synthetic, and asserted in TWO halves per this scope's own rule: the SERVER
+  // sent the figure, and THEN the line names it. A literal expectation passes straight through
+  // the mutation that stops the field being sent — and a re-implementation of the client's own
+  // `minsTxt` here would be a second copy of the formatter, which is the class this wave is about.
+  // The duration is matched as a TOKEN (the WAVE 79 idiom), never as a reconstructed string.
+  const dur80 = /\d+\s*(s|m|h|d)\b/;
+
+  // (a) the cutman's rest — a per-fighter clock that rides WIN OR LOSE, so the clause sits outside
+  // the loss-only lay-up guard. Only the server knows it: the Cornerman's tier scales it, so a
+  // restated constant is wrong for anyone the perk touches.
+  const mgr80 = await mk11('Manager');
+  const sign80 = await inj11('POST', '/v1/boxing/recruit', mgr80.token, { name: 'Kid Malone' });
+  assert.equal(sign80.code, 200, `WAVE 80 fixture: the fighter must be signed (${JSON.stringify(sign80.body)})`);
+  const bout80 = await inj11('POST', '/v1/boxing/exhibition', mgr80.token, { fighter: sign80.body.id, tier: 'clubfighter' });
+  assert.equal(bout80.code, 200, `WAVE 80 fixture: the exhibition must be fought (${JSON.stringify(bout80.body)})`);
+  assert(bout80.body.restSeconds > 0,
+    `WAVE 80: the exhibition reply must CARRY the rest clock it just armed — got ${JSON.stringify(bout80.body.restSeconds)}`);
+  const boutLine80 = String(describeFn(bout80.body, 200));
+  assert(/rests\s+\S+\s+before the next card/.test(boutLine80) && dur80.test(boutLine80),
+    'WAVE 80: the card must say when the fighter is next available — the rest lands win OR lose, so a '
+    + `winner heard about it least of all. Got "${boutLine80}"`);
+
+  // (b) the ride — all THREE race verbs stamp the same `characters.race_at`, and the class was swept
+  // to its edge rather than patched at the one site it was found on (the RT#7 discipline). The
+  // clock is NOT pinned low here on purpose: `RACE_CD_MS` would collapse the asserted figure to 1
+  // and the 'names the wait' half would prove nothing about a real clock. Clear the stamp instead.
+  const drv80 = await mk11('Driver'), riv80 = await mk11('Rival');
+  const car80 = async (id, owner) => app11.pool.query(
+    "INSERT INTO cars (id, character_id, model_id, trim_id, dmg) VALUES ($1,$2,'junker','stock',0)", [id, owner]);
+  await car80('w80drv', drv80.id); await car80('w80wager', riv80.id); await car80('w80pinks', riv80.id);
+  const cool80 = () => app11.pool.query('UPDATE characters SET race_at=NULL WHERE id=$1 OR id=$2', [drv80.id, riv80.id]);
+
+  const npc80 = await inj11('POST', '/v1/races/npc', drv80.token, { car: 'w80drv', tier: 'backalley' });
+  assert.equal(npc80.code, 200, `WAVE 80 fixture: the circuit run must go (${JSON.stringify(npc80.body)})`);
+  assert(npc80.body.cooldownSeconds > 0,
+    `WAVE 80: the circuit reply must carry the per-driver clock it stamped — got ${JSON.stringify(npc80.body.cooldownSeconds)}`);
+  const npcLine80 = String(describeFn(npc80.body, 200));
+  assert(/run again in \S+/.test(npcLine80) && dur80.test(npcLine80),
+    `WAVE 80: the circuit line must name when the ride is free again — got "${npcLine80}"`);
+
+  await cool80();
+  const listed80 = await inj11('POST', '/v1/races/list/w80wager', riv80.token, { limit: 5000 });
+  assert.equal(listed80.code, 200, `WAVE 80 fixture: the rival must be on the strip (${JSON.stringify(listed80.body)})`);
+  const wager80 = await inj11('POST', `/v1/races/challenge/${riv80.id}`, drv80.token, { myCar: 'w80drv', theirCar: 'w80wager', wager: 1000 });
+  assert.equal(wager80.code, 200, `WAVE 80 fixture: the wager race must run (${JSON.stringify(wager80.body)})`);
+  assert(wager80.body.cooldownSeconds > 0,
+    `WAVE 80: the wager reply must carry the same clock — got ${JSON.stringify(wager80.body.cooldownSeconds)}`);
+  const wagerLine80 = String(describeFn(wager80.body, 200));
+  assert(/the ride cools for \S+/.test(wagerLine80) && dur80.test(wagerLine80),
+    `WAVE 80: the wager line must name the wait — got "${wagerLine80}"`);
+
+  await cool80();
+  const pinked80 = await inj11('POST', '/v1/races/pinkslip/w80pinks', riv80.token, { on: true });
+  assert.equal(pinked80.code, 200, `WAVE 80 fixture: the rival must put a slip up (${JSON.stringify(pinked80.body)})`);
+  const pinks80 = await inj11('POST', `/v1/races/pinks/${riv80.id}`, drv80.token, { myCar: 'w80drv', theirCar: 'w80pinks' });
+  assert.equal(pinks80.code, 200, `WAVE 80 fixture: the pinks race must run (${JSON.stringify(pinks80.body)})`);
+  assert(pinks80.body.cooldownSeconds > 0,
+    `WAVE 80: the pinks reply must carry the clock too — got ${JSON.stringify(pinks80.body.cooldownSeconds)}`);
+  const pinksLine80 = String(describeFn(pinks80.body, 200));
+  assert(/PINKS/.test(pinksLine80) && /the ride cools for \S+/.test(pinksLine80) && dur80.test(pinksLine80),
+    `WAVE 80: the pinks line must name the wait — got "${pinksLine80}"`);
+  console.log('  ✓ WAVE 80: the SUCCESS reply names the clock it just armed (the cutman\'s rest + all three race verbs)');
+
+  // ── WAVE 80 (c1-7) — THE COST THAT LANDS WIN OR LOSE, AND THE TAKE THAT NEVER COMES BACK ──
+  // The same class one step over: a SUCCESS reply that CHARGED something and never named it. Three
+  // sites, three different reasons the player could not have known:
+  //   • the shovel is paid on COLD ground too (the handler says so in its own comment) — so a wrong
+  //     guess read as free, and a scroll ran a player's tank down with nothing on screen saying why;
+  //   • `hospMs` rode the VICTIM'S notify and never the attacker's own reply — the forgotten-sibling
+  //     shape, so the one man who put the mark in a bed was the one person not told they were there
+  //     (and therefore out of HIS reach too, which is the half that changes what he does next);
+  //   • a contract charges amt + fee + tax and the reply named the POT alone, so the take was
+  //     invisible at the moment it was charged AND at cancel, which refunds the pot share only.
+  //
+  // Asserted in TWO halves throughout, per this scope's own rule: the SERVER sent the figure, and
+  // THEN the line names it. A synthetic literal passes straight through the mutation that stops a
+  // field being sent, which is exactly the mutation these fixes exist to fail.
+
+  // (c) the shovel. The wrong district is COMPUTED off the scroll's own salt rather than guessed —
+  // `clueStepOf` is deterministic, so a hardcoded district would be right one day in six and the
+  // assertion would rest on a probabilistic precondition (the recorded flake class).
+  const dig80 = await mk11('Digger');
+  const salt80 = 'w80saltclue';
+  const right80 = clueStepOf(salt80, 1).district;
+  const wrong80 = DISTRICTS.map((d) => d.id).find((d) => d !== right80);
+  assert(wrong80, 'WAVE 80 fixture: there must be a district that is NOT the scroll\'s answer');
+  await app11.pool.query('INSERT INTO clue_scrolls (character_id, salt, step, steps) VALUES ($1,$2,1,3)', [dig80.id, salt80]);
+  await app11.pool.query('UPDATE characters SET loc=$2, energy=90 WHERE id=$1', [dig80.id, wrong80]);
+  const cold80 = await inj11('POST', '/v1/clues/dig', dig80.token, {});
+  assert.equal(cold80.code, 200, `WAVE 80 fixture: a cold dig is a 200, not a refusal (${JSON.stringify(cold80.body)})`);
+  assert.equal(cold80.body?.cold, true, `WAVE 80 fixture: the dig must land on COLD ground (${JSON.stringify(cold80.body)})`);
+  assert.equal(cold80.body.energy, CLUES.DIG_ENERGY,
+    `WAVE 80: the cold-ground reply must CARRY the energy the shovel still cost — got ${JSON.stringify(cold80.body.energy)}`);
+  const coldLine80 = String(describeFn(cold80.body, 200));
+  assert(new RegExp(`${CLUES.DIG_ENERGY} energy for the dig either way`).test(coldLine80),
+    `WAVE 80: a wrong guess must not read as free — the shovel is paid win or lose. Got "${coldLine80}"`);
+
+  // (d) the beating. The stat gap is seeded far past the contest's own noise term: BOTH sides add
+  // Math.random() * 25, so a gap under 25 would make this a coin toss dressed as an assertion.
+  const bru80 = await mk11('Bruiser'), mark80 = await mk11('Mark');
+  await app11.pool.query('UPDATE characters SET muscle=200, speed=200, energy=100, ammo=100, health=100 WHERE id=$1', [bru80.id]);
+  await app11.pool.query('UPDATE characters SET muscle=1, speed=1, cash=50000 WHERE id=$1', [mark80.id]);
+  const beat80 = await inj11('POST', `/v1/streets/${mark80.id}/jump`, bru80.token, {});
+  assert.equal(beat80.code, 200, `WAVE 80 fixture: the jump must land (${JSON.stringify(beat80.body)})`);
+  assert.equal(beat80.body?.win, true, `WAVE 80 fixture: the seeded gap must guarantee the WIN branch (${JSON.stringify(beat80.body)})`);
+  assert.equal(beat80.body.energy, M3.JUMP_ENERGY,
+    `WAVE 80: the jump reply must carry what the swing cost — got ${JSON.stringify(beat80.body.energy)}`);
+  assert(beat80.body.hospSeconds > 0,
+    `WAVE 80: the jump reply must carry the bed it just put them in — got ${JSON.stringify(beat80.body.hospSeconds)}`);
+  const beatLine80 = String(describeFn(beat80.body, 200));
+  assert(new RegExp(`${M3.JUMP_ENERGY} energy`).test(beatLine80),
+    `WAVE 80: the jump line must name the energy it spent — got "${beatLine80}"`);
+  assert(/in a bed for \S+/.test(beatLine80) && dur80.test(beatLine80) && /out of your reach too/.test(beatLine80),
+    'WAVE 80: the attacker must be told the mark is in a bed AND that it puts them beyond his own '
+    + `reach — the consequence that decides what he does next. Got "${beatLine80}"`);
+
+  // (e) the board's cut. Charged on top of the pot at post, and NOT returned at cancel — so it is
+  // stated at both ends, because a refund that quietly returns less than was charged is the shape
+  // this whole sweep is about. The take is read off the SERVER's own reply, never restated here.
+  const poster80 = await mk11('Poster'), quarry80 = await mk11('Quarry');
+  await app11.pool.query('UPDATE characters SET cash=500000 WHERE id=$1', [poster80.id]);
+  const post80 = await inj11('POST', `/v1/streets/${quarry80.id}/bounty`, poster80.token, { amount: 100000, kind: 'kill' });
+  assert.equal(post80.code, 200, `WAVE 80 fixture: the contract must go up (${JSON.stringify(post80.body)})`);
+  assert(post80.body.take > 0,
+    `WAVE 80: the post reply must carry the take charged ON TOP of the pot — got ${JSON.stringify(post80.body.take)}`);
+  const postLine80 = String(describeFn(post80.body, 200));
+  assert(/the board kept \S+ on top/.test(postLine80) && /never comes back/.test(postLine80),
+    `WAVE 80: the post line must name the cut it kept on top of the pot — got "${postLine80}"`);
+  const pull80 = await inj11('POST', `/v1/contracts/${quarry80.id}/kill/cancel`, poster80.token, {});
+  assert.equal(pull80.code, 200, `WAVE 80 fixture: the poster must be able to pull their own stake (${JSON.stringify(pull80.body)})`);
+  assert(pull80.body.refunded > 0 && pull80.body.refunded < 100000 + post80.body.take,
+    `WAVE 80 fixture: the refund is the POT share, never the whole charge (${JSON.stringify(pull80.body)})`);
+  const pullLine80 = String(describeFn(pull80.body, 200));
+  assert(/the board's take stays kept/.test(pullLine80),
+    `WAVE 80: the cancel line must say what does NOT come back — got "${pullLine80}"`);
+  console.log('  ✓ WAVE 80: the SUCCESS reply names what it CHARGED too (the shovel on cold ground, the jump\'s energy + the bed, the board\'s take at post and at cancel)');
+
+  // ── WAVE 80 (appliers) — FOUR MORE SUCCESS REPLIES THAT CHARGED OR SETTLED IN SILENCE ──
+  // Same class, four sites the coverage sweep reached that the c1-7 pass did not:
+  //   • a shakedown/rob shuts that front to BOTH verbs for a shared window — the one term that
+  //     decides whether you can come back, and the reply named neither it nor what the visit cost;
+  //   • the weekly fight settled into the shared ticket line as a bare figure, though the card names
+  //     both fighters and the TRACK twin has shipped `winnerName` since it landed (forgotten sibling);
+  //   • listing paper named the ASK and never the NET — the house take is the difference between the
+  //     number on the board and the number that reaches you;
+  //   • filling an order banked NET off a board quoting GROSS, so the missing cut had no explanation.
+  // Two halves throughout, as above: the SERVER sent the figure, and THEN the line names it.
+
+  // (f) THE SHARED WINDOW. Outcome-independent on purpose — `...terms` rides all three of
+  // extortFront's branches, so nothing here pins a roll (which would be a coin toss wearing a proof).
+  const lean80 = await mk11('Leaner');
+  const front80 = await mk11('Frontman');
+  await app11.pool.query('UPDATE characters SET energy=90, health=100 WHERE id=$1', [lean80.id]);
+  const biz80 = 'w80biz' + Math.random().toString(36).slice(2, 8);
+  await app11.pool.query('INSERT INTO businesses (id, character_id, kind) VALUES ($1,$2,$3)', [biz80, front80.id, 'laundromat']);
+  const shake80 = await inj11('POST', `/v1/business/${biz80}/shakedown`, lean80.token, {});
+  assert.equal(shake80.code, 200, `WAVE 80 fixture: the shakedown must land (${JSON.stringify(shake80.body)})`);
+  assert(shake80.body.cooldownSeconds > 0 && shake80.body.energy > 0 && shake80.body.heat > 0,
+    `WAVE 80: the shakedown reply must carry what the visit COST and how long the front is shut — got ${JSON.stringify(shake80.body)}`);
+  const shakeLine80 = String(describeFn(shake80.body, 200));
+  assert(/rob or shakedown/.test(shakeLine80) && dur80.test(shakeLine80),
+    `WAVE 80: the shakedown line must name the shared window it just armed — got "${shakeLine80}"`);
+
+  // (g) THE FIGHT. week 0 is guaranteed < weekOf(), so the claim always matures.
+  const punt80 = await mk11('Punter');
+  await app11.pool.query('INSERT INTO fight_bets (character_id, week, side, stake) VALUES ($1,0,$2,$3)', [punt80.id, 'a', 500]);
+  const fight80 = await inj11('POST', '/v1/casino/fight/claim', punt80.token, {});
+  assert.equal(fight80.code, 200, `WAVE 80 fixture: the ticket must settle (${JSON.stringify(fight80.body)})`);
+  assert.equal(fight80.body.settled, 1, `WAVE 80 fixture: exactly one matured ticket (${JSON.stringify(fight80.body)})`);
+  const r80 = fight80.body.results && fight80.body.results[0];
+  assert(r80 && typeof r80.winnerName === 'string' && r80.winnerName.length > 0 && typeof r80.pickName === 'string' && r80.pickName.length > 0,
+    `WAVE 80: the settle reply must NAME the fighters — got ${JSON.stringify(fight80.body.results)}`);
+  const fightLine80 = String(describeFn(fight80.body, 200));
+  assert(fightLine80.includes(r80.winnerName) && /took the fight/.test(fightLine80),
+    `WAVE 80: the fight line must name who took it — got "${fightLine80}"`);
+
+  // (h) THE PAPER'S NET. Asserted as a RELATION off the reply rather than against an imported lever —
+  // a restated take is a second copy of a founder dial, and the copies drift.
+  const shark80 = await mk11('Shylock');
+  const owes80 = await mk11('Debtor');
+  const loan80 = 'w80loan' + Math.random().toString(36).slice(2, 8);
+  await app11.pool.query(
+    "INSERT INTO loans (id, lender_character, borrower_character, principal, rate, hours, status, due_at) VALUES ($1,$2,$3,50000,0.25,24,'active', now() + interval '24 hours')",
+    [loan80, shark80.id, owes80.id]);
+  const sell80 = await inj11('POST', `/v1/loans/${loan80}/sell`, shark80.token, { price: 40000 });
+  assert.equal(sell80.code, 200, `WAVE 80 fixture: the lender must be able to list their own paper (${JSON.stringify(sell80.body)})`);
+  assert(sell80.body.net > 0 && sell80.body.net < sell80.body.price,
+    `WAVE 80: the listing must carry the NET the lender banks, below the ask — got ${JSON.stringify(sell80.body)}`);
+  const sellLine80 = String(describeFn(sell80.body, 200));
+  assert(/you bank/.test(sellLine80) && new RegExp(fmtLike(sell80.body.net)).test(sellLine80),
+    `WAVE 80: the listing line must say what reaches the lender, not just the ask — got "${sellLine80}"`);
+
+  // (i) THE FILL. Posted through the REAL route — a hand-seeded listing would have paySeller pay out
+  // of escrow that was never debited, which is a fixture that proves the wrong thing.
+  const buyer80 = await mk11('Buyer');
+  const seller80 = await mk11('Runner');
+  const g80 = GOODS[0].id;
+  const order80 = await inj11('POST', '/v1/market/order', buyer80.token, { goodId: g80, qty: 5, price: 4000, hours: 24 });
+  assert.equal(order80.code, 200, `WAVE 80 fixture: the order must post (${JSON.stringify(order80.body)})`);
+  await app11.pool.query('INSERT INTO character_cargo (character_id, good_id, qty) VALUES ($1,$2,5) ON CONFLICT (character_id, good_id) DO UPDATE SET qty=5', [seller80.id, g80]);
+  const fill80 = await inj11('POST', `/v1/market/${order80.body.id}/fill`, seller80.token, { qty: 3 });
+  assert.equal(fill80.code, 200, `WAVE 80 fixture: the delivery must land (${JSON.stringify(fill80.body)})`);
+  assert(fill80.body.gross > fill80.body.earned && fill80.body.take > 0 && fill80.body.gross - fill80.body.take === fill80.body.earned,
+    `WAVE 80: the fill must carry the GROSS the board quoted and the TAKE that explains the difference — got ${JSON.stringify(fill80.body)}`);
+  const fillLine80 = String(describeFn(fill80.body, 200));
+  assert(/house take/.test(fillLine80) && new RegExp(fmtLike(fill80.body.take)).test(fillLine80),
+    `WAVE 80: the fill line must explain the gap between the board's price and what landed — got "${fillLine80}"`);
+
+  console.log('  ✓ WAVE 80: the shared front window, the fighter who took it, the paper\'s net and the fill\'s house take all reach the player');
+
+  // ── WAVE 81 — THE PACT NAMED ON THE WAY OUT AND NOT ON THE WAY IN ────────────────────────────
+  // Check 14 (THE SILENCE LEDGER) proves statically that no act()-pressed handler is MUTE, and it is
+  // structurally blind to the class that is every tester complaint this project has had: a line that
+  // is FLUENT and simply leaves a TERM off. Founding or joining a crew silently binds a FIVE-VERB
+  // non-aggression pact — fire, jump, npcHit, shank and postBounty all refuse between crewmates — and
+  // the two ENTRY lines never said so, while the EXIT line IN THE SAME MAP has always read "you walked
+  // — the pact's off". The pact was named on the way out and not on the way in, so a player learnt it
+  // the first time the server refused. Neither entry stated the seat cap either, and the cap is
+  // unreachable from describe(): /v1/rules.crew is the KITCHEN crew, and the social cap reaches only
+  // /v1/crew (crewBoard.maxMembers), which describe() never sees — so it rides on the reply.
+  // DRIVEN, never synthetic: every claim below is about a field the SERVER now sends, and a literal
+  // passes straight through the mutation that stops it being sent.
+  const boss81 = await mk11('W81b');
+  const rec81 = await mk11('W81r');
+  const mark81 = await mk11('W81m');
+  // mk11 returns a token and an id; the invite and the crew hit both name a STREET, so read it back.
+  const nameOf81 = async (tok) => (await inj11('GET', '/v1/me', tok)).body.character.name;
+  const recName81 = await nameOf81(rec81.token);
+  const markName81 = await nameOf81(mark81.token);
+
+  const found81 = await inj11('POST', '/v1/crew', boss81.token, { name: 'Wave81 ' + Math.random().toString(36).slice(2, 6) });
+  assert.equal(found81.code, 200, `WAVE 81 fixture: the crew must be founded (${JSON.stringify(found81.body)})`);
+  assert(found81.body.members === 1 && found81.body.max > 1,
+    'WAVE 81: founding must SEND the shape of what was just bound — the seat cap is not reachable from '
+    + `describe() (rules.crew is the KITCHEN crew), so it has to ride the reply. Got ${JSON.stringify(found81.body)}`);
+  const foundLine81 = String(describeFn(found81.body, 200));
+  assert(/pact/i.test(foundLine81) && /shooting/i.test(foundLine81) && /contracts/i.test(foundLine81),
+    'WAVE 81: the ENTRY line must name the pact it just bound — the EXIT line has always said "the '
+    + `pact's off", so saying nothing on the way in is the withheld term. Got "${foundLine81}"`);
+  assert(foundLine81.includes(`${found81.body.members}/${found81.body.max}`),
+    `WAVE 81: the founding line must state the seats off the server's own figures — got "${foundLine81}"`);
+
+  const inv81 = await inj11('POST', '/v1/crew/invite', boss81.token, { name: recName81 });
+  assert.equal(inv81.code, 200, `WAVE 81 fixture: the invite must go out (${JSON.stringify(inv81.body)})`);
+  assert(inv81.body.max > 0 && inv81.body.pending > 0,
+    `WAVE 81: the invite must carry the seats AND the outstanding invites the server itself caps — got ${JSON.stringify(inv81.body)}`);
+  const invLine81 = String(describeFn(inv81.body, 200));
+  assert(invLine81.includes(`${inv81.body.members}/${inv81.body.max}`) && /invite/.test(invLine81),
+    `WAVE 81: the invite line must name how full the crew is and how many asks are out — got "${invLine81}"`);
+
+  const acc81 = await inj11('POST', `/v1/crew/accept/${found81.body.id}`, rec81.token, {});
+  assert.equal(acc81.code, 200, `WAVE 81 fixture: the invite must be accepted (${JSON.stringify(acc81.body)})`);
+  assert.equal(acc81.body.members, 2,
+    'WAVE 81: the joiner counts themselves — the reply states the crew AFTER the insert, computed from '
+    + `the count already in hand rather than a second query. Got ${JSON.stringify(acc81.body)}`);
+  const accLine81 = String(describeFn(acc81.body, 200));
+  assert(/pact/i.test(accLine81) && /shanks|shooting/i.test(accLine81),
+    `WAVE 81: the JOINER is the one who most needs to be told what just bound them — got "${accLine81}"`);
+  assert(accLine81.includes(`${acc81.body.members}/${acc81.body.max}`),
+    `WAVE 81: the join line must state the seats too — got "${accLine81}"`);
+
+  // THE CREW HIT names a kind — kill or hospitalize — on the thing the whole crew is being asked to
+  // fund, and the line rendered neither. Both kinds are driven, because a line that reads correctly
+  // for one and not the other is exactly what a single drive cannot see.
+  const kill81 = await inj11('POST', '/v1/crew/target', boss81.token, { name: markName81, kind: 'kill' });
+  assert.equal(kill81.code, 200, `WAVE 81 fixture: the hit must be called (${JSON.stringify(kill81.body)})`);
+  assert.equal(kill81.body.kind, 'kill', `WAVE 81 fixture: the reply carries the kind (${JSON.stringify(kill81.body)})`);
+  const killLine81 = String(describeFn(kill81.body, 200));
+  assert(/KILL/.test(killLine81),
+    `WAVE 81: the crew hit must say which contract the crew is funding — got "${killLine81}"`);
+  const hosp81 = await inj11('POST', '/v1/crew/target', boss81.token, { name: markName81, kind: 'hospitalize' });
+  assert.equal(hosp81.code, 200, `WAVE 81 fixture: the kind must be changeable (${JSON.stringify(hosp81.body)})`);
+  const hospLine81 = String(describeFn(hosp81.body, 200));
+  assert(/hospitalize/i.test(hospLine81) && !/KILL/.test(hospLine81),
+    `WAVE 81: a hospitalize pot must not read as a kill contract — got "${hospLine81}"`);
+  console.log('  ✓ WAVE 81: founding and joining a crew name the pact they bind and the seats; the crew hit names its kind');
 }
+
+// AND AGAIN, over everything the wave blocks above added. `said` is populated in two places separated
+// by five thousand lines — the main ACTIONS drive near the top, and the wave blocks that run on their
+// own tokens down here — and only the first half was ever swept for these three classes. A line
+// recorded but never looked at is the vacuity shape in its quietest form: the summary line counts it.
+sweepSaidClasses();

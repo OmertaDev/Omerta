@@ -7,7 +7,7 @@
 // the character-cash check is untouched and the treasury check reconciles them. The on-chain
 // tradeable-NFT layer (minted_onchain) is dormant/deferred, the M6 pattern.
 import { postPower } from './roster.js';
-import { GameError, bus } from './game.js';
+import { GameError, assertStreetActor, bus } from './game.js';
 import { DISTRICTS, TERRITORY_RACKETS, TERRITORY_TYPES, territoryTierOf, territoryTypeOf, territoryBuildCost, territoryFortCost, territoryRankOf, syndicateOf, TERRITORY_SYNDICATE_MIN, levelOf, CONSTANTS, rosterMult, charterFx, M3, jailed, hospitalized, safeHoused, usd, art , coolLeft, coolWait } from './rules.js';
 
 const canCommand = (h) => h.owned.gangRole === 'boss' || h.owned.gangRole === 'underboss';
@@ -297,9 +297,10 @@ export async function raidRivalRacket(ch, districtId, client, h) {
   // you must travel to and expose yourself at the target's district) — red-team: the client always said so,
   // the server didn't enforce it, letting a raid launch from anywhere.
   if (ch.loc !== districtId) throw new GameError('district', "You have to be on their block to muscle in.", { district: districtId });
-  if (jailed(ch)) throw new GameError('jailed', 'Not from lockup.');
-  if (hospitalized(ch)) throw new GameError('hospitalized', "You're in no shape for muscle work.");
-  if (safeHoused(ch)) throw new GameError('safe', "You can't run a raid from a safehouse.");  // P1.3
+  assertStreetActor(ch, { witpro: false, hospCode: 'hospitalized', msgs: {
+    jailed: 'Not from lockup.',
+    hosp: "You're in no shape for muscle work.",
+    safe: "You can't run a raid from a safehouse." } });  // P1.3
   if (levelOf(Number(ch.respect)) < CONSTANTS.TERRITORY_RIVAL_MIN_LVL)
     throw new GameError('rookie', `Muscling a rival operation takes level ${CONSTANTS.TERRITORY_RIVAL_MIN_LVL}.`);
   if (Number(ch.energy) < CONSTANTS.TERRITORY_RIVAL_ENERGY) throw new GameError('energy', 'Not enough energy for a raid.');

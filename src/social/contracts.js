@@ -119,7 +119,10 @@ export async function postBounty(ch, targetCharacterId, amount, client, h, opts 
   await h.notify(client, targetCharacterId, 'bounty_on_you', { kind, amount: amt }); // the mark can react (lay low, etc.)
   if (hitmanId && !live) await h.notify(client, hitmanId, 'contract_offer', { target: t.name, kind, amount: amt }); // the named hitman is tapped
   await h.track(client, ch.account_id, 'contract_post', { kind, amount: amt, directed: !!hitmanId });
-  return { ok: true, kind, total: (live ? Number(existing.amount) : 0) + amt, expiresHours: ttlH, hitman: hitmanId || undefined };
+  // WAVE 80: the poster pays amt + fee + tax and the reply named only the pot — so the take was
+  // invisible at the one moment it is charged, and invisible again at cancel (which refunds the
+  // POT share alone: the take never comes back).
+  return { ok: true, kind, total: (live ? Number(existing.amount) : 0) + amt, take: fee + tax, expiresHours: ttlH, hitman: hitmanId || undefined };
 }
 
 // Collect every claimable pot on the victim: `kinds` is what this takedown fulfils — a jump
@@ -369,7 +372,10 @@ export async function peekContracts(ch, client, h) {
        LEFT JOIN gangs g ON g.id = bc.contributor
       WHERE bc.target_character=$1`, [ch.id])).rows;
   await h.track(client, ch.account_id, 'intel_peek', { pots: pots.length });
-  return { ok: true, contracts: pots.map((p) => ({
+  // WAVE 80 — the peek is a $OMR BURN and the line named only what it bought. The charge above is
+  // real (verified 5000 -> 4970) and the reply carried no figure, so the client could not have said
+  // otherwise — the anon twin at :102 has the same shape. Piercing anonymity has a price; say it.
+  return { ok: true, omr: M8.INTEL_PEEK_OMR, contracts: pots.map((p) => ({
     kind: p.kind, pot: Math.floor(Number(p.amount)), reason: p.reason || null,
     hitman: p.hitman_name || null,
     expiresInSeconds: p.expires_at ? Math.max(0, Math.ceil((new Date(p.expires_at) - Date.now()) / 1000)) : null,

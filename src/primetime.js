@@ -143,7 +143,12 @@ export async function answerCall(ch, client, h) {
   }
   // value night: the cash lands at close, scaled by the FINAL turnout (so nobody is punished for coming early)
   await notify(client, ch.id, 'primetime_answered', { mode: 'value', turnout }).catch(() => {});
-  return { answered: true, mode: 'value', turnout, pending: true };
+  // WAVE 80 — the cut rides with the reply. It is an ESTIMATE (the settle uses the FINAL turnout, so
+  // it only ever grows), and the client cannot compute it: BASE/PER/CAP are founder levers published
+  // nowhere it reads. Both siblings in this file already ship theirs — joinSiege sends `reward` and
+  // buyRound sends `cash` — so the value rally was the one payout-bearing reply that named no figure.
+  return { answered: true, mode: 'value', turnout, pending: true,
+    reward: rallyReward(turnout), perHead: PRIME_TIME.RALLY_PER, turnoutCap: PRIME_TIME.RALLY_TURNOUT_CAP };
 }
 
 // HAPPY HOUR — buy a round (up to HAPPY_ROUNDS a night), in-window only. value → petty cash per round

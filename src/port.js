@@ -8,7 +8,7 @@
 // a WIN redirects the run's would-be landing to the pirate at a CUT, so port emission can only FALL), and
 // the offshore RENDEZVOUS (a consensual mid-sea handoff of an active run to a partner's boat — §10.4-neutral).
 import crypto from 'node:crypto';
-import { GameError, bus, bumpMastery, masteryFx } from './game.js';
+import { GameError, assertStreetActor, bus, bumpMastery, masteryFx } from './game.js';
 import { PORT, COMMISSION, NOTORIETY, boatOf, portRouteOf, boatResale, interdictChance, effHold, effSpeed, boatUpgradeCost, portRankOf, fenceMultOf, levelOf, cityHourOf, smugglerTierOf, smuggleRepPerks, notorietyNow, rollRarity, rarityUtilityBps, jailed, hospitalized, safeHoused, usd, art , districtName } from './rules.js';
 import { logCollect } from './collection.js';
 import { activeDecree } from './commission.js';
@@ -304,9 +304,10 @@ export async function rentBerth(ch, client, h) {
 // FALL). The runner's run is voided (their cargo is gone). A LOSS: the escort/guns hospitalize the pirate.
 export async function interceptRun(ch, targetBoatId, client, h) {
   const S = PORT.STEP2;
-  if (jailed(ch)) throw new GameError('jailed', 'No piracy from lockup.');
-  if (hospitalized(ch)) throw new GameError('hosp', 'Not in your condition.');
-  if (safeHoused(ch)) throw new GameError('safe', 'No raids while you hide — a safehouse is a shield, not a corsair.'); // P1.3
+  assertStreetActor(ch, { witpro: false, hospCode: 'hosp', msgs: {
+    jailed: 'No piracy from lockup.',
+    hosp: 'Not in your condition.',
+    safe: 'No raids while you hide — a safehouse is a shield, not a corsair.' } }); // P1.3
   if (ch.loc !== PORT.DISTRICT) throw new GameError('district', `Put to sea from ${districtName(PORT.DISTRICT)}.`, { district: PORT.DISTRICT });
   if (levelOf(Number(ch.respect)) < S.PIRATE_MIN_LEVEL) throw new GameError('level', `Piracy is level ${S.PIRATE_MIN_LEVEL}+ work.`);
   if (Number(ch.energy) < S.PIRATE_ENERGY) throw new GameError('energy', `Running one down takes ${S.PIRATE_ENERGY} energy.`);

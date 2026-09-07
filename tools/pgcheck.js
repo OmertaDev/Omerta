@@ -209,34 +209,59 @@ console.log('\n4. THE ROW LOCK ACTUALLY SERIALIZES (no lost update)');
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-console.log('\n5. A REFUSED ACTION LEAVES NO TRACE');
+console.log('\n5. A REFUSED ACTION COMMITS THE CLOCK AND NOTHING ELSE (two-phase commit)');
 // **pg-mem's ROLLBACK is a no-op.** Measured: BEGIN, INSERT, ROLLBACK, and the row is still there.
-// So every "the action was refused, therefore nothing changed" assertion across all 47 suites is
-// vacuous — they pass whether or not the transaction actually unwinds. That is not a small gap: the
-// entire economy rests on one-transaction-per-action, and until this check existed, nothing anywhere
-// verified that an action which throws mid-flight takes its partial writes with it.
+// So every "the action was refused, therefore nothing changed" assertion across the suites is
+// vacuous there — they pass whether or not the transaction actually unwinds. Only this engine can
+// prove the boundary, and the boundary has TWO halves since the two-phase commit (D1, SPEC.md):
+//   phase one — `settleIfDue` commits what §7.1's clock did (income, interest, the Bureau raid)
+//               in its OWN transaction, so a refused action can no longer discard a raid it rolled
+//               (the phantom that made the lock-free read path unshippable);
+//   phase two — the action itself, which must still take its partial writes with it.
+// Until 2026-09-05 this check asserted the OPPOSITE of phase one ("the accrual clock is untouched")
+// — that was the design then, and it is deliberately inverted here rather than loosened.
 {
   const cid = (await call('GET', '/v1/me', { token })).body.character.id;
-  const rows = async (t) => Number((await pool.query(`SELECT COUNT(*) n FROM ${t} WHERE character_id=$1`, [cid])).rows[0].n);
+  const rows = async (t, extra = '') => Number((await pool.query(
+    `SELECT COUNT(*) n FROM ${t} WHERE character_id=$1 ${extra}`, [cid])).rows[0].n);
   const cashOf = async () => Number((await pool.query('SELECT cash FROM characters WHERE id=$1', [cid])).rows[0].cash);
 
-  // Jail them, then attempt a crime. The gate throws AFTER §7.1 accrual has already run and written
-  // its ledger rows inside the same transaction — so if the rollback were not real, those rows (and
-  // any partial mutation) would survive a refusal.
+  // A racket makes the clock's work DETERMINISTIC: 6h of metered income is a ledger row with a
+  // known reason, where bank interest on a possibly-empty bank is not. Seeded by SQL (the racket's
+  // own income is the faucet under test, not its purchase), then jail them so the crime REFUSES —
+  // the gate throws in phase two, after phase one has already committed.
+  await pool.query(`INSERT INTO character_rackets (character_id, racket_id) VALUES ($1, 'laundro')
+    ON CONFLICT DO NOTHING`, [cid]);
   await pool.query(`UPDATE characters SET jail_until = now() + interval '10 minutes',
-    last_accrued_at = now() - interval '6 hours' WHERE id=$1`, [cid]);
-  const [txBefore, cashBefore] = [await rows('transactions'), await cashOf()];
+    last_accrued_at = now() - interval '6 hours', racket_credit_ms = 0 WHERE id=$1`, [cid]);
+  const NON_ACCRUAL = "AND reason NOT IN ('racket:income','bank:interest','crew:sales')";
+  const [incomeBefore, extraBefore, cashBefore] = [await rows('transactions', "AND reason='racket:income'"), await rows('transactions', NON_ACCRUAL), await cashOf()];
   const refused = await call('POST', '/v1/crimes/pick', { token });
   check(refused.code === 400, 'a jailed crime is refused', `${refused.code} ${JSON.stringify(refused.body)}`);
-  check(await rows('transactions') === txBefore, 'the refusal wrote no ledger rows',
-    `${await rows('transactions')} vs ${txBefore}`);
-  check(await cashOf() === cashBefore, 'the refusal moved no money', `${await cashOf()} vs ${cashBefore}`);
 
-  // and the clock did not advance either — the accrual is deferred, not consumed
-  const stale = (await pool.query(
-    "SELECT last_accrued_at < now() - interval '5 hours' old FROM characters WHERE id=$1", [cid])).rows[0].old;
-  check(stale === true, 'the accrual clock is untouched, so the window is re-accrued on the next touch');
+  // phase one landed: the income row exists, the clock is FRESH, and the cash rose by exactly the
+  // ledgered accrual — the row and the balance are asserted together because §10.4 needs both.
+  const incomeRows = (await pool.query(
+    `SELECT amount FROM transactions WHERE character_id=$1 AND reason='racket:income' AND currency='cash'`, [cid])).rows;
+  check(incomeRows.length === incomeBefore + 1, 'the refused action still COMMITTED the clock\'s racket income (phase one)',
+    `${incomeRows.length} racket:income rows vs ${incomeBefore} before`);
+  const fresh = (await pool.query(
+    "SELECT last_accrued_at > now() - interval '1 minute' fresh FROM characters WHERE id=$1", [cid])).rows[0].fresh;
+  check(fresh === true, 'and the accrual clock is FRESH — the window was settled, not deferred');
+  const accrued = (await pool.query(
+    `SELECT COALESCE(SUM(amount),0) s FROM transactions WHERE character_id=$1 AND currency='cash'
+       AND reason IN ('racket:income','bank:interest','crew:sales')`, [cid])).rows[0].s;
+  const cashAfter = await cashOf();
+  const incomeNow = Number(incomeRows[incomeRows.length - 1].amount);
+  check(incomeNow > 0 && Math.abs((cashAfter - cashBefore) - incomeNow) < 0.01,
+    'the cash rose by exactly the ledgered accrual', `cash ${cashBefore} → ${cashAfter}, income row ${incomeNow}, accrual sum ${accrued}`);
+
+  // phase two unwound: nothing but accrual reasons landed, and the crime's own rows did not.
+  const extra = await rows('transactions', NON_ACCRUAL);
+  check(extra === extraBefore,
+    'the refusal wrote no rows of its own (phase two rolled back)', `${extra} non-accrual rows, ${extraBefore} before`);
   await pool.query('UPDATE characters SET jail_until=NULL WHERE id=$1', [cid]);
+  await pool.query(`DELETE FROM character_rackets WHERE character_id=$1 AND racket_id='laundro'`, [cid]);
 }
 
 console.log('\n6. §10.4 HOLDS on real Postgres');
@@ -1042,8 +1067,20 @@ console.log('\n7b. THE BUILD BOOTS AGAINST A DATABASE OLDER THAN ITSELF');
   const swap = (u) => u.replace(/\/[^/?]+(\?|$)/, `/${oldDb}$1`);
   let ok = true; let err = ''; let added = 0;
   try {
-    const first = execSync('git log --format=%H -- schema.sql', { cwd: ROOT }).toString().trim().split('\n').pop();
+    const shas = execSync('git log --format=%H -- schema.sql', { cwd: ROOT }).toString().trim().split('\n');
+    const first = shas[shas.length - 1];
     const oldSchema = execSync(`git show ${first}:schema.sql`, { cwd: ROOT, maxBuffer: 32 * 1024 * 1024 }).toString();
+    // ANTI-VACUITY, learned from CI on 2026-09-05: on a SHALLOW checkout `git log` sees one commit,
+    // so the "oldest" schema is HEAD and this check upgrades a database from itself to itself —
+    // and passes, reading exactly like a clean bill of health. §7c's floor caught the same clone
+    // (no UUID schema to migrate from); this one had none and had been green in CI for that reason.
+    // The floor is on the SCHEMA, not the sha count: a history whose oldest schema.sql is
+    // byte-identical to today's has nothing to upgrade from either.
+    const curSchema = (await import('node:fs')).readFileSync(new URL('../schema.sql', import.meta.url), 'utf8');
+    if (shas.length < 2 || oldSchema === curSchema) {
+      throw new Error(`the oldest schema.sql in history IS the current one (${shas.length} commit(s) visible) — a shallow `
+        + 'checkout? the check has nothing to upgrade from and would pass over nothing');
+    }
     // CREATE DATABASE cannot run inside a transaction, so it goes through the live pool directly
     await pool.query(`DROP DATABASE IF EXISTS ${oldDb}`);
     await pool.query(`CREATE DATABASE ${oldDb}`);
@@ -1069,21 +1106,144 @@ console.log('\n7b. THE BUILD BOOTS AGAINST A DATABASE OLDER THAN ITSELF');
     // is the reference, and an UPGRADED one must be a superset of it. Independent of any parser, and
     // it cannot be satisfied by the deriver and the check making the same mistake together — the
     // reference is produced by CREATE TABLE, the subject by ALTER, so they share no code path.
-    const COLS = "SELECT table_name||'.'||column_name k FROM information_schema.columns WHERE table_schema='public'";
-    const fresh = new Set((await pool.query(COLS)).rows.map((r) => r.k));       // this build, on the pgcheck db
-    const upgraded = new Set((await p3.query(COLS)).rows.map((r) => r.k));      // this build, on the OLD db
-    const missing = [...fresh].filter((k) => !upgraded.has(k)).sort();
+    const COLS = "SELECT table_name||'.'||column_name k, data_type t FROM information_schema.columns WHERE table_schema='public'";
+    const typed = (rows) => new Map(rows.map((r) => [r.k, r.t]));
+    const fresh = typed((await pool.query(COLS)).rows);       // this build, on the pgcheck db
+    const upgraded = typed((await p3.query(COLS)).rows);      // this build, on the OLD db
+    const missing = [...fresh.keys()].filter((k) => !upgraded.has(k)).sort();
+    // and the TYPE, not only the name: a column that survives an upgrade under the wrong type is the
+    // 2026-07-30 outage class (`uuid = text` has no operator — every authed request 500'd while every
+    // suite stayed green). §7c below drives the one real instance; this is the general net.
+    const mistyped = [...fresh].filter(([k, t]) => upgraded.has(k) && upgraded.get(k) !== t).map(([k, t]) => `${k} (${upgraded.get(k)}, fresh ${t})`).sort();
     added = upgraded.size;
     if (missing.length) {
       ok = false;
       err = `${missing.length} declared column(s) never landed on the upgraded database — the 2026-08-06 `
         + `outage class is live again: ${missing.slice(0, 6).join(', ')}${missing.length > 6 ? ' …' : ''}`;
+    } else if (mistyped.length) {
+      ok = false;
+      err = `${mistyped.length} column(s) carry a different TYPE on the upgraded database than a fresh one: ${mistyped.slice(0, 6).join(', ')}`;
     }
     await p3.end();
     process.env.DATABASE_URL = before;
   } catch (e) { ok = false; err = e.message; }
   try { await pool.query(`DROP DATABASE IF EXISTS ${oldDb}`); } catch { /* best effort */ }
   check(ok, `the current build boots against the ORIGINAL schema (${added} columns present after migration)`, err);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+console.log('\n7c. THE ACCOUNT-ID UNIFICATION SURVIVES A DATABASE THAT STILL DECLARES UUID');
+// THE OUTAGE THIS PINS (2026-07-30): this schema's account ids were MIXED — 28 TEXT columns and 12
+// UUID — and `uuid = text` has no operator, so a query joining the two did not degrade, it failed to
+// PARSE. `loadOwned` runs on every authed request, so that was the entire game returning 500 while
+// all 61 suites stayed green: pg-mem compares uuid to text happily. Three more of the class sat live
+// for weeks (`/v1/rivals`, `/v1/commission`, THE CAST's nemesis), each guarded by "do you have any"
+// so each worked right up until it mattered. THE ACCOUNT-ID UNIFICATION (2026-09-05) made every
+// account column TEXT and removed the bridging casts — which means a database that STILL holds the
+// UUID declarations (every production database that predates it) must be converted at boot, or the
+// cast-free queries that replaced the bridges now fail on exactly the shape they were written for.
+//
+// §7b cannot see this: the OLDEST schema in history predates every one of the twelve columns, so on
+// that database the current build CREATES them TEXT and the migration path is never exercised. So
+// this takes the NEWEST schema in history that still declares an account column UUID — the shape a
+// database migrated up to yesterday really has — seeds every one of the eight tables with real uuid
+// values, boots the current build on top (what a deploy does), and asserts by NAME that no account
+// column survived as uuid, that the seeded rows came through with their values intact, and — the
+// property the outage was about — that a TEXT parameter now compares against each of them.
+// Mutation-verified: drop one `ALTER COLUMN … TYPE TEXT` from schema.sql and this names the column.
+{
+  const { execSync } = await import('node:child_process');
+  const { fileURLToPath } = await import('node:url');
+  const ROOT = fileURLToPath(new URL('..', import.meta.url));
+  const uuidDb = `pgcheck_uuid_${process.pid}`;
+  const swap = (u) => u.replace(/\/[^/?]+(\?|$)/, `/${uuidDb}$1`);
+  const UUID_DECL = /^\s*(account_id|victim_account|aggressor_account|from_account|to_account|blocker_account|blocked_account|account_a|account_b|winner_account|gang_id)\s+UUID\b/m;
+  // every account column the unification converted — the guard's corpus, asserted by NAME below
+  const ACCOUNT_COLS = [
+    ['eth_vault', 'account_id'], ['dm_messages', 'from_account'], ['dm_messages', 'to_account'],
+    ['dm_blocks', 'blocker_account'], ['dm_blocks', 'blocked_account'], ['megaproject_contributions', 'account_id'],
+    ['duels', 'account_a'], ['duels', 'account_b'], ['duels', 'winner_account'],
+    ['commission_proposals', 'gang_id'], ['career_claims', 'account_id'],
+    ['rival_events', 'victim_account'], ['rival_events', 'aggressor_account'],
+  ];
+  let ok = true; let err = ''; let found = null; let survivors = [];
+  let rowsOk = false; let cmpOk = false; let pkOk = false;
+  try {
+    // the newest schema.sql that still declares an account column UUID. Walking the log from the
+    // top means one `git show` past the unification commit, and an anti-vacuity floor: a history
+    // with no such schema means this check is measuring nothing, which must read as a failure.
+    const shas = execSync('git log --format=%H -- schema.sql', { cwd: ROOT }).toString().trim().split('\n');
+    let oldSchema = null;
+    for (const sha of shas) {
+      const text = execSync(`git show ${sha}:schema.sql`, { cwd: ROOT, maxBuffer: 32 * 1024 * 1024 }).toString();
+      if (UUID_DECL.test(text)) { oldSchema = text; found = sha.slice(0, 10); break; }
+    }
+    if (!oldSchema) throw new Error('no schema.sql in history declares an account column UUID — the check has nothing to migrate from');
+    await pool.query(`DROP DATABASE IF EXISTS ${uuidDb}`);
+    await pool.query(`CREATE DATABASE ${uuidDb}`);
+    const before = process.env.DATABASE_URL;
+    const { default: pg } = await import('pg');
+    const legacy = new pg.Pool({ connectionString: swap(before) });
+    await legacy.query(oldSchema);
+    // real uuid values in every converted column, so the conversion has DATA to carry, not just a type
+    const A = '11111111-2222-4333-8444-555555555555', B = '66666666-7777-4888-8999-000000000000';
+    await legacy.query(`INSERT INTO eth_vault (account_id, eth, cost_omr) VALUES ($1, 1.5, 2)`, [A]);
+    await legacy.query(`INSERT INTO dm_messages (id, from_account, to_account, from_name, to_name, body) VALUES ('m1', $1, $2, 'a', 'b', 'hi')`, [A, B]);
+    await legacy.query(`INSERT INTO dm_blocks (blocker_account, blocked_account, name) VALUES ($1, $2, 'b')`, [A, B]);
+    await legacy.query(`INSERT INTO megaproject_contributions (project_id, account_id, contributed) VALUES ('cathedral', $1, 100)`, [A]);
+    await legacy.query(`INSERT INTO duels (id, account_a, account_b, winner_account, day) VALUES ('d1', $1, $2, $1, 1)`, [A, B]);
+    await legacy.query(`INSERT INTO commission_proposals (week, gang_id, decree, deposit) VALUES (1, $1, 'pax', 100000)`, [A]);
+    await legacy.query(`INSERT INTO career_claims (account_id, task_id) VALUES ($1, 'as_job')`, [A]);
+    await legacy.query(`INSERT INTO rival_events (id, victim_account, aggressor_account, kind) VALUES (gen_random_uuid(), $1, $2, 'jump')`, [A, B]);
+    // the precondition, asserted rather than assumed: on the OLD database these really are uuid
+    const stillUuid = (await legacy.query(
+      `SELECT table_name||'.'||column_name k FROM information_schema.columns WHERE table_schema='public' AND data_type='uuid'`)).rows.map((r) => r.k);
+    await legacy.end();
+    if (stillUuid.length < ACCOUNT_COLS.length) throw new Error(`the old schema ${found} declares only ${stillUuid.length} uuid column(s) — the seed is not the shape this check is about`);
+    // boot the current build on top, exactly as a deploy would
+    process.env.DATABASE_URL = swap(before);
+    const mod = await import(`../src/db.js?uuid=${process.pid}`);
+    const p4 = await mod.makeDb();
+    const types = (await p4.query(
+      `SELECT table_name t, column_name c, data_type d FROM information_schema.columns WHERE table_schema='public'`)).rows;
+    const typeOf = new Map(types.map((r) => [`${r.t}.${r.c}`, r.d]));
+    survivors = ACCOUNT_COLS.map(([t, c]) => [`${t}.${c}`, typeOf.get(`${t}.${c}`)]).filter(([, d]) => d !== 'text').map(([k, d]) => `${k} (${d})`);
+    // the data came through (a type conversion that emptied the row would satisfy the type check)
+    const v = (await p4.query('SELECT account_id, eth FROM eth_vault')).rows;
+    const r = (await p4.query('SELECT victim_account, aggressor_account FROM rival_events')).rows;
+    const b = (await p4.query('SELECT blocker_account, blocked_account FROM dm_blocks')).rows;
+    rowsOk = v.length === 1 && v[0].account_id === A && Number(v[0].eth) === 1.5
+      && r.length === 1 && r[0].victim_account === A && r[0].aggressor_account === B
+      && b.length === 1 && b[0].blocker_account === A && b[0].blocked_account === B;
+    // THE PROPERTY: a TEXT parameter compares against every converted column. This is the exact
+    // statement shape that failed to parse in production; run it cast-free on the upgraded database.
+    // (One parameter typed from ONE text use, then reused — the loadOwned shape.)
+    const cmp = await p4.query(
+      `SELECT (SELECT count(*) FROM account_gear WHERE account_id=$1)
+            + (SELECT count(*) FROM rival_events WHERE victim_account=$1)
+            + (SELECT count(*) FROM dm_messages WHERE from_account=$1)
+            + (SELECT count(*) FROM dm_blocks WHERE blocker_account=$1)
+            + (SELECT count(*) FROM megaproject_contributions WHERE account_id=$1)
+            + (SELECT count(*) FROM duels WHERE winner_account=$1)
+            + (SELECT count(*) FROM commission_proposals WHERE gang_id=$1)
+            + (SELECT count(*) FROM career_claims WHERE account_id=$1)
+            + (SELECT count(*) FROM eth_vault WHERE account_id=$1) n`, [A]);
+    cmpOk = Number(cmp.rows[0].n) === 8;   // one seeded row in each of the eight tables (account_gear: none)
+    // the primary keys over converted columns were rebuilt, not dropped
+    const pks = (await p4.query(
+      `SELECT c.conrelid::regclass::text t FROM pg_constraint c WHERE c.contype='p' AND c.conrelid::regclass::text = ANY($1::text[])`,
+      [[...new Set(ACCOUNT_COLS.map(([t]) => t))]])).rows.map((x) => x.t);
+    pkOk = new Set(pks).size === new Set(ACCOUNT_COLS.map(([t]) => t)).size;
+    await p4.end();
+    process.env.DATABASE_URL = before;
+  } catch (e) { ok = false; err = e.message; }
+  try { await pool.query(`DROP DATABASE IF EXISTS ${uuidDb}`); } catch { /* best effort */ }
+  check(ok && survivors.length === 0,
+    `every account column is TEXT after booting on a UUID-declaring database (${found})`,
+    err || `survived as uuid: ${survivors.join(', ')} — the 2026-07-30 outage class is live for every database that predates the unification`);
+  check(ok && rowsOk, 'the seeded uuid values came through the conversion intact', err || 'a row was lost or its value changed');
+  check(ok && cmpOk, 'a TEXT parameter compares cast-free against every converted column (the outage statement shape)', err || 'the cast-free comparison did not match the seeded rows');
+  check(ok && pkOk, 'the primary keys over converted columns were rebuilt, not dropped', err || 'a converted table lost its primary key');
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1452,7 +1612,9 @@ console.log('\n9e. THE POT/FUNDER CYCLE LANDS AS CONTENTION, NEVER A 500');
 // The other survivor is BOXING_BOUTS (cancelBout 441 ↔ resolveMainEvent 479), whose inverted holder
 // is reachable ONLY through runEstate — resolveMainEvent's own comment claims no AB-BA and is right
 // about a live bettor and wrong about the estate path, the same "right about itself, wrong about its
-// sibling" shape as refundPot/sweepExpiredBounties. Same remedy, same double net; not driven twice.
+// sibling" shape as refundPot/sweepExpiredBounties. Same remedy, same double net — driven in §9g
+// through the one route that reaches it (the mod-kill), because "same shape, same remedy" is a claim
+// about the code, and only a drive turns it into a fact.
 console.log('\n9f. THE LISTING/BIDDER CYCLE LANDS AS CONTENTION, NEVER A 500');
 {
   const { runLedgerInvariants } = await import('../src/invariants.js');
@@ -1546,6 +1708,140 @@ console.log('\n9f. THE LISTING/BIDDER CYCLE LANDS AS CONTENTION, NEVER A 500');
     `${refunds.length} refund rows, cash +${(await cashOfM(bidder.id)) - bidderCashBefore}`);
   check((await escrowDrift()) === drift0m, 'the market escrow identity is where it started',
     `drift ${await escrowDrift()} vs ${drift0m}`);
+}
+// ─────────────────────────────────────────────────────────────────────────────
+// §9f drove the player-route instance of the class and left the estate-only one as a claim ("same
+// remedy, same double net"). This drives it. cancelBout (boxing.js) holds the BOUT row FOR UPDATE and
+// then `UPDATE characters SET cash` on every living BETTOR — third parties — while resolveMainEvent
+// locks [a_char, b_char, ...bettors] SORTED and only THEN the bout row. The inverted holder is reached
+// only through runEstate (cancelMainEventsAtDeath), so the driver is the mod-kill route: it holds the
+// dying principal's character row, runs the estate, and maps 40P01 through deadlockToRetry.
+//
+// Driven by HOLDING the bettor's row, never by racing a real resolve — a race depends on two backends
+// overlapping inside a millisecond-wide window, and timing luck reads exactly like a proof. The
+// player is given the full second before the holder closes the cycle, so Postgres aborts the PLAYER
+// (whoever started waiting first) and the victim is deterministic.
+console.log('\n9g. THE BOUT/BETTOR CYCLE LANDS AS CONTENTION, NEVER A 500');
+{
+  const { runLedgerInvariants } = await import('../src/invariants.js');
+  const { BOXING, PACING } = await import('../src/rules.js');
+  const escrowDrift = async () => {
+    const inv = await runLedgerInvariants(pool, { alert: false });
+    return inv.checks.find((c) => c.name === 'boxing bet escrow')?.drift;
+  };
+  const lvlRespect = (lvl) => PACING.LEVEL_DIVISOR * (lvl - 1) * (lvl - 1);
+  const mkb = async (label) => {
+    const { body: { token } } = await call('POST', '/v1/auth/guest');
+    await call('POST', '/v1/character', { token, body: { name: `${label} ${Date.now() % 1000000}` } });
+    const me = (await call('GET', '/v1/me', { token })).body.character;
+    await pool.query('UPDATE characters SET cash=$2, respect=$3 WHERE id=$1',
+      [me.id, 5_000_000, lvlRespect(BOXING.MANAGER_MIN_LEVEL + 4)]);
+    return { token, id: me.id };
+  };
+  const promoter = await mkb('Promoter');   // the principal who dies
+  const rival = await mkb('Rival');         // the other manager
+  const bettor = await mkb('Bettor');       // the third party cancelBout reaches
+  const cashOfB = async (id) => Number((await pool.query('SELECT cash FROM characters WHERE id=$1', [id])).rows[0].cash);
+
+  const s1 = await call('POST', '/v1/boxing/recruit', { token: promoter.token, body: { name: 'Iron Mike Corleone' } });
+  const s2 = await call('POST', '/v1/boxing/recruit', { token: rival.token, body: { name: 'Sugar Sal Provolone' } });
+  const listed = s2.body?.id
+    ? await call('POST', '/v1/boxing/list', { token: rival.token, body: { fighter: s2.body.id, stake: BOXING.MIN_STAKE } })
+    : { code: 0 };
+  const ann = s1.body?.id && listed.code === 200
+    ? await call('POST', `/v1/boxing/announce/${rival.id}`, { token: promoter.token,
+        body: { myFighter: s1.body.id, theirFighter: s2.body.id } })
+    : { code: 0 };
+  const boutId = ann.body?.bout;
+  const bet = BOXING.BET_MIN * 20;
+  const placed = boutId
+    ? await call('POST', `/v1/boxing/bout/${boutId}/bet`, { token: bettor.token, body: { fighter: s1.body.id, amount: bet } })
+    : { code: 0 };
+  check(s1.code === 200 && s2.code === 200 && listed.code === 200 && ann.code === 200 && placed.code === 200,
+    'a booked main event carries a third-party bet',
+    `recruit ${s1.code}/${s2.code} ${s1.body?.error || s2.body?.error || ''} / list ${listed.code} ${listed.body?.error || ''}`
+    + ` / announce ${ann.code} ${ann.body?.error || ''} / bet ${placed.code} ${placed.body?.error || ''}`);
+
+  const bettorCashBefore = await cashOfB(bettor.id);
+  const drift0b = await escrowDrift();
+  const deadlockCountB = async () => Number((await pool.query(
+    'SELECT deadlocks FROM pg_stat_database WHERE datname = current_database()')).rows[0]?.deadlocks || 0);
+  const deadlocks0b = await deadlockCountB();
+  const modKill = () => app.inject({ method: 'POST', url: '/v1/mod/kill',
+    headers: { 'x-mod-key': process.env.MOD_KEY, 'idempotency-key': crypto.randomUUID() },
+    payload: { characterId: promoter.id } }).then((res) => {
+    let json = null; try { json = res.json(); } catch {}
+    return { code: res.statusCode, body: json };
+  });
+
+  const holderB = await pool.connect();
+  let raced3 = null, holderTook3 = null;
+  try {
+    await holderB.query('BEGIN');
+    // exactly what resolveMainEvent does FIRST: a bettor's character row, sorted with the principals.
+    await holderB.query('SELECT 1 FROM characters WHERE id=$1 FOR UPDATE', [bettor.id]);
+    // the estate takes the dying promoter's row, then the bout row, then blocks refunding the bettor.
+    const inflightB = modKill();
+    // WAIT FOR THE BLOCK, NEVER FOR A CLOCK. A fixed sleep here is wrong in BOTH directions: too short and the
+    // estate has not reached the bettor row yet (the holder then blocks on the bout until lock_timeout, a
+    // 55P03 the vacuity guard below correctly refuses); too long and the estate's own deadlock_timeout has
+    // already fired with NO cycle to find — Postgres checks ONCE per waiter, so when the holder closes the
+    // cycle afterwards it is the HOLDER's timer that detects it and the HOLDER that is aborted, the estate
+    // sails through with a 200, and this section measures the wrong victim (measured: a 1500ms sleep did
+    // exactly that). So poll pg_stat_activity for the estate's backend WAITING on a characters row, and close
+    // the cycle the moment it is — its timer then fires ~1s later with the cycle present, before the
+    // holder's does, and the victim is deterministic.
+    let blocked = false;
+    for (let i = 0; i < 100 && !blocked; i++) {
+      const { rows } = await pool.query(
+        `SELECT 1 FROM pg_stat_activity WHERE wait_event_type='Lock' AND query ILIKE '%UPDATE characters%'
+           AND pid <> pg_backend_pid() LIMIT 1`);
+      blocked = rows.length > 0;
+      if (!blocked) await new Promise((r) => setTimeout(r, 50));
+    }
+    check(blocked, 'the estate genuinely blocked on the held bettor row', 'it never waited — nothing here can prove a cycle');
+    // close the cycle: we hold the bettor and now want the bout row the estate is holding.
+    holderTook3 = holderB.query('SELECT 1 FROM boxing_bouts WHERE id=$1 FOR UPDATE', [boutId])
+      .then(() => null, (e) => e);
+    raced3 = await inflightB;
+    await holderTook3;
+  } finally { await holderB.query('ROLLBACK').catch(() => {}); holderB.release(); }
+
+  check(raced3.code !== 500, 'the mod-kill is NOT told the server broke',
+    `got ${raced3.code} ${raced3.body?.error || ''} — "${raced3.body?.message || ''}"`);
+  check(raced3.code === 400 && raced3.body?.error === 'contention',
+    'a deadlocked estate comes back as a retryable contention',
+    `got ${raced3.code} ${raced3.body?.error || ''}`);
+  check((await deadlockCountB()) > deadlocks0b, 'and it was the CYCLE, not the lock_timeout valve',
+    'pg_stat_database.deadlocks did not move — a 55P03 maps to `contention` too, so this ran but proved'
+    + ' nothing about the bout/bettor cycle');
+
+  // the aborted estate rolled back WHOLE: a half-cancelled card (bettor refunded, bout still booked,
+  // fighters unlocked) is the drift this guards, and a DEAD promoter beside a live card the other half.
+  const still = (await pool.query('SELECT status FROM boxing_bouts WHERE id=$1', [boutId])).rows[0];
+  const alive = (await pool.query('SELECT alive FROM characters WHERE id=$1', [promoter.id])).rows[0];
+  check(still?.status === 'booked' && alive?.alive === true, 'the card survived the deadlock intact',
+    `status ${still?.status}, promoter alive=${alive?.alive}`);
+  check((await cashOfB(bettor.id)) === bettorCashBefore, 'and the bettor was not part-refunded',
+    `cash moved by ${(await cashOfB(bettor.id)) - bettorCashBefore}`);
+  const fighters = (await pool.query('SELECT booked_until FROM fighters WHERE id IN ($1,$2)', [s1.body.id, s2.body.id])).rows;
+  check(fighters.length === 2 && fighters.every((f) => f.booked_until != null), 'and both fighters are still booked',
+    fighters.map((f) => f.booked_until).join(' / '));
+
+  // the operator's own remedy works: `contention` says retry, so retrying must actually settle it.
+  const retry = await modKill();
+  check(retry.code === 200, 'the retry the contention asked for goes through',
+    `got ${retry.code} ${retry.body?.error || ''}`);
+  const refunds = (await pool.query(
+    "SELECT amount FROM transactions WHERE character_id=$1 AND reason='boxing:bet:refund'", [bettor.id])).rows;
+  check(refunds.length === 1 && Number(refunds[0].amount) === bet
+    && (await cashOfB(bettor.id)) === bettorCashBefore + bet,
+    'and the bettor is made whole exactly once',
+    `${refunds.length} refund rows, cash +${(await cashOfB(bettor.id)) - bettorCashBefore}`);
+  const after = (await pool.query('SELECT status FROM boxing_bouts WHERE id=$1', [boutId])).rows[0];
+  check(after?.status === 'cancelled', 'the card is cancelled ONCE, and the escrow went home', `status ${after?.status}`);
+  check((await escrowDrift()) === drift0b, 'the boxing bet escrow identity is where it started',
+    `drift ${await escrowDrift()} vs ${drift0b}`);
 }
 // ─────────────────────────────────────────────────────────────────────────────
 console.log('\n10. NO node-pg DEPRECATIONS');

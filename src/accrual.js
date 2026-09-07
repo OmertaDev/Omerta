@@ -138,7 +138,11 @@ export function accrue(ch, acct = null, ctx = {}, now = new Date()) {
   // the heat-100 ceiling implies — while the sibling Law-exposure path above deliberately clamps.
   // Player-favourable and parity-restoring: the raid can never be harsher than a maxed-out heat bar.
   const raidHeat = Math.min(100, Number(ch.heat));
-  if (raidHeat > 60 && stash.reduce((a, s) => a + Number(s.qty), 0) > 0) {
+  // ctx.preview: a lock-free READ accrues in memory to show the player an honest sheet, and a
+  // read must never ROLL — a raid it rolled would be discarded (a phantom the next refresh undoes)
+  // or, worse, shown. The roll is the ONLY randomness in accrue(); everything else is a pure
+  // function of the clock, so a preview differs from a settle in exactly this one branch.
+  if (!ctx.preview && raidHeat > 60 && stash.reduce((a, s) => a + Number(s.qty), 0) > 0) {
     // LAB MODULE (Tier-4) — Ghost Vents cut the per-minute raid probability
     const p = ((raidHeat - 60) / 2000) * Math.max(0, 1 - Number(ch.lab_stealth || 0) * KITCHEN.MODULES.stealth.step);
     const pWindow = 1 - Math.pow(1 - p, Math.max(1, cappedMin));

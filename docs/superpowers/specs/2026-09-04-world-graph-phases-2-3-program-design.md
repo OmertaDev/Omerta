@@ -2,9 +2,9 @@
 
 ## Status
 
-The architecture was approved in conversation on 2026-09-04; this formal written specification set awaits the user's confirmation before implementation planning. Once approved, this document binds the Phase 2A–2E and Phase 3A–3E design specifications. Where a sub-phase document is ambiguous, this program design and the Phase 1 design invariants take precedence.
+The architecture was approved in conversation on 2026-09-04, and the user subsequently explicitly approved the written designs and implementation. This document binds the Phase 2A–2E and Phase 3A–3E design specifications. Implementation is in progress; that approval does not mean Phase 2 or Phase 3 is complete. Where a sub-phase document is ambiguous, this program design and the Phase 1 design invariants take precedence.
 
-This program is prepared on branch `codex/world-graph-phases-2-3`, based on Phase 1 commit `0bdc0af79261fbbb00acab5e4516747f40cbe365`. Nothing in this program authorizes a merge to `main`, a production push, a deployment, activation of seasonal OMR rewards, or deployment of NFT contracts.
+This program is prepared on branch `codex/world-graph-phases-2-3`, based on Phase 1 commit `0bdc0af79261fbbb00acab5e4516747f40cbe365`. The user has subsequently authorized pushing and merging reviewed work, subject to the existing review and verification gates. Deployment, production activation, seasonal OMR rewards, and NFT contract deployment remain separately gated; production rollout clarification is pending before a merge that would trigger deployment.
 
 ## Objective
 

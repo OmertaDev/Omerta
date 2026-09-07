@@ -53,11 +53,11 @@ export async function peopleBoard(client, ch) {
   // THE NEMESIS — the bloodline with the most recorded malice against you (the rivals board's #1,
   // re-aggregated here as a top-1 because the enrichment needs the aggressor ACCOUNT internally,
   // which rivalsBoard rightly never returns), enriched with the blood ledger + the vendetta state.
-  // `victim_account` is UUID and `me` is the TEXT account id — cast the PARAMETER, so
-  // ix_rival_events_victim still leads (the uuid=text outage class; pgquery proves the parse).
+  // Both sides TEXT since THE ACCOUNT-ID UNIFICATION (2026-09-05, schema.sql) — the `$1::uuid`
+  // parameter cast that bridged the old UUID column would now fail to parse as `text = uuid`.
   const top = (await client.query(
-    `SELECT aggressor_account::text AS acct, COUNT(*) n, MAX(at) last_at
-       FROM rival_events WHERE victim_account = $1::uuid
+    `SELECT aggressor_account AS acct, COUNT(*) n, MAX(at) last_at
+       FROM rival_events WHERE victim_account = $1
       GROUP BY aggressor_account ORDER BY COUNT(*) DESC, MAX(at) DESC LIMIT 1`, [me])).rows[0] || null;
   let nemesis = null;
   if (top) {
@@ -138,9 +138,9 @@ export async function pairHistory(client, ch, targetCharacterId) {
   const ev = [];
   // recorded malice, both directions — kind + when + which way, never the detail JSONB
   const strikes = (await client.query(
-    `SELECT kind, at, aggressor_account::text AS agg FROM rival_events
-      WHERE (victim_account=$1::uuid AND aggressor_account=$2::uuid)
-         OR (victim_account=$2::uuid AND aggressor_account=$1::uuid)
+    `SELECT kind, at, aggressor_account AS agg FROM rival_events
+      WHERE (victim_account=$1 AND aggressor_account=$2)
+         OR (victim_account=$2 AND aggressor_account=$1)
       ORDER BY at DESC LIMIT 40`, [me, them])).rows;
   for (const s of strikes) ev.push({ at: s.at, kind: s.kind, who: s.agg === me ? 'me' : 'them' });
   // the blood — every kill either bloodline landed on the other, with the fallen street's name

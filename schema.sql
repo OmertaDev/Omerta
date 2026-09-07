@@ -2387,12 +2387,25 @@ ALTER TABLE characters ADD COLUMN IF NOT EXISTS shipment INT NOT NULL DEFAULT 0;
 -- table, because nothing needs buying: the backing asset arrives directly. `rwa_reserve` and
 -- `rwa_buys` are therefore gone.
 CREATE TABLE IF NOT EXISTS eth_vault (
-  account_id UUID PRIMARY KEY,
+  account_id TEXT PRIMARY KEY,
   eth NUMERIC NOT NULL DEFAULT 0,      -- ETH allocated to this bloodline out of what the treasury holds
   cost_omr NUMERIC NOT NULL DEFAULT 0, -- lifetime $OMR burned for it (display)
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 -- account-level, so the vault SURVIVES DEATH (the portfolios precedent; never estate-wiped)
+-- ═══ THE ACCOUNT-ID UNIFICATION (2026-09-05) ═══
+-- `accounts.id` is TEXT and so are ~90 columns that carry it; twelve columns across eight tables were
+-- declared UUID, and `uuid = text` has no operator in Postgres — that is the 2026-07-30 outage class
+-- (every authed request 500'd while pg-mem, which compares the two happily, kept every suite green).
+-- Every one of those columns is TEXT now, and each table carries an idempotent
+-- `ALTER TABLE … ALTER COLUMN … TYPE TEXT` beside it: on a live database that still holds the UUID
+-- declaration it converts in place (Postgres rebuilds the PK/indexes itself, no USING needed — uuid
+-- has an I/O cast to text), and on a database already TEXT it is a no-op MEASURED to touch neither
+-- the table nor its indexes (relfilenodes unchanged). pg-mem parses the bare form (not `USING`), so
+-- the statement lives HERE rather than in a real-Postgres-only pass and the suites boot through it.
+-- `tools/pgcheck.js` §7c boots the build on a database that still declares them UUID and fails by
+-- name if any survives as uuid.
+ALTER TABLE eth_vault ALTER COLUMN account_id TYPE TEXT;
 ALTER TABLE account_persistent ADD COLUMN IF NOT EXISTS vault_used NUMERIC NOT NULL DEFAULT 0; -- rolling-24h claim bucket
 ALTER TABLE account_persistent ADD COLUMN IF NOT EXISTS vault_at TIMESTAMPTZ;
 
@@ -2534,14 +2547,16 @@ CREATE INDEX IF NOT EXISTS ix_dynasty_tokens_acct ON dynasty_tokens(account_id);
 -- Retention: the worker's 30-day sweep (talk is ephemeral, not a ledger).
 CREATE TABLE IF NOT EXISTS dm_messages (
   id TEXT PRIMARY KEY,
-  from_account UUID NOT NULL,
-  to_account UUID NOT NULL,
+  from_account TEXT NOT NULL,
+  to_account TEXT NOT NULL,
   from_name TEXT NOT NULL,          -- sender's street name at send time (snapshot)
   to_name TEXT NOT NULL,            -- recipient's street name at send time (snapshot)
   body TEXT NOT NULL,
   seen BOOLEAN NOT NULL DEFAULT false,
   at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+ALTER TABLE dm_messages ALTER COLUMN from_account TYPE TEXT; -- the account-id unification (see eth_vault)
+ALTER TABLE dm_messages ALTER COLUMN to_account TYPE TEXT;
 CREATE INDEX IF NOT EXISTS ix_dm_to_seen ON dm_messages (to_account, seen);
 CREATE INDEX IF NOT EXISTS ix_dm_from_at ON dm_messages (from_account, at);
 
@@ -2549,12 +2564,14 @@ CREATE INDEX IF NOT EXISTS ix_dm_from_at ON dm_messages (from_account, at);
 -- blocked the bloodline, not the street; the heir stays blocked until you relent). `name` is a
 -- display snapshot at block time (the dm name-snapshot discipline). Zero §10.4 surface.
 CREATE TABLE IF NOT EXISTS dm_blocks (
-  blocker_account UUID NOT NULL,
-  blocked_account UUID NOT NULL,
+  blocker_account TEXT NOT NULL,
+  blocked_account TEXT NOT NULL,
   name TEXT NOT NULL,
   at TIMESTAMPTZ NOT NULL DEFAULT now(),
   PRIMARY KEY (blocker_account, blocked_account)
 );
+ALTER TABLE dm_blocks ALTER COLUMN blocker_account TYPE TEXT; -- the account-id unification (see eth_vault)
+ALTER TABLE dm_blocks ALTER COLUMN blocked_account TYPE TEXT;
 
 -- THE MEGAPROJECT (founder pick #1 — the WoW AQ-gate server event): the city announces a monument,
 -- the whole base pools cash/goods/$OMR toward a massive target. Every contribution is a SINK
@@ -2574,10 +2591,11 @@ CREATE TABLE IF NOT EXISTS megaprojects (
 -- No character_id column → outside the estate wipe + DISPOSITION guard by construction.
 CREATE TABLE IF NOT EXISTS megaproject_contributions (
   project_id TEXT NOT NULL,
-  account_id UUID NOT NULL,
+  account_id TEXT NOT NULL,
   contributed NUMERIC NOT NULL DEFAULT 0,
   PRIMARY KEY (project_id, account_id)
 );
+ALTER TABLE megaproject_contributions ALTER COLUMN account_id TYPE TEXT; -- the account-id unification (see eth_vault)
 -- (red-team B3) the plaque's hot reads: top-N by contribution + the rank count
 CREATE INDEX IF NOT EXISTS ix_megacontrib_top ON megaproject_contributions (project_id, contributed DESC);
 
@@ -2592,12 +2610,15 @@ ALTER TABLE account_persistent ADD COLUMN IF NOT EXISTS duel_wins INT NOT NULL D
 -- reset the pair); no character_id → outside the estate wipe + DISPOSITION guard by construction.
 CREATE TABLE IF NOT EXISTS duels (
   id TEXT PRIMARY KEY,
-  account_a UUID NOT NULL,           -- sorted pair (a < b)
-  account_b UUID NOT NULL,
-  winner_account UUID NOT NULL,
+  account_a TEXT NOT NULL,           -- sorted pair (a < b)
+  account_b TEXT NOT NULL,
+  winner_account TEXT NOT NULL,
   day INT NOT NULL,                  -- dayOf() at the duel (the per-day pair diminishing window)
   at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+ALTER TABLE duels ALTER COLUMN account_a TYPE TEXT; -- the account-id unification (see eth_vault)
+ALTER TABLE duels ALTER COLUMN account_b TYPE TEXT;
+ALTER TABLE duels ALTER COLUMN winner_account TYPE TEXT;
 CREATE INDEX IF NOT EXISTS ix_duels_pair_day ON duels (account_a, account_b, day);
 
 -- THE RETENTION COLUMNS (2026-08-22, workercost). The tick prunes nine tables on a wall-clock window,
@@ -2666,13 +2687,14 @@ CREATE INDEX IF NOT EXISTS ix_gala_guests_host ON gala_guests (host_account, gal
 -- must settle — a dead family's deposit forfeits, the dead-funder precedent).
 CREATE TABLE IF NOT EXISTS commission_proposals (
   week INT NOT NULL,
-  gang_id UUID NOT NULL,
+  gang_id TEXT NOT NULL,                 -- gangs.id is TEXT; this was the ONE uuid gang_id (see eth_vault)
   decree TEXT NOT NULL,
   deposit NUMERIC NOT NULL,
   status TEXT NOT NULL DEFAULT 'open',   -- open | refunded | forfeited
   at TIMESTAMPTZ NOT NULL DEFAULT now(),
   PRIMARY KEY (week, gang_id)
 );
+ALTER TABLE commission_proposals ALTER COLUMN gang_id TYPE TEXT;
 
 -- ── THE LOAN HOUSE (Shylock step five, design omerta-deep-deferred-design.md §C) ──
 -- The backed NPC lender: a sink-fed cash pool (half of every P2P loan vig + mod funding from the
@@ -3170,23 +3192,26 @@ CREATE TABLE IF NOT EXISTS pen_talks (
 -- once-ever bound is what caps the career: cash faucet at its lifetime total per account), so this
 -- table is NEVER estate-wiped (the first_week/onboard posture).
 CREATE TABLE IF NOT EXISTS career_claims (
-  account_id UUID NOT NULL,
+  account_id TEXT NOT NULL,
   task_id TEXT NOT NULL,
   PRIMARY KEY (account_id, task_id)
 );
+ALTER TABLE career_claims ALTER COLUMN account_id TYPE TEXT; -- the account-id unification (see eth_vault)
 
 -- THE STREET WAR + THE RIVALS LEDGER (omerta-street-rivals-design.md, founder-directed).
 -- rival_events is ACCOUNT-keyed on BOTH sides (malice follows the bloodline — the vendetta/dm_blocks
 -- posture; no character_id column, so the estate wipe never touches it by construction). It records
 -- ONLY acts whose existing notify already NAMES the aggressor to the victim — the info-economy rule.
 CREATE TABLE IF NOT EXISTS rival_events (
-  id UUID PRIMARY KEY,
-  victim_account UUID NOT NULL,
-  aggressor_account UUID NOT NULL,
+  id UUID PRIMARY KEY,                             -- a row id, not an account id — stays UUID
+  victim_account TEXT NOT NULL,
+  aggressor_account TEXT NOT NULL,
   kind TEXT NOT NULL,                              -- jump | shakedown | rob | car_theft | takeover | kill
   detail JSONB NOT NULL DEFAULT '{}',
   at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+ALTER TABLE rival_events ALTER COLUMN victim_account TYPE TEXT; -- the account-id unification (see eth_vault)
+ALTER TABLE rival_events ALTER COLUMN aggressor_account TYPE TEXT;
 CREATE INDEX IF NOT EXISTS ix_rival_events_victim ON rival_events (victim_account, at DESC);
 -- the mirror of the above: loadOwned reads MY outgoing strikes on every authed request (the coach's
 -- "have you answered them" fold), so the aggressor side needs its own index or that is a seq scan

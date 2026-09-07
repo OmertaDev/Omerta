@@ -30,13 +30,13 @@ const mk = async (name) => {
   await call('POST', '/v1/character', { token, body: { name } });
   return token;
 };
-// readCharacter merges `{character, events, ...board}` onto every authed board it serves. The two
+// readCharacter merges `{character, ...board}` onto every authed board it serves. The two
 // KEYLESS routes do not go through it — and `/v1/events`' own top-level `events` is BOARD DATA, so
 // stripping the envelope there compares the wrong thing (it read as a drift on the first probe).
 const AUTHED = (route) => route !== '/v1/events' && route !== '/v1/results';
 const bare = (body, route) => {
   const b = { ...(body || {}) };
-  if (AUTHED(route)) { delete b.character; delete b.events; }
+  if (AUTHED(route)) delete b.character;
   return b;
 };
 
@@ -171,15 +171,15 @@ const me = (await call('GET', '/v1/me', { token })).body.character;
 }
 
 // ── THE ENVELOPE'S NAMES ARE RESERVED ───────────────────────────────────────────────────────────
-// `readCharacter` returns `{ character, events: h.events, ...board }` and the spread is LAST, so a
-// board keyed on one of its fields REPLACES it — on that screen only, silently, and invisibly to the
-// contract block above, which compares the key against its own route where both sides are the board
-// and agree perfectly. This map really did ship keyed `events` for an hour; it was found by counting
-// a production response (15 boards, 14 keys) and it was harmless ONLY because `h.events` has no
-// writer anywhere in src/. The guard is what makes that a build failure instead of a coin flip on
-// whoever writes to `h.events` first.
+// `readCharacter` returns `{ character, ...board }` and the spread is LAST, so a board keyed on one
+// of its fields REPLACES it — on that screen only, silently, and invisibly to the contract block
+// above, which compares the key against its own route where both sides are the board and agree
+// perfectly. This map really did ship keyed `events` for an hour, back when the envelope carried a
+// dead `events: []`; it was found by counting a production response (15 boards, 14 keys). That dead
+// field has since been REMOVED, so `events` is a legal key again — and that is asserted too, or the
+// guard would go on refusing a name the envelope no longer owns.
 {
-  for (const bad of ['character', 'events', 'boards', 'failed']) {
+  for (const bad of ['character', 'boards', 'failed']) {
     await assert.rejects(
       () => runBoards([[bad, '/v1/whatever', async () => ({})]], {}, {}, { readOnly: true }),
       /collides with the readCharacter envelope/,
@@ -191,7 +191,11 @@ const me = (await call('GET', '/v1/me', { token })).body.character;
   // And the guard must not refuse a LEGAL map, or it would simply be an outage with a good excuse.
   const ok = await runBoards([['fine', '/v1/fine', async () => ({ n: 1 })]], {}, {}, { readOnly: true });
   assert.deepEqual(ok.fine, { n: 1 }, 'a legal map still runs');
-  assert.deepEqual(HOME_BOARDS.map(([k]) => k).filter((k) => ['character', 'events', 'boards', 'failed'].includes(k)),
+  // `events` is NOT reserved any more: the envelope slot it once shadowed was dead and is gone. A
+  // board may own the name (a timeline is the right word for one) — the pair-history board does.
+  const ev = await runBoards([['events', '/v1/events', async () => ({ n: 2 })]], {}, {}, { readOnly: true });
+  assert.deepEqual(ev.events, { n: 2 }, '`events` is a legal board key — the envelope no longer carries one');
+  assert.deepEqual(HOME_BOARDS.map(([k]) => k).filter((k) => ['character', 'boards', 'failed'].includes(k)),
     [], 'the live Home map uses no reserved key');
 }
 

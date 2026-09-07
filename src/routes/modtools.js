@@ -73,11 +73,10 @@ export function register(app, { pool, auth, modAuth, closeAccountSockets }) {
         const h = { ledger: G.ledger, notify: G.notify, victimAcct, victimOwned };
         const estate = await S.runEstate(client, h, victim, 'THE COMMISSION'); // tracks the death itself
         // this hand-rolled txn isn't wrapped by persistAccount, so it must persist every account field
-        // runEstate mutates in memory: prestige, deaths, and (L2a) the death-duty $OMR burn (the ledger
-        // row is written inside runEstate; without omr here the burn drifts §10.4 on a mod-kill). The duty
-        // reaches liquid AND unbonding, so both columns ride.
-        await client.query('UPDATE account_persistent SET prestige=$2, deaths=$3, omr=$4, unbonding=$5 WHERE account_id=$1',
-          [victim.account_id, victimAcct.prestige, victimAcct.deaths, victimAcct.omr, victimAcct.unbonding ?? 0]);
+        // runEstate mutates in memory — ESTATE_ACCOUNT_FIELDS is that list, kept in game.js beside the
+        // persist columns (test/persist.js scans runEstate and fails if the list falls behind), so a
+        // field runEstate starts touching tomorrow cannot silently drift §10.4 on a mod-kill.
+        await G.persistAccountFields(client, victim.account_id, victimAcct, G.ESTATE_ACCOUNT_FIELDS);
         if (reason) await G.track(client, victim.account_id, 'mod_kill_reason', { reason });
         await client.query('COMMIT');
         closeAccountSockets(victim.account_id, 4009, 'gang_changed'); // R26 WS: the heir is gangless — cut the dead street's stale gang: feed

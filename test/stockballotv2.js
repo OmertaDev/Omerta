@@ -1576,10 +1576,12 @@ let first;
     day: DAY, maxEthWei: '9', detailsHash: DETAILS, actorId: 'mod',
   });
   await invalidPool.query('DELETE FROM stock_asset_active_heads_v2');
-  await invalidPool.query(
-    'UPDATE stock_asset_versions_v2 SET active=false,deactivated_at=$2 WHERE asset_version_key=$1',
-    [asset.assetVersionKey, '2026-09-04T12:00:00Z'],
-  );
+  // deactivated_at is PINNED before the day's close, never now(): the close reads
+  // `deactivated_at >= closes_at` as still-eligible, so a wall-clock stamp made this
+  // assertion depend on the calendar — it passed until 2026-09-05 and then read the
+  // candidate as valid (the deterministic-assertion-on-a-date-precondition class).
+  await invalidPool.query("UPDATE stock_asset_versions_v2 SET active=false,deactivated_at='2026-09-04T23:58:00Z' WHERE asset_version_key=$1",
+    [asset.assetVersionKey]);
   await invalidPool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-04T23:59:00Z',verified_at='2026-09-04T23:59:00Z',ready_verified_at='2026-09-04T23:59:00Z',caught_up=true WHERE id=1");
   const skipped = await closeTickerBallotV2(clockedPool(invalidPool, '2026-09-05T00:00:00.000Z'), DAY);
   assert.equal(skipped.status, 'skipped_no_valid_candidate');
@@ -1615,15 +1617,20 @@ let first;
        'no_valid_candidate',$4,$5,'not_submitted')`,
     [NEXT_DAY, CATALOG_VERSION, hash('c'), hash('f'), '2026-09-06T00:00:00Z'],
   );
-  const client = await clockedPool(pool, '2026-09-04T12:00:00Z').connect();
-  try {
-    await client.query('BEGIN');
-    await removeMember(client, family.familyId, family.ch.id);
-    await client.query('COMMIT');
-  } catch (error) {
-    await client.query('ROLLBACK');
-    throw error;
-  } finally { client.release(); }
+  // The dissolution runs on the CLOCKED client, never a raw one: it deletes a V2 vote only while
+  // the ballot day is still open on the clock it reads (`closes_at > now()`), and DAY closes at
+  // 2026-09-05T00:00Z — on a raw client this assertion held until that morning and then read the
+  // (correctly frozen) vote as a defect (the deterministic-assertion-on-a-date-precondition class).
+  await withClockedClient(pool, WALL, async (client) => {
+    try {
+      await client.query('BEGIN');
+      await removeMember(client, family.familyId, family.ch.id);
+      await client.query('COMMIT');
+    } catch (error) {
+      await client.query('ROLLBACK');
+      throw error;
+    }
+  });
   assert.equal((await pool.query(
     'SELECT count(*)::int AS n FROM commission_ticker_votes_v2 WHERE family_id=$1', [family.familyId],
   )).rows[0].n, 0);

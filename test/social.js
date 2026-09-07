@@ -875,6 +875,32 @@ const kr = await whack(enemy.id); // Don (gangA) whacks the enemy boss mid-war
 assert(kr.kill && kr.warKill === true, 'a kill on a warring family is a war kill');
 assert.equal(Number((await pool.query(`SELECT war_score_us FROM gangs WHERE id='${gangA}'`)).rows[0].war_score_us), 3, 'a war kill scores WAR_KILL_POINTS (3), worth more than a jump');
 
+// ── THE TRIGGER COOLS ON THE SHOT, NOT ON THE OUTCOME ──
+// `fire` has four outcomes and the `shoot_cd_until` stamp lived in exactly ONE of them. Three — a
+// KILL, a bodyguard ABSORB and a REVIVE token — each returned above it and left the trigger COLD,
+// so a killer could re-search and fire again while a man who MISSED waited out the full two hours.
+// Nothing in this file could have seen it: `whack()` NULLs the trigger before every shot, so every
+// kill here started from a clean clock and the one branch that stamped it was the only one tested.
+// These read the DATABASE after the shot rather than the reply (the fix changed the reply too, so a
+// reply-only assertion would be checking the fix against itself), and each is preceded by that same
+// NULL, which is what makes a non-null afterwards the shot's own stamp and nothing else.
+const trigger = async () => (await pool.query(`SELECT shoot_cd_until FROM characters WHERE id='${don.id}'`)).rows[0].shoot_cd_until;
+const cdMark = await mk('Cooldown Cal'); await seedCh(cdMark.id, "respect=1000, muscle=1, speed=1, loc='docks'");
+const cdKill = await whack(cdMark.id); // whack() nulls the trigger, then searches and fires
+assert.equal(cdKill.kill, true, 'the mark went down');
+assert(await trigger(), 'a KILL cools the trigger — it used to be the one outcome that did NOT');
+assert(cdKill.shootCdSeconds > 0, '…and the reply NAMES the wait (a success that arms a clock has to say so)');
+const cdIns = await mk('Insured Ike'); await seedCh(cdIns.id, "respect=1000, muscle=1, speed=1, health=100, loc='docks'");
+await pool.query(`UPDATE account_persistent SET respawn_tokens=1 WHERE account_id=(SELECT account_id FROM characters WHERE id='${cdIns.id}')`);
+const cdRev = await whack(cdIns.id);
+assert.equal(cdRev.revived, true, 'the killing blow was absorbed by the pre-paid token');
+assert(await trigger(), 'a REVIVED shot cools it too — the rounds left the gun either way');
+assert(cdRev.shootCdSeconds > 0, '…and names the wait');
+const cdMiss = await whack(cdIns.id, 50); // too light a burst to drop anybody
+assert.equal(cdMiss.kill, false, 'a light burst is a miss');
+assert(await trigger(), 'a MISS still cools it — the branch the stamp used to live in, unbroken by the move');
+assert(cdMiss.shootCdSeconds > 0, '…and names the wait');
+
 // ── M7 Phase 4 remainder: FAMILY CONTRACTS — the treasury orders the hit ──
 const carl = await mk('Contract Carl'); await seedCh(carl.id, "respect=1000, muscle=1, speed=1, loc='docks'");
 const sal = await mk('Soldier Sal'); // a PLAIN soldier (mook is the underboss, who legitimately can)
@@ -1726,7 +1752,10 @@ const firstExpiry = new Date(vrow.expires_at).getTime();
 // the killer runs it back on the heir → the feud DEEPENS
 const esVheir = await meOf(esV.token);
 await seedCh(esVheir.id, "muscle=1, loc='docks', hosp_until=NULL, jail_until=NULL");
-await seedCh(esK.id, "muscle=100, energy=200, ammo=8000, loc='docks', hosp_until=NULL, jail_until=NULL");
+// shoot_cd_until=NULL because the trigger now cools on a KILL as well as a miss (it used to cool on
+// the miss alone), so a killer running it back on the heir must have his own trigger reset the way
+// `whack()` already does — restoring the precondition, not weakening what is asserted below.
+await seedCh(esK.id, "muscle=100, energy=200, ammo=8000, loc='docks', hosp_until=NULL, jail_until=NULL, shoot_cd_until=NULL");
 await call('POST', `/v1/streets/${esVheir.id}/search`, { token: esK.token });
 k = (await call('POST', `/v1/streets/${esVheir.id}/fire`, { token: esK.token, body: { rounds: 6000 } })).body;
 assert.equal(k.kill, true, 'blood again');

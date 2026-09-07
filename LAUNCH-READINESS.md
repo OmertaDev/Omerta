@@ -152,16 +152,19 @@ the chain authority; `UNISWAP-ROUTING.md` is the routing authority.
 
 | Gate | State | Owner |
 |---|---|---|
-| **1 — `forge test` green** | ✅ 531/531 across 27 suites (2026-08-27) | us |
+| **1 — `forge test` green** | ✅ **896/896 across 43 suites** under pinned forge v1.7.1 at head `b0a214ca` (2026-09-06) | us |
 | **2 — third-party audit of contracts AND the signer** | ❌ **not started** | external |
 | **3 — the launch review** | ✅ **CLEARED 2026-08-13** (founder statement — the whole checklist) | external |
 | **4 — Uniswap Labs routing approval for `OmertaHook`** | ❌ **mainnet deploy, explorer verification, submission, and approval pending** | external |
 
 ### Gate 2 — the audit
 
-- The current source inventory is enumerated in `CHAIN-DEPLOY.md`. The 2026-08-21
-  `CHAIN-AUDIT-PACKET.md` is now a superseded pre-RegistryV2/pre-settlement-pool/pre-O1 snapshot;
-  refresh and freeze the packet at the exact release head before an external engagement. Neither
+- **The packet is `CHAIN-AUDIT-PACKET-O1.md`**, frozen at release head `b0a214ca` under the pinned
+  toolchain and reconciled against the `CHAIN-DEPLOY.md` inventory; the 2026-08-21
+  `CHAIN-AUDIT-PACKET.md` is its superseded pre-RegistryV2/pre-settlement-pool/pre-O1 predecessor and
+  must not be sent as a scope. A frozen packet is only evidence while the head it names is the head
+  being audited: if the tree has moved on, re-freeze before the engagement rather than sending it.
+  Neither
   `StockTokenRegistryV2`, `SettlementGasPool`, nor the O1-only `AcquisitionVault` is authorized for
   production merely because its source and tests exist.
 - **Point the auditor at the deleted property.** Until tokenomics v2 step 4, every prior review of
