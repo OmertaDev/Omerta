@@ -89,8 +89,6 @@
 | [src/firstblood.js](../../src/firstblood.js) | 85 | social-combat | 1 / 2 | 0 | 3 | 0 |
 | [src/firsts.js](../../src/firsts.js) | 144 | world-progression | 1 / 6 | 1 | 7 | 1 |
 | [src/game.js](../../src/game.js) | 2736 | platform-core | 10 / 145 | 29 | 62 | 18 |
-| [src/game.js](../../src/game.js) | 2736 | platform-core | 10 / 145 | 29 | 62 | 18 |
-| [src/game.js](../../src/game.js) | 2736 | platform-core | 10 / 145 | 29 | 62 | 18 |
 | [src/genesiscadence.js](../../src/genesiscadence.js) | 152 | platform-core | 0 / 4 | 0 | 0 | 1 |
 | [src/genesiscca.js](../../src/genesiscca.js) | 808 | platform-core | 0 / 3 | 0 | 0 | 1 |
 | [src/genesislaunch.js](../../src/genesislaunch.js) | 72 | platform-core | 1 / 3 | 0 | 1 | 0 |

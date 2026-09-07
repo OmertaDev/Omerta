@@ -1,45 +1,45 @@
 # Generated repository inventory
 
-> Source: worktree at `f711742fead9`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `f4348984369e`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 1,919 |
-| Text lines | 583,903 |
-| Repository bytes inventoried | 317,745,720 |
-| Backend/route modules | 215 |
+| Current artifacts | 1,905 |
+| Text lines | 572,041 |
+| Repository bytes inventoried | 316,940,254 |
+| Backend/route modules | 213 |
 | HTTP route registrations / unique routes | 762 / 762 |
 | Database tables | 335 |
 | Solidity declarations | 49 |
-| Git commits | 1,391 |
+| Git commits | 1,400 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 5,941 / 26,621 |
+| Graph nodes / edges | 5,950 / 26,756 |
 
 ## Artifact kinds
 
 | Kind | Files |
 |---|---:|
 | media-asset | 576 |
-| documentation | 275 |
-| backend-module | 193 |
+| documentation | 271 |
+| backend-module | 191 |
 | artifact | 188 |
-| test-suite | 176 |
+| test-suite | 174 |
 | audit | 98 |
 | design | 91 |
 | contract-test | 73 |
-| engineering-harness | 69 |
 | contract-project | 67 |
+| engineering-harness | 67 |
 | contract-source | 40 |
 | route-module | 22 |
 | web-surface | 13 |
 | operations | 11 |
 | knowledge-base | 11 |
-| workflow | 6 |
-| package-config | 5 |
+| workflow | 4 |
 | agent-interface | 4 |
+| package-config | 3 |
 | data-schema | 1 |
 
 ## Largest text artifacts
@@ -47,35 +47,35 @@
 | File | Lines | Kind | Last change |
 |---|---:|---|---|
 | [omerta-contracts/x-ray/slither.json](../../omerta-contracts/x-ray/slither.json) | 64,621 | contract-project | 2026-08-25 |
-| [CLAUDE.md](../../CLAUDE.md) | 18,679 | documentation | 2026-09-03 |
-| [public/index.html](../../public/index.html) | 12,740 | web-surface | 2026-09-03 |
-| [test/client.js](../../test/client.js) | 9,438 | test-suite | 2026-09-04 |
+| [CLAUDE.md](../../CLAUDE.md) | 18,679 | documentation | 2026-09-06 |
+| [public/index.html](../../public/index.html) | 12,740 | web-surface | 2026-09-06 |
+| [test/client.js](../../test/client.js) | 9,438 | test-suite | 2026-09-06 |
 | [omerta-contracts/x-ray/slither-vars-and-auth.json](../../omerta-contracts/x-ray/slither-vars-and-auth.json) | 9,374 | contract-project | 2026-08-25 |
 | [.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
-| [BALANCE.md](../../BALANCE.md) | 6,855 | documentation | 2026-09-02 |
+| [BALANCE.md](../../BALANCE.md) | 6,855 | documentation | 2026-09-06 |
 | [schema.sql](../../schema.sql) | 6,619 | data-schema | 2026-09-07 |
 | [src/rules.tail.js](../../src/rules.tail.js) | 6,145 | backend-module | 2026-09-02 |
 | [reference-prototype-v24.jsx](../../reference-prototype-v24.jsx) | 4,235 | artifact | 2026-08-11 |
-| [test/docs.js](../../test/docs.js) | 4,204 | test-suite | 2026-09-04 |
+| [test/docs.js](../../test/docs.js) | 4,204 | test-suite | 2026-09-06 |
 | [test/gates.js](../../test/gates.js) | 3,874 | test-suite | 2026-09-07 |
 | [omerta-contracts/test/AcquisitionConstellationTask3B.t.sol](../../omerta-contracts/test/AcquisitionConstellationTask3B.t.sol) | 3,743 | contract-test | 2026-08-28 |
-| [src/server.js](../../src/server.js) | 3,509 | backend-module | 2026-09-04 |
+| [src/server.js](../../src/server.js) | 3,509 | backend-module | 2026-09-06 |
 | [test/phase2-review-regressions.js](../../test/phase2-review-regressions.js) | 3,440 | test-suite | 2026-09-07 |
 | [omerta-contracts/test/AcquisitionVaultOperator.t.sol](../../omerta-contracts/test/AcquisitionVaultOperator.t.sol) | 3,222 | contract-test | 2026-08-29 |
 | [omerta-contracts/script/Verify-AcquisitionConstellationCrosswalk.ps1](../../omerta-contracts/script/Verify-AcquisitionConstellationCrosswalk.ps1) | 2,947 | contract-project | 2026-08-28 |
 | [docs/WIKI.md](../../docs/WIKI.md) | 2,759 | documentation | 2026-09-04 |
 | [omerta-contracts/fizz_data/contracts.json](../../omerta-contracts/fizz_data/contracts.json) | 2,739 | contract-project | 2026-08-25 |
 | [src/game.js](../../src/game.js) | 2,736 | backend-module | 2026-09-07 |
-| [src/game.js](../../src/game.js) | 2,736 | backend-module | 2026-09-07 |
-| [src/game.js](../../src/game.js) | 2,736 | backend-module | 2026-09-07 |
 | [public/art/manifest.json](../../public/art/manifest.json) | 2,700 | media-asset | 2026-08-09 |
 | [src/content/corpus.js](../../src/content/corpus.js) | 2,640 | backend-module | 2026-09-07 |
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 2,619 | audit | 2026-08-13 |
-| [test/social.js](../../test/social.js) | 2,469 | test-suite | 2026-08-26 |
+| [test/social.js](../../test/social.js) | 2,469 | test-suite | 2026-09-06 |
 | [docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md](../../docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md) | 2,453 | documentation | 2026-08-27 |
+| [omerta-contracts/x-ray/slither-function-summary.json](../../omerta-contracts/x-ray/slither-function-summary.json) | 2,449 | contract-project | 2026-08-25 |
+| [test/agent-alpha.js](../../test/agent-alpha.js) | 2,416 | test-suite | 2026-08-29 |
 
 ## Media estate
 
