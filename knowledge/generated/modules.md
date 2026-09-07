@@ -121,7 +121,7 @@
 | [src/ops.js](../../src/ops.js) | 225 | platform-core | 6 / 4 | 4 | 11 | 2 |
 | [src/pass.js](../../src/pass.js) | 119 | platform-core | 3 / 5 | 2 | 3 | 2 |
 | [src/path-funnel.js](../../src/path-funnel.js) | 379 | platform-core | 0 / 4 | 0 | 7 | 2 |
-| [src/path-pages.js](../../src/path-pages.js) | 326 | platform-core | 0 / 2 | 0 | 1 | 1 |
+| [src/path-pages.js](../../src/path-pages.js) | 333 | platform-core | 0 / 2 | 0 | 1 | 1 |
 | [src/payroll.js](../../src/payroll.js) | 110 | enterprise-logistics | 5 / 2 | 1 | 0 | 0 |
 | [src/pen.js](../../src/pen.js) | 671 | law-intelligence | 6 / 6 | 19 | 13 | 2 |
 | [src/people.js](../../src/people.js) | 230 | engagement-growth | 4 / 2 | 4 | 18 | 0 |
