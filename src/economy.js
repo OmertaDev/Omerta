@@ -3,10 +3,11 @@
 // row (ch), the txn client, and the helper bag h = {ledger, rngLog, events, acct, owned}.
 import crypto from 'node:crypto';
 import { logCollect } from './collection.js';
+import { registerItemTransactionUndo } from './items.js';
 // (tokenomics v2 step 2) the early-exit surcharge + toll split now live only on the WITHDRAWAL
 // boundary in chain.js — the AMM sell that used to carry them here is retired with the pool.
 import { GameError, bumpFamilyTask, skillMult, trunkCap, npcMult, bumpStanding, bumpMastery, bus, notify } from './game.js';
-import { CONSUMABLES, RACKETS, ASSETS, GOODS, GUNS, VESTS, CONSTANTS, SKILLS, UNDERWORLD, LIMITED_RUNS, runOf, limitedRunP, levelOf, cityEventOf, dayOf, carOf, carVal, carMelt, rollCar, rollTrim, effStat, cargoCapacity, goodPriceOf, gearOf, gunObjOf, RACKET_EMPIRE, racketUpgradeCost, racketIncomeLeveled, tycoonRankOf, seasonModOf, pathFx, rollRarity, ladderFx, ladderFenceMult, STAKE_LOCKS, stakeLockActive, effectiveStake, OPERATIONS, opSlotsOf, nextOpSlotLevel, jailed, usd, art } from './rules.js';
+import { CONSUMABLES, RACKETS, ASSETS, GOODS, GUNS, VESTS, CONSTANTS, SKILLS, UNDERWORLD, LIMITED_RUNS, runOf, limitedRunP, levelOf, cityEventOf, dayOf, carOf, carVal, carMelt, rollCar, rollTrim, effStat, cargoCapacity, goodPriceOf, gearOf, gunObjOf, RACKET_EMPIRE, racketUpgradeCost, racketIncomeLeveled, tycoonRankOf, seasonModOf, pathFx, rollRarity, ladderFx, ladderFenceMult, STAKE_LOCKS, stakeLockActive, effectiveStake, OPERATIONS, opSlotsOf, nextOpSlotLevel, jailed, usd, art , coolLeft, coolWait } from './rules.js';
 
 const uid = () => crypto.randomUUID();
 const cargoCount = (cargo) => Object.values(cargo).reduce((a, n) => a + (n || 0), 0);
@@ -65,8 +66,9 @@ export async function mintLimitedRun(client, modelId, roll) {
 export async function boostCar(ch, client, h) {
   if (jailed(ch)) throw new GameError('jailed', 'No boosting from lockup.');
   const cd = CONSTANTS.GTA_CD_MS;
-  if (ch.gta_at && Date.now() < new Date(ch.gta_at).getTime() + cd)
-    throw new GameError('cooldown', `The heat's still on — wait ${Math.ceil((new Date(ch.gta_at).getTime() + cd - Date.now()) / 1000)}s.`);
+  const boostCool = coolLeft(new Date(ch.gta_at).getTime() + cd);
+  if (boostCool)
+    throw new GameError('cooldown', `The heat's still on — wait ${coolWait(boostCool)}.`, { cooldownSeconds: boostCool });
   // THE LADDER (D8=D): held $OMR parks more iron. One expression for the bound AND the message,
   // so the refusal can never quote a number the check does not use.
   const garageCap = CONSTANTS.GARAGE_CAP + ladderFx(h.acct, 'garage');
@@ -138,6 +140,103 @@ function findCar(h, carId) {
 async function removeCar(client, h, carId) {
   await client.query('DELETE FROM cars WHERE id=$1', [carId]);
   h.owned.cars = h.owned.cars.filter((c) => c.id !== carId);
+}
+
+// One selector vocabulary for graph preview and the locked mutation adapter. Named aliases retain
+// their meaning (`carId`, model-like `carType`, `vehicleClass`, `assetType`), while the validator's
+// generic `value` form can name a concrete row, model, trim, or class. `assetType: car` is the generic
+// asset selector; `value: any` is its legacy spelling.
+export function carMatchesGraphSelector(car, selector) {
+  if (!car) return false;
+  const descriptor = typeof selector === 'string'
+    ? { kind: 'value', value: selector }
+    : selector;
+  if (!descriptor || typeof descriptor !== 'object' || Array.isArray(descriptor)
+    || typeof descriptor.value !== 'string') return false;
+  const value = descriptor.value.trim();
+  if (!value) return false;
+  const model = car.modelId ?? car.model_id;
+  const trim = car.trimId ?? car.trim_id;
+  const classes = [
+    car.vehicleClass ?? car.vehicle_class,
+    car.carClass ?? car.car_class,
+    car.class,
+    // The current authoritative car schema calls its only persisted classification `rarity`.
+    car.rarity,
+  ];
+  if (descriptor.kind === 'carId') return car.id === value;
+  if (descriptor.kind === 'carType') return model === value;
+  if (descriptor.kind === 'vehicleClass') {
+    return classes.some((candidate) => candidate === value);
+  }
+  if (descriptor.kind === 'assetType') return value === 'car' || value === 'any';
+  if (descriptor.kind !== 'value') return false;
+  const candidates = ['any', 'car', car.id, model, trim, ...classes];
+  return candidates.some((candidate) => candidate === value);
+}
+
+// WORLD-GRAPH SALVAGE — consume one concrete car through the garage's authoritative row rather
+// than a client array index or caller-provided model. The caller is already inside the item module's
+// compound transaction. Registering the exact pre-image with that module gives pg-mem the same
+// rollback semantics PostgreSQL gets from the real transaction; graph data never receives this hook.
+export async function consumeOwnedCarForItemMutation(
+  client, h, characterId, carId, graphSelectors = [],
+) {
+  const row = (await client.query(
+    `SELECT id, character_id, model_id, trim_id, dmg, plate, listed, pledged, tune,
+            race_limit, pink_slip, nos, rarity, minted_onchain, created_at, run_id, serial
+       FROM cars WHERE id=$1 AND character_id=$2 FOR UPDATE`,
+    [carId, characterId],
+  )).rows[0];
+  // Extracted cars are deliberately absent from the in-play garage and must read like no car here,
+  // matching loadOwned/findCar. This also avoids leaking another owner's car state by raw ID.
+  if (!row || row.minted_onchain) throw new GameError('no_car', 'No such car in the garage.');
+  if (row.listed) throw new GameError('listed', "It's on the block — cancel the listing first.");
+  if (row.pledged) throw new GameError('pledged', "It's pledged as loan collateral — square the debt first.");
+  if (row.race_limit !== null || row.pink_slip) {
+    throw new GameError('race_reserved', "It's reserved on the race board — withdraw it first.");
+  }
+  if (!Array.isArray(graphSelectors) || graphSelectors.length < 1
+    || !graphSelectors.every((selector) => carMatchesGraphSelector(row, selector))) {
+    // This deliberately reads like absence. A caller that knows a raw car id cannot use selector
+    // mismatch to learn another recipe's eligible model/class, and no mutation side effect has run.
+    throw new GameError('no_car', 'No matching car is available in this garage.');
+  }
+
+  const cached = h?.owned?.cars?.find((car) => car.id === row.id) || null;
+  registerItemTransactionUndo(client, async () => {
+    await client.query(
+      `INSERT INTO cars
+         (id,character_id,model_id,trim_id,dmg,plate,listed,pledged,tune,race_limit,
+          pink_slip,nos,rarity,minted_onchain,created_at,run_id,serial)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)
+       ON CONFLICT (id) DO NOTHING`,
+      [row.id, row.character_id, row.model_id, row.trim_id, row.dmg, row.plate,
+        row.listed, row.pledged, row.tune, row.race_limit, row.pink_slip, row.nos,
+        row.rarity, row.minted_onchain, row.created_at, row.run_id, row.serial],
+    );
+    if (cached && h?.owned?.cars && !h.owned.cars.some((car) => car.id === cached.id)) {
+      h.owned.cars.push(cached);
+    }
+  });
+
+  const removed = await client.query(
+    `DELETE FROM cars
+      WHERE id=$1 AND character_id=$2 AND model_id=$3 AND trim_id=$4 AND rarity=$5
+        AND NOT listed AND NOT pledged AND NOT minted_onchain
+        AND race_limit IS NULL AND NOT pink_slip`,
+    [row.id, characterId, row.model_id, row.trim_id, row.rarity],
+  );
+  if (removed.rowCount !== 1) {
+    throw new GameError('contention', 'That car changed while the salvage crew was moving it.');
+  }
+  if (h?.owned?.cars) h.owned.cars = h.owned.cars.filter((car) => car.id !== row.id);
+  return {
+    id: row.id,
+    modelId: row.model_id,
+    trimId: row.trim_id,
+    damage: Number(row.dmg || 0),
+  };
 }
 
 export async function meltCar(ch, carId, client, h) {
@@ -427,7 +526,10 @@ export async function buyAsset(ch, assetId, client, h) {
   h.owned.assets.push(a.id);
   await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -(a.price + fee + tax), reason: `asset:buy:${a.id}` });
   await takeHouse(client, tax);
-  return { ok: true, asset: a.id, name: a.name };
+  // wave-75: the reply states what left (price + 2% house take) and — for an INCOME asset — what it
+  // drips (a.income is PER-MINUTE; the client renders ×60 as an hourly figure, the racket-line idiom).
+  // Wheels/Property carry no income field, so `income` is absent on those and the client's plain line stands.
+  return { ok: true, asset: a.id, name: a.name, income: a.income, spent: a.price + fee + tax };
 }
 
 export async function sellAsset(ch, assetId, client, h) {
@@ -525,8 +627,12 @@ export async function unstake(ch, client, h) {
   // which is why the ladder paid you ×mult for it.
   if (staked > 0 && stakeLockActive(h.acct)) {
     const left = Math.ceil((new Date(h.acct.stake_lock_until).getTime() - Date.now()) / 1000);
+    // ONE QUANTITY, ONE UNIT: the tiers the game SELLS are 7d/30d/90d and lockStake's own success
+    // line says "for 90d", so a refusal reading "another 2160h" states the same window in the
+    // unreadable unit — worst on the tier the ladder pays most for. Days past a day, hours below.
+    const w = left >= 86400 ? `${Math.ceil(left / 86400)}d` : `${Math.ceil(left / 3600)}h`;
     throw new GameError('locked',
-      `You gave your word on that stake — it stays put another ${Math.ceil(left / 3600)}h. That commitment is what the ladder is paying you for.`,
+      `You gave your word on that stake — it stays put another ${w}. That commitment is what the ladder is paying you for.`,
       { lockSeconds: left });
   }
   // Make-Risk-Pay: principal still ALWAYS returns whole (a bucket move, never pool-gated) — but it
@@ -600,7 +706,10 @@ export async function buyVest(ch, vestId, client, h) {
   h.acct.omr = Number(h.acct.omr) - v.omr;
   ch.vest = vestId;
   await h.ledger(client, { accountId: h.accountId, currency: 'omr', amount: -v.omr, reason: `vest:${vestId}` });
-  return { ok: true, vest: vestId, name: v.name, mult: v.mult };
+  // the PRICE rides back. A vest is a $OMR burn on the premium currency and the reply carried no
+  // cost field at all, so the line named the purchase and left the bill off — and the client cannot
+  // state it unaided (describe() has no armory catalog, and the vest ladder is not on the reply).
+  return { ok: true, vest: vestId, name: v.name, mult: v.mult, omr: v.omr };
 }
 
 export async function buyAmmo(ch, client, h) {

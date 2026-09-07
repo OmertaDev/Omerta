@@ -8,9 +8,15 @@ X weights every interaction. From the reference: **link-share via copy = 20× ·
 is perfect for this — it *forces* the reply + follow + share to enter. So the ask is **not** "RT +
 comment." It's **comment + quote + follow + send to a friend.**
 
-> ⚖️ Copy below carries earnings + the $OMR flywheel (founder-directed). It's mechanism-true and
-> number-free. Have counsel glance at it before it goes public — earnings/token-value framing is the
-> highest-scrutiny thing a pre-audit token can say.
+> ⚖️ Copy below carries earnings + the $OMR flywheel (founder-directed 2026-08-14 — see `HYPE.md`
+> § Copy). It's mechanism-true and number-free. Have counsel glance at it before it goes public —
+> earnings/token-value framing is the highest-scrutiny thing a pre-audit token can say.
+>
+> **The one thing the earnings framing does NOT license: the extraction tense.** The on-chain rail is
+> built and devnet-proven and **not open** — production runs with no chain configured, so nobody can
+> withdraw today. Every surface that describes it must say so somewhere (`MARKETING-COPY.md` §0:
+> *never "cash out today"*; `HYPE.md`: *the closer states plainly that extraction opens at launch*).
+> `test/docs.js` enforces this on the marketing docs as well as the live pages.
 
 ---
 
@@ -18,7 +24,7 @@ comment." It's **comment + quote + follow + send to a friend.**
 
 > The city runs on silence.
 >
-> Real players. Real money. One life — no respawns.
+> Real players. Real stakes. One life — no respawns.
 >
 > 1,000 founding invites. To get a code 👇
 > — Reply with the family name you'd start
@@ -55,7 +61,7 @@ posts with external links; the link goes in a reply (below).
 >
 > Every $OMR in the city was bought with real money — which is exactly why it's worth taking.
 >
-> Play well enough, cash out on-chain. For real.
+> Play well enough and the on-chain exit is yours — the rail is built, and it opens at launch.
 
 **5/ (the link goes HERE, in a reply — much less throttled than the main post)**
 > The city: omerta.fun

@@ -25,13 +25,58 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { walkSrc } from './lib/srcfiles.js';
 
-const read = (p) => fs.readFileSync(p, 'utf8');
+const read = (p) => fs.readFileSync(p, 'utf8').replaceAll('\r\n', '\n');
 // Counted the way `wc -l` counts — newlines, not `split('\n').length`, which adds a phantom line for
 // every file that ends in one. The definition matters because the whole point is that a reader can
 // check the figure by hand and get the same answer; off-by-one-per-file is 100 lines across src/.
 const lines = (p) => { const s = read(p); let n = 0; for (let i = 0; i < s.length; i++) if (s[i] === '\n') n++; return n; };
 const countLines = (files) => files.reduce((n, f) => n + lines(f), 0);
 const spec = read('SPEC.md');
+
+// Phase 1 world-graph discovery is deliberately smaller than the broad documentation census that
+// follows in Task 9, but these four operator/player entry points must already publish the safe route
+// sequence and its direct-only boundary. A route can otherwise be perfectly typed yet undiscoverable.
+{
+  const { llmsTxt } = await import('../src/agentgateway.js');
+  const surfaces = [
+    ['llms.txt', llmsTxt()],
+    ['agent guide', read('AGENTS.md')],
+    ['markdown wiki', read('docs/WIKI.md')],
+    ['browser wiki', read('public/wiki.html').replace(/<[^>]*>/g, ' ')],
+  ];
+  for (const [name, source] of surfaces) {
+    const text = source.replace(/\s+/g, ' ');
+    const plain = text.replace(/[*`]/g, '');
+    for (const route of [
+      '/v1/worldgraph/inventory',
+      '/v1/worldgraph/recipes',
+      '/v1/worldgraph/mysteries',
+      '/v1/worldgraph/operations',
+      'assign-current-character',
+    ]) {
+      assert(text.includes(route), `${name} must publish the Phase 1 world-graph route ${route}`);
+    }
+    assert(/direct(?:-| )only|direct content actions/i.test(text),
+      `${name} must identify world-graph play as deliberate direct actions`);
+    assert(/discovery.{0,100}(?:does not grant|never grants|grant no).{0,80}(?:POST )?\/v1\/agent\/act|direct.{0,140}not (?:POST )?\/v1\/agent\/act authority/i.test(plain),
+      `${name} must say discovery grants no /v1/agent/act authority`);
+    assert(/Idempotency-Key/i.test(text) && /exact retr(?:y|ies)|exact retries/i.test(text),
+      `${name} must explain mutation replay semantics`);
+    assert(/private|non-enumerat|hidden/i.test(text),
+      `${name} must preserve the shared/private board and existence-oracle boundary`);
+    assert(/immutable historical|immutable history/i.test(text)
+      && /not (?:an )?estate asset/i.test(text)
+      && /(?:never|cannot).{0,80}(?:inherit|auto-inherit)/i.test(plain),
+    `${name} must publish the Phase 1 no-inheritance death policy`);
+    assert(/(?:exact )?\$?300.{0,100}craft:recipe:hardened_steel/i.test(plain)
+      && /\$OMR-neutral|no \$OMR|creates no \$OMR/i.test(plain),
+    `${name} must publish the exact Phase 1 cash sink and zero-OMR boundary`);
+    assert(/worldgraph:check/i.test(text) && /content:check/i.test(text),
+      `${name} must distinguish the Phase 1 graph gate from authored-content validation`);
+    assert(/collection_log.{0,40}(?:not|isn't).{0,40}authority|authority.{0,40}collection_log.{0,40}(?:not|isn't)/i.test(plain),
+      `${name} must state that collection_log is not Phase 1 item authority`);
+  }
+}
 
 // Authored content is now a playable API surface, so every reader-facing guide must distinguish the
 // shipped runtime slice from the larger graph systems that are still staged. This guard exists because
@@ -203,37 +248,47 @@ const spec = read('SPEC.md');
   'the agent guide and SPEC must inventory the production authored workshop');
 
   const packageJson = JSON.parse(read('package.json'));
+  assert.equal(packageJson.scripts['content:check'], 'npm run content:check:corpus',
+    'content:check must delegate only to automatic corpus discovery');
+  assert.equal(packageJson.scripts['content:check:corpus'],
+    'node tools/content.js check-corpus content/packs',
+  'content:check:corpus must validate the canonical production root');
+  assert(packageJson.scripts.pretest.includes('node test/phase2-discovery.js'),
+    'pretest must run the Phase 2A discovery security boundary');
+  const { discoverContentPackages } = await import('../src/content/discovery.js');
+  const checkedContentPacks = new Set(discoverContentPackages({ rootDir: 'content/packs' })
+    .map(({ manifestPath }) => path.relative(process.cwd(), manifestPath).replaceAll('\\', '/')));
   assert(packageJson.scripts.pretest.includes('node test/content-seasonal-case.js'),
     'pretest must run the production seasonal case test');
-  assert(packageJson.scripts['content:check'].includes('content/packs/books-open-at-midnight/pack.json'),
+  assert(checkedContentPacks.has('content/packs/books-open-at-midnight/pack.json'),
     'content:check must validate the production seasonal source pack');
   assert.equal(packageJson.scripts['content:build:seasonal-cases'],
     'node tools/content.js build content/packs/books-open-at-midnight/pack.json content/dist/books-open-at-midnight-v1.json',
   'the seasonal build command must emit the immutable production artifact');
   assert(packageJson.scripts.pretest.includes('node test/content-crafting.js'),
     'pretest must run the production authored crafting test');
-  assert(packageJson.scripts['content:check'].includes('content/packs/bellini-lockbox/pack.json'),
+  assert(checkedContentPacks.has('content/packs/bellini-lockbox/pack.json'),
     'content:check must validate the production authored workshop source pack');
   assert.equal(packageJson.scripts['content:build:crafting-packs'],
     'node tools/content.js build content/packs/bellini-lockbox/pack.json content/dist/bellini-lockbox-v1.json',
   'the authored crafting build command must emit the immutable production artifact');
   assert(packageJson.scripts.pretest.includes('node test/content-crafting-jobs.js'),
     'pretest must run the production authored work-order and skill test');
-  assert(packageJson.scripts['content:check'].includes('content/packs/bellini-lockbox-v2/pack.json'),
+  assert(checkedContentPacks.has('content/packs/bellini-lockbox-v2/pack.json'),
     'content:check must validate the production authored work-order source pack');
   assert.equal(packageJson.scripts['content:build:crafting-jobs'],
     'node tools/content.js build content/packs/bellini-lockbox-v2/pack.json content/dist/bellini-lockbox-v2.json',
   'the authored work-order build command must emit the immutable v2 production artifact');
   assert(packageJson.scripts.pretest.includes('node test/content-crafting-tools.js'),
     'pretest must run the production authored durable-tool and facility test');
-  assert(packageJson.scripts['content:check'].includes('content/packs/bellini-lockbox-v3/pack.json'),
+  assert(checkedContentPacks.has('content/packs/bellini-lockbox-v3/pack.json'),
     'content:check must validate the production authored durable-tool source pack');
   assert.equal(packageJson.scripts['content:build:crafting-tools'],
     'node tools/content.js build content/packs/bellini-lockbox-v3/pack.json content/dist/bellini-lockbox-v3.json',
   'the authored durable-tool build command must emit the immutable v3 production artifact');
   assert(packageJson.scripts.pretest.includes('node test/content-exchange.js'),
     'pretest must run the production authored material-exchange test');
-  assert(packageJson.scripts['content:check'].includes('content/packs/bellini-lockbox-v4/pack.json'),
+  assert(checkedContentPacks.has('content/packs/bellini-lockbox-v4/pack.json'),
     'content:check must validate the production authored material-exchange source pack');
   assert.equal(packageJson.scripts['content:build:crafting-exchange'],
     'node tools/content.js build content/packs/bellini-lockbox-v4/pack.json content/dist/bellini-lockbox-v4.json',
@@ -666,6 +721,48 @@ assert.deepEqual([...new Set(phantom)], [], `docs/AUDITS.md lists reports that d
     + 'configured in production), so stating it in the present tense is a promise the product cannot '
     + `keep:\n  ${unqualified.join('\n  ')}`);
 
+  // ── THE SAME RULE, ON THE DOCS THAT BECOME THE COPY ────────────────────────────────────────────
+  // The list above is the LIVE pages. But launch-day copy is drafted in the marketing docs and then
+  // pasted verbatim into a post, so those reach further than any page and were covered by nothing —
+  // the recorded shape of a class applied where it was discovered and never swept to its edge.
+  // Found 2026-08-29 by running the guard's own predicate over them: docs/LAUNCH-TWEETS.md, the
+  // launch-day thread, said "Play well enough, cash out on-chain. For real." with no caveat anywhere
+  // in the file, while every sibling doc states the rule it was breaking (MARKETING-COPY.md §0:
+  // never "cash out today"; HYPE.md: the closer states plainly that extraction opens at launch).
+  //
+  // NOTE the scope split, deliberately: only the extraction TENSE is checked here. The earnings
+  // framing in these files is founder-directed (2026-08-14, recorded in HYPE.md § Copy and
+  // tools/hype.js) and is NOT this guard's business — what is checkable is whether a doc describing
+  // the rail also says the rail is shut.
+  //
+  // The predicates are the marketing corpus's OWN, not the live pages' above, and that is the whole
+  // reason this check works: copy says "cash out" and "the on-chain exit" where a technical page says
+  // "extraction" or names the route, so the page vocabulary run over these files matches almost
+  // nothing and the check reads clean over a file carrying the defect. Measured: with the page
+  // predicates the reverted LAUNCH-TWEETS line scores DESCRIBES=false, i.e. it would have been waved
+  // through by the very guard written for it. Widening the PAGE predicates instead was rejected —
+  // that loosens a passing check on seven live surfaces to fix a different corpus.
+  const SAYS_EXTRACTION = /cash(ing)? out|cash-out|on-chain (exit|withdrawal|extraction)|extract\w* (real |your |earned )?\$?OMR|withdraw\w* \$?OMR|POST \/v1\/withdraw/i;
+  const SAYS_SHUT = new RegExp(`${OPENS_THE_RAIL.source}|not open|opens at launch|audit-gated`, 'i');
+  const MARKETING_DOCS = ['MARKETING.md', 'MARKETING-COPY.md', 'MARKETING-POSTS.md', 'HYPE.md',
+    'LAUNCH.md', 'LAUNCH-NIGHT.md', 'LAUNCH-READINESS.md', 'docs/LAUNCH-TWEETS.md',
+    'docs/OMR-MARKETING-PACK.md', 'docs/OMR-MACHINE-CAMPAIGN.md', 'docs/GAMEPLAY-MARKETING-PACK.md'];
+  // catalogue-or-declare: a marketing doc that exists and is not listed is one nobody is checking.
+  const onDisk = [...fs.readdirSync('.').filter((f) => /^(MARKETING|HYPE|LAUNCH)[A-Z-]*\.md$/.test(f)),
+    ...fs.readdirSync('docs').filter((f) => /MARKETING|CAMPAIGN|TWEETS/.test(f)).map((f) => `docs/${f}`)];
+  const unlisted = onDisk.filter((f) => !MARKETING_DOCS.includes(f));
+  assert.deepEqual(unlisted, [], 'a marketing doc is not in MARKETING_DOCS, so the extraction-tense '
+    + `rule is not being applied to copy that ships publicly:\n  ${unlisted.join('\n  ')}`);
+  // …and the floor, because a corpus that has stopped matching reads exactly like a clean sweep.
+  const describing = MARKETING_DOCS.filter((f) => SAYS_EXTRACTION.test(read(f)));
+  assert(describing.length >= 4, 'the extraction-tense rule now governs only '
+    + `${describing.length} marketing doc(s) — the predicate or the corpus has stopped matching, so `
+    + 'this is vacuous rather than clean');
+  const loose = describing.filter((f) => !SAYS_SHUT.test(read(f)));
+  assert.deepEqual(loose, [], 'a marketing doc describes on-chain extraction without saying anywhere '
+    + 'that the rail is not open yet. This copy gets pasted into public posts verbatim, so it travels '
+    + `further than any page:\n  ${loose.join('\n  ')}`);
+
   // The caveat must also live next to the decision, not only somewhere at the bottom of a long page.
   // These were the three conversion-copy regressions found in the 2026-08-23 public-surface pass:
   // a live API pitch promising "real value", a gameplay intro saying $OMR "becomes real", and an
@@ -833,6 +930,31 @@ assert.deepEqual([...new Set(phantom)], [], `docs/AUDITS.md lists reports that d
       + 'against our own arithmetic.');
 }
 
+// ── THE WORKFLOW SCRIPT LEDGER ──────────────────────────────────────────────────
+// The block above asserts CI still INVOKES each harness. It cannot see the other half: an invocation
+// naming a script package.json does not define. `npm run <missing>` exits non-zero with
+// "Missing script", so the step fails for a reason that has nothing to do with the code under test —
+// which is exactly how ci.yml came to run `npm run test:stockcatalogv2:postgres` against a
+// package.json that had no such key, turning a real-PostgreSQL job red on every branch at once.
+// Catalogue rather than spot-check: every `npm run` any workflow issues must resolve.
+{
+  const scripts = JSON.parse(read('package.json')).scripts ?? {};
+  const invocations = [];
+  for (const file of fs.readdirSync('.github/workflows').filter((f) => /\.ya?ml$/.test(f))) {
+    for (const m of read(`.github/workflows/${file}`).matchAll(/npm run ([a-z0-9:_-]+)/gi))
+      invocations.push({ file, script: m[1] });
+  }
+  // anti-vacuity: an extractor that has stopped reading the workflows passes clean over a tree where
+  // every one of these is broken.
+  assert(invocations.length >= 10, 'THE WORKFLOW SCRIPT LEDGER read only '
+    + `${invocations.length} \`npm run\` invocation(s) across .github/workflows — the workflows or the `
+    + 'pattern have moved, so this check is measuring nothing.');
+  const missing = invocations.filter((i) => !(i.script in scripts))
+    .map((i) => `.github/workflows/${i.file} runs \`npm run ${i.script}\`, which package.json does not define`);
+  assert.deepEqual(missing, [], 'a workflow invokes a script that does not exist, so that step fails '
+    + `with "Missing script" whatever the code does:\n  ${missing.join('\n  ')}`);
+}
+
 // ── and neither does a gate that fails on its own dependency list ────────────────────────────────
 // `forge test` is the pre-mainnet gate. Economy v3 step 6 added the v4 hook, added v4-core to
 // `run-forge-test.sh`, and did NOT add it to the workflow — so on GitHub `forge build` failed to
@@ -864,6 +986,72 @@ assert.deepEqual([...new Set(phantom)], [], `docs/AUDITS.md lists reports that d
       + 'will fail to PARSE on CI and skip the ENTIRE contract suite, not just whatever needs it. '
       + 'Keep the workflow in lockstep with run-forge-test.sh.');
   }
+}
+
+// ── and the COMPILER that consumes all of them was the one thing not held still ──────────────────
+// Same class as the fetch list above, one layer down and easier to miss because it reads as
+// configured rather than as absent: `foundry-rs/foundry-toolchain@v1` with no `version` resolves
+// `stable` AT RUN TIME. So this workflow pinned forge-std (v1.9.6), OpenZeppelin (v5.6.1), v4-core
+// (1.0.2) and solc (0.8.26, foundry.toml) by hand — and left the compiler and test runner floating.
+// The forgotten sibling. It matters most exactly when the gate is red: a moving compiler means a
+// CI failure cannot be reproduced locally, and this gate spent a session in that position with
+// three tests passing on the developer's machine and failing on the runner.
+//
+// The rule is deliberately two-sided, because half of it is not obvious: a `version` key alone is
+// not a pin. `stable` and `nightly` are CHANNELS — they satisfy "a version is declared" and still
+// resolve at run time, which is the state this guard exists to forbid wearing a version key.
+{
+  const wf = read('.github/workflows/forge.yml');
+  const step = wf.match(/uses:\s*foundry-rs\/foundry-toolchain@[^\n]*\n([\s\S]*?)(?=\n\s*-\s|$)/);
+  assert(step, ".github/workflows/forge.yml no longer installs foundry-rs/foundry-toolchain — the "
+    + 'extractor found no step to check, which reads exactly like a clean sweep. If the gate now '
+    + 'gets its compiler some other way, pin THAT and re-point this guard at it.');
+  const version = step[1].match(/^\s*version:\s*(\S+)/m);
+  assert(version, '.github/workflows/forge.yml installs foundry-toolchain with NO `version:`, so it '
+    + 'resolves `stable` at run time. Every other dependency in this workflow is pinned by hand; the '
+    + 'compiler and test runner must be too, or a red gate cannot be reproduced locally.');
+  assert(!/^(stable|nightly|latest)$/i.test(version[1]),
+    `.github/workflows/forge.yml pins the toolchain to "${version[1]}", which is a CHANNEL rather `
+    + 'than a version — it still resolves at run time. Pin the release tag (e.g. v1.7.1), which is '
+    + 'the whole point: the log and the local run must be able to name the same binary.');
+  assert(/run:\s*forge --version/.test(wf),
+    '.github/workflows/forge.yml no longer prints `forge --version`. The pin says which binary SHOULD '
+    + 'run; the banner is how the log says which one DID, without anybody having to guess at it.');
+}
+
+// ── nor one whose SIZE check can skip the suite ──────────────────────────────────────────────────
+// The same class as the dependency gap above, from a different cause. `forge build --sizes` is
+// all-or-nothing, so on 2026-08-27 a single test harness 906 bytes over EIP-170 (a typed factory,
+// whose RUNTIME code embeds its target's INITCODE) failed the build step and SKIPPED `forge test`
+// and both e2e provers with it — 19 hours of a red pre-mainnet gate in which the suite never ran,
+// on a path-filtered workflow nobody was watching. The remedy is ordering, not a bigger exception:
+// the parse gate builds, the suite and the provers run, and only THEN is the size table checked, so
+// a size regression fails on its own step with everything below it already proven.
+{
+  // COMMENTS STRIPPED FIRST, line positions preserved: the notes on these steps NAME the commands
+  // they are about (`forge build --sizes` appears in the parse gate's own comment explaining why it
+  // is not there), so a scanner reading prose finds the size gate above the suite and reports the
+  // correct ordering as a violation — a mostly-wrong advisory is the kind people route around.
+  const wf = read('.github/workflows/forge.yml')
+    .split('\n').map((line) => (/^\s*#/.test(line) ? '' : line)).join('\n');
+  const at = (needle) => {
+    const i = wf.indexOf(needle);
+    assert(i > 0, `.github/workflows/forge.yml no longer contains \`${needle}\` — the forge job's `
+      + 'step order can no longer be checked, which is the state that let a size regression skip the '
+      + 'entire contract suite for 19 hours.');
+    return i;
+  };
+  const sizes = at('forge build --sizes');
+  for (const after of ['forge test -vvv', 'npm run dexbot-e2e', 'npm run stock-e2e'])
+    assert(at(after) < sizes,
+      `.github/workflows/forge.yml runs \`forge build --sizes\` BEFORE \`${after}\`. --sizes is `
+      + 'all-or-nothing, so one over-limit contract fails that step and skips every step below it — '
+      + 'which is exactly how the pre-mainnet gate went red for 19 hours with the suite not running '
+      + 'at all. Keep the size table LAST.');
+  // and the parse gate itself must stay free of it, or the split above buys nothing
+  assert(/run:\s*forge build\s*$/m.test(wf),
+    ".github/workflows/forge.yml has no bare `forge build` step — the parse gate and the size gate "
+    + 'must be separate steps, or a size regression skips the suite again.');
 }
 
 // ── EVERY SIGNER-BEARING CONTRACT IS IN THE ROTATION RUNBOOK (red-team C1) ──────────────────────
@@ -1085,6 +1273,194 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
     `CHAIN-DEPLOY.md counts ${scope[2]} interface(s); the tree holds ${ifaces}`);
   console.log(`✓ no launch-gating doc calls an existing contract unwritten (${mentions} mentions), and the `
     + `batch matches the tree (${scope[1]} contracts + ${scope[2]} interface)`);
+}
+
+// CHAIN-AUDIT-PACKET.md is a FROZEN snapshot and says so in its own banner, so it is deliberately NOT
+// held to the tree — `CHAIN-DEPLOY.md` is the live inventory authority and is checked against the tree
+// above. But a snapshot that disagrees with ITSELF is not a record: a reader cannot tell which half is
+// the evidence. It got there the ordinary way — 18738f02 refreshed the §1 table and its test count and
+// left the heading, the framing date and the §3 prover row on the pre-refresh figures, so the document
+// simultaneously claimed 17 contracts (heading) and enumerated 24 (its own table), and claimed both 387
+// tests / 22 suites and 305 / 12, ninety lines apart. Hold every figure to the ones beside it.
+{
+  const pkt = read('CHAIN-AUDIT-PACKET.md');
+
+  // the §1 table is the ground truth INSIDE this document: it enumerates the batch, one row per file
+  const rows = [...pkt.matchAll(/^\| \d+ \| `([A-Za-z0-9]+)` \|(.*)$/gm)];
+  assert(rows.length > 10, `the §1 batch table has stopped being readable (${rows.length} rows found) — `
+    + 'this check would be vacuous rather than clean');
+  const tableIfaces = rows.filter((r) => /interface, not a contract|interface only/.test(r[2])).length;
+  const tableContracts = rows.length - tableIfaces;
+
+  const head = /## 1\. HISTORICAL SCOPE — (\d+) contracts \+ (\d+) interfaces?/.exec(pkt);
+  assert(head, 'CHAIN-AUDIT-PACKET.md §1 has lost its scope heading');
+  assert.equal(`${head[1]}+${head[2]}`, `${tableContracts}+${tableIfaces}`,
+    `the packet's §1 heading sends ${head[1]} contracts + ${head[2]} interface(s) to audit while the table `
+    + `directly beneath it enumerates ${tableContracts} + ${tableIfaces}. An auditor scopes from the `
+    + 'heading and discovers the rest mid-engagement, which is what "batch, not dribble" exists to prevent');
+
+  const body = /(\d+)\s+Solidity files,\s+(\d+)\s+contracts and\s+(\d+)\s+interfaces/.exec(pkt);
+  assert(body, 'CHAIN-AUDIT-PACKET.md §1 has lost its file-count sentence');
+  assert.equal([body[1], body[2], body[3]].join('/'), [rows.length, tableContracts, tableIfaces].join('/'),
+    `the packet says ${body[1]} files / ${body[2]} contracts / ${body[3]} interfaces; its own table `
+    + `enumerates ${rows.length} / ${tableContracts} / ${tableIfaces}`);
+
+  // and every restatement of the measurement must agree with the others — a partial refresh is the
+  // failure mode, so what matters is not any single figure but that they cannot drift apart
+  const pairs = [...pkt.matchAll(/(\d+)\s+(?:Foundry\s+)?tests?\s+(?:across|\/)\s+(\d+)\s+suites/g)]
+    .map((m) => `${m[1]}/${m[2]}`);
+  assert(pairs.length >= 2, `the packet states its Foundry count in ${pairs.length} place(s); with fewer `
+    + 'than two there is nothing to hold it to and this assertion proves nothing');
+  assert.equal(new Set(pairs).size, 1,
+    `the packet gives its Foundry suite two different answers: ${[...new Set(pairs)].join(' and ')}`);
+
+  // \s+, not a space: the §1 sentence wraps between the count and "512-run", so a literal space here
+  // matched ONE site of two and the agreement below was trivially true — vacuous, not clean
+  const fuzz = [...pkt.matchAll(/(\w+)\s+512-run fuzz/g)].map((m) => m[1]);
+  assert(fuzz.length >= 2, `the packet counts its 512-run fuzz properties in ${fuzz.length} place(s); `
+    + 'with fewer than two this agreement check proves nothing');
+  assert.equal(new Set(fuzz).size, 1, `the packet counts its 512-run fuzz properties two ways: ${
+    [...new Set(fuzz)].join(' and ')}`);
+
+  const dates = [...pkt.matchAll(/measured (?:on )?\*{0,2}(\d{4}-\d\d-\d\d)/g)].map((m) => m[1]);
+  assert(dates.length >= 2, `the packet states its measurement date in ${dates.length} place(s)`);
+  assert.equal(new Set(dates).size, 1,
+    `the packet was measured on two different days at once: ${[...new Set(dates)].join(' and ')}`);
+
+  // A FROZEN test count with no compiler named is not evidence. The count is version-DEPENDENT — a
+  // suite holding only `invariant_*` functions counts as ONE test under the older aggregated reporting
+  // model and as N under 1.7.1 — and the toolchain was UNPINNED when these figures were taken
+  // (`foundry-toolchain@v1`, no `version:`, so `stable` resolved at run time). So a reader re-running
+  // the snapshot's own tree cannot tell whether the TREE changed or the COUNTER did, which is exactly
+  // the ambiguity that left the forge gate red and unreproducible for 19 hours. The packet must name
+  // the toolchain, and the version it names must be the one the workflow actually pins — two sources,
+  // one truth, or the note goes stale the first time somebody bumps the pin.
+  const pktForge = /forge v(\d+\.\d+\.\d+)/.exec(pkt);
+  assert(pktForge, 'CHAIN-AUDIT-PACKET.md freezes a Foundry test count and names no toolchain version. '
+    + 'The count is version-dependent (invariant-only suites aggregate differently), so a figure without '
+    + 'a compiler beside it cannot be reproduced — name it');
+  const wfPin = /foundry-toolchain@v1[\s\S]{0,200}?version:\s*v?(\d+\.\d+\.\d+)/
+    .exec(read('.github/workflows/forge.yml'));
+  assert(wfPin, 'the forge workflow has lost its pinned toolchain version — the packet cites one, so '
+    + 'this cross-check has nothing left to hold it to');
+  assert.equal(pktForge[1], wfPin[1],
+    `the packet says its rebuilt measurement will use forge v${pktForge[1]} while the workflow pins `
+    + `v${wfPin[1]}. A stale toolchain claim beside a frozen figure is worse than none: it tells a `
+    + 'reader the count is reproducible under a compiler that is no longer the one that runs');
+
+  console.log(`✓ the audit packet agrees with itself (${tableContracts} contracts + ${tableIfaces} `
+    + `interfaces, ${pairs[0]} tests/suites, measured ${dates[0]})`);
+}
+
+// The LIVE packet is a different object from the frozen one and gets a STRICTER check, because it IS
+// the current engagement scope. The frozen file is held only to itself (its figures are evidence about
+// a tree that no longer exists); this one must be held to the TREE, since "batch, not dribble" means an
+// auditor scopes from this table and a contract missing from it is one they never look at — discovered
+// mid-engagement, which is what paying to re-audit looks like. The same partial-refresh failure applies
+// on top, so every restated figure must agree with the ones beside it, and the toolchain it names must
+// be the one the workflow pins: a count without its compiler is not reproducible (an invariant-only
+// suite counts as 1 under the aggregated model and N under 1.7.1), which is exactly the ambiguity that
+// left the forge gate red and unreproducible for 19 hours.
+{
+  const pkt = read('CHAIN-AUDIT-PACKET-O1.md');
+
+  // (a) the table is the scope, and the TREE is the truth it must match
+  const rows = [...pkt.matchAll(/^\| \d+ \| `([A-Za-z0-9]+)` \|(.*)$/gm)];
+  assert(rows.length > 10, `the O1 packet's §1 batch table has stopped being readable (${rows.length} `
+    + 'rows found) — this check would be vacuous rather than clean');
+  const tableIfaces = rows.filter((r) => /interface, not a contract|interface only/.test(r[2])).length;
+  const tableContracts = rows.length - tableIfaces;
+
+  // one name per source file: its contract, or its interface where the file declares no contract
+  const srcDir = 'omerta-contracts/src';
+  const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory()
+    ? walk(`${d}/${e.name}`) : (e.name.endsWith('.sol') ? [`${d}/${e.name}`] : [])));
+  const files = walk(srcDir).sort();
+  const treeContracts = [];
+  const treeIfaces = [];
+  for (const f of files) {
+    const src = read(f);
+    const c = /^(?:abstract )?contract ([A-Za-z0-9_]+)/m.exec(src);
+    if (c) { treeContracts.push(c[1]); continue; }
+    const i = /^interface ([A-Za-z0-9_]+)/m.exec(src);
+    assert(i, `${f} declares neither a contract nor an interface — the packet's scope table is built `
+      + 'one row per source file, so a file this reader cannot name cannot be scoped');
+    treeIfaces.push(i[1]);
+  }
+  assert(treeContracts.length > 10, `read only ${treeContracts.length} contracts out of ${srcDir} — `
+    + 'this cross-check is measuring nothing');
+
+  const named = new Set(rows.map((r) => r[1]));
+  const missing = [...treeContracts, ...treeIfaces].filter((n) => !named.has(n));
+  assert.equal(missing.length, 0, `the O1 packet's scope table omits ${missing.join(', ')}. An auditor `
+    + 'scopes from that table, so a contract missing from it is one nobody reviews — and adding it after '
+    + 'the engagement means paying to re-audit, which is what "batch, not dribble" exists to prevent');
+  const inTree = new Set([...treeContracts, ...treeIfaces]);
+  const phantom = rows.map((r) => r[1]).filter((n) => !inTree.has(n));
+  assert.equal(phantom.length, 0, `the O1 packet scopes ${phantom.join(', ')}, which ${srcDir} does not `
+    + 'contain — a reviewer would go looking for source that is not there');
+  assert.equal(`${tableContracts}+${tableIfaces}`,
+    `${treeContracts.length}+${treeIfaces.length}`,
+    `the O1 packet's table marks ${tableContracts} contracts + ${tableIfaces} interfaces; the tree holds `
+    + `${treeContracts.length} + ${treeIfaces.length}`);
+
+  // (b) the heading and the file-count sentence are what a reader scopes from before reaching the table
+  const head = /## 1\. SCOPE — (\d+) contracts \+ (\d+) interfaces?/.exec(pkt);
+  assert(head, 'CHAIN-AUDIT-PACKET-O1.md §1 has lost its scope heading');
+  assert.equal(`${head[1]}+${head[2]}`, `${tableContracts}+${tableIfaces}`,
+    `the O1 packet's §1 heading sends ${head[1]} contracts + ${head[2]} interface(s) to audit while the `
+    + `table beneath it enumerates ${tableContracts} + ${tableIfaces}`);
+  const body = /(\d+)\s+Solidity files,\s+(\d+)\s+contracts and\s+(\d+)\s+interfaces/.exec(pkt);
+  assert(body, 'CHAIN-AUDIT-PACKET-O1.md §1 has lost its file-count sentence');
+  assert.equal([body[1], body[2], body[3]].join('/'), [files.length, treeContracts.length,
+    treeIfaces.length].join('/'),
+    `the O1 packet says ${body[1]} files / ${body[2]} contracts / ${body[3]} interfaces; the tree holds `
+    + `${files.length} / ${treeContracts.length} / ${treeIfaces.length}`);
+
+  // (c) a partial refresh is the failure mode, so no figure may drift from its own restatements
+  const pairs = [...pkt.matchAll(/(\d+)\s+(?:Foundry\s+)?tests?\s+(?:across|\/)\s+(\d+)\s+suites/g)]
+    .map((m) => `${m[1]}/${m[2]}`);
+  assert(pairs.length >= 2, `the O1 packet states its Foundry count in ${pairs.length} place(s); with `
+    + 'fewer than two there is nothing to hold it to and this assertion proves nothing');
+  assert.equal(new Set(pairs).size, 1,
+    `the O1 packet gives its Foundry suite two different answers: ${[...new Set(pairs)].join(' and ')}`);
+  const fuzz = [...pkt.matchAll(/(\d+)\s+parameterised 512-run fuzz/g)].map((m) => m[1]);
+  assert(fuzz.length >= 2, `the O1 packet counts its 512-run fuzz properties in ${fuzz.length} place(s)`);
+  assert.equal(new Set(fuzz).size, 1, `the O1 packet counts its 512-run fuzz properties two ways: ${
+    [...new Set(fuzz)].join(' and ')}`);
+  const dates = [...pkt.matchAll(/measured (?:on )?\*{0,2}(\d{4}-\d\d-\d\d)/g)].map((m) => m[1]);
+  assert(dates.length >= 2, `the O1 packet states its measurement date in ${dates.length} place(s)`);
+  assert.equal(new Set(dates).size, 1,
+    `the O1 packet was measured on two different days at once: ${[...new Set(dates)].join(' and ')}`);
+
+  // (d) the toolchain it names must be the one that runs — two sources, one truth
+  const pktForge = [...pkt.matchAll(/forge v(\d+\.\d+\.\d+)/g)].map((m) => m[1]);
+  assert(pktForge.length >= 2, `the O1 packet names its toolchain in ${pktForge.length} place(s); a `
+    + 'version-dependent count needs its compiler beside it wherever the count appears');
+  assert.equal(new Set(pktForge).size, 1,
+    `the O1 packet names two toolchains: ${[...new Set(pktForge)].join(' and ')}`);
+  const wfPin = /foundry-toolchain@v1[\s\S]{0,200}?version:\s*v?(\d+\.\d+\.\d+)/
+    .exec(read('.github/workflows/forge.yml'));
+  assert(wfPin, 'the forge workflow has lost its pinned toolchain version');
+  assert.equal(pktForge[0], wfPin[1],
+    `the O1 packet freezes its count under forge v${pktForge[0]} while the workflow pins v${wfPin[1]}. `
+    + 'A stale toolchain claim beside a frozen figure is worse than none: it tells a reader the count is '
+    + 'reproducible under a compiler that is no longer the one that runs');
+
+  // (e) the pointers. A superseded packet that does not name its successor is how a reviewer is handed
+  // the wrong scope — the whole failure this refresh exists to end, one document over.
+  const frozen = read('CHAIN-AUDIT-PACKET.md');
+  assert(/CHAIN-AUDIT-PACKET-O1\.md/.test(frozen),
+    'CHAIN-AUDIT-PACKET.md is superseded and does not name its successor. A reader who opens the file '
+    + 'named in three other documents must be sent onward, or the stale pre-O1 scope is what gets sent');
+  for (const doc of ['CHAIN-DEPLOY.md', 'LAUNCH-READINESS.md']) {
+    assert(/CHAIN-AUDIT-PACKET-O1\.md/.test(read(doc)),
+      `${doc} gates on the audit and does not name CHAIN-AUDIT-PACKET-O1.md as the packet to send`);
+  }
+
+  console.log(`✓ the O1 audit packet matches the tree (${tableContracts} contracts + ${tableIfaces} `
+    + `interfaces, ${files.length} files), agrees with itself (${pairs[0]} tests/suites under forge `
+    + `v${pktForge[0]}, measured ${dates[0]}), and every gate doc points at it`);
 }
 
 // The issuer-retirement answer is a value-conservation rule, not optional prose. Keep the player Codex,
@@ -3537,4 +3913,291 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
     && admin.includes('frozen inputs · pause or cancel · never rewrite'),
   'the operator UI must show gameplay-vault controller recovery, pull withdrawals, tranche state, exact receipt, and solvency');
   console.log('✓ RWA budget is pre-vote fixed, MVP holdings are spot/units-first, and the OMR-staking rule is complete with implementation pending');
+}
+
+// ── GRAPH.md's own evidence, against the tree ───────────────────────────────────────────────────
+//
+// GRAPH.md exists to argue two things: that the engineering memory should be a graph, and that the
+// largest fixed token cost is CLAUDE.md. Both arguments are carried entirely by measured figures —
+// and every one of them had rotted in the same direction, understating the case:
+//
+//     CLAUDE.md      5,630 → 17,224 lines   (206% out; the log tripled underneath the sentence)
+//     audit reports     57 → 96
+//     levers           769 → 727 pinned     (a different metric, restated to the mechanical one)
+//
+// So the document written to argue for the lever was making the case at a third of its true size.
+// That is the class this file exists for, and it is why the figures are now measured rather than
+// remembered.
+//
+// THE BAND IS WIDER THAN SPEC'S 2%, DELIBERATELY. CLAUDE.md is append-only by design and grows by
+// hundreds of lines in a working session, so a 2% band (344 lines) would fire on unrelated work —
+// and a guard that nags on unrelated work gets deleted, which catches nothing. 10% still catches the
+// drift that actually happened by a factor of twenty.
+{
+  const graphDoc = read('GRAPH.md');
+  const figure = (label, re) => {
+    const m = graphDoc.match(re);
+    assert(m, `GRAPH.md no longer states ${label} in the expected form — the guard below has stopped `
+      + 'checking anything. Update this test with the new wording.');
+    return Number(m[1].replace(/,/g, ''));
+  };
+  const band = (claimed, real, what, tol) => assert(Math.abs(claimed - real) / Math.max(real, 1) < tol,
+    `GRAPH.md says ${claimed} ${what}; it is ${real} — more than ${tol * 100}% out, so restate it. `
+    + 'Its whole argument is carried by these numbers.');
+
+  // Stated three times in the document; all three must move together, or §6's lever argument is
+  // made against a size §2 has already contradicted.
+  const claimedLog = [...graphDoc.matchAll(/\*\*?([\d,]{5,})\*?\*? ?lines?\b|\b([\d,]{5,})-line\b/g)]
+    .map((m) => Number((m[1] || m[2]).replace(/,/g, '')));
+  assert(claimedLog.length >= 3, 'GRAPH.md must state the CLAUDE.md line count where it argues from '
+    + `it (§2 evidence, §4 aside, §6 token cost); found ${claimedLog.length} such figures`);
+  const realLog = lines('CLAUDE.md');
+  for (const c of claimedLog) band(c, realLog, 'lines in CLAUDE.md', 0.10);
+  assert(new Set(claimedLog).size === 1,
+    `GRAPH.md states the CLAUDE.md size as ${[...new Set(claimedLog)].join(' and ')} in different `
+    + 'sections; one of them is stale and the two arguments disagree');
+
+  // Audit reports move only when an audit is written — worth restating, so this one is exact.
+  const audits = fs.readdirSync('.').filter((f) => /^AUDIT-.*\.md$/.test(f)).length;
+  assert.equal(figure('the audit-report count', /\*\*(\d+) audit reports\*\*/), audits,
+    `GRAPH.md's audit-report count is stale; the tree holds ${audits}`);
+
+  // Levers move with ordinary balance work, so band rather than nag.
+  //
+  // Counted INSIDE the SIGNED array, not across the file. A whole-file count reads 735, because
+  // test/levers.js also lists 8 levers that are inert with a stated reason — they are deliberately
+  // not pinned, so folding them in would make GRAPH.md cite a register that is 8 larger than the one
+  // the suite actually enforces. The bracket walk is what makes the two numbers the same number.
+  const lev = read('test/levers.js');
+  const open = lev.indexOf('const SIGNED = [');
+  assert(open >= 0, 'test/levers.js no longer declares `const SIGNED = [` — the lever count below is '
+    + 'measuring nothing. Update this test with the new register.');
+  let depth = 0, close = -1;
+  for (let i = open + 'const SIGNED = '.length; i < lev.length; i += 1) {
+    if (lev[i] === '[') depth += 1;
+    else if (lev[i] === ']' && (depth -= 1) === 0) { close = i; break; }
+  }
+  assert(close > open, 'the SIGNED register in test/levers.js never closes');
+  const pinned = (lev.slice(open, close).match(/^\s*\['[A-Z][A-Za-z0-9_.]*',/gm) || []).length;
+  assert(pinned > 500, `only ${pinned} pins found inside SIGNED — the extractor has stopped reading `
+    + 'the register, and a count of nothing reads exactly like a count that agrees');
+  band(figure('the signed-lever count', /\*\*([\d,]+) signed levers\*\*/), pinned, 'signed levers', 0.10);
+
+  // §6 says the precondition for trimming the log has been met because the knowledge plane shipped.
+  // If that plane is ever removed, the section is claiming a thing that no longer exists.
+  assert(fs.existsSync('tools/knowledge.js') && fs.existsSync('knowledge/generated/graph.json'),
+    "GRAPH.md §6 says the knowledge plane shipped and so the stated reason to defer trimming CLAUDE.md "
+    + 'is spent; that claim requires tools/knowledge.js and knowledge/generated/graph.json to exist');
+
+  console.log('✓ GRAPH.md argues from measured figures, not remembered ones');
+}
+
+// ═══ THE SMOKE-DEBRIS NOTE — a runbook line that makes two claims about code ══════════════════════
+// DEPLOY.md §8's smoke check creates a real player on the live box, once per deploy, forever. The
+// launch rehearsal found 10 of 12 entries on `/v1/live` were dead level-1 accounts from old smoke
+// runs, and the fix at the time was a recency gate on the player-facing boards. That closed the
+// board half and left the OTHER half unstated: the ops overview's headline counts have no recency
+// gate, so smoke debris inflates the founder's own player figure permanently.
+//
+// The note now says both halves — and a note is prose, which rots. Two claims in it are checkable
+// against code, so they are checked, and the guard is deliberately two-sided: it fails when the
+// cited window drifts, AND it fails if somebody gates the overview, because then the warning is
+// telling a reader a number is inflated when it no longer is. The correct response to that failure
+// is to DELETE the warning, not to widen the check.
+{
+  const R = await import('../src/rules.js');
+  const deploy = read('DEPLOY.md');
+
+  const cited = deploy.match(/ages off the player-facing boards after `DISCOVERY\.SEEN_DAYS` \((\d+)\)/);
+  assert(cited, 'DEPLOY.md §8 must state the window smoke debris ages off the boards after, citing DISCOVERY.SEEN_DAYS');
+  assert.equal(Number(cited[1]), R.DISCOVERY.SEEN_DAYS,
+    `DEPLOY.md §8 quotes DISCOVERY.SEEN_DAYS as ${cited[1]}; the live lever is ${R.DISCOVERY.SEEN_DAYS}`);
+
+  // Half one: the boards really are gated, so "debris self-clears there and needs no sweep" is true.
+  // Asserted at the CALL SITE, not at the lever — a helper that exists and is never called gates
+  // nothing, which is exactly the shape the rehearsal found.
+  for (const f of ['src/collision.js', 'src/discovery.js'])
+    assert(/seenSince\(\)/.test(read(f)),
+      `${f} must apply seenSince() — DEPLOY.md §8 tells the operator smoke debris ages off these boards`);
+
+  // Half two: the overview's headline counts really are UNGATED, so "counts permanently" is true.
+  const ops = read('src/ops.js');
+  // BOTH quote styles, and that is load-bearing rather than tidy: a gated count MUST be
+  // double-quoted, because the SQL then carries an interval literal with a quote inside it. A
+  // single-quote-only reader loses the gated row from the corpus entirely, so the mutation that
+  // matters fails at the COUNT assertion instead of at the one that names what changed — measured.
+  const totals = [...ops.matchAll(/\b(total|alive|dead):\s*await one\((['"])((?:(?!\2).)+)\2/g)].map((m) => [m[1], m[3]]);
+  assert.equal(totals.length, 3, `expected the three headline character counts in src/ops.js, saw ${totals.length}`);
+  const gated = totals.filter(([, q]) => /last_accrued_at/.test(q)).map(([k]) => k);
+  assert.equal(gated.length, 0,
+    `src/ops.js now gates ${gated.join('/')} on recency — DEPLOY.md §8's warning that smoke characters `
+    + 'count in the headline figure permanently is no longer true. Delete the warning rather than this check.');
+
+  // Half three: "there is no sweep, and the obvious lever makes it worse". Both halves are
+  // decidable. If a route ever CAN remove a character, the note is stale in the worst direction —
+  // it would be telling an operator to live with debris a real remedy now clears. Comments are
+  // stripped first: the rule is cited in prose in this very file, and a scanner that reads its own
+  // explanation as a violation is the mostly-wrong advisory people route around.
+  // walkSrc, never a flat readdir — its own header records the bug a flat listing reintroduces:
+  // the guard goes QUIET when code moves into a subdirectory instead of failing.
+  const stripComments = (t) => t.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+  const removers = walkSrc('src').filter((f) => /DELETE\s+FROM\s+characters\b/i.test(stripComments(read(f))));
+  assert.equal(removers.length, 0,
+    `${removers.join(', ')} now deletes character rows — DEPLOY.md §8 tells the operator there is no `
+    + 'sweep and to subtract smoke debris by name. Rewrite the note around the new remedy.');
+  // …and the lever an operator would reach for really does add a row rather than remove one.
+  assert(/INSERT INTO characters/.test(read('src/social/estate.js')),
+    'src/social/estate.js must INSERT the heir — DEPLOY.md §8 warns that mod-kill raises `total` by one');
+  assert(/runEstate\(/.test(read('src/routes/modtools.js')),
+    'POST /v1/mod/kill must run the estate — DEPLOY.md §8 warns it creates an heir');
+
+  console.log('✓ DEPLOY.md §8 states the smoke-debris window the code enforces, the asymmetry it warns about, and that no sweep exists');
+}
+
+// ─── INVARIANT_WEBHOOK_URL is not worker-only any more, and the runbook said it was ──────────────
+// §5 told the operator "**Must be set on the WORKER process** — every automatic alarm lives there".
+// That was true until `startWorkerWatch` shipped, and then it was false in the direction that leaves
+// an outage undetected: the API now alarms on its own timer and is the ONLY process that can page
+// when the worker is GONE, because a process cannot alarm on being dead. An operator following the
+// old sentence literally sets the key on the worker, every other alarm works, and exactly the one
+// covering a dark worker is mute — the shape that hid a 17h outage.
+//
+// The same false claim lived in render.yaml's comment and was corrected there; this is the sweep of
+// that class to its second instance. Guarded two-sided: the doc must say BOTH services, and must not
+// go back to saying worker-only. If the watchdog ever moves OFF the API the right response is to
+// rewrite this note, not to widen the check — and that move is separately caught by test/gates.js,
+// which fails if `startWorkerWatch` is defined in src/server.js and never called.
+{
+  const deploy = read('DEPLOY.md');
+  assert(!/Must be set on the WORKER process/.test(deploy),
+    'DEPLOY.md §5 says INVARIANT_WEBHOOK_URL must be set on the worker — since startWorkerWatch shipped '
+    + 'the API alarms too, and it is the only process that can page when the worker is dead. Setting it '
+    + 'worker-only leaves that alarm mute while every other alarm works.');
+  assert(/Set it on BOTH processes/.test(deploy),
+    'DEPLOY.md §5 must tell the operator to set INVARIANT_WEBHOOK_URL on BOTH processes');
+
+  // …and the drill the note sends them to must exist, on the service it names.
+  assert(/send test alert/.test(deploy) && /configured: true/.test(deploy),
+    'DEPLOY.md must tell the operator to run the /admin alarm drill and require `configured: true` — '
+    + 'a dashboard that renders proves the API is up, never that the alarm can leave the building');
+  assert(/\/v1\/mod\/alert\/test/.test(read('src/routes/modtools.js')),
+    'DEPLOY.md sends the operator to the alarm drill; POST /v1/mod/alert/test must exist');
+  assert(/alert\/test/.test(read('public/admin.html')),
+    'DEPLOY.md says the drill is a button on /admin — public/admin.html must call it');
+
+  console.log('✓ DEPLOY.md states the webhook belongs on BOTH services, and the drill it names exists');
+}
+
+// ═══ THE POSTED-CLAIM LEDGER — the figures that leave the building ════════════════════════════════
+// `MARKETING-POSTS.md` holds the drafts for Hacker News and the MCP registries. Its own header says
+// these are the surfaces where "a wrong sentence travels furthest", and HN in particular punishes an
+// inaccurate technical claim harder than it punishes an unfinished product — so of every document in
+// this repository it is the one where a stale number costs the most, and it was the one with no
+// guard at all. Four of its checkable claims had rotted, all understating the tree (~600 routes
+// against 746, 100 suites against 148, 85 red-team reports against 97, 30 invariants against 34);
+// understating is the safe direction to be wrong in and it is still wrong.
+//
+// TWO RULES, because each covers what the other cannot:
+//   (a) every claim's PATTERN must still match the file — a reworded sentence must fail loudly here
+//       rather than silently stop being covered, which is how prose guards quietly die;
+//   (b) the number it captures must equal the tree, MEASURED. Routes come from SPEC's own row, which
+//       test/routes.js already holds to the live app registry, so the two ends of the chain cannot
+//       disagree without something failing.
+//
+// SPEC's Ledger-invariants row is checked here for the same reason it was found wrong: it sits one
+// line under a size table every other row of which is machine-checked, and it said 18 named checks
+// against a live 30. An unchecked row in a checked table is the easiest kind of figure to trust.
+{
+  const posts = read('MARKETING-POSTS.md');
+
+  // Measured, never restated. `npm test` is the chain a reader means by "suites".
+  //
+  // Three counts of "suites" coexist in this repo and all three are correct about different sets, so
+  // do NOT reconcile them by editing one to match another (measured 2026-08-29):
+  //   148  the npm test CHAIN — 147 files in test/ plus tools/knowledge-test.js. This is the one a
+  //        reader of the post means, because it is what running `npm test` executes.
+  //   152  test/*.js at top level — THE SUITE LEDGER in test/gates.js (150 run + 2 declared). The
+  //        five outside the chain run elsewhere: three *.postgres.js in CI's real-Postgres job,
+  //        test/mcp.js under omerta-mcp's own npm test, and test/contextplus.js.
+  //   153  test/**/*.js recursive — SPEC's size table. The extra is test/lib/srcfiles.js, a shared
+  //        helper rather than a suite; the row is a file count, not a claim about how many run.
+  const pkg = JSON.parse(read('package.json'));
+  const suites = new Set(`${pkg.scripts.pretest || ''} ${pkg.scripts.test}`
+    .match(/(?:test|tools)\/[\w.-]+\.js/g) || []).size;
+  assert(suites > 100, `read only ${suites} suites out of the npm test chain — the extractor stopped `
+    + 'seeing the script, and a count of nothing reads exactly like a count that agrees');
+
+  // The red-team reports are AUDIT.md plus AUDIT-*.md at the root. `docs/AUDITS.md` is the INDEX and
+  // `CHAIN-AUDIT-PACKET.md` is a packet for an auditor, so neither is a report. Same git-not-the-disk
+  // discipline as the markdown count above, and for the same three reasons recorded there.
+  let reports;
+  try {
+    reports = [...new Set(execFileSync('git', ['ls-files', '-z', '--cached', '--others',
+      '--exclude-standard', 'AUDIT*.md'], { encoding: 'utf8' }).split('\0').filter(Boolean))].length;
+  } catch {
+    reports = fs.readdirSync('.').filter((f) => /^AUDIT.*\.md$/.test(f)).length;
+  }
+  assert(reports > 50, `found only ${reports} red-team reports — the extractor is not reading the root`);
+
+  // The §10.4 sweep is counted by RUNNING it: `invariants.js` pushes one check per currency inside a
+  // loop, so a static count of `push(` sites is a restatement of the implementation and is wrong.
+  const { makeDb } = await import('../src/db.js');
+  const { runLedgerInvariants } = await import('../src/invariants.js');
+  const db = await makeDb();
+  const { checks } = await runLedgerInvariants(db.pool || db, { alert: false });
+  const named = checks.filter((c) => !/ conservation$/.test(c.name)).length;
+  const conservation = checks.length - named;
+  assert(checks.length > 20, `the §10.4 sweep emitted only ${checks.length} checks on an empty server`);
+
+  // SPEC's own row, in the table whose every other row is already machine-checked.
+  const specInv = spec.match(/^\| Ledger invariants \| \*\*(\d+)\*\* checks — \*\*(\d+)\*\* named[^|]*?\*\*(\d+)\*\* per-currency/m);
+  assert(specInv, "SPEC.md's size table must state the ledger-invariant count in the checked form "
+    + '"**N** checks — **N** named escrow/identity checks + **N** per-currency conservation"');
+  assert.deepEqual([+specInv[1], +specInv[2], +specInv[3]], [checks.length, named, conservation],
+    `SPEC says ${specInv[1]}/${specInv[2]}/${specInv[3]} ledger invariants (total/named/per-currency); `
+    + `the sweep emits ${checks.length}/${named}/${conservation} — restate it`);
+
+  // Routes ride SPEC's row rather than booting the app a second time: test/routes.js already holds
+  // that row to `app.routes.length`, so crossing the post against SPEC crosses it against the app.
+  const specRoutes = spec.match(/^\| HTTP routes \| \*\*([\d,]+)\*\*/m);
+  assert(specRoutes, 'SPEC.md must state the route count in its size table (row "HTTP routes")');
+  const routes = Number(specRoutes[1].replace(/,/g, ''));
+
+  const CLAIMS = [
+    ['routes (Show HN)', /All ([\d,]+) routes\nwork over HTTP/, routes],
+    ['routes (registry listing)', /reaches all ([\d,]+) routes/, routes],
+    ['the §10.4 sweep', /sweep runs nightly across ([\d,]+) invariants/, checks.length],
+    ['red-team reports', /There are ([\d,]+) red-team reports/, reports],
+    ['test suites', /proudest of: ([\d,]+) suites/, suites],
+  ];
+  const wrong = [];
+  for (const [what, re, real] of CLAIMS) {
+    const m = posts.match(re);
+    // (a) the pattern must MATCH: a claim reworded out from under its check is the failure mode this
+    // whole file exists for, so it fails here rather than passing over a sentence nothing reads.
+    assert(m, `MARKETING-POSTS.md no longer states ${what} in the form this guard checks — either `
+      + 'restore the wording or update the pattern, but do not leave a public claim unchecked');
+    const claimed = Number(m[1].replace(/,/g, ''));
+    if (claimed !== real) wrong.push(`${what}: the draft says ${claimed}, the tree has ${real}`);
+  }
+  assert.deepEqual(wrong, [], 'a draft meant for Hacker News and the MCP registries states a figure '
+    + `the tree does not support:\n  ${wrong.join('\n  ')}`);
+
+  // The install snippet is the one line a stranger PASTES, so the receipt beside it is held to the
+  // package it names — a version or a tool list that has drifted would be a verification of software
+  // nobody can install.
+  const mcpPkg = JSON.parse(read('omerta-mcp/package.json'));
+  assert(posts.includes(`\`${mcpPkg.version}\`, matching the version in`),
+    `the clean-machine receipt must name omerta-mcp's current version (${mcpPkg.version})`);
+  const tools = [...read('omerta-mcp/index.js').matchAll(/name: '(omerta_\w+)'/g)].map((m) => m[1]);
+  assert(tools.length >= 5, `read only ${tools.length} tool declarations out of omerta-mcp/index.js`);
+  const missing = tools.filter((t) => !posts.includes(`\`${t}\``));
+  assert.deepEqual(missing, [], 'the clean-machine receipt lists the tools an MCP host will see, so '
+    + `every tool the package declares must be in it:\n  ${missing.join(', ')}`);
+  assert(posts.includes(`| \`tools/list\` | ${tools.length} tools:`),
+    `the receipt must state the tool COUNT the package declares (${tools.length})`);
+
+  console.log(`  ✓ the public drafts' ${CLAIMS.length} tree-claims are measured (${routes} routes, `
+    + `${checks.length} invariants, ${reports} reports, ${suites} suites) and the MCP receipt matches `
+    + `omerta-mcp@${mcpPkg.version}'s ${tools.length} tools`);
 }

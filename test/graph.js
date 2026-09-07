@@ -9,7 +9,27 @@
 // floor (the extractor really found the things we know are there) or a MECHANISM check on a
 // synthetic graph (the query really fires when the condition it looks for is true).
 import assert from 'node:assert';
-import { build, checkGraph, QUERIES, census, NODE_TYPES, EDGE_TYPES } from '../tools/graph.js';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { spawnSync } from 'node:child_process';
+import {
+  build,
+  checkGraph,
+  QUERIES,
+  census,
+  NODE_TYPES,
+  EDGE_TYPES,
+  isMainModule,
+  normalizeText,
+} from '../tools/graph.js';
+
+// The graph is a developer-facing CLI as well as an importable module. Pin the two Windows failure
+// modes explicitly: CRLF must not change the parser's language, and a drive-letter argv path must
+// still be recognized as the entry module.
+assert.equal(normalizeText('one\r\ntwo\rthree\n'), 'one\ntwo\nthree\n');
+const graphPath = fileURLToPath(new URL('../tools/graph.js', import.meta.url));
+assert(isMainModule(new URL('../tools/graph.js', import.meta.url).href, graphPath));
+assert(!isMainModule(import.meta.url, graphPath));
 
 const g = build();
 const c = census(g);
@@ -42,8 +62,22 @@ assert.deepEqual(inv.mute.sort(), [
   'character cash',
   'desk inventory backed',
   'reason vocabulary',
+  'world graph salvage car audit',
+  'world graph stack conservation',
+  'world graph unique custody and provenance',
 ],
   `unexpected checks reconcile no reason — the SQL term parser missed a shape: ${inv.mute.join(', ')}`);
+const NON_CURRENCY_WORLD_GRAPH_CHECKS = new Map([
+  ['world graph salvage car audit', 'authoritative noncurrency salvage sink'],
+  ['world graph stack conservation', 'custody conservation'],
+  ['world graph unique custody and provenance', 'unique custody/provenance'],
+]);
+for (const [name, taxonomy] of NON_CURRENCY_WORLD_GRAPH_CHECKS) {
+  assert(g.nodes.has(`Check:${name}`), `${taxonomy} check disappeared from the invariant graph`);
+  assert.equal(g.edges.some((edge) => (
+    edge.type === 'RECONCILES' && edge.from === `Check:${name}`
+  )), false, `${taxonomy} SQL must not be misclassified as a transaction currency/reason term`);
+}
 console.log('✓ write invariants: provenance, authoring run, content hash, named rubrics, no dangling edges');
 
 // ── extraction really found the things we know are in the tree ───────────────────────────────────
@@ -103,6 +137,62 @@ assert(trace.some((l) => l.includes('rules.tail.js')), 'the trace names where th
 assert(trace.some((l) => l.startsWith('read by') && l.includes('src/')), 'and which modules read it');
 assert(trace.some((l) => l.startsWith('decided in') && l.includes('.md')), 'and which documents decided it');
 console.log('✓ lever trace: declaration, readers, pins and deciding documents resolve for a real lever');
+
+// ── open-findings: it reports, and it must never quietly stop reporting ──────────────────────────
+// GRAPH.md §5 increment 2. Three registers — SIGN-OFF.md (founder decisions), BALANCE.md (economy
+// sign-off) and SPEC.md (technical debt) — share the D1–D15 id namespace, so `D1` names three
+// unrelated things and a bare mention cannot be attributed. The query therefore REPORTS: it prints
+// each row's own state with outside evidence beside it, and flags the collision. These assertions
+// pin the parts that would make it useless if they broke silently.
+{
+  const claims = [...g.nodes.values()].filter((n) => n.type === 'Claim');
+  const rows = claims.filter((n) => n.register !== 'AUDIT');
+  // per-register FIRST, so a broken parser names the register it lost rather than only the total
+  for (const reg of ['SIGN-OFF', 'BALANCE', 'SPEC']) {
+    assert(rows.some((n) => n.register === reg), `no rows extracted from ${reg} — a register that `
+      + 'stops parsing silently drops every decision it holds');
+  }
+  assert(rows.length >= 30, `only ${rows.length} register rows extracted — with a broken register `
+    + 'parser this query reports an empty sheet, which reads exactly like a clean one');
+
+  // The collision is the whole reason this reports rather than concludes. If it stopped being
+  // detected the query would start attributing one register's evidence to another's decision.
+  assert(rows.some((n) => n.ambiguous), 'the shared D1–D15 namespace is no longer detected as '
+    + 'ambiguous — evidence would now be attributed to whichever register parsed first');
+
+  const out = QUERIES['open-findings'](g);
+  const text = out.join('\n');
+  assert(/AMBIGUOUS/.test(text), 'the query must SAY when an id is carried by more than one register');
+  assert(/COVERAGE, not a census/.test(text), 'the audit-corpus figure must be stated as coverage — '
+    + 'read as a census it is a count of findings nobody can check');
+  assert(g.auditCoverage.reports > g.auditCoverage.withMarker,
+    `coverage claims ${g.auditCoverage.withMarker} of ${g.auditCoverage.reports} reports carry a `
+    + 'marker; if every report matched, the scan would be a census and the caveat would be false');
+
+  // The sheet's own answer table is the authority on whether a decision is closed. A word scan over
+  // row bodies read 12 of 15 as resolved — "it is already built that way" inside an argument FOR an
+  // option is not a closure — so the answer must come from the table or not at all.
+  const sheet = rows.filter((n) => n.register === 'SIGN-OFF');
+  assert(sheet.length >= 10 && sheet.every((n) => n.answer),
+    'every sheet row must resolve to an answer in SIGN-OFF.md\'s own answer table; a row with no '
+    + 'entry is genuinely unanswered and the query says so');
+  console.log(`✓ open-findings: ${rows.length} register rows across three D-namespace registers, `
+    + `${rows.filter((n) => n.ambiguous).length} flagged ambiguous, audit coverage stated as `
+    + `${g.auditCoverage.withMarker} of ${g.auditCoverage.reports} reports`);
+}
+
+// Exercise the actual executable boundary. This caught the silent-success regression where direct
+// commands returned status 0 but printed nothing on Windows because the entry-point guard was false.
+{
+  const cli = spawnSync(process.execPath, [graphPath, 'query', 'open-findings'], {
+    cwd: path.dirname(path.dirname(graphPath)),
+    encoding: 'utf8',
+  });
+  assert.equal(cli.status, 0, `graph CLI failed: ${cli.stderr}`);
+  assert(cli.stdout.includes('# open-findings'), 'graph CLI printed no open-findings query header');
+  assert(cli.stdout.includes('SIGN-OFF.md'), 'graph CLI silently lost the founder decision register');
+  console.log('✓ CLI boundary: direct queries execute and CRLF registers parse on this host');
+}
 
 console.log('✅ THE GRAPH PLANE test passed — the work-and-knowledge graph builds from the tree with '
   + `${c.nodes} nodes and ${c.edges} edges, every node carries provenance + an authoring run + a content hash, `

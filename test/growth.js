@@ -10,6 +10,7 @@ import fs from 'node:fs';
 import { buildServer } from '../src/server.js';
 import { SOCIAL_TASKS, socialShareUrl, SOCIAL_LINKS, CONSTANTS, DISTRICTS, HUSTLE, CORNER, cornerTasksOf, dayOf, M4, levelOf, PACING, MASTERY, masteryXpFor, CRIMES, MISSIONS, M8 } from '../src/rules.js';
 import { socialRewardsLive } from '../src/growth.js';
+import { accrue } from '../src/accrual.js';
 import { sweepGrandReferrals, gainRespect } from '../src/game.js';
 
 // The City Standing / recruiters boards are CACHED in production (standing.js — they were the most
@@ -356,11 +357,17 @@ assert.equal(Number((await runInv(pool, { alert: false })).checks.find((c) => c.
 // (B) CUTTING AGENTS — stretch a stash line: more units, weaker product; a ledgered cash sink
 await pool.query(`DELETE FROM stash WHERE character_id='${chef.id}'`);
 await pool.query(`INSERT INTO stash (character_id, drug_id, qty, quality) VALUES ('${chef.id}','vim',100,1.0)`);
+// freeze the accrual clock — chef holds a CREW and the line above just stocked 100 units, and a
+// crew sells max(1, …) units on ANY accrual a second old (accrual.js), so ANY action landing ≥1s after the
+// last accrual — including the refused cut/nope probe BELOW, whose phase-one settle now COMMITS
+// the sale before the refusal (that is the point of #29) — sells a unit and the cut works on 99 (measured: "+~40% units (got +39)" once
+// the two-phase settle added a transaction in front of the action under a full-suite run). Pin the
+// clock a few seconds into the FUTURE: dtMs clamps to 0 and the early return holds for the whole
+// read+cut regardless of load. The kingpin block below re-freezes to now() before it reads, so the
+// future stamp never reaches an assertion that expects accrual (the recorded kingpin-flake class:
+// a deterministic assertion on a probabilistic precondition — guarantee it, never make it likelier).
+await seedCh(chef.id, "last_accrued_at = now() + interval '20 seconds'");
 assert.equal((await call('POST', '/v1/kitchen/cut/nope', { token: chef.token })).body.error, 'bad_drug', 'no such line to cut');
-// freeze the accrual clock — chef holds a CREW and the line above just stocked 100 units, so a
-// minute boundary between the two cash reads lets a §7.1 crew sale land in the pocket mid-assert
-// (the recorded kingpin-flake class: a deterministic assertion on a probabilistic precondition)
-await seedCh(chef.id, 'last_accrued_at = now()');
 const cutCashPre = (await meOf(chef.token)).cash;
 r = await call('POST', '/v1/kitchen/cut/vim', { token: chef.token });
 assert.equal(r.code, 200, 'cut the line'); assert(r.body.added >= 40, `+~40% units (got +${r.body.added})`);
@@ -410,6 +417,40 @@ assert(raided, 'the Bureau eventually kicked the door');
 const raidNotes = (await call('GET', '/v1/notifications', { token: chef.token })).body.notifications;
 assert(raidNotes.some((n) => n.type === 'raid'), 'raid notified');
 assert(Number((await pool.query("SELECT COUNT(*) n FROM telemetry WHERE event='raid'")).rows[0].n) >= 1, 'raid telemetered');
+
+// ── THE TWO-PHASE COMMIT (#29): a READ never rolls the Bureau ──
+// The lock-free read path (withCharacterRead) accrues in memory with { preview: true } so the
+// sheet is honest, and the raid roll — the ONLY randomness in accrue() — is gated on !ctx.preview:
+// a raid a read rolled would be discarded (a phantom the next refresh undoes) or, worse, shown.
+// pg-mem cannot prove the other half (a refused action still COMMITS its accrual — pg-mem's
+// ROLLBACK is a no-op, so that claim is vacuous here); the real two-phase proof is pgcheck §5 on
+// real Postgres. What pg-mem CAN prove is this branch, and it is driven with the SAME fixture the
+// raid loop above needed only 300 tries on: heat 100, a 5-minute window, a stash on hand.
+{
+  const raidRow = (await pool.query(`SELECT * FROM characters WHERE id='${chef.id}'`)).rows[0];
+  const hotStash = [{ drug_id: 'vim', qty: 50, quality: 50 }];
+  let settleRaided = false, previewRaided = false;
+  for (let i = 0; i < 300; i++) {
+    const ch = { ...raidRow, heat: 100, crew: 0, jail_until: null, last_accrued_at: new Date(Date.now() - 5 * 60000) };
+    accrue(ch, null, { preview: true, stash: hotStash.map((s) => ({ ...s })), rackets: [], assets: [], held: [] });
+    if (ch._raid || ch.jail_until) previewRaided = true;
+  }
+  assert(!previewRaided, 'a preview read NEVER rolls the Bureau raid (the !ctx.preview gate)');
+  for (let i = 0; i < 300 && !settleRaided; i++) {
+    const ch = { ...raidRow, heat: 100, crew: 0, jail_until: null, last_accrued_at: new Date(Date.now() - 5 * 60000) };
+    accrue(ch, null, { stash: hotStash.map((s) => ({ ...s })), rackets: [], assets: [], held: [] });
+    if (ch._raid) settleRaided = true;
+  }
+  assert(settleRaided, 'the same fixture under a SETTLE does roll — so the preview assertion is not vacuous');
+  // The wiring is a source tripwire, because neither half is unit-drivable on pg-mem: the read path
+  // must pass preview, and the action wrapper must settle the clock in its OWN transaction first.
+  const gameSrc = fs.readFileSync(new URL('../src/game.js', import.meta.url), 'utf8');
+  const readFn = gameSrc.slice(gameSrc.indexOf('export async function withCharacterRead('));
+  assert(/accrueInMemory\([^)]*\{\s*preview:\s*true\s*\}\)/.test(readFn.slice(0, readFn.indexOf('\nexport '))), 'withCharacterRead accrues with { preview: true }');
+  const actFn = gameSrc.slice(gameSrc.indexOf('export async function withCharacter('));
+  const actHead = actFn.slice(0, actFn.indexOf('pool.connect()'));
+  assert(/await settleIfDue\(pool, accountId\)/.test(actHead), 'withCharacter settles the clock (phase one) BEFORE it opens the action transaction');
+}
 
 // ── laylow + clean papers ──
 // Seeded at 80, not 50, and that is the whole point: at heat 50 a −25 cool LANDS on 25, so the drop

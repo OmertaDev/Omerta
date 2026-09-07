@@ -11,8 +11,38 @@
 // This is the test/migrate.js DISPOSITION guard applied to config instead of tables.
 import assert from 'node:assert';
 import fs from 'node:fs';
-import { preflight, isHardened, CLASSIFIED, TEST_ONLY_ENV, REQUIRED_ENV, EXPLICIT_ENV } from '../src/preflight.js';
+import * as Preflight from '../src/preflight.js';
 import { walkSrc } from './lib/srcfiles.js';
+
+const { preflight, isHardened, CLASSIFIED, TEST_ONLY_ENV, REQUIRED_ENV, EXPLICIT_ENV } = Preflight;
+assert.equal(typeof Preflight.normalizeRwaReviewerConfig, 'function',
+  'runtime and preflight share one exported pure reviewer-config normalizer');
+for (const [label, env] of [
+  ['whitespace key', { RWA_REVIEWER_KEY: '   ', RWA_REVIEWER_ID: 'public-reviewer' }],
+  ['padded secret core', { RWA_REVIEWER_KEY: '  shared-core  ', RWA_REVIEWER_ID: 'shared-core' }],
+  ['padded public collision', { RWA_REVIEWER_KEY: 'shared-core', RWA_REVIEWER_ID: '  shared-core  ' }],
+  ['control ID', { RWA_REVIEWER_KEY: 'distinct-secret', RWA_REVIEWER_ID: 'bad\u0007id' }],
+  ['format ID', { RWA_REVIEWER_KEY: 'distinct-secret', RWA_REVIEWER_ID: 'bad\u200did' }],
+  ['line separator ID', { RWA_REVIEWER_KEY: 'distinct-secret', RWA_REVIEWER_ID: 'bad\u2028id' }],
+  ['canonical moderator ID', {
+    RWA_REVIEWER_KEY: 'distinct-secret', RWA_REVIEWER_ID: '  moderator-core  ', MOD_KEY: ' moderator-core ',
+  }],
+  ['canonical secret collision', {
+    RWA_REVIEWER_KEY: ' reviewer-secret ', RWA_REVIEWER_ID: 'public-reviewer', MOD_KEY: 'reviewer-secret',
+  }],
+]) {
+  const snapshot = { ...env };
+  const normalized = Preflight.normalizeRwaReviewerConfig(env);
+  assert.equal(normalized.enabled, false, `${label} fails closed`);
+  assert.equal(normalized.key, null, `${label} never returns a rejected secret`);
+  assert.deepEqual(env, snapshot, `${label} normalization is pure`);
+}
+assert.deepEqual(Preflight.normalizeRwaReviewerConfig({
+  RWA_REVIEWER_KEY: 'valid-reviewer-secret', RWA_REVIEWER_ID: '  valid-public-reviewer  ',
+  MOD_KEY: 'distinct-moderator-secret',
+}), {
+  enabled: true, key: 'valid-reviewer-secret', id: 'valid-public-reviewer', errors: [],
+}, 'valid configuration returns one canonical public identity without mutating the secret');
 
 // ════════════ THE DRIFT DETECTOR ════════════
 const used = new Set();
@@ -74,6 +104,32 @@ assert(preflight({ ...GOOD, MARKET_SEED: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaa' }).error
 assert(preflight({ ...GOOD, MARKET_SEED: 'short' }).errors.some((e) => /too weak/.test(e)),
   'a short seed is refused');
 
+assert(preflight({ ...GOOD, RWA_REVIEWER_KEY: 'reviewer-secret' }).errors.some((e) => /configured together/.test(e)),
+  'a reviewer key without its public reviewer identity fails closed in production');
+assert(preflight({ ...GOOD, RWA_REVIEWER_ID: 'reviewer-public-id' }).errors.some((e) => /configured together/.test(e)),
+  'a reviewer identity without its key fails closed in production');
+assert(preflight({
+  ...GOOD, RWA_REVIEWER_KEY: GOOD.MOD_KEY, RWA_REVIEWER_ID: 'reviewer-public-id',
+}).errors.some((e) => /distinct from MOD_KEY/.test(e)),
+  'reviewer and moderator authority cannot share one production secret');
+assert(preflight({
+  ...GOOD, RWA_REVIEWER_KEY: 'same-reviewer-secret', RWA_REVIEWER_ID: 'same-reviewer-secret',
+}).errors.some((e) => /public reviewer identity.*distinct from.*secret/i.test(e)),
+  'the public reviewer identity cannot publish the reviewer credential');
+assert(preflight({
+  ...GOOD, RWA_REVIEWER_KEY: 'distinct-reviewer-secret', RWA_REVIEWER_ID: `  ${GOOD.MOD_KEY}  `,
+}).errors.some((e) => /public reviewer identity.*distinct from MOD_KEY/i.test(e)),
+  'the canonical public reviewer identity cannot publish the moderator credential');
+for (const badId of ['   ', 'x'.repeat(201)]) {
+  assert(preflight({
+    ...GOOD, RWA_REVIEWER_KEY: 'distinct-reviewer-secret', RWA_REVIEWER_ID: badId,
+  }).errors.some((e) => /RWA_REVIEWER_ID.*1 through 200/i.test(e)),
+  'the canonical public reviewer identity is bounded to 1 through 200 characters');
+}
+assert.equal(preflight({
+  ...GOOD, RWA_REVIEWER_KEY: 'distinct-reviewer-secret', RWA_REVIEWER_ID: '  reviewer-public-id  ',
+}).errors.length, 0, 'a complete reviewer pair with a distinct secret is accepted');
+
 // BLUE-TEAM H1: the same floor on JWT_SECRET — the ONE secret that authenticates every session and
 // had no entropy check. HS256 over a weak-but-non-default secret is offline-forgeable → any account.
 assert(preflight({ ...GOOD, JWT_SECRET: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaa' }).errors.some((e) => /JWT_SECRET is too weak/.test(e)),
@@ -88,6 +144,26 @@ assert(preflight(GOOD).warnings.some((w) => /INVARIANT_WEBHOOK_URL is not set/.t
 assert.deepEqual(
   preflight({ ...GOOD, INVARIANT_WEBHOOK_URL: 'https://hook' }).warnings.filter((w) => /INVARIANT_WEBHOOK_URL is not set/.test(w)),
   [], '…and once set, the webhook warning is silent (H5)');
+
+// …and the warning must send them to the RIGHT service. It used to end "it must be on the WORKER
+// process, which is where the alarms fire" — true until `startWorkerWatch` shipped, and then false in
+// the direction that leaves an outage undetected: preflight runs on BOTH processes, so on the API it
+// pointed the operator at the OTHER service while THIS one's alarm was the missing one. The API is
+// the only process that can page when the worker is GONE (a process cannot alarm on being dead), so
+// worker-only leaves exactly that alarm mute while every other alarm works — the shape that hid a 17h
+// outage. Two-sided, like DEPLOY.md's own guard in test/docs.js: it must say BOTH, and must not go
+// back to saying worker-only. If the watchdog ever moves OFF the API, rewrite this note rather than
+// widening the check — that move is separately caught by test/gates.js, which fails if
+// `startWorkerWatch` is defined in src/server.js and never called.
+{
+  const w = preflight(GOOD).warnings.find((x) => /INVARIANT_WEBHOOK_URL is not set/.test(x));
+  assert(/BOTH processes/.test(w),
+    'the unset-webhook warning must tell the operator to set it on BOTH processes — the worker fires '
+    + `most alarms, the API is the only one that can page when the worker is dead. Got: ${w}`);
+  assert(!/must be on the WORKER process/.test(w),
+    'the unset-webhook warning must not send the operator to the worker alone — that leaves the '
+    + `worker-dark alarm mute while every other alarm works. Got: ${w}`);
+}
 
 // BLUE-TEAM M8: the private ops alarm and the public city-wire must be DISTINCT channels, or drama
 // buries a drift line. Fatal only on the exact misconfiguration (both set AND equal).

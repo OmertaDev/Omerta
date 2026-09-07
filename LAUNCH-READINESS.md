@@ -43,7 +43,7 @@ product.
 | Loop / lock / ledger integrity on real Postgres | `npm run pgcheck` | ✅ 43/43 |
 | Mobile layout, real Chromium, two viewports | `npm run mobile` | ✅ |
 | Client wiring — every button reaches a real route, sends fields the handler reads, and reads fields the board sends | `node test/client.js` | ✅ 7 checks |
-| Contracts | `omerta-contracts/run-forge-test-sandboxed.sh` | ✅ 319/319, incl. fuzzes |
+| Contracts | `cd omerta-contracts && forge test` | ✅ 531/531 across 27 suites (2026-08-27) |
 | Docs match the tree | `node test/docs.js` | ✅ |
 | Signed levers pinned + register complete | `node test/levers.js` | ✅ |
 
@@ -152,16 +152,21 @@ the chain authority; `UNISWAP-ROUTING.md` is the routing authority.
 
 | Gate | State | Owner |
 |---|---|---|
-| **1 — `forge test` green** | ✅ 319/319, incl. fuzzes | us |
+| **1 — `forge test` green** | ✅ **896/896 across 43 suites** under pinned forge v1.7.1 at head `b0a214ca` (2026-09-06) | us |
 | **2 — third-party audit of contracts AND the signer** | ❌ **not started** | external |
 | **3 — the launch review** | ✅ **CLEARED 2026-08-13** (founder statement — the whole checklist) | external |
 | **4 — Uniswap Labs routing approval for `OmertaHook`** | ❌ **mainnet deploy, explorer verification, submission, and approval pending** | external |
 
 ### Gate 2 — the audit
 
-- The batch is assembled: `OMR`, `VoucherClaim`, `GearVault`, `OMRStaking`, `OmertaFees`,
-  `OmertaBond`, `OmrTwapOracle`, `GenesisOracle`, `OmertaHook`, and THE BANK
-  (`Denari`/`CollateralEscrow`/`Alchemist`/`Transmuter`/`FlashGuard`).
+- **The packet is `CHAIN-AUDIT-PACKET-O1.md`**, frozen at release head `b0a214ca` under the pinned
+  toolchain and reconciled against the `CHAIN-DEPLOY.md` inventory; the 2026-08-21
+  `CHAIN-AUDIT-PACKET.md` is its superseded pre-RegistryV2/pre-settlement-pool/pre-O1 predecessor and
+  must not be sent as a scope. A frozen packet is only evidence while the head it names is the head
+  being audited: if the tree has moved on, re-freeze before the engagement rather than sending it.
+  Neither
+  `StockTokenRegistryV2`, `SettlementGasPool`, nor the O1-only `AcquisitionVault` is authorized for
+  production merely because its source and tests exist.
 - **Point the auditor at the deleted property.** Until tokenomics v2 step 4, every prior review of
   this suite rested on "nothing mints". That is no longer true — bonds mint — and what replaced it is
   four walls (`dailyCapOMR`, `MAX_DISCOUNT_BPS`, `maxOmrPerEth`, the accretion oracle). An auditor who
@@ -170,7 +175,7 @@ the chain authority; `UNISWAP-ROUTING.md` is the routing authority.
   central claim, and the class that cost Inverse ~$21M twice); the hook's pool gate (without it anyone
   can emit fabricated revenue wearing a real tx hash); and the accrue-don't-forward rule in both the
   hook and the Alchemist.
-- Hand over the 84 audit reports as context, with the standing caveat that they are **point-in-time**
+- Hand over the 96 indexed audit reports as context, with the standing caveat that they are **point-in-time**
   and `SPEC.md` is what is current.
 - **The clock has been reset twice** (v2 step 4; the bond's fourth slice). Do not start it a third
   time with a contract change unless the change is worth the delay.

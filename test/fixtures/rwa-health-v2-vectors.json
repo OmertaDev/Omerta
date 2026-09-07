@@ -1,0 +1,53 @@
+{
+  "formula": {
+    "chainId": "4663",
+    "registryAddress": "0x1111111111111111111111111111111111111111",
+    "catalogVersion": "7",
+    "catalogSnapshotHash": "0x2222222222222222222222222222222222222222222222222222222222222222",
+    "assetVersionKey": "0x3333333333333333333333333333333333333333333333333333333333333333",
+    "normalizedTicker": "AAPL",
+    "tokenAddress": "0x4444444444444444444444444444444444444444",
+    "tokenDecimals": 18,
+    "robinhoodAssetIdHash": "0x5555555555555555555555555555555555555555555555555555555555555555",
+    "cycleSlot": "123456",
+    "providerBody": "{\"assets\":[]}",
+    "episodeGeneration": "1",
+    "reviewerId": "reviewer-main",
+    "requestedState": 2,
+    "ruleCode": "reviewer_material_drift",
+    "reasonHash": "0x6666666666666666666666666666666666666666666666666666666666666666",
+    "reviewerEvidenceHash": "0x7777777777777777777777777777777777777777777777777777777777777777",
+    "outputs": {
+      "ruleSetHash": "0xe573492c63c7d528d740eb1bc084c1a2b3a18f54ef80814e3c795c6033fd1a44",
+      "providerEndpointHash": "0xd1616a50a719c165db656e87acb677b7c7b657b665298efd7637affc2a1f0940",
+      "providerBodyHash": "0x301bac8171566f7339d37f74456521447fb173cb2857e16fd36223f00b6bffb2",
+      "expectedIdentityHash": "0x31f93ef1d8559de405528c84466deb1a82c681b2c21739b8c2a0541de6abe7a1",
+      "orderedIdentityListHash": "0x283dd429c3373f0773f65309fc41aae31fb82510a8a9c52947ce11832097ce5b",
+      "activeSetHash": "0x07947b4429f7b3178d5c7a09cd9138954cf14caea7000828c16041dc5659e950",
+      "batchId": "0x56f9229bea2e725ace8af6589d4199ff81efdd49fedab40818482fde05b0dbc7",
+      "pageId": "0x021eaef8ce468814a91960655f408e12a2507193eb54aa341ca42c2165e1d777",
+      "predicateCommitment": "0x57997db6fdedcea02ef32a0b2b63e2b4ee88f938c7ac39bfb17da1c6db5baa20",
+      "evidenceHash": "0x0512f05825571476353452d0d3e0d7fc3c4ca68db615fb626d9f5c5895d7bf5f",
+      "evaluationId": "0x197238d4ff6ea6f268ebdb14143ade4f2933612e88ae6c841cd07657b7aecb5c",
+      "episodeId": "0xea515d89dd346a1aaee6d8b144dfc9eb58130136fe3eecef5267979afdcd4e8b",
+      "reviewerActionId": "0x079de776ced65165fc079b850c36f5c50f0bba2d72d4cce7f7030277d7b37055",
+      "episodeEventId": "0xf13bb7f31f1302bbc4beedfd18410f09d3738377d97347786070bfe7d3a2cc8a"
+    }
+  },
+  "healthy": {
+    "providerId": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "providerBody": "{\"assets\":[{\"id\":\"0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"tokenSymbol\":\"AAPL\",\"deployments\":[{\"chainId\":4663,\"contractAddress\":\"0x4444444444444444444444444444444444444444\"}],\"status\":\"ASSET_STATUS_ACTIVE\",\"tradingCapabilities\":{\"fractionalTradability\":\"tradable\"},\"tokenDecimals\":18}]}",
+    "outputs": {
+      "robinhoodAssetIdHash": "0x6f236a709c03559aa775103b0b8d9b9b21f8d50cd309dd3cac8be02b210e3906",
+      "providerBodyHash": "0x3b5f77010541efb32b0d5240b89a4348f298675a75851cb98f8e5ed0297eb90c",
+      "expectedIdentityHash": "0xa0faba01855d519ec80cf3444ded76a9474ae749633c95d30e5279ba32d611c8",
+      "orderedIdentityListHash": "0x31341f566fb4a2e79dbf0ad133b22d07d1d3ebe849b6fa920c1780465ea7dd8e",
+      "activeSetHash": "0x3b00dd34e55833c772669801a158d334953688d4de560da927c55f3e083e7beb",
+      "batchId": "0xed8e94f3aa0277a54173b26f3f5d8e341a2e375982c22216b5158e87611264ca",
+      "pageId": "0x087b89ee0cca9923ad927406256be8ce01b7fe5b3bad9f521059fd93fcadc95a",
+      "predicateCommitment": "0x57997db6fdedcea02ef32a0b2b63e2b4ee88f938c7ac39bfb17da1c6db5baa20",
+      "evidenceHash": "0xe85d47d8586fe0a1272f0379818e1687b5175ab509f3099122ea7c3f10094a0f",
+      "evaluationId": "0x3a57071c40411ec64909c0661ac44cb43455e20851ba1aef9d707604c3f16f10"
+    }
+  }
+}

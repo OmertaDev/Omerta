@@ -1211,3 +1211,11 @@ export function bundleSummary(bundle) {
     contentHash: bundle.contentHash,
   };
 }
+
+// Compatibility facade: legacy callers above retain their byte-for-byte compiler path,
+// while Phase 2 callers opt into the canonical corpus API explicitly.
+export {
+  compileContentCorpus,
+  validateCompiledBundle,
+  verifyStoredBundleBytes,
+} from './corpus.js';

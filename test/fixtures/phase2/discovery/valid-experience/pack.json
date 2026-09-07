@@ -1,0 +1,8 @@
+{
+  "packageId": "omerta.phase2.fixture.experience",
+  "version": 1,
+  "kind": "experience",
+  "profile": "phase2_economy",
+  "entrypoint": "experience.start",
+  "nodes": []
+}

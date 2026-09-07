@@ -32,6 +32,13 @@ import { parse } from 'acorn';
 
 const SRC = fileURLToPath(new URL('../src/', import.meta.url));
 const relPath = (from, to) => path.relative(from, to).replaceAll('\\', '/');
+
+// Comments OUT before any capability or wall scan. A capability NAMED IN PROSE is not a capability,
+// and a scanner that reads prose produces the mostly-wrong advisory people learn to route around —
+// this file's own recorded class. One implementation, because two copies of a rule is how the two
+// come to disagree. `//` is left alone after a colon so a URL in a string does not eat its own line.
+const decomment = (t) => t.replaceAll('\r\n', '\n')
+  .replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:])\/\/[^\n]*/g, '$1');
 const GATES = ['jailed', 'hospitalized', 'safeHoused', 'penSafe', 'inHole', 'witproActive'];
 // The column each gate reads, so a hand-written inline check counts as enforcement. Matched as a
 // PROPERTY ACCESS (`ch.safe_until`) rather than the bare column, because the bare name also appears
@@ -112,6 +119,17 @@ function bodyOf(src, from) {
   return src.slice(from, start + 4000);               // unbalanced: fall back, never run to EOF
 }
 
+// ── every assert*/require* helper in the tree, by name → its brace-matched body ───────────────────
+const HELPER_INDEX = new Map();
+for (const f of files) {
+  const src = fs.readFileSync(f, 'utf8');
+  for (const m of src.matchAll(/function\s+((?:assert|require)\w+)\s*\(/g)) {
+    if (!HELPER_INDEX.has(m[1])) HELPER_INDEX.set(m[1], bodyOf(src, m.index));
+  }
+}
+// the assert*/require* CALLS in a body — the call form only (`assertX(`), never a definition
+const helperCalls = (body) => [...body.matchAll(/(?<![\w$])(assert\w+|require\w+)\s*\(/g)].map((m) => m[1]);
+
 // ── extract every exported function with the gates it can reach ──────────────────────────────────
 const fns = new Map();
 for (const f of files) {
@@ -132,10 +150,31 @@ for (const f of files) {
     // Measured on `assertStreetCrime`: a 2,000-char window over a 1,072-char helper carried 928
     // characters of a neighbouring function. Nothing is mis-credited today — the spill happens to
     // hold no extra gate — which is exactly why it had to be checked rather than assumed.
-    for (const hm of code.matchAll(/(?<![\w$])(assert\w+|require\w+)\s*\(/g)) {
-      const hi = src.search(new RegExp(`function\\s+${hm[1]}\\s*\\(`));
-      if (hi >= 0) { scope += bodyOf(src, hi); helpers.push(hm[1]); }
-    }
+    // A helper is resolved in the caller's own file FIRST, then across every file in the walk —
+    // `assertStreetActor` lives in game.js (the one module every street-crime file already imports
+    // GameError from, so it closes no cycle) and eleven verbs in six other files call it. A resolver
+    // that only read the caller's file would credit those verbs with NOTHING and report the shared
+    // helper — the one-core discipline — as eleven missing gates.
+    // TRANSITIVE: `assertStreetCrime` (the victim gates) delegates its actor gates to
+    // `assertStreetActor`, so a one-level follow would credit its three callers with the victim
+    // gates and none of the actor ones. Helpers are followed until no new name appears; a seen
+    // set bounds it, since two helpers that call each other would otherwise never terminate.
+    // The function's OWN name is seeded into `seen`: a helper's entry must never credit itself.
+    const seen = new Set([marks[i].name]);
+    const queue = helperCalls(code);
+    const follow = () => {
+      while (queue.length) {
+        const name = queue.shift();
+        if (seen.has(name)) continue;
+        seen.add(name);
+        const hi = src.search(new RegExp(`function\\s+${name}\\s*\\(`));
+        const hb = hi >= 0 ? bodyOf(src, hi) : HELPER_INDEX.get(name);
+        if (!hb) continue;
+        scope += hb; helpers.push(name);
+        queue.push(...helperCalls(hb));
+      }
+    };
+    follow();
     // A THIN WRAPPER delegates its gates to the one function it returns — `robBusiness` and
     // `shakedownBusiness` are both a single `return extortFront(...)`, which is the one-core
     // discipline working exactly as intended, so refusing to follow it would make the matrix report
@@ -145,7 +184,13 @@ for (const f of files) {
     const thin = code.match(/\{\s*return\s+(\w+)\s*\([^;]*\);?\s*\}\s*$/);
     if (thin) {
       const ti = src.search(new RegExp(`function\\s+${thin[1]}\\s*\\(`));
-      if (ti >= 0) { scope += bodyOf(src, ti); helpers.push(thin[1]); }
+      if (ti >= 0) {
+        const tb = bodyOf(src, ti);
+        scope += tb; helpers.push(thin[1]);
+        // the delegate's own helpers, followed the same transitive way — a wrapper over
+        // `extortFront` reaches `assertStreetActor` only through it
+        queue.push(...helperCalls(tb)); follow();
+      }
     }
     const has = (g) => new RegExp(`(?<![\\w$])${g}\\s*\\(`).test(scope) || (INLINE[g] && INLINE[g].test(scope));
     fns.set(marks[i].name, { file: path.basename(f), scope, gates: new Set(GATES.filter(has)), helpers,
@@ -207,17 +252,21 @@ for (const fam of FAMILIES) {
 console.log(`✓ ${checked} gate requirements hold across ${FAMILIES.length} families`);
 
 // ── COMPLETENESS: a new verb must not slip past the matrix by not being listed ───────────────────
-// Anything routed through assertStreetCrime IS a street crime by construction.
-const streetCrimes = [...fns].filter(([, v]) => v.helpers.includes('assertStreetCrime')).map(([k]) => k);
+// Anything routed through assertStreetCrime OR assertStreetActor IS a street crime by construction —
+// the actor helper is what makes completeness cover all fourteen verbs instead of the three that
+// happened to share the victim helper. The helpers themselves are not verbs and are excluded.
+const STREET_HELPERS = ['assertStreetCrime', 'assertStreetActor'];
+const streetCrimes = [...fns].filter(([k, v]) => !STREET_HELPERS.includes(k) && STREET_HELPERS.some((h) => v.helpers.includes(h))).map(([k]) => k);
 const declaredStreet = new Set(FAMILIES.find((f) => f.name.startsWith('street crime')).members);
 const undeclared = streetCrimes.filter((n) => !declaredStreet.has(n));
 assert.equal(undeclared.length, 0,
-  `street crime(s) routed through assertStreetCrime but absent from the matrix: ${undeclared.join(', ')} — `
+  `street crime(s) routed through assertStreetCrime/assertStreetActor but absent from the matrix: ${undeclared.join(', ')} — `
   + 'add them to the family (or the matrix silently stops covering the newest PvP verbs)');
 
 // Every collect* action must be classified. EXEMPT needs a reason, so "it was inconvenient" cannot
 // pass as one.
 const COLLECT_EXEMPT = {
+  collectDefinitionChecks: 'read-only offline Phase 2 registry audit inside the ledger snapshot; no player collection, income or mutation authority',
   collectContentSource: 'authored salvage emits only gameplay-inert exact-hash lots; the capability '
     + 'validator admits trade only through the separate cashless, same-hash barter manifest, while the '
     + 'source mutation itself enforces location, finite global budget, per-account epoch, and ownership caps',
@@ -419,11 +468,10 @@ console.log('✅ THE GATE MATRIX passed — every verb in a family enforces the 
   };
   const unwalled = [];
   let scanned = 0;
-  // Comments OUT first. A body slice runs to the next `export`, which swallows THAT function's
-  // leading doc comment — so prose about a price would put a neighbour in scope, and prose about a
-  // wall would credit one that isn't there. (Both directions observed on the first run.) `//` is
-  // left alone after a colon so a URL in an error string does not eat its own line.
-  const decomment = (t) => t.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:])\/\/[^\n]*/g, '$1');
+  // Comments OUT first (the shared `decomment`). A body slice runs to the next `export`, which
+  // swallows THAT function's leading doc comment — so prose about a price would put a neighbour in
+  // scope, and prose about a wall would credit one that isn't there. Both directions observed on
+  // the first run, and the over-read is the dangerous one: it makes the check MORE permissive.
   for (const rel of MODULES) {
     const src = decomment(fs.readFileSync(new URL(`../src/${rel}`, import.meta.url), 'utf8'));
     // split on exported function boundaries so each body is read whole and no wall is credited to
@@ -784,6 +832,228 @@ const SCENERY_WAIVED = {
   console.log(`✓ all ${jobs} worker jobs are isolated and every wrapped result is read null-safely`);
 }
 
+// ═══ THE STARTUP-ORDER LEDGER — a schedule you never reached is not a schedule ═══════════════════
+//
+// MEASURED IN PRODUCTION, 2026-08-29: the live worker went dark for 14 hours and `/health` reported
+// `uptimeSeconds 50788, worker.beatAgoSeconds 50780` — a gap pinned at exactly 8 seconds across
+// three readings hours apart. The beat happened ONCE, 8s after boot, and never again. That is not a
+// crash and not a slow job; it is the signature of a first tick that never returned.
+//
+// The mechanism is an ordering, and it is worth stating because it reads as harmless:
+//
+//     await guardedTick();                 // ← hangs
+//     setInterval(guardedTick, 3600_000);  // ← never reached, so NO INTERVAL OBJECT EVER EXISTS
+//
+// Not a skipped tick — no schedule at all, forever. And the process does not die: it stays alive on
+// the pending top-level await, so the platform sees a healthy process and never restarts it. Worse,
+// the in-flight guard's own `previous tick still running` warning can never fire either, because the
+// interval that would have fired it was the statement below the hang. So the failure is SILENT from
+// inside and from outside alike, on the one process that owns every alarm in the game — when the
+// worker stops, the thing that would tell you has stopped too.
+//
+// Registered FIRST, the identical hang costs one tick instead of the whole schedule, and announces
+// itself hourly. So the rule is exactly the defect and nothing wider: a guarded scheduler must not
+// be INVOKED above its own `setInterval` registration. It says nothing about awaiting one below the
+// registration — `await guardedSync()` is the last statement in the block and starves nothing.
+//
+// This is a SOURCE-level check, honestly labelled: the startup sequence lives inside
+// `if (process.argv[1].endsWith('worker.js'))` with top-level await, so it is not importable and
+// there is nothing to drive. The `pool.on('error')` tripwire in test/hardening.js is the precedent.
+{
+  const src = fs.readFileSync(path.join(SRC, 'worker.js'), 'utf8');
+  const at = src.search(/if \(process\.argv\[1\] && process\.argv\[1\]\.endsWith\('worker\.js'\)\)/);
+  assert(at >= 0, 'the worker main-module block could not be located — the extractor is broken, not the code');
+  // COMMENTS ARE STRIPPED FIRST, and this check caught itself on the recorded lesson: the very
+  // paragraph in worker.js explaining this ordering contains the string `await guardedTick()`, so
+  // the first cut flagged its own documentation as the defect. `decomment` keeps the newline, so
+  // reported line numbers still name the real line (there are no block comments in this block).
+  const body = decomment(bodyOf(src, at));
+
+  const inverted = [];
+  const scheduled = new Set();
+  for (const m of body.matchAll(/setInterval\(\s*(guarded\w+)\s*,/g)) {
+    const fn = m[1];
+    if (scheduled.has(fn)) continue;
+    scheduled.add(fn);
+    // its own invocation: `await guardedX(`, `void guardedX(`, or a bare statement call — but never
+    // the declaration itself (`const guardedX = `) and never the registration we just matched.
+    const call = new RegExp(`(?:await|void)\\s+${fn}\\s*\\(|^\\s*${fn}\\s*\\(`, 'm');
+    const before = body.slice(0, m.index);
+    const hit = call.exec(before);
+    if (hit) {
+      const line = before.slice(0, hit.index).split('\n').length;
+      inverted.push(`${fn}() is called at line ${line} of the worker main block, `
+        + `${before.slice(hit.index).split('\n').length - 1} line(s) ABOVE its own setInterval`);
+    }
+  }
+
+  // Two-sided, because the two halves fail differently. Without the floor, DELETING a registration
+  // silently shrinks the governed set to nothing and this reads exactly like a clean sweep.
+  assert(scheduled.size >= 2,
+    `the startup-order scan found only ${scheduled.size} guarded scheduler(s) — the worker registers `
+    + 'the hourly tick and the chain poll, so either a schedule has been deleted or the extractor has '
+    + 'stopped seeing them; this check is vacuous rather than clean');
+  assert.equal(inverted.length, 0,
+    'a guarded scheduler is INVOKED above its own setInterval. If that call hangs, the registration\n'
+    + '      below it is never reached — no interval object is ever created, the process stays alive on\n'
+    + '      the pending await, the platform sees a healthy process, and the in-flight guard that would\n'
+    + '      have warned hourly was itself the statement that was skipped. Fire the first run BELOW the\n'
+    + '      registration (and un-awaited, so nothing after it is starved either):\n'
+    + `   - ${inverted.join('\n   - ')}`);
+  console.log(`✓ all ${scheduled.size} guarded worker schedulers are registered before they are first run`);
+
+  // AND THE ONE JOB WHOSE COST IS LINEAR IN THE POPULATION STAYS OFF THAT TICK. safe() isolates a
+  // job's ERRORS but never its LATENCY, so a rollover folded back inline holds every alarm on the
+  // hourly tick behind it -- the §10.4 drift monitor, the archiver watchdog, the oracle keeper --
+  // for ~2 minutes at 50,000 players (tools/workercost.js), once a season, silently. Nothing else
+  // here catches that: the isolation ledger is indifferent to WHICH clock a safe() job sits on, and
+  // the scheduler floor is >= 2, so deleting the season's own schedule and inlining the call passes
+  // both. Measured: that exact mutation ran green before this check existed.
+  {
+    const ti = src.search(/const tick = async \(\) =>/);
+    assert(ti >= 0, 'the worker tick could not be located -- the extractor is broken, not the code');
+    const tickBody = decomment(bodyOf(src, ti));
+    assert(tickBody.length > 2000,
+      `the tick body read only ${tickBody.length} chars -- the extractor is broken, not the code; a `
+      + 'short slice reads exactly like a tick that calls nothing');
+    assert(/\brunSeasonRollover\s*\(/.test(decomment(src)),
+      'the worker never calls runSeasonRollover at all -- either the season rollover has been deleted '
+      + 'or this check has stopped seeing it; it is vacuous rather than clean');
+    assert(!/\brunSeasonRollover\s*\(/.test(tickBody),
+      'the season rollover is called INSIDE the hourly tick. It is the one job whose cost grows with\n'
+      + '      the PLAYERBASE rather than the ledger (~2m at 50,000, tools/workercost.js), and safe()\n'
+      + '      isolates its errors but not its latency -- so on rollover night every alarm on this tick,\n'
+      + '      the \u00a710.4 drift monitor included, is that late. Give it its own clock (guardedSeasonTick).');
+    console.log('\u2713 the season rollover -- the one job linear in the population -- runs off the alarm tick');
+  }
+
+  // AND THE WATCHDOG MUST NAME WHERE IT IS STUCK. Ordering keeps the schedule alive; this is the other
+  // half — what the operator reads at 3am. Measured in production 2026-08-29: the heartbeat (job 1) and
+  // the fair-draw stamp (job 2) both landed and nothing among the other 119 ever did, so "a tick has
+  // been running 14 hours" left the reader to guess which. Three claims, because the first two are each
+  // blind to the third: safe() must RECORD the label, the watchdog must PRINT it, and no safe() may nest
+  // inside another — a nested call's finally would clear the label while its parent is still running,
+  // so the watchdog would name nothing at exactly the moment it is needed.
+  {
+    // Comments are stripped here too, and for the reason this file has been bitten by twice: the
+    // paragraph in worker.js explaining the watchdog NAMES `currentJob`, so a scan of raw source
+    // would match its own documentation and pass over a watchdog that had stopped printing it.
+    const code = decomment(src);
+    const w = code.slice(code.search(/const guardedTick = async/));
+    assert(/currentJob\s*=\s*label/.test(body),
+      'safe() no longer records the job it is running (`currentJob = label`), so the watchdog below it '
+      + 'can only report a duration — which is the state production was in on 2026-08-29');
+    assert(/currentJob\s*\?/.test(w) || /\$\{currentJob/.test(w),
+      'the worker watchdog no longer prints the job it is stuck in; a duration alone leaves the reader '
+      + `to guess which of ${(code.match(/safe\('/g) || []).length} jobs, which is the whole defect`);
+
+    let nested = 0, seen = 0;
+    for (const m of code.matchAll(/\bsafe\(/g)) {
+      // balanced-paren slice of the call's own arguments, so a multi-line query stays one call
+      let i = m.index + m[0].length, d = 1;
+      for (; i < code.length && d > 0; i++) { if (code[i] === '(') d++; else if (code[i] === ')') d--; }
+      const args = code.slice(m.index + m[0].length, i - 1);
+      if (!args.startsWith("'")) continue;           // the definition itself, not a call
+      seen++;
+      if (/\bsafe\(/.test(args)) nested++;
+    }
+    assert(seen >= 100,
+      `the nesting scan found only ${seen} safe() call(s) — the worker tick runs over a hundred, so the `
+      + 'extractor has stopped reading it; this check is vacuous rather than clean');
+    assert.equal(nested, 0,
+      'a safe() job is nested inside another. The inner call\'s finally clears currentJob while the '
+      + 'outer job is still running, so the watchdog reports no job for the one still in flight. Give '
+      + 'the inner work its own name at the top level, or drop the label clear.');
+    // AND A HANG MUST END. Ordering keeps the schedule alive and the label says where it stopped —
+    // neither RECOVERS. The hourly interval fires, the in-flight guard skips it, and the worker does
+    // nothing forever. Production supplied the missing half: `/health` said `stale: true` for 14.6
+    // hours and nobody was polling it, so the remedy cannot be a log line. Bounded, the same hang
+    // costs one restart. The window is asserted as a RELATION rather than a literal, because both
+    // ends are real: too short and a legitimately long tick is killed on a capacity problem; too long
+    // and the remedy never arrives. The citation moved when the season rollover did: it is the one job
+    // whose cost is LINEAR IN THE POPULATION (~2m at 50,000 players) and it runs on its OWN clock now,
+    // outside this watchdog's scope — the watchdog wraps `tick()` alone. What bounds THIS tick is the
+    // §10.4 invariants sweep (47 -> 87ms, tools/workercost.js), and it grows with the LEDGER rather
+    // than the playerbase, so a long-lived server is the case to re-measure before moving this.
+    // BOUNDED to the watchdog's own callback, deliberately. A slice to end-of-file reads any later
+    // `process.exit(1)` in worker.js (there is one at the boot-failure branch) and the claim below
+    // passes with the watchdog's own exit deleted — measured: mutation M1 SURVIVED exactly that way.
+    const wdStart = w.search(/const watchdog = setInterval/);
+    const wdEnd = w.indexOf('}, HANG_WARN_MS)', wdStart);
+    assert(wdStart >= 0 && wdEnd > wdStart,
+      'the hung-tick watchdog is gone from src/worker.js, so a tick that never returns leaves the '
+      + 'worker dark forever — which is the state production was in for 14.6 hours on 2026-08-29');
+    const wd = w.slice(wdStart, wdEnd);
+    // `wdEnd` was found by matching the interval's own `}, HANG_WARN_MS)` terminator, so the period is
+    // already proven to be HANG_WARN_MS; all that is left is to read what that constant is worth.
+    const period = w.match(/HANG_WARN_MS\s*=\s*(\d+)\s*\*\s*60\s*\*\s*1000/);
+    const warns = w.match(/HANG_EXIT_WARNINGS\s*=\s*(\d+)/);
+    assert(/process\.exit\(1\)/.test(wd),
+      'the worker watchdog no longer exits on a hung tick, so a hang is announced forever and never '
+      + 'remedied — which is the state production was in for 14.6 hours on 2026-08-29');
+    assert(period && warns, 'the hang bound is no longer two readable constants (HANG_WARN_MS x '
+      + 'HANG_EXIT_WARNINGS), so this check cannot size it');
+    const boundMin = Number(period[1]) * Number(warns[1]);
+    assert(boundMin >= 15 && boundMin <= 60,
+      `the hung-tick restart fires after ${boundMin}m. Under 15m it can kill a legitimately long tick `
+      + '(the longest job on it is the §10.4 invariants sweep, 87ms at 3,000 players and growing with '
+      + 'the LEDGER — tools/workercost.js; the season rollover, which grows with the POPULATION, runs '
+      + 'on its own clock and is not inside this watchdog); over 60m the remedy arrives too late to be '
+      + 'one. Re-measure the longest job on THIS tick before moving this.');
+    console.log(`✓ the worker watchdog names the job it is stuck in, across ${seen} un-nested safe() `
+      + `jobs, and restarts the process after ${boundMin}m`);
+  }
+
+  // ── AND SOMEBODY WATCHES THE WATCHER ────────────────────────────────────────────────────────────
+  // A process cannot alarm on being dead, so every claim above is worth exactly nothing on the night
+  // the worker does not come back — and that night has already happened: 14.8 hours dark on
+  // 2026-08-29, with `/health` reporting `worker.stale: true` the whole time and nobody looking. A
+  // field on an endpoint is not an alarm. The API is the only process that stays up when the worker
+  // does not, so it is the one that has to shout, on the channel every other alarm already uses.
+  {
+    const api = decomment(fs.readFileSync(new URL('../src/server.js', import.meta.url), 'utf8'));
+    assert(/import\s*\{[^}]*\balertDrift\b[^}]*\}\s*from\s*'\.\/invariants\.js'/.test(api),
+      "src/server.js calls alertDrift but does not import it — the watchdog would throw the first time "
+      + 'the worker went dark, i.e. exactly when it is the only thing running');
+    assert(/worker_heartbeat/.test(api),
+      'the API no longer reads worker_heartbeat; nothing outside the worker can tell whether it is alive');
+    // BOTH EDGES. The latch is what stops a dark worker paging every 15 minutes; the recovery line is
+    // what tells an operator their restart worked. A latch without a recovery is a watchdog that cries
+    // once and then goes as quiet as the thing it was watching — and worse, one that latches and never
+    // unlatches goes PERMANENTLY quiet: the second dark episode never pages at all.
+    //
+    // Bounded to the callback BODY, deliberately. `let workerDarkAlerted = false;` is the declaration
+    // and sits above it, so a tree-wide search for `= false` matches that and passes with the unlatch
+    // deleted — measured: mutation M4 SURVIVED exactly that way. The declaration is not an edge.
+    const wStart = api.search(/export function startWorkerWatch/);
+    const wEnd = api.indexOf('\n}\n', wStart);
+    assert(wStart >= 0 && wEnd > wStart,
+      'the API no longer runs a worker watchdog, so nothing outside the worker can notice it stop — '
+      + 'the state production was in for 14.8 hours on 2026-08-29');
+    const watch = api.slice(wStart, wEnd);
+    assert(/workerDarkAlerted\s*=\s*true/.test(watch),
+      'the worker watchdog no longer latches, so a dark worker pages on every sweep of the interval '
+      + 'until somebody mutes the channel — which is how a real alarm gets ignored');
+    assert(/workerDarkAlerted\s*=\s*false/.test(watch),
+      'the worker watchdog never unlatches, so it announces recovery to nobody AND never fires again: '
+      + 'the second dark episode is silent. (test/hardening.js DRIVES both edges; this catches the '
+      + 'shape regressing in a way that fixture happens not to reach.)');
+    assert(/startWorkerWatch\(/.test(api.slice(wEnd)),
+      'startWorkerWatch is defined and never CALLED — a watchdog nobody starts is prose. It must run '
+      + 'in the main-module block beside the drain handler.');
+
+    // ONE THRESHOLD, not two. `/health`'s `worker.stale` and the alarm answer the same question, and a
+    // second copy of the number is how a dashboard and an alarm come to disagree about whether the
+    // worker is alive — the restatement class this project keeps paying for.
+    const uses = (api.match(/WORKER_STALE_SEC/g) || []).length;
+    assert(uses >= 3, `WORKER_STALE_SEC is referenced ${uses} time(s): it must be declared and read by `
+      + "BOTH /health and the alarm, or the two disagree about what 'stale' means");
+    assert(!/ageSec\s*>\s*\d/.test(api),
+      'a bare numeric staleness threshold is back in src/server.js — both readers must share the constant');
+    console.log('✓ the API watches the worker heartbeat and shouts on the founder channel, one shared threshold');
+  }
+}
+
 // ═══ THE CATALOG LEDGER — an object index is not an allowlist ════════════════════════════════════
 //
 // `if (!CATALOG[userInput]) throw` reads like a membership test and is not one: every JavaScript
@@ -1042,6 +1312,20 @@ const SCENERY_WAIVED = {
 // reaches a pot, that implicit lock makes characters→singleton the universal order, and rule (1)
 // cannot see a lock the enclosing wrapper took.
 //
+// WHAT IT CANNOT SEE, stated because a green ledger is otherwise read as "no lock cycles exist".
+// (a) CROSS-MODULE ACQUISITIONS. A lock taken inside a function this transaction CALLS is invisible —
+//     `runEstate` holds a bounties row and then reaches third-party `characters` rows through
+//     `refundPot` and `voidListingsAtDeath`, an AB-BA against `sweepExpiredBounties` that a refuter
+//     found by reading and this scan structurally cannot. Following calls would need a call graph
+//     across 150 modules; the honest bound is that this is a per-transaction TEXT scan.
+// (b) WHOSE ROW, not which table. `UPDATE characters SET cash = cash + $2 WHERE id=$1` is a fresh
+//     acquisition when $1 is a third party and a no-op re-touch when it is the wrapper-held actor,
+//     and nothing in the text says which. That is why the write-form half is scoped to contended
+//     rows, where the question does not arise — and why the class in (a) is out of reach for a
+//     table-granularity rule at all, rather than merely unimplemented.
+// Both classes land as 40P01, which `deadlockToRetry` maps to a retryable `contention`. That is the
+// remedy for them, not a reason to widen this rule until it reports noise.
+//
 // SPLITTING ON TRANSACTION BOUNDARIES IS WHAT MAKES IT USABLE. A function may open several
 // independent transactions — the ring sweep has two, a route-registration function has dozens — and
 // concatenating them invents pairs no single transaction ever holds together. Without the split this
@@ -1055,15 +1339,17 @@ const SCENERY_WAIVED = {
     }
   })(SRC);
 
-  // the global pots and singletons a player path reaches while already holding its own character row
-  const SINGLETON = /^(street_tax|den_volume|desk_inventory|chain_reserve|bond_reserve|family_yield_pool|vig_prize_pool|stake_pool|event_fund|dev_fund|world_npcs|poker_state|stakes_state|futurity_state|population_state|loan_house|convoy_insurance|megaprojects|boxing_title|rwa_dividend_pool|rwa_family_dividend_pool|community_revenue|exchange_pool)$/;
+  // The contended shared rows a player path reaches while already holding its own character row.
+  // Not literally one-row tables (world_npcs is per-outfit, bounties per (target,kind)) — the property
+  // that matters is that many actors converge on the SAME row, which is what makes an inversion bite.
+  const SINGLETON = /^(street_tax|den_volume|desk_inventory|chain_reserve|bond_reserve|family_yield_pool|vig_prize_pool|stake_pool|event_fund|dev_fund|world_npcs|poker_state|stakes_state|futurity_state|population_state|loan_house|convoy_insurance|megaprojects|boxing_title|rwa_dividend_pool|rwa_family_dividend_pool|community_revenue|exchange_pool|bounties|poker_tournaments|stakes_races|futurities|boxing_bouts|market_listings|auctions|auction_consignments|loans|crew_heists|world_raids|pen_breaks|favors|district_bids|grand_prix|grand_prix_state)$/;
 
   // A pair may be waived only with a reason that is a PROPERTY of the pair — never "it's rare" or
   // "the retry catches it", which are true of every deadlock and would waive the whole ledger.
   const WAIVED = new Map([]);
 
   const order = new Map();          // "a|b" → Set(sites that lock a before b)
-  let segments = 0, singletonSites = 0, sequences = 0;
+  let segments = 0, singletonSites = 0, sequences = 0, writeLocks = 0;
   const singletonFirst = [];
 
   for (const f of files) {
@@ -1074,9 +1360,28 @@ const SCENERY_WAIVED = {
       const body = src.slice(marks[i].at, i + 1 < marks.length ? marks[i + 1].at : src.length);
       for (const part of body.split(/query\(\s*['"`]BEGIN/)) {
         const seg = part.split(/query\(\s*['"`](?:COMMIT|ROLLBACK)/)[0];
-        const locks = [];
-        for (const q of seg.matchAll(/FROM\s+([a-z_]+)[^'`"]*?FOR\s+UPDATE/gi)) locks.push(q[1].toLowerCase());
-        if (!locks.length) continue;
+        // An UPDATE/DELETE takes a row-exclusive lock held to COMMIT exactly as FOR UPDATE does, so
+        // those are acquisitions too. They are admitted ONLY for the contended rows above, and that
+        // scoping is the whole reason this half is a hard rule rather than noise: a singleton/pot is
+        // ONE row, so any write to it unambiguously acquires THAT row — while `UPDATE characters SET
+        // cash = cash + $2 WHERE id=$1` is a fresh acquisition for a THIRD PARTY and a no-op re-touch
+        // for the wrapper-held actor, and which one it is cannot be decided from the text. Measured:
+        // admitting every table yields 42 candidate pairs dominated by that ambiguity (this ledger's
+        // own "a mostly-wrong advisory is worse than none" rule forbids shipping that); admitting only
+        // contended rows yields 0 and sees 104 acquisitions the FOR-UPDATE-only half was blind to.
+        const hits = [];
+        for (const q of seg.matchAll(/FROM\s+([a-z_]+)[^'`"]*?FOR\s+UPDATE/gi)) hits.push({ i: q.index, t: q[1].toLowerCase(), w: false });
+        for (const q of seg.matchAll(/\bUPDATE\s+([a-z_]+)\s+SET\b/gi)) if (SINGLETON.test(q[1].toLowerCase())) hits.push({ i: q.index, t: q[1].toLowerCase(), w: true });
+        for (const q of seg.matchAll(/\bDELETE\s+FROM\s+([a-z_]+)/gi)) if (SINGLETON.test(q[1].toLowerCase())) hits.push({ i: q.index, t: q[1].toLowerCase(), w: true });
+        if (!hits.length) continue;
+        hits.sort((a, b) => a.i - b.i);
+        // A row lock is held to COMMIT, so only the FIRST acquisition of a table orders anything.
+        // Counting a later re-touch as a second acquisition emits BOTH orderings for one transaction
+        // and invents a conflict against itself — measured at 96 phantom pairs before this collapsed them.
+        const firstAt = new Map();
+        for (const h of hits) if (!firstAt.has(h.t)) firstAt.set(h.t, h);
+        writeLocks += [...firstAt.values()].filter((h) => h.w).length;
+        const locks = [...firstAt.keys()];
         segments++;
         singletonSites += locks.filter((t) => SINGLETON.test(t)).length;
         const site = `${relPath(SRC, f)}:${marks[i].name}`;
@@ -1112,6 +1417,10 @@ const SCENERY_WAIVED = {
   assert(singletonSites >= 30,
     `the lock scan matched only ${singletonSites} singleton lock site(s) — the SINGLETON list has drifted `
     + 'off the real table names, so rule 2 is checking nothing');
+  assert(writeLocks >= 70,
+    `the lock scan matched only ${writeLocks} write-form acquisition(s) on a contended row — the `
+    + 'UPDATE/DELETE half of the extractor has broken, and this ledger has silently reverted to the '
+    + 'FOR-UPDATE-only state it was widened out of, which looks exactly as clean as the widened one');
 
   const conflicts = [];
   for (const k of order.keys()) {
@@ -1138,7 +1447,7 @@ const SCENERY_WAIVED = {
     + `   - ${singletonFirst.join('\n   - ')}`);
 
   console.log(`✓ all ${sequences} multi-lock transactions agree on one order for each of ${order.size} pairs`
-    + `, and no singleton (${singletonSites} lock sites) is taken before a character row`);
+    + `, and no contended row (${singletonSites} lock sites, ${writeLocks} of them write-form) is taken before a character row`);
 }
 
 // ═══ THE CONNECTION-SHARING LEDGER — one client cannot run two queries at once ═══════════════════
@@ -1698,7 +2007,6 @@ const SCENERY_WAIVED = {
     'races.js:grandPrix':   'a DB row id — the open race the entry posts back to',
     'stable.js:stakes':     'a DB row id — the open stakes race',
     'port.js:boat':         'a boats row id — the vessel is named by its own catalog elsewhere',
-    'port.js:to':           'a CHARACTER id — the rendezvous partner, named by `name` on the board',
     'defense.js:guard':     'a CHARACTER id — the bodyguard hired, not a catalog rung',
     'population.js:band':   'an internal spawn return, never a player-facing reply',
     'favors.js:good':       'the client resolves it through goodName off the published /v1/rules catalog',
@@ -1752,7 +2060,13 @@ const SCENERY_WAIVED = {
         if (k === 'id' || /Id$/.test(k) || /_id$/.test(k)) continue;
         corpus++;
         const named = new RegExp(`\\b(name|title|label|${k}Name)\\s*:`).test(lit)
-          || new RegExp(`:\\s*${src}\\.(name|title|label)\\b`).test(lit);
+          || new RegExp(`:\\s*${src}\\.(name|title|label)\\b`).test(lit)
+          // the SHORTHAND spelling of the same assertion: `{ kind: r.kind, kindName }` ships the
+          // display name exactly as `kindName: kindName` would, and a matcher that only knows the
+          // colon form stops seeing a companion the moment it is written the other legal way — the
+          // extractor-only-knows-one-form class (the CATALOG LEDGER lesson). Only `<k>Name` gets
+          // the shorthand form: a bare `name`/`title` shorthand would be some unrelated variable.
+          || new RegExp(`(?<![\\w$.])${k}Name\\s*[,}]`).test(lit);
         if (named) continue;
         const key = `${base}:${k}`;
         if (WAIVED[key]) { seen.add(key); continue; }
@@ -1835,10 +2149,14 @@ const SCENERY_WAIVED = {
         if (RESOLVE[mm[1]]) raw.add(`${type}.${mm[1]} renders the raw id — resolve it with ${RESOLVE[mm[1]]}`);
       }
       for (const [f, lit] of payloads[type] || []) {
-        // (a) the template naming `d.<k>Name` is an assertion that the server sends it
+        // (a) the template naming `d.<k>Name` is an assertion that the server sends it. Both legal
+        // spellings count — `kindName: x` AND the SHORTHAND `{ kind, kindName }` — or the matcher
+        // reports correct code the moment it is written the other way (the extractor-only-knows-
+        // one-form class, the CATALOG LEDGER lesson; the server half above was widened identically).
         for (const mm of line.matchAll(/\bd\.(\w+)Name\b/g)) {
           watched++;
-          if (!new RegExp(`\\b${mm[1]}Name\\s*:`).test(lit)) {
+          if (!new RegExp(`\\b${mm[1]}Name\\s*:`).test(lit)
+              && !new RegExp(`(?<![\\w$.])${mm[1]}Name\\s*[,}]`).test(lit)) {
             raw.add(`${type}.${mm[1]}Name — the line reads it, ${f} does not send it (it falls back to the id)`);
           }
         }
@@ -1859,9 +2177,15 @@ const SCENERY_WAIVED = {
           // are untouched.
           if (!/^[\w.?]+$/.test(e) || !/\.(id|kind|\w*_id)\b|\w+Id\b/.test(e)) continue;
           watched++;
-          if (!new RegExp(`\\b(name|${k}Name)\\s*:`).test(lit)) {
+          // the shorthand `{ kind, kindName }` ships the name exactly as `kindName: kindName` would —
+          // both spellings satisfy "a display name rides beside the id" (and both arm rule (d) below).
+          const sentName = new RegExp(`\\b(name|${k}Name)\\s*:`).test(lit)
+            || new RegExp(`(?<![\\w$.])${k}Name\\s*[,}]`).test(lit);
+          const sentKName = new RegExp(`\\b${k}Name\\s*:`).test(lit)
+            || new RegExp(`(?<![\\w$.])${k}Name\\s*[,}]`).test(lit);
+          if (!sentName) {
             raw.add(`${type}.${k} — ${f} sends ${e} with no display name beside it`);
-          } else if (new RegExp(`\\b${k}Name\\s*:`).test(lit) && !new RegExp(`\\bd\\.${k}Name\\b`).test(line)) {
+          } else if (sentKName && !new RegExp(`\\bd\\.${k}Name\\b`).test(line)) {
             // (d) the INVERSE of (a): the server went and sent the name and the line still renders the
             // key. Rule (b) above cannot see it — it asks whether the payload carries a name, and it
             // does. This is the half that would have let the seven `d.kind` templates sit unfixed
@@ -2570,4 +2894,980 @@ scopedSocialContext = async function(db) {
     + `expressions and ${inForms.length} IN(…) sites govern the rule`);
 }
 
+}
+
+// H1 is observation and evidence only. Read every dedicated H1 source unit so splitting the
+// implementation cannot move a forbidden capability outside the gate's field of view.
+{
+  // Read the CODE, never the prose: a capability named in a comment is not a capability, and a
+  // guard that fires on an explanatory sentence is one commit away from being reworded around.
+  // (Observed: a comment about a test's own time budget tripped the budget/mint/burn assertion.)
+  const healthSource = decomment([
+    'rwahealth.js', 'rwahealthread.js', 'rwahealthreview.js', 'rwahealthsweep.js',
+  ].map((name) => fs.readFileSync(path.join(SRC, name), 'utf8')).join('\n'));
+  assert.match(healthSource, /finalizedStockCatalogForHealthV2/,
+    'H1 authority is the exact finalized Registry V2 health reader, never a legacy catalog read');
+  assert.doesNotMatch(healthSource,
+    /\b(?:privateKeyToAccount|walletClient|sendTransaction|writeContract|signMessage|signTypedData)\b/,
+    'H1 has no signing or transaction-broadcast capability');
+  assert.doesNotMatch(healthSource,
+    /\b(?:buildStockTokenActivationV2|buildStockTokenDeactivationV2|publishTickerBallot|executeSafe)\b/,
+    'H1 cannot mutate Registry state, publish ballots, or execute Safe packages');
+  assert.doesNotMatch(healthSource, /\b(?:budget|withdraw|transferEth|burn|mint)\b/i,
+    'H1 has no budget, token, ETH, mint, burn, or withdrawal surface');
+  assert.doesNotMatch(healthSource, /process\.env|CHAIN_RPC_URL|fetch\s*\(/,
+    'H1 has no environment-selected provider URL, generic production fetch, or hidden config surface');
+}
+
+// CN-6A is a read-only finalized Registry lifecycle consumer, not the later CN-6B publisher. Keep
+// the capability boundary executable: the module has exactly the frozen coordinator/read helpers,
+// and no production entry point may schedule or cut over its dormant coordinator in this slice.
+{
+  const lifecyclePath = path.join(SRC, 'rwaregistrylifecycle.js');
+  assert(fs.existsSync(lifecyclePath),
+    'CN-6A RED: src/rwaregistrylifecycle.js is missing; implement only the frozen read-only consumer');
+  const lifecycleSource = fs.readFileSync(lifecyclePath, 'utf8');
+  const executable = lifecycleSource
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/\/\/.*$/gm, '');
+  const actualExports = [...executable.matchAll(
+    /^export\s+(?:async\s+)?function\s+(\w+)\s*\(/gm,
+  )].map((match) => match[1]).sort();
+  const expectedExports = [
+    'syncFinalizedRwaRegistryLifecycle',
+    'applyFinalizedRwaActivationEvents',
+    'applyFinalizedRwaBallotEvents',
+    'readFinalizedRwaLifecycleHeadV2',
+    'compareFinalizedRwaActivationV2',
+    'requireFinalizedRwaActivationV2',
+  ].sort();
+  assert.deepEqual(actualExports, expectedExports,
+    'CN-6A exposes exactly its one coordinator and five transaction-local read/apply helpers');
+  assert.match(executable, /\bobserveFinalized\b/,
+    'CN-6A must delegate finalized-head observation to the shared FO kernel');
+  assert.match(executable, /\bcommitFinalizedObservation\b/,
+    'CN-6A must delegate checkpoint/inbox/domain atomicity to the shared FO kernel');
+  assert.doesNotMatch(executable,
+    /\b(?:privateKeyToAccount|createWalletClient|walletClient|signMessage|signTypedData|serializeTransaction|prepareTransactionRequest|sendTransaction|sendRawTransaction|writeContract|executeSafe)\b/,
+    'CN-6A has no private key, signer, Safe execution, transaction construction, or send capability');
+  assert.doesNotMatch(executable,
+    /\b(?:setPublisher|activateVersion|deactivateVersion|publishBallot|publishTickerBallot|buildStockTokenActivationV2|buildStockTokenDeactivationV2)\b/,
+    'CN-6A cannot mutate Registry publisher, activation, deactivation, or ballot state');
+  assert.doesNotMatch(executable,
+    /\b(?:eth_sendRawTransaction|eth_sendTransaction|broadcastTransaction)\b|\b(?:withdraw|transferEth|mint|burn)\s*\(/i,
+    'CN-6A has no broadcast, funds, token, mint, burn, or withdrawal surface');
+  assert.doesNotMatch(executable,
+    /\b(?:INSERT\s+INTO|UPDATE|DELETE\s+FROM)\s+rwa_health_/i,
+    'CN-6A cannot mutate H1 or H2 health/clearance state');
+  const configuredEnvironmentKeys = [...executable.matchAll(/process\.env\.([A-Z0-9_]+)/g)]
+    .map((match) => match[1]);
+  assert(configuredEnvironmentKeys.every((key) => [
+    'CHAIN_RPC_URL',
+    'STOCK_TOKEN_REGISTRY_V2_ADDRESS',
+    'STOCK_TOKEN_REGISTRY_V2_START_BLOCK',
+  ].includes(key)), 'CN-6A may read only the frozen Task-5 chain, Registry, and start-block config');
+  assert.doesNotMatch(executable, /process\.env\[[^\]]+\]|process\.env\.[A-Z0-9_]*(?:CUTOVER|ACTIVATION)/,
+    'CN-6A has no dynamic, cutover, or activation-authority environment selector');
+
+  // RUNNING ITS TESTS IS NOT SCHEDULING IT. The rule this enforces is the one stated above — no
+  // PRODUCTION entry point may schedule or cut over the dormant coordinator — and for package.json
+  // the pattern was broader than that intent: it also forbade a script that merely invokes
+  // `test/rwaregistrylifecycle*.js`, which is why those three suites were the only ones in the tree
+  // that nothing could run (THE SUITE LEDGER found ten more, and two of them were red). A test
+  // invocation is stripped BEFORE the check rather than the pattern being loosened, so every other
+  // mention — a coordinator import, a scheduled script, the exported symbol — still fails, and the
+  // dormancy property is unchanged.
+  const pkgText = fs.readFileSync(fileURLToPath(new URL('../package.json', import.meta.url)), 'utf8');
+  const pkgProduction = pkgText
+    // a whole script entry whose body is NOTHING BUT invocations of its test files — key included,
+    // since the key names the suite it runs
+    .replace(/^\s*"[^"]*":\s*"(?:node test\/rwaregistrylifecycle[A-Za-z0-9._-]*\.js(?: && )?)+",?$/gm, '')
+    // and the same invocations sitting inside a longer chain (`pretest`), fragment only
+    .replace(/node test\/rwaregistrylifecycle[A-Za-z0-9._-]*\.js/g, '');
+  const unreachable = [
+    ['worker.js', fs.readFileSync(path.join(SRC, 'worker.js'), 'utf8')],
+    ['package.json', pkgProduction],
+  ];
+  for (const [name, source] of unreachable) {
+    assert.doesNotMatch(source,
+      /\b(?:syncFinalizedRwaRegistryLifecycle|rwaregistrylifecycle)\b/,
+      `CN-6A remains dormant: ${name} must not schedule or cut over its coordinator`);
+  }
+  // and the narrowing must never become a hole: the coordinator's own SYMBOL is forbidden in
+  // package.json outright, test invocation or not.
+  assert.doesNotMatch(pkgText, /\bsyncFinalizedRwaRegistryLifecycle\b/,
+    'CN-6A remains dormant: package.json may run its tests but may never name its coordinator');
+  const serverSource = fs.readFileSync(path.join(SRC, 'server.js'), 'utf8');
+  assert.doesNotMatch(serverSource, /\bsyncFinalizedRwaRegistryLifecycle\b/,
+    'CN-6A remains dormant: server.js may expose future read-only facts but cannot run its coordinator');
+}
+
+// ═══ THE INTERPOLATION LEDGER — every `${...}` reaching SQL text is classified or declared ════════
+//
+// `tools/pgquery.js` PREPAREs every static SQL string in src/ against real Postgres. It structurally
+// CANNOT read a query built with `${...}`, so it counts those against a ceiling and says so — the
+// honesty rule. But a count is a PROXY. What actually matters about an interpolated query is whether
+// a USER STRING can reach the SQL text, and a ceiling cannot tell a new IN-list fan-out (harmless,
+// and the only portable form — `= ANY($1)` returns zero rows on pg-mem the moment the column is
+// indexed, THE ANY-OF-ARRAY BAN below) from a new `WHERE name = '${req.body.name}'`. Both move the
+// number by one.
+//
+// AUDIT-red-team-eight lens 3 proved the real property BY HAND: all 95 interpolations of the day
+// traced to a placeholder list, a ternary over two literals, a module constant or an allowlisted
+// column name, so no user string reached SQL text. It was never made into a test. The corpus is 215
+// interpolations across 162 statements now, and without this every one of those hand-sweeps has to
+// be redone from scratch by the next person who wonders.
+//
+// THE RULE. Every interpolated expression must EITHER match a declared safe SHAPE, or trace in one
+// level to bindings that ALL do, or be DECLARED here with the property that makes it safe. Waivers
+// are keyed on (file, expression text) and NEVER on a line — a line-keyed waiver rots on the next
+// edit above it, which the connection ledger's viem waivers cost once already.
+//
+// THE CORPUS IS SHARED WITH pgquery, via tools/sqlscan.js. Two guards over the same set that
+// disagree about what the set IS are worse than one of them: pgquery's ceiling would then bound a
+// corpus this never sees, and this would clear expressions pgquery never counted.
+//
+// Scope, stated rather than implied: this proves an expression cannot CARRY a user string into SQL
+// text. It does not prove the resulting SQL is correct — that is pgquery's job for the static half,
+// and precisely why the interpolated half stays counted rather than waved through.
+{
+  const LIT = "(?:'[^']*'|\"[^\"]*\")";
+  // Each shape is safe for a reason that survives a reader who has never seen this file:
+  const SHAPES = [
+    // The engine shims. `dbCaps` is set at boot from the real engine, never from a request, and each
+    // of these returns one of a fixed set of SQL fragments (they are NOT uniform across modules —
+    // `nowSql()` has three different expansions — which is exactly why a substitution table would be
+    // a new restatement surface that rots, and a named-helper allowlist is not).
+    [/^(nowSql|lockSuffix|lock|epochTimestampSql|healthDbNowSql|sqlHonorDelta|inList|filt)\s*\(/,
+      'declared SQL-fragment helper (engine shim / bound-placeholder builder)'],
+    [new RegExp(`\\?\\s*${LIT}\\s*:\\s*${LIT}\\s*$`), 'ternary over two string literals'],
+    // `$${...}` builds a PLACEHOLDER number. The value it stands for is bound, by construction.
+    [/\$\$\{/, 'generated $n placeholder fan-out (every value bound)'],
+    [/^\s*Number\(|^\s*Math\.(floor|round|min|max|abs)\(/, 'numeric coercion — cannot carry text'],
+    [/^\s*[A-Z][A-Z0-9_]*(\.[A-Z][A-Z0-9_]*)*\s*$/, 'ALL_CAPS module constant'],
+    [/^\s*\d+(\s*[-+*/]\s*\d+)*\s*$/, 'numeric literal'],
+    [/^\s*params\.length(\s*[-+]\s*\d+)?\s*$/, 'parameter-count index (a $n number)'],
+    [/^\s*(''|"")\s*$/, 'empty string'],
+  ];
+  const shapeOf = (e) => { for (const [re, why] of SHAPES) if (re.test(e)) return why; return null; };
+
+  // ONE-LEVEL TRACING, and ALL bindings must be safe — not "any". A weaker rule would clear an array
+  // initialised safely and then pushed to unsafely, which is the only interesting way this fails.
+  // Matching is file-wide rather than function-scoped, which is the conservative direction: a
+  // same-named binding in another function makes the requirement STRICTER, never looser.
+  const bindings = (src, id) => {
+    const esc = id.replace(/\$/g, '\\$');
+    const out = [];
+    const grab = (re) => { for (const m of src.matchAll(re)) out.push(m[1].replace(/\s+/g, ' ').trim()); };
+    grab(new RegExp(`(?:const|let|var)\\s+${esc}\\s*=\\s*([\\s\\S]{0,220}?)(?:;|\\n)`, 'g'));
+    grab(new RegExp(`\\b${esc}\\.push\\(([\\s\\S]{0,220}?)\\)\\s*[;\\n]`, 'g'));
+    grab(new RegExp(`(?<![\\w$.])${esc}\\s*=\\s*([^=][\\s\\S]{0,220}?)(?:;|\\n)`, 'g'));
+    return out;
+  };
+  const classify = (src, expr) => {
+    const direct = shapeOf(expr);
+    if (direct) return direct;
+    const base = expr.match(/^([A-Za-z_$][\w$]*)(?:\.join\([^)]*\))?$/);
+    if (!base) return null;
+    const b = bindings(src, base[1]);
+    if (!b.length || !b.every((r) => shapeOf(r))) return null;
+    return `traced: ${shapeOf(b[0])}`;
+  };
+
+  // SELF-TEST, and it runs FIRST on purpose. The floors below catch a matcher that matches too
+  // LITTLE; this catches one that matches too MUCH, which is the direction that lets an injection
+  // site through quietly — and if it ran last, a permissive matcher would fail at the stale-waiver
+  // assert instead (every declaration goes unused when everything is "safe"), sending the reader to
+  // delete waivers over a matcher that had stopped checking anything.
+  const synth = "const sort = req.query.sort;\nconst safe = dbCaps.skipLocked ? 'a' : 'b';\n"
+    + 'const mixed = nowSql();\nmixed = req.body.dir;\n';
+  assert.equal(classify(synth, 'req.body.name'), null, 'a raw request field must never classify safe');
+  assert.equal(classify(synth, 'sort'), null, 'a binding that traces to a request field must never classify safe');
+  assert.equal(classify(synth, 'mixed'), null, 'a binding assigned safely ONCE and unsafely once must '
+    + 'never classify safe — the rule is ALL bindings, not any, because the only interesting way this '
+    + 'fails is an array built safely and then pushed to unsafely');
+  assert(classify(synth, 'safe'), 'a binding that traces to a two-literal ternary must classify safe');
+
+  // ── DECLARED. Each of these was read at its call sites; the reason is the PROPERTY that makes a
+  // user string unreachable, never "it looked fine". Keyed on file + expression text.
+  const DECLARED = {
+    // A SQL-fragment PARAMETER of a module-local helper whose every call site passes a literal.
+    'src/honor.js|col': 'board(col,dir,cond) — both call sites pass literal column/direction/predicate',
+    'src/honor.js|dir': 'board(col,dir,cond) — both call sites pass literals',
+    'src/honor.js|cond': 'board(col,dir,cond) — both call sites pass literals',
+    'src/vig.js|table': 'sumEth(pool,table,col,where) — every call site passes a literal table name',
+    'src/vig.js|col': 'sumEth(...) — literal column at every call site',
+    'src/vig.js|where': 'sumEth(...) — literal predicate at every call site (default empty)',
+    'src/invariants.js|where': 'sum(pool,where) — literal predicates at every call site',
+    'src/heists.js|cols': 'setMember(id,cols,params) — every call site passes a literal SET clause; values bound',
+    'src/heists.js|extra': 'local candidate-scan helper — literal predicate at every call site',
+    'src/world.js|cols': 'raid setMember(id,cols,params) — literal SET clause at every call site; values bound',
+    'src/world.js|extra': 'freeQ(extra,params) — literal predicate at both call sites; values bound',
+    'src/pen.js|cols': 'break setMember/setMemberRat — literal SET clause at every call site; values bound',
+    'src/wire.js|col': "claim(w,col) — three literal column names ('alerted_hunt'/'_wanted'/'_indicted')",
+    'src/game.js|set': 'persistAccountFields — SET clause generated from ACCOUNT_PERSIST_COLUMNS entries the field list was validated against (an unknown field throws); every value bound',
+    'src/rwanominations.js|setClause': 'updateQueueNominationIds(...,setClause,marker) — literal at every call site',
+    'src/rwanominations.js|marker': 'a literal SQL-comment tag at every call site (query attribution only)',
+    'src/stockcatalogv2.js|marker': 'readState(marker) — two literal tags, inside a /* */ SQL comment',
+
+    // A CLOSED SET: the value indexes a module-private map, or is membership-gated before it is used.
+    'src/chain.js|k.table': 'k is a value of the module-private KINDS map; nftKind() null-guards a bad key',
+    'src/chain.js|k.clear': 'same KINDS map — the column name is declared in the map, not supplied',
+    'src/nft.js|k.table': 'same module-private KINDS map, reached only through nftKind() (throws bad_kind)',
+    'src/kitchen.js|col': "Object.hasOwn(KITCHEN.MODULES, modId) gates it, so `lab_${modId}` is a catalog key",
+    'src/boxing.js|s': "String(stat||'') then a .includes(s) membership check against the fixed stat list",
+    'src/stable.js|s': 'same membership gate against the fixed racer stat list',
+    'src/standing.js|sel': 'ALL_COLS.map(...) — column list derived from the STANDING_PILLARS constant',
+    'src/social/estate.js|t': "for (const t of ['cars','boats']) — literal array",
+    'src/social/estate.js|table': 'for (const table of [...47 literal table names]) — literal array',
+    'src/rwaregistrylifecycle.js|runtimeMode': "lockHeadRows(client, runtimeMode='SHARE') — lock mode, literal at both call sites",
+
+    // A DECLARED MIGRATION SPEC — the strings come from a hardcoded const array in the same file.
+    'src/db.js|table': 'migration spec table name from a module const array',
+    'src/db.js|name': 'migration spec constraint name from the same const array',
+    'src/db.js|expression': 'migration spec CHECK expression from the same const array',
+    'src/db.js|spec.table': 'the same const array, read through the spec object',
+    'src/db.js|spec.name': 'the same const array, read through the spec object',
+
+    // GENERATED PLACEHOLDERS — the fragment is `$n,$n,...`; every value is bound.
+    'src/game.js|vals.join(\',\')': 'multi-row INSERT VALUES tuples built from $n placeholders; values bound',
+    'src/rwanominations.js|values.join(\',\')': 'same batched-INSERT placeholder fan-out; values bound',
+    'src/rwanominations.js|placeholders': 'same — a generated $n list; values bound',
+    'src/rwanominations.js|conditions.join(\' OR \')': 'OR of generated $n comparisons; values bound',
+
+    // LOCALLY-BUILT PAGINATION FRAGMENTS. Each is a template containing only $n placeholders; the
+    // cursor VALUES are validated in pageOptions and pushed as bound parameters, never spliced.
+    'src/rwanominations.js|after': 'keyset predicate of $n placeholders; cursor values bound',
+    'src/rwanominations.js|cursor': 'keyset predicate of $n placeholders; cursor values bound',
+    'src/rwanominations.js|cursorClause': 'keyset predicate of $n placeholders; cursor values bound',
+    'src/rwanominations.js|activeWhere': 'built from literal fragments + $n placeholders',
+    'src/rwanominations.js|finalizedJoin': 'literal JOIN fragment chosen in-file, no request value',
+    'src/rwanominations.js|staleEndorsement': 'staleness predicate of $n placeholders; values bound',
+    'src/rwanominations.js|staleSponsor': 'staleness predicate of $n placeholders; values bound',
+
+    // MULTI-LINE ternaries over literals — safe for the same reason as the one-line shape, but the
+    // normalised text is too long for the pattern to be worth widening (a wider one would start
+    // matching ternaries whose arms are not literals at all).
+    'src/rwahealthreview.js|clockExpression': "dbCaps ternary over two literal clock expressions",
+    'src/rwahealthclearance.js|select': "wholeSecond ? date_trunc('second',expr) : expr — both literal",
+  };
+
+  const { scanQueryCalls } = await import('../tools/sqlscan.js');
+  const { readable } = scanQueryCalls(SRC, { root: fileURLToPath(new URL('../', import.meta.url)) });
+  let total = 0, shaped = 0;
+  const undeclared = [], usedDecl = new Set();
+  for (const g of readable) {
+    if (!g.interpolated) continue;
+    for (const part of g.parts) {
+      const expr = part.replace(/\s+/g, ' ').trim();
+      total++;
+      const why = classify(g.src, expr);
+      if (why) { shaped++; continue; }
+      const key = `${g.rel}|${expr}`;
+      if (DECLARED[key]) { usedDecl.add(key); continue; }
+      undeclared.push(`${g.where}  \${${expr}}`);
+    }
+  }
+
+  // Two floors, because they fail differently: one catches an extractor that has stopped reading
+  // src/ (a sweep that reaches nothing reads exactly like a clean tree), the other a shape matcher
+  // that has stopped MATCHING — which would push everything into `undeclared` and, in the tempting
+  // fix, into blanket waivers.
+  assert(total > 150, `THE INTERPOLATION LEDGER read only ${total} interpolated expressions — the `
+    + 'shared scanner has stopped reading src/, and a sweep that reaches nothing reads exactly like a clean tree');
+  assert(shaped > 100, `only ${shaped} of ${total} interpolations matched a safe shape — the shape `
+    + 'matcher is broken, and the next reader will be tempted to bulk-declare what it stopped seeing');
+
+  assert.deepEqual(undeclared, [], 'interpolated expression(s) reaching SQL text that match no safe '
+    + 'shape and carry no declaration. If the value cannot be a user string, declare it in THE '
+    + 'INTERPOLATION LEDGER with the property that makes that true; if it can, it is an injection '
+    + `site and must be bound as a parameter instead:\n   - ${undeclared.join('\n   - ')}`);
+
+  const stale = Object.keys(DECLARED).filter((k) => !usedDecl.has(k)).sort();
+  assert.deepEqual(stale, [], 'declaration(s) for interpolations that no longer exist — a stale '
+    + 'waiver silently re-covers whatever moves into its place, so remove them:'
+    + `\n   - ${stale.join('\n   - ')}`);
+
+  console.log(`  ✓ all ${total} SQL interpolations are shape-safe (${shaped}) or declared `
+    + `(${usedDecl.size}) — no user string can reach SQL text`);
+}
+
+// ═══ THE SUITE LEDGER — a test nobody runs is not a guard ═════════════════════════════════════════
+// `package.json`'s `test` is a single ~120-entry `&&` chain on ONE LINE. Any two branches that each
+// add a suite conflict on that line, git cannot merge it, and whoever resolves picks a side — which
+// silently drops the other side's suites. That is not hypothetical: merge 48238abe took one side and
+// dropped FIVE suites plus the `test:stockcatalogv2:postgres` script, and because CI still invoked
+// that script by name the real-Postgres job failed in ZERO SECONDS on every run afterwards ("Missing
+// script"). Sweeping the class then found TWELVE test/*.js that nothing ran at all — including
+// test/rwahealthoverlay.schema.js, where a guard had been added earlier in the same session as this
+// ledger. Ten of the twelve passed when finally run; a suite that does not execute reads on the
+// summary line exactly like one that does.
+//
+// TWO RULES, because the first is blind to the second:
+//   (a) every test/*.js is RUN — by `test`, by `pretest` (npm runs it automatically), by a script CI
+//       invokes with `npm run`, or named directly in the workflow — or is DECLARED below with the
+//       property that makes it unrunnable there.
+//   (b) every `npm run X` in the workflow names a script that EXISTS. This is the rule that would
+//       have caught the break at the merge: rule (a) sees a file with no runner, and says nothing at
+//       all about a runner with no script.
+//
+// Scope, honestly: this proves a suite is INVOKED, not that it is meaningful. A file wired into the
+// chain and asserting nothing still passes here.
+{
+  const ROOT = fileURLToPath(new URL('../', import.meta.url));
+  const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
+  const scripts = pkg.scripts || {};
+  const ci = fs.readFileSync(path.join(ROOT, '.github/workflows/ci.yml'), 'utf8');
+
+  // A suite is covered if it is named by `test`/`pretest` (npm runs pretest before test), by any
+  // script the workflow actually invokes, or directly by the workflow.
+  const invoked = new Set(['test', 'pretest']);
+  for (const m of ci.matchAll(/npm run ([a-zA-Z0-9:_-]+)/g)) invoked.add(m[1]);
+  const covered = new Set();
+  for (const name of invoked) {
+    const body = scripts[name];
+    if (!body) continue;
+    for (const f of body.matchAll(/test\/[A-Za-z0-9._-]+\.js/g)) covered.add(f[0]);
+  }
+  for (const f of ci.matchAll(/test\/[A-Za-z0-9._-]+\.js/g)) covered.add(f[0]);
+
+  // Declared: a suite the chain cannot run, each with the property that makes that true. A reason,
+  // not a category — "it fails in CI" is a description of the symptom and would waive a real break.
+  const DECLARED = {
+    'test/contextplus.js':
+      'Windows-only by construction: it spawns %SystemRoot%\\System32\\...\\powershell.exe to drive '
+      + 'the ContextPlus .ps1 launcher, so on Linux `join(process.env.SystemRoot, ...)` throws before '
+      + 'any assertion runs. Wiring it into the chain would make every Linux run red for a reason '
+      + 'that says nothing about the product.',
+    'test/mcp.js':
+      'Needs the SEPARATE omerta-mcp package\'s own dependencies (@modelcontextprotocol/sdk), which '
+      + 'the repo root does not install — `npm ci` here would have to carry a dep only that package '
+      + 'uses. It is the clean-machine check for the published MCP server and belongs to that '
+      + 'package\'s own verification, run from omerta-mcp/ after its install.',
+  };
+
+  const onDisk = fs.readdirSync(path.join(ROOT, 'test'))
+    .filter((f) => f.endsWith('.js')).map((f) => `test/${f}`).sort();
+  const orphans = onDisk.filter((f) => !covered.has(f) && !DECLARED[f]);
+
+  // anti-vacuity, TWO floors because they fail differently: the first catches a reader that has
+  // stopped seeing test files on disk, the second one that has stopped resolving the npm scripts —
+  // and with the second broken EVERY file reads as an orphan, which is the tempting-to-bulk-declare
+  // failure rather than a silent pass.
+  assert(onDisk.length > 100, `THE SUITE LEDGER saw only ${onDisk.length} test files on disk — the `
+    + 'directory read is broken, and a sweep that reaches nothing reads exactly like a clean tree');
+  assert(covered.size > 100, `THE SUITE LEDGER resolved only ${covered.size} suites out of the npm `
+    + 'scripts — the script reader is broken, not the tree');
+
+  // Rule (b): the workflow may not call a script that does not exist. This is the one that fires at
+  // the merge — a dropped script is invisible to rule (a), which only ever looks for files.
+  const missing = [...invoked].filter((n) => n !== 'test' && n !== 'pretest' && !scripts[n]).sort();
+  assert.deepEqual(missing, [], 'the workflow invokes npm script(s) that package.json does not '
+    + 'define — `npm run` exits non-zero immediately ("Missing script"), so the step fails in zero '
+    + 'seconds and everything reading the run assumes the check ran. This is how merge 48238abe left '
+    + `the real-Postgres job red:\n   - ${missing.join('\n   - ')}`);
+
+  assert.deepEqual(orphans, [], 'test suite(s) that NOTHING runs — not `npm test`, not `pretest`, not '
+    + 'any script the workflow invokes. A guard that never executes reads on the summary line exactly '
+    + 'like one that passes. Add it to `pretest` (or, if it needs a real database, give it a script '
+    + 'and a step in the pgcheck job), or declare it above with the property that makes it '
+    + `unrunnable here:\n   - ${orphans.join('\n   - ')}`);
+
+  const stale = Object.keys(DECLARED).filter((f) => covered.has(f) || !onDisk.includes(f)).sort();
+  assert.deepEqual(stale, [], 'declaration(s) for suites that are now run, or no longer exist — a '
+    + 'stale waiver silently re-covers whatever moves into its place, so remove them:'
+    + `\n   - ${stale.join('\n   - ')}`);
+
+  console.log(`  ✓ all ${onDisk.length} test suites are run (${covered.size}) or declared `
+    + `(${Object.keys(DECLARED).length}), and all ${invoked.size - 2} scripts the workflow calls exist`);
+}
+
+// ═══ THE SINGLE-INSTANCE LEDGER — state that does not exist across boxes ══════════════════════════
+// render.yaml documents, at length, that this service runs exactly ONE instance because the process
+// holds state a second box would not share. That warning is prose: nothing fails when somebody adds
+// the sixteenth Map, or declares numInstances, and the failure mode is the worst kind — a player on
+// box A never hears an event emitted on box B, silently, with nothing red anywhere.
+//
+// THREE RULES, because each covers what the others cannot:
+//   (a) the deployment does not declare numInstances, and the warning still NAMES each documented
+//       piece of per-process state — so deleting the reasoning fails, not just the number.
+//   (b) every module-scope mutable collection in src/ is CLASSIFIED, and anything classified SHARED
+//       is named in that warning.
+//   (c) the WORKER carries its own warning, and it names every module that takes an advisory lock.
+//
+// SCOPE, stated because it is not obvious and a reader would otherwise over-trust this: rule (b)
+// sees MODULE-scope collections only. Two of the four things render.yaml names are invisible to it —
+// `wsClients` is function-scope inside server.js and `bus` is an EventEmitter, not a Map — so they
+// are covered by rule (a) instead. A syntactic sweep alone would report all-clear while blind to the
+// two biggest, which reads exactly like a clean bill of health.
+{
+  const ROOT = fileURLToPath(new URL('../', import.meta.url));
+  const render = fs.readFileSync(path.join(ROOT, 'render.yaml'), 'utf8');
+
+  // (a) the constraint itself. numInstances is deliberately ABSENT (it defaults to 1); declaring it
+  // at all — even as 1 — is the edit that makes raising it a one-character change.
+  assert.doesNotMatch(render, /^\s*numInstances:/m,
+    'render.yaml must not declare numInstances — the single-instance constraint is the DEFAULT, and '
+    + 'declaring it makes scaling out a one-character edit past every reason in the comment above it');
+  for (const named of ['game.js `bus`', '`wsClients` presence registry', 'rate-limit buckets', 'flood brakes']) {
+    assert(render.includes(named),
+      `render.yaml's single-instance warning must still name ${named} — the warning IS the guard for `
+      + 'state this ledger cannot see, so deleting a bullet silently removes the only thing standing '
+      + 'between an operator and a scale-out that breaks it');
+  }
+
+  // (b) classify every module-scope mutable collection. Three postures, and the distinction is
+  // correctness rather than taste: a deterministic cache costs CPU on a second box and nothing else;
+  // a same-process fast path whose real guard is a DB constraint is correct anywhere; genuine
+  // cross-request state is not.
+  const POSTURE = {
+    'aggregate.js:validated': 'cache: a WeakSet of board maps already validated — a second box re-validates, same answer',
+    'stockdeliver.js:decCache': 'cache: ERC-20 decimals are immutable on-chain, so every box reads the same value',
+    'cardpng.js:CACHE': 'cache: content-hash-keyed PNG renders of a deterministic SVG; a second box re-renders',
+    'rwahealth.js:observationMemo': 'cache: per-observation-object memo of two pure hashes; a different body is a different object',
+    'rwahealthread.js:FRESH_HEALTH_RECEIPTS': 'cache: per-receipt-object freshness memo, keyed on the object itself',
+    'rwaregistrylifecycle.js:HEAD_RECEIPT_CLIENTS': 'cache: per-client head-receipt memo, keyed on the client object',
+    'finalizedobservation.js:PUBLISHED_FO_ERRORS': 'cache: per-error-object marker; a second box marks its own errors',
+    'finalizedobservation.js:SAFE_DOMAIN_ERRORS': 'cache: per-error-object marker; a second box marks its own errors',
+    'rwahealthclearance.js:CREATE_REQUESTS': 'cache: per-request-object marker, scoped to the request being served',
+    'rwahealthclearance.js:SUBMISSION_REQUESTS': 'cache: per-request-object marker, scoped to the request being served',
+    'rwahealthclearance.js:READ_REQUESTS': 'cache: per-request-object marker, scoped to the request being served',
+    'items.js:ITEM_TRANSACTIONS': 'cache: per-client active-transaction marker, scoped to the request being served',
+    'items.js:MUTATION_CONTEXTS': 'cache: per-opaque-context mutation authority, scoped to its active transaction',
+    'crafting.js:CRAFTING_CONTEXTS': 'cache: per-context-object authenticity marker; every box recognizes only contexts it creates',
+    'crafting.js:CRAFTING_DEFINITIONS': 'cache: immutable normalized recipes keyed by each locally authenticated context object',
+    'mysteries.js:CONTEXTS': 'cache: per-context-object authenticity marker; every box recognizes only contexts it creates',
+    'operations.js:CONTEXTS': 'cache: per-context-object authenticity marker; every box recognizes only contexts it creates',
+    'worldgraph.js:WORLD_GRAPH_REGISTRIES': 'cache: per-registry-object authenticity marker; every box recognizes its own immutable registries',
+    'content/discovery.js:DISCOVERED_PACKAGES': 'cache: per-descriptor authenticity marker; every box recognizes only descriptors its own walker created',
+    'content/phase2-transactions.js:CONTEXTS': 'cache: per-client active callback authority, matched to its async scope; PostgreSQL transactions and namespace row locks supply cross-process serialization',
+    'content/artifact-storage.js:VERIFIED': 'cache: per-opaque-artifact verification result tied to its active client; sealed bytes and exact memberships are persisted in PostgreSQL',
+    'content/activation-policy.js:POLICIES': 'cache: immutable trusted operator configuration keyed by locally issued opaque policies; every process brands its own admitted configuration',
+    'content/artifacts.js:SELECTIONS': 'cache: one-use replacement authority bound to the exact active callback, client and newly appended event; PostgreSQL owns durable events and selections',
+    'v4oraclekeeper.js:IN_FLIGHT_WINDOWS': 'db-backstopped: same-process guard; the DB primary key is the cross-process guard (said at the site)',
+    'auth.js:guestBootstrapLocks': 'db-backstopped: a process-local queue for same-process retries; the unique index is the cross-process backstop (said at the site)',
+    'ratelimit.js:buckets': 'shared: N instances = N× every limit, unless REDIS_URL is set',
+    'phone.js:lastDmAt': 'shared: the DM flood brake — N instances = N× the allowed rate, and REDIS_URL does NOT cover it',
+  };
+  const found = [];
+  const walk = (dir) => {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) { walk(full); continue; }
+      if (!entry.name.endsWith('.js')) continue;
+      const rel = relPath(SRC, full);
+      const text = fs.readFileSync(full, 'utf8');
+      // module scope is column 0 — an indented declaration is inside a function and out of scope.
+      // Then keep only the ones WRITTEN after construction: a Map/Set built once from a literal and
+      // never touched is a lookup table, not state, and 27 of the 42 declarations are exactly that.
+      // Classifying constants would be the mostly-wrong advisory people learn to route around.
+      for (const m of text.matchAll(/^(?:const|let|var) ([A-Za-z_$][\w$]*) = new (?:Map|Set|WeakMap|WeakSet)\(/gm)) {
+        const name = m[1];
+        if (!new RegExp(`\\b${name}\\.(?:set|add|delete|clear)\\s*\\(`).test(text)) continue;
+        found.push(`${rel}:${name}`);
+      }
+    }
+  };
+  walk(SRC);
+  found.sort();
+
+  assert(found.length > 10,
+    `read only ${found.length} module-scope collections — the scan stopped seeing src/, and a sweep `
+    + 'that reaches nothing reads exactly like a sweep that passes');
+
+  const unclassified = found.filter((k) => !POSTURE[k]);
+  assert.deepEqual(unclassified, [],
+    'module-scope mutable collection(s) with no single-instance posture — classify each as a '
+    + 'deterministic cache (a second box computes the same answer), db-backstopped (the real guard '
+    + 'is a DB constraint), or shared (single-instance only, and named in render.yaml):\n  '
+    + unclassified.join('\n  '));
+
+  // anything SHARED must be in the warning an operator actually reads
+  // decidable: the warning must name the IDENTIFIER, so an operator reading it before scaling out
+  // can find the code rather than being told a category
+  const undocumented = found.filter((k) => POSTURE[k].startsWith('shared:'))
+    .filter((k) => !render.includes(k.slice(k.indexOf(':') + 1)));
+  assert.deepEqual(undocumented, [],
+    'state classified SHARED but not named in render.yaml\'s single-instance warning — the warning is '
+    + 'what an operator reads before scaling out, so an unnamed one is invisible exactly then:\n  '
+    + undocumented.join('\n  '));
+
+  const stalePosture = Object.keys(POSTURE).filter((k) => !found.includes(k)).sort();
+  assert.deepEqual(stalePosture, [],
+    'posture(s) declared for module-scope state that no longer exists — drop them so the ledger keeps '
+    + 'describing the tree:\n  ' + stalePosture.join('\n  '));
+
+  // (c) the WORKER's own posture, which is a DIFFERENT property and had one line of prose. Rules
+  // (a) and (b) are about state that does not exist across boxes — the API's failure. A second
+  // WORKER loses no state; it DOUBLE-RUNS work, and the defence is per-job rather than global: a
+  // handful of modules take a session advisory lock and every other job rests on its own
+  // claim-then-act latch. Until this rule the worker's whole comment was "Run exactly ONE. The game
+  // works without it" — which explains running ZERO and never says a word about running TWO, the
+  // case that sends a push twice and moves money twice with nothing red anywhere.
+  //
+  // The crossing is TWO-DIRECTIONAL and DERIVED, never a list restated here (a list in a test is a
+  // second copy of the thing it checks, which is how the two come to disagree): add a lock without
+  // documenting it and this fails; delete a lock and the comment stops being allowed to claim it.
+  // `pg_try_advisory_lock` only, which is the SESSION lock the sentence is about. db.js takes a
+  // plain `pg_advisory_lock` for the schema boot (it QUEUES rather than skipping, and is not a
+  // worker job), and treasury.js also takes `pg_advisory_xact_lock` inside two claim paths — a
+  // transaction-scoped lock over one row's arithmetic, not a single-writer posture for a sweep.
+  {
+    const from = render.indexOf('# 2) the background worker');
+    assert(from > 0, "render.yaml no longer carries the worker's warning block");
+    const cut = render.indexOf('\n  - type:', from);
+    const warning = cut > 0 ? render.slice(from, cut) : render.slice(from);
+    for (const phrase of ['RUN EXACTLY ONE INSTANCE', 'TWICE']) {
+      assert(warning.includes(phrase),
+        `render.yaml's worker warning must still say ${phrase} — one instance is the DEFAULT and the `
+        + 'reasoning is the only thing standing between an operator and a second replica that '
+        + 'double-sends and double-spends');
+    }
+    const locked = fs.readdirSync(path.join(ROOT, 'src')).filter((f) => f.endsWith('.js'))
+      .filter((f) => fs.readFileSync(path.join(ROOT, 'src', f), 'utf8').includes('pg_try_advisory_lock'))
+      .sort();
+    assert(locked.length >= 3,
+      `only ${locked.length} module(s) in src/ take a pg_try_advisory_lock — the extractor has stopped `
+      + 'reading them, so this crossing is vacuous rather than clean');
+    const named = [...new Set([...warning.matchAll(/`([a-z]+\.js)`/g)].map((m) => m[1]))].sort();
+    assert.deepEqual(named, locked,
+      "render.yaml's worker warning and src/ disagree about which jobs are guarded against a second\n"
+      + '      replica. Every module taking an advisory lock must be named there (an undocumented one\n'
+      + '      reads as unguarded) and no module may be named that has stopped taking one (a comment\n'
+      + `      claiming a defence that is gone is worse than none).\n   named: ${named.join(', ')}\n`
+      + `   locked: ${locked.join(', ')}`);
+  }
+
+  // AND THE ALARM CHANNEL MUST REACH THE API. INVARIANT_WEBHOOK_URL sits in the SHARED env group,
+  // and until 2026-08-29 render.yaml explained that with "the alarms run in the worker" — a reason
+  // that is no longer complete, because the API now runs the one alarm the worker cannot: the
+  // watchdog that shouts when the WORKER is dark. A process cannot alarm on being dead. So a later
+  // tidy-up that followed that stated reason and moved the key onto the worker alone would silently
+  // mute exactly the alarm that covers the worker being gone, and nothing would fail. Two decidable
+  // halves: the key is in the group, and the web service pulls that group.
+  {
+    const group = render.match(/envVarGroups:[\s\S]*?(?=\nservices:)/);
+    assert(group && /INVARIANT_WEBHOOK_URL/.test(group[0]),
+      'INVARIANT_WEBHOOK_URL has left render.yaml\'s shared env group. The API reads it to page when '
+      + 'the WORKER goes dark (src/server.js startWorkerWatch) — a process cannot alarm on being dead, '
+      + 'so on the worker alone that alarm is mute and the outage is silent again.');
+    const web = render.slice(render.indexOf('- type: web'), render.indexOf('- type: worker'));
+    assert(/fromGroup: omerta-secrets/.test(web),
+      'the web service no longer pulls the shared env group, so the API cannot reach '
+      + 'INVARIANT_WEBHOOK_URL and its worker watchdog can write telemetry but never page a human.');
+  }
+
+  // AND THE PUSH KEY PAIR MUST SPAN BOTH PROCESSES. Web push is the only activation switch in the
+  // game that is a KEY PAIR read by two different services — the API serves the public half on
+  // /v1/rules and stores the subscriptions, the WORKER signs and sends — so it is the one switch
+  // where "set it on the service that needs it" is the wrong instruction. Set on the API alone, or
+  // generated twice, and the failure is SILENT in the worst way: /admin → Integrations reads env
+  // presence on the API, so the panel says LIVE while every push is never attempted or is rejected,
+  // with nothing red anywhere. Declaring all three keys in the SHARED group is what makes "both
+  // services, same pair" structural rather than a thing an operator has to remember, and a
+  // per-service declaration is exactly the shape that lets the two halves diverge.
+  {
+    const group = render.match(/envVarGroups:[\s\S]*?(?=\nservices:)/);
+    const KEYS = ['VAPID_PUBLIC_KEY', 'VAPID_PRIVATE_KEY', 'VAPID_SUBJECT'];
+    for (const k of KEYS) {
+      assert(group && new RegExp(`key: ${k}\\b`).test(group[0]),
+        `${k} is not declared in render.yaml's SHARED env group. Web push is a key pair spanning the `
+        + 'API (serves the public key, stores subscriptions) and the WORKER (signs and sends): declared '
+        + 'per-service, or not at all, the two halves can differ and /admin reads LIVE while nothing sends.');
+    }
+    const web = render.slice(render.indexOf('- type: web'), render.indexOf('- type: worker'));
+    const worker = render.slice(render.indexOf('- type: worker'));
+    for (const [name, body] of [['web', web], ['worker', worker]]) {
+      assert(/fromGroup: omerta-secrets/.test(body),
+        `the ${name} service no longer pulls the shared env group, so it cannot see the VAPID pair — `
+        + 'push then reads LIVE on the panel while one half of the rail is unconfigured.');
+      for (const k of KEYS) {
+        assert(!new RegExp(`key: ${k}\\b`).test(body),
+          `${name} declares ${k} in its OWN envVars. That is the divergence vector this guard exists `
+          + 'for: two services holding two different pairs is a rail that reads LIVE and sends nothing. '
+          + 'Keep the pair in the shared group.');
+      }
+    }
+    // ...and the panel must SAY so where it matters, which is the LIVE branch. `live` is computed from
+    // the API's own env, so the one reading a founder most needs to distrust is the reassuring one.
+    const ops = fs.readFileSync(path.join(ROOT, 'src', 'ops.js'), 'utf8');
+    const push = ops.slice(ops.indexOf("{ id: 'push'"), ops.indexOf("{ id: 'x_oauth'"));
+    assert(push && /caveat:/.test(push),
+      "src/ops.js's push integration has lost its `caveat`. `live` reads env presence on the API alone, "
+      + 'so without it the panel makes a confident claim about a rail whose sending half it cannot see.');
+    const admin = fs.readFileSync(path.join(ROOT, 'public', 'admin.html'), 'utf8');
+    assert(/x\.caveat/.test(admin),
+      'public/admin.html no longer renders `caveat`, so the warning is a field on an endpoint that '
+      + 'nobody reads — the same shape as an alarm posting nowhere.');
+    console.log('  ✓ the web-push key pair is declared once, in the shared group both services pull, '
+      + 'and the panel says its LIVE reading only covers this process');
+  }
+
+  const shared = found.filter((k) => POSTURE[k].startsWith('shared:')).length;
+  console.log(`  ✓ all ${found.length} module-scope collections carry a single-instance posture `
+    + `(${shared} shared, each named in render.yaml); numInstances stays undeclared`);
+  console.log('  ✓ the alarm channel reaches the API, so the watchdog that covers a dark worker can page');
+}
+
+// ═══ THE CHILD-EXIT LEDGER — a listener attached after the work never fires ═══════════════════════
+//
+// Found five times across three files before it was worth a check, which is this file's own class.
+// A child process that is spawned, worked against, and only THEN listened to is a coin toss: if it
+// died inside the work window — and a held child CAN, since Node exits 13 of its own accord on an
+// unsettled top-level await, and a real worker can crash, fail to boot, or be OOM-killed — the
+// `exit` event fired before anybody was listening and the await never settles.
+//
+// The failure is not a wrong answer. `test/agent-alpha.js` had an 8s `waitFor`, so it surfaced as
+// `Timed out waiting for bootstrap child hard exit` in a full-suite run while passing standalone —
+// a red that reads like a flake and gets re-run. `test/mcp.js` and both `tools/chaos.js` sites carry
+// NO timeout at all, so there it is an infinite hang, reported to CI as a job timeout with no
+// message. chaos.js's second site holds the gap open for a 60-second poll loop.
+//
+// Reproduced rather than argued, with the exact shape: spawn a process that exits immediately, wait
+// 300ms, kill (a no-op on a corpse), then attach — `HUNG — exit never observed`. Capture at spawn
+// instead — `OBSERVED`.
+//
+// The rule is narrow so it stays true: if a spawned child's exit is EVER awaited, the listener that
+// observes it must be attached with no `await` between it and the spawn. A child nobody waits on
+// (an anvil the parent simply kills at teardown) is not this check's business. And one site is
+// DECLARED rather than fixed, because it already solves the problem a different and equally sound
+// way — it reads exitCode/signalCode first and falls back to a listener with a timeout, so a death
+// inside the gap is seen rather than waited on forever.
+{
+  const ROOT = fileURLToPath(new URL('../', import.meta.url));
+  const dirs = ['test', 'tools'].map((d) => path.join(ROOT, d));
+  const files = [];
+  for (const d of dirs) {
+    for (const e of fs.readdirSync(d)) if (e.endsWith('.js')) files.push(path.join(d, e));
+  }
+
+  // catalogue-or-declare: a site that solves it another way is named WITH the property that makes
+  // it sound, so the next reader sees a decision rather than an oversight.
+  const WAIVED = new Map([
+    ['tools/chaos.js:child', 'reads exitCode/signalCode FIRST and only falls back to a listener, '
+      + 'with a 12s timeout — a death inside the gap is observed, not waited on; its own comment '
+      + 'records the related lesson that reading exitCode alone misreports a signalled death'],
+  ]);
+
+  const late = [];
+  const usedWaivers = new Set();
+  let captures = 0;
+  for (const f of files) {
+    const rel = relPath(ROOT, f);
+    // Strip line comments first. A scanner that reads prose reports the very comments a fix leaves
+    // behind — my own first run flagged two sites whose only `await` was in the sentence explaining
+    // why they capture at spawn, and a mostly-wrong advisory is the kind people route around. Line
+    // positions are preserved so the failure still names the real line.
+    const lines = fs.readFileSync(f, 'utf8').replaceAll('\r\n', '\n')
+      .split('\n').map((l) => l.replace(/\/\/.*$/, ''));
+    for (let i = 0; i < lines.length; i++) {
+      const m = /(?:const|let|var)?\s*\b(\w+)\s*=\s*spawn\(/.exec(lines[i]);
+      if (!m) continue;
+      const v = m[1];
+      // Where is this child's exit observed? `process.on('exit')` is the PARENT's and must not match,
+      // so the variable name is required. 'close' carries the identical hazard and counts too.
+      const listener = new RegExp(`\\b${v}\\.(?:once|on)\\(\\s*['"](?:exit|close)['"]`);
+      let at = -1;
+      for (let j = i + 1; j < lines.length && j < i + 400; j++) {
+        if (listener.test(lines[j])) { at = j; break; }
+      }
+      if (at === -1) continue;   // nobody ever waits on this child — not this check's business
+      captures++;
+      // Anything that yields between the spawn and the capture is a window the child can die in.
+      let yields = false;
+      for (let j = i + 1; j < at; j++) if (/\bawait\b/.test(lines[j])) { yields = true; break; }
+      if (!yields) continue;
+      const key = `${rel}:${v}`;
+      if (WAIVED.has(key)) { usedWaivers.add(key); continue; }
+      late.push(`${rel}:${i + 1} — \`${v}\` spawned here, its exit first observed at line ${at + 1}, `
+        + 'with an await in between');
+    }
+  }
+
+  // Two anti-vacuity floors, because they fail differently. The first catches an extractor that has
+  // stopped seeing spawns at all; the second a WAIVER list that has drifted off the tree, which
+  // would silently re-cover a real site.
+  assert(captures >= 6,
+    `THE CHILD-EXIT LEDGER found only ${captures} awaited child exit(s) — the extractor has stopped `
+    + 'reading them, so this check is vacuous rather than clean');
+  for (const key of WAIVED.keys()) {
+    assert(usedWaivers.has(key),
+      `THE CHILD-EXIT LEDGER carries a stale waiver for ${key} — that site no longer attaches its `
+      + 'listener late, so the declaration is covering nothing and would quietly re-cover a real one');
+  }
+  assert.equal(late.length, 0,
+    'a child process\'s exit listener is attached AFTER work that can outlive the child. If it dies\n'
+    + '      in that window the event fires before anybody is listening and the await never settles —\n'
+    + '      a job timeout with no message, or an 8s "flake" that only reddens under load.\n'
+    + '      Capture it at SPAWN (`const gone = new Promise((r) => child.once(\'exit\', r));`):\n'
+    + `   - ${late.join('\n   - ')}`);
+  console.log(`✓ all ${captures} awaited child exits are captured at spawn `
+    + `(${WAIVED.size} declared: reads exitCode first, with a timeout)`);
+}
+
+// ═══ THE PACKAGE MANIFEST LEDGER — the gate drives the source, the registry gets the artifact ═════
+//
+// `omerta-mcp` is the only thing this project publishes, and the command it publishes is the one
+// `/play`, `AGENTS.md`, the README and the public posts all hand a non-technical reader verbatim:
+// `npx -y omerta-mcp`. Its publish gate is the package's own `npm test`, which is `node
+// ../test/mcp.js` — and that spawns `index.js` from the WORKING TREE, where every file exists. So
+// the gate proves the SOURCE works and says nothing about what the tarball carries.
+//
+// `files` is what makes the two disagree. Reproduced 2026-08-29 rather than argued: plant a sibling
+// `_probe_helper.js`, import it from `index.js`, leave `files` alone —
+//   • `npm pack --dry-run`  →  3 files, the sibling absent
+//   • `npm test`            →  green
+// The published package then ERR_MODULE_NOT_FOUNDs for EVERY user, on the one command the docs
+// promise, while every gate in the repo is green and nothing anywhere says so until somebody
+// reports it. Latent today — `index.js` genuinely imports nothing but the SDK and node builtins —
+// and reachable on the next revision that splits a helper out of a 700-line file. The package is at
+// 1.3.0, so it has been revised three times already.
+//
+// NPM IS THE ORACLE, deliberately. `files` supports globs and directories, and npm always includes
+// package.json/README/LICENSE and always excludes others; a check that reimplemented those rules
+// would be a second implementation of npm's semantics, which is exactly how the two come to
+// disagree — the class this file exists for. `npm pack --dry-run --json` lists what the registry
+// receives, costs ~0.5s, needs no network, and runs no lifecycle script here (the package declares
+// none). If it cannot run, this FAILS rather than skips: a guard that quietly does nothing reads on
+// the summary line exactly like a clean one.
+//
+// Only RELATIVE specifiers are the tarball's business — a bare specifier is a dependency npm
+// installs for the user and `node:` is builtin — and the closure is walked transitively from the
+// declared entry points, so a file two hops deep is covered rather than only the first.
+//
+// TWO HONEST SCOPE NOTES, both measured while mutating this. The ENTRY-POINT half is UNREACHABLE:
+// npm always ships the file named by `main`/`bin` whatever `files` says (removing `index.js` from
+// the list still packs it), so that assertion is defence in depth over a guarantee npm already
+// makes — kept, because an unreachable guard costs nothing and an untested one that READS as tested
+// costs everything, but nobody should think it is load-bearing. And the closure walk has nothing to
+// walk today: `index.js` is the whole package, so the transitive step is exercised by the mutation
+// that plants a sibling, not by the tree in its current shape.
+{
+  const ROOT = fileURLToPath(new URL('../', import.meta.url));
+  const { execFileSync } = await import('node:child_process');
+
+  // The governed set is derived, never a hardcoded name: a package can only ship SHORT if it
+  // declares `files`, so that declaration is the membership test. A private package is nobody's
+  // registry problem, and one without `files` ships everything and cannot be short.
+  const pkgs = execFileSync('git', ['ls-files', '*package.json'], { cwd: ROOT, encoding: 'utf8' })
+    .split('\n').filter((p) => p && !p.includes('node_modules'))
+    .map((rel) => ({ rel, dir: path.dirname(path.join(ROOT, rel)),
+      json: JSON.parse(fs.readFileSync(path.join(ROOT, rel), 'utf8')) }))
+    .filter(({ json }) => !json.private && Array.isArray(json.files));
+  assert(pkgs.length >= 1,
+    'THE PACKAGE MANIFEST LEDGER found no publishable package declaring `files` — the extractor has '
+    + 'stopped reading them, so this check is vacuous rather than clean');
+
+  const missing = [];
+  let walked = 0;
+  const npmCommand = process.platform === 'win32' ? process.env.ComSpec || 'cmd.exe' : 'npm';
+  const npmArgs = process.platform === 'win32'
+    ? ['/d', '/s', '/c', 'npm.cmd', 'pack', '--dry-run', '--json']
+    : ['pack', '--dry-run', '--json'];
+  for (const { rel, dir, json } of pkgs) {
+    let shipped;
+    try {
+      const out = execFileSync(npmCommand, npmArgs, { cwd: dir, encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'ignore'] });
+      shipped = new Set(JSON.parse(out)[0].files.map((f) => f.path));
+    } catch (e) {
+      assert.fail(`THE PACKAGE MANIFEST LEDGER could not ask npm what ${rel} ships (${e.message}). `
+        + 'It fails rather than skipping: a guard that quietly does nothing looks exactly like one '
+        + 'that passed, and this is the only check standing between a short `files` list and a '
+        + 'published package that cannot start.');
+    }
+    assert(shipped.size >= 2, `npm reports ${rel} shipping ${shipped.size} file(s) — too few to be real`);
+
+    // Entry points first, because that is the sharpest possible break: a `bin` aimed at a file the
+    // manifest excludes is a package that cannot start at all.
+    const entries = [json.main, ...Object.values(json.bin ?? {})].filter(Boolean)
+      .map((p) => p.replace(/^\.\//, ''));
+    const seen = new Set();
+    const queue = [...new Set(entries)];
+    while (queue.length) {
+      const f = queue.shift();
+      if (seen.has(f)) continue;
+      seen.add(f);
+      if (!shipped.has(f)) { missing.push(`${rel}: \`${f}\` is imported (or is an entry point) but is not in the tarball`); continue; }
+      const abs = path.join(dir, f);
+      if (!fs.existsSync(abs)) continue;
+      walked++;
+      for (const m of fs.readFileSync(abs, 'utf8')
+        .matchAll(/(?:^|[^\w$.])(?:import|export)\s+(?:[^'"]*?\sfrom\s+)?['"](\.[^'"]+)['"]|import\s*\(\s*['"](\.[^'"]+)['"]/g)) {
+        const spec = m[1] ?? m[2];
+        queue.push(path.posix.normalize(path.posix.join(path.posix.dirname(f), spec)));
+      }
+    }
+  }
+
+  assert(walked >= 1,
+    `THE PACKAGE MANIFEST LEDGER walked only ${walked} source file(s) — the entry points did not `
+    + 'resolve, so nothing was actually checked');
+  assert.equal(missing.length, 0,
+    'a published package imports a file its `files` manifest does not ship. The publish gate spawns\n'
+    + '      the entry point from the WORKING TREE, so it stays green while the tarball the registry\n'
+    + '      serves cannot start — every `npx -y <pkg>` user gets ERR_MODULE_NOT_FOUND and no check\n'
+    + '      anywhere says so. Add the file to `files`:\n'
+    + `   - ${missing.join('\n   - ')}`);
+  console.log(`✓ every relative import reachable from ${pkgs.length} publishable package `
+    + `(${walked} source file${walked === 1 ? '' : 's'}) is in the tarball npm would publish`);
+}
+
+// ═══ THE COOLDOWN LEDGER — "not yet" is not a wait ════════════════════════════════════════════════
+// 38 of 39 cooldown refusals held the exact expiry IN THE COMPARISON ONE LINE ABOVE THE THROW and
+// threw it away. The FIRE path — the most expensive verb in the game, a two-hour trigger cooldown —
+// said only "Your trigger's still hot."; three street-race sites said "cool down" with no number;
+// `world.js` literally said "later". Six siblings already named their wait (the gym, the charter,
+// the mission ladder, the shank, the boost, the social verify), which is what makes this the
+// forgotten-sibling shape rather than a convention nobody had adopted.
+//
+// It is the WITHHELD-TERM class — the line is FLUENT and the actionable number is left off — so
+// check 14 (THE SILENCE LEDGER), which proves a handler is not MUTE, is structurally blind to it.
+// And it costs agents more than people: agents are first-class players here, they read these codes,
+// and with nothing machine-readable to back off on they retry blind into a 1/3s throttle.
+//
+// THE RULE: every `GameError('cooldown', …)` carries `cooldownSeconds` — the {district}/{lockSeconds}
+// discipline — so a client can count it down and an agent can sleep on it. The SENTENCE is checked by
+// the wave regression in test/client.js, which drives the real reply; this checks the payload, which
+// is the half a driven test cannot cover for 39 sites. Catalogue-or-declare, both directions.
+{
+  const DECLARED = {
+    // none today: every cooldown refusal in the tree holds its own expiry at the throw. A site that
+    // genuinely cannot (a cooldown whose end is not knowable at the refusal) is declared here WITH
+    // that property — never because computing it was awkward.
+  };
+  const sites = [];
+  for (const f of files) {
+    const src = decomment(fs.readFileSync(f, 'utf8'));
+    for (const m of src.matchAll(/\bnew GameError\(\s*'cooldown'/g)) {
+      let i = m.index + m[0].length, depth = 1, q = null;
+      const start = i;
+      while (i < src.length && depth > 0) {
+        const c = src[i];
+        if (q) { if (c === '\\') { i += 2; continue; } if (c === q) q = null; }
+        else if (c === "'" || c === '"' || c === '`') q = c;
+        else if ('([{'.includes(c)) depth++;
+        else if (')]}'.includes(c)) depth--;
+        i++;
+      }
+      const args = src.slice(start, i - 1);
+      const rel = f.replace(/^.*\/src\//, 'src/');
+      const line = src.slice(0, m.index).split('\n').length;
+      sites.push({ at: `${rel}:${line}`, args });
+    }
+  }
+  assert(sites.length >= 30, `THE COOLDOWN LEDGER found only ${sites.length} cooldown refusals — the `
+    + 'extractor is broken, not the tree. A scan that sees nothing passes for a clean sweep.');
+
+  const mute = sites.filter((s) => !/cooldownSeconds/.test(s.args) && !DECLARED[s.at]);
+  assert.deepEqual(mute.map((s) => s.at), [], 'cooldown refusal(s) that never say WHEN. The expiry is '
+    + 'in the comparison one line above the throw — pass it as `{ cooldownSeconds }` so a client can '
+    + 'count it down and an agent can back off instead of retrying blind:\n   - '
+    + mute.map((s) => s.at).join('\n   - '));
+  const stale = Object.keys(DECLARED).filter((at) => !sites.some((s) => s.at === at));
+  assert.deepEqual(stale, [], 'declaration(s) for a cooldown refusal the tree no longer has at that '
+    + `line. A stale waiver silently re-covers the next site that lands there:\n   - ${stale.join('\n   - ')}`);
+  console.log(`✓ all ${sites.length} cooldown refusals carry the remainder — none says only "not yet"`);
+}
+
+// ═══ THE BUCKET LEDGER — a refill is not a day ════════════════════════════════════════════════════
+// Eleven rolling token buckets meter this game (`*_used`/`*_at` pairs: the exchange window, the
+// vault's daily claim, jailhouse attempts, safehouse time, the public wash, the port supplier, the
+// level-up refill, stat-by-use, RICO structuring, club notoriety, the retired launder cap). They all
+// REFILL CONTINUOUSLY on the wall clock — `used = max(0, stored − elapsed/window × cap)` — which
+// makes "come back tomorrow" false in the ordinary partially-spent state, and false by a lot: at 5
+// bust attempts a day one comes back every ~4.8h, so that line overstated the wait by up to 19 hours.
+//
+// This is the fluent-but-false class, which no silence pattern can see — check 14 (THE SILENCE
+// LEDGER) proves a handler is not MUTE and is structurally blind to a handler that speaks and is
+// wrong. Wave 76 fixed it in `exchange.js` and did not sweep it; the sweep found two more (the vault
+// and the jailhouse) and a third bucket carrying the same expression in two copies (the safehouse,
+// in the till AND the sheet — the sixty-nine-private-copies shape, waiting).
+//
+// THE RULE: a bucket whose guard REFUSES must name the remainder, and must carry it as a payload —
+// the {district}/{lockSeconds} discipline, so a client can offer the ask instead of sending the
+// player to read a board that never said so. Catalogue-or-declare, both directions: a bucket in
+// neither list fails, and so does a declaration for a bucket the tree no longer has.
+{
+  const REMAINDER = /\b(headroom|left|Left|refill|Refill|remaining|pool|Pool)/;
+  // bucket → the refusal it guards. The payload is what makes it machine-readable; the sentence is
+  // checked by the wave regressions in test/client.js, which drive the real reply.
+  const ENFORCED = {
+    exchange_used: { file: 'src/exchange.js', codes: ['cap', 'dry'] },
+    vault_used: { file: 'src/treasury.js', codes: ['daily_cap'] },
+    bust_used: { file: 'src/social/combat.js', codes: ['bust_cap'] },
+    safehouse_used: { file: 'src/social/defense.js', codes: ['safe_cap'] },
+  };
+  // Declared: a bucket that REFUSES NOBODY has no remainder to name. Each reason is a property of
+  // the bucket, not a preference — meter silently and there is no sentence to get wrong.
+  const DECLARED = {
+    port_used: 'refuses, and already names the remainder — `The supplier can only move ${usd(left)} more contraband today` (this was the pattern the others should have followed)',
+    wash_used: 'the D3 public wash cap guarded swap-buy, which tokenomics v3 severed — no live refusal reads it',
+    launder_used: 'business laundering is retired (`launderAtBusiness` throws `retired`); the column and its board figure are vestigial',
+    rwa_used: 'the RICO structuring window ADDS HEAT rather than refusing — there is no refusal to name a figure in',
+    noto_used: 'an internal per-patron clamp on how much notoriety one account can put on a club — it silences a grief vector, it never refuses the player',
+    statuse_used: 'the stats-by-use drip is metered SILENTLY by design — a gift that scolds you for taking it too often is worse than one that simply stops',
+    refill_used: 'the level-up refill ceiling is metered SILENTLY for the same reason (BALANCE § THE REFILL CEILING) — the crossing still happens, only the gift is bounded',
+  };
+
+  // the corpus is every bucket the TREE has, never the two lists — a ledger that enumerates itself
+  // cannot notice a twelfth bucket landing tomorrow.
+  const found = new Set();
+  for (const f of files) for (const m of fs.readFileSync(f, 'utf8').matchAll(/\b(\w+)_used\b/g)) found.add(`${m[1]}_used`);
+  assert(found.size >= 8, `THE BUCKET LEDGER found only ${found.size} token buckets — the extractor is `
+    + 'broken, not the tree. A scan that sees nothing passes for a clean sweep.');
+
+  const undeclared = [...found].filter((b) => !ENFORCED[b] && !DECLARED[b]);
+  assert.deepEqual(undeclared, [], 'rolling token bucket(s) in neither list. A bucket that REFUSES must '
+    + 'name what is LEFT (and carry it as a payload) — "come back tomorrow" is false for anything that '
+    + 'refills on the wall clock. One that refuses nobody is declared with the property that makes it '
+    + `silent:\n   - ${undeclared.join('\n   - ')}`);
+  const stale = [...Object.keys(ENFORCED), ...Object.keys(DECLARED)].filter((b) => !found.has(b));
+  assert.deepEqual(stale, [], 'declaration(s) for a bucket the tree no longer has. A stale waiver '
+    + `silently re-covers the next bucket that takes the name:\n   - ${stale.join('\n   - ')}`);
+
+  const mute = [];
+  for (const [bucket, { file, codes }] of Object.entries(ENFORCED)) {
+    const s = fs.readFileSync(file, 'utf8');
+    for (const code of codes) {
+      const re = new RegExp(`\\bGameError\\(\\s*'${code}'`, 'g');
+      let seen = 0;
+      for (const m of s.matchAll(re)) {
+        // walk the balanced argument list (skipping string bodies so a `)` in a message cannot
+        // miscount), then split on DEPTH-0 commas: the third argument is the payload.
+        let i = m.index + m[0].length - `'${code}'`.length, depth = 1, str = null;
+        const start = i;
+        while (i < s.length && depth > 0) {
+          const c = s[i];
+          if (str) { if (c === '\\') { i += 2; continue; } if (c === str) str = null; }
+          else if (c === "'" || c === '"' || c === '`') str = c;
+          else if (c === '(' || c === '{' || c === '[') depth++;
+          else if (c === ')' || c === '}' || c === ']') depth--;
+          i++;
+        }
+        const args = s.slice(start, i - 1);
+        const parts = []; let d = 0, q = null, last = 0;
+        for (let j = 0; j < args.length; j++) {
+          const c = args[j];
+          if (q) { if (c === '\\') { j++; continue; } if (c === q) q = null; continue; }
+          if (c === "'" || c === '"' || c === '`') { q = c; continue; }
+          if ('([{'.includes(c)) d++;
+          else if (')]}'.includes(c)) d--;
+          else if (c === ',' && d === 0) { parts.push(args.slice(last, j)); last = j + 1; }
+        }
+        parts.push(args.slice(last));
+        seen++;
+        if (parts.length < 3 || !REMAINDER.test(parts.slice(2).join(',')))
+          mute.push(`${file} — GameError('${code}', …) guards ${bucket} and carries no remainder in its payload`);
+      }
+      assert(seen > 0, `THE BUCKET LEDGER found no GameError('${code}') in ${file} — the ENFORCED entry `
+        + 'for ' + bucket + ' points at a refusal that has moved or gone. A mapping that matches nothing '
+        + 'reads exactly like a rule that holds.');
+    }
+  }
+  assert.deepEqual(mute, [], 'bucket refusal(s) naming the BOUND with no machine-readable remainder. The '
+    + 'figure a capped player needs is what is LEFT (or when it reopens), and it is computed one line '
+    + 'above the throw — pass it as the third GameError argument so a client can offer the ask:\n   - '
+    + mute.join('\n   - '));
+  console.log(`✓ all ${found.size} rolling token buckets classified — ${Object.keys(ENFORCED).length} refuse and name what is left, ${Object.keys(DECLARED).length} refuse nobody`);
 }

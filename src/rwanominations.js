@@ -1,0 +1,1419 @@
+// PUBLIC FAMILY RWA NOMINATIONS — immutable candidate/evidence snapshots, current seated-family
+// support, append-only events, one reviewer claim, and hard original deadlines. HTTP/reviewer
+// authentication and Safe packages deliberately belong to the next slice.
+import crypto from 'node:crypto';
+import { getAddress, keccak256, toBytes } from 'viem';
+import { seatedGangs } from './commission.js';
+import { dbCaps } from './db.js';
+import { GameError } from './game.js';
+import {
+  buildStockTokenActivationV2,
+  computeStockAssetVersionKey,
+  ROBINHOOD_CHAIN_ID_V2,
+} from './stockcatalogv2.js';
+
+const OPEN = new Set(['pending', 'review_requested', 'under_review']);
+const TERMINAL = new Set(['approved', 'rejected', 'not_eligible', 'expired']);
+const DISPOSITIONS = new Set(['approved', 'rejected', 'not_eligible']);
+const SUPPORT_THRESHOLD = 3;
+const CADENCE_MS = 168 * 60 * 60 * 1000;
+const PENDING_MS = 30 * 24 * 60 * 60 * 1000;
+const DEFAULT_LIMIT = 100;
+const MAX_LIMIT = 500;
+const BOARD_LIVE_WORK_MAX = 5000;
+const BOARD_STALE_SLOT_WORK_MAX = 5000;
+const QUEUE_CLEANUP_CHUNK_SIZE = 250;
+const ZERO_HASH = `0x${'00'.repeat(32)}`;
+const SAFE_TEXT = /^[^<>"\x60\x00-\x1f\x7f]*$/;
+
+const fail = (code, message, data) => { throw new GameError(code, message, data); };
+const sameId = (a, b) => String(a) === String(b);
+
+function strictText(value, field, { min = 1, max, optional = false } = {}) {
+  if (value == null && optional) return null;
+  if (typeof value !== 'string' || value !== value.trim() || value.length < min || value.length > max
+      || !SAFE_TEXT.test(value)) {
+    fail(`bad_${field}`, `Invalid ${field.replaceAll('_', ' ')}.`);
+  }
+  return value;
+}
+
+function strictHash(value, field, code = `bad_${field}`) {
+  if (typeof value !== 'string' || !/^0x[0-9a-f]{64}$/.test(value) || value === ZERO_HASH) {
+    fail(code, `Invalid ${field.replaceAll('_', ' ')}.`);
+  }
+  return value;
+}
+
+function strictAddress(value) {
+  if (typeof value !== 'string') fail('bad_address', 'Invalid token address.');
+  let normalized;
+  try { normalized = getAddress(value); }
+  catch { fail('bad_address', 'Invalid token address.'); }
+  if (/^0x0{40}$/i.test(normalized)) fail('bad_address', 'Invalid token address.');
+  return normalized;
+}
+
+function evidenceUri(value) {
+  if (value == null) return null;
+  const uri = strictText(value, 'evidence_uri', { max: 2048 });
+  let parsed;
+  try { parsed = new URL(uri); }
+  catch { fail('bad_evidence_uri', 'Evidence URI must be HTTPS or IPFS.'); }
+  if (!['https:', 'ipfs:'].includes(parsed.protocol) || !parsed.hostname) {
+    fail('bad_evidence_uri', 'Evidence URI must be HTTPS or IPFS.');
+  }
+  return uri;
+}
+
+function candidateInput(input) {
+  if (!input || typeof input !== 'object' || Array.isArray(input)) fail('bad_nomination', 'Invalid nomination.');
+  if (input.chainId !== ROBINHOOD_CHAIN_ID_V2) fail('bad_chain', 'RWA nominations are pinned to chain 4663.');
+  if (typeof input.ticker !== 'string' || !/^[A-Z0-9._-]{1,24}$/.test(input.ticker)) {
+    fail('bad_ticker', 'Ticker must already be normalized uppercase ASCII.');
+  }
+  const name = strictText(input.name, 'name', { max: 120 });
+  const tokenAddress = strictAddress(input.tokenAddress);
+  if (typeof input.tokenDecimals !== 'number' || !Number.isInteger(input.tokenDecimals)
+      || input.tokenDecimals < 0 || input.tokenDecimals > 255) {
+    fail('bad_decimals', 'Token decimals must be an integer from 0 through 255.');
+  }
+  const robinhoodAssetIdHash = strictHash(input.robinhoodAssetIdHash, 'hash', 'bad_hash');
+  const evidenceHash = strictHash(input.evidenceHash, 'evidence', 'bad_evidence');
+  const rationale = strictText(input.rationale, 'rationale', { max: 2000 });
+  const uri = evidenceUri(input.evidenceUri);
+  const submittedKey = strictHash(input.assetVersionKey, 'asset_key', 'bad_asset_key');
+  const computedKey = computeStockAssetVersionKey({
+    chainId: input.chainId,
+    ticker: input.ticker,
+    tokenAddress,
+    robinhoodAssetIdHash,
+  });
+  if (submittedKey !== computedKey) fail('asset_key_mismatch', 'Candidate identity does not match its version key.');
+  return {
+    assetVersionKey: computedKey,
+    chainId: input.chainId,
+    ticker: input.ticker,
+    tickerHash: keccak256(toBytes(input.ticker)),
+    tokenAddress,
+    tokenDecimals: input.tokenDecimals,
+    robinhoodAssetIdHash,
+    name,
+    rationale,
+    evidenceHash,
+    evidenceUri: uri,
+  };
+}
+
+function nominationId(value) {
+  return strictText(value, 'nomination', { max: 200 });
+}
+
+function reviewerId(value) {
+  return strictText(value, 'reviewer', { max: 200 });
+}
+
+function pageOptions(options = {}, kind) {
+  if (!options || typeof options !== 'object' || Array.isArray(options)) fail('bad_page', 'Invalid page options.');
+  const limit = options.limit ?? DEFAULT_LIMIT;
+  if (!Number.isInteger(limit) || limit < 1 || limit > MAX_LIMIT) fail('bad_limit', `Limit must be 1 through ${MAX_LIMIT}.`);
+  let cursor = null;
+  if (options.cursor != null) {
+    if (typeof options.cursor !== 'string' || !options.cursor || options.cursor.length > 1000) {
+      fail('bad_cursor', 'Invalid cursor.');
+    }
+    try {
+      cursor = JSON.parse(Buffer.from(options.cursor, 'base64url').toString('utf8'));
+    } catch { fail('bad_cursor', 'Invalid cursor.'); }
+    if (!cursor || cursor.kind !== kind || typeof cursor.id !== 'string' || typeof cursor.at !== 'string'
+        || !Number.isFinite(new Date(cursor.at).getTime())) {
+      fail('bad_cursor', 'Invalid cursor.');
+    }
+    if (['board', 'review_queue'].includes(kind)
+        && (!Number.isInteger(cursor.support) || cursor.support < 0 || cursor.support > 5)) {
+      fail('bad_cursor', 'Invalid cursor.');
+    }
+  }
+  return { limit, cursor };
+}
+
+function nextCursor(kind, row, support) {
+  if (!row) return null;
+  const payload = { kind, at: new Date(row.created_at ?? row.pending_until).toISOString(), id: String(row.id) };
+  if (['board', 'review_queue'].includes(kind)) payload.support = support;
+  return Buffer.from(JSON.stringify(payload), 'utf8').toString('base64url');
+}
+
+function wholeSecond(value) {
+  return new Date(Math.floor(new Date(value).getTime() / 1000) * 1000);
+}
+
+async function wallClock(db) {
+  // PostgreSQL now() is transaction-start time and is therefore unsafe after a row-lock wait. The
+  // pg-mem adapter has no clock_timestamp(), so its declared capability uses statement-time now();
+  // focused tests intercept only this labelled query to drive exact equality deterministically.
+  const fn = dbCaps.skipLocked ? 'clock_timestamp()' : 'now()';
+  const row = (await db.query(`SELECT ${fn} AS wall_now /* rwa_wall_clock */`)).rows[0];
+  const at = new Date(row?.wall_now);
+  if (!Number.isFinite(at.getTime())) throw new Error('database wall clock returned an invalid timestamp');
+  return at;
+}
+
+async function inTransaction(db, fn, { isolation } = {}) {
+  // A checked-out node-postgres PoolClient exposes both connect() and release(); the pool exposes
+  // connect() but not release(). Query-only adapters are also caller-owned. Only a pool-shaped
+  // capability may create/commit/release a transaction here, which lets Task 4 compose disposition
+  // and its Safe package atomically on one caller-owned client.
+  if (typeof db?.connect !== 'function' || typeof db?.release === 'function') return fn(db);
+  const client = await db.connect();
+  try {
+    await client.query(isolation ? `BEGIN ISOLATION LEVEL ${isolation}` : 'BEGIN');
+    const result = await fn(client);
+    await client.query('COMMIT');
+    return result;
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+async function lockCurrentFamily(ch, client) {
+  const hint = (await client.query(
+    'SELECT gang_id FROM gang_members WHERE character_id=$1', [ch.id],
+  )).rows[0];
+  if (!hint) return null;
+  const family = (await client.query('SELECT id FROM gangs WHERE id=$1 FOR UPDATE', [hint.gang_id])).rows[0];
+  const member = (await client.query(
+    'SELECT gang_id, role FROM gang_members WHERE character_id=$1 FOR UPDATE', [ch.id],
+  )).rows[0];
+  if (!member || !sameId(member.gang_id, hint.gang_id)) return { error: 'contention' };
+  return family ? member : null;
+}
+
+async function authorityState(member, client) {
+  if (member?.error === 'contention') return { error: 'contention' };
+  if (!member || !['boss', 'underboss'].includes(member.role)) {
+    return { error: 'rank' };
+  }
+  const seats = await seatedGangs(client);
+  if (!seats.some((seat) => sameId(seat.id, member.gang_id))) {
+    return { error: 'no_seat' };
+  }
+  return { familyId: String(member.gang_id), role: member.role, seats };
+}
+
+async function requireAuthority(member, client) {
+  const authority = await authorityState(member, client);
+  if (authority.error === 'contention') fail('contention', 'Family membership changed during the mutation; retry.');
+  if (authority.error === 'rank') fail('rank', 'Only a current family boss or underboss may speak here.');
+  if (authority.error === 'no_seat') fail('no_seat', 'Only a currently seated Commission family may speak here.');
+  return authority;
+}
+
+function stable(value) {
+  if (Array.isArray(value)) return value.map(stable);
+  if (!value || typeof value !== 'object') return value;
+  return Object.fromEntries(Object.keys(value).sort().map((key) => [key, stable(value[key])]));
+}
+
+function eventRecord({
+  nominationId: id, eventType, familyId = null, accountId = null,
+  actorType, actorId, details = {}, at,
+}) {
+  const publicDetails = stable(details);
+  const detailsHash = keccak256(toBytes(JSON.stringify(publicDetails)));
+  return [crypto.randomUUID(), id, eventType, familyId, accountId, actorType, actorId,
+    detailsHash, JSON.stringify(publicDetails), at];
+}
+
+async function appendEvent(client, event) {
+  await client.query(
+    `INSERT INTO rwa_nomination_events_v2
+      (event_id,nomination_id,event_type,family_id,account_id,actor_type,actor_id,details_hash,details,created_at)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
+    eventRecord(event),
+  );
+}
+
+function chunks(values, size = QUEUE_CLEANUP_CHUNK_SIZE) {
+  const result = [];
+  for (let i = 0; i < values.length; i += size) result.push(values.slice(i, i + size));
+  return result;
+}
+
+async function appendQueueEvents(client, events) {
+  for (const batch of chunks(events)) {
+    const params = [];
+    const values = batch.map((event) => {
+      const record = eventRecord(event);
+      const placeholders = record.map((value) => {
+        params.push(value);
+        return `$${params.length}`;
+      });
+      return `(${placeholders.join(',')})`;
+    });
+    await client.query(
+      `INSERT INTO rwa_nomination_events_v2
+        (event_id,nomination_id,event_type,family_id,account_id,actor_type,actor_id,details_hash,details,created_at)
+       VALUES ${values.join(',')} /* rwa_queue_event_batch */`,
+      params,
+    );
+  }
+}
+
+async function updateQueueNominationIds(client, ids, setClause, marker) {
+  for (const batch of chunks(ids)) {
+    const params = [];
+    const list = inList(batch, params);
+    await client.query(
+      `UPDATE rwa_nominations_v2 SET ${setClause} WHERE id IN (${list}) /* ${marker} */`, params,
+    );
+  }
+}
+
+async function clearQueueEndorsements(client, slots, at) {
+  for (const batch of chunks(slots)) {
+    const params = [at];
+    const conditions = batch.map((slot) => {
+      params.push(slot.nomination_id, slot.family_id);
+      return `(nomination_id=$${params.length - 1} AND family_id=$${params.length})`;
+    });
+    await client.query(
+      `UPDATE rwa_nomination_endorsements_v2 SET active=false,updated_at=$1
+        WHERE ${conditions.join(' OR ')} /* rwa_queue_endorsement_batch */`, params,
+    );
+  }
+}
+
+async function seatSet(client) {
+  return new Set((await seatedGangs(client)).map((seat) => String(seat.id)));
+}
+
+async function endorsements(client, id) {
+  return (await client.query(
+    'SELECT nomination_id,family_id,account_id,active,rationale,updated_at FROM rwa_nomination_endorsements_v2 WHERE nomination_id=$1',
+    [id],
+  )).rows;
+}
+
+async function endorsementsFor(client, ids, activeSeats) {
+  if (!ids.length) return new Map();
+  const params = [];
+  const placeholders = inList(ids, params);
+  let activeWhere = '';
+  if (activeSeats) {
+    const seated = inList([...activeSeats], params);
+    activeWhere = `AND active AND family_id IN (${seated})`;
+  }
+  const rows = (await client.query(
+    `SELECT nomination_id,family_id,account_id,active,rationale,updated_at
+       FROM rwa_nomination_endorsements_v2
+      WHERE nomination_id IN (${placeholders}) ${activeWhere}
+      ORDER BY nomination_id ASC,family_id ASC
+      ${activeSeats ? '/* rwa_board_active_slots */' : ''}`,
+    params,
+  )).rows;
+  const grouped = new Map(ids.map((id) => [String(id), []]));
+  for (const row of rows) grouped.get(String(row.nomination_id))?.push(row);
+  return grouped;
+}
+
+function supportOf(row, slots, seats) {
+  let support = row.sponsor_support_active && seats.has(String(row.sponsor_family_id)) ? 1 : 0;
+  for (const slot of slots) {
+    if (slot.active && !sameId(slot.family_id, row.sponsor_family_id) && seats.has(String(slot.family_id))) support++;
+  }
+  return support;
+}
+
+async function expireLocked(client, row, at, actor = { type: 'system', id: 'expiry' }) {
+  if (!OPEN.has(row.status) || at.getTime() < new Date(row.pending_until).getTime()) return false;
+  await client.query("UPDATE rwa_nominations_v2 SET status='expired' WHERE id=$1", [row.id]);
+  row.status = 'expired';
+  await appendEvent(client, {
+    nominationId: row.id,
+    eventType: 'expired',
+    actorType: actor.type,
+    actorId: actor.id,
+    details: { pendingUntil: new Date(row.pending_until).toISOString() },
+    at,
+  });
+  return true;
+}
+
+async function refreshLocked(client, row, at, suppliedSeats, suppliedSlots) {
+  if (!OPEN.has(row.status)) {
+    const seats = suppliedSeats ?? await seatSet(client);
+    return { row, slots: suppliedSlots ?? await endorsements(client, row.id), seats, changed: false };
+  }
+  if (await expireLocked(client, row, at)) {
+    const seats = suppliedSeats ?? await seatSet(client);
+    return { row, slots: suppliedSlots ?? await endorsements(client, row.id), seats, changed: true };
+  }
+  const seats = suppliedSeats ?? await seatSet(client);
+  let changed = false;
+  if (row.sponsor_support_active && !seats.has(String(row.sponsor_family_id))) {
+    await client.query('UPDATE rwa_nominations_v2 SET sponsor_support_active=false WHERE id=$1', [row.id]);
+    row.sponsor_support_active = false;
+    changed = true;
+    await appendEvent(client, {
+      nominationId: row.id,
+      eventType: 'sponsor_seat_lost',
+      familyId: row.sponsor_family_id,
+      accountId: row.sponsor_account_id,
+      actorType: 'system',
+      actorId: 'seat-refresh',
+      details: {},
+      at,
+    });
+  }
+  const slots = suppliedSlots ?? await endorsements(client, row.id);
+  for (const slot of slots) {
+    if (slot.active && !seats.has(String(slot.family_id))) {
+      await client.query(
+        'UPDATE rwa_nomination_endorsements_v2 SET active=false,updated_at=$3 WHERE nomination_id=$1 AND family_id=$2',
+        [row.id, slot.family_id, at],
+      );
+      slot.active = false;
+      changed = true;
+      await appendEvent(client, {
+        nominationId: row.id,
+        eventType: 'endorsement_seat_lost',
+        familyId: slot.family_id,
+        accountId: slot.account_id,
+        actorType: 'system',
+        actorId: 'seat-refresh',
+        details: {},
+        at,
+      });
+    }
+  }
+  const support = supportOf(row, slots, seats);
+  const wanted = support >= SUPPORT_THRESHOLD ? 'review_requested' : 'pending';
+  if (['pending', 'review_requested'].includes(row.status) && row.status !== wanted) {
+    const prior = row.status;
+    await client.query('UPDATE rwa_nominations_v2 SET status=$2 WHERE id=$1', [row.id, wanted]);
+    row.status = wanted;
+    changed = true;
+    await appendEvent(client, {
+      nominationId: row.id,
+      eventType: wanted === 'review_requested' ? 'review_requested' : 'review_request_demoted',
+      actorType: 'system',
+      actorId: 'support-threshold',
+      details: { from: prior, support, threshold: SUPPORT_THRESHOLD },
+      at,
+    });
+  }
+  return { row, slots, seats, changed };
+}
+
+async function refreshQueueLockedBatch(client, rows, at, seats, slotMap, staleMap) {
+  const expired = [];
+  const staleSponsors = [];
+  const staleEndorsements = [];
+  const promoted = [];
+  const demoted = [];
+  const events = [];
+  const refreshed = new Map();
+
+  for (const row of rows) {
+    const id = String(row.id);
+    const slots = [...(slotMap.get(id) ?? []), ...(staleMap.get(id) ?? [])];
+    if (!OPEN.has(row.status)) {
+      refreshed.set(id, { row, slots, seats, support: supportOf(row, slots, seats) });
+      continue;
+    }
+    if (at.getTime() >= new Date(row.pending_until).getTime()) {
+      expired.push(id);
+      row.status = 'expired';
+      events.push({
+        nominationId: id, eventType: 'expired', actorType: 'system', actorId: 'expiry',
+        details: { pendingUntil: new Date(row.pending_until).toISOString() }, at,
+      });
+      refreshed.set(id, { row, slots, seats, support: supportOf(row, slots, seats) });
+      continue;
+    }
+    if (row.sponsor_support_active && !seats.has(String(row.sponsor_family_id))) {
+      staleSponsors.push(id);
+      row.sponsor_support_active = false;
+      events.push({
+        nominationId: id,
+        eventType: 'sponsor_seat_lost',
+        familyId: row.sponsor_family_id,
+        accountId: row.sponsor_account_id,
+        actorType: 'system',
+        actorId: 'seat-refresh',
+        details: {},
+        at,
+      });
+    }
+    for (const slot of slots) {
+      if (slot.active && !seats.has(String(slot.family_id))) {
+        staleEndorsements.push(slot);
+        slot.active = false;
+        events.push({
+          nominationId: id,
+          eventType: 'endorsement_seat_lost',
+          familyId: slot.family_id,
+          accountId: slot.account_id,
+          actorType: 'system',
+          actorId: 'seat-refresh',
+          details: {},
+          at,
+        });
+      }
+    }
+    const support = supportOf(row, slots, seats);
+    const wanted = support >= SUPPORT_THRESHOLD ? 'review_requested' : 'pending';
+    if (['pending', 'review_requested'].includes(row.status) && row.status !== wanted) {
+      const prior = row.status;
+      (wanted === 'review_requested' ? promoted : demoted).push(id);
+      row.status = wanted;
+      events.push({
+        nominationId: id,
+        eventType: wanted === 'review_requested' ? 'review_requested' : 'review_request_demoted',
+        actorType: 'system',
+        actorId: 'support-threshold',
+        details: { from: prior, support, threshold: SUPPORT_THRESHOLD },
+        at,
+      });
+    }
+    refreshed.set(id, { row, slots, seats, support });
+  }
+
+  await updateQueueNominationIds(client, expired, "status='expired'", 'rwa_queue_expiry_batch');
+  await updateQueueNominationIds(
+    client, staleSponsors, 'sponsor_support_active=false', 'rwa_queue_sponsor_batch',
+  );
+  await clearQueueEndorsements(client, staleEndorsements, at);
+  await updateQueueNominationIds(
+    client, promoted, "status='review_requested'", 'rwa_queue_promotion_batch',
+  );
+  await updateQueueNominationIds(client, demoted, "status='pending'", 'rwa_queue_demotion_batch');
+  await appendQueueEvents(client, events);
+  return refreshed;
+}
+
+function nominationView(row, support, extras = {}) {
+  return {
+    id: String(row.id),
+    assetVersionKey: row.asset_version_key,
+    chainId: String(row.chain_id),
+    ticker: row.ticker,
+    tickerHash: row.ticker_hash,
+    tokenAddress: row.token_address,
+    tokenDecimals: Number(row.token_decimals),
+    robinhoodAssetIdHash: row.robinhood_asset_id_hash,
+    name: row.name,
+    sponsorFamilyId: String(row.sponsor_family_id),
+    sponsorSupportActive: Boolean(row.sponsor_support_active),
+    rationale: row.rationale,
+    evidenceHash: row.evidence_hash,
+    evidenceUri: row.evidence_uri,
+    priorNominationId: row.prior_nomination_id,
+    status: row.status,
+    executionStatus: row.execution_status,
+    support,
+    supportThreshold: SUPPORT_THRESHOLD,
+    createdAt: new Date(row.created_at).toISOString(),
+    pendingUntil: new Date(row.pending_until).toISOString(),
+    claimedBy: row.claimed_by,
+    claimedAt: row.claimed_at ? new Date(row.claimed_at).toISOString() : null,
+    dispositionBy: row.disposition_by,
+    dispositionAt: row.disposition_at ? new Date(row.disposition_at).toISOString() : null,
+    dispositionReason: row.disposition_reason,
+    approvedAt: row.approved_at ? new Date(row.approved_at).toISOString() : null,
+    validUntil: row.valid_until ? new Date(row.valid_until).toISOString() : null,
+    ...extras,
+  };
+}
+
+async function viewLocked(client, row, at, suppliedSeats, extras) {
+  const refreshed = await refreshLocked(client, row, at, suppliedSeats);
+  return nominationView(refreshed.row, supportOf(refreshed.row, refreshed.slots, refreshed.seats), extras);
+}
+
+async function openByKey(client, key) {
+  const rows = (await client.query(
+    "SELECT * FROM rwa_nominations_v2 WHERE asset_version_key=$1 AND status IN ('pending','review_requested','under_review') FOR UPDATE",
+    [key],
+  )).rows;
+  // pg-mem can retain a stale partial-index entry after a status update; PostgreSQL does not. The
+  // application predicate is cheap and keeps the test adapter from treating terminal history open.
+  return rows.find((row) => OPEN.has(row.status));
+}
+
+export async function createRwaNomination(ch, input, client, h) {
+  const candidate = candidateInput(input);
+  const member = await lockCurrentFamily(ch, client);
+  // The sponsor-family lock serializes same-family different-key cadence checks. Same-key families
+  // may proceed independently to PostgreSQL's partial unique index.
+  // lockCurrentFamily already holds the actor's current family row when membership exists.
+  let authority;
+  let existing = await openByKey(client, candidate.assetVersionKey);
+  const at = await wallClock(client);
+  let justExpiredPriorId = null;
+  let justExpiredNomination = null;
+  if (existing) {
+    const nomination = await viewLocked(client, existing, at);
+    if (existing.status !== 'expired') {
+      authority = await requireAuthority(member, client);
+      return {
+        nomination,
+        duplicate: true,
+        endorsementAvailable: !sameId(authority.familyId, existing.sponsor_family_id),
+        requestingFamilyId: authority.familyId,
+      };
+    }
+    justExpiredPriorId = existing.id;
+    justExpiredNomination = nomination;
+    existing = null;
+  }
+  const state = await authorityState(member, client);
+  if (state.error && justExpiredNomination) {
+    return {
+      nomination: justExpiredNomination,
+      duplicate: false,
+      expired: true,
+      creationRefused: state.error,
+      requestingFamilyId: member?.gang_id ? String(member.gang_id) : null,
+    };
+  }
+  authority = await requireAuthority(member, client);
+  const previousByFamily = (await client.query(
+    'SELECT id,created_at FROM rwa_nominations_v2 WHERE sponsor_family_id=$1 ORDER BY created_at DESC,id DESC LIMIT 1 FOR UPDATE',
+    [authority.familyId],
+  )).rows[0];
+  if (previousByFamily && at.getTime() - new Date(previousByFamily.created_at).getTime() < CADENCE_MS) {
+    const eligibleAt = new Date(new Date(previousByFamily.created_at).getTime() + CADENCE_MS).toISOString();
+    if (justExpiredNomination) {
+      return {
+        nomination: justExpiredNomination,
+        duplicate: false,
+        expired: true,
+        creationRefused: 'nomination_cooldown',
+        eligibleAt,
+        requestingFamilyId: authority.familyId,
+      };
+    }
+    fail('nomination_cooldown', 'That family has already opened a nomination in the rolling seven-day window.', {
+      eligibleAt,
+    });
+  }
+  // PostgreSQL uses the exact version-key history index. pg-mem can retain a stale partial-index
+  // lookup after a row leaves the open-state predicate, so its adapter selects by the four fields
+  // from which that same V2 key was independently recomputed.
+  const prior = (await client.query(
+    dbCaps.skipLocked
+      ? `SELECT id,evidence_hash FROM rwa_nominations_v2 WHERE asset_version_key=$1
+          ORDER BY created_at DESC,id DESC LIMIT 1`
+      : `SELECT id,evidence_hash FROM rwa_nominations_v2
+          WHERE chain_id=$1 AND ticker=$2 AND token_address=$3 AND robinhood_asset_id_hash=$4
+          ORDER BY created_at DESC,id DESC LIMIT 1`,
+    dbCaps.skipLocked
+      ? [candidate.assetVersionKey]
+      : [candidate.chainId, candidate.ticker, candidate.tokenAddress, candidate.robinhoodAssetIdHash],
+  )).rows[0];
+  if (prior?.evidence_hash && prior.evidence_hash !== ZERO_HASH
+      && prior.evidence_hash === candidate.evidenceHash) {
+    fail('evidence_not_fresh', 'A linked nomination must provide evidence newer than its direct predecessor.');
+  }
+  const id = crypto.randomUUID();
+  const pendingUntil = new Date(at.getTime() + PENDING_MS);
+  const inserted = (await client.query(
+    `INSERT INTO rwa_nominations_v2
+      (id,asset_version_key,chain_id,ticker,ticker_hash,token_address,token_decimals,
+       robinhood_asset_id_hash,name,sponsor_family_id,sponsor_account_id,sponsor_support_active,
+       rationale,evidence_hash,evidence_uri,prior_nomination_id,status,execution_status,created_at,pending_until)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,true,$12,$13,$14,$15,'pending','not_applicable',$16,$17)
+     ON CONFLICT DO NOTHING RETURNING *`,
+    [id, candidate.assetVersionKey, 4663, candidate.ticker, candidate.tickerHash,
+      candidate.tokenAddress, candidate.tokenDecimals, candidate.robinhoodAssetIdHash, candidate.name,
+      authority.familyId, ch.account_id, candidate.rationale, candidate.evidenceHash, candidate.evidenceUri,
+      prior?.id ?? justExpiredPriorId, at, pendingUntil],
+  )).rows[0];
+  if (!inserted) {
+    // In PostgreSQL this statement runs only after the winning unique-index transaction resolves,
+    // so the open row is visible in this same READ COMMITTED transaction. Do not translate arbitrary
+    // SQL failures into duplicates; only zero RETURNING rows enter this branch.
+    existing = await openByKey(client, candidate.assetVersionKey);
+    if (!existing) fail('contention', 'The nomination changed while it was being opened; retry.');
+    const nomination = await viewLocked(client, existing, at);
+    return {
+      nomination,
+      duplicate: true,
+      endorsementAvailable: !sameId(authority.familyId, existing.sponsor_family_id),
+      requestingFamilyId: authority.familyId,
+    };
+  }
+  await appendEvent(client, {
+    nominationId: id,
+    eventType: 'nomination_created',
+    familyId: authority.familyId,
+    accountId: ch.account_id,
+    actorType: 'player',
+    actorId: ch.account_id,
+    details: { assetVersionKey: candidate.assetVersionKey, evidenceHash: candidate.evidenceHash },
+    at,
+  });
+  return {
+    nomination: nominationView(inserted, 1),
+    duplicate: false,
+    endorsementAvailable: false,
+    requestingFamilyId: authority.familyId,
+  };
+}
+
+function endorsementInput(input) {
+  if (!input || typeof input !== 'object' || typeof input.active !== 'boolean') {
+    fail('bad_endorsement', 'Endorsement active must be a boolean.');
+  }
+  const rationale = input.rationale == null
+    ? null
+    : strictText(input.rationale, 'rationale', { max: 1000 });
+  return { active: input.active, rationale };
+}
+
+async function lockedNomination(client, id) {
+  const row = (await client.query('SELECT * FROM rwa_nominations_v2 WHERE id=$1 FOR UPDATE', [id])).rows[0];
+  if (!row) fail('nomination_not_found', 'No such nomination.');
+  return row;
+}
+
+export async function setRwaNominationEndorsement(ch, idValue, input, client, h) {
+  const id = nominationId(idValue);
+  const desired = endorsementInput(input);
+  // Keep the repository's character→family→domain-row lock order. Authority is evaluated only after
+  // deadline handling so an expiry transition still wins over a stale role/seat refusal.
+  const member = await lockCurrentFamily(ch, client);
+  const row = await lockedNomination(client, id);
+  const at = await wallClock(client);
+  const pre = await refreshLocked(client, row, at);
+  if (row.status === 'expired') return { nomination: nominationView(row, 0), expired: true };
+  if (!OPEN.has(row.status)) fail('nomination_closed', 'That nomination is already terminal.');
+  const authority = await requireAuthority(member, client);
+  if (sameId(authority.familyId, row.sponsor_family_id)) {
+    fail('sponsor_self', 'The sponsor already counts once and cannot self-endorse.');
+  }
+  const current = (await client.query(
+    'SELECT * FROM rwa_nomination_endorsements_v2 WHERE nomination_id=$1 AND family_id=$2 FOR UPDATE',
+    [id, authority.familyId],
+  )).rows[0];
+  if (current && current.active === desired.active && current.rationale === desired.rationale) {
+    return { nomination: await viewLocked(client, row, at, pre.seats), changed: false };
+  }
+  if (current) {
+    await client.query(
+      `UPDATE rwa_nomination_endorsements_v2
+          SET account_id=$3,active=$4,rationale=$5,updated_at=$6
+        WHERE nomination_id=$1 AND family_id=$2`,
+      [id, authority.familyId, ch.account_id, desired.active, desired.rationale, at],
+    );
+  } else {
+    await client.query(
+      `INSERT INTO rwa_nomination_endorsements_v2
+        (nomination_id,family_id,account_id,active,rationale,updated_at)
+       VALUES ($1,$2,$3,$4,$5,$6)`,
+      [id, authority.familyId, ch.account_id, desired.active, desired.rationale, at],
+    );
+  }
+  await appendEvent(client, {
+    nominationId: id,
+    eventType: desired.active ? 'endorsement_active' : 'endorsement_withdrawn',
+    familyId: authority.familyId,
+    accountId: ch.account_id,
+    actorType: 'player',
+    actorId: ch.account_id,
+    details: { active: desired.active, rationale: desired.rationale },
+    at,
+  });
+  return { nomination: await viewLocked(client, row, at, pre.seats), changed: true };
+}
+
+export async function renewRwaNominationSponsorSupport(ch, idValue, client, h) {
+  const id = nominationId(idValue);
+  const member = await lockCurrentFamily(ch, client);
+  const row = await lockedNomination(client, id);
+  const at = await wallClock(client);
+  const pre = await refreshLocked(client, row, at);
+  if (row.status === 'expired') return { nomination: nominationView(row, 0), expired: true };
+  if (!OPEN.has(row.status)) fail('nomination_closed', 'That nomination is already terminal.');
+  const authority = await requireAuthority(member, client);
+  if (!sameId(authority.familyId, row.sponsor_family_id)) {
+    fail('sponsor_owner', 'Only the currently seated original sponsor family may renew support.');
+  }
+  if (row.sponsor_support_active) {
+    return { nomination: await viewLocked(client, row, at, pre.seats), changed: false };
+  }
+  await client.query('UPDATE rwa_nominations_v2 SET sponsor_support_active=true WHERE id=$1', [id]);
+  row.sponsor_support_active = true;
+  await appendEvent(client, {
+    nominationId: id,
+    eventType: 'sponsor_support_renewed',
+    familyId: authority.familyId,
+    accountId: ch.account_id,
+    actorType: 'player',
+    actorId: ch.account_id,
+    details: {},
+    at,
+  });
+  return { nomination: await viewLocked(client, row, at, pre.seats), changed: true };
+}
+
+async function lockNominationsById(client, ids) {
+  if (!ids.length) return [];
+  const params = [];
+  const placeholders = inList([...ids].map(String).sort(), params);
+  return (await client.query(
+    `SELECT * FROM rwa_nominations_v2 WHERE id IN (${placeholders}) ORDER BY id ASC FOR UPDATE`, params,
+  )).rows;
+}
+
+export async function refreshRwaNominationSeatState(db, options = {}) {
+  const page = pageOptions(options, 'refresh');
+  return inTransaction(db, async (client) => {
+    const params = [];
+    let after = '';
+    if (page.cursor) {
+      params.push(new Date(page.cursor.at), page.cursor.id);
+      after = 'AND (created_at > $1 OR (created_at = $1 AND id > $2))';
+    }
+    params.push(page.limit + 1);
+    const selected = (await client.query(
+      `SELECT id,created_at FROM rwa_nominations_v2
+        WHERE status IN ('pending','review_requested','under_review') ${after}
+        ORDER BY created_at ASC,id ASC LIMIT $${params.length}`,
+      params,
+    )).rows;
+    const hasMore = selected.length > page.limit;
+    const refs = selected.slice(0, page.limit);
+    const locked = await lockNominationsById(client, refs.map((row) => row.id));
+    const byId = new Map(locked.map((row) => [String(row.id), row]));
+    const work = refs.map((row) => byId.get(String(row.id))).filter((row) => row && OPEN.has(row.status));
+    const at = await wallClock(client);
+    const seats = await seatSet(client);
+    const slotMap = await endorsementsFor(client, work.map((row) => row.id));
+    let updated = 0;
+    for (const row of work) {
+      if ((await refreshLocked(client, row, at, seats, slotMap.get(String(row.id)))).changed) updated++;
+    }
+    const last = refs.at(-1);
+    return {
+      processed: refs.length,
+      updated,
+      hasMore,
+      nextCursor: hasMore ? nextCursor('refresh', last) : null,
+    };
+  });
+}
+
+export async function expireRwaNominations(db, options = {}) {
+  const page = pageOptions(options, 'expiry');
+  return inTransaction(db, async (client) => {
+    const params = [];
+    let after = '';
+    if (page.cursor) {
+      params.push(new Date(page.cursor.at), page.cursor.id);
+      after = 'AND (pending_until > $1 OR (pending_until = $1 AND id > $2))';
+    }
+    params.push(page.limit + 1);
+    // Lock before reading clock_timestamp(): a worker that waited across the boundary must see the
+    // later wall time, not transaction-start time.
+    const selected = (await client.query(
+      `SELECT id,pending_until FROM rwa_nominations_v2
+        WHERE status IN ('pending','review_requested','under_review') ${after}
+        ORDER BY pending_until ASC,id ASC LIMIT $${params.length}`,
+      params,
+    )).rows;
+    const locked = await lockNominationsById(client, selected.map((row) => row.id));
+    const byId = new Map(locked.map((row) => [String(row.id), row]));
+    const at = await wallClock(client);
+    const dueRefs = selected.filter((row) => at.getTime() >= new Date(row.pending_until).getTime());
+    const hasMore = dueRefs.length > page.limit;
+    const pageRefs = dueRefs.slice(0, page.limit);
+    const work = pageRefs.map((row) => byId.get(String(row.id)))
+      .filter((row) => row && OPEN.has(row.status));
+    for (const row of work) await expireLocked(client, row, at);
+    const last = pageRefs.at(-1);
+    return {
+      processed: work.length,
+      expired: work.length,
+      hasMore,
+      nextCursor: hasMore ? nextCursor('expiry', last) : null,
+    };
+  }, { isolation: 'REPEATABLE READ' });
+}
+
+function inList(values, params) {
+  if (!values.length) return 'NULL';
+  return values.map((value) => {
+    params.push(value);
+    return `$${params.length}`;
+  }).join(',');
+}
+
+async function boundedBoardCandidates(client, finalizedOnly) {
+  const params = [BOARD_LIVE_WORK_MAX + 1];
+  const finalizedJoin = finalizedOnly
+    ? 'INNER JOIN stock_asset_versions_v2 v ON v.asset_version_key=n.asset_version_key'
+    : '';
+  const candidates = (await client.query(
+    `SELECT n.id,n.asset_version_key,n.ticker,n.status,n.created_at
+       FROM rwa_nominations_v2 n ${finalizedJoin}
+      WHERE n.status IN ('pending','review_requested','under_review')
+      ORDER BY n.created_at ASC,n.id ASC LIMIT $1
+      /* rwa_board_candidates */`,
+    params,
+  )).rows;
+  if (candidates.length > BOARD_LIVE_WORK_MAX) {
+    fail('board_overloaded', 'The live nomination board exceeds its reviewed work horizon; retry after cleanup.');
+  }
+  return candidates;
+}
+
+async function boundedBoardStaleSlots(client, ids, seats) {
+  const params = [];
+  const nominations = inList(ids, params);
+  let staleSponsor;
+  let staleEndorsement;
+  if (seats.size) {
+    const seated = inList([...seats], params);
+    staleSponsor = `n.sponsor_family_id NOT IN (${seated})`;
+    staleEndorsement = `e.family_id NOT IN (${seated})`;
+  } else {
+    staleSponsor = 'n.sponsor_family_id IS NOT NULL';
+    staleEndorsement = 'e.family_id IS NOT NULL';
+  }
+  params.push(BOARD_STALE_SLOT_WORK_MAX + 1);
+  const stale = (await client.query(
+    `WITH stale_support AS (
+       SELECT 'sponsor' AS stale_kind,n.id AS nomination_id,
+         n.sponsor_family_id AS family_id,n.sponsor_account_id AS account_id
+         FROM rwa_nominations_v2 n
+        WHERE n.id IN (${nominations}) AND n.sponsor_support_active AND ${staleSponsor}
+       UNION ALL
+       SELECT 'endorsement' AS stale_kind,e.nomination_id,e.family_id,e.account_id
+         FROM rwa_nomination_endorsements_v2 e
+        WHERE e.nomination_id IN (${nominations}) AND e.active AND ${staleEndorsement}
+     )
+     SELECT stale_kind,nomination_id,family_id,account_id FROM stale_support
+      ORDER BY nomination_id ASC,stale_kind ASC,family_id ASC LIMIT $${params.length}
+      /* rwa_board_stale_preflight */`,
+    params,
+  )).rows;
+  if (stale.length > BOARD_STALE_SLOT_WORK_MAX) {
+    fail('board_overloaded', 'The nomination board has too much stale support to clean safely.');
+  }
+  return stale;
+}
+
+export async function rwaNominationBoard(db, options = {}) {
+  const page = pageOptions(options, 'board');
+  if (options.finalizedOnly != null && typeof options.finalizedOnly !== 'boolean') {
+    fail('bad_finalized_filter', 'finalizedOnly must be a boolean.');
+  }
+  // Pool callers get one coherent snapshot. A caller-owned PoolClient/query adapter is deliberately
+  // not given nested transaction control and must already belong to a coherent caller transaction.
+  return inTransaction(db, async (client) => {
+    const candidates = await boundedBoardCandidates(client, Boolean(options.finalizedOnly));
+    if (!candidates.length) return { items: [], hasMore: false, nextCursor: null };
+    const candidateIds = candidates.map((row) => String(row.id));
+    const seats = await seatSet(client);
+    const seated = [...seats];
+    const params = [];
+    const candidateList = inList(candidateIds, params);
+    const currentSeats = inList(seated, params);
+    let cursorClause = '';
+    if (page.cursor) {
+      params.push(page.cursor.support, new Date(page.cursor.at), page.cursor.id);
+      const s = `$${params.length - 2}`, at = `$${params.length - 1}`, id = `$${params.length}`;
+      cursorClause = `WHERE (support < ${s} OR (support = ${s} AND (created_at > ${at}
+        OR (created_at = ${at} AND id > ${id}))))`;
+    }
+    params.push(page.limit + 1);
+    const ranked = (await client.query(
+      `WITH scores AS (
+         SELECT n.id,n.created_at,
+           (CASE WHEN n.sponsor_support_active AND n.sponsor_family_id IN (${currentSeats}) THEN 1 ELSE 0 END
+            + COALESCE(SUM(CASE WHEN e.family_id <> n.sponsor_family_id THEN 1 ELSE 0 END),0))::int AS support
+           FROM rwa_nominations_v2 n
+           LEFT JOIN rwa_nomination_endorsements_v2 e ON e.nomination_id=n.id
+             AND e.active AND e.family_id IN (${currentSeats})
+          WHERE n.id IN (${candidateList})
+          GROUP BY n.id,n.created_at,n.sponsor_support_active,n.sponsor_family_id
+       )
+       SELECT id,created_at,support FROM scores ${cursorClause}
+       ORDER BY support DESC,created_at ASC,id ASC LIMIT $${params.length}`,
+      params,
+    )).rows;
+    const hasMore = ranked.length > page.limit;
+    const selected = ranked.slice(0, page.limit);
+    const ids = selected.map((item) => String(item.id));
+    if (!ids.length) return { items: [], hasMore: false, nextCursor: null };
+    // Lock selected rows in immutable ID order, then take wall time. This keeps seat-loss/expiry
+    // observations made by a public board durable without widening the page scan.
+    const locked = await lockNominationsById(client, ids);
+    const byId = new Map(locked.map((row) => [String(row.id), row]));
+    const at = await wallClock(client);
+    const stale = await boundedBoardStaleSlots(client, ids, seats);
+    const staleSlotMap = new Map(ids.map((id) => [String(id), []]));
+    for (const slot of stale) {
+      if (slot.stale_kind === 'endorsement') {
+        staleSlotMap.get(String(slot.nomination_id))?.push({ ...slot, active: true });
+      }
+    }
+    const slotMap = await endorsementsFor(client, ids, seats);
+    for (const rank of selected) {
+      const row = byId.get(String(rank.id));
+      if (row) {
+        const slots = [...(slotMap.get(String(row.id)) ?? []), ...(staleSlotMap.get(String(row.id)) ?? [])];
+        await refreshLocked(client, row, at, seats, slots);
+      }
+    }
+
+    const conflictsByTicker = new Map();
+    for (const candidate of candidates) {
+      if (!conflictsByTicker.has(candidate.ticker)) conflictsByTicker.set(candidate.ticker, []);
+      conflictsByTicker.get(candidate.ticker).push(candidate);
+    }
+
+    const keys = [...new Set(locked.map((row) => row.asset_version_key))].sort();
+    const mirrorParams = [];
+    const mirrorKeys = inList(keys, mirrorParams);
+    const mirrors = (await client.query(
+      `SELECT asset_version_key,active,registry_index,last_catalog_version
+         FROM stock_asset_versions_v2 WHERE asset_version_key IN (${mirrorKeys})`,
+      mirrorParams,
+    )).rows;
+    const mirrorByKey = new Map(mirrors.map((row) => [row.asset_version_key, row]));
+
+    const items = [];
+    for (const rank of selected) {
+      const row = byId.get(String(rank.id));
+      if (!row) continue;
+      const tickerConflicts = (conflictsByTicker.get(row.ticker) ?? [])
+        .filter((conflict) => !sameId(conflict.id, row.id)
+          && conflict.asset_version_key !== row.asset_version_key);
+      const mirror = mirrorByKey.get(row.asset_version_key);
+      items.push(nominationView(row, Number(rank.support), {
+        finalizedCatalog: mirror ? {
+          present: true,
+          active: Boolean(mirror.active),
+          registryIndex: String(mirror.registry_index),
+          catalogVersion: String(mirror.last_catalog_version),
+        } : { present: false, active: false, registryIndex: null, catalogVersion: null },
+        tickerConflicts: tickerConflicts.slice(0, 20).map((conflict) => ({
+          id: String(conflict.id),
+          assetVersionKey: conflict.asset_version_key,
+          status: conflict.status,
+          createdAt: new Date(conflict.created_at).toISOString(),
+        })),
+        tickerConflictsHasMore: tickerConflicts.length > 20,
+      }));
+    }
+    // Refresh may expire rows but cannot change their current seated support, so the selected order
+    // remains the authoritative support/created/id order for this transaction.
+    const last = selected.at(-1);
+    return {
+      items,
+      hasMore,
+      nextCursor: hasMore ? nextCursor('board', { id: last.id, created_at: last.created_at }, Number(last.support)) : null,
+    };
+  }, { isolation: 'REPEATABLE READ' });
+}
+
+export async function claimRwaNominationReview(db, idValue, reviewerValue) {
+  const id = nominationId(idValue);
+  const reviewer = reviewerId(reviewerValue);
+  return inTransaction(db, async (client) => {
+    const row = await lockedNomination(client, id);
+    const at = await wallClock(client);
+    const refreshed = await refreshLocked(client, row, at);
+    if (row.status === 'expired') {
+      return { nomination: nominationView(row, 0), expired: true };
+    }
+    if (row.status === 'under_review') {
+      if (row.claimed_by === reviewer) {
+        return { nomination: nominationView(row, supportOf(row, refreshed.slots, refreshed.seats)), changed: false };
+      }
+      fail('review_claimed', 'That nomination is already owned by another reviewer.');
+    }
+    if (!['pending', 'review_requested'].includes(row.status)) fail('review_terminal', 'That review is already terminal.');
+    await client.query(
+      "UPDATE rwa_nominations_v2 SET status='under_review',claimed_by=$2,claimed_at=$3 WHERE id=$1",
+      [id, reviewer, at],
+    );
+    row.status = 'under_review';
+    row.claimed_by = reviewer;
+    row.claimed_at = at;
+    await appendEvent(client, {
+      nominationId: id,
+      eventType: 'review_claimed',
+      actorType: 'reviewer',
+      actorId: reviewer,
+      details: { support: supportOf(row, refreshed.slots, refreshed.seats) },
+      at,
+    });
+    return { nomination: nominationView(row, supportOf(row, refreshed.slots, refreshed.seats)), changed: true };
+  });
+}
+
+function dispositionInput(value) {
+  const input = typeof value === 'string' ? { disposition: value } : value;
+  if (!input || typeof input !== 'object' || !DISPOSITIONS.has(input.disposition)) {
+    fail('bad_disposition', 'Disposition must be approved, rejected, or not_eligible.');
+  }
+  const reason = input.reason == null ? null : strictText(input.reason, 'disposition_reason', { max: 2000 });
+  return { disposition: input.disposition, reason };
+}
+
+export async function disposeRwaNominationReview(db, idValue, reviewerValue, dispositionValue) {
+  const id = nominationId(idValue);
+  const reviewer = reviewerId(reviewerValue);
+  const disposition = dispositionInput(dispositionValue);
+  return inTransaction(db, async (client) => {
+    const row = await lockedNomination(client, id);
+    const at = await wallClock(client);
+    if (TERMINAL.has(row.status)) {
+      if (row.status === disposition.disposition && row.disposition_by === reviewer
+          && (row.disposition_reason ?? null) === disposition.reason) {
+        const seats = await seatSet(client);
+        return { nomination: nominationView(row, supportOf(row, await endorsements(client, id), seats)), changed: false };
+      }
+      fail('review_terminal', 'That review already has a terminal disposition.');
+    }
+    const refreshed = await refreshLocked(client, row, at);
+    if (row.status === 'expired') return { nomination: nominationView(row, 0), expired: true };
+    if (row.status !== 'under_review') fail('review_unclaimed', 'Claim the review before disposing it.');
+    if (row.claimed_by !== reviewer) fail('review_owner', 'Only the reviewer who owns the claim may dispose it.');
+    await client.query(
+      `UPDATE rwa_nominations_v2
+          SET status=$2,disposition_by=$3,disposition_at=$4,disposition_reason=$5
+        WHERE id=$1`,
+      [id, disposition.disposition, reviewer, at, disposition.reason],
+    );
+    row.status = disposition.disposition;
+    row.disposition_by = reviewer;
+    row.disposition_at = at;
+    row.disposition_reason = disposition.reason;
+    await appendEvent(client, {
+      nominationId: id,
+      eventType: `review_${disposition.disposition}`,
+      actorType: 'reviewer',
+      actorId: reviewer,
+      details: { disposition: disposition.disposition, reason: disposition.reason },
+      at,
+    });
+    return {
+      nomination: nominationView(row, supportOf(row, refreshed.slots, refreshed.seats)),
+      changed: true,
+    };
+  });
+}
+
+function proposalView(row) {
+  if (!row) return null;
+  return {
+    nominationId: String(row.nomination_id),
+    assetVersionKey: row.asset_version_key,
+    registryAddress: row.registry_address,
+    safeTransaction: typeof row.safe_transaction === 'string' ? JSON.parse(row.safe_transaction) : row.safe_transaction,
+    calldataHash: row.calldata_hash,
+    evidenceHash: row.evidence_hash,
+    reviewId: row.review_id,
+    approvedAt: new Date(row.approved_at).toISOString(),
+    validUntil: new Date(row.valid_until).toISOString(),
+    status: row.status,
+    safeTxHash: row.safe_tx_hash,
+    executionTxHash: row.execution_tx_hash,
+    executionBlockNumber: row.execution_block_number == null ? null : String(row.execution_block_number),
+    executionBlockHash: row.execution_block_hash,
+    finalizedAt: row.finalized_at ? new Date(row.finalized_at).toISOString() : null,
+    syncedAt: row.synced_at ? new Date(row.synced_at).toISOString() : null,
+  };
+}
+
+async function proposalFor(client, id) {
+  return (await client.query(
+    'SELECT * FROM rwa_nomination_safe_proposals_v2 WHERE nomination_id=$1', [id],
+  )).rows[0] ?? null;
+}
+
+function exactReviewInput(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) fail('bad_disposition', 'Invalid disposition.');
+  const keys = Object.keys(value).sort();
+  if (keys.join(',') !== 'disposition,evidenceHash,reason') fail('bad_disposition_body', 'Disposition body has unknown or missing fields.');
+  const disposition = dispositionInput({ disposition: value.disposition, reason: value.reason });
+  if (disposition.reason == null) fail('bad_disposition_reason', 'A disposition reason is required.');
+  return { ...disposition, evidenceHash: strictHash(value.evidenceHash, 'evidence', 'bad_evidence') };
+}
+
+function randomReviewId() {
+  let value = ZERO_HASH;
+  while (value === ZERO_HASH) value = `0x${crypto.randomBytes(32).toString('hex')}`;
+  return value;
+}
+
+// The Safe package and terminal review are one fact. A pool owns one transaction; a caller-owned
+// client is composed without BEGIN/COMMIT/release, preserving withCharacter/worker ownership.
+export async function disposeRwaNominationReviewWithSafePackage(
+  db, idValue, reviewerValue, dispositionValue, options = {},
+) {
+  const id = nominationId(idValue);
+  const reviewer = reviewerId(reviewerValue);
+  const disposition = exactReviewInput(dispositionValue);
+  const registryAddress = disposition.disposition === 'approved' ? strictAddress(options.registryAddress) : null;
+  const buildActivation = options.buildActivation ?? buildStockTokenActivationV2;
+  return inTransaction(db, async (client) => {
+    const row = await lockedNomination(client, id);
+    const existingProposal = await proposalFor(client, id);
+    if (TERMINAL.has(row.status)) {
+      const exact = row.status === disposition.disposition && row.disposition_by === reviewer
+        && (row.disposition_reason ?? null) === disposition.reason
+        && row.evidence_hash === disposition.evidenceHash;
+      if (!exact) fail('review_conflict', 'The terminal review conflicts with this retry.');
+      if (disposition.disposition === 'approved') {
+        if (!existingProposal || existingProposal.registry_address !== registryAddress
+            || existingProposal.asset_version_key !== row.asset_version_key
+            || existingProposal.evidence_hash !== row.evidence_hash) {
+          fail('review_conflict', 'The stored activation package conflicts with this retry.');
+        }
+        let expected;
+        try {
+          expected = buildActivation({
+            asset: {
+              chainId: String(row.chain_id), ticker: row.ticker, name: row.name,
+              tokenAddress: row.token_address, tokenDecimals: Number(row.token_decimals),
+              robinhoodAssetIdHash: row.robinhood_asset_id_hash,
+            },
+            registryAddress, evidenceHash: row.evidence_hash, reviewId: existingProposal.review_id,
+            approvedAt: String(Math.floor(new Date(existingProposal.approved_at).getTime() / 1000)),
+          });
+        } catch { fail('review_conflict', 'The stored activation package conflicts with this retry.'); }
+        const storedPackage = typeof existingProposal.safe_transaction === 'string'
+          ? JSON.parse(existingProposal.safe_transaction) : existingProposal.safe_transaction;
+        const expectedValidUntil = new Date(new Date(existingProposal.approved_at).getTime() + 604800000);
+        if (expected.assetVersionKey !== row.asset_version_key
+            || JSON.stringify(stable(expected)) !== JSON.stringify(stable(storedPackage))
+            || existingProposal.calldata_hash !== keccak256(expected.data)
+            || new Date(existingProposal.valid_until).getTime() !== expectedValidUntil.getTime()) {
+          fail('review_conflict', 'The stored activation package conflicts with this retry.');
+        }
+      } else if (existingProposal) fail('review_conflict', 'A non-approved review cannot have a Safe package.');
+      const seats = await seatSet(client);
+      return {
+        nomination: nominationView(row, supportOf(row, await endorsements(client, id), seats)),
+        proposal: proposalView(existingProposal),
+        changed: false,
+      };
+    }
+
+    const exactAt = await wallClock(client);
+    const refreshed = await refreshLocked(client, row, exactAt);
+    if (row.status === 'expired') return { nomination: nominationView(row, 0), proposal: null, expired: true };
+    if (row.status !== 'under_review') fail('review_unclaimed', 'Claim the review before disposing it.');
+    if (row.claimed_by !== reviewer) fail('review_owner', 'Only the reviewer who owns the claim may dispose it.');
+    if (row.evidence_hash !== disposition.evidenceHash) fail('evidence_conflict', 'Nomination evidence changed from the reviewed snapshot.');
+
+    const approved = disposition.disposition === 'approved';
+    const approvedAt = approved ? wholeSecond(exactAt) : null;
+    const validUntil = approved ? new Date(approvedAt.getTime() + 604800000) : null;
+    await client.query(
+      `UPDATE rwa_nominations_v2
+          SET status=$2,execution_status=$3,disposition_by=$4,disposition_at=$5,
+              disposition_reason=$6,approved_at=$7,valid_until=$8
+        WHERE id=$1`,
+      [id, disposition.disposition, approved ? 'safe_package_ready' : 'not_applicable', reviewer, exactAt,
+        disposition.reason, approvedAt, validUntil],
+    );
+    row.status = disposition.disposition;
+    row.execution_status = approved ? 'safe_package_ready' : 'not_applicable';
+    row.disposition_by = reviewer;
+    row.disposition_at = exactAt;
+    row.disposition_reason = disposition.reason;
+    row.approved_at = approvedAt;
+    row.valid_until = validUntil;
+
+    let proposal = null;
+    if (approved) {
+      const reviewId = randomReviewId();
+      let packageValue;
+      try {
+        packageValue = buildActivation({
+          asset: {
+            chainId: String(row.chain_id), ticker: row.ticker, name: row.name,
+            tokenAddress: row.token_address, tokenDecimals: Number(row.token_decimals),
+            robinhoodAssetIdHash: row.robinhood_asset_id_hash,
+          },
+          registryAddress, evidenceHash: row.evidence_hash, reviewId,
+          approvedAt: String(Math.floor(approvedAt.getTime() / 1000)),
+        });
+      } catch { fail('safe_package_failed', 'Could not build the activation package.'); }
+      if (packageValue.assetVersionKey !== row.asset_version_key) {
+        fail('asset_key_mismatch', 'Activation package identity conflicts with the nomination.');
+      }
+      let exactJson;
+      try { exactJson = JSON.stringify(packageValue); }
+      catch { fail('safe_package_failed', 'Activation package is not JSON serializable.'); }
+      const safeTransaction = JSON.parse(exactJson);
+      const calldataHash = keccak256(packageValue.data);
+      proposal = (await client.query(
+        `INSERT INTO rwa_nomination_safe_proposals_v2
+          (nomination_id,asset_version_key,registry_address,safe_transaction,calldata_hash,evidence_hash,
+           review_id,approved_at,valid_until,status,created_at,updated_at)
+         VALUES ($1,$2,$3,$4::jsonb,$5,$6,$7,$8,$9,'safe_package_ready',$8,$8) RETURNING *`,
+        [id, row.asset_version_key, registryAddress, exactJson, calldataHash, row.evidence_hash,
+          reviewId, approvedAt, validUntil],
+      )).rows[0];
+    }
+    await appendEvent(client, {
+      nominationId: id,
+      eventType: `review_${disposition.disposition}`,
+      actorType: 'reviewer', actorId: reviewer,
+      details: { disposition: disposition.disposition, reason: disposition.reason,
+        evidenceHash: disposition.evidenceHash, reviewId: proposal?.review_id ?? null },
+      at: exactAt,
+    });
+    return {
+      nomination: nominationView(row, supportOf(row, refreshed.slots, refreshed.seats)),
+      proposal: proposalView(proposal), changed: true,
+    };
+  });
+}
+
+export async function recordRwaSafeSubmission(db, idValue, reviewerValue, safeTxHashValue) {
+  const id = nominationId(idValue);
+  reviewerId(reviewerValue);
+  const safeTxHash = strictHash(safeTxHashValue, 'safe_tx_hash', 'bad_safe_tx_hash');
+  return inTransaction(db, async (client) => {
+    const proposal = (await client.query(
+      'SELECT * FROM rwa_nomination_safe_proposals_v2 WHERE nomination_id=$1 FOR UPDATE', [id],
+    )).rows[0];
+    if (!proposal) fail('no_safe_package', 'No approved Safe package exists.');
+    if (proposal.status === 'safe_submitted') {
+      if (proposal.safe_tx_hash !== safeTxHash) fail('submission_conflict', 'A different Safe transaction is already recorded.');
+      return { proposal: proposalView(proposal), changed: false };
+    }
+    if (proposal.status !== 'safe_package_ready') fail('submission_terminal', 'That Safe package cannot be submitted.');
+    const at = await wallClock(client);
+    if (at.getTime() >= new Date(proposal.valid_until).getTime()) {
+      await client.query(
+        "UPDATE rwa_nomination_safe_proposals_v2 SET status='approval_stale',updated_at=$2 WHERE nomination_id=$1",
+        [id, at],
+      );
+      await client.query("UPDATE rwa_nominations_v2 SET execution_status='approval_stale' WHERE id=$1", [id]);
+      proposal.status = 'approval_stale';
+      return { proposal: proposalView(proposal), changed: true, stale: true };
+    }
+    const updated = (await client.query(
+      `UPDATE rwa_nomination_safe_proposals_v2
+          SET status='safe_submitted',safe_tx_hash=$2,updated_at=$3 WHERE nomination_id=$1 RETURNING *`,
+      [id, safeTxHash, at],
+    )).rows[0];
+    await client.query("UPDATE rwa_nominations_v2 SET execution_status='safe_submitted' WHERE id=$1", [id]);
+    return { proposal: proposalView(updated), changed: true };
+  });
+}
+
+export async function rwaNominationReviewQueue(db, options = {}) {
+  const page = pageOptions(options, 'review_queue');
+  const reviewer = reviewerId(options.reviewerId);
+  return inTransaction(db, async (client) => {
+    const candidates = await boundedBoardCandidates(client, false);
+    if (!candidates.length) return { items: [], hasMore: false, nextCursor: null };
+    const ids = candidates.map((row) => String(row.id));
+    const seats = await seatSet(client);
+    const stale = await boundedBoardStaleSlots(client, ids, seats);
+    const locked = await lockNominationsById(client, ids);
+    const at = await wallClock(client);
+    const slotMap = await endorsementsFor(client, ids, seats);
+    const staleMap = new Map(ids.map((id) => [id, []]));
+    for (const slot of stale) if (slot.stale_kind === 'endorsement') {
+      staleMap.get(String(slot.nomination_id))?.push({ ...slot, active: true });
+    }
+    const refreshed = await refreshQueueLockedBatch(client, locked, at, seats, slotMap, staleMap);
+    const eligible = [];
+    for (const row of locked) {
+      const state = refreshed.get(String(row.id));
+      if (row.status === 'review_requested' || (row.status === 'under_review' && row.claimed_by === reviewer)) {
+        eligible.push({ row, support: state.support });
+      }
+    }
+    eligible.sort((a, b) => b.support - a.support
+      || new Date(a.row.created_at).getTime() - new Date(b.row.created_at).getTime()
+      || (String(a.row.id) < String(b.row.id) ? -1 : String(a.row.id) > String(b.row.id) ? 1 : 0));
+    const afterCursor = !page.cursor ? eligible : eligible.filter(({ row, support }) => (
+      support < page.cursor.support || (support === page.cursor.support
+        && (new Date(row.created_at).getTime() > new Date(page.cursor.at).getTime()
+          || (new Date(row.created_at).getTime() === new Date(page.cursor.at).getTime()
+            && String(row.id) > page.cursor.id)))
+    ));
+    const hasMore = afterCursor.length > page.limit;
+    const selected = afterCursor.slice(0, page.limit);
+    const last = selected.at(-1);
+    return {
+      items: selected.map(({ row, support }) => nominationView(row, support)),
+      hasMore,
+      nextCursor: hasMore && last ? nextCursor('review_queue', last.row, last.support) : null,
+    };
+  }, { isolation: 'REPEATABLE READ' });
+}
+
+export async function expireRwaApprovals(db, options = {}) {
+  const page = pageOptions(options, 'approval_expiry');
+  return inTransaction(db, async (client) => {
+    const params = [];
+    let cursor = '';
+    if (page.cursor) {
+      params.push(new Date(page.cursor.at), page.cursor.id);
+      cursor = `AND (valid_until > $1 OR (valid_until=$1 AND nomination_id>$2))`;
+    }
+    const at = await wallClock(client);
+    params.push(at, page.limit + 1);
+    const nowParam = `$${params.length - 1}`;
+    const limitParam = `$${params.length}`;
+    const selected = (await client.query(
+      `SELECT nomination_id,valid_until FROM rwa_nomination_safe_proposals_v2
+        WHERE status='safe_package_ready' AND valid_until <= ${nowParam} ${cursor}
+        ORDER BY valid_until ASC,nomination_id ASC LIMIT ${limitParam}`,
+      params,
+    )).rows;
+    const hasMore = selected.length > page.limit;
+    const work = selected.slice(0, page.limit);
+    const ids = work.map((row) => String(row.nomination_id)).sort();
+    let processed = 0;
+    if (ids.length) {
+      const lockParams = [];
+      const lockList = inList(ids, lockParams);
+      await client.query(
+        `SELECT nomination_id FROM rwa_nomination_safe_proposals_v2 WHERE nomination_id IN (${lockList}) ORDER BY nomination_id ASC FOR UPDATE`,
+        lockParams,
+      );
+      const updateParams = [at];
+      const updateList = inList(ids, updateParams);
+      const changed = (await client.query(
+        `UPDATE rwa_nomination_safe_proposals_v2 SET status='approval_stale',updated_at=$1
+          WHERE nomination_id IN (${updateList}) AND status='safe_package_ready' AND valid_until <= $1
+          RETURNING nomination_id`, updateParams,
+      )).rows;
+      processed = changed.length;
+      if (changed.length) {
+        const nominationParams = [];
+        const nominationList = inList(changed.map((row) => String(row.nomination_id)), nominationParams);
+        await client.query(
+          `UPDATE rwa_nominations_v2 SET execution_status='approval_stale' WHERE id IN (${nominationList})`,
+          nominationParams,
+        );
+      }
+    }
+    const last = work.at(-1);
+    return {
+      processed, hasMore,
+      nextCursor: hasMore && last
+        ? Buffer.from(JSON.stringify({ kind: 'approval_expiry', at: new Date(last.valid_until).toISOString(), id: String(last.nomination_id) })).toString('base64url')
+        : null,
+    };
+  }, { isolation: 'REPEATABLE READ' });
+}

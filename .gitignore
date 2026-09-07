@@ -14,6 +14,11 @@ omerta-contracts/out-js/
 omerta-contracts/lib/
 omerta-contracts/out/
 omerta-contracts/cache/
+# scratch build dirs from a pinned-version experiment (FOUNDRY_OUT=out-151 / FOUNDRY_CACHE_PATH=cache-151).
+# tools/savepoint.sh runs `git add -A` as its L1 layer, so an unignored scratch dir gets STAGED and
+# then committed — which is exactly how 218 build artifacts landed in a docs commit on 2026-08-29.
+omerta-contracts/out-*/
+omerta-contracts/cache-*/
 omerta-contracts/broadcast/
 baselines/
 .hype-tmp/

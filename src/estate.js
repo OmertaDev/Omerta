@@ -213,7 +213,13 @@ export async function nameEstate(ch, name, client, h) {
   await spendOmr(client, h, ESTATE.NAME_OMR, 'estate:name');
   await bumpPrestige(client, ch.account_id, ESTATE.NAME_OMR);
   await upsertEstate(client, ch.account_id, { name: n, spent_omr: Number(cur.spent_omr || 0) + ESTATE.NAME_OMR });
-  return { ok: true, name: n };
+  // `estate` NAMES THE SYSTEM, and it is what makes the price sayable at all: the client's branch
+  // for this line was keyed on the reply having exactly ONE key besides ok/events/character — a
+  // collision guard against the soldier-assign and deed-rename replies, which are byte-identical
+  // {ok, name} — so adding a figure would have silently handed this line to one of them. `omr` and
+  // `spent` mirror upgradeEstate/unlockFeature: both of THIS file's other $OMR burns name their
+  // price, and the naming, which burns the same currency against the same compound, named none.
+  return { ok: true, estate: 'named', name: n, omr: ESTATE.NAME_OMR, spent: Number(cur.spent_omr || 0) + ESTATE.NAME_OMR };
 }
 
 // ── STEP TWO: THE STAFF (the recurring $OMR payroll) + THE GALA (design §A) ──
@@ -264,7 +270,9 @@ export async function hireStaff(ch, staffId, client, h) {
     staff_paid_at: r.staff.length ? r.estate.staff_paid_at : new Date(),
     spent_omr: Number(r.estate.spent_omr || 0) + s.hireOmr });
   await h.track(client, ch.account_id, 'estate_staff_hire', { staff: s.id, omr: s.hireOmr });
-  return { ok: true, staff: s.id, name: s.name, wageOmrDay: s.wageOmrDay, walked: r.walked };
+  // wave-75: the hire BURNS $OMR up front (estate:staff:hire) and the line named only the wage — the
+  // price left the account unstated. The client has no staff catalog to price it from, so it ships.
+  return { ok: true, staff: s.id, name: s.name, wageOmrDay: s.wageOmrDay, hireOmr: s.hireOmr, walked: r.walked };
 }
 
 // Dismiss — free, but wages must be settled first (no stiffing on the way out; the walk window is

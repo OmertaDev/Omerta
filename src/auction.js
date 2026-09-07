@@ -151,7 +151,7 @@ export async function consignTrophy(ch, lotId, reserve, client, h) {
      VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
     [id, ch.account_id, lotId, w.archetype, w.name, w.serial, res, closesAt]);
   await h.track(client, ch.account_id, 'auction_consign', { lot: lotId, reserve: res });
-  return { ok: true, id, name: w.name, serial: w.serial, reserve: res, fee: AUCTION.CONSIGN.FEE_OMR,
+  return { ok: true, consign: 'listed', id, name: w.name, serial: w.serial, reserve: res, fee: AUCTION.CONSIGN.FEE_OMR,
     closesHours: Math.round(AUCTION.CONSIGN.MS / 3600000) };
 }
 
@@ -192,7 +192,9 @@ export async function reclaimConsignment(ch, id, client, h) {
   if (row.bidder && Number(row.current_bid) > 0) throw new GameError('has_bid', "There's a bid on it — you can't pull it now.");
   await client.query("UPDATE auction_consignments SET status='cancelled' WHERE id=$1", [id]);
   await client.query('UPDATE auction_wins SET listed=false WHERE account_id=$1 AND lot_id=$2', [ch.account_id, row.trophy_lot_id]);
-  return { ok: true, id, name: row.name };
+  // Name the SYSTEM, not the state: {ok,id,name} is a bare shape that collides with anything else
+  // carrying an id and a name, and the marker is what lets the line say WHICH block the lot came off.
+  return { ok: true, consign: 'pulled', id, name: row.name };
 }
 
 // The worker settles expired consignments: reserve MET → the buyer takes the trophy, the seller is paid

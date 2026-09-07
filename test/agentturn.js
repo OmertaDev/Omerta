@@ -5,6 +5,7 @@ process.env.JWT_SECRET = 'test-jwt-secret-for-agent-turn';
 
 import assert from 'node:assert/strict';
 import { buildServer } from '../src/server.js';
+import { agentActionLockHooks, CREW_FIRST_CHARACTER_LOCKS } from '../src/crew.js';
 
 const app = await buildServer();
 const call = async (method, url, { token, body, idempotencyKey } = {}) => {
@@ -394,6 +395,10 @@ try {
     'organization growth is represented in the same plan contract as economic loops');
   assert.equal(openRecruiting.ev.cash, 0,
     'organization maintenance is not disguised as monetary expected value');
+  assert.equal(agentActionLockHooks(openRecruiting.id), CREW_FIRST_CHARACTER_LOCKS,
+    'the issued Crew recruiting action selects the Crew-first transaction boundary');
+  assert.equal(agentActionLockHooks(`${openRecruiting.id}:forged`), null,
+    'only the complete server-authored action-id shape selects the stronger lock posture');
   const activationBefore = Number((await app.pool.query(
     "SELECT COUNT(*) n FROM telemetry WHERE account_id=$1 AND event='agent_turn_action'", [agentAccount])).rows[0].n);
   const acted = await call('POST', '/v1/agent/act', {

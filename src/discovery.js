@@ -15,10 +15,9 @@
 // social front door (`NOT c.is_npc AND NOT a.agent_flag`); residents are already findable on the
 // streets roster. If you are genuinely alone the lists are empty, which is the TRUE state and the
 // empty-state honesty rule (never dress an empty board as full).
-import { DISCOVERY, CREW, DISTRICTS, levelOf, PACING, seenSince } from './rules.js';
+import { DISCOVERY, CREW, DISTRICTS, levelOf, PACING, seenSince, districtName } from './rules.js';
 import { vouchCounts } from './vouch.js';
 
-const districtName = (id) => (DISTRICTS.find((d) => d.id === id) || {}).name || id;
 // the respect a level costs, from the signed pacing curve (respect(L) = D·(L−1)²) — used to turn a
 // LEVEL band into a respect band the SQL can filter on. The inverse of levelOf, kept local (the
 // hustle.js districtName pattern: rules.js does not export it).

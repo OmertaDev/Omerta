@@ -241,6 +241,7 @@ const DOMAINS = {
   'economy-ledger': 'Cash/$OMR movement, market, taxes, treasury, exchange, emissions and invariants',
   'social-combat': 'Characters, crews/families, streets, contracts, PvP, heists and relationships',
   'world-progression': 'Progression, skills, events, population, discovery, standing and world state',
+  'world-graph': 'Conserved items, graph validation, crafting, mysteries and multi-account operations',
   'enterprise-logistics': 'Businesses, rackets, territory, convoys, port, shipments, loans and assets',
   'vice-competition': 'Casino, ring poker, racing, boxing, speakeasy and competitive ladders',
   'law-intelligence': 'Law/RICO, the Pen, wire, secrets, dossiers and counter-intelligence',
@@ -256,6 +257,7 @@ const DOMAIN_MODULES = {
   'economy-ledger': new Set(['economy','emission','exchange','fees','fairness','invariants','market','memo','router','tax','tokenhealth','treasury','vig','portfolio','stockdeliver','dexbot']),
   'social-combat': new Set(['crew','duels','firstblood','heists','honor','made','marriage','mentor','rivals','roster','soldiers','social','streets','vouch']),
   'world-progression': new Set(['citymap','citywide','day','discovery','events','explore','firsts','landmarks','mastery','notoriety','npcwar','population','season','skills','sov','standing','streak','underworld','world']),
+  'world-graph': new Set(['worldgraph','worldgraph-validate','items','crafting','mysteries','operations','phase1','phase1-policy','phase1-validation','core-materials','automotive-salvage','belladonna']),
   'enterprise-logistics': new Set(['convoy','deeds','estate','loans','market','megaproject','payroll','port','shipment','territory','business','garage']),
   'vice-competition': new Set(['casino','boxing','races','ring','speakeasy','stable']),
   'law-intelligence': new Set(['collection','law','pen','secrets','wire']),
@@ -425,7 +427,9 @@ function routeRegistrationArguments(snippet) {
 }
 
 function codeMask(source) {
-  const out = [...source];
+  // Scanner offsets are UTF-16 code units. `split('')` preserves that indexing;
+  // string spread would collapse astral characters and shift every later mask.
+  const out = source.split('');
   const blank = (i) => { if (out[i] !== '\n' && out[i] !== '\r') out[i] = ' '; };
   let state = 'code';
   let quote = '';
@@ -664,6 +668,21 @@ function finalCallbackCall(argument) {
   return name;
 }
 
+// Git renders `--date=iso-strict` for UTC as `+00:00` up to git 2.43 and as `Z` from 2.55 — the
+// same instant, two spellings. The generated artifacts are byte-compared by knowledge-test, so an
+// un-normalized commit date makes the graph a function of the CHECKOUT'S GIT BINARY rather than of
+// the revision: regenerate on one machine, verify on another, and 3,065 timestamps "drift" with
+// nothing having changed. That is the third instance of one class here (after worktreeDirty and the
+// branch name), so it is normalized at the single seam that reads git rather than tolerated
+// downstream. `Date` parsing of an ISO-8601 offset is spec-defined and version-stable, and it keeps
+// the INSTANT exactly; what it drops is the author's local wall-clock, which git itself remains the
+// authority on. An unparseable date is passed through untouched rather than written as the string
+// "Invalid Date" — a value nobody can act on is worse than a value that looks foreign.
+function canonicalCommitDate(raw) {
+  const parsed = new Date(raw);
+  return Number.isNaN(parsed.getTime()) ? raw : parsed.toISOString();
+}
+
 function parseCommits(revision = 'HEAD') {
   const raw = git(['log', '--date=iso-strict', '--pretty=format:%x1e%H%x1f%ad%x1f%an%x1f%s', '--name-only', revision]);
   const commits = [];
@@ -671,7 +690,7 @@ function parseCommits(revision = 'HEAD') {
     const lines = chunk.replace(/^\r?\n/, '').split(/\r?\n/);
     const [hash, date, author, ...subjectParts] = (lines.shift() || '').split('\x1f');
     if (!hash) continue;
-    commits.push({ hash, date, author, subject: subjectParts.join('\x1f'), files: lines.map(posix).filter(Boolean) });
+    commits.push({ hash, date: canonicalCommitDate(date), author, subject: subjectParts.join('\x1f'), files: lines.map(posix).filter(Boolean) });
   }
   return commits;
 }
@@ -810,6 +829,11 @@ function build(options = {}) {
   const routes = [];
   for (const [rel, text] of textCache) {
     if (!(rel === 'src/server.js' || rel.startsWith('src/routes/'))) continue;
+    // World-graph mutations use one local, closed wrapper. Recognize it only where its definition
+    // proves both account auth and the logical-mutation key; a same-named helper elsewhere must not
+    // acquire authority by coincidence, and weakening this wrapper must make the knowledge test red.
+    const hasWorldGraphMutationWrapper = rel === 'src/routes/worldgraph.js'
+      && /const\s+mutationOptions\s*=\s*\(auth,[\s\S]{0,240}?preHandler:\s*\[auth,\s*requireIdempotency\]/.test(text);
     const aliases = new Map();
     for (const m of text.matchAll(/import\s+\*\s+as\s+(\w+)\s+from\s+['"]([^'"]+)['"]/g)) {
       const target = relativeImport(rel, m[2], fileSet);
@@ -834,10 +858,13 @@ function build(options = {}) {
       const snippet = routeRegistrationSnippet(text, m.index);
       const registrationArguments = routeRegistrationArguments(snippet);
       const routeOptions = registrationArguments[1] || '';
+      const worldGraphMutationAuth = hasWorldGraphMutationWrapper
+        && /^\s*mutationOptions\(\s*auth(?:\s*,|\s*\))/.test(routeOptions);
       const access = /preHandler:\s*modAuth/.test(routeOptions)
           || /^\s*guarded\(\s*modAuth\b/.test(routeOptions) ? 'moderator'
         : /preHandler:\s*auth/.test(routeOptions)
-          || /^\s*guarded\(\s*auth\b/.test(routeOptions) ? 'authenticated'
+          || /^\s*guarded\(\s*auth\b/.test(routeOptions)
+          || worldGraphMutationAuth ? 'authenticated'
         : /websocket:\s*true/.test(snippet) ? 'token-query'
         : 'public';
       const routeId = `${method} ${url}`;
@@ -882,12 +909,21 @@ function build(options = {}) {
         : url.startsWith('/v1') ? domainFor(handlerFile || rel) || 'platform-core' : 'client-experience';
       const handler = resolvedLocalHandler?.name || resolvedImport?.name
         || (handlerMatch ? `${handlerMatch[1]}.${handlerMatch[2]}` : null);
-      const n = node('Route', routeId, { label: routeId, method, url, access, domain, definitions: [] }, { file: rel, line });
+      const n = node('Route', routeId, {
+        label: routeId, method, url, access, domain,
+        mutationAuthenticated: worldGraphMutationAuth,
+        idempotentMutation: worldGraphMutationAuth,
+        definitions: [],
+      }, { file: rel, line });
       n.definitions.push({ file: rel, line });
       edge('DEFINED_IN', n.key, `Artifact:${rel}`, { file: rel, line });
       edge('BELONGS_TO', n.key, `Domain:${domain}`, { file: rel, line });
       if (handlerFile) edge('HANDLED_BY', n.key, `Artifact:${handlerFile}`, { file: rel, line }, { symbol: handler });
-      routes.push({ method, url, access, domain, file: rel, line, handler, handlerFile });
+      routes.push({
+        method, url, access, domain, file: rel, line, handler, handlerFile,
+        mutationAuthenticated: worldGraphMutationAuth,
+        idempotentMutation: worldGraphMutationAuth,
+      });
     }
   }
 

@@ -6,7 +6,9 @@ are set). Two Node processes over one Postgres DB. No build step.
 ## 0. Pre-flight (on the release commit)
 - [ ] `npm ci` (or `npm install`) — one runtime dep tree; no native build required for the game (the
       `@resvg/resvg-js` used by social-share PNGs is an **optionalDependency** — absent → cards fall back to SVG).
-- [ ] `npm test` → **113 suites green**.
+- [ ] `npm test` → every suite in `test/` is mandatory and green (the gate derives the current count).
+- [ ] `npm run worldgraph:check` → deterministic CORE + AUTOMOTIVE + BELLADONNA graph validation;
+      this is separate from `npm run content:check` for authored content packs.
 - [ ] `node tools/sim.js` → ends with `✅ sim complete — §10.4 holds exactly` (drift-0).
 - [ ] **`npm run preflight`** — on the box, with the real environment loaded. Runs exactly the checks
       the server runs at startup, so a green result means it will boot; non-zero exit means it won't,
@@ -19,6 +21,8 @@ are set). Two Node processes over one Postgres DB. No build step.
       core loop on real Postgres and FAILS on any pg deprecation. It has already caught one: 16
       overlapping queries on a single pooled client in `loadOwned`, deprecated today and removed in
       pg@9 — i.e. an upgrade would have 500'd every action in the game.
+      Its Phase 1 leg checks all 12 item/mystery/operation tables, native constraints and races,
+      the full Belladonna chain, exact `$300` sink, zero $OMR, provenance and escrow cleanup.
       ```
       createdb omerta_check
       DATABASE_URL=postgres://localhost/omerta_check JWT_SECRET=x MOD_KEY=y \
@@ -115,16 +119,21 @@ collapses a pacing timer server-wide; `TRAIN_CD_MS`/`MISSION_CD_MS` in particula
       at ~30 concurrent players the 20-pool COLLAPSES (queueing on `connectionTimeout` → 503s read as an
       outage — measured 2026-08-11: 30 vs 284 req/s). Keep it declared; scale the DATABASE plan first.
 - [ ] `INVARIANT_WEBHOOK_URL=<url>` — §10.4 drift, Vig/Bond, and backup-watchdog alerts (recommended).
-      **Must be set on the WORKER process** — every automatic alarm lives there (`src/worker.js`); the api
-      only alerts on a manual `GET /v1/mod/invariants` or an `/admin` load. On Render, put it on the shared
-      env group so both get it. A Slack or Discord webhook URL works as-is: the payload carries `text` and
+      **Set it on BOTH processes** — on Render the shared env group does that, which is where
+      `render.yaml` puts it. Most automatic alarms live in the worker (`src/worker.js`), and this line
+      used to say "worker only". That stopped being true when the worker-dark watchdog shipped: the
+      **API** now alarms on its own timer as well, and it is the ONLY thing that can page when the
+      WORKER is gone — a process cannot alarm on being dead. Set the key on the worker alone and every
+      alarm works except that one, which is precisely the shape that hid a 17h outage. A Slack or Discord webhook URL works as-is: the payload carries `text` and
       `content` alongside the structured fields, because those services 400 a body with neither and
       `alertDrift` swallows the error — a webhook that looked configured would have delivered nothing.
       **Getting one (Discord, 60 seconds):** Server Settings → Integrations → Webhooks → New Webhook →
       pick a channel → *Copy Webhook URL*. It looks like `https://discord.com/api/webhooks/<id>/<token>`.
       **Slack:** api.slack.com/apps → your app → Incoming Webhooks → *Add New Webhook to Workspace*.
-      **Then PROVE it:** open `/admin` → Mod Tools → **send test alert**. A message must land in the
-      channel within seconds. `/admin`'s Backups panel also carries an *alerts reach you* line, so an
+      **Then PROVE it:** open `/admin` → Mod Tools → **send test alert**, and require
+      `configured: true`. A message must land in the channel within seconds. The drill answers for
+      ONE service — `/admin` is served by the API, so it proves the API can page (the worker-dark
+      alarm); the worker's own key is proven by its next §10.4 sweep, or by watching for the boot log. `/admin`'s Backups panel also carries an *alerts reach you* line, so an
       unset webhook is visible rather than discovered the night the ledger drifts. Treat the URL as a
       password — anyone who has it can post into that channel.
 - [ ] `CITY_WIRE_WEBHOOK_URL=<url>` — **THE CITY WIRE** (optional, organic marketing): a SEPARATE Discord
@@ -328,9 +337,10 @@ or call the script directly:
 ```
 It dumps to a temp name, **verifies**, and only then moves the file into place — so a run that dies
 halfway leaves no truncated file wearing a plausible name. Verification is: readable by `pg_restore`,
-the expected schema, `accounts`/`characters`/`transactions` present, a size floor, **and actual rows**
-(a schema-only database dumps every table — 222 in the current schema — at ~200 KB: it clears every other check while holding
-nothing, so only reading the data section back proves there is data in there). Retention runs **only
+the expected schema, `accounts`/`characters`/`transactions` plus all 12 Phase 1 item, mystery, and
+operation authority tables present, a size floor, **and actual rows** (a schema-only database dumps
+every current table and can clear every structural check while holding nothing, so only reading the
+data section back proves there is data in there). Retention runs **only
 after a good dump**, so a run of bad nights can never age out the last known-good backup.
 - exit non-zero = **no backup was kept**; the message says why. Alert on it.
 - `BACKUP_MIN_ROWS=0` for a genuinely cold database (nobody has signed up yet).
@@ -361,7 +371,7 @@ Success looks exactly like this (measured, not paraphrased):
 ```
 dumping…
 verifying…
-backup verified: ./backups/omerta-20260726-123716.dump (194085 bytes, 161 tables)   # an example run from 2026-07 — the table count grows with the schema (222 today)
+backup verified: ./backups/omerta-20260726-123716.dump (194085 bytes, 161 tables)   # historical example; the current gate derives schema size
 restore with: pg_restore --no-owner --clean --if-exists -d <target> ./backups/omerta-…dump
 ```
 If it instead says `'accounts' holds 0 rows … expected ≥ 1`, it dumped an EMPTY database — almost always
@@ -373,9 +383,10 @@ addresses, the entire ledger — so treat it like a password: keep it off shared
 (`backups/` is already ignored).
 
 **The script has its own regression test** — `npm run backup:selftest`, pointed at a throwaway
-Postgres it may create and drop databases on. It builds a populated database, a schema-only one and a
+Postgres it may create and drop databases on. It builds a linked Phase 1 fixture across all 12 new
+tables, a schema-only database and a
 non-OMERTÀ one, and proves each check *refuses what it should*: a verification that cannot fail is
-decoration. CI runs it against a real Postgres on every push, and that has already earned itself —
+decoration. CI runs it against a real Postgres on every applicable workflow run, and that has already earned itself —
 it caught a **race in the verifier that refused GOOD dumps**. The required-table check piped into
 `grep -q` under `pipefail`; `grep -q` exits at the first match and SIGPIPEs the writer still emitting
 the rest of a ~34 KB table of contents, so a *successful* match returned 141 and the backup was
@@ -437,7 +448,27 @@ step 3 returned the true counts, step 4 came back `"ok": true` with every §10.4
 - [ ] `GET /v1/session` → 200 (server up).
 - [ ] Boot log shows `[db] Postgres ready` (NOT `[db] pg-mem …` — that means `DATABASE_URL` was missing).
 - [ ] `POST /v1/auth/guest` → token; `POST /v1/character {name}` → 200; `POST /v1/crimes/pick` → a result.
+      **Name it `smoke <date>` and know that it PERSISTS** — this line creates a real player on the
+      live box, once per deploy, forever. Measured 2026-08-29, the two consequences:
+      it ages off the player-facing boards after `DISCOVERY.SEEN_DAYS` (30) — `/v1/live` and the
+      ROLODEX gate on `last_accrued_at`, so debris self-clears there and needs no sweep — but
+      `/v1/mod/overview`'s `total`/`alive`/`dead` carry **no recency gate**, so every smoke character
+      counts in YOUR OWN headline player figure permanently. `active24h` is gated and is the honest
+      one to read. The launch rehearsal found 10 of 12 entries on `/v1/live` were dead level-1
+      accounts from old smoke runs; the recency gate closed the board half, and this note closes the
+      other. If a clean count matters (a launch report, a funnel figure), subtract the smoke
+      characters by name — they are the only ones this checklist creates. **There is no sweep, and the
+      obvious lever makes it worse**: nothing in `src/` deletes a character row (a bloodline's dead
+      streets are its record), so a smoke character is permanent, and `POST /v1/mod/kill` runs the
+      estate — which INSERTs an heir (`src/social/estate.js`, carrying the victim's own `is_npc`), so
+      `total` goes UP by one. Ban does not touch these counts either; they read `characters`, not
+      `accounts`. Subtracting by name is the remedy, not a workaround.
 - [ ] `GET /admin` (with the `x-mod-key`) → the ops dashboard; the §10.4 banner reads **OK** (drift-0).
+- [ ] **Press `send test alert` on /admin and require `configured: true`** (§5 explains why it is per
+      SERVICE — this proves the API's key, i.e. the alarm that pages when the worker is gone). A green
+      §10.4 banner proves the API is up, never that an alarm can leave the building. A 200 means "we
+      tried": `alertDrift` swallows a failed POST on purpose, so watch the channel, and check the
+      logs for `invariant webhook failed` if nothing lands.
 - [ ] `npm run invariants` (or `GET /v1/mod/invariants`) → every check `ok:true`.
 - [ ] Confirm the worker logged a tick (and, after 12h, a buyback).
 

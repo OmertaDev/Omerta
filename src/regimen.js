@@ -10,7 +10,7 @@
 // §10.4: ZERO surface. Training costs energy + the shared clock, never cash; XP and levels are not
 // currencies; nothing here writes a transactions row (the regimen test proves it). Discipline state
 // DIES WITH THE STREET (runEstate wipes character_disciplines + npc_drills).
-import { REGIMEN, UNDERWORLD, PACING, disciplineLvlOf, drillOf, dayOf, jailed } from './rules.js';
+import { REGIMEN, UNDERWORLD, PACING, disciplineLvlOf, drillOf, dayOf, jailed, npcOf , coolLeft, coolWait } from './rules.js';
 import { GameError } from './game.js';
 
 const DISC_IDS = REGIMEN.DISCIPLINES.map((d) => d.id);
@@ -35,8 +35,9 @@ export async function trainDiscipline(ch, id, client, h, { fromYard = false } = 
   if (!fromYard && jailed(ch)) throw new GameError('jailed', 'No gym in lockup — but there\'s an iron pile in the yard.');
   if (Number(ch.energy) < REGIMEN.ENERGY) throw new GameError('energy', 'Too tired to train.');
   const trainCd = Number(process.env.TRAIN_CD_MS ?? PACING.TRAIN_CD_MS);
-  if (trainCd > 0 && ch.train_at && new Date(ch.train_at) > new Date())
-    throw new GameError('cooldown', `The body needs a minute. Back to the gym in ${Math.max(1, Math.ceil((new Date(ch.train_at) - Date.now()) / 60000))}m.`);
+  const gymCool = trainCd > 0 ? coolLeft(ch.train_at) : 0;
+  if (gymCool)
+    throw new GameError('cooldown', `The body needs a minute. Back to the gym in ${coolWait(gymCool)}.`, { cooldownSeconds: gymCool });
   const cur = Number(h.owned.disciplines?.[id] || 0);
   if (disciplineLvlOf(cur) >= REGIMEN.CAP) throw new GameError('capped', 'You\'ve mastered that discipline.');
   ch.energy = Number(ch.energy) - REGIMEN.ENERGY;
@@ -83,8 +84,13 @@ export async function claimDrill(ch, npc, client, h) {
   const disc = h.owned.disciplines || {};
   const target = trainerDiscipline(npc, disc);
   const total = await addXp(client, ch.id, target, REGIMEN.DRILL_XP);
-  await h.notify(client, ch.id, 'drill_done', { npc, discipline: target, xp: REGIMEN.DRILL_XP });
-  return { ok: true, npc, discipline: target, xp: REGIMEN.DRILL_XP, total, level: disciplineLvlOf(total) };
+  // npcName rides BOTH the notify and the reply — the id ('armorer') is a storage key and the name
+  // ('Bella Bang-Bang') is what a player knows the cast by; the client has no catalog of the cast,
+  // so the wire template rendered "armorer's drill is done". The board one screen up (regimenBoard)
+  // has sent `trainer` all along, which is what makes this the forgotten-sibling shape.
+  const nm = npcOf(npc)?.name || npc;
+  await h.notify(client, ch.id, 'drill_done', { npc, npcName: nm, discipline: target, xp: REGIMEN.DRILL_XP });
+  return { ok: true, npc, npcName: nm, discipline: target, xp: REGIMEN.DRILL_XP, total, level: disciplineLvlOf(total) };
 }
 
 // ── the board: your disciplines + today's six drills with live progress ──

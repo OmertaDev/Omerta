@@ -1540,6 +1540,29 @@ if (artShipped) assert(photoCount >= 100, `the shipped catalog photos are actual
   try { await alertDrift(pool, drift); } finally { globalThis.fetch = realFetch; }
   assert.equal(sent.length, before, 'with no INVARIANT_WEBHOOK_URL set, nothing is posted anywhere');
 
+  // A RECOVERY MUST NOT READ LIKE AN EMERGENCY. Every watchdog on this channel latches per EPISODE,
+  // so the all-clear is the only way an operator who restarted a dark worker learns whether it worked
+  // — and if it arrives under the same 🚨 header as the alarm, it reads as a SECOND page. Driven
+  // through the real alertDrift with the wire stubbed, never webhookText alone, because what matters
+  // is what a human actually receives.
+  {
+    const rec = [];
+    globalThis.fetch = async (url, opts) => { rec.push(JSON.parse(opts.body)); return { ok: true }; };
+    process.env.INVARIANT_WEBHOOK_URL = 'http://127.0.0.1:1/hook';
+    try {
+      await alertDrift(pool, [{ name: 'worker heartbeat', ok: true, detail: 'recovered — beat 12s ago.' }], 'worker');
+      await alertDrift(pool, [{ name: 'worker heartbeat', ok: false, detail: 'no beat in 880 minutes.' }], 'worker');
+    } finally { globalThis.fetch = realFetch; delete process.env.INVARIANT_WEBHOOK_URL; }
+    assert.equal(rec.length, 2, 'both edges of an episode reach the channel');
+    assert(/RECOVERED/.test(rec[0].content) && !/🚨/.test(rec[0].content),
+      `an all-clear must not carry the emergency header, or a restart that worked reads as a second page; got: ${rec[0].content.split('\n')[0]}`);
+    assert(/🚨/.test(rec[1].content) && !/RECOVERED/.test(rec[1].content),
+      'and the failing edge must still read as an emergency');
+    // an EMPTY list is a bug, never good news — [].every() is true, so this is the edge that decides
+    // whether the rule is "all ok" or "nothing wrong"
+    assert(!/RECOVERED/.test(webhookText('worker', [])), 'an empty alert is not a recovery');
+  }
+
   // a 4-check drift renders one line per check, so a real page is readable at a glance
   const many = webhookText('ledger', ['a', 'b', 'c', 'd'].map((n) => ({ name: n, lhs: 1, rhs: 0, drift: 1 })));
   assert.equal(many.split('\n').length, 5, 'a header plus one line per failed check');
@@ -1709,6 +1732,70 @@ if (artShipped) assert(photoCount >= 100, `the shipped catalog photos are actual
     assert.equal(oa.body.info.version, pkgVer, 'the OpenAPI doc version is the package version, derived');
     assert(Number(pkgVer.split('.')[0]) >= 1, 'the shipped surface is versioned 1.x — SemVer starts meaning something');
   }
+}
+
+// ── THE API WATCHES THE WORKER ──────────────────────────────────────────────────────────────────
+// Every proactive alarm in this game lives on the worker, and a process cannot alarm on being dead.
+// MEASURED: on 2026-08-29 production's worker went dark for 14.8 hours with `/health` reporting
+// `worker.stale: true` the whole time and nothing POSTing anywhere. So the API — the only process
+// that stays up when the worker does not — watches the heartbeat and shouts on the founder channel.
+//
+// DRIVEN through the real `startWorkerWatch`, not a copy: the returned `check` is the same predicate
+// the interval runs. Driven rather than slept through, so no wall clock decides whether it passes.
+{
+  const { startWorkerWatch } = await import('../src/server.js');
+  const { webhookText } = await import('../src/invariants.js');
+  const sent = [];
+  const alert = async (_pool, failed, kind) => { sent.push({ failed, kind }); };
+  // everyMs deliberately enormous: the interval must never fire during the test, so every result
+  // below comes from a `check()` WE called and the assertions cannot race the timer.
+  const { check, timer } = startWorkerWatch(app.pool, { staleSec: 60, everyMs: 3_600_000, alert });
+  const beat = (ago) => app.pool.query(
+    `UPDATE worker_heartbeat SET beat_at = now() - interval '${ago}' WHERE id = 1`);
+  await app.pool.query('INSERT INTO worker_heartbeat (id, beat_at) VALUES (1, now()) '
+    + 'ON CONFLICT (id) DO UPDATE SET beat_at = now()');
+
+  assert.equal(await check(), null, 'a worker that beat a moment ago must not page anybody');
+  assert.equal(sent.length, 0, 'a healthy worker paged the founder — an alarm that cries wolf is one '
+    + 'that gets muted, and then the real night is silent too');
+
+  await beat('3 hours');
+  assert.equal(await check(), 'dark', 'the worker has not beaten in three hours and the API said nothing '
+    + '— this is the 14.8-hour blackout of 2026-08-29, unchanged');
+  assert.equal(sent.length, 1, 'exactly one page on the dark edge');
+  assert.equal(sent[0].failed[0].ok, false, 'a dark worker must render as a FAILING check, or the '
+    + 'founder reads an emergency as an all-clear');
+  assert.equal(sent[0].kind, 'worker', 'the page must name the worker, not the ledger');
+  assert.match(sent[0].failed[0].detail, /180 minutes/,
+    'the page must say HOW LONG it has been dark — "the worker is down" is not actionable, "it has not '
+    + 'beaten in 180 minutes" is');
+
+  assert.equal(await check(), null, 'LATCHED: a still-dark worker must not page again on every sweep');
+  assert.equal(sent.length, 1, 'the watchdog re-paged a worker it had already reported');
+
+  await beat('1 second');
+  assert.equal(await check(), 'recovered', 'the worker came back and nobody was told — an operator who '
+    + 'restarts it cannot tell a fix that worked from one that did not');
+  assert.equal(sent.length, 2, 'exactly one recovery line on the healing edge');
+  assert.equal(sent[1].failed[0].ok, true, 'the recovery must render as an OK check, or the all-clear '
+    + 'arrives wearing an emergency header');
+
+  // THE UNLATCH IS THE POINT, and it is what a static "= false appears somewhere" check cannot see:
+  // a watchdog that latches and never unlatches goes permanently quiet after ONE episode.
+  await beat('3 hours');
+  assert.equal(await check(), 'dark', 'the SECOND dark episode was silent — the latch never cleared, so '
+    + 'the watchdog cried once and then went as quiet as the thing it was watching');
+  assert.equal(sent.length, 3, 'the second episode must page');
+
+  // and the two headers must read differently to a human at 3am
+  assert.match(webhookText('worker', sent[0].failed), /🚨/, 'a dark worker must carry the emergency header');
+  const rec = webhookText('worker', sent[1].failed);
+  assert(/RECOVERED/.test(rec) && !/🚨/.test(rec),
+    `an all-clear must not carry the emergency header; got: ${rec.split('\n')[0]}`);
+
+  clearInterval(timer);
+  console.log('✅ the API watches the worker: pages on the dark edge, latches, announces recovery, '
+    + 'and pages again on the next episode');
 }
 
 console.log(`✅ M5 hardening test passed — §10.4 invariant job (zero drift on an earned economy, drift alarm fires), idempotency keys, invite codes, X OAuth + guest upgrade, season rollover, rate limits (human burst / agent 1-per-3s / swap 6-per-min), catalog item art (${artCount} icons — ${photoCount} generated photos, SVG emblem fallback), THE BROADCAST (dossier/cards/profile, no exact-wealth leak, clean fallbacks), PRESENCE + THE TROLL BOX (online counter, city + family-gated chat, sanitized + flood-braked), ONE-CLICK X SIGN-IN (PKCE start/state/callback surface, dormant without env), THE CELLPHONE (DM send/gates/flood brake, threads + unread + seen, inbox peek without flipping delivered, zero ledger rows) + STEP TWO BLOCKED LINES (block/unblock, dead tone both directions, board + thread surfacing, history stands, self/double gates), DB-DOWN LEGIBILITY (503 db_down not 500 internal, GET /health up+down+recovery, real bugs still report as bugs), THE LOCK-FREE READ PATH (D1: a clean read is served without FOR UPDATE, a read with real accrual behind it declines and the route re-runs under the lock so the banked state and the rendered view agree, a read still CHECKPOINTS accrual while a read with nothing to bank leaves the clock alone, and the write guard refuses ten write/lock forms including MERGE, COPY, SELECT-INTO, setval and FOR UPDATE without refusing three legitimate reads), BACKUP HEALTH (pg_stat_archiver: shipping/failing/healed-not-realarming/quiet/unsupported, surfaced on the ops dashboard, and archive_mode=off reads as NOT RUNNING rather than healthy — the worker alerts on both), STREET LIFE (the black book: no_number gate, a jump-meeting is mutual, blocks precede the number gate; THE CALL: contact-only generation, one-open-call PK, located freight fulfilment paid from the contact's own pocket — contact:* legs net to zero, broke-void, expiry sweep) + STEP TWO THE BOOK (a ladder derived from the lines you hold, per-contact STANDING deepening with every settled call so a regular's next request is BIGGER — capped, and still refused outright when they can't cover it, so recycle-only holds at every tier — plus the lines-held leaderboard with residents excluded)`);

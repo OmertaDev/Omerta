@@ -76,7 +76,7 @@ async function roundsOf(client, day, cid) {
 
 // The board: tonight's window (mechanic/mode/hour/live/countdown), your participation, and the forecast.
 // Branches on the mechanic — RALLY carries turnout+reward+answered; HAPPY HOUR carries rounds. Pure read.
-export async function primeTimeBoard(client, ch) {
+export async function primeTimeBoard(client, ch, h) {
   const s = statusNow();
   const day = s.pt.day;
   const forecast = Array.from({ length: PRIME_TIME.FORECAST_DAYS }, (_, i) => {
@@ -95,6 +95,11 @@ export async function primeTimeBoard(client, ch) {
     mechanic: s.pt.mechanic, mode: s.pt.mode, hour: s.pt.hour,
     live: s.live, opensSeconds: s.secondsToStart, closesSeconds: s.secondsToEnd,
     minLevel: PRIME_TIME.RALLY_MIN_LVL, windowH: PRIME_TIME.WINDOW_H, forecast,
+    // ELIGIBILITY (Codex round 4): all three value-night actions refuse an agent at the door, and a
+    // board that still advertised the cash rendered an enabled button that could only fail — the
+    // check-5 class (the Port lane picker). ONE field covers every mechanic; always present (the
+    // ONE-shape rule), false for humans and on honor nights.
+    agentBarred: !!(h?.acct?.agent_flag && s.pt.mode === 'value'),
     // RALLY fields
     answered: siege ? false : partic, turnout: siege ? 0 : fighters, title: siege ? PRIME_TIME.SIEGE_TITLE : s.pt.title,
     reward: (!happy && !siege && s.pt.mode === 'value') ? rallyReward(fighters) : 0,  // an ESTIMATE — grows as more show; settled at final turnout
@@ -115,6 +120,12 @@ export async function answerCall(ch, client, h) {
   if (s.pt.mechanic !== 'rally') throw new GameError('not_rally', 'Tonight is not a rally — check the board for what\'s on.');
   if (!s.live) throw new GameError('closed', 'Prime Time isn\'t live right now. The board shows when tonight\'s window opens.');
   if (levelOf(Number(ch.respect)) < PRIME_TIME.RALLY_MIN_LVL) throw new GameError('rookie', `Answer the call at level ${PRIME_TIME.RALLY_MIN_LVL}.`);
+  // agents are refused a VALUE night at the door (the buyRound F3 posture) rather than at the settle:
+  // the settle already skips agent_flag rows, so an agent's answer bought a reply promising cash
+  // that could never arrive — a once-a-night spent on a false receipt. Honor nights stay open (the
+  // title lands at join, and status is not the faucet posture's business).
+  if (s.pt.mode === 'value' && h?.acct?.agent_flag)
+    throw new GameError('agent', 'The purse is for people. Machines rally for the love of it — come back on an honor night.');
   const day = s.pt.day;
   // once per night. NOT `ON CONFLICT DO NOTHING RETURNING` — pg-mem LIES about it (returns a row even on
   // a conflict, so the latch never fires; the recordReckoning lesson). answerCall runs under the
@@ -132,7 +143,12 @@ export async function answerCall(ch, client, h) {
   }
   // value night: the cash lands at close, scaled by the FINAL turnout (so nobody is punished for coming early)
   await notify(client, ch.id, 'primetime_answered', { mode: 'value', turnout }).catch(() => {});
-  return { answered: true, mode: 'value', turnout, pending: true };
+  // WAVE 80 — the cut rides with the reply. It is an ESTIMATE (the settle uses the FINAL turnout, so
+  // it only ever grows), and the client cannot compute it: BASE/PER/CAP are founder levers published
+  // nowhere it reads. Both siblings in this file already ship theirs — joinSiege sends `reward` and
+  // buyRound sends `cash` — so the value rally was the one payout-bearing reply that named no figure.
+  return { answered: true, mode: 'value', turnout, pending: true,
+    reward: rallyReward(turnout), perHead: PRIME_TIME.RALLY_PER, turnoutCap: PRIME_TIME.RALLY_TURNOUT_CAP };
 }
 
 // HAPPY HOUR — buy a round (up to HAPPY_ROUNDS a night), in-window only. value → petty cash per round
@@ -180,6 +196,14 @@ export async function joinSiege(ch, client, h) {
   if (s.pt.mechanic !== 'siege') throw new GameError('not_siege', 'Tonight is not a siege — check the board for what\'s on.');
   if (!s.live) throw new GameError('closed', 'The siege isn\'t on right now. The board shows when tonight\'s window opens.');
   if (levelOf(Number(ch.respect)) < PRIME_TIME.RALLY_MIN_LVL) throw new GameError('rookie', `Join the siege at level ${PRIME_TIME.RALLY_MIN_LVL}.`);
+  // agents are refused a VALUE siege only — the answerCall/buyRound mirror (Codex round 3). The
+  // recorded posture (SIGN-OFF 2026-08-16) keeps the CASH faucets agent-excluded, and on a value
+  // night an agent's strike would also pad the crack of a faucet it cannot draw — a fleet joining
+  // every value siege makes SIEGE_CASH a guaranteed payout for any human who shows. An HONOR siege
+  // has no faucet: the strike counts and the settle grants the badge to machines too (status is
+  // Sybil-inflatable by recorded posture — the hitman-rep/fight-fix line).
+  if (h?.acct?.agent_flag && s.pt.mode === 'value')
+    throw new GameError('agent', 'The siege\'s purse is for people. Machines storm the gates on honor nights.');
   const day = s.pt.day;
   // once per night — SELECT-then-INSERT under the character lock (the answerCall latch discipline)
   const seen = await client.query('SELECT 1 FROM primetime_rally WHERE day=$1 AND character_id=$2', [day, ch.id]);
@@ -188,7 +212,11 @@ export async function joinSiege(ch, client, h) {
   const fighters = await turnoutOf(client, day);
   const dmg = siegeDamage(fighters), target = siegeTarget();
   await notify(client, ch.id, 'primetime_siege', { fighters, damage: dmg, target }).catch(() => {});
-  return { joined: true, fighters, damage: dmg, target, cracked: dmg >= target, pending: true };
+  // the MODE and what a crack pays ride with the reply (the answerCall shape): the once-a-night
+  // participation is spent here, and neither the reward nor the all-or-nothing settle is anywhere
+  // the client can compute — value pays cash, honor pays a badge, and an uncracked siege pays neither.
+  return { joined: true, fighters, damage: dmg, target, cracked: dmg >= target, pending: true,
+    mode: s.pt.mode, reward: s.pt.mode === 'value' ? PRIME_TIME.SIEGE_CASH : PRIME_TIME.SIEGE_TITLE };
 }
 
 // THE WORKER SETTLE — after a value-rally window has fully closed, pay every answerer the turnout-scaled
@@ -232,9 +260,13 @@ export async function settlePrimeTime(pool) {
           [d, r.character_id]);
         if (!claim.rows.length) continue;               // another worker took this row
         // A siege night marks EVERY fighter settled (win or lose) but pays only on a crack; a value rally
-        // always pays. Either way the dead / agents are marked-but-unpaid (the faucet posture).
+        // always pays. The dead are marked-but-unpaid; agents are skipped from the CASH faucets (the
+        // recorded faucet posture) but an HONOR siege's badge is status — Sybil-inflatable by the
+        // hitman-rep/fight-fix posture — so a machine that stormed the gates wears it too (Codex round 3:
+        // the join now admits agents on honor nights, and a door that admits must not settle to nothing).
         if (isSiege && !cracked) continue;              // the gates held — this fighter's row is closed, nothing owed
-        if (!r.alive || r.agent_flag) continue;
+        if (!r.alive) continue;
+        if (r.agent_flag && !(isSiege && pt.mode === 'honor')) continue;
         if (isSiege && pt.mode === 'honor') {           // a cracked HONOR siege grants the badge — status, no §10.4
           await client.query('UPDATE characters SET title=$2 WHERE id=$1', [r.character_id, PRIME_TIME.SIEGE_TITLE]);
           await notify(client, r.character_id, 'primetime_siege_won', { mode: 'honor', title: PRIME_TIME.SIEGE_TITLE, fighters: turnout });

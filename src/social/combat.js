@@ -6,8 +6,8 @@
 //
 // Split out of the 2,003-line src/social.js; every function below is byte-identical to what was
 // there. Import from '../social.js' — it re-exports this package's public surface unchanged.
-import { GameError, bumpFamilyTask, bus, ledger, notify, track, loadOwned, skillMult, npcMult, npcTier, bumpStanding, bumpMastery, masteryFx, trunkCap, gainRespect, bumpCrewObjective, hunterSearchMs } from '../game.js';
-import { M3, CONSTANTS, LOAN, levelOf, rankIdxOf, cityEventOf, dayOf, btkOf, gunObjOf, vestMultOf, fleetValue, effStat, npcHitmanOf, VENDETTA, COMMISSION, SKILLS, UNDERWORLD, LAW, PORT, witproActive, penSafe, inHole, HONOR, HEIST_LOOT_RATE, BUSINESSES, seasonModOf, pathFx, RIVALS, carVal, carOf, boatOf , SHIPMENT, usd } from '../rules.js';
+import { GameError, assertStreetActor, bumpFamilyTask, bus, ledger, notify, track, loadOwned, skillMult, npcMult, npcTier, bumpStanding, bumpMastery, masteryFx, trunkCap, gainRespect, bumpCrewObjective, hunterSearchMs, persistAccountFields, ESTATE_ACCOUNT_FIELDS } from '../game.js';
+import { M3, CONSTANTS, LOAN, levelOf, rankIdxOf, cityEventOf, dayOf, btkOf, gunObjOf, vestMultOf, fleetValue, effStat, npcHitmanOf, VENDETTA, COMMISSION, SKILLS, UNDERWORLD, LAW, PORT, witproActive, penSafe, inHole, HONOR, HEIST_LOOT_RATE, BUSINESSES, seasonModOf, pathFx, RIVALS, carVal, carOf, boatOf, gearOf, SHIPMENT, usd , districtName, bustSpentToday, bustAttemptsLeft, bustRefillSeconds , coolLeft, coolWait } from '../rules.js';
 import { activeDecree } from '../commission.js';
 import { bumpHonor } from '../honor.js';
 import { recordRival, revengeOwed } from '../rivals.js';
@@ -22,16 +22,17 @@ import { hospitalized, isWanted, jailed, now, rand, safeHoused, warActive } from
 
 // ═══════════════════ JUMPS (§7.6) ═══════════════════
 export async function jump(ch, victim, client, h, intent) {
-  if (jailed(ch)) throw new GameError('jailed', 'No street work from lockup.');
-  if (safeHoused(ch)) throw new GameError('safe', "Can't throw hands while you're to ground — a safehouse is a shield, not a bunker.");
-  if (witproActive(ch)) throw new GameError('witpro', "You're in protective custody — the marshals didn't relocate you to work rivals. (witpro is a shield, not a free-kill window.)");
+  assertStreetActor(ch, { msgs: {
+    safe: "Can't throw hands while you're to ground — a safehouse is a shield, not a bunker.",
+    witpro: "You're in protective custody — the marshals didn't relocate you to work rivals. (witpro is a shield, not a free-kill window.)",
+    hosp: "You're in no shape for a fight — laid up under the Doc's care." } });
   // (R40 gate-matrix) a HOSPITALIZED actor can't launch offense — the symmetric action-lock every offense
   // sibling enforces (shakedownBusiness/standoverSpeakeasy/ambushConvoy/interceptRun/raidRivalRacket/raidNpc/
   // collectLoan + consensual PvP raceChallenge/fightBout/matchRace all gate `hosp_self`). Without it, `heal`
   // restores health=100 without clearing hosp_until, so the JUMP_MIN_HEALTH gate below is bypassable and a
   // laid-up player mugs/kills while still under the Doc's care — yet is itself untargetable (the victim gate).
-  // A founder who wants hospitalized retaliation reverts this one line.
-  if (hospitalized(ch)) throw new GameError('hosp_self', "You're in no shape for a fight — laid up under the Doc's care.");
+  // A founder who wants hospitalized retaliation drops the hosp gate from assertStreetActor's caller — but
+  // that helper is shared, so the honest form is an `opts` flag, never a private copy of the block.
   if (Number(ch.health) < M3.JUMP_MIN_HEALTH) throw new GameError('health', "You're in no shape for a fight.");
   // D6a step two — THE MESSAGE: what you came for (money vs reputation). An omitted/unknown intent
   // resolves to 'standard' (all mults 1.0), byte-identical to the pre-choice jump. Resolved HERE (above
@@ -134,7 +135,9 @@ export async function jump(ch, victim, client, h, intent) {
     await bumpFamilyTask(client, h, 'jump', 1);
     await bumpMastery(client, h, ch, 'muscle', 'jump'); // THE TRADES — a won jump works the protection racketeer's craft
     bus.emit('streets', { type: 'jump', by: ch.name, on: victim.name, war: !!war });
-    return { ok: true, win: true, intent: it.id, energy: energyCost, stolen, crates, rep, bounty, war: !!war, revenge, firstBlood };
+    // WAVE 80: hospMs rode the victim's notify and never the attacker's own reply, so the man who
+    // put them there was the one person not told the mark is off the street.
+    return { ok: true, win: true, intent: it.id, energy: energyCost, hospSeconds: Math.round(hospMs / 1000), stolen, crates, rep, bounty, war: !!war, revenge, firstBlood };
   }
   const dmg = rand(10, 25);
   ch.health = Math.max(1, Number(ch.health) - dmg);
@@ -181,7 +184,10 @@ export async function startSearch(ch, targetCharacterId, client, h) {
 // Restating a four-way stack in a second place is the class the preflight ledger exists to catch,
 // so the formula moved to where all four of its terms already live and both readers import it.
 
-const shootCdMs = () => Number(process.env.SHOOT_CD_MS || (2 * 3600 * 1000));
+// Reads the LEVER, never a second copy of its value: `hunterSearchMs` one comment up already reads
+// CONSTANTS.SEARCH_MS, and a sibling restating 2h inline is how the two come to disagree the day
+// one of them is retuned. The env knob stays TEST-ONLY (preflight refuses it in production).
+const shootCdMs = () => Number(process.env.SHOOT_CD_MS || CONSTANTS.SHOOT_CD_MS);
 
 
 export async function callOffSearch(ch, client, h) {
@@ -255,12 +261,15 @@ export async function fire(ch, victim, client, h, rounds) {
   // same clock as startSearch (executioner × fixer T3) — the hunter's two clocks agree
   if (new Date(s.started_at).getTime() + hunterSearchMs(h, ch) > Date.now())
     throw new GameError('searching', "They haven't been placed yet. Patience is a caliber.");
-  if (jailed(ch)) throw new GameError('jailed', 'No wet work from lockup.');
-  if (safeHoused(ch)) throw new GameError('safe', "No wet work while you're to ground — hiding, not hunting.");
-  if (witproActive(ch)) throw new GameError('witpro', "No wet work from witness protection — untargetable is a shield, not a licence to kill.");
-  if (hospitalized(ch)) throw new GameError('hosp_self', "You're laid up under the Doc's care — no wet work from a hospital bed. (R40: the offense action-lock every sibling enforces.)");
-  if (ch.shoot_cd_until && new Date(ch.shoot_cd_until) > new Date())
-    throw new GameError('cooldown', "Your trigger's still hot.");
+  // energy is gated below the gun/trigger checks on purpose (the order is the contract), so `energy: null`.
+  assertStreetActor(ch, { msgs: {
+    jailed: 'No wet work from lockup.',
+    safe: "No wet work while you're to ground — hiding, not hunting.",
+    witpro: "No wet work from witness protection — untargetable is a shield, not a licence to kill.",
+    hosp: "You're laid up under the Doc's care — no wet work from a hospital bed. (R40: the offense action-lock every sibling enforces.)" } });
+  const triggerCool = coolLeft(ch.shoot_cd_until);
+  if (triggerCool)
+    throw new GameError('cooldown', `Your trigger's still hot — ${coolWait(triggerCool)} before the next shot.`, { cooldownSeconds: triggerCool });
   const gun = gunObjOf(ch.gun);
   if (!gun) throw new GameError('gun', 'You need iron equipped for this kind of work.');
   if (Number(ch.energy) < M3.FIRE_ENERGY) throw new GameError('energy', `A hit takes ${M3.FIRE_ENERGY} energy.`);
@@ -297,12 +306,26 @@ export async function fire(ch, victim, client, h, rounds) {
   // THE CREW — you don't put a body on your own crew (the omertà twin; rat/WANTED forfeit it).
   if (h.owned.crewId && h.victimOwned.crewId === h.owned.crewId && !h.victimAcct.rat && !isWanted(victim))
     return callOff('crew', "They run with your crew now. The hit's off.");
-  if (victim.loc !== ch.loc) throw new GameError('district', `They were placed in ${victim.loc} — you're in ${ch.loc}. Travel there, then fire.`, { district: victim.loc });
+  if (victim.loc !== ch.loc) throw new GameError('district', `They were placed in ${districtName(victim.loc)} — you're in ${districtName(ch.loc)}. Travel there, then fire.`, { district: victim.loc });
 
   ch.energy = Number(ch.energy) - M3.FIRE_ENERGY;
   ch.ammo = Number(ch.ammo) - fired;
   ch.heat = Math.min(100, Number(ch.heat || 0) + M3.FIRE_HEAT); // §7 interlock: wet work draws law heat, like a deal
   await h.ledger(client, { characterId: ch.id, currency: 'ammo', amount: -fired, reason: 'fire' });
+  // THE TRIGGER COOLS ON THE SHOT, NOT ON THE OUTCOME. This stamp used to live in the MISS branch
+  // alone — so three of the four outcomes (a kill, a bodyguard absorb, a revive token) each returned
+  // above it and left the trigger cold, and a killer could re-search and fire again while a man who
+  // MISSED waited out two hours. It is not a discount anybody chose: the gate at the head of this
+  // function reads `shoot_cd_until` and the only writer sat past three early returns. It belongs
+  // here for the same reason the three lines above it do — the energy, the rounds and the law heat
+  // are all spent the moment the shot is fired, whatever it hits, and the cooldown is that same
+  // cost in time. Everything above this point is a gate that throws or a call-off that RETURNS
+  // before any of it, so nothing pays the cooldown for a shot it never took.
+  ch.shoot_cd_until = new Date(Date.now() + shootCdMs());
+  // …and every one of the four outcomes SAYS so. The wave-80 class: a success reply that arms a
+  // clock and never names it, so the player learns about it by pressing the button again and being
+  // refused. Only the miss line ever mentioned the trigger, and it was the one outcome that had it.
+  const shootCdSeconds = Math.ceil(shootCdMs() / 1000);
 
   const vicLvl = levelOf(Number(victim.respect));
   const btk = btkOf(vicLvl, victim.muscle, vestMultOf(victim.vest));
@@ -321,7 +344,7 @@ export async function fire(ch, victim, client, h, rounds) {
     const guard = await bodyguardAbsorbs(client, h, ch, victim);
     if (guard) {
       await h.notify(client, ch.id, 'target_guarded', { victim: victim.name, guard: guard.name });
-      return { ok: true, kill: false, absorbed: true, guard: guard.name, jammed };
+      return { ok: true, kill: false, absorbed: true, guard: guard.name, jammed, shootCdSeconds };
     }
     // ── PRE-PAID REVIVE INSURANCE (§11) ──
     // A killing blow lands, but the target bought a respawn on-chain (0.10 ETH → dev wallet).
@@ -339,7 +362,7 @@ export async function fire(ch, victim, client, h, rounds) {
       await h.notify(client, ch.id, 'target_revived', { victim: victim.name });
       await h.track(client, victim.account_id, 'respawn', { from: ch.id });
       bus.emit('streets', { type: 'revive', who: victim.name });
-      return { ok: true, kill: false, revived: true, jammed };
+      return { ok: true, kill: false, revived: true, jammed, shootCdSeconds };
     }
     // ── THE KILL ──
     const rep = Math.max(10, vicLvl * 2);
@@ -556,15 +579,27 @@ export async function fire(ch, victim, client, h, rounds) {
     const estate = await runEstate(client, h, victim, ch.name, { killerCh: ch, vendetta: true, loot: true, bloodOathMult: bloodOath });
     await alertMentor(client, victim.account_id, victim.name, ch.name, 'killed'); // THE MENTOR — the had-my-back moment: the protégé's mentor hears of the killing
     bus.emit('streets', { type: 'kill', by: ch.name, victim: victim.name });
-    return { ok: true, kill: true, rep, chop, loot, omrLoot, gearLoot, contraLoot, matLoot, orderLoot: estate.orderLoot || 0, bounty, jammed, warKill, hitman: hit,
+    // `gearLootName` is the RAW-KEY half: `gearLoot` is a catalog id and describe() has no gear
+    // resolver, so a stripped piece could only ever have rendered 'vest_kevlar' at a player. Every
+    // other display name in this file's replies ships server-side for the same reason.
+    // WAVE 80 — the WITHHELD TERMS of the most expensive verb in the game. The line read
+    // "THEY'RE DONE. · +10 respect" while the shot had ALSO spent `fired` rounds and FIRE_ENERGY
+    // energy and drawn FIRE_HEAT law heat (the §7 interlock at the deduction above), and — on a mark
+    // under LOOT_MIN_LVL — paid no loot or feared-rep AT ALL. None of it was on the reply, so the
+    // client could not have said otherwise. `lootable` is the anti-Sybil floor's own local.
+    return { ok: true, kill: true, rep, chop, loot, omrLoot, gearLoot, gearLootName: gearLoot ? (gearOf(gearLoot)?.name || gearLoot) : null,
+      heat: M3.FIRE_HEAT, heatNow: Number(ch.heat || 0), fired, energy: M3.FIRE_ENERGY, lootable,
+      contraLoot, matLoot, matLootName: matLoot > 0 ? SHIPMENT.MATERIAL : null,
+      orderLoot: estate.orderLoot || 0, bounty, jammed, warKill, hitman: hit, shootCdSeconds,
       ...(empireLoot ? { empireLoot } : {}), ...(ammoBack ? { ammoBack } : {}), vendetta: !!vend, ...(grudges.length ? { grudges } : {}), estate: { heirId: estate.heirId } };
   }
-  // ── THE MISS ──
-  ch.shoot_cd_until = new Date(Date.now() + shootCdMs());
+  // ── THE MISS ── (the trigger was cooled with the rest of the shot's cost, above)
   const dmg = rand(5, 15);
   victim.health = Math.max(1, Number(victim.health) - dmg);
   await h.notify(client, victim.id, 'attempt', { from: ch.name, dmg });
-  return { ok: true, kill: false, jammed, effective, btk };
+  // WAVE 80 — a MISS draws the same FIRE_HEAT and spends the same rounds and energy; the line named
+  // only the shot. The kill twin ships the identical fields (one shape, two outcomes).
+  return { ok: true, kill: false, jammed, effective, btk, heat: M3.FIRE_HEAT, heatNow: Number(ch.heat || 0), fired, energy: M3.FIRE_ENERGY, shootCdSeconds };
 }
 
 // ═══════════════════ SAFEHOUSE — EARNABLE DEFENSE (M7 Phase 4) ═══════════════════
@@ -583,10 +618,11 @@ export async function npcHit(ch, victim, client, h, tierId, opts = {}) {
   if (!tier) throw new GameError('bad_tier', 'No such contractor for hire.');
   // THE PEN step two: a burner phone (opts.fromBurner) is the ONE way to arrange wet work from a
   // cell — pen.js consumes the burner first, then calls in with the jail gate waived.
-  if (!opts.fromBurner && jailed(ch)) throw new GameError('jailed', 'No arranging wet work from lockup.');
-  if (safeHoused(ch)) throw new GameError('safe', "You can't reach your contacts from a safehouse.");
-  if (witproActive(ch)) throw new GameError('witpro', "You can't run contractors from witness protection — untargetable is a shield, not a licence to kill.");
-  if (hospitalized(ch)) throw new GameError('hosp_self', "You're laid up under the Doc's care — no arranging wet work from a hospital bed. (R40: the offense action-lock, symmetric with the victim gate.)");
+  assertStreetActor(ch, { jailWaived: !!opts.fromBurner, msgs: {
+    jailed: 'No arranging wet work from lockup.',
+    safe: "You can't reach your contacts from a safehouse.",
+    witpro: "You can't run contractors from witness protection — untargetable is a shield, not a licence to kill.",
+    hosp: "You're laid up under the Doc's care — no arranging wet work from a hospital bed. (R40: the offense action-lock, symmetric with the victim gate.)" } });
   if (h.owned.gangId && h.victimOwned.gangId === h.owned.gangId && !h.victimAcct.rat && !isWanted(victim)) throw new GameError('family', "They're family. Omertà."); // a rat OR a WANTED welsher forfeits family protection
   // THE CREW — no hiring a gun on your own crew (the omertà twin; rat/WANTED forfeit it)
   if (h.owned.crewId && h.victimOwned.crewId === h.owned.crewId && !h.victimAcct.rat && !isWanted(victim)) throw new GameError('crew', "They run with your crew — call it off.");
@@ -603,7 +639,8 @@ export async function npcHit(ch, victim, client, h, tierId, opts = {}) {
   // a bare jailed inmate is street-unreachable too (parity with fire/huntWanted; AUDIT-full-system-v2
   // C-MED-1) — a contractor can't walk into a cell; the shank is the in-jail path.
   if (jailed(victim)) throw new GameError('jailed', "They're in lockup — no contractor reaches them on the street.");
-  if (ch.npchit_at && new Date(ch.npchit_at) > new Date()) throw new GameError('cooldown', 'Your contact needs time between jobs.');
+  const contactCool = coolLeft(ch.npchit_at);
+  if (contactCool) throw new GameError('cooldown', `Your contact needs ${coolWait(contactCool)} between jobs.`, { cooldownSeconds: contactCool });
   // BALANCE D4 — per-TARGET cooldown: a whale could repeat-reset ONE rival every 6h by cycling
   // the payer cooldown; now each (payer, target) pair rests NPC_HIT_TARGET_CD_MS between attempts
   // (stamped win or lose — the griefing is the attempt cadence, not the kill).
@@ -714,11 +751,10 @@ export async function huntWanted(pool) {
       }
       // the hunter lands it — the estate runs (no killerCh: no chop/loot/rep; the pool bounty burns)
       await runEstate(client, h, victim, 'A BOUNTY HUNTER');
-      // narrow hand-rolled persist (no persistAccount here): must carry every account field runEstate
-      // mutates — prestige, deaths, and (L2a) the death-duty $OMR burn (ledgered inside runEstate),
-      // which reaches liquid AND unbonding, so both columns ride or the burn drifts §10.4.
-      await client.query('UPDATE account_persistent SET prestige=$2, deaths=$3, omr=$4, unbonding=$5 WHERE account_id=$1',
-        [victim.account_id, victimAcct.prestige, victimAcct.deaths, victimAcct.omr, victimAcct.unbonding ?? 0]);
+      // narrow headless persist (no persistAccount here): ESTATE_ACCOUNT_FIELDS is the list of every
+      // account field runEstate mutates, kept beside the persist columns in game.js and scanned by
+      // test/persist.js — so the death-duty $OMR burn (liquid AND unbonding) can never drift §10.4 here.
+      await persistAccountFields(client, victim.account_id, victimAcct, ESTATE_ACCOUNT_FIELDS);
       bus.emit('streets', { type: 'kill', by: 'a bounty hunter', victim: victim.name });
       await client.query('COMMIT'); killed++;
     } catch (e) { await client.query('ROLLBACK'); console.error('huntWanted', m.id, e.message); }
@@ -751,10 +787,16 @@ export async function bust(ch, victim, client, h) {
   // Direct SQL under the held char lock (the columns are off the positional persist — clobber-safe).
   const bustCap = M3.BUST_ATTEMPTS_DAY || 0;
   if (bustCap > 0) {
-    const refill = ch.bust_at ? (Date.now() - new Date(ch.bust_at).getTime()) / 86400000 * bustCap : bustCap;
-    const used = Math.max(0, Number(ch.bust_used || 0) - Math.max(0, refill));
-    if (used + 1 > bustCap)
-      throw new GameError('bust_cap', "You've pushed your luck at the jailhouse today — the guards know your face. Come back tomorrow.");
+    const used = bustSpentToday(ch);
+    if (used + 1 > bustCap) {
+      // Name the WAIT, not the bound. The bucket refills on the wall clock, so at 5 a day the next
+      // attempt is ~4.8h out, never "tomorrow" — and that figure is in hand right here (the
+      // {district}/{lockSeconds} payload rule, so a client can count it down rather than guess).
+      const wait = bustRefillSeconds(ch);
+      throw new GameError('bust_cap',
+        `You've pushed your luck at the jailhouse today — the guards know your face. ${bustCap} tries a day, and the next one is ${Math.ceil(wait / 60)}m out.`,
+        { refillSeconds: wait, attemptsDay: bustCap });
+    }
     await client.query('UPDATE characters SET bust_used=$2, bust_at=now() WHERE id=$1', [ch.id, used + 1]);
     ch.bust_used = used + 1; ch.bust_at = new Date();
   }
@@ -772,10 +814,13 @@ export async function bust(ch, victim, client, h) {
     await h.bumpDaily(client, ch.id, 'bust');
     await h.notify(client, victim.id, 'busted', { from: ch.name });
     bus.emit('streets', { type: 'bust', by: ch.name, freed: victim.name });
-    return { ok: true, success: true, reward, busts: ch.busts };
+    // WAVE 80 — the D15 daily bucket is charged BEFORE the roll (line 779), so a try SPENDS one
+    // whichever way the roll lands. Both outcomes carry the same shape (`bust` + what's left) —
+    // the fire precedent: one marker, two outcomes, so no sibling branch can claim either line.
+    return { ok: true, bust: true, success: true, reward, busts: ch.busts, attemptsLeft: bustAttemptsLeft(ch) };
   }
   ch.jail_until = new Date(Date.now() + M3.BUST_FAIL_JAIL_S * 1000);
-  return { ok: true, success: false, jailSeconds: M3.BUST_FAIL_JAIL_S };
+  return { ok: true, bust: true, success: false, jailSeconds: M3.BUST_FAIL_JAIL_S, attemptsLeft: bustAttemptsLeft(ch) };
 }
 
 // ═══════════════════ THE EXCHANGE (§5.4 — escrowed order book) ═══════════════════
@@ -796,13 +841,12 @@ export async function bust(ch, victim, client, h) {
 // feed the RIVALS ledger (the victim's notify names the thief either way).
 export async function stealCar(ch, victim, client, h) {
   const T = RIVALS.CAR_THEFT;
-  if (jailed(ch)) throw new GameError('jailed', 'No street work from lockup.');
-  if (safeHoused(ch)) throw new GameError('safe', "Can't work the streets while you're to ground — a safehouse is a shield, not a bunker.");
-  if (witproActive(ch)) throw new GameError('witpro', "You're in protective custody — the marshals didn't relocate you to boost cars.");
-  if (hospitalized(ch)) throw new GameError('hosp_self', "You're laid up under the Doc's care.");
-  if (Number(ch.energy) < T.ENERGY) throw new GameError('energy', `Boosting takes ${T.ENERGY} energy.`);
-  if (ch.gta_at && Date.now() < new Date(ch.gta_at).getTime() + CONSTANTS.GTA_CD_MS)
-    throw new GameError('cooldown', "The heat's still on from the last job — lay off the iron a minute.");
+  assertStreetActor(ch, { energy: T.ENERGY, msgs: {
+    witpro: "You're in protective custody — the marshals didn't relocate you to boost cars.",
+    energy: `Boosting takes ${T.ENERGY} energy.` } });
+  const ironCool = coolLeft(new Date(ch.gta_at).getTime() + CONSTANTS.GTA_CD_MS);
+  if (ironCool)
+    throw new GameError('cooldown', `The heat's still on from the last job — lay off the iron for ${coolWait(ironCool)}.`, { cooldownSeconds: ironCool });
   if (h.owned.cars.length >= CONSTANTS.GARAGE_CAP)
     throw new GameError('full', `The garage holds ${CONSTANTS.GARAGE_CAP} — theft is opportunism, not a purchase. Make room first.`);
   if (hospitalized(victim)) throw new GameError('hosp', "They're under the Doc's care. Even we have rules.");
@@ -847,7 +891,11 @@ export async function stealCar(ch, victim, client, h) {
     await recordRival(client, victim.account_id, ch, 'car_theft', { model: car.model_id });
     if (revenge) await bumpHonor(client, ch, RIVALS.REVENGE_HONOR);
     bus.emit('streets', { type: 'car_theft', by: ch.name, on: victim.name });
-    return { ok: true, win: true, theft: true, car: { id: car.id, model: car.model_id, trim: car.trim_id, dmg: Number(car.dmg) }, revenge };
+    // `name` is the RAW-KEY fix: the reply used to carry the catalog id alone and the client has no
+    // car resolver, so the line read "took their junker" where 'County Auction Junker' belongs. The
+    // value is already computed one line up for the victim's notify, and both sibling thefts
+    // (stealBoat sends `boat.name`, sabotage sends `name`) have shipped a display name all along.
+    return { ok: true, win: true, theft: true, car: { id: car.id, model: car.model_id, name: carOf(car.model_id)?.name || car.model_id, trim: car.trim_id, dmg: Number(car.dmg) }, revenge };
   }
   // pinched mid-hotwire
   ch.jail_until = new Date(Date.now() + T.JAIL_S * 1000);
@@ -867,11 +915,7 @@ export async function stealCar(ch, victim, client, h) {
 // three copies — the extortFront/resetFrontToNewOwner lesson: a copied gate block is how a later
 // fix misses one of them.
 function assertStreetCrime(ch, victim, h, energy) {
-  if (jailed(ch)) throw new GameError('jailed', 'No street work from lockup.');
-  if (safeHoused(ch)) throw new GameError('safe', "Can't work the streets while you're to ground — a safehouse is a shield, not a bunker.");
-  if (witproActive(ch)) throw new GameError('witpro', "You're in protective custody — keep your head down.");
-  if (hospitalized(ch)) throw new GameError('hosp_self', "You're laid up under the Doc's care.");
-  if (Number(ch.energy) < energy) throw new GameError('energy', `That takes ${energy} energy.`);
+  assertStreetActor(ch, { energy });
   if (hospitalized(victim)) throw new GameError('hosp', "They're under the Doc's care. Even we have rules.");
   if (witproActive(victim)) throw new GameError('witpro', 'They vanished into witness protection.');
   if (h.owned.gangId && h.victimOwned.gangId === h.owned.gangId) throw new GameError('family', "They're family. Omertà.");
@@ -954,9 +998,10 @@ export async function robTrunk(ch, victim, client, h) {
 export async function stealBoat(ch, victim, client, h) {
   const BT = RIVALS.BOAT_THEFT, C = RIVALS.CAR_THEFT;
   assertStreetCrime(ch, victim, h, BT.ENERGY);
-  if (ch.loc !== PORT.DISTRICT) throw new GameError('district', `Boats are stolen where they float — the ${PORT.DISTRICT}.`, { district: PORT.DISTRICT });
-  if (ch.gta_at && Date.now() < new Date(ch.gta_at).getTime() + CONSTANTS.GTA_CD_MS)
-    throw new GameError('cooldown', "The heat's still on from the last job — lay off a minute.");
+  if (ch.loc !== PORT.DISTRICT) throw new GameError('district', `Boats are stolen where they float — ${districtName(PORT.DISTRICT)}.`, { district: PORT.DISTRICT });
+  const boatCool = coolLeft(new Date(ch.gta_at).getTime() + CONSTANTS.GTA_CD_MS);
+  if (boatCool)
+    throw new GameError('cooldown', `The heat's still on from the last job — lay off for ${coolWait(boatCool)}.`, { cooldownSeconds: boatCool });
   const fleet = Number((await client.query('SELECT COUNT(*) n FROM boats WHERE character_id=$1 AND NOT minted_onchain', [ch.id])).rows[0].n);
   if (fleet >= PORT.FLEET_MAX + (Number(ch.berths) || 0))
     throw new GameError('fleet', 'Your berths are full — theft is opportunism, not a purchase.');

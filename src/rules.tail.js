@@ -386,6 +386,14 @@ export const dayOf=(t=Date.now())=>Math.floor(t/86400000);
 // `art(x)` gives "the X"; the caller passes 'a'/'an'/'The' where the sentence wants those instead.
 export const art = (name, a = 'the') => (/^the\s/i.test(String(name ?? '')) ? String(name ?? '') : `${a} ${String(name ?? '')}`);
 
+// A DISTRICT, AS A PLAYER READS IT. `docks` is the storage key; "The Docks" is the place. A refusal
+// is the most-read line in the game (describe() shows body.message FIRST), and eighteen of them
+// interpolated the id — "The freight lands at neon — be there." — while nine modules each carried
+// their OWN private copy of exactly this three-token lookup. Nine copies of one rule is how they
+// come to disagree (the jailed/penSafe collapse, at sixty-nine), so it lives here with `art` and
+// `usd`. The names already begin with "The", so a caller must NOT write `the ${districtName(x)}`.
+export const districtName = (id) => DISTRICTS.find((d) => d.id === id)?.name || String(id ?? '');
+
 // MONEY, AS A PLAYER READS IT. A refusal is the most-read line in the game — every time you can't
 // afford something, the server's own sentence is what the client shows (describe() takes body.message
 // first). 158 of them interpolated the raw number, so the retainer read "$150000" and a fighter cost
@@ -399,6 +407,31 @@ export const usd = (n) => {
   if (!Number.isFinite(v)) return '$' + String(n);
   if (v !== 0 && Math.abs(v) < 0.01) return '$' + Number(v.toPrecision(2)).toString();
   return '$' + v.toLocaleString('en-US', { maximumFractionDigits: 2 });
+};
+
+// ── THE COOLDOWN REMAINDER ──────────────────────────────────────────────────
+// 38 of 39 cooldown refusals held the exact expiry IN THE COMPARISON ONE LINE ABOVE THE THROW and
+// discarded it — the FIRE path, a two-hour wait, said only "Your trigger's still hot." Six siblings
+// already named their wait, which is what makes it the forgotten-sibling shape rather than a
+// convention. The class is the WITHHELD TERM (fluent, and the actionable number left off), so check
+// 14 — which only catches a MUTE reply — is structurally blind to it, and it costs agents more than
+// people: they read these codes, and with nothing machine-readable to back off on they retry blind
+// into a 1/3s throttle. ONE implementation on the universal leaf, so the number a player is told,
+// the number the payload carries and the number the till enforces cannot drift (the headroomOf
+// pattern of THE BUCKET LEDGER). `coolLeft` is null/undefined/garbage-safe (→ 0, i.e. "not cooling"),
+// so it is a drop-in for every `x && new Date(x) > new Date()` predicate it replaces.
+export const coolLeft = (until, now = Date.now()) => {
+  const t = until instanceof Date ? until.getTime() : typeof until === 'number' ? until : Date.parse(until);
+  return Number.isFinite(t) ? Math.max(0, Math.ceil((t - now) / 1000)) : 0;
+};
+// The prose half. Coarsens as it grows, because "7231s" is not a wait a person can act on.
+export const coolWait = (seconds) => {
+  const s = Math.max(0, Math.ceil(Number(seconds) || 0));
+  if (s < 60) return `${s}s`;
+  if (s < 3600) return `${Math.ceil(s / 60)}m`;
+  if (s < 86400) { const h = Math.floor(s / 3600), m = Math.round((s % 3600) / 60); return m ? `${h}h ${m}m` : `${h}h`; }
+  const d = Math.floor(s / 86400), h = Math.round((s % 86400) / 3600);
+  return h ? `${d}d ${h}h` : `${d}d`;
 };
 
 // ── §7.11 deterministic markets — FNV-1a hash, ported byte-for-byte from v24 ──
@@ -1753,6 +1786,55 @@ export const inHole = (ch, now = Date.now()) => !!ch.hole_until && new Date(ch.h
 export const jailed = (ch, now = Date.now()) => !!ch?.jail_until && new Date(ch.jail_until).getTime() > now;
 export const hospitalized = (ch, now = Date.now()) => !!ch?.hosp_until && new Date(ch.hosp_until).getTime() > now;
 export const safeHoused = (ch, now = Date.now()) => !!ch?.safe_until && new Date(ch.safe_until).getTime() > now;
+
+// THE JAILHOUSE BUCKET (D15) — ONE implementation, read by the till (`bustOut`) and by the sheet's
+// `bustAttemptsLeft`. It lived as two copies of the same expression, and the refusal named the BOUND:
+// "come back tomorrow" is false for a bucket that refills continuously — at 5 a day one attempt comes
+// back every ~4.8h, so the line overstated the wait by up to a day. A wait a player is told must be
+// derived from the thing that refuses them.
+export function bustSpentToday(ch, now = Date.now()) {
+  const cap = M3.BUST_ATTEMPTS_DAY || 0;
+  if (!cap) return 0;
+  const refill = ch?.bust_at ? Math.max(0, now - new Date(ch.bust_at).getTime()) / 86400000 * cap : cap;
+  return Math.max(0, Number(ch?.bust_used || 0) - refill);
+}
+export const bustAttemptsLeft = (ch, now = Date.now()) => {
+  const cap = M3.BUST_ATTEMPTS_DAY || 0;
+  return cap ? Math.max(0, Math.floor(cap - bustSpentToday(ch, now))) : null;
+};
+// Seconds until the NEXT attempt refills — the figure a capped-out player needs, and the one the
+// wall-clock bucket makes knowable. Zero when an attempt is already available.
+export function bustRefillSeconds(ch, now = Date.now()) {
+  const cap = M3.BUST_ATTEMPTS_DAY || 0;
+  if (!cap) return 0;
+  const need = 1 - (cap - bustSpentToday(ch, now));
+  if (need <= 0) return 0;
+  return Math.max(1, Math.ceil(need / cap * 86400));
+}
+
+// THE SAFEHOUSE BUCKET (L3b) — the same collapse, for the same reason: the till and the sheet each
+// carried this expression. The till already named the REMAINDER (it was the pattern the others should
+// have followed), so what changes is that both sides now read one implementation, and an exhausted
+// bucket says WHEN rather than only that it is empty.
+export function safehouseSpentToday(ch, now = Date.now()) {
+  const cap = M3.SAFEHOUSE_DAILY_CAP_MS || 0;
+  if (!cap) return 0;
+  const refill = ch?.safehouse_at ? Math.max(0, now - new Date(ch.safehouse_at).getTime()) / 86400000 * cap : cap;
+  return Math.max(0, Number(ch?.safehouse_used || 0) - refill);
+}
+export const safehouseLeftMs = (ch, now = Date.now()) => {
+  const cap = M3.SAFEHOUSE_DAILY_CAP_MS || 0;
+  return cap ? Math.max(0, Math.floor(cap - safehouseSpentToday(ch, now))) : null;
+};
+// Seconds until `needMs` of shelter is available again — the figure a capped-out player needs, and the
+// one a wall-clock bucket makes knowable. Headroom recovers at cap-ms of shelter per day of real time.
+export function safehouseRefillSeconds(ch, needMs, now = Date.now()) {
+  const cap = M3.SAFEHOUSE_DAILY_CAP_MS || 0;
+  if (!cap) return 0;
+  const need = needMs - safehouseLeftMs(ch, now);
+  if (need <= 0) return 0;
+  return Math.max(1, Math.ceil(need / cap * 86400));
+}
 
 // LOAN SHARKING — the Shylock (design omerta-loan-sharking-design.md). The game's first player-to-
 // player CASH primitive: a lender escrows capital at usurious interest (the bounty-escrow pattern), a

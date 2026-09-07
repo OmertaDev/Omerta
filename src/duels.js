@@ -19,7 +19,7 @@
 // the ELO_FLOOR, and every feed paying the 5% rake. Flagged in BALANCE.md.
 import crypto from 'crypto';
 import { GameError, notify, bumpMastery } from './game.js';
-import { DUELS, duelRankOf, duelDivisionOf, duelStyleOf, duelTitleRankOf, levelOf, dayOf, effStat, pathFx, REGIMEN, disciplineLvlOf , jailed, hospitalized, PG_INT4_MAX, usd } from './rules.js';
+import { DUELS, duelRankOf, duelDivisionOf, duelStyleOf, duelTitleRankOf, levelOf, dayOf, effStat, pathFx, REGIMEN, disciplineLvlOf , jailed, hospitalized, PG_INT4_MAX, usd , coolLeft, coolWait } from './rules.js';
 
 const rand = (lo, hi) => lo + Math.random() * (hi - lo);
 
@@ -95,7 +95,8 @@ export async function challenge(ch, opponent, amount, client, h) {
   // (red-team) the CHALLENGER cools between duels (the street-races precedent) — a strong build
   // can't machine-gun a listed weaker duelist; DUEL_CD_MS is a TEST-ONLY knob (boot-guard listed)
   let cdMs = process.env.DUEL_CD_MS != null ? Number(process.env.DUEL_CD_MS) : DUELS.CHALLENGE_CD_MS;
-  if (ch.duel_at && new Date(ch.duel_at) > new Date()) throw new GameError('cooldown', 'Catch your breath — the circuit takes its time between bouts.');
+  const duelCool = coolLeft(ch.duel_at);
+  if (duelCool) throw new GameError('cooldown', `Catch your breath — the circuit takes ${coolWait(duelCool)} more between bouts.`, { cooldownSeconds: duelCool });
   // TIER-4 GRUDGE REMATCH: if this opponent's account was the LAST to beat you, the rematch cools
   // ~⅓ as long — chase the redemption. Read the most recent duel between the pair from the log.
   const grudge = (await client.query(

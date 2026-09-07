@@ -1,7 +1,7 @@
 # Authored Content Runtime and The Sixth Chair — Design
 
-**Date:** 2026-08-27  
-**Status:** Approved  
+**Date:** 2026-08-27
+**Status:** Approved
 **Scope:** The first build-order slice: turn the deterministic authored-content compiler into a safe, server-authoritative runtime and make the narrative spine of The Sixth Chair playable.
 
 ## Outcome

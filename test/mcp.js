@@ -85,6 +85,9 @@ async function mcpProcess(base, sessionFile) {
       if (waiter) { pending.delete(msg.id); waiter.resolve(msg); }
     }
   });
+  // Capture the death at SPAWN. `stop()` below awaits an `exit` that has already fired if the
+  // server died on its own, and that await carries no timeout — it would hang the suite outright.
+  const childExited = new Promise((resolveExit) => child.once('exit', resolveExit));
   child.on('exit', (code) => {
     for (const waiter of pending.values()) waiter.reject(new Error(`MCP exited ${code}: ${stderr}`));
     pending.clear();
@@ -108,8 +111,8 @@ async function mcpProcess(base, sessionFile) {
     },
     async stop() {
       child.stdin.end();
-      if (child.exitCode == null) child.kill();
-      await new Promise((resolve) => child.once('exit', resolve));
+      if (child.exitCode == null && child.signalCode == null) child.kill();
+      await childExited;
     },
   };
 }

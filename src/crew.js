@@ -23,14 +23,48 @@
 // shield exactly as they forfeit family omertà.
 import crypto from 'node:crypto';
 import { GameError, cleanText, notify, notifyOnce, bus } from './game.js';
-import { CREW, DISTRICTS, levelOf, weekOf, crewObjectiveOf } from './rules.js';
+import { CREW, DISTRICTS, levelOf, weekOf, crewObjectiveOf, districtName } from './rules.js';
 
 const uid = () => crypto.randomUUID();
-const districtName = (id) => (DISTRICTS.find((d) => d.id === id) || {}).name || id;
 
 // the crew this account belongs to (a plain read; null if solo). Used by the routes for gating.
 export async function crewIdOf(client, accountId) {
   return (await client.query('SELECT crew_id FROM crew_members WHERE account_id=$1', [accountId])).rows[0]?.crew_id || null;
+}
+
+// Existing-member Crew mutations share a Crew -> character -> account -> membership lock order with world
+// operation opening. The generic request wrapper normally locks the character first; these hooks
+// move only the Crew authority boundary ahead of it, then re-lock/re-read the membership afterward.
+// This prevents both membership TOCTOU and Crew/character ABBA cycles without bypassing accrual,
+// persistence, account locks, or post-commit behavior in withCharacter.
+export const CREW_FIRST_CHARACTER_LOCKS = Object.freeze({
+  async beforeCharacterLock(client, accountId) {
+    const snapshot = (await client.query(
+      'SELECT crew_id FROM crew_members WHERE account_id=$1', [accountId],
+    )).rows[0];
+    if (!snapshot) throw new GameError('no_crew', "You're not in a crew.");
+    const crew = (await client.query(
+      'SELECT id FROM crews WHERE id=$1 FOR UPDATE', [snapshot.crew_id],
+    )).rows[0];
+    if (!crew) throw new GameError('no_crew', 'That crew no longer exists.');
+    return crew.id;
+  },
+  async afterAccountLock(client, accountId, _character, crewId) {
+    const membership = (await client.query(
+      'SELECT crew_id FROM crew_members WHERE account_id=$1 FOR UPDATE', [accountId],
+    )).rows[0];
+    if (!membership || membership.crew_id !== crewId) {
+      throw new GameError('crew_changed', 'Your Crew membership changed during this action.');
+    }
+  },
+});
+
+// Lock posture is selected only from the server-authored Agent Turn action-id shape. The caller's
+// id still grants no authority: /v1/agent/act recomputes the turn and resolves the exact issued
+// action inside this transaction after the Crew-first boundary is held.
+export function agentActionLockHooks(actionId) {
+  return /^organization:crew:[^:]{1,200}:recruiting:open$/.test(String(actionId || ''))
+    ? CREW_FIRST_CHARACTER_LOCKS : null;
 }
 
 // ── FORM A CREW ────────────────────────────────────────────────────────────────────────────────
@@ -45,7 +79,9 @@ export async function createCrew(ch, name, client, h) {
   const id = uid();
   await client.query('INSERT INTO crews (id, name, leader_account) VALUES ($1,$2,$3)', [id, name, ch.account_id]);
   await client.query('INSERT INTO crew_members (crew_id, account_id, name) VALUES ($1,$2,$3)', [id, ch.account_id, ch.name]);
-  return { ok: true, crew: 'formed', id, name };
+  // the reply carries the SHAPE of what was just founded so the toast can state the crew's terms
+  // at the moment they bind. The cap lives on /v1/crew, which describe() cannot reach.
+  return { ok: true, crew: 'formed', id, name, members: 1, max: CREW.MAX_MEMBERS };
 }
 
 // ── INVITE — put a word in for a player BY NAME (living-name uniqueness makes a name resolve to one
@@ -72,7 +108,7 @@ export async function inviteToCrew(ch, name, client, h) {
   await client.query('INSERT INTO crew_invites (crew_id, account_id, from_name) VALUES ($1,$2,$3)', [crewId, t.account_id, ch.name]);
   // a solicitation, not an event: cancel-and-reinvite would otherwise be a free ping loop
   await notifyOnce(client, t.id, 'crew_invite', { from: ch.name, crewId }).catch(() => {});
-  return { ok: true, crew: 'invited', to: t.name };
+  return { ok: true, crew: 'invited', to: t.name, members: n, max: CREW.MAX_MEMBERS, pending: pending + 1 };
 }
 
 // ── ACCEPT — join. Lock the crew row (the joinGang discipline) so concurrent accepts can't blow the
@@ -88,7 +124,8 @@ export async function acceptInvite(ch, crewId, client, h) {
   await client.query('INSERT INTO crew_members (crew_id, account_id, name) VALUES ($1,$2,$3)', [crewId, ch.account_id, ch.name]);
   await client.query('DELETE FROM crew_invites WHERE account_id=$1', [ch.account_id]);   // one crew — drop all my offers
   bus.emit(`crew:${crewId}`, { type: 'crew_joined', who: ch.name });
-  return { ok: true, crew: 'joined', name: crew.name };
+  // `n` is the count BEFORE this insert, so the joiner is n + 1 — free, no second query.
+  return { ok: true, crew: 'joined', name: crew.name, members: n + 1, max: CREW.MAX_MEMBERS };
 }
 
 export async function declineInvite(ch, crewId, client) {
@@ -223,6 +260,11 @@ export async function crewBoard(ch, client) {
   if (!crewId) return { crew: null, invites, maxMembers: CREW.MAX_MEMBERS, minLevel: CREW.MIN_LEVEL, nameMax: CREW.NAME_MAX, bringOne: CREW.BRING_ONE };
 
   const crew = (await client.query('SELECT * FROM crews WHERE id=$1', [crewId])).rows[0];
+  // The completed objective rows are the authoritative history. Deriving this display counter keeps
+  // ordinary character-held crime/combat transactions from ever needing a later Crew-row lock.
+  const objectivesDone = Number((await client.query(
+    'SELECT COUNT(*) n FROM crew_objectives WHERE crew_id=$1 AND done', [crewId],
+  )).rows[0].n);
   // members' live state — flat JOIN, never `= ANY($1)` (pg-mem returns zero rows for it — the rivals lesson)
   const mem = (await client.query(
     `SELECT cm.account_id, cm.name AS snap, cm.joined_at, c.id AS char_id, c.name, c.loc, c.respect,
@@ -255,7 +297,7 @@ export async function crewBoard(ch, client) {
   const objective = await crewObjective(client, crewId, ch.account_id);   // THE CREW OBJECTIVE — the weekly shared goal
   return {
     crew: { id: crewId, name: crew.name, leader: crew.leader_account === ch.account_id, members, pending,
-      recruiting: !!crew.recruiting, requests, target, objective, objectivesDone: Number(crew.objectives_done || 0) },
+      recruiting: !!crew.recruiting, requests, target, objective, objectivesDone },
     invites, maxMembers: CREW.MAX_MEMBERS, minLevel: CREW.MIN_LEVEL, nameMax: CREW.NAME_MAX, bringOne: CREW.BRING_ONE,
   };
 }

@@ -1,0 +1,69 @@
+{
+  "packageId": "omerta.phase2.core",
+  "version": 1,
+  "kind": "library",
+  "profile": "phase2_economy",
+  "metadata": {
+    "title": "Phase 2 core"
+  },
+  "definitions": [
+    {
+      "id": "mat.ferrous-scrap",
+      "definitionVersion": 1,
+      "kind": "concept",
+      "metadata": {
+        "title": "Ferrous scrap"
+      }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "source.salvage",
+      "kind": "source",
+      "refs": ["mat.ferrous-scrap"],
+      "adapter": {
+        "kind": "inventory_source",
+        "args": {
+          "definitionId": "mat.ferrous-scrap",
+          "maxUnitsPerEpoch": 100,
+          "epoch": "day"
+        }
+      },
+      "public": true
+    },
+    {
+      "id": "use.repair",
+      "kind": "use",
+      "refs": ["mat.ferrous-scrap"],
+      "adapter": {
+        "kind": "inventory_consume",
+        "args": {
+          "definitionId": "mat.ferrous-scrap",
+          "quantity": 1
+        }
+      },
+      "public": true
+    },
+    {
+      "id": "sink.scrap",
+      "kind": "sink",
+      "refs": ["mat.ferrous-scrap"],
+      "adapter": {
+        "kind": "inventory_sink",
+        "args": {
+          "definitionId": "mat.ferrous-scrap",
+          "quantity": 1
+        }
+      },
+      "public": true
+    }
+  ],
+  "edges": [
+    { "from": "source.salvage", "to": "mat.ferrous-scrap", "kind": "produces", "quantity": 1 },
+    { "from": "use.repair", "to": "mat.ferrous-scrap", "kind": "consumes", "quantity": 1 },
+    { "from": "mat.ferrous-scrap", "to": "sink.scrap", "kind": "sinks", "quantity": 1 }
+  ],
+  "exports": ["mat.ferrous-scrap"],
+  "dependencies": [],
+  "imports": []
+}

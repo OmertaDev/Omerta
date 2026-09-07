@@ -160,9 +160,14 @@ console.log('1. THE WORKER IS KILLED MID-SWEEP, THEN RUNS AGAIN');
   const killAt = [120, 400, 900];
   for (const ms of killAt) {
     const w = spawn('node', ['src/worker.js'], { env: process.env, stdio: 'ignore' });
+    // Capture the death at SPAWN. An `exit` listener attached after the work window never fires for
+    // a process that already died inside it — and the worker CAN die on its own (a boot failure, a
+    // crash, an OOM), so this await would hang with no timeout and no message rather than reporting
+    // the real error. Reproduced: attach-after-work reports HUNG, capture-at-spawn observes the exit.
+    const wExited = new Promise((r) => w.once('exit', r));
     await sleep(ms);
     w.kill('SIGKILL');
-    await new Promise((r) => w.on('exit', r));
+    await wExited;
   }
   console.log(`  … worker SIGKILLed mid-tick at ${killAt.join('ms, ')}ms`);
 
@@ -173,11 +178,14 @@ console.log('1. THE WORKER IS KILLED MID-SWEEP, THEN RUNS AGAIN');
   // alone can outlast a naive 6s window on a shared runner. So: wait for the WORK to be done, with a
   // generous ceiling for the case where it genuinely never completes.
   const done = spawn('node', ['src/worker.js'], { env: process.env, stdio: 'ignore' });
+  // Same reason as above, and the window here is far wider: the poll loop below runs up to 60s, so a
+  // worker that crashes inside it leaves an exit nobody is listening for and this harness never ends.
+  const doneExited = new Promise((r) => done.once('exit', r));
   const settledCount = async () => Number((await pool.query(
     `SELECT count(*) n FROM auctions WHERE status='settled' AND lot_id = ANY($1::text[])`, [bidLots])).rows[0].n);
   for (let waited = 0; waited < 60000 && await settledCount() < bidLots.length; waited += 500) await sleep(500);
   done.kill('SIGKILL');
-  await new Promise((r) => done.on('exit', r));
+  await doneExited;
 
   const after = await drift();
   const ledgerAfter = await ledgerCounts();
@@ -394,11 +402,20 @@ console.log('\n6. SIGTERM MID-REQUEST — the deploy drain');
   child.stdout.on('data', (d) => childOut.push(String(d)));
   child.stderr.on('data', (d) => childOut.push(String(d)));
   const cbase = `http://127.0.0.1:${port}`;
+  // A WALL-CLOCK deadline, not an iteration count. The first cut polled 100 times with a 150ms
+  // sleep on refusal — ~15s — and a cold boot applies ~2,400 ADD COLUMN IF NOT EXISTS statements
+  // plus the CREATEs before it listens: ~10s on a fast box, and past 15s on a loaded 2-core CI
+  // runner, which is exactly where this went red on main (2026-09-02) while passing everywhere
+  // else. A boot that takes 20s is not a failed drain; a wait sized by loop count instead of time
+  // is the "deterministic assertion on a timing precondition" flake shape.
+  const BOOT_DEADLINE_MS = 90_000;
+  const bootT0 = Date.now();
   let up = false;
-  for (let i = 0; i < 100 && !up; i++) {
+  while (!up && Date.now() - bootT0 < BOOT_DEADLINE_MS) {
     try { up = (await fetch(cbase + '/health')).status > 0; } catch { await sleep(150); }
   }
-  check(up, 'the child server booted and answers /health', `never came up — child said: ${childOut.join('').slice(-400)}`);
+  check(up, `the child server booted and answers /health (${Math.round((Date.now() - bootT0) / 1000)}s)`,
+    `never came up inside ${BOOT_DEADLINE_MS / 1000}s — child said: ${childOut.join('').slice(-1500)}`);
 
   if (up) {
     const g = await (await fetch(cbase + '/v1/auth/guest', { method: 'POST' })).json();

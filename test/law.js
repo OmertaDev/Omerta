@@ -245,8 +245,16 @@ await seedCh(rat.id, 'respect=500');
 const hit = await call('POST', `/v1/streets/${rat.id}/npchit`, { token: poster.token, body: { tier: 'legbreaker' } });
 assert.equal(hit.body.error, 'witpro', 'the marshals put the rat beyond a contractor reach');
 
-// the informant COLLAPSE — kill the witness (a mod-kill runs runEstate) and the seeded case lifts
+// the informant COLLAPSE — kill the witness (a mod-kill runs runEstate) and the seeded case lifts.
+// GUARANTEE THE PRECONDITION: the witpro probe above is an AUTHED request by `named`, so §7.1 lazy
+// accrual bleeds a fraction onto his meter (3200 -> 3199.997775) — and the collapse clamps with
+// `GREATEST(0, heat_exposure - $2)`, which pg-mem ROUNDS TO AN INTEGER while real Postgres keeps the
+// fraction (measured: GREATEST(0, 1699.9977) -> 1700 there, 1699.9977 here). So the base is
+// normalised to the post-flip figure before the pre-read: the claim under test is that the collapse
+// subtracts EXACTLY the seed, and an integer base is what lets both engines agree about it.
+await seedCh(named.id, `heat_exposure=${LAW.INDICT_AT + 200}`);
 const namedExpPre = Number((await rawCh(named.id)).heat_exposure);
+assert.equal(namedExpPre % 1, 0, 'the base carries no fractional residue — or pg-mem\'s GREATEST clamp rounds it away');
 r = await call('POST', '/v1/mod/kill', { mod: true, body: { characterId: rat.id, reason: 'witness eliminated' } });
 assert.equal(r.code, 200, 'the witness is down');
 nch = await rawCh(named.id);

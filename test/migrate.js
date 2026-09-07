@@ -9,11 +9,315 @@ import assert from 'node:assert';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { newDb } from 'pg-mem';
-import { columnMigrations, migrateColumns } from '../src/db.js';
-import { srcText } from './lib/srcfiles.js';
+import { DataType, newDb } from 'pg-mem';
+import { columnMigrations, migrateColumns, registerPgMemCompatibility } from '../src/db.js';
+import * as dbModule from '../src/db.js';
+import { srcText, walkSrc } from './lib/srcfiles.js';
 
 const SCHEMA = fs.readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'schema.sql'), 'utf8');
+
+const LEGACY_TASK5_SCHEMA = `
+CREATE TABLE ticker_ballot_days_v2 (
+  day INT PRIMARY KEY CHECK (day >= 0),
+  state TEXT NOT NULL CHECK (state IN
+    ('open','closed_ready','skipped_catalog_unavailable','skipped_catalog_empty',
+     'skipped_no_valid_candidate')),
+  chain_id INT NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT NOT NULL,
+  catalog_version NUMERIC(78,0) NOT NULL CHECK (catalog_version >= 0),
+  catalog_snapshot_hash TEXT NOT NULL,
+  max_eth_wei NUMERIC(78,0) NOT NULL CHECK (max_eth_wei > 0),
+  opened_by TEXT NOT NULL,
+  open_details_hash TEXT NOT NULL,
+  opened_at TIMESTAMPTZ NOT NULL,
+  closes_at TIMESTAMPTZ NOT NULL,
+  closed_at TIMESTAMPTZ,
+  purchase_until TIMESTAMPTZ,
+  CHECK (closes_at > opened_at),
+  CHECK ((state = 'closed_ready') = (purchase_until IS NOT NULL)),
+  CHECK (purchase_until IS NULL OR purchase_until = closes_at + interval '7200 seconds')
+);
+CREATE TABLE ticker_ballot_candidates_v2 (
+  day INT NOT NULL,
+  asset_version_key TEXT NOT NULL,
+  ticker TEXT NOT NULL,
+  token_address TEXT NOT NULL,
+  token_decimals INT NOT NULL CHECK (token_decimals >= 0 AND token_decimals <= 255),
+  registry_index NUMERIC(78,0) NOT NULL CHECK (registry_index >= 0),
+  PRIMARY KEY (day, asset_version_key)
+);
+CREATE TABLE commission_ticker_votes_v2 (
+  day INT NOT NULL,
+  family_id TEXT NOT NULL,
+  asset_version_key TEXT NOT NULL,
+  ticker TEXT NOT NULL,
+  standing NUMERIC(78,0) NOT NULL CHECK (standing >= 0),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (day, family_id)
+);
+CREATE TABLE ticker_ballot_results_v2 (
+  day INT PRIMARY KEY CHECK (day >= 0),
+  status TEXT NOT NULL CHECK (status IN
+    ('closed_ready','skipped_catalog_unavailable','skipped_catalog_empty',
+     'skipped_no_valid_candidate')),
+  asset_version_key TEXT,
+  ticker TEXT,
+  token_address TEXT,
+  token_decimals INT CHECK (token_decimals >= 0 AND token_decimals <= 255),
+  registry_index NUMERIC(78,0),
+  catalog_version NUMERIC(78,0) NOT NULL CHECK (catalog_version >= 0),
+  catalog_snapshot_hash TEXT NOT NULL,
+  max_eth_wei NUMERIC(78,0) NOT NULL CHECK (max_eth_wei > 0),
+  votes INT NOT NULL DEFAULT 0 CHECK (votes >= 0 AND votes <= 5),
+  weighted INT NOT NULL DEFAULT 0 CHECK (weighted >= 0 AND weighted <= 15),
+  decided_by TEXT NOT NULL CHECK (decided_by IN
+    ('chamber','default_silence','default_tie','skipped')),
+  decided_by_code INT NOT NULL CHECK (decided_by_code >= 1 AND decided_by_code <= 6),
+  skip_reason TEXT,
+  tally_hash TEXT NOT NULL,
+  closed_at TIMESTAMPTZ NOT NULL,
+  purchase_until TIMESTAMPTZ,
+  publication_status TEXT NOT NULL DEFAULT 'not_submitted' CHECK (publication_status IN
+    ('not_submitted','publisher_submitted','published_pending_finality','finalized','reorged','failed')),
+  registry_tx_hash TEXT,
+  finalized_block_number NUMERIC(78,0),
+  finalized_block_hash TEXT,
+  finalized_at TIMESTAMPTZ,
+  CHECK ((status = 'closed_ready') = (asset_version_key IS NOT NULL)),
+  CHECK ((status = 'closed_ready') = (ticker IS NOT NULL)),
+  CHECK ((status = 'closed_ready') = (token_address IS NOT NULL)),
+  CHECK ((status = 'closed_ready') = (token_decimals IS NOT NULL)),
+  CHECK ((status = 'closed_ready') = (registry_index IS NOT NULL)),
+  CHECK ((status = 'closed_ready') = (purchase_until IS NOT NULL)),
+  CHECK ((status = 'closed_ready') = (skip_reason IS NULL)),
+  CHECK (publication_status = 'not_submitted' OR status = 'closed_ready')
+);`;
+
+// A populated database with exactly the original four Task 5 tables is the migration authority.
+// It must not gain invented activation or closed-vote evidence merely because a new binary booted.
+{
+  const legacy = newDb();
+  registerPgMemCompatibility(legacy, DataType);
+  const { Pool: LegacyPool } = legacy.adapters.createPg();
+  const legacyPool = new LegacyPool();
+  await legacyPool.query(LEGACY_TASK5_SCHEMA);
+  const key = `0x${'1'.repeat(64)}`;
+  const address = `0x${'1'.repeat(40)}`;
+  const snapshot = `0x${'c'.repeat(64)}`;
+  const tally = `0x${'f'.repeat(64)}`;
+  await legacyPool.query(
+    `INSERT INTO ticker_ballot_days_v2
+      (day,state,chain_id,registry_address,catalog_version,catalog_snapshot_hash,max_eth_wei,
+       opened_by,open_details_hash,opened_at,closes_at,closed_at,purchase_until)
+     VALUES (20700,'closed_ready',4663,$1,'1',$2,'1','legacy',$3,$4,$5,$5,$6)`,
+    [address, snapshot, snapshot, '2026-09-04T00:00:00Z', '2026-09-05T00:00:00Z',
+      '2026-09-05T02:00:00Z'],
+  );
+  await legacyPool.query(
+    `INSERT INTO ticker_ballot_candidates_v2
+      (day,asset_version_key,ticker,token_address,token_decimals,registry_index)
+     VALUES (20700,$1,'T1',$2,18,'0')`, [key, address],
+  );
+  await legacyPool.query(
+    `INSERT INTO commission_ticker_votes_v2
+      (day,family_id,asset_version_key,ticker,standing) VALUES (20700,'family-old',$1,'T1','500')`,
+    [key],
+  );
+  await legacyPool.query(
+    `INSERT INTO ticker_ballot_results_v2
+      (day,status,asset_version_key,ticker,token_address,token_decimals,registry_index,
+       catalog_version,catalog_snapshot_hash,max_eth_wei,votes,weighted,decided_by,
+       decided_by_code,skip_reason,tally_hash,closed_at,purchase_until,publication_status)
+     VALUES (20700,'closed_ready',$1,'T1',$2,18,'0','1',$3,'1',1,5,'chamber',1,NULL,$4,
+       '2026-09-05T00:00:00Z','2026-09-05T02:00:00Z','not_submitted')`,
+    [key, address, snapshot, tally],
+  );
+  assert.equal(typeof dbModule.migrateTask5BallotV2, 'function',
+    'boot exposes the targeted fail-closed Task 5 authority migration');
+  await dbModule.migrateTask5BallotV2(legacyPool, { compatibility: 'pg-mem' });
+  const migratedCandidate = (await legacyPool.query(
+    'SELECT activation_evidence_version,activated_at FROM ticker_ballot_candidates_v2',
+  )).rows[0];
+  assert.equal(Number(migratedCandidate.activation_evidence_version), 0);
+  assert.equal(migratedCandidate.activated_at, null,
+    'a legacy candidate remains version-zero with no invented opening activation');
+  const migratedVote = (await legacyPool.query(
+    `SELECT closed_valid,closed_counted,closed_weight,closed_exclusion_reason
+       FROM commission_ticker_votes_v2`,
+  )).rows[0];
+  assert.deepEqual(migratedVote, {
+    closed_valid: null, closed_counted: null, closed_weight: null, closed_exclusion_reason: null,
+  });
+  const migratedResult = (await legacyPool.query(
+    'SELECT vote_evidence_version FROM ticker_ballot_results_v2',
+  )).rows[0];
+  assert.equal(Number(migratedResult.vote_evidence_version), 0,
+    'already-closed legacy results remain explicitly unproven');
+  assert.equal((await legacyPool.query(
+    'SELECT count(*)::int AS n FROM ticker_ballot_candidates_v2',
+  )).rows[0].n, 1, 'migration preserves populated legacy rows');
+  await assert.rejects(legacyPool.query(
+    `INSERT INTO ticker_ballot_days_v2
+      (day,state,chain_id,registry_address,catalog_version,catalog_snapshot_hash,max_eth_wei,
+       opened_by,open_details_hash,opened_at,closes_at)
+     VALUES (100000000,'open',4663,$1,'1',$2,'1','bad',$3,$4,$5)`,
+    [address, snapshot, snapshot, '2026-09-04T00:00:00Z', '2026-09-05T00:00:00Z'],
+  ), undefined, 'migrated day constraint rejects the first unrepresentable day');
+  await assert.rejects(legacyPool.query(
+    `INSERT INTO ticker_ballot_candidates_v2
+      (day,asset_version_key,ticker,token_address,token_decimals,registry_index,
+       activation_evidence_version,activated_at)
+     VALUES (20700,$1,'BAD',$2,18,'1',1,NULL)`,
+    [`0x${'2'.repeat(64)}`, `0x${'2'.repeat(40)}`],
+  ), undefined, 'current candidate evidence cannot omit its frozen activation');
+  await assert.rejects(legacyPool.query(
+    `UPDATE commission_ticker_votes_v2
+        SET closed_valid=true,closed_counted=true,closed_weight=0
+      WHERE day=20700 AND family_id='family-old'`,
+  ), undefined, 'migrated frozen tuple constraint rejects an incoherent counted weight');
+  await assert.rejects(legacyPool.query(
+    `UPDATE ticker_ballot_results_v2
+        SET publication_status='not_submitted',registry_tx_hash=$1
+      WHERE day=20700`, [tally],
+  ), undefined, 'migrated result publication tuple rejects false not-submitted evidence');
+
+  // The populated migration receives the same complete publication/finality state machine as a
+  // fresh table. Task 6 does not perform these transitions yet; this is storage-shape authority only.
+  let publicationDay = 20800;
+  const migratedPublication = (publicationStatus, fields = {}, status = 'closed_ready') => {
+    const ready = status === 'closed_ready';
+    return legacyPool.query(
+      `INSERT INTO ticker_ballot_results_v2
+        (day,status,asset_version_key,ticker,token_address,token_decimals,registry_index,
+         catalog_version,catalog_snapshot_hash,max_eth_wei,votes,weighted,decided_by,
+         decided_by_code,skip_reason,tally_hash,closed_at,purchase_until,publication_status,
+         registry_tx_hash,finalized_block_number,finalized_block_hash,finalized_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,'1',$8,'1',$9,$10,$11,$12,$13,$14,$15,$16,$17,
+         $18,$19,$20,$21)`,
+      [publicationDay++, status, ready ? key : null, ready ? 'T1' : null,
+        ready ? address : null, ready ? 18 : null, ready ? '0' : null, snapshot,
+        ready ? 1 : 0, ready ? 5 : 0, ready ? 'chamber' : 'skipped', ready ? 1 : 6,
+        ready ? null : 'no_valid_candidate', tally, '2026-09-05T00:00:00Z',
+        ready ? '2026-09-05T02:00:00Z' : null, publicationStatus, fields.tx ?? null,
+        fields.number ?? null, fields.blockHash ?? null, fields.at ?? null],
+    );
+  };
+  const blockHash = `0x${'b'.repeat(64)}`;
+  for (const [state, fields] of [
+    ['not_submitted', {}],
+    ['publisher_submitted', { tx: tally }],
+    ['published_pending_finality', { tx: tally }],
+    ['finalized', { tx: tally, number: '7', blockHash, at: '2026-09-05T00:00:01Z' }],
+    ['reorged', { tx: tally }],
+    ['failed', {}],
+    ['failed', { tx: tally }],
+  ]) await migratedPublication(state, fields);
+  await migratedPublication('not_submitted', {}, 'skipped_no_valid_candidate');
+  for (const [state, fields] of [
+    ['not_submitted', { tx: tally }],
+    ['publisher_submitted', {}],
+    ['publisher_submitted', { tx: `0x${'A'.repeat(64)}` }],
+    ['publisher_submitted', { tx: `0x${'z'.repeat(64)}` }],
+    ['publisher_submitted', { tx: `0x${'a'.repeat(63)}` }],
+    ['publisher_submitted', { tx: tally, number: '7' }],
+    ['published_pending_finality', { tx: tally, blockHash }],
+    ['finalized', { tx: tally, number: '7', blockHash }],
+    ['finalized', { tx: tally, number: '7', blockHash: 'not-a-hash', at: '2026-09-05T00:00:01Z' }],
+    ['finalized', { tx: tally, number: '7', blockHash: `0x${'B'.repeat(64)}`,
+      at: '2026-09-05T00:00:01Z' }],
+    ['reorged', {}],
+    ['reorged', { tx: tally, at: '2026-09-05T00:00:01Z' }],
+    ['failed', { tx: tally, number: '7' }],
+  ]) await assert.rejects(migratedPublication(state, fields), undefined,
+    `migrated ${state} rejects publication fields ${JSON.stringify(fields)}`);
+  await assert.rejects(migratedPublication(
+    'not_submitted', { tx: tally }, 'skipped_no_valid_candidate',
+  ));
+  await assert.rejects(migratedPublication('failed', {}, 'skipped_no_valid_candidate'));
+  await dbModule.migrateTask5BallotV2(legacyPool, { compatibility: 'pg-mem' });
+  assert.equal((await legacyPool.query(
+    'SELECT count(*)::int AS n FROM ticker_ballot_results_v2',
+  )).rows[0].n, 9, 'targeted migration is exact-idempotent on a populated schema');
+  await legacyPool.end();
+}
+
+// Invalid pre-existing authority must abort before adding even the compatibility columns. Real
+// PostgreSQL additionally supplies transactional DDL rollback for any later constraint failure.
+{
+  const invalid = newDb();
+  registerPgMemCompatibility(invalid, DataType);
+  const { Pool: InvalidPool } = invalid.adapters.createPg();
+  const invalidPool = new InvalidPool();
+  await invalidPool.query(LEGACY_TASK5_SCHEMA);
+  const zero = `0x${'0'.repeat(64)}`;
+  await invalidPool.query(
+    `INSERT INTO ticker_ballot_days_v2
+      (day,state,chain_id,registry_address,catalog_version,catalog_snapshot_hash,max_eth_wei,
+       opened_by,open_details_hash,opened_at,closes_at)
+     VALUES (100000000,'open',4663,$1,'1',$2,'1','legacy',$3,$4,$5)`,
+    [`0x${'1'.repeat(40)}`, zero, zero, '2026-09-04T00:00:00Z', '2026-09-05T00:00:00Z'],
+  );
+  let failure;
+  try { await dbModule.migrateTask5BallotV2(invalidPool, { compatibility: 'pg-mem' }); }
+  catch (error) { failure = error; }
+  assert(failure, 'invalid legacy authority stops the targeted migration');
+  let gainedColumn = true;
+  try { await invalidPool.query('SELECT activation_evidence_version FROM ticker_ballot_candidates_v2'); }
+  catch { gainedColumn = false; }
+  assert.equal(gainedColumn, false, 'invalid legacy data leaves the pre-migration schema untouched');
+  await invalidPool.end();
+}
+
+// The targeted lane owns one transaction and preserves the exact failing database error. pg-mem
+// does not roll transactional DDL back, so this narrow adapter asserts the production BEGIN/ROLLBACK
+// boundary while the invalid-data case above proves no compatibility DDL is reached at all.
+{
+  const injected = Object.assign(new Error('injected production authority-lock failure'), {
+    code: '55P03',
+  });
+  const statements = [];
+  const client = {
+    async query(sql) {
+      statements.push(sql);
+      if (sql.startsWith('LOCK TABLE')) throw injected;
+      return { rows: [] };
+    },
+  };
+  await assert.rejects(dbModule.migrateTask5BallotV2(client), (error) => error === injected);
+  assert.equal(statements[0], 'BEGIN');
+  assert(statements[1].includes('task5_ballot_v2_targeted_migration'));
+  assert.match(statements[2], /LOCK TABLE ticker_ballot_days_v2,ticker_ballot_candidates_v2,[\s\S]*commission_ticker_votes_v2,ticker_ballot_results_v2[\s\S]*ACCESS EXCLUSIVE/i,
+    'production freezes all four authority tables before it validates or alters legacy data');
+  assert.equal(statements.at(-1), 'ROLLBACK');
+}
+
+{
+  const broken = newDb();
+  registerPgMemCompatibility(broken, DataType);
+  const { Pool: BrokenPool } = broken.adapters.createPg();
+  const brokenPool = new BrokenPool();
+  await brokenPool.query(LEGACY_TASK5_SCHEMA);
+  const injected = Object.assign(new Error('injected Task 5 constraint failure'), { code: 'XXT51' });
+  const statements = [];
+  const query = brokenPool.query.bind(brokenPool);
+  const client = {
+    async query(sql, params = []) {
+      statements.push(sql);
+      if (sql.includes('ADD CONSTRAINT ck_ticker_ballot_days_v2_day_range')) throw injected;
+      return query(sql, params);
+    },
+  };
+  await assert.rejects(
+    dbModule.migrateTask5BallotV2(client, { compatibility: 'pg-mem' }),
+    (error) => error === injected,
+  );
+  assert.equal(statements[0], 'BEGIN');
+  assert.equal(statements.at(-1), 'ROLLBACK');
+  assert.equal(statements.includes('COMMIT'), false,
+    'a targeted authority constraint failure never commits a partial migration');
+  await brokenPool.end();
+}
 
 // ── 1. the derived statement set is well-formed ──
 const stmts = columnMigrations(SCHEMA);
@@ -25,6 +329,11 @@ assert.equal(stmts.filter((s) => /ADD COLUMN IF NOT EXISTS (PRIMARY|UNIQUE|FOREI
 // no statement carries a stray TOP-LEVEL comma (i.e. multiple columns crammed into one ALTER)
 const hasTopComma = (s) => { const d = s.replace(/^ALTER TABLE \w+ ADD COLUMN IF NOT EXISTS \w+ /, ''); let dp = 0; for (const c of d) { if (c === '(') dp++; else if (c === ')') dp--; else if (c === ',' && dp === 0) return true; } return false; };
 assert.equal(stmts.filter(hasTopComma).length, 0, 'each statement adds exactly ONE column (multi-column lines split on depth-0 commas)');
+const task5ActivationColumn = stmts.find((statement) => statement.startsWith(
+  'ALTER TABLE ticker_ballot_candidates_v2 ADD COLUMN IF NOT EXISTS activated_at ',
+));
+assert(task5ActivationColumn && !/\bNOT NULL\b/i.test(task5ActivationColumn),
+  'generic migration never attempts a populated NOT NULL/no-default Task 5 activation column');
 // known later-added columns are covered (these are exactly the ones an in-place upgrade would miss)
 for (const need of [
   'ALTER TABLE track_bets ADD COLUMN IF NOT EXISTS odds NUMERIC',
@@ -34,19 +343,174 @@ for (const need of [
   'ALTER TABLE characters ADD COLUMN IF NOT EXISTS heat_exposure NUMERIC NOT NULL DEFAULT 0',
   'ALTER TABLE commission_votes ADD COLUMN IF NOT EXISTS standing',
   'ALTER TABLE gang_members ADD COLUMN IF NOT EXISTS joined_at',
+  "ALTER TABLE item_events ADD COLUMN IF NOT EXISTS quality TEXT NOT NULL DEFAULT 'standard'",
 ]) assert(stmts.some((s) => s.startsWith(need)), `migration must cover: ${need}`);
 // column-level PRIMARY KEY is stripped from the generated def (the ADD COLUMN is always safe)
 const idStmt = stmts.find((s) => s.startsWith('ALTER TABLE characters ADD COLUMN IF NOT EXISTS id '));
 assert(idStmt && !/PRIMARY KEY/i.test(idStmt), 'column-level PRIMARY KEY is stripped from the ADD COLUMN def');
 
+// ── 1b. THE RE-APPLY LEDGER — every statement in schema.sql survives being run twice ──
+// schema.sql is applied at EVERY boot (`makeDb` → `boot.query(SCHEMA)`), and node-pg sends the whole
+// file as ONE simple query, which Postgres runs as an IMPLICIT TRANSACTION: one error aborts the
+// entire batch and `makeDb` throws, so the process refuses to boot. On a fresh database that never
+// happens; on an EXISTING one — i.e. every deploy after the first — any non-idempotent statement is a
+// crash loop. That is the 2026-08-06 outage (`gang_members.post`) and it recurred on 2026-08-28, when
+// five `CREATE INDEX` statements shipped without `IF NOT EXISTS` while the other 155 in the file had
+// it. pgcheck §7 catches this behaviourally and did, but it needs a real database and runs in its own
+// CI job; this is the same property asserted from the text alone, in `npm test`, on every PR.
+//
+// THE RULE IS PER-SHAPE, because "idempotent" means something different for each kind of DDL — an
+// index and a table say IF NOT EXISTS, a constraint has no such clause and must be DROPped first, a
+// seed row needs ON CONFLICT or a WHERE NOT EXISTS guard. Anything the classifier does not recognise
+// is a FAILURE, not a pass: a new shape has to be added deliberately with its idempotent form stated,
+// which is the whole point of catalogue-or-declare.
+{
+  // Split on top-level `;`, tracking parens, quotes, dollar-quoting and `--` comments. Hand-rolled
+  // rather than a regex for the reason the SQL scanner is: statements here span many lines and carry
+  // both quote characters, and a regex reads them wrong in a way that silently drops statements.
+  const statements = [];
+  {
+    let depth = 0, quote = null, dollar = false, cur = '';
+    for (let i = 0; i < SCHEMA.length; i++) {
+      const c = SCHEMA[i];
+      if (dollar) { if (c === '$' && SCHEMA[i + 1] === '$') { dollar = false; cur += '$$'; i++; continue; } cur += c; continue; }
+      if (quote) { cur += c; if (c === quote && SCHEMA[i - 1] !== '\\') quote = null; continue; }
+      if (c === '$' && SCHEMA[i + 1] === '$') { dollar = true; cur += '$$'; i++; continue; }
+      if (c === "'" || c === '"') { quote = c; cur += c; continue; }
+      if (c === '-' && SCHEMA[i + 1] === '-') { while (i < SCHEMA.length && SCHEMA[i] !== '\n') i++; cur += '\n'; continue; }
+      if (c === '(') depth++; else if (c === ')') depth--;
+      if (c === ';' && depth === 0) { statements.push(cur.trim()); cur = ''; continue; }
+      cur += c;
+    }
+    if (cur.trim()) statements.push(cur.trim());
+  }
+
+  // Each entry: the shape, and the form that makes THAT shape safe to run a second time.
+  const SAFE = [
+    [/^CREATE TABLE IF NOT EXISTS\b/i, 'CREATE TABLE … IF NOT EXISTS'],
+    [/^CREATE (?:UNIQUE )?INDEX IF NOT EXISTS\b/i, 'CREATE INDEX … IF NOT EXISTS'],
+    [/^ALTER TABLE [\s\S]*\bADD COLUMN IF NOT EXISTS\b/i, 'ALTER TABLE … ADD COLUMN IF NOT EXISTS'],
+    [/^ALTER TABLE [\s\S]*\bDROP CONSTRAINT IF EXISTS\b/i, 'ALTER TABLE … DROP CONSTRAINT IF EXISTS'],
+    // A seed row is idempotent either by ON CONFLICT or by the WHERE NOT EXISTS form this file uses.
+    [/^INSERT INTO [\s\S]*\bON CONFLICT\b/i, 'INSERT … ON CONFLICT'],
+    [/^INSERT INTO [\s\S]*\bWHERE NOT EXISTS\b/i, 'INSERT … WHERE NOT EXISTS'],
+    // An UPDATE is idempotent when it sets constants under a predicate that stops matching (or keeps
+    // producing the same result). The occupation seeds are the recorded case — see the E1 note in
+    // CLAUDE.md about a re-boot re-occupying a district players had liberated.
+    [/^UPDATE [\s\S]*\bSET\b[\s\S]*\bWHERE\b/i, 'UPDATE … WHERE (converges)'],
+    // A widening to TEXT is idempotent by the type's own definition: text→text is a no-op (Postgres
+    // rewrites nothing, relfilenodes are unchanged, PKs over the column are kept), so the second
+    // application of THE ACCOUNT-ID UNIFICATION's uuid→text conversions is a no-op — and it is proven
+    // on real Postgres rather than reasoned about: pgcheck §7 re-applies the whole file to an existing
+    // database, §7c boots the build on one that still declares UUID. ONLY the bare TYPE TEXT form is
+    // safe: a conversion to any NARROWER type (INT, UUID, NUMERIC) can fail on the second run's data
+    // and a USING clause can be anything, so neither classifies (the self-test below pins both).
+    [/^ALTER TABLE\s+\w+\s+ALTER COLUMN\s+\w+\s+TYPE TEXT\s*$/i, 'ALTER COLUMN … TYPE TEXT (a widening is a no-op the second time)'],
+  ];
+  // Postgres has NO `ADD CONSTRAINT IF NOT EXISTS`, so the only idempotent way to add one is to DROP
+  // it first — which is what this file does. So an ADD CONSTRAINT is safe exactly when a matching
+  // `DROP CONSTRAINT IF EXISTS` for the SAME table and name appears EARLIER in the file. Matching on
+  // the pair rather than on proximity is what makes it decidable: a drop for a different constraint
+  // sitting next to it would look identical to the eye and would not make it safe.
+  const dropped = new Set();
+  const constraintAdd = /^ALTER TABLE\s+(\w+)[\s\S]*?\bADD CONSTRAINT\s+(\w+)/i;
+  const constraintDrop = /^ALTER TABLE\s+(\w+)[\s\S]*?\bDROP CONSTRAINT IF EXISTS\s+(\w+)/i;
+  const shapeOf = (statement) => {
+    const direct = SAFE.find(([re]) => re.test(statement))?.[1];
+    if (direct) return direct;
+    const add = statement.match(constraintAdd);
+    if (add && dropped.has(`${add[1]}.${add[2]}`)) return 'ALTER TABLE … DROP CONSTRAINT IF EXISTS + ADD CONSTRAINT';
+    return null;
+  };
+
+  // SELF-TEST FIRST, before the scan, so a matcher that has stopped discriminating fails HERE rather
+  // than somewhere downstream that names the wrong thing.
+  assert.equal(shapeOf('CREATE UNIQUE INDEX ux_x ON t (a)'), null,
+    'a bare CREATE INDEX must never classify safe — it is the exact statement that crashed the boot');
+  assert.equal(shapeOf('ALTER TABLE t ADD CONSTRAINT ck_x CHECK (a > 0)'), null,
+    'a bare ADD CONSTRAINT must never classify safe — Postgres has no IF NOT EXISTS for it');
+  assert.equal(shapeOf('CREATE TABLE t (a INT)'), null, 'a bare CREATE TABLE must never classify safe');
+  assert(shapeOf('ALTER TABLE t ALTER COLUMN c TYPE TEXT'), 'a bare widening to TEXT must classify safe — text→text is a no-op');
+  assert.equal(shapeOf('ALTER TABLE t ALTER COLUMN c TYPE INT'), null,
+    'a conversion to a NARROWER type must never classify safe — the second run can fail on the data');
+  assert.equal(shapeOf('ALTER TABLE t ALTER COLUMN c TYPE TEXT USING c::text'), null,
+    'a USING clause can be anything — only the bare TYPE TEXT form is known to be a no-op');
+  assert(shapeOf('CREATE UNIQUE INDEX IF NOT EXISTS ux_x ON t (a)'), 'the guarded index form must classify safe');
+  dropped.add('t.ck_x');
+  assert(shapeOf('ALTER TABLE t ADD CONSTRAINT ck_x CHECK (a > 0)'),
+    'an ADD CONSTRAINT paired with an earlier DROP … IF EXISTS for the SAME name must classify safe');
+  assert.equal(shapeOf('ALTER TABLE t ADD CONSTRAINT ck_other CHECK (a > 0)'), null,
+    'the pair must match on NAME — a drop of a different constraint does not make this one safe');
+  assert.equal(shapeOf('ALTER TABLE other ADD CONSTRAINT ck_x CHECK (a > 0)'), null,
+    'the pair must match on TABLE — the same constraint name on another table is another constraint');
+  dropped.clear();
+
+  const unsafe = [];
+  let checked = 0;
+  for (const statement of statements) {
+    if (!statement) continue;
+    checked++;
+    const drop = statement.match(constraintDrop);
+    if (drop) dropped.add(`${drop[1]}.${drop[2]}`);
+    if (!shapeOf(statement)) unsafe.push(statement.replace(/\s+/g, ' ').slice(0, 110));
+  }
+  // Anti-vacuity, two floors because they fail differently: the first catches a splitter that has
+  // stopped finding statements, the second a matcher that has stopped recognising the file's own
+  // dominant shape (either would report a clean sweep over a schema full of hazards).
+  assert(checked > 500, `the splitter found only ${checked} statements — it has stopped reading schema.sql`);
+  assert(statements.filter((s) => /^CREATE TABLE IF NOT EXISTS\b/i.test(s)).length > 200,
+    'the classifier no longer recognises the file\'s dominant shape');
+  assert.equal(unsafe.length, 0,
+    `${unsafe.length} statement(s) in schema.sql are not safe to run a second time — the whole file is `
+    + 'applied at every boot inside one implicit transaction, so each of these is a crash loop on any '
+    + `existing database:\n  ${unsafe.join('\n  ')}`);
+  console.log(`  ✓ all ${checked} statements in schema.sql are re-apply safe (the file is applied at every boot)`);
+}
+
 // ── 2. clean no-op on a FRESH DB (every column already exists) ──
 const mem = newDb();
+registerPgMemCompatibility(mem, DataType);
 const { Pool } = mem.adapters.createPg();
 const pool = new Pool();
 await pool.query(SCHEMA);
 const fresh = await migrateColumns(pool, SCHEMA);
 assert.equal(fresh.total, stmts.length, 'runs every derived statement');
 assert.equal(fresh.failed, 0, `a fresh DB is a clean no-op — 0 statements should fail (got ${fresh.failed})`);
+await dbModule.migrateTask5BallotV2(pool, { compatibility: 'pg-mem' });
+await dbModule.migrateTask5BallotV2(pool, { compatibility: 'pg-mem' });
+
+// The production orchestration seam is what runs while makeDb holds the existing advisory lock:
+// schema -> generic safe columns -> targeted fail-closed authority -> schema stamp.
+{
+  const bootMem = newDb();
+  registerPgMemCompatibility(bootMem, DataType);
+  const { Pool: BootPool } = bootMem.adapters.createPg();
+  const bootPool = new BootPool();
+  const statements = [];
+  const query = bootPool.query.bind(bootPool);
+  const client = {
+    async query(sql, params = []) {
+      statements.push(sql);
+      return query(sql, params);
+    },
+  };
+  assert.equal(typeof dbModule.migrateSchemaUnderLock, 'function',
+    'boot exposes one tested schema ordering seam for the existing advisory lock');
+  await dbModule.migrateSchemaUnderLock(client, {
+    schemaText: SCHEMA, compatibility: 'pg-mem',
+  });
+  const targeted = statements.findIndex((sql) => sql.includes('task5_ballot_v2_targeted_migration'));
+  const h2Targeted = statements.findIndex((sql) => (
+    sql.includes('rwa_health_overlay_v2_targeted_migration')
+  ));
+  const lastGeneric = statements
+    .slice(0, targeted)
+    .findLastIndex((sql) => /^ALTER TABLE .* ADD COLUMN IF NOT EXISTS /i.test(sql));
+  const stamp = statements.findIndex((sql) => sql.includes('SELECT app_version FROM schema_meta'));
+  assert(lastGeneric >= 0 && targeted > lastGeneric && h2Targeted > targeted && stamp > h2Targeted,
+    'generic columns, Task 5 authority, and H2 authority run before the schema stamp');
+  await bootPool.end();
+}
 
 // ── 3. the actual fix: an "old" DB missing a later-added column gets it back ──
 const has = async (t, c) => { try { await pool.query(`SELECT ${c} FROM ${t} LIMIT 0`); return true; } catch { return false; } };
@@ -110,6 +574,8 @@ const DISPOSITION = {
   poker_ring_seats: 'special', // RING POKER: wipeRingAtDeath folds the seat + BURNS the stack (casino:ring:death) under the table lock — never a bare DELETE (the stack is escrowed cash)
   chat_messages: 'log', // troll-box lines keep their name snapshot — a dead man's words stand (7d worker retention)
   nft_reimports: 'log', // NFT RE-IMPORT (Option A): a chain-event audit record keyed by the log ref. `applied_character` RECORDS where the re-created car went (it dies via the normal cars estate path); this record persists past that death — the chat_messages precedent.
+  world_operation_roles: 'ledger', // pinned assignment: a dead assignee invalidates/abandons the operation; replacing the ID would let an heir impersonate the role
+  world_operation_contributions: 'ledger', // immutable participation audit; the operation close path returns escrow and preserves who contributed
   // ── the `%_character` half (audit F4): sixteen tables that scope themselves by a named role rather
   // than by `character_id`, and were invisible to this guard until it learned the suffix. Every one is
   // handled today — that is precisely why the blind spot mattered: nothing was ENFORCING it.
@@ -207,6 +673,298 @@ for (const [t, kind] of Object.entries(DISPOSITION)) {
   }
 }
 
+// ── 4b. Phase 1 generic-owner death disposition (fail closed) ────────────────────────────────
+// The legacy guard above deliberately follows character-shaped columns. Phase 1 adds a second,
+// generic ownership vocabulary that must remain immutable historical state across death and
+// replacement. Keep both the complete table census and every generic owner/depositor tuple role
+// derived from the bounded schema section: adding a table or a new *_scope role without an explicit
+// classification fails CI. This is intentionally stronger than an expected-list assertion, which
+// could omit a new owner-bearing column and silently pass.
+const PHASE1_DISPOSITION = {
+  item_stacks: 'historical_owner',
+  item_instances: 'historical_owner',
+  item_events: 'historical_audit',
+  item_mutation_guards: 'historical_audit',
+  operation_escrow: 'operation_lifecycle',
+  mystery_instances: 'historical_owner',
+  mystery_node_state: 'child_history',
+  mystery_choices: 'child_history',
+  world_operations: 'operation_lifecycle',
+  world_operation_roles: 'historical_audit',
+  world_operation_node_state: 'child_history',
+  world_operation_contributions: 'historical_audit',
+};
+const PHASE1_OWNER_TUPLE_DISPOSITION = {
+  'item_stacks.owner_scope/owner_id': 'historical_owner',
+  'item_instances.owner_scope/owner_id': 'historical_owner',
+  'item_events.from_owner_scope/from_owner_id': 'historical_audit',
+  'item_events.to_owner_scope/to_owner_id': 'historical_audit',
+  'item_mutation_guards.owner_scope/owner_id': 'historical_audit',
+  'operation_escrow.owner_scope/operation_id': 'operation_lifecycle',
+  'operation_escrow.depositor_scope/depositor_id': 'historical_owner',
+  'mystery_instances.owner_scope/owner_id': 'historical_owner',
+};
+{
+  const start = SCHEMA.indexOf('-- ── WORLD-GRAPH ITEM ECONOMY');
+  const end = SCHEMA.indexOf('-- ── AUTHORED CONTENT SUPPLY', start);
+  assert(start >= 0 && end > start, 'schema must retain the bounded Phase 1 world-graph section');
+  const phase1Schema = SCHEMA.slice(start, end);
+  assert.match(phase1Schema, /immutable historical ledger state, not an\s+-- estate asset/,
+    'Phase 1 schema must document that generic owner tuples are historical, not estate assets');
+  assert.match(phase1Schema, /Death\/replacement never wipes, rewrites, auto-inherits, or duplicates/,
+    'Phase 1 schema must document the no-inheritance death policy');
+
+  const tables = new Map();
+  const head = /CREATE TABLE(?:\s+IF NOT EXISTS)?\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(/g;
+  let match;
+  const clean = phase1Schema.replace(/--[^\n]*/g, '');
+  while ((match = head.exec(clean))) {
+    let depth = 1;
+    let body = '';
+    let i = head.lastIndex;
+    for (; i < clean.length && depth > 0; i++) {
+      const ch = clean[i];
+      if (ch === '(') depth++;
+      else if (ch === ')') {
+        depth--;
+        if (depth === 0) break;
+      }
+      body += ch;
+    }
+    head.lastIndex = i;
+    tables.set(match[1], body);
+  }
+
+  const unclassifiedTables = [...tables.keys()].filter((table) => !PHASE1_DISPOSITION[table]);
+  const staleTables = Object.keys(PHASE1_DISPOSITION).filter((table) => !tables.has(table));
+  assert.deepEqual(unclassifiedTables, [],
+    `unclassified Phase 1 table(s): ${unclassifiedTables.join(', ')} — classify the death/lifecycle disposition before shipping`);
+  assert.deepEqual(staleTables, [],
+    `stale Phase 1 disposition table(s): ${staleTables.join(', ')}`);
+
+  const ownerTuples = new Set();
+  for (const [table, body] of tables) {
+    const columns = new Set();
+    for (const line of body.split('\n')) {
+      const column = line.match(/^\s*([a-z_][a-z0-9_]*)\s+[A-Z]/i)?.[1];
+      if (column && !/^(PRIMARY|FOREIGN|UNIQUE|CHECK|CONSTRAINT)$/i.test(column)) columns.add(column);
+    }
+    for (const scopeColumn of columns) {
+      let idColumn = null;
+      if (scopeColumn === 'owner_scope') {
+        idColumn = columns.has('owner_id') ? 'owner_id'
+          : (table === 'operation_escrow' && columns.has('operation_id') ? 'operation_id' : null);
+      } else if (scopeColumn === 'from_owner_scope') idColumn = 'from_owner_id';
+      else if (scopeColumn === 'to_owner_scope') idColumn = 'to_owner_id';
+      else if (scopeColumn === 'depositor_scope') idColumn = 'depositor_id';
+      if (idColumn) {
+        assert(columns.has(idColumn), `${table}.${scopeColumn} is missing its ${idColumn} tuple half`);
+        ownerTuples.add(`${table}.${scopeColumn}/${idColumn}`);
+      }
+    }
+  }
+  const unclassifiedTuples = [...ownerTuples].filter((tuple) => !PHASE1_OWNER_TUPLE_DISPOSITION[tuple]);
+  const staleTuples = Object.keys(PHASE1_OWNER_TUPLE_DISPOSITION).filter((tuple) => !ownerTuples.has(tuple));
+  assert.deepEqual(unclassifiedTuples, [],
+    `unclassified Phase 1 generic owner/depositor tuple(s): ${unclassifiedTuples.join(', ')}`);
+  assert.deepEqual(staleTuples, [],
+    `stale Phase 1 owner/depositor disposition(s): ${staleTuples.join(', ')}`);
+
+  // The classifications above describe preservation; this source guard proves the production death
+  // path honors it. There are deliberately no Phase 1 death mutations in the approved ledger. A
+  // future exception must name its exact handler, verb, and table here, so adding a generic-owner
+  // table to runEstate (directly or through a named death helper) cannot silently become inheritance.
+  const PHASE1_DEATH_MUTATION_APPROVALS = new Set([]);
+  const lexicalMask = (source, { keepStrings = false } = {}) => {
+    // Every offset used below is a UTF-16 code-unit offset (`source[i]`,
+    // `match.index`, `indexOf`, and `slice`). Keep the mutable mask in that
+    // same coordinate system: spreading a string collapses astral characters
+    // to one array entry and shifts every later write.
+    const out = source.split('');
+    const blank = (index) => { if (!/\r|\n/.test(out[index])) out[index] = ' '; };
+    let state = 'code';
+    let quote = null;
+    let regexClass = false;
+    for (let i = 0; i < source.length; i++) {
+      const ch = source[i];
+      const next = source[i + 1];
+      if (state === 'line-comment') {
+        if (ch === '\n') state = 'code'; else blank(i);
+        continue;
+      }
+      if (state === 'block-comment') {
+        blank(i);
+        if (ch === '*' && next === '/') { blank(++i); state = 'code'; }
+        continue;
+      }
+      if (state === 'string') {
+        if (!keepStrings) blank(i);
+        if (ch === '\\') { if (!keepStrings && i + 1 < source.length) blank(i + 1); i++; continue; }
+        if (ch === quote) state = 'code';
+        continue;
+      }
+      if (state === 'regex') {
+        blank(i);
+        if (ch === '\\') { if (i + 1 < source.length) blank(++i); continue; }
+        if (ch === '[') regexClass = true;
+        else if (ch === ']') regexClass = false;
+        else if (ch === '/' && !regexClass) {
+          state = 'code';
+          while (/[a-z]/i.test(source[i + 1] || '')) blank(++i);
+        }
+        continue;
+      }
+      if (ch === '/' && next === '/') { blank(i); blank(++i); state = 'line-comment'; continue; }
+      if (ch === '/' && next === '*') { blank(i); blank(++i); state = 'block-comment'; continue; }
+      if (ch === "'" || ch === '"' || ch === '`') {
+        quote = ch; state = 'string'; if (!keepStrings) blank(i);
+        continue;
+      }
+      if (ch === '/') {
+        let previous = i - 1;
+        while (previous >= 0 && /\s/.test(source[previous])) previous--;
+        if (previous < 0 || /[=(:,!&|?{};\[]/.test(source[previous])) {
+          blank(i); state = 'regex'; regexClass = false;
+        }
+      }
+    }
+    return out.join('');
+  };
+  const functionBlock = (source, open, label) => {
+    const code = lexicalMask(source);
+    let depth = 1;
+    for (let i = open + 1; i < code.length; i++) {
+      if (code[i] === '{') depth++;
+      else if (code[i] === '}' && --depth === 0) return source.slice(open + 1, i);
+    }
+    assert.fail(`death helper ${label} has an unterminated block body`);
+  };
+  for (const newline of ['\n', '\r\n']) {
+    const unicodeFixture = [
+      'async function unicodeDeathHelper() {',
+      "  const marker = '🥊';",
+      '  if (marker) { return { preserved: true }; }',
+      '}',
+    ].join(newline);
+    const maskedFixture = lexicalMask(unicodeFixture);
+    assert.equal(maskedFixture.length, unicodeFixture.length,
+      `death-helper lexical mask must preserve UTF-16 offsets with ${JSON.stringify(newline)} line endings`);
+    const open = maskedFixture.indexOf('{');
+    const body = functionBlock(unicodeFixture, open, `unicode-${JSON.stringify(newline)}`);
+    assert.match(body, /return\s+\{\s*preserved:\s*true\s*\}/,
+      `death-helper block scanning must survive astral strings with ${JSON.stringify(newline)} line endings`);
+  }
+
+  // Build a source-wide named-function index, then crawl every statically resolvable bare helper
+  // call starting at runEstate. This includes helpers such as recordDeath, refundPot, removeMember,
+  // and checkScandal rather than trusting an `*AtDeath` naming convention. Ambiguous names include
+  // every definition, which is the fail-closed choice for a source guard.
+  const functionIndex = new Map();
+  for (const file of walkSrc()) {
+    const source = fs.readFileSync(file, 'utf8');
+    const code = lexicalMask(source);
+    const heads = [
+      /(?:export\s+)?(?:async\s+)?function\s+([A-Za-z_$][\w$]*)\s*\([^)]*\)\s*\{/g,
+      /(?:export\s+)?const\s+([A-Za-z_$][\w$]*)\s*=\s*(?:async\s*)?(?:\([^)]*\)|[A-Za-z_$][\w$]*)\s*=>\s*\{/g,
+    ];
+    for (const head of heads) {
+      for (const match of code.matchAll(head)) {
+        const open = code.indexOf('{', match.index + match[0].length - 1);
+        const entry = { name: match[1], file, source, open };
+        (functionIndex.get(entry.name) || functionIndex.set(entry.name, []).get(entry.name)).push(entry);
+      }
+    }
+  }
+  assert(functionIndex.has('runEstate'), 'runEstate must remain a statically crawlable named function');
+  const deathSources = [];
+  const reachableNames = new Set();
+  const queue = ['runEstate'];
+  while (queue.length) {
+    const name = queue.shift();
+    if (reachableNames.has(name)) continue;
+    reachableNames.add(name);
+    for (const entry of functionIndex.get(name) || []) {
+      const body = functionBlock(entry.source, entry.open, `${entry.file}:${entry.name}`);
+      deathSources.push({ name: entry.name, file: entry.file, body });
+      const executable = lexicalMask(body);
+      for (const call of executable.matchAll(/(?<![.\w$])([A-Za-z_$][\w$]*)\s*\(/g)) {
+        if (functionIndex.has(call[1]) && !reachableNames.has(call[1])) queue.push(call[1]);
+      }
+    }
+  }
+  for (const helper of [
+    'clearInboundPointers', 'recordDeath', 'recordDeedEvent', 'checkScandal', 'refundPot',
+    'removeMember', 'rememberedSkills', 'abandonRaidsAtDeath', 'voidListingsAtDeath',
+  ]) assert(reachableNames.has(helper), `runEstate call-graph crawl must include ${helper}`);
+
+  const normalizedVerb = (verb) => verb.toUpperCase().trim().replace(/\s+/g, '_');
+  const mutationsFor = (handler, body) => {
+    const mutations = [];
+    const sql = lexicalMask(body, { keepStrings: true });
+    for (const match of sql.matchAll(/\b(DELETE\s+FROM|UPDATE|INSERT\s+INTO|MERGE(?:\s+INTO)?)\s+([a-z_][a-z0-9_]*)\b/gi)) {
+      mutations.push({ handler, verb: normalizedVerb(match[1]), table: match[2] });
+    }
+    const boundedVariables = new Set();
+    for (const match of sql.matchAll(/for\s*\(\s*const\s+(\w+)\s+of\s+\[([\s\S]*?)\]\s*\)[\s\S]{0,160}?client\.query\(\s*`(DELETE\s+FROM|UPDATE|INSERT\s+INTO|MERGE(?:\s+INTO)?)\s+\$\{\1\}/gi)) {
+      boundedVariables.add(match[1]);
+      for (const tableMatch of match[2].matchAll(/['"]([a-z_][a-z0-9_]*)['"]/gi)) {
+        mutations.push({ handler, verb: normalizedVerb(match[3]), table: tableMatch[1] });
+      }
+    }
+    for (const match of sql.matchAll(/\b(DELETE\s+FROM|UPDATE|INSERT\s+INTO|MERGE(?:\s+INTO)?)\s+\$\{([^}]+)\}/gi)) {
+      if (!boundedVariables.has(match[2].trim())) {
+        mutations.push({ handler, verb: normalizedVerb(match[1]), table: `<dynamic:${match[2].trim()}>` });
+      }
+    }
+    return mutations;
+  };
+  assert.deepEqual(mutationsFor('tripwire', [
+    "await client.query('INSERT INTO item_stacks (owner_scope) VALUES ($1)', ['character']);",
+    "await client.query('MERGE INTO operation_escrow target USING source ON false WHEN NOT MATCHED THEN INSERT DEFAULT VALUES');",
+  ].join('\n')).map(({ handler, verb, table }) => `${handler}:${verb}:${table}`), [
+    'tripwire:INSERT_INTO:item_stacks',
+    'tripwire:MERGE_INTO:operation_escrow',
+  ], 'the death-policy source tripwire must detect Phase 1 INSERT and MERGE statements');
+
+  const mutations = deathSources.flatMap(({ name, body }) => mutationsFor(name, body));
+  const phase1DeathMutations = mutations
+    .filter(({ table }) => tables.has(table) || table.startsWith('<dynamic:'))
+    .map(({ handler, verb, table }) => `${handler}:${verb}:${table}`);
+  const unapprovedDeathMutations = phase1DeathMutations
+    .filter((mutation) => !PHASE1_DEATH_MUTATION_APPROVALS.has(mutation));
+  const staleDeathApprovals = [...PHASE1_DEATH_MUTATION_APPROVALS]
+    .filter((approval) => !phase1DeathMutations.includes(approval));
+  assert.deepEqual(unapprovedDeathMutations, [],
+    `Phase 1 historical owner state must not be mutated by death: ${unapprovedDeathMutations.join(', ')}`);
+  assert.deepEqual(staleDeathApprovals, [],
+    `stale Phase 1 death-mutation approval(s): ${staleDeathApprovals.join(', ')}`);
+
+  const phase1MigrationColumns = {
+    item_stacks: 'owner_scope', item_instances: 'id', item_events: 'sequence',
+    item_mutation_guards: 'idempotency_key', operation_escrow: 'item_id', mystery_instances: 'id',
+    mystery_node_state: 'instance_id', mystery_choices: 'instance_id', world_operations: 'id',
+    world_operation_roles: 'operation_id', world_operation_node_state: 'operation_id',
+    world_operation_contributions: 'operation_id',
+  };
+  for (const [table, column] of Object.entries(phase1MigrationColumns)) {
+    assert(stmts.some((statement) => new RegExp(`^ALTER TABLE ${table} ADD COLUMN IF NOT EXISTS ${column}\\b`, 'i').test(statement)),
+      `${table}.${column} must be covered by the idempotent migration derivation`);
+  }
+  assert(stmts.some((statement) => /^ALTER TABLE item_events ADD COLUMN IF NOT EXISTS quality TEXT NOT NULL DEFAULT 'standard'/i.test(statement)),
+    'item_events.quality must be backfilled safely by the idempotent migration derivation');
+  assert.match(phase1Schema,
+    /DROP CONSTRAINT IF EXISTS mystery_instances_owner_scope_owner_id_graph_id_key[\s\S]*CREATE UNIQUE INDEX IF NOT EXISTS ux_mystery_instance_owner_graph_version[\s\S]*\(owner_scope, owner_id, graph_id, graph_version\)/,
+    'mystery lifecycle migration must preserve history while enforcing one owner/graph/version row');
+
+  const rootDir = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
+  const backupSource = fs.readFileSync(path.join(rootDir, 'tools', 'backup.sh'), 'utf8');
+  const backupSelftest = fs.readFileSync(path.join(rootDir, 'tools', 'backup-selftest.sh'), 'utf8');
+  for (const table of tables.keys()) {
+    assert(backupSource.includes(table), `backup.sh must require Phase 1 table ${table}`);
+    assert(backupSelftest.includes(table), `backup selftest must seed and verify Phase 1 table ${table}`);
+  }
+}
+
 // ── (c) DISTRICT → GANG lock order (full-sweep red-team, lens B) ──────────────────────────────
 // Three paths hold BOTH a `districts` and a `gangs` row lock: seizeDistrict (social/gangs.js),
 // establishRacket (territory.js) and buildSov (sov.js). Two took districts first; buildSov took
@@ -257,5 +1015,144 @@ for (const [t, kind] of Object.entries(DISPOSITION)) {
   assert.equal(offenders.length, 0, `districts→gangs lock-order inversion (AB-BA deadlock vs seizeDistrict/establishRacket): ${offenders.join('; ')}`);
 }
 
-console.log(`✅ Schema-integrity test passed — MED-1: ${stmts.length} idempotent ADD COLUMN IF NOT EXISTS statements derived from schema.sql (no leakage, clean no-op on a fresh DB, a dropped later-added column is RE-ADDED). MED-2: all ${charTables.size} character-scoped tables (character_id OR a named %_character role) have a documented death disposition (${Object.values(DISPOSITION).filter((v) => v === 'wiped').length} wiped / ${Object.values(DISPOSITION).filter((v) => v === 'special').length} special / ${Object.values(DISPOSITION).filter((v) => v === 'escrow').length} escrow / ${Object.values(DISPOSITION).filter((v) => v === 'ledger' || v === 'log').length} ledger — a new unclassified table fails CI closed, and every wiped/special table has a DELETE or a resolving status UPDATE in src).`);
+// ── 6. CN-6A is a new-table migration with an independent, read-only authority cursor ──
+// These tables are deliberately not folded into the Task-5 getter cursor. A schema that creates only
+// some of them can appear to boot and then either lose replay evidence or make readiness a mutable flag.
+// Keep the corpus explicit: adding a second Registry lifecycle cursor is an architecture change, not a
+// harmless table addition.
+{
+  const expectedTables = [
+    'rwa_registry_lifecycle_lock_v2',
+    'rwa_registry_lifecycle_checkpoint_v2',
+    'rwa_registry_lifecycle_inbox_v2',
+    'rwa_registry_activation_instances_v2',
+    'rwa_registry_asset_lifecycle_current_v2',
+    'rwa_registry_publisher_history_v2',
+    'rwa_registry_publisher_current_v2',
+    'rwa_registry_ballot_events_v2',
+    'rwa_registry_lifecycle_event_results_v2',
+    'rwa_registry_lifecycle_runtime_v2',
+    'rwa_registry_lifecycle_attempts_v2',
+  ];
+  const tableBody = (table) => {
+    const match = SCHEMA.match(new RegExp(
+      `CREATE TABLE IF NOT EXISTS ${table}\\s*\\(([\\s\\S]*?)\\n\\);`, 'i',
+    ));
+    assert(match, `CN-6A schema must create ${table}`);
+    return match[1];
+  };
+  const requiredColumns = {
+    rwa_registry_lifecycle_lock_v2: ['id', 'created_at'],
+    rwa_registry_lifecycle_checkpoint_v2: [
+      'consumer_key', 'chain_id', 'registry_address', 'start_block_number',
+      'last_applied_block_number', 'last_applied_block_hash', 'last_observation_hash',
+      'finalized_horizon_block_number', 'finalized_horizon_block_hash', 'caught_up', 'halted',
+      'verified_at', 'ready_verified_at',
+    ],
+    rwa_registry_lifecycle_inbox_v2: [
+      'inbox_id', 'consumer_key', 'chain_id', 'contract_address', 'block_number',
+      'block_hash', 'block_timestamp', 'transaction_hash', 'transaction_index',
+      'log_index', 'topic0', 'topics_json', 'data_hex', 'event_kind', 'decoded_hash',
+      'observation_hash', 'inserted_at',
+    ],
+    rwa_registry_activation_instances_v2: [
+      'chain_id', 'registry_address', 'asset_version_key', 'activation_generation',
+      'activation_block_number', 'activation_block_hash', 'activation_transaction_hash',
+      'activation_log_index', 'catalog_version', 'review_id', 'evidence_hash',
+      'approved_at', 'valid_until', 'included_at', 'local_match',
+      'deactivation_block_number', 'deactivation_block_hash',
+    ],
+    rwa_registry_asset_lifecycle_current_v2: [
+      'chain_id', 'registry_address', 'asset_version_key', 'registered', 'active',
+      'registry_index', 'activation_generation', 'catalog_version', 'updated_at',
+    ],
+    rwa_registry_publisher_history_v2: [
+      'chain_id', 'registry_address', 'publisher', 'block_number', 'block_hash',
+      'transaction_hash', 'log_index',
+    ],
+    rwa_registry_publisher_current_v2: [
+      'chain_id', 'registry_address', 'publisher', 'block_number', 'block_hash',
+      'transaction_hash', 'log_index',
+    ],
+    rwa_registry_ballot_events_v2: [
+      'chain_id', 'registry_address', 'ballot_day', 'asset_version_key', 'token_address',
+      'token_decimals', 'tally_hash', 'catalog_version', 'max_eth_wei',
+      'purchase_until', 'activation_generation', 'block_number', 'block_hash',
+      'transaction_hash', 'log_index',
+    ],
+    rwa_registry_lifecycle_event_results_v2: [
+      'inbox_id', 'event_kind', 'disposition', 'created_at',
+    ],
+    rwa_registry_lifecycle_runtime_v2: [
+      'id', 'consumer_key', 'chain_id', 'registry_address', 'start_block_number',
+      'last_applied_block_number', 'last_applied_block_hash',
+      'finalized_horizon_block_number', 'finalized_horizon_block_hash', 'sync_in_progress',
+      'attempt_id', 'last_attempt_at', 'last_success_at', 'ready_verified_at',
+      'caught_up', 'halted', 'failure_code', 'unresolved_incident_count',
+      'last_incident_id',
+    ],
+    rwa_registry_lifecycle_attempts_v2: [
+      'attempt_id', 'status', 'started_at', 'ended_at', 'failure_code',
+    ],
+  };
+  const bodies = Object.fromEntries(expectedTables.map((table) => [table, tableBody(table)]));
+  for (const [table, columns] of Object.entries(requiredColumns)) {
+    for (const column of columns) {
+      assert.match(bodies[table], new RegExp(`\\b${column}\\b`, 'i'),
+        `CN-6A ${table} must retain authority column ${column}`);
+    }
+  }
+
+  // The essential constraints are named by their semantic boundary rather than by line number so a
+  // harmless schema reflow cannot weaken the test. These are the constraints that prevent the new
+  // consumer from becoming a second mutable Registry authority.
+  assert.match(bodies.rwa_registry_lifecycle_checkpoint_v2,
+    /consumer_key\s+TEXT[\s\S]{0,100}?CHECK\s*\(consumer_key\s*=\s*'rwa_registry_lifecycle_v2'\)/i,
+    'CN-6A checkpoint permanently binds the literal consumer key');
+  assert.match(bodies.rwa_registry_lifecycle_checkpoint_v2,
+    /chain_id\s+NUMERIC\(78,0\)[\s\S]{0,100}?CHECK\s*\(chain_id\s*=\s*4663\)/i,
+    'CN-6A checkpoint permanently binds Robinhood Chain 4663');
+  assert.match(bodies.rwa_registry_lifecycle_inbox_v2,
+    /UNIQUE\s*\(\s*chain_id\s*,\s*contract_address\s*,\s*block_hash\s*,\s*transaction_hash\s*,\s*log_index\s*\)/i,
+    'CN-6A inbox binds the complete immutable finalized-log identity');
+  assert.match(bodies.rwa_registry_activation_instances_v2,
+    /PRIMARY KEY\s*\(\s*chain_id\s*,\s*registry_address\s*,\s*asset_version_key\s*,\s*activation_generation\s*\)/i,
+    'CN-6A activation instances never reuse a generation');
+  assert.match(bodies.rwa_registry_activation_instances_v2,
+    /valid_until\s*=\s*approved_at\s*\+\s*interval\s*'604800 seconds'/i,
+    'CN-6A activation instances enforce the exact seven-day package TTL');
+  assert.match(bodies.rwa_registry_activation_instances_v2,
+    /approved_at\s*<=\s*included_at[\s\S]*included_at\s*<\s*valid_until/i,
+    'CN-6A activation instances enforce half-open timely inclusion');
+  assert.match(bodies.rwa_registry_lifecycle_attempts_v2,
+    /status\s+TEXT[\s\S]{0,100}?CHECK\s*\(status\s+IN\s*\(\s*'started'\s*,\s*'succeeded'\s*,\s*'failed'\s*,\s*'superseded'\s*\)\)/i,
+    'CN-6A attempt history has a closed operational lifecycle');
+  assert.match(bodies.rwa_registry_lifecycle_attempts_v2,
+    /status\s*=\s*'started'[\s\S]*ended_at\s+IS NULL[\s\S]*status\s+IN\s*\(\s*'succeeded'\s*,\s*'failed'\s*,\s*'superseded'\s*\)[\s\S]*ended_at\s+IS NOT NULL/i,
+    'CN-6A attempt completion time is coherent with terminal status');
+
+  const requiredIndexes = [
+    'ux_rwa_registry_lifecycle_inbox_identity_v2',
+    'ix_rwa_registry_lifecycle_inbox_order_v2',
+    'ix_rwa_registry_activation_instances_asset_generation_v2',
+    'ix_rwa_registry_ballot_events_day_v2',
+    'ix_rwa_registry_lifecycle_event_results_disposition_v2',
+    'ix_rwa_registry_lifecycle_attempts_status_v2',
+  ];
+  for (const index of requiredIndexes) {
+    assert.match(SCHEMA, new RegExp(`CREATE (?:UNIQUE )?INDEX(?: IF NOT EXISTS)? ${index}\\b`, 'i'),
+      `CN-6A schema must create operational index ${index}`);
+  }
+
+  const rows = (await pool.query(
+    `SELECT table_name FROM information_schema.tables
+       WHERE table_schema = 'public' AND table_name LIKE 'rwa_registry_%_v2'
+       ORDER BY table_name`,
+  )).rows.map((row) => row.table_name);
+  for (const table of expectedTables) {
+    assert(rows.includes(table), `fresh schema migration must materialize ${table}`);
+  }
+}
+
+console.log(`✅ Schema-integrity test passed — MED-1: ${stmts.length} idempotent ADD COLUMN IF NOT EXISTS statements derived from schema.sql (no leakage, clean no-op on a fresh DB, a dropped later-added column is RE-ADDED). MED-2: all ${charTables.size} character-scoped tables (character_id OR a named %_character role) have a documented death disposition (${Object.values(DISPOSITION).filter((v) => v === 'wiped').length} wiped / ${Object.values(DISPOSITION).filter((v) => v === 'special').length} special / ${Object.values(DISPOSITION).filter((v) => v === 'escrow').length} escrow / ${Object.values(DISPOSITION).filter((v) => v === 'ledger' || v === 'log').length} ledger — a new unclassified table fails CI closed, and every wiped/special table has a DELETE or a resolving status UPDATE in src). Phase 1: ${Object.keys(PHASE1_DISPOSITION).length} world-graph tables and ${Object.keys(PHASE1_OWNER_TUPLE_DISPOSITION).length} generic owner/depositor tuple roles have explicit fail-closed no-inheritance dispositions.`);
 process.exit(0);

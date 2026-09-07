@@ -8,6 +8,12 @@
 > `script/DeployRwaStockMachine.s.sol` were added to the manual, unit-test, static-analysis,
 > and deployment-boundary audit scope; they are not included in the 1,952 nSLOC count or
 > the diagrams below. No deployed-address mapping was found for either production contract.
+>
+> **Current-revision notice — 27/08/26:** This remains a point-in-time structural report, not a
+> description of the current source tree. Later additions include RegistryV2 and its dedicated
+> interface/tests, the standalone SettlementGasPool and its interface/tests, and the O1-only
+> AcquisitionVault authority kernel. See the current runbook, generated contract catalog and the
+> 27/08/26 addendum below before using this report for release scope.
 
 ---
 
@@ -380,5 +386,18 @@ gates for real adapters, vaults, oracles, multisig ownership, and mainnet addres
 ---
 
 ## X-Ray Verdict
+
+### Current-Revision Addendum — 27/08/26
+
+The historical 319- and 352-test measurements above remain valid only for their named revisions.
+At the independently approved O1 remediation head, the full configured Foundry run passed
+**531/531 tests across 27 suites**. The O1 AcquisitionVault runtime contains Safe/operator authority,
+typed-consent and replay controls but no payable ingress or native-ETH outflow; successful Safe
+ownership acceptance now atomically cancels a pending operator nomination so it cannot cross or
+revive across ownership epochs. O1 remains undeployed, unfunded and dormant. A1 accounting/ingress/
+budget, H2, the budget bridge, purchase, reconciliation and O2 outflow remain future review scope.
+
+This addendum does not retroactively extend the original X-Ray/Slither scope or the 25/08/26 sweep.
+It records current revision truth while preserving those earlier reports as dated evidence.
 
 **Tier: High complexity / elevated integration risk.** The contracts are non-upgradeable, heavily documented, and backed by a broad passing unit suite, but value safety depends on several external systems and immediate trust roots whose assumptions are not all enforced locally. The highest-priority audit work is stateful cross-contract conservation, v4 callback nesting, exact-transfer token configuration, ERC-4626 valuation behavior, oracle denomination/deployment parity, and signed-authorization lifecycle testing before any production arming.

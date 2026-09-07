@@ -8,8 +8,8 @@
 // the per-character cash check reconciles them automatically. Laundering rides the existing
 // `swap:buy` ledger (no new reason). Step-two scrutiny/raid/extortion risk is deferred by design.
 import crypto from 'node:crypto';
-import { GameError, bus, skillMult, trunkCap, bumpMastery, masteryFx } from './game.js';
-import { CONSTANTS, M3, CASINO, BUSINESSES, SKILLS, BUSINESS_EMPIRE, RIVALS, POPULATION, businessOf, businessTierOf, businessMaxTier, businessAssessedValue, launderRankOf, levelOf, effStat, pathFx, isMade, jailed, hospitalized, safeHoused, usd, art } from './rules.js';
+import { GameError, assertStreetActor, bus, skillMult, trunkCap, bumpMastery, masteryFx } from './game.js';
+import { CONSTANTS, M3, CASINO, BUSINESSES, SKILLS, BUSINESS_EMPIRE, RIVALS, POPULATION, businessOf, businessTierOf, businessMaxTier, businessAssessedValue, launderRankOf, levelOf, effStat, pathFx, isMade, jailed, hospitalized, safeHoused, usd, art , coolLeft, coolWait } from './rules.js';
 import { recordRival, revengeOwed } from './rivals.js';
 import { bumpHonor } from './honor.js';
 import { denAvailable, denDistribute } from './casino.js';
@@ -404,9 +404,9 @@ async function extortFront(ch, victim, businessId, client, h, verb) {
   const energy = rob ? RIVALS.ROB_ENERGY : CONSTANTS.SHAKEDOWN_ENERGY;
   const heat = rob ? RIVALS.ROB_HEAT : CONSTANTS.SHAKEDOWN_HEAT;
   const rate = rob ? RIVALS.ROB_RATE_BPS / 10000 : CONSTANTS.SHAKEDOWN_RATE;
-  if (jailed(ch)) throw new GameError('jailed', 'No street work from lockup.');
-  if (safeHoused(ch)) throw new GameError('safe', "Can't run extortion while you're to ground — a safehouse is a shield, not a bunker.");
-  if (hospitalized(ch)) throw new GameError('hosp_self', 'No leaning on anyone from a hospital bed.');
+  assertStreetActor(ch, { witpro: false, msgs: {
+    safe: "Can't run extortion while you're to ground — a safehouse is a shield, not a bunker.",
+    hosp: 'No leaning on anyone from a hospital bed.' } });
   if (Number(ch.health) < M3.JUMP_MIN_HEALTH) throw new GameError('health', "You're in no shape to lean on anyone.");
   if (Number(ch.energy) < energy) throw new GameError('energy', `Need ${energy} energy for that.`);
   if (hospitalized(victim)) throw new GameError('hosp', "They're under the Doc's care. Even we have rules.");
@@ -416,11 +416,18 @@ async function extortFront(ch, victim, businessId, client, h, verb) {
     throw new GameError('rookie', 'Nothing worth taking off a corner kid — pick a made mark.');
   const r = (await client.query('SELECT * FROM businesses WHERE id=$1 FOR UPDATE', [businessId])).rows[0];
   if (!r || r.character_id !== victim.id) throw new GameError('bad_business', 'No such front on them.');
-  if (r.shakedown_at && Date.now() - new Date(r.shakedown_at).getTime() < CONSTANTS.SHAKEDOWN_CD_MS)
-    throw new GameError('cooldown', 'That front just had a visit — let the dust settle.');
+  const visitCool = coolLeft(new Date(r.shakedown_at).getTime() + CONSTANTS.SHAKEDOWN_CD_MS);
+  if (visitCool)
+    throw new GameError('cooldown', `That front just had a visit — let the dust settle for ${coolWait(visitCool)}.`, { cooldownSeconds: visitCool });
+  const kindName = businessOf(r.kind)?.name || r.kind;
   ch.energy = Number(ch.energy) - energy;
   ch.heat = Math.min(100, Number(ch.heat || 0) + heat); // exposure win or lose (clamp 100, audit LOW-2)
   await client.query('UPDATE businesses SET shakedown_at=now() WHERE id=$1', [businessId]);
+  // WAVE 80: the three charges land win OR lose and the reply named none of them. The per-venue
+  // window is the load-bearing one — it is SHARED with rob, so a flopped shakedown closes the
+  // door on a robbery too, which a player has no way to learn but by being refused. Built once
+  // and spread on every branch, so the two outcomes can never disagree about what a visit cost.
+  const terms = { heat, energy, cooldownSeconds: Math.round(CONSTANTS.SHAKEDOWN_CD_MS / 1000) };
 
   // REVENGE, WITH TEETH (step three) — judged BEFORE the roll (so it can carry the striker's hand)
   // and before the strike is RECORDED below (else this strike would count against the debt it is
@@ -458,25 +465,33 @@ async function extortFront(ch, victim, businessId, client, h, verb) {
       ch.cash = Number(ch.cash) + cut;
       await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: cut, reason: rob ? 'business:rob' : 'business:shakedown', counterparty: victim.id });
     }
-    await h.notify(client, victim.id, rob ? 'robbed' : 'shakedown', { from: ch.name, kind: r.kind, kindName: businessOf(r.kind)?.name || r.kind, cut });
+    await h.notify(client, victim.id, rob ? 'robbed' : 'shakedown', { from: ch.name, kind: r.kind, kindName, cut });
     await recordRival(client, victim.account_id, ch, verb, { kind: r.kind, cut });
     if (revenge) await bumpHonor(client, ch, RIVALS.REVENGE_HONOR); // the code respects settled scores
     if (!rob) await bumpMastery(client, h, ch, 'muscle', 'shakedown'); // THE TRADES — extortion is the protection craft
     bus.emit('streets', { type: verb, by: ch.name, on: victim.name, kind: r.kind });
-    return { ok: true, win: true, kind: r.kind, name: businessOf(r.kind)?.name || r.kind, cut, revenge, ...(rob ? { robbed: true } : {}) };
+    // BOTH keys on EVERY branch, deliberately. rob and shakedown are the same core and disagreed
+    // about which one carries the display name — the rob branches sent `name`, the shakedown loss
+    // `kindName`, and the client (which has no business catalog and so can render nothing but what
+    // it is sent) read only `kindName`: so both rob lines printed the raw catalog KEY. It reads as
+    // capitalisation today only because every BUSINESSES id happens to be its own lowercased name.
+    return { ok: true, win: true, kind: r.kind, name: kindName, kindName, cut, revenge, ...terms, ...(rob ? { robbed: true } : {}) };
   }
   if (rob) {
     // pinched at the register — a failed robbery is a CRIME caught in the act
     ch.jail_until = new Date(Date.now() + RIVALS.ROB_JAIL_S * 1000);
-    await h.notify(client, victim.id, 'rob_failed', { from: ch.name, kind: r.kind, kindName: businessOf(r.kind)?.name || r.kind });
+    await h.notify(client, victim.id, 'rob_failed', { from: ch.name, kind: r.kind, kindName });
     await recordRival(client, victim.account_id, ch, verb, { kind: r.kind, failed: true });
-    return { ok: true, win: false, kind: r.kind, name: businessOf(r.kind)?.name || r.kind, cut: 0, robbed: true, jailedS: RIVALS.ROB_JAIL_S };
+    return { ok: true, win: false, kind: r.kind, name: kindName, kindName, cut: 0, robbed: true, jailedS: RIVALS.ROB_JAIL_S, ...terms };
   }
-  // the front's security saw you off
-  ch.health = Math.max(1, Number(ch.health) - rand(10, 25));
-  await h.notify(client, victim.id, 'shakedown_failed', { from: ch.name, kind: r.kind, kindName: businessOf(r.kind)?.name || r.kind });
+  // the front's security saw you off — and the BEATING is a term, not flavour: the line read
+  // "nothing to show for it" about an action that costs health. It is a roll, so the client cannot
+  // compute it; the figure is taken once here and reported, never re-rolled.
+  const dmg = Math.min(Number(ch.health) - 1, rand(10, 25));
+  ch.health = Math.max(1, Number(ch.health) - dmg);
+  await h.notify(client, victim.id, 'shakedown_failed', { from: ch.name, kind: r.kind, kindName });
   await recordRival(client, victim.account_id, ch, verb, { kind: r.kind, failed: true });
-  return { ok: true, win: false, kind: r.kind, kindName: businessOf(r.kind)?.name || r.kind, cut: 0 };
+  return { ok: true, win: false, kind: r.kind, name: kindName, kindName, cut: 0, dmg, ...terms };
 }
 export async function shakedownBusiness(ch, victim, businessId, client, h) {
   return extortFront(ch, victim, businessId, client, h, 'shakedown');
@@ -490,7 +505,12 @@ export async function robBusiness(ch, victim, businessId, client, h) {
 // throughput untouched). Re-specializing overwrites (a fresh $OMR burn). §10.4: `business:spec` omr burn. ──
 export async function specializeBusiness(ch, businessId, spec, client, h) {
   // `Object.hasOwn`, not truthiness (a prototype key indexes truthy — red team #8)
-  if (!Object.hasOwn(BUSINESS_EMPIRE.SPECS, spec)) throw new GameError('bad_spec', 'Pick The Fortress.');
+  // built from the LIVE catalog, never a hand-written list: this named only THE FORTRESS while the
+  // Accountant and the Fixer were retired, and stayed that way when both came back on the shelf
+  // (see the note below) — a refusal that is factually false about the game's own catalog. Derived,
+  // a spec added or retired can never leave the message behind.
+  if (!Object.hasOwn(BUSINESS_EMPIRE.SPECS, spec))
+    throw new GameError('bad_spec', `Pick one — ${Object.values(BUSINESS_EMPIRE.SPECS).map((s) => s.name).join(', ')}.`);
   // (v2 knock-on RESOLVED) THE ACCOUNTANT (income scrutiny ×0.5) and THE FIXER (raid fine ×0.5,
   // scrutiny decay ×2) were REFUSED while the Bureau layer had no feed (v2 step 2 retired
   // laundering, its only source) — selling a dead effect for real $OMR would have been worse than
@@ -528,9 +548,10 @@ async function resetFrontToNewOwner(client, businessId, newOwnerId) {
 // taxed — the `business:buyout` transfer, identical to the club buyout), the front handed over reset. Runs
 // under withTwoCharacters(raider, owner). BUSINESS_TAKEOVER_P pins the roll for tests (the standover precedent). ──
 export async function takeoverBusiness(ch, owner, businessId, client, h) {
-  if (jailed(ch)) throw new GameError('jailed', 'No moves from lockup.');
-  if (safeHoused(ch)) throw new GameError('safe', "Can't run a takeover from a safehouse — a shield, not a bunker.");
-  if (hospitalized(ch)) throw new GameError('hosp_self', 'No muscle from a hospital bed.');
+  assertStreetActor(ch, { witpro: false, msgs: {
+    jailed: 'No moves from lockup.',
+    safe: "Can't run a takeover from a safehouse — a shield, not a bunker.",
+    hosp: 'No muscle from a hospital bed.' } });
   if (levelOf(ch.respect) < BUSINESS_EMPIRE.TAKEOVER.MIN_LEVEL) throw new GameError('level', `Takeovers open at level ${BUSINESS_EMPIRE.TAKEOVER.MIN_LEVEL}.`);
   if (h.owned.gangId && h.victimOwned.gangId === h.owned.gangId) throw new GameError('family', "They're family. Omertà.");
   const r = (await client.query('SELECT * FROM businesses WHERE id=$1 FOR UPDATE', [businessId])).rows[0];
@@ -538,8 +559,9 @@ export async function takeoverBusiness(ch, owner, businessId, client, h) {
   // you can't run two of one kind — a UNIQUE(character_id,kind) collision would 500; gate before the roll
   if ((await client.query('SELECT 1 FROM businesses WHERE character_id=$1 AND kind=$2', [ch.id, r.kind])).rows[0])
     throw new GameError('have_kind', `You already run ${art(businessOf(r.kind).name, 'a')} — you can only hold one.`);
-  if (r.takeover_cd_until && new Date(r.takeover_cd_until) > new Date())
-    throw new GameError('cooldown', 'That front just fought off a move — let it settle.');
+  const takeCool = coolLeft(r.takeover_cd_until);
+  if (takeCool)
+    throw new GameError('cooldown', `That front just fought off a move — let it settle for ${coolWait(takeCool)}.`, { cooldownSeconds: takeCool });
   const fee = BUSINESS_EMPIRE.TAKEOVER.FEE;
   const price = businessAssessedValue(r.kind, r.tier);
   if (Number(ch.cash) < fee + price) throw new GameError('cash', `A takeover runs ${usd(fee)} fee + ${usd(price)} to buy it out.`);

@@ -202,6 +202,20 @@ assert.equal(r.body.error, 'downgrade');
 r = await call('POST', '/v1/brokers/activate', { token: sal.token, body: { tier: 99 } });
 assert.equal(r.code, 400);
 assert.equal(r.body.error, 'bad_tier');
+// …and it ENUMERATES, off the live catalog — the lockStake sibling's shape. A caller who guessed the
+// tier's NAME instead of its id must be able to learn the ids from the refusal itself rather than
+// spending a second round trip on GET /v1/brokers. Read from BROKERS.TIERS, never restated, so a
+// retune that reprices a desk fails here rather than leaving the sentence stale.
+{
+  const named = await call('POST', '/v1/brokers/activate', { token: sal.token, body: { tier: 'Runner' } });
+  assert.equal(named.body.error, 'bad_tier', 'a tier NAME is not an id');
+  for (const d of BROKERS.TIERS) {
+    assert(named.body.message.includes(`${d.id} — ${d.name}`),
+      `the bad_tier refusal must enumerate desk ${d.id} (${d.name}): ${named.body.message}`);
+    assert(named.body.message.includes(`${d.omr} $OMR`),
+      `the bad_tier refusal must price desk ${d.name} off the live catalog: ${named.body.message}`);
+  }
+}
 
 // ── §10.4 ──
 const inv = await runLedgerInvariants(pool, { alert: false });

@@ -124,8 +124,8 @@ Run this **in parallel** with Wave 1, but it goes live only after all three gate
 is the technical runbook; here's the founder view + the order that actually matters.
 
 ### The three HARD GATES (nothing touches mainnet until all three are ✅)
-1. **The contract test suite passes on a real toolchain.** `forge test` runs green here (213/213, incl.
-   fuzzes) via the sandboxed runner, but the toolchain is stitched together in this environment — your
+1. **The contract test suite passes on a real toolchain.** The latest full `forge test` run is green
+   (531/531 across 27 suites, 2026-08-27), but your
    developer re-runs it on any normal machine first (`cd omerta-contracts && ./run-forge-test.sh`). Cheap,
    fast, and it must be green before you pay an auditor to look.
 2. **A third-party audit of the contracts AND the signer** comes back clean (or you fix what it finds). *This
@@ -152,7 +152,8 @@ The contracts, the OMR token supply, and the treasury are owned by a **Safe** �
   transactions by clicking + confirming on your hardware wallet.
 
 ### Step 2.4 — Deploy the contracts + fund the reserves (after gates 1+2)
-Your developer follows `CHAIN-DEPLOY.md` §2–§5: deploys the contract batch (fourteen contracts, THE BANK included), hands ownership to the Safe, and the
+Your developer follows `CHAIN-DEPLOY.md` §2–§5 and `omerta-contracts/DEPLOYMENT.md`: deploys only the
+release-frozen phase set, leaves explicitly dormant/incomplete slices out, hands ownership to the Safe, and the
 **Safe funds them** with OMR (this backs withdrawals — the system can *never* mint more than you fund, by
 design). The **signing key** (`VOUCHER_SIGNER_PK`) — the thing that authorizes withdrawals — must live in a
 proper key-management service (HSM/KMS), *not* a plain environment variable. This is the single most

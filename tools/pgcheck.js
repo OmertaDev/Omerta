@@ -209,34 +209,59 @@ console.log('\n4. THE ROW LOCK ACTUALLY SERIALIZES (no lost update)');
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-console.log('\n5. A REFUSED ACTION LEAVES NO TRACE');
+console.log('\n5. A REFUSED ACTION COMMITS THE CLOCK AND NOTHING ELSE (two-phase commit)');
 // **pg-mem's ROLLBACK is a no-op.** Measured: BEGIN, INSERT, ROLLBACK, and the row is still there.
-// So every "the action was refused, therefore nothing changed" assertion across all 47 suites is
-// vacuous — they pass whether or not the transaction actually unwinds. That is not a small gap: the
-// entire economy rests on one-transaction-per-action, and until this check existed, nothing anywhere
-// verified that an action which throws mid-flight takes its partial writes with it.
+// So every "the action was refused, therefore nothing changed" assertion across the suites is
+// vacuous there — they pass whether or not the transaction actually unwinds. Only this engine can
+// prove the boundary, and the boundary has TWO halves since the two-phase commit (D1, SPEC.md):
+//   phase one — `settleIfDue` commits what §7.1's clock did (income, interest, the Bureau raid)
+//               in its OWN transaction, so a refused action can no longer discard a raid it rolled
+//               (the phantom that made the lock-free read path unshippable);
+//   phase two — the action itself, which must still take its partial writes with it.
+// Until 2026-09-05 this check asserted the OPPOSITE of phase one ("the accrual clock is untouched")
+// — that was the design then, and it is deliberately inverted here rather than loosened.
 {
   const cid = (await call('GET', '/v1/me', { token })).body.character.id;
-  const rows = async (t) => Number((await pool.query(`SELECT COUNT(*) n FROM ${t} WHERE character_id=$1`, [cid])).rows[0].n);
+  const rows = async (t, extra = '') => Number((await pool.query(
+    `SELECT COUNT(*) n FROM ${t} WHERE character_id=$1 ${extra}`, [cid])).rows[0].n);
   const cashOf = async () => Number((await pool.query('SELECT cash FROM characters WHERE id=$1', [cid])).rows[0].cash);
 
-  // Jail them, then attempt a crime. The gate throws AFTER §7.1 accrual has already run and written
-  // its ledger rows inside the same transaction — so if the rollback were not real, those rows (and
-  // any partial mutation) would survive a refusal.
+  // A racket makes the clock's work DETERMINISTIC: 6h of metered income is a ledger row with a
+  // known reason, where bank interest on a possibly-empty bank is not. Seeded by SQL (the racket's
+  // own income is the faucet under test, not its purchase), then jail them so the crime REFUSES —
+  // the gate throws in phase two, after phase one has already committed.
+  await pool.query(`INSERT INTO character_rackets (character_id, racket_id) VALUES ($1, 'laundro')
+    ON CONFLICT DO NOTHING`, [cid]);
   await pool.query(`UPDATE characters SET jail_until = now() + interval '10 minutes',
-    last_accrued_at = now() - interval '6 hours' WHERE id=$1`, [cid]);
-  const [txBefore, cashBefore] = [await rows('transactions'), await cashOf()];
+    last_accrued_at = now() - interval '6 hours', racket_credit_ms = 0 WHERE id=$1`, [cid]);
+  const NON_ACCRUAL = "AND reason NOT IN ('racket:income','bank:interest','crew:sales')";
+  const [incomeBefore, extraBefore, cashBefore] = [await rows('transactions', "AND reason='racket:income'"), await rows('transactions', NON_ACCRUAL), await cashOf()];
   const refused = await call('POST', '/v1/crimes/pick', { token });
   check(refused.code === 400, 'a jailed crime is refused', `${refused.code} ${JSON.stringify(refused.body)}`);
-  check(await rows('transactions') === txBefore, 'the refusal wrote no ledger rows',
-    `${await rows('transactions')} vs ${txBefore}`);
-  check(await cashOf() === cashBefore, 'the refusal moved no money', `${await cashOf()} vs ${cashBefore}`);
 
-  // and the clock did not advance either — the accrual is deferred, not consumed
-  const stale = (await pool.query(
-    "SELECT last_accrued_at < now() - interval '5 hours' old FROM characters WHERE id=$1", [cid])).rows[0].old;
-  check(stale === true, 'the accrual clock is untouched, so the window is re-accrued on the next touch');
+  // phase one landed: the income row exists, the clock is FRESH, and the cash rose by exactly the
+  // ledgered accrual — the row and the balance are asserted together because §10.4 needs both.
+  const incomeRows = (await pool.query(
+    `SELECT amount FROM transactions WHERE character_id=$1 AND reason='racket:income' AND currency='cash'`, [cid])).rows;
+  check(incomeRows.length === incomeBefore + 1, 'the refused action still COMMITTED the clock\'s racket income (phase one)',
+    `${incomeRows.length} racket:income rows vs ${incomeBefore} before`);
+  const fresh = (await pool.query(
+    "SELECT last_accrued_at > now() - interval '1 minute' fresh FROM characters WHERE id=$1", [cid])).rows[0].fresh;
+  check(fresh === true, 'and the accrual clock is FRESH — the window was settled, not deferred');
+  const accrued = (await pool.query(
+    `SELECT COALESCE(SUM(amount),0) s FROM transactions WHERE character_id=$1 AND currency='cash'
+       AND reason IN ('racket:income','bank:interest','crew:sales')`, [cid])).rows[0].s;
+  const cashAfter = await cashOf();
+  const incomeNow = Number(incomeRows[incomeRows.length - 1].amount);
+  check(incomeNow > 0 && Math.abs((cashAfter - cashBefore) - incomeNow) < 0.01,
+    'the cash rose by exactly the ledgered accrual', `cash ${cashBefore} → ${cashAfter}, income row ${incomeNow}, accrual sum ${accrued}`);
+
+  // phase two unwound: nothing but accrual reasons landed, and the crime's own rows did not.
+  const extra = await rows('transactions', NON_ACCRUAL);
+  check(extra === extraBefore,
+    'the refusal wrote no rows of its own (phase two rolled back)', `${extra} non-accrual rows, ${extraBefore} before`);
   await pool.query('UPDATE characters SET jail_until=NULL WHERE id=$1', [cid]);
+  await pool.query(`DELETE FROM character_rackets WHERE character_id=$1 AND racket_id='laundro'`, [cid]);
 }
 
 console.log('\n6. §10.4 HOLDS on real Postgres');
@@ -456,6 +481,558 @@ console.log('\n7. THE SCHEMA IS RE-APPLIABLE (in-place upgrade)');
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+console.log('\n7a. ITEM CONSERVATION CONSTRAINTS ARE REAL DATABASE AUTHORITY');
+// pg-mem proves the runtime behavior but cannot prove that production PostgreSQL accepted every
+// constraint with native semantics. Keep this probe small and self-cleaning: table presence, a valid
+// row, a rejected negative mutation, and a rejected impossible consumed-instance state.
+{
+  const tables = ['item_stacks', 'item_instances', 'item_events',
+    'item_mutation_guards', 'operation_escrow',
+    'mystery_instances', 'mystery_node_state', 'mystery_choices', 'world_operations',
+    'world_operation_roles', 'world_operation_node_state', 'world_operation_contributions'];
+  const present = (await pool.query(
+    `SELECT relname FROM pg_class
+      WHERE relkind='r' AND relname = ANY($1::text[])`, [tables],
+  )).rows.map((row) => row.relname);
+  check(tables.every((table) => present.includes(table)),
+    'all 12 Phase 1 item, mystery, and operation authority tables exist on real PostgreSQL',
+    `present: ${present.sort().join(', ')}`);
+  const eventQualityColumn = (await pool.query(
+    `SELECT is_nullable,column_default FROM information_schema.columns
+      WHERE table_schema='public' AND table_name='item_events' AND column_name='quality'`,
+  )).rows[0];
+  check(eventQualityColumn?.is_nullable === 'NO'
+      && String(eventQualityColumn?.column_default || '').includes('standard'),
+  'item event quality is a non-null, standard-backfilled production column',
+  JSON.stringify(eventQualityColumn || null));
+  const eventQualityConstraints = (await pool.query(
+    `SELECT conname FROM pg_constraint
+      WHERE conrelid='item_events'::regclass
+        AND conname = ANY($1::text[]) ORDER BY conname`,
+    [['item_event_quality', 'item_event_quality_kind']],
+  )).rows.map((row) => row.conname);
+  check(eventQualityConstraints.length === 2,
+    'PostgreSQL installed both item-event quality constraints',
+    `present: ${eventQualityConstraints.join(', ')}`);
+  const mysteryVersionIndex = (await pool.query(
+    `SELECT indexdef FROM pg_indexes
+      WHERE schemaname='public' AND indexname='ux_mystery_instance_owner_graph_version'`,
+  )).rows[0]?.indexdef || '';
+  check(/CREATE UNIQUE INDEX/i.test(mysteryVersionIndex)
+      && /\(owner_scope, owner_id, graph_id, graph_version\)/i.test(mysteryVersionIndex),
+  'PostgreSQL keys mystery lifecycle authority by owner, graph, and immutable version',
+  mysteryVersionIndex || 'missing index');
+
+  const mysteryProbe = `pgcheck-mystery-constraint-${process.pid}-${Date.now()}`;
+  await pool.query(
+    `INSERT INTO mystery_instances
+       (id,owner_scope,owner_id,authority_account_id,graph_id,graph_version)
+     VALUES ($1,'account','pgcheck-account','pgcheck-account','pgcheck-graph',1)`,
+    [mysteryProbe],
+  );
+  await pool.query(
+    `INSERT INTO mystery_node_state (instance_id,node_id,state,discovered_at)
+     VALUES ($1,'pgcheck-node','discovered',now())`,
+    [mysteryProbe],
+  );
+  await pool.query(
+    `INSERT INTO mystery_choices (instance_id,node_id,choice_id,result_json)
+     VALUES ($1,'pgcheck-choice','left','{}')`,
+    [mysteryProbe],
+  );
+  let mysteryTupleCode = '';
+  try {
+    await pool.query("UPDATE mystery_instances SET status='completed' WHERE id=$1", [mysteryProbe]);
+  } catch (error) { mysteryTupleCode = error.code; }
+  check(mysteryTupleCode === '23514',
+    'PostgreSQL rejects a completed mystery without its terminal timestamp tuple',
+    `error ${mysteryTupleCode || 'none'}`);
+  const mysteryProbeV2 = `${mysteryProbe}-v2`;
+  await pool.query(
+    `INSERT INTO mystery_instances
+       (id,owner_scope,owner_id,authority_account_id,graph_id,graph_version)
+     VALUES ($1,'account','pgcheck-account','pgcheck-account','pgcheck-graph',2)`,
+    [mysteryProbeV2],
+  );
+  let mysteryDuplicateCode = '';
+  try {
+    await pool.query(
+      `INSERT INTO mystery_instances
+         (id,owner_scope,owner_id,authority_account_id,graph_id,graph_version)
+       VALUES ($1,'account','pgcheck-account','pgcheck-account','pgcheck-graph',1)`,
+      [`${mysteryProbe}-duplicate`],
+    );
+  } catch (error) { mysteryDuplicateCode = error.code; }
+  check(mysteryDuplicateCode === '23505',
+    'PostgreSQL allows successor mystery versions but rejects a same-version owner race',
+    `error ${mysteryDuplicateCode || 'none'}`);
+  await pool.query('DELETE FROM mystery_choices WHERE instance_id=$1', [mysteryProbe]);
+  await pool.query('DELETE FROM mystery_node_state WHERE instance_id=$1', [mysteryProbe]);
+  await pool.query('DELETE FROM mystery_instances WHERE id = ANY($1::text[])', [
+    [mysteryProbe, mysteryProbeV2, `${mysteryProbe}-duplicate`],
+  ]);
+
+  const operationProbe = `pgcheck-world-operation-${process.pid}-${Date.now()}`;
+  await pool.query(
+    `INSERT INTO world_operations
+       (id,graph_id,graph_version,operation_node_id,crew_id,opened_by_account_id)
+     VALUES ($1,'pgcheck-graph',1,'pgcheck-operation','pgcheck-crew','pgcheck-account-a')`,
+    [operationProbe],
+  );
+  await pool.query(
+    `INSERT INTO world_operation_roles (operation_id,role_id,account_id,character_id)
+     VALUES ($1,'investigator','pgcheck-account-a','pgcheck-character-a')`,
+    [operationProbe],
+  );
+  let distinctAccountCode = '';
+  try {
+    await pool.query(
+      `INSERT INTO world_operation_roles (operation_id,role_id,account_id,character_id)
+       VALUES ($1,'driver','pgcheck-account-a','pgcheck-character-a')`,
+      [operationProbe],
+    );
+  } catch (error) { distinctAccountCode = error.code; }
+  check(distinctAccountCode === '23505',
+    'PostgreSQL enforces one account per world-operation role assignment',
+    `error ${distinctAccountCode || 'none'}`);
+  let operationTupleCode = '';
+  try {
+    await pool.query("UPDATE world_operations SET status='completed' WHERE id=$1", [operationProbe]);
+  } catch (error) { operationTupleCode = error.code; }
+  const operationStatus = (await pool.query(
+    'SELECT status FROM world_operations WHERE id=$1', [operationProbe],
+  )).rows[0]?.status;
+  check(operationTupleCode === '23514' && operationStatus === 'forming',
+    'PostgreSQL rejects a closed operation without its matching terminal timestamp tuple',
+    `error ${operationTupleCode || 'none'}, status ${operationStatus || 'missing'}`);
+  await pool.query('DELETE FROM world_operation_roles WHERE operation_id=$1', [operationProbe]);
+  await pool.query('DELETE FROM world_operations WHERE id=$1', [operationProbe]);
+
+  const ownerId = `pgcheck-item-${process.pid}`;
+  await pool.query(
+    `INSERT INTO item_stacks (owner_scope, owner_id, template_id, quality, quantity)
+     VALUES ('account',$1,'mat:pgcheck','standard',1)`, [ownerId],
+  );
+  let negativeCode = '';
+  try {
+    await pool.query(
+      `UPDATE item_stacks SET quantity=-1
+        WHERE owner_scope='account' AND owner_id=$1
+          AND template_id='mat:pgcheck' AND quality='standard'`,
+      [ownerId],
+    );
+  } catch (error) { negativeCode = error.code; }
+  const quantity = Number((await pool.query(
+    `SELECT quantity FROM item_stacks
+      WHERE owner_scope='account' AND owner_id=$1
+        AND template_id='mat:pgcheck' AND quality='standard'`, [ownerId],
+  )).rows[0]?.quantity);
+  check(negativeCode === '23514' && quantity === 1,
+    'PostgreSQL rejects a negative stack without changing its conserved value',
+    `error ${negativeCode || 'none'}, quantity ${quantity}`);
+  await pool.query(
+    `DELETE FROM item_stacks
+      WHERE owner_scope='account' AND owner_id=$1
+        AND template_id='mat:pgcheck' AND quality='standard'`, [ownerId],
+  );
+
+  let stateCode = '';
+  try {
+    await pool.query(
+      `INSERT INTO item_instances (id, template_id, owner_scope, owner_id, state)
+       VALUES ($1,'item:pgcheck','account',$2,'consumed')`,
+      [`pgcheck-impossible-${process.pid}`, ownerId],
+    );
+  } catch (error) { stateCode = error.code; }
+  check(stateCode === '23514',
+    'PostgreSQL rejects a consumed item without its permanent consumption timestamp',
+    `error ${stateCode || 'none'}`);
+  await pool.query('DELETE FROM item_instances WHERE id=$1', [`pgcheck-impossible-${process.pid}`]);
+
+  const parityId = `pgcheck-escrow-parity-${process.pid}`;
+  await pool.query(
+    `INSERT INTO item_instances (id,template_id,owner_scope,owner_id)
+     VALUES ($1,'item:pgcheck-parity','account',$2)`, [parityId, ownerId],
+  );
+  let parityCode = '';
+  try {
+    await pool.query(
+      `INSERT INTO operation_escrow (item_id,operation_id,depositor_scope,depositor_id)
+       VALUES ($1,'pgcheck-operation','account',$2)`, [parityId, ownerId],
+    );
+  } catch (error) { parityCode = error.code; }
+  check(parityCode === '23503',
+    'operation escrow must match the item authoritative operation owner and escrowed state',
+    `error ${parityCode || 'none'}`);
+  await pool.query('DELETE FROM operation_escrow WHERE item_id=$1', [parityId]);
+  await pool.query('DELETE FROM item_instances WHERE id=$1', [parityId]);
+
+  const {
+    consumeStack, createItem, grantStack, transferItem, withItemTransaction,
+  } = await import('../src/items.js');
+  const tx = (action) => withItemTransaction(pool, action);
+  const prefix = `pgcheck-item-${process.pid}-`;
+  const actor = { scope: 'account', id: `${prefix}actor` };
+  const rivalA = { scope: 'account', id: `${prefix}rival-a` };
+  const rivalB = { scope: 'account', id: `${prefix}rival-b` };
+  const keys = [
+    `${prefix}autocommit`, `${prefix}seed`, `${prefix}decrement-a`, `${prefix}decrement-b`,
+    `${prefix}replay`, `${prefix}create`, `${prefix}transfer-a`, `${prefix}transfer-b`,
+    `${prefix}quality`,
+  ];
+
+  const autocommitClient = await pool.connect();
+  let autocommitCode = '';
+  try {
+    await grantStack(
+      autocommitClient, actor, 'mat:pgcheck-concurrency', 1,
+      'standard', 'autocommit', keys[0],
+    );
+  } catch (error) { autocommitCode = error.code; }
+  finally { autocommitClient.release(); }
+  check(autocommitCode === 'item_transaction_required',
+    'a checked-out PostgreSQL client without BEGIN cannot mutate inventory',
+    `error ${autocommitCode || 'none'}`);
+
+  await tx((client) => grantStack(
+    client, actor, 'mat:pgcheck-concurrency', 10, 'standard', 'seed', keys[1],
+  ));
+  const decrements = await Promise.allSettled([
+    tx((client) => consumeStack(
+      client, actor, 'mat:pgcheck-concurrency', 7, 'standard', 'decrement', keys[2],
+    )),
+    tx((client) => consumeStack(
+      client, actor, 'mat:pgcheck-concurrency', 7, 'standard', 'decrement', keys[3],
+    )),
+  ]);
+  const afterDecrement = Number((await pool.query(
+    `SELECT quantity FROM item_stacks
+      WHERE owner_scope='account' AND owner_id=$1
+        AND template_id='mat:pgcheck-concurrency' AND quality='standard'`, [actor.id],
+  )).rows[0]?.quantity);
+  check(decrements.filter((result) => result.status === 'fulfilled').length === 1
+      && decrements.filter((result) => result.status === 'rejected'
+        && result.reason?.code === 'materials').length === 1
+      && afterDecrement === 3,
+  'competing decrements serialize and cannot drive a stack negative',
+  `outcomes ${decrements.map((result) => result.status === 'fulfilled'
+    ? 'ok' : result.reason?.code).join(', ')}, quantity ${afterDecrement}`);
+
+  const replayed = await Promise.all([
+    tx((client) => grantStack(
+      client, actor, 'mat:pgcheck-concurrency', 2, 'standard', 'replay', keys[4],
+    )),
+    tx((client) => grantStack(
+      client, actor, 'mat:pgcheck-concurrency', 2, 'standard', 'replay', keys[4],
+    )),
+  ]);
+  const afterReplay = Number((await pool.query(
+    `SELECT quantity FROM item_stacks
+      WHERE owner_scope='account' AND owner_id=$1
+        AND template_id='mat:pgcheck-concurrency' AND quality='standard'`, [actor.id],
+  )).rows[0]?.quantity);
+  check(afterReplay === 5 && JSON.stringify(replayed[0]) === JSON.stringify(replayed[1]),
+    'concurrent same-key grants apply once and return the same replay result',
+    `quantity ${afterReplay}`);
+  let collisionCode = '';
+  try {
+    await tx((client) => grantStack(
+      client, rivalA, 'mat:pgcheck-concurrency', 2, 'standard', 'replay', keys[4],
+    ));
+  } catch (error) { collisionCode = error.code; }
+  check(collisionCode === 'idempotency_conflict',
+    'the same key cannot silently replay for another owner',
+    `error ${collisionCode || 'none'}`);
+
+  await tx((client) => grantStack(
+    client, actor, 'mat:pgcheck-quality', 4, 'pristine', 'quality', keys[8],
+  ));
+  const exactQuality = (await pool.query(
+    'SELECT quality FROM item_events WHERE idempotency_key=$1', [keys[8]],
+  )).rows[0]?.quality;
+  check(exactQuality === 'pristine',
+    'a nonstandard stack mutation records its exact quality band',
+    `quality ${exactQuality || 'missing'}`);
+  let emptyQualityCode = '';
+  try {
+    await pool.query("UPDATE item_events SET quality='' WHERE idempotency_key=$1", [keys[8]]);
+  } catch (error) { emptyQualityCode = error.code; }
+  check(emptyQualityCode === '23514',
+    'PostgreSQL rejects a noncanonical empty event quality',
+    `error ${emptyQualityCode || 'none'}`);
+
+  const item = await tx((client) => createItem(
+    client, actor, 'item:pgcheck-concurrency', 'awarded', keys[5],
+  ));
+  const transfers = await Promise.allSettled([
+    tx((client) => transferItem(client, actor, rivalA, item.id, 'race', keys[6])),
+    tx((client) => transferItem(client, actor, rivalB, item.id, 'race', keys[7])),
+  ]);
+  const itemRow = (await pool.query(
+    'SELECT owner_scope, owner_id, state FROM item_instances WHERE id=$1', [item.id],
+  )).rows[0];
+  const transferEvents = (await pool.query(
+    `SELECT from_owner_scope, from_owner_id, to_owner_scope, to_owner_id, quality
+       FROM item_events WHERE item_id=$1 AND event_kind='transferred'`, [item.id],
+  )).rows;
+  check(transfers.filter((result) => result.status === 'fulfilled').length === 1
+      && transfers.filter((result) => result.status === 'rejected'
+        && result.reason?.code === 'item_unavailable').length === 1
+      && itemRow?.owner_scope === 'account' && itemRow?.state === 'active'
+      && [rivalA.id, rivalB.id].includes(itemRow?.owner_id),
+  'competing transfers leave one authoritative owner and one provenance transition',
+  `outcomes ${transfers.map((result) => result.status === 'fulfilled'
+    ? 'ok' : result.reason?.code).join(', ')}, owner ${itemRow?.owner_id || 'none'}`);
+  check(transferEvents.length === 1
+      && transferEvents[0].from_owner_scope === actor.scope
+      && transferEvents[0].from_owner_id === actor.id
+      && transferEvents[0].to_owner_scope === itemRow?.owner_scope
+      && transferEvents[0].to_owner_id === itemRow?.owner_id
+      && transferEvents[0].quality === 'standard',
+  'the winning concurrent transfer writes exactly one correct provenance event',
+  `${transferEvents.length} event(s), ${transferEvents[0]?.from_owner_id || 'none'} → ${transferEvents[0]?.to_owner_id || 'none'}`);
+  let uniqueQualityCode = '';
+  try {
+    await pool.query("UPDATE item_events SET quality='pristine' WHERE item_id=$1", [item.id]);
+  } catch (error) { uniqueQualityCode = error.code; }
+  check(uniqueQualityCode === '23514',
+    'PostgreSQL rejects nonstandard quality on every unique-item provenance event',
+    `error ${uniqueQualityCode || 'none'}`);
+
+  await pool.query('DELETE FROM item_events WHERE idempotency_key = ANY($1::text[])', [keys]);
+  await pool.query('DELETE FROM item_mutation_guards WHERE idempotency_key = ANY($1::text[])', [keys]);
+  await pool.query('DELETE FROM item_instances WHERE id=$1', [item.id]);
+  await pool.query(
+    `DELETE FROM item_stacks WHERE owner_scope='account' AND owner_id=$1
+      AND template_id IN ('mat:pgcheck-concurrency','mat:pgcheck-quality')`, [actor.id],
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+console.log('\n7a2. GRAPH CRAFTING AND SALVAGE HOLD UNDER REAL ROW LOCKS');
+// pg-mem needs an inverse log because its ROLLBACK is cosmetic, and it serializes item transactions
+// because it has no row locks. This probe reaches the production half of the contract: native
+// rollback, concurrent same/different logical keys, one car deletion, and one cash ledger debit.
+{
+  const { craftWorldGraphRecipe, salvageCar } = await import('../src/crafting.js');
+  const { runLedgerInvariants } = await import('../src/invariants.js');
+  const { grantStack, inventoryBoard, withItemTransaction } = await import('../src/items.js');
+  const tx = (action) => withItemTransaction(pool, action);
+  const prefix = `pgcheck-crafting-${process.pid}-${Date.now()}`;
+  const craftAccount = `${prefix}-cash-account`;
+  const craftCharacter = `${prefix}-cash-character`;
+  const salvageAccount = `${prefix}-car-account`;
+  const salvageCharacter = `${prefix}-car-character`;
+  const craftH = { accountId: craftAccount, owned: { cars: [] } };
+  const salvageH = { accountId: salvageAccount, owned: { cars: [] } };
+  const craftOwner = { scope: 'account', id: craftAccount };
+  const salvageOwner = { scope: 'account', id: salvageAccount };
+  const sameCar = `${prefix}-same-car`;
+  const differentCar = `${prefix}-different-car`;
+  const rollbackCar = `${prefix}-rollback-car`;
+  const keys = [
+    `${prefix}-craft-seed`, `${prefix}-craft-cap`, `${prefix}-craft-fail`,
+    `${prefix}-craft-same`, `${prefix}-salvage-same`, `${prefix}-salvage-a`,
+    `${prefix}-salvage-b`, `${prefix}-salvage-rollback`,
+  ];
+  const stackQty = (board, templateId) => Number(
+    board.stacks.find((stack) => stack.templateId === templateId)?.qty || 0,
+  );
+
+  await pool.query(
+    `INSERT INTO characters (id,account_id,name,season,loc,respect,cash)
+     VALUES ($1,$2,$3,1,'foundry',10000,1000),
+            ($4,$5,$6,1,'foundry',10000,1000)`,
+    [craftCharacter, craftAccount, `${prefix}-cash`,
+      salvageCharacter, salvageAccount, `${prefix}-car`],
+  );
+  await pool.query(
+    `INSERT INTO cars (id,character_id,model_id,trim_id,dmg)
+     VALUES ($1,$4,'junker','stock',10),
+            ($2,$4,'junker','stock',20),
+            ($3,$4,'junker','stock',30)`,
+    [sameCar, differentCar, rollbackCar, salvageCharacter],
+  );
+
+  await tx((client) => grantStack(
+    client, craftOwner, 'mat:scrap_steel', 4, 'standard', 'pgcheck craft seed', keys[0],
+  ));
+  await tx((client) => grantStack(
+    client, craftOwner, 'mat:hardened_steel', 2147483647, 'standard',
+    'pgcheck craft cap', keys[1],
+  ));
+  let lateCraftCode = '';
+  try {
+    await tx((client) => craftWorldGraphRecipe(
+      client, craftH, 'recipe:hardened_steel', keys[2],
+    ));
+  } catch (error) { lateCraftCode = error.code; }
+  let craftBoard = await inventoryBoard(pool, craftOwner);
+  const failedCraftCash = Number((await pool.query(
+    'SELECT cash FROM characters WHERE id=$1', [craftCharacter],
+  )).rows[0].cash);
+  const failedCraftLedger = Number((await pool.query(
+    "SELECT COUNT(*) AS n FROM transactions WHERE character_id=$1 AND reason='craft:recipe:hardened_steel'",
+    [craftCharacter],
+  )).rows[0].n);
+  check(lateCraftCode === 'inventory_cap' && failedCraftCash === 1000
+      && stackQty(craftBoard, 'mat:scrap_steel') === 4
+      && stackQty(craftBoard, 'mat:hardened_steel') === 2147483647
+      && failedCraftLedger === 0,
+  'native rollback restores cash, input, capped output, and exact ledger state after late failure',
+  `error ${lateCraftCode || 'none'}, cash ${failedCraftCash}, ledger ${failedCraftLedger}`);
+
+  // Remove only the fixture cap so two real clients can contend on one character and logical key.
+  await pool.query(
+    `DELETE FROM item_stacks WHERE owner_scope='account' AND owner_id=$1
+      AND template_id='mat:hardened_steel' AND quality='standard'`, [craftAccount],
+  );
+  const sameCraft = await Promise.all([
+    tx((client) => craftWorldGraphRecipe(client, craftH, 'recipe:hardened_steel', keys[3])),
+    tx((client) => craftWorldGraphRecipe(client, craftH, 'recipe:hardened_steel', keys[3])),
+  ]);
+  craftBoard = await inventoryBoard(pool, craftOwner);
+  const craftCash = Number((await pool.query(
+    'SELECT cash FROM characters WHERE id=$1', [craftCharacter],
+  )).rows[0].cash);
+  const craftLedger = Number((await pool.query(
+    "SELECT COUNT(*) AS n FROM transactions WHERE character_id=$1 AND currency='cash'"
+      + " AND amount=-300 AND reason='craft:recipe:hardened_steel'",
+    [craftCharacter],
+  )).rows[0].n);
+  check(JSON.stringify(sameCraft[0]) === JSON.stringify(sameCraft[1])
+      && craftCash === 700 && craftLedger === 1
+      && stackQty(craftBoard, 'mat:scrap_steel') === 0
+      && stackQty(craftBoard, 'mat:hardened_steel') === 1,
+  'competing same-key cash craft applies one debit, one ledger row, and one output',
+  `cash ${craftCash}, ledger ${craftLedger}, hardened ${stackQty(craftBoard, 'mat:hardened_steel')}`);
+
+  const invariantCheck = async (name) => (await runLedgerInvariants(pool, { alert: false }))
+    .checks.find((entry) => entry.name === name);
+  const carDriftBeforeSalvage = (await invariantCheck('car conservation')).drift;
+  const salvageSinksBefore = (await invariantCheck('world graph salvage car audit')).logicalSinks;
+  const ledgerRowsBeforeSalvage = Number((await pool.query(
+    'SELECT COUNT(*) AS n FROM transactions',
+  )).rows[0].n);
+
+  const sameSalvage = await Promise.all([
+    tx((client) => salvageCar(
+      client, salvageH, sameCar, 'recipe:car_salvage_basic', keys[4],
+    )),
+    tx((client) => salvageCar(
+      client, salvageH, sameCar, 'recipe:car_salvage_basic', keys[4],
+    )),
+  ]);
+  const differentSalvage = await Promise.allSettled([
+    tx((client) => salvageCar(
+      client, salvageH, differentCar, 'recipe:car_salvage_basic', keys[5],
+    )),
+    tx((client) => salvageCar(
+      client, salvageH, differentCar, 'recipe:car_salvage_basic', keys[6],
+    )),
+  ]);
+  let salvageBoard = await inventoryBoard(pool, salvageOwner);
+  check(JSON.stringify(sameSalvage[0]) === JSON.stringify(sameSalvage[1])
+      && Number((await pool.query('SELECT COUNT(*) AS n FROM cars WHERE id=$1', [sameCar])).rows[0].n) === 0,
+  'competing same-key salvage deletes the locked car once and replays the exact result');
+  check(differentSalvage.filter((result) => result.status === 'fulfilled').length === 1
+      && differentSalvage.filter((result) => result.status === 'rejected'
+        && result.reason?.code === 'no_car').length === 1
+      && Number((await pool.query(
+        'SELECT COUNT(*) AS n FROM cars WHERE id=$1', [differentCar],
+      )).rows[0].n) === 0
+      && stackQty(salvageBoard, 'mat:scrap_steel') === 12,
+  'competing different-key salvage serializes on authority and cannot double-consume the car',
+  `outcomes ${differentSalvage.map((result) => result.status === 'fulfilled'
+    ? 'ok' : result.reason?.code).join(', ')}, scrap ${stackQty(salvageBoard, 'mat:scrap_steel')}`);
+  const salvageAuditAfterSuccess = await invariantCheck('world graph salvage car audit');
+  const carDriftAfterSuccess = (await invariantCheck('car conservation')).drift;
+  const ledgerRowsAfterSuccess = Number((await pool.query(
+    'SELECT COUNT(*) AS n FROM transactions',
+  )).rows[0].n);
+  check(salvageAuditAfterSuccess.ok
+      && salvageAuditAfterSuccess.logicalSinks === salvageSinksBefore + 2
+      && carDriftAfterSuccess === carDriftBeforeSalvage,
+  'native car conservation moves two deleted cars with two distinct successful logical guards',
+  `sinks ${salvageSinksBefore} -> ${salvageAuditAfterSuccess.logicalSinks}, drift ${carDriftBeforeSalvage} -> ${carDriftAfterSuccess}`);
+  check(ledgerRowsAfterSuccess === ledgerRowsBeforeSalvage,
+    'native successful salvage, same-key replay, and competing failure write no currency rows',
+    `ledger rows ${ledgerRowsBeforeSalvage} -> ${ledgerRowsAfterSuccess}`);
+
+  // Force the second graph output to fail. Native PostgreSQL must put back both the car row and the
+  // preceding scrap grant without relying on the pg-mem inverse log.
+  await pool.query(
+    `UPDATE item_stacks SET quantity=2147483647
+      WHERE owner_scope='account' AND owner_id=$1
+        AND template_id='mat:wire' AND quality='standard'`, [salvageAccount],
+  );
+  let rollbackCode = '';
+  try {
+    await tx((client) => salvageCar(
+      client, salvageH, rollbackCar, 'recipe:car_salvage_basic', keys[7],
+    ));
+  } catch (error) { rollbackCode = error.code; }
+  salvageBoard = await inventoryBoard(pool, salvageOwner);
+  const rollbackGuard = Number((await pool.query(
+    'SELECT COUNT(*) AS n FROM item_mutation_guards WHERE idempotency_key=$1', [keys[7]],
+  )).rows[0].n);
+  check(rollbackCode === 'inventory_cap'
+      && Number((await pool.query('SELECT COUNT(*) AS n FROM cars WHERE id=$1', [rollbackCar])).rows[0].n) === 1
+      && stackQty(salvageBoard, 'mat:scrap_steel') === 12
+      && stackQty(salvageBoard, 'mat:wire') === 2147483647
+      && rollbackGuard === 0,
+  'native salvage rollback restores the car and every preceding output with no stranded guard',
+  `error ${rollbackCode || 'none'}, scrap ${stackQty(salvageBoard, 'mat:scrap_steel')}, guard ${rollbackGuard}`);
+  const salvageAuditAfterRollback = await invariantCheck('world graph salvage car audit');
+  const carDriftAfterRollback = (await invariantCheck('car conservation')).drift;
+  const ledgerRowsAfterRollback = Number((await pool.query(
+    'SELECT COUNT(*) AS n FROM transactions',
+  )).rows[0].n);
+  check(salvageAuditAfterRollback.ok
+      && salvageAuditAfterRollback.logicalSinks === salvageSinksBefore + 2
+      && carDriftAfterRollback === carDriftBeforeSalvage,
+  'native failed salvage rollback creates no sink and leaves car conservation unchanged',
+  `sinks ${salvageAuditAfterRollback.logicalSinks}, drift ${carDriftAfterRollback}`);
+  check(ledgerRowsAfterRollback === ledgerRowsBeforeSalvage,
+    'native salvage rollback remains currency-ledger neutral',
+    `ledger rows ${ledgerRowsBeforeSalvage} -> ${ledgerRowsAfterRollback}`);
+
+  await pool.query('DELETE FROM item_events WHERE idempotency_key = ANY($1::text[])', [keys]);
+  await pool.query('DELETE FROM item_mutation_guards WHERE idempotency_key = ANY($1::text[])', [keys]);
+  await pool.query(
+    `DELETE FROM item_stacks WHERE owner_scope='account' AND owner_id = ANY($1::text[])`,
+    [[craftAccount, salvageAccount]],
+  );
+  await pool.query('DELETE FROM transactions WHERE character_id = ANY($1::text[])',
+    [[craftCharacter, salvageCharacter]]);
+  await pool.query('DELETE FROM cars WHERE id = ANY($1::text[])',
+    [[sameCar, differentCar, rollbackCar]]);
+  await pool.query('DELETE FROM characters WHERE id = ANY($1::text[])',
+    [[craftCharacter, salvageCharacter]]);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+console.log('\n7a3. WORLD-GRAPH MYSTERIES HOLD UNDER REAL ROW LOCKS');
+{
+  const { runMysteryPgChecks } = await import('./pgcheck-mysteries.js');
+  await runMysteryPgChecks({ pool, check });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+console.log('\n7a4. WORLD-GRAPH OPERATIONS HOLD UNDER REAL ROW LOCKS');
+{
+  const { runOperationPgChecks } = await import('./pgcheck-operations.js');
+  await runOperationPgChecks({ pool, check });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+console.log('\n7a5. BELLADONNA VERTICAL SLICE HOLDS ON REAL POSTGRESQL');
+{
+  const { runBelladonnaPgChecks } = await import('./pgcheck-belladonna.js');
+  await runBelladonnaPgChecks({ pool, check, nativePostgres: true });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 console.log('\n7b. THE BUILD BOOTS AGAINST A DATABASE OLDER THAN ITSELF');
 // THE OUTAGE THIS PINS (2026-08-06): `CREATE TABLE IF NOT EXISTS` is a NO-OP on a live database, so
 // three columns added INLINE to the already-existing `gang_members` never landed — and the very next
@@ -490,8 +1067,20 @@ console.log('\n7b. THE BUILD BOOTS AGAINST A DATABASE OLDER THAN ITSELF');
   const swap = (u) => u.replace(/\/[^/?]+(\?|$)/, `/${oldDb}$1`);
   let ok = true; let err = ''; let added = 0;
   try {
-    const first = execSync('git log --format=%H -- schema.sql', { cwd: ROOT }).toString().trim().split('\n').pop();
+    const shas = execSync('git log --format=%H -- schema.sql', { cwd: ROOT }).toString().trim().split('\n');
+    const first = shas[shas.length - 1];
     const oldSchema = execSync(`git show ${first}:schema.sql`, { cwd: ROOT, maxBuffer: 32 * 1024 * 1024 }).toString();
+    // ANTI-VACUITY, learned from CI on 2026-09-05: on a SHALLOW checkout `git log` sees one commit,
+    // so the "oldest" schema is HEAD and this check upgrades a database from itself to itself —
+    // and passes, reading exactly like a clean bill of health. §7c's floor caught the same clone
+    // (no UUID schema to migrate from); this one had none and had been green in CI for that reason.
+    // The floor is on the SCHEMA, not the sha count: a history whose oldest schema.sql is
+    // byte-identical to today's has nothing to upgrade from either.
+    const curSchema = (await import('node:fs')).readFileSync(new URL('../schema.sql', import.meta.url), 'utf8');
+    if (shas.length < 2 || oldSchema === curSchema) {
+      throw new Error(`the oldest schema.sql in history IS the current one (${shas.length} commit(s) visible) — a shallow `
+        + 'checkout? the check has nothing to upgrade from and would pass over nothing');
+    }
     // CREATE DATABASE cannot run inside a transaction, so it goes through the live pool directly
     await pool.query(`DROP DATABASE IF EXISTS ${oldDb}`);
     await pool.query(`CREATE DATABASE ${oldDb}`);
@@ -517,21 +1106,144 @@ console.log('\n7b. THE BUILD BOOTS AGAINST A DATABASE OLDER THAN ITSELF');
     // is the reference, and an UPGRADED one must be a superset of it. Independent of any parser, and
     // it cannot be satisfied by the deriver and the check making the same mistake together — the
     // reference is produced by CREATE TABLE, the subject by ALTER, so they share no code path.
-    const COLS = "SELECT table_name||'.'||column_name k FROM information_schema.columns WHERE table_schema='public'";
-    const fresh = new Set((await pool.query(COLS)).rows.map((r) => r.k));       // this build, on the pgcheck db
-    const upgraded = new Set((await p3.query(COLS)).rows.map((r) => r.k));      // this build, on the OLD db
-    const missing = [...fresh].filter((k) => !upgraded.has(k)).sort();
+    const COLS = "SELECT table_name||'.'||column_name k, data_type t FROM information_schema.columns WHERE table_schema='public'";
+    const typed = (rows) => new Map(rows.map((r) => [r.k, r.t]));
+    const fresh = typed((await pool.query(COLS)).rows);       // this build, on the pgcheck db
+    const upgraded = typed((await p3.query(COLS)).rows);      // this build, on the OLD db
+    const missing = [...fresh.keys()].filter((k) => !upgraded.has(k)).sort();
+    // and the TYPE, not only the name: a column that survives an upgrade under the wrong type is the
+    // 2026-07-30 outage class (`uuid = text` has no operator — every authed request 500'd while every
+    // suite stayed green). §7c below drives the one real instance; this is the general net.
+    const mistyped = [...fresh].filter(([k, t]) => upgraded.has(k) && upgraded.get(k) !== t).map(([k, t]) => `${k} (${upgraded.get(k)}, fresh ${t})`).sort();
     added = upgraded.size;
     if (missing.length) {
       ok = false;
       err = `${missing.length} declared column(s) never landed on the upgraded database — the 2026-08-06 `
         + `outage class is live again: ${missing.slice(0, 6).join(', ')}${missing.length > 6 ? ' …' : ''}`;
+    } else if (mistyped.length) {
+      ok = false;
+      err = `${mistyped.length} column(s) carry a different TYPE on the upgraded database than a fresh one: ${mistyped.slice(0, 6).join(', ')}`;
     }
     await p3.end();
     process.env.DATABASE_URL = before;
   } catch (e) { ok = false; err = e.message; }
   try { await pool.query(`DROP DATABASE IF EXISTS ${oldDb}`); } catch { /* best effort */ }
   check(ok, `the current build boots against the ORIGINAL schema (${added} columns present after migration)`, err);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+console.log('\n7c. THE ACCOUNT-ID UNIFICATION SURVIVES A DATABASE THAT STILL DECLARES UUID');
+// THE OUTAGE THIS PINS (2026-07-30): this schema's account ids were MIXED — 28 TEXT columns and 12
+// UUID — and `uuid = text` has no operator, so a query joining the two did not degrade, it failed to
+// PARSE. `loadOwned` runs on every authed request, so that was the entire game returning 500 while
+// all 61 suites stayed green: pg-mem compares uuid to text happily. Three more of the class sat live
+// for weeks (`/v1/rivals`, `/v1/commission`, THE CAST's nemesis), each guarded by "do you have any"
+// so each worked right up until it mattered. THE ACCOUNT-ID UNIFICATION (2026-09-05) made every
+// account column TEXT and removed the bridging casts — which means a database that STILL holds the
+// UUID declarations (every production database that predates it) must be converted at boot, or the
+// cast-free queries that replaced the bridges now fail on exactly the shape they were written for.
+//
+// §7b cannot see this: the OLDEST schema in history predates every one of the twelve columns, so on
+// that database the current build CREATES them TEXT and the migration path is never exercised. So
+// this takes the NEWEST schema in history that still declares an account column UUID — the shape a
+// database migrated up to yesterday really has — seeds every one of the eight tables with real uuid
+// values, boots the current build on top (what a deploy does), and asserts by NAME that no account
+// column survived as uuid, that the seeded rows came through with their values intact, and — the
+// property the outage was about — that a TEXT parameter now compares against each of them.
+// Mutation-verified: drop one `ALTER COLUMN … TYPE TEXT` from schema.sql and this names the column.
+{
+  const { execSync } = await import('node:child_process');
+  const { fileURLToPath } = await import('node:url');
+  const ROOT = fileURLToPath(new URL('..', import.meta.url));
+  const uuidDb = `pgcheck_uuid_${process.pid}`;
+  const swap = (u) => u.replace(/\/[^/?]+(\?|$)/, `/${uuidDb}$1`);
+  const UUID_DECL = /^\s*(account_id|victim_account|aggressor_account|from_account|to_account|blocker_account|blocked_account|account_a|account_b|winner_account|gang_id)\s+UUID\b/m;
+  // every account column the unification converted — the guard's corpus, asserted by NAME below
+  const ACCOUNT_COLS = [
+    ['eth_vault', 'account_id'], ['dm_messages', 'from_account'], ['dm_messages', 'to_account'],
+    ['dm_blocks', 'blocker_account'], ['dm_blocks', 'blocked_account'], ['megaproject_contributions', 'account_id'],
+    ['duels', 'account_a'], ['duels', 'account_b'], ['duels', 'winner_account'],
+    ['commission_proposals', 'gang_id'], ['career_claims', 'account_id'],
+    ['rival_events', 'victim_account'], ['rival_events', 'aggressor_account'],
+  ];
+  let ok = true; let err = ''; let found = null; let survivors = [];
+  let rowsOk = false; let cmpOk = false; let pkOk = false;
+  try {
+    // the newest schema.sql that still declares an account column UUID. Walking the log from the
+    // top means one `git show` past the unification commit, and an anti-vacuity floor: a history
+    // with no such schema means this check is measuring nothing, which must read as a failure.
+    const shas = execSync('git log --format=%H -- schema.sql', { cwd: ROOT }).toString().trim().split('\n');
+    let oldSchema = null;
+    for (const sha of shas) {
+      const text = execSync(`git show ${sha}:schema.sql`, { cwd: ROOT, maxBuffer: 32 * 1024 * 1024 }).toString();
+      if (UUID_DECL.test(text)) { oldSchema = text; found = sha.slice(0, 10); break; }
+    }
+    if (!oldSchema) throw new Error('no schema.sql in history declares an account column UUID — the check has nothing to migrate from');
+    await pool.query(`DROP DATABASE IF EXISTS ${uuidDb}`);
+    await pool.query(`CREATE DATABASE ${uuidDb}`);
+    const before = process.env.DATABASE_URL;
+    const { default: pg } = await import('pg');
+    const legacy = new pg.Pool({ connectionString: swap(before) });
+    await legacy.query(oldSchema);
+    // real uuid values in every converted column, so the conversion has DATA to carry, not just a type
+    const A = '11111111-2222-4333-8444-555555555555', B = '66666666-7777-4888-8999-000000000000';
+    await legacy.query(`INSERT INTO eth_vault (account_id, eth, cost_omr) VALUES ($1, 1.5, 2)`, [A]);
+    await legacy.query(`INSERT INTO dm_messages (id, from_account, to_account, from_name, to_name, body) VALUES ('m1', $1, $2, 'a', 'b', 'hi')`, [A, B]);
+    await legacy.query(`INSERT INTO dm_blocks (blocker_account, blocked_account, name) VALUES ($1, $2, 'b')`, [A, B]);
+    await legacy.query(`INSERT INTO megaproject_contributions (project_id, account_id, contributed) VALUES ('cathedral', $1, 100)`, [A]);
+    await legacy.query(`INSERT INTO duels (id, account_a, account_b, winner_account, day) VALUES ('d1', $1, $2, $1, 1)`, [A, B]);
+    await legacy.query(`INSERT INTO commission_proposals (week, gang_id, decree, deposit) VALUES (1, $1, 'pax', 100000)`, [A]);
+    await legacy.query(`INSERT INTO career_claims (account_id, task_id) VALUES ($1, 'as_job')`, [A]);
+    await legacy.query(`INSERT INTO rival_events (id, victim_account, aggressor_account, kind) VALUES (gen_random_uuid(), $1, $2, 'jump')`, [A, B]);
+    // the precondition, asserted rather than assumed: on the OLD database these really are uuid
+    const stillUuid = (await legacy.query(
+      `SELECT table_name||'.'||column_name k FROM information_schema.columns WHERE table_schema='public' AND data_type='uuid'`)).rows.map((r) => r.k);
+    await legacy.end();
+    if (stillUuid.length < ACCOUNT_COLS.length) throw new Error(`the old schema ${found} declares only ${stillUuid.length} uuid column(s) — the seed is not the shape this check is about`);
+    // boot the current build on top, exactly as a deploy would
+    process.env.DATABASE_URL = swap(before);
+    const mod = await import(`../src/db.js?uuid=${process.pid}`);
+    const p4 = await mod.makeDb();
+    const types = (await p4.query(
+      `SELECT table_name t, column_name c, data_type d FROM information_schema.columns WHERE table_schema='public'`)).rows;
+    const typeOf = new Map(types.map((r) => [`${r.t}.${r.c}`, r.d]));
+    survivors = ACCOUNT_COLS.map(([t, c]) => [`${t}.${c}`, typeOf.get(`${t}.${c}`)]).filter(([, d]) => d !== 'text').map(([k, d]) => `${k} (${d})`);
+    // the data came through (a type conversion that emptied the row would satisfy the type check)
+    const v = (await p4.query('SELECT account_id, eth FROM eth_vault')).rows;
+    const r = (await p4.query('SELECT victim_account, aggressor_account FROM rival_events')).rows;
+    const b = (await p4.query('SELECT blocker_account, blocked_account FROM dm_blocks')).rows;
+    rowsOk = v.length === 1 && v[0].account_id === A && Number(v[0].eth) === 1.5
+      && r.length === 1 && r[0].victim_account === A && r[0].aggressor_account === B
+      && b.length === 1 && b[0].blocker_account === A && b[0].blocked_account === B;
+    // THE PROPERTY: a TEXT parameter compares against every converted column. This is the exact
+    // statement shape that failed to parse in production; run it cast-free on the upgraded database.
+    // (One parameter typed from ONE text use, then reused — the loadOwned shape.)
+    const cmp = await p4.query(
+      `SELECT (SELECT count(*) FROM account_gear WHERE account_id=$1)
+            + (SELECT count(*) FROM rival_events WHERE victim_account=$1)
+            + (SELECT count(*) FROM dm_messages WHERE from_account=$1)
+            + (SELECT count(*) FROM dm_blocks WHERE blocker_account=$1)
+            + (SELECT count(*) FROM megaproject_contributions WHERE account_id=$1)
+            + (SELECT count(*) FROM duels WHERE winner_account=$1)
+            + (SELECT count(*) FROM commission_proposals WHERE gang_id=$1)
+            + (SELECT count(*) FROM career_claims WHERE account_id=$1)
+            + (SELECT count(*) FROM eth_vault WHERE account_id=$1) n`, [A]);
+    cmpOk = Number(cmp.rows[0].n) === 8;   // one seeded row in each of the eight tables (account_gear: none)
+    // the primary keys over converted columns were rebuilt, not dropped
+    const pks = (await p4.query(
+      `SELECT c.conrelid::regclass::text t FROM pg_constraint c WHERE c.contype='p' AND c.conrelid::regclass::text = ANY($1::text[])`,
+      [[...new Set(ACCOUNT_COLS.map(([t]) => t))]])).rows.map((x) => x.t);
+    pkOk = new Set(pks).size === new Set(ACCOUNT_COLS.map(([t]) => t)).size;
+    await p4.end();
+    process.env.DATABASE_URL = before;
+  } catch (e) { ok = false; err = e.message; }
+  try { await pool.query(`DROP DATABASE IF EXISTS ${uuidDb}`); } catch { /* best effort */ }
+  check(ok && survivors.length === 0,
+    `every account column is TEXT after booting on a UUID-declaring database (${found})`,
+    err || `survived as uuid: ${survivors.join(', ')} — the 2026-07-30 outage class is live for every database that predates the unification`);
+  check(ok && rowsOk, 'the seeded uuid values came through the conversion intact', err || 'a row was lost or its value changed');
+  check(ok && cmpOk, 'a TEXT parameter compares cast-free against every converted column (the outage statement shape)', err || 'the cast-free comparison did not match the seeded rows');
+  check(ok && pkOk, 'the primary keys over converted columns were rebuilt, not dropped', err || 'a converted table lost its primary key');
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -754,6 +1466,465 @@ console.log('\n9d. THE RETENTION SWEEPS DO NOT SCAN');
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// THE ESTATE AND THE SWEEP TAKE THE SAME TWO ROWS IN OPPOSITE ORDERS. Two comments in
+// src/social/contracts.js describe the lock order and they contradict each other:
+//
+//   refundPot            "The caller must already hold the pot row lock; everyone locks the
+//                         pot BEFORE funder rows (stable order)."
+//   sweepExpiredBounties "funder character rows locked in sorted order BEFORE the pot row — the
+//                         global lock order every player path follows (characters → pots → gangs)."
+//
+// The sweep's claim is false for FUNDER rows specifically: a player path holds the ACTOR's row
+// before the pot, then takes the FUNDERS after it. So `postBounty` on a lapsed pot holds the pot
+// and wants a funder while `sweepExpiredBounties` (and `runEstate`, which reaches third-party
+// character rows through refundPot while holding a bounty row) holds that funder and wants the pot.
+// A real cycle, and the whole point is that THE LOCK LEDGER cannot see it: the acquisition lives
+// inside a function the transaction CALLS, and the distinguishing feature is WHOSE row, not which
+// table — so a green ledger is compatible with this being live, which is why it is measured here.
+//
+// The remedy has been asserted and never driven: 40P01 → a retryable `contention`, the sweep's per-pot
+// catch leaving the pot for the next tick, and the aborted transaction rolling back whole so the escrow
+// cannot half-resolve. pg-mem is single-caller, so no suite can reach any of it.
+//
+// The remedy is DOUBLE-NETTED, which is measured rather than assumed and is not what the first cut of
+// this comment claimed. `withCharacter`'s own catch (game.js:1105) maps it, AND server.js's error
+// handler maps whatever escapes; neutering EITHER one alone leaves every assertion below green, so the
+// only honest mutation for the two lines under it is to take both down at once. That survival is a
+// claim about the test before it is a claim about the code — here it corrected the layer this very
+// comment named — and it is also the property worth knowing: the route is covered twice over.
+//
+// Driven by HOLDING the funder row rather than by racing a real sweep — §9's reason: a race depends
+// on two backends overlapping inside a millisecond-wide window and timing luck reads exactly like a
+// proof. Observe the exact player refund blocked by this fixture's holder, then close the cycle at
+// once. That puts the cycle in place before the already-waiting player's deadlock timer fires.
+function observePromiseOutcome(promise, onSettled) {
+  return promise.then(
+    (value) => { onSettled(); return { ok: true, value }; },
+    (error) => { onSettled(); return { ok: false, error }; },
+  );
+}
+function valueAfterCleanup(outcome, fixtureError) {
+  if (outcome?.ok === false) throw outcome.error;
+  if (fixtureError) throw fixtureError;
+  return outcome?.value;
+}
+const waitForPlayerRefundBlockedBy = async ({ holderPid, startedAfter, requestSettled, label }) => {
+  const deadline = Date.now() + 5000;
+  const refundSql = 'UPDATE characters SET cash = cash + $2 WHERE id=$1';
+  while (Date.now() < deadline) {
+    const { rows } = await pool.query(
+      `SELECT a.pid FROM pg_stat_activity a
+        WHERE a.datname = current_database()
+          AND a.backend_type = 'client backend'
+          AND a.state = 'active'
+          AND a.wait_event_type = 'Lock'
+          AND a.query_start >= $2::timestamptz
+          AND a.query = $3
+          AND $1::int = ANY(pg_blocking_pids(a.pid))
+        LIMIT 2`, [holderPid, startedAfter, refundSql]);
+    if (rows.length === 1) return Number(rows[0].pid);
+    if (rows.length > 1) {
+      throw new Error(`${label}: multiple player refund backends were blocked by holder PID ${holderPid}`);
+    }
+    if (requestSettled()) {
+      throw new Error(`${label}: player request settled before its refund blocked behind holder PID ${holderPid}`);
+    }
+    await new Promise((r) => setTimeout(r, 25));
+  }
+  throw new Error(`${label}: player refund never blocked behind holder PID ${holderPid}`);
+};
+console.log('\n9e. THE POT/FUNDER CYCLE LANDS AS CONTENTION, NEVER A 500');
+{
+  const { sweepExpiredBounties } = await import('../src/social/contracts.js');
+  const { runLedgerInvariants } = await import('../src/invariants.js');
+  const { M3 } = await import('../src/rules.js');
+  const escrowDrift = async () => {
+    const inv = await runLedgerInvariants(pool, { alert: false });
+    return inv.checks.find((c) => c.name === 'bounty escrow')?.drift;
+  };
+
+  const mk = async (label) => {
+    const { body: { token } } = await call('POST', '/v1/auth/guest');
+    await call('POST', '/v1/character', { token, body: { name: `${label} ${Date.now() % 1000000}` } });
+    const me = (await call('GET', '/v1/me', { token })).body.character;
+    await pool.query('UPDATE characters SET cash=$2 WHERE id=$1', [me.id, 5_000_000]);
+    return { token, id: me.id };
+  };
+  const mark = await mk('Mark');
+  const funder = await mk('Funder');
+  const poster = await mk('Poster');
+  const cashOf = async (id) => Number((await pool.query('SELECT cash FROM characters WHERE id=$1', [id])).rows[0].cash);
+
+  const stake = M3.BOUNTY_MIN * 4;
+  const drift0 = await escrowDrift();
+  // pg_stat_database.deadlocks is the ONLY place a real deadlock is visible — the codebase maps 40P01
+  // to `contention` deliberately, and so is `lock_timeout` (55P03, the 8s pool valve), so the 400
+  // alone cannot tell a deadlock from a slow queue. This section's whole claim is about the CYCLE, so
+  // the mechanism is asserted rather than inferred from the elapsed time.
+  const deadlockCount = async () => Number((await pool.query(
+    'SELECT deadlocks FROM pg_stat_database WHERE datname = current_database()')).rows[0]?.deadlocks || 0);
+  const deadlocks0 = await deadlockCount();
+  const posted = await call('POST', `/v1/streets/${mark.id}/bounty`, { token: funder.token, body: { amount: stake, kind: 'kill' } });
+  check(posted.code === 200, 'a pot with a third-party funder is on the board',
+    `got ${posted.code} ${posted.body?.error || ''}`);
+  // lapse it: an EXPIRED-but-unswept pot is what sends postBounty down the refundPot path, and it is
+  // the same pot the sweep is coming for — the two paths meeting on one row is the whole cycle.
+  await pool.query("UPDATE bounties SET expires_at = now() - interval '1 hour' WHERE target_character=$1 AND kind='kill'", [mark.id]);
+  const funderCashBefore = await cashOf(funder.id);
+
+  const holder = await pool.connect();
+  let inflight = null, requestOutcome = null, holderTook = null, holderResult = null;
+  let fixtureError = null, raced = null;
+  let holderPid = null, waiterPid = null;
+  try {
+    await holder.query('BEGIN');
+    // exactly what sweepExpiredBounties (and runEstate, through refundPot) does first: the funder's row.
+    await holder.query('SELECT 1 FROM characters WHERE id=$1 FOR UPDATE', [funder.id]);
+    const identity = (await holder.query(
+      'SELECT pg_backend_pid() AS pid, clock_timestamp() AS started_after')).rows[0];
+    holderPid = Number(identity.pid);
+    // the poster takes the pot, then blocks reaching the funder inside refundPot.
+    let requestSettled = false;
+    inflight = observePromiseOutcome(call('POST', `/v1/streets/${mark.id}/bounty`, {
+      token: poster.token, body: { amount: stake, kind: 'kill' },
+    }), () => { requestSettled = true; });
+    waiterPid = await waitForPlayerRefundBlockedBy({
+      holderPid, startedAfter: identity.started_after, requestSettled: () => requestSettled,
+      label: 'section 9e bounty refund',
+    });
+    // close the cycle: we hold the funder and now want the pot the player is holding.
+    holderTook = holder.query('SELECT 1 FROM bounties WHERE target_character=$1 AND kind=$2 FOR UPDATE', [mark.id, 'kill'])
+      .then(() => ({ ok: true }), (error) => ({ ok: false, error }));
+    [requestOutcome, holderResult] = await Promise.all([inflight, holderTook]);
+  } catch (error) {
+    fixtureError = error;
+  } finally {
+    // If readiness itself failed, release the held character before draining the blocked request.
+    if (!holderTook) await holder.query('ROLLBACK').catch(() => {});
+    await Promise.allSettled([inflight, holderTook].filter(Boolean));
+    if (inflight && !requestOutcome) requestOutcome = await inflight;
+    await holder.query('ROLLBACK').catch(() => {});
+    holder.release();
+  }
+  raced = valueAfterCleanup(requestOutcome, fixtureError);
+
+  check(holderResult?.ok === true, 'the bounty fixture holder was NOT the deadlock victim',
+    `holder PID ${holderPid}, waiter PID ${waiterPid}, holder error ${holderResult?.error?.code || holderResult?.error?.message || 'unknown'}`);
+
+  check(raced.code !== 500, 'the player is NOT told the server broke',
+    `got ${raced.code} ${raced.body?.error || ''} — "${raced.body?.message || ''}"`);
+  check(raced.code === 400 && raced.body?.error === 'contention',
+    'a deadlocked contract post comes back as a retryable contention',
+    `got ${raced.code} ${raced.body?.error || ''}`);
+  check((await deadlockCount()) > deadlocks0, 'and it was the CYCLE, not the lock_timeout valve',
+    'pg_stat_database.deadlocks did not move — a 55P03 maps to `contention` too, so this ran but proved'
+    + ' nothing about the pot/funder cycle');
+
+  // the aborted transaction rolled back WHOLE: the escrow is untouched, so the pot cannot have
+  // half-resolved (a partial refund with the pot still standing is the drift this guards).
+  const stillThere = (await pool.query("SELECT amount FROM bounties WHERE target_character=$1 AND kind='kill'", [mark.id])).rows[0];
+  check(!!stillThere && Number(stillThere.amount) === stake, 'the pot survived the deadlock intact',
+    stillThere ? `amount ${stillThere.amount} vs ${stake}` : 'the pot is gone');
+  check((await cashOf(funder.id)) === funderCashBefore, 'and the funder was not part-refunded',
+    `cash moved by ${(await cashOf(funder.id)) - funderCashBefore}`);
+
+  // the worker side self-heals on its next tick — the pot the deadlock left standing is settled.
+  const swept = await sweepExpiredBounties(pool);
+  check(Number(swept?.refunded || 0) === stake, 'the next sweep tick settles the pot the deadlock left',
+    `refunded ${swept?.refunded}`);
+  const gone = (await pool.query("SELECT 1 FROM bounties WHERE target_character=$1 AND kind='kill'", [mark.id])).rowCount;
+  check(gone === 0 && (await cashOf(funder.id)) === funderCashBefore + stake,
+    'and the funder is made whole exactly once', `pot rows ${gone}, cash +${(await cashOf(funder.id)) - funderCashBefore}`);
+  const resolutions = (await pool.query(
+    "SELECT reason FROM transactions WHERE counterparty=$1 AND reason IN ('bounty:refund','death:bounty')", [mark.id])).rows;
+  check(resolutions.length === 1 && resolutions[0].reason === 'bounty:refund',
+    'the pot resolved ONCE — it cannot both refund and burn',
+    resolutions.map((r) => r.reason).join(', ') || 'nothing resolved it');
+  check((await escrowDrift()) === drift0, 'the bounty escrow identity is where it started',
+    `drift ${await escrowDrift()} vs ${drift0}`);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// §9e proved ONE instance of the class THE LOCK LEDGER structurally cannot see: a helper that
+// acquires a THIRD-PARTY `characters` row while its caller already holds an escrow row. The ledger
+// is blind to it twice over — the acquisition lives inside a function the transaction CALLS (a
+// per-transaction text scan never reaches it), and the distinguishing feature is WHOSE row rather
+// than which table. So a green ledger is compatible with the cycle being live, which is why it has
+// to be driven.
+//
+// Enumerating the class across `src/` (every function holding an escrow row FOR UPDATE, split on
+// whether the escrow lock or the character acquisition comes first) turned up six candidate tables.
+// Four DISSOLVED on reading: residentEnterTournament/residentEnterStakes/residentEnterGrandPrix/
+// residentNominateFuturity all write `r.id` — the resident's OWN row, which runResidentBehaviour
+// already holds FOR UPDATE before calling them (population.js:815). Not third-party acquisitions.
+//
+// Two survived, and MARKET_LISTINGS is the one driven here because its inverted holder is reachable
+// from a PLAYER ROUTE rather than only from the estate:
+//   ESCROW→chars   cancelListing (market.js:336, POST /v1/market/:id/cancel) — holds the listing
+//                  FOR UPDATE, then `UPDATE characters SET cash` on l.bidder (a third party)
+//                  voidListingsAtDeath (market.js:599, runEstate) — same shape, estate-only
+//   chars→ESCROW   bidListing (118) / buyListing (262) / sweepMarket (514) — every one locks the
+//                  counterparty character rows FIRST, sorted, then the listing. sweepMarket says so
+//                  in its own header: "counterparty characters sorted FOR UPDATE → the listing".
+// The other survivor is BOXING_BOUTS (cancelBout 441 ↔ resolveMainEvent 479), whose inverted holder
+// is reachable ONLY through runEstate — resolveMainEvent's own comment claims no AB-BA and is right
+// about a live bettor and wrong about the estate path, the same "right about itself, wrong about its
+// sibling" shape as refundPot/sweepExpiredBounties. Same remedy, same double net — driven in §9g
+// through the one route that reaches it (the mod-kill), because "same shape, same remedy" is a claim
+// about the code, and only a drive turns it into a fact.
+console.log('\n9f. THE LISTING/BIDDER CYCLE LANDS AS CONTENTION, NEVER A 500');
+{
+  const { runLedgerInvariants } = await import('../src/invariants.js');
+  const { BLACK_MARKET } = await import('../src/rules.js');
+  const escrowDrift = async () => {
+    const inv = await runLedgerInvariants(pool, { alert: false });
+    return inv.checks.find((c) => c.name === 'market escrow')?.drift;
+  };
+  const mkm = async (label) => {
+    const { body: { token } } = await call('POST', '/v1/auth/guest');
+    await call('POST', '/v1/character', { token, body: { name: `${label} ${Date.now() % 1000000}` } });
+    const me = (await call('GET', '/v1/me', { token })).body.character;
+    await pool.query('UPDATE characters SET cash=$2 WHERE id=$1', [me.id, 5_000_000]);
+    return { token, id: me.id };
+  };
+  const seller = await mkm('Seller');
+  const bidder = await mkm('Bidder');
+  const cashOfM = async (id) => Number((await pool.query('SELECT cash FROM characters WHERE id=$1', [id])).rows[0].cash);
+
+  const carId = 'pgcheck9f-' + Date.now();
+  await pool.query('INSERT INTO cars (id, character_id, model_id, trim_id) VALUES ($1,$2,$3,$4)',
+    [carId, seller.id, 'junker', 'stock']);
+
+  const drift0m = await escrowDrift();
+  const bid = BLACK_MARKET.MIN_PRICE * 10;
+  // A standing bid normally BLOCKS a cancel — the hammer decides. The one exception (audit #5) is a
+  // bid that can never clear an unmet hidden reserve, which was only ever a lock on the seller's
+  // iron: that one the seller may pull out from under, refunding the bidder. That refund is the
+  // third-party character acquisition, so a reserved lot is what puts cancelListing on this path.
+  const listed = await call('POST', '/v1/market', { token: seller.token,
+    body: { carId, minBid: BLACK_MARKET.MIN_PRICE, reserve: bid * 10 } });
+  const listingId = listed.body?.id;
+  const placed = listingId
+    ? await call('POST', `/v1/market/${listingId}/bid`, { token: bidder.token, body: { amount: bid } })
+    : { code: 0 };
+  check(listed.code === 200 && placed.code === 200,
+    'a lot with a third-party bid under an unmet reserve is on the block',
+    `list ${listed.code} ${listed.body?.error || ''} / bid ${placed.code} ${placed.body?.error || ''}`);
+
+  const bidderCashBefore = await cashOfM(bidder.id);
+  const deadlockCountM = async () => Number((await pool.query(
+    'SELECT deadlocks FROM pg_stat_database WHERE datname = current_database()')).rows[0]?.deadlocks || 0);
+  const deadlocks0m = await deadlockCountM();
+
+  const holderM = await pool.connect();
+  let inflightM = null, requestOutcomeM = null, holderTook2 = null, holderResult2 = null;
+  let fixtureErrorM = null, raced2 = null;
+  let holderPidM = null, waiterPidM = null;
+  try {
+    await holderM.query('BEGIN');
+    // exactly what bidListing/buyListing/sweepMarket do FIRST: the counterparty's character row.
+    await holderM.query('SELECT 1 FROM characters WHERE id=$1 FOR UPDATE', [bidder.id]);
+    const identityM = (await holderM.query(
+      'SELECT pg_backend_pid() AS pid, clock_timestamp() AS started_after')).rows[0];
+    holderPidM = Number(identityM.pid);
+    // the seller takes the listing, then blocks reaching the bidder to refund them.
+    let requestSettledM = false;
+    inflightM = observePromiseOutcome(
+      call('POST', `/v1/market/${listingId}/cancel`, { token: seller.token }),
+      () => { requestSettledM = true; },
+    );
+    waiterPidM = await waitForPlayerRefundBlockedBy({
+      holderPid: holderPidM, startedAfter: identityM.started_after,
+      requestSettled: () => requestSettledM, label: 'section 9f market refund',
+    });
+    // close the cycle: we hold the bidder and now want the listing the player is holding.
+    holderTook2 = holderM.query('SELECT 1 FROM market_listings WHERE id=$1 FOR UPDATE', [listingId])
+      .then(() => ({ ok: true }), (error) => ({ ok: false, error }));
+    [requestOutcomeM, holderResult2] = await Promise.all([inflightM, holderTook2]);
+  } catch (error) {
+    fixtureErrorM = error;
+  } finally {
+    // If readiness itself failed, release the held character before draining the blocked request.
+    if (!holderTook2) await holderM.query('ROLLBACK').catch(() => {});
+    await Promise.allSettled([inflightM, holderTook2].filter(Boolean));
+    if (inflightM && !requestOutcomeM) requestOutcomeM = await inflightM;
+    await holderM.query('ROLLBACK').catch(() => {});
+    holderM.release();
+  }
+  raced2 = valueAfterCleanup(requestOutcomeM, fixtureErrorM);
+
+  check(holderResult2?.ok === true, 'the market fixture holder was NOT the deadlock victim',
+    `holder PID ${holderPidM}, waiter PID ${waiterPidM}, holder error ${holderResult2?.error?.code || holderResult2?.error?.message || 'unknown'}`);
+
+  check(raced2.code !== 500, 'the seller is NOT told the server broke',
+    `got ${raced2.code} ${raced2.body?.error || ''} — "${raced2.body?.message || ''}"`);
+  check(raced2.code === 400 && raced2.body?.error === 'contention',
+    'a deadlocked cancel comes back as a retryable contention',
+    `got ${raced2.code} ${raced2.body?.error || ''}`);
+  check((await deadlockCountM()) > deadlocks0m, 'and it was the CYCLE, not the lock_timeout valve',
+    'pg_stat_database.deadlocks did not move — a 55P03 maps to `contention` too, so this ran but proved'
+    + ' nothing about the listing/bidder cycle');
+
+  // the aborted transaction rolled back WHOLE: a half-cancelled lot (bidder refunded, listing still
+  // live) is the drift this guards, and an unlisted car under a live listing is the ownership half.
+  const still = (await pool.query('SELECT status, bidder, bid FROM market_listings WHERE id=$1', [listingId])).rows[0];
+  check(still && still.status === 'live' && still.bidder === bidder.id && Number(still.bid) === bid,
+    'the lot survived the deadlock intact',
+    still ? `status ${still.status}, bid ${still.bid}` : 'the listing is gone');
+  check((await cashOfM(bidder.id)) === bidderCashBefore, 'and the bidder was not part-refunded',
+    `cash moved by ${(await cashOfM(bidder.id)) - bidderCashBefore}`);
+  const carRow = (await pool.query('SELECT listed FROM cars WHERE id=$1', [carId])).rows[0];
+  check(carRow?.listed === true, 'and the iron is still on the block',
+    `cars.listed = ${carRow?.listed}`);
+
+  // the player's own remedy works: `contention` says retry, so retrying must actually settle it.
+  const retry = await call('POST', `/v1/market/${listingId}/cancel`, { token: seller.token });
+  check(retry.code === 200, 'the retry the contention asked for goes through',
+    `got ${retry.code} ${retry.body?.error || ''}`);
+  const refunds = (await pool.query(
+    "SELECT amount FROM transactions WHERE character_id=$1 AND reason='market:refund'", [bidder.id])).rows;
+  check(refunds.length === 1 && Number(refunds[0].amount) === bid
+    && (await cashOfM(bidder.id)) === bidderCashBefore + bid,
+    'and the bidder is made whole exactly once',
+    `${refunds.length} refund rows, cash +${(await cashOfM(bidder.id)) - bidderCashBefore}`);
+  check((await escrowDrift()) === drift0m, 'the market escrow identity is where it started',
+    `drift ${await escrowDrift()} vs ${drift0m}`);
+}
+// ─────────────────────────────────────────────────────────────────────────────
+// §9f drove the player-route instance of the class and left the estate-only one as a claim ("same
+// remedy, same double net"). This drives it. cancelBout (boxing.js) holds the BOUT row FOR UPDATE and
+// then `UPDATE characters SET cash` on every living BETTOR — third parties — while resolveMainEvent
+// locks [a_char, b_char, ...bettors] SORTED and only THEN the bout row. The inverted holder is reached
+// only through runEstate (cancelMainEventsAtDeath), so the driver is the mod-kill route: it holds the
+// dying principal's character row, runs the estate, and maps 40P01 through deadlockToRetry.
+//
+// Driven by HOLDING the bettor's row, never by racing a real resolve — a race depends on two backends
+// overlapping inside a millisecond-wide window, and timing luck reads exactly like a proof. The
+// player is given the full second before the holder closes the cycle, so Postgres aborts the PLAYER
+// (whoever started waiting first) and the victim is deterministic.
+console.log('\n9g. THE BOUT/BETTOR CYCLE LANDS AS CONTENTION, NEVER A 500');
+{
+  const { runLedgerInvariants } = await import('../src/invariants.js');
+  const { BOXING, PACING } = await import('../src/rules.js');
+  const escrowDrift = async () => {
+    const inv = await runLedgerInvariants(pool, { alert: false });
+    return inv.checks.find((c) => c.name === 'boxing bet escrow')?.drift;
+  };
+  const lvlRespect = (lvl) => PACING.LEVEL_DIVISOR * (lvl - 1) * (lvl - 1);
+  const mkb = async (label) => {
+    const { body: { token } } = await call('POST', '/v1/auth/guest');
+    await call('POST', '/v1/character', { token, body: { name: `${label} ${Date.now() % 1000000}` } });
+    const me = (await call('GET', '/v1/me', { token })).body.character;
+    await pool.query('UPDATE characters SET cash=$2, respect=$3 WHERE id=$1',
+      [me.id, 5_000_000, lvlRespect(BOXING.MANAGER_MIN_LEVEL + 4)]);
+    return { token, id: me.id };
+  };
+  const promoter = await mkb('Promoter');   // the principal who dies
+  const rival = await mkb('Rival');         // the other manager
+  const bettor = await mkb('Bettor');       // the third party cancelBout reaches
+  const cashOfB = async (id) => Number((await pool.query('SELECT cash FROM characters WHERE id=$1', [id])).rows[0].cash);
+
+  const s1 = await call('POST', '/v1/boxing/recruit', { token: promoter.token, body: { name: 'Iron Mike Corleone' } });
+  const s2 = await call('POST', '/v1/boxing/recruit', { token: rival.token, body: { name: 'Sugar Sal Provolone' } });
+  const listed = s2.body?.id
+    ? await call('POST', '/v1/boxing/list', { token: rival.token, body: { fighter: s2.body.id, stake: BOXING.MIN_STAKE } })
+    : { code: 0 };
+  const ann = s1.body?.id && listed.code === 200
+    ? await call('POST', `/v1/boxing/announce/${rival.id}`, { token: promoter.token,
+        body: { myFighter: s1.body.id, theirFighter: s2.body.id } })
+    : { code: 0 };
+  const boutId = ann.body?.bout;
+  const bet = BOXING.BET_MIN * 20;
+  const placed = boutId
+    ? await call('POST', `/v1/boxing/bout/${boutId}/bet`, { token: bettor.token, body: { fighter: s1.body.id, amount: bet } })
+    : { code: 0 };
+  check(s1.code === 200 && s2.code === 200 && listed.code === 200 && ann.code === 200 && placed.code === 200,
+    'a booked main event carries a third-party bet',
+    `recruit ${s1.code}/${s2.code} ${s1.body?.error || s2.body?.error || ''} / list ${listed.code} ${listed.body?.error || ''}`
+    + ` / announce ${ann.code} ${ann.body?.error || ''} / bet ${placed.code} ${placed.body?.error || ''}`);
+
+  const bettorCashBefore = await cashOfB(bettor.id);
+  const drift0b = await escrowDrift();
+  const deadlockCountB = async () => Number((await pool.query(
+    'SELECT deadlocks FROM pg_stat_database WHERE datname = current_database()')).rows[0]?.deadlocks || 0);
+  const deadlocks0b = await deadlockCountB();
+  const modKill = () => app.inject({ method: 'POST', url: '/v1/mod/kill',
+    headers: { 'x-mod-key': process.env.MOD_KEY, 'idempotency-key': crypto.randomUUID() },
+    payload: { characterId: promoter.id } }).then((res) => {
+    let json = null; try { json = res.json(); } catch {}
+    return { code: res.statusCode, body: json };
+  });
+
+  const holderB = await pool.connect();
+  let raced3 = null, holderTook3 = null;
+  try {
+    await holderB.query('BEGIN');
+    // exactly what resolveMainEvent does FIRST: a bettor's character row, sorted with the principals.
+    await holderB.query('SELECT 1 FROM characters WHERE id=$1 FOR UPDATE', [bettor.id]);
+    // the estate takes the dying promoter's row, then the bout row, then blocks refunding the bettor.
+    const inflightB = modKill();
+    // WAIT FOR THE BLOCK, NEVER FOR A CLOCK. A fixed sleep here is wrong in BOTH directions: too short and the
+    // estate has not reached the bettor row yet (the holder then blocks on the bout until lock_timeout, a
+    // 55P03 the vacuity guard below correctly refuses); too long and the estate's own deadlock_timeout has
+    // already fired with NO cycle to find — Postgres checks ONCE per waiter, so when the holder closes the
+    // cycle afterwards it is the HOLDER's timer that detects it and the HOLDER that is aborted, the estate
+    // sails through with a 200, and this section measures the wrong victim (measured: a 1500ms sleep did
+    // exactly that). So poll pg_stat_activity for the estate's backend WAITING on a characters row, and close
+    // the cycle the moment it is — its timer then fires ~1s later with the cycle present, before the
+    // holder's does, and the victim is deterministic.
+    let blocked = false;
+    for (let i = 0; i < 100 && !blocked; i++) {
+      const { rows } = await pool.query(
+        `SELECT 1 FROM pg_stat_activity WHERE wait_event_type='Lock' AND query ILIKE '%UPDATE characters%'
+           AND pid <> pg_backend_pid() LIMIT 1`);
+      blocked = rows.length > 0;
+      if (!blocked) await new Promise((r) => setTimeout(r, 50));
+    }
+    check(blocked, 'the estate genuinely blocked on the held bettor row', 'it never waited — nothing here can prove a cycle');
+    // close the cycle: we hold the bettor and now want the bout row the estate is holding.
+    holderTook3 = holderB.query('SELECT 1 FROM boxing_bouts WHERE id=$1 FOR UPDATE', [boutId])
+      .then(() => null, (e) => e);
+    raced3 = await inflightB;
+    await holderTook3;
+  } finally { await holderB.query('ROLLBACK').catch(() => {}); holderB.release(); }
+
+  check(raced3.code !== 500, 'the mod-kill is NOT told the server broke',
+    `got ${raced3.code} ${raced3.body?.error || ''} — "${raced3.body?.message || ''}"`);
+  check(raced3.code === 400 && raced3.body?.error === 'contention',
+    'a deadlocked estate comes back as a retryable contention',
+    `got ${raced3.code} ${raced3.body?.error || ''}`);
+  check((await deadlockCountB()) > deadlocks0b, 'and it was the CYCLE, not the lock_timeout valve',
+    'pg_stat_database.deadlocks did not move — a 55P03 maps to `contention` too, so this ran but proved'
+    + ' nothing about the bout/bettor cycle');
+
+  // the aborted estate rolled back WHOLE: a half-cancelled card (bettor refunded, bout still booked,
+  // fighters unlocked) is the drift this guards, and a DEAD promoter beside a live card the other half.
+  const still = (await pool.query('SELECT status FROM boxing_bouts WHERE id=$1', [boutId])).rows[0];
+  const alive = (await pool.query('SELECT alive FROM characters WHERE id=$1', [promoter.id])).rows[0];
+  check(still?.status === 'booked' && alive?.alive === true, 'the card survived the deadlock intact',
+    `status ${still?.status}, promoter alive=${alive?.alive}`);
+  check((await cashOfB(bettor.id)) === bettorCashBefore, 'and the bettor was not part-refunded',
+    `cash moved by ${(await cashOfB(bettor.id)) - bettorCashBefore}`);
+  const fighters = (await pool.query('SELECT booked_until FROM fighters WHERE id IN ($1,$2)', [s1.body.id, s2.body.id])).rows;
+  check(fighters.length === 2 && fighters.every((f) => f.booked_until != null), 'and both fighters are still booked',
+    fighters.map((f) => f.booked_until).join(' / '));
+
+  // the operator's own remedy works: `contention` says retry, so retrying must actually settle it.
+  const retry = await modKill();
+  check(retry.code === 200, 'the retry the contention asked for goes through',
+    `got ${retry.code} ${retry.body?.error || ''}`);
+  const refunds = (await pool.query(
+    "SELECT amount FROM transactions WHERE character_id=$1 AND reason='boxing:bet:refund'", [bettor.id])).rows;
+  check(refunds.length === 1 && Number(refunds[0].amount) === bet
+    && (await cashOfB(bettor.id)) === bettorCashBefore + bet,
+    'and the bettor is made whole exactly once',
+    `${refunds.length} refund rows, cash +${(await cashOfB(bettor.id)) - bettorCashBefore}`);
+  const after = (await pool.query('SELECT status FROM boxing_bouts WHERE id=$1', [boutId])).rows[0];
+  check(after?.status === 'cancelled', 'the card is cancelled ONCE, and the escrow went home', `status ${after?.status}`);
+  check((await escrowDrift()) === drift0b, 'the boxing bet escrow identity is where it started',
+    `drift ${await escrowDrift()} vs ${drift0b}`);
+}
 // ─────────────────────────────────────────────────────────────────────────────
 console.log('\n10. NO node-pg DEPRECATIONS');
 await app.close();

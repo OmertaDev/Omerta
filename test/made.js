@@ -375,6 +375,15 @@ assert.equal((await call('POST', '/v1/stake/lock', { token: vera.token, body: { 
 r = await call('POST', '/v1/stake/lock', { token: vera.token, body: { tier: 'quarter' } });
 assert.equal(r.code, 200, 'but it can be made LONGER and STRONGER');
 assert.equal(r.body.mult, 2.0, 'the oath doubles it');
+// ONE QUANTITY, ONE UNIT: the success line above states the window in DAYS off the live tier, so
+// the refusal must too — "another 2160h" is the same 90 days in the unit nobody can act on.
+const quarter = STAKE_LOCKS.TIERS.find((t) => t.id === 'quarter');
+r = await call('POST', '/v1/unstake', { token: vera.token });
+assert.equal(r.body.error, 'locked', 'the oath still refuses the unstake');
+assert(r.body.message.includes(`${quarter.days}d`),
+  `the refusal names the window in DAYS, agreeing with the lock's own line: ${r.body.message}`);
+assert(!/\d+h\b/.test(r.body.message),
+  `and never in raw hours — a 90-day window read as "2160h" is unreadable: ${r.body.message}`);
 // EXPIRY: backdate the window and the whole thing lapses on its own — the effective read falls
 // back to the raw balance and the principal walks free through the ordinary unstake.
 await pool.query(`UPDATE account_persistent SET stake_lock_until = now() - interval '1 hour'

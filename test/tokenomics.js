@@ -194,6 +194,80 @@ assert.equal(Number((await pool.query('SELECT pool FROM street_tax WHERE id=1'))
   assert.equal(r.body.error, 'amount', 'no dust redemptions');
 }
 
+// ── THE TWO REFUSALS THAT NAMED THE BOUND AND NOT THE REMAINDER ──────────────────────────────────
+// Both said something FALSE about a player's own money. "Come back tomorrow" was printed while the
+// bucket still had headroom, and "try again after the next take" while the till could cover a
+// smaller ask — the ordinary partially-funded state, not an edge. The one figure a caller must
+// supply to succeed lived only on the board, so the player had to go and read a different screen to
+// learn what the refusal already knew. Each half asserts the SERVER first (the payload the client
+// renders from) and then DRIVES the named figure through: the redeem succeeding in the same block
+// is what proves the original sentence was false, and a literal expectation would pass straight
+// through the mutation that stops the field being sent.
+{ // the daily cap
+  const c = await mk('Capped Redeemer');
+  await pool.query('UPDATE account_persistent SET omr=$2 WHERE account_id=$1', [c.acct, 500]);
+  sqlOmr += 500;
+  // leave a known, non-zero slice of the rolling bucket open (the wash-cap shape: absolute write)
+  await pool.query('UPDATE account_persistent SET exchange_used=$2, exchange_at=now() WHERE account_id=$1',
+    [c.acct, EXCHANGE.DAILY_CAP_OMR - 100]);
+
+  const r = await call('POST', '/v1/window/redeem', c.token, { amount: EXCHANGE.DAILY_CAP_OMR });
+  assert.equal(r.body.error, 'cap');
+  assert.ok(r.body.headroomOmr >= 100 && r.body.headroomOmr < 101,
+    `the refusal must CARRY what is left today, not just the bound: ${JSON.stringify(r.body)}`);
+  assert.equal(r.body.dailyCapOmr, EXCHANGE.DAILY_CAP_OMR, 'and the bound it is measured against');
+  assert.match(r.body.message, new RegExp(`${r.body.headroomOmr} left today`),
+    `the sentence must name the remainder it carries: ${r.body.message}`);
+  assert.doesNotMatch(r.body.message, /come back tomorrow/i,
+    'and must NOT say come back tomorrow while $OMR is still redeemable this second');
+
+  // the half that proves the old sentence was a lie: the figure it names goes through immediately
+  const ok = await call('POST', '/v1/window/redeem', c.token, { amount: r.body.headroomOmr });
+  assert.equal(ok.code, 200,
+    `the headroom the refusal named must actually redeem: ${JSON.stringify(ok.body)}`);
+
+  // …and once the bucket really is spent, the honest sentence is the one that was always printed
+  const done = await call('POST', '/v1/window/redeem', c.token, { amount: EXCHANGE.MIN_OMR });
+  assert.equal(done.body.error, 'cap');
+  assert.match(done.body.message, /come back tomorrow/i,
+    `with nothing left, "come back tomorrow" is true and is what it says: ${done.body.message}`);
+}
+
+{ // the dry till
+  const d = await mk('Dry Till Redeemer');
+  await pool.query('UPDATE account_persistent SET omr=$2 WHERE account_id=$1', [d.acct, 500]);
+  sqlOmr += 500;
+  // Take the till down to a known partially-funded state the honest way — funded and balance move
+  // together, so `balance == funded - paid` (the invariant two blocks down) still holds exactly.
+  const held = Number((await pool.query('SELECT balance FROM exchange_pool WHERE id=1')).rows[0].balance);
+  const leave = 60 * EXCHANGE.RATE;
+  await pool.query('UPDATE exchange_pool SET balance=$1, lifetime_funded = lifetime_funded - $2 WHERE id=1',
+    [leave, held - leave]);
+
+  const r = await call('POST', '/v1/window/redeem', d.token, { amount: 100 });
+  assert.equal(r.body.error, 'dry');
+  assert.equal(r.body.poolOmr, 60, 'the refusal must CARRY what the till can pay, in $OMR terms');
+  assert.match(r.body.message, /60 \$OMR today/,
+    `and the sentence must name it: ${r.body.message}`);
+  assert.doesNotMatch(r.body.message, /try again after the next take/i,
+    'and must not send the player away while the till can pay a smaller ask this second');
+
+  const ok = await call('POST', '/v1/window/redeem', d.token, { amount: r.body.poolOmr });
+  assert.equal(ok.code, 200, `the figure the refusal named must clear the till: ${JSON.stringify(ok.body)}`);
+  assert.equal(ok.body.poolLeft, 0, 'exactly — it named what the till held, to the penny');
+
+  // a genuinely empty till keeps the old sentence, because there it is true
+  const empty = await call('POST', '/v1/window/redeem', d.token, { amount: EXCHANGE.MIN_OMR });
+  assert.equal(empty.body.error, 'dry');
+  assert.match(empty.body.message, /try again after the next take/i,
+    `an empty till says come back: ${empty.body.message}`);
+
+  // put the till back where the rest of the file found it (both columns, identity preserved)
+  const now = Number((await pool.query('SELECT balance FROM exchange_pool WHERE id=1')).rows[0].balance);
+  await pool.query('UPDATE exchange_pool SET balance=$1, lifetime_funded = lifetime_funded + $2 WHERE id=1',
+    [held - (leave - now), held - leave]);
+}
+
 { // THE REAL-VALUE INVARIANT: the window can never have paid out more than was funded into it.
   const inv = await runExchangeInvariants(pool);
   assert.ok(inv.ok, JSON.stringify(inv.checks));

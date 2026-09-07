@@ -1,8 +1,20 @@
 # CHAIN-AUDIT-PACKET — what goes to the third-party reviewer, and what to attack
 
-**This is gate 2 of the three in `CHAIN-DEPLOY.md` §0.** Gate 1 (`forge test`) is green and gate 3
-(the launch review) is signed; this is the one that is outstanding, and it is the one that cannot be
-patched after the fact, because a contract is immutable the moment it is deployed.
+> **SUPERSEDED SNAPSHOT — last measured 2026-08-27, PRE-O1.** This packet is retained as historical
+> audit evidence. It predates the Acquisition constellation (`AcquisitionAuthority`,
+> `AcquisitionConstellationFactory`, `AcquisitionIntentExecution`, `AcquisitionReconciliation`,
+> `AcquisitionVaultCore`), `PreVoteBudgetBook` and `RwaHealthOverlay`, so it is not the current tree
+> inventory and must not be sent as a complete current engagement scope.
+>
+> **SUPERSEDED BY [`CHAIN-AUDIT-PACKET-O1.md`](CHAIN-AUDIT-PACKET-O1.md)** — rebuilt and frozen at
+> release head `b0a214ca` under a PINNED toolchain, which is what makes its figures reproducible and
+> these ones not (see that packet's §0). Send THAT one. `CHAIN-DEPLOY.md` remains the operational
+> runbook. Nothing below this line has been edited: the figures are the evidence, stale or not, and
+> rewriting them would destroy the record this file is kept for.
+
+**At that snapshot, this was gate 2 of the three in `CHAIN-DEPLOY.md` §0.** Gate 1
+(`forge test`) was green and gate 3 (the launch review) was signed; the external audit remained
+outstanding.
 
 **Read this beside `CHAIN-DEPLOY.md`, never instead of it.** That document is the operational
 runbook — the deploy order, the arm order, the env, the kill switches. This one is the SCOPE and the
@@ -10,18 +22,20 @@ ATTACK SURFACE: what is in the batch, what each contract's walls actually claim,
 been proven and by what, and — the part worth an auditor's time — the properties that are load-bearing
 and are NOT proven by anything we can run ourselves.
 
-Every figure below was measured on **2026-08-21** against the tree. `test/docs.js` fails the build if
-the batch enumeration drifts from the `.sol` files, or if any launch-gating doc calls an existing
-contract unwritten — that guard exists because this document's predecessor did exactly that, and an
-auditor told a contract does not exist does not attack it.
+Every figure below was measured on **2026-08-27** against that then-current tree. The live documentation
+guard now checks the current enumeration in `CHAIN-DEPLOY.md`; it intentionally does not rewrite this
+snapshot when later contracts land — but a snapshot that disagrees with ITSELF is not a record, so the
+counts in this document are held to each other by `test/docs.js` even though they are not held to the
+tree.
 
 ---
 
-## 1. THE SCOPE — 21 contracts + 3 top-level interfaces, one engagement
+## 1. HISTORICAL SCOPE — 21 contracts + 3 interfaces, one engagement
 
 *"Batch, not dribble"* (`omerta-dynasty-machine-design.md`): the scope must be KNOWN before it is
-sent, because a contract added afterwards means paying to re-audit. The set below is complete —
-`omerta-contracts/src` holds exactly these 24 Solidity files and nothing else.
+sent, because a contract added afterwards means paying to re-audit. The set below was the complete
+`omerta-contracts/src` tree at the 2026-08-27 measurement — 24 Solidity files, 21 contracts and 3
+interfaces. It is no longer complete; the banner above names what has landed since.
 
 | # | contract | what it is | its tests |
 |---|---|---|---|
@@ -52,6 +66,18 @@ sent, because a contract added afterwards means paying to re-audit. The set belo
 
 **387 Foundry tests across 22 suites, green** (measured 2026-08-27, `forge test`), including twelve
 512-run fuzz properties across token, bond, oracle, Bank, stock-delivery, hook, and guard surfaces.
+
+> **Toolchain, and why it is stated rather than assumed.** That measurement was taken with the CI
+> toolchain **UNPINNED** — `foundry-rs/foundry-toolchain@v1` carried no `version:` key until
+> 2026-08-29, so `stable` resolved at run time and the compiler behind these figures **is not
+> recoverable from the record**. It matters because the count is version-DEPENDENT: a suite holding
+> only `invariant_*` functions counts as **one** test under the older aggregated reporting model and
+> as **N** under 1.7.1. So a reader who checks out the 2026-08-27 tree and re-runs `forge test` today
+> may get a different number and **cannot tell whether the tree changed or the counter did** — the
+> exact ambiguity that left the forge gate red and unreproducible for 19 hours. The workflow pins
+> **forge v1.7.1** as of 2026-08-29 and prints `forge --version` as its own step, so the rebuilt
+> packet this banner calls for will be the first one whose count can be reproduced. **Name the
+> toolchain beside any figure you freeze.**
 
 **Deliberately NOT in the batch, and each for a reason:**
 - **ERC-6551** (`test/vendor/ERC6551Registry.sol`, `ERC6551Account.sol`) — the reference
@@ -200,7 +226,7 @@ An auditor's time is best spent where nothing we can run reaches. These four are
 
 | prover | what it stands up | what it PROVES |
 |---|---|---|
-| `forge test` | the Foundry VM | 305 tests / 12 suites, incl. two 512-run fuzzes. Unit + property behaviour of every contract |
+| `forge test` | the Foundry VM | 387 tests / 22 suites, incl. twelve 512-run fuzz properties. Unit + property behaviour of every contract |
 | `npm run chain-e2e` | a real EVM (ganache/anvil), the REAL backend booted against it | 27 asserted steps: deploy → SIWE link → a real on-chain fee → the watcher crediting it → mint → **a real EIP-712 voucher claimed for 25 real ERC-20 OMR** → replay REVERTS → tampered voucher REVERTS → the watcher closing the reserve exact → a gear voucher minting the ERC-1155 → an UNCAPPED gearId failing closed even with a valid signature |
 | `npm run dexbot-e2e` | a **real Uniswap v4** — real `PoolManager`, real liquidity, real swaps, behind the real `OmertaHook` at a mined permission address | 23 asserted steps with both bots' senders **UNSEAMED**, so `src/dexbot.js`'s own encoders build the calldata that executes. This is what closed the ⚠ on the raw v4 encodings |
 | `npm run stock-e2e` | the real ERC-6551 registry (vendored reference impl) + StreetDeed + StockVault | 14 asserted steps: a deed minted from a server-signed voucher, **the backend's computed TBA equal to the registry's own answer**, units landing in it, the keeper sending but never settling, the `Delivered` log flipping the allocation |

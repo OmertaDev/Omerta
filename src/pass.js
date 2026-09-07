@@ -12,7 +12,7 @@
 // (pass_tier/pass_at) → the track SURVIVES DEATH (the heir keeps claiming what the pass paid for).
 import { GameError, ledger } from './game.js';
 import { fundReserve } from './chain.js';
-import { PASS, passClaimMs, passActive, passPrestigeOf, levelOf, assetEnergyCap } from './rules.js';
+import { PASS, passClaimMs, passActive, passPrestigeOf, levelOf, assetEnergyCap , coolLeft, coolWait } from './rules.js';
 
 const round6 = (x) => Math.round(x * 1e6) / 1e6;
 
@@ -60,8 +60,9 @@ export async function claimPass(ch, client, h) {
   const entry = PASS.TRACK[tier]; // TRACK is 0-indexed: tier 0 claimed → next is TRACK[0]
   if (!entry) throw new GameError('complete', "You've claimed the whole Ledger this season.");
   const now = Date.now();
-  if (a.pass_at && new Date(a.pass_at).getTime() + passClaimMs() > now)
-    throw new GameError('cooldown', 'Come back later for the next mark on the Ledger.');
+  const ledgerCool = coolLeft(new Date(a.pass_at).getTime() + passClaimMs(), now);
+  if (ledgerCool)
+    throw new GameError('cooldown', `Come back in ${coolWait(ledgerCool)} for the next mark on the Ledger.`, { cooldownSeconds: ledgerCool });
   const r = entry.reward, granted = {};
   if (r.title) { ch.title = r.title; granted.title = r.title; }                          // status (character title slot)
   if (r.respawnTokens) { a.respawn_tokens = Number(a.respawn_tokens || 0) + r.respawnTokens; granted.respawnTokens = r.respawnTokens; } // account (persistAccount commits)

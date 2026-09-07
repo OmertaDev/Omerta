@@ -7,7 +7,7 @@
 // Split out of the 2,003-line src/social.js; every function below is byte-identical to what was
 // there. Import from '../social.js' — it re-exports this package's public surface unchanged.
 import { GameError, bumpFamilyTask, bus, ledger, cleanText, notify } from '../game.js';
-import { DISTRICTS, M3, M8, MAP, districtNeighbours, ROSTER_POSTS, rosterPostOf, rosterMult, levelOf, dayOf, territoryBuildCost, worldNpcOf, liberationCost, DIPLOMACY, cityHourOf, seasonFx, CHARTERS, familyCharterOf, charterFx, FAMILY_CHARTER, usd } from '../rules.js';
+import { DISTRICTS, M3, M8, MAP, districtNeighbours, ROSTER_POSTS, rosterPostOf, rosterMult, levelOf, dayOf, territoryBuildCost, worldNpcOf, liberationCost, DIPLOMACY, cityHourOf, seasonFx, CHARTERS, familyCharterOf, charterFx, FAMILY_CHARTER, usd , coolLeft, coolWait } from '../rules.js';
 import { seizeTerritoryRackets, releaseTerritoryRackets } from '../territory.js';
 import { releaseFrontierHolds, outfitStrengthFrac } from '../world.js';
 import { releaseFamilyHolds } from '../npcwar.js';
@@ -17,6 +17,7 @@ import { sovGarrisonBonus, razeSov, dissolveSov } from '../sov.js';
 import { runEstate } from './estate.js';
 import { canCommand, now, uid, warActive } from './shared.js';
 import { postPower, rosterBoard, rosterEffects } from '../roster.js';
+import { dbCaps } from '../db.js';
 
 // ═══════════════════ GANGS (§5.5) ═══════════════════
 export async function createGang(ch, name, tag, client, h) {
@@ -103,6 +104,34 @@ export async function removeMember(client, gangId, characterId) {
     // board's join). Its VETO record stays — the decree it killed was killed while it lived.
     await client.query('DELETE FROM commission_votes WHERE gang_id=$1', [gangId]);
     await client.query('DELETE FROM commission_ticker_votes WHERE gang_id=$1', [gangId]); // the ticker ballot follows the same rule: no ghost governance
+    // Global V2 order: dissolution alone holds family first, then every ballot day containing one
+    // of its vote slots in ascending order, then the vote rows. Cast and close start at one day and
+    // never acquire a family row. The post-lock clock means a wait crossing exact cutoff preserves
+    // the now-frozen vote instead of deleting it with stale time.
+    const ballotDayLock = dbCaps.skipLocked ? 'FOR UPDATE OF d' : 'FOR UPDATE';
+    await client.query(
+      `SELECT d.day
+         FROM ticker_ballot_days_v2 d
+         JOIN commission_ticker_votes_v2 v ON v.day=d.day
+        WHERE v.family_id=$1
+        ORDER BY d.day ASC ${ballotDayLock}
+        /* ticker_ballot_v2_dissolution_days */`,
+      [gangId],
+    );
+    const ballotClockFn = dbCaps.skipLocked ? 'clock_timestamp()' : 'now()';
+    const ballotEpoch = (await client.query(
+      `SELECT EXTRACT(EPOCH FROM ${ballotClockFn})::text AS epoch_seconds
+       /* ticker_ballot_v2_dissolution_clock */`,
+    )).rows[0]?.epoch_seconds;
+    await client.query(
+      `DELETE FROM commission_ticker_votes_v2
+        WHERE family_id=$1
+          AND day IN (
+            SELECT day FROM ticker_ballot_days_v2
+             WHERE state='open' AND EXTRACT(EPOCH FROM closes_at) > $2::numeric
+          )`,
+      [gangId, String(ballotEpoch)],
+    );
     // Tier-4 — its OVERRIDE ballots die with it too (a dead family can't muster against the head veto).
     // overrideWeightOf already filters by live seats so a stale row scores 0, but keep the table honest.
     await client.query('DELETE FROM commission_overrides WHERE gang_id=$1', [gangId]);
@@ -418,8 +447,9 @@ export async function chooseCharter(ch, charterId, client, h) {
   let cost = 0;
   if (!first) {
     const since = g.charter_at ? Date.now() - new Date(g.charter_at).getTime() : Infinity;
-    if (since < FAMILY_CHARTER.CHANGE_CD_MS)
-      throw new GameError('cooldown', `The family only re-founds itself so often — ${Math.ceil((FAMILY_CHARTER.CHANGE_CD_MS - since) / 3600000)}h to go.`);
+    const charterCool = Number.isFinite(since) ? coolLeft(Date.now() + (FAMILY_CHARTER.CHANGE_CD_MS - since)) : 0;
+    if (charterCool)
+      throw new GameError('cooldown', `The family only re-founds itself so often — ${coolWait(charterCool)} to go.`, { cooldownSeconds: charterCool });
     cost = FAMILY_CHARTER.CHANGE_OMR;
     if (Number(g.omr_reserve) < cost)
       throw new GameError('reserve', `Re-founding the family takes ${cost} $OMR from the reserve (${Math.floor(Number(g.omr_reserve))} on hand).`);
@@ -630,7 +660,10 @@ export async function stakeClaim(ch, districtId, amount, client, h) {
   return { ok: true, district: districtId, staked: total, added: delta, floor: q.cost,
     defending: q.defending, families,
     resolvesSeconds: Math.max(0, Math.round((until.getTime() - nowMs) / 1000)),
-    lossBps: M3.CONTEST_LOSS_BPS };
+    // the STAKER's charter-effective forfeiture, never the base lever — settleContest charges
+    // CONTEST_LOSS_BPS × the charter multiplier, so a Fixers boss reading the base 50% here was
+    // being understated by exactly the hedge their charter prices (the nominal-vs-actual class)
+    lossBps: contestLossBpsFor(g.charter) };
 }
 
 // The settlement itself, inside whatever transaction the caller is already running. TWO callers
@@ -640,6 +673,15 @@ export async function stakeClaim(ch, districtId, amount, client, h) {
 // claim path, which already holds it, and is the mutex for the sweep. Then every bidding gang in id
 // order — the districts → gangs order seizeDistrict already establishes, so no new cycle.
 //
+// What a losing stake forfeits, for a family under this charter — ONE implementation, read by the
+// settle (which CHARGES it) and the stake receipt (which QUOTES it), so the receipt can never
+// understate a Fixers family's forfeiture (base 50% vs their charter-effective 62.5% — the
+// nominal-vs-actual class: the reply must carry the EFFECTIVE figure, never the base lever).
+// Clamped under 10000 so a stake can never forfeit more than itself.
+export function contestLossBpsFor(charter) {
+  return Math.min(9999, Math.round(M3.CONTEST_LOSS_BPS * charterFx(charter, 'contestLossMult')));
+}
+
 // Returns null if there is nothing to settle (no district, or its window is still open).
 export async function settleContest(client, districtId) {
   const d = (await client.query('SELECT * FROM districts WHERE id=$1 FOR UPDATE', [districtId])).rows[0];
@@ -680,9 +722,10 @@ export async function settleContest(client, districtId) {
       continue;
     }
     // THE CHARTER: what a losing stake forfeits is the loser's OWN business — the Fixers hedge in
-    // ways that cost them more when the hedge fails. Clamped under 10000 so a stake can never
-    // forfeit more than itself, and the escrow identity holds either way (refund + burn == stake).
-    const lossBps = Math.min(9999, Math.round(M3.CONTEST_LOSS_BPS * charterFx(alive.charter, 'contestLossMult')));
+    // ways that cost them more when the hedge fails. The escrow identity holds either way
+    // (refund + burn == stake); the rate is the shared contestLossBpsFor, so the stake receipt
+    // quotes the same figure this line charges.
+    const lossBps = contestLossBpsFor(alive.charter);
     const back = Math.floor(amt * (10000 - lossBps) / 10000);
     const burn = amt - back;
     if (back > 0) {

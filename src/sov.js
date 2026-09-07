@@ -14,7 +14,7 @@
 // (the territory convention — the DEFENDER's gang is never locked; the structure row is the
 // contested object, exactly the convoy-manifest discipline).
 import { GameError, bus } from './game.js';
-import { SOV, sovRankOf, cityHourOf, DISTRICTS, jailed, hospitalized, safeHoused, usd, art } from './rules.js';
+import { SOV, sovRankOf, cityHourOf, DISTRICTS, jailed, hospitalized, safeHoused, usd, art , coolLeft, coolWait } from './rules.js';
 
 const canCommand = (h) => h.owned.gangRole === 'boss' || h.owned.gangRole === 'underboss';
 // actor-state gates (the raidRivalRacket/P1.3 set — you can't run a siege from lockup, a hospital
@@ -189,7 +189,8 @@ export async function siegeSov(ch, districtId, client, h) {
   // the single daily slot to shield the hold from every OTHER attacker. Locked with the structure row.
   const cd = (await client.query(
     'SELECT cd_until FROM sov_siege_cooldowns WHERE district_id=$1 AND gang_id=$2 FOR UPDATE', [districtId, g.id])).rows[0];
-  if (cd && new Date(cd.cd_until) > new Date()) throw new GameError('cooldown', 'Your family already moved on those walls today.');
+  const wallCool = cd ? coolLeft(cd.cd_until) : 0;
+  if (wallCool) throw new GameError('cooldown', `Your family already moved on those walls — ${coolWait(wallCool)} before the next.`, { cooldownSeconds: wallCool });
   const tier = Number(s.tier);
   // Both returns below carry `siegeCost` — the figure DEBITED and LEDGERED — and NOT the flat
   // `SOV.SIEGE_COST` they used to quote. The chest scales with the target's build cost, so from tier

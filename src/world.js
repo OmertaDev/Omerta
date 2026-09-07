@@ -8,7 +8,7 @@
 // in this pillar — numbers are founder SIM sign-off levers (ground rule #1).
 import crypto from 'node:crypto';
 import { GameError, bus, assignedSoldier, soldierResult } from './game.js';
-import { WORLD_NPCS, worldNpcOf, worldRankOf, WORLD, LIVING, PACING, levelOf, effStat, cityHourOf, frontierTributePerHr, cartelUprisingOf, dayOf, soldierFxOf , jailed, hospitalized, safeHoused , SHIPMENT, usd } from './rules.js';
+import { WORLD_NPCS, worldNpcOf, worldRankOf, WORLD, LIVING, PACING, levelOf, effStat, cityHourOf, frontierTributePerHr, cartelUprisingOf, dayOf, soldierFxOf , jailed, hospitalized, safeHoused , SHIPMENT, usd , coolLeft, coolWait } from './rules.js';
 import { dbCaps } from './db.js';
 
 const uid = () => crypto.randomUUID();
@@ -33,7 +33,7 @@ const invadeCost = (garrison, fixtureMax) => Math.max(WORLD.FRONTIER.INVADE_BASE
   Math.floor(Number(fixtureMax || 0) * (WORLD.FRONTIER.INVADE_BASE_BPS || 0) / 10000),
   Math.floor(Number(garrison || 0) * WORLD.FRONTIER.INVADE_OUTBID));
 
-const cooling = (ch) => ch.world_raid_at && new Date(ch.world_raid_at) > new Date();
+const cooling = (ch) => coolLeft(ch.world_raid_at);
 
 // Lazy §7.1 strength regen toward the fixture max. Seeds the row (at max) on first touch. Returns
 // the current strength; the caller writes it back inside its own transaction (or here, under lock).
@@ -244,7 +244,8 @@ export async function raidNpc(ch, npcId, client, h) {
   if (hospitalized(ch)) throw new GameError('hosp', 'Not in any shape to run an op — see the Doc first.'); // parity with convoy/heist ambush
   const lvl = levelOf(Number(ch.respect));
   if (lvl < fixture.minLvl) throw new GameError('level', `Hitting ${fixture.name} takes level ${fixture.minLvl}.`);
-  if (ch.world_raid_at && new Date(ch.world_raid_at) > new Date()) throw new GameError('cooldown', 'Your crew needs to regroup before the next hit.');
+  const soloCool = coolLeft(ch.world_raid_at);
+  if (soloCool) throw new GameError('cooldown', `Your crew needs ${coolWait(soloCool)} to regroup before the next hit.`, { cooldownSeconds: soloCool });
   if (Number(ch.energy) < WORLD.RAID_ENERGY) throw new GameError('energy', `A raid takes ${WORLD.RAID_ENERGY} energy.`);
   if (Number(ch.ammo) < WORLD.RAID_AMMO) throw new GameError('ammo', `Bring at least ${WORLD.RAID_AMMO} rounds.`);
 
@@ -345,7 +346,8 @@ function gateRaider(ch, fixture) {
   if (jailed(ch)) throw new GameError('jailed', 'No raids from lockup.');
   if (hospitalized(ch)) throw new GameError('hosp', 'Not in any shape to run an op — see the Doc first.');
   if (safeHoused(ch)) throw new GameError('safe', "You can't run an op from a safehouse.");
-  if (cooling(ch)) throw new GameError('cooldown', 'Your crew needs to regroup before the next hit.');
+  const planCool = cooling(ch);
+  if (planCool) throw new GameError('cooldown', `Your crew needs ${coolWait(planCool)} to regroup before the next hit.`, { cooldownSeconds: planCool });
   if (levelOf(Number(ch.respect)) < fixture.minLvl) throw new GameError('level', `Hitting ${fixture.name} takes level ${fixture.minLvl}.`);
   if (Number(ch.energy) < WORLD.RAID_ENERGY) throw new GameError('energy', `A raid takes ${WORLD.RAID_ENERGY} energy.`);
   if (Number(ch.ammo) < WORLD.RAID_AMMO) throw new GameError('ammo', `Bring at least ${WORLD.RAID_AMMO} rounds.`);
@@ -442,7 +444,10 @@ export async function dismissGun(ch, raidId, client, h) {
   if (!gun) throw new GameError('no_gun', 'No hired guns on this crew to send home.');
   await client.query('DELETE FROM world_raid_members WHERE raid_id=$1 AND character_id=$2', [raidId, gun.character_id]);
   const crew = Number((await client.query('SELECT COUNT(*) n FROM world_raid_members WHERE raid_id=$1', [raidId])).rows[0].n);
-  return { ok: true, id: raidId, dismissed: true, crew, crewMax: WORLD.COOP_MAX_CREW };
+  // `fee` ships so the receipt can state the forfeit the header above describes: the merc was paid up
+  // front and the money stays spent. The HIRE line one branch away names both its price and its terms;
+  // its own undo named neither, and a title attribute is invisible on the phone the PWA targets.
+  return { ok: true, id: raidId, dismissed: true, crew, crewMax: WORLD.COOP_MAX_CREW, fee: WORLD.HIRE_FEE, refunded: 0 };
 }
 
 // POST /v1/world/raids/:id/leave — a raider walks; the LEADER walking disbands the op (no stake to refund).
@@ -501,7 +506,8 @@ export async function executeRaid(ch, raidId, client, h) {
     if (!hiredIds.has(m.id) && (Number(m.energy) < WORLD.RAID_ENERGY || Number(m.ammo) < WORLD.RAID_AMMO))
       throw new GameError('crew_not_ready', 'Every raider brings the energy and the rounds.');
   }
-  if (cooling(ch)) throw new GameError('cooldown', 'Your next raid lines up later.');
+  const goRaidCool = cooling(ch);
+  if (goRaidCool) throw new GameError('cooldown', `Your next raid lines up in ${coolWait(goRaidCool)}.`, { cooldownSeconds: goRaidCool });
 
   const now = new Date();
   const patrol = cityHourOf(now.getTime()).patrol;

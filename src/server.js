@@ -6,6 +6,7 @@ import zlib from 'node:zlib';
 import { makeDb } from './db.js';
 import { isDbDown, pingDb } from './dbhealth.js';
 import { preflight } from './preflight.js';
+import { RwaHealthError } from './rwahealtherror.js';
 import * as G from './game.js';
 import * as E from './economy.js';
 import * as S from './social.js';
@@ -106,7 +107,9 @@ import { register as registerDiplomacy } from './routes/diplomacy.js';
 import { register as registerSov } from './routes/sov.js';
 import { register as registerLeaderboards } from './routes/leaderboards.js';
 import { register as registerModTools } from './routes/modtools.js';
+import { registerRwa } from './routes/rwa.js';
 import { register as registerContent } from './routes/content.js';
+import { register as registerWorldGraph, WORLD_GRAPH_CAPABILITIES } from './routes/worldgraph.js';
 import * as Phone from './phone.js';
 import * as Mega from './megaproject.js';
 import * as Duels from './duels.js';
@@ -134,7 +137,7 @@ import { agentTurn } from './agentturn.js';
 import { postCityWire } from './citywire.js';
 import { bulletinPublic, bulletinBoard, claimBulletin } from './bulletin.js';
 import { rateLimitsEnabled, initRateLimiter, checkRateLimit, checkAuthRateLimit, checkReadLimit, checkPublicRateLimit } from './ratelimit.js';
-import { runLedgerInvariants } from './invariants.js';
+import { runLedgerInvariants, alertDrift } from './invariants.js';
 import { dayOf, cityEventOf, priceBlock, goodPriceOf, demandOf, makingsPriceOf,
          levelOf, GOODS, DRUGS, DISTRICTS, CONSTANTS, sealOf, CRIMES, GUNS, VESTS, CARS, KITCHENS, CONSUMABLES, TRADE_RANKS, M3, M4, M8, PATHS,
          RANKS,
@@ -170,6 +173,70 @@ class AgentTurnConflict extends Error {}
 // on a loopback socket in-suite); the wiring itself is pinned by a labelled source check.
 export const WS_MAX_BUFFER = Number(process.env.WS_MAX_BUFFER || 256 * 1024);
 export const wsSendable = (socket) => !!socket && (socket.bufferedAmount || 0) < WS_MAX_BUFFER;
+
+// HOW LONG A SILENT WORKER IS STILL NORMAL. The tick is hourly, so 90 minutes means it missed one.
+// Exported and shared by BOTH readers below — `/health`'s `worker.stale` and the alarm that fires
+// without being asked — because two copies of this number is how the dashboard and the alarm come to
+// disagree about whether the worker is alive.
+export const WORKER_STALE_SEC = Number(process.env.WORKER_STALE_SEC || 5400);
+
+// THE API WATCHES THE WORKER, because every alarm in the game lives on the process that can die.
+// MEASURED IN PRODUCTION, 2026-08-29: the worker went dark for 14.8 hours. `/health` reported
+// `worker.stale: true` the entire time and nobody saw it — the branch that sets it says a monitor
+// "pointed here can alarm on it", which is exactly the alarm-into-nothing shape this codebase has now
+// paid for three times (the §10.4 webhook that 400'd, the WAL archiver, the oracle keeper). A field on
+// an endpoint is not an alarm; something has to POST.
+//
+// The API is the right watcher for one reason: it is the only process that stays up when the worker
+// does not. It shouts on the SAME channel every other alarm uses (INVARIANT_WEBHOOK_URL), so the
+// founder configures nothing new, and it costs one primary-key read every 15 minutes. Latched per
+// EPISODE and it announces RECOVERY too (the archiver watchdog's discipline) — without the recovery
+// line an operator who restarts the worker cannot tell whether it worked, and a latch that never
+// unlatches is worse than none: the SECOND dark episode would be silent.
+//
+// Deliberately NOT on the worker: a process cannot alarm on being dead. And deliberately not a 503 on
+// /health either — the API is genuinely healthy, and failing its own health check would take the GAME
+// down to report that a sweep is late.
+//
+// A FUNCTION rather than a block inside the main-module guard, so the behaviour can be DRIVEN: the
+// returned `check` is the same predicate the interval runs, so a test exercises the real edges instead
+// of a copy, and without waiting on a wall clock (a sleeping test is the recorded flake shape).
+export function startWorkerWatch(pool, {
+  staleSec = WORKER_STALE_SEC,
+  everyMs = Number(process.env.WORKER_WATCH_MS || 15 * 60 * 1000),
+  alert = alertDrift,
+} = {}) {
+  let workerDarkAlerted = false;
+  const check = async () => {
+    try {
+      const hb = await pool.query('SELECT beat_at FROM worker_heartbeat WHERE id = 1');
+      if (!hb.rows[0]) return null;                  // no row yet: a fresh database, not a dead worker
+      const ageSec = Math.round((Date.now() - new Date(hb.rows[0].beat_at).getTime()) / 1000);
+      const dark = ageSec > staleSec;
+      if (dark && !workerDarkAlerted) {
+        workerDarkAlerted = true;
+        await alert(pool, [{ name: 'worker heartbeat', ok: false,
+          detail: `the worker has not beaten in ${Math.round(ageSec / 60)} minutes (hourly tick). Every `
+            + 'timed settlement and every proactive alarm — the nightly §10.4 drift monitor included — '
+            + 'is stopped. Check the worker service logs for a tick that never returned, and restart it.' }],
+        'worker');
+        return 'dark';
+      }
+      if (!dark && workerDarkAlerted) {
+        workerDarkAlerted = false;
+        await alert(pool, [{ name: 'worker heartbeat', ok: true,
+          detail: `recovered — the worker beat ${ageSec}s ago.` }], 'worker');
+        return 'recovered';
+      }
+      return null;
+    } catch {
+      return null;   // a DB blip is its own alarm (and /health's db half); never throw into the loop
+    }
+  };
+  const timer = setInterval(check, everyMs);
+  timer.unref?.();
+  return { timer, check };
+}
 
 export async function buildServer() {
   // ── PREFLIGHT (src/preflight.js) ────────────────────────────────────────────────────────────
@@ -252,6 +319,9 @@ export async function buildServer() {
 
   // THE AGENT GATEWAY — collect every mounted route (this hook fires per registration) so the
   // OpenAPI 3.1 contract at /openapi.json is auto-derived and never drifts from what's live.
+  const rwaReviewerRouteTrust = Symbol('rwa-reviewer-route-trust');
+  const isTrustedReviewerConfig = (config) => config?.authKind === 'rwaReviewerAuth'
+    && config?.rwaReviewerTrust === rwaReviewerRouteTrust;
   const routeRegistry = [];
   app.addHook('onRoute', (r) => {
     // Capture the REAL enforcement from the route's preHandler (by function name) so the OpenAPI
@@ -260,9 +330,18 @@ export async function buildServer() {
     const pre = [].concat(r.preHandler || []);
     const names = pre.map((f) => (f && f.name) || '');
     const isMod = names.includes('modAuth');
-    const hasAuth = names.includes('auth') || isMod;
+    const declaredReviewer = r.config?.authKind === 'rwaReviewerAuth';
+    const isRwaReviewer = isTrustedReviewerConfig(r.config);
+    if (declaredReviewer && !isRwaReviewer) {
+      throw new Error(`Untrusted reviewer route trust metadata: ${r.method} ${r.url}`);
+    }
+    const playerAuth = names.includes('auth');
+    const hasAuth = playerAuth || isMod || isRwaReviewer;
+    const authKind = isRwaReviewer ? 'rwaReviewerAuth' : isMod ? 'modAuth' : playerAuth ? 'auth' : null;
     const methods = Array.isArray(r.method) ? r.method : [r.method];
-    for (const m of methods) if (m !== 'HEAD' && m !== 'OPTIONS') routeRegistry.push({ method: m, url: r.url, hasAuth, isMod });
+    for (const m of methods) if (m !== 'HEAD' && m !== 'OPTIONS') routeRegistry.push({
+      method: m, url: r.url, hasAuth, isMod, isRwaReviewer, authKind,
+    });
   });
   // Exposed so tests can assert the mounted surface directly. /openapi.json is derived from the same
   // registry but deliberately omits /v1/mod, so it cannot stand in for the whole table — and the one
@@ -337,6 +416,27 @@ export async function buildServer() {
         return reply.header('content-encoding', 'gzip').send(gz);
       return reply.send(raw);
     };
+  };
+
+  // The same trick for a JSON body that is expensive to send and cheap to re-derive. /v1/rules is
+  // ~69 KB of catalog that every client fetches on boot and that changes only when a lever or a
+  // catalog does — so a repeat visit should cost a few hundred bytes, not 24 KB gzipped.
+  //
+  // It hashes PER REQUEST rather than once at boot, deliberately: the rulebook is not constant for
+  // the life of the process. `walletConnect` reads WALLETCONNECT_PROJECT_ID/CHAIN_ID out of the
+  // environment on every call, and test/chain.js mutates those after boot to prove the dormant
+  // surface — a hash frozen at boot would answer 304 with a body the client has never seen. The
+  // serialization was happening anyway; only the sha256 is new, and it buys the 304.
+  //
+  // Vary is set BEFORE the 304 branch, exactly as servePage does it: a shared cache validating a
+  // stored variant has to know which one it is holding, and a 304 that omits it can hand the
+  // gzipped bytes to a client that said it could not read them.
+  const jsonEtag = (req, reply, obj) => {
+    const body = JSON.stringify(obj);
+    const etag = '"' + crypto.createHash('sha256').update(body).digest('hex').slice(0, 16) + '"';
+    reply.type('application/json; charset=utf-8').header('etag', etag).header('Vary', 'Accept-Encoding');
+    if (req.headers['if-none-match'] === etag) return reply.code(304).send();
+    return reply.send(body);   // a string payload passes through fastify verbatim; the gzip hook compresses it
   };
 
   // ── the playable console: one static file, no build step, no new deps (public/index.html) ──
@@ -646,6 +746,7 @@ export async function buildServer() {
   });
 
   app.setErrorHandler((err, req, reply) => {
+    if (err instanceof RwaHealthError) return reply.code(400).send({ error: err.code });
     if (err instanceof G.GameError) return reply.code(400).send({ error: err.code, message: err.message, ...(err.data || {}) });
     // A bad token is a bad token — 401, never 500. Most fast-jwt errors already arrive carrying a 401,
     // but not all: FAST_JWT_INVALID_ALGORITHM (raised by the pinned `algorithms` above when a token is
@@ -780,7 +881,7 @@ export async function buildServer() {
       const hb = await pool.query('SELECT beat_at FROM worker_heartbeat WHERE id = 1');
       if (hb.rows[0]) {
         const ageSec = Math.round((Date.now() - new Date(hb.rows[0].beat_at).getTime()) / 1000);
-        body.worker = { beatAgoSeconds: ageSec, stale: ageSec > 5400 };
+        body.worker = { beatAgoSeconds: ageSec, stale: ageSec > WORKER_STALE_SEC };
       }
     } catch { /* the worker_heartbeat read failing is itself a DB issue, already covered by body.db */ }
     return { body, code };
@@ -853,6 +954,9 @@ export async function buildServer() {
         [uid(), req.ip, req.method, req.routeOptions?.url || req.url])
         .catch((e) => console.error('mod_actions audit write failed (non-fatal)', e?.message));
   };
+  registerRwa(app, {
+    pool, auth, modAuth, withCharacter: G.withCharacter, reviewerRouteTrust: rwaReviewerRouteTrust,
+  });
   // BLUE-TEAM M2: the audit log is readable back through the mod perimeter it records (the last N actions),
   // so the /admin dashboard can show who did what. A GET, so it doesn't log itself.
   app.get('/v1/mod/actions', { preHandler: modAuth }, async (req) => {
@@ -899,7 +1003,8 @@ export async function buildServer() {
   await initRateLimiter();
   const guarded = (req) => (req.method === 'POST' || req.method === 'DELETE')
     && req.url.startsWith('/v1') && req.url !== '/v1/path-quiz'
-    && !req.url.startsWith('/v1/auth') && !req.url.startsWith('/v1/mod');
+    && !req.url.startsWith('/v1/auth') && !req.url.startsWith('/v1/mod')
+    && !isTrustedReviewerConfig(req.routeOptions?.config);
   app.addHook('preHandler', async (req, reply) => {
     // E-M1: auth endpoints are excluded from the account-keyed limiter above (they're unauthenticated),
     // so throttle them per-IP — bounds guest-mint Sybil floods + X/Privy auth-fetch amplification.
@@ -930,7 +1035,8 @@ export async function buildServer() {
     // exhaustion. Route every keyless /v1 GET to the per-IP public limiter, so a new keyless route can
     // never ship unthrottled by omission (a denylist-by-default, not an allowlist).
     if (rateLimitsEnabled() && (req.method === 'GET' || req.method === 'HEAD')
-      && req.url.startsWith('/v1') && !req.url.startsWith('/v1/mod')) {
+      && req.url.startsWith('/v1') && !req.url.startsWith('/v1/mod')
+      && !isTrustedReviewerConfig(req.routeOptions?.config)) {
       let authed = true;
       try { await req.jwtVerify(); } catch { authed = false; }
       const limited = authed
@@ -1534,13 +1640,16 @@ export async function buildServer() {
   // Business Empire — the premium, acquired-later personal front layer: buy/upgrade venues that
   // farm pocket cash and double as private, lower-heat laundering. GET /v1/catalog is the public
   // discoverable catalog (also closes the audit's API-discoverability gap).
-  app.get('/v1/catalog', async () => ({ businesses: Business.catalog() }));
+  app.get('/v1/catalog', async () => ({
+    businesses: Business.catalog(),
+    worldGraph: WORLD_GRAPH_CAPABILITIES,
+  }));
   // ── the public rulebook (client discoverability — the /v1/catalog precedent, read-only) ──
   // Curated PUBLIC constants only: what the prototype UI always showed players. Server stays
   // authoritative — knowing the odds table doesn't move a single roll client-side.
   app.get('/v1/rules', async (req, reply) => {
     reply.header('cache-control', 'public, max-age=300, stale-while-revalidate=3600');
-    return ({
+    return jsonEtag(req, reply, {
     crimes: CRIMES.map((c) => ({ id: c.id, name: c.name, lvl: c.lvl, nerve: c.nerve, cash: c.cash, base: c.base, jail: c.jail })),
     respecOmr: M8.RESPEC_OMR, // stat respec cost — so The Life tab can price the tradeoff before you commit
     respecStatMin: M8.RESPEC_STAT_MIN,
@@ -1943,6 +2052,7 @@ export async function buildServer() {
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Loans.repayHouseLoan(ch, client, h)));
   registerModTools(app, { pool, auth, modAuth, closeAccountSockets });
   registerContent(app, { pool, auth, modAuth });
+  registerWorldGraph(app, { pool, auth });
   app.post('/v1/loans/square', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Loans.squareWanted(ch, client, h)));
   // buy is two-party (buyer pays the current lender, becomes the new lender): look up the seller, lock both.
@@ -2392,6 +2502,10 @@ export async function buildServer() {
     const turnId = typeof req.body?.turnId === 'string' ? req.body.turnId : '';
     const actionId = typeof req.body?.actionId === 'string' ? req.body.actionId : '';
     if (!turnId || !actionId) throw new G.GameError('invalid_turn', 'Send both turnId and actionId from the latest agent turn.');
+    // Crew recruiting mutates the Crew row. Select its lock posture from the closed, server-authored
+    // action-id shape, then still recompute and authorize the exact turn/action inside the lock.
+    // A forged matching shape can at most request the stronger lock; it grants no action authority.
+    const agentActionLocks = Crew.agentActionLockHooks(actionId);
 
     let result;
     try {
@@ -2410,12 +2524,12 @@ export async function buildServer() {
           // invented id reports unknown_action), rather than leaking an unrelated lookup result.
           result = await G.withCharacter(pool, req.user.sub, async (ch, client, h) => {
             return executeAgentAction(client, ch, h, turnId, actionId);
-          });
+          }, agentActionLocks);
         }
       } else {
         result = await G.withCharacter(pool, req.user.sub, async (ch, client, h) => {
           return executeAgentAction(client, ch, h, turnId, actionId);
-        });
+        }, agentActionLocks);
       }
     } catch (e) {
       if (!(e instanceof AgentTurnConflict)) throw e;
@@ -2827,9 +2941,12 @@ export async function buildServer() {
   app.post('/v1/crew/decline/:crewId', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Crew.declineInvite(ch, req.params.crewId, client)));
   app.post('/v1/crew/leave', { preHandler: auth }, async (req) =>
-    G.withCharacter(pool, req.user.sub, (ch, client, h) => Crew.leaveCrew(ch, client, h)));
+    G.withCharacter(pool, req.user.sub, (ch, client, h) => Crew.leaveCrew(ch, client, h),
+      Crew.CREW_FIRST_CHARACTER_LOCKS));
   app.delete('/v1/crew/member/:characterId', { preHandler: auth }, async (req) =>
-    G.withCharacter(pool, req.user.sub, (ch, client, h) => Crew.kickMember(ch, req.params.characterId, client, h)));
+    G.withCharacter(pool, req.user.sub,
+      (ch, client, h) => Crew.kickMember(ch, req.params.characterId, client, h),
+      Crew.CREW_FIRST_CHARACTER_LOCKS));
   // THE CREW HIT (step two) — the leader calls a shared target; the crew chips in via the EXISTING
   // contract board (POST /v1/streets/:id/bounty), so this sets a pointer and moves no value.
   app.post('/v1/crew/target', { preHandler: auth }, async (req) =>
@@ -2839,11 +2956,15 @@ export async function buildServer() {
   // THE ROLODEX step two — RECRUITING (the crew advertises) + join REQUESTS (a solo player asks, the
   // leader accepts). The push half of discovery; status/coordination only, zero §10.4.
   app.post('/v1/crew/recruiting', { preHandler: auth }, async (req) =>
-    G.withCharacter(pool, req.user.sub, (ch, client, h) => Crew.setRecruiting(ch, req.body?.on, client, h)));
+    G.withCharacter(pool, req.user.sub,
+      (ch, client, h) => Crew.setRecruiting(ch, req.body?.on, client, h),
+      Crew.CREW_FIRST_CHARACTER_LOCKS));
   app.post('/v1/crew/request/:crewId', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Crew.requestJoin(ch, req.params.crewId, client, h)));
   app.post('/v1/crew/request/:characterId/accept', { preHandler: auth }, async (req) =>
-    G.withCharacter(pool, req.user.sub, (ch, client, h) => Crew.acceptRequest(ch, req.params.characterId, client, h)));
+    G.withCharacter(pool, req.user.sub,
+      (ch, client, h) => Crew.acceptRequest(ch, req.params.characterId, client, h),
+      Crew.CREW_FIRST_CHARACTER_LOCKS));
   app.delete('/v1/crew/request/:characterId', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Crew.declineRequest(ch, req.params.characterId, client, h)));
   app.get('/v1/leaderboard/crews', { preHandler: auth }, async () => Crew.crewLeaderboard(pool));
@@ -2910,7 +3031,7 @@ export async function buildServer() {
   // ── PRIME TIME — the nightly synchronous window: answer the call during tonight's hour. Co-present
   // (the value reward scales with turnout, settled at close); the mechanic + mode rotate by the seed. ──
   app.get('/v1/primetime', { preHandler: auth }, async (req) =>
-    G.readCharacter(pool, req.user.sub, (ch, client) => Prime.primeTimeBoard(client, ch)));
+    G.readCharacter(pool, req.user.sub, (ch, client, h) => Prime.primeTimeBoard(client, ch, h)));
   app.post('/v1/primetime/answer', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Prime.answerCall(ch, client, h)));
   app.post('/v1/primetime/round', { preHandler: auth }, async (req) =>   // HAPPY HOUR — buy a round (repeatable)
@@ -3361,6 +3482,10 @@ if (process.argv[1] && process.argv[1].endsWith('server.js')) {
   // never the thing that ends us). Proven in tools/chaos.js scenario 6: a request BLOCKED on a held
   // row lock when SIGTERM lands still gets its answer, and a connection attempted after it is
   // refused — measured, not assumed.
+  // THE API WATCHES THE WORKER (see startWorkerWatch above for why the API is the one that shouts).
+  startWorkerWatch(app.pool);
+
+
   let draining = false;
   const drain = (sig) => {
     if (draining) return;

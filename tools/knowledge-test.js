@@ -23,6 +23,18 @@ const finalCallbackCases = [
     if (!ready) return null;
     return arenaBoard(pool);
   }`, 'arenaBoard', 'final top-level return after an earlier guard'],
+  [[
+    'async () => {',
+    "  const icon = '🥊';",
+    '  return arenaBoard(pool);',
+    '}',
+  ].join('\n'), 'arenaBoard', 'astral string preserves LF callback offsets'],
+  [[
+    'async () => {',
+    "  const icon = '🥊';",
+    '  return arenaBoard(pool);',
+    '}',
+  ].join('\r\n'), 'arenaBoard', 'astral string preserves CRLF callback offsets'],
   [`async () => {
     if (ready) return arenaBoard(pool);
   }`, null, 'conditional return is not a final top-level delegation'],
@@ -181,7 +193,44 @@ assert(graph.census.byNodeType.Contract >= 18, 'the contract inventory unexpecte
 assert(graph.census.byNodeType.Commit >= 800, 'the Git lineage unexpectedly collapsed');
 assert(graph.census.byNodeType.PullRequest >= 120, 'the GitHub snapshot unexpectedly collapsed');
 
+// THE TOOLCHAIN-INDEPENDENT TIMESTAMP. graph.json is asserted byte-stable, and git
+// renders a ZERO UTC offset differently by version: 2.43 emits `+00:00` where 2.55
+// emits `Z`. Non-UTC offsets (`-04:00`) are identical in both, so the divergence is
+// specifically the zero offset — which means whoever regenerates last wins and the
+// other environment fails a drift check on formatting alone, with nothing wrong.
+// Assert the canonical form on every date the generator lifts out of git.
+const commitDates = graph.nodes.filter((n) => n.type === 'Commit' && n.date)
+  .map((n) => [`Commit ${n.key}`, n.date]);
+const artifactDates = model.artifacts.filter((a) => a.lastChangedAt).map((a) => [a.path, a.lastChangedAt]);
+assert(commitDates.length >= 800, 'THE TOOLCHAIN-INDEPENDENT TIMESTAMP read only '
+  + `${commitDates.length} commit date(s) — the commit half of this check is measuring nothing.`);
+assert(artifactDates.length >= 1000, 'THE TOOLCHAIN-INDEPENDENT TIMESTAMP read only '
+  + `${artifactDates.length} artifact date(s) — the artifact half of this check is measuring nothing.`);
+const gitDates = [...commitDates, ...artifactDates];
+const offsetDates = gitDates.filter(([, date]) => /\+00:00$/.test(date));
+assert.deepEqual(offsetDates.slice(0, 5), [], 'a git-sourced date carries `+00:00` rather than `Z`. '
+  + 'That is git 2.43 rendering a zero UTC offset; git 2.55 renders the same instant as `Z`, so these '
+  + 'bytes make graph.json drift by toolchain rather than by content:\n  '
+  + offsetDates.slice(0, 5).map(([where, date]) => `${where}: ${date}`).join('\n  '));
+assert(gitDates.some(([, date]) => date.endsWith('Z')), 'THE TOOLCHAIN-INDEPENDENT TIMESTAMP '
+  + 'found no UTC date at all, so it governs nothing on this clone.');
+
 const routeById = new Map(model.routes.map((route) => [`${route.method} ${route.url}`, route]));
+const worldGraphRoutes = model.routes.filter(({ url }) => url.startsWith('/v1/worldgraph'));
+assert.equal(worldGraphRoutes.length, 20,
+  'the knowledge graph must retain the complete Phase 1 world-graph route surface');
+assert.equal(worldGraphRoutes.every(({ access }) => access === 'authenticated'), true,
+  'every Phase 1 world-graph route must be represented as authenticated');
+const worldGraphMutations = worldGraphRoutes.filter(({ method }) => method === 'POST');
+assert.equal(worldGraphMutations.length, 13,
+  'the Phase 1 world-graph route surface has exactly thirteen mutations');
+assert.equal(worldGraphMutations.every(({ mutationAuthenticated, idempotentMutation }) => (
+  mutationAuthenticated === true && idempotentMutation === true
+)), true, 'every Phase 1 mutation must derive both auth and idempotency from mutationOptions(auth)');
+assert.equal(worldGraphRoutes.filter(({ method }) => method === 'GET')
+  .every(({ mutationAuthenticated, idempotentMutation }) => (
+    mutationAuthenticated === false && idempotentMutation === false
+  )), true, 'world-graph reads are authenticated without being mislabeled as mutation wrappers');
 const contentRouteProvenance = [
   ['GET /v1/content', 'authenticated', 'contentBoard'],
   ['POST /v1/content/:namespace/instances', 'authenticated', 'createContentInstance'],
@@ -249,8 +298,61 @@ for (const route of ['POST /v1/auth/x', 'POST /v1/auth/privy']) {
 }
 assert.equal(model.routes.filter((route) => route.method === 'GET' && route.url === '/').length, 1,
   'dynamic route concatenations must not be coerced into an additional literal GET / registration');
-assert.equal(repository.currentBranch, storedRepository.currentBranch,
-  'knowledge checks must not drift when the same revision is checked from a named or detached branch');
+// This used to byte-compare the LIVE build's currentBranch against the committed artifact's, with the
+// message "must not drift when the same revision is checked from a named or detached branch". That
+// property is real, but it is a property of `currentBranchForSnapshot` and it holds only where that
+// function says it holds: a generated-only or synthetic-PR head reads the STORED branch (asserted
+// above, from both a named and a detached checkout), while an ordinary authored commit deliberately
+// FOLLOWS the checkout, so a branch describes itself. Comparing the live build against the artifact
+// therefore demanded the checkout be standing on `main` — false by design for every authored commit on
+// every branch, which is why each real-source head on a PR reddened while each regeneration head
+// passed. The git-date block below is the same lesson one field over: currentBranch is a function of
+// the CHECKOUT rather than of the REVISION, so assert the PROPERTY rather than byte-comparing it.
+assert(repository.currentBranch, 'the artifact must never carry an empty currentBranch — a bare "" '
+  + 'reads as "no branch" where the resolver promises "(detached)"');
+assert.equal(currentBranchForSnapshot({
+  currentBranch: 'a-named-branch', storedBranch: 'main', snapshot: { generatedOnly: false, syntheticPullRequestMerge: false },
+}), 'a-named-branch',
+  'an ordinary authored commit must describe the branch it is checked out on, not the branch the '
+  + 'committed artifact was generated on — the stored branch is a substitute for a checkout that has '
+  + 'no name, never an assertion that every checkout is the artifact\'s own');
+assert.equal(currentBranchForSnapshot({
+  currentBranch: '', storedBranch: '', snapshot: { generatedOnly: true },
+}), '(detached)',
+  'a detached checkout with nothing stored to fall back on must say so rather than reporting empty');
+
+// The same rule one field over, and it is the reason CI could not agree with a developer's machine:
+// git renders an ISO-strict UTC date as `+00:00` up to 2.43 and as `Z` from 2.55, so every commit
+// date in the graph used to be a function of the checkout's git binary. Byte-compared artifacts make
+// that a drift failure with nothing changed. Assert the PROPERTY rather than the normalizer: every
+// timestamp the graph carries is canonical UTC. Both floors matter and fail differently — the first
+// catches a scan that has stopped finding timestamps at all (a clean bill of health over nothing),
+// the second that the git-derived fields specifically are still present and still covered.
+{
+  const timestamps = [];
+  const walk = (value, path) => {
+    if (Array.isArray(value)) { value.forEach((entry, i) => walk(entry, `${path}[${i}]`)); return; }
+    if (value && typeof value === 'object') {
+      for (const [key, entry] of Object.entries(value)) walk(entry, path ? `${path}.${key}` : key);
+      return;
+    }
+    if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(value)) {
+      timestamps.push({ path, value });
+    }
+  };
+  walk(JSON.parse(fs.readFileSync(path.join(root, 'knowledge', 'generated', 'graph.json'), 'utf8')), '');
+  assert(timestamps.length >= 500, `only ${timestamps.length} timestamps scanned in graph.json — a scan `
+    + 'that finds nothing reads exactly like a graph with no environment-dependent dates in it');
+  const gitDerived = timestamps.filter((t) => /(?:\.date|lastChangedAt)$/.test(t.path));
+  assert(gitDerived.length >= 500, `only ${gitDerived.length} git-derived commit dates found — this `
+    + 'check exists for those fields specifically, so losing sight of them is losing the check');
+  const offset = timestamps.filter((t) => !t.value.endsWith('Z'));
+  assert.equal(offset.length, 0, `${offset.length} timestamp(s) in graph.json carry a local UTC offset `
+    + 'rather than canonical Z, so the artifact is a function of the checkout\'s git version rather '
+    + `than of the revision — first at ${offset[0]?.path} = ${offset[0]?.value}`);
+  console.log(`\u2713 checkout stability: all ${timestamps.length} graph timestamps are canonical UTC `
+    + `(${gitDerived.length} read from git), so regenerating under a different git version cannot drift them`);
+}
 
 for (const artifact of graph.nodes.filter((n) => n.type === 'Artifact')) {
   assert(artifact.version, `${artifact.key} has no version`);
@@ -291,9 +393,29 @@ for (const [name, expected] of Object.entries(outputs)) {
     const expectedLines = expected.split('\n');
     let line = 0;
     while (actualLines[line] === expectedLines[line] && line < Math.max(actualLines.length, expectedLines.length)) line += 1;
-    assert.fail(`${name} drifted; run npm run knowledge; first difference at line ${line + 1}\n`
+    // MEASURED, because the obvious recipe is half of one: the artifacts pin sourceRevision AND
+    // worktreeDirty, so they describe the tree EXACTLY as it stood when they were built. `npm run
+    // knowledge` alone does clear this locally — and it bakes worktreeDirty:true, which must never
+    // be committed. For a commit the order is forced: land the source change first (clean tree),
+    // then regenerate, then commit the artifacts ALONE. A commit whose changed paths are entirely
+    // under knowledge/generated/ is read as the snapshot of its PARENT (sourceRevisionForSnapshot),
+    // which is the only way an artifact can describe a commit it is contained in. Push the pair
+    // together or CI is red on the authored commit, which cannot carry its own hash.
+    //
+    // AND THE MERGE CASE, which is the same rule one step on and cost a silently untested PR
+    // (2026-08-30). main takes an automated artifact-refresh commit after every merge, so ANY branch
+    // carrying its own regenerated pair conflicts here by construction — every conflict a generated
+    // file, none of them hand-written. The trap is not the conflict: GitHub runs NO workflows on a
+    // dirty PR, and a PR with no checks reads on its own page exactly like one whose checks passed.
+    // Neither side of such a conflict is correct, because the artifacts are a function of the MERGED
+    // history: resolve with a placeholder (either side), commit the merge, then regenerate on the
+    // clean merged tree and commit the artifacts ALONE, so the protocol above still holds.
+    assert.fail(`${name} drifted; first difference at line ${line + 1}\n`
       + `committed: ${JSON.stringify(actualLines[line] ?? '<EOF>')}\n`
-      + `generated: ${JSON.stringify(expectedLines[line] ?? '<EOF>')}`);
+      + `generated: ${JSON.stringify(expectedLines[line] ?? '<EOF>')}\n`
+      + 'fix: `npm run knowledge` clears this locally but stamps worktreeDirty:true — do not commit '
+      + 'that. To commit: land the source change first, regenerate on the clean tree, then commit the '
+      + 'artifacts ALONE (a generated-only commit describes its PARENT) and push both together.');
   }
 }
 
