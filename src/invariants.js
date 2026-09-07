@@ -3,7 +3,16 @@
 // in the transactions ledger. Any drift beyond $1 (or one unit) — or any ledger
 // row with a reason outside the known vocabulary — is an alert.
 import crypto from 'node:crypto';
+import { dbCaps } from './db.js';
+import { withPhase2Read } from './content/phase2-transactions.js';
+import { withItemRead } from './items.js';
+import { collectDefinitionChecks } from './content/definition-invariants.js';
 import { DESK, DESK_RECYCLE_REASON } from './rules.js';
+import {
+  PHASE1_HARDENING_CASH_COST,
+  PHASE1_HARDENING_CASH_REASON,
+  PHASE1_HARDENING_RECIPE_ID,
+} from './content/phase1-policy.js';
 
 // The complete reason vocabulary, by currency. A row whose reason matches no
 // prefix here is an unenumerated faucet/sink — the loudest possible §10.4 alarm.
@@ -138,26 +147,24 @@ const one = async (pool, q) => Number((await pool.query(q)).rows[0].s);
 // DELTA instead — but every read still fired the production alarm, burying the actual ✓/✗ lines under
 // 🚨 banners that are true and irrelevant. A harness measuring is not a production drift; the alarm's
 // job is production, so it stays on by default and only a deliberate caller turns it off.
-export async function runLedgerInvariants(pool, { alert = true } = {}) {
-  let client = pool.connect ? await pool.connect() : null;
-  if (client) {
-    // best-effort snapshot — real Postgres runs every read in one MVCC snapshot; pg-mem (single-
-    // threaded, no concurrency to tear a read) can't parse the isolation syntax, so fall back cleanly.
-    try { await client.query('BEGIN ISOLATION LEVEL REPEATABLE READ, READ ONLY'); }
-    catch { try { client.release(); } catch { /* gone */ } client = null; }
-  }
+export async function runLedgerInvariants(pool, { alert = true, activationPolicy = null } = {}) {
+  let client, res;
   try {
-    const res = await collectLedgerChecks(client || pool);
+    if (dbCaps.skipLocked) {
+      client = await pool.connect();
+      await client.query('BEGIN ISOLATION LEVEL REPEATABLE READ, READ ONLY');
+    }
+    res = await withPhase2Read(client || pool, (q) => withItemRead(q, (itemClient) => collectLedgerChecks(itemClient, activationPolicy)));
     if (client) await client.query('COMMIT');
-    if (alert && !res.ok) await alertDrift(pool, res.checks.filter((c) => !c.ok));
-    return res;
   } catch (e) {
     if (client) { try { await client.query('ROLLBACK'); } catch { /* already gone */ } }
     throw e;
   } finally { if (client) client.release(); }
+  if (alert && !res.ok) await alertDrift(pool, res.checks.filter((c) => !c.ok));
+  return res;
 }
 
-async function collectLedgerChecks(pool) {
+async function collectLedgerChecks(pool, activationPolicy) {
   const checks = [];
   const push = (name, lhs, rhs, tolerance = 1, extra = {}) =>
     checks.push({ name, lhs: Math.round(lhs * 1e6) / 1e6, rhs: Math.round(rhs * 1e6) / 1e6,
@@ -425,8 +432,53 @@ async function collectLedgerChecks(pool) {
   const aucTake = -(await sum(pool, "currency='omr' AND reason='auction:take'"));
   push('auction escrow', auctionEscrow, aucBids - aucRefunds - aucWins - aucConsign - aucTake, 0.001);
 
-  // (e) CAR CONSERVATION: boost is the only faucet; melt, fence, and death the only
-  // sinks (death events carry the destroyed fleet size in telemetry).
+  // (e) CAR CONSERVATION: boost/resident grants are the faucets; melt, fence, death,
+  // resident retirement, and a completed graph-salvage guard are the sinks. Salvage is
+  // deliberately cashless, so its completed logical mutation guard is the durable authority
+  // instead of a transaction row. Read only the server result: the request digest is opaque and
+  // must never become a client-nominated car-sink counter.
+  const salvageGuardRows = (await pool.query(
+    `SELECT idempotency_key,result_json FROM item_mutation_guards
+      WHERE mutation_kind='salvage_car'
+        AND result_json IS NOT NULL AND completed_at IS NOT NULL`,
+  )).rows;
+  const salvageGuardKeys = new Set();
+  const salvagedCarIds = new Set();
+  const salvageGuardIssues = [];
+  for (const row of salvageGuardRows) {
+    const key = String(row.idempotency_key || '');
+    let result;
+    try {
+      result = typeof row.result_json === 'string'
+        ? JSON.parse(row.result_json) : row.result_json;
+    } catch {
+      salvageGuardIssues.push(`${key || '<missing-key>'}:invalid_json`);
+      continue;
+    }
+    const carId = result?.car?.id;
+    const carInputs = Array.isArray(result?.inputs)
+      ? result.inputs.filter((input) => input?.assetType === 'car') : [];
+    const input = carInputs[0];
+    const validCarId = typeof carId === 'string' && carId.length >= 1 && carId.length <= 200
+      && carId.trim() === carId;
+    const valid = result && typeof result === 'object' && !Array.isArray(result)
+      && result.ok === true && result.kind === 'salvage_car'
+      && validCarId
+      && Array.isArray(result.inputs) && result.inputs.length === 1
+      && carInputs.length === 1 && input?.id === carId && input?.quantity === 1
+      && result.cashCost === 0;
+    if (!valid) {
+      salvageGuardIssues.push(`${key || '<missing-key>'}:invalid_result`);
+      continue;
+    }
+    if (salvagedCarIds.has(carId)) salvageGuardIssues.push(`${key}:duplicate_car:${carId}`);
+    salvageGuardKeys.add(key);
+    salvagedCarIds.add(carId);
+  }
+  const salvageCarSinks = salvageGuardKeys.size;
+  push('world graph salvage car audit', salvageGuardIssues.length, 0, 0,
+    { logicalSinks: salvageCarSinks, carIds: [...salvagedCarIds].sort(),
+      issues: salvageGuardIssues.sort() });
   const carsHeld = await one(pool, 'SELECT COUNT(*) s FROM cars');
   const boosts = await one(pool, "SELECT COUNT(*) s FROM rng_audit WHERE action='gta' AND outcome='success'");
   const melts = await one(pool, "SELECT COUNT(*) s FROM transactions WHERE reason='melt' AND currency='ammo' AND character_id IS NOT NULL");
@@ -440,7 +492,9 @@ async function collectLedgerChecks(pool) {
   // STOLEN resident car just changes hands (rows conserve). PvP theft itself moves rows, never counts.
   const npcCarGrants = await one(pool, "SELECT COUNT(*) s FROM rng_audit WHERE action='npc:car' AND outcome='grant'");
   const npcCarRetires = await one(pool, "SELECT COUNT(*) s FROM rng_audit WHERE action='npc:car' AND outcome='retire'");
-  push('car conservation', carsHeld, boosts + npcCarGrants - melts - fences - deathCars - npcCarRetires, 0);
+  push('car conservation', carsHeld,
+    boosts + npcCarGrants - melts - fences - deathCars - npcCarRetires - salvageCarSinks, 0,
+    { salvageCarSinks });
 
   // (f) CONTRABAND & AMMO: characters + exchange escrow (+ the family armories);
   // ammo starts at 25/character, crates at 0.
@@ -703,6 +757,216 @@ async function collectLedgerChecks(pool) {
   );
   push('agent referral claim ledger', paidAgentClaims, agentReferralLedger, 0);
 
+  // PHASE 1 WORLD-GRAPH INVENTORY. These are deliberately ledger identities, not row-shape
+  // assertions. The schema prevents negative stacks and duplicate item IDs; this reconciles the
+  // live custody rows against the append-only mutation history so a direct write, missing event, or
+  // one-way escrow transition is loud even when every individual row still satisfies its CHECKs.
+  const stackRows = (await pool.query(
+    `SELECT owner_scope,owner_id,template_id,quality,SUM(quantity) quantity
+       FROM item_stacks GROUP BY owner_scope,owner_id,template_id,quality`,
+  )).rows;
+  const stackEvents = (await pool.query(
+    `SELECT event_kind,template_id,quality,quantity_delta,
+            from_owner_scope,from_owner_id,to_owner_scope,to_owner_id
+       FROM item_events WHERE event_kind IN ('stack_granted','stack_consumed')`,
+  )).rows;
+  // Opaque ids and template ids may themselves contain colons, so a delimited string is not a
+  // collision-free ledger key. JSON's tuple encoding preserves all four identity boundaries.
+  const stackKey = (scope, id, template, quality) => JSON.stringify([
+    scope, id, template, quality,
+  ]);
+  const heldStacks = new Map(stackRows.map((row) => [
+    stackKey(row.owner_scope, row.owner_id, row.template_id, row.quality), Number(row.quantity),
+  ]));
+  const eventStacks = new Map();
+  for (const event of stackEvents) {
+    const grant = event.event_kind === 'stack_granted';
+    const key = stackKey(
+      grant ? event.to_owner_scope : event.from_owner_scope,
+      grant ? event.to_owner_id : event.from_owner_id,
+      event.template_id,
+      event.quality,
+    );
+    eventStacks.set(key, (eventStacks.get(key) || 0) + Number(event.quantity_delta));
+  }
+  const stackIssues = [...new Set([...heldStacks.keys(), ...eventStacks.keys()])]
+    .filter((key) => (heldStacks.get(key) || 0) !== (eventStacks.get(key) || 0))
+    .sort();
+  push('world graph stack conservation', stackIssues.length, 0, 0, { issues: stackIssues });
+
+  const itemRows = (await pool.query(
+    `SELECT id,template_id,owner_scope,owner_id,state,consumed_at
+       FROM item_instances ORDER BY id`,
+  )).rows;
+  const uniqueEvents = (await pool.query(
+    `SELECT sequence,item_id,event_kind,provenance_kind,template_id,quality,
+            from_owner_scope,from_owner_id,to_owner_scope,to_owner_id
+       FROM item_events WHERE item_id IS NOT NULL ORDER BY sequence`,
+  )).rows;
+  const custodyRows = (await pool.query(
+    `SELECT item_id,owner_scope,operation_id,item_state,depositor_scope,depositor_id
+       FROM operation_escrow ORDER BY item_id`,
+  )).rows;
+  const eventsByItem = new Map();
+  for (const event of uniqueEvents) {
+    if (!eventsByItem.has(event.item_id)) eventsByItem.set(event.item_id, []);
+    eventsByItem.get(event.item_id).push(event);
+  }
+  const custodyByItem = new Map(custodyRows.map((row) => [row.item_id, row]));
+  const itemById = new Map(itemRows.map((row) => [row.id, row]));
+  const itemIssues = [];
+  const creationKinds = new Set(['crafted', 'salvaged', 'awarded', 'imported']);
+  const escrowKinds = new Set(['used_in_mystery', 'used_in_operation']);
+  const eventOwner = (event, side) => ({
+    scope: event[`${side}_owner_scope`], id: event[`${side}_owner_id`],
+  });
+  const sameOwner = (left, right) => Boolean(left && right
+    && left.scope === right.scope && left.id === right.id);
+  const emptyOwner = (owner) => owner.scope == null && owner.id == null;
+  const liveOwner = (owner) => ['character', 'account'].includes(owner.scope)
+    && typeof owner.id === 'string' && owner.id.length > 0;
+  for (const item of itemRows) {
+    const history = eventsByItem.get(item.id) || [];
+    const created = history.filter(({ event_kind: kind }) => kind === 'created');
+    const custody = custodyByItem.get(item.id);
+    if (created.length !== 1 || history[0]?.event_kind !== 'created') {
+      itemIssues.push(`${item.id}:creation_order`);
+    }
+
+    // Replay every event as a state machine. Checking only creation + latest lets a forged middle
+    // transfer disappear under a later valid-looking event, which is precisely the history an NFT
+    // provenance digest would trust. Invalid transitions do not advance the derived state, making
+    // every later from-owner claim prove continuity from the last valid event.
+    let derivedState = 'absent';
+    let derivedOwner = null;
+    let escrow = null;
+    let terminal = false;
+    for (let index = 0; index < history.length; index++) {
+      const event = history[index];
+      const from = eventOwner(event, 'from');
+      const to = eventOwner(event, 'to');
+      const issue = (kind) => itemIssues.push(`${item.id}:${kind}:${event.sequence}`);
+      if (event.template_id !== item.template_id) issue('template_chain');
+      if (event.quality !== 'standard') issue('unique_quality');
+      if (terminal) {
+        issue('post_consume');
+        continue;
+      }
+      switch (event.event_kind) {
+        case 'created':
+          if (index !== 0 || derivedState !== 'absent' || !emptyOwner(from)
+            || !liveOwner(to) || !creationKinds.has(event.provenance_kind)) {
+            issue('invalid_created');
+            break;
+          }
+          derivedState = 'active';
+          derivedOwner = to;
+          break;
+        case 'transferred':
+          if (derivedState !== 'active' || !sameOwner(from, derivedOwner)
+            || !liveOwner(to) || sameOwner(from, to)
+            || event.provenance_kind !== 'transferred') {
+            issue('invalid_transfer');
+            break;
+          }
+          derivedOwner = to;
+          break;
+        case 'escrowed':
+          if (derivedState !== 'active' || !sameOwner(from, derivedOwner)
+            || to.scope !== 'operation' || typeof to.id !== 'string' || !to.id
+            || !escrowKinds.has(event.provenance_kind)) {
+            issue('invalid_escrow');
+            break;
+          }
+          derivedState = 'escrowed';
+          derivedOwner = to;
+          escrow = { operationId: to.id, depositor: from };
+          break;
+        case 'released':
+          if (derivedState !== 'escrowed' || !escrow
+            || !sameOwner(from, derivedOwner) || from.scope !== 'operation'
+            || from.id !== escrow.operationId || !sameOwner(to, escrow.depositor)
+            || event.provenance_kind !== 'transferred') {
+            issue('invalid_release');
+            break;
+          }
+          derivedState = 'active';
+          derivedOwner = to;
+          escrow = null;
+          break;
+        case 'consumed':
+          if (!['active', 'escrowed'].includes(derivedState)
+            || !sameOwner(from, derivedOwner) || !emptyOwner(to)
+            || event.provenance_kind !== 'consumed') {
+            issue('invalid_consume');
+            break;
+          }
+          derivedState = 'consumed';
+          terminal = true;
+          escrow = null;
+          break;
+        default:
+          issue('unknown_event');
+      }
+    }
+
+    if (derivedState !== item.state
+      || !sameOwner(derivedOwner, { scope: item.owner_scope, id: item.owner_id })) {
+      itemIssues.push(`${item.id}:final_state`);
+    }
+    if ((derivedState === 'consumed') !== (item.consumed_at != null)) {
+      itemIssues.push(`${item.id}:consumed_time`);
+    }
+    if (derivedState === 'escrowed') {
+      if (!escrow || !custody || custody.owner_scope !== 'operation'
+        || custody.item_state !== 'escrowed' || custody.operation_id !== escrow.operationId
+        || custody.depositor_scope !== escrow.depositor.scope
+        || custody.depositor_id !== escrow.depositor.id) {
+        itemIssues.push(`${item.id}:current_escrow`);
+      }
+    } else if (custody) itemIssues.push(`${item.id}:stale_escrow`);
+  }
+  for (const custody of custodyRows) {
+    if (!itemById.has(custody.item_id)) itemIssues.push(`${custody.item_id}:orphan_escrow`);
+  }
+  for (const [itemId] of eventsByItem) {
+    if (!itemById.has(itemId)) itemIssues.push(`${itemId}:orphan_event`);
+  }
+  push('world graph unique custody and provenance', itemIssues.length, 0, 0,
+    { issues: [...new Set(itemIssues)].sort() });
+
+  // The only Phase 1 cash movement is the exact $300 hardening sink. A completed craft guard is the
+  // exactly-once logical action; its matching cash row is the value audit. Mystery and operation
+  // mutations have no currency adapter, and any OMR row using their/crafting vocabulary is a hard
+  // boundary violation rather than a new mint category.
+  const craftGuards = (await pool.query(
+    `SELECT idempotency_key,result_json FROM item_mutation_guards
+      WHERE mutation_kind='craft' AND result_json IS NOT NULL`,
+  )).rows;
+  const hardeningGuards = craftGuards.filter((row) => {
+    try {
+      const result = typeof row.result_json === 'string' ? JSON.parse(row.result_json) : row.result_json;
+      return result?.recipe?.recipeId === PHASE1_HARDENING_RECIPE_ID;
+    } catch { return false; }
+  }).length;
+  const hardeningSink = -(await sum(pool,
+    "currency='cash' AND reason='craft:recipe:hardened_steel'"));
+  push('world graph hardening cash sink', hardeningSink,
+    hardeningGuards * PHASE1_HARDENING_CASH_COST, 0);
+  const graphCurrencyRows = (await pool.query(
+    `SELECT currency,amount,reason FROM transactions
+      WHERE reason LIKE 'craft:recipe:%'
+         OR reason LIKE 'mystery:%'
+         OR reason LIKE 'operation:%'`,
+  )).rows;
+  const graphCurrencyIssues = graphCurrencyRows.filter((row) => (
+    row.currency !== 'cash'
+      || row.reason !== PHASE1_HARDENING_CASH_REASON
+      || Number(row.amount) !== -PHASE1_HARDENING_CASH_COST
+  )).map((row) => `${row.currency}:${row.reason}:${row.amount}`);
+  push('world graph currency boundary', graphCurrencyIssues.length, 0, 0,
+    { issues: graphCurrencyIssues.sort() });
+
   // (g) UNKNOWN REASONS — any row outside the vocabulary is an unenumerated faucet/sink
   const unknown = [];
   for (const [cur, prefixes] of Object.entries(KNOWN_REASONS)) {
@@ -712,6 +976,7 @@ async function collectLedgerChecks(pool) {
   }
   push('reason vocabulary', unknown.length, 0, 0, { unknown });
 
+  checks.push(...await collectDefinitionChecks(pool, activationPolicy));
   const ok = checks.every((c) => c.ok);
   return { ok, checks }; // alerting is done by the runLedgerInvariants snapshot wrapper (on the pool)
 }

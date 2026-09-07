@@ -266,6 +266,7 @@ assert.equal(undeclared.length, 0,
 // Every collect* action must be classified. EXEMPT needs a reason, so "it was inconvenient" cannot
 // pass as one.
 const COLLECT_EXEMPT = {
+  collectDefinitionChecks: 'read-only offline Phase 2 registry audit inside the ledger snapshot; no player collection, income or mutation authority',
   collectContentSource: 'authored salvage emits only gameplay-inert exact-hash lots; the capability '
     + 'validator admits trade only through the separate cashless, same-hash barter manifest, while the '
     + 'source mutation itself enforces location, finite global budget, per-account epoch, and ownership caps',
@@ -3331,6 +3332,18 @@ scopedSocialContext = async function(db) {
     'rwahealthclearance.js:CREATE_REQUESTS': 'cache: per-request-object marker, scoped to the request being served',
     'rwahealthclearance.js:SUBMISSION_REQUESTS': 'cache: per-request-object marker, scoped to the request being served',
     'rwahealthclearance.js:READ_REQUESTS': 'cache: per-request-object marker, scoped to the request being served',
+    'items.js:ITEM_TRANSACTIONS': 'cache: per-client active-transaction marker, scoped to the request being served',
+    'items.js:MUTATION_CONTEXTS': 'cache: per-opaque-context mutation authority, scoped to its active transaction',
+    'crafting.js:CRAFTING_CONTEXTS': 'cache: per-context-object authenticity marker; every box recognizes only contexts it creates',
+    'crafting.js:CRAFTING_DEFINITIONS': 'cache: immutable normalized recipes keyed by each locally authenticated context object',
+    'mysteries.js:CONTEXTS': 'cache: per-context-object authenticity marker; every box recognizes only contexts it creates',
+    'operations.js:CONTEXTS': 'cache: per-context-object authenticity marker; every box recognizes only contexts it creates',
+    'worldgraph.js:WORLD_GRAPH_REGISTRIES': 'cache: per-registry-object authenticity marker; every box recognizes its own immutable registries',
+    'content/discovery.js:DISCOVERED_PACKAGES': 'cache: per-descriptor authenticity marker; every box recognizes only descriptors its own walker created',
+    'content/phase2-transactions.js:CONTEXTS': 'cache: per-client active callback authority, matched to its async scope; PostgreSQL transactions and namespace row locks supply cross-process serialization',
+    'content/artifact-storage.js:VERIFIED': 'cache: per-opaque-artifact verification result tied to its active client; sealed bytes and exact memberships are persisted in PostgreSQL',
+    'content/activation-policy.js:POLICIES': 'cache: immutable trusted operator configuration keyed by locally issued opaque policies; every process brands its own admitted configuration',
+    'content/artifacts.js:SELECTIONS': 'cache: one-use replacement authority bound to the exact active callback, client and newly appended event; PostgreSQL owns durable events and selections',
     'v4oraclekeeper.js:IN_FLIGHT_WINDOWS': 'db-backstopped: same-process guard; the DB primary key is the cross-process guard (said at the site)',
     'auth.js:guestBootstrapLocks': 'db-backstopped: a process-local queue for same-process retries; the unique index is the cross-process backstop (said at the site)',
     'ratelimit.js:buckets': 'shared: N instances = N× every limit, unless REDIS_URL is set',

@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url';
 import { DataType, newDb } from 'pg-mem';
 import { columnMigrations, migrateColumns, registerPgMemCompatibility } from '../src/db.js';
 import * as dbModule from '../src/db.js';
-import { srcText } from './lib/srcfiles.js';
+import { srcText, walkSrc } from './lib/srcfiles.js';
 
 const SCHEMA = fs.readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'schema.sql'), 'utf8');
 
@@ -343,6 +343,7 @@ for (const need of [
   'ALTER TABLE characters ADD COLUMN IF NOT EXISTS heat_exposure NUMERIC NOT NULL DEFAULT 0',
   'ALTER TABLE commission_votes ADD COLUMN IF NOT EXISTS standing',
   'ALTER TABLE gang_members ADD COLUMN IF NOT EXISTS joined_at',
+  "ALTER TABLE item_events ADD COLUMN IF NOT EXISTS quality TEXT NOT NULL DEFAULT 'standard'",
 ]) assert(stmts.some((s) => s.startsWith(need)), `migration must cover: ${need}`);
 // column-level PRIMARY KEY is stripped from the generated def (the ADD COLUMN is always safe)
 const idStmt = stmts.find((s) => s.startsWith('ALTER TABLE characters ADD COLUMN IF NOT EXISTS id '));
@@ -573,6 +574,8 @@ const DISPOSITION = {
   poker_ring_seats: 'special', // RING POKER: wipeRingAtDeath folds the seat + BURNS the stack (casino:ring:death) under the table lock — never a bare DELETE (the stack is escrowed cash)
   chat_messages: 'log', // troll-box lines keep their name snapshot — a dead man's words stand (7d worker retention)
   nft_reimports: 'log', // NFT RE-IMPORT (Option A): a chain-event audit record keyed by the log ref. `applied_character` RECORDS where the re-created car went (it dies via the normal cars estate path); this record persists past that death — the chat_messages precedent.
+  world_operation_roles: 'ledger', // pinned assignment: a dead assignee invalidates/abandons the operation; replacing the ID would let an heir impersonate the role
+  world_operation_contributions: 'ledger', // immutable participation audit; the operation close path returns escrow and preserves who contributed
   // ── the `%_character` half (audit F4): sixteen tables that scope themselves by a named role rather
   // than by `character_id`, and were invisible to this guard until it learned the suffix. Every one is
   // handled today — that is precisely why the blind spot mattered: nothing was ENFORCING it.
@@ -667,6 +670,298 @@ for (const [t, kind] of Object.entries(DISPOSITION)) {
       `${t} is classified 'singleton' but the death path never UPDATEs it — nothing releases a dead holder's claim`);
     assert(!new RegExp(`DELETE FROM ${t}\\b`).test(allSrc),
       `${t} is a 'singleton' but something DELETEs from it — a singleton's row is the thing itself, not a per-player record`);
+  }
+}
+
+// ── 4b. Phase 1 generic-owner death disposition (fail closed) ────────────────────────────────
+// The legacy guard above deliberately follows character-shaped columns. Phase 1 adds a second,
+// generic ownership vocabulary that must remain immutable historical state across death and
+// replacement. Keep both the complete table census and every generic owner/depositor tuple role
+// derived from the bounded schema section: adding a table or a new *_scope role without an explicit
+// classification fails CI. This is intentionally stronger than an expected-list assertion, which
+// could omit a new owner-bearing column and silently pass.
+const PHASE1_DISPOSITION = {
+  item_stacks: 'historical_owner',
+  item_instances: 'historical_owner',
+  item_events: 'historical_audit',
+  item_mutation_guards: 'historical_audit',
+  operation_escrow: 'operation_lifecycle',
+  mystery_instances: 'historical_owner',
+  mystery_node_state: 'child_history',
+  mystery_choices: 'child_history',
+  world_operations: 'operation_lifecycle',
+  world_operation_roles: 'historical_audit',
+  world_operation_node_state: 'child_history',
+  world_operation_contributions: 'historical_audit',
+};
+const PHASE1_OWNER_TUPLE_DISPOSITION = {
+  'item_stacks.owner_scope/owner_id': 'historical_owner',
+  'item_instances.owner_scope/owner_id': 'historical_owner',
+  'item_events.from_owner_scope/from_owner_id': 'historical_audit',
+  'item_events.to_owner_scope/to_owner_id': 'historical_audit',
+  'item_mutation_guards.owner_scope/owner_id': 'historical_audit',
+  'operation_escrow.owner_scope/operation_id': 'operation_lifecycle',
+  'operation_escrow.depositor_scope/depositor_id': 'historical_owner',
+  'mystery_instances.owner_scope/owner_id': 'historical_owner',
+};
+{
+  const start = SCHEMA.indexOf('-- ── WORLD-GRAPH ITEM ECONOMY');
+  const end = SCHEMA.indexOf('-- ── AUTHORED CONTENT SUPPLY', start);
+  assert(start >= 0 && end > start, 'schema must retain the bounded Phase 1 world-graph section');
+  const phase1Schema = SCHEMA.slice(start, end);
+  assert.match(phase1Schema, /immutable historical ledger state, not an\s+-- estate asset/,
+    'Phase 1 schema must document that generic owner tuples are historical, not estate assets');
+  assert.match(phase1Schema, /Death\/replacement never wipes, rewrites, auto-inherits, or duplicates/,
+    'Phase 1 schema must document the no-inheritance death policy');
+
+  const tables = new Map();
+  const head = /CREATE TABLE(?:\s+IF NOT EXISTS)?\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(/g;
+  let match;
+  const clean = phase1Schema.replace(/--[^\n]*/g, '');
+  while ((match = head.exec(clean))) {
+    let depth = 1;
+    let body = '';
+    let i = head.lastIndex;
+    for (; i < clean.length && depth > 0; i++) {
+      const ch = clean[i];
+      if (ch === '(') depth++;
+      else if (ch === ')') {
+        depth--;
+        if (depth === 0) break;
+      }
+      body += ch;
+    }
+    head.lastIndex = i;
+    tables.set(match[1], body);
+  }
+
+  const unclassifiedTables = [...tables.keys()].filter((table) => !PHASE1_DISPOSITION[table]);
+  const staleTables = Object.keys(PHASE1_DISPOSITION).filter((table) => !tables.has(table));
+  assert.deepEqual(unclassifiedTables, [],
+    `unclassified Phase 1 table(s): ${unclassifiedTables.join(', ')} — classify the death/lifecycle disposition before shipping`);
+  assert.deepEqual(staleTables, [],
+    `stale Phase 1 disposition table(s): ${staleTables.join(', ')}`);
+
+  const ownerTuples = new Set();
+  for (const [table, body] of tables) {
+    const columns = new Set();
+    for (const line of body.split('\n')) {
+      const column = line.match(/^\s*([a-z_][a-z0-9_]*)\s+[A-Z]/i)?.[1];
+      if (column && !/^(PRIMARY|FOREIGN|UNIQUE|CHECK|CONSTRAINT)$/i.test(column)) columns.add(column);
+    }
+    for (const scopeColumn of columns) {
+      let idColumn = null;
+      if (scopeColumn === 'owner_scope') {
+        idColumn = columns.has('owner_id') ? 'owner_id'
+          : (table === 'operation_escrow' && columns.has('operation_id') ? 'operation_id' : null);
+      } else if (scopeColumn === 'from_owner_scope') idColumn = 'from_owner_id';
+      else if (scopeColumn === 'to_owner_scope') idColumn = 'to_owner_id';
+      else if (scopeColumn === 'depositor_scope') idColumn = 'depositor_id';
+      if (idColumn) {
+        assert(columns.has(idColumn), `${table}.${scopeColumn} is missing its ${idColumn} tuple half`);
+        ownerTuples.add(`${table}.${scopeColumn}/${idColumn}`);
+      }
+    }
+  }
+  const unclassifiedTuples = [...ownerTuples].filter((tuple) => !PHASE1_OWNER_TUPLE_DISPOSITION[tuple]);
+  const staleTuples = Object.keys(PHASE1_OWNER_TUPLE_DISPOSITION).filter((tuple) => !ownerTuples.has(tuple));
+  assert.deepEqual(unclassifiedTuples, [],
+    `unclassified Phase 1 generic owner/depositor tuple(s): ${unclassifiedTuples.join(', ')}`);
+  assert.deepEqual(staleTuples, [],
+    `stale Phase 1 owner/depositor disposition(s): ${staleTuples.join(', ')}`);
+
+  // The classifications above describe preservation; this source guard proves the production death
+  // path honors it. There are deliberately no Phase 1 death mutations in the approved ledger. A
+  // future exception must name its exact handler, verb, and table here, so adding a generic-owner
+  // table to runEstate (directly or through a named death helper) cannot silently become inheritance.
+  const PHASE1_DEATH_MUTATION_APPROVALS = new Set([]);
+  const lexicalMask = (source, { keepStrings = false } = {}) => {
+    // Every offset used below is a UTF-16 code-unit offset (`source[i]`,
+    // `match.index`, `indexOf`, and `slice`). Keep the mutable mask in that
+    // same coordinate system: spreading a string collapses astral characters
+    // to one array entry and shifts every later write.
+    const out = source.split('');
+    const blank = (index) => { if (!/\r|\n/.test(out[index])) out[index] = ' '; };
+    let state = 'code';
+    let quote = null;
+    let regexClass = false;
+    for (let i = 0; i < source.length; i++) {
+      const ch = source[i];
+      const next = source[i + 1];
+      if (state === 'line-comment') {
+        if (ch === '\n') state = 'code'; else blank(i);
+        continue;
+      }
+      if (state === 'block-comment') {
+        blank(i);
+        if (ch === '*' && next === '/') { blank(++i); state = 'code'; }
+        continue;
+      }
+      if (state === 'string') {
+        if (!keepStrings) blank(i);
+        if (ch === '\\') { if (!keepStrings && i + 1 < source.length) blank(i + 1); i++; continue; }
+        if (ch === quote) state = 'code';
+        continue;
+      }
+      if (state === 'regex') {
+        blank(i);
+        if (ch === '\\') { if (i + 1 < source.length) blank(++i); continue; }
+        if (ch === '[') regexClass = true;
+        else if (ch === ']') regexClass = false;
+        else if (ch === '/' && !regexClass) {
+          state = 'code';
+          while (/[a-z]/i.test(source[i + 1] || '')) blank(++i);
+        }
+        continue;
+      }
+      if (ch === '/' && next === '/') { blank(i); blank(++i); state = 'line-comment'; continue; }
+      if (ch === '/' && next === '*') { blank(i); blank(++i); state = 'block-comment'; continue; }
+      if (ch === "'" || ch === '"' || ch === '`') {
+        quote = ch; state = 'string'; if (!keepStrings) blank(i);
+        continue;
+      }
+      if (ch === '/') {
+        let previous = i - 1;
+        while (previous >= 0 && /\s/.test(source[previous])) previous--;
+        if (previous < 0 || /[=(:,!&|?{};\[]/.test(source[previous])) {
+          blank(i); state = 'regex'; regexClass = false;
+        }
+      }
+    }
+    return out.join('');
+  };
+  const functionBlock = (source, open, label) => {
+    const code = lexicalMask(source);
+    let depth = 1;
+    for (let i = open + 1; i < code.length; i++) {
+      if (code[i] === '{') depth++;
+      else if (code[i] === '}' && --depth === 0) return source.slice(open + 1, i);
+    }
+    assert.fail(`death helper ${label} has an unterminated block body`);
+  };
+  for (const newline of ['\n', '\r\n']) {
+    const unicodeFixture = [
+      'async function unicodeDeathHelper() {',
+      "  const marker = '🥊';",
+      '  if (marker) { return { preserved: true }; }',
+      '}',
+    ].join(newline);
+    const maskedFixture = lexicalMask(unicodeFixture);
+    assert.equal(maskedFixture.length, unicodeFixture.length,
+      `death-helper lexical mask must preserve UTF-16 offsets with ${JSON.stringify(newline)} line endings`);
+    const open = maskedFixture.indexOf('{');
+    const body = functionBlock(unicodeFixture, open, `unicode-${JSON.stringify(newline)}`);
+    assert.match(body, /return\s+\{\s*preserved:\s*true\s*\}/,
+      `death-helper block scanning must survive astral strings with ${JSON.stringify(newline)} line endings`);
+  }
+
+  // Build a source-wide named-function index, then crawl every statically resolvable bare helper
+  // call starting at runEstate. This includes helpers such as recordDeath, refundPot, removeMember,
+  // and checkScandal rather than trusting an `*AtDeath` naming convention. Ambiguous names include
+  // every definition, which is the fail-closed choice for a source guard.
+  const functionIndex = new Map();
+  for (const file of walkSrc()) {
+    const source = fs.readFileSync(file, 'utf8');
+    const code = lexicalMask(source);
+    const heads = [
+      /(?:export\s+)?(?:async\s+)?function\s+([A-Za-z_$][\w$]*)\s*\([^)]*\)\s*\{/g,
+      /(?:export\s+)?const\s+([A-Za-z_$][\w$]*)\s*=\s*(?:async\s*)?(?:\([^)]*\)|[A-Za-z_$][\w$]*)\s*=>\s*\{/g,
+    ];
+    for (const head of heads) {
+      for (const match of code.matchAll(head)) {
+        const open = code.indexOf('{', match.index + match[0].length - 1);
+        const entry = { name: match[1], file, source, open };
+        (functionIndex.get(entry.name) || functionIndex.set(entry.name, []).get(entry.name)).push(entry);
+      }
+    }
+  }
+  assert(functionIndex.has('runEstate'), 'runEstate must remain a statically crawlable named function');
+  const deathSources = [];
+  const reachableNames = new Set();
+  const queue = ['runEstate'];
+  while (queue.length) {
+    const name = queue.shift();
+    if (reachableNames.has(name)) continue;
+    reachableNames.add(name);
+    for (const entry of functionIndex.get(name) || []) {
+      const body = functionBlock(entry.source, entry.open, `${entry.file}:${entry.name}`);
+      deathSources.push({ name: entry.name, file: entry.file, body });
+      const executable = lexicalMask(body);
+      for (const call of executable.matchAll(/(?<![.\w$])([A-Za-z_$][\w$]*)\s*\(/g)) {
+        if (functionIndex.has(call[1]) && !reachableNames.has(call[1])) queue.push(call[1]);
+      }
+    }
+  }
+  for (const helper of [
+    'clearInboundPointers', 'recordDeath', 'recordDeedEvent', 'checkScandal', 'refundPot',
+    'removeMember', 'rememberedSkills', 'abandonRaidsAtDeath', 'voidListingsAtDeath',
+  ]) assert(reachableNames.has(helper), `runEstate call-graph crawl must include ${helper}`);
+
+  const normalizedVerb = (verb) => verb.toUpperCase().trim().replace(/\s+/g, '_');
+  const mutationsFor = (handler, body) => {
+    const mutations = [];
+    const sql = lexicalMask(body, { keepStrings: true });
+    for (const match of sql.matchAll(/\b(DELETE\s+FROM|UPDATE|INSERT\s+INTO|MERGE(?:\s+INTO)?)\s+([a-z_][a-z0-9_]*)\b/gi)) {
+      mutations.push({ handler, verb: normalizedVerb(match[1]), table: match[2] });
+    }
+    const boundedVariables = new Set();
+    for (const match of sql.matchAll(/for\s*\(\s*const\s+(\w+)\s+of\s+\[([\s\S]*?)\]\s*\)[\s\S]{0,160}?client\.query\(\s*`(DELETE\s+FROM|UPDATE|INSERT\s+INTO|MERGE(?:\s+INTO)?)\s+\$\{\1\}/gi)) {
+      boundedVariables.add(match[1]);
+      for (const tableMatch of match[2].matchAll(/['"]([a-z_][a-z0-9_]*)['"]/gi)) {
+        mutations.push({ handler, verb: normalizedVerb(match[3]), table: tableMatch[1] });
+      }
+    }
+    for (const match of sql.matchAll(/\b(DELETE\s+FROM|UPDATE|INSERT\s+INTO|MERGE(?:\s+INTO)?)\s+\$\{([^}]+)\}/gi)) {
+      if (!boundedVariables.has(match[2].trim())) {
+        mutations.push({ handler, verb: normalizedVerb(match[1]), table: `<dynamic:${match[2].trim()}>` });
+      }
+    }
+    return mutations;
+  };
+  assert.deepEqual(mutationsFor('tripwire', [
+    "await client.query('INSERT INTO item_stacks (owner_scope) VALUES ($1)', ['character']);",
+    "await client.query('MERGE INTO operation_escrow target USING source ON false WHEN NOT MATCHED THEN INSERT DEFAULT VALUES');",
+  ].join('\n')).map(({ handler, verb, table }) => `${handler}:${verb}:${table}`), [
+    'tripwire:INSERT_INTO:item_stacks',
+    'tripwire:MERGE_INTO:operation_escrow',
+  ], 'the death-policy source tripwire must detect Phase 1 INSERT and MERGE statements');
+
+  const mutations = deathSources.flatMap(({ name, body }) => mutationsFor(name, body));
+  const phase1DeathMutations = mutations
+    .filter(({ table }) => tables.has(table) || table.startsWith('<dynamic:'))
+    .map(({ handler, verb, table }) => `${handler}:${verb}:${table}`);
+  const unapprovedDeathMutations = phase1DeathMutations
+    .filter((mutation) => !PHASE1_DEATH_MUTATION_APPROVALS.has(mutation));
+  const staleDeathApprovals = [...PHASE1_DEATH_MUTATION_APPROVALS]
+    .filter((approval) => !phase1DeathMutations.includes(approval));
+  assert.deepEqual(unapprovedDeathMutations, [],
+    `Phase 1 historical owner state must not be mutated by death: ${unapprovedDeathMutations.join(', ')}`);
+  assert.deepEqual(staleDeathApprovals, [],
+    `stale Phase 1 death-mutation approval(s): ${staleDeathApprovals.join(', ')}`);
+
+  const phase1MigrationColumns = {
+    item_stacks: 'owner_scope', item_instances: 'id', item_events: 'sequence',
+    item_mutation_guards: 'idempotency_key', operation_escrow: 'item_id', mystery_instances: 'id',
+    mystery_node_state: 'instance_id', mystery_choices: 'instance_id', world_operations: 'id',
+    world_operation_roles: 'operation_id', world_operation_node_state: 'operation_id',
+    world_operation_contributions: 'operation_id',
+  };
+  for (const [table, column] of Object.entries(phase1MigrationColumns)) {
+    assert(stmts.some((statement) => new RegExp(`^ALTER TABLE ${table} ADD COLUMN IF NOT EXISTS ${column}\\b`, 'i').test(statement)),
+      `${table}.${column} must be covered by the idempotent migration derivation`);
+  }
+  assert(stmts.some((statement) => /^ALTER TABLE item_events ADD COLUMN IF NOT EXISTS quality TEXT NOT NULL DEFAULT 'standard'/i.test(statement)),
+    'item_events.quality must be backfilled safely by the idempotent migration derivation');
+  assert.match(phase1Schema,
+    /DROP CONSTRAINT IF EXISTS mystery_instances_owner_scope_owner_id_graph_id_key[\s\S]*CREATE UNIQUE INDEX IF NOT EXISTS ux_mystery_instance_owner_graph_version[\s\S]*\(owner_scope, owner_id, graph_id, graph_version\)/,
+    'mystery lifecycle migration must preserve history while enforcing one owner/graph/version row');
+
+  const rootDir = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
+  const backupSource = fs.readFileSync(path.join(rootDir, 'tools', 'backup.sh'), 'utf8');
+  const backupSelftest = fs.readFileSync(path.join(rootDir, 'tools', 'backup-selftest.sh'), 'utf8');
+  for (const table of tables.keys()) {
+    assert(backupSource.includes(table), `backup.sh must require Phase 1 table ${table}`);
+    assert(backupSelftest.includes(table), `backup selftest must seed and verify Phase 1 table ${table}`);
   }
 }
 
@@ -859,5 +1154,5 @@ for (const [t, kind] of Object.entries(DISPOSITION)) {
   }
 }
 
-console.log(`✅ Schema-integrity test passed — MED-1: ${stmts.length} idempotent ADD COLUMN IF NOT EXISTS statements derived from schema.sql (no leakage, clean no-op on a fresh DB, a dropped later-added column is RE-ADDED). MED-2: all ${charTables.size} character-scoped tables (character_id OR a named %_character role) have a documented death disposition (${Object.values(DISPOSITION).filter((v) => v === 'wiped').length} wiped / ${Object.values(DISPOSITION).filter((v) => v === 'special').length} special / ${Object.values(DISPOSITION).filter((v) => v === 'escrow').length} escrow / ${Object.values(DISPOSITION).filter((v) => v === 'ledger' || v === 'log').length} ledger — a new unclassified table fails CI closed, and every wiped/special table has a DELETE or a resolving status UPDATE in src).`);
+console.log(`✅ Schema-integrity test passed — MED-1: ${stmts.length} idempotent ADD COLUMN IF NOT EXISTS statements derived from schema.sql (no leakage, clean no-op on a fresh DB, a dropped later-added column is RE-ADDED). MED-2: all ${charTables.size} character-scoped tables (character_id OR a named %_character role) have a documented death disposition (${Object.values(DISPOSITION).filter((v) => v === 'wiped').length} wiped / ${Object.values(DISPOSITION).filter((v) => v === 'special').length} special / ${Object.values(DISPOSITION).filter((v) => v === 'escrow').length} escrow / ${Object.values(DISPOSITION).filter((v) => v === 'ledger' || v === 'log').length} ledger — a new unclassified table fails CI closed, and every wiped/special table has a DELETE or a resolving status UPDATE in src). Phase 1: ${Object.keys(PHASE1_DISPOSITION).length} world-graph tables and ${Object.keys(PHASE1_OWNER_TUPLE_DISPOSITION).length} generic owner/depositor tuple roles have explicit fail-closed no-inheritance dispositions.`);
 process.exit(0);

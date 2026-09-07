@@ -54,7 +54,9 @@ MIN_TABLES="${BACKUP_MIN_TABLES:-40}"
   echo "BACKUP FAILED: only $TABLES tables in the dump (expected ≥ $MIN_TABLES) — wrong database, or no schema." >&2
   exit 1
 }
-# and specifically the tables whose loss is unrecoverable: who people are, and every value movement
+# and specifically the tables whose loss is unrecoverable: identity, ledger value, and every Phase 1
+# item/mystery/operation authority row. Requiring the complete Phase 1 custody family prevents a dump
+# from looking usable while silently omitting provenance or the child state needed to resume a graph.
 #
 # Matched with bash's own substring test, NOT `echo "$TOC" | grep -q`. That pipeline is a race and it
 # fails on GOOD dumps: `grep -q` exits the instant it matches, closing the pipe while `echo` is still
@@ -64,7 +66,10 @@ MIN_TABLES="${BACKUP_MIN_TABLES:-40}"
 # sitting right there. On a nightly cron that reads as "backups have started failing" with a message
 # saying a table is missing when it is present. `rowsOf` below already had to dodge the same class
 # with `set +o pipefail`; `case` dodges it by having no pipe and no second process at all.
-for t in accounts characters transactions; do
+for t in accounts characters transactions \
+  item_stacks item_instances operation_escrow item_mutation_guards item_events \
+  mystery_instances mystery_node_state mystery_choices \
+  world_operations world_operation_roles world_operation_node_state world_operation_contributions; do
   case "$TOC" in
     *"TABLE DATA public $t "*) ;;
     *)

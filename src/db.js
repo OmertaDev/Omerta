@@ -20,6 +20,16 @@ export const dbCaps = { skipLocked: false, indexedTextArrayAny: false };
 // real-Postgres branch never calls this compatibility registrar.
 export function registerPgMemCompatibility(mem, DataType) {
   mem.public.registerFunction({
+    name: 'translate', args: [DataType.text, DataType.text, DataType.text], returns: DataType.text,
+    implementation: (value, from, to) => {
+      const source = Array.from(from), target = Array.from(to);
+      return Array.from(value, (character) => {
+        const index = source.indexOf(character);
+        return index < 0 ? character : (target[index] ?? '');
+      }).join('');
+    },
+  });
+  mem.public.registerFunction({
     name: 'char_length', args: [DataType.text], returns: DataType.integer,
     implementation: (value) => Array.from(value).length,
   });
@@ -538,11 +548,283 @@ export async function migrateSchemaUnderLock(
   boot, { schemaText = SCHEMA, compatibility = 'postgres' } = {},
 ) {
   await boot.query(schemaText);
+  await verifyPhase2DefinitionSchema(boot, { compatibility });
   const migration = await migrateColumns(boot, schemaText);
   await migrateTask5BallotV2(boot, { compatibility });
   await migrateRwaHealthOverlayV2(boot, { compatibility });
   const stamp = await stampSchema(boot);
   return { migration, stamp };
+}
+
+// Literal Phase 2 shape contract. CHECK definitions use PostgreSQL's canonical deparser form;
+// preserving parentheses, casts and literal strings detects semantic drift, not merely names.
+const PHASE2_SCHEMA_CONTRACT = [
+  {
+    table: 'content_bundle_artifacts',
+    columns: [
+      ["bundle_hash","text",true,null],
+      ["namespace","text",true,null],
+      ["bundle_version","bigint",true,null],
+      ["artifact_format_version","integer",true,null],
+      ["compiler_version","text",true,null],
+      ["ir_version","integer",true,null],
+      ["authored_kind","text",true,null],
+      ["package_kind","text",true,null],
+      ["profile","text",true,null],
+      ["authority_profile","text",true,null],
+      ["activatable","boolean",true,null],
+      ["source_hash","text",true,null],
+      ["secret_overlay_hash","text",true,null],
+      ["dependency_lock_hash","text",true,null],
+      ["ir_hash","text",true,null],
+      ["public_manifest_hash","text",true,null],
+      ["report_hashes_json","text",true,null],
+      ["definition_count","integer",true,null],
+      ["canonical_bytes","bytea",true,null],
+      ["registered_by","text",true,null],
+      ["registered_at","timestamp with time zone",true,"now()"],
+    ],
+    constraints: [
+      {"name":"p2_artifact_pk","type":"p","definition":"PRIMARY KEY (bundle_hash)"},
+      {"name":"p2_artifact_namespace_version_uq","type":"u","definition":"UNIQUE (namespace, bundle_version)"},
+      {"name":"p2_artifact_namespace_hash_uq","type":"u","definition":"UNIQUE (namespace, bundle_hash)"},
+      {"name":"p2_artifact_namespace_hash_lock_uq","type":"u","definition":"UNIQUE (namespace, bundle_hash, dependency_lock_hash)"},
+      {"name":"p2_artifact_bundle_hash_ck","type":"c","definition":"CHECK (char_length(bundle_hash) = 64 AND bundle_hash = lower(bundle_hash) AND translate(bundle_hash, '0123456789abcdef'::text, ''::text) = ''::text)"},
+      {"name":"p2_artifact_source_hash_ck","type":"c","definition":"CHECK (char_length(source_hash) = 64 AND source_hash = lower(source_hash) AND translate(source_hash, '0123456789abcdef'::text, ''::text) = ''::text)"},
+      {"name":"p2_artifact_secret_overlay_hash_ck","type":"c","definition":"CHECK (char_length(secret_overlay_hash) = 64 AND secret_overlay_hash = lower(secret_overlay_hash) AND translate(secret_overlay_hash, '0123456789abcdef'::text, ''::text) = ''::text)"},
+      {"name":"p2_artifact_dependency_lock_hash_ck","type":"c","definition":"CHECK (char_length(dependency_lock_hash) = 64 AND dependency_lock_hash = lower(dependency_lock_hash) AND translate(dependency_lock_hash, '0123456789abcdef'::text, ''::text) = ''::text)"},
+      {"name":"p2_artifact_ir_hash_ck","type":"c","definition":"CHECK (char_length(ir_hash) = 64 AND ir_hash = lower(ir_hash) AND translate(ir_hash, '0123456789abcdef'::text, ''::text) = ''::text)"},
+      {"name":"p2_artifact_public_manifest_hash_ck","type":"c","definition":"CHECK (char_length(public_manifest_hash) = 64 AND public_manifest_hash = lower(public_manifest_hash) AND translate(public_manifest_hash, '0123456789abcdef'::text, ''::text) = ''::text)"},
+      {"name":"p2_artifact_bundle_version_ck","type":"c","definition":"CHECK (bundle_version >= 1 AND bundle_version <= '9007199254740991'::bigint)"},
+      {"name":"p2_artifact_namespace_ck","type":"c","definition":"CHECK (char_length(namespace) >= 1 AND char_length(namespace) <= 128)"},
+      {"name":"p2_artifact_compiler_version_ck","type":"c","definition":"CHECK (char_length(compiler_version) >= 1 AND char_length(compiler_version) <= 64)"},
+      {"name":"p2_artifact_registered_by_ck","type":"c","definition":"CHECK (char_length(registered_by) >= 1 AND char_length(registered_by) <= 200)"},
+      {"name":"p2_artifact_artifact_format_version_ck","type":"c","definition":"CHECK (artifact_format_version = 1)"},
+      {"name":"p2_artifact_ir_version_ck","type":"c","definition":"CHECK (ir_version = 1)"},
+      {"name":"p2_artifact_authored_kind_ck","type":"c","definition":"CHECK (authored_kind IN ('library'::text, 'experience'::text))"},
+      {"name":"p2_artifact_package_kind_ck","type":"c","definition":"CHECK (package_kind IN ('library'::text, 'experience'::text, 'fixture'::text))"},
+      {"name":"p2_artifact_profile_ck","type":"c","definition":"CHECK (profile = 'phase2_economy'::text)"},
+      {"name":"p2_artifact_authority_profile_ck","type":"c","definition":"CHECK (authority_profile IN ('production'::text, 'fixture'::text))"},
+      {"name":"p2_artifact_activatable_ck","type":"c","definition":"CHECK (authority_profile = 'production'::text AND package_kind = authored_kind AND activatable = (authored_kind = 'experience'::text) OR authority_profile = 'fixture'::text AND package_kind = 'fixture'::text AND activatable = false)"},
+      {"name":"p2_artifact_definition_count_ck","type":"c","definition":"CHECK (definition_count >= 0 AND definition_count <= 20000)"},
+      {"name":"p2_artifact_canonical_bytes_ck","type":"c","definition":"CHECK (octet_length(canonical_bytes) >= 1 AND octet_length(canonical_bytes) <= 67108864)"},
+    ],
+  },
+  {
+    table: 'item_definition_versions',
+    columns: [
+      ["definition_hash","text",true,null],
+      ["logical_item_id","text",true,null],
+      ["definition_version","bigint",true,null],
+      ["package_id","text",true,null],
+      ["definition_kind","text",true,null],
+      ["family","text",false,null],
+      ["tags_json","text",false,null],
+      ["rarity","text",false,null],
+      ["stackable","boolean",false,null],
+      ["trade_mode","text",false,null],
+      ["transferable","boolean",false,null],
+      ["trade_policy_hash","text",false,null],
+      ["owner_scopes_json","text",false,null],
+      ["quality_mode","text",false,null],
+      ["maximum_lot_quantity","integer",false,null],
+      ["conservation_class","text",false,null],
+      ["metadata_json","text",false,null],
+      ["canonical_definition_bytes","bytea",true,null],
+      ["registered_at","timestamp with time zone",true,"now()"],
+    ],
+    constraints: [
+      {"name":"p2_definition_pk","type":"p","definition":"PRIMARY KEY (definition_hash)"},
+      {"name":"p2_definition_id_version_uq","type":"u","definition":"UNIQUE (logical_item_id, definition_version)"},
+      {"name":"p2_definition_id_hash_uq","type":"u","definition":"UNIQUE (logical_item_id, definition_hash)"},
+      {"name":"p2_definition_definition_hash_ck","type":"c","definition":"CHECK (char_length(definition_hash) = 64 AND definition_hash = lower(definition_hash) AND translate(definition_hash, '0123456789abcdef'::text, ''::text) = ''::text)"},
+      {"name":"p2_definition_version_ck","type":"c","definition":"CHECK (definition_version >= 1 AND definition_version <= '9007199254740991'::bigint)"},
+      {"name":"p2_definition_logical_item_id_ck","type":"c","definition":"CHECK (char_length(logical_item_id) >= 1 AND char_length(logical_item_id) <= 258)"},
+      {"name":"p2_definition_package_id_ck","type":"c","definition":"CHECK (char_length(package_id) >= 1 AND char_length(package_id) <= 128)"},
+      {"name":"p2_definition_kind_ck","type":"c","definition":"CHECK (definition_kind IN ('concept'::text, 'material'::text, 'item'::text))"},
+      {"name":"p2_definition_rarity_ck","type":"c","definition":"CHECK (rarity IS NULL OR (rarity IN ('common'::text, 'uncommon'::text, 'rare'::text, 'specialty'::text)))"},
+      {"name":"p2_definition_quality_ck","type":"c","definition":"CHECK (quality_mode IS NULL OR (quality_mode IN ('none'::text, 'fixed'::text, 'inherited'::text, 'bounded'::text)))"},
+      {"name":"p2_definition_conservation_ck","type":"c","definition":"CHECK (conservation_class IS NULL OR (conservation_class IN ('renewable'::text, 'finite'::text, 'durable'::text, 'consumable'::text)))"},
+      {"name":"p2_definition_trade_ck","type":"c","definition":"CHECK (trade_mode IS NULL AND transferable IS NULL AND trade_policy_hash IS NULL OR trade_mode IS NOT NULL AND transferable IS NOT NULL AND trade_policy_hash IS NOT NULL AND (trade_mode IN ('closed'::text, 'ordinary'::text, 'restricted'::text)) AND trade_policy_hash = definition_hash)"},
+      {"name":"p2_definition_scopes_ck","type":"c","definition":"CHECK (owner_scopes_json IS NULL OR (owner_scopes_json IN ('[]'::text, '[\"account\"]'::text, '[\"character\"]'::text, '[\"organization\"]'::text, '[\"project\"]'::text, '[\"account\",\"character\"]'::text, '[\"account\",\"organization\"]'::text, '[\"account\",\"project\"]'::text, '[\"character\",\"organization\"]'::text, '[\"character\",\"project\"]'::text, '[\"organization\",\"project\"]'::text, '[\"account\",\"character\",\"organization\"]'::text, '[\"account\",\"character\",\"project\"]'::text, '[\"account\",\"organization\",\"project\"]'::text, '[\"character\",\"organization\",\"project\"]'::text, '[\"account\",\"character\",\"organization\",\"project\"]'::text)))"},
+      {"name":"p2_definition_quantity_ck","type":"c","definition":"CHECK (maximum_lot_quantity IS NULL OR maximum_lot_quantity >= 1 AND maximum_lot_quantity <= 1000000)"},
+      {"name":"p2_definition_required_ck","type":"c","definition":"CHECK (definition_kind = 'concept'::text OR family IS NOT NULL AND tags_json IS NOT NULL AND rarity IS NOT NULL AND stackable IS NOT NULL AND trade_mode IS NOT NULL AND transferable IS NOT NULL AND trade_policy_hash IS NOT NULL AND owner_scopes_json IS NOT NULL AND quality_mode IS NOT NULL AND maximum_lot_quantity IS NOT NULL AND conservation_class IS NOT NULL)"},
+      {"name":"p2_definition_canonical_definition_bytes_ck","type":"c","definition":"CHECK (octet_length(canonical_definition_bytes) >= 1 AND octet_length(canonical_definition_bytes) <= 67108864)"},
+      {"name":"p2_definition_trade_policy_hash_ck","type":"c","definition":"CHECK (trade_policy_hash IS NULL OR char_length(trade_policy_hash) = 64 AND trade_policy_hash = lower(trade_policy_hash) AND translate(trade_policy_hash, '0123456789abcdef'::text, ''::text) = ''::text)"},
+    ],
+  },
+  {
+    table: 'content_bundle_item_definitions',
+    columns: [
+      ["bundle_hash","text",true,null],
+      ["logical_item_id","text",true,null],
+      ["definition_hash","text",true,null],
+      ["ordinal","integer",true,null],
+    ],
+    constraints: [
+      {"name":"p2_membership_pk","type":"p","definition":"PRIMARY KEY (bundle_hash, logical_item_id)"},
+      {"name":"p2_membership_bundle_hash_uq","type":"u","definition":"UNIQUE (bundle_hash, definition_hash)"},
+      {"name":"p2_membership_exact_uq","type":"u","definition":"UNIQUE (bundle_hash, logical_item_id, definition_hash)"},
+      {"name":"p2_membership_ordinal_uq","type":"u","definition":"UNIQUE (bundle_hash, ordinal)"},
+      {"name":"p2_membership_artifact_fk","type":"f","definition":"FOREIGN KEY (bundle_hash) REFERENCES content_bundle_artifacts(bundle_hash)"},
+      {"name":"p2_membership_definition_fk","type":"f","definition":"FOREIGN KEY (logical_item_id, definition_hash) REFERENCES item_definition_versions(logical_item_id, definition_hash)"},
+      {"name":"p2_membership_bundle_hash_ck","type":"c","definition":"CHECK (char_length(bundle_hash) = 64 AND bundle_hash = lower(bundle_hash) AND translate(bundle_hash, '0123456789abcdef'::text, ''::text) = ''::text)"},
+      {"name":"p2_membership_definition_hash_ck","type":"c","definition":"CHECK (char_length(definition_hash) = 64 AND definition_hash = lower(definition_hash) AND translate(definition_hash, '0123456789abcdef'::text, ''::text) = ''::text)"},
+      {"name":"p2_membership_ordinal_ck","type":"c","definition":"CHECK (ordinal >= 0)"},
+    ],
+  },
+  {
+    table: 'content_activation_events',
+    columns: [
+      ["id","bigint",true,"sequence"],
+      ["namespace","text",true,null],
+      ["activation_revision","bigint",true,null],
+      ["previous_bundle_hash","text",false,null],
+      ["previous_dependency_lock_hash","text",false,null],
+      ["bundle_hash","text",true,null],
+      ["dependency_lock_hash","text",true,null],
+      ["bundle_version","bigint",true,null],
+      ["compiler_version","text",true,null],
+      ["ir_version","integer",true,null],
+      ["profile","text",true,null],
+      ["policy_snapshot_json","text",true,null],
+      ["report_hashes_json","text",true,null],
+      ["operator_id","text",true,null],
+      ["activated_at","timestamp with time zone",true,"now()"],
+    ],
+    constraints: [
+      {"name":"p2_event_pk","type":"p","definition":"PRIMARY KEY (id)"},
+      {"name":"p2_event_revision_uq","type":"u","definition":"UNIQUE (namespace, activation_revision)"},
+      {"name":"p2_event_exact_uq","type":"u","definition":"UNIQUE (id, namespace, bundle_hash, activation_revision)"},
+      {"name":"p2_event_artifact_fk","type":"f","definition":"FOREIGN KEY (namespace, bundle_hash, dependency_lock_hash) REFERENCES content_bundle_artifacts(namespace, bundle_hash, dependency_lock_hash)"},
+      {"name":"p2_event_previous_artifact_fk","type":"f","definition":"FOREIGN KEY (namespace, previous_bundle_hash, previous_dependency_lock_hash) REFERENCES content_bundle_artifacts(namespace, bundle_hash, dependency_lock_hash)"},
+      {"name":"p2_event_bundle_hash_ck","type":"c","definition":"CHECK (char_length(bundle_hash) = 64 AND bundle_hash = lower(bundle_hash) AND translate(bundle_hash, '0123456789abcdef'::text, ''::text) = ''::text)"},
+      {"name":"p2_event_dependency_lock_hash_ck","type":"c","definition":"CHECK (char_length(dependency_lock_hash) = 64 AND dependency_lock_hash = lower(dependency_lock_hash) AND translate(dependency_lock_hash, '0123456789abcdef'::text, ''::text) = ''::text)"},
+      {"name":"p2_event_previous_bundle_hash_ck","type":"c","definition":"CHECK (char_length(previous_bundle_hash) = 64 AND previous_bundle_hash = lower(previous_bundle_hash) AND translate(previous_bundle_hash, '0123456789abcdef'::text, ''::text) = ''::text)"},
+      {"name":"p2_event_previous_dependency_lock_hash_ck","type":"c","definition":"CHECK (char_length(previous_dependency_lock_hash) = 64 AND previous_dependency_lock_hash = lower(previous_dependency_lock_hash) AND translate(previous_dependency_lock_hash, '0123456789abcdef'::text, ''::text) = ''::text)"},
+      {"name":"p2_event_activation_revision_ck","type":"c","definition":"CHECK (activation_revision >= 1 AND activation_revision <= '9007199254740991'::bigint)"},
+      {"name":"p2_event_bundle_version_ck","type":"c","definition":"CHECK (bundle_version >= 1 AND bundle_version <= '9007199254740991'::bigint)"},
+      {"name":"p2_event_namespace_ck","type":"c","definition":"CHECK (char_length(namespace) >= 1 AND char_length(namespace) <= 128)"},
+      {"name":"p2_event_compiler_version_ck","type":"c","definition":"CHECK (char_length(compiler_version) >= 1 AND char_length(compiler_version) <= 64)"},
+      {"name":"p2_event_operator_id_ck","type":"c","definition":"CHECK (char_length(operator_id) >= 1 AND char_length(operator_id) <= 200)"},
+      {"name":"p2_event_ir_version_ck","type":"c","definition":"CHECK (ir_version = 1)"},
+      {"name":"p2_event_profile_ck","type":"c","definition":"CHECK (profile = 'phase2_economy'::text)"},
+      {"name":"p2_event_previous_ck","type":"c","definition":"CHECK (activation_revision = 1 AND previous_bundle_hash IS NULL AND previous_dependency_lock_hash IS NULL OR activation_revision > 1 AND previous_bundle_hash IS NOT NULL AND previous_dependency_lock_hash IS NOT NULL)"},
+    ],
+  },
+  {
+    table: 'content_bundle_activations',
+    columns: [
+      ["namespace","text",true,null],
+      ["bundle_hash","text",false,null],
+      ["last_event_id","bigint",false,null],
+      ["activated_by","text",false,null],
+      ["activated_at","timestamp with time zone",false,null],
+      ["activation_revision","bigint",true,"0"],
+    ],
+    constraints: [
+      {"name":"p2_pointer_pk","type":"p","definition":"PRIMARY KEY (namespace)"},
+      {"name":"p2_pointer_artifact_fk","type":"f","definition":"FOREIGN KEY (namespace, bundle_hash) REFERENCES content_bundle_artifacts(namespace, bundle_hash)"},
+      {"name":"p2_pointer_event_fk","type":"f","definition":"FOREIGN KEY (last_event_id, namespace, bundle_hash, activation_revision) REFERENCES content_activation_events(id, namespace, bundle_hash, activation_revision)"},
+      {"name":"p2_pointer_bundle_hash_ck","type":"c","definition":"CHECK (char_length(bundle_hash) = 64 AND bundle_hash = lower(bundle_hash) AND translate(bundle_hash, '0123456789abcdef'::text, ''::text) = ''::text)"},
+      {"name":"p2_pointer_activation_revision_ck","type":"c","definition":"CHECK (activation_revision >= 0 AND activation_revision <= '9007199254740991'::bigint)"},
+      {"name":"p2_pointer_namespace_ck","type":"c","definition":"CHECK (char_length(namespace) >= 1 AND char_length(namespace) <= 128)"},
+      {"name":"p2_pointer_state_ck","type":"c","definition":"CHECK (activation_revision = 0 AND bundle_hash IS NULL AND last_event_id IS NULL AND activated_by IS NULL AND activated_at IS NULL OR activation_revision > 0 AND bundle_hash IS NOT NULL AND last_event_id IS NOT NULL AND activated_by IS NOT NULL AND activated_at IS NOT NULL)"},
+    ],
+  },
+  {
+    table: 'item_definition_activations',
+    columns: [
+      ["logical_item_id","text",true,null],
+      ["definition_hash","text",true,null],
+      ["package_id","text",true,null],
+      ["bundle_hash","text",true,null],
+      ["activation_revision","bigint",true,null],
+      ["event_id","bigint",true,null],
+    ],
+    constraints: [
+      {"name":"p2_selection_pk","type":"p","definition":"PRIMARY KEY (logical_item_id)"},
+      {"name":"p2_selection_membership_fk","type":"f","definition":"FOREIGN KEY (bundle_hash, logical_item_id, definition_hash) REFERENCES content_bundle_item_definitions(bundle_hash, logical_item_id, definition_hash)"},
+      {"name":"p2_selection_event_fk","type":"f","definition":"FOREIGN KEY (event_id, package_id, bundle_hash, activation_revision) REFERENCES content_activation_events(id, namespace, bundle_hash, activation_revision)"},
+      {"name":"p2_selection_definition_hash_ck","type":"c","definition":"CHECK (char_length(definition_hash) = 64 AND definition_hash = lower(definition_hash) AND translate(definition_hash, '0123456789abcdef'::text, ''::text) = ''::text)"},
+      {"name":"p2_selection_bundle_hash_ck","type":"c","definition":"CHECK (char_length(bundle_hash) = 64 AND bundle_hash = lower(bundle_hash) AND translate(bundle_hash, '0123456789abcdef'::text, ''::text) = ''::text)"},
+      {"name":"p2_selection_activation_revision_ck","type":"c","definition":"CHECK (activation_revision >= 1 AND activation_revision <= '9007199254740991'::bigint)"},
+    ],
+  },
+];
+
+export async function verifyPhase2DefinitionSchema(q, { compatibility } = {}) {
+  if (compatibility === 'pg-mem') return; // Direct clean-schema tests, never catalog parity.
+  const invalid = () => {
+    const error = new Error('Phase 2 definition registry schema does not match its reviewed contract.');
+    error.code = 'content_registry_schema_invalid';
+    throw error;
+  };
+  if (compatibility !== 'postgres') invalid();
+  const names = PHASE2_SCHEMA_CONTRACT.map((spec) => spec.table);
+  const columns = (await q.query(
+    `SELECT c.relname::text AS table_name,c.relkind::text AS kind,a.attname::text AS name,
+      format_type(a.atttypid,a.atttypmod) AS type,a.attnotnull AS required,
+      a.attidentity::text AS identity,a.attgenerated::text AS generated,
+      pg_get_expr(d.adbin,d.adrelid) AS default_value
+      FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace
+      JOIN pg_attribute a ON a.attrelid=c.oid AND a.attnum>0 AND NOT a.attisdropped
+      LEFT JOIN pg_attrdef d ON d.adrelid=c.oid AND d.adnum=a.attnum
+      WHERE n.nspname=current_schema() AND c.relname IN ($1,$2,$3,$4,$5,$6) ORDER BY c.relname,a.attnum`, names,
+  )).rows;
+  const constraints = (await q.query(
+    `SELECT t.relname::text AS table_name,c.conname::text AS name,c.contype::text AS type,
+      c.convalidated AS validated,c.condeferrable AS deferrable,
+      pg_get_constraintdef(c.oid,true) AS definition
+      FROM pg_constraint c JOIN pg_class t ON t.oid=c.conrelid
+      JOIN pg_namespace n ON n.oid=t.relnamespace
+      WHERE n.nspname=current_schema() AND t.relname IN ($1,$2,$3,$4,$5,$6)`, names,
+  )).rows;
+  const indexes = (await q.query(
+    `SELECT t.relname::text AS table_name,c.relname::text AS name,i.indisunique AS unique_index,
+      i.indisprimary AS primary_index,i.indisvalid AS valid,i.indisready AS ready,
+      pg_get_expr(i.indpred,i.indrelid) AS predicate,pg_get_expr(i.indexprs,i.indrelid) AS expressions,
+      ARRAY(SELECT a.attname::text FROM unnest(i.indkey) WITH ORDINALITY k(num,ord)
+        JOIN pg_attribute a ON a.attrelid=t.oid AND a.attnum=k.num ORDER BY k.ord) AS columns
+      FROM pg_index i JOIN pg_class t ON t.oid=i.indrelid JOIN pg_class c ON c.oid=i.indexrelid
+      JOIN pg_namespace n ON n.oid=t.relnamespace
+      WHERE n.nspname=current_schema() AND t.relname IN ($1,$2,$3,$4,$5,$6)`, names,
+  )).rows;
+  for (const spec of PHASE2_SCHEMA_CONTRACT) {
+    const actual = columns.filter((row) => row.table_name === spec.table);
+    if (actual.length !== spec.columns.length) invalid();
+    spec.columns.forEach(([name, type, required, defaultValue], index) => {
+      const row = actual[index];
+      if (row.kind !== 'r' || row.name !== name || row.type !== type || row.required !== required
+          || row.identity !== '' || row.generated !== '') invalid();
+      if (defaultValue === 'sequence') {
+        if (!/^nextval\('[^']+'::regclass\)$/.test(row.default_value ?? '')) invalid();
+      } else if (row.default_value !== defaultValue) invalid();
+    });
+    for (const expected of spec.constraints) {
+      const row = constraints.find((value) => value.table_name === spec.table && value.name === expected.name);
+      if (!row || row.type !== expected.type || !row.validated || row.deferrable
+          || phase2CatalogDefinition(row.definition) !== expected.definition) invalid();
+      if (expected.type === 'p' || expected.type === 'u') {
+        const index = indexes.find((value) => value.table_name === spec.table && value.name === expected.name);
+        const key = expected.definition.match(/\(([^)]+)\)/)[1].split(', ');
+        if (!index || !index.unique_index || index.primary_index !== (expected.type === 'p')
+            || !index.valid || !index.ready || index.predicate || index.expressions
+            || !exactStringArray(index.columns, key)) invalid();
+      }
+    }
+  }
+  const selection = indexes.find((row) => row.name === 'p2_selection_package_idx'
+    && row.table_name === 'item_definition_activations');
+  if (!selection || selection.unique_index || selection.primary_index || !selection.valid || !selection.ready
+      || selection.predicate || selection.expressions
+      || !exactStringArray(selection.columns, ['package_id', 'logical_item_id'])) invalid();
+}
+
+function phase2CatalogDefinition(definition) {
+  // PostgreSQL deparses literal IN lists as scalar-array equalities. Render only this exact,
+  // literal-text form as IN for the readable contract; keep every cast, literal and grouping.
+  return definition.replace(/= ANY \(ARRAY\[((?:'(?:[^']|'')*'::text(?:, )?)+)\]\)/g, 'IN ($1)');
 }
 
 export async function makeDb() {

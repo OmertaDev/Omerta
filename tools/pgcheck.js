@@ -481,6 +481,558 @@ console.log('\n7. THE SCHEMA IS RE-APPLIABLE (in-place upgrade)');
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+console.log('\n7a. ITEM CONSERVATION CONSTRAINTS ARE REAL DATABASE AUTHORITY');
+// pg-mem proves the runtime behavior but cannot prove that production PostgreSQL accepted every
+// constraint with native semantics. Keep this probe small and self-cleaning: table presence, a valid
+// row, a rejected negative mutation, and a rejected impossible consumed-instance state.
+{
+  const tables = ['item_stacks', 'item_instances', 'item_events',
+    'item_mutation_guards', 'operation_escrow',
+    'mystery_instances', 'mystery_node_state', 'mystery_choices', 'world_operations',
+    'world_operation_roles', 'world_operation_node_state', 'world_operation_contributions'];
+  const present = (await pool.query(
+    `SELECT relname FROM pg_class
+      WHERE relkind='r' AND relname = ANY($1::text[])`, [tables],
+  )).rows.map((row) => row.relname);
+  check(tables.every((table) => present.includes(table)),
+    'all 12 Phase 1 item, mystery, and operation authority tables exist on real PostgreSQL',
+    `present: ${present.sort().join(', ')}`);
+  const eventQualityColumn = (await pool.query(
+    `SELECT is_nullable,column_default FROM information_schema.columns
+      WHERE table_schema='public' AND table_name='item_events' AND column_name='quality'`,
+  )).rows[0];
+  check(eventQualityColumn?.is_nullable === 'NO'
+      && String(eventQualityColumn?.column_default || '').includes('standard'),
+  'item event quality is a non-null, standard-backfilled production column',
+  JSON.stringify(eventQualityColumn || null));
+  const eventQualityConstraints = (await pool.query(
+    `SELECT conname FROM pg_constraint
+      WHERE conrelid='item_events'::regclass
+        AND conname = ANY($1::text[]) ORDER BY conname`,
+    [['item_event_quality', 'item_event_quality_kind']],
+  )).rows.map((row) => row.conname);
+  check(eventQualityConstraints.length === 2,
+    'PostgreSQL installed both item-event quality constraints',
+    `present: ${eventQualityConstraints.join(', ')}`);
+  const mysteryVersionIndex = (await pool.query(
+    `SELECT indexdef FROM pg_indexes
+      WHERE schemaname='public' AND indexname='ux_mystery_instance_owner_graph_version'`,
+  )).rows[0]?.indexdef || '';
+  check(/CREATE UNIQUE INDEX/i.test(mysteryVersionIndex)
+      && /\(owner_scope, owner_id, graph_id, graph_version\)/i.test(mysteryVersionIndex),
+  'PostgreSQL keys mystery lifecycle authority by owner, graph, and immutable version',
+  mysteryVersionIndex || 'missing index');
+
+  const mysteryProbe = `pgcheck-mystery-constraint-${process.pid}-${Date.now()}`;
+  await pool.query(
+    `INSERT INTO mystery_instances
+       (id,owner_scope,owner_id,authority_account_id,graph_id,graph_version)
+     VALUES ($1,'account','pgcheck-account','pgcheck-account','pgcheck-graph',1)`,
+    [mysteryProbe],
+  );
+  await pool.query(
+    `INSERT INTO mystery_node_state (instance_id,node_id,state,discovered_at)
+     VALUES ($1,'pgcheck-node','discovered',now())`,
+    [mysteryProbe],
+  );
+  await pool.query(
+    `INSERT INTO mystery_choices (instance_id,node_id,choice_id,result_json)
+     VALUES ($1,'pgcheck-choice','left','{}')`,
+    [mysteryProbe],
+  );
+  let mysteryTupleCode = '';
+  try {
+    await pool.query("UPDATE mystery_instances SET status='completed' WHERE id=$1", [mysteryProbe]);
+  } catch (error) { mysteryTupleCode = error.code; }
+  check(mysteryTupleCode === '23514',
+    'PostgreSQL rejects a completed mystery without its terminal timestamp tuple',
+    `error ${mysteryTupleCode || 'none'}`);
+  const mysteryProbeV2 = `${mysteryProbe}-v2`;
+  await pool.query(
+    `INSERT INTO mystery_instances
+       (id,owner_scope,owner_id,authority_account_id,graph_id,graph_version)
+     VALUES ($1,'account','pgcheck-account','pgcheck-account','pgcheck-graph',2)`,
+    [mysteryProbeV2],
+  );
+  let mysteryDuplicateCode = '';
+  try {
+    await pool.query(
+      `INSERT INTO mystery_instances
+         (id,owner_scope,owner_id,authority_account_id,graph_id,graph_version)
+       VALUES ($1,'account','pgcheck-account','pgcheck-account','pgcheck-graph',1)`,
+      [`${mysteryProbe}-duplicate`],
+    );
+  } catch (error) { mysteryDuplicateCode = error.code; }
+  check(mysteryDuplicateCode === '23505',
+    'PostgreSQL allows successor mystery versions but rejects a same-version owner race',
+    `error ${mysteryDuplicateCode || 'none'}`);
+  await pool.query('DELETE FROM mystery_choices WHERE instance_id=$1', [mysteryProbe]);
+  await pool.query('DELETE FROM mystery_node_state WHERE instance_id=$1', [mysteryProbe]);
+  await pool.query('DELETE FROM mystery_instances WHERE id = ANY($1::text[])', [
+    [mysteryProbe, mysteryProbeV2, `${mysteryProbe}-duplicate`],
+  ]);
+
+  const operationProbe = `pgcheck-world-operation-${process.pid}-${Date.now()}`;
+  await pool.query(
+    `INSERT INTO world_operations
+       (id,graph_id,graph_version,operation_node_id,crew_id,opened_by_account_id)
+     VALUES ($1,'pgcheck-graph',1,'pgcheck-operation','pgcheck-crew','pgcheck-account-a')`,
+    [operationProbe],
+  );
+  await pool.query(
+    `INSERT INTO world_operation_roles (operation_id,role_id,account_id,character_id)
+     VALUES ($1,'investigator','pgcheck-account-a','pgcheck-character-a')`,
+    [operationProbe],
+  );
+  let distinctAccountCode = '';
+  try {
+    await pool.query(
+      `INSERT INTO world_operation_roles (operation_id,role_id,account_id,character_id)
+       VALUES ($1,'driver','pgcheck-account-a','pgcheck-character-a')`,
+      [operationProbe],
+    );
+  } catch (error) { distinctAccountCode = error.code; }
+  check(distinctAccountCode === '23505',
+    'PostgreSQL enforces one account per world-operation role assignment',
+    `error ${distinctAccountCode || 'none'}`);
+  let operationTupleCode = '';
+  try {
+    await pool.query("UPDATE world_operations SET status='completed' WHERE id=$1", [operationProbe]);
+  } catch (error) { operationTupleCode = error.code; }
+  const operationStatus = (await pool.query(
+    'SELECT status FROM world_operations WHERE id=$1', [operationProbe],
+  )).rows[0]?.status;
+  check(operationTupleCode === '23514' && operationStatus === 'forming',
+    'PostgreSQL rejects a closed operation without its matching terminal timestamp tuple',
+    `error ${operationTupleCode || 'none'}, status ${operationStatus || 'missing'}`);
+  await pool.query('DELETE FROM world_operation_roles WHERE operation_id=$1', [operationProbe]);
+  await pool.query('DELETE FROM world_operations WHERE id=$1', [operationProbe]);
+
+  const ownerId = `pgcheck-item-${process.pid}`;
+  await pool.query(
+    `INSERT INTO item_stacks (owner_scope, owner_id, template_id, quality, quantity)
+     VALUES ('account',$1,'mat:pgcheck','standard',1)`, [ownerId],
+  );
+  let negativeCode = '';
+  try {
+    await pool.query(
+      `UPDATE item_stacks SET quantity=-1
+        WHERE owner_scope='account' AND owner_id=$1
+          AND template_id='mat:pgcheck' AND quality='standard'`,
+      [ownerId],
+    );
+  } catch (error) { negativeCode = error.code; }
+  const quantity = Number((await pool.query(
+    `SELECT quantity FROM item_stacks
+      WHERE owner_scope='account' AND owner_id=$1
+        AND template_id='mat:pgcheck' AND quality='standard'`, [ownerId],
+  )).rows[0]?.quantity);
+  check(negativeCode === '23514' && quantity === 1,
+    'PostgreSQL rejects a negative stack without changing its conserved value',
+    `error ${negativeCode || 'none'}, quantity ${quantity}`);
+  await pool.query(
+    `DELETE FROM item_stacks
+      WHERE owner_scope='account' AND owner_id=$1
+        AND template_id='mat:pgcheck' AND quality='standard'`, [ownerId],
+  );
+
+  let stateCode = '';
+  try {
+    await pool.query(
+      `INSERT INTO item_instances (id, template_id, owner_scope, owner_id, state)
+       VALUES ($1,'item:pgcheck','account',$2,'consumed')`,
+      [`pgcheck-impossible-${process.pid}`, ownerId],
+    );
+  } catch (error) { stateCode = error.code; }
+  check(stateCode === '23514',
+    'PostgreSQL rejects a consumed item without its permanent consumption timestamp',
+    `error ${stateCode || 'none'}`);
+  await pool.query('DELETE FROM item_instances WHERE id=$1', [`pgcheck-impossible-${process.pid}`]);
+
+  const parityId = `pgcheck-escrow-parity-${process.pid}`;
+  await pool.query(
+    `INSERT INTO item_instances (id,template_id,owner_scope,owner_id)
+     VALUES ($1,'item:pgcheck-parity','account',$2)`, [parityId, ownerId],
+  );
+  let parityCode = '';
+  try {
+    await pool.query(
+      `INSERT INTO operation_escrow (item_id,operation_id,depositor_scope,depositor_id)
+       VALUES ($1,'pgcheck-operation','account',$2)`, [parityId, ownerId],
+    );
+  } catch (error) { parityCode = error.code; }
+  check(parityCode === '23503',
+    'operation escrow must match the item authoritative operation owner and escrowed state',
+    `error ${parityCode || 'none'}`);
+  await pool.query('DELETE FROM operation_escrow WHERE item_id=$1', [parityId]);
+  await pool.query('DELETE FROM item_instances WHERE id=$1', [parityId]);
+
+  const {
+    consumeStack, createItem, grantStack, transferItem, withItemTransaction,
+  } = await import('../src/items.js');
+  const tx = (action) => withItemTransaction(pool, action);
+  const prefix = `pgcheck-item-${process.pid}-`;
+  const actor = { scope: 'account', id: `${prefix}actor` };
+  const rivalA = { scope: 'account', id: `${prefix}rival-a` };
+  const rivalB = { scope: 'account', id: `${prefix}rival-b` };
+  const keys = [
+    `${prefix}autocommit`, `${prefix}seed`, `${prefix}decrement-a`, `${prefix}decrement-b`,
+    `${prefix}replay`, `${prefix}create`, `${prefix}transfer-a`, `${prefix}transfer-b`,
+    `${prefix}quality`,
+  ];
+
+  const autocommitClient = await pool.connect();
+  let autocommitCode = '';
+  try {
+    await grantStack(
+      autocommitClient, actor, 'mat:pgcheck-concurrency', 1,
+      'standard', 'autocommit', keys[0],
+    );
+  } catch (error) { autocommitCode = error.code; }
+  finally { autocommitClient.release(); }
+  check(autocommitCode === 'item_transaction_required',
+    'a checked-out PostgreSQL client without BEGIN cannot mutate inventory',
+    `error ${autocommitCode || 'none'}`);
+
+  await tx((client) => grantStack(
+    client, actor, 'mat:pgcheck-concurrency', 10, 'standard', 'seed', keys[1],
+  ));
+  const decrements = await Promise.allSettled([
+    tx((client) => consumeStack(
+      client, actor, 'mat:pgcheck-concurrency', 7, 'standard', 'decrement', keys[2],
+    )),
+    tx((client) => consumeStack(
+      client, actor, 'mat:pgcheck-concurrency', 7, 'standard', 'decrement', keys[3],
+    )),
+  ]);
+  const afterDecrement = Number((await pool.query(
+    `SELECT quantity FROM item_stacks
+      WHERE owner_scope='account' AND owner_id=$1
+        AND template_id='mat:pgcheck-concurrency' AND quality='standard'`, [actor.id],
+  )).rows[0]?.quantity);
+  check(decrements.filter((result) => result.status === 'fulfilled').length === 1
+      && decrements.filter((result) => result.status === 'rejected'
+        && result.reason?.code === 'materials').length === 1
+      && afterDecrement === 3,
+  'competing decrements serialize and cannot drive a stack negative',
+  `outcomes ${decrements.map((result) => result.status === 'fulfilled'
+    ? 'ok' : result.reason?.code).join(', ')}, quantity ${afterDecrement}`);
+
+  const replayed = await Promise.all([
+    tx((client) => grantStack(
+      client, actor, 'mat:pgcheck-concurrency', 2, 'standard', 'replay', keys[4],
+    )),
+    tx((client) => grantStack(
+      client, actor, 'mat:pgcheck-concurrency', 2, 'standard', 'replay', keys[4],
+    )),
+  ]);
+  const afterReplay = Number((await pool.query(
+    `SELECT quantity FROM item_stacks
+      WHERE owner_scope='account' AND owner_id=$1
+        AND template_id='mat:pgcheck-concurrency' AND quality='standard'`, [actor.id],
+  )).rows[0]?.quantity);
+  check(afterReplay === 5 && JSON.stringify(replayed[0]) === JSON.stringify(replayed[1]),
+    'concurrent same-key grants apply once and return the same replay result',
+    `quantity ${afterReplay}`);
+  let collisionCode = '';
+  try {
+    await tx((client) => grantStack(
+      client, rivalA, 'mat:pgcheck-concurrency', 2, 'standard', 'replay', keys[4],
+    ));
+  } catch (error) { collisionCode = error.code; }
+  check(collisionCode === 'idempotency_conflict',
+    'the same key cannot silently replay for another owner',
+    `error ${collisionCode || 'none'}`);
+
+  await tx((client) => grantStack(
+    client, actor, 'mat:pgcheck-quality', 4, 'pristine', 'quality', keys[8],
+  ));
+  const exactQuality = (await pool.query(
+    'SELECT quality FROM item_events WHERE idempotency_key=$1', [keys[8]],
+  )).rows[0]?.quality;
+  check(exactQuality === 'pristine',
+    'a nonstandard stack mutation records its exact quality band',
+    `quality ${exactQuality || 'missing'}`);
+  let emptyQualityCode = '';
+  try {
+    await pool.query("UPDATE item_events SET quality='' WHERE idempotency_key=$1", [keys[8]]);
+  } catch (error) { emptyQualityCode = error.code; }
+  check(emptyQualityCode === '23514',
+    'PostgreSQL rejects a noncanonical empty event quality',
+    `error ${emptyQualityCode || 'none'}`);
+
+  const item = await tx((client) => createItem(
+    client, actor, 'item:pgcheck-concurrency', 'awarded', keys[5],
+  ));
+  const transfers = await Promise.allSettled([
+    tx((client) => transferItem(client, actor, rivalA, item.id, 'race', keys[6])),
+    tx((client) => transferItem(client, actor, rivalB, item.id, 'race', keys[7])),
+  ]);
+  const itemRow = (await pool.query(
+    'SELECT owner_scope, owner_id, state FROM item_instances WHERE id=$1', [item.id],
+  )).rows[0];
+  const transferEvents = (await pool.query(
+    `SELECT from_owner_scope, from_owner_id, to_owner_scope, to_owner_id, quality
+       FROM item_events WHERE item_id=$1 AND event_kind='transferred'`, [item.id],
+  )).rows;
+  check(transfers.filter((result) => result.status === 'fulfilled').length === 1
+      && transfers.filter((result) => result.status === 'rejected'
+        && result.reason?.code === 'item_unavailable').length === 1
+      && itemRow?.owner_scope === 'account' && itemRow?.state === 'active'
+      && [rivalA.id, rivalB.id].includes(itemRow?.owner_id),
+  'competing transfers leave one authoritative owner and one provenance transition',
+  `outcomes ${transfers.map((result) => result.status === 'fulfilled'
+    ? 'ok' : result.reason?.code).join(', ')}, owner ${itemRow?.owner_id || 'none'}`);
+  check(transferEvents.length === 1
+      && transferEvents[0].from_owner_scope === actor.scope
+      && transferEvents[0].from_owner_id === actor.id
+      && transferEvents[0].to_owner_scope === itemRow?.owner_scope
+      && transferEvents[0].to_owner_id === itemRow?.owner_id
+      && transferEvents[0].quality === 'standard',
+  'the winning concurrent transfer writes exactly one correct provenance event',
+  `${transferEvents.length} event(s), ${transferEvents[0]?.from_owner_id || 'none'} → ${transferEvents[0]?.to_owner_id || 'none'}`);
+  let uniqueQualityCode = '';
+  try {
+    await pool.query("UPDATE item_events SET quality='pristine' WHERE item_id=$1", [item.id]);
+  } catch (error) { uniqueQualityCode = error.code; }
+  check(uniqueQualityCode === '23514',
+    'PostgreSQL rejects nonstandard quality on every unique-item provenance event',
+    `error ${uniqueQualityCode || 'none'}`);
+
+  await pool.query('DELETE FROM item_events WHERE idempotency_key = ANY($1::text[])', [keys]);
+  await pool.query('DELETE FROM item_mutation_guards WHERE idempotency_key = ANY($1::text[])', [keys]);
+  await pool.query('DELETE FROM item_instances WHERE id=$1', [item.id]);
+  await pool.query(
+    `DELETE FROM item_stacks WHERE owner_scope='account' AND owner_id=$1
+      AND template_id IN ('mat:pgcheck-concurrency','mat:pgcheck-quality')`, [actor.id],
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+console.log('\n7a2. GRAPH CRAFTING AND SALVAGE HOLD UNDER REAL ROW LOCKS');
+// pg-mem needs an inverse log because its ROLLBACK is cosmetic, and it serializes item transactions
+// because it has no row locks. This probe reaches the production half of the contract: native
+// rollback, concurrent same/different logical keys, one car deletion, and one cash ledger debit.
+{
+  const { craftWorldGraphRecipe, salvageCar } = await import('../src/crafting.js');
+  const { runLedgerInvariants } = await import('../src/invariants.js');
+  const { grantStack, inventoryBoard, withItemTransaction } = await import('../src/items.js');
+  const tx = (action) => withItemTransaction(pool, action);
+  const prefix = `pgcheck-crafting-${process.pid}-${Date.now()}`;
+  const craftAccount = `${prefix}-cash-account`;
+  const craftCharacter = `${prefix}-cash-character`;
+  const salvageAccount = `${prefix}-car-account`;
+  const salvageCharacter = `${prefix}-car-character`;
+  const craftH = { accountId: craftAccount, owned: { cars: [] } };
+  const salvageH = { accountId: salvageAccount, owned: { cars: [] } };
+  const craftOwner = { scope: 'account', id: craftAccount };
+  const salvageOwner = { scope: 'account', id: salvageAccount };
+  const sameCar = `${prefix}-same-car`;
+  const differentCar = `${prefix}-different-car`;
+  const rollbackCar = `${prefix}-rollback-car`;
+  const keys = [
+    `${prefix}-craft-seed`, `${prefix}-craft-cap`, `${prefix}-craft-fail`,
+    `${prefix}-craft-same`, `${prefix}-salvage-same`, `${prefix}-salvage-a`,
+    `${prefix}-salvage-b`, `${prefix}-salvage-rollback`,
+  ];
+  const stackQty = (board, templateId) => Number(
+    board.stacks.find((stack) => stack.templateId === templateId)?.qty || 0,
+  );
+
+  await pool.query(
+    `INSERT INTO characters (id,account_id,name,season,loc,respect,cash)
+     VALUES ($1,$2,$3,1,'foundry',10000,1000),
+            ($4,$5,$6,1,'foundry',10000,1000)`,
+    [craftCharacter, craftAccount, `${prefix}-cash`,
+      salvageCharacter, salvageAccount, `${prefix}-car`],
+  );
+  await pool.query(
+    `INSERT INTO cars (id,character_id,model_id,trim_id,dmg)
+     VALUES ($1,$4,'junker','stock',10),
+            ($2,$4,'junker','stock',20),
+            ($3,$4,'junker','stock',30)`,
+    [sameCar, differentCar, rollbackCar, salvageCharacter],
+  );
+
+  await tx((client) => grantStack(
+    client, craftOwner, 'mat:scrap_steel', 4, 'standard', 'pgcheck craft seed', keys[0],
+  ));
+  await tx((client) => grantStack(
+    client, craftOwner, 'mat:hardened_steel', 2147483647, 'standard',
+    'pgcheck craft cap', keys[1],
+  ));
+  let lateCraftCode = '';
+  try {
+    await tx((client) => craftWorldGraphRecipe(
+      client, craftH, 'recipe:hardened_steel', keys[2],
+    ));
+  } catch (error) { lateCraftCode = error.code; }
+  let craftBoard = await inventoryBoard(pool, craftOwner);
+  const failedCraftCash = Number((await pool.query(
+    'SELECT cash FROM characters WHERE id=$1', [craftCharacter],
+  )).rows[0].cash);
+  const failedCraftLedger = Number((await pool.query(
+    "SELECT COUNT(*) AS n FROM transactions WHERE character_id=$1 AND reason='craft:recipe:hardened_steel'",
+    [craftCharacter],
+  )).rows[0].n);
+  check(lateCraftCode === 'inventory_cap' && failedCraftCash === 1000
+      && stackQty(craftBoard, 'mat:scrap_steel') === 4
+      && stackQty(craftBoard, 'mat:hardened_steel') === 2147483647
+      && failedCraftLedger === 0,
+  'native rollback restores cash, input, capped output, and exact ledger state after late failure',
+  `error ${lateCraftCode || 'none'}, cash ${failedCraftCash}, ledger ${failedCraftLedger}`);
+
+  // Remove only the fixture cap so two real clients can contend on one character and logical key.
+  await pool.query(
+    `DELETE FROM item_stacks WHERE owner_scope='account' AND owner_id=$1
+      AND template_id='mat:hardened_steel' AND quality='standard'`, [craftAccount],
+  );
+  const sameCraft = await Promise.all([
+    tx((client) => craftWorldGraphRecipe(client, craftH, 'recipe:hardened_steel', keys[3])),
+    tx((client) => craftWorldGraphRecipe(client, craftH, 'recipe:hardened_steel', keys[3])),
+  ]);
+  craftBoard = await inventoryBoard(pool, craftOwner);
+  const craftCash = Number((await pool.query(
+    'SELECT cash FROM characters WHERE id=$1', [craftCharacter],
+  )).rows[0].cash);
+  const craftLedger = Number((await pool.query(
+    "SELECT COUNT(*) AS n FROM transactions WHERE character_id=$1 AND currency='cash'"
+      + " AND amount=-300 AND reason='craft:recipe:hardened_steel'",
+    [craftCharacter],
+  )).rows[0].n);
+  check(JSON.stringify(sameCraft[0]) === JSON.stringify(sameCraft[1])
+      && craftCash === 700 && craftLedger === 1
+      && stackQty(craftBoard, 'mat:scrap_steel') === 0
+      && stackQty(craftBoard, 'mat:hardened_steel') === 1,
+  'competing same-key cash craft applies one debit, one ledger row, and one output',
+  `cash ${craftCash}, ledger ${craftLedger}, hardened ${stackQty(craftBoard, 'mat:hardened_steel')}`);
+
+  const invariantCheck = async (name) => (await runLedgerInvariants(pool, { alert: false }))
+    .checks.find((entry) => entry.name === name);
+  const carDriftBeforeSalvage = (await invariantCheck('car conservation')).drift;
+  const salvageSinksBefore = (await invariantCheck('world graph salvage car audit')).logicalSinks;
+  const ledgerRowsBeforeSalvage = Number((await pool.query(
+    'SELECT COUNT(*) AS n FROM transactions',
+  )).rows[0].n);
+
+  const sameSalvage = await Promise.all([
+    tx((client) => salvageCar(
+      client, salvageH, sameCar, 'recipe:car_salvage_basic', keys[4],
+    )),
+    tx((client) => salvageCar(
+      client, salvageH, sameCar, 'recipe:car_salvage_basic', keys[4],
+    )),
+  ]);
+  const differentSalvage = await Promise.allSettled([
+    tx((client) => salvageCar(
+      client, salvageH, differentCar, 'recipe:car_salvage_basic', keys[5],
+    )),
+    tx((client) => salvageCar(
+      client, salvageH, differentCar, 'recipe:car_salvage_basic', keys[6],
+    )),
+  ]);
+  let salvageBoard = await inventoryBoard(pool, salvageOwner);
+  check(JSON.stringify(sameSalvage[0]) === JSON.stringify(sameSalvage[1])
+      && Number((await pool.query('SELECT COUNT(*) AS n FROM cars WHERE id=$1', [sameCar])).rows[0].n) === 0,
+  'competing same-key salvage deletes the locked car once and replays the exact result');
+  check(differentSalvage.filter((result) => result.status === 'fulfilled').length === 1
+      && differentSalvage.filter((result) => result.status === 'rejected'
+        && result.reason?.code === 'no_car').length === 1
+      && Number((await pool.query(
+        'SELECT COUNT(*) AS n FROM cars WHERE id=$1', [differentCar],
+      )).rows[0].n) === 0
+      && stackQty(salvageBoard, 'mat:scrap_steel') === 12,
+  'competing different-key salvage serializes on authority and cannot double-consume the car',
+  `outcomes ${differentSalvage.map((result) => result.status === 'fulfilled'
+    ? 'ok' : result.reason?.code).join(', ')}, scrap ${stackQty(salvageBoard, 'mat:scrap_steel')}`);
+  const salvageAuditAfterSuccess = await invariantCheck('world graph salvage car audit');
+  const carDriftAfterSuccess = (await invariantCheck('car conservation')).drift;
+  const ledgerRowsAfterSuccess = Number((await pool.query(
+    'SELECT COUNT(*) AS n FROM transactions',
+  )).rows[0].n);
+  check(salvageAuditAfterSuccess.ok
+      && salvageAuditAfterSuccess.logicalSinks === salvageSinksBefore + 2
+      && carDriftAfterSuccess === carDriftBeforeSalvage,
+  'native car conservation moves two deleted cars with two distinct successful logical guards',
+  `sinks ${salvageSinksBefore} -> ${salvageAuditAfterSuccess.logicalSinks}, drift ${carDriftBeforeSalvage} -> ${carDriftAfterSuccess}`);
+  check(ledgerRowsAfterSuccess === ledgerRowsBeforeSalvage,
+    'native successful salvage, same-key replay, and competing failure write no currency rows',
+    `ledger rows ${ledgerRowsBeforeSalvage} -> ${ledgerRowsAfterSuccess}`);
+
+  // Force the second graph output to fail. Native PostgreSQL must put back both the car row and the
+  // preceding scrap grant without relying on the pg-mem inverse log.
+  await pool.query(
+    `UPDATE item_stacks SET quantity=2147483647
+      WHERE owner_scope='account' AND owner_id=$1
+        AND template_id='mat:wire' AND quality='standard'`, [salvageAccount],
+  );
+  let rollbackCode = '';
+  try {
+    await tx((client) => salvageCar(
+      client, salvageH, rollbackCar, 'recipe:car_salvage_basic', keys[7],
+    ));
+  } catch (error) { rollbackCode = error.code; }
+  salvageBoard = await inventoryBoard(pool, salvageOwner);
+  const rollbackGuard = Number((await pool.query(
+    'SELECT COUNT(*) AS n FROM item_mutation_guards WHERE idempotency_key=$1', [keys[7]],
+  )).rows[0].n);
+  check(rollbackCode === 'inventory_cap'
+      && Number((await pool.query('SELECT COUNT(*) AS n FROM cars WHERE id=$1', [rollbackCar])).rows[0].n) === 1
+      && stackQty(salvageBoard, 'mat:scrap_steel') === 12
+      && stackQty(salvageBoard, 'mat:wire') === 2147483647
+      && rollbackGuard === 0,
+  'native salvage rollback restores the car and every preceding output with no stranded guard',
+  `error ${rollbackCode || 'none'}, scrap ${stackQty(salvageBoard, 'mat:scrap_steel')}, guard ${rollbackGuard}`);
+  const salvageAuditAfterRollback = await invariantCheck('world graph salvage car audit');
+  const carDriftAfterRollback = (await invariantCheck('car conservation')).drift;
+  const ledgerRowsAfterRollback = Number((await pool.query(
+    'SELECT COUNT(*) AS n FROM transactions',
+  )).rows[0].n);
+  check(salvageAuditAfterRollback.ok
+      && salvageAuditAfterRollback.logicalSinks === salvageSinksBefore + 2
+      && carDriftAfterRollback === carDriftBeforeSalvage,
+  'native failed salvage rollback creates no sink and leaves car conservation unchanged',
+  `sinks ${salvageAuditAfterRollback.logicalSinks}, drift ${carDriftAfterRollback}`);
+  check(ledgerRowsAfterRollback === ledgerRowsBeforeSalvage,
+    'native salvage rollback remains currency-ledger neutral',
+    `ledger rows ${ledgerRowsBeforeSalvage} -> ${ledgerRowsAfterRollback}`);
+
+  await pool.query('DELETE FROM item_events WHERE idempotency_key = ANY($1::text[])', [keys]);
+  await pool.query('DELETE FROM item_mutation_guards WHERE idempotency_key = ANY($1::text[])', [keys]);
+  await pool.query(
+    `DELETE FROM item_stacks WHERE owner_scope='account' AND owner_id = ANY($1::text[])`,
+    [[craftAccount, salvageAccount]],
+  );
+  await pool.query('DELETE FROM transactions WHERE character_id = ANY($1::text[])',
+    [[craftCharacter, salvageCharacter]]);
+  await pool.query('DELETE FROM cars WHERE id = ANY($1::text[])',
+    [[sameCar, differentCar, rollbackCar]]);
+  await pool.query('DELETE FROM characters WHERE id = ANY($1::text[])',
+    [[craftCharacter, salvageCharacter]]);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+console.log('\n7a3. WORLD-GRAPH MYSTERIES HOLD UNDER REAL ROW LOCKS');
+{
+  const { runMysteryPgChecks } = await import('./pgcheck-mysteries.js');
+  await runMysteryPgChecks({ pool, check });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+console.log('\n7a4. WORLD-GRAPH OPERATIONS HOLD UNDER REAL ROW LOCKS');
+{
+  const { runOperationPgChecks } = await import('./pgcheck-operations.js');
+  await runOperationPgChecks({ pool, check });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+console.log('\n7a5. BELLADONNA VERTICAL SLICE HOLDS ON REAL POSTGRESQL');
+{
+  const { runBelladonnaPgChecks } = await import('./pgcheck-belladonna.js');
+  await runBelladonnaPgChecks({ pool, check, nativePostgres: true });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 console.log('\n7b. THE BUILD BOOTS AGAINST A DATABASE OLDER THAN ITSELF');
 // THE OUTAGE THIS PINS (2026-08-06): `CREATE TABLE IF NOT EXISTS` is a NO-OP on a live database, so
 // three columns added INLINE to the already-existing `gang_members` never landed — and the very next
@@ -944,9 +1496,44 @@ console.log('\n9d. THE RETENTION SWEEPS DO NOT SCAN');
 //
 // Driven by HOLDING the funder row rather than by racing a real sweep — §9's reason: a race depends
 // on two backends overlapping inside a millisecond-wide window and timing luck reads exactly like a
-// proof. The victim IS deterministic: Postgres aborts the backend whose deadlock_timeout (1s) expires
-// first, which is whoever started waiting first, and the player is made to wait a full second before
-// the holder closes the cycle.
+// proof. Observe the exact player refund blocked by this fixture's holder, then close the cycle at
+// once. That puts the cycle in place before the already-waiting player's deadlock timer fires.
+function observePromiseOutcome(promise, onSettled) {
+  return promise.then(
+    (value) => { onSettled(); return { ok: true, value }; },
+    (error) => { onSettled(); return { ok: false, error }; },
+  );
+}
+function valueAfterCleanup(outcome, fixtureError) {
+  if (outcome?.ok === false) throw outcome.error;
+  if (fixtureError) throw fixtureError;
+  return outcome?.value;
+}
+const waitForPlayerRefundBlockedBy = async ({ holderPid, startedAfter, requestSettled, label }) => {
+  const deadline = Date.now() + 5000;
+  const refundSql = 'UPDATE characters SET cash = cash + $2 WHERE id=$1';
+  while (Date.now() < deadline) {
+    const { rows } = await pool.query(
+      `SELECT a.pid FROM pg_stat_activity a
+        WHERE a.datname = current_database()
+          AND a.backend_type = 'client backend'
+          AND a.state = 'active'
+          AND a.wait_event_type = 'Lock'
+          AND a.query_start >= $2::timestamptz
+          AND a.query = $3
+          AND $1::int = ANY(pg_blocking_pids(a.pid))
+        LIMIT 2`, [holderPid, startedAfter, refundSql]);
+    if (rows.length === 1) return Number(rows[0].pid);
+    if (rows.length > 1) {
+      throw new Error(`${label}: multiple player refund backends were blocked by holder PID ${holderPid}`);
+    }
+    if (requestSettled()) {
+      throw new Error(`${label}: player request settled before its refund blocked behind holder PID ${holderPid}`);
+    }
+    await new Promise((r) => setTimeout(r, 25));
+  }
+  throw new Error(`${label}: player refund never blocked behind holder PID ${holderPid}`);
+};
 console.log('\n9e. THE POT/FUNDER CYCLE LANDS AS CONTENTION, NEVER A 500');
 {
   const { sweepExpiredBounties } = await import('../src/social/contracts.js');
@@ -987,20 +1574,43 @@ console.log('\n9e. THE POT/FUNDER CYCLE LANDS AS CONTENTION, NEVER A 500');
   const funderCashBefore = await cashOf(funder.id);
 
   const holder = await pool.connect();
-  let inflight, holderTook = null, raced = null;
+  let inflight = null, requestOutcome = null, holderTook = null, holderResult = null;
+  let fixtureError = null, raced = null;
+  let holderPid = null, waiterPid = null;
   try {
     await holder.query('BEGIN');
     // exactly what sweepExpiredBounties (and runEstate, through refundPot) does first: the funder's row.
     await holder.query('SELECT 1 FROM characters WHERE id=$1 FOR UPDATE', [funder.id]);
+    const identity = (await holder.query(
+      'SELECT pg_backend_pid() AS pid, clock_timestamp() AS started_after')).rows[0];
+    holderPid = Number(identity.pid);
     // the poster takes the pot, then blocks reaching the funder inside refundPot.
-    inflight = call('POST', `/v1/streets/${mark.id}/bounty`, { token: poster.token, body: { amount: stake, kind: 'kill' } });
-    await new Promise((r) => setTimeout(r, 1000));   // > deadlock_timeout, so the player's timer fires first
+    let requestSettled = false;
+    inflight = observePromiseOutcome(call('POST', `/v1/streets/${mark.id}/bounty`, {
+      token: poster.token, body: { amount: stake, kind: 'kill' },
+    }), () => { requestSettled = true; });
+    waiterPid = await waitForPlayerRefundBlockedBy({
+      holderPid, startedAfter: identity.started_after, requestSettled: () => requestSettled,
+      label: 'section 9e bounty refund',
+    });
     // close the cycle: we hold the funder and now want the pot the player is holding.
     holderTook = holder.query('SELECT 1 FROM bounties WHERE target_character=$1 AND kind=$2 FOR UPDATE', [mark.id, 'kill'])
-      .then(() => null, (e) => e);
-    raced = await inflight;
-    await holderTook;
-  } finally { await holder.query('ROLLBACK').catch(() => {}); holder.release(); }
+      .then(() => ({ ok: true }), (error) => ({ ok: false, error }));
+    [requestOutcome, holderResult] = await Promise.all([inflight, holderTook]);
+  } catch (error) {
+    fixtureError = error;
+  } finally {
+    // If readiness itself failed, release the held character before draining the blocked request.
+    if (!holderTook) await holder.query('ROLLBACK').catch(() => {});
+    await Promise.allSettled([inflight, holderTook].filter(Boolean));
+    if (inflight && !requestOutcome) requestOutcome = await inflight;
+    await holder.query('ROLLBACK').catch(() => {});
+    holder.release();
+  }
+  raced = valueAfterCleanup(requestOutcome, fixtureError);
+
+  check(holderResult?.ok === true, 'the bounty fixture holder was NOT the deadlock victim',
+    `holder PID ${holderPid}, waiter PID ${waiterPid}, holder error ${holderResult?.error?.code || holderResult?.error?.message || 'unknown'}`);
 
   check(raced.code !== 500, 'the player is NOT told the server broke',
     `got ${raced.code} ${raced.body?.error || ''} — "${raced.body?.message || ''}"`);
@@ -1108,20 +1718,44 @@ console.log('\n9f. THE LISTING/BIDDER CYCLE LANDS AS CONTENTION, NEVER A 500');
   const deadlocks0m = await deadlockCountM();
 
   const holderM = await pool.connect();
-  let inflightM, raced2 = null, holderTook2 = null;
+  let inflightM = null, requestOutcomeM = null, holderTook2 = null, holderResult2 = null;
+  let fixtureErrorM = null, raced2 = null;
+  let holderPidM = null, waiterPidM = null;
   try {
     await holderM.query('BEGIN');
     // exactly what bidListing/buyListing/sweepMarket do FIRST: the counterparty's character row.
     await holderM.query('SELECT 1 FROM characters WHERE id=$1 FOR UPDATE', [bidder.id]);
+    const identityM = (await holderM.query(
+      'SELECT pg_backend_pid() AS pid, clock_timestamp() AS started_after')).rows[0];
+    holderPidM = Number(identityM.pid);
     // the seller takes the listing, then blocks reaching the bidder to refund them.
-    inflightM = call('POST', `/v1/market/${listingId}/cancel`, { token: seller.token });
-    await new Promise((r) => setTimeout(r, 1000));   // > deadlock_timeout, so the player's timer fires first
+    let requestSettledM = false;
+    inflightM = observePromiseOutcome(
+      call('POST', `/v1/market/${listingId}/cancel`, { token: seller.token }),
+      () => { requestSettledM = true; },
+    );
+    waiterPidM = await waitForPlayerRefundBlockedBy({
+      holderPid: holderPidM, startedAfter: identityM.started_after,
+      requestSettled: () => requestSettledM, label: 'section 9f market refund',
+    });
     // close the cycle: we hold the bidder and now want the listing the player is holding.
     holderTook2 = holderM.query('SELECT 1 FROM market_listings WHERE id=$1 FOR UPDATE', [listingId])
-      .then(() => null, (e) => e);
-    raced2 = await inflightM;
-    await holderTook2;
-  } finally { await holderM.query('ROLLBACK').catch(() => {}); holderM.release(); }
+      .then(() => ({ ok: true }), (error) => ({ ok: false, error }));
+    [requestOutcomeM, holderResult2] = await Promise.all([inflightM, holderTook2]);
+  } catch (error) {
+    fixtureErrorM = error;
+  } finally {
+    // If readiness itself failed, release the held character before draining the blocked request.
+    if (!holderTook2) await holderM.query('ROLLBACK').catch(() => {});
+    await Promise.allSettled([inflightM, holderTook2].filter(Boolean));
+    if (inflightM && !requestOutcomeM) requestOutcomeM = await inflightM;
+    await holderM.query('ROLLBACK').catch(() => {});
+    holderM.release();
+  }
+  raced2 = valueAfterCleanup(requestOutcomeM, fixtureErrorM);
+
+  check(holderResult2?.ok === true, 'the market fixture holder was NOT the deadlock victim',
+    `holder PID ${holderPidM}, waiter PID ${waiterPidM}, holder error ${holderResult2?.error?.code || holderResult2?.error?.message || 'unknown'}`);
 
   check(raced2.code !== 500, 'the seller is NOT told the server broke',
     `got ${raced2.code} ${raced2.body?.error || ''} — "${raced2.body?.message || ''}"`);

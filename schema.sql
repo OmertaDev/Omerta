@@ -4443,6 +4443,421 @@ ALTER TABLE content_instance_effects ADD COLUMN IF NOT EXISTS target_id TEXT;
 CREATE UNIQUE INDEX IF NOT EXISTS ux_content_effects_entitlement
   ON content_instance_effects (subject_account, kind, target_id);
 
+-- ── WORLD-GRAPH ITEM ECONOMY — conserved stacks + permanent unique instances ─────────────────
+-- Phase 1 death policy: every generic owner tuple is immutable historical ledger state, not an
+-- estate asset.  Death/replacement never wipes, rewrites, auto-inherits, or duplicates an
+-- (owner_scope, owner_id) tuple, a mystery owner tuple, or an operation escrow depositor tuple.
+-- Account-authorized lifecycle recovery may close a historical instance and release escrow only
+-- to its exact recorded historical depositor; a replacement character cannot drive or claim it.
+-- This is the ordinary gameplay inventory authority used by data-defined world graphs. It is
+-- deliberately separate from the earlier exact-content-hash workshop lots: authored definitions
+-- may nominate template ids and quantities only through an allow-listed runtime, while every actual
+-- mutation below is performed by src/items.js under a transaction and a globally bound logical key.
+-- Owners are opaque server-side ids. Phase 1 admits living-character, durable-account, and operation
+-- custody; Crew and Family scopes require a later explicit schema/runtime expansion.
+CREATE TABLE IF NOT EXISTS item_stacks (
+  owner_scope TEXT NOT NULL,
+  owner_id TEXT NOT NULL,
+  template_id TEXT NOT NULL,
+  quality TEXT NOT NULL DEFAULT 'standard',
+  quantity INT NOT NULL DEFAULT 0,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (owner_scope, owner_id, template_id, quality),
+  CONSTRAINT item_stack_owner_scope CHECK (owner_scope IN ('character','account','operation')),
+  CONSTRAINT item_stack_owner_id CHECK (char_length(owner_id) BETWEEN 1 AND 200),
+  CONSTRAINT item_stack_template_id CHECK (char_length(template_id) BETWEEN 1 AND 200),
+  CONSTRAINT item_stack_quality CHECK (char_length(quality) BETWEEN 1 AND 80),
+  CONSTRAINT item_stack_quantity CHECK (quantity >= 0)
+);
+CREATE INDEX IF NOT EXISTS ix_item_stacks_owner
+  ON item_stacks (owner_scope, owner_id, template_id);
+
+-- Unique/stateful items are never deleted and never change id. `state` plus this single owner tuple
+-- is the sole spendability/custody authority. A consumed row retains its final custodian for history
+-- but is excluded from every inventory board and every future transition.
+CREATE TABLE IF NOT EXISTS item_instances (
+  id TEXT PRIMARY KEY,
+  template_id TEXT NOT NULL,
+  owner_scope TEXT NOT NULL,
+  owner_id TEXT NOT NULL,
+  state TEXT NOT NULL DEFAULT 'active',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  consumed_at TIMESTAMPTZ,
+  CONSTRAINT item_instance_id CHECK (char_length(id) BETWEEN 1 AND 200),
+  CONSTRAINT item_instance_template_id CHECK (char_length(template_id) BETWEEN 1 AND 200),
+  CONSTRAINT item_instance_owner_scope CHECK (owner_scope IN ('character','account','operation')),
+  CONSTRAINT item_instance_owner_id CHECK (char_length(owner_id) BETWEEN 1 AND 200),
+  CONSTRAINT item_instance_state CHECK (state IN ('active','escrowed','consumed')),
+  CONSTRAINT item_instance_state_time CHECK (
+    (state = 'consumed' AND consumed_at IS NOT NULL)
+    OR (state <> 'consumed' AND consumed_at IS NULL)
+  ),
+  CONSTRAINT item_instance_escrow_owner CHECK (
+    (state = 'active' AND owner_scope IN ('character','account'))
+    OR (state = 'escrowed' AND owner_scope = 'operation')
+    OR state = 'consumed'
+  ),
+  UNIQUE (id, owner_scope, owner_id, state)
+);
+CREATE INDEX IF NOT EXISTS ix_item_instances_owner
+  ON item_instances (owner_scope, owner_id, state, template_id);
+
+-- The instance row above remains authoritative while this row records which operation may release
+-- escrow and where custody came from. One item id can appear at most once, so an object cannot be in
+-- two operation escrows. Release/consumption removes this live custody claim; item_events preserves
+-- the full append-only history.
+CREATE TABLE IF NOT EXISTS operation_escrow (
+  item_id TEXT PRIMARY KEY,
+  owner_scope TEXT NOT NULL DEFAULT 'operation',
+  operation_id TEXT NOT NULL,
+  item_state TEXT NOT NULL DEFAULT 'escrowed',
+  depositor_scope TEXT NOT NULL,
+  depositor_id TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  FOREIGN KEY (item_id, owner_scope, operation_id, item_state)
+    REFERENCES item_instances(id, owner_scope, owner_id, state) ON DELETE RESTRICT,
+  CONSTRAINT operation_escrow_owner_scope CHECK (owner_scope = 'operation'),
+  CONSTRAINT operation_escrow_item_state CHECK (item_state = 'escrowed'),
+  CONSTRAINT operation_escrow_operation_id CHECK (char_length(operation_id) BETWEEN 1 AND 200),
+  CONSTRAINT operation_escrow_depositor_scope CHECK (depositor_scope IN ('character','account')),
+  CONSTRAINT operation_escrow_depositor_id CHECK (char_length(depositor_id) BETWEEN 1 AND 200)
+);
+CREATE INDEX IF NOT EXISTS ix_operation_escrow_operation
+  ON operation_escrow (operation_id, created_at, item_id);
+
+-- A logical mutation key is global, not merely owner-local. The request digest binds the key to its
+-- operation, owner and complete arguments; a collision therefore fails visibly instead of replaying
+-- somebody else's result. A NULL result exists only inside the transaction currently performing the
+-- mutation. PostgreSQL rollback, or the item module's explicit pg-mem compensation, removes the
+-- reservation together with every item write.
+CREATE TABLE IF NOT EXISTS item_mutation_guards (
+  idempotency_key TEXT PRIMARY KEY,
+  mutation_kind TEXT NOT NULL,
+  owner_scope TEXT NOT NULL,
+  owner_id TEXT NOT NULL,
+  request_hash TEXT NOT NULL,
+  reservation_id TEXT NOT NULL,
+  result_json TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  completed_at TIMESTAMPTZ,
+  CONSTRAINT item_guard_key CHECK (char_length(idempotency_key) BETWEEN 1 AND 200),
+  CONSTRAINT item_guard_kind CHECK (mutation_kind IN (
+    'grant_stack','consume_stack','create_item','transfer_item','consume_item','escrow_item','release_escrow',
+    'assign_current_character','craft','salvage_car','mystery_action','operation_action','reward_claim'
+  )),
+  CONSTRAINT item_guard_owner_scope CHECK (owner_scope IN ('character','account','operation')),
+  CONSTRAINT item_guard_owner_id CHECK (char_length(owner_id) BETWEEN 1 AND 200),
+  CONSTRAINT item_guard_request_hash CHECK (char_length(request_hash) = 64),
+  CONSTRAINT item_guard_reservation_id CHECK (char_length(reservation_id) BETWEEN 1 AND 200),
+  CONSTRAINT item_guard_completion CHECK (
+    (result_json IS NULL AND completed_at IS NULL)
+    OR (result_json IS NOT NULL AND completed_at IS NOT NULL)
+  )
+);
+CREATE INDEX IF NOT EXISTS ix_item_mutation_guards_created
+  ON item_mutation_guards (created_at);
+-- Dormant Phase 2 domain receipts. Existing raw-key rows remain v1, with no invented UUID lineage.
+ALTER TABLE item_mutation_guards ADD COLUMN IF NOT EXISTS envelope_version INTEGER NOT NULL DEFAULT 1;
+ALTER TABLE item_mutation_guards ADD COLUMN IF NOT EXISTS mutation_id UUID;
+ALTER TABLE item_mutation_guards ADD COLUMN IF NOT EXISTS actor_account_id TEXT;
+ALTER TABLE item_mutation_guards ADD COLUMN IF NOT EXISTS external_key TEXT;
+ALTER TABLE item_mutation_guards ADD COLUMN IF NOT EXISTS request_json TEXT;
+ALTER TABLE item_mutation_guards DROP CONSTRAINT IF EXISTS item_guard_envelope;
+ALTER TABLE item_mutation_guards ADD CONSTRAINT item_guard_envelope CHECK (
+  (envelope_version=1 AND actor_account_id IS NULL AND external_key IS NULL AND request_json IS NULL)
+  OR (envelope_version=2 AND mutation_id IS NOT NULL AND actor_account_id IS NOT NULL
+    AND char_length(actor_account_id) BETWEEN 1 AND 200 AND external_key IS NOT NULL
+    AND char_length(external_key) BETWEEN 1 AND 200 AND request_json IS NOT NULL)
+);
+CREATE UNIQUE INDEX IF NOT EXISTS ix_item_mutation_uuid ON item_mutation_guards(mutation_id);
+CREATE UNIQUE INDEX IF NOT EXISTS ix_item_mutation_v2_scope
+  ON item_mutation_guards(actor_account_id,mutation_kind,external_key);
+-- Existing Phase 1 databases predate the compound assignment bridge. Rebuild the closed mutation
+-- vocabulary idempotently so deployment cannot accept the code while retaining the old constraint.
+ALTER TABLE item_mutation_guards DROP CONSTRAINT IF EXISTS item_guard_kind;
+ALTER TABLE item_mutation_guards ADD CONSTRAINT item_guard_kind CHECK (mutation_kind IN (
+  'grant_stack','consume_stack','create_item','transfer_item','consume_item','escrow_item','release_escrow',
+  'assign_current_character','craft','salvage_car','mystery_action','operation_action','reward_claim'
+));
+
+-- All stack movements are recorded too, but unique-item provenance is the hard contract: every
+-- successful instance mutation writes exactly one row in the same transaction. `sequence` gives a
+-- stable history order without allowing callers to choose item or event identity.
+CREATE TABLE IF NOT EXISTS item_events (
+  sequence BIGSERIAL PRIMARY KEY,
+  id TEXT NOT NULL UNIQUE,
+  event_key TEXT NOT NULL,
+  event_kind TEXT NOT NULL,
+  provenance_kind TEXT,
+  item_id TEXT REFERENCES item_instances(id) ON DELETE RESTRICT,
+  template_id TEXT NOT NULL,
+  quality TEXT NOT NULL DEFAULT 'standard',
+  quantity_delta INT,
+  quantity_before INT,
+  quantity_after INT,
+  from_owner_scope TEXT,
+  from_owner_id TEXT,
+  to_owner_scope TEXT,
+  to_owner_id TEXT,
+  reason TEXT NOT NULL,
+  idempotency_key TEXT NOT NULL REFERENCES item_mutation_guards(idempotency_key) ON DELETE RESTRICT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (idempotency_key, event_key),
+  CONSTRAINT item_event_key CHECK (char_length(event_key) BETWEEN 1 AND 200),
+  CONSTRAINT item_event_kind CHECK (event_kind IN (
+    'stack_granted','stack_consumed','created','transferred','consumed','escrowed','released'
+  )),
+  CONSTRAINT item_event_provenance_kind CHECK (
+    provenance_kind IS NULL OR provenance_kind IN (
+      'crafted','salvaged','transferred','consumed','modified',
+      'used_in_mystery','used_in_operation','awarded','exported','imported'
+    )
+  ),
+  CONSTRAINT item_event_template_id CHECK (char_length(template_id) BETWEEN 1 AND 200),
+  CONSTRAINT item_event_quality CHECK (char_length(quality) BETWEEN 1 AND 80),
+  CONSTRAINT item_event_quality_kind CHECK (item_id IS NULL OR quality = 'standard'),
+  CONSTRAINT item_event_reason CHECK (char_length(reason) BETWEEN 1 AND 500),
+  CONSTRAINT item_event_from_scope CHECK (
+    from_owner_scope IS NULL OR from_owner_scope IN ('character','account','operation')
+  ),
+  CONSTRAINT item_event_to_scope CHECK (
+    to_owner_scope IS NULL OR to_owner_scope IN ('character','account','operation')
+  ),
+  CONSTRAINT item_event_owner_pairs CHECK (
+    (from_owner_scope IS NULL) = (from_owner_id IS NULL)
+    AND (to_owner_scope IS NULL) = (to_owner_id IS NULL)
+  ),
+  CONSTRAINT item_event_quantities CHECK (
+    (
+      event_kind IN ('stack_granted','stack_consumed')
+      AND item_id IS NULL AND provenance_kind IS NULL
+      AND quantity_delta IS NOT NULL AND quantity_delta <> 0
+      AND quantity_before IS NOT NULL AND quantity_before >= 0
+      AND quantity_after IS NOT NULL AND quantity_after >= 0
+      AND quantity_after = quantity_before + quantity_delta
+    ) OR (
+      event_kind NOT IN ('stack_granted','stack_consumed')
+      AND item_id IS NOT NULL AND provenance_kind IS NOT NULL
+      AND quantity_delta IS NULL AND quantity_before IS NULL AND quantity_after IS NULL
+    )
+  )
+);
+-- The generic column migration also derives this ADD from the CREATE block. Keep it here too:
+-- schema.sql runs before that derived pass, so an already-created item_events table must gain the
+-- column before the two constraints below are re-applied during the same boot.
+ALTER TABLE item_events ADD COLUMN IF NOT EXISTS quality TEXT NOT NULL DEFAULT 'standard';
+ALTER TABLE item_events DROP CONSTRAINT IF EXISTS item_event_quality;
+ALTER TABLE item_events
+  ADD CONSTRAINT item_event_quality CHECK (char_length(quality) BETWEEN 1 AND 80);
+ALTER TABLE item_events DROP CONSTRAINT IF EXISTS item_event_quality_kind;
+ALTER TABLE item_events
+  ADD CONSTRAINT item_event_quality_kind CHECK (item_id IS NULL OR quality = 'standard');
+CREATE INDEX IF NOT EXISTS ix_item_events_item
+  ON item_events (item_id, sequence);
+CREATE INDEX IF NOT EXISTS ix_item_events_owner
+  ON item_events (to_owner_scope, to_owner_id, sequence);
+
+-- ── WORLD-GRAPH MYSTERIES — graph-pinned runtime state, never content authority ─────────────
+-- Definitions stay in immutable, validated source packages. These rows contain only one root
+-- owner's progress through one pinned package version. Account roots survive street replacement;
+-- character roots remain attached to that historical street and cannot be driven by its heir.
+-- Neither disposition is a currency/value transfer, so the estate path intentionally does not wipe
+-- or rewrite these generic owner tuples. Any item placed in mystery custody is separately governed
+-- by item_instances + operation_escrow and never duplicated in these tables.
+CREATE TABLE IF NOT EXISTS mystery_instances (
+  id TEXT PRIMARY KEY,
+  owner_scope TEXT NOT NULL,
+  owner_id TEXT NOT NULL,
+  authority_account_id TEXT NOT NULL,
+  graph_id TEXT NOT NULL,
+  graph_version INT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'active',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  completed_at TIMESTAMPTZ,
+  failed_at TIMESTAMPTZ,
+  canceled_at TIMESTAMPTZ,
+  CONSTRAINT mystery_instance_id CHECK (char_length(id) BETWEEN 1 AND 200),
+  CONSTRAINT mystery_instance_owner_scope CHECK (owner_scope IN ('character','account')),
+  CONSTRAINT mystery_instance_owner_id CHECK (char_length(owner_id) BETWEEN 1 AND 200),
+  CONSTRAINT mystery_instance_authority CHECK (char_length(authority_account_id) BETWEEN 1 AND 200),
+  CONSTRAINT mystery_instance_graph_id CHECK (char_length(graph_id) BETWEEN 1 AND 200),
+  CONSTRAINT mystery_instance_graph_version CHECK (graph_version > 0),
+  CONSTRAINT mystery_instance_status CHECK (status IN ('active','completed','failed','canceled')),
+  CONSTRAINT mystery_instance_status_time CHECK (
+    (status = 'active' AND completed_at IS NULL AND failed_at IS NULL AND canceled_at IS NULL)
+    OR (status = 'completed' AND completed_at IS NOT NULL AND failed_at IS NULL AND canceled_at IS NULL)
+    OR (status = 'failed' AND completed_at IS NULL AND failed_at IS NOT NULL AND canceled_at IS NULL)
+    OR (status = 'canceled' AND completed_at IS NULL AND failed_at IS NULL AND canceled_at IS NOT NULL)
+  )
+);
+ALTER TABLE mystery_instances ADD COLUMN IF NOT EXISTS canceled_at TIMESTAMPTZ;
+-- Pre-Phase1 candidates keyed only owner+graph and permanently stranded later package versions.
+-- Preserve every historical row, replace only the uniqueness authority, and let each immutable
+-- graph version own one independently replay-safe lifecycle.
+ALTER TABLE mystery_instances
+  DROP CONSTRAINT IF EXISTS mystery_instances_owner_scope_owner_id_graph_id_key;
+CREATE UNIQUE INDEX IF NOT EXISTS ux_mystery_instance_owner_graph_version
+  ON mystery_instances (owner_scope, owner_id, graph_id, graph_version);
+ALTER TABLE mystery_instances DROP CONSTRAINT IF EXISTS mystery_instance_status;
+ALTER TABLE mystery_instances
+  ADD CONSTRAINT mystery_instance_status
+  CHECK (status IN ('active','completed','failed','canceled'));
+ALTER TABLE mystery_instances DROP CONSTRAINT IF EXISTS mystery_instance_status_time;
+ALTER TABLE mystery_instances
+  ADD CONSTRAINT mystery_instance_status_time CHECK (
+    (status = 'active' AND completed_at IS NULL AND failed_at IS NULL AND canceled_at IS NULL)
+    OR (status = 'completed' AND completed_at IS NOT NULL AND failed_at IS NULL AND canceled_at IS NULL)
+    OR (status = 'failed' AND completed_at IS NULL AND failed_at IS NOT NULL AND canceled_at IS NULL)
+    OR (status = 'canceled' AND completed_at IS NULL AND failed_at IS NULL AND canceled_at IS NOT NULL)
+  );
+CREATE INDEX IF NOT EXISTS ix_mystery_instances_authority
+  ON mystery_instances (authority_account_id, status, created_at);
+
+-- One row is the complete state of one graph node for one instance. `result_json` is the safe,
+-- server-produced replay result only; raw conditions/effects never enter storage. Excluded nodes use
+-- failed_at as their closure timestamp so irreversible and transitively closed branches are durable.
+CREATE TABLE IF NOT EXISTS mystery_node_state (
+  instance_id TEXT NOT NULL REFERENCES mystery_instances(id) ON DELETE CASCADE,
+  node_id TEXT NOT NULL,
+  state TEXT NOT NULL,
+  result_json TEXT,
+  discovered_at TIMESTAMPTZ,
+  completed_at TIMESTAMPTZ,
+  failed_at TIMESTAMPTZ,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (instance_id, node_id),
+  CONSTRAINT mystery_node_id CHECK (char_length(node_id) BETWEEN 1 AND 200),
+  CONSTRAINT mystery_node_status CHECK (state IN ('discovered','completed','failed','excluded')),
+  CONSTRAINT mystery_node_status_time CHECK (
+    (state = 'discovered' AND discovered_at IS NOT NULL AND completed_at IS NULL AND failed_at IS NULL)
+    OR (state = 'completed' AND discovered_at IS NOT NULL AND completed_at IS NOT NULL AND failed_at IS NULL)
+    OR (state IN ('failed','excluded') AND completed_at IS NULL AND failed_at IS NOT NULL)
+  )
+);
+CREATE INDEX IF NOT EXISTS ix_mystery_node_state_status
+  ON mystery_node_state (instance_id, state, node_id);
+
+-- A choice point can be committed exactly once. New logical keys may retrieve the same decision,
+-- but storage makes changing it impossible even if two requests race on real PostgreSQL.
+CREATE TABLE IF NOT EXISTS mystery_choices (
+  instance_id TEXT NOT NULL REFERENCES mystery_instances(id) ON DELETE CASCADE,
+  node_id TEXT NOT NULL,
+  choice_id TEXT NOT NULL,
+  result_json TEXT NOT NULL,
+  committed_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (instance_id, node_id),
+  CONSTRAINT mystery_choice_node_id CHECK (char_length(node_id) BETWEEN 1 AND 200),
+  CONSTRAINT mystery_choice_id CHECK (char_length(choice_id) BETWEEN 1 AND 200)
+);
+CREATE INDEX IF NOT EXISTS ix_mystery_choices_instance
+  ON mystery_choices (instance_id, committed_at, node_id);
+
+-- ── WORLD-GRAPH SOCIAL OPERATIONS — account-distinct graph convergence ───────────────
+-- Runtime rows pin immutable graph content and server-derived Crew authority. Crew/account/character
+-- identifiers are never client-nominated. Operation escrow remains authoritative in item_instances
+-- plus operation_escrow; these tables store coordination state and no cash/OMR authority.
+CREATE TABLE IF NOT EXISTS world_operations (
+  id TEXT PRIMARY KEY,
+  graph_id TEXT NOT NULL,
+  graph_version INT NOT NULL,
+  operation_node_id TEXT NOT NULL,
+  crew_id TEXT NOT NULL,
+  opened_by_account_id TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'forming',
+  close_reason TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  activated_at TIMESTAMPTZ,
+  completed_at TIMESTAMPTZ,
+  canceled_at TIMESTAMPTZ,
+  abandoned_at TIMESTAMPTZ,
+  UNIQUE (crew_id, graph_id, graph_version, operation_node_id),
+  CONSTRAINT world_operation_id CHECK (char_length(id) BETWEEN 1 AND 200),
+  CONSTRAINT world_operation_graph CHECK (
+    char_length(graph_id) BETWEEN 1 AND 200 AND graph_version > 0
+    AND char_length(operation_node_id) BETWEEN 1 AND 200
+  ),
+  CONSTRAINT world_operation_authority CHECK (
+    char_length(crew_id) BETWEEN 1 AND 200
+    AND char_length(opened_by_account_id) BETWEEN 1 AND 200
+  ),
+  CONSTRAINT world_operation_status CHECK (
+    status IN ('forming','active','completed','canceled','abandoned')
+  ),
+  CONSTRAINT world_operation_close_reason CHECK (
+    close_reason IS NULL OR char_length(close_reason) BETWEEN 1 AND 80
+  ),
+  CONSTRAINT world_operation_status_time CHECK (
+    (status = 'forming' AND activated_at IS NULL AND completed_at IS NULL
+      AND canceled_at IS NULL AND abandoned_at IS NULL AND close_reason IS NULL)
+    OR (status = 'active' AND activated_at IS NOT NULL AND completed_at IS NULL
+      AND canceled_at IS NULL AND abandoned_at IS NULL AND close_reason IS NULL)
+    OR (status = 'completed' AND activated_at IS NOT NULL AND completed_at IS NOT NULL
+      AND canceled_at IS NULL AND abandoned_at IS NULL AND close_reason = 'completed')
+    OR (status = 'canceled' AND completed_at IS NULL AND canceled_at IS NOT NULL
+      AND abandoned_at IS NULL AND close_reason = 'canceled')
+    OR (status = 'abandoned' AND completed_at IS NULL AND canceled_at IS NULL
+      AND abandoned_at IS NOT NULL AND close_reason IN ('participant_dead','crew_changed'))
+  )
+);
+CREATE INDEX IF NOT EXISTS ix_world_operations_crew
+  ON world_operations (crew_id, status, created_at);
+
+-- Role uniqueness plus account uniqueness is the storage-level distinct-account guarantee.
+CREATE TABLE IF NOT EXISTS world_operation_roles (
+  operation_id TEXT NOT NULL REFERENCES world_operations(id) ON DELETE CASCADE,
+  role_id TEXT NOT NULL,
+  account_id TEXT NOT NULL,
+  character_id TEXT NOT NULL,
+  assigned_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (operation_id, role_id),
+  UNIQUE (operation_id, account_id),
+  CONSTRAINT world_operation_role_id CHECK (char_length(role_id) BETWEEN 1 AND 80),
+  CONSTRAINT world_operation_role_account CHECK (char_length(account_id) BETWEEN 1 AND 200),
+  CONSTRAINT world_operation_role_character CHECK (char_length(character_id) BETWEEN 1 AND 200)
+);
+CREATE INDEX IF NOT EXISTS ix_world_operation_roles_account
+  ON world_operation_roles (account_id, operation_id);
+
+CREATE TABLE IF NOT EXISTS world_operation_node_state (
+  operation_id TEXT NOT NULL REFERENCES world_operations(id) ON DELETE CASCADE,
+  node_id TEXT NOT NULL,
+  state TEXT NOT NULL,
+  completed_at TIMESTAMPTZ,
+  excluded_at TIMESTAMPTZ,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (operation_id, node_id),
+  CONSTRAINT world_operation_state_node CHECK (char_length(node_id) BETWEEN 1 AND 200),
+  CONSTRAINT world_operation_state CHECK (state IN ('completed','excluded')),
+  CONSTRAINT world_operation_state_time CHECK (
+    (state = 'completed' AND completed_at IS NOT NULL AND excluded_at IS NULL)
+    OR (state = 'excluded' AND completed_at IS NULL AND excluded_at IS NOT NULL)
+  )
+);
+CREATE INDEX IF NOT EXISTS ix_world_operation_node_state
+  ON world_operation_node_state (operation_id, state, node_id);
+
+CREATE TABLE IF NOT EXISTS world_operation_contributions (
+  operation_id TEXT NOT NULL REFERENCES world_operations(id) ON DELETE CASCADE,
+  node_id TEXT NOT NULL,
+  role_id TEXT NOT NULL,
+  account_id TEXT NOT NULL,
+  character_id TEXT NOT NULL,
+  contributed_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (operation_id, node_id),
+  CONSTRAINT world_operation_contribution_node CHECK (char_length(node_id) BETWEEN 1 AND 200),
+  CONSTRAINT world_operation_contribution_role CHECK (char_length(role_id) BETWEEN 1 AND 80),
+  CONSTRAINT world_operation_contribution_account CHECK (char_length(account_id) BETWEEN 1 AND 200),
+  CONSTRAINT world_operation_contribution_character CHECK (char_length(character_id) BETWEEN 1 AND 200),
+  FOREIGN KEY (operation_id, role_id)
+    REFERENCES world_operation_roles(operation_id, role_id)
+);
+CREATE INDEX IF NOT EXISTS ix_world_operation_contributions_role
+  ON world_operation_contributions (operation_id, role_id, contributed_at);
+
 -- ── AUTHORED CONTENT SUPPLY — exact-hash lots + globally finite sources ───────────────────────
 -- Authored inventory is account-owned and therefore survives street death. Every lot is pinned to
 -- the exact activated bundle hash that defined it; a later version cannot reinterpret old inputs.
@@ -6031,3 +6446,173 @@ CREATE TABLE IF NOT EXISTS rwa_health_current_v2 (
           AND clearance_applied_at IS NOT NULL)),
   CHECK (next_due_at IS NULL OR next_due_at = last_observed_at + interval '300 seconds')
 );
+-- Phase 2 sealed definition plane; separate from legacy content and inventory.
+CREATE TABLE IF NOT EXISTS content_bundle_artifacts (
+  bundle_hash TEXT NOT NULL,
+  namespace TEXT NOT NULL,
+  bundle_version BIGINT NOT NULL,
+  artifact_format_version INTEGER NOT NULL,
+  compiler_version TEXT NOT NULL,
+  ir_version INTEGER NOT NULL,
+  authored_kind TEXT NOT NULL,
+  package_kind TEXT NOT NULL,
+  profile TEXT NOT NULL,
+  authority_profile TEXT NOT NULL,
+  activatable BOOLEAN NOT NULL,
+  source_hash TEXT NOT NULL,
+  secret_overlay_hash TEXT NOT NULL,
+  dependency_lock_hash TEXT NOT NULL,
+  ir_hash TEXT NOT NULL,
+  public_manifest_hash TEXT NOT NULL,
+  report_hashes_json TEXT NOT NULL,
+  definition_count INTEGER NOT NULL,
+  canonical_bytes BYTEA NOT NULL,
+  registered_by TEXT NOT NULL,
+  registered_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  CONSTRAINT p2_artifact_pk PRIMARY KEY (bundle_hash),
+  CONSTRAINT p2_artifact_namespace_version_uq UNIQUE (namespace,bundle_version),
+  CONSTRAINT p2_artifact_namespace_hash_uq UNIQUE (namespace,bundle_hash),
+  CONSTRAINT p2_artifact_namespace_hash_lock_uq UNIQUE (namespace,bundle_hash,dependency_lock_hash),
+  CONSTRAINT p2_artifact_bundle_hash_ck CHECK (char_length(bundle_hash)=64 AND bundle_hash=lower(bundle_hash) AND translate(bundle_hash,'0123456789abcdef','')=''),
+  CONSTRAINT p2_artifact_source_hash_ck CHECK (char_length(source_hash)=64 AND source_hash=lower(source_hash) AND translate(source_hash,'0123456789abcdef','')=''),
+  CONSTRAINT p2_artifact_secret_overlay_hash_ck CHECK (char_length(secret_overlay_hash)=64 AND secret_overlay_hash=lower(secret_overlay_hash) AND translate(secret_overlay_hash,'0123456789abcdef','')=''),
+  CONSTRAINT p2_artifact_dependency_lock_hash_ck CHECK (char_length(dependency_lock_hash)=64 AND dependency_lock_hash=lower(dependency_lock_hash) AND translate(dependency_lock_hash,'0123456789abcdef','')=''),
+  CONSTRAINT p2_artifact_ir_hash_ck CHECK (char_length(ir_hash)=64 AND ir_hash=lower(ir_hash) AND translate(ir_hash,'0123456789abcdef','')=''),
+  CONSTRAINT p2_artifact_public_manifest_hash_ck CHECK (char_length(public_manifest_hash)=64 AND public_manifest_hash=lower(public_manifest_hash) AND translate(public_manifest_hash,'0123456789abcdef','')=''),
+  CONSTRAINT p2_artifact_bundle_version_ck CHECK (bundle_version BETWEEN 1 AND 9007199254740991),
+  CONSTRAINT p2_artifact_namespace_ck CHECK (char_length(namespace) BETWEEN 1 AND 128),
+  CONSTRAINT p2_artifact_compiler_version_ck CHECK (char_length(compiler_version) BETWEEN 1 AND 64),
+  CONSTRAINT p2_artifact_registered_by_ck CHECK (char_length(registered_by) BETWEEN 1 AND 200),
+  CONSTRAINT p2_artifact_artifact_format_version_ck CHECK (artifact_format_version=1),
+  CONSTRAINT p2_artifact_ir_version_ck CHECK (ir_version=1),
+  CONSTRAINT p2_artifact_authored_kind_ck CHECK (authored_kind IN ('library','experience')),
+  CONSTRAINT p2_artifact_package_kind_ck CHECK (package_kind IN ('library','experience','fixture')),
+  CONSTRAINT p2_artifact_profile_ck CHECK (profile='phase2_economy'),
+  CONSTRAINT p2_artifact_authority_profile_ck CHECK (authority_profile IN ('production','fixture')),
+  CONSTRAINT p2_artifact_activatable_ck CHECK ((authority_profile='production' AND package_kind=authored_kind AND activatable=(authored_kind='experience')) OR (authority_profile='fixture' AND package_kind='fixture' AND activatable=false)),
+  CONSTRAINT p2_artifact_definition_count_ck CHECK (definition_count BETWEEN 0 AND 20000),
+  CONSTRAINT p2_artifact_canonical_bytes_ck CHECK (octet_length(canonical_bytes) BETWEEN 1 AND 67108864)
+);
+
+CREATE TABLE IF NOT EXISTS item_definition_versions (
+  definition_hash TEXT NOT NULL,
+  logical_item_id TEXT NOT NULL,
+  definition_version BIGINT NOT NULL,
+  package_id TEXT NOT NULL,
+  definition_kind TEXT NOT NULL,
+  family TEXT,
+  tags_json TEXT,
+  rarity TEXT,
+  stackable BOOLEAN,
+  trade_mode TEXT,
+  transferable BOOLEAN,
+  trade_policy_hash TEXT,
+  owner_scopes_json TEXT,
+  quality_mode TEXT,
+  maximum_lot_quantity INTEGER,
+  conservation_class TEXT,
+  metadata_json TEXT,
+  canonical_definition_bytes BYTEA NOT NULL,
+  registered_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  CONSTRAINT p2_definition_pk PRIMARY KEY (definition_hash),
+  CONSTRAINT p2_definition_id_version_uq UNIQUE (logical_item_id,definition_version),
+  CONSTRAINT p2_definition_id_hash_uq UNIQUE (logical_item_id,definition_hash),
+  CONSTRAINT p2_definition_definition_hash_ck CHECK (char_length(definition_hash)=64 AND definition_hash=lower(definition_hash) AND translate(definition_hash,'0123456789abcdef','')=''),
+  CONSTRAINT p2_definition_version_ck CHECK (definition_version BETWEEN 1 AND 9007199254740991),
+  CONSTRAINT p2_definition_logical_item_id_ck CHECK (char_length(logical_item_id) BETWEEN 1 AND 258),
+  CONSTRAINT p2_definition_package_id_ck CHECK (char_length(package_id) BETWEEN 1 AND 128),
+  CONSTRAINT p2_definition_trade_policy_hash_ck CHECK (trade_policy_hash IS NULL OR (char_length(trade_policy_hash)=64 AND trade_policy_hash=lower(trade_policy_hash) AND translate(trade_policy_hash,'0123456789abcdef','')='')),
+  CONSTRAINT p2_definition_kind_ck CHECK (definition_kind IN ('concept','material','item')),
+  CONSTRAINT p2_definition_rarity_ck CHECK (rarity IS NULL OR rarity IN ('common','uncommon','rare','specialty')),
+  CONSTRAINT p2_definition_quality_ck CHECK (quality_mode IS NULL OR quality_mode IN ('none','fixed','inherited','bounded')),
+  CONSTRAINT p2_definition_conservation_ck CHECK (conservation_class IS NULL OR conservation_class IN ('renewable','finite','durable','consumable')),
+  CONSTRAINT p2_definition_trade_ck CHECK ((trade_mode IS NULL AND transferable IS NULL AND trade_policy_hash IS NULL) OR (trade_mode IS NOT NULL AND transferable IS NOT NULL AND trade_policy_hash IS NOT NULL AND trade_mode IN ('closed','ordinary','restricted') AND trade_policy_hash=definition_hash)),
+  CONSTRAINT p2_definition_scopes_ck CHECK (owner_scopes_json IS NULL OR owner_scopes_json IN ('[]','["account"]','["character"]','["organization"]','["project"]','["account","character"]','["account","organization"]','["account","project"]','["character","organization"]','["character","project"]','["organization","project"]','["account","character","organization"]','["account","character","project"]','["account","organization","project"]','["character","organization","project"]','["account","character","organization","project"]')),
+  CONSTRAINT p2_definition_quantity_ck CHECK (maximum_lot_quantity IS NULL OR maximum_lot_quantity BETWEEN 1 AND 1000000),
+  CONSTRAINT p2_definition_required_ck CHECK (definition_kind='concept' OR (family IS NOT NULL AND tags_json IS NOT NULL AND rarity IS NOT NULL AND stackable IS NOT NULL AND trade_mode IS NOT NULL AND transferable IS NOT NULL AND trade_policy_hash IS NOT NULL AND owner_scopes_json IS NOT NULL AND quality_mode IS NOT NULL AND maximum_lot_quantity IS NOT NULL AND conservation_class IS NOT NULL)),
+  CONSTRAINT p2_definition_canonical_definition_bytes_ck CHECK (octet_length(canonical_definition_bytes) BETWEEN 1 AND 67108864)
+);
+
+CREATE TABLE IF NOT EXISTS content_bundle_item_definitions (
+  bundle_hash TEXT NOT NULL,
+  logical_item_id TEXT NOT NULL,
+  definition_hash TEXT NOT NULL,
+  ordinal INTEGER NOT NULL,
+  CONSTRAINT p2_membership_pk PRIMARY KEY (bundle_hash,logical_item_id),
+  CONSTRAINT p2_membership_bundle_hash_uq UNIQUE (bundle_hash,definition_hash),
+  CONSTRAINT p2_membership_exact_uq UNIQUE (bundle_hash,logical_item_id,definition_hash),
+  CONSTRAINT p2_membership_ordinal_uq UNIQUE (bundle_hash,ordinal),
+  CONSTRAINT p2_membership_artifact_fk FOREIGN KEY (bundle_hash) REFERENCES content_bundle_artifacts(bundle_hash),
+  CONSTRAINT p2_membership_definition_fk FOREIGN KEY (logical_item_id,definition_hash) REFERENCES item_definition_versions(logical_item_id,definition_hash),
+  CONSTRAINT p2_membership_bundle_hash_ck CHECK (char_length(bundle_hash)=64 AND bundle_hash=lower(bundle_hash) AND translate(bundle_hash,'0123456789abcdef','')=''),
+  CONSTRAINT p2_membership_definition_hash_ck CHECK (char_length(definition_hash)=64 AND definition_hash=lower(definition_hash) AND translate(definition_hash,'0123456789abcdef','')=''),
+  CONSTRAINT p2_membership_ordinal_ck CHECK (ordinal>=0)
+);
+
+CREATE TABLE IF NOT EXISTS content_activation_events (
+  id BIGSERIAL NOT NULL,
+  namespace TEXT NOT NULL,
+  activation_revision BIGINT NOT NULL,
+  previous_bundle_hash TEXT,
+  previous_dependency_lock_hash TEXT,
+  bundle_hash TEXT NOT NULL,
+  dependency_lock_hash TEXT NOT NULL,
+  bundle_version BIGINT NOT NULL,
+  compiler_version TEXT NOT NULL,
+  ir_version INTEGER NOT NULL,
+  profile TEXT NOT NULL,
+  policy_snapshot_json TEXT NOT NULL,
+  report_hashes_json TEXT NOT NULL,
+  operator_id TEXT NOT NULL,
+  activated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  CONSTRAINT p2_event_pk PRIMARY KEY (id),
+  CONSTRAINT p2_event_revision_uq UNIQUE (namespace,activation_revision),
+  CONSTRAINT p2_event_exact_uq UNIQUE (id,namespace,bundle_hash,activation_revision),
+  CONSTRAINT p2_event_artifact_fk FOREIGN KEY (namespace,bundle_hash,dependency_lock_hash) REFERENCES content_bundle_artifacts(namespace,bundle_hash,dependency_lock_hash),
+  CONSTRAINT p2_event_previous_artifact_fk FOREIGN KEY (namespace,previous_bundle_hash,previous_dependency_lock_hash) REFERENCES content_bundle_artifacts(namespace,bundle_hash,dependency_lock_hash),
+  CONSTRAINT p2_event_bundle_hash_ck CHECK (char_length(bundle_hash)=64 AND bundle_hash=lower(bundle_hash) AND translate(bundle_hash,'0123456789abcdef','')=''),
+  CONSTRAINT p2_event_dependency_lock_hash_ck CHECK (char_length(dependency_lock_hash)=64 AND dependency_lock_hash=lower(dependency_lock_hash) AND translate(dependency_lock_hash,'0123456789abcdef','')=''),
+  CONSTRAINT p2_event_previous_bundle_hash_ck CHECK (char_length(previous_bundle_hash)=64 AND previous_bundle_hash=lower(previous_bundle_hash) AND translate(previous_bundle_hash,'0123456789abcdef','')=''),
+  CONSTRAINT p2_event_previous_dependency_lock_hash_ck CHECK (char_length(previous_dependency_lock_hash)=64 AND previous_dependency_lock_hash=lower(previous_dependency_lock_hash) AND translate(previous_dependency_lock_hash,'0123456789abcdef','')=''),
+  CONSTRAINT p2_event_activation_revision_ck CHECK (activation_revision BETWEEN 1 AND 9007199254740991),
+  CONSTRAINT p2_event_bundle_version_ck CHECK (bundle_version BETWEEN 1 AND 9007199254740991),
+  CONSTRAINT p2_event_namespace_ck CHECK (char_length(namespace) BETWEEN 1 AND 128),
+  CONSTRAINT p2_event_compiler_version_ck CHECK (char_length(compiler_version) BETWEEN 1 AND 64),
+  CONSTRAINT p2_event_operator_id_ck CHECK (char_length(operator_id) BETWEEN 1 AND 200),
+  CONSTRAINT p2_event_ir_version_ck CHECK (ir_version=1),
+  CONSTRAINT p2_event_profile_ck CHECK (profile='phase2_economy'),
+  CONSTRAINT p2_event_previous_ck CHECK ((activation_revision=1 AND previous_bundle_hash IS NULL AND previous_dependency_lock_hash IS NULL) OR (activation_revision>1 AND previous_bundle_hash IS NOT NULL AND previous_dependency_lock_hash IS NOT NULL))
+);
+
+CREATE TABLE IF NOT EXISTS content_bundle_activations (
+  namespace TEXT NOT NULL,
+  bundle_hash TEXT,
+  last_event_id BIGINT,
+  activated_by TEXT,
+  activated_at TIMESTAMPTZ,
+  activation_revision BIGINT NOT NULL DEFAULT 0,
+  CONSTRAINT p2_pointer_pk PRIMARY KEY (namespace),
+  CONSTRAINT p2_pointer_artifact_fk FOREIGN KEY (namespace,bundle_hash) REFERENCES content_bundle_artifacts(namespace,bundle_hash),
+  CONSTRAINT p2_pointer_event_fk FOREIGN KEY (last_event_id,namespace,bundle_hash,activation_revision) REFERENCES content_activation_events(id,namespace,bundle_hash,activation_revision),
+  CONSTRAINT p2_pointer_bundle_hash_ck CHECK (char_length(bundle_hash)=64 AND bundle_hash=lower(bundle_hash) AND translate(bundle_hash,'0123456789abcdef','')=''),
+  CONSTRAINT p2_pointer_activation_revision_ck CHECK (activation_revision BETWEEN 0 AND 9007199254740991),
+  CONSTRAINT p2_pointer_namespace_ck CHECK (char_length(namespace) BETWEEN 1 AND 128),
+  CONSTRAINT p2_pointer_state_ck CHECK ((activation_revision=0 AND bundle_hash IS NULL AND last_event_id IS NULL AND activated_by IS NULL AND activated_at IS NULL) OR (activation_revision>0 AND bundle_hash IS NOT NULL AND last_event_id IS NOT NULL AND activated_by IS NOT NULL AND activated_at IS NOT NULL))
+);
+
+CREATE TABLE IF NOT EXISTS item_definition_activations (
+  logical_item_id TEXT NOT NULL,
+  definition_hash TEXT NOT NULL,
+  package_id TEXT NOT NULL,
+  bundle_hash TEXT NOT NULL,
+  activation_revision BIGINT NOT NULL,
+  event_id BIGINT NOT NULL,
+  CONSTRAINT p2_selection_pk PRIMARY KEY (logical_item_id),
+  CONSTRAINT p2_selection_membership_fk FOREIGN KEY (bundle_hash,logical_item_id,definition_hash) REFERENCES content_bundle_item_definitions(bundle_hash,logical_item_id,definition_hash),
+  CONSTRAINT p2_selection_event_fk FOREIGN KEY (event_id,package_id,bundle_hash,activation_revision) REFERENCES content_activation_events(id,namespace,bundle_hash,activation_revision),
+  CONSTRAINT p2_selection_definition_hash_ck CHECK (char_length(definition_hash)=64 AND definition_hash=lower(definition_hash) AND translate(definition_hash,'0123456789abcdef','')=''),
+  CONSTRAINT p2_selection_bundle_hash_ck CHECK (char_length(bundle_hash)=64 AND bundle_hash=lower(bundle_hash) AND translate(bundle_hash,'0123456789abcdef','')=''),
+  CONSTRAINT p2_selection_activation_revision_ck CHECK (activation_revision BETWEEN 1 AND 9007199254740991)
+);
+
+CREATE INDEX IF NOT EXISTS p2_selection_package_idx ON item_definition_activations(package_id,logical_item_id);

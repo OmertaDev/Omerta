@@ -1,0 +1,8 @@
+{
+  "packageId": "omerta.phase2.fixture.adversarial",
+  "version": 1,
+  "kind": "library",
+  "profile": "phase2_economy",
+  "authorityProfile": "production",
+  "cases": []
+}

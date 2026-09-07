@@ -1,0 +1,8 @@
+{
+  "packageId": "omerta.phase2.fixture.library",
+  "version": 1,
+  "kind": "library",
+  "profile": "phase2_economy",
+  "authorityProfile": "fixture",
+  "exports": []
+}

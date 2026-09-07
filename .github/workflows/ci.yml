@@ -55,6 +55,9 @@ jobs:
           cache: npm
       - run: npm ci
 
+      - name: Phase 1 world graph (deterministic package validation)
+        run: npm run worldgraph:check
+
       # The knowledge artifacts are REVISION-STAMPED (graph.json records its own sourceRevision and
       # carries the git lineage as ~1,200 Commit nodes), so on `push: main` they are necessarily
       # stamped from whichever branch generated them and the byte-comparison in `npm test` cannot be
@@ -187,6 +190,18 @@ jobs:
           SOCIAL_VERIFY_MODE: 'off'
           POPULATION_OFF: 'on'      # the resident worker would race the probe's own fixtures
         run: npm run pgcheck
+
+      - name: Phase 2 definition registry (real PostgreSQL)
+        if: '!cancelled()'
+        env:
+          TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check
+        run: npm run phase2:definitions:postgres
+
+      - name: Phase 2 dormant item boundary (real PostgreSQL)
+        if: '!cancelled()'
+        env:
+          TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check
+        run: npm run phase2:lots:postgres
 
       - name: stock catalog v2 finalized-observation consumer (real PostgreSQL)
         if: '!cancelled()'

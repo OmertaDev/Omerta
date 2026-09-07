@@ -23,6 +23,18 @@ const finalCallbackCases = [
     if (!ready) return null;
     return arenaBoard(pool);
   }`, 'arenaBoard', 'final top-level return after an earlier guard'],
+  [[
+    'async () => {',
+    "  const icon = '🥊';",
+    '  return arenaBoard(pool);',
+    '}',
+  ].join('\n'), 'arenaBoard', 'astral string preserves LF callback offsets'],
+  [[
+    'async () => {',
+    "  const icon = '🥊';",
+    '  return arenaBoard(pool);',
+    '}',
+  ].join('\r\n'), 'arenaBoard', 'astral string preserves CRLF callback offsets'],
   [`async () => {
     if (ready) return arenaBoard(pool);
   }`, null, 'conditional return is not a final top-level delegation'],
@@ -204,6 +216,21 @@ assert(gitDates.some(([, date]) => date.endsWith('Z')), 'THE TOOLCHAIN-INDEPENDE
   + 'found no UTC date at all, so it governs nothing on this clone.');
 
 const routeById = new Map(model.routes.map((route) => [`${route.method} ${route.url}`, route]));
+const worldGraphRoutes = model.routes.filter(({ url }) => url.startsWith('/v1/worldgraph'));
+assert.equal(worldGraphRoutes.length, 20,
+  'the knowledge graph must retain the complete Phase 1 world-graph route surface');
+assert.equal(worldGraphRoutes.every(({ access }) => access === 'authenticated'), true,
+  'every Phase 1 world-graph route must be represented as authenticated');
+const worldGraphMutations = worldGraphRoutes.filter(({ method }) => method === 'POST');
+assert.equal(worldGraphMutations.length, 13,
+  'the Phase 1 world-graph route surface has exactly thirteen mutations');
+assert.equal(worldGraphMutations.every(({ mutationAuthenticated, idempotentMutation }) => (
+  mutationAuthenticated === true && idempotentMutation === true
+)), true, 'every Phase 1 mutation must derive both auth and idempotency from mutationOptions(auth)');
+assert.equal(worldGraphRoutes.filter(({ method }) => method === 'GET')
+  .every(({ mutationAuthenticated, idempotentMutation }) => (
+    mutationAuthenticated === false && idempotentMutation === false
+  )), true, 'world-graph reads are authenticated without being mislabeled as mutation wrappers');
 const contentRouteProvenance = [
   ['GET /v1/content', 'authenticated', 'contentBoard'],
   ['POST /v1/content/:namespace/instances', 'authenticated', 'createContentInstance'],

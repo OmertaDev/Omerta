@@ -10,7 +10,8 @@ process.env.SHOOT_CD_MS = '0';
 import assert from 'node:assert';
 import { buildServer } from '../src/server.js';
 import { runLedgerInvariants } from '../src/invariants.js';
-import { sweepCrewInvites } from '../src/crew.js';
+import { sweepCrewInvites, CREW_FIRST_CHARACTER_LOCKS, setRecruiting } from '../src/crew.js';
+import { withCharacter } from '../src/game.js';
 import { CREW } from '../src/rules.js';
 import { readFileSync as _readSrc } from 'node:fs';
 
@@ -76,6 +77,72 @@ let bb = (await call('GET', '/v1/crew', { token: boss.token })).body;
 assert.equal(bb.crew.members.length, 2, 'two on the board');
 assert.equal(bb.crew.members.find((m) => m.isMe).leader, true, 'the boss is flagged leader');
 assert.equal(bb.crew.members.find((m) => m.name === 'Tony Two').level >= 3, true, 'members carry live level');
+
+// The composed wrapper must settle earned income before the Crew-first action transaction.
+// Removing that first settle leaves a refused action's income ledger without its persisted cash
+// in pg-mem (ROLLBACK is a no-op); real PostgreSQL additionally proves rollback in pgcheck.
+{
+  const accountId = await acctOf(tony.id);
+  const RealDate = globalThis.Date;
+  const now = RealDate.now();
+  const trace = [];
+  const tracedPool = {
+    query: (...args) => pool.query(...args),
+    async connect() {
+      const client = await pool.connect();
+      return {
+        query(sql, params) { trace.push(sql); return client.query(sql, params); },
+        release() { client.release(); },
+      };
+    },
+  };
+  const cash = async () => Number((await pool.query('SELECT cash FROM characters WHERE id=$1', [tony.id])).rows[0].cash);
+  const income = async () => (await pool.query(
+    "SELECT id,amount FROM transactions WHERE character_id=$1 AND reason='racket:income' ORDER BY id", [tony.id],
+  )).rows;
+  const crewBefore = (await pool.query('SELECT * FROM crews WHERE id=$1', [crewId])).rows;
+  const membersBefore = (await pool.query('SELECT * FROM crew_members WHERE crew_id=$1 ORDER BY account_id', [crewId])).rows;
+  await pool.query("INSERT INTO character_rackets (character_id,racket_id) VALUES ($1,'laundro')", [tony.id]);
+  await pool.query('UPDATE characters SET last_accrued_at=$2,racket_credit_ms=0 WHERE id=$1',
+    [tony.id, new RealDate(now - 6 * 3600000)]);
+  const cashBefore = await cash();
+  const rowsBefore = await income();
+  globalThis.Date = class extends RealDate {
+    constructor(...args) { super(...(args.length ? args : [now])); }
+    static now() { return now; }
+    static [Symbol.hasInstance](value) { return value instanceof RealDate; }
+  };
+  try {
+    const refuse = () => withCharacter(tracedPool, accountId,
+      (ch, client, h) => setRecruiting(ch, true, client, h), CREW_FIRST_CHARACTER_LOCKS);
+    await assert.rejects(refuse, (error) => error.code === 'not_leader', 'the actual Crew leader gate refuses the member');
+    const paid = await cash() - cashBefore;
+    const rowsAfter = await income();
+    const added = rowsAfter.filter((row) => !rowsBefore.some((old) => old.id === row.id));
+    assert(paid > 0, 'refused Crew action preserves settled racket cash');
+    assert.equal(added.length, 1, 'refused Crew action commits one earned-income ledger row');
+    assert(Math.abs(Number(added[0].amount) - paid) < 0.000001, 'settled cash exactly matches its ledger row');
+    const firstCommit = trace.indexOf('COMMIT');
+    const actionBegin = trace.indexOf('BEGIN', firstCommit + 1);
+    assert(firstCommit >= 0 && actionBegin > firstCommit, 'settlement commits before the action transaction begins');
+    const actionLocks = trace.slice(actionBegin).filter((sql) => /FOR UPDATE/.test(sql));
+    assert.deepEqual(actionLocks.map((sql) => sql.match(/FROM (\w+)/)[1]),
+      ['crews', 'characters', 'account_persistent', 'crew_members'],
+      'refused action retains Crew then character then account then membership lock order');
+    assert.equal(trace.at(-1), 'ROLLBACK', 'the refused Crew action reaches rollback');
+    await assert.rejects(refuse, (error) => error.code === 'not_leader');
+    assert.equal(await cash() - cashBefore, paid, 'retry at the same clock never settles income twice');
+    assert.deepEqual(await income(), rowsAfter, 'retry never adds a second income row');
+    assert.deepEqual((await pool.query('SELECT * FROM crews WHERE id=$1', [crewId])).rows, crewBefore,
+      'refused recruiting leaves Crew state unchanged');
+    assert.deepEqual((await pool.query('SELECT * FROM crew_members WHERE crew_id=$1 ORDER BY account_id', [crewId])).rows, membersBefore,
+      'refused recruiting leaves membership unchanged');
+  } finally {
+    globalThis.Date = RealDate;
+    await pool.query("DELETE FROM character_rackets WHERE character_id=$1 AND racket_id='laundro'", [tony.id]);
+  }
+  console.log('  ✓ refused Crew action settles once before Crew-first locks and preserves Crew state');
+}
 
 // the cap — fill to MAX_MEMBERS, then the next invite is refused at the door
 for (const c of [vito, nick]) {
@@ -265,9 +332,13 @@ assert.equal((await sweepCrewInvites(pool)).swept >= 2, true, 'the worker sweeps
   let obj = (await call('GET', '/v1/crew', { token: cap.token })).body.crew.objective;
   assert.equal(obj.progress, 1, 'the crew total is the sum of contributions'); assert.equal(obj.done, false, 'not cracked at 1 of 2');
   await bumpCrewObjective(pool, { owned: { crewId: cid } }, { id: hand.id, account_id: handA }, { crimes: 1 });
-  obj = (await call('GET', '/v1/crew', { token: cap.token })).body.crew.objective;
+  const completedBoard = (await call('GET', '/v1/crew', { token: cap.token })).body.crew;
+  obj = completedBoard.objective;
   assert.equal(obj.done, true, 'the target is cracked'); assert.equal(obj.progress, 2, 'progress at target');
-  assert.equal(await one('SELECT objectives_done n FROM crews WHERE id=$1', [cid]), 1, 'the crew legend bumped once on completion');
+  assert.equal(completedBoard.objectivesDone, 1,
+    'the crew legend derives one completed objective from the authoritative done rows');
+  assert.equal(await one('SELECT objectives_done n FROM crews WHERE id=$1', [cid]), 0,
+    'character-held objective completion never takes the Crew row to maintain a denormalized count');
   // the per-member contribution texture ("what your crew did")
   assert.equal(obj.contributions.length, 2, 'both contributors listed');
   assert.equal(obj.mine, 1, 'the caller sees their own contribution');
@@ -292,8 +363,13 @@ assert.equal((await sweepCrewInvites(pool)).swept >= 2, true, 'the worker sweeps
   // progress / delay completion a bump. pg-mem is single-caller — a labelled source tripwire.
   {
     const gameSrc = _readSrc(new URL('../src/game.js', import.meta.url), 'utf8');
-    const bump = gameSrc.slice(gameSrc.indexOf('export async function bumpCrewObjective'), gameSrc.indexOf('export async function bumpCrewObjective') + 1600);
+    const bump = gameSrc.slice(
+      gameSrc.indexOf('export async function bumpCrewObjective'),
+      gameSrc.indexOf('async function advanceCampaignsInline'),
+    );
     assert(/FROM crew_objectives WHERE crew_id=\$1 AND week=\$2 FOR UPDATE/.test(bump), 'bumpCrewObjective locks the objective row FOR UPDATE');
+    assert(!/UPDATE crews\b/.test(bump),
+      'character-held objective progress never acquires a later Crew-row lock');
   }
   assert.equal(obj.claimable, true, 'a contributor can claim a cracked objective');
   // everyone was pinged (the synchronous "your crew is active" moment) — scoped to THIS crew's three

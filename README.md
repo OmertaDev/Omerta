@@ -1,6 +1,6 @@
 # OMERTÀ Backend
 
-Server-authoritative backend for OMERTÀ, built to `omerta-backend-spec.md` (in this repo). What began as the M1 solo loop is now the full city: 167 backend source files, 125 test files, 263 database tables, and a playable web console covering every system — with the transaction ledger and RNG audit live from day one.
+Server-authoritative backend for OMERTÀ, built to `omerta-backend-spec.md` (in this repo). What began as the M1 solo loop is now the full city: the current source, test, route, schema and documentation census lives in `SPEC.md` and is enforced by `test/docs.js`, alongside a playable web console covering every system and a transaction ledger and RNG audit live from day one.
 
 ## Run it (zero setup)
 ```

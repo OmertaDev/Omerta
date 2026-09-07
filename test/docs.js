@@ -33,6 +33,51 @@ const lines = (p) => { const s = read(p); let n = 0; for (let i = 0; i < s.lengt
 const countLines = (files) => files.reduce((n, f) => n + lines(f), 0);
 const spec = read('SPEC.md');
 
+// Phase 1 world-graph discovery is deliberately smaller than the broad documentation census that
+// follows in Task 9, but these four operator/player entry points must already publish the safe route
+// sequence and its direct-only boundary. A route can otherwise be perfectly typed yet undiscoverable.
+{
+  const { llmsTxt } = await import('../src/agentgateway.js');
+  const surfaces = [
+    ['llms.txt', llmsTxt()],
+    ['agent guide', read('AGENTS.md')],
+    ['markdown wiki', read('docs/WIKI.md')],
+    ['browser wiki', read('public/wiki.html').replace(/<[^>]*>/g, ' ')],
+  ];
+  for (const [name, source] of surfaces) {
+    const text = source.replace(/\s+/g, ' ');
+    const plain = text.replace(/[*`]/g, '');
+    for (const route of [
+      '/v1/worldgraph/inventory',
+      '/v1/worldgraph/recipes',
+      '/v1/worldgraph/mysteries',
+      '/v1/worldgraph/operations',
+      'assign-current-character',
+    ]) {
+      assert(text.includes(route), `${name} must publish the Phase 1 world-graph route ${route}`);
+    }
+    assert(/direct(?:-| )only|direct content actions/i.test(text),
+      `${name} must identify world-graph play as deliberate direct actions`);
+    assert(/discovery.{0,100}(?:does not grant|never grants|grant no).{0,80}(?:POST )?\/v1\/agent\/act|direct.{0,140}not (?:POST )?\/v1\/agent\/act authority/i.test(plain),
+      `${name} must say discovery grants no /v1/agent/act authority`);
+    assert(/Idempotency-Key/i.test(text) && /exact retr(?:y|ies)|exact retries/i.test(text),
+      `${name} must explain mutation replay semantics`);
+    assert(/private|non-enumerat|hidden/i.test(text),
+      `${name} must preserve the shared/private board and existence-oracle boundary`);
+    assert(/immutable historical|immutable history/i.test(text)
+      && /not (?:an )?estate asset/i.test(text)
+      && /(?:never|cannot).{0,80}(?:inherit|auto-inherit)/i.test(plain),
+    `${name} must publish the Phase 1 no-inheritance death policy`);
+    assert(/(?:exact )?\$?300.{0,100}craft:recipe:hardened_steel/i.test(plain)
+      && /\$OMR-neutral|no \$OMR|creates no \$OMR/i.test(plain),
+    `${name} must publish the exact Phase 1 cash sink and zero-OMR boundary`);
+    assert(/worldgraph:check/i.test(text) && /content:check/i.test(text),
+      `${name} must distinguish the Phase 1 graph gate from authored-content validation`);
+    assert(/collection_log.{0,40}(?:not|isn't).{0,40}authority|authority.{0,40}collection_log.{0,40}(?:not|isn't)/i.test(plain),
+      `${name} must state that collection_log is not Phase 1 item authority`);
+  }
+}
+
 // Authored content is now a playable API surface, so every reader-facing guide must distinguish the
 // shipped runtime slice from the larger graph systems that are still staged. This guard exists because
 // the browser wiki continued to call the whole runtime inactive after the API and tests had gone live.
@@ -203,37 +248,47 @@ const spec = read('SPEC.md');
   'the agent guide and SPEC must inventory the production authored workshop');
 
   const packageJson = JSON.parse(read('package.json'));
+  assert.equal(packageJson.scripts['content:check'], 'npm run content:check:corpus',
+    'content:check must delegate only to automatic corpus discovery');
+  assert.equal(packageJson.scripts['content:check:corpus'],
+    'node tools/content.js check-corpus content/packs',
+  'content:check:corpus must validate the canonical production root');
+  assert(packageJson.scripts.pretest.includes('node test/phase2-discovery.js'),
+    'pretest must run the Phase 2A discovery security boundary');
+  const { discoverContentPackages } = await import('../src/content/discovery.js');
+  const checkedContentPacks = new Set(discoverContentPackages({ rootDir: 'content/packs' })
+    .map(({ manifestPath }) => path.relative(process.cwd(), manifestPath).replaceAll('\\', '/')));
   assert(packageJson.scripts.pretest.includes('node test/content-seasonal-case.js'),
     'pretest must run the production seasonal case test');
-  assert(packageJson.scripts['content:check'].includes('content/packs/books-open-at-midnight/pack.json'),
+  assert(checkedContentPacks.has('content/packs/books-open-at-midnight/pack.json'),
     'content:check must validate the production seasonal source pack');
   assert.equal(packageJson.scripts['content:build:seasonal-cases'],
     'node tools/content.js build content/packs/books-open-at-midnight/pack.json content/dist/books-open-at-midnight-v1.json',
   'the seasonal build command must emit the immutable production artifact');
   assert(packageJson.scripts.pretest.includes('node test/content-crafting.js'),
     'pretest must run the production authored crafting test');
-  assert(packageJson.scripts['content:check'].includes('content/packs/bellini-lockbox/pack.json'),
+  assert(checkedContentPacks.has('content/packs/bellini-lockbox/pack.json'),
     'content:check must validate the production authored workshop source pack');
   assert.equal(packageJson.scripts['content:build:crafting-packs'],
     'node tools/content.js build content/packs/bellini-lockbox/pack.json content/dist/bellini-lockbox-v1.json',
   'the authored crafting build command must emit the immutable production artifact');
   assert(packageJson.scripts.pretest.includes('node test/content-crafting-jobs.js'),
     'pretest must run the production authored work-order and skill test');
-  assert(packageJson.scripts['content:check'].includes('content/packs/bellini-lockbox-v2/pack.json'),
+  assert(checkedContentPacks.has('content/packs/bellini-lockbox-v2/pack.json'),
     'content:check must validate the production authored work-order source pack');
   assert.equal(packageJson.scripts['content:build:crafting-jobs'],
     'node tools/content.js build content/packs/bellini-lockbox-v2/pack.json content/dist/bellini-lockbox-v2.json',
   'the authored work-order build command must emit the immutable v2 production artifact');
   assert(packageJson.scripts.pretest.includes('node test/content-crafting-tools.js'),
     'pretest must run the production authored durable-tool and facility test');
-  assert(packageJson.scripts['content:check'].includes('content/packs/bellini-lockbox-v3/pack.json'),
+  assert(checkedContentPacks.has('content/packs/bellini-lockbox-v3/pack.json'),
     'content:check must validate the production authored durable-tool source pack');
   assert.equal(packageJson.scripts['content:build:crafting-tools'],
     'node tools/content.js build content/packs/bellini-lockbox-v3/pack.json content/dist/bellini-lockbox-v3.json',
   'the authored durable-tool build command must emit the immutable v3 production artifact');
   assert(packageJson.scripts.pretest.includes('node test/content-exchange.js'),
     'pretest must run the production authored material-exchange test');
-  assert(packageJson.scripts['content:check'].includes('content/packs/bellini-lockbox-v4/pack.json'),
+  assert(checkedContentPacks.has('content/packs/bellini-lockbox-v4/pack.json'),
     'content:check must validate the production authored material-exchange source pack');
   assert.equal(packageJson.scripts['content:build:crafting-exchange'],
     'node tools/content.js build content/packs/bellini-lockbox-v4/pack.json content/dist/bellini-lockbox-v4.json',
