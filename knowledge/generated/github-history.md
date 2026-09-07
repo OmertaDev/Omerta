@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `6379bb6e149b`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `e9340634c2e3`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1378 |
+| Commits in clone | 1381 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-07 — test: fix historical stock fixture clocks |
+| Latest commit | 2026-09-07 — docs: reconcile lot migration integration |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 512 |
+| OmertaDev | 515 |
 | Claude | 156 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 21 |
@@ -33,15 +33,15 @@
 | [CLAUDE.md](../../CLAUDE.md) | 510 | yes |
 | [public/index.html](../../public/index.html) | 397 | yes |
 | [src/server.js](../../src/server.js) | 354 | yes |
-| [SPEC.md](../../SPEC.md) | 292 | yes |
+| [SPEC.md](../../SPEC.md) | 293 | yes |
 | [schema.sql](../../schema.sql) | 280 | yes |
 | [BALANCE.md](../../BALANCE.md) | 253 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 174 | yes |
-| knowledge/generated/github-history.md | 162 | historical |
-| knowledge/generated/graph-summary.md | 162 | historical |
-| knowledge/generated/graph.json | 162 | historical |
-| knowledge/generated/inventory.md | 162 | historical |
+| knowledge/generated/github-history.md | 163 | historical |
+| knowledge/generated/graph-summary.md | 163 | historical |
+| knowledge/generated/graph.json | 163 | historical |
+| knowledge/generated/inventory.md | 163 | historical |
 | [package.json](../../package.json) | 152 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 122 | yes |
@@ -53,8 +53,8 @@
 | [public/wiki.html](../../public/wiki.html) | 83 | yes |
 | [test/growth.js](../../test/growth.js) | 79 | yes |
 | [docs/WIKI.md](../../docs/WIKI.md) | 72 | yes |
+| knowledge/generated/documents.md | 65 | historical |
 | [test/hardening.js](../../test/hardening.js) | 65 | yes |
-| knowledge/generated/documents.md | 64 | historical |
 | [tools/sim.js](../../tools/sim.js) | 59 | yes |
 | [test/gates.js](../../test/gates.js) | 58 | yes |
 | [README.md](../../README.md) | 56 | yes |

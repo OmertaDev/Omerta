@@ -1,29 +1,29 @@
 # Generated repository inventory
 
-> Source: worktree at `6379bb6e149b`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `e9340634c2e3`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 1,887 |
-| Text lines | 564,090 |
-| Repository bytes inventoried | 316,316,944 |
+| Current artifacts | 1,888 |
+| Text lines | 564,818 |
+| Repository bytes inventoried | 316,405,516 |
 | Backend/route modules | 206 |
 | HTTP route registrations / unique routes | 762 / 762 |
 | Database tables | 329 |
 | Solidity declarations | 49 |
-| Git commits | 1,378 |
+| Git commits | 1,381 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 5,882 / 26,139 |
+| Graph nodes / edges | 5,887 / 26,217 |
 
 ## Artifact kinds
 
 | Kind | Files |
 |---|---:|
 | media-asset | 576 |
-| documentation | 269 |
+| documentation | 270 |
 | artifact | 188 |
 | backend-module | 184 |
 | test-suite | 165 |
@@ -63,8 +63,8 @@
 | [test/gates.js](../../test/gates.js) | 3,796 | test-suite | 2026-09-07 |
 | [omerta-contracts/test/AcquisitionConstellationTask3B.t.sol](../../omerta-contracts/test/AcquisitionConstellationTask3B.t.sol) | 3,743 | contract-test | 2026-08-28 |
 | [src/server.js](../../src/server.js) | 3,488 | backend-module | 2026-09-04 |
+| [test/phase2-review-regressions.js](../../test/phase2-review-regressions.js) | 3,440 | test-suite | 2026-09-07 |
 | [omerta-contracts/test/AcquisitionVaultOperator.t.sol](../../omerta-contracts/test/AcquisitionVaultOperator.t.sol) | 3,222 | contract-test | 2026-08-29 |
-| [test/phase2-review-regressions.js](../../test/phase2-review-regressions.js) | 3,133 | test-suite | 2026-09-07 |
 | [omerta-contracts/script/Verify-AcquisitionConstellationCrosswalk.ps1](../../omerta-contracts/script/Verify-AcquisitionConstellationCrosswalk.ps1) | 2,947 | contract-project | 2026-08-28 |
 | [docs/WIKI.md](../../docs/WIKI.md) | 2,759 | documentation | 2026-09-04 |
 | [omerta-contracts/fizz_data/contracts.json](../../omerta-contracts/fizz_data/contracts.json) | 2,739 | contract-project | 2026-08-25 |
