@@ -351,7 +351,7 @@
 | [docs/superpowers/plans/2026-08-28-rwa-health-h2.md](../../docs/superpowers/plans/2026-08-28-rwa-health-h2.md) | documentation | 872 | 2026-08-28 |
 | [docs/superpowers/plans/2026-08-28-rwa-registry-lifecycle-cn6a.md](../../docs/superpowers/plans/2026-08-28-rwa-registry-lifecycle-cn6a.md) | documentation | 507 | 2026-08-28 |
 | [docs/superpowers/plans/2026-09-03-world-graph-item-economy.md](../../docs/superpowers/plans/2026-09-03-world-graph-item-economy.md) | documentation | 311 | 2026-09-03 |
-| [docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md](../../docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md) | documentation | 1014 | 2026-09-07 |
+| [docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md](../../docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md) | documentation | 1017 | 2026-09-07 |
 | [docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md](../../docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md) | design | 124 | 2026-08-24 |
 | [docs/superpowers/specs/2026-08-25-agent-alpha-deep-city-design.md](../../docs/superpowers/specs/2026-08-25-agent-alpha-deep-city-design.md) | design | 177 | 2026-08-25 |
 | [docs/superpowers/specs/2026-08-26-grill-completion.md](../../docs/superpowers/specs/2026-08-26-grill-completion.md) | documentation | 861 | 2026-08-28 |
@@ -370,7 +370,7 @@
 | [docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md](../../docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md) | design | 939 | 2026-09-07 |
 | [docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md](../../docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md) | design | 224 | 2026-09-07 |
 | [docs/superpowers/specs/2026-09-07-world-graph-phase-2a-definition-registry-amendment.md](../../docs/superpowers/specs/2026-09-07-world-graph-phase-2a-definition-registry-amendment.md) | documentation | 130 | 2026-09-07 |
-| [docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md](../../docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md) | documentation | 219 | 2026-09-07 |
+| [docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md](../../docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md) | documentation | 229 | 2026-09-07 |
 | [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2759 | 2026-09-04 |
 | [GRAPH.md](../../GRAPH.md) | documentation | 295 | 2026-08-29 |
 | [GTM.md](../../GTM.md) | documentation | 295 | 2026-08-13 |

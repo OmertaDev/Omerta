@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "a24eea9de4eb68c1bdf5e4524834847c90413f0b",
+  "sourceRevision": "1d64f3648f5a340412b2404005f6d88e17d9badf",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,42 +43,42 @@
     ]
   },
   "census": {
-    "nodes": 5925,
-    "edges": 26477,
+    "nodes": 5936,
+    "edges": 26564,
     "byNodeType": {
-      "Artifact": 1900,
-      "Command": 62,
-      "Commit": 1387,
+      "Artifact": 1903,
+      "Command": 64,
+      "Commit": 1390,
       "Contract": 49,
       "Document": 492,
       "Domain": 13,
       "ExternalDependency": 24,
       "HistoricalArtifact": 306,
-      "Module": 212,
+      "Module": 213,
       "PullRequest": 126,
       "Repository": 1,
       "Route": 762,
       "Subsystem": 8,
       "Table": 335,
-      "TestSuite": 244,
+      "TestSuite": 246,
       "Workflow": 4
     },
     "byEdgeType": {
-      "BELONGS_TO": 2055,
-      "CHANGED": 10562,
-      "CONTAINS": 1921,
-      "DECLARES": 62,
+      "BELONGS_TO": 2058,
+      "CHANGED": 10586,
+      "CONTAINS": 1924,
+      "DECLARES": 64,
       "DEFINED_IN": 1146,
       "DEPENDS_ON": 64,
-      "EXECUTES": 229,
+      "EXECUTES": 232,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1387,
+      "HAS_COMMIT": 1390,
       "IMPLEMENTS": 124,
-      "IMPORTS": 1817,
+      "IMPORTS": 1839,
       "INHERITS": 12,
-      "REFERENCES": 3090,
-      "REPRESENTS": 952,
-      "TESTS": 655,
+      "REFERENCES": 3102,
+      "REPRESENTS": 955,
+      "TESTS": 667,
       "TRACKS": 126,
       "USES_TABLE": 1573
     }
@@ -7521,20 +7521,20 @@
       "path": ".github/workflows/ci.yml",
       "kind": "workflow",
       "extension": ".yml",
-      "bytes": 16383,
-      "lines": 301,
-      "version": "334fab5fbda5c920",
+      "bytes": 16613,
+      "lines": 307,
+      "version": "38590cae531d3217",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "334fab5fbda5c920"
+          "version": "38590cae531d3217"
         }
       ],
-      "lastChangedAt": "2026-09-07T10:18:44.000Z",
+      "lastChangedAt": "2026-09-07T14:15:50.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a24eea9de4eb68c1bdf5e4524834847c90413f0b"
+      "lastChangedCommit": "1d64f3648f5a340412b2404005f6d88e17d9badf"
     },
     {
       "key": "Artifact:.github/workflows/forge.yml",
@@ -13271,20 +13271,20 @@
       "path": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 124336,
-      "lines": 1014,
-      "version": "9d570a6ba094e565",
+      "bytes": 127163,
+      "lines": 1017,
+      "version": "f2d62dbf15c98288",
       "text": true,
       "provenance": [
         {
           "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
           "line": 1,
-          "version": "9d570a6ba094e565"
+          "version": "f2d62dbf15c98288"
         }
       ],
-      "lastChangedAt": "2026-09-07T06:57:43.000Z",
+      "lastChangedAt": "2026-09-07T14:15:50.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e9340634c2e3cea06d9529467eb0c53fa7cd2997"
+      "lastChangedCommit": "1d64f3648f5a340412b2404005f6d88e17d9badf"
     },
     {
       "key": "Artifact:docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md",
@@ -13708,20 +13708,20 @@
       "path": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 34960,
-      "lines": 219,
-      "version": "579d4735292ff081",
+      "bytes": 38935,
+      "lines": 229,
+      "version": "0727a630b09b61bb",
       "text": true,
       "provenance": [
         {
           "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
           "line": 1,
-          "version": "579d4735292ff081"
+          "version": "0727a630b09b61bb"
         }
       ],
-      "lastChangedAt": "2026-09-07T06:57:43.000Z",
+      "lastChangedAt": "2026-09-07T14:15:50.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e9340634c2e3cea06d9529467eb0c53fa7cd2997"
+      "lastChangedCommit": "1d64f3648f5a340412b2404005f6d88e17d9badf"
     },
     {
       "key": "Artifact:docs/WIKI.md",
@@ -14170,18 +14170,18 @@
       "extension": ".md",
       "bytes": 7058,
       "lines": 128,
-      "version": "8b89b798159f7216",
+      "version": "6be34670871384cd",
       "text": true,
       "provenance": [
         {
           "file": "MARKETING-POSTS.md",
           "line": 1,
-          "version": "8b89b798159f7216"
+          "version": "6be34670871384cd"
         }
       ],
-      "lastChangedAt": "2026-09-07T10:18:44.000Z",
+      "lastChangedAt": "2026-09-07T14:15:50.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a24eea9de4eb68c1bdf5e4524834847c90413f0b"
+      "lastChangedCommit": "1d64f3648f5a340412b2404005f6d88e17d9badf"
     },
     {
       "key": "Artifact:MARKETING.md",
@@ -20372,20 +20372,20 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 11183,
-      "lines": 90,
-      "version": "b73a3a7cd9c26cea",
+      "bytes": 11347,
+      "lines": 92,
+      "version": "f51979e743177952",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "b73a3a7cd9c26cea"
+          "version": "f51979e743177952"
         }
       ],
-      "lastChangedAt": "2026-09-07T10:18:44.000Z",
+      "lastChangedAt": "2026-09-07T14:15:50.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a24eea9de4eb68c1bdf5e4524834847c90413f0b"
+      "lastChangedCommit": "1d64f3648f5a340412b2404005f6d88e17d9badf"
     },
     {
       "key": "Artifact:Procfile",
@@ -33114,20 +33114,20 @@
       "path": "schema.sql",
       "kind": "data-schema",
       "extension": ".sql",
-      "bytes": 405808,
-      "lines": 6578,
-      "version": "446674e9ec4a85ba",
+      "bytes": 407062,
+      "lines": 6594,
+      "version": "77bf1bf4c0093c01",
       "text": true,
       "provenance": [
         {
           "file": "schema.sql",
           "line": 1,
-          "version": "446674e9ec4a85ba"
+          "version": "77bf1bf4c0093c01"
         }
       ],
-      "lastChangedAt": "2026-09-07T08:34:33.000Z",
+      "lastChangedAt": "2026-09-07T14:15:50.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "5a03f9ef049f424374ae9659fde81c8510c71e87"
+      "lastChangedCommit": "1d64f3648f5a340412b2404005f6d88e17d9badf"
     },
     {
       "key": "Artifact:SIGN-OFF.md",
@@ -33185,18 +33185,18 @@
       "extension": ".md",
       "bytes": 54642,
       "lines": 735,
-      "version": "746b95ee90e1f142",
+      "version": "5aa2f005985dc5bf",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "746b95ee90e1f142"
+          "version": "5aa2f005985dc5bf"
         }
       ],
-      "lastChangedAt": "2026-09-07T10:18:44.000Z",
+      "lastChangedAt": "2026-09-07T14:15:50.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a24eea9de4eb68c1bdf5e4524834847c90413f0b"
+      "lastChangedCommit": "1d64f3648f5a340412b2404005f6d88e17d9badf"
     },
     {
       "key": "Artifact:src/accrual.js",
@@ -34517,20 +34517,20 @@
       "path": "src/crafting.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 33024,
-      "lines": 822,
-      "version": "7794acaf5348244e",
+      "bytes": 33048,
+      "lines": 823,
+      "version": "6500a68cadfece4f",
       "text": true,
       "provenance": [
         {
           "file": "src/crafting.js",
           "line": 1,
-          "version": "7794acaf5348244e"
+          "version": "6500a68cadfece4f"
         }
       ],
-      "lastChangedAt": "2026-09-04T04:25:27.000Z",
+      "lastChangedAt": "2026-09-07T14:15:50.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      "lastChangedCommit": "1d64f3648f5a340412b2404005f6d88e17d9badf"
     },
     {
       "key": "Artifact:src/crew.js",
@@ -35138,20 +35138,20 @@
       "path": "src/game.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 205969,
-      "lines": 2608,
-      "version": "ace0d90dfe7b5c41",
+      "bytes": 206410,
+      "lines": 2614,
+      "version": "4a7571f3339227cf",
       "text": true,
       "provenance": [
         {
           "file": "src/game.js",
           "line": 1,
-          "version": "ace0d90dfe7b5c41"
+          "version": "4a7571f3339227cf"
         }
       ],
-      "lastChangedAt": "2026-09-03T23:46:13.000Z",
+      "lastChangedAt": "2026-09-07T14:15:50.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c37f3b2b55a1c74f242719c4ffbd6bd3a7e4335c"
+      "lastChangedCommit": "1d64f3648f5a340412b2404005f6d88e17d9badf"
     },
     {
       "key": "Artifact:src/genesiscadence.js",
@@ -35368,20 +35368,43 @@
       "path": "src/invariants.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 78139,
-      "lines": 1065,
-      "version": "db215c23e80d0216",
+      "bytes": 78224,
+      "lines": 1066,
+      "version": "e9dc27626e40579c",
       "text": true,
       "provenance": [
         {
           "file": "src/invariants.js",
           "line": 1,
-          "version": "db215c23e80d0216"
+          "version": "e9dc27626e40579c"
         }
       ],
-      "lastChangedAt": "2026-09-07T10:18:44.000Z",
+      "lastChangedAt": "2026-09-07T14:15:50.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a24eea9de4eb68c1bdf5e4524834847c90413f0b"
+      "lastChangedCommit": "1d64f3648f5a340412b2404005f6d88e17d9badf"
+    },
+    {
+      "key": "Artifact:src/item-lock-trace.js",
+      "type": "Artifact",
+      "id": "src/item-lock-trace.js",
+      "label": "item-lock-trace.js",
+      "path": "src/item-lock-trace.js",
+      "kind": "backend-module",
+      "extension": ".js",
+      "bytes": 3162,
+      "lines": 59,
+      "version": "e391998167adc54c",
+      "text": true,
+      "provenance": [
+        {
+          "file": "src/item-lock-trace.js",
+          "line": 1,
+          "version": "e391998167adc54c"
+        }
+      ],
+      "lastChangedAt": "2026-09-07T14:15:50.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "1d64f3648f5a340412b2404005f6d88e17d9badf"
     },
     {
       "key": "Artifact:src/itemdefinitions.js",
@@ -35414,20 +35437,20 @@
       "path": "src/items.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 37363,
-      "lines": 831,
-      "version": "5e4afd88a498dbe1",
+      "bytes": 50736,
+      "lines": 1050,
+      "version": "eff97e30efa6995a",
       "text": true,
       "provenance": [
         {
           "file": "src/items.js",
           "line": 1,
-          "version": "5e4afd88a498dbe1"
+          "version": "eff97e30efa6995a"
         }
       ],
-      "lastChangedAt": "2026-09-04T04:25:27.000Z",
+      "lastChangedAt": "2026-09-07T14:15:50.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      "lastChangedCommit": "1d64f3648f5a340412b2404005f6d88e17d9badf"
     },
     {
       "key": "Artifact:src/kitchen.js",
@@ -40076,6 +40099,29 @@
       "lastChangedCommit": "a24eea9de4eb68c1bdf5e4524834847c90413f0b"
     },
     {
+      "key": "Artifact:test/lib/phase2-item-fixtures.js",
+      "type": "Artifact",
+      "id": "test/lib/phase2-item-fixtures.js",
+      "label": "phase2-item-fixtures.js",
+      "path": "test/lib/phase2-item-fixtures.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 8097,
+      "lines": 120,
+      "version": "384754998b5568c5",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/lib/phase2-item-fixtures.js",
+          "line": 1,
+          "version": "384754998b5568c5"
+        }
+      ],
+      "lastChangedAt": "2026-09-07T14:15:50.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "1d64f3648f5a340412b2404005f6d88e17d9badf"
+    },
+    {
       "key": "Artifact:test/lib/srcfiles.js",
       "type": "Artifact",
       "id": "test/lib/srcfiles.js",
@@ -40628,6 +40674,29 @@
       "lastChangedCommit": "49d3066f587652d6b9b8948a670f0ebe6cedb9f6"
     },
     {
+      "key": "Artifact:test/phase2-lot-boundary.js",
+      "type": "Artifact",
+      "id": "test/phase2-lot-boundary.js",
+      "label": "phase2-lot-boundary.js",
+      "path": "test/phase2-lot-boundary.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 39734,
+      "lines": 543,
+      "version": "a1c6cdde9bfbb67d",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/phase2-lot-boundary.js",
+          "line": 1,
+          "version": "a1c6cdde9bfbb67d"
+        }
+      ],
+      "lastChangedAt": "2026-09-07T14:15:50.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "1d64f3648f5a340412b2404005f6d88e17d9badf"
+    },
+    {
       "key": "Artifact:test/phase2-postgres.js",
       "type": "Artifact",
       "id": "test/phase2-postgres.js",
@@ -40635,20 +40704,20 @@
       "path": "test/phase2-postgres.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 35809,
-      "lines": 478,
-      "version": "498ff9494d70fdf2",
+      "bytes": 36780,
+      "lines": 497,
+      "version": "6e7d9e1d6a08c6e2",
       "text": true,
       "provenance": [
         {
           "file": "test/phase2-postgres.js",
           "line": 1,
-          "version": "498ff9494d70fdf2"
+          "version": "6e7d9e1d6a08c6e2"
         }
       ],
-      "lastChangedAt": "2026-09-07T10:18:44.000Z",
+      "lastChangedAt": "2026-09-07T14:15:50.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a24eea9de4eb68c1bdf5e4524834847c90413f0b"
+      "lastChangedCommit": "1d64f3648f5a340412b2404005f6d88e17d9badf"
     },
     {
       "key": "Artifact:test/phase2-review-regressions.js",
@@ -44325,6 +44394,32 @@
       ]
     },
     {
+      "key": "Command:npm:phase2:lots:check",
+      "type": "Command",
+      "id": "npm:phase2:lots:check",
+      "label": "npm run phase2:lots:check",
+      "command": "node test/phase2-lot-boundary.js",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "key": "Command:npm:phase2:lots:postgres",
+      "type": "Command",
+      "id": "npm:phase2:lots:postgres",
+      "label": "npm run phase2:lots:postgres",
+      "command": "node test/phase2-postgres.js --lots",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
       "key": "Command:npm:playthrough",
       "type": "Command",
       "id": "npm:playthrough",
@@ -44368,7 +44463,7 @@
       "type": "Command",
       "id": "npm:pretest",
       "label": "npm run pretest",
-      "command": "node test/finalizedobservation.js && node test/stockballotv2.js && node test/rwanominations.js && node test/rwaroutes.js && node test/rwahealth.js && node test/rwahealth.integration.js && node test/rwahealthclearance.js && node test/rwahealthclearancecontext.js && node test/rwahealthoverlay.readiness.js && node test/rwahealthoverlay.schema.js && node test/rwahealthoverlay.vector.js && node test/rwaregistrylifecycle.js && node test/rwaregistrylifecycle.sync.js && node test/agent-referral-cash.js && node test/phase2-discovery.js && node test/phase2-compiler.js && node test/phase2-review-regressions.js && node test/phase2-scale.js && node test/content-graph.js && node test/content-runtime.js && node test/content-social.js && node test/content-seasonal.js && node test/content-seasonal-case.js && node test/content-crafting.js && node test/content-crafting-jobs.js && node test/content-crafting-tools.js && node test/content-exchange.js && node test/content-api.js && node test/v4oraclekeeper.js && node test/genesiscca.js && node test/genesislaunch.js && node test/genesisrelease.js && node test/worldgraph.js && node test/worldgraph-validation.js && node test/items.js && node test/crafting.js && node test/mysteries.js && node test/operations.js && node test/belladonna.js && node test/worldgraph-api.js && node tools/pgcheck-belladonna.js --pg-mem && node test/phase2-definition-schema.js && node test/phase2-definitions.js && node test/phase2-activation.js && node test/phase2-definition-invariants.js",
+      "command": "node test/finalizedobservation.js && node test/stockballotv2.js && node test/rwanominations.js && node test/rwaroutes.js && node test/rwahealth.js && node test/rwahealth.integration.js && node test/rwahealthclearance.js && node test/rwahealthclearancecontext.js && node test/rwahealthoverlay.readiness.js && node test/rwahealthoverlay.schema.js && node test/rwahealthoverlay.vector.js && node test/rwaregistrylifecycle.js && node test/rwaregistrylifecycle.sync.js && node test/agent-referral-cash.js && node test/phase2-discovery.js && node test/phase2-compiler.js && node test/phase2-review-regressions.js && node test/phase2-scale.js && node test/content-graph.js && node test/content-runtime.js && node test/content-social.js && node test/content-seasonal.js && node test/content-seasonal-case.js && node test/content-crafting.js && node test/content-crafting-jobs.js && node test/content-crafting-tools.js && node test/content-exchange.js && node test/content-api.js && node test/v4oraclekeeper.js && node test/genesiscca.js && node test/genesislaunch.js && node test/genesisrelease.js && node test/worldgraph.js && node test/worldgraph-validation.js && node test/items.js && node test/crafting.js && node test/mysteries.js && node test/operations.js && node test/belladonna.js && node test/worldgraph-api.js && node tools/pgcheck-belladonna.js --pg-mem && node test/phase2-definition-schema.js && node test/phase2-definitions.js && node test/phase2-activation.js && node test/phase2-definition-invariants.js && node test/phase2-lot-boundary.js",
       "provenance": [
         {
           "file": "package.json",
@@ -46917,6 +47012,22 @@
         {
           "commit": "1d571afc1ad685433befc0dc5d3b84b4dc3005fc",
           "url": "https://github.com/OmertaDev/Omerta/commit/1d571afc1ad685433befc0dc5d3b84b4dc3005fc"
+        }
+      ]
+    },
+    {
+      "key": "Commit:1d64f3648f5a340412b2404005f6d88e17d9badf",
+      "type": "Commit",
+      "id": "1d64f3648f5a340412b2404005f6d88e17d9badf",
+      "label": "feat: harden owned item mutation boundary for lots",
+      "title": "feat: harden owned item mutation boundary for lots",
+      "date": "2026-09-07T14:15:50.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/1d64f3648f5a340412b2404005f6d88e17d9badf",
+      "provenance": [
+        {
+          "commit": "1d64f3648f5a340412b2404005f6d88e17d9badf",
+          "url": "https://github.com/OmertaDev/Omerta/commit/1d64f3648f5a340412b2404005f6d88e17d9badf"
         }
       ]
     },
@@ -58473,6 +58584,22 @@
       ]
     },
     {
+      "key": "Commit:99c70b8cdd53a690bc043592fbff54702b076994",
+      "type": "Commit",
+      "id": "99c70b8cdd53a690bc043592fbff54702b076994",
+      "label": "docs: refresh verified definition registry graph",
+      "title": "docs: refresh verified definition registry graph",
+      "date": "2026-09-07T10:20:05.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/99c70b8cdd53a690bc043592fbff54702b076994",
+      "provenance": [
+        {
+          "commit": "99c70b8cdd53a690bc043592fbff54702b076994",
+          "url": "https://github.com/OmertaDev/Omerta/commit/99c70b8cdd53a690bc043592fbff54702b076994"
+        }
+      ]
+    },
+    {
       "key": "Commit:9a22714061f0c2daf9c107858978fb1f633e3218",
       "type": "Commit",
       "id": "9a22714061f0c2daf9c107858978fb1f633e3218",
@@ -62549,6 +62676,22 @@
         {
           "commit": "c7fe4c9fa0a3b4dcbdf1ad01348f9c60e50d4c36",
           "url": "https://github.com/OmertaDev/Omerta/commit/c7fe4c9fa0a3b4dcbdf1ad01348f9c60e50d4c36"
+        }
+      ]
+    },
+    {
+      "key": "Commit:c80d6794f8f6134fef39dad33234fdc9b2d0a545",
+      "type": "Commit",
+      "id": "c80d6794f8f6134fef39dad33234fdc9b2d0a545",
+      "label": "docs: approve owned-client item transaction integration",
+      "title": "docs: approve owned-client item transaction integration",
+      "date": "2026-09-07T12:19:36.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/c80d6794f8f6134fef39dad33234fdc9b2d0a545",
+      "provenance": [
+        {
+          "commit": "c80d6794f8f6134fef39dad33234fdc9b2d0a545",
+          "url": "https://github.com/OmertaDev/Omerta/commit/c80d6794f8f6134fef39dad33234fdc9b2d0a545"
         }
       ]
     },
@@ -73216,13 +73359,13 @@
       "id": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
       "label": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
       "documentType": "documentation",
-      "lines": 1014,
-      "version": "9d570a6ba094e565",
+      "lines": 1017,
+      "version": "f2d62dbf15c98288",
       "provenance": [
         {
           "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
           "line": 1,
-          "version": "9d570a6ba094e565"
+          "version": "f2d62dbf15c98288"
         }
       ]
     },
@@ -73520,13 +73663,13 @@
       "id": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
       "label": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
       "documentType": "documentation",
-      "lines": 219,
-      "version": "579d4735292ff081",
+      "lines": 229,
+      "version": "0727a630b09b61bb",
       "provenance": [
         {
           "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
           "line": 1,
-          "version": "579d4735292ff081"
+          "version": "0727a630b09b61bb"
         }
       ]
     },
@@ -73825,12 +73968,12 @@
       "label": "MARKETING-POSTS.md",
       "documentType": "documentation",
       "lines": 128,
-      "version": "8b89b798159f7216",
+      "version": "6be34670871384cd",
       "provenance": [
         {
           "file": "MARKETING-POSTS.md",
           "line": 1,
-          "version": "8b89b798159f7216"
+          "version": "6be34670871384cd"
         }
       ]
     },
@@ -75441,12 +75584,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 735,
-      "version": "746b95ee90e1f142",
+      "version": "5aa2f005985dc5bf",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "746b95ee90e1f142"
+          "version": "5aa2f005985dc5bf"
         }
       ]
     },
@@ -80516,6 +80659,9 @@
           "commit": "99439d4c633a14dcdf11854903d92ea79abbb12a"
         },
         {
+          "commit": "99c70b8cdd53a690bc043592fbff54702b076994"
+        },
+        {
           "commit": "9b5e1f54d084547bb33600f5934391191726a3c1"
         },
         {
@@ -81021,6 +81167,9 @@
         },
         {
           "commit": "99439d4c633a14dcdf11854903d92ea79abbb12a"
+        },
+        {
+          "commit": "99c70b8cdd53a690bc043592fbff54702b076994"
         },
         {
           "commit": "9b5e1f54d084547bb33600f5934391191726a3c1"
@@ -81530,6 +81679,9 @@
           "commit": "99439d4c633a14dcdf11854903d92ea79abbb12a"
         },
         {
+          "commit": "99c70b8cdd53a690bc043592fbff54702b076994"
+        },
+        {
           "commit": "9b5e1f54d084547bb33600f5934391191726a3c1"
         },
         {
@@ -81762,6 +81914,9 @@
         },
         {
           "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
+        },
+        {
+          "commit": "99c70b8cdd53a690bc043592fbff54702b076994"
         },
         {
           "commit": "9b5e1f54d084547bb33600f5934391191726a3c1"
@@ -82124,6 +82279,9 @@
           "commit": "99439d4c633a14dcdf11854903d92ea79abbb12a"
         },
         {
+          "commit": "99c70b8cdd53a690bc043592fbff54702b076994"
+        },
+        {
           "commit": "9b5e1f54d084547bb33600f5934391191726a3c1"
         },
         {
@@ -82400,6 +82558,9 @@
           "commit": "99439d4c633a14dcdf11854903d92ea79abbb12a"
         },
         {
+          "commit": "99c70b8cdd53a690bc043592fbff54702b076994"
+        },
+        {
           "commit": "9b5e1f54d084547bb33600f5934391191726a3c1"
         },
         {
@@ -82563,6 +82724,9 @@
         },
         {
           "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
+        },
+        {
+          "commit": "99c70b8cdd53a690bc043592fbff54702b076994"
         },
         {
           "commit": "9b5e1f54d084547bb33600f5934391191726a3c1"
@@ -83540,13 +83704,13 @@
       "type": "Module",
       "id": "src/crafting.js",
       "label": "src/crafting.js",
-      "lines": 822,
-      "version": "7794acaf5348244e",
+      "lines": 823,
+      "version": "6500a68cadfece4f",
       "provenance": [
         {
           "file": "src/crafting.js",
           "line": 1,
-          "version": "7794acaf5348244e"
+          "version": "6500a68cadfece4f"
         }
       ]
     },
@@ -83945,13 +84109,13 @@
       "type": "Module",
       "id": "src/game.js",
       "label": "src/game.js",
-      "lines": 2608,
-      "version": "ace0d90dfe7b5c41",
+      "lines": 2614,
+      "version": "4a7571f3339227cf",
       "provenance": [
         {
           "file": "src/game.js",
           "line": 1,
-          "version": "ace0d90dfe7b5c41"
+          "version": "4a7571f3339227cf"
         }
       ]
     },
@@ -84095,13 +84259,28 @@
       "type": "Module",
       "id": "src/invariants.js",
       "label": "src/invariants.js",
-      "lines": 1065,
-      "version": "db215c23e80d0216",
+      "lines": 1066,
+      "version": "e9dc27626e40579c",
       "provenance": [
         {
           "file": "src/invariants.js",
           "line": 1,
-          "version": "db215c23e80d0216"
+          "version": "e9dc27626e40579c"
+        }
+      ]
+    },
+    {
+      "key": "Module:src/item-lock-trace.js",
+      "type": "Module",
+      "id": "src/item-lock-trace.js",
+      "label": "src/item-lock-trace.js",
+      "lines": 59,
+      "version": "e391998167adc54c",
+      "provenance": [
+        {
+          "file": "src/item-lock-trace.js",
+          "line": 1,
+          "version": "e391998167adc54c"
         }
       ]
     },
@@ -84125,13 +84304,13 @@
       "type": "Module",
       "id": "src/items.js",
       "label": "src/items.js",
-      "lines": 831,
-      "version": "5e4afd88a498dbe1",
+      "lines": 1050,
+      "version": "eff97e30efa6995a",
       "provenance": [
         {
           "file": "src/items.js",
           "line": 1,
-          "version": "5e4afd88a498dbe1"
+          "version": "eff97e30efa6995a"
         }
       ]
     },
@@ -89015,12 +89194,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "a24eea9de4eb68c1bdf5e4524834847c90413f0b",
+      "revision": "1d64f3648f5a340412b2404005f6d88e17d9badf",
       "currentBranch": "codex/world-graph-phases-2-3",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 1900,
+      "currentArtifactCount": 1903,
       "provenance": [
         {
           "file": "README.md",
@@ -108598,13 +108777,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6510
+          "line": 6526
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6510
+          "line": 6526
         }
       ]
     },
@@ -108634,13 +108813,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6545
+          "line": 6561
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6545
+          "line": 6561
         }
       ]
     },
@@ -108652,13 +108831,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6409
+          "line": 6425
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6409
+          "line": 6425
         }
       ]
     },
@@ -108670,13 +108849,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6494
+          "line": 6510
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6494
+          "line": 6510
         }
       ]
     },
@@ -108706,13 +108885,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5028
+          "line": 5044
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5028
+          "line": 5044
         }
       ]
     },
@@ -108724,13 +108903,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5001
+          "line": 5017
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5001
+          "line": 5017
         }
       ]
     },
@@ -108832,13 +109011,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4825
+          "line": 4841
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4825
+          "line": 4841
         }
       ]
     },
@@ -108850,13 +109029,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4983
+          "line": 4999
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4983
+          "line": 4999
         }
       ]
     },
@@ -108868,13 +109047,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4872
+          "line": 4888
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4872
+          "line": 4888
         }
       ]
     },
@@ -108886,13 +109065,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4858
+          "line": 4874
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4858
+          "line": 4874
         }
       ]
     },
@@ -108922,13 +109101,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4886
+          "line": 4902
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4886
+          "line": 4902
         }
       ]
     },
@@ -108940,13 +109119,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4959
+          "line": 4975
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4959
+          "line": 4975
         }
       ]
     },
@@ -108958,13 +109137,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4935
+          "line": 4951
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4935
+          "line": 4951
         }
       ]
     },
@@ -108976,13 +109155,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4906
+          "line": 4922
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4906
+          "line": 4922
         }
       ]
     },
@@ -109534,13 +109713,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5058
+          "line": 5074
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5058
+          "line": 5074
         }
       ]
     },
@@ -109552,13 +109731,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5074
+          "line": 5090
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5074
+          "line": 5090
         }
       ]
     },
@@ -109750,13 +109929,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5131
+          "line": 5147
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5131
+          "line": 5147
         }
       ]
     },
@@ -110236,13 +110415,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6561
+          "line": 6577
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6561
+          "line": 6577
         }
       ]
     },
@@ -110254,13 +110433,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6455
+          "line": 6471
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6455
+          "line": 6471
         }
       ]
     },
@@ -110272,13 +110451,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4547
+          "line": 4563
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4547
+          "line": 4563
         }
       ]
     },
@@ -110668,13 +110847,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4704
+          "line": 4720
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4704
+          "line": 4720
         }
       ]
     },
@@ -110686,13 +110865,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4628
+          "line": 4644
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4628
+          "line": 4644
         }
       ]
     },
@@ -110704,13 +110883,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4681
+          "line": 4697
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4681
+          "line": 4697
         }
       ]
     },
@@ -111460,13 +111639,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5475
+          "line": 5491
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5475
+          "line": 5491
         }
       ]
     },
@@ -111478,13 +111657,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5502
+          "line": 5518
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5502
+          "line": 5518
         }
       ]
     },
@@ -111496,13 +111675,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5851
+          "line": 5867
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5851
+          "line": 5867
         }
       ]
     },
@@ -111514,13 +111693,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5929
+          "line": 5945
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5929
+          "line": 5945
         }
       ]
     },
@@ -111532,13 +111711,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5943
+          "line": 5959
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5943
+          "line": 5959
         }
       ]
     },
@@ -111550,13 +111729,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6318
+          "line": 6334
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6318
+          "line": 6334
         }
       ]
     },
@@ -111568,13 +111747,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6218
+          "line": 6234
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6218
+          "line": 6234
         }
       ]
     },
@@ -111586,13 +111765,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6127
+          "line": 6143
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6127
+          "line": 6143
         }
       ]
     },
@@ -111604,13 +111783,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5584
+          "line": 5600
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5584
+          "line": 5600
         }
       ]
     },
@@ -111622,13 +111801,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6043
+          "line": 6059
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6043
+          "line": 6059
         }
       ]
     },
@@ -111640,13 +111819,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5768
+          "line": 5784
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5768
+          "line": 5784
         }
       ]
     },
@@ -111658,13 +111837,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5743
+          "line": 5759
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5743
+          "line": 5759
         }
       ]
     },
@@ -111676,13 +111855,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5647
+          "line": 5663
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5647
+          "line": 5663
         }
       ]
     },
@@ -111694,13 +111873,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6003
+          "line": 6019
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6003
+          "line": 6019
         }
       ]
     },
@@ -111712,13 +111891,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5790
+          "line": 5806
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5790
+          "line": 5806
         }
       ]
     },
@@ -111730,13 +111909,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6023
+          "line": 6039
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6023
+          "line": 6039
         }
       ]
     },
@@ -111748,13 +111927,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5642
+          "line": 5658
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5642
+          "line": 5658
         }
       ]
     },
@@ -111766,13 +111945,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5691
+          "line": 5707
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5691
+          "line": 5707
         }
       ]
     },
@@ -111784,13 +111963,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5568
+          "line": 5584
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5568
+          "line": 5584
         }
       ]
     },
@@ -111802,13 +111981,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5553
+          "line": 5569
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5553
+          "line": 5569
         }
       ]
     },
@@ -111820,13 +111999,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6090
+          "line": 6106
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6090
+          "line": 6106
         }
       ]
     },
@@ -111838,13 +112017,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5480
+          "line": 5496
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5480
+          "line": 5496
         }
       ]
     },
@@ -111946,13 +112125,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5244
+          "line": 5260
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5244
+          "line": 5260
         }
       ]
     },
@@ -111964,13 +112143,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5291
+          "line": 5307
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5291
+          "line": 5307
         }
       ]
     },
@@ -111982,13 +112161,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5346
+          "line": 5362
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5346
+          "line": 5362
         }
       ]
     },
@@ -112000,13 +112179,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5451
+          "line": 5467
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5451
+          "line": 5467
         }
       ]
     },
@@ -112018,13 +112197,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5158
+          "line": 5174
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5158
+          "line": 5174
         }
       ]
     },
@@ -112036,13 +112215,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5371
+          "line": 5387
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5371
+          "line": 5387
         }
       ]
     },
@@ -112054,13 +112233,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5193
+          "line": 5209
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5193
+          "line": 5209
         }
       ]
     },
@@ -112072,13 +112251,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5153
+          "line": 5169
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5153
+          "line": 5169
         }
       ]
     },
@@ -112090,13 +112269,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5407
+          "line": 5423
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5407
+          "line": 5423
         }
       ]
     },
@@ -112108,13 +112287,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5332
+          "line": 5348
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5332
+          "line": 5348
         }
       ]
     },
@@ -112126,13 +112305,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5318
+          "line": 5334
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5318
+          "line": 5334
         }
       ]
     },
@@ -112180,13 +112359,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5142
+          "line": 5158
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5142
+          "line": 5158
         }
       ]
     },
@@ -113188,13 +113367,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5098
+          "line": 5114
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5098
+          "line": 5114
         }
       ]
     },
@@ -113314,13 +113493,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4801
+          "line": 4817
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4801
+          "line": 4817
         }
       ]
     },
@@ -113332,13 +113511,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4783
+          "line": 4799
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4783
+          "line": 4799
         }
       ]
     },
@@ -113350,13 +113529,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4769
+          "line": 4785
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4769
+          "line": 4785
         }
       ]
     },
@@ -113368,13 +113547,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4721
+          "line": 4737
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4721
+          "line": 4737
         }
       ]
     },
@@ -115716,6 +115895,21 @@
       ]
     },
     {
+      "key": "TestSuite:test/lib/phase2-item-fixtures.js",
+      "type": "TestSuite",
+      "id": "test/lib/phase2-item-fixtures.js",
+      "label": "test/lib/phase2-item-fixtures.js",
+      "lines": 120,
+      "version": "384754998b5568c5",
+      "provenance": [
+        {
+          "file": "test/lib/phase2-item-fixtures.js",
+          "line": 1,
+          "version": "384754998b5568c5"
+        }
+      ]
+    },
+    {
       "key": "TestSuite:test/lib/srcfiles.js",
       "type": "TestSuite",
       "id": "test/lib/srcfiles.js",
@@ -116076,17 +116270,32 @@
       ]
     },
     {
+      "key": "TestSuite:test/phase2-lot-boundary.js",
+      "type": "TestSuite",
+      "id": "test/phase2-lot-boundary.js",
+      "label": "test/phase2-lot-boundary.js",
+      "lines": 543,
+      "version": "a1c6cdde9bfbb67d",
+      "provenance": [
+        {
+          "file": "test/phase2-lot-boundary.js",
+          "line": 1,
+          "version": "a1c6cdde9bfbb67d"
+        }
+      ]
+    },
+    {
       "key": "TestSuite:test/phase2-postgres.js",
       "type": "TestSuite",
       "id": "test/phase2-postgres.js",
       "label": "test/phase2-postgres.js",
-      "lines": 478,
-      "version": "498ff9494d70fdf2",
+      "lines": 497,
+      "version": "6e7d9e1d6a08c6e2",
       "provenance": [
         {
           "file": "test/phase2-postgres.js",
           "line": 1,
-          "version": "498ff9494d70fdf2"
+          "version": "6e7d9e1d6a08c6e2"
         }
       ]
     },
@@ -117115,13 +117324,13 @@
       "type": "Workflow",
       "id": ".github/workflows/ci.yml",
       "label": ".github/workflows/ci.yml",
-      "lines": 301,
-      "version": "334fab5fbda5c920",
+      "lines": 307,
+      "version": "38590cae531d3217",
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "334fab5fbda5c920"
+          "version": "38590cae531d3217"
         }
       ]
     },
@@ -125535,6 +125744,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:src/item-lock-trace.js",
+      "to": "Domain:platform-core",
+      "provenance": {
+        "file": "src/item-lock-trace.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:src/itemdefinitions.js",
       "to": "Domain:platform-core",
       "provenance": {
@@ -127371,6 +127589,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/lib/phase2-item-fixtures.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/lib/phase2-item-fixtures.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/lib/srcfiles.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -127582,6 +127809,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "test/phase2-discovery.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/phase2-lot-boundary.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/phase2-lot-boundary.js",
         "line": 1
       }
     },
@@ -147001,6 +147237,126 @@
       "to": "Artifact:test/auction.js",
       "provenance": {
         "commit": "1d571afc1ad685433befc0dc5d3b84b4dc3005fc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1d64f3648f5a340412b2404005f6d88e17d9badf",
+      "to": "Artifact:.github/workflows/ci.yml",
+      "provenance": {
+        "commit": "1d64f3648f5a340412b2404005f6d88e17d9badf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1d64f3648f5a340412b2404005f6d88e17d9badf",
+      "to": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "provenance": {
+        "commit": "1d64f3648f5a340412b2404005f6d88e17d9badf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1d64f3648f5a340412b2404005f6d88e17d9badf",
+      "to": "Artifact:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
+      "provenance": {
+        "commit": "1d64f3648f5a340412b2404005f6d88e17d9badf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1d64f3648f5a340412b2404005f6d88e17d9badf",
+      "to": "Artifact:MARKETING-POSTS.md",
+      "provenance": {
+        "commit": "1d64f3648f5a340412b2404005f6d88e17d9badf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1d64f3648f5a340412b2404005f6d88e17d9badf",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "1d64f3648f5a340412b2404005f6d88e17d9badf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1d64f3648f5a340412b2404005f6d88e17d9badf",
+      "to": "Artifact:schema.sql",
+      "provenance": {
+        "commit": "1d64f3648f5a340412b2404005f6d88e17d9badf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1d64f3648f5a340412b2404005f6d88e17d9badf",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "1d64f3648f5a340412b2404005f6d88e17d9badf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1d64f3648f5a340412b2404005f6d88e17d9badf",
+      "to": "Artifact:src/crafting.js",
+      "provenance": {
+        "commit": "1d64f3648f5a340412b2404005f6d88e17d9badf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1d64f3648f5a340412b2404005f6d88e17d9badf",
+      "to": "Artifact:src/game.js",
+      "provenance": {
+        "commit": "1d64f3648f5a340412b2404005f6d88e17d9badf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1d64f3648f5a340412b2404005f6d88e17d9badf",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "commit": "1d64f3648f5a340412b2404005f6d88e17d9badf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1d64f3648f5a340412b2404005f6d88e17d9badf",
+      "to": "Artifact:src/item-lock-trace.js",
+      "provenance": {
+        "commit": "1d64f3648f5a340412b2404005f6d88e17d9badf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1d64f3648f5a340412b2404005f6d88e17d9badf",
+      "to": "Artifact:src/items.js",
+      "provenance": {
+        "commit": "1d64f3648f5a340412b2404005f6d88e17d9badf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1d64f3648f5a340412b2404005f6d88e17d9badf",
+      "to": "Artifact:test/lib/phase2-item-fixtures.js",
+      "provenance": {
+        "commit": "1d64f3648f5a340412b2404005f6d88e17d9badf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1d64f3648f5a340412b2404005f6d88e17d9badf",
+      "to": "Artifact:test/phase2-lot-boundary.js",
+      "provenance": {
+        "commit": "1d64f3648f5a340412b2404005f6d88e17d9badf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1d64f3648f5a340412b2404005f6d88e17d9badf",
+      "to": "Artifact:test/phase2-postgres.js",
+      "provenance": {
+        "commit": "1d64f3648f5a340412b2404005f6d88e17d9badf"
       }
     },
     {
@@ -189077,6 +189433,62 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:99c70b8cdd53a690bc043592fbff54702b076994",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "99c70b8cdd53a690bc043592fbff54702b076994"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:99c70b8cdd53a690bc043592fbff54702b076994",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "99c70b8cdd53a690bc043592fbff54702b076994"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:99c70b8cdd53a690bc043592fbff54702b076994",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "99c70b8cdd53a690bc043592fbff54702b076994"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:99c70b8cdd53a690bc043592fbff54702b076994",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "99c70b8cdd53a690bc043592fbff54702b076994"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:99c70b8cdd53a690bc043592fbff54702b076994",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "99c70b8cdd53a690bc043592fbff54702b076994"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:99c70b8cdd53a690bc043592fbff54702b076994",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "99c70b8cdd53a690bc043592fbff54702b076994"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:99c70b8cdd53a690bc043592fbff54702b076994",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "99c70b8cdd53a690bc043592fbff54702b076994"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:9a22714061f0c2daf9c107858978fb1f633e3218",
       "to": "Artifact:AUDIT-npc-families.md",
       "provenance": {
@@ -203561,6 +203973,22 @@
       "to": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-constellation.md",
       "provenance": {
         "commit": "c7fe4c9fa0a3b4dcbdf1ad01348f9c60e50d4c36"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c80d6794f8f6134fef39dad33234fdc9b2d0a545",
+      "to": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "provenance": {
+        "commit": "c80d6794f8f6134fef39dad33234fdc9b2d0a545"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c80d6794f8f6134fef39dad33234fdc9b2d0a545",
+      "to": "Artifact:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
+      "provenance": {
+        "commit": "c80d6794f8f6134fef39dad33234fdc9b2d0a545"
       }
     },
     {
@@ -221102,6 +221530,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:backend",
+      "to": "Artifact:src/item-lock-trace.js",
+      "provenance": {
+        "file": "src/item-lock-trace.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:backend",
       "to": "Artifact:src/itemdefinitions.js",
       "provenance": {
         "file": "src/itemdefinitions.js",
@@ -230620,6 +231057,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/lib/phase2-item-fixtures.js",
+      "provenance": {
+        "file": "test/lib/phase2-item-fixtures.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/lib/srcfiles.js",
       "provenance": {
         "file": "test/lib/srcfiles.js",
@@ -230830,6 +231276,15 @@
       "to": "Artifact:test/phase2-discovery.js",
       "provenance": {
         "file": "test/phase2-discovery.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/phase2-lot-boundary.js",
+      "provenance": {
+        "file": "test/phase2-lot-boundary.js",
         "line": 1
       }
     },
@@ -237741,6 +238196,24 @@
       "type": "DECLARES",
       "from": "Artifact:package.json",
       "to": "Command:npm:phase2:definitions:postgres",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
+      "to": "Command:npm:phase2:lots:check",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
+      "to": "Command:npm:phase2:lots:postgres",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -245816,7 +246289,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6510
+        "line": 6526
       }
     },
     {
@@ -245834,7 +246307,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6545
+        "line": 6561
       }
     },
     {
@@ -245843,7 +246316,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6409
+        "line": 6425
       }
     },
     {
@@ -245852,7 +246325,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6494
+        "line": 6510
       }
     },
     {
@@ -245870,7 +246343,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5028
+        "line": 5044
       }
     },
     {
@@ -245879,7 +246352,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5001
+        "line": 5017
       }
     },
     {
@@ -245933,7 +246406,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4825
+        "line": 4841
       }
     },
     {
@@ -245942,7 +246415,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4983
+        "line": 4999
       }
     },
     {
@@ -245951,7 +246424,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4872
+        "line": 4888
       }
     },
     {
@@ -245960,7 +246433,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4858
+        "line": 4874
       }
     },
     {
@@ -245978,7 +246451,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4886
+        "line": 4902
       }
     },
     {
@@ -245987,7 +246460,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4959
+        "line": 4975
       }
     },
     {
@@ -245996,7 +246469,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4935
+        "line": 4951
       }
     },
     {
@@ -246005,7 +246478,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4906
+        "line": 4922
       }
     },
     {
@@ -246284,7 +246757,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5058
+        "line": 5074
       }
     },
     {
@@ -246293,7 +246766,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5074
+        "line": 5090
       }
     },
     {
@@ -246392,7 +246865,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5131
+        "line": 5147
       }
     },
     {
@@ -246635,7 +247108,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6561
+        "line": 6577
       }
     },
     {
@@ -246644,7 +247117,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6455
+        "line": 6471
       }
     },
     {
@@ -246653,7 +247126,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4547
+        "line": 4563
       }
     },
     {
@@ -246851,7 +247324,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4704
+        "line": 4720
       }
     },
     {
@@ -246860,7 +247333,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4628
+        "line": 4644
       }
     },
     {
@@ -246869,7 +247342,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4681
+        "line": 4697
       }
     },
     {
@@ -247247,7 +247720,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5475
+        "line": 5491
       }
     },
     {
@@ -247256,7 +247729,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5502
+        "line": 5518
       }
     },
     {
@@ -247265,7 +247738,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5851
+        "line": 5867
       }
     },
     {
@@ -247274,7 +247747,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5929
+        "line": 5945
       }
     },
     {
@@ -247283,7 +247756,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5943
+        "line": 5959
       }
     },
     {
@@ -247292,7 +247765,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6318
+        "line": 6334
       }
     },
     {
@@ -247301,7 +247774,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6218
+        "line": 6234
       }
     },
     {
@@ -247310,7 +247783,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6127
+        "line": 6143
       }
     },
     {
@@ -247319,7 +247792,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5584
+        "line": 5600
       }
     },
     {
@@ -247328,7 +247801,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6043
+        "line": 6059
       }
     },
     {
@@ -247337,7 +247810,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5768
+        "line": 5784
       }
     },
     {
@@ -247346,7 +247819,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5743
+        "line": 5759
       }
     },
     {
@@ -247355,7 +247828,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5647
+        "line": 5663
       }
     },
     {
@@ -247364,7 +247837,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6003
+        "line": 6019
       }
     },
     {
@@ -247373,7 +247846,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5790
+        "line": 5806
       }
     },
     {
@@ -247382,7 +247855,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6023
+        "line": 6039
       }
     },
     {
@@ -247391,7 +247864,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5642
+        "line": 5658
       }
     },
     {
@@ -247400,7 +247873,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5691
+        "line": 5707
       }
     },
     {
@@ -247409,7 +247882,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5568
+        "line": 5584
       }
     },
     {
@@ -247418,7 +247891,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5553
+        "line": 5569
       }
     },
     {
@@ -247427,7 +247900,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6090
+        "line": 6106
       }
     },
     {
@@ -247436,7 +247909,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5480
+        "line": 5496
       }
     },
     {
@@ -247490,7 +247963,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5244
+        "line": 5260
       }
     },
     {
@@ -247499,7 +247972,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5291
+        "line": 5307
       }
     },
     {
@@ -247508,7 +247981,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5346
+        "line": 5362
       }
     },
     {
@@ -247517,7 +247990,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5451
+        "line": 5467
       }
     },
     {
@@ -247526,7 +247999,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5158
+        "line": 5174
       }
     },
     {
@@ -247535,7 +248008,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5371
+        "line": 5387
       }
     },
     {
@@ -247544,7 +248017,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5193
+        "line": 5209
       }
     },
     {
@@ -247553,7 +248026,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5153
+        "line": 5169
       }
     },
     {
@@ -247562,7 +248035,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5407
+        "line": 5423
       }
     },
     {
@@ -247571,7 +248044,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5332
+        "line": 5348
       }
     },
     {
@@ -247580,7 +248053,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5318
+        "line": 5334
       }
     },
     {
@@ -247607,7 +248080,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5142
+        "line": 5158
       }
     },
     {
@@ -248111,7 +248584,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5098
+        "line": 5114
       }
     },
     {
@@ -248174,7 +248647,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4801
+        "line": 4817
       }
     },
     {
@@ -248183,7 +248656,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4783
+        "line": 4799
       }
     },
     {
@@ -248192,7 +248665,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4769
+        "line": 4785
       }
     },
     {
@@ -248201,7 +248674,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4721
+        "line": 4737
       }
     },
     {
@@ -248280,7 +248753,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:economy-ledger",
-      "weight": 153
+      "weight": 154
     },
     {
       "type": "DEPENDS_ON",
@@ -248304,7 +248777,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 462
+      "weight": 469
     },
     {
       "type": "DEPENDS_ON",
@@ -248322,7 +248795,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:world-graph",
-      "weight": 34
+      "weight": 38
     },
     {
       "type": "DEPENDS_ON",
@@ -248358,7 +248831,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:economy-ledger",
       "to": "Domain:world-graph",
-      "weight": 1
+      "weight": 2
     },
     {
       "type": "DEPENDS_ON",
@@ -248580,7 +249053,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:world-graph",
       "to": "Domain:platform-core",
-      "weight": 14
+      "weight": 16
     },
     {
       "type": "DEPENDS_ON",
@@ -249013,6 +249486,24 @@
     },
     {
       "type": "EXECUTES",
+      "from": "Command:npm:phase2:lots:check",
+      "to": "Artifact:test/phase2-lot-boundary.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:phase2:lots:postgres",
+      "to": "Artifact:test/phase2-postgres.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
       "from": "Command:npm:playthrough",
       "to": "Artifact:tools/playthrough.js",
       "provenance": {
@@ -249276,6 +249767,15 @@
       "type": "EXECUTES",
       "from": "Command:npm:pretest",
       "to": "Artifact:test/phase2-discovery.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:pretest",
+      "to": "Artifact:test/phase2-lot-boundary.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -258876,6 +259376,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:1d64f3648f5a340412b2404005f6d88e17d9badf",
+      "provenance": {
+        "commit": "1d64f3648f5a340412b2404005f6d88e17d9badf"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:1d7badff6545daa932195698ad74f3f046ff62bd",
       "provenance": {
         "commit": "1d7badff6545daa932195698ad74f3f046ff62bd"
@@ -264652,6 +265160,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:99c70b8cdd53a690bc043592fbff54702b076994",
+      "provenance": {
+        "commit": "99c70b8cdd53a690bc043592fbff54702b076994"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:9a22714061f0c2daf9c107858978fb1f633e3218",
       "provenance": {
         "commit": "9a22714061f0c2daf9c107858978fb1f633e3218"
@@ -266687,6 +267203,14 @@
       "to": "Commit:c7fe4c9fa0a3b4dcbdf1ad01348f9c60e50d4c36",
       "provenance": {
         "commit": "c7fe4c9fa0a3b4dcbdf1ad01348f9c60e50d4c36"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:c80d6794f8f6134fef39dad33234fdc9b2d0a545",
+      "provenance": {
+        "commit": "c80d6794f8f6134fef39dad33234fdc9b2d0a545"
       }
     },
     {
@@ -272616,7 +273140,7 @@
       "to": "Artifact:src/content/definition-invariants.js",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 8
+        "line": 9
       }
     },
     {
@@ -272640,10 +273164,28 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:src/invariants.js",
+      "to": "Artifact:src/items.js",
+      "provenance": {
+        "file": "src/invariants.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/invariants.js",
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 9
+        "line": 10
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/item-lock-trace.js",
+      "to": "Artifact:src/game.js",
+      "provenance": {
+        "file": "src/item-lock-trace.js",
+        "line": 1
       }
     },
     {
@@ -272685,10 +273227,28 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:src/items.js",
+      "to": "Artifact:src/content/canonical.js",
+      "provenance": {
+        "file": "src/items.js",
+        "line": 13
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/items.js",
+      "to": "Artifact:src/content/phase2-transactions.js",
+      "provenance": {
+        "file": "src/items.js",
+        "line": 12
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/items.js",
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "src/items.js",
-        "line": 9
+        "line": 10
       }
     },
     {
@@ -272697,7 +273257,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "src/items.js",
-        "line": 10
+        "line": 11
       }
     },
     {
@@ -281234,6 +281794,51 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:test/lib/phase2-item-fixtures.js",
+      "to": "Artifact:src/content/artifacts.js",
+      "provenance": {
+        "file": "test/lib/phase2-item-fixtures.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/phase2-item-fixtures.js",
+      "to": "Artifact:src/itemdefinitions.js",
+      "provenance": {
+        "file": "test/lib/phase2-item-fixtures.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/phase2-item-fixtures.js",
+      "to": "Artifact:src/items.js",
+      "provenance": {
+        "file": "test/lib/phase2-item-fixtures.js",
+        "line": 17
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/phase2-item-fixtures.js",
+      "to": "Artifact:src/items.js",
+      "provenance": {
+        "file": "test/lib/phase2-item-fixtures.js",
+        "line": 97
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/phase2-item-fixtures.js",
+      "to": "Artifact:test/lib/phase2-definition-fixtures.js",
+      "provenance": {
+        "file": "test/lib/phase2-item-fixtures.js",
+        "line": 3
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:test/loans.js",
       "to": "Artifact:src/game.js",
       "provenance": {
@@ -281990,6 +282595,96 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:test/phase2-lot-boundary.js",
+      "to": "Artifact:src/content/phase2-transactions.js",
+      "provenance": {
+        "file": "test/phase2-lot-boundary.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-lot-boundary.js",
+      "to": "Artifact:src/crafting.js",
+      "provenance": {
+        "file": "test/phase2-lot-boundary.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-lot-boundary.js",
+      "to": "Artifact:src/db.js",
+      "provenance": {
+        "file": "test/phase2-lot-boundary.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-lot-boundary.js",
+      "to": "Artifact:src/game.js",
+      "provenance": {
+        "file": "test/phase2-lot-boundary.js",
+        "line": 11
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-lot-boundary.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "test/phase2-lot-boundary.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-lot-boundary.js",
+      "to": "Artifact:src/item-lock-trace.js",
+      "provenance": {
+        "file": "test/phase2-lot-boundary.js",
+        "line": 400
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-lot-boundary.js",
+      "to": "Artifact:src/itemdefinitions.js",
+      "provenance": {
+        "file": "test/phase2-lot-boundary.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-lot-boundary.js",
+      "to": "Artifact:src/items.js",
+      "provenance": {
+        "file": "test/phase2-lot-boundary.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-lot-boundary.js",
+      "to": "Artifact:test/lib/phase2-definition-fixtures.js",
+      "provenance": {
+        "file": "test/phase2-lot-boundary.js",
+        "line": 12
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-lot-boundary.js",
+      "to": "Artifact:test/lib/phase2-item-fixtures.js",
+      "provenance": {
+        "file": "test/phase2-lot-boundary.js",
+        "line": 13
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:test/phase2-postgres.js",
       "to": "Artifact:src/content/activation-policy.js",
       "provenance": {
@@ -282031,6 +282726,33 @@
       "provenance": {
         "file": "test/phase2-postgres.js",
         "line": 10
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-postgres.js",
+      "to": "Artifact:test/lib/phase2-item-fixtures.js",
+      "provenance": {
+        "file": "test/phase2-postgres.js",
+        "line": 105
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-postgres.js",
+      "to": "Artifact:test/lib/phase2-item-fixtures.js",
+      "provenance": {
+        "file": "test/phase2-postgres.js",
+        "line": 66
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-postgres.js",
+      "to": "Artifact:test/phase2-lot-boundary.js",
+      "provenance": {
+        "file": "test/phase2-postgres.js",
+        "line": 114
       }
     },
     {
@@ -308256,7 +308978,7 @@
       "to": "Artifact:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 676
+        "line": 679
       }
     },
     {
@@ -308265,7 +308987,7 @@
       "to": "Artifact:docs/WIKI.md",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 964
+        "line": 967
       }
     },
     {
@@ -308283,7 +309005,7 @@
       "to": "Artifact:src/agentgateway.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 862
+        "line": 865
       }
     },
     {
@@ -308400,7 +309122,7 @@
       "to": "Artifact:src/content/corpus.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 765
+        "line": 768
       }
     },
     {
@@ -308409,7 +309131,7 @@
       "to": "Artifact:src/content/corpus.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 814
+        "line": 817
       }
     },
     {
@@ -308481,7 +309203,7 @@
       "to": "Artifact:src/content/economy-profile.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 764
+        "line": 767
       }
     },
     {
@@ -308490,7 +309212,7 @@
       "to": "Artifact:src/content/economy-profile.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 813
+        "line": 816
       }
     },
     {
@@ -308553,7 +309275,16 @@
       "to": "Artifact:src/crafting.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 738
+        "line": 611
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:src/crafting.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 741
       }
     },
     {
@@ -308571,7 +309302,7 @@
       "to": "Artifact:src/crew.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 750
+        "line": 753
       }
     },
     {
@@ -308607,7 +309338,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 696
+        "line": 699
       }
     },
     {
@@ -308616,7 +309347,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 738
+        "line": 741
       }
     },
     {
@@ -308626,6 +309357,15 @@
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
         "line": 598
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:src/game.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 611
       }
     },
     {
@@ -308670,7 +309410,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 644
+        "line": 647
       }
     },
     {
@@ -308679,7 +309419,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 696
+        "line": 699
       }
     },
     {
@@ -308688,7 +309428,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 738
+        "line": 741
       }
     },
     {
@@ -308697,7 +309437,43 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 863
+        "line": 866
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:src/item-lock-trace.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 49
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:src/item-lock-trace.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 589
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:src/item-lock-trace.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 611
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:src/item-lock-trace.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 858
       }
     },
     {
@@ -308742,7 +309518,7 @@
       "to": "Artifact:src/items.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 637
+        "line": 639
       }
     },
     {
@@ -308760,7 +309536,7 @@
       "to": "Artifact:src/items.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 644
+        "line": 647
       }
     },
     {
@@ -308769,7 +309545,7 @@
       "to": "Artifact:src/items.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 738
+        "line": 741
       }
     },
     {
@@ -308787,7 +309563,7 @@
       "to": "Artifact:src/mysteries.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 738
+        "line": 741
       }
     },
     {
@@ -308805,7 +309581,7 @@
       "to": "Artifact:src/operations.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 738
+        "line": 741
       }
     },
     {
@@ -308850,7 +309626,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 738
+        "line": 741
       }
     },
     {
@@ -308859,7 +309635,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 860
+        "line": 863
       }
     },
     {
@@ -308868,7 +309644,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 821
+        "line": 824
       }
     },
     {
@@ -308904,15 +309680,6 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 750
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-      "to": "Artifact:src/server.js",
-      "provenance": {
-        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
         "line": 753
       }
     },
@@ -308922,7 +309689,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 861
+        "line": 756
       }
     },
     {
@@ -308931,7 +309698,16 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 896
+        "line": 864
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 899
       }
     },
     {
@@ -308949,7 +309725,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 966
+        "line": 969
       }
     },
     {
@@ -309063,10 +309839,37 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:test/lib/phase2-item-fixtures.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 600
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:test/lib/phase2-item-fixtures.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 611
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:test/lib/phase2-item-fixtures.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 618
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
       "to": "Artifact:test/migrate.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 733
+        "line": 736
       }
     },
     {
@@ -309162,6 +309965,33 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:test/phase2-lot-boundary.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 601
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:test/phase2-lot-boundary.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 611
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:test/phase2-lot-boundary.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 617
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
       "to": "Artifact:test/phase2-postgres.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
@@ -309192,7 +310022,7 @@
       "to": "Artifact:test/phase2-postgres.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 738
+        "line": 741
       }
     },
     {
@@ -309201,7 +310031,7 @@
       "to": "Artifact:test/phase2-postgres.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 859
+        "line": 862
       }
     },
     {
@@ -309210,7 +310040,7 @@
       "to": "Artifact:test/phase2-postgres.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 956
+        "line": 959
       }
     },
     {
@@ -309246,7 +310076,7 @@
       "to": "Artifact:tools/backup-selftest.sh",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 696
+        "line": 699
       }
     },
     {
@@ -309255,7 +310085,7 @@
       "to": "Artifact:tools/backup-selftest.sh",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 960
+        "line": 963
       }
     },
     {
@@ -309273,7 +310103,7 @@
       "to": "Artifact:tools/backup.sh",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 696
+        "line": 699
       }
     },
     {
@@ -309282,7 +310112,7 @@
       "to": "Artifact:tools/backup.sh",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 959
+        "line": 962
       }
     },
     {
@@ -309336,7 +310166,7 @@
       "to": "Artifact:tools/preflight.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 918
+        "line": 921
       }
     },
     {
@@ -309723,7 +310553,7 @@
       "to": "Artifact:src/crafting.js",
       "provenance": {
         "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
-        "line": 149
+        "line": 157
       }
     },
     {
@@ -309732,7 +310562,7 @@
       "to": "Artifact:src/crew.js",
       "provenance": {
         "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
-        "line": 147
+        "line": 155
       }
     },
     {
@@ -309750,7 +310580,7 @@
       "to": "Artifact:src/mysteries.js",
       "provenance": {
         "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
-        "line": 149
+        "line": 157
       }
     },
     {
@@ -309759,7 +310589,7 @@
       "to": "Artifact:src/operations.js",
       "provenance": {
         "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
-        "line": 149
+        "line": 157
       }
     },
     {
@@ -309768,7 +310598,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
-        "line": 149
+        "line": 157
       }
     },
     {
@@ -309777,7 +310607,7 @@
       "to": "Artifact:tools/backup-selftest.sh",
       "provenance": {
         "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
-        "line": 195
+        "line": 205
       }
     },
     {
@@ -309786,7 +310616,7 @@
       "to": "Artifact:tools/backup.sh",
       "provenance": {
         "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
-        "line": 195
+        "line": 205
       }
     },
     {
@@ -319349,6 +320179,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Module:src/item-lock-trace.js",
+      "to": "Artifact:src/item-lock-trace.js",
+      "provenance": {
+        "file": "src/item-lock-trace.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Module:src/itemdefinitions.js",
       "to": "Artifact:src/itemdefinitions.js",
       "provenance": {
@@ -321761,6 +322600,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/lib/phase2-item-fixtures.js",
+      "to": "Artifact:test/lib/phase2-item-fixtures.js",
+      "provenance": {
+        "file": "test/lib/phase2-item-fixtures.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/lib/srcfiles.js",
       "to": "Artifact:test/lib/srcfiles.js",
       "provenance": {
@@ -321972,6 +322820,15 @@
       "to": "Artifact:test/phase2-discovery.js",
       "provenance": {
         "file": "test/phase2-discovery.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/phase2-lot-boundary.js",
+      "to": "Artifact:test/phase2-lot-boundary.js",
+      "provenance": {
+        "file": "test/phase2-lot-boundary.js",
         "line": 1
       }
     },
@@ -325568,6 +326425,42 @@
     },
     {
       "type": "TESTS",
+      "from": "Artifact:test/lib/phase2-item-fixtures.js",
+      "to": "Artifact:src/content/artifacts.js",
+      "provenance": {
+        "file": "test/lib/phase2-item-fixtures.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/lib/phase2-item-fixtures.js",
+      "to": "Artifact:src/itemdefinitions.js",
+      "provenance": {
+        "file": "test/lib/phase2-item-fixtures.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/lib/phase2-item-fixtures.js",
+      "to": "Artifact:src/items.js",
+      "provenance": {
+        "file": "test/lib/phase2-item-fixtures.js",
+        "line": 17
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/lib/phase2-item-fixtures.js",
+      "to": "Artifact:src/items.js",
+      "provenance": {
+        "file": "test/lib/phase2-item-fixtures.js",
+        "line": 97
+      }
+    },
+    {
+      "type": "TESTS",
       "from": "Artifact:test/loans.js",
       "to": "Artifact:src/game.js",
       "provenance": {
@@ -326257,6 +327150,78 @@
       "provenance": {
         "file": "test/phase2-discovery.js",
         "line": 17
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/phase2-lot-boundary.js",
+      "to": "Artifact:src/content/phase2-transactions.js",
+      "provenance": {
+        "file": "test/phase2-lot-boundary.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/phase2-lot-boundary.js",
+      "to": "Artifact:src/crafting.js",
+      "provenance": {
+        "file": "test/phase2-lot-boundary.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/phase2-lot-boundary.js",
+      "to": "Artifact:src/db.js",
+      "provenance": {
+        "file": "test/phase2-lot-boundary.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/phase2-lot-boundary.js",
+      "to": "Artifact:src/game.js",
+      "provenance": {
+        "file": "test/phase2-lot-boundary.js",
+        "line": 11
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/phase2-lot-boundary.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "test/phase2-lot-boundary.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/phase2-lot-boundary.js",
+      "to": "Artifact:src/item-lock-trace.js",
+      "provenance": {
+        "file": "test/phase2-lot-boundary.js",
+        "line": 400
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/phase2-lot-boundary.js",
+      "to": "Artifact:src/itemdefinitions.js",
+      "provenance": {
+        "file": "test/phase2-lot-boundary.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/phase2-lot-boundary.js",
+      "to": "Artifact:src/items.js",
+      "provenance": {
+        "file": "test/phase2-lot-boundary.js",
+        "line": 5
       }
     },
     {
@@ -332331,7 +333296,7 @@
       "to": "Table:item_instances",
       "provenance": {
         "file": "src/crafting.js",
-        "line": 685
+        "line": 686
       }
     },
     {
@@ -334392,7 +335357,7 @@
       "to": "Table:account_gear",
       "provenance": {
         "file": "src/game.js",
-        "line": 232
+        "line": 238
       }
     },
     {
@@ -334401,7 +335366,7 @@
       "to": "Table:account_persistent",
       "provenance": {
         "file": "src/game.js",
-        "line": 292
+        "line": 298
       }
     },
     {
@@ -334410,7 +335375,7 @@
       "to": "Table:accounts",
       "provenance": {
         "file": "src/game.js",
-        "line": 1219
+        "line": 1225
       }
     },
     {
@@ -334419,7 +335384,7 @@
       "to": "Table:activity_log",
       "provenance": {
         "file": "src/game.js",
-        "line": 694
+        "line": 700
       }
     },
     {
@@ -334428,7 +335393,7 @@
       "to": "Table:batches",
       "provenance": {
         "file": "src/game.js",
-        "line": 220
+        "line": 226
       }
     },
     {
@@ -334437,7 +335402,7 @@
       "to": "Table:bespoke_pieces",
       "provenance": {
         "file": "src/game.js",
-        "line": 390
+        "line": 396
       }
     },
     {
@@ -334446,7 +335411,7 @@
       "to": "Table:bloodline",
       "provenance": {
         "file": "src/game.js",
-        "line": 339
+        "line": 345
       }
     },
     {
@@ -334464,7 +335429,7 @@
       "to": "Table:campaign_progress",
       "provenance": {
         "file": "src/game.js",
-        "line": 796
+        "line": 802
       }
     },
     {
@@ -334473,7 +335438,7 @@
       "to": "Table:cars",
       "provenance": {
         "file": "src/game.js",
-        "line": 220
+        "line": 226
       }
     },
     {
@@ -334482,7 +335447,7 @@
       "to": "Table:character_assets",
       "provenance": {
         "file": "src/game.js",
-        "line": 246
+        "line": 252
       }
     },
     {
@@ -334491,7 +335456,7 @@
       "to": "Table:character_cargo",
       "provenance": {
         "file": "src/game.js",
-        "line": 247
+        "line": 253
       }
     },
     {
@@ -334500,7 +335465,7 @@
       "to": "Table:character_disciplines",
       "provenance": {
         "file": "src/game.js",
-        "line": 267
+        "line": 273
       }
     },
     {
@@ -334509,7 +335474,7 @@
       "to": "Table:character_guns",
       "provenance": {
         "file": "src/game.js",
-        "line": 256
+        "line": 262
       }
     },
     {
@@ -334518,7 +335483,7 @@
       "to": "Table:character_items",
       "provenance": {
         "file": "src/game.js",
-        "line": 248
+        "line": 254
       }
     },
     {
@@ -334527,7 +335492,7 @@
       "to": "Table:character_rackets",
       "provenance": {
         "file": "src/game.js",
-        "line": 245
+        "line": 251
       }
     },
     {
@@ -334536,7 +335501,7 @@
       "to": "Table:character_skills",
       "provenance": {
         "file": "src/game.js",
-        "line": 260
+        "line": 266
       }
     },
     {
@@ -334545,7 +335510,7 @@
       "to": "Table:character_traits",
       "provenance": {
         "file": "src/game.js",
-        "line": 264
+        "line": 270
       }
     },
     {
@@ -334563,7 +335528,7 @@
       "to": "Table:clue_scrolls",
       "provenance": {
         "file": "src/game.js",
-        "line": 312
+        "line": 318
       }
     },
     {
@@ -334581,7 +335546,7 @@
       "to": "Table:convoys",
       "provenance": {
         "file": "src/game.js",
-        "line": 1460
+        "line": 1466
       }
     },
     {
@@ -334590,7 +335555,7 @@
       "to": "Table:corner_jobs",
       "provenance": {
         "file": "src/game.js",
-        "line": 306
+        "line": 312
       }
     },
     {
@@ -334599,7 +335564,7 @@
       "to": "Table:crew_members",
       "provenance": {
         "file": "src/game.js",
-        "line": 311
+        "line": 317
       }
     },
     {
@@ -334608,7 +335573,7 @@
       "to": "Table:crew_objective_progress",
       "provenance": {
         "file": "src/game.js",
-        "line": 767
+        "line": 773
       }
     },
     {
@@ -334617,7 +335582,7 @@
       "to": "Table:crew_objectives",
       "provenance": {
         "file": "src/game.js",
-        "line": 756
+        "line": 762
       }
     },
     {
@@ -334626,7 +335591,7 @@
       "to": "Table:crews",
       "provenance": {
         "file": "src/game.js",
-        "line": 781
+        "line": 787
       }
     },
     {
@@ -334635,7 +335600,7 @@
       "to": "Table:daily_progress",
       "provenance": {
         "file": "src/game.js",
-        "line": 304
+        "line": 310
       }
     },
     {
@@ -334644,7 +335609,7 @@
       "to": "Table:desk_inventory",
       "provenance": {
         "file": "src/game.js",
-        "line": 173
+        "line": 179
       }
     },
     {
@@ -334662,7 +335627,7 @@
       "to": "Table:estates",
       "provenance": {
         "file": "src/game.js",
-        "line": 265
+        "line": 271
       }
     },
     {
@@ -334671,7 +335636,7 @@
       "to": "Table:favors",
       "provenance": {
         "file": "src/game.js",
-        "line": 513
+        "line": 519
       }
     },
     {
@@ -334680,7 +335645,7 @@
       "to": "Table:fighters",
       "provenance": {
         "file": "src/game.js",
-        "line": 414
+        "line": 420
       }
     },
     {
@@ -334716,7 +335681,7 @@
       "to": "Table:hustles",
       "provenance": {
         "file": "src/game.js",
-        "line": 305
+        "line": 311
       }
     },
     {
@@ -334725,7 +335690,7 @@
       "to": "Table:idempotency",
       "provenance": {
         "file": "src/game.js",
-        "line": 1092
+        "line": 1098
       }
     },
     {
@@ -334734,7 +335699,7 @@
       "to": "Table:loans",
       "provenance": {
         "file": "src/game.js",
-        "line": 1352
+        "line": 1358
       }
     },
     {
@@ -334743,7 +335708,7 @@
       "to": "Table:makings",
       "provenance": {
         "file": "src/game.js",
-        "line": 258
+        "line": 264
       }
     },
     {
@@ -334752,7 +335717,7 @@
       "to": "Table:masteries",
       "provenance": {
         "file": "src/game.js",
-        "line": 263
+        "line": 269
       }
     },
     {
@@ -334761,7 +335726,7 @@
       "to": "Table:mastery_legend",
       "provenance": {
         "file": "src/game.js",
-        "line": 665
+        "line": 671
       }
     },
     {
@@ -334779,7 +335744,7 @@
       "to": "Table:npc_drills",
       "provenance": {
         "file": "src/game.js",
-        "line": 307
+        "line": 313
       }
     },
     {
@@ -334788,7 +335753,7 @@
       "to": "Table:npc_errands",
       "provenance": {
         "file": "src/game.js",
-        "line": 578
+        "line": 584
       }
     },
     {
@@ -334797,7 +335762,7 @@
       "to": "Table:npc_gain",
       "provenance": {
         "file": "src/game.js",
-        "line": 550
+        "line": 556
       }
     },
     {
@@ -334806,7 +335771,7 @@
       "to": "Table:npc_grudges",
       "provenance": {
         "file": "src/game.js",
-        "line": 262
+        "line": 268
       }
     },
     {
@@ -334815,7 +335780,7 @@
       "to": "Table:npc_leads",
       "provenance": {
         "file": "src/game.js",
-        "line": 565
+        "line": 571
       }
     },
     {
@@ -334824,7 +335789,7 @@
       "to": "Table:npc_standing",
       "provenance": {
         "file": "src/game.js",
-        "line": 261
+        "line": 267
       }
     },
     {
@@ -334833,7 +335798,7 @@
       "to": "Table:referral_push",
       "provenance": {
         "file": "src/game.js",
-        "line": 2524
+        "line": 2530
       }
     },
     {
@@ -334842,7 +335807,7 @@
       "to": "Table:referrals",
       "provenance": {
         "file": "src/game.js",
-        "line": 291
+        "line": 297
       }
     },
     {
@@ -334851,7 +335816,7 @@
       "to": "Table:rival_events",
       "provenance": {
         "file": "src/game.js",
-        "line": 233
+        "line": 239
       }
     },
     {
@@ -334860,7 +335825,7 @@
       "to": "Table:rng_audit",
       "provenance": {
         "file": "src/game.js",
-        "line": 184
+        "line": 190
       }
     },
     {
@@ -334869,7 +335834,7 @@
       "to": "Table:searches",
       "provenance": {
         "file": "src/game.js",
-        "line": 273
+        "line": 279
       }
     },
     {
@@ -334887,7 +335852,7 @@
       "to": "Table:stash",
       "provenance": {
         "file": "src/game.js",
-        "line": 259
+        "line": 265
       }
     },
     {
@@ -334896,7 +335861,7 @@
       "to": "Table:street_deeds",
       "provenance": {
         "file": "src/game.js",
-        "line": 266
+        "line": 272
       }
     },
     {
@@ -334914,7 +335879,7 @@
       "to": "Table:telemetry",
       "provenance": {
         "file": "src/game.js",
-        "line": 436
+        "line": 442
       }
     },
     {
@@ -334923,7 +335888,7 @@
       "to": "Table:transactions",
       "provenance": {
         "file": "src/game.js",
-        "line": 154
+        "line": 160
       }
     },
     {
@@ -334932,7 +335897,7 @@
       "to": "Table:vendettas",
       "provenance": {
         "file": "src/game.js",
-        "line": 415
+        "line": 421
       }
     },
     {
@@ -334941,7 +335906,7 @@
       "to": "Table:world_npcs",
       "provenance": {
         "file": "src/game.js",
-        "line": 753
+        "line": 759
       }
     },
     {
@@ -335283,7 +336248,7 @@
       "to": "Table:account_persistent",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 273
+        "line": 274
       }
     },
     {
@@ -335292,7 +336257,7 @@
       "to": "Table:accounts",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 259
+        "line": 260
       }
     },
     {
@@ -335301,7 +336266,7 @@
       "to": "Table:agent_acquisition_budgets",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 711
+        "line": 712
       }
     },
     {
@@ -335310,7 +336275,7 @@
       "to": "Table:agent_referral_claims",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 714
+        "line": 715
       }
     },
     {
@@ -335319,7 +336284,7 @@
       "to": "Table:amm_pool",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 274
+        "line": 275
       }
     },
     {
@@ -335328,7 +336293,7 @@
       "to": "Table:auction_consignments",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 272
+        "line": 273
       }
     },
     {
@@ -335337,7 +336302,7 @@
       "to": "Table:auctions",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 269
+        "line": 270
       }
     },
     {
@@ -335346,7 +336311,7 @@
       "to": "Table:bounties",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 244
+        "line": 245
       }
     },
     {
@@ -335355,7 +336320,7 @@
       "to": "Table:boxing_bets",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 619
+        "line": 620
       }
     },
     {
@@ -335364,7 +336329,7 @@
       "to": "Table:boxing_bouts",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 619
+        "line": 620
       }
     },
     {
@@ -335373,7 +336338,7 @@
       "to": "Table:career_claims",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 67
+        "line": 68
       }
     },
     {
@@ -335382,7 +336347,7 @@
       "to": "Table:cars",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 481
+        "line": 482
       }
     },
     {
@@ -335391,7 +336356,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 40
+        "line": 41
       }
     },
     {
@@ -335400,7 +336365,7 @@
       "to": "Table:commission_proposals",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 238
+        "line": 239
       }
     },
     {
@@ -335409,7 +336374,7 @@
       "to": "Table:convoy_insurance",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 511
+        "line": 512
       }
     },
     {
@@ -335418,7 +336383,7 @@
       "to": "Table:den_volume",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 634
+        "line": 635
       }
     },
     {
@@ -335427,7 +336392,7 @@
       "to": "Table:desk_inventory",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 115
+        "line": 116
       }
     },
     {
@@ -335436,7 +336401,7 @@
       "to": "Table:dev_fund",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 278
+        "line": 279
       }
     },
     {
@@ -335445,7 +336410,7 @@
       "to": "Table:district_bids",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 588
+        "line": 589
       }
     },
     {
@@ -335454,7 +336419,7 @@
       "to": "Table:drop_allocations",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 569
+        "line": 570
       }
     },
     {
@@ -335463,7 +336428,7 @@
       "to": "Table:family_yield_pool",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 284
+        "line": 285
       }
     },
     {
@@ -335472,7 +336437,7 @@
       "to": "Table:favors",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 578
+        "line": 579
       }
     },
     {
@@ -335481,7 +336446,7 @@
       "to": "Table:futurities",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 692
+        "line": 693
       }
     },
     {
@@ -335490,7 +336455,7 @@
       "to": "Table:gangs",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 112
+        "line": 113
       }
     },
     {
@@ -335499,7 +336464,7 @@
       "to": "Table:grand_prix",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 672
+        "line": 673
       }
     },
     {
@@ -335508,7 +336473,7 @@
       "to": "Table:item_events",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 770
+        "line": 771
       }
     },
     {
@@ -335517,7 +336482,7 @@
       "to": "Table:item_instances",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 798
+        "line": 799
       }
     },
     {
@@ -335526,7 +336491,7 @@
       "to": "Table:item_mutation_guards",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 440
+        "line": 441
       }
     },
     {
@@ -335535,7 +336500,7 @@
       "to": "Table:item_stacks",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 765
+        "line": 766
       }
     },
     {
@@ -335544,7 +336509,7 @@
       "to": "Table:listings",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 502
+        "line": 503
       }
     },
     {
@@ -335553,7 +336518,7 @@
       "to": "Table:loan_house",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 603
+        "line": 604
       }
     },
     {
@@ -335562,7 +336527,7 @@
       "to": "Table:loans",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 106
+        "line": 107
       }
     },
     {
@@ -335571,7 +336536,7 @@
       "to": "Table:makings",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 28
+        "line": 29
       }
     },
     {
@@ -335580,7 +336545,7 @@
       "to": "Table:market_listings",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 522
+        "line": 523
       }
     },
     {
@@ -335589,7 +336554,7 @@
       "to": "Table:mentorships",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 74
+        "line": 75
       }
     },
     {
@@ -335598,7 +336563,7 @@
       "to": "Table:operation_escrow",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 807
+        "line": 808
       }
     },
     {
@@ -335607,7 +336572,7 @@
       "to": "Table:poker_ring_seats",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 660
+        "line": 661
       }
     },
     {
@@ -335616,7 +336581,7 @@
       "to": "Table:poker_tables",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 661
+        "line": 662
       }
     },
     {
@@ -335625,7 +336590,7 @@
       "to": "Table:poker_tournaments",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 649
+        "line": 650
       }
     },
     {
@@ -335634,7 +336599,7 @@
       "to": "Table:rng_audit",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 482
+        "line": 483
       }
     },
     {
@@ -335643,7 +336608,7 @@
       "to": "Table:rwa_dividend_pool",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 279
+        "line": 280
       }
     },
     {
@@ -335652,7 +336617,7 @@
       "to": "Table:rwa_family_dividend_pool",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 280
+        "line": 281
       }
     },
     {
@@ -335661,7 +336626,7 @@
       "to": "Table:secrets",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 50
+        "line": 51
       }
     },
     {
@@ -335670,7 +336635,7 @@
       "to": "Table:soldiers",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 46
+        "line": 47
       }
     },
     {
@@ -335679,7 +336644,7 @@
       "to": "Table:stake_pool",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 277
+        "line": 278
       }
     },
     {
@@ -335688,7 +336653,7 @@
       "to": "Table:stakes_races",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 683
+        "line": 684
       }
     },
     {
@@ -335697,7 +336662,7 @@
       "to": "Table:street_tax",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 51
+        "line": 52
       }
     },
     {
@@ -335706,7 +336671,7 @@
       "to": "Table:telemetry",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 485
+        "line": 486
       }
     },
     {
@@ -335778,7 +336743,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/items.js",
-        "line": 30
+        "line": 35
       }
     },
     {
@@ -335787,7 +336752,7 @@
       "to": "Table:idempotency",
       "provenance": {
         "file": "src/items.js",
-        "line": 56
+        "line": 61
       }
     },
     {
@@ -335796,7 +336761,7 @@
       "to": "Table:item_events",
       "provenance": {
         "file": "src/items.js",
-        "line": 93
+        "line": 125
       }
     },
     {
@@ -335805,7 +336770,7 @@
       "to": "Table:item_instances",
       "provenance": {
         "file": "src/items.js",
-        "line": 436
+        "line": 638
       }
     },
     {
@@ -335814,7 +336779,7 @@
       "to": "Table:item_mutation_guards",
       "provenance": {
         "file": "src/items.js",
-        "line": 97
+        "line": 124
       }
     },
     {
@@ -335823,7 +336788,7 @@
       "to": "Table:item_stacks",
       "provenance": {
         "file": "src/items.js",
-        "line": 488
+        "line": 690
       }
     },
     {
@@ -335832,7 +336797,7 @@
       "to": "Table:operation_escrow",
       "provenance": {
         "file": "src/items.js",
-        "line": 443
+        "line": 645
       }
     },
     {
@@ -335841,7 +336806,7 @@
       "to": "Table:transactions",
       "provenance": {
         "file": "src/items.js",
-        "line": 149
+        "line": 12
       }
     },
     {
