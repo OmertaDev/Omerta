@@ -387,7 +387,7 @@
 | [LAUNCH-READINESS.md](../../LAUNCH-READINESS.md) | operations | 283 | 2026-08-27 |
 | [LAUNCH.md](../../LAUNCH.md) | operations | 232 | 2026-08-27 |
 | [MARKETING-COPY.md](../../MARKETING-COPY.md) | documentation | 432 | 2026-08-27 |
-| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 128 | 2026-09-04 |
+| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 128 | 2026-09-07 |
 | [MARKETING.md](../../MARKETING.md) | documentation | 368 | 2026-08-29 |
 | [NIGHT-SESSION-LOG.md](../../NIGHT-SESSION-LOG.md) | documentation | 45 | 2026-08-13 |
 | [omerta-backend-spec.md](../../omerta-backend-spec.md) | documentation | 373 | 2026-07-12 |
@@ -475,5 +475,5 @@
 | [PRODUCT.md](../../PRODUCT.md) | documentation | 50 | 2026-08-24 |
 | [README.md](../../README.md) | documentation | 166 | 2026-09-04 |
 | [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 882 | 2026-08-29 |
-| [SPEC.md](../../SPEC.md) | documentation | 735 | 2026-09-04 |
+| [SPEC.md](../../SPEC.md) | documentation | 735 | 2026-09-07 |
 | [UNISWAP-ROUTING.md](../../UNISWAP-ROUTING.md) | documentation | 37 | 2026-08-25 |

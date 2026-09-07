@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "422b09583a9dc9ab1a4212ef52bb9ac245a4f368",
+  "sourceRevision": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,44 +43,44 @@
     ]
   },
   "census": {
-    "nodes": 5846,
-    "edges": 25963,
+    "nodes": 5877,
+    "edges": 26106,
     "byNodeType": {
-      "Artifact": 1869,
-      "Command": 59,
-      "Commit": 1372,
+      "Artifact": 1886,
+      "Command": 60,
+      "Commit": 1375,
       "Contract": 49,
       "Document": 490,
       "Domain": 13,
       "ExternalDependency": 24,
       "HistoricalArtifact": 306,
-      "Module": 200,
+      "Module": 206,
       "PullRequest": 126,
       "Repository": 1,
       "Route": 762,
       "Subsystem": 8,
       "Table": 329,
-      "TestSuite": 234,
+      "TestSuite": 238,
       "Workflow": 4
     },
     "byEdgeType": {
-      "BELONGS_TO": 2026,
-      "CHANGED": 10446,
-      "CONTAINS": 1890,
-      "DECLARES": 59,
+      "BELONGS_TO": 2043,
+      "CHANGED": 10480,
+      "CONTAINS": 1907,
+      "DECLARES": 60,
       "DEFINED_IN": 1140,
       "DEPENDS_ON": 64,
-      "EXECUTES": 216,
+      "EXECUTES": 220,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1372,
+      "HAS_COMMIT": 1375,
       "IMPLEMENTS": 124,
-      "IMPORTS": 1731,
+      "IMPORTS": 1754,
       "INHERITS": 12,
-      "REFERENCES": 2969,
-      "REPRESENTS": 928,
-      "TESTS": 613,
+      "REFERENCES": 2992,
+      "REPRESENTS": 938,
+      "TESTS": 623,
       "TRACKS": 126,
-      "USES_TABLE": 1545
+      "USES_TABLE": 1546
     }
   },
   "nodes": [
@@ -14124,18 +14124,18 @@
       "extension": ".md",
       "bytes": 7058,
       "lines": 128,
-      "version": "cb9d75756896d4e1",
+      "version": "8d8d8cd5b62e0799",
       "text": true,
       "provenance": [
         {
           "file": "MARKETING-POSTS.md",
           "line": 1,
-          "version": "cb9d75756896d4e1"
+          "version": "8d8d8cd5b62e0799"
         }
       ],
-      "lastChangedAt": "2026-09-04T04:25:27.000Z",
+      "lastChangedAt": "2026-09-07T05:47:12.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      "lastChangedCommit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
     },
     {
       "key": "Artifact:MARKETING.md",
@@ -20326,20 +20326,20 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 12449,
-      "lines": 87,
-      "version": "c50c9b562f6199c9",
+      "bytes": 10764,
+      "lines": 88,
+      "version": "9581c256245eb8bc",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "c50c9b562f6199c9"
+          "version": "9581c256245eb8bc"
         }
       ],
-      "lastChangedAt": "2026-09-04T02:02:56.000Z",
+      "lastChangedAt": "2026-09-07T05:47:12.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3c8da2205b6f6868194ad8400dcd93773224217a"
+      "lastChangedCommit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
     },
     {
       "key": "Artifact:Procfile",
@@ -33139,18 +33139,18 @@
       "extension": ".md",
       "bytes": 54622,
       "lines": 735,
-      "version": "cc3205071c8fa4e2",
+      "version": "4e72a9ab9af9a671",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "cc3205071c8fa4e2"
+          "version": "4e72a9ab9af9a671"
         }
       ],
-      "lastChangedAt": "2026-09-04T13:14:15.000Z",
+      "lastChangedAt": "2026-09-07T05:47:12.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3231fb2774e4eeaa410392f23c206064ca6608dd"
+      "lastChangedCommit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
     },
     {
       "key": "Artifact:src/accrual.js",
@@ -33981,6 +33981,29 @@
       "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
+      "key": "Artifact:src/content/canonical.js",
+      "type": "Artifact",
+      "id": "src/content/canonical.js",
+      "label": "canonical.js",
+      "path": "src/content/canonical.js",
+      "kind": "backend-module",
+      "extension": ".js",
+      "bytes": 8336,
+      "lines": 214,
+      "version": "25b33a562fc19d35",
+      "text": true,
+      "provenance": [
+        {
+          "file": "src/content/canonical.js",
+          "line": 1,
+          "version": "25b33a562fc19d35"
+        }
+      ],
+      "lastChangedAt": "2026-09-07T05:47:12.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
+    },
+    {
       "key": "Artifact:src/content/compiler.js",
       "type": "Artifact",
       "id": "src/content/compiler.js",
@@ -33988,20 +34011,20 @@
       "path": "src/content/compiler.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 63088,
-      "lines": 1214,
-      "version": "a4eeaff3d68bfd5d",
+      "bytes": 63356,
+      "lines": 1222,
+      "version": "167fe1d662cb6f83",
       "text": true,
       "provenance": [
         {
           "file": "src/content/compiler.js",
           "line": 1,
-          "version": "a4eeaff3d68bfd5d"
+          "version": "167fe1d662cb6f83"
         }
       ],
-      "lastChangedAt": "2026-08-29T00:22:12.000Z",
+      "lastChangedAt": "2026-09-07T05:47:12.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
+      "lastChangedCommit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
     },
     {
       "key": "Artifact:src/content/core-materials.js",
@@ -34027,6 +34050,29 @@
       "lastChangedCommit": "d940ac787986cf72c9677abe8072decbe357de84"
     },
     {
+      "key": "Artifact:src/content/corpus.js",
+      "type": "Artifact",
+      "id": "src/content/corpus.js",
+      "label": "corpus.js",
+      "path": "src/content/corpus.js",
+      "kind": "backend-module",
+      "extension": ".js",
+      "bytes": 114612,
+      "lines": 2640,
+      "version": "70fcd33bc1d1074e",
+      "text": true,
+      "provenance": [
+        {
+          "file": "src/content/corpus.js",
+          "line": 1,
+          "version": "70fcd33bc1d1074e"
+        }
+      ],
+      "lastChangedAt": "2026-09-07T05:47:12.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
+    },
+    {
       "key": "Artifact:src/content/crafting.js",
       "type": "Artifact",
       "id": "src/content/crafting.js",
@@ -34050,6 +34096,75 @@
       "lastChangedCommit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
     },
     {
+      "key": "Artifact:src/content/diagnostics.js",
+      "type": "Artifact",
+      "id": "src/content/diagnostics.js",
+      "label": "diagnostics.js",
+      "path": "src/content/diagnostics.js",
+      "kind": "backend-module",
+      "extension": ".js",
+      "bytes": 1947,
+      "lines": 65,
+      "version": "9227c8aa4112d5d5",
+      "text": true,
+      "provenance": [
+        {
+          "file": "src/content/diagnostics.js",
+          "line": 1,
+          "version": "9227c8aa4112d5d5"
+        }
+      ],
+      "lastChangedAt": "2026-09-07T05:47:12.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
+    },
+    {
+      "key": "Artifact:src/content/discovery.js",
+      "type": "Artifact",
+      "id": "src/content/discovery.js",
+      "label": "discovery.js",
+      "path": "src/content/discovery.js",
+      "kind": "backend-module",
+      "extension": ".js",
+      "bytes": 17818,
+      "lines": 482,
+      "version": "f76193bd137ddc86",
+      "text": true,
+      "provenance": [
+        {
+          "file": "src/content/discovery.js",
+          "line": 1,
+          "version": "f76193bd137ddc86"
+        }
+      ],
+      "lastChangedAt": "2026-09-04T15:28:01.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "49d3066f587652d6b9b8948a670f0ebe6cedb9f6"
+    },
+    {
+      "key": "Artifact:src/content/economy-profile.js",
+      "type": "Artifact",
+      "id": "src/content/economy-profile.js",
+      "label": "economy-profile.js",
+      "path": "src/content/economy-profile.js",
+      "kind": "backend-module",
+      "extension": ".js",
+      "bytes": 53846,
+      "lines": 1264,
+      "version": "5b0118be26e80dd2",
+      "text": true,
+      "provenance": [
+        {
+          "file": "src/content/economy-profile.js",
+          "line": 1,
+          "version": "5b0118be26e80dd2"
+        }
+      ],
+      "lastChangedAt": "2026-09-07T05:47:12.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
+    },
+    {
       "key": "Artifact:src/content/exchange.js",
       "type": "Artifact",
       "id": "src/content/exchange.js",
@@ -34071,6 +34186,29 @@
       "lastChangedAt": "2026-08-29T00:22:12.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
+    },
+    {
+      "key": "Artifact:src/content/json-source.js",
+      "type": "Artifact",
+      "id": "src/content/json-source.js",
+      "label": "json-source.js",
+      "path": "src/content/json-source.js",
+      "kind": "backend-module",
+      "extension": ".js",
+      "bytes": 10260,
+      "lines": 337,
+      "version": "f468a1694f577729",
+      "text": true,
+      "provenance": [
+        {
+          "file": "src/content/json-source.js",
+          "line": 1,
+          "version": "f468a1694f577729"
+        }
+      ],
+      "lastChangedAt": "2026-09-04T15:28:01.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "49d3066f587652d6b9b8948a670f0ebe6cedb9f6"
     },
     {
       "key": "Artifact:src/content/phase1-policy.js",
@@ -38864,20 +39002,20 @@
       "path": "test/docs.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 303618,
-      "lines": 4083,
-      "version": "281bd4a49203b435",
+      "bytes": 304271,
+      "lines": 4093,
+      "version": "81fcdbe3d6490af2",
       "text": true,
       "provenance": [
         {
           "file": "test/docs.js",
           "line": 1,
-          "version": "281bd4a49203b435"
+          "version": "81fcdbe3d6490af2"
         }
       ],
-      "lastChangedAt": "2026-09-04T02:02:56.000Z",
+      "lastChangedAt": "2026-09-04T15:28:01.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3c8da2205b6f6868194ad8400dcd93773224217a"
+      "lastChangedCommit": "49d3066f587652d6b9b8948a670f0ebe6cedb9f6"
     },
     {
       "key": "Artifact:test/drop.js",
@@ -39248,6 +39386,121 @@
       "lastChangedCommit": "0524f3ce06d49e9409c54a15f8dd8de30444aa01"
     },
     {
+      "key": "Artifact:test/fixtures/phase2/compiler/malicious-duplicate/pack.json",
+      "type": "Artifact",
+      "id": "test/fixtures/phase2/compiler/malicious-duplicate/pack.json",
+      "label": "pack.json",
+      "path": "test/fixtures/phase2/compiler/malicious-duplicate/pack.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 206,
+      "lines": 2,
+      "version": "0b64d88c7b3ec67b",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/fixtures/phase2/compiler/malicious-duplicate/pack.json",
+          "line": 1,
+          "version": "0b64d88c7b3ec67b"
+        }
+      ],
+      "lastChangedAt": "2026-09-07T05:47:12.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
+    },
+    {
+      "key": "Artifact:test/fixtures/phase2/compiler/valid-core/pack.json",
+      "type": "Artifact",
+      "id": "test/fixtures/phase2/compiler/valid-core/pack.json",
+      "label": "pack.json",
+      "path": "test/fixtures/phase2/compiler/valid-core/pack.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 1614,
+      "lines": 70,
+      "version": "1ad4cb2be130d17e",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/fixtures/phase2/compiler/valid-core/pack.json",
+          "line": 1,
+          "version": "1ad4cb2be130d17e"
+        }
+      ],
+      "lastChangedAt": "2026-09-07T05:47:12.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
+    },
+    {
+      "key": "Artifact:test/fixtures/phase2/discovery/fixtures/adversarial/pack.json",
+      "type": "Artifact",
+      "id": "test/fixtures/phase2/discovery/fixtures/adversarial/pack.json",
+      "label": "pack.json",
+      "path": "test/fixtures/phase2/discovery/fixtures/adversarial/pack.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 174,
+      "lines": 9,
+      "version": "152c2fc5e67ea1a6",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/fixtures/phase2/discovery/fixtures/adversarial/pack.json",
+          "line": 1,
+          "version": "152c2fc5e67ea1a6"
+        }
+      ],
+      "lastChangedAt": "2026-09-04T15:28:01.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "49d3066f587652d6b9b8948a670f0ebe6cedb9f6"
+    },
+    {
+      "key": "Artifact:test/fixtures/phase2/discovery/valid-experience/pack.json",
+      "type": "Artifact",
+      "id": "test/fixtures/phase2/discovery/valid-experience/pack.json",
+      "label": "pack.json",
+      "path": "test/fixtures/phase2/discovery/valid-experience/pack.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 176,
+      "lines": 9,
+      "version": "a042fd0129a46853",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/fixtures/phase2/discovery/valid-experience/pack.json",
+          "line": 1,
+          "version": "a042fd0129a46853"
+        }
+      ],
+      "lastChangedAt": "2026-09-04T15:28:01.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "49d3066f587652d6b9b8948a670f0ebe6cedb9f6"
+    },
+    {
+      "key": "Artifact:test/fixtures/phase2/discovery/valid-library/pack.json",
+      "type": "Artifact",
+      "id": "test/fixtures/phase2/discovery/valid-library/pack.json",
+      "label": "pack.json",
+      "path": "test/fixtures/phase2/discovery/valid-library/pack.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 169,
+      "lines": 9,
+      "version": "a8cb595c22e5f395",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/fixtures/phase2/discovery/valid-library/pack.json",
+          "line": 1,
+          "version": "a8cb595c22e5f395"
+        }
+      ],
+      "lastChangedAt": "2026-09-04T15:28:01.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "49d3066f587652d6b9b8948a670f0ebe6cedb9f6"
+    },
+    {
       "key": "Artifact:test/fixtures/rwa-health-overlay-v2-vectors.json",
       "type": "Artifact",
       "id": "test/fixtures/rwa-health-overlay-v2-vectors.json",
@@ -39301,20 +39554,20 @@
       "path": "test/gates.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 247457,
-      "lines": 3795,
-      "version": "989c02a051cf4624",
+      "bytes": 247612,
+      "lines": 3796,
+      "version": "7ee684a757002d08",
       "text": true,
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "989c02a051cf4624"
+          "version": "7ee684a757002d08"
         }
       ],
-      "lastChangedAt": "2026-09-04T04:25:27.000Z",
+      "lastChangedAt": "2026-09-07T05:47:12.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      "lastChangedCommit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
     },
     {
       "key": "Artifact:test/genesiscca.js",
@@ -40028,6 +40281,98 @@
       "lastChangedAt": "2026-08-14T19:24:50.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "aba6c29f3c4f8bb7d2d85becd6724b016879b3f5"
+    },
+    {
+      "key": "Artifact:test/phase2-compiler.js",
+      "type": "Artifact",
+      "id": "test/phase2-compiler.js",
+      "label": "phase2-compiler.js",
+      "path": "test/phase2-compiler.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 31840,
+      "lines": 662,
+      "version": "284860c41416006e",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/phase2-compiler.js",
+          "line": 1,
+          "version": "284860c41416006e"
+        }
+      ],
+      "lastChangedAt": "2026-09-07T05:47:12.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
+    },
+    {
+      "key": "Artifact:test/phase2-discovery.js",
+      "type": "Artifact",
+      "id": "test/phase2-discovery.js",
+      "label": "phase2-discovery.js",
+      "path": "test/phase2-discovery.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 24030,
+      "lines": 624,
+      "version": "9fb6a75761264865",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/phase2-discovery.js",
+          "line": 1,
+          "version": "9fb6a75761264865"
+        }
+      ],
+      "lastChangedAt": "2026-09-04T15:28:01.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "49d3066f587652d6b9b8948a670f0ebe6cedb9f6"
+    },
+    {
+      "key": "Artifact:test/phase2-review-regressions.js",
+      "type": "Artifact",
+      "id": "test/phase2-review-regressions.js",
+      "label": "phase2-review-regressions.js",
+      "path": "test/phase2-review-regressions.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 136550,
+      "lines": 3133,
+      "version": "671738ae520d0452",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/phase2-review-regressions.js",
+          "line": 1,
+          "version": "671738ae520d0452"
+        }
+      ],
+      "lastChangedAt": "2026-09-07T05:47:12.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
+    },
+    {
+      "key": "Artifact:test/phase2-scale.js",
+      "type": "Artifact",
+      "id": "test/phase2-scale.js",
+      "label": "phase2-scale.js",
+      "path": "test/phase2-scale.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 3204,
+      "lines": 73,
+      "version": "b6411d074dd73318",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/phase2-scale.js",
+          "line": 1,
+          "version": "b6411d074dd73318"
+        }
+      ],
+      "lastChangedAt": "2026-09-07T05:47:12.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
     },
     {
       "key": "Artifact:test/playthrough-truth.js",
@@ -41509,20 +41854,20 @@
       "path": "test/worldgraph-validation.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 80834,
-      "lines": 1889,
-      "version": "a510baa8c1479e06",
+      "bytes": 81049,
+      "lines": 1894,
+      "version": "f09a7ea636b39c74",
       "text": true,
       "provenance": [
         {
           "file": "test/worldgraph-validation.js",
           "line": 1,
-          "version": "a510baa8c1479e06"
+          "version": "f09a7ea636b39c74"
         }
       ],
-      "lastChangedAt": "2026-09-04T04:25:27.000Z",
+      "lastChangedAt": "2026-09-04T15:28:01.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      "lastChangedCommit": "49d3066f587652d6b9b8948a670f0ebe6cedb9f6"
     },
     {
       "key": "Artifact:test/worldgraph.js",
@@ -41916,6 +42261,52 @@
       "lastChangedCommit": "dd8e51401f4950ac05a6f8eb8d147a31c778f548"
     },
     {
+      "key": "Artifact:tools/content-artifacts.js",
+      "type": "Artifact",
+      "id": "tools/content-artifacts.js",
+      "label": "content-artifacts.js",
+      "path": "tools/content-artifacts.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 30497,
+      "lines": 776,
+      "version": "cfa4e68883187511",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/content-artifacts.js",
+          "line": 1,
+          "version": "cfa4e68883187511"
+        }
+      ],
+      "lastChangedAt": "2026-09-07T05:47:12.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
+    },
+    {
+      "key": "Artifact:tools/content-scale.js",
+      "type": "Artifact",
+      "id": "tools/content-scale.js",
+      "label": "content-scale.js",
+      "path": "tools/content-scale.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 6698,
+      "lines": 179,
+      "version": "f2b86839a69c047a",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/content-scale.js",
+          "line": 1,
+          "version": "f2b86839a69c047a"
+        }
+      ],
+      "lastChangedAt": "2026-09-07T05:47:12.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
+    },
+    {
       "key": "Artifact:tools/content.js",
       "type": "Artifact",
       "id": "tools/content.js",
@@ -41923,20 +42314,20 @@
       "path": "tools/content.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 1267,
-      "lines": 31,
-      "version": "01a4bfbd1962ab1f",
+      "bytes": 5109,
+      "lines": 121,
+      "version": "3fbdb325ea94f1fe",
       "text": true,
       "provenance": [
         {
           "file": "tools/content.js",
           "line": 1,
-          "version": "01a4bfbd1962ab1f"
+          "version": "3fbdb325ea94f1fe"
         }
       ],
-      "lastChangedAt": "2026-08-27T05:22:04.000Z",
+      "lastChangedAt": "2026-09-07T05:47:12.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "0524f3ce06d49e9409c54a15f8dd8de30444aa01"
+      "lastChangedCommit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
     },
     {
       "key": "Artifact:tools/contextplus-health.js",
@@ -43317,7 +43708,20 @@
       "type": "Command",
       "id": "npm:content:check",
       "label": "npm run content:check",
-      "command": "node tools/content.js check content/packs/sixth-chair/pack.json && node tools/content.js check content/packs/sixth-chair-v2/pack.json && node tools/content.js check content/packs/docks-missed-tide/pack.json && node tools/content.js check content/packs/canal-water-cellar/pack.json && node tools/content.js check content/packs/brick-last-kiln/pack.json && node tools/content.js check content/packs/neon-house-lights/pack.json && node tools/content.js check content/packs/foundry-furnace-ledger/pack.json && node tools/content.js check content/packs/cathedral-saints-account/pack.json && node tools/content.js check content/packs/iron-election/pack.json && node tools/content.js check content/packs/house-made-of-glass/pack.json && node tools/content.js check content/packs/port-no-return/pack.json && node tools/content.js check content/packs/empty-seat/pack.json && node tools/content.js check content/packs/two-funerals/pack.json && node tools/content.js check content/packs/federal-ledger/pack.json && node tools/content.js check content/packs/don-of-the-city/pack.json && node tools/content.js check content/packs/last-clean-contract/pack.json && node tools/content.js check content/packs/hostile-books/pack.json && node tools/content.js check content/packs/bad-batch/pack.json && node tools/content.js check content/packs/black-ice/pack.json && node tools/content.js check content/packs/nobody-saw-him-leave/pack.json && node tools/content.js check content/packs/twelve-rounds/pack.json && node tools/content.js check content/packs/two-man-rule/pack.json && node tools/content.js check content/packs/books-open-at-midnight/pack.json && node tools/content.js check content/packs/bellini-lockbox/pack.json && node tools/content.js check content/packs/bellini-lockbox-v2/pack.json && node tools/content.js check content/packs/bellini-lockbox-v3/pack.json && node tools/content.js check content/packs/bellini-lockbox-v4/pack.json",
+      "command": "npm run content:check:corpus",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "key": "Command:npm:content:check:corpus",
+      "type": "Command",
+      "id": "npm:content:check:corpus",
+      "label": "npm run content:check:corpus",
+      "command": "node tools/content.js check-corpus content/packs",
       "provenance": [
         {
           "file": "package.json",
@@ -43616,7 +44020,7 @@
       "type": "Command",
       "id": "npm:pretest",
       "label": "npm run pretest",
-      "command": "node test/finalizedobservation.js && node test/stockballotv2.js && node test/rwanominations.js && node test/rwaroutes.js && node test/rwahealth.js && node test/rwahealth.integration.js && node test/rwahealthclearance.js && node test/rwahealthclearancecontext.js && node test/rwahealthoverlay.readiness.js && node test/rwahealthoverlay.schema.js && node test/rwahealthoverlay.vector.js && node test/rwaregistrylifecycle.js && node test/rwaregistrylifecycle.sync.js && node test/agent-referral-cash.js && node test/content-graph.js && node test/content-runtime.js && node test/content-social.js && node test/content-seasonal.js && node test/content-seasonal-case.js && node test/content-crafting.js && node test/content-crafting-jobs.js && node test/content-crafting-tools.js && node test/content-exchange.js && node test/content-api.js && node test/v4oraclekeeper.js && node test/genesiscca.js && node test/genesislaunch.js && node test/genesisrelease.js && node test/worldgraph.js && node test/worldgraph-validation.js && node test/items.js && node test/crafting.js && node test/mysteries.js && node test/operations.js && node test/belladonna.js && node test/worldgraph-api.js && node tools/pgcheck-belladonna.js --pg-mem",
+      "command": "node test/finalizedobservation.js && node test/stockballotv2.js && node test/rwanominations.js && node test/rwaroutes.js && node test/rwahealth.js && node test/rwahealth.integration.js && node test/rwahealthclearance.js && node test/rwahealthclearancecontext.js && node test/rwahealthoverlay.readiness.js && node test/rwahealthoverlay.schema.js && node test/rwahealthoverlay.vector.js && node test/rwaregistrylifecycle.js && node test/rwaregistrylifecycle.sync.js && node test/agent-referral-cash.js && node test/phase2-discovery.js && node test/phase2-compiler.js && node test/phase2-review-regressions.js && node test/phase2-scale.js && node test/content-graph.js && node test/content-runtime.js && node test/content-social.js && node test/content-seasonal.js && node test/content-seasonal-case.js && node test/content-crafting.js && node test/content-crafting-jobs.js && node test/content-crafting-tools.js && node test/content-exchange.js && node test/content-api.js && node test/v4oraclekeeper.js && node test/genesiscca.js && node test/genesislaunch.js && node test/genesisrelease.js && node test/worldgraph.js && node test/worldgraph-validation.js && node test/items.js && node test/crafting.js && node test/mysteries.js && node test/operations.js && node test/belladonna.js && node test/worldgraph-api.js && node tools/pgcheck-belladonna.js --pg-mem",
       "provenance": [
         {
           "file": "package.json",
@@ -44501,6 +44905,22 @@
         {
           "commit": "09246249991961b316fc84c6571a14096bc1859e",
           "url": "https://github.com/OmertaDev/Omerta/commit/09246249991961b316fc84c6571a14096bc1859e"
+        }
+      ]
+    },
+    {
+      "key": "Commit:09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d",
+      "type": "Commit",
+      "id": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d",
+      "label": "feat: compile canonical economy corpus",
+      "title": "feat: compile canonical economy corpus",
+      "date": "2026-09-07T05:47:12.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d",
+      "provenance": [
+        {
+          "commit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d",
+          "url": "https://github.com/OmertaDev/Omerta/commit/09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
         }
       ]
     },
@@ -48025,6 +48445,22 @@
       ]
     },
     {
+      "key": "Commit:30e090e119d3b089415d8f56f3d628cb25c03af5",
+      "type": "Commit",
+      "id": "30e090e119d3b089415d8f56f3d628cb25c03af5",
+      "label": "docs: refresh phase 2a knowledge snapshot",
+      "title": "docs: refresh phase 2a knowledge snapshot",
+      "date": "2026-09-04T14:03:09.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/30e090e119d3b089415d8f56f3d628cb25c03af5",
+      "provenance": [
+        {
+          "commit": "30e090e119d3b089415d8f56f3d628cb25c03af5",
+          "url": "https://github.com/OmertaDev/Omerta/commit/30e090e119d3b089415d8f56f3d628cb25c03af5"
+        }
+      ]
+    },
+    {
       "key": "Commit:30fa150110ae753fb3a61a5d09c7f370ea4302b2",
       "type": "Commit",
       "id": "30fa150110ae753fb3a61a5d09c7f370ea4302b2",
@@ -50693,6 +51129,22 @@
         {
           "commit": "49c3216e26efec2d945e81cf8f1012e07fc5fbdb",
           "url": "https://github.com/OmertaDev/Omerta/commit/49c3216e26efec2d945e81cf8f1012e07fc5fbdb"
+        }
+      ]
+    },
+    {
+      "key": "Commit:49d3066f587652d6b9b8948a670f0ebe6cedb9f6",
+      "type": "Commit",
+      "id": "49d3066f587652d6b9b8948a670f0ebe6cedb9f6",
+      "label": "feat: discover authored content corpus",
+      "title": "feat: discover authored content corpus",
+      "date": "2026-09-04T15:28:01.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/49d3066f587652d6b9b8948a670f0ebe6cedb9f6",
+      "provenance": [
+        {
+          "commit": "49d3066f587652d6b9b8948a670f0ebe6cedb9f6",
+          "url": "https://github.com/OmertaDev/Omerta/commit/49d3066f587652d6b9b8948a670f0ebe6cedb9f6"
         }
       ]
     },
@@ -72801,12 +73253,12 @@
       "label": "MARKETING-POSTS.md",
       "documentType": "documentation",
       "lines": 128,
-      "version": "cb9d75756896d4e1",
+      "version": "8d8d8cd5b62e0799",
       "provenance": [
         {
           "file": "MARKETING-POSTS.md",
           "line": 1,
-          "version": "cb9d75756896d4e1"
+          "version": "8d8d8cd5b62e0799"
         }
       ]
     },
@@ -74417,12 +74869,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 735,
-      "version": "cc3205071c8fa4e2",
+      "version": "4e72a9ab9af9a671",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "cc3205071c8fa4e2"
+          "version": "4e72a9ab9af9a671"
         }
       ]
     },
@@ -78994,6 +79446,9 @@
           "commit": "30514acce0345f7ed2d7ebde333e5de343c699e5"
         },
         {
+          "commit": "30e090e119d3b089415d8f56f3d628cb25c03af5"
+        },
+        {
           "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
         },
         {
@@ -79259,6 +79714,9 @@
         },
         {
           "commit": "30514acce0345f7ed2d7ebde333e5de343c699e5"
+        },
+        {
+          "commit": "30e090e119d3b089415d8f56f3d628cb25c03af5"
         },
         {
           "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
@@ -79750,6 +80208,9 @@
           "commit": "30514acce0345f7ed2d7ebde333e5de343c699e5"
         },
         {
+          "commit": "30e090e119d3b089415d8f56f3d628cb25c03af5"
+        },
+        {
           "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
         },
         {
@@ -80237,6 +80698,9 @@
         },
         {
           "commit": "30514acce0345f7ed2d7ebde333e5de343c699e5"
+        },
+        {
+          "commit": "30e090e119d3b089415d8f56f3d628cb25c03af5"
         },
         {
           "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
@@ -80804,6 +81268,9 @@
         },
         {
           "commit": "30514acce0345f7ed2d7ebde333e5de343c699e5"
+        },
+        {
+          "commit": "30e090e119d3b089415d8f56f3d628cb25c03af5"
         },
         {
           "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
@@ -82074,17 +82541,32 @@
       ]
     },
     {
+      "key": "Module:src/content/canonical.js",
+      "type": "Module",
+      "id": "src/content/canonical.js",
+      "label": "src/content/canonical.js",
+      "lines": 214,
+      "version": "25b33a562fc19d35",
+      "provenance": [
+        {
+          "file": "src/content/canonical.js",
+          "line": 1,
+          "version": "25b33a562fc19d35"
+        }
+      ]
+    },
+    {
       "key": "Module:src/content/compiler.js",
       "type": "Module",
       "id": "src/content/compiler.js",
       "label": "src/content/compiler.js",
-      "lines": 1214,
-      "version": "a4eeaff3d68bfd5d",
+      "lines": 1222,
+      "version": "167fe1d662cb6f83",
       "provenance": [
         {
           "file": "src/content/compiler.js",
           "line": 1,
-          "version": "a4eeaff3d68bfd5d"
+          "version": "167fe1d662cb6f83"
         }
       ]
     },
@@ -82104,6 +82586,21 @@
       ]
     },
     {
+      "key": "Module:src/content/corpus.js",
+      "type": "Module",
+      "id": "src/content/corpus.js",
+      "label": "src/content/corpus.js",
+      "lines": 2640,
+      "version": "70fcd33bc1d1074e",
+      "provenance": [
+        {
+          "file": "src/content/corpus.js",
+          "line": 1,
+          "version": "70fcd33bc1d1074e"
+        }
+      ]
+    },
+    {
       "key": "Module:src/content/crafting.js",
       "type": "Module",
       "id": "src/content/crafting.js",
@@ -82119,6 +82616,51 @@
       ]
     },
     {
+      "key": "Module:src/content/diagnostics.js",
+      "type": "Module",
+      "id": "src/content/diagnostics.js",
+      "label": "src/content/diagnostics.js",
+      "lines": 65,
+      "version": "9227c8aa4112d5d5",
+      "provenance": [
+        {
+          "file": "src/content/diagnostics.js",
+          "line": 1,
+          "version": "9227c8aa4112d5d5"
+        }
+      ]
+    },
+    {
+      "key": "Module:src/content/discovery.js",
+      "type": "Module",
+      "id": "src/content/discovery.js",
+      "label": "src/content/discovery.js",
+      "lines": 482,
+      "version": "f76193bd137ddc86",
+      "provenance": [
+        {
+          "file": "src/content/discovery.js",
+          "line": 1,
+          "version": "f76193bd137ddc86"
+        }
+      ]
+    },
+    {
+      "key": "Module:src/content/economy-profile.js",
+      "type": "Module",
+      "id": "src/content/economy-profile.js",
+      "label": "src/content/economy-profile.js",
+      "lines": 1264,
+      "version": "5b0118be26e80dd2",
+      "provenance": [
+        {
+          "file": "src/content/economy-profile.js",
+          "line": 1,
+          "version": "5b0118be26e80dd2"
+        }
+      ]
+    },
+    {
       "key": "Module:src/content/exchange.js",
       "type": "Module",
       "id": "src/content/exchange.js",
@@ -82130,6 +82672,21 @@
           "file": "src/content/exchange.js",
           "line": 1,
           "version": "afba835e473250a8"
+        }
+      ]
+    },
+    {
+      "key": "Module:src/content/json-source.js",
+      "type": "Module",
+      "id": "src/content/json-source.js",
+      "label": "src/content/json-source.js",
+      "lines": 337,
+      "version": "f468a1694f577729",
+      "provenance": [
+        {
+          "file": "src/content/json-source.js",
+          "line": 1,
+          "version": "f468a1694f577729"
         }
       ]
     },
@@ -87688,12 +88245,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "422b09583a9dc9ab1a4212ef52bb9ac245a4f368",
+      "revision": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d",
       "currentBranch": "codex/world-graph-phases-2-3",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 1869,
+      "currentArtifactCount": 1886,
       "provenance": [
         {
           "file": "README.md",
@@ -113835,13 +114392,13 @@
       "type": "TestSuite",
       "id": "test/docs.js",
       "label": "test/docs.js",
-      "lines": 4083,
-      "version": "281bd4a49203b435",
+      "lines": 4093,
+      "version": "81fcdbe3d6490af2",
       "provenance": [
         {
           "file": "test/docs.js",
           "line": 1,
-          "version": "281bd4a49203b435"
+          "version": "81fcdbe3d6490af2"
         }
       ]
     },
@@ -114060,13 +114617,13 @@
       "type": "TestSuite",
       "id": "test/gates.js",
       "label": "test/gates.js",
-      "lines": 3795,
-      "version": "989c02a051cf4624",
+      "lines": 3796,
+      "version": "7ee684a757002d08",
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "989c02a051cf4624"
+          "version": "7ee684a757002d08"
         }
       ]
     },
@@ -114532,6 +115089,66 @@
           "file": "test/people.js",
           "line": 1,
           "version": "34d6081a14a6b255"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/phase2-compiler.js",
+      "type": "TestSuite",
+      "id": "test/phase2-compiler.js",
+      "label": "test/phase2-compiler.js",
+      "lines": 662,
+      "version": "284860c41416006e",
+      "provenance": [
+        {
+          "file": "test/phase2-compiler.js",
+          "line": 1,
+          "version": "284860c41416006e"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/phase2-discovery.js",
+      "type": "TestSuite",
+      "id": "test/phase2-discovery.js",
+      "label": "test/phase2-discovery.js",
+      "lines": 624,
+      "version": "9fb6a75761264865",
+      "provenance": [
+        {
+          "file": "test/phase2-discovery.js",
+          "line": 1,
+          "version": "9fb6a75761264865"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/phase2-review-regressions.js",
+      "type": "TestSuite",
+      "id": "test/phase2-review-regressions.js",
+      "label": "test/phase2-review-regressions.js",
+      "lines": 3133,
+      "version": "671738ae520d0452",
+      "provenance": [
+        {
+          "file": "test/phase2-review-regressions.js",
+          "line": 1,
+          "version": "671738ae520d0452"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/phase2-scale.js",
+      "type": "TestSuite",
+      "id": "test/phase2-scale.js",
+      "label": "test/phase2-scale.js",
+      "lines": 73,
+      "version": "b6411d074dd73318",
+      "provenance": [
+        {
+          "file": "test/phase2-scale.js",
+          "line": 1,
+          "version": "b6411d074dd73318"
         }
       ]
     },
@@ -115500,13 +116117,13 @@
       "type": "TestSuite",
       "id": "test/worldgraph-validation.js",
       "label": "test/worldgraph-validation.js",
-      "lines": 1889,
-      "version": "a510baa8c1479e06",
+      "lines": 1894,
+      "version": "f09a7ea636b39c74",
       "provenance": [
         {
           "file": "test/worldgraph-validation.js",
           "line": 1,
-          "version": "a510baa8c1479e06"
+          "version": "f09a7ea636b39c74"
         }
       ]
     },
@@ -123419,6 +124036,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:src/content/canonical.js",
+      "to": "Domain:platform-core",
+      "provenance": {
+        "file": "src/content/canonical.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:src/content/compiler.js",
       "to": "Domain:platform-core",
       "provenance": {
@@ -123437,6 +124063,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:src/content/corpus.js",
+      "to": "Domain:platform-core",
+      "provenance": {
+        "file": "src/content/corpus.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:src/content/crafting.js",
       "to": "Domain:world-graph",
       "provenance": {
@@ -123446,10 +124081,46 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:src/content/diagnostics.js",
+      "to": "Domain:platform-core",
+      "provenance": {
+        "file": "src/content/diagnostics.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:src/content/discovery.js",
+      "to": "Domain:world-progression",
+      "provenance": {
+        "file": "src/content/discovery.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:src/content/economy-profile.js",
+      "to": "Domain:platform-core",
+      "provenance": {
+        "file": "src/content/economy-profile.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:src/content/exchange.js",
       "to": "Domain:economy-ledger",
       "provenance": {
         "file": "src/content/exchange.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:src/content/json-source.js",
+      "to": "Domain:platform-core",
+      "provenance": {
+        "file": "src/content/json-source.js",
         "line": 1
       }
     },
@@ -125480,6 +126151,51 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/fixtures/phase2/compiler/malicious-duplicate/pack.json",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/fixtures/phase2/compiler/malicious-duplicate/pack.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/fixtures/phase2/compiler/valid-core/pack.json",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/fixtures/phase2/compiler/valid-core/pack.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/fixtures/phase2/discovery/fixtures/adversarial/pack.json",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/fixtures/phase2/discovery/fixtures/adversarial/pack.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/fixtures/phase2/discovery/valid-experience/pack.json",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/fixtures/phase2/discovery/valid-experience/pack.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/fixtures/phase2/discovery/valid-library/pack.json",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/fixtures/phase2/discovery/valid-library/pack.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/fixtures/rwa-health-overlay-v2-vectors.json",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -125781,6 +126497,42 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "test/people.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/phase2-compiler.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/phase2-compiler.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/phase2-discovery.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/phase2-discovery.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/phase2-review-regressions.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/phase2-review-regressions.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/phase2-scale.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/phase2-scale.js",
         "line": 1
       }
     },
@@ -126519,6 +127271,24 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "tools/concurrency.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/content-artifacts.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/content-artifacts.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/content-scale.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/content-scale.js",
         "line": 1
       }
     },
@@ -136139,6 +136909,142 @@
       "to": "Artifact:tools/playthrough.js",
       "provenance": {
         "commit": "09246249991961b316fc84c6571a14096bc1859e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d",
+      "to": "Artifact:MARKETING-POSTS.md",
+      "provenance": {
+        "commit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d",
+      "to": "Artifact:src/content/canonical.js",
+      "provenance": {
+        "commit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d",
+      "to": "Artifact:src/content/compiler.js",
+      "provenance": {
+        "commit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d",
+      "to": "Artifact:src/content/corpus.js",
+      "provenance": {
+        "commit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d",
+      "to": "Artifact:src/content/diagnostics.js",
+      "provenance": {
+        "commit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d",
+      "to": "Artifact:src/content/economy-profile.js",
+      "provenance": {
+        "commit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d",
+      "to": "Artifact:test/fixtures/phase2/compiler/malicious-duplicate/pack.json",
+      "provenance": {
+        "commit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d",
+      "to": "Artifact:test/fixtures/phase2/compiler/valid-core/pack.json",
+      "provenance": {
+        "commit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d",
+      "to": "Artifact:test/gates.js",
+      "provenance": {
+        "commit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d",
+      "to": "Artifact:test/phase2-compiler.js",
+      "provenance": {
+        "commit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d",
+      "to": "Artifact:test/phase2-review-regressions.js",
+      "provenance": {
+        "commit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d",
+      "to": "Artifact:test/phase2-scale.js",
+      "provenance": {
+        "commit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d",
+      "to": "Artifact:tools/content-artifacts.js",
+      "provenance": {
+        "commit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d",
+      "to": "Artifact:tools/content-scale.js",
+      "provenance": {
+        "commit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d",
+      "to": "Artifact:tools/content.js",
+      "provenance": {
+        "commit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
       }
     },
     {
@@ -152479,6 +153385,46 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:30e090e119d3b089415d8f56f3d628cb25c03af5",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "30e090e119d3b089415d8f56f3d628cb25c03af5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:30e090e119d3b089415d8f56f3d628cb25c03af5",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "30e090e119d3b089415d8f56f3d628cb25c03af5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:30e090e119d3b089415d8f56f3d628cb25c03af5",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "30e090e119d3b089415d8f56f3d628cb25c03af5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:30e090e119d3b089415d8f56f3d628cb25c03af5",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "30e090e119d3b089415d8f56f3d628cb25c03af5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:30e090e119d3b089415d8f56f3d628cb25c03af5",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "30e090e119d3b089415d8f56f3d628cb25c03af5"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:30fa150110ae753fb3a61a5d09c7f370ea4302b2",
       "to": "Artifact:src/routes/casino.js",
       "provenance": {
@@ -162819,6 +163765,102 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "commit": "49c3216e26efec2d945e81cf8f1012e07fc5fbdb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:49d3066f587652d6b9b8948a670f0ebe6cedb9f6",
+      "to": "Artifact:MARKETING-POSTS.md",
+      "provenance": {
+        "commit": "49d3066f587652d6b9b8948a670f0ebe6cedb9f6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:49d3066f587652d6b9b8948a670f0ebe6cedb9f6",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "49d3066f587652d6b9b8948a670f0ebe6cedb9f6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:49d3066f587652d6b9b8948a670f0ebe6cedb9f6",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "49d3066f587652d6b9b8948a670f0ebe6cedb9f6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:49d3066f587652d6b9b8948a670f0ebe6cedb9f6",
+      "to": "Artifact:src/content/discovery.js",
+      "provenance": {
+        "commit": "49d3066f587652d6b9b8948a670f0ebe6cedb9f6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:49d3066f587652d6b9b8948a670f0ebe6cedb9f6",
+      "to": "Artifact:src/content/json-source.js",
+      "provenance": {
+        "commit": "49d3066f587652d6b9b8948a670f0ebe6cedb9f6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:49d3066f587652d6b9b8948a670f0ebe6cedb9f6",
+      "to": "Artifact:test/docs.js",
+      "provenance": {
+        "commit": "49d3066f587652d6b9b8948a670f0ebe6cedb9f6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:49d3066f587652d6b9b8948a670f0ebe6cedb9f6",
+      "to": "Artifact:test/fixtures/phase2/discovery/fixtures/adversarial/pack.json",
+      "provenance": {
+        "commit": "49d3066f587652d6b9b8948a670f0ebe6cedb9f6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:49d3066f587652d6b9b8948a670f0ebe6cedb9f6",
+      "to": "Artifact:test/fixtures/phase2/discovery/valid-experience/pack.json",
+      "provenance": {
+        "commit": "49d3066f587652d6b9b8948a670f0ebe6cedb9f6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:49d3066f587652d6b9b8948a670f0ebe6cedb9f6",
+      "to": "Artifact:test/fixtures/phase2/discovery/valid-library/pack.json",
+      "provenance": {
+        "commit": "49d3066f587652d6b9b8948a670f0ebe6cedb9f6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:49d3066f587652d6b9b8948a670f0ebe6cedb9f6",
+      "to": "Artifact:test/phase2-discovery.js",
+      "provenance": {
+        "commit": "49d3066f587652d6b9b8948a670f0ebe6cedb9f6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:49d3066f587652d6b9b8948a670f0ebe6cedb9f6",
+      "to": "Artifact:test/worldgraph-validation.js",
+      "provenance": {
+        "commit": "49d3066f587652d6b9b8948a670f0ebe6cedb9f6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:49d3066f587652d6b9b8948a670f0ebe6cedb9f6",
+      "to": "Artifact:tools/content.js",
+      "provenance": {
+        "commit": "49d3066f587652d6b9b8948a670f0ebe6cedb9f6"
       }
     },
     {
@@ -217797,6 +218839,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:backend",
+      "to": "Artifact:src/content/canonical.js",
+      "provenance": {
+        "file": "src/content/canonical.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:backend",
       "to": "Artifact:src/content/compiler.js",
       "provenance": {
         "file": "src/content/compiler.js",
@@ -217815,6 +218866,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:backend",
+      "to": "Artifact:src/content/corpus.js",
+      "provenance": {
+        "file": "src/content/corpus.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:backend",
       "to": "Artifact:src/content/crafting.js",
       "provenance": {
         "file": "src/content/crafting.js",
@@ -217824,9 +218884,45 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:backend",
+      "to": "Artifact:src/content/diagnostics.js",
+      "provenance": {
+        "file": "src/content/diagnostics.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:backend",
+      "to": "Artifact:src/content/discovery.js",
+      "provenance": {
+        "file": "src/content/discovery.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:backend",
+      "to": "Artifact:src/content/economy-profile.js",
+      "provenance": {
+        "file": "src/content/economy-profile.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:backend",
       "to": "Artifact:src/content/exchange.js",
       "provenance": {
         "file": "src/content/exchange.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:backend",
+      "to": "Artifact:src/content/json-source.js",
+      "provenance": {
+        "file": "src/content/json-source.js",
         "line": 1
       }
     },
@@ -225929,6 +227025,51 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:test/fixtures/phase2/compiler/malicious-duplicate/pack.json",
+      "provenance": {
+        "file": "test/fixtures/phase2/compiler/malicious-duplicate/pack.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:test/fixtures/phase2/compiler/valid-core/pack.json",
+      "provenance": {
+        "file": "test/fixtures/phase2/compiler/valid-core/pack.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:test/fixtures/phase2/discovery/fixtures/adversarial/pack.json",
+      "provenance": {
+        "file": "test/fixtures/phase2/discovery/fixtures/adversarial/pack.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:test/fixtures/phase2/discovery/valid-experience/pack.json",
+      "provenance": {
+        "file": "test/fixtures/phase2/discovery/valid-experience/pack.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:test/fixtures/phase2/discovery/valid-library/pack.json",
+      "provenance": {
+        "file": "test/fixtures/phase2/discovery/valid-library/pack.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:test/fixtures/rwa-health-overlay-v2-vectors.json",
       "provenance": {
         "file": "test/fixtures/rwa-health-overlay-v2-vectors.json",
@@ -227828,6 +228969,42 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/phase2-compiler.js",
+      "provenance": {
+        "file": "test/phase2-compiler.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/phase2-discovery.js",
+      "provenance": {
+        "file": "test/phase2-discovery.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/phase2-review-regressions.js",
+      "provenance": {
+        "file": "test/phase2-review-regressions.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/phase2-scale.js",
+      "provenance": {
+        "file": "test/phase2-scale.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/playthrough-truth.js",
       "provenance": {
         "file": "test/playthrough-truth.js",
@@ -228560,6 +229737,24 @@
       "to": "Artifact:tools/concurrency.js",
       "provenance": {
         "file": "tools/concurrency.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/content-artifacts.js",
+      "provenance": {
+        "file": "tools/content-artifacts.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/content-scale.js",
+      "provenance": {
+        "file": "tools/content-scale.js",
         "line": 1
       }
     },
@@ -234490,6 +235685,15 @@
       "type": "DECLARES",
       "from": "Artifact:package.json",
       "to": "Command:npm:content:check",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
+      "to": "Command:npm:content:check:corpus",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -245170,7 +246374,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 425
+      "weight": 437
     },
     {
       "type": "DEPENDS_ON",
@@ -245194,7 +246398,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:world-progression",
-      "weight": 23
+      "weight": 28
     },
     {
       "type": "DEPENDS_ON",
@@ -245386,7 +246590,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:platform-core",
       "to": "Domain:world-progression",
-      "weight": 35
+      "weight": 36
     },
     {
       "type": "DEPENDS_ON",
@@ -245476,7 +246680,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:world-progression",
       "to": "Domain:platform-core",
-      "weight": 37
+      "weight": 38
     },
     {
       "type": "DEPENDS_ON",
@@ -245663,7 +246867,7 @@
     },
     {
       "type": "EXECUTES",
-      "from": "Command:npm:content:check",
+      "from": "Command:npm:content:check:corpus",
       "to": "Artifact:tools/content.js",
       "provenance": {
         "file": "package.json",
@@ -246043,6 +247247,42 @@
       "type": "EXECUTES",
       "from": "Command:npm:pretest",
       "to": "Artifact:test/operations.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:pretest",
+      "to": "Artifact:test/phase2-compiler.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:pretest",
+      "to": "Artifact:test/phase2-discovery.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:pretest",
+      "to": "Artifact:test/phase2-review-regressions.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:pretest",
+      "to": "Artifact:test/phase2-scale.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -254793,6 +256033,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d",
+      "provenance": {
+        "commit": "09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:0a412baaf02ffac43416df687184b9223e8258cc",
       "provenance": {
         "commit": "0a412baaf02ffac43416df687184b9223e8258cc"
@@ -256553,6 +257801,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:30e090e119d3b089415d8f56f3d628cb25c03af5",
+      "provenance": {
+        "commit": "30e090e119d3b089415d8f56f3d628cb25c03af5"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:30fa150110ae753fb3a61a5d09c7f370ea4302b2",
       "provenance": {
         "commit": "30fa150110ae753fb3a61a5d09c7f370ea4302b2"
@@ -257884,6 +259140,14 @@
       "to": "Commit:49c3216e26efec2d945e81cf8f1012e07fc5fbdb",
       "provenance": {
         "commit": "49c3216e26efec2d945e81cf8f1012e07fc5fbdb"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:49d3066f587652d6b9b8948a670f0ebe6cedb9f6",
+      "provenance": {
+        "commit": "49d3066f587652d6b9b8948a670f0ebe6cedb9f6"
       }
     },
     {
@@ -267639,6 +268903,33 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:src/content/corpus.js",
+      "to": "Artifact:src/content/diagnostics.js",
+      "provenance": {
+        "file": "src/content/corpus.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/content/corpus.js",
+      "to": "Artifact:src/content/discovery.js",
+      "provenance": {
+        "file": "src/content/corpus.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/content/corpus.js",
+      "to": "Artifact:src/content/json-source.js",
+      "provenance": {
+        "file": "src/content/corpus.js",
+        "line": 22
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:src/content/crafting.js",
       "to": "Artifact:src/content/compiler.js",
       "provenance": {
@@ -267671,6 +268962,24 @@
       "provenance": {
         "file": "src/content/crafting.js",
         "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/content/discovery.js",
+      "to": "Artifact:src/content/json-source.js",
+      "provenance": {
+        "file": "src/content/discovery.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/content/economy-profile.js",
+      "to": "Artifact:src/content/canonical.js",
+      "provenance": {
+        "file": "src/content/economy-profile.js",
+        "line": 1
       }
     },
     {
@@ -276166,7 +277475,16 @@
       "to": "Artifact:src/agentgateway.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 567
+        "line": 577
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/docs.js",
+      "to": "Artifact:src/content/discovery.js",
+      "provenance": {
+        "file": "test/docs.js",
+        "line": 258
       }
     },
     {
@@ -276175,7 +277493,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 4023
+        "line": 4033
       }
     },
     {
@@ -276184,7 +277502,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 4024
+        "line": 4034
       }
     },
     {
@@ -276193,7 +277511,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 1175
+        "line": 1185
       }
     },
     {
@@ -276202,7 +277520,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 3887
+        "line": 3897
       }
     },
     {
@@ -276211,7 +277529,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 494
+        "line": 504
       }
     },
     {
@@ -276220,7 +277538,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 775
+        "line": 785
       }
     },
     {
@@ -276229,7 +277547,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 833
+        "line": 843
       }
     },
     {
@@ -278012,6 +279330,87 @@
       "provenance": {
         "file": "test/people.js",
         "line": 13
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-compiler.js",
+      "to": "Artifact:src/content/canonical.js",
+      "provenance": {
+        "file": "test/phase2-compiler.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-compiler.js",
+      "to": "Artifact:src/content/discovery.js",
+      "provenance": {
+        "file": "test/phase2-compiler.js",
+        "line": 16
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-compiler.js",
+      "to": "Artifact:src/content/json-source.js",
+      "provenance": {
+        "file": "test/phase2-compiler.js",
+        "line": 17
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-discovery.js",
+      "to": "Artifact:src/content/json-source.js",
+      "provenance": {
+        "file": "test/phase2-discovery.js",
+        "line": 17
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-review-regressions.js",
+      "to": "Artifact:src/content/canonical.js",
+      "provenance": {
+        "file": "test/phase2-review-regressions.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-review-regressions.js",
+      "to": "Artifact:src/content/corpus.js",
+      "provenance": {
+        "file": "test/phase2-review-regressions.js",
+        "line": 11
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-review-regressions.js",
+      "to": "Artifact:src/content/diagnostics.js",
+      "provenance": {
+        "file": "test/phase2-review-regressions.js",
+        "line": 12
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-review-regressions.js",
+      "to": "Artifact:src/content/discovery.js",
+      "provenance": {
+        "file": "test/phase2-review-regressions.js",
+        "line": 13
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-review-regressions.js",
+      "to": "Artifact:src/content/economy-profile.js",
+      "provenance": {
+        "file": "test/phase2-review-regressions.js",
+        "line": 14
       }
     },
     {
@@ -280716,11 +282115,83 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:tools/content-artifacts.js",
+      "to": "Artifact:src/content/corpus.js",
+      "provenance": {
+        "file": "tools/content-artifacts.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/content-scale.js",
+      "to": "Artifact:src/content/canonical.js",
+      "provenance": {
+        "file": "tools/content-scale.js",
+        "line": 12
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/content-scale.js",
+      "to": "Artifact:src/content/discovery.js",
+      "provenance": {
+        "file": "tools/content-scale.js",
+        "line": 13
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/content.js",
+      "to": "Artifact:src/content/canonical.js",
+      "provenance": {
+        "file": "tools/content.js",
+        "line": 11
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:tools/content.js",
       "to": "Artifact:src/content/compiler.js",
       "provenance": {
         "file": "tools/content.js",
         "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/content.js",
+      "to": "Artifact:src/content/diagnostics.js",
+      "provenance": {
+        "file": "tools/content.js",
+        "line": 13
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/content.js",
+      "to": "Artifact:src/content/discovery.js",
+      "provenance": {
+        "file": "tools/content.js",
+        "line": 12
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/content.js",
+      "to": "Artifact:src/content/json-source.js",
+      "provenance": {
+        "file": "tools/content.js",
+        "line": 14
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/content.js",
+      "to": "Artifact:tools/content-artifacts.js",
+      "provenance": {
+        "file": "tools/content.js",
+        "line": 15
       }
     },
     {
@@ -304090,6 +305561,24 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:src/content/canonical.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 230
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:src/content/canonical.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 37
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
       "to": "Artifact:src/content/compiler.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
@@ -304103,6 +305592,123 @@
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
         "line": 41
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:src/content/corpus.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 232
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:src/content/corpus.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 39
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:src/content/corpus.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 472
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:src/content/corpus.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 521
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:src/content/discovery.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 168
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:src/content/discovery.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 204
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:src/content/discovery.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 35
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:src/content/economy-profile.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 231
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:src/content/economy-profile.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 38
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:src/content/economy-profile.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 471
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:src/content/economy-profile.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 520
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:src/content/json-source.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 167
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:src/content/json-source.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 36
       }
     },
     {
@@ -304288,6 +305894,69 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:test/fixtures/phase2/discovery/fixtures/adversarial/pack.json",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 172
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:test/fixtures/phase2/discovery/valid-experience/pack.json",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 171
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:test/fixtures/phase2/discovery/valid-library/pack.json",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 170
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:test/phase2-compiler.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 233
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:test/phase2-discovery.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 169
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:test/phase2-scale.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 234
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:test/phase2-scale.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 266
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
       "to": "Artifact:tools/backup-selftest.sh",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
@@ -304301,6 +305970,15 @@
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
         "line": 662
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:tools/content-scale.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 236
       }
     },
     {
@@ -313566,6 +315244,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Module:src/content/canonical.js",
+      "to": "Artifact:src/content/canonical.js",
+      "provenance": {
+        "file": "src/content/canonical.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Module:src/content/compiler.js",
       "to": "Artifact:src/content/compiler.js",
       "provenance": {
@@ -313584,6 +315271,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Module:src/content/corpus.js",
+      "to": "Artifact:src/content/corpus.js",
+      "provenance": {
+        "file": "src/content/corpus.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Module:src/content/crafting.js",
       "to": "Artifact:src/content/crafting.js",
       "provenance": {
@@ -313593,10 +315289,46 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Module:src/content/diagnostics.js",
+      "to": "Artifact:src/content/diagnostics.js",
+      "provenance": {
+        "file": "src/content/diagnostics.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Module:src/content/discovery.js",
+      "to": "Artifact:src/content/discovery.js",
+      "provenance": {
+        "file": "src/content/discovery.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Module:src/content/economy-profile.js",
+      "to": "Artifact:src/content/economy-profile.js",
+      "provenance": {
+        "file": "src/content/economy-profile.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Module:src/content/exchange.js",
       "to": "Artifact:src/content/exchange.js",
       "provenance": {
         "file": "src/content/exchange.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Module:src/content/json-source.js",
+      "to": "Artifact:src/content/json-source.js",
+      "provenance": {
+        "file": "src/content/json-source.js",
         "line": 1
       }
     },
@@ -316554,6 +318286,42 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/phase2-compiler.js",
+      "to": "Artifact:test/phase2-compiler.js",
+      "provenance": {
+        "file": "test/phase2-compiler.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/phase2-discovery.js",
+      "to": "Artifact:test/phase2-discovery.js",
+      "provenance": {
+        "file": "test/phase2-discovery.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/phase2-review-regressions.js",
+      "to": "Artifact:test/phase2-review-regressions.js",
+      "provenance": {
+        "file": "test/phase2-review-regressions.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/phase2-scale.js",
+      "to": "Artifact:test/phase2-scale.js",
+      "provenance": {
+        "file": "test/phase2-scale.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/playthrough-truth.js",
       "to": "Artifact:test/playthrough-truth.js",
       "provenance": {
@@ -318817,7 +320585,16 @@
       "to": "Artifact:src/agentgateway.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 567
+        "line": 577
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/docs.js",
+      "to": "Artifact:src/content/discovery.js",
+      "provenance": {
+        "file": "test/docs.js",
+        "line": 258
       }
     },
     {
@@ -318826,7 +320603,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 4023
+        "line": 4033
       }
     },
     {
@@ -318835,7 +320612,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 4024
+        "line": 4034
       }
     },
     {
@@ -318844,7 +320621,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 1175
+        "line": 1185
       }
     },
     {
@@ -318853,7 +320630,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 3887
+        "line": 3897
       }
     },
     {
@@ -318862,7 +320639,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 494
+        "line": 504
       }
     },
     {
@@ -318871,7 +320648,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 775
+        "line": 785
       }
     },
     {
@@ -318880,7 +320657,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 833
+        "line": 843
       }
     },
     {
@@ -320519,6 +322296,87 @@
       "provenance": {
         "file": "test/people.js",
         "line": 13
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/phase2-compiler.js",
+      "to": "Artifact:src/content/canonical.js",
+      "provenance": {
+        "file": "test/phase2-compiler.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/phase2-compiler.js",
+      "to": "Artifact:src/content/discovery.js",
+      "provenance": {
+        "file": "test/phase2-compiler.js",
+        "line": 16
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/phase2-compiler.js",
+      "to": "Artifact:src/content/json-source.js",
+      "provenance": {
+        "file": "test/phase2-compiler.js",
+        "line": 17
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/phase2-discovery.js",
+      "to": "Artifact:src/content/json-source.js",
+      "provenance": {
+        "file": "test/phase2-discovery.js",
+        "line": 17
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/phase2-review-regressions.js",
+      "to": "Artifact:src/content/canonical.js",
+      "provenance": {
+        "file": "test/phase2-review-regressions.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/phase2-review-regressions.js",
+      "to": "Artifact:src/content/corpus.js",
+      "provenance": {
+        "file": "test/phase2-review-regressions.js",
+        "line": 11
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/phase2-review-regressions.js",
+      "to": "Artifact:src/content/diagnostics.js",
+      "provenance": {
+        "file": "test/phase2-review-regressions.js",
+        "line": 12
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/phase2-review-regressions.js",
+      "to": "Artifact:src/content/discovery.js",
+      "provenance": {
+        "file": "test/phase2-review-regressions.js",
+        "line": 13
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/phase2-review-regressions.js",
+      "to": "Artifact:src/content/economy-profile.js",
+      "provenance": {
+        "file": "test/phase2-review-regressions.js",
+        "line": 14
       }
     },
     {
@@ -325991,6 +327849,15 @@
       "provenance": {
         "file": "src/content/crafting.js",
         "line": 318
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/content/discovery.js",
+      "to": "Table:characters",
+      "provenance": {
+        "file": "src/content/discovery.js",
+        "line": 123
       }
     },
     {

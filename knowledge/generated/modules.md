@@ -40,10 +40,16 @@
 | [src/contacts.js](../../src/contacts.js) | 247 | engagement-growth | 2 / 9 | 3 | 10 | 2 |
 | [src/content/automotive-salvage.js](../../src/content/automotive-salvage.js) | 72 | world-graph | 0 / 4 | 0 | 0 | 2 |
 | [src/content/belladonna.js](../../src/content/belladonna.js) | 241 | world-graph | 0 / 3 | 0 | 0 | 1 |
-| [src/content/compiler.js](../../src/content/compiler.js) | 1214 | platform-core | 1 / 12 | 0 | 0 | 8 |
+| [src/content/canonical.js](../../src/content/canonical.js) | 214 | platform-core | 0 / 5 | 0 | 0 | 2 |
+| [src/content/compiler.js](../../src/content/compiler.js) | 1222 | platform-core | 1 / 12 | 0 | 0 | 8 |
 | [src/content/core-materials.js](../../src/content/core-materials.js) | 39 | world-graph | 0 / 4 | 0 | 0 | 2 |
+| [src/content/corpus.js](../../src/content/corpus.js) | 2640 | platform-core | 3 / 2 | 0 | 0 | 1 |
 | [src/content/crafting.js](../../src/content/crafting.js) | 1064 | world-graph | 4 / 0 | 0 | 11 | 0 |
+| [src/content/diagnostics.js](../../src/content/diagnostics.js) | 65 | platform-core | 0 / 3 | 0 | 0 | 1 |
+| [src/content/discovery.js](../../src/content/discovery.js) | 482 | world-progression | 1 / 6 | 0 | 1 | 3 |
+| [src/content/economy-profile.js](../../src/content/economy-profile.js) | 1264 | platform-core | 1 / 1 | 0 | 0 | 1 |
 | [src/content/exchange.js](../../src/content/exchange.js) | 412 | economy-ledger | 1 / 0 | 0 | 6 | 0 |
+| [src/content/json-source.js](../../src/content/json-source.js) | 337 | platform-core | 0 / 5 | 0 | 0 | 2 |
 | [src/content/phase1-policy.js](../../src/content/phase1-policy.js) | 161 | world-graph | 0 / 3 | 0 | 0 | 1 |
 | [src/content/phase1-validation.js](../../src/content/phase1-validation.js) | 54 | world-graph | 5 / 2 | 0 | 0 | 0 |
 | [src/content/phase1.js](../../src/content/phase1.js) | 12 | world-graph | 3 / 4 | 0 | 0 | 1 |

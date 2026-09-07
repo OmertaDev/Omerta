@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `422b09583a9d`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `09ccf7f70500`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 1,869 |
-| Text lines | 553,082 |
-| Repository bytes inventoried | 315,800,722 |
-| Backend/route modules | 200 |
+| Current artifacts | 1,886 |
+| Text lines | 563,745 |
+| Repository bytes inventoried | 316,246,147 |
+| Backend/route modules | 206 |
 | HTTP route registrations / unique routes | 762 / 762 |
 | Database tables | 329 |
 | Solidity declarations | 49 |
-| Git commits | 1,372 |
+| Git commits | 1,375 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 5,846 / 25,963 |
+| Graph nodes / edges | 5,877 / 26,106 |
 
 ## Artifact kinds
 
@@ -24,14 +24,14 @@
 |---|---:|
 | media-asset | 576 |
 | documentation | 268 |
-| artifact | 183 |
-| backend-module | 178 |
-| test-suite | 161 |
+| artifact | 188 |
+| backend-module | 184 |
+| test-suite | 165 |
 | audit | 98 |
 | design | 91 |
 | contract-test | 73 |
 | contract-project | 67 |
-| engineering-harness | 65 |
+| engineering-harness | 67 |
 | contract-source | 40 |
 | route-module | 22 |
 | web-surface | 13 |
@@ -59,23 +59,23 @@
 | [schema.sql](../../schema.sql) | 6,408 | data-schema | 2026-09-04 |
 | [src/rules.tail.js](../../src/rules.tail.js) | 6,145 | backend-module | 2026-09-02 |
 | [reference-prototype-v24.jsx](../../reference-prototype-v24.jsx) | 4,235 | artifact | 2026-08-11 |
-| [test/docs.js](../../test/docs.js) | 4,083 | test-suite | 2026-09-04 |
-| [test/gates.js](../../test/gates.js) | 3,795 | test-suite | 2026-09-04 |
+| [test/docs.js](../../test/docs.js) | 4,093 | test-suite | 2026-09-04 |
+| [test/gates.js](../../test/gates.js) | 3,796 | test-suite | 2026-09-07 |
 | [omerta-contracts/test/AcquisitionConstellationTask3B.t.sol](../../omerta-contracts/test/AcquisitionConstellationTask3B.t.sol) | 3,743 | contract-test | 2026-08-28 |
 | [src/server.js](../../src/server.js) | 3,488 | backend-module | 2026-09-04 |
 | [omerta-contracts/test/AcquisitionVaultOperator.t.sol](../../omerta-contracts/test/AcquisitionVaultOperator.t.sol) | 3,222 | contract-test | 2026-08-29 |
+| [test/phase2-review-regressions.js](../../test/phase2-review-regressions.js) | 3,133 | test-suite | 2026-09-07 |
 | [omerta-contracts/script/Verify-AcquisitionConstellationCrosswalk.ps1](../../omerta-contracts/script/Verify-AcquisitionConstellationCrosswalk.ps1) | 2,947 | contract-project | 2026-08-28 |
 | [docs/WIKI.md](../../docs/WIKI.md) | 2,759 | documentation | 2026-09-04 |
 | [omerta-contracts/fizz_data/contracts.json](../../omerta-contracts/fizz_data/contracts.json) | 2,739 | contract-project | 2026-08-25 |
 | [public/art/manifest.json](../../public/art/manifest.json) | 2,700 | media-asset | 2026-08-09 |
+| [src/content/corpus.js](../../src/content/corpus.js) | 2,640 | backend-module | 2026-09-07 |
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 2,619 | audit | 2026-08-13 |
 | [src/game.js](../../src/game.js) | 2,608 | backend-module | 2026-09-03 |
 | [docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md](../../docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md) | 2,453 | documentation | 2026-08-27 |
 | [omerta-contracts/x-ray/slither-function-summary.json](../../omerta-contracts/x-ray/slither-function-summary.json) | 2,449 | contract-project | 2026-08-25 |
 | [test/social.js](../../test/social.js) | 2,440 | test-suite | 2026-08-26 |
 | [test/agent-alpha.js](../../test/agent-alpha.js) | 2,416 | test-suite | 2026-08-29 |
-| [omerta-contracts/test/AcquisitionConstellationTask4BudgetBook.t.sol](../../omerta-contracts/test/AcquisitionConstellationTask4BudgetBook.t.sol) | 2,264 | contract-test | 2026-08-28 |
-| [test/growth.js](../../test/growth.js) | 2,212 | test-suite | 2026-08-27 |
 
 ## Media estate
 
