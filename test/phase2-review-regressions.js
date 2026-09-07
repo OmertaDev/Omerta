@@ -2212,6 +2212,313 @@ try {
     assert.equal(collision.status, 0, `${collision.stdout}\n${collision.stderr}`);
   });
 
+  reviewCase('publisher-race held lock permits live contender stages without deleting them', () => {
+    // Rejecting a genuine contender at the winner's scan must fail this test.
+    // Real children retain real filesystem operations; barriers only choose the schedule.
+    const root = temporaryRoot('omerta-publisher-interleaving-');
+    const worker = `
+      import fs from 'node:fs';
+      import path from 'node:path';
+      import { publishImmutableCorpus } from './tools/content-artifacts.js';
+      const [root, role, mode] = process.argv.slice(1);
+      const outputPath = path.join(root, 'output');
+      const read = fs.readdirSync.bind(fs);
+      const link = fs.linkSync.bind(fs);
+      const write = fs.writeFileSync.bind(fs);
+      const stat = fs.lstatSync.bind(fs);
+      const open = fs.openSync.bind(fs);
+      const readFd = fs.readSync.bind(fs);
+      const signal = (name) => write(path.join(root, name), 'ready');
+      const wait = (name) => {
+        const deadline = Date.now() + 8000;
+        while (!fs.existsSync(path.join(root, name))) {
+          if (Date.now() > deadline) throw new Error('barrier timeout: ' + name);
+          Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 1);
+        }
+      };
+      const pause = () => { signal('B-stage-ready'); wait('A-finished'); };
+      let reads = 0;
+      let contenderStage;
+      let contenderDescriptor;
+      fs.readdirSync = (p, ...args) => {
+        if (path.resolve(p) !== outputPath) return read(p, ...args);
+        reads++;
+        if (reads === 1) {
+          const entries = read(p, ...args);
+          signal(role + '-recovered');
+          wait((role === 'A' ? 'B' : 'A') + '-recovered');
+          if (role === 'B') wait('A-held-lock');
+          return entries;
+        }
+        if (role === 'A' && reads === 2) {
+          signal('A-held-lock');
+          wait('B-stage-ready');
+          const entries = read(p, ...args);
+          contenderStage = entries.find((name) => name.startsWith('.corpus.publish.lock.staging-'));
+          if (!contenderStage) throw new Error('controlled contender was absent from scan');
+          console.log('controlled-stage:' + mode);
+          if (mode === 'vanish-owner-exit') {
+            signal('B-remove-stage'); wait('B-closed');
+          }
+          return entries;
+        }
+        return read(p, ...args);
+      };
+      const disappear = (p) => {
+        if (role !== 'A' || !contenderStage || path.basename(p) !== contenderStage) return;
+        signal('B-remove-stage');
+        wait('B-stage-removed');
+      };
+      fs.lstatSync = (p, ...args) => {
+        if (mode === 'vanish-stat') disappear(p);
+        return stat(p, ...args);
+      };
+      fs.openSync = (p, ...args) => {
+        if (mode === 'vanish-open') disappear(p);
+        const descriptor = open(p, ...args);
+        if (role === 'A' && contenderStage && path.basename(p) === contenderStage) {
+          contenderDescriptor = descriptor;
+          if (mode === 'vanish-after-open') disappear(p);
+        }
+        return descriptor;
+      };
+      fs.readSync = (descriptor, ...args) => {
+        const count = readFd(descriptor, ...args);
+        if (descriptor === contenderDescriptor) {
+          if (mode === 'vanish-after-read') disappear(contenderStage);
+          if (mode === 'growing') { signal('B-complete-pid'); wait('B-pid-complete'); }
+        }
+        return count;
+      };
+      fs.writeFileSync = (p, bytes, ...args) => {
+        if (role === 'B' && ['partial', 'growing'].includes(mode) && typeof p === 'number'
+            && Buffer.isBuffer(bytes) && bytes.toString() === String(process.pid)) {
+          write(p, bytes.subarray(0, 1), ...args);
+          if (mode === 'growing') {
+            signal('B-stage-ready'); wait('B-complete-pid');
+            write(p, bytes.subarray(1), ...args);
+            signal('B-pid-complete'); wait('A-finished');
+            return;
+          }
+          pause();
+          return write(p, bytes.subarray(1), ...args);
+        }
+        return write(p, bytes, ...args);
+      };
+      fs.linkSync = (from, to) => {
+        try { return link(from, to); }
+        catch (error) {
+          if (role === 'B' && path.basename(to) === '.corpus.publish.lock' && error.code === 'EEXIST') {
+            if (mode.startsWith('vanish-')) {
+              signal('B-stage-ready');
+              wait('B-remove-stage');
+              fs.unlinkSync(from);
+              signal('B-stage-removed');
+              if (mode !== 'vanish-owner-exit') wait('A-finished');
+            } else if (mode === 'complete') pause();
+          }
+          throw error;
+        }
+      };
+      try {
+        publishImmutableCorpus({ outputPath, outputs: [
+          { name: 'a.bundle.json', bytes: Buffer.from('trusted-bundle') },
+          { name: 'corpus.index.json', bytes: Buffer.from('trusted-index') },
+        ], hooks: {
+          afterLockStageCreate() { if (role === 'B' && mode === 'empty') pause(); },
+          beforeIndex() {
+            if (role === 'A' && !mode.startsWith('vanish-')
+                && !fs.existsSync(path.join(outputPath, contenderStage))) {
+              throw new Error('winner deleted live contender stage');
+            }
+          },
+        } });
+      } catch (error) {
+        console.error(error);
+        process.exitCode = 1;
+      } finally { signal(role + '-finished'); }
+    `;
+    const script = `
+      import assert from 'node:assert/strict';
+      import fs from 'node:fs';
+      import path from 'node:path';
+      import { spawn } from 'node:child_process';
+      const worker = ${JSON.stringify(worker)};
+      for (const mode of ['complete', 'empty', 'partial', 'growing',
+        'vanish-stat', 'vanish-open', 'vanish-after-open', 'vanish-after-read', 'vanish-owner-exit']) {
+        const root = path.join(${JSON.stringify(root)}, mode);
+        const output = path.join(root, 'output');
+        fs.mkdirSync(output, { recursive: true });
+        const run = (role) => new Promise((resolve) => {
+          const child = spawn(process.execPath, ['--input-type=module', '--eval', worker, root, role, mode], {
+            cwd: ${JSON.stringify(ROOT)}, stdio: ['ignore', 'pipe', 'pipe'],
+          });
+          let stdout = '', stderr = '', launchError;
+          child.stdout.on('data', (chunk) => stdout += chunk);
+          child.stderr.on('data', (chunk) => stderr += chunk);
+          child.on('error', (error) => { launchError = error.message; });
+          const timer = setTimeout(() => child.kill(), 12000);
+          child.on('close', (code, signal) => {
+            clearTimeout(timer);
+            if (role === 'B') fs.writeFileSync(path.join(root, 'B-closed'), 'closed');
+            resolve({ role, code, signal, stdout, stderr, launchError });
+          });
+        });
+        // Both children close before assertions can throw and fixture cleanup can begin.
+        const results = await Promise.all([run('A'), run('B')]);
+        assert(results.every((r) => !r.launchError && !r.signal), JSON.stringify(results));
+        assert.equal(results[0].code, 0, mode + ': winner failed: ' + JSON.stringify(results));
+        assert(results[0].stdout.includes('controlled-stage:' + mode));
+        assert(results[1].code === 0 || results[1].stderr.includes('content_artifact_mismatch'), JSON.stringify(results));
+        assert.equal(fs.readFileSync(path.join(output, 'a.bundle.json'), 'utf8'), 'trusted-bundle');
+        assert.equal(fs.readFileSync(path.join(output, 'corpus.index.json'), 'utf8'), 'trusted-index');
+        assert.deepEqual(fs.readdirSync(output).sort(), ['a.bundle.json', 'corpus.index.json']);
+        console.log('controlled publication passed: ' + mode);
+      }
+    `;
+    // The orchestrator's per-child deadlines bound every schedule. Let it join
+    // both children before returning instead of racing cleanup with a parent kill.
+    const result = spawnSync(process.execPath, ['--input-type=module'], {
+      input: script, cwd: ROOT, encoding: 'utf8',
+    });
+    assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  });
+
+  reviewCase('publisher-race contender classification rejects foreign stages and changed held locks', () => {
+    // Broad prefix skipping, trusting PID text, or dropping inode/link checks must fail.
+    const root = temporaryRoot('omerta-publisher-stage-attacks-');
+    const script = `
+      import assert from 'node:assert/strict';
+      import fs from 'node:fs';
+      import path from 'node:path';
+      import { spawnSync } from 'node:child_process';
+      import { publishImmutableCorpus } from './tools/content-artifacts.js';
+      const root = ${JSON.stringify(root)};
+      const read = fs.readdirSync.bind(fs);
+      const open = fs.openSync.bind(fs);
+      const readFd = fs.readSync.bind(fs);
+      const statFd = fs.fstatSync.bind(fs);
+      const kill = process.kill.bind(process);
+      const failures = [];
+      const dead = spawnSync(process.execPath, ['-e', 'process.stdout.write(String(process.pid))'], { encoding: 'utf8' });
+      assert.equal(dead.status, 0);
+      for (const attack of ['malformed-name', 'zero-pid', 'foreign-bytes', 'high-bit-bytes', 'wrong-pid',
+        'too-large', 'dead-owner', 'hard-link', 'symlink', 'directory', 'replace-stage',
+        'change-stage-after-read', 'open-denied', 'replace-held-lock', 'link-held-lock', 'unrelated-file',
+        'impossible-pid-int32', 'impossible-pid-large', 'retain-foreign-link', 'permission-denied-owner']) {
+        const outputPath = path.join(root, attack);
+        fs.mkdirSync(outputPath);
+        const external = path.join(root, attack + '-external');
+        fs.writeFileSync(external, String(process.pid));
+        let stagePath, stageDescriptor, injected = false, skipped = false, reads = 0;
+        fs.readdirSync = (p, ...args) => {
+          if (p === outputPath && ++reads === 2) {
+            let pid = attack === 'dead-owner' ? dead.stdout : String(process.pid);
+            if (attack === 'impossible-pid-int32') pid = '2147483648';
+            if (attack === 'impossible-pid-large') pid = '999999999999999';
+            let name = '.corpus.publish.lock.staging-' + pid + '-' + 'a'.repeat(32);
+            if (attack === 'malformed-name') name += '-extra';
+            if (attack === 'zero-pid') name = '.corpus.publish.lock.staging-0-' + 'a'.repeat(32);
+            if (attack === 'unrelated-file') name = 'foreign.txt';
+            stagePath = path.join(outputPath, name);
+            if (attack === 'hard-link') fs.linkSync(external, stagePath);
+            else if (attack === 'symlink') {
+              try { fs.symlinkSync(external, stagePath); }
+              catch (error) { if (!['EPERM', 'EACCES'].includes(error.code)) throw error; skipped = true; }
+            } else if (attack === 'directory') fs.mkdirSync(stagePath);
+            else {
+              let bytes = Buffer.from(pid);
+              if (attack === 'foreign-bytes') bytes = Buffer.from('x');
+              if (attack === 'high-bit-bytes') bytes = Buffer.from([...bytes].map((b) => b | 128));
+              if (attack === 'wrong-pid') bytes = Buffer.from(pid === '1' ? '2' : '1'.repeat(pid.length));
+              if (attack === 'too-large') bytes = Buffer.alloc(33, 49);
+              fs.writeFileSync(stagePath, bytes);
+            }
+            if (attack === 'replace-held-lock') {
+              fs.renameSync(path.join(outputPath, '.corpus.publish.lock'), path.join(root, 'retained-lock'));
+              fs.writeFileSync(path.join(outputPath, '.corpus.publish.lock'), String(process.pid));
+            }
+            if (attack === 'link-held-lock') fs.linkSync(path.join(outputPath, '.corpus.publish.lock'), path.join(root, 'extra-lock-link'));
+            injected = true;
+          }
+          return read(p, ...args);
+        };
+        fs.openSync = (p, ...args) => {
+          if (injected && p === stagePath && attack === 'open-denied') {
+            const error = new Error('controlled access failure'); error.code = 'EACCES'; throw error;
+          }
+          if (injected && p === stagePath && attack === 'replace-stage') {
+            injected = false;
+            fs.renameSync(stagePath, path.join(root, 'retained-stage'));
+            fs.writeFileSync(stagePath, String(process.pid));
+            injected = true;
+          }
+          const descriptor = open(p, ...args);
+          if (p === stagePath) stageDescriptor = descriptor;
+          return descriptor;
+        };
+        fs.readSync = (descriptor, ...args) => {
+          const count = readFd(descriptor, ...args);
+          if (descriptor === stageDescriptor && attack === 'change-stage-after-read') {
+            fs.linkSync(stagePath, path.join(root, 'extra-stage-link'));
+          }
+          return count;
+        };
+        // The old absent-path branch trusted this sampled nlink=1 even though
+        // the inode remains reachable through a new foreign name after unlink.
+        const retained = path.join(root, 'retained-foreign-stage');
+        let retainedLink = false;
+        fs.fstatSync = (descriptor, ...args) => {
+          const status = statFd(descriptor, ...args);
+          if (injected && descriptor === stageDescriptor && attack === 'retain-foreign-link' && !retainedLink) {
+            fs.linkSync(stagePath, retained);
+            fs.unlinkSync(stagePath);
+            retainedLink = true;
+          }
+          return status;
+        };
+        process.kill = (pid, signal) => {
+          if (attack === 'permission-denied-owner' && pid === process.pid && signal === 0) {
+            const error = new Error('controlled permission denial'); error.code = 'EPERM'; throw error;
+          }
+          return kill(pid, signal);
+        };
+        let error;
+        try { publishImmutableCorpus({ outputPath, outputs: [
+          { name: 'a.bundle.json', bytes: Buffer.from('trusted-bundle') },
+          { name: 'corpus.index.json', bytes: Buffer.from('trusted-index') },
+        ] }); } catch (caught) { error = caught; }
+        finally {
+          fs.readdirSync = read; fs.openSync = open; fs.readSync = readFd;
+          fs.fstatSync = statFd; process.kill = kill;
+        }
+        assert(injected, attack + ': injection did not run');
+        if (skipped) { console.log('unsupported symlink creation'); continue; }
+        try {
+          if (attack === 'permission-denied-owner') {
+            assert.ifError(error);
+            assert.equal(fs.readFileSync(path.join(outputPath, 'corpus.index.json'), 'utf8'), 'trusted-index');
+          } else {
+            assert.equal(error?.code, 'content_artifact_mismatch', attack + ': unsafe stage accepted');
+            assert(!fs.existsSync(path.join(outputPath, 'corpus.index.json')), attack + ': index published');
+          }
+          assert(fs.existsSync(retainedLink ? retained : stagePath), attack + ': foreign entry removed');
+          if (attack === 'retain-foreign-link') {
+            assert(retainedLink, 'foreign-link interleaving did not execute');
+            assert.equal(fs.readFileSync(retained, 'utf8'), String(process.pid));
+            assert.equal(fs.statSync(retained).nlink, 1);
+          }
+          assert.equal(fs.readFileSync(external, 'utf8'), String(process.pid));
+        } catch (failure) { failures.push(failure); }
+      }
+      if (failures.length) throw new AggregateError(failures, 'unsafe contender classification');
+    `;
+    const result = spawnSync(process.execPath, ['--input-type=module'], {
+      input: script, cwd: ROOT, encoding: 'utf8', timeout: 20000,
+    });
+    assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  });
+
   reviewCase('final-review post-verification link substitution is removed by exact inode and retries cleanly', () => {
     const output = path.join(temporaryRoot(), 'post-verify-link-race');
     const script = `

@@ -468,6 +468,97 @@ function recoverPublicationLockStages(directory) {
   }
 }
 
+function inspectConcurrentPublicationLockStage(directory, name, lock) {
+  const role = 'concurrent immutable corpus publication lock staging file';
+  const match = /^([1-9][0-9]{0,14})-([a-f0-9]{32})$/u.exec(
+    name.slice(PUBLICATION_LOCK_STAGE_PREFIX.length),
+  );
+  if (!match || !Number.isSafeInteger(Number(match[1]))) mismatch(`${role} is malformed`);
+  const ownerBytes = Buffer.from(match[1], 'ascii');
+  const stagePath = path.join(directory.resolved, name);
+  const assertHeldLock = () => {
+    assertOutputDirectory(directory);
+    const options = {
+      expectedIdentity: lock.identity,
+      expectedLinks: 1,
+      expectedSize: Buffer.byteLength(String(process.pid)),
+    };
+    ensureRegularStatus(fs.fstatSync(lock.descriptor, { bigint: true }), 'held publication lock', options);
+    ensureRegularStatus(safeLstat(lock.path, 'held publication lock'), 'held publication lock', options);
+  };
+  let descriptor;
+  try {
+    assertHeldLock();
+    const initial = safeLstat(stagePath, role, { optional: true });
+    if (!initial) return;
+    ensureRegularStatus(initial, role, { expectedLinks: 1 });
+    if (initial.size < 0n || initial.size > BigInt(ownerBytes.length)) mismatch(`${role} is malformed`);
+    let ownerAlive = true;
+    try { process.kill(Number(match[1]), 0); }
+    catch (error) {
+      if (error?.code === 'ESRCH') ownerAlive = false;
+      else if (error?.code !== 'EPERM') mismatch(`${role} owner cannot be inspected safely`);
+    }
+    if (!ownerAlive) {
+      if (!safeLstat(stagePath, role, { optional: true })) return;
+      mismatch(`${role} has no valid live owner`);
+    }
+    try { descriptor = fs.openSync(stagePath, fs.constants.O_RDONLY | NO_FOLLOW); }
+    catch (error) {
+      if (error?.code === 'ENOENT' && !safeLstat(stagePath, role, { optional: true })) return;
+      mismatch(`${role} cannot be opened safely`);
+    }
+    const stageIdentity = identityOf(initial);
+    const currentSize = (minimum) => {
+      const status = fs.fstatSync(descriptor, { bigint: true });
+      const pathStatus = safeLstat(stagePath, role, { optional: true });
+      // A contender may unlink its own stage after our open. An absent path
+      // grants no cleanup authority and does not authorize a replacement inode.
+      if (!pathStatus) {
+        ensureRegularStatus(fs.fstatSync(descriptor, { bigint: true }), role, {
+          expectedIdentity: stageIdentity,
+          expectedLinks: 0,
+        });
+        return null;
+      }
+      for (const entry of [status, pathStatus]) {
+        ensureRegularStatus(entry, role, { expectedIdentity: stageIdentity, expectedLinks: 1 });
+        if (entry.size < BigInt(minimum) || entry.size > BigInt(ownerBytes.length)) {
+          mismatch(`${role} is malformed`);
+        }
+      }
+      return Math.max(Number(status.size), Number(pathStatus.size));
+    };
+    let size = currentSize(Number(initial.size));
+    // Creation precedes the PID write. Admit only an empty file or exact PID
+    // prefix; revisit strictly growing prefixes at most once per possible byte.
+    // These bytes never become artifact input or authorize deletion/publication.
+    for (let growth = 0; growth <= ownerBytes.length; growth++) {
+      if (size === null) return;
+      if (!readDescriptorExactly(descriptor, size, role).equals(ownerBytes.subarray(0, size))) {
+        mismatch(`${role} owner bytes conflict with its filename`);
+      }
+      const afterSize = currentSize(size);
+      if (afterSize === null || afterSize === size) return;
+      size = afterSize;
+    }
+    mismatch(`${role} did not finish a bounded owner write`);
+  } catch (error) {
+    if (error instanceof ContentCompileError) throw error;
+    mismatch(`${role} cannot be inspected safely`);
+  } finally {
+    if (descriptor !== undefined) {
+      try { fs.closeSync(descriptor); } catch { mismatch(`${role} cannot be closed safely`); }
+    }
+    // Even the optional-disappearance paths are valid only under our exact lock.
+    try { assertHeldLock(); }
+    catch (error) {
+      if (error instanceof ContentCompileError) throw error;
+      mismatch('held publication lock cannot be inspected safely');
+    }
+  }
+}
+
 function createPublicationLockStage(directory, hooks) {
   const role = 'immutable corpus publication lock staging file';
   let descriptor;
@@ -718,6 +809,10 @@ export function publishImmutableCorpus({ outputPath, outputs, hooks } = {}) {
     }
     for (const name of existingNames) {
       if (name === PUBLICATION_LOCK_NAME || names.has(name)) continue;
+      if (name.startsWith(PUBLICATION_LOCK_STAGE_PREFIX)) {
+        inspectConcurrentPublicationLockStage(directory, name, publicationLock);
+        continue;
+      }
       const owner = stageOwner(name, normalizedOutputs);
       if (!owner) mismatch(`immutable corpus output contains unexpected artifact ${path.basename(name)}`);
       removeRecoverableStage(directory, name, owner);
