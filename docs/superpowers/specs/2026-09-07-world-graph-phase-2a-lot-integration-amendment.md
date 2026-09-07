@@ -8,6 +8,8 @@ Read with the [Phase 2A specification](2026-09-04-world-graph-phase-2a-materials
 
 ## Decisions and alternatives
 
+Task 4.2 additionally consumes the adopted [lot contract amendment](2026-09-07-world-graph-phase-2a-lot-contract-amendment.md) and its [implementation addendum](../plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md). They resolve downstream quality representation, producer authority, complete candidate admission, split custody, historical attachment constraints, and errors without weakening this amendment or completing implementation.
+
 Use dormant lot primitives in Task 4, followed by one coherent Task 5 caller/schema/authority cutover. This gives two reviewable boundaries while preserving the current live lock order until all shared consumers can move together. Shipping converted leaf functions under old outer locks would produce mixed orders; maintaining writable old stacks alongside lots would produce two authorities. Neither is an acceptable intermediate runtime state.
 
 Keep completed semantic `result_json` permanently in the existing guard table. An additional archive service would add retrieval and corruption states without satisfying a present retention need. Transport cache expiry never deletes the domain receipt. Oversized legacy stacks become deterministic capped chunks; the reviewed definition quantity cap stays unchanged.
