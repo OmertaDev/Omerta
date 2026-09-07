@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "f107791cb8556850edd5e74de6ddbc7c65f0882e",
+  "sourceRevision": "4610a319654d52cf105821740d6b4b72653ce111",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,14 +43,14 @@
     ]
   },
   "census": {
-    "nodes": 5955,
-    "edges": 26773,
+    "nodes": 5961,
+    "edges": 26810,
     "byNodeType": {
-      "Artifact": 1905,
+      "Artifact": 1907,
       "Command": 64,
-      "Commit": 1405,
+      "Commit": 1407,
       "Contract": 49,
-      "Document": 493,
+      "Document": 495,
       "Domain": 13,
       "ExternalDependency": 24,
       "HistoricalArtifact": 306,
@@ -65,19 +65,19 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 2059,
-      "CHANGED": 10732,
-      "CONTAINS": 1926,
+      "CHANGED": 10742,
+      "CONTAINS": 1928,
       "DECLARES": 64,
       "DEFINED_IN": 1146,
       "DEPENDS_ON": 64,
       "EXECUTES": 233,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1405,
+      "HAS_COMMIT": 1407,
       "IMPLEMENTS": 124,
       "IMPORTS": 1846,
       "INHERITS": 12,
-      "REFERENCES": 3133,
-      "REPRESENTS": 957,
+      "REFERENCES": 3154,
+      "REPRESENTS": 959,
       "TESTS": 671,
       "TRACKS": 126,
       "USES_TABLE": 1573
@@ -13294,20 +13294,43 @@
       "path": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 127163,
-      "lines": 1017,
-      "version": "f2d62dbf15c98288",
+      "bytes": 127533,
+      "lines": 1019,
+      "version": "83bc43048a5eeb4d",
       "text": true,
       "provenance": [
         {
           "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
           "line": 1,
-          "version": "f2d62dbf15c98288"
+          "version": "83bc43048a5eeb4d"
         }
       ],
-      "lastChangedAt": "2026-09-07T14:15:50.000Z",
+      "lastChangedAt": "2026-09-07T16:32:47.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "1d64f3648f5a340412b2404005f6d88e17d9badf"
+      "lastChangedCommit": "4610a319654d52cf105821740d6b4b72653ce111"
+    },
+    {
+      "key": "Artifact:docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+      "type": "Artifact",
+      "id": "docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+      "label": "2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+      "path": "docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 16548,
+      "lines": 383,
+      "version": "8d535405df21edd9",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+          "line": 1,
+          "version": "8d535405df21edd9"
+        }
+      ],
+      "lastChangedAt": "2026-09-07T16:32:47.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "4610a319654d52cf105821740d6b4b72653ce111"
     },
     {
       "key": "Artifact:docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md",
@@ -13685,20 +13708,20 @@
       "path": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
       "kind": "design",
       "extension": ".md",
-      "bytes": 20285,
-      "lines": 224,
-      "version": "1fc40d9e693bd432",
+      "bytes": 20413,
+      "lines": 225,
+      "version": "8a7b82151bfdd42c",
       "text": true,
       "provenance": [
         {
           "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
           "line": 1,
-          "version": "1fc40d9e693bd432"
+          "version": "8a7b82151bfdd42c"
         }
       ],
-      "lastChangedAt": "2026-09-07T15:58:10.000Z",
+      "lastChangedAt": "2026-09-07T16:32:47.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "ebbd5a5ea4634bda27fe98c970ccd42735783156"
+      "lastChangedCommit": "4610a319654d52cf105821740d6b4b72653ce111"
     },
     {
       "key": "Artifact:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-definition-registry-amendment.md",
@@ -13724,6 +13747,29 @@
       "lastChangedCommit": "aa9d369f546f8ecfc71e7a46aa4312e68e249e17"
     },
     {
+      "key": "Artifact:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md",
+      "type": "Artifact",
+      "id": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md",
+      "label": "2026-09-07-world-graph-phase-2a-lot-contract-amendment.md",
+      "path": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 15866,
+      "lines": 347,
+      "version": "6a916c420cdad3e1",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md",
+          "line": 1,
+          "version": "6a916c420cdad3e1"
+        }
+      ],
+      "lastChangedAt": "2026-09-07T16:32:47.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "4610a319654d52cf105821740d6b4b72653ce111"
+    },
+    {
       "key": "Artifact:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
       "type": "Artifact",
       "id": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
@@ -13731,20 +13777,20 @@
       "path": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 38935,
-      "lines": 229,
-      "version": "0727a630b09b61bb",
+      "bytes": 39387,
+      "lines": 231,
+      "version": "67d548e45f1d8c1f",
       "text": true,
       "provenance": [
         {
           "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
           "line": 1,
-          "version": "0727a630b09b61bb"
+          "version": "67d548e45f1d8c1f"
         }
       ],
-      "lastChangedAt": "2026-09-07T14:15:50.000Z",
+      "lastChangedAt": "2026-09-07T16:32:47.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "1d64f3648f5a340412b2404005f6d88e17d9badf"
+      "lastChangedCommit": "4610a319654d52cf105821740d6b4b72653ce111"
     },
     {
       "key": "Artifact:docs/WIKI.md",
@@ -33208,18 +33254,18 @@
       "extension": ".md",
       "bytes": 56521,
       "lines": 754,
-      "version": "53a6e96654ec183b",
+      "version": "d013ebb4e8aefea7",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "53a6e96654ec183b"
+          "version": "d013ebb4e8aefea7"
         }
       ],
-      "lastChangedAt": "2026-09-07T14:15:50.000Z",
+      "lastChangedAt": "2026-09-07T16:32:47.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "1d64f3648f5a340412b2404005f6d88e17d9badf"
+      "lastChangedCommit": "4610a319654d52cf105821740d6b4b72653ce111"
     },
     {
       "key": "Artifact:src/accrual.js",
@@ -51382,6 +51428,22 @@
       ]
     },
     {
+      "key": "Commit:4610a319654d52cf105821740d6b4b72653ce111",
+      "type": "Commit",
+      "id": "4610a319654d52cf105821740d6b4b72653ce111",
+      "label": "docs: adopt exact lot quality and lineage implementation contracts",
+      "title": "docs: adopt exact lot quality and lineage implementation contracts",
+      "date": "2026-09-07T16:32:47.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/4610a319654d52cf105821740d6b4b72653ce111",
+      "provenance": [
+        {
+          "commit": "4610a319654d52cf105821740d6b4b72653ce111",
+          "url": "https://github.com/OmertaDev/Omerta/commit/4610a319654d52cf105821740d6b4b72653ce111"
+        }
+      ]
+    },
+    {
       "key": "Commit:46bbd1723b8b9f46a2075e4ba91ba3a52a8fdfd7",
       "type": "Commit",
       "id": "46bbd1723b8b9f46a2075e4ba91ba3a52a8fdfd7",
@@ -62194,6 +62256,22 @@
         {
           "commit": "beccd6ed4a9f1cedcf8ed11ed88d54a551bebc03",
           "url": "https://github.com/OmertaDev/Omerta/commit/beccd6ed4a9f1cedcf8ed11ed88d54a551bebc03"
+        }
+      ]
+    },
+    {
+      "key": "Commit:bed312b892527aa40fe7f5d73ad42108af4dea35",
+      "type": "Commit",
+      "id": "bed312b892527aa40fe7f5d73ad42108af4dea35",
+      "label": "chore(knowledge): refresh generated artifacts for f107791c",
+      "title": "chore(knowledge): refresh generated artifacts for f107791c",
+      "date": "2026-09-07T16:28:24.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/bed312b892527aa40fe7f5d73ad42108af4dea35",
+      "provenance": [
+        {
+          "commit": "bed312b892527aa40fe7f5d73ad42108af4dea35",
+          "url": "https://github.com/OmertaDev/Omerta/commit/bed312b892527aa40fe7f5d73ad42108af4dea35"
         }
       ]
     },
@@ -73661,13 +73739,29 @@
       "id": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
       "label": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
       "documentType": "documentation",
-      "lines": 1017,
-      "version": "f2d62dbf15c98288",
+      "lines": 1019,
+      "version": "83bc43048a5eeb4d",
       "provenance": [
         {
           "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
           "line": 1,
-          "version": "f2d62dbf15c98288"
+          "version": "83bc43048a5eeb4d"
+        }
+      ]
+    },
+    {
+      "key": "Document:docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+      "type": "Document",
+      "id": "docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+      "label": "docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+      "documentType": "documentation",
+      "lines": 383,
+      "version": "8d535405df21edd9",
+      "provenance": [
+        {
+          "file": "docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+          "line": 1,
+          "version": "8d535405df21edd9"
         }
       ]
     },
@@ -73933,13 +74027,13 @@
       "id": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
       "label": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
       "documentType": "design",
-      "lines": 224,
-      "version": "1fc40d9e693bd432",
+      "lines": 225,
+      "version": "8a7b82151bfdd42c",
       "provenance": [
         {
           "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
           "line": 1,
-          "version": "1fc40d9e693bd432"
+          "version": "8a7b82151bfdd42c"
         }
       ]
     },
@@ -73960,18 +74054,34 @@
       ]
     },
     {
+      "key": "Document:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md",
+      "type": "Document",
+      "id": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md",
+      "label": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md",
+      "documentType": "documentation",
+      "lines": 347,
+      "version": "6a916c420cdad3e1",
+      "provenance": [
+        {
+          "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md",
+          "line": 1,
+          "version": "6a916c420cdad3e1"
+        }
+      ]
+    },
+    {
       "key": "Document:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
       "type": "Document",
       "id": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
       "label": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
       "documentType": "documentation",
-      "lines": 229,
-      "version": "0727a630b09b61bb",
+      "lines": 231,
+      "version": "67d548e45f1d8c1f",
       "provenance": [
         {
           "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
           "line": 1,
-          "version": "0727a630b09b61bb"
+          "version": "67d548e45f1d8c1f"
         }
       ]
     },
@@ -75886,12 +75996,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 754,
-      "version": "53a6e96654ec183b",
+      "version": "d013ebb4e8aefea7",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "53a6e96654ec183b"
+          "version": "d013ebb4e8aefea7"
         }
       ]
     },
@@ -81088,6 +81198,9 @@
           "commit": "beccd6ed4a9f1cedcf8ed11ed88d54a551bebc03"
         },
         {
+          "commit": "bed312b892527aa40fe7f5d73ad42108af4dea35"
+        },
+        {
           "commit": "c175ce5dd8574f02c80ff6d3fd6372a95928a5cc"
         },
         {
@@ -81631,6 +81744,9 @@
           "commit": "beccd6ed4a9f1cedcf8ed11ed88d54a551bebc03"
         },
         {
+          "commit": "bed312b892527aa40fe7f5d73ad42108af4dea35"
+        },
+        {
           "commit": "c175ce5dd8574f02c80ff6d3fd6372a95928a5cc"
         },
         {
@@ -82172,6 +82288,9 @@
         },
         {
           "commit": "beccd6ed4a9f1cedcf8ed11ed88d54a551bebc03"
+        },
+        {
+          "commit": "bed312b892527aa40fe7f5d73ad42108af4dea35"
         },
         {
           "commit": "c175ce5dd8574f02c80ff6d3fd6372a95928a5cc"
@@ -82814,6 +82933,9 @@
         },
         {
           "commit": "beccd6ed4a9f1cedcf8ed11ed88d54a551bebc03"
+        },
+        {
+          "commit": "bed312b892527aa40fe7f5d73ad42108af4dea35"
         },
         {
           "commit": "c175ce5dd8574f02c80ff6d3fd6372a95928a5cc"
@@ -89692,12 +89814,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "f107791cb8556850edd5e74de6ddbc7c65f0882e",
-      "currentBranch": "main",
+      "revision": "4610a319654d52cf105821740d6b4b72653ce111",
+      "currentBranch": "codex/world-graph-lots",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 1905,
+      "currentArtifactCount": 1907,
       "provenance": [
         {
           "file": "README.md",
@@ -165299,6 +165421,54 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:4610a319654d52cf105821740d6b4b72653ce111",
+      "to": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "provenance": {
+        "commit": "4610a319654d52cf105821740d6b4b72653ce111"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4610a319654d52cf105821740d6b4b72653ce111",
+      "to": "Artifact:docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+      "provenance": {
+        "commit": "4610a319654d52cf105821740d6b4b72653ce111"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4610a319654d52cf105821740d6b4b72653ce111",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+      "provenance": {
+        "commit": "4610a319654d52cf105821740d6b4b72653ce111"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4610a319654d52cf105821740d6b4b72653ce111",
+      "to": "Artifact:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md",
+      "provenance": {
+        "commit": "4610a319654d52cf105821740d6b4b72653ce111"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4610a319654d52cf105821740d6b4b72653ce111",
+      "to": "Artifact:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
+      "provenance": {
+        "commit": "4610a319654d52cf105821740d6b4b72653ce111"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4610a319654d52cf105821740d6b4b72653ce111",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "4610a319654d52cf105821740d6b4b72653ce111"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:46bbd1723b8b9f46a2075e4ba91ba3a52a8fdfd7",
       "to": "Artifact:src/hustle.js",
       "provenance": {
@@ -202187,6 +202357,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:bed312b892527aa40fe7f5d73ad42108af4dea35",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "bed312b892527aa40fe7f5d73ad42108af4dea35"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:bed312b892527aa40fe7f5d73ad42108af4dea35",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "bed312b892527aa40fe7f5d73ad42108af4dea35"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:bed312b892527aa40fe7f5d73ad42108af4dea35",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "bed312b892527aa40fe7f5d73ad42108af4dea35"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:bed312b892527aa40fe7f5d73ad42108af4dea35",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "bed312b892527aa40fe7f5d73ad42108af4dea35"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:bf2d3854140ff5eb3174fd0da68f149d75d86eb4",
       "to": "Artifact:CLAUDE.md",
       "provenance": {
@@ -229795,6 +229997,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md",
       "provenance": {
         "file": "docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md",
@@ -229951,6 +230162,15 @@
       "to": "Artifact:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-definition-registry-amendment.md",
       "provenance": {
         "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-definition-registry-amendment.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md",
         "line": 1
       }
     },
@@ -263253,6 +263473,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:4610a319654d52cf105821740d6b4b72653ce111",
+      "provenance": {
+        "commit": "4610a319654d52cf105821740d6b4b72653ce111"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:46bbd1723b8b9f46a2075e4ba91ba3a52a8fdfd7",
       "provenance": {
         "commit": "46bbd1723b8b9f46a2075e4ba91ba3a52a8fdfd7"
@@ -268656,6 +268884,14 @@
       "to": "Commit:beccd6ed4a9f1cedcf8ed11ed88d54a551bebc03",
       "provenance": {
         "commit": "beccd6ed4a9f1cedcf8ed11ed88d54a551bebc03"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:bed312b892527aa40fe7f5d73ad42108af4dea35",
+      "provenance": {
+        "commit": "bed312b892527aa40fe7f5d73ad42108af4dea35"
       }
     },
     {
@@ -311091,6 +311327,15 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 647
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
       "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2a-materials-salvage-design.md",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
@@ -311118,6 +311363,15 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "to": "Artifact:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+        "line": 647
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
       "to": "Artifact:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
@@ -311130,7 +311384,7 @@
       "to": "Artifact:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 679
+        "line": 681
       }
     },
     {
@@ -311139,7 +311393,7 @@
       "to": "Artifact:docs/WIKI.md",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 967
+        "line": 969
       }
     },
     {
@@ -311157,7 +311411,7 @@
       "to": "Artifact:src/agentgateway.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 865
+        "line": 867
       }
     },
     {
@@ -311274,7 +311528,7 @@
       "to": "Artifact:src/content/corpus.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 768
+        "line": 770
       }
     },
     {
@@ -311283,7 +311537,7 @@
       "to": "Artifact:src/content/corpus.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 817
+        "line": 819
       }
     },
     {
@@ -311355,7 +311609,7 @@
       "to": "Artifact:src/content/economy-profile.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 767
+        "line": 769
       }
     },
     {
@@ -311364,7 +311618,7 @@
       "to": "Artifact:src/content/economy-profile.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 816
+        "line": 818
       }
     },
     {
@@ -311436,7 +311690,7 @@
       "to": "Artifact:src/crafting.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 741
+        "line": 743
       }
     },
     {
@@ -311454,7 +311708,7 @@
       "to": "Artifact:src/crew.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 753
+        "line": 755
       }
     },
     {
@@ -311490,7 +311744,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 699
+        "line": 701
       }
     },
     {
@@ -311499,7 +311753,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 741
+        "line": 743
       }
     },
     {
@@ -311562,7 +311816,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 647
+        "line": 649
       }
     },
     {
@@ -311571,7 +311825,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 699
+        "line": 701
       }
     },
     {
@@ -311580,7 +311834,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 741
+        "line": 743
       }
     },
     {
@@ -311589,7 +311843,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 866
+        "line": 868
       }
     },
     {
@@ -311625,7 +311879,7 @@
       "to": "Artifact:src/item-lock-trace.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 858
+        "line": 860
       }
     },
     {
@@ -311688,7 +311942,7 @@
       "to": "Artifact:src/items.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 647
+        "line": 649
       }
     },
     {
@@ -311697,7 +311951,7 @@
       "to": "Artifact:src/items.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 741
+        "line": 743
       }
     },
     {
@@ -311715,7 +311969,7 @@
       "to": "Artifact:src/mysteries.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 741
+        "line": 743
       }
     },
     {
@@ -311733,7 +311987,7 @@
       "to": "Artifact:src/operations.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 741
+        "line": 743
       }
     },
     {
@@ -311778,7 +312032,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 741
+        "line": 743
       }
     },
     {
@@ -311787,7 +312041,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 863
+        "line": 865
       }
     },
     {
@@ -311796,7 +312050,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 824
+        "line": 826
       }
     },
     {
@@ -311832,7 +312086,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 753
+        "line": 755
       }
     },
     {
@@ -311841,7 +312095,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 756
+        "line": 758
       }
     },
     {
@@ -311850,7 +312104,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 864
+        "line": 866
       }
     },
     {
@@ -311859,7 +312113,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 899
+        "line": 901
       }
     },
     {
@@ -311877,7 +312131,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 969
+        "line": 971
       }
     },
     {
@@ -312021,7 +312275,7 @@
       "to": "Artifact:test/migrate.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 736
+        "line": 738
       }
     },
     {
@@ -312174,7 +312428,7 @@
       "to": "Artifact:test/phase2-postgres.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 741
+        "line": 743
       }
     },
     {
@@ -312183,7 +312437,7 @@
       "to": "Artifact:test/phase2-postgres.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 862
+        "line": 864
       }
     },
     {
@@ -312192,7 +312446,7 @@
       "to": "Artifact:test/phase2-postgres.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 959
+        "line": 961
       }
     },
     {
@@ -312228,7 +312482,7 @@
       "to": "Artifact:tools/backup-selftest.sh",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 699
+        "line": 701
       }
     },
     {
@@ -312237,7 +312491,7 @@
       "to": "Artifact:tools/backup-selftest.sh",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 963
+        "line": 965
       }
     },
     {
@@ -312255,7 +312509,7 @@
       "to": "Artifact:tools/backup.sh",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 699
+        "line": 701
       }
     },
     {
@@ -312264,7 +312518,7 @@
       "to": "Artifact:tools/backup.sh",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 962
+        "line": 964
       }
     },
     {
@@ -312318,7 +312572,124 @@
       "to": "Artifact:tools/preflight.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
-        "line": 921
+        "line": 923
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+      "to": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+        "line": 17
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+      "to": "Artifact:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-definition-registry-amendment.md",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+        "line": 15
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+      "to": "Artifact:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+        "line": 11
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+      "to": "Artifact:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+        "line": 13
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+        "line": 231
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+        "line": 48
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+      "to": "Artifact:src/items.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+        "line": 229
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+      "to": "Artifact:src/items.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+        "line": 45
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+      "to": "Artifact:test/lib/phase2-item-fixtures.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+        "line": 161
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+      "to": "Artifact:test/lib/phase2-item-fixtures.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+        "line": 49
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+      "to": "Artifact:test/phase2-lot-boundary.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+        "line": 233
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+      "to": "Artifact:test/phase2-lot-boundary.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+        "line": 52
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+      "to": "Artifact:test/phase2-postgres.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+        "line": 234
       }
     },
     {
@@ -312534,7 +312905,7 @@
       "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3a-mystery-runtime-evidence-board-design.md",
       "provenance": {
         "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
-        "line": 29
+        "line": 30
       }
     },
     {
@@ -312543,7 +312914,7 @@
       "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3b-crew-social-puzzle-primitives-design.md",
       "provenance": {
         "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
-        "line": 30
+        "line": 31
       }
     },
     {
@@ -312552,7 +312923,7 @@
       "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3c-family-hierarchical-investigation-design.md",
       "provenance": {
         "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
-        "line": 31
+        "line": 32
       }
     },
     {
@@ -312561,7 +312932,7 @@
       "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3d-dynamic-cross-season-mystery-design.md",
       "provenance": {
         "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
-        "line": 32
+        "line": 33
       }
     },
     {
@@ -312570,7 +312941,7 @@
       "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3e-authoring-corpus-content-desk-design.md",
       "provenance": {
         "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
-        "line": 33
+        "line": 34
       }
     },
     {
@@ -312588,7 +312959,7 @@
       "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2b-professions-blueprints-design.md",
       "provenance": {
         "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
-        "line": 25
+        "line": 26
       }
     },
     {
@@ -312597,7 +312968,7 @@
       "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2c-workshops-crafting-durability-design.md",
       "provenance": {
         "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
-        "line": 26
+        "line": 27
       }
     },
     {
@@ -312606,7 +312977,7 @@
       "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2d-ammunition-contraband-equipment-design.md",
       "provenance": {
         "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
-        "line": 27
+        "line": 28
       }
     },
     {
@@ -312615,7 +312986,7 @@
       "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2e-trade-social-provenance-nft-readiness-design.md",
       "provenance": {
         "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
-        "line": 28
+        "line": 29
       }
     },
     {
@@ -312630,10 +313001,19 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+      "to": "Artifact:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+        "line": 25
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
       "to": "Artifact:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
       "provenance": {
         "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
-        "line": 104
+        "line": 105
       }
     },
     {
@@ -312665,11 +313045,47 @@
     },
     {
       "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md",
+      "to": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md",
+        "line": 10
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md",
+      "to": "Artifact:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-definition-registry-amendment.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md",
+        "line": 8
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md",
+      "to": "Artifact:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md",
+        "line": 6
+      }
+    },
+    {
+      "type": "REFERENCES",
       "from": "Artifact:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
       "to": "Artifact:docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md",
       "provenance": {
         "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
         "line": 7
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
+      "to": "Artifact:docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
+        "line": 11
       }
     },
     {
@@ -312702,10 +313118,19 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
+      "to": "Artifact:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
+        "line": 11
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
       "to": "Artifact:src/crafting.js",
       "provenance": {
         "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
-        "line": 157
+        "line": 159
       }
     },
     {
@@ -312714,7 +313139,7 @@
       "to": "Artifact:src/crew.js",
       "provenance": {
         "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
-        "line": 155
+        "line": 157
       }
     },
     {
@@ -312723,7 +313148,7 @@
       "to": "Artifact:src/items.js",
       "provenance": {
         "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
-        "line": 54
+        "line": 56
       }
     },
     {
@@ -312732,7 +313157,7 @@
       "to": "Artifact:src/mysteries.js",
       "provenance": {
         "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
-        "line": 157
+        "line": 159
       }
     },
     {
@@ -312741,7 +313166,7 @@
       "to": "Artifact:src/operations.js",
       "provenance": {
         "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
-        "line": 157
+        "line": 159
       }
     },
     {
@@ -312750,7 +313175,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
-        "line": 157
+        "line": 159
       }
     },
     {
@@ -312759,7 +313184,7 @@
       "to": "Artifact:tools/backup-selftest.sh",
       "provenance": {
         "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
-        "line": 205
+        "line": 207
       }
     },
     {
@@ -312768,7 +313193,7 @@
       "to": "Artifact:tools/backup.sh",
       "provenance": {
         "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
-        "line": 205
+        "line": 207
       }
     },
     {
@@ -320243,6 +320668,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Document:docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+      "to": "Artifact:docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Document:docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md",
       "to": "Artifact:docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md",
       "provenance": {
@@ -320400,6 +320834,15 @@
       "to": "Artifact:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-definition-registry-amendment.md",
       "provenance": {
         "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-definition-registry-amendment.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md",
+      "to": "Artifact:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md",
         "line": 1
       }
     },
