@@ -1496,9 +1496,44 @@ console.log('\n9d. THE RETENTION SWEEPS DO NOT SCAN');
 //
 // Driven by HOLDING the funder row rather than by racing a real sweep — §9's reason: a race depends
 // on two backends overlapping inside a millisecond-wide window and timing luck reads exactly like a
-// proof. The victim IS deterministic: Postgres aborts the backend whose deadlock_timeout (1s) expires
-// first, which is whoever started waiting first, and the player is made to wait a full second before
-// the holder closes the cycle.
+// proof. Observe the exact player refund blocked by this fixture's holder, then close the cycle at
+// once. That puts the cycle in place before the already-waiting player's deadlock timer fires.
+function observePromiseOutcome(promise, onSettled) {
+  return promise.then(
+    (value) => { onSettled(); return { ok: true, value }; },
+    (error) => { onSettled(); return { ok: false, error }; },
+  );
+}
+function valueAfterCleanup(outcome, fixtureError) {
+  if (outcome?.ok === false) throw outcome.error;
+  if (fixtureError) throw fixtureError;
+  return outcome?.value;
+}
+const waitForPlayerRefundBlockedBy = async ({ holderPid, startedAfter, requestSettled, label }) => {
+  const deadline = Date.now() + 5000;
+  const refundSql = 'UPDATE characters SET cash = cash + $2 WHERE id=$1';
+  while (Date.now() < deadline) {
+    const { rows } = await pool.query(
+      `SELECT a.pid FROM pg_stat_activity a
+        WHERE a.datname = current_database()
+          AND a.backend_type = 'client backend'
+          AND a.state = 'active'
+          AND a.wait_event_type = 'Lock'
+          AND a.query_start >= $2::timestamptz
+          AND a.query = $3
+          AND $1::int = ANY(pg_blocking_pids(a.pid))
+        LIMIT 2`, [holderPid, startedAfter, refundSql]);
+    if (rows.length === 1) return Number(rows[0].pid);
+    if (rows.length > 1) {
+      throw new Error(`${label}: multiple player refund backends were blocked by holder PID ${holderPid}`);
+    }
+    if (requestSettled()) {
+      throw new Error(`${label}: player request settled before its refund blocked behind holder PID ${holderPid}`);
+    }
+    await new Promise((r) => setTimeout(r, 25));
+  }
+  throw new Error(`${label}: player refund never blocked behind holder PID ${holderPid}`);
+};
 console.log('\n9e. THE POT/FUNDER CYCLE LANDS AS CONTENTION, NEVER A 500');
 {
   const { sweepExpiredBounties } = await import('../src/social/contracts.js');
@@ -1539,20 +1574,43 @@ console.log('\n9e. THE POT/FUNDER CYCLE LANDS AS CONTENTION, NEVER A 500');
   const funderCashBefore = await cashOf(funder.id);
 
   const holder = await pool.connect();
-  let inflight, holderTook = null, raced = null;
+  let inflight = null, requestOutcome = null, holderTook = null, holderResult = null;
+  let fixtureError = null, raced = null;
+  let holderPid = null, waiterPid = null;
   try {
     await holder.query('BEGIN');
     // exactly what sweepExpiredBounties (and runEstate, through refundPot) does first: the funder's row.
     await holder.query('SELECT 1 FROM characters WHERE id=$1 FOR UPDATE', [funder.id]);
+    const identity = (await holder.query(
+      'SELECT pg_backend_pid() AS pid, clock_timestamp() AS started_after')).rows[0];
+    holderPid = Number(identity.pid);
     // the poster takes the pot, then blocks reaching the funder inside refundPot.
-    inflight = call('POST', `/v1/streets/${mark.id}/bounty`, { token: poster.token, body: { amount: stake, kind: 'kill' } });
-    await new Promise((r) => setTimeout(r, 1000));   // > deadlock_timeout, so the player's timer fires first
+    let requestSettled = false;
+    inflight = observePromiseOutcome(call('POST', `/v1/streets/${mark.id}/bounty`, {
+      token: poster.token, body: { amount: stake, kind: 'kill' },
+    }), () => { requestSettled = true; });
+    waiterPid = await waitForPlayerRefundBlockedBy({
+      holderPid, startedAfter: identity.started_after, requestSettled: () => requestSettled,
+      label: 'section 9e bounty refund',
+    });
     // close the cycle: we hold the funder and now want the pot the player is holding.
     holderTook = holder.query('SELECT 1 FROM bounties WHERE target_character=$1 AND kind=$2 FOR UPDATE', [mark.id, 'kill'])
-      .then(() => null, (e) => e);
-    raced = await inflight;
-    await holderTook;
-  } finally { await holder.query('ROLLBACK').catch(() => {}); holder.release(); }
+      .then(() => ({ ok: true }), (error) => ({ ok: false, error }));
+    [requestOutcome, holderResult] = await Promise.all([inflight, holderTook]);
+  } catch (error) {
+    fixtureError = error;
+  } finally {
+    // If readiness itself failed, release the held character before draining the blocked request.
+    if (!holderTook) await holder.query('ROLLBACK').catch(() => {});
+    await Promise.allSettled([inflight, holderTook].filter(Boolean));
+    if (inflight && !requestOutcome) requestOutcome = await inflight;
+    await holder.query('ROLLBACK').catch(() => {});
+    holder.release();
+  }
+  raced = valueAfterCleanup(requestOutcome, fixtureError);
+
+  check(holderResult?.ok === true, 'the bounty fixture holder was NOT the deadlock victim',
+    `holder PID ${holderPid}, waiter PID ${waiterPid}, holder error ${holderResult?.error?.code || holderResult?.error?.message || 'unknown'}`);
 
   check(raced.code !== 500, 'the player is NOT told the server broke',
     `got ${raced.code} ${raced.body?.error || ''} — "${raced.body?.message || ''}"`);
@@ -1660,20 +1718,44 @@ console.log('\n9f. THE LISTING/BIDDER CYCLE LANDS AS CONTENTION, NEVER A 500');
   const deadlocks0m = await deadlockCountM();
 
   const holderM = await pool.connect();
-  let inflightM, raced2 = null, holderTook2 = null;
+  let inflightM = null, requestOutcomeM = null, holderTook2 = null, holderResult2 = null;
+  let fixtureErrorM = null, raced2 = null;
+  let holderPidM = null, waiterPidM = null;
   try {
     await holderM.query('BEGIN');
     // exactly what bidListing/buyListing/sweepMarket do FIRST: the counterparty's character row.
     await holderM.query('SELECT 1 FROM characters WHERE id=$1 FOR UPDATE', [bidder.id]);
+    const identityM = (await holderM.query(
+      'SELECT pg_backend_pid() AS pid, clock_timestamp() AS started_after')).rows[0];
+    holderPidM = Number(identityM.pid);
     // the seller takes the listing, then blocks reaching the bidder to refund them.
-    inflightM = call('POST', `/v1/market/${listingId}/cancel`, { token: seller.token });
-    await new Promise((r) => setTimeout(r, 1000));   // > deadlock_timeout, so the player's timer fires first
+    let requestSettledM = false;
+    inflightM = observePromiseOutcome(
+      call('POST', `/v1/market/${listingId}/cancel`, { token: seller.token }),
+      () => { requestSettledM = true; },
+    );
+    waiterPidM = await waitForPlayerRefundBlockedBy({
+      holderPid: holderPidM, startedAfter: identityM.started_after,
+      requestSettled: () => requestSettledM, label: 'section 9f market refund',
+    });
     // close the cycle: we hold the bidder and now want the listing the player is holding.
     holderTook2 = holderM.query('SELECT 1 FROM market_listings WHERE id=$1 FOR UPDATE', [listingId])
-      .then(() => null, (e) => e);
-    raced2 = await inflightM;
-    await holderTook2;
-  } finally { await holderM.query('ROLLBACK').catch(() => {}); holderM.release(); }
+      .then(() => ({ ok: true }), (error) => ({ ok: false, error }));
+    [requestOutcomeM, holderResult2] = await Promise.all([inflightM, holderTook2]);
+  } catch (error) {
+    fixtureErrorM = error;
+  } finally {
+    // If readiness itself failed, release the held character before draining the blocked request.
+    if (!holderTook2) await holderM.query('ROLLBACK').catch(() => {});
+    await Promise.allSettled([inflightM, holderTook2].filter(Boolean));
+    if (inflightM && !requestOutcomeM) requestOutcomeM = await inflightM;
+    await holderM.query('ROLLBACK').catch(() => {});
+    holderM.release();
+  }
+  raced2 = valueAfterCleanup(requestOutcomeM, fixtureErrorM);
+
+  check(holderResult2?.ok === true, 'the market fixture holder was NOT the deadlock victim',
+    `holder PID ${holderPidM}, waiter PID ${waiterPidM}, holder error ${holderResult2?.error?.code || holderResult2?.error?.message || 'unknown'}`);
 
   check(raced2.code !== 500, 'the seller is NOT told the server broke',
     `got ${raced2.code} ${raced2.body?.error || ''} — "${raced2.body?.message || ''}"`);
