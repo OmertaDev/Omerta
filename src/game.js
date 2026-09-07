@@ -148,8 +148,14 @@ export async function bumpFamilyTask(client, h, kind, amount) {
   return { completed, prog, effGoal, omrPaid };
 }
 
-export async function ledger(client, { characterId = null, accountId = null, currency, amount, reason, counterparty = null }) {
+export async function ledger(client, { characterId = null, accountId = null, currency, amount, reason, counterparty = null }, { beforeInsert } = {}) {
+  if (beforeInsert !== undefined && typeof beforeInsert !== 'function') {
+    throw new GameError('bad_ledger_hook', 'Ledger preparation requires an internal callback.');
+  }
   const transactionId = uid();
+  // Trusted integration seam for the PRIMARY audit row only. The ledger retains ID generation;
+  // this does not register compensation for the separate OMR recycling side effects below.
+  if (beforeInsert) await beforeInsert(transactionId);
   await client.query(
     'INSERT INTO transactions (id, character_id, account_id, currency, amount, reason, counterparty) VALUES ($1,$2,$3,$4,$5,$6,$7)',
     [transactionId, characterId, accountId, currency, amount, reason, counterparty]);

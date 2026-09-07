@@ -5,6 +5,7 @@
 import crypto from 'node:crypto';
 import { dbCaps } from './db.js';
 import { withPhase2Read } from './content/phase2-transactions.js';
+import { withItemRead } from './items.js';
 import { collectDefinitionChecks } from './content/definition-invariants.js';
 import { DESK, DESK_RECYCLE_REASON } from './rules.js';
 import {
@@ -153,7 +154,7 @@ export async function runLedgerInvariants(pool, { alert = true, activationPolicy
       client = await pool.connect();
       await client.query('BEGIN ISOLATION LEVEL REPEATABLE READ, READ ONLY');
     }
-    res = await withPhase2Read(client || pool, (q) => collectLedgerChecks(q, activationPolicy));
+    res = await withPhase2Read(client || pool, (q) => withItemRead(q, (itemClient) => collectLedgerChecks(itemClient, activationPolicy)));
     if (client) await client.query('COMMIT');
   } catch (e) {
     if (client) { try { await client.query('ROLLBACK'); } catch { /* already gone */ } }

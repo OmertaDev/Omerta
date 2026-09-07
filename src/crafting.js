@@ -660,15 +660,16 @@ async function debitRecipeCash(client, actor, recipe) {
       required: cashCost, current: actor.character.cash,
     });
   }
-  const transactionId = await ledger(client, {
+  await ledger(client, {
     characterId: actor.character.id,
     currency: 'cash',
     amount: -cashCost,
     reason: phase1CraftReason(recipe.id),
+  }, {
+    beforeInsert: (transactionId) => registerItemTransactionUndo(client, () => client.query(
+      'DELETE FROM transactions WHERE id=$1', [transactionId],
+    )),
   });
-  registerItemTransactionUndo(client, () => client.query(
-    'DELETE FROM transactions WHERE id=$1', [transactionId],
-  ));
   return { cashCost, cashAfter: Number(debited.rows[0].cash) };
 }
 

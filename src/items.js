@@ -6,8 +6,11 @@
 // DML, appends provenance, and completes the replay result inside that boundary.
 import crypto from 'node:crypto';
 import { AsyncLocalStorage } from 'node:async_hooks';
+import { types } from 'node:util';
 import { dbCaps } from './db.js';
 import { GameError } from './game.js';
+import { withPhase2Read, assertPhase2Client } from './content/phase2-transactions.js';
+import { canonicalBytes } from './content/canonical.js';
 
 const OWNER_SCOPES = new Set(['character', 'account', 'operation']);
 const COMPOSITE_MUTATION_KINDS = new Set([
@@ -19,7 +22,9 @@ const ESCROW_PROVENANCE_KINDS = new Set(['used_in_mystery', 'used_in_operation']
 const MUTATION_CONTEXTS = new WeakMap();
 const ITEM_TRANSACTIONS = new WeakMap();
 const TRANSACTION_SCOPE = new AsyncLocalStorage();
+const READ_SCOPE = new AsyncLocalStorage();
 let PG_MEM_TRANSACTION_TAIL = Promise.resolve();
+let PG_MEM_RECOVERY_REQUIRED = false;
 const INT_MAX = 2147483647;
 
 const fail = (code, message, data) => { throw new GameError(code, message, data); };
@@ -67,6 +72,32 @@ function transactionClient(client) {
   return transaction;
 }
 
+export function assertItemTransaction(client) { transactionClient(client); }
+function mutationState(client, token) {
+  const transaction = transactionClient(client);
+  const state = token && typeof token === 'object' ? MUTATION_CONTEXTS.get(token) : null;
+  if (!state || state.closed || state.client !== client || state.transaction !== transaction) {
+    fail('item_transaction_required', 'Item mutation requires its active private root token.');
+  }
+  return state;
+}
+export function itemMutationContext(client, token) {
+  const { guard } = mutationState(client, token);
+  return Object.freeze({ key: guard.key, mutationId: guard.mutationId, envelopeVersion: guard.envelopeVersion });
+}
+export function nextItemMutationOrdinal(client, token) {
+  return mutationState(client, token).ioOrdinal++;
+}
+export function poisonItemTransaction(client, error) {
+  const transaction = transactionClient(client);
+  transaction.failed ||= error || new GameError('bad_item_request', 'Item mutation failed.');
+}
+function recoveryRequired() {
+  if (!dbCaps.skipLocked && PG_MEM_RECOVERY_REQUIRED) {
+    fail('item_recovery_required', 'Item recovery requires a fresh database process.');
+  }
+}
+
 async function activeTransaction(client) {
   transactionClient(client);
   if (!dbCaps.skipLocked) return client; // pg-mem has no SAVEPOINT syntax; focused tests own BEGIN.
@@ -89,12 +120,13 @@ async function compensateItemTransaction(client, transaction) {
   // serialized module-wide below, so a transaction-local inverse log gives the same externally visible
   // atomicity contract without overwriting a later successful item transaction. Events go first
   // because they reference both guards and permanent item rows; guards go last.
-  for (const key of transaction.guardKeys) {
-    await client.query('DELETE FROM item_events WHERE idempotency_key=$1', [key]);
+  for (const [key, reservationId] of transaction.guardReservations) {
+    const row = (await client.query('SELECT reservation_id FROM item_mutation_guards WHERE idempotency_key=$1', [key])).rows[0];
+    if (row?.reservation_id === reservationId) await client.query('DELETE FROM item_events WHERE idempotency_key=$1', [key]);
   }
   for (let i = transaction.undo.length - 1; i >= 0; i--) await transaction.undo[i]();
-  for (const key of transaction.guardKeys) {
-    await client.query('DELETE FROM item_mutation_guards WHERE idempotency_key=$1', [key]);
+  for (const [key, reservationId] of transaction.guardReservations) {
+    await client.query('DELETE FROM item_mutation_guards WHERE idempotency_key=$1 AND reservation_id=$2', [key, reservationId]);
   }
 }
 
@@ -109,6 +141,7 @@ async function acquirePgMemTransaction() {
   const tail = previous.then(() => gate);
   PG_MEM_TRANSACTION_TAIL = tail;
   await previous;
+  if (PG_MEM_RECOVERY_REQUIRED) { releaseGate(); recoveryRequired(); }
   let released = false;
   return () => {
     if (released) return;
@@ -119,6 +152,7 @@ async function acquirePgMemTransaction() {
 }
 
 async function waitForPgMemTransactions(queryable) {
+  recoveryRequired();
   if (dbCaps.skipLocked) return;
   const transaction = ITEM_TRANSACTIONS.get(queryable);
   if (transaction && TRANSACTION_SCOPE.getStore()?.transaction === transaction) return;
@@ -126,6 +160,38 @@ async function waitForPgMemTransactions(queryable) {
   // the pool, a checked-out adapter, a Proxy, or a forwarding alias. This prevents identity aliases
   // from observing writes which the active boundary may still compensate.
   await PG_MEM_TRANSACTION_TAIL;
+  recoveryRequired();
+}
+
+export async function withItemRead(queryable, action) {
+  recoveryRequired();
+  const transaction = queryable && ITEM_TRANSACTIONS.get(queryable);
+  if ((transaction?.active && TRANSACTION_SCOPE.getStore()?.transaction === transaction)
+    || (READ_SCOPE.getStore()?.client === queryable && READ_SCOPE.getStore()?.active)) return action(queryable);
+  // Preserve arrival behind already queued legacy writers before entering the composed read.
+  // The callback itself is still protected for its entire duration by both gates below.
+  if (!registryContext(queryable)) await waitForPgMemTransactions(queryable);
+  return withPhase2Read(queryable, async (client) => {
+    const release = await acquirePgMemTransaction();
+    const scope = { client, active: true };
+    try { return await READ_SCOPE.run(scope, () => action(client)); }
+    finally { scope.active = false; release(); }
+  });
+}
+
+function registryContext(client) {
+  try { assertPhase2Client(client); return true; }
+  catch (error) { if (error?.code !== 'content_transaction_required') throw error; return false; }
+}
+
+function itemFailure(error, rolledBack) {
+  if (['40001', '40P01', '55P03'].includes(error?.code) || (error?.code === '57014' && rolledBack)) {
+    return new GameError('contention', 'Item transaction must be retried.');
+  }
+  if (/^(?:22|23|25)[0-9A-Z]{3}$/.test(error?.code ?? '')) {
+    return new GameError('item_integrity_error', 'Item transaction failed its database constraints.');
+  }
+  return error;
 }
 
 /**
@@ -154,42 +220,77 @@ export async function withItemTransaction(pool, action) {
   if (!pool || typeof pool.connect !== 'function' || typeof action !== 'function') {
     fail('item_transaction_required', 'Item transaction requires a database pool and callback.');
   }
-  if (TRANSACTION_SCOPE.getStore()) {
+  if (TRANSACTION_SCOPE.getStore() || registryContext(pool) || READ_SCOPE.getStore()?.active) {
     fail('item_transaction_nested', 'Item transactions cannot be nested; reuse the active client.');
   }
   return TRANSACTION_SCOPE.run({ active: true }, async () => {
     const scope = TRANSACTION_SCOPE.getStore();
-    const releasePgMemTransaction = await acquirePgMemTransaction();
-    let client = null;
-    const transaction = { active: false, failed: null, guardKeys: new Set(), undo: [] };
-    try {
-      client = await pool.connect();
-      await client.query('BEGIN');
-      transaction.active = true;
-      ITEM_TRANSACTIONS.set(client, transaction);
-      scope.transaction = transaction;
-      const result = await action(client);
-      if (transaction.failed) throw transaction.failed;
-      await client.query('COMMIT');
-      return result;
-    } catch (error) {
-      if (client) await client.query('ROLLBACK').catch(() => {});
-      if (client && !dbCaps.skipLocked && transaction.active) {
-        try { await compensateItemTransaction(client, transaction); }
-        catch (compensationError) {
-          compensationError.cause = error;
-          throw compensationError;
+    let client = null, discard = false, begun = false, outcome, borrowed = false;
+    const transaction = { active: false, failed: null, guardReservations: [], undo: [] };
+    // Keep all raw failures inside the item owner. The registry wrapper sees a private outcome,
+    // never a raw SQLSTATE that it could remap before rollback/commit disposition is known.
+    async function ownedAction() {
+      let release = () => {}, committing = false;
+      try {
+        release = await acquirePgMemTransaction();
+        if (!begun) { await client.query('BEGIN'); begun = true; }
+        transaction.active = true;
+        ITEM_TRANSACTIONS.set(client, transaction); scope.transaction = transaction;
+        const result = await action(client);
+        if (transaction.failed) throw transaction.failed;
+        committing = true;
+        await client.query('COMMIT');
+        outcome = { result };
+      } catch (error) {
+        let failure = error, rolledBack = false;
+        const definite = /^[0-9A-Z]{5}$/.test(error?.code ?? '') && !/^(08|57P)/.test(error.code);
+        if (committing && !definite) {
+          discard = true;
+          failure = new GameError('item_commit_unknown', 'Reconcile the exact item key on a fresh connection.');
+        } else {
+          try { await client.query('ROLLBACK'); rolledBack = true; } catch { discard = true; }
+          if (!dbCaps.skipLocked && transaction.active) {
+            try { await compensateItemTransaction(client, transaction); }
+            catch {
+              PG_MEM_RECOVERY_REQUIRED = true; discard = true;
+              failure = new GameError('item_recovery_required', 'Item recovery requires a fresh database process.');
+            }
+          }
+          if (!rolledBack && !PG_MEM_RECOVERY_REQUIRED) failure = new GameError('item_commit_unknown', 'Item rollback could not be confirmed.');
+          else failure = itemFailure(failure, rolledBack);
         }
+        outcome = { error: failure };
+      } finally {
+        transaction.active = false; ITEM_TRANSACTIONS.delete(client);
+        release();
       }
-      throw error;
+    }
+    try {
+      recoveryRequired();
+      client = await pool.connect();
+      if (registryContext(client)) {
+        borrowed = true;
+        fail('item_transaction_nested', 'Registry callbacks cannot start item transactions.');
+      }
+      if (dbCaps.skipLocked) { await client.query('BEGIN'); begun = true; }
+      await withPhase2Read(client, ownedAction);
+    } catch (error) {
+      let rolledBack = false;
+      if (client && !outcome && !registryContext(client)) {
+        try { await client.query('ROLLBACK'); rolledBack = true; } catch { discard = true; }
+      }
+      outcome = { error: error?.code === 'content_transaction_nested'
+        ? new GameError('item_transaction_nested', 'Registry callbacks cannot start item transactions.')
+        : discard ? new GameError('item_commit_unknown', 'Item rollback could not be confirmed.') : itemFailure(error, rolledBack) };
     } finally {
       transaction.active = false;
-      if (client) {
+      if (client && !borrowed) {
         ITEM_TRANSACTIONS.delete(client);
-        client.release();
+        client.release(discard);
       }
-      releasePgMemTransaction();
     }
+    if (outcome.error) throw outcome.error;
+    return outcome.result;
   });
 }
 
@@ -218,41 +319,52 @@ async function beginMutation(client, kind, owner, idempotencyKey, request) {
   await activeTransaction(client);
   const key = logicalKey(idempotencyKey);
   const requestHash = digest({ kind, owner, request });
+  return reserveMutation(client, { key, kind, owner, requestHash, envelopeVersion: 1 });
+}
+
+async function reserveMutation(client, { key, kind, owner, requestHash, envelopeVersion,
+  actorAccountId = null, externalKey = null, requestJson = null }) {
+  await activeTransaction(client);
   const reservationId = crypto.randomUUID();
+  const mutationId = crypto.randomUUID();
+  const matches = (row) => row && row.envelope_version === envelopeVersion && row.mutation_kind === kind
+    && row.owner_scope === owner.scope && row.owner_id === owner.id && row.request_hash === requestHash
+    && (envelopeVersion === 1 || (row.actor_account_id === actorAccountId && row.external_key === externalKey
+      && row.request_json === requestJson));
+  const replay = (row) => {
+    if (!matches(row)) fail('idempotency_conflict', 'That item key is bound to another mutation.');
+    if (row.result_json != null) return { key, replay: JSON.parse(row.result_json), completed: true,
+      mutationId: row.mutation_id, envelopeVersion };
+    return null;
+  };
+  // A completed receipt is immutable and can be resolved without descending from a guard lock.
+  const prior = (await client.query('SELECT * FROM item_mutation_guards WHERE idempotency_key=$1', [key])).rows[0];
+  if (prior) { const result = replay(prior); if (result) return result; }
+  // Track reservation intent before the insertion acknowledgement can be lost. Compensation uses
+  // the reservation UUID too, so a losing reservation can never delete another receipt.
+  // Keep every attempt: a before-write failure can leave an unused first UUID, while
+  // a lost acknowledgement can leave the first UUID owning the row. Neither a first-
+  // nor last-only slot can safely identify all writes after caught same-key retries.
+  transactionClient(client).guardReservations.push([key, reservationId]);
   await client.query(
     `INSERT INTO item_mutation_guards
-       (idempotency_key, mutation_kind, owner_scope, owner_id, request_hash, reservation_id)
-     VALUES ($1,$2,$3,$4,$5,$6)
+       (idempotency_key, mutation_kind, owner_scope, owner_id, request_hash, reservation_id,
+        envelope_version, mutation_id, actor_account_id, external_key, request_json)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
      ON CONFLICT (idempotency_key) DO NOTHING`,
-    [key, kind, owner.scope, owner.id, requestHash, reservationId],
+    [key, kind, owner.scope, owner.id, requestHash, reservationId, envelopeVersion, mutationId, actorAccountId, externalKey, requestJson],
   );
   const row = (await client.query(
-    `SELECT mutation_kind, owner_scope, owner_id, request_hash, reservation_id, result_json
+    `SELECT *
        FROM item_mutation_guards WHERE idempotency_key=$1 FOR UPDATE`,
     [key],
   )).rows[0];
-  if (!row || row.mutation_kind !== kind || row.owner_scope !== owner.scope
-    || row.owner_id !== owner.id || row.request_hash !== requestHash) {
-    fail('idempotency_conflict', 'That item idempotency key is already bound to another mutation.');
-  }
-  if (row.result_json !== null && row.result_json !== undefined) {
-    return { key, replay: JSON.parse(row.result_json) };
-  }
+  const completed = replay(row);
+  if (completed) return completed;
   if (row.reservation_id !== reservationId) {
     fail('idempotency_in_progress', 'That item mutation is still in progress.');
   }
-  transactionClient(client).guardKeys.add(key);
-  return { key, reservationId, replay: null };
-}
-
-async function abandonMutation(client, guard) {
-  if (!guard?.reservationId) return;
-  await client.query('DELETE FROM item_events WHERE idempotency_key=$1', [guard.key]).catch(() => {});
-  await client.query(
-    `DELETE FROM item_mutation_guards
-      WHERE idempotency_key=$1 AND reservation_id=$2 AND result_json IS NULL`,
-    [guard.key, guard.reservationId],
-  ).catch(() => {});
+  return { key, reservationId, replay: null, completed: false, mutationId, envelopeVersion };
 }
 
 const ownerKey = (owner) => `${owner.scope}:${owner.id}`;
@@ -318,8 +430,11 @@ async function completeMutation(client, guard, result) {
 }
 
 async function executeMutation(client, kind, owner, key, request, action) {
-  transactionClient(client);
+  const transaction = transactionClient(client);
   const composite = key && typeof key === 'object' ? MUTATION_CONTEXTS.get(key) : null;
+  if (transaction.mutation && composite !== transaction.mutation) {
+    fail('item_mutation_nested', 'Reuse the active item mutation token.');
+  }
   if (composite) {
     if (composite.client !== client || composite.closed) {
       fail('item_transaction_required', 'That item mutation context is not active on this transaction.');
@@ -327,6 +442,7 @@ async function executeMutation(client, kind, owner, key, request, action) {
     try {
       assertCompositeAuthority(composite, kind, owner, request);
       composite.ordinal += 1;
+      nextItemMutationOrdinal(client, key);
       return await action(
         composite.guard, `${String(composite.ordinal).padStart(4, '0')}:${kind}`,
       );
@@ -336,15 +452,13 @@ async function executeMutation(client, kind, owner, key, request, action) {
       throw error;
     }
   }
-  const guard = await beginMutation(client, kind, owner, key, request);
-  if (guard.replay !== null) return guard.replay;
   try {
+    if (key && typeof key === 'object') fail('item_transaction_required', 'Invalid item mutation token.');
+    const guard = await beginMutation(client, kind, owner, key, request);
+    if (guard.completed) return guard.replay;
     const result = await action(guard, 'result');
     return await completeMutation(client, guard, result);
   } catch (error) {
-    // Remove an unfinished logical claim before the module-owned boundary rolls back/compensates.
-    // Events go first because their FK deliberately prevents orphaned provenance.
-    await abandonMutation(client, guard);
     transactionClient(client).failed ||= error;
     throw error;
   }
@@ -354,10 +468,11 @@ async function executeMutation(client, kind, owner, key, request, action) {
 // context lets those leaf primitives share exactly one guard and append distinct ordinal events;
 // replay returns the aggregate result without entering `action` at all. withItemTransaction owns the
 // surrounding BEGIN/COMMIT/ROLLBACK and pg-mem compensation boundary.
-export async function withItemMutation(
+async function withItemMutationImpl(
   client, ownerValue, mutationKindValue, idempotencyKey, request, action,
 ) {
-  transactionClient(client);
+  const transaction = transactionClient(client);
+  if (transaction.mutation) fail('item_mutation_nested', 'Reuse the active item mutation token.');
   const owner = itemOwner(ownerValue);
   const mutationKind = boundedText(mutationKindValue, 'Item mutation kind', 80);
   if (!COMPOSITE_MUTATION_KINDS.has(mutationKind) || typeof action !== 'function') {
@@ -369,7 +484,7 @@ export async function withItemMutation(
   } catch {
     fail('bad_item_request', 'Composite item mutation request must be JSON-serializable.');
   }
-  const authority = compositeAuthority(requestHashInput);
+  const authorityInput = requestHashInput.itemAuthority;
   // itemAuthority is server-derived execution capability, not client-nominated logical input. It
   // may legitimately change between an action and its exact replay (for example, more participants
   // may join an operation), so binding it into the replay digest would turn a successful retry into
@@ -379,24 +494,111 @@ export async function withItemMutation(
   const guard = await beginMutation(
     client, mutationKind, owner, idempotencyKey, requestHashInput,
   );
-  if (guard.replay !== null) return guard.replay;
+  if (guard.completed) return guard.replay;
+  return runMutation(client, guard, owner, mutationKind, () => compositeAuthority({ itemAuthority: authorityInput }), action);
+}
+
+async function runMutation(client, guard, owner, mutationKind, authority, action) {
   const context = Object.freeze({});
   const state = {
-    client, guard, rootOwner: owner, authority, mutationKind,
-    ordinal: 0, closed: false, failed: null,
+    client, guard, rootOwner: owner, authority: null, mutationKind, transaction: transactionClient(client),
+    ordinal: 0, ioOrdinal: 0, closed: false, failed: null,
   };
   MUTATION_CONTEXTS.set(context, state);
+  state.transaction.mutation = state;
   try {
+    state.authority = authority();
     const result = await action(context);
     if (state.failed) throw state.failed;
     state.closed = true;
     return await completeMutation(client, guard, result);
   } catch (error) {
     state.closed = true;
-    await abandonMutation(client, guard);
     transactionClient(client).failed ||= error;
     throw error;
+  } finally { state.closed = true; state.transaction.mutation = null; }
+}
+
+// Task 3's seven hash domains remain closed. This private, string-only framing uses the same
+// typed/length-prefixed wire format for the separate item-key domain; it grants no registry authority.
+function lotStorageKey(actorAccountId, actionKind, externalKey) {
+  const u32 = (n) => { const b = Buffer.alloc(4); b.writeUInt32BE(n); return b; };
+  const u64 = (n) => { const b = Buffer.alloc(8); b.writeBigUInt64BE(BigInt(n)); return b; };
+  const domain = Buffer.from('omerta:item-mutation-key:v1');
+  const parts = [Buffer.from('OMERTA\0'), u32(domain.length), domain, u32(3)];
+  for (const [name, value] of [['actorAccountId', actorAccountId], ['actionKind', actionKind], ['externalKey', externalKey]]) {
+    const field = Buffer.from(name), payload = Buffer.from(value);
+    parts.push(u32(field.length), field, Buffer.from([4]), u64(payload.length), payload);
   }
+  return crypto.createHash('sha256').update(Buffer.concat(parts)).digest('hex');
+}
+
+function closedObject(value, keys) {
+  if (!value || Array.isArray(value) || typeof value !== 'object'
+    || Object.keys(value).length !== keys.length || keys.some((key) => !Object.hasOwn(value, key))) {
+    fail('bad_item_request', 'Item authority must have exactly its declared fields.');
+  }
+}
+
+function snapshotLotRequest(value) {
+  // Inspect descriptors before encoding: getters, proxies, cycles and oversized trees are not data.
+  const seen = new WeakSet(); let members = 0, textBytes = 0;
+  function inspect(node, depth) {
+    if (++members > 4096 || depth > 32) fail('bad_item_request', 'Item authority exceeds its data bounds.');
+    if (typeof node === 'string') { textBytes += Buffer.byteLength(node); }
+    if (textBytes > 65536) fail('bad_item_request', 'Item authority exceeds its data bounds.');
+    if (!node || typeof node !== 'object') return;
+    if (types.isProxy(node) || seen.has(node)) fail('bad_item_request', 'Item authority must be inert canonical data.');
+    seen.add(node);
+    const descriptors = Object.getOwnPropertyDescriptors(node);
+    for (const key of Reflect.ownKeys(descriptors)) {
+      const descriptor = descriptors[key];
+      if (!Object.hasOwn(descriptor, 'value') || typeof key !== 'string') fail('bad_item_request', 'Item authority must be inert canonical data.');
+      if (['__proto__', 'constructor', 'prototype'].includes(key)) fail('bad_item_request', 'Item authority contains a prohibited property name.');
+      textBytes += Buffer.byteLength(key); inspect(descriptor.value, depth + 1);
+    }
+    seen.delete(node);
+  }
+  try { inspect(value, 0); return JSON.parse(canonicalBytes(value).toString('utf8')); }
+  catch (error) { if (error instanceof GameError) throw error; fail('bad_item_request', 'Item authority must be inert canonical data.'); }
+}
+
+export async function withLotMutation(client, value, action) {
+  const transaction = transactionClient(client);
+  try {
+    if (transaction.mutation) fail('item_mutation_nested', 'Reuse the active item mutation token.');
+    const input = snapshotLotRequest(value);
+    closedObject(input, ['actorAccountId', 'actionKind', 'idempotencyKey', 'owner', 'request']);
+    closedObject(input.owner, ['scope', 'id']);
+    const owner = itemOwner(input.owner), kind = input.actionKind;
+    const account = boundedText(input.actorAccountId, 'Actor account', 200);
+    const externalKey = logicalKey(input.idempotencyKey);
+    if (!COMPOSITE_MUTATION_KINDS.has(kind) || typeof action !== 'function') fail('bad_item_request', 'Unsupported lot action.');
+    closedObject(input.request, ['input', 'authority']);
+    const authority = input.request.authority;
+    closedObject(authority, ['issuedActionId', 'aggregate', 'resolvedOwner', 'bundleHash', 'namespace',
+      'activationRevision', 'eventId', 'inputDefinitionHashes', 'outputDefinitionHashes']);
+    closedObject(authority.aggregate, ['kind', 'id']); closedObject(authority.resolvedOwner, ['scope', 'id']);
+    itemOwner(authority.resolvedOwner);
+    for (const text of [authority.issuedActionId, authority.aggregate.kind, authority.aggregate.id,
+      authority.namespace, authority.eventId]) boundedText(text, 'Authority identity', 200);
+    if (!Number.isSafeInteger(authority.activationRevision) || authority.activationRevision < 1
+      || typeof authority.bundleHash !== 'string' || !/^[0-9a-f]{64}$/.test(authority.bundleHash)) fail('bad_item_request', 'Invalid item selection authority.');
+    for (const name of ['inputDefinitionHashes', 'outputDefinitionHashes']) {
+      const hashes = authority[name];
+      if (!Array.isArray(hashes) || hashes.length > 256
+        || hashes.some((hash) => typeof hash !== 'string' || !/^[0-9a-f]{64}$/.test(hash))) {
+        fail('bad_item_request', 'Invalid exact definition pins.');
+      }
+      hashes.sort();
+    }
+    const requestJson = canonicalBytes({ owner, request: input.request }).toString('utf8');
+    const guard = await reserveMutation(client, { key: lotStorageKey(account, kind, externalKey), kind, owner,
+      requestHash: crypto.createHash('sha256').update(requestJson).digest('hex'), envelopeVersion: 2,
+      actorAccountId: account, externalKey, requestJson });
+    if (guard.completed) return guard.replay;
+    return await runMutation(client, guard, owner, kind, () => ({ destinations: new Set(), operations: new Set() }), action);
+  } catch (error) { poisonItemTransaction(client, error); throw error; }
 }
 
 async function appendEvent(client, guard, {
@@ -473,7 +675,7 @@ function assertHeld(row, owner, { activeOnly = false } = {}) {
 }
 
 /** Grant a fungible stack quantity. Exact replay returns the first result. */
-export async function grantStack(
+async function grantStackImpl(
   client, ownerValue, templateIdValue, qtyValue, qualityValue,
   reasonValue, idempotencyKey,
 ) {
@@ -537,7 +739,7 @@ export async function grantStack(
 }
 
 /** Consume a fungible stack quantity under a row lock and nonnegative conditional update. */
-export async function consumeStack(
+async function consumeStackImpl(
   client, ownerValue, templateIdValue, qtyValue, qualityValue,
   reasonValue, idempotencyKey,
 ) {
@@ -586,7 +788,7 @@ export async function consumeStack(
 }
 
 /** Create one unique/stateful item with a permanent server-generated ID. */
-export async function createItem(
+async function createItemImpl(
   client, ownerValue, templateIdValue, reasonValue, idempotencyKey,
 ) {
   const owner = itemOwner(ownerValue, { allowOperation: false });
@@ -614,7 +816,7 @@ export async function createItem(
 }
 
 /** Transfer an active unique item between authoritative owners. */
-export async function transferItem(
+async function transferItemImpl(
   client, fromOwnerValue, toOwnerValue, itemIdValue, reasonValue, idempotencyKey,
 ) {
   const from = itemOwner(fromOwnerValue, { allowOperation: false });
@@ -649,7 +851,7 @@ export async function transferItem(
 }
 
 /** Permanently consume an owned or operation-escrowed unique item. */
-export async function consumeItem(
+async function consumeItemImpl(
   client, ownerValue, itemIdValue, reasonValue, idempotencyKey,
 ) {
   const owner = itemOwner(ownerValue);
@@ -701,7 +903,7 @@ export async function consumeItem(
 }
 
 /** Move an active character/account item into one operation's sole custody. */
-export async function escrowItem(
+async function escrowItemImpl(
   client, fromOwnerValue, operationIdValue, itemIdValue, reasonValue, idempotencyKey,
   provenanceKindValue = 'used_in_mystery',
 ) {
@@ -744,7 +946,7 @@ export async function escrowItem(
 }
 
 /** Release one escrowed item. Only the operation named by the custody row can release it. */
-export async function releaseEscrow(
+async function releaseEscrowImpl(
   client, operationIdValue, toOwnerValue, itemIdValue, reasonValue, idempotencyKey,
 ) {
   const operation = itemOwner({ scope: 'operation', id: operationIdValue });
@@ -796,15 +998,32 @@ export async function releaseEscrow(
     });
 }
 
+// Validation is part of the leaf, too: a caller cannot catch malformed quantities/owners and
+// commit earlier writes. Keep this outside the implementations so their historical digest order stays intact.
+function itemLeaf(implementation) {
+  return async (client, ...args) => {
+    transactionClient(client);
+    try { return await implementation(client, ...args); }
+    catch (error) { poisonItemTransaction(client, error); throw error; }
+  };
+}
+export const grantStack = itemLeaf(grantStackImpl);
+export const withItemMutation = itemLeaf(withItemMutationImpl);
+export const consumeStack = itemLeaf(consumeStackImpl);
+export const createItem = itemLeaf(createItemImpl);
+export const transferItem = itemLeaf(transferItemImpl);
+export const consumeItem = itemLeaf(consumeItemImpl);
+export const escrowItem = itemLeaf(escrowItemImpl);
+export const releaseEscrow = itemLeaf(releaseEscrowImpl);
+
 /** Read current spendable stacks and unique instances exactly once from their authoritative rows. */
 export async function inventoryBoard(client, ownerValue) {
   if (!client || typeof client.query !== 'function') {
     fail('item_transaction_required', 'Inventory read requires a database query client.');
   }
-  // Waiting on the module-wide pg-mem tail prevents pool/client aliases from observing a
-  // compensatable partial write. A read made inside the active branded transaction skips the wait,
-  // avoiding self-deadlock.
-  await waitForPgMemTransactions(client);
+  return withItemRead(client, (q) => collectInventory(q, ownerValue));
+}
+async function collectInventory(client, ownerValue) {
   const owner = itemOwner(ownerValue);
   const stacks = (await client.query(
     `SELECT template_id, quality, quantity, created_at, updated_at

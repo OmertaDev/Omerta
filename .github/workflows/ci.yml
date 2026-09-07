@@ -179,6 +179,12 @@ jobs:
           TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check
         run: npm run phase2:definitions:postgres
 
+      - name: Phase 2 dormant item boundary (real PostgreSQL)
+        if: '!cancelled()'
+        env:
+          TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check
+        run: npm run phase2:lots:postgres
+
       - name: stock catalog v2 finalized-observation consumer (real PostgreSQL)
         if: '!cancelled()'
         env:

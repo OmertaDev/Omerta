@@ -12,7 +12,8 @@ import { createActivationPolicy } from '../src/content/activation-policy.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 
 function endpoint() {
-  assert.deepEqual(process.argv.slice(2), ['--definitions'], 'explicit --definitions required; unknown options refused');
+  assert(process.argv.length === 3 && ['--definitions', '--lots'].includes(process.argv[2]),
+    'explicit --definitions or --lots required; unknown options refused');
   assert(process.env.TEST_DATABASE_URL, 'TEST_DATABASE_URL is required; no default or skip');
   let url;
   try { url = new URL(process.env.TEST_DATABASE_URL); } catch { throw Error('invalid explicit PostgreSQL test endpoint'); }
@@ -34,13 +35,13 @@ async function parent(url) {
   const admin = new pg.Client({ connectionString: url.toString() });
   await admin.connect();
   try {
-    for (const mode of ['clean','upgrade','scalar','missing-unique']) {
+    for (const mode of process.argv[2] === '--lots' ? ['lots', 'lots-upgrade'] : ['clean','upgrade','scalar','missing-unique']) {
       const name = ownedName('p2_definitions_'+randomUUID().replaceAll('-',''));
       await admin.query(`CREATE SCHEMA "${name}"`);
       try {
         const childUrl = new URL(url);
         childUrl.searchParams.set('options', `-c search_path=${name} -c statement_timeout=30000 -c lock_timeout=5000 -c idle_in_transaction_session_timeout=30000`);
-        const result = spawnSync(process.execPath,[fileURLToPath(import.meta.url),'--definitions'], {
+        const result = spawnSync(process.execPath,[fileURLToPath(import.meta.url),process.argv[2]], {
           env: { ...process.env, TEST_DATABASE_URL: childUrl.toString(), DATABASE_URL: childUrl.toString(),
             P2_TEST_SCHEMA: name, P2_TEST_CHILD: mode, INVARIANT_WEBHOOK_URL: '', PG_POOL_MAX: '12' },
           encoding: 'utf8', timeout: 240000, maxBuffer: 8*1024*1024, windowsHide: true,
@@ -61,6 +62,10 @@ async function child(url) {
   assert.equal(settings.schema,name); assert.equal(settings.timeout,'30s'); assert.equal(settings.lock_timeout,'5s');
   const mode = process.env.P2_TEST_CHILD;
   let before, oldConstraints;
+  if (mode === 'lots-upgrade') {
+    const { seedPre41ItemGuards } = await import('./lib/phase2-item-fixtures.js');
+    before = await seedPre41ItemGuards(preflight);
+  }
   const legacy = schema.slice(0,schema.indexOf('-- Phase 2 sealed definition plane;'));
   if (mode === 'upgrade') {
     await preflight.query(legacy);
@@ -96,6 +101,20 @@ async function child(url) {
   const pool = await makeDb();
   try {
     assert.equal(dbCaps.skipLocked,true); assert.equal((await pool.query('SELECT current_schema() AS schema')).rows[0].schema,name);
+    if (mode === 'lots-upgrade') {
+      const { verifyPre41ItemGuardUpgrade } = await import('./lib/phase2-item-fixtures.js');
+      await verifyPre41ItemGuardUpgrade(pool, before);
+      const second = await makeDb();
+      try { await verifyPre41ItemGuardUpgrade(second, before); } finally { await second.end(); }
+      console.log(`phase2-postgres: ${settings.version}`);
+      console.log('phase2-postgres: populated pre-4.1 guards survive two real boots with exact raw v1/null-ID replay; null-ID v2 SQL refused');
+      return;
+    }
+    if (mode === 'lots') {
+      const { runLotBoundary } = await import('./phase2-lot-boundary.js');
+      await runLotBoundary(pool);
+      return;
+    }
     const second = await makeDb(); await second.end();
     await verifyPhase2DefinitionSchema(pool,{ compatibility: 'postgres' });
     const catalog = (await pool.query(`SELECT t.relname::text AS table_name,c.conname::text AS name,c.contype::text AS type,

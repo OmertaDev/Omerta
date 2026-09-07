@@ -4533,6 +4533,22 @@ CREATE TABLE IF NOT EXISTS item_mutation_guards (
 );
 CREATE INDEX IF NOT EXISTS ix_item_mutation_guards_created
   ON item_mutation_guards (created_at);
+-- Dormant Phase 2 domain receipts. Existing raw-key rows remain v1, with no invented UUID lineage.
+ALTER TABLE item_mutation_guards ADD COLUMN IF NOT EXISTS envelope_version INTEGER NOT NULL DEFAULT 1;
+ALTER TABLE item_mutation_guards ADD COLUMN IF NOT EXISTS mutation_id UUID;
+ALTER TABLE item_mutation_guards ADD COLUMN IF NOT EXISTS actor_account_id TEXT;
+ALTER TABLE item_mutation_guards ADD COLUMN IF NOT EXISTS external_key TEXT;
+ALTER TABLE item_mutation_guards ADD COLUMN IF NOT EXISTS request_json TEXT;
+ALTER TABLE item_mutation_guards DROP CONSTRAINT IF EXISTS item_guard_envelope;
+ALTER TABLE item_mutation_guards ADD CONSTRAINT item_guard_envelope CHECK (
+  (envelope_version=1 AND actor_account_id IS NULL AND external_key IS NULL AND request_json IS NULL)
+  OR (envelope_version=2 AND mutation_id IS NOT NULL AND actor_account_id IS NOT NULL
+    AND char_length(actor_account_id) BETWEEN 1 AND 200 AND external_key IS NOT NULL
+    AND char_length(external_key) BETWEEN 1 AND 200 AND request_json IS NOT NULL)
+);
+CREATE UNIQUE INDEX IF NOT EXISTS ix_item_mutation_uuid ON item_mutation_guards(mutation_id);
+CREATE UNIQUE INDEX IF NOT EXISTS ix_item_mutation_v2_scope
+  ON item_mutation_guards(actor_account_id,mutation_kind,external_key);
 -- Existing Phase 1 databases predate the compound assignment bridge. Rebuild the closed mutation
 -- vocabulary idempotently so deployment cannot accept the code while retaining the old constraint.
 ALTER TABLE item_mutation_guards DROP CONSTRAINT IF EXISTS item_guard_kind;
