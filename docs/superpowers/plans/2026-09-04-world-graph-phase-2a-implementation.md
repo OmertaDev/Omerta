@@ -644,6 +644,8 @@ await withItemTransaction(pool, async (client) => {
 
 #### Task 4.2: Exact lots, shared lineage, and branch-aware invariants
 
+**Adopted downstream contract:** Read the [lot contract amendment](../specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md) and [implementation addendum](2026-09-07-world-graph-phase-2a-lot-contract-addendum.md) before implementation. The addendum stages this task; every requirement below remains mandatory and no partial slice is independently releasable.
+
 **Files:** Create `src/itemlots.js`, `test/phase2-lots.js`, `test/phase2-lots-property.js`; modify `schema.sql`, `src/items.js`, `src/invariants.js`, fixture helper, `test/phase2-postgres.js --lots`, and immediate wiring/census files.
 
 **Consumes:** 4.1's branded client/token/ordinal/read/recovery interfaces; unchanged Task 3 `definitionByHash(queryable, definitionHash)` and safe `ItemDefinition`; the complete item-key plan and trace.

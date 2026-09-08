@@ -1,32 +1,32 @@
 # Generated repository inventory
 
-> Source: worktree at `088ab1c6d4fa`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `18aec9a8b5a2`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 2,223 |
-| Text lines | 582,556 |
-| Repository bytes inventoried | 545,680,092 |
-| Backend/route modules | 213 |
+| Current artifacts | 2,230 |
+| Text lines | 588,214 |
+| Repository bytes inventoried | 546,138,739 |
+| Backend/route modules | 214 |
 | HTTP route registrations / unique routes | 762 / 762 |
-| Database tables | 335 |
+| Database tables | 338 |
 | Solidity declarations | 49 |
-| Git commits | 1,420 |
+| Git commits | 1,437 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 6,292 / 27,704 |
+| Graph nodes / edges | 6,326 / 28,009 |
 
 ## Artifact kinds
 
 | Kind | Files |
 |---|---:|
 | media-asset | 893 |
-| documentation | 271 |
-| backend-module | 191 |
+| documentation | 275 |
+| backend-module | 192 |
 | artifact | 188 |
-| test-suite | 174 |
+| test-suite | 176 |
 | audit | 98 |
 | design | 91 |
 | contract-test | 73 |
@@ -55,12 +55,12 @@
 | [.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
+| [schema.sql](../../schema.sql) | 6,876 | data-schema | 2026-09-08 |
 | [BALANCE.md](../../BALANCE.md) | 6,855 | documentation | 2026-09-06 |
-| [schema.sql](../../schema.sql) | 6,619 | data-schema | 2026-09-07 |
 | [src/rules.tail.js](../../src/rules.tail.js) | 6,145 | backend-module | 2026-09-02 |
 | [reference-prototype-v24.jsx](../../reference-prototype-v24.jsx) | 4,235 | artifact | 2026-08-11 |
 | [test/docs.js](../../test/docs.js) | 4,204 | test-suite | 2026-09-06 |
-| [test/gates.js](../../test/gates.js) | 3,874 | test-suite | 2026-09-07 |
+| [test/gates.js](../../test/gates.js) | 4,078 | test-suite | 2026-09-08 |
 | [omerta-contracts/test/AcquisitionConstellationTask3B.t.sol](../../omerta-contracts/test/AcquisitionConstellationTask3B.t.sol) | 3,743 | contract-test | 2026-08-28 |
 | [src/server.js](../../src/server.js) | 3,509 | backend-module | 2026-09-06 |
 | [test/phase2-review-regressions.js](../../test/phase2-review-regressions.js) | 3,440 | test-suite | 2026-09-07 |

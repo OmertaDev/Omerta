@@ -26,8 +26,52 @@ const policy = createActivationPolicy({ environment: 'postgres-test', allowedPro
 const concept = (id = 'note', version = 1) => ({ id, definitionVersion: version, kind: 'concept' });
 const fixture = (name,version = 1,definitions = [concept()]) => compileFixture(baseLibrary({ packageId: `omerta.pg.${name}`, version, definitions }));
 const rejects = (promise,code) => assert.rejects(promise,(error) => error.code === code,`expected ${code}`);
-const safeError = (error) => error?.code === 'ERR_ASSERTION' ? `assertion: ${error.message.split('\n')[0]}`
-  : `code: ${/^[a-zA-Z0-9_]{1,64}$/.test(error?.code ?? '') ? error.code : 'test_failed'}`;
+const safeError = (error) => {
+  if (error?.code !== 'ERR_ASSERTION') return `code: ${/^[a-zA-Z0-9_]{1,64}$/.test(error?.code ?? '') ? error.code : 'test_failed'}`;
+  const location = String(error.stack ?? '').match(/(?:test[\\/])?(phase2-[a-z-]+\.js:\d+:\d+)/)?.[1] ?? 'unknown assertion location';
+  const scalar = (value) => value === null || typeof value === 'boolean' || (typeof value === 'number' && Number.isFinite(value))
+    ? JSON.stringify(value) : '[redacted non-scalar]';
+  return `assertion at ${location}; actual=${scalar(error.actual)} expected=${scalar(error.expected)}; ${String(error.operator ?? '').replace(/[^a-zA-Z]/g, '').slice(0, 32)}`;
+};
+
+// Only the already verified native child can allocate these per-block schemas. The locally retained
+// exact name grants cleanup ownership only after CREATE is positively acknowledged. An ambiguous
+// CREATE or a pre-existing name fails without claiming/dropping that schema.
+function lotFixtureFactory(parentPool, verifiedChildUrl) {
+  return async () => {
+    const fixtureName = ownedName('p2_definitions_' + randomUUID().replaceAll('-', ''));
+    let created = false, fixturePool = null, disposed = false;
+    const dispose = async () => {
+      if (disposed) return;
+      if (fixturePool) { await fixturePool.end(); fixturePool = null; }
+      if (created) {
+        await parentPool.query(`DROP SCHEMA "${ownedName(fixtureName)}" CASCADE`);
+        created = false;
+      }
+      disposed = true;
+    };
+    try {
+      const prior = await parentPool.query('SELECT nspname FROM pg_namespace WHERE nspname=$1', [fixtureName]);
+      assert.equal(prior.rows.length, 0, 'fresh native lot fixture schema must not pre-exist');
+      await parentPool.query(`CREATE SCHEMA "${fixtureName}"`); created = true;
+      const fixtureUrl = new URL(verifiedChildUrl.toString());
+      fixtureUrl.searchParams.set('options', `-c search_path=${fixtureName} -c statement_timeout=30000 -c lock_timeout=5000 -c idle_in_transaction_session_timeout=30000`);
+      fixturePool = new pg.Pool({ connectionString: fixtureUrl.toString(), max: 12 });
+      const settings = (await fixturePool.query(`SELECT current_schema() AS schema,
+        current_setting('statement_timeout') AS timeout,current_setting('lock_timeout') AS lock_timeout,
+        current_setting('idle_in_transaction_session_timeout') AS idle_timeout,current_database() AS database,current_user AS role`)).rows[0];
+      const parentSettings = (await parentPool.query('SELECT current_database() AS database,current_user AS role')).rows[0];
+      assert.equal(settings.schema, fixtureName); assert.equal(settings.timeout, '30s');
+      assert.equal(settings.lock_timeout, '5s'); assert.equal(settings.idle_timeout, '30s');
+      assert.equal(settings.database, parentSettings.database); assert.equal(settings.role, parentSettings.role);
+      await fixturePool.query(schema);
+      return { pool: fixturePool, dispose };
+    } catch (error) {
+      try { await dispose(); } catch (cleanup) { throw new AggregateError([error, cleanup], 'native fixture setup and cleanup failed'); }
+      throw error;
+    }
+  };
+}
 
 async function parent(url) {
   // An admin connection creates/drops only names generated and retained by this invocation.
@@ -35,7 +79,7 @@ async function parent(url) {
   const admin = new pg.Client({ connectionString: url.toString() });
   await admin.connect();
   try {
-    for (const mode of process.argv[2] === '--lots' ? ['lots', 'lots-upgrade'] : ['clean','upgrade','scalar','missing-unique']) {
+    for (const mode of process.argv[2] === '--lots' ? ['lots-boundary', 'lots', 'lots-upgrade'] : ['clean','upgrade','scalar','missing-unique']) {
       const name = ownedName('p2_definitions_'+randomUUID().replaceAll('-',''));
       await admin.query(`CREATE SCHEMA "${name}"`);
       try {
@@ -58,7 +102,7 @@ async function child(url) {
   // The independent preflight connection verifies the exact child-scoped DSN before ANY DDL.
   const preflight = new pg.Client({ connectionString: url.toString() });
   await preflight.connect();
-  const settings = (await preflight.query("SELECT current_schema() AS schema,current_setting('statement_timeout') AS timeout,current_setting('lock_timeout') AS lock_timeout,version() AS version")).rows[0];
+  const settings = (await preflight.query("SELECT current_schema() AS schema,current_setting('statement_timeout') AS timeout,current_setting('lock_timeout') AS lock_timeout,current_setting('server_version_num') AS server_version_num,version() AS version")).rows[0];
   assert.equal(settings.schema,name); assert.equal(settings.timeout,'30s'); assert.equal(settings.lock_timeout,'5s');
   const mode = process.env.P2_TEST_CHILD;
   let before, oldConstraints;
@@ -110,9 +154,26 @@ async function child(url) {
       console.log('phase2-postgres: populated pre-4.1 guards survive two real boots with exact raw v1/null-ID replay; null-ID v2 SQL refused');
       return;
     }
-    if (mode === 'lots') {
+    if (mode === 'lots-boundary') {
       const { runLotBoundary } = await import('./phase2-lot-boundary.js');
       await runLotBoundary(pool);
+      console.log(`phase2-postgres: exact item boundary on ${settings.version}`);
+      return;
+    }
+    if (mode === 'lots') {
+      const { runLots } = await import('./phase2-lots.js');
+      const fixtureFactory = lotFixtureFactory(pool, url);
+      let fixtureCount = 0, completedFixtures = 0;
+      await runLots(async () => {
+        const fixture = await fixtureFactory(); fixtureCount++;
+        return { ...fixture, async dispose() { await fixture.dispose(); completedFixtures++; } };
+      });
+      assert.equal(completedFixtures, fixtureCount, 'every actually executed native lot fixture completed its fresh-schema lifecycle');
+      console.log(`phase2-postgres: ${completedFixtures} native root lot fixture blocks completed in fresh schemas`);
+      await lotRaces(pool);
+      const residue = (await pool.query("SELECT nspname FROM pg_namespace WHERE nspname LIKE 'p2_definitions_%' AND nspname<>$1", [name])).rows;
+      assert.equal(residue.length, 0, 'native fixture schemas leave no residue');
+      console.log(`phase2-postgres: exact lots on ${settings.version}`);
       return;
     }
     const second = await makeDb(); await second.end();
@@ -129,8 +190,12 @@ async function child(url) {
     console.log('phase2-postgres: constraint catalog available; '+catalog.filter((row)=>row.name.startsWith('p2_')).length+' explicit p2 constraints');
     if(mode==='clean') console.log('phase2-postgres: named catalog '+JSON.stringify(catalog.filter((row)=>row.name.startsWith('p2_'))));
     if (mode === 'upgrade') {
-      assert.deepEqual(await legacySnapshot(pool),before); assert.deepEqual(await legacyConstraints(pool),oldConstraints);
-      console.log('phase2-postgres: populated legacy hashes/pointer and complete legacy constraint catalog unchanged');
+      assert.deepEqual(await legacySnapshot(pool),before);
+      const upgradedConstraints = await legacyConstraints(pool);
+      verifyUpgradeConstraintCatalog(oldConstraints,upgradedConstraints,Number(settings.server_version_num));
+      verifyUpgradeConstraintCausalNegatives(oldConstraints,upgradedConstraints,Number(settings.server_version_num));
+      console.log('phase2-postgres: populated legacy hashes/pointer and complete legacy constraint catalog unchanged except exact lot/IO additions and four branch-aware replacements');
+      console.log('phase2-postgres: nine upgrade catalog causal negatives reject unrelated/replacement/new removal or alteration and unexpected addition');
       return;
     }
     const failureTarget = fixture('read-failure');
@@ -159,6 +224,106 @@ async function legacyConstraints(q) {
   return (await q.query(`SELECT t.relname::text AS table_name,c.conname::text AS name,pg_get_constraintdef(c.oid,true) AS definition
     FROM pg_constraint c JOIN pg_class t ON t.oid=c.conrelid JOIN pg_namespace n ON n.oid=t.relnamespace
     WHERE n.nspname=current_schema() AND t.relname NOT IN ($1,$2,$3,$4,$5,$6) ORDER BY t.relname,c.conname`,TABLES)).rows;
+}
+const constraintRow = (table_name,name,definition) => ({ table_name,name,definition });
+const replacedUpgradeConstraints = [
+  {
+    before: constraintRow('item_instances','item_instance_template_id',`CHECK (char_length(template_id) >= 1 AND char_length(template_id) <= 200)`),
+    after: constraintRow('item_instances','item_instance_template_id',`CHECK (definition_hash IS NULL AND char_length(template_id) >= 1 AND char_length(template_id) <= 200 OR definition_hash IS NOT NULL AND char_length(template_id) >= 1 AND char_length(template_id) <= 258)`),
+  },
+  {
+    before: constraintRow('item_events','item_event_template_id',`CHECK (char_length(template_id) >= 1 AND char_length(template_id) <= 200)`),
+    after: constraintRow('item_events','item_event_template_id',`CHECK (event_branch = 'legacy'::text AND char_length(template_id) >= 1 AND char_length(template_id) <= 200 OR event_branch <> 'legacy'::text AND char_length(template_id) >= 1 AND char_length(template_id) <= 258)`),
+  },
+  {
+    before: constraintRow('item_events','item_event_kind',`CHECK (event_kind = ANY (ARRAY['stack_granted'::text, 'stack_consumed'::text, 'created'::text, 'transferred'::text, 'consumed'::text, 'escrowed'::text, 'released'::text]))`),
+    after: constraintRow('item_events','item_event_kind',`CHECK (event_branch = 'legacy'::text AND (event_kind = ANY (ARRAY['stack_granted'::text, 'stack_consumed'::text, 'created'::text, 'transferred'::text, 'consumed'::text, 'escrowed'::text, 'released'::text])) OR event_branch = 'lot'::text AND (event_kind = ANY (ARRAY['lot_granted'::text, 'lot_consumed'::text, 'lot_split_debit'::text, 'lot_split_output'::text, 'lot_escrowed'::text, 'lot_released'::text, 'lot_escrow_consumed'::text])) OR event_branch = 'unique'::text AND (event_kind = ANY (ARRAY['unique_granted'::text, 'unique_escrowed'::text, 'unique_released'::text, 'unique_transferred'::text, 'unique_consumed'::text])) OR event_branch = 'observation'::text AND event_kind = 'migration_origin'::text)`),
+  },
+  {
+    before: constraintRow('item_events','item_event_quantities',`CHECK ((event_kind = ANY (ARRAY['stack_granted'::text, 'stack_consumed'::text])) AND item_id IS NULL AND provenance_kind IS NULL AND quantity_delta IS NOT NULL AND quantity_delta <> 0 AND quantity_before IS NOT NULL AND quantity_before >= 0 AND quantity_after IS NOT NULL AND quantity_after >= 0 AND quantity_after = (quantity_before + quantity_delta) OR (event_kind <> ALL (ARRAY['stack_granted'::text, 'stack_consumed'::text])) AND item_id IS NOT NULL AND provenance_kind IS NOT NULL AND quantity_delta IS NULL AND quantity_before IS NULL AND quantity_after IS NULL)`),
+    after: constraintRow('item_events','item_event_quantities',`CHECK (event_branch = 'legacy'::text AND ((event_kind = ANY (ARRAY['stack_granted'::text, 'stack_consumed'::text])) AND item_id IS NULL AND provenance_kind IS NULL AND quantity_delta IS NOT NULL AND quantity_delta <> 0 AND quantity_before IS NOT NULL AND quantity_before >= 0 AND quantity_after IS NOT NULL AND quantity_after >= 0 AND quantity_after = (quantity_before + quantity_delta) OR (event_kind <> ALL (ARRAY['stack_granted'::text, 'stack_consumed'::text])) AND item_id IS NOT NULL AND provenance_kind IS NOT NULL AND quantity_delta IS NULL AND quantity_before IS NULL AND quantity_after IS NULL) OR (event_branch = ANY (ARRAY['lot'::text, 'unique'::text])) AND provenance_kind IS NULL AND (event_branch = 'lot'::text AND item_id IS NULL OR event_branch = 'unique'::text AND item_id IS NOT NULL) AND quantity_delta IS NOT NULL AND quantity_before IS NOT NULL AND quantity_before >= 0 AND quantity_after IS NOT NULL AND quantity_after >= 0 AND quantity_after = (quantity_before + quantity_delta) AND ((event_kind = ANY (ARRAY['lot_granted'::text, 'lot_split_output'::text, 'unique_granted'::text])) AND quantity_before = 0 AND quantity_delta > 0 OR (event_kind = ANY (ARRAY['lot_consumed'::text, 'lot_split_debit'::text, 'lot_escrow_consumed'::text, 'unique_consumed'::text])) AND quantity_before > 0 AND quantity_delta < 0 OR (event_kind = ANY (ARRAY['lot_escrowed'::text, 'lot_released'::text, 'unique_escrowed'::text, 'unique_released'::text, 'unique_transferred'::text])) AND quantity_before > 0 AND quantity_delta = 0) AND (event_branch <> 'unique'::text OR (quantity_before = ANY (ARRAY[0, 1])) AND (quantity_after = ANY (ARRAY[0, 1]))) OR event_branch = 'observation'::text AND item_id IS NOT NULL AND provenance_kind IS NULL AND quantity_delta IS NOT NULL AND quantity_delta = 0 AND quantity_before IS NOT NULL AND (quantity_before = ANY (ARRAY[0, 1])) AND quantity_after IS NOT NULL AND quantity_after = quantity_before)`),
+  },
+];
+// Independent expected pg_get_constraintdef output: this is intentionally not parsed from schema.sql.
+const requiredUpgradeConstraints = [
+  constraintRow('item_events','item_event_branch_ck',`CHECK (event_branch = 'legacy'::text AND mutation_id IS NULL AND event_ordinal IS NULL AND lot_id IS NULL AND definition_hash IS NULL AND snapshot_json IS NULL OR event_branch = 'lot'::text AND mutation_id IS NOT NULL AND event_ordinal IS NOT NULL AND event_ordinal >= 0 AND lot_id IS NOT NULL AND definition_hash IS NOT NULL AND snapshot_json IS NOT NULL OR (event_branch = ANY (ARRAY['unique'::text, 'observation'::text])) AND mutation_id IS NOT NULL AND event_ordinal IS NOT NULL AND event_ordinal >= 0 AND lot_id IS NULL AND item_id IS NOT NULL AND definition_hash IS NOT NULL AND snapshot_json IS NOT NULL)`),
+  constraintRow('item_events','item_event_lot_fk',`FOREIGN KEY (lot_id, definition_hash) REFERENCES item_lots(lot_id, definition_hash)`),
+  constraintRow('item_events','item_event_mutation_fk',`FOREIGN KEY (mutation_id) REFERENCES item_mutation_guards(mutation_id)`),
+  constraintRow('item_events','item_event_unique_fk',`FOREIGN KEY (item_id, definition_hash) REFERENCES item_instances(id, definition_hash)`),
+  constraintRow('item_instances','item_unique_attachment_ck',`CHECK (definition_hash IS NULL AND logical_item_id IS NULL AND quality_band IS NULL AND quality_state_digest IS NULL AND trade_policy_hash IS NULL AND condition_summary IS NULL AND export_policy IS NULL AND provenance_class IS NULL AND provenance_digest IS NULL AND mutation_id IS NULL AND output_ordinal IS NULL OR definition_hash IS NOT NULL AND logical_item_id IS NOT NULL AND trade_policy_hash IS NOT NULL AND trade_policy_hash = definition_hash AND condition_summary IS NULL AND export_policy IS NOT NULL AND export_policy = 'ineligible'::text AND provenance_class IS NOT NULL AND (provenance_class = ANY (ARRAY['crafted'::text, 'salvaged'::text, 'awarded'::text, 'imported'::text, 'migration_origin'::text])) AND provenance_digest IS NOT NULL AND char_length(provenance_digest) = 64 AND provenance_digest = lower(provenance_digest) AND translate(provenance_digest, '0123456789abcdef'::text, ''::text) = ''::text AND mutation_id IS NOT NULL AND output_ordinal IS NOT NULL AND output_ordinal >= 0 AND (quality_band IS NULL OR char_length(quality_band) >= 1 AND char_length(quality_band) <= 80) AND (quality_state_digest IS NULL OR char_length(quality_state_digest) = 64 AND quality_state_digest = lower(quality_state_digest) AND translate(quality_state_digest, '0123456789abcdef'::text, ''::text) = ''::text))`),
+  constraintRow('item_instances','item_unique_definition_fk',`FOREIGN KEY (logical_item_id, definition_hash) REFERENCES item_definition_versions(logical_item_id, definition_hash)`),
+  constraintRow('item_instances','item_unique_mutation_fk',`FOREIGN KEY (mutation_id) REFERENCES item_mutation_guards(mutation_id)`),
+  constraintRow('item_lots','item_lot_attachment_uq',`UNIQUE (lot_id, definition_hash, mutation_id, output_ordinal, original_quantity)`),
+  constraintRow('item_lots','item_lot_custody_ck',`CHECK (state = 'exhausted'::text AND custody_state IS NULL AND custody_scope IS NULL AND custody_id IS NULL AND depositor_scope IS NULL AND depositor_id IS NULL OR state = 'active'::text AND custody_state IS NOT NULL AND custody_state = 'direct'::text AND custody_scope IS NULL AND custody_id IS NULL AND depositor_scope IS NULL AND depositor_id IS NULL AND (owner_scope = ANY (ARRAY['character'::text, 'account'::text])) OR state = 'escrowed'::text AND custody_state IS NOT NULL AND custody_state = 'escrowed'::text AND custody_scope IS NOT NULL AND custody_scope = 'operation'::text AND custody_id IS NOT NULL AND owner_scope = 'operation'::text AND custody_id = owner_id AND depositor_scope IS NOT NULL AND (depositor_scope = ANY (ARRAY['character'::text, 'account'::text])) AND depositor_id IS NOT NULL AND char_length(depositor_id) >= 1 AND char_length(depositor_id) <= 200)`),
+  constraintRow('item_lots','item_lot_definition_fk',`FOREIGN KEY (logical_item_id, definition_hash) REFERENCES item_definition_versions(logical_item_id, definition_hash)`),
+  constraintRow('item_lots','item_lot_identity_uq',`UNIQUE (lot_id, definition_hash)`),
+  constraintRow('item_lots','item_lot_mutation_fk',`FOREIGN KEY (mutation_id) REFERENCES item_mutation_guards(mutation_id)`),
+  constraintRow('item_lots','item_lot_ordinal_ck',`CHECK (output_ordinal >= 0 AND (source_input_ordinal IS NULL OR source_input_ordinal >= 0 AND source_input_ordinal < output_ordinal))`),
+  constraintRow('item_lots','item_lot_owner_ck',`CHECK ((owner_scope = ANY (ARRAY['character'::text, 'account'::text, 'operation'::text])) AND char_length(owner_id) >= 1 AND char_length(owner_id) <= 200)`),
+  constraintRow('item_lots','item_lot_policy_ck',`CHECK (trade_policy_hash = definition_hash)`),
+  constraintRow('item_lots','item_lot_provenance_ck',`CHECK ((provenance_class = ANY (ARRAY['crafted'::text, 'salvaged'::text, 'awarded'::text, 'imported'::text, 'migration_origin'::text])) AND char_length(provenance_digest) = 64 AND provenance_digest = lower(provenance_digest) AND translate(provenance_digest, '0123456789abcdef'::text, ''::text) = ''::text)`),
+  constraintRow('item_lots','item_lot_quality_ck',`CHECK (quality_band IS NULL OR char_length(quality_band) >= 1 AND char_length(quality_band) <= 80)`),
+  constraintRow('item_lots','item_lot_quality_digest_ck',`CHECK (quality_state_digest IS NULL OR char_length(quality_state_digest) = 64 AND quality_state_digest = lower(quality_state_digest) AND translate(quality_state_digest, '0123456789abcdef'::text, ''::text) = ''::text)`),
+  constraintRow('item_lots','item_lot_quantity_ck',`CHECK (original_quantity >= 1 AND original_quantity <= 1000000 AND remaining_quantity >= 0 AND remaining_quantity <= original_quantity)`),
+  constraintRow('item_lots','item_lot_state_ck',`CHECK (state = 'active'::text AND custody_state = 'direct'::text AND remaining_quantity > 0 OR state = 'escrowed'::text AND custody_state = 'escrowed'::text AND remaining_quantity > 0 OR state = 'exhausted'::text AND remaining_quantity = 0)`),
+  constraintRow('item_lots','item_lots_pkey',`PRIMARY KEY (lot_id)`),
+  constraintRow('item_mutation_inputs','item_input_branch_ck',`CHECK (event_branch = 'lot'::text AND lot_id IS NOT NULL AND item_id IS NULL AND (transition_kind = ANY (ARRAY['consume'::text, 'split'::text, 'escrow'::text, 'release'::text, 'consume_escrow_lot'::text])) OR event_branch = 'unique'::text AND lot_id IS NULL AND item_id IS NOT NULL AND quantity_before = 1 AND attachment_quantity = 1 AND (transition_kind = ANY (ARRAY['escrow'::text, 'release'::text, 'transfer_unique'::text, 'consume_unique'::text])))`),
+  constraintRow('item_mutation_inputs','item_input_event_fk',`FOREIGN KEY (event_id, mutation_id, input_ordinal, event_branch, definition_hash) REFERENCES item_events(id, mutation_id, event_ordinal, event_branch, definition_hash)`),
+  constraintRow('item_mutation_inputs','item_input_lot_attachment_fk',`FOREIGN KEY (lot_id, definition_hash, attachment_mutation_id, attachment_output_ordinal, attachment_quantity) REFERENCES item_lots(lot_id, definition_hash, mutation_id, output_ordinal, original_quantity)`),
+  constraintRow('item_mutation_inputs','item_input_lot_event_fk',`FOREIGN KEY (event_id, mutation_id, input_ordinal, event_branch, definition_hash, lot_id) REFERENCES item_events(id, mutation_id, event_ordinal, event_branch, definition_hash, lot_id)`),
+  constraintRow('item_mutation_inputs','item_input_lot_fk',`FOREIGN KEY (lot_id, definition_hash) REFERENCES item_lots(lot_id, definition_hash)`),
+  constraintRow('item_mutation_inputs','item_input_pk',`PRIMARY KEY (mutation_id, input_ordinal)`),
+  constraintRow('item_mutation_inputs','item_input_quantity_ck',`CHECK (input_ordinal >= 0 AND quantity_before >= removed_quantity AND quantity_before > 0 AND quantity_after = (quantity_before - removed_quantity) AND ((transition_kind = ANY (ARRAY['escrow'::text, 'release'::text, 'transfer_unique'::text])) AND removed_quantity = 0 OR (transition_kind = ANY (ARRAY['consume'::text, 'split'::text, 'consume_unique'::text, 'consume_escrow_lot'::text])) AND removed_quantity > 0) AND attachment_output_ordinal >= 0 AND attachment_quantity >= 1 AND attachment_quantity <= 1000000)`),
+  constraintRow('item_mutation_inputs','item_input_split_uq',`UNIQUE (mutation_id, input_ordinal, definition_hash, removed_quantity, transition_kind)`),
+  constraintRow('item_mutation_inputs','item_input_unique_attachment_fk',`FOREIGN KEY (item_id, definition_hash, attachment_mutation_id, attachment_output_ordinal) REFERENCES item_instances(id, definition_hash, mutation_id, output_ordinal)`),
+  constraintRow('item_mutation_inputs','item_input_unique_event_fk',`FOREIGN KEY (event_id, mutation_id, input_ordinal, event_branch, definition_hash, item_id) REFERENCES item_events(id, mutation_id, event_ordinal, event_branch, definition_hash, item_id)`),
+  constraintRow('item_mutation_outputs','item_output_branch_ck',`CHECK (event_branch = 'lot'::text AND lot_id IS NOT NULL AND item_id IS NULL AND ((transition_kind = ANY (ARRAY['grant'::text, 'escrow'::text, 'release'::text])) AND source_input_ordinal IS NULL AND source_transition_kind IS NULL OR transition_kind = 'split'::text AND source_input_ordinal IS NOT NULL AND source_input_ordinal >= 0 AND source_input_ordinal < output_ordinal AND source_transition_kind = 'split'::text) OR event_branch = 'unique'::text AND lot_id IS NULL AND item_id IS NOT NULL AND quantity = 1 AND attachment_quantity = 1 AND (transition_kind = ANY (ARRAY['grant'::text, 'escrow'::text, 'release'::text, 'transfer_unique'::text])) AND source_input_ordinal IS NULL AND source_transition_kind IS NULL OR event_branch = 'observation'::text AND lot_id IS NULL AND item_id IS NOT NULL AND quantity = 0 AND attachment_quantity = 1 AND transition_kind = 'migration_origin'::text AND source_input_ordinal IS NULL AND source_transition_kind IS NULL AND attachment_mutation_id = mutation_id AND attachment_output_ordinal = output_ordinal)`),
+  constraintRow('item_mutation_outputs','item_output_event_fk',`FOREIGN KEY (event_id, mutation_id, output_ordinal, event_branch, definition_hash) REFERENCES item_events(id, mutation_id, event_ordinal, event_branch, definition_hash)`),
+  constraintRow('item_mutation_outputs','item_output_lot_event_fk',`FOREIGN KEY (event_id, mutation_id, output_ordinal, event_branch, definition_hash, lot_id) REFERENCES item_events(id, mutation_id, event_ordinal, event_branch, definition_hash, lot_id)`),
+  constraintRow('item_mutation_outputs','item_output_lot_fk',`FOREIGN KEY (lot_id, definition_hash, attachment_mutation_id, attachment_output_ordinal, attachment_quantity) REFERENCES item_lots(lot_id, definition_hash, mutation_id, output_ordinal, original_quantity)`),
+  constraintRow('item_mutation_outputs','item_output_pk',`PRIMARY KEY (mutation_id, output_ordinal)`),
+  constraintRow('item_mutation_outputs','item_output_quantity_ck',`CHECK (output_ordinal >= 0 AND (event_branch = 'observation'::text AND quantity = 0 OR event_branch <> 'observation'::text AND quantity >= 1 AND quantity <= 1000000) AND attachment_output_ordinal >= 0 AND attachment_quantity >= quantity AND attachment_quantity <= 1000000 AND ((transition_kind <> ALL (ARRAY['grant'::text, 'split'::text])) OR attachment_mutation_id = mutation_id AND attachment_output_ordinal = output_ordinal AND attachment_quantity = quantity))`),
+  constraintRow('item_mutation_outputs','item_output_split_fk',`FOREIGN KEY (mutation_id, source_input_ordinal, definition_hash, quantity, source_transition_kind) REFERENCES item_mutation_inputs(mutation_id, input_ordinal, definition_hash, removed_quantity, transition_kind)`),
+  constraintRow('item_mutation_outputs','item_output_unique_event_fk',`FOREIGN KEY (event_id, mutation_id, output_ordinal, event_branch, definition_hash, item_id) REFERENCES item_events(id, mutation_id, event_ordinal, event_branch, definition_hash, item_id)`),
+  constraintRow('item_mutation_outputs','item_output_unique_fk',`FOREIGN KEY (item_id, definition_hash, attachment_mutation_id, attachment_output_ordinal) REFERENCES item_instances(id, definition_hash, mutation_id, output_ordinal)`),
+];
+// PostgreSQL 18 promotes NOT NULL metadata into pg_constraint; earlier supported backends do not.
+const upgradeNotNullColumns = {
+  item_events: ['event_branch'],
+  item_lots: ['created_at','definition_hash','logical_item_id','lot_id','mutation_id','original_quantity','output_ordinal','owner_id','owner_scope','provenance_class','provenance_coalescing_class','provenance_digest','remaining_quantity','state','trade_policy_hash','updated_at'],
+  item_mutation_inputs: ['attachment_mutation_id','attachment_output_ordinal','attachment_quantity','definition_hash','event_branch','event_id','input_ordinal','mutation_id','quantity_after','quantity_before','removed_quantity','snapshot_json','transition_kind'],
+  item_mutation_outputs: ['attachment_mutation_id','attachment_output_ordinal','attachment_quantity','definition_hash','event_branch','event_id','mutation_id','output_ordinal','quantity','snapshot_json','transition_kind'],
+};
+const catalogIdentity = (row) => `${row.table_name}\0${row.name}`;
+const orderedCatalog = (rows) => [...rows].sort((left,right) => catalogIdentity(left) < catalogIdentity(right) ? -1 : catalogIdentity(left) > catalogIdentity(right) ? 1 : 0);
+function expectedUpgradeConstraintCatalog(before,serverVersionNum) {
+  const replacements = new Map(replacedUpgradeConstraints.map(({ before: prior,after }) => [catalogIdentity(prior),{ prior,after }]));
+  for (const { prior } of replacements.values()) assert.deepEqual(before.find((row) => catalogIdentity(row) === catalogIdentity(prior)),prior);
+  const additions = [...requiredUpgradeConstraints,...replacedUpgradeConstraints.map(({ after }) => after)];
+  if (serverVersionNum >= 180000) for (const [table,columns] of Object.entries(upgradeNotNullColumns)) {
+    for (const column of columns) additions.push(constraintRow(table,`${table}_${column}_not_null`,`NOT NULL ${column}`));
+  }
+  return orderedCatalog([...before.filter((row) => !replacements.has(catalogIdentity(row))),...additions]);
+}
+function verifyUpgradeConstraintCatalog(before,after,serverVersionNum) {
+  assert.deepEqual(orderedCatalog(after),expectedUpgradeConstraintCatalog(before,serverVersionNum));
+}
+function verifyUpgradeConstraintCausalNegatives(before,after,serverVersionNum) {
+  const mutate = (table,name,change) => {
+    const candidate = after.map((row) => ({ ...row })), index = candidate.findIndex((row) => row.table_name === table && row.name === name);
+    assert(index >= 0,`causal fixture target ${table}.${name} exists`); change(candidate,index); return candidate;
+  };
+  const rejected = (label,candidate) => assert.throws(() => verifyUpgradeConstraintCatalog(before,candidate,serverVersionNum),
+    (error) => error?.code === 'ERR_ASSERTION',label);
+  rejected('unrelated removal',mutate('item_events','item_event_key',(rows,index) => rows.splice(index,1)));
+  rejected('unrelated alteration',mutate('item_events','item_event_key',(rows,index) => { rows[index].definition += ' altered'; }));
+  rejected('replacement removal',mutate('item_events','item_event_kind',(rows,index) => rows.splice(index,1)));
+  rejected('replacement alteration',mutate('item_events','item_event_quantities',(rows,index) => { rows[index].definition += ' altered'; }));
+  rejected('unique template-bound alteration',mutate('item_instances','item_instance_template_id',(rows,index) => { rows[index].definition += ' altered'; }));
+  rejected('event template-bound removal',mutate('item_events','item_event_template_id',(rows,index) => rows.splice(index,1)));
+  rejected('required addition removal',mutate('item_lots','item_lot_quantity_ck',(rows,index) => rows.splice(index,1)));
+  rejected('required addition alteration',mutate('item_lots','item_lot_quantity_ck',(rows,index) => { rows[index].definition += ' altered'; }));
+  rejected('unexpected addition',[...after,constraintRow('item_events','unexpected_upgrade_constraint','CHECK (true)')]);
 }
 async function constraints(pool) {
   console.log('phase2-postgres: beginning direct constraints');
@@ -230,6 +395,87 @@ async function concurrent(pool,left,right) {
   await contender.promise;
   release.resolve();
   return Promise.all([one,two]);
+}
+async function lotRaces(pool) {
+  const { withItemFixture, lotRequest } = await import('./lib/phase2-item-fixtures.js');
+  const { withItemTransaction, withLotMutation } = await import('../src/items.js');
+  const { grantLot, consumeExactLot, withCompleteItemCandidates } = await import('../src/itemlots.js');
+  const { lotOutput, lotLeafPrivateCases } = await import('./phase2-lots.js');
+  const { createItemLockTrace } = await import('../src/item-lock-trace.js');
+  await withItemFixture(async ({ accountOwner: owner, definition, snapshot }) => {
+    const overlap = async (pattern, waitingTable, left, right) => {
+      const entered = deferred(), release = deferred(); let paused = false;
+      const first = forwardPool(pool, { after: async (sql) => {
+        if (!paused && pattern.test(sql)) { paused = true; entered.resolve(); await release.promise; }
+      } });
+      const second = forwardPool(pool);
+      const settle = (promise) => promise.then((value) => ({ ok: true, value }), (error) => ({ ok: false, code: error.code }));
+      const one = settle(left(first));
+      await Promise.race([entered.promise, one.then(() => { throw Error('first lot contender did not reach its lock barrier'); })]);
+      const two = settle(right(second));
+      let waiting = false;
+      try {
+        const deadline = Date.now() + 4000;
+        while (Date.now() < deadline) {
+          const result = await pool.query(`SELECT pid FROM pg_stat_activity WHERE datname=current_database()
+            AND pid<>pg_backend_pid() AND wait_event_type='Lock' AND query LIKE $1`, [`%${waitingTable}%`]);
+          if (result.rows.length) { waiting = true; break; }
+          await new Promise((resolve) => setTimeout(resolve, 10));
+        }
+      } finally { release.resolve(); }
+      const outcomes = await Promise.all([one, two]);
+      assert.equal(waiting, true, 'second native connection actually waits on the held SQL lock');
+      assert.equal([...first.statements, ...second.statements].filter((sql) =>
+        /^DELETE FROM item_(lots|events|mutation_inputs|mutation_outputs|mutation_guards)/.test(sql)).length, 0,
+      'native race rollback never emits compensation SQL');
+      return outcomes;
+    };
+    const grantRequest = lotRequest(owner, definition);
+    const grant = (target) => withItemTransaction(target, (q) => withLotMutation(q, grantRequest,
+      (token) => grantLot(q, token, definition, lotOutput(owner, definition))));
+    const grants = await overlap(/^INSERT INTO item_mutation_guards /, 'item_mutation_guards', grant, grant);
+    assert(grants.every((outcome) => outcome.ok)); assert.deepEqual(grants[0].value, grants[1].value);
+    assert.equal((await pool.query('SELECT * FROM item_lots')).rowCount, 1, 'same scoped key grants one physical lot');
+    const lotId = grants[0].value.lotId;
+    const consume = (target, request, quantity) => withItemTransaction(target, (q) => withLotMutation(q, request,
+      (token) => withCompleteItemCandidates(q, token, createItemLockTrace(), { root: { owner, authority: request.request.authority },
+        requirements: [{ kind: 'lot_exact', lotId, quantity }] }, () => consumeExactLot(q, token, lotId, quantity))));
+    const first = lotRequest(owner, definition), second = lotRequest(owner, definition);
+    const consumers = await overlap(/FROM item_lots WHERE lot_id=\$1 FOR UPDATE/, 'item_lots',
+      (target) => consume(target, first, 7), (target) => consume(target, second, 7));
+    assert.equal(consumers[0].ok, true); assert.equal(consumers[1].code, 'contention');
+    const afterRace = await snapshot();
+    await rejects(consume(pool, second, 7), 'materials');
+    assert.deepEqual(await snapshot(), afterRace, 'losing same-key retry recomputes shortage without a committed guard');
+    assert.equal((await pool.query('SELECT remaining_quantity FROM item_lots WHERE lot_id=$1', [lotId])).rows[0].remaining_quantity, 3);
+    const { materialSource, compileFixture } = await import('./lib/phase2-definition-fixtures.js');
+    const uniqueSource = materialSource({ kind: 'item', stackable: false, maximumLotQuantity: 1, definitionVersion: 2 });
+    uniqueSource.version = 2;
+    const uniqueArtifact = compileFixture(uniqueSource); await storeSealedBundle(pool, uniqueArtifact.request);
+    const uniqueDefinition = await definitionByHash(pool, uniqueArtifact.expectedDefinitions[0].definitionHash);
+    const lotLeaves = await import('../src/itemlots.js');
+    for (const [name, invoke] of lotLeafPrivateCases(lotLeaves, owner, definition, uniqueDefinition)) {
+      const before = await snapshot(), entered = deferred(), release = deferred(); let otherClient, otherToken;
+      const cleanup = Object.assign(new Error('Close deliberately held private root.'), { code: 'fixture_close' });
+      const held = withItemTransaction(pool, (q) => withLotMutation(q, lotRequest(owner, definition), async (token) => {
+        otherClient = q; otherToken = token; entered.resolve(); await release.promise; throw cleanup;
+      }));
+      const heldSettled = held.then(() => null, (error) => error);
+      try {
+        await Promise.race([entered.promise, heldSettled.then(() => { throw Error('private root barrier not reached'); })]);
+        await assert.rejects(() => withItemTransaction(pool, (q) => withLotMutation(q, lotRequest(owner, definition), async () => {
+          assert.notEqual(q, otherClient, 'two distinct native item clients remain active');
+          return invoke(q, otherToken);
+        })), { code: 'item_transaction_required' }, `${name}/other-active-client-token`);
+      } finally { release.resolve(); }
+      assert.equal(await heldSettled, cleanup);
+      assert.deepEqual(await snapshot(), before, `${name}/cross-client rolls back both roots without effects`);
+    }
+    console.log('phase2-postgres: five lot leaves reject another simultaneously active native client token with unchanged snapshots PASS');
+    const invariant = await runLedgerInvariants(pool, { alert: false });
+    assert.equal(invariant.ok, true, JSON.stringify(invariant.checks.filter((check) => !check.ok)));
+    console.log('phase2-postgres: lot same-key grant/replay and competing exact consumption: actual SQL lock wait, one winner, contention then materials, zero compensation PASS');
+  }, pool);
 }
 async function races(pool) {
   const cases = [

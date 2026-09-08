@@ -6616,3 +6616,260 @@ CREATE TABLE IF NOT EXISTS item_definition_activations (
 );
 
 CREATE INDEX IF NOT EXISTS p2_selection_package_idx ON item_definition_activations(package_id,logical_item_id);
+
+-- Dormant Phase 2 exact inventory. No Phase 1 caller writes this authority before fenced cutover.
+CREATE TABLE IF NOT EXISTS item_lots (
+  lot_id TEXT PRIMARY KEY,
+  logical_item_id TEXT NOT NULL,
+  definition_hash TEXT NOT NULL,
+  owner_scope TEXT NOT NULL,
+  owner_id TEXT NOT NULL,
+  custody_state TEXT,
+  custody_scope TEXT,
+  custody_id TEXT,
+  depositor_scope TEXT,
+  depositor_id TEXT,
+  quality_band TEXT,
+  quality_state_digest TEXT,
+  trade_policy_hash TEXT NOT NULL,
+  binding TEXT,
+  transfer_restriction TEXT,
+  season_id TEXT,
+  run_id TEXT,
+  source_cap_id TEXT,
+  expires_at TIMESTAMPTZ,
+  age_basis_at TIMESTAMPTZ,
+  provenance_coalescing_class TEXT NOT NULL,
+  provenance_class TEXT NOT NULL,
+  provenance_digest TEXT NOT NULL,
+  original_quantity INTEGER NOT NULL,
+  remaining_quantity INTEGER NOT NULL,
+  state TEXT NOT NULL DEFAULT 'active',
+  mutation_id UUID NOT NULL,
+  output_ordinal INTEGER NOT NULL,
+  source_input_ordinal INTEGER,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  CONSTRAINT item_lot_definition_fk FOREIGN KEY (logical_item_id,definition_hash)
+    REFERENCES item_definition_versions(logical_item_id,definition_hash),
+  CONSTRAINT item_lot_mutation_fk FOREIGN KEY (mutation_id) REFERENCES item_mutation_guards(mutation_id),
+  CONSTRAINT item_lot_attachment_uq UNIQUE (lot_id,definition_hash,mutation_id,output_ordinal,original_quantity),
+  CONSTRAINT item_lot_identity_uq UNIQUE (lot_id,definition_hash),
+  CONSTRAINT item_lot_owner_ck CHECK (owner_scope IN ('character','account','operation') AND char_length(owner_id) BETWEEN 1 AND 200),
+  CONSTRAINT item_lot_custody_ck CHECK (
+    (state='exhausted' AND custody_state IS NULL AND custody_scope IS NULL AND custody_id IS NULL
+      AND depositor_scope IS NULL AND depositor_id IS NULL)
+    OR (state='active' AND custody_state IS NOT NULL AND custody_state='direct' AND custody_scope IS NULL AND custody_id IS NULL
+      AND depositor_scope IS NULL AND depositor_id IS NULL AND owner_scope IN ('character','account'))
+    OR (state='escrowed' AND custody_state IS NOT NULL AND custody_state='escrowed' AND custody_scope IS NOT NULL
+      AND custody_scope='operation' AND custody_id IS NOT NULL AND owner_scope='operation' AND custody_id=owner_id
+      AND depositor_scope IS NOT NULL AND depositor_scope IN ('character','account') AND depositor_id IS NOT NULL
+      AND char_length(depositor_id) BETWEEN 1 AND 200)),
+  CONSTRAINT item_lot_quality_ck CHECK (quality_band IS NULL OR char_length(quality_band) BETWEEN 1 AND 80),
+  CONSTRAINT item_lot_quality_digest_ck CHECK (quality_state_digest IS NULL OR
+    (char_length(quality_state_digest)=64 AND quality_state_digest=lower(quality_state_digest)
+      AND translate(quality_state_digest,'0123456789abcdef','')='')),
+  CONSTRAINT item_lot_policy_ck CHECK (trade_policy_hash=definition_hash),
+  CONSTRAINT item_lot_provenance_ck CHECK (provenance_class IN ('crafted','salvaged','awarded','imported','migration_origin')
+    AND char_length(provenance_digest)=64 AND provenance_digest=lower(provenance_digest)
+    AND translate(provenance_digest,'0123456789abcdef','')=''),
+  CONSTRAINT item_lot_quantity_ck CHECK (original_quantity BETWEEN 1 AND 1000000
+    AND remaining_quantity BETWEEN 0 AND original_quantity),
+  CONSTRAINT item_lot_state_ck CHECK ((state='active' AND custody_state='direct' AND remaining_quantity>0)
+    OR (state='escrowed' AND custody_state='escrowed' AND remaining_quantity>0)
+    OR (state='exhausted' AND remaining_quantity=0)),
+  CONSTRAINT item_lot_ordinal_ck CHECK (output_ordinal>=0 AND
+    (source_input_ordinal IS NULL OR (source_input_ordinal>=0 AND source_input_ordinal<output_ordinal)))
+);
+CREATE INDEX IF NOT EXISTS item_lot_owner_idx ON item_lots(owner_scope,owner_id,created_at,lot_id);
+
+-- Nullable only for untouched legacy instances. New exact uniques retain this creation attachment.
+ALTER TABLE item_instances ADD COLUMN IF NOT EXISTS logical_item_id TEXT;
+ALTER TABLE item_instances ADD COLUMN IF NOT EXISTS definition_hash TEXT;
+ALTER TABLE item_instances ADD COLUMN IF NOT EXISTS quality_band TEXT;
+ALTER TABLE item_instances ADD COLUMN IF NOT EXISTS quality_state_digest TEXT;
+ALTER TABLE item_instances ADD COLUMN IF NOT EXISTS trade_policy_hash TEXT;
+ALTER TABLE item_instances ADD COLUMN IF NOT EXISTS condition_summary TEXT;
+ALTER TABLE item_instances ADD COLUMN IF NOT EXISTS export_policy TEXT;
+ALTER TABLE item_instances ADD COLUMN IF NOT EXISTS provenance_class TEXT;
+ALTER TABLE item_instances ADD COLUMN IF NOT EXISTS provenance_digest TEXT;
+ALTER TABLE item_instances ADD COLUMN IF NOT EXISTS mutation_id UUID;
+ALTER TABLE item_instances ADD COLUMN IF NOT EXISTS output_ordinal INTEGER;
+-- The retained template column holds exact qualified IDs only on the exact branch.
+-- Apply after its discriminator exists so populated pre-lot installations upgrade too.
+ALTER TABLE item_instances DROP CONSTRAINT IF EXISTS item_instance_template_id;
+ALTER TABLE item_instances ADD CONSTRAINT item_instance_template_id CHECK (
+  (definition_hash IS NULL AND char_length(template_id) BETWEEN 1 AND 200)
+  OR (definition_hash IS NOT NULL AND char_length(template_id) BETWEEN 1 AND 258));
+ALTER TABLE item_instances DROP CONSTRAINT IF EXISTS item_unique_attachment_ck;
+ALTER TABLE item_instances ADD CONSTRAINT item_unique_attachment_ck CHECK (
+  (definition_hash IS NULL AND logical_item_id IS NULL AND quality_band IS NULL AND quality_state_digest IS NULL
+    AND trade_policy_hash IS NULL AND condition_summary IS NULL AND export_policy IS NULL
+    AND provenance_class IS NULL AND provenance_digest IS NULL AND mutation_id IS NULL AND output_ordinal IS NULL)
+  OR (definition_hash IS NOT NULL AND logical_item_id IS NOT NULL AND trade_policy_hash IS NOT NULL
+    AND trade_policy_hash=definition_hash AND condition_summary IS NULL AND export_policy IS NOT NULL AND export_policy='ineligible'
+    AND provenance_class IS NOT NULL AND provenance_class IN ('crafted','salvaged','awarded','imported','migration_origin')
+    AND provenance_digest IS NOT NULL AND char_length(provenance_digest)=64 AND provenance_digest=lower(provenance_digest)
+    AND translate(provenance_digest,'0123456789abcdef','')='' AND mutation_id IS NOT NULL AND output_ordinal IS NOT NULL AND output_ordinal>=0
+    AND (quality_band IS NULL OR char_length(quality_band) BETWEEN 1 AND 80)
+    AND (quality_state_digest IS NULL OR (char_length(quality_state_digest)=64 AND quality_state_digest=lower(quality_state_digest)
+      AND translate(quality_state_digest,'0123456789abcdef','')=''))));
+ALTER TABLE item_instances DROP CONSTRAINT IF EXISTS item_unique_definition_fk;
+ALTER TABLE item_instances ADD CONSTRAINT item_unique_definition_fk FOREIGN KEY (logical_item_id,definition_hash)
+  REFERENCES item_definition_versions(logical_item_id,definition_hash);
+ALTER TABLE item_instances DROP CONSTRAINT IF EXISTS item_unique_mutation_fk;
+ALTER TABLE item_instances ADD CONSTRAINT item_unique_mutation_fk FOREIGN KEY (mutation_id) REFERENCES item_mutation_guards(mutation_id);
+CREATE UNIQUE INDEX IF NOT EXISTS item_unique_attachment_idx ON item_instances(id,definition_hash,mutation_id,output_ordinal);
+CREATE UNIQUE INDEX IF NOT EXISTS item_unique_identity_idx ON item_instances(id,definition_hash);
+
+ALTER TABLE item_events ADD COLUMN IF NOT EXISTS event_branch TEXT NOT NULL DEFAULT 'legacy';
+ALTER TABLE item_events ADD COLUMN IF NOT EXISTS mutation_id UUID;
+ALTER TABLE item_events ADD COLUMN IF NOT EXISTS event_ordinal INTEGER;
+ALTER TABLE item_events ADD COLUMN IF NOT EXISTS lot_id TEXT;
+ALTER TABLE item_events ADD COLUMN IF NOT EXISTS definition_hash TEXT;
+ALTER TABLE item_events ADD COLUMN IF NOT EXISTS snapshot_json TEXT;
+ALTER TABLE item_events DROP CONSTRAINT IF EXISTS item_event_template_id;
+ALTER TABLE item_events ADD CONSTRAINT item_event_template_id CHECK (
+  (event_branch='legacy' AND char_length(template_id) BETWEEN 1 AND 200)
+  OR (event_branch<>'legacy' AND char_length(template_id) BETWEEN 1 AND 258));
+ALTER TABLE item_events DROP CONSTRAINT IF EXISTS item_event_kind;
+ALTER TABLE item_events ADD CONSTRAINT item_event_kind CHECK (
+  (event_branch='legacy' AND event_kind IN ('stack_granted','stack_consumed','created','transferred','consumed','escrowed','released'))
+  OR (event_branch='lot' AND event_kind IN ('lot_granted','lot_consumed','lot_split_debit','lot_split_output','lot_escrowed','lot_released','lot_escrow_consumed'))
+  OR (event_branch='unique' AND event_kind IN ('unique_granted','unique_escrowed','unique_released','unique_transferred','unique_consumed'))
+  OR (event_branch='observation' AND event_kind='migration_origin'));
+ALTER TABLE item_events DROP CONSTRAINT IF EXISTS item_event_quantities;
+ALTER TABLE item_events ADD CONSTRAINT item_event_quantities CHECK (
+  (event_branch='legacy' AND ((event_kind IN ('stack_granted','stack_consumed')
+    AND item_id IS NULL AND provenance_kind IS NULL AND quantity_delta IS NOT NULL AND quantity_delta<>0
+    AND quantity_before IS NOT NULL AND quantity_before>=0 AND quantity_after IS NOT NULL AND quantity_after>=0
+    AND quantity_after=quantity_before+quantity_delta)
+    OR (event_kind NOT IN ('stack_granted','stack_consumed') AND item_id IS NOT NULL
+      AND provenance_kind IS NOT NULL AND quantity_delta IS NULL AND quantity_before IS NULL AND quantity_after IS NULL)))
+  OR (event_branch IN ('lot','unique') AND provenance_kind IS NULL
+    AND ((event_branch='lot' AND item_id IS NULL) OR (event_branch='unique' AND item_id IS NOT NULL))
+    AND quantity_delta IS NOT NULL AND quantity_before IS NOT NULL AND quantity_before>=0
+    AND quantity_after IS NOT NULL AND quantity_after>=0 AND quantity_after=quantity_before+quantity_delta
+    AND ((event_kind IN ('lot_granted','lot_split_output','unique_granted') AND quantity_before=0 AND quantity_delta>0)
+      OR (event_kind IN ('lot_consumed','lot_split_debit','lot_escrow_consumed','unique_consumed') AND quantity_before>0 AND quantity_delta<0)
+      OR (event_kind IN ('lot_escrowed','lot_released','unique_escrowed','unique_released','unique_transferred') AND quantity_before>0 AND quantity_delta=0))
+    AND (event_branch<>'unique' OR (quantity_before IN (0,1) AND quantity_after IN (0,1))))
+  OR (event_branch='observation' AND item_id IS NOT NULL AND provenance_kind IS NULL
+    AND quantity_delta IS NOT NULL AND quantity_delta=0 AND quantity_before IS NOT NULL
+    AND quantity_before IN (0,1) AND quantity_after IS NOT NULL AND quantity_after=quantity_before));
+ALTER TABLE item_events DROP CONSTRAINT IF EXISTS item_event_branch_ck;
+ALTER TABLE item_events ADD CONSTRAINT item_event_branch_ck CHECK (
+  (event_branch='legacy' AND mutation_id IS NULL AND event_ordinal IS NULL AND lot_id IS NULL
+    AND definition_hash IS NULL AND snapshot_json IS NULL)
+  OR (event_branch='lot' AND mutation_id IS NOT NULL AND event_ordinal IS NOT NULL AND event_ordinal>=0
+    AND lot_id IS NOT NULL AND definition_hash IS NOT NULL AND snapshot_json IS NOT NULL)
+  OR (event_branch IN ('unique','observation') AND mutation_id IS NOT NULL AND event_ordinal IS NOT NULL AND event_ordinal>=0
+    AND lot_id IS NULL AND item_id IS NOT NULL AND definition_hash IS NOT NULL AND snapshot_json IS NOT NULL));
+CREATE UNIQUE INDEX IF NOT EXISTS item_event_normalized_idx ON item_events(mutation_id,event_ordinal);
+CREATE UNIQUE INDEX IF NOT EXISTS item_event_attachment_idx ON item_events(id,mutation_id,event_ordinal,event_branch,definition_hash);
+CREATE UNIQUE INDEX IF NOT EXISTS item_event_lot_subject_idx ON item_events(id,mutation_id,event_ordinal,event_branch,definition_hash,lot_id);
+CREATE UNIQUE INDEX IF NOT EXISTS item_event_unique_subject_idx ON item_events(id,mutation_id,event_ordinal,event_branch,definition_hash,item_id);
+ALTER TABLE item_events DROP CONSTRAINT IF EXISTS item_event_lot_fk;
+ALTER TABLE item_events ADD CONSTRAINT item_event_lot_fk FOREIGN KEY (lot_id,definition_hash) REFERENCES item_lots(lot_id,definition_hash);
+ALTER TABLE item_events DROP CONSTRAINT IF EXISTS item_event_unique_fk;
+ALTER TABLE item_events ADD CONSTRAINT item_event_unique_fk FOREIGN KEY (item_id,definition_hash) REFERENCES item_instances(id,definition_hash);
+ALTER TABLE item_events DROP CONSTRAINT IF EXISTS item_event_mutation_fk;
+ALTER TABLE item_events ADD CONSTRAINT item_event_mutation_fk FOREIGN KEY (mutation_id) REFERENCES item_mutation_guards(mutation_id);
+
+CREATE TABLE IF NOT EXISTS item_mutation_inputs (
+  mutation_id UUID NOT NULL,
+  input_ordinal INTEGER NOT NULL,
+  event_id TEXT NOT NULL,
+  event_branch TEXT NOT NULL,
+  definition_hash TEXT NOT NULL,
+  lot_id TEXT,
+  item_id TEXT,
+  attachment_mutation_id UUID NOT NULL,
+  attachment_output_ordinal INTEGER NOT NULL,
+  attachment_quantity INTEGER NOT NULL,
+  quantity_before INTEGER NOT NULL,
+  removed_quantity INTEGER NOT NULL,
+  quantity_after INTEGER NOT NULL,
+  transition_kind TEXT NOT NULL,
+  snapshot_json TEXT NOT NULL,
+  CONSTRAINT item_input_pk PRIMARY KEY (mutation_id,input_ordinal),
+  CONSTRAINT item_input_event_fk FOREIGN KEY (event_id,mutation_id,input_ordinal,event_branch,definition_hash)
+    REFERENCES item_events(id,mutation_id,event_ordinal,event_branch,definition_hash),
+  CONSTRAINT item_input_lot_fk FOREIGN KEY (lot_id,definition_hash) REFERENCES item_lots(lot_id,definition_hash),
+  CONSTRAINT item_input_lot_attachment_fk FOREIGN KEY (lot_id,definition_hash,attachment_mutation_id,attachment_output_ordinal,attachment_quantity)
+    REFERENCES item_lots(lot_id,definition_hash,mutation_id,output_ordinal,original_quantity),
+  CONSTRAINT item_input_unique_attachment_fk FOREIGN KEY (item_id,definition_hash,attachment_mutation_id,attachment_output_ordinal)
+    REFERENCES item_instances(id,definition_hash,mutation_id,output_ordinal),
+  CONSTRAINT item_input_branch_ck CHECK ((event_branch='lot' AND lot_id IS NOT NULL AND item_id IS NULL
+    AND transition_kind IN ('consume','split','escrow','release','consume_escrow_lot'))
+    OR (event_branch='unique' AND lot_id IS NULL AND item_id IS NOT NULL AND quantity_before=1 AND attachment_quantity=1
+      AND transition_kind IN ('escrow','release','transfer_unique','consume_unique'))),
+  CONSTRAINT item_input_quantity_ck CHECK (input_ordinal>=0 AND quantity_before>=removed_quantity
+    AND quantity_before>0 AND quantity_after=quantity_before-removed_quantity
+    AND ((transition_kind IN ('escrow','release','transfer_unique') AND removed_quantity=0)
+      OR (transition_kind IN ('consume','split','consume_unique','consume_escrow_lot') AND removed_quantity>0))
+    AND attachment_output_ordinal>=0 AND attachment_quantity BETWEEN 1 AND 1000000),
+  CONSTRAINT item_input_split_uq UNIQUE (mutation_id,input_ordinal,definition_hash,removed_quantity,transition_kind)
+);
+CREATE TABLE IF NOT EXISTS item_mutation_outputs (
+  mutation_id UUID NOT NULL,
+  output_ordinal INTEGER NOT NULL,
+  event_id TEXT NOT NULL,
+  event_branch TEXT NOT NULL,
+  definition_hash TEXT NOT NULL,
+  lot_id TEXT,
+  item_id TEXT,
+  attachment_mutation_id UUID NOT NULL,
+  attachment_output_ordinal INTEGER NOT NULL,
+  attachment_quantity INTEGER NOT NULL,
+  quantity INTEGER NOT NULL,
+  source_input_ordinal INTEGER,
+  source_transition_kind TEXT,
+  transition_kind TEXT NOT NULL,
+  snapshot_json TEXT NOT NULL,
+  CONSTRAINT item_output_pk PRIMARY KEY (mutation_id,output_ordinal),
+  CONSTRAINT item_output_event_fk FOREIGN KEY (event_id,mutation_id,output_ordinal,event_branch,definition_hash)
+    REFERENCES item_events(id,mutation_id,event_ordinal,event_branch,definition_hash),
+  CONSTRAINT item_output_lot_fk FOREIGN KEY (lot_id,definition_hash,attachment_mutation_id,attachment_output_ordinal,attachment_quantity)
+    REFERENCES item_lots(lot_id,definition_hash,mutation_id,output_ordinal,original_quantity),
+  CONSTRAINT item_output_unique_fk FOREIGN KEY (item_id,definition_hash,attachment_mutation_id,attachment_output_ordinal)
+    REFERENCES item_instances(id,definition_hash,mutation_id,output_ordinal),
+  CONSTRAINT item_output_split_fk FOREIGN KEY (mutation_id,source_input_ordinal,definition_hash,quantity,source_transition_kind)
+    REFERENCES item_mutation_inputs(mutation_id,input_ordinal,definition_hash,removed_quantity,transition_kind),
+  CONSTRAINT item_output_branch_ck CHECK ((event_branch='lot' AND lot_id IS NOT NULL AND item_id IS NULL
+    AND ((transition_kind IN ('grant','escrow','release') AND source_input_ordinal IS NULL AND source_transition_kind IS NULL)
+      OR (transition_kind='split' AND source_input_ordinal IS NOT NULL AND source_input_ordinal>=0
+        AND source_input_ordinal<output_ordinal AND source_transition_kind='split')))
+    OR (event_branch='unique' AND lot_id IS NULL AND item_id IS NOT NULL AND quantity=1
+      AND attachment_quantity=1 AND transition_kind IN ('grant','escrow','release','transfer_unique')
+      AND source_input_ordinal IS NULL AND source_transition_kind IS NULL)
+    OR (event_branch='observation' AND lot_id IS NULL AND item_id IS NOT NULL AND quantity=0
+      AND attachment_quantity=1 AND transition_kind='migration_origin'
+      AND source_input_ordinal IS NULL AND source_transition_kind IS NULL
+      AND attachment_mutation_id=mutation_id AND attachment_output_ordinal=output_ordinal)),
+  CONSTRAINT item_output_quantity_ck CHECK (output_ordinal>=0
+    AND ((event_branch='observation' AND quantity=0) OR (event_branch<>'observation' AND quantity BETWEEN 1 AND 1000000))
+    AND attachment_output_ordinal>=0 AND attachment_quantity BETWEEN quantity AND 1000000
+    AND (transition_kind NOT IN ('grant','split') OR (attachment_mutation_id=mutation_id
+      AND attachment_output_ordinal=output_ordinal AND attachment_quantity=quantity)))
+);
+
+-- Present IO must name the subject of its exact event, not merely another valid attachment.
+-- Separate branch FKs avoid MATCH SIMPLE skipping both nullable subject columns together.
+-- Explicit ALTERs also install these constraints when the exact tables already exist.
+ALTER TABLE item_mutation_inputs DROP CONSTRAINT IF EXISTS item_input_lot_event_fk;
+ALTER TABLE item_mutation_inputs ADD CONSTRAINT item_input_lot_event_fk
+  FOREIGN KEY (event_id,mutation_id,input_ordinal,event_branch,definition_hash,lot_id)
+  REFERENCES item_events(id,mutation_id,event_ordinal,event_branch,definition_hash,lot_id);
+ALTER TABLE item_mutation_inputs DROP CONSTRAINT IF EXISTS item_input_unique_event_fk;
+ALTER TABLE item_mutation_inputs ADD CONSTRAINT item_input_unique_event_fk
+  FOREIGN KEY (event_id,mutation_id,input_ordinal,event_branch,definition_hash,item_id)
+  REFERENCES item_events(id,mutation_id,event_ordinal,event_branch,definition_hash,item_id);
+ALTER TABLE item_mutation_outputs DROP CONSTRAINT IF EXISTS item_output_lot_event_fk;
+ALTER TABLE item_mutation_outputs ADD CONSTRAINT item_output_lot_event_fk
+  FOREIGN KEY (event_id,mutation_id,output_ordinal,event_branch,definition_hash,lot_id)
+  REFERENCES item_events(id,mutation_id,event_ordinal,event_branch,definition_hash,lot_id);
+ALTER TABLE item_mutation_outputs DROP CONSTRAINT IF EXISTS item_output_unique_event_fk;
+ALTER TABLE item_mutation_outputs ADD CONSTRAINT item_output_unique_event_fk
+  FOREIGN KEY (event_id,mutation_id,output_ordinal,event_branch,definition_hash,item_id)
+  REFERENCES item_events(id,mutation_id,event_ordinal,event_branch,definition_hash,item_id);

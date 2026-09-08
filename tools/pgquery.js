@@ -169,7 +169,13 @@ if (failures.length) {
 // lists (one source for the column set, every value bound). A generated fragment cannot be a literal
 // without restating the list, which is the drift the lists exist to remove; test/persist.js SELECTs
 // every column against the live schema instead.
-const CEILING = { interpolated: 165, unreadable: 40 };
+// 165 → 167 (2026-09-08): itemlots.js adds two candidate selector shapes: sufficient FIFO-prefix
+// selection and exact-lot lookup, both retaining native timestamp precision. Backend SELECT text
+// and identity columns are closed literals; predicate/ID lists contain only scalar placeholders,
+// with every value bound. test/gates.js audits these fragments; the native --lots lane exercises
+// their filtering, precise FIFO, complete-root revalidation and canonical locks. These two sites
+// remain counted as unpreparable here; this records their reviewed growth, not further headroom.
+const CEILING = { interpolated: 167, unreadable: 40 };
 const overflow = [];
 if (interpolated.length > CEILING.interpolated)
   overflow.push(`interpolated queries grew to ${interpolated.length} (ceiling ${CEILING.interpolated}) — these are UNCHECKED by this guard`);

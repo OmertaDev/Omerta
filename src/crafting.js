@@ -684,7 +684,7 @@ function templateFor(context, entry) {
 async function uniqueInput(client, owner, entry) {
   const row = (await client.query(
     `SELECT id FROM item_instances
-      WHERE owner_scope=$1 AND owner_id=$2 AND template_id=$3 AND state='active'
+      WHERE owner_scope=$1 AND owner_id=$2 AND template_id=$3 AND state='active' AND definition_hash IS NULL
       ORDER BY created_at,id LIMIT 1 FOR UPDATE`,
     [owner.scope, owner.id, entry.templateId],
   )).rows[0];

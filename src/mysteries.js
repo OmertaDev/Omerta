@@ -928,11 +928,11 @@ async function conditionBlocker({
     const params = [owner.scope, owner.id, templateId];
     const row = lock ? (await client.query(
       `SELECT id FROM item_instances
-        WHERE owner_scope=$1 AND owner_id=$2 AND template_id=$3 AND state='active'
+        WHERE owner_scope=$1 AND owner_id=$2 AND template_id=$3 AND state='active' AND definition_hash IS NULL
         ORDER BY created_at,id LIMIT 1 FOR UPDATE`, params,
     )).rows[0] : (await client.query(
       `SELECT id FROM item_instances
-        WHERE owner_scope=$1 AND owner_id=$2 AND template_id=$3 AND state='active'
+        WHERE owner_scope=$1 AND owner_id=$2 AND template_id=$3 AND state='active' AND definition_hash IS NULL
         ORDER BY created_at,id LIMIT 1`, params,
     )).rows[0];
     return row ? null : { adapter, templateId };
@@ -1144,7 +1144,7 @@ async function setInstanceStatus(client, instance, status) {
 async function selectOwnedItem(client, owner, templateId) {
   const row = (await client.query(
     `SELECT id FROM item_instances
-      WHERE owner_scope=$1 AND owner_id=$2 AND template_id=$3 AND state='active'
+      WHERE owner_scope=$1 AND owner_id=$2 AND template_id=$3 AND state='active' AND definition_hash IS NULL
       ORDER BY created_at,id LIMIT 1 FOR UPDATE`,
     [owner.scope, owner.id, templateId],
   )).rows[0];

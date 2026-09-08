@@ -8,6 +8,8 @@ Read with the [Phase 2A specification](2026-09-04-world-graph-phase-2a-materials
 
 ## Decisions and alternatives
 
+Task 4.2 additionally consumes the adopted [lot contract amendment](2026-09-07-world-graph-phase-2a-lot-contract-amendment.md) and its [implementation addendum](../plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md). They resolve downstream quality representation, producer authority, complete candidate admission, split custody, historical attachment constraints, and errors without weakening this amendment or completing implementation.
+
 Use dormant lot primitives in Task 4, followed by one coherent Task 5 caller/schema/authority cutover. This gives two reviewable boundaries while preserving the current live lock order until all shared consumers can move together. Shipping converted leaf functions under old outer locks would produce mixed orders; maintaining writable old stacks alongside lots would produce two authorities. Neither is an acceptable intermediate runtime state.
 
 Keep completed semantic `result_json` permanently in the existing guard table. An additional archive service would add retrieval and corruption states without satisfying a present retention need. Transport cache expiry never deletes the domain receipt. Oversized legacy stacks become deterministic capped chunks; the reviewed definition quantity cap stays unchanged.
@@ -114,9 +116,21 @@ lotInventoryBoard(queryable, owner, {cursor, limit, includeLots}): Promise<LotBo
 
 `LotOutput`/`LotSelector` carry the specification's complete economic identity: exact definition/logical ID, owner tuple, custody state/reference, quality band/state digest, exact trade-policy hash, binding/restriction, season/run/source-cap, expiry/immutable age basis, and provenance-coalescing class. A selector also has checked quantity and either exact compatible dimensions or exact server-issued lot IDs. `LotConsumption` contains lot ID, definition hash, before/removed/after quantities and input/event ordinal. `LotProjection` contains the persisted safe identity, original/remaining quantities, state, mutation/output ordinal, and timestamps; private provenance is omitted from player projections. `LotBoard` contains compatible aggregate groups and optional bounded lot rows with an opaque next cursor. Query bounds and privacy binding become public acceptance in Task 8.
 
+**Adopted external-review clarification (2026-09-08).** The board selects one
+owner-bound FIFO physical page in SQL before aggregation, with `limit` 1–100
+and at most `limit + 1` returned physical rows. `groups` aggregate only that
+selected page across every complete economic identity dimension; they are not
+whole-owner totals. `includeLots: false` suppresses the `lots` detail array but
+does not change paging or group computation. The opaque, closed-shape cursor
+binds the owner and the last immutable `(created_at, lot_id)` key, retaining
+database timestamp precision. Continuation does not require that anchor to
+remain live. Equal timestamps use canonical ID order. The native keyset is an
+index range on the existing owner/FIFO index, with no offsets, whole-owner
+materialization, physical coalescing or owner holding cap. Task 4 remains dormant.
+
 Original quantity and source identity are immutable. Remaining quantities never become negative or exceed original. Each new lot is at most the exact definition's `maximumLotQuantity` (itself at most 1,000,000); checked arithmetic rejects non-integral, unsafe, zero and negative input. A split decreases the parent and creates a child while conserving total quantity and every immutable identity dimension. The child's creation time is the actual split time; the inherited age basis and source provenance remain unchanged. Physical coalescing is forbidden.
 
-FIFO priority is `(created_at, lot_id)` among eligible lots. It is distinct from physical locking. Before the first item lock, the operation resolves its **complete** required input set and all pre-existing unique/custody rows, using locked owners and aggregate authority; it then locks canonical item keys and rechecks every selected row, quantity, and predicate. Each exact key orders by item subtype then canonical ID; the same comparator is used by SQL acquisition and trace assertions. FIFO allocation is computed from the verified candidates under those locks. Every shared writer must lock the corresponding owner/aggregate, preventing a concurrent eligible insertion from escaping selection. If a changed candidate set requires an unplanned or lower-sorted member, abort with retryable `contention` and restart the whole logical transaction using the same key. Never acquire it late or loop inside a partly executed mutation. Multi-input crafting cannot discover inputs leaf by leaf.
+FIFO priority is exact database `(created_at, lot_id)` among eligible lots, retaining native timestamp precision and canonical bytewise ID ties. It is distinct from physical locking. Before the first item lock, the operation resolves its **complete** required input set and all pre-existing unique/custody rows, using locked owners and aggregate authority: candidate membership is the deterministic sufficient selection for the complete ordered requirement multiset, with one shared shadow balance across exact and FIFO requirements. Complete economic identity and explicit lot IDs filter SQL before its 4097-row per-requirement result bound; only selected physical rows are retained. The unchanged 4096 physical-key budget counts custody and unique separately; 4097 returned compatible holdings alone do not refuse a smaller spend, and no owner holding cap is added. The operation then locks canonical item keys once and repeats the whole-root selection/allocation from fresh shadow balances, rechecking every selected row, precise timestamp/order, quantity, predicate and shortfall. Each exact key orders by item subtype then canonical ID; the same comparator is used by SQL acquisition and trace assertions. FIFO allocation is verified under those locks. Every shared writer must lock the corresponding owner/aggregate, preventing a concurrent eligible insertion from escaping selection. Selected-prefix, membership, predicate or allocation drift aborts with retryable `contention` and restarts the whole logical transaction using the same key; an unselected-tail change that cannot alter the deterministic selection need not abort. An unchanged eligible shortage remains `materials`. Never acquire a new key late or loop inside a partly executed mutation. Multi-input crafting cannot discover inputs leaf by leaf.
 
 Use one zero-based monotonic ordinal sequence for normalized mutation transition events. An event has at most one normalized input row and at most one normalized output row; both use that event ordinal. An input describes the pre/post state and removed/moved quantity; an output identifies its created lot or unique attachment. Split uses a source-debit event and a child-output event, with the child output referencing the source input ordinal. Unique transition events bind before/after owner, custody, state, and exact definition. Creation outputs are unique by `(mutation_id, output_ordinal)` across lots and uniques. Migration observation outputs use the same identity key but a distinct observation branch, so they never count as authorized creation.
 
@@ -201,6 +215,12 @@ Stage unique compatibility columns as nullable before backfill, then validate ex
 ## 6. Integration ownership and acceptance (all seams)
 
 Task 4 owns the internal bridge, lot schema/primitives, normalized event/invariant branches, coherent read/recovery composition, and dormant lock tracing. Task 5 owns compatibility artifact/map admission, deterministic migration, epoch/fence, all live caller and selector conversion, and deployed backup integration. Task 8 owns scoped Phase 2 HTTP replay integration and safe lot-detail projections; no Tasks 4–5 test can claim that HTTP acceptance passed.
+
+The Task 8 lot-board handoff must preserve Section 3's page-local groups,
+owner-bound complete timestamp/ID cursor, 1–100 limit, and detail-suppression
+semantics. Public acceptance must cover large owners, empty/final pages and an
+exhausted cursor anchor; an HTTP adapter must not relabel page totals as complete
+holdings or discard database timestamp precision from continuation.
 
 Task 5 updates `tools/backup.sh` and `tools/backup-selftest.sh` critical-table lists and linked restore fixtures. Include all six Task 3 registry tables, lots, normalized IO, existing guards/events/unique/custody, authority epochs, and migration receipts/parts, plus the existing legacy state families. Restore verifies hashes, totals, unique identity/state/custody/provenance, guard/result references, epoch and trigger enforcement; an omitted new critical table must fail the backup check. Bellini and estate non-interference remain explicit before/after fixtures.
 
