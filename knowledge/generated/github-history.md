@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `8bd1109c2092`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `d25e89555bec`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1441 |
+| Commits in clone | 1443 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-08 — feat: launch invitation access and reviewed mint readiness |
+| Latest commit | 2026-09-08 — fix: record invitation-aware launch handler in knowledge checks |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 568 |
+| OmertaDev | 570 |
 | Claude | 156 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 28 |
@@ -32,14 +32,14 @@
 |---|---:|---|
 | [CLAUDE.md](../../CLAUDE.md) | 514 | yes |
 | [public/index.html](../../public/index.html) | 405 | yes |
-| [src/server.js](../../src/server.js) | 356 | yes |
+| [src/server.js](../../src/server.js) | 357 | yes |
 | [SPEC.md](../../SPEC.md) | 310 | yes |
 | [schema.sql](../../schema.sql) | 286 | yes |
 | [BALANCE.md](../../BALANCE.md) | 254 | yes |
-| knowledge/generated/github-history.md | 193 | historical |
-| knowledge/generated/graph-summary.md | 193 | historical |
-| knowledge/generated/graph.json | 193 | historical |
-| knowledge/generated/inventory.md | 193 | historical |
+| knowledge/generated/github-history.md | 194 | historical |
+| knowledge/generated/graph-summary.md | 194 | historical |
+| knowledge/generated/graph.json | 194 | historical |
+| knowledge/generated/inventory.md | 194 | historical |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 177 | yes |
 | [package.json](../../package.json) | 160 | yes |
@@ -51,12 +51,12 @@
 | [test/levers.js](../../test/levers.js) | 96 | yes |
 | [test/social.js](../../test/social.js) | 85 | yes |
 | [public/wiki.html](../../public/wiki.html) | 84 | yes |
+| knowledge/generated/documents.md | 80 | historical |
 | [test/growth.js](../../test/growth.js) | 80 | yes |
-| knowledge/generated/documents.md | 79 | historical |
 | [docs/WIKI.md](../../docs/WIKI.md) | 72 | yes |
 | [test/gates.js](../../test/gates.js) | 67 | yes |
 | [test/hardening.js](../../test/hardening.js) | 66 | yes |
-| knowledge/generated/modules.md | 64 | historical |
+| knowledge/generated/modules.md | 65 | historical |
 | [tools/sim.js](../../tools/sim.js) | 59 | yes |
 | [README.md](../../README.md) | 57 | yes |
 | [src/preflight.js](../../src/preflight.js) | 55 | yes |
