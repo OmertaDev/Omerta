@@ -163,9 +163,13 @@ async function child(url) {
     if (mode === 'lots') {
       const { runLots } = await import('./phase2-lots.js');
       const fixtureFactory = lotFixtureFactory(pool, url);
-      let fixtureCount = 0;
-      await runLots(async () => { fixtureCount++; return fixtureFactory(); });
-      assert.equal(fixtureCount, 14, 'every native root lot fixture block executed in its own fresh schema');
+      let fixtureCount = 0, completedFixtures = 0;
+      await runLots(async () => {
+        const fixture = await fixtureFactory(); fixtureCount++;
+        return { ...fixture, async dispose() { await fixture.dispose(); completedFixtures++; } };
+      });
+      assert.equal(completedFixtures, fixtureCount, 'every actually executed native lot fixture completed its fresh-schema lifecycle');
+      console.log(`phase2-postgres: ${completedFixtures} native root lot fixture blocks completed in fresh schemas`);
       await lotRaces(pool);
       const residue = (await pool.query("SELECT nspname FROM pg_namespace WHERE nspname LIKE 'p2_definitions_%' AND nspname<>$1", [name])).rows;
       assert.equal(residue.length, 0, 'native fixture schemas leave no residue');

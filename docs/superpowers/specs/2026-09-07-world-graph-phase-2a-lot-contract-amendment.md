@@ -267,13 +267,22 @@ ordinal, authorize quality, or permit another owner's transition. Malformed or
 substituted owner/pin arguments are `bad_item_request`; invalid private contexts
 retain their existing failure classification.
 
-`withCompleteItemCandidates` freezes the full requirement multiset and
-candidate/FIFO plan before item locks, admits the complete item trace once,
-locks using the one shared comparator, rereads all predicates, and lets each
-leaf consume exactly one planned requirement. Callback success requires all
-planned consuming requirements to be used; unplanned or changed candidates are
-`contention`. The plan closes in `finally` and returns no token. There is no
-second root, guard, counter, or capability.
+`withCompleteItemCandidates` freezes the full ordered requirement multiset and
+its deterministic sufficient candidate/FIFO allocation before item locks, using
+one shared shadow balance across exact and FIFO overlaps. Complete exact economic
+identity and explicit IDs filter SQL before its 4097-row per-requirement result
+bound; unused tails are discarded. The existing 4096 physical-key budget counts
+custody and unique separately, and is not an owner holding cap. The helper admits
+the complete selected item trace once, locks using the one shared comparator,
+then repeats the entire ordered resolution with fresh shadow balances and compares
+selected snapshots, native timestamp precision/order, membership, allocations and
+shortfalls. An unselected-tail change that cannot alter deterministic selection
+need not abort; selected-prefix/predicate/allocation drift is `contention`, while unchanged
+eligible shortage is `materials`. Each leaf consumes exactly one planned
+requirement and callback success requires all planned consuming requirements to
+be used; unplanned or changed candidates are `contention`, with no late locks.
+The plan closes in `finally` and returns no token. There is no second root, guard,
+counter, or capability.
 
 ### Immediate acyclic FKs plus root parity
 

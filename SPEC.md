@@ -10,15 +10,15 @@ Written 2026-07-25. Every number below was measured from the tree, not recalled.
 
 | | |
 |---|---|
-| Backend modules | **214** files, **93392** lines (`src/`, incl. `src/routes/` and `src/social/`) |
-| Test suites | **176** files, **97752** lines (`test/`) — ratio 1.05 test:src |
+| Backend modules | **214** files, **93436** lines (`src/`, incl. `src/routes/` and `src/social/`) |
+| Test suites | **176** files, **98090** lines (`test/`) — ratio 1.05 test:src |
 | HTTP routes | **766** registrations (**766** unique) |
 | Database tables | **338** (`schema.sql`, 6875 lines) |
 | Client | **12891** lines (`public/index.html`, single file, zero dependencies) |
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |
 | Smart contracts | **32** top-level Solidity files, **9794** lines, **844** declared top-level Foundry test functions; the release gate re-measures the passing suite |
 | Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/bond-dials.js` (sizing the on-chain mint walls), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |
-| Design + audit docs | **514** markdown files, **140515** lines — indexed in `docs/AUDITS.md`, which states they are point-in-time |
+| Design + audit docs | **514** markdown files, **140527** lines — indexed in `docs/AUDITS.md`, which states they are point-in-time |
 | Ledger invariants | **51** checks — **45** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |
 
 Roughly **208,000 lines** of backend code, tests, schema and top-level contracts.

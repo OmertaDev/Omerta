@@ -14,6 +14,7 @@ const IDENTITY_KEYS = Object.freeze(['logicalItemId', 'definitionHash', 'owner',
   'qualityBand', 'qualityStateDigest', 'tradePolicyHash', 'binding', 'transferRestriction',
   'seasonId', 'runId', 'sourceCapId', 'expiresAt', 'ageBasisAt', 'provenanceCoalescingClass']);
 const CANDIDATE_PLANS = new WeakMap();
+const CANDIDATE_CREATED_AT = new WeakMap();
 const fail = (code = 'bad_item_request') => { throw new GameError(code, 'Exact item request cannot be applied.'); };
 const equal = (a, b) => canonicalBytes(a).equals(canonicalBytes(b));
 const instant = (value) => value == null ? null : new Date(value).toISOString();
@@ -259,8 +260,20 @@ function checkPinnedSubject(actual, expected, unique = false) {
     || (unique && actual.state !== expected.state)) fail('item_unavailable');
   if (!equal(actual, expected)) fail();
 }
-function fifo(a, b) {
-  return new Date(a.created_at) - new Date(b.created_at) || Buffer.compare(Buffer.from(a.lot_id), Buffer.from(b.lot_id));
+function candidateLotSelect() {
+  return dbCaps.skipLocked
+    ? `SELECT *,to_char(created_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS candidate_created_at FROM item_lots`
+    : 'SELECT * FROM item_lots';
+}
+function candidateLotRows(rows) {
+  return rows.map(({ candidate_created_at, ...row }) => {
+    // Native precision belongs only to the private plan, never its physical rows or leaf snapshots.
+    CANDIDATE_CREATED_AT.set(row, candidate_created_at ?? instant(row.created_at));
+    return row;
+  });
+}
+function candidateSnapshot(row) {
+  return { row: databaseSnapshot(row), createdAt: row.lot_id ? CANDIDATE_CREATED_AT.get(row) : null };
 }
 async function resolveRequirement(client, mutation, requirement, root) {
   const transition = transitionFor(root, requirement);
@@ -281,14 +294,26 @@ async function resolveRequirement(client, mutation, requirement, root) {
     assertLotDefinitionPin(client, mutation, { owner: input.owner, definitionHash: input.definitionHash, direction: 'input' });
     if (input.owner.scope === 'operation') fail('item_mutation_authority');
     await verifiedDefinition(client, input);
-    const rows = (await client.query(`SELECT * FROM item_lots
-      WHERE owner_scope=$1 AND owner_id=$2 AND definition_hash=$3 AND remaining_quantity>0 LIMIT 4097`,
-    [input.owner.scope, input.owner.id, input.definitionHash])).rows;
-    if (rows.length > 4096) fail('contention');
-    return rows.filter((row) => equal(rowIdentity(row), economicIdentity(input))
-      && (input.selection === 'compatible' || input.lotIds.includes(row.lot_id))).sort(fifo);
+    // Column names are closed server literals. All nonnull values, including explicit IDs, bind
+    // as scalars; null means exact SQL null rather than an omitted/wildcard predicate.
+    const dimensions = [
+      ['owner_scope', input.owner.scope], ['owner_id', input.owner.id], ['definition_hash', input.definitionHash],
+      ['logical_item_id', input.logicalItemId], ['custody_state', input.custody.state],
+      ['custody_scope', input.custody.scope], ['custody_id', input.custody.id],
+      ['quality_band', input.qualityBand], ['quality_state_digest', input.qualityStateDigest],
+      ['trade_policy_hash', input.tradePolicyHash], ['binding', input.binding], ['transfer_restriction', input.transferRestriction],
+      ['season_id', input.seasonId], ['run_id', input.runId], ['source_cap_id', input.sourceCapId],
+      ['expires_at', input.expiresAt], ['age_basis_at', input.ageBasisAt],
+      ['provenance_coalescing_class', input.provenanceCoalescingClass],
+    ];
+    const params = [], predicates = dimensions.map(([column, value]) => value === null
+      ? `${column} IS NULL` : `${column}=$${params.push(value)}`);
+    if (input.selection === 'lot_ids') predicates.push(`lot_id IN (${input.lotIds.map(id => `$${params.push(id)}`).join(',')})`);
+    const order = dbCaps.skipLocked ? 'created_at,lot_id COLLATE "C"' : 'created_at,lot_id';
+    return candidateLotRows((await client.query(`${candidateLotSelect()} WHERE ${predicates.join(' AND ')}
+      AND remaining_quantity>0 ORDER BY ${order} LIMIT 4097`, params)).rows);
   }
-  const row = (await client.query('SELECT * FROM item_lots WHERE lot_id=$1', [requirement.lotId])).rows[0];
+  const row = candidateLotRows((await client.query(`${candidateLotSelect()} WHERE lot_id=$1`, [requirement.lotId])).rows)[0];
   if (!row) fail('item_unavailable');
   const identity = rowIdentity(row);
   if (!root.authority.inputDefinitionHashes.includes(row.definition_hash)) fail();
@@ -304,6 +329,42 @@ async function resolveRequirement(client, mutation, requirement, root) {
   }
   await verifiedDefinition(client, { ...identity, quantity: requirement.quantity }, null, recordedDepositor(row));
   return [row];
+}
+async function resolveCompleteRequirements(client, mutation, requirements, root) {
+  const selected = new Map(), available = new Map(), allocations = [], shortfalls = [];
+  let physicalKeys = 0;
+  for (const requirement of requirements) {
+    let remaining = requirement.kind === 'lot_fifo' ? requirement.selector.quantity
+      : requirement.kind === 'unique_exact' ? 1 : requirement.quantity;
+    const parts = [];
+    // At most 4097 filtered rows are returned for this requirement. Any exhausted shadow row
+    // already owns a selected key; needing a row beyond that prefix must exceed the root budget.
+    // Do not retain unused tails across requirements or reserve later exact inputs out of order.
+    for (const row of await resolveRequirement(client, mutation, requirement, root)) {
+      const key = subjectKey(row), prior = selected.get(key);
+      if (prior && !equal(candidateSnapshot(prior), candidateSnapshot(row))) fail('contention');
+      const before = available.get(key) ?? (row.lot_id ? row.remaining_quantity : 1);
+      const removed = Math.min(before, remaining);
+      if (!removed && requirement.kind === 'lot_fifo') continue;
+      if (!prior) {
+        physicalKeys += row._escrow ? 2 : 1;
+        if (physicalKeys > 4096) fail('contention');
+        selected.set(key, row);
+      }
+      if (removed) {
+        parts.push({ row: prior ?? row, before, removed, after: before - removed });
+        available.set(key, before - removed); remaining -= removed;
+      }
+      if (!remaining) break;
+    }
+    allocations.push(parts); shortfalls.push(remaining);
+  }
+  return { selected, allocations, shortfalls };
+}
+function completeSnapshot(resolved) {
+  return { selected: [...resolved.selected.values()].map(candidateSnapshot), shortfalls: resolved.shortfalls,
+    allocations: resolved.allocations.map(parts => parts.map(({ row, before, removed, after }) =>
+      ({ key: subjectKey(row), before, removed, after }))) };
 }
 export async function withCompleteItemCandidates(client, mutation, trace, rawRequest, action) {
   let plan;
@@ -326,13 +387,11 @@ export async function withCompleteItemCandidates(client, mutation, trace, rawReq
     });
     plan = { client, root: request.root, requirements, allocations: [], used: new Set(), active: false };
     CANDIDATE_PLANS.set(mutation, plan); // reserve once before resolving or locking any candidate
-    const resolved = [];
-    for (const requirement of requirements) resolved.push(await resolveRequirement(client, mutation, requirement, request.root));
+    const resolved = await resolveCompleteRequirements(client, mutation, requirements, request.root);
     for (const entry of request.root.authority.itemTransitions ?? []) {
       if (requirements.filter((requirement) => transitionFor(request.root, requirement) === entry).length !== 1) fail('contention');
     }
-    const uniqueRows = new Map(resolved.flat().map((row) => [subjectKey(row), row]));
-    if (uniqueRows.size > 4096) fail('contention');
+    const uniqueRows = resolved.selected;
     const entries = [...uniqueRows.values()].flatMap((row) => row.lot_id ? [lockEntry('lot', row.lot_id)]
       : [...(row._escrow ? [lockEntry('custody', row.id)] : []), lockEntry('unique', row.id)]).sort(compareItemLockEntries);
     trace.admitCandidates('item', entries);
@@ -347,25 +406,10 @@ export async function withCompleteItemCandidates(client, mutation, trace, rawReq
       const expected = entry.subtype === 'custody' ? _escrow : entry.subtype === 'unique' ? instance : prior;
       if (!locked || !equal(databaseSnapshot(locked), databaseSnapshot(expected))) fail('contention');
     }
-    for (let i = 0; i < requirements.length; i++) {
-      const current = await resolveRequirement(client, mutation, requirements[i], request.root);
-      if (!equal(databaseSnapshot(current), databaseSnapshot(resolved[i]))) fail('contention');
-    }
-    const available = new Map([...uniqueRows].map(([id, row]) => [id, row.lot_id ? row.remaining_quantity : 1]));
-    const allocations = requirements.map((requirement, index) => {
-      let remaining = requirement.kind === 'lot_fifo' ? requirement.selector.quantity : requirement.kind === 'unique_exact' ? 1 : requirement.quantity;
-      const parts = [];
-      for (const row of resolved[index]) {
-        const before = available.get(subjectKey(row)), removed = Math.min(before, remaining);
-        if (!removed) continue;
-        parts.push({ row, before, removed, after: before - removed });
-        available.set(subjectKey(row), before - removed); remaining -= removed;
-        if (!remaining) break;
-      }
-      if (remaining) fail('materials');
-      return parts;
-    });
-    plan.allocations = allocations; plan.active = true;
+    const current = await resolveCompleteRequirements(client, mutation, requirements, request.root);
+    if (!equal(completeSnapshot(current), completeSnapshot(resolved))) fail('contention');
+    if (resolved.shortfalls.some(Boolean)) fail('materials');
+    plan.allocations = resolved.allocations; plan.active = true;
     const result = await action();
     if (plan.used.size !== requirements.length) fail('contention');
     return result;

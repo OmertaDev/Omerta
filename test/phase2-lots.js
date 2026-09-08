@@ -872,7 +872,7 @@ export async function runLots(existingPool = null) {
     const overlapRequest = lotRequest(owner, definition), beforeOverlap = await snapshot();
     const entered = deferred(), release = deferred(); let blocked = false;
     const overlapPool = forwardPool(pool, { before: async (sql) => {
-      if (!blocked && sql === 'SELECT * FROM item_lots WHERE lot_id=$1') { blocked = true; entered.resolve(); await release.promise; }
+      if (!blocked && /^SELECT .* FROM item_lots WHERE lot_id=\$1$/.test(sql)) { blocked = true; entered.resolve(); await release.promise; }
     } });
     await assert.rejects(() => withItemTransaction(overlapPool, (q) => withLotMutation(q, overlapRequest, async (token) => {
       await lots.grantLot(q, token, definition, lotOutput(owner, definition, { binding: 'before-overlap' }));
@@ -1173,6 +1173,7 @@ export async function runLots(existingPool = null) {
 
 export async function runExternalCorrections(existingPool = null, only = null) {
   const lots = await import('../src/itemlots.js');
+  if (!only || only.startsWith('fifo-')) await runFifoCorrections(existingPool, only);
   if ((!only || only === 'microseconds') && dbCaps.skipLocked) await withItemFixture(async ({ pool, accountOwner: owner, definition }) => {
     const ids = [], stamps = ['2026-01-01T00:00:00.000001Z', '2026-01-01T00:00:00.000002Z', '2026-01-01T00:00:00.001001Z'];
     const clocked = forwardPool(pool, { after: async (sql, values, result, q) => {
@@ -1289,7 +1290,7 @@ export async function runExternalCorrections(existingPool = null, only = null) {
       console.log(`external-correction ${mode}: exact-only refusal, exact-first collision selects legacy, exact history and replay PASS`);
     }, existingPool);
   }
-  if (!only || only === 'paging') await withItemFixture(async ({ pool, accountOwner: owner, definition }) => {
+  if (!only || ['paging', 'fifo-bounds'].includes(only)) await withItemFixture(async ({ pool, accountOwner: owner, definition, snapshot }) => {
     const frozen = [];
     const clocked = forwardPool(pool, { after: async (sql, values, result, q) => {
       if (!sql.startsWith('INSERT INTO item_lots ')) return;
@@ -1360,6 +1361,7 @@ export async function runExternalCorrections(existingPool = null, only = null) {
     const empty = await lots.lotInventoryBoard(pool, { ...owner, id: 'empty-owner' }, { cursor: null, limit: 1, includeLots: true });
     assert.deepEqual(empty.groups, []); assert.deepEqual(empty.lots, []); assert.equal(empty.nextCursor, null);
     console.log('external-correction paging: 4097 complete grants, FIFO 1/100 pages, page-local groups, hidden details, exhausted anchor, closed cursor PASS');
+    if (!only || only === 'fifo-bounds') await exerciseLargeFifo({ pool, owner, definition, snapshot }, frozen);
   }, existingPool);
   if (!only || only === 'ids') await withItemFixture(async ({ pool, accountOwner: owner, snapshot }) => {
     for (const length of [200, 201, 258]) for (const unique of [false, true]) {
@@ -1445,7 +1447,7 @@ export async function runExternalCorrections(existingPool = null, only = null) {
           armed = false;
           if (mode === 'registry') result.rows[0] = { ...result.rows[0], definition_kind: 'corrupt' };
           if (mode === 'missing') result.rows = [];
-        } else if (['malformed', 'candidate'].includes(mode) && sql === 'SELECT * FROM item_lots WHERE lot_id=$1') {
+        } else if (['malformed', 'candidate'].includes(mode) && /^SELECT .* FROM item_lots WHERE lot_id=\$1$/.test(sql)) {
           armed = false;
           result.rows[0] = { ...result.rows[0], ...(mode === 'malformed' ? { quality_band: 'invalid-for-none-mode' }
             : { remaining_quantity: result.rows[0].remaining_quantity - 1 }) };
@@ -1499,6 +1501,335 @@ export async function runExternalCorrections(existingPool = null, only = null) {
       console.log('external-correction assignment: corrupted legacy-shaped alias on exact row refused at precheck PASS');
     }
   }, existingPool);
+}
+
+// These regressions exercise the complete real root. The SQL wrapper only supplies deterministic
+// fixture IDs/clocks before the grant writes its history, or observes the actual selected/locked rows.
+async function runFifoCorrections(existingPool, only) {
+  const lots = await import('../src/itemlots.js');
+  if (!only || only === 'fifo-drift') await withItemFixture(async ({ pool, accountOwner: owner, definition, snapshot }) => {
+    for (const mode of ['quantity', 'identity', 'earlier-prefix', 'shortfall', 'unused-tail', ...(dbCaps.skipLocked ? ['microsecond'] : [])]) {
+      const granted = [], stamps = ['2026-01-01T00:00:00.000001Z', '2026-01-02T00:00:00.000001Z', '2026-01-03T00:00:00.000001Z'];
+      const clocked = forwardPool(pool, { after: async (sql, values, result, q) => {
+        if (!sql.startsWith('INSERT INTO item_lots ')) return;
+        const stamp = stamps[granted.length];
+        await q.query('UPDATE item_lots SET created_at=$2 WHERE lot_id=$1', [result.rows[0].lot_id, stamp]);
+        result.rows[0].created_at = new Date(stamp);
+      } });
+      await withItemTransaction(clocked, q => withLotMutation(q, lotRequest(owner, definition), async m => {
+        for (let i = 0; i < 3; i++) granted.push(await lots.grantLot(q, m, definition, lotOutput(owner, definition, { binding: mode })));
+        return { granted: 3 };
+      }));
+      const request = lotRequest(owner, definition), before = await snapshot();
+      const selector = lotSelector(owner, definition, mode === 'shortfall' ? 25 : 2, { binding: mode });
+      const target = mode === 'earlier-prefix' || mode === 'shortfall' || mode === 'unused-tail' ? 2 : 0;
+      const column = mode === 'identity' ? 'binding' : mode === 'earlier-prefix' || mode === 'microsecond' ? 'created_at' : 'remaining_quantity';
+      const changed = mode === 'identity' ? 'changed-identity' : mode === 'earlier-prefix' ? '2025-12-31T00:00:00.000001Z'
+        : mode === 'microsecond' ? '2026-01-01T00:00:00.000002Z' : mode === 'shortfall' ? 4 : 9;
+      const original = column === 'binding' ? mode : column === 'created_at' ? stamps[target] : 10;
+      let activeClient, injected = false, entered = 0; const locked = [];
+      const drift = forwardPool(pool, { after: async (sql, values, result, q) => {
+        if (sql !== 'SELECT * FROM item_lots WHERE lot_id=$1 FOR UPDATE') return;
+        locked.push(values[0]);
+        if (injected) return;
+        injected = true;
+        registerItemTransactionUndo(activeClient, () => activeClient.query(`UPDATE item_lots SET ${column}=$2 WHERE lot_id=$1`, [granted[target].lotId, original]));
+        await q.query(`UPDATE item_lots SET ${column}=$2 WHERE lot_id=$1`, [granted[target].lotId, changed]);
+      } });
+      const execute = targetPool => withItemTransaction(targetPool, q => { activeClient = q; return withLotMutation(q, request, m =>
+        lots.withCompleteItemCandidates(q, m, createItemLockTrace(), { root: { owner, authority: request.request.authority },
+          requirements: [{ kind: 'lot_fifo', selector }] }, async () => { entered++; return lots.consumeLotsFifo(q, m, selector); })); });
+      if (mode === 'unused-tail') {
+        const result = await execute(drift); assert.equal(result[0].lotId, granted[0].lotId);
+        assert.equal((await pool.query('SELECT remaining_quantity FROM item_lots WHERE lot_id=$1', [granted[2].lotId])).rows[0].remaining_quantity, 9,
+          'an unselected tail change which cannot affect selection does not abort the root');
+        // Restore the separate fixture-only tail edit so later invariant/snapshot checks stay meaningful.
+        await pool.query('UPDATE item_lots SET remaining_quantity=10 WHERE lot_id=$1', [granted[2].lotId]);
+        assert.deepEqual(await execute(pool), result); assert.equal(entered, 1);
+      } else {
+        await assert.rejects(() => execute(drift), { code: 'contention' });
+        assert.equal(entered, 0, `${mode}: drift cannot reach any leaf`); assert.equal(injected, true);
+        assert.deepEqual(await snapshot(), before, `${mode}: native rollback/pg-mem compensation removes every guard/item/event/IO effect`);
+        assert(locked.every(id => (mode === 'shortfall' ? granted : granted.slice(0, 1)).some(row => row.lotId === id)),
+          `${mode}: revalidation cannot acquire a newly eligible prefix key late`);
+        const result = await execute(pool), committed = await snapshot();
+        assert.deepEqual(await execute(pool), result); assert.deepEqual(await snapshot(), committed); assert.equal(entered, 1);
+      }
+    }
+    console.log(`fifo-correction drift: quantity, identity, earlier prefix, changed shortfall, irrelevant tail${dbCaps.skipLocked ? ', native same-millisecond timestamp' : ''}, zero-write abort and same-key retry/replay PASS`);
+  }, existingPool);
+  if (!only || only === 'fifo-filter') await withItemFixture(async ({ pool, accountOwner: owner }) => {
+    const source = materialSource({ qualityMode: 'inherited', definitionVersion: 2 }); source.version = 2;
+    const artifact = compileFixture(source); await storeSealedBundle(pool, artifact.request);
+    const definition = await definitionByHash(pool, artifact.expectedDefinitions[0].definitionHash);
+    const dimensions = [
+      ['qualityBand', 'Pristine Ω'], ['qualityStateDigest', 'b'.repeat(64)], ['binding', 'bound'],
+      ['transferRestriction', 'restricted'], ['seasonId', 'season-1'], ['runId', 'run-1'], ['sourceCapId', 'cap-1'],
+      ['expiresAt', '2028-01-01T00:00:00.000Z'], ['ageBasisAt', '2025-01-01T00:00:00.000Z'],
+      ['provenanceCoalescingClass', 'other-source'],
+    ];
+    for (const [index, [field, value]] of dimensions.entries()) {
+      const base = { provenanceCoalescingClass: `filter-${index}`, ...(field === 'provenanceCoalescingClass' ? { binding: 'class-filter' } : {}) };
+      const granted = [];
+      await withItemTransaction(pool, q => withLotMutation(q, lotRequest(owner, definition), async m => {
+        granted.push(await lots.grantLot(q, m, definition, lotOutput(owner, definition, base)));
+        granted.push(await lots.grantLot(q, m, definition, lotOutput(owner, definition, { ...base, [field]: value })));
+        return { granted: 2 };
+      }));
+      for (let selected = 0; selected < 2; selected++) {
+        const selector = lotSelector(owner, definition, 1, { ...base, ...(selected ? { [field]: value } : {}) });
+        let queries = 0;
+        const observed = forwardPool(pool, { after: async (sql, values, result) => {
+          if (!sql.includes('FROM item_lots') || !sql.includes('LIMIT 4097')) return;
+          queries++;
+          assert.deepEqual(result.rows.map(row => row.lot_id), [granted[selected].lotId],
+            `${field}/${selected}: exact identity, including null, filters the SQL result before its bound`);
+          assert(values.every(value => !Array.isArray(value)), 'every SQL bind is scalar; no array ANY/SOME coercion');
+        } });
+        const request = lotRequest(owner, definition);
+        const consumed = await withItemTransaction(observed, q => withLotMutation(q, request, m => lots.withCompleteItemCandidates(q, m,
+          createItemLockTrace(), { root: { owner, authority: request.request.authority }, requirements: [{ kind: 'lot_fifo', selector }] },
+          () => lots.consumeLotsFifo(q, m, selector))));
+        assert.equal(queries, 2, 'the same filtered selection is resolved before and after locking');
+        assert.equal(consumed[0].lotId, granted[selected].lotId);
+      }
+    }
+    console.log('fifo-correction filtering: ten exact economic dimensions, null/non-null SQL selection and scalar binds PASS');
+  }, existingPool);
+  if ((!only || only === 'fifo-precision') && dbCaps.skipLocked) await withItemFixture(async ({ pool, accountOwner: owner, definition, snapshot }) => {
+    let index = 0; const replacements = new Map();
+    const ids = ['z-micro-old', 'a-micro-new', 'Z-tie-first', 'a-tie-second'];
+    const stamps = ['2026-01-01T00:00:00.000001Z', '2026-01-01T00:00:00.000002Z',
+      '2026-01-02T00:00:00.000001Z', '2026-01-02T00:00:00.000001Z'];
+    const fixture = forwardPool(pool, { before: async (sql, values) => {
+      if (sql.startsWith('INSERT INTO item_lots ')) replacements.set(values[0], ids[index]);
+      if (values) for (let i = 0; i < values.length; i++) if (replacements.has(values[i])) values[i] = replacements.get(values[i]);
+    }, after: async (sql, values, result, q) => {
+      if (!sql.startsWith('INSERT INTO item_lots ')) return;
+      await q.query('UPDATE item_lots SET created_at=$2 WHERE lot_id=$1', [result.rows[0].lot_id, stamps[index]]);
+      result.rows[0].created_at = new Date(stamps[index++]);
+    } });
+    await withItemTransaction(fixture, q => withLotMutation(q, lotRequest(owner, definition), async m => {
+      for (let i = 0; i < ids.length; i++) await lots.grantLot(q, m, definition, lotOutput(owner, definition, { quantity: 1 }));
+      return { granted: 4 };
+    }));
+    const precise = (await pool.query("SELECT lot_id,to_char(created_at AT TIME ZONE 'UTC','YYYY-MM-DD\"T\"HH24:MI:SS.US\"Z\"') AS stamp FROM item_lots ORDER BY created_at,lot_id COLLATE \"C\"")).rows;
+    assert.deepEqual(precise.map(row => [row.lot_id, row.stamp]), ids.map((id, i) => [id, stamps[i]]));
+    const uniqueSource = materialSource({ kind: 'item', stackable: false, maximumLotQuantity: 1,
+      ownerScopes: ['account', 'project'], definitionVersion: 2 }); uniqueSource.version = 2;
+    const artifact = compileFixture(uniqueSource); await storeSealedBundle(pool, artifact.request);
+    const uniqueDefinition = await definitionByHash(pool, artifact.expectedDefinitions[0].definitionHash);
+    const unique = await withItemTransaction(pool, q => withLotMutation(q, lotRequest(owner, uniqueDefinition), m => lots.grantUnique(q, m,
+      uniqueDefinition, { logicalItemId: uniqueDefinition.logicalItemId, definitionHash: uniqueDefinition.definitionHash,
+        owner, qualityBand: null, qualityStateDigest: null, tradePolicyHash: uniqueDefinition.definitionHash,
+        conditionSummary: null, exportPolicy: 'ineligible', provenanceClass: 'awarded', provenanceDigest: 'a'.repeat(64) })));
+    const directExpected = { definitionHash: uniqueDefinition.definitionHash, owner, state: 'active',
+      custody: { state: 'direct', scope: null, id: null }, qualityBand: null, qualityStateDigest: null,
+      conditionSummary: null, exportPolicy: 'ineligible' };
+    const operationFixture = { pool, permissions: { actorAccountId: owner.id, role: 'custodian' } };
+    await prepareDormantOperationFixture(operationFixture);
+    const operationId = operationFixture.operation.id, escrowRequest = lotRequest(owner, uniqueDefinition);
+    escrowRequest.request.authority.aggregate = { kind: 'operation', id: operationId };
+    escrowRequest.request.authority.itemTransitions = [{ kind: 'escrow', operationId,
+      subject: { storageKind: 'unique', itemId: unique.id, expected: directExpected } }];
+    await withItemTransaction(pool, q => withLotMutation(q, escrowRequest, m => lots.withCompleteItemCandidates(q, m, createItemLockTrace(),
+      { root: { owner, authority: escrowRequest.request.authority }, requirements: [{ kind: 'unique_exact', itemId: unique.id, expected: directExpected }] },
+      () => lots.applyItemTransition(q, m, 0))));
+    const expected = { ...directExpected, owner: { scope: 'operation', id: operationId }, state: 'escrowed',
+      custody: { state: 'escrowed', scope: 'operation', id: operationId } };
+    const request = lotRequest(owner, definition), selector = lotSelector(owner, definition, 3), trace = createItemLockTrace();
+    request.request.authority.inputDefinitionHashes = [definition.definitionHash, uniqueDefinition.definitionHash].sort();
+    request.request.authority.aggregate = { kind: 'operation', id: operationId };
+    request.request.authority.itemTransitions = [{ kind: 'consume_unique', depositor: owner,
+      subject: { storageKind: 'unique', itemId: unique.id, expected } }];
+    const result = await withItemTransaction(pool, q => withLotMutation(q, request, m => lots.withCompleteItemCandidates(q, m, trace,
+      { root: { owner, authority: request.request.authority }, requirements: [{ kind: 'lot_fifo', selector }, { kind: 'unique_exact', itemId: unique.id, expected }] },
+      async () => { const parts = await lots.consumeLotsFifo(q, m, selector); await lots.applyItemTransition(q, m, 0); return parts; })));
+    assert.deepEqual(result.map(row => row.lotId), ['z-micro-old', 'a-micro-new', 'Z-tie-first'],
+      'actual consumption preserves microseconds and canonical bytewise equal-time ID ties');
+    assert.deepEqual(trace.snapshot().map(row => [row.subtype, row.id]), [['custody', unique.id], ['lot', 'Z-tie-first'],
+      ['lot', 'a-micro-new'], ['lot', 'z-micro-old'], ['unique', unique.id]],
+    'canonical mixed custody/lot/unique acquisition remains independent of precise native FIFO');
+    const committed = await snapshot();
+    assert(!JSON.stringify(committed).includes('candidate_created_at'), 'private precision evidence never reaches physical rows/history/IO');
+    assert.equal(committed.item_lots.find(row => row.lot_id === 'a-tie-second').remaining_quantity, 1);
+    console.log('fifo-correction native precision: .000001/.000002 consumption, C-collation timestamp ties and independent lock order PASS');
+  }, existingPool);
+  if (!only || only === 'fifo-overlap') await withItemFixture(async ({ pool, accountOwner: owner, definition, snapshot }) => {
+    const cases = [
+      { name: 'sufficient-prefix', quantities: [2], want: [[['z-old', 10, 2, 8]]], locks: ['z-old'] },
+      { name: 'repeated-fifo', quantities: [10, 10], want: [[['z-old', 10, 10, 0]], [['a-next', 10, 10, 0]]], locks: ['a-next', 'z-old'] },
+      { name: 'partial-oldest', quantities: [4, 8], want: [[['z-old', 10, 4, 6]], [['z-old', 6, 6, 0], ['a-next', 10, 2, 8]]], locks: ['a-next', 'z-old'] },
+      { name: 'explicit-before-compatible', quantities: [10, 3], kinds: ['ids', 'fifo'], want: [[['z-old', 10, 10, 0]], [['a-next', 10, 3, 7]]], locks: ['a-next', 'z-old'] },
+      { name: 'exact-before-fifo', quantities: [10, 3], kinds: ['exact', 'fifo'], want: [[['z-old', 10, 10, 0]], [['a-next', 10, 3, 7]]], locks: ['a-next', 'z-old'] },
+      { name: 'fifo-before-exact-partial', quantities: [3, 7], kinds: ['fifo', 'exact'], want: [[['z-old', 10, 3, 7]], [['z-old', 7, 7, 0]]], locks: ['z-old'] },
+      { name: 'fifo-before-exact-shortage', quantities: [10, 1], kinds: ['fifo', 'exact'], shortage: true, locks: ['z-old'] },
+    ];
+    for (const test of cases) {
+      let index = 0; const replacements = new Map();
+      const names = ['z-old', 'a-next', 'm-tail'], ids = names.map(id => `${test.name}-${id}`);
+      const fixture = forwardPool(pool, { before: async (sql, values) => {
+        if (sql.startsWith('INSERT INTO item_lots ')) replacements.set(values[0], ids[index]);
+        if (values) for (let i = 0; i < values.length; i++) if (replacements.has(values[i])) values[i] = replacements.get(values[i]);
+      }, after: async (sql, values, result, q) => {
+        if (!sql.startsWith('INSERT INTO item_lots ')) return;
+        const stamp = `2026-01-0${++index}T00:00:00.000Z`;
+        await q.query('UPDATE item_lots SET created_at=$2 WHERE lot_id=$1', [result.rows[0].lot_id, stamp]);
+        result.rows[0].created_at = new Date(stamp);
+      } });
+      await withItemTransaction(fixture, q => withLotMutation(q, lotRequest(owner, definition), async m => {
+        for (let i = 0; i < 3; i++) await lots.grantLot(q, m, definition, lotOutput(owner, definition, { binding: test.name }));
+        return { granted: 3 };
+      }));
+      const requirements = test.quantities.map((quantity, i) => (test.kinds?.[i] === 'exact'
+        ? { kind: 'lot_exact', lotId: ids[0], quantity }
+        : { kind: 'lot_fifo', selector: lotSelector(owner, definition, quantity, { binding: test.name,
+          ...(test.kinds?.[i] === 'ids' ? { selection: 'lot_ids', lotIds: [ids[0]] } : {}) }) }));
+      const request = lotRequest(owner, definition), trace = createItemLockTrace();
+      const before = await snapshot(); let entered = 0;
+      const execute = () => withItemTransaction(pool, q => withLotMutation(q, request, m => lots.withCompleteItemCandidates(q, m, trace,
+        { root: { owner, authority: request.request.authority }, requirements }, async () => {
+          entered++;
+          assert.deepEqual(trace.snapshot().map(row => row.id), test.locks.map(id => `${test.name}-${id}`),
+            `${test.name}: only the sufficient whole-root selection locks, canonically, before any leaf`);
+          const results = [];
+          for (const requirement of requirements) results.push(requirement.kind === 'lot_exact'
+            ? [await lots.consumeExactLot(q, m, requirement.lotId, requirement.quantity)]
+            : await lots.consumeLotsFifo(q, m, requirement.selector));
+          return results;
+        })));
+      if (test.shortage) {
+        await assert.rejects(execute, { code: 'materials' }); assert.equal(entered, 0);
+        assert.deepEqual(await snapshot(), before, 'unchanged ordered exact/FIFO shortage writes nothing');
+      } else {
+        const results = await execute();
+        assert.deepEqual(results.map(parts => parts.map(row => [row.lotId.slice(test.name.length + 1), row.beforeQuantity,
+          row.removedQuantity, row.afterQuantity])), test.want, `${test.name}: shared shadow balances preserve ordered allocation`);
+        const committed = await snapshot(); assert.deepEqual(await execute(), results); assert.deepEqual(await snapshot(), committed);
+        assert.equal(entered, 1, 'matching receipt returns before candidate admission and leaves');
+        assert.deepEqual(committed.item_lots.find(row => row.lot_id === ids[2]), before.item_lots.find(row => row.lot_id === ids[2]),
+          'unused tail row remains byte-equivalent');
+        assert.deepEqual(committed.item_events.filter(row => row.lot_id === ids[2]), before.item_events.filter(row => row.lot_id === ids[2]),
+          'unused tail history remains byte-equivalent');
+      }
+    }
+    console.log('fifo-correction overlap: sufficient prefix, repeated/partial/explicit/exact ordering, unchanged shortage and replay PASS');
+  }, existingPool);
+}
+
+async function exerciseLargeFifo({ pool, owner, definition, snapshot }, frozen) {
+  const lots = await import('../src/itemlots.js');
+  const grant = output => withItemTransaction(pool, q => withLotMutation(q, lotRequest(owner, definition), m =>
+    lots.grantLot(q, m, definition, lotOutput(owner, definition, output))));
+  // The paging fixture exhausted its first row. A fresh real grant restores 4097 compatible
+  // positive holdings without editing their authority/history or imposing an owner holding cap.
+  const replenished = await grant({ quantity: 2 });
+  const narrow = await grant({ quantity: 2, binding: 'fifo-narrow' });
+  const eligible = [...frozen.slice(1), replenished];
+  const traceFor = () => {
+    const inner = createItemLockTrace(); let admitted = null;
+    return { trace: { admitCandidates(kind, entries) { admitted = entries; inner.admitCandidates(kind, entries); },
+      record: entry => inner.record(entry), snapshot: () => inner.snapshot() }, get admitted() { return admitted; } };
+  };
+  const execute = (request, requirements, tracker, action, target = pool) => withItemTransaction(target,
+    q => withLotMutation(q, request, m => lots.withCompleteItemCandidates(q, m, tracker.trace,
+      { root: { owner, authority: request.request.authority }, requirements }, () => action(q, m))));
+  let boundedQueries = 0, largestResult = 0;
+  const observed = forwardPool(pool, { after: async (sql, values, result) => {
+    if (!sql.includes('FROM item_lots') || !sql.includes('LIMIT 4097')) return;
+    boundedQueries++; largestResult = Math.max(largestResult, result.rows.length);
+    assert(result.rows.length <= 4097, 'each actual FIFO result is bounded even for a large owner');
+    assert(values.every(value => !Array.isArray(value)), 'large explicit selectors still bind scalar IDs');
+  } });
+  for (const test of [
+    { name: 'unrelated-identities', selector: lotSelector(owner, definition, 1, { binding: 'fifo-narrow' }), id: narrow.lotId },
+    { name: 'explicit-id-after-old-cap', selector: lotSelector(owner, definition, 1, { selection: 'lot_ids', lotIds: [replenished.lotId] }), id: replenished.lotId },
+    { name: '4097-compatible-small-spend', selector: lotSelector(owner, definition, 1), id: eligible[0].lotId },
+  ]) {
+    const before = await snapshot(), request = lotRequest(owner, definition), tracker = traceFor();
+    const parts = await execute(request, [{ kind: 'lot_fifo', selector: test.selector }], tracker,
+      (q, m) => lots.consumeLotsFifo(q, m, test.selector), observed);
+    assert.deepEqual(parts.map(row => row.lotId), [test.id], `${test.name}: unrelated owner cardinality cannot deny an exact spend`);
+    assert.deepEqual(tracker.admitted.map(row => row.id), [test.id], `${test.name}: only sufficient physical keys are retained/admitted`);
+    const after = await snapshot();
+    assert.deepEqual(after.item_lots.filter(row => row.lot_id !== test.id), before.item_lots.filter(row => row.lot_id !== test.id));
+    assert.deepEqual(after.item_events.filter(row => row.lot_id !== test.id), before.item_events.filter(row => row.lot_id !== test.id));
+  }
+  assert.equal(largestResult, 4097, '4097 fully filtered results are evidence, not an automatic overflow');
+  const prefixQuantity = count => count * 2 - 1; // oldest is now one; replenished last row is also one.
+  const allQuantity = 8192; // 4097*2, less the explicit and compatible one-unit spends above.
+  const uniqueSource = materialSource({ kind: 'item', stackable: false, maximumLotQuantity: 1,
+    ownerScopes: ['account', 'project'], definitionVersion: 2 }); uniqueSource.version = 2;
+  const uniqueArtifact = compileFixture(uniqueSource); await storeSealedBundle(pool, uniqueArtifact.request);
+  const uniqueDefinition = await definitionByHash(pool, uniqueArtifact.expectedDefinitions[0].definitionHash);
+  const unique = await withItemTransaction(pool, q => withLotMutation(q, lotRequest(owner, uniqueDefinition), m => lots.grantUnique(q, m,
+    uniqueDefinition, { logicalItemId: uniqueDefinition.logicalItemId, definitionHash: uniqueDefinition.definitionHash,
+      owner, qualityBand: null, qualityStateDigest: null, tradePolicyHash: uniqueDefinition.definitionHash,
+      conditionSummary: null, exportPolicy: 'ineligible', provenanceClass: 'awarded', provenanceDigest: 'a'.repeat(64) })));
+  const directExpected = { definitionHash: uniqueDefinition.definitionHash, owner, state: 'active',
+    custody: { state: 'direct', scope: null, id: null }, qualityBand: null, qualityStateDigest: null,
+    conditionSummary: null, exportPolicy: 'ineligible' };
+  const inputRequest = () => {
+    const request = lotRequest(owner, definition);
+    request.request.authority.inputDefinitionHashes = [definition.definitionHash, uniqueDefinition.definitionHash].sort();
+    return request;
+  };
+  const unchangedFailure = async (name, request, requirements, code) => {
+    const before = await snapshot(), tracker = traceFor(); let entered = 0;
+    await assert.rejects(() => execute(request, requirements, tracker, async () => { entered++; return false; }, observed), { code });
+    assert.equal(entered, 0, `${name}: no leaf begins`);
+    if (code === 'contention') { assert.equal(tracker.admitted, null); assert.deepEqual(tracker.trace.snapshot(), [], `${name}: no late or partial locks`); }
+    assert.deepEqual(await snapshot(), before, `${name}: no committed item/history/IO/guard effects`);
+  };
+  await unchangedFailure('single requirement genuinely needs 4097 lot keys', inputRequest(),
+    [{ kind: 'lot_fifo', selector: lotSelector(owner, definition, allQuantity) }], 'contention');
+  await unchangedFailure('cumulative requirements genuinely need 4097 lot keys', inputRequest(),
+    [4000, allQuantity - 4000].map(quantity => ({ kind: 'lot_fifo', selector: lotSelector(owner, definition, quantity) })), 'contention');
+  await unchangedFailure('4096 lot keys plus one direct unique exceed physical budget', inputRequest(),
+    [{ kind: 'lot_fifo', selector: lotSelector(owner, definition, prefixQuantity(4096)) },
+      { kind: 'unique_exact', itemId: unique.id, expected: directExpected }], 'contention');
+  await unchangedFailure('unchanged exact-identity shortage is materials despite large owner', inputRequest(),
+    [{ kind: 'lot_fifo', selector: lotSelector(owner, definition, 2, { binding: 'fifo-narrow' }) }], 'materials');
+  const operationFixture = { pool, permissions: { actorAccountId: owner.id, role: 'custodian' } };
+  await prepareDormantOperationFixture(operationFixture);
+  const operationId = operationFixture.operation.id, escrowRequest = lotRequest(owner, uniqueDefinition);
+  escrowRequest.request.authority.aggregate = { kind: 'operation', id: operationId };
+  escrowRequest.request.authority.itemTransitions = [{ kind: 'escrow', subject: { storageKind: 'unique', itemId: unique.id, expected: directExpected }, operationId }];
+  await execute(escrowRequest, [{ kind: 'unique_exact', itemId: unique.id, expected: directExpected }], traceFor(), (q, m) => lots.applyItemTransition(q, m, 0));
+  const expected = { ...directExpected, owner: { scope: 'operation', id: operationId }, state: 'escrowed',
+    custody: { state: 'escrowed', scope: 'operation', id: operationId } };
+  const mixedRequest = () => {
+    const request = inputRequest(); request.request.authority.aggregate = { kind: 'operation', id: operationId };
+    request.request.authority.itemTransitions = [{ kind: 'consume_unique', depositor: owner,
+      subject: { storageKind: 'unique', itemId: unique.id, expected } }];
+    return request;
+  };
+  await unchangedFailure('4095 lot keys plus custody and unique exceed physical budget', mixedRequest(),
+    [{ kind: 'unique_exact', itemId: unique.id, expected },
+      { kind: 'lot_fifo', selector: lotSelector(owner, definition, prefixQuantity(4095)) }], 'contention');
+  const request = mixedRequest(), tracker = traceFor(), before = await snapshot();
+  const selectors = [4000, prefixQuantity(4094) - 4000].map(quantity => lotSelector(owner, definition, quantity));
+  const requirements = selectors.map(selector => ({ kind: 'lot_fifo', selector }));
+  requirements.push({ kind: 'unique_exact', itemId: unique.id, expected });
+  const spend = async (q, m) => {
+    assert.equal(tracker.admitted.length, 4096, '4094 selected lots plus custody and unique reach exactly 4096 physical keys');
+    assert.equal(tracker.trace.snapshot().length, 4096, 'the entire union locks before the first leaf');
+    assert.equal(tracker.admitted[0].subtype, 'custody'); assert.equal(tracker.admitted.at(-1).subtype, 'unique');
+    const parts = [];
+    for (const selector of selectors) parts.push(...await lots.consumeLotsFifo(q, m, selector));
+    assert.deepEqual([...new Set(parts.map(row => row.lotId))], eligible.slice(0, 4094).map(row => row.lotId),
+      'shared allocation consumes the exactly sufficient FIFO prefix in order at the physical bound');
+    const moved = await lots.applyItemTransition(q, m, 0);
+    return { removed: parts.reduce((sum, row) => sum + row.removedQuantity, 0), unique: moved.after.uniqueState };
+  };
+  const result = await execute(request, requirements, tracker, spend, observed);
+  assert.deepEqual(result, { removed: 8187, unique: 'consumed' });
+  const committed = await snapshot(), untouched = new Set(eligible.slice(4094).map(row => row.lotId));
+  assert.deepEqual(committed.item_lots.filter(row => untouched.has(row.lot_id)), before.item_lots.filter(row => untouched.has(row.lot_id)));
+  assert.deepEqual(committed.item_events.filter(row => untouched.has(row.lot_id)), before.item_events.filter(row => untouched.has(row.lot_id)));
+  assert.deepEqual(await execute(request, requirements, tracker, spend, observed), result); assert.deepEqual(await snapshot(), committed);
+  assert(boundedQueries >= 16, 'bounded SQL evidence covers initial resolution, complete revalidation and overflow attempts');
+  console.log(`fifo-correction bounds: 4097 real compatible holdings, unrelated/explicit selection, shared overflow/shortage, 4096 mixed-key success and replay PASS (${boundedQueries} bounded queries, max ${largestResult} returned rows; no row-visit/index-performance claim)`);
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) await runLots();

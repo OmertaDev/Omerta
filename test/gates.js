@@ -3121,6 +3121,8 @@ scopedSocialContext = async function(db) {
     'src/social/estate.js|t': "for (const t of ['cars','boats']) — literal array",
     'src/social/estate.js|table': 'for (const table of [...47 literal table names]) — literal array',
     'src/rwaregistrylifecycle.js|runtimeMode': "lockHeadRows(client, runtimeMode='SHARE') — lock mode, literal at both call sites",
+    'src/itemlots.js|candidateLotSelect()': 'backend capability chooses between two fixed literal SELECT fragments; no caller argument or value enters the SQL text',
+    "src/itemlots.js|predicates.join(' AND ')": 'columns come only from the closed dimensions literal list; predicates are exact IS NULL, numbered scalar placeholders or a literal lot_id IN placeholder list; all identity values and explicit IDs are bound',
 
     // A DECLARED MIGRATION SPEC — the strings come from a hardcoded const array in the same file.
     'src/db.js|table': 'migration spec table name from a module const array',
@@ -3535,6 +3537,7 @@ scopedSocialContext = async function(db) {
     'items.js:ITEM_TRANSACTIONS': 'cache: per-client active-transaction marker, scoped to the request being served',
     'items.js:MUTATION_CONTEXTS': 'cache: per-opaque-context mutation authority, scoped to its active transaction',
     'itemlots.js:CANDIDATE_PLANS': 'cache: callback-local frozen input plan keyed by the existing item root; PostgreSQL row locks and conditional writes enforce durable serialization',
+    'itemlots.js:CANDIDATE_CREATED_AT': 'cache: exact database creation-time evidence keyed by each local candidate row object; every process reads its own PostgreSQL evidence, while row locks and conditional writes enforce durable serialization',
     'crafting.js:CRAFTING_CONTEXTS': 'cache: per-context-object authenticity marker; every box recognizes only contexts it creates',
     'crafting.js:CRAFTING_DEFINITIONS': 'cache: immutable normalized recipes keyed by each locally authenticated context object',
     'mysteries.js:CONTEXTS': 'cache: per-context-object authenticity marker; every box recognizes only contexts it creates',
