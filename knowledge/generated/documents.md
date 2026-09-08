@@ -319,7 +319,7 @@
 | [content/README.md](../../content/README.md) | documentation | 281 | 2026-08-29 |
 | [DEPLOY-CHECKLIST.md](../../DEPLOY-CHECKLIST.md) | operations | 147 | 2026-08-13 |
 | [DEPLOY.md](../../DEPLOY.md) | operations | 574 | 2026-09-04 |
-| [DESIGN.md](../../DESIGN.md) | design | 88 | 2026-08-27 |
+| [DESIGN.md](../../DESIGN.md) | design | 160 | 2026-09-07 |
 | [docs/ART.md](../../docs/ART.md) | documentation | 238 | 2026-08-14 |
 | [docs/AUDITS.md](../../docs/AUDITS.md) | audit | 120 | 2026-08-17 |
 | [docs/BULLETPROOF.md](../../docs/BULLETPROOF.md) | documentation | 272 | 2026-09-04 |
@@ -374,8 +374,8 @@
 | [docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md](../../docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md) | design | 225 | 2026-09-07 |
 | [docs/superpowers/specs/2026-09-07-world-graph-phase-2a-definition-registry-amendment.md](../../docs/superpowers/specs/2026-09-07-world-graph-phase-2a-definition-registry-amendment.md) | documentation | 130 | 2026-09-07 |
 | [docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md](../../docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md) | documentation | 359 | 2026-09-07 |
-| [docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md](../../docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md) | documentation | 231 | 2026-09-07 |
-| [docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-transition-amendment.md](../../docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-transition-amendment.md) | documentation | 252 | 2026-09-07 |
+| [docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md](../../docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md) | documentation | 249 | 2026-09-08 |
+| [docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-transition-amendment.md](../../docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-transition-amendment.md) | documentation | 261 | 2026-09-08 |
 | [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2759 | 2026-09-04 |
 | [GRAPH.md](../../GRAPH.md) | documentation | 295 | 2026-08-29 |
 | [GTM.md](../../GTM.md) | documentation | 295 | 2026-08-13 |
@@ -480,7 +480,7 @@
 | [omerta-wall-one-mission-resource-design.md](../../omerta-wall-one-mission-resource-design.md) | design | 167 | 2026-08-11 |
 | [omerta-wallet-forged-stats-design.md](../../omerta-wallet-forged-stats-design.md) | design | 140 | 2026-08-21 |
 | [PRODUCT.md](../../PRODUCT.md) | documentation | 50 | 2026-08-24 |
-| [README.md](../../README.md) | documentation | 166 | 2026-09-04 |
+| [README.md](../../README.md) | documentation | 168 | 2026-09-07 |
 | [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 918 | 2026-09-06 |
 | [SPEC.md](../../SPEC.md) | documentation | 754 | 2026-09-08 |
 | [UNISWAP-ROUTING.md](../../UNISWAP-ROUTING.md) | documentation | 37 | 2026-08-25 |
