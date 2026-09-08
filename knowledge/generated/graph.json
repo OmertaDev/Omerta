@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "d25e89555bec1488078ce0fe185baadfd435de8a",
+  "sourceRevision": "e8d268df84bbb0ea1a1108682c56aa765a83b47b",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 6447,
-    "edges": 28596,
+    "nodes": 6449,
+    "edges": 28607,
     "byNodeType": {
       "Artifact": 2299,
       "Command": 70,
-      "Commit": 1443,
+      "Commit": 1445,
       "Contract": 49,
       "Document": 515,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 2137,
-      "CHANGED": 11350,
+      "CHANGED": 11359,
       "CONTAINS": 2320,
       "DECLARES": 70,
       "DEFINED_IN": 1154,
       "DEPENDS_ON": 64,
       "EXECUTES": 246,
       "HANDLED_BY": 704,
-      "HAS_COMMIT": 1443,
+      "HAS_COMMIT": 1445,
       "IMPLEMENTS": 124,
       "IMPORTS": 1940,
       "INHERITS": 12,
@@ -51606,20 +51606,20 @@
       "path": "tools/chaos.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 31602,
-      "lines": 499,
-      "version": "fe87ab1cc2898f0d",
+      "bytes": 32435,
+      "lines": 514,
+      "version": "d6b8fa0f2886d943",
       "text": true,
       "provenance": [
         {
           "file": "tools/chaos.js",
           "line": 1,
-          "version": "fe87ab1cc2898f0d"
+          "version": "d6b8fa0f2886d943"
         }
       ],
-      "lastChangedAt": "2026-09-02T13:51:20.000Z",
+      "lastChangedAt": "2026-09-08T07:48:23.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "cce43ee0afccc10f34ab09d96c2cf8f44f8474f4"
+      "lastChangedCommit": "e8d268df84bbb0ea1a1108682c56aa765a83b47b"
     },
     {
       "key": "Artifact:tools/character-nft-preflight.js",
@@ -51721,20 +51721,20 @@
       "path": "tools/concurrency.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 13481,
-      "lines": 207,
-      "version": "74615b9814d3db5c",
+      "bytes": 14123,
+      "lines": 217,
+      "version": "c3bb3ab519d73c84",
       "text": true,
       "provenance": [
         {
           "file": "tools/concurrency.js",
           "line": 1,
-          "version": "74615b9814d3db5c"
+          "version": "c3bb3ab519d73c84"
         }
       ],
-      "lastChangedAt": "2026-08-03T21:23:10.000Z",
-      "lastChangedBy": "Claude",
-      "lastChangedCommit": "dd8e51401f4950ac05a6f8eb8d147a31c778f548"
+      "lastChangedAt": "2026-09-08T07:48:23.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "e8d268df84bbb0ea1a1108682c56aa765a83b47b"
     },
     {
       "key": "Artifact:tools/content-artifacts.js",
@@ -52204,20 +52204,20 @@
       "path": "tools/loadtest.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 22335,
-      "lines": 351,
-      "version": "c54e31f33f4e0c5b",
+      "bytes": 23089,
+      "lines": 362,
+      "version": "df01f9044655619d",
       "text": true,
       "provenance": [
         {
           "file": "tools/loadtest.js",
           "line": 1,
-          "version": "c54e31f33f4e0c5b"
+          "version": "df01f9044655619d"
         }
       ],
-      "lastChangedAt": "2026-07-26T14:48:27.000Z",
-      "lastChangedBy": "crvydev",
-      "lastChangedCommit": "158f00af562fab9c54521e37ccd51bce0908eb85"
+      "lastChangedAt": "2026-09-08T07:48:23.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "e8d268df84bbb0ea1a1108682c56aa765a83b47b"
     },
     {
       "key": "Artifact:tools/make-brand.js",
@@ -56038,6 +56038,22 @@
         {
           "commit": "1b33e8457e8398bea1b267574bd4bcc44d02debf",
           "url": "https://github.com/OmertaDev/Omerta/commit/1b33e8457e8398bea1b267574bd4bcc44d02debf"
+        }
+      ]
+    },
+    {
+      "key": "Commit:1b5d2c285816e9070f995c496647577a28cfcf1a",
+      "type": "Commit",
+      "id": "1b5d2c285816e9070f995c496647577a28cfcf1a",
+      "label": "chore(knowledge): refresh invitation handler provenance",
+      "title": "chore(knowledge): refresh invitation handler provenance",
+      "date": "2026-09-08T07:39:08.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/1b5d2c285816e9070f995c496647577a28cfcf1a",
+      "provenance": [
+        {
+          "commit": "1b5d2c285816e9070f995c496647577a28cfcf1a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/1b5d2c285816e9070f995c496647577a28cfcf1a"
         }
       ]
     },
@@ -75050,6 +75066,22 @@
       ]
     },
     {
+      "key": "Commit:e8d268df84bbb0ea1a1108682c56aa765a83b47b",
+      "type": "Commit",
+      "id": "e8d268df84bbb0ea1a1108682c56aa765a83b47b",
+      "label": "test: admit database harness players through launch invitations",
+      "title": "test: admit database harness players through launch invitations",
+      "date": "2026-09-08T07:48:23.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/e8d268df84bbb0ea1a1108682c56aa765a83b47b",
+      "provenance": [
+        {
+          "commit": "e8d268df84bbb0ea1a1108682c56aa765a83b47b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/e8d268df84bbb0ea1a1108682c56aa765a83b47b"
+        }
+      ]
+    },
+    {
       "key": "Commit:e8d3bb868c25572092d1d09707bf379d17857f68",
       "type": "Commit",
       "id": "e8d3bb868c25572092d1d09707bf379d17857f68",
@@ -91036,6 +91068,9 @@
           "commit": "1b33e8457e8398bea1b267574bd4bcc44d02debf"
         },
         {
+          "commit": "1b5d2c285816e9070f995c496647577a28cfcf1a"
+        },
+        {
           "commit": "1be7d6f1267dc2ae0b2dc59b80a67f83cc4764ae"
         },
         {
@@ -91627,6 +91662,9 @@
           "commit": "1b33e8457e8398bea1b267574bd4bcc44d02debf"
         },
         {
+          "commit": "1b5d2c285816e9070f995c496647577a28cfcf1a"
+        },
+        {
           "commit": "1be7d6f1267dc2ae0b2dc59b80a67f83cc4764ae"
         },
         {
@@ -92216,6 +92254,9 @@
         },
         {
           "commit": "1b33e8457e8398bea1b267574bd4bcc44d02debf"
+        },
+        {
+          "commit": "1b5d2c285816e9070f995c496647577a28cfcf1a"
         },
         {
           "commit": "1be7d6f1267dc2ae0b2dc59b80a67f83cc4764ae"
@@ -92926,6 +92967,9 @@
           "commit": "1b33e8457e8398bea1b267574bd4bcc44d02debf"
         },
         {
+          "commit": "1b5d2c285816e9070f995c496647577a28cfcf1a"
+        },
+        {
           "commit": "1be7d6f1267dc2ae0b2dc59b80a67f83cc4764ae"
         },
         {
@@ -93466,6 +93510,9 @@
           "commit": "18738f0238abac2204c0d201ea4ce93acefcd781"
         },
         {
+          "commit": "1b5d2c285816e9070f995c496647577a28cfcf1a"
+        },
+        {
           "commit": "1d868547fb310e02e7dfe7daa7a11315d85b6b29"
         },
         {
@@ -93656,6 +93703,9 @@
         },
         {
           "commit": "16e24ac09a4dc7d2baeb5f75af3839844dca1876"
+        },
+        {
+          "commit": "1b5d2c285816e9070f995c496647577a28cfcf1a"
         },
         {
           "commit": "27f81c38122be5c0bf9dc9a153e233379ed61ff8"
@@ -100279,7 +100329,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "d25e89555bec1488078ce0fe185baadfd435de8a",
+      "revision": "e8d268df84bbb0ea1a1108682c56aa765a83b47b",
       "currentBranch": "codex/launch-invites-2026-09-08",
       "defaultBranch": "main",
       "visibility": "public",
@@ -159259,6 +159309,54 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "1b33e8457e8398bea1b267574bd4bcc44d02debf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1b5d2c285816e9070f995c496647577a28cfcf1a",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "1b5d2c285816e9070f995c496647577a28cfcf1a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1b5d2c285816e9070f995c496647577a28cfcf1a",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "1b5d2c285816e9070f995c496647577a28cfcf1a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1b5d2c285816e9070f995c496647577a28cfcf1a",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "1b5d2c285816e9070f995c496647577a28cfcf1a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1b5d2c285816e9070f995c496647577a28cfcf1a",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "1b5d2c285816e9070f995c496647577a28cfcf1a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1b5d2c285816e9070f995c496647577a28cfcf1a",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "1b5d2c285816e9070f995c496647577a28cfcf1a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1b5d2c285816e9070f995c496647577a28cfcf1a",
+      "to": "HistoricalArtifact:knowledge/generated/routes.md",
+      "provenance": {
+        "commit": "1b5d2c285816e9070f995c496647577a28cfcf1a"
       }
     },
     {
@@ -232799,6 +232897,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:e8d268df84bbb0ea1a1108682c56aa765a83b47b",
+      "to": "Artifact:tools/chaos.js",
+      "provenance": {
+        "commit": "e8d268df84bbb0ea1a1108682c56aa765a83b47b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e8d268df84bbb0ea1a1108682c56aa765a83b47b",
+      "to": "Artifact:tools/concurrency.js",
+      "provenance": {
+        "commit": "e8d268df84bbb0ea1a1108682c56aa765a83b47b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e8d268df84bbb0ea1a1108682c56aa765a83b47b",
+      "to": "Artifact:tools/loadtest.js",
+      "provenance": {
+        "commit": "e8d268df84bbb0ea1a1108682c56aa765a83b47b"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:e919245b2d4e548f86471f2bd864b9724e33f512",
       "to": "Artifact:tools/knowledge-test.js",
       "provenance": {
@@ -281394,6 +281516,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:1b5d2c285816e9070f995c496647577a28cfcf1a",
+      "provenance": {
+        "commit": "1b5d2c285816e9070f995c496647577a28cfcf1a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:1b5e69dee44558e1d7164effd95db8facbf9edbd",
       "provenance": {
         "commit": "1b5e69dee44558e1d7164effd95db8facbf9edbd"
@@ -290893,6 +291023,14 @@
       "to": "Commit:e8bfd452fa2af5a7ec13cd154ea35606e67548b3",
       "provenance": {
         "commit": "e8bfd452fa2af5a7ec13cd154ea35606e67548b3"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:e8d268df84bbb0ea1a1108682c56aa765a83b47b",
+      "provenance": {
+        "commit": "e8d268df84bbb0ea1a1108682c56aa765a83b47b"
       }
     },
     {
@@ -308775,7 +308913,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "tools/chaos.js",
-        "line": 77
+        "line": 78
       }
     },
     {
@@ -308784,7 +308922,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "tools/chaos.js",
-        "line": 76
+        "line": 77
       }
     },
     {
@@ -308856,7 +308994,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "tools/concurrency.js",
-        "line": 35
+        "line": 36
       }
     },
     {
@@ -308865,7 +309003,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "tools/concurrency.js",
-        "line": 34
+        "line": 35
       }
     },
     {
@@ -309135,7 +309273,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "tools/loadtest.js",
-        "line": 92
+        "line": 93
       }
     },
     {
@@ -309144,7 +309282,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "tools/loadtest.js",
-        "line": 91
+        "line": 92
       }
     },
     {
