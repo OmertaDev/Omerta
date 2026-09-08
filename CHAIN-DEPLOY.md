@@ -1,5 +1,11 @@
 # OMERTÀ — chain go-live runbook (the on-chain rail)
 
+**Current security review policy — 2026-09-08:**
+[SECURITY-REVIEW-POLICY.md](omerta-contracts/SECURITY-REVIEW-POLICY.md) governs the agent-led
+security gate in this runbook. Pin the release source and scope, execute and retain the relevant
+proofs/tests/fuzzing/invariants and static triage, and disposition findings. Dated test totals and
+approval notes below are historical evidence, not clearance for a changed revision.
+
 The mainnet-prep sequence for the §11 chain layer — the counterpart to `DEPLOY.md` (which covers the
 off-chain game). The chain layer is **dormant by default**: the backend runs the full game with ZERO chain
 config, and each on-chain rail activates only when its env vars are set. This runbook is how you deploy the
@@ -16,7 +22,7 @@ touches mainnet** until §0 is satisfied.
 > token, deed TBA, units, delivery id, and deadline. The Safe curates the candidate registry; the
 > server publishes one closed-day family result; the buyer resolves its token from that day and cannot
 > accept a keeper-supplied address. All three deploy/operate disabled until the ceremony below. The
-> venue adapter, independent quote/TWAP oracle, third-party audit, mainnet funding, and written launch
+> venue adapter, independent quote/TWAP oracle, scoped agent-led security review, mainnet funding, and written launch
 > review of the founder's no-in-game-KYC posture are still open gates. Historical “gateless keeper” text
 > below describes the superseded 2026-08-14 authorization posture; delivery itself intentionally has no
 > identity, residency, sanctions, or jurisdiction check.
@@ -25,7 +31,8 @@ touches mainnet** until §0 is satisfied.
 
 ## 0. The three HARD GATES (no mainnet step proceeds until all three are green)
 
-1. **`forge test` passes on a real Foundry toolchain. ✅ EXECUTED 2026-07-23 — 73/73 PASS; 128/128 after
+1. **`forge test` passes on a real Foundry toolchain for the exact release.** Historical evidence:
+   **✅ EXECUTED 2026-07-23 — 73/73 PASS; 128/128 after
    the v4 sell-tax hook** (incl. five 512-run fuzzes: OMR sell-tax conservation, the OmertaBond
    anti-Ponzi bound, the four-wall mint-rate bound, TWAP decode overflow, and the hook's fee-split
    dust) via the official
@@ -33,16 +40,20 @@ touches mainnet** until §0 is satisfied.
    — forge-std/OZ from npm, solc via a solc-js 0.8.26 stdio shim: the emscripten build of the SAME
    compiler version+commit as native). The run surfaced and fixed a latent test-harness class (inline
    `_sign(...)` staticcalls consuming `vm.prank`/`vm.expectRevert` in OmertaBond.t.sol — 14 tests +
-   one silently false-passing fuzz, all now genuinely exercising the contract). BELT-AND-BRACES: the
-   third-party audit should re-run `./run-forge-test.sh` on an open-internet machine with NATIVE solc
-   as part of its own verification — but the Foundry-VM gate itself is now green. NOTE: NATIVE solc is
+   one silently false-passing fuzz, all now genuinely exercising the contract). The current review must
+   re-run `./run-forge-test.sh` with NATIVE solc and retain the exact tool versions and output; these
+   historical executions do not clear a newer source revision. NOTE: NATIVE solc is
    no longer only belt-and-braces. The hook's suite deploys a real v4 `PoolManager` and the emscripten
    compiler runs out of heap on it, so a shim-only box silently runs every suite EXCEPT that one.
-2. **A third-party audit of the CONTRACTS *and* the off-chain EIP-712 signer.** The signer (`src/chain.js`) is
-   as security-critical as the contracts — it mints withdrawal authority. Audit both.
+2. **A scoped agent-led review of the CONTRACTS *and* the off-chain EIP-712 signer** under
+   [the current policy](omerta-contracts/SECURITY-REVIEW-POLICY.md). The signer (`src/chain.js`) is
+   as security-critical as the contracts — it mints withdrawal authority. Review both, plus the
+   applicable browser, API, watcher, storage, and deployment boundaries. Retain executed proofs,
+   unit/integration and stateful fuzz/invariant results, static-analysis triage, findings and retests.
+   Resolve critical/high findings before the affected scope is ready; name every remaining limitation.
    ⚠ **The audit clock was RESET by tokenomics v2 step 4 (2026-07-29).** Until then OMR had no mint
    function and "nothing mints" was the property every prior review of this suite rested on. Supply is now
-   unbounded and bonds mint it. Any auditor must be pointed at that specifically, and at the FOUR walls
+   unbounded and bonds mint it. Every review must address that specifically, and the FOUR walls
    that replaced the fixed cap: `OMR.minter` (one path, no owner mint) plus OmertaBond's `dailyCapOMR`,
    `MAX_DISCOUNT_BPS`, `maxOmrPerEth` and the `oracle`. **The single most important property to review is
    the COMPOSITION of walls 3 and 4** — a price feed sits on the mint path, and what makes that safe is
@@ -59,11 +70,11 @@ touches mainnet** until §0 is satisfied.
    look. **Do not treat the hook as a variant of the ERC-20 tax** — it is a different mechanism at a
    different layer, and the ERC-20 path survives armed at zero as its backstop.
 
-   ### THE BATCH — what goes out, and why it is drawn here
-   **`CHAIN-AUDIT-PACKET-O1.md` is the packet to send** — rebuilt and frozen at release head
-   `b0a214ca` against the tree below, under the PINNED forge v1.7.1, with every figure bound to how
-   it was measured. `CHAIN-AUDIT-PACKET.md` is its superseded pre-O1 predecessor, kept unmodified as
-   historical attack-surface context and **not** a current engagement scope.
+   ### THE BATCH — scope and historical evidence
+   **Freeze a new review package for the selected release.** `CHAIN-AUDIT-PACKET-O1.md` is historical
+   context frozen at release head `b0a214ca` under the PINNED forge v1.7.1, with every figure bound to
+   how it was measured. `CHAIN-AUDIT-PACKET.md` is its superseded pre-O1 predecessor. Preserve both
+   as historical attack-surface evidence; neither defines the scope or clearance of a changed release.
    *"Batch, not dribble" (`omerta-dynasty-machine-design.md`) means the scope must be KNOWN before it
    is sent. The authoritative measurement is the O1 packet's §0: **896 tests across 43 suites, 0
    failed**, under forge v1.7.1 at `b0a214ca`. The 305/305 below is the OLD packet's figure, taken
@@ -83,7 +94,7 @@ touches mainnet** until §0 is satisfied.
    contract-bearing or abstract contract sources. Compatibility and module interfaces under
    `src/interfaces/` remain in source/audit scope even though they are not independently deployable.
    Inventory does not equal launch authorization: the rows marked dormant remain outside deployment
-   until their dependent plans and external gates close.
+   until their dependent plans, scoped review, and applicable operational gates close.
 
    | subsystem | contracts | the thing to attack |
    |---|---|---|
@@ -132,12 +143,12 @@ touches mainnet** until §0 is satisfied.
    **`GenesisOracle` was written specifically so it would not become a straggler** — it is launch-blocking
    (the genesis window bonds before the pool its TWAP would read exists), carries no launch gate at all,
    and was the one contract the launch plan needed that nobody had enumerated. With the two NFTs and the
-   Store leg now in, the batch is the WHOLE on-chain surface — a single engagement, which is what the
-   "batch, not dribble" discipline asks for.
-3. **Launch review sign-off** on the Risk-to-Earn line (see the "Sensitive design notes" in `CLAUDE.md`).
+   Store leg now in, this historical batch enumerates the broad on-chain surface. A new release package
+   must explicitly state which of those systems it covers; a narrow review does not clear the whole batch.
+3. **Owner launch acceptance** on the Risk-to-Earn line (see the "Sensitive design notes" in `CLAUDE.md`).
    **✅ CLEARED 2026-08-12; scope WIDENED to the whole checklist 2026-08-13** — the founder reports
    the tokenomics are approved and the on-chain details; on 2026-08-13 the founder further stated the
-   outside review cleared the ENTIRE launch checklist (every value-moving surface — the stock buys,
+   launch review cleared the ENTIRE launch checklist (every value-moving surface — the stock buys,
    the TBA drops, the claim rail, THE BANK's four — not only the $OMR side first recorded here).
    Recorded as the founder's statements, which is what closes this gate.
    **This gate does NOT unlock mainnet on its own, and the distinction is worth keeping
@@ -145,8 +156,8 @@ touches mainnet** until §0 is satisfied.
    exist — tokenomics v2 step 4 deleted the property every prior contract review rested on ("nothing
    mints") and replaced it with four walls, and on 2026-08-12 two unbounded-mint holes were found in the
    BACKEND keepers (`AUDIT-family-buyback.md`) that had shipped with green tests and passing invariants.
-   That is precisely the class an external auditor exists to catch in the contracts, where it cannot be
-   patched after the fact. **Nothing on this checklist should be armed until gate 2 also clears.**
+   The scoped agent-led review must attack these cross-system assumptions and retain executable evidence
+   for the fixes. **Nothing on this checklist should be armed until gate 2 also clears for that scope.**
    **What this gate covers has moved TWICE, and the current position is the second one.** The stock
    layer was retired 2026-07-31 (`omerta-stock-layer-retirement.md`) and **reinstated 2026-08-10**
    (`omerta-brokers-design.md`, founder decision). Buying, holding and eventually delivering Stock
@@ -169,7 +180,7 @@ touches mainnet** until §0 is satisfied.
    reason is unset env, not unwritten code, and the two are different things to review. The ETH
    VAULT is the same shape one asset over: a player burns earned $OMR for a share of ETH the treasury
    already holds, same asset both sides, allocation-only. The $OMR side and the stock side are
-   different questions; as of 2026-08-13 the founder states BOTH are cleared by the outside review
+   different questions; as of 2026-08-13 the founder states BOTH were included in the launch acceptance
    (still owed regardless: the claim-rail parameters — the eligibility list + verification depth —
    and gate 2). The in-game Portfolio remains a status collectible with no sell and no
    cash-out, using real ticker SYMBOLS for flavour (a flagged, undecided founder question).
@@ -180,7 +191,7 @@ Devnet + testnet rehearsal may proceed now. **Mainnet is blocked on 1 + 2 + 3.**
 
 ## 0.5 RESOLVED — the bond's fourth slice (now the treasury's) leaves on-chain
 
-Found 2026-07-30 while scoping the v4 hook work; **fixed 2026-07-31** before the third-party audit, so
+Found 2026-07-30 while scoping the v4 hook work; **fixed 2026-07-31** during review preparation, so
 it costs nothing extra (the audit clock was already reset by tokenomics v2 step 4 — changing the
 contract AFTER an audit would mean paying to re-audit it).
 
@@ -256,13 +267,18 @@ from the first block. Use `omerta-contracts/DEPLOYMENT.md` and its Foundry scrip
        `gearVault.setMinter(voucherClaim)` so gear mints route through it.
 - [ ] **`OMRStaking(safe, omr, apyBps)`** — pre-funded reward pool; principal always withdrawable.
 - [ ] **`OmertaFees(safe, feeRecipient=devWallet, vigRecipient, vigBps=2500, mintFeeWei, respawnFeeWei)`** —
-      the ETH tollbooth. It splits each fee ON-CHAIN in one tx: `vigBps` → `vigRecipient`, the remainder →
-      `feeRecipient` (dev); it custodies nothing. **`vigBps=2500` is the Path A fee split** (fee vig 2500 —
+      the ETH tollbooth. Character creation mint fees go **100% to `feeRecipient` (`DEV_WALLET`)**,
+      with `mintDevBps() == 10000`. No Vig, treasury or community allocation is booked from those mints.
+      Respawn, reroll and package fees still split ON-CHAIN in one tx: `vigBps` → `vigRecipient`, the
+      remainder → `feeRecipient` (dev); it custodies nothing. **`vigBps=2500` is the non-mint Path A split** (fee vig 2500 —
       down from 6000); it is IMMUTABLE, so set it at deploy and keep it in lockstep with the backend
-      `VIG_BPS` in `deploy/fee-splits.env` (the treasury + community slices of the fee are backend earmarks
+      `VIG_BPS` in `deploy/fee-splits.env` (the treasury + community slices of non-mint fees are backend earmarks
       carved from the dev remainder — not on-chain). Fees: `MINT = 0.01 ETH` (wave 1 of the published
       `MINT_TRANCHES` schedule — five waves to a capped 0.05; each boundary is ONE owner `setFees` tx,
       watched on `/admin`), `RESPAWN = 0.10 ETH`, `reroll` defaults to `mintFee` (owner-settable).
+      The [mint allocation amendment](omerta-contracts/audits/2026-09-08-mint-dev-allocation/report.md)
+      requires new OmertaFees bytecode; the old testnet fee deployment and its readiness report retain
+      the historical split and cannot authorize the current checkout. Mainnet remains chain **4663**.
 - [ ] **`OmertaBond(safe, signer, omr, polBps=7500, devBps=1500, rwaBps=500, polRecipient, devRecipient,
       rwaRecipient, vigRecipient, dailyCapOMR, maxOmrPerEth)`** — POL bonding with the four-way ETH split.
       **Path A: 75% POL / 15% dev wallet / 5% treasury / the REMAINDER, 5%, to Vig** (POL-heavy for
@@ -1212,13 +1228,14 @@ from the first block. Use `omerta-contracts/DEPLOYMENT.md` and its Foundry scrip
       authority. Default UI to active/most-recent incident while allowing full export of every generation with cursor
       continuity and reorg/finality state. Rehearse concurrent append, page boundary, duplicate/missing cursor, deep
       history, reorg rollback, finalized replay, and export parity.
-      **RECOVERY IMPLEMENTATION / INDEPENDENT AUDIT ACTIVATION GATE (founder-approved 2026-08-25):** treat quarantine
+      **RECOVERY IMPLEMENTATION / SCOPED SECURITY REVIEW GATE (founder-approved 2026-08-25; review policy amended 2026-09-08):** treat quarantine
       and indefinite hold as complete launch behavior. Recovery is optional, deferred until a real material balance makes
       it worth building, and is not an ordinary RWA-launch blocker. If later activated, keep recovery unavailable and
       every recovery mutation disabled until the exact production vault/adapter/oracle/API code and deployment manifest
       exist. Require contract unit tests, stateful fuzz/invariant tests, malicious token/adapter/oracle/receiver
       and reentrancy tests, forked-route MEV/slippage/reorg tests, API authorization/idempotency/concurrency/body/cursor/
-      export/load/DoS tests, and independent third-party review of exact source and bytecode. Fix every critical/high
+      export/load/DoS tests, and agent-led review of exact source and bytecode under `omerta-contracts/SECURITY-REVIEW-POLICY.md`.
+      Retain static-analysis diagnostics and triage alongside the executed evidence. Fix every critical/high
       finding and publicly disposition every remainder. Pin chain, addresses, compiler/settings, source commit, runtime/
       implementation code hashes, adapter/oracle identities, test reports, and audit artifacts in the manifest. Any
       material contract/proxy/adapter/oracle/auth/accounting/write-route change resets the applicable gate. Deploy no
@@ -1339,8 +1356,8 @@ from the first block. Use `omerta-contracts/DEPLOYMENT.md` and its Foundry scrip
       initialize the proxy once, and allow a versioned reinitializer only once inside the exact committed
       `upgradeAndCall`. Atomically validate pinned OMR token, vault balance, total accounted liabilities, ruleset,
       settlement-nonce continuity, pause state, controller bindings, and implementation version; any continuity failure
-      reverts the upgrade. Because a malicious implementation can lie, also require independent audit, storage-layout
-      comparison, deployed-bytecode reproduction, and fork rehearsal.
+      reverts the upgrade. Because a malicious implementation can lie, also require a separate agent-led adversarial
+      pass under the current security review policy, storage-layout comparison, deployed-bytecode reproduction, and fork rehearsal.
       Treat rollback as another complete delayed proposal; no instant switch-back or preauthorized old code. A material
       increase in loss, withdrawal restriction, signer scope, or other economic risk creates a new ruleset, requires fresh
       consent, and preserves a prior-terms exit for nonconsenting positions; behavior-preserving security fixes may apply

@@ -3,6 +3,7 @@
 // closure it used to read directly (pool, auth), so nothing about what is mounted or how it is
 // authenticated moves with it; test/routes.js asserts the mounted surface is identical either way.
 import crypto from 'node:crypto';
+import { generateInviteCode } from '../invites.js';
 import { runLedgerInvariants, alertDrift } from '../invariants.js';
 import { TAX, withdrawTaxBps } from '../rules.js';
 import * as Bank from '../bank.js';
@@ -116,7 +117,7 @@ export function register(app, { pool, auth, modAuth, closeAccountSockets }) {
       const uses = Math.max(1, Math.floor(Number(req.body?.uses) || 1));
       const codes = [];
       for (let i = 0; i < count; i++) {
-        const code = crypto.randomBytes(6).toString('hex');
+        const code = generateInviteCode();
         await pool.query('INSERT INTO invite_codes (code, uses_left, created_by) VALUES ($1,$2,$3)', [code, uses, 'mod']);
         codes.push(code);
       }

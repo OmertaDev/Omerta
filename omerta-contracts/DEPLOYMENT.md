@@ -1,5 +1,24 @@
 # OMERTA smart-contract deployment plan
 
+**Current security review policy — 2026-09-08:** follow
+[SECURITY-REVIEW-POLICY.md](SECURITY-REVIEW-POLICY.md). The release gate is an agent-led review of
+the exact source, signer and deployment scope, with executed evidence and retained findings.
+
+The [2026-09-08 comprehensive review](audits/2026-09-08-comprehensive/report.md) records the reviewed
+source, fixes, tests, dependency checks and open conditions for each rail. Public mainnet recipients
+and the concrete Safe, Bank, RWA and liquidity dependencies still require configuration verification;
+source-review completion does not activate those rails.
+
+The later [character mint allocation amendment](audits/2026-09-08-mint-dev-allocation/report.md)
+requires `payMintFee()` to forward 100% to `DEV_WALLET` (`feeRecipient`), with
+`mintDevBps() == 10000` in the deployed runtime. Respawn, reroll and package fees retain `VIG_BPS`.
+The old testnet OmertaFees is immutable and cannot satisfy this amendment; use a new reviewed fee
+deployment and fresh deployment-scoped indexing state or an explicitly reviewed migration.
+
+For the first character NFT activation workstream, start with
+[CHARACTER-NFT-LAUNCH.md](CHARACTER-NFT-LAUNCH.md): existing testnet addresses, a read-only
+preflight, and a disposable fee-to-NFT rehearsal. It preserves the mainnet gates below.
+
 The Uniswap CCA/LBP genesis launch has its own fail-closed ceremony and replaces the original
 concurrent bootstrap-bond concept. Read and sign off [GENESIS-LAUNCH.md](./GENESIS-LAUNCH.md) before
 deploying the launch hook, proceeds splitter, or launcher calldata. The older sections below still
@@ -9,8 +28,8 @@ describe the core suite and post-launch bond/oracle rail; where they conflict on
 This runbook deploys every contract that should have a top-level address while keeping every privileged
 path off until the Safe completes a separate, reviewable ceremony.
 
-> **Mainnet gate:** do not broadcast a mainnet transaction until the third-party contract/signer audit,
-> Safe signer ceremony, chain/legal launch review, and the launch checklist are all signed off. Production
+> **Mainnet gate:** do not broadcast a mainnet transaction until the scoped agent-led contract/signer
+> review, Safe signer ceremony, owner launch acceptance, and the launch checklist are complete. Production
 > is intentionally chain-dormant until those gates clear.
 
 > **First mainnet cut — founder direction, 2026-08-24:** Phase 0 governance and the ten Phase 1 core
@@ -30,8 +49,9 @@ path off until the Safe completes a separate, reviewable ceremony.
 | 4 — v4 hook | `script/DeployHook.s.sol` | OmertaHook at a mined CREATE2 address |
 | Additive legacy RWA machine | `script/DeployRwaStockMachine.s.sol` | StockTokenRegistry and RwaStockBuyer; both born with automation/venue authority off |
 | 5 — post-genesis v4 oracle | `script/DeployV4TwapOracle.s.sol` | ownerless OmrV4TwapOracle |
+| Genesis residual distribution | `script/DeployGenesisSplitter.s.sol` | ownerless GenesisProceedsSplitter, with immutable pool and recipient configuration |
 
-Six other top-level source files do not get a deployment transaction from the current release scripts:
+The remaining source files do not get a standalone release transaction from these scripts:
 
 - `CollateralEscrow` is created by `Alchemist` when each user first deposits.
 - `FlashGuard` is abstract and is inherited by the Bank contracts.
@@ -40,13 +60,22 @@ Six other top-level source files do not get a deployment transaction from the cu
   remains blocked on the finalized consumer, health overlay, and AcquisitionVault budget bridge.
 - `SettlementGasPool` is a reviewed standalone dependency, but no gameplay-vault integration or deploy
   script is authorized by this runbook yet.
-- `AcquisitionVault` contains only the independently approved O1 authority base. A1 accounting and all
-  later custody/outflow integration remain pending, so it must not be deployed.
+- `AcquisitionVault` now includes native deposit/reclassification accounting as well as the legacy
+  authority base. Its later outflow integration remains incomplete; do not deploy or fund it.
+- `RwaHealthOverlay` is a separate implemented health-attestation module whose production writer,
+  consumer and generation-change integration require their own activation configuration.
+- The acquisition constellation comprises `AcquisitionConstellationFactory`, `AcquisitionAuthority`,
+  `AcquisitionVaultCore`, `PreVoteBudgetBook`, `AcquisitionIntentExecution`, and
+  `AcquisitionReconciliation`. The factory deploys the components atomically, but the authority's
+  readiness gate deliberately cannot unpause and the execution/reconciliation components remain
+  staged shells. Deposits do not imply a completed withdrawal or acquisition path. Do not fund it.
 
-That accounts for all 23 top-level `src/*.sol` files: 22 contract-bearing files plus the top-level
-`IOmrOracle` interface. Three additional dedicated interface files live under `src/interfaces/` and
-also receive no deployment transaction. Freeze the exact release phase and refresh the third-party
-audit packet before any mainnet broadcast; source inventory alone is not release scope approval.
+The 2026-09-08 inventory has 32 top-level `src/*.sol` files: 31 contract-bearing files (including the
+abstract `FlashGuard`) plus `IOmrOracle`. Eight additional interface files live under `src/interfaces/`
+and receive no deployment transaction. The historical `reference/OmertaTradeFeeHook.sol` is an
+unimplemented reference, not the live hook. See [the comprehensive review](audits/2026-09-08-comprehensive/report.md)
+for file coverage, findings and retained test evidence. Freeze the exact release phase and refresh the review package
+under the current policy before any mainnet broadcast; source inventory alone is not release approval.
 
 ## 1. Freeze and prove the source
 
@@ -73,6 +102,11 @@ forge build --sizes --skip FuzzTester
 
 The hook tests compile a real Uniswap v4 `PoolManager`; use native solc 0.8.26. Do not use a successful
 no-hook/shim build as the mainnet gate.
+
+Retain the executed test/fuzz/invariant results, static-analysis diagnostics and triage, exploit-proof
+results, remediation/retest record, and explicit exclusions in the source-pinned review package. Use the
+three pinned method repositories in [the policy](SECURITY-REVIEW-POLICY.md); historical counts and a
+successful build do not establish current review coverage.
 
 ## 2. Prepare keys and configuration
 
@@ -102,9 +136,12 @@ Copy-Item .env.mainnet.example .env.mainnet
 ```
 
 Fill every release placeholder, including the exact clean release commit, the deployer's current mainnet
-nonce, the core audit-report SHA-256, and `CORE_SIGNER_AUDIT_INCLUDED=true`. The mainnet wrappers reject a
-dirty worktree, a commit mismatch, a missing audit record, placeholder metadata, a wrong chain, and any
-nonzero Bank address. `.env.mainnet` is gitignored and must contain public configuration only.
+nonce, the scoped review-package SHA-256 in `CORE_AUDIT_REPORT_SHA256`, and
+`CORE_SIGNER_AUDIT_INCLUDED=true` only when the package includes the signer. Verify the referenced file's
+hash and source/scope before proceeding: these existing wrapper fields are operator attestations, not
+automatic validation of the report's contents. The mainnet wrappers reject a dirty worktree, a commit
+mismatch, missing or malformed review fields, placeholder metadata, a wrong chain, and any nonzero Bank
+address. `.env.mainnet` is gitignored and must contain public configuration only.
 
 Before Phase 1, make the following explicit decisions:
 
@@ -156,7 +193,7 @@ broadcast:
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\script\Deploy-TestnetSafe.ps1
 ```
 
-For mainnet, the guarded wrapper defaults to preflight-only. It validates the frozen source, audit record,
+For mainnet, the guarded wrapper defaults to preflight-only. It validates the frozen source, review fields,
 canonical Safe v1.4.1 infrastructure, 2-of-3 owner set, counterfactual address, exact deployer nonce, and a
 2x gas buffer. A broadcast requires both `-Broadcast` and the exact interactive confirmation:
 
@@ -247,9 +284,15 @@ cast call $omr "minter()(address)" --rpc-url $env:CHAIN_RPC_URL
 cast call $bond "dailyCapOMR()(uint256)" --rpc-url $env:CHAIN_RPC_URL
 cast call $bond "maxOmrPerEth()(uint256)" --rpc-url $env:CHAIN_RPC_URL
 cast call $fees "vigBps()(uint256)" --rpc-url $env:CHAIN_RPC_URL
+cast call $fees "mintDevBps()(uint256)" --rpc-url $env:CHAIN_RPC_URL
+cast call $fees "feeRecipient()(address)" --rpc-url $env:CHAIN_RPC_URL
 ```
 
 Do not continue if any address, owner, split, cap, recipient, bytecode hash, or chain ID differs.
+For OmertaFees, `mintDevBps` must return `10000`, and `feeRecipient` must equal the finalized
+`DEV_WALLET`. `vigBps` remains `2500` for respawn, reroll and packages; it does not allocate any
+part of a character mint. A missing mint policy getter is unready, even if the older contract's
+other values match a historical manifest.
 
 ## 5. Build and simulate the Safe ceremony
 

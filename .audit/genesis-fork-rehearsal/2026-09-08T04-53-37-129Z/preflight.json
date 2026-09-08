@@ -1,0 +1,73 @@
+{
+  "ok": true,
+  "stack": {
+    "chainId": 4663,
+    "checkedAtBlock": "57419985",
+    "runtimeCodeHashes": {
+      "liquidityLauncher": "0x4a586d925c9d59ece13ce2239ebd7dea9ee725f9d33c6667e0fd16ae8d977d80",
+      "lbpStrategy": "0x6e822d6a2f634311363ec357109a691d86912414df5c211a2f6ac6de9a680d68",
+      "ccaFactory": "0xa1d2a90564f4f63580b25de42efaff92505c254b00fc666f65ab38126cce5cfa",
+      "permit2": "0x5208783f52488f7d3493e5e38311ab707c1d75457fe472a19b0b4d57d66a7fca",
+      "poolManager": "0xbd3881180b547f5fe817545743cfb4343e96b1bc6640dcd70c106b0066e95626",
+      "positionManager": "0xc873e135dc9aaec88489cfbad146b4cb49d6a32e0d80326377784b7ba17670b2"
+    },
+    "immutables": {
+      "launcherPermit2": "0x000000000022D473030F116dDEE9F6B43aC78BA3",
+      "strategyFactory": "0x000000001F26a0044BaA66024e7b6599c61963F8",
+      "strategyPoolManager": "0x8366a39CC670B4001A1121B8F6A443A643e40951",
+      "strategyPositionManager": "0x58daec3116aae6D93017bAAea7749052E8a04fA7"
+    },
+    "protocolFee": {
+      "controller": "0x0000000000000000000000000000000000000000",
+      "enabled": false,
+      "recipient": "0x0000000000000000000000000000000000000000",
+      "globalPips": "0",
+      "nativeBrackets": [],
+      "representativeRaise": "10000000000000000000",
+      "amount": "0",
+      "netRaise": "10000000000000000000",
+      "effectivePips": "0"
+    }
+  },
+  "readiness": {
+    "checkedAtBlock": "57419985",
+    "checkedAtTimestamp": "1788843241",
+    "customRuntimeCodeHashes": {
+      "token": "0x41a139a604e6490e1e92700baeae5d4c55efbb693cc112cbb1ebb4e506e8f35c",
+      "hook": "0xa552d15a23f5c3eaf6e4e88861452a83b3f6a3c830a0fc512ddf55c64488986a",
+      "proceedsSplitter": "0x2cb19adf5b55e99fcafffa322fe4204a64742241cb80583619b4bc736b7fdad3"
+    },
+    "canonicalPoolId": "0xa914994acadf16902937a067cace4f6a98dcfadf32927427825dd0ff30db741b",
+    "taxes": {
+      "tokenSellTaxBps": "0",
+      "hookSellTaxBps": "0"
+    },
+    "funding": {
+      "launchOwner": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+      "ownerBalance": "99900000000000000000000000",
+      "required": "6063750000000000000000000",
+      "erc20Permit2Allowance": "6063750000000000000000000",
+      "permit2Amount": "6063750000000000000000000",
+      "permit2Expiration": "1788929636",
+      "permit2Nonce": 0
+    },
+    "hook": {
+      "owner": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+      "poolManager": "0x8366a39CC670B4001A1121B8F6A443A643e40951",
+      "omr": "0x512F7469BcC83089497506b5df64c6E246B39925",
+      "authorized": "0x05d552391067389EE44fec3924157ed33F976000",
+      "hookFlags": "12492",
+      "nativeQuoteAllowed": true,
+      "initializerInterfaceSupported": true,
+      "observationSourceInterfaceSupported": true
+    },
+    "splitter": {
+      "poolManager": "0x8366a39CC670B4001A1121B8F6A443A643e40951",
+      "canonicalPoolId": "0xa914994acadf16902937a067cace4f6a98dcfadf32927427825dd0ff30db741b",
+      "poolInitialized": false,
+      "treasury": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+      "vig": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
+      "founder": "0x90F79bf6EB2c4f870365E785982E1f101E93b906"
+    }
+  }
+}

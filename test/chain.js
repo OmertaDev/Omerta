@@ -679,13 +679,20 @@ const d0Toll = await driftOf('$OMR conservation');
 // of the four contracts sharing one signer key had a signing route; this one did not.
 {
   process.env.DYNASTY_NFT_ADDRESS = '0x4444444444444444444444444444444444444444';
-  const { MINT_VOUCHER_TYPES, dynastyChainConfig } = await import('../src/chain.js');
+  const { MINT_VOUCHER_TYPES, dynastyChainConfig, requestDynastyMint, recordDynastyMint, recordDynastyTransfer } = await import('../src/chain.js');
 
   // the gate is the founder's recorded answer — a made account with a proven wallet, one per account
   const { body: { token: freshTok } } = await call('POST', '/v1/auth/guest');
   await call('POST', '/v1/character', { token: freshTok, body: { name: `Nino Dyn${Date.now() % 100000}` } });
   assert.equal((await call('POST', '/v1/identity/mint', { token: freshTok })).body.error, 'not_minted',
     'an account that never paid the identity fee cannot take a portrait on-chain');
+  const freshAccount = (await pool.query('SELECT account_id FROM characters WHERE id=$1',
+    [(await meOf(freshTok)).id])).rows[0].account_id;
+  await pool.query('UPDATE account_persistent SET minted=true WHERE account_id=$1', [freshAccount]);
+  assert.equal((await call('POST', '/v1/identity/mint', { token: freshTok,
+    body: { address: player2.address } })).body.error, 'wallet', 'a recipient address does not replace SIWE proof');
+  assert.equal((await call('POST', '/v1/identity/mint', { token,
+    body: { address: player2.address } })).body.error, 'wallet', 'a linked account cannot mint another wallet its portrait');
 
   const mint = await call('POST', '/v1/identity/mint', { token });
   assert.equal(mint.code, 200, 'a made account with a linked wallet gets a signed MintVoucher');
@@ -717,14 +724,142 @@ const d0Toll = await driftOf('$OMR conservation');
   assert.equal((await pool.query("SELECT status FROM vouchers WHERE kind='dynasty'")).rows[0].status, before,
     'the VoucherClaim reclaim sweep leaves the dynasty voucher alone');
 
-  // once the token is on-chain the account is done — the Minted watcher records it, and the entrance closes
-  await pool.query("UPDATE vouchers SET status='claimed' WHERE kind='dynasty'");
-  const acctId = (await pool.query("SELECT account_id FROM vouchers WHERE kind='dynasty'")).rows[0].account_id;
-  await pool.query("INSERT INTO dynasty_tokens (token_id, minter_address, account_id) VALUES ('7', $1, $2)",
-    [player.address.toLowerCase(), acctId]);
+  // The real watcher transition closes the entrance, not a test-only status flip/token insertion.
+  const acctId = (await pool.query('SELECT account_id FROM vouchers WHERE id=$1', [mint.body.id])).rows[0].account_id;
+  await recordDynastyMint(pool, { nonce: mint.body.nonce, tokenId: '7', minter: player.address });
+  const claimed = (await pool.query('SELECT status, claimed_onchain FROM vouchers WHERE id=$1', [mint.body.id])).rows[0];
+  assert.equal(claimed.status, 'claimed');
+  assert.equal(claimed.claimed_onchain, true, 'the Minted event durably closes its originating voucher');
+  assert.equal((await pool.query("SELECT account_id FROM dynasty_tokens WHERE token_id='7'")).rows[0].account_id, acctId);
   assert.equal((await call('POST', '/v1/identity/mint', { token })).body.error, 'already',
     'one portrait per bloodline, ever');
+
+  // Wallet reassignment between signing and observation cannot move the portrait to another account.
+  // Let Transfer arrive first too: the stub must be completed from nonce history, not today's SIWE map.
+  const originalWallet = '0x8888888888888888888888888888888888888888';
+  await pool.query('UPDATE account_persistent SET wallet_address=$2 WHERE account_id=$1', [freshAccount, originalWallet]);
+  const first = await requestDynastyMint(pool, freshAccount);
+  const rotatedWallet = '0x7777777777777777777777777777777777777777';
+  await pool.query('UPDATE account_persistent SET wallet_address=$2 WHERE account_id=$1', [freshAccount, rotatedWallet]);
+  await pool.query('UPDATE account_persistent SET wallet_address=$2 WHERE account_id=$1', [acctId, originalWallet]);
+  await assert.rejects(() => recordDynastyTransfer(pool, {
+    tokenId: '8', from: '0x0000000000000000000000000000000000000000', to: originalWallet,
+    blockNumber: 100, logIndex: 0,
+  }), /Minted provenance is pending/, 'Transfer cannot invent account provenance from a reassigned wallet');
+  assert.equal((await pool.query("SELECT account_id FROM dynasty_tokens WHERE token_id='8'")).rows.length, 0);
+  // Model a pre-fix frozen stub: reconciliation must clear the unrelated account's snapshot.
+  await pool.query(`INSERT INTO dynasty_tokens (token_id, minter_address, owner_address, account_id, frozen, snapshot)
+    VALUES ('8',$1,$1,$2,true,$3)`, [originalWallet, acctId, JSON.stringify({ name: 'Wrong account' })]);
+  await recordDynastyMint(pool, { nonce: first.nonce, tokenId: '8', minter: originalWallet });
+  assert.equal((await pool.query("SELECT account_id FROM dynasty_tokens WHERE token_id='8'")).rows[0].account_id, freshAccount,
+    'the voucher preserves the requesting account through wallet rotation and Transfer-first delivery');
+  assert.equal((await pool.query("SELECT snapshot FROM dynasty_tokens WHERE token_id='8'")).rows[0].snapshot, null,
+    'a repaired frozen stub cannot publish facts from the unrelated account');
+  await pool.query('UPDATE account_persistent SET wallet_address=$2 WHERE account_id=$1', [acctId, player.address]);
+  await assert.rejects(() => requestDynastyMint(pool, freshAccount), (e) => e.code === 'already');
+  const replay = await recordDynastyMint(pool, { nonce: first.nonce, tokenId: '8', minter: originalWallet });
+  assert.equal(replay.duplicate, true, 'Minted replay cannot duplicate the portrait');
+
+  // A missing registry row still cannot erase the durable claimed-voucher barrier.
+  await pool.query("DELETE FROM dynasty_tokens WHERE token_id='8'");
+  await assert.rejects(() => requestDynastyMint(pool, freshAccount), (e) => e.code === 'already');
+
+  // Expiry is not proof of non-claim. Build a separate made identity to test replacement recovery.
+  const recoveryToken = (await call('POST', '/v1/auth/guest')).body.token;
+  await call('POST', '/v1/character', { token: recoveryToken, body: { name: `Nino Retry${Date.now() % 100000}` } });
+  const recoveryId = (await pool.query('SELECT account_id FROM characters WHERE id=$1', [(await meOf(recoveryToken)).id])).rows[0].account_id;
+  await pool.query('UPDATE account_persistent SET minted=true, wallet_address=$2 WHERE account_id=$1', [recoveryId, originalWallet]);
+  const old = await requestDynastyMint(pool, recoveryId);
+  const oldDeadline = Math.floor(Date.now() / 1000) - 100;
+  await pool.query('UPDATE vouchers SET deadline=$2 WHERE id=$1', [old.id, oldDeadline]);
+  const refuseReplacement = (reader) => assert.rejects(() => requestDynastyMint(pool, recoveryId, undefined, reader),
+    (e) => e.code === 'pending');
+  await refuseReplacement(null);
+  await refuseReplacement({ nonceState: async () => { throw new Error('RPC unavailable'); } });
+  await refuseReplacement({ nonceState: async () => ({ used: false, expired: false }) });
+  await refuseReplacement({ nonceState: async () => ({ expired: true }) });
+  const payload = JSON.parse((await pool.query('SELECT signed_payload FROM vouchers WHERE id=$1', [old.id])).rows[0].signed_payload);
+  assert.deepEqual(payload.domain, dom, 'recovery persists the complete EIP-712 domain');
+  const expiryProof = { nonceState: async () => ({ used: false, expired: true }) };
+  process.env.DYNASTY_NFT_ADDRESS = '0x5555555555555555555555555555555555555555';
+  await refuseReplacement(expiryProof);
+  process.env.DYNASTY_NFT_ADDRESS = dom.verifyingContract;
+  await pool.query('UPDATE vouchers SET signed_payload=$2 WHERE id=$1', [old.id,
+    JSON.stringify({ voucher: payload.voucher, signature: payload.signature })]);
+  await refuseReplacement(expiryProof);
+  await pool.query('UPDATE vouchers SET signed_payload=$2 WHERE id=$1', [old.id, JSON.stringify(payload)]);
+  let checkedNonce = null;
+  const replacement = await requestDynastyMint(pool, recoveryId, undefined, { nonceState: async (nonce, deadline) => {
+    checkedNonce = Number(nonce); assert.equal(Number(deadline), oldDeadline);
+    return { used: false, expired: true };
+  } });
+  assert.equal(checkedNonce, old.nonce, 'the replacement checks its own contract nonce');
+  assert.notEqual(replacement.nonce, old.nonce, 'an expired, confirmed-unused voucher can be replaced');
+  assert.equal((await pool.query('SELECT status FROM vouchers WHERE id=$1', [old.id])).rows[0].status, 'expired');
+  await pool.query('UPDATE vouchers SET deadline=$2 WHERE id=$1', [replacement.id, oldDeadline]);
+  await assert.rejects(() => requestDynastyMint(pool, recoveryId, undefined, {
+    nonceState: async () => ({ used: true, expired: true }),
+  }), (e) => e.code === 'already', 'a claim missed by the watcher prevents a second mint');
+  assert.equal((await pool.query('SELECT claimed_onchain FROM vouchers WHERE id=$1', [replacement.id])).rows[0].claimed_onchain, true);
+  await assert.rejects(() => requestDynastyMint(pool, recoveryId, undefined, null), (e) => e.code === 'already',
+    'a confirmed claim stays closed when the RPC subsequently fails');
+
+  // A log that disagrees with the signed recipient cannot consume the unrelated account's voucher.
+  await assert.rejects(() => recordDynastyMint(pool, { nonce: replacement.nonce, tokenId: '9', minter: rotatedWallet }),
+    /recipient does not match/);
+  assert.equal((await pool.query("SELECT token_id FROM dynasty_tokens WHERE token_id='9'")).rows.length, 0);
   console.log('  ✓ the identity NFT has an entrance: a made account signs one MintVoucher, EIP-712 parity holds, and the reclaim rail ignores it');
+}
+
+// Exercise the actual RPC adapter: latest node time and the local clock are not expiry evidence.
+// The nonce and timestamp must both come from the same confirmation-depth block on our chain.
+{
+  const { createServer } = await import('node:http');
+  const { makeDynastyReader } = await import('../src/chain.js');
+  const savedRpc = process.env.CHAIN_RPC_URL, savedDepth = process.env.CHAIN_CONFIRMATIONS;
+  let rpcChainId = 46630, chainTime = 1000, used = false;
+  const calls = [];
+  const rpc = createServer(async (req, res) => {
+    let raw = ''; for await (const chunk of req) raw += chunk;
+    const q = JSON.parse(raw); calls.push(q);
+    let result;
+    if (q.method === 'eth_chainId') result = '0x' + rpcChainId.toString(16);
+    else if (q.method === 'eth_blockNumber') result = '0x64';
+    else if (q.method === 'eth_getBlockByNumber') result = { number: q.params[0], timestamp: '0x' + chainTime.toString(16) };
+    else if (q.method === 'eth_call') result = '0x' + (used ? '1' : '0').padStart(64, '0');
+    res.writeHead(200, { 'content-type': 'application/json' });
+    res.end(JSON.stringify({ jsonrpc: '2.0', id: q.id, result }));
+  });
+  await new Promise((resolve) => rpc.listen(0, '127.0.0.1', resolve));
+  try {
+    process.env.CHAIN_RPC_URL = `http://127.0.0.1:${rpc.address().port}`;
+    process.env.CHAIN_CONFIRMATIONS = '5';
+    rpcChainId = 1;
+    assert.equal(await makeDynastyReader(), null, 'a same-address contract on the wrong chain is not evidence');
+    rpcChainId = 46630;
+    const reader = await makeDynastyReader();
+    assert.deepEqual(await reader.nonceState(42, 1000), { used: false, expired: false },
+      'the contract still accepts a voucher at its exact deadline');
+    chainTime = 1001;
+    assert.deepEqual(await reader.nonceState(42, 1000), { used: false, expired: true });
+    used = true;
+    assert.deepEqual(await reader.nonceState(42, 1000), { used: true, expired: true });
+    const reads = calls.filter((c) => c.method === 'eth_call');
+    assert.equal(reads.length, 3);
+    for (const c of reads) {
+      assert.equal(c.params[0].to.toLowerCase(), process.env.DYNASTY_NFT_ADDRESS.toLowerCase(),
+        'read DynastyNFT, never VoucherClaim');
+      assert.equal(c.params[1], '0x5f', 'nonce state is read five blocks behind head');
+    }
+    assert(calls.filter((c) => c.method === 'eth_getBlockByNumber').every((c) => c.params[0] === '0x5f'),
+      'expiry uses the timestamp of that same confirmed block');
+  } finally {
+    if (savedRpc === undefined) delete process.env.CHAIN_RPC_URL; else process.env.CHAIN_RPC_URL = savedRpc;
+    if (savedDepth === undefined) delete process.env.CHAIN_CONFIRMATIONS; else process.env.CHAIN_CONFIRMATIONS = savedDepth;
+    rpc.closeAllConnections();
+    await new Promise((resolve) => rpc.close(resolve));
+  }
+  console.log('  ✓ identity replacement uses the correct chain and a confirmed block strictly beyond the signed deadline');
 }
 
 // ─────────────────────────────────────────────────────────────────────────────────────────────────
@@ -744,7 +879,7 @@ const d0Toll = await driftOf('$OMR conservation');
     'not knowing is not the same as broken — an unreachable RPC is reported, never alarmed on');
 
   // a chain that performs exactly the split the backend books is SILENT
-  const agree = { state: 'ok', feeVigBps: VIG_BPS, bondPolBps: BONDS.POL_BPS, bondDevBps: BONDS.DEV_BPS, bondRwaBps: BONDS.RWA_BPS };
+  const agree = { state: 'ok', feeVigBps: VIG_BPS, feeMintDevBps: 10000, bondPolBps: BONDS.POL_BPS, bondDevBps: BONDS.DEV_BPS, bondRwaBps: BONDS.RWA_BPS };
   __setChainParamsReader(async () => agree);
   assert.equal((await chainParity()).state, 'ok', 'agreement is silent');
 
@@ -764,8 +899,13 @@ const d0Toll = await driftOf('$OMR conservation');
   assert.ok(p.mismatches.every((m) => m.what.startsWith('OmertaBond.')), 'both name the bond contract');
 
   // a contract the deploy has not reached yet is simply absent — never compared against 0
-  __setChainParamsReader(async () => ({ state: 'ok', feeVigBps: VIG_BPS }));
+  __setChainParamsReader(async () => ({ state: 'ok', feeVigBps: VIG_BPS, feeMintDevBps: 10000 }));
   assert.equal((await chainParity()).state, 'ok', 'an un-deployed sibling is absent, not a mismatch');
+  __setChainParamsReader(async () => ({ state: 'ok', feeVigBps: VIG_BPS }));
+  assert.equal((await chainParity()).state, 'mismatch', 'an old fees contract without the mint allocation getter is incompatible');
+  __setChainParamsReader(async () => ({ ...agree, feeMintDevBps: 7500 }));
+  assert.deepEqual((await chainParity()).mismatches,
+    [{ what: 'OmertaFees.mintDevBps', onchain: 7500, backend: 10000 }], 'mint allocation drift is reported separately');
 
   // ── THE REST OF THE CLASS (red team #10) ──────────────────────────────────────────────────────
   // Enumerating "a value the chain holds and the backend restates" turned up five instances, not
@@ -775,7 +915,7 @@ const d0Toll = await driftOf('$OMR conservation');
   const MINT_ETH = Number(process.env.MINT_FEE_ETH || 0.01);
   const RESPAWN_ETH = Number(process.env.RESPAWN_FEE_ETH || 0.10);
   const full = {
-    state: 'ok', feeVigBps: VIG_BPS,
+    state: 'ok', feeVigBps: VIG_BPS, feeMintDevBps: 10000,
     bondPolBps: BONDS.POL_BPS, bondDevBps: BONDS.DEV_BPS, bondRwaBps: BONDS.RWA_BPS,
     mintFeeWei: wei(MINT_ETH), respawnFeeWei: wei(RESPAWN_ETH),
     claimDailyCapWei: String(process.env.DAILY_CAP_OMR || '0'),

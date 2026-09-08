@@ -266,7 +266,9 @@ export async function syncDynastyTransferEvents(pool, source, opts = {}) {
   const logs = await source.dynastyTransferLogs(w.from, w.to);
   let processed = 0;
   for (const l of logs) {
-    if (await isolate('dynasty_transfer', () => recordDynastyTransfer(pool, { tokenId: l.tokenId, from: l.from, to: l.to }))) processed++;
+    if (await isolate('dynasty_transfer', () => recordDynastyTransfer(pool, {
+      tokenId: l.tokenId, from: l.from, to: l.to, blockNumber: l.blockNumber, logIndex: l.logIndex,
+    }))) processed++;
   }
   await setCursor(pool, 'dynasty_transfer', w.to);
   return { processed, from: w.from, to: w.to };
@@ -381,10 +383,32 @@ export async function makeViemSource() {
   // wei / 1e18-decimal-OMR → ETH / in-game $OMR units, via viem's decimal-exact formatter (Number() alone
   // on a >2^53 wei bigint loses low-order digits; formatUnits keeps full precision, then recordBond round6's).
   const w18 = (v) => Number(formatUnits(v, 18));
+  // FeeSplit is immutable on OmertaFees. Refuse ingestion before any cursor can advance
+  // if the ledger would book a different Vig share from the ETH actually forwarded.
+  let feeSplitChecked = false;
+  const checkFeeSplit = async () => {
+    if (feeSplitChecked) return;
+    const { VIG_BPS } = await import('./vig.js');
+    const bps = await client.readContract({ address: feesAddr,
+      abi: [{ type: 'function', name: 'vigBps', stateMutability: 'view', inputs: [], outputs: [{ type: 'uint256' }] }],
+      functionName: 'vigBps' });
+    if (BigInt(VIG_BPS) !== bps) throw new Error('OmertaFees Vig split differs from VIG_BPS; fee indexing held for configuration correction.');
+    let mintDevBps;
+    try {
+      mintDevBps = await client.readContract({ address: feesAddr,
+        abi: [{ type: 'function', name: 'mintDevBps', stateMutability: 'view', inputs: [], outputs: [{ type: 'uint256' }] }],
+        functionName: 'mintDevBps' });
+    } catch {
+      throw new Error('OmertaFees mintDevBps is unavailable; fee indexing requires the 100% DEV_WALLET mint contract.');
+    }
+    if (mintDevBps !== 10000n) throw new Error('OmertaFees mint allocation is not 100% DEV_WALLET; fee indexing held for contract correction.');
+    feeSplitChecked = true;
+  };
   return {
     head: () => client.getBlockNumber(),
     feeLogs: async (from, to) => {
       if (!feesAddr) return [];
+      await checkFeeSplit();
       const [mints, respawns, rerolls] = await Promise.all([
         client.getLogs({ address: feesAddr, event: mintEv, ...range(from, to) }),
         client.getLogs({ address: feesAddr, event: respawnEv, ...range(from, to) }),
@@ -396,6 +420,7 @@ export async function makeViemSource() {
     },
     storePaidLogs: async (from, to) => {
       if (!feesAddr) return [];
+      await checkFeeSplit();
       const logs = await client.getLogs({ address: feesAddr, event: packagePaidEv, ...range(from, to) });
       // sku is uint256(keccak256(skuString)) — far beyond 2^53, so it stays a decimal string for the
       // skuFromChainId reverse map (the deliveryId/tokenId discipline).
@@ -479,7 +504,8 @@ export async function makeViemSource() {
     dynastyTransferLogs: async (from, to) => {
       if (!dynastyAddr) return [];
       const logs = await client.getLogs({ address: dynastyAddr, event: erc721TransferEv, ...range(from, to) });
-      return logs.map((l) => ({ from: l.args.from, to: l.args.to, tokenId: l.args.tokenId?.toString() }));
+      return logs.map((l) => ({ from: l.args.from, to: l.args.to, tokenId: l.args.tokenId?.toString(),
+        blockNumber: l.blockNumber?.toString(), logIndex: l.logIndex }));
     },
   };
 }

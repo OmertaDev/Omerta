@@ -834,26 +834,88 @@ export function dynastyChainConfig() {
   return { name: 'OmertaDynasty', version: '1', chainId, verifyingContract: getAddress(verifyingContract) };
 }
 
-export async function requestDynastyMint(pool, accountId, toAddress) {
+// Replacement vouchers require confirmed chain time past the old deadline AND an unused nonce.
+// Wall-clock expiry alone cannot distinguish an unclaimed voucher from a claim the watcher missed.
+// Reads stay outside database locks; the request rechecks the exact nonce/deadline under its lock.
+export async function makeDynastyReader() {
+  if (!process.env.CHAIN_RPC_URL) return null;
+  const domain = dynastyChainConfig();
+  const { createPublicClient, http } = await import('viem');
+  const client = createPublicClient({ transport: http(process.env.CHAIN_RPC_URL) });
+  try { if (Number(await client.getChainId()) !== domain.chainId) return null; } catch { return null; }
+  const depth = Number(process.env.CHAIN_CONFIRMATIONS ?? 5);
+  if (!Number.isSafeInteger(depth) || depth < 0) return null;
+  const abi = [{ type: 'function', name: 'usedNonce', stateMutability: 'view',
+    inputs: [{ name: '', type: 'uint256' }], outputs: [{ name: '', type: 'bool' }] }];
+  return {
+    nonceState: async (nonce, deadline) => {
+      const head = await client.getBlockNumber();
+      if (head < BigInt(depth)) return { used: false, expired: false };
+      const blockNumber = head - BigInt(depth);
+      const block = await client.getBlock({ blockNumber });
+      const used = await client.readContract({ address: domain.verifyingContract, abi,
+        functionName: 'usedNonce', args: [BigInt(nonce)], blockNumber });
+      return { used, expired: block.timestamp > BigInt(deadline) };
+    },
+  };
+}
+
+export async function requestDynastyMint(pool, accountId, toAddress, reader = undefined) {
   const domain = dynastyChainConfig();  // throws chain_unconfigured if not configured
   const signer = signerAccount();       // throws chain_unconfigured if the signer PK is missing
+  const prior = (await pool.query(
+    "SELECT id, nonce, deadline, signed_payload FROM vouchers WHERE account_id=$1 AND kind='dynasty' AND status='signed' AND NOT claimed_onchain AND deadline <= $2",
+    [accountId, Math.floor(Date.now() / 1000)])).rows;
+  const checked = new Map();
+  if (prior.length) {
+    const chain = reader !== undefined ? reader : await makeDynastyReader();
+    for (const v of prior) {
+      // A nonce is meaningful only in its original deployment. Legacy records without a
+      // saved domain remain pending for reconciliation; configuration drift cannot retire them.
+      let saved;
+      try { saved = JSON.parse(v.signed_payload)?.domain; } catch { continue; }
+      if (!saved || saved.name !== domain.name || saved.version !== domain.version
+        || Number(saved.chainId) !== domain.chainId
+        || String(saved.verifyingContract).toLowerCase() !== domain.verifyingContract.toLowerCase()) continue;
+      try { if (chain) checked.set(v.id, { nonce: String(v.nonce), deadline: String(v.deadline), savedPayload: v.signed_payload,
+        ...await chain.nonceState(v.nonce, v.deadline) }); }
+      catch { /* unavailable chain evidence leaves the prior voucher pending */ }
+    }
+  }
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
     const acct = (await client.query('SELECT * FROM account_persistent WHERE account_id=$1 FOR UPDATE', [accountId])).rows[0];
     if (!acct?.minted) throw new GameError('not_minted', 'Only a made account can take its portrait on-chain — pay the identity mint fee first.');
-    const to = toAddress || acct?.wallet_address;
-    if (!to || !isAddress(to)) throw new GameError('wallet', 'Link a wallet (SIWE) or pass a valid address first.');
+    const to = acct?.wallet_address;
+    if (!to || !isAddress(to)) throw new GameError('wallet', 'Link your wallet (SIWE) before minting your portrait.');
+    if (toAddress != null && (!isAddress(toAddress) || getAddress(toAddress) !== getAddress(to)))
+      throw new GameError('wallet', 'The portrait must mint to your linked wallet.');
     // ONE per account, on both horizons: a token the Minted watcher has already recorded, and a
     // voucher signed but not yet claimed. Without the second the window between signing and the mint
     // landing would issue a second voucher for the same account (the contract has no per-account cap
     // — its walls are the nonce, the deadline and the daily rate).
     const have = (await client.query('SELECT token_id FROM dynasty_tokens WHERE account_id=$1', [accountId])).rows[0];
     if (have) throw new GameError('already', 'Your bloodline already has its portrait on-chain.');
-    const pending = (await client.query(
-      "SELECT id FROM vouchers WHERE account_id=$1 AND kind='dynasty' AND status='signed' AND deadline > $2",
-      [accountId, Math.floor(Date.now() / 1000)])).rows[0];
-    if (pending) throw new GameError('pending', 'A mint voucher is already out — claim it, or wait for it to lapse.');
+    const previous = (await client.query(
+      "SELECT id, nonce, deadline, status, claimed_onchain, signed_payload FROM vouchers WHERE account_id=$1 AND kind='dynasty' FOR UPDATE",
+      [accountId])).rows;
+    if (previous.some((v) => v.claimed_onchain || v.status === 'claimed'))
+      throw new GameError('already', 'Your bloodline already claimed its portrait on-chain.');
+    for (const v of previous.filter((v) => v.status === 'signed')) {
+      const proof = checked.get(v.id);
+      if (!proof || proof.nonce !== String(v.nonce) || proof.deadline !== String(v.deadline)
+        || proof.savedPayload !== v.signed_payload)
+        throw new GameError('pending', 'A mint voucher is already out — claim it, or wait for confirmed expiry.');
+      if (proof.used === true) {
+        await client.query("UPDATE vouchers SET status='claimed', claimed_onchain=true WHERE id=$1", [v.id]);
+        await client.query('COMMIT');
+        throw new GameError('already', 'Your portrait was already claimed on-chain; its metadata is syncing.');
+      }
+      if (proof.used !== false || proof.expired !== true)
+        throw new GameError('pending', 'The previous mint must be confirmed unused and expired before replacing its voucher.');
+      await client.query("UPDATE vouchers SET status='expired' WHERE id=$1", [v.id]);
+    }
 
     // nonce from the shared chain_reserve counter (unique across ALL vouchers; this contract's own
     // usedNonce only ever sees this subset, all distinct). NOT reserve-bounded — no $OMR moves.
@@ -869,7 +931,7 @@ export async function requestDynastyMint(pool, accountId, toAddress) {
     const id = uid();
     await client.query(
       'INSERT INTO vouchers (id, account_id, kind, amount, gear_id, nonce, to_address, deadline, status, signed_payload) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',
-      [id, accountId, 'dynasty', 1, null, nonce, getAddress(to), deadline, 'signed', JSON.stringify({ voucher, signature })]);
+      [id, accountId, 'dynasty', 1, null, nonce, getAddress(to), deadline, 'signed', JSON.stringify({ voucher, signature, domain })]);
     await client.query('COMMIT');
     // the SYSTEM marker (dynasty.js's siblings use the same key with their own values — 'proposed',
     // 'wed'): `nonce` + `status:'signed'` alone is the withdrawal and gear-withdrawal shape too, so
@@ -1014,25 +1076,41 @@ export async function recordDeedTransfer(pool, { tokenId, to, from }) {
 
 // Record ONE Minted(nonce, minter, tokenId) — idempotent on the token_id PK (SELECT-then-INSERT
 // inside the txn, never ON CONFLICT DO NOTHING: pg-mem lies about the suppressed rowCount, the
-// recordReckoning lesson). The account resolves from the minter's SIWE wallet (the Store
-// pay-before-link pattern); an unlinked minter leaves account_id NULL — the token is a pure trophy
-// either way. A Transfer-created stub (see recordDynastyTransfer's ordering note) is UPDATEd with
-// the nonce rather than duplicated.
+// recordReckoning lesson). The originating voucher is the account authority: a wallet can change
+// after signing, but the bloodline that requested this nonce cannot. Historical mints with no
+// locally issued voucher retain the legacy wallet lookup. Record the claim in the SAME transaction
+// as the token so a delayed/replayed event cannot leave the account eligible for another mint.
+// A Transfer-created stub is completed from the voucher rather than changing the token's owner.
 export async function recordDynastyMint(pool, { nonce, tokenId, minter }) {
   if (!tokenId || !minter) return { recorded: false };
   const addr = String(minter).toLowerCase();
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
-    const cur = (await client.query('SELECT nonce FROM dynasty_tokens WHERE token_id=$1 FOR UPDATE', [String(tokenId)])).rows[0];
+    const issued = nonce == null ? null : (await client.query(
+      "SELECT id, account_id, to_address FROM vouchers WHERE nonce=$1 AND kind='dynasty'", [Number(nonce)])).rows[0];
+    if (issued && String(issued.to_address).toLowerCase() !== addr)
+      throw new Error('Dynasty mint recipient does not match its issued voucher; refusing to attribute the event.');
+    const acct = issued || (await client.query(
+      'SELECT account_id FROM account_persistent WHERE lower(wallet_address)=lower($1)', [addr])).rows[0];
+    // Same order as issuance: account → voucher → token. The account lock serializes a late
+    // watcher claim with a replacement request; neither can issue past the other's durable claim.
+    if (acct) await client.query('SELECT account_id FROM account_persistent WHERE account_id=$1 FOR UPDATE', [acct.account_id]);
+    if (issued) await client.query("UPDATE vouchers SET status='claimed', claimed_onchain=true WHERE id=$1", [issued.id]);
+    const cur = (await client.query('SELECT nonce, account_id, frozen FROM dynasty_tokens WHERE token_id=$1 FOR UPDATE', [String(tokenId)])).rows[0];
     if (cur) { // a re-scan, or the Transfer stream got here first (the stub) — fill the nonce in, once
-      if (cur.nonce == null && nonce != null)
-        await client.query('UPDATE dynasty_tokens SET nonce=$2 WHERE token_id=$1', [String(tokenId), Number(nonce)]);
+      if (cur.nonce != null && nonce != null && String(cur.nonce) !== String(nonce))
+        throw new Error('Dynasty token is already assigned to another mint nonce; refusing to rewrite its history.');
+      if (issued || (cur.nonce == null && nonce != null))
+        await client.query('UPDATE dynasty_tokens SET nonce=$2, minter_address=$3, account_id=$4 WHERE token_id=$1',
+          [String(tokenId), Number(nonce), addr, acct?.account_id || null]);
+      // A legacy Transfer-first stub may have frozen a different account after wallet rotation.
+      // We cannot reconstruct the old portrait; serve a blank frozen plate instead of false history.
+      if (issued && cur.frozen && cur.account_id !== issued.account_id)
+        await client.query('UPDATE dynasty_tokens SET snapshot=NULL WHERE token_id=$1', [String(tokenId)]);
       await client.query('COMMIT');
       return { recorded: false, duplicate: true };
     }
-    const acct = (await client.query(
-      'SELECT account_id FROM account_persistent WHERE lower(wallet_address)=lower($1)', [addr])).rows[0];
     await client.query(
       `INSERT INTO dynasty_tokens (token_id, nonce, minter_address, owner_address, account_id)
        VALUES ($1,$2,$3,$3,$4)`,
@@ -1045,31 +1123,33 @@ export async function recordDynastyMint(pool, { nonce, tokenId, minter }) {
 
 // Record ONE ERC-721 Transfer on the DynastyNFT. A mint transfer (from 0x0) just confirms the first
 // owner; the FIRST owner→owner transfer FREEZES the portrait (snapshot = the account's latest
-// character's portrait row, captured in the same transaction). Replay-safe: a re-delivered event
-// finds the owner already recorded and the frozen flag already set, and changes nothing. ORDERING
-// NOTE: Minted and Transfer ride two cursor streams, so a sale can arrive before its mint was
-// processed — a missing row is created as a STUB from what the transfer knows (minter := from, the
-// closest owner on record) so the freeze is never lost; recordDynastyMint later fills the nonce.
-export async function recordDynastyTransfer(pool, { tokenId, from, to }) {
+// character's portrait row, captured at observation time). The canonical log position prevents
+// backfills from rolling ownership backwards. Minted must establish provenance before Transfers
+// can be processed; an unavailable mint holds the cursor for retry instead of guessing an account.
+export async function recordDynastyTransfer(pool, { tokenId, from, to, blockNumber, logIndex }) {
   if (!tokenId || !to) return { changed: false };
   const owner = String(to).toLowerCase();
   const ZERO = '0x0000000000000000000000000000000000000000';
   if (owner === ZERO) return { changed: false };          // a burn — DynastyNFT has none today; future-proof skip
   const isMint = !from || String(from).toLowerCase() === ZERO;
+  const positioned = blockNumber != null && logIndex != null;
+  if ((blockNumber != null || logIndex != null) && (!positioned
+    || !/^\d+$/.test(String(blockNumber)) || !/^\d+$/.test(String(logIndex))))
+    throw new Error('Dynasty Transfer log position is invalid.');
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
-    let row = (await client.query(
-      'SELECT token_id, owner_address, account_id, frozen FROM dynasty_tokens WHERE token_id=$1 FOR UPDATE',
+    const row = (await client.query(
+      'SELECT token_id, nonce, owner_address, account_id, frozen, last_transfer_block, last_transfer_log_index FROM dynasty_tokens WHERE token_id=$1 FOR UPDATE',
       [String(tokenId)])).rows[0];
-    if (!row) {
-      const seedMinter = isMint ? owner : String(from).toLowerCase();
-      const acct = (await client.query(
-        'SELECT account_id FROM account_persistent WHERE lower(wallet_address)=lower($1)', [seedMinter])).rows[0];
-      await client.query(
-        `INSERT INTO dynasty_tokens (token_id, minter_address, owner_address, account_id)
-         VALUES ($1,$2,$2,$3)`, [String(tokenId), seedMinter, acct?.account_id || null]);
-      row = { token_id: String(tokenId), owner_address: seedMinter, account_id: acct?.account_id || null, frozen: false };
+    if (!row || row.nonce == null) throw new Error('Dynasty Minted provenance is pending; retry this Transfer after mint indexing.');
+    if (row.last_transfer_block != null) {
+      if (!positioned) throw new Error('A positioned Dynasty token requires a canonical Transfer log position.');
+      const block = BigInt(blockNumber), last = BigInt(row.last_transfer_block);
+      if (block < last || (block === last && BigInt(logIndex) <= BigInt(row.last_transfer_log_index))) {
+        await client.query('COMMIT');
+        return { changed: false, stale: true };
+      }
     }
     let changed = false;
     if (String(row.owner_address || '').toLowerCase() !== owner) {
@@ -1093,6 +1173,9 @@ export async function recordDynastyTransfer(pool, { tokenId, from, to }) {
         'UPDATE dynasty_tokens SET frozen=true, frozen_at=now(), snapshot=$2 WHERE token_id=$1',
         [String(tokenId), snapshot ? JSON.stringify(snapshot) : null]);
     }
+    if (positioned) await client.query(
+      'UPDATE dynasty_tokens SET last_transfer_block=$2, last_transfer_log_index=$3 WHERE token_id=$1',
+      [String(tokenId), String(blockNumber), String(logIndex)]);
     await client.query('COMMIT');
     return { changed, frozen: !isMint && !row.frozen && changed };
   } catch (e) { await client.query('ROLLBACK'); throw e; }
@@ -1109,11 +1192,14 @@ async function applyDeedReimport(client, ref, wallet, tokenId) {
   if (!r || r.status !== 'pending') return null; // already applied / gone
   const onchainOwner = 'onchain:' + String(tokenId);
   const deed = (await client.query(
-    'SELECT account_id, name FROM street_deeds WHERE onchain_token_id=$1 AND account_id=$2 FOR UPDATE', [String(tokenId), onchainOwner])).rows[0];
-  if (!deed) { // the deed isn't in the on-chain state (already re-imported, or never extracted) — settle
+    'SELECT account_id, name FROM street_deeds WHERE onchain_token_id=$1 FOR UPDATE', [String(tokenId)])).rows[0];
+  if (!deed) { // no outstanding extraction (already re-imported, or never extracted) — settle
     await client.query("UPDATE deed_reimports SET status='applied', applied_at=now() WHERE ref=$1", [ref]);
     return null;
   }
+  // Redeemed may precede Extracted in a mint callback, and the two watcher streams
+  // retry independently. Keep this burn recoverable until extraction is indexed.
+  if (deed.account_id !== onchainOwner) return null;
   const acct = (await client.query(
     'SELECT account_id FROM account_persistent WHERE lower(wallet_address)=lower($1)', [wallet])).rows[0];
   if (!acct) return null; // burner's wallet not linked to any account yet — wait
@@ -1630,6 +1716,10 @@ export async function onchainParams() {
     };
     if (fees && isAddress(fees)) {
       out.feeVigBps = Number(await client.readContract({ address: getAddress(fees), abi: [u('vigBps')], functionName: 'vigBps' }));
+      // Missing on older contracts: keep an explicit null so parity reports the incompatible
+      // allocation while preserving the other readable fields.
+      const mintDev = await opt(fees, 'mintDevBps');
+      out.feeMintDevBps = mintDev === undefined ? null : Number(mintDev);
       // the two fee PRICES. Unlike vigBps these are settable, so they move at a tranche boundary —
       // and the backend restates them (vig.js MINT_FEE_ETH/RESPAWN_FEE_ETH) to price the PLEX rail.
       // Wei, not ether: the comparison converts, because a float ether value cannot be compared to a

@@ -1,0 +1,211 @@
+{
+  "capturedAt": "2026-09-08T06:07:16.032Z",
+  "sourceCommit": "e1d0e8476b6f1ebf590b13bd07c072d9d9d33aee",
+  "workingTree": "dirty; hashes identify the reviewed amendment",
+  "target": "Robinhood mainnet 4663, undeployed amendment",
+  "priorAuditSourceTreeSha256": "d43f210a97262729207f9f2aa6d7855d07e55246a1a8656901ee7c89c28d124b",
+  "solidityDeltaFromPriorAudit": [
+    {
+      "path": "omerta-contracts/src/OmertaFees.sol",
+      "before": "7d17fcaa466a6eec92f5824e7d6eef0142090fd6c42465d60e1b5191f861ec5d",
+      "after": "7af9501169458e2796bfe175d1a05c9b0e974c963fbf5dcba852ce539801a1c2"
+    }
+  ],
+  "files": [
+    {
+      "path": "omerta-contracts/src/OmertaFees.sol",
+      "bytes": 10362,
+      "sha256": "7af9501169458e2796bfe175d1a05c9b0e974c963fbf5dcba852ce539801a1c2"
+    },
+    {
+      "path": "omerta-contracts/src/DynastyNFT.sol",
+      "bytes": 10379,
+      "sha256": "c23e6a910caae32b3ac0894861674cdafa91c5092f8191384e6215fb3688deb6"
+    },
+    {
+      "path": "omerta-contracts/test/Omerta.t.sol",
+      "bytes": 33914,
+      "sha256": "04525754cd274be456dc2977eb8de2a6e9cee656c46db925faa19e948840fd1c"
+    },
+    {
+      "path": "omerta-contracts/test/CharacterLaunchAudit.t.sol",
+      "bytes": 47622,
+      "sha256": "039816e8af8315552a9ded444f1af1157808e3c25a4c6cc5692cdf51450095c0"
+    },
+    {
+      "path": "omerta-contracts/script/Deploy.s.sol",
+      "bytes": 9976,
+      "sha256": "0135a24a96fa6005a73af4109aa07953be158432b19a221a0bd1104cf5ebc896"
+    },
+    {
+      "path": "omerta-contracts/script/Deploy-MainnetCore.ps1",
+      "bytes": 19423,
+      "sha256": "1b85cbaae40e733e152069d273c3a8f5ac9677c1ea774a457586e47e95709caf"
+    },
+    {
+      "path": "omerta-contracts/script/Deploy-TestnetCore.ps1",
+      "bytes": 17038,
+      "sha256": "1b66fb276c4997fab9e6dfc0a835b45ef93bde534cb17ff855cd6b4337bf7d06"
+    },
+    {
+      "path": "omerta-contracts/foundry.toml",
+      "bytes": 3139,
+      "sha256": "59a2ce4dd4be2e51d7b63b5c8192b40604bd471047c60ae7492a9d8413bef75c"
+    },
+    {
+      "path": "schema.sql",
+      "bytes": 416450,
+      "sha256": "5116c46d373dc617b27aefb038c107509ff61e9510b5ac108e88fa0aea001b86"
+    },
+    {
+      "path": "src/db.js",
+      "bytes": 61568,
+      "sha256": "2ef8926323ad266ef685856ebf7192f8005cc733eb104d5ddabf2bdc14fe1d52"
+    },
+    {
+      "path": "src/fees.js",
+      "bytes": 16316,
+      "sha256": "8a2da48dba18e290286540eeb89191de03cadb5ac370044ce7cb2088f0adeef0"
+    },
+    {
+      "path": "src/vig.js",
+      "bytes": 29672,
+      "sha256": "78c93b4005b8e016b61b3feb28e255ff235e3a467b59c71bf1b54fa5fc6778f1"
+    },
+    {
+      "path": "src/router.js",
+      "bytes": 27948,
+      "sha256": "b0a4763151d939e1673c88fbc6fee6641375d9356620983f4cb2e0eeaae06901"
+    },
+    {
+      "path": "src/chain.js",
+      "bytes": 127887,
+      "sha256": "5db2c9f6baf64b54c27bc87ce5057dcb7f1ee795838fc2e18e9e8ace0b4ff2aa"
+    },
+    {
+      "path": "src/watcher.js",
+      "bytes": 34149,
+      "sha256": "ff9b5121c5c609587c5eabd90351e70f2f37721801e3ea07a4846eddcc15837d"
+    },
+    {
+      "path": "test/audit/mint-dev-allocation.js",
+      "bytes": 7200,
+      "sha256": "0b34998aec03bd6f11776ce29ba919cad62673e1f8895fcf6017dd96f50ef374"
+    },
+    {
+      "path": "test/router.js",
+      "bytes": 13039,
+      "sha256": "7205bbd54fce74961fa1b632d7c8d496ca004638609d4e664b1086faf4f908ae"
+    },
+    {
+      "path": "test/vig.js",
+      "bytes": 23517,
+      "sha256": "29dfdf1846b2e419099152164a6f3f46cd12d5c3136020bee9a53c1ababa1511"
+    },
+    {
+      "path": "test/community.js",
+      "bytes": 27713,
+      "sha256": "aa6bcf8255bc5c1957d815be5053c5c4aeb51d3e35ab35a8abde801a0cc43d55"
+    },
+    {
+      "path": "test/chain.js",
+      "bytes": 78127,
+      "sha256": "b72455592af58be0ab7d3fc8261c2fb6af2a2675a444841b0d7dc7593581d6c1"
+    },
+    {
+      "path": "test/watcher.js",
+      "bytes": 29838,
+      "sha256": "90dce008b4882eca0bb1ae337c389985a2780232412b250aecb154da17b8f2bf"
+    },
+    {
+      "path": "test/chainparams.js",
+      "bytes": 12113,
+      "sha256": "d648195565df7901eecd17044c35321eed3d9462a7f5b5d9a90a6fbe4ed43ee7"
+    },
+    {
+      "path": "test/migrate.js",
+      "bytes": 72837,
+      "sha256": "fa6cf8f3adb9b78aa4919814117de01992b7878e488bd64f149a977d1d779537"
+    },
+    {
+      "path": "test/character-mint-policy.js",
+      "bytes": 1048,
+      "sha256": "37b3dd041e5ea9d66be540adc6f78b4619c0758baad0f721a49fe7eb82b2f237"
+    },
+    {
+      "path": "tools/character-nft-preflight.js",
+      "bytes": 16151,
+      "sha256": "dd558a8854115e7dc010790e12ba8c7d830e5a0ed2bf5f05cd1e0ce086925b20"
+    },
+    {
+      "path": "tools/character-nft-rehearsal.js",
+      "bytes": 15783,
+      "sha256": "765f176b35935f3cf26b827a208a61727c2802140413573f0de0dd8c0b85ad2e"
+    },
+    {
+      "path": "tools/validate-fee-splits.js",
+      "bytes": 6211,
+      "sha256": "f26854d4d274a1ccafb824358ce356617981cb73850c9e29450b6a88dc3f3902"
+    },
+    {
+      "path": "deploy/fee-splits.json",
+      "bytes": 4419,
+      "sha256": "7e815ac88d7411fc24b06ef7b281416ee66e9962c51796c254a825fbf7696316"
+    },
+    {
+      "path": "deploy/fee-splits.env",
+      "bytes": 4562,
+      "sha256": "b1b793c214addb22b7bbf87b1358be769051ef4ea3f38444c2590b101306c657"
+    },
+    {
+      "path": "public/fee-flows.html",
+      "bytes": 37308,
+      "sha256": "8e06cf495cfd4091f2f657669efde200def3d241addef41f66e721417b18e2fb"
+    },
+    {
+      "path": "omerta-contracts/README.md",
+      "bytes": 11770,
+      "sha256": "d8c24a5f883c1a97ebdf047789bf8662a2b887fe8282563402a050ec19cb24b8"
+    },
+    {
+      "path": "omerta-contracts/DEPLOYMENT.md",
+      "bytes": 31623,
+      "sha256": "3614ef2490a62a054a6bcacb8186c4117115b078da6545e4ece413d74665bf33"
+    },
+    {
+      "path": "omerta-contracts/CHARACTER-NFT-LAUNCH.md",
+      "bytes": 11856,
+      "sha256": "0132ecdce90d53eb5d1fd004a9592f93b70d9e4ee65604811a3f4e76a0b7ef84"
+    },
+    {
+      "path": "CHAIN-DEPLOY.md",
+      "bytes": 210830,
+      "sha256": "ac6840adf52f965d6eb681b9ecaf99841c04ca254c2e5868a7243309a01e8688"
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/access/Ownable.sol",
+      "bytes": 3102,
+      "sha256": "38578bd71c0a909840e67202db527cc6b4e6b437e0f39f0c909da32c1e30cb81"
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol",
+      "bytes": 2476,
+      "sha256": "c75345d7b9feef17ae29f2a800ca2f65f8021cf80436a41d6ec00f57f5180f36"
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/utils/Context.sol",
+      "bytes": 963,
+      "sha256": "847fda5460fee70f56f4200f59b82ae622bb03c79c77e67af010e31b7e2cc5b6"
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol",
+      "bytes": 4766,
+      "sha256": "94e409e8f6e3184236651a6cc2b1a6a3ea0f0a25eb85b71e524ad5791bb2fbc8"
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol",
+      "bytes": 4182,
+      "sha256": "75704538dcb223239280c6726d9a31cf769a7816718517c997fc7d63bdb70778"
+    }
+  ]
+}

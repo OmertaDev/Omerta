@@ -3392,7 +3392,8 @@ scopedSocialContext = async function(db) {
   const expectedNativeCommands = [
     'pgquery', 'pgcheck', 'phase2:definitions:postgres', 'phase2:lots:postgres',
     'test:stockcatalogv2:postgres', 'test:rwahealth:postgres',
-    'test:rwaregistrylifecycle:postgres', 'backup:selftest', 'chaos', 'loadtest', 'concurrency',
+    'test:rwaregistrylifecycle:postgres', 'test:audit:mint-dev:postgres',
+    'test:audit:deed-reimport:postgres', 'backup:selftest', 'chaos', 'loadtest', 'concurrency',
   ];
   const replacePgquery = (replacement) => {
     const fixture = pgcheck.replace(/^([ ]*)npm run pgquery[ ]*$/m,

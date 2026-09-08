@@ -5,8 +5,9 @@
    (you always get the latest client online; cached pages are only offline fallbacks). The shared stylesheet
    also follows the network so installed players receive visual fixes. Icons and art are cache-first.
    The API (/v1/*, the websocket) is NEVER cached. */
-const CACHE = 'omerta-shell-v2';
-const SHELL = ['/', '/omerta-ui.css', '/manifest.json', '/icon-192.png', '/icon-512.png', '/apple-touch-icon.png'];
+const CACHE = 'omerta-shell-v3';
+// Never precache the private console: cache.addAll ignores its no-store response header.
+const SHELL = ['/omerta-ui.css', '/manifest.json', '/icon-192.png', '/icon-512.png', '/apple-touch-icon.png'];
 const cacheable = (res) => res && res.status === 200 && !res.redirected
   && (res.type === 'basic' || res.type === 'default')
   && !/(?:^|,)\s*(?:no-store|private)(?:\s|,|=|$)/i.test(res.headers.get('cache-control') || '');

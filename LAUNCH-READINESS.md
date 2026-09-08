@@ -1,8 +1,14 @@
 # OMERTÀ — launch readiness checklist and plan
 
-**Written 2026-08-11.** The gated plan. `GTM.md` says who we are reaching and in what order;
+**Written 2026-08-11; security policy amended 2026-09-08.** The gated plan. `GTM.md` says who we are reaching and in what order;
 `MARKETING.md` says what we say; this says **what has to be true before each door opens, and who
 decides.**
+
+The active security gate follows the
+[agent-led security review policy](omerta-contracts/SECURITY-REVIEW-POLICY.md): pin source and scope,
+execute the relevant proofs/tests/fuzzing/invariants, triage static results, and retain findings and
+retest evidence. Historical status measurements below retain their original dates and do not clear
+a changed release or an unreviewed deployment phase.
 
 Two rules govern the whole document:
 
@@ -22,7 +28,7 @@ There are three distinct launches here and conflating them is the main way this 
 |---|---|---|---|
 | **DOOR 1 — the game** | Real players in a live city. No chain, no token sale, no real-money extraction. | Engineering + ops readiness only | **Effectively open.** Blocked only by the Phase-0 activation items below. |
 | **DOOR 2 — the agent channel** | Segment B: MCP directories, Show HN, `/arena`. | Door 1 populated | **OPEN** — `omerta-mcp@1.0.0` is live on npm (verified 2026-08-11); 1.0.1 republish pending via the publish workflow. |
-| **DOOR 3 — the chain** | Genesis window, pool, community drop, on-chain extraction. | Third-party audit **and** the launch checklist **and** `forge test` | **Hard-blocked.** Two of three gates are red and neither is ours to close alone. |
+| **DOOR 3 — the chain** | Genesis window, pool, community drop, on-chain extraction. | Scoped agent-led review, current `forge test`, owner launch acceptance, and applicable routing/operational checks | **Scope-specific review required.** A character NFT review does not clear the other rails. |
 
 **Doors 1 and 2 do not wait for Door 3.** That separation is the single most important structural
 decision in this plan: it means we can launch a game, learn from real players, and fix what they
@@ -146,41 +152,41 @@ that screen.
 
 # DOOR 3 — the chain
 
-**Hard-gated. Nothing below ships until all four gates are green — and the two still open (the
-security audit and Uniswap Labs routing review) are not ours to close alone.** `CHAIN-DEPLOY.md` §0 is
-the chain authority; `UNISWAP-ROUTING.md` is the routing authority.
+**Nothing below ships until the gates applicable to its exact release scope are green.**
+`CHAIN-DEPLOY.md` §0 and the current security review policy govern review and activation;
+`UNISWAP-ROUTING.md` governs routing. A fee-to-character-NFT activation is a separate scope from
+genesis, liquidity, bonds, RWA delivery, THE BANK, and token withdrawals.
 
 | Gate | State | Owner |
 |---|---|---|
-| **1 — `forge test` green** | ✅ **896/896 across 43 suites** under pinned forge v1.7.1 at head `b0a214ca` (2026-09-06) | us |
-| **2 — third-party audit of contracts AND the signer** | ❌ **not started** | external |
-| **3 — the launch review** | ✅ **CLEARED 2026-08-13** (founder statement — the whole checklist) | external |
+| **1 — `forge test` green** | Historical: ✅ **896/896 across 43 suites** under pinned forge v1.7.1 at head `b0a214ca` (2026-09-06). Rerun for the selected release. | agents |
+| **2 — scoped agent-led review of contracts AND the signer** | Authorized and in progress for the character NFT workstream; retain the exact source/evidence package and unresolved findings. Broader rails require their own scope coverage. | agents |
+| **3 — owner launch acceptance** | Historical: ✅ **CLEARED 2026-08-13** (founder statement — the then-current checklist). Record current release choices and readiness. | owner |
 | **4 — Uniswap Labs routing approval for `OmertaHook`** | ❌ **mainnet deploy, explorer verification, submission, and approval pending** | external |
 
-### Gate 2 — the audit
+### Gate 2 — the scoped security review
 
-- **The packet is `CHAIN-AUDIT-PACKET-O1.md`**, frozen at release head `b0a214ca` under the pinned
-  toolchain and reconciled against the `CHAIN-DEPLOY.md` inventory; the 2026-08-21
-  `CHAIN-AUDIT-PACKET.md` is its superseded pre-RegistryV2/pre-settlement-pool/pre-O1 predecessor and
-  must not be sent as a scope. A frozen packet is only evidence while the head it names is the head
-  being audited: if the tree has moved on, re-freeze before the engagement rather than sending it.
-  Neither
+- **Freeze a current review package** using the three pinned method repositories in the policy.
+  `CHAIN-AUDIT-PACKET-O1.md`, frozen at release head `b0a214ca`, and the earlier 2026-08-21
+  `CHAIN-AUDIT-PACKET.md` remain historical context. They do not clear source changes. Record the
+  reviewed files/dependencies, commit and working-tree hashes, compiler/artifacts, scope exclusions,
+  executed proofs/tests/fuzzing/invariants, static-analysis triage, and findings/retests. Neither
   `StockTokenRegistryV2`, `SettlementGasPool`, nor the O1-only `AcquisitionVault` is authorized for
   production merely because its source and tests exist.
-- **Point the auditor at the deleted property.** Until tokenomics v2 step 4, every prior review of
+- **Review the changed property.** Until tokenomics v2 step 4, every prior review of
   this suite rested on "nothing mints". That is no longer true — bonds mint — and what replaced it is
-  four walls (`dailyCapOMR`, `MAX_DISCOUNT_BPS`, `maxOmrPerEth`, the accretion oracle). An auditor who
-  reads the old sentence will review the wrong contract.
-- Also brief them on: no oracle on THE BANK's borrow path and no `liquidate()` anywhere (the design's
+  four walls (`dailyCapOMR`, `MAX_DISCOUNT_BPS`, `maxOmrPerEth`, the accretion oracle). A review based
+  on the old claim assesses the wrong behavior.
+- Also cover, when in scope: no oracle on THE BANK's borrow path and no `liquidate()` anywhere (the design's
   central claim, and the class that cost Inverse ~$21M twice); the hook's pool gate (without it anyone
   can emit fabricated revenue wearing a real tx hash); and the accrue-don't-forward rule in both the
   hook and the Alchemist.
-- Hand over the 96 indexed audit reports as context, with the standing caveat that they are **point-in-time**
-  and `SPEC.md` is what is current.
-- **The clock has been reset twice** (v2 step 4; the bond's fourth slice). Do not start it a third
-  time with a contract change unless the change is worth the delay.
+- Retain the indexed audit reports as **point-in-time** context. Do not rewrite them or present their
+  old test totals as evidence for current code; compare their assumptions with the selected release.
+- Material changes reopen the affected review. Fix and retest critical/high findings before that
+  scope is ready, and record every remaining finding, accepted residual risk, and unverified boundary.
 
-### Gate 3 — the launch checklist
+### Gate 3 — owner launch acceptance
 
 The checklist is kept **outside this repo** — see the founder. It is the review of every surface that
 moves real value. The surfaces it covers are the ones this repo builds chain-dormant and never arms
@@ -188,12 +194,12 @@ on its own: treasury stock purchases, transferable TBA drops, the claim rail, NF
 play-pool redistribution, the free community distribution, provenance traits, the activator's leg,
 and THE BANK's four (synthetic issuance, yield-bearing deposits, revenue distribution, custody).
 
-**✅ CLEARED 2026-08-13** — the founder states the outside review cleared the WHOLE checklist,
+**Historical: ✅ CLEARED 2026-08-13** — the founder states the launch review cleared the WHOLE checklist,
 every surface above included. Recorded here as the founder's statement, which is what closes this
 gate (the $OMR side had already been recorded cleared 2026-08-12 in `CHAIN-DEPLOY.md`; this widens
-it to the full list). **Gate 2 — the security audit — is a different thing entirely and is still
-not started: nothing here should be ARMED until it also clears.** A review of whether a surface may
-run says nothing about whether the contract holding the money is safe; that is what the audit is for.
+it to the full list). Retain this as the decision for that dated scope, and record the choices applicable
+to the current release. **Gate 2 is separate: nothing here should be ARMED until its scoped security
+review and executed evidence are complete.** Product acceptance does not substitute for that evidence.
 
 ### Gate 4 — Uniswap Labs routing
 
@@ -261,7 +267,7 @@ Written down so it is a decision on the record rather than something that quietl
 
 - **No paid acquisition.** Cold paid traffic into a deep game with a cold start converts terribly, and
   we would be paying to learn what Phase 1 teaches free.
-- **No promised chain date.** Two of three gates are external.
+- **No promised chain date.** Publish timing only after the scoped evidence and applicable operational gates are ready.
 - **No earnings, yield, or price messaging.** In any channel, including replies.
 - **No leading with crypto.** Segment C is last, by design, and its acquisition motion is the
   community drop rather than a campaign.
@@ -278,8 +284,8 @@ Written down so it is a decision on the record rather than something that quietl
 
 **Blocking Door 2:** nothing — the package is live; populate Door 1 and post.
 
-**Blocking Door 3:** a third-party audit that has not started and six open launch-checklist rows. Neither is
-ours to close alone, and neither should hold the game.
+**Door 3 readiness:** complete the agent-led review package and operational checklist for the exact
+release being opened. Keep unreviewed rails dormant; they do not hold the off-chain game.
 
 **The real risk is not any of the above.** It is launching into a city where nobody meets anybody.
 Recruit in cohorts, read the coach census, and watch co-presence rather than headcount.

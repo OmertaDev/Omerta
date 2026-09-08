@@ -263,6 +263,7 @@ contract OmertaHook is IHooks, IInitializerHook, IOmrV4ObservationSource, Ownabl
     error HookNotImplemented();
     error BadBps();
     error ZeroAddress();
+    error InvalidRecipient();
     error PoolNotAllowed();
     error InvalidInitializer(address caller, address expected);
     error NothingToSweep();
@@ -323,6 +324,11 @@ contract OmertaHook is IHooks, IInitializerHook, IOmrV4ObservationSource, Ownabl
     function setRecipients(address dev, address rwa, address community, address lp) external onlyOwner {
         if (dev == address(0) || rwa == address(0) || community == address(0) || lp == address(0)) {
             revert ZeroAddress();
+        }
+        // A sweep to this contract clears the owed claim without moving the asset out. There is
+        // no unaccounted-balance rescue, so reject self for every native/ERC-20 fee leg.
+        if (dev == address(this) || rwa == address(this) || community == address(this) || lp == address(this)) {
+            revert InvalidRecipient();
         }
         devRecipient = dev;
         rwaRecipient = rwa;

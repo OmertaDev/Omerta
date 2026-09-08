@@ -288,7 +288,9 @@ assert.equal(routeById.get('GET /card/:type/:name')?.handler, 'Cards.publicDossi
   'card routes must not promote the incidental named-import renderPng call over their domain handler');
 assert.equal(routeById.get('GET /v1/auth/x/callback')?.handler, 'A.xOAuthCallback',
   'X callbacks must keep their domain handler rather than promoting the incidental cookie parser');
-for (const route of ['GET /', 'GET /admin', 'GET /wiki', 'GET /arena', 'GET /play', 'GET /path']) {
+assert.equal(routeById.get('GET /')?.handler, 'serveLaunchPage',
+  'the launch page must resolve its admission-aware local handler');
+for (const route of ['GET /admin', 'GET /wiki', 'GET /arena', 'GET /play', 'GET /path']) {
   assert.equal(routeById.get(route)?.handler, 'servePage',
     `${route} must resolve its direct callback-factory handler argument`);
 }

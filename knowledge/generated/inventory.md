@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `e1811ed1ee02`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `e8d268df84bb`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 2,230 |
-| Text lines | 588,214 |
-| Repository bytes inventoried | 546,138,739 |
-| Backend/route modules | 214 |
-| HTTP route registrations / unique routes | 762 / 762 |
+| Current artifacts | 2,299 |
+| Text lines | 730,917 |
+| Repository bytes inventoried | 551,802,785 |
+| Backend/route modules | 216 |
+| HTTP route registrations / unique routes | 767 / 767 |
 | Database tables | 338 |
 | Solidity declarations | 49 |
-| Git commits | 1,439 |
+| Git commits | 1,445 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 6,328 / 28,017 |
+| Graph nodes / edges | 6,449 / 28,607 |
 
 ## Artifact kinds
 
@@ -24,17 +24,17 @@
 |---|---:|
 | media-asset | 893 |
 | documentation | 275 |
-| backend-module | 192 |
+| backend-module | 194 |
 | artifact | 188 |
-| test-suite | 176 |
+| test-suite | 181 |
+| contract-project | 122 |
 | audit | 98 |
 | design | 91 |
-| contract-test | 73 |
-| contract-project | 68 |
-| engineering-harness | 67 |
+| contract-test | 77 |
+| engineering-harness | 70 |
 | contract-source | 40 |
 | route-module | 22 |
-| web-surface | 13 |
+| web-surface | 14 |
 | operations | 11 |
 | knowledge-base | 11 |
 | workflow | 4 |
@@ -47,35 +47,35 @@
 | File | Lines | Kind | Last change |
 |---|---:|---|---|
 | [omerta-contracts/x-ray/slither.json](../../omerta-contracts/x-ray/slither.json) | 64,621 | contract-project | 2026-08-25 |
+| [omerta-contracts/audits/2026-09-08-comprehensive/shared-static-triage.json](../../omerta-contracts/audits/2026-09-08-comprehensive/shared-static-triage.json) | 52,258 | contract-project | 2026-09-08 |
+| [omerta-contracts/audits/2026-09-08-comprehensive/hook-retest-static.json](../../omerta-contracts/audits/2026-09-08-comprehensive/hook-retest-static.json) | 47,392 | contract-project | 2026-09-08 |
 | [CLAUDE.md](../../CLAUDE.md) | 18,679 | documentation | 2026-09-06 |
-| [public/index.html](../../public/index.html) | 12,892 | web-surface | 2026-09-08 |
+| [public/index.html](../../public/index.html) | 12,915 | web-surface | 2026-09-08 |
 | [test/client.js](../../test/client.js) | 9,441 | test-suite | 2026-09-08 |
 | [omerta-contracts/x-ray/slither-vars-and-auth.json](../../omerta-contracts/x-ray/slither-vars-and-auth.json) | 9,374 | contract-project | 2026-08-25 |
 | [.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
-| [schema.sql](../../schema.sql) | 6,876 | data-schema | 2026-09-08 |
+| [schema.sql](../../schema.sql) | 6,881 | data-schema | 2026-09-08 |
 | [BALANCE.md](../../BALANCE.md) | 6,855 | documentation | 2026-09-06 |
+| [omerta-contracts/audits/2026-09-08-comprehensive/package-manifest.json](../../omerta-contracts/audits/2026-09-08-comprehensive/package-manifest.json) | 6,609 | contract-project | 2026-09-08 |
+| [omerta-contracts/audits/2026-09-08-comprehensive/forge-lint-triage.json](../../omerta-contracts/audits/2026-09-08-comprehensive/forge-lint-triage.json) | 6,203 | contract-project | 2026-09-08 |
 | [src/rules.tail.js](../../src/rules.tail.js) | 6,145 | backend-module | 2026-09-02 |
+| [omerta-contracts/audits/2026-09-08-comprehensive/source-manifest.json](../../omerta-contracts/audits/2026-09-08-comprehensive/source-manifest.json) | 4,877 | contract-project | 2026-09-08 |
+| [omerta-contracts/audits/2026-09-08-comprehensive/source-before.json](../../omerta-contracts/audits/2026-09-08-comprehensive/source-before.json) | 4,687 | contract-project | 2026-09-08 |
 | [reference-prototype-v24.jsx](../../reference-prototype-v24.jsx) | 4,235 | artifact | 2026-08-11 |
-| [test/docs.js](../../test/docs.js) | 4,204 | test-suite | 2026-09-06 |
-| [test/gates.js](../../test/gates.js) | 4,078 | test-suite | 2026-09-08 |
+| [test/docs.js](../../test/docs.js) | 4,204 | test-suite | 2026-09-08 |
+| [test/gates.js](../../test/gates.js) | 4,079 | test-suite | 2026-09-08 |
 | [omerta-contracts/test/AcquisitionConstellationTask3B.t.sol](../../omerta-contracts/test/AcquisitionConstellationTask3B.t.sol) | 3,743 | contract-test | 2026-08-28 |
-| [src/server.js](../../src/server.js) | 3,509 | backend-module | 2026-09-06 |
+| [src/server.js](../../src/server.js) | 3,580 | backend-module | 2026-09-08 |
 | [test/phase2-review-regressions.js](../../test/phase2-review-regressions.js) | 3,440 | test-suite | 2026-09-07 |
 | [package-lock.json](../../package-lock.json) | 3,260 | package-config | 2026-09-07 |
-| [omerta-contracts/test/AcquisitionVaultOperator.t.sol](../../omerta-contracts/test/AcquisitionVaultOperator.t.sol) | 3,222 | contract-test | 2026-08-29 |
+| [omerta-contracts/test/AcquisitionVaultOperator.t.sol](../../omerta-contracts/test/AcquisitionVaultOperator.t.sol) | 3,236 | contract-test | 2026-09-08 |
+| [omerta-contracts/audits/2026-09-08-comprehensive/artifact-manifest.json](../../omerta-contracts/audits/2026-09-08-comprehensive/artifact-manifest.json) | 2,972 | contract-project | 2026-09-08 |
 | [omerta-contracts/script/Verify-AcquisitionConstellationCrosswalk.ps1](../../omerta-contracts/script/Verify-AcquisitionConstellationCrosswalk.ps1) | 2,947 | contract-project | 2026-08-28 |
 | [docs/WIKI.md](../../docs/WIKI.md) | 2,759 | documentation | 2026-09-04 |
 | [omerta-contracts/fizz_data/contracts.json](../../omerta-contracts/fizz_data/contracts.json) | 2,739 | contract-project | 2026-08-25 |
-| [src/game.js](../../src/game.js) | 2,736 | backend-module | 2026-09-07 |
-| [public/art/manifest.json](../../public/art/manifest.json) | 2,700 | media-asset | 2026-08-09 |
-| [src/content/corpus.js](../../src/content/corpus.js) | 2,640 | backend-module | 2026-09-07 |
-| [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 2,619 | audit | 2026-08-13 |
-| [brand/master-campaign/manifest.json](../../brand/master-campaign/manifest.json) | 2,568 | media-asset | 2026-09-07 |
-| [test/social.js](../../test/social.js) | 2,469 | test-suite | 2026-09-06 |
-| [docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md](../../docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md) | 2,453 | documentation | 2026-08-27 |
 
 ## Media estate
 

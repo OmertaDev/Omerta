@@ -19,6 +19,8 @@ import * as Corner from './corner.js';
 import * as Contacts from './contacts.js';
 import * as Favors from './favors.js';
 import * as Crew from './crew.js';
+import * as Invites from './invites.js';
+import { accessCookie, clearAccessCookie, readAccessCookie } from './access.js';
 import * as Discovery from './discovery.js';
 import * as Mentor from './mentor.js';
 import * as Streak from './streak.js';
@@ -290,6 +292,10 @@ export async function buildServer() {
     // spurious second pass the head is already flushed, so touching a header would throw
     // ERR_HTTP_HEADERS_SENT and kill the process. Skip once headers are on the wire.
     if (reply.raw.headersSent) return;
+    if (req.launchPrivate) {
+      reply.header('Cache-Control', 'private, no-store');
+      reply.header('Vary', 'Cookie, Authorization, Accept-Encoding');
+    }
     reply.header('X-Content-Type-Options', 'nosniff');
     reply.header('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
     reply.header('Cross-Origin-Opener-Policy', 'same-origin');
@@ -382,17 +388,18 @@ export async function buildServer() {
     if (reply.statusCode === 204 || reply.statusCode === 304 || reply.statusCode === 206) return payload;
     if (reply.getHeader('content-encoding')) return payload;
     if (!COMPRESSIBLE.test(String(reply.getHeader('content-type') || ''))) return payload;
+    const vary = [...new Set(String(reply.getHeader('Vary') || '').split(',').map((v) => v.trim()).filter(Boolean).concat('Accept-Encoding'))].join(', ');
     if (!/\bgzip\b/i.test(String(req.headers['accept-encoding'] || ''))) {
       // Still declare the variance: a cache that stored this uncompressed copy must not hand it to
       // a client that would have got the gzipped one, or the ETag on the static pages goes wrong.
-      reply.header('Vary', 'Accept-Encoding');
+      reply.header('Vary', vary);
       return payload;
     }
     const buf = typeof payload === 'string' ? Buffer.from(payload)
       : Buffer.isBuffer(payload) ? payload : null;
-    if (!buf || buf.length < GZIP_MIN) { reply.header('Vary', 'Accept-Encoding'); return payload; }
+    if (!buf || buf.length < GZIP_MIN) { reply.header('Vary', vary); return payload; }
     const gz = zlib.gzipSync(buf, { level: 6 });
-    reply.header('content-encoding', 'gzip').header('Vary', 'Accept-Encoding')
+    reply.header('content-encoding', 'gzip').header('Vary', vary)
       .header('content-length', gz.length);
     return gz;
   });
@@ -443,7 +450,26 @@ export async function buildServer() {
   // Read once at boot; a missing file degrades to a pointer, never a crash (tests boot headless).
   let clientHtml = '<!doctype html><title>OMERTA</title><p>API up. Client file missing (public/index.html).</p>';
   try { clientHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'index.html'), 'utf8'); } catch { /* headless */ }
-  app.get('/', servePage(clientHtml));
+  const inviteHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'invite.html'), 'utf8');
+  const privateHeaders = { 'Cache-Control': 'private, no-store', Vary: 'Cookie, Authorization, Accept-Encoding',
+    'Referrer-Policy': 'no-referrer' };
+  const invitePage = servePage(inviteHtml, privateHeaders);
+  const gamePage = servePage(clientHtml, privateHeaders);
+  // A bearer can restore an existing browser session. The separate cookie only opens public views;
+  // gameplay routes continue to demand their bearer and all existing server authority checks.
+  const hasViewAccess = async (req) => {
+    let claims = readAccessCookie(req);
+    if (!claims && req.headers.authorization) {
+      try { await req.jwtVerify(); claims = req.user; } catch { return false; }
+    }
+    if (!claims) return false;
+    const a = (await pool.query('SELECT status, token_version FROM accounts WHERE id=$1', [claims.sub])).rows[0];
+    return !!a && a.status !== 'banned' && (claims.tv === undefined || Number(claims.tv) === Number(a.token_version));
+  };
+  async function serveLaunchPage(req, reply) {
+    return Invites.inviteModeEnabled() && !await hasViewAccess(req) ? invitePage(req, reply) : gamePage(req, reply);
+  }
+  app.get('/', async (req, reply) => serveLaunchPage(req, reply));
   // the LIVE-OPS dashboard (mod-key gated client-side; every call carries x-mod-key) — public/admin.html
   let adminHtml = '<!doctype html><title>OMERTA ops</title><p>Ops console file missing (public/admin.html).</p>';
   try { adminHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'admin.html'), 'utf8'); } catch { /* headless */ }
@@ -631,8 +657,8 @@ export async function buildServer() {
     return {
       name: `${row.name} — Generation ${row.generation}`,
       description: frozen
-        ? 'A portrait of a bloodline in OMERTÀ, frozen at its first transfer — a photograph of the '
-          + 'bloodline as it stood. The entitlement never travels with the token.'
+        ? 'A portrait of a bloodline in OMERTÀ, frozen when its first transfer was confirmed and indexed. '
+          + 'It preserves the bloodline observed at that time. The entitlement never travels with the token.'
         : 'A portrait of a bloodline in OMERTÀ. The frame deepens with every generation '
           + 'buried; the coat climbs with the street\'s rank. Held by the account, not by the token.',
       image: `${baseUrl}/v1/identity/${encodeURIComponent(id)}/portrait.svg`,
@@ -999,16 +1025,33 @@ export async function buildServer() {
   };
 
   // ── M5 hardening hooks: §10.2 rate limits + §5 idempotency keys ──
+  // Marketing, documentation, external token metadata, and account recovery stay reachable. Live
+  // public city boards and spectator pages require admission just like the playable console.
+  const publicLaunchReads = new Set(['/v1/rules', '/v1/catalog', '/v1/fairness', '/v1/ws']);
+  app.addHook('preHandler', async (req, reply) => {
+    if (!Invites.inviteModeEnabled() || !['GET', 'HEAD'].includes(req.method)) return;
+    const path = req.routeOptions?.url || req.url.split('?')[0];
+    const isView = ['/wiki', '/arena'].includes(path) || /^\/(?:u|beef|card|deed)\//.test(path);
+    const route = routeRegistry.find((r) => r.method === 'GET' && r.url === path);
+    const isBoard = path.startsWith('/v1/') && route && !route.hasAuth && !publicLaunchReads.has(path)
+      && !/^\/v1\/(?:auth|access|art|avatar|identity|digest|rwa|deeds\/plate)\//.test(path);
+    if (!isView && !isBoard) return;
+    req.launchPrivate = true;
+    reply.header('Cache-Control', 'private, no-store').header('Vary', 'Cookie, Authorization, Accept-Encoding');
+    if (await hasViewAccess(req)) return;
+    if (isView && !/^\/(?:card|deed)\//.test(path)) return invitePage(req, reply);
+    return reply.code(403).send({ error: 'invite_required', message: 'An invite is required to view the city. Sign in to continue.' });
+  });
   // Applied to mutating player endpoints (auth/mod routes are excluded).
   await initRateLimiter();
   const guarded = (req) => (req.method === 'POST' || req.method === 'DELETE')
     && req.url.startsWith('/v1') && req.url !== '/v1/path-quiz'
-    && !req.url.startsWith('/v1/auth') && !req.url.startsWith('/v1/mod')
+    && !req.url.startsWith('/v1/auth') && !req.url.startsWith('/v1/access') && !req.url.startsWith('/v1/mod')
     && !isTrustedReviewerConfig(req.routeOptions?.config);
   app.addHook('preHandler', async (req, reply) => {
     // E-M1: auth endpoints are excluded from the account-keyed limiter above (they're unauthenticated),
     // so throttle them per-IP — bounds guest-mint Sybil floods + X/Privy auth-fetch amplification.
-    if (rateLimitsEnabled() && req.method === 'POST' && req.url.startsWith('/v1/auth')) {
+    if (rateLimitsEnabled() && req.method === 'POST' && (req.url.startsWith('/v1/auth') || req.url.startsWith('/v1/access'))) {
       const limited = await checkAuthRateLimit({ ip: req.ip });
       if (limited) return reply.code(429).header('retry-after', limited.retryAfter)
         .send({ error: 'rate_limited', retryAfter: limited.retryAfter });
@@ -1213,7 +1256,7 @@ export async function buildServer() {
     return { ok: true };
   });
 
-  app.post('/v1/auth/guest', async (req) => {
+  const guestLogin = async (req) => {
     if (req.body && typeof req.body === 'object' && !Array.isArray(req.body) &&
         Object.prototype.hasOwnProperty.call(req.body, 'bootstrapSecret')) {
       const { accountId, tokenVersion } = await A.accountForGuestBootstrap(
@@ -1221,12 +1264,29 @@ export async function buildServer() {
       );
       return { token: await signFor(accountId, {}, '30d', tokenVersion) };
     }
-    await A.consumeInvite(pool, req.body?.inviteCode);
-    const id = uid();
-    await pool.query('INSERT INTO accounts (id, auth_provider, auth_subject, created_ip, last_ip) VALUES ($1,$2,$3,$4,$4)',
-      [id, 'guest', id, req.ip || '0.0.0.0']);
-    await pool.query('INSERT INTO account_persistent (account_id) VALUES ($1)', [id]);
+    const id = await A.createGuestAccount(pool, req.ip || '0.0.0.0', req.body?.inviteCode);
     return { token: await signFor(id, {}, '30d', 0) };
+  };
+  app.post('/v1/auth/guest', guestLogin);
+  app.post('/v1/access/redeem', async (req, reply) => {
+    // The browser persists this random recovery credential before submitting. A lost response can
+    // recover the same admission instead of burning another code or minting another identity.
+    if (!req.body?.bootstrapSecret) throw new G.GameError('bootstrap_credential', 'A recovery credential is required. Reload and try again.');
+    const result = await guestLogin(req);
+    const claims = app.jwt.verify(result.token);
+    reply.header('Cache-Control', 'no-store').header('Set-Cookie', accessCookie(claims.sub, claims.tv));
+    return result;
+  });
+  app.post('/v1/access/session', { preHandler: auth }, async (req, reply) => {
+    // Preserve the bearer version we actually authenticated. Reading a newer version after a
+    // simultaneous logout-all would let a just-revoked bearer mint a fresh valid view cookie.
+    const tv = req.user.tv ?? (await pool.query('SELECT token_version FROM accounts WHERE id=$1', [req.user.sub])).rows[0].token_version;
+    reply.header('Cache-Control', 'no-store').header('Set-Cookie', accessCookie(req.user.sub, tv));
+    return { ok: true };
+  });
+  app.post('/v1/access/logout', async (_req, reply) => {
+    reply.header('Cache-Control', 'no-store').header('Set-Cookie', clearAccessCookie());
+    return { ok: true };
   });
   app.post('/v1/auth/guest/bootstrap/ack', { preHandler: auth }, async (req) =>
     A.acknowledgeGuestBootstrap(pool, req.user.sub));
@@ -1295,7 +1355,10 @@ export async function buildServer() {
       }
       // (B2) invite consumed atomically inside accountForIdentity's create txn — gate held under races
       const { accountId } = await A.accountForIdentity(pool, r.identity, req.ip || '0.0.0.0', r.invite);
-      return reply.redirect(`/#token=${encodeURIComponent(await signFor(accountId))}`);
+      const token = await signFor(accountId);
+      const claims = app.jwt.verify(token);
+      reply.header('Set-Cookie', [reply.getHeader('Set-Cookie'), accessCookie(accountId, claims.tv)]);
+      return reply.redirect(`/#token=${encodeURIComponent(token)}`);
     } catch (e) {
       const code = e instanceof G.GameError ? e.code : 'oauth_failed';
       if (!(e instanceof G.GameError)) console.error('x oauth callback', e);
@@ -2932,6 +2995,14 @@ export async function buildServer() {
   // until accepted, so the target is never locked). ──
   app.get('/v1/crew', { preHandler: auth }, async (req) =>
     G.readCharacter(pool, req.user.sub, (ch, client) => Crew.crewBoard(ch, client)));
+  app.get('/v1/invites', { preHandler: auth }, async (req, reply) => {
+    reply.header('Cache-Control', 'private, no-store');
+    return Invites.inviteBoard(pool, req.user.sub);
+  });
+  app.post('/v1/invites', { preHandler: auth }, async (req, reply) => {
+    reply.header('Cache-Control', 'private, no-store');
+    return G.withCharacter(pool, req.user.sub, (ch, client) => Invites.issueCrewInvite(ch, client), Crew.CREW_FIRST_CHARACTER_LOCKS);
+  });
   app.post('/v1/crew', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Crew.createCrew(ch, req.body?.name, client, h)));
   app.post('/v1/crew/invite', { preHandler: auth }, async (req) =>

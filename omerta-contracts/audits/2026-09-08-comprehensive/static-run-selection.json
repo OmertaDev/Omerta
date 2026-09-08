@@ -1,0 +1,188 @@
+[
+  {
+    "name": "AcquisitionAuthority",
+    "file": "slither-AcquisitionAuthority-ir.json",
+    "success": true,
+    "diagnostics": 120
+  },
+  {
+    "name": "AcquisitionConstellationFactory",
+    "file": "slither-AcquisitionConstellationFactory-full.json",
+    "success": true,
+    "diagnostics": 8
+  },
+  {
+    "name": "AcquisitionIntentExecution",
+    "file": "slither-AcquisitionIntentExecution-full.json",
+    "success": true,
+    "diagnostics": 0
+  },
+  {
+    "name": "AcquisitionReconciliation",
+    "file": "slither-AcquisitionReconciliation-full.json",
+    "success": true,
+    "diagnostics": 0
+  },
+  {
+    "name": "AcquisitionVault",
+    "file": "slither-AcquisitionVault-full.json",
+    "success": true,
+    "diagnostics": 129
+  },
+  {
+    "name": "AcquisitionVaultCore",
+    "file": "slither-AcquisitionVaultCore-ir.json",
+    "success": true,
+    "diagnostics": 44
+  },
+  {
+    "name": "Alchemist",
+    "file": "slither-Alchemist-full.json",
+    "success": true,
+    "diagnostics": 92
+  },
+  {
+    "name": "CollateralEscrow",
+    "file": "slither-CollateralEscrow-full.json",
+    "success": true,
+    "diagnostics": 11
+  },
+  {
+    "name": "Denari",
+    "file": "slither-Denari-full.json",
+    "success": true,
+    "diagnostics": 76
+  },
+  {
+    "name": "DynastyNFT",
+    "file": "slither-DynastyNFT-full.json",
+    "success": true,
+    "diagnostics": 83
+  },
+  {
+    "name": "FlashGuard",
+    "file": "slither-FlashGuard-full.json",
+    "success": true,
+    "diagnostics": 5
+  },
+  {
+    "name": "GearVault",
+    "file": "slither-GearVault-full.json",
+    "success": true,
+    "diagnostics": 111
+  },
+  {
+    "name": "GenesisOracle",
+    "file": "slither-GenesisOracle-full.json",
+    "success": true,
+    "diagnostics": 8
+  },
+  {
+    "name": "GenesisProceedsSplitter",
+    "file": "slither-GenesisProceedsSplitter-full.json",
+    "success": true,
+    "diagnostics": 70
+  },
+  {
+    "name": "OmertaBond",
+    "file": "slither-OmertaBond-full.json",
+    "success": true,
+    "diagnostics": 84
+  },
+  {
+    "name": "OmertaFees",
+    "file": "slither-OmertaFees-full.json",
+    "success": true,
+    "diagnostics": 16
+  },
+  {
+    "name": "OmertaHook",
+    "file": "slither-OmertaHook-full.json",
+    "success": true,
+    "diagnostics": 82
+  },
+  {
+    "name": "OMR",
+    "file": "slither-OMR-full.json",
+    "success": true,
+    "diagnostics": 79
+  },
+  {
+    "name": "OMRStaking",
+    "file": "slither-OMRStaking-full.json",
+    "success": true,
+    "diagnostics": 22
+  },
+  {
+    "name": "OmrTwapOracle",
+    "file": "slither-OmrTwapOracle-full.json",
+    "success": true,
+    "diagnostics": 38
+  },
+  {
+    "name": "OmrV4TwapOracle",
+    "file": "slither-OmrV4TwapOracle-full.json",
+    "success": true,
+    "diagnostics": 118
+  },
+  {
+    "name": "PreVoteBudgetBook",
+    "file": "slither-PreVoteBudgetBook-full.json",
+    "success": true,
+    "diagnostics": 10
+  },
+  {
+    "name": "RwaHealthOverlay",
+    "file": "slither-RwaHealthOverlay-ir.json",
+    "success": true,
+    "diagnostics": 7
+  },
+  {
+    "name": "RwaStockBuyer",
+    "file": "slither-RwaStockBuyer-full.json",
+    "success": true,
+    "diagnostics": 30
+  },
+  {
+    "name": "SettlementGasPool",
+    "file": "slither-SettlementGasPool-full.json",
+    "success": true,
+    "diagnostics": 23
+  },
+  {
+    "name": "StockTokenRegistry",
+    "file": "slither-StockTokenRegistry-full.json",
+    "success": true,
+    "diagnostics": 10
+  },
+  {
+    "name": "StockTokenRegistryV2",
+    "file": "slither-StockTokenRegistryV2-full.json",
+    "success": true,
+    "diagnostics": 22
+  },
+  {
+    "name": "StockVault",
+    "file": "slither-StockVault-full.json",
+    "success": true,
+    "diagnostics": 77
+  },
+  {
+    "name": "StreetDeed",
+    "file": "slither-StreetDeed-full.json",
+    "success": true,
+    "diagnostics": 85
+  },
+  {
+    "name": "Transmuter",
+    "file": "slither-Transmuter-full.json",
+    "success": true,
+    "diagnostics": 82
+  },
+  {
+    "name": "VoucherClaim",
+    "file": "slither-VoucherClaim-full.json",
+    "success": true,
+    "diagnostics": 74
+  }
+]

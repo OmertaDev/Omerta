@@ -1,0 +1,770 @@
+{
+  "date": "2026-09-08",
+  "note": "Each entry links a raw diagnostic to a disposition. Imported dependency-only diagnostics remain with the shared-dependency/global review.",
+  "inputs": [
+    {
+      "path": "output\\comprehensive-audit\\slither-Alchemist-full.json",
+      "sha256": "624df8ae1d1ebd3f1ee467aac19c60897765ae9b1e3521776449c03d7d3cd24f",
+      "success": true
+    },
+    {
+      "path": "output\\comprehensive-audit\\slither-Denari-full.json",
+      "sha256": "e315b235f386ca84c268eb58f29a0ede0c392208905785c6a55bf3e59b09100e",
+      "success": true
+    },
+    {
+      "path": "output\\comprehensive-audit\\slither-Transmuter-full.json",
+      "sha256": "1ee4e5574f7a06a6eb7aa51377aca0ff4e57dfa8a4c90026362a2b7ec9392126",
+      "success": true
+    },
+    {
+      "path": "output\\comprehensive-audit\\slither-CollateralEscrow-full.json",
+      "sha256": "549f2db9d6e58c18ebdbbcdcf4b9983cf33ab78d78a485d425625d420223c3d0",
+      "success": true
+    },
+    {
+      "path": "output\\comprehensive-audit\\slither-FlashGuard-full.json",
+      "sha256": "bac07e3343743ecc31f9cd02e6edd52c449900e0ef9cf8e008ae46e354450a7b",
+      "success": true
+    },
+    {
+      "path": "output\\comprehensive-audit\\slither-OmertaHook-full.json",
+      "sha256": "302efabf63d9872b2889bb4333220aaeb01ddb875a4f920b59af5c61026f3331",
+      "success": true
+    },
+    {
+      "path": "output\\comprehensive-audit\\slither-OmrTwapOracle-full.json",
+      "sha256": "3c1c407aa5ad886c4353d7f61ac33cb896dec45d9060553af4cd774de6f28f33",
+      "success": true
+    },
+    {
+      "path": "output\\comprehensive-audit\\slither-OmrV4TwapOracle-full.json",
+      "sha256": "e3fa58837e377eda79a7f22e547a0c9a0b5ce64c4217ff9548154458b887798f",
+      "success": true
+    },
+    {
+      "path": "output\\comprehensive-audit\\slither-StockTokenRegistry-full.json",
+      "sha256": "c8f904d9a19205a60dabab739d0d33e7892145eeec22e84a640fbdfff02e8e11",
+      "success": true
+    },
+    {
+      "path": "output\\comprehensive-audit\\slither-RwaStockBuyer-full.json",
+      "sha256": "54d639766d729095e0e13f8fb7ad25692b26428e4e9e0d33b1a2ac4cf81cca19",
+      "success": true
+    }
+  ],
+  "diagnostics": [
+    {
+      "sourceRun": "Alchemist",
+      "id": "365651b0a2b26f2390e667da9c752a75a393f5d8d23bde4a811362ccdd751df3",
+      "check": "divide-before-multiply",
+      "reportedImpact": "Medium",
+      "description": "Alchemist.harvest(address) (src/Alchemist.sol#368-443) performs a multiplication on the result of a division:\n\t- take = (d + scale - 1) / scale (src/Alchemist.sol#392)\n\t- asDebt = take * scale (src/Alchemist.sol#394)\n",
+      "disposition": "Reviewed rounding: Alchemist ceils debt-to-assets then caps debt reduction; V2 follows canonical UQ112 reserve-ratio truncation before time accrual; hook rounds measured impact to integer bps, then stays between configured floor and hard-capped surge ceiling. No proven harmful loss from this rule."
+    },
+    {
+      "sourceRun": "Alchemist",
+      "id": "2d4c3fb9df5622084e5022fb55470df2a0678e645e722a9f71e9053a00c3eef4",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "FlashGuard.notSameBlockAsEntry(address) (src/FlashGuard.sol#75-78) uses a dangerous strict equality:\n\t- _lastEntry[account] == block.number (src/FlashGuard.sol#76)\n",
+      "disposition": "Intentional discrete/sentinel check: same-block separation, zero share early return, uninitialized pool/ballot/average, or exact prior-UTC-day binding. None compares a manipulable external token balance to a nonzero fixed expected amount."
+    },
+    {
+      "sourceRun": "Alchemist",
+      "id": "849aae87e7e156bb84eedffe85d0804631834af195796a4efe876ab9f6d48faa",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "CollateralEscrow.withdrawAll(address) (src/CollateralEscrow.sol#87-91) uses a dangerous strict equality:\n\t- shares == 0 (src/CollateralEscrow.sol#89)\n",
+      "disposition": "Intentional discrete/sentinel check: same-block separation, zero share early return, uninitialized pool/ballot/average, or exact prior-UTC-day binding. None compares a manipulable external token balance to a nonzero fixed expected amount."
+    },
+    {
+      "sourceRun": "Alchemist",
+      "id": "d5be0e9b4409e0c39ef16a015f20612b7c233c1e75e4495ac9569b8825634466",
+      "check": "reentrancy-no-eth",
+      "reportedImpact": "Medium",
+      "description": "Reentrancy in Alchemist.harvest(address) (src/Alchemist.sol#368-443):\n\tExternal calls:\n\t- e.withdraw(take + fee,address(this)) (src/Alchemist.sol#417)\n\tState variables written after the call(s):\n\t- debtOf[user] = d - asDebt (src/Alchemist.sol#418)\n\tAlchemist.debtOf (src/Alchemist.sol#103) can be used in cross function reentrancies:\n\t- Alchemist.debtOf (src/Alchemist.sol#103)\n",
+      "disposition": "False positive: all Alchemist state-mutating position entry points are nonReentrant. Harvest rechecks actual collateral after vault withdrawal before funding. Public views can observe an intermediate value, but no in-scope consumer performs a mutation from that view during a callback."
+    },
+    {
+      "sourceRun": "Alchemist",
+      "id": "7adc73d3e73fdd12cdf203bc5f1bd5cf419a701ea89ac65ff699313e1c33b1cf",
+      "check": "unused-return",
+      "reportedImpact": "Medium",
+      "description": "CollateralEscrow.withdraw(uint256,address) (src/CollateralEscrow.sol#81-83) ignores return value by vault.withdraw(assets,to,address(this)) (src/CollateralEscrow.sol#82)\n",
+      "disposition": "Intentional: escrow measures actual share-balance delta instead of trusting deposit return; vault withdraw share return is unused and subsequent Alchemist collateral is rechecked. Hook ignores LP/protocol fee fields it does not consume. Buyer ignores ballot display ticker/tally while binding asset key, token and active status."
+    },
+    {
+      "sourceRun": "Alchemist",
+      "id": "ebe8390214f6f78b7f7fccb06710a59f731c78edb768b6791f1bdd7eb8c64b54",
+      "check": "unused-return",
+      "reportedImpact": "Medium",
+      "description": "CollateralEscrow.deployToVault(uint256) (src/CollateralEscrow.sol#71-78) ignores return value by vault.deposit(assets,address(this)) (src/CollateralEscrow.sol#74)\n",
+      "disposition": "Intentional: escrow measures actual share-balance delta instead of trusting deposit return; vault withdraw share return is unused and subsequent Alchemist collateral is rechecked. Hook ignores LP/protocol fee fields it does not consume. Buyer ignores ballot display ticker/tally while binding asset key, token and active status."
+    },
+    {
+      "sourceRun": "Alchemist",
+      "id": "32567c7091b49d7eec7c86fb12ddc6e9563214d896f3219693e2de293aa5aa32",
+      "check": "missing-zero-check",
+      "reportedImpact": "Low",
+      "description": "CollateralEscrow.constructor(address,IERC20,IERC4626).owner_ (src/CollateralEscrow.sol#60) lacks a zero-check on :\n\t\t- owner = owner_ (src/CollateralEscrow.sol#62)\n",
+      "disposition": "Intentional disabled role: zero minter/burner/publisher/keeper disables authority. Escrow owner is attribution only; production Alchemist passes nonzero msg.sender and only immutable controller has custody authority."
+    },
+    {
+      "sourceRun": "Alchemist",
+      "id": "39a0aaaafdee3bdc40c1f0f220de475b7353825cc4b0dd7caa74ddfcb20177ae",
+      "check": "missing-zero-check",
+      "reportedImpact": "Low",
+      "description": "Denari.setBurner(address).b (src/Denari.sol#71) lacks a zero-check on :\n\t\t- burner = b (src/Denari.sol#72)\n",
+      "disposition": "Intentional disabled role: zero minter/burner/publisher/keeper disables authority. Escrow owner is attribution only; production Alchemist passes nonzero msg.sender and only immutable controller has custody authority."
+    },
+    {
+      "sourceRun": "Alchemist",
+      "id": "9258a9ae7935927de2445dd06be9035bd00f92d07d60d4bed15c0e64efd06d31",
+      "check": "missing-zero-check",
+      "reportedImpact": "Low",
+      "description": "Denari.setMinter(address).m (src/Denari.sol#62) lacks a zero-check on :\n\t\t- minter = m (src/Denari.sol#63)\n",
+      "disposition": "Intentional disabled role: zero minter/burner/publisher/keeper disables authority. Escrow owner is attribution only; production Alchemist passes nonzero msg.sender and only immutable controller has custody authority."
+    },
+    {
+      "sourceRun": "Alchemist",
+      "id": "701791101cbc3cb8f7978e82dee2c9a831300d8f8f9ed7fcf36d0b6ba767b6e9",
+      "check": "reentrancy-benign",
+      "reportedImpact": "Low",
+      "description": "Reentrancy in Alchemist.withdraw(uint256) (src/Alchemist.sol#288-302):\n\tExternal calls:\n\t- e.withdraw(assets,msg.sender) (src/Alchemist.sol#293)\n\tState variables written after the call(s):\n\t- principalOf[msg.sender] = 0 (src/Alchemist.sol#297)\n\t- principalOf[msg.sender] = p - assets (src/Alchemist.sol#297)\n",
+      "disposition": "False positive: deposit, withdraw and harvest share the Alchemist nonReentrant lock. Reverted external calls roll back state; withdrawal and harvest recheck collateral after vault execution."
+    },
+    {
+      "sourceRun": "Alchemist",
+      "id": "a29b32c02cea95f6754134f632861305bb2778eee7b71f6510c346d89e00266c",
+      "check": "reentrancy-benign",
+      "reportedImpact": "Low",
+      "description": "Reentrancy in Alchemist.deposit(uint256,uint256) (src/Alchemist.sol#263-286):\n\tExternal calls:\n\t- shares = e.deployToVault(assets) (src/Alchemist.sol#282)\n\tState variables written after the call(s):\n\t- principalOf[msg.sender] += assets (src/Alchemist.sol#284)\n",
+      "disposition": "False positive: deposit, withdraw and harvest share the Alchemist nonReentrant lock. Reverted external calls roll back state; withdrawal and harvest recheck collateral after vault execution."
+    },
+    {
+      "sourceRun": "Alchemist",
+      "id": "f6757c529e7bf5bc642020308fe83d1f25a1c06cf84a8be4317c304b5fe02cf6",
+      "check": "reentrancy-benign",
+      "reportedImpact": "Low",
+      "description": "Reentrancy in Alchemist.harvest(address) (src/Alchemist.sol#368-443):\n\tExternal calls:\n\t- e.withdraw(take + fee,address(this)) (src/Alchemist.sol#417)\n\tState variables written after the call(s):\n\t- accruedFees += fee (src/Alchemist.sol#434)\n",
+      "disposition": "False positive: deposit, withdraw and harvest share the Alchemist nonReentrant lock. Reverted external calls roll back state; withdrawal and harvest recheck collateral after vault execution."
+    },
+    {
+      "sourceRun": "Alchemist",
+      "id": "0eb75d6631c2b3aff4c250aa04d317aaf5cca4db879f2b1e3af1b3692574aa19",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "FlashGuard._meter(FlashGuard.Flow,uint256,uint256,uint256) (src/FlashGuard.sol#101-118) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- block.timestamp >= f.dayStart + 86400 (src/FlashGuard.sol#108)\n",
+      "disposition": "Expected time semantics: UTC ballot/day caps and bounded TWAP windows require block timestamp. No randomness/security entitlement derives from sub-block unpredictability; chain timestamp/sequencer availability remains an external assumption."
+    },
+    {
+      "sourceRun": "Alchemist",
+      "id": "7a50c724db016d6bb87a7716d824487428decd70a164e5c81ddff6dccde5206e",
+      "check": "pragma",
+      "reportedImpact": "Informational",
+      "description": "6 different versions of Solidity are used:\n\t- Version constraint ^0.8.20 is used by:\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Context.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Nonces.sol#3)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Panic.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/ShortStrings.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#5)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/cryptography/ECDSA.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/Math.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/SafeCast.sol#5)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/SignedMath.sol#4)\n\t- Version constraint >=0.6.2 is used by:\n\t\t->=0.6.2 (lib/openzeppelin-contracts/contracts/interfaces/IERC1363.sol#4)\n\t\t->=0.6.2 (lib/openzeppelin-contracts/contracts/interfaces/IERC20Metadata.sol#4)\n\t\t->=0.6.2 (lib/openzeppelin-contracts/contracts/interfaces/IERC4626.sol#4)\n\t\t->=0.6.2 (lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol#4)\n\t- Version constraint >=0.4.16 is used by:\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/interfaces/IERC165.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/interfaces/IERC20.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/interfaces/IERC5267.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Permit.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol#4)\n\t- Version constraint >=0.8.4 is used by:\n\t\t->=0.8.4 (lib/openzeppelin-contracts/contracts/interfaces/draft-IERC6093.sol#4)\n\t- Version constraint ^0.8.24 is used by:\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC20Permit.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/Bytes.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/Strings.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/cryptography/EIP712.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/cryptography/MessageHashUtils.sol#4)\n\t- Version constraint 0.8.26 is used by:\n\t\t-0.8.26 (src/Alchemist.sol#2)\n\t\t-0.8.26 (src/CollateralEscrow.sol#2)\n\t\t-0.8.26 (src/Denari.sol#2)\n\t\t-0.8.26 (src/FlashGuard.sol#2)\n\t\t-0.8.26 (src/Transmuter.sol#2)\n",
+      "disposition": "Build configuration pins native solc 0.8.26 even though imported libraries declare compatible wider ranges."
+    },
+    {
+      "sourceRun": "Alchemist",
+      "id": "4618e9ca299146582f6e1b8bc50b29dc10854ccb5c0f9b2d3b3e3d9fa19be87b",
+      "check": "cyclomatic-complexity",
+      "reportedImpact": "Informational",
+      "description": "Alchemist.harvest(address) (src/Alchemist.sol#368-443) has a high cyclomatic complexity (12).\n",
+      "disposition": "Maintainability observation: harvest rounding, fee, collateral and funding branches reviewed; covered by existing dust, fee-limit, exit-fee and borrow-buffer regressions."
+    },
+    {
+      "sourceRun": "Alchemist",
+      "id": "dd854c360194a3ad2d17f37b544cfd27ea995ce60ae227a0c8a2f29d9de8c220",
+      "check": "unindexed-event-address",
+      "reportedImpact": "Informational",
+      "description": "Event Alchemist.HarvestFeeSet(uint16,address) (src/Alchemist.sol#131) has address parameters but no indexed parameters\n",
+      "disposition": "Indexing/performance observation only: event fields remain recoverable from receipt data; no event filter is authority for these on-chain checks."
+    },
+    {
+      "sourceRun": "Denari",
+      "id": "39a0aaaafdee3bdc40c1f0f220de475b7353825cc4b0dd7caa74ddfcb20177ae",
+      "check": "missing-zero-check",
+      "reportedImpact": "Low",
+      "description": "Denari.setBurner(address).b (src/Denari.sol#71) lacks a zero-check on :\n\t\t- burner = b (src/Denari.sol#72)\n",
+      "disposition": "Intentional disabled role: zero minter/burner/publisher/keeper disables authority. Escrow owner is attribution only; production Alchemist passes nonzero msg.sender and only immutable controller has custody authority."
+    },
+    {
+      "sourceRun": "Denari",
+      "id": "9258a9ae7935927de2445dd06be9035bd00f92d07d60d4bed15c0e64efd06d31",
+      "check": "missing-zero-check",
+      "reportedImpact": "Low",
+      "description": "Denari.setMinter(address).m (src/Denari.sol#62) lacks a zero-check on :\n\t\t- minter = m (src/Denari.sol#63)\n",
+      "disposition": "Intentional disabled role: zero minter/burner/publisher/keeper disables authority. Escrow owner is attribution only; production Alchemist passes nonzero msg.sender and only immutable controller has custody authority."
+    },
+    {
+      "sourceRun": "Denari",
+      "id": "498c5cbc6c2efcfb3dad4d8935f6dde4a67abea534d8866051f1ef69e7d917af",
+      "check": "pragma",
+      "reportedImpact": "Informational",
+      "description": "6 different versions of Solidity are used:\n\t- Version constraint ^0.8.20 is used by:\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Context.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Nonces.sol#3)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Panic.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/ShortStrings.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#5)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/cryptography/ECDSA.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/Math.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/SafeCast.sol#5)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/SignedMath.sol#4)\n\t- Version constraint >=0.4.16 is used by:\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/interfaces/IERC5267.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Permit.sol#4)\n\t- Version constraint >=0.8.4 is used by:\n\t\t->=0.8.4 (lib/openzeppelin-contracts/contracts/interfaces/draft-IERC6093.sol#4)\n\t- Version constraint ^0.8.24 is used by:\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC20Permit.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/Bytes.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/Strings.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/cryptography/EIP712.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/cryptography/MessageHashUtils.sol#4)\n\t- Version constraint >=0.6.2 is used by:\n\t\t->=0.6.2 (lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol#4)\n\t- Version constraint 0.8.26 is used by:\n\t\t-0.8.26 (src/Denari.sol#2)\n",
+      "disposition": "Build configuration pins native solc 0.8.26 even though imported libraries declare compatible wider ranges."
+    },
+    {
+      "sourceRun": "Transmuter",
+      "id": "2d4c3fb9df5622084e5022fb55470df2a0678e645e722a9f71e9053a00c3eef4",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "FlashGuard.notSameBlockAsEntry(address) (src/FlashGuard.sol#75-78) uses a dangerous strict equality:\n\t- _lastEntry[account] == block.number (src/FlashGuard.sol#76)\n",
+      "disposition": "Intentional discrete/sentinel check: same-block separation, zero share early return, uninitialized pool/ballot/average, or exact prior-UTC-day binding. None compares a manipulable external token balance to a nonzero fixed expected amount."
+    },
+    {
+      "sourceRun": "Transmuter",
+      "id": "39a0aaaafdee3bdc40c1f0f220de475b7353825cc4b0dd7caa74ddfcb20177ae",
+      "check": "missing-zero-check",
+      "reportedImpact": "Low",
+      "description": "Denari.setBurner(address).b (src/Denari.sol#71) lacks a zero-check on :\n\t\t- burner = b (src/Denari.sol#72)\n",
+      "disposition": "Intentional disabled role: zero minter/burner/publisher/keeper disables authority. Escrow owner is attribution only; production Alchemist passes nonzero msg.sender and only immutable controller has custody authority."
+    },
+    {
+      "sourceRun": "Transmuter",
+      "id": "9258a9ae7935927de2445dd06be9035bd00f92d07d60d4bed15c0e64efd06d31",
+      "check": "missing-zero-check",
+      "reportedImpact": "Low",
+      "description": "Denari.setMinter(address).m (src/Denari.sol#62) lacks a zero-check on :\n\t\t- minter = m (src/Denari.sol#63)\n",
+      "disposition": "Intentional disabled role: zero minter/burner/publisher/keeper disables authority. Escrow owner is attribution only; production Alchemist passes nonzero msg.sender and only immutable controller has custody authority."
+    },
+    {
+      "sourceRun": "Transmuter",
+      "id": "0eb75d6631c2b3aff4c250aa04d317aaf5cca4db879f2b1e3af1b3692574aa19",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "FlashGuard._meter(FlashGuard.Flow,uint256,uint256,uint256) (src/FlashGuard.sol#101-118) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- block.timestamp >= f.dayStart + 86400 (src/FlashGuard.sol#108)\n",
+      "disposition": "Expected time semantics: UTC ballot/day caps and bounded TWAP windows require block timestamp. No randomness/security entitlement derives from sub-block unpredictability; chain timestamp/sequencer availability remains an external assumption."
+    },
+    {
+      "sourceRun": "Transmuter",
+      "id": "d21682da939cb83a0369a161dd7e68f8f980df9c9f28ea6f901a0ae77b4284ad",
+      "check": "pragma",
+      "reportedImpact": "Informational",
+      "description": "6 different versions of Solidity are used:\n\t- Version constraint ^0.8.20 is used by:\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Context.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Nonces.sol#3)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Panic.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/ShortStrings.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#5)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/cryptography/ECDSA.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/Math.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/SafeCast.sol#5)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/SignedMath.sol#4)\n\t- Version constraint >=0.6.2 is used by:\n\t\t->=0.6.2 (lib/openzeppelin-contracts/contracts/interfaces/IERC1363.sol#4)\n\t\t->=0.6.2 (lib/openzeppelin-contracts/contracts/interfaces/IERC20Metadata.sol#4)\n\t\t->=0.6.2 (lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol#4)\n\t- Version constraint >=0.4.16 is used by:\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/interfaces/IERC165.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/interfaces/IERC20.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/interfaces/IERC5267.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Permit.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol#4)\n\t- Version constraint >=0.8.4 is used by:\n\t\t->=0.8.4 (lib/openzeppelin-contracts/contracts/interfaces/draft-IERC6093.sol#4)\n\t- Version constraint ^0.8.24 is used by:\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC20Permit.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/Bytes.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/Strings.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/cryptography/EIP712.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/cryptography/MessageHashUtils.sol#4)\n\t- Version constraint 0.8.26 is used by:\n\t\t-0.8.26 (src/Denari.sol#2)\n\t\t-0.8.26 (src/FlashGuard.sol#2)\n\t\t-0.8.26 (src/Transmuter.sol#2)\n",
+      "disposition": "Build configuration pins native solc 0.8.26 even though imported libraries declare compatible wider ranges."
+    },
+    {
+      "sourceRun": "Transmuter",
+      "id": "7ba99bb6a75ad1ced0cf5e5ab434b6bb9f1a95ba448189ed485a96c4d320343e",
+      "check": "dead-code",
+      "reportedImpact": "Informational",
+      "description": "FlashGuard._recordEntry(address) (src/FlashGuard.sol#64-66) is never used and should be removed\n",
+      "disposition": "Context artifact: abstract FlashGuard helpers are used by derived contracts; Transmuter intentionally does not use same-block entry/exit protection for redemption."
+    },
+    {
+      "sourceRun": "CollateralEscrow",
+      "id": "849aae87e7e156bb84eedffe85d0804631834af195796a4efe876ab9f6d48faa",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "CollateralEscrow.withdrawAll(address) (src/CollateralEscrow.sol#87-91) uses a dangerous strict equality:\n\t- shares == 0 (src/CollateralEscrow.sol#89)\n",
+      "disposition": "Intentional discrete/sentinel check: same-block separation, zero share early return, uninitialized pool/ballot/average, or exact prior-UTC-day binding. None compares a manipulable external token balance to a nonzero fixed expected amount."
+    },
+    {
+      "sourceRun": "CollateralEscrow",
+      "id": "7adc73d3e73fdd12cdf203bc5f1bd5cf419a701ea89ac65ff699313e1c33b1cf",
+      "check": "unused-return",
+      "reportedImpact": "Medium",
+      "description": "CollateralEscrow.withdraw(uint256,address) (src/CollateralEscrow.sol#81-83) ignores return value by vault.withdraw(assets,to,address(this)) (src/CollateralEscrow.sol#82)\n",
+      "disposition": "Intentional: escrow measures actual share-balance delta instead of trusting deposit return; vault withdraw share return is unused and subsequent Alchemist collateral is rechecked. Hook ignores LP/protocol fee fields it does not consume. Buyer ignores ballot display ticker/tally while binding asset key, token and active status."
+    },
+    {
+      "sourceRun": "CollateralEscrow",
+      "id": "ebe8390214f6f78b7f7fccb06710a59f731c78edb768b6791f1bdd7eb8c64b54",
+      "check": "unused-return",
+      "reportedImpact": "Medium",
+      "description": "CollateralEscrow.deployToVault(uint256) (src/CollateralEscrow.sol#71-78) ignores return value by vault.deposit(assets,address(this)) (src/CollateralEscrow.sol#74)\n",
+      "disposition": "Intentional: escrow measures actual share-balance delta instead of trusting deposit return; vault withdraw share return is unused and subsequent Alchemist collateral is rechecked. Hook ignores LP/protocol fee fields it does not consume. Buyer ignores ballot display ticker/tally while binding asset key, token and active status."
+    },
+    {
+      "sourceRun": "CollateralEscrow",
+      "id": "32567c7091b49d7eec7c86fb12ddc6e9563214d896f3219693e2de293aa5aa32",
+      "check": "missing-zero-check",
+      "reportedImpact": "Low",
+      "description": "CollateralEscrow.constructor(address,IERC20,IERC4626).owner_ (src/CollateralEscrow.sol#60) lacks a zero-check on :\n\t\t- owner = owner_ (src/CollateralEscrow.sol#62)\n",
+      "disposition": "Intentional disabled role: zero minter/burner/publisher/keeper disables authority. Escrow owner is attribution only; production Alchemist passes nonzero msg.sender and only immutable controller has custody authority."
+    },
+    {
+      "sourceRun": "CollateralEscrow",
+      "id": "d02ccdef2ff26ee0e39e9bff33a6951045701219a18a6133b625d83a418e20a4",
+      "check": "pragma",
+      "reportedImpact": "Informational",
+      "description": "4 different versions of Solidity are used:\n\t- Version constraint >=0.6.2 is used by:\n\t\t->=0.6.2 (lib/openzeppelin-contracts/contracts/interfaces/IERC1363.sol#4)\n\t\t->=0.6.2 (lib/openzeppelin-contracts/contracts/interfaces/IERC4626.sol#4)\n\t\t->=0.6.2 (lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol#4)\n\t- Version constraint >=0.4.16 is used by:\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/interfaces/IERC165.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/interfaces/IERC20.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol#4)\n\t- Version constraint ^0.8.20 is used by:\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol#4)\n\t- Version constraint 0.8.26 is used by:\n\t\t-0.8.26 (src/CollateralEscrow.sol#2)\n",
+      "disposition": "Build configuration pins native solc 0.8.26 even though imported libraries declare compatible wider ranges."
+    },
+    {
+      "sourceRun": "FlashGuard",
+      "id": "312f65a9f4c7d5717c85d2b6a101f02a074c62ece7f80a407026858b2258acd0",
+      "check": "uninitialized-state",
+      "reportedImpact": "High",
+      "description": "FlashGuard._allowedContract (src/FlashGuard.sol#122) is never initialized. It is used in:\n",
+      "disposition": "False positive: FlashGuard is abstract; Alchemist/Transmuter owner setters write the inherited allowlist. The empty map deliberately rejects contracts by default."
+    },
+    {
+      "sourceRun": "FlashGuard",
+      "id": "2d4c3fb9df5622084e5022fb55470df2a0678e645e722a9f71e9053a00c3eef4",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "FlashGuard.notSameBlockAsEntry(address) (src/FlashGuard.sol#75-78) uses a dangerous strict equality:\n\t- _lastEntry[account] == block.number (src/FlashGuard.sol#76)\n",
+      "disposition": "Intentional discrete/sentinel check: same-block separation, zero share early return, uninitialized pool/ballot/average, or exact prior-UTC-day binding. None compares a manipulable external token balance to a nonzero fixed expected amount."
+    },
+    {
+      "sourceRun": "FlashGuard",
+      "id": "0eb75d6631c2b3aff4c250aa04d317aaf5cca4db879f2b1e3af1b3692574aa19",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "FlashGuard._meter(FlashGuard.Flow,uint256,uint256,uint256) (src/FlashGuard.sol#101-118) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- block.timestamp >= f.dayStart + 86400 (src/FlashGuard.sol#108)\n",
+      "disposition": "Expected time semantics: UTC ballot/day caps and bounded TWAP windows require block timestamp. No randomness/security entitlement derives from sub-block unpredictability; chain timestamp/sequencer availability remains an external assumption."
+    },
+    {
+      "sourceRun": "FlashGuard",
+      "id": "7ba99bb6a75ad1ced0cf5e5ab434b6bb9f1a95ba448189ed485a96c4d320343e",
+      "check": "dead-code",
+      "reportedImpact": "Informational",
+      "description": "FlashGuard._recordEntry(address) (src/FlashGuard.sol#64-66) is never used and should be removed\n",
+      "disposition": "Context artifact: abstract FlashGuard helpers are used by derived contracts; Transmuter intentionally does not use same-block entry/exit protection for redemption."
+    },
+    {
+      "sourceRun": "FlashGuard",
+      "id": "a4ee14cf8c5dca38486372f190f1dcc14f4f35fb1a72cc7ea8d1d4426266d815",
+      "check": "dead-code",
+      "reportedImpact": "Informational",
+      "description": "FlashGuard._meter(FlashGuard.Flow,uint256,uint256,uint256) (src/FlashGuard.sol#101-118) is never used and should be removed\n",
+      "disposition": "Context artifact: abstract FlashGuard helpers are used by derived contracts; Transmuter intentionally does not use same-block entry/exit protection for redemption."
+    },
+    {
+      "sourceRun": "OmertaHook",
+      "id": "651a56d010b8bbcb2574c3bdd20ce54eb281e55bfeaacd2a282b654493760d85",
+      "check": "divide-before-multiply",
+      "reportedImpact": "Medium",
+      "description": "OmertaHook._sellRate(uint160) (src/OmertaHook.sol#629-651) performs a multiplication on the result of a division:\n\t- impactBps = (diff * 10000) / pre (src/OmertaHook.sol#648)\n\t- base + ((ceil - base) * impactBps) / surgeFullBps (src/OmertaHook.sol#650)\n",
+      "disposition": "Reviewed rounding: Alchemist ceils debt-to-assets then caps debt reduction; V2 follows canonical UQ112 reserve-ratio truncation before time accrual; hook rounds measured impact to integer bps, then stays between configured floor and hard-capped surge ceiling. No proven harmful loss from this rule."
+    },
+    {
+      "sourceRun": "OmertaHook",
+      "id": "1257b245999d9626c84fdd24ecef8c66eccb4bebcadd8fcb5c844ab1e05bb790",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "OmertaHook.pokeObserver(PoolKey) (src/OmertaHook.sol#698-705) uses a dangerous strict equality:\n\t- address(key.hooks) != address(this) || openedAt[id] == 0 (src/OmertaHook.sol#700)\n",
+      "disposition": "Intentional discrete/sentinel check: same-block separation, zero share early return, uninitialized pool/ballot/average, or exact prior-UTC-day binding. None compares a manipulable external token balance to a nonzero fixed expected amount."
+    },
+    {
+      "sourceRun": "OmertaHook",
+      "id": "44a82ae5a4c8f56f9d97e764457afc3db844065d1e6b39ce4c07048ce266e684",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "OmertaHook._openingBuyRate(PoolKey) (src/OmertaHook.sol#655-660) uses a dangerous strict equality:\n\t- opened == 0 || block.number >= openingEndsAt[id] (src/OmertaHook.sol#658)\n",
+      "disposition": "Intentional discrete/sentinel check: same-block separation, zero share early return, uninitialized pool/ballot/average, or exact prior-UTC-day binding. None compares a manipulable external token balance to a nonzero fixed expected amount."
+    },
+    {
+      "sourceRun": "OmertaHook",
+      "id": "e9ea337443e86305e6f96739b8d3db3e82fbb9cbd88f0286016b6a6acab3e418",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "OmertaHook._guardOpening(PoolKey,SwapParams) (src/OmertaHook.sol#499-521) uses a dangerous strict equality:\n\t- opened == 0 || block.number >= deadline (src/OmertaHook.sol#505)\n",
+      "disposition": "Intentional discrete/sentinel check: same-block separation, zero share early return, uninitialized pool/ballot/average, or exact prior-UTC-day binding. None compares a manipulable external token balance to a nonzero fixed expected amount."
+    },
+    {
+      "sourceRun": "OmertaHook",
+      "id": "2275aae433498353158e05fee4ddda9cdc8c88480b6f618cd50cb8da6f2ef6d6",
+      "check": "uninitialized-local",
+      "reportedImpact": "Medium",
+      "description": "OmertaHook._accrue(address,PoolKey,Currency,uint256).rwa (src/OmertaHook.sol#675) is a local variable never initialized\n",
+      "disposition": "False positive: Solidity zero-initializes local uint256 dev/rwa/community. When sellTaxBps==0 the entire fee deliberately accrues to the LP remainder."
+    },
+    {
+      "sourceRun": "OmertaHook",
+      "id": "a9cc32f8fbe18ad8a3d843d360dc5df78196746bfab0c58f9a77fbf1ffecfad1",
+      "check": "uninitialized-local",
+      "reportedImpact": "Medium",
+      "description": "OmertaHook._accrue(address,PoolKey,Currency,uint256).community (src/OmertaHook.sol#676) is a local variable never initialized\n",
+      "disposition": "False positive: Solidity zero-initializes local uint256 dev/rwa/community. When sellTaxBps==0 the entire fee deliberately accrues to the LP remainder."
+    },
+    {
+      "sourceRun": "OmertaHook",
+      "id": "f237871ce0e2f60f1770646824d06fbbe420e907082bf8bbad77e90c746ba1a1",
+      "check": "uninitialized-local",
+      "reportedImpact": "Medium",
+      "description": "OmertaHook._accrue(address,PoolKey,Currency,uint256).dev (src/OmertaHook.sol#674) is a local variable never initialized\n",
+      "disposition": "False positive: Solidity zero-initializes local uint256 dev/rwa/community. When sellTaxBps==0 the entire fee deliberately accrues to the LP remainder."
+    },
+    {
+      "sourceRun": "OmertaHook",
+      "id": "50bcb0289a9500bcd1975538960e9db8abbc28ce9e8a17eec736598f04953d75",
+      "check": "unused-return",
+      "reportedImpact": "Medium",
+      "description": "OmertaHook._writeTickAccumulator(PoolId) (src/OmertaHook.sol#569-583) ignores return value by (sqrtPriceX96,tick,None,None) = StateLibrary.getSlot0(poolManager,id) (src/OmertaHook.sol#581)\n",
+      "disposition": "Intentional: escrow measures actual share-balance delta instead of trusting deposit return; vault withdraw share return is unused and subsequent Alchemist collateral is rechecked. Hook ignores LP/protocol fee fields it does not consume. Buyer ignores ballot display ticker/tally while binding asset key, token and active status."
+    },
+    {
+      "sourceRun": "OmertaHook",
+      "id": "6307241b0fb801b2239076b83a55ac7b7f51b9cf15fc772c1d4e55aa7181c95b",
+      "check": "unused-return",
+      "reportedImpact": "Medium",
+      "description": "OmertaHook.beforeSwap(address,PoolKey,SwapParams,bytes) (src/OmertaHook.sol#477-494) ignores return value by (sqrtPriceX96,None,None,None) = StateLibrary.getSlot0(poolManager,key.toId()) (src/OmertaHook.sol#487)\n",
+      "disposition": "Intentional: escrow measures actual share-balance delta instead of trusting deposit return; vault withdraw share return is unused and subsequent Alchemist collateral is rechecked. Hook ignores LP/protocol fee fields it does not consume. Buyer ignores ballot display ticker/tally while binding asset key, token and active status."
+    },
+    {
+      "sourceRun": "OmertaHook",
+      "id": "6b35c259a7734c03092f5a93548950e5d93b38e65820b186df3bce4a6d26d0d7",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "OmertaHook.beforeSwap(address,PoolKey,SwapParams,bytes) (src/OmertaHook.sol#477-494) uses assembly\n\t- INLINE ASM (src/OmertaHook.sol#489-491)\n",
+      "disposition": "Reviewed hook assembly accesses a dedicated transient pre-price slot through tstore/tload under Cancun. Hook has no delegatecall and both accesses occur in matched swap callbacks."
+    },
+    {
+      "sourceRun": "OmertaHook",
+      "id": "995814afccb02cd5ffaddfae59bd079befc02ce755d5e288c1f53a3939b3fb8f",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "OmertaHook._sellRate(uint160) (src/OmertaHook.sol#629-651) uses assembly\n\t- INLINE ASM (src/OmertaHook.sol#636-638)\n",
+      "disposition": "Reviewed hook assembly accesses a dedicated transient pre-price slot through tstore/tload under Cancun. Hook has no delegatecall and both accesses occur in matched swap callbacks."
+    },
+    {
+      "sourceRun": "OmertaHook",
+      "id": "935265ec8e56dac692b755cf435b2c6a43f8b5ce0f6b5732ad357fc9e37fc682",
+      "check": "pragma",
+      "reportedImpact": "Informational",
+      "description": "5 different versions of Solidity are used:\n\t- Version constraint ^0.8.20 is used by:\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Context.sol#4)\n\t- Version constraint >=0.4.16 is used by:\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol#4)\n\t- Version constraint ^0.8.0 is used by:\n\t\t-^0.8.0 (lib/v4-core/src/interfaces/IExtsload.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/interfaces/IHooks.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/interfaces/IProtocolFees.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/interfaces/external/IERC20Minimal.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/interfaces/external/IERC6909Claims.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/libraries/CustomRevert.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/libraries/FixedPoint128.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/libraries/FullMath.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/libraries/Hooks.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/libraries/LPFeeLibrary.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/libraries/LiquidityMath.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/libraries/ParseBytes.sol#3)\n\t\t-^0.8.0 (lib/v4-core/src/libraries/Position.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/libraries/SafeCast.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/libraries/StateLibrary.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/types/BalanceDelta.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/types/BeforeSwapDelta.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/types/Currency.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/types/PoolId.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/types/PoolKey.sol#2)\n\t\t-^0.8.0 (src/interfaces/IInitializerHook.sol#2)\n\t- Version constraint ^0.8.24 is used by:\n\t\t-^0.8.24 (lib/v4-core/src/interfaces/IExttload.sol#2)\n\t\t-^0.8.24 (lib/v4-core/src/interfaces/IPoolManager.sol#2)\n\t\t-^0.8.24 (lib/v4-core/src/types/PoolOperation.sol#2)\n\t- Version constraint 0.8.26 is used by:\n\t\t-0.8.26 (src/OmertaHook.sol#2)\n\t\t-0.8.26 (src/interfaces/IOmrV4ObservationSource.sol#2)\n",
+      "disposition": "Build configuration pins native solc 0.8.26 even though imported libraries declare compatible wider ranges."
+    },
+    {
+      "sourceRun": "OmertaHook",
+      "id": "34e771284512c38cf6bb1f04119e7addd65fff14d05baa1499dd44f37686cf15",
+      "check": "unindexed-event-address",
+      "reportedImpact": "Informational",
+      "description": "Event OmertaHook.RecipientsSet(address,address,address,address) (src/OmertaHook.sol#249) has address parameters but no indexed parameters\n",
+      "disposition": "Indexing/performance observation only: event fields remain recoverable from receipt data; no event filter is authority for these on-chain checks."
+    },
+    {
+      "sourceRun": "OmertaHook",
+      "id": "721e54ff2d3e1559a60ed5f794668fddc73c58aa298fd08d827ecfc54adaf043",
+      "check": "unindexed-event-address",
+      "reportedImpact": "Informational",
+      "description": "Event OmertaHook.ObserverSet(address) (src/OmertaHook.sol#251) has address parameters but no indexed parameters\n",
+      "disposition": "Indexing/performance observation only: event fields remain recoverable from receipt data; no event filter is authority for these on-chain checks."
+    },
+    {
+      "sourceRun": "OmrTwapOracle",
+      "id": "3095c915b42684884a1064f2767da727b46b9fd92c7fc14b1d7acb78ba776bd1",
+      "check": "weak-prng",
+      "reportedImpact": "High",
+      "description": "OmrTwapOracle._currentCumulativePrices() (src/OmrTwapOracle.sol#203-220) uses a weak PRNG: \"blockTimestamp = uint32(block.timestamp % 2 ** 32) (src/OmrTwapOracle.sol#208)\" \n",
+      "disposition": "False positive: uint32 timestamp modulo implements V2 cumulative wrapping; no random outcome is derived."
+    },
+    {
+      "sourceRun": "OmrTwapOracle",
+      "id": "6b41c0c4e1f8847da034787b1fd410401193c2823bcf4aebcb9e03fc0a9ecde5",
+      "check": "divide-before-multiply",
+      "reportedImpact": "Medium",
+      "description": "OmrTwapOracle._currentCumulativePrices() (src/OmrTwapOracle.sol#203-220) performs a multiplication on the result of a division:\n\t- price1Cumulative += ((uint256(reserve0) << 112) / reserve1) * timeElapsed (src/OmrTwapOracle.sol#217)\n",
+      "disposition": "Reviewed rounding: Alchemist ceils debt-to-assets then caps debt reduction; V2 follows canonical UQ112 reserve-ratio truncation before time accrual; hook rounds measured impact to integer bps, then stays between configured floor and hard-capped surge ceiling. No proven harmful loss from this rule."
+    },
+    {
+      "sourceRun": "OmrTwapOracle",
+      "id": "a9271448527403eff0eeb800688088e984e8c46496929f3ac97124d216d2397e",
+      "check": "divide-before-multiply",
+      "reportedImpact": "Medium",
+      "description": "OmrTwapOracle._currentCumulativePrices() (src/OmrTwapOracle.sol#203-220) performs a multiplication on the result of a division:\n\t- price0Cumulative += ((uint256(reserve1) << 112) / reserve0) * timeElapsed (src/OmrTwapOracle.sol#216)\n",
+      "disposition": "Reviewed rounding: Alchemist ceils debt-to-assets then caps debt reduction; V2 follows canonical UQ112 reserve-ratio truncation before time accrual; hook rounds measured impact to integer bps, then stays between configured floor and hard-capped surge ceiling. No proven harmful loss from this rule."
+    },
+    {
+      "sourceRun": "OmrTwapOracle",
+      "id": "8a0b2b308e1aba3b391b6180d0c291545f4bb73a9779dd434b745894d91ad779",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "OmrTwapOracle._decode(uint224) (src/OmrTwapOracle.sol#194-197) uses a dangerous strict equality:\n\t- avg == 0 (src/OmrTwapOracle.sol#195)\n",
+      "disposition": "Intentional discrete/sentinel check: same-block separation, zero share early return, uninitialized pool/ballot/average, or exact prior-UTC-day binding. None compares a manipulable external token balance to a nonzero fixed expected amount."
+    },
+    {
+      "sourceRun": "OmrTwapOracle",
+      "id": "acc87db51fc552c43ea0562573452449d0a436ebaaaa789eb9286cbd506ea428",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "OmrTwapOracle._currentCumulativePrices() (src/OmrTwapOracle.sol#203-220) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- tsLast != blockTimestamp (src/OmrTwapOracle.sol#213)\n",
+      "disposition": "Expected time semantics: UTC ballot/day caps and bounded TWAP windows require block timestamp. No randomness/security entitlement derives from sub-block unpredictability; chain timestamp/sequencer availability remains an external assumption."
+    },
+    {
+      "sourceRun": "OmrTwapOracle",
+      "id": "b4d2b1320e563be2ceabb2b0fc65893203be243b61282d5d583ed22021b766f6",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "OmrTwapOracle._decode(uint224) (src/OmrTwapOracle.sol#194-197) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- avg == 0 (src/OmrTwapOracle.sol#195)\n",
+      "disposition": "Expected time semantics: UTC ballot/day caps and bounded TWAP windows require block timestamp. No randomness/security entitlement derives from sub-block unpredictability; chain timestamp/sequencer availability remains an external assumption."
+    },
+    {
+      "sourceRun": "OmrTwapOracle",
+      "id": "efdbfd4b64b9c8b033bf7ee42c8572d09937454bd25b052deab974bf13f96279",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "OmrTwapOracle.update() (src/OmrTwapOracle.sol#138-182) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- timeElapsed < PERIOD (src/OmrTwapOracle.sol#144)\n\t- timeElapsed > PERIOD * MAX_WINDOW_MULT (src/OmrTwapOracle.sol#162)\n",
+      "disposition": "Expected time semantics: UTC ballot/day caps and bounded TWAP windows require block timestamp. No randomness/security entitlement derives from sub-block unpredictability; chain timestamp/sequencer availability remains an external assumption."
+    },
+    {
+      "sourceRun": "OmrTwapOracle",
+      "id": "a820712a64603c7349451183e4a1e639889c3384f0031b6db7da08270ddf6b31",
+      "check": "pragma",
+      "reportedImpact": "Informational",
+      "description": "4 different versions of Solidity are used:\n\t- Version constraint ^0.8.20 is used by:\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Context.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Panic.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/Math.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/SafeCast.sol#5)\n\t- Version constraint >=0.4.16 is used by:\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol#4)\n\t- Version constraint >=0.6.2 is used by:\n\t\t->=0.6.2 (lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol#4)\n\t- Version constraint 0.8.26 is used by:\n\t\t-0.8.26 (src/IOmrOracle.sol#2)\n\t\t-0.8.26 (src/OmrTwapOracle.sol#2)\n",
+      "disposition": "Build configuration pins native solc 0.8.26 even though imported libraries declare compatible wider ranges."
+    },
+    {
+      "sourceRun": "OmrTwapOracle",
+      "id": "c74f5474f2422aa8f04f2142a7feddee5b0638388a022151e52d6c3241c3b300",
+      "check": "naming-convention",
+      "reportedImpact": "Informational",
+      "description": "Variable OmrTwapOracle.PERIOD (src/OmrTwapOracle.sol#53) is not in mixedCase\n",
+      "disposition": "Style only: PERIOD is immutable and deliberately uppercase."
+    },
+    {
+      "sourceRun": "OmrV4TwapOracle",
+      "id": "651a56d010b8bbcb2574c3bdd20ce54eb281e55bfeaacd2a282b654493760d85",
+      "check": "divide-before-multiply",
+      "reportedImpact": "Medium",
+      "description": "OmertaHook._sellRate(uint160) (src/OmertaHook.sol#629-651) performs a multiplication on the result of a division:\n\t- impactBps = (diff * 10000) / pre (src/OmertaHook.sol#648)\n\t- base + ((ceil - base) * impactBps) / surgeFullBps (src/OmertaHook.sol#650)\n",
+      "disposition": "Reviewed rounding: Alchemist ceils debt-to-assets then caps debt reduction; V2 follows canonical UQ112 reserve-ratio truncation before time accrual; hook rounds measured impact to integer bps, then stays between configured floor and hard-capped surge ceiling. No proven harmful loss from this rule."
+    },
+    {
+      "sourceRun": "OmrV4TwapOracle",
+      "id": "1257b245999d9626c84fdd24ecef8c66eccb4bebcadd8fcb5c844ab1e05bb790",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "OmertaHook.pokeObserver(PoolKey) (src/OmertaHook.sol#698-705) uses a dangerous strict equality:\n\t- address(key.hooks) != address(this) || openedAt[id] == 0 (src/OmertaHook.sol#700)\n",
+      "disposition": "Intentional discrete/sentinel check: same-block separation, zero share early return, uninitialized pool/ballot/average, or exact prior-UTC-day binding. None compares a manipulable external token balance to a nonzero fixed expected amount."
+    },
+    {
+      "sourceRun": "OmrV4TwapOracle",
+      "id": "44a82ae5a4c8f56f9d97e764457afc3db844065d1e6b39ce4c07048ce266e684",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "OmertaHook._openingBuyRate(PoolKey) (src/OmertaHook.sol#655-660) uses a dangerous strict equality:\n\t- opened == 0 || block.number >= openingEndsAt[id] (src/OmertaHook.sol#658)\n",
+      "disposition": "Intentional discrete/sentinel check: same-block separation, zero share early return, uninitialized pool/ballot/average, or exact prior-UTC-day binding. None compares a manipulable external token balance to a nonzero fixed expected amount."
+    },
+    {
+      "sourceRun": "OmrV4TwapOracle",
+      "id": "e9ea337443e86305e6f96739b8d3db3e82fbb9cbd88f0286016b6a6acab3e418",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "OmertaHook._guardOpening(PoolKey,SwapParams) (src/OmertaHook.sol#499-521) uses a dangerous strict equality:\n\t- opened == 0 || block.number >= deadline (src/OmertaHook.sol#505)\n",
+      "disposition": "Intentional discrete/sentinel check: same-block separation, zero share early return, uninitialized pool/ballot/average, or exact prior-UTC-day binding. None compares a manipulable external token balance to a nonzero fixed expected amount."
+    },
+    {
+      "sourceRun": "OmrV4TwapOracle",
+      "id": "2275aae433498353158e05fee4ddda9cdc8c88480b6f618cd50cb8da6f2ef6d6",
+      "check": "uninitialized-local",
+      "reportedImpact": "Medium",
+      "description": "OmertaHook._accrue(address,PoolKey,Currency,uint256).rwa (src/OmertaHook.sol#675) is a local variable never initialized\n",
+      "disposition": "False positive: Solidity zero-initializes local uint256 dev/rwa/community. When sellTaxBps==0 the entire fee deliberately accrues to the LP remainder."
+    },
+    {
+      "sourceRun": "OmrV4TwapOracle",
+      "id": "a9cc32f8fbe18ad8a3d843d360dc5df78196746bfab0c58f9a77fbf1ffecfad1",
+      "check": "uninitialized-local",
+      "reportedImpact": "Medium",
+      "description": "OmertaHook._accrue(address,PoolKey,Currency,uint256).community (src/OmertaHook.sol#676) is a local variable never initialized\n",
+      "disposition": "False positive: Solidity zero-initializes local uint256 dev/rwa/community. When sellTaxBps==0 the entire fee deliberately accrues to the LP remainder."
+    },
+    {
+      "sourceRun": "OmrV4TwapOracle",
+      "id": "f237871ce0e2f60f1770646824d06fbbe420e907082bf8bbad77e90c746ba1a1",
+      "check": "uninitialized-local",
+      "reportedImpact": "Medium",
+      "description": "OmertaHook._accrue(address,PoolKey,Currency,uint256).dev (src/OmertaHook.sol#674) is a local variable never initialized\n",
+      "disposition": "False positive: Solidity zero-initializes local uint256 dev/rwa/community. When sellTaxBps==0 the entire fee deliberately accrues to the LP remainder."
+    },
+    {
+      "sourceRun": "OmrV4TwapOracle",
+      "id": "50bcb0289a9500bcd1975538960e9db8abbc28ce9e8a17eec736598f04953d75",
+      "check": "unused-return",
+      "reportedImpact": "Medium",
+      "description": "OmertaHook._writeTickAccumulator(PoolId) (src/OmertaHook.sol#569-583) ignores return value by (sqrtPriceX96,tick,None,None) = StateLibrary.getSlot0(poolManager,id) (src/OmertaHook.sol#581)\n",
+      "disposition": "Intentional: escrow measures actual share-balance delta instead of trusting deposit return; vault withdraw share return is unused and subsequent Alchemist collateral is rechecked. Hook ignores LP/protocol fee fields it does not consume. Buyer ignores ballot display ticker/tally while binding asset key, token and active status."
+    },
+    {
+      "sourceRun": "OmrV4TwapOracle",
+      "id": "6307241b0fb801b2239076b83a55ac7b7f51b9cf15fc772c1d4e55aa7181c95b",
+      "check": "unused-return",
+      "reportedImpact": "Medium",
+      "description": "OmertaHook.beforeSwap(address,PoolKey,SwapParams,bytes) (src/OmertaHook.sol#477-494) ignores return value by (sqrtPriceX96,None,None,None) = StateLibrary.getSlot0(poolManager,key.toId()) (src/OmertaHook.sol#487)\n",
+      "disposition": "Intentional: escrow measures actual share-balance delta instead of trusting deposit return; vault withdraw share return is unused and subsequent Alchemist collateral is rechecked. Hook ignores LP/protocol fee fields it does not consume. Buyer ignores ballot display ticker/tally while binding asset key, token and active status."
+    },
+    {
+      "sourceRun": "OmrV4TwapOracle",
+      "id": "6b35c259a7734c03092f5a93548950e5d93b38e65820b186df3bce4a6d26d0d7",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "OmertaHook.beforeSwap(address,PoolKey,SwapParams,bytes) (src/OmertaHook.sol#477-494) uses assembly\n\t- INLINE ASM (src/OmertaHook.sol#489-491)\n",
+      "disposition": "Reviewed hook assembly accesses a dedicated transient pre-price slot through tstore/tload under Cancun. Hook has no delegatecall and both accesses occur in matched swap callbacks."
+    },
+    {
+      "sourceRun": "OmrV4TwapOracle",
+      "id": "995814afccb02cd5ffaddfae59bd079befc02ce755d5e288c1f53a3939b3fb8f",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "OmertaHook._sellRate(uint160) (src/OmertaHook.sol#629-651) uses assembly\n\t- INLINE ASM (src/OmertaHook.sol#636-638)\n",
+      "disposition": "Reviewed hook assembly accesses a dedicated transient pre-price slot through tstore/tload under Cancun. Hook has no delegatecall and both accesses occur in matched swap callbacks."
+    },
+    {
+      "sourceRun": "OmrV4TwapOracle",
+      "id": "6a14c732f56f20222cd1bbd7df7b3ed3e910fd1ed830a62cc11a6281ad6b4f70",
+      "check": "pragma",
+      "reportedImpact": "Informational",
+      "description": "6 different versions of Solidity are used:\n\t- Version constraint ^0.8.20 is used by:\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Context.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Panic.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/Math.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/SafeCast.sol#5)\n\t- Version constraint >=0.4.16 is used by:\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol#4)\n\t- Version constraint >=0.6.2 is used by:\n\t\t->=0.6.2 (lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol#4)\n\t- Version constraint ^0.8.0 is used by:\n\t\t-^0.8.0 (lib/v4-core/src/interfaces/IExtsload.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/interfaces/IHooks.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/interfaces/IProtocolFees.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/interfaces/external/IERC20Minimal.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/interfaces/external/IERC6909Claims.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/libraries/BitMath.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/libraries/CustomRevert.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/libraries/FixedPoint128.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/libraries/FullMath.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/libraries/Hooks.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/libraries/LPFeeLibrary.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/libraries/LiquidityMath.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/libraries/ParseBytes.sol#3)\n\t\t-^0.8.0 (lib/v4-core/src/libraries/Position.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/libraries/SafeCast.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/libraries/StateLibrary.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/libraries/TickMath.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/types/BalanceDelta.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/types/BeforeSwapDelta.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/types/Currency.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/types/PoolId.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/types/PoolKey.sol#2)\n\t\t-^0.8.0 (src/interfaces/IInitializerHook.sol#2)\n\t- Version constraint ^0.8.24 is used by:\n\t\t-^0.8.24 (lib/v4-core/src/interfaces/IExttload.sol#2)\n\t\t-^0.8.24 (lib/v4-core/src/interfaces/IPoolManager.sol#2)\n\t\t-^0.8.24 (lib/v4-core/src/types/PoolOperation.sol#2)\n\t- Version constraint 0.8.26 is used by:\n\t\t-0.8.26 (src/IOmrOracle.sol#2)\n\t\t-0.8.26 (src/OmertaHook.sol#2)\n\t\t-0.8.26 (src/OmrV4TwapOracle.sol#2)\n\t\t-0.8.26 (src/interfaces/IOmrV4ObservationSource.sol#2)\n",
+      "disposition": "Build configuration pins native solc 0.8.26 even though imported libraries declare compatible wider ranges."
+    },
+    {
+      "sourceRun": "OmrV4TwapOracle",
+      "id": "549f6a39201c80662ef5a613cbe7fe943b4eadd24c005a06400a138dbe649cc4",
+      "check": "naming-convention",
+      "reportedImpact": "Informational",
+      "description": "Variable OmrV4TwapOracle.PERIOD (src/OmrV4TwapOracle.sol#42) is not in mixedCase\n",
+      "disposition": "Style only: PERIOD is immutable and deliberately uppercase."
+    },
+    {
+      "sourceRun": "OmrV4TwapOracle",
+      "id": "34e771284512c38cf6bb1f04119e7addd65fff14d05baa1499dd44f37686cf15",
+      "check": "unindexed-event-address",
+      "reportedImpact": "Informational",
+      "description": "Event OmertaHook.RecipientsSet(address,address,address,address) (src/OmertaHook.sol#249) has address parameters but no indexed parameters\n",
+      "disposition": "Indexing/performance observation only: event fields remain recoverable from receipt data; no event filter is authority for these on-chain checks."
+    },
+    {
+      "sourceRun": "OmrV4TwapOracle",
+      "id": "721e54ff2d3e1559a60ed5f794668fddc73c58aa298fd08d827ecfc54adaf043",
+      "check": "unindexed-event-address",
+      "reportedImpact": "Informational",
+      "description": "Event OmertaHook.ObserverSet(address) (src/OmertaHook.sol#251) has address parameters but no indexed parameters\n",
+      "disposition": "Indexing/performance observation only: event fields remain recoverable from receipt data; no event filter is authority for these on-chain checks."
+    },
+    {
+      "sourceRun": "StockTokenRegistry",
+      "id": "ef2a2bc6a93881436446f29f6f602a9686da235c5bfd2105f19a706897039e32",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "StockTokenRegistry.resolveBallot(uint256) (src/StockTokenRegistry.sol#173-184) uses a dangerous strict equality:\n\t- ballot.publishedAt == 0 (src/StockTokenRegistry.sol#179)\n",
+      "disposition": "Intentional discrete/sentinel check: same-block separation, zero share early return, uninitialized pool/ballot/average, or exact prior-UTC-day binding. None compares a manipulable external token balance to a nonzero fixed expected amount."
+    },
+    {
+      "sourceRun": "StockTokenRegistry",
+      "id": "10fcfdd424ab7e6d4670fd605e26e9c503912071f674ab4ffa1884e25aba3387",
+      "check": "missing-zero-check",
+      "reportedImpact": "Low",
+      "description": "StockTokenRegistry.setPublisher(address).publisher_ (src/StockTokenRegistry.sol#138) lacks a zero-check on :\n\t\t- publisher = publisher_ (src/StockTokenRegistry.sol#139)\n",
+      "disposition": "Intentional disabled role: zero minter/burner/publisher/keeper disables authority. Escrow owner is attribution only; production Alchemist passes nonzero msg.sender and only immutable controller has custody authority."
+    },
+    {
+      "sourceRun": "StockTokenRegistry",
+      "id": "9c0e63ef7826a0fad4b924eccc3efe50481b7b0430654638a128b8f8e23c18a1",
+      "check": "missing-zero-check",
+      "reportedImpact": "Low",
+      "description": "StockTokenRegistry.constructor(address,address).publisher_ (src/StockTokenRegistry.sol#75) lacks a zero-check on :\n\t\t- publisher = publisher_ (src/StockTokenRegistry.sol#76)\n",
+      "disposition": "Intentional disabled role: zero minter/burner/publisher/keeper disables authority. Escrow owner is attribution only; production Alchemist passes nonzero msg.sender and only immutable controller has custody authority."
+    },
+    {
+      "sourceRun": "StockTokenRegistry",
+      "id": "797dcd33f7e8691cedbf830ccaead3bc7e2717228b2a96bc30dab40822abfb09",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "StockTokenRegistry.publishBallot(uint256,bytes32,bytes32) (src/StockTokenRegistry.sol#159-168) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- day >= block.timestamp / 86400 (src/StockTokenRegistry.sol#160)\n",
+      "disposition": "Expected time semantics: UTC ballot/day caps and bounded TWAP windows require block timestamp. No randomness/security entitlement derives from sub-block unpredictability; chain timestamp/sequencer availability remains an external assumption."
+    },
+    {
+      "sourceRun": "StockTokenRegistry",
+      "id": "e02ae5e3bdf94c5025788bc02cec96d137c82917d770506027e15ddcb2a53108",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "StockTokenRegistry.resolveBallot(uint256) (src/StockTokenRegistry.sol#173-184) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- ballot.publishedAt == 0 (src/StockTokenRegistry.sol#179)\n",
+      "disposition": "Expected time semantics: UTC ballot/day caps and bounded TWAP windows require block timestamp. No randomness/security entitlement derives from sub-block unpredictability; chain timestamp/sequencer availability remains an external assumption."
+    },
+    {
+      "sourceRun": "StockTokenRegistry",
+      "id": "09d9a73949ce179bb7df877a7e7ecaec64b8c5ab1ecefd5364b4056ade49f162",
+      "check": "pragma",
+      "reportedImpact": "Informational",
+      "description": "2 different versions of Solidity are used:\n\t- Version constraint ^0.8.20 is used by:\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Context.sol#4)\n\t- Version constraint 0.8.26 is used by:\n\t\t-0.8.26 (src/StockTokenRegistry.sol#2)\n",
+      "disposition": "Build configuration pins native solc 0.8.26 even though imported libraries declare compatible wider ranges."
+    },
+    {
+      "sourceRun": "RwaStockBuyer",
+      "id": "3b0806ee73e1a04d2fdd8b46492b346c3cec90a4a5f3bc216581e8680d1de2c8",
+      "check": "arbitrary-send-eth",
+      "reportedImpact": "High",
+      "description": "RwaStockBuyer._acquire(address,uint256,uint256,bytes) (src/RwaStockBuyer.sol#215-224) sends eth to arbitrary user\n\tDangerous calls:\n\t- IStockSwapAdapter(adapter).buy{value: ethIn}(token,stockVault,minUnits,routeData) (src/RwaStockBuyer.sol#220)\n",
+      "disposition": "Constrained behavior: only keeper can enter buy; Safe selects code-bearing adapter while paused. Exact registry token, immutable vault, independent fresh quote floor, budget and actual balance delta constrain output. Adapter/source code and supported token behavior still require concrete activation review."
+    },
+    {
+      "sourceRun": "RwaStockBuyer",
+      "id": "13bbe534aa27afca7467f18705a389a3a67e40b51c464d967a5fcf30a9e6c888",
+      "check": "reentrancy-balance",
+      "reportedImpact": "High",
+      "description": "Reentrancy in RwaStockBuyer._acquire(address,uint256,uint256,bytes) (src/RwaStockBuyer.sol#215-224):\n\tExternal call allowing reentrancy:\n\t- IStockSwapAdapter(adapter).buy{value: ethIn}(token,stockVault,minUnits,routeData) (src/RwaStockBuyer.sol#220)\n\tBalance read before the call:\n\t- beforeBalance = IERC20(token).balanceOf(stockVault) (src/RwaStockBuyer.sol#219)\n\tPossible stale balance used after the call in a condition:\n\t- afterBalance < beforeBalance || afterBalance - beforeBalance < minUnits (src/RwaStockBuyer.sol#222)\n\t\t- stale variable `beforeBalance`\n",
+      "disposition": "False positive for the supported exact-transfer asset model: buy is nonReentrant, pre-call balance is an intentional baseline, and post-call exact-token net increase enforces output. Rebasing/malicious balanceOf tokens are outside verified support and retained as dependency risks."
+    },
+    {
+      "sourceRun": "RwaStockBuyer",
+      "id": "28f149b6b3bcf4c73dc436baf7fb4c17f57107069c480bb23569515a93f07254",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "RwaStockBuyer.buy(uint256,uint256,uint256,bytes) (src/RwaStockBuyer.sol#168-192) uses a dangerous strict equality:\n\t- currentDay == 0 || ballotDay != currentDay - 1 (src/RwaStockBuyer.sol#178)\n",
+      "disposition": "Intentional discrete/sentinel check: same-block separation, zero share early return, uninitialized pool/ballot/average, or exact prior-UTC-day binding. None compares a manipulable external token balance to a nonzero fixed expected amount."
+    },
+    {
+      "sourceRun": "RwaStockBuyer",
+      "id": "5f069decc5c888309cfb64b84af43c7cb148a80758da9c8e6ec8fecb7838a345",
+      "check": "unused-return",
+      "reportedImpact": "Medium",
+      "description": "RwaStockBuyer._resolveActiveBallot(uint256) (src/RwaStockBuyer.sol#194-198) ignores return value by (assetKey,token,None,None,active) = registry.resolveBallot(ballotDay) (src/RwaStockBuyer.sol#196)\n",
+      "disposition": "Intentional: escrow measures actual share-balance delta instead of trusting deposit return; vault withdraw share return is unused and subsequent Alchemist collateral is rechecked. Hook ignores LP/protocol fee fields it does not consume. Buyer ignores ballot display ticker/tally while binding asset key, token and active status."
+    },
+    {
+      "sourceRun": "RwaStockBuyer",
+      "id": "07f693668a95a41e61a66ee62894b26b477ae9cbb3b0179a18843c684e7f7d9f",
+      "check": "missing-zero-check",
+      "reportedImpact": "Low",
+      "description": "RwaStockBuyer.constructor(address,address,address,address,address,uint256).keeper_ (src/RwaStockBuyer.sol#98) lacks a zero-check on :\n\t\t- keeper = keeper_ (src/RwaStockBuyer.sol#111)\n",
+      "disposition": "Intentional disabled role: zero minter/burner/publisher/keeper disables authority. Escrow owner is attribution only; production Alchemist passes nonzero msg.sender and only immutable controller has custody authority."
+    },
+    {
+      "sourceRun": "RwaStockBuyer",
+      "id": "b971c800eb863517c2a7781e5e16c2eb85dfed1eb50c7f7280a6677241bf8272",
+      "check": "missing-zero-check",
+      "reportedImpact": "Low",
+      "description": "RwaStockBuyer.setKeeper(address).keeper_ (src/RwaStockBuyer.sol#124) lacks a zero-check on :\n\t\t- keeper = keeper_ (src/RwaStockBuyer.sol#125)\n",
+      "disposition": "Intentional disabled role: zero minter/burner/publisher/keeper disables authority. Escrow owner is attribution only; production Alchemist passes nonzero msg.sender and only immutable controller has custody authority."
+    },
+    {
+      "sourceRun": "RwaStockBuyer",
+      "id": "4cbc3b78c7eaafa0d6e3ccadf3ea056dfdb6e42406b117c301129b93ad4658bb",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "RwaStockBuyer._enforcedMinimum(address,uint256,uint256) (src/RwaStockBuyer.sol#207-213) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- oracleMinUnits == 0 || observedAt == 0 || observedAt > block.timestamp (src/RwaStockBuyer.sol#210)\n\t- block.timestamp - observedAt > maxQuoteAge (src/RwaStockBuyer.sol#211)\n",
+      "disposition": "Expected time semantics: UTC ballot/day caps and bounded TWAP windows require block timestamp. No randomness/security entitlement derives from sub-block unpredictability; chain timestamp/sequencer availability remains an external assumption."
+    },
+    {
+      "sourceRun": "RwaStockBuyer",
+      "id": "4da33406da684721adc592d0945a42acc55c0fee29466aa8b0c81631335b819b",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "RwaStockBuyer.buy(uint256,uint256,uint256,bytes) (src/RwaStockBuyer.sol#168-192) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- currentDay == 0 || ballotDay != currentDay - 1 (src/RwaStockBuyer.sol#178)\n",
+      "disposition": "Expected time semantics: UTC ballot/day caps and bounded TWAP windows require block timestamp. No randomness/security entitlement derives from sub-block unpredictability; chain timestamp/sequencer availability remains an external assumption."
+    },
+    {
+      "sourceRun": "RwaStockBuyer",
+      "id": "76e2b39f4bde20b317c2fd54c5395390b12939889fa7d005778f54373ee572a0",
+      "check": "pragma",
+      "reportedImpact": "Informational",
+      "description": "4 different versions of Solidity are used:\n\t- Version constraint ^0.8.20 is used by:\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Context.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Pausable.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#5)\n\t- Version constraint >=0.6.2 is used by:\n\t\t->=0.6.2 (lib/openzeppelin-contracts/contracts/interfaces/IERC1363.sol#4)\n\t- Version constraint >=0.4.16 is used by:\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/interfaces/IERC165.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/interfaces/IERC20.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol#4)\n\t- Version constraint 0.8.26 is used by:\n\t\t-0.8.26 (src/RwaStockBuyer.sol#2)\n",
+      "disposition": "Build configuration pins native solc 0.8.26 even though imported libraries declare compatible wider ranges."
+    },
+    {
+      "sourceRun": "RwaStockBuyer",
+      "id": "abc29ff86b0e1dcedd57325c7c5df96b8a84bd5cf06cbcff18939c2b3af1be73",
+      "check": "low-level-calls",
+      "reportedImpact": "Informational",
+      "description": "Low level call in RwaStockBuyer.sweepEth(address,uint256) (src/RwaStockBuyer.sol#228-234):\n\t- (ok,None) = to.call{value: amount}() (src/RwaStockBuyer.sol#231)\n",
+      "disposition": "Expected native transfer: owner-only sweepEth uses nonReentrant, nonzero amount/destination and checks success; reverted transfer preserves funds."
+    }
+  ]
+}

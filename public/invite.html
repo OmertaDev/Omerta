@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a0909">
+  <meta name="referrer" content="no-referrer">
+  <meta name="description" content="The city has rules. The first is an invitation. Enter OMERTÀ with your launch invite.">
+  <title>An invitation to the city — OMERTÀ</title>
+  <link rel="icon" href="/icon-192.png">
+  <link rel="stylesheet" href="/omerta-ui.css">
+  <style>
+    *{box-sizing:border-box}body{margin:0;background:#0a0909;color:#eee6d7;font-family:var(--om-font-body);min-height:100svh}
+    .scene{position:fixed;inset:0;background:linear-gradient(90deg,rgba(10,9,9,.35),rgba(10,9,9,.96) 72%),linear-gradient(0deg,#0a0909,transparent 70%),url('/art/hero-backdrop.jpg') center/cover;z-index:-1}
+    header,footer{max-width:1400px;margin:auto;padding:30px 6vw;display:flex;justify-content:space-between;align-items:center;gap:20px}
+    .wordmark{font-family:var(--om-font-display);font-size:29px;letter-spacing:.18em}.edition,.eyebrow,footer{font:12px var(--om-font-data);letter-spacing:.12em;color:#c9c0b1}.edition{border-left:1px solid #80652f;padding-left:16px}
+    main{max-width:1400px;margin:auto;padding:9vh 6vw 10vh;display:grid;grid-template-columns:1fr minmax(320px,480px);gap:8vw;align-items:center;min-height:70svh}
+    .caption{align-self:end;max-width:280px;padding-bottom:30px}.caption p{font-size:18px;line-height:1.6;color:#c9c0b1}.eyebrow{color:#e0bd72;text-transform:uppercase}
+    h1{font-family:var(--om-font-display);font-size:clamp(48px,5.5vw,76px);font-weight:600;line-height:1.04;margin:23px 0;letter-spacing:.01em;text-transform:uppercase}
+    .intro{font-size:19px;line-height:1.55;color:#c9c0b1;margin:0 0 34px;max-width:400px}
+    label{display:block;font:12px var(--om-font-data);letter-spacing:.1em;margin-bottom:12px;text-transform:uppercase}
+    input,button,select{font:15px var(--om-font-data);width:100%;border:1px solid #80652f;border-radius:3px;min-height:52px;padding:14px;color:#eee6d7;background:#141214}
+    input{letter-spacing:.05em}input::placeholder{color:#9f9688}button{cursor:pointer;background:#cda653;color:#0a0909;font-weight:700;margin-top:12px}button:hover{background:#e0bd72}button:disabled{opacity:.65;cursor:wait}
+    :is(input,button,summary,select):focus-visible{outline:2px solid #e0bd72;outline-offset:4px}
+    .hint{font-size:14px;color:#9f9688;line-height:1.6;margin-top:14px}.status{font-size:15px;color:#e0bd72;line-height:1.5;min-height:23px;margin:14px 0}.status.error{color:#ed9a91}
+    .returning{margin-top:27px;border-top:1px solid #433a3e;padding-top:24px}.returning p{margin:0;color:#c9c0b1;font-size:15px}.secondary{background:transparent;color:#eee6d7;border-color:#433a3e;font-weight:400}.secondary:hover{background:#211d20}
+    details{margin-top:18px;font-size:14px;color:#c9c0b1}summary{cursor:pointer;padding:6px 0}details label{margin-top:16px}footer{font-size:10px;border-top:1px solid #302a2d;letter-spacing:.08em}
+    @media(max-width:720px){header{padding:24px}.edition{font-size:10px}.wordmark{font-size:23px}main{display:block;padding:32px 24px 56px;min-height:auto;max-width:510px}.caption{display:none}.scene{background:linear-gradient(0deg,#0a0909 25%,rgba(10,9,9,.6)),url('/art/hero-backdrop.jpg') center/cover}h1{font-size:54px}.intro{font-size:18px}footer{padding:24px;align-items:start;line-height:1.7}input{font-size:16px;letter-spacing:0}}
+  </style>
+</head>
+<body>
+  <div class="scene" aria-hidden="true"></div>
+  <header><span class="wordmark">OMERTÀ</span><span class="edition">THE OPENING NIGHT<br>INVITATION REQUIRED</span></header>
+  <main>
+    <aside class="caption"><span class="eyebrow">A city built on names.</span><p>Make yours mean something.</p></aside>
+    <section aria-labelledby="title">
+      <span class="eyebrow">Someone put a word in.</span>
+      <h1 id="title">The city doesn't<br>open for everyone.</h1>
+      <p class="intro">A name. A crew. A place at the table.<br>Your invitation is the first move.</p>
+      <form id="invite-form">
+        <label for="invite-code">Your invite code</label>
+        <input id="invite-code" name="inviteCode" required maxlength="128" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="OMR-XXXXX-XXXXX-XXXXX-XXXXX" aria-describedby="invite-hint gate-status">
+        <button id="enter" type="submit">Enter the city →</button>
+        <p class="hint" id="invite-hint">One invitation. One player. Keep yours close.<br>You can link your X account once inside.</p>
+      </form>
+      <p class="status" id="gate-status" role="status" aria-live="polite"></p>
+      <div class="returning"><p>Already have a place here?</p><button class="secondary" id="return-x" type="button">Sign in with X</button>
+        <details><summary>Use an existing account token</summary><form id="token-form">
+          <label for="token-kind">Sign-in provider</label><select id="token-kind"><option value="omerta">OMERTÀ account token</option value="privy">Privy token</option><option value="x">X access token</option></select>
+          <label for="account-token">Your existing token</label><input type="password" id="account-token" required autocomplete="off">
+          <button class="secondary" type="submit">Return to your account</button>
+        </form></details>
+      </div>
+    </section>
+  </main>
+  <footer><span>LOYALTY IS EARNED. ENTRY IS INVITED.</span><span>OMERTÀ · LAUNCH ACCESS</span></footer>
+  <noscript><p style="padding:24px">Enable JavaScript to redeem your invitation or sign in.</p></noscript>
+  <script>
+    const status = document.querySelector('#gate-status');
+    const codeInput = document.querySelector('#invite-code');
+    const pendingKey = 'omerta_launch_pending';
+    const message = (text, error = false) => { status.textContent = text; status.classList.toggle('error', error); };
+    const request = async (path, body, token) => {
+      const response = await fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: 'Bearer ' + token } : {}) }, body: JSON.stringify(body || {}) });
+      const result = await response.json();
+      if (!response.ok) throw new Error(response.status === 429 ? 'Too many attempts. Wait a moment, then try again.' : result.message || 'We could not verify your access. Check your details and try again.');
+      return result;
+    };
+    function pending() { try { return JSON.parse(sessionStorage.getItem(pendingKey)); } catch { return null; } }
+    function secret() { return btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(32)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+    async function enter(token) {
+      // Store the bearer before retiring the recovery credential or navigating anywhere.
+      localStorage.setItem('omerta_token', token);
+      await request('/v1/access/session', {}, token);
+      await request('/v1/auth/guest/bootstrap/ack', {}, token).catch(() => {});
+      sessionStorage.removeItem(pendingKey);
+      location.reload();
+    }
+    // Invite fragments keep codes out of HTTP logs. Older query links work too; scrub both promptly.
+    const url = new URL(location.href);
+    const fragment = new URLSearchParams(url.hash.slice(1));
+    const incomingCode = fragment.get('invite') || url.searchParams.get('invite');
+    if (incomingCode) codeInput.value = incomingCode;
+    else if (pending()?.inviteCode) codeInput.value = pending().inviteCode;
+    const incomingToken = fragment.get('token');
+    const authError = fragment.get('autherr');
+    if (incomingCode || incomingToken || authError) {
+      url.searchParams.delete('invite'); fragment.delete('invite'); fragment.delete('token'); fragment.delete('autherr');
+      url.hash = fragment.toString(); history.replaceState(null, '', url.pathname + url.search + url.hash);
+    }
+    if (authError) message(authError === 'invite' ? 'New players need an unused invite code. Enter yours above.' : 'X sign-in did not finish. Try again or use your account token.', true);
+    document.querySelector('#invite-form').onsubmit = async (event) => {
+      event.preventDefault(); const button = document.querySelector('#enter'); button.disabled = true;
+      message('Checking your invitation…');
+      try {
+        const inviteCode = codeInput.value.trim();
+        let operation = pending();
+        if (!operation || operation.inviteCode !== inviteCode) {
+          operation = { inviteCode, bootstrapSecret: secret() };
+          sessionStorage.setItem(pendingKey, JSON.stringify(operation));
+        }
+        const result = await request('/v1/access/redeem', operation);
+        await enter(result.token);
+      } catch (error) { message(error.message || 'The city did not answer. Try again with the same code.', true); button.disabled = false; }
+    };
+    document.querySelector('#return-x').onclick = async () => {
+      const button = document.querySelector('#return-x'); button.disabled = true; message('Connecting to X…');
+      try { location.assign((await request('/v1/auth/x/start', {})).url); }
+      catch (error) { message(error.message, true); button.disabled = false; }
+    };
+    document.querySelector('#token-form').onsubmit = async (event) => {
+      event.preventDefault(); message('Checking your account…');
+      try {
+        let token = document.querySelector('#account-token').value.trim();
+        const provider = document.querySelector('#token-kind').value;
+        if (provider !== 'omerta') token = (await request('/v1/auth/' + provider, { token })).token;
+        await request('/v1/access/session', {}, token); await enter(token);
+      }
+      catch (error) { message(error.message, true); }
+    };
+    (async () => {
+      try {
+        const saved = incomingToken || localStorage.getItem('omerta_token');
+        if (!saved) return;
+        message('Opening your city…'); await request('/v1/access/session', {}, saved); await enter(saved);
+      } catch { message('Sign in again to return to your account, or enter an unused invitation.', true); }
+    })();
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
+  </script>
+</body>
+</html>

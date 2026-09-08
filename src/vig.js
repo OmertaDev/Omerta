@@ -106,6 +106,8 @@ export async function payPlex(ch, kind, client, h) {
 // the revenue row and the fee row commit together. Amounts arrive in wei (string) and are stored
 // in ETH units to stay inside JS-safe-integer range for the accounting math.
 export async function recordVigRevenue(client, { source, ref, kind, amountWei, bps }) {
+  // Mint revenue belongs entirely to DEV_WALLET, even if a caller supplies an override.
+  if (source === 'fee' && kind === 'mint') return { recorded: false };
   let grossEth = 0;
   try { grossEth = Number(BigInt(amountWei ?? '0')) / 1e18; } catch { grossEth = 0; }
   if (!(grossEth > 0)) return { recorded: false };
@@ -282,6 +284,11 @@ export async function chainParity() {
     if (Number(onchain) !== Number(backend)) mismatches.push({ what, onchain: Number(onchain), backend: Number(backend) });
   };
   cmp('OmertaFees.vigBps', chain.feeVigBps, VIG_BPS);
+  if (chain.feeVigBps !== undefined || chain.feeMintDevBps !== undefined) {
+    if (chain.feeMintDevBps === undefined || chain.feeMintDevBps === null)
+      mismatches.push({ what: 'OmertaFees.mintDevBps', onchain: null, backend: 10000 });
+    else cmp('OmertaFees.mintDevBps', chain.feeMintDevBps, 10000);
+  }
   cmp('OmertaBond.polBps', chain.bondPolBps, BONDS.POL_BPS);
   cmp('OmertaBond.devBps', chain.bondDevBps, BONDS.DEV_BPS);
   cmp('OmertaBond.rwaBps', chain.bondRwaBps, BONDS.RWA_BPS);

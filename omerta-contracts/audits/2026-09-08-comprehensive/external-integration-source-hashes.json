@@ -1,0 +1,192 @@
+{
+  "date": "2026-09-08",
+  "rootCommit": "e1d0e8476b6f1ebf590b13bd07c072d9d9d33aee",
+  "ccaCommit": "a56d42231e7bf048136d9d88fa61e8518c10c5ff",
+  "safeCommit": "bf943f80fec5ac647159d26161446ac5d716a294",
+  "entries": [
+    {
+      "path": "src/genesiscca.js",
+      "sha256": "72f88b479ab3f109ab4f4bfa3ffb29dddf59cf3dd148532c881c1f031d691c26"
+    },
+    {
+      "path": "src/genesislaunch.js",
+      "sha256": "a758195a4d1e4e63ee933700c467d24784d7d062686b678b4eabbec1cc6ac0d7"
+    },
+    {
+      "path": "src/stockdeliver.js",
+      "sha256": "acab8cef697e1f267997c4d46a3cb558ed0aec3a368ad3fed51ed3e8d167f22b"
+    },
+    {
+      "path": "src/genesiscadence.js",
+      "sha256": "93982c9d893f12ceeca894bc9b15485e56158ca298223b94bde36ed19006aaa0"
+    },
+    {
+      "path": "tools/genesis-launch-preflight.js",
+      "sha256": "3913cf0f8ae03bb1a814fbeecd86c5419b78116156440fdc23a5679077f9bb37"
+    },
+    {
+      "path": "omerta-contracts/script/DeploySafe.s.sol",
+      "sha256": "fbe71a2e7b6f1073a2ce21600dfd68cb4eeaefe559717eedda970badeebf02f3"
+    },
+    {
+      "path": "omerta-contracts/script/Deploy-MainnetSafe.ps1",
+      "sha256": "593a863551039772f370ca48dc768dab632dba9101507e22c10d7738fc86c755"
+    },
+    {
+      "path": "omerta-contracts/script/Deploy-TestnetSafe.ps1",
+      "sha256": "d04d2e6f2961a335cc0214b762da6b517a3e963850d15e137229e9bd40a41a87"
+    },
+    {
+      "path": "omerta-contracts/test/vendor/ERC6551Registry.sol",
+      "sha256": "1b74bdd3769e88f9801f59a92f1c6ff465324698029606afe7e310cfd7f066a2"
+    },
+    {
+      "path": "omerta-contracts/test/vendor/ERC6551Account.sol",
+      "sha256": "d8bc302195d0779dcfc3301ec762843bd8c80ebbb8a4d6c4609720bdc2661289"
+    },
+    {
+      "path": "output/comprehensive-audit/external/cca-BlockNumberish.sol",
+      "sha256": "199200adf6482e85e401f16c2301d785a754f29dfb1281c424c012f43ebf0fad"
+    },
+    {
+      "path": "output/comprehensive-audit/external/cca-ProtocolFeeLib.sol",
+      "sha256": "ff1acedf31462e072d15ecd59f04e9c3bf47cc0d1e707353886e5b6fdbb03526"
+    },
+    {
+      "path": "output/comprehensive-audit/external/continuous-clearing-auction/src/ContinuousClearingAuction.sol",
+      "sha256": "e52cdf1e6194a10b5f92daa78d055780e75b40e08bc087f66b5cd78d31c97fbb"
+    },
+    {
+      "path": "output/comprehensive-audit/external/continuous-clearing-auction/src/ContinuousClearingAuctionFactory.sol",
+      "sha256": "6e363ababfb4ca7c6278df5555bb2ddad8d624708a04e296abe3f3f421804fbb"
+    },
+    {
+      "path": "output/comprehensive-audit/external/continuous-clearing-auction/src/AuctionStorage.sol",
+      "sha256": "cb187d3139df99369f1289bed72bce6f157c709b27adb976ba61bfd8a5dbedaa"
+    },
+    {
+      "path": "output/comprehensive-audit/external/continuous-clearing-auction/src/BidStorage.sol",
+      "sha256": "24c38d81ad14e3e2d943b65b39aae525007169f88bcdc4202af792594e9c91b0"
+    },
+    {
+      "path": "output/comprehensive-audit/external/continuous-clearing-auction/src/CheckpointStorage.sol",
+      "sha256": "fa9def3d6211bc5806b3b503c6c02e1efec928ffd58bf83087603661ac73a2ca"
+    },
+    {
+      "path": "output/comprehensive-audit/external/continuous-clearing-auction/src/StepStorage.sol",
+      "sha256": "3c7765201e324ebcc3692b1b980ab477b58714dad6ab7b09c01e6c0d1c30301a"
+    },
+    {
+      "path": "output/comprehensive-audit/external/continuous-clearing-auction/src/TickStorage.sol",
+      "sha256": "4c42532b7ef1830bcfe9cc913441dcb0de7ccaaadc3c3b93afc9c5f0fc804279"
+    },
+    {
+      "path": "output/comprehensive-audit/external/continuous-clearing-auction/src/libraries/BidLib.sol",
+      "sha256": "38bad7097c57115c5e1f947da7b2eb77b8557fb01155beb9e66847bf2353b5f5"
+    },
+    {
+      "path": "output/comprehensive-audit/external/continuous-clearing-auction/src/libraries/CheckpointAccountingLib.sol",
+      "sha256": "dd31c9c62d5d5e13c027276c0afbff4d8b37684cabbdc3dacefa33b647085230"
+    },
+    {
+      "path": "output/comprehensive-audit/external/continuous-clearing-auction/src/libraries/CheckpointLib.sol",
+      "sha256": "32d1baabe418fc5ad9ec464f68d54f28ba3fc946fea1ca6485ba2506f5fa319a"
+    },
+    {
+      "path": "output/comprehensive-audit/external/continuous-clearing-auction/src/libraries/ConstantsLib.sol",
+      "sha256": "41f89f5dbf612615240b23f68ad7879eeca4b42399b8c7ea83f6996b6289874f"
+    },
+    {
+      "path": "output/comprehensive-audit/external/continuous-clearing-auction/src/libraries/CurrencyLibrary.sol",
+      "sha256": "b666341062fdd23cc58565a0f6ac92d40e5ad3756070fe17965def4889577a8d"
+    },
+    {
+      "path": "output/comprehensive-audit/external/continuous-clearing-auction/src/libraries/DemandLib.sol",
+      "sha256": "489591a54cfa65e40f394313c66ce6ca4548319db400179d5dc453f5e30028c9"
+    },
+    {
+      "path": "output/comprehensive-audit/external/continuous-clearing-auction/src/libraries/FixedPoint96.sol",
+      "sha256": "5a75bd597b8f708d42249d18c4a47d126eade37852107d4f07201e87820e8ab1"
+    },
+    {
+      "path": "output/comprehensive-audit/external/continuous-clearing-auction/src/libraries/MaxBidPriceLib.sol",
+      "sha256": "4c5e05d6dd61b6b507576cb3b06b7212efa2ddeab0f4068da27f1fdb565ecb18"
+    },
+    {
+      "path": "output/comprehensive-audit/external/continuous-clearing-auction/src/libraries/PriceLib.sol",
+      "sha256": "995a9988b2924148c7e9611a9b31fe1c42cee5cd148b0290a0503fefa3898c82"
+    },
+    {
+      "path": "output/comprehensive-audit/external/continuous-clearing-auction/src/libraries/StepLib.sol",
+      "sha256": "89002e921ec248bc08e6a4adb2b60c117d17b64bd4490ecb3031871d94d11100"
+    },
+    {
+      "path": "output/comprehensive-audit/external/continuous-clearing-auction/src/libraries/ValidationHookLib.sol",
+      "sha256": "7140e1efa4ebb6ff45bae4bce2c342f6e054e7e5c3e2a9b7f6ceb90276e4ac31"
+    },
+    {
+      "path": "output/comprehensive-audit/external/continuous-clearing-auction/src/libraries/ValueX7Lib.sol",
+      "sha256": "4d568e465a601cdc3f0896ad381bf8f257e5a78f9205cc615883a0b50f4a62ee"
+    },
+    {
+      "path": "output/comprehensive-audit/external/safe-smart-account-v1.4.1/contracts/Safe.sol",
+      "sha256": "bd7cceee930ab98f2b39e0919ce37ae7e20a3954b7aa54f72717280a11e6a3c8"
+    },
+    {
+      "path": "output/comprehensive-audit/external/safe-smart-account-v1.4.1/contracts/SafeL2.sol",
+      "sha256": "5beef8a409203059d274a9902e21d35ef3b510d002fdd80559f9fb585141da60"
+    },
+    {
+      "path": "output/comprehensive-audit/external/safe-smart-account-v1.4.1/contracts/proxies/SafeProxy.sol",
+      "sha256": "08f29d81718c2c13f9dcbb1a3a96c81633a8f14585bb4721ae13f2875e5acf87"
+    },
+    {
+      "path": "output/comprehensive-audit/external/safe-smart-account-v1.4.1/contracts/proxies/SafeProxyFactory.sol",
+      "sha256": "32e3620501cae534c048ef2c772f7e44b139e599c81c4a21a2d393ed0943e2d6"
+    },
+    {
+      "path": "output/comprehensive-audit/external/safe-smart-account-v1.4.1/contracts/base/OwnerManager.sol",
+      "sha256": "745592f606709c3d07d65bcd0ae29a059ad20014ea3ccf71f040fdf3fc179ccc"
+    },
+    {
+      "path": "output/comprehensive-audit/external/safe-smart-account-v1.4.1/contracts/base/ModuleManager.sol",
+      "sha256": "1355791aa1bc280b92cb965abfc89ce388a1d2b5d8151c489c29b34436a62569"
+    },
+    {
+      "path": "output/comprehensive-audit/external/safe-smart-account-v1.4.1/contracts/base/FallbackManager.sol",
+      "sha256": "72b4d73be82c4f7a1eeaf7d5bd2de7be0e2bfc56ebe79a8ca14020e1ea255388"
+    },
+    {
+      "path": "output/comprehensive-audit/external/safe-smart-account-v1.4.1/contracts/base/GuardManager.sol",
+      "sha256": "9b6a4101042703c02d1a460d88c69d9ff080c9f36303ca529ba4dabeab02b5a7"
+    },
+    {
+      "path": "output/comprehensive-audit/external/safe-smart-account-v1.4.1/contracts/base/Executor.sol",
+      "sha256": "6fb1eb062cda3b777150d431af3ff8c388edd0e11fe97c0ae2bc7d705a977b91"
+    },
+    {
+      "path": "output/comprehensive-audit/external/safe-smart-account-v1.4.1/contracts/common/SelfAuthorized.sol",
+      "sha256": "6b1cfce13d85512ac493b04321caebb18941c8eab5139068390a4b782c21d5a7"
+    },
+    {
+      "path": "output/comprehensive-audit/external/safe-smart-account-v1.4.1/contracts/common/StorageAccessible.sol",
+      "sha256": "49ac26dfbb76ae2e56633685699af39a0fec80a5675f0b73e0206c842abd1115"
+    },
+    {
+      "path": "output/comprehensive-audit/external/safe-smart-account-v1.4.1/contracts/common/SignatureDecoder.sol",
+      "sha256": "8c74e3eb3660108f948505bf27b2501f516d8add8872fd7bf4fa873360fba878"
+    },
+    {
+      "path": "output/comprehensive-audit/external/safe-smart-account-v1.4.1/contracts/common/SecuredTokenTransfer.sol",
+      "sha256": "83f5cbb9c1c3e528c02d21cad2d1c4a37d9028fe4cd3ef64209e41d4c929ce42"
+    },
+    {
+      "path": "output/comprehensive-audit/external/safe-smart-account-v1.4.1/contracts/handler/CompatibilityFallbackHandler.sol",
+      "sha256": "c95538eac220bf443b55e311f4d4e413fe76fb843843208439755eeccfd7c499"
+    },
+    {
+      "path": "output/comprehensive-audit/external/safe-smart-account-v1.4.1/contracts/handler/TokenCallbackHandler.sol",
+      "sha256": "17bfce504626cdd4e82f0f72eb54a86145b7db94a6a827b28c5e41ee5525fb98"
+    }
+  ]
+}
