@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `e8d268df84bb`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `284bc60f18e6`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1445 |
+| Commits in clone | 1447 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-08 — test: admit database harness players through launch invitations |
+| Latest commit | 2026-09-08 — Merge pull request #181 from OmertaDev/codex/launch-invites-2026-09-08 |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 572 |
+| OmertaDev | 574 |
 | Claude | 156 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 28 |
@@ -36,10 +36,10 @@
 | [SPEC.md](../../SPEC.md) | 310 | yes |
 | [schema.sql](../../schema.sql) | 286 | yes |
 | [BALANCE.md](../../BALANCE.md) | 254 | yes |
-| knowledge/generated/github-history.md | 195 | historical |
-| knowledge/generated/graph-summary.md | 195 | historical |
-| knowledge/generated/graph.json | 195 | historical |
-| knowledge/generated/inventory.md | 195 | historical |
+| knowledge/generated/github-history.md | 196 | historical |
+| knowledge/generated/graph-summary.md | 196 | historical |
+| knowledge/generated/graph.json | 196 | historical |
+| knowledge/generated/inventory.md | 196 | historical |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 177 | yes |
 | [package.json](../../package.json) | 160 | yes |
