@@ -466,8 +466,10 @@ export async function buildServer() {
     const a = (await pool.query('SELECT status, token_version FROM accounts WHERE id=$1', [claims.sub])).rows[0];
     return !!a && a.status !== 'banned' && (claims.tv === undefined || Number(claims.tv) === Number(a.token_version));
   };
-  app.get('/', async (req, reply) =>
-    Invites.inviteModeEnabled() && !await hasViewAccess(req) ? invitePage(req, reply) : gamePage(req, reply));
+  async function serveLaunchPage(req, reply) {
+    return Invites.inviteModeEnabled() && !await hasViewAccess(req) ? invitePage(req, reply) : gamePage(req, reply);
+  }
+  app.get('/', async (req, reply) => serveLaunchPage(req, reply));
   // the LIVE-OPS dashboard (mod-key gated client-side; every call carries x-mod-key) — public/admin.html
   let adminHtml = '<!doctype html><title>OMERTA ops</title><p>Ops console file missing (public/admin.html).</p>';
   try { adminHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'admin.html'), 'utf8'); } catch { /* headless */ }
