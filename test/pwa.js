@@ -3,6 +3,7 @@
 // service worker is an app-shell (network-first navigations, never caches the API), and the client head
 // carries the install tags. Runs on pg-mem — zero infra.
 import assert from 'node:assert';
+import vm from 'node:vm';
 import { buildServer } from '../src/server.js';
 
 const app = await buildServer();
@@ -40,6 +41,106 @@ assert.ok(/addEventListener\(['"]install['"]/.test(sw), 'the SW handles install 
 assert.ok(/addEventListener\(['"]fetch['"]/.test(sw), 'the SW handles fetch (offline shell)');
 assert.ok(/addEventListener\(['"]push['"]/.test(sw), 'the SW still handles push');
 assert.ok(sw.includes("startsWith('/v1/')"), 'the SW NEVER caches the API');
+
+// Drive the deployed worker against real Request/Response values and a disposable Cache API double.
+// A stylesheet can be permanently stale while every route test stays green; a Codex navigation used
+// to overwrite '/'. These checks exercise the actual fetch handlers and the offline results.
+{
+  const origin = 'https://omerta.test';
+  const keyOf = (req) => new URL(typeof req === 'string' ? req : req.url, origin).href;
+  const stores = new Map();
+  const listeners = new Map();
+  const calls = [];
+  let network = async (req) => new Response(`fresh:${new URL(keyOf(req)).pathname}`);
+  const caches = {
+    async open(name) {
+      if (!stores.has(name)) stores.set(name, new Map());
+      const entries = stores.get(name);
+      return {
+        async match(req) { return entries.get(keyOf(req))?.clone(); },
+        async put(req, res) { entries.set(keyOf(req), res.clone()); },
+        async addAll(urls) {
+          for (const url of urls) entries.set(keyOf(url), await network(url));
+        },
+      };
+    },
+    async keys() { return [...stores.keys()]; },
+    async delete(name) { return stores.delete(name); },
+  };
+  stores.set('omerta-shell-v1', new Map([[keyOf('/'), new Response('polluted old shell')]]));
+  stores.set('unrelated-cache', new Map());
+  vm.runInNewContext(sw, {
+    URL, Response, caches,
+    fetch: (req) => { calls.push(keyOf(req)); return network(req); },
+    self: { location: { origin }, skipWaiting: async () => {},
+      clients: { claim: async () => {} },
+      addEventListener: (type, fn) => listeners.set(type, fn) },
+  });
+  const dispatch = async (type, request) => {
+    const waits = [];
+    let response;
+    listeners.get(type)({ request, respondWith: (p) => { response = p; }, waitUntil: (p) => waits.push(p) });
+    const result = await response;
+    await Promise.all(waits);
+    return result;
+  };
+  const req = (path, { mode = 'navigate', method = 'GET', headers = {} } = {}) =>
+    ({ url: new URL(path, origin).href, mode, method, headers: new Headers(headers) });
+  const read = (path, options) => dispatch('fetch', req(path, options));
+  await dispatch('install');
+  await dispatch('activate');
+  assert(!stores.has('omerta-shell-v1'), 'activation discards the old polluted shell cache');
+  assert(stores.has('unrelated-cache'), 'activation leaves caches owned by other features alone');
+  const ownName = [...stores.keys()].find((name) => name.startsWith('omerta-shell-'));
+  const own = await caches.open(ownName);
+  assert.equal(await (await own.match('/omerta-ui.css')).text(), 'fresh:/omerta-ui.css',
+    'the shared stylesheet is part of the offline installation');
+
+  for (const version of ['first', 'second']) {
+    network = async () => new Response(`stylesheet:${version}`);
+    assert.equal(await (await read('/omerta-ui.css', { mode: 'cors' })).text(), `stylesheet:${version}`,
+      'an installed client sees a newly deployed shared stylesheet without clearing storage');
+  }
+  network = async (request) => new Response(`page:${new URL(request.url).pathname}`);
+  await read('/'); await read('/wiki');
+  assert.equal(await (await own.match('/')).text(), 'page:/', 'Codex never overwrites the game shell');
+  assert.equal(await (await own.match('/wiki')).text(), 'page:/wiki', 'Codex keeps its own offline page');
+
+  for (const [label, response] of [
+    ['server error', new Response('failure', { status: 500 })],
+    ['not found', new Response('missing', { status: 404 })],
+    ['no-store', new Response('private data', { headers: { 'cache-control': 'no-store' } })],
+    ['private', new Response('private data', { headers: { 'cache-control': 'private, max-age=60' } })],
+    ['redirect', Object.defineProperty(new Response('redirect target'), 'redirected', { value: true })],
+  ]) {
+    network = async () => response;
+    await read('/wiki');
+    assert.equal(await (await own.match('/wiki')).text(), 'page:/wiki', `${label} cannot replace a working cached page`);
+  }
+
+  network = async () => { throw new Error('offline'); };
+  assert.equal(await (await read('/')).text(), 'page:/', 'offline root uses its cached game shell');
+  assert.equal(await (await read('/?ref=NewStreet')).text(), 'page:/', 'offline root referrals use the canonical shell');
+  assert.equal(await (await read('/wiki')).text(), 'page:/wiki', 'offline Codex uses its own page');
+  assert.equal((await read('/uncached-page')).type, 'error', 'an uncached page does not masquerade as the game shell');
+  assert.equal(await (await read('/omerta-ui.css', { mode: 'cors' })).text(), 'stylesheet:second',
+    'offline styling uses the latest successful stylesheet');
+
+  const before = calls.length;
+  for (const [path, options] of [
+    ['/v1/me', {}], ['/openapi.json', {}], ['/sw.js', {}],
+    ['/v1/crimes/pick', { method: 'POST' }], ['https://elsewhere.test/art.jpg', { mode: 'cors' }],
+    ['/art/hype/hero-poster.mp4', { mode: 'cors', headers: { range: 'bytes=0-1023' } }],
+    ['/private-page', { headers: { authorization: 'Bearer disposable-test-value' } }],
+  ]) assert.equal(await read(path, options), undefined, `${path} passes through without cache handling`);
+  assert.equal(calls.length, before, 'excluded requests never enter the worker network/cache strategy');
+
+  network = async () => new Response('stable art');
+  await read('/art/test.webp', { mode: 'cors' });
+  network = async () => { throw new Error('art should have been cached'); };
+  assert.equal(await (await read('/art/test.webp', { mode: 'cors' })).text(), 'stable art',
+    'unchanged static art retains its cache-first behavior');
+}
 
 // ── the client head carries the install tags ──
 const html = (await get('/')).body;

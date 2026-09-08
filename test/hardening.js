@@ -443,7 +443,10 @@ assert(arena.leaderboard.some((a) => a.name === 'Machine Malone') && arena.leade
 assert(arena.links.quickstart.endsWith('/agents') && arena.links.openapi.endsWith('/openapi.json'), 'the arena links out to the machine-discovery surfaces');
 const arenaPage = await app.inject({ method: 'GET', url: '/arena' });
 assert(arenaPage.statusCode === 200 && /text\/html/.test(arenaPage.headers['content-type']) && /THE ARENA/.test(arenaPage.body), 'the public human-facing arena page serves at /arena');
-assert(arenaPage.body.includes("['/v1/arena', 'Arena snapshot (JSON)', 'the public banded board behind this page']"),
+const publicArenaLink = arenaPage.body.match(/<a\b[^>]*href=["']\/v1\/arena["'][^>]*>([\s\S]*?)<\/a>/i)?.[1]
+  .replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+assert(publicArenaLink && /Arena snapshot \(JSON\)/i.test(publicArenaLink)
+    && /the public banded board behind this page/i.test(publicArenaLink),
   'the public Arena page identifies its keyless JSON snapshot as the public banded board behind this page');
 assert(!arenaPage.body.includes('/v1/leaderboard/agents'),
   'unauthenticated Arena navigation never links to the authenticated agent leaderboard');

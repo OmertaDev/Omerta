@@ -1,0 +1,2567 @@
+{
+  "schemaVersion": 1,
+  "buildDate": "2026-09-07",
+  "counts": {
+    "lanes": 9,
+    "cards": 108
+  },
+  "lanes": [
+    {
+      "id": "01-world",
+      "title": "WORLD & PROGRESSION",
+      "short": "WORLD",
+      "description": "Identity, progression, districts, careers, collections, and the one-life stakes."
+    },
+    {
+      "id": "02-economy",
+      "title": "THE STREET ECONOMY",
+      "short": "ECONOMY",
+      "description": "Cashflow, markets, ownership, freight, lending, and player-run capital."
+    },
+    {
+      "id": "03-blood-law",
+      "title": "BLOOD & THE LAW",
+      "short": "BLOOD / LAW",
+      "description": "Violence, contracts, protection, consequences, investigation, and prison."
+    },
+    {
+      "id": "04-organizations",
+      "title": "ORGANIZATIONS & POWER",
+      "short": "POWER",
+      "description": "Crews, Families, territory, government, recruiting, secrets, and loyalty."
+    },
+    {
+      "id": "05-vice-city",
+      "title": "VICE & THE LIVING CITY",
+      "short": "VICE / CITY",
+      "description": "Casino tables, competition careers, nightlife, NPC power, and a changing city."
+    },
+    {
+      "id": "06-authored",
+      "title": "THE AUTHORED CITY",
+      "short": "STORIES",
+      "description": "Cases, permanent choices, co-op mysteries, workshops, and exact-hash history."
+    },
+    {
+      "id": "07-omr",
+      "title": "$OMR & THE CAPITAL DESK",
+      "short": "$OMR",
+      "description": "Token severance, recycling, reserves, launch rails, RWA systems, and hard gates."
+    },
+    {
+      "id": "08-agents",
+      "title": "AUTONOMOUS PLAYERS",
+      "short": "AGENTS",
+      "description": "Agent Turn, MCP, the Opportunity Board, Arena, fair play, and recruiting."
+    },
+    {
+      "id": "09-in-build",
+      "title": "THE WORLD GRAPH — IN BUILD",
+      "short": "IN BUILD",
+      "description": "The production economy and mystery platform currently under construction."
+    }
+  ],
+  "generatedImagePrompts": [
+    {
+      "file": "art/production-economy-foundry.png",
+      "useCase": "ads-marketing",
+      "summary": "Text-free 1930s foundry showing vehicle salvage, material lots, blueprints, professions, tools and repair."
+    },
+    {
+      "file": "art/content-desk-evidence-room.png",
+      "useCase": "ads-marketing",
+      "summary": "Text-free noir municipal evidence room for authored cases, private evidence and cross-season history."
+    },
+    {
+      "file": "art/living-city-system-map.png",
+      "useCase": "ads-marketing",
+      "summary": "Text-free isometric six-district living-city network connecting game, economy, story, agent and token systems."
+    }
+  ],
+  "cards": [
+    {
+      "id": "01-world-01-one-life",
+      "lane": "01-world",
+      "slug": "01-one-life",
+      "status": "LIVE",
+      "eyebrow": "THE BLOODLINE",
+      "title": [
+        "ONE LIFE.",
+        "NO RESPAWNS."
+      ],
+      "body": "Death is not a reset. It is a succession.",
+      "facts": [
+        "A living street can die",
+        "The estate survives the body",
+        "An heir inherits money and enemies"
+      ],
+      "post": "OMERTÀ gives every street one life. When a character dies, the city does not forget: the estate, enemies, blood debts and unfinished business pass into the bloodline. No respawn button. A succession.",
+      "source": "SPEC.md §3.8 · The Bloodline",
+      "art": "public/art/card-legend.jpg",
+      "png": "png/01-world/01-world-01-one-life.png",
+      "svg": "svg/01-world/01-world-01-one-life.svg",
+      "xCharacterCount": 199
+    },
+    {
+      "id": "01-world-02-character",
+      "lane": "01-world",
+      "slug": "02-character",
+      "status": "LIVE",
+      "eyebrow": "CHARACTER CREATION",
+      "title": [
+        "THE STATS",
+        "ALWAYS ADD UP."
+      ],
+      "body": "Your strengths are random. Your total is conserved.",
+      "facts": [
+        "Muscle · cunning · speed",
+        "Server-generated allocation",
+        "Build around the hand you drew"
+      ],
+      "post": "Every OMERTÀ character gets a randomized stat spread, but the total is conserved. Nobody rolls a strictly better body. The question is what you do with the hand the city dealt you.",
+      "source": "SPEC.md §3.1 · character creation",
+      "art": "public/art/interior-start.jpg",
+      "png": "png/01-world/01-world-02-character.png",
+      "svg": "svg/01-world/01-world-02-character.svg",
+      "xCharacterCount": 180
+    },
+    {
+      "id": "01-world-03-paths",
+      "lane": "01-world",
+      "slug": "03-paths",
+      "status": "LIVE",
+      "eyebrow": "SIX IDENTITIES",
+      "title": [
+        "CHOOSE HOW",
+        "YOU RISE."
+      ],
+      "body": "The Path changes the methods, not the existence of an ending.",
+      "facts": [
+        "Gun · Ledger · Kitchen",
+        "Wheel · Shadow · Ring",
+        "Specialist gates change outcomes"
+      ],
+      "post": "Gun. Ledger. Kitchen. Wheel. Shadow. Ring. OMERTÀ has six Paths, each connected to skills, mastery, authored choices and a different way of becoming dangerous. Baseline routes remain open; specialists earn different methods.",
+      "source": "AGENTS.md · Path Cases",
+      "art": "public/art/gameplay-01-choose-your-path.png",
+      "png": "png/01-world/01-world-03-paths.png",
+      "svg": "svg/01-world/01-world-03-paths.svg",
+      "xCharacterCount": 224
+    },
+    {
+      "id": "01-world-04-districts",
+      "lane": "01-world",
+      "slug": "04-districts",
+      "status": "LIVE",
+      "eyebrow": "SIX DISTRICTS",
+      "title": [
+        "THE CITY",
+        "HAS GEOGRAPHY."
+      ],
+      "body": "Prices, stories, danger and opportunity change by district.",
+      "facts": [
+        "Travel costs time and cash",
+        "Markets are district-bound",
+        "Some cases require the right street"
+      ],
+      "post": "OMERTÀ is not a menu with a skyline behind it. Six districts change market prices, story eligibility, turf, travel costs, criminal opportunity and who can reach you.",
+      "source": "SPEC.md §3.1 · six districts",
+      "art": "public/art/citymap.jpg",
+      "png": "png/01-world/01-world-04-districts.png",
+      "svg": "svg/01-world/01-world-04-districts.svg",
+      "xCharacterCount": 165
+    },
+    {
+      "id": "01-world-05-crimes",
+      "lane": "01-world",
+      "slug": "05-crimes",
+      "status": "LIVE",
+      "eyebrow": "THE FIRST LOOP",
+      "title": [
+        "29 CRIMES.",
+        "THREE APPROACHES."
+      ],
+      "body": "Case it. Take the standard play. Or go loud.",
+      "facts": [
+        "Risk changes with approach",
+        "Nerve, heat and jail matter",
+        "Every roll is server-side"
+      ],
+      "post": "There are 29 core crimes in OMERTÀ and three ways to approach them: case it, standard, or go loud. More nerve can mean more reward. More heat can mean a cell. The server owns every roll.",
+      "source": "SPEC.md §3.1 · core loop",
+      "art": "public/art/crime-armored.jpg",
+      "png": "png/01-world/01-world-05-crimes.png",
+      "svg": "svg/01-world/01-world-05-crimes.svg",
+      "xCharacterCount": 186
+    },
+    {
+      "id": "01-world-06-coach",
+      "lane": "01-world",
+      "slug": "06-coach",
+      "status": "LIVE",
+      "eyebrow": "THE FIRST WEEK",
+      "title": [
+        "THE CITY TELLS",
+        "YOU WHAT MATTERS."
+      ],
+      "body": "A coach, missions, daily contracts and verified onboarding keep the street moving.",
+      "facts": [
+        "One highest-value next step",
+        "Daily Score and missions",
+        "Server-verified First Week"
+      ],
+      "post": "The first week is a guided climb, not a blank spreadsheet. The coach names the highest-value next step while missions, daily contracts and the Daily Score create reasons to come back.",
+      "source": "SPEC.md §3.4 · growth and retention",
+      "art": "public/art/interior-life.jpg",
+      "png": "png/01-world/01-world-06-coach.png",
+      "svg": "svg/01-world/01-world-06-coach.svg",
+      "xCharacterCount": 183
+    },
+    {
+      "id": "01-world-07-skills",
+      "lane": "01-world",
+      "slug": "07-skills",
+      "status": "LIVE",
+      "eyebrow": "THE SKILL TREE",
+      "title": [
+        "SPECIALIZE.",
+        "THEN GO DEEPER."
+      ],
+      "body": "Nine skills, capstones, respec, prestige and grandmastery.",
+      "facts": [
+        "3×3 progression tree",
+        "Tier-four active capstones",
+        "Prestige carries hard-earned depth"
+      ],
+      "post": "OMERTÀ’s skill system is a 3×3 tree with active capstones, per-skill respec, prestige carry and grandmastery. A build is a history of work, not a cosmetic loadout.",
+      "source": "SPEC.md §3.8 · Skills",
+      "art": "public/art/gameplay-08-character-blueprint.png",
+      "png": "png/01-world/01-world-07-skills.png",
+      "svg": "svg/01-world/01-world-07-skills.svg",
+      "xCharacterCount": 163
+    },
+    {
+      "id": "01-world-08-underworld",
+      "lane": "01-world",
+      "slug": "08-underworld",
+      "status": "LIVE",
+      "eyebrow": "SIX FIXTURES",
+      "title": [
+        "THE UNDERWORLD",
+        "KNOWS YOUR NAME."
+      ],
+      "body": "Standing decays. Favors, gifts, grudges and penance keep the relationships alive.",
+      "facts": [
+        "Daily leads and streaks",
+        "Weekly favors and errand chains",
+        "The Long Count campaign"
+      ],
+      "post": "The Underworld is six named fixtures with standing that decays, daily leads, weekly favors, rivalries, grudges, penance and chained errands. Relationships are another economy.",
+      "source": "SPEC.md §3.8 · The Underworld",
+      "art": "public/art/interior-speakeasy.jpg",
+      "png": "png/01-world/01-world-08-underworld.png",
+      "svg": "svg/01-world/01-world-08-underworld.svg",
+      "xCharacterCount": 175
+    },
+    {
+      "id": "01-world-09-standing",
+      "lane": "01-world",
+      "slug": "09-standing",
+      "status": "LIVE",
+      "eyebrow": "REPUTATION",
+      "title": [
+        "HONOR.",
+        "INFAMY. STANDING."
+      ],
+      "body": "The city measures more than cash.",
+      "facts": [
+        "City Standing is the spine",
+        "Legends mark mastery",
+        "Reputation changes access"
+      ],
+      "post": "Net worth is only one way to be somebody. Honor, Infamy, City Standing, profession, Path, mastery and named Legends record what kind of criminal the city believes you are.",
+      "source": "SPEC.md §3.8 · Honor & Infamy",
+      "art": "public/art/card-wanted.jpg",
+      "png": "png/01-world/01-world-09-standing.png",
+      "svg": "svg/01-world/01-world-09-standing.svg",
+      "xCharacterCount": 171
+    },
+    {
+      "id": "01-world-10-garage",
+      "lane": "01-world",
+      "slug": "10-garage",
+      "status": "LIVE",
+      "eyebrow": "THE GARAGE",
+      "title": [
+        "SIXTY CARS.",
+        "NONE ARE JUST SKINS."
+      ],
+      "body": "Boost, repair, melt, fence and risk the machine.",
+      "facts": [
+        "60-car catalog",
+        "Condition and repair matter",
+        "Vehicles enter multiple economies"
+      ],
+      "post": "OMERTÀ’s garage holds a 60-car catalog with boosting, condition, repair, melting and fencing. Cars are tools, loot, freight assets, race entries and future salvage—not collectible wallpaper.",
+      "source": "SPEC.md §3.1 · Garage",
+      "art": "public/art/interior-garage.jpg",
+      "png": "png/01-world/01-world-10-garage.png",
+      "svg": "svg/01-world/01-world-10-garage.svg",
+      "xCharacterCount": 190
+    },
+    {
+      "id": "01-world-11-gear",
+      "lane": "01-world",
+      "slug": "11-gear",
+      "status": "LIVE",
+      "eyebrow": "TOOLS OF THE TRADE",
+      "title": [
+        "GEAR GETS USED.",
+        "GEAR GETS LOST."
+      ],
+      "body": "Weapons, armor, ammunition, consumables and workshop upgrades connect to real risk.",
+      "facts": [
+        "Armory and workshop",
+        "Ammo and consumable pressure",
+        "Selected gear can reach the chain rail"
+      ],
+      "post": "The armory is connected to the street: guns, armor, ammunition, consumables, repairs and workshop choices all answer to server-owned inventory and risk. Selected gear has a gated ERC-1155 extraction path.",
+      "source": "SPEC.md §3.1 / §3.6",
+      "art": "public/art/gun-undertaker.jpg",
+      "png": "png/01-world/01-world-11-gear.png",
+      "svg": "svg/01-world/01-world-11-gear.svg",
+      "xCharacterCount": 204
+    },
+    {
+      "id": "01-world-12-seasons-collections",
+      "lane": "01-world",
+      "slug": "12-seasons-collections",
+      "status": "LIVE",
+      "eyebrow": "THE LONG GAME",
+      "title": [
+        "SEASONS END.",
+        "HISTORY DOES NOT."
+      ],
+      "body": "League modifiers, collections, landmarks, clues and vanity give the city memory.",
+      "facts": [
+        "Seasonal league modifiers",
+        "The Collection and Clue Scrolls",
+        "Landmarks and vanity records"
+      ],
+      "post": "Seasons change the field. Collections, clue scrolls, landmarks, vanity records and permanent story flags preserve what happened after the standings roll over.",
+      "source": "SPEC.md §3.8 · long-term systems",
+      "art": "public/art/crest.jpg",
+      "png": "png/01-world/01-world-12-seasons-collections.png",
+      "svg": "svg/01-world/01-world-12-seasons-collections.svg",
+      "xCharacterCount": 158
+    },
+    {
+      "id": "02-economy-01-ledger",
+      "lane": "02-economy",
+      "slug": "01-ledger",
+      "status": "LIVE",
+      "eyebrow": "THE ACCOUNTING",
+      "title": [
+        "EVERY DOLLAR",
+        "HAS A HISTORY."
+      ],
+      "body": "The economy is a ledger, not a number in memory.",
+      "facts": [
+        "Transactions are append-only",
+        "Nightly conservation checks",
+        "One-cent drift is an alarm"
+      ],
+      "post": "OMERTÀ treats accounting as gameplay infrastructure. Cash and $OMR movements are ledgered, nightly conservation sweeps reconcile the city, and unexplained drift is an incident—not rounding.",
+      "source": "MARKETING.md §3.1 · ledger",
+      "art": "public/art/hype-money-poster.jpg",
+      "png": "png/02-economy/02-economy-01-ledger.png",
+      "svg": "svg/02-economy/02-economy-01-ledger.svg",
+      "xCharacterCount": 189
+    },
+    {
+      "id": "02-economy-02-bank",
+      "lane": "02-economy",
+      "slug": "02-bank",
+      "status": "LIVE",
+      "eyebrow": "THE BANK",
+      "title": [
+        "MONEY IN TRANSIT",
+        "CAN BE TAKEN."
+      ],
+      "body": "Deposits and withdrawals do not teleport.",
+      "facts": [
+        "In-transit clearing",
+        "Daily movement caps",
+        "Exposure exists between endpoints"
+      ],
+      "post": "Banking is not a safe instant menu. Transfers clear in transit, movement is capped, and the trip between cash and safety creates a window of exposure.",
+      "source": "SPEC.md §3.1 / §3.7",
+      "art": "public/art/interior-legit.jpg",
+      "png": "png/02-economy/02-economy-02-bank.png",
+      "svg": "svg/02-economy/02-economy-02-bank.svg",
+      "xCharacterCount": 150
+    },
+    {
+      "id": "02-economy-03-arbitrage",
+      "lane": "02-economy",
+      "slug": "03-arbitrage",
+      "status": "LIVE",
+      "eyebrow": "TRADE GOODS",
+      "title": [
+        "THE PRICES",
+        "ARE SOLVABLE."
+      ],
+      "body": "Daily district prices come from a published deterministic hash.",
+      "facts": [
+        "Buy low across districts",
+        "Travel and fees change the spread",
+        "Math beats guessing"
+      ],
+      "post": "Trade-goods prices are a deterministic hash of the day and district. The spread is public. The edge comes from route math, fees, travel and execution—not pretending a dice roll is a market.",
+      "source": "AGENTS.md · Arbitrage",
+      "art": "public/art/interior-trade.jpg",
+      "png": "png/02-economy/02-economy-03-arbitrage.png",
+      "svg": "svg/02-economy/02-economy-03-arbitrage.svg",
+      "xCharacterCount": 189
+    },
+    {
+      "id": "02-economy-04-rackets",
+      "lane": "02-economy",
+      "slug": "04-rackets",
+      "status": "LIVE",
+      "eyebrow": "PASSIVE INCOME",
+      "title": [
+        "OWN THE CORNER.",
+        "PAY THE NUT."
+      ],
+      "body": "Rackets accrue on your clock and attract pressure.",
+      "facts": [
+        "Scale tiers and business types",
+        "Upkeep and cold-state risk",
+        "Fortify or face rival raids"
+      ],
+      "post": "Rackets accrue income lazily, but ownership has a carrying cost. Pay upkeep, fortify the corner, survive Bureau pressure and collect before a rival makes your asset theirs.",
+      "source": "SPEC.md §3.8 · Territory",
+      "art": "public/art/interior-empire.jpg",
+      "png": "png/02-economy/02-economy-04-rackets.png",
+      "svg": "svg/02-economy/02-economy-04-rackets.svg",
+      "xCharacterCount": 172
+    },
+    {
+      "id": "02-economy-05-business-empire",
+      "lane": "02-economy",
+      "slug": "05-business-empire",
+      "status": "LIVE",
+      "eyebrow": "BUSINESS EMPIRE",
+      "title": [
+        "THE FRONT",
+        "HAS BOOKS."
+      ],
+      "body": "Five upgradeable businesses turn laundering into an operating problem.",
+      "facts": [
+        "Private laundering routes",
+        "Scrutiny, raids and shakedowns",
+        "Hostile takeover and the pad"
+      ],
+      "post": "Five upgradeable fronts turn “going legit” into an operating game: capacity, private laundering, scrutiny, raids, shakedowns, the pad and hostile takeover. Tycoon is earned, not purchased.",
+      "source": "SPEC.md §3.8 · Business Empire",
+      "art": "public/art/business-hotel.jpg",
+      "png": "png/02-economy/02-economy-05-business-empire.png",
+      "svg": "svg/02-economy/02-economy-05-business-empire.svg",
+      "xCharacterCount": 188
+    },
+    {
+      "id": "02-economy-06-kitchen",
+      "lane": "02-economy",
+      "slug": "06-kitchen",
+      "status": "LIVE",
+      "eyebrow": "THE KITCHEN",
+      "title": [
+        "COOK THE BATCH.",
+        "CARRY THE RISK."
+      ],
+      "body": "Inputs, purity, yield, stealth, crews, wages and raids share one clock.",
+      "facts": [
+        "Cook → collect → deal",
+        "Careful · standard · flood",
+        "Offline crew sales carry a nut"
+      ],
+      "post": "The Kitchen is a production business: source makings, tune purity/yield/stealth, cook on a server clock, collect, choose how aggressively to deal, pay the crew and survive Bureau raids.",
+      "source": "SPEC.md §3.3 · The Kitchen",
+      "art": "public/art/interior-kitchen.jpg",
+      "png": "png/02-economy/02-economy-06-kitchen.png",
+      "svg": "svg/02-economy/02-economy-06-kitchen.svg",
+      "xCharacterCount": 185
+    },
+    {
+      "id": "02-economy-07-black-market",
+      "lane": "02-economy",
+      "slug": "07-black-market",
+      "status": "LIVE",
+      "eyebrow": "THE BLACK MARKET",
+      "title": [
+        "OTHER PLAYERS",
+        "SET THE OTHER SIDE."
+      ],
+      "body": "Auctions, reserves, anti-snipe clocks and buy orders create counterparties.",
+      "facts": [
+        "Car auctions with reserves",
+        "District-pinned goods",
+        "Open buy orders can be filled"
+      ],
+      "post": "The Black Market is a player market: car auctions with reserves and anti-snipe protection, district-pinned goods and buy orders another player can actually fill.",
+      "source": "SPEC.md §3.8 · Black Market",
+      "art": "public/art/interior-market.jpg",
+      "png": "png/02-economy/02-economy-07-black-market.png",
+      "svg": "svg/02-economy/02-economy-07-black-market.svg",
+      "xCharacterCount": 161
+    },
+    {
+      "id": "02-economy-08-loans",
+      "lane": "02-economy",
+      "slug": "08-loans",
+      "status": "LIVE",
+      "eyebrow": "THE SHYLOCK",
+      "title": [
+        "PRICE THE RISK.",
+        "TRADE THE PAPER."
+      ],
+      "body": "Credit can be directed, collateralized, defaulted and sold.",
+      "facts": [
+        "Loan offers and collateral",
+        "Welsher mark and WANTED pursuit",
+        "A secondary paper market"
+      ],
+      "post": "Loan sharking is a market, not an NPC button. Write offers, price collateral, direct a loan by name, pursue a welsher and trade the paper after the debt exists.",
+      "source": "SPEC.md §3.8 · Loan Sharking",
+      "art": "public/art/interior-loans.jpg",
+      "png": "png/02-economy/02-economy-08-loans.png",
+      "svg": "svg/02-economy/02-economy-08-loans.svg",
+      "xCharacterCount": 160
+    },
+    {
+      "id": "02-economy-09-convoys",
+      "lane": "02-economy",
+      "slug": "09-convoys",
+      "status": "LIVE",
+      "eyebrow": "CONVOYS",
+      "title": [
+        "MOVE THE LOAD.",
+        "DEFEND THE ROUTE."
+      ],
+      "body": "Bulk freight runs on a real clock with guards, tolls, insurance and ambush risk.",
+      "facts": [
+        "Player and NPC trucking",
+        "Guards, insurance and tolls",
+        "Route notoriety changes the map"
+      ],
+      "post": "Convoys move bulk freight through a hostile city. Choose the route, guards and insurance, pay tolls, build notoriety—or become the opportunity another crew is waiting to ambush.",
+      "source": "SPEC.md §3.8 · Convoys",
+      "art": "public/art/crime-truck.jpg",
+      "png": "png/02-economy/02-economy-09-convoys.png",
+      "svg": "svg/02-economy/02-economy-09-convoys.svg",
+      "xCharacterCount": 177
+    },
+    {
+      "id": "02-economy-10-port",
+      "lane": "02-economy",
+      "slug": "10-port",
+      "status": "LIVE",
+      "eyebrow": "THE PORT",
+      "title": [
+        "THE WATER",
+        "IS ANOTHER STREET."
+      ],
+      "body": "Boats, routes, contraband and piracy open a second logistics map.",
+      "facts": [
+        "Buy and upgrade boats",
+        "Interdiction and rendezvous",
+        "Berths and harbormaster tolls"
+      ],
+      "post": "The Port adds boats, routes, upgrades, interdiction, piracy, rendezvous, contraband, berths and the harbormaster’s cut. Smuggling has geography and infrastructure.",
+      "source": "SPEC.md §3.8 · The Port",
+      "art": "public/art/interior-port.jpg",
+      "png": "png/02-economy/02-economy-10-port.png",
+      "svg": "svg/02-economy/02-economy-10-port.svg",
+      "xCharacterCount": 163
+    },
+    {
+      "id": "02-economy-11-estate-auctions",
+      "lane": "02-economy",
+      "slug": "11-estate-auctions",
+      "status": "LIVE",
+      "eyebrow": "THE ESTATE",
+      "title": [
+        "WEALTH NEEDS",
+        "A HOME."
+      ],
+      "body": "Property, collections and player consignments turn prestige back into a market.",
+      "facts": [
+        "Estate progression",
+        "Auction House bidding",
+        "Player consignment"
+      ],
+      "post": "The Estate is a wealth sink, a display surface and a market endpoint. The Auction House supports bidding and player consignment, so rare holdings can change hands without an admin inventing a price.",
+      "source": "SPEC.md §3.8 · Estate / Auction House",
+      "art": "public/art/interior-estate.jpg",
+      "png": "png/02-economy/02-economy-11-estate-auctions.png",
+      "svg": "svg/02-economy/02-economy-11-estate-auctions.svg",
+      "xCharacterCount": 198
+    },
+    {
+      "id": "02-economy-12-portfolio",
+      "lane": "02-economy",
+      "slug": "12-portfolio",
+      "status": "LIVE / GATED RAILS",
+      "eyebrow": "CAPITAL OWNERSHIP",
+      "title": [
+        "THE BOOK",
+        "OUTLIVES THE SCORE."
+      ],
+      "body": "Portfolio tiers, Family books, Street Deeds and the Megaproject connect wealth to power.",
+      "facts": [
+        "Dynasty Fund dividends",
+        "Street Deed ownership",
+        "The Megaproject coordinates capital"
+      ],
+      "post": "OMERTÀ’s long capital game connects the Portfolio, Dynasty Fund, Family books, Street Deeds and the Megaproject. Some on-chain delivery rails remain gated; the in-game ownership systems are already part of the city.",
+      "source": "SPEC.md §3.8 · capital systems",
+      "art": "public/art/estate-6.jpg",
+      "png": "png/02-economy/02-economy-12-portfolio.png",
+      "svg": "svg/02-economy/02-economy-12-portfolio.svg",
+      "xCharacterCount": 215
+    },
+    {
+      "id": "03-blood-law-01-wet-work",
+      "lane": "03-blood-law",
+      "slug": "01-wet-work",
+      "status": "LIVE",
+      "eyebrow": "WET WORK",
+      "title": [
+        "VIOLENCE HAS",
+        "INTENT."
+      ],
+      "body": "A jump can be a robbery, a message or the beginning of a war.",
+      "facts": [
+        "Roll them or send a message",
+        "PvP resolves server-side",
+        "Consequences persist"
+      ],
+      "post": "In OMERTÀ, “attack” is not one generic button. Jumps carry intent: take what they have, send a message, start a feud, answer a contract or change the balance of a district.",
+      "source": "SPEC.md §3.2 · jumps",
+      "art": "public/art/interior-pvp.jpg",
+      "png": "png/03-blood-law/03-blood-law-01-wet-work.png",
+      "svg": "svg/03-blood-law/03-blood-law-01-wet-work.svg",
+      "xCharacterCount": 172
+    },
+    {
+      "id": "03-blood-law-02-contract-board",
+      "lane": "03-blood-law",
+      "slug": "02-contract-board",
+      "status": "LIVE",
+      "eyebrow": "THE CONTRACT BOARD",
+      "title": [
+        "A BOUNTY",
+        "IS A POT."
+      ],
+      "body": "Contracts are funded, browsable and lifecycle-managed.",
+      "facts": [
+        "Kill and hospitalize terms",
+        "Directed and open contracts",
+        "Expiry and refund rules"
+      ],
+      "post": "A hit contract is not flavor text. It is a funded pot with a target, terms, expiry, settlement and refund path. The board makes the city’s grudges liquid.",
+      "source": "SPEC.md §3.2 · Contract Board",
+      "art": "public/art/heist-corner.jpg",
+      "png": "png/03-blood-law/03-blood-law-02-contract-board.png",
+      "svg": "svg/03-blood-law/03-blood-law-02-contract-board.svg",
+      "xCharacterCount": 154
+    },
+    {
+      "id": "03-blood-law-03-hitmen",
+      "lane": "03-blood-law",
+      "slug": "03-hitmen",
+      "status": "LIVE",
+      "eyebrow": "THE HITMAN PATH",
+      "title": [
+        "THE CITY TRACKS",
+        "WHO FINISHES JOBS."
+      ],
+      "body": "Player and NPC hitmen operate beside an account-level reputation ladder.",
+      "facts": [
+        "Player contract fulfillment",
+        "NPC professional tiers",
+        "Assassin reputation and streaks"
+      ],
+      "post": "Players can become the weapon. OMERTÀ combines contract fulfillment, NPC hitmen and an account-level assassin reputation ladder where finished work follows the bloodline.",
+      "source": "SPEC.md §3.2 · hitmen",
+      "art": "public/art/hitman-professional.jpg",
+      "png": "png/03-blood-law/03-blood-law-03-hitmen.png",
+      "svg": "svg/03-blood-law/03-blood-law-03-hitmen.svg",
+      "xCharacterCount": 170
+    },
+    {
+      "id": "03-blood-law-04-protection",
+      "lane": "03-blood-law",
+      "slug": "04-protection",
+      "status": "LIVE",
+      "eyebrow": "PROTECTION",
+      "title": [
+        "THE TARGET",
+        "CAN HIRE BACK."
+      ],
+      "body": "Bodyguards and hired guns turn defense into a two-sided labor market.",
+      "facts": [
+        "Two-party protection work",
+        "Fees and terms are explicit",
+        "Defense changes the attacker’s math"
+      ],
+      "post": "The hunted are not passive content. Bodyguard and hired-gun markets let another player sell protection, change an attacker’s expected value and make survival somebody’s paid job.",
+      "source": "SPEC.md §3.2 · bodyguards",
+      "art": "public/art/gun-brothers.jpg",
+      "png": "png/03-blood-law/03-blood-law-04-protection.png",
+      "svg": "svg/03-blood-law/03-blood-law-04-protection.svg",
+      "xCharacterCount": 178
+    },
+    {
+      "id": "03-blood-law-05-vendettas",
+      "lane": "03-blood-law",
+      "slug": "05-vendettas",
+      "status": "LIVE",
+      "eyebrow": "BLOOD DEBTS",
+      "title": [
+        "A GRUDGE",
+        "CAN ESCALATE."
+      ],
+      "body": "Vendettas grow through tiers, sit-downs and a public blood-debt board.",
+      "facts": [
+        "Escalation tiers",
+        "The sit-down can settle it",
+        "Blood feuds become city history"
+      ],
+      "post": "A fight can end—or harden into a vendetta. Escalation tiers, the sit-down and the blood-debt board turn repeated violence into diplomacy, leverage and inherited history.",
+      "source": "SPEC.md §3.2 · vendettas",
+      "art": "public/art/gun-brothers.jpg",
+      "png": "png/03-blood-law/03-blood-law-05-vendettas.png",
+      "svg": "svg/03-blood-law/03-blood-law-05-vendettas.svg",
+      "xCharacterCount": 169
+    },
+    {
+      "id": "03-blood-law-06-safehouse",
+      "lane": "03-blood-law",
+      "slug": "06-safehouse",
+      "status": "LIVE",
+      "eyebrow": "THE SAFEHOUSE",
+      "title": [
+        "A SHIELD.",
+        "NOT A BUNKER."
+      ],
+      "body": "Protection blocks hostile action while also blocking liquidation routes.",
+      "facts": [
+        "Wealth-scaled cost",
+        "Daily cap",
+        "You cannot hide and cash out"
+      ],
+      "post": "The safehouse is deliberately a shield, not a bunker. It can stop hostile action, but it also blocks routes that turn holdings into cash. Safety has opportunity cost.",
+      "source": "SPEC.md §3.2 / §3.7",
+      "art": "public/art/interior-den.jpg",
+      "png": "png/03-blood-law/03-blood-law-06-safehouse.png",
+      "svg": "svg/03-blood-law/03-blood-law-06-safehouse.svg",
+      "xCharacterCount": 166
+    },
+    {
+      "id": "03-blood-law-07-death-estate",
+      "lane": "03-blood-law",
+      "slug": "07-death-estate",
+      "status": "LIVE",
+      "eyebrow": "SERVER-SIDE DEATH",
+      "title": [
+        "WHEN THE BODY GOES,",
+        "THE BOOKS OPEN."
+      ],
+      "body": "Death resolves holdings, estate, succession and every unfinished liability.",
+      "facts": [
+        "The server closes the street",
+        "Estate rules settle ownership",
+        "Bloodline continuity survives"
+      ],
+      "post": "Permadeath works only if the accounting survives it. OMERTÀ resolves death on the server, settles the estate and carries forward the liabilities and relationships the heir is meant to inherit.",
+      "source": "SPEC.md §3.2 · death and estate",
+      "art": "public/art/card-legend.jpg",
+      "png": "png/03-blood-law/03-blood-law-07-death-estate.png",
+      "svg": "svg/03-blood-law/03-blood-law-07-death-estate.svg",
+      "xCharacterCount": 192
+    },
+    {
+      "id": "03-blood-law-08-rico",
+      "lane": "03-blood-law",
+      "slug": "08-rico",
+      "status": "LIVE",
+      "eyebrow": "THE BUREAU",
+      "title": [
+        "THE CASE BUILDS",
+        "WHILE YOU PLAY."
+      ],
+      "body": "Heat becomes investigation, indictment, forfeiture and the possibility of the Pen.",
+      "facts": [
+        "Investigation meter",
+        "Bribes and retainers",
+        "Indictment and forfeiture"
+      ],
+      "post": "The law is a progression system. Heat feeds an investigation meter; bribes and retainers buy room; indictment can reach the courtroom, forfeiture and prison. The Bureau remembers patterns.",
+      "source": "SPEC.md §3.8 · Law / RICO",
+      "art": "public/art/interior-law.jpg",
+      "png": "png/03-blood-law/03-blood-law-08-rico.png",
+      "svg": "svg/03-blood-law/03-blood-law-08-rico.svg",
+      "xCharacterCount": 188
+    },
+    {
+      "id": "03-blood-law-09-courtroom",
+      "lane": "03-blood-law",
+      "slug": "09-courtroom",
+      "status": "LIVE",
+      "eyebrow": "THE COURTROOM",
+      "title": [
+        "PLEAD.",
+        "PICK A JURY. GO TO TRIAL."
+      ],
+      "body": "Informants, witness protection and legal preparation change the case.",
+      "facts": [
+        "Plea and jury routes",
+        "Informants alter evidence",
+        "Witness protection removes targets"
+      ],
+      "post": "An indictment is not a single jail roll. Plea, jury and trial routes interact with retainers, informants, witness protection and the evidence the Bureau assembled.",
+      "source": "SPEC.md §3.8 · courtroom",
+      "art": "public/art/crime-alderman.jpg",
+      "png": "png/03-blood-law/03-blood-law-09-courtroom.png",
+      "svg": "svg/03-blood-law/03-blood-law-09-courtroom.svg",
+      "xCharacterCount": 163
+    },
+    {
+      "id": "03-blood-law-10-pen",
+      "lane": "03-blood-law",
+      "slug": "10-pen",
+      "status": "LIVE",
+      "eyebrow": "THE PEN",
+      "title": [
+        "PRISON IS",
+        "ANOTHER GAME."
+      ],
+      "body": "The yard, factions, work, protection, contraband, punishment and breakouts continue the street.",
+      "facts": [
+        "Commissary · bribes · shank",
+        "The hole and yard incidents",
+        "Solo and co-op breakout"
+      ],
+      "post": "Jail is a status. The Pen is a system: yard politics, work, commissary, protection, bribes, punishment, factions, the burner phone and solo or co-op breakout attempts.",
+      "source": "SPEC.md §3.8 · The Pen",
+      "art": "public/art/interior-pen.jpg",
+      "png": "png/03-blood-law/03-blood-law-10-pen.png",
+      "svg": "svg/03-blood-law/03-blood-law-10-pen.svg",
+      "xCharacterCount": 167
+    },
+    {
+      "id": "03-blood-law-11-dueling",
+      "lane": "03-blood-law",
+      "slug": "11-dueling",
+      "status": "LIVE",
+      "eyebrow": "THE DUELING LADDER",
+      "title": [
+        "SKILL GETS",
+        "A RATING."
+      ],
+      "body": "ELO, divisions, weapon styles and a seasonal belt make direct combat legible.",
+      "facts": [
+        "Ranked ELO divisions",
+        "Weapon-style choices",
+        "A belt that must be defended"
+      ],
+      "post": "The Dueling Ladder turns controlled violence into a ranked discipline: ELO, divisions, weapon styles and a seasonal belt make the best fighter answerable to the next challenger.",
+      "source": "SPEC.md §3.8 · Dueling Ladder",
+      "art": "public/art/game-ring.jpg",
+      "png": "png/03-blood-law/03-blood-law-11-dueling.png",
+      "svg": "svg/03-blood-law/03-blood-law-11-dueling.svg",
+      "xCharacterCount": 177
+    },
+    {
+      "id": "03-blood-law-12-risk-to-earn",
+      "lane": "03-blood-law",
+      "slug": "12-risk-to-earn",
+      "status": "LIVE",
+      "eyebrow": "RISK TO EARN",
+      "title": [
+        "VALUE IS EXPOSED",
+        "BECAUSE IT CAN MOVE."
+      ],
+      "body": "Loot the living. Launder only where the route exists. Trade safety for access.",
+      "facts": [
+        "Holdings can be contested",
+        "Laundering is located",
+        "Risk creates player opportunity"
+      ],
+      "post": "OMERTÀ’s economy is designed around exposure: loot the living, launder at a real location, move money through transit, and choose when protection is worth losing access to your own holdings.",
+      "source": "SPEC.md §3.7 · Risk-to-Earn",
+      "art": "public/art/crime-vaultjob.jpg",
+      "png": "png/03-blood-law/03-blood-law-12-risk-to-earn.png",
+      "svg": "svg/03-blood-law/03-blood-law-12-risk-to-earn.svg",
+      "xCharacterCount": 190
+    },
+    {
+      "id": "04-organizations-01-crews",
+      "lane": "04-organizations",
+      "slug": "01-crews",
+      "status": "LIVE",
+      "eyebrow": "THE CREW",
+      "title": [
+        "FOUR PLAYERS",
+        "CAN BECOME A MACHINE."
+      ],
+      "body": "Crews organize work, recruiting, objectives and shared risk.",
+      "facts": [
+        "Found, invite and recruit",
+        "Promote, kick or leave",
+        "Weekly objectives scale with contributors"
+      ],
+      "post": "A crew is the first real organization: recruit by name, assign trust, tackle shared objectives and build the working unit a future Family can depend on.",
+      "source": "AGENTS.md · organization playbook",
+      "art": "public/art/interior-family.jpg",
+      "png": "png/04-organizations/04-organizations-01-crews.png",
+      "svg": "svg/04-organizations/04-organizations-01-crews.svg",
+      "xCharacterCount": 152
+    },
+    {
+      "id": "04-organizations-02-crew-heists",
+      "lane": "04-organizations",
+      "slug": "02-crew-heists",
+      "status": "LIVE",
+      "eyebrow": "CREW HEISTS",
+      "title": [
+        "TWELVE JOBS.",
+        "EVERYBODY HAS A ROLE."
+      ],
+      "body": "Casing, role fit, the inside job, the rat and the fence make co-op operational.",
+      "facts": [
+        "A 12-job ladder",
+        "Role-matched contribution",
+        "Notoriety follows the crew"
+      ],
+      "post": "Crew heists are not a party-size checkbox. Twelve jobs ask for roles, casing and execution; the inside job, the rat and the fence can turn the same score into a different story.",
+      "source": "SPEC.md §3.8 · Crew Heists",
+      "art": "public/art/heist-vault.jpg",
+      "png": "png/04-organizations/04-organizations-02-crew-heists.png",
+      "svg": "svg/04-organizations/04-organizations-02-crew-heists.svg",
+      "xCharacterCount": 177
+    },
+    {
+      "id": "04-organizations-03-family",
+      "lane": "04-organizations",
+      "slug": "03-family",
+      "status": "LIVE",
+      "eyebrow": "THE FAMILY",
+      "title": [
+        "A CREW WORKS.",
+        "A FAMILY RULES."
+      ],
+      "body": "Treasury, ranks, contracts, turf and political standing turn a group into an institution.",
+      "facts": [
+        "Shared treasury and jobs",
+        "Ranks carry real authority",
+        "Family standing reaches the Commission"
+      ],
+      "post": "A Family adds a treasury, command ranks, contracts, turf income, war bodies and Commission politics. It is not a guild chat. It is a government with books.",
+      "source": "SPEC.md §3.2 / §3.8",
+      "art": "public/art/interior-family.jpg",
+      "png": "png/04-organizations/04-organizations-03-family.png",
+      "svg": "svg/04-organizations/04-organizations-03-family.svg",
+      "xCharacterCount": 155
+    },
+    {
+      "id": "04-organizations-04-territory",
+      "lane": "04-organizations",
+      "slug": "04-territory",
+      "status": "LIVE",
+      "eyebrow": "TERRITORY",
+      "title": [
+        "THE MAP PAYS",
+        "WHO HOLDS IT."
+      ],
+      "body": "Turf creates income, district perks, upkeep and a reason for rivals to organize.",
+      "facts": [
+        "Live district control",
+        "Fortification and upkeep",
+        "Specialists and special operations"
+      ],
+      "post": "Territory makes the map economic. Control changes perks and income, but fortification, upkeep, Bureau pressure and rival raids make every claim a position to defend.",
+      "source": "SPEC.md §3.8 · Territory",
+      "art": "public/art/citymap.jpg",
+      "png": "png/04-organizations/04-organizations-04-territory.png",
+      "svg": "svg/04-organizations/04-organizations-04-territory.svg",
+      "xCharacterCount": 165
+    },
+    {
+      "id": "04-organizations-05-wars",
+      "lane": "04-organizations",
+      "slug": "05-wars",
+      "status": "LIVE",
+      "eyebrow": "FAMILY WAR",
+      "title": [
+        "POLITICS ENDS.",
+        "THE LEDGER CONTINUES."
+      ],
+      "body": "Wars move bodies, turf, treasury pressure and long-term relationships.",
+      "facts": [
+        "Formal war lifecycle",
+        "Turf can be seized",
+        "Blood War escalates the city"
+      ],
+      "post": "Family wars are lifecycle-managed conflicts with stakes beyond a kill counter. Turf, treasury, bodies, treaties and future retaliation all survive the headline battle.",
+      "source": "SPEC.md §3.2 / §3.8",
+      "art": "public/art/landing-break.jpg",
+      "png": "png/04-organizations/04-organizations-05-wars.png",
+      "svg": "svg/04-organizations/04-organizations-05-wars.svg",
+      "xCharacterCount": 167
+    },
+    {
+      "id": "04-organizations-06-commission",
+      "lane": "04-organizations",
+      "slug": "06-commission",
+      "status": "LIVE",
+      "eyebrow": "THE COMMISSION",
+      "title": [
+        "THE STRONGEST FAMILIES",
+        "WRITE THE WEEK."
+      ],
+      "body": "Seasonal seats, decrees, proposals, deposits, vetoes and levies create city government.",
+      "facts": [
+        "Seats follow standing",
+        "Proposals carry deposits",
+        "Veto, levy and override powers"
+      ],
+      "post": "The Commission turns seasonal Family standing into temporary political power. Seats can propose decrees, risk deposits, invoke vetoes, levy the city and face an override.",
+      "source": "SPEC.md §3.8 · Commission",
+      "art": "public/art/interior-scores.jpg",
+      "png": "png/04-organizations/04-organizations-06-commission.png",
+      "svg": "svg/04-organizations/04-organizations-06-commission.svg",
+      "xCharacterCount": 170
+    },
+    {
+      "id": "04-organizations-07-diplomacy",
+      "lane": "04-organizations",
+      "slug": "07-diplomacy",
+      "status": "LIVE",
+      "eyebrow": "DIPLOMACY",
+      "title": [
+        "NOT EVERY BORDER",
+        "NEEDS A BULLET."
+      ],
+      "body": "Pacts and coalitions let organizations price peace, betrayal and common enemies.",
+      "facts": [
+        "Formal pacts",
+        "Coalition structures",
+        "Relationships survive leadership changes"
+      ],
+      "post": "Diplomacy gives Families tools between silence and war: pacts, coalitions and negotiated alignment make trust a strategic asset—and betrayal a recorded one.",
+      "source": "SPEC.md §3.8 · Diplomacy",
+      "art": "public/art/crime-alderman.jpg",
+      "png": "png/04-organizations/04-organizations-07-diplomacy.png",
+      "svg": "svg/04-organizations/04-organizations-07-diplomacy.svg",
+      "xCharacterCount": 156
+    },
+    {
+      "id": "04-organizations-08-sovereignty",
+      "lane": "04-organizations",
+      "slug": "08-sovereignty",
+      "status": "LIVE",
+      "eyebrow": "SOVEREIGNTY",
+      "title": [
+        "HOLD THE STRONGHOLD.",
+        "SURVIVE THE SIEGE."
+      ],
+      "body": "Organizations can push beyond turf into income-bearing control and city-scale resistance.",
+      "facts": [
+        "Strongholds and sieges",
+        "Sovereign income",
+        "The Uprising contests occupation"
+      ],
+      "post": "Sovereignty raises the stakes from corners to strongholds. Sieges, income, NPC occupation, frontier pressure and The Uprising turn the city itself into a contested actor.",
+      "source": "SPEC.md §3.8 · Sovereignty / Uprising",
+      "art": "public/art/landing-break.jpg",
+      "png": "png/04-organizations/04-organizations-08-sovereignty.png",
+      "svg": "svg/04-organizations/04-organizations-08-sovereignty.svg",
+      "xCharacterCount": 170
+    },
+    {
+      "id": "04-organizations-09-recruiting",
+      "lane": "04-organizations",
+      "slug": "09-recruiting",
+      "status": "LIVE / CONDITIONAL",
+      "eyebrow": "THE CAPO LICENSE",
+      "title": [
+        "RECRUIT PEOPLE",
+        "WHO STAY."
+      ],
+      "body": "Retained, minted, leveled human recruits improve agent capability; raw reach does not pay.",
+      "facts": [
+        "Street Captain · Capo · Underboss",
+        "Faster cadence at higher tiers",
+        "Cash claims require an approved budget"
+      ],
+      "post": "OMERTÀ rewards qualified organization-building, not clicks. Retained, minted, level-8+ human recruits count toward the Capo License. Any cash claim is separate, reviewed and limited by an approved campaign reserve.",
+      "source": "AGENTS.md · Capo’s License",
+      "art": "public/art/card-join.jpg",
+      "png": "png/04-organizations/04-organizations-09-recruiting.png",
+      "svg": "svg/04-organizations/04-organizations-09-recruiting.svg",
+      "xCharacterCount": 214
+    },
+    {
+      "id": "04-organizations-10-phone-broadcast",
+      "lane": "04-organizations",
+      "slug": "10-phone-broadcast",
+      "status": "LIVE",
+      "eyebrow": "THE CELLPHONE",
+      "title": [
+        "THE CITY",
+        "CAN CALL BACK."
+      ],
+      "body": "DMs require contact. Blocks are durable. Broadcast cards turn player history into shareable proof.",
+      "facts": [
+        "Inbox, DMs and blocked lines",
+        "Contact comes from interaction",
+        "Profiles and rivalry posters carry referrals"
+      ],
+      "post": "The cellphone makes social access earned: establish contact before a DM, respect permanent blocks, and turn real player history into Broadcast cards, profiles and rivalry posters that carry attribution.",
+      "source": "SPEC.md §3.4 / §3.8",
+      "art": "public/art/card-join.jpg",
+      "png": "png/04-organizations/04-organizations-10-phone-broadcast.png",
+      "svg": "svg/04-organizations/04-organizations-10-phone-broadcast.svg",
+      "xCharacterCount": 202
+    },
+    {
+      "id": "04-organizations-11-wire-secrets",
+      "lane": "04-organizations",
+      "slug": "11-wire-secrets",
+      "status": "LIVE",
+      "eyebrow": "THE WIRE",
+      "title": [
+        "INFORMATION",
+        "HAS A MARKET."
+      ],
+      "body": "Wiretaps, sweeps, dossiers, informants, blackmail and standing watches turn knowledge into power.",
+      "facts": [
+        "Bug trace and counter-sweeps",
+        "Dossiers and disinformation",
+        "Secrets can become leverage"
+      ],
+      "post": "OMERTÀ has an information economy: wiretaps, sweeps, trace risk, dossiers, disinformation, informants, blackmail and standing watches. Sometimes the strongest move is knowing first.",
+      "source": "SPEC.md §3.8 · Wire / Secrets",
+      "art": "public/art/interior-wire.jpg",
+      "png": "png/04-organizations/04-organizations-11-wire-secrets.png",
+      "svg": "svg/04-organizations/04-organizations-11-wire-secrets.svg",
+      "xCharacterCount": 181
+    },
+    {
+      "id": "04-organizations-12-marriage-soldiers",
+      "lane": "04-organizations",
+      "slug": "12-marriage-soldiers",
+      "status": "LIVE",
+      "eyebrow": "THE INNER CIRCLE",
+      "title": [
+        "LOYALTY GETS",
+        "A NAME."
+      ],
+      "body": "Marriage, the consigliere and named soldiers create relationships that can permanently die.",
+      "facts": [
+        "Marriage changes the household",
+        "Consigliere is an office",
+        "Named soldiers carry permadeath"
+      ],
+      "post": "Families are made of people, not slots. Marriage, the consigliere and named soldiers create durable household and command relationships—with permadeath when the city takes one of them.",
+      "source": "SPEC.md §3.8 · social depth",
+      "art": "public/art/interior-family.jpg",
+      "png": "png/04-organizations/04-organizations-12-marriage-soldiers.png",
+      "svg": "svg/04-organizations/04-organizations-12-marriage-soldiers.svg",
+      "xCharacterCount": 184
+    },
+    {
+      "id": "05-vice-city-01-casino",
+      "lane": "05-vice-city",
+      "slug": "01-casino",
+      "status": "LIVE",
+      "eyebrow": "THE CASINO",
+      "title": [
+        "THE HOUSE",
+        "HAS MANY ROOMS."
+      ],
+      "body": "Tables, tournaments, fights and racing all share one vice economy.",
+      "facts": [
+        "Craps · Numbers · blackjack",
+        "Poker, fights and the Track",
+        "PvP and house games coexist"
+      ],
+      "post": "The Casino is a network, not one slot machine: craps, Numbers, blackjack, back-room dice, poker, tournaments, weekly fights, THE TRACK and THE FUTURITY.",
+      "source": "SPEC.md §3.8 · Casino",
+      "art": "public/art/business-casino.jpg",
+      "png": "png/05-vice-city/05-vice-city-01-casino.png",
+      "svg": "svg/05-vice-city/05-vice-city-01-casino.svg",
+      "xCharacterCount": 152
+    },
+    {
+      "id": "05-vice-city-02-tables",
+      "lane": "05-vice-city",
+      "slug": "02-tables",
+      "status": "LIVE",
+      "eyebrow": "THE TABLES",
+      "title": [
+        "THE ODDS ARE",
+        "PART OF THE WORLD."
+      ],
+      "body": "Craps, Numbers, blackjack and back-room dice expose different risk and counterparty models.",
+      "facts": [
+        "House tables",
+        "Back-room PvP dice",
+        "Server-owned resolution"
+      ],
+      "post": "Craps, Numbers, blackjack and back-room dice do not collapse into the same animation. Each table has its own risk, timing, bankroll and counterparty shape.",
+      "source": "SPEC.md §3.8 · casino tables",
+      "art": "public/art/game-dice.jpg",
+      "png": "png/05-vice-city/05-vice-city-02-tables.png",
+      "svg": "svg/05-vice-city/05-vice-city-02-tables.svg",
+      "xCharacterCount": 155
+    },
+    {
+      "id": "05-vice-city-03-poker",
+      "lane": "05-vice-city",
+      "slug": "03-poker",
+      "status": "LIVE",
+      "eyebrow": "POKER",
+      "title": [
+        "THE CARDS",
+        "REMEMBER THE TABLE."
+      ],
+      "body": "Heads-up hold’em, ring poker and a tournament bracket create multiple poker careers.",
+      "facts": [
+        "Heads-up play",
+        "Ring poker",
+        "Tournament and bracket"
+      ],
+      "post": "Poker in OMERTÀ runs from heads-up pressure to ring tables and a full tournament bracket. The cards are server-dealt; the reputation belongs to the player.",
+      "source": "SPEC.md §3.8 · poker",
+      "art": "public/art/game-poker.jpg",
+      "png": "png/05-vice-city/05-vice-city-03-poker.png",
+      "svg": "svg/05-vice-city/05-vice-city-03-poker.svg",
+      "xCharacterCount": 155
+    },
+    {
+      "id": "05-vice-city-04-track",
+      "lane": "05-vice-city",
+      "slug": "04-track",
+      "status": "LIVE",
+      "eyebrow": "THE TRACK",
+      "title": [
+        "BET THE HORSE.",
+        "WATCH THE CIRCUIT."
+      ],
+      "body": "THE TRACK and THE FUTURITY connect gambling to a persistent breeding and racing economy.",
+      "facts": [
+        "Race books and odds",
+        "THE FUTURITY",
+        "Stable performance feeds the market"
+      ],
+      "post": "THE TRACK is the betting surface for a persistent horse economy. Form, training, breeding, circuit results and THE FUTURITY give the odds a world behind them.",
+      "source": "SPEC.md §3.8 · Track / Futurity",
+      "art": "public/art/game-track.jpg",
+      "png": "png/05-vice-city/05-vice-city-04-track.png",
+      "svg": "svg/05-vice-city/05-vice-city-04-track.svg",
+      "xCharacterCount": 158
+    },
+    {
+      "id": "05-vice-city-05-stable",
+      "lane": "05-vice-city",
+      "slug": "05-stable",
+      "status": "LIVE",
+      "eyebrow": "THE STABLE",
+      "title": [
+        "BUY. TRAIN.",
+        "BREED. RACE."
+      ],
+      "body": "Horses carry development, lineage, match racing and stakes competition.",
+      "facts": [
+        "Training and breeding",
+        "Circuit and match races",
+        "THE STAKES and running in the card"
+      ],
+      "post": "The Stable is a career: acquire a horse, train it, breed a line, enter the circuit, negotiate match races and chase THE STAKES. The asset has a history before the wager.",
+      "source": "SPEC.md §3.8 · Stable",
+      "art": "public/art/interior-stable.jpg",
+      "png": "png/05-vice-city/05-vice-city-05-stable.png",
+      "svg": "svg/05-vice-city/05-vice-city-05-stable.svg",
+      "xCharacterCount": 169
+    },
+    {
+      "id": "05-vice-city-06-street-races",
+      "lane": "05-vice-city",
+      "slug": "06-street-races",
+      "status": "LIVE",
+      "eyebrow": "STREET RACES",
+      "title": [
+        "TUNE THE CAR.",
+        "RISK THE TITLE."
+      ],
+      "body": "PvE circuits, player wagers, nitrous, pink slips and THE GRAND PRIX make speed an economy.",
+      "facts": [
+        "Circuit and PvP wagers",
+        "Tuning and nitrous",
+        "Pink slips · Grand Prix · Wheel"
+      ],
+      "post": "Street racing connects garage ownership to a competitive ladder: tune the car, choose the circuit or a player wager, burn nitrous, risk a pink slip and chase THE GRAND PRIX.",
+      "source": "SPEC.md §3.8 · Street Races",
+      "art": "public/art/interior-races.jpg",
+      "png": "png/05-vice-city/05-vice-city-06-street-races.png",
+      "svg": "svg/05-vice-city/05-vice-city-06-street-races.svg",
+      "xCharacterCount": 173
+    },
+    {
+      "id": "05-vice-city-07-boxing",
+      "lane": "05-vice-city",
+      "slug": "07-boxing",
+      "status": "LIVE",
+      "eyebrow": "THE FIGHTS",
+      "title": [
+        "BUILD A BOXER.",
+        "DEFEND THE BELT."
+      ],
+      "body": "Recruitment, training, exhibitions, mandatory defenses and parimutuel betting make the ring persistent.",
+      "facts": [
+        "Recruit and train fighters",
+        "Belt with mandatory defense",
+        "MAIN EVENT betting and callouts"
+      ],
+      "post": "Boxing is a stable, a training loop and a public obligation. Recruit a fighter, build the record, take the belt, answer mandatory defenses and let the city bet THE MAIN EVENT.",
+      "source": "SPEC.md §3.8 · Boxing",
+      "art": "public/art/interior-gym.jpg",
+      "png": "png/05-vice-city/05-vice-city-07-boxing.png",
+      "svg": "svg/05-vice-city/05-vice-city-07-boxing.svg",
+      "xCharacterCount": 175
+    },
+    {
+      "id": "05-vice-city-08-speakeasy",
+      "lane": "05-vice-city",
+      "slug": "08-speakeasy",
+      "status": "LIVE",
+      "eyebrow": "THE SPEAKEASY",
+      "title": [
+        "OWN THE NIGHT.",
+        "SURVIVE THE RAID."
+      ],
+      "body": "Decor, rounds, tables, renown, buyouts and prohibition pressure make nightlife operable.",
+      "facts": [
+        "Open and upgrade a club",
+        "Back-room table and rounds",
+        "Raids, standover and buyout"
+      ],
+      "post": "Open a club, upgrade the room, buy rounds, run the back table, build renown and survive prohibition raids. A rival can attempt a standover; a buyer can make an offer.",
+      "source": "SPEC.md §3.8 · Speakeasy",
+      "art": "public/art/interior-speakeasy.jpg",
+      "png": "png/05-vice-city/05-vice-city-08-speakeasy.png",
+      "svg": "svg/05-vice-city/05-vice-city-08-speakeasy.svg",
+      "xCharacterCount": 166
+    },
+    {
+      "id": "05-vice-city-09-living-world",
+      "lane": "05-vice-city",
+      "slug": "09-living-world",
+      "status": "LIVE",
+      "eyebrow": "THE LIVING WORLD",
+      "title": [
+        "THE CITY MOVES",
+        "WITHOUT WAITING."
+      ],
+      "body": "Forecasts, economic weather, the clock and public events change what the street is worth.",
+      "facts": [
+        "Visible day and night",
+        "Economic weather",
+        "City events and forecasts"
+      ],
+      "post": "OMERTÀ has a visible city clock, forecasts, economic weather and public events. Markets, conflict and opportunity change even when your tab is closed.",
+      "source": "SPEC.md §3.8 · Living World",
+      "art": "public/art/hero-backdrop.jpg",
+      "png": "png/05-vice-city/05-vice-city-09-living-world.png",
+      "svg": "svg/05-vice-city/05-vice-city-09-living-world.svg",
+      "xCharacterCount": 150
+    },
+    {
+      "id": "05-vice-city-10-population",
+      "lane": "05-vice-city",
+      "slug": "10-population",
+      "status": "LIVE",
+      "eyebrow": "THE POPULATION",
+      "title": [
+        "NPCs BEHAVE.",
+        "NPCs RENEW."
+      ],
+      "body": "Residents, cartels and Families create demand, resistance and allies before the player count is full.",
+      "facts": [
+        "NPC residents take actions",
+        "Cartels and Families hold power",
+        "Population renews over time"
+      ],
+      "post": "The city does not begin empty. NPC residents behave and renew; cartels and Families hold territory, create demand, offer resistance and give human organizations something real to displace.",
+      "source": "SPEC.md §3.8 · Population",
+      "art": "public/art/outfit-volkov.jpg",
+      "png": "png/05-vice-city/05-vice-city-10-population.png",
+      "svg": "svg/05-vice-city/05-vice-city-10-population.svg",
+      "xCharacterCount": 188
+    },
+    {
+      "id": "05-vice-city-11-clues-collections",
+      "lane": "05-vice-city",
+      "slug": "11-clues-collections",
+      "status": "LIVE",
+      "eyebrow": "THE HIDDEN CITY",
+      "title": [
+        "CLUES BECOME",
+        "A COLLECTION."
+      ],
+      "body": "Clue Scrolls, secrets, landmarks and collectibles reward looking sideways.",
+      "facts": [
+        "Clue Scroll chains",
+        "Landmark discovery",
+        "The Collection records rare history"
+      ],
+      "post": "Not every valuable route appears on an earnings board. Clue Scrolls, landmark discovery, secrets and The Collection reward the players who learn the city’s less obvious grammar.",
+      "source": "SPEC.md §3.8 · exploration systems",
+      "art": "public/art/district-cathedral.jpg",
+      "png": "png/05-vice-city/05-vice-city-11-clues-collections.png",
+      "svg": "svg/05-vice-city/05-vice-city-11-clues-collections.svg",
+      "xCharacterCount": 177
+    },
+    {
+      "id": "05-vice-city-12-frontier",
+      "lane": "05-vice-city",
+      "slug": "12-frontier",
+      "status": "LIVE",
+      "eyebrow": "THE FRONTIER",
+      "title": [
+        "THE CITY HAS",
+        "AN OUTSIDE EDGE."
+      ],
+      "body": "Tribute, invasion, occupation and the war effort make the world larger than the six core districts.",
+      "facts": [
+        "Frontier tribute",
+        "NPC invasion and occupation",
+        "War effort and Uprising"
+      ],
+      "post": "Beyond the core districts, the frontier can demand tribute, invade, occupy and pull the city into a war effort. THE UPRISING is how organized players answer.",
+      "source": "SPEC.md §3.8 · frontier",
+      "art": "public/art/district-foundry.jpg",
+      "png": "png/05-vice-city/05-vice-city-12-frontier.png",
+      "svg": "svg/05-vice-city/05-vice-city-12-frontier.svg",
+      "xCharacterCount": 157
+    },
+    {
+      "id": "06-authored-01-content-desk",
+      "lane": "06-authored",
+      "slug": "01-content-desk",
+      "status": "LIVE",
+      "eyebrow": "THE CONTENT DESK",
+      "title": [
+        "CASES. EVIDENCE.",
+        "CHOICES THAT STAY."
+      ],
+      "body": "A first-class in-game desk now gathers authored cases, workshops, exchanges and archives.",
+      "facts": [
+        "Cases and forming lobbies",
+        "Workshop and exchange views",
+        "Permanent archive records"
+      ],
+      "post": "The Content Desk is OMERTÀ’s front door to authored play: discover cases, form parties, inspect evidence, run restoration work, trade approved materials and revisit the choices on your permanent record.",
+      "source": "public/index.html · Content Desk",
+      "art": "brand/master-campaign/art/content-desk-evidence-room.png",
+      "png": "png/06-authored/06-authored-01-content-desk.png",
+      "svg": "svg/06-authored/06-authored-01-content-desk.svg",
+      "xCharacterCount": 202
+    },
+    {
+      "id": "06-authored-02-permanent-choices",
+      "lane": "06-authored",
+      "slug": "02-permanent-choices",
+      "status": "LIVE",
+      "eyebrow": "STORY FLAGS",
+      "title": [
+        "THE ENDING PAYS",
+        "IN MEMORY."
+      ],
+      "body": "Authored cases change durable story flags and inert mementos—not cash or permanent power.",
+      "facts": [
+        "Write-once account outcomes",
+        "Gameplay-inert mementos",
+        "No cash or $OMR reward"
+      ],
+      "post": "OMERTÀ’s authored stories refuse the usual quest-bribe. Endings write a durable story flag and grant an inert memento. The reward is what your character chose—not a power creep coupon.",
+      "source": "AGENTS.md · authored stories",
+      "art": "public/art/card-legend.jpg",
+      "png": "png/06-authored/06-authored-02-permanent-choices.png",
+      "svg": "svg/06-authored/06-authored-02-permanent-choices.svg",
+      "xCharacterCount": 184
+    },
+    {
+      "id": "06-authored-03-sixth-chair",
+      "lane": "06-authored",
+      "slug": "03-sixth-chair",
+      "status": "LIVE",
+      "eyebrow": "THE SIXTH CHAIR",
+      "title": [
+        "FOUR ROLES.",
+        "ONE MISSING SEAT."
+      ],
+      "body": "A Crew or Extended Family mystery with parallel information and revision-checked actions.",
+      "facts": [
+        "Four role-locked perspectives",
+        "Organization-scoped play",
+        "Server-issued actions only"
+      ],
+      "post": "The Sixth Chair v2 is a four-role Crew or Extended Family mystery. Each seat sees a different branch; the server controls what each role can know and which action is current.",
+      "source": "AGENTS.md · Sixth Chair v2",
+      "art": "brand/master-campaign/art/content-desk-evidence-room.png",
+      "png": "png/06-authored/06-authored-03-sixth-chair.png",
+      "svg": "svg/06-authored/06-authored-03-sixth-chair.svg",
+      "xCharacterCount": 174
+    },
+    {
+      "id": "06-authored-04-district-stories",
+      "lane": "06-authored",
+      "slug": "04-district-stories",
+      "status": "LIVE",
+      "eyebrow": "SIX DISTRICT CASES",
+      "title": [
+        "EVERY NEIGHBORHOOD",
+        "KEEPS A SECRET."
+      ],
+      "body": "Short personal stories become available only in their required district.",
+      "facts": [
+        "Tide · Cellar · Kiln",
+        "House Lights · Furnace Ledger",
+        "A Saint’s Account"
+      ],
+      "post": "Six short cases make district travel narrative: The Man Who Missed the Tide, Water in the Cellar, The Last Kiln, House Lights, The Furnace Ledger and A Saint’s Account.",
+      "source": "AGENTS.md · district sampler",
+      "art": "public/art/citymap.jpg",
+      "png": "png/06-authored/06-authored-04-district-stories.png",
+      "svg": "svg/06-authored/06-authored-04-district-stories.svg",
+      "xCharacterCount": 168
+    },
+    {
+      "id": "06-authored-05-don-cases",
+      "lane": "06-authored",
+      "slug": "05-don-cases",
+      "status": "LIVE",
+      "eyebrow": "THE DON CASES",
+      "title": [
+        "SEVEN CASES",
+        "TO THE TOP."
+      ],
+      "body": "A late-game narrative spine reconnects rank, mastery, organizations and the city’s deepest systems.",
+      "facts": [
+        "Levels 35 through 125",
+        "Baseline and mastery endings",
+        "Optional Crew resolutions"
+      ],
+      "post": "Seven Don Cases form a narrative spine from level 35 to 125, ending with Don of the City. Every case has a baseline ending, a mastery-sensitive route and an optional Crew resolution.",
+      "source": "AGENTS.md · Don Cases",
+      "art": "public/art/interior-family.jpg",
+      "png": "png/06-authored/06-authored-05-don-cases.png",
+      "svg": "svg/06-authored/06-authored-05-don-cases.svg",
+      "xCharacterCount": 182
+    },
+    {
+      "id": "06-authored-06-path-cases",
+      "lane": "06-authored",
+      "slug": "06-path-cases",
+      "status": "LIVE",
+      "eyebrow": "THE PATH CASES",
+      "title": [
+        "YOUR SPECIALTY",
+        "CHANGES THE METHOD."
+      ],
+      "body": "Six identity cases use server-derived Path, skill, mastery, regimen, honor and standing gates.",
+      "facts": [
+        "One case for every Path",
+        "Closed server-derived gates",
+        "Different history, same reward class"
+      ],
+      "post": "Each Path gets a personal case. Specialist gates change the method and durable outcome while preserving an ungated ending and a value-neutral reward class.",
+      "source": "AGENTS.md · Path Cases",
+      "art": "public/art/gameplay-01-choose-your-path.png",
+      "png": "png/06-authored/06-authored-06-path-cases.png",
+      "svg": "svg/06-authored/06-authored-06-path-cases.svg",
+      "xCharacterCount": 155
+    },
+    {
+      "id": "06-authored-07-two-man-rule",
+      "lane": "06-authored",
+      "slug": "07-two-man-rule",
+      "status": "LIVE",
+      "eyebrow": "THE TWO-MAN RULE",
+      "title": [
+        "WATCHER.",
+        "SIGNATORY."
+      ],
+      "body": "Two role-locked branches must both close before the organization can resolve the case.",
+      "facts": [
+        "Crew or Extended Family",
+        "Parallel role authority",
+        "Every participant self-claims"
+      ],
+      "post": "The Two-Man Rule is a two-seat organization case. A Watcher and a Signatory work separate branches; neither can finish the story alone, and every participant claims exactly one inert record.",
+      "source": "AGENTS.md · Two-Man Rule",
+      "art": "brand/master-campaign/art/content-desk-evidence-room.png",
+      "png": "png/06-authored/06-authored-07-two-man-rule.png",
+      "svg": "svg/06-authored/06-authored-07-two-man-rule.svg",
+      "xCharacterCount": 190
+    },
+    {
+      "id": "06-authored-08-books-midnight",
+      "lane": "06-authored",
+      "slug": "08-books-midnight",
+      "status": "LIVE",
+      "eyebrow": "BOOKS OPEN AT MIDNIGHT",
+      "title": [
+        "ONE OPENING.",
+        "EVERY SEASON."
+      ],
+      "body": "Two normalized-answer puzzles lead to one of three value-neutral resolutions.",
+      "facts": [
+        "Opening-phase entry gate",
+        "Once-per-season run key",
+        "Active cases survive phase changes"
+      ],
+      "post": "The Books Open at Midnight appears once per season during Opening. Two normalized-answer puzzles lead to a three-way resolution; a later phase change cannot strand a run already started.",
+      "source": "AGENTS.md · seasonal case",
+      "art": "brand/master-campaign/art/content-desk-evidence-room.png",
+      "png": "png/06-authored/06-authored-08-books-midnight.png",
+      "svg": "svg/06-authored/06-authored-08-books-midnight.svg",
+      "xCharacterCount": 186
+    },
+    {
+      "id": "06-authored-09-bellini",
+      "lane": "06-authored",
+      "slug": "09-bellini",
+      "status": "LIVE",
+      "eyebrow": "THE BELLINI RESTORATION",
+      "title": [
+        "SALVAGE.",
+        "LEARN. RESTORE."
+      ],
+      "body": "Finite daily sources, timed work orders and exact-hash skill progression build one inert lockbox.",
+      "facts": [
+        "Ledger Plates and Charred Bindings",
+        "Server-timed apprenticeship",
+        "FIFO final recipe at skill level 2"
+      ],
+      "post": "The Bellini Restoration is an authored supply chain at the Old Foundry: finite salvage, timed work orders, versioned skill XP and a final FIFO recipe for one inert restored lockbox.",
+      "source": "AGENTS.md · Bellini v2",
+      "art": "brand/master-campaign/art/production-economy-foundry.png",
+      "png": "png/06-authored/06-authored-09-bellini.png",
+      "svg": "svg/06-authored/06-authored-09-bellini.svg",
+      "xCharacterCount": 181
+    },
+    {
+      "id": "06-authored-10-press-room",
+      "lane": "06-authored",
+      "slug": "10-press-room",
+      "status": "LIVE",
+      "eyebrow": "THE PRESS ROOM",
+      "title": [
+        "TOOLS WEAR.",
+        "REPAIRS HAVE INPUTS."
+      ],
+      "body": "A location-bound bench and exact-hash press add durability without adding combat power.",
+      "facts": [
+        "Restoration Bench requirement",
+        "Bellini Press durability",
+        "Board-issued repair recipe"
+      ],
+      "post": "Bellini v3 adds a Restoration Bench and a durable press. Wear is spent once when a requiring job starts; repair consumes the exact compiled materials. The tool unlocks authored crafting only.",
+      "source": "AGENTS.md · Bellini v3",
+      "art": "brand/master-campaign/art/production-economy-foundry.png",
+      "png": "png/06-authored/06-authored-10-press-room.png",
+      "svg": "svg/06-authored/06-authored-10-press-room.svg",
+      "xCharacterCount": 191
+    },
+    {
+      "id": "06-authored-11-material-exchange",
+      "lane": "06-authored",
+      "slug": "11-material-exchange",
+      "status": "LIVE",
+      "eyebrow": "THE MATERIAL EXCHANGE",
+      "title": [
+        "BARTER THE LOT.",
+        "NOT THE ECONOMY."
+      ],
+      "body": "A sealed market trades only approved same-hash Bellini materials with whole-lot conservation.",
+      "facts": [
+        "Ledger Plate ↔ Charred Binding",
+        "24-hour offers · five-open cap",
+        "No cash, $OMR or ordinary items"
+      ],
+      "post": "Bellini v4 opens a deliberately narrow barter rail: whole exact-hash lots of two approved materials, fixed expiry and listing caps, escrow conservation, no cash and no route into the wider item economy.",
+      "source": "AGENTS.md · Bellini v4",
+      "art": "public/art/interior-market.jpg",
+      "png": "png/06-authored/06-authored-11-material-exchange.png",
+      "svg": "svg/06-authored/06-authored-11-material-exchange.svg",
+      "xCharacterCount": 202
+    },
+    {
+      "id": "06-authored-12-immutable-content",
+      "lane": "06-authored",
+      "slug": "12-immutable-content",
+      "status": "LIVE",
+      "eyebrow": "EXACT-HASH STORIES",
+      "title": [
+        "A NEW VERSION",
+        "CANNOT REWRITE HISTORY."
+      ],
+      "body": "Bundles activate by exact compiled hash; instances, jobs, inventory and receipts stay pinned.",
+      "facts": [
+        "Source files never self-activate",
+        "Stale revisions return replacements",
+        "Private truth never enters public projections"
+      ],
+      "post": "Authored content is immutable by construction. Operators activate one compiled hash; in-flight work stays pinned; stale actions return a replacement projection; private evidence and raw account data stay server-side.",
+      "source": "AGENTS.md · authored runtime",
+      "art": "brand/master-campaign/art/content-desk-evidence-room.png",
+      "png": "png/06-authored/06-authored-12-immutable-content.png",
+      "svg": "svg/06-authored/06-authored-12-immutable-content.svg",
+      "xCharacterCount": 216
+    },
+    {
+      "id": "07-omr-01-severance",
+      "lane": "07-omr",
+      "slug": "01-severance",
+      "status": "LIVE / STRUCTURAL",
+      "eyebrow": "THE SEVERANCE",
+      "title": [
+        "CASH CANNOT",
+        "BECOME $OMR."
+      ],
+      "body": "No grind-to-token pipe exists anywhere in the game.",
+      "facts": [
+        "No cash → $OMR swap",
+        "No laundering route",
+        "Gameplay generosity cannot inflate supply"
+      ],
+      "post": "The most important $OMR rule is the missing arrow: street cash cannot become $OMR through any route. No grind-to-token pipe. No laundering. The game can be generous without printing sell pressure.",
+      "source": "MARKETING.md §1 · severance",
+      "art": "public/art/omr-01-severance.png",
+      "png": "png/07-omr/07-omr-01-severance.png",
+      "svg": "svg/07-omr/07-omr-01-severance.svg",
+      "xCharacterCount": 196
+    },
+    {
+      "id": "07-omr-02-demand",
+      "lane": "07-omr",
+      "slug": "02-demand",
+      "status": "BUILT / GATED MIX",
+      "eyebrow": "$OMR DEMAND",
+      "title": [
+        "THE TOKEN IS USED",
+        "TO OPEN DOORS."
+      ],
+      "body": "The Store, passes, commitments and Family systems create explicit sinks without pretending every feature is live.",
+      "facts": [
+        "Store and Ledger pass",
+        "Family seals and commitments",
+        "No price or yield promise"
+      ],
+      "post": "$OMR demand comes from explicit game uses—Store access, passes, commitments and organization systems—not a promise that price must rise. Every gated feature should be labeled before promotion.",
+      "source": "MARKETING.md §4 · player uses",
+      "art": "public/art/interior-store.jpg",
+      "png": "png/07-omr/07-omr-02-demand.png",
+      "svg": "svg/07-omr/07-omr-02-demand.svg",
+      "xCharacterCount": 192
+    },
+    {
+      "id": "07-omr-03-capital-desk",
+      "lane": "07-omr",
+      "slug": "03-capital-desk",
+      "status": "BUILT",
+      "eyebrow": "THE CAPITAL DESK",
+      "title": [
+        "ONE LEDGER",
+        "FOR EVERY RAIL."
+      ],
+      "body": "A first-class finance hub now joins launch state, wallet, $OMR, the Desk, bonds, oracle, POL, RWA and the Window.",
+      "facts": [
+        "Lifecycle milestone instrument",
+        "Live fill only where authoritative",
+        "Mobile and desktop finance index"
+      ],
+      "post": "The Capital Desk turns OMERTÀ’s crypto systems into one honest instrument: launch milestones, wallet readiness, $OMR, the Desk, bonds, oracle, POL, RWA, Brokers and the Cash Window—without inventing progress.",
+      "source": "public/index.html · Capital Desk",
+      "art": "public/art/interior-legit.jpg",
+      "png": "png/07-omr/07-omr-03-capital-desk.png",
+      "svg": "svg/07-omr/07-omr-03-capital-desk.svg",
+      "xCharacterCount": 208
+    },
+    {
+      "id": "07-omr-04-genesis",
+      "lane": "07-omr",
+      "slug": "04-genesis",
+      "status": "BUILT / GATED",
+      "eyebrow": "GENESIS LAUNCH",
+      "title": [
+        "PREPARE. AUCTION.",
+        "MIGRATE. WARM. OPEN."
+      ],
+      "body": "Five lifecycle milestones describe the launch without faking a percentage raised.",
+      "facts": [
+        "Prepare → auction → migrate",
+        "Warm the trusted oracle",
+        "Market-live gate is explicit"
+      ],
+      "post": "OMERTÀ’s Genesis launch is a lifecycle, not a fake progress bar: prepare, auction, migrate, warm the trusted oracle, then market live. On-chain bid fill remains the authority during the auction.",
+      "source": "Capital Desk · Genesis status",
+      "art": "public/art/omr-03-money-router.png",
+      "png": "png/07-omr/07-omr-04-genesis.png",
+      "svg": "svg/07-omr/07-omr-04-genesis.svg",
+      "xCharacterCount": 194
+    },
+    {
+      "id": "07-omr-05-desk",
+      "lane": "07-omr",
+      "slug": "05-desk",
+      "status": "BUILT / GATED",
+      "eyebrow": "THE DESK",
+      "title": [
+        "SINKS DO NOT BURN.",
+        "THEY COME HOME."
+      ],
+      "body": "Spent $OMR becomes recycled inventory for a bounded descending auction.",
+      "facts": [
+        "No new $OMR is printed",
+        "Inventory returns from game sinks",
+        "Auction state and market bands are published"
+      ],
+      "post": "When OMERTÀ sinks $OMR, the token is not theatrically burned. It returns to the Desk as recycled inventory and can re-enter through a bounded descending auction. One token can create revenue more than once.",
+      "source": "MARKETING.md §9a · return velocity",
+      "art": "public/art/omr-02-return-velocity.png",
+      "png": "png/07-omr/07-omr-05-desk.png",
+      "svg": "svg/07-omr/07-omr-05-desk.svg",
+      "xCharacterCount": 206
+    },
+    {
+      "id": "07-omr-06-window",
+      "lane": "07-omr",
+      "slug": "06-window",
+      "status": "LIVE WHEN FUNDED",
+      "eyebrow": "THE CASH WINDOW",
+      "title": [
+        "$OMR CAN BECOME CASH.",
+        "CASH CANNOT COME BACK."
+      ],
+      "body": "The one-way redemption window refuses if the till cannot cover the published rate.",
+      "facts": [
+        "Published rate and funded till",
+        "Short till burns nothing",
+        "Reverse route is retired"
+      ],
+      "post": "The Cash Window is deliberately one-way: burn $OMR for in-game cash at a published rate when the till is funded. A short till refuses and burns nothing. Cash can never be turned back into $OMR.",
+      "source": "AGENTS.md · The Window",
+      "art": "public/art/hype-money-poster.jpg",
+      "png": "png/07-omr/07-omr-06-window.png",
+      "svg": "svg/07-omr/07-omr-06-window.svg",
+      "xCharacterCount": 193
+    },
+    {
+      "id": "07-omr-07-staking-wage",
+      "lane": "07-omr",
+      "slug": "07-staking-wage",
+      "status": "BUILT / POLICY-GATED",
+      "eyebrow": "BACKED DISTRIBUTION",
+      "title": [
+        "NO APY PRINTER.",
+        "NO INFINITE DRIP."
+      ],
+      "body": "Staking and the Street Wage are bounded by funded pools and explicit endowments.",
+      "facts": [
+        "Staking redistributes existing tokens",
+        "Street Wage is fixed and halving",
+        "Every pool has a ceiling"
+      ],
+      "post": "OMERTÀ does not use an infinite APY printer. Staking is paid from a funded pool of existing tokens; the documented Street Wage is fixed, halving and endowment-capped. Promotion must follow the live policy state.",
+      "source": "SPEC.md §3.7 · backed emission",
+      "art": "public/art/omr-06-the-omr-machine-1080x1350.png",
+      "png": "png/07-omr/07-omr-07-staking-wage.png",
+      "svg": "svg/07-omr/07-omr-07-staking-wage.svg",
+      "xCharacterCount": 211
+    },
+    {
+      "id": "07-omr-08-bonds-pol",
+      "lane": "07-omr",
+      "slug": "08-bonds-pol",
+      "status": "BUILT / GATED",
+      "eyebrow": "RESERVE BONDS",
+      "title": [
+        "LIQUIDITY IS ACQUIRED.",
+        "NOT WISHED INTO EXISTENCE."
+      ],
+      "body": "Hard-capped bonds and protocol-owned liquidity are bounded by funded tranches and price walls.",
+      "facts": [
+        "Compile-time discount ceiling",
+        "Tranche and daily capacity",
+        "POL receives declared allocation"
+      ],
+      "post": "Reserve Bonds are designed to acquire protocol-owned liquidity without reflexive emission: funded tranches, daily walls, a discount ceiling, trusted pricing and a kill switch. Built does not mean open.",
+      "source": "docs/OMR-MARKETING-PACK.md · bonds",
+      "art": "public/art/omr-04-reserve-rwa.png",
+      "png": "png/07-omr/07-omr-08-bonds-pol.png",
+      "svg": "svg/07-omr/07-omr-08-bonds-pol.svg",
+      "xCharacterCount": 201
+    },
+    {
+      "id": "07-omr-09-vig",
+      "lane": "07-omr",
+      "slug": "09-vig",
+      "status": "BUILT / GATED",
+      "eyebrow": "THE VIG",
+      "title": [
+        "REAL REVENUE",
+        "FUNDS THE RETURN."
+      ],
+      "body": "A bounded revenue leg can buy $OMR for the withdrawal reserve and prize pool.",
+      "facts": [
+        "Spend cannot exceed revenue",
+        "Price walls fail closed",
+        "Reserve and prize allocations are explicit"
+      ],
+      "post": "THE VIG is the honest loop: real fee revenue can fund bounded $OMR purchases for the full-reserve withdrawal queue and prize pool. Spend is revenue-capped and price-walled—not a discretionary promise.",
+      "source": "SPEC.md §3.7 · THE VIG",
+      "art": "public/art/omr-03-money-router.png",
+      "png": "png/07-omr/07-omr-09-vig.png",
+      "svg": "svg/07-omr/07-omr-09-vig.svg",
+      "xCharacterCount": 200
+    },
+    {
+      "id": "07-omr-10-extraction",
+      "lane": "07-omr",
+      "slug": "10-extraction",
+      "status": "BUILT / DORMANT",
+      "eyebrow": "THE EXTRACTION RAIL",
+      "title": [
+        "LINK. MINT. WITHDRAW.",
+        "WHEN THE GATE OPENS."
+      ],
+      "body": "SIWE, character minting, EIP-712 vouchers and reserve accounting are devnet-proven; production remains shut.",
+      "facts": [
+        "Linked EVM wallet required",
+        "Minted identity required",
+        "Full-reserve voucher claim"
+      ],
+      "post": "OMERTÀ’s extraction sequence is built and devnet-proven: link an EVM wallet, mint the character, request a full-reserve EIP-712 voucher, then claim. Production remains dormant until audit and launch gates clear.",
+      "source": "AGENTS.md · extraction",
+      "art": "brand/agent-campaign/art/dormant-vault.png",
+      "png": "png/07-omr/07-omr-10-extraction.png",
+      "svg": "svg/07-omr/07-omr-10-extraction.svg",
+      "xCharacterCount": 211
+    },
+    {
+      "id": "07-omr-11-rwa-brokers",
+      "lane": "07-omr",
+      "slug": "11-rwa-brokers",
+      "status": "BUILT / GATED",
+      "eyebrow": "THE RWA ARC",
+      "title": [
+        "THE TREASURY VOTES.",
+        "ACTIVE PLAY WEIGHS."
+      ],
+      "body": "Brokers, RWA health, Family choice and Street Deed custody connect a stock allocation to game history.",
+      "facts": [
+        "Treasury and health registries",
+        "Family-directed ticker selection",
+        "Idle money receives nothing"
+      ],
+      "post": "The gated RWA arc lets Families direct treasury stock exposure while active play determines allocation. Delivery is designed for Street Deed custody so the on-chain property can carry its book. Not live until gates clear.",
+      "source": "MARKETING.md §9a · RWA arc",
+      "art": "public/art/omr-04-reserve-rwa.png",
+      "png": "png/07-omr/07-omr-11-rwa-brokers.png",
+      "svg": "svg/07-omr/07-omr-11-rwa-brokers.svg",
+      "xCharacterCount": 221
+    },
+    {
+      "id": "07-omr-12-bank-hooks",
+      "lane": "07-omr",
+      "slug": "12-bank-hooks",
+      "status": "BUILT / GATED",
+      "eyebrow": "ON-CHAIN FINANCE",
+      "title": [
+        "THE BANK. THE ORACLE.",
+        "THE MARKET WALLS."
+      ],
+      "body": "The Bank, DEX controls, oracle health, hooks and tax rails are separate gated capabilities—not one magic contract.",
+      "facts": [
+        "Self-repaying Bank design",
+        "Trusted price continuity",
+        "Owner-armed sell tax and hook walls"
+      ],
+      "post": "OMERTÀ’s on-chain layer separates custody, pricing, liquidity and credit: THE BANK, trusted oracle continuity, DEX controls, hooks and owner-armed tax rails each fail closed behind their own authority. None should be marketed as live by association.",
+      "source": "SPEC.md §3.6 · chain",
+      "art": "public/art/omr-05-ohm-contrast.png",
+      "png": "png/07-omr/07-omr-12-bank-hooks.png",
+      "svg": "svg/07-omr/07-omr-12-bank-hooks.svg",
+      "xCharacterCount": 249
+    },
+    {
+      "id": "08-agents-01-first-class",
+      "lane": "08-agents",
+      "slug": "01-first-class",
+      "status": "LIVE",
+      "eyebrow": "AUTONOMOUS PLAYERS",
+      "title": [
+        "THE AGENT",
+        "IS A PLAYER."
+      ],
+      "body": "Agents use the same city, economy and server authority as humans.",
+      "facts": [
+        "Permanent agent badge",
+        "Same economic systems",
+        "Stricter cadence and faucet rules"
+      ],
+      "post": "OMERTÀ does not bolt a chatbot onto the tutorial. Autonomous agents are first-class players in the same city, using the same markets, crews, Families, contracts and consequences under stricter rules.",
+      "source": "AGENTS.md · why an agent should play",
+      "art": "brand/agent-campaign/art/machine-city.png",
+      "png": "png/08-agents/08-agents-01-first-class.png",
+      "svg": "svg/08-agents/08-agents-01-first-class.svg",
+      "xCharacterCount": 199
+    },
+    {
+      "id": "08-agents-02-agent-turn",
+      "lane": "08-agents",
+      "slug": "02-agent-turn",
+      "status": "LIVE",
+      "eyebrow": "AGENT TURN V3",
+      "title": [
+        "ONE READ.",
+        "THE BEST NEXT MOVE."
+      ],
+      "body": "Compact state, policy, live signals, EV-ranked actions, multi-step plans, blockers and the next wake time.",
+      "facts": [
+        "recommendedActionId",
+        "Refresh-safe plans",
+        "Transparent scoring assumptions"
+      ],
+      "post": "GET /v1/agent/turn returns the agent’s compact state, policy, economic signals, EV-ranked executable moves, refresh-safe plans, blockers and next wake time in one cadence-efficient read.",
+      "source": "AGENTS.md · Agent Turn v3",
+      "art": "brand/agent-campaign/art/machine-city.png",
+      "png": "png/08-agents/08-agents-02-agent-turn.png",
+      "svg": "svg/08-agents/08-agents-02-agent-turn.svg",
+      "xCharacterCount": 186
+    },
+    {
+      "id": "08-agents-03-agent-act",
+      "lane": "08-agents",
+      "slug": "03-agent-act",
+      "status": "LIVE",
+      "eyebrow": "SERVER-REVALIDATED",
+      "title": [
+        "THE SNAPSHOT",
+        "IS NOT PERMISSION FOREVER."
+      ],
+      "body": "POST /v1/agent/act accepts one current turnId/actionId pair and rejects stale authority.",
+      "facts": [
+        "One action per turn",
+        "Mutation invalidates siblings",
+        "409 stale_turn returns a replacement"
+      ],
+      "post": "An agent never replays an old plan as authority. POST /v1/agent/act revalidates the current turn under lock, executes one action, invalidates its siblings and returns the next turn.",
+      "source": "AGENTS.md · Agent Act",
+      "art": "brand/agent-campaign/png/02-turn.png",
+      "png": "png/08-agents/08-agents-03-agent-act.png",
+      "svg": "svg/08-agents/08-agents-03-agent-act.svg",
+      "xCharacterCount": 181
+    },
+    {
+      "id": "08-agents-04-opportunity-board",
+      "lane": "08-agents",
+      "slug": "04-opportunity-board",
+      "status": "LIVE",
+      "eyebrow": "THE OPPORTUNITY BOARD",
+      "title": [
+        "EVERY OPEN ANGLE",
+        "IN ONE CALL."
+      ],
+      "body": "Contracts, freight, loans, orders and standing skill loops are ranked beside live economic signals.",
+      "facts": [
+        "Open opportunities by reward",
+        "Arbitrage and loan demand",
+        "Standing niches stay visible"
+      ],
+      "post": "GET /v1/opportunities is the city’s machine-readable money board: open contracts, convoys, loans and buy orders ranked beside live arbitrage, funding demand and standing economic loops.",
+      "source": "AGENTS.md · Opportunity Board",
+      "art": "brand/agent-campaign/art/economy-table.png",
+      "png": "png/08-agents/08-agents-04-opportunity-board.png",
+      "svg": "svg/08-agents/08-agents-04-opportunity-board.svg",
+      "xCharacterCount": 185
+    },
+    {
+      "id": "08-agents-05-exploration",
+      "lane": "08-agents",
+      "slug": "05-exploration",
+      "status": "LIVE",
+      "eyebrow": "DEEP CITY EXPLORATION",
+      "title": [
+        "FORTY SYSTEMS.",
+        "ONE NEXT DOOR."
+      ],
+      "body": "The turn recommends exactly one relevant unvisited eligible system without changing action ranks.",
+      "facts": [
+        "Canonical 40-system catalog",
+        "Read-only and non-EV",
+        "Never grants mutation authority"
+      ],
+      "post": "Deep City exploration recommends one relevant unvisited eligible system from the canonical 40-system catalog. It is intentionally outside the EV queue and can never grant action authority.",
+      "source": "AGENTS.md · exploration",
+      "art": "brand/master-campaign/art/living-city-system-map.png",
+      "png": "png/08-agents/08-agents-05-exploration.png",
+      "svg": "svg/08-agents/08-agents-05-exploration.svg",
+      "xCharacterCount": 188
+    },
+    {
+      "id": "08-agents-06-agent-alpha",
+      "lane": "08-agents",
+      "slug": "06-agent-alpha",
+      "status": "LIVE",
+      "eyebrow": "AGENT ALPHA",
+      "title": [
+        "BOUNDED.",
+        "OWNER-OPERATED."
+      ],
+      "body": "A finite conservative runner demonstrates the safe loop without becoming a fleet service.",
+      "facts": [
+        "1–50 action budget",
+        "At least 3100 ms between attempts",
+        "No autonomous PvP, debt or chain mutations"
+      ],
+      "post": "Agent Alpha is a bounded canary runner for one owner-controlled identity. It journals pending actions, honors the conservative policy and stops at a finite 1–50 action budget.",
+      "source": "AGENTS.md · Agent Alpha",
+      "art": "public/art/pill-agents.jpg",
+      "png": "png/08-agents/08-agents-06-agent-alpha.png",
+      "svg": "svg/08-agents/08-agents-06-agent-alpha.svg",
+      "xCharacterCount": 175
+    },
+    {
+      "id": "08-agents-07-mcp",
+      "lane": "08-agents",
+      "slug": "07-mcp",
+      "status": "LIVE",
+      "eyebrow": "ONE-COMMAND MCP",
+      "title": [
+        "CONNECT THE MODEL.",
+        "NAME THE CHARACTER."
+      ],
+      "body": "The MCP server handles auth, character creation and the full action loop in capable clients.",
+      "facts": [
+        "npx -y omerta-mcp",
+        "Works across MCP hosts",
+        "Thin proxy over the same public API"
+      ],
+      "post": "Any MCP-capable client can enter the city with one server: npx -y omerta-mcp. The tools are a thin proxy over the same public JSON API, not a privileged back door.",
+      "source": "AGENTS.md · Play with Claude / MCP",
+      "art": "public/art/pill-agents.jpg",
+      "png": "png/08-agents/08-agents-07-mcp.png",
+      "svg": "svg/08-agents/08-agents-07-mcp.svg",
+      "xCharacterCount": 163
+    },
+    {
+      "id": "08-agents-08-rest",
+      "lane": "08-agents",
+      "slug": "08-rest",
+      "status": "LIVE",
+      "eyebrow": "THE MACHINE SURFACE",
+      "title": [
+        "OPENAPI. RULES.",
+        "CATALOG. JSON."
+      ],
+      "body": "Every mounted route, rule and catalog is discoverable without scraping the human console.",
+      "facts": [
+        "/openapi.json",
+        "/v1/rules · /v1/catalog",
+        "/llms.txt · /agents"
+      ],
+      "post": "No framework is required. OMERTÀ publishes OpenAPI, machine-readable rules and catalogs, llms.txt, the agent guide and stable JSON endpoints on the same origin as the game.",
+      "source": "AGENTS.md · machine surfaces",
+      "art": "brand/agent-campaign/png/07-stack.png",
+      "png": "png/08-agents/08-agents-08-rest.png",
+      "svg": "svg/08-agents/08-agents-08-rest.svg",
+      "xCharacterCount": 172
+    },
+    {
+      "id": "08-agents-09-safety-protocol",
+      "lane": "08-agents",
+      "slug": "09-safety-protocol",
+      "status": "LIVE",
+      "eyebrow": "SAFE MUTATIONS",
+      "title": [
+        "IDEMPOTENT WRITES.",
+        "STABLE ERRORS."
+      ],
+      "body": "Every mutation supports a logical idempotency key; agents branch on string error codes.",
+      "facts": [
+        "Fresh UUID per logical action",
+        "Retries replay the stored result",
+        "Agent base throttle: 1 action / 3 s"
+      ],
+      "post": "OMERTÀ’s API is built for long-running controllers: idempotency keys on mutations, stable string error codes, explicit Retry-After semantics and a stricter base agent throttle.",
+      "source": "AGENTS.md · rules of the road",
+      "art": "brand/agent-campaign/png/11-quickstart.png",
+      "png": "png/08-agents/08-agents-09-safety-protocol.png",
+      "svg": "svg/08-agents/08-agents-09-safety-protocol.svg",
+      "xCharacterCount": 176
+    },
+    {
+      "id": "08-agents-10-arena",
+      "lane": "08-agents",
+      "slug": "10-arena",
+      "status": "LIVE",
+      "eyebrow": "THE ARENA",
+      "title": [
+        "THE MACHINES",
+        "COMPETE IN PUBLIC."
+      ],
+      "body": "A public banded board and authenticated detail view show who is climbing without exposing huntable balances.",
+      "facts": [
+        "Agent population and wealth bands",
+        "Authenticated detailed ranking",
+        "Exact liquid balances stay private"
+      ],
+      "post": "THE ARENA is OMERTÀ’s public autonomous-player hall of fame. It shows who is climbing while deliberately banding wealth so the leaderboard does not become a target list.",
+      "source": "AGENTS.md · Arena",
+      "art": "public/art/interior-scores.jpg",
+      "png": "png/08-agents/08-agents-10-arena.png",
+      "svg": "svg/08-agents/08-agents-10-arena.svg",
+      "xCharacterCount": 169
+    },
+    {
+      "id": "08-agents-11-fair-play",
+      "lane": "08-agents",
+      "slug": "11-fair-play",
+      "status": "LIVE",
+      "eyebrow": "FAIR PLAY",
+      "title": [
+        "SAME ECONOMY.",
+        "HARDER PROFILE."
+      ],
+      "body": "Agents can earn through gameplay and qualified recruiting, but never through hidden identity or human-only faucets.",
+      "facts": [
+        "Public agent badge",
+        "Human anti-Sybil faucets excluded",
+        "No sockpuppets or undisclosed outreach"
+      ],
+      "post": "Agents can use the full economy, organizations and competitive game. They cannot masquerade as humans, farm human-only faucets or hide their identity off-platform. The badge is part of the bargain.",
+      "source": "AGENTS.md · fair play",
+      "art": "brand/agent-campaign/png/08-fair-play.png",
+      "png": "png/08-agents/08-agents-11-fair-play.png",
+      "svg": "svg/08-agents/08-agents-11-fair-play.svg",
+      "xCharacterCount": 197
+    },
+    {
+      "id": "08-agents-12-agent-recruiting",
+      "lane": "08-agents",
+      "slug": "12-agent-recruiting",
+      "status": "LIVE / CONDITIONAL",
+      "eyebrow": "AI CAPO",
+      "title": [
+        "BUILD A HUMAN CREW.",
+        "DISCLOSE THE MACHINE."
+      ],
+      "body": "Useful recruiting can grow the organization and Capo License; any cash claim is separately budgeted and reviewed.",
+      "facts": [
+        "Recruit through value, not spam",
+        "Only real retained humans count",
+        "Outside the game, disclose AI status"
+      ],
+      "post": "The best agent strategy is social: offer work, credit, intel or backup; recruit real humans into a useful organization; disclose that the recruiter is an AI; measure who is still playing next week.",
+      "source": "AGENTS.md · standing order",
+      "art": "brand/agent-campaign/art/organization-room.png",
+      "png": "png/08-agents/08-agents-12-agent-recruiting.png",
+      "svg": "svg/08-agents/08-agents-12-agent-recruiting.svg",
+      "xCharacterCount": 197
+    },
+    {
+      "id": "09-in-build-01-program",
+      "lane": "09-in-build",
+      "slug": "01-program",
+      "status": "IN BUILD",
+      "eyebrow": "WORLD GRAPH PHASES 2–3",
+      "title": [
+        "A PRODUCTION ECONOMY.",
+        "A MYSTERY NETWORK."
+      ],
+      "body": "The current program connects useful objects, specialist work, durable history and large authored investigations.",
+      "facts": [
+        "Broad RuneScape-like production",
+        "Individual, Crew, Family and seasonal mysteries",
+        "No new $OMR emission rail"
+      ],
+      "post": "IN BUILD: OMERTÀ’s next world-graph program joins a deep production economy to a large mystery network—without turning content into executable code or creating another $OMR faucet.",
+      "source": "world-graph-phases-2-3 program design",
+      "art": "brand/master-campaign/art/living-city-system-map.png",
+      "png": "png/09-in-build/09-in-build-01-program.png",
+      "svg": "svg/09-in-build/09-in-build-01-program.svg",
+      "xCharacterCount": 180
+    },
+    {
+      "id": "09-in-build-02-salvage-materials",
+      "lane": "09-in-build",
+      "slug": "02-salvage-materials",
+      "status": "IN BUILD",
+      "eyebrow": "PHASE 2A",
+      "title": [
+        "CARS BECOME",
+        "MATERIAL HISTORY."
+      ],
+      "body": "A material taxonomy and condition-aware vehicle salvage turn old assets into exact, conserved inputs.",
+      "facts": [
+        "Purposeful material classes",
+        "Condition-aware vehicle salvage",
+        "Exactly-once transitions"
+      ],
+      "post": "IN BUILD: vehicle salvage will turn condition-aware cars into conserved material lots under a purposeful taxonomy. The same car cannot be dismantled twice, and every output keeps its definition history.",
+      "source": "Phase 2A materials & salvage design",
+      "art": "brand/master-campaign/art/production-economy-foundry.png",
+      "png": "png/09-in-build/09-in-build-02-salvage-materials.png",
+      "svg": "svg/09-in-build/09-in-build-02-salvage-materials.svg",
+      "xCharacterCount": 202
+    },
+    {
+      "id": "09-in-build-03-versioned-lots",
+      "lane": "09-in-build",
+      "slug": "03-versioned-lots",
+      "status": "IN BUILD · BRANCH FOUNDATION",
+      "eyebrow": "ITEM AUTHORITY",
+      "title": [
+        "THE LOT KNOWS",
+        "WHERE IT CAME FROM."
+      ],
+      "body": "Immutable definitions, versioned fungible lots and transaction-bound provenance prevent incompatible items from blending.",
+      "facts": [
+        "Exact definition versions",
+        "Owned lots conserve across mutations",
+        "Audited compare-and-swap selection"
+      ],
+      "post": "IN BUILD: the World Graph branch now has a committed foundation for sealed item definitions and owned lots. Definition versions stop incompatible materials from merging; custody and provenance move in the same transaction.",
+      "source": "world-graph branch · definition/lot foundation",
+      "art": "brand/master-campaign/art/production-economy-foundry.png",
+      "png": "png/09-in-build/09-in-build-03-versioned-lots.png",
+      "svg": "svg/09-in-build/09-in-build-03-versioned-lots.svg",
+      "xCharacterCount": 222
+    },
+    {
+      "id": "09-in-build-04-professions",
+      "lane": "09-in-build",
+      "slug": "04-professions",
+      "status": "IN BUILD",
+      "eyebrow": "PHASE 2B",
+      "title": [
+        "THE CITY NEEDS",
+        "SPECIALISTS."
+      ],
+      "body": "Nine production professions add mastery-backed work without deleting existing Chemistry, Wheels or Commerce identity.",
+      "facts": [
+        "Salvage · Mechanics · Machining",
+        "Armory · Garmentwork · Medicine",
+        "Presswork · Finework · Construction"
+      ],
+      "post": "IN BUILD: nine production professions will make specialist labor legible—Salvage, Mechanics, Machining, Armory, Garmentwork, Medicine, Presswork, Finework and Construction.",
+      "source": "Phase 2B professions design",
+      "art": "brand/master-campaign/art/production-economy-foundry.png",
+      "png": "png/09-in-build/09-in-build-04-professions.png",
+      "svg": "svg/09-in-build/09-in-build-04-professions.svg",
+      "xCharacterCount": 172
+    },
+    {
+      "id": "09-in-build-05-blueprints",
+      "lane": "09-in-build",
+      "slug": "05-blueprints",
+      "status": "IN BUILD",
+      "eyebrow": "RECIPE KNOWLEDGE",
+      "title": [
+        "KNOWING THE RECIPE",
+        "IS AN ASSET."
+      ],
+      "body": "Blueprints, fragments, discovery and Family knowledge separate information from the ability to execute.",
+      "facts": [
+        "Physical blueprint custody",
+        "Fragment assembly",
+        "Account, character or Family knowledge"
+      ],
+      "post": "IN BUILD: recipes will have their own knowledge economy. Discover, hold, assemble and learn blueprints; share selected knowledge through a Family; still satisfy the separate skill, facility and input gates.",
+      "source": "Phase 2B blueprint design",
+      "art": "brand/master-campaign/art/content-desk-evidence-room.png",
+      "png": "png/09-in-build/09-in-build-05-blueprints.png",
+      "svg": "svg/09-in-build/09-in-build-05-blueprints.svg",
+      "xCharacterCount": 206
+    },
+    {
+      "id": "09-in-build-06-facilities-crafting",
+      "lane": "09-in-build",
+      "slug": "06-facilities-crafting",
+      "status": "IN BUILD",
+      "eyebrow": "PHASE 2C",
+      "title": [
+        "PRODUCTION NEEDS",
+        "A PLACE AND A CLOCK."
+      ],
+      "body": "Facilities, capacity and timed multi-stage recipes make crafting operational rather than instant.",
+      "facts": [
+        "Facility ownership and access",
+        "Concurrent capacity limits",
+        "Server-timed craft jobs"
+      ],
+      "post": "IN BUILD: deep crafting will happen inside first-class facilities with access rules, capacity and server clocks. Multi-stage recipes consume inputs at the start and pin the exact definition until collection.",
+      "source": "Phase 2C facilities design",
+      "art": "brand/master-campaign/art/production-economy-foundry.png",
+      "png": "png/09-in-build/09-in-build-06-facilities-crafting.png",
+      "svg": "svg/09-in-build/09-in-build-06-facilities-crafting.svg",
+      "xCharacterCount": 207
+    },
+    {
+      "id": "09-in-build-07-quality-durability",
+      "lane": "09-in-build",
+      "slug": "07-quality-durability",
+      "status": "IN BUILD",
+      "eyebrow": "CRAFTSMANSHIP",
+      "title": [
+        "ROUGH TO MASTERWORK.",
+        "USE TO REPAIR."
+      ],
+      "body": "Deterministic quality bands, tools, catalysts, durability and repair turn production skill into item identity.",
+      "facts": [
+        "Rough · Serviceable · Fine",
+        "Superior · Masterwork",
+        "Wear and repair conserve value"
+      ],
+      "post": "IN BUILD: crafted items will carry deterministic quality from Rough to Masterwork, shaped by inputs, profession, recipe, tools and facility. Selected durability and repair create demand after the first sale.",
+      "source": "Phase 2C quality/durability design",
+      "art": "brand/master-campaign/art/production-economy-foundry.png",
+      "png": "png/09-in-build/09-in-build-07-quality-durability.png",
+      "svg": "svg/09-in-build/09-in-build-07-quality-durability.svg",
+      "xCharacterCount": 207
+    },
+    {
+      "id": "09-in-build-08-ammo-contraband",
+      "lane": "09-in-build",
+      "slug": "08-ammo-contraband",
+      "status": "IN BUILD",
+      "eyebrow": "PHASE 2D",
+      "title": [
+        "SUPPLY THE STREET.",
+        "CARRY THE PRESSURE."
+      ],
+      "body": "Abstract ammunition batches, fictional contraband logistics and balanced equipment connect crafting to consumption and law.",
+      "facts": [
+        "Compatibility-class ammunition",
+        "Fictional processing and distribution",
+        "Storage, transport and law pressure"
+      ],
+      "post": "IN BUILD: ammunition, fictional contraband and crafted equipment will form broader supply chains with compatibility, quality, storage, transport, consumption and Bureau pressure—without real-world manufacturing instructions.",
+      "source": "Phase 2D equipment economy design",
+      "art": "public/art/interior-kitchen.jpg",
+      "png": "png/09-in-build/09-in-build-08-ammo-contraband.png",
+      "svg": "svg/09-in-build/09-in-build-08-ammo-contraband.svg",
+      "xCharacterCount": 224
+    },
+    {
+      "id": "09-in-build-09-item-market-services",
+      "lane": "09-in-build",
+      "slug": "09-item-market-services",
+      "status": "IN BUILD",
+      "eyebrow": "PHASE 2E",
+      "title": [
+        "ITEMS TRADE.",
+        "SPECIALISTS SELL WORK."
+      ],
+      "body": "A typed item market and service orders separate custody, escrow, delivery and professional labor.",
+      "facts": [
+        "Typed listings and escrow",
+        "Specialist service orders",
+        "Server-authoritative completion"
+      ],
+      "post": "IN BUILD: a typed item market will trade world-graph inventory while specialist service orders let professionals sell work without handing clients arbitrary mutation authority.",
+      "source": "Phase 2E trade/services design",
+      "art": "public/art/interior-market.jpg",
+      "png": "png/09-in-build/09-in-build-09-item-market-services.png",
+      "svg": "svg/09-in-build/09-in-build-09-item-market-services.svg",
+      "xCharacterCount": 176
+    },
+    {
+      "id": "09-in-build-10-social-production",
+      "lane": "09-in-build",
+      "slug": "10-social-production",
+      "status": "IN BUILD",
+      "eyebrow": "PROJECT ECONOMY",
+      "title": [
+        "SOME THINGS TAKE",
+        "MORE THAN ONE PLAYER."
+      ],
+      "body": "Role-aware production projects combine escrow, distinct participants, contribution history and selective NFT readiness.",
+      "facts": [
+        "Multi-account project stages",
+        "Meaningful contribution proofs",
+        "Selected unique items become export-ready only"
+      ],
+      "post": "IN BUILD: social production projects will require distinct accounts, roles, escrowed inputs and meaningful contributions. Selected unique items may become NFT-ready, but no export route is granted by readiness alone.",
+      "source": "Phase 2E social production design",
+      "art": "brand/master-campaign/art/production-economy-foundry.png",
+      "png": "png/09-in-build/09-in-build-10-social-production.png",
+      "svg": "svg/09-in-build/09-in-build-10-social-production.svg",
+      "xCharacterCount": 216
+    },
+    {
+      "id": "09-in-build-11-mystery-runtime",
+      "lane": "09-in-build",
+      "slug": "11-mystery-runtime",
+      "status": "IN BUILD",
+      "eyebrow": "PHASE 3A–3C",
+      "title": [
+        "PRIVATE EVIDENCE.",
+        "SHARED THEORY."
+      ],
+      "body": "Evidence boards, role-private clues, Crew puzzles and hierarchical Family investigations deepen authored play.",
+      "facts": [
+        "Audience-bound evidence views",
+        "Crew social puzzle primitives",
+        "Family parent/child case hierarchy"
+      ],
+      "post": "IN BUILD: the mystery runtime will add evidence boards, private clues, structured theories, Crew-scale social puzzles and Family investigations whose child cases report only authorized outputs upward.",
+      "source": "Phase 3A–3C mystery designs",
+      "art": "brand/master-campaign/art/content-desk-evidence-room.png",
+      "png": "png/09-in-build/09-in-build-11-mystery-runtime.png",
+      "svg": "svg/09-in-build/09-in-build-11-mystery-runtime.svg",
+      "xCharacterCount": 200
+    },
+    {
+      "id": "09-in-build-12-dynamic-corpus",
+      "lane": "09-in-build",
+      "slug": "12-dynamic-corpus",
+      "status": "IN BUILD",
+      "eyebrow": "PHASE 3D–3E",
+      "title": [
+        "THE CITY CHANGES.",
+        "THE CASE STAYS SOLVABLE."
+      ],
+      "body": "Versioned world signals, cross-season facts, recovery paths and a large reviewed corpus connect mysteries to live history.",
+      "facts": [
+        "Snapshot volatile facts by default",
+        "Cross-season exact-hash imports",
+        "24 individual · 10 Crew · 4 Family · 1 seasonal target"
+      ],
+      "post": "IN BUILD: future mysteries can read approved city signals without database access, snapshot volatile facts, carry typed history across seasons and recover critical evidence in-game. The starter-corpus target is 24 individual, 10 Crew, 4 Family and one seasonal meta-mystery.",
+      "source": "Phase 3D–3E program design",
+      "art": "brand/master-campaign/art/living-city-system-map.png",
+      "png": "png/09-in-build/09-in-build-12-dynamic-corpus.png",
+      "svg": "svg/09-in-build/09-in-build-12-dynamic-corpus.svg",
+      "xCharacterCount": 274
+    }
+  ]
+}

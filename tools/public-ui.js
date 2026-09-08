@@ -3,14 +3,39 @@
 // it catches truth, first-paint, payload, public empty/search states, and intent navigation.
 import { chromium } from 'playwright-core';
 import fs from 'node:fs';
+import path from 'node:path';
 import { buildServer } from '../src/server.js';
 
 function resolveBrowser() {
-  if (process.env.CHROMIUM_PATH) return process.env.CHROMIUM_PATH;
+  if (process.env.CHROMIUM_PATH) return fs.existsSync(process.env.CHROMIUM_PATH) ? process.env.CHROMIUM_PATH : null;
+  const caches = [...new Set([
+    process.env.PLAYWRIGHT_BROWSERS_PATH,
+    process.env.LOCALAPPDATA && path.join(process.env.LOCALAPPDATA, 'ms-playwright'),
+    process.env.HOME && path.join(process.env.HOME, '.cache', 'ms-playwright'),
+  ].filter(Boolean))];
+  for (const cache of caches) {
+    let versions;
+    try { versions = fs.readdirSync(cache).filter((entry) => entry.startsWith('chromium')).sort().reverse(); }
+    catch { continue; }
+    for (const version of versions) for (const relative of [
+      'chrome-win64/chrome.exe', 'chrome-win/chrome.exe',
+      'chrome-headless-shell-win64/headless_shell.exe',
+      'chrome-linux/chrome', 'chrome-linux64/chrome', 'chrome-linux/headless_shell',
+      'chrome-headless-shell-linux64/headless_shell',
+      'chrome-mac/Chromium.app/Contents/MacOS/Chromium',
+      'chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing',
+      'chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing',
+    ]) {
+      const candidate = path.join(cache, version, relative);
+      if (fs.existsSync(candidate)) return candidate;
+    }
+  }
   for (const p of [
     'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
     'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
-    '/usr/bin/chromium', '/usr/bin/google-chrome',
+    'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
+    '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    '/usr/bin/chromium', '/usr/bin/chromium-browser', '/usr/bin/google-chrome',
   ]) if (fs.existsSync(p)) return p;
   return null;
 }
@@ -28,12 +53,92 @@ if (process.env.DATABASE_URL) {
 const app = await buildServer();
 await app.listen({ port: 0, host: '127.0.0.1' });
 const BASE = `http://127.0.0.1:${app.server.address().port}`;
-const browser = await chromium.launch({ executablePath: exe });
+let browser;
+try {
+  browser = await chromium.launch({ executablePath: exe, timeout: 20000 });
+} catch (error) {
+  await app.close();
+  console.error(`✗ PUBLIC UI CONTRACT CANNOT LAUNCH ${exe}\n${error.message}\nSet CHROMIUM_PATH to a working Chromium/Chrome binary.`);
+  process.exit(1);
+}
 const failures = [];
 const check = (ok, message) => { if (!ok) failures.push(message); };
+const startedAt = Date.now();
+let stage = 'starting';
+const reportStage = (name) => { stage = name; console.log(`  • ${name}`); };
+async function newPage(options) {
+  const page = await browser.newPage({ locale: 'en-US', ...options });
+  page.setDefaultTimeout(15000);
+  page.on('pageerror', (error) => check(false, `${new URL(page.url()).pathname}: uncaught browser error: ${error.message}`));
+  return page;
+}
+
+// Keep these checks behavioral: a labelled overlay can still strand a real keyboard user.
+async function checkDialogKeyboard(page, opener, overlay, name) {
+  await page.locator(opener).focus();
+  await page.keyboard.press('Enter');
+  await page.locator(`${overlay}:not(.hidden)`).waitFor();
+  await page.waitForFunction((selector) => document.querySelector(selector)?.contains(document.activeElement), overlay);
+  const shape = await page.locator(overlay).evaluate((bg) => {
+    const panel = bg.querySelector('[role="dialog"], [role="alertdialog"]');
+    const label = panel?.getAttribute('aria-label') || panel?.getAttribute('aria-labelledby')?.split(/\s+/)
+      .map((id) => document.getElementById(id)?.textContent.trim()).filter(Boolean).join(' ');
+    return { modal: panel?.getAttribute('aria-modal'), label, hidden: bg.getAttribute('aria-hidden') };
+  });
+  check(shape.modal === 'true' && shape.label && shape.hidden !== 'true',
+    `${name} has no announced modal name/state — ${JSON.stringify(shape)}`);
+  const initial = await page.evaluate(() => document.activeElement?.outerHTML.slice(0, 160));
+  await page.keyboard.press('Shift+Tab');
+  check(await page.locator(overlay).evaluate((bg) => bg.contains(document.activeElement)),
+    `${name}: Shift+Tab escaped into the background`);
+  const reverse = await page.evaluate(() => document.activeElement?.outerHTML.slice(0, 160));
+  // Opening callbacks must not steal focus after a user has already moved it.
+  await page.waitForTimeout(80);
+  check(await page.evaluate(() => document.activeElement?.outerHTML.slice(0, 160)) === reverse,
+    `${name}: a delayed callback stole keyboard focus after Shift+Tab`);
+  await page.keyboard.press('Tab');
+  check(await page.evaluate(() => document.activeElement?.outerHTML.slice(0, 160)) === initial,
+    `${name}: reverse/forward focus loop did not return to the initial control`);
+  await page.keyboard.press('Escape');
+  await page.locator(overlay).waitFor({ state: 'hidden' });
+  check(await page.locator(opener).evaluate((element) => element === document.activeElement),
+    `${name}: Escape did not restore the opener's keyboard focus`);
+}
+
+async function checkPublicKeyboard(page, route) {
+  await page.goto(`${BASE}${route}`, { waitUntil: 'networkidle' });
+  await page.keyboard.press('Tab');
+  const skip = await page.evaluate(() => {
+    const focused = document.activeElement;
+    const rect = focused?.getBoundingClientRect();
+    return { text: focused?.textContent.trim(), href: focused?.getAttribute('href'),
+      visible: rect?.top >= 0 && rect?.bottom <= innerHeight && rect?.width > 0 };
+  });
+  check(skip.href?.startsWith('#') && /skip/i.test(skip.text || '') && skip.visible,
+    `${route}: first keyboard stop is not a visible skip link — ${JSON.stringify(skip)}`);
+  if (!skip.href?.startsWith('#')) return;
+  await page.keyboard.press('Enter');
+  check(await page.evaluate((href) => {
+    const target = document.getElementById(href.slice(1));
+    return !!target && (document.activeElement === target || target.contains(document.activeElement));
+  }, skip.href), `${route}: skip link scrolls without moving keyboard focus to its destination`);
+  const landmarks = await page.evaluate(() => ({
+    main: [...document.querySelectorAll('main, [role="main"]')].filter((element) => element.getClientRects().length).length,
+    navigation: !!document.querySelector('nav[aria-label], [role="navigation"][aria-label]'),
+    language: document.documentElement.lang,
+    title: document.title,
+  }));
+  check(landmarks.main === 1 && landmarks.navigation && landmarks.language && landmarks.title,
+    `${route}: public landmark/language/title contract failed — ${JSON.stringify(landmarks)}`);
+}
 
 try {
-  const desktop = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  reportStage('Desktop landing, payload, and agent discovery');
+  const desktop = await newPage({ viewport: { width: 1440, height: 900 } });
+  const landingVideoRequests = [];
+  desktop.on('request', (request) => {
+    if (/\.(?:mp4|webm)$/.test(new URL(request.url()).pathname)) landingVideoRequests.push(request.url());
+  });
   await desktop.goto(BASE, { waitUntil: 'domcontentloaded' });
   const firstFrame = await desktop.evaluate(() => ({
     ctaOpacity: Number(getComputedStyle(document.querySelector('#btn-guest')).opacity),
@@ -84,8 +189,41 @@ try {
   });
   check(landingLoad.bytes <= 768 * 1024,
     `cold landing transfers ${Math.round(landingLoad.bytes / 1024)} KB; budget is 768 KB — ${JSON.stringify(landingLoad.resources)}`);
+  console.log(`    Cold landing: ${Math.round(landingLoad.bytes / 1024)} KB / 768 KB transfer budget`);
   check(landingLoad.heroFallbackBytes === 0,
     `the responsive landing still fetched the 630 KB hero fallback — ${JSON.stringify(landingLoad.resources)}`);
+
+  // Merely moving a pointer must not silently begin the large atmosphere transfer.
+  // Measure before any explicit play and keep that opt-in transfer outside the cold-load budget.
+  await desktop.mouse.move(360, 260);
+  await desktop.waitForTimeout(250);
+  check(await desktop.locator('.hero .herovid').count() === 0 && landingVideoRequests.length === 0,
+    `pointer movement started landing video without consent — ${JSON.stringify(landingVideoRequests)}`);
+  await desktop.getByRole('button', { name: 'Animate scene', exact: true }).click();
+  await desktop.waitForFunction(() => {
+    const video = document.querySelector('.hero video.herovid');
+    return video && !video.paused && video.readyState >= 2 && video.videoWidth > 0
+      && document.querySelector('#hero-motion')?.getAttribute('aria-pressed') === 'true';
+  }, null, { timeout: 10000 });
+  const playingHero = await desktop.locator('.hero video.herovid').evaluate((video) => ({
+    local: new URL(video.currentSrc).origin === location.origin,
+    source: new URL(video.currentSrc).pathname,
+    width: video.videoWidth,
+    height: video.videoHeight,
+  }));
+  check(playingHero.local && /\.(mp4|webm)$/.test(playingHero.source)
+      && playingHero.width > 0 && playingHero.height > 0,
+    `Animate scene did not play valid local video — ${JSON.stringify(playingHero)}`);
+  await desktop.getByRole('button', { name: 'Pause scene', exact: true }).click();
+  await desktop.waitForFunction(() => document.querySelector('.hero video.herovid')?.paused
+    && document.querySelector('#hero-motion')?.getAttribute('aria-pressed') === 'false', null, { timeout: 3000 });
+
+  const cityGuideLinks = await desktop.locator('#city-guide a').evaluateAll((links) => links.map((link) => ({
+    href: new URL(link.href).pathname + new URL(link.href).hash,
+    name: link.textContent.replace(/\s+/g, ' ').trim(),
+  })));
+  check(cityGuideLinks.length >= 9 && cityGuideLinks.every((link) => link.name && /^\/wiki#[\w-]+$/.test(link.href)),
+    `city guide is missing native, named Codex links — ${JSON.stringify(cityGuideLinks)}`);
 
   await desktop.locator('#agent-players').scrollIntoViewIfNeeded();
   await desktop.waitForFunction(() => document.querySelector('[data-agent-graphic="overview"]')?.naturalWidth > 0);
@@ -110,6 +248,7 @@ try {
   // THE PATH FINDER — one real seven-decision walk, not a DOM snapshot. This catches a quiz whose
   // progressive controls render but cannot complete, a result whose share image 404s, and dossiers
   // that push their exact modifier cards sideways at ordinary desktop widths.
+  reportStage('Path quiz, result cards, and downloadable proof');
   await desktop.goto(`${BASE}/path`, { waitUntil: 'networkidle' });
   let pathShape = await desktop.evaluate(() => ({
     form: document.querySelector('#path-quiz')?.tagName,
@@ -164,7 +303,8 @@ try {
   check(resultShape.over <= 1, `desktop Path result scrolls sideways by ${resultShape.over}px`);
   await desktop.close();
 
-  const mobile = await browser.newPage({ viewport: { width: 320, height: 568 }, isMobile: true, hasTouch: true });
+  reportStage('320px public layouts and deferred media');
+  const mobile = await newPage({ viewport: { width: 320, height: 568 }, isMobile: true, hasTouch: true });
   await mobile.goto(BASE, { waitUntil: 'networkidle' });
   const landingMobile = await mobile.evaluate(() => {
     const px = (selector) => Number.parseFloat(getComputedStyle(document.querySelector(selector)).fontSize);
@@ -203,6 +343,19 @@ try {
   `dense support copy fell below 14px — ${JSON.stringify(landingMobile.type)}`);
   check(landingMobile.videoDeferred && landingMobile.agentDeferred && landingMobile.tourDeferred,
     `below-fold/hidden media was exposed on the cold visit — ${JSON.stringify(landingMobile)}`);
+  const mobileHeroIndex = await mobile.locator('.hero-index').evaluate((nav) => ({
+    label: nav.getAttribute('aria-label'),
+    links: [...nav.querySelectorAll('a')].map((link) => {
+      const target = document.getElementById(link.hash.slice(1));
+      const labelledBy = target?.getAttribute('aria-labelledby');
+      return { href: link.getAttribute('href'), text: link.textContent.trim(),
+        height: link.getBoundingClientRect().height,
+        targetName: target?.getAttribute('aria-label') || (labelledBy && document.getElementById(labelledBy)?.textContent.trim()) };
+    }),
+  }));
+  check(mobileHeroIndex.label && mobileHeroIndex.links.length === 4
+      && mobileHeroIndex.links.every((link) => link.href?.startsWith('#') && link.text && link.height >= 44 && link.targetName),
+    `320px hero index loses native section links, names, or touch targets — ${JSON.stringify(mobileHeroIndex)}`);
   await mobile.locator('#agent-players').scrollIntoViewIfNeeded();
   await mobile.waitForFunction(() => document.querySelector('[data-agent-graphic="overview"]')?.naturalWidth > 0);
   const agentMobile = await mobile.evaluate(() => {
@@ -250,6 +403,12 @@ try {
   check(mobileResult.over <= 1, `320px Path result scrolls sideways by ${mobileResult.over}px`);
 
   await mobile.goto(`${BASE}/wiki`, { waitUntil: 'networkidle' });
+  const guideDestinations = await mobile.evaluate((links) => links.map((link) => {
+    const target = document.getElementById(new URL(link.href, location.origin).hash.slice(1));
+    return { href: link.href, heading: target?.querySelector('h1, h2, h3')?.textContent.trim() };
+  }), cityGuideLinks);
+  check(guideDestinations.every((target) => target.heading),
+    `city-guide links reach missing or unnamed Codex sections — ${JSON.stringify(guideDestinations)}`);
   let publicWidth = await mobile.evaluate(() => ({ inner: innerWidth, scroll: document.documentElement.scrollWidth }));
   check(publicWidth.inner <= 320 && publicWidth.scroll <= 321,
     `320px Codex expands its layout viewport — ${JSON.stringify(publicWidth)}`);
@@ -279,6 +438,7 @@ try {
   check(arenaEmpty.metrics === 0 && arenaEmpty.artifact === 1,
     `empty Arena repeats zero metrics instead of teaching the first-entry path — ${JSON.stringify(arenaEmpty)}`);
 
+  reportStage('Guest onboarding and operation receipts');
   await mobile.goto(BASE, { waitUntil: 'networkidle' });
   await mobile.click('#btn-guest');
   await mobile.waitForSelector('#screen-create:not(.hidden)');
@@ -370,7 +530,10 @@ try {
   await mobile.waitForSelector('#operation-feed .operation-receipt--error .operation-receipt__recovery');
   const recovery = await mobile.locator('#operation-feed .operation-receipt--error .operation-receipt__recovery').first().textContent();
   check(/lower|cash|earn/i.test(recovery || ''), `cash refusal has no concrete recovery guidance — ${JSON.stringify(recovery)}`);
-  for (const [query, expected] of [['heal', 'life'], ['sell car', 'garage'], ['take loan', 'loans']]) {
+  for (const [query, expected] of [
+    ['heal', 'life'], ['sell car', 'garage'], ['take loan', 'loans'],
+    ['sell a car', 'garage'], ['take a loan', 'loans'],
+  ]) {
     await mobile.click('#btn-jump');
     await mobile.fill('#jump-q', query);
     const got = await mobile.locator('#jump-list [data-jump]').first().getAttribute('data-jump').catch(() => null);
@@ -385,7 +548,110 @@ try {
   });
   check(typeFloor.cardDetail >= 14 && typeFloor.coachHint >= 14 && typeFloor.bottomNav >= 11.5,
     `operational type floor is still too small — ${JSON.stringify(typeFloor)}`);
+
+  // A completed action must refresh its own board even when its keyboard trigger remains
+  // focused. Background focus protection must not leave stale, apparently executable costs.
+  const gymDrawer = mobile.locator('#tab-streets details[data-sect="streets-train"]');
+  if (!await gymDrawer.evaluate((drawer) => drawer.open)) await gymDrawer.locator('summary').click();
+  const trainMuscle = mobile.locator('#tab-streets [data-do="POST /v1/train/muscle"]');
+  await trainMuscle.focus();
+  const [trained] = await Promise.all([
+    mobile.waitForResponse((response) => response.request().method() === 'POST'
+      && new URL(response.url()).pathname === '/v1/train/muscle'),
+    mobile.keyboard.press('Enter'),
+  ]);
+  const trainingResult = await trained.json();
+  check(trained.ok() && trainingResult.gain > 0 && trainingResult.nextTrainSeconds > 0,
+    `Gym regression fixture did not complete a stat gain with a recovery clock — ${JSON.stringify(trainingResult)}`);
+  if (trained.ok() && trainingResult.nextTrainSeconds > 0) {
+    await mobile.waitForFunction(() => {
+      const button = document.querySelector('#tab-streets [data-do="POST /v1/train/muscle"]');
+      const terms = document.querySelector('#streets-gym-terms')?.textContent || '';
+      return button?.disabled && /BLOCKED:.*Gym reopens/i.test(terms);
+    }, null, { timeout: 6000 });
+    const trainedBoard = await mobile.evaluate(() => ({
+      receiptLabels: [...document.querySelectorAll('#operation-feed .operation-receipt--success .operation-receipt__head b')]
+        .map((label) => label.textContent.trim()),
+      focused: document.querySelector('#tab-streets')?.contains(document.activeElement)
+        && document.activeElement?.getClientRects().length > 0,
+      focusTarget: document.activeElement?.id || document.activeElement?.tagName,
+    }));
+    check(trainedBoard.receiptLabels.some((label) => /train muscle/i.test(label)) && trainedBoard.focused,
+      `Gym result did not leave its receipt and usable focus in the refreshed screen — ${JSON.stringify(trainedBoard)}`);
+  }
+
+  reportStage('Keyboard navigation, modal focus, and accessible destinations');
+  await checkDialogKeyboard(mobile, '#btn-jump', '#jumpmodal', 'Quick jump');
+  await checkDialogKeyboard(mobile, '#btn-logout', '.modal-bg[data-managed-dialog]', 'Sign-out confirmation');
+  await mobile.locator('#btn-jump').focus();
+  await mobile.keyboard.press('Enter');
+  await mobile.locator('#jump-q').fill('heal');
+  await mobile.keyboard.press('ArrowDown');
+  const pickedResult = await mobile.evaluate(() => document.activeElement?.getAttribute('data-jump'));
+  check(pickedResult === 'life', `quick jump ArrowDown did not focus its leading heal result — ${pickedResult}`);
+  await mobile.keyboard.press('Enter');
+  await mobile.locator('#tab-life').waitFor({ state: 'visible' });
+  const destination = await mobile.locator('#tab-life').evaluate((panel) => ({
+    selected: document.getElementById(panel.getAttribute('aria-labelledby'))?.getAttribute('aria-selected'),
+    focused: panel === document.activeElement || panel.contains(document.activeElement),
+    over: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  }));
+  check(destination.selected === 'true' && destination.focused && destination.over <= 1,
+    `quick jump did not land keyboard users inside the named destination — ${JSON.stringify(destination)}`);
+
+  // Desktop tablists need repeated arrows, not just one successful selection. A generic
+  // "focus the destination" handoff previously stole focus after the first arrow press.
+  await mobile.setViewportSize({ width: 1280, height: 900 });
+  const visibleTabs = await mobile.locator('#tabs [role="tab"]:visible').evaluateAll((tabs) => tabs.map((tab) => tab.id));
+  check(visibleTabs.length >= 2, 'keyboard navigation fixture has fewer than two visible tabs');
+  if (visibleTabs.length >= 2) {
+    await mobile.locator(`#${visibleTabs[0]}`).focus();
+    let at = 0;
+    for (const key of ['ArrowRight', 'ArrowRight', 'End', 'Home', 'ArrowLeft']) {
+      at = key === 'Home' ? 0 : key === 'End' ? visibleTabs.length - 1
+        : (at + (key === 'ArrowRight' ? 1 : -1) + visibleTabs.length) % visibleTabs.length;
+      await mobile.keyboard.press(key);
+      const state = await mobile.evaluate(() => ({
+        focused: document.activeElement?.id,
+        selected: [...document.querySelectorAll('#tabs [role="tab"][aria-selected="true"]')].map((tab) => tab.id),
+        tabbable: [...document.querySelectorAll('#tabs [role="tab"][tabindex="0"]')].map((tab) => tab.id),
+        panels: [...document.querySelectorAll('#tabbodies [role="tabpanel"]')]
+          .filter((panel) => panel.getClientRects().length).map((panel) => panel.getAttribute('aria-labelledby')),
+      }));
+      check(state.focused === visibleTabs[at] && JSON.stringify(state.selected) === JSON.stringify([visibleTabs[at]])
+          && JSON.stringify(state.tabbable) === JSON.stringify([visibleTabs[at]])
+          && JSON.stringify(state.panels) === JSON.stringify([visibleTabs[at]]),
+        `${key}: tab focus, selection, roving stop, and displayed panel diverged — ${JSON.stringify(state)}`);
+    }
+  }
   await mobile.close();
+
+  reportStage('Public keyboard entry and reduced-motion preferences');
+  const quiet = await newPage({ viewport: { width: 320, height: 568 }, reducedMotion: 'reduce' });
+  for (const route of ['/', '/wiki', '/play', '/arena']) {
+    await checkPublicKeyboard(quiet, route);
+    const motion = await quiet.evaluate(() => ({
+      preference: matchMedia('(prefers-reduced-motion: reduce)').matches,
+      running: document.getAnimations().filter((animation) => animation.playState === 'running').length,
+      playing: [...document.querySelectorAll('video')].filter((video) => !video.paused).length,
+      scroll: getComputedStyle(document.documentElement).scrollBehavior,
+      over: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    }));
+    check(motion.preference && motion.running === 0 && motion.playing === 0 && motion.scroll !== 'smooth',
+      `${route}: reduced-motion visit still animates, plays video, or smooth-scrolls — ${JSON.stringify(motion)}`);
+    check(motion.over <= 1, `${route}: 320px public page scrolls sideways by ${motion.over}px`);
+  }
+  await quiet.close();
+} catch (error) {
+  check(false, `${stage}: ${error.stack || error.message}`);
+  if (process.env.UI_QUALITY_SHOTS) {
+    const directory = path.resolve(process.env.UI_QUALITY_SHOTS);
+    fs.mkdirSync(directory, { recursive: true });
+    for (const [index, page] of browser.contexts().flatMap((context) => context.pages()).entries()) {
+      await page.screenshot({ path: path.join(directory, `failure-${index + 1}.png`), fullPage: true }).catch(() => {});
+    }
+    console.error(`  Failure screenshots: ${directory}`);
+  }
 } finally {
   await browser.close();
   await app.close();
@@ -396,4 +662,4 @@ if (failures.length) {
   failures.forEach((f) => console.error('   • ' + f));
   process.exit(1);
 }
-console.log('\n✅ public UI contract passed — first paint, payload, Path quiz/results, truth register, Codex search, Arena empty state, intent jump, and chat labeling.');
+console.log(`\n✅ public UI contract passed in ${Math.round((Date.now() - startedAt) / 1000)}s — first paint, payload, Path quiz/results, truth register, Codex search, Arena empty state, operation receipts, keyboard navigation, modal focus, public landmarks, reduced motion, and chat labeling.`);

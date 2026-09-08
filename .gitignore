@@ -1,5 +1,6 @@
 node_modules/
 .env
+.env.txt
 *.log
 econ-sim.json
 
@@ -30,3 +31,7 @@ baselines/
 probe-tmp.mjs
 .worktrees/
 .release-worktrees/
+
+# Local distribution archives and browser/PDF verification output. Durable campaign
+# sources and finished assets live under brand/master-campaign/.
+output/
