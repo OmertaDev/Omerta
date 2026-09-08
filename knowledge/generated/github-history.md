@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `12da2899c96c`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `ed635e470e3c`.
 
 ## Repository
 
@@ -9,21 +9,21 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1416 |
+| Commits in clone | 1418 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-08 — Merge pull request #179 from OmertaDev/codex/site-copy-ui-upgrade |
+| Latest commit | 2026-09-08 — Pin the client receipt fixture outside calendar uprisings |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 545 |
+| OmertaDev | 546 |
 | Claude | 156 |
 | CRVYDEV | 41 |
-| github-actions[bot] | 26 |
+| github-actions[bot] | 27 |
 | claude[bot] | 1 |
 
 ## Historical hotspots
@@ -37,17 +37,17 @@
 | [schema.sql](../../schema.sql) | 283 | yes |
 | [BALANCE.md](../../BALANCE.md) | 254 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
-| knowledge/generated/github-history.md | 182 | historical |
-| knowledge/generated/graph-summary.md | 182 | historical |
-| knowledge/generated/graph.json | 182 | historical |
-| knowledge/generated/inventory.md | 182 | historical |
+| knowledge/generated/github-history.md | 183 | historical |
+| knowledge/generated/graph-summary.md | 183 | historical |
+| knowledge/generated/graph.json | 183 | historical |
+| knowledge/generated/inventory.md | 183 | historical |
 | [src/game.js](../../src/game.js) | 177 | yes |
 | [package.json](../../package.json) | 158 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 123 | yes |
 | [src/invariants.js](../../src/invariants.js) | 120 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 117 | yes |
-| [test/client.js](../../test/client.js) | 114 | yes |
+| [test/client.js](../../test/client.js) | 115 | yes |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
 | [test/social.js](../../test/social.js) | 85 | yes |
 | [public/wiki.html](../../public/wiki.html) | 84 | yes |
