@@ -814,7 +814,10 @@ async function collectLedgerChecks(pool, activationPolicy) {
     if (!eventsByItem.has(event.item_id)) eventsByItem.set(event.item_id, []);
     eventsByItem.get(event.item_id).push(event);
   }
-  const custodyByItem = new Map(custodyRows.map((row) => [row.item_id, row]));
+  // The normalized oracle owns observation attachments; legacy replay below must still prove
+  // each historical endpoint. Reuse this snapshot's single custody read/index in both checks.
+  const lotAudit = await collectLotChecks(pool, custodyRows);
+  const custodyByItem = lotAudit.custodyByItem;
   const itemById = new Map(itemRows.map((row) => [row.id, row]));
   const itemIssues = [];
   const creationKinds = new Set(['crafted', 'salvaged', 'awarded', 'imported']);
@@ -829,9 +832,15 @@ async function collectLedgerChecks(pool, activationPolicy) {
     && typeof owner.id === 'string' && owner.id.length > 0;
   for (const item of itemRows) {
     if (item.definition_hash !== null && item.provenance_class !== 'migration_origin') continue;
+    const migrated = item.definition_hash !== null;
+    const boundary = migrated ? lotAudit.observations.get(item.id) : null;
+    if (migrated && !boundary) itemIssues.push(`${item.id}:observation_boundary`);
     const history = eventsByItem.get(item.id) || [];
     const created = history.filter(({ event_kind: kind }) => kind === 'created');
-    const custody = custodyByItem.get(item.id);
+    const custody = migrated ? boundary?.snapshot.state === 'escrowed' ? {
+      owner_scope: 'operation', operation_id: boundary.snapshot.custody.id, item_state: 'escrowed',
+      depositor_scope: boundary.snapshot.depositor.scope, depositor_id: boundary.snapshot.depositor.id,
+    } : null : custodyByItem.get(item.id);
     if (created.length !== 1 || history[0]?.event_kind !== 'created') {
       itemIssues.push(`${item.id}:creation_order`);
     }
@@ -849,6 +858,10 @@ async function collectLedgerChecks(pool, activationPolicy) {
       const from = eventOwner(event, 'from');
       const to = eventOwner(event, 'to');
       const issue = (kind) => itemIssues.push(`${item.id}:${kind}:${event.sequence}`);
+      if (migrated) {
+        const sequence = itemEventSequence(event.sequence);
+        if (sequence === null || !boundary || sequence >= boundary.sequence) issue('observation_order');
+      }
       if (event.template_id !== item.template_id) issue('template_chain');
       if (event.quality !== 'standard') issue('unique_quality');
       if (terminal) {
@@ -913,11 +926,17 @@ async function collectLedgerChecks(pool, activationPolicy) {
       }
     }
 
-    if (derivedState !== item.state
-      || !sameOwner(derivedOwner, { scope: item.owner_scope, id: item.owner_id })) {
+    // Missing/invalid observation evidence is already loud; it must never fall back to
+    // comparing the legacy endpoint with a plausible mutable current row.
+    if (migrated && !boundary) continue;
+    const compared = migrated ? { state: boundary.snapshot.state,
+      owner_scope: boundary.snapshot.owner.scope, owner_id: boundary.snapshot.owner.id,
+      consumed_at: boundary.snapshot.consumedAt } : item;
+    if (derivedState !== compared.state
+      || !sameOwner(derivedOwner, { scope: compared.owner_scope, id: compared.owner_id })) {
       itemIssues.push(`${item.id}:final_state`);
     }
-    if ((derivedState === 'consumed') !== (item.consumed_at != null)) {
+    if ((derivedState === 'consumed') !== (compared.consumed_at != null)) {
       itemIssues.push(`${item.id}:consumed_time`);
     }
     if (derivedState === 'escrowed') {
@@ -980,29 +999,44 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('reason vocabulary', unknown.length, 0, 0, { unknown });
 
   checks.push(...await collectDefinitionChecks(pool, activationPolicy));
-  checks.push(...await collectLotChecks(pool));
+  checks.push(...lotAudit.checks);
   const ok = checks.every((c) => c.ok);
   return { ok, checks }; // alerting is done by the runLedgerInvariants snapshot wrapper (on the pool)
 }
 
 // Runs only inside the enclosing Phase 2 -> item read collection. This oracle derives balances
 // independently from normalized history, including physical split legs but excluding them as sources.
-async function collectLotChecks(pool) {
+function itemEventSequence(value) {
+  if (typeof value === 'number') return Number.isSafeInteger(value) && value > 0 ? BigInt(value) : null;
+  if (typeof value !== 'string' || !/^[1-9][0-9]{0,18}$/.test(value)) return null;
+  const sequence = BigInt(value);
+  return sequence <= 9223372036854775807n ? sequence : null;
+}
+
+async function collectLotChecks(pool, custody) {
   const lots = (await pool.query('SELECT * FROM item_lots ORDER BY lot_id')).rows;
   const uniques = (await pool.query('SELECT * FROM item_instances WHERE definition_hash IS NOT NULL ORDER BY id')).rows;
-  const custody = (await pool.query('SELECT * FROM operation_escrow')).rows;
   const inputs = (await pool.query('SELECT * FROM item_mutation_inputs ORDER BY mutation_id,input_ordinal')).rows;
   const outputs = (await pool.query('SELECT * FROM item_mutation_outputs ORDER BY mutation_id,output_ordinal')).rows;
   const events = (await pool.query("SELECT * FROM item_events WHERE event_branch<>'legacy' ORDER BY sequence")).rows;
   const guards = (await pool.query('SELECT * FROM item_mutation_guards WHERE mutation_id IS NOT NULL')).rows;
   const issues = { definition: [], quantity: [], custody: [], parity: [], conservation: [] };
+  const custodyByItem = new Map(), observations = new Map();
+  for (const claim of custody) {
+    if (custodyByItem.has(claim.item_id)) issues.custody.push(claim.item_id);
+    else custodyByItem.set(claim.item_id, claim);
+  }
   const equal = (a, b) => { try { return canonicalBytes(a).equals(canonicalBytes(b)); } catch { return false; } };
   const owner = (row) => ({ scope: row.owner_scope, id: row.owner_id });
   const depositor = (row) => row?.depositor_scope == null ? null : { scope: row.depositor_scope, id: row.depositor_id };
   const keyOf = (row) => row.lot_id ? `lot:${row.lot_id}` : `unique:${row.item_id ?? row.id}`;
   const bySubject = new Map([...lots, ...uniques].map((row) => [keyOf(row), row]));
   const byEvent = new Map(events.map((row) => [row.id, row]));
-  const byGuard = new Map(guards.map((row) => [row.mutation_id, row]));
+  const byGuard = new Map(), duplicateGuards = new Set();
+  for (const guard of guards) {
+    if (byGuard.has(guard.mutation_id)) duplicateGuards.add(guard.mutation_id);
+    else byGuard.set(guard.mutation_id, guard);
+  }
   const byInput = new Map(inputs.map((row) => [`${row.mutation_id}:${row.input_ordinal}`, row]));
   const history = new Map(), incoming = new Map(), outgoing = new Map(), creations = new Map(), splitChildren = new Map();
   const group = (map, key, value) => { if (!map.has(key)) map.set(key, []); map.get(key).push(value); };
@@ -1026,9 +1060,71 @@ async function collectLotChecks(pool) {
     if (canonicalBytes(value).toString('utf8') !== row.snapshot_json) issues.parity.push(row.id ?? row.event_id);
     return value;
   } catch { issues.parity.push(row.id ?? row.event_id); return null; } };
+  const instant = (value) => {
+    if (typeof value !== 'string' && !(value instanceof Date)) return null;
+    const date = new Date(value); return Number.isFinite(date.getTime()) ? date.toISOString() : null;
+  };
+  const uuid = (value) => typeof value === 'string' && /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/.test(value);
+  const liveOwner = (value) => value && ['account', 'character'].includes(value.scope)
+    && typeof value.id === 'string' && value.id.length > 0 && value.id.length <= 200
+    && equal(value, { scope: value.scope, id: value.id });
+  function observationBoundary(row, created) {
+    const all = history.get(keyOf(row)) ?? [];
+    const origins = all.filter(event => event.event_branch === 'observation' || event.event_kind === 'migration_origin');
+    const event = origins.length === 1 ? origins[0] : null, output = created.length === 1 ? created[0] : null;
+    const guard = event && byGuard.get(event.mutation_id), snapshot = event && parse(event);
+    const sequence = event && itemEventSequence(event.sequence), quantity = snapshot?.state === 'consumed' ? 0 : 1;
+    const fields = ['id', 'logicalItemId', 'definitionHash', 'owner', 'state', 'custody', 'qualityBand',
+      'qualityStateDigest', 'tradePolicyHash', 'conditionSummary', 'exportPolicy', 'mutationId', 'outputOrdinal',
+      'createdAt', 'updatedAt', 'consumedAt', 'provenanceClass', 'provenanceDigest'];
+    const coherentState = snapshot?.state === 'active'
+      ? liveOwner(snapshot.owner) && equal(snapshot.custody, { state: 'direct', scope: null, id: null }) && snapshot.depositor == null
+      : snapshot?.state === 'escrowed'
+        ? snapshot.owner?.scope === 'operation' && typeof snapshot.owner.id === 'string' && snapshot.owner.id.length > 0
+          && snapshot.owner.id.length <= 200 && equal(snapshot.owner, { scope: 'operation', id: snapshot.owner.id })
+          && equal(snapshot.custody, { state: 'escrowed', scope: 'operation', id: snapshot.owner.id }) && liveOwner(snapshot.depositor)
+        : snapshot?.state === 'consumed' && (liveOwner(snapshot.owner) || (snapshot.owner?.scope === 'operation'
+          && typeof snapshot.owner.id === 'string' && snapshot.owner.id.length > 0 && snapshot.owner.id.length <= 200
+          && equal(snapshot.owner, { scope: 'operation', id: snapshot.owner.id })))
+          && snapshot.custody === null && snapshot.depositor == null;
+    if (!event || !output || !snapshot || Array.isArray(snapshot) || !coherentState || sequence === null
+      || fields.some(field => !Object.hasOwn(snapshot, field))
+      || Object.keys(snapshot).some(field => !fields.includes(field) && field !== 'depositor')
+      || !uuid(row.mutation_id) || !uuid(event.id) || !Number.isSafeInteger(row.output_ordinal) || row.output_ordinal < 0
+      || snapshot.id !== row.id || snapshot.mutationId !== row.mutation_id || snapshot.outputOrdinal !== row.output_ordinal
+      || immutable.some(([field, column]) => snapshot[field] !== row[column])
+      || snapshot.qualityBand !== 'standard' || snapshot.qualityStateDigest !== null
+      || snapshot.conditionSummary !== null || snapshot.conditionSummary !== row.condition_summary
+      || snapshot.exportPolicy !== 'ineligible' || snapshot.exportPolicy !== row.export_policy
+      || instant(snapshot.createdAt) === null || snapshot.createdAt !== instant(row.created_at)
+      || instant(snapshot.updatedAt) === null || snapshot.updatedAt !== instant(snapshot.updatedAt)
+      || (snapshot.state === 'consumed' ? row.state !== 'consumed' || instant(snapshot.consumedAt) === null
+        || snapshot.consumedAt !== instant(row.consumed_at) : snapshot.consumedAt !== null)
+      || event.item_id !== row.id || event.lot_id !== null || event.template_id !== row.template_id
+      || event.definition_hash !== row.definition_hash || event.mutation_id !== row.mutation_id || event.event_ordinal !== row.output_ordinal
+      || event.event_branch !== 'observation' || event.event_kind !== 'migration_origin' || event.provenance_kind !== null
+      || event.quality !== 'standard' || event.quantity_delta !== 0 || event.quantity_before !== quantity || event.quantity_after !== quantity
+      || output.item_id !== row.id || output.lot_id !== null || output.event_id !== event.id
+      || output.definition_hash !== row.definition_hash || output.mutation_id !== row.mutation_id || output.output_ordinal !== row.output_ordinal
+      || output.event_branch !== 'observation' || output.transition_kind !== 'migration_origin' || output.quantity !== 0
+      || output.attachment_quantity !== 1 || output.attachment_mutation_id !== row.mutation_id || output.attachment_output_ordinal !== row.output_ordinal
+      || output.source_input_ordinal !== null || output.source_transition_kind !== null
+      || output.snapshot_json !== event.snapshot_json || canonicalBytes(snapshot).toString('utf8') !== event.snapshot_json
+      || (incoming.get(event.id)?.length ?? 0) !== 0 || outgoing.get(event.id)?.length !== 1
+      || duplicateGuards.has(row.mutation_id) || instant(guard?.completed_at) === null
+      || !guard?.result_json || guard.idempotency_key !== event.idempotency_key
+      || all.some(other => other !== event && (itemEventSequence(other.sequence) === null || itemEventSequence(other.sequence) <= sequence))) {
+      issues.parity.push(row.id); return null;
+    }
+    return { snapshot, sequence, eventId: event.id };
+  }
   for (const [key, row] of bySubject) {
     const unique = !row.lot_id, id = row.lot_id ?? row.id, created = creations.get(key) ?? [];
-    const liveCustody = unique ? custody.find((claim) => claim.item_id === id) : row;
+    const liveCustody = unique ? custodyByItem.get(id) : row;
+    if (unique && row.provenance_class === 'migration_origin') {
+      const boundary = observationBoundary(row, created);
+      if (boundary) observations.set(id, boundary);
+    }
     let definition = definitions.get(row.definition_hash);
     if (!definition) {
       try { definition = await definitionByHash(pool, row.definition_hash); definitions.set(row.definition_hash, definition); }
@@ -1076,14 +1172,10 @@ async function collectLotChecks(pool) {
       const normalizedInput = incoming.get(event.id)?.[0];
       if (event.event_branch === 'observation') {
         // An attachment observes an existing legacy instance; it never grants it again.
-        // The legacy state machine above still proves its creation/consumption history.
-        if (!unique || row.provenance_class !== 'migration_origin' || derived
-          || snapshot.qualityBand !== 'standard' || snapshot.qualityStateDigest !== null
-          || snapshot.conditionSummary !== null || snapshot.exportPolicy !== 'ineligible'
-          || snapshot.createdAt !== new Date(row.created_at).toISOString()
-          || snapshot.consumedAt !== (row.consumed_at ? new Date(row.consumed_at).toISOString() : null)
-          || event.quantity_delta !== 0 || event.quantity_before !== event.quantity_after
-          || event.quantity_before !== (snapshot.state === 'consumed' ? 0 : 1)) issues.parity.push(event.id);
+        // Legacy replay separately proves this strictly linked observation's historical state.
+        if (!unique || derived || observations.get(id)?.eventId !== event.id) {
+          issues.parity.push(event.id); continue;
+        }
         quantity = event.quantity_after;
         derived = { owner: snapshot.owner, custody: snapshot.custody, uniqueState: snapshot.state, remainingQuantity: quantity };
         heldDepositor = snapshot.depositor ?? null;
@@ -1141,6 +1233,7 @@ async function collectLotChecks(pool) {
         : { state: 'direct', scope: null, id: null }, uniqueState: unique ? row.state : null, remainingQuantity: currentQuantity };
     if (!equal(derived, currentState) || !equal(heldDepositor, depositor(liveCustody))) issues.custody.push(id);
     if (unique ? (row.state === 'escrowed') !== Boolean(liveCustody) || (row.state === 'consumed') !== Boolean(row.consumed_at)
+      || (liveCustody && (liveCustody.owner_scope !== 'operation' || liveCustody.operation_id !== row.owner_id || liveCustody.item_state !== 'escrowed'))
       : (currentQuantity === 0 ? row.state !== 'exhausted' || row.custody_state !== null || row.custody_scope !== null || row.custody_id !== null
         : row.custody_state !== currentState.custody.state || row.custody_scope !== currentState.custody.scope || row.custody_id !== currentState.custody.id
           || row.state !== (row.custody_state === 'escrowed' ? 'escrowed' : 'active'))) issues.custody.push(id);
@@ -1195,10 +1288,11 @@ async function collectLotChecks(pool) {
   for (const key of new Set([...physical.keys(), ...sources.keys(), ...sinks.keys()])) {
     if ((physical.get(key) || 0) !== (observedBalances.get(key) || 0) + (sources.get(key) || 0) - (sinks.get(key) || 0)) issues.conservation.push(qualityBucketIssue);
   }
-  return [['definition', 'item lot definition integrity'], ['quantity', 'item lot quantity integrity'],
+  const checks = [['definition', 'item lot definition integrity'], ['quantity', 'item lot quantity integrity'],
     ['custody', 'item lot custody integrity'], ['parity', 'item lot lineage parity'], ['conservation', 'item lot conservation']]
     .map(([key, name]) => ({ name, lhs: issues[key].length, rhs: 0, drift: issues[key].length,
       ok: issues[key].length === 0, issues: [...new Set(issues[key])].slice(0, 25) }));
+  return { checks, observations, custodyByItem };
 }
 
 // Alerting: a telemetry row always; a webhook when INVARIANT_WEBHOOK_URL is set. Exported + `kind`-tagged

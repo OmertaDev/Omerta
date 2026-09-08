@@ -39,7 +39,426 @@ export function lotLeafPrivateCases(lots, owner, definition, uniqueDefinition) {
   ];
 }
 
+async function runCustodyIndexInvariants(existingPool) {
+  await withItemFixture(async ({ pool, accountOwner: owner }) => {
+    const source = materialSource({ kind: 'item', stackable: false, maximumLotQuantity: 1,
+      ownerScopes: ['account', 'project'], definitionVersion: 44 }); source.version = 44;
+    const artifact = compileFixture(source); await storeSealedBundle(pool, artifact.request);
+    const definition = await definitionByHash(pool, artifact.expectedDefinitions[0].definitionHash);
+    const lots = await import('../src/itemlots.js'), exactIds = new Set();
+    for (const size of [4, 8]) {
+      for (let i = exactIds.size; i < size; i++) {
+        const row = await withItemTransaction(pool, q => withLotMutation(q, lotRequest(owner, definition),
+          m => lots.grantUnique(q, m, definition, { logicalItemId: definition.logicalItemId, definitionHash: definition.definitionHash,
+            owner, qualityBand: null, qualityStateDigest: null, tradePolicyHash: definition.definitionHash,
+            conditionSummary: null, exportPolicy: 'ineligible', provenanceClass: 'awarded', provenanceDigest: 'a'.repeat(64) })));
+        exactIds.add(row.id);
+        const legacy = await withItemTransaction(pool, q => createItem(q, owner, `custody-scale:${i}`, 'awarded', randomUUID()));
+        await withItemTransaction(pool, q => escrowItem(q, owner, 'custody-scale-operation', legacy.id, 'scale custody', randomUUID()));
+      }
+      // Observe real collector Map operations, not private source text or elapsed time. Only
+      // maps populated with actual custody-query row identities count as custody indexes.
+      const claims = new Set(), indexes = new Set();
+      let custodyReads = 0, indexVisits = 0, uniqueLookups = 0;
+      const measured = forwardPool(pool, { after: async (sql, values, result) => {
+        if (/^SELECT .* FROM operation_escrow(?: ORDER BY item_id)?$/.test(sql)) {
+          custodyReads++; for (const row of result.rows) claims.add(row);
+        }
+      } });
+      const originalSet = Map.prototype.set, originalGet = Map.prototype.get;
+      let checked;
+      try {
+        Map.prototype.set = function (key, value) {
+          if (claims.has(value)) { indexes.add(this); indexVisits++; }
+          return originalSet.call(this, key, value);
+        };
+        Map.prototype.get = function (key) {
+          if (indexes.has(this) && exactIds.has(key)) uniqueLookups++;
+          return originalGet.call(this, key);
+        };
+        checked = await runLedgerInvariants(measured, { alert: false });
+      } finally { Map.prototype.set = originalSet; Map.prototype.get = originalGet; }
+      assert.equal(checked.ok, true, JSON.stringify(checked.checks.filter(check => !check.ok)));
+      assert.equal(uniqueLookups, size, `${size} direct uniques use one indexed custody lookup each, even with unrelated claims`);
+      assert.equal(indexVisits, size, `${size} claims populate the custody index once`);
+      assert.equal(indexes.size, 1, 'legacy and normalized reconciliation share one custody index');
+      assert.equal(custodyReads, 1, 'the collector reuses the caller custody projection without a duplicate table scan');
+    }
+    console.log('invariant correction: C custody index visits plus U exact-unique lookups at two scales PASS');
+  }, existingPool);
+}
+
+// Migration is not implemented here: only the observation attachment is fixture SQL.
+// Every legacy history and subsequent exact transition uses its real owned mutation path.
+async function runObservedUniqueInvariants(existingPool) {
+  await withItemFixture(async ({ pool, accountOwner: owner, snapshot }) => {
+    const source = materialSource({ kind: 'item', stackable: false, qualityMode: 'fixed', maximumLotQuantity: 1,
+      ownerScopes: ['account', 'character', 'project'], definitionVersion: 43 }); source.version = 43;
+    const artifact = compileFixture(source); await storeSealedBundle(pool, artifact.request);
+    const definition = await definitionByHash(pool, artifact.expectedDefinitions[0].definitionHash);
+    const fixture = { pool, permissions: { actorAccountId: owner.id, alive: true, role: 'custodian', revision: 1, consent: true },
+      issuedActions: Object.freeze({}) };
+    await prepareDormantOperationFixture(fixture);
+    const operationId = fixture.operation.id, character = { scope: 'character', id: fixture.operation.characterId };
+    const legacyReceipts = [], exactReceipts = [], observedItems = [];
+    const legacyAction = async (leaf) => {
+      const key = randomUUID(), run = () => withItemTransaction(pool, q => leaf(q, key));
+      const result = await run(); legacyReceipts.push({ run, result }); return result;
+    };
+    const observe = async (mode) => {
+      const initialOwner = mode === 'transferred' ? character : owner;
+      const item = await legacyAction((q, key) => createItem(q, initialOwner, `historical:${mode}`, 'awarded', key));
+      if (mode === 'transferred') await legacyAction((q, key) => transferItem(q, character, owner, item.id, 'historical transfer', key));
+      if (['escrowed', 'released', 'escrow-consumed'].includes(mode)) {
+        await legacyAction((q, key) => escrowItem(q, owner, operationId, item.id, 'historical escrow', key));
+      }
+      if (mode === 'released') await legacyAction((q, key) => releaseEscrow(q, operationId, owner, item.id, 'historical release', key));
+      if (['consumed', 'escrow-consumed'].includes(mode)) {
+        await legacyAction((q, key) => consumeItem(q, mode === 'consumed' ? owner : { scope: 'operation', id: operationId },
+          item.id, 'historical consumption', key));
+      }
+      const old = (await pool.query('SELECT * FROM item_instances WHERE id=$1', [item.id])).rows[0];
+      const oldHistory = (await pool.query('SELECT * FROM item_events WHERE item_id=$1 ORDER BY sequence', [item.id])).rows;
+      const mutationId = randomUUID(), eventId = randomUUID(), key = `migration-observation:${randomUUID()}`;
+      await pool.query(`INSERT INTO item_mutation_guards
+        (idempotency_key,mutation_kind,owner_scope,owner_id,request_hash,reservation_id,mutation_id,result_json,completed_at)
+        VALUES ($1,'craft','account',$2,$3,$4,$5,'{"observation":true}',now())`, [key, owner.id, 'a'.repeat(64), randomUUID(), mutationId]);
+      await pool.query(`UPDATE item_instances SET logical_item_id=$2,definition_hash=$3,quality_band='standard',
+        trade_policy_hash=$3,export_policy='ineligible',provenance_class='migration_origin',provenance_digest=$4,
+        mutation_id=$5,output_ordinal=0 WHERE id=$1`, [item.id, definition.logicalItemId, definition.definitionHash, 'a'.repeat(64), mutationId]);
+      const observed = { id: item.id, logicalItemId: definition.logicalItemId, definitionHash: definition.definitionHash,
+        owner: { scope: old.owner_scope, id: old.owner_id }, state: old.state,
+        custody: old.state === 'consumed' ? null : old.state === 'escrowed'
+          ? { state: 'escrowed', scope: 'operation', id: operationId } : { state: 'direct', scope: null, id: null },
+        ...(old.state === 'escrowed' ? { depositor: owner } : {}),
+        qualityBand: 'standard', qualityStateDigest: null, tradePolicyHash: definition.definitionHash,
+        conditionSummary: null, exportPolicy: 'ineligible', mutationId, outputOrdinal: 0,
+        createdAt: new Date(old.created_at).toISOString(), updatedAt: new Date(old.updated_at).toISOString(),
+        consumedAt: old.consumed_at === null ? null : new Date(old.consumed_at).toISOString(),
+        provenanceClass: 'migration_origin', provenanceDigest: 'a'.repeat(64) };
+      const bytes = canonicalBytes(observed).toString('utf8'), quantity = old.state === 'consumed' ? 0 : 1;
+      await pool.query(`INSERT INTO item_events
+        (id,event_key,event_kind,item_id,template_id,quality,quantity_delta,quantity_before,quantity_after,
+         reason,idempotency_key,event_branch,mutation_id,event_ordinal,definition_hash,snapshot_json)
+        VALUES ($1,'observation:0','migration_origin',$2,$3,'standard',0,$4,$4,
+          'migration observation fixture',$5,'observation',$6,0,$7,$8)`,
+      [eventId, item.id, old.template_id, quantity, key, mutationId, definition.definitionHash, bytes]);
+      await pool.query(`INSERT INTO item_mutation_outputs
+        (mutation_id,output_ordinal,event_id,event_branch,definition_hash,item_id,quantity,transition_kind,snapshot_json,
+         attachment_mutation_id,attachment_output_ordinal,attachment_quantity)
+        VALUES ($1,0,$2,'observation',$3,$4,0,'migration_origin',$5,$1,0,1)`,
+      [mutationId, eventId, definition.definitionHash, item.id, bytes]);
+      const record = { item, old, oldHistory, mutationId, eventId, observed };
+      observedItems.push(record); return record;
+    };
+    const move = async (record, kind, extra = {}, expectedOverride = {}) => {
+      const row = (await pool.query('SELECT * FROM item_instances WHERE id=$1', [record.item.id])).rows[0];
+      const expected = { definitionHash: definition.definitionHash, owner: { scope: row.owner_scope, id: row.owner_id },
+        state: row.state, custody: row.state === 'escrowed' ? { state: 'escrowed', scope: 'operation', id: row.owner_id }
+          : { state: 'direct', scope: null, id: null }, qualityBand: 'standard', qualityStateDigest: null,
+        conditionSummary: null, exportPolicy: 'ineligible', ...expectedOverride };
+      const subject = { storageKind: 'unique', itemId: row.id, expected }, transition = { kind, subject, ...extra };
+      const id = `observed-transition-${randomUUID()}`, request = lotRequest(row.owner_scope === 'character' ? character : owner,
+        definition, { actorAccountId: owner.id, actionKind: 'operation_action' });
+      request.request.authority.issuedActionId = id; request.request.authority.aggregate = { kind: 'operation', id: operationId };
+      request.request.authority.itemTransitions = [transition];
+      fixture.issuedActions = Object.freeze({ ...fixture.issuedActions, [id]: Object.freeze({ kind: 'transition', request,
+        definition, requirements: [{ kind: 'unique_exact', itemId: row.id, expected }], role: 'custodian', revision: 1 }) });
+      const run = () => runTrustedDormantItemAction(fixture, { issuedActionId: id }), result = await run();
+      exactReceipts.push({ run, result }); return result;
+    };
+    const clean = async (label) => {
+      const result = await runLedgerInvariants(pool, { alert: false });
+      assert.equal(result.ok, true, `${label}: ${JSON.stringify(result.checks.filter(check => !check.ok))}`);
+    };
+    const live = await observe('active'); await clean('live observation');
+    // SQL-valid corruptions go through real DML and unmodified collector reads. Every case
+    // restores exact fixture bytes in finally, including when the invariant assertion fails.
+    let persistedCases = 0;
+    const persistedFailure = async (name, damage, restore, expectedFamily = null) => {
+      const before = await snapshot();
+      try {
+        await damage();
+        assert.notDeepEqual(await snapshot(), before, `${name} actually changes stored fixture rows`);
+        const result = await runLedgerInvariants(pool, { alert: false });
+        assert.equal(result.ok, false, `${name} must reject persisted corruption through real queries`);
+        if (expectedFamily) assert.equal(result.checks.find(check => check.name === expectedFamily).ok, false, name);
+        persistedCases++;
+      } finally {
+        await restore();
+        assert.deepEqual(await snapshot(), before, `${name} restores exact bytes before another case`);
+        await clean(`${name} restored fixture`);
+      }
+    };
+    const persistedSnapshot = async (name, record, mutate, expectedFamily = null, forgeDepositor = false) => {
+      const event = (await pool.query('SELECT snapshot_json FROM item_events WHERE id=$1', [record.eventId])).rows[0];
+      const output = (await pool.query('SELECT snapshot_json FROM item_mutation_outputs WHERE mutation_id=$1 AND output_ordinal=0',
+        [record.mutationId])).rows[0];
+      const custody = forgeDepositor
+        ? (await pool.query('SELECT depositor_id FROM operation_escrow WHERE item_id=$1', [record.item.id])).rows[0] : null;
+      const value = JSON.parse(event.snapshot_json); mutate(value);
+      const bytes = canonicalBytes(value).toString('utf8');
+      await persistedFailure(name, async () => {
+        await pool.query('UPDATE item_events SET snapshot_json=$2 WHERE id=$1', [record.eventId, bytes]);
+        await pool.query('UPDATE item_mutation_outputs SET snapshot_json=$2 WHERE mutation_id=$1 AND output_ordinal=0',
+          [record.mutationId, bytes]);
+        if (forgeDepositor) await pool.query('UPDATE operation_escrow SET depositor_id=$2 WHERE item_id=$1', [record.item.id, character.id]);
+        assert.equal((await pool.query('SELECT snapshot_json FROM item_events WHERE id=$1', [record.eventId])).rows[0].snapshot_json, bytes);
+        assert.equal((await pool.query('SELECT snapshot_json FROM item_mutation_outputs WHERE mutation_id=$1 AND output_ordinal=0',
+          [record.mutationId])).rows[0].snapshot_json, bytes, 'both canonical snapshots are persisted, not substituted on read');
+      }, async () => {
+        await pool.query('UPDATE item_events SET snapshot_json=$2 WHERE id=$1', [record.eventId, event.snapshot_json]);
+        await pool.query('UPDATE item_mutation_outputs SET snapshot_json=$2 WHERE mutation_id=$1 AND output_ordinal=0',
+          [record.mutationId, output.snapshot_json]);
+        if (forgeDepositor) await pool.query('UPDATE operation_escrow SET depositor_id=$2 WHERE item_id=$1', [record.item.id, custody.depositor_id]);
+      }, expectedFamily);
+    };
+    // Controlled SELECT fixtures below are reserved for FK/CHECK/unique-key violations or
+    // driver representations which cannot be retained by the native column type.
+    const readTable = (sql) => {
+      if (sql.includes("FROM item_events WHERE event_branch<>'legacy'")) return 'events';
+      if (sql.includes("FROM item_events WHERE item_id IS NOT NULL AND event_branch='legacy'")) return 'legacy';
+      if (sql.startsWith('SELECT * FROM item_mutation_outputs ')) return 'outputs';
+      if (sql.startsWith('SELECT * FROM item_mutation_inputs ')) return 'inputs';
+      if (sql.startsWith('SELECT * FROM item_mutation_guards WHERE mutation_id IS NOT NULL')) return 'guards';
+      if (sql.startsWith('SELECT * FROM item_instances WHERE definition_hash IS NOT NULL')) return 'uniques';
+      if (/^SELECT .* FROM operation_escrow(?: ORDER BY item_id)?$/.test(sql)) return 'custody';
+      return null;
+    };
+    const corruptRead = async (name, change, expectedFamily = null) => {
+      let touched = 0;
+      const corrupt = forwardPool(pool, { after: async (sql, values, result) => {
+        const table = readTable(sql); if (!table) return;
+        const rows = structuredClone(result.rows), before = JSON.stringify(rows);
+        change(table, rows); result.rows = rows;
+        if (JSON.stringify(rows) !== before) touched++;
+      } });
+      const result = await runLedgerInvariants(corrupt, { alert: false });
+      assert(touched > 0, `${name} reached its named real query boundary`);
+      assert.equal(result.ok, false, `${name} must remain loud rather than certify an observation boundary`);
+      if (expectedFamily) assert.equal(result.checks.find(check => check.name === expectedFamily).ok, false, name);
+      return result;
+    };
+    for (const [name, mutate] of [
+      ['snapshot item identity', value => { value.id = 'forged-permanent-item'; }],
+      ['snapshot root UUID', value => { value.mutationId = randomUUID(); }],
+      ['snapshot output ordinal', value => { value.outputOrdinal = 1; }],
+      ['snapshot logical definition', value => { value.logicalItemId = 'forged::item'; }],
+      ['snapshot exact definition', value => { value.definitionHash = 'b'.repeat(64); }],
+      ['snapshot quality band', value => { value.qualityBand = 'forged'; }],
+      ['snapshot quality digest', value => { value.qualityStateDigest = 'b'.repeat(64); }],
+      ['snapshot trade policy', value => { value.tradePolicyHash = 'b'.repeat(64); }],
+      ['snapshot provenance class', value => { value.provenanceClass = 'awarded'; }],
+      ['snapshot provenance digest', value => { value.provenanceDigest = 'b'.repeat(64); }],
+      ['snapshot creation timestamp', value => { value.createdAt = '2000-01-01T00:00:00.000Z'; }],
+      ['non-scalar historical timestamp', value => { value.updatedAt = { toString: 'not-callable', valueOf: 'not-callable' }; }],
+      ['live observation consumed time', value => { value.consumedAt = '2000-01-01T00:00:00.000Z'; }],
+      ['snapshot owner', value => { value.owner = character; }],
+      ['snapshot state', value => { value.state = 'consumed'; }],
+      ['snapshot custody', value => { value.custody = { state: 'escrowed', scope: 'operation', id: operationId }; }],
+      ['snapshot depositor', value => { value.depositor = owner; }],
+    ]) await persistedSnapshot(name, live, mutate);
+    const originEvent = (await pool.query('SELECT * FROM item_events WHERE id=$1', [live.eventId])).rows[0];
+    const originOutput = (await pool.query('SELECT * FROM item_mutation_outputs WHERE mutation_id=$1 AND output_ordinal=0',
+      [live.mutationId])).rows[0];
+    const insertOriginOutput = (row) => pool.query(`INSERT INTO item_mutation_outputs
+      (mutation_id,output_ordinal,event_id,event_branch,definition_hash,item_id,quantity,transition_kind,snapshot_json,
+       attachment_mutation_id,attachment_output_ordinal,attachment_quantity)
+      VALUES ($1,0,$2,$3,$4,$5,$6,$7,$8,$1,0,1)`,
+    [row.mutation_id, row.event_id, row.event_branch, row.definition_hash, row.item_id, row.quantity, row.transition_kind, row.snapshot_json]);
+    await persistedFailure('missing origin output',
+      () => pool.query('DELETE FROM item_mutation_outputs WHERE mutation_id=$1 AND output_ordinal=0', [live.mutationId]),
+      () => insertOriginOutput(originOutput));
+    await persistedFailure('wrong event template',
+      () => pool.query('UPDATE item_events SET template_id=$2 WHERE id=$1', [live.eventId, 'forged:legacy']),
+      () => pool.query('UPDATE item_events SET template_id=$2 WHERE id=$1', [live.eventId, originEvent.template_id]));
+    // Native timestamps may contain sub-millisecond precision; pg-mem has only Date
+    // precision and does not implement timestamptz::text. Preserve each backend's bytes.
+    const readOriginGuard = () => pool.query(dbCaps.skipLocked
+      ? 'SELECT result_json,completed_at::text AS completed_at FROM item_mutation_guards WHERE mutation_id=$1'
+      : 'SELECT result_json,completed_at FROM item_mutation_guards WHERE mutation_id=$1', [live.mutationId]);
+    const originGuard = (await readOriginGuard()).rows[0];
+    await persistedFailure('uncompleted observation guard with SQL-valid null pair',
+      () => pool.query('UPDATE item_mutation_guards SET result_json=NULL,completed_at=NULL WHERE mutation_id=$1', [live.mutationId]),
+      async () => {
+        await pool.query('UPDATE item_mutation_guards SET result_json=$2,completed_at=$3 WHERE mutation_id=$1',
+          [live.mutationId, originGuard.result_json, originGuard.completed_at]);
+        assert.deepEqual((await readOriginGuard()).rows[0], originGuard, 'native timestamp precision is restored without a JavaScript Date roundtrip');
+      });
+    await persistedFailure('noncanonical observation bytes', async () => {
+      await pool.query('UPDATE item_events SET snapshot_json=$2 WHERE id=$1', [live.eventId, originEvent.snapshot_json + ' ']);
+      await pool.query('UPDATE item_mutation_outputs SET snapshot_json=$2 WHERE mutation_id=$1 AND output_ordinal=0',
+        [live.mutationId, originOutput.snapshot_json + ' ']);
+    }, async () => {
+      await pool.query('UPDATE item_events SET snapshot_json=$2 WHERE id=$1', [live.eventId, originEvent.snapshot_json]);
+      await pool.query('UPDATE item_mutation_outputs SET snapshot_json=$2 WHERE mutation_id=$1 AND output_ordinal=0',
+        [live.mutationId, originOutput.snapshot_json]);
+    });
+    // Remove the referencing output before changing its composite event FK, then restore
+    // in the same dependency order. The stored substituted grant is individually SQL-valid.
+    await persistedFailure('ordinary grant substituted for observation', async () => {
+      await pool.query('DELETE FROM item_mutation_outputs WHERE mutation_id=$1 AND output_ordinal=0', [live.mutationId]);
+      await pool.query(`UPDATE item_events SET event_branch='unique',event_kind='unique_granted',
+        quantity_delta=1,quantity_before=0,quantity_after=1 WHERE id=$1`, [live.eventId]);
+      await insertOriginOutput({ ...originOutput, event_branch: 'unique', transition_kind: 'grant', quantity: 1 });
+    }, async () => {
+      await pool.query('DELETE FROM item_mutation_outputs WHERE mutation_id=$1 AND output_ordinal=0', [live.mutationId]);
+      await pool.query(`UPDATE item_events SET event_branch=$2,event_kind=$3,
+        quantity_delta=$4,quantity_before=$5,quantity_after=$6 WHERE id=$1`,
+      [live.eventId, originEvent.event_branch, originEvent.event_kind, originEvent.quantity_delta, originEvent.quantity_before, originEvent.quantity_after]);
+      await insertOriginOutput(originOutput);
+    });
+    for (const [name, change] of [
+      ['missing observation event', (table, rows) => { if (table === 'events') rows.splice(rows.findIndex(row => row.id === live.eventId), 1); }],
+      ['missing observation guard', (table, rows) => { if (table === 'guards') rows.splice(rows.findIndex(row => row.mutation_id === live.mutationId), 1); }],
+      ['incomplete observation guard', (table, rows) => { if (table === 'guards') rows.find(row => row.mutation_id === live.mutationId).completed_at = null; }],
+      ['extra observation guard', (table, rows) => { if (table === 'guards') rows.push({ ...rows.find(row => row.mutation_id === live.mutationId) }); }],
+      ['invalid guard completion time', (table, rows) => { if (table === 'guards') rows.find(row => row.mutation_id === live.mutationId).completed_at = 'not-a-time'; }],
+      ['wrong guard key', (table, rows) => { if (table === 'guards') rows.find(row => row.mutation_id === live.mutationId).idempotency_key = 'unlinked'; }],
+      ['extra observation event', (table, rows) => { if (table === 'events') rows.push({ ...rows.find(row => row.id === live.eventId), id: randomUUID() }); }],
+      ['extra origin output', (table, rows) => { if (table === 'outputs') rows.push({ ...rows.find(row => row.event_id === live.eventId), output_ordinal: 1 }); }],
+      ['observation input', (table, rows) => { if (table === 'inputs') rows.push({ mutation_id: live.mutationId, input_ordinal: 0,
+        event_id: live.eventId, event_branch: 'observation', definition_hash: definition.definitionHash, lot_id: null,
+        item_id: live.item.id, attachment_mutation_id: live.mutationId, attachment_output_ordinal: 0, attachment_quantity: 1,
+        quantity_before: 1, removed_quantity: 0, quantity_after: 1, transition_kind: 'migration_origin', snapshot_json: canonicalBytes(live.observed).toString('utf8') }); }],
+      ['wrong origin branch', (table, rows) => { if (table === 'outputs') rows.find(row => row.event_id === live.eventId).event_branch = 'unique'; }],
+      ['wrong event root', (table, rows) => { if (table === 'events') rows.find(row => row.id === live.eventId).mutation_id = randomUUID(); }],
+      ['wrong event ordinal', (table, rows) => { if (table === 'events') rows.find(row => row.id === live.eventId).event_ordinal = 1; }],
+      ['wrong output attachment', (table, rows) => { if (table === 'outputs') rows.find(row => row.event_id === live.eventId).attachment_mutation_id = randomUUID(); }],
+      ['nonzero observation output', (table, rows) => { if (table === 'outputs') rows.find(row => row.event_id === live.eventId).quantity = 1; }],
+      ['wrong observation attachment quantity', (table, rows) => { if (table === 'outputs') rows.find(row => row.event_id === live.eventId).attachment_quantity = 2; }],
+      ['observation supply delta', (table, rows) => { if (table === 'events') rows.find(row => row.id === live.eventId).quantity_delta = 1; }],
+      ['observation balance mismatch', (table, rows) => { if (table === 'events') rows.find(row => row.id === live.eventId).quantity_after = 0; }],
+    ]) await corruptRead(name, change);
+    const forgedHistoryIds = [randomUUID(), randomUUID()];
+    await persistedFailure('post-observation legacy roundtrip', async () => {
+      for (const [index, from, to] of [[0, owner, character], [1, character, owner]]) {
+        await pool.query(`INSERT INTO item_events (sequence,id,event_key,event_kind,provenance_kind,item_id,template_id,
+          from_owner_scope,from_owner_id,to_owner_scope,to_owner_id,reason,idempotency_key)
+          VALUES ($1,$2,$2,'transferred','transferred',$3,$4,$5,$6,$7,$8,'forged post-observation roundtrip',$9)`,
+        [String(BigInt(originEvent.sequence) + BigInt(index + 1)), forgedHistoryIds[index], live.item.id, originEvent.template_id,
+          from.scope, from.id, to.scope, to.id, originEvent.idempotency_key]);
+      }
+    }, () => pool.query('DELETE FROM item_events WHERE id IN ($1,$2)', forgedHistoryIds), 'world graph unique custody and provenance');
+    for (const sequence of ['0', '-1']) {
+      await persistedFailure(`invalid observation sequence ${sequence}`,
+        () => pool.query('UPDATE item_events SET sequence=$2 WHERE id=$1', [live.eventId, sequence]),
+        () => pool.query('UPDATE item_events SET sequence=$2 WHERE id=$1', [live.eventId, originEvent.sequence]));
+    }
+    for (const sequence of [9007199254740992, '01', '1.5', '9223372036854775808']) {
+      await corruptRead(`invalid observation sequence ${sequence}`, (table, rows) => {
+        if (table === 'events') rows.find(row => row.id === live.eventId).sequence = sequence;
+      });
+    }
+    const largeSequences = (inverted) => forwardPool(pool, { after: async (sql, values, result) => {
+      const table = readTable(sql);
+      if (table === 'legacy') for (const row of result.rows) if (row.item_id === live.item.id) row.sequence = '9007199254740992';
+      if (table === 'events') for (const row of result.rows) if (row.id === live.eventId) row.sequence = inverted ? '9007199254740992' : '9007199254740993';
+    } });
+    assert.equal((await runLedgerInvariants(largeSequences(false), { alert: false })).ok, true,
+      'adjacent valid BIGINT sequences beyond Number precision preserve strict legacy-before-observation order');
+    assert.equal((await runLedgerInvariants(largeSequences(true), { alert: false })).ok, false,
+      'an equal legacy/observation sequence cannot certify chronology');
+    await move(live, 'consume_unique', { depositor: null });
+    await clean('observed-live exact consumption reconciles both legacy and normalized histories');
+    const consumedOwner = (await pool.query('SELECT owner_id FROM item_instances WHERE id=$1', [live.item.id])).rows[0].owner_id;
+    await persistedFailure('current normalized owner remains independently checked',
+      () => pool.query('UPDATE item_instances SET owner_id=$2 WHERE id=$1', [live.item.id, character.id]),
+      () => pool.query('UPDATE item_instances SET owner_id=$2 WHERE id=$1', [live.item.id, consumedOwner]), 'item lot custody integrity');
+    await corruptRead('normalized transition must follow observation', (table, rows) => {
+      if (table === 'events') rows.find(row => row.item_id === live.item.id && row.id !== live.eventId).sequence = originEvent.sequence;
+    }, 'item lot lineage parity');
+    const travelling = await observe('active'); await clean('second live observation');
+    await move(travelling, 'transfer_unique', { destination: character }); await clean('observed exact transfer');
+    await move(travelling, 'escrow', { operationId }); await clean('observed exact escrow');
+    await move(travelling, 'release', { depositor: character }); await clean('observed exact release');
+    await move(travelling, 'consume_unique', { depositor: null }); await clean('released observed exact consumption');
+    const held = await observe('escrowed'); await clean('escrowed observation');
+    await persistedSnapshot('forged historical depositor cannot be legitimized by current custody', held,
+      value => { value.depositor = character; }, 'world graph unique custody and provenance', true);
+    const readHeldCustody = () => pool.query(dbCaps.skipLocked
+      ? 'SELECT *,created_at::text AS retained_created_at FROM operation_escrow WHERE item_id=$1'
+      : 'SELECT *,created_at AS retained_created_at FROM operation_escrow WHERE item_id=$1', [held.item.id]);
+    const heldCustody = (await readHeldCustody()).rows[0];
+    await persistedFailure('missing current exact custody',
+      () => pool.query('DELETE FROM operation_escrow WHERE item_id=$1', [held.item.id]),
+      async () => {
+        await pool.query(`INSERT INTO operation_escrow
+          (item_id,owner_scope,operation_id,item_state,depositor_scope,depositor_id,created_at) VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+        [heldCustody.item_id, heldCustody.owner_scope, heldCustody.operation_id, heldCustody.item_state,
+          heldCustody.depositor_scope, heldCustody.depositor_id, heldCustody.retained_created_at]);
+        assert.deepEqual((await readHeldCustody()).rows[0], heldCustody, 'native custody timestamp precision survives delete/restore');
+      }, 'item lot custody integrity');
+    await persistedFailure('current custody depositor_id',
+      () => pool.query('UPDATE operation_escrow SET depositor_id=$2 WHERE item_id=$1', [held.item.id, character.id]),
+      () => pool.query('UPDATE operation_escrow SET depositor_id=$2 WHERE item_id=$1', [held.item.id, heldCustody.depositor_id]),
+      'item lot custody integrity');
+    for (const [field, value] of [['owner_scope', 'account'], ['operation_id', 'another-operation'],
+      ['item_state', 'active']]) {
+      await corruptRead(`current custody ${field}`, (table, rows) => {
+        if (table === 'custody') rows.find(row => row.item_id === held.item.id)[field] = value;
+      }, 'item lot custody integrity');
+    }
+    const duplicate = await corruptRead('duplicate custody retains first claim and reports duplicate', (table, rows) => {
+      if (table === 'custody') rows.push({ ...rows.find(row => row.item_id === held.item.id), depositor_id: character.id });
+    }, 'item lot custody integrity');
+    assert.equal(duplicate.checks.find(check => check.name === 'item lot custody integrity').lhs, 1,
+      'duplicate evidence is counted, but its conflicting second claim cannot overwrite the first valid claim');
+    await corruptRead('orphan custody evidence survives indexing', (table, rows) => {
+      if (table === 'custody') rows.push({ ...rows.find(row => row.item_id === held.item.id), item_id: 'orphan-observed-custody' });
+    }, 'world graph unique custody and provenance');
+    await move(held, 'release', { depositor: owner }); await clean('release after escrowed observation');
+    await move(held, 'escrow', { operationId }); await clean('re-escrow after escrowed observation');
+    await move(held, 'consume_unique', { depositor: owner }); await clean('observed escrow consumption');
+    for (const mode of ['released', 'transferred', 'consumed', 'escrow-consumed']) {
+      const record = await observe(mode); await clean(`${mode} legacy history at observation`);
+      if (mode === 'released') {
+        const middle = record.oldHistory.find(row => row.event_kind === 'escrowed');
+        await persistedFailure('forged middle legacy transition remains loud after observation',
+          () => pool.query('UPDATE item_events SET from_owner_id=$2 WHERE id=$1', [middle.id, character.id]),
+          () => pool.query('UPDATE item_events SET from_owner_id=$2 WHERE id=$1', [middle.id, middle.from_owner_id]),
+          'world graph unique custody and provenance');
+      }
+      if (mode.endsWith('consumed')) {
+        for (const consumedAt of [null, '2000-01-01T00:00:00.000Z']) {
+          await persistedSnapshot('consumed observation retains exact terminal consumption time', record,
+            value => { value.consumedAt = consumedAt; }, 'item lot lineage parity');
+        }
+        const before = await snapshot();
+        await assert.rejects(() => move(record, 'consume_unique', { depositor: null },
+          { state: 'active', owner, custody: { state: 'direct', scope: null, id: null } }), { code: 'item_unavailable' });
+        assert.deepEqual(await snapshot(), before, 'consumed observation cannot resurrect or consume again');
+        const lots = await import('../src/itemlots.js');
+        for (const extra of [{ provenanceClass: 'migration_origin' }, { id: record.item.id }]) {
+          await assert.rejects(() => withItemTransaction(pool, q => withLotMutation(q, lotRequest(owner, definition),
+            m => lots.grantUnique(q, m, definition, { logicalItemId: definition.logicalItemId, definitionHash: definition.definitionHash,
+              owner, qualityBand: 'standard', qualityStateDigest: null, tradePolicyHash: definition.definitionHash,
+              conditionSummary: null, exportPolicy: 'ineligible', provenanceClass: 'awarded', provenanceDigest: 'a'.repeat(64), ...extra }))),
+          { code: 'bad_item_request' });
+          assert.deepEqual(await snapshot(), before, 'ordinary grants cannot remigrate or reissue a consumed permanent identity');
+        }
+      }
+    }
+    for (const record of observedItems) {
+      const row = (await pool.query('SELECT * FROM item_instances WHERE id=$1', [record.item.id])).rows[0];
+      for (const field of ['id', 'template_id', 'created_at']) assert.deepEqual(row[field], record.old[field]);
+      assert.equal(row.mutation_id, record.mutationId); assert.equal(row.output_ordinal, 0);
+      assert.deepEqual((await pool.query("SELECT * FROM item_events WHERE item_id=$1 AND event_branch='legacy' ORDER BY sequence",
+        [row.id])).rows, record.oldHistory, 'post-observation transitions preserve every historical event byte');
+    }
+    const beforeReplay = await snapshot();
+    for (const receipt of [...legacyReceipts, ...exactReceipts]) assert.deepEqual(await receipt.run(), receipt.result);
+    assert.deepEqual(await snapshot(), beforeReplay, 'legacy and exact completed receipts replay without writes after movement/consumption');
+    await clean('post-observation replay');
+    assert.equal(persistedCases, 34, 'every SQL-valid named corruption traversed the persisted real-query path and exact restoration');
+    console.log(`invariant correction: ${persistedCases} persisted SQL-valid corruptions rejected, exact fixture restoration and clean rechecks PASS`);
+    console.log('invariant correction: observed active/escrowed/released/transferred/consumed histories and exact transitions PASS');
+  }, existingPool);
+}
+
 export async function runLots(existingPool = null) {
+  await runObservedUniqueInvariants(existingPool);
+  await runCustodyIndexInvariants(existingPool);
   await runExternalCorrections(existingPool);
   // Missing storage is an explicit assertion failure, not an accidental import error.
   const lots = await import('../src/itemlots.js').catch((error) => {
