@@ -482,5 +482,5 @@
 | [PRODUCT.md](../../PRODUCT.md) | documentation | 50 | 2026-08-24 |
 | [README.md](../../README.md) | documentation | 166 | 2026-09-04 |
 | [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 918 | 2026-09-06 |
-| [SPEC.md](../../SPEC.md) | documentation | 754 | 2026-09-07 |
+| [SPEC.md](../../SPEC.md) | documentation | 754 | 2026-09-08 |
 | [UNISWAP-ROUTING.md](../../UNISWAP-ROUTING.md) | documentation | 37 | 2026-08-25 |

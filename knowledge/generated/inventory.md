@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `f5da40cfc224`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `6e3e539b2920`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
 | Current artifacts | 1,912 |
-| Text lines | 576,376 |
-| Repository bytes inventoried | 317,272,376 |
+| Text lines | 576,472 |
+| Repository bytes inventoried | 317,292,677 |
 | Backend/route modules | 214 |
 | HTTP route registrations / unique routes | 762 / 762 |
 | Database tables | 338 |
 | Solidity declarations | 49 |
-| Git commits | 1,410 |
+| Git commits | 1,413 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 5,977 / 26,987 |
+| Graph nodes / edges | 5,980 / 27,002 |
 
 ## Artifact kinds
 
@@ -49,7 +49,7 @@
 | [omerta-contracts/x-ray/slither.json](../../omerta-contracts/x-ray/slither.json) | 64,621 | contract-project | 2026-08-25 |
 | [CLAUDE.md](../../CLAUDE.md) | 18,679 | documentation | 2026-09-06 |
 | [public/index.html](../../public/index.html) | 12,740 | web-surface | 2026-09-06 |
-| [test/client.js](../../test/client.js) | 9,438 | test-suite | 2026-09-06 |
+| [test/client.js](../../test/client.js) | 9,440 | test-suite | 2026-09-08 |
 | [omerta-contracts/x-ray/slither-vars-and-auth.json](../../omerta-contracts/x-ray/slither-vars-and-auth.json) | 9,374 | contract-project | 2026-08-25 |
 | [.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
