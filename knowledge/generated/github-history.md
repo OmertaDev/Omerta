@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `b72ecdd0aa78`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `303dfd19901f`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1433 |
+| Commits in clone | 1435 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-08 — fix(items): select bounded FIFO prefixes at native timestamp precision |
+| Latest commit | 2026-09-08 — Record reviewed FIFO selectors in PostgreSQL query ceiling |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 561 |
+| OmertaDev | 563 |
 | Claude | 156 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 27 |
@@ -36,10 +36,10 @@
 | [SPEC.md](../../SPEC.md) | 309 | yes |
 | [schema.sql](../../schema.sql) | 285 | yes |
 | [BALANCE.md](../../BALANCE.md) | 254 | yes |
-| knowledge/generated/github-history.md | 189 | historical |
-| knowledge/generated/graph-summary.md | 189 | historical |
-| knowledge/generated/graph.json | 189 | historical |
-| knowledge/generated/inventory.md | 189 | historical |
+| knowledge/generated/github-history.md | 190 | historical |
+| knowledge/generated/graph-summary.md | 190 | historical |
+| knowledge/generated/graph.json | 190 | historical |
+| knowledge/generated/inventory.md | 190 | historical |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 177 | yes |
 | [package.json](../../package.json) | 159 | yes |
@@ -52,11 +52,11 @@
 | [test/social.js](../../test/social.js) | 85 | yes |
 | [public/wiki.html](../../public/wiki.html) | 84 | yes |
 | [test/growth.js](../../test/growth.js) | 80 | yes |
-| knowledge/generated/documents.md | 78 | historical |
+| knowledge/generated/documents.md | 79 | historical |
 | [docs/WIKI.md](../../docs/WIKI.md) | 72 | yes |
 | [test/gates.js](../../test/gates.js) | 66 | yes |
 | [test/hardening.js](../../test/hardening.js) | 66 | yes |
-| knowledge/generated/modules.md | 62 | historical |
+| knowledge/generated/modules.md | 63 | historical |
 | [tools/sim.js](../../tools/sim.js) | 59 | yes |
 | [README.md](../../README.md) | 57 | yes |
 | [src/preflight.js](../../src/preflight.js) | 55 | yes |
