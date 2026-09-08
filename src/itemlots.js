@@ -8,6 +8,7 @@ import { definitionByHash } from './itemdefinitions.js';
 import { itemMutationContext, nextItemMutationOrdinal, assertLotDefinitionPin,
   assertLotCandidateRoot, assertAndUseLotTransition, registerItemTransactionUndo, poisonItemTransaction, withItemRead } from './items.js';
 import { compareItemLockEntries } from './item-lock-trace.js';
+import { dbCaps } from './db.js';
 
 const IDENTITY_KEYS = Object.freeze(['logicalItemId', 'definitionHash', 'owner', 'custody',
   'qualityBand', 'qualityStateDigest', 'tradePolicyHash', 'binding', 'transferRestriction',
@@ -85,7 +86,7 @@ function validateLotQuality(definition, value) {
   return Object.freeze(tuple);
 }
 function validateIdentity(input) {
-  text(input.logicalItemId); hash(input.definitionHash); hash(input.tradePolicyHash);
+  text(input.logicalItemId, 258); hash(input.definitionHash); hash(input.tradePolicyHash);
   input.owner = owner(input.owner); input.custody = custody(input.custody);
   token(input.binding); token(input.transferRestriction); token(input.provenanceCoalescingClass, false);
   for (const key of ['seasonId', 'runId', 'sourceCapId']) if (input[key] !== null) text(input[key]);
@@ -139,7 +140,7 @@ export async function grantUnique(client, mutation, rawDefinition, rawOutput) {
     const supplied = detach(rawDefinition);
     const input = exact(detach(rawOutput), ['logicalItemId', 'definitionHash', 'owner', 'qualityBand',
       'qualityStateDigest', 'tradePolicyHash', 'conditionSummary', 'exportPolicy', 'provenanceClass', 'provenanceDigest']);
-    input.owner = owner(input.owner); text(input.logicalItemId); hash(input.definitionHash); hash(input.tradePolicyHash); hash(input.provenanceDigest);
+    input.owner = owner(input.owner); text(input.logicalItemId, 258); hash(input.definitionHash); hash(input.tradePolicyHash); hash(input.provenanceDigest);
     if (input.owner.scope === 'operation' || input.conditionSummary !== null || input.exportPolicy !== 'ineligible'
       || !['crafted', 'salvaged', 'awarded', 'imported'].includes(input.provenanceClass)) fail();
     assertLotDefinitionPin(client, mutation, { owner: input.owner, definitionHash: input.definitionHash, direction: 'output' });
@@ -347,9 +348,7 @@ export async function withCompleteItemCandidates(client, mutation, trace, rawReq
       if (!locked || !equal(databaseSnapshot(locked), databaseSnapshot(expected))) fail('contention');
     }
     for (let i = 0; i < requirements.length; i++) {
-      let current;
-      try { current = await resolveRequirement(client, mutation, requirements[i], request.root); }
-      catch { fail('contention'); }
+      const current = await resolveRequirement(client, mutation, requirements[i], request.root);
       if (!equal(databaseSnapshot(current), databaseSnapshot(resolved[i]))) fail('contention');
     }
     const available = new Map([...uniqueRows].map(([id, row]) => [id, row.lot_id ? row.remaining_quantity : 1]));
@@ -587,30 +586,51 @@ export async function lotInventoryBoard(queryable, rawOwner, rawOptions) {
   if (options.cursor !== null) {
     text(options.cursor, 4096);
     try {
+      if (!/^[A-Za-z0-9_-]+$/.test(options.cursor)) fail();
       const cursor = exact(JSON.parse(Buffer.from(options.cursor, 'base64url').toString('utf8')), ['owner', 'after']);
-      if (!equal(cursor.owner, heldBy)) fail();
-      after = text(cursor.after);
+      if (!equal(owner(cursor.owner), heldBy)) fail();
+      after = exact(cursor.after, ['createdAt', 'lotId']);
+      text(after.lotId);
+      // Preserve native microseconds; Date alone rounds away a valid key's last three digits.
+      if (typeof after.createdAt !== 'string'
+        || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}(?:\d{3})?Z$/.test(after.createdAt)
+        || after.createdAt.startsWith('0000-')
+        || !Number.isFinite(Date.parse(after.createdAt))
+        || instant(after.createdAt) !== after.createdAt.replace(/(\.\d{3})\d{3}Z$/, '$1Z')) fail();
     } catch { fail(); }
   }
   return withItemRead(queryable, async (client) => {
-    const rows = (await client.query(`SELECT * FROM item_lots
-      WHERE owner_scope=$1 AND owner_id=$2 AND remaining_quantity>0 LIMIT 4097`, [heldBy.scope, heldBy.id])).rows.sort(fifo);
-    if (rows.length > 4096) fail();
+    const params = [heldBy.scope, heldBy.id, options.limit + 1];
+    if (after) params.push(after.createdAt, after.lotId);
+    // Native row comparison is the range bound on item_lot_owner_idx; pg-mem lacks tuple comparison.
+    // Keep each backend/page branch as closed SQL; every caller value remains a bound parameter.
+    const sql = dbCaps.skipLocked ? after
+      ? `SELECT *,to_char(created_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS cursor_created_at
+         FROM item_lots WHERE owner_scope=$1 AND owner_id=$2 AND remaining_quantity>0
+         AND (created_at,lot_id)>($4,$5) ORDER BY created_at,lot_id LIMIT $3`
+      : `SELECT *,to_char(created_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS cursor_created_at
+         FROM item_lots WHERE owner_scope=$1 AND owner_id=$2 AND remaining_quantity>0
+         ORDER BY created_at,lot_id LIMIT $3`
+      : after
+        ? `SELECT * FROM item_lots WHERE owner_scope=$1 AND owner_id=$2 AND remaining_quantity>0
+           AND (created_at>$4 OR (created_at=$4 AND lot_id>$5)) ORDER BY created_at,lot_id LIMIT $3`
+        : `SELECT * FROM item_lots WHERE owner_scope=$1 AND owner_id=$2 AND remaining_quantity>0
+           ORDER BY created_at,lot_id LIMIT $3`;
+    const rows = (await client.query(sql, params)).rows;
+    const page = rows.slice(0, options.limit), more = rows.length > options.limit;
     const groups = new Map();
-    for (const row of rows) {
+    for (const row of page) {
       const identity = rowIdentity(row), key = canonicalBytes(identity).toString('utf8');
       const group = groups.get(key) || { ...identity, quantity: 0, lotCount: 0 };
       group.quantity += row.remaining_quantity; group.lotCount++;
       if (!Number.isSafeInteger(group.quantity)) fail('item_integrity_error');
       groups.set(key, group);
     }
-    const start = after === null ? 0 : rows.findIndex((row) => row.lot_id === after) + 1;
-    if (after !== null && start === 0) fail();
-    const page = rows.slice(start, start + options.limit);
-    const more = start + page.length < rows.length;
+    const last = page.at(-1);
     return { owner: heldBy, groups: [...groups].sort(([a], [b]) => Buffer.compare(Buffer.from(a), Buffer.from(b))).map(([, group]) => group),
       lots: options.includeLots ? page.map(projection) : [],
-      nextCursor: more ? Buffer.from(JSON.stringify({ owner: heldBy, after: page.at(-1).lot_id })).toString('base64url') : null };
+      nextCursor: more ? Buffer.from(JSON.stringify({ owner: heldBy,
+        after: { createdAt: last.cursor_created_at ?? instant(last.created_at), lotId: last.lot_id } })).toString('base64url') : null };
   });
 }
 

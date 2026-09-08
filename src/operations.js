@@ -1136,7 +1136,7 @@ async function conditionBlocker(client, actor, operation, states, condition, int
   if (adapter === 'item_ownership' || adapter === 'owns_item') {
     const row = (await client.query(
       `SELECT 1 FROM item_instances WHERE owner_scope='account' AND owner_id=$1
-        AND template_id=$2 AND state='active' LIMIT 1 FOR UPDATE`,
+        AND template_id=$2 AND state='active' AND definition_hash IS NULL LIMIT 1 FOR UPDATE`,
       [actor.accountId, normalized.templateId],
     )).rows[0];
     return row ? null : { adapter };
@@ -1183,7 +1183,7 @@ async function assertConditions(client, actor, operation, states, conditions, in
 async function selectOwnedItem(client, accountId, templateId) {
   const row = (await client.query(
     `SELECT id FROM item_instances WHERE owner_scope='account' AND owner_id=$1
-      AND template_id=$2 AND state='active' ORDER BY created_at,id LIMIT 1 FOR UPDATE`,
+      AND template_id=$2 AND state='active' AND definition_hash IS NULL ORDER BY created_at,id LIMIT 1 FOR UPDATE`,
     [accountId, templateId],
   )).rows[0];
   if (!row) fail('item_unavailable', 'This role lacks its required item.');

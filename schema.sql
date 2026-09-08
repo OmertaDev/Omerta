@@ -6695,6 +6695,12 @@ ALTER TABLE item_instances ADD COLUMN IF NOT EXISTS provenance_class TEXT;
 ALTER TABLE item_instances ADD COLUMN IF NOT EXISTS provenance_digest TEXT;
 ALTER TABLE item_instances ADD COLUMN IF NOT EXISTS mutation_id UUID;
 ALTER TABLE item_instances ADD COLUMN IF NOT EXISTS output_ordinal INTEGER;
+-- The retained template column holds exact qualified IDs only on the exact branch.
+-- Apply after its discriminator exists so populated pre-lot installations upgrade too.
+ALTER TABLE item_instances DROP CONSTRAINT IF EXISTS item_instance_template_id;
+ALTER TABLE item_instances ADD CONSTRAINT item_instance_template_id CHECK (
+  (definition_hash IS NULL AND char_length(template_id) BETWEEN 1 AND 200)
+  OR (definition_hash IS NOT NULL AND char_length(template_id) BETWEEN 1 AND 258));
 ALTER TABLE item_instances DROP CONSTRAINT IF EXISTS item_unique_attachment_ck;
 ALTER TABLE item_instances ADD CONSTRAINT item_unique_attachment_ck CHECK (
   (definition_hash IS NULL AND logical_item_id IS NULL AND quality_band IS NULL AND quality_state_digest IS NULL
@@ -6722,6 +6728,10 @@ ALTER TABLE item_events ADD COLUMN IF NOT EXISTS event_ordinal INTEGER;
 ALTER TABLE item_events ADD COLUMN IF NOT EXISTS lot_id TEXT;
 ALTER TABLE item_events ADD COLUMN IF NOT EXISTS definition_hash TEXT;
 ALTER TABLE item_events ADD COLUMN IF NOT EXISTS snapshot_json TEXT;
+ALTER TABLE item_events DROP CONSTRAINT IF EXISTS item_event_template_id;
+ALTER TABLE item_events ADD CONSTRAINT item_event_template_id CHECK (
+  (event_branch='legacy' AND char_length(template_id) BETWEEN 1 AND 200)
+  OR (event_branch<>'legacy' AND char_length(template_id) BETWEEN 1 AND 258));
 ALTER TABLE item_events DROP CONSTRAINT IF EXISTS item_event_kind;
 ALTER TABLE item_events ADD CONSTRAINT item_event_kind CHECK (
   (event_branch='legacy' AND event_kind IN ('stack_granted','stack_consumed','created','transferred','consumed','escrowed','released'))

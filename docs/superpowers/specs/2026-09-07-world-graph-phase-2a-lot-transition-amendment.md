@@ -70,7 +70,7 @@ It checks the private transaction/token/root, index, exact canonical entry equal
 
 ## Closed transition subjects and entries
 
-The full `LotEconomicIdentity` is the adopted exact-key type: logicalItemId, definitionHash, owner, custody, qualityBand, qualityStateDigest, tradePolicyHash, binding, transferRestriction, seasonId, runId, sourceCapId, expiresAt, ageBasisAt, and provenanceCoalescingClass. Every null is exact. Its existing string, timestamp, quality, and policy validation applies without alteration.
+The full `LotEconomicIdentity` is the adopted exact-key type: logicalItemId, definitionHash, owner, custody, qualityBand, qualityStateDigest, tradePolicyHash, binding, transferRestriction, seasonId, runId, sourceCapId, expiresAt, ageBasisAt, and provenanceCoalescingClass. Every null is exact. Its existing string, timestamp, quality, and policy validation applies, with this explicit logical-ID bound: the registry's canonical ASCII `packageId::localId` has two components of at most 128 bytes each and a complete bound of 258 characters/bytes. Exact grants, selectors, transitions and their shared instance/event storage must retain that full range. Legacy template IDs and owner, request and subject identifiers keep their existing 200-character bounds; the registry grammar and existing definition/artifact hashes do not change. Populated-schema upgrades replace the shared template-column checks only after their exact/legacy discriminator columns exist, retaining the narrower legacy branch and exact definition FKs.
 
 ```ts
 type UniqueExpected = Readonly<{
@@ -166,6 +166,15 @@ These are internal dormant repository leaves, owned by `src/itemlots.js` beside 
 `grantUnique` rereads through unchanged `definitionByHash`, compares the entire caller intrinsic projection, requires economic kind and `stackable === false`, verifies the owner scope and output pin, and enforces the exact adopted quality representation table. Quantity is intrinsically one, checked against the definition cap. `tradePolicyHash === definitionHash`. It derives a fresh permanent server item ID and creation time. Output owner must equal the root owner and resolved owner; it cannot mint directly into operation custody or award another participant. Condition and export remain null/ineligible. Private provenance never enters `UniqueProjection`. Creation references in the projection retain their original root and output ordinal through later transitions.
 
 Numeric quality still needs trusted producer derivation and a digest; representation validity is not formula proof. The same fixed/bounded/inherited/none table applies to this new exact unique branch, without changing legacy standard quality. New unique storage may retain logical ID in the legacy nonempty template column internally, but no exact leaf selects by that column and no compatibility public alias is synthesized.
+
+Until the Task 5.3 compatibility cutover, legacy inventory projections, positive
+ownership predicates, template consumption/escrow selectors and the legacy
+assignment precheck must exclude rows with nonnull `definition_hash`. An exact
+unique is neither legacy inventory nor template-selector authority, even when
+its retained template column collides with a legacy template. Historical audit,
+invariant and exact transition readers retain access to both relevant branches.
+This dormant exclusion creates no producer, alias, migration, activation or
+early Task 5.3 convergence.
 
 For unique result states, remainingQuantity is 1 before a legal transition, 1 after a move, and 0 after consumption. For lots it is the actual remaining quantity; uniqueState is null. Consumed/exhausted after-state has null live custody. The historical before-state and depositor are preserved in normalized records. An escrow-consumed unique keeps its recorded operation owner and existing consumed timestamp semantics.
 

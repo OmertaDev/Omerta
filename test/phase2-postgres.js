@@ -165,7 +165,7 @@ async function child(url) {
       const fixtureFactory = lotFixtureFactory(pool, url);
       let fixtureCount = 0;
       await runLots(async () => { fixtureCount++; return fixtureFactory(); });
-      assert.equal(fixtureCount, 6, 'every native root lot fixture block executed in its own fresh schema');
+      assert.equal(fixtureCount, 14, 'every native root lot fixture block executed in its own fresh schema');
       await lotRaces(pool);
       const residue = (await pool.query("SELECT nspname FROM pg_namespace WHERE nspname LIKE 'p2_definitions_%' AND nspname<>$1", [name])).rows;
       assert.equal(residue.length, 0, 'native fixture schemas leave no residue');
@@ -190,8 +190,8 @@ async function child(url) {
       const upgradedConstraints = await legacyConstraints(pool);
       verifyUpgradeConstraintCatalog(oldConstraints,upgradedConstraints,Number(settings.server_version_num));
       verifyUpgradeConstraintCausalNegatives(oldConstraints,upgradedConstraints,Number(settings.server_version_num));
-      console.log('phase2-postgres: populated legacy hashes/pointer and complete legacy constraint catalog unchanged except exact lot/IO additions and two branch-aware replacements');
-      console.log('phase2-postgres: seven upgrade catalog causal negatives reject unrelated/replacement/new removal or alteration and unexpected addition');
+      console.log('phase2-postgres: populated legacy hashes/pointer and complete legacy constraint catalog unchanged except exact lot/IO additions and four branch-aware replacements');
+      console.log('phase2-postgres: nine upgrade catalog causal negatives reject unrelated/replacement/new removal or alteration and unexpected addition');
       return;
     }
     const failureTarget = fixture('read-failure');
@@ -223,6 +223,14 @@ async function legacyConstraints(q) {
 }
 const constraintRow = (table_name,name,definition) => ({ table_name,name,definition });
 const replacedUpgradeConstraints = [
+  {
+    before: constraintRow('item_instances','item_instance_template_id',`CHECK (char_length(template_id) >= 1 AND char_length(template_id) <= 200)`),
+    after: constraintRow('item_instances','item_instance_template_id',`CHECK (definition_hash IS NULL AND char_length(template_id) >= 1 AND char_length(template_id) <= 200 OR definition_hash IS NOT NULL AND char_length(template_id) >= 1 AND char_length(template_id) <= 258)`),
+  },
+  {
+    before: constraintRow('item_events','item_event_template_id',`CHECK (char_length(template_id) >= 1 AND char_length(template_id) <= 200)`),
+    after: constraintRow('item_events','item_event_template_id',`CHECK (event_branch = 'legacy'::text AND char_length(template_id) >= 1 AND char_length(template_id) <= 200 OR event_branch <> 'legacy'::text AND char_length(template_id) >= 1 AND char_length(template_id) <= 258)`),
+  },
   {
     before: constraintRow('item_events','item_event_kind',`CHECK (event_kind = ANY (ARRAY['stack_granted'::text, 'stack_consumed'::text, 'created'::text, 'transferred'::text, 'consumed'::text, 'escrowed'::text, 'released'::text]))`),
     after: constraintRow('item_events','item_event_kind',`CHECK (event_branch = 'legacy'::text AND (event_kind = ANY (ARRAY['stack_granted'::text, 'stack_consumed'::text, 'created'::text, 'transferred'::text, 'consumed'::text, 'escrowed'::text, 'released'::text])) OR event_branch = 'lot'::text AND (event_kind = ANY (ARRAY['lot_granted'::text, 'lot_consumed'::text, 'lot_split_debit'::text, 'lot_split_output'::text, 'lot_escrowed'::text, 'lot_released'::text, 'lot_escrow_consumed'::text])) OR event_branch = 'unique'::text AND (event_kind = ANY (ARRAY['unique_granted'::text, 'unique_escrowed'::text, 'unique_released'::text, 'unique_transferred'::text, 'unique_consumed'::text])) OR event_branch = 'observation'::text AND event_kind = 'migration_origin'::text)`),
@@ -307,6 +315,8 @@ function verifyUpgradeConstraintCausalNegatives(before,after,serverVersionNum) {
   rejected('unrelated alteration',mutate('item_events','item_event_key',(rows,index) => { rows[index].definition += ' altered'; }));
   rejected('replacement removal',mutate('item_events','item_event_kind',(rows,index) => rows.splice(index,1)));
   rejected('replacement alteration',mutate('item_events','item_event_quantities',(rows,index) => { rows[index].definition += ' altered'; }));
+  rejected('unique template-bound alteration',mutate('item_instances','item_instance_template_id',(rows,index) => { rows[index].definition += ' altered'; }));
+  rejected('event template-bound removal',mutate('item_events','item_event_template_id',(rows,index) => rows.splice(index,1)));
   rejected('required addition removal',mutate('item_lots','item_lot_quantity_ck',(rows,index) => rows.splice(index,1)));
   rejected('required addition alteration',mutate('item_lots','item_lot_quantity_ck',(rows,index) => { rows[index].definition += ' altered'; }));
   rejected('unexpected addition',[...after,constraintRow('item_events','unexpected_upgrade_constraint','CHECK (true)')]);

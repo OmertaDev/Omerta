@@ -561,6 +561,9 @@ async function runMutation(client, guard, owner, mutationKind, authority, action
     state.authority = authority();
     const result = await action(context);
     if (state.failed) throw state.failed;
+    // Exact leaves poison the transaction even when the caller catches their error.
+    // Preserve that first failure before parity/guard SQL can observe native 25P02.
+    if (state.transaction.failed) throw state.transaction.failed;
     if (lotRoot) {
       if (state.usedLotTransitions.size !== (lotRoot.authority.itemTransitions?.length || 0)) {
         fail('item_mutation_authority', 'Every declared exact transition must be applied.');
@@ -668,7 +671,7 @@ function validateLotTransitions(authority) {
     if (expected.qualityBand !== null) boundedText(expected.qualityBand, 'Exact quality', 80);
     if (expected.qualityStateDigest !== null) hash(expected.qualityStateDigest);
     if (subject.storageKind === 'lot') {
-      boundedText(expected.logicalItemId, 'Exact logical item', 200); hash(expected.tradePolicyHash);
+      boundedText(expected.logicalItemId, 'Exact logical item', 258); hash(expected.tradePolicyHash);
       if (expected.tradePolicyHash !== expected.definitionHash) bad();
       if (!Number.isSafeInteger(expected.remainingQuantity) || expected.remainingQuantity < 1 || expected.remainingQuantity > 1000000) {
         fail('qty', 'Invalid pinned lot quantity.');
@@ -1177,7 +1180,7 @@ async function collectInventory(client, ownerValue) {
   const items = (await client.query(
     `SELECT id, template_id, owner_scope, owner_id, state, created_at, updated_at, consumed_at
        FROM item_instances
-      WHERE owner_scope=$1 AND owner_id=$2 AND state<>'consumed'
+      WHERE owner_scope=$1 AND owner_id=$2 AND state<>'consumed' AND definition_hash IS NULL
       ORDER BY created_at, id`,
     [owner.scope, owner.id],
   )).rows.map(itemProjection);

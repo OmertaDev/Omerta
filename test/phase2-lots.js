@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
-import { withItemTransaction, withLotMutation, withItemMutation, assertLotCandidateRoot, assertLotDefinitionPin, createItem, consumeItem, transferItem, escrowItem, releaseEscrow, grantStack, registerItemTransactionUndo } from '../src/items.js';
+import { withItemTransaction, withLotMutation, withItemMutation, assertLotCandidateRoot, assertLotDefinitionPin, createItem, consumeItem, transferItem, escrowItem, releaseEscrow, grantStack, registerItemTransactionUndo, inventoryBoard } from '../src/items.js';
 import { ledger } from '../src/game.js';
 import { canonicalBytes } from '../src/content/canonical.js';
 import { withItemFixture, lotRequest, injectSqlFailure, runTrustedDormantLotGrant, runTrustedDormantItemAction, prepareDormantOperationFixture } from './lib/phase2-item-fixtures.js';
@@ -40,6 +40,7 @@ export function lotLeafPrivateCases(lots, owner, definition, uniqueDefinition) {
 }
 
 export async function runLots(existingPool = null) {
+  await runExternalCorrections(existingPool);
   // Missing storage is an explicit assertion failure, not an accidental import error.
   const lots = await import('../src/itemlots.js').catch((error) => {
     if (error.code === 'ERR_MODULE_NOT_FOUND' && error.url?.endsWith('/src/itemlots.js')) return {};
@@ -1168,6 +1169,336 @@ export async function runLots(existingPool = null) {
     assert.equal(await parity(), true, 'restored lineage and earlier legal escrow/split/release remain valid');
   }, existingPool);
   console.log('phase2-lots: exact lots/uniques, complete mixed candidates, custody/owner transitions, historical lineage, SQL constraints, recovery and replay PASS');
+}
+
+export async function runExternalCorrections(existingPool = null, only = null) {
+  const lots = await import('../src/itemlots.js');
+  if ((!only || only === 'microseconds') && dbCaps.skipLocked) await withItemFixture(async ({ pool, accountOwner: owner, definition }) => {
+    const ids = [], stamps = ['2026-01-01T00:00:00.000001Z', '2026-01-01T00:00:00.000002Z', '2026-01-01T00:00:00.001001Z'];
+    const clocked = forwardPool(pool, { after: async (sql, values, result, q) => {
+      if (!sql.startsWith('INSERT INTO item_lots ')) return;
+      const timestamp = stamps[ids.length], row = result.rows[0]; ids.push(row.lot_id);
+      await q.query('UPDATE item_lots SET created_at=$2 WHERE lot_id=$1', [row.lot_id, timestamp]);
+      row.created_at = new Date(timestamp);
+    } });
+    await withItemTransaction(clocked, q => withLotMutation(q, lotRequest(owner, definition), async m => {
+      for (let i = 0; i < 3; i++) await lots.grantLot(q, m, definition, lotOutput(owner, definition));
+      return { created: 3 };
+    }));
+    let cursor = null;
+    for (let index = 0; index < 3; index++) {
+      const board = await lots.lotInventoryBoard(pool, owner, { cursor, limit: 1, includeLots: true });
+      assert.equal(board.lots[0].lotId, ids[index], 'native keyset retains distinct microseconds within one JS millisecond');
+      cursor = board.nextCursor;
+      if (index < 2) assert.equal(JSON.parse(Buffer.from(cursor, 'base64url').toString('utf8')).after.createdAt, stamps[index]);
+    }
+    assert.equal(cursor, null);
+    console.log('external-correction native microseconds: three one-row pages preserve .000001/.000002/.001001 and terminate PASS');
+  }, existingPool);
+  for (const mode of ['crafting', 'mysteries', 'operations']) if (!only || only === mode) {
+    await withItemFixture(async ({ pool, accountOwner: owner }) => {
+      const { loadAndValidateGraphPackages } = await import('../src/worldgraph-validate.js');
+      const templateId = 'omerta.phase2.collision::tool';
+      const source = materialSource({ id: 'tool', kind: 'item', stackable: false, maximumLotQuantity: 1 });
+      source.packageId = 'omerta.phase2.collision'; source.exports = []; source.nodes = []; source.edges = [];
+      const artifact = compileFixture(source); await storeSealedBundle(pool, artifact.request);
+      const definition = await definitionByHash(pool, artifact.expectedDefinitions[0].definitionHash);
+      const exactItem = await withItemTransaction(pool, q => withLotMutation(q, lotRequest(owner, definition), m => lots.grantUnique(q, m, definition, {
+        logicalItemId: templateId, definitionHash: definition.definitionHash, owner, qualityBand: null, qualityStateDigest: null,
+        tradePolicyHash: definition.definitionHash, conditionSummary: null, exportPolicy: 'ineligible',
+        provenanceClass: 'awarded', provenanceDigest: 'a'.repeat(64),
+      })));
+      const exactSnapshot = async () => ({
+        row: (await pool.query('SELECT * FROM item_instances WHERE id=$1', [exactItem.id])).rows,
+        events: (await pool.query('SELECT * FROM item_events WHERE item_id=$1 ORDER BY sequence', [exactItem.id])).rows,
+        outputs: (await pool.query('SELECT * FROM item_mutation_outputs WHERE item_id=$1', [exactItem.id])).rows,
+      });
+      const historical = await exactSnapshot();
+      const characterId = `collision-${mode}-character`;
+      await pool.query('INSERT INTO characters(id,account_id,name,season) VALUES ($1,$2,$1,1)', [characterId, owner.id]);
+      const core = { id: 'collision-core', version: 1, season: 'core', dependsOn: [], nodes: [
+        { id: templateId, type: 'item_template', visibility: 'public', metadata: { inventoryClass: 'unique' } },
+        { id: 'mat:external_collision_result', type: 'material', visibility: 'public', metadata: { inventoryClass: 'stack' } },
+        { id: 'source:collision', type: 'source', visibility: 'public', produces: [{ templateId, quantity: 1 }] },
+      ] };
+      let execute, checkEligibility = async () => {};
+      if (mode === 'crafting') {
+        const { createCraftingContext, craftWorldGraphRecipe } = await import('../src/crafting.js');
+        const registry = loadAndValidateGraphPackages([core, { id: 'collision-craft', version: 1, season: 'core', dependsOn: ['collision-core'], nodes: [
+          { id: 'recipe:collision', type: 'recipe', version: 1, visibility: 'public', repeatability: 'repeatable',
+            consumes: [{ templateId, quantity: 1 }], produces: [{ templateId: 'mat:external_collision_result', quantity: 1, quality: 'standard' }] },
+        ] }]);
+        const context = createCraftingContext({ registry });
+        execute = () => withItemTransaction(pool, q => craftWorldGraphRecipe(q, { accountId: owner.id }, 'recipe:collision', 'collision-craft-key', context));
+      } else if (mode === 'mysteries') {
+        const { createMysteryContext, startMystery, mysteryBoard, completeNode } = await import('../src/mysteries.js');
+        const registry = loadAndValidateGraphPackages([core, { id: 'collision-mystery', version: 1, season: 'core', dependsOn: ['collision-core'], nodes: [
+          { id: 'm:collision', type: 'mystery_step', version: 1, visibility: 'public',
+            conditions: [{ adapter: 'item_ownership', templateId }], effects: [{ adapter: 'item_consume', templateId }] },
+        ] }]);
+        const context = createMysteryContext({ registry, accountId: owner.id });
+        await withItemTransaction(pool, q => startMystery(q, context, owner, 'collision-mystery', 1));
+        checkEligibility = async (available) => {
+          const board = await mysteryBoard(pool, context, owner, 'collision-mystery');
+          assert.equal(board.nodes.find(node => node.id === 'm:collision').available, available,
+            'exact-only cannot satisfy the read-side legacy ownership condition');
+        };
+        execute = () => withItemTransaction(pool, q => completeNode(q, context, owner, 'collision-mystery', 'm:collision', { idempotencyKey: 'collision-mystery-key' }));
+      } else {
+        const { createOperationContext, openOperation, assignRole, contribute } = await import('../src/operations.js');
+        const registry = loadAndValidateGraphPackages([core, { id: 'collision-operation', version: 1, season: 'core', dependsOn: ['collision-core'], nodes: [
+          { id: 'op:collision', type: 'social_gate', visibility: 'public', minimumDistinctAccounts: 2,
+            roles: [{ id: 'keeper', distinct: true }, { id: 'witness', distinct: true }],
+            metadata: { closerRoleId: 'keeper', completionRequires: ['op:collision-keep', 'op:collision-witness'] } },
+          { id: 'op:collision-keep', type: 'operation_step', visibility: 'public', requires: ['op:collision'],
+            metadata: { operationId: 'op:collision', roleId: 'keeper' },
+            conditions: [{ adapter: 'item_ownership', templateId }], effects: [{ adapter: 'item_escrow', templateId }] },
+          { id: 'op:collision-witness', type: 'operation_step', visibility: 'public', requires: ['op:collision'],
+            metadata: { operationId: 'op:collision', roleId: 'witness' } },
+          { id: 'op:collision-condition', type: 'operation_step', visibility: 'public', requires: ['op:collision'],
+            metadata: { operationId: 'op:collision', roleId: 'keeper' }, conditions: [{ adapter: 'owns_item', templateId }] },
+        ] }]);
+        const otherAccount = 'collision-witness-account', crewId = 'collision-crew';
+        await pool.query("INSERT INTO accounts(id,auth_provider,auth_subject) VALUES ($1,'guest',$1)", [otherAccount]);
+        await pool.query("INSERT INTO characters(id,account_id,name,season) VALUES ('collision-witness',$1,'Witness',1)", [otherAccount]);
+        await pool.query('INSERT INTO crews(id,name,leader_account) VALUES ($1,$1,$2)', [crewId, owner.id]);
+        for (const accountId of [owner.id, otherAccount]) await pool.query('INSERT INTO crew_members(crew_id,account_id,name) VALUES ($1,$2,$2)', [crewId, accountId]);
+        const context = createOperationContext({ registry, accountId: owner.id });
+        const other = createOperationContext({ registry, accountId: otherAccount });
+        const opened = await withItemTransaction(pool, q => openOperation(q, context, 'collision-operation', 'op:collision', 1, 'collision-open'));
+        await withItemTransaction(pool, q => assignRole(q, context, opened.operationId, 'keeper', { idempotencyKey: 'collision-keeper' }));
+        await withItemTransaction(pool, q => assignRole(q, other, opened.operationId, 'witness', { idempotencyKey: 'collision-witness' }));
+        checkEligibility = async (available) => {
+          if (available) return;
+          await assert.rejects(() => withItemTransaction(pool, q => contribute(q, context, opened.operationId,
+            'op:collision-condition', { idempotencyKey: 'collision-condition' })), { code: 'item_unavailable' },
+          'exact-only cannot satisfy a condition-only legacy operation step');
+        };
+        execute = () => withItemTransaction(pool, q => contribute(q, context, opened.operationId, 'op:collision-keep', { idempotencyKey: 'collision-operation-key' }));
+      }
+      await checkEligibility(false);
+      await assert.rejects(execute, { code: 'item_unavailable' }, `${mode} exact-only is unavailable`);
+      const legacy = await withItemTransaction(pool, q => createItem(q, owner, templateId, 'awarded', `collision-${mode}-legacy`));
+      const ordered = (await pool.query('SELECT id FROM item_instances WHERE template_id=$1 ORDER BY created_at,id', [templateId])).rows;
+      assert.equal(ordered[0].id, exactItem.id, 'exact collision sorts before the usable legacy subject');
+      await checkEligibility(true);
+      const result = await execute(); assert.deepEqual(await execute(), result, `${mode} same-key replay`);
+      assert.equal((await pool.query('SELECT state FROM item_instances WHERE id=$1', [legacy.id])).rows[0].state,
+        mode === 'operations' ? 'escrowed' : 'consumed');
+      assert.deepEqual(await exactSnapshot(), historical, `${mode} leaves the exact item and normalized history untouched`);
+      console.log(`external-correction ${mode}: exact-only refusal, exact-first collision selects legacy, exact history and replay PASS`);
+    }, existingPool);
+  }
+  if (!only || only === 'paging') await withItemFixture(async ({ pool, accountOwner: owner, definition }) => {
+    const frozen = [];
+    const clocked = forwardPool(pool, { after: async (sql, values, result, q) => {
+      if (!sql.startsWith('INSERT INTO item_lots ')) return;
+      // Fix the inserted timestamp before the real grant derives its immutable snapshot and result.
+      const row = result.rows[0];
+      await q.query("UPDATE item_lots SET created_at='2026-01-01T00:00:00Z' WHERE lot_id=$1", [row.lot_id]);
+      row.created_at = new Date('2026-01-01T00:00:00Z');
+    } });
+    // Real grants provide complete guards, immutable definitions, event snapshots and normalized outputs.
+    // Each root stays below its existing candidate/ordinal budget; no orphan rows stand in for inventory.
+    for (let start = 0; start < 4097; start += 64) {
+      await withItemTransaction(clocked, (q) => withLotMutation(q, lotRequest(owner, definition), async (m) => {
+        for (let index = start; index < Math.min(start + 64, 4097); index++) {
+          const row = await lots.grantLot(q, m, definition, lotOutput(owner, definition, { quantity: 2 }));
+          frozen.push(row);
+        }
+        return { count: Math.min(64, 4097 - start) };
+      }));
+    }
+    frozen.sort((a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt) || Buffer.compare(Buffer.from(a.lotId), Buffer.from(b.lotId)));
+    assert(frozen.some((row, index) => index && row.createdAt === frozen[index - 1].createdAt), 'fixture covers equal creation instants');
+    let lastRead;
+    const boundedReader = forwardPool(pool, { after: async (sql, values, result) => {
+      if (sql.startsWith('SELECT *') && sql.includes(' FROM item_lots ')) {
+        assert(result.rows.length <= values[2], 'the SQL result itself is bounded by limit+1');
+        lastRead = { sql, values };
+      }
+    } });
+    const board = (cursor = null, limit = 100, includeLots = true) => lots.lotInventoryBoard(boundedReader, owner, { cursor, limit, includeLots });
+    const first = await board(null, 1);
+    assert.equal(first.lots[0].lotId, frozen[0].lotId);
+    assert.equal(first.groups.length, 1); assert.equal(first.groups[0].quantity, 2); assert.equal(first.groups[0].lotCount, 1);
+    const hidden = await board(first.nextCursor, 100, false);
+    assert.deepEqual(hidden.lots, []); assert.equal(hidden.groups[0].quantity, 200); assert.equal(hidden.groups[0].lotCount, 100);
+    const seen = []; let cursor = null, lastPage;
+    do {
+      lastPage = await board(cursor); seen.push(...lastPage.lots.map(row => row.lotId)); cursor = lastPage.nextCursor;
+      assert(lastPage.lots.length <= 100); assert.equal(lastPage.groups[0].quantity, lastPage.lots.length * 2);
+    } while (cursor);
+    assert.equal(lastPage.lots.length, 97); assert.equal(lastPage.groups[0].quantity, 194);
+    assert.deepEqual(seen, frozen.map(row => row.lotId), 'FIFO traversal contains all 4097 frozen rows exactly once');
+    if (dbCaps.skipLocked) {
+      await pool.query('ANALYZE item_lots');
+      const plan = (await pool.query(`EXPLAIN (FORMAT JSON) ${lastRead.sql}`, lastRead.values)).rows[0]['QUERY PLAN'][0].Plan;
+      const nodes = [plan]; for (let index = 0; index < nodes.length; index++) nodes.push(...(nodes[index].Plans ?? []));
+      const range = nodes.find(node => node['Index Name'] === 'item_lot_owner_idx');
+      assert(range, 'late native page uses the existing owner/FIFO index');
+      assert.match(range['Index Cond'], /created_at.*lot_id.*>/, 'cursor tuple belongs to the native index range, not a post-scan filter');
+      console.log(`external-correction native late-page plan: ${JSON.stringify(plan)}`);
+    }
+    const consumeRequest = lotRequest(owner, definition);
+    await withItemTransaction(pool, q => withLotMutation(q, consumeRequest, m => lots.withCompleteItemCandidates(q, m, createItemLockTrace(),
+      { root: { owner, authority: consumeRequest.request.authority }, requirements: [{ kind: 'lot_exact', lotId: first.lots[0].lotId, quantity: 2 }] },
+      () => lots.consumeExactLot(q, m, first.lots[0].lotId, 2))));
+    assert.equal((await board(first.nextCursor, 1)).lots[0].lotId, frozen[1].lotId, 'exhausted cursor anchor cannot strand continuation');
+    const decoded = JSON.parse(Buffer.from(first.nextCursor, 'base64url').toString('utf8'));
+    const encode = value => Buffer.from(JSON.stringify(value)).toString('base64url');
+    for (const invalid of ['', '!', encode({ ...decoded, extra: 1 }), encode({ ...decoded, after: null }),
+      ...['invalid', '0000-01-01T00:00:00.000Z', '2026-02-30T00:00:00.000Z', '2026-01-01', 1].map(createdAt => encode({ ...decoded, after: { ...decoded.after, createdAt } })),
+      ...['', ' padded', 'x'.repeat(201), 1, []].map(lotId => encode({ ...decoded, after: { ...decoded.after, lotId } })),
+      encode({ ...decoded, after: { ...decoded.after, extra: 1 } }), encode({ ...decoded, owner: { ...owner, extra: 1 } })]) {
+      await assert.rejects(() => board(invalid), { code: 'bad_item_request' });
+    }
+    const pastLast = await board(encode({ owner, after: { createdAt: frozen.at(-1).createdAt, lotId: frozen.at(-1).lotId } }));
+    assert.deepEqual(pastLast.groups, []); assert.deepEqual(pastLast.lots, []); assert.equal(pastLast.nextCursor, null);
+    await assert.rejects(() => lots.lotInventoryBoard(pool, { ...owner, id: 'other-owner' },
+      { cursor: first.nextCursor, limit: 1, includeLots: true }), { code: 'bad_item_request' });
+    const empty = await lots.lotInventoryBoard(pool, { ...owner, id: 'empty-owner' }, { cursor: null, limit: 1, includeLots: true });
+    assert.deepEqual(empty.groups, []); assert.deepEqual(empty.lots, []); assert.equal(empty.nextCursor, null);
+    console.log('external-correction paging: 4097 complete grants, FIFO 1/100 pages, page-local groups, hidden details, exhausted anchor, closed cursor PASS');
+  }, existingPool);
+  if (!only || only === 'ids') await withItemFixture(async ({ pool, accountOwner: owner, snapshot }) => {
+    for (const length of [200, 201, 258]) for (const unique of [false, true]) {
+      const source = materialSource({ id: 'b'.repeat(length - 130), kind: unique ? 'item' : 'material',
+        stackable: !unique, maximumLotQuantity: unique ? 1 : 100, ownerScopes: ['account', 'project'] });
+      source.packageId = (unique ? 'u' : 'l').repeat(128);
+      source.exports = []; source.nodes = []; source.edges = []; source.version = length;
+      source.definitions[0].definitionVersion = length;
+      const artifact = compileFixture(source); await storeSealedBundle(pool, artifact.request);
+      const definition = await definitionByHash(pool, artifact.expectedDefinitions[0].definitionHash);
+      assert.equal(definition.logicalItemId.length, length);
+      const request = lotRequest(owner, definition), output = unique ? {
+        logicalItemId: definition.logicalItemId, definitionHash: definition.definitionHash, owner,
+        qualityBand: null, qualityStateDigest: null, tradePolicyHash: definition.definitionHash,
+        conditionSummary: null, exportPolicy: 'ineligible', provenanceClass: 'awarded', provenanceDigest: 'a'.repeat(64),
+      } : lotOutput(owner, definition);
+      const grant = () => withItemTransaction(pool, (q) => withLotMutation(q, request,
+        (m) => unique ? lots.grantUnique(q, m, definition, output) : lots.grantLot(q, m, definition, output)));
+      const created = await grant(); assert.deepEqual(await grant(), created);
+      const event = (await pool.query('SELECT template_id FROM item_events WHERE mutation_id=$1', [created.mutationId])).rows[0];
+      assert.equal(event.template_id, definition.logicalItemId);
+      if (unique) {
+        assert.equal((await pool.query('SELECT template_id FROM item_instances WHERE id=$1', [created.id])).rows[0].template_id, definition.logicalItemId);
+      } else {
+        const debitRequest = lotRequest(owner, definition), selected = lotSelector(owner, definition, 1);
+        await withItemTransaction(pool, q => withLotMutation(q, debitRequest, m => lots.withCompleteItemCandidates(q, m,
+          createItemLockTrace(), { root: { owner, authority: debitRequest.request.authority },
+            requirements: [{ kind: 'lot_fifo', selector: selected }] }, () => lots.consumeLotsFifo(q, m, selected))));
+        const { quantity, provenanceClass, provenanceDigest, ...identity } = output;
+        const transition = { kind: 'escrow', subject: { storageKind: 'lot', lotId: created.lotId,
+          expected: { ...identity, remainingQuantity: 9 } }, operationId: 'long-id-operation' };
+        const moveRequest = lotRequest(owner, definition);
+        moveRequest.request.authority.aggregate = { kind: 'operation', id: 'long-id-operation' };
+        moveRequest.request.authority.itemTransitions = [transition];
+        const move = () => withItemTransaction(pool, (q) => withLotMutation(q, moveRequest, (m) =>
+          lots.withCompleteItemCandidates(q, m, createItemLockTrace(), { root: { owner, authority: moveRequest.request.authority },
+            requirements: [{ kind: 'lot_exact', lotId: created.lotId, quantity: 9 }] }, () => lots.applyItemTransition(q, m, 0))));
+        assert.deepEqual(await move(), await move());
+      }
+      for (const logicalItemId of ['a'.repeat(259), 'bad::id::extra', 'bad:: padded']) {
+        const before = await snapshot(), invalid = lotRequest(owner, definition);
+        await assert.rejects(() => withItemTransaction(pool, (q) => withLotMutation(q, invalid,
+          (m) => unique ? lots.grantUnique(q, m, definition, { ...output, logicalItemId })
+            : lots.grantLot(q, m, definition, { ...output, logicalItemId }))), { code: 'bad_item_request' });
+        assert.deepEqual(await snapshot(), before);
+      }
+    }
+    const legacy = await withItemTransaction(pool, (q) => createItem(q, owner, 't'.repeat(200), 'awarded', randomUUID()));
+    await assert.rejects(() => withItemTransaction(pool, (q) => createItem(q, owner, 't'.repeat(201), 'awarded', randomUUID())), { code: 'bad_item_request' });
+    await assert.rejects(() => pool.query('UPDATE item_instances SET template_id=$2 WHERE id=$1', [legacy.id, 't'.repeat(201)]), /item_instance_template_id/);
+    await assert.rejects(() => pool.query('UPDATE item_events SET template_id=$2 WHERE item_id=$1', [legacy.id, 't'.repeat(201)]), /item_event_template_id/);
+    console.log('external-correction ids: 200/201/258 exact lot/unique grants, events, transition/replay and legacy bounds PASS');
+  }, existingPool);
+  if (!only || ['errors', 'errors-aborted'].includes(only)) await withItemFixture(async ({ pool, accountOwner: owner, definition, snapshot }) => {
+    const created = await withItemTransaction(pool, (q) => withLotMutation(q, lotRequest(owner, definition),
+      (m) => lots.grantLot(q, m, definition, lotOutput(owner, definition))));
+    const modes = only === 'errors-aborted' ? ['operational-aborted']
+      : ['registry', 'missing', 'integrity', 'operational', 'operational-aborted', 'malformed', 'candidate'];
+    for (const mode of modes) {
+      const request = lotRequest(owner, definition), before = await snapshot(); let armed = true, locked = false, aborted = false, postPoisonSql = 0;
+      const alias = forwardPool(pool, { before: async (sql, values, q) => {
+        // Reproduce PostgreSQL's aborted-transaction semantics on pg-mem after an actual failed SQL read.
+        if (aborted && sql === 'ROLLBACK') aborted = false;
+        if (aborted) {
+          postPoisonSql++;
+          throw Object.assign(Error('SQL after a poisoned native transaction'), { code: '25P02' });
+        }
+        if (sql === 'SELECT * FROM item_lots WHERE lot_id=$1 FOR UPDATE') locked = true;
+        if (armed && locked && ['integrity', 'operational', 'operational-aborted'].includes(mode) && sql.startsWith('SELECT * FROM item_definition_versions')) {
+          armed = false;
+          try {
+            if (mode === 'integrity') return await q.query('UPDATE item_lots SET remaining_quantity=-1 WHERE lot_id=$1', [created.lotId]);
+            return await q.query('SELECT * FROM missing_revalidation_table');
+          } catch (error) {
+            // pg-mem omits SQLSTATE; retain the actual failed SQL/error and supply its native classification.
+            error.code ??= mode === 'integrity' ? '23514' : '42P01';
+            aborted = mode === 'operational-aborted'; throw error;
+          }
+        }
+      }, after: async (sql, values, result) => {
+        if (!armed || !locked) return;
+        if (sql.startsWith('SELECT * FROM item_definition_versions')) {
+          armed = false;
+          if (mode === 'registry') result.rows[0] = { ...result.rows[0], definition_kind: 'corrupt' };
+          if (mode === 'missing') result.rows = [];
+        } else if (['malformed', 'candidate'].includes(mode) && sql === 'SELECT * FROM item_lots WHERE lot_id=$1') {
+          armed = false;
+          result.rows[0] = { ...result.rows[0], ...(mode === 'malformed' ? { quality_band: 'invalid-for-none-mode' }
+            : { remaining_quantity: result.rows[0].remaining_quantity - 1 }) };
+        }
+      } });
+      const execute = (target, caught) => withItemTransaction(target, (q) => withLotMutation(q, request, async (m) => {
+        await lots.grantLot(q, m, definition, lotOutput(owner, definition));
+        const action = () => lots.withCompleteItemCandidates(q, m, createItemLockTrace(),
+          { root: { owner, authority: request.request.authority }, requirements: [{ kind: 'lot_exact', lotId: created.lotId, quantity: 1 }] },
+          () => lots.consumeExactLot(q, m, created.lotId, 1));
+        if (!caught) return action();
+        try { await action(); } catch { return 'caught leaf'; }
+      }));
+      const expected = { registry: 'content_registry_corrupt', missing: 'definition_not_found',
+        integrity: 'item_integrity_error', operational: '42P01', 'operational-aborted': '42P01', malformed: 'bad_item_request', candidate: 'contention' }[mode];
+      await assert.rejects(() => execute(alias, true), (error) => {
+        const actualCode = /^[a-zA-Z0-9_]{1,64}$/.test(error?.code ?? '') ? error.code : 'unavailable';
+        console.log(`external-correction error observation: ${JSON.stringify({ mode, actualCode, expected })}`);
+        assert.equal(error.code, expected, `${mode} revalidation classification`); return true;
+      });
+      assert.equal(postPoisonSql, 0, 'caught leaf poison must reach rollback before parity or guard SQL');
+      assert.equal(armed, false, `${mode} injection reached post-lock resolution`);
+      assert.deepEqual(await snapshot(), before, `${mode} poisons root and removes preceding grant and guard`);
+      const retried = await execute(pool, false); assert.equal(retried.removedQuantity, 1);
+      assert.deepEqual(await execute(pool, false), retried);
+    }
+    console.log('external-correction errors: revalidation classification, poisoned-root rollback and same-key retry PASS');
+  }, existingPool);
+  if (!only || ['legacy-board', 'assignment'].includes(only)) await withItemFixture(async ({ pool, accountOwner: owner }) => {
+    const source = materialSource({ kind: 'item', stackable: false, maximumLotQuantity: 1, definitionVersion: 70 }); source.version = 70;
+    const artifact = compileFixture(source);
+    await storeSealedBundle(pool, artifact.request);
+    const definition = await definitionByHash(pool, artifact.expectedDefinitions[0].definitionHash);
+    const item = await withItemTransaction(pool, (q) => withLotMutation(q, lotRequest(owner, definition),
+      (m) => lots.grantUnique(q, m, definition, { logicalItemId: definition.logicalItemId,
+        definitionHash: definition.definitionHash, owner, qualityBand: null, qualityStateDigest: null,
+        tradePolicyHash: definition.definitionHash, conditionSummary: null, exportPolicy: 'ineligible',
+        provenanceClass: 'awarded', provenanceDigest: 'a'.repeat(64) })));
+    assert.deepEqual((await inventoryBoard(pool, owner)).items, [], 'legacy board must exclude exact unique');
+    assert.equal((await pool.query('SELECT state FROM item_instances WHERE id=$1', [item.id])).rows[0].state, 'active');
+    console.log('external-correction legacy-board: exact unique stays stored and invisible to legacy inventory PASS');
+    if (!only || only === 'assignment') {
+      const { assignItemToCurrentCharacter } = await import('../src/routes/worldgraph.js');
+      // Adversarial corruption of the legacy-shaped alias must not let an exact attachment through the legacy precheck.
+      // Its logical ID, exact definition and immutable normalized records are unchanged.
+      await pool.query("UPDATE item_instances SET template_id='item:precision_lock_tool' WHERE id=$1", [item.id]);
+      const row = (await pool.query('SELECT * FROM item_instances WHERE id=$1', [item.id])).rows[0];
+      await assert.rejects(() => withItemTransaction(pool, q => assignItemToCurrentCharacter(q, owner.id, item.id, 'exact-assignment-key')),
+        { code: 'item_assignment_unavailable' });
+      assert.deepEqual((await pool.query('SELECT * FROM item_instances WHERE id=$1', [item.id])).rows[0], row);
+      console.log('external-correction assignment: corrupted legacy-shaped alias on exact row refused at precheck PASS');
+    }
+  }, existingPool);
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) await runLots();
