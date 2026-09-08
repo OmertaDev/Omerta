@@ -11,7 +11,7 @@ Written 2026-07-25. Every number below was measured from the tree, not recalled.
 | | |
 |---|---|
 | Backend modules | **214** files, **93362** lines (`src/`, incl. `src/routes/` and `src/social/`) |
-| Test suites | **176** files, **97210** lines (`test/`) — ratio 1.04 test:src |
+| Test suites | **176** files, **97304** lines (`test/`) — ratio 1.04 test:src |
 | HTTP routes | **766** registrations (**766** unique) |
 | Database tables | **338** (`schema.sql`, 6865 lines) |
 | Client | **12739** lines (`public/index.html`, single file, zero dependencies) |
