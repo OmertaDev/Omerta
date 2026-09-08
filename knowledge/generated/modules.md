@@ -101,7 +101,7 @@
 | [src/invariants.js](../../src/invariants.js) | 1286 | economy-ledger | 7 / 96 | 1 | 52 | 89 |
 | [src/item-lock-trace.js](../../src/item-lock-trace.js) | 59 | platform-core | 1 / 6 | 0 | 0 | 4 |
 | [src/itemdefinitions.js](../../src/itemdefinitions.js) | 201 | platform-core | 4 / 12 | 0 | 6 | 8 |
-| [src/itemlots.js](../../src/itemlots.js) | 663 | platform-core | 5 / 4 | 0 | 7 | 6 |
+| [src/itemlots.js](../../src/itemlots.js) | 707 | platform-core | 5 / 4 | 0 | 7 | 8 |
 | [src/items.js](../../src/items.js) | 1189 | world-graph | 6 / 10 | 0 | 10 | 7 |
 | [src/kitchen.js](../../src/kitchen.js) | 374 | platform-core | 3 / 3 | 13 | 8 | 0 |
 | [src/landmarks.js](../../src/landmarks.js) | 53 | world-progression | 3 / 1 | 2 | 2 | 0 |

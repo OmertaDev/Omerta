@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "35e8917bed2ab9050900c6c6fb53dd55885759f5",
+  "sourceRevision": "b72ecdd0aa780c7738dce8a8ff5324532cff25ae",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 6320,
-    "edges": 27966,
+    "nodes": 6322,
+    "edges": 27987,
     "byNodeType": {
       "Artifact": 2230,
       "Command": 64,
-      "Commit": 1431,
+      "Commit": 1433,
       "Contract": 49,
       "Document": 501,
       "Domain": 13,
@@ -65,20 +65,20 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 2063,
-      "CHANGED": 11170,
+      "CHANGED": 11185,
       "CONTAINS": 2251,
       "DECLARES": 64,
       "DEFINED_IN": 1149,
       "DEPENDS_ON": 64,
       "EXECUTES": 237,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1431,
+      "HAS_COMMIT": 1433,
       "IMPLEMENTS": 124,
-      "IMPORTS": 1894,
+      "IMPORTS": 1896,
       "INHERITS": 12,
       "REFERENCES": 3427,
       "REPRESENTS": 968,
-      "TESTS": 699,
+      "TESTS": 701,
       "TRACKS": 126,
       "USES_TABLE": 1585
     }
@@ -21068,20 +21068,20 @@
       "path": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 16987,
-      "lines": 359,
-      "version": "33a0eef88a8109bd",
+      "bytes": 17724,
+      "lines": 368,
+      "version": "24d5c12d511d1c22",
       "text": true,
       "provenance": [
         {
           "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md",
           "line": 1,
-          "version": "33a0eef88a8109bd"
+          "version": "24d5c12d511d1c22"
         }
       ],
-      "lastChangedAt": "2026-09-07T23:40:20.000Z",
+      "lastChangedAt": "2026-09-08T03:30:24.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "1618f119fa4ff45427c70b1f83e26beb79a40fa6"
+      "lastChangedCommit": "b72ecdd0aa780c7738dce8a8ff5324532cff25ae"
     },
     {
       "key": "Artifact:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
@@ -21091,20 +21091,20 @@
       "path": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 40629,
+      "bytes": 41455,
       "lines": 249,
-      "version": "bf8a3cd641e0b3b9",
+      "version": "5fea5f35a574233c",
       "text": true,
       "provenance": [
         {
           "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
           "line": 1,
-          "version": "bf8a3cd641e0b3b9"
+          "version": "5fea5f35a574233c"
         }
       ],
-      "lastChangedAt": "2026-09-08T02:23:21.000Z",
+      "lastChangedAt": "2026-09-08T03:30:24.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "35e8917bed2ab9050900c6c6fb53dd55885759f5"
+      "lastChangedCommit": "b72ecdd0aa780c7738dce8a8ff5324532cff25ae"
     },
     {
       "key": "Artifact:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-transition-amendment.md",
@@ -40614,18 +40614,18 @@
       "extension": ".md",
       "bytes": 56521,
       "lines": 754,
-      "version": "c9704c8483fb6ffa",
+      "version": "86766989e96f0585",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "c9704c8483fb6ffa"
+          "version": "86766989e96f0585"
         }
       ],
-      "lastChangedAt": "2026-09-08T02:23:21.000Z",
+      "lastChangedAt": "2026-09-08T03:30:24.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "35e8917bed2ab9050900c6c6fb53dd55885759f5"
+      "lastChangedCommit": "b72ecdd0aa780c7738dce8a8ff5324532cff25ae"
     },
     {
       "key": "Artifact:src/accrual.js",
@@ -42866,20 +42866,20 @@
       "path": "src/itemlots.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 48253,
-      "lines": 663,
-      "version": "4ec835fa9c7bd1cf",
+      "bytes": 50938,
+      "lines": 707,
+      "version": "c467be88ad6f43b3",
       "text": true,
       "provenance": [
         {
           "file": "src/itemlots.js",
           "line": 1,
-          "version": "4ec835fa9c7bd1cf"
+          "version": "c467be88ad6f43b3"
         }
       ],
-      "lastChangedAt": "2026-09-08T02:23:21.000Z",
+      "lastChangedAt": "2026-09-08T03:30:24.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "35e8917bed2ab9050900c6c6fb53dd55885759f5"
+      "lastChangedCommit": "b72ecdd0aa780c7738dce8a8ff5324532cff25ae"
     },
     {
       "key": "Artifact:src/items.js",
@@ -47213,20 +47213,20 @@
       "path": "test/gates.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 265512,
-      "lines": 4075,
-      "version": "dc12548620ad0fb7",
+      "bytes": 266183,
+      "lines": 4078,
+      "version": "edd076ec46eec350",
       "text": true,
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "dc12548620ad0fb7"
+          "version": "edd076ec46eec350"
         }
       ],
-      "lastChangedAt": "2026-09-07T23:40:38.000Z",
+      "lastChangedAt": "2026-09-08T03:30:24.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "f5da40cfc2242cd749cbce97aa754a0ffac26a5c"
+      "lastChangedCommit": "b72ecdd0aa780c7738dce8a8ff5324532cff25ae"
     },
     {
       "key": "Artifact:test/genesiscca.js",
@@ -48202,20 +48202,20 @@
       "path": "test/phase2-lots.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 128955,
-      "lines": 1505,
-      "version": "f83c7c99eb85970c",
+      "bytes": 157663,
+      "lines": 1836,
+      "version": "b761e8430d05294b",
       "text": true,
       "provenance": [
         {
           "file": "test/phase2-lots.js",
           "line": 1,
-          "version": "f83c7c99eb85970c"
+          "version": "b761e8430d05294b"
         }
       ],
-      "lastChangedAt": "2026-09-08T02:23:21.000Z",
+      "lastChangedAt": "2026-09-08T03:30:24.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "35e8917bed2ab9050900c6c6fb53dd55885759f5"
+      "lastChangedCommit": "b72ecdd0aa780c7738dce8a8ff5324532cff25ae"
     },
     {
       "key": "Artifact:test/phase2-postgres.js",
@@ -48225,20 +48225,20 @@
       "path": "test/phase2-postgres.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 68118,
-      "lines": 739,
-      "version": "7395b7016d69b781",
+      "bytes": 68412,
+      "lines": 743,
+      "version": "fb5c5b0f22f09a19",
       "text": true,
       "provenance": [
         {
           "file": "test/phase2-postgres.js",
           "line": 1,
-          "version": "7395b7016d69b781"
+          "version": "fb5c5b0f22f09a19"
         }
       ],
-      "lastChangedAt": "2026-09-08T02:23:21.000Z",
+      "lastChangedAt": "2026-09-08T03:30:24.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "35e8917bed2ab9050900c6c6fb53dd55885759f5"
+      "lastChangedCommit": "b72ecdd0aa780c7738dce8a8ff5324532cff25ae"
     },
     {
       "key": "Artifact:test/phase2-review-regressions.js",
@@ -69161,6 +69161,22 @@
       ]
     },
     {
+      "key": "Commit:b72ecdd0aa780c7738dce8a8ff5324532cff25ae",
+      "type": "Commit",
+      "id": "b72ecdd0aa780c7738dce8a8ff5324532cff25ae",
+      "label": "fix(items): select bounded FIFO prefixes at native timestamp precision",
+      "title": "fix(items): select bounded FIFO prefixes at native timestamp precision",
+      "date": "2026-09-08T03:30:24.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/b72ecdd0aa780c7738dce8a8ff5324532cff25ae",
+      "provenance": [
+        {
+          "commit": "b72ecdd0aa780c7738dce8a8ff5324532cff25ae",
+          "url": "https://github.com/OmertaDev/Omerta/commit/b72ecdd0aa780c7738dce8a8ff5324532cff25ae"
+        }
+      ]
+    },
+    {
       "key": "Commit:b73127dfb91af5deb1fce35e654c93cfedb7db78",
       "type": "Commit",
       "id": "b73127dfb91af5deb1fce35e654c93cfedb7db78",
@@ -74485,6 +74501,22 @@
         {
           "commit": "f82032965a77e68a02e7d4ecc866092093af2076",
           "url": "https://github.com/OmertaDev/Omerta/commit/f82032965a77e68a02e7d4ecc866092093af2076"
+        }
+      ]
+    },
+    {
+      "key": "Commit:f8642cfa03b06ebae22854e0de9f2512d234b979",
+      "type": "Commit",
+      "id": "f8642cfa03b06ebae22854e0de9f2512d234b979",
+      "label": "docs: refresh knowledge for reviewed exact item corrections",
+      "title": "docs: refresh knowledge for reviewed exact item corrections",
+      "date": "2026-09-08T02:24:53.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f8642cfa03b06ebae22854e0de9f2512d234b979",
+      "provenance": [
+        {
+          "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f8642cfa03b06ebae22854e0de9f2512d234b979"
         }
       ]
     },
@@ -81952,13 +81984,13 @@
       "id": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md",
       "label": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md",
       "documentType": "documentation",
-      "lines": 359,
-      "version": "33a0eef88a8109bd",
+      "lines": 368,
+      "version": "24d5c12d511d1c22",
       "provenance": [
         {
           "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md",
           "line": 1,
-          "version": "33a0eef88a8109bd"
+          "version": "24d5c12d511d1c22"
         }
       ]
     },
@@ -81969,12 +82001,12 @@
       "label": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
       "documentType": "documentation",
       "lines": 249,
-      "version": "bf8a3cd641e0b3b9",
+      "version": "5fea5f35a574233c",
       "provenance": [
         {
           "file": "docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
           "line": 1,
-          "version": "bf8a3cd641e0b3b9"
+          "version": "5fea5f35a574233c"
         }
       ]
     },
@@ -83905,12 +83937,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 754,
-      "version": "c9704c8483fb6ffa",
+      "version": "86766989e96f0585",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "c9704c8483fb6ffa"
+          "version": "86766989e96f0585"
         }
       ]
     },
@@ -88682,6 +88714,9 @@
           "commit": "f711742fead91b6d1eaaaf0329ad08adcc8a9a15"
         },
         {
+          "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
+        },
+        {
           "commit": "fd41232dffa31491628830869916fe246609b20f"
         },
         {
@@ -89253,6 +89288,9 @@
         },
         {
           "commit": "f711742fead91b6d1eaaaf0329ad08adcc8a9a15"
+        },
+        {
+          "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
         },
         {
           "commit": "fd41232dffa31491628830869916fe246609b20f"
@@ -89828,6 +89866,9 @@
           "commit": "f711742fead91b6d1eaaaf0329ad08adcc8a9a15"
         },
         {
+          "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
+        },
+        {
           "commit": "fd41232dffa31491628830869916fe246609b20f"
         },
         {
@@ -90401,6 +90442,9 @@
           "commit": "f711742fead91b6d1eaaaf0329ad08adcc8a9a15"
         },
         {
+          "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
+        },
+        {
           "commit": "fd41232dffa31491628830869916fe246609b20f"
         },
         {
@@ -90507,6 +90551,9 @@
         },
         {
           "commit": "f711742fead91b6d1eaaaf0329ad08adcc8a9a15"
+        },
+        {
+          "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
         },
         {
           "commit": "fd41232dffa31491628830869916fe246609b20f"
@@ -91079,6 +91126,9 @@
           "commit": "f711742fead91b6d1eaaaf0329ad08adcc8a9a15"
         },
         {
+          "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
+        },
+        {
           "commit": "fd41232dffa31491628830869916fe246609b20f"
         },
         {
@@ -91271,6 +91321,9 @@
           "commit": "f711742fead91b6d1eaaaf0329ad08adcc8a9a15"
         },
         {
+          "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
+        },
+        {
           "commit": "fd41232dffa31491628830869916fe246609b20f"
         },
         {
@@ -91416,6 +91469,9 @@
         },
         {
           "commit": "f711742fead91b6d1eaaaf0329ad08adcc8a9a15"
+        },
+        {
+          "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
         },
         {
           "commit": "ff0ff3aaf31e9d9473ea2437e10f26cbfd46a70d"
@@ -92978,13 +93034,13 @@
       "type": "Module",
       "id": "src/itemlots.js",
       "label": "src/itemlots.js",
-      "lines": 663,
-      "version": "4ec835fa9c7bd1cf",
+      "lines": 707,
+      "version": "c467be88ad6f43b3",
       "provenance": [
         {
           "file": "src/itemlots.js",
           "line": 1,
-          "version": "4ec835fa9c7bd1cf"
+          "version": "c467be88ad6f43b3"
         }
       ]
     },
@@ -97883,7 +97939,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "35e8917bed2ab9050900c6c6fb53dd55885759f5",
+      "revision": "b72ecdd0aa780c7738dce8a8ff5324532cff25ae",
       "currentBranch": "codex/world-graph-lots",
       "defaultBranch": "main",
       "visibility": "public",
@@ -124417,13 +124473,13 @@
       "type": "TestSuite",
       "id": "test/gates.js",
       "label": "test/gates.js",
-      "lines": 4075,
-      "version": "dc12548620ad0fb7",
+      "lines": 4078,
+      "version": "edd076ec46eec350",
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "dc12548620ad0fb7"
+          "version": "edd076ec46eec350"
         }
       ]
     },
@@ -125062,13 +125118,13 @@
       "type": "TestSuite",
       "id": "test/phase2-lots.js",
       "label": "test/phase2-lots.js",
-      "lines": 1505,
-      "version": "f83c7c99eb85970c",
+      "lines": 1836,
+      "version": "b761e8430d05294b",
       "provenance": [
         {
           "file": "test/phase2-lots.js",
           "line": 1,
-          "version": "f83c7c99eb85970c"
+          "version": "b761e8430d05294b"
         }
       ]
     },
@@ -125077,13 +125133,13 @@
       "type": "TestSuite",
       "id": "test/phase2-postgres.js",
       "label": "test/phase2-postgres.js",
-      "lines": 739,
-      "version": "7395b7016d69b781",
+      "lines": 743,
+      "version": "fb5c5b0f22f09a19",
       "provenance": [
         {
           "file": "test/phase2-postgres.js",
           "line": 1,
-          "version": "7395b7016d69b781"
+          "version": "fb5c5b0f22f09a19"
         }
       ]
     },
@@ -210690,6 +210746,62 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:b72ecdd0aa780c7738dce8a8ff5324532cff25ae",
+      "to": "Artifact:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md",
+      "provenance": {
+        "commit": "b72ecdd0aa780c7738dce8a8ff5324532cff25ae"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b72ecdd0aa780c7738dce8a8ff5324532cff25ae",
+      "to": "Artifact:docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md",
+      "provenance": {
+        "commit": "b72ecdd0aa780c7738dce8a8ff5324532cff25ae"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b72ecdd0aa780c7738dce8a8ff5324532cff25ae",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "b72ecdd0aa780c7738dce8a8ff5324532cff25ae"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b72ecdd0aa780c7738dce8a8ff5324532cff25ae",
+      "to": "Artifact:src/itemlots.js",
+      "provenance": {
+        "commit": "b72ecdd0aa780c7738dce8a8ff5324532cff25ae"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b72ecdd0aa780c7738dce8a8ff5324532cff25ae",
+      "to": "Artifact:test/gates.js",
+      "provenance": {
+        "commit": "b72ecdd0aa780c7738dce8a8ff5324532cff25ae"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b72ecdd0aa780c7738dce8a8ff5324532cff25ae",
+      "to": "Artifact:test/phase2-lots.js",
+      "provenance": {
+        "commit": "b72ecdd0aa780c7738dce8a8ff5324532cff25ae"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b72ecdd0aa780c7738dce8a8ff5324532cff25ae",
+      "to": "Artifact:test/phase2-postgres.js",
+      "provenance": {
+        "commit": "b72ecdd0aa780c7738dce8a8ff5324532cff25ae"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:b73127dfb91af5deb1fce35e654c93cfedb7db78",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -231710,6 +231822,70 @@
       "to": "Artifact:test/security.js",
       "provenance": {
         "commit": "f82032965a77e68a02e7d4ecc866092093af2076"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f8642cfa03b06ebae22854e0de9f2512d234b979",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f8642cfa03b06ebae22854e0de9f2512d234b979",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f8642cfa03b06ebae22854e0de9f2512d234b979",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f8642cfa03b06ebae22854e0de9f2512d234b979",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f8642cfa03b06ebae22854e0de9f2512d234b979",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f8642cfa03b06ebae22854e0de9f2512d234b979",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f8642cfa03b06ebae22854e0de9f2512d234b979",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f8642cfa03b06ebae22854e0de9f2512d234b979",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
       }
     },
     {
@@ -265252,7 +265428,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 492
+      "weight": 494
     },
     {
       "type": "DEPENDS_ON",
@@ -283208,6 +283384,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:b72ecdd0aa780c7738dce8a8ff5324532cff25ae",
+      "provenance": {
+        "commit": "b72ecdd0aa780c7738dce8a8ff5324532cff25ae"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:b73127dfb91af5deb1fce35e654c93cfedb7db78",
       "provenance": {
         "commit": "b73127dfb91af5deb1fce35e654c93cfedb7db78"
@@ -285867,6 +286051,14 @@
       "to": "Commit:f82032965a77e68a02e7d4ecc866092093af2076",
       "provenance": {
         "commit": "f82032965a77e68a02e7d4ecc866092093af2076"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:f8642cfa03b06ebae22854e0de9f2512d234b979",
+      "provenance": {
+        "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
       }
     },
     {
@@ -297980,7 +298172,7 @@
       "to": "Artifact:tools/sqlscan.js",
       "provenance": {
         "file": "test/gates.js",
-        "line": 3155
+        "line": 3157
       }
     },
     {
@@ -299798,7 +299990,7 @@
       "to": "Artifact:src/crafting.js",
       "provenance": {
         "file": "test/phase2-lots.js",
-        "line": 1226
+        "line": 1227
       }
     },
     {
@@ -299861,6 +300053,24 @@
       "to": "Artifact:src/itemlots.js",
       "provenance": {
         "file": "test/phase2-lots.js",
+        "line": 1509
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-lots.js",
+      "to": "Artifact:src/itemlots.js",
+      "provenance": {
+        "file": "test/phase2-lots.js",
+        "line": 1721
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-lots.js",
+      "to": "Artifact:src/itemlots.js",
+      "provenance": {
+        "file": "test/phase2-lots.js",
         "line": 45
       }
     },
@@ -299879,7 +300089,7 @@
       "to": "Artifact:src/mysteries.js",
       "provenance": {
         "file": "test/phase2-lots.js",
-        "line": 1234
+        "line": 1235
       }
     },
     {
@@ -299888,7 +300098,7 @@
       "to": "Artifact:src/operations.js",
       "provenance": {
         "file": "test/phase2-lots.js",
-        "line": 1248
+        "line": 1249
       }
     },
     {
@@ -299897,7 +300107,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "test/phase2-lots.js",
-        "line": 1491
+        "line": 1493
       }
     },
     {
@@ -299906,7 +300116,7 @@
       "to": "Artifact:src/worldgraph-validate.js",
       "provenance": {
         "file": "test/phase2-lots.js",
-        "line": 1200
+        "line": 1201
       }
     },
     {
@@ -299969,7 +300179,7 @@
       "to": "Artifact:src/item-lock-trace.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 400
+        "line": 404
       }
     },
     {
@@ -299987,7 +300197,7 @@
       "to": "Artifact:src/itemlots.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 398
+        "line": 402
       }
     },
     {
@@ -299996,7 +300206,7 @@
       "to": "Artifact:src/itemlots.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 452
+        "line": 456
       }
     },
     {
@@ -300005,7 +300215,7 @@
       "to": "Artifact:src/items.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 397
+        "line": 401
       }
     },
     {
@@ -300014,7 +300224,7 @@
       "to": "Artifact:test/lib/phase2-definition-fixtures.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 447
+        "line": 451
       }
     },
     {
@@ -300041,7 +300251,7 @@
       "to": "Artifact:test/lib/phase2-item-fixtures.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 396
+        "line": 400
       }
     },
     {
@@ -300068,7 +300278,7 @@
       "to": "Artifact:test/phase2-lots.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 399
+        "line": 403
       }
     },
     {
@@ -347750,7 +347960,7 @@
       "to": "Artifact:src/crafting.js",
       "provenance": {
         "file": "test/phase2-lots.js",
-        "line": 1226
+        "line": 1227
       }
     },
     {
@@ -347813,6 +348023,24 @@
       "to": "Artifact:src/itemlots.js",
       "provenance": {
         "file": "test/phase2-lots.js",
+        "line": 1509
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/phase2-lots.js",
+      "to": "Artifact:src/itemlots.js",
+      "provenance": {
+        "file": "test/phase2-lots.js",
+        "line": 1721
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/phase2-lots.js",
+      "to": "Artifact:src/itemlots.js",
+      "provenance": {
+        "file": "test/phase2-lots.js",
         "line": 45
       }
     },
@@ -347831,7 +348059,7 @@
       "to": "Artifact:src/mysteries.js",
       "provenance": {
         "file": "test/phase2-lots.js",
-        "line": 1234
+        "line": 1235
       }
     },
     {
@@ -347840,7 +348068,7 @@
       "to": "Artifact:src/operations.js",
       "provenance": {
         "file": "test/phase2-lots.js",
-        "line": 1248
+        "line": 1249
       }
     },
     {
@@ -347849,7 +348077,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "test/phase2-lots.js",
-        "line": 1491
+        "line": 1493
       }
     },
     {
@@ -347858,7 +348086,7 @@
       "to": "Artifact:src/worldgraph-validate.js",
       "provenance": {
         "file": "test/phase2-lots.js",
-        "line": 1200
+        "line": 1201
       }
     },
     {
@@ -347903,7 +348131,7 @@
       "to": "Artifact:src/item-lock-trace.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 400
+        "line": 404
       }
     },
     {
@@ -347921,7 +348149,7 @@
       "to": "Artifact:src/itemlots.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 398
+        "line": 402
       }
     },
     {
@@ -347930,7 +348158,7 @@
       "to": "Artifact:src/itemlots.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 452
+        "line": 456
       }
     },
     {
@@ -347939,7 +348167,7 @@
       "to": "Artifact:src/items.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 397
+        "line": 401
       }
     },
     {
@@ -357443,7 +357671,7 @@
       "to": "Table:item_events",
       "provenance": {
         "file": "src/itemlots.js",
-        "line": 164
+        "line": 165
       }
     },
     {
@@ -357452,7 +357680,7 @@
       "to": "Table:item_instances",
       "provenance": {
         "file": "src/itemlots.js",
-        "line": 155
+        "line": 156
       }
     },
     {
@@ -357461,7 +357689,7 @@
       "to": "Table:item_lots",
       "provenance": {
         "file": "src/itemlots.js",
-        "line": 180
+        "line": 181
       }
     },
     {
@@ -357470,7 +357698,7 @@
       "to": "Table:item_mutation_guards",
       "provenance": {
         "file": "src/itemlots.js",
-        "line": 656
+        "line": 700
       }
     },
     {
@@ -357479,7 +357707,7 @@
       "to": "Table:item_mutation_inputs",
       "provenance": {
         "file": "src/itemlots.js",
-        "line": 503
+        "line": 547
       }
     },
     {
@@ -357488,7 +357716,7 @@
       "to": "Table:item_mutation_outputs",
       "provenance": {
         "file": "src/itemlots.js",
-        "line": 170
+        "line": 171
       }
     },
     {
@@ -357497,7 +357725,7 @@
       "to": "Table:operation_escrow",
       "provenance": {
         "file": "src/itemlots.js",
-        "line": 270
+        "line": 283
       }
     },
     {

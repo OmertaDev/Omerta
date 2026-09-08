@@ -373,7 +373,7 @@
 | [docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md](../../docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md) | design | 939 | 2026-09-07 |
 | [docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md](../../docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md) | design | 225 | 2026-09-07 |
 | [docs/superpowers/specs/2026-09-07-world-graph-phase-2a-definition-registry-amendment.md](../../docs/superpowers/specs/2026-09-07-world-graph-phase-2a-definition-registry-amendment.md) | documentation | 130 | 2026-09-07 |
-| [docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md](../../docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md) | documentation | 359 | 2026-09-07 |
+| [docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md](../../docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-contract-amendment.md) | documentation | 368 | 2026-09-08 |
 | [docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md](../../docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md) | documentation | 249 | 2026-09-08 |
 | [docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-transition-amendment.md](../../docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-transition-amendment.md) | documentation | 261 | 2026-09-08 |
 | [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2759 | 2026-09-04 |
