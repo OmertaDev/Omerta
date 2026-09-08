@@ -9633,7 +9633,7 @@
       pick a move, <code>:params</code> become inputs, and the body is yours to edit. See also
       <code>/agents</code> and <code>/openapi.json</code>.</p></div>`;
     const groupSel = el(`<select id="deck-group">${Object.keys(DECK).map((g) => `<option>${g}</option>`).join('')}</select>`);
-    const routeSel = el(`<select id="deck-route" style="max-width:340px"></select>`);
+    const routeSel = el(`<select id="deck-route" style="max-width:min(340px,100%);min-width:0"></select>`);
     const paramBox = el(`<span id="deck-params"></span>`);
     const bodyTa = el(`<textarea id="deck-body" spellcheck="false"></textarea>`);
     const goBtn = el(`<button class="act" style="margin-top:6px">SEND</button>`);
