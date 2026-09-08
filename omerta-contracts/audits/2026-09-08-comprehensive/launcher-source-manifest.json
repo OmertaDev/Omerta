@@ -1,0 +1,497 @@
+{
+  "note": "Complete source content pins for the selected Launcher/LBP checkouts, not a claim that every unused file received independent full review.",
+  "launcherCommit": "41442a518de9aa2a60ce5db76046dc4c983dd35a",
+  "lbpCommit": "5ef0262b8e191360a212aac864a525dcf7a06605",
+  "files": [
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/factories/periphery/MerkleClaimFactory.sol",
+      "bytes": 9104,
+      "sha256": "b88bdd74351685a7d44b70172dfe1b633a3567ed1cb7cabb63ded7e66f588092"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/interfaces/external/IUERC20.sol",
+      "bytes": 142,
+      "sha256": "48481e87e8dc1965f66d54090f5f86a3f08cdd30e4ea09dad8b694b898b7b75d"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/interfaces/external/IUniversalRouter.sol",
+      "bytes": 636,
+      "sha256": "940aed7987025a0a1c4020ac152f316b733c762f9435e7335e6fe4e81af9c511"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/interfaces/external/IVirtualERC20.sol",
+      "bytes": 240,
+      "sha256": "93a59377a7ca884583c4aa9e0ea0e67a83ce6fa7bf94cbbc617c1440c3b5197c"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/interfaces/IBeneficiaryVault.sol",
+      "bytes": 2400,
+      "sha256": "49008d51b83bf3eef5ef0f9ae56f9c88b39b569b3b78528d5f06a473d4850ebb"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/interfaces/IClaimableRecipient.sol",
+      "bytes": 4233,
+      "sha256": "09614315c6ef961ffbcb96d82b6fced7d06ca92d629f1cd72be97ce1d6b53994"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/interfaces/IClaimExecutor.sol",
+      "bytes": 1127,
+      "sha256": "464f226edabee89be592c9be246923e51804a24c3c651ffe0bd88055e1555626"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/interfaces/IDistributor.sol",
+      "bytes": 923,
+      "sha256": "0bba13700ffd78977f5f19861a3df32f78ec094dddad040eda63881316af939d"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/interfaces/IDistributorFactory.sol",
+      "bytes": 1564,
+      "sha256": "6d42e301bee8ee01e1c38f12595578cc9c23caf55aab474e9190e797d2d94f57"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/interfaces/IFeeSplitter.sol",
+      "bytes": 6292,
+      "sha256": "9770ac43e2c7752c4c3c28fea3de5927263a21b46df2cd229254e63500ac65ae"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/interfaces/IInitializerHook.sol",
+      "bytes": 437,
+      "sha256": "2fa509a8f7f317b8957109f0047687d878fdc03a5385885ee0f710b0ed4b28e1"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/interfaces/ILBPInitializer.sol",
+      "bytes": 2880,
+      "sha256": "381116c5bc872c8eb666c5fcec6ca9dfc5ec45c1ced6b00be4c2b1b299254bb5"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/interfaces/ILBPStrategy.sol",
+      "bytes": 8393,
+      "sha256": "543c8a5c5beff763650c5ae2b3dfcab781110a24e5c9faf25b69ca03468f5cfc"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/interfaces/ILiquidityLauncher.sol",
+      "bytes": 4658,
+      "sha256": "2e8874553c77c33e82dec1c85d41974b2e6cd881ad3246c7a3e4a101c8a4d1ea"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/interfaces/IMulticall.sol",
+      "bytes": 553,
+      "sha256": "abdd18a911f39ae0d74136b8013d10fc1bf1b54db0d855d96bfd8f7ceffe6e5b"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/interfaces/INativeStrategy.sol",
+      "bytes": 523,
+      "sha256": "954f1aa42aad8f05f286e8745e61b6cfa3234072bafa55a2e37e0dd1b2a2ec07"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/interfaces/IPermit2Forwarder.sol",
+      "bytes": 861,
+      "sha256": "d82d664f16a1f7ade562f6d950f43e1dd3c1a5a0a745da6aa62b157b556a9d67"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/interfaces/IProtocolFeeController.sol",
+      "bytes": 5699,
+      "sha256": "b5f3844eae2bbe3f5e89760e813286c97b9ed4f1f803aa6a66f1bc39bd7a9ecd"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/interfaces/IStrategy.sol",
+      "bytes": 1957,
+      "sha256": "ad2da743014b25a1f1f74011ad7cbc806676c148fdb5e82fb7b9846765468188"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/interfaces/ITimelockedPositionRecipient.sol",
+      "bytes": 1165,
+      "sha256": "2f074a6f6247fe202cbc79cbfdcd954ec62efec5fdfb197d08be17b23f676c82"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/interfaces/ITokenSplitter.sol",
+      "bytes": 1442,
+      "sha256": "dbd4af4391dd87a9e02500ca75cb810525a373a58bc899237ab4f64728ef55b6"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/libraries/external/MerkleClaimHelpers.sol",
+      "bytes": 35669,
+      "sha256": "5130e8a046e197f3bfd8fb65d67a90f21b240654b90c967ff9e02b59cbd36497"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/libraries/MigratorParams.sol",
+      "bytes": 10637,
+      "sha256": "2d9b159ea538ad32f9bd8b6d03a789b8e6946829aefc38e5d96b84109cc2a15e"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/libraries/PositionPlanner.sol",
+      "bytes": 20856,
+      "sha256": "f4573b33f426522fd9471a65445f5de037fca5cd975093d852e1424e6f19dc4e"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/libraries/ProtocolFeeLib.sol",
+      "bytes": 2270,
+      "sha256": "287226a4f6f2cf9b1a487dedcb893fccdd6b88d9ffd5696c8ba50649b27a5225"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/libraries/TickCalculations.sol",
+      "bytes": 1104,
+      "sha256": "59240ff3680b694eecf39323747a96f912b8927c87872d3927c4d69a53d69c10"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/libraries/TokenPricing.sol",
+      "bytes": 3257,
+      "sha256": "e579bab24d3ed4e70d99391abdb280476a57e051d05d16243b333322a8bcee93"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/LiquidityLauncher.sol",
+      "bytes": 3736,
+      "sha256": "146751da93b8dd775085b38ec411e0685c33d675d75a11b0c7bbde61a020ff13"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/Multicall.sol",
+      "bytes": 923,
+      "sha256": "7c617339b11b4e5108b8180caed23f8454e7306cce1e9eebcac296f287f3a4dc"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/periphery/BaseClaimRecipient.sol",
+      "bytes": 7066,
+      "sha256": "a1e196946dd4a08100ca7bf91da491b4482c4d88633a8648352e4c173367b176"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/periphery/BaseClaimRecipientWithCallback.sol",
+      "bytes": 2540,
+      "sha256": "3c2db14e749403b4efe82d3642fc031759b07bb918bc3b524478bd7640496ec3"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/periphery/BeneficiaryVault.sol",
+      "bytes": 3684,
+      "sha256": "73788f0aaa4a31c60b929ba9f5e143c263ad33b379ee19619338d0167400fff8"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/periphery/BuybackAndBurnClaimRecipient.sol",
+      "bytes": 3042,
+      "sha256": "465363a21577dd15d69f1433852cd1dae8c805200c02f8912af2e28b1dfe4342"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/periphery/CompoundingClaimRecipient.sol",
+      "bytes": 2625,
+      "sha256": "3b8df89ba78d32c8f124fa909eaab61b8d14a49c082b47cf6041ac77b711427e"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/periphery/FeeSplitter.sol",
+      "bytes": 12701,
+      "sha256": "398e5cfb599ec67c0eeff300bad9e73b495524d0be6db137be9e4a9ce0fcbd2e"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/periphery/hooks/GatedSwapHook.sol",
+      "bytes": 3166,
+      "sha256": "f01aa10db109b6046dfc7a23e5e4118ed18018149911809647b81a43362718ac"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/periphery/hooks/InitializerHook.sol",
+      "bytes": 2553,
+      "sha256": "018a9f08b841535e1e94c2a1a28dc832dbc5b3fd68905cfecaf99feecc9e41cc"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/periphery/ProtocolFeeController.sol",
+      "bytes": 5704,
+      "sha256": "ba50f5043113ffe1b8472241483f218e54a233e46ccb854631351f45d0d1125e"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/periphery/TimelockedPositionRecipient.sol",
+      "bytes": 1752,
+      "sha256": "25ecf2f367e7b33bc9156a74d1353e066459e2aab266b50ad53186bfbc3e4fa0"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/periphery/UERC20BeneficiaryVault.sol",
+      "bytes": 5574,
+      "sha256": "95e1d51947f904a2feb19f8e9e2b1528b95f4c98b68b7360c17f09dd0bf17041"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/Permit2Forwarder.sol",
+      "bytes": 1060,
+      "sha256": "c9fb425e6a40a0777da8d5d1f49818107688c63086110e1decb9eacd5dbbdce8"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/strategies/InstantLaunchStrategy.sol",
+      "bytes": 13314,
+      "sha256": "d4626966858c69c712d537c1d292981395dc0036f1dd67d544321fdcd5772d7a"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/strategies/lbp/LBPStrategy.sol",
+      "bytes": 24896,
+      "sha256": "e46086942efb106578d10e0e3b1e39cfd0cffeb6c3fef77c7d1e4933a5b4a435"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/strategies/lbp/SelfInitializerMixin.sol",
+      "bytes": 944,
+      "sha256": "bda7d4b9824c91ba3355c2c0013cdbcb272486f68618e31015fe712e49662f37"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/strategies/MerkleClaim.sol",
+      "bytes": 1153,
+      "sha256": "116de7f645205348c13c6bf017bf6420cb1e0443482cf16e889365be3bd963eb"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/strategies/TokenSplitter.sol",
+      "bytes": 1916,
+      "sha256": "481bb2d5bfd97d96b690a67e6d418bdfd55649f57ac81dfa25eccc95f5a7f3eb"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/strategies/UniversalRouterStrategy.sol",
+      "bytes": 3968,
+      "sha256": "48295cc34be37405fb751ba5008b0b4325701b081a3c688536b2fa8e0ea3cf9a"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/types/Distribution.sol",
+      "bytes": 292,
+      "sha256": "4f5619b286192a9b739031f4de97801747a68734fa476dffab9a9fc73ae2e242"
+    },
+    {
+      "path": "output/comprehensive-audit/external/liquidity-launcher/src/types/PositionPlannerTypes.sol",
+      "bytes": 1221,
+      "sha256": "58d34d1f8f2349966307840ad8d3b5631636dd10d019cd75db6b7828ac9c138d"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/factories/periphery/MerkleClaimFactory.sol",
+      "bytes": 9104,
+      "sha256": "b88bdd74351685a7d44b70172dfe1b633a3567ed1cb7cabb63ded7e66f588092"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/interfaces/external/IUERC20.sol",
+      "bytes": 142,
+      "sha256": "48481e87e8dc1965f66d54090f5f86a3f08cdd30e4ea09dad8b694b898b7b75d"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/interfaces/external/IUniversalRouter.sol",
+      "bytes": 636,
+      "sha256": "940aed7987025a0a1c4020ac152f316b733c762f9435e7335e6fe4e81af9c511"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/interfaces/external/IVirtualERC20.sol",
+      "bytes": 240,
+      "sha256": "93a59377a7ca884583c4aa9e0ea0e67a83ce6fa7bf94cbbc617c1440c3b5197c"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/interfaces/IBeneficiaryVault.sol",
+      "bytes": 2400,
+      "sha256": "49008d51b83bf3eef5ef0f9ae56f9c88b39b569b3b78528d5f06a473d4850ebb"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/interfaces/IClaimableRecipient.sol",
+      "bytes": 4233,
+      "sha256": "09614315c6ef961ffbcb96d82b6fced7d06ca92d629f1cd72be97ce1d6b53994"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/interfaces/IClaimExecutor.sol",
+      "bytes": 1127,
+      "sha256": "464f226edabee89be592c9be246923e51804a24c3c651ffe0bd88055e1555626"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/interfaces/IDistributor.sol",
+      "bytes": 923,
+      "sha256": "0bba13700ffd78977f5f19861a3df32f78ec094dddad040eda63881316af939d"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/interfaces/IDistributorFactory.sol",
+      "bytes": 1564,
+      "sha256": "6d42e301bee8ee01e1c38f12595578cc9c23caf55aab474e9190e797d2d94f57"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/interfaces/IFeeSplitter.sol",
+      "bytes": 6293,
+      "sha256": "146e902467e681f8d5e2fe2ca01e1176fdaf8c505ccc33842f17594192b88fea"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/interfaces/IInitializerHook.sol",
+      "bytes": 437,
+      "sha256": "2fa509a8f7f317b8957109f0047687d878fdc03a5385885ee0f710b0ed4b28e1"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/interfaces/ILBPInitializer.sol",
+      "bytes": 2880,
+      "sha256": "381116c5bc872c8eb666c5fcec6ca9dfc5ec45c1ced6b00be4c2b1b299254bb5"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/interfaces/ILBPStrategy.sol",
+      "bytes": 8393,
+      "sha256": "543c8a5c5beff763650c5ae2b3dfcab781110a24e5c9faf25b69ca03468f5cfc"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/interfaces/ILiquidityLauncher.sol",
+      "bytes": 4546,
+      "sha256": "6f7ac130852123987bf278f4ec90b28ecc37f2635d317223fc85aaeeae78cbaa"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/interfaces/IMulticall.sol",
+      "bytes": 553,
+      "sha256": "abdd18a911f39ae0d74136b8013d10fc1bf1b54db0d855d96bfd8f7ceffe6e5b"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/interfaces/INativeStrategy.sol",
+      "bytes": 523,
+      "sha256": "954f1aa42aad8f05f286e8745e61b6cfa3234072bafa55a2e37e0dd1b2a2ec07"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/interfaces/IPermit2Forwarder.sol",
+      "bytes": 861,
+      "sha256": "d82d664f16a1f7ade562f6d950f43e1dd3c1a5a0a745da6aa62b157b556a9d67"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/interfaces/IProtocolFeeController.sol",
+      "bytes": 5699,
+      "sha256": "b5f3844eae2bbe3f5e89760e813286c97b9ed4f1f803aa6a66f1bc39bd7a9ecd"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/interfaces/IStrategy.sol",
+      "bytes": 1957,
+      "sha256": "ad2da743014b25a1f1f74011ad7cbc806676c148fdb5e82fb7b9846765468188"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/interfaces/ITimelockedPositionRecipient.sol",
+      "bytes": 1165,
+      "sha256": "2f074a6f6247fe202cbc79cbfdcd954ec62efec5fdfb197d08be17b23f676c82"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/interfaces/ITokenSplitter.sol",
+      "bytes": 1442,
+      "sha256": "dbd4af4391dd87a9e02500ca75cb810525a373a58bc899237ab4f64728ef55b6"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/libraries/external/MerkleClaimHelpers.sol",
+      "bytes": 35669,
+      "sha256": "5130e8a046e197f3bfd8fb65d67a90f21b240654b90c967ff9e02b59cbd36497"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/libraries/MigratorParams.sol",
+      "bytes": 10637,
+      "sha256": "2d9b159ea538ad32f9bd8b6d03a789b8e6946829aefc38e5d96b84109cc2a15e"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/libraries/PositionPlanner.sol",
+      "bytes": 20856,
+      "sha256": "f4573b33f426522fd9471a65445f5de037fca5cd975093d852e1424e6f19dc4e"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/libraries/ProtocolFeeLib.sol",
+      "bytes": 2270,
+      "sha256": "287226a4f6f2cf9b1a487dedcb893fccdd6b88d9ffd5696c8ba50649b27a5225"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/libraries/TickCalculations.sol",
+      "bytes": 1104,
+      "sha256": "59240ff3680b694eecf39323747a96f912b8927c87872d3927c4d69a53d69c10"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/libraries/TokenPricing.sol",
+      "bytes": 3257,
+      "sha256": "e579bab24d3ed4e70d99391abdb280476a57e051d05d16243b333322a8bcee93"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/LiquidityLauncher.sol",
+      "bytes": 3736,
+      "sha256": "146751da93b8dd775085b38ec411e0685c33d675d75a11b0c7bbde61a020ff13"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/Multicall.sol",
+      "bytes": 923,
+      "sha256": "7c617339b11b4e5108b8180caed23f8454e7306cce1e9eebcac296f287f3a4dc"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/periphery/BaseClaimRecipient.sol",
+      "bytes": 7066,
+      "sha256": "a1e196946dd4a08100ca7bf91da491b4482c4d88633a8648352e4c173367b176"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/periphery/BaseClaimRecipientWithCallback.sol",
+      "bytes": 2540,
+      "sha256": "3c2db14e749403b4efe82d3642fc031759b07bb918bc3b524478bd7640496ec3"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/periphery/BeneficiaryVault.sol",
+      "bytes": 3684,
+      "sha256": "73788f0aaa4a31c60b929ba9f5e143c263ad33b379ee19619338d0167400fff8"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/periphery/BuybackAndBurnClaimRecipient.sol",
+      "bytes": 3042,
+      "sha256": "465363a21577dd15d69f1433852cd1dae8c805200c02f8912af2e28b1dfe4342"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/periphery/CompoundingClaimRecipient.sol",
+      "bytes": 2625,
+      "sha256": "3b8df89ba78d32c8f124fa909eaab61b8d14a49c082b47cf6041ac77b711427e"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/periphery/FeeSplitter.sol",
+      "bytes": 12555,
+      "sha256": "ceb29a3c18e0c6461b9a84a4cab93688bb6ea138eff338bb6398d58793396e37"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/periphery/hooks/GatedSwapHook.sol",
+      "bytes": 3166,
+      "sha256": "f01aa10db109b6046dfc7a23e5e4118ed18018149911809647b81a43362718ac"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/periphery/hooks/InitializerHook.sol",
+      "bytes": 2553,
+      "sha256": "018a9f08b841535e1e94c2a1a28dc832dbc5b3fd68905cfecaf99feecc9e41cc"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/periphery/ProtocolFeeController.sol",
+      "bytes": 5702,
+      "sha256": "84e0392cab744becaf8773cffb2969538c452327b2dbe945c058a79e459b3cfd"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/periphery/TimelockedPositionRecipient.sol",
+      "bytes": 1752,
+      "sha256": "25ecf2f367e7b33bc9156a74d1353e066459e2aab266b50ad53186bfbc3e4fa0"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/periphery/UERC20BeneficiaryVault.sol",
+      "bytes": 5238,
+      "sha256": "27d8cdcb5c376fcf97cba0560150d299d6ebcaac3cb991ce57ddd59e570274cc"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/Permit2Forwarder.sol",
+      "bytes": 1060,
+      "sha256": "c9fb425e6a40a0777da8d5d1f49818107688c63086110e1decb9eacd5dbbdce8"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/strategies/InstantLaunchStrategy.sol",
+      "bytes": 13137,
+      "sha256": "7e739d82e16c14be6474f334229dd0afb326cddc022f959b8b1560233178ab25"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/strategies/lbp/LBPStrategy.sol",
+      "bytes": 24896,
+      "sha256": "e46086942efb106578d10e0e3b1e39cfd0cffeb6c3fef77c7d1e4933a5b4a435"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/strategies/lbp/SelfInitializerMixin.sol",
+      "bytes": 944,
+      "sha256": "bda7d4b9824c91ba3355c2c0013cdbcb272486f68618e31015fe712e49662f37"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/strategies/MerkleClaim.sol",
+      "bytes": 1153,
+      "sha256": "116de7f645205348c13c6bf017bf6420cb1e0443482cf16e889365be3bd963eb"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/strategies/TokenSplitter.sol",
+      "bytes": 1916,
+      "sha256": "481bb2d5bfd97d96b690a67e6d418bdfd55649f57ac81dfa25eccc95f5a7f3eb"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/strategies/UniversalRouterStrategy.sol",
+      "bytes": 3968,
+      "sha256": "48295cc34be37405fb751ba5008b0b4325701b081a3c688536b2fa8e0ea3cf9a"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/types/Distribution.sol",
+      "bytes": 292,
+      "sha256": "4f5619b286192a9b739031f4de97801747a68734fa476dffab9a9fc73ae2e242"
+    },
+    {
+      "path": "output/comprehensive-audit/external/lbp-v3.1.1/src/types/PositionPlannerTypes.sol",
+      "bytes": 1221,
+      "sha256": "58d34d1f8f2349966307840ad8d3b5631636dd10d019cd75db6b7828ac9c138d"
+    }
+  ]
+}

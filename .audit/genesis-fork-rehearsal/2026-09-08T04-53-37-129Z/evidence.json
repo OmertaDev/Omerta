@@ -1,0 +1,101 @@
+{
+  "ok": true,
+  "startedAt": "2026-09-08T04:53:37.129Z",
+  "completedAt": "2026-09-08T04:54:39.239Z",
+  "safety": {
+    "mutationRpc": "http://127.0.0.1:51326",
+    "mutationTargetLoopback": true,
+    "upstreamRpcOrigin": "https://rpc.mainnet.chain.robinhood.com",
+    "upstreamReadOnly": true,
+    "productionTransactionsBroadcast": 0,
+    "productionKeysRead": 0,
+    "secretsPersisted": false,
+    "blockNumberishShim": {
+      "reason": "Anvil does not emulate Robinhood ArbSys address(100); pinned CCA/LBP bytecode is unchanged.",
+      "address": "0x0000000000000000000000000000000000000064",
+      "runtimeCodeHash": "0x11daa047dae39153903c79cf77e9e8b64178e080bb1ecddd85e2a1ba991e2e17"
+    }
+  },
+  "toolchain": {
+    "foundryBuild": "passed",
+    "node": "v24.19.0"
+  },
+  "fork": {
+    "chainId": 4663,
+    "blockNumber": "57419976",
+    "blockHash": "0x04d865c35ae4b9ed3739c4823f2c9a69a14416303975b32796146b06f9f8a180",
+    "timestamp": "1788843218",
+    "pinnedRuntimeCodeHashes": {
+      "liquidityLauncher": "0x4a586d925c9d59ece13ce2239ebd7dea9ee725f9d33c6667e0fd16ae8d977d80",
+      "lbpStrategy": "0x6e822d6a2f634311363ec357109a691d86912414df5c211a2f6ac6de9a680d68",
+      "ccaFactory": "0xa1d2a90564f4f63580b25de42efaff92505c254b00fc666f65ab38126cce5cfa",
+      "permit2": "0x5208783f52488f7d3493e5e38311ab707c1d75457fe472a19b0b4d57d66a7fca",
+      "poolManager": "0xbd3881180b547f5fe817545743cfb4343e96b1bc6640dcd70c106b0066e95626",
+      "positionManager": "0xc873e135dc9aaec88489cfbad146b4cb49d6a32e0d80326377784b7ba17670b2"
+    }
+  },
+  "participants": {
+    "safe": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    "treasury": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+    "vig": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
+    "founder": "0x90F79bf6EB2c4f870365E785982E1f101E93b906",
+    "positionRecipient": "0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65",
+    "bidder": "0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc",
+    "trader": "0x976EA74026E726554dB657fA54763abd0C3a0aa9",
+    "pol": "0x14dC79964da2C08b23698B3D3cc7Ca32193d9955",
+    "rwa": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
+    "bonder": "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
+    "keeper": "0x272ae0A540A9633a233080D706bbb09d2e822fD5"
+  },
+  "deployments": {
+    "OMR": "0x512F7469BcC83089497506b5df64c6E246B39925",
+    "OmertaHook": "0xF39CCEee4c90238e3E5784067ff567c89f26B0Cc",
+    "GenesisProceedsSplitter": "0xCBBe2A5c3A22BE749D5DDF24e9534f98951983e2",
+    "PoolSwapTest": "0x987e855776C03A4682639eEb14e65b3089EE6310",
+    "CCAInitializer": "0x982c9110596ae94d5538d52477796Bd07277850B",
+    "OmrV4TwapOracle": "0x75c68e69775fA3E9DD38eA32E554f6BF259C1135",
+    "OmertaBond": "0x975Ab64F4901Af5f0C96636deA0b9de3419D0c2F"
+  },
+  "hookSecurity": {
+    "create2Salt": "0x0000000000000000000000000000000000000000000000000000000000000ce9",
+    "flags": "0x30cc",
+    "directNonPoolManagerCallbackRejected": true,
+    "initializerInterface": "0x456cb7c6",
+    "observationSourceInterface": "0xa4f7792a"
+  },
+  "genesis": {
+    "inputSha256": "48c8bd14cf70879f9067b1ee1dcc6d16cd916f0da0c31b685c77d63af789671f",
+    "initializer": "0x982c9110596ae94d5538d52477796Bd07277850B",
+    "poolId": "0xa914994acadf16902937a067cace4f6a98dcfadf32927427825dd0ff30db741b",
+    "auctionState": {
+      "graduated": true,
+      "clearingPriceQ96": "384823163337563932706800",
+      "currencyRaised": "11999999999999999999",
+      "totalCleared": "2470584000000000000000079"
+    },
+    "timingMode": "compressed fork blocks; production 72h/24h derivation is not reused",
+    "bidMaxPriceQ96": "388671394970939572033868",
+    "positionTokenId": "2163239",
+    "positionOwner": "0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65",
+    "migrationSucceeded": true,
+    "migrationFailureEvents": 0,
+    "residualDistributed": true
+  },
+  "oracle": {
+    "address": "0x75c68e69775fA3E9DD38eA32E554f6BF259C1135",
+    "observerReadback": "0x75c68e69775fA3E9DD38eA32E554f6BF259C1135",
+    "directWorkerAddress": "0x75c68e69775fA3E9DD38eA32E554f6BF259C1135",
+    "periodSeconds": 600,
+    "maxWindowMultiple": 4,
+    "earlyUpdateRejected": true
+  },
+  "bond": {
+    "address": "0x975Ab64F4901Af5f0C96636deA0b9de3419D0c2F",
+    "oracle": "0x75c68e69775fA3E9DD38eA32E554f6BF259C1135",
+    "principalWei": "1000000000000000",
+    "oraclePriceOmrPerEthWei": "203595164982277944311622",
+    "expectedAndMintedPayoutWei": "203595164982277944311",
+    "transactionHash": "0xfd0dfe9b174b5256b1df2ceda82fd67a99fdb7313dc4e362985b043f6ecdfd8b",
+    "retainedEthWei": 0
+  }
+}

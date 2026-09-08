@@ -31,6 +31,9 @@ if (!process.env.DATABASE_URL) {
 // answers 429 before a request ever reaches the row lock, which is the one thing section 4 exists to
 // measure. The buckets themselves are covered by the pg-mem suites; here they would only hide things.
 process.env.RATE_LIMIT = 'off';
+// This harness provisions throwaway fixtures without campaign codes. Launch admission is exercised
+// explicitly below, after the existing ledger checks, rather than blocking unrelated fixtures.
+process.env.INVITE_MODE = 'off';
 
 const fails = [];
 const pass = [];
@@ -1926,6 +1929,52 @@ console.log('\n9g. THE BOUT/BETTOR CYCLE LANDS AS CONTENTION, NEVER A 500');
     `drift ${await escrowDrift()} vs ${drift0b}`);
 }
 // ─────────────────────────────────────────────────────────────────────────────
+console.log('\n9z. LAUNCH INVITATIONS — real transaction rollback and simultaneous requests');
+{
+  process.env.INVITE_MODE = 'on';
+  const { generateInviteCode } = await import('../src/invites.js');
+  const { createGuestAccount } = await import('../src/auth.js');
+  const code = generateInviteCode();
+  await pool.query('INSERT INTO invite_codes (code, uses_left) VALUES ($1,1)', [code]);
+  const contenders = await Promise.all(Array.from({ length: 8 }, () =>
+    call('POST', '/v1/auth/guest', { body: { inviteCode: code } })));
+  check(contenders.filter((r) => r.code === 200).length === 1, 'one invite admits exactly one account under eight simultaneous signups');
+  check(contenders.filter((r) => r.body?.error === 'invite').length === 7, 'every losing signup receives invite refusal');
+  const admittedToken = contenders.find((r) => r.code === 200)?.body?.token;
+
+  const rollbackCode = generateInviteCode();
+  await pool.query('INSERT INTO invite_codes (code, uses_left) VALUES ($1,1)', [rollbackCode]);
+  const beforeAccounts = Number((await pool.query('SELECT COUNT(*) n FROM accounts')).rows[0].n);
+  const interruptedPool = { async connect() {
+    const client = await pool.connect();
+    return { release: () => client.release(), query: (sql, params) => {
+      if (sql.startsWith('INSERT INTO account_persistent')) throw new Error('injected persistent-row failure');
+      return client.query(sql, params);
+    } };
+  } };
+  let rolledBack = false;
+  try { await createGuestAccount(interruptedPool, '127.0.0.1', rollbackCode); }
+  catch (error) { rolledBack = error.message === 'injected persistent-row failure'; }
+  check(rolledBack && Number((await pool.query('SELECT uses_left FROM invite_codes WHERE code=$1', [rollbackCode])).rows[0].uses_left) === 1
+    && Number((await pool.query('SELECT COUNT(*) n FROM accounts')).rows[0].n) === beforeAccounts,
+  'account failure rolls back both invitation use and account creation on real Postgres');
+
+  if (admittedToken) {
+    const suffix = crypto.randomBytes(4).toString('hex');
+    const character = await call('POST', '/v1/character', { token: admittedToken, body: { name: `Invite ${suffix}` } });
+    check(character.code === 200, 'invited account can create its character');
+    const accountId = app.jwt.verify(admittedToken).sub;
+    await pool.query('UPDATE characters SET respect=5000 WHERE account_id=$1', [accountId]);
+    const crew = await call('POST', '/v1/crew', { token: admittedToken, body: { name: `Invite Crew ${suffix}` } });
+    check(crew.code === 200, 'invited character can found a Crew');
+    const issued = await Promise.all(Array.from({ length: 8 }, () => call('POST', '/v1/invites', { token: admittedToken, body: {} })));
+    check(issued.filter((r) => r.code === 200).length === 3 && issued.filter((r) => r.body?.error === 'invite_limit').length === 5,
+      'eight simultaneous Crew issuance requests mint exactly three codes');
+    const board = await call('GET', '/v1/invites', { token: admittedToken });
+    check(board.body?.codes?.length === 3 && board.body.remaining === 0, 'durable allowance agrees with concurrent issuance');
+  }
+  process.env.INVITE_MODE = 'off';
+}
 console.log('\n10. NO node-pg DEPRECATIONS');
 await app.close();
 await new Promise((r) => setTimeout(r, 200));                // let any late warning land

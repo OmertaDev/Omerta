@@ -1,0 +1,29 @@
+{
+  "poolId": "0xa914994acadf16902937a067cace4f6a98dcfadf32927427825dd0ff30db741b",
+  "baseline": {
+    "tickCumulative": "515485828",
+    "timestamp": 1788847461
+  },
+  "beforeSwap": {
+    "tickCumulative": "552192628",
+    "timestamp": 1788847761
+  },
+  "afterSwap": {
+    "tickCumulative": "552314984",
+    "timestamp": 1788847762
+  },
+  "end": {
+    "tickCumulative": "589322192",
+    "timestamp": 1788848065
+  },
+  "inferredPreSwapTick": "122356",
+  "inferredPostSwapTick": "122136",
+  "elapsedSeconds": "604",
+  "reconstructedMeanTick": 122245,
+  "publishedMeanTick": 122245,
+  "reconstructedOmrPerEthWei": "203595164982277944311622",
+  "publishedOmrPerEthWei": "203595164982277944311622",
+  "ethPerOmrWad": "4911707997029",
+  "orientation": "currency1/currency0 = OMR-wei per ETH-wei; scaled to 18-decimal OMR per native ETH",
+  "exactMatch": true
+}

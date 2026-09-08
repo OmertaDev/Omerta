@@ -16,7 +16,8 @@ import {
   parseEther, stringToHex, toFunctionSelector, toHex,
 } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
-import { newDb } from 'pg-mem';
+import { newDb, DataType } from 'pg-mem';
+import { registerPgMemCompatibility } from '../src/db.js';
 import {
   ROBINHOOD_GENESIS_STACK, V4_OBSERVATION_SOURCE_INTERFACE_ID,
   buildGenesisLaunchArtifacts, canonicalGenesisPoolId,
@@ -222,6 +223,7 @@ function wrapClients(base, controls) {
 }
 async function journalDb() {
   const mem = newDb();
+  registerPgMemCompatibility(mem, DataType);
   const { Pool } = mem.adapters.createPg();
   const pool = new Pool();
   await pool.query(fs.readFileSync(path.join(root, 'schema.sql'), 'utf8'));

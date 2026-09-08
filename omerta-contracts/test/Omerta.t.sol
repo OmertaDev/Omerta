@@ -398,19 +398,38 @@ contract OmertaTest is Test {
         f = new OmertaFees(safe, dev, dev, 0, 0.01 ether, 0.1 ether); // vigBps 0 → 100% to dev (pre-split behaviour)
     }
 
-    function test_fee_split_dev_and_vig() public {
+    function test_respawn_fee_split_dev_and_vig() public {
         address payable dev = payable(makeAddr("dev"));
         address payable vig = payable(makeAddr("vig"));
         OmertaFees f = new OmertaFees(safe, dev, vig, 6000, 0.01 ether, 0.1 ether); // 60% Vig / 40% dev
         vm.deal(player, 1 ether);
         vm.expectEmit(true, false, false, true, address(f));
-        emit OmertaFees.FeeSplit(1, 0.004 ether, 0.006 ether);
+        emit OmertaFees.FeeSplit(1, 0.04 ether, 0.06 ether);
+        vm.prank(player);
+        f.payRespawnFee{value: 0.1 ether}();
+        assertEq(vig.balance, 0.06 ether, "Vig wallet got its 60% share");
+        assertEq(dev.balance, 0.04 ether, "dev got the remaining 40%");
+        assertEq(address(f).balance, 0, "contract still custodies nothing");
+        // Non-mint fees retain the split; the payment event still carries the GROSS amount.
+    }
+
+    function test_mint_fee_is_all_dev_despite_nonzero_vig_bps() public {
+        address payable dev = payable(makeAddr("dev"));
+        address payable vig = payable(makeAddr("vig"));
+        OmertaFees f = new OmertaFees(safe, dev, vig, 6000, 0.01 ether, 0.1 ether);
+        vm.deal(player, 1 ether);
+        assertEq(f.mintDevBps(), 10000);
+        assertEq(f.vigBps(), 6000);
+        vm.expectEmit(true, false, false, true, address(f));
+        emit OmertaFees.FeeSplit(1, 0.01 ether, 0);
+        vm.expectEmit(true, true, false, true, address(f));
+        emit OmertaFees.MintFeePaid(player, 1, 0.01 ether);
         vm.prank(player);
         f.payMintFee{value: 0.01 ether}();
-        assertEq(vig.balance, 0.006 ether, "Vig wallet got its 60% share");
-        assertEq(dev.balance, 0.004 ether, "dev got the remaining 40%");
-        assertEq(address(f).balance, 0, "contract still custodies nothing");
-        // MintFeePaid still carries the GROSS amount (backend keys idempotency on nonce, books gross x VIG_BPS)
+        assertEq(dev.balance, 0.01 ether);
+        assertEq(vig.balance, 0);
+        assertEq(address(f).balance, 0);
+        assertEq(f.nonce(), 1);
     }
 
     function test_bad_bps_and_missing_vig_recipient_rejected() public {

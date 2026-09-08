@@ -1,0 +1,61 @@
+{
+  "path": "omerta-contracts/out/OmertaFees.sol/OmertaFees.json",
+  "bytes": 137696,
+  "sha256": "054cf118e4173a0721928f86971b6333619c215be65c5330b82ee452df53ecaa",
+  "compiler": "0.8.26+commit.8a97fa7a",
+  "settings": {
+    "remappings": [
+      "@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+      "@openzeppelin/=lib/openzeppelin-contracts/",
+      "ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+      "erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+      "forge-std/=lib/forge-std/src/",
+      "hardhat/=lib/v4-core/node_modules/hardhat/",
+      "openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+      "solmate/=lib/v4-core/lib/solmate/",
+      "v4-core/=lib/v4-core/src/"
+    ],
+    "optimizer": {
+      "enabled": true,
+      "runs": 800
+    },
+    "metadata": {
+      "bytecodeHash": "ipfs"
+    },
+    "compilationTarget": {
+      "src/OmertaFees.sol": "OmertaFees"
+    },
+    "evmVersion": "cancun",
+    "libraries": {}
+  },
+  "compiledSourceKeccak256": "0xcf989dc14ad10ba38fd4d94d04d4f71bdb4302ac247d795ee98eea8fba3e89d2",
+  "sourceMatch": "exact",
+  "runtimeTemplateBytes": 3726,
+  "initcodeTemplateBytes": 4588,
+  "runtimeTemplateKeccak256": "0x200d7dcdac2966f1ecb7fb642c277273b7aa9001229d799082b22eaa01279deb",
+  "immutableReferences": {
+    "55645": [
+      {
+        "start": 806,
+        "length": 32
+      },
+      {
+        "start": 1252,
+        "length": 32
+      },
+      {
+        "start": 1737,
+        "length": 32
+      },
+      {
+        "start": 2005,
+        "length": 32
+      },
+      {
+        "start": 2266,
+        "length": 32
+      }
+    ]
+  },
+  "note": "Templates require constructor arguments and immutable values for live runtime verification."
+}

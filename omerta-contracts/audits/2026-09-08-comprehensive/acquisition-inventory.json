@@ -1,0 +1,1540 @@
+[
+  {
+    "path": "src/AcquisitionVault.sol",
+    "lines": 994,
+    "sha256": "A7301148771BBF4AA57E2E49D65C885179373FE73D5A6C5AD06F1122EA0DB52D",
+    "coverage": "Full source read; all declared entry points and helpers considered",
+    "functions": [
+      {
+        "line": 89,
+        "declaration": "constructor(address safeOwner, address registry, uint256 globalLifetimeCanonicalDepositCapWei_)"
+      },
+      {
+        "line": 120,
+        "declaration": "function pendingMainOperatorNomination() external view returns (PendingOperatorNomination memory) {"
+      },
+      {
+        "line": 124,
+        "declaration": "function pendingIngressProposal() external view returns (PendingIngressProposal memory) {"
+      },
+      {
+        "line": 128,
+        "declaration": "function getIngress(uint256 generation) external view returns (IngressRecord memory record) {"
+      },
+      {
+        "line": 133,
+        "declaration": "function getDeposit(bytes32 depositId) external view returns (DepositRecord memory record) {"
+      },
+      {
+        "line": 138,
+        "declaration": "function transferOwnership(address newOwner) public override onlyOwner {"
+      },
+      {
+        "line": 148,
+        "declaration": "function acceptOwnership() public override {"
+      },
+      {
+        "line": 165,
+        "declaration": "function renounceOwnership() public override onlyOwner {"
+      },
+      {
+        "line": 169,
+        "declaration": "function nominateMainOperator(address nominee, bytes32 detailsHash)"
+      },
+      {
+        "line": 219,
+        "declaration": "function cancelMainOperatorNomination(bytes32 proposalId, bytes32 detailsHash) external onlyOwner {"
+      },
+      {
+        "line": 228,
+        "declaration": "function expireMainOperatorNomination(bytes32 proposalId) external {"
+      },
+      {
+        "line": 238,
+        "declaration": "function acceptMainOperatorNomination(bytes32 proposalId) external {"
+      },
+      {
+        "line": 253,
+        "declaration": "function disableMainOperator(bytes32 detailsHash) external onlyOwner {"
+      },
+      {
+        "line": 272,
+        "declaration": "function renounceMainOperator(bytes32 detailsHash) external {"
+      },
+      {
+        "line": 284,
+        "declaration": "function replaceMainOperator(SuccessorConsent calldata consent, bytes calldata signature) external nonReentrant {"
+      },
+      {
+        "line": 308,
+        "declaration": "function invalidateOutflowNonce(uint256 newNextNonce, bytes32 detailsHash) external {"
+      },
+      {
+        "line": 325,
+        "declaration": "function pause(bytes32 detailsHash) external {"
+      },
+      {
+        "line": 333,
+        "declaration": "function unpause(bytes32 detailsHash) external onlyOwner {"
+      },
+      {
+        "line": 343,
+        "declaration": "function hashOutflowAuthorization(OutflowAuthorization calldata a) public view returns (bytes32) {"
+      },
+      {
+        "line": 362,
+        "declaration": "function hashSuccessorConsent(SuccessorConsent calldata c) public view returns (bytes32) {"
+      },
+      {
+        "line": 380,
+        "declaration": "function accountingTotals() public view returns (AccountingTotals memory totals) {"
+      },
+      {
+        "line": 384,
+        "declaration": "function syncBalance() external returns (bytes32 mutationId) {"
+      },
+      {
+        "line": 426,
+        "declaration": "function reclassifyUnattributed(uint256 amountWei, bytes32 detailsHash)"
+      },
+      {
+        "line": 469,
+        "declaration": "function proposeIngress(IngressConfig calldata config, bytes32 detailsHash)"
+      },
+      {
+        "line": 516,
+        "declaration": "function _emitIngressProposalCreated(PendingIngressProposal storage pending) private {"
+      },
+      {
+        "line": 531,
+        "declaration": "function cancelIngressProposal(bytes32 proposalId, bytes32 detailsHash) external onlyOwner {"
+      },
+      {
+        "line": 542,
+        "declaration": "function expireIngressProposal(bytes32 proposalId) external {"
+      },
+      {
+        "line": 554,
+        "declaration": "function activateIngress(bytes32 proposalId) external onlyOwner whenPaused returns (uint256 generation) {"
+      },
+      {
+        "line": 596,
+        "declaration": "function disableIngress(bytes32 detailsHash) external onlyOwner {"
+      },
+      {
+        "line": 610,
+        "declaration": "function depositCanonical(bytes32 sourceEventId) external payable returns (bytes32 depositId) {"
+      },
+      {
+        "line": 676,
+        "declaration": "function _emitCanonicalDepositEvidence("
+      },
+      {
+        "line": 730,
+        "declaration": "function _checkOwnerCandidate(address candidate) private view {"
+      },
+      {
+        "line": 739,
+        "declaration": "function _checkOperatorCandidate(address candidate, bool ignorePendingNominee) private view {"
+      },
+      {
+        "line": 744,
+        "declaration": "function _operatorCollision(address candidate, bool ignorePendingNominee) private view returns (bool) {"
+      },
+      {
+        "line": 751,
+        "declaration": "function _requirePending(bytes32 proposalId) private view returns (PendingOperatorNomination memory p) {"
+      },
+      {
+        "line": 757,
+        "declaration": "function _requirePendingIngress(bytes32 proposalId) private view returns (PendingIngressProposal storage p) {"
+      },
+      {
+        "line": 763,
+        "declaration": "function _validateIngressConfig(IngressConfig memory config, bool ignorePendingIngress) private view {"
+      },
+      {
+        "line": 777,
+        "declaration": "function _requireHealthyIngress(address ingress, bytes32 expectedCodeHash, bool ignoreActiveIngress) private view {"
+      },
+      {
+        "line": 782,
+        "declaration": "function _requireIngressCodeHash(address ingress, bytes32 expectedCodeHash) private view {"
+      },
+      {
+        "line": 790,
+        "declaration": "function _ingressRoleCollision(address candidate, bool ignorePendingIngress, bool ignoreActiveIngress)"
+      },
+      {
+        "line": 802,
+        "declaration": "function _activeIngressAddress() private view returns (address) {"
+      },
+      {
+        "line": 806,
+        "declaration": "function _ingressConfigHash(IngressConfig memory config) private pure returns (bytes32) {"
+      },
+      {
+        "line": 819,
+        "declaration": "function _checkedTimestamp(uint256 timestamp) internal pure returns (uint64) {"
+      },
+      {
+        "line": 824,
+        "declaration": "function _checkedDepositTotal(DepositCapKind kind, uint256 capWei, uint256 priorWei, uint256 amountWei)"
+      },
+      {
+        "line": 836,
+        "declaration": "function _accountingTotalsAtBalance(uint256 actual) private view returns (AccountingTotals memory totals) {"
+      },
+      {
+        "line": 856,
+        "declaration": "function _requireDirectOperator() private view returns (address operator) {"
+      },
+      {
+        "line": 862,
+        "declaration": "function _nextGeneration() private view returns (uint256) {"
+      },
+      {
+        "line": 867,
+        "declaration": "function _nextAccountingSequence() private view returns (uint256) {"
+      },
+      {
+        "line": 872,
+        "declaration": "function _accountingMutationId(uint256 sequence, AccountingMutationKind kind, bytes32 subjectId)"
+      },
+      {
+        "line": 882,
+        "declaration": "function _emitAccountingComponent("
+      },
+      {
+        "line": 905,
+        "declaration": "function _requireDetails(bytes32 detailsHash) private pure {"
+      },
+      {
+        "line": 909,
+        "declaration": "function _validateWindow(uint64 issuedAt, uint64 deadline) private view {"
+      },
+      {
+        "line": 917,
+        "declaration": "function _validateSignature(address signer, bytes32 digest, bytes calldata signature) private view {"
+      },
+      {
+        "line": 942,
+        "declaration": "function _requireErc1271PrecallGas(uint256 observedGas) internal pure {"
+      },
+      {
+        "line": 946,
+        "declaration": "function _requireErc1271PostcallGas(uint256 observedGas) internal pure {"
+      },
+      {
+        "line": 950,
+        "declaration": "function _localReadinessSatisfied() private view returns (bool) {"
+      }
+    ]
+  },
+  {
+    "path": "src/AcquisitionVaultCore.sol",
+    "lines": 542,
+    "sha256": "62A603ED3D502E00877CDCBDFE66444F24C4460BB4ABFC980E8A33D159C9B186",
+    "coverage": "Full source read; all declared entry points and helpers considered",
+    "functions": [
+      {
+        "line": 157,
+        "declaration": "modifier finalizedState() {"
+      },
+      {
+        "line": 162,
+        "declaration": "constructor("
+      },
+      {
+        "line": 201,
+        "declaration": "function stockTokenRegistryV2() external view returns (address) {"
+      },
+      {
+        "line": 205,
+        "declaration": "function globalLifetimeCanonicalDepositCapWei() external view returns (uint256) {"
+      },
+      {
+        "line": 209,
+        "declaration": "function accountingTotals() external view returns (AccountingTotals memory totals) {"
+      },
+      {
+        "line": 213,
+        "declaration": "function getDeposit(bytes32 depositId) external view returns (DepositRecord memory record) {"
+      },
+      {
+        "line": 218,
+        "declaration": "function syncBalance() external finalizedState nonReentrant returns (bytes32 mutationId) {"
+      },
+      {
+        "line": 234,
+        "declaration": "function reclassifyUnattributed(uint256 amountWei, bytes32 detailsHash)"
+      },
+      {
+        "line": 259,
+        "declaration": "function depositCanonical(bytes32 sourceEventId)"
+      },
+      {
+        "line": 346,
+        "declaration": "function coreTopology() external view returns (address factory, bytes32 manifestHash, bool finalized) {"
+      },
+      {
+        "line": 350,
+        "declaration": "function coreSnapshot()"
+      },
+      {
+        "line": 378,
+        "declaration": "function _coreSnapshotWords() private view returns (uint256[18] memory w) {"
+      },
+      {
+        "line": 399,
+        "declaration": "function finalizeCore(bytes32 manifestHash) external {"
+      },
+      {
+        "line": 415,
+        "declaration": "function _totals(uint256 v) private view returns (AccountingTotals memory t) {"
+      },
+      {
+        "line": 429,
+        "declaration": "function _next() private returns (uint256 n) {"
+      },
+      {
+        "line": 435,
+        "declaration": "function _mid(uint256 g, uint256 s, uint8 k, bytes32 subject) private view returns (bytes32) {"
+      },
+      {
+        "line": 439,
+        "declaration": "function _component(uint256 g, uint256 s, bytes32 m, uint256 i, uint8 k, bytes32 subject, uint256 amount) private {"
+      },
+      {
+        "line": 444,
+        "declaration": "function _cap(uint8 k, uint256 cap, uint256 prior, uint256 amount) private pure {"
+      },
+      {
+        "line": 448,
+        "declaration": "function _snapshot() private view returns (AuthoritySnapshot memory s) {"
+      },
+      {
+        "line": 498,
+        "declaration": "function _ingress(uint256 g, address active, bytes32 cfg) private view returns (IngressRecord memory r) {"
+      },
+      {
+        "line": 527,
+        "declaration": "function _clean(uint256 w, uint8 f) private pure {"
+      },
+      {
+        "line": 531,
+        "declaration": "function _collision(address c, AuthoritySnapshot memory s) private view {"
+      },
+      {
+        "line": 539,
+        "declaration": "function _predict(address d, uint8 n) private pure returns (address) {"
+      }
+    ]
+  },
+  {
+    "path": "src/AcquisitionAuthority.sol",
+    "lines": 1148,
+    "sha256": "4DCF23D3003BE8A4D867D6DDB051E2FC1367387ACA70682255F1A6D2B892A9BA",
+    "coverage": "Full source read; all declared entry points and helpers considered",
+    "functions": [
+      {
+        "line": 124,
+        "declaration": "modifier finalizedState() {"
+      },
+      {
+        "line": 129,
+        "declaration": "function version() external pure returns (string memory) {"
+      },
+      {
+        "line": 138,
+        "declaration": "constructor("
+      },
+      {
+        "line": 180,
+        "declaration": "function _validatedLaunchSafe(address factory, bytes32 manifestHash, address safe) private pure returns (address) {"
+      },
+      {
+        "line": 187,
+        "declaration": "function authorityTopology() external view returns (address factory, bytes32 manifestHash, bool finalized) {"
+      },
+      {
+        "line": 191,
+        "declaration": "function authoritySnapshot()"
+      },
+      {
+        "line": 258,
+        "declaration": "function finalizeAuthority(bytes32 manifestHash) external {"
+      },
+      {
+        "line": 286,
+        "declaration": "function outflowNonce() external view returns (uint256) {"
+      },
+      {
+        "line": 290,
+        "declaration": "function pendingMainOperatorNomination() external view returns (PendingOperatorNomination memory) {"
+      },
+      {
+        "line": 306,
+        "declaration": "function pendingIngressProposal() external view returns (PendingIngressProposal memory) {"
+      },
+      {
+        "line": 326,
+        "declaration": "function getIngress(uint256 generation) external view returns (IngressRecord memory) {"
+      },
+      {
+        "line": 350,
+        "declaration": "function transferOwnership(address newOwner) public override finalizedState nonReentrant onlyOwner {"
+      },
+      {
+        "line": 360,
+        "declaration": "function acceptOwnership() public override finalizedState nonReentrant {"
+      },
+      {
+        "line": 381,
+        "declaration": "function renounceOwnership() public override finalizedState nonReentrant onlyOwner {"
+      },
+      {
+        "line": 385,
+        "declaration": "function nominateMainOperator(address nominee, bytes32 detailsHash)"
+      },
+      {
+        "line": 414,
+        "declaration": "function _emitOperatorProposalCreated(PendingOperatorNomination memory pending) private {"
+      },
+      {
+        "line": 428,
+        "declaration": "function _transitionOperator(address previous, address next, ReasonCode reason, bytes32 details) private {"
+      },
+      {
+        "line": 444,
+        "declaration": "function _emitProposalResult("
+      },
+      {
+        "line": 460,
+        "declaration": "function cancelMainOperatorNomination(bytes32 proposalId, bytes32 detailsHash)"
+      },
+      {
+        "line": 479,
+        "declaration": "function expireMainOperatorNomination(bytes32 proposalId) external finalizedState nonReentrant {"
+      },
+      {
+        "line": 494,
+        "declaration": "function acceptMainOperatorNomination(bytes32 proposalId) external finalizedState nonReentrant {"
+      },
+      {
+        "line": 503,
+        "declaration": "function disableMainOperator(bytes32 detailsHash) external finalizedState nonReentrant onlyOwner {"
+      },
+      {
+        "line": 522,
+        "declaration": "function renounceMainOperator(bytes32 detailsHash) external finalizedState nonReentrant {"
+      },
+      {
+        "line": 528,
+        "declaration": "function replaceMainOperator(SuccessorConsent calldata consent, bytes calldata signature)"
+      },
+      {
+        "line": 551,
+        "declaration": "function invalidateOutflowNonce(uint256 newNextNonce, bytes32 detailsHash) external finalizedState nonReentrant {"
+      },
+      {
+        "line": 571,
+        "declaration": "function pause(bytes32 detailsHash) external finalizedState nonReentrant {"
+      },
+      {
+        "line": 589,
+        "declaration": "function unpause(bytes32 detailsHash) external finalizedState nonReentrant onlyOwner {"
+      },
+      {
+        "line": 595,
+        "declaration": "function hashOutflowAuthorization(OutflowAuthorization calldata authorization) public view returns (bytes32) {"
+      },
+      {
+        "line": 613,
+        "declaration": "function hashSuccessorConsent(SuccessorConsent calldata consent) public view returns (bytes32) {"
+      },
+      {
+        "line": 631,
+        "declaration": "function proposeIngress(IngressConfig calldata config, bytes32 detailsHash)"
+      },
+      {
+        "line": 668,
+        "declaration": "function _emitIngressProposalCreated(PendingIngressProposal memory pending) private {"
+      },
+      {
+        "line": 684,
+        "declaration": "function cancelIngressProposal(bytes32 proposalId, bytes32 detailsHash)"
+      },
+      {
+        "line": 703,
+        "declaration": "function expireIngressProposal(bytes32 proposalId) external finalizedState nonReentrant {"
+      },
+      {
+        "line": 718,
+        "declaration": "function activateIngress(bytes32 proposalId)"
+      },
+      {
+        "line": 753,
+        "declaration": "function _emitIngressActivated(uint256 generation, PendingIngressProposal memory pending, uint64 activatedAt)"
+      },
+      {
+        "line": 771,
+        "declaration": "function disableIngress(bytes32 detailsHash) external finalizedState nonReentrant onlyOwner {"
+      },
+      {
+        "line": 793,
+        "declaration": "function _initial(bool condition, uint8 field) private pure {"
+      },
+      {
+        "line": 804,
+        "declaration": "function _requireDetails(bytes32 detailsHash) private pure {"
+      },
+      {
+        "line": 808,
+        "declaration": "function _requireProposalTimestampRoom() private view {"
+      },
+      {
+        "line": 814,
+        "declaration": "function _checkedTimestamp() private view returns (uint64) {"
+      },
+      {
+        "line": 819,
+        "declaration": "function _nextGeneration() private view returns (uint256) {"
+      },
+      {
+        "line": 824,
+        "declaration": "function _requireDirectOperator() private view returns (address operator) {"
+      },
+      {
+        "line": 830,
+        "declaration": "function _requirePending(bytes32 proposalId) private view returns (PendingOperatorNomination memory pending) {"
+      },
+      {
+        "line": 836,
+        "declaration": "function _requirePendingIngress(bytes32 proposalId) private view returns (PendingIngressProposal memory pending) {"
+      },
+      {
+        "line": 842,
+        "declaration": "function _checkOwnerCandidate(address candidate, bool ignorePendingOwner) private view {"
+      },
+      {
+        "line": 847,
+        "declaration": "function _checkOperatorCandidate(address candidate, bool ignorePendingNominee) private view {"
+      },
+      {
+        "line": 852,
+        "declaration": "function _roleCollision(address candidate, uint8 ignored) private view returns (bool) {"
+      },
+      {
+        "line": 860,
+        "declaration": "function _constellationCollision(address candidate) private view returns (bool) {"
+      },
+      {
+        "line": 865,
+        "declaration": "function _activeIngressAddress() private view returns (address) {"
+      },
+      {
+        "line": 869,
+        "declaration": "function _validateIngressConfig(IngressConfig memory config, bool ignorePendingIngress) private view {"
+      },
+      {
+        "line": 885,
+        "declaration": "function _readCoreGlobalLifetimeCap() private view returns (uint256 cap) {"
+      },
+      {
+        "line": 902,
+        "declaration": "function _ingressConfigHash(IngressConfig memory config) private view returns (bytes32) {"
+      },
+      {
+        "line": 912,
+        "declaration": "function _ingressRecordConfigHash(IngressRecord memory record) private view returns (bytes32) {"
+      },
+      {
+        "line": 923,
+        "declaration": "function _configHash(address ingress, bytes32 runtimeHash, uint256 perCap, uint256 epochCap, uint256 lifetimeCap)"
+      },
+      {
+        "line": 945,
+        "declaration": "function _operatorStateHash(PendingOperatorNomination memory pending) private pure returns (bytes32 result) {"
+      },
+      {
+        "line": 949,
+        "declaration": "function _ownershipCancellationDetails(PendingOperatorNomination memory pending, address previous, address next)"
+      },
+      {
+        "line": 971,
+        "declaration": "function _operatorExpiryDetails(PendingOperatorNomination memory pending) private view returns (bytes32 result) {"
+      },
+      {
+        "line": 988,
+        "declaration": "function _ingressExpiryDetails(PendingIngressProposal memory pending) private view returns (bytes32 result) {"
+      },
+      {
+        "line": 1006,
+        "declaration": "function _operatorProposalId(PendingOperatorNomination memory pending) private view returns (bytes32 result) {"
+      },
+      {
+        "line": 1029,
+        "declaration": "function _ingressStateHash(PendingIngressProposal memory pending) private pure returns (bytes32 result) {"
+      },
+      {
+        "line": 1050,
+        "declaration": "function _ingressProposalId(PendingIngressProposal memory pending) private view returns (bytes32 result) {"
+      },
+      {
+        "line": 1078,
+        "declaration": "function _validateWindow(uint64 issuedAt, uint64 deadline) private view {"
+      },
+      {
+        "line": 1086,
+        "declaration": "function _validateSignature(address signer, bytes32 digest, bytes calldata signature) private view {"
+      },
+      {
+        "line": 1137,
+        "declaration": "function _predict(address deployer, uint8 nonce) private pure returns (address) {"
+      }
+    ]
+  },
+  {
+    "path": "src/AcquisitionIntentExecution.sol",
+    "lines": 82,
+    "sha256": "CEC00CD816D1539CCC0BD620D779BBDE53667105ED5CE907416D802A34CA92C1",
+    "coverage": "Full source read; all declared entry points and helpers considered",
+    "functions": [
+      {
+        "line": 25,
+        "declaration": "constructor(address factory, bytes32 manifestHash, address core) {"
+      },
+      {
+        "line": 39,
+        "declaration": "function intentExecutionTopology() external view returns (address factory, bytes32 manifestHash, bool finalized) {"
+      },
+      {
+        "line": 43,
+        "declaration": "function finalizeIntentExecution(bytes32 manifestHash) external {"
+      },
+      {
+        "line": 51,
+        "declaration": "function deriveIntentId(uint256 ballotDay, bytes32 assetVersionKey) external view returns (bytes32 intentId) {"
+      },
+      {
+        "line": 55,
+        "declaration": "function deriveAttemptId("
+      },
+      {
+        "line": 79,
+        "declaration": "function _predictCreateAddress(address deployer, uint8 nonce) private pure returns (address) {"
+      }
+    ]
+  },
+  {
+    "path": "src/AcquisitionReconciliation.sol",
+    "lines": 33,
+    "sha256": "1D0C6391FBAEB4F30C98646627CA11D7487A6720B9F34EBC97E9C6F5B40AEC78",
+    "coverage": "Full source read; all declared entry points and helpers considered",
+    "functions": [
+      {
+        "line": 15,
+        "declaration": "constructor(address factory, bytes32 manifestHash) {"
+      },
+      {
+        "line": 22,
+        "declaration": "function reconciliationTopology() external view returns (address factory, bytes32 manifestHash, bool finalized) {"
+      },
+      {
+        "line": 26,
+        "declaration": "function finalizeReconciliation(bytes32 manifestHash) external {"
+      }
+    ]
+  },
+  {
+    "path": "src/AcquisitionConstellationFactory.sol",
+    "lines": 508,
+    "sha256": "BC2581C8F45906749E9B9C84BA9F58DE81C87911A9622BF5FDE982694B861431",
+    "coverage": "Full source read; all declared entry points and helpers considered",
+    "functions": [
+      {
+        "line": 80,
+        "declaration": "constructor("
+      },
+      {
+        "line": 151,
+        "declaration": "function factoryState()"
+      },
+      {
+        "line": 179,
+        "declaration": "function childCommitment(uint8 index)"
+      },
+      {
+        "line": 188,
+        "declaration": "function deployNext(bytes calldata initcode) external returns (address child) {"
+      },
+      {
+        "line": 225,
+        "declaration": "function finalizeConstellation() external {"
+      },
+      {
+        "line": 254,
+        "declaration": "function _checkAuthoritySnapshot() private view {"
+      },
+      {
+        "line": 295,
+        "declaration": "function _checkCoreSnapshot() private view {"
+      },
+      {
+        "line": 325,
+        "declaration": "function _coreSnapshotEq(uint256 actual, uint256 expected, uint8 field) private pure {"
+      },
+      {
+        "line": 329,
+        "declaration": "function _coreSnapshotAddress(uint256 word, address expected, uint8 field) private pure {"
+      },
+      {
+        "line": 335,
+        "declaration": "function _coreSnapshotBool(uint256 word, bool expected, uint8 field) private pure {"
+      },
+      {
+        "line": 339,
+        "declaration": "function _snapshotEq(uint256 actual, uint256 expected, uint8 field) private pure {"
+      },
+      {
+        "line": 343,
+        "declaration": "function _snapshotAddress(uint256 word, address expected, uint8 field) private pure {"
+      },
+      {
+        "line": 349,
+        "declaration": "function _snapshotBool(uint256 word, bool expected, uint8 field) private pure {"
+      },
+      {
+        "line": 353,
+        "declaration": "function _emptyOperatorStateHash() private pure returns (bytes32) {"
+      },
+      {
+        "line": 359,
+        "declaration": "function _emptyIngressStateHash() private pure returns (bytes32) {"
+      },
+      {
+        "line": 379,
+        "declaration": "function _checkDeployedChild(uint8 index, bool finalized) private view {"
+      },
+      {
+        "line": 392,
+        "declaration": "function _checkRegistry(address registry, bool checkCode) private view {"
+      },
+      {
+        "line": 409,
+        "declaration": "function _checkTopology(uint8 index, bool expectedFinalized, bool afterFinalizer) private view {"
+      },
+      {
+        "line": 437,
+        "declaration": "function _finalize(uint8 index) private {"
+      },
+      {
+        "line": 444,
+        "declaration": "function _callFinalizer(uint8 index, address child, bytes memory input) internal returns (uint256 afterGas) {"
+      },
+      {
+        "line": 461,
+        "declaration": "function _requireChildAddress(uint8 index, address expected, address actual) internal pure {"
+      },
+      {
+        "line": 465,
+        "declaration": "function _requireRuntimeSize(uint8 index, uint256 actual) internal pure {"
+      },
+      {
+        "line": 469,
+        "declaration": "function _topologySelector(uint8 index) private pure returns (bytes4) {"
+      },
+      {
+        "line": 477,
+        "declaration": "function _finalizerSelector(uint8 index) private pure returns (bytes4) {"
+      },
+      {
+        "line": 485,
+        "declaration": "function _predictCreateAddress(address deployer, uint8 nonce) private pure returns (address) {"
+      },
+      {
+        "line": 489,
+        "declaration": "function _hasFinalizerPrecheckGas(uint256 available) internal pure returns (bool) {"
+      },
+      {
+        "line": 493,
+        "declaration": "function _hasFinalizerPostcheckGas(uint256 available) internal pure returns (bool) {"
+      },
+      {
+        "line": 497,
+        "declaration": "function _requireFinalizerPrecheck(uint8 index, uint256 available) internal pure {"
+      },
+      {
+        "line": 503,
+        "declaration": "function _requireFinalizerPostcheck(uint8 index, uint256 available) internal pure {"
+      }
+    ]
+  },
+  {
+    "path": "src/PreVoteBudgetBook.sol",
+    "lines": 284,
+    "sha256": "0B78EB0E1242A43871048E9A59496ACFFF8B3291F634D753E04AE5CD81AE7153",
+    "coverage": "Full source read; all declared entry points and helpers considered",
+    "functions": [
+      {
+        "line": 82,
+        "declaration": "constructor(address factory, bytes32 manifestHash, address authority, address core, address registry) {"
+      },
+      {
+        "line": 104,
+        "declaration": "function budgetBookTopology() external view returns (address factory, bytes32 manifestHash, bool finalized) {"
+      },
+      {
+        "line": 108,
+        "declaration": "function finalizeBudgetBook(bytes32 manifestHash) external {"
+      },
+      {
+        "line": 116,
+        "declaration": "function authorizePreVoteBudget(PreVoteBudgetInput calldata input, bytes32 detailsHash)"
+      },
+      {
+        "line": 161,
+        "declaration": "function getPreVoteBudget(uint256 ballotDay)"
+      },
+      {
+        "line": 170,
+        "declaration": "function _authorityState() private view returns (address safe, bool paused) {"
+      },
+      {
+        "line": 222,
+        "declaration": "function _accounting() private view returns (BudgetAccounting memory totals) {"
+      },
+      {
+        "line": 253,
+        "declaration": "function _deadline(uint256 ballotDay) private pure returns (uint64 expected) {"
+      },
+      {
+        "line": 262,
+        "declaration": "function _commit(PreVoteBudgetAuthorization memory a) private {"
+      },
+      {
+        "line": 277,
+        "declaration": "function _clean(uint256 word, uint8 field) private pure {"
+      },
+      {
+        "line": 281,
+        "declaration": "function _predict(address deployer, uint8 nonce) private pure returns (address) {"
+      }
+    ]
+  },
+  {
+    "path": "src/RwaHealthOverlay.sol",
+    "lines": 185,
+    "sha256": "9048C311B6C7051776D5CDACECD56145530F5C307447F9DFB7C06B6526AF4D23",
+    "coverage": "Full source read; all declared entry points and helpers considered",
+    "functions": [
+      {
+        "line": 23,
+        "declaration": "constructor(address safe_, IStockTokenRegistryV2 registry_) {"
+      },
+      {
+        "line": 33,
+        "declaration": "function clearancePayloadHash(Clearance calldata value) external view override returns (bytes32) {"
+      },
+      {
+        "line": 37,
+        "declaration": "function safeCallIntentHash(Clearance calldata value) external view override returns (bytes32) {"
+      },
+      {
+        "line": 41,
+        "declaration": "function clearanceId(Clearance calldata value) external view override returns (bytes32) {"
+      },
+      {
+        "line": 45,
+        "declaration": "function recordClearance(Clearance calldata value) external override returns (bytes32 clearanceId_) {"
+      },
+      {
+        "line": 83,
+        "declaration": "function _validateLocal(Clearance calldata value) private view {"
+      },
+      {
+        "line": 107,
+        "declaration": "function _validateRegistry(Clearance calldata value) private view {"
+      },
+      {
+        "line": 116,
+        "declaration": "function _clearancePayloadHash(Clearance calldata value) private view returns (bytes32) {"
+      },
+      {
+        "line": 143,
+        "declaration": "function _safeCallIntentHash(Clearance calldata value) private view returns (bytes32) {"
+      },
+      {
+        "line": 159,
+        "declaration": "function _clearanceId(Clearance calldata value, bytes32 callIntentHash) private view returns (bytes32) {"
+      }
+    ]
+  },
+  {
+    "path": "src/SettlementGasPool.sol",
+    "lines": 798,
+    "sha256": "D2F479A6FB780AFF31EE53FFEE12C02EBC92CD460B865BB40BA20FAEBB59E3FF",
+    "coverage": "Full source read; all declared entry points and helpers considered",
+    "functions": [
+      {
+        "line": 11,
+        "declaration": "function version() external view returns (bytes32);"
+      },
+      {
+        "line": 12,
+        "declaration": "function supportedChainId() external view returns (uint256);"
+      },
+      {
+        "line": 13,
+        "declaration": "function gameplayVault() external view returns (address);"
+      },
+      {
+        "line": 14,
+        "declaration": "function predecessor() external view returns (address);"
+      },
+      {
+        "line": 15,
+        "declaration": "function owner() external view returns (address);"
+      },
+      {
+        "line": 16,
+        "declaration": "function paused() external view returns (bool);"
+      },
+      {
+        "line": 17,
+        "declaration": "function acceptMigration(bytes32 migrationProposalId) external payable;"
+      },
+      {
+        "line": 238,
+        "declaration": "constructor("
+      },
+      {
+        "line": 267,
+        "declaration": "receive() external payable {"
+      },
+      {
+        "line": 271,
+        "declaration": "function contribute(bytes32 memo) external payable {"
+      },
+      {
+        "line": 275,
+        "declaration": "function acceptMigration(bytes32 migrationProposalId) external payable {"
+      },
+      {
+        "line": 282,
+        "declaration": "function recordSettlementCredit(CreditRequest calldata request)"
+      },
+      {
+        "line": 318,
+        "declaration": "function withdrawCredit() external nonReentrant returns (uint256 amount) {"
+      },
+      {
+        "line": 332,
+        "declaration": "function unreservedBalance() public view returns (uint256) {"
+      },
+      {
+        "line": 338,
+        "declaration": "function settlementKey(bytes32 eventId, bytes32 victimAccountId, uint256 victimNonce)"
+      },
+      {
+        "line": 346,
+        "declaration": "function previewCredit(uint256 measuredSettlementGas)"
+      },
+      {
+        "line": 371,
+        "declaration": "function pauseCredits(bytes32 reasonHash) external onlyOwner {"
+      },
+      {
+        "line": 377,
+        "declaration": "function unpauseCredits(bytes32 reasonHash) external onlyOwner {"
+      },
+      {
+        "line": 385,
+        "declaration": "function reduceCaps(uint128 priorityFeeCapWei, uint128 perSettlementWeiCap, uint128 dataFeeWeiCap)"
+      },
+      {
+        "line": 416,
+        "declaration": "function proposeConfig(Config calldata nextConfig, bytes32 reasonHash)"
+      },
+      {
+        "line": 445,
+        "declaration": "function cancelConfigProposal(bytes32 proposalId) external onlyOwner {"
+      },
+      {
+        "line": 455,
+        "declaration": "function executeConfigProposal(bytes32 proposalId) external onlyOwner {"
+      },
+      {
+        "line": 481,
+        "declaration": "function getConfigProposal(bytes32 proposalId) external view returns (ConfigProposal memory) {"
+      },
+      {
+        "line": 485,
+        "declaration": "function configProposalState(bytes32 proposalId) public view returns (ProposalState) {"
+      },
+      {
+        "line": 497,
+        "declaration": "function proposeMigration(address successor_, uint256 amount, bytes32 reasonHash)"
+      },
+      {
+        "line": 540,
+        "declaration": "function cancelMigrationProposal(bytes32 proposalId) external onlyOwner {"
+      },
+      {
+        "line": 549,
+        "declaration": "function executeMigration(bytes32 proposalId) external onlyOwner nonReentrant {"
+      },
+      {
+        "line": 577,
+        "declaration": "function getMigrationProposal(bytes32 proposalId) external view returns (MigrationProposal memory) {"
+      },
+      {
+        "line": 581,
+        "declaration": "function migrationProposalState(bytes32 proposalId) public view returns (ProposalState) {"
+      },
+      {
+        "line": 591,
+        "declaration": "function version() public pure returns (bytes32) {"
+      },
+      {
+        "line": 595,
+        "declaration": "function renounceOwnership() public view override onlyOwner {"
+      },
+      {
+        "line": 599,
+        "declaration": "function _recordContribution(bytes32 memo) private {"
+      },
+      {
+        "line": 605,
+        "declaration": "function _calculateCredit(uint256 measuredSettlementGas)"
+      },
+      {
+        "line": 644,
+        "declaration": "function _approvedDataFee() private view returns (uint256) {"
+      },
+      {
+        "line": 665,
+        "declaration": "function _cancelLiveConfigProposal(bytes32 cancellationReasonHash) private {"
+      },
+      {
+        "line": 675,
+        "declaration": "function _validateDataFeeSourceConfig(Config memory config_) private view {"
+      },
+      {
+        "line": 688,
+        "declaration": "function _validateProposedConfig(Config calldata nextConfig)"
+      },
+      {
+        "line": 707,
+        "declaration": "function _emitConfigProposalCreated(ConfigProposal storage proposal, bytes32 nextConfigHash) private {"
+      },
+      {
+        "line": 719,
+        "declaration": "function _configHash(Config memory config_) private pure returns (bytes32) {"
+      },
+      {
+        "line": 723,
+        "declaration": "function _deriveProposalId(uint256 nonce, bytes32 baseConfigHash, bytes32 nextConfigHash, bytes32 reasonHash)"
+      },
+      {
+        "line": 745,
+        "declaration": "function _validateMigrationSuccessor(address candidateAddress) private view {"
+      },
+      {
+        "line": 760,
+        "declaration": "function _deriveMigrationProposalId("
+      },
+      {
+        "line": 787,
+        "declaration": "function _addCapped(uint256 a, uint256 b, uint256 cap) private pure returns (uint256) {"
+      },
+      {
+        "line": 792,
+        "declaration": "function _mulCapped(uint256 a, uint256 b, uint256 cap) private pure returns (uint256) {"
+      }
+    ]
+  },
+  {
+    "path": "src/StockTokenRegistryV2.sol",
+    "lines": 286,
+    "sha256": "ED14F5E07EF8B90105947DE60E90B417642DB9ECFA878FECC850EA2F4D313EFB",
+    "coverage": "Full source read; all declared entry points and helpers considered",
+    "functions": [
+      {
+        "line": 27,
+        "declaration": "modifier onlyPublisher() {"
+      },
+      {
+        "line": 32,
+        "declaration": "constructor(address owner_, address publisher_) Ownable(owner_) {"
+      },
+      {
+        "line": 37,
+        "declaration": "function assetVersionKey(string memory normalizedTicker, address token, bytes32 robinhoodAssetIdHash)"
+      },
+      {
+        "line": 46,
+        "declaration": "function activateVersion(Activation calldata activation) external override onlyOwner returns (bytes32 versionKey) {"
+      },
+      {
+        "line": 120,
+        "declaration": "function deactivateVersion(bytes32 versionKey, bytes32 reasonHash) external override onlyOwner {"
+      },
+      {
+        "line": 131,
+        "declaration": "function publishBallot("
+      },
+      {
+        "line": 173,
+        "declaration": "function resolveBallot(uint256 day)"
+      },
+      {
+        "line": 201,
+        "declaration": "function setPublisher(address publisher_) external override onlyOwner {"
+      },
+      {
+        "line": 206,
+        "declaration": "function versionCount() external view override returns (uint256) {"
+      },
+      {
+        "line": 210,
+        "declaration": "function versionKeyAt(uint256 index) external view override returns (bytes32) {"
+      },
+      {
+        "line": 214,
+        "declaration": "function getVersion(bytes32 versionKey) external view override returns (AssetVersion memory) {"
+      },
+      {
+        "line": 220,
+        "declaration": "function getBallot(uint256 day) external view override returns (Ballot memory) {"
+      },
+      {
+        "line": 226,
+        "declaration": "function _validateActivation(Activation calldata activation) private view {"
+      },
+      {
+        "line": 241,
+        "declaration": "function _validTicker(bytes memory ticker) private pure returns (bool) {"
+      },
+      {
+        "line": 253,
+        "declaration": "function _deactivateConflict(bytes32 conflictKey, bytes32 targetKey, uint256 nextCatalogVersion) private {"
+      },
+      {
+        "line": 259,
+        "declaration": "function _deactivate(bytes32 versionKey, bytes32 reasonHash, uint256 nextCatalogVersion) private {"
+      },
+      {
+        "line": 276,
+        "declaration": "function _isExactlyActive(bytes32 versionKey, AssetVersion storage version) private view returns (bool) {"
+      },
+      {
+        "line": 282,
+        "declaration": "function _isLiveBallot(uint256 day, bytes32 versionKey, AssetVersion storage version) private view returns (bool) {"
+      }
+    ]
+  },
+  {
+    "path": "src/interfaces/IAcquisitionVaultV1.sol",
+    "lines": 394,
+    "sha256": "3A79F24EE81EDED0891A63D73ABDB6672A23322B9FA898AB3B3E721DE66F4C38",
+    "coverage": "Full source read; all declared entry points and helpers considered",
+    "functions": [
+      {
+        "line": 334,
+        "declaration": "function supportedChainId() external view returns (uint256);"
+      },
+      {
+        "line": 335,
+        "declaration": "function OPERATOR_NOMINATION_DELAY() external view returns (uint64);"
+      },
+      {
+        "line": 336,
+        "declaration": "function OPERATOR_ACCEPTANCE_WINDOW() external view returns (uint64);"
+      },
+      {
+        "line": 337,
+        "declaration": "function INGRESS_PROPOSAL_DELAY() external view returns (uint64);"
+      },
+      {
+        "line": 338,
+        "declaration": "function INGRESS_ACCEPTANCE_WINDOW() external view returns (uint64);"
+      },
+      {
+        "line": 339,
+        "declaration": "function MAX_AUTHORIZATION_LIFETIME() external view returns (uint64);"
+      },
+      {
+        "line": 340,
+        "declaration": "function MAX_SIGNATURE_BYTES() external view returns (uint256);"
+      },
+      {
+        "line": 341,
+        "declaration": "function ERC1271_CALL_GAS() external view returns (uint256);"
+      },
+      {
+        "line": 342,
+        "declaration": "function ERC1271_POST_CALL_GAS_RESERVE() external view returns (uint256);"
+      },
+      {
+        "line": 343,
+        "declaration": "function ERC1271_MIN_PRECALL_GAS() external view returns (uint256);"
+      },
+      {
+        "line": 344,
+        "declaration": "function MAX_ACTIVE_ORDINARY_RESERVATIONS() external view returns (uint256);"
+      },
+      {
+        "line": 345,
+        "declaration": "function MAX_ACTIVE_RECONCILIATIONS() external view returns (uint256);"
+      },
+      {
+        "line": 346,
+        "declaration": "function MAX_OPERATOR_OUTFLOW_COMPONENTS() external view returns (uint256);"
+      },
+      {
+        "line": 347,
+        "declaration": "function OUTFLOW_AUTHORIZATION_TYPEHASH() external view returns (bytes32);"
+      },
+      {
+        "line": 348,
+        "declaration": "function SUCCESSOR_CONSENT_TYPEHASH() external view returns (bytes32);"
+      },
+      {
+        "line": 349,
+        "declaration": "function stockTokenRegistryV2() external view returns (address);"
+      },
+      {
+        "line": 350,
+        "declaration": "function version() external view returns (string memory);"
+      },
+      {
+        "line": 351,
+        "declaration": "function mainOperator() external view returns (address);"
+      },
+      {
+        "line": 352,
+        "declaration": "function operatorGeneration() external view returns (uint256);"
+      },
+      {
+        "line": 353,
+        "declaration": "function outflowNonce() external view returns (uint256);"
+      },
+      {
+        "line": 354,
+        "declaration": "function nominationNonce() external view returns (uint256);"
+      },
+      {
+        "line": 355,
+        "declaration": "function pendingMainOperatorNomination() external view returns (PendingOperatorNomination memory);"
+      },
+      {
+        "line": 356,
+        "declaration": "function nominateMainOperator(address nominee, bytes32 detailsHash) external returns (bytes32);"
+      },
+      {
+        "line": 357,
+        "declaration": "function cancelMainOperatorNomination(bytes32 proposalId, bytes32 detailsHash) external;"
+      },
+      {
+        "line": 358,
+        "declaration": "function expireMainOperatorNomination(bytes32 proposalId) external;"
+      },
+      {
+        "line": 359,
+        "declaration": "function acceptMainOperatorNomination(bytes32 proposalId) external;"
+      },
+      {
+        "line": 360,
+        "declaration": "function disableMainOperator(bytes32 detailsHash) external;"
+      },
+      {
+        "line": 361,
+        "declaration": "function renounceMainOperator(bytes32 detailsHash) external;"
+      },
+      {
+        "line": 362,
+        "declaration": "function replaceMainOperator(SuccessorConsent calldata consent, bytes calldata signature) external;"
+      },
+      {
+        "line": 363,
+        "declaration": "function invalidateOutflowNonce(uint256 newNextNonce, bytes32 detailsHash) external;"
+      },
+      {
+        "line": 364,
+        "declaration": "function pause(bytes32 detailsHash) external;"
+      },
+      {
+        "line": 365,
+        "declaration": "function unpause(bytes32 detailsHash) external;"
+      },
+      {
+        "line": 366,
+        "declaration": "function hashOutflowAuthorization(OutflowAuthorization calldata authorization) external view returns (bytes32);"
+      },
+      {
+        "line": 367,
+        "declaration": "function hashSuccessorConsent(SuccessorConsent calldata consent) external view returns (bytes32);"
+      },
+      {
+        "line": 368,
+        "declaration": "function globalLifetimeCanonicalDepositCapWei() external view returns (uint256);"
+      },
+      {
+        "line": 369,
+        "declaration": "function availableWei() external view returns (uint256);"
+      },
+      {
+        "line": 370,
+        "declaration": "function unattributedWei() external view returns (uint256);"
+      },
+      {
+        "line": 371,
+        "declaration": "function ordinaryReservedWei() external view returns (uint256);"
+      },
+      {
+        "line": 372,
+        "declaration": "function reconciliationLiabilityWei() external view returns (uint256);"
+      },
+      {
+        "line": 373,
+        "declaration": "function reconciliationBackingWei() external view returns (uint256);"
+      },
+      {
+        "line": 374,
+        "declaration": "function accountingSequence() external view returns (uint256);"
+      },
+      {
+        "line": 375,
+        "declaration": "function lastObservedBalanceDeficitWei() external view returns (uint256);"
+      },
+      {
+        "line": 376,
+        "declaration": "function accountingTotals() external view returns (AccountingTotals memory);"
+      },
+      {
+        "line": 377,
+        "declaration": "function syncBalance() external returns (bytes32 mutationId);"
+      },
+      {
+        "line": 378,
+        "declaration": "function reclassifyUnattributed(uint256 amountWei, bytes32 detailsHash) external returns (bytes32 mutationId);"
+      },
+      {
+        "line": 379,
+        "declaration": "function globalLifetimeCanonicalDepositedWei() external view returns (uint256);"
+      },
+      {
+        "line": 380,
+        "declaration": "function ingressProposalNonce() external view returns (uint256);"
+      },
+      {
+        "line": 381,
+        "declaration": "function ingressGeneration() external view returns (uint256);"
+      },
+      {
+        "line": 382,
+        "declaration": "function activeIngressGeneration() external view returns (uint256);"
+      },
+      {
+        "line": 383,
+        "declaration": "function pendingIngressProposal() external view returns (PendingIngressProposal memory);"
+      },
+      {
+        "line": 384,
+        "declaration": "function getIngress(uint256 generation) external view returns (IngressRecord memory);"
+      },
+      {
+        "line": 385,
+        "declaration": "function proposeIngress(IngressConfig calldata config, bytes32 detailsHash) external returns (bytes32 proposalId);"
+      },
+      {
+        "line": 386,
+        "declaration": "function cancelIngressProposal(bytes32 proposalId, bytes32 detailsHash) external;"
+      },
+      {
+        "line": 387,
+        "declaration": "function expireIngressProposal(bytes32 proposalId) external;"
+      },
+      {
+        "line": 388,
+        "declaration": "function activateIngress(bytes32 proposalId) external returns (uint256 generation);"
+      },
+      {
+        "line": 389,
+        "declaration": "function disableIngress(bytes32 detailsHash) external;"
+      },
+      {
+        "line": 390,
+        "declaration": "function ingressLifetimeDepositedWei(uint256 generation) external view returns (uint256);"
+      },
+      {
+        "line": 391,
+        "declaration": "function ingressEpochDepositedWei(uint256 generation, uint256 epochDay) external view returns (uint256);"
+      },
+      {
+        "line": 392,
+        "declaration": "function getDeposit(bytes32 depositId) external view returns (DepositRecord memory);"
+      },
+      {
+        "line": 393,
+        "declaration": "function depositCanonical(bytes32 sourceEventId) external payable returns (bytes32 depositId);"
+      }
+    ]
+  },
+  {
+    "path": "src/interfaces/IAcquisitionAuthorityV2.sol",
+    "lines": 216,
+    "sha256": "9795A81EB15AD715A6FD0EC5FC2E4C0D3E3043E88A6E0BBB0E9E161373CC2A32",
+    "coverage": "Full source read; all declared entry points and helpers considered",
+    "functions": []
+  },
+  {
+    "path": "src/interfaces/IAcquisitionIntentExecutionV2.sol",
+    "lines": 35,
+    "sha256": "86F0173C5775603FCA516FB152448EE657D0999B8FF1EBA8C48C71BF7FC55E04",
+    "coverage": "Full source read; all declared entry points and helpers considered",
+    "functions": []
+  },
+  {
+    "path": "src/interfaces/IRwaHealthOverlay.sol",
+    "lines": 60,
+    "sha256": "59931C0A23C51D38E21A1A4651E0D09381DC531B33615120EF9522FBFE0CAB40",
+    "coverage": "Full source read; all declared entry points and helpers considered",
+    "functions": [
+      {
+        "line": 49,
+        "declaration": "function supportedChainId() external view returns (uint256);"
+      },
+      {
+        "line": 50,
+        "declaration": "function SAFE() external view returns (address);"
+      },
+      {
+        "line": 51,
+        "declaration": "function REGISTRY() external view returns (IStockTokenRegistryV2);"
+      },
+      {
+        "line": 52,
+        "declaration": "function clearanceGeneration(bytes32 assetVersionKey) external view returns (uint256 generation);"
+      },
+      {
+        "line": 53,
+        "declaration": "function latestClearanceId(bytes32 assetVersionKey) external view returns (bytes32 clearanceId_);"
+      },
+      {
+        "line": 54,
+        "declaration": "function usedClearanceId(bytes32 clearanceId_) external view returns (bool used);"
+      },
+      {
+        "line": 56,
+        "declaration": "function clearancePayloadHash(Clearance calldata value) external view returns (bytes32);"
+      },
+      {
+        "line": 57,
+        "declaration": "function safeCallIntentHash(Clearance calldata value) external view returns (bytes32);"
+      },
+      {
+        "line": 58,
+        "declaration": "function clearanceId(Clearance calldata value) external view returns (bytes32);"
+      },
+      {
+        "line": 59,
+        "declaration": "function recordClearance(Clearance calldata value) external returns (bytes32 clearanceId_);"
+      }
+    ]
+  },
+  {
+    "path": "src/interfaces/IStockTokenRegistryV2.sol",
+    "lines": 140,
+    "sha256": "B1791C05F784C84CDE8F3740920A94750C48F8B6C353E331E6C435863BDBD979",
+    "coverage": "Full source read; all declared entry points and helpers considered",
+    "functions": [
+      {
+        "line": 99,
+        "declaration": "function assetVersionKey(string memory normalizedTicker, address token, bytes32 robinhoodAssetIdHash)"
+      },
+      {
+        "line": 103,
+        "declaration": "function activateVersion(Activation calldata activation) external returns (bytes32 versionKey);"
+      },
+      {
+        "line": 104,
+        "declaration": "function deactivateVersion(bytes32 versionKey, bytes32 reasonHash) external;"
+      },
+      {
+        "line": 105,
+        "declaration": "function publishBallot("
+      },
+      {
+        "line": 113,
+        "declaration": "function resolveBallot(uint256 day)"
+      },
+      {
+        "line": 127,
+        "declaration": "function supportedChainId() external view returns (uint256);"
+      },
+      {
+        "line": 128,
+        "declaration": "function publisher() external view returns (address);"
+      },
+      {
+        "line": 129,
+        "declaration": "function catalogVersion() external view returns (uint256);"
+      },
+      {
+        "line": 130,
+        "declaration": "function activationGeneration(bytes32 versionKey) external view returns (uint256);"
+      },
+      {
+        "line": 131,
+        "declaration": "function ballotActivationGeneration(uint256 day) external view returns (uint256);"
+      },
+      {
+        "line": 132,
+        "declaration": "function versionCount() external view returns (uint256);"
+      },
+      {
+        "line": 133,
+        "declaration": "function versionKeyAt(uint256 index) external view returns (bytes32);"
+      },
+      {
+        "line": 134,
+        "declaration": "function getVersion(bytes32 versionKey) external view returns (AssetVersion memory);"
+      },
+      {
+        "line": 135,
+        "declaration": "function activeVersionForTickerHash(bytes32 tickerHash) external view returns (bytes32);"
+      },
+      {
+        "line": 136,
+        "declaration": "function activeVersionForToken(address token) external view returns (bytes32);"
+      },
+      {
+        "line": 137,
+        "declaration": "function activeVersionForProviderIdHash(bytes32 providerIdHash) external view returns (bytes32);"
+      },
+      {
+        "line": 138,
+        "declaration": "function setPublisher(address publisher_) external;"
+      },
+      {
+        "line": 139,
+        "declaration": "function getBallot(uint256 day) external view returns (Ballot memory);"
+      }
+    ]
+  },
+  {
+    "path": "src/interfaces/ISettlementDataFeeSource.sol",
+    "lines": 6,
+    "sha256": "E59A4FEFB9EDBBB27211D7D6F00016CD674AED0765ED4D8A6D54B05FC2BF1BED",
+    "coverage": "Full source read; all declared entry points and helpers considered",
+    "functions": [
+      {
+        "line": 5,
+        "declaration": "function currentTransactionNativeDataFee() external view returns (uint256);"
+      }
+    ]
+  }
+]

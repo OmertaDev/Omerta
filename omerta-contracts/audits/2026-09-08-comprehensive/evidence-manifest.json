@@ -1,0 +1,1345 @@
+{
+  "generatedAt": "2026-09-08T05:01:01.002Z",
+  "chainId": 4663,
+  "sourceCommit": "e1d0e8476b6f1ebf590b13bd07c072d9d9d33aee",
+  "sourceTreeSha256": "d43f210a97262729207f9f2aa6d7855d07e55246a1a8656901ee7c89c28d124b",
+  "tools": {
+    "forge": "1.7.1",
+    "solc": "0.8.26+commit.8a97fa7a",
+    "slither": "0.11.6",
+    "node": "v24.19.0",
+    "postgres": "18"
+  },
+  "settings": {
+    "optimizerRuns": 800,
+    "evm": "cancun",
+    "fuzzRuns": 512,
+    "invariantRuns": 512,
+    "invariantDepth": 500,
+    "invariantFailOnRevert": false,
+    "canonicalProfiles": "omerta-contracts/foundry.toml"
+  },
+  "runs": [
+    {
+      "id": "baseline",
+      "command": "forge test -vv",
+      "workingDirectory": "omerta-contracts",
+      "exitCode": 1,
+      "seed": null,
+      "seedNote": "No explicit seed; do not infer a reproducible randomized seed.",
+      "log": {
+        "path": "output/comprehensive-audit/forge-baseline.log",
+        "bytes": 130304,
+        "sha256": "c701cc3d80b809c95953f3322abd53893866627e680b6774716822fa936abf4c"
+      },
+      "exit": {
+        "path": "output/comprehensive-audit/forge-baseline.exit.txt",
+        "bytes": 3,
+        "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+      },
+      "finalFoundrySummary": "Ran 46 test suites in 1383.97s (2699.02s CPU time): 927 tests passed, 1 failed, 0 skipped (928 total tests)",
+      "fuzzAssertions": [
+        {
+          "name": "testFuzz_tick_conversion_matches_the_independent_fixed_point_price(int24)",
+          "runs": 512
+        },
+        {
+          "name": "testFuzz_record_never_exceeds_cap_or_unreserved(uint256,uint256)",
+          "runs": 512
+        },
+        {
+          "name": "testFuzz_price_decode_survives_extremes(uint112)",
+          "runs": 512
+        },
+        {
+          "name": "testFuzz_conservation(uint256,uint256,uint256,uint256,uint256)",
+          "runs": 512
+        },
+        {
+          "name": "testFuzz_delivery_conserves_units_never_mints(uint256,uint256)",
+          "runs": 512
+        },
+        {
+          "name": "testFuzz_block_counter_equals_the_sum_metered(uint96,uint96,uint96)",
+          "runs": 512
+        },
+        {
+          "name": "testFuzz_the_cap_is_exactly_the_boundary(uint96,uint96)",
+          "runs": 512
+        },
+        {
+          "name": "testFuzz_feeConservesValueAndBoundsRoundingAcrossAllBps(uint96,uint16)",
+          "runs": 512
+        },
+        {
+          "name": "testFuzz_rejectingMintReceiverRollsBackNonceSupplyAndTransfers(uint8)",
+          "runs": 512
+        },
+        {
+          "name": "testFuzz_signedRecipientNonceAndDeadlineCannotBeAltered(uint128,uint32,uint8)",
+          "runs": 512
+        },
+        {
+          "name": "testFuzz_supply_never_exceeds_collateral_times_ltv(uint96,uint96,uint96,uint96,uint16)",
+          "runs": 512
+        },
+        {
+          "name": "testFuzz_the_fee_never_exceeds_the_yield_it_came_from(uint96,uint16)",
+          "runs": 512
+        },
+        {
+          "name": "testFuzz_transmuter_never_pays_more_than_it_holds(uint96,uint96,uint96)",
+          "runs": 512
+        },
+        {
+          "name": "testFuzz_boundedTraceNonceGrowthNeverExceedsSuccessfulOneStepInvalidations(uint8,uint256)",
+          "runs": 512
+        },
+        {
+          "name": "testFuzz_claims_bounded_by_tranche(uint96[8])",
+          "runs": 512
+        },
+        {
+          "name": "testFuzz_allIntegerBoundaryCombinationsRecord(uint8)",
+          "runs": 512
+        },
+        {
+          "name": "testFuzz_anyNonzeroTtlMutationRejects(uint32,bool)",
+          "runs": 512
+        },
+        {
+          "name": "testFuzz_everySingleFieldMutationChangesAllThreeCanonicalIdentities(uint8,bytes32)",
+          "runs": 512
+        },
+        {
+          "name": "testFuzz_halfOpenWindowAcceptsBeforeAndRejectsAtDeadline(uint32)",
+          "runs": 512
+        },
+        {
+          "name": "testFuzz_stateSequenceOutsideSignedBigintDomainAlwaysRejects(uint64)",
+          "runs": 512
+        },
+        {
+          "name": "testFuzz_validClosedIntegerDomainRecordsExactlyOne(uint256,uint64,uint8,uint64)",
+          "runs": 512
+        },
+        {
+          "name": "testFuzz_wrongCallerNeverChangesStorage(address)",
+          "runs": 512
+        },
+        {
+          "name": "testFuzz_committed_never_exceeds_balance(uint256,uint256)",
+          "runs": 512
+        },
+        {
+          "name": "testFuzz_mint_rate_never_exceeds_either_ceiling(uint256,uint256,uint256)",
+          "runs": 512
+        }
+      ],
+      "invariantAssertions": [
+        {
+          "name": "invariant_balance_always_backs_outstanding_credits()",
+          "runs": 512,
+          "calls": 256000,
+          "reverts": 0
+        },
+        {
+          "name": "invariant_known_credit_sum_equals_outstanding()",
+          "runs": 512,
+          "calls": 256000,
+          "reverts": 0
+        },
+        {
+          "name": "invariant_outstanding_equals_recorded_minus_withdrawn()",
+          "runs": 512,
+          "calls": 256000,
+          "reverts": 0
+        },
+        {
+          "name": "invariant_recorded_ghost_conserves_live_and_withdrawn_credits()",
+          "runs": 512,
+          "calls": 256000,
+          "reverts": 0
+        },
+        {
+          "name": "invariant_unreserved_is_exact_balance_minus_liability()",
+          "runs": 512,
+          "calls": 256000,
+          "reverts": 0
+        },
+        {
+          "name": "invariant_withdrawal_ghost_matches_cumulative_withdrawals()",
+          "runs": 512,
+          "calls": 256000,
+          "reverts": 0
+        },
+        {
+          "name": "invariant_generationLatestAndUsedIdsAreMonotone()",
+          "runs": 512,
+          "calls": 256000,
+          "reverts": 0
+        },
+        {
+          "name": "invariant_feeReceiptsConserveGrossAndForcedFundsNeverBecomePayments()",
+          "runs": 512,
+          "calls": 256000,
+          "reverts": 0
+        },
+        {
+          "name": "invariant_task4_oneImmutableRecordPerDayAndNoCoreOrFundMovement()",
+          "runs": 512,
+          "calls": 256000,
+          "reverts": 0
+        },
+        {
+          "name": "invariant_nftOwnershipNoncesSupplyAndDailyAccountingMatchModel()",
+          "runs": 512,
+          "calls": 256000,
+          "reverts": 0
+        },
+        {
+          "name": "invariant_reverseHeadsHistoryCatalogAndBallotsRemainHonest()",
+          "runs": 512,
+          "calls": 256000,
+          "reverts": 0
+        }
+      ],
+      "invariantNote": "Assertions can share an underlying invariant campaign; counts are per reported assertion and must not be summed as independent campaigns."
+    },
+    {
+      "id": "supplementary-before",
+      "command": "forge test --match-path test/audit/Comprehensive*.t.sol --fuzz-seed 0x20260908 -vv",
+      "workingDirectory": "omerta-contracts",
+      "exitCode": 0,
+      "seed": "0x20260908",
+      "seedNote": "Explicit fixed seed.",
+      "log": {
+        "path": "output/comprehensive-audit/supplementary-before.log",
+        "bytes": 13495,
+        "sha256": "bac9b88ee0cea3a9d723fd9f39129c50257f1d7054caafe065c3e5267677c9bd"
+      },
+      "exit": {
+        "path": "output/comprehensive-audit/supplementary-before.exit.txt",
+        "bytes": 3,
+        "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+      },
+      "finalFoundrySummary": "Ran 5 test suites in 154.37ms (296.21ms CPU time): 19 tests passed, 0 failed, 0 skipped (19 total tests)",
+      "fuzzAssertions": [
+        {
+          "name": "testFuzz_repeatedBondClaimsConserveMintedCommitment(uint96,uint16,uint32[8])",
+          "runs": 512
+        },
+        {
+          "name": "testFuzz_stakingRateHistoryAndCheckpointsCannotOverpay(uint96,uint32[8],uint16[8])",
+          "runs": 512
+        },
+        {
+          "name": "testFuzz_conservationAcrossDonationReclassificationAndIngressRotation(uint96,uint96,uint96,uint96)",
+          "runs": 512
+        },
+        {
+          "name": "testFuzz_injectedBalanceDeficitRepairNeverDoubleCredits(uint96)",
+          "runs": 512
+        }
+      ],
+      "invariantAssertions": [],
+      "invariantNote": "Assertions can share an underlying invariant campaign; counts are per reported assertion and must not be summed as independent campaigns."
+    },
+    {
+      "id": "affected-after",
+      "command": "forge test --match-contract (Comprehensive|OmertaHook|OmrV4TwapOracle|AcquisitionVaultOperator) --fuzz-seed 0x20260908 -vv",
+      "workingDirectory": "omerta-contracts",
+      "exitCode": 0,
+      "seed": "0x20260908",
+      "seedNote": "Explicit fixed seed.",
+      "log": {
+        "path": "output/comprehensive-audit/affected-retest.log",
+        "bytes": 18068,
+        "sha256": "c0c6bfe0002e7fa3b0736f1aec5be065bab40ea372da5f8d699f148e263852d4"
+      },
+      "exit": {
+        "path": "output/comprehensive-audit/affected-retest.exit.txt",
+        "bytes": 3,
+        "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+      },
+      "finalFoundrySummary": "Ran 9 test suites in 1.61s (4.47s CPU time): 169 tests passed, 0 failed, 0 skipped (169 total tests)",
+      "fuzzAssertions": [
+        {
+          "name": "testFuzz_conservationAcrossDonationReclassificationAndIngressRotation(uint96,uint96,uint96,uint96)",
+          "runs": 512
+        },
+        {
+          "name": "testFuzz_injectedBalanceDeficitRepairNeverDoubleCredits(uint96)",
+          "runs": 512
+        },
+        {
+          "name": "testFuzz_repeatedBondClaimsConserveMintedCommitment(uint96,uint16,uint32[8])",
+          "runs": 512
+        },
+        {
+          "name": "testFuzz_stakingRateHistoryAndCheckpointsCannotOverpay(uint96,uint32[8],uint16[8])",
+          "runs": 512
+        },
+        {
+          "name": "testFuzz_tick_conversion_matches_the_independent_fixed_point_price(int24)",
+          "runs": 512
+        },
+        {
+          "name": "testFuzz_boundedTraceNonceGrowthNeverExceedsSuccessfulOneStepInvalidations(uint8,uint256)",
+          "runs": 512
+        }
+      ],
+      "invariantAssertions": [],
+      "invariantNote": "Assertions can share an underlying invariant campaign; counts are per reported assertion and must not be summed as independent campaigns."
+    },
+    {
+      "id": "sizes-initial",
+      "command": "forge build --sizes --skip test --skip script",
+      "workingDirectory": "omerta-contracts",
+      "exitCode": 1,
+      "seed": null,
+      "seedNote": "No explicit seed; do not infer a reproducible randomized seed.",
+      "log": {
+        "path": "output/comprehensive-audit/build-sizes.log",
+        "bytes": 42819,
+        "sha256": "0585851c6b40afe3dcf8c5f5c6e1954636b6906b03400d2106b08adc299f500d"
+      },
+      "exit": {
+        "path": "output/comprehensive-audit/build-sizes.exit.txt",
+        "bytes": 3,
+        "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+      },
+      "finalFoundrySummary": null,
+      "fuzzAssertions": [],
+      "invariantAssertions": [],
+      "invariantNote": "Assertions can share an underlying invariant campaign; counts are per reported assertion and must not be summed as independent campaigns."
+    },
+    {
+      "id": "sizes-production",
+      "command": "forge build --sizes --skip FuzzTester",
+      "workingDirectory": "omerta-contracts",
+      "exitCode": 0,
+      "seed": null,
+      "seedNote": "No explicit seed; do not infer a reproducible randomized seed.",
+      "log": {
+        "path": "output/comprehensive-audit/build-sizes-production.log",
+        "bytes": 231526,
+        "sha256": "923e87fbcfd5dbec5efc724223a41063241cc7867ce3e90a959cbdc978648f10"
+      },
+      "exit": {
+        "path": "output/comprehensive-audit/build-sizes-production.exit.txt",
+        "bytes": 3,
+        "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+      },
+      "finalFoundrySummary": null,
+      "fuzzAssertions": [],
+      "invariantAssertions": [],
+      "invariantNote": "Assertions can share an underlying invariant campaign; counts are per reported assertion and must not be summed as independent campaigns."
+    },
+    {
+      "id": "stock-local-e2e",
+      "command": "ANVIL_BIN=C:/Users/Jorge/.foundry/bin/anvil.exe node tools/stock-e2e.js",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "seed": null,
+      "seedNote": "No explicit seed; do not infer a reproducible randomized seed.",
+      "log": {
+        "path": "output/comprehensive-audit/stock-e2e.log",
+        "bytes": 1588,
+        "sha256": "a9287a1cfffe94dd129513be9da022b5504d594c491810264b708ed61dd362aa"
+      },
+      "exit": {
+        "path": "output/comprehensive-audit/stock-e2e.exit.txt",
+        "bytes": 3,
+        "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+      },
+      "finalFoundrySummary": null,
+      "fuzzAssertions": [],
+      "invariantAssertions": [],
+      "invariantNote": "Assertions can share an underlying invariant campaign; counts are per reported assertion and must not be summed as independent campaigns."
+    },
+    {
+      "id": "postgres-initial",
+      "command": "DATABASE_URL=loopback scratch omerta_audit node tools/pgcheck.js",
+      "workingDirectory": ".",
+      "exitCode": 1,
+      "seed": null,
+      "seedNote": "No explicit seed; do not infer a reproducible randomized seed.",
+      "log": {
+        "path": "output/comprehensive-audit/postgres-check.log",
+        "bytes": 17972,
+        "sha256": "fc600b6d70e1a5f6a1fa8b3f016dfcd3e09a58697a654074b886c22c196e02b0"
+      },
+      "exit": {
+        "path": "output/comprehensive-audit/postgres-check.exit.txt",
+        "bytes": 3,
+        "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+      },
+      "finalFoundrySummary": null,
+      "fuzzAssertions": [],
+      "invariantAssertions": [],
+      "invariantNote": "Assertions can share an underlying invariant campaign; counts are per reported assertion and must not be summed as independent campaigns."
+    },
+    {
+      "id": "postgres-retest",
+      "command": "DATABASE_URL=loopback scratch omerta_audit_retest node tools/pgcheck.js",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "seed": null,
+      "seedNote": "No explicit seed; do not infer a reproducible randomized seed.",
+      "log": {
+        "path": "output/comprehensive-audit/postgres-retest.log",
+        "bytes": 17499,
+        "sha256": "6909db71ee93ca93ac3b3378314b1e9c22a54663be0e490c3c5acdedce6120f9"
+      },
+      "exit": {
+        "path": "output/comprehensive-audit/postgres-retest.exit.txt",
+        "bytes": 3,
+        "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+      },
+      "finalFoundrySummary": null,
+      "fuzzAssertions": [],
+      "invariantAssertions": [],
+      "invariantNote": "Assertions can share an underlying invariant campaign; counts are per reported assertion and must not be summed as independent campaigns."
+    },
+    {
+      "id": "fee-splits",
+      "command": "node tools/validate-fee-splits.js",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "seed": null,
+      "seedNote": "No explicit seed; do not infer a reproducible randomized seed.",
+      "log": {
+        "path": "output/comprehensive-audit/fee-splits-final.log",
+        "bytes": 1522,
+        "sha256": "e3727aed01361af80255c88edfbf9fa1224777b9e183985002fcc7abbd683cdd"
+      },
+      "exit": {
+        "path": "output/comprehensive-audit/fee-splits-final.exit.txt",
+        "bytes": 3,
+        "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+      },
+      "finalFoundrySummary": null,
+      "fuzzAssertions": [],
+      "invariantAssertions": [],
+      "invariantNote": "Assertions can share an underlying invariant campaign; counts are per reported assertion and must not be summed as independent campaigns."
+    }
+  ],
+  "otherRunRecords": [
+    {
+      "path": "output/comprehensive-audit/deed-lifecycle-retest-run.json",
+      "bytes": 362,
+      "sha256": "a143927c214c634499c5f6cbdd21f150b7c09ae42c19606966f772942dd15f66"
+    },
+    {
+      "path": "output/comprehensive-audit/deed-reimport-after-run.json",
+      "bytes": 362,
+      "sha256": "4fdfca6ea0182921a83bb6d444c5983c6a1012d7b7bba955d695a434263dd46c"
+    },
+    {
+      "path": "output/comprehensive-audit/deed-reimport-before-run.json",
+      "bytes": 362,
+      "sha256": "7b0f3e6c53af6be0e3eba8f80cfc013645989db5f003f55356f62184df1374ec"
+    },
+    {
+      "path": "output/comprehensive-audit/deed-reimport-postgres-run.json",
+      "bytes": 435,
+      "sha256": "fba639edf7ab3f24bf3ee798be76a85f450877ce7bbb761c77391e12ca0e5244"
+    },
+    {
+      "path": "output/comprehensive-audit/genesis-fork-retest-run.json",
+      "bytes": 174,
+      "sha256": "c7590e3e3bbc33f96f05e471a3684f673bb98a0515f029707fc726c13aa5e7de"
+    },
+    {
+      "path": "output/comprehensive-audit/genesis-fork-run.json",
+      "bytes": 174,
+      "sha256": "1e507aac013106013ba6afac0367227afccfed4a6ee2010767069a49a55fea2d"
+    },
+    {
+      "path": "output/comprehensive-audit/js-chain-after-run.json",
+      "bytes": 140,
+      "sha256": "293bb6a54d1154ae281053352f88cb3294ee22ae8884fa3d5888d9353b349d91"
+    },
+    {
+      "path": "output/comprehensive-audit/js-reimport-after-run.json",
+      "bytes": 143,
+      "sha256": "b37ca29debab57378abe0b00aca3e9d269cb1c77f1ce5b6041b9d445b20fe6dc"
+    },
+    {
+      "path": "output/comprehensive-audit/js-runs.json",
+      "bytes": 1892,
+      "sha256": "e2a60a53260febdd86cbd79987742047703288396123d4e21c2fdf61ec7fb472"
+    },
+    {
+      "path": "output/comprehensive-audit/js-stockdeliver-after-run.json",
+      "bytes": 147,
+      "sha256": "970e156b5353096260a67a888ae04fd96dd31e9ed8bceb4ebe672b52e3ed02fd"
+    },
+    {
+      "path": "output/comprehensive-audit/js-watcher-after-run.json",
+      "bytes": 142,
+      "sha256": "33eff83095a095c3479c4574fb097d651b16e5a1116bd04a7744bff57bcf6bf6"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-OmertaHook-after-run.json",
+      "bytes": 552,
+      "sha256": "2494a766f36027dfe9d153ba1bcd2dcc37f6186b99c4eefa32157c7a3c141862"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-runs.json",
+      "bytes": 13774,
+      "sha256": "1dbf35740f6e5467345a4a394f4065f7d3ded54d3597667d93c4bb080470e30a"
+    }
+  ],
+  "files": [
+    {
+      "path": "output/comprehensive-audit/affected-retest.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "output/comprehensive-audit/affected-retest.log",
+      "bytes": 18068,
+      "sha256": "c0c6bfe0002e7fa3b0736f1aec5be065bab40ea372da5f8d699f148e263852d4"
+    },
+    {
+      "path": "output/comprehensive-audit/build-sizes-production.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "output/comprehensive-audit/build-sizes-production.log",
+      "bytes": 231526,
+      "sha256": "923e87fbcfd5dbec5efc724223a41063241cc7867ce3e90a959cbdc978648f10"
+    },
+    {
+      "path": "output/comprehensive-audit/build-sizes.exit.txt",
+      "bytes": 3,
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": "output/comprehensive-audit/build-sizes.log",
+      "bytes": 42819,
+      "sha256": "0585851c6b40afe3dcf8c5f5c6e1954636b6906b03400d2106b08adc299f500d"
+    },
+    {
+      "path": "output/comprehensive-audit/ComprehensiveMarketAudit.before.sol.txt",
+      "bytes": 5650,
+      "sha256": "23fa843b6195c02e7a6fd341124bbf2bb39826c9aeccd874d352413dba69d93c"
+    },
+    {
+      "path": "output/comprehensive-audit/core-diagnostics.json",
+      "bytes": 36139,
+      "sha256": "fde28a841356aa158b1c1b0ad24c3e9e9c898092b0bcb6f011f9da3998ec7ed5"
+    },
+    {
+      "path": "output/comprehensive-audit/deed-lifecycle-retest-run.json",
+      "bytes": 362,
+      "sha256": "a143927c214c634499c5f6cbdd21f150b7c09ae42c19606966f772942dd15f66"
+    },
+    {
+      "path": "output/comprehensive-audit/deed-lifecycle-retest.log",
+      "bytes": 77,
+      "sha256": "8b1fd7afa591bebed0efae4ccc96ce995bfcbc0396b056b8afabfceccd59b963"
+    },
+    {
+      "path": "output/comprehensive-audit/deed-reimport-after-run.json",
+      "bytes": 362,
+      "sha256": "4fdfca6ea0182921a83bb6d444c5983c6a1012d7b7bba955d695a434263dd46c"
+    },
+    {
+      "path": "output/comprehensive-audit/deed-reimport-after.log",
+      "bytes": 312,
+      "sha256": "a9f00f1cab586030d78e57edc5bfd537c35e08b69e36c1f34c22d67cd50814ba"
+    },
+    {
+      "path": "output/comprehensive-audit/deed-reimport-before-run.json",
+      "bytes": 362,
+      "sha256": "7b0f3e6c53af6be0e3eba8f80cfc013645989db5f003f55356f62184df1374ec"
+    },
+    {
+      "path": "output/comprehensive-audit/deed-reimport-before.log",
+      "bytes": 595,
+      "sha256": "052bf6ddf58d0e74a3a0a32f68f6015b3c34f3ff62d954d436e1c7af28682134"
+    },
+    {
+      "path": "output/comprehensive-audit/deed-reimport-postgres-run.json",
+      "bytes": 435,
+      "sha256": "fba639edf7ab3f24bf3ee798be76a85f450877ce7bbb761c77391e12ca0e5244"
+    },
+    {
+      "path": "output/comprehensive-audit/deed-reimport-postgres.log",
+      "bytes": 328,
+      "sha256": "52e59fd683630078c87224c14bc1630f8e4b4008197a3dadc5cd48598c4a03ec"
+    },
+    {
+      "path": "output/comprehensive-audit/dependency-diagnostics.json",
+      "bytes": 32195380,
+      "sha256": "cc255032ca5f731caa91852ba579642f787b8167bdf229162e793ad2a70a9a18"
+    },
+    {
+      "path": "output/comprehensive-audit/erc-Denari.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "output/comprehensive-audit/erc-Denari.log",
+      "bytes": 1686,
+      "sha256": "dab7986206831d622e7f74c597a3f5e140de65ff99f57f399c72435f75a42e0a"
+    },
+    {
+      "path": "output/comprehensive-audit/erc-DynastyNFT.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "output/comprehensive-audit/erc-DynastyNFT.log",
+      "bytes": 2525,
+      "sha256": "41cf265f1d71a0ab459428244499cb0a4b38ec1da6d522e2c6579983a7b06529"
+    },
+    {
+      "path": "output/comprehensive-audit/erc-GearVault.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "output/comprehensive-audit/erc-GearVault.log",
+      "bytes": 2328,
+      "sha256": "e3f09e69a901a678fb75e5bd7089c275d673f3e201f26cf1218307c36043b97d"
+    },
+    {
+      "path": "output/comprehensive-audit/erc-OMR.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "output/comprehensive-audit/erc-OMR.log",
+      "bytes": 1680,
+      "sha256": "f00c9976fc03533fb015d6c91bafa23f7771edb8138b09e99c5ea9a36f32a9f3"
+    },
+    {
+      "path": "output/comprehensive-audit/erc-StreetDeed.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "output/comprehensive-audit/erc-StreetDeed.log",
+      "bytes": 2525,
+      "sha256": "9822f3bae377a08fafcfdfe3e83c7135006a2ff7bb89ec9b9dc59563fad75f70"
+    },
+    {
+      "path": "output/comprehensive-audit/external-clock-observation.json",
+      "bytes": 306,
+      "sha256": "35d355ac6092be2ef7af596ccc2fdb7d25a05fedeb80e6ebf8ea5e51a81801b3"
+    },
+    {
+      "path": "output/comprehensive-audit/external-integration-source-hashes.json",
+      "bytes": 9303,
+      "sha256": "fb98525579271fd61fddf2b0d01638ff422605c702ce38dc70d7af5853f9a50e"
+    },
+    {
+      "path": "output/comprehensive-audit/fee-splits-final.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "output/comprehensive-audit/fee-splits-final.log",
+      "bytes": 1522,
+      "sha256": "e3727aed01361af80255c88edfbf9fa1224777b9e183985002fcc7abbd683cdd"
+    },
+    {
+      "path": "output/comprehensive-audit/fee-splits.log",
+      "bytes": 1522,
+      "sha256": "e3727aed01361af80255c88edfbf9fa1224777b9e183985002fcc7abbd683cdd"
+    },
+    {
+      "path": "output/comprehensive-audit/forge-baseline.exit.txt",
+      "bytes": 3,
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": "output/comprehensive-audit/forge-baseline.log",
+      "bytes": 130304,
+      "sha256": "c701cc3d80b809c95953f3322abd53893866627e680b6774716822fa936abf4c"
+    },
+    {
+      "path": "output/comprehensive-audit/genesis-fork-rehearsal.before.js.txt",
+      "bytes": 43014,
+      "sha256": "b29eff777ea2040207e090e04be6ded084fbe5ec6e2495a1e5ac56c67fe309da"
+    },
+    {
+      "path": "output/comprehensive-audit/genesis-fork-retest-run.json",
+      "bytes": 174,
+      "sha256": "c7590e3e3bbc33f96f05e471a3684f673bb98a0515f029707fc726c13aa5e7de"
+    },
+    {
+      "path": "output/comprehensive-audit/genesis-fork-retest.log",
+      "bytes": 728,
+      "sha256": "855f5bceb948cdd3b583d449eb6832fbfec0586f8e9bbfd12baf3f9e7d481ce1"
+    },
+    {
+      "path": "output/comprehensive-audit/genesis-fork-run.json",
+      "bytes": 174,
+      "sha256": "1e507aac013106013ba6afac0367227afccfed4a6ee2010767069a49a55fea2d"
+    },
+    {
+      "path": "output/comprehensive-audit/genesis-fork.log",
+      "bytes": 1577,
+      "sha256": "a4e04d723462e20b8b58a253ba161804f4130576cc096cbd3679cd89e7bfb837"
+    },
+    {
+      "path": "output/comprehensive-audit/hook-inheritance.dot",
+      "bytes": 5617,
+      "sha256": "d03d80122d7725c4230fe9cf4786821a5e71aecfb50e56e303d0faadee774b97"
+    },
+    {
+      "path": "output/comprehensive-audit/js-bank.log",
+      "bytes": 155,
+      "sha256": "d2b9753ecd23c4cea820231f0426e2034c627f7efbf915ddef88ac1b4b206755"
+    },
+    {
+      "path": "output/comprehensive-audit/js-chain-after-run.json",
+      "bytes": 140,
+      "sha256": "293bb6a54d1154ae281053352f88cb3294ee22ae8884fa3d5888d9353b349d91"
+    },
+    {
+      "path": "output/comprehensive-audit/js-chain-after.log",
+      "bytes": 1742,
+      "sha256": "2a54f1e888b19d5c48d4537730411297b9c0e384494ba09b2566c45c19bb16b2"
+    },
+    {
+      "path": "output/comprehensive-audit/js-chain.log",
+      "bytes": 1742,
+      "sha256": "1b57a854bc8f54bfedf11b6210380dea6cb26cc4427e218a755345b3851b4a73"
+    },
+    {
+      "path": "output/comprehensive-audit/js-chainparams.log",
+      "bytes": 665,
+      "sha256": "6ad2ce09a0de9316b4e00451861b9f14b75e694ebcab6a14198de35c640e86a0"
+    },
+    {
+      "path": "output/comprehensive-audit/js-genesiscca.log",
+      "bytes": 186,
+      "sha256": "0607ec1069ec73a39e2c13753391c7cd27f8419d741ca2c365ef5d6f1bb0cf15"
+    },
+    {
+      "path": "output/comprehensive-audit/js-genesislaunch.log",
+      "bytes": 235,
+      "sha256": "768224af5c3197c202359ba2a9b3f0f0eb48d78758249ace68afbdd306c90b0d"
+    },
+    {
+      "path": "output/comprehensive-audit/js-genesisrelease.log",
+      "bytes": 221,
+      "sha256": "d10682eb4b6bf2f08ec28bb5f344916445d8f1fa467fcc345a791159aba7373f"
+    },
+    {
+      "path": "output/comprehensive-audit/js-nft.log",
+      "bytes": 241,
+      "sha256": "df7d5e794175d7d95b72cea0684780a405c2c6ed812577f3f4de7189851c9e83"
+    },
+    {
+      "path": "output/comprehensive-audit/js-reimport-after-run.json",
+      "bytes": 143,
+      "sha256": "b37ca29debab57378abe0b00aca3e9d269cb1c77f1ce5b6041b9d445b20fe6dc"
+    },
+    {
+      "path": "output/comprehensive-audit/js-reimport-after.log",
+      "bytes": 160,
+      "sha256": "9881168aad0d96f275b553c2f8ddf317d6cf47143f8244703513b60746eb6b0f"
+    },
+    {
+      "path": "output/comprehensive-audit/js-reimport.log",
+      "bytes": 160,
+      "sha256": "9881168aad0d96f275b553c2f8ddf317d6cf47143f8244703513b60746eb6b0f"
+    },
+    {
+      "path": "output/comprehensive-audit/js-runs.json",
+      "bytes": 1892,
+      "sha256": "e2a60a53260febdd86cbd79987742047703288396123d4e21c2fdf61ec7fb472"
+    },
+    {
+      "path": "output/comprehensive-audit/js-stockdeliver-after-run.json",
+      "bytes": 147,
+      "sha256": "970e156b5353096260a67a888ae04fd96dd31e9ed8bceb4ebe672b52e3ed02fd"
+    },
+    {
+      "path": "output/comprehensive-audit/js-stockdeliver-after.log",
+      "bytes": 463,
+      "sha256": "d0f97207e4724b9f6fa5c3a1a377e40872f22b32cf254d02aa617a87181d187e"
+    },
+    {
+      "path": "output/comprehensive-audit/js-stockdeliver.log",
+      "bytes": 463,
+      "sha256": "d0f97207e4724b9f6fa5c3a1a377e40872f22b32cf254d02aa617a87181d187e"
+    },
+    {
+      "path": "output/comprehensive-audit/js-tokenomics.log",
+      "bytes": 477,
+      "sha256": "01d39382cda83b7ab6c1d2518d962beaf4dbe793ec6023456746c5298036b244"
+    },
+    {
+      "path": "output/comprehensive-audit/js-v4oraclekeeper.log",
+      "bytes": 264,
+      "sha256": "f8222b8cb42323da69f9ace65fbceea773cbf35a69736da4c12c085aa7b169e9"
+    },
+    {
+      "path": "output/comprehensive-audit/js-watcher-after-run.json",
+      "bytes": 142,
+      "sha256": "33eff83095a095c3479c4574fb097d651b16e5a1116bd04a7744bff57bcf6bf6"
+    },
+    {
+      "path": "output/comprehensive-audit/js-watcher-after.log",
+      "bytes": 529,
+      "sha256": "bc0c0f2365229bb6973fce728c5919d15d47bafac71c112d2afb27c7b3a07bc0"
+    },
+    {
+      "path": "output/comprehensive-audit/js-watcher.log",
+      "bytes": 529,
+      "sha256": "bc0c0f2365229bb6973fce728c5919d15d47bafac71c112d2afb27c7b3a07bc0"
+    },
+    {
+      "path": "output/comprehensive-audit/mainnet-external-check.json",
+      "bytes": 1396,
+      "sha256": "77ec90d3d3aa0723e288de39ef2a2dd15799acf504a24a63d4f45aeb43ca700e"
+    },
+    {
+      "path": "output/comprehensive-audit/OmertaHook.before.sol.txt",
+      "bytes": 45441,
+      "sha256": "8d5b7e2f7394bd6f8202156171ae95725eff17b2763b207621aa3338f41037f2"
+    },
+    {
+      "path": "output/comprehensive-audit/pg-init.log",
+      "bytes": 903,
+      "sha256": "d7c3fae870fdd247b4088e57d0764196d879a08c11223c470f0541541317546b"
+    },
+    {
+      "path": "output/comprehensive-audit/pg-server.log",
+      "bytes": 22359,
+      "sha256": "b9808f62fd7012bdd42749a4d248327396c3cc5e08e5ecc55f9bfcb1649ae6c4"
+    },
+    {
+      "path": "output/comprehensive-audit/postgres-check.exit.txt",
+      "bytes": 3,
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": "output/comprehensive-audit/postgres-check.log",
+      "bytes": 17972,
+      "sha256": "fc600b6d70e1a5f6a1fa8b3f016dfcd3e09a58697a654074b886c22c196e02b0"
+    },
+    {
+      "path": "output/comprehensive-audit/postgres-retest.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "output/comprehensive-audit/postgres-retest.log",
+      "bytes": 17499,
+      "sha256": "6909db71ee93ca93ac3b3378314b1e9c22a54663be0e490c3c5acdedce6120f9"
+    },
+    {
+      "path": "output/comprehensive-audit/postgres-stop.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "output/comprehensive-audit/postgres-stop.log",
+      "bytes": 58,
+      "sha256": "3589d2bd01f8295cc7c9ec3f5e07625fcd347ccb6f33f2d80edafe5f5217c1fb"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-AcquisitionAuthority-full.log",
+      "bytes": 4261,
+      "sha256": "1468340744ed05163f644a8afd623fdbc4221f2faf3b387e60f6ba6d61557408"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-AcquisitionAuthority-ir.exit.txt",
+      "bytes": 4,
+      "sha256": "186a919b8c7cb84aebf4e53c70cd1cc028a93a1d183ee29dd6e10cd18a714577"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-AcquisitionAuthority-ir.json",
+      "bytes": 6542715,
+      "sha256": "176940b68d7a0fdd050c255d671c2187912f0a50b9ada95d34281341fe3ec7ea"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-AcquisitionAuthority-ir.log",
+      "bytes": 34396,
+      "sha256": "87d1814618db1e5b74521c3a240ff1aa0fb6ffad6af7f4acab366c6083460901"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-AcquisitionConstellationFactory-full.json",
+      "bytes": 260278,
+      "sha256": "dc230de31e3eca4be7000cb5cac2cedb7991dfa48b226415e2b059bb82485262"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-AcquisitionConstellationFactory-full.log",
+      "bytes": 2907,
+      "sha256": "fb21dfca98d2ae88ff2e1d20cdc5bebc1543a801bd38ce3ecd7db3b5268459e3"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-AcquisitionIntentExecution-full.json",
+      "bytes": 59,
+      "sha256": "58221e443233e71b0b8e76df489b483221faff4c83fb0d5e8e4b6b1631c484da"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-AcquisitionIntentExecution-full.log",
+      "bytes": 938,
+      "sha256": "03afce40aad6cdeb98c70162121dc74477d1564b239b3f6825a5a3a68939f7f5"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-AcquisitionReconciliation-full.json",
+      "bytes": 59,
+      "sha256": "58221e443233e71b0b8e76df489b483221faff4c83fb0d5e8e4b6b1631c484da"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-AcquisitionReconciliation-full.log",
+      "bytes": 936,
+      "sha256": "8ca014a883c5d97c1ef4106bc4d602700250b5cce27b484640338f8bfe6c23ff"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-AcquisitionVault-full.json",
+      "bytes": 5587118,
+      "sha256": "2138f1eb112d06039b2147c5698d8a1d2ac44aee10942360371590ac9dee4b3e"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-AcquisitionVault-full.log",
+      "bytes": 36487,
+      "sha256": "998791e4f79815fbd58dbe596c37103e8924f26fe689b0e9268e845afd003d0c"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-AcquisitionVaultCore-full.log",
+      "bytes": 4261,
+      "sha256": "08308bb0c32892b2923c702d44974840a720199e41c580a776125dbdc4fac486"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-AcquisitionVaultCore-ir.exit.txt",
+      "bytes": 4,
+      "sha256": "186a919b8c7cb84aebf4e53c70cd1cc028a93a1d183ee29dd6e10cd18a714577"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-AcquisitionVaultCore-ir.json",
+      "bytes": 1181111,
+      "sha256": "163071272dba498de6bfda8cffcd2ac20483008d147f6256b8ed48da533b965d"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-AcquisitionVaultCore-ir.log",
+      "bytes": 20662,
+      "sha256": "00f336ae3149a31acefd9ce03887e6363940d6de89e4e371435c2010d2aee30f"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-Alchemist-full.json",
+      "bytes": 2742902,
+      "sha256": "624df8ae1d1ebd3f1ee467aac19c60897765ae9b1e3521776449c03d7d3cd24f"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-Alchemist-full.log",
+      "bytes": 30016,
+      "sha256": "090451f460b7d8343be3fc25fc4040754e983eca645a957be519facdc4bdf081"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-all.exit.txt",
+      "bytes": 3,
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-all.log",
+      "bytes": 2648,
+      "sha256": "b9760b33a43cc9a22ee1f32b6222832d39e9c2da0e8cbe170034316a2ca2ea79"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-CollateralEscrow-full.json",
+      "bytes": 122286,
+      "sha256": "549f2db9d6e58c18ebdbbcdcf4b9983cf33ab78d78a485d425625d420223c3d0"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-CollateralEscrow-full.log",
+      "bytes": 6172,
+      "sha256": "01c0914240fb6f63368c4e89a1e8a7e4c54c2c5b6262d1afeb5b1194af1aef1b"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-Denari-full.json",
+      "bytes": 2289229,
+      "sha256": "e315b235f386ca84c268eb58f29a0ede0c392208905785c6a55bf3e59b09100e"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-Denari-full.log",
+      "bytes": 24385,
+      "sha256": "aec4d59dd9fee223695bbcfc9b880ce9890c14cf8a7ec3156b78c606bf4a7268"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-DynastyNFT-full.json",
+      "bytes": 2381684,
+      "sha256": "ed946f8953a50e430d3068809472ee574bea5b476f14040f96219b4026b2c3ba"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-DynastyNFT-full.log",
+      "bytes": 26796,
+      "sha256": "9bcce832583542bb6c03a3910ec432c6184600b11421bd430c470ba4616599ff"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-FlashGuard-full.json",
+      "bytes": 33491,
+      "sha256": "bac07e3343743ecc31f9cd02e6edd52c449900e0ef9cf8e008ae46e354450a7b"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-FlashGuard-full.log",
+      "bytes": 2088,
+      "sha256": "b01e6eb37809f1959600f3d6324e89f48ff221118dcb35832d744f3ac359e658"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-GearVault-full.json",
+      "bytes": 4256360,
+      "sha256": "94ea30da13268ea5792fe40e699909db77fc4c1b7b0b3db6f729d71333df4a45"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-GearVault-full.log",
+      "bytes": 32859,
+      "sha256": "c9159c36a106be14210fc1ef69e9792c13959478f6a753a05f728e94c3d69bc6"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-GenesisOracle-full.json",
+      "bytes": 45031,
+      "sha256": "c85775314c03ff5bcf2819dbef1ea4d6758b235054117e1a74c00a4df1a605e5"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-GenesisOracle-full.log",
+      "bytes": 3519,
+      "sha256": "733cae3c3205ebc70ceb266213794e19533f64c5a64e8a13f79aaefbcb50f613"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-GenesisProceedsSplitter-full.json",
+      "bytes": 923855,
+      "sha256": "ed88172b057d940588cbde2248bd5ba313a439c22c39700d5957d8a70be56632"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-GenesisProceedsSplitter-full.log",
+      "bytes": 21427,
+      "sha256": "3170fa680579ec880ebd5e0e68709806f91d22a1e94db8ba82e93898c1170971"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-hook-structure.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-hook-structure.json",
+      "bytes": 589483,
+      "sha256": "c18dad0dc273afcaedf0be91a01cc5076178e9f1ea05671a2bc5fbfa3711daea"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-hook-structure.log",
+      "bytes": 261928,
+      "sha256": "1c8184218b6dc0b20addc0238f2495b0a228dc805d84b9a237545d685750ca74"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-OmertaBond-full.json",
+      "bytes": 2726116,
+      "sha256": "8b06f2b1f582e2d73d718382635fd0600aa2eea0248222b1dc9b3caef2416f99"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-OmertaBond-full.log",
+      "bytes": 26620,
+      "sha256": "8734efb89fb008f3c8fdb0c55b9a59918cf4da1a5150c9d42ae0cc73a7ba5dfc"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-OmertaFees-full.json",
+      "bytes": 164945,
+      "sha256": "a508d60e253fec3ac9d7849882e0ab0cf3c1e57f98be473b934480d6193faccf"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-OmertaFees-full.log",
+      "bytes": 5491,
+      "sha256": "71fdddb9ce84e6fafdfb486e137bce7b47fb160fd005bcefc822288851d67a64"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-OmertaHook-after-run.json",
+      "bytes": 552,
+      "sha256": "2494a766f36027dfe9d153ba1bcd2dcc37f6186b99c4eefa32157c7a3c141862"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-OmertaHook-after.json",
+      "bytes": 1422679,
+      "sha256": "b117212ecc61604a70103a5306fa46658424db81f5ea5aa11632dc3aafb6701b"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-OmertaHook-after.log",
+      "bytes": 23860,
+      "sha256": "6db5145ee2ca401b9882c25cb3bf5d7d21c221135fd0e65427c56b8081a2b6b5"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-OmertaHook-full.json",
+      "bytes": 1418959,
+      "sha256": "302efabf63d9872b2889bb4333220aaeb01ddb875a4f920b59af5c61026f3331"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-OmertaHook-full.log",
+      "bytes": 23860,
+      "sha256": "313afb6de77a9bb9602978766e422079df978cf2c2bd1f3716b63fc95d521ff6"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-OMR-direct.exit.txt",
+      "bytes": 3,
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-OMR-direct.log",
+      "bytes": 2239,
+      "sha256": "7b1eff0398899c8e4c6fe2e65515ef600c513e629c4f7a9163828f7407b46d42"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-OMR-full.json",
+      "bytes": 2355647,
+      "sha256": "2fcf389779ecb1aa254f69952b8d81f099bc858fdc5428ec179f4ac0f5b53300"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-OMR-full.log",
+      "bytes": 25100,
+      "sha256": "66f3f68e94a9831c4b5742be55bf9ab5e9ac90382a1905869ac56ea473129522"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-OMR-native.exit.txt",
+      "bytes": 4,
+      "sha256": "186a919b8c7cb84aebf4e53c70cd1cc028a93a1d183ee29dd6e10cd18a714577"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-OMR-native.json",
+      "bytes": 2355647,
+      "sha256": "2fcf389779ecb1aa254f69952b8d81f099bc858fdc5428ec179f4ac0f5b53300"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-OMR-native.log",
+      "bytes": 25100,
+      "sha256": "66f3f68e94a9831c4b5742be55bf9ab5e9ac90382a1905869ac56ea473129522"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-OMR.exit.txt",
+      "bytes": 3,
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-OMR.log",
+      "bytes": 3015,
+      "sha256": "f66c3275795ce1494e7423a9918bd24fcf457b718c2f2ff11545073139aa382c"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-OMRStaking-full.json",
+      "bytes": 248112,
+      "sha256": "c9cb2ac144b9fb447a7f612ed874426ce72799fb83dc117d3499fb29e07b93eb"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-OMRStaking-full.log",
+      "bytes": 8749,
+      "sha256": "41d76a9f9a638a82caaca27c24a5fb1cb8dcebf158209ca804b8413c74a2c53d"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-OmrTwapOracle-full.json",
+      "bytes": 1537049,
+      "sha256": "3c1c407aa5ad886c4353d7f61ac33cb896dec45d9060553af4cd774de6f28f33"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-OmrTwapOracle-full.log",
+      "bytes": 13599,
+      "sha256": "c7c84ec626ecd443abe8f71a5010af21fb82ad5517262ff079bb038d8bdfadd2"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-OmrV4TwapOracle-full.json",
+      "bytes": 3163736,
+      "sha256": "e3fa58837e377eda79a7f22e547a0c9a0b5ce64c4217ff9548154458b887798f"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-OmrV4TwapOracle-full.log",
+      "bytes": 35713,
+      "sha256": "b0dd5bc1a2d5b9e81bbcdcac7cfba880ca1bbabbab11b7746f79660260a4bff5"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-PreVoteBudgetBook-full.json",
+      "bytes": 193020,
+      "sha256": "434a0f2f2ea431a48c97572dceea53e29f530fe049d01dadde997d6243d0e101"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-PreVoteBudgetBook-full.log",
+      "bytes": 3355,
+      "sha256": "7f2bae13f88a10e288aade19fccfdb953b27f81aae203a7e6b69342e67d64162"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-runs.json",
+      "bytes": 13774,
+      "sha256": "1dbf35740f6e5467345a4a394f4065f7d3ded54d3597667d93c4bb080470e30a"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-RwaHealthOverlay-full.log",
+      "bytes": 4499,
+      "sha256": "53e6eb74c8b44920b0415585078ed2a495e7ace708a4ee81d34c9294857fff04"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-RwaHealthOverlay-ir.exit.txt",
+      "bytes": 4,
+      "sha256": "186a919b8c7cb84aebf4e53c70cd1cc028a93a1d183ee29dd6e10cd18a714577"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-RwaHealthOverlay-ir.json",
+      "bytes": 61499,
+      "sha256": "f54777958dd2761bfdf36b18ecbfbfdcea8dd5e1137a9a1218acc5df3e456a79"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-RwaHealthOverlay-ir.log",
+      "bytes": 2424,
+      "sha256": "21332fadfeb4690f6151e31dc186822e92fde49c041b94435afcc8c16de463ed"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-RwaStockBuyer-full.json",
+      "bytes": 398246,
+      "sha256": "54d639766d729095e0e13f8fb7ad25692b26428e4e9e0d33b1a2ac4cf81cca19"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-RwaStockBuyer-full.log",
+      "bytes": 11659,
+      "sha256": "268e426c2ac74f4537dcd84250b70e181b914bdaca5504f441cc505c0a2d18ea"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-SettlementGasPool-full.json",
+      "bytes": 533479,
+      "sha256": "c98c40682774d035325985c96d9a5582a9ee2d6ecc0501ef34c998cae155d14c"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-SettlementGasPool-full.log",
+      "bytes": 7517,
+      "sha256": "681f8ada9cdf44bb73f1cf8e6f100aedfe68ba25880f79e7c7103e93d91890aa"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-StockTokenRegistry-full.json",
+      "bytes": 96856,
+      "sha256": "c8f904d9a19205a60dabab739d0d33e7892145eeec22e84a640fbdfff02e8e11"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-StockTokenRegistry-full.log",
+      "bytes": 3970,
+      "sha256": "28a9cc1d668ecc8b8ef9b8f6691c605e4d43f202a724249578ffe2800cba43a3"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-StockTokenRegistryV2-full.json",
+      "bytes": 352044,
+      "sha256": "6e5811364e2a4a35345f4b900f5459d0a72b12dc4f837c85b4214549a4977199"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-StockTokenRegistryV2-full.log",
+      "bytes": 8790,
+      "sha256": "f398cee94a1ad02f3c3c118c578627aa24a3de0375bf2e036e5bfd1925023afe"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-StockVault-full.json",
+      "bytes": 2380865,
+      "sha256": "da3ebf2172843bddbe0e6566d08a9b2286a197a48b03a030e8f12bec457444b8"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-StockVault-full.log",
+      "bytes": 24530,
+      "sha256": "51c3614beba6697bb02206522d107d4627fcd1e6ea9d17e5781515a01d61ba6b"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-StreetDeed-full.json",
+      "bytes": 2496373,
+      "sha256": "940b0c353e5d7d97e45488d9aa987880b1f2e5133f1d140ab36f48ac383edb62"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-StreetDeed-full.log",
+      "bytes": 27647,
+      "sha256": "047ba9b6112551c910189fca499d104de54d843bbb4f345d0cdf230252eac745"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-Transmuter-full.json",
+      "bytes": 2395318,
+      "sha256": "1ee4e5574f7a06a6eb7aa51377aca0ff4e57dfa8a4c90026362a2b7ec9392126"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-Transmuter-full.log",
+      "bytes": 26930,
+      "sha256": "30d7d63118395fa6caf0775d2158fd00b2794d54fef7047a8ee3b7ad21173c74"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-VoucherClaim-full.json",
+      "bytes": 2332996,
+      "sha256": "725d1b9b8d26bddd05aee631b7796706cbaa6d6958fdf4b88eacd542f63e60a4"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-VoucherClaim-full.log",
+      "bytes": 24192,
+      "sha256": "2adbf6504aa2b9d67b42cbc1681c1b0239af8078f2b74c8933973f48393a262d"
+    },
+    {
+      "path": "output/comprehensive-audit/stock-e2e.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "output/comprehensive-audit/stock-e2e.log",
+      "bytes": 1588,
+      "sha256": "a9287a1cfffe94dd129513be9da022b5504d594c491810264b708ed61dd362aa"
+    },
+    {
+      "path": "output/comprehensive-audit/supplementary-before.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "output/comprehensive-audit/supplementary-before.log",
+      "bytes": 13495,
+      "sha256": "bac9b88ee0cea3a9d723fd9f39129c50257f1d7054caafe065c3e5267677c9bd"
+    }
+  ],
+  "forkEvidence": [
+    {
+      "path": ".audit/genesis-fork-rehearsal/2026-09-08T04-52-14-761Z/failure.json",
+      "bytes": 40288,
+      "sha256": "f61bec3ead431a6c31e6b4b832a01fd08428acb4b58bc5575819ceef67815547"
+    },
+    {
+      "path": ".audit/genesis-fork-rehearsal/2026-09-08T04-53-37-129Z/evidence.json",
+      "bytes": 4530,
+      "sha256": "ce584d5f5ef8dbec5dd8ac13130a748c6e9ea5cc613cff8bb9379b7fecb86d06"
+    },
+    {
+      "path": ".audit/genesis-fork-rehearsal/2026-09-08T04-53-37-129Z/fault-evidence.json",
+      "bytes": 735,
+      "sha256": "7d29aabaa75922c15cef4d75dec8a331a6c839d3d93602d12dc7aaa14f6e0777"
+    },
+    {
+      "path": ".audit/genesis-fork-rehearsal/2026-09-08T04-53-37-129Z/genesis-input.json",
+      "bytes": 781,
+      "sha256": "48c8bd14cf70879f9067b1ee1dcc6d16cd916f0da0c31b685c77d63af789671f"
+    },
+    {
+      "path": ".audit/genesis-fork-rehearsal/2026-09-08T04-53-37-129Z/health-snapshots.json",
+      "bytes": 4171,
+      "sha256": "066fb68245ebd7d8e387e193976d22c14810be72f09ec16ccdb5ec0d5338e7b1"
+    },
+    {
+      "path": ".audit/genesis-fork-rehearsal/2026-09-08T04-53-37-129Z/keeper-journal.json",
+      "bytes": 3272,
+      "sha256": "60e9d2e8d62ddfeedde30b75f954df937da7f5983d070ed539966b94a3a3d248"
+    },
+    {
+      "path": ".audit/genesis-fork-rehearsal/2026-09-08T04-53-37-129Z/preflight.json",
+      "bytes": 3148,
+      "sha256": "076dc5095daaab98f7b57e4aef6cb36fd4c0c2a39fa279df933e405a70b55552"
+    },
+    {
+      "path": ".audit/genesis-fork-rehearsal/2026-09-08T04-53-37-129Z/price-reconstruction.json",
+      "bytes": 857,
+      "sha256": "5a7ef3fac5d4bf15fe3e63a768586a8b8c0cb88f9a18e6d7c8ecb9833546b7ed"
+    },
+    {
+      "path": ".audit/genesis-fork-rehearsal/2026-09-08T04-53-37-129Z/receipts.json",
+      "bytes": 44429,
+      "sha256": "9599059b3c3c1076058fef72ccf9e13eaf05a193d222253c2b119027567ed804"
+    },
+    {
+      "path": ".audit/genesis-fork-rehearsal/2026-09-08T04-53-37-129Z/SHA256SUMS",
+      "bytes": 678,
+      "sha256": "9afd4a62aa83606d81839c033392fe1691daf981830e38e42a31d0794d165ab5"
+    }
+  ],
+  "boundary": "All mutations were local, including Anvil fork transactions and isolated PostgreSQL. No production database, key or chain mutation. Full baseline and later affected runs are separate source-time evidence, not a fictional single all-green full-suite run."
+}

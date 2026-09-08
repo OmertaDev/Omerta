@@ -1,0 +1,2724 @@
+{
+  "date": "2026-09-08",
+  "note": "Lexical declarations, including internal/private functions and inline interfaces. Inherited callees are described in the manual group and shared-dependency reviews.",
+  "files": [
+    {
+      "path": "src/AcquisitionAuthority.sol",
+      "group": "acquisition",
+      "sha256": "4dcf23d3003be8a4d867d6ddb051e2fc1367387aca70682255f1a6d2b892a9ba",
+      "bytes": 51768,
+      "entries": [
+        {
+          "name": "finalizedState",
+          "line": 122
+        },
+        {
+          "name": "version",
+          "line": 127
+        },
+        {
+          "name": "constructor",
+          "line": 136
+        },
+        {
+          "name": "_validatedLaunchSafe",
+          "line": 178
+        },
+        {
+          "name": "authorityTopology",
+          "line": 185
+        },
+        {
+          "name": "authoritySnapshot",
+          "line": 189
+        },
+        {
+          "name": "finalizeAuthority",
+          "line": 256
+        },
+        {
+          "name": "outflowNonce",
+          "line": 284
+        },
+        {
+          "name": "pendingMainOperatorNomination",
+          "line": 288
+        },
+        {
+          "name": "pendingIngressProposal",
+          "line": 304
+        },
+        {
+          "name": "getIngress",
+          "line": 324
+        },
+        {
+          "name": "transferOwnership",
+          "line": 348
+        },
+        {
+          "name": "acceptOwnership",
+          "line": 358
+        },
+        {
+          "name": "renounceOwnership",
+          "line": 379
+        },
+        {
+          "name": "nominateMainOperator",
+          "line": 383
+        },
+        {
+          "name": "_emitOperatorProposalCreated",
+          "line": 412
+        },
+        {
+          "name": "_transitionOperator",
+          "line": 426
+        },
+        {
+          "name": "_emitProposalResult",
+          "line": 442
+        },
+        {
+          "name": "cancelMainOperatorNomination",
+          "line": 458
+        },
+        {
+          "name": "expireMainOperatorNomination",
+          "line": 477
+        },
+        {
+          "name": "acceptMainOperatorNomination",
+          "line": 492
+        },
+        {
+          "name": "disableMainOperator",
+          "line": 501
+        },
+        {
+          "name": "renounceMainOperator",
+          "line": 520
+        },
+        {
+          "name": "replaceMainOperator",
+          "line": 526
+        },
+        {
+          "name": "invalidateOutflowNonce",
+          "line": 549
+        },
+        {
+          "name": "pause",
+          "line": 569
+        },
+        {
+          "name": "unpause",
+          "line": 587
+        },
+        {
+          "name": "hashOutflowAuthorization",
+          "line": 593
+        },
+        {
+          "name": "hashSuccessorConsent",
+          "line": 611
+        },
+        {
+          "name": "proposeIngress",
+          "line": 629
+        },
+        {
+          "name": "_emitIngressProposalCreated",
+          "line": 666
+        },
+        {
+          "name": "cancelIngressProposal",
+          "line": 682
+        },
+        {
+          "name": "expireIngressProposal",
+          "line": 701
+        },
+        {
+          "name": "activateIngress",
+          "line": 716
+        },
+        {
+          "name": "_emitIngressActivated",
+          "line": 751
+        },
+        {
+          "name": "disableIngress",
+          "line": 769
+        },
+        {
+          "name": "_initial",
+          "line": 791
+        },
+        {
+          "name": "_requireDetails",
+          "line": 802
+        },
+        {
+          "name": "_requireProposalTimestampRoom",
+          "line": 806
+        },
+        {
+          "name": "_checkedTimestamp",
+          "line": 812
+        },
+        {
+          "name": "_nextGeneration",
+          "line": 817
+        },
+        {
+          "name": "_requireDirectOperator",
+          "line": 822
+        },
+        {
+          "name": "_requirePending",
+          "line": 828
+        },
+        {
+          "name": "_requirePendingIngress",
+          "line": 834
+        },
+        {
+          "name": "_checkOwnerCandidate",
+          "line": 840
+        },
+        {
+          "name": "_checkOperatorCandidate",
+          "line": 845
+        },
+        {
+          "name": "_roleCollision",
+          "line": 850
+        },
+        {
+          "name": "_constellationCollision",
+          "line": 858
+        },
+        {
+          "name": "_activeIngressAddress",
+          "line": 863
+        },
+        {
+          "name": "_validateIngressConfig",
+          "line": 867
+        },
+        {
+          "name": "_readCoreGlobalLifetimeCap",
+          "line": 883
+        },
+        {
+          "name": "_ingressConfigHash",
+          "line": 900
+        },
+        {
+          "name": "_ingressRecordConfigHash",
+          "line": 910
+        },
+        {
+          "name": "_configHash",
+          "line": 921
+        },
+        {
+          "name": "_operatorStateHash",
+          "line": 943
+        },
+        {
+          "name": "_ownershipCancellationDetails",
+          "line": 947
+        },
+        {
+          "name": "_operatorExpiryDetails",
+          "line": 969
+        },
+        {
+          "name": "_ingressExpiryDetails",
+          "line": 986
+        },
+        {
+          "name": "_operatorProposalId",
+          "line": 1004
+        },
+        {
+          "name": "_ingressStateHash",
+          "line": 1027
+        },
+        {
+          "name": "_ingressProposalId",
+          "line": 1048
+        },
+        {
+          "name": "_validateWindow",
+          "line": 1076
+        },
+        {
+          "name": "_validateSignature",
+          "line": 1084
+        },
+        {
+          "name": "_predict",
+          "line": 1135
+        }
+      ]
+    },
+    {
+      "path": "src/AcquisitionConstellationFactory.sol",
+      "group": "acquisition",
+      "sha256": "bc2581c8f45906749e9b9c84ba9f58de81c87911a9622bf5fde982694b861431",
+      "bytes": 22611,
+      "entries": [
+        {
+          "name": "constructor",
+          "line": 78
+        },
+        {
+          "name": "factoryState",
+          "line": 149
+        },
+        {
+          "name": "childCommitment",
+          "line": 177
+        },
+        {
+          "name": "deployNext",
+          "line": 186
+        },
+        {
+          "name": "finalizeConstellation",
+          "line": 223
+        },
+        {
+          "name": "_checkAuthoritySnapshot",
+          "line": 252
+        },
+        {
+          "name": "_checkCoreSnapshot",
+          "line": 293
+        },
+        {
+          "name": "_coreSnapshotEq",
+          "line": 323
+        },
+        {
+          "name": "_coreSnapshotAddress",
+          "line": 327
+        },
+        {
+          "name": "_coreSnapshotBool",
+          "line": 333
+        },
+        {
+          "name": "_snapshotEq",
+          "line": 337
+        },
+        {
+          "name": "_snapshotAddress",
+          "line": 341
+        },
+        {
+          "name": "_snapshotBool",
+          "line": 347
+        },
+        {
+          "name": "_emptyOperatorStateHash",
+          "line": 351
+        },
+        {
+          "name": "_emptyIngressStateHash",
+          "line": 357
+        },
+        {
+          "name": "_checkDeployedChild",
+          "line": 377
+        },
+        {
+          "name": "_checkRegistry",
+          "line": 390
+        },
+        {
+          "name": "_checkTopology",
+          "line": 407
+        },
+        {
+          "name": "_finalize",
+          "line": 435
+        },
+        {
+          "name": "_callFinalizer",
+          "line": 442
+        },
+        {
+          "name": "_requireChildAddress",
+          "line": 459
+        },
+        {
+          "name": "_requireRuntimeSize",
+          "line": 463
+        },
+        {
+          "name": "_topologySelector",
+          "line": 467
+        },
+        {
+          "name": "_finalizerSelector",
+          "line": 475
+        },
+        {
+          "name": "_predictCreateAddress",
+          "line": 483
+        },
+        {
+          "name": "_hasFinalizerPrecheckGas",
+          "line": 487
+        },
+        {
+          "name": "_hasFinalizerPostcheckGas",
+          "line": 491
+        },
+        {
+          "name": "_requireFinalizerPrecheck",
+          "line": 495
+        },
+        {
+          "name": "_requireFinalizerPostcheck",
+          "line": 501
+        }
+      ]
+    },
+    {
+      "path": "src/AcquisitionIntentExecution.sol",
+      "group": "acquisition",
+      "sha256": "cec00cd816d1539ccc0bd620d779bbde53667105ed5ce907416d802a34ca92c1",
+      "bytes": 3604,
+      "entries": [
+        {
+          "name": "constructor",
+          "line": 23
+        },
+        {
+          "name": "intentExecutionTopology",
+          "line": 37
+        },
+        {
+          "name": "finalizeIntentExecution",
+          "line": 41
+        },
+        {
+          "name": "deriveIntentId",
+          "line": 49
+        },
+        {
+          "name": "deriveAttemptId",
+          "line": 53
+        },
+        {
+          "name": "_predictCreateAddress",
+          "line": 77
+        }
+      ]
+    },
+    {
+      "path": "src/AcquisitionReconciliation.sol",
+      "group": "acquisition",
+      "sha256": "1d0c6391fbaeb4f30c98646627ca11d7487a6720b9f34ebc97e9c6f5b40aec78",
+      "bytes": 1467,
+      "entries": [
+        {
+          "name": "constructor",
+          "line": 13
+        },
+        {
+          "name": "reconciliationTopology",
+          "line": 20
+        },
+        {
+          "name": "finalizeReconciliation",
+          "line": 24
+        }
+      ]
+    },
+    {
+      "path": "src/AcquisitionVault.sol",
+      "group": "acquisition",
+      "sha256": "a7301148771bbf4aa57e2e49d65c885179373fe73d5a6c5ad06f1122ea0db52d",
+      "bytes": 46194,
+      "entries": [
+        {
+          "name": "constructor",
+          "line": 87
+        },
+        {
+          "name": "pendingMainOperatorNomination",
+          "line": 118
+        },
+        {
+          "name": "pendingIngressProposal",
+          "line": 122
+        },
+        {
+          "name": "getIngress",
+          "line": 126
+        },
+        {
+          "name": "getDeposit",
+          "line": 131
+        },
+        {
+          "name": "transferOwnership",
+          "line": 136
+        },
+        {
+          "name": "acceptOwnership",
+          "line": 146
+        },
+        {
+          "name": "renounceOwnership",
+          "line": 163
+        },
+        {
+          "name": "nominateMainOperator",
+          "line": 167
+        },
+        {
+          "name": "cancelMainOperatorNomination",
+          "line": 217
+        },
+        {
+          "name": "expireMainOperatorNomination",
+          "line": 226
+        },
+        {
+          "name": "acceptMainOperatorNomination",
+          "line": 236
+        },
+        {
+          "name": "disableMainOperator",
+          "line": 251
+        },
+        {
+          "name": "renounceMainOperator",
+          "line": 270
+        },
+        {
+          "name": "replaceMainOperator",
+          "line": 282
+        },
+        {
+          "name": "invalidateOutflowNonce",
+          "line": 306
+        },
+        {
+          "name": "pause",
+          "line": 323
+        },
+        {
+          "name": "unpause",
+          "line": 331
+        },
+        {
+          "name": "hashOutflowAuthorization",
+          "line": 341
+        },
+        {
+          "name": "hashSuccessorConsent",
+          "line": 360
+        },
+        {
+          "name": "accountingTotals",
+          "line": 378
+        },
+        {
+          "name": "syncBalance",
+          "line": 382
+        },
+        {
+          "name": "reclassifyUnattributed",
+          "line": 424
+        },
+        {
+          "name": "proposeIngress",
+          "line": 467
+        },
+        {
+          "name": "_emitIngressProposalCreated",
+          "line": 514
+        },
+        {
+          "name": "cancelIngressProposal",
+          "line": 529
+        },
+        {
+          "name": "expireIngressProposal",
+          "line": 540
+        },
+        {
+          "name": "activateIngress",
+          "line": 552
+        },
+        {
+          "name": "disableIngress",
+          "line": 594
+        },
+        {
+          "name": "depositCanonical",
+          "line": 608
+        },
+        {
+          "name": "_emitCanonicalDepositEvidence",
+          "line": 674
+        },
+        {
+          "name": "_checkOwnerCandidate",
+          "line": 728
+        },
+        {
+          "name": "_checkOperatorCandidate",
+          "line": 737
+        },
+        {
+          "name": "_operatorCollision",
+          "line": 742
+        },
+        {
+          "name": "_requirePending",
+          "line": 749
+        },
+        {
+          "name": "_requirePendingIngress",
+          "line": 755
+        },
+        {
+          "name": "_validateIngressConfig",
+          "line": 761
+        },
+        {
+          "name": "_requireHealthyIngress",
+          "line": 775
+        },
+        {
+          "name": "_requireIngressCodeHash",
+          "line": 780
+        },
+        {
+          "name": "_ingressRoleCollision",
+          "line": 788
+        },
+        {
+          "name": "_activeIngressAddress",
+          "line": 800
+        },
+        {
+          "name": "_ingressConfigHash",
+          "line": 804
+        },
+        {
+          "name": "_checkedTimestamp",
+          "line": 817
+        },
+        {
+          "name": "_checkedDepositTotal",
+          "line": 822
+        },
+        {
+          "name": "_accountingTotalsAtBalance",
+          "line": 834
+        },
+        {
+          "name": "_requireDirectOperator",
+          "line": 854
+        },
+        {
+          "name": "_nextGeneration",
+          "line": 860
+        },
+        {
+          "name": "_nextAccountingSequence",
+          "line": 865
+        },
+        {
+          "name": "_accountingMutationId",
+          "line": 870
+        },
+        {
+          "name": "_emitAccountingComponent",
+          "line": 880
+        },
+        {
+          "name": "_requireDetails",
+          "line": 903
+        },
+        {
+          "name": "_validateWindow",
+          "line": 907
+        },
+        {
+          "name": "_validateSignature",
+          "line": 915
+        },
+        {
+          "name": "_requireErc1271PrecallGas",
+          "line": 940
+        },
+        {
+          "name": "_requireErc1271PostcallGas",
+          "line": 944
+        },
+        {
+          "name": "_localReadinessSatisfied",
+          "line": 948
+        }
+      ]
+    },
+    {
+      "path": "src/AcquisitionVaultCore.sol",
+      "group": "acquisition",
+      "sha256": "62a603ed3d502e00877cdcbdfe66444f24c4460bb4abfc980e8a33d159c9b186",
+      "bytes": 24152,
+      "entries": [
+        {
+          "name": "finalizedState",
+          "line": 156
+        },
+        {
+          "name": "constructor",
+          "line": 160
+        },
+        {
+          "name": "stockTokenRegistryV2",
+          "line": 199
+        },
+        {
+          "name": "globalLifetimeCanonicalDepositCapWei",
+          "line": 203
+        },
+        {
+          "name": "accountingTotals",
+          "line": 207
+        },
+        {
+          "name": "getDeposit",
+          "line": 211
+        },
+        {
+          "name": "syncBalance",
+          "line": 216
+        },
+        {
+          "name": "reclassifyUnattributed",
+          "line": 232
+        },
+        {
+          "name": "depositCanonical",
+          "line": 257
+        },
+        {
+          "name": "coreTopology",
+          "line": 344
+        },
+        {
+          "name": "coreSnapshot",
+          "line": 348
+        },
+        {
+          "name": "_coreSnapshotWords",
+          "line": 376
+        },
+        {
+          "name": "finalizeCore",
+          "line": 397
+        },
+        {
+          "name": "_totals",
+          "line": 413
+        },
+        {
+          "name": "_next",
+          "line": 427
+        },
+        {
+          "name": "_mid",
+          "line": 433
+        },
+        {
+          "name": "_component",
+          "line": 437
+        },
+        {
+          "name": "_cap",
+          "line": 442
+        },
+        {
+          "name": "_snapshot",
+          "line": 446
+        },
+        {
+          "name": "_ingress",
+          "line": 496
+        },
+        {
+          "name": "_clean",
+          "line": 525
+        },
+        {
+          "name": "_collision",
+          "line": 529
+        },
+        {
+          "name": "_predict",
+          "line": 537
+        }
+      ]
+    },
+    {
+      "path": "src/Alchemist.sol",
+      "group": "market",
+      "sha256": "58857bd22a2f460ef092a0628a3c66dbacead0e0d185c10737d6593ed5e9da63",
+      "bytes": 27874,
+      "entries": [
+        {
+          "name": "constructor",
+          "line": 151
+        },
+        {
+          "name": "setLtvBps",
+          "line": 173
+        },
+        {
+          "name": "_assertLtvFeeCompatible",
+          "line": 200
+        },
+        {
+          "name": "setHarvestFee",
+          "line": 206
+        },
+        {
+          "name": "sweepFees",
+          "line": 226
+        },
+        {
+          "name": "setMintCaps",
+          "line": 235
+        },
+        {
+          "name": "setAllowedContract",
+          "line": 241
+        },
+        {
+          "name": "collateralOf",
+          "line": 249
+        },
+        {
+          "name": "maxDebtOf",
+          "line": 256
+        },
+        {
+          "name": "deposit",
+          "line": 266
+        },
+        {
+          "name": "withdraw",
+          "line": 290
+        },
+        {
+          "name": "mint",
+          "line": 310
+        },
+        {
+          "name": "repay",
+          "line": 343
+        },
+        {
+          "name": "harvest",
+          "line": 371
+        }
+      ]
+    },
+    {
+      "path": "src/CollateralEscrow.sol",
+      "group": "market",
+      "sha256": "aea024853522f827e665445a91cd9ac6260d456a7c3f6ceaba268312d063b6ac",
+      "bytes": 5991,
+      "entries": [
+        {
+          "name": "onlyController",
+          "line": 54
+        },
+        {
+          "name": "constructor",
+          "line": 59
+        },
+        {
+          "name": "deployToVault",
+          "line": 71
+        },
+        {
+          "name": "withdraw",
+          "line": 81
+        },
+        {
+          "name": "withdrawAll",
+          "line": 87
+        },
+        {
+          "name": "totalAssets",
+          "line": 99
+        }
+      ]
+    },
+    {
+      "path": "src/Denari.sol",
+      "group": "market",
+      "sha256": "f1ac4f24d2491d9b4c576670447526be4d3c08449427801619fdf570293b08fe",
+      "bytes": 5393,
+      "entries": [
+        {
+          "name": "constructor",
+          "line": 55
+        },
+        {
+          "name": "setMinter",
+          "line": 63
+        },
+        {
+          "name": "setBurner",
+          "line": 72
+        },
+        {
+          "name": "mint",
+          "line": 76
+        },
+        {
+          "name": "burn",
+          "line": 86
+        }
+      ]
+    },
+    {
+      "path": "src/DynastyNFT.sol",
+      "group": "core",
+      "sha256": "c23e6a910caae32b3ac0894861674cdafa91c5092f8191384e6215fb3688deb6",
+      "bytes": 10379,
+      "entries": [
+        {
+          "name": "constructor",
+          "line": 86
+        },
+        {
+          "name": "setSigner",
+          "line": 104
+        },
+        {
+          "name": "setDailyMintCap",
+          "line": 109
+        },
+        {
+          "name": "setBaseUri",
+          "line": 114
+        },
+        {
+          "name": "setDefaultRoyalty",
+          "line": 122
+        },
+        {
+          "name": "pause",
+          "line": 129
+        },
+        {
+          "name": "unpause",
+          "line": 132
+        },
+        {
+          "name": "hashVoucher",
+          "line": 138
+        },
+        {
+          "name": "claim",
+          "line": 146
+        },
+        {
+          "name": "tokenURI",
+          "line": 166
+        },
+        {
+          "name": "supportsInterface",
+          "line": 172
+        }
+      ]
+    },
+    {
+      "path": "src/FlashGuard.sol",
+      "group": "market",
+      "sha256": "e27d500d90a9266ee1429f16cddd2f9e4ae74c463d95fcaeb09cc1d12d8083ce",
+      "bytes": 9869,
+      "entries": [
+        {
+          "name": "_recordEntry",
+          "line": 64
+        },
+        {
+          "name": "notSameBlockAsEntry",
+          "line": 75
+        },
+        {
+          "name": "lastEntryBlock",
+          "line": 81
+        },
+        {
+          "name": "_meter",
+          "line": 101
+        },
+        {
+          "name": "onlyAllowedCaller",
+          "line": 139
+        }
+      ]
+    },
+    {
+      "path": "src/GearVault.sol",
+      "group": "core",
+      "sha256": "364ae51294f6f2b8d5ad9864cba79cb06f4f9e66df4e117a21907f7f4c0ed4a9",
+      "bytes": 14396,
+      "entries": [
+        {
+          "name": "constructor",
+          "line": 63
+        },
+        {
+          "name": "setMinter",
+          "line": 67
+        },
+        {
+          "name": "setGearCap",
+          "line": 80
+        },
+        {
+          "name": "setImageBase",
+          "line": 90
+        },
+        {
+          "name": "setClassName",
+          "line": 99
+        },
+        {
+          "name": "setClassNames",
+          "line": 105
+        },
+        {
+          "name": "mint",
+          "line": 112
+        },
+        {
+          "name": "redeem",
+          "line": 142
+        },
+        {
+          "name": "_isCar",
+          "line": 159
+        },
+        {
+          "name": "_isBoat",
+          "line": 163
+        },
+        {
+          "name": "_classKey",
+          "line": 169
+        },
+        {
+          "name": "_classIdx",
+          "line": 176
+        },
+        {
+          "name": "_rarityIdx",
+          "line": 183
+        },
+        {
+          "name": "_typeName",
+          "line": 188
+        },
+        {
+          "name": "_rarityName",
+          "line": 197
+        },
+        {
+          "name": "_displayName",
+          "line": 204
+        },
+        {
+          "name": "uri",
+          "line": 213
+        }
+      ]
+    },
+    {
+      "path": "src/GenesisOracle.sol",
+      "group": "core",
+      "sha256": "1af72fe4006f8983a3307e215a73e363fb957838e14449b1a8861191ebfabb31",
+      "bytes": 5893,
+      "entries": [
+        {
+          "name": "constructor",
+          "line": 63
+        },
+        {
+          "name": "setPrice",
+          "line": 79
+        },
+        {
+          "name": "consult",
+          "line": 87
+        }
+      ]
+    },
+    {
+      "path": "src/GenesisProceedsSplitter.sol",
+      "group": "core",
+      "sha256": "e1530a96908d359935e46f3f9a201a62950b74ba0b5fde6bdb19c15af004bc32",
+      "bytes": 5797,
+      "entries": [
+        {
+          "name": "constructor",
+          "line": 52
+        },
+        {
+          "name": "receive",
+          "line": 70
+        },
+        {
+          "name": "canonicalPoolInitialized",
+          "line": 74
+        },
+        {
+          "name": "distributeResidual",
+          "line": 80
+        },
+        {
+          "name": "recoverFailedLaunch",
+          "line": 98
+        },
+        {
+          "name": "recoverToken",
+          "line": 108
+        },
+        {
+          "name": "_send",
+          "line": 115
+        }
+      ]
+    },
+    {
+      "path": "src/IOmrOracle.sol",
+      "group": "core",
+      "sha256": "f14793abcb93aafb7e1ab8d47373709e0f93897536efae541b478576743b5d84",
+      "bytes": 1521,
+      "entries": [
+        {
+          "name": "consult",
+          "line": 21
+        }
+      ]
+    },
+    {
+      "path": "src/OMR.sol",
+      "group": "core",
+      "sha256": "f5c2001cbb8661e1ad67ffe3805c51388483e4f5b4d68e77e58661f02c938be7",
+      "bytes": 13413,
+      "entries": [
+        {
+          "name": "constructor",
+          "line": 115
+        },
+        {
+          "name": "setMinter",
+          "line": 125
+        },
+        {
+          "name": "mint",
+          "line": 135
+        },
+        {
+          "name": "setSellTax",
+          "line": 146
+        },
+        {
+          "name": "setTaxRecipients",
+          "line": 162
+        },
+        {
+          "name": "setPair",
+          "line": 175
+        },
+        {
+          "name": "setExempt",
+          "line": 182
+        },
+        {
+          "name": "_update",
+          "line": 187
+        }
+      ]
+    },
+    {
+      "path": "src/OMRStaking.sol",
+      "group": "core",
+      "sha256": "04f36419e57109b56202272b7d9ebec462e0e5b7d0125abd1cb73e17ef466f09",
+      "bytes": 5025,
+      "entries": [
+        {
+          "name": "constructor",
+          "line": 41
+        },
+        {
+          "name": "setApy",
+          "line": 48
+        },
+        {
+          "name": "fundRewards",
+          "line": 60
+        },
+        {
+          "name": "_updateRewardIndex",
+          "line": 65
+        },
+        {
+          "name": "_accrue",
+          "line": 73
+        },
+        {
+          "name": "stake",
+          "line": 83
+        },
+        {
+          "name": "unstake",
+          "line": 92
+        },
+        {
+          "name": "claimRewards",
+          "line": 102
+        },
+        {
+          "name": "pendingRewards",
+          "line": 114
+        }
+      ]
+    },
+    {
+      "path": "src/OmertaBond.sol",
+      "group": "core",
+      "sha256": "c9ace3c1d7d270afb8b47c818445a6fa6797fa18f47fc817c4abf38aab30edee",
+      "bytes": 27563,
+      "entries": [
+        {
+          "name": "mint",
+          "line": 16
+        },
+        {
+          "name": "constructor",
+          "line": 200
+        },
+        {
+          "name": "setDailyCap",
+          "line": 250
+        },
+        {
+          "name": "setMaxRate",
+          "line": 258
+        },
+        {
+          "name": "setOracle",
+          "line": 268
+        },
+        {
+          "name": "priceCeiling",
+          "line": 282
+        },
+        {
+          "name": "_oraclePrice",
+          "line": 289
+        },
+        {
+          "name": "hashQuote",
+          "line": 304
+        },
+        {
+          "name": "bond",
+          "line": 324
+        },
+        {
+          "name": "claim",
+          "line": 415
+        },
+        {
+          "name": "_vested",
+          "line": 426
+        },
+        {
+          "name": "claimable",
+          "line": 434
+        },
+        {
+          "name": "setSigner",
+          "line": 440
+        },
+        {
+          "name": "setRecipients",
+          "line": 445
+        },
+        {
+          "name": "pause",
+          "line": 460
+        },
+        {
+          "name": "unpause",
+          "line": 464
+        },
+        {
+          "name": "sweep",
+          "line": 472
+        },
+        {
+          "name": "sweepETH",
+          "line": 482
+        }
+      ]
+    },
+    {
+      "path": "src/OmertaFees.sol",
+      "group": "core",
+      "sha256": "7d17fcaa466a6eec92f5824e7d6eef0142090fd6c42465d60e1b5191f861ec5d",
+      "bytes": 9929,
+      "entries": [
+        {
+          "name": "constructor",
+          "line": 63
+        },
+        {
+          "name": "payMintFee",
+          "line": 89
+        },
+        {
+          "name": "payRespawnFee",
+          "line": 97
+        },
+        {
+          "name": "payRerollFee",
+          "line": 105
+        },
+        {
+          "name": "payForPackage",
+          "line": 114
+        },
+        {
+          "name": "_forward",
+          "line": 128
+        },
+        {
+          "name": "setFeeRecipient",
+          "line": 143
+        },
+        {
+          "name": "setVigRecipient",
+          "line": 150
+        },
+        {
+          "name": "setFees",
+          "line": 155
+        },
+        {
+          "name": "setRerollFee",
+          "line": 164
+        },
+        {
+          "name": "setPackagePrice",
+          "line": 172
+        },
+        {
+          "name": "sweep",
+          "line": 181
+        }
+      ]
+    },
+    {
+      "path": "src/OmertaHook.sol",
+      "group": "market",
+      "sha256": "aa185334f198da4b12b8661f39ef00b4e17edd10bc2dfbf7dc456d91cd1520b1",
+      "bytes": 45820,
+      "entries": [
+        {
+          "name": "observe",
+          "line": 28
+        },
+        {
+          "name": "onlyPoolManager",
+          "line": 274
+        },
+        {
+          "name": "constructor",
+          "line": 279
+        },
+        {
+          "name": "supportsInterface",
+          "line": 295
+        },
+        {
+          "name": "setSellTax",
+          "line": 305
+        },
+        {
+          "name": "setRecipients",
+          "line": 323
+        },
+        {
+          "name": "setAllowedQuote",
+          "line": 342
+        },
+        {
+          "name": "setObserver",
+          "line": 346
+        },
+        {
+          "name": "setAntiSnipe",
+          "line": 355
+        },
+        {
+          "name": "setSurge",
+          "line": 379
+        },
+        {
+          "name": "sweep",
+          "line": 408
+        },
+        {
+          "name": "receive",
+          "line": 433
+        },
+        {
+          "name": "beforeInitialize",
+          "line": 439
+        },
+        {
+          "name": "afterInitialize",
+          "line": 453
+        },
+        {
+          "name": "beforeSwap",
+          "line": 483
+        },
+        {
+          "name": "_guardOpening",
+          "line": 505
+        },
+        {
+          "name": "afterSwap",
+          "line": 532
+        },
+        {
+          "name": "currentTickCumulative",
+          "line": 555
+        },
+        {
+          "name": "_writeTickAccumulator",
+          "line": 575
+        },
+        {
+          "name": "_fee",
+          "line": 594
+        },
+        {
+          "name": "_sellRate",
+          "line": 635
+        },
+        {
+          "name": "_openingBuyRate",
+          "line": 661
+        },
+        {
+          "name": "_accrue",
+          "line": 678
+        },
+        {
+          "name": "pokeObserver",
+          "line": 704
+        },
+        {
+          "name": "beforeAddLiquidity",
+          "line": 717
+        },
+        {
+          "name": "afterAddLiquidity",
+          "line": 725
+        },
+        {
+          "name": "beforeRemoveLiquidity",
+          "line": 736
+        },
+        {
+          "name": "afterRemoveLiquidity",
+          "line": 744
+        },
+        {
+          "name": "beforeDonate",
+          "line": 755
+        },
+        {
+          "name": "afterDonate",
+          "line": 759
+        }
+      ]
+    },
+    {
+      "path": "src/OmrTwapOracle.sol",
+      "group": "market",
+      "sha256": "3e9a65b7d86cdac4527d17befe49c10703f1cf0e677b247ba63fac73c633fb7f",
+      "bytes": 12624,
+      "entries": [
+        {
+          "name": "getPair",
+          "line": 10
+        },
+        {
+          "name": "token0",
+          "line": 14
+        },
+        {
+          "name": "token1",
+          "line": 15
+        },
+        {
+          "name": "price0CumulativeLast",
+          "line": 16
+        },
+        {
+          "name": "price1CumulativeLast",
+          "line": 17
+        },
+        {
+          "name": "getReserves",
+          "line": 18
+        },
+        {
+          "name": "constructor",
+          "line": 97
+        },
+        {
+          "name": "update",
+          "line": 138
+        },
+        {
+          "name": "consult",
+          "line": 185
+        },
+        {
+          "name": "_decode",
+          "line": 194
+        },
+        {
+          "name": "_currentCumulativePrices",
+          "line": 203
+        }
+      ]
+    },
+    {
+      "path": "src/OmrV4TwapOracle.sol",
+      "group": "market",
+      "sha256": "1a13300decd1ff82307bb88f1c5d6bc3ee674e39cc24737031a9c69e223f5f66",
+      "bytes": 9425,
+      "entries": [
+        {
+          "name": "constructor",
+          "line": 81
+        },
+        {
+          "name": "update",
+          "line": 120
+        },
+        {
+          "name": "observe",
+          "line": 128
+        },
+        {
+          "name": "consult",
+          "line": 135
+        },
+        {
+          "name": "_update",
+          "line": 138
+        },
+        {
+          "name": "_setBaseline",
+          "line": 188
+        },
+        {
+          "name": "_omrPerEthAtTick",
+          "line": 196
+        }
+      ]
+    },
+    {
+      "path": "src/PreVoteBudgetBook.sol",
+      "group": "acquisition",
+      "sha256": "0b78eb0e1242a43871048e9a59496acfff8b3291f634d753e04ae5cd81ae7153",
+      "bytes": 13215,
+      "entries": [
+        {
+          "name": "constructor",
+          "line": 80
+        },
+        {
+          "name": "budgetBookTopology",
+          "line": 102
+        },
+        {
+          "name": "finalizeBudgetBook",
+          "line": 106
+        },
+        {
+          "name": "authorizePreVoteBudget",
+          "line": 114
+        },
+        {
+          "name": "getPreVoteBudget",
+          "line": 159
+        },
+        {
+          "name": "_authorityState",
+          "line": 168
+        },
+        {
+          "name": "_accounting",
+          "line": 220
+        },
+        {
+          "name": "_deadline",
+          "line": 251
+        },
+        {
+          "name": "_commit",
+          "line": 260
+        },
+        {
+          "name": "_clean",
+          "line": 275
+        },
+        {
+          "name": "_predict",
+          "line": 279
+        }
+      ]
+    },
+    {
+      "path": "src/RwaHealthOverlay.sol",
+      "group": "acquisition",
+      "sha256": "9048c311b6c7051776d5cdacecd56145530f5c307447f9dfb7c06b6526af4d23",
+      "bytes": 8306,
+      "entries": [
+        {
+          "name": "constructor",
+          "line": 21
+        },
+        {
+          "name": "clearancePayloadHash",
+          "line": 31
+        },
+        {
+          "name": "safeCallIntentHash",
+          "line": 35
+        },
+        {
+          "name": "clearanceId",
+          "line": 39
+        },
+        {
+          "name": "recordClearance",
+          "line": 43
+        },
+        {
+          "name": "_validateLocal",
+          "line": 81
+        },
+        {
+          "name": "_validateRegistry",
+          "line": 105
+        },
+        {
+          "name": "_clearancePayloadHash",
+          "line": 114
+        },
+        {
+          "name": "_safeCallIntentHash",
+          "line": 141
+        },
+        {
+          "name": "_clearanceId",
+          "line": 157
+        }
+      ]
+    },
+    {
+      "path": "src/RwaStockBuyer.sol",
+      "group": "market",
+      "sha256": "2a8725f20b8d1bf1ceff2ec9a567c6a2b16869229b372f0bbed7955a5edc7de1",
+      "bytes": 10936,
+      "entries": [
+        {
+          "name": "resolveBallot",
+          "line": 11
+        },
+        {
+          "name": "buy",
+          "line": 21
+        },
+        {
+          "name": "minUnitsOut",
+          "line": 29
+        },
+        {
+          "name": "onlyKeeper",
+          "line": 90
+        },
+        {
+          "name": "constructor",
+          "line": 95
+        },
+        {
+          "name": "receive",
+          "line": 119
+        },
+        {
+          "name": "setKeeper",
+          "line": 123
+        },
+        {
+          "name": "setAdapter",
+          "line": 128
+        },
+        {
+          "name": "setQuoteOracle",
+          "line": 137
+        },
+        {
+          "name": "setDailyEthCap",
+          "line": 150
+        },
+        {
+          "name": "pause",
+          "line": 155
+        },
+        {
+          "name": "unpause",
+          "line": 159
+        },
+        {
+          "name": "buy",
+          "line": 167
+        },
+        {
+          "name": "_resolveActiveBallot",
+          "line": 193
+        },
+        {
+          "name": "_chargeDailyCap",
+          "line": 199
+        },
+        {
+          "name": "_enforcedMinimum",
+          "line": 206
+        },
+        {
+          "name": "_acquire",
+          "line": 214
+        },
+        {
+          "name": "sweepEth",
+          "line": 228
+        },
+        {
+          "name": "sweepToken",
+          "line": 237
+        }
+      ]
+    },
+    {
+      "path": "src/SettlementGasPool.sol",
+      "group": "acquisition",
+      "sha256": "d2f479a6fb780aff31ee53ffee12c02ebc92cd460b865bb40ba20faebb59e3ff",
+      "bytes": 31054,
+      "entries": [
+        {
+          "name": "version",
+          "line": 10
+        },
+        {
+          "name": "supportedChainId",
+          "line": 11
+        },
+        {
+          "name": "gameplayVault",
+          "line": 12
+        },
+        {
+          "name": "predecessor",
+          "line": 13
+        },
+        {
+          "name": "owner",
+          "line": 14
+        },
+        {
+          "name": "paused",
+          "line": 15
+        },
+        {
+          "name": "acceptMigration",
+          "line": 16
+        },
+        {
+          "name": "constructor",
+          "line": 236
+        },
+        {
+          "name": "receive",
+          "line": 265
+        },
+        {
+          "name": "contribute",
+          "line": 269
+        },
+        {
+          "name": "acceptMigration",
+          "line": 273
+        },
+        {
+          "name": "recordSettlementCredit",
+          "line": 280
+        },
+        {
+          "name": "withdrawCredit",
+          "line": 316
+        },
+        {
+          "name": "unreservedBalance",
+          "line": 330
+        },
+        {
+          "name": "settlementKey",
+          "line": 336
+        },
+        {
+          "name": "previewCredit",
+          "line": 344
+        },
+        {
+          "name": "pauseCredits",
+          "line": 369
+        },
+        {
+          "name": "unpauseCredits",
+          "line": 375
+        },
+        {
+          "name": "reduceCaps",
+          "line": 383
+        },
+        {
+          "name": "proposeConfig",
+          "line": 414
+        },
+        {
+          "name": "cancelConfigProposal",
+          "line": 443
+        },
+        {
+          "name": "executeConfigProposal",
+          "line": 453
+        },
+        {
+          "name": "getConfigProposal",
+          "line": 479
+        },
+        {
+          "name": "configProposalState",
+          "line": 483
+        },
+        {
+          "name": "proposeMigration",
+          "line": 496
+        },
+        {
+          "name": "cancelMigrationProposal",
+          "line": 538
+        },
+        {
+          "name": "executeMigration",
+          "line": 547
+        },
+        {
+          "name": "getMigrationProposal",
+          "line": 575
+        },
+        {
+          "name": "migrationProposalState",
+          "line": 579
+        },
+        {
+          "name": "version",
+          "line": 589
+        },
+        {
+          "name": "renounceOwnership",
+          "line": 593
+        },
+        {
+          "name": "_recordContribution",
+          "line": 597
+        },
+        {
+          "name": "_calculateCredit",
+          "line": 603
+        },
+        {
+          "name": "_approvedDataFee",
+          "line": 642
+        },
+        {
+          "name": "_cancelLiveConfigProposal",
+          "line": 663
+        },
+        {
+          "name": "_validateDataFeeSourceConfig",
+          "line": 673
+        },
+        {
+          "name": "_validateProposedConfig",
+          "line": 686
+        },
+        {
+          "name": "_emitConfigProposalCreated",
+          "line": 705
+        },
+        {
+          "name": "_configHash",
+          "line": 717
+        },
+        {
+          "name": "_deriveProposalId",
+          "line": 721
+        },
+        {
+          "name": "_validateMigrationSuccessor",
+          "line": 744
+        },
+        {
+          "name": "_deriveMigrationProposalId",
+          "line": 758
+        },
+        {
+          "name": "_addCapped",
+          "line": 785
+        },
+        {
+          "name": "_mulCapped",
+          "line": 790
+        }
+      ]
+    },
+    {
+      "path": "src/StockTokenRegistry.sol",
+      "group": "market",
+      "sha256": "3be8a3c7d798e5c8f3f6956c600819b5cd3373f7b8ba953c521b6ca4bdc74784",
+      "bytes": 8017,
+      "entries": [
+        {
+          "name": "onlyPublisher",
+          "line": 69
+        },
+        {
+          "name": "constructor",
+          "line": 74
+        },
+        {
+          "name": "keyOf",
+          "line": 81
+        },
+        {
+          "name": "upsertAsset",
+          "line": 88
+        },
+        {
+          "name": "setAssetActive",
+          "line": 129
+        },
+        {
+          "name": "setPublisher",
+          "line": 138
+        },
+        {
+          "name": "assetCount",
+          "line": 142
+        },
+        {
+          "name": "assetKeyAt",
+          "line": 146
+        },
+        {
+          "name": "getAsset",
+          "line": 150
+        },
+        {
+          "name": "publishBallot",
+          "line": 159
+        },
+        {
+          "name": "resolveBallot",
+          "line": 173
+        }
+      ]
+    },
+    {
+      "path": "src/StockTokenRegistryV2.sol",
+      "group": "acquisition",
+      "sha256": "ed14f5e07ef8b90105947de60e90b417642db9ecfa878fecc850ea2f4d313efb",
+      "bytes": 12819,
+      "entries": [
+        {
+          "name": "onlyPublisher",
+          "line": 25
+        },
+        {
+          "name": "constructor",
+          "line": 30
+        },
+        {
+          "name": "assetVersionKey",
+          "line": 35
+        },
+        {
+          "name": "activateVersion",
+          "line": 44
+        },
+        {
+          "name": "deactivateVersion",
+          "line": 118
+        },
+        {
+          "name": "publishBallot",
+          "line": 129
+        },
+        {
+          "name": "resolveBallot",
+          "line": 171
+        },
+        {
+          "name": "setPublisher",
+          "line": 199
+        },
+        {
+          "name": "versionCount",
+          "line": 204
+        },
+        {
+          "name": "versionKeyAt",
+          "line": 208
+        },
+        {
+          "name": "getVersion",
+          "line": 212
+        },
+        {
+          "name": "getBallot",
+          "line": 218
+        },
+        {
+          "name": "_validateActivation",
+          "line": 224
+        },
+        {
+          "name": "_validTicker",
+          "line": 239
+        },
+        {
+          "name": "_deactivateConflict",
+          "line": 251
+        },
+        {
+          "name": "_deactivate",
+          "line": 257
+        },
+        {
+          "name": "_isExactlyActive",
+          "line": 274
+        },
+        {
+          "name": "_isLiveBallot",
+          "line": 280
+        }
+      ]
+    },
+    {
+      "path": "src/StockVault.sol",
+      "group": "core",
+      "sha256": "11a8b3a56bc64286419728ca4e414ad51eaffa25d9864a55091420a718182150",
+      "bytes": 13280,
+      "entries": [
+        {
+          "name": "onlyKeeper",
+          "line": 99
+        },
+        {
+          "name": "constructor",
+          "line": 104
+        },
+        {
+          "name": "setKeeper",
+          "line": 116
+        },
+        {
+          "name": "setAllocationSigner",
+          "line": 123
+        },
+        {
+          "name": "setDailyCap",
+          "line": 127
+        },
+        {
+          "name": "setDefaultDailyCap",
+          "line": 134
+        },
+        {
+          "name": "effectiveDailyCap",
+          "line": 142
+        },
+        {
+          "name": "pause",
+          "line": 148
+        },
+        {
+          "name": "unpause",
+          "line": 151
+        },
+        {
+          "name": "sweep",
+          "line": 158
+        },
+        {
+          "name": "deliver",
+          "line": 168
+        },
+        {
+          "name": "deliverAuthorized",
+          "line": 181
+        },
+        {
+          "name": "hashAuthorization",
+          "line": 194
+        },
+        {
+          "name": "deliverBatch",
+          "line": 215
+        },
+        {
+          "name": "_deliver",
+          "line": 228
+        }
+      ]
+    },
+    {
+      "path": "src/StreetDeed.sol",
+      "group": "core",
+      "sha256": "88f20153640a84bb528c6bae4d332ce2d052cc8c4c648e7447803c835be87e9e",
+      "bytes": 15373,
+      "entries": [
+        {
+          "name": "constructor",
+          "line": 97
+        },
+        {
+          "name": "setSigner",
+          "line": 113
+        },
+        {
+          "name": "setDailyMintCap",
+          "line": 118
+        },
+        {
+          "name": "setImageBase",
+          "line": 123
+        },
+        {
+          "name": "setExternalBase",
+          "line": 128
+        },
+        {
+          "name": "pause",
+          "line": 136
+        },
+        {
+          "name": "unpause",
+          "line": 139
+        },
+        {
+          "name": "tokenIdFor",
+          "line": 145
+        },
+        {
+          "name": "hashVoucher",
+          "line": 148
+        },
+        {
+          "name": "claim",
+          "line": 168
+        },
+        {
+          "name": "setTransferLock",
+          "line": 197
+        },
+        {
+          "name": "redeem",
+          "line": 202
+        },
+        {
+          "name": "_update",
+          "line": 215
+        },
+        {
+          "name": "tokenURI",
+          "line": 231
+        },
+        {
+          "name": "_json",
+          "line": 262
+        }
+      ]
+    },
+    {
+      "path": "src/Transmuter.sol",
+      "group": "market",
+      "sha256": "21264df1c5a45f90658a3e09e6abb8ff7e75dd66bb4b5e2211b3f4166b871540",
+      "bytes": 11470,
+      "entries": [
+        {
+          "name": "constructor",
+          "line": 99
+        },
+        {
+          "name": "setFunder",
+          "line": 109
+        },
+        {
+          "name": "setBufferFloorBps",
+          "line": 114
+        },
+        {
+          "name": "setRedeemCaps",
+          "line": 120
+        },
+        {
+          "name": "setAllowedContract",
+          "line": 128
+        },
+        {
+          "name": "requiredBuffer",
+          "line": 135
+        },
+        {
+          "name": "bufferHealthy",
+          "line": 140
+        },
+        {
+          "name": "fund",
+          "line": 145
+        },
+        {
+          "name": "redeem",
+          "line": 169
+        }
+      ]
+    },
+    {
+      "path": "src/VoucherClaim.sol",
+      "group": "core",
+      "sha256": "5bdea68e473429ae39f3286b3fa7da8de335035929cc3f7665f5e824ad608573",
+      "bytes": 8169,
+      "entries": [
+        {
+          "name": "mint",
+          "line": 13
+        },
+        {
+          "name": "redeemed",
+          "line": 17
+        },
+        {
+          "name": "constructor",
+          "line": 68
+        },
+        {
+          "name": "setSigner",
+          "line": 81
+        },
+        {
+          "name": "setDailyCap",
+          "line": 86
+        },
+        {
+          "name": "setGearSupplyCap",
+          "line": 96
+        },
+        {
+          "name": "pause",
+          "line": 101
+        },
+        {
+          "name": "unpause",
+          "line": 105
+        },
+        {
+          "name": "sweep",
+          "line": 111
+        },
+        {
+          "name": "hashVoucher",
+          "line": 117
+        },
+        {
+          "name": "claim",
+          "line": 122
+        }
+      ]
+    },
+    {
+      "path": "src/interfaces/IAcquisitionAuthorityV2.sol",
+      "group": "acquisition",
+      "sha256": "9795a81eb15ad715a6fd0ec5fc2e4c0d3e3043e88a6e0bbb0e9e161373cc2a32",
+      "bytes": 6703,
+      "entries": []
+    },
+    {
+      "path": "src/interfaces/IAcquisitionIntentExecutionV2.sol",
+      "group": "acquisition",
+      "sha256": "86f0173c5775603fca516fb152448ee657d0999b8ff1eba8c48c71bf7fc55e04",
+      "bytes": 912,
+      "entries": []
+    },
+    {
+      "path": "src/interfaces/IAcquisitionVaultV1.sol",
+      "group": "acquisition",
+      "sha256": "3a79f24ee81eded0891a63d73abdb6672a23322b9fa898ab3b3e721de66f4c38",
+      "bytes": 15098,
+      "entries": [
+        {
+          "name": "supportedChainId",
+          "line": 332
+        },
+        {
+          "name": "OPERATOR_NOMINATION_DELAY",
+          "line": 334
+        },
+        {
+          "name": "OPERATOR_ACCEPTANCE_WINDOW",
+          "line": 335
+        },
+        {
+          "name": "INGRESS_PROPOSAL_DELAY",
+          "line": 336
+        },
+        {
+          "name": "INGRESS_ACCEPTANCE_WINDOW",
+          "line": 337
+        },
+        {
+          "name": "MAX_AUTHORIZATION_LIFETIME",
+          "line": 338
+        },
+        {
+          "name": "MAX_SIGNATURE_BYTES",
+          "line": 339
+        },
+        {
+          "name": "ERC1271_CALL_GAS",
+          "line": 340
+        },
+        {
+          "name": "ERC1271_POST_CALL_GAS_RESERVE",
+          "line": 341
+        },
+        {
+          "name": "ERC1271_MIN_PRECALL_GAS",
+          "line": 342
+        },
+        {
+          "name": "MAX_ACTIVE_ORDINARY_RESERVATIONS",
+          "line": 343
+        },
+        {
+          "name": "MAX_ACTIVE_RECONCILIATIONS",
+          "line": 344
+        },
+        {
+          "name": "MAX_OPERATOR_OUTFLOW_COMPONENTS",
+          "line": 345
+        },
+        {
+          "name": "OUTFLOW_AUTHORIZATION_TYPEHASH",
+          "line": 346
+        },
+        {
+          "name": "SUCCESSOR_CONSENT_TYPEHASH",
+          "line": 347
+        },
+        {
+          "name": "stockTokenRegistryV2",
+          "line": 348
+        },
+        {
+          "name": "version",
+          "line": 349
+        },
+        {
+          "name": "mainOperator",
+          "line": 350
+        },
+        {
+          "name": "operatorGeneration",
+          "line": 351
+        },
+        {
+          "name": "outflowNonce",
+          "line": 352
+        },
+        {
+          "name": "nominationNonce",
+          "line": 353
+        },
+        {
+          "name": "pendingMainOperatorNomination",
+          "line": 354
+        },
+        {
+          "name": "nominateMainOperator",
+          "line": 355
+        },
+        {
+          "name": "cancelMainOperatorNomination",
+          "line": 356
+        },
+        {
+          "name": "expireMainOperatorNomination",
+          "line": 357
+        },
+        {
+          "name": "acceptMainOperatorNomination",
+          "line": 358
+        },
+        {
+          "name": "disableMainOperator",
+          "line": 359
+        },
+        {
+          "name": "renounceMainOperator",
+          "line": 360
+        },
+        {
+          "name": "replaceMainOperator",
+          "line": 361
+        },
+        {
+          "name": "invalidateOutflowNonce",
+          "line": 362
+        },
+        {
+          "name": "pause",
+          "line": 363
+        },
+        {
+          "name": "unpause",
+          "line": 364
+        },
+        {
+          "name": "hashOutflowAuthorization",
+          "line": 365
+        },
+        {
+          "name": "hashSuccessorConsent",
+          "line": 366
+        },
+        {
+          "name": "globalLifetimeCanonicalDepositCapWei",
+          "line": 367
+        },
+        {
+          "name": "availableWei",
+          "line": 368
+        },
+        {
+          "name": "unattributedWei",
+          "line": 369
+        },
+        {
+          "name": "ordinaryReservedWei",
+          "line": 370
+        },
+        {
+          "name": "reconciliationLiabilityWei",
+          "line": 371
+        },
+        {
+          "name": "reconciliationBackingWei",
+          "line": 372
+        },
+        {
+          "name": "accountingSequence",
+          "line": 373
+        },
+        {
+          "name": "lastObservedBalanceDeficitWei",
+          "line": 374
+        },
+        {
+          "name": "accountingTotals",
+          "line": 375
+        },
+        {
+          "name": "syncBalance",
+          "line": 376
+        },
+        {
+          "name": "reclassifyUnattributed",
+          "line": 377
+        },
+        {
+          "name": "globalLifetimeCanonicalDepositedWei",
+          "line": 378
+        },
+        {
+          "name": "ingressProposalNonce",
+          "line": 379
+        },
+        {
+          "name": "ingressGeneration",
+          "line": 380
+        },
+        {
+          "name": "activeIngressGeneration",
+          "line": 381
+        },
+        {
+          "name": "pendingIngressProposal",
+          "line": 382
+        },
+        {
+          "name": "getIngress",
+          "line": 383
+        },
+        {
+          "name": "proposeIngress",
+          "line": 384
+        },
+        {
+          "name": "cancelIngressProposal",
+          "line": 385
+        },
+        {
+          "name": "expireIngressProposal",
+          "line": 386
+        },
+        {
+          "name": "activateIngress",
+          "line": 387
+        },
+        {
+          "name": "disableIngress",
+          "line": 388
+        },
+        {
+          "name": "ingressLifetimeDepositedWei",
+          "line": 389
+        },
+        {
+          "name": "ingressEpochDepositedWei",
+          "line": 390
+        },
+        {
+          "name": "getDeposit",
+          "line": 391
+        },
+        {
+          "name": "depositCanonical",
+          "line": 392
+        }
+      ]
+    },
+    {
+      "path": "src/interfaces/IInitializerHook.sol",
+      "group": "market",
+      "sha256": "64dd472652df0d669857b08e2191a22e6d7228b4ff7c1adf02186e862897231a",
+      "bytes": 591,
+      "entries": [
+        {
+          "name": "authorized",
+          "line": 12
+        }
+      ]
+    },
+    {
+      "path": "src/interfaces/IOmrV4ObservationSource.sol",
+      "group": "market",
+      "sha256": "a272583e3f972af7707a0fdb7a79a1573741e36c880018a0f0584602bd8f5c0e",
+      "bytes": 697,
+      "entries": [
+        {
+          "name": "poolManager",
+          "line": 11
+        },
+        {
+          "name": "currentTickCumulative",
+          "line": 12
+        }
+      ]
+    },
+    {
+      "path": "src/interfaces/IRwaHealthOverlay.sol",
+      "group": "acquisition",
+      "sha256": "59931c0a23c51d38e21a1a4651e0d09381dc531b33615120ef9522fbfe0cab40",
+      "bytes": 2420,
+      "entries": [
+        {
+          "name": "supportedChainId",
+          "line": 47
+        },
+        {
+          "name": "SAFE",
+          "line": 49
+        },
+        {
+          "name": "REGISTRY",
+          "line": 50
+        },
+        {
+          "name": "clearanceGeneration",
+          "line": 51
+        },
+        {
+          "name": "latestClearanceId",
+          "line": 52
+        },
+        {
+          "name": "usedClearanceId",
+          "line": 53
+        },
+        {
+          "name": "clearancePayloadHash",
+          "line": 54
+        },
+        {
+          "name": "safeCallIntentHash",
+          "line": 56
+        },
+        {
+          "name": "clearanceId",
+          "line": 57
+        },
+        {
+          "name": "recordClearance",
+          "line": 58
+        }
+      ]
+    },
+    {
+      "path": "src/interfaces/ISettlementDataFeeSource.sol",
+      "group": "acquisition",
+      "sha256": "e59a4fefb9edbbb27211d7d6f00016cd674aed0765ed4d8a6d54b05fc2bf1bed",
+      "bytes": 182,
+      "entries": [
+        {
+          "name": "currentTransactionNativeDataFee",
+          "line": 4
+        }
+      ]
+    },
+    {
+      "path": "src/interfaces/IStockTokenRegistryV2.sol",
+      "group": "acquisition",
+      "sha256": "b1791c05f784c84cde8f3740920a94750c48f8b6c353e331e6c435863bdbd979",
+      "bytes": 4714,
+      "entries": [
+        {
+          "name": "assetVersionKey",
+          "line": 97
+        },
+        {
+          "name": "activateVersion",
+          "line": 102
+        },
+        {
+          "name": "deactivateVersion",
+          "line": 103
+        },
+        {
+          "name": "publishBallot",
+          "line": 104
+        },
+        {
+          "name": "resolveBallot",
+          "line": 112
+        },
+        {
+          "name": "supportedChainId",
+          "line": 125
+        },
+        {
+          "name": "publisher",
+          "line": 127
+        },
+        {
+          "name": "catalogVersion",
+          "line": 128
+        },
+        {
+          "name": "activationGeneration",
+          "line": 129
+        },
+        {
+          "name": "ballotActivationGeneration",
+          "line": 130
+        },
+        {
+          "name": "versionCount",
+          "line": 131
+        },
+        {
+          "name": "versionKeyAt",
+          "line": 132
+        },
+        {
+          "name": "getVersion",
+          "line": 133
+        },
+        {
+          "name": "activeVersionForTickerHash",
+          "line": 134
+        },
+        {
+          "name": "activeVersionForToken",
+          "line": 135
+        },
+        {
+          "name": "activeVersionForProviderIdHash",
+          "line": 136
+        },
+        {
+          "name": "setPublisher",
+          "line": 137
+        },
+        {
+          "name": "getBallot",
+          "line": 138
+        }
+      ]
+    }
+  ]
+}

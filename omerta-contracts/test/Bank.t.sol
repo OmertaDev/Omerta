@@ -895,11 +895,11 @@ contract BankTest is Test {
     /// under-backed, and there is no liquidation to close the gap — by design, because adding one
     /// would reintroduce the oracle-on-the-borrow-path class that cost Inverse $21M.
     ///
-    /// What actually protects holders is the Transmuter's buffer: redemption pays from REAL
-    /// reserves, first come first served, and the floor halts issuance the moment backing thins.
-    /// So the answer to a sleeve loss is "stop issuing, honour what is backed" — not "seize
-    /// somebody's collateral." Test asserts the ordering holds through the loss.
-    function test_a_vault_loss_breaks_the_invariant_and_the_protocol_stops_issuing() public {
+    /// The Transmuter's funded reserves remain available, first come first served. Its buffer floor
+    /// sees reserves and supply, not vault impairment. An affected underwater borrower cannot mint,
+    /// while another healthy position can still mint if the reserve floor permits. This test proves
+    /// collateral impairment and preservation of funded reserves; it does not prove a global halt.
+    function test_a_vault_loss_impairs_collateral_but_preserves_funded_reserves() public {
         (, Transmuter t, Alchemist a, MockVault v) = _market(50_000 * M);
         vm.startPrank(alice);
         usdc.approve(address(a), type(uint256).max);

@@ -87,6 +87,9 @@ jobs:
       - name: npm test (the full suite, on pg-mem)
         run: npm test
 
+      - name: Invite-only launch admission and Crew allowance
+        run: npm run test:invites
+
       - name: economy sim (§10.4 drift-0)
         run: npm run sim
 
@@ -113,6 +116,9 @@ jobs:
       # that quietly does nothing still goes green, and everyone assumes the screens were checked.
       - name: install chromium for the client harness
         run: npx playwright-core install --with-deps chromium
+
+      - name: Invite gate and Crew invitation controls in the browser
+        run: npm run test:invites:browser
 
       - name: mobile (every screen at phone size — overflow, the fold, nav targets, page errors)
         env:
@@ -224,6 +230,36 @@ jobs:
         env:
           RWA_REGISTRY_LIFECYCLE_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check
         run: npm run test:rwaregistrylifecycle:postgres
+
+      - name: create throwaway databases for fee allocation and deed recovery
+        if: '!cancelled()'
+        env:
+          DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check
+        run: |
+          node -e "
+            const { Client } = require('pg');
+            (async () => {
+              const c = new Client({ connectionString: process.env.DATABASE_URL });
+              await c.connect();
+              for (const db of ['omerta_audit_mint_dev', 'omerta_audit_deed_recovery']) {
+                await c.query('DROP DATABASE IF EXISTS ' + db);
+                await c.query('CREATE DATABASE ' + db);
+              }
+              await c.end();
+            })().catch((e) => { console.error(e.message); process.exit(1); });
+          "
+
+      - name: character mint DEV allocation and migration (real PostgreSQL)
+        if: '!cancelled()'
+        env:
+          DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_audit_mint_dev
+        run: npm run test:audit:mint-dev:postgres
+
+      - name: deed event ordering and concurrent recovery (real PostgreSQL)
+        if: '!cancelled()'
+        env:
+          DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_audit_deed_recovery
+        run: npm run test:audit:deed-reimport:postgres
 
       # The backup is the last line of defence and the only check nobody would notice failing — you
       # find out on the day you need a restore. Two of its verifications were written after real

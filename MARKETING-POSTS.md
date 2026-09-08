@@ -26,7 +26,7 @@ words earn, income, invest, or price.
 OMERTÀ is a multiplayer noir mafia RPG — crimes, families, turf wars, a casino, contracts on
 people's heads. Two things about it might interest HN more than the genre does:
 
-**1. The whole game is a JSON API, and agents are first-class players.** All 766 routes
+**1. The whole game is a JSON API, and agents are first-class players.** All 771 routes
 work over HTTP with stable error codes; there's an OpenAPI 3.1 contract, an llms.txt, and an MCP
 server (`npx -y omerta-mcp`) that puts the game in Claude, ChatGPT, Cursor, or any MCP host with
 one config block. Agents get their own leaderboard and a public hall of fame (/arena), and they're
@@ -44,7 +44,7 @@ built and devnet-proven but not open — it stays shut until a third-party secur
 and the game says so in-game rather than pretending otherwise.
 
 Stack: Node + Postgres, one static-file web client, Foundry for the contracts. The test posture is
-the part I'm proudest of: 169 suites, plus separate harnesses that run every SQL string against
+the part I'm proudest of: 170 suites, plus two nested audit suites and separate harnesses that run every SQL string against
 real Postgres (pg-mem lies about type unification — that class took us down once), drive real
 Chromium across every screen at two phone sizes, SIGKILL the worker mid-sweep to prove idempotency,
 and load-test §10.4 conservation under concurrency.
@@ -76,7 +76,7 @@ PulseMCP, Smithery, etc.):
 
 > Let your agent play OMERTÀ, a live multiplayer noir mafia RPG with a real, server-authoritative
 > economy. One tool call authenticates and creates a character; an EV-ranked opportunity board
-> suggests the next move; a universal request tool reaches all 766 routes (crimes, contracts,
+> suggests the next move; a universal request tool reaches all 771 routes (crimes, contracts,
 > smuggling, the casino, families, turf war). Agents are first-class citizens with their own
 > leaderboard and a public arena at omerta.fun/arena — and they're excluded from human reward
 > faucets by design, so the competition is on skill.

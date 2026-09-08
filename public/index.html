@@ -1238,7 +1238,7 @@
     <div id="invite-row" class="hidden" style="margin:0 auto 14px;max-width:320px">
       <label class="visually-hidden" for="invite-code">Invite code</label>
       <input id="invite-code" placeholder="invite code" size="18" autocomplete="off">
-      <div class="sub" style="color:var(--bad);margin-top:4px">This alpha is invite-only. Ask a made man for a code.</div>
+      <div class="sub" style="color:var(--bad);margin-top:4px">This launch is invite-only. Enter an unused invite code.</div>
     </div>
     <div id="enter-city"><button class="act cta" id="btn-guest" data-i18n="e_ghost">START A GUEST STREET — NO SIGNUP</button></div>
     <div class="ctahint">No wallet. No email. Claim the same street with X or Privy later.</div>
@@ -2475,6 +2475,7 @@
     return `${a === 'a' && /^[aeiou]/i.test(v) ? 'an' : a} ${v}`;
   };
   function describe(body, code) {
+    if (body?.inviteIssued) return `Invitation ready. ${Number(body.remaining)} launch invites left — copy the link from your crew.`;
     // PLAIN TEXT, not HTML. Every consumer of describe() is toast(), which assigns to textContent —
     // injection-proof by construction — so HTML-escaping here protects nothing and CORRUPTS the very
     // strings that most need to read right: 94 catalog names carry an apostrophe or ampersand
@@ -5327,7 +5328,7 @@
   $('#btn-down-retry').onclick = () => { downStop(); $('#down-tick').textContent = 'trying again…'; boot(); };
 
   const landToken = (r) => {
-    if (r.body?.token) { token = r.body.token; localStorage.setItem('omerta_token', token); boot(); return true; }
+    if (r.body?.token) { token = r.body.token; localStorage.setItem('omerta_token', token); api('POST', '/v1/access/session', {}).then(() => boot()); return true; }
     if (r.body?.error === 'invite') { $('#invite-row').classList.remove('hidden'); toast(r.body.message || 'invite only', true); }
     else toast(r.body?.message || r.body?.error || 'no dice', true);
     return false;
@@ -5442,6 +5443,8 @@
       const r = await api('POST', '/v1/auth/logout-all');
       if (r.code >= 400) { toast(ERRMAP[r.body?.error] || 'couldn’t reach the city to kill those sessions — try again', true); return; }
     }
+    const cleared = await api('POST', '/v1/access/logout', {});
+    if (cleared.code >= 400) { toast('Could not sign out of this browser. Try again.', true); return; }
     localStorage.removeItem('omerta_token'); location.reload();
   };
   $('#btn-refresh').onclick = () => refresh();
@@ -7605,6 +7608,7 @@
     await refresh();
     const b = (await api('GET', '/v1/crew')).body || {};
     const crew = b.crew, invites = b.invites || [];
+    const launchInvites = crew ? (await api('GET', '/v1/invites')).body : null;
     // BRING ONE — wire the two share buttons (X-intent + copy). me.name is the referral code.
     const wireBringOne = (root) => {
       const link = me?.name ? shareUrl(me.name) : (rules?.share?.gameUrl || location.origin);
@@ -7666,6 +7670,12 @@
 
     const mem = crew.members || [];
     t.innerHTML = `${inviteCards}
+      ${launchInvites?.enabled ? `<div class="card" style="margin-bottom:12px;border-color:var(--gold)">
+        <span class="t">Put a word in</span><div class="d" style="margin:8px 0">Bring someone new into the city. Each code admits one player; invite them to your crew by name once inside.</div>
+        <div class="d">${Number(launchInvites.remaining)} of ${Number(launchInvites.limit)} launch invites left. Your allowance stays with your account.</div>
+        ${launchInvites.eligible ? '<button class="act" id="launch-invite-generate" style="margin-top:8px">generate an invite</button>' : ''}
+        ${(launchInvites.codes || []).map((entry) => `<div class="row" style="margin-top:10px;flex-wrap:wrap"><code style="overflow-wrap:anywhere">${esc(entry.code)}</code> <span class="chip">${entry.usesLeft > 0 ? 'unused' : 'claimed'}</span>${entry.usesLeft > 0 ? ` <button class="act" data-launch-copy="${esc(entry.code)}">copy invite link</button>` : ''}</div>`).join('')}
+      </div>` : ''}
       <div class="card"><span class="t">${esc(crew.name)}</span> <span class="chip">${mem.length}/${b.maxMembers}</span>${crew.leader ? ' <span class="chip good">you run it</span>' : ''} <a href="#" id="crew-lb" style="font-size:11px">the deadliest crews →</a>
         <div class="grid" style="margin-top:6px">${mem.map((m) => `
           <div class="card">${av(m.characterId, 30)}<span class="t">${esc(m.name)}${m.leader ? ' <span class="chip good">boss</span>' : ''}${m.isMe ? ' <span class="chip">you</span>' : ''}</span>
@@ -7709,6 +7719,19 @@
 
     wireBringOne(t);
     const ib = t.querySelector('#crew-invite-btn');
+    const generateLaunchInvite = t.querySelector('#launch-invite-generate');
+    if (generateLaunchInvite) generateLaunchInvite.onclick = async () => {
+      generateLaunchInvite.disabled = true;
+      try { await act('POST', '/v1/invites', {}); await renderCrew(); }
+      finally { generateLaunchInvite.disabled = false; }
+    };
+    t.querySelectorAll('[data-launch-copy]').forEach((button) => { button.onclick = async () => {
+      const link = new URL('/', location.origin);
+      if (me?.name) link.searchParams.set('ref', me.name);
+      link.hash = 'invite=' + encodeURIComponent(button.dataset.launchCopy);
+      try { await navigator.clipboard.writeText(link.href); toast('Invite link copied. Send it to one person.'); }
+      catch { toast('Copy the code shown beside this button.', true); }
+    }; });
     if (ib) ib.onclick = () => {
       const name = (t.querySelector('#crew-invite').value || '').trim();
       if (!name) return;

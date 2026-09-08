@@ -707,6 +707,7 @@ CREATE TABLE IF NOT EXISTS invite_codes (
   created_by TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+CREATE INDEX IF NOT EXISTS ix_invite_codes_creator ON invite_codes (created_by);
 
 -- ── M6-B chain service (spec §11, EVM) — the ONLY chain-facing state ──
 -- A withdrawal debits the in-game $OMR ledger immediately (no double-spend), then
@@ -748,7 +749,8 @@ CREATE TABLE IF NOT EXISTS wallet_challenges (
 -- The ETH itself never touches this DB — the contract forwarded it to the dev wallet.
 CREATE TABLE IF NOT EXISTS fee_payments (
   nonce BIGINT PRIMARY KEY,
-  kind TEXT NOT NULL,                 -- 'mint' | 'respawn'
+  kind TEXT NOT NULL,                 -- 'mint' | 'respawn' | 'reroll'
+  mint_dev_only BOOLEAN NOT NULL DEFAULT false, -- new mint allocation; legacy rows keep their historical split
   payer_address TEXT NOT NULL,
   amount_wei TEXT NOT NULL,
   tx_hash TEXT,
@@ -2539,6 +2541,9 @@ CREATE TABLE IF NOT EXISTS dynasty_tokens (
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS ix_dynasty_tokens_acct ON dynasty_tokens(account_id);
+-- Canonical log position prevents a repeated backfill from rolling ownership backwards.
+ALTER TABLE dynasty_tokens ADD COLUMN IF NOT EXISTS last_transfer_block BIGINT;
+ALTER TABLE dynasty_tokens ADD COLUMN IF NOT EXISTS last_transfer_log_index BIGINT;
 
 -- THE CELLPHONE (founder-directed): a personal inbox + player-to-player DIRECT MESSAGES. Pure
 -- talk — zero §10.4 surface (no currency ever rides a DM). ACCOUNT-keyed on BOTH sides (the

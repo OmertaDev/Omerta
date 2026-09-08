@@ -1,0 +1,14 @@
+{
+  "date": "2026-09-08",
+  "command": "node omerta-contracts/audits/2026-09-08-comprehensive/check-bitmath-model.mjs",
+  "runtime": "v24.19.0",
+  "sourcePath": "omerta-contracts/lib/v4-core/src/libraries/BitMath.sol",
+  "sourceSha256": "e8a45eb3d57f9427fc47bbb2543c1a6a5f394113b378123ac7ca9f113a7502b4",
+  "method": "Literal BigInt EVM-word translation compared with independent bit-string/shift reference; no compiler or EVM execution.",
+  "cases": 2813,
+  "comparisons": 5626,
+  "passed": true,
+  "inputs": "All 256 powers of two, adjacent nonzero in-range words, uint256.max, and 2048 SHA-256 deterministic words.",
+  "seed": "omerta-bitmath-triage:2026-09-08:<0..2047>",
+  "limitation": "Bounded mathematical cross-check of the two diagnostic expressions; not exhaustive over all uint256 inputs or a compiled-bytecode test."
+}

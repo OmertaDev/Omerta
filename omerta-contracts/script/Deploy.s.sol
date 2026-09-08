@@ -105,7 +105,10 @@ contract Deploy is Script {
     }
 
     function _deployFees(Config memory c) private returns (OmertaFees) {
-        return new OmertaFees(c.safe, c.devWallet, c.vigWallet, c.feeVigBps, c.mintFee, c.respawnFee);
+        OmertaFees fees = new OmertaFees(c.safe, c.devWallet, c.vigWallet, c.feeVigBps, c.mintFee, c.respawnFee);
+        require(fees.mintDevBps() == 10_000, "Deploy: character mint must be 100% DEV");
+        require(fees.feeRecipient() == c.devWallet, "Deploy: DEV recipient mismatch");
+        return fees;
     }
 
     function _deployBond(Config memory c, OMR omr) private returns (OmertaBond) {

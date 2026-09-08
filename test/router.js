@@ -26,7 +26,7 @@ const mod = async (method, url, body) => {
 // ── 1. THE DECLARATION — every source sums, and the shape is what the board serves ──
 {
   const wf = waterfall();
-  assert.deepEqual(wf.map((s) => s.id), ['fee', 'store', 'bond', 'tax', 'trade', 'auction', 'polfees', 'harvest', 'toll'],
+  assert.deepEqual(wf.map((s) => s.id), ['mint', 'fee', 'store', 'bond', 'tax', 'trade', 'auction', 'polfees', 'harvest', 'toll'],
     'the waterfall declares every real-value inflow, in one place');
   // THE BANK's harvest fee is declared in the market's UNDERLYING, not ETH. That is not cosmetic:
   // `rwa_revenue`'s sum IS the vault's `held` wall, so a USDC amount mirrored there would inflate the
@@ -53,10 +53,10 @@ const mod = async (method, url, body) => {
 
 // ── 2. REAL INGESTS through the audited rails, then the invariants hold over them ──
 {
-  // a real gameplay fee (mint 0.01 ETH), a comp fee (no txHash — books ZERO revenue),
+  // a real gameplay fee (reroll 0.01 ETH), a comp fee (no txHash — books ZERO revenue),
   // a real Store purchase, a real sell-tax episode — each through its mod route.
   const r1 = await mod('POST', '/v1/mod/fees/record',
-    { nonce: 910001, kind: 'mint', payer: '0x' + 'a'.repeat(40), amountWei: (10n ** 16n).toString(), txHash: '0x' + 'f'.repeat(64) });
+    { nonce: 910001, kind: 'reroll', payer: '0x' + 'a'.repeat(40), amountWei: (10n ** 16n).toString(), txHash: '0x' + 'f'.repeat(64) });
   assert.equal(r1.code, 200, 'real fee ingests');
   await mod('POST', '/v1/mod/fees/record',
     { nonce: 910002, kind: 'mint', payer: '0x' + 'b'.repeat(40), amountWei: (10n ** 16n).toString() }); // comp — no txHash
@@ -107,7 +107,7 @@ const mod = async (method, url, body) => {
 {
   const b = await routerBoard(pool);
   assert.equal(b.lifetime.harvest.byAsset.USDC, 12.5, 'the board reports bank revenue by ASSET, so a stablecoin is never read as ETH');
-  assert(b.waterfall.length === 9 && b.invariants.ok, 'the board carries the waterfall + a passing verdict');
+  assert(b.waterfall.length === 10 && b.invariants.ok, 'the board carries the waterfall + a passing verdict');
   assert.equal(b.lifetime.fee.gross, 0.01, 'the fee gross counts ONLY the real payment (the comp is excluded)');
   assert.equal(b.lifetime.fee.vig, 0.01 * VIG_BPS / 10000, 'the fee vig slice matches the declared split');
   assert.equal(b.lifetime.store.treasury, 0.01 * STORE.SPLIT_BPS.rwa / 10000, 'the store treasury slice matches');

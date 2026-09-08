@@ -49,7 +49,9 @@ export function waterfall() {
   const commHarvest = COMMUNITY.HARVEST_BPS();
   const polfeesVig = COMMUNITY.POLFEES_VIG_BPS();
   return [
-    { id: 'fee', name: 'Gameplay fees (mint / respawn / reroll — OmertaFees)', currency: 'eth', totalBps: 10000,
+    { id: 'mint', name: 'Character creation mint (OmertaFees)', currency: 'eth', totalBps: 10000,
+      splits: [{ dest: 'operations', bps: 10000, lands: 'DEV_WALLET (OmertaFees.feeRecipient)', implicit: true }] },
+    { id: 'fee', name: 'Gameplay fees (respawn / reroll — OmertaFees; lifetime includes legacy mint splits)', currency: 'eth', totalBps: 10000,
       splits: [
         { dest: 'vig', bps: VIG_BPS, lands: "vig_revenue source='fee'" },
         { dest: 'treasury', bps: feeTreasury, lands: "rwa_revenue source='fee'" },
@@ -184,7 +186,7 @@ export async function runRouterInvariants(pool) {
   // (4)+(5) THE FEE MIRRORS — Σ booked slices == Σ real fee gross × the declared bps. 'fee' rows
   // were inserted by recordFeePayment and reconciled NOWHERE (the mapping pass's GAP-2 half).
   const feeRows = (await pool.query(
-    'SELECT amount_wei FROM fee_payments WHERE tx_hash IS NOT NULL')).rows;
+    'SELECT amount_wei FROM fee_payments WHERE tx_hash IS NOT NULL AND NOT mint_dev_only')).rows;
   const feeGross = feeRows.reduce((a, r) => { try { return a + Number(BigInt(r.amount_wei)) / 1e18; } catch { return a; } }, 0);
   const feeTol = 2e-6 * (feeRows.length + 1);
   const feeVig = num((await pool.query("SELECT COALESCE(SUM(vig_eth),0) s FROM vig_revenue WHERE source='fee'")).rows[0].s);
@@ -193,6 +195,17 @@ export async function runRouterInvariants(pool) {
   const feeTre = num((await pool.query("SELECT COALESCE(SUM(rwa_eth),0) s FROM rwa_revenue WHERE source='fee'")).rows[0].s);
   push('fee → treasury mirror matches the declared split', Math.abs(feeTre - feeGross * TREASURY.FEE_TREASURY_BPS() / 10000) <= feeTol,
     `booked ${feeTre} vs declared ${round6(feeGross * TREASURY.FEE_TREASURY_BPS() / 10000)}`);
+  const mintRevenueRows = (await pool.query(`
+    SELECT r.ref FROM vig_revenue r JOIN fee_payments f
+      ON r.ref = CAST(f.nonce AS TEXT) WHERE r.source='fee' AND f.mint_dev_only
+    UNION ALL
+    SELECT r.ref FROM rwa_revenue r JOIN fee_payments f
+      ON r.ref = CAST(f.nonce AS TEXT) WHERE r.source='fee' AND f.mint_dev_only
+    UNION ALL
+    SELECT r.ref FROM community_revenue r JOIN fee_payments f
+      ON r.ref = CAST(f.nonce AS TEXT) WHERE r.source='fee' AND f.mint_dev_only`)).rows.length;
+  push('character mint belongs entirely to DEV_WALLET', mintRevenueRows === 0,
+    `${mintRevenueRows} non-DEV revenue rows reference a DEV-only mint`);
 
   // (6)+(7) THE STORE MIRRORS — same shape over store_payments (real only).
   const storeRows = (await pool.query('SELECT amount_wei FROM store_payments WHERE tx_hash IS NOT NULL')).rows;
@@ -277,7 +290,12 @@ export async function routerBoard(pool) {
   const wf = waterfall();
   const lifetime = {};
 
-  const feeRows = (await pool.query('SELECT amount_wei FROM fee_payments WHERE tx_hash IS NOT NULL')).rows;
+  // Preserve historical splits: old rows default to false; only newly ingested mint fees
+  // carry the allocation marker. No recorded revenue is rewritten during this amendment.
+  const mintRows = (await pool.query('SELECT amount_wei FROM fee_payments WHERE tx_hash IS NOT NULL AND mint_dev_only')).rows;
+  const mintGross = mintRows.reduce((a, r) => { try { return a + Number(BigInt(r.amount_wei)) / 1e18; } catch { return a; } }, 0);
+  lifetime.mint = { gross: round6(mintGross), operations: round6(mintGross), vig: 0, treasury: 0, community: 0 };
+  const feeRows = (await pool.query('SELECT amount_wei FROM fee_payments WHERE tx_hash IS NOT NULL AND NOT mint_dev_only')).rows;
   const feeGross = feeRows.reduce((a, r) => { try { return a + Number(BigInt(r.amount_wei)) / 1e18; } catch { return a; } }, 0);
   lifetime.fee = { gross: round6(feeGross),
     vig: await one("SELECT COALESCE(SUM(vig_eth),0) s FROM vig_revenue WHERE source='fee'"),
