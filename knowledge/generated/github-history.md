@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `ed635e470e3c`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `088ab1c6d4fa`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1418 |
+| Commits in clone | 1420 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-08 — Pin the client receipt fixture outside calendar uprisings |
+| Latest commit | 2026-09-08 — Keep the API Deck route selector within narrow screens |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 546 |
+| OmertaDev | 548 |
 | Claude | 156 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 27 |
@@ -31,16 +31,16 @@
 | Path | Commits touching path | Current? |
 |---|---:|---|
 | [CLAUDE.md](../../CLAUDE.md) | 514 | yes |
-| [public/index.html](../../public/index.html) | 403 | yes |
+| [public/index.html](../../public/index.html) | 404 | yes |
 | [src/server.js](../../src/server.js) | 355 | yes |
 | [SPEC.md](../../SPEC.md) | 302 | yes |
 | [schema.sql](../../schema.sql) | 283 | yes |
 | [BALANCE.md](../../BALANCE.md) | 254 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
-| knowledge/generated/github-history.md | 183 | historical |
-| knowledge/generated/graph-summary.md | 183 | historical |
-| knowledge/generated/graph.json | 183 | historical |
-| knowledge/generated/inventory.md | 183 | historical |
+| knowledge/generated/github-history.md | 184 | historical |
+| knowledge/generated/graph-summary.md | 184 | historical |
+| knowledge/generated/graph.json | 184 | historical |
+| knowledge/generated/inventory.md | 184 | historical |
 | [src/game.js](../../src/game.js) | 177 | yes |
 | [package.json](../../package.json) | 158 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
