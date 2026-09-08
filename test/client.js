@@ -40,6 +40,8 @@
 // misnamed, or whether the action then behaves correctly. Those need the gameplay suites, which exist.
 process.env.MOD_KEY = 'test-mod-key';
 process.env.WORLD_RAID_P = '1';   // the rout driven below must land every run, not most runs
+// Frontier receipt coverage needs accrued tribute; test/world.js covers uprising suspension.
+process.env.WORLD_UPRISING = 'none';
 // This suite drives receipt and client-wiring paths, including several commissary purchases. The
 // seed-drawn daily `toss` incident closes that shop and turns calendar state into a false failure.
 // Pin the client fixture; test/pen.js exercises every yard incident and owns that behaviour coverage.
