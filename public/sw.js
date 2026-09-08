@@ -2,51 +2,60 @@
    Two jobs: (1) receive push events and show a notification (learn while away); (2) make the game an
    installable app that opens instantly and survives a flaky connection — WITHOUT ever serving stale game
    code. The whole game is one HTML file that changes on every deploy, so navigations are NETWORK-FIRST
-   (you always get the latest client online; the cached shell is only an offline fallback). Static assets
-   (icons, art) are cache-first. The API (/v1/*, the websocket) is NEVER cached. */
-const CACHE = 'omerta-shell-v1';
-const SHELL = ['/', '/manifest.json', '/icon-192.png', '/icon-512.png', '/apple-touch-icon.png'];
+   (you always get the latest client online; cached pages are only offline fallbacks). The shared stylesheet
+   also follows the network so installed players receive visual fixes. Icons and art are cache-first.
+   The API (/v1/*, the websocket) is NEVER cached. */
+const CACHE = 'omerta-shell-v2';
+const SHELL = ['/', '/omerta-ui.css', '/manifest.json', '/icon-192.png', '/icon-512.png', '/apple-touch-icon.png'];
+const cacheable = (res) => res && res.status === 200 && !res.redirected
+  && (res.type === 'basic' || res.type === 'default')
+  && !/(?:^|,)\s*(?:no-store|private)(?:\s|,|=|$)/i.test(res.headers.get('cache-control') || '');
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).catch(() => {}).then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
+    caches.keys().then((keys) => Promise.all(keys.filter((k) => k.startsWith('omerta-shell-') && k !== CACHE).map((k) => caches.delete(k))))
       .then(() => self.clients.claim())
   );
 });
 
 self.addEventListener('fetch', (event) => {
   const req = event.request;
-  if (req.method !== 'GET') return;                       // never cache writes
+  if (req.method !== 'GET' || req.headers.has('range') || req.headers.has('authorization')) return;
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;        // third-party → passthrough
   // NEVER cache the live game surface — the API, the websocket, the SW itself.
   if (url.pathname.startsWith('/v1/') || url.pathname === '/openapi.json' || url.pathname === '/sw.js') return;
 
   const isNav = req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html');
-  if (isNav) {
-    // NETWORK-FIRST: always try fresh (a deploy must reach the player); fall back to the cached shell
-    // only when the network is gone. Cache '/' as the canonical shell so any route resolves offline.
+  if (isNav || url.pathname === '/omerta-ui.css') {
+    // NETWORK-FIRST: a Codex visit belongs to its own URL, never the root game's offline slot.
+    // Only a root navigation (including a referral query) may fall back to the canonical root shell.
     event.respondWith(
       fetch(req).then((res) => {
-        const copy = res.clone();
-        caches.open(CACHE).then((c) => c.put('/', copy)).catch(() => {});
+        if (cacheable(res)) {
+          const copy = res.clone();
+          event.waitUntil(caches.open(CACHE).then((c) => c.put(req, copy)).catch(() => {}));
+        }
         return res;
-      }).catch(() => caches.match('/').then((m) => m || caches.match(req)))
+      }).catch(async () => {
+        const cache = await caches.open(CACHE);
+        return (await cache.match(req)) || (isNav && url.pathname === '/' ? await cache.match('/') : null) || Response.error();
+      })
     );
     return;
   }
   // static assets (icons, /art/*, manifest) → CACHE-FIRST, then fill the cache.
   event.respondWith(
-    caches.match(req).then((hit) => hit || fetch(req).then((res) => {
-      if (res && res.ok && (res.type === 'basic' || res.type === 'default')) {
+    caches.open(CACHE).then((cache) => cache.match(req)).then((hit) => hit || fetch(req).then((res) => {
+      if (cacheable(res)) {
         const copy = res.clone();
-        caches.open(CACHE).then((c) => c.put(req, copy)).catch(() => {});
+        event.waitUntil(caches.open(CACHE).then((c) => c.put(req, copy)).catch(() => {}));
       }
       return res;
-    }).catch(() => hit))
+    }).catch(() => Response.error()))
   );
 });
 

@@ -10,6 +10,8 @@ npm start       # API on :8787 using pg-mem (no Postgres needed)
 ```
 Set `DATABASE_URL=postgres://...` to use real Postgres (schema auto-applies). Set `JWT_SECRET` in production.
 
+For interface changes, run `npm run ui:quality` for the public pages and keyboard flows, then `npm run mobile` for the full phone screen catalog. See [browser quality setup and coverage](DESIGN.md#browser-quality-checks) for browser discovery, screenshots, and the disposable database requirement.
+
 ## Play it (the console)
 `npm start`, then open **http://localhost:8787/** — the playable web console (`public/index.html`, one
 static file, no build step, no extra deps). Guest sign-in → name a street character → the sheet (live
