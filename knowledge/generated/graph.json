@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "303dfd19901f68a816404b8cc7d551a9adc2270f",
+  "sourceRevision": "18aec9a8b5a26659d8b36712841090573fd92850",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 6324,
-    "edges": 27997,
+    "nodes": 6326,
+    "edges": 28009,
     "byNodeType": {
       "Artifact": 2230,
       "Command": 64,
-      "Commit": 1435,
+      "Commit": 1437,
       "Contract": 49,
       "Document": 501,
       "Domain": 13,
@@ -65,20 +65,20 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 2063,
-      "CHANGED": 11193,
+      "CHANGED": 11199,
       "CONTAINS": 2251,
       "DECLARES": 64,
       "DEFINED_IN": 1149,
       "DEPENDS_ON": 64,
       "EXECUTES": 237,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1435,
+      "HAS_COMMIT": 1437,
       "IMPLEMENTS": 124,
-      "IMPORTS": 1896,
+      "IMPORTS": 1898,
       "INHERITS": 12,
       "REFERENCES": 3427,
       "REPRESENTS": 968,
-      "TESTS": 701,
+      "TESTS": 703,
       "TRACKS": 126,
       "USES_TABLE": 1585
     }
@@ -42797,20 +42797,20 @@
       "path": "src/invariants.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 96649,
-      "lines": 1286,
-      "version": "3b5a6606fa5e6e8b",
+      "bytes": 103877,
+      "lines": 1380,
+      "version": "3eda1b5399cde469",
       "text": true,
       "provenance": [
         {
           "file": "src/invariants.js",
           "line": 1,
-          "version": "3b5a6606fa5e6e8b"
+          "version": "3eda1b5399cde469"
         }
       ],
-      "lastChangedAt": "2026-09-07T23:40:20.000Z",
+      "lastChangedAt": "2026-09-08T05:23:07.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "1618f119fa4ff45427c70b1f83e26beb79a40fa6"
+      "lastChangedCommit": "18aec9a8b5a26659d8b36712841090573fd92850"
     },
     {
       "key": "Artifact:src/item-lock-trace.js",
@@ -48202,20 +48202,20 @@
       "path": "test/phase2-lots.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 157663,
-      "lines": 1836,
-      "version": "b761e8430d05294b",
+      "bytes": 192682,
+      "lines": 2255,
+      "version": "99a4134a76126ca3",
       "text": true,
       "provenance": [
         {
           "file": "test/phase2-lots.js",
           "line": 1,
-          "version": "b761e8430d05294b"
+          "version": "99a4134a76126ca3"
         }
       ],
-      "lastChangedAt": "2026-09-08T03:30:24.000Z",
+      "lastChangedAt": "2026-09-08T05:23:07.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b72ecdd0aa780c7738dce8a8ff5324532cff25ae"
+      "lastChangedCommit": "18aec9a8b5a26659d8b36712841090573fd92850"
     },
     {
       "key": "Artifact:test/phase2-postgres.js",
@@ -54197,6 +54197,22 @@
         {
           "commit": "1885dcca00f4fddac0c48ea0263f26112e56aa2e",
           "url": "https://github.com/OmertaDev/Omerta/commit/1885dcca00f4fddac0c48ea0263f26112e56aa2e"
+        }
+      ]
+    },
+    {
+      "key": "Commit:18aec9a8b5a26659d8b36712841090573fd92850",
+      "type": "Commit",
+      "id": "18aec9a8b5a26659d8b36712841090573fd92850",
+      "label": "fix(items): reconcile migrated unique history at its observation boundary",
+      "title": "fix(items): reconcile migrated unique history at its observation boundary",
+      "date": "2026-09-08T05:23:07.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/18aec9a8b5a26659d8b36712841090573fd92850",
+      "provenance": [
+        {
+          "commit": "18aec9a8b5a26659d8b36712841090573fd92850",
+          "url": "https://github.com/OmertaDev/Omerta/commit/18aec9a8b5a26659d8b36712841090573fd92850"
         }
       ]
     },
@@ -65973,6 +65989,22 @@
         {
           "commit": "93c5e2c594ad74fb47d2996d6bd6340e6528031a",
           "url": "https://github.com/OmertaDev/Omerta/commit/93c5e2c594ad74fb47d2996d6bd6340e6528031a"
+        }
+      ]
+    },
+    {
+      "key": "Commit:940258a8cbad3f96bfa859e1059f3caa9341ba04",
+      "type": "Commit",
+      "id": "940258a8cbad3f96bfa859e1059f3caa9341ba04",
+      "label": "docs: refresh knowledge for reviewed PostgreSQL query guard",
+      "title": "docs: refresh knowledge for reviewed PostgreSQL query guard",
+      "date": "2026-09-08T03:50:40.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/940258a8cbad3f96bfa859e1059f3caa9341ba04",
+      "provenance": [
+        {
+          "commit": "940258a8cbad3f96bfa859e1059f3caa9341ba04",
+          "url": "https://github.com/OmertaDev/Omerta/commit/940258a8cbad3f96bfa859e1059f3caa9341ba04"
         }
       ]
     },
@@ -89115,6 +89147,9 @@
           "commit": "92b05e973d1a6b3571e2adf04d9c9ba1c8fde266"
         },
         {
+          "commit": "940258a8cbad3f96bfa859e1059f3caa9341ba04"
+        },
+        {
           "commit": "941040497b187366baf25a5f32e14b420b62e438"
         },
         {
@@ -89694,6 +89729,9 @@
           "commit": "92b05e973d1a6b3571e2adf04d9c9ba1c8fde266"
         },
         {
+          "commit": "940258a8cbad3f96bfa859e1059f3caa9341ba04"
+        },
+        {
           "commit": "941040497b187366baf25a5f32e14b420b62e438"
         },
         {
@@ -90271,6 +90309,9 @@
         },
         {
           "commit": "92b05e973d1a6b3571e2adf04d9c9ba1c8fde266"
+        },
+        {
+          "commit": "940258a8cbad3f96bfa859e1059f3caa9341ba04"
         },
         {
           "commit": "941040497b187366baf25a5f32e14b420b62e438"
@@ -90961,6 +91002,9 @@
         },
         {
           "commit": "92b05e973d1a6b3571e2adf04d9c9ba1c8fde266"
+        },
+        {
+          "commit": "940258a8cbad3f96bfa859e1059f3caa9341ba04"
         },
         {
           "commit": "941040497b187366baf25a5f32e14b420b62e438"
@@ -93042,13 +93086,13 @@
       "type": "Module",
       "id": "src/invariants.js",
       "label": "src/invariants.js",
-      "lines": 1286,
-      "version": "3b5a6606fa5e6e8b",
+      "lines": 1380,
+      "version": "3eda1b5399cde469",
       "provenance": [
         {
           "file": "src/invariants.js",
           "line": 1,
-          "version": "3b5a6606fa5e6e8b"
+          "version": "3eda1b5399cde469"
         }
       ]
     },
@@ -97992,7 +98036,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "303dfd19901f68a816404b8cc7d551a9adc2270f",
+      "revision": "18aec9a8b5a26659d8b36712841090573fd92850",
       "currentBranch": "codex/world-graph-lots",
       "defaultBranch": "main",
       "visibility": "public",
@@ -125171,13 +125215,13 @@
       "type": "TestSuite",
       "id": "test/phase2-lots.js",
       "label": "test/phase2-lots.js",
-      "lines": 1836,
-      "version": "b761e8430d05294b",
+      "lines": 2255,
+      "version": "99a4134a76126ca3",
       "provenance": [
         {
           "file": "test/phase2-lots.js",
           "line": 1,
-          "version": "b761e8430d05294b"
+          "version": "99a4134a76126ca3"
         }
       ]
     },
@@ -155459,6 +155503,22 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "commit": "1885dcca00f4fddac0c48ea0263f26112e56aa2e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:18aec9a8b5a26659d8b36712841090573fd92850",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "commit": "18aec9a8b5a26659d8b36712841090573fd92850"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:18aec9a8b5a26659d8b36712841090573fd92850",
+      "to": "Artifact:test/phase2-lots.js",
+      "provenance": {
+        "commit": "18aec9a8b5a26659d8b36712841090573fd92850"
       }
     },
     {
@@ -200747,6 +200807,38 @@
       "to": "Artifact:test/wire.js",
       "provenance": {
         "commit": "93c3221e04432058635fc4e3569b6d5a5090bd37"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:940258a8cbad3f96bfa859e1059f3caa9341ba04",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "940258a8cbad3f96bfa859e1059f3caa9341ba04"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:940258a8cbad3f96bfa859e1059f3caa9341ba04",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "940258a8cbad3f96bfa859e1059f3caa9341ba04"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:940258a8cbad3f96bfa859e1059f3caa9341ba04",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "940258a8cbad3f96bfa859e1059f3caa9341ba04"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:940258a8cbad3f96bfa859e1059f3caa9341ba04",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "940258a8cbad3f96bfa859e1059f3caa9341ba04"
       }
     },
     {
@@ -265545,7 +265637,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 494
+      "weight": 496
     },
     {
       "type": "DEPENDS_ON",
@@ -276021,6 +276113,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:18aec9a8b5a26659d8b36712841090573fd92850",
+      "provenance": {
+        "commit": "18aec9a8b5a26659d8b36712841090573fd92850"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:1919872e3b741f76def795462df50e13abf3ad71",
       "provenance": {
         "commit": "1919872e3b741f76def795462df50e13abf3ad71"
@@ -281904,6 +282004,14 @@
       "to": "Commit:93c5e2c594ad74fb47d2996d6bd6340e6528031a",
       "provenance": {
         "commit": "93c5e2c594ad74fb47d2996d6bd6340e6528031a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:940258a8cbad3f96bfa859e1059f3caa9341ba04",
+      "provenance": {
+        "commit": "940258a8cbad3f96bfa859e1059f3caa9341ba04"
       }
     },
     {
@@ -300123,7 +300231,7 @@
       "to": "Artifact:src/crafting.js",
       "provenance": {
         "file": "test/phase2-lots.js",
-        "line": 1227
+        "line": 1646
       }
     },
     {
@@ -300177,7 +300285,7 @@
       "to": "Artifact:src/itemlots.js",
       "provenance": {
         "file": "test/phase2-lots.js",
-        "line": 1175
+        "line": 1594
       }
     },
     {
@@ -300186,7 +300294,7 @@
       "to": "Artifact:src/itemlots.js",
       "provenance": {
         "file": "test/phase2-lots.js",
-        "line": 1509
+        "line": 1928
       }
     },
     {
@@ -300195,7 +300303,7 @@
       "to": "Artifact:src/itemlots.js",
       "provenance": {
         "file": "test/phase2-lots.js",
-        "line": 1721
+        "line": 2140
       }
     },
     {
@@ -300204,7 +300312,25 @@
       "to": "Artifact:src/itemlots.js",
       "provenance": {
         "file": "test/phase2-lots.js",
-        "line": 45
+        "line": 431
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-lots.js",
+      "to": "Artifact:src/itemlots.js",
+      "provenance": {
+        "file": "test/phase2-lots.js",
+        "line": 464
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/phase2-lots.js",
+      "to": "Artifact:src/itemlots.js",
+      "provenance": {
+        "file": "test/phase2-lots.js",
+        "line": 48
       }
     },
     {
@@ -300222,7 +300348,7 @@
       "to": "Artifact:src/mysteries.js",
       "provenance": {
         "file": "test/phase2-lots.js",
-        "line": 1235
+        "line": 1654
       }
     },
     {
@@ -300231,7 +300357,7 @@
       "to": "Artifact:src/operations.js",
       "provenance": {
         "file": "test/phase2-lots.js",
-        "line": 1249
+        "line": 1668
       }
     },
     {
@@ -300240,7 +300366,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "test/phase2-lots.js",
-        "line": 1493
+        "line": 1912
       }
     },
     {
@@ -300249,7 +300375,7 @@
       "to": "Artifact:src/worldgraph-validate.js",
       "provenance": {
         "file": "test/phase2-lots.js",
-        "line": 1201
+        "line": 1620
       }
     },
     {
@@ -348093,7 +348219,7 @@
       "to": "Artifact:src/crafting.js",
       "provenance": {
         "file": "test/phase2-lots.js",
-        "line": 1227
+        "line": 1646
       }
     },
     {
@@ -348147,7 +348273,7 @@
       "to": "Artifact:src/itemlots.js",
       "provenance": {
         "file": "test/phase2-lots.js",
-        "line": 1175
+        "line": 1594
       }
     },
     {
@@ -348156,7 +348282,7 @@
       "to": "Artifact:src/itemlots.js",
       "provenance": {
         "file": "test/phase2-lots.js",
-        "line": 1509
+        "line": 1928
       }
     },
     {
@@ -348165,7 +348291,7 @@
       "to": "Artifact:src/itemlots.js",
       "provenance": {
         "file": "test/phase2-lots.js",
-        "line": 1721
+        "line": 2140
       }
     },
     {
@@ -348174,7 +348300,25 @@
       "to": "Artifact:src/itemlots.js",
       "provenance": {
         "file": "test/phase2-lots.js",
-        "line": 45
+        "line": 431
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/phase2-lots.js",
+      "to": "Artifact:src/itemlots.js",
+      "provenance": {
+        "file": "test/phase2-lots.js",
+        "line": 464
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/phase2-lots.js",
+      "to": "Artifact:src/itemlots.js",
+      "provenance": {
+        "file": "test/phase2-lots.js",
+        "line": 48
       }
     },
     {
@@ -348192,7 +348336,7 @@
       "to": "Artifact:src/mysteries.js",
       "provenance": {
         "file": "test/phase2-lots.js",
-        "line": 1235
+        "line": 1654
       }
     },
     {
@@ -348201,7 +348345,7 @@
       "to": "Artifact:src/operations.js",
       "provenance": {
         "file": "test/phase2-lots.js",
-        "line": 1249
+        "line": 1668
       }
     },
     {
@@ -348210,7 +348354,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "test/phase2-lots.js",
-        "line": 1493
+        "line": 1912
       }
     },
     {
@@ -348219,7 +348363,7 @@
       "to": "Artifact:src/worldgraph-validate.js",
       "provenance": {
         "file": "test/phase2-lots.js",
-        "line": 1201
+        "line": 1620
       }
     },
     {
@@ -357525,7 +357669,7 @@
       "to": "Table:item_lots",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 991
+        "line": 1017
       }
     },
     {
@@ -357543,7 +357687,7 @@
       "to": "Table:item_mutation_inputs",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 994
+        "line": 1019
       }
     },
     {
@@ -357552,7 +357696,7 @@
       "to": "Table:item_mutation_outputs",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 995
+        "line": 1020
       }
     },
     {
