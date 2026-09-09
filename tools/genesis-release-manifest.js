@@ -12,6 +12,7 @@ import {
   buildGenesisReleaseManifest,
 } from '../src/genesisrelease.js';
 import { canonicalJson, sha256Hex } from '../src/genesiscadence.js';
+import { buildGenesisLaunchArtifacts, assertGenesisWalletCapPolicy } from '../src/genesiscca.js';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -119,6 +120,7 @@ try {
     process.exit(0);
   }
   const parsed = JSON.parse(readRegularFile('release-review.json', reviewFile).toString('utf8'));
+  assertGenesisWalletCapPolicy(buildGenesisLaunchArtifacts(parsed.launch));
   const manifest = buildGenesisReleaseManifest(hydrateEvidence(parsed), {
     createdAt: new Date().toISOString(), repository: repositoryInventory(),
   });

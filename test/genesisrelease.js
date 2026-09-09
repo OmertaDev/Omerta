@@ -199,12 +199,14 @@ Object.assign(autoInput.launch, { launchMode: 'automated',
   lifecycleController: '0x8888888888888888888888888888888888888888',
   oracle: '0x9999999999999999999999999999999999999999',
   liquidityKeeper: '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+  walletCap: '0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
   runtimeCodeHashes: Object.fromEntries(['token', 'hook', 'proceedsSplitter', 'lifecycleController',
-    'positionRecipient', 'oracle'].map((name) => [name, hex32('a')])),
+    'positionRecipient', 'oracle', 'walletCap'].map((name) => [name, hex32('a')])),
 });
 Object.assign(autoInput.audit.scope, Object.fromEntries(GENESIS_AUTOMATED_AUDIT_SCOPE.map((name) => [name, true])));
 Object.assign(autoInput.forkRehearsal, Object.fromEntries(['prePoolOracleBootstrap', 'controllerBoundBeforeStart',
-  'exactFactoryPrediction', 'migrationToProtocolVault', 'oracleFullWindowRequired', 'keeperReceiptAccounting']
+  'exactFactoryPrediction', 'migrationToProtocolVault', 'oracleFullWindowRequired', 'keeperReceiptAccounting',
+  'walletCapEnforced', 'walletCapCumulative', 'walletCapRollback']
   .map((name) => [name, true])));
 autoInput.governance.lpCustody.kind = 'protocol_liquidity_vault';
 const autoLaunch = buildGenesisLaunchArtifacts(autoInput.launch);

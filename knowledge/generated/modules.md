@@ -92,10 +92,10 @@
 | [src/firsts.js](../../src/firsts.js) | 144 | world-progression | 1 / 6 | 1 | 7 | 1 |
 | [src/game.js](../../src/game.js) | 2736 | platform-core | 10 / 147 | 30 | 62 | 18 |
 | [src/genesiscadence.js](../../src/genesiscadence.js) | 152 | platform-core | 0 / 6 | 0 | 0 | 2 |
-| [src/genesiscca.js](../../src/genesiscca.js) | 1055 | platform-core | 1 / 3 | 0 | 0 | 1 |
+| [src/genesiscca.js](../../src/genesiscca.js) | 1084 | platform-core | 1 / 4 | 0 | 0 | 1 |
 | [src/genesiskeeper.js](../../src/genesiskeeper.js) | 133 | platform-core | 0 / 1 | 0 | 0 | 0 |
 | [src/genesislaunch.js](../../src/genesislaunch.js) | 74 | platform-core | 2 / 3 | 0 | 1 | 0 |
-| [src/genesisrelease.js](../../src/genesisrelease.js) | 551 | platform-core | 2 / 1 | 0 | 2 | 0 |
+| [src/genesisrelease.js](../../src/genesisrelease.js) | 554 | platform-core | 2 / 1 | 0 | 2 | 0 |
 | [src/growth.js](../../src/growth.js) | 1037 | engagement-growth | 4 / 15 | 16 | 17 | 6 |
 | [src/heists.js](../../src/heists.js) | 585 | social-combat | 3 / 9 | 10 | 10 | 3 |
 | [src/home.js](../../src/home.js) | 55 | engagement-growth | 13 / 3 | 1 | 0 | 1 |

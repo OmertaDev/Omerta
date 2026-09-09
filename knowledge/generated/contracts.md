@@ -21,6 +21,7 @@
 | `GenesisLifecycleController` | contract | [omerta-contracts/src/GenesisLifecycleController.sol:59](../../omerta-contracts/src/GenesisLifecycleController.sol#L59) | `Ownable2Step`, `ReentrancyGuard` |
 | `GenesisOracle` | contract | [omerta-contracts/src/GenesisOracle.sol:49](../../omerta-contracts/src/GenesisOracle.sol#L49) | `IOmrOracle`, `Ownable2Step` |
 | `GenesisProceedsSplitter` | contract | [omerta-contracts/src/GenesisProceedsSplitter.sol:28](../../omerta-contracts/src/GenesisProceedsSplitter.sol#L28) | `ReentrancyGuard` |
+| `GenesisWalletCap` | contract | [omerta-contracts/src/GenesisWalletCap.sol:19](../../omerta-contracts/src/GenesisWalletCap.sol#L19) | `IGenesisBidValidation` |
 | `IAcquisitionAuthorityV2` | interface | [omerta-contracts/src/interfaces/IAcquisitionAuthorityV2.sol:3](../../omerta-contracts/src/interfaces/IAcquisitionAuthorityV2.sol#L3) | — |
 | `IAcquisitionIntentExecutionV2` | interface | [omerta-contracts/src/interfaces/IAcquisitionIntentExecutionV2.sol:3](../../omerta-contracts/src/interfaces/IAcquisitionIntentExecutionV2.sol#L3) | — |
 | `IAcquisitionVaultV1` | interface | [omerta-contracts/src/interfaces/IAcquisitionVaultV1.sol:3](../../omerta-contracts/src/interfaces/IAcquisitionVaultV1.sol#L3) | — |
@@ -28,6 +29,8 @@
 | `IGearVault` | interface | [omerta-contracts/src/VoucherClaim.sol:11](../../omerta-contracts/src/VoucherClaim.sol#L11) | — |
 | `IGenesisArbSys` | interface | [omerta-contracts/src/GenesisLifecycleController.sol:53](../../omerta-contracts/src/GenesisLifecycleController.sol#L53) | — |
 | `IGenesisAuction` | interface | [omerta-contracts/src/GenesisLifecycleController.sol:23](../../omerta-contracts/src/GenesisLifecycleController.sol#L23) | — |
+| `IGenesisBidValidation` | interface | [omerta-contracts/src/GenesisWalletCap.sol:10](../../omerta-contracts/src/GenesisWalletCap.sol#L10) | — |
+| `IGenesisCapController` | interface | [omerta-contracts/src/GenesisWalletCap.sol:3](../../omerta-contracts/src/GenesisWalletCap.sol#L3) | — |
 | `IGenesisFoundation` | interface | [omerta-contracts/src/GenesisLifecycleController.sol:40](../../omerta-contracts/src/GenesisLifecycleController.sol#L40) | — |
 | `IGenesisStrategy` | interface | [omerta-contracts/src/GenesisLifecycleController.sol:35](../../omerta-contracts/src/GenesisLifecycleController.sol#L35) | — |
 | `IInitializerHook` | interface | [omerta-contracts/src/interfaces/IInitializerHook.sol:10](../../omerta-contracts/src/interfaces/IInitializerHook.sol#L10) | `IERC165` |

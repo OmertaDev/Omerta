@@ -10,6 +10,8 @@ import {
   Q96,
   ROBINHOOD_GENESIS_STACK,
   V4_OBSERVATION_SOURCE_INTERFACE_ID,
+  GENESIS_WALLET_CAP_WEI,
+  assertGenesisWalletCapPolicy,
   buildGenesisLaunchArtifacts,
   buildGenesisAuctionBinding,
   verifyGenesisAutomationReadiness,
@@ -70,10 +72,19 @@ const automatedInput = { ...input, launchMode: 'automated',
   lifecycleController: '0x8888888888888888888888888888888888888888',
   oracle: '0x9999999999999999999999999999999999999999',
   liquidityKeeper: '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+  walletCap: '0xcccccccccccccccccccccccccccccccccccccccc',
   runtimeCodeHashes: Object.fromEntries(['token', 'hook', 'proceedsSplitter', 'lifecycleController',
-    'positionRecipient', 'oracle'].map((name) => [name, keccak256('0x6000')])),
+    'positionRecipient', 'oracle', 'walletCap'].map((name) => [name, keccak256('0x6000')])),
 };
 const controlled = buildGenesisLaunchArtifacts(automatedInput);
+assertGenesisWalletCapPolicy(controlled);
+assert.equal(controlled.initializerParameters.validationHook.toLowerCase(), automatedInput.walletCap);
+assert.equal(controlled.walletCapPolicy.maxCommitmentWei, GENESIS_WALLET_CAP_WEI);
+assert.throws(() => buildGenesisLaunchArtifacts({ ...automatedInput, walletCap: undefined }), /walletCap/);
+assert.throws(() => buildGenesisLaunchArtifacts({ ...automatedInput, walletCap: `0x${'0'.repeat(40)}` }), /zero address/);
+assert.throws(() => assertGenesisWalletCapPolicy(built), /current Genesis launches/);
+assert.throws(() => assertGenesisWalletCapPolicy({ ...controlled, walletCapPolicy: { ...controlled.walletCapPolicy,
+  maxCommitmentWei: 2n * GENESIS_WALLET_CAP_WEI } }), /1 ETH commitment/);
 assert.equal(controlled.initializerParameters.tokensRecipient, '0x8888888888888888888888888888888888888888');
 assert.equal(built.initializerParameters.tokensRecipient, input.treasury);
 assert.deepEqual(controlled.migratorParameters, built.migratorParameters, 'automation changes unsold-token authority only');
@@ -178,20 +189,7 @@ const readinessClient = {
     throw new Error(`unexpected readiness read: ${address} ${functionName}`);
   },
 };
-const readiness = await verifyGenesisLaunchReadiness(readinessClient, built);
-assert.equal(readiness.canonicalPoolId, expectedPoolId);
-assert.equal(readiness.funding.permit2Nonce, 7n);
-assert.equal(readiness.funding.permit2Expiration, BigInt(input.permit2Expiration));
-assert.equal(readiness.hook.initializerInterfaceSupported, true);
-assert.equal(readiness.hook.observationSourceInterfaceSupported, true);
-assert.equal(readiness.splitter.poolInitialized, false);
-await assert.rejects(
-  () => verifyGenesisLaunchReadiness({
-    ...readinessClient,
-    getBlock: async () => ({ number: built.timeline.startBlock, timestamp: 1_700_000_000n }),
-  }, built),
-  /start block.*not in the future/,
-);
+await assert.rejects(() => verifyGenesisLaunchReadiness(readinessClient, built), /current Genesis launches/);
 
 assert.throws(() => buildGenesisLaunchArtifacts({ ...input, hook: 'not-an-address' }), /valid EVM address/);
 assert.throws(
@@ -235,12 +233,14 @@ function automatedClient(options = {}) {
     poolId: expectedPoolId, fee: 3000, tickSpacing: 60, baselineInitialized: false, consult: [0n, 0n] };
   const auctionReads = { token: p.token, currency: '0x0000000000000000000000000000000000000000',
     tokensRecipient: p.lifecycleController, fundsRecipient: ROBINHOOD_GENESIS_STACK.lbpStrategy,
-    validationHook: '0x0000000000000000000000000000000000000000', totalSupply: GENESIS_SALE_OMR,
+    validationHook: p.walletCap, totalSupply: GENESIS_SALE_OMR,
     startBlock: controlled.timeline.startBlock, endBlock: controlled.timeline.endBlock,
     claimBlock: controlled.timeline.claimBlock, floorPrice: controlled.pricing.floorPrice,
     tickSpacing: controlled.pricing.tickSpacing };
   const dictionaries = { [p.lifecycleController.toLowerCase()]: controllerReads,
     [p.positionRecipient.toLowerCase()]: vaultReads, [p.oracle.toLowerCase()]: oracleReads,
+    [p.walletCap.toLowerCase()]: { controller: p.lifecycleController, controllerCodeHash: runtimeHash('lifecycleController'),
+      MAX_COMMITMENT: GENESIS_WALLET_CAP_WEI, totalCommitted: 0n },
     [auctionAddress]: auctionReads };
   for (const [target, updates] of Object.entries(options.overrides ?? {})) {
     Object.assign(dictionaries[target.toLowerCase()], updates);
@@ -298,6 +298,13 @@ assert.equal(autoReadiness.baselineInitialized, false);
 assert(autoClient.reads.every((read) => read.blockNumber === 80_000_000n
   || (read.functionName === 'currentBlock' && read.blockTag === 'latest')));
 assert.equal((await verifyGenesisLaunchReadiness(automatedClient(), controlled)).automation.currentBlock, 49_999_999n);
+const readiness = await verifyGenesisLaunchReadiness(automatedClient(), controlled);
+assert.equal(readiness.canonicalPoolId, expectedPoolId);
+assert.equal(readiness.funding.permit2Nonce, 7n);
+assert.equal(readiness.funding.permit2Expiration, BigInt(input.permit2Expiration));
+assert.equal(readiness.hook.initializerInterfaceSupported, true);
+assert.equal(readiness.hook.observationSourceInterfaceSupported, true);
+assert.equal(readiness.splitter.poolInitialized, false);
 const binding = await buildGenesisAuctionBinding(automatedClient(), controlled);
 assert.equal(binding.transaction.to, controlled.participants.lifecycleController);
 assert.equal(binding.transaction.value, 0n);
@@ -317,7 +324,7 @@ async function rejectAuto(options, pattern, bind = false) {
   ), pattern);
   adversarial++;
 }
-for (const target of ['lifecycleController', 'positionRecipient', 'oracle']) {
+for (const target of ['lifecycleController', 'positionRecipient', 'oracle', 'walletCap']) {
   await rejectAuto({ empty: controlled.participants[target] }, /no runtime code/);
   await rejectAuto({ changedCode: controlled.participants[target] }, /runtime code hash mismatch/);
 }
@@ -337,6 +344,8 @@ for (const [target, field, value] of [
   ['positionRecipient', 'keeper', wrong], ['positionRecipient', 'emergencyLatched', true],
   ['positionRecipient', 'positionId', 1n], ['oracle', 'source', wrong], ['oracle', 'poolId', `0x${'00'.repeat(32)}`],
   ['oracle', 'baselineInitialized', true], ['oracle', 'consult', [1n, 1n]],
+  ['walletCap', 'controller', wrong], ['walletCap', 'controllerCodeHash', `0x${'ff'.repeat(32)}`],
+  ['walletCap', 'MAX_COMMITMENT', 2n * GENESIS_WALLET_CAP_WEI], ['walletCap', 'totalCommitted', 1n],
 ]) {
   await rejectAuto({ overrides: { [controlled.participants[target]]: { [field]: value } } }, /mismatch|not in the future|zero quote/);
 }
@@ -345,7 +354,7 @@ await rejectAuto({ predicted: wrong }, /factory prediction/, true);
 await rejectAuto({ empty: auctionAddress }, /created CCA.*no runtime/, true);
 await rejectAuto({ migrator: { ...controlled.migratorParameters, positionRecipient: wrong } }, /migration parameters/, true);
 await rejectAuto({ migrator: { ...controlled.migratorParameters, lpAllocationSchedule: '0x' } }, /migration parameters/, true);
-for (const [field, value] of [['tokensRecipient', wrong], ['fundsRecipient', wrong],
+for (const [field, value] of [['tokensRecipient', wrong], ['fundsRecipient', wrong], ['validationHook', wrong],
   ['startBlock', controlled.timeline.startBlock - 1n], ['endBlock', controlled.timeline.endBlock + 1n],
   ['claimBlock', controlled.timeline.claimBlock + 1n], ['totalSupply', GENESIS_SALE_OMR - 1n]]) {
   await rejectAuto({ overrides: { [auctionAddress]: { [field]: value } } }, /created CCA.*mismatch/, true);

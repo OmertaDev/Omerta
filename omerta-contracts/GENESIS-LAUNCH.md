@@ -1,12 +1,16 @@
 # OMERTÀ genesis CCA/LBP launch runbook
 
 Status: automated Genesis requires the bootstrap-capable `OmrV4TwapOracle`, the fixed
-`ProtocolLiquidityVault`, and a `GenesisLifecycleController` bound before bidding starts. The
+`ProtocolLiquidityVault`, a `GenesisLifecycleController` bound before bidding starts, and the
+`GenesisWalletCap` validation hook enforcing the owner's cumulative 1 ETH wallet limit. The
 2026-09-09 bootstrap amendment verifies that integrated sequence in a local chain-4663 fork; see
 [the scoped amendment](audits/2026-09-09-genesis-bootstrap/report.md). Earlier fork reports
 used different custody/deployment ordering and remain historical evidence for their stated scope.
 Production execution requires the current scoped review, exact recipients and budgets, measured
 block timing, and the production Safe simulation/approval ceremony.
+
+The 1 ETH wallet-cap amendment requires its own scoped review and fork evidence. Earlier uncapped
+launch artifacts remain historical; they must not be signed for the current launch.
 
 This runbook is the source of truth for replacing the original bootstrap bond sale with a Uniswap
 Continuous Clearing Auction (CCA) that migrates into the canonical OMR/native-ETH Uniswap v4 pool.
@@ -29,9 +33,10 @@ For the automated route, the deployment order is mandatory:
    latest/pending nonce, empty future addresses and live splitter bindings before that sequence.
    A changed nonce requires a newly reviewed plan; the checker never rebases addresses.
 3. Deploy the vault, four fixed-purpose buyback executors, fee router, gas vault and controller.
+   Deploy `GenesisWalletCap(controller)` immediately after the controller while it is unbound.
    Apply the reviewed Safe configuration, including `setGenesisController` and keeper bindings.
 4. Build with explicit `launchMode: "automated"`, the controller, vault, final oracle, liquidity
-   keeper and all six exact runtime hashes described at Gate D. Preflight checks the entire
+   keeper, `walletCap`, and all seven exact runtime hashes described at Gate D. Preflight checks the entire
    unopened dependency chain, including controller and vault runtime commitments.
 5. Create the CCA, then generate its separate `bindAuction` transaction from the chain using
    `genesis:config --bind-auction`. Verify and execute that transaction before `startBlock`.
@@ -50,12 +55,31 @@ inconsistent automatic observations keep new issuance closed. THE BANK remains s
 
 ## 1. Committed architecture
 
+### Genesis wallet allowance
+
+Each wallet may commit at most 1 ETH across the entire auction. For example, accepted bids of
+0.4 ETH and 0.6 ETH exhaust that wallet's allowance. The maximum is on committed ETH, not eventual
+spend or token allocation: exits, refunds, changing a bid's price and new bids never replenish it.
+The caller must be the bid owner, so a third party cannot consume another wallet's allowance or
+rotate recipients to bypass its own limit. EOAs and smart accounts may call CCA directly; routers
+that submit for another recipient are unsupported. No character NFT or identity credential is used.
+Multiple wallets can still belong to one person; this is not a person-level limit or a later trading cap.
+
+`GenesisWalletCap` accepts validation only from the auction bound once by its immutable lifecycle
+controller, and checks both runtime identities. It holds no ETH or OMR and has no administrator,
+upgrade or allowance-reset function. CCA reverts roll back any tentative commitment update.
+The release builder commits its address in `validationHook`; preflight pins its runtime, controller,
+1 ETH constant and zero prelaunch commitment. The created CCA must report that exact hook before
+the Safe binds it. Legacy artifacts can be reconstructed offline, but current config/release CLIs
+and launch preflight reject the uncapped legacy mode.
+
 | Component | Committed value |
 |---|---:|
 | Auction inventory | 4,410,000 OMR |
 | Reserved LP inventory | 1,653,750 OMR |
 | Total launcher deposit | 6,063,750 OMR |
 | Graduation minimum | 10 native ETH by default |
+| Wallet commitment maximum | 1 native ETH cumulatively across all accepted Genesis bids |
 | Sale floor | 205,882 OMR per ETH, represented in Q96 and rounded down to a 1% auction tick |
 | Auction shape | 12 convex release steps carrying about 70% plus a one-block final release carrying about 30% |
 | Auction duration target | 72 wall-clock hours, converted to `BlockNumberish` immediately before launch |
@@ -288,13 +312,15 @@ Prepare a private, access-controlled JSON input:
   "lifecycleController": "<DEPLOYED_GENESIS_LIFECYCLE_CONTROLLER>",
   "oracle": "<DEPLOYED_BOOTSTRAP_CAPABLE_V4_ORACLE>",
   "liquidityKeeper": "<DEDICATED_LIQUIDITY_KEEPER>",
+  "walletCap": "<DEPLOYED_GENESIS_WALLET_CAP>",
   "runtimeCodeHashes": {
     "token": "<EXACT_RUNTIME_KECCAK256>",
     "hook": "<EXACT_RUNTIME_KECCAK256>",
     "proceedsSplitter": "<EXACT_RUNTIME_KECCAK256>",
     "lifecycleController": "<EXACT_RUNTIME_KECCAK256>",
     "positionRecipient": "<EXACT_RUNTIME_KECCAK256>",
-    "oracle": "<EXACT_RUNTIME_KECCAK256>"
+    "oracle": "<EXACT_RUNTIME_KECCAK256>",
+    "walletCap": "<EXACT_RUNTIME_KECCAK256>"
   },
   "hook": "<MINED_HOOK_WITH_0x30cc_PERMISSION_BITS>",
   "salt": "<UNIQUE_32_BYTE_SALT>",

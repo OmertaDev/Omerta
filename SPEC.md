@@ -16,7 +16,7 @@ Written 2026-07-25. Every number below was measured from the tree, not recalled.
 | Database tables | **340** (`schema.sql`, 6717 lines) |
 | Client | **12914** lines (`public/index.html`, single file, zero dependencies) |
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |
-| Smart contracts | **38** top-level Solidity files, **11257** lines, **1028** declared top-level Foundry test functions; the release gate re-measures the passing suite |
+| Smart contracts | **39** top-level Solidity files, **11322** lines, **1046** declared top-level Foundry test functions; the release gate re-measures the passing suite |
 | Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/bond-dials.js` (sizing the on-chain mint walls), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |
 | Design + audit docs | **534** markdown files, **142517** lines — indexed in `docs/AUDITS.md`, which states they are point-in-time |
 | Ledger invariants | **46** checks — **41** named escrow/identity/custody/definition-registry checks + **5** per-currency conservation, **drift-0** |

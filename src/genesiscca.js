@@ -42,6 +42,7 @@ export const GENESIS_LP_RESERVE_OMR = 1_653_750n * 10n ** 18n;
 export const GENESIS_DISTRIBUTION_OMR = GENESIS_SALE_OMR + GENESIS_LP_RESERVE_OMR;
 export const GENESIS_LP_CURRENCY_MPS = 3_750_000;
 export const GENESIS_FLOOR_OMR_PER_ETH = 205_882n;
+export const GENESIS_WALLET_CAP_WEI = 10n ** 18n;
 
 const UINT24_MAX = (1n << 24n) - 1n;
 const UINT40_MAX = (1n << 40n) - 1n;
@@ -500,6 +501,7 @@ async function assertLivePrestartClock(client, artifacts, block) {
 }
 
 async function inspectGenesisAutomation(client, artifacts, block) {
+  assertGenesisWalletCapPolicy(artifacts);
   if (artifacts.launchMode !== 'automated' || !artifacts.automation) {
     throw new Error('explicit automated genesis artifacts are required');
   }
@@ -507,7 +509,7 @@ async function inspectGenesisAutomation(client, artifacts, block) {
   const expectedPoolId = canonicalGenesisPoolId(p);
   const pins = artifacts.automation.runtimeCodeHashes;
   const runtimeCodeHashes = {};
-  for (const name of ['token', 'hook', 'proceedsSplitter', 'lifecycleController', 'positionRecipient', 'oracle']) {
+  for (const name of ['token', 'hook', 'proceedsSplitter', 'lifecycleController', 'positionRecipient', 'oracle', 'walletCap']) {
     if (!pins?.[name]) throw new Error(`runtimeCodeHashes.${name} is required`);
     runtimeCodeHashes[name] = await assertRuntimeCode(client, name, p[name], pins[name], block.number);
   }
@@ -522,6 +524,13 @@ async function inspectGenesisAutomation(client, artifacts, block) {
     assertAddressRead(label ?? name, await read(target, name), expected);
   };
   const controller = p.lifecycleController;
+  const capAbi = parseAbi(['function controller() view returns (address)',
+    'function controllerCodeHash() view returns (bytes32)', 'function MAX_COMMITMENT() view returns (uint256)',
+    'function totalCommitted() view returns (uint256)']);
+  for (const [name, expected] of Object.entries({ controller, controllerCodeHash: pins.lifecycleController,
+    MAX_COMMITMENT: GENESIS_WALLET_CAP_WEI, totalCommitted: 0n })) {
+    assertEqualRead(`GenesisWalletCap ${name}`, await read(p.walletCap, name, capAbi), expected);
+  }
   for (const [name, expected] of Object.entries({ owner: p.launchOwner, strategy: ROBINHOOD_GENESIS_STACK.lbpStrategy,
     splitter: p.proceedsSplitter, foundation: p.positionRecipient, oracle: p.oracle, omr: p.token, treasury: p.treasury })) {
     await checkAddress(controller, name, expected, `GenesisLifecycleController ${name}`);
@@ -605,7 +614,7 @@ export async function buildGenesisAuctionBinding(client, artifacts) {
   }
   for (const [name, expected] of Object.entries({ token: p.token, currency: ZERO_ADDRESS,
     tokensRecipient: p.lifecycleController, fundsRecipient: ROBINHOOD_GENESIS_STACK.lbpStrategy,
-    validationHook: ZERO_ADDRESS, totalSupply: GENESIS_SALE_OMR, startBlock: artifacts.timeline.startBlock,
+    validationHook: p.walletCap, totalSupply: GENESIS_SALE_OMR, startBlock: artifacts.timeline.startBlock,
     endBlock: artifacts.timeline.endBlock, claimBlock: artifacts.timeline.claimBlock,
     floorPrice: artifacts.pricing.floorPrice, tickSpacing: artifacts.pricing.tickSpacing })) {
     assertEqualRead(`created CCA ${name}`, await read(auction, name), expected);
@@ -629,6 +638,7 @@ export async function buildGenesisAuctionBinding(client, artifacts) {
 /// Verify the OMERTÀ-controlled contracts and one-shot allowances immediately before the launch
 /// multicall. This is expected to run after the three preparation Safe calls have landed.
 export async function verifyGenesisLaunchReadiness(client, artifacts) {
+  assertGenesisWalletCapPolicy(artifacts);
   if (!artifacts?.participants || !artifacts?.allocation || !artifacts?.approvals) {
     throw new Error('buildGenesisLaunchArtifacts output is required');
   }
@@ -860,6 +870,22 @@ export function encodeSupplySchedule(schedule) {
   return encoded;
 }
 
+/// Historic legacy artifacts can still be reconstructed offline, but cannot clear a current
+/// launch preflight or production CLI. New launches always use the cumulative wallet cap.
+export function assertGenesisWalletCapPolicy(artifacts) {
+  if (artifacts?.launchMode !== 'automated' || !artifacts?.participants?.walletCap) {
+    throw new Error('current Genesis launches require automated mode and the 1 ETH walletCap');
+  }
+  const cap = address('walletCap', artifacts.participants.walletCap);
+  assertAddressRead('Genesis validation hook', artifacts.initializerParameters?.validationHook, cap);
+  if (artifacts.walletCapPolicy?.maxCommitmentWei !== GENESIS_WALLET_CAP_WEI
+    || artifacts.walletCapPolicy?.cumulativeAcrossAuction !== true
+    || artifacts.walletCapPolicy?.bidderMustOwnBid !== true
+    || artifacts.walletCapPolicy?.allowanceRestoredOnRefund !== false) {
+    throw new Error('Genesis wallet cap policy must be a non-replenishing cumulative 1 ETH commitment');
+  }
+}
+
 /// Build the exact unsigned Safe calls for the existing-token Liquidity Launcher path.
 /// Nothing here sends a transaction or reads a private key.
 export function buildGenesisLaunchArtifacts(input = {}) {
@@ -875,8 +901,9 @@ export function buildGenesisLaunchArtifacts(input = {}) {
   const lifecycleController = launchMode === 'automated' ? address('lifecycleController', input.lifecycleController) : null;
   const oracle = launchMode === 'automated' ? address('oracle', input.oracle) : null;
   const liquidityKeeper = launchMode === 'automated' ? address('liquidityKeeper', input.liquidityKeeper) : null;
+  const walletCap = launchMode === 'automated' ? address('walletCap', input.walletCap) : null;
   const runtimeCodeHashes = launchMode === 'automated' ? Object.fromEntries(
-    ['token', 'hook', 'proceedsSplitter', 'lifecycleController', 'positionRecipient', 'oracle'].map((name) => {
+    ['token', 'hook', 'proceedsSplitter', 'lifecycleController', 'positionRecipient', 'oracle', 'walletCap'].map((name) => {
       const hash = bytes32(`runtimeCodeHashes.${name}`, input.runtimeCodeHashes?.[name]).toLowerCase();
       if (/^0x0{64}$/.test(hash)) throw new Error(`runtimeCodeHashes.${name} cannot be zero`);
       return [name, hash];
@@ -920,7 +947,7 @@ export function buildGenesisLaunchArtifacts(input = {}) {
     endBlock,
     claimBlock,
     tickSpacing: prices.tickSpacing,
-    validationHook: ZERO_ADDRESS,
+    validationHook: walletCap ?? ZERO_ADDRESS,
     floorPrice: prices.floorPrice,
     requiredCurrencyRaised,
     auctionStepsData,
@@ -972,6 +999,8 @@ export function buildGenesisLaunchArtifacts(input = {}) {
 
   return {
     launchMode,
+    walletCapPolicy: walletCap ? { maxCommitmentWei: GENESIS_WALLET_CAP_WEI,
+      cumulativeAcrossAuction: true, bidderMustOwnBid: true, allowanceRestoredOnRefund: false } : null,
     automation: launchMode === 'automated' ? {
       oracle, liquidityKeeper, runtimeCodeHashes,
       auctionBinding: { status: 'requires_created_auction_verification', beforeBlock: startBlock },
@@ -987,7 +1016,7 @@ export function buildGenesisLaunchArtifacts(input = {}) {
       proceedsSplitter,
       positionRecipient,
       hook,
-      ...(launchMode === 'automated' ? { lifecycleController, oracle, liquidityKeeper, tokensRecipient } : {}),
+      ...(launchMode === 'automated' ? { lifecycleController, oracle, liquidityKeeper, tokensRecipient, walletCap } : {}),
     },
     allocation: {
       auctionOmr: GENESIS_SALE_OMR,

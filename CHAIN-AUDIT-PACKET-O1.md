@@ -1,6 +1,6 @@
 # CHAIN-AUDIT-PACKET (O1) — current source inventory and review provenance
 
-> **LIVE PACKET — source inventory measured 2026-09-08 in the working tree.** This supersedes
+> **LIVE PACKET — source inventory measured 2026-09-09 in the working tree.** This supersedes
 > `CHAIN-AUDIT-PACKET.md`, which is retained unmodified as historical audit evidence from the
 > pre-O1 tree and must not be sent as a current engagement scope. **`CHAIN-DEPLOY.md` remains the
 > operational runbook**; this document is the SCOPE and the ATTACK SURFACE.
@@ -31,7 +31,7 @@ unreproducible for 19 hours on 2026-08-29. Hence:
 
 | what | value | how it was measured |
 |---|---|---|
-| current source snapshot | working tree over `e1d0e8476b6f1ebf590b13bd07c072d9d9d33aee` | source inventory measured 2026-09-08; the base commit does not identify the working-tree changes. The new review's source/artifact manifests identify the final reviewed bytes |
+| current source snapshot | working tree over `641af48e212b91a8b989f931bb8e8038623ff229` | source inventory measured 2026-09-09; the base commit does not identify the working-tree changes. The new review's source/artifact manifests identify the final reviewed bytes |
 | historical suite baseline | `b0a214ca` | the earlier CI `forge test (contracts)` run cited below; it predates the new liquidity contracts and is not a test result for this working tree |
 | toolchain | **forge v1.7.1** | pinned in `.github/workflows/forge.yml`, which also prints `forge --version` as its own step |
 | compiler | **solc 0.8.26**, optimizer on, `optimizer_runs = 800`, `evm_version = "cancun"` | `omerta-contracts/foundry.toml` |
@@ -52,11 +52,11 @@ aggregated reporting model it reports **1**. A count quoted without its compiler
 
 ---
 
-## 1. SCOPE — 37 contracts + 10 interfaces, current source inventory
+## 1. SCOPE — 38 contracts + 10 interfaces, current source inventory
 
 *"Batch, not dribble"* (`omerta-dynasty-machine-design.md`): the scope must be KNOWN before it is
 sent, because a contract added afterwards means paying to re-audit. The set below is the complete
-`omerta-contracts/src` working tree — 47 Solidity files, 37 contracts and 10 interfaces.
+`omerta-contracts/src` working tree — 48 Solidity files, 38 contracts and 10 interfaces.
 This is the complete source inventory, not a claim that one review package clears every component.
 The 2026-09-08 liquidity review names its own source closure and release phase; earlier packages
 retain their original scopes and conclusions.
@@ -110,6 +110,7 @@ retain their original scopes and conclusions.
 | 45 | `LiquidityBuybackExecutor` | fixed pool, stream and recipient; exact OMR delivery under oracle, health, slippage and spend limits | `LiquidityBuybackExecutor.t.sol`, `BondLiquidityHealth.t.sol` |
 | 46 | `ProtocolLiquidityVault` | protected full-range v4 position, exact inventory contributions/refunds, bounded reinvestment and fixed fee routing | `ProtocolLiquidityVault.t.sol` |
 | 47 | `ILiquidityHealth` | liquidity readiness surface used by issuance and executor guards — **interface only** | `BondLiquidityHealth.t.sol`, `ProtocolLiquidityVault.t.sol` |
+| 48 | `GenesisWalletCap` | controller-bound CCA validation; cumulative 1 ETH commitment per bidding wallet; no reset on exit or refund and no separate-recipient bypass | `GenesisWalletCap.t.sol` |
 
 **Historical baseline: 896 Foundry tests across 43 suites, green** under **forge v1.7.1** at head `b0a214ca`, including
 **19 parameterised 512-run fuzz** properties and **9 `invariant_` properties** across token, bond,

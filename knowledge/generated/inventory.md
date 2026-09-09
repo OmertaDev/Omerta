@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `e1d0e8476b6f`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `641af48e212b`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 2,357 |
-| Text lines | 774,069 |
-| Repository bytes inventoried | 553,906,419 |
+| Current artifacts | 2,359 |
+| Text lines | 774,374 |
+| Repository bytes inventoried | 553,924,992 |
 | Backend/route modules | 225 |
 | HTTP route registrations / unique routes | 767 / 767 |
 | Database tables | 340 |
-| Solidity declarations | 64 |
-| Git commits | 1,421 |
+| Solidity declarations | 67 |
+| Git commits | 1,422 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 6,531 / 28,601 |
+| Graph nodes / edges | 6,575 / 28,871 |
 
 ## Artifact kinds
 
@@ -30,9 +30,9 @@
 | contract-project | 143 |
 | audit | 98 |
 | design | 91 |
-| contract-test | 84 |
+| contract-test | 85 |
 | engineering-harness | 74 |
-| contract-source | 47 |
+| contract-source | 48 |
 | route-module | 22 |
 | web-surface | 14 |
 | operations | 11 |
@@ -47,35 +47,35 @@
 | File | Lines | Kind | Last change |
 |---|---:|---|---|
 | [omerta-contracts/x-ray/slither.json](../../omerta-contracts/x-ray/slither.json) | 64,621 | contract-project | 2026-08-25 |
-| [omerta-contracts/audits/2026-09-08-comprehensive/shared-static-triage.json](../../omerta-contracts/audits/2026-09-08-comprehensive/shared-static-triage.json) | 52,258 | contract-project | uncommitted |
-| [omerta-contracts/audits/2026-09-08-comprehensive/hook-retest-static.json](../../omerta-contracts/audits/2026-09-08-comprehensive/hook-retest-static.json) | 47,392 | contract-project | uncommitted |
+| [omerta-contracts/audits/2026-09-08-comprehensive/shared-static-triage.json](../../omerta-contracts/audits/2026-09-08-comprehensive/shared-static-triage.json) | 52,258 | contract-project | 2026-09-09 |
+| [omerta-contracts/audits/2026-09-08-comprehensive/hook-retest-static.json](../../omerta-contracts/audits/2026-09-08-comprehensive/hook-retest-static.json) | 47,392 | contract-project | 2026-09-09 |
 | [CLAUDE.md](../../CLAUDE.md) | 18,679 | documentation | 2026-09-06 |
-| [public/index.html](../../public/index.html) | 12,922 | web-surface | 2026-09-08 |
-| [omerta-contracts/audits/2026-09-08-liquidity-automation/package-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/package-manifest.json) | 10,623 | contract-project | uncommitted |
+| [public/index.html](../../public/index.html) | 12,922 | web-surface | 2026-09-09 |
+| [omerta-contracts/audits/2026-09-08-liquidity-automation/package-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/package-manifest.json) | 10,623 | contract-project | 2026-09-09 |
 | [test/client.js](../../test/client.js) | 9,441 | test-suite | 2026-09-08 |
 | [omerta-contracts/x-ray/slither-vars-and-auth.json](../../omerta-contracts/x-ray/slither-vars-and-auth.json) | 9,374 | contract-project | 2026-08-25 |
-| [omerta-contracts/audits/2026-09-08-liquidity-automation/source-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/source-manifest.json) | 8,690 | contract-project | uncommitted |
+| [omerta-contracts/audits/2026-09-08-liquidity-automation/source-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/source-manifest.json) | 8,690 | contract-project | 2026-09-09 |
 | [.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
-| [omerta-contracts/audits/2026-09-08-liquidity-automation/artifact-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/artifact-manifest.json) | 7,385 | contract-project | uncommitted |
+| [omerta-contracts/audits/2026-09-08-liquidity-automation/artifact-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/artifact-manifest.json) | 7,385 | contract-project | 2026-09-09 |
 | [BALANCE.md](../../BALANCE.md) | 6,855 | documentation | 2026-09-06 |
-| [schema.sql](../../schema.sql) | 6,722 | data-schema | 2026-09-07 |
-| [omerta-contracts/audits/2026-09-08-comprehensive/package-manifest.json](../../omerta-contracts/audits/2026-09-08-comprehensive/package-manifest.json) | 6,609 | contract-project | uncommitted |
-| [omerta-contracts/audits/2026-09-08-comprehensive/forge-lint-triage.json](../../omerta-contracts/audits/2026-09-08-comprehensive/forge-lint-triage.json) | 6,203 | contract-project | uncommitted |
+| [schema.sql](../../schema.sql) | 6,722 | data-schema | 2026-09-09 |
+| [omerta-contracts/audits/2026-09-08-comprehensive/package-manifest.json](../../omerta-contracts/audits/2026-09-08-comprehensive/package-manifest.json) | 6,609 | contract-project | 2026-09-09 |
+| [omerta-contracts/audits/2026-09-08-comprehensive/forge-lint-triage.json](../../omerta-contracts/audits/2026-09-08-comprehensive/forge-lint-triage.json) | 6,203 | contract-project | 2026-09-09 |
 | [src/rules.tail.js](../../src/rules.tail.js) | 6,145 | backend-module | 2026-09-02 |
-| [omerta-contracts/audits/2026-09-08-comprehensive/source-manifest.json](../../omerta-contracts/audits/2026-09-08-comprehensive/source-manifest.json) | 4,877 | contract-project | uncommitted |
-| [omerta-contracts/audits/2026-09-08-comprehensive/source-before.json](../../omerta-contracts/audits/2026-09-08-comprehensive/source-before.json) | 4,687 | contract-project | uncommitted |
-| [omerta-contracts/audits/2026-09-09-genesis-bootstrap/artifact-manifest.json](../../omerta-contracts/audits/2026-09-09-genesis-bootstrap/artifact-manifest.json) | 4,402 | contract-project | uncommitted |
+| [omerta-contracts/audits/2026-09-08-comprehensive/source-manifest.json](../../omerta-contracts/audits/2026-09-08-comprehensive/source-manifest.json) | 4,877 | contract-project | 2026-09-09 |
+| [omerta-contracts/audits/2026-09-08-comprehensive/source-before.json](../../omerta-contracts/audits/2026-09-08-comprehensive/source-before.json) | 4,687 | contract-project | 2026-09-09 |
+| [omerta-contracts/audits/2026-09-09-genesis-bootstrap/artifact-manifest.json](../../omerta-contracts/audits/2026-09-09-genesis-bootstrap/artifact-manifest.json) | 4,402 | contract-project | 2026-09-09 |
 | [reference-prototype-v24.jsx](../../reference-prototype-v24.jsx) | 4,235 | artifact | 2026-08-11 |
-| [test/docs.js](../../test/docs.js) | 4,204 | test-suite | 2026-09-06 |
-| [test/gates.js](../../test/gates.js) | 3,926 | test-suite | 2026-09-07 |
+| [test/docs.js](../../test/docs.js) | 4,204 | test-suite | 2026-09-09 |
+| [test/gates.js](../../test/gates.js) | 3,926 | test-suite | 2026-09-09 |
 | [omerta-contracts/test/AcquisitionConstellationTask3B.t.sol](../../omerta-contracts/test/AcquisitionConstellationTask3B.t.sol) | 3,743 | contract-test | 2026-08-28 |
-| [src/server.js](../../src/server.js) | 3,578 | backend-module | 2026-09-06 |
+| [src/server.js](../../src/server.js) | 3,578 | backend-module | 2026-09-09 |
 | [test/phase2-review-regressions.js](../../test/phase2-review-regressions.js) | 3,440 | test-suite | 2026-09-07 |
 | [package-lock.json](../../package-lock.json) | 3,260 | package-config | 2026-09-07 |
-| [omerta-contracts/test/AcquisitionVaultOperator.t.sol](../../omerta-contracts/test/AcquisitionVaultOperator.t.sol) | 3,236 | contract-test | 2026-08-29 |
+| [omerta-contracts/test/AcquisitionVaultOperator.t.sol](../../omerta-contracts/test/AcquisitionVaultOperator.t.sol) | 3,236 | contract-test | 2026-09-09 |
 
 ## Media estate
 

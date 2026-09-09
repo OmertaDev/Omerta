@@ -87,9 +87,9 @@ touches mainnet** until §0 is satisfied.
    caps, RT#8's two-step ownership, the four-way sell tax — so re-measure rather than quoting this
    figure, and if the two disagree the tree is right and this line is stale.)*
 
-   **In the batch — 37 contracts + 1 interface, every contract carrying tests:**
+   **In the batch — 38 contracts + 1 interface, every contract carrying tests:**
 
-   This is the current 38-file top-level Solidity inventory. `IOmrOracle` is the standalone
+   This is the current 39-file top-level Solidity inventory. `IOmrOracle` is the standalone
    top-level consumer interface; the remaining top-level files are
    contract-bearing or abstract contract sources. Compatibility and module interfaces under
    `src/interfaces/` remain in source/audit scope even though they are not independently deployable.
@@ -105,6 +105,7 @@ touches mainnet** until §0 is satisfied.
    | the $OMR rail | `OMR`, `VoucherClaim`, `GearVault`, `OMRStaking`, `OmertaFees` | the mint path (rule 2) and the two supply caps that survive a minter swap; **plus `OmertaFees.payForPackage`** — the on-chain Store leg: fail-closed on an unpriced sku, exact-value, forwards dev/Vig, custodies nothing |
    | issuance | `OmertaBond`, `OmrTwapOracle`, `OmrV4TwapOracle`, `GenesisOracle`, `IOmrOracle` | the four walls, specifically that 3 and 4 COMPOSE rather than substitute, and that both V2 arithmetic-price and v4 geometric-tick windows fail closed on early/late/stale input |
    | the market | `OmertaHook`, `GenesisProceedsSplitter` (including the top-level `IInitializerHook` and `IOmrV4ObservationSource` compatibility surfaces) | the singleton-LBP initialization gate, the `afterSwap` delta, exact tick-time accumulation without an external callback inside settlement, the absence of a pause, and the success-vs-failure proceeds branch bound to canonical PoolManager state |
+   | Genesis participation | `GenesisWalletCap` | 1 ETH cumulative commitment per wallet; only the controller-bound CCA may validate; caller equals recipient; rejected bids roll back and refunds never replenish allowance; no NFT or identity gate |
    | THE BANK | `Denari` (the DNR debt token, né `nUSD`), `CollateralEscrow`, `Alchemist`, `Transmuter`, `FlashGuard` | that no oracle sits on the borrow path and no `liquidate()` exists anywhere — the design's central claim, and the class that cost Inverse ~$21M twice |
    | Street Deeds | `StreetDeed` | the EIP-712 self-mint (name↔tokenId bijection, the daily cap, replay/deadline; NO owner mint), that `redeem` (the burn-to-re-import) is never pausable so a paused contract can never trap a holder's asset, and the **default-ON per-token transfer lock** (added 2026-08-14, the drain-before-sale mitigation): mint locks, every transfer arrival RE-LOCKS, only the OWNER may unlock (an approved operator deliberately cannot — operator-unlock IS the drain vector), `redeem` is never blocked by it, and the unlock emits `TransferLockSet` — the public "listing" act a buyer anchors TBA-content checks on |
    | the identity NFT | `DynastyNFT` | the EIP-712 self-mint (NO owner mint, nonce/deadline/daily-cap walls), that it gates **NOTHING on `balanceOf`** (the entitlement is account-bound off-chain — the token is a transferable trophy), and the uncapped sequential supply + EIP-2981 royalty |
