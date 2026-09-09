@@ -1,0 +1,518 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-08T01:53:05.197Z",
+  "reviewType": "agent-led-scoped-security-review",
+  "reviewComplete": true,
+  "publicReleaseReady": false,
+  "scope": [
+    "OmertaFees",
+    "DynastyNFT",
+    "character fee, voucher, indexing and portrait integration"
+  ],
+  "sourceCommit": "e1d0e8476b6f1ebf590b13bd07c072d9d9d33aee",
+  "workingTree": "dirty; includes earlier invite work and character preparation; per-file hashes are authoritative",
+  "publicTransactionsBroadcast": 0,
+  "productionStateChanged": false,
+  "report": {
+    "path": "omerta-contracts/audits/character-nft-2026-09-08.md",
+    "sha256": "1bb86236a8bb85161989a703df074b2b8cc2389a91e5d2e4596cc3bb7b745d8f",
+    "bytes": 12057
+  },
+  "policy": {
+    "path": "omerta-contracts/SECURITY-REVIEW-POLICY.md",
+    "sha256": "106336d2dbd0993e90a53e9de3f2e5aedb772605dff6398bffc82667b42b5e6d",
+    "bytes": 7323
+  },
+  "methods": [
+    {
+      "repository": "https://github.com/pashov/skills",
+      "commit": "c577eb7799c349de0acb187ba00ca98e14e436fd"
+    },
+    {
+      "repository": "https://github.com/PlamenTSV/plamen",
+      "commit": "795962b96e254f2e423a2635fe7f8cb8ea1e6d69"
+    },
+    {
+      "repository": "https://github.com/trailofbits/skills",
+      "commit": "d3323cefbcf645678b8dc481de204b02ad3d02dc"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "omerta-contracts/foundry.toml",
+      "sha256": "59a2ce4dd4be2e51d7b63b5c8192b40604bd471047c60ae7492a9d8413bef75c",
+      "bytes": 3139
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/access/Ownable.sol",
+      "sha256": "38578bd71c0a909840e67202db527cc6b4e6b437e0f39f0c909da32c1e30cb81",
+      "bytes": 3102
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol",
+      "sha256": "c75345d7b9feef17ae29f2a800ca2f65f8021cf80436a41d6ec00f57f5180f36",
+      "bytes": 2476
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/interfaces/IERC2981.sol",
+      "sha256": "ea5f52ef580b9cb7c97091fd8164ec3ff211f5bdec359d18191eac4fcf7fcf76",
+      "bytes": 1114
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/interfaces/IERC5267.sol",
+      "sha256": "f89772d2d4fafcbef8b73bb10ee9a3373edec2eedb2f1b302320915b351dc3d1",
+      "bytes": 740
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/interfaces/draft-IERC6093.sol",
+      "sha256": "fa7068f56bc180571a6095be6eaef06d51dbe81e30cb128397d993c9599ecc30",
+      "bytes": 6540
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/package.json",
+      "sha256": "3c1a597cb911ffc2988c038d83ee93e1f8bf0ad17769d6bb0368d08bc350d773",
+      "bytes": 786
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/token/ERC721/ERC721.sol",
+      "sha256": "ef8e2398c78851bd2ec12bc48d923058c557889d5a3d5ee4919c17ff0fb3517e",
+      "bytes": 16201
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol",
+      "sha256": "ff0eb9902bf0ac099205615fac90eacf34fae637571b05aab3ea35dea53d5f17",
+      "bytes": 4929
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/token/ERC721/IERC721Receiver.sol",
+      "sha256": "eafee3ffdc7cb2fba4bf6bd16fb28f8e5b4679742e81c2ad42a1b1df5c179feb",
+      "bytes": 997
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/token/ERC721/extensions/IERC721Metadata.sol",
+      "sha256": "33223782ea652dca413702ce92f9f59d91d758a035065b24bbedb7dc60c63a78",
+      "bytes": 792
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/token/ERC721/utils/ERC721Utils.sol",
+      "sha256": "b48e95db8c85866c1d88af8e82f346e0d22d24b5aac5b936079d958c72e13b9f",
+      "bytes": 1923
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/token/common/ERC2981.sol",
+      "sha256": "bac8f7ccae3c561a105a18cd1600ade43bb8856f9b7c9e0acc98d950af9ffa81",
+      "bytes": 5323
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/utils/Bytes.sol",
+      "sha256": "3ce9120a27934c75a074cb785d3a88868069ef6529dbe4dc6b845af0836f3c70",
+      "bytes": 14737
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/utils/Context.sol",
+      "sha256": "847fda5460fee70f56f4200f59b82ae622bb03c79c77e67af010e31b7e2cc5b6",
+      "bytes": 963
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/utils/Panic.sol",
+      "sha256": "270fc8401c1a13fae6a7a4a2dd6e381b95d658896701e51f0d3e2688acab3dec",
+      "bytes": 1973
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/utils/Pausable.sol",
+      "sha256": "2c26130748f06552c65ca74d89eaf78c9324a3cbac3ba6fdbadaa8beba0cb0b4",
+      "bytes": 2706
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol",
+      "sha256": "94e409e8f6e3184236651a6cc2b1a6a3ea0f0a25eb85b71e524ad5791bb2fbc8",
+      "bytes": 4766
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/utils/ShortStrings.sol",
+      "sha256": "1cfa08d3c551e9ec0b9cd249b09987f04e7e90f352e1a5e3b0d6a3bc426b3de7",
+      "bytes": 4310
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol",
+      "sha256": "75704538dcb223239280c6726d9a31cf769a7816718517c997fc7d63bdb70778",
+      "bytes": 4182
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/utils/Strings.sol",
+      "sha256": "e318709bbe73a7831d64c1351e8bdc43780b245f25191234e361e6ab9b98c67b",
+      "bytes": 21538
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/utils/cryptography/ECDSA.sol",
+      "sha256": "ba7c2d314fcd61c9783e0b3f0c664d004b76b408fda6a84edc8267d17c5012d6",
+      "bytes": 12152
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/utils/cryptography/EIP712.sol",
+      "sha256": "2845caaaf70757b6cce612ae4ffbec2c382cb3d1cb9765c98fa649c0f5f1c794",
+      "bytes": 6695
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/utils/cryptography/MessageHashUtils.sol",
+      "sha256": "538a0d7c4f0ec5a8562f58561890f7b49d14580674ecf58bc5f505b45c73df65",
+      "bytes": 8631
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/utils/introspection/ERC165.sol",
+      "sha256": "61a2b12c96857aaa35f48aeda67a4281637a42494c0b3795be0ae976aa7b3793",
+      "bytes": 879
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
+      "sha256": "9055c2994b37dea1a41b7b7926dcb510f05dbe2540b0aafc5fbee9558fffd0ca",
+      "bytes": 871
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/utils/math/Math.sol",
+      "sha256": "bdfdbe133991c0c78042957ff5cd97167926fcaf6d15664f3835a076cb066457",
+      "bytes": 32664
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/utils/math/SafeCast.sol",
+      "sha256": "5779bc848bde39f1ad7bc02b4f708a0040888e0083b1a33f119cd94639350134",
+      "bytes": 34940
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/utils/math/SignedMath.sol",
+      "sha256": "1ed50b1056af886752f0fb48a0165d381e69bb4a4b18b893b066dc144a7e08d7",
+      "bytes": 2613
+    },
+    {
+      "path": "omerta-contracts/script/Deploy-Mainnet.Utilities.ps1",
+      "sha256": "49133ee22bf696bb5051c9d801e5778b3354b3287478d762b0203145750d9d65",
+      "bytes": 3843
+    },
+    {
+      "path": "omerta-contracts/script/Deploy.s.sol",
+      "sha256": "6eb729512ecfe803b509e9ed5318a854ed19a87e911c433350b3d2eab3844540",
+      "bytes": 9768
+    },
+    {
+      "path": "omerta-contracts/src/DynastyNFT.sol",
+      "sha256": "c23e6a910caae32b3ac0894861674cdafa91c5092f8191384e6215fb3688deb6",
+      "bytes": 10379
+    },
+    {
+      "path": "omerta-contracts/src/OmertaFees.sol",
+      "sha256": "7d17fcaa466a6eec92f5824e7d6eef0142090fd6c42465d60e1b5191f861ec5d",
+      "bytes": 9929
+    },
+    {
+      "path": "omerta-contracts/test/CharacterLaunchAudit.t.sol",
+      "sha256": "8c378b656eb2a262e83fcf9e1bb5510932bc319e1cece4b150ff9cad1029397e",
+      "bytes": 43628
+    },
+    {
+      "path": "omerta-contracts/test/DynastyNFT.t.sol",
+      "sha256": "2fa97b683d1727013fcdd71512474b702ff520adf2cb11d2b9cbf4a9be056ec0",
+      "bytes": 11147
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+      "bytes": 119402
+    },
+    {
+      "path": "package.json",
+      "sha256": "81e88bc64693f3588803f5ef1ba2f775c2609081d7881805dce2a12c7aee8005",
+      "bytes": 11740
+    },
+    {
+      "path": "public/index.html",
+      "sha256": "9e3c84c3199e5f3bdf09d725bc0ac885fcab15002bfe5659e39a5e9e8ff31801",
+      "bytes": 1269204
+    },
+    {
+      "path": "schema.sql",
+      "sha256": "ac0da8343224ef4598aedb135e51263975f15c7dbe44d2e0fb7ec6c2b5460e58",
+      "bytes": 416330
+    },
+    {
+      "path": "src/auth.js",
+      "sha256": "7359ba97aa09c817cbe4838b73fa776764a6c63373bedd5dba46eee0a0342832",
+      "bytes": 20370
+    },
+    {
+      "path": "src/chain.js",
+      "sha256": "9ff587881e4398053c5088a357a022e7cd9064d01303ae6d0e404dea1c3fcf23",
+      "bytes": 127434
+    },
+    {
+      "path": "src/db.js",
+      "sha256": "2ef8926323ad266ef685856ebf7192f8005cc733eb104d5ddabf2bdc14fe1d52",
+      "bytes": 61568
+    },
+    {
+      "path": "src/fees.js",
+      "sha256": "dc81d25ed583bddec17c38ca66b362af162a83a483552da8ab79b24e78227bf9",
+      "bytes": 16396
+    },
+    {
+      "path": "src/portrait.js",
+      "sha256": "e57d4a72fcb67d5dfd591dff39d7c4e603a5ffc8ddd158950ca997f681d1815b",
+      "bytes": 23579
+    },
+    {
+      "path": "src/preflight.js",
+      "sha256": "cac48993f722a72e4af7ea946ad69fb91b6c5a395424b516f65810ef0666a90a",
+      "bytes": 35195
+    },
+    {
+      "path": "src/server.js",
+      "sha256": "8eb576aaad858677caf500baba744f971ef9e83de66dc2705b4a7a8623bd6dc2",
+      "bytes": 276566
+    },
+    {
+      "path": "src/vig.js",
+      "sha256": "d27948bd1ae3f22fcb7beea1c22081e41aec17f96e6d16f4aad7e010a0394a8d",
+      "bytes": 29203
+    },
+    {
+      "path": "src/watcher.js",
+      "sha256": "f8b2c7e15b3c0cec63ee85851a09319662c252e3ffb4830eb5aa47e822bf9fef",
+      "bytes": 33602
+    },
+    {
+      "path": "src/worker.js",
+      "sha256": "7d3abb12408c93816a96dbf8dcbcd06f58854413090a85622e26716db98ec126",
+      "bytes": 80566
+    },
+    {
+      "path": "test/chain.js",
+      "sha256": "ed347d8d7cebfe1714e450b9a070cd0fc6496073392c0ee0c0852635a09d3c87",
+      "bytes": 77607
+    },
+    {
+      "path": "test/docs.js",
+      "sha256": "457d77b5bff27ad77dcb8b52b9f00e0761db12d15a4c929c6d193712dbff9ab0",
+      "bytes": 316237
+    },
+    {
+      "path": "test/gates.js",
+      "sha256": "fe5fc3a0fe0327246cbac1d2cf0a63fcc7abf24749d42fcfd6778f54b3e623ce",
+      "bytes": 257595
+    },
+    {
+      "path": "test/migrate.js",
+      "sha256": "fa6cf8f3adb9b78aa4919814117de01992b7878e488bd64f149a977d1d779537",
+      "bytes": 72837
+    },
+    {
+      "path": "test/portrait.js",
+      "sha256": "0a1ac76ad97fed32c23139ed059f1b82077ae539e22c3a259f1ceb3a9e7e7d43",
+      "bytes": 13331
+    },
+    {
+      "path": "test/preflight.js",
+      "sha256": "f6ffacbfad4ae8b529bee96eb7f3a744ef4f8a53deef3379d6bb7936cb49f067",
+      "bytes": 24775
+    },
+    {
+      "path": "test/watcher.js",
+      "sha256": "d7d1316befd9a25da67efdf4489167489ca58d08c40212a1ac36689b59e6e7bc",
+      "bytes": 29069
+    },
+    {
+      "path": "tools/character-nft-preflight.js",
+      "sha256": "3a87bf2bdb8dce9a71f97e78fa512ca9f62c03acd83d683f5f78db4ba0a2a2d1",
+      "bytes": 13445
+    },
+    {
+      "path": "tools/character-nft-rehearsal.js",
+      "sha256": "a395e8a9a1d6b2172fc8f5a79c57f2b436d65c03b673b8343a8019c698f3fe05",
+      "bytes": 15244
+    }
+  ],
+  "artifacts": {
+    "OmertaFees": {
+      "path": "omerta-contracts/out/OmertaFees.sol/OmertaFees.json",
+      "sha256": "23b644258ebc6753efc0bbdedbd9c0ee3f74fc68e8d73783cdf5ca3f940d590e",
+      "bytes": 131502,
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "optimizer": {
+        "enabled": true,
+        "runs": 800
+      },
+      "evmVersion": "cancun",
+      "viaIR": false,
+      "bytecodeSha256": "82e22eea6f3dae94f14e64a98d292455b0cf71152cd7f85a5872abb2a2a51421",
+      "deployedBytecodeSha256": "3a0e66e51bf7cc511933c7fa525dfff3c0f7ff43f2ab1187daf46576e02818bb"
+    },
+    "DynastyNFT": {
+      "path": "omerta-contracts/out/DynastyNFT.sol/DynastyNFT.json",
+      "sha256": "19aeff2bdf327bfae83b2aa7b587672f80a458ec89219168b334476c5e07c616",
+      "bytes": 417002,
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "optimizer": {
+        "enabled": true,
+        "runs": 800
+      },
+      "evmVersion": "cancun",
+      "viaIR": false,
+      "bytecodeSha256": "4f576dd2770ccfd2e57c8d176dc3c4a4b05ce0ee39582c55477c0ae9af711e97",
+      "deployedBytecodeSha256": "8d81978b12171d7d0a139de387c8eb53e83aa13eb1ea8bd7173f9dd8f1b92cf9"
+    }
+  },
+  "solidityTests": {
+    "path": "output/character-audit/forge-final.log",
+    "sha256": "df5d20ef8a7a96a63375e5d4857d0f028bfcab34f433529514475ad9921cf1a0",
+    "bytes": 7962,
+    "foundry": "1.7.1",
+    "passed": 32,
+    "failed": 0,
+    "skipped": 0,
+    "exampleAndFuzzTests": 30,
+    "fuzzProperties": 3,
+    "fuzzRunsEach": 512,
+    "invariants": 2,
+    "invariantRunsEach": 256,
+    "depth": 128,
+    "handlerCalls": 65536,
+    "handlerReverts": 0,
+    "discards": 0,
+    "failOnRevert": true,
+    "seed": "0x4f4d455254412d4155444954",
+    "command": "forge test --use ./cache/verify/solc-0.8.26.exe --match-path test/CharacterLaunchAudit.t.sol --fuzz-seed 0x4f4d455254412d4155444954 -vv",
+    "env": {
+      "FOUNDRY_INVARIANT_RUNS": "256",
+      "FOUNDRY_INVARIANT_DEPTH": "128",
+      "FOUNDRY_INVARIANT_FAIL_ON_REVERT": "true"
+    }
+  },
+  "integration": {
+    "path": "output/character-nft/rehearsal.json",
+    "sha256": "57c1f90a18434091ae715a4b7edd0d069b1b2948f57436469a614df8c1d47a39",
+    "bytes": 2401,
+    "status": "passed",
+    "checks": [
+      "Current fee and NFT Solidity sources compile",
+      "Only OmertaFees and DynastyNFT deployed on the fresh local chain",
+      "Two fresh invited accounts created and wallets proved through SIWE",
+      "Unmade accounts cannot mint the NFT",
+      "Exact 0.01 local ETH fee paid and forwarded 75% / 25%; wrong amount rejected",
+      "Vig revenue accounting matches the actual on-chain fee split",
+      "Real fee log credited once and account mint consumed exactly one credit",
+      "NFT voucher cannot be redirected to another wallet",
+      "Backend EIP-712 voucher claimed as NFT #1; duplicate issue and on-chain replay rejected",
+      "Mint watcher binds NFT to voucher account, marks claimed, and serves metadata",
+      "Transfer freezes portrait; seller keeps account entitlement, buyer receives trophy only",
+      "Token withdrawal and OMR contract configuration remain absent"
+    ],
+    "chainId": 31337,
+    "database": "disposable pg-mem",
+    "publicTransactions": 0
+  },
+  "otherSuccessfulChecks": [
+    "node test/chain.js",
+    "node test/watcher.js",
+    "node test/portrait.js",
+    "node test/migrate.js",
+    "node test/preflight.js",
+    "node test/gates.js",
+    "node test/docs.js",
+    "git diff --check"
+  ],
+  "staticAnalysis": {
+    "tool": "Slither",
+    "version": "0.11.6",
+    "detectorsPerTarget": 102,
+    "results": {
+      "fees": {
+        "path": "output/character-audit/slither-fees.json",
+        "sha256": "a508d60e253fec3ac9d7849882e0ab0cf3c1e57f98be473b934480d6193faccf",
+        "bytes": 164945,
+        "successfulToolExecution": true,
+        "diagnosticCount": 16,
+        "groups": {
+          "missing-zero-check": 1,
+          "assembly": 9,
+          "pragma": 1,
+          "dead-code": 2,
+          "solc-version": 1,
+          "low-level-calls": 2
+        }
+      },
+      "dynasty": {
+        "path": "output/character-audit/slither-dynasty.json",
+        "sha256": "ed946f8953a50e430d3068809472ee574bea5b476f14040f96219b4026b2c3ba",
+        "bytes": 2381684,
+        "successfulToolExecution": true,
+        "diagnosticCount": 83,
+        "groups": {
+          "incorrect-exp": 1,
+          "divide-before-multiply": 9,
+          "missing-zero-check": 1,
+          "timestamp": 1,
+          "assembly": 43,
+          "pragma": 1,
+          "dead-code": 11,
+          "solc-version": 5,
+          "naming-convention": 2,
+          "too-many-digits": 7,
+          "unindexed-event-address": 2
+        }
+      }
+    },
+    "erc721Conformance": {
+      "path": "output/character-audit/erc721.log",
+      "sha256": "41cf265f1d71a0ab459428244499cb0a4b38ec1da6d522e2c6579983a7b06529",
+      "bytes": 2525,
+      "passed": true
+    }
+  },
+  "supportingEvidence": [
+    {
+      "path": "output/character-audit/contracts.md",
+      "sha256": "6a55aece3c8fcd6d3b57a564cf5ca420631b1945eceadc8a5aace3cc3aca3a63",
+      "bytes": 27753
+    },
+    {
+      "path": "output/character-audit/periphery.md",
+      "sha256": "50fce967ce8cd3dd5fb36ea840c2c3f76390657f285dfa471bcc153b71792c70",
+      "bytes": 17992
+    },
+    {
+      "path": "output/character-audit/rehearsal-split-before.json",
+      "sha256": "3c181d622351e9c5ce2d5566a93580a3e5673d33db1d80a70464ed3553b39cdb",
+      "bytes": 1912
+    },
+    {
+      "path": "output/character-audit/slither-fees-structure.json",
+      "sha256": "20ee1675e330e9c11886f4b1789d3701ee7cc5ece7597828eebe39a7ce37ba07",
+      "bytes": 466707
+    },
+    {
+      "path": "output/character-audit/slither-dynasty-structure.json",
+      "sha256": "3e2250c309a3087463548c7cebe006eb0cabee286c16b39e8c27db895f0b65f1",
+      "bytes": 7081952
+    }
+  ],
+  "fixedFindingIds": [
+    "C-01",
+    "C-02",
+    "C-03",
+    "C-04"
+  ],
+  "clarifiedLimitationIds": [
+    "C-05"
+  ],
+  "openFindingIds": [
+    "C-06",
+    "C-07",
+    "C-08",
+    "C-09"
+  ],
+  "unverified": [
+    "PostgreSQL concurrency and restart persistence",
+    "browser wallet checkout and recovery",
+    "public RPC finality and reorg recovery",
+    "testnet metadata routing",
+    "final production recipients and parameters"
+  ]
+}

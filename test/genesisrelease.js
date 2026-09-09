@@ -1,12 +1,14 @@
 import assert from 'node:assert/strict';
-import { keccak256 } from 'viem';
-import { buildGenesisCadenceEvidence } from '../src/genesiscadence.js';
+import fs from 'node:fs';
+import { encodeFunctionData, keccak256 } from 'viem';
+import { buildGenesisCadenceEvidence, canonicalJson, sha256Hex } from '../src/genesiscadence.js';
 import {
   GENESIS_RELEASE_ARTIFACTS,
   GENESIS_RELEASE_SCOPE_FILES,
+  GENESIS_AUTOMATED_AUDIT_SCOPE,
   buildGenesisReleaseManifest,
 } from '../src/genesisrelease.js';
-import { GENESIS_DISTRIBUTION_OMR, buildGenesisLaunchArtifacts } from '../src/genesiscca.js';
+import { GENESIS_DISTRIBUTION_OMR, buildGenesisLaunchArtifacts, canonicalGenesisPoolId } from '../src/genesiscca.js';
 
 const sha = (byte) => byte.repeat(64);
 const hex32 = (byte) => `0x${byte.repeat(64)}`;
@@ -136,9 +138,9 @@ const context = {
     files: GENESIS_RELEASE_SCOPE_FILES.map((file, index) => ({ path: file, sha256: sha(String(index % 10)) })),
     artifacts: GENESIS_RELEASE_ARTIFACTS.map((contract, index) => ({
       contract,
-      artifactSha256: sha(String(index + 1)),
-      creationBytecodeKeccak256: hex32(String(index + 3)),
-      runtimeBytecodeKeccak256: hex32(String(index + 6)),
+      artifactSha256: sha(((index + 1) % 16).toString(16)),
+      creationBytecodeKeccak256: hex32(((index + 3) % 16).toString(16)),
+      runtimeBytecodeKeccak256: hex32(((index + 6) % 16).toString(16)),
     })),
   },
 };
@@ -183,5 +185,107 @@ assert.throws(() => buildGenesisCadenceEvidence({
   ...cadence,
   samples: cadence.samples.map((sample) => ({ ...sample, finalizedBlock: null })),
 }), /finalizedBlock/);
+
+for (const file of GENESIS_RELEASE_SCOPE_FILES) assert(fs.existsSync(file), `frozen source exists: ${file}`);
+for (const file of ['src/genesiskeeper.js', 'src/keepertransactions.js', 'src/liquiditystate.js',
+  'src/liquidityqueue.js', 'tools/liquidity-deployment-plan.js', 'omerta-contracts/src/GenesisLifecycleController.sol']) {
+  assert(GENESIS_RELEASE_SCOPE_FILES.includes(file));
+}
+for (const name of ['GenesisLifecycleController', 'ProtocolLiquidityVault', 'LiquidityBuybackExecutor', 'KeeperGasVault']) {
+  assert(GENESIS_RELEASE_ARTIFACTS.includes(name));
+}
+const autoInput = structuredClone(input);
+Object.assign(autoInput.launch, { launchMode: 'automated',
+  lifecycleController: '0x8888888888888888888888888888888888888888',
+  oracle: '0x9999999999999999999999999999999999999999',
+  liquidityKeeper: '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+  runtimeCodeHashes: Object.fromEntries(['token', 'hook', 'proceedsSplitter', 'lifecycleController',
+    'positionRecipient', 'oracle'].map((name) => [name, hex32('a')])),
+});
+Object.assign(autoInput.audit.scope, Object.fromEntries(GENESIS_AUTOMATED_AUDIT_SCOPE.map((name) => [name, true])));
+Object.assign(autoInput.forkRehearsal, Object.fromEntries(['prePoolOracleBootstrap', 'controllerBoundBeforeStart',
+  'exactFactoryPrediction', 'migrationToProtocolVault', 'oracleFullWindowRequired', 'keeperReceiptAccounting']
+  .map((name) => [name, true])));
+autoInput.governance.lpCustody.kind = 'protocol_liquidity_vault';
+const autoLaunch = buildGenesisLaunchArtifacts(autoInput.launch);
+const autoLaunchDigest = autoLaunch.calldataDigests.launchKeccak256;
+autoInput.safeCeremony.preflight.launchCalldataKeccak256 = autoLaunchDigest;
+autoInput.safeCeremony.simulation.launchCalldataKeccak256 = autoLaunchDigest;
+autoInput.safeCeremony.preflight.blockNumberish = '50500000';
+autoInput.safeCeremony.simulation.blockNumberish = '50600000';
+// L2 block numbers can already exceed the auction's separate ArbSys clock.
+autoInput.safeCeremony.preflight.blockNumber = '90000000';
+autoInput.safeCeremony.simulation.blockNumber = '90000001';
+for (const decoder of autoInput.safeCeremony.decoders) decoder.launchCalldataKeccak256 = autoLaunchDigest;
+autoInput.safeCeremony.auctionBinding = { status: 'pending_creation', postCreationVerificationRequired: true };
+const autoManifest = buildGenesisReleaseManifest(autoInput, context);
+assert.equal(autoManifest.status, 'ready_for_safe_launch_requires_auction_binding');
+assert.equal(autoManifest.auctionBinding.transaction, null, 'no guessed auction produces calldata before creation');
+assert.equal(autoManifest.launch.participants.lifecycleController, autoInput.launch.lifecycleController);
+assert.equal(autoManifest.governance.lpCustody.custodyType, 'protocol_liquidity_vault');
+const rejectAutomatic = (modify, pattern) => {
+  const candidate = structuredClone(autoInput);
+  const candidateContext = structuredClone(context);
+  modify(candidate, candidateContext);
+  assert.throws(() => buildGenesisReleaseManifest(candidate, candidateContext), pattern);
+};
+rejectAutomatic((review) => { delete review.safeCeremony.auctionBinding; }, /auctionBinding.*required/);
+rejectAutomatic((review) => { review.safeCeremony.auctionBinding.postCreationVerificationRequired = false; }, /explicitly true/);
+rejectAutomatic((review) => { review.governance.lpCustody.kind = 'audited_lock'; }, /protocol_liquidity_vault/);
+rejectAutomatic((review) => { delete review.safeCeremony.preflight.blockNumberish; }, /blockNumberish/);
+rejectAutomatic((review) => { review.safeCeremony.simulation.blockNumberish = autoInput.launch.startBlock; }, /precede startBlock/);
+for (const name of GENESIS_AUTOMATED_AUDIT_SCOPE) {
+  rejectAutomatic((review) => { delete review.audit.scope[name]; }, new RegExp(`audit.scope.${name}`));
+}
+rejectAutomatic((review) => { review.forkRehearsal.controllerBoundBeforeStart = false; }, /controllerBoundBeforeStart/);
+rejectAutomatic((_review, inventory) => {
+  inventory.repository.files = inventory.repository.files.filter((entry) => entry.path !== 'src/genesiskeeper.js');
+}, /missing src\/genesiskeeper/);
+rejectAutomatic((_review, inventory) => {
+  inventory.repository.artifacts = inventory.repository.artifacts.filter((entry) => entry.contract !== 'ProtocolLiquidityVault');
+}, /missing ProtocolLiquidityVault/);
+
+const auction = '0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb';
+const data = encodeFunctionData({ abi: [{ type: 'function', name: 'bindAuction', stateMutability: 'nonpayable',
+  inputs: [{ name: 'auction', type: 'address' }], outputs: [] }], functionName: 'bindAuction', args: [auction] });
+const checkedAtTimestamp = BigInt(Math.floor(Date.parse(context.createdAt) / 1000));
+autoInput.safeCeremony.auctionBinding = { status: 'ready_for_auction_binding', chainId: 4663,
+  transaction: { from: launch.launchOwner, to: autoInput.launch.lifecycleController, value: '0', data },
+  auction, auctionRuntimeCodeHash: hex32('d'), checkedAtBlock: '90000002', checkedAtBlockHash: hex32('e'),
+  checkedAtTimestamp, currentBlock: '50700000', beforeBlock: launch.startBlock,
+  launchCalldataKeccak256: autoLaunchDigest, bindingCalldataKeccak256: keccak256(data),
+  launchArtifactsSha256: sha256Hex(canonicalJson(autoLaunch)),
+  factoryPredictionVerified: true, simulated: true,
+  readiness: { canonicalPoolId: canonicalGenesisPoolId(autoInput.launch),
+    launchArtifactsSha256: sha256Hex(canonicalJson(autoLaunch)),
+    runtimeCodeHashes: { ...autoInput.launch.runtimeCodeHashes }, baselineInitialized: false,
+    oracleQuote: { price: 0n, updatedAt: 0n }, checkedAtBlock: '90000002', checkedAtBlockHash: hex32('e'),
+    checkedAtTimestamp, currentBlock: '50700000' },
+};
+const readyBinding = buildGenesisReleaseManifest(autoInput, context);
+assert.equal(readyBinding.status, 'ready_for_auction_binding');
+assert.equal(readyBinding.auctionBinding.submitted, false, 'a simulated unsigned payload is never claimed as already bound');
+assert.equal(readyBinding.auctionBinding.transaction.data, data);
+for (const [field, value] of [['factoryPredictionVerified', false], ['simulated', false],
+  ['beforeBlock', '51000001'], ['currentBlock', launch.startBlock], ['bindingCalldataKeccak256', hex32('f')],
+  ['launchCalldataKeccak256', hex32('f')], ['checkedAtTimestamp', checkedAtTimestamp - 121n]]) {
+  rejectAutomatic((review) => { review.safeCeremony.auctionBinding[field] = value; },
+    /explicitly true|startBlock|calldata|stale/);
+}
+rejectAutomatic((review) => { review.safeCeremony.auctionBinding.transaction.to = launch.token; }, /exact zero-value/);
+rejectAutomatic((review) => { review.safeCeremony.auctionBinding.transaction.value = '1'; }, /exact zero-value/);
+rejectAutomatic((review) => { review.safeCeremony.auctionBinding.transaction.data = '0x'; }, /exact zero-value/);
+rejectAutomatic((review) => { review.safeCeremony.auctionBinding.readiness.baselineInitialized = true; }, /pre-pool oracle/);
+rejectAutomatic((review) => { review.safeCeremony.auctionBinding.readiness.checkedAtBlockHash = hex32('f'); }, /same canonical snapshot/);
+rejectAutomatic((review) => { review.safeCeremony.auctionBinding.readiness.runtimeCodeHashes.oracle = hex32('f'); }, /runtimeCodeHashes.oracle/);
+for (const name of ['oracle', 'liquidityKeeper']) {
+  rejectAutomatic((review) => {
+    review.launch[name] = '0xcccccccccccccccccccccccccccccccccccccccc';
+    assert.equal(buildGenesisLaunchArtifacts(review.launch).calldataDigests.launchKeccak256, autoLaunchDigest,
+      'these off-calldata identities require the separate full-artifact commitment');
+  }, /full launch artifact/);
+}
+console.log(`✅ Automated Genesis release: ${GENESIS_RELEASE_SCOPE_FILES.length} source files and ${GENESIS_RELEASE_ARTIFACTS.length} artifacts,
+  mandatory automated audit/rehearsal scope, pinned POL custody, distinct auction clocks, and pending/verified binding stages.`);
 
 console.log('✅ Genesis production release gate passed — fresh chain cadence, source/bytecode freeze, audit scope, governance custody, fork evidence, and independent Safe ceremony all fail closed and bind exact unsigned calldata.');

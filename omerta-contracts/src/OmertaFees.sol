@@ -3,6 +3,7 @@ pragma solidity 0.8.26;
 
 import {Ownable2Step, Ownable} from "@openzeppelin/contracts/access/Ownable2Step.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import {IFeeRevenueRouter} from "./FeeRevenueRouter.sol";
 
 /// @title OmertaFees — the inbound entry/revive fee rail (§11).
 /// @notice Players pay two flat native-currency (ETH) fees here:
@@ -10,20 +11,27 @@ import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol
 ///             permanent, withdrawal-eligible one), and
 ///           • the RESPAWN fee (pre-paid revive insurance: a killing blow is
 ///             absorbed instead of permadeath).
-///         Each payment forwards the ETH STRAIGHT to the developer wallet in the
-///         same transaction — this contract never custodies funds — and emits an
+///         Character creation forwards 100% to the developer wallet. Other fees
+///         use the configured non-mint router, or retain the legacy developer/Vig split until
+///         a router is configured. Each payment forwards ETH in
+///         the same transaction — this contract never custodies funds — and emits an
 ///         event carrying a monotonic nonce. The off-chain game server watches
 ///         those events and credits the paying wallet its in-game entitlement.
 ///         This contract mints nothing and holds nothing; it is a metered tollbooth.
 contract OmertaFees is Ownable2Step, ReentrancyGuard {
-    /// @notice Where the DEV share of every fee is forwarded. The Safe/owner can rotate it.
+    /// @notice Where all mint fees and the DEV share of other fees are forwarded.
+    ///         Deployment wires this to DEV_WALLET; the Safe/owner can rotate it.
     address payable public feeRecipient;
+    /// @notice Character creation always pays 100% to DEV, independently of vigBps.
+    ///         This getter identifies the mint policy for deployment and backend checks.
+    uint256 public constant mintDevBps = 10000;
     /// @notice Where the VIG share is forwarded (the Phase-2 redistribution wallet, a Safe). Owner
-    ///         can rotate it. The backend's src/vig.js MUST book revenue with VIG_BPS == `vigBps`.
+    ///         can rotate it. Backend non-mint revenue MUST use VIG_BPS == `vigBps`.
     address payable public vigRecipient;
-    /// @notice The Vig's share of every fee, in basis points (0–10000). IMMUTABLE — set once at
-    ///         deploy in lockstep with the backend's VIG_BPS so on-chain and off-chain never drift
-    ///         (an owner-settable ratio would let the two diverge; 0 = no split, 100% to dev).
+    /// @notice The Vig's legacy share of respawn, reroll and package fees, in basis points (0–10000).
+    ///         IMMUTABLE — set at deploy in lockstep with backend VIG_BPS. Mint fees are excluded.
+    ///         The optional four-way router requires 2500. Without a router, 0 = all to DEV,
+    ///         10000 = all non-mint fees to Vig.
     uint256 public immutable vigBps;
     /// @notice Flat fees, in wei. Owner-settable (launch tuning); enforced exactly.
     uint256 public mintFee;
@@ -34,13 +42,17 @@ contract OmertaFees is Ownable2Step, ReentrancyGuard {
     uint256 public rerollFee;
     /// @notice The on-chain STORE paywall: the exact price (in wei) of each package SKU. Owner-settable and
     ///         FAIL-CLOSED — a sku with price 0 is UNBUYABLE (an unset/retired sku reverts), so a player can
-    ///         never underpay and an off-chain-retired package cannot be purchased on-chain. The four-way Store
-    ///         earmark (founder/buyback/rwa/community) is a BACKEND concern computed from the gross `amount`;
-    ///         on-chain this splits dev/vig exactly like the other fees and forwards, custodying nothing.
+    ///         never underpay and an off-chain-retired package cannot be purchased on-chain. It follows
+    ///         the same optional non-mint router as respawn/reroll. Without a router, only DEV/Vig
+    ///         receive on-chain transfers and other revenue allocations remain backend earmarks.
     mapping(uint256 => uint256) public packagePrice; // sku => wei (0 = not for sale)
 
     /// @notice Monotonic id stamped on every payment — the off-chain idempotency key.
     uint256 public nonce;
+    /// @notice Optional fixed four-way policy for respawn, reroll and packages. Zero retains the
+    ///         legacy dev/Vig route. This address has no authority over character creation fees.
+    IFeeRevenueRouter public nonMintRouter;
+    bytes32 public constant nonMintPolicyId = keccak256("OMERTA_NON_MINT_FEE_ROUTER_V1_5000_2500_1000_1500");
 
     event MintFeePaid(address indexed payer, uint256 indexed nonce, uint256 amount);
     event RespawnFeePaid(address indexed payer, uint256 indexed nonce, uint256 amount);
@@ -48,18 +60,24 @@ contract OmertaFees is Ownable2Step, ReentrancyGuard {
     event PackagePaid(address indexed payer, uint256 indexed nonce, uint256 indexed sku, uint256 amount);
     event PackagePriceSet(uint256 indexed sku, uint256 price);
     event RerollFeeChanged(uint256 rerollFee);
-    /// @dev On-chain transparency of each split; the backend does NOT rely on it (it computes the
-    ///      Vig share from the gross `amount` in MintFeePaid/RespawnFeePaid × VIG_BPS == vigBps).
+    /// @dev Mint emits (nonce, gross, 0); legacy non-mint fees use vigBps. Configured routing emits
+    ///      NonMintFeeRouted instead. The gross entitlement events retain their existing ABI.
     event FeeSplit(uint256 indexed nonce, uint256 toDev, uint256 toVig);
     event FeeRecipientChanged(address indexed recipient);
     event VigRecipientChanged(address indexed recipient);
     event FeesChanged(uint256 mintFee, uint256 respawnFee);
+    event NonMintRouterChanged(address indexed router);
+    /// @dev The router's RevenueRouted event states the actual four recipients and exact amounts.
+    ///      FeeSplit is not emitted in this mode: its two-leg semantics would omit two recipients.
+    event NonMintFeeRouted(uint256 indexed nonce, address indexed router, uint256 gross);
 
     error WrongFee(uint256 sent, uint256 required);
     error ForwardFailed();
     error ZeroAddress();
     error ZeroFee();
     error BadBps();
+    error InvalidRouter();
+    error RouterActive();
 
     constructor(
         address owner_,
@@ -85,11 +103,11 @@ contract OmertaFees is Ownable2Step, ReentrancyGuard {
         emit RerollFeeChanged(mintFee_);
     }
 
-    /// @notice Pay the mint fee to make your character permanent. Exact-value only.
+    /// @notice Pay the mint fee to make your character permanent. Exact-value only; 100% to DEV.
     function payMintFee() external payable nonReentrant {
         if (msg.value != mintFee) revert WrongFee(msg.value, mintFee);
         uint256 n = ++nonce; // effect before interaction (CEI + guard)
-        _forward(n, msg.value);
+        _forward(n, msg.value, 10000 - mintDevBps);
         emit MintFeePaid(msg.sender, n, msg.value);
     }
 
@@ -97,7 +115,7 @@ contract OmertaFees is Ownable2Step, ReentrancyGuard {
     function payRespawnFee() external payable nonReentrant {
         if (msg.value != respawnFee) revert WrongFee(msg.value, respawnFee);
         uint256 n = ++nonce;
-        _forward(n, msg.value);
+        _forwardNonMint(n, msg.value);
         emit RespawnFeePaid(msg.sender, n, msg.value);
     }
 
@@ -105,7 +123,7 @@ contract OmertaFees is Ownable2Step, ReentrancyGuard {
     function payRerollFee() external payable nonReentrant {
         if (msg.value != rerollFee) revert WrongFee(msg.value, rerollFee);
         uint256 n = ++nonce;
-        _forward(n, msg.value);
+        _forwardNonMint(n, msg.value);
         emit RerollFeePaid(msg.sender, n, msg.value);
     }
 
@@ -116,17 +134,17 @@ contract OmertaFees is Ownable2Step, ReentrancyGuard {
         if (price == 0) revert ZeroFee(); // sku not for sale (unset/retired) — fail closed
         if (msg.value != price) revert WrongFee(msg.value, price);
         uint256 n = ++nonce; // effect before interaction (CEI + guard)
-        _forward(n, msg.value);
+        _forwardNonMint(n, msg.value);
         emit PackagePaid(msg.sender, n, sku, msg.value);
     }
 
-    /// @dev Splits `amount` into a Vig share (vigBps) forwarded to `vigRecipient` and the remainder
+    /// @dev Splits `amount` into the payment's Vig share forwarded to `vigRecipient` and the remainder
     ///      to `feeRecipient` (dev), in the same tx — the contract still custodies NOTHING and mints
-    ///      NOTHING. INVARIANT: both recipients MUST accept ETH (an EOA or a trivial receiver); if
-    ///      either reverts, the fee call reverts (a recoverable DoS — the Safe rotates the recipient).
+    ///      NOTHING. Each recipient with a nonzero share MUST accept ETH; a rejection reverts the
+    ///      entire payment (a recoverable DoS — the Safe rotates the recipient). Mint never calls Vig.
     ///      CEI + nonReentrant make this safe against a reentrant recipient.
-    function _forward(uint256 n, uint256 amount) private {
-        uint256 toVig = (amount * vigBps) / 10000;
+    function _forward(uint256 n, uint256 amount, uint256 paymentVigBps) private {
+        uint256 toVig = (amount * paymentVigBps) / 10000;
         uint256 toDev = amount - toVig;
         if (toVig > 0) {
             (bool okV,) = vigRecipient.call{value: toVig}("");
@@ -140,7 +158,39 @@ contract OmertaFees is Ownable2Step, ReentrancyGuard {
     }
 
     // ── owner (Safe) admin ──
+    /// @notice Enable a reviewed router or return to the legacy two-way route with address(0).
+    ///         The owner must verify runtime code; self-reported policy getters are binding checks,
+    ///         not proof that arbitrary implementation code follows the advertised policy.
+    function setNonMintRouter(IFeeRevenueRouter router) external onlyOwner nonReentrant {
+        if (address(router) != address(0)) _validateRouter(router);
+        nonMintRouter = router;
+        emit NonMintRouterChanged(address(router));
+    }
+
+    function _forwardNonMint(uint256 n, uint256 amount) private {
+        IFeeRevenueRouter router = nonMintRouter;
+        if (address(router) == address(0)) {
+            _forward(n, amount, vigBps);
+            return;
+        }
+        _validateRouter(router);
+        router.route{value: amount}(n);
+        emit NonMintFeeRouted(n, address(router), amount);
+    }
+
+    function _validateRouter(IFeeRevenueRouter router) private view {
+        if (address(router).code.length == 0 || vigBps != 2500) revert InvalidRouter();
+        if (router.policyId() != nonMintPolicyId || router.feeContract() != address(this)
+            || router.devRecipient() != feeRecipient || router.vigRecipient() != vigRecipient
+            || router.devBps() != 5000 || router.vigBps() != 2500
+            || router.treasuryBps() != 1000 || router.communityBps() != 1500
+            || router.treasuryRecipient() == address(0) || router.communityRecipient() == address(0)) {
+            revert InvalidRouter();
+        }
+    }
+
     function setFeeRecipient(address payable recipient) external onlyOwner {
+        if (address(nonMintRouter) != address(0)) revert RouterActive();
         if (recipient == address(0)) revert ZeroAddress();
         feeRecipient = recipient;
         emit FeeRecipientChanged(recipient);
@@ -148,6 +198,7 @@ contract OmertaFees is Ownable2Step, ReentrancyGuard {
 
     /// @notice Rotate the Vig destination (Safe hygiene). Cannot be zeroed while a split is active.
     function setVigRecipient(address payable recipient) external onlyOwner {
+        if (address(nonMintRouter) != address(0)) revert RouterActive();
         if (recipient == address(0) && vigBps > 0) revert ZeroAddress();
         vigRecipient = recipient;
         emit VigRecipientChanged(recipient);

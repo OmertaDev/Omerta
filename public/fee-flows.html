@@ -169,7 +169,7 @@
     <h1>Where a Dollar Goes <span class="amp">&amp;</span> Why</h1>
     <p class="sub">An editable fee-flow sandbox. Follow each source into its destinations, change the split, and export a proposal for review.</p>
   </header>
-  <div class="scenario-notice"><b>This is an illustrative scenario, not current production.</b> The starting model explores a smaller treasury and a family-yield allocation. All edits stay in this browser; nothing here changes the game, moves money, or opens extraction. Read the <a href="/wiki#chain">Codex for production rail status</a>.</div>
+  <div class="scenario-notice"><b>This is an illustrative scenario, not current production.</b> The starting model explores a smaller treasury and a family-yield allocation. Character creation mint proceeds go 100% to the operations wallet (DEV_WALLET); respawn and reroll keep their existing split. All edits stay in this browser; nothing here changes the game, moves money, or opens extraction. Read the <a href="/wiki#chain">Codex for production rail status</a>.</div>
 
   <div class="bar">
     <button id="theme" type="button" title="Toggle light/dark">Change theme</button>
@@ -206,7 +206,7 @@
   <footer>
     <b>Share a proposal:</b> choose <span class="mono">Export JSON</span> to download
     <span class="mono">fee-structure.json</span>. The export dialog also contains the text for manual copying. Import accepts the same format.
-    <div style="margin-top:8px">Sources marked <span class="mono">implicit</span> take the on-chain remainder (they aren't booked as a row) — kept for honesty, not because they need a ledger entry.</div>
+    <div style="margin-top:8px">Slices marked <span class="mono">implicit</span> are paid on-chain without a separate destination-ledger row; some are calculated as a remainder.</div>
   </footer>
 </main>
 
@@ -234,12 +234,14 @@
      • The MAJORITY of the former-treasury slice goes to `community` — and for ETH/USD sources that
        means: spend → buyback → $OMR → family_yield_pool (Path A). The family prize grows, funded by
        real revenue, WITHOUT paying real ETH to a gang (which would cross the line).
-     • Vig unchanged (the withdrawal reserve — solo extraction stays fed).
+     • Character creation mint goes entirely to DEV_WALLET; other Vig allocations stay unchanged.
      • Bonds stay POL-heavy: liquidity DEPTH is the binding constraint on the daily bond cap, so they
        deliberately get NO family redirect.
    Reset-to-live restores THIS seed; hit Import to load production or your own variant. */
 const LIVE = [
-  {id:"fee",name:"Gameplay fees (mint / respawn / reroll)",currency:"eth",splits:[
+  {id:"mint",name:"Character creation mint",currency:"eth",splits:[
+    {dest:"operations",bps:10000,lands:"DEV_WALLET (OmertaFees.feeRecipient)",implicit:true}]},
+  {id:"fee",name:"Gameplay fees (respawn / reroll)",currency:"eth",splits:[
     {dest:"vig",bps:2500,lands:"vig_revenue source='fee' (withdrawal reserve)"},
     {dest:"treasury",bps:1000,lands:"rwa_revenue source='fee' (backed vault — kept small)"},
     {dest:"community",bps:1500,lands:"→ buyback → family_yield_pool (Path A)"},
@@ -295,7 +297,7 @@ const destLabel = d => (DESTS.find(x=>x.id===d)||{}).label || d;
    load the NEW seed and FLAG it (never silently drop edits — the status pill says the baseline moved
    and to Import to recover). An Import or Reset re-saves under the current version, so a chosen
    variant persists. */
-const SEED_VERSION = 4;
+const SEED_VERSION = 5;
 let staleLocal = false;
 let localSaveFailed = false;
 let hasLocalEdits = false;

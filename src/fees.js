@@ -1,6 +1,6 @@
 // §11 inbound fee ingestion — the entry (0.01 ETH mint) and revive-insurance (0.10 ETH
 // respawn) fees. Players pay them ON-CHAIN to the OmertaFees contract, which forwards the
-// ETH straight to the developer wallet in the same transaction — this backend never custodies
+// mint ETH entirely to DEV_WALLET; respawn/reroll keep their configured split. This backend never custodies
 // ETH and never mints in-game value from a fee. The worker's fee watcher observes the
 // contract's MintFeePaid / RespawnFeePaid events and calls `recordFeePayment` here, which
 // (idempotently) records the payment and credits the paying account an in-game entitlement:
@@ -57,27 +57,26 @@ export async function recordFeePayment(pool, { nonce, kind, payer, amountWei, tx
     // back and the cursor does NOT advance (the block window re-scans idempotently next tick).
     try {
       await client.query(
-        'INSERT INTO fee_payments (nonce, kind, payer_address, amount_wei, tx_hash) VALUES ($1,$2,$3,$4,$5)',
-        [n, kind, addr, String(amountWei ?? '0'), txHash || null]);
+        'INSERT INTO fee_payments (nonce, kind, payer_address, amount_wei, tx_hash, mint_dev_only) VALUES ($1,$2,$3,$4,$5,$6)',
+        [n, kind, addr, String(amountWei ?? '0'), txHash || null, kind === 'mint']);
     } catch (e) {
       await client.query('ROLLBACK');
       if (e?.code === '23505') return { recorded: false, duplicate: true };
       throw e;
     }
-    // Phase 2: route this payment's Vig share into the redistribution pool (same txn). The ETH
-    // itself still went to the dev wallet on-chain; this only records the accounting split. Booked
+    // Character mint fees are 100% DEV_WALLET (2026-09-08 allocation amendment).
+    // Other fees retain their configured revenue shares. Booked
     // ONLY for a REAL on-chain payment (one carrying a txHash from the observed FeePaid event) — the
     // store.js/bonds.js precedent (AUDIT-full-system-v2 D-MED2). A comp / manual QA record with no
     // txHash grants the entitlement but injects ZERO Vig revenue — else it would fabricate real-ETH
     // "revenue" that runVigBuyback (which sums vig_revenue with no source filter) would spend,
     // unbacking the withdrawal reserve, invisible to runVigInvariants.
-    if (txHash) await recordVigRevenue(client, { source: 'fee', ref: n, kind, amountWei });
+    if (txHash && kind !== 'mint') await recordVigRevenue(client, { source: 'fee', ref: n, kind, amountWei });
     // THE FLOAT (omerta-rwa-float-design.md): a FEE_RWA_BPS slice of the same real payment funds the
-    // The TREASURY's slice — carved from the FOUNDER share (the Vig 60% is untouched), so the split
-    // is Vig 60 / treasury 10 / founder 30. Same txHash gate (no fabricated real-ETH revenue), same
+    // treasury slice is earmarked from the non-mint developer remainder. Same txHash gate, same
     // SELECT-then-INSERT idempotency on (source, ref) as the Store's earmark. (This funded the stock
     // float until 2026-07-31; the slice and its bps are unchanged, only the destination.)
-    if (txHash) {
+    if (txHash && kind !== 'mint') {
       let grossEth = 0;
       try { grossEth = Number(BigInt(amountWei ?? '0')) / 1e18; } catch { grossEth = 0; }
       const rwaEth = Math.round(grossEth * TREASURY.FEE_TREASURY_BPS() / 10000 * 1e6) / 1e6;

@@ -34,9 +34,12 @@ import {Denari} from "./Denari.sol";
 ///         pool must be divided. See CollateralEscrow's header for the full argument. Do not
 ///         reintroduce an internal share layer — it would re-create the bug it was meant to fix.
 ///
-///         ── THE INVARIANT THIS FILE EXISTS TO HOLD ───────────────────────────────────────────
-///             Σ DNR supply ≤ Σ collateral × LTV
-///         Enforced per-user at every issuance and every withdrawal, and fuzzed in the tests.
+///         ── THE POSITION CHECK THIS FILE ENFORCES ───────────────────────────────────────────
+///             user debt ≤ user redeemable collateral × LTV
+///         Checked at issuance, withdrawal and harvest. Repayment moves underlying into Transmuter
+///         reserves while leaving DNR outstanding, so aggregate DNR supply is not bounded by escrow
+///         collateral alone. Vault losses or an owner LTV reduction can impair existing positions;
+///         neither automatically pauses healthy positions elsewhere in the market.
 contract Alchemist is Ownable2Step, ReentrancyGuard, FlashGuard {
     using SafeERC20 for IERC20;
 
@@ -335,8 +338,8 @@ contract Alchemist is Ownable2Step, ReentrancyGuard, FlashGuard {
     ///         Transmuter directly.
     ///
     ///         Overpayment is REFUSED rather than banked as a credit. A negative debt balance is a
-    ///         claim on the protocol, and this batch issues none — clamping at zero keeps
-    ///         `Σ supply ≤ Σ collateral × LTV` a statement about debt only.
+    ///         claim on the protocol, and this batch issues none. Clamping at zero prevents a user
+    ///         acquiring repayment credit beyond the debt actually cleared.
     function repay(uint256 assets) external nonReentrant {
         if (assets == 0) revert ZeroAmount();
         uint256 d = debtOf[msg.sender];

@@ -3259,7 +3259,7 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
     && deploy.includes('MONOTONIC PARTIAL RECOVERY / NO STOCK SWEEP / SEPARATE GAS')
     && deploy.includes('BLACKHAT- AND GRIEF-RESISTANT RECOVERY EXECUTION')
     && deploy.includes('PUBLIC FINALIZED RECOVERY HISTORY / API SPAM WALL')
-    && deploy.includes('RECOVERY IMPLEMENTATION / INDEPENDENT AUDIT ACTIVATION GATE')
+    && deploy.includes('RECOVERY IMPLEMENTATION / SCOPED SECURITY REVIEW GATE')
     && deploy.includes('CONDITIONAL MINIMAL RECOVERY SECURITY')
     && deploy.includes('CRITICAL RECONCILIATION INCIDENT UI')
     && deploy.includes('TEN-MINUTE STALE INCIDENT MIRROR FAILS RED')

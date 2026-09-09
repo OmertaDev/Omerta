@@ -27,6 +27,11 @@ import {IOmrV4ObservationSource} from "./interfaces/IOmrV4ObservationSource.sol"
 ///         counterfactually at read time. A keeper outage makes the oracle stale; it cannot make a
 ///         spot price masquerade as a TWAP.
 ///
+///         DEPLOYMENT DOES NOT REQUIRE AN OPEN POOL. The immutable source and pool identity may be
+///         pinned before genesis migration. Until an initialized observation seeds a baseline,
+///         consult returns no quote. The first seed also returns no quote: only a full subsequent
+///         PERIOD of initialized pool history can produce the first reading.
+///
 ///         BOTH SIDES OF THE WINDOW ARE BOUNDED. A call before `PERIOD` reverts (or no-ops when it
 ///         arrives through the hook's observer seam). A call after `PERIOD * MAX_WINDOW_MULT`
 ///         discards the obsolete interval, clears the public reading, and re-baselines. Recovery is
@@ -50,11 +55,13 @@ contract OmrV4TwapOracle is IOmrOracle, IOmrHookObserver {
     int24 public immutable tickSpacing;
     PoolId public immutable poolId;
 
-    // These three values pack into one slot. The cumulative and timestamp deliberately follow the
+    // These values pack into one slot. The cumulative and timestamp deliberately follow the
     // v3 int56/uint32 wrapping convention; their differences remain correct across timestamp wrap.
     int56 public tickCumulativeLast;
     uint32 public blockTimestampLast;
     int24 public arithmeticMeanTick;
+    // Timestamp zero is valid at chain genesis and uint32 wrap, so it cannot be an initialization flag.
+    bool public baselineInitialized;
 
     uint256 public priceAverage;
     uint256 public lastUpdate;
@@ -62,6 +69,7 @@ contract OmrV4TwapOracle is IOmrOracle, IOmrHookObserver {
     event Updated(int24 arithmeticMeanTick, uint256 omrPerEth, uint32 timeElapsed);
     event Rebaselined(uint32 discardedWindow);
     event Invalidated(int24 arithmeticMeanTick);
+    event BaselineInitialized(int56 tickCumulative, uint32 blockTimestamp);
 
     error PeriodTooShort();
     error PeriodNotElapsed(uint32 elapsed, uint32 required);
@@ -103,7 +111,6 @@ contract OmrV4TwapOracle is IOmrOracle, IOmrHookObserver {
         });
         PoolId poolId_ = key.toId();
         (int56 cumulative, uint32 timestamp, bool initialized) = source_.currentTickCumulative(poolId_);
-        if (!initialized) revert PoolNotInitialized();
 
         source = source_;
         poolManager = poolManager_;
@@ -112,11 +119,11 @@ contract OmrV4TwapOracle is IOmrOracle, IOmrHookObserver {
         tickSpacing = tickSpacing_;
         poolId = poolId_;
         PERIOD = period_;
-        tickCumulativeLast = cumulative;
-        blockTimestampLast = timestamp;
+        if (initialized) _setBaseline(cumulative, timestamp);
     }
 
-    /// @notice Permissionless keeper entry point. Nobody can close a window early.
+    /// @notice Permissionless keeper entry point. The first initialized call seeds a baseline;
+    ///         nobody can close a window before a full PERIOD after that baseline.
     function update() external {
         _update(true);
     }
@@ -138,7 +145,15 @@ contract OmrV4TwapOracle is IOmrOracle, IOmrHookObserver {
 
     function _update(bool revertIfEarly) private {
         (int56 cumulative, uint32 timestamp, bool initialized) = source.currentTickCumulative(poolId);
-        if (!initialized) revert PoolNotInitialized();
+        if (!initialized) {
+            if (revertIfEarly) revert PoolNotInitialized();
+            return;
+        }
+
+        if (!baselineInitialized) {
+            _setBaseline(cumulative, timestamp);
+            return;
+        }
 
         uint32 timeElapsed;
         unchecked {
@@ -189,6 +204,10 @@ contract OmrV4TwapOracle is IOmrOracle, IOmrHookObserver {
     function _setBaseline(int56 cumulative, uint32 timestamp) private {
         tickCumulativeLast = cumulative;
         blockTimestampLast = timestamp;
+        if (!baselineInitialized) {
+            baselineInitialized = true;
+            emit BaselineInitialized(cumulative, timestamp);
+        }
     }
 
     /// @dev v4 tick price is currency1/currency0 in raw units. Here that is OMR-wei/ETH-wei.

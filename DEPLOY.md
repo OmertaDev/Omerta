@@ -169,7 +169,7 @@ when unconfigured — sign-in buttons hide, social claims fail-closed — so set
 above is the real path and the only one the console offers).
 
 ## 3b. Other optional
-- `INVITE_MODE=on` — closed-alpha gate; mint codes via `POST /v1/mod/invites`.
+- `INVITE_MODE=on` — launch gate for the console, live city boards, and new accounts. This is the Render launch setting and the default on production/database-backed deployments. Import the private 5,000-code campaign batch with `tools/invites.js` before distribution; see [tools/invites.md](tools/invites.md). Existing accounts retain access, and Crew members can issue three codes per account. Set `off` explicitly to open admission.
 - `PRIVY_APP_ID` — enables Privy sign-in (else guest + X only).
 - `SOCIAL_GAME_URL` — falls back for `PUBLIC_URL` in share links, OG cards, the OpenAPI `baseUrl`.
 - `REDIS_URL` — moves the rate-limit buckets off in-memory (needed only for multi-instance).

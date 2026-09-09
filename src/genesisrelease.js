@@ -1,5 +1,5 @@
-import { getAddress, isAddress, keccak256 } from 'viem';
-import { GENESIS_DISTRIBUTION_OMR, buildGenesisLaunchArtifacts } from './genesiscca.js';
+import { encodeFunctionData, getAddress, isAddress, keccak256 } from 'viem';
+import { GENESIS_DISTRIBUTION_OMR, buildGenesisLaunchArtifacts, canonicalGenesisPoolId } from './genesiscca.js';
 import { buildGenesisCadenceEvidence, canonicalJson, sha256Hex } from './genesiscadence.js';
 
 export const GENESIS_RELEASE_SCOPE_FILES = Object.freeze([
@@ -7,6 +7,18 @@ export const GENESIS_RELEASE_SCOPE_FILES = Object.freeze([
   'omerta-contracts/src/OmertaHook.sol',
   'omerta-contracts/src/GenesisProceedsSplitter.sol',
   'omerta-contracts/src/OmrV4TwapOracle.sol',
+  'omerta-contracts/src/IOmrOracle.sol',
+  'omerta-contracts/src/OMR.sol',
+  'omerta-contracts/src/OmertaFees.sol',
+  'omerta-contracts/src/OmertaBond.sol',
+  'omerta-contracts/src/VoucherClaim.sol',
+  'omerta-contracts/src/GenesisLifecycleController.sol',
+  'omerta-contracts/src/ProtocolLiquidityVault.sol',
+  'omerta-contracts/src/LiquidityBuybackExecutor.sol',
+  'omerta-contracts/src/FeeRevenueRouter.sol',
+  'omerta-contracts/src/KeeperGasVault.sol',
+  'omerta-contracts/src/BankBufferVault.sol',
+  'omerta-contracts/src/interfaces/ILiquidityHealth.sol',
   'omerta-contracts/src/interfaces/IInitializerHook.sol',
   'omerta-contracts/src/interfaces/IOmrV4ObservationSource.sol',
   'omerta-contracts/GENESIS-LAUNCH.md',
@@ -14,21 +26,75 @@ export const GENESIS_RELEASE_SCOPE_FILES = Object.freeze([
   'src/genesiscadence.js',
   'src/genesislaunch.js',
   'src/genesisrelease.js',
+  'src/genesiskeeper.js',
+  'src/keepertransactions.js',
+  'src/liquiditykeeper.js',
+  'src/liquidityautomation.js',
+  'src/liquidityaccounting.js',
+  'src/liquidityindexer.js',
+  'src/liquiditypolicy.js',
+  'src/liquidityqueue.js',
+  'src/liquiditystate.js',
+  'src/chain.js',
+  'src/chainparams.js',
+  'src/watcher.js',
+  'src/worker.js',
+  'src/bonds.js',
+  'src/fees.js',
+  'src/desk.js',
+  'src/bank.js',
+  'src/rules.js',
+  'src/db.js',
+  'schema.sql',
+  'package.json',
+  'package-lock.json',
   'src/v4oraclekeeper.js',
   'tools/genesis-cadence-sample.js',
   'tools/genesis-fork-rehearsal.js',
   'tools/genesis-launch-config.js',
   'tools/genesis-launch-preflight.js',
   'tools/genesis-release-manifest.js',
+  'tools/liquidity-deployment-plan.js',
+  'tools/liquidity-keeper.js',
+  'tools/liquidity-manifest-example.js',
+  'tools/liquidity-e2e.js',
+  'omerta-contracts/script/DeployV4TwapOracle.s.sol',
+  'omerta-contracts/script/DeployHook.s.sol',
+  'omerta-contracts/script/DeployGenesisSplitter.s.sol',
+  'omerta-contracts/test/OmrV4TwapOracle.t.sol',
+  'omerta-contracts/test/audit/GenesisOracleBootstrap.t.sol',
+  'omerta-contracts/test/GenesisLifecycleController.t.sol',
+  'omerta-contracts/test/ProtocolLiquidityVault.t.sol',
+  'omerta-contracts/test/LiquidityBuybackExecutor.t.sol',
+  'test/genesiscca.js',
+  'test/fixtures/genesis-stack-runtime.json',
+  'test/genesisrelease.js',
+  'test/genesiskeeper.js',
+  'test/v4oraclekeeper.js',
+  'test/keepertransactions.js',
+  'test/liquiditykeeper.js',
+  'test/liquidityaccounting.js',
+  'test/liquidityindexer.js',
+  'test/liquiditypolicy.js',
+  'test/liquidityqueue.js',
+  'test/liquidity-deployment-plan.js',
 ]);
 
 export const GENESIS_RELEASE_ARTIFACTS = Object.freeze([
   'OmertaHook', 'GenesisProceedsSplitter', 'OmrV4TwapOracle',
+  'GenesisLifecycleController', 'ProtocolLiquidityVault', 'LiquidityBuybackExecutor',
+  'FeeRevenueRouter', 'KeeperGasVault', 'BankBufferVault', 'OMR', 'OmertaFees', 'OmertaBond', 'VoucherClaim',
 ]);
 
 const REQUIRED_AUDIT_SCOPE = Object.freeze([
   'initializerHook', 'tickAccumulator', 'v4Oracle', 'proceedsSplitter',
   'omrTransferBehavior', 'lbpFailureBranch', 'forkEvidence', 'sharedSigner',
+]);
+
+export const GENESIS_AUTOMATED_AUDIT_SCOPE = Object.freeze([
+  'oracleBootstrap', 'lifecycleController', 'protocolLiquidityVault', 'keeperTransactionJournal',
+  'receiptAccounting', 'receiptIndexer', 'liquidityHealth', 'claimQueueBacking', 'dailyOffering',
+  'deploymentNonceCoordination', 'auctionBinding',
 ]);
 
 function object(label, value) {
@@ -155,7 +221,7 @@ function validateRepository(raw) {
   };
 }
 
-function validateAudit(raw, commit) {
+function validateAudit(raw, commit, automated) {
   const audit = object('audit', raw);
   if (audit.status !== 'passed') throw new Error('audit.status must be passed');
   if (String(audit.scopeCommit || '').toLowerCase() !== commit) {
@@ -167,13 +233,14 @@ function validateAudit(raw, commit) {
   }
   bool('audit.signerIncluded', audit.signerIncluded);
   const scope = object('audit.scope', audit.scope);
-  for (const item of REQUIRED_AUDIT_SCOPE) bool(`audit.scope.${item}`, scope[item]);
+  const requiredScope = [...REQUIRED_AUDIT_SCOPE, ...(automated ? GENESIS_AUTOMATED_AUDIT_SCOPE : [])];
+  for (const item of requiredScope) bool(`audit.scope.${item}`, scope[item]);
   return {
     status: 'passed', scopeCommit: commit,
     reportSha256: sha256('audit.reportSha256', audit.reportSha256),
     reviewer: string('audit.reviewer', audit.reviewer),
     unresolvedCritical: 0, unresolvedHigh: 0, signerIncluded: true,
-    scope: Object.fromEntries(REQUIRED_AUDIT_SCOPE.map((item) => [item, true])),
+    scope: Object.fromEntries(requiredScope.map((item) => [item, true])),
   };
 }
 
@@ -191,8 +258,11 @@ function validateGovernance(raw, launch) {
     throw new Error('governance.treasuryAllocationOmr must equal the exact launcher allocation');
   }
   const lp = object('governance.lpCustody', governance.lpCustody);
-  if (!['safe', 'audited_lock'].includes(lp.kind)) {
-    throw new Error('governance.lpCustody.kind must be safe or audited_lock');
+  if (!['safe', 'audited_lock', 'protocol_liquidity_vault'].includes(lp.kind)) {
+    throw new Error('governance.lpCustody.kind must be safe, audited_lock, or protocol_liquidity_vault');
+  }
+  if (launch.launchMode === 'automated' && lp.kind !== 'protocol_liquidity_vault') {
+    throw new Error('automated genesis requires governance.lpCustody.kind protocol_liquidity_vault');
   }
   const custodyType = lp.kind;
   const lpAddress = address('governance.lpCustody.address', lp.address);
@@ -260,17 +330,21 @@ function validateTiming(rawCadence, rawApproval, launch, createdAt) {
   };
 }
 
-function validateFork(raw) {
+function validateFork(raw, automated) {
   const fork = object('forkRehearsal', raw);
   if (Number(fork.chainId) !== 4663) throw new Error('forkRehearsal.chainId must be 4663');
   bool('forkRehearsal.passed', fork.passed);
   bool('forkRehearsal.noProductionBroadcasts', fork.noProductionBroadcasts);
   bool('forkRehearsal.noProductionKeysRead', fork.noProductionKeysRead);
   bool('forkRehearsal.arbSysShimDeclared', fork.arbSysShimDeclared);
+  const automatedChecks = ['prePoolOracleBootstrap', 'controllerBoundBeforeStart', 'exactFactoryPrediction',
+    'migrationToProtocolVault', 'oracleFullWindowRequired', 'keeperReceiptAccounting'];
+  if (automated) for (const name of automatedChecks) bool(`forkRehearsal.${name}`, fork[name]);
   return {
     chainId: 4663, blockNumber: uint('forkRehearsal.blockNumber', fork.blockNumber), passed: true,
     archiveSha256: sha256('forkRehearsal.archiveSha256', fork.archiveSha256),
     noProductionBroadcasts: true, noProductionKeysRead: true, arbSysShimDeclared: true,
+    ...(automated ? Object.fromEntries(automatedChecks.map((name) => [name, true])) : {}),
   };
 }
 
@@ -289,7 +363,9 @@ function validateSafeCeremony(raw, launch, launchCalldataKeccak256) {
   if (hex32('safeCeremony.preflight.launchCalldataKeccak256', preflight.launchCalldataKeccak256)
     !== launchCalldataKeccak256) throw new Error('preflight must bind the exact launch calldata');
   const preflightBlock = uint('safeCeremony.preflight.blockNumber', preflight.blockNumber);
-  if (preflightBlock >= launch.timeline.startBlock) throw new Error('preflight block must precede startBlock');
+  const preflightClock = launch.launchMode === 'automated'
+    ? uint('safeCeremony.preflight.blockNumberish', preflight.blockNumberish) : preflightBlock;
+  if (preflightClock >= launch.timeline.startBlock) throw new Error('preflight block must precede startBlock');
 
   const simulation = object('safeCeremony.simulation', ceremony.simulation);
   if (simulation.status !== 'passed' || Number(simulation.chainId) !== 4663) {
@@ -298,7 +374,9 @@ function validateSafeCeremony(raw, launch, launchCalldataKeccak256) {
   if (hex32('safeCeremony.simulation.launchCalldataKeccak256', simulation.launchCalldataKeccak256)
     !== launchCalldataKeccak256) throw new Error('simulation must bind the exact launch calldata');
   const simulationBlock = uint('safeCeremony.simulation.blockNumber', simulation.blockNumber);
-  if (simulationBlock >= launch.timeline.startBlock) throw new Error('simulation block must precede startBlock');
+  const simulationClock = launch.launchMode === 'automated'
+    ? uint('safeCeremony.simulation.blockNumberish', simulation.blockNumberish) : simulationBlock;
+  if (simulationClock >= launch.timeline.startBlock) throw new Error('simulation block must precede startBlock');
 
   if (!Array.isArray(ceremony.decoders) || ceremony.decoders.length < 2) {
     throw new Error('safeCeremony.decoders must contain at least two independent records');
@@ -323,11 +401,13 @@ function validateSafeCeremony(raw, launch, launchCalldataKeccak256) {
     launchCalldataKeccak256,
     preflight: {
       status: 'passed', chainId: 4663, blockNumber: preflightBlock,
+      ...(launch.launchMode === 'automated' ? { blockNumberish: preflightClock } : {}),
       evidenceSha256: sha256('safeCeremony.preflight.evidenceSha256', preflight.evidenceSha256),
       stackRuntimeHashesMatch: true, readinessPassed: true, launchCalldataKeccak256,
     },
     simulation: {
       status: 'passed', chainId: 4663, blockNumber: simulationBlock,
+      ...(launch.launchMode === 'automated' ? { blockNumberish: simulationClock } : {}),
       evidenceSha256: sha256('safeCeremony.simulation.evidenceSha256', simulation.evidenceSha256),
       launchCalldataKeccak256,
     },
@@ -335,6 +415,82 @@ function validateSafeCeremony(raw, launch, launchCalldataKeccak256) {
     approvalsRecorded: true,
     approvalsSha256: sha256('safeCeremony.approvalsSha256', ceremony.approvalsSha256),
   };
+}
+
+function validateAuctionBinding(raw, launch, createdAt) {
+  if (launch.launchMode !== 'automated') return null;
+  const binding = object('safeCeremony.auctionBinding', raw);
+  if (binding.status === 'pending_creation') {
+    bool('safeCeremony.auctionBinding.postCreationVerificationRequired', binding.postCreationVerificationRequired);
+    return { status: 'pending_creation', postCreationVerificationRequired: true,
+      controller: launch.participants.lifecycleController, foundation: launch.participants.positionRecipient,
+      oracle: launch.participants.oracle, canonicalPoolId: canonicalGenesisPoolId(launch.participants),
+      beforeBlock: launch.timeline.startBlock, transaction: null };
+  }
+  if (binding.status !== 'ready_for_auction_binding' || Number(binding.chainId) !== 4663) {
+    throw new Error('safeCeremony.auctionBinding must be pending_creation or verified ready_for_auction_binding on chain 4663');
+  }
+  bool('safeCeremony.auctionBinding.factoryPredictionVerified', binding.factoryPredictionVerified);
+  bool('safeCeremony.auctionBinding.simulated', binding.simulated);
+  const launchArtifactsSha256 = sha256Hex(canonicalJson(launch));
+  if (sha256('binding.launchArtifactsSha256', binding.launchArtifactsSha256) !== launchArtifactsSha256) {
+    throw new Error('auction binding must bind the full launch artifact including oracle, keeper, and runtime identities');
+  }
+  const auction = address('safeCeremony.auctionBinding.auction', binding.auction);
+  const currentBlock = uint('safeCeremony.auctionBinding.currentBlock', binding.currentBlock);
+  if (currentBlock >= launch.timeline.startBlock
+    || uint('safeCeremony.auctionBinding.beforeBlock', binding.beforeBlock) !== launch.timeline.startBlock) {
+    throw new Error('auction binding must precede the exact committed startBlock on the controller clock');
+  }
+  const checkedAtTimestamp = uint('safeCeremony.auctionBinding.checkedAtTimestamp', binding.checkedAtTimestamp);
+  const age = BigInt(Math.floor(Date.parse(createdAt) / 1000)) - checkedAtTimestamp;
+  if (age > 120n || age < -60n) throw new Error('auction binding evidence is stale or future-dated');
+  const tx = object('safeCeremony.auctionBinding.transaction', binding.transaction);
+  const expectedData = encodeFunctionData({ abi: [{ type: 'function', name: 'bindAuction', stateMutability: 'nonpayable',
+    inputs: [{ name: 'auction', type: 'address' }], outputs: [] }], functionName: 'bindAuction', args: [auction] });
+  if (address('binding transaction.from', tx.from) !== launch.participants.launchOwner
+    || address('binding transaction.to', tx.to) !== launch.participants.lifecycleController
+    || uint('binding transaction.value', tx.value) !== 0n || tx.data?.toLowerCase() !== expectedData.toLowerCase()) {
+    throw new Error('auction binding transaction must be the exact zero-value Safe controller call');
+  }
+  const bindingCalldataKeccak256 = keccak256(expectedData);
+  if (hex32('binding.bindingCalldataKeccak256', binding.bindingCalldataKeccak256) !== bindingCalldataKeccak256
+    || hex32('binding.launchCalldataKeccak256', binding.launchCalldataKeccak256)
+      !== launch.calldataDigests.launchKeccak256.toLowerCase()) {
+    throw new Error('auction binding evidence must bind the exact launch and binding calldata');
+  }
+  const readiness = object('auction binding readiness', binding.readiness);
+  if (sha256('binding.readiness.launchArtifactsSha256', readiness.launchArtifactsSha256) !== launchArtifactsSha256) {
+    throw new Error('auction binding readiness must bind the full launch artifact');
+  }
+  if (readiness.baselineInitialized !== false
+    || uint('binding.readiness.oracleQuote.price', readiness.oracleQuote?.price) !== 0n
+    || uint('binding.readiness.oracleQuote.updatedAt', readiness.oracleQuote?.updatedAt) !== 0n) {
+    throw new Error('auction binding requires the verified pre-pool oracle baseline and zero quote');
+  }
+  if (uint('binding.readiness.checkedAtBlock', readiness.checkedAtBlock) !== uint('binding.checkedAtBlock', binding.checkedAtBlock)
+    || hex32('binding.readiness.checkedAtBlockHash', readiness.checkedAtBlockHash)
+      !== hex32('binding.checkedAtBlockHash', binding.checkedAtBlockHash)
+    || uint('binding.readiness.checkedAtTimestamp', readiness.checkedAtTimestamp) !== checkedAtTimestamp
+    || uint('binding.readiness.currentBlock', readiness.currentBlock) > currentBlock) {
+    throw new Error('auction binding readiness must use the same canonical snapshot and a coherent controller clock');
+  }
+  if (hex32('binding.readiness.canonicalPoolId', readiness.canonicalPoolId)
+    !== canonicalGenesisPoolId(launch.participants).toLowerCase()) throw new Error('auction binding pool mismatch');
+  for (const [name, hash] of Object.entries(launch.automation.runtimeCodeHashes)) {
+    if (hex32(`binding.readiness.runtimeCodeHashes.${name}`, readiness.runtimeCodeHashes?.[name]) !== hash) {
+      throw new Error(`auction binding runtimeCodeHashes.${name} mismatch`);
+    }
+  }
+  return { status: 'ready_for_auction_binding', chainId: 4663, auction,
+    auctionRuntimeCodeHash: hex32('binding.auctionRuntimeCodeHash', binding.auctionRuntimeCodeHash),
+    checkedAtBlock: uint('binding.checkedAtBlock', binding.checkedAtBlock),
+    checkedAtBlockHash: hex32('binding.checkedAtBlockHash', binding.checkedAtBlockHash),
+    checkedAtTimestamp, currentBlock, beforeBlock: launch.timeline.startBlock,
+    transaction: { from: tx.from, to: tx.to, value: 0n, data: expectedData },
+    bindingCalldataKeccak256, launchCalldataKeccak256: launch.calldataDigests.launchKeccak256,
+    launchArtifactsSha256,
+    factoryPredictionVerified: true, simulated: true, submitted: false };
 }
 
 export function buildGenesisReleaseManifest(input = {}, context = {}) {
@@ -346,14 +502,18 @@ export function buildGenesisReleaseManifest(input = {}, context = {}) {
   if (launch.calldataDigests.launchKeccak256.toLowerCase() !== launchCalldataKeccak256) {
     throw new Error('Genesis builder launch calldata digest mismatch');
   }
-  const audit = validateAudit(input.audit, repository.commit);
+  const automated = launch.launchMode === 'automated';
+  const audit = validateAudit(input.audit, repository.commit, automated);
   const governance = validateGovernance(input.governance, launch);
   const timing = validateTiming(input.cadence, input.timingApproval, launch, createdAt);
-  const forkRehearsal = validateFork(input.forkRehearsal);
+  const forkRehearsal = validateFork(input.forkRehearsal, automated);
   const safeCeremony = validateSafeCeremony(input.safeCeremony, launch, launchCalldataKeccak256);
+  const auctionBinding = validateAuctionBinding(input.safeCeremony?.auctionBinding, launch, createdAt);
 
   const launchSummary = {
     artifactsSha256: sha256Hex(canonicalJson(launch)),
+    launchMode: launch.launchMode,
+    automation: launch.automation,
     participants: launch.participants,
     allocation: launch.allocation,
     timeline: launch.timeline,
@@ -365,7 +525,8 @@ export function buildGenesisReleaseManifest(input = {}, context = {}) {
   };
   const body = {
     schemaVersion: 1,
-    status: 'ready_for_safe_execution',
+    status: automated ? (auctionBinding.status === 'pending_creation'
+      ? 'ready_for_safe_launch_requires_auction_binding' : 'ready_for_auction_binding') : 'ready_for_safe_execution',
     createdAt,
     chainId: 4663,
     repository,
@@ -376,6 +537,7 @@ export function buildGenesisReleaseManifest(input = {}, context = {}) {
     timing,
     forkRehearsal,
     safeCeremony,
+    auctionBinding,
     safety: {
       unsigned: true,
       broadcastsTransactions: false,

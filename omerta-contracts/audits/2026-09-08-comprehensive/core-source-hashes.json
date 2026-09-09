@@ -1,0 +1,46 @@
+[
+  {
+    "path": "omerta-contracts/src/OMR.sol",
+    "sha256": "f5c2001cbb8661e1ad67ffe3805c51388483e4f5b4d68e77e58661f02c938be7"
+  },
+  {
+    "path": "omerta-contracts/src/OMRStaking.sol",
+    "sha256": "04f36419e57109b56202272b7d9ebec462e0e5b7d0125abd1cb73e17ef466f09"
+  },
+  {
+    "path": "omerta-contracts/src/OmertaFees.sol",
+    "sha256": "7d17fcaa466a6eec92f5824e7d6eef0142090fd6c42465d60e1b5191f861ec5d"
+  },
+  {
+    "path": "omerta-contracts/src/VoucherClaim.sol",
+    "sha256": "5bdea68e473429ae39f3286b3fa7da8de335035929cc3f7665f5e824ad608573"
+  },
+  {
+    "path": "omerta-contracts/src/GearVault.sol",
+    "sha256": "364ae51294f6f2b8d5ad9864cba79cb06f4f9e66df4e117a21907f7f4c0ed4a9"
+  },
+  {
+    "path": "omerta-contracts/src/StreetDeed.sol",
+    "sha256": "88f20153640a84bb528c6bae4d332ce2d052cc8c4c648e7447803c835be87e9e"
+  },
+  {
+    "path": "omerta-contracts/src/DynastyNFT.sol",
+    "sha256": "c23e6a910caae32b3ac0894861674cdafa91c5092f8191384e6215fb3688deb6"
+  },
+  {
+    "path": "omerta-contracts/src/StockVault.sol",
+    "sha256": "11a8b3a56bc64286419728ca4e414ad51eaffa25d9864a55091420a718182150"
+  },
+  {
+    "path": "omerta-contracts/src/GenesisOracle.sol",
+    "sha256": "1af72fe4006f8983a3307e215a73e363fb957838e14449b1a8861191ebfabb31"
+  },
+  {
+    "path": "omerta-contracts/src/OmertaBond.sol",
+    "sha256": "c9ace3c1d7d270afb8b47c818445a6fa6797fa18f47fc817c4abf38aab30edee"
+  },
+  {
+    "path": "omerta-contracts/src/GenesisProceedsSplitter.sol",
+    "sha256": "e1530a96908d359935e46f3f9a201a62950b74ba0b5fde6bdb19c15af004bc32"
+  }
+]

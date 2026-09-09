@@ -12,20 +12,24 @@ import { fileURLToPath } from 'node:url';
 import { spawn, spawnSync } from 'node:child_process';
 import {
   concatHex, createPublicClient, createWalletClient, defineChain, encodeAbiParameters,
-  encodeFunctionData, getAddress, getCreate2Address, http, keccak256, maxUint256,
+  encodeFunctionData, getAddress, getContractAddress, getCreate2Address, http, keccak256, maxUint256,
   parseEther, stringToHex, toFunctionSelector, toHex,
 } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
-import { newDb } from 'pg-mem';
+import { newDb, DataType } from 'pg-mem';
+import { registerPgMemCompatibility } from '../src/db.js';
 import {
   ROBINHOOD_GENESIS_STACK, V4_OBSERVATION_SOURCE_INTERFACE_ID,
   buildGenesisLaunchArtifacts, canonicalGenesisPoolId,
+  buildGenesisAuctionBinding,
   verifyGenesisLaunchReadiness, verifyRobinhoodGenesisStack,
 } from '../src/genesiscca.js';
 import {
   classifyV4OracleHealth, readV4OracleSnapshot,
   runV4OracleKeeper, v4OracleHealth,
 } from '../src/v4oraclekeeper.js';
+import { validateLiquidityManifest, readLiquiditySnapshot, runLiquidityKeeper } from '../src/liquiditykeeper.js';
+import { bookConfirmedLiquidityAction } from '../src/liquidityaccounting.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '..');
@@ -59,10 +63,6 @@ const CCA_ABI = [
   { type: 'function', name: 'currencyRaised', stateMutability: 'view', inputs: [], outputs: [{ type: 'uint256' }] },
   { type: 'function', name: 'totalCleared', stateMutability: 'view', inputs: [], outputs: [{ type: 'uint128' }] },
 ];
-const LBP_ABI = [{
-  type: 'function', name: 'migrate', stateMutability: 'nonpayable',
-  inputs: [{ name: 'initializer', type: 'address' }], outputs: [],
-}];
 const ERC20_ABI = [
   { type: 'function', name: 'transfer', stateMutability: 'nonpayable', inputs: [{ type: 'address' }, { type: 'uint256' }], outputs: [{ type: 'bool' }] },
   { type: 'function', name: 'approve', stateMutability: 'nonpayable', inputs: [{ type: 'address' }, { type: 'uint256' }], outputs: [{ type: 'bool' }] },
@@ -125,6 +125,8 @@ function foundryExecutable(name) {
   const filename = process.platform === 'win32' ? `${name}.exe` : name;
   if (process.env.FOUNDRY_BIN) return path.join(process.env.FOUNDRY_BIN, filename);
   const homeInstall = path.join(os.homedir(), '.foundry', 'bin', filename);
+  const nativeInstall = path.join(contractsRoot, 'cache', 'verify', 'node_modules', '@foundry-rs', `${name}-win32-amd64`, 'bin', filename);
+  if (!fs.existsSync(homeInstall) && process.platform === 'win32' && fs.existsSync(nativeInstall)) return nativeInstall;
   return fs.existsSync(homeInstall) ? homeInstall : filename;
 }
 async function freePort() {
@@ -145,7 +147,7 @@ async function waitForRpc(url, child) {
     if (child.exitCode != null) throw new Error(`Anvil exited during startup (code ${child.exitCode})`);
     try {
       await probe.getChainId();
-      return createPublicClient({ transport: http(url, { timeout: 180_000, retryCount: 0 }) });
+      return createPublicClient({ transport: http(url, { timeout: 180_000, retryCount: 0 }), cacheTime: 0 });
     } catch { /* startup */ }
     await new Promise((resolve) => setTimeout(resolve, 200));
   }
@@ -221,7 +223,22 @@ function wrapClients(base, controls) {
   return { clients: { ...base, publicClient, walletClient }, evidence };
 }
 async function journalDb() {
+  if (process.env.GENESIS_REHEARSAL_DATABASE_URL) {
+    const url = new URL(process.env.GENESIS_REHEARSAL_DATABASE_URL);
+    assert(['127.0.0.1', 'localhost', '[::1]'].includes(url.hostname), 'rehearsal database must be loopback');
+    assert(/^\/omerta_genesis_[a-z0-9_]*test$/.test(url.pathname), 'rehearsal database must be dedicated omerta_genesis_*test');
+    const { default: pg } = await import('pg');
+    const pool = new pg.Pool({ connectionString: url.href });
+    assert.equal(Number((await pool.query("SELECT count(*) n FROM information_schema.tables WHERE table_schema='public'")).rows[0].n), 0,
+      'rehearsal database must be empty');
+    // Shared production journal/accounting helpers select PostgreSQL advisory locks through this
+    // setting. Assign only the validated disposable endpoint, never an inherited production URL.
+    process.env.DATABASE_URL = url.href;
+    await pool.query(fs.readFileSync(path.join(root, 'schema.sql'), 'utf8'));
+    return pool;
+  }
   const mem = newDb();
+  registerPgMemCompatibility(mem, DataType);
   const { Pool } = mem.adapters.createPg();
   const pool = new Pool();
   await pool.query(fs.readFileSync(path.join(root, 'schema.sql'), 'utf8'));
@@ -265,11 +282,15 @@ async function run() {
     '--fork-url', remoteUrl.toString(), '--fork-block-number', forkBlock.number.toString(),
     '--fork-chain-id', String(CHAIN_ID), '--chain-id', String(CHAIN_ID),
     '--host', '127.0.0.1', '--port', String(port), '--auto-impersonate', '--balance', '1000000',
-    '--gas-limit', '50000000', '--disable-code-size-limit', '--no-rate-limit', '--no-storage-caching', '--quiet',
+    '--gas-limit', '50000000', '--no-rate-limit', '--no-storage-caching', '--quiet',
   ];
   const anvil = spawn(anvilPath, anvilArgs, { stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
   let anvilDiagnostics = '';
-  anvil.stderr.on('data', (chunk) => { anvilDiagnostics = `${anvilDiagnostics}${chunk}`.slice(-12_000); });
+  const collectAnvilDiagnostics = (chunk) => { anvilDiagnostics = `${anvilDiagnostics}${chunk}`.slice(-12_000); };
+  // Drain both pipes: larger automated rehearsals otherwise fill stdout's OS buffer and stall
+  // Anvil's RPC loop even though stderr is drained. Retain a bounded tail for failed runs.
+  anvil.stdout.on('data', collectAnvilDiagnostics);
+  anvil.stderr.on('data', collectAnvilDiagnostics);
   let pool;
   const receipts = [];
   const healthSnapshots = [];
@@ -279,6 +300,8 @@ async function run() {
     const publicClient = await waitForRpc(localRpc, anvil);
     assert.equal(await publicClient.getChainId(), CHAIN_ID, 'local fork must retain chain ID 4663');
     assert.equal(new URL(localRpc).hostname, '127.0.0.1', 'mutations must target loopback');
+    assert.equal((await publicClient.getBlock({ blockNumber: forkBlock.number })).hash, forkBlock.hash,
+      'local initial fork block must match the upstream pinned block hash before any mutation');
     const chain = defineChain({
       id: CHAIN_ID, name: 'Robinhood Chain fork rehearsal',
       nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
@@ -287,7 +310,7 @@ async function run() {
     const accounts = (await publicClient.request({ method: 'eth_accounts' }))
       .map((address) => getAddress(address.toLowerCase()));
     assert(accounts.length >= 10, 'Anvil did not expose ten disposable accounts');
-    const [safe, treasury, vig, founder, positionRecipient, bidder, trader, pol, rwa, bonder] = accounts;
+    const [safe, treasury, _legacyVig, founder, _legacyPositionRecipient, bidder, trader, _legacyPol, rwa, bonder] = accounts;
     const localTransport = () => http(localRpc, { timeout: 180_000, retryCount: 0 });
     const safeWallet = createWalletClient({ account: safe, chain, transport: localTransport() });
     const bidderWallet = createWalletClient({ account: bidder, chain, transport: localTransport() });
@@ -299,6 +322,7 @@ async function run() {
       const receipt = await publicClient.waitForTransactionReceipt({ hash, confirmations: 1, timeout: 60_000 });
       assert.equal(receipt.status, 'success', `${label} reverted`);
       receipts.push(receiptEvidence(label, receipt));
+      console.log(`PASS ${label}`);
       return receipt;
     }
     async function deploy(label, art, args, wallet = safeWallet) {
@@ -343,6 +367,13 @@ async function run() {
     const oracleArt = artifact('OmrV4TwapOracle', 'OmrV4TwapOracle');
     const bondArt = artifact('OmertaBond', 'OmertaBond');
     const swapRouterArt = artifact('PoolSwapTest', 'PoolSwapTest');
+    const vaultArt = artifact('ProtocolLiquidityVault', 'ProtocolLiquidityVault');
+    const controllerArt = artifact('GenesisLifecycleController', 'GenesisLifecycleController');
+    const buybackArt = artifact('LiquidityBuybackExecutor', 'LiquidityBuybackExecutor');
+    const liquidityAccount = privateKeyToAccount(generatePrivateKey());
+    await rpc('anvil_setBalance', [liquidityAccount.address, toHex(parseEther('100'))]);
+    const liquidityClients = { publicClient, account: liquidityAccount,
+      walletClient: createWalletClient({ account: liquidityAccount, chain, transport: localTransport() }) };
 
     const omr = await deploy('OMR', omrArt, [safe]);
     const constructorArgs = encodeAbiParameters(
@@ -374,20 +405,61 @@ async function run() {
     assert(await publicClient.readContract({ address: hook, abi: hookArt.abi, functionName: 'supportsInterface', args: [V4_OBSERVATION_SOURCE_INTERFACE_ID] }));
     let directCallbackRejected = false;
     try {
-      await publicClient.call({
-        account: safe, to: hook,
-        data: encodeFunctionData({
-          abi: hookArt.abi, functionName: 'beforeInitialize',
-          args: [safe, { currency0: ZERO, currency1: omr, fee: 3_000, tickSpacing: 60, hooks: hook }, 1n],
-        }),
+      await publicClient.simulateContract({
+        account: safe, address: hook, abi: hookArt.abi, functionName: 'beforeInitialize',
+        args: [safe, { currency0: ZERO, currency1: omr, fee: 3_000, tickSpacing: 60, hooks: hook }, 1n],
       });
-    } catch { directCallbackRejected = true; }
+    } catch (error) {
+      const reverted = error.walk?.(cause => cause.name === 'ContractFunctionRevertedError');
+      assert.equal(reverted?.data?.errorName, 'NotPoolManager', 'transport errors cannot prove callback rejection');
+      directCallbackRejected = true;
+    }
     assert(directCallbackRejected, 'hook callback accepted a direct non-PoolManager caller');
 
     const poolId = canonicalGenesisPoolId({ token: omr, hook });
+    const key = { currency0: ZERO, currency1: omr, fee: 3000, tickSpacing: 60, hooks: hook };
+    const oracle = await deploy('OmrV4TwapOracle', oracleArt, [hook, omr, 3_000, 60, PERIOD]);
+    assert.equal(await publicClient.readContract({ address: oracle, abi: oracleArt.abi, functionName: 'baselineInitialized' }), false);
+    assert.deepEqual(await publicClient.readContract({ address: oracle, abi: oracleArt.abi, functionName: 'consult' }), [0n, 0n]);
+    await write('oracle:register-observer-before-auction', safeWallet, {
+      address: hook, abi: hookArt.abi, functionName: 'setObserver', args: [oracle],
+    });
+    const claim = await deploy('VoucherClaim', artifact('VoucherClaim', 'VoucherClaim'), [safe, safe, omr, ZERO, parseEther('10000')]);
+    // The splitter commits to the real Vig executor before that executor exists. Reserve this
+    // contiguous CREATE sequence; no other Safe-EOA transaction may consume these local nonces.
+    const reservedNonce = BigInt(await publicClient.getTransactionCount({ address: safe, blockTag: 'pending' }));
+    const predictedVig = getContractAddress({ from: safe, nonce: reservedNonce + 2n });
+    const predictedDesk = getContractAddress({ from: safe, nonce: reservedNonce + 3n });
     const splitter = await deploy('GenesisProceedsSplitter', splitterArt, [
-      ROBINHOOD_GENESIS_STACK.poolManager, poolId, treasury, vig, founder,
+      ROBINHOOD_GENESIS_STACK.poolManager, poolId, treasury, predictedVig, founder,
     ]);
+    const pol = await deploy('ProtocolLiquidityVault', vaultArt, [{ safe, keeper: liquidityAccount.address,
+      positionManager: ROBINHOOD_GENESIS_STACK.positionManager, permit2: ROBINHOOD_GENESIS_STACK.permit2, oracle, key,
+      deskRecipient: predictedDesk, vigRecipient: predictedVig, minLiquidity: 1n,
+      warmup: PERIOD, maxOracleAge: PERIOD, maxDeviationBps: 500, budgetWindow: 86400,
+      maxNativePerAction: parseEther('1'), maxNativePerWindow: parseEther('2'),
+      maxOmrPerAction: parseEther('1000'), maxOmrPerWindow: parseEther('2000') }]);
+    const policy = { perAction: parseEther('1'), perDay: parseEther('2'), minInterval: 60,
+      maxOracleAge: PERIOD, slippageBps: 500 };
+    const vig = await deploy('VigExecutor', buybackArt, [safe, ROBINHOOD_GENESIS_STACK.poolManager, key, oracle, pol, 0, claim, claim, policy]);
+    const desk = await deploy('DeskExecutor', buybackArt, [safe, ROBINHOOD_GENESIS_STACK.poolManager, key, oracle, pol, 1, claim, ZERO, policy]);
+    const community = await deploy('CommunityExecutor', buybackArt, [safe, ROBINHOOD_GENESIS_STACK.poolManager, key, oracle, pol, 2, rwa, ZERO, policy]);
+    const polBuyback = await deploy('PolExecutor', buybackArt, [safe, ROBINHOOD_GENESIS_STACK.poolManager, key, oracle, pol, 3, pol, ZERO, policy]);
+    assert.equal(vig, predictedVig); assert.equal(desk, predictedDesk);
+    const controller = await deploy('GenesisLifecycleController', controllerArt, [safe, ROBINHOOD_GENESIS_STACK.lbpStrategy,
+      splitter, pol, oracle, omr, treasury, PERIOD]);
+    const fees = await deploy('OmertaFees', artifact('OmertaFees', 'OmertaFees'), [safe, founder, vig, 2500n, parseEther('0.001'), parseEther('0.001')]);
+    const feeRouter = await deploy('FeeRevenueRouter', artifact('FeeRevenueRouter', 'FeeRevenueRouter'), [fees, founder, vig, treasury, community]);
+    await write('configure:fee-router', safeWallet, { address: fees, abi: artifact('OmertaFees', 'OmertaFees').abi, functionName: 'setNonMintRouter', args: [feeRouter] });
+    const gasVaultArt = artifact('KeeperGasVault', 'KeeperGasVault');
+    const gasVault = await deploy('KeeperGasVault', gasVaultArt, [safe, parseEther('0.1'), parseEther('0.01'), parseEther('0.02'), 3600n]);
+    await write('configure:gas-keeper', safeWallet, { address: gasVault, abi: gasVaultArt.abi, functionName: 'setKeeperAllowed', args: [liquidityAccount.address, true] });
+    await write('configure:genesis-controller', safeWallet, { address: pol, abi: vaultArt.abi, functionName: 'setGenesisController', args: [controller] });
+    await write('configure:inventory-executor', safeWallet, { address: pol, abi: vaultArt.abi, functionName: 'setInventoryExecutor', args: [polBuyback] });
+    for (const address of [vig, desk, community, polBuyback]) await write('configure:buyback-keeper', safeWallet,
+      { address, abi: buybackArt.abi, functionName: 'setKeeper', args: [liquidityAccount.address, true] });
+    await write('configure:hook-recipients', safeWallet, { address: hook, abi: hookArt.abi, functionName: 'setRecipients', args: [founder, treasury, community, pol] });
+    const positionRecipient = pol;
     const swapRouter = await deploy('PoolSwapTest', swapRouterArt, [ROBINHOOD_GENESIS_STACK.poolManager]);
     await write('prepare:fund-trader-omr', safeWallet, {
       address: omr, abi: ERC20_ABI, functionName: 'transfer', args: [trader, parseEther('100000')],
@@ -399,14 +471,18 @@ async function run() {
     const clockNow = await chainBlockNumberish();
     const launchBlock = await publicClient.getBlock({ blockTag: 'latest' });
     const genesisInput = {
+      launchMode: 'automated', lifecycleController: controller, oracle, liquidityKeeper: liquidityAccount.address,
       token: omr, launchOwner: safe, treasury, vigRecipient: vig, founderRecipient: founder,
       proceedsSplitter: splitter, positionRecipient, hook,
       salt: keccak256(stringToHex(`omerta-fork-${forkBlock.number}-${omr}`)),
       // Block time is deliberately compressed for the fork; supply-MPS and migration invariants are
       // unchanged. Production block counts still come from the separately measured 72h/24h cadence.
-      startBlock: (clockNow + 12n).toString(), auctionBlocks: '24', prebidBlocks: '0',
+      startBlock: (clockNow + 24n).toString(), auctionBlocks: '24', prebidBlocks: '0',
       claimDelayBlocks: '12', permit2Expiration: (launchBlock.timestamp + 86_400n).toString(),
       requiredCurrencyRaised: parseEther('10').toString(),
+      runtimeCodeHashes: Object.fromEntries(await Promise.all(Object.entries({ token: omr, hook, proceedsSplitter: splitter,
+        lifecycleController: controller, positionRecipient, oracle }).map(async ([name, address]) =>
+        [name, keccak256(await publicClient.getCode({ address }))]))),
     };
     const launch = buildGenesisLaunchArtifacts(genesisInput);
     for (const [index, transaction] of launch.safeTransactions.prepare.entries()) {
@@ -425,6 +501,44 @@ async function run() {
     assert(initializerLog?.topics[1], 'LBPStrategy.InitializerCreated was not emitted');
     const initializer = topicAddress(initializerLog.topics[1]);
     deployments.CCAInitializer = initializer;
+    const binding = await buildGenesisAuctionBinding(publicClient, launch);
+    await send('launch:bind-auction-before-bidding', safeWallet,
+      { to: binding.transaction.to, data: binding.transaction.data, value: binding.transaction.value });
+    assert.equal(getAddress(await publicClient.readContract({ address: controller, abi: controllerArt.abi, functionName: 'auction' })), initializer);
+    assert.equal(Number(await publicClient.readContract({ address: controller, abi: controllerArt.abi, functionName: 'phase' })), 1);
+    pool = await journalDb();
+    const contractAddresses = { omr, oracle, polVault: pol, genesisController: controller, auction: initializer, splitter,
+      strategy: ROBINHOOD_GENESIS_STACK.lbpStrategy, poolManager: ROBINHOOD_GENESIS_STACK.poolManager,
+      positionManager: ROBINHOOD_GENESIS_STACK.positionManager };
+    const keeperManifest = validateLiquidityManifest({ schemaVersion: 1, chainId: CHAIN_ID, governanceSafe: safe,
+      keeper: liquidityAccount.address, poolId,
+      contracts: Object.fromEntries(await Promise.all(Object.entries(contractAddresses).map(async ([name, address]) =>
+        [name, { address, runtimeHash: keccak256(await publicClient.getCode({ address })) }]))),
+      indexing: { startL2Block: String(launchReceipt.blockNumber), maxBlocks: 2000 },
+      genesis: { treasuryRecipient: treasury, vigRecipient: vig, founderRecipient: founder,
+        genesisStartL2Block: String(launchReceipt.blockNumber), maxLogScanBlocks: 10000, maxCandidatePositions: 16 },
+      gas: { maxGas: '10000000', maxFeePerGas: '10000000000', maxPriorityFeePerGas: '1000000000',
+        dailyBudget: parseEther('10').toString(), confirmations: 2, maxSnapshotAgeSeconds: 300 },
+      jobs: ['genesis_checkpoint', 'genesis_migrate', 'genesis_accept_foundation', 'genesis_sweep_unsold', 'genesis_distribute']
+        .map(kind => ({ id: kind, kind, target: 'genesisController', intervalSeconds: 3600 })) });
+    const lifecycleResults = [];
+    async function runGenesisJob(kind) {
+      const manifest = { ...keeperManifest, jobs: keeperManifest.jobs.filter(job => job.kind === kind) };
+      let result;
+      for (let i = 0; i < 5; i++) {
+        result = await runLiquidityKeeper(pool, { config: { enabled: true, manifest, rpcUrl: localRpc },
+          clients: liquidityClients, onConfirmed: bookConfirmedLiquidityAction });
+        if (result.state === 'settled') break;
+        assert(['submitted', 'mined', 'confirmed', 'ambiguous'].includes(result.state), `${kind}: ${json(result)}`);
+        // Public chains keep mining after a transaction. The disposable auto-mining fork needs
+        // an explicit successor block to satisfy the durable journal's confirmation-depth gate.
+        await rpc('evm_mine');
+      }
+      assert.equal(result.state, 'settled', `${kind}: ${json(result)}`);
+      lifecycleResults.push({ kind, ...result });
+      console.log(`PASS typed-keeper:${kind}`);
+      return publicClient.getTransactionReceipt({ hash: result.txHash });
+    }
 
     await mineToBlock(launch.timeline.startBlock);
     // CCA requires every bid's maximum to be strictly above the current clearing price. The first
@@ -435,9 +549,7 @@ async function run() {
       args: [bidMaxPriceQ96, parseEther('12'), bidder, '0x'], value: parseEther('12'),
     });
     await mineToBlock(launch.timeline.endBlock + 1n);
-    await write('auction:final-checkpoint', bidderWallet, {
-      address: initializer, abi: CCA_ABI, functionName: 'checkpoint', args: [],
-    });
+    await runGenesisJob('genesis_checkpoint');
     const auctionState = {
       graduated: await publicClient.readContract({ address: initializer, abi: CCA_ABI, functionName: 'isGraduated' }),
       clearingPriceQ96: await publicClient.readContract({ address: initializer, abi: CCA_ABI, functionName: 'clearingPrice' }),
@@ -447,9 +559,7 @@ async function run() {
     assert.equal(auctionState.graduated, true, 'CCA did not graduate');
     assert(auctionState.currencyRaised >= parseEther('10'), 'CCA raise is below graduation minimum');
 
-    const migrationReceipt = await write('migration:lbp-migrate', bidderWallet, {
-      address: ROBINHOOD_GENESIS_STACK.lbpStrategy, abi: LBP_ABI, functionName: 'migrate', args: [initializer],
-    });
+    const migrationReceipt = await runGenesisJob('genesis_migrate');
     const migrationTopics = migrationReceipt.logs.map((log) => log.topics[0]?.toLowerCase());
     assert(migrationTopics.includes(TOPICS.migrated.toLowerCase()), 'Migrated was not emitted');
     assert(!migrationTopics.includes(TOPICS.migrationFailed.toLowerCase()), 'MigrationFailed was emitted');
@@ -474,14 +584,13 @@ async function run() {
       functionName: 'ownerOf', args: [positionTokenId],
     }));
     assert.equal(positionOwner, positionRecipient, 'position NFT owner mismatch');
-    await write('migration:distribute-residual', bidderWallet, {
-      address: splitter, abi: splitterArt.abi, functionName: 'distributeResidual', args: [],
-    });
-
-    const oracle = await deploy('OmrV4TwapOracle', oracleArt, [hook, omr, 3_000, 60, PERIOD]);
-    await write('oracle:set-hook-observer', safeWallet, {
-      address: hook, abi: hookArt.abi, functionName: 'setObserver', args: [oracle],
-    });
+    const adoptionReceipt = await runGenesisJob('genesis_accept_foundation');
+    assert.equal(await publicClient.readContract({ address: pol, abi: vaultArt.abi, functionName: 'positionId' }), positionTokenId);
+    await runGenesisJob('genesis_distribute');
+    await runGenesisJob('genesis_sweep_unsold');
+    const postMigration = await readLiquiditySnapshot(keeperManifest, liquidityClients);
+    assert.equal(postMigration.genesisPhase, 4, 'funded pool with an unwarmed oracle cannot be Live');
+    assert.deepEqual(await publicClient.readContract({ address: oracle, abi: oracleArt.abi, functionName: 'consult' }), [0n, 0n]);
     assert.equal(getAddress(await publicClient.readContract({ address: hook, abi: hookArt.abi, functionName: 'observer' })), oracle);
 
     const keeperKey = generatePrivateKey();
@@ -496,14 +605,22 @@ async function run() {
       walletClient: createWalletClient({ account: keeperAccount, chain, transport: localTransport() }),
       account: keeperAccount,
     };
-    pool = await journalDb();
     let health = await v4OracleHealth(pool, { config: keeperConfig, clients: keeperClients, keeperConfigured: true });
+    if (health.state === 'seeding') {
+      const seeded = await runV4OracleKeeper(pool, { config: keeperConfig, clients: keeperClients });
+      assert.equal(seeded.action, 'confirmed');
+      health = seeded.health;
+    }
     healthSnapshots.push(compactHealth('03-warming', health));
     assert.equal(health.state, 'warming');
     let earlyUpdateRejected = false;
     try {
       await keeperClients.publicClient.simulateContract({ address: oracle, abi: oracleArt.abi, functionName: 'update', account: keeperAccount });
-    } catch { earlyUpdateRejected = true; }
+    } catch (error) {
+      const reverted = error.walk?.(cause => cause.name === 'ContractFunctionRevertedError');
+      assert.equal(reverted?.data?.errorName, 'PeriodNotElapsed', 'transport errors cannot prove an early-window rejection');
+      earlyUpdateRejected = true;
+    }
     assert(earlyUpdateRejected, 'oracle accepted an early update');
     await advanceOracleTo(oracle, oracleArt.abi, PERIOD);
     health = await v4OracleHealth(pool, { config: keeperConfig, clients: keeperClients, keeperConfigured: true });
@@ -513,6 +630,14 @@ async function run() {
     healthSnapshots.push(compactHealth('03-healthy', initialUpdate.health));
     assert.equal(initialUpdate.action, 'confirmed');
     assert.equal(initialUpdate.health.state, 'healthy');
+    const activatedAt = Number(await publicClient.readContract({ address: pol, abi: vaultArt.abi, functionName: 'activationTimestamp' }));
+    const firstPriceAt = Number(await publicClient.readContract({ address: oracle, abi: oracleArt.abi, functionName: 'lastUpdate' }));
+    if (firstPriceAt < activatedAt + PERIOD) {
+      await advanceOracleTo(oracle, oracleArt.abi, PERIOD);
+      assert.equal((await runV4OracleKeeper(pool, { config: keeperConfig, clients: keeperClients })).action, 'confirmed');
+    }
+    assert.equal(Number(await publicClient.readContract({ address: controller, abi: controllerArt.abi, functionName: 'phase' })), 5,
+      'Live requires a fresh completed observation after the adopted foundation warmup');
 
     await advanceOracleTo(oracle, oracleArt.abi, PERIOD);
     const sendFault = wrapClients(keeperClients, { failSends: 1, receiptTimeouts: 0 });
@@ -616,6 +741,9 @@ async function run() {
     await write('bond:set-v4-oracle', safeWallet, {
       address: bond, abi: bondArt.abi, functionName: 'setOracle', args: [oracle, 500n, 1_800n],
     });
+    await write('bond:set-foundation-health-guard', safeWallet, {
+      address: bond, abi: bondArt.abi, functionName: 'setLiquidityHealthGuard', args: [pol],
+    });
     await write('bond:arm-omr-minter-last', safeWallet, {
       address: omr, abi: omrArt.abi, functionName: 'setMinter', args: [bond],
     });
@@ -663,17 +791,24 @@ async function run() {
         mutationRpc: localRpc, mutationTargetLoopback: true, upstreamRpcOrigin: remoteUrl.origin,
         upstreamReadOnly: true, productionTransactionsBroadcast: 0, productionKeysRead: 0,
         secretsPersisted: false,
+        forkBlockHashVerifiedBeforeMutations: true, codeSizeLimitEnabled: true,
+        postgresAdvisoryLocksEnabled: !!process.env.GENESIS_REHEARSAL_DATABASE_URL,
         blockNumberishShim: {
           reason: 'Anvil does not emulate Robinhood ArbSys address(100); pinned CCA/LBP bytecode is unchanged.',
           address: ARBSYS, runtimeCodeHash: keccak256(shimCode),
         },
       },
       toolchain: { foundryBuild: 'passed', node: process.version },
+      limitations: { governance: 'disposable EOA stands in for reviewed Safe governance; no Safe signing ceremony is proven',
+        persistence: process.env.GENESIS_REHEARSAL_DATABASE_URL ? 'isolated native PostgreSQL' : 'pg-mem; no PostgreSQL concurrency claim',
+        cadence: 'compressed local auction blocks and advanced oracle time; no public-chain liveness claim',
+        excluded: ['mainnet broadcast', 'owner budgets', 'private key provisioning', 'THE BANK asset activation'] },
       fork: {
         chainId: CHAIN_ID, blockNumber: forkBlock.number, blockHash: forkBlock.hash,
         timestamp: forkBlock.timestamp, pinnedRuntimeCodeHashes: remoteCodeHashes,
       },
-      participants: { safe, treasury, vig, founder, positionRecipient, bidder, trader, pol, rwa, bonder, keeper: keeperAccount.address },
+      participants: { safe, treasury, vig, founder, positionRecipient, bidder, trader, pol, rwa, bonder,
+        oracleKeeper: keeperAccount.address, liquidityKeeper: liquidityAccount.address },
       deployments,
       hookSecurity: {
         create2Salt: hookSalt, flags: toHex(HOOK_FLAGS), directNonPoolManagerCallbackRejected: true,
@@ -684,10 +819,15 @@ async function run() {
         timingMode: 'compressed fork blocks; production 72h/24h derivation is not reused',
         bidMaxPriceQ96, positionTokenId, positionOwner, migrationSucceeded: true, migrationFailureEvents: 0,
         residualDistributed: true,
+        controller, bindingBeforeStart: true, bindingCalldataKeccak256: binding.bindingCalldataKeccak256,
+        custody: 'ProtocolLiquidityVault', adoptedFoundation: positionTokenId, adoptionTransaction: adoptionReceipt.transactionHash,
+        warmupPhaseObserved: postMigration.genesisPhase, livePhaseAfterFoundationAndOracleWarmup: 5,
+        lifecycleResults,
       },
       oracle: {
         address: oracle, observerReadback: oracle, directWorkerAddress: oracle,
         periodSeconds: PERIOD, maxWindowMultiple: MAX_WINDOW_MULT, earlyUpdateRejected,
+        deployedBeforeAuction: true, prePoolQuoteZero: true, realInitializedBaselineRequired: true,
       },
       bond: {
         address: bond, oracle, principalWei: principal, oraclePriceOmrPerEthWei: publishedPrice,
@@ -698,6 +838,9 @@ async function run() {
     const files = {
       'evidence.json': json(evidence),
       'genesis-input.json': json(genesisInput),
+      'auction-binding.json': json(binding),
+      'liquidity-manifest.json': json(keeperManifest),
+      'liquidity-journal.json': json((await pool.query('SELECT * FROM keeper_transactions ORDER BY nonce')).rows),
       'preflight.json': json({ ok: true, stack: stackPreflight, readiness: readinessPreflight }),
       'receipts.json': json(receipts),
       'health-snapshots.json': json(healthSnapshots),

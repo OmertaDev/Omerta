@@ -1,0 +1,74 @@
+[
+  {
+    "oracle_address": "0xcbbe2a5c3a22be749d5ddf24e9534f98951983e2",
+    "baseline_timestamp": "-1",
+    "status": "confirmed",
+    "tx_hash": "0x864b0421e73cd8d733dfed01f04eab86fe63fcf9819cd4e77b84b88a24219e6c",
+    "raw_tx": "0x02f87082123780843b9aca0084478696d482cb7b94cbbe2a5c3a22be749d5ddf24e9534f98951983e28084a2e62045c080a0988528f243caf45a8866838a843839041631aadb34832f187ea3dc094fc7f4d6a04409e9055aebddc44993d17a8b91db3df6375af8895e4f9bbb27df465cd703fc",
+    "nonce": "0",
+    "claimed_at": "2026-09-09T07:20:37.071Z",
+    "sent_at": "2026-09-09T07:20:37.210Z",
+    "confirmed_at": "2026-09-09T07:20:37.225Z",
+    "last_error": null
+  },
+  {
+    "oracle_address": "0xcbbe2a5c3a22be749d5ddf24e9534f98951983e2",
+    "baseline_timestamp": "1788938434",
+    "status": "confirmed",
+    "tx_hash": "0x9eef9cd22183c3203b67ed5910d1fd3c25bfb5cc9ac2dec20953e5194c7a0502",
+    "raw_tx": "0x02f87182123701843b9aca00844786944c83013c0494cbbe2a5c3a22be749d5ddf24e9534f98951983e28084a2e62045c080a0b467ed83d22f5a56468b3d14a16948e079d469f5ae49d0aa069449ec24a28f9ca03611d03f56baa0320f7e603d3a280e1e13dfbcf4f905b8c4c819229d7ce760f5",
+    "nonce": "1",
+    "claimed_at": "2026-09-09T07:20:37.696Z",
+    "sent_at": "2026-09-09T07:20:37.819Z",
+    "confirmed_at": "2026-09-09T07:20:37.834Z",
+    "last_error": null
+  },
+  {
+    "oracle_address": "0xcbbe2a5c3a22be749d5ddf24e9534f98951983e2",
+    "baseline_timestamp": "1788939034",
+    "status": "confirmed",
+    "tx_hash": "0x1a554de11dfd2e9ea518572f3942c641c878d6d3f8a0285c913b6389d209bdb6",
+    "raw_tx": "0x02f87082123702843b9aca00844786925c82ab7c94cbbe2a5c3a22be749d5ddf24e9534f98951983e28084a2e62045c080a0967d009a3492dc6b2c74b4714e2448bd94ee500362777fbafb28433fa616f25fa06afe9bf1d77f44c3a1307148a82df92e4612e896b6c7c1101f6f9956e595a5af",
+    "nonce": "2",
+    "claimed_at": "2026-09-09T07:20:38.100Z",
+    "sent_at": "2026-09-09T07:20:38.334Z",
+    "confirmed_at": "2026-09-09T07:20:38.350Z",
+    "last_error": null
+  },
+  {
+    "oracle_address": "0xcbbe2a5c3a22be749d5ddf24e9534f98951983e2",
+    "baseline_timestamp": "1788939635",
+    "status": "confirmed",
+    "tx_hash": "0x9ba323ceb457ade0521254137ed3726df6e9772535698ddd823bb9ae30348a5e",
+    "raw_tx": "0x02f87082123703843b9aca0084478690e082ab7c94cbbe2a5c3a22be749d5ddf24e9534f98951983e28084a2e62045c080a0c4cac07af334a274748fbc010f44b75c4099a8f9f9bda6fd4176b4fe36c20458a07191c567e9ba43ce24006670deb4174d4d486d2a1e3672234ad68604033dc897",
+    "nonce": "3",
+    "claimed_at": "2026-09-09T07:20:38.696Z",
+    "sent_at": "2026-09-09T07:20:38.834Z",
+    "confirmed_at": "2026-09-09T07:20:38.962Z",
+    "last_error": null
+  },
+  {
+    "oracle_address": "0xcbbe2a5c3a22be749d5ddf24e9534f98951983e2",
+    "baseline_timestamp": "1788940235",
+    "status": "confirmed",
+    "tx_hash": "0xce00329ed7d2d0ab850be8986b7e11ad3df7ab5aefdf5bde0500a7742c9b142f",
+    "raw_tx": "0x02f86f82123704843b9aca008447868f4682acaa94cbbe2a5c3a22be749d5ddf24e9534f98951983e28084a2e62045c0019f820db52c8bd6c07adabb4f412140a9400955ddd28b6fb4440e72ebafab8050a01d10704cb8050e205235a8455d6522a1a018ef29dda1e1251ad703dc7e095577",
+    "nonce": "4",
+    "claimed_at": "2026-09-09T07:20:39.744Z",
+    "sent_at": "2026-09-09T07:20:39.882Z",
+    "confirmed_at": "2026-09-09T07:20:39.897Z",
+    "last_error": null
+  },
+  {
+    "oracle_address": "0xcbbe2a5c3a22be749d5ddf24e9534f98951983e2",
+    "baseline_timestamp": "1788942636",
+    "status": "confirmed",
+    "tx_hash": "0xf532a6600d21787256bb61edb4798f35c814cfb7c7abf57d60fd6134dcc810ac",
+    "raw_tx": "0x02f87182123705843b9aca008447868dee83013bda94cbbe2a5c3a22be749d5ddf24e9534f98951983e28084a2e62045c080a0823495f7fc57e34d78449500fe72cd353ef9b4b2ab3c86bbacfd653fda3c6817a055cacd3a79ef83baed62d2bf29b1d412e8b86811edf979a4b1cfffa68d0efce4",
+    "nonce": "5",
+    "claimed_at": "2026-09-09T07:20:44.565Z",
+    "sent_at": "2026-09-09T07:20:44.690Z",
+    "confirmed_at": "2026-09-09T07:20:44.705Z",
+    "last_error": null
+  }
+]

@@ -4,8 +4,10 @@ import {
   getAddress,
   isAddress,
   keccak256,
+  parseAbi,
   toFunctionSelector,
 } from 'viem';
+import { canonicalJson, sha256Hex } from './genesiscadence.js';
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 export const Q96 = 2n ** 96n;
@@ -296,8 +298,8 @@ function sameAddress(actual, expected) {
   return getAddress(actual) === getAddress(expected);
 }
 
-async function assertRuntimeCode(client, label, target, expectedHash) {
-  const code = await client.getBytecode({ address: target });
+async function assertRuntimeCode(client, label, target, expectedHash, blockNumber) {
+  const code = await client.getBytecode({ address: target, ...(blockNumber == null ? {} : { blockNumber }) });
   if (!code || code === '0x') throw new Error(`${label} has no runtime code at ${target}`);
   const runtimeCodeHash = keccak256(code);
   if (expectedHash && runtimeCodeHash.toLowerCase() !== expectedHash.toLowerCase()) {
@@ -420,6 +422,210 @@ export function canonicalGenesisPoolId({ token, hook }) {
   }]));
 }
 
+const AUTOMATION_ABI = parseAbi([
+  'function owner() view returns (address)', 'function strategy() view returns (address)',
+  'function splitter() view returns (address)', 'function foundation() view returns (address)',
+  'function oracle() view returns (address)', 'function omr() view returns (address)',
+  'function treasury() view returns (address)', 'function poolId() view returns (bytes32)',
+  'function chainId() view returns (uint256)', 'function configuredChainId() view returns (uint256)',
+  'function currentBlock() view returns (uint256)', 'function usesArbSys() view returns (bool)',
+  'function auction() view returns (address)', 'function stopped() view returns (bool)',
+  'function failed() view returns (bool)', 'function positionManager() view returns (address)',
+  'function poolManager() view returns (address)', 'function permit2() view returns (address)',
+  'function keeper() view returns (address)', 'function genesisController() view returns (address)',
+  'function vigRecipient() view returns (address)', 'function emergencyRecipient() view returns (address)',
+  'function positionId() view returns (uint256)', 'function activationTimestamp() view returns (uint256)',
+  'function paused() view returns (bool)', 'function emergencyLatched() view returns (bool)',
+  'function source() view returns (address)', 'function fee() view returns (uint24)',
+  'function tickSpacing() view returns (int24)', 'function baselineInitialized() view returns (bool)',
+  'function consult() view returns (uint256,uint256)',
+  'function strategyCodeHash() view returns (bytes32)', 'function splitterCodeHash() view returns (bytes32)',
+  'function foundationCodeHash() view returns (bytes32)', 'function oracleCodeHash() view returns (bytes32)',
+  'function omrCodeHash() view returns (bytes32)', 'function poolManagerCodeHash() view returns (bytes32)',
+  'function positionManagerCodeHash() view returns (bytes32)', 'function permit2CodeHash() view returns (bytes32)',
+  'function hookCodeHash() view returns (bytes32)', 'function genesisControllerCodeHash() view returns (bytes32)',
+  'function bindAuction(address auction)',
+]);
+const GENESIS_BINDING_ABI = [
+  ...parseAbi([
+    'function registeredPoolIds(bytes32 poolId) view returns (address)',
+    'function getAddress(address token,uint256 amount,bytes configData,bytes32 salt,address sender) view returns (address)',
+    'function token() view returns (address)', 'function currency() view returns (address)',
+    'function tokensRecipient() view returns (address)', 'function fundsRecipient() view returns (address)',
+    'function validationHook() view returns (address)', 'function totalSupply() view returns (uint128)',
+    'function startBlock() view returns (uint64)', 'function endBlock() view returns (uint64)',
+    'function claimBlock() view returns (uint64)', 'function floorPrice() view returns (uint256)',
+    'function tickSpacing() view returns (uint256)',
+  ]),
+  { type: 'function', name: 'initializers', stateMutability: 'view',
+    inputs: [{ name: 'auction', type: 'address' }], outputs: [{ ...MIGRATOR_PARAMETERS, name: 'parameters' }] },
+];
+
+function assertEqualRead(label, actual, expected) {
+  if (String(actual).toLowerCase() !== String(expected).toLowerCase()) {
+    throw new Error(`${label} mismatch: expected ${expected}, received ${actual}`);
+  }
+}
+
+async function automatedSnapshot(client) {
+  if (await client.getChainId() !== ROBINHOOD_GENESIS_STACK.chainId) throw new Error('automated genesis requires chain 4663');
+  const block = await client.getBlock({ blockTag: 'latest' });
+  if (typeof block.number !== 'bigint' || !/^0x[0-9a-f]{64}$/i.test(block.hash || '')) {
+    throw new Error('automated genesis requires a canonical numbered block');
+  }
+  const age = BigInt(Math.floor(Date.now() / 1000)) - BigInt(block.timestamp);
+  if (age > 120n || age < -60n) throw new Error('automated genesis snapshot is stale or future-dated');
+  return block;
+}
+
+function assertSnapshotFresh(block) {
+  const age = BigInt(Math.floor(Date.now() / 1000)) - BigInt(block.timestamp);
+  if (age > 120n || age < -60n) throw new Error('automated genesis snapshot became stale during verification');
+}
+
+async function assertSnapshotCanonical(client, block) {
+  const canonical = await client.getBlock({ blockNumber: block.number });
+  if (canonical.hash !== block.hash) throw new Error('automated genesis snapshot changed canonical block');
+  assertSnapshotFresh(block);
+}
+
+async function assertLivePrestartClock(client, artifacts, block) {
+  const currentBlock = BigInt(await client.readContract({ address: artifacts.participants.lifecycleController,
+    abi: AUTOMATION_ABI, functionName: 'currentBlock', blockTag: 'latest' }));
+  if (currentBlock >= artifacts.timeline.startBlock) throw new Error('auction reached its start during verification');
+  // This must be after the final awaited RPC: even a valid clock reply can arrive too late
+  // to reuse the earlier runtime, ownership, and custody snapshot.
+  assertSnapshotFresh(block);
+  return currentBlock;
+}
+
+async function inspectGenesisAutomation(client, artifacts, block) {
+  if (artifacts.launchMode !== 'automated' || !artifacts.automation) {
+    throw new Error('explicit automated genesis artifacts are required');
+  }
+  const p = artifacts.participants;
+  const expectedPoolId = canonicalGenesisPoolId(p);
+  const pins = artifacts.automation.runtimeCodeHashes;
+  const runtimeCodeHashes = {};
+  for (const name of ['token', 'hook', 'proceedsSplitter', 'lifecycleController', 'positionRecipient', 'oracle']) {
+    if (!pins?.[name]) throw new Error(`runtimeCodeHashes.${name} is required`);
+    runtimeCodeHashes[name] = await assertRuntimeCode(client, name, p[name], pins[name], block.number);
+  }
+  for (const name of ['liquidityLauncher', 'lbpStrategy', 'ccaFactory', 'poolManager', 'positionManager', 'permit2']) {
+    runtimeCodeHashes[name] = await assertRuntimeCode(client, name, ROBINHOOD_GENESIS_STACK[name],
+      ROBINHOOD_GENESIS_STACK.runtimeCodeHashes[name], block.number);
+  }
+  const read = (target, name, abi = AUTOMATION_ABI, args = []) => client.readContract({
+    address: target, abi, functionName: name, args, blockNumber: block.number,
+  });
+  const checkAddress = async (target, name, expected, label) => {
+    assertAddressRead(label ?? name, await read(target, name), expected);
+  };
+  const controller = p.lifecycleController;
+  for (const [name, expected] of Object.entries({ owner: p.launchOwner, strategy: ROBINHOOD_GENESIS_STACK.lbpStrategy,
+    splitter: p.proceedsSplitter, foundation: p.positionRecipient, oracle: p.oracle, omr: p.token, treasury: p.treasury })) {
+    await checkAddress(controller, name, expected, `GenesisLifecycleController ${name}`);
+  }
+  for (const [name, expected] of Object.entries({ poolId: expectedPoolId, chainId: 4663n, stopped: false, failed: false,
+    usesArbSys: true, auction: ZERO_ADDRESS })) {
+    assertEqualRead(`GenesisLifecycleController ${name}`, await read(controller, name), expected);
+  }
+  const currentBlock = BigInt(await read(controller, 'currentBlock'));
+  if (currentBlock >= artifacts.timeline.startBlock) throw new Error('auction start block is not in the future on the controller clock');
+  const vault = p.positionRecipient;
+  for (const [name, expected] of Object.entries({ owner: p.launchOwner, poolManager: ROBINHOOD_GENESIS_STACK.poolManager,
+    positionManager: ROBINHOOD_GENESIS_STACK.positionManager, permit2: ROBINHOOD_GENESIS_STACK.permit2,
+    oracle: p.oracle, omr: p.token, keeper: p.liquidityKeeper, genesisController: controller,
+    vigRecipient: p.vigRecipient, emergencyRecipient: p.launchOwner })) {
+    await checkAddress(vault, name, expected, `ProtocolLiquidityVault ${name}`);
+  }
+  for (const [name, expected] of Object.entries({ poolId: expectedPoolId, configuredChainId: 4663n, positionId: 0n,
+    activationTimestamp: 0n, paused: false, emergencyLatched: false })) {
+    assertEqualRead(`ProtocolLiquidityVault ${name}`, await read(vault, name), expected);
+  }
+  const controllerHashBindings = { strategyCodeHash: 'lbpStrategy', splitterCodeHash: 'proceedsSplitter',
+    foundationCodeHash: 'positionRecipient', oracleCodeHash: 'oracle', omrCodeHash: 'token', poolManagerCodeHash: 'poolManager' };
+  const vaultHashBindings = { positionManagerCodeHash: 'positionManager', poolManagerCodeHash: 'poolManager',
+    permit2CodeHash: 'permit2', omrCodeHash: 'token', oracleCodeHash: 'oracle', hookCodeHash: 'hook',
+    genesisControllerCodeHash: 'lifecycleController' };
+  for (const [target, bindings] of [[controller, controllerHashBindings], [vault, vaultHashBindings]]) {
+    for (const [getter, name] of Object.entries(bindings)) {
+      assertEqualRead(`${target} ${getter}`, await read(target, getter), runtimeCodeHashes[name]);
+    }
+  }
+  for (const [name, expected] of Object.entries({ source: p.hook, poolManager: ROBINHOOD_GENESIS_STACK.poolManager, omr: p.token })) {
+    await checkAddress(p.oracle, name, expected, `OmrV4TwapOracle ${name}`);
+  }
+  for (const [name, expected] of Object.entries({ poolId: expectedPoolId, fee: 3000, tickSpacing: 60, baselineInitialized: false })) {
+    assertEqualRead(`OmrV4TwapOracle ${name}`, await read(p.oracle, name), expected);
+  }
+  const [price, updatedAt] = await read(p.oracle, 'consult');
+  if (BigInt(price) !== 0n || BigInt(updatedAt) !== 0n) throw new Error('pre-pool oracle must have an unavailable zero quote');
+  for (const [name, expected] of Object.entries({ poolManager: ROBINHOOD_GENESIS_STACK.poolManager,
+    treasuryRecipient: p.treasury, vigRecipient: p.vigRecipient, founderRecipient: p.founderRecipient,
+    canonicalPoolId: expectedPoolId, canonicalPoolInitialized: false })) {
+    assertEqualRead(`GenesisProceedsSplitter ${name}`, await read(p.proceedsSplitter, name, SPLITTER_READINESS_ABI), expected);
+  }
+  return { currentBlock, canonicalPoolId: expectedPoolId, runtimeCodeHashes,
+    launchArtifactsSha256: sha256Hex(canonicalJson(artifacts)),
+    checkedAtBlock: block.number, checkedAtBlockHash: block.hash, checkedAtTimestamp: block.timestamp,
+    baselineInitialized: false, oracleQuote: { price: 0n, updatedAt: 0n } };
+}
+
+/// Pre-auction identity and runtime proof. All reads use one fresh canonical L2 block; scheduling
+/// uses the controller's pinned ArbSys clock, never an assumed equivalence with eth_blockNumber.
+export async function verifyGenesisAutomationReadiness(client, artifacts) {
+  const block = await automatedSnapshot(client);
+  const report = await inspectGenesisAutomation(client, artifacts, block);
+  await assertSnapshotCanonical(client, block);
+  return { ...report, latestCurrentBlock: await assertLivePrestartClock(client, artifacts, block) };
+}
+
+/// Discover and verify the created CCA before emitting its one-shot governance binding. The
+/// official factory recomputes CREATE2 from the exact launch bytes, including the private schedule
+/// and graduation threshold; a caller cannot nominate or guess an auction address.
+export async function buildGenesisAuctionBinding(client, artifacts) {
+  const block = await automatedSnapshot(client);
+  const readiness = await inspectGenesisAutomation(client, artifacts, block);
+  const p = artifacts.participants;
+  const read = (target, functionName, args = []) => client.readContract({
+    address: target, abi: GENESIS_BINDING_ABI, functionName, args, blockNumber: block.number,
+  });
+  const auction = address('registered auction', await read(ROBINHOOD_GENESIS_STACK.lbpStrategy,
+    'registeredPoolIds', [readiness.canonicalPoolId]));
+  const predicted = await read(ROBINHOOD_GENESIS_STACK.ccaFactory, 'getAddress', [
+    p.token, GENESIS_SALE_OMR, artifacts.initializerParams, artifacts.initializerSalt, ROBINHOOD_GENESIS_STACK.lbpStrategy,
+  ]);
+  assertAddressRead('registered auction versus exact factory prediction', auction, predicted);
+  const auctionRuntimeCodeHash = await assertRuntimeCode(client, 'created CCA', auction, undefined, block.number);
+  const migrator = await read(ROBINHOOD_GENESIS_STACK.lbpStrategy, 'initializers', [auction]);
+  if (encodeAbiParameters([MIGRATOR_PARAMETERS], [migrator]).toLowerCase()
+    !== encodeAbiParameters([MIGRATOR_PARAMETERS], [artifacts.migratorParameters]).toLowerCase()) {
+    throw new Error('created auction migration parameters do not match the committed launch');
+  }
+  for (const [name, expected] of Object.entries({ token: p.token, currency: ZERO_ADDRESS,
+    tokensRecipient: p.lifecycleController, fundsRecipient: ROBINHOOD_GENESIS_STACK.lbpStrategy,
+    validationHook: ZERO_ADDRESS, totalSupply: GENESIS_SALE_OMR, startBlock: artifacts.timeline.startBlock,
+    endBlock: artifacts.timeline.endBlock, claimBlock: artifacts.timeline.claimBlock,
+    floorPrice: artifacts.pricing.floorPrice, tickSpacing: artifacts.pricing.tickSpacing })) {
+    assertEqualRead(`created CCA ${name}`, await read(auction, name), expected);
+  }
+  const transaction = { from: p.launchOwner, to: p.lifecycleController, value: 0n,
+    data: encodeFunctionData({ abi: AUTOMATION_ABI, functionName: 'bindAuction', args: [auction] }),
+    purpose: 'Bind the verified created CCA to the lifecycle controller before bidding starts' };
+  await client.simulateContract({ address: p.lifecycleController, abi: AUTOMATION_ABI, functionName: 'bindAuction',
+    args: [auction], account: p.launchOwner, blockNumber: block.number });
+  await assertSnapshotCanonical(client, block);
+  const currentBlock = await assertLivePrestartClock(client, artifacts, block);
+  return { status: 'ready_for_auction_binding', chainId: 4663, transaction, auction,
+    auctionRuntimeCodeHash, checkedAtBlock: block.number, checkedAtBlockHash: block.hash,
+    checkedAtTimestamp: block.timestamp, currentBlock, beforeBlock: artifacts.timeline.startBlock,
+    launchCalldataKeccak256: artifacts.calldataDigests.launchKeccak256,
+    launchArtifactsSha256: readiness.launchArtifactsSha256,
+    bindingCalldataKeccak256: keccak256(transaction.data), factoryPredictionVerified: true,
+    simulated: true, readiness, unsigned: true, broadcastsTransactions: false };
+}
+
 /// Verify the OMERTÀ-controlled contracts and one-shot allowances immediately before the launch
 /// multicall. This is expected to run after the three preparation Safe calls have landed.
 export async function verifyGenesisLaunchReadiness(client, artifacts) {
@@ -430,6 +636,8 @@ export async function verifyGenesisLaunchReadiness(client, artifacts) {
     token, launchOwner, treasury, vigRecipient, founderRecipient, proceedsSplitter, hook,
   } = artifacts.participants;
   const expectedPoolId = canonicalGenesisPoolId({ token, hook });
+  const automation = artifacts.launchMode === 'automated'
+    ? await verifyGenesisAutomationReadiness(client, artifacts) : null;
 
   const customCode = [
     await assertRuntimeCode(client, 'OMR', token),
@@ -477,7 +685,7 @@ export async function verifyGenesisLaunchReadiness(client, artifacts) {
   const latestBlock = await client.getBlock({ blockTag: 'latest' });
 
   const required = artifacts.allocation.totalOmr;
-  if (latestBlock.number >= artifacts.timeline.startBlock) {
+  if (!automation && latestBlock.number >= artifacts.timeline.startBlock) {
     throw new Error(
       `auction start block ${artifacts.timeline.startBlock} is not in the future; latest block is ${latestBlock.number}`,
     );
@@ -524,8 +732,16 @@ export async function verifyGenesisLaunchReadiness(client, artifacts) {
   assertAddressRead('GenesisProceedsSplitter treasury', splitterTreasury, treasury);
   assertAddressRead('GenesisProceedsSplitter Vig recipient', splitterVig, vigRecipient);
   assertAddressRead('GenesisProceedsSplitter founder recipient', splitterFounder, founderRecipient);
+  if (automation) {
+    await assertSnapshotCanonical(client, { number: automation.checkedAtBlock,
+      hash: automation.checkedAtBlockHash, timestamp: automation.checkedAtTimestamp });
+    automation.latestCurrentBlock = await assertLivePrestartClock(client, artifacts, {
+      timestamp: automation.checkedAtTimestamp,
+    });
+  }
 
   return {
+    automation,
     checkedAtBlock: latestBlock.number,
     checkedAtTimestamp: latestBlock.timestamp,
     customRuntimeCodeHashes: { token: customCode[0], hook: customCode[1], proceedsSplitter: customCode[2] },
@@ -649,6 +865,24 @@ export function encodeSupplySchedule(schedule) {
 export function buildGenesisLaunchArtifacts(input = {}) {
   const token = address('token', input.token);
   const treasury = address('treasury', input.treasury);
+  // The reviewed lifecycle controller can be the narrowly authorized unsold-token receiver.
+  // It returns those tokens only to the same treasury; no other genesis allocation changes.
+  const launchMode = input.launchMode ?? 'legacy';
+  if (!['legacy', 'automated'].includes(launchMode)) throw new Error('launchMode must be legacy or automated');
+  if (launchMode !== 'automated' && (input.lifecycleController || input.oracle || input.liquidityKeeper)) {
+    throw new Error('lifecycleController/oracle/liquidityKeeper require explicit launchMode automated');
+  }
+  const lifecycleController = launchMode === 'automated' ? address('lifecycleController', input.lifecycleController) : null;
+  const oracle = launchMode === 'automated' ? address('oracle', input.oracle) : null;
+  const liquidityKeeper = launchMode === 'automated' ? address('liquidityKeeper', input.liquidityKeeper) : null;
+  const runtimeCodeHashes = launchMode === 'automated' ? Object.fromEntries(
+    ['token', 'hook', 'proceedsSplitter', 'lifecycleController', 'positionRecipient', 'oracle'].map((name) => {
+      const hash = bytes32(`runtimeCodeHashes.${name}`, input.runtimeCodeHashes?.[name]).toLowerCase();
+      if (/^0x0{64}$/.test(hash)) throw new Error(`runtimeCodeHashes.${name} cannot be zero`);
+      return [name, hash];
+    }),
+  ) : null;
+  const tokensRecipient = lifecycleController ?? treasury;
   const launchOwner = address('launchOwner', input.launchOwner ?? input.treasury);
   const vigRecipient = address('vigRecipient', input.vigRecipient);
   const founderRecipient = address('founderRecipient', input.founderRecipient);
@@ -680,7 +914,7 @@ export function buildGenesisLaunchArtifacts(input = {}) {
   const prices = floorPriceConfig();
   const initializerParameters = {
     currency: ZERO_ADDRESS,
-    tokensRecipient: treasury,
+    tokensRecipient,
     fundsRecipient: ROBINHOOD_GENESIS_STACK.lbpStrategy,
     startBlock,
     endBlock,
@@ -707,6 +941,12 @@ export function buildGenesisLaunchArtifacts(input = {}) {
     positionDefinitions,
     lpAllocationSchedule,
   };
+  const launcherSalt = keccak256(encodeAbiParameters(
+    [{ type: 'address' }, { type: 'bytes32' }], [launchOwner, salt],
+  ));
+  const initializerSalt = keccak256(encodeAbiParameters(
+    [{ type: 'bytes32' }, MIGRATOR_PARAMETERS], [launcherSalt, migratorParameters],
+  ));
   const strategyConfigData = encodeAbiParameters(
     [MIGRATOR_PARAMETERS, { type: 'bytes' }], [migratorParameters, initializerParams],
   );
@@ -731,6 +971,11 @@ export function buildGenesisLaunchArtifacts(input = {}) {
   });
 
   return {
+    launchMode,
+    automation: launchMode === 'automated' ? {
+      oracle, liquidityKeeper, runtimeCodeHashes,
+      auctionBinding: { status: 'requires_created_auction_verification', beforeBlock: startBlock },
+    } : null,
     chainId: ROBINHOOD_GENESIS_STACK.chainId,
     stack: ROBINHOOD_GENESIS_STACK,
     participants: {
@@ -742,6 +987,7 @@ export function buildGenesisLaunchArtifacts(input = {}) {
       proceedsSplitter,
       positionRecipient,
       hook,
+      ...(launchMode === 'automated' ? { lifecycleController, oracle, liquidityKeeper, tokensRecipient } : {}),
     },
     allocation: {
       auctionOmr: GENESIS_SALE_OMR,
@@ -757,6 +1003,7 @@ export function buildGenesisLaunchArtifacts(input = {}) {
     auctionStepsData,
     initializerParameters,
     initializerParams,
+    initializerSalt,
     migratorParameters,
     strategyConfigData,
     distribution,

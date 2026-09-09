@@ -1,0 +1,58 @@
+name: liquidity PostgreSQL recovery
+on:
+  push:
+    branches: [main]
+    paths: ['src/**', 'test/liquidity*.js', 'test/keepertransactions.js', 'test/genesiskeeper.js', 'schema.sql', 'package*.json', '.github/workflows/liquidity-postgres.yml']
+  pull_request:
+    paths: ['src/**', 'test/liquidity*.js', 'test/keepertransactions.js', 'test/genesiskeeper.js', 'schema.sql', 'package*.json', '.github/workflows/liquidity-postgres.yml']
+  workflow_dispatch: {}
+jobs:
+  recovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      PGHOST: 127.0.0.1
+      PGUSER: postgres
+      PGPASSWORD: postgres
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: create dedicated disposable databases
+        run: |
+          createdb omerta_keeper_transport_test
+          createdb omerta_liquidity_test
+          createdb omerta_liquidity_indexer_test
+          createdb omerta_liquidity_policy_test
+      - name: durable nonce and cross-process transaction recovery
+        env:
+          DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/omerta_keeper_transport_test
+        run: |
+          node test/keepertransactions.js
+          node test/liquiditykeeper.js
+      - name: exact custody-backed books
+        env:
+          DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/omerta_liquidity_test
+        run: node test/liquidityaccounting.js
+      - name: canonical indexer and existing queue recovery
+        env:
+          DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/omerta_liquidity_indexer_test
+        run: |
+          node test/liquidityindexer.js
+          node test/liquidityqueue.js
+      - name: concurrent daily policy and expired observations
+        env:
+          DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/omerta_liquidity_policy_test
+        run: node test/liquiditypolicy.js

@@ -1,9 +1,13 @@
 {
   "schema": "omerta.fee-structure.v1",
   "exportedAt": "2026-08-13T20:56:54.104Z",
+  "amendedAt": "2026-09-08",
+  "amendment": "Owner-directed: character creation mint proceeds go 100% to DEV_WALLET. All other source allocations remain unchanged.",
   "note": "The founder-signed Path A revenue configuration (exported from the 'Where a Dollar Goes' artifact 2026-08-13). Translated to backend levers + contract args in fee-splits.env; validated by `node tools/validate-fee-splits.js`. GO-LIVE config: applied at chain go-live (past the launch-checklist + audit gate), NOT armed in live render.yaml while the chain is dormant.",
   "sources": [
-    { "id": "fee", "name": "Gameplay fees (mint / respawn / reroll)", "currency": "eth",
+    { "id": "mint", "name": "Character creation mint", "currency": "eth",
+      "splits": [ { "dest": "operations", "bps": 10000, "lands": "DEV_WALLET (OmertaFees.feeRecipient)", "implicit": true } ] },
+    { "id": "fee", "name": "Gameplay fees (respawn / reroll)", "currency": "eth",
       "splits": [
         { "dest": "vig", "bps": 2500, "lands": "vig_revenue source='fee' (withdrawal reserve)" },
         { "dest": "treasury", "bps": 1000, "lands": "rwa_revenue source='fee' (backed vault — kept small)" },

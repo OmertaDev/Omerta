@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "chainId": 4663,
+  "governanceSafe": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+  "keeper": "0xa914d83e657bd86cd21c1697b61519164c28057c",
+  "poolId": "0xa914994acadf16902937a067cace4f6a98dcfadf32927427825dd0ff30db741b",
+  "contracts": {
+    "omr": {
+      "address": "0x512f7469bcc83089497506b5df64c6e246b39925",
+      "runtimeHash": "0x41a139a604e6490e1e92700baeae5d4c55efbb693cc112cbb1ebb4e506e8f35c"
+    },
+    "oracle": {
+      "address": "0xcbbe2a5c3a22be749d5ddf24e9534f98951983e2",
+      "runtimeHash": "0x04d40bab77bb7618a1e962ac9689e3e1c431a82be835dcc0838b830696450c07"
+    },
+    "polVault": {
+      "address": "0xe38b6847e611e942e6c80ed89ae867f522402e80",
+      "runtimeHash": "0x8aba4aa77009b0a2e65afd6a40d1caad594ded92dc35923ed444863bde9bc0d6"
+    },
+    "genesisController": {
+      "address": "0x975ab64f4901af5f0c96636dea0b9de3419d0c2f",
+      "runtimeHash": "0x3c4b3633ed74d9868364a4cf400fdbe25c17e7d2ebbab50f1917c9d7e5a16cd5"
+    },
+    "auction": {
+      "address": "0x44bb4c8e1b0b7d5a042bbfecde3476542c1d6cfc",
+      "runtimeHash": "0x0bc3dfe17ddd7566ab5cf79d0e4795f9737374d1f0dd8f58a865fcb8f8b402b5"
+    },
+    "splitter": {
+      "address": "0xe8f7d98be6722d42f29b50500b0e318ef2be4fc8",
+      "runtimeHash": "0xc8e96486be3a6b3a583107d75af3e00b71f631d1cc5d86071c3de36de69d4347"
+    },
+    "strategy": {
+      "address": "0x05d552391067389ee44fec3924157ed33f976000",
+      "runtimeHash": "0x6e822d6a2f634311363ec357109a691d86912414df5c211a2f6ac6de9a680d68"
+    },
+    "poolManager": {
+      "address": "0x8366a39cc670b4001a1121b8f6a443a643e40951",
+      "runtimeHash": "0xbd3881180b547f5fe817545743cfb4343e96b1bc6640dcd70c106b0066e95626"
+    },
+    "positionManager": {
+      "address": "0x58daec3116aae6d93017baaea7749052e8a04fa7",
+      "runtimeHash": "0xc873e135dc9aaec88489cfbad146b4cb49d6a32e0d80326377784b7ba17670b2"
+    }
+  },
+  "indexing": {
+    "startL2Block": "58362844",
+    "maxBlocks": 2000
+  },
+  "genesis": {
+    "treasuryRecipient": "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+    "vigRecipient": "0x2c8ed11fd7a058096f2e5828799c68be88744e2f",
+    "founderRecipient": "0x90f79bf6eb2c4f870365e785982e1f101e93b906",
+    "genesisStartL2Block": "58362844",
+    "maxLogScanBlocks": 10000,
+    "maxCandidatePositions": 16
+  },
+  "gas": {
+    "maxGas": "10000000",
+    "maxFeePerGas": "10000000000",
+    "maxPriorityFeePerGas": "1000000000",
+    "dailyBudget": "10000000000000000000",
+    "confirmations": 2,
+    "maxSnapshotAgeSeconds": 300
+  },
+  "jobs": [
+    {
+      "id": "genesis_checkpoint",
+      "kind": "genesis_checkpoint",
+      "target": "genesisController",
+      "intervalSeconds": 3600
+    },
+    {
+      "id": "genesis_migrate",
+      "kind": "genesis_migrate",
+      "target": "genesisController",
+      "intervalSeconds": 3600
+    },
+    {
+      "id": "genesis_accept_foundation",
+      "kind": "genesis_accept_foundation",
+      "target": "genesisController",
+      "intervalSeconds": 3600
+    },
+    {
+      "id": "genesis_sweep_unsold",
+      "kind": "genesis_sweep_unsold",
+      "target": "genesisController",
+      "intervalSeconds": 3600
+    },
+    {
+      "id": "genesis_distribute",
+      "kind": "genesis_distribute",
+      "target": "genesisController",
+      "intervalSeconds": 3600
+    }
+  ]
+}

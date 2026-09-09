@@ -1,0 +1,124 @@
+{
+  "initialSourceTree": "a20bead0a1a4b3f7fd1f19504aae24034469b970f49cc833edda83f4444c8b8e",
+  "finalSourceTree": "d43f210a97262729207f9f2aa6d7855d07e55246a1a8656901ee7c89c28d124b",
+  "note": "Content delta between capture times, not a git diff attribution. Pre-existing dirty work is preserved. Newly inventoried files were not necessarily created by this review; some new proof files were already in the initial capture.",
+  "changed": [
+    {
+      "path": "deploy/fee-splits.env",
+      "before": "fa34501cb8f5a9e2287ec0c19fea84fceab1a5ef9df70d3e59ad273562d0fddc",
+      "after": "cb43fc722be011dd8c3854729708c2dffca5dffaacbaa7d724afcd87feaa0241"
+    },
+    {
+      "path": "omerta-contracts/DEPLOYMENT.md",
+      "before": "001c81e9c1c65f18da619df502b395aa183b324870ec21b6e156ae1090c17e51",
+      "after": "00ae49546485cb11849e9cd032d98a5fdb37353d2728bba61a23d659740406da"
+    },
+    {
+      "path": "omerta-contracts/src/Alchemist.sol",
+      "before": "ca47e483a590c07519eb78c25dc69ba12cce98b8281a29336342c70ed3b309e7",
+      "after": "58857bd22a2f460ef092a0628a3c66dbacead0e0d185c10737d6593ed5e9da63"
+    },
+    {
+      "path": "omerta-contracts/src/Denari.sol",
+      "before": "1076d55ebed91899c2d3d3593368edc182b2a548f422b5d2e23f6a2c2c382574",
+      "after": "f1ac4f24d2491d9b4c576670447526be4d3c08449427801619fdf570293b08fe"
+    },
+    {
+      "path": "omerta-contracts/src/OmertaHook.sol",
+      "before": "8d5b7e2f7394bd6f8202156171ae95725eff17b2763b207621aa3338f41037f2",
+      "after": "aa185334f198da4b12b8661f39ef00b4e17edd10bc2dfbf7dc456d91cd1520b1"
+    },
+    {
+      "path": "omerta-contracts/src/Transmuter.sol",
+      "before": "a57d5a9c9a60d3cf03f62f3ca8d105dadb76851246e6b897524f3afbeae1d418",
+      "after": "21264df1c5a45f90658a3e09e6abb8ff7e75dd66bb4b5e2211b3f4166b871540"
+    },
+    {
+      "path": "omerta-contracts/test/AcquisitionVaultOperator.t.sol",
+      "before": "6c89d2b96570710a49f39871211effa23c002dca1367da8a7e29dba911034e70",
+      "after": "fd7478cda112238ced82c69c66a274cd423aacbd62a206f00f2faf22e7eec7b2"
+    },
+    {
+      "path": "omerta-contracts/test/Bank.t.sol",
+      "before": "b6566e5de67c06d9607d4f6ae868e16c309ea5098aeb849931005d647f7174a2",
+      "after": "5414bc45d8d39edc4e5353daaea3995090d6924a2689b885e2227e2359ea3d9b"
+    },
+    {
+      "path": "omerta-contracts/test/audit/ComprehensiveMarketAudit.t.sol",
+      "before": "23fa843b6195c02e7a6fd341124bbf2bb39826c9aeccd874d352413dba69d93c",
+      "after": "795b8defcc29a6cb763bc36e84822624c1bd0c8009165abe9aa92d861850e99b"
+    },
+    {
+      "path": "src/chain.js",
+      "before": "9ff587881e4398053c5088a357a022e7cd9064d01303ae6d0e404dea1c3fcf23",
+      "after": "5bd20176417e61a239423d13a4876be8243841aa1b411daa0aa719b7ff9d4d44"
+    }
+  ],
+  "newlyInventoried": [
+    "CHAIN-DEPLOY.md",
+    "docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+    "docs/superpowers/plans/2026-08-27-acquisition-constellation-task0-crosswalk.md",
+    "docs/superpowers/plans/2026-08-27-acquisition-constellation-task2-authority.md",
+    "docs/superpowers/plans/2026-08-27-acquisition-constellation-task3-core.md",
+    "docs/superpowers/plans/2026-08-27-acquisition-constellation-task4-budget-book.md",
+    "docs/superpowers/plans/2026-08-27-acquisition-constellation.md",
+    "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+    "docs/superpowers/plans/2026-08-28-acquisition-constellation-task5-intent-identity.md",
+    "docs/superpowers/plans/2026-08-28-rwa-health-h2-implementation-addendum.md",
+    "docs/superpowers/plans/2026-08-28-rwa-health-h2.md",
+    "omerta-bank-protocol-design.md",
+    "omerta-contracts/README.md",
+    "omerta-contracts/test/audit/ComprehensiveAcquisitionAudit.t.sol",
+    "omerta-v4-hook-design.md",
+    "src/community.js",
+    "src/db.js",
+    "src/router.js",
+    "src/rules.tail.js",
+    "src/v4oraclekeeper.js",
+    "src/vig.js",
+    "test/bank.js",
+    "test/chain.js",
+    "test/chainparams.js",
+    "test/deeds.js",
+    "test/genesiscca.js",
+    "test/genesislaunch.js",
+    "test/genesisrelease.js",
+    "test/nft.js",
+    "test/reimport.js",
+    "test/stockdeliver.js",
+    "test/tokenomics.js",
+    "test/v4oraclekeeper.js",
+    "test/watcher.js",
+    "test/audit/deed-reimport-order.js",
+    "tools/genesis-fork-rehearsal.js",
+    "tools/stock-e2e.js",
+    "tools/validate-fee-splits.js"
+  ],
+  "authoredProofs": [
+    "omerta-contracts/test/audit/ComprehensiveCoreAudit.t.sol",
+    "omerta-contracts/test/audit/ComprehensiveAcquisitionAudit.t.sol",
+    "omerta-contracts/test/audit/ComprehensiveMarketAudit.t.sol",
+    "test/audit/deed-reimport-order.js"
+  ],
+  "runtimeCorrections": [
+    {
+      "path": "omerta-contracts/src/OmertaHook.sol",
+      "finding": "M-01",
+      "change": "Reject self in all four fee recipient positions before writes."
+    },
+    {
+      "path": "src/chain.js",
+      "finding": "INT-DEED-01",
+      "change": "Retain confirmed burn pending while its matching extraction has not been indexed."
+    }
+  ],
+  "harnessCorrections": [
+    "omerta-contracts/test/AcquisitionVaultOperator.t.sol: CRLF source representation in artifact binding",
+    "tools/genesis-fork-rehearsal.js: use existing pg-mem schema compatibility registrar"
+  ],
+  "commentOnlySolidity": [
+    "omerta-contracts/src/Alchemist.sol",
+    "omerta-contracts/src/Denari.sol",
+    "omerta-contracts/src/Transmuter.sol"
+  ]
+}

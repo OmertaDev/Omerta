@@ -201,8 +201,9 @@ export async function runFamilyBuybackInvariants(pool) {
   // purchase whose credit never landed) breaks the equality from one side or the other.
   const credited = num((await pool.query(
     "SELECT COALESCE(SUM(amount),0) s FROM transactions WHERE currency='omr' AND reason='yield:buyback'")).rows[0].s);
+  const directFees = num((await pool.query('SELECT COALESCE(SUM(primary_booked),0) s FROM liquidity_settlements WHERE stream=2 AND eth_wei=0')).rows[0].s);
   const bought = num((await pool.query(
-    'SELECT COALESCE(SUM(omr_bought),0) s FROM family_buybacks WHERE real')).rows[0].s);
+    'SELECT COALESCE(SUM(omr_bought),0) s FROM family_buybacks WHERE real')).rows[0].s) + directFees;
   push('buyback credited == bought', Math.abs(credited - bought) <= eps, { credited, bought });
 
   // (3) comps move nothing — spend AND $OMR (the bank's "books ZERO $OMR, not merely zero spend").

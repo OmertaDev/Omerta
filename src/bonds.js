@@ -1,14 +1,14 @@
 // THE RESERVE BOND (omerta-reserve-bond-design.md) — Protocol-Owned Liquidity via a disciplined treasury
-// bond (Olympus Pro, without the reflexive mint). A bonder deposits real ETH → receives DISCOUNTED treasury
-// OMR, vested; the ETH deepens the OMR-ETH pool (POL) + feeds the Vig. The payout OMR is a SALE from a
-// BUDGETED tranche (`bond_reserve.capacity_omr`), NEVER a mint, and `committed ≤ capacity` is enforced at
-// bond time — so bond emission is hard-capped and never reflexive. REAL-VALUE / OUT-OF-BAND: this module
+// bond. A bonder deposits real ETH → OmertaBond mints discounted OMR into vesting custody;
+// the ETH deepens the OMR-ETH pool (POL) + feeds the Vig. `bond_reserve.capacity_omr` is the
+// backend's lifetime signing budget, not a funded token reserve or an on-chain supply cap.
+// New quotes reserve that budget before signing. REAL-VALUE / OUT-OF-BAND: this module
 // writes only bonds / bond_reserve / vig_revenue(source='bond') — ZERO `transactions` rows — so the in-game
 // §10.4 sweep is untouched by construction (the fees.js precedent). It carries its OWN invariant
 // (`runBondInvariants`) on the real-value side. The chain layer (the OmertaBond contract + a Bonded watcher
 // + the POL pairing bot) is DORMANT, mainnet-gated on the launch checklist + a third-party audit.
 import crypto from 'node:crypto';
-import { getAddress } from 'viem';
+import { getAddress, parseUnits } from 'viem';
 import { GameError } from './game.js';
 import { BONDS, bondPayout, underwriterScore, backerTierOf, nextBackerTier, charterOf, dayOf } from './rules.js';
 import { spendOmr } from './vanity.js';
@@ -18,6 +18,39 @@ const uid = () => crypto.randomUUID();
 const round6 = (x) => Math.round(Number(x) * 1e6) / 1e6;
 const num = (x) => (Number.isFinite(Number(x)) ? Number(x) : NaN);
 const norm = (addr) => { try { return getAddress(addr); } catch { return null; } };
+
+// Mirror Solidity's two integer divisions, then reserve upward to the ledger's six decimals.
+// Display rounding must never issue even a fraction of a micro-OMR beyond the signing budget.
+export function bondQuoteBudgetAmount(principal, price, discountBps) {
+  const market = parseUnits(String(principal), 18) * parseUnits(String(price), 18) / 10n ** 18n;
+  const payoutWei = market * 10000n / (10000n - BigInt(discountBps));
+  return (payoutWei + 10n ** 12n - 1n) / 10n ** 12n;
+}
+
+// Read under bond_reserve before signing or discretionary booking. Expiry requires finalized
+// unused-nonce proof. A booked quote retains any rounding headroom above its six-decimal ledger
+// payout, so quote -> settlement cannot silently free that dust for another signature.
+export async function bondQuoteBudgetUsage(db, { excludeNonce } = {}) {
+  const rows = (await db.query("SELECT q.nonce,q.principal_eth,q.price,q.discount_bps,b.payout_omr AS settled_payout FROM bond_quotes q LEFT JOIN bonds b ON b.nonce=q.nonce WHERE q.status<>'expired' OR b.nonce IS NOT NULL")).rows;
+  let outstanding = 0n, settledAdjustment = 0n, excludedQuoteUnits = 0n;
+  for (const row of rows) {
+    const budget = bondQuoteBudgetAmount(row.principal_eth, row.price, row.discount_bps);
+    if (excludeNonce != null && String(row.nonce) === String(excludeNonce)) { excludedQuoteUnits = budget; continue; }
+    if (row.settled_payout == null) outstanding += budget;
+    else {
+      const delta = budget - parseUnits(String(row.settled_payout), 6);
+      if (delta > 0n) settledAdjustment += delta;
+    }
+  }
+  return { outstanding, settledAdjustment, excludedQuoteUnits };
+}
+
+export async function outstandingBondQuoteUnits(db) { return (await bondQuoteBudgetUsage(db)).outstanding; }
+
+async function unlimitedDailyIssuance() {
+  return process.env.LIQUIDITY_AUTOMATION_ENABLED === 'on'
+    && (await import('./liquiditykeeper.js')).liquidityKeeperConfig().manifest.bondDailyIssuance === 'unlimited';
+}
 
 // the live OMR-per-ETH oracle (the DEX TWAP on mainnet; the latest Vig buyback print off-chain). null if
 // no price has ever printed — bonding needs a price, so recordBond takes one explicitly (the watcher/mod
@@ -64,14 +97,15 @@ export async function recordBond(pool, { nonce, accountId = null, payer = null, 
       await client.query('ROLLBACK'); return { recorded: false, duplicate: true };
     }
     const res = (await client.query('SELECT capacity_omr, committed_omr, pol_eth, dev_eth FROM bond_reserve WHERE id=1')).rows[0];
-    // THE ANTI-PONZI CAP: the treasury can never promise more OMR than it budgeted (the full-reserve-queue
-    // discipline). Over the tranche → reject; the treasury must top up (mod/bond/fund) first. This is a
-    // PRE-FLIGHT guard for the off-chain/mod request path ONLY: a REAL on-chain Bonded event already
-    // happened (the contract enforced its OWN identical cap against its funded balance), so it must ALWAYS
-    // be recorded — never rejected — or the watcher would stall the cursor forever on a legitimate bond.
-    if (!onchain && Number(res.committed_omr) + payout > Number(res.capacity_omr) + 1e-6) {
-      await client.query('ROLLBACK');
-      throw new GameError('over_capacity', 'The bond tranche is exhausted — the treasury must top it up.');
+    // This budget check applies to the off-chain/mod path. A real Bonded event already minted
+    // its OMR and must always be recorded, including issuance by a signer outside this server;
+    // rejecting it here would stall the watcher. The contract has no lifetime signing-budget cap.
+    if (!onchain) {
+      const budget = await bondQuoteBudgetUsage(client, { excludeNonce: n });
+      const payoutUnits = parseUnits(String(payout), 6);
+      const incoming = budget.excludedQuoteUnits > payoutUnits ? budget.excludedQuoteUnits : payoutUnits;
+      if (parseUnits(String(res.committed_omr), 6) + budget.outstanding + budget.settledAdjustment + incoming > parseUnits(String(res.capacity_omr), 6))
+        throw new GameError('over_capacity', 'The lifetime bond budget is allocated to bonds and pending quotes.');
     }
     // attribute: an explicit accountId (mod/test) wins; else resolve the payer wallet → account (null = parked
     // for reconcileBonds at link — the Store precedent; recordBond stays valid + tranche-committed either way).
@@ -351,15 +385,22 @@ export async function underwriterLeaderboard(pool, limit = 25) {
 // ── GET /v1/bonds — public: the offering + remaining capacity + the oracle + your bonds. Informational
 // (real bonds are on-chain at the mainnet paywall — the Store's on-chain-note precedent). ──
 // ── THE DAILY OFFERING — the GM's per-day issuance window (founder-directed) ─────────────────────
-// The tranche (bond_reserve.capacity_omr) is the LIFETIME budget wall; this is the daily POLICY
-// throttle on top: no offering row for the day → quoteBond signs NOTHING (fail-closed). Distinct
-// from the contract's dailyCapOMR (the wall against a leaked signer — that one caps damage, this
-// one expresses intent). Setting an offering moves no value and writes no ledger row (bonds are
+// The lifetime signing budget remains in both modes. Capped/default policy adds this daily
+// throttle: no offering row for the day → quoteBond signs nothing. Explicit unlimited policy
+// bypasses daily rows and rejects this legacy control. Setting an offering moves no value
+// and writes no ledger row (bonds are
 // out-of-band real-value plumbing — the §10.4 posture of the whole module).
 export async function setBondOffering(pool, omr, day = null) {
-  assertGenesisBondsOpen();
+  if (await unlimitedDailyIssuance()) throw new GameError('daily_offerings_disabled',
+    'Daily bond offerings are disabled. Use the Safe or guardian bond pause to stop issuance.');
   const amt = Math.round(Number(omr));
   if (!Number.isFinite(amt) || amt < 0) throw new GameError('amount', 'A non-negative whole-OMR offering.');
+  // Zero is the emergency stop; existing signed quotes still form the floor below.
+  if (amt > 0) {
+    if (process.env.LIQUIDITY_AUTOMATION_ENABLED === 'on')
+      await (await import('./liquiditypolicy.js')).assertLiquidityBondReady(pool);
+    assertGenesisBondsOpen();
+  }
   const d = day == null ? dayOf() : Math.floor(Number(day));
   if (!Number.isInteger(d) || d < dayOf()) throw new GameError('day', 'Offerings are set for today or a future day — the past is the record.');
   const client = await pool.connect();
@@ -383,15 +424,20 @@ export async function setBondOffering(pool, omr, day = null) {
 
 export async function offeringOf(db, day = null) {
   const d = day == null ? dayOf() : Math.floor(Number(day));
+  if (await unlimitedDailyIssuance()) return { day: d, unlimited: true, offeredOmr: null, quotedOmr: null, remainingOmr: null };
   const row = (await db.query('SELECT offered_omr, quoted_omr FROM bond_offerings WHERE day=$1', [d])).rows[0];
   if (!row) return null;
   const offered = round6(Number(row.offered_omr)), quoted = round6(Number(row.quoted_omr));
-  return { day: d, offeredOmr: offered, quotedOmr: quoted, remainingOmr: round6(Math.max(0, offered - quoted)) };
+  return { day: d, unlimited: false, offeredOmr: offered, quotedOmr: quoted, remainingOmr: round6(Math.max(0, offered - quoted)) };
 }
 
 export async function bondBoard(pool, accountId) {
+  const liquidity = process.env.LIQUIDITY_AUTOMATION_ENABLED === 'on'
+    ? await (await import('./liquiditypolicy.js')).refreshLiquidityObservation(pool) : null;
   const r = (await pool.query('SELECT capacity_omr, committed_omr, pol_eth, dev_eth, rwa_eth FROM bond_reserve WHERE id=1')).rows[0] || {};
-  const remaining = round6(Math.max(0, Number(r.capacity_omr || 0) - Number(r.committed_omr || 0)));
+  const budget = await bondQuoteBudgetUsage(pool);
+  const reservedQuotesOmr = Number(budget.outstanding) / 1e6;
+  const remaining = round6(Math.max(0, Number(r.capacity_omr || 0) - Number(r.committed_omr || 0) - Number(budget.outstanding + budget.settledAdjustment) / 1e6));
   const oracle = await oraclePrice(pool);
   const mine = accountId ? (await pool.query('SELECT * FROM bonds WHERE account_id=$1 ORDER BY opened_at DESC', [accountId])).rows : [];
   const daily = await offeringOf(pool);
@@ -400,12 +446,13 @@ export async function bondBoard(pool, accountId) {
   return {
     offering: { discountBps: BONDS.DISCOUNT_BPS, vestHours: BONDS.VEST_HOURS, polBps: BONDS.POL_BPS, vigBps: BONDS.VIG_BPS, rwaBps: BONDS.RWA_BPS, devBps: BONDS.DEV_BPS, minEth: BONDS.MIN_PRINCIPAL_ETH },
     oracle, // OMR per ETH (null until a Vig buyback prints a price)
-    reserve: { capacityOmr: round6(Number(r.capacity_omr || 0)), committedOmr: round6(Number(r.committed_omr || 0)), remainingOmr: remaining, polEth: round6(Number(r.pol_eth || 0)), devEth: round6(Number(r.dev_eth || 0)), rwaEth: round6(Number(r.rwa_eth || 0)) },
+    reserve: { capacityOmr: round6(Number(r.capacity_omr || 0)), committedOmr: round6(Number(r.committed_omr || 0)), reservedQuotesOmr, remainingOmr: remaining, polEth: round6(Number(r.pol_eth || 0)), devEth: round6(Number(r.dev_eth || 0)), rwaEth: round6(Number(r.rwa_eth || 0)) },
     // an illustrative quote for 1 ETH at the current oracle + discount (display only)
-    // THE DAILY OFFERING — null = the desk is CLOSED today (fail-closed; the GM opens it)
+    // Daily policy: null = closed in capped mode; unlimited has no finite daily quantities.
     daily,
     genesis,
-    quote: oracle && genesis.bondQuotesOpen
+    liquidity: liquidity ? { ready: liquidity.ready, bondReady: liquidity.bondReady } : null,
+    quote: oracle && genesis.bondQuotesOpen && (!liquidity || liquidity.bondReady)
       ? { forEth: 1, payoutOmr: bondPayout(1, oracle, BONDS.DISCOUNT_BPS) }
       : null,
     yours: mine.map((b) => {
@@ -429,9 +476,13 @@ export async function bondBoard(pool, accountId) {
 
 // ── ops view (the founder's bond dashboard) — capacity/committed/remaining + POL + the Vig share + the invariant. ──
 export async function bondStatus(pool) {
+  if (process.env.LIQUIDITY_AUTOMATION_ENABLED === 'on')
+    await (await import('./liquiditypolicy.js')).refreshLiquidityObservation(pool);
   const r = (await pool.query('SELECT capacity_omr, committed_omr, pol_eth, dev_eth, rwa_eth FROM bond_reserve WHERE id=1')).rows[0] || {};
   const daily = await offeringOf(pool);
   const bonds = Number((await pool.query('SELECT COUNT(*) n FROM bonds')).rows[0].n);
+  const budget = await bondQuoteBudgetUsage(pool);
+  const reservedQuotesOmr = Number(budget.outstanding) / 1e6;
   const claimed = round6(Number((await pool.query('SELECT COALESCE(SUM(claimed_omr),0) s FROM bonds')).rows[0].s));
   const vigEth = round6(Number((await pool.query("SELECT COALESCE(SUM(vig_eth),0) s FROM vig_revenue WHERE source='bond'")).rows[0].s));
   const inv = await runBondInvariants(pool);
@@ -439,7 +490,8 @@ export async function bondStatus(pool) {
     genesis: genesisLaunchStatus(),
     daily, // THE DAILY OFFERING — null = closed today (the GM opens it via POST /v1/mod/bond/offer)
     capacityOmr: round6(Number(r.capacity_omr || 0)), committedOmr: round6(Number(r.committed_omr || 0)),
-    remainingOmr: round6(Math.max(0, Number(r.capacity_omr || 0) - Number(r.committed_omr || 0))),
+    reservedQuotesOmr,
+    remainingOmr: round6(Math.max(0, Number(r.capacity_omr || 0) - Number(r.committed_omr || 0) - Number(budget.outstanding + budget.settledAdjustment) / 1e6)),
     polEth: round6(Number(r.pol_eth || 0)), devEth: round6(Number(r.dev_eth || 0)),
     rwaEth: round6(Number(r.rwa_eth || 0)), vigEth, bonds, claimedOmr: claimed,
     invariant: inv.ok, checks: inv.checks,

@@ -15,6 +15,10 @@ on:
       - 'tools/dexbot-e2e.js'
       - 'src/stockdeliver.js'          # the 6551 + StockVault legs the second prover executes
       - 'tools/stock-e2e.js'
+      - 'src/liquidity*.js'
+      - 'src/keepertransactions.js'
+      - 'tools/liquidity-*.js'
+      - 'test/liquidity*.js'
   pull_request:
     paths:
       - 'omerta-contracts/**'
@@ -23,11 +27,25 @@ on:
       - 'tools/dexbot-e2e.js'
       - 'src/stockdeliver.js'
       - 'tools/stock-e2e.js'
+      - 'src/liquidity*.js'
+      - 'src/keepertransactions.js'
+      - 'tools/liquidity-*.js'
+      - 'test/liquidity*.js'
   workflow_dispatch: {}
 
 jobs:
   forge:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     defaults:
       run:
         working-directory: omerta-contracts
@@ -69,6 +87,11 @@ jobs:
           mkdir -p lib/v4-core
           tar xzf uniswap-v4-core-1.0.2.tgz -C lib/v4-core --strip-components=1
           rm -f uniswap-v4-core-1.0.2.tgz
+          # Exact dependencies used by the custody vault and real PositionManager tests.
+          git clone --no-checkout https://github.com/Uniswap/v4-periphery lib/v4-periphery
+          git -C lib/v4-periphery checkout --detach ad04c9f24a170accf5ea1b2836bbafd514537ca6
+          git clone --no-checkout https://github.com/Uniswap/permit2 lib/permit2
+          git -C lib/permit2 checkout --detach cc56ad0f3439c502c246fc5cfcc3db92bb8b7219
 
       # PARSE gate only — the SIZE gate is its own step at the END of this job, and the split is
       # load-bearing rather than tidy. `forge build --sizes` is all-or-nothing: on 2026-08-27 a test
@@ -112,6 +135,18 @@ jobs:
       - name: the stock rail on a real chain (stock-e2e)
         working-directory: .
         run: npm run stock-e2e
+
+      - name: unsigned liquidity deployment plan and actual keeper flow
+        working-directory: .
+        env:
+          PGHOST: 127.0.0.1
+          PGUSER: postgres
+          PGPASSWORD: postgres
+          LIQUIDITY_E2E_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/omerta_liquidity_ci_e2e_test
+        run: |
+          node test/liquidity-deployment-plan.js
+          createdb omerta_liquidity_ci_e2e_test
+          node tools/liquidity-e2e.js
 
       # THE SIZE GATE, LAST ON PURPOSE. Runs after the suite and both provers so an over-limit
       # contract fails on its own step and can never skip them (see the note on `forge build`).

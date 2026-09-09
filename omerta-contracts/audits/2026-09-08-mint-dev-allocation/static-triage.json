@@ -1,0 +1,150 @@
+{
+  "tool": "Slither 0.11.6",
+  "diagnostics": 16,
+  "entries": [
+    {
+      "id": "268f1a42150829827932a060c0b5caea2cf636dcba4aff290d3f33110125fc68",
+      "rule": "missing-zero-check",
+      "impact": "Low",
+      "confidence": "Medium",
+      "description": "Ownable2Step.transferOwnership(address).newOwner (lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol#43) lacks a zero-check on :\n\t\t- _pendingOwner = newOwner (lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol#44)\n",
+      "disposition": "Ownable2Step permits zero to cancel the pending nomination. The active owner is unchanged; cancellation and privileged-selector tests cover this behavior.",
+      "confirmedDefect": false
+    },
+    {
+      "id": "0cb0950f0a0659779cfbb710140755d3c77f5a3e0cd20665f14e2c29ffa77241",
+      "rule": "assembly",
+      "impact": "Informational",
+      "confidence": "High",
+      "description": "StorageSlot.getAddressSlot(bytes32) (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#66-70) uses assembly\n\t- INLINE ASM (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#67-69)\n",
+      "disposition": "OpenZeppelin StorageSlot helpers bind references to explicitly supplied slots. This inherited dependency was reviewed in the prior package and is unchanged; these assembly notices identify no new reachable fee mutation.",
+      "confirmedDefect": false
+    },
+    {
+      "id": "39b269e77ca4a55a660c8ff6fb0327594b7836943bf18153a5a3f415eaec6ee2",
+      "rule": "assembly",
+      "impact": "Informational",
+      "confidence": "High",
+      "description": "StorageSlot.getInt256Slot(bytes32) (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#102-106) uses assembly\n\t- INLINE ASM (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#103-105)\n",
+      "disposition": "OpenZeppelin StorageSlot helpers bind references to explicitly supplied slots. This inherited dependency was reviewed in the prior package and is unchanged; these assembly notices identify no new reachable fee mutation.",
+      "confirmedDefect": false
+    },
+    {
+      "id": "5312cebb2ab4b8c384cec1819b8568b6c3421d67d46e2d67394b702843826ee6",
+      "rule": "assembly",
+      "impact": "Informational",
+      "confidence": "High",
+      "description": "StorageSlot.getBytesSlot(bytes32) (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#129-133) uses assembly\n\t- INLINE ASM (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#130-132)\n",
+      "disposition": "OpenZeppelin StorageSlot helpers bind references to explicitly supplied slots. This inherited dependency was reviewed in the prior package and is unchanged; these assembly notices identify no new reachable fee mutation.",
+      "confirmedDefect": false
+    },
+    {
+      "id": "6a9ae1f07a6a025e863e9db6b62be4f7010ba985b05c152e4f03dae1893353f7",
+      "rule": "assembly",
+      "impact": "Informational",
+      "confidence": "High",
+      "description": "StorageSlot.getStringSlot(string) (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#120-124) uses assembly\n\t- INLINE ASM (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#121-123)\n",
+      "disposition": "OpenZeppelin StorageSlot helpers bind references to explicitly supplied slots. This inherited dependency was reviewed in the prior package and is unchanged; these assembly notices identify no new reachable fee mutation.",
+      "confirmedDefect": false
+    },
+    {
+      "id": "6e227cedcd7e749e974202ff8de10aac20188eab08f34d87055eed0e201722d2",
+      "rule": "assembly",
+      "impact": "Informational",
+      "confidence": "High",
+      "description": "StorageSlot.getBytes32Slot(bytes32) (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#84-88) uses assembly\n\t- INLINE ASM (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#85-87)\n",
+      "disposition": "OpenZeppelin StorageSlot helpers bind references to explicitly supplied slots. This inherited dependency was reviewed in the prior package and is unchanged; these assembly notices identify no new reachable fee mutation.",
+      "confirmedDefect": false
+    },
+    {
+      "id": "749137134693cf0304f52b590e5a47c5286e0c8814e75ef8be3f6159fd60f08c",
+      "rule": "assembly",
+      "impact": "Informational",
+      "confidence": "High",
+      "description": "StorageSlot.getBytesSlot(bytes) (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#138-142) uses assembly\n\t- INLINE ASM (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#139-141)\n",
+      "disposition": "OpenZeppelin StorageSlot helpers bind references to explicitly supplied slots. This inherited dependency was reviewed in the prior package and is unchanged; these assembly notices identify no new reachable fee mutation.",
+      "confirmedDefect": false
+    },
+    {
+      "id": "983222c57c42f357d634e6a0307e308f2f0068150a399b605dcd74e034e93c8b",
+      "rule": "assembly",
+      "impact": "Informational",
+      "confidence": "High",
+      "description": "StorageSlot.getBooleanSlot(bytes32) (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#75-79) uses assembly\n\t- INLINE ASM (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#76-78)\n",
+      "disposition": "OpenZeppelin StorageSlot helpers bind references to explicitly supplied slots. This inherited dependency was reviewed in the prior package and is unchanged; these assembly notices identify no new reachable fee mutation.",
+      "confirmedDefect": false
+    },
+    {
+      "id": "a06128e1b1c97ee25c55d74dda6e1aaa0976f9d134f60bf4344ab3080b21abd2",
+      "rule": "assembly",
+      "impact": "Informational",
+      "confidence": "High",
+      "description": "StorageSlot.getStringSlot(bytes32) (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#111-115) uses assembly\n\t- INLINE ASM (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#112-114)\n",
+      "disposition": "OpenZeppelin StorageSlot helpers bind references to explicitly supplied slots. This inherited dependency was reviewed in the prior package and is unchanged; these assembly notices identify no new reachable fee mutation.",
+      "confirmedDefect": false
+    },
+    {
+      "id": "e0999a78e2a4800028a800b8f94e81bd4b1fcbb9c2c0021af31da78c22e747e4",
+      "rule": "assembly",
+      "impact": "Informational",
+      "confidence": "High",
+      "description": "StorageSlot.getUint256Slot(bytes32) (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#93-97) uses assembly\n\t- INLINE ASM (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#94-96)\n",
+      "disposition": "OpenZeppelin StorageSlot helpers bind references to explicitly supplied slots. This inherited dependency was reviewed in the prior package and is unchanged; these assembly notices identify no new reachable fee mutation.",
+      "confirmedDefect": false
+    },
+    {
+      "id": "3860470fd91165090ff071d07a18328dd81da7d30e1008f40f4f215f0e265d19",
+      "rule": "pragma",
+      "impact": "Informational",
+      "confidence": "High",
+      "description": "2 different versions of Solidity are used:\n\t- Version constraint ^0.8.20 is used by:\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Context.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#5)\n\t- Version constraint 0.8.26 is used by:\n\t\t-0.8.26 (src/OmertaFees.sol#2)\n",
+      "disposition": "Dependency ^0.8.20 ranges intersect the application exact 0.8.26 pragma. Both native Forge and Slither compile with pinned 0.8.26.",
+      "confirmedDefect": false
+    },
+    {
+      "id": "10de43c0e01930a1b9fb40f4f6ed72c2f999387cc16e08f742e274689dd237ba",
+      "rule": "dead-code",
+      "impact": "Informational",
+      "confidence": "Medium",
+      "description": "Context._contextSuffixLength() (lib/openzeppelin-contracts/contracts/utils/Context.sol#25-27) is never used and should be removed\n",
+      "disposition": "Unused inherited Context helpers are excluded from reachable fee logic by compilation; no accounting or access-control effect.",
+      "confirmedDefect": false
+    },
+    {
+      "id": "93bd23634a3bf022810e43138345cf58db61248a704a7d277c8ec3d68c3ad188",
+      "rule": "dead-code",
+      "impact": "Informational",
+      "confidence": "Medium",
+      "description": "Context._msgData() (lib/openzeppelin-contracts/contracts/utils/Context.sol#21-23) is never used and should be removed\n",
+      "disposition": "Unused inherited Context helpers are excluded from reachable fee logic by compilation; no accounting or access-control effect.",
+      "confirmedDefect": false
+    },
+    {
+      "id": "13fd26915b443026f1e51ba6dacf3385ff9ff460a7174e394bb6eb6918efe0f7",
+      "rule": "solc-version",
+      "impact": "Informational",
+      "confidence": "High",
+      "description": "Version constraint ^0.8.20 contains known severe issues (https://solidity.readthedocs.io/en/latest/bugs.html)\n\t- VerbatimInvalidDeduplication\n\t- FullInlinerNonExpressionSplitArgumentEvaluationOrder\n\t- MissingSideEffectsOnSelectorAccess.\nIt is used by:\n\t- ^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable.sol#4)\n\t- ^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol#4)\n\t- ^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Context.sol#4)\n\t- ^0.8.20 (lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol#4)\n\t- ^0.8.20 (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#5)\n",
+      "disposition": "Range-based dependency warning. Actual compiler is 0.8.26, not the older compiler releases named by these range diagnostics; no custom Yul optimizer sequence is configured.",
+      "confirmedDefect": false
+    },
+    {
+      "id": "e7c89e0e86e26906f08633a47c1674693a10a7ff882a273f3e5c28e601ef7044",
+      "rule": "low-level-calls",
+      "impact": "Informational",
+      "confidence": "High",
+      "description": "Low level call in OmertaFees.sweep() (src/OmertaFees.sol#186-192):\n\t- (ok,None) = address(owner()).call{value: bal}() (src/OmertaFees.sol#189)\n",
+      "disposition": "Native-currency forwarding checks each call result and reverts the whole payment on failure. Every payment and owner-only sweep uses nonReentrant; mint has zero Vig leg. Malicious receiver, rejection, reentry and conservation proofs executed.",
+      "confirmedDefect": false
+    },
+    {
+      "id": "f49b059c13742495035031679d929f5d011b25c046d5a3dccff819ce69ed5612",
+      "rule": "low-level-calls",
+      "impact": "Informational",
+      "confidence": "High",
+      "description": "Low level call in OmertaFees._forward(uint256,uint256,uint256) (src/OmertaFees.sol#133-145):\n\t- (okV,None) = vigRecipient.call{value: toVig}() (src/OmertaFees.sol#137)\n\t- (okD,None) = feeRecipient.call{value: toDev}() (src/OmertaFees.sol#141)\n",
+      "disposition": "Native-currency forwarding checks each call result and reverts the whole payment on failure. Every payment and owner-only sweep uses nonReentrant; mint has zero Vig leg. Malicious receiver, rejection, reentry and conservation proofs executed.",
+      "confirmedDefect": false
+    }
+  ]
+}

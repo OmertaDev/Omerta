@@ -1,10 +1,12 @@
 # OMERTÀ genesis CCA/LBP launch runbook
 
-Status: implementation, unsigned ceremony and release-manifest tooling, the canonical v4 bond oracle, and its durable
-permissionless keeper/watchdog are present. The complete migration/oracle handoff passed a disposable
-chain-4663 fork rehearsal on 2026-08-27. Production execution remains blocked on the launch-specific
-audit, final recipient addresses, a reviewed LP-position custody choice, exact production block
-timing, and the production Safe simulation/approval ceremony.
+Status: automated Genesis requires the bootstrap-capable `OmrV4TwapOracle`, the fixed
+`ProtocolLiquidityVault`, and a `GenesisLifecycleController` bound before bidding starts. The
+2026-09-09 bootstrap amendment verifies that integrated sequence in a local chain-4663 fork; see
+[the scoped amendment](audits/2026-09-09-genesis-bootstrap/report.md). Earlier fork reports
+used different custody/deployment ordering and remain historical evidence for their stated scope.
+Production execution requires the current scoped review, exact recipients and budgets, measured
+block timing, and the production Safe simulation/approval ceremony.
 
 This runbook is the source of truth for replacing the original bootstrap bond sale with a Uniswap
 Continuous Clearing Auction (CCA) that migrates into the canonical OMR/native-ETH Uniswap v4 pool.
@@ -12,6 +14,39 @@ Continuous Clearing Auction (CCA) that migrates into the canonical OMR/native-ET
 
 No script in the genesis tooling signs or broadcasts a transaction. Safe operators must decode,
 simulate, and approve every call independently.
+
+The exception is `genesis:fork`: it creates disposable test signatures and broadcasts only to its
+own loopback Anvil fork. It never accepts a production private key.
+
+For the automated route, the deployment order is mandatory:
+
+1. Deploy the core and canonical hook, then deploy the final v4 oracle while the pool is unopened.
+   Pin its runtime and immutable source identity. Its `baselineInitialized` must be false and its
+   quote `(0,0)`. Register the hook observer before launch.
+2. Fix one contiguous liquidity CREATE sequence. Deploy the splitter with the predicted Vig
+   executor as its immutable recipient; include every prerequisite transaction in the nonce plan.
+   `verifyLiquidityDeploymentStartup` verifies the approved plan hash, prerequisite runtimes,
+   latest/pending nonce, empty future addresses and live splitter bindings before that sequence.
+   A changed nonce requires a newly reviewed plan; the checker never rebases addresses.
+3. Deploy the vault, four fixed-purpose buyback executors, fee router, gas vault and controller.
+   Apply the reviewed Safe configuration, including `setGenesisController` and keeper bindings.
+4. Build with explicit `launchMode: "automated"`, the controller, vault, final oracle, liquidity
+   keeper and all six exact runtime hashes described at Gate D. Preflight checks the entire
+   unopened dependency chain, including controller and vault runtime commitments.
+5. Create the CCA, then generate its separate `bindAuction` transaction from the chain using
+   `genesis:config --bind-auction`. Verify and execute that transaction before `startBlock`.
+   A simulated binding or unsigned payload is not an executed binding.
+6. The typed keeper checkpoints, migrates, discovers and adopts the actual vault-owned full-range
+   position, and releases fixed-recipient unsold tokens and residual proceeds. Successful receipt
+   status alone does not prove successful LBP migration.
+7. The oracle worker waits for the real pool, seeds its first initialized observation without
+   publishing a price, then requires a complete `PERIOD`. Genesis becomes live only after both
+   the vault's foundation warmup and a fresh qualifying oracle observation. Existing claims remain
+   available while new issuance is closed.
+
+With `LIQUIDITY_AUTOMATION_ENABLED=true`, the durable keeper observation drives launch phase;
+manual `GENESIS_LAUNCH_PHASE` values below describe the legacy/manual mode. Missing, expired or
+inconsistent automatic observations keep new issuance closed. THE BANK remains separately gated.
 
 ## 1. Committed architecture
 
@@ -133,7 +168,7 @@ oracle closes bounded windows over that cumulative and preserves `IOmrOracle.con
 `OmertaBond`. A missed keeper poke can make the feed stale but cannot erase intervening swaps or turn a
 spot read into a TWAP. The implementation is built and tested, and the complete disposable chain-4663
 fork rehearsal passed. `oracle_warmup -> live` remains a production gate until this hook/oracle pair
-passes the external audit and the production deployment ceremony verifies the same invariants.
+passes the [scoped agent-led review](SECURITY-REVIEW-POLICY.md) and the production deployment ceremony verifies the same invariants.
 Do not point `OmertaBond` at `GenesisOracle` indefinitely and do not reopen it from PoolManager slot0.
 
 ## 5. Measure time in the chain's clock
@@ -242,6 +277,7 @@ Prepare a private, access-controlled JSON input:
 
 ```json
 {
+  "launchMode": "automated",
   "token": "<OMR>",
   "launchOwner": "<SAFE_THAT_OWNS_THE_OMR>",
   "treasury": "<TREASURY_RECIPIENT>",
@@ -249,6 +285,17 @@ Prepare a private, access-controlled JSON input:
   "founderRecipient": "<FOUNDER_RECIPIENT>",
   "proceedsSplitter": "<DEPLOYED_SPLITTER>",
   "positionRecipient": "<REVIEWED_LP_POSITION_RECIPIENT>",
+  "lifecycleController": "<DEPLOYED_GENESIS_LIFECYCLE_CONTROLLER>",
+  "oracle": "<DEPLOYED_BOOTSTRAP_CAPABLE_V4_ORACLE>",
+  "liquidityKeeper": "<DEDICATED_LIQUIDITY_KEEPER>",
+  "runtimeCodeHashes": {
+    "token": "<EXACT_RUNTIME_KECCAK256>",
+    "hook": "<EXACT_RUNTIME_KECCAK256>",
+    "proceedsSplitter": "<EXACT_RUNTIME_KECCAK256>",
+    "lifecycleController": "<EXACT_RUNTIME_KECCAK256>",
+    "positionRecipient": "<EXACT_RUNTIME_KECCAK256>",
+    "oracle": "<EXACT_RUNTIME_KECCAK256>"
+  },
   "hook": "<MINED_HOOK_WITH_0x30cc_PERMISSION_BITS>",
   "salt": "<UNIQUE_32_BYTE_SALT>",
   "startBlock": "<MEASURED_BLOCK>",
@@ -294,6 +341,21 @@ Verify the receipt and extract the initializer from `LBPStrategy.InitializerCrea
 expected `TokenDistributed` and `TokensReceived` events. Read every initializer parameter back from
 chain. Only then deploy `GENESIS_LAUNCH_PHASE=auction`.
 
+For automated mode, `positionRecipient` must be the configured `ProtocolLiquidityVault`. After
+CCA creation, generate its binding from the exact original input:
+
+```powershell
+npm --prefix .. run genesis:config -- .\path\to\genesis-input.json --bind-auction
+```
+
+The read-only tool discovers the reserved auction from the strategy, recomputes the official
+factory's CREATE2 address from the exact launch bytes, verifies auction parameters and migration
+recipients, and simulates `bindAuction` as the Safe. Execute the returned `transaction` and read
+`controller.auction()` back **before bidding starts**. If that deadline is missed, stop: neither a
+new timestamp nor a different auction can be substituted into the reviewed launch. Retain binding
+evidence separately from the pre-creation release manifest; `pending_creation` is an explicit
+unfinished obligation.
+
 Immediately before execution, run the final release gate described in
 `GENESIS-RELEASE-MANIFEST.md`. It requires a clean frozen commit, hashed launch bytecode, complete
 audit scope, approved recipients and LP custody, fresh cadence evidence, the fork archive, the live
@@ -335,23 +397,30 @@ Require all of the following:
 - LP and residual deltas reconcile to the post-fee raise;
 - the splitter received only residual currency and unused LP-reserve dust.
 
-Then call `distributeResidual()` and reconcile all recipient balances. Call `recoverToken(OMR)` only
+In automated mode, let the typed controller jobs adopt the proven vault-owned NFT, distribute
+residuals and sweep unsold tokens to the pinned treasury. Verify their confirmed receipts and durable
+accounting. The controller is the CCA's `tokensRecipient`; the treasury cannot impersonate it.
+
+For the legacy/manual custody route, call `distributeResidual()` and reconcile all recipient balances. Call `recoverToken(OMR)` only
 after explaining any OMR balance. The treasury may separately call the initializer's
 `sweepUnsoldTokens()` as `tokensRecipient`.
 
-Deploy `GENESIS_LAUNCH_PHASE=oracle_warmup` and keep bonds, Desk creation, OMR minting, and both tax
-layers closed. The hook accumulator began at pool initialization, but the oracle deliberately seeds a
-new baseline when it is deployed; no pre-deployment interval is published as fresh.
+Keep bonds, Desk creation, OMR minting, and both tax layers closed during oracle warmup. In automated
+mode the final oracle already exists. Its first initialized observation seeds a baseline; all time
+before that observation is excluded. The worker exposes `awaiting_pool`, then `seeding`, then
+`warming`, and finally a usable price after a complete window.
 
-Simulate the ownerless oracle deployment without `--broadcast`, decode all constructor inputs, then
-execute it only after the successful-migration evidence above is signed:
+For legacy/manual mode only, set `GENESIS_LAUNCH_PHASE=oracle_warmup` and deploy the oracle after
+successful migration. This ordering cannot be used for a pre-bound automated controller/vault.
+The same script also supports the pre-pool deployment required by automated mode:
 
 ```powershell
 forge script script/DeployV4TwapOracle.s.sol:DeployV4TwapOracle --rpc-url $env:CHAIN_RPC_URL --sender $env:DEPLOYER -vvvv
 ```
 
 The script fixes the pool to native ETH / OMR / fee 3000 / spacing 60 / the mined hook, verifies the
-hook's PoolManager and initialized accumulator, and requires the fresh oracle to report `(0, 0)`.
+hook's PoolManager and exact observation-source identity, and requires the fresh oracle to report
+`(0, 0)`. An unopened pool is accepted without inventing an observation baseline.
 
 ### Failed auction or migration
 
@@ -388,10 +457,14 @@ Before `live`:
    liveness hint, not a completeness dependency: the hook already retains every swap and idle-time
    tick-second. Keep every close between `PERIOD` and `PERIOD * 4`; an overlong window is discarded
    and recovery takes one additional honest window.
-4. Wait at least one complete window after oracle deployment, call `update()`, and independently read
+4. Wait at least one complete window after `baselineInitialized` becomes true, call `update()`, and independently read
    `consult()`, `arithmeticMeanTick()`, `tickCumulativeLast()`, `blockTimestampLast()`, and
    `lastUpdate()`. Confirm OMR-per-ETH orientation against independently reconstructed historical
    ticks; do not compare only with current slot0.
+   The bootstrap journal uses `-1` until a real uint32 baseline exists; timestamp zero is valid after
+   wrap. A prepared transaction is held if pool initialization disappears. If a confirmed update
+   is no longer reflected in canonical state, `reorg_requires_review` alerts and blocks new signing
+   until its receipt is reconciled; the worker never invents a replacement operation.
 5. On a chain-4663 fork, prove the feed goes stale when pokes stop, rejects an early close, discards an
    overlong interval, recovers after one valid window, preserves multiple swaps between pokes, and
    makes `OmertaBond.priceCeiling()` revert for zero/stale readings and reject an out-of-tolerance quote.

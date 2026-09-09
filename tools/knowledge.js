@@ -21,6 +21,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { parse } from 'acorn';
 
 const ROOT = path.resolve(fileURLToPath(new URL('..', import.meta.url)));
 const OUT = path.join(ROOT, 'knowledge', 'generated');
@@ -668,6 +669,104 @@ function finalCallbackCall(argument) {
   return name;
 }
 
+// A page gate can choose between callbacks built once by the same local factory. Preserve that
+// factory only when every terminal branch proves it; predicates and unrelated calls are not owners.
+function callbackFactoryHandlers(source) {
+  const ast = parse(source, { ecmaVersion: 'latest', sourceType: 'module' });
+  const handlers = new Map();
+  const functions = new Set(['FunctionDeclaration', 'FunctionExpression', 'ArrowFunctionExpression']);
+  function walk(node, visit, ancestors = []) {
+    if (!node || typeof node.type !== 'string') return;
+    visit(node, ancestors);
+    for (const child of Object.values(node)) {
+      if (Array.isArray(child)) for (const value of child) walk(value, visit, [...ancestors, node]);
+      else if (child && typeof child === 'object') walk(child, visit, [...ancestors, node]);
+    }
+  }
+  function bindings(pattern) {
+    if (!pattern) return [];
+    if (pattern.type === 'Identifier') return [pattern.name];
+    if (pattern.type === 'AssignmentPattern') return bindings(pattern.left);
+    if (pattern.type === 'RestElement') return bindings(pattern.argument);
+    if (pattern.type === 'ObjectPattern') return pattern.properties.flatMap(p => bindings(p.value ?? p.argument));
+    if (pattern.type === 'ArrayPattern') return pattern.elements.flatMap(bindings);
+    return [];
+  }
+  function changedOrShadowed(tree, names) {
+    let invalid = false;
+    walk(tree, node => {
+      const declared = node.type === 'VariableDeclarator' ? bindings(node.id)
+        : functions.has(node.type) ? [...bindings(node.id), ...node.params.flatMap(bindings)]
+          : node.type === 'CatchClause' ? bindings(node.param)
+            : /^(?:ClassDeclaration|ClassExpression)$/.test(node.type) ? bindings(node.id) : [];
+      if (declared.some(name => names.has(name))) invalid = true;
+      const target = node.type === 'AssignmentExpression' ? node.left
+        : node.type === 'UpdateExpression' ? node.argument : null;
+      if (bindings(target).some(name => names.has(name))) invalid = true;
+    });
+    return invalid;
+  }
+  const terminal = fn => fn.body.type === 'BlockStatement'
+    ? fn.body.body.at(-1)?.type === 'ReturnStatement' ? fn.body.body.at(-1).argument : null : fn.body;
+  walk(ast, (node, ancestors) => {
+    if (node.type !== 'CallExpression' || node.optional || node.callee.type !== 'MemberExpression'
+      || node.callee.computed || node.callee.object.type !== 'Identifier' || node.callee.object.name !== 'app'
+      || !/^(?:get|post|put|patch|delete|options|head)$/.test(node.callee.property.name)) return;
+    const callback = node.arguments.at(-1);
+    if (!callback || !functions.has(callback.type)) return;
+    const scope = ancestors.findLast(parent => parent.type === 'BlockStatement' || parent.type === 'Program');
+    if (!scope) return;
+    const before = scope.body.filter(statement => statement.end <= node.start);
+    const constants = new Map();
+    for (const statement of before) if (statement.type === 'VariableDeclaration' && statement.kind === 'const')
+      for (const declaration of statement.declarations) if (declaration.id.type === 'Identifier')
+        constants.set(declaration.id.name, declaration);
+    function factory(name) {
+      const declaration = constants.get(name), definition = declaration?.init;
+      if (!definition || !functions.has(definition.type) || definition.async || definition.generator) return null;
+      const result = terminal(definition);
+      return result && functions.has(result.type) ? name : null;
+    }
+    const selectedBindings = new Set();
+    function resolve(expression) {
+      if (expression?.type === 'AwaitExpression') return resolve(expression.argument);
+      if (expression?.type === 'ConditionalExpression') {
+        const left = resolve(expression.consequent), right = resolve(expression.alternate);
+        return left && left === right ? left : null;
+      }
+      if (expression?.type !== 'CallExpression' || expression.optional) return null;
+      let creation;
+      if (expression.callee.type === 'Identifier') {
+        const alias = expression.callee.name;
+        creation = constants.get(alias)?.init;
+        selectedBindings.add(alias);
+      } else if (expression.callee.type === 'CallExpression' && !expression.callee.optional) {
+        creation = expression.callee;
+      }
+      if (creation?.type !== 'CallExpression' || creation.optional || creation.callee.type !== 'Identifier') return null;
+      const name = factory(creation.callee.name);
+      if (name) selectedBindings.add(name);
+      return name;
+    }
+    const name = resolve(terminal(callback));
+    if (!name || changedOrShadowed(callback, selectedBindings)) return;
+    // The selected const declarations are the only bindings allowed in the enclosing prefix.
+    // Inspect their initializers and every other statement for mutation or competing declarations.
+    for (const statement of before) {
+      if (statement.type === 'VariableDeclaration') {
+        for (const declaration of statement.declarations) {
+          if (declaration.id.type === 'Identifier' && selectedBindings.has(declaration.id.name)
+            && constants.get(declaration.id.name) === declaration) {
+            if (changedOrShadowed(declaration.init, selectedBindings)) return;
+          } else if (changedOrShadowed(declaration, selectedBindings)) return;
+        }
+      } else if (changedOrShadowed(statement, selectedBindings)) return;
+    }
+    handlers.set(node.start, name);
+  });
+  return handlers;
+}
+
 // Git renders `--date=iso-strict` for UTC as `+00:00` up to git 2.43 and as `Z` from 2.55 — the
 // same instant, two spellings. The generated artifacts are byte-compared by knowledge-test, so an
 // un-normalized commit date makes the graph a function of the CHECKOUT'S GIT BINARY rather than of
@@ -829,6 +928,7 @@ function build(options = {}) {
   const routes = [];
   for (const [rel, text] of textCache) {
     if (!(rel === 'src/server.js' || rel.startsWith('src/routes/'))) continue;
+    const factoryHandlers = callbackFactoryHandlers(text);
     // World-graph mutations use one local, closed wrapper. Recognize it only where its definition
     // proves both account auth and the logical-mutation key; a same-named helper elsewhere must not
     // acquire authority by coincidence, and weakening this wrapper must make the knowledge test red.
@@ -883,7 +983,8 @@ function build(options = {}) {
         const call = new RegExp(`(?:=>|\\breturn\\b)\\s*(?:await\\s+)?${esc(name)}\\s*\\(`).exec(snippet);
         return call ? { name, index: call.index } : null;
       }).filter(Boolean).sort((a, b) => a.index - b.index)[0] || null;
-      const localHandler = directFactory || returnedLocal;
+      const commonFactory = factoryHandlers.get(m.index);
+      const localHandler = directFactory || (commonFactory ? { name: commonFactory, index: m.index } : null) || returnedLocal;
       const returnedImport = namedImports.get(finalCallbackCall(directHandlerArgument)) || null;
       // The authored-content registrar deliberately composes security/transaction wrappers around a
       // named runtime operation. Preserve the innermost domain operation as graph provenance rather
@@ -1225,6 +1326,6 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
 }
 
 export {
-  build, buildForCheck, currentBranchForSnapshot, finalCallbackCall, repositorySnapshotFromState,
+  build, buildForCheck, callbackFactoryHandlers, currentBranchForSnapshot, finalCallbackCall, repositorySnapshotFromState,
   sourceRevisionForSnapshot, validate, render,
 };

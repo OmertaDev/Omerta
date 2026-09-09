@@ -22,6 +22,8 @@ const base = {
   bondOracleMismatch: false,
   periodS: PERIOD,
   maxWindowMult: 4,
+  baselineInitialized: true,
+  poolInitialized: true,
   baselineS: 1_000,
   priceAverage: 2_000n * 10n ** 18n,
   lastUpdateS: 1_000,
@@ -62,21 +64,29 @@ assert.throws(() => v4OracleConfig({
 }, { write: true }), /not a usable secp256k1/, 'the sender refuses an out-of-range scalar, not just bad hex');
 
 function fakeViem(pool, state, controls = {}) {
+  state.baselineInitialized ??= true;
+  state.poolInitialized ??= true;
   const sentRaw = [];
   let signed = 0;
   let simulated = 0;
   let nonce = 0;
   const publicClient = {
     getChainId: async () => controls.chainId ?? 4663,
-    getCode: async () => '0x6000',
-    getBlock: async () => ({ timestamp: BigInt(state.nowS) }),
-    readContract: async ({ address, functionName }) => {
+    getCode: async ({ blockNumber }) => { assert.equal(blockNumber, 9n); return '0x6000'; },
+    getBlock: async ({ blockNumber } = {}) => ({ timestamp: BigInt(state.nowS), number: 9n,
+      hash: `0x${(controls.reorg && blockNumber != null ? 'b' : 'a').repeat(64)}` }),
+    readContract: async ({ address, functionName, blockNumber }) => {
+      assert.equal(blockNumber, 9n, 'every binding and observation uses the same block');
       if (address.toLowerCase() === BOND.toLowerCase()) {
         if (functionName === 'oracle') return ORACLE;
         if (functionName === 'maxOracleAge') return 1_800n;
       }
       if (functionName === 'PERIOD') return BigInt(PERIOD);
       if (functionName === 'MAX_WINDOW_MULT') return 4n;
+      if (functionName === 'baselineInitialized') return state.baselineInitialized;
+      if (functionName === 'source') return `0x${'4'.repeat(40)}`;
+      if (functionName === 'poolId') return `0x${'5'.repeat(64)}`;
+      if (functionName === 'currentTickCumulative') return [0n, BigInt(state.nowS), state.poolInitialized];
       if (functionName === 'blockTimestampLast') return BigInt(state.baselineS);
       if (functionName === 'priceAverage') return state.priceAverage;
       if (functionName === 'lastUpdate') return BigInt(state.lastUpdateS);
@@ -84,11 +94,18 @@ function fakeViem(pool, state, controls = {}) {
     },
     simulateContract: async () => {
       simulated++;
+      if (!state.poolInitialized) throw new Error('PoolNotInitialized');
+      if (!state.baselineInitialized) return;
       if (uint32Elapsed(state.nowS, state.baselineS) < PERIOD) throw new Error('PeriodNotElapsed');
     },
     waitForTransactionReceipt: async ({ hash }) => {
       if (controls.receiptPending) throw new Error('receipt timeout');
       if (controls.receiptReverts) return { status: 'reverted', blockNumber: 9n, transactionHash: hash };
+      if (!state.baselineInitialized) {
+        state.baselineInitialized = true;
+        state.baselineS = state.nowS >>> 0;
+        return { status: 'success', blockNumber: 9n, transactionHash: hash };
+      }
       const elapsed = uint32Elapsed(state.nowS, state.baselineS);
       state.baselineS = state.nowS;
       if (elapsed > PERIOD * 4) {
@@ -146,6 +163,56 @@ const config = {
 
 const pool = await makeDb();
 try {
+  const bootstrap = { nowS: 2 ** 32, baselineS: 0, baselineInitialized: false,
+    poolInitialized: false, priceAverage: 0n, lastUpdateS: 0 };
+  const bootViem = fakeViem(pool, bootstrap);
+  let boot = await runV4OracleKeeper(pool, { config, clients: bootViem.clients });
+  assert.equal(boot.health.state, 'awaiting_pool');
+  assert.equal(boot.action, 'none');
+  assert.equal(bootViem.counts.simulated, 0);
+  assert.equal(bootViem.counts.signed, 0);
+  bootstrap.poolInitialized = true;
+  boot = await runV4OracleKeeper(pool, { config, clients: bootViem.clients });
+  assert.equal(boot.action, 'confirmed');
+  assert.equal(boot.health.state, 'warming');
+  assert.equal(boot.health.priceAverage, '0');
+  assert.equal(bootstrap.baselineS, 0, 'a real baseline at uint32 wrap remains valid');
+  assert.equal(Number((await pool.query('SELECT COUNT(*) n FROM v4_oracle_keeper_attempts WHERE baseline_timestamp=-1')).rows[0].n), 1);
+  bootstrap.nowS += PERIOD - 1;
+  boot = await runV4OracleKeeper(pool, { config, clients: bootViem.clients });
+  assert.equal(boot.action, 'none', 'pre-pool elapsed time never counts toward warmup');
+  bootstrap.nowS++;
+  boot = await runV4OracleKeeper(pool, { config, clients: bootViem.clients });
+  assert.equal(boot.action, 'confirmed', 'bootstrap journal cannot block a real zero baseline');
+  assert.equal(boot.health.state, 'healthy');
+  await pool.query('DELETE FROM v4_oracle_keeper_attempts');
+  const rollback = { nowS: 1000, baselineS: 0, baselineInitialized: false,
+    poolInitialized: true, priceAverage: 0n, lastUpdateS: 0 };
+  const rollbackViem = fakeViem(pool, rollback, { failSends: 1 });
+  const preparedSeed = await runV4OracleKeeper(pool, { config, clients: rollbackViem.clients });
+  assert.equal(preparedSeed.action, 'prepared');
+  rollback.poolInitialized = false;
+  const heldSeed = await runV4OracleKeeper(pool, { config, clients: rollbackViem.clients });
+  assert.equal(heldSeed.action, 'prepared');
+  assert.equal(heldSeed.health.state, 'awaiting_pool');
+  assert.equal(rollbackViem.counts.sent, 1, 'a reorged-out initialization cannot cause a known-invalid rebroadcast');
+  rollback.poolInitialized = true;
+  const resumedSeed = await runV4OracleKeeper(pool, { config, clients: rollbackViem.clients });
+  assert.equal(resumedSeed.action, 'confirmed');
+  assert.equal(rollbackViem.counts.signed, 1);
+  assert.equal(rollbackViem.counts.sentRaw[0], rollbackViem.counts.sentRaw[1], 'restored initialization resumes exact signed seed bytes');
+  rollback.baselineInitialized = false;
+  rollback.baselineS = 0;
+  const orphanedSeed = await runV4OracleKeeper(pool, { config, clients: rollbackViem.clients });
+  assert.equal(orphanedSeed.action, 'blocked');
+  assert.equal(orphanedSeed.health.state, 'reorg_requires_review');
+  assert.equal(orphanedSeed.health.alert, true, 'an orphaned confirmed seed cannot silently stall automation');
+  assert.equal(rollbackViem.counts.signed, 1, 'finality disagreement never invents a replacement signature');
+  await pool.query('DELETE FROM v4_oracle_keeper_attempts');
+  const reorgViem = fakeViem(pool, { nowS: 1600, baselineS: 1000, priceAverage: 0n, lastUpdateS: 0 }, { reorg: true });
+  const reorg = await runV4OracleKeeper(pool, { config, clients: reorgViem.clients });
+  assert.equal(reorg.action, 'failed');
+  assert.equal(reorgViem.counts.signed, 0, 'changed snapshot block refuses before any signature');
   // Early is read-only: no journal row, no simulation, no signature, no transaction.
   const earlyState = { nowS: 1_599, baselineS: 1_000, priceAverage: 0n, lastUpdateS: 0 };
   const earlyViem = fakeViem(pool, earlyState);

@@ -1497,6 +1497,50 @@ const SCENERY_WAIVED = {
       why: 'viem, independent control-room live-value RPC reads' },
     { file: 'src/v4oraclekeeper.js', mark: "functionName: 'MAX_WINDOW_MULT'",
       why: 'viem, one read-only oracle snapshot assembled from independent contract and block RPC reads' },
+    { file: 'src/genesiskeeper.js', mark: 'names.map(name=>r(',
+      why: 'viem only; r delegates to the pinned block readContract closure for five immutable genesis addresses' },
+    { file: 'src/genesiskeeper.js', mark: "r('currentBlock() view returns (uint256)')",
+      why: 'viem only; genesis phase/cadence/custody snapshot through pinned readContract helpers' },
+    { file: 'src/genesiskeeper.js', mark: 'comparisons.map(async([target,getter,expected])',
+      why: 'viem only; independent dependency readContract calls followed by in-memory equality checks' },
+    { file: 'src/genesiskeeper.js', mark: 'pub.getBalance({address:getAddress(m.contracts.splitter.address)',
+      why: 'viem only; controller/splitter token balances and native balance at the pinned block' },
+    { file: 'src/genesiskeeper.js', mark: 'event:OBSERVED,fromBlock:begin,toBlock:end',
+      why: 'viem only; two bounded migration-event getLogs streams, no database handle' },
+    { file: 'src/genesiskeeper.js', mark: "read('polVault','minLiquidity() view returns (uint128)')",
+      why: 'viem only; three fixed foundation policy reads at the same pinned block' },
+    { file: 'src/genesiskeeper.js', mark: "read('positionManager','ownerOf(uint256) view returns (address)'",
+      why: 'viem only; one migration-receipt NFT owner/liquidity/position snapshot, no PostgreSQL work' },
+    { file: 'src/keepertransactions.js', mark: 'pub.getBlock({ blockNumber: BigInt(receipt.blockNumber) })',
+      why: 'viem only; receipt block and head reads before accounting, no calls on the held PG connection' },
+    { file: 'src/keepertransactions.js', mark: "['latest', 'pending'].map((blockTag)",
+      why: 'viem only; two nonce-domain RPC reads, no calls on the held PG connection' },
+    { file: 'src/liquidityindexer.js', mark: 'Object.values(m.contracts).map(async (pin)',
+      why: 'viem only; historical runtime getCode fan-out and in-memory hashes; no database work in callbacks' },
+    { file: 'src/liquiditykeeper.js', mark: 'Object.values(m.contracts).map(async (t)',
+      why: 'viem only; exact manifest runtime checks at one pinned block' },
+    { file: 'src/liquiditykeeper.js', mark: 'pub.getBalance({ address: getAddress(m.keeper)',
+      why: 'viem only; native balance and fixed POL/oracle health readContract snapshot' },
+    { file: 'src/liquiditykeeper.js', mark: ".map((s) => read('polVault',s))",
+      why: 'viem only; five fixed foundation dependency reads through the pinned readContract closure' },
+    { file: 'src/liquiditykeeper.js', mark: "read('bond','liquidityHealthGuard() view returns (address)')",
+      why: 'viem only; independent Bond authority, cap and OMR minter readContract calls' },
+    { file: 'src/liquiditykeeper.js', mark: "r('keeper(address) view returns (bool)'",
+      why: 'viem only; immutable buyback executor bindings and keeper permission snapshot' },
+    { file: 'src/liquiditykeeper.js', mark: "r('spentInDay(uint256) view returns (uint256)'",
+      why: 'viem only; fixed executor balance, per-action/day budgets and next execution clock' },
+    { file: 'src/liquiditykeeper.js', mark: "r('emergencyLatched() view returns (bool)'), r('keeper() view returns (address)')",
+      why: 'viem only; POL custody, health and dependency readContract calls' },
+    { file: 'src/liquiditykeeper.js', mark: "r('budgetAvailable() view returns (uint256,uint256)')",
+      why: 'viem only; POL budget and native/ERC20 inventory balances; helpers close only over the RPC read client' },
+    { file: 'src/liquiditykeeper.js', mark: "r('refillAmount(address) view returns (uint256)'",
+      why: 'viem only; gas-vault permission, refill amount and immutable cap reads' },
+    { file: 'src/liquiditykeeper.js', mark: "r('fundingAmount() view returns (uint256)')",
+      why: 'viem only; Bank buffer preview/cap and token allowance/funder reads at the pinned block' },
+    { file: 'src/liquiditykeeper.js', mark: "r('principalOf(address) view returns (uint256)'",
+      why: 'viem only; declared borrower principal/debt/collateral and harvest policy reads' },
+    { file: 'src/liquidityqueue.js', mark: "read('signer() view returns (address)')",
+      why: 'viem only; existing claim signer/token/owner/pause RPC checks before the separate drainQueue database transaction' },
     { file: 'src/arena.js', mark: 'agentLeaderboard(pool, 25), agentEconomyStats(pool)',
       why: 'a genuine app pool; each reader acquires its own connection and no request snapshot is shared' },
   ];
@@ -2026,6 +2070,7 @@ const SCENERY_WAIVED = {
     'stable.js:kind':     'dog|horse — the same two-value word on the stakes board',
     'chain.js:kind':      "the EIP-712 voucher struct's numeric kind — signed, never rendered",
     'chain.js:amount':    'the same voucher struct — a wei amount reached by the kind ternary',
+    'keepertransactions.js:kind': 'gas|spend — an internal signed-budget discriminator, never a gameplay catalog identifier or narrative label',
     'server.js:kind':     "omr|gear on the chain board — a voucher's rail, not a catalog rung",
     'contacts.js:kind':   'freight|visit — the discriminator the client branches on',
     'corner.js:kind':     'the drawn daily-counter kind (crime|jump|…) the client jumps a tab on',
@@ -3106,6 +3151,7 @@ scopedSocialContext = async function(db) {
     'src/pen.js|cols': 'break setMember/setMemberRat — literal SET clause at every call site; values bound',
     'src/wire.js|col': "claim(w,col) — three literal column names ('alerted_hunt'/'_wanted'/'_indicted')",
     'src/game.js|set': 'persistAccountFields — SET clause generated from ACCOUNT_PERSIST_COLUMNS entries the field list was validated against (an unknown field throws); every value bound',
+    'src/keepertransactions.js|columns': 'private journal-progress update checks every column against seven literal allowedColumns before generating numbered placeholders; every value is bound and signed-authority fields cannot be updated',
     'src/rwanominations.js|setClause': 'updateQueueNominationIds(...,setClause,marker) — literal at every call site',
     'src/rwanominations.js|marker': 'a literal SQL-comment tag at every call site (query attribution only)',
     'src/stockcatalogv2.js|marker': 'readState(marker) — two literal tags, inside a /* */ SQL comment',
@@ -3217,19 +3263,23 @@ scopedSocialContext = async function(db) {
   const ROOT = fileURLToPath(new URL('../', import.meta.url));
   const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
   const scripts = pkg.scripts || {};
-  const ci = fs.readFileSync(path.join(ROOT, '.github/workflows/ci.yml'), 'utf8');
+  const workflowsDir = path.join(ROOT, '.github/workflows');
+  const workflowFiles = fs.readdirSync(workflowsDir).filter((name) => /\.ya?ml$/.test(name)).sort();
+  assert(workflowFiles.includes('ci.yml'), 'the suite ledger must include the primary CI workflow');
+  const workflows = workflowFiles.map((name) => fs.readFileSync(path.join(workflowsDir, name), 'utf8')).join('\n');
 
   // A suite is covered if it is named by `test`/`pretest` (npm runs pretest before test), by any
-  // script the workflow actually invokes, or directly by the workflow.
+  // script a checked-in workflow actually invokes, or directly by a workflow. Forge and real-PG
+  // suites have dedicated workflows; reading only ci.yml would report those live checks as orphaned.
   const invoked = new Set(['test', 'pretest']);
-  for (const m of ci.matchAll(/npm run ([a-zA-Z0-9:_-]+)/g)) invoked.add(m[1]);
+  for (const m of workflows.matchAll(/npm run ([a-zA-Z0-9:_-]+)/g)) invoked.add(m[1]);
   const covered = new Set();
   for (const name of invoked) {
     const body = scripts[name];
     if (!body) continue;
     for (const f of body.matchAll(/test\/[A-Za-z0-9._-]+\.js/g)) covered.add(f[0]);
   }
-  for (const f of ci.matchAll(/test\/[A-Za-z0-9._-]+\.js/g)) covered.add(f[0]);
+  for (const f of workflows.matchAll(/test\/[A-Za-z0-9._-]+\.js/g)) covered.add(f[0]);
 
   // Declared: a suite the chain cannot run, each with the property that makes that true. A reason,
   // not a category — "it fails in CI" is a description of the symptom and would waive a real break.
@@ -3345,6 +3395,8 @@ scopedSocialContext = async function(db) {
     'content/activation-policy.js:POLICIES': 'cache: immutable trusted operator configuration keyed by locally issued opaque policies; every process brands its own admitted configuration',
     'content/artifacts.js:SELECTIONS': 'cache: one-use replacement authority bound to the exact active callback, client and newly appended event; PostgreSQL owns durable events and selections',
     'v4oraclekeeper.js:IN_FLIGHT_WINDOWS': 'db-backstopped: same-process guard; the DB primary key is the cross-process guard (said at the site)',
+    'keepertransactions.js:LOCAL_WALLETS': 'db-backstopped: same-process wallet guard; a PostgreSQL session advisory lock protects the same chain/wallet nonce domain across workers',
+    'liquidityindexer.js:active': 'db-backstopped: same-process manifest-domain guard; a PostgreSQL transaction advisory lock and canonical cursor serialize indexing across workers',
     'auth.js:guestBootstrapLocks': 'db-backstopped: a process-local queue for same-process retries; the unique index is the cross-process backstop (said at the site)',
     'ratelimit.js:buckets': 'shared: N instances = N× every limit, unless REDIS_URL is set',
     'phone.js:lastDmAt': 'shared: the DM flood brake — N instances = N× the allowed rate, and REDIS_URL does NOT cover it',

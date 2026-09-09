@@ -1,51 +1,41 @@
-# Minting invite codes for a seeded launch night
+# Invite-only launch
 
-`INVITE_MODE=on` closes the doors to anyone without a code — a controlled first cohort and a real
-Sybil bound. This is the whole procedure; it takes two minutes and needs only the production
-`MOD_KEY`. (I — the developer session — do not hold the production key, which is why this is a
-runnable recipe rather than a done deed.)
+`INVITE_MODE=on` requires admission to load the playable console, Codex, Arena, live city boards, and player spectator pages. The server sends a separate invitation page to visitors; game markup is withheld. Gameplay API routes continue to require account authentication. Documentation, the Path acquisition funnel, external token metadata, and account recovery stay available.
 
-## 1. Turn the door on
+Render's checked-in launch configuration sets `INVITE_MODE=on`. Production and database-backed deployments also default to invite-only when the setting is absent. Local in-memory development stays open. An explicit `INVITE_MODE=off` opens admission.
 
-Set `INVITE_MODE=on` on the **API** service (Render → Environment) and redeploy. From that moment
-a new account needs a code; existing accounts are untouched.
+Existing accounts retain access. Returning browsers exchange their saved bearer for a signed HttpOnly view cookie; returning players can use X sign-in or their OMERTA account token. Banned or revoked accounts cannot use old view cookies. The cookie cannot authenticate gameplay requests. Signing out clears it. Private pages use `private, no-store`, and the service worker no longer precaches the console.
 
-## 2. Mint a batch
+## Generate and activate campaign codes
 
-One call, up to 100 codes at a time. `uses` is how many accounts each code admits — for a launch
-night, single-use codes are the honest bound (a multi-use code posted in a Discord is an open door):
+Generate a private export outside the repository:
 
-```bash
-curl -s -X POST https://www.omerta.fun/v1/mod/invites \
-  -H "x-mod-key: $MOD_KEY" -H "content-type: application/json" \
-  -d '{"count": 50, "uses": 1}' | python3 -m json.tool
+```powershell
+node tools/invites.js generate --count 5000 --output-dir C:/Users/Jorge/Documents/Omerta-private/launch-invites-2026-09-07
 ```
 
-The response is `{"codes": ["a1b2c3d4e5f6", ...], "uses": 1}`. Save it — codes are not listed
-anywhere afterwards (there is deliberately no "list all invites" surface).
+The directory contains a numbered `invites.csv` with share links, one code per line in `invites.txt`, the exact `invites.json` import manifest, an additive `import.sql`, and a README with the CSV checksum. Codes are cryptographically random, 100 bits, single-use, and formatted `OMR-XXXXX-XXXXX-XXXXX-XXXXX`. The generator refuses to overwrite an existing directory. Keep these admission credentials out of Git and public hosting.
 
-For a friends-of-friends tier, mint a second, smaller batch with `"uses": 3` and label it as such
-in your notes, so an over-shared code is identifiable by which batch it came from.
+Generation does **not** activate codes. With the intended database's `DATABASE_URL` set, import the saved batch:
 
-## 3. Hand them out
+```powershell
+node tools/invites.js import --output-dir C:/Users/Jorge/Documents/Omerta-private/launch-invites-2026-09-07
+```
 
-A code is entered on the entry screen (the field reveals itself when the server answers `invite`),
-and it rides through **both** doors — guest sign-in and X one-click — so recipients need no
-instructions beyond the code itself. One line to send with each:
+The importer opens one transaction, inserts the exact saved codes, and reports new versus existing rows without printing codes or credentials. Repeating an import does not restore a used code. A collision with another batch aborts. Operators may instead run `import.sql` with normal database tooling; its `ON CONFLICT DO NOTHING` never replenishes uses.
 
-> Doors open Saturday night. Your code: `a1b2c3d4e5f6` — enter it at https://www.omerta.fun when
-> it asks. One use, so it's yours.
+Import before distributing links, deploy the gate with `INVITE_MODE=on`, and verify an anonymous browser receives the invitation screen. The configuration change must be applied to an existing Render service; editing the YAML alone does not update production. No codes are active on a target until imported there.
 
-## 4. On the night
+## Admission and recovery
 
-- Codes running low is one more `curl` away — minting is instant and additive.
-- `INVITE_MODE=off` (and a redeploy) opens the doors to everyone; the codes simply stop being
-  asked for. Opening up mid-night is a one-way decision worth making deliberately, not under
-  pressure.
+The form posts `{inviteCode, bootstrapSecret}` to `POST /v1/access/redeem`. It saves a random 32-byte recovery secret before submitting and retains it across reloads, so an interrupted response recovers the same account without consuming an additional invitation. Account creation and invite consumption share a transaction. The browser saves its bearer before retiring the bootstrap credential. Direct guest, X, Privy, and agent signups also require admission while invite mode is enabled.
 
-## Notes
+Share links use `https://www.omerta.fun/#invite=CODE`: the fragment is not sent in the HTTP request. A referral can stay in the query string (`?ref=CharacterName#invite=CODE`). The invitation admits one player; referral attribution and subsequent Crew membership remain separate choices.
 
-- Consumption is atomic with account creation (one code burned per created account, race-proof —
-  the red-team B2 fix), so a code cannot be double-spent by two simultaneous signups.
-- Agents need codes too while the mode is on (`omerta_start` passes `OMERTA_INVITE`) — decide
-  whether the launch cohort includes machines, and mint their batch separately if so.
+## Player-issued Crew invitations
+
+A living player in a Crew can issue **three codes for the lifetime of their account** from the Crew panel. `GET /v1/invites` shows only that account's codes, remaining allowance, and eligibility. `POST /v1/invites` issues one single-use code under the existing Crew, character, and account locks. Send an `Idempotency-Key` when issuing, as for other mutations.
+
+Used codes still count. Death, replacement, leaving, or joining another Crew never resets the allowance. Codes admit a new player to the game; the existing invite-by-name flow determines who joins the Crew. This allowance is additional to the 5,000 campaign codes.
+
+Moderators can still mint batches through `POST /v1/mod/invites` with `x-mod-key`, up to 100 at a time, using the same strong code format. Distribution is a separate operator action; the game sends no recruiting messages automatically.

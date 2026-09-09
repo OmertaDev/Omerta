@@ -9,6 +9,7 @@ import {Ownable2Step, Ownable} from "@openzeppelin/contracts/access/Ownable2Step
 import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {IOmrOracle} from "./IOmrOracle.sol";
+import {ILiquidityHealth} from "./interfaces/ILiquidityHealth.sol";
 
 /// @dev The single mint path on OMR. Held as a narrow interface on purpose: this contract needs
 ///      exactly one privilege on the token and should be readable as having exactly one.
@@ -72,6 +73,42 @@ interface IOMRMintable {
 ///         `sweep` can pull only OMR that is not backing an outstanding vested bond.
 contract OmertaBond is EIP712, Ownable2Step, Pausable, ReentrancyGuard {
     using SafeERC20 for IERC20;
+
+    /// @notice Once installed, custody-backed liquidity health is required for every new quote
+    ///         execution. Existing vested claims remain available when liquidity is unhealthy.
+    ILiquidityHealth public liquidityHealthGuard;
+    address public emergencyGuardian;
+    event LiquidityHealthGuardSet(address indexed guard);
+    event EmergencyGuardianSet(address indexed guardian);
+    error LiquidityUnhealthy();
+    error InvalidHealthGuard();
+    error NotEmergencyGuardian();
+
+    function setLiquidityHealthGuard(ILiquidityHealth guard) external onlyOwner {
+        if (address(guard).code.length == 0) revert InvalidHealthGuard();
+        // Installation can occur before funding. Replacing an installed boundary requires
+        // an explicit governance stop; zero can never bypass the guard after installation.
+        if (address(liquidityHealthGuard) != address(0) && !paused()) revert InvalidHealthGuard();
+        liquidityHealthGuard = guard;
+        emit LiquidityHealthGuardSet(address(guard));
+    }
+
+    function setEmergencyGuardian(address guardian) external onlyOwner {
+        emergencyGuardian = guardian;
+        emit EmergencyGuardianSet(guardian);
+    }
+
+    /// @notice The monitoring key may only stop issuance. Only governance can resume it.
+    function emergencyPause() external {
+        if (msg.sender != emergencyGuardian) revert NotEmergencyGuardian();
+        _pause();
+    }
+
+    function liquidityHealthy() public view returns (bool) {
+        if (address(liquidityHealthGuard) == address(0)) return false;
+        try liquidityHealthGuard.healthy() returns (bool ok) { return ok; }
+        catch { return false; }
+    }
 
     /// @notice Rogue-discount backstop (a leaked signer can't quote a near-infinite payout). The
     ///         server quotes far less; must equal the backend's BONDS.MAX_DISCOUNT_BPS.
@@ -280,6 +317,7 @@ contract OmertaBond is EIP712, Ownable2Step, Pausable, ReentrancyGuard {
     /// @return ceiling the highest `priceOmrPerEth` a quote may carry right now
     /// @return oraclePrice the raw TWAP reading behind it
     function priceCeiling() public view returns (uint256 ceiling, uint256 oraclePrice) {
+        if (address(liquidityHealthGuard) != address(0) && !liquidityHealthy()) revert LiquidityUnhealthy();
         oraclePrice = _oraclePrice();
         ceiling = (oraclePrice * (10000 + priceToleranceBps)) / 10000;
     }
@@ -292,8 +330,8 @@ contract OmertaBond is EIP712, Ownable2Step, Pausable, ReentrancyGuard {
         // of an opaque bubble — and, more importantly, so "the oracle broke" can never be mistaken
         // in review for a path that proceeds.
         try oracle.consult() returns (uint256 price, uint256 updatedAt) {
-            if (price == 0) revert OracleUnavailable();
-            if (block.timestamp > updatedAt + maxOracleAge) revert OracleStale(updatedAt, maxOracleAge);
+            if (price == 0 || updatedAt > block.timestamp) revert OracleUnavailable();
+            if (block.timestamp - updatedAt > maxOracleAge) revert OracleStale(updatedAt, maxOracleAge);
             return price;
         } catch {
             revert OracleUnavailable();

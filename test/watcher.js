@@ -193,12 +193,61 @@ r = await syncStorePaidEvents(pool, source, { startBlock: 45 });
 assert.equal(await getCursor(pool, 'store'), 62, 'the stream resumes once the poison payment is resolved');
 
 // ═══ THE DYNASTY TOKEN REGISTRY (Minted + Transfer) — the portrait FREEZES at first sale ═══
+// Exercise the actual RPC fee adapter: an immutable on-chain split must agree before
+// any payment can be decoded into ledger revenue, including the sibling store stream.
+{
+  const { createServer } = await import('node:http');
+  const { makeViemSource } = await import('../src/watcher.js');
+  const { VIG_BPS } = await import('../src/vig.js');
+  const { toFunctionSelector } = await import('viem');
+  const mintSelector = toFunctionSelector('mintDevBps()');
+  const savedRpc = process.env.CHAIN_RPC_URL, savedFees = process.env.OMERTA_FEES_ADDRESS;
+  let onchainBps = VIG_BPS === 2500 ? 6000 : 2500, logReads = 0;
+  let mintDevBps = null;
+  const rpc = createServer(async (req, res) => {
+    let raw = ''; for await (const chunk of req) raw += chunk;
+    const q = JSON.parse(raw);
+    let result;
+    if (q.method === 'eth_call') {
+      const isMint = q.params[0].data === mintSelector;
+      result = isMint && mintDevBps === null ? '0x'
+        : '0x' + BigInt(isMint ? mintDevBps : onchainBps).toString(16).padStart(64, '0');
+    }
+    else if (q.method === 'eth_getLogs') { result = []; logReads++; }
+    res.writeHead(200, { 'content-type': 'application/json' });
+    res.end(JSON.stringify({ jsonrpc: '2.0', id: q.id, result }));
+  });
+  await new Promise((resolve) => rpc.listen(0, '127.0.0.1', resolve));
+  try {
+    process.env.CHAIN_RPC_URL = `http://127.0.0.1:${rpc.address().port}`;
+    process.env.OMERTA_FEES_ADDRESS = wallet;
+    const adapter = await makeViemSource();
+    await assert.rejects(() => adapter.feeLogs(0, 10), /Vig split differs/);
+    await assert.rejects(() => adapter.storePaidLogs(0, 10), /Vig split differs/);
+    assert.equal(logReads, 0, 'a mismatched split cannot reach payment ingestion');
+    onchainBps = VIG_BPS;
+    await assert.rejects(() => adapter.feeLogs(0, 10), /mintDevBps is unavailable/);
+    await assert.rejects(() => adapter.storePaidLogs(0, 10), /mintDevBps is unavailable/);
+    mintDevBps = 7500;
+    await assert.rejects(() => adapter.feeLogs(0, 10), /not 100% DEV_WALLET/);
+    await assert.rejects(() => adapter.storePaidLogs(0, 10), /not 100% DEV_WALLET/);
+    assert.equal(logReads, 0, 'missing or wrong mint allocation cannot advance either payment stream');
+    mintDevBps = 10000;
+    assert.deepEqual(await adapter.feeLogs(0, 10), []);
+    assert.equal(logReads, 3, 'correcting the split resumes normal fee decoding');
+  } finally {
+    await new Promise((resolve) => rpc.close(resolve));
+    if (savedRpc === undefined) delete process.env.CHAIN_RPC_URL; else process.env.CHAIN_RPC_URL = savedRpc;
+    if (savedFees === undefined) delete process.env.OMERTA_FEES_ADDRESS; else process.env.OMERTA_FEES_ADDRESS = savedFees;
+  }
+}
+
 const dynMintLog = [];  // { block, nonce, minter, tokenId }
 const dynXferLog = [];  // { block, from, to, tokenId }
 source.dynastyMintedLogs = async (from, to) => dynMintLog.filter((l) => l.block >= from && l.block <= to)
   .map((l) => ({ nonce: l.nonce, minter: l.minter, tokenId: l.tokenId }));
 source.dynastyTransferLogs = async (from, to) => dynXferLog.filter((l) => l.block >= from && l.block <= to)
-  .map((l) => ({ from: l.from, to: l.to, tokenId: l.tokenId }));
+  .map((l) => ({ from: l.from, to: l.to, tokenId: l.tokenId, blockNumber: l.block, logIndex: l.logIndex ?? 0 }));
 const ZERO = '0x0000000000000000000000000000000000000000';
 const STRANGER = '0xB0B0000000000000000000000000000000000b0b';
 
@@ -234,7 +283,8 @@ assert.ok(dtok.snapshot, 'the freeze captured a snapshot of the bloodline as it 
 await pool.query(`UPDATE characters SET respect=respect+2000000 WHERE account_id='${accId}' AND alive`);
 const frozenMeta = await call('GET', '/v1/identity/7');
 assert.equal(frozenMeta.code, 200, 'frozen metadata serves');
-assert.ok(/frozen at its first transfer/i.test(frozenMeta.body.description), 'the metadata SAYS it is frozen');
+assert.ok(/frozen when its first transfer was confirmed and indexed/i.test(frozenMeta.body.description),
+  'metadata states observation-time freezing, without claiming historical reconstruction');
 const levelAfter = frozenMeta.body.attributes.find((a) => a.trait_type === 'Rank')?.value;
 assert.equal(levelAfter, levelBefore, "a sold portrait is a PHOTOGRAPH — the seller's later play changed nothing");
 // the PRECONDITION, guaranteed rather than assumed (the recorded flake discipline): the live
@@ -252,6 +302,27 @@ await syncDynastyTransferEvents(pool, source, { startBlock: 60 });
 dtok = (await pool.query("SELECT * FROM dynasty_tokens WHERE token_id='7'")).rows[0];
 assert.equal(dtok.frozen, true, 'the freeze is ONE-WAY — a buy-back does not resurrect a living portrait');
 assert.equal(String(dtok.owner_address), wallet.toLowerCase(), 'though the owner is tracked back');
+// A cursor rewind must replay historical transfers without rolling a later owner back.
+const { recordDynastyTransfer } = await import('../src/chain.js');
+let oldTransfer = await recordDynastyTransfer(pool, {
+  tokenId: '7', from: wallet, to: STRANGER, blockNumber: 68, logIndex: 0,
+});
+assert.equal(oldTransfer.stale, true);
+assert.equal((await pool.query("SELECT owner_address FROM dynasty_tokens WHERE token_id='7'")).rows[0].owner_address,
+  wallet.toLowerCase(), 'an older sale cannot overwrite the buy-back');
+await recordDynastyTransfer(pool, { tokenId: '7', from: wallet, to: STRANGER, blockNumber: 73, logIndex: 2 });
+oldTransfer = await recordDynastyTransfer(pool, { tokenId: '7', from: STRANGER, to: wallet, blockNumber: 73, logIndex: 1 });
+assert.equal(oldTransfer.stale, true, 'within one block, log index determines order');
+// Transfer-first delivery is retryable and holds its stream cursor until Minted establishes provenance.
+dynXferLog.push({ block: 78, from: ZERO, to: wallet, tokenId: '99' });
+head = 84;
+const heldCursor = await getCursor(pool, 'dynasty_transfer');
+await assert.rejects(() => syncDynastyTransferEvents(pool, source, { startBlock: 60 }), /Minted provenance is pending/);
+assert.equal(await getCursor(pool, 'dynasty_transfer'), heldCursor);
+dynMintLog.push({ block: 78, nonce: 99, minter: wallet, tokenId: '99' });
+await syncDynastyMintEvents(pool, source, { startBlock: 60 });
+await syncDynastyTransferEvents(pool, source, { startBlock: 60 });
+assert.equal(await getCursor(pool, 'dynasty_transfer'), 81, 'mint indexing lets the held stream resume');
 
 // ── red-team R31 F3: A MALFORMED LOG MUST NOT WEDGE A STREAM ────────────────────────────────────
 // `isolate` skips a DETERMINISTIC data fault so the cursor advances past it, and re-throws anything

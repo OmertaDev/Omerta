@@ -749,6 +749,19 @@ contract AcquisitionVaultOperatorTest is Test {
         return type(uint256).max;
     }
 
+    function _normalizeCrLf(bytes memory source) internal pure returns (bytes memory normalized) {
+        uint256 pairs;
+        for (uint256 i; i + 1 < source.length; ++i) {
+            if (source[i] == 0x0d && source[i + 1] == 0x0a) ++pairs;
+        }
+        normalized = new bytes(source.length - pairs);
+        uint256 next;
+        for (uint256 i; i < source.length; ++i) {
+            if (source[i] == 0x0d && i + 1 < source.length && source[i + 1] == 0x0a) continue;
+            normalized[next++] = source[i];
+        }
+    }
+
     function _slice(bytes memory value, uint256 from, uint256 to) internal pure returns (bytes memory result) {
         assertLe(from, to);
         assertLe(to, value.length);
@@ -1815,7 +1828,8 @@ contract AcquisitionVaultOperatorTest is Test {
         assertNotEq(_find(metadata, bytes('"evmVersion\":\"cancun\"'), 0), type(uint256).max, "wrong EVM");
 
         bytes memory source = bytes(vm.readFile(string.concat(vm.projectRoot(), "/src/AcquisitionVault.sol")));
-        string memory sourceHash = vm.toString(keccak256(source));
+        // Compiler metadata hashes LF source; vm.readFile preserves Windows CRLF. Keep every other byte.
+        string memory sourceHash = vm.toString(keccak256(_normalizeCrLf(source)));
         bytes memory sourceHashEntry =
             bytes(string.concat('"src/AcquisitionVault.sol\":{\"keccak256\":\"', sourceHash, '"'));
         assertNotEq(_find(metadata, sourceHashEntry, 0), type(uint256).max, "artifact is not bound to reviewed source");

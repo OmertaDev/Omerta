@@ -1,0 +1,2971 @@
+{
+  "generatedAt": "2026-09-08T04:56:54.938Z",
+  "note": "Canonical local artifacts, including abstract FlashGuard (zero bytecode). Constructor arguments and immutable values must be applied for deployment verification. Sizes do not include constructor arguments; check final transaction initcode separately.",
+  "entries": [
+    {
+      "name": "AcquisitionAuthority",
+      "path": "omerta-contracts/out/AcquisitionAuthority.sol/AcquisitionAuthority.json",
+      "artifactSha256": "2fa7e07057491452c679bb1dce4e57dc54b6e7c80544186f2d37238cfb1f70ba",
+      "sourceSha256": "4dcf23d3003be8a4d867d6ddb051e2fc1367387aca70682255f1a6d2b892a9ba",
+      "compiledSourceKeccak256": "0xe0fb78a865fb03d91cae9357b0b229fcd15c44e3df3a285aaaff4463b9c72a9b",
+      "sourceMatches": "CRLF-to-LF equivalent",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/AcquisitionAuthority.sol": "AcquisitionAuthority"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/"
+        ],
+        "viaIR": true
+      },
+      "runtimeBytes": 16300,
+      "initcodeBytes": 18868,
+      "runtimeTemplateKeccak256": "0x1fb612a026bfd6d408de551c4ab971477beeb32a04bcadbca720553c125be46b",
+      "initcodeTemplateKeccak256": "0xb2168207026b31cc5a9e7c3ccb96e8a19157f04711068e5a9cf3edc31d5bd242",
+      "immutableReferences": {
+        "3234": [
+          {
+            "start": 15987,
+            "length": 32
+          }
+        ],
+        "3236": [
+          {
+            "start": 16176,
+            "length": 32
+          }
+        ],
+        "3238": [
+          {
+            "start": 15940,
+            "length": 32
+          }
+        ],
+        "3240": [
+          {
+            "start": 16066,
+            "length": 32
+          }
+        ],
+        "3242": [
+          {
+            "start": 16104,
+            "length": 32
+          }
+        ],
+        "3245": [
+          {
+            "start": 5993,
+            "length": 32
+          }
+        ],
+        "3248": [
+          {
+            "start": 6034,
+            "length": 32
+          }
+        ],
+        "7520": [
+          {
+            "start": 2994,
+            "length": 32
+          },
+          {
+            "start": 4641,
+            "length": 32
+          },
+          {
+            "start": 7758,
+            "length": 32
+          },
+          {
+            "start": 12188,
+            "length": 32
+          },
+          {
+            "start": 14580,
+            "length": 32
+          }
+        ],
+        "7522": [
+          {
+            "start": 3033,
+            "length": 32
+          },
+          {
+            "start": 4681,
+            "length": 32
+          },
+          {
+            "start": 12224,
+            "length": 32
+          }
+        ],
+        "7524": [
+          {
+            "start": 4757,
+            "length": 32
+          }
+        ],
+        "7526": [
+          {
+            "start": 3072,
+            "length": 32
+          },
+          {
+            "start": 7708,
+            "length": 32
+          },
+          {
+            "start": 14529,
+            "length": 32
+          }
+        ],
+        "7528": [
+          {
+            "start": 1595,
+            "length": 32
+          },
+          {
+            "start": 3112,
+            "length": 32
+          },
+          {
+            "start": 3869,
+            "length": 32
+          },
+          {
+            "start": 6535,
+            "length": 32
+          },
+          {
+            "start": 7658,
+            "length": 32
+          },
+          {
+            "start": 8268,
+            "length": 32
+          },
+          {
+            "start": 9722,
+            "length": 32
+          },
+          {
+            "start": 11263,
+            "length": 32
+          },
+          {
+            "start": 11936,
+            "length": 32
+          },
+          {
+            "start": 13396,
+            "length": 32
+          },
+          {
+            "start": 14096,
+            "length": 32
+          },
+          {
+            "start": 14478,
+            "length": 32
+          },
+          {
+            "start": 15315,
+            "length": 32
+          }
+        ],
+        "7530": [
+          {
+            "start": 3152,
+            "length": 32
+          },
+          {
+            "start": 7608,
+            "length": 32
+          },
+          {
+            "start": 14427,
+            "length": 32
+          }
+        ],
+        "7532": [
+          {
+            "start": 3192,
+            "length": 32
+          },
+          {
+            "start": 7558,
+            "length": 32
+          },
+          {
+            "start": 14376,
+            "length": 32
+          }
+        ],
+        "7534": [
+          {
+            "start": 3232,
+            "length": 32
+          },
+          {
+            "start": 7508,
+            "length": 32
+          },
+          {
+            "start": 14338,
+            "length": 32
+          }
+        ]
+      },
+      "linkReferences": {}
+    },
+    {
+      "name": "AcquisitionConstellationFactory",
+      "path": "omerta-contracts/out/AcquisitionConstellationFactory.sol/AcquisitionConstellationFactory.json",
+      "artifactSha256": "4b930f4ee1b2894f514aaeb1206bda92bfbf8c7f3f5a6c84cbc6eb35c691ff29",
+      "sourceSha256": "bc2581c8f45906749e9b9c84ba9f58de81c87911a9622bf5fde982694b861431",
+      "compiledSourceKeccak256": "0xd654af38a41bbe22c0989129f2e82219557b147abe5a6d6d4f25f3e40e452830",
+      "sourceMatches": "CRLF-to-LF equivalent",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/AcquisitionConstellationFactory.sol": "AcquisitionConstellationFactory"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/"
+        ],
+        "viaIR": true
+      },
+      "runtimeBytes": 6258,
+      "initcodeBytes": 8022,
+      "runtimeTemplateKeccak256": "0x21e3f0e8634c92bcf287f8ee73236ee1c3f473d626482feca17e791d9c7feba9",
+      "initcodeTemplateKeccak256": "0x49d3ed53083fb135c3b7d82c5fd0535d0fade30cf2d99f01ec9c7fb87d1b609b",
+      "immutableReferences": {
+        "11041": [
+          {
+            "start": 926,
+            "length": 32
+          },
+          {
+            "start": 4812,
+            "length": 32
+          }
+        ],
+        "11043": [
+          {
+            "start": 1011,
+            "length": 32
+          },
+          {
+            "start": 1340,
+            "length": 32
+          }
+        ],
+        "11045": [
+          {
+            "start": 1050,
+            "length": 32
+          },
+          {
+            "start": 1382,
+            "length": 32
+          }
+        ],
+        "11047": [
+          {
+            "start": 1088,
+            "length": 32
+          },
+          {
+            "start": 2794,
+            "length": 32
+          }
+        ],
+        "11049": [
+          {
+            "start": 965,
+            "length": 32
+          }
+        ],
+        "11051": [
+          {
+            "start": 831,
+            "length": 32
+          },
+          {
+            "start": 1794,
+            "length": 32
+          },
+          {
+            "start": 5631,
+            "length": 32
+          },
+          {
+            "start": 5912,
+            "length": 32
+          }
+        ],
+        "11053": [
+          {
+            "start": 866,
+            "length": 32
+          },
+          {
+            "start": 3507,
+            "length": 32
+          }
+        ]
+      },
+      "linkReferences": {}
+    },
+    {
+      "name": "AcquisitionIntentExecution",
+      "path": "omerta-contracts/out/AcquisitionIntentExecution.sol/AcquisitionIntentExecution.json",
+      "artifactSha256": "fe536a11b47cbac702dec69274791b41bc60d1bd005acee9b8b85615e6c7a301",
+      "sourceSha256": "cec00cd816d1539ccc0bd620d779bbde53667105ed5ce907416d802a34ca92c1",
+      "compiledSourceKeccak256": "0x28d228a17a23e9b55703ceca7c738d0c0430155f39c77fc7e4b6131e7a6d5053",
+      "sourceMatches": "CRLF-to-LF equivalent",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/AcquisitionIntentExecution.sol": "AcquisitionIntentExecution"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/"
+        ],
+        "viaIR": true
+      },
+      "runtimeBytes": 847,
+      "initcodeBytes": 1380,
+      "runtimeTemplateKeccak256": "0xf02d6ba3e860243613da578cc68fb5424fb19ef192148c99787ecdb028c4a0d2",
+      "initcodeTemplateKeccak256": "0xd552ebd1339adac87e1920bae954c64564343e46f1bec4b549d8bf7904b45abf",
+      "immutableReferences": {
+        "13116": [
+          {
+            "start": 102,
+            "length": 32
+          },
+          {
+            "start": 457,
+            "length": 32
+          }
+        ],
+        "13118": [
+          {
+            "start": 142,
+            "length": 32
+          },
+          {
+            "start": 493,
+            "length": 32
+          }
+        ],
+        "13120": [
+          {
+            "start": 341,
+            "length": 32
+          },
+          {
+            "start": 635,
+            "length": 32
+          }
+        ]
+      },
+      "linkReferences": {}
+    },
+    {
+      "name": "AcquisitionReconciliation",
+      "path": "omerta-contracts/out/AcquisitionReconciliation.sol/AcquisitionReconciliation.json",
+      "artifactSha256": "3858104641568e2cfd97cc3d352b2ab246247e6f6c6fc159b76f721037382eba",
+      "sourceSha256": "1d0c6391fbaeb4f30c98646627ca11d7487a6720b9f34ebc97e9c6f5b40aec78",
+      "compiledSourceKeccak256": "0x8881c7b26f1f063c90eb1c2660cbb7fd0b2b934f27aecc2248400a141b3840e0",
+      "sourceMatches": "CRLF-to-LF equivalent",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/AcquisitionReconciliation.sol": "AcquisitionReconciliation"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/"
+        ],
+        "viaIR": true
+      },
+      "runtimeBytes": 473,
+      "initcodeBytes": 676,
+      "runtimeTemplateKeccak256": "0x012f3818d24bca7780c3a493bcb0cfc7daa60bc0822cca3231c6ebdff81d9ead",
+      "initcodeTemplateKeccak256": "0x7713a5acdd49042834464430a0fbd059f45dadf0fd0d4cc33be44a428eda433a",
+      "immutableReferences": {
+        "13398": [
+          {
+            "start": 93,
+            "length": 32
+          },
+          {
+            "start": 338,
+            "length": 32
+          }
+        ],
+        "13400": [
+          {
+            "start": 133,
+            "length": 32
+          },
+          {
+            "start": 374,
+            "length": 32
+          }
+        ]
+      },
+      "linkReferences": {}
+    },
+    {
+      "name": "AcquisitionVault",
+      "path": "omerta-contracts/out/AcquisitionVault.sol/AcquisitionVault.json",
+      "artifactSha256": "526783220df8edef053cf04880aa153f68f66428a6a5db0606c86c243ce68e7b",
+      "sourceSha256": "a7301148771bbf4aa57e2e49d65c885179373fe73d5a6c5ad06f1122ea0db52d",
+      "compiledSourceKeccak256": "0x275685e5920a8eeee17b725a7bb23fef62eeb29390ba1ed1730c3122b33551f9",
+      "sourceMatches": "CRLF-to-LF equivalent",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/AcquisitionVault.sol": "AcquisitionVault"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/"
+        ]
+      },
+      "runtimeBytes": 23212,
+      "initcodeBytes": 25120,
+      "runtimeTemplateKeccak256": "0xef8468f6996a927e31f06971cc0b71ae8c79bafa85e137c4a6db8bb6019afc66",
+      "initcodeTemplateKeccak256": "0x3d015e658604974481dcd1659a3240a94524f0bb5ac0c0809aaba3404896fd80",
+      "immutableReferences": {
+        "49565": [
+          {
+            "start": 19893,
+            "length": 32
+          }
+        ],
+        "49567": [
+          {
+            "start": 19851,
+            "length": 32
+          }
+        ],
+        "49569": [
+          {
+            "start": 19809,
+            "length": 32
+          }
+        ],
+        "49571": [
+          {
+            "start": 19974,
+            "length": 32
+          }
+        ],
+        "49573": [
+          {
+            "start": 20014,
+            "length": 32
+          }
+        ],
+        "49576": [
+          {
+            "start": 17433,
+            "length": 32
+          }
+        ],
+        "49579": [
+          {
+            "start": 17477,
+            "length": 32
+          }
+        ],
+        "58352": [
+          {
+            "start": 1443,
+            "length": 32
+          },
+          {
+            "start": 13990,
+            "length": 32
+          },
+          {
+            "start": 14172,
+            "length": 32
+          },
+          {
+            "start": 14297,
+            "length": 32
+          },
+          {
+            "start": 14450,
+            "length": 32
+          },
+          {
+            "start": 14631,
+            "length": 32
+          },
+          {
+            "start": 16272,
+            "length": 32
+          },
+          {
+            "start": 17102,
+            "length": 32
+          },
+          {
+            "start": 19117,
+            "length": 32
+          }
+        ],
+        "58354": [
+          {
+            "start": 2929,
+            "length": 32
+          },
+          {
+            "start": 9882,
+            "length": 32
+          },
+          {
+            "start": 15691,
+            "length": 32
+          }
+        ]
+      },
+      "linkReferences": {}
+    },
+    {
+      "name": "AcquisitionVaultCore",
+      "path": "omerta-contracts/out/AcquisitionVaultCore.sol/AcquisitionVaultCore.json",
+      "artifactSha256": "d4ad8e3bee62ffe339908374748acbff650d782f236df9c418e60eeda310f673",
+      "sourceSha256": "62a603ed3d502e00877cdcbdfe66444f24c4460bb4abfc980e8a33d159c9b186",
+      "compiledSourceKeccak256": "0x65debac648a1dc636b4be54fc238b6a6a48897fd61fe3fd5b19cfe10eca38750",
+      "sourceMatches": "CRLF-to-LF equivalent",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/AcquisitionVaultCore.sol": "AcquisitionVaultCore"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/"
+        ],
+        "viaIR": true
+      },
+      "runtimeBytes": 9988,
+      "initcodeBytes": 11264,
+      "runtimeTemplateKeccak256": "0xcab68f621784bc26ea0f11e3921993ed838b0af01277738babb90dc76e612c3d",
+      "initcodeTemplateKeccak256": "0x0410d9381ca6ff7c242c1ca954679f22348de6beec863b714298b1341bffb609",
+      "immutableReferences": {
+        "13817": [
+          {
+            "start": 1504,
+            "length": 32
+          },
+          {
+            "start": 2049,
+            "length": 32
+          },
+          {
+            "start": 6530,
+            "length": 32
+          },
+          {
+            "start": 7373,
+            "length": 32
+          },
+          {
+            "start": 8887,
+            "length": 32
+          }
+        ],
+        "13819": [
+          {
+            "start": 1543,
+            "length": 32
+          },
+          {
+            "start": 2089,
+            "length": 32
+          },
+          {
+            "start": 7409,
+            "length": 32
+          },
+          {
+            "start": 8931,
+            "length": 32
+          }
+        ],
+        "13821": [
+          {
+            "start": 1589,
+            "length": 32
+          },
+          {
+            "start": 3710,
+            "length": 32
+          },
+          {
+            "start": 8812,
+            "length": 32
+          }
+        ],
+        "13823": [
+          {
+            "start": 1636,
+            "length": 32
+          },
+          {
+            "start": 6469,
+            "length": 32
+          },
+          {
+            "start": 7485,
+            "length": 32
+          },
+          {
+            "start": 8982,
+            "length": 32
+          }
+        ],
+        "13825": [
+          {
+            "start": 1683,
+            "length": 32
+          },
+          {
+            "start": 6418,
+            "length": 32
+          },
+          {
+            "start": 9045,
+            "length": 32
+          }
+        ],
+        "13827": [
+          {
+            "start": 1730,
+            "length": 32
+          },
+          {
+            "start": 6367,
+            "length": 32
+          },
+          {
+            "start": 9097,
+            "length": 32
+          }
+        ],
+        "13829": [
+          {
+            "start": 1777,
+            "length": 32
+          },
+          {
+            "start": 6316,
+            "length": 32
+          },
+          {
+            "start": 9149,
+            "length": 32
+          }
+        ],
+        "13831": [
+          {
+            "start": 1840,
+            "length": 32
+          },
+          {
+            "start": 1983,
+            "length": 32
+          },
+          {
+            "start": 4574,
+            "length": 32
+          },
+          {
+            "start": 6736,
+            "length": 32
+          }
+        ]
+      },
+      "linkReferences": {}
+    },
+    {
+      "name": "Alchemist",
+      "path": "omerta-contracts/out/Alchemist.sol/Alchemist.json",
+      "artifactSha256": "d4ec3213c04b57c33eeb4b3674aacd83c1c23ff54823a81811706b1f9d518ba4",
+      "sourceSha256": "58857bd22a2f460ef092a0628a3c66dbacead0e0d185c10737d6593ed5e9da63",
+      "compiledSourceKeccak256": "0x4f57a9fb1c26cf6b6ad00e538dda54c2f9f8509a60a2c539197b039bd1492afb",
+      "sourceMatches": "exact bytes",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/Alchemist.sol": "Alchemist"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/"
+        ]
+      },
+      "runtimeBytes": 11408,
+      "initcodeBytes": 13238,
+      "runtimeTemplateKeccak256": "0x81174ef2d4ecbf2e37b86363b657986f8b7b2438ccc1fbae7260005e502d73f9",
+      "initcodeTemplateKeccak256": "0x00daa1ac94cc3067d1883c82784e8ac6773f87b00e9b744e194897b05632cd96",
+      "immutableReferences": {
+        "64331": [
+          {
+            "start": 1297,
+            "length": 32
+          },
+          {
+            "start": 5060,
+            "length": 32
+          }
+        ],
+        "64334": [
+          {
+            "start": 808,
+            "length": 32
+          },
+          {
+            "start": 2476,
+            "length": 32
+          },
+          {
+            "start": 2677,
+            "length": 32
+          },
+          {
+            "start": 3967,
+            "length": 32
+          },
+          {
+            "start": 4037,
+            "length": 32
+          },
+          {
+            "start": 4246,
+            "length": 32
+          },
+          {
+            "start": 5465,
+            "length": 32
+          },
+          {
+            "start": 6091,
+            "length": 32
+          },
+          {
+            "start": 6375,
+            "length": 32
+          },
+          {
+            "start": 6497,
+            "length": 32
+          },
+          {
+            "start": 6570,
+            "length": 32
+          }
+        ],
+        "64337": [
+          {
+            "start": 1336,
+            "length": 32
+          },
+          {
+            "start": 6124,
+            "length": 32
+          }
+        ],
+        "64340": [
+          {
+            "start": 1005,
+            "length": 32
+          },
+          {
+            "start": 2510,
+            "length": 32
+          },
+          {
+            "start": 2569,
+            "length": 32
+          },
+          {
+            "start": 2713,
+            "length": 32
+          },
+          {
+            "start": 4079,
+            "length": 32
+          },
+          {
+            "start": 4138,
+            "length": 32
+          },
+          {
+            "start": 4282,
+            "length": 32
+          },
+          {
+            "start": 4764,
+            "length": 32
+          },
+          {
+            "start": 5149,
+            "length": 32
+          },
+          {
+            "start": 5681,
+            "length": 32
+          }
+        ],
+        "64343": [
+          {
+            "start": 1258,
+            "length": 32
+          },
+          {
+            "start": 1385,
+            "length": 32
+          },
+          {
+            "start": 1847,
+            "length": 32
+          },
+          {
+            "start": 1896,
+            "length": 32
+          },
+          {
+            "start": 1978,
+            "length": 32
+          },
+          {
+            "start": 3837,
+            "length": 32
+          },
+          {
+            "start": 3888,
+            "length": 32
+          }
+        ]
+      },
+      "linkReferences": {}
+    },
+    {
+      "name": "CollateralEscrow",
+      "path": "omerta-contracts/out/CollateralEscrow.sol/CollateralEscrow.json",
+      "artifactSha256": "0070912b1c486861e31ed926c75c25dea7d411aaee7f3b104110d51fd37b1b5b",
+      "sourceSha256": "aea024853522f827e665445a91cd9ac6260d456a7c3f6ceaba268312d063b6ac",
+      "compiledSourceKeccak256": "0xf2090a02b2e15b69abfa68d587bcbb246ea885cb28febb27e43ba36e9aaeb984",
+      "sourceMatches": "exact bytes",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/CollateralEscrow.sol": "CollateralEscrow"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/"
+        ]
+      },
+      "runtimeBytes": 2395,
+      "initcodeBytes": 2719,
+      "runtimeTemplateKeccak256": "0xf47c4c1ddfd0c2d030a95ab77309b63a36bcc063d761ffd9db31fcb7fef36868",
+      "initcodeTemplateKeccak256": "0xce81be13eb4c4a3325c657344c5cd3c5910d0196eed113b1419feb5c18b1c30f",
+      "immutableReferences": {
+        "63421": [
+          {
+            "start": 310,
+            "length": 32
+          },
+          {
+            "start": 413,
+            "length": 32
+          },
+          {
+            "start": 884,
+            "length": 32
+          },
+          {
+            "start": 1563,
+            "length": 32
+          }
+        ],
+        "63424": [
+          {
+            "start": 252,
+            "length": 32
+          }
+        ],
+        "63428": [
+          {
+            "start": 189,
+            "length": 32
+          },
+          {
+            "start": 1097,
+            "length": 32
+          },
+          {
+            "start": 1324,
+            "length": 32
+          }
+        ],
+        "63432": [
+          {
+            "start": 368,
+            "length": 32
+          },
+          {
+            "start": 519,
+            "length": 32
+          },
+          {
+            "start": 653,
+            "length": 32
+          },
+          {
+            "start": 969,
+            "length": 32
+          },
+          {
+            "start": 1131,
+            "length": 32
+          },
+          {
+            "start": 1196,
+            "length": 32
+          },
+          {
+            "start": 1358,
+            "length": 32
+          },
+          {
+            "start": 1418,
+            "length": 32
+          },
+          {
+            "start": 1648,
+            "length": 32
+          },
+          {
+            "start": 1822,
+            "length": 32
+          }
+        ]
+      },
+      "linkReferences": {}
+    },
+    {
+      "name": "Denari",
+      "path": "omerta-contracts/out/Denari.sol/Denari.json",
+      "artifactSha256": "63dd76351bc36ef54a168afbe7b9a0c80fd3fbe97e4af59a0140361db248486d",
+      "sourceSha256": "f1ac4f24d2491d9b4c576670447526be4d3c08449427801619fdf570293b08fe",
+      "compiledSourceKeccak256": "0xe26160b3ef2796fc2c41aef5ac7debdb8ec1dd7b26cedf076244a93b9eafff06",
+      "sourceMatches": "exact bytes",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/Denari.sol": "Denari"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/"
+        ]
+      },
+      "runtimeBytes": 4909,
+      "initcodeBytes": 6257,
+      "runtimeTemplateKeccak256": "0xb6e5e937b408e456b1d9d3b14cd51a418c19043cf70a35a5a24bcd7835e54afa",
+      "initcodeTemplateKeccak256": "0x0ac3fd648ceb8c639990927e4d0085bbcdbe1a0adb2885bb6405833a5513cd01",
+      "immutableReferences": {
+        "49359": [
+          {
+            "start": 2428,
+            "length": 32
+          }
+        ],
+        "49361": [
+          {
+            "start": 2386,
+            "length": 32
+          }
+        ],
+        "49363": [
+          {
+            "start": 2344,
+            "length": 32
+          }
+        ],
+        "49365": [
+          {
+            "start": 2509,
+            "length": 32
+          }
+        ],
+        "49367": [
+          {
+            "start": 2549,
+            "length": 32
+          }
+        ],
+        "49370": [
+          {
+            "start": 2758,
+            "length": 32
+          }
+        ],
+        "49373": [
+          {
+            "start": 2803,
+            "length": 32
+          }
+        ]
+      },
+      "linkReferences": {}
+    },
+    {
+      "name": "DynastyNFT",
+      "path": "omerta-contracts/out/DynastyNFT.sol/DynastyNFT.json",
+      "artifactSha256": "19aeff2bdf327bfae83b2aa7b587672f80a458ec89219168b334476c5e07c616",
+      "sourceSha256": "c23e6a910caae32b3ac0894861674cdafa91c5092f8191384e6215fb3688deb6",
+      "compiledSourceKeccak256": "0xc5f70b3a25ef5870c11d0fa06e1e35048af8c381f81523b9d1f6890ab3a5e495",
+      "sourceMatches": "exact bytes",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/DynastyNFT.sol": "DynastyNFT"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/"
+        ]
+      },
+      "runtimeBytes": 9599,
+      "initcodeBytes": 11553,
+      "runtimeTemplateKeccak256": "0x921c323943d9a0ef3e1d6b88f1c3db2e3f70aa9123d50efe8da800c4db302ed3",
+      "initcodeTemplateKeccak256": "0x3d0dfc46019627e211f297bf6f393ce44cda9c2e26c6115234fa28a5aa6c36c2",
+      "immutableReferences": {
+        "5329": [
+          {
+            "start": 6122,
+            "length": 32
+          }
+        ],
+        "5331": [
+          {
+            "start": 6080,
+            "length": 32
+          }
+        ],
+        "5333": [
+          {
+            "start": 6038,
+            "length": 32
+          }
+        ],
+        "5335": [
+          {
+            "start": 6203,
+            "length": 32
+          }
+        ],
+        "5337": [
+          {
+            "start": 6243,
+            "length": 32
+          }
+        ],
+        "5340": [
+          {
+            "start": 4663,
+            "length": 32
+          }
+        ],
+        "5343": [
+          {
+            "start": 4713,
+            "length": 32
+          }
+        ]
+      },
+      "linkReferences": {}
+    },
+    {
+      "name": "FlashGuard",
+      "path": "omerta-contracts/out/FlashGuard.sol/FlashGuard.json",
+      "artifactSha256": "3ac306787955631c6f4942227cb5e4dc15bf3842e93b95578ed39b85fb1c2379",
+      "sourceSha256": "e27d500d90a9266ee1429f16cddd2f9e4ae74c463d95fcaeb09cc1d12d8083ce",
+      "compiledSourceKeccak256": "0xf1a4879d9609ab00777b6d7de2c8097b10f7895cbc31913fe131e63710fc52f0",
+      "sourceMatches": "exact bytes",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/FlashGuard.sol": "FlashGuard"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/"
+        ]
+      },
+      "runtimeBytes": 0,
+      "initcodeBytes": 0,
+      "runtimeTemplateKeccak256": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+      "initcodeTemplateKeccak256": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+      "immutableReferences": {},
+      "linkReferences": {}
+    },
+    {
+      "name": "GearVault",
+      "path": "omerta-contracts/out/GearVault.sol/GearVault.json",
+      "artifactSha256": "94e2de47c430a079bff84aeeead08224f4dd7e9a64b21a86f55262883cc1ea76",
+      "sourceSha256": "364ae51294f6f2b8d5ad9864cba79cb06f4f9e66df4e117a21907f7f4c0ed4a9",
+      "compiledSourceKeccak256": "0x17eadf4aea71dd25a29d9a4c622b91d71a10a91b32da9c6828ac6c05419affb2",
+      "sourceMatches": "exact bytes",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/GearVault.sol": "GearVault"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/"
+        ]
+      },
+      "runtimeBytes": 10999,
+      "initcodeBytes": 11829,
+      "runtimeTemplateKeccak256": "0xb4b7e2d61a3a3d8b45d78119a4ea20d3074b5f480e9462efe8213910b89cadce",
+      "initcodeTemplateKeccak256": "0xe7cede3962f64c08215868a6c8a498416ad416989d405cac6e68237c2e327bce",
+      "immutableReferences": {},
+      "linkReferences": {}
+    },
+    {
+      "name": "GenesisOracle",
+      "path": "omerta-contracts/out/GenesisOracle.sol/GenesisOracle.json",
+      "artifactSha256": "3a4ae6905b1100a1fe96048087f273204bf765553458cb2c5452e7d7a084f77d",
+      "sourceSha256": "1af72fe4006f8983a3307e215a73e363fb957838e14449b1a8861191ebfabb31",
+      "compiledSourceKeccak256": "0xaff66f53899015f8e2caaf2e277695c601858b93bf2955a80600778b39ebe2a8",
+      "sourceMatches": "exact bytes",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/GenesisOracle.sol": "GenesisOracle"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/"
+        ]
+      },
+      "runtimeBytes": 1020,
+      "initcodeBytes": 1424,
+      "runtimeTemplateKeccak256": "0x5ef28a0a6a1e0063ece21cf8b4d7084b10ef14e8a0476d7c565b63566bf6eb2d",
+      "initcodeTemplateKeccak256": "0x70a3a4503cda0b5dd0a86e09a4121859f5c886066f88cfd9f57fb91e279167e8",
+      "immutableReferences": {},
+      "linkReferences": {}
+    },
+    {
+      "name": "GenesisProceedsSplitter",
+      "path": "omerta-contracts/out/GenesisProceedsSplitter.sol/GenesisProceedsSplitter.json",
+      "artifactSha256": "8e7c7092f634130265be077371a340bbef011d0e25d5cc739860c0860852698f",
+      "sourceSha256": "e1530a96908d359935e46f3f9a201a62950b74ba0b5fde6bdb19c15af004bc32",
+      "compiledSourceKeccak256": "0x23a61877dbed1a1d47d7294fc29a0d3f25f83422c17eb0def135e1e4ba743e93",
+      "sourceMatches": "exact bytes",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/GenesisProceedsSplitter.sol": "GenesisProceedsSplitter"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/"
+        ]
+      },
+      "runtimeBytes": 2712,
+      "initcodeBytes": 3180,
+      "runtimeTemplateKeccak256": "0x5c50330d226bd163065277e1f526d4e981a086976f564979739e4aa5fdfa486b",
+      "initcodeTemplateKeccak256": "0xeb8ddd61267ac3138d3c74e9d2fd74a9f46ad0e033c01756ad179c2282b00376",
+      "immutableReferences": {
+        "65301": [
+          {
+            "start": 594,
+            "length": 32
+          },
+          {
+            "start": 1097,
+            "length": 32
+          }
+        ],
+        "65304": [
+          {
+            "start": 248,
+            "length": 32
+          },
+          {
+            "start": 1131,
+            "length": 32
+          }
+        ],
+        "65306": [
+          {
+            "start": 645,
+            "length": 32
+          },
+          {
+            "start": 842,
+            "length": 32
+          },
+          {
+            "start": 1386,
+            "length": 32
+          },
+          {
+            "start": 1425,
+            "length": 32
+          },
+          {
+            "start": 1661,
+            "length": 32
+          },
+          {
+            "start": 1700,
+            "length": 32
+          }
+        ],
+        "65308": [
+          {
+            "start": 396,
+            "length": 32
+          },
+          {
+            "start": 884,
+            "length": 32
+          }
+        ],
+        "65310": [
+          {
+            "start": 523,
+            "length": 32
+          },
+          {
+            "start": 926,
+            "length": 32
+          }
+        ]
+      },
+      "linkReferences": {}
+    },
+    {
+      "name": "OMR",
+      "path": "omerta-contracts/out/OMR.sol/OMR.json",
+      "artifactSha256": "f703868cea3cbb6c4b3dc7614b233a4e8c0253d23c855071f437fd56e24ece29",
+      "sourceSha256": "f5c2001cbb8661e1ad67ffe3805c51388483e4f5b4d68e77e58661f02c938be7",
+      "compiledSourceKeccak256": "0x0b77d889d45c61c40a420914a3a6f765da5656b4bcbf9279443c861e5d343282",
+      "sourceMatches": "exact bytes",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/OMR.sol": "OMR"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/"
+        ]
+      },
+      "runtimeBytes": 6838,
+      "initcodeBytes": 9022,
+      "runtimeTemplateKeccak256": "0x1b6618362f4fcdff25f024802167d1bc1e7f08ef99cc148572e7d4e58bcda5b6",
+      "initcodeTemplateKeccak256": "0x4ce916adc0e18a169f0c7c9328c584c1e33b237b2db55b028b55bd021dffe5ef",
+      "immutableReferences": {
+        "49565": [
+          {
+            "start": 3695,
+            "length": 32
+          }
+        ],
+        "49567": [
+          {
+            "start": 3653,
+            "length": 32
+          }
+        ],
+        "49569": [
+          {
+            "start": 3611,
+            "length": 32
+          }
+        ],
+        "49571": [
+          {
+            "start": 3776,
+            "length": 32
+          }
+        ],
+        "49573": [
+          {
+            "start": 3816,
+            "length": 32
+          }
+        ],
+        "49576": [
+          {
+            "start": 3984,
+            "length": 32
+          }
+        ],
+        "49579": [
+          {
+            "start": 4029,
+            "length": 32
+          }
+        ]
+      },
+      "linkReferences": {}
+    },
+    {
+      "name": "OMRStaking",
+      "path": "omerta-contracts/out/OMRStaking.sol/OMRStaking.json",
+      "artifactSha256": "aee9e008b02e98a9c58877397177087a9dd010bf4e5be27bf243abdfa36ab73d",
+      "sourceSha256": "04f36419e57109b56202272b7d9ebec462e0e5b7d0125abd1cb73e17ef466f09",
+      "compiledSourceKeccak256": "0xde5fc569680bbfd487f760c2744fd29868026b58c426e11d55d7aaf15c77b973",
+      "sourceMatches": "exact bytes",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/OMRStaking.sol": "OMRStaking"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/"
+        ]
+      },
+      "runtimeBytes": 3791,
+      "initcodeBytes": 4306,
+      "runtimeTemplateKeccak256": "0xe446f3c019f342ac859941737ab7e9e113fb48d2fe9a994e3103b76eef7d9b6f",
+      "initcodeTemplateKeccak256": "0x0786cf380ad38c5ddb939a87c3e854fb9b8b4f4886367b1a502ffb3e6c3732a3",
+      "immutableReferences": {
+        "66252": [
+          {
+            "start": 431,
+            "length": 32
+          },
+          {
+            "start": 1017,
+            "length": 32
+          },
+          {
+            "start": 1675,
+            "length": 32
+          },
+          {
+            "start": 2065,
+            "length": 32
+          },
+          {
+            "start": 2284,
+            "length": 32
+          }
+        ]
+      },
+      "linkReferences": {}
+    },
+    {
+      "name": "OmertaBond",
+      "path": "omerta-contracts/out/OmertaBond.sol/OmertaBond.json",
+      "artifactSha256": "e2ffc0043ac3c7d71177a224768f704d4425e34864487955fdf2a54106e17c9f",
+      "sourceSha256": "c9ace3c1d7d270afb8b47c818445a6fa6797fa18f47fc817c4abf38aab30edee",
+      "compiledSourceKeccak256": "0x912cf19a691e00c95ee3174b0ef81650bd40ad5686e550d7e942960e6fd0749e",
+      "sourceMatches": "exact bytes",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/OmertaBond.sol": "OmertaBond"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/"
+        ]
+      },
+      "runtimeBytes": 9847,
+      "initcodeBytes": 12012,
+      "runtimeTemplateKeccak256": "0x23dc5f1d0f4cad2037caa1c01d517ce8224425ee1d0955b86062d6af7b47a211",
+      "initcodeTemplateKeccak256": "0x1a7ed242e9fee9bdf0f1ec3bec620638ce8c8485cafa0821e5d5657188a21cc8",
+      "immutableReferences": {
+        "49565": [
+          {
+            "start": 7901,
+            "length": 32
+          }
+        ],
+        "49567": [
+          {
+            "start": 7859,
+            "length": 32
+          }
+        ],
+        "49569": [
+          {
+            "start": 7817,
+            "length": 32
+          }
+        ],
+        "49571": [
+          {
+            "start": 7982,
+            "length": 32
+          }
+        ],
+        "49573": [
+          {
+            "start": 8022,
+            "length": 32
+          }
+        ],
+        "49576": [
+          {
+            "start": 7512,
+            "length": 32
+          }
+        ],
+        "49579": [
+          {
+            "start": 7561,
+            "length": 32
+          }
+        ],
+        "66814": [
+          {
+            "start": 1002,
+            "length": 32
+          },
+          {
+            "start": 2556,
+            "length": 32
+          },
+          {
+            "start": 5645,
+            "length": 32
+          },
+          {
+            "start": 5813,
+            "length": 32
+          }
+        ],
+        "66818": [
+          {
+            "start": 4535,
+            "length": 32
+          }
+        ],
+        "66821": [
+          {
+            "start": 1927,
+            "length": 32
+          },
+          {
+            "start": 2935,
+            "length": 32
+          },
+          {
+            "start": 4630,
+            "length": 32
+          }
+        ],
+        "66823": [
+          {
+            "start": 1608,
+            "length": 32
+          },
+          {
+            "start": 3019,
+            "length": 32
+          },
+          {
+            "start": 4693,
+            "length": 32
+          }
+        ],
+        "66826": [
+          {
+            "start": 1073,
+            "length": 32
+          },
+          {
+            "start": 3103,
+            "length": 32
+          },
+          {
+            "start": 4751,
+            "length": 32
+          }
+        ]
+      },
+      "linkReferences": {}
+    },
+    {
+      "name": "OmertaFees",
+      "path": "omerta-contracts/out/OmertaFees.sol/OmertaFees.json",
+      "artifactSha256": "23b644258ebc6753efc0bbdedbd9c0ee3f74fc68e8d73783cdf5ca3f940d590e",
+      "sourceSha256": "7d17fcaa466a6eec92f5824e7d6eef0142090fd6c42465d60e1b5191f861ec5d",
+      "compiledSourceKeccak256": "0x7b1e4e438b6218eb8ee7f710ebfa69ba8b6986602e5bb5f89e1e2ccf636f1447",
+      "sourceMatches": "exact bytes",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/OmertaFees.sol": "OmertaFees"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/"
+        ]
+      },
+      "runtimeBytes": 3614,
+      "initcodeBytes": 4462,
+      "runtimeTemplateKeccak256": "0x7eab61452e7a494ac80b22be4ee13f0726bffb8b51f0e991b70199b6120ef549",
+      "initcodeTemplateKeccak256": "0x7b19219bdbd09511f534c652c46be42d8777f92c87d3b73130821a08ab57a20d",
+      "immutableReferences": {
+        "9780": [
+          {
+            "start": 774,
+            "length": 32
+          },
+          {
+            "start": 1895,
+            "length": 32
+          },
+          {
+            "start": 2789,
+            "length": 32
+          }
+        ]
+      },
+      "linkReferences": {}
+    },
+    {
+      "name": "OmertaHook",
+      "path": "omerta-contracts/out/OmertaHook.sol/OmertaHook.json",
+      "artifactSha256": "924aa234c3d7e419f5e91b5718c40ada05747438d100f607e4f6bbbf44b94b4b",
+      "sourceSha256": "aa185334f198da4b12b8661f39ef00b4e17edd10bc2dfbf7dc456d91cd1520b1",
+      "compiledSourceKeccak256": "0xf5ab5dc95dae8b6f8dd1ea82096a8ae773ee3c3dac99da8f0ac247a0ded550c6",
+      "sourceMatches": "exact bytes",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/OmertaHook.sol": "OmertaHook"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/"
+        ]
+      },
+      "runtimeBytes": 11061,
+      "initcodeBytes": 11692,
+      "runtimeTemplateKeccak256": "0x9e3859e052484f904b0d8d7a2010f12e5f13b2c71582666b1c52b8fe159e19f5",
+      "initcodeTemplateKeccak256": "0x98023406392cc2c4732a7525c7f891f9a7272314b6070862fbec7e983706dc9e",
+      "immutableReferences": {
+        "63650": [
+          {
+            "start": 2071,
+            "length": 32
+          },
+          {
+            "start": 3403,
+            "length": 32
+          },
+          {
+            "start": 3489,
+            "length": 32
+          },
+          {
+            "start": 4286,
+            "length": 32
+          },
+          {
+            "start": 5767,
+            "length": 32
+          },
+          {
+            "start": 6009,
+            "length": 32
+          },
+          {
+            "start": 6136,
+            "length": 32
+          },
+          {
+            "start": 7654,
+            "length": 32
+          }
+        ],
+        "63653": [
+          {
+            "start": 1141,
+            "length": 32
+          },
+          {
+            "start": 6342,
+            "length": 32
+          },
+          {
+            "start": 6402,
+            "length": 32
+          },
+          {
+            "start": 6982,
+            "length": 32
+          },
+          {
+            "start": 7041,
+            "length": 32
+          },
+          {
+            "start": 7754,
+            "length": 32
+          },
+          {
+            "start": 7813,
+            "length": 32
+          }
+        ],
+        "63656": [
+          {
+            "start": 1254,
+            "length": 32
+          },
+          {
+            "start": 6200,
+            "length": 32
+          },
+          {
+            "start": 6286,
+            "length": 32
+          }
+        ]
+      },
+      "linkReferences": {}
+    },
+    {
+      "name": "OmrTwapOracle",
+      "path": "omerta-contracts/out/OmrTwapOracle.sol/OmrTwapOracle.json",
+      "artifactSha256": "ad9c3b3fec91dd0b302fc6da86e8fe7f14d015dfe700d4a3190d7a966b2e9081",
+      "sourceSha256": "3e9a65b7d86cdac4527d17befe49c10703f1cf0e677b247ba63fac73c633fb7f",
+      "compiledSourceKeccak256": "0xebb33db6f22c0fcac4454cebca34dd37bd5cbe728e8b26ddf944932f5108552c",
+      "sourceMatches": "exact bytes",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/OmrTwapOracle.sol": "OmrTwapOracle"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/"
+        ]
+      },
+      "runtimeBytes": 3087,
+      "initcodeBytes": 5463,
+      "runtimeTemplateKeccak256": "0xdcbd883a6f2608ef9d9b1525dd3b7c5347875a908e3342645d6405753e8417fa",
+      "initcodeTemplateKeccak256": "0xa43ef8b971c2b433957890b905809a554cc77bbc9dfa8b5ed5d71b0f4735142b",
+      "immutableReferences": {
+        "70206": [
+          {
+            "start": 662,
+            "length": 32
+          },
+          {
+            "start": 1026,
+            "length": 32
+          },
+          {
+            "start": 1096,
+            "length": 32
+          },
+          {
+            "start": 1196,
+            "length": 32
+          }
+        ],
+        "70217": [
+          {
+            "start": 623,
+            "length": 32
+          },
+          {
+            "start": 1804,
+            "length": 32
+          },
+          {
+            "start": 1934,
+            "length": 32
+          },
+          {
+            "start": 2067,
+            "length": 32
+          }
+        ],
+        "70220": [
+          {
+            "start": 719,
+            "length": 32
+          }
+        ],
+        "70222": [
+          {
+            "start": 450,
+            "length": 32
+          }
+        ],
+        "70224": [
+          {
+            "start": 513,
+            "length": 32
+          }
+        ],
+        "70227": [
+          {
+            "start": 338,
+            "length": 32
+          },
+          {
+            "start": 1144,
+            "length": 32
+          }
+        ]
+      },
+      "linkReferences": {}
+    },
+    {
+      "name": "OmrV4TwapOracle",
+      "path": "omerta-contracts/out/OmrV4TwapOracle.sol/OmrV4TwapOracle.json",
+      "artifactSha256": "04660a7395b45c6b9877d5540e36b3ac512f9738ce662f8c9121c6a81f57aa76",
+      "sourceSha256": "1a13300decd1ff82307bb88f1c5d6bc3ee674e39cc24737031a9c69e223f5f66",
+      "compiledSourceKeccak256": "0xc696d89ad8eedcd6b74756e41d93ae234ee8ef6354f746594ed1bf1014f227fd",
+      "sourceMatches": "exact bytes",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/OmrV4TwapOracle.sol": "OmrV4TwapOracle"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/"
+        ]
+      },
+      "runtimeBytes": 3588,
+      "initcodeBytes": 5149,
+      "runtimeTemplateKeccak256": "0x2fb44240e9582eab4ddb9f809d92606ace9641f6d29dc94940c89da8bd9f0800",
+      "initcodeTemplateKeccak256": "0x0cc6888a58568cc1261c77916cf600913ff4a57dc6025190936e169992514b2f",
+      "immutableReferences": {
+        "65687": [
+          {
+            "start": 543,
+            "length": 32
+          },
+          {
+            "start": 1251,
+            "length": 32
+          },
+          {
+            "start": 1327,
+            "length": 32
+          },
+          {
+            "start": 1390,
+            "length": 32
+          }
+        ],
+        "65696": [
+          {
+            "start": 436,
+            "length": 32
+          },
+          {
+            "start": 855,
+            "length": 32
+          },
+          {
+            "start": 1084,
+            "length": 32
+          }
+        ],
+        "65699": [
+          {
+            "start": 711,
+            "length": 32
+          }
+        ],
+        "65701": [
+          {
+            "start": 320,
+            "length": 32
+          }
+        ],
+        "65703": [
+          {
+            "start": 750,
+            "length": 32
+          }
+        ],
+        "65705": [
+          {
+            "start": 626,
+            "length": 32
+          }
+        ],
+        "65708": [
+          {
+            "start": 383,
+            "length": 32
+          },
+          {
+            "start": 919,
+            "length": 32
+          },
+          {
+            "start": 1032,
+            "length": 32
+          }
+        ]
+      },
+      "linkReferences": {}
+    },
+    {
+      "name": "PreVoteBudgetBook",
+      "path": "omerta-contracts/out/PreVoteBudgetBook.sol/PreVoteBudgetBook.json",
+      "artifactSha256": "0c8f315b0c8453454f77145e61cb2c4cbf0a10e47d50e85d7e0519582e800806",
+      "sourceSha256": "0b78eb0e1242a43871048e9a59496acfff8b3291f634d753e04ae5cd81ae7153",
+      "compiledSourceKeccak256": "0x4cf119d131a1378bccff4872bdf159f4fe2a0b2d5f7aa9d06d98abee39b7d2df",
+      "sourceMatches": "CRLF-to-LF equivalent",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/PreVoteBudgetBook.sol": "PreVoteBudgetBook"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/"
+        ],
+        "viaIR": true
+      },
+      "runtimeBytes": 3582,
+      "initcodeBytes": 4320,
+      "runtimeTemplateKeccak256": "0xc90f8c0c7d14d462a2fbb79ce62879e94cc0b6b85a45457afcb15a2e755fcb28",
+      "initcodeTemplateKeccak256": "0xa39505da7c69a08056c7a8ebd9e413b21adb99743a686cb524ca95d03dfe7c86",
+      "immutableReferences": {
+        "16322": [
+          {
+            "start": 106,
+            "length": 32
+          },
+          {
+            "start": 221,
+            "length": 32
+          },
+          {
+            "start": 890,
+            "length": 32
+          }
+        ],
+        "16324": [
+          {
+            "start": 142,
+            "length": 32
+          },
+          {
+            "start": 261,
+            "length": 32
+          },
+          {
+            "start": 944,
+            "length": 32
+          }
+        ],
+        "16326": [
+          {
+            "start": 822,
+            "length": 32
+          }
+        ],
+        "16328": [
+          {
+            "start": 1043,
+            "length": 32
+          }
+        ],
+        "16330": [
+          {
+            "start": 996,
+            "length": 32
+          }
+        ]
+      },
+      "linkReferences": {}
+    },
+    {
+      "name": "RwaHealthOverlay",
+      "path": "omerta-contracts/out/RwaHealthOverlay.sol/RwaHealthOverlay.json",
+      "artifactSha256": "d177b4c212dd8521687031c6e7909290b3f2708f73537b1d59839542de7f245f",
+      "sourceSha256": "9048c311b6c7051776d5cdacecd56145530f5c307447f9dfb7c06b6526af4d23",
+      "compiledSourceKeccak256": "0xe564c34660679d2105438d1c6011c32100e3739dbba7da981c8fb7fbad44f7e0",
+      "sourceMatches": "CRLF-to-LF equivalent",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/RwaHealthOverlay.sol": "RwaHealthOverlay"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/"
+        ],
+        "viaIR": true
+      },
+      "runtimeBytes": 3825,
+      "initcodeBytes": 4205,
+      "runtimeTemplateKeccak256": "0xde03e5e3555c23da1293cd67219361d239c1a55b04410b416d45303845ddc452",
+      "initcodeTemplateKeccak256": "0x290cd4058493f190d8a5bcfdfd9ecef5741c406affaf13ab79bdbdc5b0a6be05",
+      "immutableReferences": {
+        "17598": [
+          {
+            "start": 387,
+            "length": 32
+          },
+          {
+            "start": 2310,
+            "length": 32
+          },
+          {
+            "start": 3336,
+            "length": 32
+          }
+        ],
+        "17602": [
+          {
+            "start": 444,
+            "length": 32
+          },
+          {
+            "start": 2416,
+            "length": 32
+          },
+          {
+            "start": 2828,
+            "length": 32
+          },
+          {
+            "start": 3577,
+            "length": 32
+          }
+        ]
+      },
+      "linkReferences": {}
+    },
+    {
+      "name": "RwaStockBuyer",
+      "path": "omerta-contracts/out/RwaStockBuyer.sol/RwaStockBuyer.json",
+      "artifactSha256": "422489ffe11bb698cd5d92fd361388ab98a9e1cd8267df27dfa46202f59dbd0e",
+      "sourceSha256": "2a8725f20b8d1bf1ceff2ec9a567c6a2b16869229b372f0bbed7955a5edc7de1",
+      "compiledSourceKeccak256": "0x7c871e9abf37be9f2a459c3e990749ddb8ec3f1d7e0feaa6017266722e4fa0e1",
+      "sourceMatches": "exact bytes",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/RwaStockBuyer.sol": "RwaStockBuyer"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/"
+        ]
+      },
+      "runtimeBytes": 6021,
+      "initcodeBytes": 7120,
+      "runtimeTemplateKeccak256": "0x1eeefa187f6cb354a704c4c0c139328b72177573883228d5f32ad641ca4463bd",
+      "initcodeTemplateKeccak256": "0xe5bcc77dcddecf2fbc0158a0b9242cbceae3e6419f69656171a1cce7078197e8",
+      "immutableReferences": {
+        "71409": [
+          {
+            "start": 872,
+            "length": 32
+          },
+          {
+            "start": 3797,
+            "length": 32
+          }
+        ],
+        "71411": [
+          {
+            "start": 595,
+            "length": 32
+          },
+          {
+            "start": 3135,
+            "length": 32
+          },
+          {
+            "start": 4427,
+            "length": 32
+          },
+          {
+            "start": 4589,
+            "length": 32
+          },
+          {
+            "start": 4701,
+            "length": 32
+          }
+        ]
+      },
+      "linkReferences": {}
+    },
+    {
+      "name": "SettlementGasPool",
+      "path": "omerta-contracts/out/SettlementGasPool.sol/SettlementGasPool.json",
+      "artifactSha256": "65c331d853e0c178cb94c4e339716b1b43807c70e50f964084758b90b364bf8c",
+      "sourceSha256": "d2f479a6fb780aff31ee53ffee12c02ebc92cd460b865bb40ba20faebb59e3ff",
+      "compiledSourceKeccak256": "0xc5e15a4b365c9587bb93d7829d27c15e811f50a3716c3b0ad882d97617094aa9",
+      "sourceMatches": "CRLF-to-LF equivalent",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/SettlementGasPool.sol": "SettlementGasPool"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/"
+        ]
+      },
+      "runtimeBytes": 14458,
+      "initcodeBytes": 15574,
+      "runtimeTemplateKeccak256": "0xd917ed2880ebe8f59cca490705b4e73e15449d8b346d947692c43bd40b5b631c",
+      "initcodeTemplateKeccak256": "0xc8c568d6a5049ab68848b2f4ba281c1caedf5a6745c49759beaf19319637a8d5",
+      "immutableReferences": {
+        "72469": [
+          {
+            "start": 2150,
+            "length": 32
+          },
+          {
+            "start": 3317,
+            "length": 32
+          },
+          {
+            "start": 6822,
+            "length": 32
+          },
+          {
+            "start": 9868,
+            "length": 32
+          },
+          {
+            "start": 11245,
+            "length": 32
+          }
+        ],
+        "72471": [
+          {
+            "start": 1531,
+            "length": 32
+          },
+          {
+            "start": 4323,
+            "length": 32
+          },
+          {
+            "start": 6868,
+            "length": 32
+          },
+          {
+            "start": 10006,
+            "length": 32
+          }
+        ],
+        "72473": [
+          {
+            "start": 1613,
+            "length": 32
+          },
+          {
+            "start": 5769,
+            "length": 32
+          },
+          {
+            "start": 5849,
+            "length": 32
+          }
+        ],
+        "72475": [
+          {
+            "start": 1736,
+            "length": 32
+          },
+          {
+            "start": 10710,
+            "length": 32
+          }
+        ]
+      },
+      "linkReferences": {}
+    },
+    {
+      "name": "StockTokenRegistry",
+      "path": "omerta-contracts/out/StockTokenRegistry.sol/StockTokenRegistry.json",
+      "artifactSha256": "2aa8d4258200c464637ecb2dd5db3ff7406ae11a919acc470e810e14a27fcf0b",
+      "sourceSha256": "3be8a3c7d798e5c8f3f6956c600819b5cd3373f7b8ba953c521b6ca4bdc74784",
+      "compiledSourceKeccak256": "0x830873a70440c94ad527d331ebcaa57b8c629afbc9f54d5e1f7aaccc4df1ae0d",
+      "sourceMatches": "exact bytes",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/StockTokenRegistry.sol": "StockTokenRegistry"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/"
+        ]
+      },
+      "runtimeBytes": 5045,
+      "initcodeBytes": 5420,
+      "runtimeTemplateKeccak256": "0x39404bd2660e8b8e156aeff56f256f9bc9236b8f178721e057e23c574c3f109d",
+      "initcodeTemplateKeccak256": "0x6d7b28003247d768282560dece350d742703705298ac1ea44c15858611e8cc96",
+      "immutableReferences": {},
+      "linkReferences": {}
+    },
+    {
+      "name": "StockTokenRegistryV2",
+      "path": "omerta-contracts/out/StockTokenRegistryV2.sol/StockTokenRegistryV2.json",
+      "artifactSha256": "62337e619d39cbdf3c7739e5a5de8fbcec4da807065ddf27e3ced07822c13d57",
+      "sourceSha256": "ed14f5e07ef8b90105947de60e90b417642db9ecfa878fecc850ea2f4d313efb",
+      "compiledSourceKeccak256": "0xa377f3b38f68c75faba4673354ac0fcec4daee6c99949438d0ff5c13cd75ca65",
+      "sourceMatches": "CRLF-to-LF equivalent",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/StockTokenRegistryV2.sol": "StockTokenRegistryV2"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/"
+        ]
+      },
+      "runtimeBytes": 8535,
+      "initcodeBytes": 8910,
+      "runtimeTemplateKeccak256": "0x9d095e10e8542a510bc7ca1203a55dfe1d5c120c78fdfa50c9ea6bf4bc53cd9f",
+      "initcodeTemplateKeccak256": "0xc29e65b3906f268987ebf0181fee934f4911f0c253757613641ca7a01a282600",
+      "immutableReferences": {},
+      "linkReferences": {}
+    },
+    {
+      "name": "StockVault",
+      "path": "omerta-contracts/out/StockVault.sol/StockVault.json",
+      "artifactSha256": "690f5c34dce527f62bbf99c29ec6c88fb986bdec71a3ad5da56ab66fcd7007f4",
+      "sourceSha256": "11a8b3a56bc64286419728ca4e414ad51eaffa25d9864a55091420a718182150",
+      "compiledSourceKeccak256": "0x81c2170e13f75df886d650342dbd6b6dfda245277ad7b10611880d2d54882f3a",
+      "sourceMatches": "exact bytes",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/StockVault.sol": "StockVault"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/"
+        ]
+      },
+      "runtimeBytes": 7294,
+      "initcodeBytes": 8617,
+      "runtimeTemplateKeccak256": "0x7ada29a85e7dbb356096176633de243c311abe2302678bac794c2eae3349257a",
+      "initcodeTemplateKeccak256": "0xadc524217e417595b1a98a73108341dc63825b17a1dac130e9fef41eb266a5af",
+      "immutableReferences": {
+        "49565": [
+          {
+            "start": 5183,
+            "length": 32
+          }
+        ],
+        "49567": [
+          {
+            "start": 5141,
+            "length": 32
+          }
+        ],
+        "49569": [
+          {
+            "start": 5099,
+            "length": 32
+          }
+        ],
+        "49571": [
+          {
+            "start": 5264,
+            "length": 32
+          }
+        ],
+        "49573": [
+          {
+            "start": 5304,
+            "length": 32
+          }
+        ],
+        "49576": [
+          {
+            "start": 4753,
+            "length": 32
+          }
+        ],
+        "49579": [
+          {
+            "start": 4803,
+            "length": 32
+          }
+        ]
+      },
+      "linkReferences": {}
+    },
+    {
+      "name": "StreetDeed",
+      "path": "omerta-contracts/out/StreetDeed.sol/StreetDeed.json",
+      "artifactSha256": "77a8eb514d9d568f4b419d979af7233a0e644363b8912b1daa24fa7e11f99986",
+      "sourceSha256": "88f20153640a84bb528c6bae4d332ce2d052cc8c4c648e7447803c835be87e9e",
+      "compiledSourceKeccak256": "0x38a45d267fe15e94925d2dd4c8c461f79840ea9fbe161779f105235ca314209a",
+      "sourceMatches": "exact bytes",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/StreetDeed.sol": "StreetDeed"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/"
+        ]
+      },
+      "runtimeBytes": 12690,
+      "initcodeBytes": 14403,
+      "runtimeTemplateKeccak256": "0x63e21abdbf07b50ab66b31591e19c65b318076ab44a02e52f22ae908e4330b45",
+      "initcodeTemplateKeccak256": "0x86d497679aab329cee6d36300e6fa98079c20e0dfd1f1ee508ea437d8292d2d2",
+      "immutableReferences": {
+        "49565": [
+          {
+            "start": 9005,
+            "length": 32
+          }
+        ],
+        "49567": [
+          {
+            "start": 8963,
+            "length": 32
+          }
+        ],
+        "49569": [
+          {
+            "start": 8921,
+            "length": 32
+          }
+        ],
+        "49571": [
+          {
+            "start": 9086,
+            "length": 32
+          }
+        ],
+        "49573": [
+          {
+            "start": 9126,
+            "length": 32
+          }
+        ],
+        "49576": [
+          {
+            "start": 5714,
+            "length": 32
+          }
+        ],
+        "49579": [
+          {
+            "start": 5764,
+            "length": 32
+          }
+        ]
+      },
+      "linkReferences": {}
+    },
+    {
+      "name": "Transmuter",
+      "path": "omerta-contracts/out/Transmuter.sol/Transmuter.json",
+      "artifactSha256": "c521d3055d2440cb009ece22e71043e8ed2d7f283bb6043ec486d5367566b3c7",
+      "sourceSha256": "21264df1c5a45f90658a3e09e6abb8ff7e75dd66bb4b5e2211b3f4166b871540",
+      "compiledSourceKeccak256": "0x18ce745bbf7211e2c24e72774192626eb89bbc95daaf7a0a8a5a276d7a86a382",
+      "sourceMatches": "exact bytes",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/Transmuter.sol": "Transmuter"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/"
+        ]
+      },
+      "runtimeBytes": 4108,
+      "initcodeBytes": 5136,
+      "runtimeTemplateKeccak256": "0xe376a33b97a8e11136bd286aadb0db74754b6a64ec2cce773b3f1ddf0926ef1f",
+      "initcodeTemplateKeccak256": "0x8b011b2f152e80ade94f75eadc56353ed953d20944aa37b7749e7fec581b5bc8",
+      "immutableReferences": {
+        "73970": [
+          {
+            "start": 897,
+            "length": 32
+          },
+          {
+            "start": 1096,
+            "length": 32
+          },
+          {
+            "start": 2455,
+            "length": 32
+          },
+          {
+            "start": 2523,
+            "length": 32
+          }
+        ],
+        "73973": [
+          {
+            "start": 552,
+            "length": 32
+          },
+          {
+            "start": 1728,
+            "length": 32
+          },
+          {
+            "start": 1856,
+            "length": 32
+          },
+          {
+            "start": 1919,
+            "length": 32
+          },
+          {
+            "start": 2631,
+            "length": 32
+          }
+        ],
+        "73976": [
+          {
+            "start": 858,
+            "length": 32
+          },
+          {
+            "start": 1036,
+            "length": 32
+          },
+          {
+            "start": 2296,
+            "length": 32
+          }
+        ]
+      },
+      "linkReferences": {}
+    },
+    {
+      "name": "VoucherClaim",
+      "path": "omerta-contracts/out/VoucherClaim.sol/VoucherClaim.json",
+      "artifactSha256": "3aba4e03c60f3c49d8d3a2b8d2886eb4b9c4a086834421138a244acaf77d578c",
+      "sourceSha256": "5bdea68e473429ae39f3286b3fa7da8de335035929cc3f7665f5e824ad608573",
+      "compiledSourceKeccak256": "0x50cef7f81fe85c131449d06d1813a1fe3fb5beae0ea9d3a47e07174f0be0274a",
+      "sourceMatches": "exact bytes",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/VoucherClaim.sol": "VoucherClaim"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/"
+        ]
+      },
+      "runtimeBytes": 6369,
+      "initcodeBytes": 7770,
+      "runtimeTemplateKeccak256": "0x4d659011fcccfbd6a44e4a48286bd7cb9bf2729566dd85363f1874860375db28",
+      "initcodeTemplateKeccak256": "0xc0d36d0ca3d7c050711cac207f7af637615bc3785fad38fae5773c8d28d2966f",
+      "immutableReferences": {
+        "49565": [
+          {
+            "start": 5102,
+            "length": 32
+          }
+        ],
+        "49567": [
+          {
+            "start": 5060,
+            "length": 32
+          }
+        ],
+        "49569": [
+          {
+            "start": 5018,
+            "length": 32
+          }
+        ],
+        "49571": [
+          {
+            "start": 5183,
+            "length": 32
+          }
+        ],
+        "49573": [
+          {
+            "start": 5223,
+            "length": 32
+          }
+        ],
+        "49576": [
+          {
+            "start": 4158,
+            "length": 32
+          }
+        ],
+        "49579": [
+          {
+            "start": 4207,
+            "length": 32
+          }
+        ],
+        "78739": [
+          {
+            "start": 510,
+            "length": 32
+          },
+          {
+            "start": 1931,
+            "length": 32
+          },
+          {
+            "start": 3022,
+            "length": 32
+          }
+        ],
+        "78742": [
+          {
+            "start": 875,
+            "length": 32
+          },
+          {
+            "start": 2158,
+            "length": 32
+          },
+          {
+            "start": 2395,
+            "length": 32
+          }
+        ]
+      },
+      "linkReferences": {}
+    }
+  ]
+}

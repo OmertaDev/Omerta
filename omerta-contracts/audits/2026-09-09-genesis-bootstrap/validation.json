@@ -1,0 +1,45 @@
+{
+  "finalFork": ".audit/genesis-fork-rehearsal/2026-09-09T07-23-05-323Z",
+  "finalForkEvidenceSha256": "3c31297cfaa69e5f25e52490fafdcb76fc498efc8bab2630e77f86416683ed2f",
+  "forkBlock": {
+    "chainId": 4663,
+    "blockNumber": "58365227",
+    "blockHash": "0x82d72da9aa146c4e3eb4d109fc895fce1307596fd1cc61e6b20cd15c21bb40c8",
+    "timestamp": "1788938585",
+    "pinnedRuntimeCodeHashes": {
+      "liquidityLauncher": "0x4a586d925c9d59ece13ce2239ebd7dea9ee725f9d33c6667e0fd16ae8d977d80",
+      "lbpStrategy": "0x6e822d6a2f634311363ec357109a691d86912414df5c211a2f6ac6de9a680d68",
+      "ccaFactory": "0xa1d2a90564f4f63580b25de42efaff92505c254b00fc666f65ab38126cce5cfa",
+      "permit2": "0x5208783f52488f7d3493e5e38311ab707c1d75457fe472a19b0b4d57d66a7fca",
+      "poolManager": "0xbd3881180b547f5fe817545743cfb4343e96b1bc6640dcd70c106b0066e95626",
+      "positionManager": "0xc873e135dc9aaec88489cfbad146b4cb49d6a32e0d80326377784b7ba17670b2"
+    }
+  },
+  "passedExitMarkers": [
+    "oracle-bootstrap-retest",
+    "liquidity-solidity-regression",
+    "v4keeper-final",
+    "v4keeper-postgres-final",
+    "chain-final",
+    "watcher",
+    "preflight",
+    "docs-final",
+    "genesiskeeper",
+    "liquiditykeeper",
+    "genesiscca-tests",
+    "genesisrelease-tests",
+    "review-keeper-final-proof",
+    "fork-5"
+  ],
+  "expectedBeforeFixExit": 1,
+  "tests": {
+    "oracle": 28,
+    "coupledLiquidity": 99,
+    "ccaRejectionCases": 46,
+    "startupChecks": 16,
+    "independentKeeperAssertions": 26
+  },
+  "staticTriageSha256": "d7d8fda3cdb0969cb93cf0ca026238e8c24d38d4fe7c0ca36eb16138b6585c07",
+  "publicConfiguration": "draft; no private keys, funding, live configuration or activation applied",
+  "historicalReviewPackages": "September 8 packages preserved unchanged; no newer claims attached to them"
+}

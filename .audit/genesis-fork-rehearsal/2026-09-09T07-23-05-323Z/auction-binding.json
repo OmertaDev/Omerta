@@ -1,0 +1,52 @@
+{
+  "status": "ready_for_auction_binding",
+  "chainId": 4663,
+  "transaction": {
+    "from": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    "to": "0x975Ab64F4901Af5f0C96636deA0b9de3419D0c2F",
+    "value": "0",
+    "data": "0xccd616ae000000000000000000000000d36b056d9568a01e8851fc7bd70e6ed1c1cc61e1",
+    "purpose": "Bind the verified created CCA to the lifecycle controller before bidding starts"
+  },
+  "auction": "0xD36b056D9568a01E8851fC7bd70e6ED1C1cc61E1",
+  "auctionRuntimeCodeHash": "0x1619e0c172db90cdc712d7a7045fe86bbd320a563a59bcf874c2efff577221ba",
+  "checkedAtBlock": "58365258",
+  "checkedAtBlockHash": "0x3e08608d54910738f7adeb562ec0fdc3e58330b3ac21b46c37f94e4a1891ca4f",
+  "checkedAtTimestamp": "1788938656",
+  "currentBlock": "58365258",
+  "beforeBlock": "58365278",
+  "launchCalldataKeccak256": "0x88d7e330c24bf7c5f92f25f937ef0ee4535e4666c512096a5e6f0ae144497cc8",
+  "launchArtifactsSha256": "b5b2b40b7d2e37335d3da48082d37839fb00477568ef9cdb4bc8d5f63a4d0f4d",
+  "bindingCalldataKeccak256": "0x246ca4185ea2dd7ca8f6aa9c72ed4cefae1372f5581a0be268ee9b7a853bc4c5",
+  "factoryPredictionVerified": true,
+  "simulated": true,
+  "readiness": {
+    "currentBlock": "58365258",
+    "canonicalPoolId": "0xa914994acadf16902937a067cace4f6a98dcfadf32927427825dd0ff30db741b",
+    "runtimeCodeHashes": {
+      "token": "0x41a139a604e6490e1e92700baeae5d4c55efbb693cc112cbb1ebb4e506e8f35c",
+      "hook": "0xa552d15a23f5c3eaf6e4e88861452a83b3f6a3c830a0fc512ddf55c64488986a",
+      "proceedsSplitter": "0xc8e96486be3a6b3a583107d75af3e00b71f631d1cc5d86071c3de36de69d4347",
+      "lifecycleController": "0x3c4b3633ed74d9868364a4cf400fdbe25c17e7d2ebbab50f1917c9d7e5a16cd5",
+      "positionRecipient": "0x8aba4aa77009b0a2e65afd6a40d1caad594ded92dc35923ed444863bde9bc0d6",
+      "oracle": "0x04d40bab77bb7618a1e962ac9689e3e1c431a82be835dcc0838b830696450c07",
+      "liquidityLauncher": "0x4a586d925c9d59ece13ce2239ebd7dea9ee725f9d33c6667e0fd16ae8d977d80",
+      "lbpStrategy": "0x6e822d6a2f634311363ec357109a691d86912414df5c211a2f6ac6de9a680d68",
+      "ccaFactory": "0xa1d2a90564f4f63580b25de42efaff92505c254b00fc666f65ab38126cce5cfa",
+      "poolManager": "0xbd3881180b547f5fe817545743cfb4343e96b1bc6640dcd70c106b0066e95626",
+      "positionManager": "0xc873e135dc9aaec88489cfbad146b4cb49d6a32e0d80326377784b7ba17670b2",
+      "permit2": "0x5208783f52488f7d3493e5e38311ab707c1d75457fe472a19b0b4d57d66a7fca"
+    },
+    "launchArtifactsSha256": "b5b2b40b7d2e37335d3da48082d37839fb00477568ef9cdb4bc8d5f63a4d0f4d",
+    "checkedAtBlock": "58365258",
+    "checkedAtBlockHash": "0x3e08608d54910738f7adeb562ec0fdc3e58330b3ac21b46c37f94e4a1891ca4f",
+    "checkedAtTimestamp": "1788938656",
+    "baselineInitialized": false,
+    "oracleQuote": {
+      "price": "0",
+      "updatedAt": "0"
+    }
+  },
+  "unsigned": true,
+  "broadcastsTransactions": false
+}

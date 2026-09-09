@@ -13,7 +13,7 @@ import { privateKeyToAccount } from 'viem/accounts';
 import { GameError, ledger } from './game.js';
 import { reconcileFees } from './fees.js';
 import { reconcileStore } from './store.js';
-import { reconcileBonds } from './bonds.js';
+import { reconcileBonds, bondQuoteBudgetUsage, bondQuoteBudgetAmount } from './bonds.js';
 import { portraitRow } from './portrait.js'; // the freeze snapshot (portrait.js is a leaf — no cycle)
 import { assertGenesisBondsOpen } from './genesislaunch.js';
 import {
@@ -141,10 +141,10 @@ function signerAccount() {
 // claims revert while the backend has already burned the $OMR (a fail-closed-for-funds but INVISIBLE
 // withdrawal outage). Better to refuse to boot the chain service than to sign dead vouchers. Dormant
 // (no RPC) → nothing to check. Called from the worker's chain startup.
-export async function assertChainId() {
-  if (!process.env.CHAIN_RPC_URL || !process.env.CHAIN_ID) return;
+export async function assertChainId({ publicClient } = {}) {
+  if ((!publicClient && !process.env.CHAIN_RPC_URL) || !process.env.CHAIN_ID) return;
   const { createPublicClient, http } = await import('viem');
-  const client = createPublicClient({ transport: http(process.env.CHAIN_RPC_URL) });
+  const client = publicClient || createPublicClient({ transport: http(process.env.CHAIN_RPC_URL) });
   const rpcChainId = Number(await client.getChainId());
   if (Number(process.env.CHAIN_ID) !== rpcChainId)
     throw new Error(`CHAIN_ID mismatch: env CHAIN_ID=${process.env.CHAIN_ID} but the RPC reports ${rpcChainId} — refusing to sign vouchers under the wrong EIP-712 domain (they would all revert on-chain while $OMR is burned).`);
@@ -412,22 +412,41 @@ export async function requestItemWithdraw(pool, accountId, kind, itemId, toAddre
 
 // Drain the queue FIFO after the Safe funds more reserve (or on a timer). Signs
 // queued OMR vouchers oldest-first while the funded tranche still covers them.
-export async function drainQueue(pool) {
+export async function drainQueue(pool, { maxLiveClaimWei = null } = {}) {
   const client = await pool.connect();
   let signed = 0;
   try {
     await client.query('BEGIN');
     const res = (await client.query('SELECT * FROM chain_reserve WHERE id=1 FOR UPDATE')).rows[0];
-    let outstanding = await committedOutstanding(client); // committed-ever gate (see requestWithdraw)
+    // The queue and reserve use exact six-decimal game units. Converting two
+    // adjacent valid micro amounts through Number can make an underfunded claim
+    // look equal to its backing and sign a larger exact EIP-712 amount.
+    const micros = (value) => {
+      const parts = /^(\d+)(?:\.(\d*))?$/.exec(String(value ?? 0));
+      const fraction = (parts?.[2] || '').replace(/0+$/, '');
+      if (!parts || fraction.length > 6) throw new GameError('reserve_precision', 'Reserve queue amounts must use exact six-decimal units.');
+      return BigInt(parts[1]) * 1_000_000n + BigInt(fraction.padEnd(6, '0'));
+    };
+    const funded = micros(res.funded_omr);
+    let outstanding = micros((await client.query("SELECT COALESCE(SUM(amount),0) s FROM vouchers WHERE kind='omr' AND (status='signed' OR claimed_onchain)")).rows[0].s);
+    const physicalCap = maxLiveClaimWei == null ? null : BigInt(maxLiveClaimWei);
+    if (physicalCap != null && physicalCap < 0n) throw new GameError('reserve_precision', 'Physical reserve capacity cannot be negative.');
+    let liveOutstanding = physicalCap == null ? 0n : micros((await client.query("SELECT COALESCE(SUM(amount),0) s FROM vouchers WHERE kind='omr' AND status='signed' AND NOT claimed_onchain")).rows[0].s);
+    if (physicalCap != null && liveOutstanding * 1_000_000_000_000n > physicalCap) {
+      await client.query('COMMIT');
+      return { signed: 0, alert: true, reason: 'physical_claim_backing_unavailable' };
+    }
     const queued = (await client.query("SELECT * FROM vouchers WHERE kind='omr' AND status='queued' ORDER BY created_at, nonce")).rows;
     for (const row of queued) {
-      if (outstanding + Number(row.amount) > Number(res.funded_omr)) break; // FIFO stops at the reserve edge
+      const amount = micros(row.amount);
+      if (outstanding + amount > funded) break; // FIFO stops at the exact reserve edge
+      if (physicalCap != null && (liveOutstanding + amount) * 1_000_000_000_000n > physicalCap) break;
       // recompute the deadline at SIGN time — a voucher may have sat queued past its original 24h TTL,
       // and the contract rejects an already-expired voucher (the in-game $OMR is already burned).
       const freshDeadline = Math.floor(Date.now() / 1000) + WITHDRAW_TTL_SEC;
       const payload = JSON.stringify(await signVoucher({ ...row, deadline: freshDeadline }));
       await client.query("UPDATE vouchers SET status='signed', signed_payload=$2, deadline=$3 WHERE id=$1", [row.id, payload, freshDeadline]);
-      outstanding += Number(row.amount); signed++;
+      outstanding += amount; liveOutstanding += amount; signed++;
     }
     await client.query('COMMIT');
     return { signed };
@@ -834,26 +853,88 @@ export function dynastyChainConfig() {
   return { name: 'OmertaDynasty', version: '1', chainId, verifyingContract: getAddress(verifyingContract) };
 }
 
-export async function requestDynastyMint(pool, accountId, toAddress) {
+// Replacement vouchers require confirmed chain time past the old deadline AND an unused nonce.
+// Wall-clock expiry alone cannot distinguish an unclaimed voucher from a claim the watcher missed.
+// Reads stay outside database locks; the request rechecks the exact nonce/deadline under its lock.
+export async function makeDynastyReader() {
+  if (!process.env.CHAIN_RPC_URL) return null;
+  const domain = dynastyChainConfig();
+  const { createPublicClient, http } = await import('viem');
+  const client = createPublicClient({ transport: http(process.env.CHAIN_RPC_URL) });
+  try { if (Number(await client.getChainId()) !== domain.chainId) return null; } catch { return null; }
+  const depth = Number(process.env.CHAIN_CONFIRMATIONS ?? 5);
+  if (!Number.isSafeInteger(depth) || depth < 0) return null;
+  const abi = [{ type: 'function', name: 'usedNonce', stateMutability: 'view',
+    inputs: [{ name: '', type: 'uint256' }], outputs: [{ name: '', type: 'bool' }] }];
+  return {
+    nonceState: async (nonce, deadline) => {
+      const head = await client.getBlockNumber();
+      if (head < BigInt(depth)) return { used: false, expired: false };
+      const blockNumber = head - BigInt(depth);
+      const block = await client.getBlock({ blockNumber });
+      const used = await client.readContract({ address: domain.verifyingContract, abi,
+        functionName: 'usedNonce', args: [BigInt(nonce)], blockNumber });
+      return { used, expired: block.timestamp > BigInt(deadline) };
+    },
+  };
+}
+
+export async function requestDynastyMint(pool, accountId, toAddress, reader = undefined) {
   const domain = dynastyChainConfig();  // throws chain_unconfigured if not configured
   const signer = signerAccount();       // throws chain_unconfigured if the signer PK is missing
+  const prior = (await pool.query(
+    "SELECT id, nonce, deadline, signed_payload FROM vouchers WHERE account_id=$1 AND kind='dynasty' AND status='signed' AND NOT claimed_onchain AND deadline <= $2",
+    [accountId, Math.floor(Date.now() / 1000)])).rows;
+  const checked = new Map();
+  if (prior.length) {
+    const chain = reader !== undefined ? reader : await makeDynastyReader();
+    for (const v of prior) {
+      // A nonce is meaningful only in its original deployment. Legacy records without a
+      // saved domain remain pending for reconciliation; configuration drift cannot retire them.
+      let saved;
+      try { saved = JSON.parse(v.signed_payload)?.domain; } catch { continue; }
+      if (!saved || saved.name !== domain.name || saved.version !== domain.version
+        || Number(saved.chainId) !== domain.chainId
+        || String(saved.verifyingContract).toLowerCase() !== domain.verifyingContract.toLowerCase()) continue;
+      try { if (chain) checked.set(v.id, { nonce: String(v.nonce), deadline: String(v.deadline), savedPayload: v.signed_payload,
+        ...await chain.nonceState(v.nonce, v.deadline) }); }
+      catch { /* unavailable chain evidence leaves the prior voucher pending */ }
+    }
+  }
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
     const acct = (await client.query('SELECT * FROM account_persistent WHERE account_id=$1 FOR UPDATE', [accountId])).rows[0];
     if (!acct?.minted) throw new GameError('not_minted', 'Only a made account can take its portrait on-chain — pay the identity mint fee first.');
-    const to = toAddress || acct?.wallet_address;
-    if (!to || !isAddress(to)) throw new GameError('wallet', 'Link a wallet (SIWE) or pass a valid address first.');
+    const to = acct?.wallet_address;
+    if (!to || !isAddress(to)) throw new GameError('wallet', 'Link your wallet (SIWE) before minting your portrait.');
+    if (toAddress != null && (!isAddress(toAddress) || getAddress(toAddress) !== getAddress(to)))
+      throw new GameError('wallet', 'The portrait must mint to your linked wallet.');
     // ONE per account, on both horizons: a token the Minted watcher has already recorded, and a
     // voucher signed but not yet claimed. Without the second the window between signing and the mint
     // landing would issue a second voucher for the same account (the contract has no per-account cap
     // — its walls are the nonce, the deadline and the daily rate).
     const have = (await client.query('SELECT token_id FROM dynasty_tokens WHERE account_id=$1', [accountId])).rows[0];
     if (have) throw new GameError('already', 'Your bloodline already has its portrait on-chain.');
-    const pending = (await client.query(
-      "SELECT id FROM vouchers WHERE account_id=$1 AND kind='dynasty' AND status='signed' AND deadline > $2",
-      [accountId, Math.floor(Date.now() / 1000)])).rows[0];
-    if (pending) throw new GameError('pending', 'A mint voucher is already out — claim it, or wait for it to lapse.');
+    const previous = (await client.query(
+      "SELECT id, nonce, deadline, status, claimed_onchain, signed_payload FROM vouchers WHERE account_id=$1 AND kind='dynasty' FOR UPDATE",
+      [accountId])).rows;
+    if (previous.some((v) => v.claimed_onchain || v.status === 'claimed'))
+      throw new GameError('already', 'Your bloodline already claimed its portrait on-chain.');
+    for (const v of previous.filter((v) => v.status === 'signed')) {
+      const proof = checked.get(v.id);
+      if (!proof || proof.nonce !== String(v.nonce) || proof.deadline !== String(v.deadline)
+        || proof.savedPayload !== v.signed_payload)
+        throw new GameError('pending', 'A mint voucher is already out — claim it, or wait for confirmed expiry.');
+      if (proof.used === true) {
+        await client.query("UPDATE vouchers SET status='claimed', claimed_onchain=true WHERE id=$1", [v.id]);
+        await client.query('COMMIT');
+        throw new GameError('already', 'Your portrait was already claimed on-chain; its metadata is syncing.');
+      }
+      if (proof.used !== false || proof.expired !== true)
+        throw new GameError('pending', 'The previous mint must be confirmed unused and expired before replacing its voucher.');
+      await client.query("UPDATE vouchers SET status='expired' WHERE id=$1", [v.id]);
+    }
 
     // nonce from the shared chain_reserve counter (unique across ALL vouchers; this contract's own
     // usedNonce only ever sees this subset, all distinct). NOT reserve-bounded — no $OMR moves.
@@ -869,7 +950,7 @@ export async function requestDynastyMint(pool, accountId, toAddress) {
     const id = uid();
     await client.query(
       'INSERT INTO vouchers (id, account_id, kind, amount, gear_id, nonce, to_address, deadline, status, signed_payload) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',
-      [id, accountId, 'dynasty', 1, null, nonce, getAddress(to), deadline, 'signed', JSON.stringify({ voucher, signature })]);
+      [id, accountId, 'dynasty', 1, null, nonce, getAddress(to), deadline, 'signed', JSON.stringify({ voucher, signature, domain })]);
     await client.query('COMMIT');
     // the SYSTEM marker (dynasty.js's siblings use the same key with their own values — 'proposed',
     // 'wed'): `nonce` + `status:'signed'` alone is the withdrawal and gear-withdrawal shape too, so
@@ -1014,25 +1095,41 @@ export async function recordDeedTransfer(pool, { tokenId, to, from }) {
 
 // Record ONE Minted(nonce, minter, tokenId) — idempotent on the token_id PK (SELECT-then-INSERT
 // inside the txn, never ON CONFLICT DO NOTHING: pg-mem lies about the suppressed rowCount, the
-// recordReckoning lesson). The account resolves from the minter's SIWE wallet (the Store
-// pay-before-link pattern); an unlinked minter leaves account_id NULL — the token is a pure trophy
-// either way. A Transfer-created stub (see recordDynastyTransfer's ordering note) is UPDATEd with
-// the nonce rather than duplicated.
+// recordReckoning lesson). The originating voucher is the account authority: a wallet can change
+// after signing, but the bloodline that requested this nonce cannot. Historical mints with no
+// locally issued voucher retain the legacy wallet lookup. Record the claim in the SAME transaction
+// as the token so a delayed/replayed event cannot leave the account eligible for another mint.
+// A Transfer-created stub is completed from the voucher rather than changing the token's owner.
 export async function recordDynastyMint(pool, { nonce, tokenId, minter }) {
   if (!tokenId || !minter) return { recorded: false };
   const addr = String(minter).toLowerCase();
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
-    const cur = (await client.query('SELECT nonce FROM dynasty_tokens WHERE token_id=$1 FOR UPDATE', [String(tokenId)])).rows[0];
+    const issued = nonce == null ? null : (await client.query(
+      "SELECT id, account_id, to_address FROM vouchers WHERE nonce=$1 AND kind='dynasty'", [Number(nonce)])).rows[0];
+    if (issued && String(issued.to_address).toLowerCase() !== addr)
+      throw new Error('Dynasty mint recipient does not match its issued voucher; refusing to attribute the event.');
+    const acct = issued || (await client.query(
+      'SELECT account_id FROM account_persistent WHERE lower(wallet_address)=lower($1)', [addr])).rows[0];
+    // Same order as issuance: account → voucher → token. The account lock serializes a late
+    // watcher claim with a replacement request; neither can issue past the other's durable claim.
+    if (acct) await client.query('SELECT account_id FROM account_persistent WHERE account_id=$1 FOR UPDATE', [acct.account_id]);
+    if (issued) await client.query("UPDATE vouchers SET status='claimed', claimed_onchain=true WHERE id=$1", [issued.id]);
+    const cur = (await client.query('SELECT nonce, account_id, frozen FROM dynasty_tokens WHERE token_id=$1 FOR UPDATE', [String(tokenId)])).rows[0];
     if (cur) { // a re-scan, or the Transfer stream got here first (the stub) — fill the nonce in, once
-      if (cur.nonce == null && nonce != null)
-        await client.query('UPDATE dynasty_tokens SET nonce=$2 WHERE token_id=$1', [String(tokenId), Number(nonce)]);
+      if (cur.nonce != null && nonce != null && String(cur.nonce) !== String(nonce))
+        throw new Error('Dynasty token is already assigned to another mint nonce; refusing to rewrite its history.');
+      if (issued || (cur.nonce == null && nonce != null))
+        await client.query('UPDATE dynasty_tokens SET nonce=$2, minter_address=$3, account_id=$4 WHERE token_id=$1',
+          [String(tokenId), Number(nonce), addr, acct?.account_id || null]);
+      // A legacy Transfer-first stub may have frozen a different account after wallet rotation.
+      // We cannot reconstruct the old portrait; serve a blank frozen plate instead of false history.
+      if (issued && cur.frozen && cur.account_id !== issued.account_id)
+        await client.query('UPDATE dynasty_tokens SET snapshot=NULL WHERE token_id=$1', [String(tokenId)]);
       await client.query('COMMIT');
       return { recorded: false, duplicate: true };
     }
-    const acct = (await client.query(
-      'SELECT account_id FROM account_persistent WHERE lower(wallet_address)=lower($1)', [addr])).rows[0];
     await client.query(
       `INSERT INTO dynasty_tokens (token_id, nonce, minter_address, owner_address, account_id)
        VALUES ($1,$2,$3,$3,$4)`,
@@ -1045,31 +1142,33 @@ export async function recordDynastyMint(pool, { nonce, tokenId, minter }) {
 
 // Record ONE ERC-721 Transfer on the DynastyNFT. A mint transfer (from 0x0) just confirms the first
 // owner; the FIRST owner→owner transfer FREEZES the portrait (snapshot = the account's latest
-// character's portrait row, captured in the same transaction). Replay-safe: a re-delivered event
-// finds the owner already recorded and the frozen flag already set, and changes nothing. ORDERING
-// NOTE: Minted and Transfer ride two cursor streams, so a sale can arrive before its mint was
-// processed — a missing row is created as a STUB from what the transfer knows (minter := from, the
-// closest owner on record) so the freeze is never lost; recordDynastyMint later fills the nonce.
-export async function recordDynastyTransfer(pool, { tokenId, from, to }) {
+// character's portrait row, captured at observation time). The canonical log position prevents
+// backfills from rolling ownership backwards. Minted must establish provenance before Transfers
+// can be processed; an unavailable mint holds the cursor for retry instead of guessing an account.
+export async function recordDynastyTransfer(pool, { tokenId, from, to, blockNumber, logIndex }) {
   if (!tokenId || !to) return { changed: false };
   const owner = String(to).toLowerCase();
   const ZERO = '0x0000000000000000000000000000000000000000';
   if (owner === ZERO) return { changed: false };          // a burn — DynastyNFT has none today; future-proof skip
   const isMint = !from || String(from).toLowerCase() === ZERO;
+  const positioned = blockNumber != null && logIndex != null;
+  if ((blockNumber != null || logIndex != null) && (!positioned
+    || !/^\d+$/.test(String(blockNumber)) || !/^\d+$/.test(String(logIndex))))
+    throw new Error('Dynasty Transfer log position is invalid.');
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
-    let row = (await client.query(
-      'SELECT token_id, owner_address, account_id, frozen FROM dynasty_tokens WHERE token_id=$1 FOR UPDATE',
+    const row = (await client.query(
+      'SELECT token_id, nonce, owner_address, account_id, frozen, last_transfer_block, last_transfer_log_index FROM dynasty_tokens WHERE token_id=$1 FOR UPDATE',
       [String(tokenId)])).rows[0];
-    if (!row) {
-      const seedMinter = isMint ? owner : String(from).toLowerCase();
-      const acct = (await client.query(
-        'SELECT account_id FROM account_persistent WHERE lower(wallet_address)=lower($1)', [seedMinter])).rows[0];
-      await client.query(
-        `INSERT INTO dynasty_tokens (token_id, minter_address, owner_address, account_id)
-         VALUES ($1,$2,$2,$3)`, [String(tokenId), seedMinter, acct?.account_id || null]);
-      row = { token_id: String(tokenId), owner_address: seedMinter, account_id: acct?.account_id || null, frozen: false };
+    if (!row || row.nonce == null) throw new Error('Dynasty Minted provenance is pending; retry this Transfer after mint indexing.');
+    if (row.last_transfer_block != null) {
+      if (!positioned) throw new Error('A positioned Dynasty token requires a canonical Transfer log position.');
+      const block = BigInt(blockNumber), last = BigInt(row.last_transfer_block);
+      if (block < last || (block === last && BigInt(logIndex) <= BigInt(row.last_transfer_log_index))) {
+        await client.query('COMMIT');
+        return { changed: false, stale: true };
+      }
     }
     let changed = false;
     if (String(row.owner_address || '').toLowerCase() !== owner) {
@@ -1093,6 +1192,9 @@ export async function recordDynastyTransfer(pool, { tokenId, from, to }) {
         'UPDATE dynasty_tokens SET frozen=true, frozen_at=now(), snapshot=$2 WHERE token_id=$1',
         [String(tokenId), snapshot ? JSON.stringify(snapshot) : null]);
     }
+    if (positioned) await client.query(
+      'UPDATE dynasty_tokens SET last_transfer_block=$2, last_transfer_log_index=$3 WHERE token_id=$1',
+      [String(tokenId), String(blockNumber), String(logIndex)]);
     await client.query('COMMIT');
     return { changed, frozen: !isMint && !row.frozen && changed };
   } catch (e) { await client.query('ROLLBACK'); throw e; }
@@ -1109,11 +1211,14 @@ async function applyDeedReimport(client, ref, wallet, tokenId) {
   if (!r || r.status !== 'pending') return null; // already applied / gone
   const onchainOwner = 'onchain:' + String(tokenId);
   const deed = (await client.query(
-    'SELECT account_id, name FROM street_deeds WHERE onchain_token_id=$1 AND account_id=$2 FOR UPDATE', [String(tokenId), onchainOwner])).rows[0];
-  if (!deed) { // the deed isn't in the on-chain state (already re-imported, or never extracted) — settle
+    'SELECT account_id, name FROM street_deeds WHERE onchain_token_id=$1 FOR UPDATE', [String(tokenId)])).rows[0];
+  if (!deed) { // no outstanding extraction (already re-imported, or never extracted) — settle
     await client.query("UPDATE deed_reimports SET status='applied', applied_at=now() WHERE ref=$1", [ref]);
     return null;
   }
+  // Redeemed may precede Extracted in a mint callback, and the two watcher streams
+  // retry independently. Keep this burn recoverable until extraction is indexed.
+  if (deed.account_id !== onchainOwner) return null;
   const acct = (await client.query(
     'SELECT account_id FROM account_persistent WHERE lower(wallet_address)=lower($1)', [wallet])).rows[0];
   if (!acct) return null; // burner's wallet not linked to any account yet — wait
@@ -1412,14 +1517,21 @@ export function bondChainConfig() {
 
 // Sign a bond quote for `principalEth` ETH from this account's linked wallet. The quote is bound to the
 // wallet (the contract enforces msg.sender == payer), priced at the live oracle with BONDS.DISCOUNT_BPS,
-// nonce'd from the bond tranche's own allocator, and PRE-CHECKED against the backend tranche budget so a
-// player never gets a quote whose bond() would revert TrancheExhausted. Locks account → bond_reserve.
+// nonce'd from the bond budget's own allocator, and reserved against the backend lifetime signing
+// budget. OmertaBond mints the payout; this budget is not an on-chain token reserve. Locks account → bond_reserve.
 export async function quoteBond(pool, accountId, principalEth) {
+  const liquidity = process.env.LIQUIDITY_AUTOMATION_ENABLED === 'on'
+    ? await (await import('./liquiditypolicy.js')).assertLiquidityBondReady(pool) : null;
+  const unlimitedDaily = liquidity?.dailyIssuancePolicy === 'unlimited';
   assertGenesisBondsOpen();
   const eth = round6(Number(principalEth));
-  if (!(eth >= BONDS.MIN_PRINCIPAL_ETH)) throw new GameError('min', `A bond takes at least ${BONDS.MIN_PRINCIPAL_ETH} ETH.`);
+  if (!Number.isFinite(eth) || !(eth >= BONDS.MIN_PRINCIPAL_ETH)) throw new GameError('min', `A bond takes at least ${BONDS.MIN_PRINCIPAL_ETH} finite ETH.`);
   const domain = bondChainConfig();  // throws chain_unconfigured if the bond chain isn't configured
+  if (unlimitedDaily && (domain.chainId !== liquidity.chainId
+    || domain.verifyingContract.toLowerCase() !== liquidity.bondAddress?.toLowerCase()))
+    throw new GameError('liquidity_unavailable', 'The bond signer does not match the approved deployment.');
   const signer = signerAccount();    // throws chain_unconfigured if the signer PK is missing
+  if (unlimitedDaily) await (await import('./bondquoteexpiry.js')).releaseExpiredBondQuotes(pool);
 
   // THE ORACLE READ HAPPENS BEFORE THE TRANSACTION OPENS (RED TEAM 2026-08-16). It needs nothing
   // from the database, and an RPC inside a held transaction pins a pooled connection for as long as
@@ -1430,6 +1542,8 @@ export async function quoteBond(pool, accountId, principalEth) {
   // the order of its PERIOD, so a price fetched microseconds before the transaction opens is exactly
   // as current as one fetched inside it — there is nothing to buy by holding the lock across it.
   const priceReader = await makeBondPriceReader();
+  if (unlimitedDaily && !priceReader)
+    throw new GameError('oracle', 'The bond chain price cannot be verified.');
   let onchainPrice = null;
   if (priceReader) {
     let onchain = null;
@@ -1476,13 +1590,21 @@ export async function quoteBond(pool, accountId, principalEth) {
     const disc = BONDS.DISCOUNT_BPS;
     const vestSeconds = Math.floor(BONDS.VEST_HOURS * 3600);
     const payout = bondPayout(eth, price, disc);
-    if (!(payout > 0)) throw new GameError('payout', 'A bond payout must be positive.');
-    // THE ANTI-PONZI PRE-CHECK (mirrors the contract's tranche cap against the backend budget). The contract
-    // enforces its OWN cap on-chain against its funded balance; refusing here means a player never receives
-    // a quote the treasury can't back. Keep bond_reserve.capacity_omr funded to match the on-chain balance.
+    if (!Number.isFinite(payout) || !(payout > 0)) throw new GameError('payout', 'A bond payout must be finite and positive.');
+    // Serialize all quote reservations and watcher settlements through the same lifetime budget lock.
+    // Include unresolved signed quotes, even after expiry, until settlement or proven unused release.
     const res = (await client.query('SELECT capacity_omr, committed_omr, next_nonce FROM bond_reserve WHERE id=1 FOR UPDATE')).rows[0];
-    if (Number(res.committed_omr) + payout > Number(res.capacity_omr) + 1e-6)
-      throw new GameError('over_capacity', 'The bond tranche is exhausted — the treasury must top it up.');
+    if (liquidity) {
+      // RPC recovery, price reads and lock contention can outlive the original heartbeat.
+      const current = await (await import('./liquiditypolicy.js')).assertLiquidityBondReady(client);
+      if (!current || current.dailyIssuancePolicy !== liquidity.dailyIssuancePolicy || current.chainId !== domain.chainId
+        || current.bondAddress?.toLowerCase() !== domain.verifyingContract.toLowerCase())
+        throw new GameError('liquidity_unavailable', 'The approved bond deployment or issuance policy changed.');
+    }
+    const budget = await bondQuoteBudgetUsage(client);
+    if (parseUnits(String(res.committed_omr), 6) + budget.outstanding + budget.settledAdjustment
+      + bondQuoteBudgetAmount(eth, price, disc) > parseUnits(String(res.capacity_omr), 6))
+      throw new GameError('over_capacity', 'The lifetime bond issuance budget is allocated to bonds and pending quotes.');
     const nonce = Number(res.next_nonce);
     await client.query('UPDATE bond_reserve SET next_nonce = next_nonce + 1 WHERE id=1');
     // THE DAILY OFFERING (founder-directed GM issuance control): the tranche above is the LIFETIME
@@ -1491,12 +1613,14 @@ export async function quoteBond(pool, accountId, principalEth) {
     // live option for its TTL, so counting quotes — not bonds — is the conservative side; an
     // unexercised quote wasting window is the accepted cost of a bounded day). Lock order:
     // account → bond_reserve → bond_offerings (a new leaf — nothing else locks it first).
-    const today = dayOf();
-    const off = (await client.query('SELECT offered_omr, quoted_omr FROM bond_offerings WHERE day=$1 FOR UPDATE', [today])).rows[0];
-    if (!off) throw new GameError('no_offering', "The bond desk is closed today — no offering has been posted. Check back when the day's window opens.");
-    if (Number(off.quoted_omr) + payout > Number(off.offered_omr) + 1e-6)
-      throw new GameError('offering_spent', "Today's offering is spoken for — what was on the desk has been quoted. Tomorrow is another day.");
-    await client.query('UPDATE bond_offerings SET quoted_omr = quoted_omr + $2 WHERE day=$1', [today, payout]);
+    if (!unlimitedDaily) {
+      const today = dayOf();
+      const off = (await client.query('SELECT offered_omr, quoted_omr FROM bond_offerings WHERE day=$1 FOR UPDATE', [today])).rows[0];
+      if (!off) throw new GameError('no_offering', "The bond desk is closed today — no offering has been posted. Check back when the day's window opens.");
+      if (Number(off.quoted_omr) + payout > Number(off.offered_omr) + 1e-6)
+        throw new GameError('offering_spent', "Today's offering is spoken for — what was on the desk has been quoted. Tomorrow is another day.");
+      await client.query('UPDATE bond_offerings SET quoted_omr = quoted_omr + $2 WHERE day=$1', [today, payout]);
+    }
     const deadline = Math.floor(Date.now() / 1000) + BOND_QUOTE_TTL_SEC;
     // the on-chain tuple: principal + priceOmrPerEth in wei (1e18). priceOmrPerEth = OMR wei per 1 ETH, so
     // the contract's `principal * priceOmrPerEth / 1e18` yields plain OMR wei (parity with bondPayout here).
@@ -1511,9 +1635,9 @@ export async function quoteBond(pool, accountId, principalEth) {
     };
     const signature = await signer.signTypedData({ domain, types: BOND_QUOTE_TYPES, primaryType: 'BondQuote', message });
     await client.query(
-      `INSERT INTO bond_quotes (nonce, account_id, payer_address, principal_eth, price, discount_bps, payout_omr, vest_seconds, deadline, signature)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
-      [nonce, accountId, getAddress(payer), eth, price, disc, payout, vestSeconds, deadline, signature]);
+      `INSERT INTO bond_quotes (nonce, account_id, payer_address, principal_eth, price, discount_bps, payout_omr, vest_seconds, deadline, signature, chain_id, bond_address)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`,
+      [nonce, accountId, getAddress(payer), eth, price, disc, payout, vestSeconds, deadline, signature, domain.chainId, domain.verifyingContract.toLowerCase()]);
     await client.query('COMMIT');
     // serialize the bigints for transport; the client submits { quote, signature } to OmertaBond.bond().
     const quote = Object.fromEntries(Object.entries(message).map(([k, v]) => [k, typeof v === 'bigint' ? v.toString() : v]));
@@ -1630,6 +1754,10 @@ export async function onchainParams() {
     };
     if (fees && isAddress(fees)) {
       out.feeVigBps = Number(await client.readContract({ address: getAddress(fees), abi: [u('vigBps')], functionName: 'vigBps' }));
+      // Missing on older contracts: keep an explicit null so parity reports the incompatible
+      // allocation while preserving the other readable fields.
+      const mintDev = await opt(fees, 'mintDevBps');
+      out.feeMintDevBps = mintDev === undefined ? null : Number(mintDev);
       // the two fee PRICES. Unlike vigBps these are settable, so they move at a tranche boundary —
       // and the backend restates them (vig.js MINT_FEE_ETH/RESPAWN_FEE_ETH) to price the PLEX rail.
       // Wei, not ether: the comparison converts, because a float ether value cannot be compared to a

@@ -68,6 +68,8 @@ import { sweepRwaHealth } from './rwahealthsweep.js';
 import { runDexBuyback, runPolPairing, runDexBotInvariants, dexBuybackReady, polPairingReady,
   readLpPositions, lpReaderReady } from './dexbot.js';
 import { runV4OracleKeeper, v4OracleKeeperReady } from './v4oraclekeeper.js';
+import { runLiquidityAutomationCycle } from './liquidityautomation.js';
+import { liquidityKeeperConfig, makeLiquidityKeeperClients } from './liquiditykeeper.js';
 
 // THE LP LEAGUE reader — installed once at boot, and on a WEAKER condition than the bots: it is a
 // read-only path that needs no bot key, so a box that never sends a transaction can still accrue
@@ -297,6 +299,7 @@ if (process.argv[1] && process.argv[1].endsWith('worker.js')) {
   // episode alerts again (two separate outages in one day is exactly the pattern that matters).
   let archiverAlerted = false;
   let oracleKeeperAlerted = false; // the bond-oracle keeper watchdog, same latch discipline
+  let liquidityAlerted = false;
   let chainParityAlerted = false;  // the contract-vs-lever split check, same latch discipline
   let deskDarkAlerted = false;     // the desk's anchor went stale — same latch, same reason
   const tick = async () => {
@@ -842,25 +845,66 @@ if (process.argv[1] && process.argv[1].endsWith('worker.js')) {
     process.exit(1);
   });
 
+  // Register independently of the legacy single-RPC watcher. Its startup chain check and
+  // unrelated log backfills cannot suppress the pinned liquidity RPC fallback or its alarms.
+  // A pending cycle skips only its own next fire; signed work resumes from the shared journal.
+  if (process.env.LIQUIDITY_AUTOMATION_ENABLED === 'on') {
+    let liquidityTicking = false;
+    const guardedLiquidityTick = async () => {
+      if (liquidityTicking) return;
+      liquidityTicking = true;
+      try {
+        const automation = await safe('liquidity automation', () => runLiquidityAutomationCycle(pool));
+        if ((!automation || automation?.alert) && !liquidityAlerted) {
+          liquidityAlerted = true;
+          await safe('liquidity automation alert', () => alertDrift(pool, [{
+            name: 'liquidity automation requires attention', reason: automation?.reason || 'cycle_unavailable',
+            note: 'Inspect the pinned keeper status. New commitments close when the health observation expires.',
+          }], 'liquidity'));
+        } else if (automation && !automation?.alert && automation?.state !== 'indexing' && liquidityAlerted) {
+          liquidityAlerted = false;
+          console.log('liquidity automation recovered');
+        }
+      } finally { liquidityTicking = false; }
+    };
+    setInterval(guardedLiquidityTick, 30000);
+    void guardedLiquidityTick();
+  }
+
   // §11 chain-event sync (audit F2/F3): POLL getLogs over a persisted block cursor, staying
   // CHAIN_CONFIRMATIONS behind head — so worker downtime backfills (no lost fee credits) and a
   // shallow reorg is never acted on (no premature reserve free). Idempotent, so overlapping
   // reprocessing on restart is harmless. Dormant (source=null) without CHAIN_RPC_URL. Seed
   // CHAIN_START_BLOCK to the contracts' deploy block so the first run doesn't scan from genesis.
-  const source = await makeViemSource();
+  let source = null, watcherPublicClient = null;
+  const automatedWatcher = process.env.LIQUIDITY_AUTOMATION_ENABLED === 'on';
+  if (automatedWatcher) {
+    try {
+      // Only this worker's existing read-only event sources share the approved fallback.
+      // Invalid pins close those sources; the independent liquidity clock reports the issue.
+      watcherPublicClient = makeLiquidityKeeperClients(liquidityKeeperConfig(), { signing: false }).publicClient;
+      source = await makeViemSource({ publicClient: watcherPublicClient });
+    } catch (error) {
+      console.error('CHAIN SYNC DISABLED — liquidity RPC configuration invalid', error.keeperCode || 'liquidity_configuration_unavailable');
+    }
+  } else source = await makeViemSource();
   if (source) {
     // deploy hardening (audit): a wrong-but-nonzero CHAIN_ID would sign every voucher under the wrong
     // EIP-712 domain. AUDIT-full-system-v2 B-L8: a mismatch DISABLES the chain sync (fail-closed — never
     // sync under the wrong domain) but must NOT crash the worker, or a poison chain config takes down the
     // nightly §10.4 drift monitor + buyback + sweeps with it. Wrap it; on mismatch, skip chain sync only.
     let chainOk = true;
-    try { await assertChainId(); }
+    try { if (!automatedWatcher) await assertChainId(); }
     catch (e) { chainOk = false; console.error('🚨 CHAIN SYNC DISABLED — ', e.message); }
     if (chainOk) {
       const startBlock = process.env.CHAIN_START_BLOCK ? Number(process.env.CHAIN_START_BLOCK) : undefined;
       let lastDexBotRun = 0;                     // the DEX bots' cadence gate (pacing — the root caps are the safety)
       const syncTick = async () => {
         try {
+          // Re-probe before every automated watcher pass, before any log can be consumed.
+          // A temporary endpoint failure retries next poll instead of disabling inflow sync
+          // for the process lifetime; a wrong chain never reaches a watcher.
+          if (automatedWatcher) await assertChainId({ publicClient: watcherPublicClient });
           if (process.env.OMERTA_FEES_ADDRESS) {
             const f = await safe('fee sync', () => syncFeeEvents(pool, source, { startBlock }));
             if (f?.processed) console.log(`💰 fee sync: credited ${f.processed} payment(s) (blocks ${f.from}–${f.to})`);
@@ -972,7 +1016,7 @@ if (process.argv[1] && process.argv[1].endsWith('worker.js')) {
                 console.error(`💧 pol pairing: skipped — ${s.why}${s.error ? ` (${s.error})` : ''}`);
             }
           }
-        } catch (e) { console.error('chain sync error', e.message); }
+        } catch (e) { console.error('chain sync error', automatedWatcher ? e.keeperCode || 'chain_rpc_unavailable' : e.message); }
       };
       // (red-team R14 F3) same re-entrancy guard as the hourly tick — a slow getLogs sweep (a big
       // backfill after downtime) must not overlap the next 30s poll and double-process a block range.

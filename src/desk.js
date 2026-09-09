@@ -83,6 +83,7 @@ export async function bandAnchor(db, now = Date.now()) {
   const omrPerEth = Number(last.price_omr_per_eth);
   if (!(omrPerEth > 0)) return { anchor: null, stale: true, reason: 'no_price' };
   const ageMs = now - new Date(last.created_at).getTime();
+  if (ageMs < 0) return { anchor: null, stale: true, reason: 'future_price', ageMs, omrPerEth };
   if (ageMs > DESK_AUCTION.ORACLE_MAX_AGE_MS) return { anchor: null, stale: true, reason: 'stale_price', ageMs, omrPerEth };
   return { anchor: round8(1 / omrPerEth), omrPerEth, stale: false, ageMs, windowDays: BAND.ANCHOR_DAYS };
 }
@@ -154,6 +155,8 @@ export async function lotSize(db, now = Date.now()) {
 // same shelf. The anchor is SNAPSHOTTED here: the whole session prices off one reading, and a
 // mid-auction oracle move cannot re-price a lot somebody is already bidding into.
 export async function openAuction(pool, now = Date.now()) {
+  if (process.env.LIQUIDITY_AUTOMATION_ENABLED === 'on')
+    await (await import('./liquiditypolicy.js')).assertLiquidityMarketReady(pool);
   const genesis = genesisLaunchStatus();
   if (!genesis.deskAuctionsOpen) return { opened: false, reason: 'genesis_launch', phase: genesis.phase };
   const day = dayOf(now);
@@ -190,6 +193,8 @@ export async function closeExpired(pool, now = Date.now()) {
 // ETH follows from the two. Idempotent on `ref` (a re-delivered log is a clean no-op); `txHash` marks
 // a REAL payment and is what gates the ETH accounting.
 export async function recordAuctionBuy(pool, { ref, accountId, omr, txHash = null, now = Date.now() } = {}) {
+  if (process.env.LIQUIDITY_AUTOMATION_ENABLED === 'on')
+    await (await import('./liquiditypolicy.js')).refreshLiquidityObservation(pool);
   assertExistingDeskFillOpen();
   const key = String(ref || '').trim();
   if (!key) throw new GameError('ref', 'A fill needs a ref (mainnet: txHash:logIndex).');
@@ -429,7 +434,8 @@ export async function runDeskInvariants(pool) {
   // something other than the purchase, THIS is the check that says so.
   const buybackMinted = Number((await pool.query(
     `SELECT COALESCE(SUM(amount),0) s FROM transactions WHERE currency='omr' AND reason='desk:buyback'`)).rows[0].s);
-  const hardBought = Number((await pool.query('SELECT COALESCE(SUM(omr_bought),0) s FROM desk_buys')).rows[0].s);
+  const directFees = Number((await pool.query('SELECT COALESCE(SUM(primary_booked),0) s FROM liquidity_settlements WHERE stream=1 AND eth_wei=0')).rows[0].s);
+  const hardBought = Number((await pool.query('SELECT COALESCE(SUM(omr_bought),0) s FROM desk_buys')).rows[0].s) + directFees;
   push('buyback backed by a real purchase', buybackMinted, hardBought, 0.000001, { hardBought });
   const desk = await deskInventory(pool);
   push('desk books the buyback', Number(desk.lifetime_bought), hardBought, 0.000001);
@@ -443,6 +449,8 @@ export async function runDeskInvariants(pool) {
 // read the shelf, the clock and the price. `sinks` names WHICH spends feed it, so the claim is
 // checkable and not just stated.
 export async function deskBoard(pool, now = Date.now()) {
+  if (process.env.LIQUIDITY_AUTOMATION_ENABLED === 'on')
+    await (await import('./liquiditypolicy.js')).refreshLiquidityObservation(pool);
   const genesis = genesisLaunchStatus();
   const d = await deskInventory(pool);
   const recycledToday = Number((await pool.query(

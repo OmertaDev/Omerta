@@ -260,6 +260,10 @@ Assert-ScalarEquals 'OMR sell tax' (Convert-CastUint (Invoke-Cast $cast @('call'
 Assert-AddressEquals 'GearVault minter' (Invoke-Cast $cast @('call', $predicted.GearVault, 'minter()(address)', '--rpc-url', $RpcUrl)) $zero
 Assert-AddressEquals 'StockVault keeper' (Invoke-Cast $cast @('call', $predicted.StockVault, 'keeper()(address)', '--rpc-url', $RpcUrl)) $zero
 Assert-AddressEquals 'OmertaBond oracle' (Invoke-Cast $cast @('call', $predicted.OmertaBond, 'oracle()(address)', '--rpc-url', $RpcUrl)) $zero
+Assert-ScalarEquals 'OmertaFees character mint DEV bps' (Convert-CastUint (Invoke-Cast $cast @('call', $predicted.OmertaFees, 'mintDevBps()(uint256)', '--rpc-url', $RpcUrl))) '10000'
+Assert-ScalarEquals 'OmertaFees non-mint Vig bps' (Convert-CastUint (Invoke-Cast $cast @('call', $predicted.OmertaFees, 'vigBps()(uint256)', '--rpc-url', $RpcUrl))) ([string]$config.VIG_BPS)
+Assert-AddressEquals 'OmertaFees DEV recipient' (Invoke-Cast $cast @('call', $predicted.OmertaFees, 'feeRecipient()(address)', '--rpc-url', $RpcUrl)) ([string]$config.DEV_WALLET)
+Assert-AddressEquals 'OmertaFees Vig recipient' (Invoke-Cast $cast @('call', $predicted.OmertaFees, 'vigRecipient()(address)', '--rpc-url', $RpcUrl)) ([string]$config.VIG_WALLET)
 Assert-ScalarEquals 'VoucherClaim daily cap' (Convert-CastUint (Invoke-Cast $cast @('call', $predicted.VoucherClaim, 'dailyCapOMR()(uint256)', '--rpc-url', $RpcUrl))) ([string]$config.DAILY_CAP_OMR)
 Assert-ScalarEquals 'StreetDeed daily cap' (Convert-CastUint (Invoke-Cast $cast @('call', $predicted.StreetDeed, 'dailyMintCap()(uint256)', '--rpc-url', $RpcUrl))) ([string]$config.DEED_DAILY_MINT_CAP)
 Assert-ScalarEquals 'DynastyNFT daily cap' (Convert-CastUint (Invoke-Cast $cast @('call', $predicted.DynastyNFT, 'dailyMintCap()(uint256)', '--rpc-url', $RpcUrl))) ([string]$config.DYNASTY_DAILY_MINT_CAP)
@@ -330,6 +334,7 @@ $manifest = [ordered]@{
             endingNonce = $expectedInitialNonce + $expectedContracts.Count
             contracts = $contracts
             transactions = $transactionRecords
+            feePolicy = [ordered]@{ mintDevBps = 10000; nonMintVigBps = [int]$config.VIG_BPS; mintRecipient = 'DEV_WALLET' }
         }
         bank = [ordered]@{ status = 'deferred-pending-audit-and-post-launch-catalyst' }
         twap = [ordered]@{ status = 'deferred-until-canonical-pool-exists' }

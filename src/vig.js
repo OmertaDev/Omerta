@@ -106,6 +106,8 @@ export async function payPlex(ch, kind, client, h) {
 // the revenue row and the fee row commit together. Amounts arrive in wei (string) and are stored
 // in ETH units to stay inside JS-safe-integer range for the accounting math.
 export async function recordVigRevenue(client, { source, ref, kind, amountWei, bps }) {
+  // Mint revenue belongs entirely to DEV_WALLET, even if a caller supplies an override.
+  if (source === 'fee' && kind === 'mint') return { recorded: false };
   let grossEth = 0;
   try { grossEth = Number(BigInt(amountWei ?? '0')) / 1e18; } catch { grossEth = 0; }
   if (!(grossEth > 0)) return { recorded: false };
@@ -282,6 +284,11 @@ export async function chainParity() {
     if (Number(onchain) !== Number(backend)) mismatches.push({ what, onchain: Number(onchain), backend: Number(backend) });
   };
   cmp('OmertaFees.vigBps', chain.feeVigBps, VIG_BPS);
+  if (chain.feeVigBps !== undefined || chain.feeMintDevBps !== undefined) {
+    if (chain.feeMintDevBps === undefined || chain.feeMintDevBps === null)
+      mismatches.push({ what: 'OmertaFees.mintDevBps', onchain: null, backend: 10000 });
+    else cmp('OmertaFees.mintDevBps', chain.feeMintDevBps, 10000);
+  }
   cmp('OmertaBond.polBps', chain.bondPolBps, BONDS.POL_BPS);
   cmp('OmertaBond.devBps', chain.bondDevBps, BONDS.DEV_BPS);
   cmp('OmertaBond.rwaBps', chain.bondRwaBps, BONDS.RWA_BPS);
@@ -330,8 +337,13 @@ export async function runVigInvariants(pool) {
   const revenueIn = round6(await sumEth(pool, 'vig_revenue', 'vig_eth'));
   const ethSpent = round6(await sumEth(pool, 'vig_buyback', 'eth_spent', 'WHERE real'));
   const omrBought = round6(await sumEth(pool, 'vig_buyback', 'omr_bought', 'WHERE real'));
-  const toReserve = round6(await sumEth(pool, 'vig_buyback', 'to_reserve', 'WHERE real'));
-  const toPrize = round6(await sumEth(pool, 'vig_buyback', 'to_prize', 'WHERE real'));
+  const boughtToReserve = round6(await sumEth(pool, 'vig_buyback', 'to_reserve', 'WHERE real'));
+  const boughtToPrize = round6(await sumEth(pool, 'vig_buyback', 'to_prize', 'WHERE real'));
+  // Direct OMR fees need no swap. Their exact delivery receipts are a separate source so they
+  // never fabricate an ETH execution price or contaminate the canonical buyback price history.
+  const directVig = (await pool.query('SELECT COALESCE(SUM(primary_booked),0) reserve,COALESCE(SUM(secondary_booked),0) prize FROM liquidity_settlements WHERE stream=0 AND eth_wei=0')).rows[0];
+  const toReserve = round6(boughtToReserve + num(directVig.reserve));
+  const toPrize = round6(boughtToPrize + num(directVig.prize));
   const pp = (await pool.query('SELECT balance, paid_total FROM vig_prize_pool WHERE id=1')).rows[0] || {};
   const prizePaid = round6(num(pp.paid_total));
   const prizeBalance = round6(num(pp.balance));
@@ -349,7 +361,8 @@ export async function runVigInvariants(pool) {
   // `WHERE real` matches the gate on the credit itself (desk.js: only a REAL buy funds the reserve).
   // The two must agree or the sandwich fires spuriously — which is the point: with both halves gated
   // this pair now CATCHES a comp-funded reserve instead of silently absorbing it.
-  const deskToReserve = round6(await sumEth(pool, 'desk_buys', 'omr_bought', 'WHERE real'));
+  const directDesk = num((await pool.query('SELECT COALESCE(SUM(primary_booked),0) s FROM liquidity_settlements WHERE stream=1 AND eth_wei=0')).rows[0].s);
+  const deskToReserve = round6(await sumEth(pool, 'desk_buys', 'omr_bought', 'WHERE real') + directDesk);
   // THE CITY LEG (src/bank.js) is the third legitimate funder. Every $OMR it credits a player is
   // fundReserve'd for the same amount immediately after the commit — the payPrizes shape — so its
   // lifetime paid IS its contribution to `funded`. It has to be named in BOTH terms below, and the
@@ -363,7 +376,7 @@ export async function runVigInvariants(pool) {
   // (1) the bot never spends more ETH than the Vig received — the root cap
   push('spend ≤ revenue', ethSpent <= revenueIn + eps, { ethSpent, revenueIn });
   // (2) every bought $OMR is split to reserve + prize, nothing conjured
-  push('buyback split exact', Math.abs((toReserve + toPrize) - omrBought) <= eps, { toReserve, toPrize, omrBought });
+  push('buyback split exact', Math.abs((boughtToReserve + boughtToPrize) - omrBought) <= eps, { toReserve: boughtToReserve, toPrize: boughtToPrize, omrBought });
   // (3) the reserve holds ONLY Vig-bought $OMR — the buyback's reserve share plus any prize $OMR
   // moved from the pool to back a prize withdrawal. No unbacked (team-charity) funding.
   push('reserve fully backed', funded <= toReserve + prizePaid + deskToReserve + cityPaid + eps,

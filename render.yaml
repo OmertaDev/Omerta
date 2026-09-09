@@ -155,11 +155,9 @@ services:
       - key: NODE_ENV
         value: production
       - key: INVITE_MODE
-        value: "off"              # LAUNCH (founder-directed 2026-08-12): the doors are OPEN — anyone
-                                 # can create an account. `off` is also the code default, but a launch
-                                 # posture resting on an unstated default is invisible: written here so
-                                 # opening or closing the doors is a diff, not somebody's memory.
-                                 # Set to "on" to go back to closed alpha (codes: POST /v1/mod/invites).
+        value: "on"               # Launch: invite required to view the city or create an account.
+                                 # Existing accounts keep access. Import the private campaign batch
+                                 # with tools/invites.js before distributing codes (tools/invites.md).
       - key: SOCIAL_VERIFY_MODE
         value: live               # REQUIRED in production or social/First-Week rewards pay nothing.
                                  # BUT `live` means "verify for real", and that needs a token to verify
@@ -241,7 +239,8 @@ services:
   #     lock's own comment records its case: the DEX bots each SENDING real ETH, the city leg on a
   #     MINT path, the population's metered daily faucet spending its whole allowance twice.
   #   · the defence is PER JOB, never global. These modules take a session advisory lock —
-  #     `bank.js`, `dexbot.js`, `treasury.js`, `npcwar.js`, `population.js`, `diplomacy.js` — and
+  #     `bank.js`, `dexbot.js`, `treasury.js`, `npcwar.js`, `population.js`, `diplomacy.js`,
+  #     `keepertransactions.js` — and
   #     every other job rests on its own claim-then-act latch. A NEW job inherits nothing: it
   #     carries that discipline itself, or it double-runs the day a second replica exists.
   # That second replica is not hypothetical — it is the threat model each of those locks names in

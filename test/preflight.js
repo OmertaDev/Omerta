@@ -11,6 +11,7 @@
 // This is the test/migrate.js DISPOSITION guard applied to config instead of tables.
 import assert from 'node:assert';
 import fs from 'node:fs';
+import { parse } from 'acorn';
 import * as Preflight from '../src/preflight.js';
 import { walkSrc } from './lib/srcfiles.js';
 
@@ -45,6 +46,151 @@ assert.deepEqual(Preflight.normalizeRwaReviewerConfig({
 }, 'valid configuration returns one canonical public identity without mutating the secret');
 
 // ════════════ THE DRIFT DETECTOR ════════════
+// These two production consumers deliberately accept an injected environment for deterministic
+// tests. Admit their reads only after proving the binding and a real default-using caller. This
+// is a bounded supplement to the existing direct-read inventory, not a scan of arbitrary env.X.
+function walkEnvAst(node, visit, parent = null) {
+  if (!node || typeof node.type !== 'string') return;
+  visit(node, parent);
+  for (const child of Object.values(node)) {
+    if (Array.isArray(child)) for (const value of child) walkEnvAst(value, visit, node);
+    else if (child && typeof child === 'object') walkEnvAst(child, visit, node);
+  }
+}
+function envBindingNames(pattern) {
+  if (!pattern) return [];
+  if (pattern.type === 'Identifier') return [pattern.name];
+  if (pattern.type === 'AssignmentPattern') return envBindingNames(pattern.left);
+  if (pattern.type === 'RestElement') return envBindingNames(pattern.argument);
+  if (pattern.type === 'ObjectPattern') return pattern.properties.flatMap(p => envBindingNames(p.value ?? p.argument));
+  if (pattern.type === 'ArrayPattern') return pattern.elements.flatMap(envBindingNames);
+  return [];
+}
+function assertEnvNamesUnchanged(tree, names, label) {
+  walkEnvAst(tree, (node) => {
+    const declared = node.type === 'VariableDeclarator' ? envBindingNames(node.id)
+      : /^(?:FunctionDeclaration|FunctionExpression|ArrowFunctionExpression)$/.test(node.type)
+        ? [...envBindingNames(node.id), ...node.params.flatMap(envBindingNames)]
+        : /^(?:ClassDeclaration|ClassExpression)$/.test(node.type) ? envBindingNames(node.id)
+          : node.type === 'CatchClause' ? envBindingNames(node.param) : [];
+    assert(!declared.some(name => names.has(name)), `${label}: admitted binding is shadowed or redeclared`);
+    const target = node.type === 'AssignmentExpression' ? node.left
+      : node.type === 'UpdateExpression' || node.type === 'UnaryExpression' && node.operator === 'delete' ? node.argument : null;
+    let root = target;
+    while (root?.type === 'MemberExpression') root = root.object;
+    const assigned = root?.type === 'Identifier' ? [root.name] : envBindingNames(target);
+    assert(!assigned.some(name => names.has(name)), `${label}: admitted binding is reassigned or mutated`);
+  });
+}
+function injectedLiquidityEnvReads(consumerText, callerText) {
+  const options = { ecmaVersion: 'latest', sourceType: 'module' };
+  const consumer = parse(consumerText, options), caller = parse(callerText, options);
+  const exported = (ast, name) => ast.body.find(n => n.type === 'ExportNamedDeclaration'
+    && n.declaration?.type === 'FunctionDeclaration' && n.declaration.id.name === name)?.declaration;
+  const isProcessEnv = node => node?.type === 'MemberExpression' && !node.computed
+    && node.object.type === 'Identifier' && node.object.name === 'process'
+    && node.property.type === 'Identifier' && node.property.name === 'env';
+  const isDefaultEnv = node => node?.type === 'AssignmentPattern'
+    && node.left.type === 'Identifier' && node.left.name === 'env' && isProcessEnv(node.right);
+  const names = ['liquidityKeeperConfig', 'makeLiquidityKeeperClients'];
+  const functions = names.map(name => {
+    const fn = exported(consumer, name);
+    assert(fn, `missing admitted environment consumer ${name}`);
+    return fn;
+  });
+  assert(functions[0].params.length === 1 && isDefaultEnv(functions[0].params[0]),
+    'liquidityKeeperConfig must bind its environment parameter to process.env');
+  const clientOptions = functions[1].params[1];
+  assert(functions[1].params.length === 2 && clientOptions?.type === 'AssignmentPattern'
+    && clientOptions.left.type === 'ObjectPattern' && clientOptions.right.type === 'ObjectExpression'
+    && clientOptions.right.properties.length === 0
+    && clientOptions.left.properties.some(p => p.type === 'Property' && !p.computed
+      && p.key.name === 'env' && isDefaultEnv(p.value)),
+  'makeLiquidityKeeperClients must default its options and env property to process.env');
+  // A module-local process object would invalidate both default proofs.
+  assertEnvNamesUnchanged(consumer, new Set(['process']), 'consumer process');
+  for (const node of consumer.body.filter(n => n.type === 'ImportDeclaration'))
+    assert(!node.specifiers.some(s => s.local.name === 'process'), 'consumer process must be the global process');
+
+  const production = exported(caller, 'runLiquidityAutomationCycle');
+  assert(production, 'missing production liquidity automation caller');
+  const imported = new Map(caller.body.filter(n => n.type === 'ImportDeclaration'
+    && n.source.value === './liquiditykeeper.js').flatMap(n => n.specifiers
+    .filter(s => s.type === 'ImportSpecifier').map(s => [s.imported.name, s.local.name])));
+  assert(names.every(name => imported.has(name)), 'production caller must import both admitted consumers');
+  const importedNames = new Set(names.map(name => imported.get(name)));
+  assert(!production.params.flatMap(envBindingNames).some(name => importedNames.has(name)),
+    'production parameters cannot shadow admitted imports');
+  assertEnvNamesUnchanged(production.body, importedNames, 'production consumer imports');
+  const defaultCalls = new Set();
+  walkEnvAst(production.body, node => {
+    if (node.type !== 'CallExpression' || node.callee.type !== 'Identifier') return;
+    if (node.callee.name === imported.get(names[0]) && node.arguments.length === 0) defaultCalls.add(names[0]);
+    if (node.callee.name !== imported.get(names[1])) return;
+    const supplied = node.arguments[1];
+    if (node.arguments.length === 1 || node.arguments.length === 2 && supplied.type === 'ObjectExpression'
+      && supplied.properties.every(p => p.type === 'Property' && !p.computed
+        && (p.key.name ?? p.key.value) !== 'env')) defaultCalls.add(names[1]);
+  });
+  assert(names.every(name => defaultCalls.has(name)), 'production caller must invoke both consumers using the environment defaults');
+
+  const reads = new Set();
+  for (const fn of functions) {
+    assertEnvNamesUnchanged(fn.body, new Set(['env']), fn.id.name);
+    walkEnvAst(fn.body, (node, parent) => {
+      if (node.type !== 'Identifier' || node.name !== 'env') return;
+      assert(parent?.type === 'MemberExpression' && parent.object === node,
+        `${fn.id.name}: environment aliases or escapes need an explicit inventory rule`);
+      const key = parent.computed ? parent.property.type === 'Literal' ? parent.property.value : null : parent.property.name;
+      assert(typeof key === 'string' && /^[A-Z_0-9]+$/.test(key), `${fn.id.name}: environment key must be a literal`);
+      reads.add(key);
+    });
+  }
+  return reads;
+}
+
+// Scanner regressions use source strings only: no environment mutation, filesystem fixture or key.
+{
+  const consumer = `
+    export function liquidityKeeperConfig(env = process.env) {
+      // env.COMMENT_ONLY is not a read.
+      const prose = 'env.STRING_ONLY';
+      return (() => env.CONFIG_READ)();
+    }
+    export function makeLiquidityKeeperClients(config, { env = process.env, signing = false } = {}) {
+      return env['KEY_READ'];
+    }
+    function unrelated(env = {}) { return env.UNRELATED_READ; }
+    const env = { OBJECT_ONLY: true }; env.OBJECT_ONLY;
+  `;
+  const caller = `
+    import { liquidityKeeperConfig, makeLiquidityKeeperClients } from './liquiditykeeper.js';
+    export function runLiquidityAutomationCycle() {
+      const config = liquidityKeeperConfig();
+      return makeLiquidityKeeperClients(config, { signing: true });
+    }
+  `;
+  const expected = new Set(['CONFIG_READ', 'KEY_READ']);
+  assert.deepEqual(injectedLiquidityEnvReads(consumer, caller), expected,
+    'only proven environment bindings count, including a captured read and a literal bracket key');
+  const deleted = injectedLiquidityEnvReads(consumer.replace('env.CONFIG_READ', 'null'), caller);
+  assert.deepEqual([...expected].filter(key => !deleted.has(key)), ['CONFIG_READ'],
+    'deleting an injected read remains visible to the stale-classification comparison');
+  const added = injectedLiquidityEnvReads(consumer.replace('return env[', 'void env.NEW_UNCLASSIFIED; return env['), caller);
+  assert.deepEqual([...added].filter(key => !expected.has(key)), ['NEW_UNCLASSIFIED'],
+    'a new injected read remains visible to the missing-classification comparison');
+  for (const [label, changedConsumer, changedCaller] of [
+    ['non-process default', consumer.replace('env = process.env', 'env = {}'), caller],
+    ['shadowed closure', consumer.replace('() => env.CONFIG_READ', '(env) => env.CONFIG_READ'), caller],
+    ['reassigned environment', consumer.replace('return (()', 'env = {}; return (()'), caller],
+    ['escaped alias', consumer.replace('return (()', 'const alias = env; return (()'), caller],
+    ['overridden caller', consumer, caller.replace('signing: true', 'signing: true, env: {}')],
+    ['caller spread', consumer, caller.replace('signing: true', '...overrides, signing: true')],
+    ['wrong import', consumer, caller.replace('./liquiditykeeper.js', './fake.js')],
+    ['call removed', consumer, caller.replace('const config = liquidityKeeperConfig();', 'const config = {}; // liquidityKeeperConfig();')],
+  ]) assert.throws(() => injectedLiquidityEnvReads(changedConsumer, changedCaller), undefined, label);
+}
+
 const used = new Set();
 // preflight.js is the classifier, not a consumer — it only ever reads the `env` object it is
 // handed, and its prose mentions `process.env.X` generically, which the scanner would take literally
@@ -52,6 +198,8 @@ const used = new Set();
 // it moves into a subdirectory, which is the exact drift this detector exists to catch.
 for (const f of walkSrc('src', { exclude: ['src/preflight.js'] }))
   for (const m of fs.readFileSync(f, 'utf8').matchAll(/process\.env\.([A-Z_0-9]+)/g)) used.add(m[1]);
+for (const key of injectedLiquidityEnvReads(fs.readFileSync('src/liquiditykeeper.js', 'utf8'),
+  fs.readFileSync('src/liquidityautomation.js', 'utf8'))) used.add(key);
 
 const unclassified = [...used].filter((v) => !CLASSIFIED.has(v)).sort();
 assert.deepEqual(unclassified, [],

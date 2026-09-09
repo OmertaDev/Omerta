@@ -93,6 +93,62 @@ for (const [source, expected, label] of finalCallbackCases) {
   assert.equal(knowledge.finalCallbackCall(source), expected, label);
 }
 
+assert.equal(typeof knowledge.callbackFactoryHandlers, 'function',
+  'shared callback-factory provenance must be directly regression-testable');
+const factorySource = `function register(app) {
+  const servePage = (html) => async (req, reply) => reply.send(html);
+  const invitePage = servePage('invite');
+  const gamePage = servePage('game');
+  app.get('/', async (req, reply) =>
+    Invites.inviteModeEnabled() ? invitePage(req, reply) : gamePage(req, reply));
+}`;
+const factoryCases = [
+  [factorySource, 'servePage', 'conditional callbacks share one proven factory, not their predicate'],
+  [factorySource.replace("Invites.inviteModeEnabled() ? invitePage(req, reply) : gamePage(req, reply)",
+    "ready ? invitePage(req, reply) : (other ? gamePage(req, reply) : invitePage(req, reply))"),
+  'servePage', 'every nested terminal branch agrees on one factory'],
+  [factorySource.replace("Invites.inviteModeEnabled() ? invitePage(req, reply) : gamePage(req, reply)",
+    "{ if (!ready) return null; return gamePage(req, reply); }"),
+  'servePage', 'final top-level return delegates to the prebuilt callback after a guard'],
+  [factorySource.replace("Invites.inviteModeEnabled() ? invitePage(req, reply) : gamePage(req, reply)",
+    "servePage('game')(req, reply)"), 'servePage', 'immediate callback-factory invocation preserves its local provenance'],
+  [factorySource.replace("const gamePage = servePage('game');",
+    "const otherFactory = (html) => (req, reply) => reply.send(html); const gamePage = otherFactory('game');"),
+  null, 'different factories cannot claim one common handler'],
+  [factorySource.replace('gamePage(req, reply)', 'Accounts.board(req)'), null,
+    'a domain-operation branch cannot be labeled as the page factory'],
+  [factorySource.replace('gamePage(req, reply)', 'null'), null,
+    'a conditional branch with no callback does not prove a common factory'],
+  [factorySource.replace('const gamePage =', 'let gamePage ='), null,
+    'a mutable callback alias cannot acquire fixed factory provenance'],
+  [factorySource.replace('const servePage =', 'let servePage ='), null,
+    'a mutable factory cannot acquire fixed factory provenance'],
+  [factorySource.replace('async (req, reply) => reply.send(html)', '(req, reply) => html'), 'servePage',
+    'factory identity follows the returned function rather than a particular reply implementation'],
+  [factorySource.replace('async (req, reply) => reply.send(html)', 'html'), null,
+    'an ordinary value-returning helper is not a callback factory'],
+  [factorySource.replace("  app.get('/',", "  gamePage = replacement; app.get('/',"), null,
+    'an intervening callback assignment invalidates provenance'],
+  [factorySource.replace("  app.get('/',", "  servePage = replacement; app.get('/',"), null,
+    'an intervening factory assignment invalidates provenance'],
+  [factorySource.replace('async (req, reply) =>\n    Invites', 'async (req, gamePage) =>\n    Invites'), null,
+    'a callback parameter cannot shadow a selected alias'],
+  [factorySource.replace("Invites.inviteModeEnabled() ? invitePage(req, reply) : gamePage(req, reply)",
+    "{ const { gamePage } = injected; return gamePage(req, reply); }"), null,
+  'a callback-local destructured binding cannot inherit the outer factory'],
+  [factorySource.replace("Invites.inviteModeEnabled() ? invitePage(req, reply) : gamePage(req, reply)",
+    "{ const nested = () => gamePage(req, reply); }"), null,
+  'an unreturned nested invocation does not own the route'],
+  [factorySource.replace("  const invitePage = servePage('invite');", "  { const invitePage = servePage('invite'); }"), null,
+    'an alias declared in an inaccessible sibling scope is not resolved'],
+];
+for (const [source, expected, label] of factoryCases) {
+  const handlers = knowledge.callbackFactoryHandlers(source);
+  assert.deepEqual([...handlers.values()], expected ? [expected] : [], label);
+  if (expected) assert.equal(handlers.get(source.indexOf('app.get')), expected,
+    `${label}: provenance is attached to the exact route registration offset`);
+}
+
 const root = path.resolve(fileURLToPath(new URL('..', import.meta.url)));
 const generatedFiles = fs.readdirSync(path.join(root, 'knowledge', 'generated'))
   .map((name) => `knowledge/generated/${name}`).sort();
@@ -290,8 +346,13 @@ assert.equal(routeById.get('GET /v1/auth/x/callback')?.handler, 'A.xOAuthCallbac
   'X callbacks must keep their domain handler rather than promoting the incidental cookie parser');
 for (const route of ['GET /', 'GET /admin', 'GET /wiki', 'GET /arena', 'GET /play', 'GET /path']) {
   assert.equal(routeById.get(route)?.handler, 'servePage',
-    `${route} must resolve its direct callback-factory handler argument`);
+    `${route} must resolve its direct or proven common callback-factory handler`);
 }
+assert.equal(routeById.get('GET /')?.handlerFile, 'src/server.js',
+  'the invite-gated root page remains owned by its local servePage factory');
+assert.deepEqual(model.graph.edges.filter(edge => edge.type === 'HANDLED_BY' && edge.from === 'Route:GET /')
+  .map(edge => ({ to: edge.to, symbol: edge.symbol })), [{ to: 'Artifact:src/server.js', symbol: 'servePage' }],
+'the root page has exactly one factory provenance edge, without promoting the invitation predicate');
 for (const route of ['POST /v1/auth/x', 'POST /v1/auth/privy']) {
   assert.equal(routeById.get(route)?.handler, 'providerLogin',
     `${route} must resolve its direct callback-factory handler argument`);

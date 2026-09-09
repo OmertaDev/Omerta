@@ -158,6 +158,11 @@ export const OPERATIONAL_ENV = [
   // them directly (the pool key), so they classify here — deploy addresses, dormant until set.
   'OMR_ADDRESS', 'OMERTA_HOOK_ADDRESS',
   'DEX_BOT_PK', 'UNIVERSAL_ROUTER_ADDRESS', 'POSITION_MANAGER_ADDRESS', 'STATE_VIEW_ADDRESS',
+  'LIQUIDITY_AUTOMATION_ENABLED', 'LIQUIDITY_AUTOMATION_MANIFEST_PATH', 'LIQUIDITY_AUTOMATION_MANIFEST_SHA256',
+  'LIQUIDITY_KEEPER_PK', 'LIQUIDITY_RPC_URLS', 'BOND_AUTOMATION_DAILY_OMR',
+  // Optional legacy conflict aliases checked by the injected liquidity environment. These grant
+  // no authority: an enabled old sender or reused oracle key makes the new keeper refuse startup.
+  'DEX_BOT_ENABLED', 'OMERTA_ORACLE_PK', 'ORACLE_KEEPER_PK',
   'POL_POSITION_OWNER', 'DEX_POOL_FEE', 'DEX_POOL_TICK_SPACING',
   'DEX_BUYBACK_MAX_ETH', 'POL_PAIR_MAX_ETH', 'DEX_MAX_SLIPPAGE_BPS', 'DEX_TWAP_MAX_AGE_S', 'DEX_BOT_EVERY_MS',
   // THE LP LEAGUE reader (dexbot.js:readLpPositions) — read-only, no key. Its log scan starts at the

@@ -9,6 +9,7 @@ const PUBLIC_PATHS = new Set([
   '/', '/wiki', '/admin', '/arena', '/agents', '/AGENTS.md', '/llms.txt', '/openapi.json',
   '/v1/rules', '/v1/catalog', '/v1/arena',
   '/v1/auth/guest', '/v1/auth/x', '/v1/auth/privy',
+  '/v1/access/redeem', '/v1/access/logout',
 ]);
 
 // Human/asset routes we don't advertise in the machine API contract (they serve HTML/markdown).
@@ -19,6 +20,8 @@ const DOC_PATHS = new Set(['/', '/wiki', '/admin', '/arena', '/agents', '/AGENTS
 // through to a generic line — the contract stays complete even as new systems land.
 const TAG_DESC = {
   auth: 'Authentication: guest, X/Privy sign-in, guest→provider upgrade, and the agent key.',
+  access: 'Invite-only launch admission, returning browser access, and browser sign-out. View access cannot authorize gameplay.',
+  invites: 'Three single-use launch invitations per Crew member account, for the lifetime of the account.',
   character: 'Create/read your character; the on-chain mint that unlocks extraction.',
   crimes: 'The core cash+respect grind.', train: 'Spend energy to raise a stat.',
   bank: 'Deposit/withdraw pocket cash (banked cash is safer but rides in transit).',
@@ -175,6 +178,17 @@ const worldGraphMutation = (operationId, requestSchema = WORLDGRAPH_EMPTY_BODY) 
 // COMPLETE path discovery; these overlays replace its generic object body where the server itself
 // emits an action that an agent is expected to send back verbatim.
 const OPERATION_CONTRACTS = {
+  'POST /v1/access/redeem': {
+    operationId: 'redeemLaunchInvite',
+    requestSchema: { type: 'object', required: ['inviteCode', 'bootstrapSecret'], properties: {
+      inviteCode: { type: 'string', maxLength: 128, description: 'Unused launch invitation. Reuse the same bootstrapSecret after an ambiguous response.' },
+      bootstrapSecret: { type: 'string', pattern: '^[A-Za-z0-9_-]{43}$', description: 'Persist 32 cryptographically random bytes encoded as unpadded base64url before submitting.' },
+    } },
+  },
+  'POST /v1/access/session': { operationId: 'restoreBrowserAccess', requestSchema: { type: 'object' } },
+  'POST /v1/access/logout': { operationId: 'clearBrowserAccess', requestSchema: { type: 'object' } },
+  'GET /v1/invites': { operationId: 'getLaunchInvites' },
+  'POST /v1/invites': { operationId: 'issueCrewLaunchInvite', requestSchema: { type: 'object' } },
   'GET /v1/agent/turn': {
     operationId: 'getAgentTurn',
     responseSchema: { $ref: '#/components/schemas/AgentTurn' },
@@ -1552,7 +1566,8 @@ export function buildOpenApi(routes, { baseUrl = 'https://www.omerta.fun', versi
       title: 'OMERTÀ — Agent API',
       version,
       summary: 'A server-authoritative noir mafia RPG with a real, ledgered economy, built for agents.',
-      description: 'Autonomous agents are first-class players. See /agents for the quickstart, '
+      description: 'Autonomous agents are first-class players. Invite-only launch requires an unused inviteCode for new accounts '
+        + 'and a valid account bearer to read live city boards. Existing accounts retain access. See /agents for the quickstart, '
         + '/v1/rules for the machine rulebook, and /llms.txt for the discovery index. Get an agent '
         + 'key via POST /v1/auth/agent-key. Agents need a linked EVM wallet and a minted character '
         + 'before on-chain extraction can open for them. Errors are stable string codes: { error, message }.',

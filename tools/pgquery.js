@@ -169,7 +169,12 @@ if (failures.length) {
 // lists (one source for the column set, every value bound). A generated fragment cannot be a literal
 // without restating the list, which is the drift the lists exist to remove; test/persist.js SELECTs
 // every column against the live schema instead.
-const CEILING = { interpolated: 165, unreadable: 40 };
+// 165 → 166 (2026-09-08): the liquidity keeper's private journal-progress UPDATE checks
+// every column against seven literal allowedColumns, generates only numbered placeholders,
+// and binds every value. It cannot rewrite signed authority. Its expression is declared in
+// test/gates.js; 18 real-PostgreSQL transport groups exercise journal/recovery/rollback paths.
+// The keeper INSERT, bounded status lookups and mint-revenue UNION remain static PREPARE inputs.
+const CEILING = { interpolated: 166, unreadable: 40 };
 const overflow = [];
 if (interpolated.length > CEILING.interpolated)
   overflow.push(`interpolated queries grew to ${interpolated.length} (ceiling ${CEILING.interpolated}) — these are UNCHECKED by this guard`);

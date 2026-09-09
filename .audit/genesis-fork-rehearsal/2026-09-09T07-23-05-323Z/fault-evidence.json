@@ -1,0 +1,19 @@
+{
+  "sendOutage": {
+    "firstAction": "prepared",
+    "recoveryAction": "confirmed",
+    "signCount": 1,
+    "rawTxEqual": true,
+    "hashEqual": true,
+    "rawTx": "0x02f87082123702843b9aca00844786925682ab7c94cbbe2a5c3a22be749d5ddf24e9534f98951983e28084a2e62045c080a029200945a4b99eab827d0c59e784cc36d8a5a0da670a071093769d5c0ec15301a07e61f86d45cdc32ab0bf66b4d9f702f8ce6227bc1882f2de9a893eebfa73d0ff",
+    "txHash": "0xa7b7b69fc8044b22c4adf1bf8c0dbdb4aecc8df4a16dd4584fcf2803eada5d9d"
+  },
+  "receiptTimeout": {
+    "firstAction": "pending",
+    "recoveryAction": "confirmed",
+    "signCount": 1,
+    "sendCount": 1,
+    "watchedSameHash": true,
+    "txHash": "0x6c630ca3de9c9c1917ff97b291fb6ab996ef19bd1cc74b5bbca9f9246f67b236"
+  }
+}

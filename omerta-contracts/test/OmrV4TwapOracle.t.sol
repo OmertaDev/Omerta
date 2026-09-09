@@ -128,6 +128,7 @@ contract OmrV4TwapOracleTest is Test {
         assertEq(oracle.fee(), FEE);
         assertEq(oracle.tickSpacing(), TICK_SPACING);
         assertEq(PoolId.unwrap(oracle.poolId()), PoolId.unwrap(key.toId()));
+        assertTrue(oracle.baselineInitialized(), "an initialized constructor should preserve its existing seed semantics");
         (uint256 price, uint256 updatedAt) = oracle.consult();
         assertEq(price, 0, "a fresh oracle cannot publish a spot price");
         assertEq(updatedAt, 0);
@@ -137,6 +138,183 @@ contract OmrV4TwapOracleTest is Test {
         vm.warp(block.timestamp + PERIOD - 1);
         vm.expectRevert(abi.encodeWithSelector(OmrV4TwapOracle.PeriodNotElapsed.selector, PERIOD - 1, PERIOD));
         oracle.update();
+    }
+
+    function test_bootstrap_deploys_before_pool_initialization_and_has_no_quote() public {
+        MockV4ObservationSource unopenedSource = new MockV4ObservationSource(manager);
+        OmrV4TwapOracle bootstrap = new OmrV4TwapOracle(unopenedSource, address(omr), FEE, TICK_SPACING, PERIOD);
+        assertFalse(bootstrap.baselineInitialized());
+        assertEq(address(bootstrap.source()), address(unopenedSource));
+        assertEq(address(bootstrap.poolManager()), address(manager));
+        PoolKey memory unopenedKey = _key(unopenedSource, address(omr), FEE, TICK_SPACING);
+        assertEq(PoolId.unwrap(bootstrap.poolId()), PoolId.unwrap(unopenedKey.toId()));
+        assertEq(bootstrap.blockTimestampLast(), 0);
+        assertEq(bootstrap.tickCumulativeLast(), 0);
+        (uint256 price, uint256 updatedAt) = bootstrap.consult();
+        assertEq(price, 0);
+        assertEq(updatedAt, 0);
+    }
+
+    function test_uninitialized_update_reverts_observe_noops_and_identity_is_still_enforced() public {
+        (MockV4ObservationSource unopenedSource, PoolKey memory unopenedKey, OmrV4TwapOracle bootstrap) = _bootstrap();
+        vm.warp(block.timestamp + 100 days);
+        vm.expectRevert(OmrV4TwapOracle.PoolNotInitialized.selector);
+        bootstrap.update();
+        vm.prank(address(unopenedSource));
+        bootstrap.observe(unopenedKey);
+        assertFalse(bootstrap.baselineInitialized());
+        assertEq(bootstrap.blockTimestampLast(), 0);
+        _assertUnavailable(bootstrap);
+
+        vm.expectRevert(OmrV4TwapOracle.NotObservationSource.selector);
+        bootstrap.observe(unopenedKey);
+        PoolKey memory wrongKey = _key(unopenedSource, address(omr), 500, 10);
+        vm.prank(address(unopenedSource));
+        vm.expectRevert(OmrV4TwapOracle.WrongPool.selector);
+        bootstrap.observe(wrongKey);
+    }
+
+    function test_first_initialized_update_discards_all_prebaseline_time() public {
+        (MockV4ObservationSource unopenedSource, PoolKey memory unopenedKey, OmrV4TwapOracle bootstrap) = _bootstrap();
+        vm.warp(block.timestamp + 100 days);
+        unopenedSource.initialize(unopenedKey.toId(), TICK_5000);
+        // Even history after pool initialization is ineligible until this oracle actually seeds.
+        vm.warp(block.timestamp + PERIOD * 2);
+        bootstrap.update();
+        assertTrue(bootstrap.baselineInitialized());
+        assertEq(bootstrap.blockTimestampLast(), uint32(block.timestamp));
+        assertEq(bootstrap.tickCumulativeLast(), int56(TICK_5000) * int56(uint56(PERIOD * 2)));
+        _assertUnavailable(bootstrap);
+
+        unopenedSource.setTick(-1);
+        vm.warp(block.timestamp + PERIOD - 1);
+        vm.expectRevert(abi.encodeWithSelector(OmrV4TwapOracle.PeriodNotElapsed.selector, PERIOD - 1, PERIOD));
+        bootstrap.update();
+        _assertUnavailable(bootstrap);
+        vm.warp(block.timestamp + 1);
+        bootstrap.update();
+        assertEq(bootstrap.arithmeticMeanTick(), -1, "prebaseline price history contaminated the first window");
+        (uint256 price, uint256 updatedAt) = bootstrap.consult();
+        assertGt(price, 0);
+        assertLt(price, 1e18);
+        assertEq(updatedAt, block.timestamp);
+    }
+
+    function test_first_initialized_observe_seeds_without_quote() public {
+        (MockV4ObservationSource unopenedSource, PoolKey memory unopenedKey, OmrV4TwapOracle bootstrap) = _bootstrap();
+        vm.warp(block.timestamp + PERIOD * 3);
+        unopenedSource.initialize(unopenedKey.toId(), 0);
+        vm.prank(address(unopenedSource));
+        bootstrap.observe(unopenedKey);
+        assertTrue(bootstrap.baselineInitialized());
+        _assertUnavailable(bootstrap);
+        vm.prank(address(unopenedSource));
+        bootstrap.observe(unopenedKey);
+        _assertUnavailable(bootstrap);
+        vm.warp(block.timestamp + PERIOD);
+        vm.prank(address(unopenedSource));
+        bootstrap.observe(unopenedKey);
+        (uint256 price, uint256 updatedAt) = bootstrap.consult();
+        assertEq(price, 1e18);
+        assertEq(updatedAt, block.timestamp);
+    }
+
+    function test_initialized_constructor_at_timestamp_zero_does_not_reseed() public {
+        vm.warp(0);
+        MockV4ObservationSource zeroSource = new MockV4ObservationSource(manager);
+        PoolKey memory zeroKey = _key(zeroSource, address(omr), FEE, TICK_SPACING);
+        zeroSource.initialize(zeroKey.toId(), 0);
+        OmrV4TwapOracle zeroOracle = new OmrV4TwapOracle(zeroSource, address(omr), FEE, TICK_SPACING, PERIOD);
+        assertTrue(zeroOracle.baselineInitialized());
+        assertEq(zeroOracle.blockTimestampLast(), 0);
+        vm.warp(PERIOD);
+        zeroOracle.update();
+        (uint256 price, uint256 updatedAt) = zeroOracle.consult();
+        assertEq(price, 1e18);
+        assertEq(updatedAt, PERIOD);
+    }
+
+    function test_deferred_baseline_at_uint32_zero_remains_initialized() public {
+        (MockV4ObservationSource unopenedSource, PoolKey memory unopenedKey, OmrV4TwapOracle bootstrap) = _bootstrap();
+        uint256 wrapAt = uint256(type(uint32).max) + 1;
+        vm.warp(wrapAt);
+        unopenedSource.initialize(unopenedKey.toId(), TICK_5000);
+        bootstrap.update();
+        assertTrue(bootstrap.baselineInitialized());
+        assertEq(bootstrap.blockTimestampLast(), 0);
+        _assertUnavailable(bootstrap);
+        vm.expectRevert(abi.encodeWithSelector(OmrV4TwapOracle.PeriodNotElapsed.selector, 0, PERIOD));
+        bootstrap.update();
+        vm.warp(wrapAt + PERIOD);
+        bootstrap.update();
+        (uint256 price,) = bootstrap.consult();
+        assertApproxEqRel(price, 5000e18, 2e15);
+    }
+
+    function test_deferred_baseline_window_crosses_timestamp_wrap() public {
+        (MockV4ObservationSource unopenedSource, PoolKey memory unopenedKey, OmrV4TwapOracle bootstrap) = _bootstrap();
+        uint256 seedAt = uint256(type(uint32).max) - PERIOD / 2;
+        vm.warp(seedAt);
+        unopenedSource.initialize(unopenedKey.toId(), -1);
+        bootstrap.update();
+        vm.warp(seedAt + PERIOD);
+        bootstrap.update();
+        assertTrue(bootstrap.baselineInitialized());
+        assertEq(bootstrap.arithmeticMeanTick(), -1);
+        (uint256 price, uint256 updatedAt) = bootstrap.consult();
+        assertGt(price, 0);
+        assertLt(price, 1e18);
+        assertEq(updatedAt, seedAt + PERIOD);
+    }
+
+    function test_deferred_bootstrap_retains_overlong_reset_and_honest_recovery() public {
+        (MockV4ObservationSource unopenedSource, PoolKey memory unopenedKey, OmrV4TwapOracle bootstrap) = _bootstrap();
+        unopenedSource.initialize(unopenedKey.toId(), 0);
+        bootstrap.update();
+        vm.warp(block.timestamp + PERIOD);
+        bootstrap.update();
+        vm.warp(block.timestamp + PERIOD * bootstrap.MAX_WINDOW_MULT() + 1);
+        bootstrap.update();
+        assertTrue(bootstrap.baselineInitialized());
+        _assertUnavailable(bootstrap);
+        vm.warp(block.timestamp + PERIOD);
+        bootstrap.update();
+        (uint256 price,) = bootstrap.consult();
+        assertEq(price, 1e18);
+    }
+
+    function testFuzz_no_prepool_or_prebaseline_time_qualifies(uint64 delay, uint32 early, int24 tick, bool observe)
+        public
+    {
+        delay = uint64(bound(delay, 0, uint256(type(uint32).max) * 2));
+        early = uint32(bound(early, 0, PERIOD - 1));
+        tick = int24(bound(int256(tick), -100_000, 100_000));
+        (MockV4ObservationSource unopenedSource, PoolKey memory unopenedKey, OmrV4TwapOracle bootstrap) = _bootstrap();
+        vm.warp(block.timestamp + delay);
+        unopenedSource.initialize(unopenedKey.toId(), tick);
+        // The same arbitrary delay exercises initialized history that must be discarded at seeding.
+        vm.warp(block.timestamp + delay);
+        if (observe) {
+            vm.prank(address(unopenedSource));
+            bootstrap.observe(unopenedKey);
+        } else {
+            bootstrap.update();
+        }
+        uint256 seedAt = block.timestamp;
+        assertTrue(bootstrap.baselineInitialized());
+        _assertUnavailable(bootstrap);
+        vm.warp(seedAt + early);
+        vm.prank(address(unopenedSource));
+        bootstrap.observe(unopenedKey);
+        _assertUnavailable(bootstrap);
+        vm.expectRevert(abi.encodeWithSelector(OmrV4TwapOracle.PeriodNotElapsed.selector, early, PERIOD));
+        bootstrap.update();
+        vm.warp(seedAt + PERIOD);
+        bootstrap.update();
+        assertEq(bootstrap.arithmeticMeanTick(), tick);
+        (uint256 price, uint256 updatedAt) = bootstrap.consult();
+        assertGt(price, 0);
+        assertEq(updatedAt, block.timestamp);
     }
 
     function test_tick_zero_closes_at_one_omr_per_eth() public {
@@ -250,7 +428,7 @@ contract OmrV4TwapOracleTest is Test {
         oracle.observe(wrongKey);
     }
 
-    function test_constructor_rejects_short_period_unsupported_source_bad_decimals_and_wrong_pool() public {
+    function test_constructor_rejects_short_period_unsupported_source_and_bad_decimals() public {
         vm.expectRevert(OmrV4TwapOracle.PeriodTooShort.selector);
         new OmrV4TwapOracle(source, address(omr), FEE, TICK_SPACING, 1 minutes);
 
@@ -264,8 +442,15 @@ contract OmrV4TwapOracleTest is Test {
         );
         new OmrV4TwapOracle(source, address(sixDecimalOmr), FEE, TICK_SPACING, PERIOD);
 
+    }
+
+    function test_uninitialized_identity_cannot_adopt_another_open_pool() public {
+        OmrV4TwapOracle differentPool = new OmrV4TwapOracle(source, address(omr), 500, 10, PERIOD);
+        assertFalse(differentPool.baselineInitialized());
+        vm.warp(block.timestamp + PERIOD);
         vm.expectRevert(OmrV4TwapOracle.PoolNotInitialized.selector);
-        new OmrV4TwapOracle(source, address(omr), 500, 10, PERIOD);
+        differentPool.update();
+        _assertUnavailable(differentPool);
     }
 
     function testFuzz_tick_conversion_matches_the_independent_fixed_point_price(int24 tick) public {
@@ -278,6 +463,21 @@ contract OmrV4TwapOracleTest is Test {
         uint256 expected = Math.mulDiv(sqrtPriceX96, sqrtPriceX96 * 1e18, uint256(1) << 192);
         (uint256 actual,) = oracle.consult();
         assertEq(actual, expected);
+    }
+
+    function _bootstrap()
+        private
+        returns (MockV4ObservationSource unopenedSource, PoolKey memory unopenedKey, OmrV4TwapOracle bootstrap)
+    {
+        unopenedSource = new MockV4ObservationSource(manager);
+        unopenedKey = _key(unopenedSource, address(omr), FEE, TICK_SPACING);
+        bootstrap = new OmrV4TwapOracle(unopenedSource, address(omr), FEE, TICK_SPACING, PERIOD);
+    }
+
+    function _assertUnavailable(OmrV4TwapOracle target) private view {
+        (uint256 price, uint256 updatedAt) = target.consult();
+        assertEq(price, 0, "quote available before an eligible window");
+        assertEq(updatedAt, 0, "ineligible window stamped fresh");
     }
 
     function _key(MockV4ObservationSource source_, address omr_, uint24 fee_, int24 spacing_)

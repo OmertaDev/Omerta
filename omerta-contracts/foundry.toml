@@ -15,6 +15,9 @@ additional_compiler_profiles = [
   { name = "constellation-via-ir", via_ir = true, optimizer = true, optimizer_runs = 800, evm_version = "cancun" },
 ]
 compilation_restrictions = [
+  { paths = "src/ProtocolLiquidityVault.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "test/ProtocolLiquidityVault.t.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "lib/v4-periphery/src/PositionManager.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
   { paths = "src/RwaHealthOverlay.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
   { paths = "src/interfaces/IRwaHealthOverlay.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
   { paths = "src/AcquisitionConstellationFactory.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
@@ -41,6 +44,8 @@ fs_permissions = [
 remappings = [
   "@openzeppelin/=lib/openzeppelin-contracts/",
   "v4-core/=lib/v4-core/src/",
+  "@uniswap/v4-core/=lib/v4-core/",
+  "permit2/=lib/permit2/",
   "solmate/=lib/v4-core/lib/solmate/",
 ]
 

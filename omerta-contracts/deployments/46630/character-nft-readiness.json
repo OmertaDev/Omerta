@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-09-08T01:28:25.403Z",
+  "status": "passed-read-only-testnet-configuration-checks",
+  "network": {
+    "name": "Robinhood Chain Testnet",
+    "chainId": 46630,
+    "rpc": "https://rpc.testnet.chain.robinhood.com"
+  },
+  "snapshot": {
+    "blockNumber": "115234915",
+    "blockHash": "0x209a7639a101aa2427e17c8ae1bf1411a0eac99d2e8088248c9ef784de3ff9ca",
+    "blockTimestamp": "1788830896",
+    "observedHead": "115234979",
+    "confirmationDepth": 64
+  },
+  "referenceManifest": "omerta-contracts/deployments/46630/manifest.json",
+  "referenceSourceCommit": "cb4e6a35d7950366a984b9f812a9d6376c4f2675",
+  "verification": {
+    "rpcConfigurationAndDeploymentReceipts": "passed",
+    "artifactExecutableBytecodeComparison": "passed; metadata and immutable slots excluded from runtime comparison",
+    "artifactFreshness": "Uses existing local Foundry artifacts; build current source before checking a changed revision.",
+    "explorerSourceVerification": "not checked; manifest verified status is not treated as explorer source verification",
+    "independentAudit": "not performed by this tool",
+    "mintRehearsal": "not performed by this tool",
+    "mainnetLaunchApproval": false,
+    "transactionsSubmitted": 0
+  },
+  "governance": {
+    "safe": "0x895fC13973f66Aa39A1fB27F4a3245c6aC9717B0",
+    "owners": [
+      "0x8c8DfE7B443C80603Fbb0E08F22aA859a98D747B",
+      "0x0cD9d2B32f25f1038634628490Eb643F63d46f52",
+      "0x3458bB301eA4CBfC7a4c53B6e9e5b8bDd22a1fd4"
+    ],
+    "threshold": "2"
+  },
+  "contracts": {
+    "OmertaFees": {
+      "address": "0xf89405e54F699bE14bff01d3c2edb017029B3F7A",
+      "explorerUrl": "https://explorer.testnet.chain.robinhood.com/address/0xf89405e54F699bE14bff01d3c2edb017029B3F7A",
+      "runtimeCodeBytes": 3614,
+      "runtimeCodeHash": "0x9f9ea4d3952cf8ba7e7526ffa067ea6a6753598849d099c058d75d799c0f38e4",
+      "runtimeMatchesLocalArtifactIgnoringMetadataAndImmutables": true,
+      "creationMatchesLocalArtifactIgnoringMetadata": true,
+      "artifact": "omerta-contracts/out/OmertaFees.sol/OmertaFees.json",
+      "owner": "0x895fC13973f66Aa39A1fB27F4a3245c6aC9717B0",
+      "deployment": {
+        "transactionHash": "0x0162d7f52a548d7e38fb5d447bdb818f3cef3b7aab18cd261d0452f3cd6a203d",
+        "blockNumber": "106404178",
+        "status": "success"
+      },
+      "constructor": {
+        "owner_": "0x895fC13973f66Aa39A1fB27F4a3245c6aC9717B0",
+        "feeRecipient_": "0x8c8DfE7B443C80603Fbb0E08F22aA859a98D747B",
+        "vigRecipient_": "0x0cD9d2B32f25f1038634628490Eb643F63d46f52",
+        "vigBps_": "2500",
+        "mintFee_": "10000000000000000",
+        "respawnFee_": "100000000000000000"
+      },
+      "state": {
+        "mintFee": "10000000000000000",
+        "respawnFee": "100000000000000000",
+        "rerollFee": "10000000000000000",
+        "vigBps": "2500",
+        "feeRecipient": "0x8c8DfE7B443C80603Fbb0E08F22aA859a98D747B",
+        "vigRecipient": "0x0cD9d2B32f25f1038634628490Eb643F63d46f52",
+        "nonce": "0"
+      }
+    },
+    "DynastyNFT": {
+      "address": "0x13B76A0F73b6879423Cf4fB69B09F75e5c9b01f0",
+      "explorerUrl": "https://explorer.testnet.chain.robinhood.com/address/0x13B76A0F73b6879423Cf4fB69B09F75e5c9b01f0",
+      "runtimeCodeBytes": 9599,
+      "runtimeCodeHash": "0xd570d5fa4e79f4c11f3548a047e12b7d09b247da49c3016a538d0f616cc901af",
+      "runtimeMatchesLocalArtifactIgnoringMetadataAndImmutables": true,
+      "creationMatchesLocalArtifactIgnoringMetadata": true,
+      "artifact": "omerta-contracts/out/DynastyNFT.sol/DynastyNFT.json",
+      "owner": "0x895fC13973f66Aa39A1fB27F4a3245c6aC9717B0",
+      "deployment": {
+        "transactionHash": "0xd550775f798ebc4811aff47540ad7041354541840654513e60a28bf795bb629e",
+        "blockNumber": "106404229",
+        "status": "success"
+      },
+      "constructor": {
+        "owner_": "0x895fC13973f66Aa39A1fB27F4a3245c6aC9717B0",
+        "signer_": "0x5CCD83A89b9cd1C4544679dec2087dfe04c06b62",
+        "baseUri_": "https://www.omerta.fun/v1/identity/",
+        "royaltyRecipient_": "0x895fC13973f66Aa39A1fB27F4a3245c6aC9717B0",
+        "royaltyBps_": "500",
+        "dailyMintCap_": "10"
+      },
+      "state": {
+        "signer": "0x5CCD83A89b9cd1C4544679dec2087dfe04c06b62",
+        "dailyMintCap": "10",
+        "nextId": "1",
+        "mintedCount": "0",
+        "paused": false,
+        "royaltyRecipient": "0x895fC13973f66Aa39A1fB27F4a3245c6aC9717B0",
+        "royaltyBps": "500"
+      },
+      "metadata": {
+        "constructorBaseUri": "https://www.omerta.fun/v1/identity/",
+        "currentBaseUri": null,
+        "currentBaseUriVerification": "Unavailable through tokenURI: no token exists, and the base URI has no public getter.",
+        "servedMetadataChecked": false
+      }
+    }
+  },
+  "observations": [
+    "The two contracts support fee payment and a separately claimed identity NFT; game entitlements remain account-bound.",
+    "Unpaused Dynasty minting accepts valid signer vouchers. OmertaFees accepts exact fee payments immediately and has no pause function.",
+    "Fee nonce and NFT supply are observed chain state, not evidence that the complete backend or wallet flow has passed.",
+    "No production configuration, keys, wallet signing, deployment, or game mutation is performed."
+  ]
+}

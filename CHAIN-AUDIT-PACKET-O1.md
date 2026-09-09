@@ -1,13 +1,18 @@
-# CHAIN-AUDIT-PACKET (O1) — what goes to the third-party reviewer, and what to attack
+# CHAIN-AUDIT-PACKET (O1) — current source inventory and review provenance
 
-> **LIVE PACKET — measured 2026-09-06 at release head `b0a214ca`.** This supersedes
+> **LIVE PACKET — source inventory measured 2026-09-08 in the working tree.** This supersedes
 > `CHAIN-AUDIT-PACKET.md`, which is retained unmodified as historical audit evidence from the
 > pre-O1 tree and must not be sent as a current engagement scope. **`CHAIN-DEPLOY.md` remains the
 > operational runbook**; this document is the SCOPE and the ATTACK SURFACE.
 
-**This is gate 2 of the three in `CHAIN-DEPLOY.md` §0.** Gate 1 (`forge test`) is green and gate 3
-(the launch review) is signed; the external audit is what remains, plus gate 4 (Uniswap Labs routing
-approval for `OmertaHook`), which is a separate submission and not this engagement.
+**This is the current inventory for the review gate in `CHAIN-DEPLOY.md` §0.** The
+[agent-led review policy](omerta-contracts/SECURITY-REVIEW-POLICY.md) governs new release packages.
+The [2026-09-08 liquidity-automation review](omerta-contracts/audits/2026-09-08-liquidity-automation/report.md)
+is a local predeployment review of the new components and their stated integrations. Its final
+contract, PostgreSQL, local-EVM and full backend checks passed; its manifests identify the exact
+reviewed source and evidence. The inventory and historical
+measurements below grant no production activation, funding or deployment authority. Hook routing
+approval remains a separate submission where required.
 
 **Read this beside `CHAIN-DEPLOY.md`, never instead of it.** That document is the deploy order, the
 arm order, the env and the kill switches. This one is what is in the batch, what each contract's
@@ -26,12 +31,14 @@ unreproducible for 19 hours on 2026-08-29. Hence:
 
 | what | value | how it was measured |
 |---|---|---|
-| release head | `b0a214ca` | the commit whose `forge test (contracts)` run is cited below; `39937a12` (current `main`) is contract-identical — its diff touches `knowledge/generated/` only |
+| current source snapshot | working tree over `e1d0e8476b6f1ebf590b13bd07c072d9d9d33aee` | source inventory measured 2026-09-08; the base commit does not identify the working-tree changes. The new review's source/artifact manifests identify the final reviewed bytes |
+| historical suite baseline | `b0a214ca` | the earlier CI `forge test (contracts)` run cited below; it predates the new liquidity contracts and is not a test result for this working tree |
 | toolchain | **forge v1.7.1** | pinned in `.github/workflows/forge.yml`, which also prints `forge --version` as its own step |
 | compiler | **solc 0.8.26**, optimizer on, `optimizer_runs = 800`, `evm_version = "cancun"` | `omerta-contracts/foundry.toml` |
 | fuzz | **512 runs** | `foundry.toml [fuzz]` |
 | invariants | **forge defaults** — there is no `[invariant]` section | `foundry.toml`; stated rather than implying tuned depth |
-| suite result | **896 tests across 43 suites, 0 failed, 0 skipped** | the CI forge job on `b0a214ca`, measured 2026-09-06; the 43 per-suite lines sum to exactly 896 |
+| historical suite result | **896 tests across 43 suites, 0 failed, 0 skipped** | the CI forge job on `b0a214ca`, dated 2026-09-06; the 43 per-suite lines sum to exactly 896. Retained as baseline evidence only |
+| current liquidity verification | scoped contract, PostgreSQL and 19-group actual-EVM rehearsal evidence | [current local review](omerta-contracts/audits/2026-09-08-liquidity-automation/report.md); the focused gates and full backend suite passed, with exact source/artifact/evidence manifests |
 
 **The version fingerprint, concretely.** `test/SettlementGasPoolInvariant.t.sol` holds six
 `invariant_*` functions and zero `test_*` functions. Under 1.7.1 it reports **6**; under the older
@@ -45,11 +52,14 @@ aggregated reporting model it reports **1**. A count quoted without its compiler
 
 ---
 
-## 1. SCOPE — 31 contracts + 9 interfaces, one engagement
+## 1. SCOPE — 37 contracts + 10 interfaces, current source inventory
 
 *"Batch, not dribble"* (`omerta-dynasty-machine-design.md`): the scope must be KNOWN before it is
 sent, because a contract added afterwards means paying to re-audit. The set below is the complete
-`omerta-contracts/src` tree at the release head — 40 Solidity files, 31 contracts and 9 interfaces.
+`omerta-contracts/src` working tree — 47 Solidity files, 37 contracts and 10 interfaces.
+This is the complete source inventory, not a claim that one review package clears every component.
+The 2026-09-08 liquidity review names its own source closure and release phase; earlier packages
+retain their original scopes and conclusions.
 
 | # | contract | what it is | its tests |
 |---|---|---|---|
@@ -93,10 +103,19 @@ sent, because a contract added afterwards means paying to re-audit. The set belo
 | 38 | `IRwaHealthOverlay` | the overlay surface `RwaHealthOverlay` implements — **interface only** | the overlay suites |
 | 39 | `IStockTokenRegistryV2` | the registry surface the vault and overlay pin — **interface only** | registry v2 + overlay suites |
 | 40 | `ISettlementDataFeeSource` | the data-fee source surface the gas pool pins — **interface only** | the gas-pool suites |
+| 41 | `BankBufferVault` | optional prefunded exact-asset Transmuter deficit funding, bounded by action/period limits; no debt mint authority | `BankBufferVault.t.sol` |
+| 42 | `FeeRevenueRouter` | fixed non-mint fee routing through the bound tollbooth; character mint remains directly 100% DEV | `LiquidityRevenueAutomation.t.sol` |
+| 43 | `GenesisLifecycleController` | exact CCA/LBP binding, actual migration proof, fixed recovery destinations and one-time foundation acceptance | `GenesisLifecycleController.t.sol` |
+| 44 | `KeeperGasVault` | prefunded allowlisted keeper gas refill with per-call/day/cooldown bounds and paused owner recovery | `LiquidityRevenueAutomation.t.sol` |
+| 45 | `LiquidityBuybackExecutor` | fixed pool, stream and recipient; exact OMR delivery under oracle, health, slippage and spend limits | `LiquidityBuybackExecutor.t.sol`, `BondLiquidityHealth.t.sol` |
+| 46 | `ProtocolLiquidityVault` | protected full-range v4 position, exact inventory contributions/refunds, bounded reinvestment and fixed fee routing | `ProtocolLiquidityVault.t.sol` |
+| 47 | `ILiquidityHealth` | liquidity readiness surface used by issuance and executor guards — **interface only** | `BondLiquidityHealth.t.sol`, `ProtocolLiquidityVault.t.sol` |
 
-**896 Foundry tests across 43 suites, green** under **forge v1.7.1** at head `b0a214ca`, including
+**Historical baseline: 896 Foundry tests across 43 suites, green** under **forge v1.7.1** at head `b0a214ca`, including
 **19 parameterised 512-run fuzz** properties and **9 `invariant_` properties** across token, bond,
-oracle, Bank, stock-delivery, hook, overlay, gas-pool and constellation surfaces.
+oracle, Bank, stock-delivery, hook, overlay, gas-pool and constellation surfaces. These counts
+predate the new rows 41–47. Their current focused verification and full-wrapper health/dormant
+extraction/issuance boundary are recorded in the linked liquidity review.
 
 **Deliberately NOT in the batch, and each for a reason:**
 - **ERC-6551** (`test/vendor/ERC6551Registry.sol`, `ERC6551Account.sol`) — the reference
@@ -109,8 +128,9 @@ oracle, Bank, stock-delivery, hook, overlay, gas-pool and constellation surfaces
 ### 1a. WHERE THE TESTS ACTUALLY ARE — the map, not the claim
 
 `CHAIN-DEPLOY.md` states that every contract carries tests. That is true and it is useless to an
-auditor trying to *find* them: **19 of the 31 contracts have no `<Name>.t.sol`** and are covered
-inside a shared suite. Twelve have a dedicated suite; the rest are here.
+auditor trying to *find* them: **20 of the 37 contracts have no `<Name>.t.sol`** and are covered
+inside a shared suite. Seventeen have a dedicated suite; the rest are here. The older numeric
+suite sizes in this table retain the baseline measurement; new rows identify their current suites.
 
 | covered inside | contracts |
 |---|---|
@@ -120,6 +140,7 @@ inside a shared suite. Twelve have a dedicated suite; the rest are here.
 | the six constellation suites (188 tests total) | `AcquisitionAuthority`, `AcquisitionConstellationFactory`, `AcquisitionIntentExecution`, `AcquisitionReconciliation`, `AcquisitionVaultCore`, `PreVoteBudgetBook` |
 | `AcquisitionVaultAccounting.t.sol` (38) + `AcquisitionVaultOperator.t.sol` (84) | `AcquisitionVault` |
 | the four `SettlementGasPool*` suites (65) | `SettlementGasPool` |
+| `LiquidityRevenueAutomation.t.sol` | `FeeRevenueRouter`, `KeeperGasVault` |
 
 The three thinnest cases were checked individually rather than assumed, because "it is referenced in
 a shared suite" and "it is tested" are different claims: `OMRStaking` is constructed and exercised in
@@ -129,15 +150,16 @@ a shared suite" and "it is tested" are different claims: `OMRStaking` is constru
 
 ### 1b. WHAT COMPILES DIFFERENTLY, AND WHY IT MATTERS TO A REVIEWER
 
-**Seven contracts and three interfaces compile under `via_ir`** — the whole Acquisition
+**Eight local contracts and three interfaces compile under `via_ir`** — the whole Acquisition
 constellation (`AcquisitionAuthority`, `AcquisitionConstellationFactory`, `AcquisitionVaultCore`,
 `AcquisitionIntentExecution`, `AcquisitionReconciliation`), plus `PreVoteBudgetBook` and
-`RwaHealthOverlay`. That is a different codegen pipeline from the rest of the tree, and a reviewer
+`RwaHealthOverlay`, and the new `ProtocolLiquidityVault`; the upstream `PositionManager` dependency
+also has an explicit `via_ir` restriction. That is a different codegen pipeline from the rest of the tree, and a reviewer
 should know which half of the batch they are reading bytecode for.
 
 ### 1c. THE SIZE MARGIN, AND THE ONE CONTRACT THAT CANNOT BE DEPLOYED THE OBVIOUS WAY
 
-Measured from the CI `forge build --sizes` table at the release head. Runtime margins against
+Historical baseline from the CI `forge build --sizes` table at `b0a214ca`. Runtime margins against
 EIP-170's 24,576:
 
 | contract | runtime | margin |
@@ -146,6 +168,10 @@ EIP-170's 24,576:
 | `AcquisitionAuthority` | 16,300 | 8,276 |
 | `SettlementGasPool` | 14,458 | 10,118 |
 | `StreetDeed` | 12,690 | 11,886 |
+
+Current liquidity artifact sizes and compiler profiles are recorded separately in the linked
+2026-09-08 review; the new POL runtime is 23,220 bytes. This baseline table is not a current
+whole-tree size certificate.
 
 **`AcquisitionVault`'s INITCODE is 25,120 bytes — over EIP-170 by itself.** A typed
 `new AcquisitionVault(...)` embeds that whole initcode in the *calling* contract's runtime code, so
@@ -248,7 +274,7 @@ An auditor's time is best spent where nothing we can run reaches. These four are
 
 | prover | what it stands up | what it PROVES |
 |---|---|---|
-| `forge test` | the Foundry VM under **pinned forge v1.7.1** | **896 tests / 43 suites**, incl. 19 parameterised 512-run fuzz properties and 9 invariants. Unit + property behaviour of every contract |
+| historical `forge test` baseline | the Foundry VM under **pinned forge v1.7.1** | **896 tests / 43 suites**, incl. 19 parameterised 512-run fuzz properties and 9 invariants. Unit + property behaviour at `b0a214ca`; this does not cover later contracts |
 | `npm run chain-e2e` | a real EVM, the REAL backend booted against it | 27 asserted steps: deploy → SIWE link → a real on-chain fee → the watcher crediting it → mint → **a real EIP-712 voucher claimed for 25 real ERC-20 OMR** → replay REVERTS → tampered voucher REVERTS → the watcher closing the reserve exact → a gear voucher minting the ERC-1155 → an UNCAPPED gearId failing closed even with a valid signature |
 | `npm run dexbot-e2e` | a **real Uniswap v4** — real `PoolManager`, real liquidity, real swaps, behind the real `OmertaHook` at a mined permission address | 23 asserted steps with both bots' senders **UNSEAMED**, so `src/dexbot.js`'s own encoders build the calldata that executes. This is what closed the ⚠ on the raw v4 encodings |
 | `npm run stock-e2e` | the real ERC-6551 registry (vendored reference impl) + StreetDeed + StockVault | 14 asserted steps: a deed minted from a server-signed voucher, **the backend's computed TBA equal to the registry's own answer**, units landing in it, the keeper sending but never settling, the `Delivered` log flipping the allocation |
@@ -338,14 +364,15 @@ Gate 2 is "a third-party audit of the contracts **AND the signer**". The off-cha
     reserved credit, or leave `unreserved` disagreeing with `balance − liability`? (§2.7.)
 12. **The constellation's raw-`create` factory** — does it bubble the constructor's revert faithfully,
     and is there any path that reintroduces a typed `new` (which would put it over EIP-170 again)?
-13. **`via_ir` vs the rest** — seven contracts compile through a different pipeline (§1b). Confirm the
+13. **`via_ir` vs the rest** — eight local contracts compile through a different pipeline (§1b). Confirm the
     reviewed bytecode is the deployed bytecode for both halves.
 
 ---
 
 ## 7. WHAT THIS PACKET FOUND ABOUT ITSELF
 
-Two things measured while assembling it, both a reviewer's problem rather than a defect:
+Two historical observations from assembling the 2026-09-06 baseline, both a reviewer's problem
+rather than a defect. The sizes below describe that earlier tree:
 
 - **Eight of the 40 source files carry no `@title` and no `@notice` at all** —
   `AcquisitionAuthority`, `AcquisitionVault`, `AcquisitionVaultCore`,

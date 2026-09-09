@@ -38,14 +38,14 @@ const acctId = (await pool.query(`SELECT account_id FROM characters WHERE id='${
 let r;
 
 // ── (1) real ETH revenue in → the Vig takes its 60% share (dev keeps 40%) ──
-await call('POST', '/v1/mod/fees/record', { headers: modH, body: { nonce: 9001, kind: 'mint', payer: player.address, amountWei: '10000000000000000', txHash: '0xfee9001' } });   // 0.01 ETH (real on-chain → books Vig revenue)
+await call('POST', '/v1/mod/fees/record', { headers: modH, body: { nonce: 9001, kind: 'reroll', payer: player.address, amountWei: '10000000000000000', txHash: '0xfee9001' } });   // 0.01 ETH (non-mint fee → books Vig revenue)
 await call('POST', '/v1/mod/fees/record', { headers: modH, body: { nonce: 9002, kind: 'respawn', payer: player.address, amountWei: '100000000000000000', txHash: '0xfee9002' } }); // 0.10 ETH
 let vig = await vigOf();
 assert(near(vig.status.grossRevenueEth, 0.11), `gross real revenue = 0.11 ETH (got ${vig.status.grossRevenueEth})`);
 assert(near(vig.status.vigRevenueEth, 0.066), 'the Vig takes its 60% share = 0.066 ETH');
 assert(near(vig.status.devRevenueEth, 0.044), 'dev keeps the other 40% = 0.044 ETH');
 // a re-delivered fee event (reorg/watcher restart) doesn't double-count Vig revenue
-await call('POST', '/v1/mod/fees/record', { headers: modH, body: { nonce: 9001, kind: 'mint', payer: player.address, amountWei: '10000000000000000' } });
+await call('POST', '/v1/mod/fees/record', { headers: modH, body: { nonce: 9001, kind: 'reroll', payer: player.address, amountWei: '10000000000000000' } });
 assert(near((await vigOf()).status.vigRevenueEth, 0.066), 'a re-delivered fee is idempotent — no double-count');
 
 // ── (2) the buyback: the Vig's ETH buys hard $OMR, split 50/50 reserve/prize ──
@@ -245,7 +245,7 @@ assert((await runLedgerInvariants(pool, { alert: false })).ok, '§10.4 in-game l
 {
   // fresh real revenue so there is a live budget to fabricate against
   await call('POST', '/v1/mod/fees/record', { headers: modH,
-    body: { nonce: 990001, kind: 'mint', payer: player.address, amountWei: '200000000000000000', txHash: '0xcompgate' } });
+    body: { nonce: 990001, kind: 'respawn', payer: player.address, amountWei: '200000000000000000', txHash: '0xcompgate' } });
   const before = await vigOf();
   const fundedBefore2 = before.invariants.summary.funded;
   const prizeBefore = Number((await pool.query('SELECT balance FROM vig_prize_pool WHERE id=1')).rows[0].balance);

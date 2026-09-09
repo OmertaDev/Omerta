@@ -33,10 +33,19 @@ const ORACLE_ABI = [
   { type: 'function', name: 'PERIOD', stateMutability: 'view', inputs: [], outputs: [{ type: 'uint32' }] },
   { type: 'function', name: 'MAX_WINDOW_MULT', stateMutability: 'view', inputs: [], outputs: [{ type: 'uint32' }] },
   { type: 'function', name: 'blockTimestampLast', stateMutability: 'view', inputs: [], outputs: [{ type: 'uint32' }] },
+  { type: 'function', name: 'baselineInitialized', stateMutability: 'view', inputs: [], outputs: [{ type: 'bool' }] },
+  { type: 'function', name: 'source', stateMutability: 'view', inputs: [], outputs: [{ type: 'address' }] },
+  { type: 'function', name: 'poolId', stateMutability: 'view', inputs: [], outputs: [{ type: 'bytes32' }] },
   { type: 'function', name: 'priceAverage', stateMutability: 'view', inputs: [], outputs: [{ type: 'uint256' }] },
   { type: 'function', name: 'lastUpdate', stateMutability: 'view', inputs: [], outputs: [{ type: 'uint256' }] },
   { type: 'function', name: 'update', stateMutability: 'nonpayable', inputs: [], outputs: [] },
 ];
+
+const SOURCE_ABI = [{ type: 'function', name: 'currentTickCumulative', stateMutability: 'view',
+  inputs: [{ type: 'bytes32' }], outputs: [{ type: 'int56' }, { type: 'uint32' }, { type: 'bool' }] }];
+// Bootstrap has no timestamp. A negative journal key cannot collide with a real uint32 baseline,
+// including a legitimate baseline at timestamp zero after wrap. No schema migration is needed.
+const journalBaseline = (snapshot) => snapshot.baselineInitialized === false ? -1 : snapshot.baselineS;
 
 const BOND_ABI = [
   { type: 'function', name: 'oracle', stateMutability: 'view', inputs: [], outputs: [{ type: 'address' }] },
@@ -135,8 +144,8 @@ export function makeV4OracleClients(config) {
   return { publicClient, walletClient, account };
 }
 
-async function contractCodeRequired(client, address, label) {
-  const code = await client.getCode({ address });
+async function contractCodeRequired(client, address, label, blockNumber) {
+  const code = await client.getCode({ address, blockNumber });
   if (!code || code === '0x') throw new Error(`v4 oracle keeper: no contract code at ${label}`);
 }
 
@@ -145,36 +154,35 @@ export async function readV4OracleSnapshot(config, publicClient) {
   if (rpcChainId !== config.chainId) {
     throw new Error(`v4 oracle keeper: RPC chain ${rpcChainId} does not match CHAIN_ID ${config.chainId}`);
   }
+  const block = await publicClient.getBlock({ blockTag: 'latest' });
+  if (typeof block.number !== 'bigint' || !block.hash) throw new Error('v4 oracle keeper: missing snapshot block identity');
+  const blockNumber = block.number;
+  const read = (address, abi, functionName, args = []) => publicClient.readContract({ address, abi, functionName, args, blockNumber });
 
   let bondOracleAddress = null;
   let maxOracleAgeS = 0;
   if (config.bondAddress) {
-    await contractCodeRequired(publicClient, config.bondAddress, 'OMERTA_BOND_ADDRESS');
-    bondOracleAddress = await publicClient.readContract({
-      address: config.bondAddress, abi: BOND_ABI, functionName: 'oracle',
-    });
+    await contractCodeRequired(publicClient, config.bondAddress, 'OMERTA_BOND_ADDRESS', blockNumber);
+    bondOracleAddress = await read(config.bondAddress, BOND_ABI, 'oracle');
     if (zeroAddress(bondOracleAddress)) bondOracleAddress = null;
   }
 
   const oracleAddress = config.oracleAddress || bondOracleAddress;
   if (!oracleAddress) return { state: 'unset', bondOracleAddress: null };
-  await contractCodeRequired(publicClient, oracleAddress, 'OMR_V4_ORACLE_ADDRESS');
+  await contractCodeRequired(publicClient, oracleAddress, 'OMR_V4_ORACLE_ADDRESS', blockNumber);
   const bondOracleMismatch = !!(config.oracleAddress && bondOracleAddress
     && lower(config.oracleAddress) !== lower(bondOracleAddress));
   if (config.bondAddress && bondOracleAddress && !bondOracleMismatch) {
-    maxOracleAgeS = Number(await publicClient.readContract({
-      address: config.bondAddress, abi: BOND_ABI, functionName: 'maxOracleAge',
-    }));
+    maxOracleAgeS = Number(await read(config.bondAddress, BOND_ABI, 'maxOracleAge'));
   }
 
-  const [periodS, maxWindowMult, baselineS, priceAverage, lastUpdateS, block] = await Promise.all([
-    publicClient.readContract({ address: oracleAddress, abi: ORACLE_ABI, functionName: 'PERIOD' }),
-    publicClient.readContract({ address: oracleAddress, abi: ORACLE_ABI, functionName: 'MAX_WINDOW_MULT' }),
-    publicClient.readContract({ address: oracleAddress, abi: ORACLE_ABI, functionName: 'blockTimestampLast' }),
-    publicClient.readContract({ address: oracleAddress, abi: ORACLE_ABI, functionName: 'priceAverage' }),
-    publicClient.readContract({ address: oracleAddress, abi: ORACLE_ABI, functionName: 'lastUpdate' }),
-    publicClient.getBlock({ blockTag: 'latest' }),
-  ]);
+  const [periodS, maxWindowMult, baselineS, priceAverage, lastUpdateS, baselineInitialized, source, poolId] = await Promise.all(
+    ['PERIOD', 'MAX_WINDOW_MULT', 'blockTimestampLast', 'priceAverage', 'lastUpdate', 'baselineInitialized', 'source', 'poolId']
+      .map(name => read(oracleAddress, ORACLE_ABI, name)));
+  await contractCodeRequired(publicClient, source, 'oracle observation source', blockNumber);
+  const observation = await read(source, SOURCE_ABI, 'currentTickCumulative', [poolId]);
+  const canonical = await publicClient.getBlock({ blockNumber });
+  if (lower(canonical.hash) !== lower(block.hash)) throw new Error('v4 oracle keeper: snapshot block changed during reads');
   return {
     oracleAddress: getAddress(oracleAddress),
     bondOracleAddress: bondOracleAddress ? getAddress(bondOracleAddress) : null,
@@ -182,6 +190,10 @@ export async function readV4OracleSnapshot(config, publicClient) {
     periodS: Number(periodS),
     maxWindowMult: Number(maxWindowMult),
     baselineS: Number(baselineS),
+    baselineInitialized,
+    poolInitialized: observation[2],
+    blockNumber: blockNumber.toString(),
+    blockHash: block.hash,
     priceAverage: BigInt(priceAverage),
     lastUpdateS: Number(lastUpdateS),
     maxOracleAgeS,
@@ -206,31 +218,53 @@ export function classifyV4OracleHealth(snapshot = {}) {
   if (!finitePositiveInt(periodS) || !finitePositiveInt(maxWindowMult)) {
     return { ...snapshot, state: 'misconfigured', alert: true, note: 'oracle period/window constants are invalid' };
   }
+  if (typeof snapshot.baselineInitialized !== 'boolean' || typeof snapshot.poolInitialized !== 'boolean'
+      || (snapshot.baselineInitialized && !snapshot.poolInitialized)
+      || (!snapshot.baselineInitialized && (BigInt(snapshot.priceAverage || 0) !== 0n || Number(snapshot.lastUpdateS || 0) !== 0))) {
+    return { ...snapshot, state: 'misconfigured', alert: true, updateEligible: false,
+      note: 'oracle bootstrap state is missing or inconsistent' };
+  }
   const elapsedS = uint32Elapsed(snapshot.chainNowS, snapshot.baselineS);
   const maxWindowS = periodS * maxWindowMult;
   const lateAfterS = periodS * V4_ORACLE_LATE_MULT;
   const lastUpdateS = Number(snapshot.lastUpdateS || 0);
   const ageS = lastUpdateS ? Math.max(0, Number(snapshot.chainNowS) - lastUpdateS) : null;
   const priceAverage = BigInt(snapshot.priceAverage || 0);
-  const updateEligible = elapsedS >= periodS;
+  const updateEligible = snapshot.baselineInitialized ? elapsedS >= periodS : snapshot.poolInitialized;
   const base = {
     ...snapshot,
     priceAverage: priceAverage.toString(),
-    elapsedS,
-    dueInS: Math.max(0, periodS - elapsedS),
+    elapsedS: snapshot.baselineInitialized ? elapsedS : null,
+    dueInS: snapshot.baselineInitialized ? Math.max(0, periodS - elapsedS) : null,
     lateAfterS,
     maxWindowS,
     ageS,
     updateEligible,
   };
 
-  const journal = snapshot.journal && Number(snapshot.journal.baseline_timestamp) === Number(snapshot.baselineS)
+  const journal = snapshot.journal && Number(snapshot.journal.baseline_timestamp) === Number(journalBaseline(snapshot))
     ? snapshot.journal : null;
+  if (journal?.status === 'confirmed') {
+    // Every successful update advances this identity (including bootstrap -1 -> real uint32).
+    // Seeing a confirmed row for the current identity means its effect disappeared or the RPC
+    // history disagrees. Never silently loop or manufacture a replacement signature.
+    return { ...base, state: 'reorg_requires_review', alert: true, updateEligible: false,
+      note: 'a confirmed update is not reflected in the canonical oracle state; reconcile its receipt before resuming' };
+  }
   if (journal && (journal.status === 'prepared' || journal.status === 'submitted')) {
     if (journal.last_error) return { ...base, state: 'tx_failed', alert: true,
       note: `the signed update transaction could not be submitted or confirmed: ${journal.last_error}` };
-    return { ...base, state: 'tx_pending', alert: elapsedS > lateAfterS,
+    return { ...base, state: 'tx_pending', alert: snapshot.baselineInitialized && elapsedS > lateAfterS,
       note: `update transaction ${journal.tx_hash || 'prepared'} is awaiting confirmation` };
+  }
+
+  if (!snapshot.baselineInitialized) {
+    if (!snapshot.poolInitialized) return { ...base, state: 'awaiting_pool', alert: false,
+      note: 'Genesis has not initialized the canonical pool; no oracle transaction is eligible' };
+    if (journal && ['failed', 'reverted', 'replaced'].includes(journal.status)) return { ...base, state: 'tx_failed', alert: true,
+      note: journal.last_error || 'the first initialized-pool baseline could not be recorded' };
+    return { ...base, state: 'seeding', alert: !snapshot.keeperConfigured,
+      note: 'the canonical pool is initialized; update() records the first baseline without publishing a price' };
   }
 
   if (elapsedS > maxWindowS) {
@@ -276,7 +310,7 @@ async function claimBaseline(pool, snapshot, leaseMs, nowMs) {
   // Fast-path the cooldown before the atomic INSERT. PostgreSQL's conflict predicate below is the
   // cross-process authority; this read also makes the rule explicit and keeps pg-mem's incomplete
   // ON CONFLICT ... WHERE emulation from hot-looping terminal attempts in tests.
-  const existing = await journalForBaseline(pool, snapshot.oracleAddress, snapshot.baselineS);
+  const existing = await journalForBaseline(pool, snapshot.oracleAddress, journalBaseline(snapshot));
   if (existing) {
     const claimedAt = new Date(existing.claimed_at).getTime();
     const cooled = Number.isFinite(claimedAt) && claimedAt < cutoff.getTime();
@@ -292,7 +326,7 @@ async function claimBaseline(pool, snapshot, leaseMs, nowMs) {
        WHERE (v4_oracle_keeper_attempts.status IN ('failed','reverted','superseded','replaced')
               AND v4_oracle_keeper_attempts.claimed_at < $3)
           OR (v4_oracle_keeper_attempts.status='claimed' AND v4_oracle_keeper_attempts.claimed_at < $3)
-     RETURNING *`, [lower(snapshot.oracleAddress), snapshot.baselineS, cutoff])).rows[0] || null;
+     RETURNING *`, [lower(snapshot.oracleAddress), journalBaseline(snapshot), cutoff])).rows[0] || null;
 }
 
 async function latestOpenJournal(pool, oracleAddress) {
@@ -372,7 +406,7 @@ export async function v4OracleHealth(pool, opts = {}) {
     const snapshot = await readV4OracleSnapshot(config, clients.publicClient);
     if (snapshot.state === 'unset') return classifyV4OracleHealth(snapshot);
     snapshot.keeperConfigured = opts.keeperConfigured ?? v4OracleKeeperReady(opts.env || process.env);
-    snapshot.journal = await journalForBaseline(pool, snapshot.oracleAddress, snapshot.baselineS);
+    snapshot.journal = await journalForBaseline(pool, snapshot.oracleAddress, journalBaseline(snapshot));
     return classifyV4OracleHealth(snapshot);
   } catch (error) {
     const message = errorMessage(error);
@@ -397,7 +431,7 @@ export async function runV4OracleKeeper(pool, opts = {}) {
     if (snapshot.state === 'unset') return { action: 'none', health: classifyV4OracleHealth(snapshot) };
     const open = await latestOpenJournal(pool, snapshot.oracleAddress);
     if (open) {
-      if (Number(open.baseline_timestamp) !== Number(snapshot.baselineS)) {
+      if (Number(open.baseline_timestamp) !== Number(journalBaseline(snapshot))) {
         // A receipt timeout does not imply the transaction was unmined. On auto-mining chains the
         // update can advance the baseline before the RPC exposes its receipt. Reconcile an already-
         // submitted hash once before calling it superseded; otherwise the durable journal would
@@ -409,15 +443,23 @@ export async function runV4OracleKeeper(pool, opts = {}) {
             snapshot = await readV4OracleSnapshot(config, clients.publicClient);
             return { action: 'confirmed', txHash: receipt.txHash, health: classifyV4OracleHealth({
               ...snapshot, keeperConfigured: true,
-              journal: await journalForBaseline(pool, snapshot.oracleAddress, snapshot.baselineS),
+              journal: await journalForBaseline(pool, snapshot.oracleAddress, journalBaseline(snapshot)),
             }) };
           }
         }
         await markJournal(pool, open, { status: 'superseded', last_error: null });
       } else {
+        // A prepared transaction may have failed before broadcast and pool initialization may
+        // then disappear in a reorg. Keep its signed bytes, but do not spend gas rebroadcasting
+        // an update that the fresh canonical state says cannot execute. Submitted hashes are
+        // still reconciled below without broadcasting, including receipts that now revert.
+        const currentHealth = classifyV4OracleHealth({ ...snapshot, keeperConfigured: true });
+        if (open.status === 'prepared' && !currentHealth.updateEligible) {
+          return { action: 'prepared', txHash: open.tx_hash, health: currentHealth };
+        }
         const receipt = await submitPrepared(pool, open, config, clients);
         if (receipt.state !== 'confirmed') {
-          const journal = await journalForBaseline(pool, snapshot.oracleAddress, snapshot.baselineS);
+          const journal = await journalForBaseline(pool, snapshot.oracleAddress, journalBaseline(snapshot));
           return { action: receipt.state, txHash: receipt.txHash, health: classifyV4OracleHealth({
             ...snapshot, keeperConfigured: true, journal,
           }) };
@@ -425,16 +467,17 @@ export async function runV4OracleKeeper(pool, opts = {}) {
         snapshot = await readV4OracleSnapshot(config, clients.publicClient);
         return { action: 'confirmed', txHash: receipt.txHash, health: classifyV4OracleHealth({
           ...snapshot, keeperConfigured: true,
-          journal: await journalForBaseline(pool, snapshot.oracleAddress, snapshot.baselineS),
+          journal: await journalForBaseline(pool, snapshot.oracleAddress, journalBaseline(snapshot)),
         }) };
       }
     }
 
     const health = classifyV4OracleHealth({ ...snapshot, keeperConfigured: true,
-      journal: await journalForBaseline(pool, snapshot.oracleAddress, snapshot.baselineS) });
+      journal: await journalForBaseline(pool, snapshot.oracleAddress, journalBaseline(snapshot)) });
+    if (health.state === 'reorg_requires_review') return { action: 'blocked', health };
     if (!health.updateEligible) return { action: 'none', health };
 
-    const windowKey = `${lower(snapshot.oracleAddress)}:${snapshot.baselineS}`;
+    const windowKey = `${lower(snapshot.oracleAddress)}:${journalBaseline(snapshot)}`;
     if (IN_FLIGHT_WINDOWS.has(windowKey)) return { action: 'in_flight', health };
     IN_FLIGHT_WINDOWS.add(windowKey);
     try {
@@ -450,7 +493,7 @@ export async function runV4OracleKeeper(pool, opts = {}) {
         });
       } catch (error) {
         const next = await readV4OracleSnapshot(config, clients.publicClient).catch(() => null);
-        const superseded = next && next.baselineS !== snapshot.baselineS;
+        const superseded = next && journalBaseline(next) !== journalBaseline(snapshot);
         await markJournal(pool, claimed, { status: superseded ? 'superseded' : 'failed',
           last_error: superseded ? null : errorMessage(error) });
         return { action: superseded ? 'superseded' : 'failed', health: next
@@ -478,7 +521,7 @@ export async function runV4OracleKeeper(pool, opts = {}) {
       const next = receipt.state === 'confirmed'
         ? await readV4OracleSnapshot(config, clients.publicClient)
         : snapshot;
-      const journal = await journalForBaseline(pool, next.oracleAddress, next.baselineS);
+      const journal = await journalForBaseline(pool, next.oracleAddress, journalBaseline(next));
       return { action: receipt.state, txHash: receipt.txHash || txHash,
         health: classifyV4OracleHealth({ ...next, keeperConfigured: true, journal }) };
     } finally {

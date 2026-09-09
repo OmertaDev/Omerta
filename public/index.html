@@ -1238,7 +1238,7 @@
     <div id="invite-row" class="hidden" style="margin:0 auto 14px;max-width:320px">
       <label class="visually-hidden" for="invite-code">Invite code</label>
       <input id="invite-code" placeholder="invite code" size="18" autocomplete="off">
-      <div class="sub" style="color:var(--bad);margin-top:4px">This alpha is invite-only. Ask a made man for a code.</div>
+      <div class="sub" style="color:var(--bad);margin-top:4px">This launch is invite-only. Enter an unused invite code.</div>
     </div>
     <div id="enter-city"><button class="act cta" id="btn-guest" data-i18n="e_ghost">START A GUEST STREET — NO SIGNUP</button></div>
     <div class="ctahint">No wallet. No email. Claim the same street with X or Privy later.</div>
@@ -2475,6 +2475,7 @@
     return `${a === 'a' && /^[aeiou]/i.test(v) ? 'an' : a} ${v}`;
   };
   function describe(body, code) {
+    if (body?.inviteIssued) return `Invitation ready. ${Number(body.remaining)} launch invites left — copy the link from your crew.`;
     // PLAIN TEXT, not HTML. Every consumer of describe() is toast(), which assigns to textContent —
     // injection-proof by construction — so HTML-escaping here protects nothing and CORRUPTS the very
     // strings that most need to read right: 94 catalog names carry an apostrophe or ampersand
@@ -5327,7 +5328,7 @@
   $('#btn-down-retry').onclick = () => { downStop(); $('#down-tick').textContent = 'trying again…'; boot(); };
 
   const landToken = (r) => {
-    if (r.body?.token) { token = r.body.token; localStorage.setItem('omerta_token', token); boot(); return true; }
+    if (r.body?.token) { token = r.body.token; localStorage.setItem('omerta_token', token); api('POST', '/v1/access/session', {}).then(() => boot()); return true; }
     if (r.body?.error === 'invite') { $('#invite-row').classList.remove('hidden'); toast(r.body.message || 'invite only', true); }
     else toast(r.body?.message || r.body?.error || 'no dice', true);
     return false;
@@ -5442,6 +5443,8 @@
       const r = await api('POST', '/v1/auth/logout-all');
       if (r.code >= 400) { toast(ERRMAP[r.body?.error] || 'couldn’t reach the city to kill those sessions — try again', true); return; }
     }
+    const cleared = await api('POST', '/v1/access/logout', {});
+    if (cleared.code >= 400) { toast('Could not sign out of this browser. Try again.', true); return; }
     localStorage.removeItem('omerta_token'); location.reload();
   };
   $('#btn-refresh').onclick = () => refresh();
@@ -7605,6 +7608,7 @@
     await refresh();
     const b = (await api('GET', '/v1/crew')).body || {};
     const crew = b.crew, invites = b.invites || [];
+    const launchInvites = crew ? (await api('GET', '/v1/invites')).body : null;
     // BRING ONE — wire the two share buttons (X-intent + copy). me.name is the referral code.
     const wireBringOne = (root) => {
       const link = me?.name ? shareUrl(me.name) : (rules?.share?.gameUrl || location.origin);
@@ -7666,6 +7670,12 @@
 
     const mem = crew.members || [];
     t.innerHTML = `${inviteCards}
+      ${launchInvites?.enabled ? `<div class="card" style="margin-bottom:12px;border-color:var(--gold)">
+        <span class="t">Put a word in</span><div class="d" style="margin:8px 0">Bring someone new into the city. Each code admits one player; invite them to your crew by name once inside.</div>
+        <div class="d">${Number(launchInvites.remaining)} of ${Number(launchInvites.limit)} launch invites left. Your allowance stays with your account.</div>
+        ${launchInvites.eligible ? '<button class="act" id="launch-invite-generate" style="margin-top:8px">generate an invite</button>' : ''}
+        ${(launchInvites.codes || []).map((entry) => `<div class="row" style="margin-top:10px;flex-wrap:wrap"><code style="overflow-wrap:anywhere">${esc(entry.code)}</code> <span class="chip">${entry.usesLeft > 0 ? 'unused' : 'claimed'}</span>${entry.usesLeft > 0 ? ` <button class="act" data-launch-copy="${esc(entry.code)}">copy invite link</button>` : ''}</div>`).join('')}
+      </div>` : ''}
       <div class="card"><span class="t">${esc(crew.name)}</span> <span class="chip">${mem.length}/${b.maxMembers}</span>${crew.leader ? ' <span class="chip good">you run it</span>' : ''} <a href="#" id="crew-lb" style="font-size:11px">the deadliest crews →</a>
         <div class="grid" style="margin-top:6px">${mem.map((m) => `
           <div class="card">${av(m.characterId, 30)}<span class="t">${esc(m.name)}${m.leader ? ' <span class="chip good">boss</span>' : ''}${m.isMe ? ' <span class="chip">you</span>' : ''}</span>
@@ -7709,6 +7719,19 @@
 
     wireBringOne(t);
     const ib = t.querySelector('#crew-invite-btn');
+    const generateLaunchInvite = t.querySelector('#launch-invite-generate');
+    if (generateLaunchInvite) generateLaunchInvite.onclick = async () => {
+      generateLaunchInvite.disabled = true;
+      try { await act('POST', '/v1/invites', {}); await renderCrew(); }
+      finally { generateLaunchInvite.disabled = false; }
+    };
+    t.querySelectorAll('[data-launch-copy]').forEach((button) => { button.onclick = async () => {
+      const link = new URL('/', location.origin);
+      if (me?.name) link.searchParams.set('ref', me.name);
+      link.hash = 'invite=' + encodeURIComponent(button.dataset.launchCopy);
+      try { await navigator.clipboard.writeText(link.href); toast('Invite link copied. Send it to one person.'); }
+      catch { toast('Copy the code shown beside this button.', true); }
+    }; });
     if (ib) ib.onclick = () => {
       const name = (t.querySelector('#crew-invite').value || '').trim();
       if (!name) return;
@@ -11322,10 +11345,14 @@
       return `<span class="capital-stage${cls}">${label}</span>`;
     }).join('');
     const bondDaily = bd.daily || null;
+    const bondUnlimited = bondDaily?.unlimited === true;
+    const bondUnlimitedReady = bd.liquidity?.bondReady === true && bd.genesis?.bondQuotesOpen === true && !!bd.quote;
     const bondOffered = Number(bondDaily?.offeredOmr || 0);
     const bondRemaining = Number(bondDaily?.remainingOmr || 0);
     const bondTranche = Number(bd.reserve?.remainingOmr || 0);
-    const bondBuyable = Math.max(0, Math.min(bondRemaining, bondTranche));
+    const bondCapacityKnown = bd.reserve?.remainingOmr != null && Number.isFinite(bondTranche);
+    const bondBuyable = bondUnlimited ? (bondUnlimitedReady && bondCapacityKnown ? Math.max(0, bondTranche) : 0)
+      : Math.max(0, Math.min(bondRemaining, bondTranche));
     const bondFilledPct = bondOffered > 0 ? Math.max(0, Math.min(100, ((bondOffered - bondRemaining) / bondOffered) * 100)) : 0;
     const deskAuction = desk.auction || null;
     const deskLot = Number(deskAuction?.lot || 0);
@@ -11394,8 +11421,8 @@
           </div>
           <div class="capital-market">
             <span class="capital-market__name">Reserve bonds</span>
-            <span class="capital-market__body">${bondDaily ? `${fmt(bondBuyable)} $OMR is executable now, bounded by today’s post and the funded tranche` : 'No daily reserve-bond offering has been posted.'}</span>
-            <span class="capital-market__value ${bondBuyable > 0 ? 'is-live' : 'is-closed'}">${bondDaily ? `${Math.round(bondFilledPct)}% filled` : 'closed'}</span>
+            <span class="capital-market__body">${bondUnlimited ? `No daily purchase limit · ${bondCapacityKnown ? `${fmt(Math.max(0, bondTranche))} $OMR available for new quotes` : 'available supply is not reported'}` : bondDaily ? `${fmt(bondBuyable)} $OMR is executable now, bounded by today’s post and the funded tranche` : 'No daily reserve-bond offering has been posted.'}</span>
+            <span class="capital-market__value ${bondBuyable > 0 ? 'is-live' : 'is-closed'}">${bondUnlimited ? (bondBuyable > 0 ? 'open' : 'quotes unavailable') : bondDaily ? `${Math.round(bondFilledPct)}% filled` : 'closed'}</span>
           </div>
           <div class="capital-market">
             <span class="capital-market__name">Price oracle</span>
@@ -11634,22 +11661,25 @@
         <button class="act" id="stake-in">stake</button>
         <button class="act" id="stake-out">unstake it all</button></div>
 
-      <h2 class="capital-anchor" id="capital-bonds" style="margin-top:12px">The Bond Desk <span class="d" style="font-size:11px">(the house sells $OMR below market for ETH — and only as much as it opened the window for that day)</span></h2>
+      <h2 class="capital-anchor" id="capital-bonds" style="margin-top:12px">The Bond Desk <span class="d" style="font-size:11px">${bd.daily?.unlimited === true ? '(the house sells $OMR below market for ETH, with no daily purchase limit)' : '(the house sells $OMR below market for ETH — and only as much as it opened the window for that day)'}</span></h2>
       ${(() => {
         const dl = bd.daily, off = bd.offering || {};
-        // TWO things have to hold before a quote can be signed: the house posted a window TODAY, and
-        // the tranche behind the desk still has $OMR in it. The server checks both — so a card that
-        // showed only the window would say OPEN over an empty tranche and refuse on press, which is
-        // the exact "control that lies" class. What is actually buyable is the SMALLER of the two.
+        const unlimited = dl?.unlimited === true;
+        // Unlimited daily policy does not imply readiness or available quote capacity.
         const tranche = Number(bd.reserve?.remainingOmr || 0);
+        const capacityKnown = bd.reserve?.remainingOmr != null && Number.isFinite(tranche);
         const posted = dl ? Number(dl.remainingOmr || 0) : 0;
-        const left = Math.min(posted, tranche);
-        const open = !!dl && left > 0;
+        const left = unlimited ? (capacityKnown ? Math.max(0, tranche) : 0) : Math.min(posted, tranche);
+        const ready = !unlimited || (bd.liquidity?.bondReady === true && bd.genesis?.bondQuotesOpen === true && !!bd.quote);
+        const open = !!dl && left > 0 && ready;
         const pct = dl && Number(dl.offeredOmr) > 0 ? Math.round((posted / Number(dl.offeredOmr)) * 100) : 0;
         return `
       <div class="card" style="border-color:${open ? 'var(--neon)' : 'rgba(255,255,255,.12)'}">
-        <span class="t" style="color:${open ? 'var(--neon)' : 'var(--dim)'}">${open ? "TODAY'S WINDOW — OPEN" : 'THE WINDOW IS SHUT TODAY'}</span>
-        ${open ? `<div class="d"><b>${fmt(left)}</b> $OMR still on offer${posted > left ? ` <span class="chip cold">the tranche behind the desk is the tighter of the two</span>` : ` of ${fmt(dl.offeredOmr)} posted`}</div>
+        <span class="t" style="color:${open ? 'var(--neon)' : 'var(--dim)'}">${unlimited ? 'No daily purchase limit' : open ? "TODAY'S WINDOW — OPEN" : 'THE WINDOW IS SHUT TODAY'}</span>
+        ${unlimited ? `<div class="d">${capacityKnown ? `<b>${fmt(left)}</b> $OMR available for new quotes.` : 'Available supply is not reported.'}</div>
+          ${Number(bd.reserve?.reservedQuotesOmr) > 0 ? `<div class="d">${fmt(bd.reserve.reservedQuotesOmr)} $OMR is reserved for outstanding signed quotes.</div>` : ''}
+          <div class="d" style="font-size:11.5px;color:var(--dim);margin-top:4px">${open ? 'Choose your purchase amount. The quote checks the available supply and current price.' : !ready ? 'New bond purchases are temporarily unavailable while the desk is paused or waiting for launch, liquidity and a current price.' : !capacityKnown ? 'Purchases are unavailable until the available supply is confirmed.' : 'There is no available supply for a new quote. Purchases resume when supply becomes available.'}</div>`
+        : open ? `<div class="d"><b>${fmt(left)}</b> $OMR still on offer${posted > left ? ` <span class="chip cold">the tranche behind the desk is the tighter of the two</span>` : ` of ${fmt(dl.offeredOmr)} posted`}</div>
           <div class="bar" style="margin-top:4px"><i style="width:${pct}%"></i></div>
           <div class="d" style="font-size:11.5px;color:var(--dim);margin-top:4px">When it's gone it's gone until the house posts the next one. There is no queue and no reservation.</div>`
         : (dl
@@ -11664,16 +11694,16 @@
           <tr><th>when</th><td>released steadily over <b>${off.vestHours ?? '—'}h</b>, not all at once</td></tr>
           <tr><th>where your ETH goes</th><td>the pool, the treasury and the withdrawal reserve — split by a published rule, none of it to a promise</td></tr>
         </table>
-        <div class="d" style="font-size:11.5px;color:var(--dim);margin-top:4px">${bd.quote ? '' : 'No market price has printed yet, so no quote can be signed. '}${tranche > 0
+        <div class="d" style="font-size:11.5px;color:var(--dim);margin-top:4px">${unlimited ? `${bd.quote ? '' : 'A quote is unavailable while the desk is closed. '}${capacityKnown ? `${fmt(left)} $OMR remains available after accounting for outstanding signed quotes.` : 'Available supply is not reported.'}` : `${bd.quote ? '' : 'No market price has printed yet, so no quote can be signed. '}${tranche > 0
           ? `The tranche behind the desk holds ${fmt(tranche)} $OMR in total — the daily window is a slice of it, never the whole thing.`
-          : 'The tranche behind the desk is empty, so nothing can be sold today whatever window is posted.'}</div>
+          : 'The tranche behind the desk is empty, so nothing can be sold today whatever window is posted.'}`}</div>
       </div>
       <div class="card">
         <span class="t">Take the Deal</span>
         <div class="d">You ask the house for a signed quote, then your own wallet sends the ETH. Nothing is taken from you here — the quote is bound to your linked address and expires.</div>
-        <div style="margin-top:6px"><input id="bond-eth" placeholder="ETH" size="6"> <button class="act" id="bond-quote"${open ? '' : ' disabled'}>${open ? 'request a signed quote' : 'the window is shut'}</button>
+        <div style="margin-top:6px"><input id="bond-eth" placeholder="ETH" size="6"> <button class="act" id="bond-quote"${open ? '' : ' disabled'}>${open ? 'request a signed quote' : unlimited ? 'quotes unavailable' : 'the window is shut'}</button>
           <button class="act" id="bond-submit" style="display:none;border-color:var(--neon)">submit on-chain with wallet</button>
-          <div class="d" style="font-size:11px;color:var(--dim)">${me.wallet ? '' : '<b>Link your wallet above first</b> — a quote is bound to a proven address. '}The on-chain desk is <b>dormant until launch</b>.</div>
+          <div class="d" style="font-size:11px;color:var(--dim)">${me.wallet ? '' : '<b>Link your wallet above first</b> — a quote is bound to a proven address. '}${unlimited ? (open ? 'The desk is ready for on-chain purchases.' : 'New on-chain purchases are currently unavailable.') : 'The on-chain desk is <b>dormant until launch</b>.'}</div>
           <pre id="bond-quote-out" style="display:none;white-space:pre-wrap;font-size:11px;background:#111;padding:6px;border-radius:4px;margin-top:4px;overflow-x:auto"></pre></div>
       </div>
       <div class="card">

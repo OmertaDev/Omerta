@@ -13,10 +13,10 @@ import {Ownable2Step} from "@openzeppelin/contracts/access/Ownable2Step.sol";
 ///         Deploy with name "Denari", symbol "DNR" — the constructor takes both.
 ///
 ///         ── WHAT THIS TOKEN IS ────────────────────────────────────────────────────────────────
-///         A borrower's claim, not a currency we sell. It comes into existence ONLY when somebody
-///         locks collateral in their own escrow and draws against it, and it leaves existence ONLY
-///         when it is redeemed 1:1 at the Transmuter or burned to repay. Nothing else can create
-///         or destroy it — not the owner, not a multisig, not an upgrade.
+///         A borrower's claim, not a currency we sell. In the intended configuration the Alchemist
+///         mints against escrowed collateral and the Transmuter burns on redemption. The owner can
+///         replace either authority, so that configuration is a Safe trust assumption rather than
+///         an immutable restriction on how supply can change.
 ///
 ///         ── TWO AUTHORITIES, EACH SINGULAR AND FAIL-CLOSED ────────────────────────────────────
 ///         `minter`  — the Alchemist for this market, and only it.
@@ -31,11 +31,12 @@ import {Ownable2Step} from "@openzeppelin/contracts/access/Ownable2Step.sol";
 ///         "improve" this into a pause modifier that covers both.
 ///
 ///         ── WHAT IS DELIBERATELY ABSENT, AND MUST STAY ABSENT ─────────────────────────────────
-///         • **No owner mint.** So "the Safe was compromised" and "supply was inflated" remain two
-///           separate events — the argument OMR.sol already rests on.
-///         • **No blacklist, no freeze, no confiscation, no forced transfer.** A confiscation path
-///           is a rug vector, and adding one resets the third-party audit clock. It is also the
-///           first thing an integrator's risk team greps for.
+///         • **No direct owner mint.** The owner can nevertheless appoint itself or another address
+///           as minter, then issue arbitrary supply. A replacement burner can burn arbitrary accounts
+///           without allowance. Safe compromise therefore compromises both supply and balances.
+///         • **No blacklist, transfer freeze, or forced transfer entry point.** The configured
+///           burner still has balance-destruction authority as described above. Changes to these
+///           trust boundaries require a new scoped review under SECURITY-REVIEW-POLICY.md.
 ///         • **No upgradeability.** No proxy, no admin slot.
 ///         • **No rebasing, no fee-on-transfer.** Integrators may assume `transfer(x)` moves
 ///           exactly `x`; a debt token that lies about its own transfers breaks every downstream

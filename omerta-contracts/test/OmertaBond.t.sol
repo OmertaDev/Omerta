@@ -516,6 +516,44 @@ contract OmertaBondTest is Test {
         assertEq(capped.dailyCapOMR(), 0);
     }
 
+    function test_zero_daily_cap_allows_two_large_customers_in_the_same_day() public {
+        address secondBonder = makeAddr("secondBonder");
+        vm.deal(secondBonder, 2 ether);
+        vm.prank(safe);
+        bond.setDailyCap(1_000e18);
+
+        OmertaBond.BondQuote memory first = _quote(bonder, 1 ether, 0, 5 days, 1);
+        OmertaBond.BondQuote memory second = _quote(secondBonder, 2 ether, 0, 5 days, 2);
+        bytes memory firstSignature = _sign(first, signerPk);
+        bytes memory secondSignature = _sign(second, signerPk);
+        vm.prank(bonder);
+        vm.expectRevert("OB: daily cap");
+        bond.bond{value: 1 ether}(first, firstSignature);
+
+        // The Safe removes the aggregate ceiling. Both quotes still pass the ordinary
+        // signature, price, discount, oracle, vesting and token mint-role checks.
+        vm.prank(safe);
+        bond.setDailyCap(0);
+        uint256 supplyBefore = omr.totalSupply();
+        uint256 day = block.timestamp / 1 days;
+        vm.prank(bonder);
+        uint256 firstId = bond.bond{value: 1 ether}(first, firstSignature);
+        vm.prank(secondBonder);
+        uint256 secondId = bond.bond{value: 2 ether}(second, secondSignature);
+
+        (address firstOwner, uint256 firstPayout,,,) = bond.bonds(firstId);
+        (address secondOwner, uint256 secondPayout,,,) = bond.bonds(secondId);
+        assertEq(bond.dailyCapOMR(), 0);
+        assertEq(block.timestamp / 1 days, day);
+        assertEq(firstOwner, bonder);
+        assertEq(secondOwner, secondBonder);
+        assertEq(firstPayout, 5_000e18);
+        assertEq(secondPayout, 10_000e18);
+        assertEq(bond.committedOMR(), 15_000e18);
+        assertEq(omr.totalSupply(), supplyBefore + 15_000e18);
+        assertEq(pol.balance + dev.balance + rwa.balance + vig.balance, 3 ether);
+    }
+
     function _sign2(OmertaBond target, OmertaBond.BondQuote memory q) internal view returns (bytes memory) {
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(signerPk, target.hashQuote(q));
         return abi.encodePacked(r, s, v);

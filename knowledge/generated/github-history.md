@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `088ab1c6d4fa`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `e1d0e8476b6f`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1420 |
+| Commits in clone | 1421 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-08 — Keep the API Deck route selector within narrow screens |
+| Latest commit | 2026-09-08 — Refresh release knowledge after mobile Deck fix |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 548 |
+| OmertaDev | 549 |
 | Claude | 156 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 27 |
@@ -37,10 +37,10 @@
 | [schema.sql](../../schema.sql) | 283 | yes |
 | [BALANCE.md](../../BALANCE.md) | 254 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
-| knowledge/generated/github-history.md | 184 | historical |
-| knowledge/generated/graph-summary.md | 184 | historical |
-| knowledge/generated/graph.json | 184 | historical |
-| knowledge/generated/inventory.md | 184 | historical |
+| knowledge/generated/github-history.md | 185 | historical |
+| knowledge/generated/graph-summary.md | 185 | historical |
+| knowledge/generated/graph.json | 185 | historical |
+| knowledge/generated/inventory.md | 185 | historical |
 | [src/game.js](../../src/game.js) | 177 | yes |
 | [package.json](../../package.json) | 158 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |

@@ -707,6 +707,7 @@ CREATE TABLE IF NOT EXISTS invite_codes (
   created_by TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+CREATE INDEX IF NOT EXISTS ix_invite_codes_creator ON invite_codes (created_by);
 
 -- ── M6-B chain service (spec §11, EVM) — the ONLY chain-facing state ──
 -- A withdrawal debits the in-game $OMR ledger immediately (no double-spend), then
@@ -748,7 +749,8 @@ CREATE TABLE IF NOT EXISTS wallet_challenges (
 -- The ETH itself never touches this DB — the contract forwarded it to the dev wallet.
 CREATE TABLE IF NOT EXISTS fee_payments (
   nonce BIGINT PRIMARY KEY,
-  kind TEXT NOT NULL,                 -- 'mint' | 'respawn'
+  kind TEXT NOT NULL,                 -- 'mint' | 'respawn' | 'reroll'
+  mint_dev_only BOOLEAN NOT NULL DEFAULT false, -- new mint allocation; legacy rows keep their historical split
   payer_address TEXT NOT NULL,
   amount_wei TEXT NOT NULL,
   tx_hash TEXT,
@@ -1834,10 +1836,14 @@ CREATE TABLE IF NOT EXISTS bond_quotes (
   vest_seconds BIGINT NOT NULL,        -- linear vesting window (≤ MAX_VEST)
   deadline BIGINT NOT NULL,            -- unix seconds the quote is valid until (≤ MAX_QUOTE_TTL)
   signature TEXT NOT NULL,             -- the server's EIP-712 signature over the quote
-  status TEXT NOT NULL DEFAULT 'quoted', -- 'quoted' | 'bonded' (set when the Bonded watcher records it)
+  chain_id BIGINT,                     -- signing domain; legacy null rows cannot be auto-released
+  bond_address TEXT,                   -- signing contract, retained independently of current config
+  expiry_proof TEXT,                   -- finalized unused-nonce evidence when a reservation is released
+  status TEXT NOT NULL DEFAULT 'quoted', -- 'quoted' | 'bonded' | 'expired' after chain-verified unused expiry
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS ix_bond_quotes_account ON bond_quotes (account_id);
+CREATE INDEX IF NOT EXISTS ix_bond_quotes_expiry ON bond_quotes (status, deadline);
 
 -- ── M2 economy singletons (spec §3.4, §7.12) ──
 -- Constant-product AMM, single row, row-locked on every swap.
@@ -2539,6 +2545,9 @@ CREATE TABLE IF NOT EXISTS dynasty_tokens (
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS ix_dynasty_tokens_acct ON dynasty_tokens(account_id);
+-- Canonical log position prevents a repeated backfill from rolling ownership backwards.
+ALTER TABLE dynasty_tokens ADD COLUMN IF NOT EXISTS last_transfer_block BIGINT;
+ALTER TABLE dynasty_tokens ADD COLUMN IF NOT EXISTS last_transfer_log_index BIGINT;
 
 -- THE CELLPHONE (founder-directed): a personal inbox + player-to-player DIRECT MESSAGES. Pure
 -- talk — zero §10.4 surface (no currency ever rides a DM). ACCOUNT-keyed on BOTH sides (the
@@ -6616,3 +6625,97 @@ CREATE TABLE IF NOT EXISTS item_definition_activations (
 );
 
 CREATE INDEX IF NOT EXISTS p2_selection_package_idx ON item_definition_activations(package_id,logical_item_id);
+
+-- Shared liquidity keeper transport: one durable signed request per deployment/action, prepared
+-- before any RPC broadcast. Signed bytes are operational secrets; status APIs omit raw_tx.
+CREATE TABLE IF NOT EXISTS keeper_transactions (
+  id TEXT PRIMARY KEY,
+  chain_id BIGINT NOT NULL,
+  wallet TEXT NOT NULL,
+  target TEXT NOT NULL,
+  target_code_hash TEXT NOT NULL,
+  job_key TEXT NOT NULL,
+  action_hash TEXT NOT NULL,
+  nonce BIGINT NOT NULL,
+  raw_tx TEXT NOT NULL,
+  tx_hash TEXT NOT NULL UNIQUE,
+  request_json TEXT NOT NULL,
+  budget_json TEXT NOT NULL,
+  metadata_json TEXT NOT NULL,
+  gas_limit TEXT NOT NULL,
+  max_fee_per_gas TEXT NOT NULL,
+  priority_fee_per_gas TEXT NOT NULL,
+  confirmations INTEGER NOT NULL,
+  accounting_required BOOLEAN NOT NULL DEFAULT false,
+  status TEXT NOT NULL,
+  broadcast_attempts INTEGER NOT NULL DEFAULT 0,
+  last_broadcast_at TIMESTAMPTZ,
+  last_error TEXT,
+  block_number BIGINT,
+  block_hash TEXT,
+  receipt_json TEXT,
+  accounted_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (chain_id, wallet, nonce),
+  CHECK (status IN ('prepared','submitted','ambiguous','mined','confirmed','settled','reverted','nonce_conflict','reorged')),
+  CHECK (chain_id > 0 AND nonce >= 0 AND confirmations > 0 AND broadcast_attempts >= 0)
+);
+CREATE INDEX IF NOT EXISTS keeper_transactions_wallet_idx ON keeper_transactions(chain_id,wallet,status,nonce);
+
+-- Confirmed buyback receipts settle once in the same transaction as the existing economy books.
+CREATE TABLE IF NOT EXISTS liquidity_settlements (
+  id TEXT PRIMARY KEY,
+  chain_id BIGINT NOT NULL,
+  executor TEXT NOT NULL,
+  tx_hash TEXT NOT NULL,
+  sequence NUMERIC NOT NULL,
+  stream INTEGER NOT NULL,
+  eth_wei NUMERIC NOT NULL,
+  omr_wei NUMERIC NOT NULL,
+  primary_wei NUMERIC NOT NULL,
+  secondary_wei NUMERIC NOT NULL,
+  receipt_block BIGINT NOT NULL,
+  receipt_hash TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (chain_id, executor, sequence)
+);
+-- One permissionless outer transaction may call a typed executor more than once.
+-- Sequence, rather than outer transaction, is the on-chain settlement identity.
+ALTER TABLE liquidity_settlements DROP CONSTRAINT IF EXISTS liquidity_settlements_chain_id_tx_hash_executor_key;
+ALTER TABLE liquidity_settlements ADD COLUMN IF NOT EXISTS primary_booked NUMERIC NOT NULL DEFAULT 0;
+ALTER TABLE liquidity_settlements ADD COLUMN IF NOT EXISTS secondary_booked NUMERIC NOT NULL DEFAULT 0;
+CREATE TABLE IF NOT EXISTS liquidity_flow_receipts (
+  id TEXT PRIMARY KEY,
+  chain_id BIGINT NOT NULL,
+  contract_address TEXT NOT NULL,
+  tx_hash TEXT NOT NULL,
+  log_index INTEGER NOT NULL,
+  kind TEXT NOT NULL,
+  currency TEXT NOT NULL,
+  gross_wei NUMERIC NOT NULL,
+  details_json TEXT NOT NULL,
+  block_number BIGINT NOT NULL,
+  block_hash TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE(chain_id,contract_address,tx_hash,log_index)
+);
+CREATE TABLE IF NOT EXISTS liquidity_sync_cursors (
+  domain TEXT PRIMARY KEY,
+  next_block BIGINT NOT NULL,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+ALTER TABLE liquidity_sync_cursors ADD COLUMN IF NOT EXISTS previous_block_hash TEXT;
+CREATE TABLE IF NOT EXISTS liquidity_market_status (
+  chain_id BIGINT NOT NULL,
+  manifest_hash TEXT NOT NULL,
+  phase TEXT NOT NULL,
+  ready BOOLEAN NOT NULL DEFAULT false,
+  bond_ready BOOLEAN NOT NULL DEFAULT false,
+  bond_daily_cap_wei NUMERIC NOT NULL DEFAULT 0,
+  block_number BIGINT NOT NULL,
+  block_hash TEXT NOT NULL,
+  observed_at TIMESTAMPTZ NOT NULL,
+  expires_at TIMESTAMPTZ NOT NULL,
+  PRIMARY KEY(chain_id,manifest_hash)
+);

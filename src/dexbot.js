@@ -74,10 +74,10 @@ const maxTwapAgeS = () => Number(process.env.DEX_TWAP_MAX_AGE_S || 7200);  // a 
 const MIN_ETH = 0.001;                                                     // dust floor — gas would eat a smaller run
 
 export const dexBuybackReady = () =>
-  !!(process.env.CHAIN_RPC_URL && process.env.OMERTA_BOND_ADDRESS && process.env.DEX_BOT_PK
+  process.env.LIQUIDITY_AUTOMATION_ENABLED !== 'on' && !!(process.env.CHAIN_RPC_URL && process.env.OMERTA_BOND_ADDRESS && process.env.DEX_BOT_PK
      && process.env.UNIVERSAL_ROUTER_ADDRESS && process.env.OMR_ADDRESS && process.env.OMERTA_HOOK_ADDRESS);
 export const polPairingReady = () =>
-  !!(process.env.CHAIN_RPC_URL && process.env.OMERTA_BOND_ADDRESS && process.env.DEX_BOT_PK
+  process.env.LIQUIDITY_AUTOMATION_ENABLED !== 'on' && !!(process.env.CHAIN_RPC_URL && process.env.OMERTA_BOND_ADDRESS && process.env.DEX_BOT_PK
      && process.env.POSITION_MANAGER_ADDRESS && process.env.OMR_ADDRESS && process.env.OMERTA_HOOK_ADDRESS);
 
 // ── the seams (the __setTbaResolver discipline: the real RPC legs are swappable so the

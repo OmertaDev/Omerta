@@ -98,7 +98,8 @@ for (const s of wf) {
 if (fails) { console.error(`\n❌ ${fails} mismatch(es) — deploy/fee-splits.env does NOT reproduce fee-splits.json`); process.exit(1); }
 console.log('\n✅ deploy/fee-splits.env reproduces deploy/fee-splits.json exactly, and every load guard accepts it.');
 console.log('   Contract args to set in lockstep at deploy (see CHAIN-DEPLOY.md):');
-console.log('     OmertaFees vigBps = 2500');
+console.log('     OmertaFees mintDevBps = 10000 (fixed); feeRecipient = DEV_WALLET');
+console.log('     OmertaFees vigBps = 2500 (respawn / reroll / package only)');
 console.log('     OmertaBond polBps = 7500, devBps = 1500, rwaBps = 500  (vig = on-chain remainder 500)');
 console.log('     OMR / OmertaHook setSellTax(total=900, dev=200, rwa=160, community=240; lp=remainder)');
 console.log('       [the community slice is now ON-CHAIN — its recipient must be the community-buyback');

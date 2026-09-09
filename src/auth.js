@@ -3,6 +3,7 @@
 // created-or-fetched on that pair, and a guest account can upgrade in place
 // (preserving every possession, since everything hangs off the account row).
 import crypto from 'node:crypto';
+import { inviteModeEnabled, normalizeInviteCode } from './invites.js';
 import { GameError } from './game.js';
 
 // X (Twitter): the client sends the user's OAuth2 access token; we resolve it
@@ -118,6 +119,24 @@ export async function accountForIdentity(pool, { provider, subject }, ip, invite
       return { accountId: row.id, created: false };
     }
     throw e;
+  } finally { client.release(); }
+}
+
+// Ordinary guests consume admission in the SAME transaction as both durable account rows.
+export async function createGuestAccount(pool, ip, invite) {
+  const id = crypto.randomUUID();
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    await consumeInvite(client, invite);
+    await client.query('INSERT INTO accounts (id, auth_provider, auth_subject, created_ip, last_ip) VALUES ($1,$2,$1,$3,$3)',
+      [id, 'guest', ip]);
+    await client.query('INSERT INTO account_persistent (account_id) VALUES ($1)', [id]);
+    await client.query('COMMIT');
+    return id;
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
   } finally { client.release(); }
 }
 
@@ -267,9 +286,9 @@ export async function upgradeAccount(pool, accountId, { provider, subject }) {
 // The guarded UPDATE is the whole check — a SELECT-then-UPDATE would let concurrent
 // signups all pass on a single 1-use code and drive uses_left negative.
 export async function consumeInvite(pool, code) {
-  if ((process.env.INVITE_MODE || 'off') !== 'on') return true;
-  const r = await pool.query('UPDATE invite_codes SET uses_left = uses_left - 1 WHERE code=$1 AND uses_left > 0', [String(code || '')]);
-  if (r.rowCount !== 1) throw new GameError('invite', 'This alpha is invite-only. Ask a made man for a code.');
+  if (!inviteModeEnabled()) return true;
+  const r = await pool.query('UPDATE invite_codes SET uses_left = uses_left - 1 WHERE code=$1 AND uses_left > 0', [normalizeInviteCode(code)]);
+  if (r.rowCount !== 1) throw new GameError('invite', 'This launch is invite-only. Enter an unused invite code.');
   return true;
 }
 

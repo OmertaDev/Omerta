@@ -314,6 +314,10 @@ Assert-AddressEquals 'OMR minter' (Invoke-Cast @('call', $predicted.OMR, 'minter
 Assert-AddressEquals 'GearVault minter' (Invoke-Cast @('call', $predicted.GearVault, 'minter()(address)', '--rpc-url', $RpcUrl)) $zero
 Assert-AddressEquals 'StockVault keeper' (Invoke-Cast @('call', $predicted.StockVault, 'keeper()(address)', '--rpc-url', $RpcUrl)) $zero
 Assert-AddressEquals 'OmertaBond oracle' (Invoke-Cast @('call', $predicted.OmertaBond, 'oracle()(address)', '--rpc-url', $RpcUrl)) $zero
+Assert-ScalarEquals 'OmertaFees character mint DEV bps' (Convert-CastUint (Invoke-Cast @('call', $predicted.OmertaFees, 'mintDevBps()(uint256)', '--rpc-url', $RpcUrl))) '10000'
+Assert-ScalarEquals 'OmertaFees non-mint Vig bps' (Convert-CastUint (Invoke-Cast @('call', $predicted.OmertaFees, 'vigBps()(uint256)', '--rpc-url', $RpcUrl))) $config.VIG_BPS
+Assert-AddressEquals 'OmertaFees DEV recipient' (Invoke-Cast @('call', $predicted.OmertaFees, 'feeRecipient()(address)', '--rpc-url', $RpcUrl)) $config.DEV_WALLET
+Assert-AddressEquals 'OmertaFees Vig recipient' (Invoke-Cast @('call', $predicted.OmertaFees, 'vigRecipient()(address)', '--rpc-url', $RpcUrl)) $config.VIG_WALLET
 Assert-ScalarEquals 'VoucherClaim daily cap' (Convert-CastUint (Invoke-Cast @('call', $predicted.VoucherClaim, 'dailyCapOMR()(uint256)', '--rpc-url', $RpcUrl))) $config.DAILY_CAP_OMR
 Assert-ScalarEquals 'StreetDeed daily cap' (Convert-CastUint (Invoke-Cast @('call', $predicted.StreetDeed, 'dailyMintCap()(uint256)', '--rpc-url', $RpcUrl))) $config.DEED_DAILY_MINT_CAP
 Assert-ScalarEquals 'DynastyNFT daily cap' (Convert-CastUint (Invoke-Cast @('call', $predicted.DynastyNFT, 'dailyMintCap()(uint256)', '--rpc-url', $RpcUrl))) $config.DYNASTY_DAILY_MINT_CAP

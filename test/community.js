@@ -64,7 +64,7 @@ const checkOf = async (runner, name) => {
 // Every ingest driven REAL (a txHash) with no lever set: the community ledger must stay EMPTY and
 // each booking must be the pre-drop figure exactly.
 {
-  await recordFeePayment(pool, { nonce: 800001, kind: 'mint', payer: wallet, amountWei: (10n ** 16n).toString(), txHash: tx() });
+  await recordFeePayment(pool, { nonce: 800001, kind: 'reroll', payer: wallet, amountWei: (10n ** 16n).toString(), txHash: tx() });
   await recordStorePurchase(pool, { nonce: 800002, sku: 'decor_deco', payer: wallet, amountWei: (2n * 10n ** 16n).toString(), txHash: tx() });
   const taxed = await recordSellTax(pool, { ref: 'cm-tax-0', omrTaxed: 900, priceOmrPerEth: 1000, txHash: tx(), bootstrap: true });
   // gross 0.9 ETH → the ORIGINAL three-way split: dev 0.2 / rwa 0.4 / lp 0.3, community 0
@@ -98,13 +98,13 @@ process.env.HARVEST_COMMUNITY_BPS = '6280';
 process.env.POL_FEES_VIG_BPS = '2500';
 {
   // the gameplay fee: 0.01 ETH × 15% = 0.0015
-  await recordFeePayment(pool, { nonce: 800003, kind: 'mint', payer: wallet, amountWei: (10n ** 16n).toString(), txHash: tx() });
+  await recordFeePayment(pool, { nonce: 800003, kind: 'reroll', payer: wallet, amountWei: (10n ** 16n).toString(), txHash: tx() });
   const fee = await commRows('fee');
   assert.equal(fee.length, 1, 'the real fee carved ONE community row');
   assert.equal(Number(fee[0].amount), 0.0015, 'fee slice = gross × FEE_COMMUNITY_BPS exactly');
   assert.equal(fee[0].currency, 'eth');
   // a COMP fee (no txHash) books nothing, lever on or not — the txHash gate lives at the caller
-  await recordFeePayment(pool, { nonce: 800004, kind: 'mint', payer: wallet, amountWei: (10n ** 16n).toString() });
+  await recordFeePayment(pool, { nonce: 800004, kind: 'reroll', payer: wallet, amountWei: (10n ** 16n).toString() });
   assert.equal((await commRows('fee')).length, 1, 'a comp fee books NO community slice even with the lever on');
 
   // the Store: 0.02 ETH × 15% = 0.003, carved BEFORE the founder remainder

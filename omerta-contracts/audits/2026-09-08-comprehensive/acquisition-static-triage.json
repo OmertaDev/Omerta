@@ -1,0 +1,1697 @@
+{
+  "date": "2026-09-08",
+  "note": "Every direct in-scope diagnostic from the successful per-contract static runs has an explicit disposition. Imported dependency-only diagnostics remain with the root shared-dependency review. Failed tool runs remain visible separately.",
+  "inputs": [
+    {
+      "name": "AcquisitionVault",
+      "path": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "sha256": "2138f1eb112d06039b2147c5698d8a1d2ac44aee10942360371590ac9dee4b3e",
+      "success": true
+    },
+    {
+      "name": "AcquisitionAuthority",
+      "path": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "sha256": "176940b68d7a0fdd050c255d671c2187912f0a50b9ada95d34281341fe3ec7ea",
+      "success": true
+    },
+    {
+      "name": "AcquisitionVaultCore",
+      "path": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "sha256": "163071272dba498de6bfda8cffcd2ac20483008d147f6256b8ed48da533b965d",
+      "success": true
+    },
+    {
+      "name": "AcquisitionConstellationFactory",
+      "path": "output\\comprehensive-audit\\slither-AcquisitionConstellationFactory-full.json",
+      "sha256": "dc230de31e3eca4be7000cb5cac2cedb7991dfa48b226415e2b059bb82485262",
+      "success": true
+    },
+    {
+      "name": "AcquisitionIntentExecution",
+      "path": "output\\comprehensive-audit\\slither-AcquisitionIntentExecution-full.json",
+      "sha256": "58221e443233e71b0b8e76df489b483221faff4c83fb0d5e8e4b6b1631c484da",
+      "success": true
+    },
+    {
+      "name": "AcquisitionReconciliation",
+      "path": "output\\comprehensive-audit\\slither-AcquisitionReconciliation-full.json",
+      "sha256": "58221e443233e71b0b8e76df489b483221faff4c83fb0d5e8e4b6b1631c484da",
+      "success": true
+    },
+    {
+      "name": "PreVoteBudgetBook",
+      "path": "output\\comprehensive-audit\\slither-PreVoteBudgetBook-full.json",
+      "sha256": "434a0f2f2ea431a48c97572dceea53e29f530fe049d01dadde997d6243d0e101",
+      "success": true
+    },
+    {
+      "name": "RwaHealthOverlay",
+      "path": "output\\comprehensive-audit\\slither-RwaHealthOverlay-ir.json",
+      "sha256": "f54777958dd2761bfdf36b18ecbfbfdcea8dd5e1137a9a1218acc5df3e456a79",
+      "success": true
+    },
+    {
+      "name": "SettlementGasPool",
+      "path": "output\\comprehensive-audit\\slither-SettlementGasPool-full.json",
+      "sha256": "c98c40682774d035325985c96d9a5582a9ee2d6ecc0501ef34c998cae155d14c",
+      "success": true
+    },
+    {
+      "name": "StockTokenRegistryV2",
+      "path": "output\\comprehensive-audit\\slither-StockTokenRegistryV2-full.json",
+      "sha256": "6e5811364e2a4a35345f4b900f5459d0a72b12dc4f837c85b4214549a4977199",
+      "success": true
+    }
+  ],
+  "unavailable": [],
+  "diagnostics": [
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "5a41655204a9daa371968a192a8670cb358c9bff4e53ff50b93b0051bd09e6a4",
+      "check": "uninitialized-state",
+      "reportedImpact": "High",
+      "description": "AcquisitionVault.reconciliationBackingWei (src/AcquisitionVault.sol#76) is never initialized. It is used in:\n\t- AcquisitionVault._accountingTotalsAtBalance(uint256) (src/AcquisitionVault.sol#836-854)\n",
+      "disposition": "Intentional zero-initialized milestone state. Solidity defaults these scalar storage slots to zero. Ordinary reservations, reconciliation liability/backing and the relayed cancellation nonce have no implemented mutator in this phase. Snapshot/finalization prove zero; introducing the future transitions reopens review. See AQ-PHASE-01."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "ac75178af3403e591730a2b0282a1f5b08798c33ec4e8f56971e7cece0c83476",
+      "check": "uninitialized-state",
+      "reportedImpact": "High",
+      "description": "AcquisitionVault.ordinaryReservedWei (src/AcquisitionVault.sol#74) is never initialized. It is used in:\n\t- AcquisitionVault._accountingTotalsAtBalance(uint256) (src/AcquisitionVault.sol#836-854)\n",
+      "disposition": "Intentional zero-initialized milestone state. Solidity defaults these scalar storage slots to zero. Ordinary reservations, reconciliation liability/backing and the relayed cancellation nonce have no implemented mutator in this phase. Snapshot/finalization prove zero; introducing the future transitions reopens review. See AQ-PHASE-01."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "ff57f48b431da17baeeb1fa96bab3e7198a5bacbf9748f8bf5b83ebc7aabe465",
+      "check": "uninitialized-state",
+      "reportedImpact": "High",
+      "description": "AcquisitionVault.reconciliationLiabilityWei (src/AcquisitionVault.sol#75) is never initialized. It is used in:\n\t- AcquisitionVault._accountingTotalsAtBalance(uint256) (src/AcquisitionVault.sol#836-854)\n",
+      "disposition": "Intentional zero-initialized milestone state. Solidity defaults these scalar storage slots to zero. Ordinary reservations, reconciliation liability/backing and the relayed cancellation nonce have no implemented mutator in this phase. Snapshot/finalization prove zero; introducing the future transitions reopens review. See AQ-PHASE-01."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "283c201be94229f8d81f470b91fabea5dc34ce811cad9ec3cc41f4fc6d656c2f",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "AcquisitionVault.getDeposit(bytes32) (src/AcquisitionVault.sol#133-136) uses a dangerous strict equality:\n\t- record.depositId == bytes32(0) (src/AcquisitionVault.sol#135)\n",
+      "disposition": "Intentional sentinel, exact identity or boundary comparison. Zero IDs/generations identify absent records; zero credit/surplus selects evidence/status; exact reverse-head and snapshot hashes enforce identity; uint256.max detects exhausted counters. No manipulable nonzero external balance-equality gate is introduced."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "7a920fc51b831f686c1aaa1bd237ddcc73e54e7fa11deebb32e3da48c2d6e59a",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "AcquisitionVault.getIngress(uint256) (src/AcquisitionVault.sol#128-131) uses a dangerous strict equality:\n\t- record.generation == 0 (src/AcquisitionVault.sol#130)\n",
+      "disposition": "Intentional sentinel, exact identity or boundary comparison. Zero IDs/generations identify absent records; zero credit/surplus selects evidence/status; exact reverse-head and snapshot hashes enforce identity; uint256.max detects exhausted counters. No manipulable nonzero external balance-equality gate is introduced."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "7f003458e8e8124622d7d02c79859553b7745948ee491a3d0edd6ebba930cff4",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "AcquisitionVault._nextAccountingSequence() (src/AcquisitionVault.sol#867-870) uses a dangerous strict equality:\n\t- accountingSequence == type()(uint256).max (src/AcquisitionVault.sol#868)\n",
+      "disposition": "Intentional sentinel, exact identity or boundary comparison. Zero IDs/generations identify absent records; zero credit/surplus selects evidence/status; exact reverse-head and snapshot hashes enforce identity; uint256.max detects exhausted counters. No manipulable nonzero external balance-equality gate is introduced."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "acfa1390ec0a3768dba7752d59149006cea2a7e96e3a27a51a2d15902609477b",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "AcquisitionVault._emitCanonicalDepositEvidence(IAcquisitionVaultV1.DepositRecord,IAcquisitionVaultV1.AccountingTotals,IAcquisitionVaultV1.AccountingTotals) (src/AcquisitionVault.sol#676-728) uses a dangerous strict equality:\n\t- deposit.availableCreditWei == 0 (src/AcquisitionVault.sol#684-685)\n",
+      "disposition": "Intentional sentinel, exact identity or boundary comparison. Zero IDs/generations identify absent records; zero credit/surplus selects evidence/status; exact reverse-head and snapshot hashes enforce identity; uint256.max detects exhausted counters. No manipulable nonzero external balance-equality gate is introduced."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "fdaced1cdb92f36f7e79e3a8870d75863d3d37a3eafeb6f78a1f0c187a09794e",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "AcquisitionVault._requirePending(bytes32) (src/AcquisitionVault.sol#751-755) uses a dangerous strict equality:\n\t- p.proposalId == bytes32(0) (src/AcquisitionVault.sol#753)\n",
+      "disposition": "Intentional sentinel, exact identity or boundary comparison. Zero IDs/generations identify absent records; zero credit/surplus selects evidence/status; exact reverse-head and snapshot hashes enforce identity; uint256.max detects exhausted counters. No manipulable nonzero external balance-equality gate is introduced."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "fee8d64922b45d152097ddf876b3770f61839c3f4e05aa6bc101e39e1da15524",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "AcquisitionVault.syncBalance() (src/AcquisitionVault.sol#384-424) uses a dangerous strict equality:\n\t- forcedSurplus == 0 && ! observationChanged (src/AcquisitionVault.sol#388)\n",
+      "disposition": "Intentional sentinel, exact identity or boundary comparison. Zero IDs/generations identify absent records; zero credit/surplus selects evidence/status; exact reverse-head and snapshot hashes enforce identity; uint256.max detects exhausted counters. No manipulable nonzero external balance-equality gate is introduced."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "d95520357ce5e8fe1fa4047bed54c79f241b71f71704467e17d307609b0f7215",
+      "check": "locked-ether",
+      "reportedImpact": "Medium",
+      "description": "Contract locking ether found:\n\tContract AcquisitionVault (src/AcquisitionVault.sol#13-994) has payable functions:\n\t - IAcquisitionVaultV1.depositCanonical(bytes32) (src/interfaces/IAcquisitionVaultV1.sol#393)\n\t - AcquisitionVault.depositCanonical(bytes32) (src/AcquisitionVault.sol#610-674)\n\tBut does not have a function to withdraw the ether\n",
+      "disposition": "Accurate reachability observation, retained as AQ-PHASE-01: native deposits exist and outflow/recovery does not. Normative acquisition Tasks 3-5 explicitly require an unfunded dormant milestone; this is not dismissed as a false positive and prevents funding/activation of this revision."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "57d24d3f916c28536bad2d45965d0696770790f7516a5fb5eee3e79552c362c5",
+      "check": "uninitialized-local",
+      "reportedImpact": "Medium",
+      "description": "AcquisitionVault._emitCanonicalDepositEvidence(IAcquisitionVaultV1.DepositRecord,IAcquisitionVaultV1.AccountingTotals,IAcquisitionVaultV1.AccountingTotals).componentIndex (src/AcquisitionVault.sol#694) is a local variable never initialized\n",
+      "disposition": "False positive: Solidity zero-initializes local counters; the deposit work struct is assigned before each field is read; all five Factory predicted-address elements are assigned in the bounded loop before use. No uninitialized memory pointer is consumed."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "8877b4395d400ed22fa08b72d34582006c96a1ed73610a1322091c09615a9b96",
+      "check": "uninitialized-local",
+      "reportedImpact": "Medium",
+      "description": "AcquisitionVault.syncBalance().componentIndex (src/AcquisitionVault.sol#402) is a local variable never initialized\n",
+      "disposition": "False positive: Solidity zero-initializes local counters; the deposit work struct is assigned before each field is read; all five Factory predicted-address elements are assigned in the bounded loop before use. No uninitialized memory pointer is consumed."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "a6bb8589f1284990563328d6fdd2930fb841988170333f0c23c333fb5c9b2884",
+      "check": "uninitialized-local",
+      "reportedImpact": "Medium",
+      "description": "AcquisitionVault.depositCanonical(bytes32).work (src/AcquisitionVault.sol#618) is a local variable never initialized\n",
+      "disposition": "False positive: Solidity zero-initializes local counters; the deposit work struct is assigned before each field is read; all five Factory predicted-address elements are assigned in the bounded loop before use. No uninitialized memory pointer is consumed."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "f2fc788e4ad2b1a309d6c20507826ea81a8a09b20372c1fc747065696a6e173a",
+      "check": "unused-return",
+      "reportedImpact": "Medium",
+      "description": "AcquisitionVault._validateSignature(address,bytes32,bytes) (src/AcquisitionVault.sol#917-940) ignores return value by (recovered,error,None) = ECDSA.tryRecoverCalldata(digest,signature) (src/AcquisitionVault.sol#921)\n",
+      "disposition": "False positive: legacy-vault signature validation intentionally ignores only the ECDSA diagnostic error-argument bytes. It checks both RecoverError.NoError and the exact recovered successor address before mutation."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "184aa4397aa7b1c306a800416b18ab1f27a00fca2265cabbc0d6470449fc6b85",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVault._localReadinessSatisfied() (src/AcquisitionVault.sol#950-993) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- o == address(this) || o == stockTokenRegistryV2 || (po != address(0) && (po == o || po == address(this) || po == stockTokenRegistryV2)) || (m != address(0) && (m == o || m == po || m == address(this) || m == stockTokenRegistryV2)) || (n != address(0) && (n == o || n == po || n == m || n == address(this) || n == stockTokenRegistryV2)) || (activeIngress != address(0) && _ingressRoleCollision(activeIngress,true,true)) || (pendingIngress != address(0) && _ingressRoleCollision(pendingIngress,true,true)) || (activeIngress != address(0) && activeIngress == pendingIngress) (src/AcquisitionVault.sol#963-969)\n\t- totals.balanceDeficitWei != 0 (src/AcquisitionVault.sol#972)\n\t- totals.reconciliationShortfallWei != 0 (src/AcquisitionVault.sol#975)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "1e050004b18d586dce49555dddf5b72fdbc8cb172a33c12af21b1a9e5871ef0c",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVault._checkOwnerCandidate(address) (src/AcquisitionVault.sol#730-737) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- candidate == owner() || candidate == address(this) || candidate == stockTokenRegistryV2 || candidate == mainOperator || candidate == _pendingMainOperatorNomination.nominee || candidate == _activeIngressAddress() || candidate == _pendingIngressProposal.config.ingress (src/AcquisitionVault.sol#732-734)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "2b6feed54fcc7c70dda6f1340d1b997be1388a4664e0906af00569b963cd56d4",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVault.getIngress(uint256) (src/AcquisitionVault.sol#128-131) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- record.generation == 0 (src/AcquisitionVault.sol#130)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "3318a0c8e0eeb24b9eac14e50706f9ae2d4de55b0e6649260f6f9f6bb6b38e3d",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVault._ingressRoleCollision(address,bool,bool) (src/AcquisitionVault.sol#790-800) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- candidate == owner() || candidate == pendingOwner() || candidate == mainOperator || candidate == _pendingMainOperatorNomination.nominee || candidate == address(this) || candidate == stockTokenRegistryV2 || (! ignorePendingIngress && candidate == _pendingIngressProposal.config.ingress) || (! ignoreActiveIngress && candidate == _activeIngressAddress()) (src/AcquisitionVault.sol#795-799)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "37fde23356e2eeeb3fcaaca9c3dc22a5108abfeeb542ed17c05c01f35b487b33",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVault.replaceMainOperator(IAcquisitionVaultV1.SuccessorConsent,bytes) (src/AcquisitionVault.sol#284-306) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- successor == address(0) || successor == previous || _operatorCollision(successor,false) (src/AcquisitionVault.sol#287)\n\t- consent.currentOperator != previous || consent.generation != operatorGeneration || consent.outflowNonce != outflowNonce (src/AcquisitionVault.sol#291-292)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "3b6044c0b30979c81cf246b2ace8d91b8625693813b75eb56abd58ac2866e8ec",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVault._requirePending(bytes32) (src/AcquisitionVault.sol#751-755) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- p.proposalId == bytes32(0) (src/AcquisitionVault.sol#753)\n\t- proposalId != p.proposalId (src/AcquisitionVault.sol#754)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "3ccdf037bddaa597193d8e7f1fc78bb38437672b454299c0d3a911771535c26a",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVault.nominateMainOperator(address,bytes32) (src/AcquisitionVault.sol#169-217) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- mainOperator != address(0) (src/AcquisitionVault.sol#174)\n\t- block.timestamp > type()(uint64).max - OPERATOR_NOMINATION_DELAY - OPERATOR_ACCEPTANCE_WINDOW (src/AcquisitionVault.sol#180)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "41f154c15ea6740a9b1742d66da5b5233f6866b2c7c9151822c1313ad875a93a",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVault.reclassifyUnattributed(uint256,bytes32) (src/AcquisitionVault.sol#426-467) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- preTotals.balanceDeficitWei != 0 (src/AcquisitionVault.sol#434)\n\t- preTotals.reconciliationShortfallWei != 0 (src/AcquisitionVault.sol#435)\n\t- amountWei > preTotals.unattributedWei (src/AcquisitionVault.sol#438)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "4d40f626acaed68846af7d2d18877150aef00811decca23733c4728894c44400",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVault.getDeposit(bytes32) (src/AcquisitionVault.sol#133-136) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- record.depositId == bytes32(0) (src/AcquisitionVault.sol#135)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "5761baf9bf7aa629d65a78eb3f76418188cf9fd0b7e3f4d5de258b22546ba666",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVault.depositCanonical(bytes32) (src/AcquisitionVault.sol#610-674) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- msg.value < work.preTotals.balanceDeficitWei (src/AcquisitionVault.sol#649)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "57be92457dc52a5744337e10951393d41372ca5dbc20c0c6c6e9eed6a4829352",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVault._accountingTotalsAtBalance(uint256) (src/AcquisitionVault.sol#836-854) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- accounted > actual (src/AcquisitionVault.sol#839)\n\t- actual > accounted (src/AcquisitionVault.sol#840)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "583042a0acbe46df87a6640d0d763caf60b3feebd7c1321eef1f76bf8c353982",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVault.syncBalance() (src/AcquisitionVault.sol#384-424) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- observationChanged = preTotals.balanceDeficitWei != lastObservedBalanceDeficitWei (src/AcquisitionVault.sol#387)\n\t- forcedSurplus == 0 && ! observationChanged (src/AcquisitionVault.sol#388)\n\t- forcedSurplus != 0 (src/AcquisitionVault.sol#391)\n\t- forcedSurplus != 0 (src/AcquisitionVault.sol#403)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "6ce339a02b343cc7e3f3da2525bdaa6dc02ae8d8ac58f4cb0ec54b6dbafa1b99",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVault._requireDirectOperator() (src/AcquisitionVault.sol#856-860) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- operator == address(0) (src/AcquisitionVault.sol#858)\n\t- _msgSender() != operator (src/AcquisitionVault.sol#859)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "6d67bad41482af241ae3f5446d2c1b6896b9ec172c14889fed58e90a1344e9dd",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVault._nextAccountingSequence() (src/AcquisitionVault.sol#867-870) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- accountingSequence == type()(uint256).max (src/AcquisitionVault.sol#868)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "70df7cf60280cf89f202896d4478b50cc52a017b103811a29e4c7ec43227457c",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVault._emitCanonicalDepositEvidence(IAcquisitionVaultV1.DepositRecord,IAcquisitionVaultV1.AccountingTotals,IAcquisitionVaultV1.AccountingTotals) (src/AcquisitionVault.sol#676-728) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- deposit.balanceDeficitRepairWei != 0 (src/AcquisitionVault.sol#695)\n\t- deposit.availableCreditWei != 0 (src/AcquisitionVault.sol#706)\n\t- deposit.availableCreditWei == 0 (src/AcquisitionVault.sol#684-685)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "8a800c2d23bf2ffe333198baa082381ada3ccf19d01e8a74b7f6de4122a256d7",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVault.expireMainOperatorNomination(bytes32) (src/AcquisitionVault.sol#228-236) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- block.timestamp < p.expiresAt (src/AcquisitionVault.sol#230)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "8c1bef7cf08c33acae01741f5c89e418241dc0c47c8258b6b4a994c9640a5f1d",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVault.pause(bytes32) (src/AcquisitionVault.sol#325-331) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- _msgSender() != owner() && _msgSender() != mainOperator (src/AcquisitionVault.sol#326)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "a61b127c7773e31e25379c5cfa058c30c800df6495b065aabac43f61bca34fa3",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVault.acceptMainOperatorNomination(bytes32) (src/AcquisitionVault.sol#238-251) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- _msgSender() != p.nominee (src/AcquisitionVault.sol#240)\n\t- block.timestamp < p.validAfter (src/AcquisitionVault.sol#241)\n\t- block.timestamp >= p.expiresAt (src/AcquisitionVault.sol#242)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "a63953c095244dc266495dd2d03c41925ddc2a5fc2bbb1f936a397aad6f2682e",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVault._validateWindow(uint64,uint64) (src/AcquisitionVault.sol#909-915) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- block.timestamp < issuedAt (src/AcquisitionVault.sol#913)\n\t- block.timestamp > deadline (src/AcquisitionVault.sol#914)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "c8bd55365640a3b20509fb9568a8f2d968ad63bfb8ba87d6ef17a5ebd0e03def",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVault.expireIngressProposal(bytes32) (src/AcquisitionVault.sol#542-552) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- block.timestamp < p.expiresAt (src/AcquisitionVault.sol#544)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "cf68b3050822994e3c3126a209b498e7e36924a2b8b2ebbd2e75cda608855630",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVault._checkedTimestamp(uint256) (src/AcquisitionVault.sol#819-822) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- timestamp > type()(uint64).max (src/AcquisitionVault.sol#820)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "ec158964763b4d7be2de1024d8e8e790840d37421e891470c4b5e19de0b1b399",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVault.activateIngress(bytes32) (src/AcquisitionVault.sol#554-594) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- activatedAt < p.validAfter (src/AcquisitionVault.sol#557)\n\t- activatedAt >= p.expiresAt (src/AcquisitionVault.sol#558)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "ec3795ef687f7d72f5cbbf2eb26c3e1fa1c9e47bc660756ae5c5e00a2a6fa566",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVault.proposeIngress(IAcquisitionVaultV1.IngressConfig,bytes32) (src/AcquisitionVault.sol#469-514) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- block.timestamp > type()(uint64).max - INGRESS_PROPOSAL_DELAY - INGRESS_ACCEPTANCE_WINDOW (src/AcquisitionVault.sol#479)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "f5f1356b00f986a236e9ccc47b45d23d55e496d1833b47028cc2d4aee92ea42b",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVault._checkOperatorCandidate(address,bool) (src/AcquisitionVault.sol#739-742) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- candidate == address(0) (src/AcquisitionVault.sol#740)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "fe6fdbbc401a84fac15b0fc1fb4f26059e25c9796790643bd1cac2f3daec61e2",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVault._operatorCollision(address,bool) (src/AcquisitionVault.sol#744-749) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- candidate == owner() || candidate == pendingOwner() || candidate == address(this) || candidate == stockTokenRegistryV2 || candidate == _activeIngressAddress() || candidate == _pendingIngressProposal.config.ingress || (! ignorePendingNominee && candidate == _pendingMainOperatorNomination.nominee) (src/AcquisitionVault.sol#745-748)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "ef3f94f8e6959c4c8836518e157faa8c511e7d5fbce7e8bacd12825ffbe0d8a7",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionVault._validateSignature(address,bytes32,bytes) (src/AcquisitionVault.sol#917-940) uses assembly\n\t- INLINE ASM (src/AcquisitionVault.sol#930-937)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "f729b97bc1ee57605aff78093e0ae0db291fd76b77748750a4a54c43896180e4",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionVault.constructor(address,address,uint256) (src/AcquisitionVault.sol#89-118) uses assembly\n\t- INLINE ASM (src/AcquisitionVault.sol#102-111)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "454df1f9dc8dde22d74f2528c438f33a8a86edae9f311618b071f2270d33e9d2",
+      "check": "pragma",
+      "reportedImpact": "Informational",
+      "description": "4 different versions of Solidity are used:\n\t- Version constraint ^0.8.20 is used by:\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Context.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Panic.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Pausable.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/ShortStrings.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#5)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/cryptography/ECDSA.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/Math.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/SafeCast.sol#5)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/SignedMath.sol#4)\n\t- Version constraint >=0.4.16 is used by:\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/interfaces/IERC5267.sol#4)\n\t- Version constraint ^0.8.24 is used by:\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/Bytes.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/Strings.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/cryptography/EIP712.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/cryptography/MessageHashUtils.sol#4)\n\t- Version constraint 0.8.26 is used by:\n\t\t-0.8.26 (src/AcquisitionVault.sol#2)\n\t\t-0.8.26 (src/interfaces/IAcquisitionVaultV1.sol#2)\n\t\t-0.8.26 (src/interfaces/IStockTokenRegistryV2.sol#2)\n",
+      "disposition": "Informational dependency pragma differences. The canonical build selects Solidity 0.8.26, optimizer 800, Cancun and required per-file viaIR; compatible dependency ranges do not select an older compiler."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "695d79ad6a704f8e6c9896346aaf6f5c0ac8303220bb955d28af311e35a0f814",
+      "check": "too-many-digits",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionVault.slitherConstructorConstantVariables() (src/AcquisitionVault.sol#13-994) uses literals with too many digits:\n\t- ERC1271_CALL_GAS = 100000 (src/AcquisitionVault.sol#33)\n",
+      "disposition": "Literal readability observation. Gas budgets and limits match the frozen specification; formatting a numeric literal does not alter the enforced cap."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "2904488d5dd344bbe095cf7dc9de06304c0856f38525ae905431b57bf61d0769",
+      "check": "constable-states",
+      "reportedImpact": "Optimization",
+      "description": "AcquisitionVault.reconciliationLiabilityWei (src/AcquisitionVault.sol#75) should be constant \n",
+      "disposition": "Optimization suggestion on deliberately frozen zero storage reserved by the current milestone schema. Changing to a constant would change storage/snapshot conformance and is not required for security. See AQ-PHASE-01."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "5dd313998b9e9d4fb3f9fbfc8f28870cd31c82ffab41a53f6e907ccdc6c326ac",
+      "check": "constable-states",
+      "reportedImpact": "Optimization",
+      "description": "AcquisitionVault.ordinaryReservedWei (src/AcquisitionVault.sol#74) should be constant \n",
+      "disposition": "Optimization suggestion on deliberately frozen zero storage reserved by the current milestone schema. Changing to a constant would change storage/snapshot conformance and is not required for security. See AQ-PHASE-01."
+    },
+    {
+      "sourceRun": "AcquisitionVault",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVault-full.json",
+      "id": "8e33c0e8aba6489642ae24d4cb0ec49c36361d0594a4c638d8ee7606dda49980",
+      "check": "constable-states",
+      "reportedImpact": "Optimization",
+      "description": "AcquisitionVault.reconciliationBackingWei (src/AcquisitionVault.sol#76) should be constant \n",
+      "disposition": "Optimization suggestion on deliberately frozen zero storage reserved by the current milestone schema. Changing to a constant would change storage/snapshot conformance and is not required for security. See AQ-PHASE-01."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "d76921aa07014acb90aad55c110289ec63ce5862e06c0bf3a159af702db533b7",
+      "check": "uninitialized-state",
+      "reportedImpact": "High",
+      "description": "AcquisitionAuthority._cancelNonce (src/AcquisitionAuthority.sol#115) is never initialized. It is used in:\n\t- AcquisitionAuthority.authoritySnapshot() (src/AcquisitionAuthority.sol#191-256)\n\t- AcquisitionAuthority.finalizeAuthority(bytes32) (src/AcquisitionAuthority.sol#258-284)\n",
+      "disposition": "Intentional zero-initialized milestone state. Solidity defaults these scalar storage slots to zero. Ordinary reservations, reconciliation liability/backing and the relayed cancellation nonce have no implemented mutator in this phase. Snapshot/finalization prove zero; introducing the future transitions reopens review. See AQ-PHASE-01."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "30b631d13b1ccca530aeb600e18940bc445d310c41a2a6da01f2aef5da342758",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "AcquisitionAuthority._requirePending(bytes32) (src/AcquisitionAuthority.sol#830-834) uses a dangerous strict equality:\n\t- pending.proposalId == bytes32(0) (src/AcquisitionAuthority.sol#832)\n",
+      "disposition": "Intentional sentinel, exact identity or boundary comparison. Zero IDs/generations identify absent records; zero credit/surplus selects evidence/status; exact reverse-head and snapshot hashes enforce identity; uint256.max detects exhausted counters. No manipulable nonzero external balance-equality gate is introduced."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "53da4f098d1151c6933619c7e3551d4f6ab58cf561736f1486aaec9eade0cc31",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "AcquisitionAuthority.finalizeAuthority(bytes32) (src/AcquisitionAuthority.sol#258-284) uses a dangerous strict equality:\n\t- _initial(_operatorStateHash(_pendingMainOperatorNomination) == _EMPTY_OPERATOR_HASH,24) (src/AcquisitionAuthority.sol#277)\n",
+      "disposition": "Intentional sentinel, exact identity or boundary comparison. Zero IDs/generations identify absent records; zero credit/surplus selects evidence/status; exact reverse-head and snapshot hashes enforce identity; uint256.max detects exhausted counters. No manipulable nonzero external balance-equality gate is introduced."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "55c0268e00cb9d547287497b80ab664ce180b876a588984fd99e264cf220841a",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "AcquisitionAuthority._validateIngressConfig(IAcquisitionAuthorityV2.IngressConfig,bool) (src/AcquisitionAuthority.sol#869-883) uses a dangerous strict equality:\n\t- config.ingress.code.length == 0 (src/AcquisitionAuthority.sol#877)\n",
+      "disposition": "Intentional sentinel, exact identity or boundary comparison. Zero IDs/generations identify absent records; zero credit/surplus selects evidence/status; exact reverse-head and snapshot hashes enforce identity; uint256.max detects exhausted counters. No manipulable nonzero external balance-equality gate is introduced."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "8c4dfe1a786314f6163a52dacbffccec6ad97b376fc7bd1ea50a51544db379d9",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "AcquisitionAuthority._requirePendingIngress(bytes32) (src/AcquisitionAuthority.sol#836-840) uses a dangerous strict equality:\n\t- pending.proposalId == bytes32(0) (src/AcquisitionAuthority.sol#838)\n",
+      "disposition": "Intentional sentinel, exact identity or boundary comparison. Zero IDs/generations identify absent records; zero credit/surplus selects evidence/status; exact reverse-head and snapshot hashes enforce identity; uint256.max detects exhausted counters. No manipulable nonzero external balance-equality gate is introduced."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "d6776e6dbfb8a0393c9e4997467d6a89ae6e1fd173b42a510e7e5053cdd17c62",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "AcquisitionAuthority._validateIngressConfig(IAcquisitionAuthorityV2.IngressConfig,bool) (src/AcquisitionAuthority.sol#869-883) uses a dangerous strict equality:\n\t- config.runtimeCodeHash == bytes32(0) || config.perDepositCapWei == 0 || config.perDepositCapWei > config.epochDepositCapWei || config.epochDepositCapWei > config.lifetimeDepositCapWei (src/AcquisitionAuthority.sol#872-874)\n",
+      "disposition": "Intentional sentinel, exact identity or boundary comparison. Zero IDs/generations identify absent records; zero credit/surplus selects evidence/status; exact reverse-head and snapshot hashes enforce identity; uint256.max detects exhausted counters. No manipulable nonzero external balance-equality gate is introduced."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "0776ae5f430df020bac275b63260f71c922245e81584bb0d29bcee8b0f6b9188",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionAuthority._checkedTimestamp() (src/AcquisitionAuthority.sol#814-817) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- block.timestamp > type()(uint64).max (src/AcquisitionAuthority.sol#815)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "081110d5189f18ff9a6570ccc74b987efb8c014eb69c579a7d3b1921af65f603",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionAuthority._ingressRecordConfigHash(IAcquisitionAuthorityV2.IngressRecord) (src/AcquisitionAuthority.sol#912-921) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- record.ingress == address(0) (src/AcquisitionAuthority.sol#913)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "08a20c6f3ca76fbc62f2279ec2774cdfc74b578be38130a90e157b53692d74d1",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionAuthority._checkOperatorCandidate(address,bool) (src/AcquisitionAuthority.sol#847-850) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- candidate == address(0) (src/AcquisitionAuthority.sol#848)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "1e03440edd05ac09d731aa02c9d803126fa1e3fd83a2118eb9321b2043466aab",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionAuthority._constellationCollision(address) (src/AcquisitionAuthority.sol#860-863) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- candidate == address(this) || candidate == _factory || candidate == _registry || candidate == _core || candidate == _budgetBook || candidate == _intentExecution || candidate == _reconciliation (src/AcquisitionAuthority.sol#861-862)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "1ea8ad4eabc26073f91fdafc72113cfc356e9e1ee32364687401e94f8888bf8e",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionAuthority._requirePending(bytes32) (src/AcquisitionAuthority.sol#830-834) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- pending.proposalId == bytes32(0) (src/AcquisitionAuthority.sol#832)\n\t- proposalId != pending.proposalId (src/AcquisitionAuthority.sol#833)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "4281756ea138b808425a024652a474fc7d0973e2cdb3c8e5f46a9518998f9dc2",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionAuthority.activateIngress(bytes32) (src/AcquisitionAuthority.sol#718-751) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- activatedAt < pending.validAfter (src/AcquisitionAuthority.sol#728)\n\t- activatedAt >= pending.expiresAt (src/AcquisitionAuthority.sol#729)\n\t- _ingressConfigHash(pending.config) != pending.configHash (src/AcquisitionAuthority.sol#734)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "42a7566ee80812f3d9cfc3b9fe6d4f9e71440f889d4257b3e2d1e72562f8b324",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionAuthority.nominateMainOperator(address,bytes32) (src/AcquisitionAuthority.sol#385-412) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- mainOperator != address(0) (src/AcquisitionAuthority.sol#392)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "4fa40ae2f6caf1fd6cf1d99f941eb75310df2e415ce5fbfa6259b29af023a40e",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionAuthority._requireDirectOperator() (src/AcquisitionAuthority.sol#824-828) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- operator == address(0) (src/AcquisitionAuthority.sol#826)\n\t- _msgSender() != operator (src/AcquisitionAuthority.sol#827)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "58c258e21f45852ec54e19b39faac36088c01767558126d26d2ea42aa00745ef",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionAuthority.finalizeAuthority(bytes32) (src/AcquisitionAuthority.sol#258-284) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- _initial(mainOperator == address(0),12) (src/AcquisitionAuthority.sol#265)\n\t- _initial(_operatorStateHash(_pendingMainOperatorNomination) == _EMPTY_OPERATOR_HASH,24) (src/AcquisitionAuthority.sol#277)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "5e2a19824c3ff651e95f8a81627ad449ae2882f79fa937ed54f67bb048faab6d",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionAuthority.expireMainOperatorNomination(bytes32) (src/AcquisitionAuthority.sol#479-492) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- block.timestamp < p.expiresAt (src/AcquisitionAuthority.sol#481)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "7df41697087eea136586dab0d6ce55679b211c96ea91bb43ab878f8093e7dfee",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionAuthority.acceptMainOperatorNomination(bytes32) (src/AcquisitionAuthority.sol#494-501) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- _msgSender() != p.nominee (src/AcquisitionAuthority.sol#496)\n\t- block.timestamp < p.validAfter (src/AcquisitionAuthority.sol#497)\n\t- block.timestamp >= p.expiresAt (src/AcquisitionAuthority.sol#498)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "8b30b6071aa961aae1b6eedc99fddbb8b0b3dadf7c3f29c8976629a6fd159691",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionAuthority.replaceMainOperator(IAcquisitionAuthorityV2.SuccessorConsent,bytes) (src/AcquisitionAuthority.sol#528-549) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- successor == address(0) || successor == previous || _roleCollision(successor,0) (src/AcquisitionAuthority.sol#535)\n\t- consent.currentOperator != previous || consent.generation != operatorGeneration || consent.outflowNonce != _sharedO2Nonce (src/AcquisitionAuthority.sol#539-540)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "94cf3d730344b1099a666fac45d2b5583f66fb578e4083311269372be8c6b871",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionAuthority._validateIngressConfig(IAcquisitionAuthorityV2.IngressConfig,bool) (src/AcquisitionAuthority.sol#869-883) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- config.ingress == address(0) (src/AcquisitionAuthority.sol#870)\n\t- config.runtimeCodeHash == bytes32(0) || config.perDepositCapWei == 0 || config.perDepositCapWei > config.epochDepositCapWei || config.epochDepositCapWei > config.lifetimeDepositCapWei (src/AcquisitionAuthority.sol#872-874)\n\t- config.lifetimeDepositCapWei > _readCoreGlobalLifetimeCap() (src/AcquisitionAuthority.sol#876)\n\t- config.ingress.code.length == 0 (src/AcquisitionAuthority.sol#877)\n\t- actual != config.runtimeCodeHash (src/AcquisitionAuthority.sol#879)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "a3f173bfc1a711fb1cfec3a5f91887c3e5ae0bb83b69d37848b4616c91831a7c",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionAuthority._roleCollision(address,uint8) (src/AcquisitionAuthority.sol#852-858) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- candidate == owner() || (ignored & 1 == 0 && candidate == pendingOwner()) || candidate == mainOperator || (ignored & 2 == 0 && candidate == _pendingMainOperatorNomination.nominee) || candidate == _activeIngressAddress() || (ignored & 4 == 0 && candidate == _pendingIngressProposal.config.ingress) || _constellationCollision(candidate) (src/AcquisitionAuthority.sol#853-857)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "a592a793a8c48261437a12919fe1419c52d03a46698dc6c7a46427a346d95adf",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionAuthority._validateWindow(uint64,uint64) (src/AcquisitionAuthority.sol#1078-1084) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- block.timestamp < issuedAt (src/AcquisitionAuthority.sol#1082)\n\t- block.timestamp > deadline (src/AcquisitionAuthority.sol#1083)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "ac15c5fd942bfa9245f90a7a67b26025212c01ed2e79fcd82a30584fde7c4eef",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionAuthority.pause(bytes32) (src/AcquisitionAuthority.sol#571-587) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- _msgSender() != owner() && _msgSender() != mainOperator (src/AcquisitionAuthority.sol#572)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "b98cae3b2e7124a4a1babb1f5af42ab7957dd10d7cbfc47a9eecb1b72c536f4f",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionAuthority.expireIngressProposal(bytes32) (src/AcquisitionAuthority.sol#703-716) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- block.timestamp < pending.expiresAt (src/AcquisitionAuthority.sol#705)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "be0fbeb33a561d6f88fd0c22aab0f4bbd04fdd1c65d4722a4c80b3071dcb5611",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionAuthority._requireProposalTimestampRoom() (src/AcquisitionAuthority.sol#808-812) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- block.timestamp > type()(uint64).max - OPERATOR_NOMINATION_DELAY - OPERATOR_ACCEPTANCE_WINDOW (src/AcquisitionAuthority.sol#809)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "ccef258ead3d75bed8c2ed026c18ba0b1b51faaf9b8d13db22976701ab9cb689",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionAuthority._requirePendingIngress(bytes32) (src/AcquisitionAuthority.sol#836-840) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- pending.proposalId == bytes32(0) (src/AcquisitionAuthority.sol#838)\n\t- proposalId != pending.proposalId (src/AcquisitionAuthority.sol#839)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "10e7990a14dac5301300a0d731d86e6ffbdb5ee1b63fe98f6a246c21297aac9b",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionAuthority._emitIngressProposalCreated(IAcquisitionAuthorityV2.PendingIngressProposal) (src/AcquisitionAuthority.sol#668-682) uses assembly\n\t- INLINE ASM (src/AcquisitionAuthority.sol#670-681)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "186e59ffc3d11c012391f09309ecb887473a0d720ba62fbc445cd82c84228a91",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionAuthority._configHash(address,bytes32,uint256,uint256,uint256) (src/AcquisitionAuthority.sol#923-943) uses assembly\n\t- INLINE ASM (src/AcquisitionAuthority.sol#930-942)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "210b8cc8831dc5b515bbbb46922c3a6ca48ce46292e8683b1693df9554a71d6d",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionAuthority._ingressExpiryDetails(IAcquisitionAuthorityV2.PendingIngressProposal) (src/AcquisitionAuthority.sol#988-1004) uses assembly\n\t- INLINE ASM (src/AcquisitionAuthority.sol#991-1003)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "21ceb9c6899bcc230dfbff1357c8e220fb7dce9abedd6b4898b2ac3dce1ee6f0",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionAuthority._emitIngressActivated(uint256,IAcquisitionAuthorityV2.PendingIngressProposal,uint64) (src/AcquisitionAuthority.sol#753-769) uses assembly\n\t- INLINE ASM (src/AcquisitionAuthority.sol#757-768)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "285671215f5e33450e901f3da4a1e1e62e1db9d04f3b154db83e2e24c97a9c1d",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionAuthority.hashOutflowAuthorization(IAcquisitionAuthorityV2.OutflowAuthorization) (src/AcquisitionAuthority.sol#595-611) uses assembly\n\t- INLINE ASM (src/AcquisitionAuthority.sol#600-609)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "2fc3de11a7bf784785cab09770e4b8683fa26d71ad72c7971c1454032f1d70fa",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionAuthority._initial(bool,uint8) (src/AcquisitionAuthority.sol#793-802) uses assembly\n\t- INLINE ASM (src/AcquisitionAuthority.sol#796-800)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "3b4914d5db4d2fb2d9e3f006c2f351ff522cbd4763ae914870fbae0879692388",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionAuthority._readCoreGlobalLifetimeCap() (src/AcquisitionAuthority.sol#885-900) uses assembly\n\t- INLINE ASM (src/AcquisitionAuthority.sol#890-896)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "45a0f19061b63316a4c8ee6b15be8fbf21049b69fb37d4b8cc3ad583d5687ed1",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionAuthority.invalidateOutflowNonce(uint256,bytes32) (src/AcquisitionAuthority.sol#551-569) uses assembly\n\t- INLINE ASM (src/AcquisitionAuthority.sol#561-568)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "465431d85a3214f0234766d44c53d71285ff6d6f1b397e01303e2b213071775c",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionAuthority._ingressProposalId(IAcquisitionAuthorityV2.PendingIngressProposal) (src/AcquisitionAuthority.sol#1050-1076) uses assembly\n\t- INLINE ASM (src/AcquisitionAuthority.sol#1055-1075)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "554e6ecbbce1d044014206b832203044e3641692b5dc7706680f05d0651980d7",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionAuthority._validateSignature(address,bytes32,bytes) (src/AcquisitionAuthority.sol#1086-1135) uses assembly\n\t- INLINE ASM (src/AcquisitionAuthority.sol#1094-1098)\n\t- INLINE ASM (src/AcquisitionAuthority.sol#1100-1109)\n\t- INLINE ASM (src/AcquisitionAuthority.sol#1118-1132)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "59f3980a332413f03d7337d01ef3ba4a50e8eddc6d06cc09bf477c95eb78bdc5",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionAuthority.pendingMainOperatorNomination() (src/AcquisitionAuthority.sol#290-304) uses assembly\n\t- INLINE ASM (src/AcquisitionAuthority.sol#291-303)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "6f2a1e4bb0a6f7307aeb8247db5d6fc1013ee5f40364abf9e2a31b42b5b4940e",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionAuthority._ingressStateHash(IAcquisitionAuthorityV2.PendingIngressProposal) (src/AcquisitionAuthority.sol#1029-1048) uses assembly\n\t- INLINE ASM (src/AcquisitionAuthority.sol#1030-1047)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "7bbefdf1ec0eee1a0fece5c035d04973be3f27ac617ce35c6bd779a5b9ae276b",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionAuthority.authoritySnapshot() (src/AcquisitionAuthority.sol#191-256) uses assembly\n\t- INLINE ASM (src/AcquisitionAuthority.sol#255)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "7e3cc7d375b3321117233cffdbf2d27c53024098e1f3af06b2a009fc9ea52982",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionAuthority._emitOperatorProposalCreated(IAcquisitionAuthorityV2.PendingOperatorNomination) (src/AcquisitionAuthority.sol#414-426) uses assembly\n\t- INLINE ASM (src/AcquisitionAuthority.sol#416-425)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "7fdee0742fb29e83ad1afdfbf5260637b4d2be41e1f17147e3f5b57af3d560a0",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionAuthority.finalizeAuthority(bytes32) (src/AcquisitionAuthority.sol#258-284) uses assembly\n\t- INLINE ASM (src/AcquisitionAuthority.sol#283)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "820caf44599dd1ab62c2c47123e3924f90aec716b70fcf2b1c27c461a95dc958",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionAuthority._predict(address,uint8) (src/AcquisitionAuthority.sol#1137-1147) uses assembly\n\t- INLINE ASM (src/AcquisitionAuthority.sol#1139-1145)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "87a5f797a0c83f3522669a7d76d8bbb88399d30cae537be81089d0647f15dfe2",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionAuthority._operatorProposalId(IAcquisitionAuthorityV2.PendingOperatorNomination) (src/AcquisitionAuthority.sol#1006-1027) uses assembly\n\t- INLINE ASM (src/AcquisitionAuthority.sol#1011-1026)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "97216a3fa46c0f6c6d6e3a1cba3ecdc98dea54c6269f4febc71fa111d47164e3",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionAuthority._transitionOperator(address,address,IAcquisitionAuthorityV2.ReasonCode,bytes32) (src/AcquisitionAuthority.sol#428-442) uses assembly\n\t- INLINE ASM (src/AcquisitionAuthority.sol#435-441)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "9a116c08788bc35a11d61cf8d472846a757e1e988f2186e230675ce11093f87b",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionAuthority._operatorExpiryDetails(IAcquisitionAuthorityV2.PendingOperatorNomination) (src/AcquisitionAuthority.sol#971-986) uses assembly\n\t- INLINE ASM (src/AcquisitionAuthority.sol#974-985)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "a807af8386c17fe407ffacee4e3704f5297d07403d25d5efc7a6d0ed8c40128f",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionAuthority.pause(bytes32) (src/AcquisitionAuthority.sol#571-587) uses assembly\n\t- INLINE ASM (src/AcquisitionAuthority.sol#581-586)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "adc0d4b35233790fb090d0180aabf09d39adb06de8747b5671e72c8bd9aab5d5",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionAuthority.hashSuccessorConsent(IAcquisitionAuthorityV2.SuccessorConsent) (src/AcquisitionAuthority.sol#613-629) uses assembly\n\t- INLINE ASM (src/AcquisitionAuthority.sol#618-627)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "bc2492c161d5d784132fe695215df90af1150325815367d6b06ede5d34e1112f",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionAuthority._ownershipCancellationDetails(IAcquisitionAuthorityV2.PendingOperatorNomination,address,address) (src/AcquisitionAuthority.sol#949-969) uses assembly\n\t- INLINE ASM (src/AcquisitionAuthority.sol#956-968)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "bebfc5655d48b94549b4fd66eea3064afc58d04247037d3ce00f10e8bc2205b8",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionAuthority.pendingIngressProposal() (src/AcquisitionAuthority.sol#306-324) uses assembly\n\t- INLINE ASM (src/AcquisitionAuthority.sol#307-323)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "c3e25e428befea650c169f7af8c614364ab1f187e594c2613dd4a14de2e28e35",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionAuthority.getIngress(uint256) (src/AcquisitionAuthority.sol#326-348) uses assembly\n\t- INLINE ASM (src/AcquisitionAuthority.sol#329-334)\n\t- INLINE ASM (src/AcquisitionAuthority.sol#336-347)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "d0ce6b7b34008fc11d75d2c90add70d8f03f64275158cb4461b1e8bc8ef87fa8",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionAuthority._emitProposalResult(bytes32,bytes32,address,address,IAcquisitionAuthorityV2.ReasonCode,bytes32) (src/AcquisitionAuthority.sol#444-458) uses assembly\n\t- INLINE ASM (src/AcquisitionAuthority.sol#452-457)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "e9728e4ac17d50c4bd8fb64be3ef7e1d7443e126deb8925f751f680f84ab750e",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionAuthority.version() (src/AcquisitionAuthority.sol#129-136) uses assembly\n\t- INLINE ASM (src/AcquisitionAuthority.sol#130-135)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "faaf5cdf676121eb3bed510196f20e6d1455e6a6dc80897fa3de7ee004f289a6",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionAuthority.disableIngress(bytes32) (src/AcquisitionAuthority.sol#771-791) uses assembly\n\t- INLINE ASM (src/AcquisitionAuthority.sol#784-790)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "fcb8fb801d116d7c79750392397dcbed6b7d9fa7a93d768c4e4fbd224034e402",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionAuthority._operatorStateHash(IAcquisitionAuthorityV2.PendingOperatorNomination) (src/AcquisitionAuthority.sol#945-947) uses assembly\n\t- INLINE ASM (src/AcquisitionAuthority.sol#946)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "06bd5fe8d99d67336167db5397801c636fd5bc4d429955e94ba76ba20d694526",
+      "check": "pragma",
+      "reportedImpact": "Informational",
+      "description": "4 different versions of Solidity are used:\n\t- Version constraint ^0.8.20 is used by:\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Context.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Panic.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Pausable.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/ShortStrings.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#5)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/Math.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/SafeCast.sol#5)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/SignedMath.sol#4)\n\t- Version constraint >=0.4.16 is used by:\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/interfaces/IERC5267.sol#4)\n\t- Version constraint ^0.8.24 is used by:\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/Bytes.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/Strings.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/cryptography/EIP712.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/cryptography/MessageHashUtils.sol#4)\n\t- Version constraint 0.8.26 is used by:\n\t\t-0.8.26 (src/AcquisitionAuthority.sol#2)\n\t\t-0.8.26 (src/interfaces/IAcquisitionAuthorityV2.sol#2)\n",
+      "disposition": "Informational dependency pragma differences. The canonical build selects Solidity 0.8.26, optimizer 800, Cancun and required per-file viaIR; compatible dependency ranges do not select an older compiler."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "9a84ec692d460cf283af8191ec317ed137fd26a9c7829bac09ed248b1ad541e0",
+      "check": "cyclomatic-complexity",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionAuthority.constructor(address,bytes32,address,address,address,address,address,address) (src/AcquisitionAuthority.sol#138-178) has a high cyclomatic complexity (13).\n",
+      "disposition": "Maintainability observation. These functions enumerate explicit identity/encoding/accounting checks and failure boundaries. Each helper was read through, and the existing conformance suites exercise malformed peer responses and precedence. Complexity itself is not evidence of an exploitable path."
+    },
+    {
+      "sourceRun": "AcquisitionAuthority",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionAuthority-ir.json",
+      "id": "81cc9e5f6cced1470e0c59f84235276f545d12aa36818aa692c490aa8ae65499",
+      "check": "constable-states",
+      "reportedImpact": "Optimization",
+      "description": "AcquisitionAuthority._cancelNonce (src/AcquisitionAuthority.sol#115) should be constant \n",
+      "disposition": "Optimization suggestion on deliberately frozen zero storage reserved by the current milestone schema. Changing to a constant would change storage/snapshot conformance and is not required for security. See AQ-PHASE-01."
+    },
+    {
+      "sourceRun": "AcquisitionVaultCore",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "id": "607ea76423b69dfa99c513d8cbf793e6c439a0486710f0f1c6975eeb7af22681",
+      "check": "uninitialized-state",
+      "reportedImpact": "High",
+      "description": "AcquisitionVaultCore.reconciliationLiabilityWei (src/AcquisitionVaultCore.sol#149) is never initialized. It is used in:\n\t- AcquisitionVaultCore._coreSnapshotWords() (src/AcquisitionVaultCore.sol#378-397)\n\t- AcquisitionVaultCore.finalizeCore(bytes32) (src/AcquisitionVaultCore.sol#399-413)\n\t- AcquisitionVaultCore._totals(uint256) (src/AcquisitionVaultCore.sol#415-427)\n",
+      "disposition": "Intentional zero-initialized milestone state. Solidity defaults these scalar storage slots to zero. Ordinary reservations, reconciliation liability/backing and the relayed cancellation nonce have no implemented mutator in this phase. Snapshot/finalization prove zero; introducing the future transitions reopens review. See AQ-PHASE-01."
+    },
+    {
+      "sourceRun": "AcquisitionVaultCore",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "id": "690df22741a585215b40b0a7edd5a892a449b38efd50e9f83beab2c2db8ee128",
+      "check": "uninitialized-state",
+      "reportedImpact": "High",
+      "description": "AcquisitionVaultCore.ordinaryReservedWei (src/AcquisitionVaultCore.sol#148) is never initialized. It is used in:\n\t- AcquisitionVaultCore._coreSnapshotWords() (src/AcquisitionVaultCore.sol#378-397)\n\t- AcquisitionVaultCore.finalizeCore(bytes32) (src/AcquisitionVaultCore.sol#399-413)\n\t- AcquisitionVaultCore._totals(uint256) (src/AcquisitionVaultCore.sol#415-427)\n",
+      "disposition": "Intentional zero-initialized milestone state. Solidity defaults these scalar storage slots to zero. Ordinary reservations, reconciliation liability/backing and the relayed cancellation nonce have no implemented mutator in this phase. Snapshot/finalization prove zero; introducing the future transitions reopens review. See AQ-PHASE-01."
+    },
+    {
+      "sourceRun": "AcquisitionVaultCore",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "id": "d35ef273dea4565fb266bbaf1e83c28cd0d85d78c374933704d275c706afde3a",
+      "check": "uninitialized-state",
+      "reportedImpact": "High",
+      "description": "AcquisitionVaultCore.reconciliationBackingWei (src/AcquisitionVaultCore.sol#150) is never initialized. It is used in:\n\t- AcquisitionVaultCore._coreSnapshotWords() (src/AcquisitionVaultCore.sol#378-397)\n\t- AcquisitionVaultCore.finalizeCore(bytes32) (src/AcquisitionVaultCore.sol#399-413)\n\t- AcquisitionVaultCore._totals(uint256) (src/AcquisitionVaultCore.sol#415-427)\n",
+      "disposition": "Intentional zero-initialized milestone state. Solidity defaults these scalar storage slots to zero. Ordinary reservations, reconciliation liability/backing and the relayed cancellation nonce have no implemented mutator in this phase. Snapshot/finalization prove zero; introducing the future transitions reopens review. See AQ-PHASE-01."
+    },
+    {
+      "sourceRun": "AcquisitionVaultCore",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "id": "a87b4250c7ef0a278b09c084f2f3e02749cff52406f8010464b69977356779ac",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "AcquisitionVaultCore.depositCanonical(bytes32) (src/AcquisitionVaultCore.sol#259-344) uses a dangerous strict equality:\n\t- credit == 0 (src/AcquisitionVaultCore.sol#328)\n",
+      "disposition": "Intentional sentinel, exact identity or boundary comparison. Zero IDs/generations identify absent records; zero credit/surplus selects evidence/status; exact reverse-head and snapshot hashes enforce identity; uint256.max detects exhausted counters. No manipulable nonzero external balance-equality gate is introduced."
+    },
+    {
+      "sourceRun": "AcquisitionVaultCore",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "id": "b0916911093f4bb1c45ced59b959c8b68c8115b214a046ad090d4da31bd41457",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "AcquisitionVaultCore.getDeposit(bytes32) (src/AcquisitionVaultCore.sol#213-216) uses a dangerous strict equality:\n\t- record.depositId == 0 (src/AcquisitionVaultCore.sol#215)\n",
+      "disposition": "Intentional sentinel, exact identity or boundary comparison. Zero IDs/generations identify absent records; zero credit/surplus selects evidence/status; exact reverse-head and snapshot hashes enforce identity; uint256.max detects exhausted counters. No manipulable nonzero external balance-equality gate is introduced."
+    },
+    {
+      "sourceRun": "AcquisitionVaultCore",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "id": "ebe7c09fb2b6599d4e3969ec2e9a93d72ca580eb718e27b534d2710ec75351f9",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "AcquisitionVaultCore.syncBalance() (src/AcquisitionVaultCore.sol#218-232) uses a dangerous strict equality:\n\t- pre.forcedSurplusWei == 0 && ! changed (src/AcquisitionVaultCore.sol#221)\n",
+      "disposition": "Intentional sentinel, exact identity or boundary comparison. Zero IDs/generations identify absent records; zero credit/surplus selects evidence/status; exact reverse-head and snapshot hashes enforce identity; uint256.max detects exhausted counters. No manipulable nonzero external balance-equality gate is introduced."
+    },
+    {
+      "sourceRun": "AcquisitionVaultCore",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "id": "ff35b74ed494b6d0c166e0adbfb8a0bdbef2250d7a8f9c505e847c92a9882e6b",
+      "check": "locked-ether",
+      "reportedImpact": "Medium",
+      "description": "Contract locking ether found:\n\tContract AcquisitionVaultCore (src/AcquisitionVaultCore.sol#5-542) has payable functions:\n\t - AcquisitionVaultCore.depositCanonical(bytes32) (src/AcquisitionVaultCore.sol#259-344)\n\tBut does not have a function to withdraw the ether\n",
+      "disposition": "Accurate reachability observation, retained as AQ-PHASE-01: native deposits exist and outflow/recovery does not. Normative acquisition Tasks 3-5 explicitly require an unfunded dormant milestone; this is not dismissed as a false positive and prevents funding/activation of this revision."
+    },
+    {
+      "sourceRun": "AcquisitionVaultCore",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "id": "7c29ec9e46eb6e6532b3e025ce4c95a0878adc1be766eadeea63672e9676f24c",
+      "check": "uninitialized-local",
+      "reportedImpact": "Medium",
+      "description": "AcquisitionVaultCore.depositCanonical(bytes32).i (src/AcquisitionVaultCore.sol#329) is a local variable never initialized\n",
+      "disposition": "False positive: Solidity zero-initializes local counters; the deposit work struct is assigned before each field is read; all five Factory predicted-address elements are assigned in the bounded loop before use. No uninitialized memory pointer is consumed."
+    },
+    {
+      "sourceRun": "AcquisitionVaultCore",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "id": "f15273ac568bda57573316339dfbd4e9271c5987ef7c05f6eb83f24dbeabb5aa",
+      "check": "uninitialized-local",
+      "reportedImpact": "Medium",
+      "description": "AcquisitionVaultCore.syncBalance().i (src/AcquisitionVaultCore.sol#229) is a local variable never initialized\n",
+      "disposition": "False positive: Solidity zero-initializes local counters; the deposit work struct is assigned before each field is read; all five Factory predicted-address elements are assigned in the bounded loop before use. No uninitialized memory pointer is consumed."
+    },
+    {
+      "sourceRun": "AcquisitionVaultCore",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "id": "0069f801ca05ae65f8640408f381adfa2be172389221a079daecef7784a9d217",
+      "check": "shadowing-local",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVaultCore.coreSnapshot().globalLifetimeCanonicalDepositedWei (src/AcquisitionVaultCore.sol#371) shadows:\n\t- AcquisitionVaultCore.globalLifetimeCanonicalDepositedWei (src/AcquisitionVaultCore.sol#153) (state variable)\n",
+      "disposition": "API naming observation: Core snapshot named return values do not write or read an accidental local; _coreSnapshotWords reads the actual storage fields and returns its exact 18-word array. The constructor cap parameter is explicitly assigned to immutable _globalCap."
+    },
+    {
+      "sourceRun": "AcquisitionVaultCore",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "id": "15254bb256875cfdc7e22d274be200480c92741f43c3a8731473540ca473d89c",
+      "check": "shadowing-local",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVaultCore.constructor(address,bytes32,address,address,address,address,address,uint256).globalLifetimeCanonicalDepositCapWei (src/AcquisitionVaultCore.sol#170) shadows:\n\t- AcquisitionVaultCore.globalLifetimeCanonicalDepositCapWei() (src/AcquisitionVaultCore.sol#205-207) (function)\n",
+      "disposition": "API naming observation: Core snapshot named return values do not write or read an accidental local; _coreSnapshotWords reads the actual storage fields and returns its exact 18-word array. The constructor cap parameter is explicitly assigned to immutable _globalCap."
+    },
+    {
+      "sourceRun": "AcquisitionVaultCore",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "id": "2b8dff3fe5fe1f16cc66e1a7e7ef61a38d1f1405525d93554739097ed9a6f52e",
+      "check": "shadowing-local",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVaultCore.coreSnapshot().accountingSequence (src/AcquisitionVaultCore.sol#369) shadows:\n\t- AcquisitionVaultCore.accountingSequence (src/AcquisitionVaultCore.sol#151) (state variable)\n",
+      "disposition": "API naming observation: Core snapshot named return values do not write or read an accidental local; _coreSnapshotWords reads the actual storage fields and returns its exact 18-word array. The constructor cap parameter is explicitly assigned to immutable _globalCap."
+    },
+    {
+      "sourceRun": "AcquisitionVaultCore",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "id": "30c3aa89b66b580b3e4ab1a34c8130522e1c89fda2d99adeef6548d253799090",
+      "check": "shadowing-local",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVaultCore.coreSnapshot().globalLifetimeCanonicalDepositCapWei (src/AcquisitionVaultCore.sol#363) shadows:\n\t- AcquisitionVaultCore.globalLifetimeCanonicalDepositCapWei() (src/AcquisitionVaultCore.sol#205-207) (function)\n",
+      "disposition": "API naming observation: Core snapshot named return values do not write or read an accidental local; _coreSnapshotWords reads the actual storage fields and returns its exact 18-word array. The constructor cap parameter is explicitly assigned to immutable _globalCap."
+    },
+    {
+      "sourceRun": "AcquisitionVaultCore",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "id": "647b0b96d06831775a24e93105be938d839d05f239bc5f6d3ccf30d7b540d5d9",
+      "check": "shadowing-local",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVaultCore.coreSnapshot().unattributedWei (src/AcquisitionVaultCore.sol#365) shadows:\n\t- AcquisitionVaultCore.unattributedWei (src/AcquisitionVaultCore.sol#147) (state variable)\n",
+      "disposition": "API naming observation: Core snapshot named return values do not write or read an accidental local; _coreSnapshotWords reads the actual storage fields and returns its exact 18-word array. The constructor cap parameter is explicitly assigned to immutable _globalCap."
+    },
+    {
+      "sourceRun": "AcquisitionVaultCore",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "id": "6e3548aa4bfb5988dcaf0def82892c50156345caaf8009fad5569a27c67ba370",
+      "check": "shadowing-local",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVaultCore.coreSnapshot().reconciliationBackingWei (src/AcquisitionVaultCore.sol#368) shadows:\n\t- AcquisitionVaultCore.reconciliationBackingWei (src/AcquisitionVaultCore.sol#150) (state variable)\n",
+      "disposition": "API naming observation: Core snapshot named return values do not write or read an accidental local; _coreSnapshotWords reads the actual storage fields and returns its exact 18-word array. The constructor cap parameter is explicitly assigned to immutable _globalCap."
+    },
+    {
+      "sourceRun": "AcquisitionVaultCore",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "id": "7291f7e99ddf0a11aea1a63c7711645303b620254b2c0c36cd1be167b8760168",
+      "check": "shadowing-local",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVaultCore.coreSnapshot().availableWei (src/AcquisitionVaultCore.sol#364) shadows:\n\t- AcquisitionVaultCore.availableWei (src/AcquisitionVaultCore.sol#146) (state variable)\n",
+      "disposition": "API naming observation: Core snapshot named return values do not write or read an accidental local; _coreSnapshotWords reads the actual storage fields and returns its exact 18-word array. The constructor cap parameter is explicitly assigned to immutable _globalCap."
+    },
+    {
+      "sourceRun": "AcquisitionVaultCore",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "id": "86592a509dd2518afecf8a4975e24e8043788312a4986e12a13ed6391ffdf564",
+      "check": "shadowing-local",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVaultCore.coreSnapshot().reconciliationLiabilityWei (src/AcquisitionVaultCore.sol#367) shadows:\n\t- AcquisitionVaultCore.reconciliationLiabilityWei (src/AcquisitionVaultCore.sol#149) (state variable)\n",
+      "disposition": "API naming observation: Core snapshot named return values do not write or read an accidental local; _coreSnapshotWords reads the actual storage fields and returns its exact 18-word array. The constructor cap parameter is explicitly assigned to immutable _globalCap."
+    },
+    {
+      "sourceRun": "AcquisitionVaultCore",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "id": "c36982e8dfed438209feb5c2ecc3089c871a21a420cad60a7399f9932b3ca3df",
+      "check": "shadowing-local",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVaultCore.coreSnapshot().ordinaryReservedWei (src/AcquisitionVaultCore.sol#366) shadows:\n\t- AcquisitionVaultCore.ordinaryReservedWei (src/AcquisitionVaultCore.sol#148) (state variable)\n",
+      "disposition": "API naming observation: Core snapshot named return values do not write or read an accidental local; _coreSnapshotWords reads the actual storage fields and returns its exact 18-word array. The constructor cap parameter is explicitly assigned to immutable _globalCap."
+    },
+    {
+      "sourceRun": "AcquisitionVaultCore",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "id": "cece70f654aefa814bf11632a84e52a1b5d6547b46a26382035156792f9afde9",
+      "check": "shadowing-local",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVaultCore.coreSnapshot().lastObservedBalanceDeficitWei (src/AcquisitionVaultCore.sol#370) shadows:\n\t- AcquisitionVaultCore.lastObservedBalanceDeficitWei (src/AcquisitionVaultCore.sol#152) (state variable)\n",
+      "disposition": "API naming observation: Core snapshot named return values do not write or read an accidental local; _coreSnapshotWords reads the actual storage fields and returns its exact 18-word array. The constructor cap parameter is explicitly assigned to immutable _globalCap."
+    },
+    {
+      "sourceRun": "AcquisitionVaultCore",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "id": "3706b7c4b3cf3568f83146fb347e660eb078a87454d8be49a435b185a830b52e",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVaultCore.depositCanonical(bytes32) (src/AcquisitionVaultCore.sol#259-344) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- block.timestamp > type()(uint64).max (src/AcquisitionVaultCore.sol#276)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionVaultCore",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "id": "ecd7c23afbc43a44b211fa543408abd3ed6a8b5991537b3949d77b9045980400",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "AcquisitionVaultCore.getDeposit(bytes32) (src/AcquisitionVaultCore.sol#213-216) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- record.depositId == 0 (src/AcquisitionVaultCore.sol#215)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "AcquisitionVaultCore",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "id": "37f531e1706f56839b1c0041786e3153ffc2bce072537e7f0061d6ffd5d5a582",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionVaultCore._snapshot() (src/AcquisitionVaultCore.sol#448-496) uses assembly\n\t- INLINE ASM (src/AcquisitionVaultCore.sol#454-458)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionVaultCore",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "id": "c1b0d9d86e614587c28f3460b27fadfea032129e65b1a9406508a6c6abbc5a85",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionVaultCore.coreSnapshot() (src/AcquisitionVaultCore.sol#350-376) uses assembly\n\t- INLINE ASM (src/AcquisitionVaultCore.sol#375)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionVaultCore",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "id": "db142ceac75f7a218066da8157261fd0fdbe8cce1163ac4ef3cae27aa85a6ccc",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionVaultCore._ingress(uint256,address,bytes32) (src/AcquisitionVaultCore.sol#498-525) uses assembly\n\t- INLINE ASM (src/AcquisitionVaultCore.sol#504-509)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionVaultCore",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "id": "a114f2d06f74c3354209bfdd3832ab80335c91ee98f27b3abc098152af599fc0",
+      "check": "pragma",
+      "reportedImpact": "Informational",
+      "description": "2 different versions of Solidity are used:\n\t- Version constraint ^0.8.20 is used by:\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#5)\n\t- Version constraint 0.8.26 is used by:\n\t\t-0.8.26 (src/AcquisitionVaultCore.sol#2)\n",
+      "disposition": "Informational dependency pragma differences. The canonical build selects Solidity 0.8.26, optimizer 800, Cancun and required per-file viaIR; compatible dependency ranges do not select an older compiler."
+    },
+    {
+      "sourceRun": "AcquisitionVaultCore",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "id": "55c4e7fd2de2403cfe5f7ce9e24aa1e0d5adf10c74261489368a1a09893add41",
+      "check": "cyclomatic-complexity",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionVaultCore._ingress(uint256,address,bytes32) (src/AcquisitionVaultCore.sol#498-525) has a high cyclomatic complexity (12).\n",
+      "disposition": "Maintainability observation. These functions enumerate explicit identity/encoding/accounting checks and failure boundaries. Each helper was read through, and the existing conformance suites exercise malformed peer responses and precedence. Complexity itself is not evidence of an exploitable path."
+    },
+    {
+      "sourceRun": "AcquisitionVaultCore",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "id": "672fc1208f4e696afac59fec9477a6d4083a625ff01244c4e91963aa8a292d66",
+      "check": "cyclomatic-complexity",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionVaultCore.constructor(address,bytes32,address,address,address,address,address,uint256) (src/AcquisitionVaultCore.sol#162-199) has a high cyclomatic complexity (12).\n",
+      "disposition": "Maintainability observation. These functions enumerate explicit identity/encoding/accounting checks and failure boundaries. Each helper was read through, and the existing conformance suites exercise malformed peer responses and precedence. Complexity itself is not evidence of an exploitable path."
+    },
+    {
+      "sourceRun": "AcquisitionVaultCore",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "id": "8562947622a130849650f1779c92b6f1cf5fe503f11a1f3f1c04b1b4ff59bfd2",
+      "check": "cyclomatic-complexity",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionVaultCore._snapshot() (src/AcquisitionVaultCore.sol#448-496) has a high cyclomatic complexity (19).\n",
+      "disposition": "Maintainability observation. These functions enumerate explicit identity/encoding/accounting checks and failure boundaries. Each helper was read through, and the existing conformance suites exercise malformed peer responses and precedence. Complexity itself is not evidence of an exploitable path."
+    },
+    {
+      "sourceRun": "AcquisitionVaultCore",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "id": "bcba74c009f364d2b6220d4362220ba406992d3b528c30e4ba9f4d4677de205a",
+      "check": "cyclomatic-complexity",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionVaultCore.depositCanonical(bytes32) (src/AcquisitionVaultCore.sol#259-344) has a high cyclomatic complexity (14).\n",
+      "disposition": "Maintainability observation. These functions enumerate explicit identity/encoding/accounting checks and failure boundaries. Each helper was read through, and the existing conformance suites exercise malformed peer responses and precedence. Complexity itself is not evidence of an exploitable path."
+    },
+    {
+      "sourceRun": "AcquisitionVaultCore",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "id": "eaacfb1b18d83127039e17d8c348ba397d8299e738913be3e3f6fff3651fd0ea",
+      "check": "cyclomatic-complexity",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionVaultCore.finalizeCore(bytes32) (src/AcquisitionVaultCore.sol#399-413) has a high cyclomatic complexity (12).\n",
+      "disposition": "Maintainability observation. These functions enumerate explicit identity/encoding/accounting checks and failure boundaries. Each helper was read through, and the existing conformance suites exercise malformed peer responses and precedence. Complexity itself is not evidence of an exploitable path."
+    },
+    {
+      "sourceRun": "AcquisitionVaultCore",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "id": "b13c57a0cc99550a606838018ac5f0e1a6cb9ab5bba6bd4a893bd5db1df44c66",
+      "check": "too-many-digits",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionVaultCore._ingress(uint256,address,bytes32) (src/AcquisitionVaultCore.sol#498-525) uses literals with too many digits:\n\t- ok = staticcall(uint256,uint256,uint256,uint256,uint256,uint256)(100000,target,0,36,w,256) (src/AcquisitionVaultCore.sol#507)\n",
+      "disposition": "Literal readability observation. Gas budgets and limits match the frozen specification; formatting a numeric literal does not alter the enforced cap."
+    },
+    {
+      "sourceRun": "AcquisitionVaultCore",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "id": "1b2c47f2afc3d8d56ba6db59e43a90e247d8f61871f28ee132e682334848ca52",
+      "check": "constable-states",
+      "reportedImpact": "Optimization",
+      "description": "AcquisitionVaultCore.reconciliationLiabilityWei (src/AcquisitionVaultCore.sol#149) should be constant \n",
+      "disposition": "Optimization suggestion on deliberately frozen zero storage reserved by the current milestone schema. Changing to a constant would change storage/snapshot conformance and is not required for security. See AQ-PHASE-01."
+    },
+    {
+      "sourceRun": "AcquisitionVaultCore",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "id": "6c1ae7447e6b2718b534545aff3f3867518eef49940498236dcdb07757357481",
+      "check": "constable-states",
+      "reportedImpact": "Optimization",
+      "description": "AcquisitionVaultCore.ordinaryReservedWei (src/AcquisitionVaultCore.sol#148) should be constant \n",
+      "disposition": "Optimization suggestion on deliberately frozen zero storage reserved by the current milestone schema. Changing to a constant would change storage/snapshot conformance and is not required for security. See AQ-PHASE-01."
+    },
+    {
+      "sourceRun": "AcquisitionVaultCore",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionVaultCore-ir.json",
+      "id": "85a5334eff08853707301fcb717c89e8e5f1f68f5d500ffadf942d00e298dd48",
+      "check": "constable-states",
+      "reportedImpact": "Optimization",
+      "description": "AcquisitionVaultCore.reconciliationBackingWei (src/AcquisitionVaultCore.sol#150) should be constant \n",
+      "disposition": "Optimization suggestion on deliberately frozen zero storage reserved by the current milestone schema. Changing to a constant would change storage/snapshot conformance and is not required for security. See AQ-PHASE-01."
+    },
+    {
+      "sourceRun": "AcquisitionConstellationFactory",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionConstellationFactory-full.json",
+      "id": "bf18f7a3d04d31a71c424b2cbe0b0f77f92f02340c06c0cb055bf81ec7494c12",
+      "check": "uninitialized-local",
+      "reportedImpact": "Medium",
+      "description": "AcquisitionConstellationFactory.constructor(address,address,bytes32,uint256,bytes32[5],bytes32[5]).predicted (src/AcquisitionConstellationFactory.sol#95) is a local variable never initialized\n",
+      "disposition": "False positive: Solidity zero-initializes local counters; the deposit work struct is assigned before each field is read; all five Factory predicted-address elements are assigned in the bounded loop before use. No uninitialized memory pointer is consumed."
+    },
+    {
+      "sourceRun": "AcquisitionConstellationFactory",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionConstellationFactory-full.json",
+      "id": "012854b747d7794a7cf3ec34033a056d55e87baf888b5c3aa6990015eeb3b4d0",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionConstellationFactory.deployNext(bytes) (src/AcquisitionConstellationFactory.sol#188-223) uses assembly\n\t- INLINE ASM (src/AcquisitionConstellationFactory.sol#201-203)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionConstellationFactory",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionConstellationFactory-full.json",
+      "id": "2e8daac27281f6b26a8e9e0ac7bd746bf95b9c717d024c8c92cc2d5ed28f20b3",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionConstellationFactory._checkCoreSnapshot() (src/AcquisitionConstellationFactory.sol#295-323) uses assembly\n\t- INLINE ASM (src/AcquisitionConstellationFactory.sol#301-306)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionConstellationFactory",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionConstellationFactory-full.json",
+      "id": "40cd9a269238a09feda7be93975b0a335b3ec96b32be5064191be4b9ec44115f",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionConstellationFactory._checkTopology(uint8,bool,bool) (src/AcquisitionConstellationFactory.sol#409-435) uses assembly\n\t- INLINE ASM (src/AcquisitionConstellationFactory.sol#417-425)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionConstellationFactory",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionConstellationFactory-full.json",
+      "id": "4ff1e36bfde8c7784af87a5429406471ac999a4ca5854c87ac83ee0f95b74dc4",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionConstellationFactory._checkAuthoritySnapshot() (src/AcquisitionConstellationFactory.sol#254-293) uses assembly\n\t- INLINE ASM (src/AcquisitionConstellationFactory.sol#260-265)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionConstellationFactory",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionConstellationFactory-full.json",
+      "id": "8eecb7191ebad656b0d825ec7cd0a52751464920f5a5d9dd5a2f271622ef3549",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionConstellationFactory._callFinalizer(uint8,address,bytes) (src/AcquisitionConstellationFactory.sol#444-459) uses assembly\n\t- INLINE ASM (src/AcquisitionConstellationFactory.sol#449-452)\n\t- INLINE ASM (src/AcquisitionConstellationFactory.sol#454-456)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionConstellationFactory",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionConstellationFactory-full.json",
+      "id": "925af4bc7f3a5ed04c55e77019dfbcbd41f320eb2ef9d3b1ce16175381c13b64",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionConstellationFactory._checkRegistry(address,bool) (src/AcquisitionConstellationFactory.sol#392-407) uses assembly\n\t- INLINE ASM (src/AcquisitionConstellationFactory.sol#398-403)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "AcquisitionConstellationFactory",
+      "rawFile": "output\\comprehensive-audit\\slither-AcquisitionConstellationFactory-full.json",
+      "id": "f48a58ff0ac59354c5ff2bf8f1953818b934a40d26e05e3a6c4946a5461835da",
+      "check": "cyclomatic-complexity",
+      "reportedImpact": "Informational",
+      "description": "AcquisitionConstellationFactory.constructor(address,address,bytes32,uint256,bytes32[5],bytes32[5]) (src/AcquisitionConstellationFactory.sol#80-149) has a high cyclomatic complexity (19).\n",
+      "disposition": "Maintainability observation. These functions enumerate explicit identity/encoding/accounting checks and failure boundaries. Each helper was read through, and the existing conformance suites exercise malformed peer responses and precedence. Complexity itself is not evidence of an exploitable path."
+    },
+    {
+      "sourceRun": "PreVoteBudgetBook",
+      "rawFile": "output\\comprehensive-audit\\slither-PreVoteBudgetBook-full.json",
+      "id": "4eaab44a436b94b43d47280a0b4bf287099af8442126d74917939777684e0e49",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "PreVoteBudgetBook.getPreVoteBudget(uint256) (src/PreVoteBudgetBook.sol#161-168) uses a dangerous strict equality:\n\t- authorization.budgetId == 0 (src/PreVoteBudgetBook.sol#167)\n",
+      "disposition": "Intentional sentinel, exact identity or boundary comparison. Zero IDs/generations identify absent records; zero credit/surplus selects evidence/status; exact reverse-head and snapshot hashes enforce identity; uint256.max detects exhausted counters. No manipulable nonzero external balance-equality gate is introduced."
+    },
+    {
+      "sourceRun": "PreVoteBudgetBook",
+      "rawFile": "output\\comprehensive-audit\\slither-PreVoteBudgetBook-full.json",
+      "id": "054cb3c6077909e18cc965ea90145ce4bd4a0f45206f8a2350f15d713dc186ab",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "PreVoteBudgetBook.authorizePreVoteBudget(PreVoteBudgetBook.PreVoteBudgetInput,bytes32) (src/PreVoteBudgetBook.sol#116-159) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- _preVoteBudgets[input.ballotDay].budgetId != 0 (src/PreVoteBudgetBook.sol#121)\n\t- block.timestamp > type()(uint64).max (src/PreVoteBudgetBook.sol#127)\n\t- input.ballotDay < block.timestamp / 86400 (src/PreVoteBudgetBook.sol#129)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "PreVoteBudgetBook",
+      "rawFile": "output\\comprehensive-audit\\slither-PreVoteBudgetBook-full.json",
+      "id": "73346d7fe1f689108f790aba75d6e58798cfc562c40778e3ea392ca93066f8af",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "PreVoteBudgetBook.getPreVoteBudget(uint256) (src/PreVoteBudgetBook.sol#161-168) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- authorization.budgetId == 0 (src/PreVoteBudgetBook.sol#167)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "PreVoteBudgetBook",
+      "rawFile": "output\\comprehensive-audit\\slither-PreVoteBudgetBook-full.json",
+      "id": "dfdc96d9a3dfb961d0cce5c8b54db7b9fd83a093ac8bcb770a5b02c94cb06e20",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "PreVoteBudgetBook._accounting() (src/PreVoteBudgetBook.sol#222-251) uses assembly\n\t- INLINE ASM (src/PreVoteBudgetBook.sol#228-232)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "PreVoteBudgetBook",
+      "rawFile": "output\\comprehensive-audit\\slither-PreVoteBudgetBook-full.json",
+      "id": "dff453eb233acf46347a4b93e95fc84a574b4c35c76fb2bb7007b27949d9c606",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "PreVoteBudgetBook._authorityState() (src/PreVoteBudgetBook.sol#170-220) uses assembly\n\t- INLINE ASM (src/PreVoteBudgetBook.sol#176-180)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "PreVoteBudgetBook",
+      "rawFile": "output\\comprehensive-audit\\slither-PreVoteBudgetBook-full.json",
+      "id": "4980d5f97140d5fc245d1a56ee3ba1a107958525df6108e6d23232ac9e8279fa",
+      "check": "cyclomatic-complexity",
+      "reportedImpact": "Informational",
+      "description": "PreVoteBudgetBook.constructor(address,bytes32,address,address,address) (src/PreVoteBudgetBook.sol#82-102) has a high cyclomatic complexity (12).\n",
+      "disposition": "Maintainability observation. These functions enumerate explicit identity/encoding/accounting checks and failure boundaries. Each helper was read through, and the existing conformance suites exercise malformed peer responses and precedence. Complexity itself is not evidence of an exploitable path."
+    },
+    {
+      "sourceRun": "PreVoteBudgetBook",
+      "rawFile": "output\\comprehensive-audit\\slither-PreVoteBudgetBook-full.json",
+      "id": "5ef11eeb8318e393a23548d8911b4845e7dd4ff70cb51b12a5ca5d002a13f76d",
+      "check": "cyclomatic-complexity",
+      "reportedImpact": "Informational",
+      "description": "PreVoteBudgetBook._accounting() (src/PreVoteBudgetBook.sol#222-251) has a high cyclomatic complexity (14).\n",
+      "disposition": "Maintainability observation. These functions enumerate explicit identity/encoding/accounting checks and failure boundaries. Each helper was read through, and the existing conformance suites exercise malformed peer responses and precedence. Complexity itself is not evidence of an exploitable path."
+    },
+    {
+      "sourceRun": "PreVoteBudgetBook",
+      "rawFile": "output\\comprehensive-audit\\slither-PreVoteBudgetBook-full.json",
+      "id": "6ed1c48608fd8f8e2278920c7a092a0e55ace68b91d40d386631684da88d5f53",
+      "check": "cyclomatic-complexity",
+      "reportedImpact": "Informational",
+      "description": "PreVoteBudgetBook.authorizePreVoteBudget(PreVoteBudgetBook.PreVoteBudgetInput,bytes32) (src/PreVoteBudgetBook.sol#116-159) has a high cyclomatic complexity (13).\n",
+      "disposition": "Maintainability observation. These functions enumerate explicit identity/encoding/accounting checks and failure boundaries. Each helper was read through, and the existing conformance suites exercise malformed peer responses and precedence. Complexity itself is not evidence of an exploitable path."
+    },
+    {
+      "sourceRun": "PreVoteBudgetBook",
+      "rawFile": "output\\comprehensive-audit\\slither-PreVoteBudgetBook-full.json",
+      "id": "70b132f3e4a331c40a129b58405ab2cc01e75ea9ff4622ab8d89be29fd1013d0",
+      "check": "cyclomatic-complexity",
+      "reportedImpact": "Informational",
+      "description": "PreVoteBudgetBook._authorityState() (src/PreVoteBudgetBook.sol#170-220) has a high cyclomatic complexity (21).\n",
+      "disposition": "Maintainability observation. These functions enumerate explicit identity/encoding/accounting checks and failure boundaries. Each helper was read through, and the existing conformance suites exercise malformed peer responses and precedence. Complexity itself is not evidence of an exploitable path."
+    },
+    {
+      "sourceRun": "PreVoteBudgetBook",
+      "rawFile": "output\\comprehensive-audit\\slither-PreVoteBudgetBook-full.json",
+      "id": "6de2da2537ae6f12003263c7015c1b11a7d1d6cbf01ea5730a77362b7b262fee",
+      "check": "too-many-digits",
+      "reportedImpact": "Informational",
+      "description": "PreVoteBudgetBook._accounting() (src/PreVoteBudgetBook.sol#222-251) uses literals with too many digits:\n\t- ok = staticcall(uint256,uint256,uint256,uint256,uint256,uint256)(100000,target,0,4,w,352) (src/PreVoteBudgetBook.sol#230)\n",
+      "disposition": "Literal readability observation. Gas budgets and limits match the frozen specification; formatting a numeric literal does not alter the enforced cap."
+    },
+    {
+      "sourceRun": "RwaHealthOverlay",
+      "rawFile": "output\\comprehensive-audit\\slither-RwaHealthOverlay-ir.json",
+      "id": "e0deb1977e69c4ae4cc3111e5193121523f409057e00e1302a957280ddc3a91b",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "RwaHealthOverlay._validateLocal(IRwaHealthOverlay.Clearance) (src/RwaHealthOverlay.sol#83-105) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- block.timestamp < value.approvedAt || block.timestamp >= value.clearanceDeadline (src/RwaHealthOverlay.sol#99)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "RwaHealthOverlay",
+      "rawFile": "output\\comprehensive-audit\\slither-RwaHealthOverlay-ir.json",
+      "id": "82e6d2949c0361376cf3f75bd66b915c97898ac0613cc95b3c05f8464e7c0216",
+      "check": "naming-convention",
+      "reportedImpact": "Informational",
+      "description": "Variable RwaHealthOverlay.REGISTRY (src/RwaHealthOverlay.sol#17) is not in mixedCase\n",
+      "disposition": "Style-only diagnostic: SAFE and REGISTRY are immutable bindings deliberately exposed with uppercase getter names in the frozen interface."
+    },
+    {
+      "sourceRun": "RwaHealthOverlay",
+      "rawFile": "output\\comprehensive-audit\\slither-RwaHealthOverlay-ir.json",
+      "id": "b8a6a0f284561de414249970f03511d5f7baa8a9071cc80309f1aed8f21cf6d6",
+      "check": "naming-convention",
+      "reportedImpact": "Informational",
+      "description": "Variable RwaHealthOverlay.SAFE (src/RwaHealthOverlay.sol#16) is not in mixedCase\n",
+      "disposition": "Style-only diagnostic: SAFE and REGISTRY are immutable bindings deliberately exposed with uppercase getter names in the frozen interface."
+    },
+    {
+      "sourceRun": "SettlementGasPool",
+      "rawFile": "output\\comprehensive-audit\\slither-SettlementGasPool-full.json",
+      "id": "f1ed31a26fb9ea80bc4444b82f3db3bb5ab1d5aae0d41ad77160b6eda0acbd6b",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "SettlementGasPool._calculateCredit(uint256) (src/SettlementGasPool.sol#605-642) uses a dangerous strict equality:\n\t- calculation.available == 0 (src/SettlementGasPool.sol#634)\n",
+      "disposition": "Intentional sentinel, exact identity or boundary comparison. Zero IDs/generations identify absent records; zero credit/surplus selects evidence/status; exact reverse-head and snapshot hashes enforce identity; uint256.max detects exhausted counters. No manipulable nonzero external balance-equality gate is introduced."
+    },
+    {
+      "sourceRun": "SettlementGasPool",
+      "rawFile": "output\\comprehensive-audit\\slither-SettlementGasPool-full.json",
+      "id": "0b05b6050dd81352a87b5c37e4b72763f1e22e7022f0b0a8e345b5cd83c00e68",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "SettlementGasPool.cancelConfigProposal(bytes32) (src/SettlementGasPool.sol#445-453) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- liveConfigProposalId == proposalId (src/SettlementGasPool.sol#451)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "SettlementGasPool",
+      "rawFile": "output\\comprehensive-audit\\slither-SettlementGasPool-full.json",
+      "id": "46f46f98204c8b697c75d3784325d499673b294c5febeae931e6b08649a79bcd",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "SettlementGasPool.configProposalState(bytes32) (src/SettlementGasPool.sol#485-493) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- block.timestamp < proposal.executableAt (src/SettlementGasPool.sol#490)\n\t- block.timestamp > proposal.expiresAt (src/SettlementGasPool.sol#491)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "SettlementGasPool",
+      "rawFile": "output\\comprehensive-audit\\slither-SettlementGasPool-full.json",
+      "id": "9ead75486bb890f8a3db6dd4b3173a719fa6358ebc039ed51da66e7ce661db28",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "SettlementGasPool.migrationProposalState(bytes32) (src/SettlementGasPool.sol#581-589) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- block.timestamp < proposal.executableAt (src/SettlementGasPool.sol#586)\n\t- block.timestamp > proposal.expiresAt (src/SettlementGasPool.sol#587)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "SettlementGasPool",
+      "rawFile": "output\\comprehensive-audit\\slither-SettlementGasPool-full.json",
+      "id": "dc10e9fe5ba2812f448e74dff9f9295bd9bedc71f905a67db0a01d8f97aa0df6",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "SettlementGasPool.executeConfigProposal(bytes32) (src/SettlementGasPool.sol#455-479) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- liveConfigProposalId == proposalId (src/SettlementGasPool.sol#466)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "SettlementGasPool",
+      "rawFile": "output\\comprehensive-audit\\slither-SettlementGasPool-full.json",
+      "id": "cc0f88fac5f99fcda36091353d733b71cee8c1b18492deb8d8fe7a5761c126bb",
+      "check": "assembly",
+      "reportedImpact": "Informational",
+      "description": "SettlementGasPool._approvedDataFee() (src/SettlementGasPool.sol#644-663) uses assembly\n\t- INLINE ASM (src/SettlementGasPool.sol#653-660)\n",
+      "disposition": "Reviewed explicit assembly: bounded fixed-output peer/signature calls, storage getter encoding, hash/event construction and terminal ABI returns; Factory CREATE/finalizer calls are fixed by the committed graph. Handwritten storage slots remain compiler/dependency-sensitive and are covered by frozen storage/getter tests. No generic delegatecall, arbitrary outflow or unchecked dynamic returndata copy was introduced."
+    },
+    {
+      "sourceRun": "SettlementGasPool",
+      "rawFile": "output\\comprehensive-audit\\slither-SettlementGasPool-full.json",
+      "id": "1b9c98cb56a74719ff0eb2c15c1b59acb4f00c9fb63c081e0aeeb628a6eb1f3b",
+      "check": "pragma",
+      "reportedImpact": "Informational",
+      "description": "2 different versions of Solidity are used:\n\t- Version constraint ^0.8.20 is used by:\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Context.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Pausable.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#5)\n\t- Version constraint 0.8.26 is used by:\n\t\t-0.8.26 (src/SettlementGasPool.sol#2)\n\t\t-0.8.26 (src/interfaces/ISettlementDataFeeSource.sol#2)\n",
+      "disposition": "Informational dependency pragma differences. The canonical build selects Solidity 0.8.26, optimizer 800, Cancun and required per-file viaIR; compatible dependency ranges do not select an older compiler."
+    },
+    {
+      "sourceRun": "SettlementGasPool",
+      "rawFile": "output\\comprehensive-audit\\slither-SettlementGasPool-full.json",
+      "id": "0245890410dc17f99092ccfd3bb774cd67f54656eb165b584f5c03396aa42f71",
+      "check": "low-level-calls",
+      "reportedImpact": "Informational",
+      "description": "Low level call in SettlementGasPool.withdrawCredit() (src/SettlementGasPool.sol#318-330):\n\t- (sent,None) = address(msg.sender).call{value: amount}() (src/SettlementGasPool.sol#326)\n",
+      "disposition": "Expected self-only native credit payment. withdrawCredit zeros the caller credit and updates exact liabilities before the call, uses nonReentrant and checks success. A revert restores all state; new callback/donation and failed-recipient tests retain this evidence."
+    },
+    {
+      "sourceRun": "StockTokenRegistryV2",
+      "rawFile": "output\\comprehensive-audit\\slither-StockTokenRegistryV2-full.json",
+      "id": "440983ae6d5005f84133e4425e4597323248654843309d408c02eca7caea38bb",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "StockTokenRegistryV2.getBallot(uint256) (src/StockTokenRegistryV2.sol#220-224) uses a dangerous strict equality:\n\t- ballot.assetVersionKey == bytes32(0) (src/StockTokenRegistryV2.sol#222)\n",
+      "disposition": "Intentional sentinel, exact identity or boundary comparison. Zero IDs/generations identify absent records; zero credit/surplus selects evidence/status; exact reverse-head and snapshot hashes enforce identity; uint256.max detects exhausted counters. No manipulable nonzero external balance-equality gate is introduced."
+    },
+    {
+      "sourceRun": "StockTokenRegistryV2",
+      "rawFile": "output\\comprehensive-audit\\slither-StockTokenRegistryV2-full.json",
+      "id": "4d7da8d37ac621da46df6e876d018d3eed1dffaf0271cf20c8b922dd8258680e",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "StockTokenRegistryV2.resolveBallot(uint256) (src/StockTokenRegistryV2.sol#173-199) uses a dangerous strict equality:\n\t- ballot.assetVersionKey == bytes32(0) (src/StockTokenRegistryV2.sol#189)\n",
+      "disposition": "Intentional sentinel, exact identity or boundary comparison. Zero IDs/generations identify absent records; zero credit/surplus selects evidence/status; exact reverse-head and snapshot hashes enforce identity; uint256.max detects exhausted counters. No manipulable nonzero external balance-equality gate is introduced."
+    },
+    {
+      "sourceRun": "StockTokenRegistryV2",
+      "rawFile": "output\\comprehensive-audit\\slither-StockTokenRegistryV2-full.json",
+      "id": "fd6c3eed09b839126670a476822dc668f8e1ddd7e70814d67966ff2acad6b379",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "StockTokenRegistryV2._isExactlyActive(bytes32,IStockTokenRegistryV2.AssetVersion) (src/StockTokenRegistryV2.sol#276-280) uses a dangerous strict equality:\n\t- version.active && activeVersionForTickerHash[version.tickerHash] == versionKey && activeVersionForToken[version.token] == versionKey && activeVersionForProviderIdHash[version.robinhoodAssetIdHash] == versionKey (src/StockTokenRegistryV2.sol#277-279)\n",
+      "disposition": "Intentional sentinel, exact identity or boundary comparison. Zero IDs/generations identify absent records; zero credit/surplus selects evidence/status; exact reverse-head and snapshot hashes enforce identity; uint256.max detects exhausted counters. No manipulable nonzero external balance-equality gate is introduced."
+    },
+    {
+      "sourceRun": "StockTokenRegistryV2",
+      "rawFile": "output\\comprehensive-audit\\slither-StockTokenRegistryV2-full.json",
+      "id": "fed8e3df4ad7f1db117d656bbfbd4e22f2ca728b635d18e3432cc3c585fc30e4",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "StockTokenRegistryV2.getVersion(bytes32) (src/StockTokenRegistryV2.sol#214-218) uses a dangerous strict equality:\n\t- version.chainId == 0 (src/StockTokenRegistryV2.sol#216)\n",
+      "disposition": "Intentional sentinel, exact identity or boundary comparison. Zero IDs/generations identify absent records; zero credit/surplus selects evidence/status; exact reverse-head and snapshot hashes enforce identity; uint256.max detects exhausted counters. No manipulable nonzero external balance-equality gate is introduced."
+    },
+    {
+      "sourceRun": "StockTokenRegistryV2",
+      "rawFile": "output\\comprehensive-audit\\slither-StockTokenRegistryV2-full.json",
+      "id": "7b61eb403305681e18360c722297e5401dc10dda8313c17edfd581a39f9a86b4",
+      "check": "missing-zero-check",
+      "reportedImpact": "Low",
+      "description": "StockTokenRegistryV2.constructor(address,address).publisher_ (src/StockTokenRegistryV2.sol#32) lacks a zero-check on :\n\t\t- publisher = publisher_ (src/StockTokenRegistryV2.sol#33)\n",
+      "disposition": "Intentional disabled publisher: address(0) makes onlyPublisher reject all calls. Constructor and owner-only setPublisher may disable publication; a zero value gains no capability."
+    },
+    {
+      "sourceRun": "StockTokenRegistryV2",
+      "rawFile": "output\\comprehensive-audit\\slither-StockTokenRegistryV2-full.json",
+      "id": "d9fec5d0f3f3ddafd7f6941b273c4ac21d2fcc61f31df0d420b3e70134d75580",
+      "check": "missing-zero-check",
+      "reportedImpact": "Low",
+      "description": "StockTokenRegistryV2.setPublisher(address).publisher_ (src/StockTokenRegistryV2.sol#201) lacks a zero-check on :\n\t\t- publisher = publisher_ (src/StockTokenRegistryV2.sol#202)\n",
+      "disposition": "Intentional disabled publisher: address(0) makes onlyPublisher reject all calls. Constructor and owner-only setPublisher may disable publication; a zero value gains no capability."
+    },
+    {
+      "sourceRun": "StockTokenRegistryV2",
+      "rawFile": "output\\comprehensive-audit\\slither-StockTokenRegistryV2-full.json",
+      "id": "222bd9fd4388d895a4330ff9a904a756f23bb6c2ffa99d76e7a4b8872e2ed12d",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "StockTokenRegistryV2._isLiveBallot(uint256,bytes32,IStockTokenRegistryV2.AssetVersion) (src/StockTokenRegistryV2.sol#282-285) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- _isExactlyActive(versionKey,version) && activationGeneration[versionKey] == ballotActivationGeneration[day] (src/StockTokenRegistryV2.sol#283-284)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "StockTokenRegistryV2",
+      "rawFile": "output\\comprehensive-audit\\slither-StockTokenRegistryV2-full.json",
+      "id": "7214523bc98c5755bb0ef3e15c6d2e7a2016aa5ac4c75bcf21a1e18c5ce57f50",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "StockTokenRegistryV2._isExactlyActive(bytes32,IStockTokenRegistryV2.AssetVersion) (src/StockTokenRegistryV2.sol#276-280) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- version.active && activeVersionForTickerHash[version.tickerHash] == versionKey && activeVersionForToken[version.token] == versionKey && activeVersionForProviderIdHash[version.robinhoodAssetIdHash] == versionKey (src/StockTokenRegistryV2.sol#277-279)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "StockTokenRegistryV2",
+      "rawFile": "output\\comprehensive-audit\\slither-StockTokenRegistryV2-full.json",
+      "id": "7761ddb8b1062ea15f7741ad0248ec8f536e6ab435ede6735b4aa45682bc61c2",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "StockTokenRegistryV2.publishBallot(uint256,bytes32,bytes32,uint256,uint256,uint64) (src/StockTokenRegistryV2.sol#131-171) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- day >= block.timestamp / 86400 (src/StockTokenRegistryV2.sol#139)\n\t- purchaseUntil <= block.timestamp (src/StockTokenRegistryV2.sol#146)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "StockTokenRegistryV2",
+      "rawFile": "output\\comprehensive-audit\\slither-StockTokenRegistryV2-full.json",
+      "id": "7d6a022eaee10d6ed66033063455848cc69aab87337404c75b0cf016f9de25c4",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "StockTokenRegistryV2._validateActivation(IStockTokenRegistryV2.Activation) (src/StockTokenRegistryV2.sol#226-239) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- block.timestamp < activation.approvedAt (src/StockTokenRegistryV2.sol#237)\n\t- block.timestamp >= activation.validUntil (src/StockTokenRegistryV2.sol#238)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "StockTokenRegistryV2",
+      "rawFile": "output\\comprehensive-audit\\slither-StockTokenRegistryV2-full.json",
+      "id": "9c54a1e0809c62c49be96b590d89215aec7af8ab9b25adf192093439bc618883",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "StockTokenRegistryV2.getVersion(bytes32) (src/StockTokenRegistryV2.sol#214-218) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- version.chainId == 0 (src/StockTokenRegistryV2.sol#216)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "StockTokenRegistryV2",
+      "rawFile": "output\\comprehensive-audit\\slither-StockTokenRegistryV2-full.json",
+      "id": "a969e2e445ba1bbc5f77de40bebac405bf68870393406a9bb4c464d2a6391cac",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "StockTokenRegistryV2.resolveBallot(uint256) (src/StockTokenRegistryV2.sol#173-199) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- ballot.assetVersionKey == bytes32(0) (src/StockTokenRegistryV2.sol#189)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "StockTokenRegistryV2",
+      "rawFile": "output\\comprehensive-audit\\slither-StockTokenRegistryV2-full.json",
+      "id": "ceadabf6772c2b20508998dec37d5f19b980f1518b191b36bcc65c2df671c51f",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "StockTokenRegistryV2.getBallot(uint256) (src/StockTokenRegistryV2.sol#220-224) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- ballot.assetVersionKey == bytes32(0) (src/StockTokenRegistryV2.sol#222)\n",
+      "disposition": "Expected time-dependent windows, UTC epochs and exact inclusion deadlines; timestamps are not used as randomness. Some diagnostics propagate timestamp taint to identity checks, which do not depend on timestamp unpredictability. Timestamp bounds/truncation and deadline arithmetic were checked against the stated uint64/UTC domain; native chain timestamp availability remains an assumption."
+    },
+    {
+      "sourceRun": "StockTokenRegistryV2",
+      "rawFile": "output\\comprehensive-audit\\slither-StockTokenRegistryV2-full.json",
+      "id": "aa049bffed3c09ceb0d951cf3567d521fc9fe5188de0c36477bebac20480ed6d",
+      "check": "pragma",
+      "reportedImpact": "Informational",
+      "description": "4 different versions of Solidity are used:\n\t- Version constraint ^0.8.20 is used by:\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Context.sol#4)\n\t- Version constraint >=0.4.16 is used by:\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol#4)\n\t- Version constraint >=0.6.2 is used by:\n\t\t->=0.6.2 (lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol#4)\n\t- Version constraint 0.8.26 is used by:\n\t\t-0.8.26 (src/StockTokenRegistryV2.sol#2)\n\t\t-0.8.26 (src/interfaces/IStockTokenRegistryV2.sol#2)\n",
+      "disposition": "Informational dependency pragma differences. The canonical build selects Solidity 0.8.26, optimizer 800, Cancun and required per-file viaIR; compatible dependency ranges do not select an older compiler."
+    }
+  ],
+  "countsByRule": {
+    "uninitialized-state": 7,
+    "incorrect-equality": 20,
+    "locked-ether": 2,
+    "uninitialized-local": 6,
+    "unused-return": 1,
+    "timestamp": 60,
+    "assembly": 42,
+    "pragma": 5,
+    "too-many-digits": 3,
+    "constable-states": 7,
+    "cyclomatic-complexity": 11,
+    "shadowing-local": 10,
+    "naming-convention": 2,
+    "low-level-calls": 1,
+    "missing-zero-check": 2
+  }
+}

@@ -1,4 +1,5 @@
 import { GameError } from './game.js';
+import { automaticLiquidityPhase } from './liquiditystate.js';
 
 export const GENESIS_PHASES = Object.freeze([
   'legacy',
@@ -14,6 +15,7 @@ const OPEN_PHASES = new Set(['legacy', 'live']);
 const EXISTING_DESK_FILL_PHASES = new Set(['legacy', 'prepare', 'live']);
 
 export function genesisLaunchPhase(env = process.env) {
+  if (env.LIQUIDITY_AUTOMATION_ENABLED === 'on') return automaticLiquidityPhase();
   // Keep the live process read explicit so the repository's env-classification drift test can prove
   // this operational interlock is classified, while injected test/config environments remain usable.
   const configured = env === process.env ? process.env.GENESIS_LAUNCH_PHASE : env.GENESIS_LAUNCH_PHASE;

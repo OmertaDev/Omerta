@@ -1,0 +1,467 @@
+{
+  "date": "2026-09-08",
+  "inputs": [
+    {
+      "path": "output/comprehensive-audit/slither-OMR-full.json",
+      "sha256": "2fcf389779ecb1aa254f69952b8d81f099bc858fdc5428ec179f4ac0f5b53300"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-OMRStaking-full.json",
+      "sha256": "c9cb2ac144b9fb447a7f612ed874426ce72799fb83dc117d3499fb29e07b93eb"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-OmertaFees-full.json",
+      "sha256": "a508d60e253fec3ac9d7849882e0ab0cf3c1e57f98be473b934480d6193faccf"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-VoucherClaim-full.json",
+      "sha256": "725d1b9b8d26bddd05aee631b7796706cbaa6d6958fdf4b88eacd542f63e60a4"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-GearVault-full.json",
+      "sha256": "94ea30da13268ea5792fe40e699909db77fc4c1b7b0b3db6f729d71333df4a45"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-StreetDeed-full.json",
+      "sha256": "940b0c353e5d7d97e45488d9aa987880b1f2e5133f1d140ab36f48ac383edb62"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-DynastyNFT-full.json",
+      "sha256": "ed946f8953a50e430d3068809472ee574bea5b476f14040f96219b4026b2c3ba"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-StockVault-full.json",
+      "sha256": "da3ebf2172843bddbe0e6566d08a9b2286a197a48b03a030e8f12bec457444b8"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-GenesisOracle-full.json",
+      "sha256": "c85775314c03ff5bcf2819dbef1ea4d6758b235054117e1a74c00a4df1a605e5"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-OmertaBond-full.json",
+      "sha256": "8b06f2b1f582e2d73d718382635fd0600aa2eea0248222b1dc9b3caef2416f99"
+    },
+    {
+      "path": "output/comprehensive-audit/slither-GenesisProceedsSplitter-full.json",
+      "sha256": "ed88172b057d940588cbde2248bd5ba313a439c22c39700d5957d8a70be56632"
+    }
+  ],
+  "diagnostics": [
+    {
+      "sourceRun": "OMR",
+      "id": "ac30a3eb235f047d6b73fae9b5fe01dd1e44f57c6459d30705ccea30eccff97e",
+      "check": "divide-before-multiply",
+      "reportedImpact": "Medium",
+      "description": "OMR._update(address,address,uint256) (src/OMR.sol#188-210) performs a multiplication on the result of a division:\n\t- tax = (value * sellTaxBps) / 10000 (src/OMR.sol#191)\n\t- community = (tax * taxCommunityBps) / sellTaxBps (src/OMR.sol#199)\n",
+      "disposition": "Reviewed arithmetic: OMR splits the rounded tax and assigns the residual to LP, preserving total balance. Bond floors market OMR and discount payout; zero payout is refused and a hard absolute rate plus daily cap bounds issuance. Bounded token-wei rounding does not create an unbacked claim."
+    },
+    {
+      "sourceRun": "OMR",
+      "id": "e7b27611cb02ee5608fb35411578885a689f19c604ec8f05cb477fcf9cf1f5da",
+      "check": "divide-before-multiply",
+      "reportedImpact": "Medium",
+      "description": "OMR._update(address,address,uint256) (src/OMR.sol#188-210) performs a multiplication on the result of a division:\n\t- tax = (value * sellTaxBps) / 10000 (src/OMR.sol#191)\n\t- dev = (tax * taxDevBps) / sellTaxBps (src/OMR.sol#197)\n",
+      "disposition": "Reviewed arithmetic: OMR splits the rounded tax and assigns the residual to LP, preserving total balance. Bond floors market OMR and discount payout; zero payout is refused and a hard absolute rate plus daily cap bounds issuance. Bounded token-wei rounding does not create an unbacked claim."
+    },
+    {
+      "sourceRun": "OMR",
+      "id": "ef65f738e21247db031efb8e0f5b02b082020c260dd18ba8cf426bcaefe07c64",
+      "check": "divide-before-multiply",
+      "reportedImpact": "Medium",
+      "description": "OMR._update(address,address,uint256) (src/OMR.sol#188-210) performs a multiplication on the result of a division:\n\t- tax = (value * sellTaxBps) / 10000 (src/OMR.sol#191)\n\t- rwa = (tax * taxRwaBps) / sellTaxBps (src/OMR.sol#198)\n",
+      "disposition": "Reviewed arithmetic: OMR splits the rounded tax and assigns the residual to LP, preserving total balance. Bond floors market OMR and discount payout; zero payout is refused and a hard absolute rate plus daily cap bounds issuance. Bounded token-wei rounding does not create an unbacked claim."
+    },
+    {
+      "sourceRun": "OMR",
+      "id": "3358a922c83790b92116f2e80030ff84c0911b1ae380887639c1e0df9e5746a6",
+      "check": "missing-zero-check",
+      "reportedImpact": "Low",
+      "description": "OMR.setMinter(address).m (src/OMR.sol#125) lacks a zero-check on :\n\t\t- minter = m (src/OMR.sol#126)\n",
+      "disposition": "Intentional disabled role: zero OMR minter/StockVault keeper disables that role. Zero allocationSigner enables legacy keeper-only delivery by explicit design; mainnet activation must choose and verify authorization mode."
+    },
+    {
+      "sourceRun": "OMR",
+      "id": "9600f5b02551f9a961a87c162912006a238ce5f9b93400a2e5a754fdc3e8bce2",
+      "check": "pragma",
+      "reportedImpact": "Informational",
+      "description": "6 different versions of Solidity are used:\n\t- Version constraint ^0.8.20 is used by:\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Context.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Nonces.sol#3)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Panic.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/ShortStrings.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#5)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/cryptography/ECDSA.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/Math.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/SafeCast.sol#5)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/SignedMath.sol#4)\n\t- Version constraint >=0.4.16 is used by:\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/interfaces/IERC5267.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Permit.sol#4)\n\t- Version constraint >=0.8.4 is used by:\n\t\t->=0.8.4 (lib/openzeppelin-contracts/contracts/interfaces/draft-IERC6093.sol#4)\n\t- Version constraint ^0.8.24 is used by:\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC20Permit.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/Bytes.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/Strings.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/cryptography/EIP712.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/cryptography/MessageHashUtils.sol#4)\n\t- Version constraint >=0.6.2 is used by:\n\t\t->=0.6.2 (lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol#4)\n\t- Version constraint 0.8.26 is used by:\n\t\t-0.8.26 (src/OMR.sol#2)\n",
+      "disposition": "The executed build uses native Solidity 0.8.26; compatible dependency source ranges are not multiple selected compiler versions."
+    },
+    {
+      "sourceRun": "OMRStaking",
+      "id": "1a788f6b9c6f0b7561a775ca577ff7e1a7a573de54a3c3bb9732845167683ea3",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "OMRStaking.unstake(uint256) (src/OMRStaking.sol#93-101) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- require(bool,string)(amount > 0 && amount <= p.staked,Staking: bad amount) (src/OMRStaking.sol#96)\n",
+      "disposition": "Intended deadline, vesting, APY, oracle-expiry and UTC daily-cap boundaries. No randomness is derived; sequencer time and availability remain network assumptions."
+    },
+    {
+      "sourceRun": "OMRStaking",
+      "id": "83af9f1c2c8a20a4521422dbe7df66cabf3b6e32390e343bb3ad41cd0d9e7b3e",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "OMRStaking.pendingRewards(address) (src/OMRStaking.sol#115-122) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- elapsed > 0 (src/OMRStaking.sol#119)\n\t- p.staked > 0 (src/OMRStaking.sol#120)\n",
+      "disposition": "Intended deadline, vesting, APY, oracle-expiry and UTC daily-cap boundaries. No randomness is derived; sequencer time and availability remain network assumptions."
+    },
+    {
+      "sourceRun": "OMRStaking",
+      "id": "ad9a38e76f2b31ec807a8e5395361f9457cb489091eee4e4df213d7cf166ea6a",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "OMRStaking._updateRewardIndex() (src/OMRStaking.sol#66-72) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- elapsed > 0 (src/OMRStaking.sol#68)\n",
+      "disposition": "Intended deadline, vesting, APY, oracle-expiry and UTC daily-cap boundaries. No randomness is derived; sequencer time and availability remain network assumptions."
+    },
+    {
+      "sourceRun": "OMRStaking",
+      "id": "3c5ad8d6ec3a410c5f3a99a8cf194d22ac4ccabdff11d6f5c783f13656ebdc05",
+      "check": "pragma",
+      "reportedImpact": "Informational",
+      "description": "4 different versions of Solidity are used:\n\t- Version constraint ^0.8.20 is used by:\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Context.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#5)\n\t- Version constraint >=0.6.2 is used by:\n\t\t->=0.6.2 (lib/openzeppelin-contracts/contracts/interfaces/IERC1363.sol#4)\n\t- Version constraint >=0.4.16 is used by:\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/interfaces/IERC165.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/interfaces/IERC20.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol#4)\n\t- Version constraint 0.8.26 is used by:\n\t\t-0.8.26 (src/OMRStaking.sol#2)\n",
+      "disposition": "The executed build uses native Solidity 0.8.26; compatible dependency source ranges are not multiple selected compiler versions."
+    },
+    {
+      "sourceRun": "OmertaFees",
+      "id": "3860470fd91165090ff071d07a18328dd81da7d30e1008f40f4f215f0e265d19",
+      "check": "pragma",
+      "reportedImpact": "Informational",
+      "description": "2 different versions of Solidity are used:\n\t- Version constraint ^0.8.20 is used by:\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Context.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#5)\n\t- Version constraint 0.8.26 is used by:\n\t\t-0.8.26 (src/OmertaFees.sol#2)\n",
+      "disposition": "The executed build uses native Solidity 0.8.26; compatible dependency source ranges are not multiple selected compiler versions."
+    },
+    {
+      "sourceRun": "OmertaFees",
+      "id": "0ee878a65cc0de4194a8089ce6d4151383c09cdc55fceadc4b5cfae8f71cfda9",
+      "check": "low-level-calls",
+      "reportedImpact": "Informational",
+      "description": "Low level call in OmertaFees.sweep() (src/OmertaFees.sol#181-187):\n\t- (ok,None) = address(owner()).call{value: bal}() (src/OmertaFees.sol#184)\n",
+      "disposition": "Checked native forwarding: failures revert atomic fee/bond accounting under nonReentrant; owner sweep destinations are deliberate. Immutable splitter recipients can permanently reject, retained as a concrete recipient-validation requirement."
+    },
+    {
+      "sourceRun": "OmertaFees",
+      "id": "22e2f0c514200b264d6f172bc56e0214d688036940993a4b2407465a3aa502f1",
+      "check": "low-level-calls",
+      "reportedImpact": "Informational",
+      "description": "Low level call in OmertaFees._forward(uint256,uint256) (src/OmertaFees.sol#128-140):\n\t- (okV,None) = vigRecipient.call{value: toVig}() (src/OmertaFees.sol#132)\n\t- (okD,None) = feeRecipient.call{value: toDev}() (src/OmertaFees.sol#136)\n",
+      "disposition": "Checked native forwarding: failures revert atomic fee/bond accounting under nonReentrant; owner sweep destinations are deliberate. Immutable splitter recipients can permanently reject, retained as a concrete recipient-validation requirement."
+    },
+    {
+      "sourceRun": "VoucherClaim",
+      "id": "8a78aed06f9bdbfc803dade366c3baff634535cf89a06bd429a3952a8c79e52a",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "VoucherClaim.claim(VoucherClaim.Voucher,bytes) (src/VoucherClaim.sol#123-160) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- require(bool,string)(block.timestamp <= v.deadline,VC: expired) (src/VoucherClaim.sol#124)\n\t- require(bool,string)(v.deadline <= block.timestamp + MAX_VOUCHER_TTL,VC: deadline too far) (src/VoucherClaim.sol#125)\n",
+      "disposition": "Intended deadline, vesting, APY, oracle-expiry and UTC daily-cap boundaries. No randomness is derived; sequencer time and availability remain network assumptions."
+    },
+    {
+      "sourceRun": "VoucherClaim",
+      "id": "c9bdff32fbb19adbf39d4f22f5f82cd989a94b3d3cb03215235bd9fb66be3f6b",
+      "check": "pragma",
+      "reportedImpact": "Informational",
+      "description": "5 different versions of Solidity are used:\n\t- Version constraint ^0.8.20 is used by:\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Context.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Panic.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Pausable.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/ShortStrings.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#5)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/cryptography/ECDSA.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/Math.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/SafeCast.sol#5)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/SignedMath.sol#4)\n\t- Version constraint >=0.6.2 is used by:\n\t\t->=0.6.2 (lib/openzeppelin-contracts/contracts/interfaces/IERC1363.sol#4)\n\t- Version constraint >=0.4.16 is used by:\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/interfaces/IERC165.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/interfaces/IERC20.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/interfaces/IERC5267.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol#4)\n\t- Version constraint ^0.8.24 is used by:\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/Bytes.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/Strings.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/cryptography/EIP712.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/cryptography/MessageHashUtils.sol#4)\n\t- Version constraint 0.8.26 is used by:\n\t\t-0.8.26 (src/VoucherClaim.sol#2)\n",
+      "disposition": "The executed build uses native Solidity 0.8.26; compatible dependency source ranges are not multiple selected compiler versions."
+    },
+    {
+      "sourceRun": "GearVault",
+      "id": "0100172b58493126cea8816fa79d7c518086a7a58f4847cd96eb5e61d7810bd4",
+      "check": "reentrancy-benign",
+      "reportedImpact": "Low",
+      "description": "Reentrancy in GearVault.redeem(uint256,uint256) (src/GearVault.sol#142-151):\n\tExternal calls:\n\t- _burn(msg.sender,tokenId,amount) (src/GearVault.sol#148)\n\t\t- response = IERC1155Receiver(to).onERC1155BatchReceived(operator,from,ids,values,data) (lib/openzeppelin-contracts/contracts/token/ERC1155/utils/ERC1155Utils.sol#69-85)\n\t\t- response = IERC1155Receiver(to).onERC1155Received(operator,from,id,value,data) (lib/openzeppelin-contracts/contracts/token/ERC1155/utils/ERC1155Utils.sol#34-48)\n\t\t- ERC1155Utils.checkOnERC1155BatchReceived(operator,from,to,ids,values,data) (lib/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#216)\n\t\t- ERC1155Utils.checkOnERC1155Received(operator,from,to,id,value,data) (lib/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#220)\n\tState variables written after the call(s):\n\t- redeemed[tokenId] += amount (src/GearVault.sol#149)\n",
+      "disposition": "False positive in GearVault.redeem: OpenZeppelin ERC1155._burn calls _updateWithAcceptanceCheck with to=address(0), whose to != address(0) guard prevents both receiver callbacks. Actual safe-mint callbacks and immediate burns are separately tested."
+    },
+    {
+      "sourceRun": "GearVault",
+      "id": "462f9c2ecfec4e5aac82c1c855fac0ecce5f1967beb2d878c9df06db4516826a",
+      "check": "reentrancy-events",
+      "reportedImpact": "Low",
+      "description": "Reentrancy in GearVault.redeem(uint256,uint256) (src/GearVault.sol#142-151):\n\tExternal calls:\n\t- _burn(msg.sender,tokenId,amount) (src/GearVault.sol#148)\n\t\t- response = IERC1155Receiver(to).onERC1155BatchReceived(operator,from,ids,values,data) (lib/openzeppelin-contracts/contracts/token/ERC1155/utils/ERC1155Utils.sol#69-85)\n\t\t- response = IERC1155Receiver(to).onERC1155Received(operator,from,id,value,data) (lib/openzeppelin-contracts/contracts/token/ERC1155/utils/ERC1155Utils.sol#34-48)\n\t\t- ERC1155Utils.checkOnERC1155BatchReceived(operator,from,to,ids,values,data) (lib/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#216)\n\t\t- ERC1155Utils.checkOnERC1155Received(operator,from,to,id,value,data) (lib/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#220)\n\tEvent emitted after the call(s):\n\t- Redeemed(msg.sender,tokenId,amount) (src/GearVault.sol#150)\n",
+      "disposition": "Same unreachable burn callback as the GearVault reentrancy-benign diagnostic. _burn cannot call a receiver; the subsequent Redeemed event follows the balance burn."
+    },
+    {
+      "sourceRun": "GearVault",
+      "id": "03129e30459c71a6bef9fda0dc3d1fdeb1206a472c9039c61385c92e7d6f66bb",
+      "check": "pragma",
+      "reportedImpact": "Informational",
+      "description": "6 different versions of Solidity are used:\n\t- Version constraint ^0.8.20 is used by:\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/token/ERC1155/utils/ERC1155Utils.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Base64.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Comparators.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Context.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Panic.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/SlotDerivation.sol#5)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#5)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/introspection/ERC165.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/Math.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/SafeCast.sol#5)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/SignedMath.sol#4)\n\t- Version constraint >=0.8.4 is used by:\n\t\t->=0.8.4 (lib/openzeppelin-contracts/contracts/interfaces/draft-IERC6093.sol#4)\n\t- Version constraint ^0.8.24 is used by:\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/Arrays.sol#5)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/Bytes.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/Strings.sol#4)\n\t- Version constraint >=0.6.2 is used by:\n\t\t->=0.6.2 (lib/openzeppelin-contracts/contracts/token/ERC1155/IERC1155.sol#4)\n\t\t->=0.6.2 (lib/openzeppelin-contracts/contracts/token/ERC1155/IERC1155Receiver.sol#4)\n\t\t->=0.6.2 (lib/openzeppelin-contracts/contracts/token/ERC1155/extensions/IERC1155MetadataURI.sol#4)\n\t- Version constraint >=0.4.16 is used by:\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol#4)\n\t- Version constraint 0.8.26 is used by:\n\t\t-0.8.26 (src/GearVault.sol#2)\n",
+      "disposition": "The executed build uses native Solidity 0.8.26; compatible dependency source ranges are not multiple selected compiler versions."
+    },
+    {
+      "sourceRun": "GearVault",
+      "id": "114ad08c607c0574f1aee48f66a52ae84e032b3c417469925dcab4200a2bf798",
+      "check": "too-many-digits",
+      "reportedImpact": "Informational",
+      "description": "GearVault.slitherConstructorConstantVariables() (src/GearVault.sol#24-252) uses literals with too many digits:\n\t- CAR_BASE = 100000 (src/GearVault.sol#28)\n",
+      "disposition": "Fixed metadata/color literals, not arithmetic authority or asset movement."
+    },
+    {
+      "sourceRun": "GearVault",
+      "id": "daeb7136bfc85e4c4917409694751f467c29cf8a21e37b0cb770b3a7f61775fd",
+      "check": "too-many-digits",
+      "reportedImpact": "Informational",
+      "description": "GearVault.slitherConstructorConstantVariables() (src/GearVault.sol#24-252) uses literals with too many digits:\n\t- BOAT_BASE = 200000 (src/GearVault.sol#29)\n",
+      "disposition": "Fixed metadata/color literals, not arithmetic authority or asset movement."
+    },
+    {
+      "sourceRun": "StreetDeed",
+      "id": "c04b32a76713a7dc2f24897085eeec5e3e3c82276e0d69b775eda0a014bcbfb7",
+      "check": "shadowing-local",
+      "reportedImpact": "Low",
+      "description": "StreetDeed.tokenIdFor(string).name (src/StreetDeed.sol#145) shadows:\n\t- ERC721.name() (lib/openzeppelin-contracts/contracts/token/ERC721/ERC721.sol#66-68) (function)\n\t- IERC721Metadata.name() (lib/openzeppelin-contracts/contracts/token/ERC721/extensions/IERC721Metadata.sol#16) (function)\n",
+      "disposition": "StreetDeed.tokenIdFor parameter name shadows the ERC721 name() function lexically; keccak256(bytes(name)) uses the supplied string intentionally."
+    },
+    {
+      "sourceRun": "StreetDeed",
+      "id": "db6d057b9780f8b9868e8995ef1af0cd14ace978a717dc8fb7b636bf73ffa0ac",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "StreetDeed.claim(StreetDeed.DeedVoucher,bytes) (src/StreetDeed.sol#168-188) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- require(bool,string)(block.timestamp <= v.deadline,SD: expired) (src/StreetDeed.sol#169)\n\t- require(bool,string)(v.deadline <= block.timestamp + MAX_VOUCHER_TTL,SD: deadline too far) (src/StreetDeed.sol#170)\n",
+      "disposition": "Intended deadline, vesting, APY, oracle-expiry and UTC daily-cap boundaries. No randomness is derived; sequencer time and availability remain network assumptions."
+    },
+    {
+      "sourceRun": "StreetDeed",
+      "id": "fd7dfc3a609ca24b47e194d022300dc25c233f1886e322fd04aa2bb5a900fa24",
+      "check": "pragma",
+      "reportedImpact": "Informational",
+      "description": "7 different versions of Solidity are used:\n\t- Version constraint ^0.8.20 is used by:\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/token/ERC721/utils/ERC721Utils.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Base64.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Context.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Panic.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Pausable.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/ShortStrings.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#5)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/cryptography/ECDSA.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/introspection/ERC165.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/Math.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/SafeCast.sol#5)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/SignedMath.sol#4)\n\t- Version constraint >=0.4.16 is used by:\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/interfaces/IERC5267.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol#4)\n\t- Version constraint >=0.8.4 is used by:\n\t\t->=0.8.4 (lib/openzeppelin-contracts/contracts/interfaces/draft-IERC6093.sol#4)\n\t- Version constraint ^0.8.24 is used by:\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/token/ERC721/ERC721.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/Bytes.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/Strings.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/cryptography/EIP712.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/cryptography/MessageHashUtils.sol#4)\n\t- Version constraint >=0.6.2 is used by:\n\t\t->=0.6.2 (lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol#4)\n\t\t->=0.6.2 (lib/openzeppelin-contracts/contracts/token/ERC721/extensions/IERC721Metadata.sol#4)\n\t- Version constraint >=0.5.0 is used by:\n\t\t->=0.5.0 (lib/openzeppelin-contracts/contracts/token/ERC721/IERC721Receiver.sol#4)\n\t- Version constraint 0.8.26 is used by:\n\t\t-0.8.26 (src/StreetDeed.sol#2)\n",
+      "disposition": "The executed build uses native Solidity 0.8.26; compatible dependency source ranges are not multiple selected compiler versions."
+    },
+    {
+      "sourceRun": "DynastyNFT",
+      "id": "3e0b1be7549682bc1aaf7e5c32b1d6ba158168ba1725b6f2e2b4ff454d78ec38",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "DynastyNFT.claim(DynastyNFT.MintVoucher,bytes) (src/DynastyNFT.sol#146-163) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- require(bool,string)(block.timestamp <= v.deadline,DN: expired) (src/DynastyNFT.sol#147)\n\t- require(bool,string)(v.deadline <= block.timestamp + MAX_VOUCHER_TTL,DN: deadline too far) (src/DynastyNFT.sol#148)\n",
+      "disposition": "Intended deadline, vesting, APY, oracle-expiry and UTC daily-cap boundaries. No randomness is derived; sequencer time and availability remain network assumptions."
+    },
+    {
+      "sourceRun": "DynastyNFT",
+      "id": "5f4d359b57788f3959dc12e2784b6f58305689403d83faa9fc43ffbb61eb4622",
+      "check": "pragma",
+      "reportedImpact": "Informational",
+      "description": "7 different versions of Solidity are used:\n\t- Version constraint ^0.8.20 is used by:\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/token/ERC721/utils/ERC721Utils.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/token/common/ERC2981.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Context.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Panic.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Pausable.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/ShortStrings.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#5)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/cryptography/ECDSA.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/introspection/ERC165.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/Math.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/SafeCast.sol#5)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/SignedMath.sol#4)\n\t- Version constraint >=0.6.2 is used by:\n\t\t->=0.6.2 (lib/openzeppelin-contracts/contracts/interfaces/IERC2981.sol#4)\n\t\t->=0.6.2 (lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol#4)\n\t\t->=0.6.2 (lib/openzeppelin-contracts/contracts/token/ERC721/extensions/IERC721Metadata.sol#4)\n\t- Version constraint >=0.4.16 is used by:\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/interfaces/IERC5267.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol#4)\n\t- Version constraint >=0.8.4 is used by:\n\t\t->=0.8.4 (lib/openzeppelin-contracts/contracts/interfaces/draft-IERC6093.sol#4)\n\t- Version constraint ^0.8.24 is used by:\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/token/ERC721/ERC721.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/Bytes.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/Strings.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/cryptography/EIP712.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/cryptography/MessageHashUtils.sol#4)\n\t- Version constraint >=0.5.0 is used by:\n\t\t->=0.5.0 (lib/openzeppelin-contracts/contracts/token/ERC721/IERC721Receiver.sol#4)\n\t- Version constraint 0.8.26 is used by:\n\t\t-0.8.26 (src/DynastyNFT.sol#2)\n",
+      "disposition": "The executed build uses native Solidity 0.8.26; compatible dependency source ranges are not multiple selected compiler versions."
+    },
+    {
+      "sourceRun": "StockVault",
+      "id": "078ce103093195c559476d9d79164dc062f9dae70e1bb2b6f946c460c43e5842",
+      "check": "missing-zero-check",
+      "reportedImpact": "Low",
+      "description": "StockVault.constructor(address,address,uint256).keeper_ (src/StockVault.sol#105) lacks a zero-check on :\n\t\t- keeper = keeper_ (src/StockVault.sol#109)\n",
+      "disposition": "Intentional disabled role: zero OMR minter/StockVault keeper disables that role. Zero allocationSigner enables legacy keeper-only delivery by explicit design; mainnet activation must choose and verify authorization mode."
+    },
+    {
+      "sourceRun": "StockVault",
+      "id": "1669020e3a0f674fcdf42b2665498f3d5fe7508181981ea148488566616cecbd",
+      "check": "missing-zero-check",
+      "reportedImpact": "Low",
+      "description": "StockVault.setKeeper(address).k (src/StockVault.sol#116) lacks a zero-check on :\n\t\t- keeper = k (src/StockVault.sol#117)\n",
+      "disposition": "Intentional disabled role: zero OMR minter/StockVault keeper disables that role. Zero allocationSigner enables legacy keeper-only delivery by explicit design; mainnet activation must choose and verify authorization mode."
+    },
+    {
+      "sourceRun": "StockVault",
+      "id": "49f4656bfe27f01ca63a5be3ccfc9bee2737b1641bd84dcfbd29c3971ac92c96",
+      "check": "missing-zero-check",
+      "reportedImpact": "Low",
+      "description": "StockVault.setAllocationSigner(address).signer_ (src/StockVault.sol#123) lacks a zero-check on :\n\t\t- allocationSigner = signer_ (src/StockVault.sol#124)\n",
+      "disposition": "Intentional disabled role: zero OMR minter/StockVault keeper disables that role. Zero allocationSigner enables legacy keeper-only delivery by explicit design; mainnet activation must choose and verify authorization mode."
+    },
+    {
+      "sourceRun": "StockVault",
+      "id": "5877ad58bfb9765fc1058d75c1c576510599cb0f704172d3e2614eba88f08463",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "StockVault.deliverAuthorized(StockVault.DeliveryAuthorization,bytes) (src/StockVault.sol#181-193) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- require(bool,string)(auth.deadline >= block.timestamp,SV: authorization expired) (src/StockVault.sol#188)\n",
+      "disposition": "Intended deadline, vesting, APY, oracle-expiry and UTC daily-cap boundaries. No randomness is derived; sequencer time and availability remain network assumptions."
+    },
+    {
+      "sourceRun": "StockVault",
+      "id": "45ce786fbc2bd975531538c6ab4867bd3c55802ce22035ea9fa8cddd4063116f",
+      "check": "pragma",
+      "reportedImpact": "Informational",
+      "description": "5 different versions of Solidity are used:\n\t- Version constraint ^0.8.20 is used by:\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Context.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Panic.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Pausable.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/ShortStrings.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#5)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/cryptography/ECDSA.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/Math.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/SafeCast.sol#5)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/SignedMath.sol#4)\n\t- Version constraint >=0.6.2 is used by:\n\t\t->=0.6.2 (lib/openzeppelin-contracts/contracts/interfaces/IERC1363.sol#4)\n\t- Version constraint >=0.4.16 is used by:\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/interfaces/IERC165.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/interfaces/IERC20.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/interfaces/IERC5267.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol#4)\n\t- Version constraint ^0.8.24 is used by:\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/Bytes.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/Strings.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/cryptography/EIP712.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/cryptography/MessageHashUtils.sol#4)\n\t- Version constraint 0.8.26 is used by:\n\t\t-0.8.26 (src/StockVault.sol#2)\n",
+      "disposition": "The executed build uses native Solidity 0.8.26; compatible dependency source ranges are not multiple selected compiler versions."
+    },
+    {
+      "sourceRun": "GenesisOracle",
+      "id": "0776e7b393977a80542ccc146aae0d3b174d4818e17522945982562842c21cdc",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "GenesisOracle.constructor(address,uint256,uint256) (src/GenesisOracle.sol#63-70) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- price_ != 0 && validUntil_ <= block.timestamp (src/GenesisOracle.sol#66)\n",
+      "disposition": "Intended deadline, vesting, APY, oracle-expiry and UTC daily-cap boundaries. No randomness is derived; sequencer time and availability remain network assumptions."
+    },
+    {
+      "sourceRun": "GenesisOracle",
+      "id": "7e03f0c75cc2d0185eef756c748bf15159340e65902751f2a87a06f07a2404b5",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "GenesisOracle.consult() (src/GenesisOracle.sol#87-90) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- price == 0 || block.timestamp > validUntil (src/GenesisOracle.sol#88)\n",
+      "disposition": "Intended deadline, vesting, APY, oracle-expiry and UTC daily-cap boundaries. No randomness is derived; sequencer time and availability remain network assumptions."
+    },
+    {
+      "sourceRun": "GenesisOracle",
+      "id": "97627c6d5bdb85315e80600c0eaf50a1a38dd3c556d374981bfe10adab3e837c",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "GenesisOracle.setPrice(uint256,uint256) (src/GenesisOracle.sol#79-84) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- price_ != 0 && validUntil_ <= block.timestamp (src/GenesisOracle.sol#80)\n",
+      "disposition": "Intended deadline, vesting, APY, oracle-expiry and UTC daily-cap boundaries. No randomness is derived; sequencer time and availability remain network assumptions."
+    },
+    {
+      "sourceRun": "GenesisOracle",
+      "id": "2ab6247ca3e1f44b9d55ce7e0b6cdde334fe0794891f76b98ef9ba6ff5d6d4e7",
+      "check": "pragma",
+      "reportedImpact": "Informational",
+      "description": "2 different versions of Solidity are used:\n\t- Version constraint ^0.8.20 is used by:\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Context.sol#4)\n\t- Version constraint 0.8.26 is used by:\n\t\t-0.8.26 (src/GenesisOracle.sol#2)\n\t\t-0.8.26 (src/IOmrOracle.sol#2)\n",
+      "disposition": "The executed build uses native Solidity 0.8.26; compatible dependency source ranges are not multiple selected compiler versions."
+    },
+    {
+      "sourceRun": "OmertaBond",
+      "id": "50845c1df873a3f1c253c47b39cb7099abac3fd23de68b31edeed6b74b0d2a71",
+      "check": "divide-before-multiply",
+      "reportedImpact": "Medium",
+      "description": "OmertaBond.bond(OmertaBond.BondQuote,bytes) (src/OmertaBond.sol#324-412) performs a multiplication on the result of a division:\n\t- payout = (marketOmr * 10000) / (10000 - q.discountBps) (src/OmertaBond.sol#351)\n\t- maxOmrPerEth == 0 || (payout * 1e18) / q.principal > maxOmrPerEth (src/OmertaBond.sol#357)\n",
+      "disposition": "Reviewed arithmetic: OMR splits the rounded tax and assigns the residual to LP, preserving total balance. Bond floors market OMR and discount payout; zero payout is refused and a hard absolute rate plus daily cap bounds issuance. Bounded token-wei rounding does not create an unbacked claim."
+    },
+    {
+      "sourceRun": "OmertaBond",
+      "id": "8d08407b6eceb27d9c79c1f994bc06c12dae98946e8241665506b5c031dbec3f",
+      "check": "divide-before-multiply",
+      "reportedImpact": "Medium",
+      "description": "OmertaBond.bond(OmertaBond.BondQuote,bytes) (src/OmertaBond.sol#324-412) performs a multiplication on the result of a division:\n\t- marketOmr = (q.principal * q.priceOmrPerEth) / 1e18 (src/OmertaBond.sol#350)\n\t- payout = (marketOmr * 10000) / (10000 - q.discountBps) (src/OmertaBond.sol#351)\n",
+      "disposition": "Reviewed arithmetic: OMR splits the rounded tax and assigns the residual to LP, preserving total balance. Bond floors market OMR and discount payout; zero payout is refused and a hard absolute rate plus daily cap bounds issuance. Bounded token-wei rounding does not create an unbacked claim."
+    },
+    {
+      "sourceRun": "OmertaBond",
+      "id": "408a50a770bc9dc5d7284318dc62e049c85a12ed5c5578ff5387f1261f2d64f8",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "OmertaBond.claim(uint256) (src/OmertaBond.sol#415-425) uses a dangerous strict equality:\n\t- amount == 0 (src/OmertaBond.sol#420)\n",
+      "disposition": "Zero claimable amount or zero complete token/native balance means no work; unsolicited funds cannot block a positive fixed-balance equality. Pool initialization is the deliberate zero/nonzero discriminator and its upstream authorization/atomicity is reviewed separately."
+    },
+    {
+      "sourceRun": "OmertaBond",
+      "id": "51339b348ba18f2fbbdd495e10a1a0633aa4fe8bf7522a080c9da4bfe1a20b74",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "OmertaBond.sweep(address,uint256) (src/OmertaBond.sol#472-476) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- amount > omr.balanceOf(address(this)) - committedOMR (src/OmertaBond.sol#473)\n",
+      "disposition": "Intended deadline, vesting, APY, oracle-expiry and UTC daily-cap boundaries. No randomness is derived; sequencer time and availability remain network assumptions."
+    },
+    {
+      "sourceRun": "OmertaBond",
+      "id": "778f1e2bbf2aa544a3143a3b83ece7ba81c3a613add74b1a1d9fa1c7e9bde2a2",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "OmertaBond._vested(OmertaBond.Bond) (src/OmertaBond.sol#427-431) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- elapsed >= b.vestSeconds (src/OmertaBond.sol#429)\n",
+      "disposition": "Intended deadline, vesting, APY, oracle-expiry and UTC daily-cap boundaries. No randomness is derived; sequencer time and availability remain network assumptions."
+    },
+    {
+      "sourceRun": "OmertaBond",
+      "id": "9cc80b1f42ace142ef1213bab2eef1f027b765b0284bc046256024d934dd7a00",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "OmertaBond._oraclePrice() (src/OmertaBond.sol#289-301) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- block.timestamp > updatedAt + maxOracleAge (src/OmertaBond.sol#296)\n",
+      "disposition": "Intended deadline, vesting, APY, oracle-expiry and UTC daily-cap boundaries. No randomness is derived; sequencer time and availability remain network assumptions."
+    },
+    {
+      "sourceRun": "OmertaBond",
+      "id": "f0fc65815a49249f04d18cdf053a23d1e158f9ec48958d34f092df947a4fb2cb",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "OmertaBond.bond(OmertaBond.BondQuote,bytes) (src/OmertaBond.sol#324-412) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- block.timestamp > q.deadline (src/OmertaBond.sol#333)\n\t- q.deadline > block.timestamp + MAX_QUOTE_TTL (src/OmertaBond.sol#334)\n",
+      "disposition": "Intended deadline, vesting, APY, oracle-expiry and UTC daily-cap boundaries. No randomness is derived; sequencer time and availability remain network assumptions."
+    },
+    {
+      "sourceRun": "OmertaBond",
+      "id": "f1760094dcae21a182a201bb56dafec3f3d6a5d9faa75928d2f1463084139db8",
+      "check": "timestamp",
+      "reportedImpact": "Low",
+      "description": "OmertaBond.claim(uint256) (src/OmertaBond.sol#415-425) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- amount == 0 (src/OmertaBond.sol#420)\n",
+      "disposition": "Intended deadline, vesting, APY, oracle-expiry and UTC daily-cap boundaries. No randomness is derived; sequencer time and availability remain network assumptions."
+    },
+    {
+      "sourceRun": "OmertaBond",
+      "id": "8142f1c1bf0aa24542969d21e3943e2148cf8b2b943a5d97331729c86426c5e9",
+      "check": "pragma",
+      "reportedImpact": "Informational",
+      "description": "5 different versions of Solidity are used:\n\t- Version constraint ^0.8.20 is used by:\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Context.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Panic.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/Pausable.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/ShortStrings.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#5)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/cryptography/ECDSA.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/Math.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/SafeCast.sol#5)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/math/SignedMath.sol#4)\n\t- Version constraint >=0.6.2 is used by:\n\t\t->=0.6.2 (lib/openzeppelin-contracts/contracts/interfaces/IERC1363.sol#4)\n\t- Version constraint >=0.4.16 is used by:\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/interfaces/IERC165.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/interfaces/IERC20.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/interfaces/IERC5267.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol#4)\n\t- Version constraint ^0.8.24 is used by:\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/Bytes.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/Strings.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/cryptography/EIP712.sol#4)\n\t\t-^0.8.24 (lib/openzeppelin-contracts/contracts/utils/cryptography/MessageHashUtils.sol#4)\n\t- Version constraint 0.8.26 is used by:\n\t\t-0.8.26 (src/IOmrOracle.sol#2)\n\t\t-0.8.26 (src/OmertaBond.sol#2)\n",
+      "disposition": "The executed build uses native Solidity 0.8.26; compatible dependency source ranges are not multiple selected compiler versions."
+    },
+    {
+      "sourceRun": "OmertaBond",
+      "id": "18fae2b74b4f52ec2df7664535b816ff8a44afc98498715db59ac37bfda6e495",
+      "check": "cyclomatic-complexity",
+      "reportedImpact": "Informational",
+      "description": "OmertaBond.bond(OmertaBond.BondQuote,bytes) (src/OmertaBond.sol#324-412) has a high cyclomatic complexity (20).\n",
+      "disposition": "Complexity in metadata generation is retained as maintenance cost; signed issuance and custody do not branch on generated JSON."
+    },
+    {
+      "sourceRun": "OmertaBond",
+      "id": "88741ee8ad7cc76ee36d2ca30b973e4df04df519e550cccdf016ac0267081d94",
+      "check": "low-level-calls",
+      "reportedImpact": "Informational",
+      "description": "Low level call in OmertaBond.bond(OmertaBond.BondQuote,bytes) (src/OmertaBond.sol#324-412):\n\t- (okP,None) = polRecipient.call{value: toPol}() (src/OmertaBond.sol#395)\n\t- (okD,None) = devRecipient.call{value: toDev}() (src/OmertaBond.sol#399)\n\t- (okR,None) = rwaRecipient.call{value: toRwa}() (src/OmertaBond.sol#403)\n\t- (okV,None) = vigRecipient.call{value: toVig}() (src/OmertaBond.sol#407)\n",
+      "disposition": "Checked native forwarding: failures revert atomic fee/bond accounting under nonReentrant; owner sweep destinations are deliberate. Immutable splitter recipients can permanently reject, retained as a concrete recipient-validation requirement."
+    },
+    {
+      "sourceRun": "OmertaBond",
+      "id": "d2dab0f4705babb268797515e0d32409ea86a23661e5f814c5088a3d402f8b8b",
+      "check": "low-level-calls",
+      "reportedImpact": "Informational",
+      "description": "Low level call in OmertaBond.sweepETH() (src/OmertaBond.sol#482-488):\n\t- (ok,None) = address(owner()).call{value: bal}() (src/OmertaBond.sol#485)\n",
+      "disposition": "Checked native forwarding: failures revert atomic fee/bond accounting under nonReentrant; owner sweep destinations are deliberate. Immutable splitter recipients can permanently reject, retained as a concrete recipient-validation requirement."
+    },
+    {
+      "sourceRun": "GenesisProceedsSplitter",
+      "id": "7e697763d6d0b11d89a898afc3077e9c4ab737b5d03667f7a55eafa4ce5001ac",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "GenesisProceedsSplitter.distributeResidual() (src/GenesisProceedsSplitter.sol#80-93) uses a dangerous strict equality:\n\t- total == 0 (src/GenesisProceedsSplitter.sol#83)\n",
+      "disposition": "Zero claimable amount or zero complete token/native balance means no work; unsolicited funds cannot block a positive fixed-balance equality. Pool initialization is the deliberate zero/nonzero discriminator and its upstream authorization/atomicity is reviewed separately."
+    },
+    {
+      "sourceRun": "GenesisProceedsSplitter",
+      "id": "ba5e7b788d4ae1e53dfd3cc9016e3e789e811022208d8cb1723f6b75098c80af",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "GenesisProceedsSplitter.recoverFailedLaunch() (src/GenesisProceedsSplitter.sol#98-104) uses a dangerous strict equality:\n\t- amount == 0 (src/GenesisProceedsSplitter.sol#101)\n",
+      "disposition": "Zero claimable amount or zero complete token/native balance means no work; unsolicited funds cannot block a positive fixed-balance equality. Pool initialization is the deliberate zero/nonzero discriminator and its upstream authorization/atomicity is reviewed separately."
+    },
+    {
+      "sourceRun": "GenesisProceedsSplitter",
+      "id": "dd0698d09874e3a608d056853e5f611b80ee301219d6ab673b91d6c7928b8fbb",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "GenesisProceedsSplitter.recoverToken(IERC20) (src/GenesisProceedsSplitter.sol#108-114) uses a dangerous strict equality:\n\t- amount == 0 (src/GenesisProceedsSplitter.sol#111)\n",
+      "disposition": "Zero claimable amount or zero complete token/native balance means no work; unsolicited funds cannot block a positive fixed-balance equality. Pool initialization is the deliberate zero/nonzero discriminator and its upstream authorization/atomicity is reviewed separately."
+    },
+    {
+      "sourceRun": "GenesisProceedsSplitter",
+      "id": "f87ded304728bdeee0d0494ff55a56e7ebb32aa3ddcd8e1135c0e8bc7654a401",
+      "check": "incorrect-equality",
+      "reportedImpact": "Medium",
+      "description": "GenesisProceedsSplitter._send(address,uint256) (src/GenesisProceedsSplitter.sol#116-120) uses a dangerous strict equality:\n\t- amount == 0 (src/GenesisProceedsSplitter.sol#117)\n",
+      "disposition": "Zero claimable amount or zero complete token/native balance means no work; unsolicited funds cannot block a positive fixed-balance equality. Pool initialization is the deliberate zero/nonzero discriminator and its upstream authorization/atomicity is reviewed separately."
+    },
+    {
+      "sourceRun": "GenesisProceedsSplitter",
+      "id": "d9210a6386e492af29909d155ba4905d0bb9da3ddc0466f83f8b58c54b68e85d",
+      "check": "unused-return",
+      "reportedImpact": "Medium",
+      "description": "GenesisProceedsSplitter.canonicalPoolInitialized() (src/GenesisProceedsSplitter.sol#74-77) ignores return value by (sqrtPriceX96,None,None,None) = poolManager.getSlot0(canonicalPoolId) (src/GenesisProceedsSplitter.sol#75)\n",
+      "disposition": "Splitter only needs sqrtPriceX96 to distinguish initialized pool; tick, protocol fee and LP fee are unused by that discriminator. It is not a price or liquidity-quality check."
+    },
+    {
+      "sourceRun": "GenesisProceedsSplitter",
+      "id": "e1cb776df37af7f68105cccdb3a5fd8e0db4cab99ec08f2da849fd1885a24224",
+      "check": "pragma",
+      "reportedImpact": "Informational",
+      "description": "6 different versions of Solidity are used:\n\t- Version constraint >=0.6.2 is used by:\n\t\t->=0.6.2 (lib/openzeppelin-contracts/contracts/interfaces/IERC1363.sol#4)\n\t- Version constraint >=0.4.16 is used by:\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/interfaces/IERC165.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/interfaces/IERC20.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol#4)\n\t\t->=0.4.16 (lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol#4)\n\t- Version constraint ^0.8.20 is used by:\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol#4)\n\t\t-^0.8.20 (lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol#5)\n\t- Version constraint ^0.8.0 is used by:\n\t\t-^0.8.0 (lib/v4-core/src/interfaces/IExtsload.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/interfaces/IHooks.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/interfaces/IProtocolFees.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/interfaces/external/IERC20Minimal.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/interfaces/external/IERC6909Claims.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/libraries/CustomRevert.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/libraries/FixedPoint128.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/libraries/FullMath.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/libraries/LiquidityMath.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/libraries/Position.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/libraries/SafeCast.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/libraries/StateLibrary.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/types/BalanceDelta.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/types/BeforeSwapDelta.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/types/Currency.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/types/PoolId.sol#2)\n\t\t-^0.8.0 (lib/v4-core/src/types/PoolKey.sol#2)\n\t- Version constraint ^0.8.24 is used by:\n\t\t-^0.8.24 (lib/v4-core/src/interfaces/IExttload.sol#2)\n\t\t-^0.8.24 (lib/v4-core/src/interfaces/IPoolManager.sol#2)\n\t\t-^0.8.24 (lib/v4-core/src/types/PoolOperation.sol#2)\n\t- Version constraint 0.8.26 is used by:\n\t\t-0.8.26 (src/GenesisProceedsSplitter.sol#2)\n",
+      "disposition": "The executed build uses native Solidity 0.8.26; compatible dependency source ranges are not multiple selected compiler versions."
+    },
+    {
+      "sourceRun": "GenesisProceedsSplitter",
+      "id": "deb34b0302545ba2ae12a070f2dfa5986389231bf0850b32dbe2f1d3cf89df54",
+      "check": "low-level-calls",
+      "reportedImpact": "Informational",
+      "description": "Low level call in GenesisProceedsSplitter._send(address,uint256) (src/GenesisProceedsSplitter.sol#116-120):\n\t- (ok,None) = recipient.call{value: amount}() (src/GenesisProceedsSplitter.sol#118)\n",
+      "disposition": "Checked native forwarding: failures revert atomic fee/bond accounting under nonReentrant; owner sweep destinations are deliberate. Immutable splitter recipients can permanently reject, retained as a concrete recipient-validation requirement."
+    }
+  ]
+}

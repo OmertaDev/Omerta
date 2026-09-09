@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import { canonicalJson, sha256Hex } from '../src/genesiscadence.js';
 import { decodeFunctionData, keccak256 } from 'viem';
 import {
   GENESIS_DISTRIBUTION_OMR,
@@ -9,6 +11,8 @@ import {
   ROBINHOOD_GENESIS_STACK,
   V4_OBSERVATION_SOURCE_INTERFACE_ID,
   buildGenesisLaunchArtifacts,
+  buildGenesisAuctionBinding,
+  verifyGenesisAutomationReadiness,
   canonicalGenesisPoolId,
   encodeSupplySchedule,
   floorPriceConfig,
@@ -62,6 +66,28 @@ const input = {
   permit2Expiration: '1800000000',
 };
 const built = buildGenesisLaunchArtifacts(input);
+const automatedInput = { ...input, launchMode: 'automated',
+  lifecycleController: '0x8888888888888888888888888888888888888888',
+  oracle: '0x9999999999999999999999999999999999999999',
+  liquidityKeeper: '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+  runtimeCodeHashes: Object.fromEntries(['token', 'hook', 'proceedsSplitter', 'lifecycleController',
+    'positionRecipient', 'oracle'].map((name) => [name, keccak256('0x6000')])),
+};
+const controlled = buildGenesisLaunchArtifacts(automatedInput);
+assert.equal(controlled.initializerParameters.tokensRecipient, '0x8888888888888888888888888888888888888888');
+assert.equal(built.initializerParameters.tokensRecipient, input.treasury);
+assert.deepEqual(controlled.migratorParameters, built.migratorParameters, 'automation changes unsold-token authority only');
+assert.throws(() => buildGenesisLaunchArtifacts({ ...automatedInput, lifecycleController: 'invalid' }), /valid EVM address/);
+assert.throws(() => buildGenesisLaunchArtifacts({ ...input, lifecycleController: automatedInput.lifecycleController }), /explicit launchMode/);
+assert.throws(() => buildGenesisLaunchArtifacts({ ...automatedInput, oracle: undefined }), /oracle/);
+assert.throws(() => buildGenesisLaunchArtifacts({ ...automatedInput, runtimeCodeHashes: {} }), /runtimeCodeHashes.token/);
+assert.throws(() => buildGenesisLaunchArtifacts({ ...automatedInput,
+  runtimeCodeHashes: { ...automatedInput.runtimeCodeHashes, oracle: `0x${'00'.repeat(32)}` } }), /cannot be zero/);
+assert.equal(controlled.participants.lifecycleController, automatedInput.lifecycleController);
+assert.equal(controlled.participants.tokensRecipient, automatedInput.lifecycleController);
+assert.equal(controlled.automation.auctionBinding.status, 'requires_created_auction_verification');
+assert.equal(built.initializerSalt, controlled.initializerSalt, 'the strategy salt binds the migration tuple');
+assert.notEqual(built.initializerParams, controlled.initializerParams, 'unsold authority changes factory CREATE2 init code');
 assert.equal(built.chainId, 4663);
 assert.equal(built.stack.lbpStrategy, ROBINHOOD_GENESIS_STACK.lbpStrategy);
 assert.equal(built.timeline.endBlock, 52_592_000n);
@@ -175,5 +201,170 @@ assert.throws(
 assert.throws(() => buildGenesisLaunchArtifacts({ ...input, claimDelayBlocks: '0' }), /claimBlock/);
 assert.throws(() => buildGenesisLaunchArtifacts({ ...input, salt: '0x1234' }), /32 bytes/);
 assert.throws(() => buildGenesisLaunchArtifacts({ ...input, vigRecipient: undefined }), /vigRecipient/);
+
+const runtimeFixture = JSON.parse(fs.readFileSync(new URL('./fixtures/genesis-stack-runtime.json', import.meta.url)));
+for (const [name, code] of Object.entries(runtimeFixture.runtime)) {
+  assert.equal(keccak256(code), ROBINHOOD_GENESIS_STACK.runtimeCodeHashes[name], `fixture ${name} runtime remains pinned`);
+}
+const auctionAddress = '0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb';
+const blockHash = `0x${'ab'.repeat(32)}`;
+function automatedClient(options = {}) {
+  const reads = [];
+  const p = controlled.participants;
+  const codes = Object.fromEntries(Object.entries(runtimeFixture.runtime).map(([name, code]) => [
+    ROBINHOOD_GENESIS_STACK[name].toLowerCase(), code,
+  ]));
+  const runtimeHash = (name) => controlled.automation.runtimeCodeHashes[name] ?? ROBINHOOD_GENESIS_STACK.runtimeCodeHashes[name];
+  const controllerReads = { owner: p.launchOwner, strategy: ROBINHOOD_GENESIS_STACK.lbpStrategy,
+    splitter: p.proceedsSplitter, foundation: p.positionRecipient, oracle: p.oracle, omr: p.token,
+    treasury: p.treasury, poolId: expectedPoolId, chainId: 4663n, stopped: false, failed: false,
+    usesArbSys: true, auction: '0x0000000000000000000000000000000000000000', currentBlock: 49_999_999n,
+    ...Object.fromEntries(Object.entries({ strategyCodeHash: 'lbpStrategy', splitterCodeHash: 'proceedsSplitter',
+      foundationCodeHash: 'positionRecipient', oracleCodeHash: 'oracle', omrCodeHash: 'token',
+      poolManagerCodeHash: 'poolManager' }).map(([name, dependency]) => [name, runtimeHash(dependency)])) };
+  const vaultReads = { owner: p.launchOwner, poolManager: ROBINHOOD_GENESIS_STACK.poolManager,
+    positionManager: ROBINHOOD_GENESIS_STACK.positionManager, permit2: ROBINHOOD_GENESIS_STACK.permit2,
+    oracle: p.oracle, omr: p.token, keeper: p.liquidityKeeper, genesisController: p.lifecycleController,
+    vigRecipient: p.vigRecipient, emergencyRecipient: p.launchOwner,
+    poolId: expectedPoolId, configuredChainId: 4663n, positionId: 0n, activationTimestamp: 0n,
+    paused: false, emergencyLatched: false,
+    ...Object.fromEntries(Object.entries({ positionManagerCodeHash: 'positionManager', poolManagerCodeHash: 'poolManager',
+      permit2CodeHash: 'permit2', omrCodeHash: 'token', oracleCodeHash: 'oracle', hookCodeHash: 'hook',
+      genesisControllerCodeHash: 'lifecycleController' }).map(([name, dependency]) => [name, runtimeHash(dependency)])) };
+  const oracleReads = { source: p.hook, poolManager: ROBINHOOD_GENESIS_STACK.poolManager, omr: p.token,
+    poolId: expectedPoolId, fee: 3000, tickSpacing: 60, baselineInitialized: false, consult: [0n, 0n] };
+  const auctionReads = { token: p.token, currency: '0x0000000000000000000000000000000000000000',
+    tokensRecipient: p.lifecycleController, fundsRecipient: ROBINHOOD_GENESIS_STACK.lbpStrategy,
+    validationHook: '0x0000000000000000000000000000000000000000', totalSupply: GENESIS_SALE_OMR,
+    startBlock: controlled.timeline.startBlock, endBlock: controlled.timeline.endBlock,
+    claimBlock: controlled.timeline.claimBlock, floorPrice: controlled.pricing.floorPrice,
+    tickSpacing: controlled.pricing.tickSpacing };
+  const dictionaries = { [p.lifecycleController.toLowerCase()]: controllerReads,
+    [p.positionRecipient.toLowerCase()]: vaultReads, [p.oracle.toLowerCase()]: oracleReads,
+    [auctionAddress]: auctionReads };
+  for (const [target, updates] of Object.entries(options.overrides ?? {})) {
+    Object.assign(dictionaries[target.toLowerCase()], updates);
+  }
+  const block = { number: 80_000_000n, hash: blockHash,
+    timestamp: BigInt(Math.floor(Date.now() / 1000)) - BigInt(options.age ?? 0) };
+  return { reads,
+    getChainId: async () => options.chainId ?? 4663,
+    getBytecode: async ({ address, blockNumber }) => {
+      // All automated proof reads are pinned; legacy funding checks have their separate API.
+      if (blockNumber != null) assert.equal(blockNumber, block.number);
+      if (address.toLowerCase() === options.empty?.toLowerCase()) return '0x';
+      if (address.toLowerCase() === options.changedCode?.toLowerCase()) return '0x6001';
+      return codes[address.toLowerCase()] ?? '0x6000';
+    },
+    getBlock: async ({ blockNumber }) => ({ ...block,
+      hash: blockNumber != null && options.reorg ? `0x${'cd'.repeat(32)}` : block.hash }),
+    readContract: async (request) => {
+      reads.push(request);
+      const { address, functionName, blockNumber, args = [] } = request;
+      if (blockNumber != null) assert.equal(blockNumber, block.number);
+      if (request.blockTag === 'latest' && functionName === 'currentBlock') {
+        options.onLiveClock?.();
+        return options.finalClock ?? controllerReads.currentBlock;
+      }
+      if (address === ROBINHOOD_GENESIS_STACK.lbpStrategy) {
+        if (functionName === 'registeredPoolIds') return options.registered ?? auctionAddress;
+        if (functionName === 'initializers') return options.migrator ?? controlled.migratorParameters;
+      }
+      if (address === ROBINHOOD_GENESIS_STACK.ccaFactory && functionName === 'getAddress') {
+        assert.deepEqual(args, [p.token, GENESIS_SALE_OMR, controlled.initializerParams,
+          controlled.initializerSalt, ROBINHOOD_GENESIS_STACK.lbpStrategy]);
+        return options.predicted ?? auctionAddress;
+      }
+      const dictionary = dictionaries[address.toLowerCase()];
+      if (dictionary && Object.hasOwn(dictionary, functionName)) return dictionary[functionName];
+      return readinessClient.readContract(request);
+    },
+    simulateContract: async (request) => {
+      assert.equal(request.address, p.lifecycleController);
+      assert.equal(request.functionName, 'bindAuction');
+      assert.equal(request.account, p.launchOwner);
+      assert.equal(request.blockNumber, block.number);
+      assert.equal(request.args[0].toLowerCase(), auctionAddress);
+      if (options.simulationError) throw new Error('binding simulation refused');
+      return { result: undefined };
+    },
+  };
+}
+const autoClient = automatedClient();
+const autoReadiness = await verifyGenesisAutomationReadiness(autoClient, controlled);
+assert.equal(autoReadiness.currentBlock, 49_999_999n);
+assert.equal(autoReadiness.checkedAtBlock, 80_000_000n, 'ArbSys scheduling must not use the independent L2 block number');
+assert.equal(autoReadiness.baselineInitialized, false);
+assert(autoClient.reads.every((read) => read.blockNumber === 80_000_000n
+  || (read.functionName === 'currentBlock' && read.blockTag === 'latest')));
+assert.equal((await verifyGenesisLaunchReadiness(automatedClient(), controlled)).automation.currentBlock, 49_999_999n);
+const binding = await buildGenesisAuctionBinding(automatedClient(), controlled);
+assert.equal(binding.transaction.to, controlled.participants.lifecycleController);
+assert.equal(binding.transaction.value, 0n);
+assert.equal(binding.factoryPredictionVerified, true);
+assert.equal(binding.launchArtifactsSha256, sha256Hex(canonicalJson(controlled)));
+assert.equal(binding.readiness.launchArtifactsSha256, binding.launchArtifactsSha256);
+assert.equal(binding.simulated, true);
+assert.equal(binding.auction.toLowerCase(), auctionAddress);
+assert.equal(binding.bindingCalldataKeccak256, keccak256(binding.transaction.data));
+assert.equal(decodeFunctionData({ abi: [{ type: 'function', name: 'bindAuction', stateMutability: 'nonpayable',
+  inputs: [{ type: 'address', name: 'auction' }], outputs: [] }], data: binding.transaction.data }).args[0].toLowerCase(), auctionAddress);
+
+let adversarial = 0;
+async function rejectAuto(options, pattern, bind = false) {
+  await assert.rejects(() => (bind ? buildGenesisAuctionBinding : verifyGenesisAutomationReadiness)(
+    automatedClient(options), controlled,
+  ), pattern);
+  adversarial++;
+}
+for (const target of ['lifecycleController', 'positionRecipient', 'oracle']) {
+  await rejectAuto({ empty: controlled.participants[target] }, /no runtime code/);
+  await rejectAuto({ changedCode: controlled.participants[target] }, /runtime code hash mismatch/);
+}
+await rejectAuto({ changedCode: ROBINHOOD_GENESIS_STACK.lbpStrategy }, /runtime code hash mismatch/);
+await rejectAuto({ chainId: 1 }, /chain 4663/);
+await rejectAuto({ age: 121 }, /stale/);
+await rejectAuto({ reorg: true }, /canonical block/);
+const wrong = controlled.participants.treasury;
+for (const [target, field, value] of [
+  ['lifecycleController', 'foundation', wrong], ['lifecycleController', 'oracle', wrong],
+  ['lifecycleController', 'treasury', controlled.participants.oracle], ['lifecycleController', 'owner', controlled.participants.oracle],
+  ['lifecycleController', 'auction', auctionAddress], ['lifecycleController', 'usesArbSys', false],
+  ['lifecycleController', 'currentBlock', controlled.timeline.startBlock],
+  ['lifecycleController', 'foundationCodeHash', `0x${'00'.repeat(32)}`],
+  ['positionRecipient', 'genesisController', wrong], ['positionRecipient', 'oracle', wrong],
+  ['positionRecipient', 'vigRecipient', wrong], ['positionRecipient', 'emergencyRecipient', controlled.participants.oracle],
+  ['positionRecipient', 'keeper', wrong], ['positionRecipient', 'emergencyLatched', true],
+  ['positionRecipient', 'positionId', 1n], ['oracle', 'source', wrong], ['oracle', 'poolId', `0x${'00'.repeat(32)}`],
+  ['oracle', 'baselineInitialized', true], ['oracle', 'consult', [1n, 1n]],
+]) {
+  await rejectAuto({ overrides: { [controlled.participants[target]]: { [field]: value } } }, /mismatch|not in the future|zero quote/);
+}
+await rejectAuto({ registered: '0x0000000000000000000000000000000000000000' }, /zero address/, true);
+await rejectAuto({ predicted: wrong }, /factory prediction/, true);
+await rejectAuto({ empty: auctionAddress }, /created CCA.*no runtime/, true);
+await rejectAuto({ migrator: { ...controlled.migratorParameters, positionRecipient: wrong } }, /migration parameters/, true);
+await rejectAuto({ migrator: { ...controlled.migratorParameters, lpAllocationSchedule: '0x' } }, /migration parameters/, true);
+for (const [field, value] of [['tokensRecipient', wrong], ['fundsRecipient', wrong],
+  ['startBlock', controlled.timeline.startBlock - 1n], ['endBlock', controlled.timeline.endBlock + 1n],
+  ['claimBlock', controlled.timeline.claimBlock + 1n], ['totalSupply', GENESIS_SALE_OMR - 1n]]) {
+  await rejectAuto({ overrides: { [auctionAddress]: { [field]: value } } }, /created CCA.*mismatch/, true);
+}
+await rejectAuto({ simulationError: true }, /simulation refused/, true);
+await rejectAuto({ finalClock: controlled.timeline.startBlock }, /reached its start/, true);
+await rejectAuto({ finalClock: controlled.timeline.startBlock }, /reached its start/);
+await assert.rejects(() => verifyGenesisLaunchReadiness(automatedClient({ finalClock: controlled.timeline.startBlock }), controlled),
+  /reached its start/);
+const realNow = Date.now;
+try {
+  let testNow = realNow();
+  Date.now = () => testNow;
+  for (const check of [verifyGenesisAutomationReadiness, buildGenesisAuctionBinding, verifyGenesisLaunchReadiness]) {
+    const client = automatedClient({ onLiveClock: () => { testNow += 121_000; } });
+    await assert.rejects(() => check(client, controlled), /became stale during verification/);
+    adversarial++;
+  }
+} finally { Date.now = realNow; }
+console.log(`✅ Automated Genesis bootstrap/binding: coherent uninitialized oracle accepted, exact factory/strategy proof, unsigned simulated Safe payload, and ${adversarial} rejection cases.`);
 
 console.log('✅ Genesis CCA config/preflight test passed — exact allocation, schedule, pricing, pinned stack, zero-tax hook, splitter, one-shot allowances, and unsigned atomic launcher calldata.');

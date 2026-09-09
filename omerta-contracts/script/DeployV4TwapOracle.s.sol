@@ -10,9 +10,9 @@ import {PoolKey} from "v4-core/types/PoolKey.sol";
 import {OmrV4TwapOracle} from "../src/OmrV4TwapOracle.sol";
 import {IOmrV4ObservationSource} from "../src/interfaces/IOmrV4ObservationSource.sol";
 
-/// @notice Deploy the ownerless post-genesis oracle for the canonical native ETH/OMR v4 pool.
-/// @dev Foundry sends only when the operator explicitly adds `--broadcast`. The pool must already
-///      have migrated successfully; this script refuses an unopened or mismatched hook source.
+/// @notice Deploy the ownerless oracle for the canonical native ETH/OMR v4 pool, including before genesis.
+/// @dev Foundry sends only when the operator explicitly adds `--broadcast`. An unopened pool leaves
+///      the oracle unavailable until an initialized baseline and a complete subsequent window exist.
 contract DeployV4TwapOracle is Script {
     using PoolIdLibrary for PoolKey;
 
@@ -40,12 +40,12 @@ contract DeployV4TwapOracle is Script {
         });
         PoolId expectedPoolId = key.toId();
         (,, bool initialized) = source.currentTickCumulative(expectedPoolId);
-        require(initialized, "DeployV4TwapOracle: canonical pool is not initialized");
 
         console.logBytes32(PoolId.unwrap(expectedPoolId));
         console.log("Observation source:", hook);
         console.log("PoolManager:       ", expectedPoolManager);
         console.log("Period:            ", period);
+        console.log("Pool initialized:  ", initialized);
 
         vm.startBroadcast();
         oracle = new OmrV4TwapOracle(source, omr, POOL_FEE, POOL_TICK_SPACING, uint32(period));
@@ -60,7 +60,9 @@ contract DeployV4TwapOracle is Script {
         require(price == 0 && updatedAt == 0, "DeployV4TwapOracle: fresh oracle published a price");
 
         console.log("OmrV4TwapOracle:", address(oracle));
-        console.log("Next: Safe setObserver(oracle), wait one full period, then call update() and verify consult().");
+        console.log("Baseline initialized:", oracle.baselineInitialized());
+        console.log("Next: Safe setObserver(oracle); after pool initialization, call update() to seed if needed.");
+        console.log("Wait one full period after the baseline, then call update() and verify consult().");
         console.log("Keep OmertaBond paused/unset until the separate setOracle activation batch is approved.");
     }
 

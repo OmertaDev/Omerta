@@ -23,7 +23,8 @@ import {Denari} from "./Denari.sol";
 ///              it is false. **The protocol stops issuing before it stops paying** — that ordering
 ///              is the whole point and it is why the floor gates minting, not redemption.
 ///           3. **Flow limits** so one block cannot drain the queue.
-///           4. The fuzzed supply-vs-collateral invariant, enforced in the Alchemist.
+///           4. Per-position debt-vs-collateral checks in the Alchemist and conservation of DNR
+///              against debt plus funded reserves, assuming the configured authorities and assets.
 ///
 ///         ── WHY REDEMPTION IS NOT SAME-BLOCK GUARDED, DELIBERATELY ───────────────────────────
 ///         `FlashGuard`'s L1 is absent from `redeem()` ON PURPOSE. Somebody who flash-loans to buy

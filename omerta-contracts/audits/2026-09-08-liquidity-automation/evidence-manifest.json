@@ -1,0 +1,2232 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-09-08T21:13:45.586Z",
+  "status": "sealed-reviewed-source",
+  "sourceTreeSha256": "ffa992ce6d9dd7bbfeba4bd93732c6e38c91c2483a482a374ee01fbe0530e712",
+  "reportPath": "omerta-contracts/audits/2026-09-08-liquidity-automation/report.md",
+  "reportSha256": "26592b103cea7cb6b3982ba1a53e47210bcc661b57cc6a48f6d0a899e433363a",
+  "artifactManifestSha256": "d6fc30cd372bf8d94e5678146c382ea43fbb28de5d7fcbbd9a57e90972590540",
+  "evidenceTreeSha256": "ee8ede9fea2c8e1c7ed3c9e39bf024a7013dbcc1a4440d3954c964b4186c3cb6",
+  "finalTests": {
+    "coordinatingReviewerConfirmed": true,
+    "npmExit": 0,
+    "npmExitPath": "output/liquidity-automation/npm-test.exit.txt",
+    "note": "A draft may observe an existing exit marker while a later run is active; only explicit final confirmation and a completed report permit sealing."
+  },
+  "finalExitEvidence": [
+    {
+      "path": "output/liquidity-automation/npm-test.exit.txt",
+      "exitCode": 0
+    },
+    {
+      "path": "output/liquidity-automation/forge-combined-final.exit.txt",
+      "exitCode": 0
+    },
+    {
+      "path": "output/liquidity-automation/forge-existing-regressions-final.exit.txt",
+      "exitCode": 0
+    },
+    {
+      "path": "output/liquidity-automation/forge-sizes-final.exit.txt",
+      "exitCode": 0
+    },
+    {
+      "path": "output/liquidity-automation/final-pgcheck.exit.txt",
+      "exitCode": 0
+    },
+    {
+      "path": "output/liquidity-automation/final-pgquery.exit.txt",
+      "exitCode": 0
+    },
+    {
+      "path": "output/liquidity-automation/final-gates.exit.txt",
+      "exitCode": 0
+    },
+    {
+      "path": "output/liquidity-automation/e2e-wrapper-run.exit.txt",
+      "exitCode": 0
+    },
+    {
+      "path": "output/liquidity-automation/deployment-plan-tests-final.exit.txt",
+      "exitCode": 0
+    },
+    {
+      "path": "output/liquidity-automation/accounting-postgres.exit.txt",
+      "exitCode": 0
+    },
+    {
+      "path": "output/liquidity-automation/indexer-postgres-final.exit",
+      "exitCode": 0
+    },
+    {
+      "path": "output/liquidity-automation/queue-postgres-final.exit",
+      "exitCode": 0
+    },
+    {
+      "path": "output/liquidity-automation/policy-postgres.exit.txt",
+      "exitCode": 0
+    },
+    {
+      "path": "output/liquidity-automation/accounting-review-final.exit",
+      "exitCode": 0
+    },
+    {
+      "path": "output/liquidity-automation/policy-review-final.exit",
+      "exitCode": 0
+    },
+    {
+      "path": "output/liquidity-automation/queue-precision-final.exit",
+      "exitCode": 0
+    },
+    {
+      "path": "output/liquidity-automation/preflight-inventory-retest.exit.txt",
+      "exitCode": 0
+    },
+    {
+      "path": "output/liquidity-automation/docs-size-retest.exit.txt",
+      "exitCode": 0
+    },
+    {
+      "path": "output/liquidity-automation/knowledge-final.exit.txt",
+      "exitCode": 0
+    }
+  ],
+  "static": {
+    "successfulScans": 10,
+    "diagnosticOccurrences": 767,
+    "uniqueDiagnostics": 293,
+    "untriaged": 0
+  },
+  "exclusions": [],
+  "note": "Every raw liquidity output, including failures, is retained except classified live data/nested packages. This manifest excludes itself and the outer package manifest to avoid circular hashes. Source and artifact paths are copied only once into the mirrored package.",
+  "files": [
+    {
+      "path": "omerta-contracts/audits/2026-09-08-comprehensive/evidence-manifest.json",
+      "bytes": 50690,
+      "sha256": "5799a2a68fe4f1fca19445148484943f50f35f7815cf8a75182a5ea378703fd0",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "unchanged historical review reference; no nested historical package"
+      ]
+    },
+    {
+      "path": "omerta-contracts/audits/2026-09-08-comprehensive/external-integration-source-hashes.json",
+      "bytes": 9303,
+      "sha256": "fb98525579271fd61fddf2b0d01638ff422605c702ce38dc70d7af5853f9a50e",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "unchanged historical source reference"
+      ]
+    },
+    {
+      "path": "omerta-contracts/audits/2026-09-08-comprehensive/launcher-source-manifest.json",
+      "bytes": 22007,
+      "sha256": "33f6f03b935f930d45a0d21c97e00ac93677cd79ad1947d8707d65c9ab3b29c9",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "unchanged historical source reference"
+      ]
+    },
+    {
+      "path": "omerta-contracts/audits/2026-09-08-comprehensive/report.md",
+      "bytes": 18878,
+      "sha256": "c10d8b37de4734354f6e3c25e37fbac5c2331a3f7bd92a8db98a15f653555fc5",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "unchanged historical review reference; no nested historical package"
+      ]
+    },
+    {
+      "path": "omerta-contracts/audits/2026-09-08-comprehensive/source-manifest.json",
+      "bytes": 204562,
+      "sha256": "196ba3d95ab9689410daf33aa28e5491aa0c89b01fe5dcc923af4cf24a53ce8a",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "unchanged historical review reference; no nested historical package"
+      ]
+    },
+    {
+      "path": "omerta-contracts/audits/2026-09-08-liquidity-automation/artifact-manifest.json",
+      "bytes": 335366,
+      "sha256": "d6fc30cd372bf8d94e5678146c382ea43fbb28de5d7fcbbd9a57e90972590540"
+    },
+    {
+      "path": "omerta-contracts/audits/2026-09-08-liquidity-automation/build-static-triage.mjs",
+      "bytes": 19199,
+      "sha256": "ce93d7242c9a1c3d8205f7b66a1dd75e836aadf2a07619b04ddbd6d2e6ba522e",
+      "categories": [
+        "evidence",
+        "source"
+      ],
+      "reasons": [
+        "current review report, subreport or evidence script",
+        "evidence acquisition/verification implementation"
+      ]
+    },
+    {
+      "path": "omerta-contracts/audits/2026-09-08-liquidity-automation/capture-evidence.mjs",
+      "bytes": 31506,
+      "sha256": "cc3384ed863fabd1a28c65eaa68cb2f6abe7bd9b2957a38f199e0ef4ca830fea",
+      "categories": [
+        "evidence",
+        "source"
+      ],
+      "reasons": [
+        "current review report, subreport or evidence script",
+        "evidence acquisition/verification implementation"
+      ]
+    },
+    {
+      "path": "omerta-contracts/audits/2026-09-08-liquidity-automation/report.md",
+      "bytes": 20574,
+      "sha256": "26592b103cea7cb6b3982ba1a53e47210bcc661b57cc6a48f6d0a899e433363a",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "current review report, subreport or evidence script"
+      ]
+    },
+    {
+      "path": "omerta-contracts/audits/2026-09-08-liquidity-automation/review-accounting-indexer.md",
+      "bytes": 13209,
+      "sha256": "3706778f31fa1aa1b6b6e97ac8ba9a862b1f9b505c74214b9b7f741de8213df7",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "current review report, subreport or evidence script"
+      ]
+    },
+    {
+      "path": "omerta-contracts/audits/2026-09-08-liquidity-automation/review-bank-buffer.md",
+      "bytes": 8885,
+      "sha256": "8151ebeeca479a193c423b0db7419e6af9182bea11cc3a4a199b01e4e6884725",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "current review report, subreport or evidence script"
+      ]
+    },
+    {
+      "path": "omerta-contracts/audits/2026-09-08-liquidity-automation/review-buyback-bond.md",
+      "bytes": 12579,
+      "sha256": "b4aa660577a4485c9b561a1ed6eb7fa3703efa484baaab29acedd3af49b5b575",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "current review report, subreport or evidence script"
+      ]
+    },
+    {
+      "path": "omerta-contracts/audits/2026-09-08-liquidity-automation/review-genesis-controller.md",
+      "bytes": 14036,
+      "sha256": "7fb2d13aabfd1cf4dc497df18af7b3a1540849f1fc4e391b48ec038a3d114d4c",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "current review report, subreport or evidence script"
+      ]
+    },
+    {
+      "path": "omerta-contracts/audits/2026-09-08-liquidity-automation/review-keeper.md",
+      "bytes": 9227,
+      "sha256": "b0dbe0cecaa763f27698767c7e2f51ea59bfba213d3b6d728d87a27e3bfb7b56",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "current review report, subreport or evidence script"
+      ]
+    },
+    {
+      "path": "omerta-contracts/audits/2026-09-08-liquidity-automation/review-pol-vault.md",
+      "bytes": 14674,
+      "sha256": "419ecb11eac4e8fc2491f4eb2c083c1f1d3375006a8f0913e01da0e98314f4f0",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "current review report, subreport or evidence script"
+      ]
+    },
+    {
+      "path": "omerta-contracts/audits/2026-09-08-liquidity-automation/review-revenue-gas-static.md",
+      "bytes": 12519,
+      "sha256": "9ef363e05c425832103a8bdc98b46aeb3faabd93c79f5e9a0733b3ffe1354c06",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "current review report, subreport or evidence script"
+      ]
+    },
+    {
+      "path": "omerta-contracts/audits/2026-09-08-liquidity-automation/run-static.ps1",
+      "bytes": 3477,
+      "sha256": "1dc0fe2a68ba67eca1a908249c08fffa783299eb3c53382bfd892ed5c8c3fbb2",
+      "categories": [
+        "evidence",
+        "source"
+      ],
+      "reasons": [
+        "current review report, subreport or evidence script",
+        "evidence acquisition/verification implementation"
+      ]
+    },
+    {
+      "path": "omerta-contracts/audits/2026-09-08-liquidity-automation/source-manifest.json",
+      "bytes": 345969,
+      "sha256": "c94e2e6bc86df04b766bad60122f6954aaf2d59a9a4c434432877812ea69254a"
+    },
+    {
+      "path": "omerta-contracts/audits/2026-09-08-mint-dev-allocation/evidence-manifest.json",
+      "bytes": 8426,
+      "sha256": "1c992e30ddcdcb38cc201ddd7d4514c8ae47249994d3d0c2d2fed4ef6dac2c92",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "unchanged historical review reference; no nested historical package"
+      ]
+    },
+    {
+      "path": "omerta-contracts/audits/2026-09-08-mint-dev-allocation/report.md",
+      "bytes": 10555,
+      "sha256": "4a691b86c3968df675e87d80f4d0b035e428e541470d9c9aec05a035e0e2699f",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "unchanged historical review reference; no nested historical package"
+      ]
+    },
+    {
+      "path": "omerta-contracts/audits/2026-09-08-mint-dev-allocation/source-manifest.json",
+      "bytes": 7112,
+      "sha256": "d66bb25e58d11bd622fa26a16b46f832a397fb3331d8517164ca7d22998cb895",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "unchanged historical review reference; no nested historical package"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/accounting-continuity-before.exit",
+      "bytes": 3,
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/accounting-continuity-before.log",
+      "bytes": 809,
+      "sha256": "435368b4d2496bcc97ea88e70482f8c906517eb6550cac717bac11b994193331",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/accounting-indexer-review.md",
+      "bytes": 13209,
+      "sha256": "3706778f31fa1aa1b6b6e97ac8ba9a862b1f9b505c74214b9b7f741de8213df7",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/accounting-memory.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/accounting-memory.log",
+      "bytes": 665,
+      "sha256": "6b2f61a9760075168ad198042d5331d8b8a0d447fed1605d8f536d4daecb6b0e",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/accounting-postgres.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/accounting-postgres.log",
+      "bytes": 688,
+      "sha256": "3043c0c11c81a081a0df2b302668a28dace239bef96c3516892bff59326ebfac",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/accounting-review-before.log",
+      "bytes": 1130,
+      "sha256": "b4c385b2b908a67aff1ac16f3d1128b33d96744bf28b83799b5db6782722faf4",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/accounting-review-before.log.exit",
+      "bytes": 3,
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/accounting-review-final.exit",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/accounting-review-final.log",
+      "bytes": 780,
+      "sha256": "b32cf7130a268871f564f4e486c6668885cc93fd520fa4ada70c5c4c7a455b22",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/before-bond-future-fix/MockOracle.json",
+      "bytes": 48748,
+      "sha256": "d5f0f7e289502d93f8bb7491d703a2827dcceae27c8ed77d19c6e93cc7d20b96",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/before-bond-future-fix/OMR.json",
+      "bytes": 330139,
+      "sha256": "f703868cea3cbb6c4b3dc7614b233a4e8c0253d23c855071f437fd56e24ece29",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/before-bond-future-fix/OmertaBond.json",
+      "bytes": 420824,
+      "sha256": "63a473456c55fb68523373835bb05936c0b5546f799f647d6ebfd49c68e42c7e",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/before-bond-future-fix/OmertaBond.sol",
+      "bytes": 29414,
+      "sha256": "2b1232d81517988ac4b3d579ca09c297d431bc500dfe6c634845524c338ede98",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/before-bond-future-fix/exit-code.txt",
+      "bytes": 1,
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/before-bond-future-fix/proof.mjs",
+      "bytes": 4762,
+      "sha256": "4bcb2c6df997aad7e6039604c2bc53d3ea1faf34cd74d6198c9a64ba6955eacb",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/before-bond-future-fix/result.json",
+      "bytes": 850,
+      "sha256": "b52f29442b2a73697a8b8a5620098e7401877f10d0461ac6ab06702a6ff90482",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/before-bond-future-fix/stdout.txt",
+      "bytes": 865,
+      "sha256": "907640920ea51f006b01fe32692dfaf193dc10a10f4cf40e0b1a3f212ce9e8d0",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/before-genesis-binding-fix/GenesisLifecycleController.json",
+      "bytes": 318858,
+      "sha256": "8e87a087f5b076807d243d0ea54d10b85bea2fbec94182254c85a380b4f4df62",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/before-genesis-binding-fix/GenesisLifecycleController.sol",
+      "bytes": 9854,
+      "sha256": "a69d59d7cdd56092bbae34f44f828be8faa0391a504b48e3b488a447e894d871",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/before-genesis-binding-fix/GenesisLifecycleController.t.sol",
+      "bytes": 21683,
+      "sha256": "8ff48299d926beb6547777d0bd3bd693365fcb7ec9eaf57e146ced1e7a94c145",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/before-genesis-binding-fix/exit-code.txt",
+      "bytes": 3,
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/before-genesis-binding-fix/forge-before.txt",
+      "bytes": 1513,
+      "sha256": "2ebc3fbc3a2d0ad5de35482d7f816d8cf6ad809f2fa0913757718cd361984ebd",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/before-genesis-renounce-fix/GenesisLifecycleController.json",
+      "bytes": 410124,
+      "sha256": "e3adf79d58c8cdab835d260d061dbcd23d31b27cdb7304a65ae3717d78e7568d",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/before-genesis-renounce-fix/GenesisLifecycleController.sol",
+      "bytes": 12794,
+      "sha256": "6c3ac320c73e88bf549acdca181f540e2fff754e273e909b3a41fba360bc7255",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/before-genesis-renounce-fix/GenesisLifecycleController.t.sol",
+      "bytes": 28472,
+      "sha256": "8d85c286f822808ec07c564f3a8033ff99bf830259bcf84fc1a2b74342c76695",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/before-genesis-renounce-fix/exit-code.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/before-genesis-renounce-fix/forge-before.txt",
+      "bytes": 413,
+      "sha256": "d902a2549dbc1da567b7d4267c84e2e13d752fa544ac973de41d086890b621a7",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/chain-queue-retest.exit",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/chain-queue-retest.log",
+      "bytes": 1742,
+      "sha256": "2a54f1e888b19d5c48d4537730411297b9c0e384494ba09b2566c45c19bb16b2",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/deployment-input.template.json",
+      "bytes": 4559,
+      "sha256": "f052d8dcaed8d7ddffe24944e449707bff42c570c957397c513bec7a2fcd6cc3",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/deployment-plan-tests-exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/deployment-plan-tests-final.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/deployment-plan-tests-final.log",
+      "bytes": 1055,
+      "sha256": "6652e3e2deb523a7321bdacebc987485afef51f3deac087564d5ce0c8575677a",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/deployment-plan-tests.txt",
+      "bytes": 1055,
+      "sha256": "6652e3e2deb523a7321bdacebc987485afef51f3deac087564d5ce0c8575677a",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/docs-size-before-draft-count.exit.txt",
+      "bytes": 3,
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/docs-size-before-draft-count.log",
+      "bytes": 4645,
+      "sha256": "ee89b7864c4eed2bd419297d60c83ac58a1210e646332c4681b7b83611eedbd9",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/docs-size-before-inventory.exit.txt",
+      "bytes": 3,
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/docs-size-before-inventory.log",
+      "bytes": 1038,
+      "sha256": "08d036f9fdce3f67b6e7b8ec6c85495a67e07d7acd04d85cc46d0abe9e7f6440",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/docs-size-retest.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/docs-size-retest.log",
+      "bytes": 4270,
+      "sha256": "4004818d47e287d45ae46403e149247c6bdaf4b6aa76a35931248e61bc4e51cc",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/e2e-report.json",
+      "bytes": 20346,
+      "sha256": "8370b18bcb233435595ad8cf36be9ada29f5ff71a3f97142a91cbff06a8e4e20",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/e2e-run.log",
+      "bytes": 1108,
+      "sha256": "feb24b26f6559f797086c29e6531f3b77de8b84d9a7d6108d5925bef05fc071f",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/e2e-wrapper-run.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/e2e-wrapper-run.log",
+      "bytes": 1228,
+      "sha256": "1dd593bedd48199f14df2e602dfb7f4393cd1c36fac2aa130d2de6b159d3ee6d",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/final-gates.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/final-gates.log",
+      "bytes": 4203,
+      "sha256": "35d3c946cab761c6136e19aa04f47fa9ba719d5eccd55682f3ea575376b02711",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/final-pgcheck.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/final-pgcheck.log",
+      "bytes": 17560,
+      "sha256": "1f8e6e4828a41b797307c0eb85b839a2344f44566e725ec4e415b6dae97ae61e",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/final-pgquery.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/final-pgquery.log",
+      "bytes": 5634,
+      "sha256": "188e8cefbc7d5fcd9727c70c58e4af98b7b6ebd4e1298e315370036480a2af94",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/final-router.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/final-router.log",
+      "bytes": 895,
+      "sha256": "9e4a7b623802b32516fe4f66f589a9ff026a1e7c9b3d862bd9479e40e5f3a0e2",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/final-watcher.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/final-watcher.log",
+      "bytes": 529,
+      "sha256": "bc0c0f2365229bb6973fce728c5919d15d47bafac71c112d2afb27c7b3a07bc0",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/forge-bank-buffer-exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/forge-bank-buffer.txt",
+      "bytes": 8348,
+      "sha256": "04548bed3ee9b119c57000a5f31ce550a760b7aaab50c1eef130cd5b2e749ec1",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/forge-buyback-bond-exit.txt",
+      "bytes": 1,
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/forge-buyback-bond.txt",
+      "bytes": 3600,
+      "sha256": "70e70bb4db93e5ae923f881953431f2a3e2d536771aeb3ec30bd8bcfcd9089e0",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/forge-combined-final.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/forge-combined-final.log",
+      "bytes": 30897,
+      "sha256": "e23101dd0c8aa97f9ea8507dd27a4825db1142919fc7547ad51188f5eb7aa25c",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/forge-existing-regressions-final.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/forge-existing-regressions-final.log",
+      "bytes": 14506,
+      "sha256": "f15a8759b6f9390055aaa0f9156bdce4700f55e169625e92894ca3ba447ee661",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/forge-genesis-controller-exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/forge-genesis-controller-permit-harness-failure.txt",
+      "bytes": 4864,
+      "sha256": "4e67248394a7c22436039736b2f616a48b8bdb048dfb0223ee741aa2065e4dcf",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/forge-genesis-controller-via-ir-harness-failure.txt",
+      "bytes": 391,
+      "sha256": "9b3553d680dac784861e3ee747efadfce74b018cc468c72a927aa71b9bc0b692",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/forge-genesis-controller.txt",
+      "bytes": 4600,
+      "sha256": "c1f578d2ff3b5628690db4d885053de0460c2776b13342ad0168d4d62027f4d9",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/forge-revenue-gas-final-exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/forge-revenue-gas-final.txt",
+      "bytes": 7243,
+      "sha256": "ecabba542eb1af3b8f28f697ff9441da2d972ca3206b6c8720a7c634444126f4",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/forge-sizes-final.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/forge-sizes-final.log",
+      "bytes": 277888,
+      "sha256": "3dd2d34e66cdd76ef667fe3102767de5d0209883e25ffd41f4a38495b1e39ad2",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/forge-sizes-including-upstream-fuzzer.exit.txt",
+      "bytes": 3,
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/forge-sizes-including-upstream-fuzzer.log",
+      "bytes": 39106,
+      "sha256": "13f4da0fa09b71f9c972f2121df1e2e8112e1f243ac16aa38a7ff0f6e901377e",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/gates-final.exit.txt",
+      "bytes": 3,
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/gates-final.log",
+      "bytes": 4153,
+      "sha256": "a2d1f9b9e267f8b7ae289d4f72ee517c69471594dc2cf09caec092e465c68f3c",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/indexer-hook-rotation-before.exit",
+      "bytes": 3,
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/indexer-hook-rotation-before.log",
+      "bytes": 1654,
+      "sha256": "beedb7564b54af699f81548271d500f961101c5444e752e2ee38b45710e2bcd2",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/indexer-postgres-final.exit",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/indexer-postgres-final.log",
+      "bytes": 2229,
+      "sha256": "3984d4a947c03d7f69aa8e92710f468102400e31086d27eef8aafacc92e24d53",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/initial-contract-build.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/initial-contract-build.log",
+      "bytes": 5697,
+      "sha256": "c364b556c878be09ebe79edbb739d94b4a67d550263fd44a8d3b73097cedb87f",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/keeper-review-final.md",
+      "bytes": 7572,
+      "sha256": "289894d7e6458269088194bdce55269f4d88347982cfac3f62645f48a3ac82d6",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/keeper-review.md",
+      "bytes": 6061,
+      "sha256": "6273cbe1fc8a8c0067245ff4b4caf76280023d2220dab65610c631b7e76d4618",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/knowledge-before-fix.exit.txt",
+      "bytes": 3,
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/knowledge-before-fix.log",
+      "bytes": 721,
+      "sha256": "a322def828184b47010c9ab9c4fa98cd55c1d9d3c20e5913853cbc77563369a3",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/knowledge-before-regeneration.exit.txt",
+      "bytes": 3,
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/knowledge-before-regeneration.log",
+      "bytes": 1199,
+      "sha256": "77e0c12604504fcc76ee73e7c0cf2be1a5a7edcf95c7c61b2d3d11ed56258cba",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/knowledge-final.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/knowledge-final.log",
+      "bytes": 272,
+      "sha256": "59e6d35881e659e49d3fc084915de923169b2459d97cdb9fd542e956f89d2d27",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/knowledge-regeneration.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/knowledge-regeneration.log",
+      "bytes": 158,
+      "sha256": "92ca34ac7b18a19c132c1f60fd6cece1c60a2f58c508494d346c460245a3c706",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/liquidity-rpc-tests.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/liquidity-rpc-tests.log",
+      "bytes": 263,
+      "sha256": "4dbd2c51ea18e31b3a130bf912302c7ccbbc524600534b9a9963f8504b2e039b",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/local-savepoint.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/local-savepoint.log",
+      "bytes": 2806,
+      "sha256": "d8a58b93bb564fc19cbfc0f4dbf997352d43b343d7de148616aaf6796e1f57c6",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/manifest-notes.md",
+      "bytes": 7494,
+      "sha256": "72e3cda6a4f3984807adda212a9b2ee4c0e7336d32c39db856c32272d62ee780",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/manifest.example.json",
+      "bytes": 10267,
+      "sha256": "d9e25996914b3a78938659f097a90e2e1543c54d391780da36c84c9ad87e71c8",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/manifest.schema-fixture.json",
+      "bytes": 12449,
+      "sha256": "f2a77d6e0b952493e14b4edee5b4e6903b8b31e61a9c4f294283b920808e8959",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/npm-tail-check.exit.txt",
+      "bytes": 3,
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/npm-tail-check.log",
+      "bytes": 19298,
+      "sha256": "838f42a34210ff702b7d6f33f4f79864c2c328ef4ac9fe207d89ecc4d113d6ef",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/npm-test-before-continuity-fix.exit.txt",
+      "bytes": 3,
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/npm-test-before-continuity-fix.log",
+      "bytes": 43698,
+      "sha256": "9cede4e2cc781e63a026bbe8a3a0ca7ce1d7321da5157ebb364ac502f401a0f5",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/npm-test-before-env-inventory-fix.exit.txt",
+      "bytes": 3,
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/npm-test-before-env-inventory-fix.log",
+      "bytes": 140685,
+      "sha256": "aee78e0a0261b7144ed2307e9f9d0d8cabe009c24d039e0af7f45945a8aac4e9",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/npm-test.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/npm-test.log",
+      "bytes": 163764,
+      "sha256": "f7824a66fe992604f16b3fe685f3a3797eba181437ca9c281983a3c3edb4d76d",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/planner-postgres.log",
+      "bytes": 1424,
+      "sha256": "c1aa595c6c20f55c5856839f6e5a43ad444c3fc9f2f2869fcccb2ba4cb8830ad",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/planner-tests.log",
+      "bytes": 1167,
+      "sha256": "7b0e3175eed4a3ff6b0738c3b455df898fdc72f79e09d5fe09bc84dafa3fe8e0",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/playthrough-final.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/playthrough-final.log",
+      "bytes": 47,
+      "sha256": "0d2c65ef227ffb98caf9461f445fd30e967a3e39b598d2cc9ab44559e9561321",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/pol-review.md",
+      "bytes": 14674,
+      "sha256": "419ecb11eac4e8fc2491f4eb2c083c1f1d3375006a8f0913e01da0e98314f4f0",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/pol-tests-final.log",
+      "bytes": 15348,
+      "sha256": "f9400530d26604e55f53420774579e6ebcc227e890fd9af792461fc85bd08aa8",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/pol-tests-final.log.exit",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/pol-tests-genesis-final.log",
+      "bytes": 15232,
+      "sha256": "bccccb9f63f4babbd7d5e66f6368ec23eba9adde5d7cacd6a7f6253033de9def",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/pol-tests-genesis-final.log.exit",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/pol-tests-initial.log",
+      "bytes": 21700,
+      "sha256": "da428cc3f9aa8e4497abd6fd4ddc7043c289028063c16e271da518a1471b5989",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/pol-tests-initial.log.exit",
+      "bytes": 3,
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/pol-tests-invariants.log",
+      "bytes": 133221,
+      "sha256": "b33756dfb3c1149aac820612d7f985d2d02d0edac1a7cca402cff1daffb43e56",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/pol-tests-invariants.log.exit",
+      "bytes": 3,
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/policy-postgres.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/policy-postgres.log",
+      "bytes": 759,
+      "sha256": "04bb99ed3ef913de90307acaeacb91570460a1110a46e8bf42c0fe73dd31424c",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/policy-review-before.exit",
+      "bytes": 3,
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/policy-review-before.log",
+      "bytes": 540,
+      "sha256": "317c213ea977324004d9d1aa7d072a8a1625c3c0e8f8b73b6ba78e0ed5d53d92",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/policy-review-final.exit",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/policy-review-final.log",
+      "bytes": 329,
+      "sha256": "e5e0488272598deeaf9317940c4419a3df228e7b385e3e935eb6e6988175ff99",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/postgres-shutdown.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/postgres-shutdown.log",
+      "bytes": 58,
+      "sha256": "3589d2bd01f8295cc7c9ec3f5e07625fcd347ccb6f33f2d80edafe5f5217c1fb",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/postgres.log",
+      "bytes": 13533,
+      "sha256": "885579df2f22d30bad5d47b080adeea7b161ed3b6a7e70992352b9f8fd59bd31",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/preflight-inventory-retest.exit.txt",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/preflight-inventory-retest.log",
+      "bytes": 349,
+      "sha256": "00e901860e06ea7b5281664a948ccfa63e22e3f4ebd089d3223379c38c72a2ab",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/queue-postgres-final.exit",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/queue-postgres-final.log",
+      "bytes": 1167,
+      "sha256": "b92f6fecf21811d76d2c843034c1ad9b3d0527388683762778d3791bb0f6eadc",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/queue-precision-before.exit",
+      "bytes": 3,
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/queue-precision-before.log",
+      "bytes": 429,
+      "sha256": "91fb5232a92be5db8b3eb7338025a027dc88ac369c0ab59d4a8081384e64ea7e",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/queue-precision-final.exit",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/queue-precision-final.log",
+      "bytes": 81,
+      "sha256": "3c964a5454e9f05beb4e3bfb8415b15c2b1eaa55e998ed28f222bdcb43fabcd6",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/revenue-gas-evidence.json",
+      "bytes": 2351,
+      "sha256": "bc35da3fa656774fbe2d4196efde1bfc32815b44726afb5a16553b6554ee8a6d",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/static/slither-BankBufferVault.exit",
+      "bytes": 4,
+      "sha256": "186a919b8c7cb84aebf4e53c70cd1cc028a93a1d183ee29dd6e10cd18a714577",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/static/slither-BankBufferVault.json",
+      "bytes": 2487183,
+      "sha256": "69e34b8ccd7c8672f732a9db3d0ce7ed2311f5a1ca5ed69810f2b62c083fa616",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/static/slither-BankBufferVault.log",
+      "bytes": 29864,
+      "sha256": "8cc82ccff81da8636f97fff4e451c8b16a8eae747158d7db1e8fa57217711ad4",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/static/slither-FeeRevenueRouter.exit",
+      "bytes": 4,
+      "sha256": "186a919b8c7cb84aebf4e53c70cd1cc028a93a1d183ee29dd6e10cd18a714577",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/static/slither-FeeRevenueRouter.json",
+      "bytes": 1564020,
+      "sha256": "e1751c0acbaea5182fc84922179928c1e20eafabed2d4aa57a48730d74c7dd3a",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/static/slither-FeeRevenueRouter.log",
+      "bytes": 12583,
+      "sha256": "f53f30caa1634df08391e2ec8c511906b40dbb56feb3d32d3c9344134a8baab1",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/static/slither-GenesisLifecycleController.exit",
+      "bytes": 4,
+      "sha256": "186a919b8c7cb84aebf4e53c70cd1cc028a93a1d183ee29dd6e10cd18a714577",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/static/slither-GenesisLifecycleController.json",
+      "bytes": 1013457,
+      "sha256": "33df264ffb1734b96ef3e164a8c6e71045f21f832090a9abf34fd24e565afa27",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/static/slither-GenesisLifecycleController.log",
+      "bytes": 24417,
+      "sha256": "ed9bd0005293c4065ad6e3f23ea9b6f64fe330d3e1d47933ee1179f1b3b63396",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/static/slither-GenesisProceedsSplitter.exit",
+      "bytes": 4,
+      "sha256": "186a919b8c7cb84aebf4e53c70cd1cc028a93a1d183ee29dd6e10cd18a714577",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/static/slither-GenesisProceedsSplitter.json",
+      "bytes": 923855,
+      "sha256": "ed88172b057d940588cbde2248bd5ba313a439c22c39700d5957d8a70be56632",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/static/slither-GenesisProceedsSplitter.log",
+      "bytes": 21516,
+      "sha256": "15fa21ba75939a218a315cd39e72994839b25682a5b44199f909fe1dedc89063",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/static/slither-KeeperGasVault.exit",
+      "bytes": 4,
+      "sha256": "186a919b8c7cb84aebf4e53c70cd1cc028a93a1d183ee29dd6e10cd18a714577",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/static/slither-KeeperGasVault.json",
+      "bytes": 1582258,
+      "sha256": "cb8b6b1a6e3fa1bbd9b9d5e779a71ab4485e3a5ea16e811c96a1854b26a3bb0a",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/static/slither-KeeperGasVault.log",
+      "bytes": 14308,
+      "sha256": "4a646b637ec4ce1066666b381f207eec1617f18e33b39c00148827b370d89a66",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/static/slither-LiquidityBuybackExecutor.exit",
+      "bytes": 4,
+      "sha256": "186a919b8c7cb84aebf4e53c70cd1cc028a93a1d183ee29dd6e10cd18a714577",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/static/slither-LiquidityBuybackExecutor.json",
+      "bytes": 2438945,
+      "sha256": "90b1f37553880ddfb76756841f533d3d1b26e4e323c2336aa8cf872aa5fd5136",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/static/slither-LiquidityBuybackExecutor.log",
+      "bytes": 31784,
+      "sha256": "25e90eda47cd9f58ec9d1077c7f973ef830d59db1b622f2a474bd6d90ec9d825",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/static/slither-OmertaBond.exit",
+      "bytes": 4,
+      "sha256": "186a919b8c7cb84aebf4e53c70cd1cc028a93a1d183ee29dd6e10cd18a714577",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/static/slither-OmertaBond.json",
+      "bytes": 2804148,
+      "sha256": "c244c14ac0288f4e5c80d4ec27ec696e07a3a887271866293b1f918989a12bb7",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/static/slither-OmertaBond.log",
+      "bytes": 26988,
+      "sha256": "24d1f91798ee53ca352b24575692cf882ff8c5835b474df9a853ed6f78af7aa6",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/static/slither-OmertaFees.exit",
+      "bytes": 4,
+      "sha256": "186a919b8c7cb84aebf4e53c70cd1cc028a93a1d183ee29dd6e10cd18a714577",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/static/slither-OmertaFees.json",
+      "bytes": 1628189,
+      "sha256": "50bc6f89405173500dc1f2ed51d8d9d74a1a22e76d748f709a2d2bfbd4f4f341",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/static/slither-OmertaFees.log",
+      "bytes": 14030,
+      "sha256": "b0e9eaf755c72d70f8e53e84b21f0e72770f08589660199beb7f8051a2b6ba58",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/static/slither-OmertaHook.exit",
+      "bytes": 4,
+      "sha256": "186a919b8c7cb84aebf4e53c70cd1cc028a93a1d183ee29dd6e10cd18a714577",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/static/slither-OmertaHook.json",
+      "bytes": 1422679,
+      "sha256": "b117212ecc61604a70103a5306fa46658424db81f5ea5aa11632dc3aafb6701b",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/static/slither-OmertaHook.log",
+      "bytes": 23949,
+      "sha256": "57ad2ce04d7e9367c50962f911b5b3e7d4fbe5868e95d79e65673eaecec80534",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/static/slither-ProtocolLiquidityVault.exit",
+      "bytes": 4,
+      "sha256": "186a919b8c7cb84aebf4e53c70cd1cc028a93a1d183ee29dd6e10cd18a714577",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/static/slither-ProtocolLiquidityVault.json",
+      "bytes": 4337824,
+      "sha256": "709df7ef153d1bd79dee940546cf6c8e35708b1702713ae69f9b2f298cba205b",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/static/slither-ProtocolLiquidityVault.log",
+      "bytes": 53168,
+      "sha256": "711e35bf310e4d5311387d3faeafc6eabc5022c800def405f6f1bfe64565159b",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/static/slither-runs.json",
+      "bytes": 6064,
+      "sha256": "0de48eab1d30e3701c82b64e93695be7e555ba9e7678e2abfec5c7354d397c1d",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/static/toolchain.json",
+      "bytes": 1312,
+      "sha256": "7681e1005a7bfdd1e58aab83b3debde07d6f6cd9d22ebcb9b6df893af68b9d5d",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/static/triage.json",
+      "bytes": 671462,
+      "sha256": "bc99106ba463684f6ce8d661ae245c89152afa7c308d4a3eee8a35a9a835c64b",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/static/triage.md",
+      "bytes": 275871,
+      "sha256": "fa16af2a25672e22e4492f4dc38c9049c8a1ec897f97214a9a70f75ad754f8b7",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    },
+    {
+      "path": "output/liquidity-automation/transport-postgres.log",
+      "bytes": 1846,
+      "sha256": "311fe3bc7effde07867f31a6d8d68b6ea9724857d835d51eaa25e680ae9636e6",
+      "categories": [
+        "evidence"
+      ],
+      "reasons": [
+        "raw/current or retained failing liquidity review evidence"
+      ]
+    }
+  ]
+}

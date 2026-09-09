@@ -90,6 +90,9 @@ jobs:
       - name: npm test (the full suite, on pg-mem)
         run: npm test
 
+      - name: Invite-only launch admission and Crew allowance
+        run: npm run test:invites
+
       - name: economy sim (§10.4 drift-0)
         run: npm run sim
 
@@ -116,6 +119,9 @@ jobs:
       # that quietly does nothing still goes green, and everyone assumes the screens were checked.
       - name: install chromium for the client harness
         run: npx playwright-core install --with-deps chromium
+
+      - name: Invite gate and Crew invitation controls in the browser
+        run: npm run test:invites:browser
 
       - name: mobile (every screen at phone size — overflow, the fold, nav targets, page errors)
         env:

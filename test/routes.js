@@ -69,6 +69,8 @@ const PUBLIC = {
     + 'spend comes back to the desk to be sold again is entitled to read the shelf and the sink list',
   'GET /v1/deeds/plate/:tokenId': 'STREET DEEDS — the on-chain deed\'s block-plate SVG, the ERC-721 tokenURI image a marketplace/crawler fetches with no token; the untrusted street name is escaped (the /v1/art precedent)',
   'POST /v1/auth/guest': 'an auth entry point — there is no token to present yet',
+  'POST /v1/access/redeem': 'launch admission authenticates an unused invite and a durable bootstrap credential before creating or recovering an account',
+  'POST /v1/access/logout': 'clears only the caller browser view cookie and grants no account or gameplay authority',
   'POST /v1/auth/privy': 'an auth entry point — there is no token to present yet',
   'POST /v1/auth/x': 'an auth entry point — there is no token to present yet',
   'POST /v1/auth/x/start': 'an auth entry point — there is no token to present yet',
@@ -441,11 +443,10 @@ console.log(`✅ Mounted-surface test passed — ${app.routes.length} registrati
     assert(/accept-encoding/i.test(String(r.headers.vary || '')),
       `the ${name} branch must send Vary: Accept-Encoding, or a shared cache serves the wrong copy`);
 
-  // the ETag: a repeat visit pays ~0 for the shell rather than 319 KB. `no-cache` and not a max-age
-  // on purpose — the shell changes on every deploy, so it revalidates rather than going stale.
+  // Private console responses must never become a public cache entry after launch admission.
   const etag = gz.headers.etag;
   assert(etag, 'GET / must carry an ETag — without one a repeat visit re-downloads the whole shell');
-  assert.equal(gz.headers['cache-control'], 'no-cache', 'the shell must revalidate, never go stale');
+  assert.equal(gz.headers['cache-control'], 'private, no-store', 'the console must never be stored by a shared cache or service worker');
   const again = await get('/', { ...GZ, 'if-none-match': etag });
   assert.equal(again.statusCode, 304, 'a matching ETag must answer 304');
   assert.equal(again.rawPayload.length, 0, 'a 304 must carry no body');
