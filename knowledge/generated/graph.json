@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "4a9e6bf2120fe1cd04c5a4a708a53b6a6c85cc88",
+  "sourceRevision": "74dff397b7654400e9dca62eeb453778cfb991be",
   "worktreeDirty": true,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 6576,
-    "edges": 28896,
+    "nodes": 6577,
+    "edges": 28912,
     "byNodeType": {
       "Artifact": 2359,
       "Command": 76,
-      "Commit": 1423,
+      "Commit": 1424,
       "Contract": 67,
       "Document": 521,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 2201,
-      "CHANGED": 11392,
+      "CHANGED": 11407,
       "CONTAINS": 2380,
       "DECLARES": 76,
       "DEFINED_IN": 1174,
       "DEPENDS_ON": 65,
       "EXECUTES": 271,
       "HANDLED_BY": 704,
-      "HAS_COMMIT": 1423,
+      "HAS_COMMIT": 1424,
       "IMPLEMENTS": 124,
       "IMPORTS": 2018,
       "INHERITS": 14,
@@ -18239,20 +18239,20 @@
       "path": "CHAIN-AUDIT-PACKET-O1.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 33941,
+      "bytes": 33942,
       "lines": 403,
-      "version": "9d887effbec8675e",
+      "version": "80b9aea40f5d48d1",
       "text": true,
       "provenance": [
         {
           "file": "CHAIN-AUDIT-PACKET-O1.md",
           "line": 1,
-          "version": "9d887effbec8675e"
+          "version": "80b9aea40f5d48d1"
         }
       ],
-      "lastChangedAt": "2026-09-09T16:17:15.000Z",
+      "lastChangedAt": "2026-09-10T18:27:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4a9e6bf2120fe1cd04c5a4a708a53b6a6c85cc88"
+      "lastChangedCommit": "74dff397b7654400e9dca62eeb453778cfb991be"
     },
     {
       "key": "Artifact:CHAIN-AUDIT-PACKET.md",
@@ -18285,20 +18285,20 @@
       "path": "CHAIN-DEPLOY.md",
       "kind": "operations",
       "extension": ".md",
-      "bytes": 209997,
+      "bytes": 209998,
       "lines": 2029,
-      "version": "2b5861095d9df6a6",
+      "version": "2bf6d254e7767cdb",
       "text": true,
       "provenance": [
         {
           "file": "CHAIN-DEPLOY.md",
           "line": 1,
-          "version": "2b5861095d9df6a6"
+          "version": "2bf6d254e7767cdb"
         }
       ],
-      "lastChangedAt": "2026-09-09T16:17:15.000Z",
+      "lastChangedAt": "2026-09-10T18:27:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4a9e6bf2120fe1cd04c5a4a708a53b6a6c85cc88"
+      "lastChangedCommit": "74dff397b7654400e9dca62eeb453778cfb991be"
     },
     {
       "key": "Artifact:CLAUDE.md",
@@ -23690,20 +23690,20 @@
       "path": "omerta-contracts/GENESIS-LAUNCH.md",
       "kind": "contract-project",
       "extension": ".md",
-      "bytes": 30797,
+      "bytes": 30803,
       "lines": 519,
-      "version": "bd7208ba12558d25",
+      "version": "4682db81f34841d9",
       "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/GENESIS-LAUNCH.md",
           "line": 1,
-          "version": "bd7208ba12558d25"
+          "version": "4682db81f34841d9"
         }
       ],
-      "lastChangedAt": "2026-09-09T16:17:15.000Z",
+      "lastChangedAt": "2026-09-10T18:27:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4a9e6bf2120fe1cd04c5a4a708a53b6a6c85cc88"
+      "lastChangedCommit": "74dff397b7654400e9dca62eeb453778cfb991be"
     },
     {
       "key": "Artifact:omerta-contracts/GENESIS-RELEASE-MANIFEST.md",
@@ -25070,20 +25070,20 @@
       "path": "omerta-contracts/src/GenesisWalletCap.sol",
       "kind": "contract-source",
       "extension": ".sol",
-      "bytes": 3285,
+      "bytes": 3287,
       "lines": 65,
-      "version": "7615aadf83ae4242",
+      "version": "7c059fe0f3fe662b",
       "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/src/GenesisWalletCap.sol",
           "line": 1,
-          "version": "7615aadf83ae4242"
+          "version": "7c059fe0f3fe662b"
         }
       ],
-      "lastChangedAt": "2026-09-09T16:17:15.000Z",
+      "lastChangedAt": "2026-09-10T18:27:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4a9e6bf2120fe1cd04c5a4a708a53b6a6c85cc88"
+      "lastChangedCommit": "74dff397b7654400e9dca62eeb453778cfb991be"
     },
     {
       "key": "Artifact:omerta-contracts/src/interfaces/IAcquisitionAuthorityV2.sol",
@@ -27071,20 +27071,20 @@
       "path": "omerta-contracts/test/GenesisWalletCap.t.sol",
       "kind": "contract-test",
       "extension": ".sol",
-      "bytes": 8065,
+      "bytes": 8093,
       "lines": 154,
-      "version": "74fb13e521da21df",
+      "version": "0783be6584114471",
       "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/test/GenesisWalletCap.t.sol",
           "line": 1,
-          "version": "74fb13e521da21df"
+          "version": "0783be6584114471"
         }
       ],
-      "lastChangedAt": "2026-09-09T16:17:15.000Z",
+      "lastChangedAt": "2026-09-10T18:27:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4a9e6bf2120fe1cd04c5a4a708a53b6a6c85cc88"
+      "lastChangedCommit": "74dff397b7654400e9dca62eeb453778cfb991be"
     },
     {
       "key": "Artifact:omerta-contracts/test/LiquidityBuybackExecutor.t.sol",
@@ -42452,20 +42452,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1258358,
+      "bytes": 1258359,
       "lines": 12922,
-      "version": "3ac716235ca8eb03",
+      "version": "a52c71571b8c372f",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "3ac716235ca8eb03"
+          "version": "a52c71571b8c372f"
         }
       ],
-      "lastChangedAt": "2026-09-09T16:17:15.000Z",
+      "lastChangedAt": "2026-09-10T18:27:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4a9e6bf2120fe1cd04c5a4a708a53b6a6c85cc88"
+      "lastChangedCommit": "74dff397b7654400e9dca62eeb453778cfb991be"
     },
     {
       "key": "Artifact:public/invite.html",
@@ -44798,20 +44798,20 @@
       "path": "src/genesiscca.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 53491,
+      "bytes": 53494,
       "lines": 1084,
-      "version": "8b60b91e4ce87609",
+      "version": "2274bffc62000b87",
       "text": true,
       "provenance": [
         {
           "file": "src/genesiscca.js",
           "line": 1,
-          "version": "8b60b91e4ce87609"
+          "version": "2274bffc62000b87"
         }
       ],
-      "lastChangedAt": "2026-09-09T16:17:15.000Z",
+      "lastChangedAt": "2026-09-10T18:27:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4a9e6bf2120fe1cd04c5a4a708a53b6a6c85cc88"
+      "lastChangedCommit": "74dff397b7654400e9dca62eeb453778cfb991be"
     },
     {
       "key": "Artifact:src/genesiskeeper.js",
@@ -49766,20 +49766,20 @@
       "path": "test/genesiscca.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 23746,
+      "bytes": 23747,
       "lines": 381,
-      "version": "24230fe8d0dda037",
+      "version": "ffcc3d62085c4619",
       "text": true,
       "provenance": [
         {
           "file": "test/genesiscca.js",
           "line": 1,
-          "version": "24230fe8d0dda037"
+          "version": "ffcc3d62085c4619"
         }
       ],
-      "lastChangedAt": "2026-09-09T16:17:15.000Z",
+      "lastChangedAt": "2026-09-10T18:27:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4a9e6bf2120fe1cd04c5a4a708a53b6a6c85cc88"
+      "lastChangedCommit": "74dff397b7654400e9dca62eeb453778cfb991be"
     },
     {
       "key": "Artifact:test/genesiskeeper.js",
@@ -53239,20 +53239,20 @@
       "path": "tools/genesis-fork-rehearsal.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 57001,
-      "lines": 886,
-      "version": "ffe13b1a60a0ebc5",
+      "bytes": 57068,
+      "lines": 887,
+      "version": "0776d70b3f8e6b6d",
       "text": true,
       "provenance": [
         {
           "file": "tools/genesis-fork-rehearsal.js",
           "line": 1,
-          "version": "ffe13b1a60a0ebc5"
+          "version": "0776d70b3f8e6b6d"
         }
       ],
-      "lastChangedAt": "2026-09-09T16:17:15.000Z",
+      "lastChangedAt": "2026-09-10T18:27:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4a9e6bf2120fe1cd04c5a4a708a53b6a6c85cc88"
+      "lastChangedCommit": "74dff397b7654400e9dca62eeb453778cfb991be"
     },
     {
       "key": "Artifact:tools/genesis-launch-config.js",
@@ -53262,20 +53262,20 @@
       "path": "tools/genesis-launch-config.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 3016,
+      "bytes": 3017,
       "lines": 61,
-      "version": "81b489213452b026",
+      "version": "27e779c50f7e2b78",
       "text": true,
       "provenance": [
         {
           "file": "tools/genesis-launch-config.js",
           "line": 1,
-          "version": "81b489213452b026"
+          "version": "27e779c50f7e2b78"
         }
       ],
-      "lastChangedAt": "2026-09-09T16:17:15.000Z",
+      "lastChangedAt": "2026-09-10T18:27:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4a9e6bf2120fe1cd04c5a4a708a53b6a6c85cc88"
+      "lastChangedCommit": "74dff397b7654400e9dca62eeb453778cfb991be"
     },
     {
       "key": "Artifact:tools/genesis-launch-preflight.js",
@@ -53492,20 +53492,20 @@
       "path": "tools/liquidity-deployment-plan.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 38894,
+      "bytes": 38895,
       "lines": 474,
-      "version": "05bb8dc7f3b64304",
+      "version": "c0bc62cd4fb91888",
       "text": true,
       "provenance": [
         {
           "file": "tools/liquidity-deployment-plan.js",
           "line": 1,
-          "version": "05bb8dc7f3b64304"
+          "version": "c0bc62cd4fb91888"
         }
       ],
-      "lastChangedAt": "2026-09-09T16:17:15.000Z",
+      "lastChangedAt": "2026-09-10T18:27:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4a9e6bf2120fe1cd04c5a4a708a53b6a6c85cc88"
+      "lastChangedCommit": "74dff397b7654400e9dca62eeb453778cfb991be"
     },
     {
       "key": "Artifact:tools/liquidity-e2e.js",
@@ -65880,6 +65880,22 @@
         {
           "commit": "74c2662f8544576e02f179be013cc58200e941fd",
           "url": "https://github.com/OmertaDev/Omerta/commit/74c2662f8544576e02f179be013cc58200e941fd"
+        }
+      ]
+    },
+    {
+      "key": "Commit:74dff397b7654400e9dca62eeb453778cfb991be",
+      "type": "Commit",
+      "id": "74dff397b7654400e9dca62eeb453778cfb991be",
+      "label": "Lower cumulative Genesis wallet commitment cap to 0.5 ETH",
+      "title": "Lower cumulative Genesis wallet commitment cap to 0.5 ETH",
+      "date": "2026-09-10T18:27:14.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/74dff397b7654400e9dca62eeb453778cfb991be",
+      "provenance": [
+        {
+          "commit": "74dff397b7654400e9dca62eeb453778cfb991be",
+          "url": "https://github.com/OmertaDev/Omerta/commit/74dff397b7654400e9dca62eeb453778cfb991be"
         }
       ]
     },
@@ -84269,12 +84285,12 @@
       "label": "CHAIN-AUDIT-PACKET-O1.md",
       "documentType": "documentation",
       "lines": 403,
-      "version": "9d887effbec8675e",
+      "version": "80b9aea40f5d48d1",
       "provenance": [
         {
           "file": "CHAIN-AUDIT-PACKET-O1.md",
           "line": 1,
-          "version": "9d887effbec8675e"
+          "version": "80b9aea40f5d48d1"
         }
       ]
     },
@@ -84301,12 +84317,12 @@
       "label": "CHAIN-DEPLOY.md",
       "documentType": "operations",
       "lines": 2029,
-      "version": "2b5861095d9df6a6",
+      "version": "2bf6d254e7767cdb",
       "provenance": [
         {
           "file": "CHAIN-DEPLOY.md",
           "line": 1,
-          "version": "2b5861095d9df6a6"
+          "version": "2bf6d254e7767cdb"
         }
       ]
     },
@@ -86077,12 +86093,12 @@
       "label": "omerta-contracts/GENESIS-LAUNCH.md",
       "documentType": "contract-project",
       "lines": 519,
-      "version": "bd7208ba12558d25",
+      "version": "4682db81f34841d9",
       "provenance": [
         {
           "file": "omerta-contracts/GENESIS-LAUNCH.md",
           "line": 1,
-          "version": "bd7208ba12558d25"
+          "version": "4682db81f34841d9"
         }
       ]
     },
@@ -93225,6 +93241,9 @@
           "commit": "711e005409b67e48860b62656965aa6430cbcd50"
         },
         {
+          "commit": "74dff397b7654400e9dca62eeb453778cfb991be"
+        },
+        {
           "commit": "7513034368a2281262dc56792b1fba9d09501059"
         },
         {
@@ -93795,6 +93814,9 @@
           "commit": "711e005409b67e48860b62656965aa6430cbcd50"
         },
         {
+          "commit": "74dff397b7654400e9dca62eeb453778cfb991be"
+        },
+        {
           "commit": "7513034368a2281262dc56792b1fba9d09501059"
         },
         {
@@ -94363,6 +94385,9 @@
         },
         {
           "commit": "711e005409b67e48860b62656965aa6430cbcd50"
+        },
+        {
+          "commit": "74dff397b7654400e9dca62eeb453778cfb991be"
         },
         {
           "commit": "7513034368a2281262dc56792b1fba9d09501059"
@@ -95041,6 +95066,9 @@
         },
         {
           "commit": "711e005409b67e48860b62656965aa6430cbcd50"
+        },
+        {
+          "commit": "74dff397b7654400e9dca62eeb453778cfb991be"
         },
         {
           "commit": "7513034368a2281262dc56792b1fba9d09501059"
@@ -97096,12 +97124,12 @@
       "id": "src/genesiscca.js",
       "label": "src/genesiscca.js",
       "lines": 1084,
-      "version": "8b60b91e4ce87609",
+      "version": "2274bffc62000b87",
       "provenance": [
         {
           "file": "src/genesiscca.js",
           "line": 1,
-          "version": "8b60b91e4ce87609"
+          "version": "2274bffc62000b87"
         }
       ]
     },
@@ -102300,7 +102328,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "4a9e6bf2120fe1cd04c5a4a708a53b6a6c85cc88",
+      "revision": "74dff397b7654400e9dca62eeb453778cfb991be",
       "currentBranch": "codex/site-copy-ui-upgrade",
       "defaultBranch": "main",
       "visibility": "public",
@@ -127791,12 +127819,12 @@
       "id": "omerta-contracts/test/GenesisWalletCap.t.sol",
       "label": "omerta-contracts/test/GenesisWalletCap.t.sol",
       "lines": 154,
-      "version": "74fb13e521da21df",
+      "version": "0783be6584114471",
       "provenance": [
         {
           "file": "omerta-contracts/test/GenesisWalletCap.t.sol",
           "line": 1,
-          "version": "74fb13e521da21df"
+          "version": "0783be6584114471"
         }
       ]
     },
@@ -129261,12 +129289,12 @@
       "id": "test/genesiscca.js",
       "label": "test/genesiscca.js",
       "lines": 381,
-      "version": "24230fe8d0dda037",
+      "version": "ffcc3d62085c4619",
       "provenance": [
         {
           "file": "test/genesiscca.js",
           "line": 1,
-          "version": "24230fe8d0dda037"
+          "version": "ffcc3d62085c4619"
         }
       ]
     },
@@ -198047,6 +198075,126 @@
       "to": "Artifact:SPEC.md",
       "provenance": {
         "commit": "74c2662f8544576e02f179be013cc58200e941fd"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:74dff397b7654400e9dca62eeb453778cfb991be",
+      "to": "Artifact:CHAIN-AUDIT-PACKET-O1.md",
+      "provenance": {
+        "commit": "74dff397b7654400e9dca62eeb453778cfb991be"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:74dff397b7654400e9dca62eeb453778cfb991be",
+      "to": "Artifact:CHAIN-DEPLOY.md",
+      "provenance": {
+        "commit": "74dff397b7654400e9dca62eeb453778cfb991be"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:74dff397b7654400e9dca62eeb453778cfb991be",
+      "to": "Artifact:omerta-contracts/GENESIS-LAUNCH.md",
+      "provenance": {
+        "commit": "74dff397b7654400e9dca62eeb453778cfb991be"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:74dff397b7654400e9dca62eeb453778cfb991be",
+      "to": "Artifact:omerta-contracts/src/GenesisWalletCap.sol",
+      "provenance": {
+        "commit": "74dff397b7654400e9dca62eeb453778cfb991be"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:74dff397b7654400e9dca62eeb453778cfb991be",
+      "to": "Artifact:omerta-contracts/test/GenesisWalletCap.t.sol",
+      "provenance": {
+        "commit": "74dff397b7654400e9dca62eeb453778cfb991be"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:74dff397b7654400e9dca62eeb453778cfb991be",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "74dff397b7654400e9dca62eeb453778cfb991be"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:74dff397b7654400e9dca62eeb453778cfb991be",
+      "to": "Artifact:src/genesiscca.js",
+      "provenance": {
+        "commit": "74dff397b7654400e9dca62eeb453778cfb991be"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:74dff397b7654400e9dca62eeb453778cfb991be",
+      "to": "Artifact:test/genesiscca.js",
+      "provenance": {
+        "commit": "74dff397b7654400e9dca62eeb453778cfb991be"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:74dff397b7654400e9dca62eeb453778cfb991be",
+      "to": "Artifact:tools/genesis-fork-rehearsal.js",
+      "provenance": {
+        "commit": "74dff397b7654400e9dca62eeb453778cfb991be"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:74dff397b7654400e9dca62eeb453778cfb991be",
+      "to": "Artifact:tools/genesis-launch-config.js",
+      "provenance": {
+        "commit": "74dff397b7654400e9dca62eeb453778cfb991be"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:74dff397b7654400e9dca62eeb453778cfb991be",
+      "to": "Artifact:tools/liquidity-deployment-plan.js",
+      "provenance": {
+        "commit": "74dff397b7654400e9dca62eeb453778cfb991be"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:74dff397b7654400e9dca62eeb453778cfb991be",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "74dff397b7654400e9dca62eeb453778cfb991be"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:74dff397b7654400e9dca62eeb453778cfb991be",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "74dff397b7654400e9dca62eeb453778cfb991be"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:74dff397b7654400e9dca62eeb453778cfb991be",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "74dff397b7654400e9dca62eeb453778cfb991be"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:74dff397b7654400e9dca62eeb453778cfb991be",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "74dff397b7654400e9dca62eeb453778cfb991be"
       }
     },
     {
@@ -289870,6 +290018,14 @@
       "to": "Commit:74c2662f8544576e02f179be013cc58200e941fd",
       "provenance": {
         "commit": "74c2662f8544576e02f179be013cc58200e941fd"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:74dff397b7654400e9dca62eeb453778cfb991be",
+      "provenance": {
+        "commit": "74dff397b7654400e9dca62eeb453778cfb991be"
       }
     },
     {

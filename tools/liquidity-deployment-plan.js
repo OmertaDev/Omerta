@@ -319,7 +319,7 @@ export function buildLiquidityDeploymentPlan(input, { contractsRoot = DEFAULT_RO
       'Confirm mint remains 100% DEV, signer/minter/burner authorities remain unchanged, and keeper has no governance or withdrawal authority.',
       'Prefund operating gas/backing separately using explicitly approved amounts; this plan contains no funding or payout transaction.',
       ...(genesis ? ['The existing splitter must already commit its immutable Vig recipient to the predicted Vig executor; this plan refuses an old operations-wallet recipient.',
-        'Create the atomic CCA with tokensRecipient=predicted.genesisController, validationHook=predicted.genesisWalletCap and LP positionRecipient=predicted.polVault, then bind its verified address before startBlock. The hook enforces 0.5 ETH cumulative per bidding wallet. Auction creation/binding is not fabricated in this plan.'] : []),
+        'Create the atomic CCA with tokensRecipient=predicted.genesisController, validationHook=predicted.genesisWalletCap and LP positionRecipient=predicted.polVault, then bind its verified address before startBlock. The hook enforces 0.28 ETH cumulative per bidding wallet. Auction creation/binding is not fabricated in this plan.'] : []),
       ...(bank ? ['Keep bank activation subject to its separate concrete asset/ERC-4626 review; this plan does not enable debt issuance or seed the first borrow.'] : []),
     ] };
   return { ...result, planSha256: SHA(json(result)) };

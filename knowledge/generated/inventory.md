@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `4a9e6bf2120f`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `74dff397b765`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
 | Current artifacts | 2,359 |
-| Text lines | 774,375 |
-| Repository bytes inventoried | 553,925,144 |
+| Text lines | 774,376 |
+| Repository bytes inventoried | 553,925,256 |
 | Backend/route modules | 225 |
 | HTTP route registrations / unique routes | 767 / 767 |
 | Database tables | 340 |
 | Solidity declarations | 67 |
-| Git commits | 1,423 |
+| Git commits | 1,424 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 6,576 / 28,896 |
+| Graph nodes / edges | 6,577 / 28,912 |
 
 ## Artifact kinds
 
@@ -50,7 +50,7 @@
 | [omerta-contracts/audits/2026-09-08-comprehensive/shared-static-triage.json](../../omerta-contracts/audits/2026-09-08-comprehensive/shared-static-triage.json) | 52,258 | contract-project | 2026-09-09 |
 | [omerta-contracts/audits/2026-09-08-comprehensive/hook-retest-static.json](../../omerta-contracts/audits/2026-09-08-comprehensive/hook-retest-static.json) | 47,392 | contract-project | 2026-09-09 |
 | [CLAUDE.md](../../CLAUDE.md) | 18,679 | documentation | 2026-09-06 |
-| [public/index.html](../../public/index.html) | 12,922 | web-surface | 2026-09-09 |
+| [public/index.html](../../public/index.html) | 12,922 | web-surface | 2026-09-10 |
 | [omerta-contracts/audits/2026-09-08-liquidity-automation/package-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/package-manifest.json) | 10,623 | contract-project | 2026-09-09 |
 | [test/client.js](../../test/client.js) | 9,441 | test-suite | 2026-09-08 |
 | [omerta-contracts/x-ray/slither-vars-and-auth.json](../../omerta-contracts/x-ray/slither-vars-and-auth.json) | 9,374 | contract-project | 2026-08-25 |

@@ -110,7 +110,7 @@ retain their original scopes and conclusions.
 | 45 | `LiquidityBuybackExecutor` | fixed pool, stream and recipient; exact OMR delivery under oracle, health, slippage and spend limits | `LiquidityBuybackExecutor.t.sol`, `BondLiquidityHealth.t.sol` |
 | 46 | `ProtocolLiquidityVault` | protected full-range v4 position, exact inventory contributions/refunds, bounded reinvestment and fixed fee routing | `ProtocolLiquidityVault.t.sol` |
 | 47 | `ILiquidityHealth` | liquidity readiness surface used by issuance and executor guards — **interface only** | `BondLiquidityHealth.t.sol`, `ProtocolLiquidityVault.t.sol` |
-| 48 | `GenesisWalletCap` | controller-bound CCA validation; cumulative 0.5 ETH commitment per bidding wallet; no reset on exit or refund and no separate-recipient bypass | `GenesisWalletCap.t.sol` |
+| 48 | `GenesisWalletCap` | controller-bound CCA validation; cumulative 0.28 ETH commitment per bidding wallet; no reset on exit or refund and no separate-recipient bypass | `GenesisWalletCap.t.sol` |
 
 **Historical baseline: 896 Foundry tests across 43 suites, green** under **forge v1.7.1** at head `b0a214ca`, including
 **19 parameterised 512-run fuzz** properties and **9 `invariant_` properties** across token, bond,
