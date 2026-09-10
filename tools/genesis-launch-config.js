@@ -25,7 +25,7 @@ All current Genesis launches require:
   positionRecipient equal to the ProtocolLiquidityVault,
   runtimeCodeHashes for token, hook, proceedsSplitter, lifecycleController,
   positionRecipient, oracle and walletCap (deployed runtime hashes, including immutables).
-  walletCap is the immutable GenesisWalletCap with a cumulative 1 ETH allowance.
+  walletCap is the immutable GenesisWalletCap with a cumulative 0.5 ETH allowance.
 
 --bind-auction reads CHAIN_RPC_URL (HTTPS), discovers the already created CCA,
 checks its exact factory prediction and controller/vault/oracle bindings,

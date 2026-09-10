@@ -79,12 +79,13 @@ const automatedInput = { ...input, launchMode: 'automated',
 const controlled = buildGenesisLaunchArtifacts(automatedInput);
 assertGenesisWalletCapPolicy(controlled);
 assert.equal(controlled.initializerParameters.validationHook.toLowerCase(), automatedInput.walletCap);
+assert.equal(GENESIS_WALLET_CAP_WEI, 500000000000000000n);
 assert.equal(controlled.walletCapPolicy.maxCommitmentWei, GENESIS_WALLET_CAP_WEI);
 assert.throws(() => buildGenesisLaunchArtifacts({ ...automatedInput, walletCap: undefined }), /walletCap/);
 assert.throws(() => buildGenesisLaunchArtifacts({ ...automatedInput, walletCap: `0x${'0'.repeat(40)}` }), /zero address/);
 assert.throws(() => assertGenesisWalletCapPolicy(built), /current Genesis launches/);
 assert.throws(() => assertGenesisWalletCapPolicy({ ...controlled, walletCapPolicy: { ...controlled.walletCapPolicy,
-  maxCommitmentWei: 2n * GENESIS_WALLET_CAP_WEI } }), /1 ETH commitment/);
+  maxCommitmentWei: 2n * GENESIS_WALLET_CAP_WEI } }), /0\.5 ETH commitment/);
 assert.equal(controlled.initializerParameters.tokensRecipient, '0x8888888888888888888888888888888888888888');
 assert.equal(built.initializerParameters.tokensRecipient, input.treasury);
 assert.deepEqual(controlled.migratorParameters, built.migratorParameters, 'automation changes unsold-token authority only');

@@ -2,14 +2,14 @@
 
 Status: automated Genesis requires the bootstrap-capable `OmrV4TwapOracle`, the fixed
 `ProtocolLiquidityVault`, a `GenesisLifecycleController` bound before bidding starts, and the
-`GenesisWalletCap` validation hook enforcing the owner's cumulative 1 ETH wallet limit. The
+`GenesisWalletCap` validation hook enforcing the owner's cumulative 0.5 ETH wallet limit. The
 2026-09-09 bootstrap amendment verifies that integrated sequence in a local chain-4663 fork; see
 [the scoped amendment](audits/2026-09-09-genesis-bootstrap/report.md). Earlier fork reports
 used different custody/deployment ordering and remain historical evidence for their stated scope.
 Production execution requires the current scoped review, exact recipients and budgets, measured
 block timing, and the production Safe simulation/approval ceremony.
 
-The 1 ETH wallet-cap amendment requires its own scoped review and fork evidence. Earlier uncapped
+The 0.5 ETH wallet-cap amendment requires its own scoped review and fork evidence. Earlier uncapped
 launch artifacts remain historical; they must not be signed for the current launch.
 
 This runbook is the source of truth for replacing the original bootstrap bond sale with a Uniswap
@@ -57,8 +57,8 @@ inconsistent automatic observations keep new issuance closed. THE BANK remains s
 
 ### Genesis wallet allowance
 
-Each wallet may commit at most 1 ETH across the entire auction. For example, accepted bids of
-0.4 ETH and 0.6 ETH exhaust that wallet's allowance. The maximum is on committed ETH, not eventual
+Each wallet may commit at most 0.5 ETH across the entire auction. For example, accepted bids of
+0.2 ETH and 0.3 ETH exhaust that wallet's allowance. The maximum is on committed ETH, not eventual
 spend or token allocation: exits, refunds, changing a bid's price and new bids never replenish it.
 The caller must be the bid owner, so a third party cannot consume another wallet's allowance or
 rotate recipients to bypass its own limit. EOAs and smart accounts may call CCA directly; routers
@@ -69,7 +69,7 @@ Multiple wallets can still belong to one person; this is not a person-level limi
 controller, and checks both runtime identities. It holds no ETH or OMR and has no administrator,
 upgrade or allowance-reset function. CCA reverts roll back any tentative commitment update.
 The release builder commits its address in `validationHook`; preflight pins its runtime, controller,
-1 ETH constant and zero prelaunch commitment. The created CCA must report that exact hook before
+0.5 ETH constant and zero prelaunch commitment. The created CCA must report that exact hook before
 the Safe binds it. Legacy artifacts can be reconstructed offline, but current config/release CLIs
 and launch preflight reject the uncapped legacy mode.
 
@@ -79,7 +79,7 @@ and launch preflight reject the uncapped legacy mode.
 | Reserved LP inventory | 1,653,750 OMR |
 | Total launcher deposit | 6,063,750 OMR |
 | Graduation minimum | 10 native ETH by default |
-| Wallet commitment maximum | 1 native ETH cumulatively across all accepted Genesis bids |
+| Wallet commitment maximum | 0.5 native ETH cumulatively across all accepted Genesis bids |
 | Sale floor | 205,882 OMR per ETH, represented in Q96 and rounded down to a 1% auction tick |
 | Auction shape | 12 convex release steps carrying about 70% plus a one-block final release carrying about 30% |
 | Auction duration target | 72 wall-clock hours, converted to `BlockNumberish` immediately before launch |

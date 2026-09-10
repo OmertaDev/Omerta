@@ -11,13 +11,13 @@ interface IGenesisBidValidation {
     function validate(uint256 maxPrice, uint128 amount, address owner, address sender, bytes calldata hookData) external;
 }
 
-/// @notice One cumulative 1 ETH commitment allowance per bidding wallet for the bound Genesis auction.
+/// @notice One cumulative 0.5 ETH commitment allowance per bidding wallet for the bound Genesis auction.
 /// @dev Accepted commitments never replenish on exit, refund, price change or a new bid. The caller
 ///      and recipient must be the same wallet, including for smart accounts. Relayers/routers that
 ///      submit on behalf of a different recipient are intentionally unsupported. No tx.origin check.
 ///      This limits wallets, not people: one person can control multiple wallets.
 contract GenesisWalletCap is IGenesisBidValidation {
-    uint256 public constant MAX_COMMITMENT = 1 ether;
+    uint256 public constant MAX_COMMITMENT = 0.5 ether;
     IGenesisCapController public immutable controller;
     bytes32 public immutable controllerCodeHash;
     mapping(address wallet => uint256 amount) public committed;

@@ -545,15 +545,15 @@ async function run() {
     // CCA requires every bid's maximum to be strictly above the current clearing price. The first
     // aligned tick is the smallest admissible bid ceiling; the auction can still clear at its floor.
     const bidMaxPriceQ96 = launch.pricing.floorPrice + launch.pricing.tickSpacing;
-    // Twelve independent local wallets respect the production cumulative 1 ETH cap.
-    for (let index = 0; index < 12; index++) {
+    // Twenty-four independent local wallets respect the production cumulative 0.5 ETH cap.
+    for (let index = 0; index < 24; index++) {
       const bidderAddress = index === 0 ? bidder : getAddress(toHex(0xCA0000n + BigInt(index), { size: 20 }));
       await rpc('anvil_impersonateAccount', [bidderAddress]);
       await rpc('anvil_setBalance', [bidderAddress, toHex(parseEther('2'))]);
       const cappedBidder = createWalletClient({ account: bidderAddress, chain, transport: localTransport() });
-      await write(`auction:submit-1-eth-wallet-${index + 1}`, cappedBidder, {
+      await write(`auction:submit-half-eth-wallet-${index + 1}`, cappedBidder, {
         address: initializer, abi: SUBMIT_BID_ABI, functionName: 'submitBid',
-        args: [bidMaxPriceQ96, parseEther('1'), bidderAddress, '0x'], value: parseEther('1'),
+        args: [bidMaxPriceQ96, parseEther('0.5'), bidderAddress, '0x'], value: parseEther('0.5'),
       });
     }
     await mineToBlock(launch.timeline.endBlock + 1n);

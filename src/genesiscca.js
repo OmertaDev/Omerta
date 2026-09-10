@@ -42,7 +42,7 @@ export const GENESIS_LP_RESERVE_OMR = 1_653_750n * 10n ** 18n;
 export const GENESIS_DISTRIBUTION_OMR = GENESIS_SALE_OMR + GENESIS_LP_RESERVE_OMR;
 export const GENESIS_LP_CURRENCY_MPS = 3_750_000;
 export const GENESIS_FLOOR_OMR_PER_ETH = 205_882n;
-export const GENESIS_WALLET_CAP_WEI = 10n ** 18n;
+export const GENESIS_WALLET_CAP_WEI = 5n * 10n ** 17n;
 
 const UINT24_MAX = (1n << 24n) - 1n;
 const UINT40_MAX = (1n << 40n) - 1n;
@@ -874,7 +874,7 @@ export function encodeSupplySchedule(schedule) {
 /// launch preflight or production CLI. New launches always use the cumulative wallet cap.
 export function assertGenesisWalletCapPolicy(artifacts) {
   if (artifacts?.launchMode !== 'automated' || !artifacts?.participants?.walletCap) {
-    throw new Error('current Genesis launches require automated mode and the 1 ETH walletCap');
+    throw new Error('current Genesis launches require automated mode and the 0.5 ETH walletCap');
   }
   const cap = address('walletCap', artifacts.participants.walletCap);
   assertAddressRead('Genesis validation hook', artifacts.initializerParameters?.validationHook, cap);
@@ -882,7 +882,7 @@ export function assertGenesisWalletCapPolicy(artifacts) {
     || artifacts.walletCapPolicy?.cumulativeAcrossAuction !== true
     || artifacts.walletCapPolicy?.bidderMustOwnBid !== true
     || artifacts.walletCapPolicy?.allowanceRestoredOnRefund !== false) {
-    throw new Error('Genesis wallet cap policy must be a non-replenishing cumulative 1 ETH commitment');
+    throw new Error('Genesis wallet cap policy must be a non-replenishing cumulative 0.5 ETH commitment');
   }
 }
 

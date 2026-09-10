@@ -42,51 +42,51 @@ contract GenesisWalletCapTest is Test {
         controller.bind(address(auction));
     }
     function bid(address who, uint128 amount) internal { vm.prank(who); auction.submit(amount, who, 1, ""); }
-    function testSplitBidsExactlyOneEthThenOneWeiRejected() public {
-        bid(alice, 0.4 ether); bid(alice, 0.6 ether);
-        assertEq(cap.committed(alice), 1 ether); assertEq(cap.remainingCommitment(alice), 0);
+    function testSplitBidsExactlyHalfEthThenOneWeiRejected() public {
+        bid(alice, 0.2 ether); bid(alice, 0.3 ether);
+        assertEq(cap.committed(alice), 0.5 ether); assertEq(cap.remainingCommitment(alice), 0);
         vm.expectRevert(abi.encodeWithSelector(GenesisWalletCap.WalletCapExceeded.selector, alice, 0, 1));
         bid(alice, 1);
-        assertEq(cap.totalCommitted(), 1 ether);
+        assertEq(cap.totalCommitted(), 0.5 ether);
     }
     function testOversizedFirstBidLeavesAllowanceIntact() public {
-        vm.expectRevert(abi.encodeWithSelector(GenesisWalletCap.WalletCapExceeded.selector, alice, 1 ether, 1 ether + 1));
-        bid(alice, 1 ether + 1); assertEq(cap.committed(alice), 0); assertEq(cap.totalCommitted(), 0);
+        vm.expectRevert(abi.encodeWithSelector(GenesisWalletCap.WalletCapExceeded.selector, alice, 0.5 ether, 0.5 ether + 1));
+        bid(alice, 0.5 ether + 1); assertEq(cap.committed(alice), 0); assertEq(cap.totalCommitted(), 0);
     }
-    function testWalletsAreIndependent() public { bid(alice, 1 ether); bid(bob, 1 ether); assertEq(cap.totalCommitted(), 2 ether); }
+    function testWalletsAreIndependent() public { bid(alice, 0.5 ether); bid(bob, 0.5 ether); assertEq(cap.totalCommitted(), 1 ether); }
     function testDirectCallerCannotBurnVictimAllowance() public {
         vm.expectRevert(GenesisWalletCap.UnauthorizedAuction.selector);
-        cap.validate(1, 1 ether, alice, alice, ""); assertEq(cap.committed(alice), 0);
+        cap.validate(1, 0.5 ether, alice, alice, ""); assertEq(cap.committed(alice), 0);
     }
     function testForeignAuctionCannotBurnAllowance() public {
         CapAuctionMock foreign = new CapAuctionMock(cap);
         vm.expectRevert(GenesisWalletCap.UnauthorizedAuction.selector);
-        vm.prank(alice); foreign.submit(1 ether, alice, 1, "");
+        vm.prank(alice); foreign.submit(0.5 ether, alice, 1, "");
     }
     function testCannotBidForAnotherWalletOrRotateRecipient() public {
-        bid(alice, 1 ether);
+        bid(alice, 0.5 ether);
         vm.expectRevert(GenesisWalletCap.BidderMustOwnBid.selector);
         vm.prank(alice); auction.submit(1, bob, 1, ""); assertEq(cap.committed(bob), 0);
     }
     function testVictimCannotBeGriefedThroughAuction() public {
         vm.expectRevert(GenesisWalletCap.BidderMustOwnBid.selector);
-        vm.prank(bob); auction.submit(1 ether, alice, 1, ""); assertEq(cap.committed(alice), 0);
+        vm.prank(bob); auction.submit(0.5 ether, alice, 1, ""); assertEq(cap.committed(alice), 0);
     }
     function testChangedPriceAndHookDataDoNotResetAllowance() public {
-        bid(alice, 1 ether);
+        bid(alice, 0.5 ether);
         vm.expectRevert(abi.encodeWithSelector(GenesisWalletCap.WalletCapExceeded.selector, alice, 0, 1));
         vm.prank(alice); auction.submit(1, alice, type(uint256).max, hex"deadbeef");
     }
     function testExitDoesNotResetAllowance() public {
-        bid(alice, 1 ether); vm.prank(alice); auction.exit(); assertEq(cap.remainingCommitment(alice), 0);
+        bid(alice, 0.5 ether); vm.prank(alice); auction.exit(); assertEq(cap.remainingCommitment(alice), 0);
     }
     function testDownstreamRevertRollsBackCommitment() public {
-        vm.expectRevert("downstream auction failure"); vm.prank(alice); auction.failAfterValidation(1 ether);
-        assertEq(cap.committed(alice), 0); assertEq(cap.totalCommitted(), 0); bid(alice, 1 ether);
+        vm.expectRevert("downstream auction failure"); vm.prank(alice); auction.failAfterValidation(0.5 ether);
+        assertEq(cap.committed(alice), 0); assertEq(cap.totalCommitted(), 0); bid(alice, 0.5 ether);
     }
     function testSmartWalletCanBidForItself() public {
-        CapSmartWallet wallet = new CapSmartWallet(); wallet.bid(auction, 1 ether);
-        assertEq(cap.committed(address(wallet)), 1 ether); assertEq(cap.committed(tx.origin), 0);
+        CapSmartWallet wallet = new CapSmartWallet(); wallet.bid(auction, 0.5 ether);
+        assertEq(cap.committed(address(wallet)), 0.5 ether); assertEq(cap.committed(tx.origin), 0);
     }
     function testUnboundAuctionFailsClosed() public {
         CapControllerMock c = new CapControllerMock(); GenesisWalletCap h = new GenesisWalletCap(c);
@@ -113,10 +113,10 @@ contract GenesisWalletCapTest is Test {
         assertTrue(cap.supportsInterface(0x01ffc9a7)); assertFalse(cap.supportsInterface(0xffffffff));
     }
     function testFuzzSplitCommitment(uint128 first, uint128 second) public {
-        first = uint128(bound(first, 1, 1 ether)); second = uint128(bound(second, 1, 2 ether));
+        first = uint128(bound(first, 1, 0.5 ether)); second = uint128(bound(second, 1, 2 ether));
         bid(alice, first);
-        if (uint256(first) + second > 1 ether) {
-            vm.expectRevert(abi.encodeWithSelector(GenesisWalletCap.WalletCapExceeded.selector, alice, 1 ether - first, second));
+        if (uint256(first) + second > 0.5 ether) {
+            vm.expectRevert(abi.encodeWithSelector(GenesisWalletCap.WalletCapExceeded.selector, alice, 0.5 ether - first, second));
             bid(alice, second); assertEq(cap.committed(alice), first);
         } else { bid(alice, second); assertEq(cap.committed(alice), uint256(first) + second); }
     }
@@ -146,7 +146,7 @@ contract GenesisWalletCapInvariantTest is StdInvariant, Test {
     function invariantEveryWalletBoundedAndAggregateConserved() public view {
         uint256 sum;
         for (uint256 i; i < 16; ++i) {
-            uint256 used = cap.committed(address(uint160(0x1000 + i))); assertLe(used, 1 ether); sum += used;
+            uint256 used = cap.committed(address(uint160(0x1000 + i))); assertLe(used, 0.5 ether); sum += used;
         }
         assertEq(sum, cap.totalCommitted()); assertEq(sum, handler.accepted());
     }
