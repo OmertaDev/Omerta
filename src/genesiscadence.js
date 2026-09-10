@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
 
-export const GENESIS_AUCTION_TARGET_SECONDS = 72 * 60 * 60;
+export const GENESIS_AUCTION_TARGET_SECONDS = 7 * 24 * 60 * 60;
 export const GENESIS_CLAIM_TARGET_SECONDS = 24 * 60 * 60;
 export const GENESIS_CADENCE_MIN_SPAN_MS = 3 * 60 * 1000;
 export const GENESIS_CADENCE_MIN_SAMPLES = 5;

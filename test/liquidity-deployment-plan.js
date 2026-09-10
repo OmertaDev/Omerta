@@ -65,9 +65,8 @@ const plan = buildLiquidityDeploymentPlan(input);
 
 test('deterministic EOA CREATE nonces, bytecode and immutable future recipients', () => {
   assert.deepEqual(plan, buildLiquidityDeploymentPlan(clone(input)));
-  assert.deepEqual(plan.deployments.map((d) => d.id), ['polVault', 'vig', 'desk', 'community', 'polBuyback', 'feeRouter', 'gasVault', 'genesisController', 'genesisWalletCap', 'bankBuffer']);
-  assert.deepEqual(plan.deployments.find((d) => d.id === 'genesisWalletCap').constructorArguments,
-    [plan.predicted.genesisController]);
+  assert.deepEqual(plan.deployments.map((d) => d.id), ['polVault', 'vig', 'desk', 'community', 'polBuyback', 'feeRouter', 'gasVault', 'genesisController', 'bankBuffer']);
+  assert.equal(plan.deployments.some((d) => d.contract === 'GenesisWalletCap'), false);
   for (const [index, d] of plan.deployments.entries()) {
     assert.equal(d.predictedAddress, getContractAddress({ from: input.roles.deployer, nonce: 17n + BigInt(index) }));
     assert.equal(d.nonce, String(17 + index)); assert.equal(d.to, null); assert.equal(d.value, '0');
@@ -303,7 +302,7 @@ await testAsync('startup verifies the complete reserved CREATE interval and immu
   assert.equal(evidence.coreRuntimePins.length, Object.keys(plan.coreRuntimePins).length);
   assert.deepEqual(evidence.emptyCreationAddresses, plan.deployments.map((d) => d.predictedAddress));
   assert.equal(evidence.genesisSplitterVerified, true); assert.equal(evidence.nonceReservationEnforcedOnChain, false);
-  assert.equal(plan.startupProtocol.nextNonceAfterBundle, '27');
+  assert.equal(plan.startupProtocol.nextNonceAfterBundle, '26');
   assert.match(plan.startupProtocol.requirements.join(' '), /CREATE2 factory call/);
   assert.match(plan.startupProtocol.requirements.join(' '), /reverted transactions/);
   assert.match(plan.startupProtocol.requirements.join(' '), /Never shift the remaining nonces/);

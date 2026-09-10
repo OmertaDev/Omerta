@@ -4,7 +4,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { createPublicClient, http } from 'viem';
-import { buildGenesisLaunchArtifacts, buildGenesisAuctionBinding, assertGenesisWalletCapPolicy } from '../src/genesiscca.js';
+import { buildGenesisLaunchArtifacts, buildGenesisAuctionBinding, assertGenesisAuctionPolicy } from '../src/genesiscca.js';
 
 const file = process.argv[2];
 const bindAuction = process.argv[3] === '--bind-auction';
@@ -21,11 +21,11 @@ Optional fields:
   requiredCurrencyRaised (default 10 ETH in wei)
 
 All current Genesis launches require:
-  launchMode: "automated", lifecycleController, oracle, liquidityKeeper, walletCap,
+  launchMode: "automated", lifecycleController, oracle, liquidityKeeper,
   positionRecipient equal to the ProtocolLiquidityVault,
   runtimeCodeHashes for token, hook, proceedsSplitter, lifecycleController,
-  positionRecipient, oracle and walletCap (deployed runtime hashes, including immutables).
-  walletCap is the immutable GenesisWalletCap with a cumulative 0.28 ETH allowance.
+  positionRecipient and oracle (deployed runtime hashes, including immutables).
+  Genesis is uncapped: validationHook must be the zero address.
 
 --bind-auction reads CHAIN_RPC_URL (HTTPS), discovers the already created CCA,
 checks its exact factory prediction and controller/vault/oracle bindings,
@@ -40,7 +40,7 @@ Output is unsigned Safe calldata on stdout; this tool never broadcasts or writes
 const inputPath = path.resolve(file);
 const parsed = JSON.parse(fs.readFileSync(inputPath, 'utf8'));
 const artifacts = buildGenesisLaunchArtifacts(parsed);
-assertGenesisWalletCapPolicy(artifacts);
+assertGenesisAuctionPolicy(artifacts);
 let rpcUrl;
 try {
   let result = artifacts;

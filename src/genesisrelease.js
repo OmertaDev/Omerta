@@ -13,7 +13,6 @@ export const GENESIS_RELEASE_SCOPE_FILES = Object.freeze([
   'omerta-contracts/src/OmertaBond.sol',
   'omerta-contracts/src/VoucherClaim.sol',
   'omerta-contracts/src/GenesisLifecycleController.sol',
-  'omerta-contracts/src/GenesisWalletCap.sol',
   'omerta-contracts/src/ProtocolLiquidityVault.sol',
   'omerta-contracts/src/LiquidityBuybackExecutor.sol',
   'omerta-contracts/src/FeeRevenueRouter.sol',
@@ -65,7 +64,6 @@ export const GENESIS_RELEASE_SCOPE_FILES = Object.freeze([
   'omerta-contracts/test/OmrV4TwapOracle.t.sol',
   'omerta-contracts/test/audit/GenesisOracleBootstrap.t.sol',
   'omerta-contracts/test/GenesisLifecycleController.t.sol',
-  'omerta-contracts/test/GenesisWalletCap.t.sol',
   'omerta-contracts/test/ProtocolLiquidityVault.t.sol',
   'omerta-contracts/test/LiquidityBuybackExecutor.t.sol',
   'test/genesiscca.js',
@@ -84,7 +82,7 @@ export const GENESIS_RELEASE_SCOPE_FILES = Object.freeze([
 
 export const GENESIS_RELEASE_ARTIFACTS = Object.freeze([
   'OmertaHook', 'GenesisProceedsSplitter', 'OmrV4TwapOracle',
-  'GenesisLifecycleController', 'GenesisWalletCap', 'ProtocolLiquidityVault', 'LiquidityBuybackExecutor',
+  'GenesisLifecycleController', 'ProtocolLiquidityVault', 'LiquidityBuybackExecutor',
   'FeeRevenueRouter', 'KeeperGasVault', 'BankBufferVault', 'OMR', 'OmertaFees', 'OmertaBond', 'VoucherClaim',
 ]);
 
@@ -96,7 +94,7 @@ const REQUIRED_AUDIT_SCOPE = Object.freeze([
 export const GENESIS_AUTOMATED_AUDIT_SCOPE = Object.freeze([
   'oracleBootstrap', 'lifecycleController', 'protocolLiquidityVault', 'keeperTransactionJournal',
   'receiptAccounting', 'receiptIndexer', 'liquidityHealth', 'claimQueueBacking', 'dailyOffering',
-  'deploymentNonceCoordination', 'auctionBinding', 'genesisWalletCap',
+  'deploymentNonceCoordination', 'auctionBinding', 'uncappedGenesis',
 ]);
 
 function object(label, value) {
@@ -340,8 +338,7 @@ function validateFork(raw, automated) {
   bool('forkRehearsal.noProductionKeysRead', fork.noProductionKeysRead);
   bool('forkRehearsal.arbSysShimDeclared', fork.arbSysShimDeclared);
   const automatedChecks = ['prePoolOracleBootstrap', 'controllerBoundBeforeStart', 'exactFactoryPrediction',
-    'migrationToProtocolVault', 'oracleFullWindowRequired', 'keeperReceiptAccounting', 'walletCapEnforced',
-    'walletCapCumulative', 'walletCapRollback'];
+    'migrationToProtocolVault', 'oracleFullWindowRequired', 'keeperReceiptAccounting', 'uncappedBidding', 'zeroValidationHook'];
   if (automated) for (const name of automatedChecks) bool(`forkRehearsal.${name}`, fork[name]);
   return {
     chainId: 4663, blockNumber: uint('forkRehearsal.blockNumber', fork.blockNumber), passed: true,

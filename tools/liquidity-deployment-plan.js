@@ -211,8 +211,7 @@ function validateInput(input) {
 /** Produces a deterministic unsigned plan from public, caller-supplied observations. No network verification is implied. */
 export function buildLiquidityDeploymentPlan(input, { contractsRoot = DEFAULT_ROOT } = {}) {
   const { i, roles: r, core: c, key, b, pol, buys, gas, bond, genesis, bank, nonce } = validateInput(input);
-  const order = [...BASE_DEPLOYMENTS, ...(genesis ? [['genesisController', 'GenesisLifecycleController'],
-    ['genesisWalletCap', 'GenesisWalletCap']] : []),
+  const order = [...BASE_DEPLOYMENTS, ...(genesis ? [['genesisController', 'GenesisLifecycleController']] : []),
     ...(bank ? [['bankBuffer', 'BankBufferVault']] : [])];
   if (nonce + BigInt(order.length) >= (1n << 64n)) throw new Error('Deployment nonces exceed the EIP-2681 account limit');
   const needed = [...new Set([...order.map(([, type]) => type), 'OmertaFees', 'OmertaBond', 'OmertaHook', ...(bank ? ['Transmuter'] : [])])];
@@ -237,7 +236,7 @@ export function buildLiquidityDeploymentPlan(input, { contractsRoot = DEFAULT_RO
     feeRouter: [c.fees.address, r.dev, predicted.vig, r.treasury, predicted.community],
     gasVault: [r.safe, gas.periodBudget, gas.perRefillCap, gas.targetBalance, gas.minInterval],
     ...(genesis ? { genesisController: [r.safe, c.strategy.address, c.splitter.address, predicted.polVault, c.oracle.address,
-      c.omr.address, r.treasury, BigInt(i.genesis.maxOracleAge)], genesisWalletCap: [predicted.genesisController] } : {}),
+      c.omr.address, r.treasury, BigInt(i.genesis.maxOracleAge)] } : {}),
     ...(bank ? { bankBuffer: [c.bankAsset.address, c.bankTransmuter.address, r.safe, BigInt(i.bank.perActionCap), BigInt(i.bank.periodBudget)] } : {}),
   };
   const codeDependencies = {
@@ -245,7 +244,7 @@ export function buildLiquidityDeploymentPlan(input, { contractsRoot = DEFAULT_RO
     vig: ['poolManager', 'oracle', 'omr', 'polVault'], desk: ['poolManager', 'oracle', 'omr', 'polVault'],
     community: ['poolManager', 'oracle', 'omr', 'polVault'], polBuyback: ['poolManager', 'oracle', 'omr', 'polVault'],
     feeRouter: ['fees'], gasVault: [], genesisController: ['strategy', 'splitter', 'polVault', 'oracle', 'omr', 'poolManager'],
-    genesisWalletCap: ['genesisController'], bankBuffer: ['bankAsset', 'bankTransmuter'],
+    bankBuffer: ['bankAsset', 'bankTransmuter'],
   };
   const available = new Set(Object.keys(c));
   const deployments = order.map(([name, contract], index) => {
@@ -319,7 +318,7 @@ export function buildLiquidityDeploymentPlan(input, { contractsRoot = DEFAULT_RO
       'Confirm mint remains 100% DEV, signer/minter/burner authorities remain unchanged, and keeper has no governance or withdrawal authority.',
       'Prefund operating gas/backing separately using explicitly approved amounts; this plan contains no funding or payout transaction.',
       ...(genesis ? ['The existing splitter must already commit its immutable Vig recipient to the predicted Vig executor; this plan refuses an old operations-wallet recipient.',
-        'Create the atomic CCA with tokensRecipient=predicted.genesisController, validationHook=predicted.genesisWalletCap and LP positionRecipient=predicted.polVault, then bind its verified address before startBlock. The hook enforces 0.28 ETH cumulative per bidding wallet. Auction creation/binding is not fabricated in this plan.'] : []),
+        'Create the atomic CCA with tokensRecipient=predicted.genesisController, validationHook=address(0) and LP positionRecipient=predicted.polVault, then bind its verified address before startBlock. Genesis bidding has no wallet cap or validation hook. Auction creation/binding is not fabricated in this plan.'] : []),
       ...(bank ? ['Keep bank activation subject to its separate concrete asset/ERC-4626 review; this plan does not enable debt issuance or seed the first borrow.'] : []),
     ] };
   return { ...result, planSha256: SHA(json(result)) };

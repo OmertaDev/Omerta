@@ -448,7 +448,6 @@ async function run() {
     assert.equal(vig, predictedVig); assert.equal(desk, predictedDesk);
     const controller = await deploy('GenesisLifecycleController', controllerArt, [safe, ROBINHOOD_GENESIS_STACK.lbpStrategy,
       splitter, pol, oracle, omr, treasury, PERIOD]);
-    const walletCap = await deploy('GenesisWalletCap', artifact('GenesisWalletCap', 'GenesisWalletCap'), [controller]);
     const fees = await deploy('OmertaFees', artifact('OmertaFees', 'OmertaFees'), [safe, founder, vig, 2500n, parseEther('0.001'), parseEther('0.001')]);
     const feeRouter = await deploy('FeeRevenueRouter', artifact('FeeRevenueRouter', 'FeeRevenueRouter'), [fees, founder, vig, treasury, community]);
     await write('configure:fee-router', safeWallet, { address: fees, abi: artifact('OmertaFees', 'OmertaFees').abi, functionName: 'setNonMintRouter', args: [feeRouter] });
@@ -472,17 +471,17 @@ async function run() {
     const clockNow = await chainBlockNumberish();
     const launchBlock = await publicClient.getBlock({ blockTag: 'latest' });
     const genesisInput = {
-      launchMode: 'automated', lifecycleController: controller, oracle, liquidityKeeper: liquidityAccount.address, walletCap,
+      launchMode: 'automated', lifecycleController: controller, oracle, liquidityKeeper: liquidityAccount.address,
       token: omr, launchOwner: safe, treasury, vigRecipient: vig, founderRecipient: founder,
       proceedsSplitter: splitter, positionRecipient, hook,
       salt: keccak256(stringToHex(`omerta-fork-${forkBlock.number}-${omr}`)),
       // Block time is deliberately compressed for the fork; supply-MPS and migration invariants are
-      // unchanged. Production block counts still come from the separately measured 72h/24h cadence.
+      // unchanged. Production block counts still come from the separately measured 168h/24h cadence.
       startBlock: (clockNow + 24n).toString(), auctionBlocks: '24', prebidBlocks: '0',
       claimDelayBlocks: '12', permit2Expiration: (launchBlock.timestamp + 86_400n).toString(),
       requiredCurrencyRaised: parseEther('10').toString(),
       runtimeCodeHashes: Object.fromEntries(await Promise.all(Object.entries({ token: omr, hook, proceedsSplitter: splitter,
-        lifecycleController: controller, positionRecipient, oracle, walletCap }).map(async ([name, address]) =>
+        lifecycleController: controller, positionRecipient, oracle }).map(async ([name, address]) =>
         [name, keccak256(await publicClient.getCode({ address }))]))),
     };
     const launch = buildGenesisLaunchArtifacts(genesisInput);
@@ -545,18 +544,12 @@ async function run() {
     // CCA requires every bid's maximum to be strictly above the current clearing price. The first
     // aligned tick is the smallest admissible bid ceiling; the auction can still clear at its floor.
     const bidMaxPriceQ96 = launch.pricing.floorPrice + launch.pricing.tickSpacing;
-    // Forty-three independent local wallets respect the 0.28 ETH cap, with a partial final bid.
-    for (let index = 0; index < 43; index++) {
-      const bidderAddress = index === 0 ? bidder : getAddress(toHex(0xCA0000n + BigInt(index), { size: 20 }));
-      await rpc('anvil_impersonateAccount', [bidderAddress]);
-      await rpc('anvil_setBalance', [bidderAddress, toHex(parseEther('2'))]);
-      const bidAmount = index === 42 ? parseEther('0.24') : parseEther('0.28');
-      const cappedBidder = createWalletClient({ account: bidderAddress, chain, transport: localTransport() });
-      await write(`auction:submit-capped-wallet-${index + 1}`, cappedBidder, {
-        address: initializer, abi: SUBMIT_BID_ABI, functionName: 'submitBid',
-        args: [bidMaxPriceQ96, bidAmount, bidderAddress, '0x'], value: bidAmount,
-      });
-    }
+    // One wallet can commit the full 12 ETH: Genesis has no wallet validation hook.
+    const uncappedBidder = createWalletClient({ account: bidder, chain, transport: localTransport() });
+    await write('auction:submit-12-eth', uncappedBidder, {
+      address: initializer, abi: SUBMIT_BID_ABI, functionName: 'submitBid',
+      args: [bidMaxPriceQ96, parseEther('12'), bidder, '0x'], value: parseEther('12'),
+    });
     await mineToBlock(launch.timeline.endBlock + 1n);
     await runGenesisJob('genesis_checkpoint');
     const auctionState = {
@@ -825,7 +818,7 @@ async function run() {
       },
       genesis: {
         inputSha256: sha256(json(genesisInput)), initializer, poolId, auctionState,
-        timingMode: 'compressed fork blocks; production 72h/24h derivation is not reused',
+        timingMode: 'compressed fork blocks; production 168h/24h derivation is not reused',
         bidMaxPriceQ96, positionTokenId, positionOwner, migrationSucceeded: true, migrationFailureEvents: 0,
         residualDistributed: true,
         controller, bindingBeforeStart: true, bindingCalldataKeccak256: binding.bindingCalldataKeccak256,

@@ -1,15 +1,15 @@
 # OMERTÀ genesis CCA/LBP launch runbook
 
 Status: automated Genesis requires the bootstrap-capable `OmrV4TwapOracle`, the fixed
-`ProtocolLiquidityVault`, a `GenesisLifecycleController` bound before bidding starts, and the
-`GenesisWalletCap` validation hook enforcing the owner's cumulative 0.28 ETH wallet limit. The
+`ProtocolLiquidityVault`, a `GenesisLifecycleController` bound before bidding starts, and
+an uncapped CCA with a zero validation hook and a seven-day auction target. The
 2026-09-09 bootstrap amendment verifies that integrated sequence in a local chain-4663 fork; see
 [the scoped amendment](audits/2026-09-09-genesis-bootstrap/report.md). Earlier fork reports
 used different custody/deployment ordering and remain historical evidence for their stated scope.
 Production execution requires the current scoped review, exact recipients and budgets, measured
 block timing, and the production Safe simulation/approval ceremony.
 
-The 0.28 ETH wallet-cap amendment requires its own scoped review and fork evidence. Earlier uncapped
+The seven-day, uncapped amendment requires its own scoped review and fork evidence. Earlier capped
 launch artifacts remain historical; they must not be signed for the current launch.
 
 This runbook is the source of truth for replacing the original bootstrap bond sale with a Uniswap
@@ -33,10 +33,9 @@ For the automated route, the deployment order is mandatory:
    latest/pending nonce, empty future addresses and live splitter bindings before that sequence.
    A changed nonce requires a newly reviewed plan; the checker never rebases addresses.
 3. Deploy the vault, four fixed-purpose buyback executors, fee router, gas vault and controller.
-   Deploy `GenesisWalletCap(controller)` immediately after the controller while it is unbound.
    Apply the reviewed Safe configuration, including `setGenesisController` and keeper bindings.
 4. Build with explicit `launchMode: "automated"`, the controller, vault, final oracle, liquidity
-   keeper, `walletCap`, and all seven exact runtime hashes described at Gate D. Preflight checks the entire
+   keeper and all six exact runtime hashes described at Gate D. Preflight checks the entire
    unopened dependency chain, including controller and vault runtime commitments.
 5. Create the CCA, then generate its separate `bindAuction` transaction from the chain using
    `genesis:config --bind-auction`. Verify and execute that transaction before `startBlock`.
@@ -55,23 +54,17 @@ inconsistent automatic observations keep new issuance closed. THE BANK remains s
 
 ## 1. Committed architecture
 
-### Genesis wallet allowance
+### Genesis bidding and timing
 
-Each wallet may commit at most 0.28 ETH across the entire auction. For example, accepted bids of
-0.1 ETH and 0.18 ETH exhaust that wallet's allowance. The maximum is on committed ETH, not eventual
-spend or token allocation: exits, refunds, changing a bid's price and new bids never replenish it.
-The caller must be the bid owner, so a third party cannot consume another wallet's allowance or
-rotate recipients to bypass its own limit. EOAs and smart accounts may call CCA directly; routers
-that submit for another recipient are unsupported. No character NFT or identity credential is used.
-Multiple wallets can still belong to one person; this is not a person-level limit or a later trading cap.
+The owner selected a seven-day (168-hour) auction with no wallet bid cap. The CCA validation hook
+must be the zero address. Current config/release CLIs and launch preflight reject stale wallet-cap
+configuration and nonzero validation hooks. The historical GenesisWalletCap contract is not deployed
+or bound by the current package. Native CCA amount, price and timing validation still applies.
+The auction has no configured aggregate fundraising ceiling; 10 ETH is its graduation minimum.
 
-`GenesisWalletCap` accepts validation only from the auction bound once by its immutable lifecycle
-controller, and checks both runtime identities. It holds no ETH or OMR and has no administrator,
-upgrade or allowance-reset function. CCA reverts roll back any tentative commitment update.
-The release builder commits its address in `validationHook`; preflight pins its runtime, controller,
-0.28 ETH constant and zero prelaunch commitment. The created CCA must report that exact hook before
-the Safe binds it. Legacy artifacts can be reconstructed offline, but current config/release CLIs
-and launch preflight reject the uncapped legacy mode.
+The schedule targets about 70% gradual release and 30% in the final block. Integer per-block rates
+are adjusted toward that target while preserving nondecreasing gradual rates. The exact measured
+schedule must conserve all supply and leave 20–40% in its final block, or preparation fails closed.
 
 | Component | Committed value |
 |---|---:|
@@ -79,10 +72,10 @@ and launch preflight reject the uncapped legacy mode.
 | Reserved LP inventory | 1,653,750 OMR |
 | Total launcher deposit | 6,063,750 OMR |
 | Graduation minimum | 10 native ETH by default |
-| Wallet commitment maximum | 0.28 native ETH cumulatively across all accepted Genesis bids |
+| Wallet commitment maximum | None; zero CCA validation hook |
 | Sale floor | 205,882 OMR per ETH, represented in Q96 and rounded down to a 1% auction tick |
 | Auction shape | 12 convex release steps carrying about 70% plus a one-block final release carrying about 30% |
-| Auction duration target | 72 wall-clock hours, converted to `BlockNumberish` immediately before launch |
+| Auction duration target | 168 wall-clock hours (seven days), converted to `BlockNumberish` immediately before launch |
 | Claim delay target | 24 wall-clock hours after auction end, as a claim cliff rather than linear vesting |
 | v4 pool | native ETH / OMR, static 0.30% fee, tick spacing 60, `OmertaHook` |
 | LP range | implicit full range |
@@ -198,7 +191,7 @@ Do not point `OmertaBond` at `GenesisOracle` indefinitely and do not reopen it f
 ## 5. Measure time in the chain's clock
 
 The CCA uses BlockNumberish, not timestamps. An observation on 2026-08-27 was approximately 100 ms
-per block, making 72 hours about 2,592,000 blocks and 24 hours about 864,000 blocks. Those are
+per block, making seven days about 6,048,000 blocks and 24 hours about 864,000 blocks. Those are
 examples, not permanent constants.
 
 Immediately before choosing `startBlock`:
@@ -206,7 +199,7 @@ Immediately before choosing `startBlock`:
 1. sample finalized `arbBlockNumber()` or the chain's BlockNumberish-equivalent value several times
    over at least a few minutes;
 2. record sample blocks, timestamps, median cadence, RPC class, and finality lag;
-3. convert the approved 72-hour auction and 24-hour claim cliff with that measured cadence;
+3. convert the approved 168-hour auction and 24-hour claim cliff with that measured cadence;
 4. leave enough lead blocks for Safe review without creating an unreasonably long public prebid;
 5. have a second operator recompute every derived block independently.
 
@@ -218,7 +211,7 @@ npm --prefix .. run genesis:cadence -- --duration-seconds 180 --interval-seconds
 ```
 
 It records ArbSys BlockNumberish, latest/finalized blocks, timestamps, median cadence, finality lag,
-and ceiling-derived 72-hour/24-hour block counts in hash-bound JSON. It prints no RPC URL and never
+and ceiling-derived 168-hour/24-hour block counts in hash-bound JSON. It prints no RPC URL and never
 signs, broadcasts, or writes. The final manifest accepts evidence no more than one hour old.
 
 The builder enforces:
@@ -312,20 +305,18 @@ Prepare a private, access-controlled JSON input:
   "lifecycleController": "<DEPLOYED_GENESIS_LIFECYCLE_CONTROLLER>",
   "oracle": "<DEPLOYED_BOOTSTRAP_CAPABLE_V4_ORACLE>",
   "liquidityKeeper": "<DEDICATED_LIQUIDITY_KEEPER>",
-  "walletCap": "<DEPLOYED_GENESIS_WALLET_CAP>",
   "runtimeCodeHashes": {
     "token": "<EXACT_RUNTIME_KECCAK256>",
     "hook": "<EXACT_RUNTIME_KECCAK256>",
     "proceedsSplitter": "<EXACT_RUNTIME_KECCAK256>",
     "lifecycleController": "<EXACT_RUNTIME_KECCAK256>",
     "positionRecipient": "<EXACT_RUNTIME_KECCAK256>",
-    "oracle": "<EXACT_RUNTIME_KECCAK256>",
-    "walletCap": "<EXACT_RUNTIME_KECCAK256>"
+    "oracle": "<EXACT_RUNTIME_KECCAK256>"
   },
   "hook": "<MINED_HOOK_WITH_0x30cc_PERMISSION_BITS>",
   "salt": "<UNIQUE_32_BYTE_SALT>",
   "startBlock": "<MEASURED_BLOCK>",
-  "auctionBlocks": "<MEASURED_72H_BLOCK_COUNT>",
+  "auctionBlocks": "<MEASURED_168H_BLOCK_COUNT>",
   "prebidBlocks": "0",
   "claimDelayBlocks": "<MEASURED_24H_BLOCK_COUNT>",
   "permit2Expiration": "<UNIX_SECONDS_AFTER_LAUNCH_EXECUTION>",

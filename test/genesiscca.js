@@ -10,8 +10,7 @@ import {
   Q96,
   ROBINHOOD_GENESIS_STACK,
   V4_OBSERVATION_SOURCE_INTERFACE_ID,
-  GENESIS_WALLET_CAP_WEI,
-  assertGenesisWalletCapPolicy,
+  assertGenesisAuctionPolicy,
   buildGenesisLaunchArtifacts,
   buildGenesisAuctionBinding,
   verifyGenesisAutomationReadiness,
@@ -24,7 +23,7 @@ import {
   verifyRobinhoodGenesisStack,
 } from '../src/genesiscca.js';
 
-const AUCTION_BLOCKS = 2_592_000; // 72h at Robinhood's current 100ms ArbSys cadence
+const AUCTION_BLOCKS = 6_048_000; // Seven days at a synthetic 100 ms ArbSys cadence
 const schedule = generateSupplySchedule({ auctionBlocks: AUCTION_BLOCKS });
 const summary = validateSupplySchedule(schedule, AUCTION_BLOCKS);
 assert.equal(summary.totalMps, MPS);
@@ -33,6 +32,40 @@ assert.equal(schedule.length, 13, '12 convex steps plus one final block');
 assert.equal(schedule.at(-1).blockDelta, 1);
 assert(summary.finalMps >= 2_000_000n && summary.finalMps <= 4_000_000n);
 assert.equal((encodeSupplySchedule(schedule).length - 2) / 2, schedule.length * 8);
+
+// Seven-day cadence boundaries previously overflowed the permitted final allocation after
+// independent rate rounding. Check integer conservation and monotonicity independently of
+// validateSupplySchedule, including encoded payloads and optional zero-release prebid blocks.
+let scheduleSeed = 0x168c0de;
+const scheduleBlockCases = [6_048_000, 6_000_000, 5_988_119, 5_760_000, 5_498_182, 8_000_000];
+for (let i = 0; i < 2000; i++) {
+  scheduleSeed = (Math.imul(scheduleSeed, 1664525) + 1013904223) >>> 0;
+  scheduleBlockCases.push(1000 + (scheduleSeed % 7_999_001));
+}
+for (const [index, blocks] of scheduleBlockCases.entries()) {
+  const prebidBlocks = index % 2 ? 173 : 0;
+  const steps = generateSupplySchedule({ auctionBlocks: blocks, prebidBlocks });
+  let released = 0n, elapsed = 0n, priorRate = 0;
+  for (const step of steps) {
+    assert(Number.isSafeInteger(step.mps) && Number.isSafeInteger(step.blockDelta));
+    assert(step.blockDelta > 0 && step.mps >= priorRate);
+    priorRate = step.mps;
+    released += BigInt(step.mps) * BigInt(step.blockDelta);
+    elapsed += BigInt(step.blockDelta);
+  }
+  assert.equal(released, 10_000_000n);
+  assert.equal(elapsed, BigInt(blocks + prebidBlocks));
+  assert(steps.at(-1).mps >= 2_000_000 && steps.at(-1).mps <= 4_000_000);
+  assert.equal(steps.at(-1).blockDelta, 1);
+  const bytes = encodeSupplySchedule(steps).slice(2);
+  for (let i = 0; i < steps.length; i++) {
+    const packed = BigInt(`0x${bytes.slice(i * 16, (i + 1) * 16)}`);
+    assert.equal(packed >> 40n, BigInt(steps[i].mps));
+    assert.equal(packed & ((1n << 40n) - 1n), BigInt(steps[i].blockDelta));
+  }
+}
+assert.throws(() => generateSupplySchedule({ auctionBlocks: 8_000_002 }), /20-40%/);
+console.log(`PASS ${scheduleBlockCases.length} schedule conservation/monotonicity/encoding cases; seed 0x168c0de`);
 
 const withPrebid = generateSupplySchedule({ auctionBlocks: 10_000, prebidBlocks: 500 });
 assert.deepEqual(withPrebid[0], { mps: 0, blockDelta: 500 });
@@ -72,20 +105,20 @@ const automatedInput = { ...input, launchMode: 'automated',
   lifecycleController: '0x8888888888888888888888888888888888888888',
   oracle: '0x9999999999999999999999999999999999999999',
   liquidityKeeper: '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-  walletCap: '0xcccccccccccccccccccccccccccccccccccccccc',
   runtimeCodeHashes: Object.fromEntries(['token', 'hook', 'proceedsSplitter', 'lifecycleController',
-    'positionRecipient', 'oracle', 'walletCap'].map((name) => [name, keccak256('0x6000')])),
+    'positionRecipient', 'oracle'].map((name) => [name, keccak256('0x6000')])),
 };
 const controlled = buildGenesisLaunchArtifacts(automatedInput);
-assertGenesisWalletCapPolicy(controlled);
-assert.equal(controlled.initializerParameters.validationHook.toLowerCase(), automatedInput.walletCap);
-assert.equal(GENESIS_WALLET_CAP_WEI, 280000000000000000n);
-assert.equal(controlled.walletCapPolicy.maxCommitmentWei, GENESIS_WALLET_CAP_WEI);
-assert.throws(() => buildGenesisLaunchArtifacts({ ...automatedInput, walletCap: undefined }), /walletCap/);
-assert.throws(() => buildGenesisLaunchArtifacts({ ...automatedInput, walletCap: `0x${'0'.repeat(40)}` }), /zero address/);
-assert.throws(() => assertGenesisWalletCapPolicy(built), /current Genesis launches/);
-assert.throws(() => assertGenesisWalletCapPolicy({ ...controlled, walletCapPolicy: { ...controlled.walletCapPolicy,
-  maxCommitmentWei: 2n * GENESIS_WALLET_CAP_WEI } }), /0\.28 ETH commitment/);
+assertGenesisAuctionPolicy(controlled);
+assert.equal(controlled.initializerParameters.validationHook, '0x0000000000000000000000000000000000000000');
+assert.equal(controlled.biddingPolicy.mode, 'uncapped');
+assert.equal(controlled.participants.walletCap, undefined);
+assert.throws(() => buildGenesisLaunchArtifacts({ ...automatedInput, walletCap: '0xcccccccccccccccccccccccccccccccccccccccc' }), /uncapped/);
+assert.throws(() => buildGenesisLaunchArtifacts({ ...automatedInput, runtimeCodeHashes: { ...automatedInput.runtimeCodeHashes, walletCap: keccak256('0x6000') } }), /uncapped/);
+assert.throws(() => assertGenesisAuctionPolicy(built), /current Genesis launches/);
+assert.throws(() => assertGenesisAuctionPolicy({ ...controlled, biddingPolicy: { mode: 'capped' } }), /uncapped/);
+assert.throws(() => assertGenesisAuctionPolicy({ ...controlled, participants: { ...controlled.participants, walletCap: '0xcccccccccccccccccccccccccccccccccccccccc' } }), /uncapped/);
+assert.throws(() => assertGenesisAuctionPolicy({ ...controlled, initializerParameters: { ...controlled.initializerParameters, validationHook: '0xcccccccccccccccccccccccccccccccccccccccc' } }), /validation hook/);
 assert.equal(controlled.initializerParameters.tokensRecipient, '0x8888888888888888888888888888888888888888');
 assert.equal(built.initializerParameters.tokensRecipient, input.treasury);
 assert.deepEqual(controlled.migratorParameters, built.migratorParameters, 'automation changes unsold-token authority only');
@@ -102,9 +135,9 @@ assert.equal(built.initializerSalt, controlled.initializerSalt, 'the strategy sa
 assert.notEqual(built.initializerParams, controlled.initializerParams, 'unsold authority changes factory CREATE2 init code');
 assert.equal(built.chainId, 4663);
 assert.equal(built.stack.lbpStrategy, ROBINHOOD_GENESIS_STACK.lbpStrategy);
-assert.equal(built.timeline.endBlock, 52_592_000n);
-assert.equal(built.timeline.migrationBlock, 52_592_001n);
-assert.equal(built.timeline.claimBlock, 53_456_000n);
+assert.equal(built.timeline.endBlock, 56_048_000n);
+assert.equal(built.timeline.migrationBlock, 56_048_001n);
+assert.equal(built.timeline.claimBlock, 56_912_000n);
 assert.equal(built.initializerParameters.fundsRecipient, ROBINHOOD_GENESIS_STACK.lbpStrategy);
 assert.equal(built.migratorParameters.reservedTokenAmountForLP, GENESIS_LP_RESERVE_OMR);
 assert.equal(built.migratorParameters.recipient, input.proceedsSplitter);
@@ -234,14 +267,12 @@ function automatedClient(options = {}) {
     poolId: expectedPoolId, fee: 3000, tickSpacing: 60, baselineInitialized: false, consult: [0n, 0n] };
   const auctionReads = { token: p.token, currency: '0x0000000000000000000000000000000000000000',
     tokensRecipient: p.lifecycleController, fundsRecipient: ROBINHOOD_GENESIS_STACK.lbpStrategy,
-    validationHook: p.walletCap, totalSupply: GENESIS_SALE_OMR,
+    validationHook: '0x0000000000000000000000000000000000000000', totalSupply: GENESIS_SALE_OMR,
     startBlock: controlled.timeline.startBlock, endBlock: controlled.timeline.endBlock,
     claimBlock: controlled.timeline.claimBlock, floorPrice: controlled.pricing.floorPrice,
     tickSpacing: controlled.pricing.tickSpacing };
   const dictionaries = { [p.lifecycleController.toLowerCase()]: controllerReads,
     [p.positionRecipient.toLowerCase()]: vaultReads, [p.oracle.toLowerCase()]: oracleReads,
-    [p.walletCap.toLowerCase()]: { controller: p.lifecycleController, controllerCodeHash: runtimeHash('lifecycleController'),
-      MAX_COMMITMENT: GENESIS_WALLET_CAP_WEI, totalCommitted: 0n },
     [auctionAddress]: auctionReads };
   for (const [target, updates] of Object.entries(options.overrides ?? {})) {
     Object.assign(dictionaries[target.toLowerCase()], updates);
@@ -325,7 +356,7 @@ async function rejectAuto(options, pattern, bind = false) {
   ), pattern);
   adversarial++;
 }
-for (const target of ['lifecycleController', 'positionRecipient', 'oracle', 'walletCap']) {
+for (const target of ['lifecycleController', 'positionRecipient', 'oracle']) {
   await rejectAuto({ empty: controlled.participants[target] }, /no runtime code/);
   await rejectAuto({ changedCode: controlled.participants[target] }, /runtime code hash mismatch/);
 }
@@ -345,8 +376,6 @@ for (const [target, field, value] of [
   ['positionRecipient', 'keeper', wrong], ['positionRecipient', 'emergencyLatched', true],
   ['positionRecipient', 'positionId', 1n], ['oracle', 'source', wrong], ['oracle', 'poolId', `0x${'00'.repeat(32)}`],
   ['oracle', 'baselineInitialized', true], ['oracle', 'consult', [1n, 1n]],
-  ['walletCap', 'controller', wrong], ['walletCap', 'controllerCodeHash', `0x${'ff'.repeat(32)}`],
-  ['walletCap', 'MAX_COMMITMENT', 2n * GENESIS_WALLET_CAP_WEI], ['walletCap', 'totalCommitted', 1n],
 ]) {
   await rejectAuto({ overrides: { [controlled.participants[target]]: { [field]: value } } }, /mismatch|not in the future|zero quote/);
 }

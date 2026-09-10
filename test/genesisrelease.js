@@ -30,8 +30,10 @@ const cadence = buildGenesisCadenceEvidence({
     finalizedBlock: String(50_000_080 + index * 450),
   })),
 });
+assert.equal(cadence.targets.auctionSeconds, 604800);
+assert.equal(cadence.targets.claimDelaySeconds, 86400);
 assert.equal(cadence.summary.medianCadenceMicros, 100_000n);
-assert.equal(cadence.summary.auctionBlocks, 2_592_000n);
+assert.equal(cadence.summary.auctionBlocks, 6_048_000n);
 assert.equal(cadence.summary.claimDelayBlocks, 864_000n);
 assert.equal(cadence.summary.maxFinalityLagBlocks, 20n);
 
@@ -46,7 +48,7 @@ const launch = {
   hook: '0x55555555555555555555555555555555555530cc',
   salt: `0x${'ab'.repeat(32)}`,
   startBlock: '51000000',
-  auctionBlocks: '2592000',
+  auctionBlocks: '6048000',
   prebidBlocks: '0',
   claimDelayBlocks: '864000',
   permit2Expiration: '1800000000',
@@ -150,7 +152,7 @@ assert.equal(manifest.status, 'ready_for_safe_execution');
 assert.equal(manifest.chainId, 4663);
 assert.equal(manifest.repository.commit, context.repository.commit);
 assert.equal(manifest.launch.launchCalldataKeccak256, launchCalldataKeccak256);
-assert.equal(manifest.launch.timeline.auctionBlocks, 2_592_000);
+assert.equal(manifest.launch.timeline.auctionBlocks, 6_048_000);
 assert.equal(manifest.timing.evidence.evidenceSha256, cadence.evidenceSha256);
 assert.equal(manifest.governance.treasuryAllocationOmr, GENESIS_DISTRIBUTION_OMR);
 assert.match(manifest.manifestSha256, /^[0-9a-f]{64}$/);
@@ -169,7 +171,8 @@ assert.throws(mutate((review) => { review.audit.scope.v4Oracle = false; }), /aud
 assert.throws(mutate((review) => { review.audit.unresolvedHigh = 1; }), /critical or high/);
 assert.throws(mutate((review) => { review.governance.launchSafe.owners[2] = owners[1]; }), /owners must be distinct/);
 assert.throws(mutate((review) => { review.governance.lpCustody.address = launch.treasury; }), /positionRecipient/);
-assert.throws(mutate((review) => { review.launch.auctionBlocks = '2591999'; }), /cadence-derived/);
+assert.throws(mutate((review) => { review.launch.auctionBlocks = '6047999'; }), /cadence-derived/);
+assert.throws(mutate((review) => { review.launch.auctionBlocks = '2592000'; }), /cadence-derived/);
 assert.throws(mutate((review) => { review.cadence.samples[4].blockNumberish = '50001799'; }),
   /evidenceSha256/);
 assert.throws(mutate((review) => { review.timingApproval.independentlyRecomputed = false; }),
@@ -199,14 +202,13 @@ Object.assign(autoInput.launch, { launchMode: 'automated',
   lifecycleController: '0x8888888888888888888888888888888888888888',
   oracle: '0x9999999999999999999999999999999999999999',
   liquidityKeeper: '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-  walletCap: '0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
   runtimeCodeHashes: Object.fromEntries(['token', 'hook', 'proceedsSplitter', 'lifecycleController',
-    'positionRecipient', 'oracle', 'walletCap'].map((name) => [name, hex32('a')])),
+    'positionRecipient', 'oracle'].map((name) => [name, hex32('a')])),
 });
 Object.assign(autoInput.audit.scope, Object.fromEntries(GENESIS_AUTOMATED_AUDIT_SCOPE.map((name) => [name, true])));
 Object.assign(autoInput.forkRehearsal, Object.fromEntries(['prePoolOracleBootstrap', 'controllerBoundBeforeStart',
   'exactFactoryPrediction', 'migrationToProtocolVault', 'oracleFullWindowRequired', 'keeperReceiptAccounting',
-  'walletCapEnforced', 'walletCapCumulative', 'walletCapRollback']
+  'uncappedBidding', 'zeroValidationHook']
   .map((name) => [name, true])));
 autoInput.governance.lpCustody.kind = 'protocol_liquidity_vault';
 const autoLaunch = buildGenesisLaunchArtifacts(autoInput.launch);
