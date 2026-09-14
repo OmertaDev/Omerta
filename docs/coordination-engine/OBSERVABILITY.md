@@ -1,0 +1,11 @@
+# Coordination observability
+
+The foundation uses the durable audit table as its metric source. `GET /v1/mod/coordination/metrics` returns versioned event totals by closed event type and instance totals by `active`, `completed` or `cancelled`. Phase 01 adds `knowledge: {claims, activeGrants, links, archiveEntries}` from the corresponding retained rows. Existing moderator authentication protects this endpoint; it is omitted from player OpenAPI. The endpoint returns no account, character, node, command, source or instance identifiers.
+
+Counters count committed transitions. A terminal action increments both node-completed and run-completed totals by design; these are different events, not duplicate completion. A repeated HTTP/domain key, refused revision or rollback contributes nothing. No separate best-effort telemetry insert can drift from state. SQL grouping reads retained events, so cost grows with history: this is acceptable for the bounded pilot, not an asserted mass-operation design.
+
+Pilot review should inspect started/completed/cancelled counts, correctness of expected event sequences and unexpected 4xx/5xx in the existing server logs. Avoid interpreting low participation as an engineering defect before checking the allowlist and content availability. No automatic alerting, histograms, public activity feed, cross-family coordination metric or durable worker consumer ships in this phase.
+
+Later phases add aggregate measurements with their data models: discovery-to-corroboration time, revocation latency, distinct contributing groups, approval latency, operation completion time, deadline lag, branch conflict/retry rate, abandonment, dependency depth and coordination complexity versus outcome. Define denominators, sampling, retention and secrecy before collecting them. Never use secret role, evidence ID, player ID or private answer as a metric label. Suppress small-cohort public statistics that would reveal private participation.
+
+Operational rollback sets the feature off and restarts API processes. Existing state and counters remain available. There is no new background worker or delivery queue to drain. Investigate state/receipt/event inconsistencies as integrity failures, not by deleting receipt rows or replaying a command with a fresh key.

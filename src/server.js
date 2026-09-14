@@ -111,6 +111,7 @@ import { register as registerLeaderboards } from './routes/leaderboards.js';
 import { register as registerModTools } from './routes/modtools.js';
 import { registerRwa } from './routes/rwa.js';
 import { register as registerContent } from './routes/content.js';
+import { register as registerCoordination } from './routes/coordination.js';
 import { register as registerWorldGraph, WORLD_GRAPH_CAPABILITIES } from './routes/worldgraph.js';
 import * as Phone from './phone.js';
 import * as Mega from './megaproject.js';
@@ -326,6 +327,7 @@ export async function buildServer() {
   // THE AGENT GATEWAY — collect every mounted route (this hook fires per registration) so the
   // OpenAPI 3.1 contract at /openapi.json is auto-derived and never drifts from what's live.
   const rwaReviewerRouteTrust = Symbol('rwa-reviewer-route-trust');
+  const coordinationReceiptTrust = Symbol('coordination-command-receipt-trust');
   const isTrustedReviewerConfig = (config) => config?.authKind === 'rwaReviewerAuth'
     && config?.rwaReviewerTrust === rwaReviewerRouteTrust;
   const routeRegistry = [];
@@ -1132,6 +1134,14 @@ export async function buildServer() {
         if (!row) continue; // released between our INSERT and this SELECT — loop and re-reserve, never proceed unreserved
         if (row.body_hash !== bodyHash)
           return reply.code(422).send({ error: 'idempotency_key_reuse', message: 'This Idempotency-Key was used with a different request.' });
+        if (row.status === 0 && req.routeOptions?.config?.coordinationReceipts === coordinationReceiptTrust) {
+          // Only these source-registered handlers commit a durable command receipt
+          // atomically with state/events under the account lock. They can resolve an
+          // exact pending request after a lost HTTP receipt-store acknowledgement,
+          // or serialize against its concurrent execution. Other handlers cannot.
+          req._idem = { key, bodyHash };
+          return;
+        }
         if (row.status === 0)
           return reply.code(409).header('retry-after', 1).send({ error: 'in_progress', message: 'A request with this key is still processing.' });
         return reply.code(row.status).header('x-idempotent-replay', 'true').type('application/json').send(row.response);
@@ -1141,7 +1151,7 @@ export async function buildServer() {
   });
   app.addHook('onSend', async (req, reply, payload) => {
     if (!req._idem || reply.getHeader('x-idempotent-replay')) return payload;
-    const { key } = req._idem;
+    const { key, bodyHash } = req._idem;
     // Only a genuine success is stored (and thus replayed). A 4xx/5xx RELEASES the
     // reservation so the key isn't poisoned — a transient "jailed" or a 429 must not
     // permanently lock the key out.
@@ -1162,12 +1172,15 @@ export async function buildServer() {
       // (red-team R15 F1) A swallowed store failure leaves a COMMITTED action's key at status=0 — the
       // orphan the long-horizon worker prune protects. Surface it so an operator sees the (rare)
       // committed-but-unstored seam rather than it vanishing silently.
-      await pool.query('UPDATE idempotency SET status=$3, response=$4 WHERE account_id=$1 AND key=$2',
-        [req.user.sub, key, reply.statusCode, storedPayload])
+      // A concurrent pending-receipt retry can outlive another callback that
+      // released this key. Compare the original request binding before storing;
+      // an older response cannot overwrite a replacement or finalized receipt.
+      await pool.query('UPDATE idempotency SET status=$3, response=$4 WHERE account_id=$1 AND key=$2 AND body_hash=$5 AND status=0',
+        [req.user.sub, key, reply.statusCode, storedPayload, bodyHash])
         .catch((e) => console.error('idempotency: store UPDATE failed — key left in-progress, value may have committed', e?.message));
     } else {
-      await pool.query('DELETE FROM idempotency WHERE account_id=$1 AND key=$2 AND status=0',
-        [req.user.sub, key]).catch(() => {});
+      await pool.query('DELETE FROM idempotency WHERE account_id=$1 AND key=$2 AND status=0 AND body_hash=$3',
+        [req.user.sub, key, bodyHash]).catch(() => {});
     }
     return payload;
   });
@@ -2113,6 +2126,7 @@ export async function buildServer() {
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Loans.repayHouseLoan(ch, client, h)));
   registerModTools(app, { pool, auth, modAuth, closeAccountSockets });
   registerContent(app, { pool, auth, modAuth });
+  registerCoordination(app, { pool, auth, modAuth, receiptTrust: coordinationReceiptTrust });
   registerWorldGraph(app, { pool, auth });
   app.post('/v1/loans/square', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Loans.squareWanted(ch, client, h)));

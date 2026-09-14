@@ -1,0 +1,110 @@
+Coordination Phase 01: membership and disclosure lock design
+Review date: 2026-09-13
+Baseline HEAD: 2b3feb7c807848564094c9b56d13fd7e41f97bae
+Scope: live claim read/share/revoke/gate authority against existing Crew/family/death writers.
+This design record precedes the executable Phase 01 PostgreSQL evidence. It is not a release clearance.
+The working tree includes unrelated preexisting modifications and untracked files.
+
+Pinned method checkouts verified with git rev-parse HEAD:
+pashov/skills       c577eb7799c349de0acb187ba00ca98e14e436fd
+PlamenTSV/plamen    795962b96e254f2e423a2635fe7f8cb8ea1e6d69
+trailofbits/skills  d3323cefbcf645678b8dc481de204b02ad3d02dc
+
+Applied method references (relative to each checkout):
+pashov: solidity-auditor/SKILL.md; references/hacking-agents/shared-rules.md,
+  access-control-agent.md, execution-trace-agent.md.
+Plamen: agents/depth-state-trace.md; agents/skills/injectable/l1/
+  consensus-tx-identity-invariants/SKILL.md.
+Trail of Bits: plugins/audit-context-building/skills/audit-context-building/SKILL.md
+  and resources/DOMAIN_NOTES.md.
+Adaptation: access-control surfaces, concrete interleaving traces, outside assumptions,
+canonical command/source identity, read/write coupling, proof-vs-lead separation.
+Solidity-specific orchestration, broad vulnerability databases, contract fuzzers,
+and chain deployment review are outside this JavaScript/SQL implementation scope.
+
+[Feynman: Crew.CREW_FIRST_CHARACTER_LOCKS]
+Existing-member Crew mutations first hold the Crew record, then the caller's current
+character and persistent account, then recheck the account's membership under its row lock.
+References: src/crew.js:CREW_FIRST_CHARACTER_LOCKS; src/game.js:withCharacter;
+src/server.js registrations of Crew.leaveCrew, kickMember, acceptRequest, setRecruiting.
+
+[Feynman: Crew.kickMember]
+The Crew leader can remove another account's membership without locking that account's
+character. Reading and locking only the caller character therefore cannot preserve
+the caller's Crew disclosure authority against a simultaneous kick.
+References: src/crew.js:kickMember; leaveCrew; acceptRequest; acceptInvite.
+
+[Feynman: family removeMember]
+Family membership belongs to a character. The caller's character/account locks precede
+the Family record and target membership. A boss can remove another character's membership
+without locking that target character. Death calls the same removal helper.
+References: src/social/gangs.js:removeMember, kickMember, leaveGang, promoteMember;
+src/social/estate.js:runEstate; src/social/shared.js:canCommand.
+Family promotion updates membership role directly, so a membership SHARE lock also protects
+future role-dependent readers against promotion/demotion within their transaction.
+
+[Socratic: knowledge context — why no organization record lock?]
+Acquiring a Crew record after runtime.actor would reverse the existing Crew-before-character
+order. Knowledge only requires the caller's membership record to preserve read permission;
+it does not execute organization actions, change capacity, or require leadership authority.
+Crew and Family membership tables have no organization foreign keys that silently add
+an organization row lock (schema.sql:crew_members, gang_members).
+
+Agreed Phase 01 lock order:
+1. Original current character, then accounts, via src/coordination/runtime.js:actor.
+2. Caller crew_members row FOR SHARE, then caller gang_members row FOR SHARE.
+3. Target coordination instance where applicable.
+4. Relevant claim rows FOR UPDATE in deterministic ID order, then their ACL/grant state.
+5. Append claim/link/archive/event/command rows without acquiring any organization,
+   foreign character, or foreign account locks afterward.
+The knowledge prelock entry is a checked no-op. The context does not lock crews/gangs.
+Catalog entries use separate checked transactions to avoid holding different graph claim
+batches in a conflicting order against globally ID-sorted board/archive/rebuild readers.
+One gate action retains its initial complete bounded candidate set and may add only its
+own newly inserted claim during the post-action projection. Rebuild locks the union of
+owned claims and archived foreign references before repairing FK-backed projections.
+Named-recipient selection reads the recipient identity without locking that other actor.
+Sharing freezes the server-resolved recipient principal; current reader membership
+determines whether that grant conveys access later.
+
+[Inversion: membership authority]
+Attack 1: hold a member's old board, let the leader kick the member, then execute its action.
+  Required result: fresh membership revalidation removes the foreign evidence and gate.
+Attack 2: start disclosure, remove membership while the read is constructing its projection.
+  Required result: the membership removal waits for the held membership row lock, or the
+  reader waits for removal and then omits the claim. No snapshot-only durable authorization.
+Attack 3: let a Family member die and gain an heir, then read or act using old Family access.
+  Required result: the account's own historical claims remain inspectable; old character
+  Family grants and old run advancement do not transfer to the heir.
+
+[Feynman: read transaction and revocation]
+withPhase2Read uses REPEATABLE READ READ ONLY on real PostgreSQL. It cannot take SHARE locks,
+and repeated queries can retain the snapshot that preceded a completed revocation.
+Knowledge-sensitive projections use a short checked transaction without domain writes,
+acquire membership and exclusive claim locks, and re-read grants after acquiring the claim lock.
+Revoke takes the same claim lock; share/revoke update independent ACL revision state.
+References: src/content/phase2-transactions.js:withPhase2Read, withPhase2Transaction.
+
+Disclosure linearization boundary:
+A checked projection whose authority locks precede a revocation/removal may finish while
+that mutation waits. A projection obtaining those locks after the mutation commits must
+deny the removed access. Already delivered information cannot be recalled. Responses use
+no-store; cached board actions and persisted command receipts grant no future authority.
+Receipts omit foreign evidence payloads and link/archive endpoint IDs. An owned-claim
+share/revoke receipt can return only that caller's own safe claim.
+
+[CROSS-DOMAIN-DEP: membership writers]
+All authority-changing member removal paths must actually delete/update the membership
+row read by knowledge. Existing Crew/family kick/leave/death paths were traced above.
+[CROSS-DOMAIN-DEP: transaction ownership]
+Runtime and knowledge share the same checked client and transaction. No nested transaction
+or second connection may be acquired while the authority locks are held.
+[CROSS-DOMAIN-DEP: transport receipts]
+HTTP idempotency and domain receipts must bind the same account, operation and exact body.
+Neither a replayed board nor a pre-reserved HTTP key can authorize a new transition.
+
+Planned real-PostgreSQL probes:
+Observed pg_stat_activity Lock waits in both revoke/read and membership/remove orderings;
+existing Crew and Family kick implementations; reciprocal claim operations; stale gate
+actions after revoke/removal; original-source independence; death/heir authority; atomic
+rollback and replay; bounded filtered boards and archives; no economy/item changes.

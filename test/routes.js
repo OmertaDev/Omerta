@@ -381,8 +381,16 @@ console.log(`✅ Mounted-surface test passed — ${app.routes.length} registrati
     'the deferred video poster must also have a phone-sized source');
   assert(landing.includes('data-src="/art/hype-money-720.mp4"'),
     'the narrated money map must provide a lighter phone encode');
+  assert(landing.includes('data-video-poster="/art/hype-flywheel-v3-poster-960.webp"')
+    && landing.includes('data-video-poster-mobile="/art/hype-flywheel-v3-poster-640.webp"'),
+  'the narrated flywheel must defer responsive campaign-specific posters');
+  assert(landing.includes('media="(max-width: 760px)" data-src="/art/hype-flywheel-v3-720.mp4"')
+    && landing.includes('data-src="/art/hype-flywheel-v3.mp4"'),
+  'the narrated flywheel must publish mobile and master sources');
   assert(!/<video[^>]+(?:\sposter|\ssrc)="\/art\/hype-money/.test(landing),
     'the below-fold video must not eagerly expose a poster or source on the cold visit');
+  assert(!/<video[^>]+(?:\sposter|\ssrc)="\/art\/hype-flywheel-v3/.test(landing),
+    'the flywheel must not eagerly expose a poster or source on the cold visit');
   for (const name of [
     'hero-poster-640.webp',
     'hero-poster-1920.webp',
@@ -390,6 +398,8 @@ console.log(`✅ Mounted-surface test passed — ${app.routes.length} registrati
     'gameplay-01-choose-your-path-1080.webp',
     'omr-03-money-router-1080.webp',
     'hype-money-poster-960.webp',
+    'hype-flywheel-v3-poster-960.webp',
+    'hype-flywheel-v3-poster-640.webp',
   ]) {
     const asset = await app.inject({ method: 'GET', url: `/art/${name}` });
     assert.equal(asset.statusCode, 200, `responsive landing asset ${name} must be mounted by /art`);
@@ -398,6 +408,11 @@ console.log(`✅ Mounted-surface test passed — ${app.routes.length} registrati
   const mobileVideo = await app.inject({ method: 'GET', url: '/art/hype-money-720.mp4', headers: { range: 'bytes=0-1023' } });
   assert.equal(mobileVideo.statusCode, 206, 'the lighter phone video must preserve range streaming');
   assert.equal(mobileVideo.headers['content-length'], '1024');
+  const flywheelVideo = await app.inject({
+    method: 'GET', url: '/art/hype-flywheel-v3-720.mp4', headers: { range: 'bytes=0-1023' },
+  });
+  assert.equal(flywheelVideo.statusCode, 206, 'the flywheel phone video must preserve range streaming');
+  assert.equal(flywheelVideo.headers['content-length'], '1024');
   console.log('✅ landing media is responsive, below-fold video is deferred, and the phone encode range-streams');
 }
 

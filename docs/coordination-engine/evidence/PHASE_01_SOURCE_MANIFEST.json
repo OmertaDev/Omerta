@@ -1,0 +1,311 @@
+{
+  "schemaVersion": 1,
+  "phase": "coordination-01",
+  "createdAt": "2026-09-13T17:34:07.524Z",
+  "baselineCommit": "2b3feb7c807848564094c9b56d13fd7e41f97bae",
+  "scope": "Additive inert distributed knowledge and scoped HTTP receipt finalization correction; no deployment or commit.",
+  "workingTreeCaveat": "Includes preexisting unrelated tracked modifications and untracked source. Hashes pin the reviewed working snapshot, not attribution or whole-application clearance.",
+  "nodeVersion": "v24.19.0",
+  "postgresVersion": "18.4",
+  "methodCommits": {
+    "pashov": "c577eb7799c349de0acb187ba00ca98e14e436fd",
+    "plamen": "795962b96e254f2e423a2635fe7f8cb8ea1e6d69",
+    "trailofbits": "d3323cefbcf645678b8dc481de204b02ad3d02dc"
+  },
+  "files": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "role": "implementation",
+      "sha256": "9f1b9fdb5a58473a43c03654e6fee0b66f5ad52d43340759d46a86e174f0c6bc",
+      "bytes": 18966
+    },
+    {
+      "path": "docs/coordination-engine/adr/ADR_003_KNOWLEDGE_IMMUTABILITY.md",
+      "role": "documentation",
+      "sha256": "76474e04af2d66816c1e213c4b73812075dd4a1f21e008be8199aa89cebc188a",
+      "bytes": 925
+    },
+    {
+      "path": "docs/coordination-engine/adr/ADR_004_AUTHORIZATION.md",
+      "role": "documentation",
+      "sha256": "2fc5d115827f3965e08f472ad9b15f48c1df4b1a3e7bfd0f56367f9db0a04fb0",
+      "bytes": 1385
+    },
+    {
+      "path": "docs/coordination-engine/ARCHITECTURE.md",
+      "role": "documentation",
+      "sha256": "855b3cfb395d47c524bffd3e064837cd728f4996998d08c3bc41abb3476a740e",
+      "bytes": 5872
+    },
+    {
+      "path": "docs/coordination-engine/DATA_MODEL.md",
+      "role": "documentation",
+      "sha256": "849d1cd250cb092ea1dffa5fc03546546a25e2e4797e4156513d6469a540a328",
+      "bytes": 10242
+    },
+    {
+      "path": "docs/coordination-engine/EVENT_CATALOG.md",
+      "role": "documentation",
+      "sha256": "7319a337cb1b231ea2a5ed47c38e6884e74bcc5a2f340b4688d2c9f3742021e5",
+      "bytes": 3784
+    },
+    {
+      "path": "docs/coordination-engine/MASTER_SPEC.md",
+      "role": "documentation",
+      "sha256": "0fbdf44f9f3db0772736ba71f1c65af2b24f5d6ba64b9f68de18786006951811",
+      "bytes": 7020
+    },
+    {
+      "path": "docs/coordination-engine/OBSERVABILITY.md",
+      "role": "documentation",
+      "sha256": "7c9243a9bd3c049626af767d029a89fcc5d75b1b1a5d2251bad7a9066fddffb3",
+      "bytes": 2286
+    },
+    {
+      "path": "docs/coordination-engine/PHASE_01_REVIEW.md",
+      "role": "documentation",
+      "sha256": "7c19ac2bb2a2d8b3d5335eee632cd5e71fc579c3159c029913fb87f3cce938c0",
+      "bytes": 13923
+    },
+    {
+      "path": "docs/coordination-engine/phases/PHASE_01_KNOWLEDGE.md",
+      "role": "documentation",
+      "sha256": "5d4baf4d24231a33b92177a3134a56c745ddb3a4c72c740d4ce3164319ced00a",
+      "bytes": 10180
+    },
+    {
+      "path": "docs/coordination-engine/README.md",
+      "role": "documentation",
+      "sha256": "dbb719ab62de8ff158cfe676d8d4c5da33a5712992584720fb68e409e6173eb1",
+      "bytes": 5955
+    },
+    {
+      "path": "docs/coordination-engine/REPO_MAP.md",
+      "role": "documentation",
+      "sha256": "307040190c4d23018a4485ad1b55f1d4e7be0fb7e5b851f91a1c286d30ad7812",
+      "bytes": 30612
+    },
+    {
+      "path": "docs/coordination-engine/SECURITY_INVARIANTS.md",
+      "role": "documentation",
+      "sha256": "a3855f6a4167053eea67ab149d9569600c667a96c958f67eb568d1b5f71a4bf3",
+      "bytes": 4975
+    },
+    {
+      "path": "docs/coordination-engine/tasks/TASK_INDEX.md",
+      "role": "documentation",
+      "sha256": "82d2d848c00102b765afb2d7af7921ee8832c884f9364c47f36443f36fbb57ee",
+      "bytes": 30415
+    },
+    {
+      "path": "docs/coordination-engine/TEST_STRATEGY.md",
+      "role": "documentation",
+      "sha256": "05b8329f5286695908201b62f5a08ac0c27bf69a03feaaace24f43c5bc2853d8",
+      "bytes": 5241
+    },
+    {
+      "path": "MARKETING-POSTS.md",
+      "role": "documentation",
+      "sha256": "ca6058f9dbbb7f4b248d9d772e533e74dc0f2fadbe60ab4da19d062a53d8cb04",
+      "bytes": 7182
+    },
+    {
+      "path": "omerta-contracts/SECURITY-REVIEW-POLICY.md",
+      "role": "context",
+      "sha256": "106336d2dbd0993e90a53e9de3f2e5aedb772605dff6398bffc82667b42b5e6d",
+      "bytes": 7323
+    },
+    {
+      "path": "package.json",
+      "role": "implementation",
+      "sha256": "aa06d7194ef3b88aab88c7492b5725d905f0421c7fd2335e683e768c24c63032",
+      "bytes": 14073
+    },
+    {
+      "path": "schema.sql",
+      "role": "implementation",
+      "sha256": "aa7afde0ab8e4c312c83babd24ab338f61e9ce0c7a73f324d7533cd9aaaf4389",
+      "bytes": 427193
+    },
+    {
+      "path": "SPEC.md",
+      "role": "documentation",
+      "sha256": "2a94084ed854b065b669e5de5ba0358b32c1b86aae0f9867b83b08409abfcbf8",
+      "bytes": 57431
+    },
+    {
+      "path": "src/agentgateway.js",
+      "role": "implementation",
+      "sha256": "aa779158b045b7ba681f7aceed9451d84beeaa2043cac71cbb4ee27114f5bad0",
+      "bytes": 99399
+    },
+    {
+      "path": "src/content/canonical.js",
+      "role": "context",
+      "sha256": "d012d76200806755da939f2c0559ac3ebce2a6c126de02482b0a376110c02848",
+      "bytes": 8549
+    },
+    {
+      "path": "src/content/phase2-transactions.js",
+      "role": "context",
+      "sha256": "267e94e92c040bc4f40c098af2dff4af35b800105b624056c83988a4c3233978",
+      "bytes": 5635
+    },
+    {
+      "path": "src/coordination/graph.js",
+      "role": "implementation",
+      "sha256": "00a83f656cb2c94d63eb9105ca6d057e00e3d41e94ba215d37c4c1d1c1bb8341",
+      "bytes": 16466
+    },
+    {
+      "path": "src/coordination/http-contract.js",
+      "role": "implementation",
+      "sha256": "240c35eea47723af64d9f920940b80e3103c580fead031f7ca87f623e5fe760d",
+      "bytes": 5880
+    },
+    {
+      "path": "src/coordination/knowledge.js",
+      "role": "implementation",
+      "sha256": "5fe1fa7b5b1d0e3d0e6f9ef91dd95e5d05d1ba4813f0fc01d69952b5aba6365b",
+      "bytes": 36268
+    },
+    {
+      "path": "src/coordination/pilot.js",
+      "role": "implementation",
+      "sha256": "1ce5d9516b1765dc8a871b95d6258df9566ee9a19b971729bf6f3357f2bc7b40",
+      "bytes": 4187
+    },
+    {
+      "path": "src/coordination/runtime.js",
+      "role": "implementation",
+      "sha256": "09a4a9de6808e4fc9c78fe10234a60d34f80059d4e7783c82c54e00b95d3648b",
+      "bytes": 23102
+    },
+    {
+      "path": "src/crew.js",
+      "role": "context",
+      "sha256": "55c80abdc0043d2bb1a3cd1b0aac58b1a97c0637d547f2d5b7f5806543fb7d28",
+      "bytes": 31955
+    },
+    {
+      "path": "src/db.js",
+      "role": "context",
+      "sha256": "2ef8926323ad266ef685856ebf7192f8005cc733eb104d5ddabf2bdc14fe1d52",
+      "bytes": 61568
+    },
+    {
+      "path": "src/game.js",
+      "role": "context",
+      "sha256": "7829195c2235b24d2a8e5d0c879e4c58ca31525a5d80884603ce4c15394d7fc4",
+      "bytes": 218275
+    },
+    {
+      "path": "src/preflight.js",
+      "role": "implementation",
+      "sha256": "d1fde80eedc1bf51b07c645f777950568fda1858e18ff42414ccc59217a37787",
+      "bytes": 35850
+    },
+    {
+      "path": "src/routes/coordination.js",
+      "role": "implementation",
+      "sha256": "fef364de5c4ab2396c4034d2fe9a33f2cb2427d537f996be5011d59eff57e434",
+      "bytes": 10387
+    },
+    {
+      "path": "src/server.js",
+      "role": "implementation",
+      "sha256": "b7db86603fbd9bfc0a3d00634c20a42882f19e3b453eac8d3395f2aee5ce7349",
+      "bytes": 277642
+    },
+    {
+      "path": "src/social/estate.js",
+      "role": "context",
+      "sha256": "e089698b3ae27ae51cdfff10d37167bb5547cff0b330f1f2542c01f56d7d579b",
+      "bytes": 45057
+    },
+    {
+      "path": "src/social/gangs.js",
+      "role": "context",
+      "sha256": "9abc71e53dd05d61fd1a974a501125a6380fcb82aa4cf02e3cd21ffab9b362de",
+      "bytes": 61418
+    },
+    {
+      "path": "src/social/shared.js",
+      "role": "context",
+      "sha256": "c430f7a1e6334b8b3585d0cf8c6a747a95bd0572984d9f00fca14bd113d840fe",
+      "bytes": 2475
+    },
+    {
+      "path": "test/coordination-api.js",
+      "role": "tests",
+      "sha256": "0e0173df0935e95549da11c85396fa6db3e20e0030a755e1eb97517e4b7cb8af",
+      "bytes": 20159
+    },
+    {
+      "path": "test/coordination-graph.js",
+      "role": "tests",
+      "sha256": "11aa5d7c36b01e6e3aa24ef1ae2c984a79f3f596196328a6a36e3d524798beb3",
+      "bytes": 23047
+    },
+    {
+      "path": "test/coordination-http-receipts.js",
+      "role": "tests",
+      "sha256": "9278dde093c2362213796520c64b213f8ff6cbae65c7a5258a78fcc0bfd2a35e",
+      "bytes": 3831
+    },
+    {
+      "path": "test/coordination-knowledge-api.js",
+      "role": "tests",
+      "sha256": "bde2d57e449a983c91e244aa925246c343dd283adc0688d5f14be9fdaadf3362",
+      "bytes": 12595
+    },
+    {
+      "path": "test/coordination-knowledge-postgres.js",
+      "role": "tests",
+      "sha256": "b2df5f7f263e25dd000f89deb5004cb292a1416526eadd83d5014f56ccb3c6b4",
+      "bytes": 19699
+    },
+    {
+      "path": "test/coordination-knowledge-runtime.js",
+      "role": "tests",
+      "sha256": "f35a6f3beac17a259c8a269ef61f6b653cc756e2284147687607e3212d84c4fb",
+      "bytes": 20929
+    },
+    {
+      "path": "test/coordination-knowledge.js",
+      "role": "tests",
+      "sha256": "f633a1ec49bb9bcc2eeaf85ef07ccd356be5b75ff8ebc425dd4ba62705ab87d0",
+      "bytes": 16068
+    },
+    {
+      "path": "test/coordination.js",
+      "role": "tests",
+      "sha256": "5cd961d2fd88560c93295e7886f166c4a66c2f42f2caf911f565b0eb4c4c5def",
+      "bytes": 13589
+    },
+    {
+      "path": "test/docs.js",
+      "role": "context",
+      "sha256": "457d77b5bff27ad77dcb8b52b9f00e0761db12d15a4c929c6d193712dbff9ab0",
+      "bytes": 316237
+    },
+    {
+      "path": "test/gates.js",
+      "role": "context",
+      "sha256": "7d4f3f29c2666e9b9a7ae91d64b39805c432cba9974c38fbabdecbccea1318d8",
+      "bytes": 263071
+    },
+    {
+      "path": "test/migrate.js",
+      "role": "context",
+      "sha256": "fa6cf8f3adb9b78aa4919814117de01992b7878e488bd64f149a977d1d779537",
+      "bytes": 72837
+    },
+    {
+      "path": "test/routes.js",
+      "role": "context",
+      "sha256": "f9c98815bafd90437be6eca042b1b67daf2f1ef3e7f3a0b232a9d5b08bde54b1",
+      "bytes": 39977
+    }
+  ]
+}

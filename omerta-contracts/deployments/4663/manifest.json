@@ -1,0 +1,268 @@
+{
+  "schemaVersion": 1,
+  "status": "accepted-deployment-dormant",
+  "recordedAt": "2026-09-11T06:49:05.179Z",
+  "network": {
+    "name": "Robinhood Chain",
+    "chainId": 4663,
+    "rpc": "https://rpc.mainnet.chain.robinhood.com/",
+    "explorer": "https://robinhoodchain.blockscout.com",
+    "nativeCurrency": { "name": "Ether", "symbol": "ETH", "decimals": 18 }
+  },
+  "source": {
+    "commit": "2b3feb7c807848564094c9b56d13fd7e41f97bae",
+    "solc": "0.8.26",
+    "optimizerRuns": 800,
+    "evmVersion": "cancun"
+  },
+  "verification": {
+    "checkedAt": "2026-09-11T06:42:15.485Z",
+    "snapshotBlock": "60052804",
+    "snapshotHash": "0xf8e6d55ec39c3e28b8082d176565b2b80b8c2c0c83196e0d51480a98001289ff",
+    "checks": 221,
+    "failures": 0,
+    "getterChecks": 126,
+    "runtimeTemplateMatches": true,
+    "explorerCreationTransactionsSuccessful": 21,
+    "explorerSourcesVerified": 0,
+    "liveReportSha256": "a76092ab1a9f63eea6475b85535f4a38a5be0865e5e42679e4c1262487ede5d7",
+    "method": "Sealed transaction inputs, runtime templates, constructor and configuration getters, governance Safe state, and Safe execution were checked against one live chain snapshot."
+  },
+  "governance": {
+    "safe": "0xBe225658718DCb3865902437887a11830E4a9b10",
+    "communitySafe": "0x785be68e426a382C52004e04340897F834F2FCaF",
+    "threshold": 2,
+    "ownerCount": 3,
+    "safeNonceAtVerification": "2",
+    "configurationTransaction": "0x468d4230cf0bb05ef95ef457387014082f4aab7804644aeab23b388b0d43804c"
+  },
+  "roles": {
+    "keeper": "0x6744b7c6ddB4aB6838fF4BBf063522c2d19bCA0E",
+    "guardian": "0x6744b7c6ddB4aB6838fF4BBf063522c2d19bCA0E"
+  },
+  "pool": {
+    "id": "0x5c8f2a22a4dcf1e792039f9adf54ec8b96842bca0522ff15f4178d503c5231d3",
+    "currency0": "0x0000000000000000000000000000000000000000",
+    "currency1": "0x2e82f8C1cFD5172612b3aF56088d7D68d920545D",
+    "fee": 3000,
+    "tickSpacing": 60,
+    "hook": "0x53d3Bf835DC77eb62bF6D4D0f90D9c8BEb2030cc",
+    "publicSwapRouter": null
+  },
+  "externalContracts": {
+    "PoolManager": "0x8366a39CC670B4001A1121B8F6A443A643e40951",
+    "PositionManager": "0x58daec3116aae6D93017bAAea7749052E8a04fA7",
+    "Permit2": "0x000000000022D473030F116dDEE9F6B43aC78BA3",
+    "LiquidityLauncher": "0x0000FffFBE8efE702c8703aE3477FF5dE3d319C0",
+    "LBPStrategy": "0x05d552391067389EE44fec3924157ed33F976000",
+    "CCAFactory": "0x000000001F26a0044BaA66024e7b6599c61963F8"
+  },
+  "contracts": {
+    "OMR": {
+      "address": "0x2e82f8C1cFD5172612b3aF56088d7D68d920545D",
+      "category": "token",
+      "purpose": "OMR utility token and the bond-only issuance boundary.",
+      "transactionHash": "0x409c7f757af23fb6774ec11a83e594f13507a7224fd415437ab9d8ddc206a5aa",
+      "deploymentBlock": "59875569",
+      "deployerNonce": 0,
+      "runtimeHash": "0x9764f5d29297e9ca3b22b5f7e501fbd0629d93be1b4a08db74a461559b3c1d12"
+    },
+    "GearVault": {
+      "address": "0x73A9739956336B0bF4d082D0FA07f6829bC62f07",
+      "category": "settlement",
+      "purpose": "ERC-1155 custody and extraction for on-chain gear.",
+      "transactionHash": "0xb2c637a1cdfbc681abfee48e614eb9439be3ab7b36663cb94e8d77083af258f8",
+      "deploymentBlock": "59890667",
+      "deployerNonce": 1,
+      "runtimeHash": "0x58ddb36e479829e3c13ed9cbdc2c4a78b6950a400e03bc2064546372387c5668"
+    },
+    "VoucherClaim": {
+      "address": "0x7b16cfE21e5e3f5cF2a9c6e72163F3A5F9d4b3f3",
+      "category": "settlement",
+      "purpose": "EIP-712 OMR and gear extraction claims backed by funded inventory.",
+      "transactionHash": "0xd491f78d5d53ea1fb34aefea00acfb436fb155a4413e26e5f5180be7f3b683b3",
+      "deploymentBlock": "59891287",
+      "deployerNonce": 2,
+      "runtimeHash": "0x92e68c9e15716d49631bea860bc6e21f0cca6d9b58119b4e5810b59175f4f8ed"
+    },
+    "OMRStaking": {
+      "address": "0x834B70Bed0e882d36DCbf4683fe9dAb64e2fC529",
+      "category": "defi",
+      "purpose": "Non-custodial OMR staking with explicitly funded rewards.",
+      "transactionHash": "0x95f89c686cd62b0e5117ea38c593248feb4a1b48c2a9ec468541bbbd3ca45e44",
+      "deploymentBlock": "59891571",
+      "deployerNonce": 3,
+      "runtimeHash": "0xf8c4974df992ea8b70f380ff82a8b8b1d953ae414065038be69811a83d184fdf"
+    },
+    "OmertaFees": {
+      "address": "0x69c037751e3F8c076089038d9F6988dDA0cf0bAA",
+      "category": "revenue",
+      "purpose": "Character and package ETH fee collection and routing.",
+      "transactionHash": "0x6e183e0f942ebbd0029a5f908bf236a048107be6c572cb10e4b5d1e66c507bec",
+      "deploymentBlock": "59891800",
+      "deployerNonce": 4,
+      "runtimeHash": "0xd62dcc1c7fea7321599d22b524388603d89b691878e2340027c9cffd8ed54831"
+    },
+    "StreetDeed": {
+      "address": "0xF3D56cea0C7BF005F10DeCbE646cFdd6bD609372",
+      "category": "settlement",
+      "purpose": "ERC-721 extraction and re-entry rail for street deeds.",
+      "transactionHash": "0x1538eea3049ad2f208f53bb6b8a6b8a6a47e46c836ee5e8c0e578a125d10fa92",
+      "deploymentBlock": "59892025",
+      "deployerNonce": 5,
+      "runtimeHash": "0xf38d17a3e0dec6ebd7d1b9f60c1bbfb57c0dd7c83f2ce79158a45bb3ff171aca"
+    },
+    "DynastyNFT": {
+      "address": "0x669C8878A2Db3C3d0f7A447f398dAA3178a0200B",
+      "category": "settlement",
+      "purpose": "ERC-721 dynasty identity and provenance collectible.",
+      "transactionHash": "0x51cb51b651df2af048dcfb96d630ea5ff13b517108867d5e0526d39e99442f39",
+      "deploymentBlock": "59892366",
+      "deployerNonce": 6,
+      "runtimeHash": "0x4a0612d384367eeb7e22885091280d7cb7e926ef263a3ad2e21b7bdc12d26e0f"
+    },
+    "StockVault": {
+      "address": "0x7Ba605Fef2f0642847fd5a39dE9fd80392E38C30",
+      "category": "settlement",
+      "purpose": "Capped stock-token delivery vault.",
+      "transactionHash": "0xfa2396e8a847e836f10bef1ef4284f4bb3c9149e98a425441459c7c55e024b27",
+      "deploymentBlock": "59892671",
+      "deployerNonce": 7,
+      "runtimeHash": "0x2ee5f51f748021aadae8b01cef71da71b1696fd3c57f62e56504b446596f0619"
+    },
+    "GenesisOracle": {
+      "address": "0x4A4D996Ee2EF503602B68597467248A6E8EC195a",
+      "category": "oracle",
+      "purpose": "Owner-published Genesis price rail retained for core compatibility.",
+      "transactionHash": "0x3573dc1bbf2b1743735400c8522d2129a4bb9c0cd521801043339f7e959397e5",
+      "deploymentBlock": "59892986",
+      "deployerNonce": 8,
+      "runtimeHash": "0x84b1e15c39ae8cb0ed6ab3532282839960cbcad73a90477d97c8c4aa6ce14870"
+    },
+    "OmertaBond": {
+      "address": "0xA15933Cb7c05c43bfdf97CC7f7809511530dC4CF",
+      "category": "defi",
+      "purpose": "Signed ETH-to-OMR reserve bonds with oracle and liquidity-health walls.",
+      "transactionHash": "0xf7d4d6dca91a85952ff20960fd3b810ca99e40dfd874b252e16a08a57ddaa3b2",
+      "deploymentBlock": "59893378",
+      "deployerNonce": 9,
+      "runtimeHash": "0xe03a23f46c3f0e3a011e613c46f391c37ae3657967681409229051878916607e"
+    },
+    "OmertaHook": {
+      "address": "0x53d3Bf835DC77eb62bF6D4D0f90D9c8BEb2030cc",
+      "category": "market",
+      "purpose": "Canonical Uniswap v4 pool guard, fee accounting, and sell-tax hook.",
+      "transactionHash": "0x4bee7c8d8a0a440317b9faf8c9035458e528097d8bc3367b1c5c10bd695451c2",
+      "deploymentBlock": "59902839",
+      "deployerNonce": 11,
+      "runtimeHash": "0x36313f2e02edd45c80d16e6aee29df9ca36a272903edb1f7730d1ab8aa72d72c"
+    },
+    "OmrV4TwapOracle": {
+      "address": "0x8BC63E0dD9C5bEd48681AB50Bbd1ebf8F2359B90",
+      "category": "oracle",
+      "purpose": "Canonical pool time-weighted OMR per ETH oracle.",
+      "transactionHash": "0x6f4f062b033f50249ce3394ca16737057e89793c072b3596763657134ea7b890",
+      "deploymentBlock": "59904894",
+      "deployerNonce": 12,
+      "runtimeHash": "0x868c0f188ff8c98211518cd0feb6adf63e763039ed7c998de63e31cd37105fa1"
+    },
+    "GenesisProceedsSplitter": {
+      "address": "0x926ad21DBd951d58e86955724C8FdB981FD196A6",
+      "category": "genesis",
+      "purpose": "Immutable post-auction native proceeds and recovery splitter.",
+      "transactionHash": "0xc0db782984a5470f94a989cffc4c0b93726c06407c78d54a07a0d37e6f1e29cb",
+      "deploymentBlock": "60032644",
+      "deployerNonce": 15,
+      "runtimeHash": "0x3b86cc50f1e93c42fa5c37eeac6aadfdf0fd83e260e7cf122c90de625fa5fe26"
+    },
+    "ProtocolLiquidityVault": {
+      "address": "0x2Feac450365fE3a10748e41EB5dcA6403B6AD583",
+      "category": "liquidity",
+      "purpose": "Safe-owned protocol liquidity position, fee collection, and health guard.",
+      "transactionHash": "0xe42285a3ee2ca795cf430cc6aa4dfe92d306e7f89e5fed0dc59d42ba62d94d97",
+      "deploymentBlock": "60046114",
+      "deployerNonce": 16,
+      "runtimeHash": "0x4f41bab03a1a5a5b69e44a859405b59131f3982e40b65527f83760e21fe392dd"
+    },
+    "VigBuyback": {
+      "address": "0xeB369f53bfE6d28e92dD9E03d98E160122860DA1",
+      "contract": "LiquidityBuybackExecutor",
+      "category": "automation",
+      "purpose": "Vig revenue buyback stream to extraction custody.",
+      "transactionHash": "0xa7f4bd8d87958ccaed008d662c658e4f2a14919b47560895e2b7a735f06a9a79",
+      "deploymentBlock": "60046512",
+      "deployerNonce": 17,
+      "runtimeHash": "0xa45ffafaeacca0875f1052b14f6cd6f61523a46051159d3c09958c3732ee1899"
+    },
+    "DeskBuyback": {
+      "address": "0x071Fc5b7FdFFbC1c4fCe5D9814A91Ecb028B5700",
+      "contract": "LiquidityBuybackExecutor",
+      "category": "automation",
+      "purpose": "Desk revenue buyback stream to extraction custody.",
+      "transactionHash": "0x38a0da14c2417c6f0e5aa85137ad5e6120269d8eecd790363e699fe56c9cb15a",
+      "deploymentBlock": "60046736",
+      "deployerNonce": 18,
+      "runtimeHash": "0x6ca2aefaafa2a705df8de588395e6998049fde13baff0a6f43b00c9138f0457d"
+    },
+    "CommunityBuyback": {
+      "address": "0x7849bb8560d6b48BD0b2E21182855ddF19554B35",
+      "contract": "LiquidityBuybackExecutor",
+      "category": "automation",
+      "purpose": "Community revenue buyback stream to community custody.",
+      "transactionHash": "0x855a3c850c3a2dfda34fdfa8a948535d0ce87a1e98004a0d4bb9040a98f5d197",
+      "deploymentBlock": "60046916",
+      "deployerNonce": 19,
+      "runtimeHash": "0xf34b1e4da4821d1da1c5a06893501d2db9fb92c185ab6515c8d425ad660b901e"
+    },
+    "PolBuyback": {
+      "address": "0xd331Be25e3CC635C42b948A2F254Df5242d9DeCc",
+      "contract": "LiquidityBuybackExecutor",
+      "category": "automation",
+      "purpose": "Protocol-owned-liquidity inventory buyback stream.",
+      "transactionHash": "0xe6ec147f295ee5d9d243ba2da149a9c0dff877ca40a8166eb03b82bc1059a65e",
+      "deploymentBlock": "60047140",
+      "deployerNonce": 20,
+      "runtimeHash": "0x7a19e2717ead844d7ac0840a535926b955a1b3a9de891e7e2a9e2b34cf901453"
+    },
+    "FeeRevenueRouter": {
+      "address": "0xBD869e17Ee46607F57517f891f1e8AF3aD446e1b",
+      "category": "revenue",
+      "purpose": "Immutable non-mint ETH revenue routing policy.",
+      "transactionHash": "0xba8aa3bcca086a106075e96c033891a1b2a67b0fefcf19088cb17e7f7e238fc8",
+      "deploymentBlock": "60047370",
+      "deployerNonce": 21,
+      "runtimeHash": "0x7a2246e5b13b20e54fa11ab275b9126aa103fe4b4c22c79fc66a9c098f4d2032"
+    },
+    "KeeperGasVault": {
+      "address": "0x2911E5d82491B9e09bcBd1118676FFFd2eA8D26A",
+      "category": "automation",
+      "purpose": "Budgeted native-gas refill rail for the liquidity keeper.",
+      "transactionHash": "0xdb2dbe26f2242f19972c590901a941e03f4196f4b05e99d87a831c4ed27dc41d",
+      "deploymentBlock": "60047610",
+      "deployerNonce": 22,
+      "runtimeHash": "0x0cf5dfc4a8918c77f29d9af37ba29b5835cd8e44fc73f04b581299e1b1d4476d"
+    },
+    "GenesisLifecycleController": {
+      "address": "0xDf0f80E7D683B920fDd6936210A455f0a3fd43F7",
+      "category": "genesis",
+      "purpose": "Permissionless fail-closed auction, migration, oracle warmup, and activation state machine.",
+      "transactionHash": "0xa502f6772f570f937a1ce1b038561df9e9aecb7f0d3a49fe235ad069fcb29946",
+      "deploymentBlock": "60047843",
+      "deployerNonce": 23,
+      "runtimeHash": "0xace68f80117d7d82657613ab65f21dbaf3a39c51001135e8513ce4a2d0e0c465"
+    }
+  },
+  "dormantStateAtAcceptance": {
+    "genesisAuction": "0x0000000000000000000000000000000000000000",
+    "canonicalPoolInitialized": false,
+    "oracleBaselineInitialized": false,
+    "protocolLiquidityHealthy": false,
+    "bondPaused": true,
+    "bondDailyCapOMR": "0",
+    "activation": false
+  },
+  "excluded": {
+    "abandonedSplitter": "0xc6e998e561b9833b9817229fa2C5a2bEb3d83Df7",
+    "malformedNonce10Create": "0x37Ae2a276bcd56C28F97c93bCDD1C023AEEf4e35"
+  }
+}

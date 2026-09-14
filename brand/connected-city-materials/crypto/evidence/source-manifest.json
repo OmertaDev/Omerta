@@ -1,0 +1,92 @@
+{
+  "capturedAt": "2026-09-14T19:12:43.512Z",
+  "head": "ebf3f033da16b304a54aa55f0718fc5f5c35d8f1",
+  "scope": "Marketing source snapshot. Working-tree sources may differ from HEAD. No live RPC checks or security review were performed for this collection.",
+  "files": [
+    {
+      "path": "omerta-contracts/docs/market-v2/DESIGN.md",
+      "sha256": "be8b601c8a191a56fd2d57eb478bd8c08bd3533503950c143acc11852370ca83",
+      "gitStatus": "?? omerta-contracts/docs/market-v2/DESIGN.md"
+    },
+    {
+      "path": "omerta-contracts/docs/market-v2/RUNBOOK.md",
+      "sha256": "e6fee14b5f7fffae86d9a0e74099299231c0fe5b0cc2df99098f9e6fded3ed92",
+      "gitStatus": "?? omerta-contracts/docs/market-v2/RUNBOOK.md"
+    },
+    {
+      "path": "omerta-contracts/src/market-v2/OmertaHookV2.sol",
+      "sha256": "fc8b9eb84ade96cb8d6c9e9b5db3b69372bfe33174fef65d05549733687c69ea",
+      "gitStatus": "?? omerta-contracts/src/market-v2/OmertaHookV2.sol"
+    },
+    {
+      "path": "omerta-contracts/src/market-v2/OmertaStabilityControllerV2.sol",
+      "sha256": "e2d4200aa9ad51c1df2567ad52708d719fa11a9b693bf5c7acd2943f5b6cd645",
+      "gitStatus": "?? omerta-contracts/src/market-v2/OmertaStabilityControllerV2.sol"
+    },
+    {
+      "path": "omerta-contracts/src/market-v2/OmertaTurfV2.sol",
+      "sha256": "6c08e149aef906db41cddef80250e0327d1906ecacae74158a7a5d2b2a47aeb1",
+      "gitStatus": "?? omerta-contracts/src/market-v2/OmertaTurfV2.sol"
+    },
+    {
+      "path": "omerta-contracts/src/market-v2/OmertaGameSettlementV2.sol",
+      "sha256": "f9deb4e087904a2796619a317acbd64fef32e35e3b67f434561b4b14e813888f",
+      "gitStatus": "?? omerta-contracts/src/market-v2/OmertaGameSettlementV2.sol"
+    },
+    {
+      "path": "omerta-contracts/src/market-v2/OmertaReserveFundingV2.sol",
+      "sha256": "142d00824aeaaa2c40fd861ced331461e8989b199a68355c4bfafe04fa4cbce3",
+      "gitStatus": "?? omerta-contracts/src/market-v2/OmertaReserveFundingV2.sol"
+    },
+    {
+      "path": "omerta-contracts/src/market-v2/OmertaCommitmentVaultV2.sol",
+      "sha256": "605e24016bad0f6b58e7c872d0eed72885d7a65639a5cd3b19a0fb3dd79f1b04",
+      "gitStatus": "?? omerta-contracts/src/market-v2/OmertaCommitmentVaultV2.sol"
+    },
+    {
+      "path": "omerta-contracts/src/market-v2/OmertaInventoryBondV2.sol",
+      "sha256": "2c46d627b7f4ac92131cd9d448e42235ab34b2d1b37d1875d2856702e56aa66f",
+      "gitStatus": "?? omerta-contracts/src/market-v2/OmertaInventoryBondV2.sol"
+    },
+    {
+      "path": "SPEC.md",
+      "sha256": "2a94084ed854b065b669e5de5ba0358b32c1b86aae0f9867b83b08409abfcbf8",
+      "gitStatus": "M SPEC.md"
+    },
+    {
+      "path": "docs/coordination-engine/README.md",
+      "sha256": "dbb719ab62de8ff158cfe676d8d4c5da33a5712992584720fb68e409e6173eb1",
+      "gitStatus": "?? docs/coordination-engine/README.md"
+    },
+    {
+      "path": "docs/coordination-engine/evidence/phase1-verification-summary.json",
+      "sha256": "5441ceeabd333822856a37546027337daaa584506551ec8df894e4cbcd6ba977",
+      "gitStatus": "?? docs/coordination-engine/evidence/phase1-verification-summary.json"
+    },
+    {
+      "path": "omerta-contracts/test/market-v2/OmertaHookV2.t.sol",
+      "sha256": "913c5fc78e126b5ad6b00ed5ba155e2c6e612188482b64eb0116b0a82b57b15e",
+      "gitStatus": "?? omerta-contracts/test/market-v2/OmertaHookV2.t.sol"
+    },
+    {
+      "path": "omerta-contracts/test/market-v2/StabilityV2.t.sol",
+      "sha256": "c90c6ebc33e3f383592b8867a4dae6808343688385dd5442dafa63996c5c2847",
+      "gitStatus": "?? omerta-contracts/test/market-v2/StabilityV2.t.sol"
+    },
+    {
+      "path": "omerta-contracts/test/market-v2/TurfV2.t.sol",
+      "sha256": "ce0e81265fcb3b7681662354d3729df632ce9571846cb777997b4f2a3523cb60",
+      "gitStatus": "?? omerta-contracts/test/market-v2/TurfV2.t.sol"
+    },
+    {
+      "path": "test/coordination-knowledge.js",
+      "sha256": "f633a1ec49bb9bcc2eeaf85ef07ccd356be5b75ff8ebc425dd4ba62705ab87d0",
+      "gitStatus": "?? test/coordination-knowledge.js"
+    },
+    {
+      "path": "brand/connected-city-materials/next/developer/example-results.json",
+      "sha256": "a2cd807523c2e7aeeb252c170487fe9bae25eadad67a5945507669d78bb0dafc",
+      "gitStatus": "clean"
+    }
+  ]
+}

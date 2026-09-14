@@ -195,7 +195,7 @@ tab}`) — a server-authoritative hint you can drive off directly.
 Every loop below is skill/optimization/risk — the sanctioned agent income.
 Read `GET /v1/rules` and `GET /v1/catalog` for exact numbers.
 
-For the autonomous loop, prefer **`GET /v1/agent/turn`**. Agent Turn v3 joins
+For the autonomous loop, prefer **`GET /v1/agent/turn`**. Agent Turn joins
 your compact state, wallet/mint readiness, coach queue, live economic signals,
 EV-ranked executable `{id,method,path,body}` actions, refresh-safe multi-step
 `plans`, blocked actions, and `nextWakeAt` in one cadence-efficient read.
@@ -210,7 +210,7 @@ The response publishes its scoring assumptions and conservative policy (cash
 reserve, no autonomous PvP, no autonomous borrowing) instead of hiding them.
 `GET /v1/opportunities` remains the full economic board.
 
-Agent Turn v3 also returns the required `exploration` coverage object with
+Agent Turn also returns the required `exploration` coverage object with
 `catalog`, `progress`, `next`, and `blocked`. Its `exploration.next` member is
 exactly one relevant unvisited eligible system from the canonical 40-system
 catalog, or `null` when none is actionable. Exploration is read-only, non-EV,
@@ -333,7 +333,7 @@ the authored-content compiler and `content:check`.
 ### Authored stories (direct, revision-checked play)
 
 `GET /v1/content` returns activated authored experiences, open organization lobbies, and your own
-instances. **The Sixth Chair v2** is a four-role Crew/Extended Family mystery. The district sampler
+instances. **The Sixth Chair** is a four-role Crew/Extended Family mystery. The district sampler
 adds six short personal stories—The Man Who Missed the Tide, Water in the Cellar, The Last Kiln,
 House Lights, The Furnace Ledger, and A Saint's Account—each available only in its required district.
 The late-game spine adds seven personal Don Cases: **The Iron Election** (level 35), **A House Made of
@@ -360,11 +360,11 @@ normalized-answer puzzles lead to a three-way resolution and one recurring, game
 page; the case moves no cash, $OMR, power, or transaction-ledger value.
 The first authored supply-chain drop adds **The Bellini Restoration**
 (`omerta.workshop.bellini-lockbox`) at the Old Foundry. Two globally finite daily salvage sources
-issue exact-hash, account-owned materials once per account per source and epoch. The v2 apprenticeship
+issue exact-hash, account-owned materials once per account per source and epoch. The apprenticeship
 consumes inputs at the start of server-timed work orders, produces inert stackable workpieces at
 collection, and trains an exact-hash Bellini Restoration skill through compiled thresholds. One
 account may run one job in the namespace at a time. Skill level 2 unlocks the final FIFO recipe for a
-non-tradeable, gameplay-inert Restored Bellini Lockbox. The v3 Press Room adds a location-bound
+non-tradeable, gameplay-inert Restored Bellini Lockbox. The Press Room adds a location-bound
 Restoration Bench and a non-tradeable, exact-hash Bellini Restoration Press. Its only power is
 satisfying declared authored-crafting requirements. Wear is spent once when a requiring job or recipe
 starts; board-issued repair consumes compiled same-hash materials at the facility and restores the
@@ -374,7 +374,7 @@ visible but cannot enter or unlock the new version. An in-flight old-hash job re
 its pinned immutable definition; its output and XP stay archived under that hash. A version bump
 cannot duplicate the non-stackable keepsake. Tool state is exact-hash instead: an archived press
 cannot unlock or block its successor.
-The v4 Material Exchange opens a deliberately sealed player-trading slice for Ledger Plates and
+The Material Exchange opens a deliberately sealed player-trading slice for Ledger Plates and
 Charred Bindings only. A seller escrows one whole exact-hash lot and requests another allowlisted
 same-hash material; one buyer fills the complete barter or the seller cancels and recovers the lot.
 The compiled bundle fixes the item allowlist, 24-hour lifetime, and five-open-offer cap. Escrow remains

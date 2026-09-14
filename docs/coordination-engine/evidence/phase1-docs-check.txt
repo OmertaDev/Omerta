@@ -1,0 +1,22 @@
+✅ docs test passed — every number in SPEC.md's size table checked against the tree (235 src files / 98102 lines, 204 suites, 352 tables, 566 markdown files), the rules-seam figures are current, the false "re-apply by hand" warning cannot come back, no doc misstates its own size by more than 25%, and all 96 audit reports are indexed as point-in-time with none phantom.
+✓ all 26 ownable contracts hand ownership over in two steps
+✓ the risk register's 7 lever-derived figures match the live levers in both codices
+✓ no launch-gating doc calls an existing contract unwritten (205 mentions), and the batch matches the tree (38 contracts + 1 interface)
+✓ the audit packet agrees with itself (21 contracts + 3 interfaces, 387/22 tests/suites, measured 2026-08-27)
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: the O1 packet's scope table omits OmertaArbitrageV2, OmertaCommitmentVaultV2, OmertaGameSettlementV2, OmertaHookV2, OmertaInventoryBondV2, OmertaMarketStateV2, OmertaReserveFundingV2, OmertaStabilityControllerV2, OmertaTurfFeeBridgeV2, OmertaTurfV2, IOmertaMarketStateV2. An auditor scopes from that table, so a contract missing from it is one nobody reviews — and adding it after the engagement means paying to re-audit, which is what "batch, not dribble" exists to prevent
+    at file:///C:/Users/Jorge/Documents/Omerta/test/docs.js:1395:10 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 11,
+  expected: 0,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.19.0
+Command: node test/docs.js
+Exit code: 1

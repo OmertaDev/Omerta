@@ -1,0 +1,20 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"character cash","lhs":119186,"rhs":106841,"drift":12345,"ok":false}]
+[slow] GET /card/legend/Broadcast%20Bruno.png 200 1049ms
+✓ X integrations: full PKCE exchange + replay, upgrade + identity collision, x_busy transient semantics, post author binding, follow pagination
+[db] unreachable: connect ECONNREFUSED
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"character cash","lhs":1477500,"rhs":-22500,"drift":1500000,"ok":false}]
+🚨 BACKUP INVARIANT DRIFT: [{"name":"wal archiving off","archiveMode":"off","note":"no PITR"}]
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"character cash","lhs":1477500,"rhs":-22500,"drift":1500000,"ok":false}]
+🚨 WORKER INVARIANT DRIFT: [{"name":"worker heartbeat","ok":true,"detail":"recovered — beat 12s ago."}]
+🚨 WORKER INVARIANT DRIFT: [{"name":"worker heartbeat","ok":false,"detail":"no beat in 880 minutes."}]
+🚨 TEST INVARIANT DRIFT: [{"name":"test alert","note":"fired from /admin — this is a drill, nothing is wrong"}]
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"character cash","lhs":1477500,"rhs":-22500,"drift":1500000,"ok":false}]
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"character cash","lhs":1477500,"rhs":-22500,"drift":1500000,"ok":false}]
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"character cash","lhs":1477500,"rhs":-22500,"drift":1500000,"ok":false}]
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"character cash","lhs":1477500,"rhs":-22500,"drift":1500000,"ok":false}]
+invariant webhook failed after 3 attempts EAI_AGAIN
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"x","ok":false}]
+[db] ⚠ this build (v1.2.0) is OLDER than the build that last migrated this database (v999.0.0) — likely a rollback in progress. Additive-only schema discipline makes this safe to run; see DEPLOY.md § Rolling back a bad deploy.
+✅ the API watches the worker: pages on the dark edge, latches, announces recovery, and pages again on the next episode
+✅ M5 hardening test passed — §10.4 invariant job (zero drift on an earned economy, drift alarm fires), idempotency keys, invite codes, X OAuth + guest upgrade, season rollover, rate limits (human burst / agent 1-per-3s / swap 6-per-min), catalog item art (105 icons — 105 generated photos, SVG emblem fallback), THE BROADCAST (dossier/cards/profile, no exact-wealth leak, clean fallbacks), PRESENCE + THE TROLL BOX (online counter, city + family-gated chat, sanitized + flood-braked), ONE-CLICK X SIGN-IN (PKCE start/state/callback surface, dormant without env), THE CELLPHONE (DM send/gates/flood brake, threads + unread + seen, inbox peek without flipping delivered, zero ledger rows) + STEP TWO BLOCKED LINES (block/unblock, dead tone both directions, board + thread surfacing, history stands, self/double gates), DB-DOWN LEGIBILITY (503 db_down not 500 internal, GET /health up+down+recovery, real bugs still report as bugs), THE LOCK-FREE READ PATH (D1: a clean read is served without FOR UPDATE, a read with real accrual behind it declines and the route re-runs under the lock so the banked state and the rendered view agree, a read still CHECKPOINTS accrual while a read with nothing to bank leaves the clock alone, and the write guard refuses ten write/lock forms including MERGE, COPY, SELECT-INTO, setval and FOR UPDATE without refusing three legitimate reads), BACKUP HEALTH (pg_stat_archiver: shipping/failing/healed-not-realarming/quiet/unsupported, surfaced on the ops dashboard, and archive_mode=off reads as NOT RUNNING rather than healthy — the worker alerts on both), STREET LIFE (the black book: no_number gate, a jump-meeting is mutual, blocks precede the number gate; THE CALL: contact-only generation, one-open-call PK, located freight fulfilment paid from the contact's own pocket — contact:* legs net to zero, broke-void, expiry sweep) + STEP TWO THE BOOK (a ladder derived from the lines you hold, per-contact STANDING deepening with every settled call so a regular's next request is BIGGER — capped, and still refused outright when they can't cover it, so recycle-only holds at every tier — plus the lines-held leaderboard with residents excluded)

@@ -1,5 +1,7 @@
 # Phase 2A Task 3 — Definition Registry Amendment
 
+> **Current development workflow:** The [2026-09-13 workflow amendment](2026-09-13-world-graph-phase-2a-development-workflow-amendment.md) supersedes all conflicting review, TDD, orchestration, commit, repeated-test, and documentation-cadence requirements below. Technical acceptance criteria remain in force.
+
 Date: 2026-09-07. Status: approved design amendment. Supersedes conflicting Task 3 wording in the Phase 2A specification, implementation plan, architecture review, and resume preflight. The reviewed Task 2 authored commit is `09ccf7f705008bf8b91eb16fc70f6a0cf991eb1d`. Implementation remains gated on the controller's clean full-suite baseline, technical reviews, independent verification, and scoped commits. Execution continues in the existing Phase 2A plan and SDD workspace.
 
 ## Deliverable and boundaries

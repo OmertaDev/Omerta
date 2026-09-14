@@ -1,0 +1,106 @@
+{
+  "campaign": "The city has a treasury.",
+  "created": "2026-09-13",
+  "release": "Built and tested locally; not deployed or funded.",
+  "assets": [
+    {
+      "id": "01-city-treasury",
+      "title": "The city has a treasury.",
+      "category": "Campaign reveal",
+      "description": "A noir city inside the vault. The central image for the Market V2 reveal.",
+      "file": "png/01-city-treasury.png",
+      "svg": null,
+      "width": 1122,
+      "height": 1402,
+      "bytes": 2272770,
+      "sha256": "b2255a6fb7c89e17f90c66a8efbf4327673120df10e6158a9523049ac2d204be"
+    },
+    {
+      "id": "02-reserve-desk",
+      "title": "Capital with orders.",
+      "category": "Reserve system",
+      "description": "Seven compartments. Finite budgets. The reserve desk gets its own feature.",
+      "file": "png/02-reserve-desk.png",
+      "svg": null,
+      "width": 1122,
+      "height": 1402,
+      "bytes": 2257324,
+      "sha256": "80988991e386c9c6dde67163011f7c9fdc3adc4c2faa45bc1fbace51ed52f3aa"
+    },
+    {
+      "id": "03-turf-city",
+      "title": "Control the Turf.",
+      "category": "Family Turf",
+      "description": "A miniature city of family boundaries, future fee rights and protocol capital.",
+      "file": "png/03-turf-city.png",
+      "svg": null,
+      "width": 1122,
+      "height": 1402,
+      "bytes": 2415836,
+      "sha256": "0815a5cb480db24e895244649548f52a464d806d6d7795e7214bd43a7f351746"
+    },
+    {
+      "id": "04-tax-map",
+      "title": "Every cut has a job.",
+      "category": "Sell-fee allocation",
+      "description": "The canonical 9% base sell fee, its four destinations and the additional reserve surge.",
+      "file": "png/04-tax-map.png",
+      "svg": "svg/04-tax-map.svg",
+      "width": 1080,
+      "height": 1350,
+      "bytes": 109613,
+      "sha256": "1a0d63d10ac46c6865ff13db69cc518739115a30747b352265f3c7ae4550b5ea"
+    },
+    {
+      "id": "05-seven-compartments",
+      "title": "Seven ledgers. One city.",
+      "category": "Capital architecture",
+      "description": "How Core, the two cushions, Garrison, Desk, War Chest and Turf fit together.",
+      "file": "png/05-seven-compartments.png",
+      "svg": "svg/05-seven-compartments.svg",
+      "width": 1080,
+      "height": 1350,
+      "bytes": 116379,
+      "sha256": "573489aac9fb2b6d3bbbbb5c3653d04c2243ae43c192b92670d5bfe015c83aa3"
+    },
+    {
+      "id": "06-inventory-bonds",
+      "title": "Inventory before promises.",
+      "category": "Inventory bonds",
+      "description": "Already funded OMR becomes a reserved entitlement with linear vesting.",
+      "file": "png/06-inventory-bonds.png",
+      "svg": "svg/06-inventory-bonds.svg",
+      "width": 1080,
+      "height": 1350,
+      "bytes": 124651,
+      "sha256": "e1f21f331932e21b612fc5090109e63046c443a2621ccf679ad419f48887f0af"
+    },
+    {
+      "id": "07-arbitrage",
+      "title": "The machines work the spread.",
+      "category": "Solver arbitrage",
+      "description": "A solver-funded atomic cycle with a fixed reserve share of realized trading profit.",
+      "file": "png/07-arbitrage.png",
+      "svg": "svg/07-arbitrage.svg",
+      "width": 1080,
+      "height": 1350,
+      "bytes": 127524,
+      "sha256": "ff229912883502ac8e0b6c70168e41b5d0d6af5daa06213fc64859e314ab2699"
+    },
+    {
+      "id": "08-fee-rights",
+      "title": "The family gets the fees.",
+      "category": "Principal and fees",
+      "description": "Family fee rights and protocol principal follow separate custody rules.",
+      "file": "png/08-fee-rights.png",
+      "svg": "svg/08-fee-rights.svg",
+      "width": 1080,
+      "height": 1350,
+      "bytes": 106560,
+      "sha256": "ec2998339e2c93a34ba68a6dbafb2e65ce27188d2ffaa6c46a8d622326c4e5db"
+    }
+  ],
+  "threads": 3,
+  "threadPosts": 24,
+  "standalonePosts": 6
+}

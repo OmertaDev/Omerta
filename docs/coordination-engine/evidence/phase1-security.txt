@@ -1,0 +1,2 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ security regression suite passed — exchange escrow §10.4, sub-cent bank interest, swap-sell dust, bounty-funder self-pay, mission $OMR re-mint, wallet validation, idempotency (concurrency/release/body-bind), invite race, identity race, agent throttle, banned websocket, revoked-token websocket, gang-leave socket drop, name uniqueness, JWT/seed/DATABASE_URL boot guards

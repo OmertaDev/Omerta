@@ -1,0 +1,38 @@
+PASS YAML: all 5 checked-in workflow files parse; coordination step uses existing pgcheck service and only explicit loopback test environment
+PASS coordination suite wiring: foundation/runtime/postgres tests all reached by CI npm script
+Suite-ledger equivalent orphan list: ["test/market-v2-deployment-plan.js","test/marketv2keeper.js","test/marketv2solver.js"]
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
++ [
++   'test/market-v2-deployment-plan.js',
++   'test/marketv2keeper.js',
++   'test/marketv2solver.js'
++ ]
+- []
+
+    at file:///C:/Users/Jorge/Documents/Omerta/[eval1]:28:8
+    at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async node:internal/modules/esm/loader:224:26
+    at async ModuleLoader.executeModuleJob (node:internal/modules/esm/loader:221:20)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: [
+    'test/market-v2-deployment-plan.js',
+    'test/marketv2keeper.js',
+    'test/marketv2solver.js'
+  ],
+  expected: [],
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.19.0
+Command: js-yaml parse + equivalent suite-ledger wiring assertions (read-only)
+Exit code: 1

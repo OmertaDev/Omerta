@@ -1,0 +1,4 @@
+coordination-graph: isolated immutable definitions, canonical identity and registry authority pass
+coordination-graph: AND, OR, every M-of-N truth table, clocks and missing state pass
+coordination-graph: hostile schemas, hidden references, cycles and disconnected branches pass
+coordination-graph: node, depth and aggregate predicate limits pass

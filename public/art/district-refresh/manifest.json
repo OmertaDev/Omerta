@@ -1,0 +1,37 @@
+{
+  "model": "fal-ai/flux/schnell",
+  "estimatedTotalUsd": 0.015,
+  "pricing": "https://fal.ai/models/fal-ai/flux/schnell",
+  "jobs": {
+    "foundry": {
+      "status": "downloaded",
+      "prompt": "An immense working steel foundry at blue hour, seen across a canal from beneath a riveted iron bridge. Tall brick furnace halls, delicate iron gantries, controlled amber furnace light behind tall windows, a few steam plumes. Industry with monumental art deco dignity, not a building on fire. Wide cinematic establishing photograph for a sophisticated 1940s noir crime game. Architectural realism, carefully composed depth, wet black cobblestones, ivory practical lights, aged brass details, restrained petrol teal shadows, subtle fine film grain. Beautiful rich darks, readable architecture, no people close to camera. No text, signs, logos, typography, UI, modern cars, or watermark. Wide 16:9 landscape, focal architecture in central area, dark outer edges for game overlays.",
+      "resultUrl": "https://v3b.fal.media/files/b/0aaa6ed3/FiurMgIMRvnyTEQUdp10U.jpg",
+      "sha256": "9af7b8dd4d0be1effdda7054e22013e7d59134323d4c402916360f481be3173a",
+      "bytes": 932727
+    },
+    "docks": {
+      "status": "downloaded",
+      "prompt": "A quiet 1940s waterfront at midnight. Foreground wet stone quay with heavy mooring ropes and brass bollards. Middle distance a moored cargo steamer and elegant customs warehouse, cranes receding into sea mist, small warm pools of lamplight reflected on almost black water. Wide cinematic establishing photograph for a sophisticated 1940s noir crime game. Architectural realism, carefully composed depth, wet black cobblestones, ivory practical lights, aged brass details, restrained petrol teal shadows, subtle fine film grain. Beautiful rich darks, readable architecture, no people close to camera. No text, signs, logos, typography, UI, modern cars, or watermark. Wide 16:9 landscape, focal architecture in central area, dark outer edges for game overlays.",
+      "resultUrl": "https://v3b.fal.media/files/b/0aaa6ed3/yBMxCkV75VnxSNnk1w1m5.jpg",
+      "sha256": "baee092255e5154833c704c2916f736d61f92c155f47a6a382c70b09f856ca74",
+      "bytes": 633632
+    },
+    "neon": {
+      "status": "downloaded",
+      "prompt": "A 1940s nightlife boulevard after rain, seen at street level. Ornate art deco theater facades, a jazz club entrance beneath a luminous blank ivory marquee, subdued burgundy velvet awnings, restrained teal neon architectural strips without lettering, antique black sedan parked deep in background. Intimate, expensive, mysterious. Wide cinematic establishing photograph for a sophisticated 1940s noir crime game. Architectural realism, carefully composed depth, wet black cobblestones, ivory practical lights, aged brass details, restrained petrol teal shadows, subtle fine film grain. Beautiful rich darks, readable architecture, no people close to camera. No text, signs, logos, typography, UI, modern cars, or watermark. Wide 16:9 landscape, focal architecture in central area, dark outer edges for game overlays.",
+      "resultUrl": "https://v3b.fal.media/files/b/0aaa6ed3/_Utqoxonu8v0226o-lZ8q.jpg",
+      "sha256": "caa2546bb2bfc909aa8d9607eeb81d8efa443cb99d8910ec7d44c568098ee04d",
+      "bytes": 817205
+    }
+  },
+  "neonRevision": {
+    "status": "downloaded",
+    "reason": "Original generation contains unwanted invented signage.",
+    "prompt": "Wide cinematic photograph of a quiet 1940s nightlife district at midnight, an elegant covered art deco arcade with blank dark stone facades and burgundy curtains, warm brass wall sconces, restrained turquoise light glowing through frosted glass, rain on pavement, distant vintage sedan, black ivory brass color palette, no storefront signage anywhere, no theater, no marquee, no words or letters anywhere, no logos, no UI, architectural realism, atmospheric game environment, wide 16:9 composition."
+  },
+  "neonInterior": {
+    "status": "downloaded",
+    "prompt": "Cinematic wide architectural photograph of an empty luxurious 1930s cocktail lounge, burgundy velvet booths, art deco brass arches, dark polished walnut, subtle turquoise lamps, rain running down tall windows, a grand piano in the background, ivory practical lighting, no people, entirely unmarked walls, noir crime game atmosphere, realistic materials, extremely elegant, no signage or lettering anywhere, no text, no posters, no logos, no watermark."
+  }
+}

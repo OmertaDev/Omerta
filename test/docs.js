@@ -20,6 +20,7 @@
 // Adding a number to SPEC's size table without adding it here is fine; the table is checked row by row
 // for the rows that exist, so an unchecked row simply is not guarded. Prefer to guard it.
 import assert from 'node:assert';
+import './current-copy.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
@@ -109,8 +110,8 @@ const spec = read('SPEC.md');
   for (const [name, guide] of [['markdown wiki', markdownWiki], ['browser wiki', browserWiki]]) {
     const prose = (name === 'browser wiki' ? guide.replace(/<[^>]*>/g, ' ') : guide)
       .replace(/\s+/g, ' ');
-    assert(guide.includes('The Sixth Chair') && /playable.{0,30}v2|v2.{0,30}playable/i.test(guide),
-      `${name} must identify The Sixth Chair v2 as playable`);
+    assert(guide.includes('The Sixth Chair') && /The Sixth Chair.{0,30}playable/i.test(guide),
+      `${name} must identify The Sixth Chair as playable`);
     for (const storylet of storylets) {
       assert(prose.includes(storylet), `${name} must list the district storylet ${storylet}`);
     }
@@ -167,7 +168,7 @@ const spec = read('SPEC.md');
       && /early collection is refused/i.test(prose)
       && /(?:later activation|old-hash).{0,180}(?:does not strand|remains collectible|pinned immutable)/i.test(prose),
     `${name} must explain work-order consumption, readiness, and pinned-version collection`);
-    assert(/v3.{0,120}Press Room/i.test(prose)
+    assert(/Press Room/i.test(prose)
       && /location-bound|location facility/i.test(prose)
       && /Restoration Press/i.test(prose),
     `${name} must describe the production authored tool and facility`);
@@ -178,7 +179,7 @@ const spec = read('SPEC.md');
     assert(/(?:acquisition, use, and repair|acquisition, use, and repairs).{0,80}(?:append-only|audited)/i.test(prose)
       && /(?:archived.{0,100}press|old-version press.{0,100}archived).{0,160}(?:cannot|can't).{0,100}(?:unlock|satisfy|affect)/i.test(prose),
     `${name} must explain durable-tool auditing and version isolation`);
-    assert(/v4.{0,120}Material Exchange/i.test(prose)
+    assert(/Material Exchange/i.test(prose)
       && /Ledger Plates?.{0,120}Charred Bindings?/i.test(prose)
       && /same-hash|exact-hash/i.test(prose)
       && /whole-lot|complete (?:barter|offer)/i.test(prose),
@@ -623,7 +624,7 @@ assert.deepEqual([...new Set(phantom)], [], `docs/AUDITS.md lists reports that d
     ['<llms.txt>', llms],
   ];
   for (const [name, text] of requiredV3Surfaces) {
-    assert(/Agent Turn v3/i.test(text), `${name} must name the shipped Agent Turn v3 contract`);
+    assert(/Agent Turn/i.test(text), `${name} must name the Agent Turn contract`);
     assert(/`exploration`[\s\S]{0,300}(?:coverage object|coverage payload)[\s\S]{0,300}`catalog`[\s\S]{0,100}`progress`[\s\S]{0,100}`next`[\s\S]{0,100}`blocked`/i.test(text),
       `${name} must describe required exploration as the catalog/progress/next/blocked coverage object`);
     assert(/`exploration\.next`[\s\S]{0,400}(?:one|exactly one)[\s\S]{0,120}(?:unvisited|new)[\s\S]{0,120}(?:eligible|actionable)[\s\S]{0,120}(?:40-system|40 system)[\s\S]{0,120}(?:null|none)/i.test(text),
@@ -2819,7 +2820,7 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
       && plain.includes('main operator') && plain.includes('ETH after canonical receipt is unchanged')
       && plain.includes('Two fresh independent price sources')
       && plain.includes('more conservative output floor') && plain.includes('500 basis points fails closed')
-      && plain.includes('V1 accepts only conventional balance-delta ERC-20 behavior')
+      && plain.includes('The adapter accepts only conventional balance-delta ERC-20 behavior')
       && plain.includes('zero attributable token or ETH residue and zero allowance')
       && plain.includes('forced unsolicited dust receives no recovery credit')
       && plain.includes('Public APIs return unsigned calldata')
@@ -3379,11 +3380,11 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
       && plain.includes('at least seven public days') && plain.includes('first full epoch beginning after notice')
       && plain.includes('Every epoch freezes the schedule')
       && plain.includes('critical defect pauses or cancels that epoch rather than rewriting weights')
-      && plain.includes('replacement custody and settlement baseline is approved but not live')
+      && plain.includes('on-chain custody and settlement design is approved but not live')
       && plain.includes('OMRGameplayVault') && plain.includes('no personal APY')
       && plain.includes('actual reserve-backed on-chain OMR')
       && plain.includes('one-use typed and rate-bounded chain-first gameplay outcomes')
-      && plain.includes('imports legacy stake only against deposited OMR')
+      && plain.includes('credits stake only against deposited OMR')
       && plain.includes('shipped formula remains') && plain.includes('activationMult × activityScore')
       && plain.includes('no current stake balance counts silently or retroactively')
       && plain.includes('Agent accounts have full economic parity')
@@ -3393,19 +3394,19 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
       && plain.includes('receive Stock Token allocations and delivery')
       && plain.includes('never denies vault authorization, settlement, checkpoints, Broker weight, RWA allocation, or delivery'),
     `${name} must pin the capped tier schedule, agent-wallet parity, eligible buckets, wallet uniqueness, prospective TWA, Safe governance, and frozen epoch rules`);
-    assert(plain.includes('founder-directed replacement makes that stake actual on-chain OMR')
-      && plain.includes('rather than a separate database balance')
+    assert(plain.includes('Current gameplay staking uses the game ledger')
+      && plain.includes('planned on-chain custody design requires actual deposited OMR')
       && plain.includes('same canonical position must drive the Made Ladder')
       && plain.includes('Broker staking multiplier, gameplay loss, unbonding, inheritance, and public accounting')
       && plain.includes('database may mirror finalized chain state and journal pending settlement')
       && plain.includes('cannot independently create or move stake')
-      && plain.includes('approved design uses a new') && plain.includes('OMRGameplayVault')
+      && plain.includes('approved design uses') && plain.includes('OMRGameplayVault')
       && plain.includes('Principal pays no personal APY')
       && plain.includes('Game-earned OMR must first become real')
       && plain.includes('reserve-backed on-chain OMR before staking')
       && plain.includes('Safe-rotatable gameplay signer') && plain.includes('may not sweep funds')
       && plain.includes('Chain settlement finalizes before the game consumes one-use resources')
-      && plain.includes('migration mint covers a shortage')
+      && plain.includes('Positions must be backed by actual deposited OMR')
       && plain.includes('approved, not live'),
     `${name} must disclose the approved actual-OMR gameplay-vault custody, settlement, outage, and migration baseline`);
     assert(plain.includes("Only the account's verified controller wallet")

@@ -201,6 +201,19 @@ with raids, a small garrison is enough.
 
 ## 5. The economy
 
+### The Canonical Market
+
+**Status: implementation candidate · production inactive.**
+
+The canonical ETH/OMR market is an implementation candidate. Production market operation requires verified deployment, actual funding and launch approval; source code and passing tests do not activate it.
+
+The Hook routes a 9% base sell fee: 2% to the developer recipient, 1.6% to the RWA recipient, 2.4% to the community recipient and 3% to protocol-owned liquidity. A bounded 0–1% surge can apply; LP fees are additional. Settlement may collect ETH or OMR according to swap deltas and partial fills. Other pools have their own policies.
+
+Core liquidity and the War Chest have separate budgets. Controllers enforce finite action, episode and lifetime capacity. Deposits do not reset consumed capacity, and a price rebound does not create ETH. Recovery uses funded, bounded War Chest transfers across qualifying epochs.
+
+Turf allocates future funded fees to families, not liquidity principal. Game adjudication uses narrowly typed authority. Inventory bonds sell funded OMR entitlements with linear vesting. The commitment vault holds actual liquidity-position NFTs; rewards are prefunded and mature exits do not depend on rewards being available.
+
+
 **Currencies:** **cash** (in your pocket and your bank), **$OMR** (premium, account-level, earned through
 enumerated rules, and eligible for on-chain extraction by minted accounts once the production rail opens),
 **crates** (cb), and **ammo**. **Cash can never buy $OMR.** The one live conversion runs the other way at
@@ -272,17 +285,15 @@ is to put a permanent, visible, lootable float on exactly the players worth hunt
 
 **The Vault (staking)** (`POST /v1/stake`, `/unstake`) — **cheaper cover, not a safe harbour.**
 Nothing makes $OMR untouchable: a killer takes 50% of a loose or unbonding
-balance but only 20% of a staked one, so committing halves what a bad night costs you without ever
-making you safe. You always get your full principal back, but it "unbonds" for 6 hours (at the higher
-IDLE rate during that window) before it is liquid. **Nothing you hold is out of reach** — the whole
+balance but only 20% of a staked one. Staking reduces exposure from 50% to 20% without making you safe.
+Remaining principal unbonds for 6 hours at the higher exposure rate before becoming liquid; gameplay losses reduce what returns. **Nothing you hold is out of reach** — the whole
 point of the currency is that it can be taken off you. Principal pays no personal APY: $OMR yield pays
 THE FAMILIES — the top families by seasonal standing draw the **family yield** into their gang reserves.
 
-The founder-directed replacement makes that stake actual on-chain OMR rather than a separate database balance. The same
+Current gameplay staking uses the game ledger. The planned on-chain custody design requires actual deposited OMR. The same
 canonical position must drive the Made Ladder, commitment multiplier, Den access, Broker staking multiplier, gameplay
 loss, unbonding, inheritance, and public accounting. The database may mirror finalized chain state and journal pending
-settlement, but cannot independently create or move stake. The approved design uses a new `OMRGameplayVault`, not the
-current yield-oriented `OMRStaking` contract. Principal pays no personal APY: family yield and separately backed utility
+settlement, but cannot independently create or move stake. The approved design uses `OMRGameplayVault`. Principal pays no personal APY: family yield and separately backed utility
 rewards remain, while the stake itself earns nothing. Game-earned OMR must first become real, reserve-backed on-chain OMR
 before staking; the claim and stake may be atomic but cannot be credited twice.
 
@@ -290,10 +301,7 @@ The vault enforces the visible path from pending deposit to active or committed 
 period, to withdrawable OMR. A narrowly authorized, Safe-rotatable gameplay signer can apply one-use, rate-bounded game
 outcomes but may not sweep funds. Loot moves actual OMR inside the vault from the victim's exposed position to the
 killer's on-chain gameplay balance. Chain settlement finalizes before the game consumes one-use resources or publishes
-an irreversible result; chain or settlement outages therefore stop value-taking actions safely. Legacy database stake
-becomes on-chain stake only to the extent actual OMR backs it. No migration mint covers a shortage, and any unfunded
-difference is reported as a liability. This design is approved, not live, until implementation,
-audit, funded migration, and launch verification are complete.
+an irreversible result; chain or settlement outages therefore stop value-taking actions safely. Positions must be backed by actual deposited OMR; any unfunded amount remains a published liability. This design is approved, not live, until implementation, audit, funding, and launch verification are complete.
 
 Only the account's verified controller wallet or the reserve-backed claim-and-stake rail may fund its position; a bypass
 transfer cannot stake for somebody else or qualify them. The position follows the permanent game account—not a character
@@ -1373,7 +1381,7 @@ is no non-upgradeable requirement—but exact proxy and implementation identitie
 caps limit each tranche, each Stock Token version over rolling 24 hours, and all recovery over rolling 24 hours, with no
 operator bypass over Stock Token recovery; the main operator's separate authority over ETH after canonical receipt is
 unchanged. Two fresh independent price sources set the more conservative output floor and divergence above 500 basis
-points fails closed. V1 accepts only conventional balance-delta ERC-20 behavior. A successful adapter ends with zero
+points fails closed. The adapter accepts only conventional balance-delta ERC-20 behavior. A successful adapter ends with zero
 attributable token or ETH residue and zero allowance; forced unsolicited dust receives no recovery credit and is
 quarantined. Public APIs return unsigned calldata and never sponsor or relay anonymous gas. Canonical history derives
 only from finalized events emitted by pinned contracts. Failed, duplicate, or malformed spam may be rate-limited and
@@ -1406,16 +1414,16 @@ for an epoch and a wallet change begins next epoch. Liquid OMR, unclaimed reward
 Broker-activation spend do not count. The approved cap is 1.50×: below 300 OMR receives 1.00×; 300–999.999… receives
 1.10×; 1,000–4,999.999… receives 1.20×; 5,000–19,999.999… receives 1.35×; and 20,000 OMR or more receives 1.50×.
 Only finalized active and committed principal qualifies. Pending deposits, idle loot, unbonding, withdrawable, withdrawn,
-unattributed, quarantined, and unfunded legacy value do not. One verified wallet may qualify one permanent account per
+unattributed, quarantined, and unfunded value do not. One verified wallet may qualify one permanent account per
 epoch; every conflicting claim receives zero stake multiplier until resolved. Each finalized transition changes the TWA
 prospectively from canonical time with no shortcut, backfill, or retroactive restoration.
 
 Only the Safe may change tiers or thresholds, after at least seven public days, effective no earlier than the first full
 epoch beginning after notice. Every epoch freezes the schedule, wallet/account bindings, eligible buckets, activity
 formula, activation requirement, and ruleset. A critical defect pauses or cancels that epoch rather than rewriting weights
-after participation is known. The replacement custody and settlement baseline is approved but not live: a new
+after participation is known. The on-chain custody and settlement design is approved but not live: a new
 `OMRGameplayVault` has no personal APY, accepts only actual reserve-backed on-chain OMR, enforces commitment/unbonding,
-uses one-use typed and rate-bounded chain-first gameplay outcomes, and imports legacy stake only against deposited OMR.
+uses one-use typed and rate-bounded chain-first gameplay outcomes, and credits stake only against deposited OMR.
 Until that vault, the tier schedule, and anti-flash historical snapshots are implemented and tested, the shipped formula
 remains `activationMult × activityScore`; no current stake balance counts silently or retroactively.
 
@@ -2014,7 +2022,7 @@ sooner (Big Scores), fighters healing faster (Fisticuffs). Den plays under **$1,
 further, for this life) or **Dynast** (your heir keeps HALF this trade's schooling instead of a
 quarter). The choice dies with the street; the heir chooses their own.
 
-**Paths v2 (step three):** six careers now — The Gun, The Ledger, The Kitchen, **The Wheel, The
+**Paths:** six careers — The Gun, The Ledger, The Kitchen, **The Wheel, The
 Shadow, The Ring** — each with a signature edge, a REAL handicap (the Gun sells goods at ×0.95, the
 Ledger fights at ×0.95, the Kitchen does ×1.1 jail time, the Wheel cooks slow, the Shadow shies from
 duels, the Ring pays the Doc ×1.15), and trades that come easy (**×1.5 XP**) or fight you (**×0.6**).
@@ -2120,20 +2128,18 @@ the audit, legal/eligibility, venue, reserve, and Safe launch gates are cleared.
 
 Going legit includes what your **earned $OMR** does:
 
-- **Stake it** (`/v1/stake`) — the approved architecture requires actual on-chain OMR; the same canonical
-  position climbs the ladder (trunk, energy, nerve, garage, the fence at the top), supports commitment locks and the
-  Broker multiplier, and remains exposed to gameplay loss and unbonding. This custody path is designed, not live.
+- **Stake it** (`/v1/stake`) — the game-ledger position climbs the Made Ladder and supports commitment locks, while remaining exposed to gameplay loss and six-hour unbonding. Actual on-chain custody and the Broker stake multiplier are planned and not active.
 - **Redeem it** at the Window for cash (below).
 - **Claim backed ETH** at the Vault (`GET /v1/vault`) — real ETH the treasury holds, never more than
-  it holds; big moves draw the Bureau's eye and are blocked from a safehouse.
-- **Get Made** (`/v1/made`) and take your $OMR out on-chain (`/v1/withdraw`).
+  it holds. This production rail remains gated by launch requirements and actual backing; big moves draw the Bureau's eye and are blocked from a safehouse.
+- **Get Made** (`/v1/made`) for current game benefits. On-chain extraction (`/v1/withdraw`) remains gated by production launch requirements.
 - **Landmarks** (`/v1/landmarks/:districtId`) — one plaque in each district still bears a name that
   survives death.
 
-### Architecture status — Grill v2
+### Architecture status — Stock Tokens & OMR custody
 
-Grill v2 is being implemented as a dependency-ordered RWA and OMR custody program, with deployment authority
-kept separate from implementation. The active branch has production-shaped implementations and tests for the
+The Stock Token and OMR custody program has staged implementation, with deployment authority
+kept separate from implementation. The repository contains implementations and tests for the
 native-only `SettlementGasPool`, immutable `StockTokenRegistryV2`, the finalized Stock Token catalog mirror,
 public nomination and reviewer state machines, a dormant version-snapshot family ballot, and the shared
 finalized-observation kernel used to pin canonical block/hash/time evidence. None of that work authorizes a
@@ -2350,8 +2356,8 @@ Agents are full players. `POST /v1/auth/agent-key` grants a permanent 🤖 flag 
 action each 3 seconds). Discovery: **`GET /agents`** (the quickstart), **`GET /openapi.json`** (the full API
 contract), **`GET /llms.txt`** (the discovery index), **`GET /v1/opportunities`** (the Opportunity Board —
 every open economic action and skill loop, with the estimated value and risk, in one call), and
-**`GET /v1/agent/turn`** (Agent Turn v3), plus **`POST /v1/agent/act`** for one server-revalidated move.
-Agent Turn v3 keeps EV-ranked executable actions separate from its read-only **Deep City** `exploration`
+**`GET /v1/agent/turn`** (Agent Turn), plus **`POST /v1/agent/act`** for one server-revalidated move.
+Agent Turn keeps EV-ranked executable actions separate from its read-only **Deep City** `exploration`
 object, which reports coverage across the canonical 40-system catalog and recommends one relevant unvisited
 eligible system without changing action rank or authority.
 
@@ -2371,7 +2377,26 @@ agent recruits, Spread-the-Word cash, and assassin-reputation status do not qual
 **`GET /v1/arena`** is the public, banded Arena snapshot; **`GET /v1/leaderboard/agents`** is the
 authenticated detailed agent leaderboard.
 
-### Phase 1 World Graph — conserved items, mysteries, and Crew operations
+### The Omerta Coordination Engine
+
+**Status: API pilots · default off.**
+
+The Omerta Coordination Engine provides private graph runs, immutable discoveries, live sharing permissions, evidence gates, player assertions and personal reference archives. Its implemented API pilots are value-neutral and default off; they award no money, items or combat power.
+
+The Dead Letter follows two discoverable leads to a conclusion. The Split Ledger requires original evidence from different accounts; copied evidence does not create another independent origin. Account independence does not prove that different humans control those accounts.
+
+When an operator enables the pilot for an account, discover it through GET /v1/coordination. Start with the returned content hash, then use server-issued actions and the latest revision. Sharing uses current permissions and ACL revisions. There is no dedicated graphical console; delegated organization authority and economic adapters remain planned.
+
+
+### World Graph — conserved items, mysteries, and Crew operations
+
+**Status: conserved items · direct API play.**
+
+The World Graph connects conserved item custody, recipes, individual mysteries and four-account Crew operations. Belladonna progression uses server-issued choices and exact instance identifiers. Its current direct-play surface is cash-only and OMR-neutral; inventory is not an NFT export.
+
+Read GET /v1/worldgraph/inventory, GET /v1/worldgraph/recipes and GET /v1/worldgraph/mysteries to discover current options. Complete an individual case to unlock Crew operations. Use the direct World Graph routes; Agent Turn does not grant authority to execute them.
+
+
 
 The Belladonna proof is a fully server-authoritative direct sequence. Read
 `GET /v1/worldgraph/inventory` and `GET /v1/worldgraph/recipes`; the recipe board includes current
@@ -2423,11 +2448,9 @@ Packs cannot contain JavaScript, SQL, shell commands, credentials, or publishing
 
 `npm run content:check` validates the schemas, dependency rules, source/sink conservation, social satisfiability,
 finite reward budgets, runtime capability profile, and deterministic hashes. `npm run content:build` emits the
-immutable runtime-ready v2 bundle and refuses to overwrite it; compilation never activates a pack. The original
-**The Sixth Chair** v1 graph remains an unchanged 47-node, 57-edge compiler specimen spanning clues,
-Crew/Family coordination, item acquisition, and a bounded seasonal $OMR hunt.
+immutable runtime-ready bundle and refuses to overwrite it; compilation never activates a pack.
 
-**The Sixth Chair v2 is playable** through a deliberately smaller runtime profile: an operator activates its exact bundle hash,
+**The Sixth Chair is playable** through a deliberately smaller runtime profile: an operator activates its exact bundle hash,
 a Crew or Extended Family opens a four-seat lobby, and organization members discover and join the open run as
 Archivist, Driver, Broker, or consent-required human Witness. Each role receives only its server-issued puzzle or
 choice. All four contributions reveal shared evidence, close the case, record the Sixth Family world fact, and
@@ -2475,7 +2498,7 @@ not appear until an operator activates its exact compiled bundle hash.
 The first production authored workshop is **The Bellini Restoration**
 (`omerta.workshop.bellini-lockbox`) at the Old Foundry. Two globally finite daily sources issue
 Ledger Plate and Charred Binding lots once per account per source and epoch. Those lots are durable,
-account-owned, and pinned to the exact bundle hash that defined them. The v2 apprenticeship consumes
+account-owned, and pinned to the exact bundle hash that defined them. The apprenticeship consumes
 fixed inputs when a server-timed work order starts and produces only stackable, gameplay-inert
 workpieces when the server-issued `readyAt` clears. Collection grants a compiled XP award to one
 exact-hash Bellini Restoration skill track; one active job is allowed per account and namespace, and
@@ -2483,7 +2506,7 @@ skill level 2 unlocks the final FIFO recipe for one non-stackable, non-tradeable
 Restored Bellini Lockbox. Clients submit only the board's active hash and source, job, or recipe
 identity; they cannot nominate items, quantities, budgets, clocks, XP, caps, or outputs.
 
-The v3 Press Room adds the location-bound Old Foundry Restoration Bench and an account-owned Bellini
+The Press Room adds the location-bound Old Foundry Restoration Bench and an account-owned Bellini
 Restoration Press. The press is non-tradeable and its only gameplay power is satisfying explicitly
 declared authored-crafting requirements. It has exact-hash durability: a requiring work order spends
 wear once when the job starts, an instant recipe spends wear inside its craft transaction, and job
@@ -2492,7 +2515,7 @@ same-hash material (Ledger Plate) and restores the compiler-declared maximum at 
 acquisition, use, and repair is append-only audited. An old-version press remains visible under
 archived tools but cannot satisfy, block acquisition in, or otherwise affect the active version.
 
-The v4 **Material Exchange** admits only Ledger Plates and Charred Bindings to an authored-only barter
+The **Material Exchange** admits only Ledger Plates and Charred Bindings to an authored-only barter
 board. A seller chooses two different allowlisted material IDs and whole quantities, escrows the offered
 leg, and requests the other material under the same exact content hash. Offers are whole-lot and
 full-fill only; the

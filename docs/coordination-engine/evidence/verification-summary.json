@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-09-13",
+  "baselineCommit": "2b3feb7c807848564094c9b56d13fd7e41f97bae",
+  "scope": "Coordination Engine Phase 0, disabled internal foundation; Phases 01–09 are documentation and planned tasks only.",
+  "workingTreeDirty": true,
+  "sourceManifest": "SOURCE_MANIFEST.json",
+  "sourceManifestSha256": "f46232f2ec2b73eeddb970f79466a5dfaca4ca0aeb61edc13790e80fc1bdd816",
+  "finalSourceHashCheck": {
+    "checkedFiles": 23,
+    "mismatches": 0
+  },
+  "focused": [
+    {
+      "command": "npm run test:coordination",
+      "exitCode": 0,
+      "evidence": "coordination-suite-final.txt"
+    },
+    {
+      "command": "node test/coordination.js --postgres",
+      "environment": "Explicit COORDINATION_TEST_DATABASE_URL targeting isolated loopback PostgreSQL 18.4; production DATABASE_URL not used.",
+      "exitCode": 0,
+      "evidence": "coordination-postgres-final.txt"
+    },
+    {
+      "command": "Isolated PostgreSQL concurrency/death/rollback probes",
+      "exitCode": 0,
+      "script": "postgres-probes.mjs",
+      "evidence": "postgres-probes.txt"
+    }
+  ],
+  "broadRun": {
+    "command": "npm test",
+    "exitCode": 1,
+    "evidence": "npm-test.txt",
+    "pretest": {
+      "steps": 63,
+      "passed": 63
+    },
+    "test": {
+      "steps": 121,
+      "passedBeforeStop": 116,
+      "failedStep": 117,
+      "failedCommand": "node test/gates.js"
+    },
+    "reason": "Existing price-bound classification assertion flags src/bonds.js:bondQuoteBudgetAmount at test/gates.js:499. Both files are unchanged from the baseline commit.",
+    "remainingStepsRunIndependently": [
+      {
+        "command": "node test/chainparams.js",
+        "exitCode": 0,
+        "evidence": "chainparams-check.txt"
+      },
+      {
+        "command": "node test/docs.js",
+        "exitCode": 1,
+        "evidence": "docs-check.txt",
+        "reason": "Census checks pass; O1 audit-packet scope omits eleven preexisting untracked market-v2 contracts at test/docs.js:1395. The packet and test were not changed."
+      },
+      {
+        "command": "node test/playthrough-truth.js",
+        "exitCode": 0,
+        "evidence": "playthrough-truth-check.txt"
+      },
+      {
+        "command": "node tools/knowledge-test.js",
+        "exitCode": 1,
+        "evidence": "knowledge-check.txt",
+        "reason": "Committed graph.json has sourceRevision 49087c4bf3f1a8acc36f3f9ea0c380b3278df541; current generated revision is 2b3feb7c807848564094c9b56d13fd7e41f97bae. Test requires clean-tree regeneration after source commit; source and generated artifacts were not committed or regenerated."
+      }
+    ],
+    "allScriptStepsAccountedFor": true,
+    "aggregateSteps": {
+      "total": 184,
+      "passed": 181,
+      "failed": 3
+    },
+    "interpretation": "Counts describe command steps in this checkout, not individual test assertions or a security clearance. The broad suite is not green."
+  },
+  "otherChecks": {
+    "syntax": "passed",
+    "gitDiffCheck": "passed; informational LF-to-CRLF notices only",
+    "documentation": "Relative links and task dependencies validated; 50 work packages, three detailed Phase 01 cards.",
+    "staticAnalysis": "ContextPlus navigation used; run_static_analysis not exposed and Semgrep unavailable. No unexecuted static analysis is claimed."
+  },
+  "limitations": [
+    "Phase 0 JSON API only; no dedicated graphical console.",
+    "No production deployment or activation, commit, push, monetary reward, item movement or Agent Turn execution authority.",
+    "Focused real-PostgreSQL proofs cover the runtime; HTTP integration uses the in-memory test server.",
+    "Not a full application security audit or approval for economic or chain rails."
+  ],
+  "cleanup": {
+    "postgres": "Stopped; isolated loopback listener closed.",
+    "scratchDirectory": "tmp/coordination-review",
+    "status": "Retained and excluded by exact .gitignore entry.",
+    "reason": "Automatic approval review rejected recursive deletion with 'blocked by policy'; no alternate deletion mechanism was used."
+  }
+}

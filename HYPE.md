@@ -10,7 +10,7 @@ five short hype cuts, each with its **own footage set and its own music track**,
 FAL_KEY=… node tools/hype.js --fal --cap 150     # generate the Seedance 2.5 motion library (once)
 node tools/hype.js --cut hype   --music /tmp/music/hype.wav      # build one cut with its track
 node tools/hype.js --cut streets --music /tmp/music/streets.wav
-node tools/hype.js --cut flywheel --music /tmp/music/flywheel.wav
+node tools/hype.js --cut flywheel --music /tmp/music/flywheel.wav   # legacy 15s cut
 node tools/hype.js --cut earn   --music /tmp/music/earn.wav
 node tools/hype.js --cut short  --music /tmp/music/short.wav
 node tools/hype.js --cut money  --music public/art/hype/bed-legit.m4a   # the fees/flows explainer
@@ -33,14 +33,14 @@ Lengths below were **measured from each file's own `mvhd` box** on 2026-08-29, n
 `hype-money.mp4` had been recorded as ~77s and is 86.7s. Every one of them is served in production at
 `https://www.omerta.fun/art/<file>` (range-served by `sendVideo()` off a boot-time allowlist).
 
-| file | size | ~len | job | angle | featured |
-|---|---|---|---|---|---|
-| `hype.mp4` | 1920×1080 | ~13s | the trailer | the city / world, earnings closer | landing `#films` |
-| `hype-streets.mp4` | 1920×1080 | ~12s | crime/action | the jobs — hitman, heist, arson, cars | landing `#films` |
-| `hype-flywheel.mp4` | 1920×1080 | ~15s | tokenomics | the $OMR value flywheel, mechanism-true | landing `#omr-economy`, beside the routing it explains |
-| `hype-earn.mp4` | 1920×1080 | ~13s | acquisition | risk-to-earn: play, take it, cash out | landing `#films` |
-| `hype-short.mp4` | 1080×1920 | ~10s | social | vertical, fastest cut for X/TikTok/Reels | **distribution only** — see below |
-| `hype-money.mp4` | 1920×1080 | ~87s | explainer | the FULL money map — every fee, every flow, the RWA arc | landing `#omr-economy` |
+| file                   | size      | ~len  | job          | angle                                                                                                                              | featured                                               |
+| ---------------------- | --------- | ----- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| `hype.mp4`             | 1920×1080 | ~13s  | the trailer  | the city / world, earnings closer                                                                                                  | landing `#films`                                       |
+| `hype-streets.mp4`     | 1920×1080 | ~12s  | crime/action | the jobs — hitman, heist, arson, cars                                                                                              | landing `#films`                                       |
+| `hype-flywheel-v3.mp4` | 1920×1080 | 82.3s | game economy | play, eligible sink recycling, Street Deeds, the gated RWA arc, the revenue-capped buyback design, and the dormant extraction rail | landing `#omr-economy`, beside the routing it explains |
+| `hype-earn.mp4`        | 1920×1080 | ~13s  | acquisition  | risk-to-earn: play, take it, cash out                                                                                              | landing `#films`                                       |
+| `hype-short.mp4`       | 1080×1920 | ~10s  | social       | vertical, fastest cut for X/TikTok/Reels                                                                                           | **distribution only** — see below                      |
+| `hype-money.mp4`       | 1920×1080 | ~87s  | explainer    | the FULL money map — every fee, every flow, the RWA arc                                                                            | landing `#omr-economy`                                 |
 
 `hype-money.mp4` also ships a **mobile encode** — `hype-money-720.mp4` (1280×720, H.264 CRF 29, 9.5 MB
 against 53.9 MB), attached to the same `<video>` under `media="(max-width: 760px)"`, so a phone fetches
@@ -67,15 +67,49 @@ OMERTÀ title reveal — the classic trailer "music bed + logo BRAAAM", so every
 when the track's own dynamics don't. The bed is loudness-normalized (loudnorm I=-15) and the whole mix
 is compressed + limited. **Founder swaps a licensed track before public** (`--music track.mp3`).
 
-## Copy — earnings + the flywheel (founder-directed 2026-08-14)
+### Game-economy flywheel v3 (`hype-flywheel-v3.mp4`, 2026-09-10)
 
-The founder lifted the standing no-earnings rule and asked for earnings language + the $OMR value
-flywheel. The copy is **mechanism-true** and carries **no fabricated numbers**:
+The landing page now uses a narrated, 82.3-second Remotion film in place of the legacy 15-second
+flywheel cut. Its mechanism claims are deliberately narrower than the legacy copy:
 
-- **flywheel** (all true per the design): *$OMR isn't printed, it's bought* · *every sink buys $OMR off
-  the market* · *buybacks from real revenue* · *fund the players who play* · *spenders fund earners*.
-- **earn**: *play, take risks* · *take it off somebody who didn't* · *turn the streets into a living* ·
-  *cash out — on-chain, for real*.
+- There is no time-based $OMR wage or passive drip; player action creates utility and counterparties.
+- Eligible supported house sinks recycle $OMR into bounded Desk inventory. Withdrawal is explicitly
+  outside that recycling loop.
+- The buyback rail is separate. If and when execution is armed, spend is capped by source revenue that
+  has actually arrived; purchased $OMR is split between full-reserve backing and player prizes.
+- One account may hold one named Street Deed. Its mapped provenance survives character death, while
+  the bounded corner take and district perks follow contestable in-game control rather than passive ownership.
+- The RWA arc is future and gated: seated families choose an approved ticker, a walled keeper may spend
+  no more treasury ETH than arrived, frozen active-play weights split held Stock Token units, and delivery
+  targets an extracted Deed's ERC-6551 account. An activated idler receives zero.
+- Production remains chain-unconfigured. Buybacks and extraction are dormant until the scoped security
+  review and launch gates clear, and the film describes a mechanism rather than a price promise.
+
+The project lives in `brand/hype-flywheel-video/`. It combines three campaign-specific fal.ai
+Seedance 2.5 plates (the hero at 480p plus Street Deeds and future RWA at 720p), nine MiniMax voice
+segments, the existing noir motion library, deterministic Remotion graphics, and a 1080p H.264
+master. Rebuild and review it with:
+
+```powershell
+cd brand/hype-flywheel-video
+npm install
+npm run lint
+npm run render:preview
+npm run render
+```
+
+The site also serves `hype-flywheel-v3-720.mp4` to narrow screens and uses dedicated 960 px and 640 px
+WebP posters. Asset-generation provenance and the bounded fal.ai request set are retained in
+`public/art/hype/flywheel-v3-manifest.json`.
+
+The existing generated music bed still requires founder confirmation that its license covers the
+intended public distribution.
+
+## Copy — earnings (founder-directed 2026-08-14)
+
+The legacy **earn** cut uses: _play, take risks_ · _take it off somebody who didn't_ · _turn the streets
+into a living_ · _cash out — on-chain, for real_. That last line is historical launch copy: the current
+production rail remains chain-unconfigured and cannot cash out yet.
 
 ### The money explainer (`hype-money.mp4`, v2 2026-08-21)
 
@@ -138,7 +172,7 @@ under a queue of reserving jobs — a 403 "Exhausted balance" can be followed se
 accept — so the bespoke submitter retries through 403s with backoff and only a submit that stays
 locked through the whole ladder is a real out-of-money stop.
 
-**Legal note (flagged to the founder):** earnings/income + "OMR value" framing in *public* marketing is
+**Legal note (flagged to the founder):** earnings/income + "OMR value" framing in _public_ marketing is
 the Howey-test surface. Kept defensible by staying mechanism-true and number-free, but **have counsel
 eyeball the wording, and note extraction is not live until the chain layer opens (audit + launch gate)**,
 before anything goes public.

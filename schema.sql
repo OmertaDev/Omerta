@@ -6719,3 +6719,148 @@ CREATE TABLE IF NOT EXISTS liquidity_market_status (
   expires_at TIMESTAMPTZ NOT NULL,
   PRIMARY KEY(chain_id,manifest_hash)
 );
+
+-- Coordination Phase 0 is a separate, inert authority. Additive-only rollout;
+-- disabling the feature preserves definitions, historical owners, receipts and audit.
+CREATE TABLE IF NOT EXISTS coordination_definitions (
+  graph_id TEXT NOT NULL,
+  graph_version INTEGER NOT NULL CHECK (graph_version > 0),
+  content_hash TEXT NOT NULL,
+  definition_json TEXT NOT NULL,
+  PRIMARY KEY (graph_id, graph_version),
+  UNIQUE (graph_id, graph_version, content_hash)
+);
+CREATE TABLE IF NOT EXISTS coordination_instances (
+  id TEXT PRIMARY KEY,
+  graph_id TEXT NOT NULL,
+  graph_version INTEGER NOT NULL,
+  content_hash TEXT NOT NULL,
+  owner_account_id TEXT NOT NULL REFERENCES accounts(id),
+  owner_character_id TEXT NOT NULL REFERENCES characters(id),
+  state_json TEXT NOT NULL,
+  status TEXT NOT NULL CHECK (status IN ('active', 'completed', 'cancelled')),
+  revision INTEGER NOT NULL CHECK (revision >= 0),
+  created_at TIMESTAMPTZ NOT NULL,
+  updated_at TIMESTAMPTZ NOT NULL,
+  UNIQUE (owner_character_id, graph_id),
+  FOREIGN KEY (graph_id, graph_version, content_hash)
+    REFERENCES coordination_definitions(graph_id, graph_version, content_hash)
+);
+CREATE INDEX IF NOT EXISTS ix_coordination_instances_owner
+  ON coordination_instances(owner_account_id, created_at, id);
+CREATE TABLE IF NOT EXISTS coordination_commands (
+  account_id TEXT NOT NULL REFERENCES accounts(id),
+  command_key TEXT NOT NULL,
+  command_id TEXT NOT NULL UNIQUE,
+  fingerprint TEXT NOT NULL,
+  response_json TEXT NOT NULL,
+  PRIMARY KEY (account_id, command_key)
+);
+CREATE TABLE IF NOT EXISTS coordination_events (
+  id TEXT PRIMARY KEY,
+  event_type TEXT NOT NULL CHECK (event_type IN ('coordination.created',
+    'coordination.node.discovered', 'coordination.node.completed',
+    'coordination.completed', 'coordination.cancelled')),
+  event_version INTEGER NOT NULL CHECK (event_version = 1),
+  instance_id TEXT NOT NULL REFERENCES coordination_instances(id),
+  revision INTEGER NOT NULL CHECK (revision >= 0),
+  ordinal INTEGER NOT NULL CHECK (ordinal >= 0 AND ordinal <= 1),
+  content_hash TEXT NOT NULL,
+  actor_account_id TEXT NOT NULL REFERENCES accounts(id),
+  actor_character_id TEXT REFERENCES characters(id),
+  correlation_id TEXT NOT NULL,
+  payload_json TEXT NOT NULL,
+  occurred_at TIMESTAMPTZ NOT NULL,
+  UNIQUE (instance_id, revision, ordinal)
+);
+CREATE INDEX IF NOT EXISTS ix_coordination_events_type ON coordination_events(event_type);
+
+-- Coordination Phase 1: immutable authentic discovery records. Principal IDs and
+-- source receipts stay private; grants and archives never mint another discovery.
+CREATE TABLE IF NOT EXISTS coordination_claims (
+  id TEXT PRIMARY KEY,
+  instance_id TEXT NOT NULL REFERENCES coordination_instances(id),
+  node_id TEXT NOT NULL,
+  content_hash TEXT NOT NULL,
+  domain TEXT NOT NULL,
+  proposition TEXT NOT NULL,
+  value_json TEXT NOT NULL,
+  discovery_receipt TEXT NOT NULL UNIQUE,
+  source_kind TEXT NOT NULL CHECK (source_kind = 'coordination_discovery'),
+  source_event_id TEXT NOT NULL UNIQUE REFERENCES coordination_events(id),
+  source_root TEXT NOT NULL,
+  owner_account_id TEXT NOT NULL REFERENCES accounts(id),
+  origin_character_id TEXT NOT NULL REFERENCES characters(id),
+  discovered_at TIMESTAMPTZ NOT NULL,
+  UNIQUE (instance_id, node_id)
+);
+CREATE INDEX IF NOT EXISTS ix_coordination_claims_evidence
+  ON coordination_claims(content_hash, domain, proposition, id);
+CREATE INDEX IF NOT EXISTS ix_coordination_claims_owner ON coordination_claims(owner_account_id, id);
+CREATE TABLE IF NOT EXISTS coordination_claim_acl_state (
+  claim_id TEXT PRIMARY KEY REFERENCES coordination_claims(id),
+  revision INTEGER NOT NULL CHECK (revision >= 0)
+);
+CREATE TABLE IF NOT EXISTS coordination_claim_acl_events (
+  id TEXT PRIMARY KEY,
+  claim_id TEXT NOT NULL REFERENCES coordination_claims(id),
+  grant_id TEXT NOT NULL,
+  operation TEXT NOT NULL CHECK (operation IN ('grant', 'revoke')),
+  recipient_kind TEXT NOT NULL CHECK (recipient_kind IN ('account', 'crew', 'family')),
+  recipient_id TEXT NOT NULL,
+  recipient_label TEXT NOT NULL,
+  revision INTEGER NOT NULL CHECK (revision > 0),
+  author_account_id TEXT NOT NULL REFERENCES accounts(id),
+  command_id TEXT NOT NULL,
+  occurred_at TIMESTAMPTZ NOT NULL,
+  UNIQUE (claim_id, revision)
+);
+-- No organization/recipient FKs: ACL writes must never lock a second actor or
+-- organization after caller membership locks. Historical principals may retire.
+CREATE TABLE IF NOT EXISTS coordination_claim_grants (
+  id TEXT PRIMARY KEY,
+  claim_id TEXT NOT NULL REFERENCES coordination_claims(id),
+  recipient_kind TEXT NOT NULL CHECK (recipient_kind IN ('account', 'crew', 'family')),
+  recipient_id TEXT NOT NULL,
+  recipient_label TEXT NOT NULL,
+  active BOOLEAN NOT NULL,
+  revision INTEGER NOT NULL CHECK (revision > 0),
+  UNIQUE (claim_id, recipient_kind, recipient_id)
+);
+CREATE INDEX IF NOT EXISTS ix_coordination_grants_reader
+  ON coordination_claim_grants(recipient_kind, recipient_id, active, claim_id);
+CREATE TABLE IF NOT EXISTS coordination_claim_links (
+  id TEXT PRIMARY KEY,
+  from_claim_id TEXT NOT NULL REFERENCES coordination_claims(id),
+  to_claim_id TEXT NOT NULL REFERENCES coordination_claims(id),
+  relation TEXT NOT NULL CHECK (relation IN ('corroborates', 'contradicts')),
+  assertion TEXT NOT NULL CHECK (assertion = 'player'),
+  author_account_id TEXT NOT NULL REFERENCES accounts(id),
+  command_id TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL,
+  CHECK (from_claim_id <> to_claim_id),
+  UNIQUE (author_account_id, from_claim_id, to_claim_id, relation)
+);
+CREATE INDEX IF NOT EXISTS ix_coordination_links_from ON coordination_claim_links(from_claim_id, id);
+CREATE INDEX IF NOT EXISTS ix_coordination_links_to ON coordination_claim_links(to_claim_id, id);
+CREATE TABLE IF NOT EXISTS coordination_knowledge_archives (
+  id TEXT PRIMARY KEY,
+  custodian_account_id TEXT NOT NULL UNIQUE REFERENCES accounts(id),
+  policy TEXT NOT NULL CHECK (policy = 'personal_reference'),
+  created_at TIMESTAMPTZ NOT NULL
+);
+CREATE TABLE IF NOT EXISTS coordination_archive_events (
+  id TEXT PRIMARY KEY,
+  archive_id TEXT NOT NULL REFERENCES coordination_knowledge_archives(id),
+  claim_id TEXT NOT NULL REFERENCES coordination_claims(id),
+  command_id TEXT NOT NULL,
+  added_at TIMESTAMPTZ NOT NULL,
+  UNIQUE (archive_id, claim_id)
+);
+CREATE TABLE IF NOT EXISTS coordination_archive_entries (
+  id TEXT PRIMARY KEY REFERENCES coordination_archive_events(id),
+  archive_id TEXT NOT NULL REFERENCES coordination_knowledge_archives(id),
+  claim_id TEXT NOT NULL REFERENCES coordination_claims(id),
+  added_at TIMESTAMPTZ NOT NULL,
+  UNIQUE (archive_id, claim_id)
+);

@@ -2,6 +2,7 @@
 // so the game publishes a standard OpenAPI 3.1 contract + an llms.txt index, both auto-derived from
 // the live route registry (server.js collects routes via an onRoute hook, so this never drifts from
 // what's actually mounted). Read-only, keyless, zero §10.4 surface.
+import { KNOWLEDGE_SCHEMAS, knowledgeContracts } from './coordination/http-contract.js';
 
 // Routes reachable WITHOUT a player token (the discovery + auth surface). Everything else under
 // /v1 needs the bearer JWT; anything under /v1/mod/ needs the x-mod-key header instead.
@@ -44,6 +45,7 @@ const TAG_DESC = {
   wire: 'The intelligence terminal: wiretaps, sweeps, the Street Wire.',
   underworld: 'Named-NPC relationships: standing, gifts, favors, errands.',
   content: 'Hash-pinned authored stories: personal district storylets and organization-scoped mysteries with exact-once rewards.',
+  coordination: 'Private, value-neutral coordination runs. Direct issued actions only; disabled by default and separate from Agent Act, item custody, authored content, and currency authority.',
   worldgraph: 'Conserved Phase 1 inventory, data-defined crafting, mysteries, and four-account Crew operations. Direct actions only; this surface is not autonomous-agent authority.',
   wallet: 'SIWE wallet linking for on-chain extraction.',
   withdraw: 'Withdraw earned $OMR on-chain (EIP-712 voucher, full-reserve backed; rail not yet open — opens when the audit and launch gates clear).',
@@ -174,10 +176,106 @@ const worldGraphMutation = (operationId, requestSchema = WORLDGRAPH_EMPTY_BODY) 
   },
 });
 
+const COORDINATION_IDENTIFIER = { type: 'string', minLength: 1, maxLength: 200, pattern: '^[!-~]+$' };
+const COORDINATION_REVISION = { type: 'integer', minimum: 0, maximum: Number.MAX_SAFE_INTEGER };
+const COORDINATION_HASH = { type: 'string', pattern: '^[a-f0-9]{64}$' };
+const coordinationErrorResponse = (description) => ({ description,
+  content: { 'application/json': { schema: { $ref: '#/components/schemas/CoordinationError' } } } });
+const COORDINATION_RESPONSES = {
+  400: coordinationErrorResponse('Malformed input. Unknown fields and coerced values are refused.'),
+  401: coordinationErrorResponse('Missing, invalid, expired, or revoked bearer token.'),
+  403: coordinationErrorResponse('The authenticated account is banned.'),
+  404: coordinationErrorResponse('coordination_unavailable: absent, foreign, historical-action, or unavailable action authority. These cases do not reveal private state.'),
+  409: { ...coordinationErrorResponse('stale_coordination, stale_coordination_content, coordination_key_reuse, contention, or in_progress. Refresh stale state; an in-progress key must be retried unchanged.'),
+    headers: { 'Retry-After': WORLDGRAPH_RETRY_AFTER_HEADER } },
+  422: coordinationErrorResponse('The global HTTP Idempotency-Key belongs to a different method, URL, or body (idempotency_key_reuse).'),
+  429: { ...coordinationErrorResponse('Existing account or agent cadence exceeded.'),
+    headers: { 'Retry-After': WORLDGRAPH_RETRY_AFTER_HEADER } },
+  500: coordinationErrorResponse('Internal failure; no private error or database details are returned.'),
+  503: { ...coordinationErrorResponse('coordination_disabled refuses new work outside the enabled cohort; historical reads and cancellation remain available. coordination_commit_unknown requires retrying the same command key to resolve its durable receipt. db_down indicates temporary database unavailability.'),
+    headers: { 'Retry-After': WORLDGRAPH_RETRY_AFTER_HEADER } },
+};
+const coordinationContract = (operationId, response, requestSchema) => ({
+  operationId, responseSchema: { $ref: `#/components/schemas/${response}` },
+  pathSchemas: { graphId: COORDINATION_IDENTIFIER, instanceId: COORDINATION_IDENTIFIER },
+  extraResponses: COORDINATION_RESPONSES,
+  ...(requestSchema ? { requestSchema, requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true,
+    description: 'Persist this logical command key before posting. Use 1–200 printable ASCII characters without whitespace. Exact retries recover the original committed receipt; never change the command body while reusing its key.',
+    schema: COORDINATION_IDENTIFIER }], responseHeaders: WORLDGRAPH_REPLAY_HEADER } : {}),
+});
+
+// Shared only by the HTTP serializers and machine contract. These projections carry
+// no owner IDs, hidden node definitions, rule expressions, or raw audit payloads.
+export const COORDINATION_SCHEMAS = {
+  ...KNOWLEDGE_SCHEMAS,
+  CoordinationError: { type: 'object', additionalProperties: false, required: ['error'], properties: {
+    error: { type: 'string' }, message: { type: 'string' }, retryAfter: { type: 'number' },
+  } },
+  CoordinationGraphSummary: { type: 'object', additionalProperties: false,
+    required: ['id', 'version', 'title', 'contentHash'], properties: {
+      id: COORDINATION_IDENTIFIER, version: { type: 'integer', minimum: 1 }, title: { type: 'string' }, contentHash: COORDINATION_HASH,
+    } },
+  CoordinationNode: { type: 'object', additionalProperties: false, required: ['id', 'title', 'status'], properties: {
+    id: COORDINATION_IDENTIFIER, title: { type: 'string' }, description: { type: 'string' },
+    status: { type: 'string', enum: ['completed', 'available', 'blocked'] },
+  } },
+  CoordinationAction: { type: 'object', additionalProperties: false, required: ['id', 'kind', 'label'], properties: {
+    id: COORDINATION_IDENTIFIER, kind: { type: 'string', enum: ['discover', 'complete'] },
+    label: { type: 'string' }, nodeId: COORDINATION_IDENTIFIER,
+  } },
+  CoordinationInstance: { type: 'object', additionalProperties: false,
+    required: ['id', 'graphId', 'graphVersion', 'contentHash', 'title', 'status', 'revision', 'createdAt', 'updatedAt',
+      'historical', 'nodes', 'actions', 'canCancel', 'directOnly'], properties: {
+      id: COORDINATION_IDENTIFIER, graphId: COORDINATION_IDENTIFIER, graphVersion: { type: 'integer', minimum: 1 },
+      contentHash: COORDINATION_HASH, title: { type: 'string' },
+      status: { type: 'string', enum: ['active', 'completed', 'cancelled'] }, revision: COORDINATION_REVISION,
+      createdAt: { type: 'string', format: 'date-time' }, updatedAt: { type: 'string', format: 'date-time' },
+      historical: { type: 'boolean' }, canCancel: { type: 'boolean' }, directOnly: { type: 'boolean', const: true },
+      nodes: { type: 'array', items: { $ref: '#/components/schemas/CoordinationNode' } },
+      actions: { type: 'array', items: { $ref: '#/components/schemas/CoordinationAction' } },
+    } },
+  CoordinationCatalog: { type: 'object', additionalProperties: false, required: ['enabled', 'directOnly', 'graphs', 'instances'], properties: {
+    enabled: { type: 'boolean' }, directOnly: { type: 'boolean', const: true },
+    graphs: { type: 'array', items: { $ref: '#/components/schemas/CoordinationGraphSummary' } },
+    instances: { type: 'array', maxItems: 20, items: { $ref: '#/components/schemas/CoordinationInstance' } },
+  } },
+  CoordinationReceipt: { type: 'object', additionalProperties: false, required: ['instance', 'replayed'], properties: {
+    instance: { $ref: '#/components/schemas/CoordinationInstance' },
+    replayed: { type: 'boolean', description: 'True when the domain command journal recovered the original committed receipt. The HTTP replay header can separately identify transport replay.' },
+  } },
+  CoordinationMetrics: { type: 'object', additionalProperties: false, required: ['schemaVersion', 'events', 'instances'], properties: {
+    schemaVersion: { type: 'integer', const: 1 },
+    knowledge: { type: 'object', additionalProperties: false, required: ['claims', 'activeGrants', 'links', 'archiveEntries'], properties: {
+      claims: { type: 'integer', minimum: 0 }, activeGrants: { type: 'integer', minimum: 0 },
+      links: { type: 'integer', minimum: 0 }, archiveEntries: { type: 'integer', minimum: 0 },
+    } },
+    events: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['type', 'total'], properties: {
+      type: { type: 'string', enum: ['coordination.created', 'coordination.node.discovered', 'coordination.node.completed', 'coordination.completed', 'coordination.cancelled'] },
+      total: { type: 'integer', minimum: 0 },
+    } } },
+    instances: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['status', 'total'], properties: {
+      status: { type: 'string', enum: ['active', 'completed', 'cancelled'] }, total: { type: 'integer', minimum: 0 },
+    } } },
+  } },
+};
+
 // The first strict contracts cover the autonomous hot path. The route registry still guarantees
 // COMPLETE path discovery; these overlays replace its generic object body where the server itself
 // emits an action that an agent is expected to send back verbatim.
 const OPERATION_CONTRACTS = {
+  ...knowledgeContracts(coordinationContract),
+  'GET /v1/coordination': coordinationContract('getCoordinationCatalog', 'CoordinationCatalog'),
+  'POST /v1/coordination/:graphId/instances': coordinationContract('createCoordinationInstance', 'CoordinationReceipt', {
+    type: 'object', additionalProperties: false, required: ['expectedContentHash'], properties: { expectedContentHash: COORDINATION_HASH },
+  }),
+  'GET /v1/coordination/instances/:instanceId': coordinationContract('getCoordinationInstance', 'CoordinationInstance'),
+  'POST /v1/coordination/instances/:instanceId/act': coordinationContract('actOnCoordinationInstance', 'CoordinationReceipt', {
+    type: 'object', additionalProperties: false, required: ['expectedRevision', 'actionId'],
+    properties: { expectedRevision: COORDINATION_REVISION, actionId: COORDINATION_IDENTIFIER },
+  }),
+  'POST /v1/coordination/instances/:instanceId/cancel': coordinationContract('cancelCoordinationInstance', 'CoordinationReceipt', {
+    type: 'object', additionalProperties: false, required: ['expectedRevision'], properties: { expectedRevision: COORDINATION_REVISION },
+  }),
   'POST /v1/access/redeem': {
     operationId: 'redeemLaunchInvite',
     requestSchema: { type: 'object', required: ['inviteCode', 'bootstrapSecret'], properties: {
@@ -426,6 +524,7 @@ const OPERATION_CONTRACTS = {
 };
 
 const AGENT_SCHEMAS = {
+  ...COORDINATION_SCHEMAS,
   ContentGateState: {
     type: 'object', additionalProperties: false,
     required: ['kind', 'label', 'passed'],
@@ -1602,8 +1701,8 @@ export function llmsTxt({ baseUrl = 'https://www.omerta.fun' } = {}) {
 - [Agent quickstart](${baseUrl}/agents): auth → agent key → create → poll opportunities → act. Extraction setup: link EVM wallet → mint character.
 - [Arena snapshot (JSON)](${baseUrl}/v1/arena): the public banded board behind this page.
 - [Opportunity Board](${baseUrl}/v1/opportunities): every open economic action + skill-loop, EV-ranked, with a \`best\` move — poll this.
-- [Agent Turn v3](${baseUrl}/v1/agent/turn): transparent EV ranking + refresh-safe multi-loop plans + executable next steps + blockers + next wake time in one throttled read.
-- Agent Turn v3 also returns the required \`exploration\` coverage object with \`catalog\`, \`progress\`, \`next\`, and \`blocked\`. Its \`exploration.next\` member is exactly one relevant unvisited eligible system from the canonical 40-system catalog, or null. Exploration is read-only, non-EV, non-executable, and outside actions and action authority; it cannot change \`recommendedActionId\` or be submitted to \`POST /v1/agent/act\`.
+- [Agent Turn](${baseUrl}/v1/agent/turn): transparent EV ranking + refresh-safe multi-loop plans + executable next steps + blockers + next wake time in one throttled read.
+- Agent Turn also returns the required \`exploration\` coverage object with \`catalog\`, \`progress\`, \`next\`, and \`blocked\`. Its \`exploration.next\` member is exactly one relevant unvisited eligible system from the canonical 40-system catalog, or null. Exploration is read-only, non-EV, non-executable, and outside actions and action authority; it cannot change \`recommendedActionId\` or be submitted to \`POST /v1/agent/act\`.
 - Execute a turn: POST ${baseUrl}/v1/agent/act with the latest \`{turnId, actionId}\`; success returns the post-action turn, while \`409 stale_turn\` returns a replacement snapshot without executing.
 - Agent Alpha is the owner-operated bounded runner in \`tools/agent-alpha.js\`: one durable identity, default one action, finite 1–50 attempts, at least 3100 ms between mutations, no reset, and no fleet, PvP, borrowing, human-faucet, wallet, mint, withdrawal, or replacement automation.
 - [OpenAPI 3.1 spec](${baseUrl}/openapi.json): every route, for your tool framework.

@@ -1,0 +1,22 @@
+✓ checkout stability: all 4283 graph timestamps are canonical UTC (3782 read from git), so regenerating under a different git version cannot drift them
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: graph.json drifted; first difference at line 3
+committed: "  \"sourceRevision\": \"49087c4bf3f1a8acc36f3f9ea0c380b3278df541\","
+generated: "  \"sourceRevision\": \"2b3feb7c807848564094c9b56d13fd7e41f97bae\","
+fix: `npm run knowledge` clears this locally but stamps worktreeDirty:true — do not commit that. To commit: land the source change first, regenerate on the clean tree, then commit the artifacts ALONE (a generated-only commit describes its PARENT) and push both together.
+    at file:///C:/Users/Jorge/Documents/Omerta/tools/knowledge-test.js:474:12
+    at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+    at async node:internal/modules/esm/loader:643:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: undefined,
+  expected: undefined,
+  operator: 'fail',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

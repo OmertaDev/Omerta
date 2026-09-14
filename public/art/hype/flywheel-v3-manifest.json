@@ -1,0 +1,127 @@
+{
+  "campaign": "OMERTA hype flywheel v3",
+  "sourceRevision": "2b3feb7c807848564094c9b56d13fd7e41f97bae",
+  "videoModel": "bytedance/seedance-2.5/text-to-video",
+  "ttsModel": "fal-ai/minimax/speech-02-hd",
+  "ttsVoice": "Deep_Voice_Man",
+  "generatedAt": "2026-09-10T23:41:49.782Z",
+  "estimatedSpendUsd": 7.0927,
+  "assets": [
+    {
+      "id": "flywheel-v3-loop",
+      "type": "video",
+      "model": "bytedance/seedance-2.5/text-to-video",
+      "resolution": "480p",
+      "aspectRatio": "16:9",
+      "durationSeconds": 6,
+      "generatedAudio": false,
+      "prompt": "Hero shot of an enormous art-deco mechanical flywheel with five icon stations: a player silhouette, a storefront, circular inventory arrows, a market gavel, and a trophy. Golden energy races clockwise around the ring; every completed turn lights more of the rain-soaked noir city behind it. The camera orbits the machine, then pulls back for a monumental centered finale, cinematic 1940s film noir, premium prestige-game trailer, moody amber and teal practical lighting, wet black stone, brass, smoked glass, volumetric haze, 35mm texture, deep blacks, controlled highlights, physically coherent motion, dynamic camera, no readable text, no letters, no logos, no watermark.",
+      "promptSha256": "3de0079fb139c4bca78deeae2b9b0709097ffd9b29bf6ad857853c76ef2007a9",
+      "requestId": "01a08d10-ff54-71f2-8291-7bd5e1aa21dc",
+      "url": "https://v3b.fal.media/files/b/0aa9e8ce/7QyyN_zHESkBLxVS4PUM2_video.mp4",
+      "estimatedSpendUsd": 1.323
+    },
+    {
+      "id": "flywheel-v3-deeds",
+      "type": "video",
+      "model": "bytedance/seedance-2.5/text-to-video",
+      "resolution": "720p",
+      "aspectRatio": "16:9",
+      "durationSeconds": 6,
+      "generatedAudio": false,
+      "prompt": "A continuous cinematic move begins inches above an ornate brass property deed with an engraved blank street grid, then dives into the living rain-soaked city block represented on it. A permanent golden provenance thread stays bound to the deed while two rival noir crews contest the physical street corner and a cyan control beacon changes hands. The paper remains untouched as the active corner changes control. End on a high oblique view that clearly separates enduring property from contestable street control, cinematic 1940s film noir, premium prestige-game trailer, moody amber and teal practical lighting, wet black stone, brass, smoked glass, volumetric haze, 35mm texture, deep blacks, controlled highlights, physically coherent motion, dynamic camera, no readable text, no letters, no logos, no watermark.",
+      "promptSha256": "a22cebbe4f087bdfc1ca8180f15dbd3a5a69656c41f75c479a725fcd939305ba",
+      "requestId": "01a08da8-fbde-76a3-97b8-1ff1001f8af6",
+      "url": "https://v3b.fal.media/files/b/0aa9ecd0/TpD6rh62QCNKBwKNkBAkr_video.mp4",
+      "estimatedSpendUsd": 2.838
+    },
+    {
+      "id": "flywheel-v3-rwa",
+      "type": "video",
+      "model": "bytedance/seedance-2.5/text-to-video",
+      "resolution": "720p",
+      "aspectRatio": "16:9",
+      "durationSeconds": 6,
+      "generatedAudio": false,
+      "prompt": "A ceremonial art-deco commission chamber visualizes a future gated asset rail without brands or readable labels. Six family silhouettes cast brass ballots toward one approved blank market medallion. The selected medallion passes through a sealed glass treasury machine that accepts only the emerald light already inside, then produces a conserved set of blue-green stock-token coins in a transparent custody vault. Precisely measured units travel along one locked rail into a brass street-deed vault. Deterministic machinery, no random drops, no charts, no price movement, no currency symbols, no financial-brand likenesses, cinematic 1940s film noir, premium prestige-game trailer, moody amber and teal practical lighting, wet black stone, brass, smoked glass, volumetric haze, 35mm texture, deep blacks, controlled highlights, physically coherent motion, dynamic camera, no readable text, no letters, no logos, no watermark.",
+      "promptSha256": "e83c20b5602fa22a76197b6844171d810fe0e626435a0d969169ba8a7d42eca6",
+      "requestId": "01a08da8-fbd9-78c3-bf5b-2e7ca30571fe",
+      "url": "https://v3b.fal.media/files/b/0aa9eca6/zOKzSV8juRjPNjWTTglGv_video.mp4",
+      "estimatedSpendUsd": 2.838
+    }
+  ],
+  "voiceover": [
+    {
+      "index": 0,
+      "text": "OMERTÀ does not pay O-M-R for waiting. Value starts when players act.",
+      "type": "audio",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "voice": "Deep_Voice_Man",
+      "url": "https://v3b.fal.media/files/b/0aa9e8aa/C-Zp-I4CBtlefE4DEr_ZF_speech.mp3"
+    },
+    {
+      "index": 1,
+      "text": "Crimes create stakes. Markets create counterparties. Crews turn coordination into territory.",
+      "type": "audio",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "voice": "Deep_Voice_Man",
+      "url": "https://v3b.fal.media/files/b/0aa9e8c3/sWYmdjdIUW8-dNbHKSwiU_speech.mp3"
+    },
+    {
+      "index": 2,
+      "text": "Most supported house sinks recycle O-M-R to the Desk, where the city prices the same supply again.",
+      "type": "audio",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "voice": "Deep_Voice_Man",
+      "url": "https://v3b.fal.media/files/b/0aa9e8ab/WG-1INqz872prvlOeIiuE_speech.mp3"
+    },
+    {
+      "index": 3,
+      "text": "Separately, arrived revenue caps the Vig. When armed, it buys O-M-R from the market and splits it between the reserve and prizes.",
+      "type": "audio",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "voice": "Deep_Voice_Man",
+      "url": "https://v3b.fal.media/files/b/0aa9e8ab/P_ujI6KARFEMsiDEJ01xL_speech.mp3"
+    },
+    {
+      "index": 4,
+      "text": "More players mean more trades, contracts, rivals, and families. More liquidity makes every loop stronger.",
+      "type": "audio",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "voice": "Deep_Voice_Man",
+      "url": "https://v3b.fal.media/files/b/0aa9e8ac/QrDiJQgMTolL-HP8MeOuQ_speech.mp3"
+    },
+    {
+      "index": 5,
+      "text": "Play. Spend. Recycle. Buy back. Reward. Repeat.",
+      "type": "audio",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "voice": "Deep_Voice_Man",
+      "url": "https://v3b.fal.media/files/b/0aa9e8ac/wgRNdpePRC4QjpPBHNRGO_speech.mp3"
+    },
+    {
+      "index": 6,
+      "text": "The rail is built and devnet-proven. Production stays chain-unconfigured until the security gates clear.",
+      "type": "audio",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "voice": "Deep_Voice_Man",
+      "url": "https://v3b.fal.media/files/b/0aa9e8c5/H44hLliatsHbXCKWDEYpL_speech.mp3"
+    },
+    {
+      "index": 7,
+      "text": "One account, one named Street Deed. The legend survives death, while corner cash and perks belong only to whoever controls the block.",
+      "type": "audio",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "voice": "Deep_Voice_Man",
+      "url": "https://v3b.fal.media/files/b/0aa9eb9f/PrQJyD2Zcl2QvbYJM9N_M_speech.mp3"
+    },
+    {
+      "index": 8,
+      "text": "When armed, families vote an approved ticker. A walled treasury buys only what arrived; active play earns Stock Tokens delivered into an extracted Deed's vault.",
+      "type": "audio",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "voice": "Deep_Voice_Man",
+      "url": "https://v3b.fal.media/files/b/0aa9eba0/eNdb8MUeC4uFklswx63nS_speech.mp3"
+    }
+  ]
+}

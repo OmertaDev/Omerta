@@ -1,0 +1,30 @@
+✓ 73 gate requirements hold across 5 families
+✓ completeness: 14 street crimes and every collect* action are classified
+✓ 4 participation cash faucets exclude agents at the point of payment (3 waived with a stated reason)
+✓ no site hand-rolls a gate
+✓ no module re-defines jailed/hospitalized/safeHoused — every gate resolves to the one definition
+✓ all 28 wrong-location refusals carry the destination as data — the client turns every one into a "go there" button
+✅ THE GATE MATRIX passed — every verb in a family enforces the gates its siblings do, checked through direct calls, shared assert helpers and inline column comparisons alike; the membership is derived from the code rather than trusted, so a new street crime or collect action cannot slip past unclassified; the sites that hand-roll a gate instead of calling the helper are named rather than quietly accepted; and no module may re-define a canonical predicate, which is the shape the inline check structurally cannot see. Scope: it proves a gate is REACHED, not that it is correct.
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: real-value function(s) that take or derive a PRICE with nothing bounding it. A downstream check
+      cannot catch this: it compares two numbers both derived from the bad price. Add a continuity
+      wall against the last REAL print, or waive it here with the bound that replaces it:
+   - bonds.js:bondQuoteBudgetAmount
+    at file:///C:/Users/Jorge/Documents/Omerta/test/gates.js:499:10
+    at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+    at async node:internal/modules/esm/loader:643:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 1,
+  expected: 0,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.19.0
+Command: node test/gates.js
+Exit code: 1

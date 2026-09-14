@@ -1,5 +1,7 @@
 # Phase 2A — Material Taxonomy, Versioned Inventory, and Vehicle Salvage
 
+> **Current development workflow:** The [2026-09-13 workflow amendment](2026-09-13-world-graph-phase-2a-development-workflow-amendment.md) supersedes all conflicting review, TDD, orchestration, commit, repeated-test, and documentation-cadence requirements below. Technical acceptance criteria remain in force.
+
 ## Status and scope
 
 This specification defines the first independently reviewable increment of the approved Phase 2 world-graph expansion. It depends on the Phase 1 world-graph and item-economy foundation and establishes the canonical definitions, inventory versioning, material catalog, salvage runtime, and static economy analysis required by all later Phase 2 work.

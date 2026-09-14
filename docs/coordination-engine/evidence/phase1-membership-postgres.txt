@@ -1,0 +1,13 @@
+PostgreSQL 18.4; isolated schema coordination_knowledge_test_089929256ee2d8a6
+PASS live ACL: disclosure/revoke serial order; board and archive omit revoked evidence
+PASS reverse ACL order: read waits for pending revoke and then refuses
+PASS crew: real kick waits for read; committed removal immediately removes access
+PASS family: real kick waits for read; committed removal immediately removes access
+PASS evidence: same-account copies refuse; independent sources unlock; stale action loses revoked authority
+PASS gate race: pending evidence revoke wins without a partial instance transition
+PASS reciprocal links: stable claim order and receipts without evidence identifiers
+PASS death/heir: real family removal, current-character relookup, historical private evidence without action inheritance
+PASS value boundary: sharing/archive/revocation created no discovery copy or economic event
+Command: node test/coordination-knowledge-postgres.js
+Exit code: 0
+Target: explicit isolated loopback PostgreSQL; no DATABASE_URL fallback

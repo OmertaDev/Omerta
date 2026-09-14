@@ -1,0 +1,4 @@
+PASS: all 5 workflows parse with js-yaml; exactly one coordination pgcheck step invokes all three existing scripts using only the existing isolated loopback service.
+Scope: YAML and coordination CI wiring only; remote CI was not executed.
+Command: js-yaml parse + scoped coordination CI wiring assertions (read-only)
+Exit code: 0

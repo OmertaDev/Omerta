@@ -1,0 +1,27 @@
+
+> omerta-backend@1.2.0 test:coordination
+> node test/coordination-graph.js && node test/coordination.js && node test/coordination-api.js && node test/coordination-http-receipts.js && node test/coordination-knowledge.js && node test/coordination-knowledge-runtime.js && node test/coordination-knowledge-api.js
+
+coordination-graph: isolated immutable definitions, canonical identity and registry authority pass
+coordination-graph: AND, OR, every M-of-N truth table, clocks and missing state pass
+coordination-graph: hostile schemas, hidden references, cycles and disconnected branches pass
+coordination-graph: node, depth and aggregate predicate limits pass
+coordination-graph: schema 2 typed claims, exact source dependencies, contradictions and v1 hash stability pass
+coordination-graph: pure exact-rule/hash-bound evidence result evaluation rejects callbacks and malformed receipts
+coordination-graph: schema 2 preserves node, depth and total-rule bounds
+coordination: pg-mem journey, visibility, replay, races, pins, historical recovery, zero-value and 10 rollback boundaries pass
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+idempotency: store UPDATE failed — key left in-progress, value may have committed injected lost HTTP receipt-store acknowledgement
+coordination API: strict inputs, auth, safe projections, OpenAPI, cohort, replay, privacy, and stopped-rollout recovery passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+coordination HTTP receipts: delayed success/failure cannot overwrite or delete a replacement reservation; first finalized receipt wins
+coordination-knowledge: checked contexts, immutable provenance, encrypted targets, filtered pages with revoke retry, 12 rollback boundaries, aggregate rebuild bound and disabled recovery pass
+coordination-knowledge-runtime: two-account journey, private projections and live gate revocation pass
+coordination-knowledge-runtime: own-root and same-account heir non-independence, historical recovery pass
+coordination-knowledge-runtime: exact-hash isolation and retired-definition resolution pass
+coordination-knowledge-runtime: incompatible readable source blocks qualification until revoked pass
+coordination-knowledge-runtime: engine/cohort/knowledge/private-only sharing flags pass
+coordination-knowledge-runtime: pg-mem complete journeys, lifecycle/flags, races, discovery rollback and ambiguous commit recovery pass
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+idempotency: store UPDATE failed — key left in-progress, value may have committed injected knowledge HTTP receipt-store failure
+coordination knowledge API: full shared pilot, strict inputs, private projections, stale authority, receipt recovery, archive/link revocation and dormant recovery pass

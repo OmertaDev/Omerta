@@ -1,0 +1,10 @@
+Command: COORDINATION_TEST_DATABASE_URL=postgresql://coordination_review@127.0.0.1:55483/postgres node test/coordination-knowledge-runtime.js --postgres
+Database: isolated loopback PostgreSQL 18.4; random test schema removed by finally; existing scratch cluster left running for the reviewer.
+Exit status: 0
+
+coordination-knowledge-runtime: two-account journey, private projections and live gate revocation pass
+coordination-knowledge-runtime: own-root and same-account heir non-independence, historical recovery pass
+coordination-knowledge-runtime: exact-hash isolation and retired-definition resolution pass
+coordination-knowledge-runtime: incompatible readable source blocks qualification until revoked pass
+coordination-knowledge-runtime: engine/cohort/knowledge/private-only sharing flags pass
+coordination-knowledge-runtime: PostgreSQL complete journeys, lifecycle/flags, races, discovery rollback and ambiguous commit recovery pass

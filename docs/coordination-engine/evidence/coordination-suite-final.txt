@@ -1,0 +1,12 @@
+
+> omerta-backend@1.2.0 test:coordination
+> node test/coordination-graph.js && node test/coordination.js && node test/coordination-api.js
+
+coordination-graph: isolated immutable definitions, canonical identity and registry authority pass
+coordination-graph: AND, OR, every M-of-N truth table, clocks and missing state pass
+coordination-graph: hostile schemas, hidden references, cycles and disconnected branches pass
+coordination-graph: node, depth and aggregate predicate limits pass
+coordination: pg-mem journey, visibility, replay, races, pins, historical recovery, zero-value and 10 rollback boundaries pass
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+idempotency: store UPDATE failed — key left in-progress, value may have committed injected lost HTTP receipt-store acknowledgement
+coordination API: strict inputs, auth, safe projections, OpenAPI, cohort, replay, privacy, and stopped-rollout recovery passed

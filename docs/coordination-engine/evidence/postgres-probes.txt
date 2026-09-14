@@ -1,0 +1,6 @@
+PASS PostgreSQL: concurrent creates converge and same-revision commands serialize
+PASS PostgreSQL: event insert failure rolls progress and receipts back
+OBSERVED death-race create: {"ok":true}
+OBSERVED post-death cancellation actor: review-heir actual living character: review-heir
+PASS historical owner cannot act; original account can cancel; disabled service replays receipt only
+PASS oversized persisted INTEGER version rejected by compiler

@@ -74,6 +74,9 @@ export const EXPLICIT_ENV = {
 // ── Everything else, classified so nothing can be added without a decision. `test/preflight.js`
 //    fails on any src/ env var missing from this file entirely.
 export const OPERATIONAL_ENV = [
+  // Inert coordination pilot: disabled by default; optional account cohort only narrows access.
+  'COORDINATION_ENGINE', 'COORDINATION_ACCOUNT_IDS',
+  'COORDINATION_KNOWLEDGE', 'COORDINATION_KNOWLEDGE_SHARING',
   // infrastructure
   'DATABASE_URL', 'NODE_ENV', 'PORT', 'PG_POOL_MAX', 'REDIS_URL', 'TRUST_PROXY', 'PUBLIC_URL',
   // Postgres safety valves (db.js). Operational, not gameplay: they bound how long anything may hold

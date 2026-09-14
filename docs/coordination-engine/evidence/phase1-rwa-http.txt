@@ -1,0 +1,23 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ RWA HTTP routes passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ RWA reviewer classification requires an unforgeable server-created trust token
+✅ RWA Safe package validation rejects types, not valid BigInt text
+✅ RWA disposition compares exact DB wall time before whole-second packaging
+✅ RWA reviewer queue ranks a dense current-support snapshot without stale holes
+✅ RWA reviewer queue cleanup remains chunk-bounded at the 5,000-row wall
+✅ RWA reviewer queue batches every cleanup transition with exact event payloads
+✅ RWA reviewer queue batches 100 cleanup transitions with exact events
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ RWA reviewer GETs have their own pre/post-auth limiter and no player-read path
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[500] POST /v1/rwa/reviewer/nominations/rwa-completion-store-failure/claim Error: injected reviewer completion-store failure
+    at live.pool.query (file:///C:/Users/Jorge/Documents/Omerta/test/rwaroutes.js:833:13)
+    at Object.rwaReviewerMutation (file:///C:/Users/Jorge/Documents/Omerta/src/routes/rwa.js:151:33)
+✅ RWA reviewer auth, exact package, replay, and submission routes passed
+✅ RWA approval package failure rolls review, event, and proposal back together
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ RWA reviewer mutations have a bounded reviewer-only rate namespace

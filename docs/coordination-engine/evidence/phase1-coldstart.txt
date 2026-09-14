@@ -1,0 +1,2 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ cold start passed — all 175 parameterless authed GET routes answer for the FIRST player on a world with no season, no monument, no event, no leaderboard and not even a resident to fill the boards; the 6 that refuse are declared tombstones, checked in both directions so a waiver cannot outlive the thing it waives.

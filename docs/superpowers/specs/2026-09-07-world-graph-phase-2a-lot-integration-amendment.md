@@ -1,5 +1,7 @@
 # Phase 2A Tasks 4–5 — Lot Integration Amendment
 
+> **Current development workflow:** The [2026-09-13 workflow amendment](2026-09-13-world-graph-phase-2a-development-workflow-amendment.md) supersedes all conflicting review, TDD, orchestration, commit, repeated-test, and documentation-cadence requirements below. Technical acceptance criteria remain in force.
+
 Date: 2026-09-07. Status: approved design amendment. This contract supersedes conflicting downstream Task 4–5 wording in the Phase 2A specification and implementation plan and narrows the new HTTP action scope to Task 8's Phase 2 route family. It also establishes the optional exact Crew-authority prefix reflected in the program, cross-cutting, and affected later specifications. Approval establishes design and task decomposition; it does not begin or complete registry implementation, inventory migration, activation, or release.
 
 The [Definition Registry Amendment](2026-09-07-world-graph-phase-2a-definition-registry-amendment.md) retains precedence over every Task 3 interface, six-table schema, intrinsic definition vocabulary, seven hash domains, admission rule, separate transaction brand, policy, and review gate. Task 4 execution requires completed Task 3.1–3.3 reviews and verification. All interfaces added here are downstream item integration contracts; they do not alter Task 3.

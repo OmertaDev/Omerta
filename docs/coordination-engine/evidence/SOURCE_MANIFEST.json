@@ -1,0 +1,126 @@
+{
+  "schemaVersion": 1,
+  "baselineCommit": "2b3feb7c807848564094c9b56d13fd7e41f97bae",
+  "workingTreeDirty": true,
+  "capturedAt": "2026-09-13T12:18:03.7508310Z",
+  "scope": "Coordination Engine Phase 0 internal disabled foundation and narrow HTTP receipt recovery",
+  "files": [
+    {
+      "path": ".gitignore",
+      "sha256": "fc3ca650e90bd7ea95b90457dbe7d46bf5ff3c6bf2e724c3446f76661e46b74c",
+      "role": "Phase 0 source, integration or verification"
+    },
+    {
+      "path": "src/coordination/graph.js",
+      "sha256": "cc46b882408660e6a99eb8ce3af8f2d3e6909efb7537307dde0463c4bf044694",
+      "role": "Phase 0 source, integration or verification"
+    },
+    {
+      "path": "src/coordination/runtime.js",
+      "sha256": "7363fcbeade3bf774fca77064bfcde7f767aaa911f29f0cba3a8b792b94ccd8f",
+      "role": "Phase 0 source, integration or verification"
+    },
+    {
+      "path": "src/coordination/pilot.js",
+      "sha256": "9d5ee3e4010ac5051092c8d57c8f726f24b09ab85185faf3024664082aa4c2ed",
+      "role": "Phase 0 source, integration or verification"
+    },
+    {
+      "path": "src/routes/coordination.js",
+      "sha256": "16e5a604f338b296ae31d2f959fe21aaf588cc2fcbda804e764990285e002c94",
+      "role": "Phase 0 source, integration or verification"
+    },
+    {
+      "path": "schema.sql",
+      "sha256": "1d0d4877529cd57bba3de0f9dac61d429cc5787ca1035ee6d8314e0a8a31c302",
+      "role": "Phase 0 source, integration or verification"
+    },
+    {
+      "path": "src/agentgateway.js",
+      "sha256": "865998822787f8a1485e16405ff45f9bf780b4523ac1abc6c07e10025b2e2d9c",
+      "role": "Phase 0 source, integration or verification"
+    },
+    {
+      "path": "src/server.js",
+      "sha256": "565675eb073fd14980a31d52880c0dad09a171f1e21563a6c72e8cecd8299b38",
+      "role": "Phase 0 source, integration or verification"
+    },
+    {
+      "path": "src/preflight.js",
+      "sha256": "6d2ff19c58fb952bd0fda121a161f721d9ac4729aa1cf7f0eba7a9af33be8502",
+      "role": "Phase 0 source, integration or verification"
+    },
+    {
+      "path": "package.json",
+      "sha256": "32618cfc42892484fb5d1048a3b6e2b8f7a7faee9b04878aa04033d6a88432e4",
+      "role": "Phase 0 source, integration or verification"
+    },
+    {
+      "path": "test/coordination-graph.js",
+      "sha256": "51dff7b3133c8c4cd9cbd99ccb671e2bc07d923d9c382f4271a24a3579145f2b",
+      "role": "Phase 0 source, integration or verification"
+    },
+    {
+      "path": "test/coordination.js",
+      "sha256": "5cd961d2fd88560c93295e7886f166c4a66c2f42f2caf911f565b0eb4c4c5def",
+      "role": "Phase 0 source, integration or verification"
+    },
+    {
+      "path": "test/coordination-api.js",
+      "sha256": "7ddf8120802f7f69c0d8781d73b73876118dd3bfa7127aac9f91e235a1cd67f4",
+      "role": "Phase 0 source, integration or verification"
+    }
+  ],
+  "inspectedDependencies": [
+    {
+      "path": "src/content/canonical.js",
+      "sha256": "d012d76200806755da939f2c0559ac3ebce2a6c126de02482b0a376110c02848",
+      "role": "Inspected dependency/context; not a whole-module security clearance"
+    },
+    {
+      "path": "src/content/phase2-transactions.js",
+      "sha256": "267e94e92c040bc4f40c098af2dff4af35b800105b624056c83988a4c3233978",
+      "role": "Inspected dependency/context; not a whole-module security clearance"
+    },
+    {
+      "path": "src/worldgraph.js",
+      "sha256": "c7d857551b9f29c742c02bada8282d41d1311b48fb4d52ab7170a5aded2f0979",
+      "role": "Inspected dependency/context; not a whole-module security clearance"
+    },
+    {
+      "path": "src/db.js",
+      "sha256": "2ef8926323ad266ef685856ebf7192f8005cc733eb104d5ddabf2bdc14fe1d52",
+      "role": "Inspected dependency/context; not a whole-module security clearance"
+    },
+    {
+      "path": "src/dbhealth.js",
+      "sha256": "8f0e65e9a9dfc5c1353b2b918b95cd5e1afd9ce9d4b858e822ded860e6767aa5",
+      "role": "Inspected dependency/context; not a whole-module security clearance"
+    },
+    {
+      "path": "src/game.js",
+      "sha256": "7829195c2235b24d2a8e5d0c879e4c58ca31525a5d80884603ce4c15394d7fc4",
+      "role": "Inspected dependency/context; not a whole-module security clearance"
+    },
+    {
+      "path": "src/rules.js",
+      "sha256": "fff8a956f608fcdfa834d86767699aa87026abe58ff1fcb5c18d92c9b467d0bb",
+      "role": "Inspected dependency/context; not a whole-module security clearance"
+    },
+    {
+      "path": "src/auth.js",
+      "sha256": "7359ba97aa09c817cbe4838b73fa776764a6c63373bedd5dba46eee0a0342832",
+      "role": "Inspected dependency/context; not a whole-module security clearance"
+    },
+    {
+      "path": "src/fees.js",
+      "sha256": "8a2da48dba18e290286540eeb89191de03cadb5ac370044ce7cb2088f0adeef0",
+      "role": "Inspected dependency/context; not a whole-module security clearance"
+    },
+    {
+      "path": "src/social/estate.js",
+      "sha256": "e089698b3ae27ae51cdfff10d37167bb5547cff0b330f1f2542c01f56d7d579b",
+      "role": "Inspected dependency/context; not a whole-module security clearance"
+    }
+  ]
+}

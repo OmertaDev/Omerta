@@ -53,6 +53,9 @@ curl -s localhost:8787/v1/me -H "Authorization: Bearer $TOKEN"
 ```
 
 ## Layout
+
+The [Coordination Engine specification](docs/coordination-engine/README.md) maps the phased social-coordination roadmap to this codebase. Its opt-in Phase 0 pilot is implemented with private graph progress, immutable definitions and transactional replay/audit. Run `npm run test:coordination`; production defaults off via `COORDINATION_ENGINE=off`. Later phases remain planned.
+
 - `src/rules.generated.js` — the prototype's 22 data tables and NOTHING else. Machine-owned:
   `node tools/extract-rules.js path/to/omerta-game-v24.jsx` overwrites it wholesale, so never hand-edit
   it — change the PROTOTYPE and re-extract.

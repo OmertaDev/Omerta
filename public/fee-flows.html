@@ -169,7 +169,7 @@
     <h1>Where a Dollar Goes <span class="amp">&amp;</span> Why</h1>
     <p class="sub">An editable fee-flow sandbox. Follow each source into its destinations, change the split, and export a proposal for review.</p>
   </header>
-  <div class="scenario-notice"><b>This is an illustrative scenario, not current production.</b> The starting model explores a smaller treasury and a family-yield allocation. Character creation mint proceeds go 100% to the operations wallet (DEV_WALLET); respawn and reroll keep their existing split. All edits stay in this browser; nothing here changes the game, moves money, or opens extraction. Read the <a href="/wiki#chain">Codex for production rail status</a>.</div>
+  <div class="scenario-notice"><b>This is an illustrative scenario, not current production.</b> The starting model explores a smaller treasury and a family-yield allocation. Character creation mint proceeds go 100% to the operations wallet (DEV_WALLET); respawn and reroll keep their existing split. All edits stay in this browser; nothing here changes the game, moves money, or opens extraction. This editable allocation is not a canonical-market quote. Read the <a href="/wiki#canonical-market">Codex for current market mechanics</a> and <a href="/wiki#chain">production rail status</a>.</div>
 
   <div class="bar">
     <button id="theme" type="button" title="Toggle light/dark">Change theme</button>
@@ -256,7 +256,7 @@ const LIVE = [
     {dest:"vig",bps:500,lands:"vig_revenue source='bond' (reserve)"},
     {dest:"treasury",bps:500,lands:"bond_reserve.rwa_eth (backed float)"},
     {dest:"operations",bps:1500,lands:"bond_reserve.dev_eth"}]},
-  {id:"tax",name:"DEX sell tax (900 bps of every OMR sell)",currency:"eth",splits:[
+  {id:"tax",name:"Illustrative sell-fee allocation (900 bps)",currency:"eth",splits:[
     {dest:"operations",bps:2222,lands:"sell_tax_events.dev_eth"},
     {dest:"treasury",bps:1778,lands:"sell_tax_events.rwa_eth (backed vault — kept small)"},
     {dest:"community",bps:2666,lands:"→ buyback → family_yield_pool (Path A)"},

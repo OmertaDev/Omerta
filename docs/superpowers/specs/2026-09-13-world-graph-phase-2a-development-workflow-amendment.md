@@ -1,0 +1,22 @@
+# Phase 2A development workflow amendment
+
+**Owner direction — 2026-09-13:** remove excessive development overhead. This amendment governs unfinished Phase 2A work and supersedes conflicting process requirements in its implementation plan, definition-registry and lot-integration amendments, inherited program/cross-cutting workflows, and resume/SDD instructions. It does not change technical acceptance criteria or invalidate retained evidence.
+
+## Development requirements
+
+- One implementer may complete and verify a coherent change. Subagents, particular skills, fresh reviewer identities, separate spec/quality reviewers, controller handoffs, controller-only commits, and prescribed commit messages are optional. Use additional reviewers when the risk or complexity merits them.
+- Review spec compliance, code quality, and relevant security properties together at a coherent integration boundary. Do not require a new review package for every helper or subtask. Preserve the repository security-review policy for sensitive work and release; this amendment removes repeated orchestration, not its evidence requirements.
+- Preserve actual technical dependencies, particularly the coherent inventory-authority cutover. Dependent work can continue once its prerequisite interfaces and focused checks pass; it need not wait for administrative review/commit cycles. Unresolved correctness or security findings block the affected boundary, not unrelated development. Record and retest material findings.
+- Test-first development is optional. Required behavioral, regression, adversarial, and invariant coverage remains required, but a separate red/green transcript, artificial pre-implementation failure, or TDD report is not an acceptance gate. Retain reproductions for actual bugs and meaningful mutation tests where specified.
+- Run the smallest affected suites during development. Reuse baseline and review evidence when relevant code, dependencies, configuration, and test conditions have not changed. Broaden or repeat checks only for new changes, failures, unresolved concerns, or an integration/release boundary.
+- Run the full repository suite once against the final integrated candidate. A review with no code changes does not trigger another full run. After fixes, rerun affected checks; repeat the full suite when shared changes or failures make the previous full result insufficient. Required CI still applies.
+- Run real PostgreSQL evidence for changes involving locks, transactions, constraints, migration, or replay. Group the relevant cases at the boundary they validate instead of repeating the entire matrix per subtask. Run backup/restore verification for migration/backup changes and final cutover readiness. Missing evidence blocks the corresponding readiness claim, not unrelated coding.
+- Register new tests in the normal runner with the change. Batch measured SPEC/MARKETING census updates, knowledge regeneration, and documentation checks at integration rather than after every helper/subtask. Finish applicable repository gates before declaring the integrated candidate ready; do not weaken automated checks to hide drift.
+- Run browser/mobile/UI checks only for affected rendered surfaces. Do not separately rerun unchanged suites already covered by the required runner. Preserve final economy simulation budgets and reproducible evidence; reuse unchanged reports with their original source identity.
+- Keep one concise record of changed scope, commands/results, findings, and remaining limitations. Separate per-subtask review packets, repeated knowledge refreshes, and ceremonial ledger updates are not required. Preserve existing historical records and release evidence.
+
+## Final boundary
+
+Before declaring Phase 2A complete, check the integrated change against its technical specification and the repository security-review policy, close material findings, and retain applicable full-suite, PostgreSQL, migration/recovery, invariant, and economy evidence. Reuse valid earlier evidence with its exact scope and revision; do not claim it covers changed code without verification. A second whole-plan review is required only when an unreviewed integration risk remains, not merely because individual tasks ended.
+
+Inventory conservation, authorization, immutable definitions, idempotency, atomic rollback, quality preservation, compatibility, and the zero-OMR/no-NFT boundary remain mandatory. This amendment grants no merge, push, deployment, production migration, or activation authorization.

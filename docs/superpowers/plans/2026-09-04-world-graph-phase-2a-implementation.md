@@ -1,6 +1,8 @@
 # World Graph Phase 2A Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Current development workflow:** The [2026-09-13 workflow amendment](../specs/2026-09-13-world-graph-phase-2a-development-workflow-amendment.md) supersedes all conflicting review, TDD, orchestration, commit, repeated-test, and documentation-cadence requirements below. Technical acceptance criteria remain in force.
+
+> **For agentic workers:** Follow the current workflow amendment. Skills and subagents are optional; checkboxes track technical work, not mandatory orchestration.
 
 **Goal:** Build the canonical declarative content-corpus, immutable item definitions, lot-authoritative inventory, purposeful starter material catalog, and transactional condition-aware vehicle salvage required by Phase 2A.
 
@@ -27,7 +29,7 @@
 - PostgreSQL is authoritative. pg-mem compensation must expose equivalent atomic results without replacing required real-PostgreSQL race tests.
 - Algorithms are iterative and bounded and must validate a synthetic graph of at least 10,000 nodes without recursion on authored depth.
 - Preserve Phase 1 world-graph, crafting, mystery, operation, Belladonna, content-runtime, and Bellini compatibility behavior.
-- Every task is implemented without a final task commit, reviewed first by a fresh spec-compliance reviewer and then by a different fresh code-quality/security/PostgreSQL reviewer, fixed and re-reviewed as needed, independently verified by the integration agent, and committed only when no Critical or Important finding remains.
+- Apply combined review and focused verification at coherent integration boundaries under the current workflow amendment; retain applicable security and release evidence.
 - Do not merge, push, deploy, activate a production bundle, activate seasonal OMR, or deploy NFT contracts.
 
 ## File Structure
@@ -88,19 +90,9 @@ These versioned server-owned limits cannot be raised by authored data. The produ
 
 - **Ruling: immutable definition registration is monotonic, but activation is an audited pointer and may explicitly select an older stored valid bundle for operational rollback.** The higher-order cross-cutting continuation/rollback contract controls the Phase 2A sentence about monotonic activation versions. Existing/in-flight state remains pinned, and an append-only event records every rollback activation. If this ruling is wrong, new work could run an older economy definition when the intended policy was forward-only; the complete event history and exact pins make that choice visible and reversible by another activation.
 
-## Per-Task Review and Commit Gate
+## Development and integration checks
 
-For every Task 0–9, the implementer stops with a tested working-tree diff and a TDD report but no final task commit. The integration agent then:
-
-1. packages the complete working-tree diff from the recorded base;
-2. dispatches a fresh spec-compliance reviewer;
-3. sends every compliance finding back to the implementer and obtains a scoped re-review;
-4. dispatches a different fresh code-quality/security/PostgreSQL reviewer;
-5. sends every Critical or Important finding back to the implementer and obtains a scoped re-review;
-6. inspects the final diff and runs the task's named focused/regression evidence;
-7. commits exactly the task files with the message shown in that task.
-
-Minor findings are fixed when low-risk or recorded in the SDD ledger for the whole-phase reviewer. No later task begins while an unreviewed or unresolved Critical/Important finding remains.
+Follow the current workflow amendment linked above. Complete focused verification as work proceeds, combine review at coherent integration boundaries, and reuse applicable evidence. Older per-step references below to two fresh reviewers, controller-only commits, TDD reports, immediate census refreshes, and repeated full verification are superseded; they are not additional gates. Preserve technical dependencies and final integrated acceptance criteria.
 
 ### Task 0: Make the Phase 1 lock-order tripwire portable across LF and CRLF
 
@@ -1013,4 +1005,4 @@ git commit -m "test: close Phase 2A verification gates"
 
 ## Phase 2A Completion Review
 
-After Task 10, generate one whole-plan review package from the commit before Task 0 through `HEAD`. Dispatch the strongest available reviewer with the Phase 2A spec, cross-cutting constraints, SDD ledger rulings/deferred minors, implementation reports, and diff package. Resolve every Critical and Important finding through one implementer fix wave plus scoped re-review, then rerun `npm run phase2a:verify`, the real-PostgreSQL matrix, backup self-test, full `npm test`, and knowledge verification. Do not merge, push, deploy, or activate content after review.
+After Task 10, complete the final boundary defined by the workflow amendment. Reuse valid scoped reviews and verification; investigate unreviewed integration risks and rerun checks affected by fixes. Do not require a duplicate whole-plan reviewer or repeat an unchanged full verification matrix. Retain the final source identity, findings, and applicable release evidence. Do not merge, push, deploy, or activate content.

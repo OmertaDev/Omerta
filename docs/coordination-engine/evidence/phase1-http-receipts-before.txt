@@ -1,0 +1,34 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Delayed callback must preserve the replaced-before-success reservation
++ actual - expected
+
+  {
+    body_hash: 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
++   response: '{"instance":{"id":"80257419-565f-4d25-9199-e416cd2f7f56","graphId":"omerta.coordination.dead-letter","graphVersion":1,"contentHash":"519695a8262ee96126dfa378ebdd4d7010a489b59e76d924f35900964c51e3c6","title":"The Dead Letter","status":"active","revision":0,"createdAt":"2026-09-13T17:21:09.669Z","updatedAt":"2026-09-13T17:21:09.669Z","historical":false,"canCancel":true,"directOnly":true,"nodes":[{"id":"envelope","title":"Open the envelope","status":"available","description":"An empty envelope bears two marks: a tide line and a printer’s seal."}],"actions":[{"id":"coord_43c6cdbce0b129d95611d5cce1abd989e771a332bc4a9d948b911a61165f0c00","kind":"complete","label":"Complete: Open the envelope","nodeId":"envelope"}]},"replayed":false}',
++   status: 200
+-   response: '{"marker":"replaced-before-success"}',
+-   status: 0
+  }
+
+    at file:///C:/Users/Jorge/Documents/Omerta/test/coordination-http-receipts.js:49:12 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: {
+    body_hash: 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
+    status: 200,
+    response: '{"instance":{"id":"80257419-565f-4d25-9199-e416cd2f7f56","graphId":"omerta.coordination.dead-letter","graphVersion":1,"contentHash":"519695a8262ee96126dfa378ebdd4d7010a489b59e76d924f35900964c51e3c6","title":"The Dead Letter","status":"active","revision":0,"createdAt":"2026-09-13T17:21:09.669Z","updatedAt":"2026-09-13T17:21:09.669Z","historical":false,"canCancel":true,"directOnly":true,"nodes":[{"id":"envelope","title":"Open the envelope","status":"available","description":"An empty envelope bears two marks: a tide line and a printer’s seal."}],"actions":[{"id":"coord_43c6cdbce0b129d95611d5cce1abd989e771a332bc4a9d948b911a61165f0c00","kind":"complete","label":"Complete: Open the envelope","nodeId":"envelope"}]},"replayed":false}'
+  },
+  expected: {
+    body_hash: 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
+    status: 0,
+    response: '{"marker":"replaced-before-success"}'
+  },
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

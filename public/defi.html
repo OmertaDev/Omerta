@@ -1,0 +1,1042 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0a0909">
+<title>THE CAPITAL DESK — OMERTÀ DeFi</title>
+<meta name="description" content="Read OMERTÀ's on-chain reserve, contract readiness, fee routing, market health, and wallet-authorized staking and bond actions.">
+<meta property="og:title" content="THE CAPITAL DESK — OMERTÀ DeFi">
+<meta property="og:description" content="A finality-bound public view of OMERTÀ's on-chain capital system.">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="/omerta-ui.css?v=20260826">
+<style>
+  :root {
+    --desk-rule: color-mix(in srgb, var(--om-action-primary) 27%, var(--om-border-subtle));
+    --desk-glow: color-mix(in srgb, var(--om-action-primary) 10%, transparent);
+  }
+
+  html { scroll-behavior: smooth; }
+  body { font-size: var(--om-type-public); line-height: 1.55; }
+  button, input, select { font: inherit; }
+  button { color: inherit; }
+  a { color: var(--om-action-primary); }
+  code, .mono { font-family: var(--om-font-data); }
+
+  .defi-shell { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 34px 0 72px; }
+  .defi-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(280px, .65fr);
+    gap: clamp(24px, 5vw, 64px);
+    align-items: end;
+    padding: clamp(24px, 5vw, 58px) 0 28px;
+    border-bottom: 1px solid var(--desk-rule);
+  }
+  .eyebrow {
+    margin: 0 0 10px;
+    color: var(--om-color-machine-400);
+    font: 650 11px/1.4 var(--om-font-data);
+    letter-spacing: .22em;
+    text-transform: uppercase;
+  }
+  h1, h2, h3, p { margin-top: 0; }
+  h1 {
+    max-width: 13ch;
+    margin-bottom: 13px;
+    color: var(--om-action-primary);
+    font: 600 clamp(38px, 7vw, 76px)/.94 var(--om-font-display);
+    letter-spacing: .075em;
+    text-wrap: balance;
+  }
+  .lede { max-width: 68ch; margin-bottom: 0; color: var(--om-text-secondary); font-size: clamp(16px, 2vw, 19px); }
+  .hero-file {
+    position: relative;
+    min-width: 0;
+    padding: 19px 20px 18px;
+    border: 1px solid var(--om-border-strong);
+    border-top: 3px solid var(--om-action-primary);
+    background: linear-gradient(145deg, var(--om-surface-raised), var(--om-surface-panel));
+    box-shadow: var(--om-shadow-raised);
+  }
+  .hero-file::after {
+    content: "PUBLIC RECORD";
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    color: var(--om-border-strong);
+    font: 650 9px/1 var(--om-font-data);
+    letter-spacing: .16em;
+    transform: rotate(-2deg);
+  }
+  .hero-file__line { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--om-border-subtle); }
+  .hero-file__line:last-child { border-bottom: 0; }
+  .hero-file dt { color: var(--om-text-muted); font: 600 10px/1.5 var(--om-font-data); letter-spacing: .08em; text-transform: uppercase; }
+  .hero-file dd { min-width: 0; margin: 0; color: var(--om-text-primary); font: 600 12px/1.5 var(--om-font-data); overflow-wrap: anywhere; }
+
+  .snapshot-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 66px;
+    padding: 11px 0;
+  }
+  .snapshot-state { display: flex; align-items: center; gap: 10px; min-width: 0; color: var(--om-text-muted); font: 12px/1.45 var(--om-font-data); }
+  .signal { flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--om-text-faint); box-shadow: 0 0 0 4px color-mix(in srgb, var(--om-text-faint) 11%, transparent); }
+  .signal.good { background: var(--om-status-success); box-shadow: 0 0 0 4px color-mix(in srgb, var(--om-status-success) 12%, transparent); }
+  .signal.warn { background: var(--om-status-warning); box-shadow: 0 0 0 4px color-mix(in srgb, var(--om-status-warning) 12%, transparent); }
+  .signal.bad { background: var(--om-status-danger); box-shadow: 0 0 0 4px color-mix(in srgb, var(--om-status-danger) 12%, transparent); }
+  .status-copy { min-width: 0; }
+  .status-copy b { display: block; color: var(--om-text-primary); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
+  .status-copy span { display: block; overflow-wrap: anywhere; }
+
+  .control {
+    min-height: var(--om-target-min);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 14px;
+    border: 1px solid var(--om-border-strong);
+    border-radius: var(--om-radius-sm);
+    background: var(--om-surface-panel);
+    color: var(--om-text-primary);
+    cursor: pointer;
+    font: 650 11px/1 var(--om-font-data);
+    letter-spacing: .075em;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color var(--om-duration-fast), border-color var(--om-duration-fast), background var(--om-duration-fast), transform var(--om-duration-fast);
+  }
+  .control:hover:not(:disabled) { border-color: var(--om-action-primary); color: var(--om-action-primary-hover); text-decoration: none; }
+  .control:active:not(:disabled) { transform: translateY(1px); }
+  .control.primary { border-color: var(--om-action-primary); background: var(--om-action-primary); color: var(--om-surface-canvas); }
+  .control.primary:hover:not(:disabled) { background: var(--om-action-primary-hover); color: var(--om-surface-canvas); }
+  .control:disabled, .control[aria-disabled="true"] { cursor: not-allowed; opacity: .44; }
+  .control[aria-busy="true"]::before { content: ""; width: 11px; height: 11px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: turn .7s linear infinite; }
+  @keyframes turn { to { transform: rotate(1turn); } }
+
+  .notice { display: none; margin: 0 0 22px; padding: 15px 17px; border: 1px solid var(--om-status-warning); background: color-mix(in srgb, var(--om-status-warning) 6%, var(--om-surface-panel)); color: var(--om-text-secondary); }
+  .notice.show { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+  .notice p { margin: 0; max-width: 80ch; }
+
+  .section { margin-top: clamp(34px, 6vw, 64px); scroll-margin-top: 90px; }
+  .section-head { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--desk-rule); }
+  .section-head h2 { margin: 0; color: var(--om-action-primary); font: 600 clamp(22px, 3vw, 31px)/1.1 var(--om-font-display); letter-spacing: .08em; }
+  .section-head p { max-width: 60ch; margin: 0; color: var(--om-text-muted); font-size: 13px; text-align: right; }
+
+  .metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1px solid var(--om-border-strong); background: var(--om-surface-panel); }
+  .metric { min-width: 0; min-height: 128px; padding: 18px 18px 16px; border-right: 1px solid var(--om-border-subtle); }
+  .metric:last-child { border-right: 0; }
+  .metric__label { display: block; color: var(--om-text-muted); font: 650 10px/1.4 var(--om-font-data); letter-spacing: .09em; text-transform: uppercase; }
+  .metric__value { display: block; margin: 14px 0 4px; color: var(--om-text-primary); font: 650 clamp(20px, 2.4vw, 30px)/1.1 var(--om-font-data); overflow-wrap: anywhere; }
+  .metric__note { display: block; color: var(--om-text-faint); font: 11px/1.45 var(--om-font-data); }
+  .metric--loading { overflow: hidden; }
+  .metric--loading::after { content: ""; display: block; width: 72%; height: 25px; margin-top: 18px; background: linear-gradient(90deg, var(--om-surface-raised), var(--om-border-subtle), var(--om-surface-raised)); background-size: 200% 100%; animation: shimmer 1.3s ease infinite; }
+  @keyframes shimmer { to { background-position: -200% 0; } }
+
+  .readiness { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+  .stage { position: relative; min-height: 160px; padding: 18px; border: 1px solid var(--om-border-subtle); background: var(--om-surface-panel); }
+  .stage::before { content: attr(data-index); display: block; width: 25px; height: 25px; margin-bottom: 24px; border: 1px solid var(--om-border-strong); border-radius: 50%; color: var(--om-text-faint); font: 650 10px/23px var(--om-font-data); text-align: center; }
+  .stage:not(:last-child)::after { content: ""; position: absolute; top: 30px; left: 43px; width: calc(100% - 33px); height: 1px; background: var(--om-border-strong); }
+  .stage.good { border-color: color-mix(in srgb, var(--om-status-success) 50%, var(--om-border-subtle)); }
+  .stage.good::before { border-color: var(--om-status-success); color: var(--om-status-success); }
+  .stage.warn::before { border-color: var(--om-status-warning); color: var(--om-status-warning); }
+  .stage.bad::before { border-color: var(--om-status-danger); color: var(--om-status-danger); }
+  .stage h3 { margin: 0 0 5px; color: var(--om-text-primary); font: 650 13px/1.35 var(--om-font-data); text-transform: uppercase; }
+  .stage p { margin: 0; color: var(--om-text-muted); font-size: 13px; line-height: 1.45; }
+
+  .panel { border: 1px solid var(--om-border-strong); background: var(--om-surface-panel); }
+  .panel-empty { padding: 30px; color: var(--om-text-muted); text-align: center; }
+  .panel-empty b { display: block; margin-bottom: 5px; color: var(--om-text-primary); font: 650 14px/1.4 var(--om-font-data); text-transform: uppercase; }
+  .table-scroll { max-width: 100%; overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th { padding: 10px 13px; border-bottom: 1px solid var(--om-border-strong); color: var(--om-text-muted); font: 650 10px/1.35 var(--om-font-data); letter-spacing: .085em; text-align: left; text-transform: uppercase; }
+  td { padding: 13px; border-bottom: 1px solid var(--om-border-subtle); color: var(--om-text-secondary); font-size: 13px; vertical-align: middle; }
+  tbody tr:last-child td { border-bottom: 0; }
+  tbody tr:hover td { background: var(--om-surface-raised); }
+  .contract-name b { display: block; color: var(--om-text-primary); font: 650 13px/1.4 var(--om-font-data); }
+  .contract-name small { color: var(--om-text-faint); font: 10px/1.4 var(--om-font-data); }
+  .address { display: inline-flex; align-items: center; gap: 8px; max-width: 100%; }
+  .address code { color: var(--om-color-machine-400); font-size: 12px; }
+  .icon-btn { width: 34px; height: 34px; display: inline-grid; place-content: center; border: 1px solid transparent; border-radius: var(--om-radius-sm); background: transparent; color: var(--om-text-muted); cursor: pointer; }
+  .icon-btn:hover { border-color: var(--om-border-strong); color: var(--om-action-primary); }
+  .pill { display: inline-flex; align-items: center; gap: 6px; min-height: 26px; padding: 4px 8px; border: 1px solid var(--om-border-subtle); border-radius: 999px; color: var(--om-text-muted); font: 650 10px/1.2 var(--om-font-data); letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; }
+  .pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .pill.good { color: var(--om-status-success); }
+  .pill.warn { color: var(--om-status-warning); }
+  .pill.bad { color: var(--om-status-danger); }
+
+  .fee-grid { display: grid; grid-template-columns: minmax(220px, .72fr) minmax(0, 1.28fr); gap: 12px; }
+  .fee-summary { padding: 22px; }
+  .fee-summary strong { display: block; margin: 12px 0 5px; color: var(--om-text-primary); font: 650 28px/1.1 var(--om-font-data); }
+  .fee-summary p { margin-bottom: 0; color: var(--om-text-muted); font-size: 13px; }
+  .route-list { display: grid; }
+  .fee-route { display: grid; grid-template-columns: minmax(130px, 1fr) 52px minmax(140px, 1.15fr) 70px; gap: 13px; align-items: center; min-height: 72px; padding: 12px 16px; border-bottom: 1px solid var(--om-border-subtle); }
+  .fee-route:last-child { border-bottom: 0; }
+  .fee-route__from, .fee-route__to { min-width: 0; }
+  .fee-route__from b, .fee-route__to b { display: block; color: var(--om-text-primary); font: 650 12px/1.4 var(--om-font-data); overflow-wrap: anywhere; }
+  .fee-route small { display: block; color: var(--om-text-faint); font: 10px/1.4 var(--om-font-data); overflow-wrap: anywhere; }
+  .fee-route__arrow { color: var(--om-border-strong); font: 650 18px/1 var(--om-font-data); text-align: center; }
+  .fee-route__share { color: var(--om-action-primary); font: 650 14px/1.2 var(--om-font-data); text-align: right; }
+
+  .wallet-panel { display: grid; grid-template-columns: minmax(240px, .72fr) minmax(0, 1.28fr); }
+  .wallet-sidebar { padding: 22px; border-right: 1px solid var(--om-border-strong); background: linear-gradient(160deg, var(--om-surface-raised), var(--om-surface-panel)); }
+  .wallet-mark { width: 42px; height: 42px; display: grid; place-content: center; margin-bottom: 18px; border: 1px solid var(--om-action-primary); border-radius: 50%; color: var(--om-action-primary); font: 650 15px/1 var(--om-font-data); }
+  .wallet-sidebar h3 { margin-bottom: 8px; color: var(--om-text-primary); font: 650 16px/1.35 var(--om-font-data); }
+  .wallet-sidebar p { color: var(--om-text-muted); font-size: 13px; }
+  .wallet-sidebar .control { width: 100%; }
+  .wallet-identity { margin: 16px 0; padding: 12px 0; border-top: 1px solid var(--om-border-subtle); border-bottom: 1px solid var(--om-border-subtle); }
+  .wallet-identity span { display: block; color: var(--om-text-muted); font: 10px/1.4 var(--om-font-data); letter-spacing: .07em; text-transform: uppercase; }
+  .wallet-identity code { display: block; margin-top: 5px; color: var(--om-color-machine-400); font-size: 12px; overflow-wrap: anywhere; }
+  .wallet-caveat { margin: 13px 0 0; color: var(--om-text-faint); font: 10px/1.5 var(--om-font-data); }
+  .wallet-main { min-width: 0; padding: 22px; }
+  .account-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; margin-bottom: 18px; border: 1px solid var(--om-border-subtle); background: var(--om-border-subtle); }
+  .account-stat { min-width: 0; padding: 12px; background: var(--om-surface-panel); }
+  .account-stat span { display: block; color: var(--om-text-faint); font: 9px/1.35 var(--om-font-data); letter-spacing: .07em; text-transform: uppercase; }
+  .account-stat b { display: block; margin-top: 5px; color: var(--om-text-primary); font: 650 13px/1.35 var(--om-font-data); overflow-wrap: anywhere; }
+  .actions { border-top: 1px solid var(--om-border-subtle); }
+  .wallet-action { display: grid; grid-template-columns: minmax(160px, 1fr) minmax(150px, .7fr) auto; gap: 14px; align-items: end; padding: 16px 0; border-bottom: 1px solid var(--om-border-subtle); }
+  .wallet-action:last-child { border-bottom: 0; }
+  .wallet-action__copy h3 { margin: 0 0 4px; color: var(--om-text-primary); font: 650 13px/1.35 var(--om-font-data); }
+  .wallet-action__copy p { margin: 0; color: var(--om-text-muted); font-size: 12px; line-height: 1.45; }
+  .field { min-width: 0; }
+  .field label { display: block; margin-bottom: 5px; color: var(--om-text-muted); font: 650 10px/1.3 var(--om-font-data); letter-spacing: .07em; text-transform: uppercase; }
+  .field input {
+    width: 100%;
+    min-height: var(--om-target-min);
+    padding: 8px 10px;
+    border: 1px solid var(--om-border-strong);
+    border-radius: var(--om-radius-sm);
+    background: var(--om-surface-sunken);
+    color: var(--om-text-primary);
+    font: 13px/1 var(--om-font-data);
+  }
+  .field input::placeholder { color: var(--om-text-faint); }
+  .action-state { grid-column: 1 / -1; margin-top: -7px; color: var(--om-text-faint); font: 10px/1.45 var(--om-font-data); }
+  .action-state.bad { color: var(--om-status-danger); }
+  .action-state.good { color: var(--om-status-success); }
+
+  .activity-list { display: grid; }
+  .activity-row { display: grid; grid-template-columns: minmax(170px, 1fr) minmax(120px, .7fr) minmax(140px, .8fr) auto; gap: 14px; align-items: center; padding: 14px 16px; border-bottom: 1px solid var(--om-border-subtle); }
+  .activity-row:last-child { border-bottom: 0; }
+  .activity-row b { color: var(--om-text-primary); font: 650 12px/1.4 var(--om-font-data); }
+  .activity-row span, .activity-row time { color: var(--om-text-muted); font: 11px/1.45 var(--om-font-data); overflow-wrap: anywhere; }
+
+  .page-foot { margin-top: 60px; padding-top: 18px; border-top: 1px solid var(--om-border-subtle); color: var(--om-text-muted); font-size: 12px; text-align: center; }
+
+  dialog { width: min(540px, calc(100% - 28px)); max-height: calc(100vh - 28px); padding: 0; border: 1px solid var(--om-border-strong); border-radius: var(--om-radius-md); background: var(--om-surface-raised); color: var(--om-text-primary); box-shadow: 0 30px 90px rgb(0 0 0 / 72%); }
+  dialog::backdrop { background: rgb(0 0 0 / 76%); backdrop-filter: blur(4px); }
+  .dialog-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 19px 20px 15px; border-bottom: 1px solid var(--om-border-strong); }
+  .dialog-head h2 { margin: 0; color: var(--om-action-primary); font: 600 20px/1.2 var(--om-font-display); letter-spacing: .08em; }
+  .dialog-body { padding: 20px; overflow-y: auto; }
+  .dialog-body > p { color: var(--om-text-muted); font-size: 13px; }
+  .dialog-actions { display: flex; justify-content: flex-end; gap: 9px; padding: 14px 20px; border-top: 1px solid var(--om-border-strong); }
+  .wallet-options { display: grid; gap: 8px; }
+  .wallet-option { width: 100%; justify-content: flex-start; text-align: left; text-transform: none; letter-spacing: 0; font-size: 13px; }
+  .tx-review { display: grid; gap: 10px; margin: 14px 0 0; }
+  .tx-review div { display: grid; grid-template-columns: 100px minmax(0, 1fr); gap: 12px; padding-bottom: 9px; border-bottom: 1px solid var(--om-border-subtle); }
+  .tx-review dt { color: var(--om-text-muted); font: 650 10px/1.4 var(--om-font-data); text-transform: uppercase; }
+  .tx-review dd { min-width: 0; margin: 0; color: var(--om-text-secondary); font: 11px/1.45 var(--om-font-data); overflow-wrap: anywhere; }
+  .toast-stack { position: fixed; z-index: var(--om-z-toast); right: 16px; bottom: 16px; display: grid; gap: 8px; width: min(390px, calc(100% - 32px)); pointer-events: none; }
+  .toast { padding: 13px 15px; border: 1px solid var(--om-border-strong); border-left: 3px solid var(--om-status-success); background: var(--om-surface-raised); color: var(--om-text-secondary); box-shadow: var(--om-shadow-raised); font: 12px/1.45 var(--om-font-data); pointer-events: auto; }
+  .toast.bad { border-left-color: var(--om-status-danger); }
+
+  @media (max-width: 900px) {
+    .defi-hero { grid-template-columns: 1fr; align-items: start; }
+    .hero-file { max-width: 560px; }
+    .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .metric:nth-child(2) { border-right: 0; }
+    .metric:nth-child(-n + 2) { border-bottom: 1px solid var(--om-border-subtle); }
+    .readiness { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .stage:nth-child(even)::after { display: none; }
+    .fee-grid, .wallet-panel { grid-template-columns: 1fr; }
+    .wallet-sidebar { border-right: 0; border-bottom: 1px solid var(--om-border-strong); }
+  }
+
+  @media (max-width: 680px) {
+    html { scroll-behavior: auto; }
+    .defi-shell { width: min(100% - 28px, 1180px); padding-top: 20px; }
+    .defi-hero { padding-top: 24px; }
+    h1 { letter-spacing: .055em; }
+    .snapshot-bar, .section-head { align-items: flex-start; flex-direction: column; }
+    .section-head p { text-align: left; }
+    .snapshot-bar .control { width: 100%; }
+    .notice.show { flex-direction: column; }
+    .metrics, .readiness, .account-strip { grid-template-columns: 1fr; }
+    .metric { min-height: 104px; border-right: 0; border-bottom: 1px solid var(--om-border-subtle); }
+    .metric:last-child { border-bottom: 0; }
+    .stage { min-height: 130px; }
+    .stage::after { display: none; }
+    .fee-route { grid-template-columns: minmax(0, 1fr) auto; gap: 7px 12px; }
+    .fee-route__arrow { display: none; }
+    .fee-route__to { grid-column: 1; }
+    .fee-route__share { grid-column: 2; grid-row: 1 / span 2; }
+    .wallet-action { grid-template-columns: 1fr; align-items: stretch; }
+    .wallet-action .control { width: 100%; }
+    .action-state { grid-column: auto; margin-top: -5px; }
+    .activity-row { grid-template-columns: minmax(0, 1fr) auto; }
+    .activity-row > :nth-child(3) { grid-column: 1; }
+    .activity-row > :nth-child(4) { grid-column: 2; grid-row: 1 / span 2; }
+    #contracts-table, #contracts-table thead, #contracts-table tbody, #contracts-table tr, #contracts-table th, #contracts-table td { display: block; }
+    #contracts-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    #contracts-table tr { margin: 9px; padding: 10px 12px; border: 1px solid var(--om-border-subtle); background: var(--om-surface-raised); }
+    #contracts-table td { display: grid; grid-template-columns: 8rem minmax(0, 1fr); gap: 10px; padding: 6px 0; border: 0; }
+    #contracts-table td::before { content: attr(data-label); color: var(--om-text-faint); font: 650 9px/1.4 var(--om-font-data); letter-spacing: .07em; text-transform: uppercase; }
+    .address { align-items: flex-start; }
+    .dialog-actions { flex-direction: column-reverse; }
+    .dialog-actions .control { width: 100%; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  }
+
+  @media (forced-colors: active) {
+    .signal, .pill::before { forced-color-adjust: none; }
+    .control.primary { border: 2px solid ButtonText; }
+  }
+</style>
+</head>
+<body class="public-page">
+<a class="skip-link" href="#main">Skip to the Capital Desk</a>
+<nav class="public-nav" aria-label="Primary">
+  <a class="public-nav__brand" href="/">OMERTÀ</a>
+  <details class="public-nav__menu" id="nav-menu">
+    <summary>Explore</summary>
+    <div class="public-nav__menu-list">
+      <a href="/">The city</a><a href="/wiki">The Codex</a><a href="/arena">The Arena</a><a href="/defi" aria-current="page">DeFi</a><a href="/play">Connect an AI</a>
+    </div>
+  </details>
+  <div class="public-nav__links">
+    <a href="/wiki">Codex</a><a href="/arena">Arena</a><a href="/defi" aria-current="page">DeFi</a><a href="/play">Agent setup</a><a class="public-nav__cta" href="/">Enter</a>
+  </div>
+</nav>
+
+<main class="defi-shell" id="main" tabindex="-1">
+  <section class="defi-hero" aria-labelledby="page-title">
+    <div>
+      <p class="eyebrow">On-chain capital · public finality record</p>
+      <h1 id="page-title">THE CAPITAL DESK</h1>
+      <p class="lede">One ledger for protocol reserves, deployed contracts, market health, and fee destinations. Public figures are read-only. Wallet transactions remain yours to review and sign.</p>
+    </div>
+    <dl class="hero-file" aria-label="Deployment status">
+      <div class="hero-file__line"><dt>Network</dt><dd id="hero-network">Waiting for the ledger</dd></div>
+      <div class="hero-file__line"><dt>Lifecycle</dt><dd id="hero-phase">—</dd></div>
+      <div class="hero-file__line"><dt>Observed</dt><dd id="hero-observed">—</dd></div>
+      <div class="hero-file__line"><dt>Block</dt><dd id="hero-block">—</dd></div>
+    </dl>
+  </section>
+
+  <div class="snapshot-bar">
+    <div class="snapshot-state" role="status" aria-live="polite">
+      <span class="signal" id="snapshot-signal" aria-hidden="true"></span>
+      <span class="status-copy"><b id="snapshot-title">Opening the public ledger</b><span id="snapshot-detail">Reading a finalized protocol snapshot…</span></span>
+    </div>
+    <button class="control" type="button" id="refresh">Refresh snapshot</button>
+  </div>
+  <div class="notice" id="load-error" role="alert"></div>
+
+  <section class="section" aria-labelledby="metrics-title">
+    <div class="section-head"><h2 id="metrics-title">CAPITAL AT A GLANCE</h2><p>Server-observed, finality-bound figures. A dash means the source did not publish that measurement.</p></div>
+    <div class="metrics" id="metrics" aria-busy="true">
+      <div class="metric metric--loading"><span class="metric__label">Loading</span></div>
+      <div class="metric metric--loading"><span class="metric__label">Loading</span></div>
+      <div class="metric metric--loading"><span class="metric__label">Loading</span></div>
+      <div class="metric metric--loading"><span class="metric__label">Loading</span></div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="readiness-title">
+    <div class="section-head"><h2 id="readiness-title">LIFECYCLE &amp; READINESS</h2><p id="readiness-copy">Each gate stays explicit. A deployed address alone never means a live protocol.</p></div>
+    <div class="readiness" id="readiness" aria-busy="true">
+      <article class="stage" data-index="01"><h3>Runtime code</h3><p>Checking the canonical deployment.</p></article>
+      <article class="stage" data-index="02"><h3>Governance</h3><p>Checking Safe ownership.</p></article>
+      <article class="stage" data-index="03"><h3>Bindings</h3><p>Checking contract wiring.</p></article>
+      <article class="stage" data-index="04"><h3>Genesis</h3><p>Checking lifecycle progression.</p></article>
+      <article class="stage" data-index="05"><h3>Live market</h3><p>Checking activation gates.</p></article>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="contracts-title">
+    <div class="section-head"><h2 id="contracts-title">CONTRACT DIRECTORY</h2><p>Published deployment addresses and their latest verified operating state.</p></div>
+    <div class="panel" id="contracts" aria-busy="true"><div class="panel-empty">Reading the deployment registry…</div></div>
+  </section>
+
+  <section class="section" aria-labelledby="fees-title">
+    <div class="section-head"><h2 id="fees-title">FEE ROUTING</h2><p>Where protocol fees are meant to land, shown from the same public projection.</p></div>
+    <div class="fee-grid" id="fees" aria-busy="true">
+      <div class="panel fee-summary"><span class="eyebrow">Published routes</span><strong>—</strong><p>Waiting for the current routing table.</p></div>
+      <div class="panel"><div class="panel-empty">Reading fee destinations…</div></div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="wallet-title">
+    <div class="section-head"><h2 id="wallet-title">YOUR WALLET</h2><p>Connect an injected EVM wallet. The site prepares no calldata of its own; only a server-issued transaction can reach your wallet.</p></div>
+    <div class="panel wallet-panel">
+      <aside class="wallet-sidebar">
+        <div class="wallet-mark" aria-hidden="true">0x</div>
+        <h3 id="wallet-heading">Wallet not connected</h3>
+        <p id="wallet-copy">Connect to inspect account-specific eligibility and review any transaction the server currently authorizes.</p>
+        <div class="wallet-identity" id="wallet-identity" hidden><span>Active account</span><code id="wallet-address"></code></div>
+        <button class="control primary" type="button" id="connect-wallet">Connect wallet</button>
+        <p class="wallet-caveat">Injected wallets are discovered through EIP-6963, with a browser-wallet fallback. No WalletConnect session is created here.</p>
+      </aside>
+      <div class="wallet-main">
+        <div class="account-strip" id="account-strip" aria-label="Wallet position">
+          <div class="account-stat"><span>Wallet OMR</span><b>—</b></div>
+          <div class="account-stat"><span>Approved</span><b>—</b></div>
+          <div class="account-stat"><span>Staked</span><b>—</b></div>
+          <div class="account-stat"><span>Rewards</span><b>—</b></div>
+        </div>
+        <div class="actions" id="wallet-actions" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="evidence-title">
+    <div class="section-head"><h2 id="evidence-title">VERIFICATION RECORD</h2><p>The accepted deployment record, pinned source revision, pool identity, and any partial-read warnings.</p></div>
+    <div class="panel" id="evidence" aria-busy="true"><div class="panel-empty">Reading verification evidence…</div></div>
+  </section>
+
+  <footer class="page-foot">OMERTÀ · a server-authoritative noir economy. <a href="/">Enter the city</a> · <a href="/wiki">Read the Codex</a> · <a href="/arena">Watch the Arena</a></footer>
+</main>
+
+<dialog id="wallet-dialog" aria-labelledby="wallet-dialog-title">
+  <div class="dialog-head"><div><p class="eyebrow">Injected wallets</p><h2 id="wallet-dialog-title">CHOOSE A WALLET</h2></div><button class="icon-btn" type="button" data-close="wallet-dialog" aria-label="Close wallet picker">×</button></div>
+  <div class="dialog-body"><p id="wallet-dialog-copy">Select one of the wallets announced by this browser.</p><div class="wallet-options" id="wallet-options"></div></div>
+  <div class="dialog-actions"><button class="control" type="button" data-close="wallet-dialog">Cancel</button></div>
+</dialog>
+
+<dialog id="tx-dialog" aria-labelledby="tx-dialog-title">
+  <div class="dialog-head"><div><p class="eyebrow">Wallet authorization</p><h2 id="tx-dialog-title">REVIEW TRANSACTION</h2></div><button class="icon-btn" type="button" data-close="tx-dialog" aria-label="Close transaction review">×</button></div>
+  <div class="dialog-body"><p id="tx-summary">Review the server-issued transaction before opening your wallet.</p><dl class="tx-review" id="tx-review"></dl></div>
+  <div class="dialog-actions"><button class="control" type="button" data-close="tx-dialog">Cancel</button><button class="control primary" type="button" id="send-transaction">Review in wallet</button></div>
+</dialog>
+
+<div class="toast-stack" id="toasts" aria-live="polite" aria-atomic="false"></div>
+
+<script>
+(() => {
+  'use strict';
+
+  const $ = (id) => document.getElementById(id);
+  const esc = (value) => String(value == null ? '' : value).replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+  const present = (value) => value !== null && value !== undefined && value !== '';
+  const array = (value) => Array.isArray(value) ? value : [];
+  const shortAddress = (value) => /^0x[0-9a-f]{40}$/i.test(String(value || '')) ? String(value).slice(0, 6) + '…' + String(value).slice(-4) : '—';
+  const shortHash = (value) => /^0x[0-9a-f]+$/i.test(String(value || '')) ? String(value).slice(0, 10) + '…' + String(value).slice(-6) : '—';
+  const numeric = (value) => present(value) && Number.isFinite(Number(value));
+  const integerString = (value) => typeof value === 'bigint' || /^\d+$/.test(String(value || ''));
+  const authToken = () => { try { return localStorage.getItem('omerta_token') || ''; } catch { return ''; } };
+  const uuid = () => crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + '-' + Math.random().toString(16).slice(2);
+
+  let projection = null;
+  let lastSuccessfulAt = null;
+  let loading = false;
+  let activeProvider = null;
+  let activeAddress = null;
+  let pendingTx = null;
+  let pendingActionId = null;
+  let lastFocus = null;
+  const announcedWallets = new Map();
+  const boundProviders = new WeakSet();
+
+  const ACTIONS = [
+    { id: 'staking.approve', title: 'Approve OMR', copy: 'Authorize the staking contract to use exactly the amount you choose.', field: 'amountOmr', label: 'OMR amount', placeholder: '0.00', functionName: 'approve', selector: '0x095ea7b3', contractKind: 'token' },
+    { id: 'staking.stake', title: 'Stake OMR', copy: 'Commit approved OMR to the published staking contract.', field: 'amountOmr', label: 'OMR amount', placeholder: '0.00', functionName: 'stake', selector: '0xa694fc3a', contractKind: 'staking' },
+    { id: 'staking.unstake', title: 'Unstake OMR', copy: 'Return part of your current position to your wallet.', field: 'amountOmr', label: 'OMR amount', placeholder: '0.00', functionName: 'unstake', selector: '0x2e17de78', contractKind: 'staking' },
+    { id: 'staking.claim', title: 'Claim rewards', copy: 'Claim rewards currently recorded for your connected wallet.', functionName: 'claimRewards', selector: '0x372500ab', contractKind: 'staking' },
+    { id: 'bond.claim', title: 'Claim vested bond', copy: 'Claim the vested amount from one eligible bond position.', field: 'bondId', label: 'Bond ID', placeholder: 'Server-issued ID', functionName: 'claim', selector: '0x379607f5', contractKind: 'bond' },
+  ];
+  const INPUT_BLOCKERS = new Set(['amount_required', 'bond_id_required', 'input_required']);
+
+  function requestWalletAnnouncements() {
+    try { window.dispatchEvent(new Event('eip6963:requestProvider')); } catch {}
+  }
+  window.addEventListener('eip6963:announceProvider', (event) => {
+    const detail = event.detail;
+    if (!detail?.provider || !detail?.info) return;
+    const key = detail.info.uuid || detail.info.rdns || detail.info.name;
+    if (key) announcedWallets.set(String(key), detail);
+  });
+  requestWalletAnnouncements();
+
+  function toast(message, bad = false, link = null) {
+    const el = document.createElement('div');
+    el.className = 'toast' + (bad ? ' bad' : '');
+    el.setAttribute('role', bad ? 'alert' : 'status');
+    el.textContent = String(message || (bad ? 'That request failed.' : 'Done.'));
+    if (link?.href) {
+      const anchor = document.createElement('a');
+      anchor.href = link.href;
+      anchor.target = '_blank';
+      anchor.rel = 'noopener noreferrer';
+      anchor.textContent = ' ' + (link.label || 'View transaction ↗');
+      el.append(anchor);
+    }
+    $('toasts').append(el);
+    setTimeout(() => el.remove(), 9000);
+  }
+
+  function dateLabel(value) {
+    if (!value) return '—';
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? '—' : date.toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
+  }
+
+  function formatDecimal(value, digits = 2) {
+    if (!numeric(value)) return '—';
+    return Number(value).toLocaleString(undefined, { maximumFractionDigits: digits });
+  }
+
+  function formatWei(value, digits = 2) {
+    if (!integerString(value)) return '—';
+    try {
+      const raw = BigInt(value);
+      const unit = 10n ** 18n;
+      const whole = raw / unit;
+      const fraction = String(raw % unit).padStart(18, '0').slice(0, Math.max(0, digits)).replace(/0+$/, '');
+      return Number(whole) <= Number.MAX_SAFE_INTEGER
+        ? Number(whole).toLocaleString() + (fraction ? '.' + fraction : '')
+        : whole.toString() + (fraction ? '.' + fraction : '');
+    } catch { return '—'; }
+  }
+
+  function formatOmr(value, options = {}) {
+    if (!present(value)) return '—';
+    const text = String(value);
+    const amount = options.wei || (integerString(text) && text.length > 15) ? formatWei(text) : formatDecimal(text);
+    return amount === '—' ? '—' : amount + ' OMR';
+  }
+
+  function statePill(value, yes = 'verified', no = 'failed', unknown = 'unreported') {
+    const state = value === true ? ['good', yes] : value === false ? ['bad', no] : ['', unknown];
+    return '<span class="pill ' + state[0] + '">' + esc(state[1]) + '</span>';
+  }
+
+  function humanize(value) {
+    return String(value || 'unavailable').replace(/[._-]+/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
+  }
+
+  function metric(label, value, note) {
+    return '<div class="metric"><span class="metric__label">' + esc(label) + '</span><strong class="metric__value">' + esc(value) + '</strong><span class="metric__note">' + esc(note) + '</span></div>';
+  }
+
+  function renderMetrics(data) {
+    const reserve = data.reserve || {};
+    const oracle = data.market?.oracle || {};
+    const ratio = numeric(reserve.reserveRatio) ? Number(reserve.reserveRatio).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '×' : '—';
+    const oraclePrice = formatWei(oracle.omrPerEthWei, 2);
+    $('metrics').innerHTML = [
+      metric('Available reserve', formatOmr(reserve.availableOmr), 'after signed, committed, and queued obligations'),
+      metric('Reserve coverage', ratio, 'published backing ratio'),
+      metric('Oracle rate', oraclePrice === '—' ? '—' : oraclePrice + ' OMR / ETH', oracle.healthy === true ? 'oracle healthy' : oracle.healthy === false ? 'oracle unhealthy' : 'health unreported'),
+      metric('On-chain claim balance', formatOmr(reserve.onchainClaimBalanceWei, { wei: true }), 'wallet-claim contract balance'),
+    ].join('');
+    $('metrics').removeAttribute('aria-busy');
+  }
+
+  function renderReadiness(data) {
+    const contracts = array(data.contracts);
+    const configured = data.configured === true;
+    const verificationKnown = contracts.length > 0;
+    const verified = verificationKnown && contracts.every((contract) => contract.runtimeVerified === true && contract.ownerVerified === true);
+    const verificationFailed = contracts.some((contract) => contract.runtimeVerified === false || contract.ownerVerified === false);
+    const oracleHealth = data.market?.oracle?.healthy;
+    const marketHealth = data.market?.health;
+    const marketReady = marketHealth === true && oracleHealth !== false;
+    const marketFailed = marketHealth === false || oracleHealth === false;
+    const ready = data.status?.ready === true;
+    const stages = [
+      { title: 'Configuration', state: configured ? 'good' : 'warn', copy: configured ? 'A deployment manifest is active for ' + (data.network?.name || 'the published network') + '.' : 'No active production deployment is published.' },
+      { title: 'Verification', state: verificationFailed ? 'bad' : verified ? 'good' : 'warn', copy: verificationFailed ? 'At least one code or owner check failed.' : verified ? 'Published runtime code and ownership checks pass.' : 'Verification is incomplete or not reported.' },
+      { title: 'Market health', state: marketFailed ? 'bad' : marketReady ? 'good' : 'warn', copy: marketFailed ? 'Liquidity or oracle health is outside its safe gate.' : marketReady ? 'Market and oracle health are inside their published gates.' : 'Market readiness is still pending or unreported.' },
+      { title: 'Public operations', state: ready ? 'good' : 'warn', copy: ready ? 'The protocol reports its public action gate ready.' : (data.status?.reason ? humanize(data.status.reason) + '.' : 'Wallet actions remain gated.') },
+    ];
+    $('readiness').innerHTML = stages.map((stage, index) => '<article class="stage ' + stage.state + '" data-index="' + String(index + 1).padStart(2, '0') + '"><h3>' + esc(stage.title) + '</h3><p>' + esc(stage.copy) + '</p></article>').join('');
+    $('readiness').removeAttribute('aria-busy');
+    $('readiness-copy').textContent = data.status?.phase ? 'Current release phase: ' + humanize(data.status.phase) + '.' : 'Each gate stays explicit. A deployed address alone never means a live protocol.';
+  }
+
+  function renderContracts(data) {
+    const contracts = array(data.contracts);
+    if (!contracts.length) {
+      $('contracts').innerHTML = '<div class="panel-empty"><b>No directory published</b>The current snapshot contains no contract addresses. Wallet writes stay disabled.</div>';
+      $('contracts').removeAttribute('aria-busy');
+      return;
+    }
+    $('contracts').innerHTML = '<div class="table-scroll"><table id="contracts-table" aria-label="Published smart contract directory"><thead><tr><th scope="col">Contract</th><th scope="col">Address</th><th scope="col">Runtime</th><th scope="col">Owner</th><th scope="col">Operating state</th></tr></thead><tbody>'
+      + contracts.map((contract) => {
+        const address = /^0x[0-9a-f]{40}$/i.test(String(contract.address || '')) ? String(contract.address) : '';
+        const explorer = safeExternalUrl(contract.explorerUrl) || (address ? explorerAddress(data, address) : '');
+        const addressMarkup = address
+          ? '<span class="address"><code title="' + esc(address) + '">' + esc(shortAddress(address)) + '</code><button class="icon-btn copy-address" type="button" data-address="' + esc(address) + '" aria-label="Copy ' + esc(contract.name || contract.key || 'contract') + ' address">⧉</button>' + (explorer ? '<a href="' + esc(explorer) + '" target="_blank" rel="noopener noreferrer" aria-label="Open ' + esc(contract.name || contract.key || 'contract') + ' in explorer">↗</a>' : '') + '</span>'
+          : '<span class="pill warn">not published</span>';
+        const operating = contract.paused === true ? statePill(false, '', 'paused') : contract.paused === false ? statePill(true, 'active') : statePill(null);
+        return '<tr><td data-label="Contract" class="contract-name"><b>' + esc(contract.name || humanize(contract.key)) + '</b><small>' + esc(contract.key || 'registry entry') + '</small></td><td data-label="Address">' + addressMarkup + '</td><td data-label="Runtime">' + statePill(contract.runtimeVerified) + '</td><td data-label="Owner">' + statePill(contract.ownerVerified) + '</td><td data-label="Operating state">' + operating + '</td></tr>';
+      }).join('') + '</tbody></table></div>';
+    $('contracts').removeAttribute('aria-busy');
+    document.querySelectorAll('.copy-address').forEach((button) => button.addEventListener('click', () => copyText(button.dataset.address, button)));
+  }
+
+  function feeRoutes(data) {
+    const fees = data.feeRouting || data.fees || {};
+    if (Array.isArray(fees)) return fees;
+    if (Array.isArray(fees.routes)) return fees.routes;
+    if (Array.isArray(fees.allocations)) return fees.allocations;
+    return [];
+  }
+
+  function routeShare(route) {
+    if (numeric(route.bps ?? route.shareBps)) return (Number(route.bps ?? route.shareBps) / 100).toLocaleString(undefined, { maximumFractionDigits: 2 }) + '%';
+    if (numeric(route.percent ?? route.pct)) return Number(route.percent ?? route.pct).toLocaleString(undefined, { maximumFractionDigits: 2 }) + '%';
+    if (numeric(route.share)) return (Number(route.share) <= 1 ? Number(route.share) * 100 : Number(route.share)).toLocaleString(undefined, { maximumFractionDigits: 2 }) + '%';
+    return '—';
+  }
+
+  function renderFees(data) {
+    const routes = feeRoutes(data);
+    const fees = data.feeRouting || data.fees || {};
+    if (!routes.length) {
+      $('fees').innerHTML = '<div class="panel fee-summary"><span class="eyebrow">Published routes</span><strong>0</strong><p>No fee-routing table is included in this snapshot.</p></div><div class="panel"><div class="panel-empty"><b>Routing unavailable</b>No destination is inferred from contract addresses or documentation. The API must publish it explicitly.</div></div>';
+      $('fees').removeAttribute('aria-busy');
+      return;
+    }
+    const version = fees.version || fees.policyVersion || fees.updatedAt;
+    $('fees').innerHTML = '<div class="panel fee-summary"><span class="eyebrow">Published routes</span><strong>' + esc(routes.length) + '</strong><p>' + (version ? 'Policy ' + esc(String(version)) + '. ' : '') + 'Percentages describe the current server-published routing policy.</p></div><div class="panel route-list">'
+      + routes.map((route) => {
+        const from = route.source || route.from || route.event || route.name || 'Protocol fee';
+        const to = route.destination || route.to || route.recipient || route.recipientName || 'Unspecified destination';
+        const address = route.address || route.recipientAddress || (typeof route.to === 'string' && /^0x/i.test(route.to) ? route.to : '');
+        const detail = route.description || route.reason || route.kind || '';
+        return '<div class="fee-route"><div class="fee-route__from"><b>' + esc(from) + '</b><small>' + esc(detail || 'fee source') + '</small></div><div class="fee-route__arrow" aria-hidden="true">→</div><div class="fee-route__to"><b>' + esc(to) + '</b><small>' + esc(address ? shortAddress(address) : 'published destination') + '</small></div><div class="fee-route__share">' + esc(routeShare(route)) + '</div></div>';
+      }).join('') + '</div>';
+    $('fees').removeAttribute('aria-busy');
+  }
+
+  function actionDescriptor(id) {
+    return array(projection?.actions).find((action) => action && action.id === id) || null;
+  }
+
+  function isWalletDescriptor(action) {
+    return !!action && (action.kind === 'wallet_transaction' || !!action.tx || !!action.prepare || !!action.preparePath);
+  }
+
+  function nonInputBlockers(action) {
+    return array(action?.blockedBy).filter((code) => !INPUT_BLOCKERS.has(String(code)));
+  }
+
+  function renderAccount() {
+    const account = projection?.account || projection?.wallet || {};
+    const values = [
+      ['Wallet OMR', formatOmr(account.omrBalance ?? account.balanceOmr ?? account.balance)],
+      ['Approved', formatOmr(account.allowanceOmr ?? account.allowance)],
+      ['Staked', formatOmr(account.stakedOmr ?? account.staked)],
+      ['Rewards', formatOmr(account.pendingRewardsOmr ?? account.pendingRewards ?? account.rewards)],
+    ];
+    $('account-strip').innerHTML = values.map(([label, value]) => '<div class="account-stat"><span>' + esc(label) + '</span><b>' + esc(value) + '</b></div>').join('');
+  }
+
+  function renderActions() {
+    $('wallet-actions').innerHTML = ACTIONS.map((spec) => {
+      const action = actionDescriptor(spec.id);
+      const walletAction = isWalletDescriptor(action);
+      const blockers = nonInputBlockers(action);
+      const onlyNeedsInput = walletAction && blockers.length === 0;
+      const snapshotUsable = projection?.configured === true && projection?.snapshot?.stale !== true;
+      const enabled = !!activeAddress && snapshotUsable && onlyNeedsInput && (action.enabled !== false || array(action.blockedBy).every((code) => INPUT_BLOCKERS.has(String(code))));
+      const reason = !activeAddress ? 'Connect a wallet to continue.'
+        : projection?.configured !== true ? 'No active deployment is published.'
+        : projection?.snapshot?.stale === true ? 'The action snapshot is stale. Refresh before continuing.'
+        : !action ? 'The server has not published this action.'
+        : !walletAction ? 'No wallet-transaction authority was published.'
+        : blockers.length ? blockers.map(humanize).join(' · ')
+        : action.tx ? 'A concrete transaction is ready for review.'
+        : 'Your input will be sent to the server to prepare a concrete transaction.';
+      const field = spec.field && !action?.tx ? '<div class="field"><label for="field-' + esc(spec.id) + '">' + esc(spec.label) + '</label><input id="field-' + esc(spec.id) + '" data-field="' + esc(spec.field) + '" inputmode="' + (spec.field === 'bondId' ? 'numeric' : 'decimal') + '" autocomplete="off" placeholder="' + esc(spec.placeholder) + '"' + (enabled ? '' : ' disabled') + '></div>' : '<div></div>';
+      return '<article class="wallet-action" data-action-row="' + esc(spec.id) + '"><div class="wallet-action__copy"><h3>' + esc(action?.label || spec.title) + '</h3><p>' + esc(spec.copy) + '</p></div>' + field + '<button class="control' + (enabled ? ' primary' : '') + ' wallet-action-button" type="button" data-action="' + esc(spec.id) + '" aria-describedby="state-' + esc(spec.id) + '" aria-label="' + esc((action?.tx ? 'Review ' : 'Prepare ') + (action?.label || spec.title) + ' transaction') + '"' + (enabled ? '' : ' disabled') + '>' + (action?.tx ? 'Review transaction' : 'Prepare transaction') + '</button><div class="action-state' + (blockers.length ? ' bad' : '') + '" id="state-' + esc(spec.id) + '">' + esc(reason) + '</div></article>';
+    }).join('');
+    document.querySelectorAll('.wallet-action-button').forEach((button) => button.addEventListener('click', () => prepareAction(button.dataset.action, button)));
+  }
+
+  function renderActivity(data) {
+    const events = array(data.activity);
+    if (!events.length) {
+      $('activity').innerHTML = '<div class="panel-empty"><b>No finalized activity published</b>Pending wallet transactions are never shown here.</div>';
+      $('activity').removeAttribute('aria-busy');
+      return;
+    }
+    $('activity').innerHTML = '<div class="activity-list">' + events.slice(0, 20).map((event) => {
+      const amounts = event.amounts && typeof event.amounts === 'object' ? Object.entries(event.amounts).map(([key, value]) => humanize(key) + ' ' + value).join(' · ') : '—';
+      const url = safeExternalUrl(event.explorerUrl) || (event.txHash ? explorerTx(data, event.txHash) : '');
+      return '<article class="activity-row"><b>' + esc(humanize(event.kind)) + '</b><span>' + esc(amounts) + '</span><time datetime="' + esc(event.confirmedAt || '') + '">' + esc(dateLabel(event.confirmedAt)) + '</time>' + (url ? '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer" aria-label="Open transaction ' + esc(shortHash(event.txHash)) + ' in explorer">' + esc(shortHash(event.txHash)) + ' ↗</a>' : '<span>' + esc(shortHash(event.txHash)) + '</span>') + '</article>';
+    }).join('') + '</div>';
+    $('activity').removeAttribute('aria-busy');
+  }
+
+  function renderHero(data) {
+    const network = data.network || {};
+    const snapshot = data.snapshot || {};
+    $('hero-network').textContent = network.name ? network.name + (present(network.chainId) ? ' · chain ' + network.chainId : '') : data.configured === false ? 'Not configured' : '—';
+    $('hero-phase').textContent = humanize(data.status?.phase || (data.configured === false ? 'not configured' : 'unreported'));
+    $('hero-observed').textContent = dateLabel(snapshot.observedAt);
+    $('hero-block').textContent = present(snapshot.blockNumber) ? '#' + snapshot.blockNumber + (present(snapshot.confirmations) ? ' · ' + snapshot.confirmations + ' confirmations' : '') : '—';
+    const ready = data.status?.ready === true;
+    const stale = snapshot.stale === true;
+    const signal = $('snapshot-signal');
+    signal.className = 'signal ' + (stale ? 'bad' : ready ? 'good' : data.configured === false ? 'warn' : 'warn');
+    $('snapshot-title').textContent = stale ? 'Snapshot is stale' : ready ? 'Protocol reports ready' : data.configured === false ? 'Deployment not configured' : 'Protocol gate is not ready';
+    $('snapshot-detail').textContent = stale ? 'The last finalized observation is outside its freshness window.' : data.status?.reason ? humanize(data.status.reason) : (snapshot.observedAt ? 'Finalized observation from ' + dateLabel(snapshot.observedAt) : 'The latest snapshot did not publish an observation time.');
+  }
+
+  function render(data) {
+    renderHero(data);
+    renderMetrics(data);
+    renderReadiness(data);
+    renderContracts(data);
+    renderFees(data);
+    renderAccount();
+    renderActions();
+    renderActivity(data);
+  }
+
+  async function loadDefi(options = {}) {
+    if (loading) return;
+    loading = true;
+    $('refresh').disabled = true;
+    $('refresh').setAttribute('aria-busy', 'true');
+    $('load-error').classList.remove('show');
+    $('load-error').innerHTML = '';
+    if (!options.quiet) {
+      $('snapshot-title').textContent = projection ? 'Refreshing the public ledger' : 'Opening the public ledger';
+      $('snapshot-detail').textContent = 'Reading a finalized protocol snapshot…';
+    }
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 12000);
+    try {
+      const query = activeAddress ? '?address=' + encodeURIComponent(activeAddress) : '';
+      const headers = { accept: 'application/json' };
+      const token = authToken();
+      if (token) headers.authorization = 'Bearer ' + token;
+      const response = await fetch('/v1/defi' + query, { headers, signal: controller.signal, credentials: 'same-origin' });
+      let body = null;
+      try { body = await response.json(); } catch {}
+      if (!response.ok) throw new Error(body?.message || body?.error || 'HTTP ' + response.status);
+      if (!body || typeof body !== 'object' || Array.isArray(body)) throw new Error('The server returned an invalid DeFi projection.');
+      projection = body;
+      lastSuccessfulAt = new Date();
+      render(body);
+    } catch (error) {
+      const message = error?.name === 'AbortError' ? 'The public ledger timed out.' : (error?.message || 'The public ledger could not load.');
+      $('snapshot-signal').className = 'signal bad';
+      $('snapshot-title').textContent = projection ? 'Refresh failed' : 'Public ledger unavailable';
+      $('snapshot-detail').textContent = projection && lastSuccessfulAt ? 'Keeping the snapshot loaded at ' + lastSuccessfulAt.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) + '.' : 'No protocol figures are available yet.';
+      $('load-error').innerHTML = '<p>' + esc(message) + (projection ? ' The last successful snapshot remains visible.' : ' Try again, or return later when the endpoint is available.') + '</p><button class="control" type="button" id="retry">Try again</button>';
+      $('load-error').classList.add('show');
+      $('retry').addEventListener('click', () => loadDefi());
+      if (!projection) renderUnavailable();
+    } finally {
+      clearTimeout(timeout);
+      loading = false;
+      $('refresh').disabled = false;
+      $('refresh').removeAttribute('aria-busy');
+    }
+  }
+
+  function renderUnavailable() {
+    $('metrics').innerHTML = [
+      metric('Available reserve', '—', 'snapshot unavailable'), metric('Reserve coverage', '—', 'snapshot unavailable'),
+      metric('Oracle rate', '—', 'snapshot unavailable'), metric('On-chain claim balance', '—', 'snapshot unavailable'),
+    ].join('');
+    $('metrics').removeAttribute('aria-busy');
+    ['contracts', 'activity'].forEach((id) => { $(id).innerHTML = '<div class="panel-empty"><b>Snapshot unavailable</b>No data can be shown until the public endpoint responds.</div>'; $(id).removeAttribute('aria-busy'); });
+    $('fees').innerHTML = '<div class="panel fee-summary"><span class="eyebrow">Published routes</span><strong>—</strong><p>Snapshot unavailable.</p></div><div class="panel"><div class="panel-empty">No routing table is available.</div></div>';
+    $('fees').removeAttribute('aria-busy');
+    renderActions();
+  }
+
+  function safeExternalUrl(value) {
+    if (!value) return '';
+    try {
+      const url = new URL(String(value), location.origin);
+      return url.protocol === 'https:' || (url.protocol === 'http:' && ['localhost', '127.0.0.1'].includes(url.hostname)) ? url.href : '';
+    } catch { return ''; }
+  }
+
+  function explorerAddress(data, address) {
+    const base = safeExternalUrl(data.network?.explorerBaseUrl || data.links?.explorer);
+    return base ? base.replace(/\/$/, '') + '/address/' + encodeURIComponent(address) : '';
+  }
+
+  function explorerTx(data, hash) {
+    const base = safeExternalUrl(data.network?.explorerBaseUrl || data.links?.explorer);
+    return base && /^0x[0-9a-f]+$/i.test(String(hash || '')) ? base.replace(/\/$/, '') + '/tx/' + encodeURIComponent(hash) : '';
+  }
+
+  async function copyText(value, button) {
+    try {
+      await navigator.clipboard.writeText(String(value));
+      const previous = button.textContent;
+      button.textContent = '✓';
+      toast('Contract address copied.');
+      setTimeout(() => { if (button.isConnected) button.textContent = previous; }, 1500);
+    } catch { toast('Could not copy the address.', true); }
+  }
+
+  function providerOptions() {
+    requestWalletAnnouncements();
+    const options = [...announcedWallets.values()].map((entry) => ({ name: entry.info?.name || 'Injected wallet', detail: entry.info?.rdns || 'EIP-6963', provider: entry.provider }));
+    if (!options.length && window.ethereum) options.push({ name: 'Browser wallet', detail: 'Injected browser provider', provider: window.ethereum });
+    return options;
+  }
+
+  function openDialog(dialog) {
+    lastFocus = document.activeElement;
+    if (typeof dialog.showModal === 'function') dialog.showModal(); else dialog.setAttribute('open', '');
+  }
+
+  function closeDialog(dialog) {
+    if (dialog.open && typeof dialog.close === 'function') dialog.close(); else dialog.removeAttribute('open');
+    if (lastFocus?.isConnected) lastFocus.focus();
+  }
+
+  async function chooseWallet() {
+    const options = providerOptions();
+    if (!options.length) {
+      $('wallet-dialog-copy').textContent = 'No injected EVM wallet announced itself. Install or open an EIP-1193 wallet in this browser, then reload the page.';
+      $('wallet-options').innerHTML = '<div class="panel-empty"><b>No wallet detected</b>This page does not create WalletConnect sessions.</div>';
+      openDialog($('wallet-dialog'));
+      return;
+    }
+    $('wallet-dialog-copy').textContent = options.length === 1 ? 'One injected wallet is available.' : 'Choose which injected wallet may request your account.';
+    $('wallet-options').innerHTML = '';
+    options.forEach((option) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'control wallet-option';
+      button.innerHTML = '<span><b>' + esc(option.name) + '</b><br><small>' + esc(option.detail) + '</small></span>';
+      button.addEventListener('click', () => { closeDialog($('wallet-dialog')); connectProvider(option.provider, option.name); });
+      $('wallet-options').append(button);
+    });
+    openDialog($('wallet-dialog'));
+  }
+
+  async function connectProvider(provider, name) {
+    const button = $('connect-wallet');
+    button.disabled = true;
+    button.setAttribute('aria-busy', 'true');
+    try {
+      const accounts = await provider.request({ method: 'eth_requestAccounts' });
+      if (!Array.isArray(accounts) || !/^0x[0-9a-f]{40}$/i.test(String(accounts[0] || ''))) throw new Error('No EVM account was selected.');
+      activeProvider = provider;
+      activeAddress = String(accounts[0]);
+      bindProvider(provider);
+      $('wallet-heading').textContent = name || 'Wallet connected';
+      $('wallet-copy').textContent = 'Transactions will open in this wallet for final review and signature.';
+      $('wallet-identity').hidden = false;
+      $('wallet-address').textContent = activeAddress;
+      button.textContent = 'Change wallet';
+      renderActions();
+      await loadDefi({ quiet: true });
+      toast('Wallet connected. No transaction was sent.');
+    } catch (error) {
+      toast(error?.code === 4001 ? 'Wallet connection cancelled.' : (error?.message || 'Wallet connection failed.'), true);
+    } finally {
+      button.disabled = false;
+      button.removeAttribute('aria-busy');
+    }
+  }
+
+  function bindProvider(provider) {
+    if (boundProviders.has(provider) || typeof provider.on !== 'function') return;
+    boundProviders.add(provider);
+    provider.on('accountsChanged', (accounts) => {
+      if (provider !== activeProvider) return;
+      if (!Array.isArray(accounts) || !accounts[0]) return disconnectWallet();
+      activeAddress = String(accounts[0]);
+      $('wallet-address').textContent = activeAddress;
+      renderActions();
+      loadDefi({ quiet: true });
+    });
+    provider.on('chainChanged', () => { if (provider === activeProvider) renderActions(); });
+    provider.on('disconnect', () => { if (provider === activeProvider) disconnectWallet(); });
+  }
+
+  function disconnectWallet() {
+    activeProvider = null;
+    activeAddress = null;
+    $('wallet-heading').textContent = 'Wallet not connected';
+    $('wallet-copy').textContent = 'Connect to inspect account-specific eligibility and review any transaction the server currently authorizes.';
+    $('wallet-identity').hidden = true;
+    $('wallet-address').textContent = '';
+    $('connect-wallet').textContent = 'Connect wallet';
+    renderAccount();
+    renderActions();
+  }
+
+  function validateInput(spec, value) {
+    const clean = String(value || '').trim();
+    if (spec.field === 'amountOmr') {
+      if (!/^(?:0|[1-9]\d*)(?:\.\d{1,18})?$/.test(clean) || !/[1-9]/.test(clean)) throw new Error('Enter a positive OMR amount with at most 18 decimal places.');
+    }
+    if (spec.field === 'bondId' && !/^(?:0|[1-9]\d*)$/.test(clean)) throw new Error('Enter a valid numeric bond ID.');
+    return clean;
+  }
+
+  function prepareEndpoint(action) {
+    const candidate = action.prepare?.path || action.preparePath || '/v1/defi/actions/' + encodeURIComponent(action.id) + '/prepare';
+    if (typeof candidate !== 'string' || !candidate.startsWith('/v1/defi/actions/') || !candidate.endsWith('/prepare')) throw new Error('The action did not publish a safe preparation route.');
+    return candidate;
+  }
+
+  function expectedContract(spec) {
+    const contracts = array(projection?.contracts);
+    const matches = (contract, terms) => {
+      const key = String(contract?.key || '').toLowerCase();
+      const name = String(contract?.name || '').toLowerCase();
+      return terms.some((term) => key === term || key.includes(term) || name.includes(term));
+    };
+    if (spec.contractKind === 'token') return contracts.find((contract) => matches(contract, ['omr_token', 'omrtoken', 'token'])) || contracts.find((contract) => String(contract?.key || '').toLowerCase() === 'omr') || null;
+    if (spec.contractKind === 'staking') return contracts.find((contract) => matches(contract, ['staking', 'stake'])) || null;
+    if (spec.contractKind === 'bond') return contracts.find((contract) => matches(contract, ['bond'])) || null;
+    return null;
+  }
+
+  async function prepareAction(id, button) {
+    const spec = ACTIONS.find((entry) => entry.id === id);
+    const action = actionDescriptor(id);
+    if (!spec || !isWalletDescriptor(action) || !activeProvider || !activeAddress) return;
+    button.disabled = true;
+    button.setAttribute('aria-busy', 'true');
+    const state = $('state-' + id);
+    try {
+      let descriptor = action;
+      if (!descriptor.tx) {
+        const input = spec.field ? document.getElementById('field-' + id) : null;
+        const value = spec.field ? validateInput(spec, input?.value) : null;
+        const body = spec.field ? { [spec.field]: value } : {};
+        const headers = { accept: 'application/json', 'content-type': 'application/json', 'idempotency-key': uuid() };
+        const token = authToken();
+        if (token) headers.authorization = 'Bearer ' + token;
+        const response = await fetch(prepareEndpoint(action), { method: 'POST', headers, credentials: 'same-origin', body: JSON.stringify(body) });
+        let result = null;
+        try { result = await response.json(); } catch {}
+        if (!response.ok) {
+          if (response.status === 401) throw new Error('Sign in through the city console before preparing this account action.');
+          throw new Error(result?.message || result?.error || 'The server could not prepare this transaction.');
+        }
+        descriptor = result?.action || result;
+        if (descriptor?.id !== id) throw new Error('The server returned a different action than requested.');
+      }
+      const tx = validateTransaction(spec, descriptor);
+      pendingTx = tx;
+      pendingActionId = id;
+      showTransactionReview(spec, descriptor, tx);
+      state.className = 'action-state';
+      state.textContent = 'Concrete server-issued transaction prepared. Nothing has been signed yet.';
+    } catch (error) {
+      state.className = 'action-state bad';
+      state.textContent = error?.message || 'The transaction could not be prepared.';
+      toast(state.textContent, true);
+    } finally {
+      button.disabled = false;
+      button.removeAttribute('aria-busy');
+    }
+  }
+
+  function validateTransaction(spec, descriptor) {
+    if (!descriptor || descriptor.id !== spec.id || descriptor.kind !== 'wallet_transaction' || descriptor.enabled === false) throw new Error('The server did not authorize this wallet transaction.');
+    if (nonInputBlockers(descriptor).length) throw new Error(nonInputBlockers(descriptor).map(humanize).join(' · '));
+    const tx = descriptor.tx;
+    if (!tx || !Number.isSafeInteger(Number(tx.chainId)) || Number(tx.chainId) <= 0) throw new Error('The transaction has no valid chain ID.');
+    if (projection?.network?.chainId != null && Number(tx.chainId) !== Number(projection.network.chainId)) throw new Error('The transaction chain does not match the public deployment.');
+    if (!/^0x[0-9a-f]{40}$/i.test(String(tx.to || ''))) throw new Error('The transaction target is invalid.');
+    if (!/^0x(?:[0-9a-f]{2})*$/i.test(String(tx.data || ''))) throw new Error('The transaction calldata is invalid.');
+    if (!['0', '0x0', '0x00', 0, null, undefined].includes(tx.value)) throw new Error('This action must not send native currency.');
+    if (tx.functionName !== spec.functionName) throw new Error('The transaction function does not match the selected action.');
+    if (!String(tx.data).toLowerCase().startsWith(spec.selector)) throw new Error('The calldata selector does not match the selected action.');
+    const contract = expectedContract(spec);
+    if (!contract || !/^0x[0-9a-f]{40}$/i.test(String(contract.address || '')) || contract.runtimeVerified !== true) throw new Error('The matching verified contract is not present in the public directory.');
+    if (String(contract.address).toLowerCase() !== String(tx.to).toLowerCase()) throw new Error('The transaction target does not match the public contract directory.');
+    if (tx.validUntil) {
+      const expiry = new Date(tx.validUntil).getTime();
+      if (!Number.isFinite(expiry)) throw new Error('The transaction authorization has an invalid expiry.');
+      if (expiry <= Date.now()) throw new Error('This transaction authorization expired. Refresh and prepare it again.');
+    }
+    if (!present(tx.snapshotBlockNumber)) throw new Error('The transaction is not pinned to a snapshot block.');
+    return { chainId: Number(tx.chainId), to: String(tx.to), data: String(tx.data), value: '0x0', summary: String(tx.summary || descriptor.label || spec.title), snapshotBlockNumber: String(tx.snapshotBlockNumber), validUntil: tx.validUntil || null };
+  }
+
+  function showTransactionReview(spec, descriptor, tx) {
+    $('tx-dialog-title').textContent = spec.title.toUpperCase();
+    $('tx-summary').textContent = tx.summary;
+    $('tx-review').innerHTML = [
+      ['Action', descriptor.label || spec.title],
+      ['Network', (projection?.network?.name || 'Chain') + ' · ' + tx.chainId],
+      ['From', activeAddress],
+      ['Contract', tx.to],
+      ['Function', spec.functionName + '(…)'],
+      ['Native value', '0'],
+      ['Snapshot block', tx.snapshotBlockNumber],
+      ['Authorization', tx.validUntil ? 'Valid until ' + dateLabel(tx.validUntil) : 'No published expiry'],
+    ].map(([term, value]) => '<div><dt>' + esc(term) + '</dt><dd>' + esc(value) + '</dd></div>').join('');
+    openDialog($('tx-dialog'));
+  }
+
+  async function switchChain(chainId) {
+    const hex = '0x' + Number(chainId).toString(16);
+    const current = await activeProvider.request({ method: 'eth_chainId' });
+    if (Number.parseInt(String(current), 16) === Number(chainId)) return;
+    try { await activeProvider.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: hex }] }); }
+    catch (error) {
+      if (error?.code === 4902) throw new Error('Add ' + (projection?.network?.name || 'chain ' + chainId) + ' to your wallet, then try again.');
+      throw error;
+    }
+  }
+
+  async function sendPendingTransaction() {
+    if (!pendingTx || !pendingActionId || !activeProvider || !activeAddress) return;
+    const button = $('send-transaction');
+    button.disabled = true;
+    button.setAttribute('aria-busy', 'true');
+    try {
+      if (pendingTx.validUntil && new Date(pendingTx.validUntil).getTime() <= Date.now()) throw new Error('This transaction authorization expired. Prepare it again.');
+      await switchChain(pendingTx.chainId);
+      const hash = await activeProvider.request({ method: 'eth_sendTransaction', params: [{ from: activeAddress, to: pendingTx.to, data: pendingTx.data, value: pendingTx.value }] });
+      if (!/^0x[0-9a-f]+$/i.test(String(hash || ''))) throw new Error('The wallet did not return a transaction hash.');
+      const explorer = explorerTx(projection || {}, hash);
+      const state = $('state-' + pendingActionId);
+      if (state) { state.className = 'action-state good'; state.textContent = 'Submitted to your wallet network: ' + shortHash(hash) + '. Refresh after it finalizes.'; }
+      closeDialog($('tx-dialog'));
+      toast('Transaction submitted: ' + shortHash(hash), false, explorer ? { href: explorer, label: 'View on explorer ↗' } : null);
+      pendingTx = null;
+      pendingActionId = null;
+    } catch (error) {
+      const message = error?.code === 4001 ? 'Transaction cancelled in wallet.' : (error?.message || 'Wallet transaction failed.');
+      toast(message, true);
+    } finally {
+      button.disabled = false;
+      button.removeAttribute('aria-busy');
+    }
+  }
+
+  $('refresh').addEventListener('click', () => loadDefi());
+  $('connect-wallet').addEventListener('click', chooseWallet);
+  $('send-transaction').addEventListener('click', sendPendingTransaction);
+  document.querySelectorAll('[data-close]').forEach((button) => button.addEventListener('click', () => closeDialog($(button.dataset.close))));
+  document.querySelectorAll('dialog').forEach((dialog) => dialog.addEventListener('click', (event) => { if (event.target === dialog) closeDialog(dialog); }));
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') return;
+    const menu = $('nav-menu');
+    if (menu.open) { menu.open = false; menu.querySelector('summary').focus(); }
+  });
+  $('nav-menu').addEventListener('click', (event) => { if (event.target.closest('a')) $('nav-menu').open = false; });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && lastSuccessfulAt && Date.now() - lastSuccessfulAt.getTime() > 60000) loadDefi({ quiet: true }); });
+  setInterval(() => { if (!document.hidden) loadDefi({ quiet: true }); }, 60000);
+  renderActions();
+  loadDefi();
+})();
+</script>
+</body>
+</html>

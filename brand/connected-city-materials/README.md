@@ -24,3 +24,9 @@ Build scripts depend on the surrounding Omertà repository and its installed dep
 
 Additional fal.ai usage: zero. Existing artwork, narration and video were reused.
 Verification: three simulation invariant tests passed; real example passed 24 HTTP responses plus inventory, cash and completion assertions; 227 local page/asset links resolved; all three PDFs have one page; developer video decoded with audio; desktop and 390px responsive interactions checked.
+
+## Crypto field guide — crypto/index.html
+
+Six exhibits: ownership/authority, illustrative fee receipts, finite-budget stress scenarios, Family Turf season, account identity/evidence gates, and release evidence. Includes a PNG/SVG ownership overview and captured documentation with 17 source hashes.
+
+Checks: four teaching-model tests passed; receipt validation and stages, capacity exhaustion despite extra funding, identity/current-access changes and all six season steps verified in the browser. 323 local HTML asset/page references resolve. No live deployment check or contract security review was performed. No additional fal.ai credits used.

@@ -1,0 +1,2 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ world-graph Phase 1 HTTP authority, replay, privacy, and economy contract passed

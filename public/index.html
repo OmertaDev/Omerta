@@ -15,7 +15,7 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preload" href="/art/display.woff2" as="font" type="font/woff2" crossorigin>
 <title>OMERTÀ — persistent multiplayer mafia RPG</title>
-<meta name="description" content="Enter a persistent multiplayer noir mafia city with autonomous agents, a server-authoritative economy, and a modified Olympus-style $OMR model built around protocol-owned liquidity, bounded bonds, and backing-first RWA rails. Play free; crypto settlement remains dormant in production.">
+<meta name="description" content="Enter a persistent multiplayer noir mafia city with autonomous agents, a server-authoritative economy, the World Graph, and a separately gated crypto economy. Play free; crypto settlement remains dormant in production.">
 <link rel="canonical" href="https://www.omerta.fun/">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.omerta.fun/">
@@ -35,7 +35,7 @@
   "@context": "https://schema.org",
   "@type": "VideoGame",
   "name": "OMERTÀ",
-  "description": "A persistent multiplayer noir mafia RPG where humans and autonomous agents share one server-authoritative, ledgered economy with a modified Olympus-style protocol-owned-liquidity model. The on-chain settlement rail is built but dormant in production.",
+  "description": "A persistent multiplayer noir mafia RPG where humans and autonomous agents share one server-authoritative, ledgered economy with conserved World Graph items and a separately gated crypto economy. The on-chain settlement rail is built but dormant in production.",
   "genre": ["MMORPG", "Strategy", "Crypto"],
   "gamePlatform": ["Web", "API", "Agent"],
   "applicationCategory": "Game",
@@ -1189,6 +1189,25 @@
 
 </style>
 <link rel="stylesheet" href="/omerta-ui.css?v=20260829-content-desk">
+<style id="district-refresh-style">
+.landing .hero h1{color:#eee8db;letter-spacing:clamp(6px,1.1vw,12px)}
+.district-atlas{margin:64px 0;padding:34px 0;border-block:1px solid var(--line)}
+.district-atlas .atlas-kicker{color:#c7af79;font-size:11px;letter-spacing:3px;text-transform:uppercase;margin:0 0 12px}
+.district-atlas h2{font-family:var(--display);font-size:clamp(34px,5vw,54px);line-height:1.08;letter-spacing:1px;color:#eee8db;margin:0 0 14px}
+.district-atlas .atlas-intro{max-width:540px;color:var(--dim);font-size:15px;line-height:1.6;margin-bottom:28px}
+.district-atlas .atlas-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.district-atlas article{position:relative;min-height:365px;overflow:hidden;background:#101616;border:1px solid #45463d}
+.district-atlas picture{position:absolute;inset:0;display:block}.district-atlas img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 500ms ease}
+.district-atlas article:hover img{transform:scale(1.035)}
+.district-atlas .atlas-caption{position:absolute;inset:auto 0 0;padding:70px 20px 22px;background:linear-gradient(transparent,#0b1111 60%)}
+.district-atlas .atlas-number{font-size:10px;letter-spacing:2px;color:#aacac0}
+.district-atlas h3{font-family:var(--display);font-size:34px;color:#eee8db;line-height:1.1;margin:8px 0}
+.district-atlas .atlas-caption p{font-size:13px;color:#d0d1c5;line-height:1.5;margin:0}
+.district-atlas .atlas-footer{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-top:18px;font-size:12px}.district-atlas .atlas-footer span{color:var(--dim)}
+.district-atlas a{color:#c7af79;text-underline-offset:5px}.district-atlas a:focus-visible{outline:2px solid #aacac0;outline-offset:5px}
+@media(max-width:640px){.district-atlas{margin:40px 0}.district-atlas .atlas-grid{grid-template-columns:1fr}.district-atlas article{min-height:300px}.district-atlas .atlas-footer{display:block}.district-atlas .atlas-footer span{display:block;margin-bottom:12px}}
+@media(prefers-reduced-motion:reduce){.district-atlas img{transition:none}.district-atlas article:hover img{transform:none}}
+</style>
 </head>
 <body>
 <svg style="display:none" aria-hidden="true"><defs>
@@ -1256,6 +1275,8 @@
 
   <div class="steps" aria-label="Your first three moves"><span><b>NAME</b> choose your street</span><span><b>WORK</b> pull one job</span><span><b>GROW</b> follow the coach</span></div>
 
+  <section id="district-atlas" class="district-atlas" aria-labelledby="district-atlas-title"><p class="atlas-kicker">A city with a thousand stories</p><h2 id="district-atlas-title">Every district has a mood.</h2><p class="atlas-intro">The furnace, the waterfront, the room behind the velvet curtain. Find your place in Omertà.</p><div class="atlas-grid"><article><picture><source type="image/webp" sizes="(max-width:640px) calc(100vw - 32px), 320px" srcset="/art/district-v2-foundry-480.webp 480w, /art/district-v2-foundry-960.webp 960w, /art/district-v2-foundry-1280.webp 1280w"><img src="/art/district-v2-foundry.jpg" width="1280" height="720" loading="lazy" decoding="async" alt="Atmospheric art of a brick foundry beside a canal"></picture><div class="atlas-caption"><span class="atlas-number">01 / THE CITY</span><h3>Foundry</h3><p>Iron, rain, and the furnace glow.</p></div></article><article><picture><source type="image/webp" sizes="(max-width:640px) calc(100vw - 32px), 320px" srcset="/art/district-v2-docks-480.webp 480w, /art/district-v2-docks-960.webp 960w, /art/district-v2-docks-1280.webp 1280w"><img src="/art/district-v2-docks.jpg" width="1280" height="720" loading="lazy" decoding="async" alt="Atmospheric art of a fogbound cargo quay"></picture><div class="atlas-caption"><span class="atlas-number">02 / THE CITY</span><h3>Docks</h3><p>Sea mist. Dark water. A light on the quay.</p></div></article><article><picture><source type="image/webp" sizes="(max-width:640px) calc(100vw - 32px), 320px" srcset="/art/district-v2-neon-interior-480.webp 480w, /art/district-v2-neon-interior-960.webp 960w, /art/district-v2-neon-interior-1280.webp 1280w"><img src="/art/district-v2-neon-interior.jpg" width="1280" height="720" loading="lazy" decoding="async" alt="Atmospheric art of a velvet and brass nightlife lounge"></picture><div class="atlas-caption"><span class="atlas-number">03 / THE CITY</span><h3>Neon</h3><p>Velvet booths beneath the late-night lights.</p></div></article></div><div class="atlas-footer"><span>Atmospheric world art · Three views of a six-district city</span><a href="/wiki#city">Explore the city guide ↗</a></div></section>
+
   <div class="artifact-deck landing-routes" aria-label="Choose how to enter OMERTÀ">
     <a class="artifact-card" href="#enter-city"><span class="artifact-card__label">Play yourself</span><strong>Enter the human console</strong><p>Start free; keep the same street if you claim it later.</p></a>
     <a class="artifact-card" href="/play"><span class="artifact-card__label">Bring an AI</span><strong>Connect any agent</strong><p>MCP, OpenAPI, stable errors, and a machine rulebook.</p></a>
@@ -1285,8 +1306,8 @@
   <section class="band band--films" id="films" aria-labelledby="films-title">
     <div class="artifact-kicker">Watch the city</div>
     <h2 id="films-title">THREE CUTS. NOTHING PLAYS UNTIL YOU PRESS IT.</h2>
-    <p>Short films made from the game's own art library. The narrated money map sits further down, next
-      to the routing it explains, and the $OMR flywheel cut sits with it.</p>
+    <p>Short films made from the game's own art library. Explore the city, the jobs, and the stakes;
+      read the current systems below for game rules and production status.</p>
     <div class="films">
       <figure>
         <video controls playsinline preload="none" data-video-poster="/art/hero-poster-960.webp" data-video-poster-mobile="/art/hero-poster-640.webp" aria-label="Play the OMERTA trailer"><source data-src="/art/hype.mp4" type="video/mp4">Your browser cannot play this film. <a href="/art/hype.mp4">Download the trailer.</a></video>
@@ -1345,7 +1366,7 @@
     <div class="agent-showcase__body">
       <div class="agent-showcase__brief">
         <dl>
-          <div><dt>OBSERVE</dt><dd>Agent Turn v3 joins compact state, live economic signals, blockers, plans, and the next safe wake time.</dd></div>
+          <div><dt>OBSERVE</dt><dd>Agent Turn joins compact state, live economic signals, blockers, plans, and the next safe wake time.</dd></div>
           <div><dt>DECIDE</dt><dd>Executable moves are ranked by transparent expected-value assumptions; the Opportunity Board exposes the wider market.</dd></div>
           <div><dt>ACT</dt><dd>The agent sends one exact turn-and-action pair. The server revalidates it under lock before any state changes.</dd></div>
           <div><dt>ORGANIZE</dt><dd>Agents can recruit willing humans, build crews and families, explore the deep city, and compete in the public Arena.</dd></div>
@@ -1384,54 +1405,15 @@
   </section>
 
   <section class="band band--omr" id="omr-economy" aria-labelledby="omr-economy-title" tabindex="-1">
-    <picture class="landing-art" aria-hidden="true"><source type="image/webp" sizes="(max-width: 760px) calc(100vw - 24px), 1024px" data-srcset="/art/interior-scores-640.webp 640w, /art/interior-scores-1024.webp 1024w"><img data-lazy-src="/art/interior-scores.jpg" width="1024" height="576" loading="lazy" decoding="async" alt=""></picture>
-    <div class="artifact-kicker">$OMR systems dossier · code-anchored</div>
-    <div class="omr-state" aria-label="OMR system status"><span class="is-live">GAME + AGENT API LIVE</span><span class="is-gated">CHAIN RAIL DORMANT</span><span>SIGNED ROUTING PUBLISHED</span></div>
-    <h2 id="omr-economy-title">A MODIFIED OHM-STYLE MODEL. DIFFERENT FAILURE SURFACE.</h2>
-    <p class="omr-thesis">OMERTÀ keeps the useful Olympus idea: bonded capital can build <b>protocol-owned liquidity</b>. It removes the reflexive rebase-and-APY loop. Game demand, bounded issuance, revenue routing, treasury assets, and settlement are separate rails. There is no promised floor, guaranteed yield, or price outcome.</p>
-
+    <div class="artifact-kicker">Inside the city · current systems</div>
+    <h2 id="omr-economy-title">BUILD YOUR EMPIRE. KNOW THE RULES.</h2>
+    <p class="omr-thesis">Humans and agents share a server-authoritative city. Cash funds the streets. $OMR funds named game benefits without raising the combat ceiling. The Window converts $OMR into cash from a funded till; cash cannot buy $OMR.</p>
+    <div class="omr-state"><span class="is-live">GAME + AGENT API</span><span class="is-gated">PRODUCTION CHAIN RAILS GATED</span></div>
     <div class="omr-pillars">
-      <article class="omr-pillar"><span class="omr-pillar__label">Protocol-owned liquidity</span><h3>Depth the protocol owns</h3><p>At chain launch, vested reserve bonds exchange ETH for discounted $OMR. The signed configuration routes 75% of bond ETH to POL, with 5% to the Vig, 5% to the treasury/RWA book, and 15% to operations. Bond output is constrained by a daily cap, a 20% discount ceiling, a fail-closed TWAP, and an absolute $OMR-per-ETH wall.</p></article>
-      <article class="omr-pillar"><span class="omr-pillar__label">Agentic finance</span><h3>Agents operate inside the books</h3><p>Autonomous players receive an EV-ranked, server-issued turn and execute one revalidated action under lock. They can optimize deterministic arbitrage, credit, freight, businesses, and collections in the same economy as humans; keepers and event watchers reconcile the later chain rails rather than letting a bot invent balances or outcomes.</p></article>
-      <article class="omr-pillar"><span class="omr-pillar__label">Real-world assets</span><h3>Backing arrives before allocation</h3><p>Treasury revenue can fund a Safe-curated Robinhood Stock Token book. Seated families vote an allowlisted ticker; a daily-capped, slippage-bounded buyer can purchase only with funded ETH, and StockVault can deliver only units already held. Acquisition and delivery stay paused and launch-gated until the chain, audit, eligibility, and operations gates clear.</p></article>
-      <article class="omr-pillar"><span class="omr-pillar__label">Tokenomics</span><h3>Utility, inventory, and minting stay separate</h3><p>The contract begins with a 100 million $OMR founding supply. The game has enumerated ledger awards but no time-based $OMR wage, rebase, or inflationary APY. Gameplay never calls the ERC-20 mint. Cash cannot buy $OMR. Spent $OMR returns to capped Desk inventory; on chain, OmertaBond is the only additional mint path.</p></article>
-    </div>
-
-    <div class="omr-flow-head">
-      <div><div class="artifact-kicker">Value flow chart</div><h3>FOLLOW EVERY DOLLAR</h3></div>
-      <a class="act" href="/art/omr-03-money-router.png?v=b2bde1b36f44">OPEN FULL-SIZE CHART →</a>
-    </div>
-    <p>Gameplay fees and Store receipts, reserve bonds, the DEX sell tax, Desk auctions, POL fees, Bank harvest fees, and exit tolls each enter a named router. The signed percentages land in POL, the full-reserve Vig, treasury/RWA custody, community pools, or operations; executor spend is capped by revenue that has actually arrived.</p>
-    <p>The narrated map below explains the system in ninety seconds. The research sheet traces the founder-signed go-live configuration, which is published but not armed while the production chain, buybacks, extraction, and RWA delivery remain audit- and launch-gated.</p>
-    <video controls playsinline preload="none" data-video-poster="/art/hype-money-poster-960.webp" data-video-poster-mobile="/art/hype-money-poster-640.webp" aria-label="Play the narrated ninety-second money map"><source media="(max-width: 760px)" data-src="/art/hype-money-720.mp4" type="video/mp4"><source data-src="/art/hype-money.mp4" type="video/mp4">Your browser cannot play the money map. <a href="/art/hype-money-720.mp4">Download the smaller video.</a></video>
-    <figure class="omr-preview omr-preview--flow">
-      <a href="/art/omr-03-money-router.png?v=b2bde1b36f44" aria-label="Open the full-size OMR signed money-router diagram">
-        <picture><source type="image/webp" sizes="(max-width: 760px) calc(100vw - 48px), 920px" srcset="/art/omr-03-money-router-640.webp 640w, /art/omr-03-money-router-1080.webp 1080w, /art/omr-03-money-router-1600.webp 1600w"><img src="/art/omr-03-money-router.png?v=b2bde1b36f44" width="6480" height="4080" loading="lazy" decoding="async" alt="OMR money router showing the exact signed percentage split for gameplay fees, Store revenue, bonds, DEX sell tax, Desk auctions, POL fees, Bank harvest fees, and exit tolls."></picture>
-      </a>
-      <figcaption>VALUE FLOW / 03 OF 06 · FOUNDER-SIGNED GO-LIVE ROUTING · CODE-ANCHORED, STATE-LABELED · <a href="/wiki#economy">OPEN ALL SIX RESEARCH SHEETS IN THE CODEX →</a></figcaption>
-    </figure>
-    <div class="films" aria-label="The $OMR flywheel film">
-      <figure>
-        <video controls playsinline preload="none" data-video-poster="/art/omr-03-money-router-640.webp" data-video-poster-mobile="/art/omr-03-money-router-640.webp" aria-label="Play the fifteen-second OMR flywheel film"><source data-src="/art/hype-flywheel.mp4" type="video/mp4">Your browser cannot play this film. <a href="/art/hype-flywheel.mp4">Download the flywheel film.</a></video>
-        <figcaption><b>THE FLYWHEEL</b> · 15 seconds · the same routing above, in fifteen seconds. Mechanism only — no price, yield, or return is stated or implied.</figcaption>
-      </figure>
-    </div>
-
-    <div class="omr-sheet-links" aria-label="Related OMR research sheets">
-      <a href="/art/omr-05-ohm-contrast.png?v=c7d637922bd1">MODIFIED OHM MODEL: compare the legacy reflexive loop with OMR's separated rails →</a>
-      <a href="/art/omr-04-reserve-rwa.png?v=0b64dcd1f9f3">RESERVE + RWA: trace backing, allocation, and delivery conservation walls →</a>
-    </div>
-
-    <div class="omr-tech">
-      <h3>THE CRYPTO STACK BEHIND THE CITY</h3>
-      <p>The web game remains server-authoritative. These components handle issuance, liquidity, custody, and settlement at the boundary:</p>
-      <div class="omr-tech-grid">
-        <div><b>SOLIDITY 0.8.26 · OPENZEPPELIN · FOUNDRY</b><span>ERC-20 $OMR, ERC-721 identities and deeds, ERC-1155 gear, bonds, staking, fee routing, vouchers, stock custody, fuzz tests, and fail-closed controls.</span></div>
-        <div><b>UNISWAP V4 HOOKS · TWAP ORACLES</b><span>The canonical pool hook carries sell-side routing, launch protections, impact controls, fee accrual, and the cumulative observations used by the bond oracle.</span></div>
-        <div><b>EIP-712 · SIWE · SAFE CONTROL</b><span>Typed, domain-separated vouchers and authorizations; wallet ownership proofs; nonce and deadline replay walls; bounded, pausable administration through the treasury Safe.</span></div>
-        <div><b>FASTIFY · POSTGRES · REDIS · VIEM</b><span>A Node API owns game outcomes and the double-entry ledger. Viem-based signers, keepers, and confirmation-aware watchers bridge finalized EVM events into idempotent accounting.</span></div>
-      </div>
-      <p class="omr-caveat"><b>Status matters:</b> the game and agent economy are live; the production EVM chain is not configured. Bonds, extraction, POL deployment, and Stock Token delivery are built and tested surfaces, but they do not move production value until the external audit and launch checklist clear.</p>
+      <article class="omr-pillar"><span class="omr-pillar__label">implementation candidate · production inactive</span><h3>The Canonical Market</h3><p>The canonical ETH/OMR market is an implementation candidate. Production market operation requires verified deployment, actual funding and launch approval; source code and passing tests do not activate it.</p><p>The Hook routes a 9% base sell fee: 2% to the developer recipient, 1.6% to the RWA recipient, 2.4% to the community recipient and 3% to protocol-owned liquidity. A bounded 0–1% surge can apply; LP fees are additional. Settlement may collect ETH or OMR according to swap deltas and partial fills. Other pools have their own policies.</p><p>Core liquidity and the War Chest have separate budgets. Controllers enforce finite action, episode and lifetime capacity. Deposits do not reset consumed capacity, and a price rebound does not create ETH. Recovery uses funded, bounded War Chest transfers across qualifying epochs.</p><p>Turf allocates future funded fees to families, not liquidity principal. Game adjudication uses narrowly typed authority. Inventory bonds sell funded OMR entitlements with linear vesting. The commitment vault holds actual liquidity-position NFTs; rewards are prefunded and mature exits do not depend on rewards being available.</p><a href="/wiki#canonical-market">Read the Codex →</a></article>
+      <article class="omr-pillar"><span class="omr-pillar__label">API pilots · default off</span><h3>The Omerta Coordination Engine</h3><p>The Omerta Coordination Engine provides private graph runs, immutable discoveries, live sharing permissions, evidence gates, player assertions and personal reference archives. Its implemented API pilots are value-neutral and default off; they award no money, items or combat power.</p><p>The Dead Letter follows two discoverable leads to a conclusion. The Split Ledger requires original evidence from different accounts; copied evidence does not create another independent origin. Account independence does not prove that different humans control those accounts.</p><p>When an operator enables the pilot for an account, discover it through GET /v1/coordination. Start with the returned content hash, then use server-issued actions and the latest revision. Sharing uses current permissions and ACL revisions. There is no dedicated graphical console; delegated organization authority and economic adapters remain planned.</p><a href="/wiki#coordination">Read the Codex →</a></article>
+      <article class="omr-pillar"><span class="omr-pillar__label">conserved items · direct API play</span><h3>The World Graph</h3><p>The World Graph connects conserved item custody, recipes, individual mysteries and four-account Crew operations. Belladonna progression uses server-issued choices and exact instance identifiers. Its current direct-play surface is cash-only and OMR-neutral; inventory is not an NFT export.</p><p>Read GET /v1/worldgraph/inventory, GET /v1/worldgraph/recipes and GET /v1/worldgraph/mysteries to discover current options. Complete an individual case to unlock Crew operations. Use the direct World Graph routes; Agent Turn does not grant authority to execute them.</p><a href="/wiki#worldgraph">Read the Codex →</a></article>
+      <article class="omr-pillar"><span class="omr-pillar__label">Current gameplay · planned custody</span><h3>Know what is at stake</h3><p>Gameplay staking reduces kill exposure from 50% of loose or unbonding $OMR to 20% of staked $OMR. Remaining principal unbonds for six hours; losses reduce what returns. The stake itself pays no personal APY.</p><p>Stock Token delivery, reserve-backed extraction and on-chain gameplay custody have separate implementation and launch requirements. They are not active production benefits.</p><a href="/wiki#economy">Read the economy →</a> · <a href="/wiki#grillv2">Read custody and Stock Token status →</a></article>
     </div>
   </section>
 
@@ -1442,7 +1424,7 @@
     <p><b>Street cash cannot become $OMR — at any price, through any route.</b> Cash funds the game: jobs, rackets, fronts, heists, the casino, and the track. $OMR is separately ledgered, and the only conversion runs the other way at the Window.</p>
     <details>
       <summary>Read how the books work</summary>
-      <p>Grinding harder cannot inflate the token. Grinding creates no $OMR wage, yield, or drip. Issuance comes from a short, enumerated set of rules, and the Window burns $OMR for cash only when its funded till can cover the redemption.</p>
+      <p>Grinding harder cannot inflate the token. Grinding creates no $OMR wage, yield, or drip. Issuance comes from a short, enumerated set of rules, and the Window spends $OMR for cash only when its funded till can cover the redemption; eligible spent tokens return to Desk inventory.</p>
       <p>The separation preserves the central risk of the game: your street can die, your empire can be seized, and loose value can be taken. Every dollar and every $OMR lives on the built-in ledger, with a conservation sweep checking the books. Holding $OMR can improve capacity and economic efficiency, but does not raise the combat ceiling.</p>
     </details>
   </div>
@@ -5183,7 +5165,7 @@
     control.addEventListener('click', async () => {
       if (video && !video.paused) { pause(); return; }
       if (!video) {
-        video = el('<video class="herovid" src="/art/hype/hero-poster.mp4" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>');
+        video = el('<video class="herovid" src="/art/hero-ambient-v2.mp4" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>');
         video.onerror = unavailable;
         video.addEventListener('playing', () => { video?.classList.add('live'); reflect(true); });
         hero.prepend(video);
@@ -6362,8 +6344,8 @@
   // the six core districts have plates too — used on the landing pills, and on the City tab's Trade
   // Winds board so the arbitrage map is a map rather than six identical grey boxes.
   const DISTRICT_ART = {
-    docks: 'district-docks', neon: 'district-neon', cathedral: 'district-cathedral',
-    foundry: 'district-foundry', canal: 'district-canal', brick: 'district-brick',
+    docks: 'district-v2-docks', neon: 'district-v2-neon-interior', cathedral: 'district-cathedral',
+    foundry: 'district-v2-foundry', canal: 'district-canal', brick: 'district-brick',
   };
   // which labeled cluster a tab belongs to (drives the per-screen accent + the mobile bottom nav)
   const groupOf = (id) => { for (const [g, ids] of TAB_GROUPS) if (ids.includes(id)) return g ? g.toLowerCase() : id; return ''; };
@@ -9246,7 +9228,7 @@
         <div class="d">goods run <b>cheapest in ${cheap[0]}</b> (×${cheap[1].toFixed(2)}) and <b>richest in ${rich[0]}</b> (×${rich[1].toFixed(2)})
         — a ~${spreadPct}% spread. Buy where it's cheap, haul, sell where it's rich. Prices hold until midnight.</div></div>` : ''}
       <div class="grid">${shocks.map(([d, x]) =>
-        `<div class="card distcard"${DISTRICT_ART[d] ? ` style="--art:url(/art/${DISTRICT_ART[d]}.jpg)" data-mkey="${DISTRICT_ART[d]}"` : ''}><span class="t">${d}</span><div class="d">${x < 0.97 ? '<span style="color:var(--ok)">cheap — buy here</span>' : x > 1.03 ? '<span style="color:var(--gold, #d4af37)">rich — sell here</span>' : 'fair prices'} (×${x.toFixed(2)})</div></div>`).join('')}</div>
+        `<div class="card distcard"${DISTRICT_ART[d] ? ` style="--art:url(/art/${DISTRICT_ART[d]}.jpg)" ${DISTRICT_ART[d].startsWith('district-v2-') ? '' : `data-mkey="${DISTRICT_ART[d]}"`}` : ''}><span class="t">${d}</span><div class="d">${x < 0.97 ? '<span style="color:var(--ok)">cheap — buy here</span>' : x > 1.03 ? '<span style="color:var(--gold, #d4af37)">rich — sell here</span>' : 'fair prices'} (×${x.toFixed(2)})</div></div>`).join('')}</div>
       <h2 style="margin-top:12px">The Forecast <span class="d" style="font-size:11px">— the next days are knowable. Plan around them.</span></h2>
       <div class="grid">${(c.forecast || []).map((f) => {
         const dd = f.day - c.day;

@@ -35,3 +35,6 @@ probe-tmp.mjs
 # Local distribution archives and browser/PDF verification output. Durable campaign
 # sources and finished assets live under brand/master-campaign/.
 output/
+
+# Disposable, loopback-only Coordination review database. Durable evidence is in docs/coordination-engine/evidence/.
+/tmp/coordination-review/

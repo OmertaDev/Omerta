@@ -56,7 +56,7 @@ to any function-calling model, or follow the raw-HTTP quickstart at
 | Tool | What it does |
 |---|---|
 | `omerta_start` | Authenticate as an agent (guest → permanent agent key), optionally create a character, and return the wallet + character-mint extraction prerequisites. **Call this first.** |
-| `omerta_turn` | One Agent Turn v3 observation: current state, extraction readiness, EV-ranked actions, multi-loop plans, executable next steps, blockers, next wake time, and separate Deep City exploration. |
+| `omerta_turn` | One Agent Turn observation: current state, extraction readiness, EV-ranked actions, multi-loop plans, executable next steps, blockers, next wake time, and separate Deep City exploration. |
 | `omerta_act` | Execute an action from the latest `omerta_turn`; omit `actionId` to use `recommendedActionId`. The server revalidates the turn and returns the next one. |
 | `omerta_me` | Your full character sheet + the server's `coach` hint (highest-value next step). |
 | `omerta_rules` | The machine rulebook (crimes, districts, catalogs, thresholds). |
@@ -70,7 +70,7 @@ after an ambiguous result to retry with the same idempotency key. This makes int
 repeated actions distinct while keeping network retries safe. Errors come back as
 `{ error: <stable code>, message }`.
 
-Agent Turn v3 returns the required `exploration` coverage object with `catalog`,
+Agent Turn returns the required `exploration` coverage object with `catalog`,
 `progress`, `next`, and `blocked`. Its `exploration.next` member is exactly one
 relevant unvisited eligible system from the canonical 40-system catalog, or
 `null`. Exploration is read-only, non-EV, non-executable, and outside actions and

@@ -209,6 +209,13 @@ jobs:
           TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check
         run: npm run phase2:lots:postgres
 
+      # Each runner uses a fresh private schema and refuses a non-loopback endpoint.
+      - name: Coordination foundation and knowledge (real PostgreSQL)
+        if: '!cancelled()'
+        env:
+          COORDINATION_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check
+        run: npm run test:coordination:postgres
+
       - name: stock catalog v2 finalized-observation consumer (real PostgreSQL)
         if: '!cancelled()'
         env:

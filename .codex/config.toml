@@ -1,6 +1,6 @@
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
-model_verbosity = "high"
+model_verbosity = "low"
 [mcp_servers.contextplus]
 command = "powershell.exe"
 args = ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", ".codex/start-contextplus.ps1"]
