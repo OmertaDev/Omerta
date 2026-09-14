@@ -49,6 +49,7 @@ if (!process.env.DATABASE_URL) {
   process.exit(2);
 }
 process.env.RATE_LIMIT = 'off';
+process.env.INVITE_MODE = 'on'; // fixture players enter through the same admission gate as production
 
 const PG_CTL = process.env.PG_CTL || null;
 const fails = [];
@@ -108,8 +109,22 @@ const ledgerCounts = async () => {
   return new Map(r.rows.map((x) => [x.reason, { n: x.n, s: Number(x.s) }]));
 };
 
+const guest = async (origin, name) => {
+  const inviteCode = `chaos-${crypto.randomUUID()}`;
+  await pool.query('INSERT INTO invite_codes (code, uses_left, created_by) VALUES ($1,1,$2)',
+    [inviteCode, 'chaos-fixture']);
+  const response = await fetch(origin + '/v1/auth/guest', { method: 'POST',
+    headers: { 'content-type': 'application/json' }, body: JSON.stringify({ inviteCode }) });
+  const g = await response.json().catch(() => null);
+  if (response.status !== 200 || typeof g?.token !== 'string' || !g.token) {
+    const error = typeof g?.error === 'string' && /^[a-z0-9_:-]{1,80}$/.test(g.error) ? g.error : 'invalid_response';
+    console.error(`could not sign up ${name}: HTTP ${response.status} (${error}); expected a guest token`);
+    process.exit(1);
+  }
+  return g;
+};
 const mk = async (name) => {
-  const g = await (await fetch(base + '/v1/auth/guest', { method: 'POST' })).json();
+  const g = await guest(base, name);
   const c = await (await fetch(base + '/v1/character', { method: 'POST',
     headers: { authorization: `Bearer ${g.token}`, 'content-type': 'application/json' },
     body: JSON.stringify({ name }) })).json();
@@ -246,7 +261,7 @@ console.log('\n2. BACKENDS TERMINATED MID-TRANSACTION, UNDER LOAD');
   check(moved.length === 0, `§10.4 unmoved while ${kills} backend(s) were killed mid-transaction`, moved.join('; '));
   console.log(`     outcomes: ${[...codes].sort((a, b) => b[1] - a[1]).map(([k, n]) => `${k}×${n}`).join('  ')}`);
   // the server must still be answering at all
-  const alive = await api('GET', '/v1/city');
+  const alive = await api('GET', '/v1/city', { token: crew[0].token });
   check(alive.code === 200, 'the server is still serving after the reaper');
 }
 
@@ -418,7 +433,7 @@ console.log('\n6. SIGTERM MID-REQUEST — the deploy drain');
     `never came up inside ${BOOT_DEADLINE_MS / 1000}s — child said: ${childOut.join('').slice(-1500)}`);
 
   if (up) {
-    const g = await (await fetch(cbase + '/v1/auth/guest', { method: 'POST' })).json();
+    const g = await guest(cbase, `Chaos D${RUN}`);
     const c = await (await fetch(cbase + '/v1/character', { method: 'POST',
       headers: { authorization: `Bearer ${g.token}`, 'content-type': 'application/json' },
       body: JSON.stringify({ name: `Chaos D${RUN}` }) })).json();

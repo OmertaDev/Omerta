@@ -356,7 +356,7 @@ async function lockCurrentCharacterOwner(client, accountId, expectedOwner) {
 export async function assignItemToCurrentCharacter(client, accountId, itemId, idempotencyKey) {
   const row = (await client.query(
     `SELECT template_id FROM item_instances
-      WHERE id=$1 AND owner_scope='account' AND owner_id=$2 AND state='active'`,
+      WHERE id=$1 AND owner_scope='account' AND owner_id=$2 AND state='active' AND definition_hash IS NULL`,
     [itemId, accountId],
   )).rows[0];
   const template = row ? PHASE1_WORLD_GRAPH.nodes.get(row.template_id) : null;

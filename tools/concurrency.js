@@ -30,6 +30,7 @@ if (!process.env.DATABASE_URL) {
   process.exit(2);
 }
 process.env.RATE_LIMIT = 'off';   // every virtual writer shares one IP; the throttle has its own coverage
+process.env.INVITE_MODE = 'on';  // fixture players exercise launch admission on this loopback server
 
 const { buildServer } = await import('../src/server.js');
 const { runLedgerInvariants } = await import('../src/invariants.js');
@@ -55,7 +56,16 @@ async function hit(method, path, { token, body, key } = {}) {
   return { code: res.status, body: await res.json().catch(() => null) };
 }
 const mk = async (name) => {
-  const g = await (await fetch(base + '/v1/auth/guest', { method: 'POST' })).json();
+  const inviteCode = `CONC-${crypto.randomUUID()}`;
+  await pool.query('INSERT INTO invite_codes (code, uses_left) VALUES ($1,1)', [inviteCode]);
+  const signup = await hit('POST', '/v1/auth/guest', { body: { inviteCode } });
+  if (signup.code !== 200 || typeof signup.body?.token !== 'string' || !signup.body.token) {
+    const error = typeof signup.body?.error === 'string' && /^[a-z0-9_:-]{1,80}$/.test(signup.body.error)
+      ? signup.body.error : 'invalid_response';
+    console.error(`could not admit ${name}: HTTP ${signup.code} (${error}); expected a guest token`);
+    process.exit(1);
+  }
+  const g = signup.body;
   const c = await (await fetch(base + '/v1/character', {
     method: 'POST', headers: { authorization: `Bearer ${g.token}`, 'content-type': 'application/json' },
     body: JSON.stringify({ name: `${name} ${RUN}` }),

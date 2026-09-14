@@ -20,7 +20,7 @@ function entry(value) {
     || !Number.isSafeInteger(generation) || generation < 0) fail('item_lock_order');
   return Object.freeze({ className, subtype, key, id, generation });
 }
-function compare(a, b) {
+export function compareItemLockEntries(a, b) {
   return ORDER.indexOf(a.className) - ORDER.indexOf(b.className)
     || compareText(a.subtype, b.subtype) || compareText(a.key, b.key)
     || compareText(a.id, b.id) || a.generation - b.generation;
@@ -49,7 +49,7 @@ export function createItemLockTrace() {
       if (['crew', 'item'].includes(row.className)) {
         if (!candidates.get(row.className)?.has(identity(row))) fail('contention');
       }
-      if (rows.length && compare(rows.at(-1), row) > 0) fail('item_lock_order');
+      if (rows.length && compareItemLockEntries(rows.at(-1), row) > 0) fail('item_lock_order');
       rows.push(row);
       return row;
     },

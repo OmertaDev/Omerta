@@ -195,12 +195,15 @@ export async function runRouterInvariants(pool) {
   const feeTre = num((await pool.query("SELECT COALESCE(SUM(rwa_eth),0) s FROM rwa_revenue WHERE source='fee'")).rows[0].s);
   push('fee → treasury mirror matches the declared split', Math.abs(feeTre - feeGross * TREASURY.FEE_TREASURY_BPS() / 10000) <= feeTol,
     `booked ${feeTre} vs declared ${round6(feeGross * TREASURY.FEE_TREASURY_BPS() / 10000)}`);
-  const mintRevenueRows = (await pool.query(`SELECT r.ref FROM (
-    SELECT source,ref FROM vig_revenue UNION ALL
-    SELECT source,ref FROM rwa_revenue UNION ALL
-    SELECT source,ref FROM community_revenue
-  ) r JOIN fee_payments f ON r.ref = CAST(f.nonce AS TEXT)
-  WHERE r.source='fee' AND f.mint_dev_only`)).rows.length;
+  const mintRevenueRows = (await pool.query(`
+    SELECT r.ref FROM vig_revenue r JOIN fee_payments f
+      ON r.ref = CAST(f.nonce AS TEXT) WHERE r.source='fee' AND f.mint_dev_only
+    UNION ALL
+    SELECT r.ref FROM rwa_revenue r JOIN fee_payments f
+      ON r.ref = CAST(f.nonce AS TEXT) WHERE r.source='fee' AND f.mint_dev_only
+    UNION ALL
+    SELECT r.ref FROM community_revenue r JOIN fee_payments f
+      ON r.ref = CAST(f.nonce AS TEXT) WHERE r.source='fee' AND f.mint_dev_only`)).rows.length;
   push('character mint belongs entirely to DEV_WALLET', mintRevenueRows === 0,
     `${mintRevenueRows} non-DEV revenue rows reference a DEV-only mint`);
 

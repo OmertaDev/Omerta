@@ -83,6 +83,7 @@ if (!process.env.DATABASE_URL) {
 // production; here every virtual player shares one IP, so they would 429 long before reaching a row
 // lock — measuring the bucket instead of the database. The buckets have their own coverage.
 process.env.RATE_LIMIT = 'off';
+process.env.INVITE_MODE = 'on'; // fixture players enter through the same admission gate as production
 
 const PLAYERS = Number(process.env.LOAD_PLAYERS || 30);
 const SECONDS = Number(process.env.LOAD_SECONDS || 20);
@@ -152,7 +153,17 @@ process.stdout.write(`  seating ${PLAYERS} players… `);
 const RUN = crypto.randomBytes(3).toString('hex');
 const players = [];
 for (let i = 0; i < PLAYERS; i++) {
-  const g = await (await fetch(base + '/v1/auth/guest', { method: 'POST' })).json();
+  const inviteCode = `load-${crypto.randomUUID()}`;
+  await pool.query('INSERT INTO invite_codes (code, uses_left, created_by) VALUES ($1,1,$2)',
+    [inviteCode, 'load-fixture']);
+  const response = await fetch(base + '/v1/auth/guest', { method: 'POST',
+    headers: { 'content-type': 'application/json' }, body: JSON.stringify({ inviteCode }) });
+  const g = await response.json().catch(() => null);
+  if (response.status !== 200 || typeof g?.token !== 'string' || !g.token) {
+    const error = typeof g?.error === 'string' && /^[a-z0-9_:-]{1,80}$/.test(g.error) ? g.error : 'invalid_response';
+    console.error(`\ncould not sign up player ${i}: HTTP ${response.status} (${error}); expected a guest token`);
+    process.exit(1);
+  }
   const c = await (await fetch(base + '/v1/character', {
     method: 'POST',
     headers: { authorization: `Bearer ${g.token}`, 'content-type': 'application/json' },

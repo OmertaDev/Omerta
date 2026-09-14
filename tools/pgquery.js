@@ -174,7 +174,13 @@ if (failures.length) {
 // and binds every value. It cannot rewrite signed authority. Its expression is declared in
 // test/gates.js; 18 real-PostgreSQL transport groups exercise journal/recovery/rollback paths.
 // The keeper INSERT, bounded status lookups and mint-revenue UNION remain static PREPARE inputs.
-const CEILING = { interpolated: 166, unreadable: 40 };
+// 165 → 167 (2026-09-08): itemlots.js adds two candidate selector shapes: sufficient FIFO-prefix
+// selection and exact-lot lookup, both retaining native timestamp precision. Backend SELECT text
+// and identity columns are closed literals; predicate/ID lists contain only scalar placeholders,
+// with every value bound. test/gates.js audits these fragments; the native --lots lane exercises
+// their filtering, precise FIFO, complete-root revalidation and canonical locks. These two sites
+// remain counted as unpreparable here; this records their reviewed growth, not further headroom.
+const CEILING = { interpolated: 168, unreadable: 40 };
 const overflow = [];
 if (interpolated.length > CEILING.interpolated)
   overflow.push(`interpolated queries grew to ${interpolated.length} (ceiling ${CEILING.interpolated}) — these are UNCHECKED by this guard`);

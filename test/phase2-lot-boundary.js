@@ -48,7 +48,7 @@ export async function reservationRetryRegression({ pool, accountOwner: owner, de
   fault?.restore();
   assert.equal(callbacks, timing === 'after-insert' ? 0 : 1);
   assert.equal(inverses, !dbCaps.skipLocked && timing !== 'after-insert' ? 1 : 0);
-  if (dbCaps.skipLocked) assert.equal(traced.statements.filter((sql) => /^DELETE FROM item_(events|mutation_guards)/.test(sql)).length, 0,
+  if (dbCaps.skipLocked) assert.equal(traced.statements.filter((sql) => /^DELETE FROM item_(events|mutation_guards|lots|mutation_inputs|mutation_outputs)/.test(sql)).length, 0,
     'PostgreSQL restores natively, without item compensation');
   assert.deepEqual(await snapshot(), before, `v${version} ${timing}: failed same-key retry restores every guard, event and item row`);
   let freshCallbacks = 0;
@@ -87,6 +87,68 @@ export async function reservationRetryRegression({ pool, accountOwner: owner, de
 }
 
 export async function runLotBoundary(existingPool = null) {
+  await withItemFixture(async ({ pool, accountOwner: owner, definition, snapshot }) => {
+    for (const authority of [null, false, 1, []]) {
+      const invalid = lotRequest(owner, definition); invalid.request.authority = authority;
+      const before = await snapshot();
+      await rejects(() => items.withItemTransaction(pool, (q) => items.withLotMutation(q, invalid,
+        () => assert.fail('malformed authority cannot enter callback'))), 'bad_item_request');
+      assert.deepEqual(await snapshot(), before);
+    }
+    // Literal pre-extension v2 bytes: no current canonical serializer builds this receipt.
+    const historicalJson = '{"owner":{"id":"historical-owner","scope":"account"},"request":{"authority":{"activationRevision":1,"aggregate":{"id":"historical","kind":"operation"},"bundleHash":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","eventId":"old-event","inputDefinitionHashes":[],"issuedActionId":"old-issued","namespace":"omerta.old","outputDefinitionHashes":[],"resolvedOwner":{"id":"historical-owner","scope":"account"}},"input":{"old":true}}}';
+    const historical = { actorAccountId: 'historical-account', actionKind: 'operation_action',
+      idempotencyKey: 'historical-v2-before-transitions', ...JSON.parse(historicalJson) };
+    const historicalResult = '{"retained":"already-consumed","ordinal":3,"owner":"dead-depositor"}';
+    await pool.query(`INSERT INTO item_mutation_guards
+      (idempotency_key,mutation_kind,owner_scope,owner_id,request_hash,reservation_id,envelope_version,
+       mutation_id,actor_account_id,external_key,request_json,result_json,completed_at)
+      VALUES ($1,'operation_action','account','historical-owner',$2,'old-reservation',2,$3,
+        'historical-account','historical-v2-before-transitions',$4,$5,'2026-01-01T00:00:00Z')`,
+    [independentStorageKey(historical), '12142be30abb7e12f9209909ec5ac49a8d4987151c7944f54767eada1e9d6967',
+      crypto.randomUUID(), historicalJson, historicalResult]);
+    // There is deliberately no live owner, operation, subject or definition for this historical descriptor.
+    const historicalBefore = await snapshot();
+    assert.deepEqual(await items.withItemTransaction(pool, (q) => items.withLotMutation(q, historical,
+      () => assert.fail('literal old receipt attempted fresh authority derivation'))), JSON.parse(historicalResult));
+    assert.deepEqual(await snapshot(), historicalBefore, 'historical literal v2 request/result bytes remain unchanged');
+    const request = lotRequest(owner, definition);
+    const invoke = (input, action = async () => ({ extended: true })) => items.withItemTransaction(pool,
+      (q) => items.withLotMutation(q, input, (token) => action(q, token)));
+    request.request.authority.itemTransitions = [];
+    assert.deepEqual(await invoke(request), { extended: true }, 'extended empty authority is a supported exact variant');
+    assert.deepEqual(await invoke(request, () => assert.fail('extended replay callback')), { extended: true });
+    const oldShape = structuredClone(request); delete oldShape.request.authority.itemTransitions;
+    await rejects(() => invoke(oldShape), 'idempotency_conflict');
+    const transition = { kind: 'escrow', operationId: 'issued-operation', subject: {
+      storageKind: 'unique', itemId: 'issued-unique', expected: { definitionHash: definition.definitionHash,
+        owner, state: 'active', custody: { state: 'direct', scope: null, id: null },
+        qualityBand: null, qualityStateDigest: null, conditionSummary: null, exportPolicy: 'ineligible' } } };
+    const fresh = (entries) => { const r = lotRequest(owner, definition); r.request.authority.itemTransitions = entries; return r; };
+    const before = await snapshot();
+    await rejects(() => invoke(fresh([transition])), 'item_mutation_authority');
+    assert.equal(typeof items.assertAndUseLotTransition, 'function');
+    const sentinel = Object.assign(Error('assertion exercised without claiming a transition write'), { code: 't1_assertion_done' });
+    await assert.rejects(() => invoke(fresh([transition]), (q, token) => {
+      assert.throws(() => items.assertAndUseLotTransition(new Proxy(q, {}), token, 0, transition), { code: 'item_transaction_required' });
+      assert.equal(items.assertAndUseLotTransition(q, token, 0, transition), undefined);
+      assert.throws(() => items.assertAndUseLotTransition(q, token, 0, transition), { code: 'contention' });
+      throw sentinel;
+    }));
+    for (const index of [-1, 1, 0.5, Number.MAX_SAFE_INTEGER]) await rejects(() => invoke(fresh([transition]),
+      (q, token) => items.assertAndUseLotTransition(q, token, index, transition)), 'bad_item_request');
+    const substituted = structuredClone(transition); substituted.subject.expected.qualityBand = 'Changed';
+    await rejects(() => invoke(fresh([transition]), (q, token) => items.assertAndUseLotTransition(q, token, 0, substituted)), 'bad_item_request');
+    const malformed = [null, undefined, {}, [transition, transition], Array(257).fill(transition),
+      [{ ...transition, destination: owner }], [{ ...transition, subject: { ...transition.subject, extra: true } }],
+      [{ ...transition, operationId: '' }], [{ ...transition, kind: 'invented' }],
+      [{ ...transition, subject: { ...transition.subject, expected: { ...transition.subject.expected, qualityStateDigest: 'bad' } } }],
+      [{ ...transition, subject: { ...transition.subject, expected: { ...transition.subject.expected, definitionHash: 'b'.repeat(64) } } }],
+      [{ ...transition, subject: { ...transition.subject, itemId: 'z-last' } }, transition]];
+    for (const entries of malformed) await rejects(() => invoke(fresh(entries)), 'bad_item_request');
+    assert.deepEqual(await snapshot(), before, 'invalid, omitted, repeated and substituted transition use leaves no writes');
+    console.log('phase2-lot-boundary: closed optional transitions, exact-use assertions and empty-versus-absent replay pass');
+  }, existingPool);
   await withItemFixture(async ({ pool, accountOwner: owner, definition, snapshot }) => {
     for (const version of [1, 2]) for (const timing of ['callback', 'after-insert', 'before-insert']) {
       await reservationRetryRegression({ pool, accountOwner: owner, definition, snapshot }, version, timing);
