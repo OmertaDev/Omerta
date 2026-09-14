@@ -1,0 +1,23 @@
+{
+  "model": "bytedance/seedance-2.5/text-to-video",
+  "resolution": "720p",
+  "duration": "8",
+  "aspect_ratio": "9:16",
+  "generate_audio": false,
+  "estimatedUsd": 11.352,
+  "estimateSource": "https://fal.ai/models/bytedance/seedance-2.5/text-to-video",
+  "catalog": [
+    {
+      "id": "city",
+      "prompt": "An immense art deco vault door slowly opens onto a meticulously crafted miniature rain-soaked harbor city. Gold-lit windows illuminate one district at a time. A single brass ledger mechanism in the foreground distributes a finite set of tokens into four channels, preserving every token. Camera pushes through the circular vault frame toward the city. Eight second single continuous shot. Vertical 9:16 premium 1940s noir game campaign, black stone, antique brass, ivory light and restrained teal, cinematic realism, slow controlled dolly, volumetric haze, deep blacks, no flashing. Keep main subject in upper half and lower half dark for later typography. No text, lettering, currency symbols, logos, charts, watermark, or UI. This is a cinematic metaphor, not gameplay footage."
+    },
+    {
+      "id": "reserve",
+      "prompt": "Inside a noir treasury, a monumental seven-compartment brass reserve desk sits beneath a narrow shaft of ivory light. Each compartment contains a distinct finite quantity of dark gold tokens or teal glass counters. A precision mechanical arm moves one existing stack between compartments, never multiplying assets. Camera makes a slow arc past smoked glass into a grand symmetrical view. Eight second single continuous shot. Vertical 9:16 premium 1940s noir game campaign, black stone, antique brass, ivory light and restrained teal, cinematic realism, slow controlled dolly, volumetric haze, deep blacks, no flashing. Keep main subject in upper half and lower half dark for later typography. No text, lettering, currency symbols, logos, charts, watermark, or UI. This is a cinematic metaphor, not gameplay footage."
+    },
+    {
+      "id": "turf",
+      "prompt": "A cinematic overhead view of a miniature 1940s city on a black marble strategy table. Four distinct family signet rings rest at its edges. Brass borders trace adjacent city blocks. A small teal beacon shifts from one block to the next while the substantial underlying buildings and foundation remain in place. Slow descending camera reveals exquisite wet streets and warm windows. No violence. Eight second single continuous shot. Vertical 9:16 premium 1940s noir game campaign, black stone, antique brass, ivory light and restrained teal, cinematic realism, slow controlled dolly, volumetric haze, deep blacks, no flashing. Keep main subject in upper half and lower half dark for later typography. No text, lettering, currency symbols, logos, charts, watermark, or UI. This is a cinematic metaphor, not gameplay footage."
+    }
+  ]
+}

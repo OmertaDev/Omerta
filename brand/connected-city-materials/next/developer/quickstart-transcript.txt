@@ -1,0 +1,5 @@
+This is Omerta running locally, with synthetic accounts and real API handlers. We will salvage a wreck, craft a material, and complete a shared investigation.
+
+The World Graph records the change. This salvage recipe consumes one wreck and produces six scrap steel, two wire, and two salvage parts.
+
+Crafting hardened steel consumes four scrap steel and three hundred in game cash. The resulting inventory holds one hardened steel and two remaining scrap steel.

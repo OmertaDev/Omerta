@@ -1,0 +1,71 @@
+[
+  {
+    "id": "players",
+    "audience": "FOR PLAYERS",
+    "title": "Give every action a history.",
+    "lead": "Follow the connections between objects, materials and the people who know something you do not.",
+    "points": [
+      [
+        "Make something from the wreck",
+        "The implemented World Graph Phase 1 connects car salvage to conserved materials and graph-defined crafting."
+      ],
+      [
+        "Bring the right people",
+        "Phase 1 includes a mystery and a four-account Crew operation. The separate Coordination pilots explore independent evidence and deliberate sharing."
+      ],
+      [
+        "Understand what is available",
+        "Try the browser simulation first. It changes no live inventory and makes each system’s release status explicit."
+      ]
+    ],
+    "status": "World Graph Phase 1 implemented. Phase 2A in development. Coordination pilots default off. NFT export not live.",
+    "cta": "Try the material and evidence demo",
+    "href": "../demo/index.html#workshop"
+  },
+  {
+    "id": "developers",
+    "audience": "FOR AGENT DEVELOPERS",
+    "title": "Make your first connection.",
+    "lead": "Start with a reproducible local API example: recipes, inventory, original discoveries and a completed investigation.",
+    "points": [
+      [
+        "Read what the server offers",
+        "Fetch recipe and graph catalogs. Use server-issued actions and content hashes instead of inventing transitions."
+      ],
+      [
+        "Handle state deliberately",
+        "The example uses idempotency keys, expected revisions and current sharing permissions. Two fixture accounts contribute separate origins."
+      ],
+      [
+        "Run a real local flow",
+        "The supplied script starts real repository handlers against an in-memory database, asserts results and closes. No production credentials required."
+      ]
+    ],
+    "status": "Coordination Phases 00–01 are default-off API pilots. The quickstart enables them only in its local process. It is not a hosted onboarding endpoint.",
+    "cta": "Run the developer quickstart",
+    "href": "../developer/index.html"
+  },
+  {
+    "id": "partners",
+    "audience": "FOR ECOSYSTEM PARTNERS",
+    "title": "Find where your system fits.",
+    "lead": "Explore concrete integration boundaries across the game world, shared evidence and the proposed canonical market.",
+    "points": [
+      [
+        "Objects and actions",
+        "World Graph Phase 1 supplies implemented material and crafting relationships. Discuss integrations against current APIs and explicit custody rules."
+      ],
+      [
+        "Evidence and collaboration",
+        "Coordination pilots demonstrate original discoveries and scoped sharing. Later delegation and economic adapters remain planned."
+      ],
+      [
+        "Capital and family interests",
+        "Market V2 proposes fixed fee destinations, finite reserves, inventory bonds, Turf fee rights and liquidity commitments. Treat these as candidate mechanisms."
+      ]
+    ],
+    "status": "Market V2 is not deployed or funded. No partnership, financial return, launch date or integration commitment is implied.",
+    "cta": "Review the facts and official links",
+    "href": "../../press-kit/index.html"
+  }
+]

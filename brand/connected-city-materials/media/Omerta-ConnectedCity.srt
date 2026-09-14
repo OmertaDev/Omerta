@@ -1,0 +1,47 @@
+1
+00:00:00,400 --> 00:00:07,300
+Omerta. The city is connected. The Hook. The World Graph. The Coordination Engine.
+
+2
+00:00:08,067 --> 00:00:14,571
+Every cut has a job. The canonical market design routes its nine percent base sell fee into four fixed buckets.
+
+3
+00:00:15,733 --> 00:00:22,633
+The reserve has limits. Finite capacity, cooldowns, and market checks govern deployment. There is no bottomless vault.
+
+4
+00:00:23,400 --> 00:00:30,300
+Capital has terms. Funded inventory bonds. Solver-funded arbitrage. Real liquidity commitments with prefunded campaigns.
+
+5
+00:00:31,067 --> 00:00:37,967
+Hold Turf. Claim allocated fees. Families control future fee rights. The protocol keeps the liquidity principal.
+
+6
+00:00:38,733 --> 00:00:45,633
+The World Graph connects sources, materials, recipes, evidence, and social gates. Every dependency has a place.
+
+7
+00:00:46,400 --> 00:00:53,300
+The wreck is a beginning. Salvage consumes the car once. Crafting consumes its inputs. Quality stays in the ledger.
+
+8
+00:00:54,067 --> 00:01:00,967
+Some doors take a crew. Evidence unlocks dependencies. Four distinct accounts contribute to a shared operation.
+
+9
+00:01:01,733 --> 00:01:08,633
+The Docks needs the Foundry. Two investigators. Two original sources. The Split Ledger needs independent evidence.
+
+10
+00:01:09,400 --> 00:01:16,300
+A copy is not a source. Discoveries keep their identity. Archives and assertions cannot manufacture independent evidence.
+
+11
+00:01:17,067 --> 00:01:23,967
+Choose who knows what. Share with an account, Crew, or Family. Current permissions are checked when evidence is used.
+
+12
+00:01:24,733 --> 00:01:31,473
+Every action. A connection. Explore Omerta, and follow the next chapter at omerta dot fun.

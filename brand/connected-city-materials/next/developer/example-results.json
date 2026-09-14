@@ -1,0 +1,1014 @@
+{
+  "capturedAt": "2026-09-14T18:11:52.684Z",
+  "environment": "Actual repository handlers; pg-mem; synthetic accounts; no production or external RPC",
+  "records": [
+    {
+      "title": "Recipe catalog",
+      "method": "GET",
+      "url": "/v1/worldgraph/recipes",
+      "status": 200,
+      "body": {
+        "recipes": [
+          {
+            "packageId": "automotive-salvage",
+            "packageVersion": 1,
+            "recipeId": "recipe:car_salvage_basic",
+            "recipeVersion": 1,
+            "id": "recipe:car_salvage_basic",
+            "title": "Strip a Wreck",
+            "inputs": [
+              {
+                "assetType": "car",
+                "quantity": 1
+              }
+            ],
+            "outputs": [
+              {
+                "templateId": "mat:scrap_steel",
+                "quantity": 6,
+                "quality": "standard"
+              },
+              {
+                "templateId": "mat:wire",
+                "quantity": 2,
+                "quality": "standard"
+              },
+              {
+                "templateId": "mat:salvage_parts",
+                "quantity": 2,
+                "quality": "standard"
+              }
+            ],
+            "cashCost": 0,
+            "available": true,
+            "blockedBy": []
+          },
+          {
+            "packageId": "automotive-salvage",
+            "packageVersion": 1,
+            "recipeId": "recipe:hardened_steel",
+            "recipeVersion": 1,
+            "id": "recipe:hardened_steel",
+            "title": "Case-Harden Salvage Steel",
+            "inputs": [
+              {
+                "templateId": "mat:scrap_steel",
+                "quantity": 4,
+                "quality": "standard"
+              }
+            ],
+            "outputs": [
+              {
+                "templateId": "mat:hardened_steel",
+                "quantity": 1,
+                "quality": "standard"
+              }
+            ],
+            "cashCost": 300,
+            "available": false,
+            "blockedBy": [
+              {
+                "adapter": "material_quantity",
+                "templateId": "mat:scrap_steel",
+                "quality": "standard",
+                "required": 4,
+                "current": 0
+              }
+            ]
+          },
+          {
+            "packageId": "automotive-salvage",
+            "packageVersion": 1,
+            "recipeId": "recipe:precision_lock_tool",
+            "recipeVersion": 1,
+            "id": "recipe:precision_lock_tool",
+            "title": "Machine a Precision Lock Tool",
+            "inputs": [
+              {
+                "templateId": "mat:hardened_steel",
+                "quantity": 1,
+                "quality": "standard"
+              },
+              {
+                "templateId": "mat:salvage_parts",
+                "quantity": 2,
+                "quality": "standard"
+              }
+            ],
+            "outputs": [
+              {
+                "templateId": "item:precision_lock_tool",
+                "quantity": 1,
+                "quality": "standard"
+              }
+            ],
+            "cashCost": 0,
+            "available": false,
+            "blockedBy": [
+              {
+                "adapter": "skill",
+                "required": "fence_network"
+              },
+              {
+                "adapter": "material_quantity",
+                "templateId": "mat:hardened_steel",
+                "quality": "standard",
+                "required": 1,
+                "current": 0
+              },
+              {
+                "adapter": "material_quantity",
+                "templateId": "mat:salvage_parts",
+                "quality": "standard",
+                "required": 2,
+                "current": 0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "title": "Before salvage",
+      "method": "GET",
+      "url": "/v1/worldgraph/inventory",
+      "status": 200,
+      "body": {
+        "stacks": [],
+        "items": []
+      }
+    },
+    {
+      "title": "Salvage a wreck",
+      "method": "POST",
+      "url": "/v1/worldgraph/recipes/recipe:car_salvage_basic/salvage/8d199dbd-0ffb-42c6-b863-72485e37a6f6",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "kind": "salvage_car",
+        "recipe": {
+          "packageId": "automotive-salvage",
+          "packageVersion": 1,
+          "recipeId": "recipe:car_salvage_basic",
+          "recipeVersion": 1
+        },
+        "cashCost": 0,
+        "cashAfter": 10000,
+        "car": {
+          "id": "8d199dbd-0ffb-42c6-b863-72485e37a6f6",
+          "modelId": "junker",
+          "trimId": "stock",
+          "damage": 80
+        },
+        "inputs": [
+          {
+            "assetType": "car",
+            "quantity": 1,
+            "id": "8d199dbd-0ffb-42c6-b863-72485e37a6f6"
+          }
+        ],
+        "outputs": [
+          {
+            "templateId": "mat:scrap_steel",
+            "quality": "standard",
+            "qty": 6,
+            "delta": 6
+          },
+          {
+            "templateId": "mat:wire",
+            "quality": "standard",
+            "qty": 2,
+            "delta": 2
+          },
+          {
+            "templateId": "mat:salvage_parts",
+            "quality": "standard",
+            "qty": 2,
+            "delta": 2
+          }
+        ]
+      }
+    },
+    {
+      "title": "Materials after salvage",
+      "method": "GET",
+      "url": "/v1/worldgraph/inventory",
+      "status": 200,
+      "body": {
+        "stacks": [
+          {
+            "templateId": "mat:salvage_parts",
+            "quality": "standard",
+            "qty": 2,
+            "createdAt": "2026-09-14T18:11:52.181Z",
+            "updatedAt": "2026-09-14T18:11:52.181Z"
+          },
+          {
+            "templateId": "mat:scrap_steel",
+            "quality": "standard",
+            "qty": 6,
+            "createdAt": "2026-09-14T18:11:52.164Z",
+            "updatedAt": "2026-09-14T18:11:52.164Z"
+          },
+          {
+            "templateId": "mat:wire",
+            "quality": "standard",
+            "qty": 2,
+            "createdAt": "2026-09-14T18:11:52.173Z",
+            "updatedAt": "2026-09-14T18:11:52.173Z"
+          }
+        ],
+        "items": []
+      }
+    },
+    {
+      "title": "Craft hardened steel",
+      "method": "POST",
+      "url": "/v1/worldgraph/recipes/recipe:hardened_steel/craft",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "kind": "craft",
+        "recipe": {
+          "packageId": "automotive-salvage",
+          "packageVersion": 1,
+          "recipeId": "recipe:hardened_steel",
+          "recipeVersion": 1
+        },
+        "cashCost": 300,
+        "cashAfter": 9700,
+        "inputs": [
+          {
+            "templateId": "mat:scrap_steel",
+            "quality": "standard",
+            "qty": 2,
+            "delta": -4
+          }
+        ],
+        "outputs": [
+          {
+            "templateId": "mat:hardened_steel",
+            "quality": "standard",
+            "qty": 1,
+            "delta": 1
+          }
+        ]
+      }
+    },
+    {
+      "title": "Inventory after crafting",
+      "method": "GET",
+      "url": "/v1/worldgraph/inventory",
+      "status": 200,
+      "body": {
+        "stacks": [
+          {
+            "templateId": "mat:hardened_steel",
+            "quality": "standard",
+            "qty": 1,
+            "createdAt": "2026-09-14T18:11:52.242Z",
+            "updatedAt": "2026-09-14T18:11:52.242Z"
+          },
+          {
+            "templateId": "mat:salvage_parts",
+            "quality": "standard",
+            "qty": 2,
+            "createdAt": "2026-09-14T18:11:52.181Z",
+            "updatedAt": "2026-09-14T18:11:52.181Z"
+          },
+          {
+            "templateId": "mat:scrap_steel",
+            "quality": "standard",
+            "qty": 2,
+            "createdAt": "2026-09-14T18:11:52.164Z",
+            "updatedAt": "2026-09-14T18:11:52.234Z"
+          },
+          {
+            "templateId": "mat:wire",
+            "quality": "standard",
+            "qty": 2,
+            "createdAt": "2026-09-14T18:11:52.173Z",
+            "updatedAt": "2026-09-14T18:11:52.173Z"
+          }
+        ],
+        "items": []
+      }
+    },
+    {
+      "title": "Coordination catalog",
+      "method": "GET",
+      "url": "/v1/coordination",
+      "status": 200,
+      "body": {
+        "enabled": true,
+        "directOnly": true,
+        "graphs": [
+          {
+            "id": "omerta.coordination.dead-letter",
+            "version": 1,
+            "title": "The Dead Letter",
+            "contentHash": "519695a8262ee96126dfa378ebdd4d7010a489b59e76d924f35900964c51e3c6"
+          },
+          {
+            "id": "omerta.coordination.split-ledger",
+            "version": 1,
+            "title": "The Split Ledger",
+            "contentHash": "eeb403e00b03ff26618b8a29344de02dccd2b818906cb276237321debf3b477c"
+          }
+        ],
+        "instances": []
+      }
+    },
+    {
+      "title": "Start Docks investigation",
+      "method": "POST",
+      "url": "/v1/coordination/omerta.coordination.split-ledger/instances",
+      "status": 200,
+      "requestBody": {
+        "expectedContentHash": "eeb403e00b03ff26618b8a29344de02dccd2b818906cb276237321debf3b477c"
+      },
+      "body": {
+        "instance": {
+          "id": "a4b8cb0f-799d-4463-8fd8-e04b05912011",
+          "graphId": "omerta.coordination.split-ledger",
+          "graphVersion": 1,
+          "contentHash": "eeb403e00b03ff26618b8a29344de02dccd2b818906cb276237321debf3b477c",
+          "title": "The Split Ledger",
+          "status": "active",
+          "revision": 0,
+          "createdAt": "2026-09-14T18:11:52.300Z",
+          "updatedAt": "2026-09-14T18:11:52.300Z",
+          "historical": false,
+          "canCancel": true,
+          "directOnly": true,
+          "nodes": [
+            {
+              "id": "briefing",
+              "title": "Read the case notes",
+              "status": "available",
+              "description": "A shipping manifest and a printer’s impression tell the same story. Each source needs its own discoverer."
+            }
+          ],
+          "actions": [
+            {
+              "id": "coord_1c4f49ca98ee025af0b0390e33fd6c961a7c56820dd577998592b4e461023110",
+              "kind": "complete",
+              "label": "Complete: Read the case notes",
+              "nodeId": "briefing"
+            }
+          ]
+        },
+        "replayed": false
+      }
+    },
+    {
+      "title": "Start Foundry investigation",
+      "method": "POST",
+      "url": "/v1/coordination/omerta.coordination.split-ledger/instances",
+      "status": 200,
+      "requestBody": {
+        "expectedContentHash": "eeb403e00b03ff26618b8a29344de02dccd2b818906cb276237321debf3b477c"
+      },
+      "body": {
+        "instance": {
+          "id": "b5a65190-202c-44c9-b980-17fecf00ac13",
+          "graphId": "omerta.coordination.split-ledger",
+          "graphVersion": 1,
+          "contentHash": "eeb403e00b03ff26618b8a29344de02dccd2b818906cb276237321debf3b477c",
+          "title": "The Split Ledger",
+          "status": "active",
+          "revision": 0,
+          "createdAt": "2026-09-14T18:11:52.338Z",
+          "updatedAt": "2026-09-14T18:11:52.338Z",
+          "historical": false,
+          "canCancel": true,
+          "directOnly": true,
+          "nodes": [
+            {
+              "id": "briefing",
+              "title": "Read the case notes",
+              "status": "available",
+              "description": "A shipping manifest and a printer’s impression tell the same story. Each source needs its own discoverer."
+            }
+          ],
+          "actions": [
+            {
+              "id": "coord_b9c1d0b359802860727b7aac7c0a0e18b8c80ac57d66557af94c970761d06497",
+              "kind": "complete",
+              "label": "Complete: Read the case notes",
+              "nodeId": "briefing"
+            }
+          ]
+        },
+        "replayed": false
+      }
+    },
+    {
+      "title": "Advance investigation",
+      "method": "POST",
+      "url": "/v1/coordination/instances/a4b8cb0f-799d-4463-8fd8-e04b05912011/act",
+      "status": 200,
+      "requestBody": {
+        "expectedRevision": 0,
+        "actionId": "coord_1c4f49ca98ee025af0b0390e33fd6c961a7c56820dd577998592b4e461023110"
+      },
+      "body": {
+        "instance": {
+          "id": "a4b8cb0f-799d-4463-8fd8-e04b05912011",
+          "graphId": "omerta.coordination.split-ledger",
+          "graphVersion": 1,
+          "contentHash": "eeb403e00b03ff26618b8a29344de02dccd2b818906cb276237321debf3b477c",
+          "title": "The Split Ledger",
+          "status": "active",
+          "revision": 1,
+          "createdAt": "2026-09-14T18:11:52.300Z",
+          "updatedAt": "2026-09-14T18:11:52.361Z",
+          "historical": false,
+          "canCancel": true,
+          "directOnly": true,
+          "nodes": [
+            {
+              "id": "briefing",
+              "title": "Read the case notes",
+              "status": "completed",
+              "description": "A shipping manifest and a printer’s impression tell the same story. Each source needs its own discoverer."
+            }
+          ],
+          "actions": [
+            {
+              "id": "coord_c27830ec083b88a9489c67506b4445e1c8f3923e020df32c3db916140f2a0446",
+              "kind": "discover",
+              "label": "Follow a lead"
+            }
+          ]
+        },
+        "replayed": false
+      }
+    },
+    {
+      "title": "Advance investigation",
+      "method": "POST",
+      "url": "/v1/coordination/instances/b5a65190-202c-44c9-b980-17fecf00ac13/act",
+      "status": 200,
+      "requestBody": {
+        "expectedRevision": 0,
+        "actionId": "coord_b9c1d0b359802860727b7aac7c0a0e18b8c80ac57d66557af94c970761d06497"
+      },
+      "body": {
+        "instance": {
+          "id": "b5a65190-202c-44c9-b980-17fecf00ac13",
+          "graphId": "omerta.coordination.split-ledger",
+          "graphVersion": 1,
+          "contentHash": "eeb403e00b03ff26618b8a29344de02dccd2b818906cb276237321debf3b477c",
+          "title": "The Split Ledger",
+          "status": "active",
+          "revision": 1,
+          "createdAt": "2026-09-14T18:11:52.338Z",
+          "updatedAt": "2026-09-14T18:11:52.387Z",
+          "historical": false,
+          "canCancel": true,
+          "directOnly": true,
+          "nodes": [
+            {
+              "id": "briefing",
+              "title": "Read the case notes",
+              "status": "completed",
+              "description": "A shipping manifest and a printer’s impression tell the same story. Each source needs its own discoverer."
+            }
+          ],
+          "actions": [
+            {
+              "id": "coord_35128ce030a011f53c90eaa83060ace6e22296fd9176e6e65058489665da762e",
+              "kind": "discover",
+              "label": "Follow a lead"
+            }
+          ]
+        },
+        "replayed": false
+      }
+    },
+    {
+      "title": "Advance investigation",
+      "method": "POST",
+      "url": "/v1/coordination/instances/a4b8cb0f-799d-4463-8fd8-e04b05912011/act",
+      "status": 200,
+      "requestBody": {
+        "expectedRevision": 1,
+        "actionId": "coord_c27830ec083b88a9489c67506b4445e1c8f3923e020df32c3db916140f2a0446"
+      },
+      "body": {
+        "instance": {
+          "id": "a4b8cb0f-799d-4463-8fd8-e04b05912011",
+          "graphId": "omerta.coordination.split-ledger",
+          "graphVersion": 1,
+          "contentHash": "eeb403e00b03ff26618b8a29344de02dccd2b818906cb276237321debf3b477c",
+          "title": "The Split Ledger",
+          "status": "active",
+          "revision": 2,
+          "createdAt": "2026-09-14T18:11:52.300Z",
+          "updatedAt": "2026-09-14T18:11:52.406Z",
+          "historical": false,
+          "canCancel": true,
+          "directOnly": true,
+          "nodes": [
+            {
+              "id": "briefing",
+              "title": "Read the case notes",
+              "status": "completed",
+              "description": "A shipping manifest and a printer’s impression tell the same story. Each source needs its own discoverer."
+            },
+            {
+              "id": "docks-source",
+              "title": "Read the surviving manifest",
+              "status": "available",
+              "description": "The manifest dates the ledger’s assembly after the warehouse fire. Its original discovery remains yours."
+            }
+          ],
+          "actions": [
+            {
+              "id": "coord_f8f285488e32d8fd194c12aeb2dcd8eecf4d1a599a8c6851dd9e2e8eb565e0fa",
+              "kind": "complete",
+              "label": "Complete: Read the surviving manifest",
+              "nodeId": "docks-source"
+            }
+          ]
+        },
+        "replayed": false
+      }
+    },
+    {
+      "title": "Advance investigation",
+      "method": "POST",
+      "url": "/v1/coordination/instances/b5a65190-202c-44c9-b980-17fecf00ac13/act",
+      "status": 200,
+      "requestBody": {
+        "expectedRevision": 1,
+        "actionId": "coord_35128ce030a011f53c90eaa83060ace6e22296fd9176e6e65058489665da762e"
+      },
+      "body": {
+        "instance": {
+          "id": "b5a65190-202c-44c9-b980-17fecf00ac13",
+          "graphId": "omerta.coordination.split-ledger",
+          "graphVersion": 1,
+          "contentHash": "eeb403e00b03ff26618b8a29344de02dccd2b818906cb276237321debf3b477c",
+          "title": "The Split Ledger",
+          "status": "active",
+          "revision": 2,
+          "createdAt": "2026-09-14T18:11:52.338Z",
+          "updatedAt": "2026-09-14T18:11:52.443Z",
+          "historical": false,
+          "canCancel": true,
+          "directOnly": true,
+          "nodes": [
+            {
+              "id": "briefing",
+              "title": "Read the case notes",
+              "status": "completed",
+              "description": "A shipping manifest and a printer’s impression tell the same story. Each source needs its own discoverer."
+            },
+            {
+              "id": "foundry-source",
+              "title": "Inspect the saved impression",
+              "status": "available",
+              "description": "The impression confirms the ledger was assembled after the fire. Share it deliberately with another investigator."
+            }
+          ],
+          "actions": [
+            {
+              "id": "coord_b29ea0d9c12b21c878993bf31e766b1cd7ed81c8a9f645705eac4b696a214744",
+              "kind": "complete",
+              "label": "Complete: Inspect the saved impression",
+              "nodeId": "foundry-source"
+            }
+          ]
+        },
+        "replayed": false
+      }
+    },
+    {
+      "title": "Advance investigation",
+      "method": "POST",
+      "url": "/v1/coordination/instances/a4b8cb0f-799d-4463-8fd8-e04b05912011/act",
+      "status": 200,
+      "requestBody": {
+        "expectedRevision": 2,
+        "actionId": "coord_f8f285488e32d8fd194c12aeb2dcd8eecf4d1a599a8c6851dd9e2e8eb565e0fa"
+      },
+      "body": {
+        "instance": {
+          "id": "a4b8cb0f-799d-4463-8fd8-e04b05912011",
+          "graphId": "omerta.coordination.split-ledger",
+          "graphVersion": 1,
+          "contentHash": "eeb403e00b03ff26618b8a29344de02dccd2b818906cb276237321debf3b477c",
+          "title": "The Split Ledger",
+          "status": "active",
+          "revision": 3,
+          "createdAt": "2026-09-14T18:11:52.300Z",
+          "updatedAt": "2026-09-14T18:11:52.482Z",
+          "historical": false,
+          "canCancel": true,
+          "directOnly": true,
+          "nodes": [
+            {
+              "id": "briefing",
+              "title": "Read the case notes",
+              "status": "completed",
+              "description": "A shipping manifest and a printer’s impression tell the same story. Each source needs its own discoverer."
+            },
+            {
+              "id": "docks-source",
+              "title": "Read the surviving manifest",
+              "status": "completed",
+              "description": "The manifest dates the ledger’s assembly after the warehouse fire. Its original discovery remains yours."
+            }
+          ],
+          "actions": []
+        },
+        "replayed": false
+      }
+    },
+    {
+      "title": "Advance investigation",
+      "method": "POST",
+      "url": "/v1/coordination/instances/b5a65190-202c-44c9-b980-17fecf00ac13/act",
+      "status": 200,
+      "requestBody": {
+        "expectedRevision": 2,
+        "actionId": "coord_b29ea0d9c12b21c878993bf31e766b1cd7ed81c8a9f645705eac4b696a214744"
+      },
+      "body": {
+        "instance": {
+          "id": "b5a65190-202c-44c9-b980-17fecf00ac13",
+          "graphId": "omerta.coordination.split-ledger",
+          "graphVersion": 1,
+          "contentHash": "eeb403e00b03ff26618b8a29344de02dccd2b818906cb276237321debf3b477c",
+          "title": "The Split Ledger",
+          "status": "active",
+          "revision": 3,
+          "createdAt": "2026-09-14T18:11:52.338Z",
+          "updatedAt": "2026-09-14T18:11:52.503Z",
+          "historical": false,
+          "canCancel": true,
+          "directOnly": true,
+          "nodes": [
+            {
+              "id": "briefing",
+              "title": "Read the case notes",
+              "status": "completed",
+              "description": "A shipping manifest and a printer’s impression tell the same story. Each source needs its own discoverer."
+            },
+            {
+              "id": "foundry-source",
+              "title": "Inspect the saved impression",
+              "status": "completed",
+              "description": "The impression confirms the ledger was assembled after the fire. Share it deliberately with another investigator."
+            }
+          ],
+          "actions": []
+        },
+        "replayed": false
+      }
+    },
+    {
+      "title": "Docks original evidence",
+      "method": "GET",
+      "url": "/v1/coordination/knowledge",
+      "status": 200,
+      "body": {
+        "claims": [
+          {
+            "id": "55544d6a-76a8-49fc-87fd-d13d86198600",
+            "domain": "omerta.knowledge.split-ledger",
+            "proposition": "ledger.assembly",
+            "value": {
+              "type": "text",
+              "value": "assembled-after-the-fire"
+            },
+            "contentHash": "eeb403e00b03ff26618b8a29344de02dccd2b818906cb276237321debf3b477c",
+            "discoveredAt": "2026-09-14T18:11:52.406Z",
+            "owned": true,
+            "source": {
+              "kind": "coordination_discovery",
+              "root": "docks.manifest"
+            },
+            "aclRevision": 0,
+            "grants": []
+          }
+        ],
+        "nextCursor": null
+      }
+    },
+    {
+      "title": "Foundry original evidence",
+      "method": "GET",
+      "url": "/v1/coordination/knowledge",
+      "status": 200,
+      "body": {
+        "claims": [
+          {
+            "id": "6de85f70-1e67-4e3e-ba36-d59c611af655",
+            "domain": "omerta.knowledge.split-ledger",
+            "proposition": "ledger.assembly",
+            "value": {
+              "type": "text",
+              "value": "assembled-after-the-fire"
+            },
+            "contentHash": "eeb403e00b03ff26618b8a29344de02dccd2b818906cb276237321debf3b477c",
+            "discoveredAt": "2026-09-14T18:11:52.443Z",
+            "owned": true,
+            "source": {
+              "kind": "coordination_discovery",
+              "root": "foundry.impression"
+            },
+            "aclRevision": 0,
+            "grants": []
+          }
+        ],
+        "nextCursor": null
+      }
+    },
+    {
+      "title": "Choose a sharing recipient",
+      "method": "GET",
+      "url": "/v1/coordination/knowledge/targets?characterName=Demo%20Archivist",
+      "status": 200,
+      "body": {
+        "targets": [
+          {
+            "id": "Wzi0BfEoygQhpjhMYDm38o2wvEgtevOkO4tWQAMewGMUvjMQAe8WuRXdKkBqFF7tcxC34DMv7Y_MiuarFlMSBEJ_7rdIRnCfXeK8GUkoPooz6Xi3YDi7CUpxOyAUaHMIn88PD0zajCMN2_mI9Q8V-pw7iMRp2lJUvjr2oPLavxp5fX7tYik65UwMLBwH-gJHpTxMVM2auYmA5Jr4qemefWGQUM_yzsBa7hURA8CTB2BytgKzLfvqGg",
+            "kind": "account",
+            "label": "Demo Archivist"
+          }
+        ],
+        "expiresAt": "2026-09-14T18:21:52.563Z"
+      }
+    },
+    {
+      "title": "Share the Foundry source",
+      "method": "POST",
+      "url": "/v1/coordination/knowledge/6de85f70-1e67-4e3e-ba36-d59c611af655/share",
+      "status": 200,
+      "requestBody": {
+        "targetId": "Wzi0BfEoygQhpjhMYDm38o2wvEgtevOkO4tWQAMewGMUvjMQAe8WuRXdKkBqFF7tcxC34DMv7Y_MiuarFlMSBEJ_7rdIRnCfXeK8GUkoPooz6Xi3YDi7CUpxOyAUaHMIn88PD0zajCMN2_mI9Q8V-pw7iMRp2lJUvjr2oPLavxp5fX7tYik65UwMLBwH-gJHpTxMVM2auYmA5Jr4qemefWGQUM_yzsBa7hURA8CTB2BytgKzLfvqGg",
+        "expectedAclRevision": 0
+      },
+      "body": {
+        "claim": {
+          "id": "6de85f70-1e67-4e3e-ba36-d59c611af655",
+          "domain": "omerta.knowledge.split-ledger",
+          "proposition": "ledger.assembly",
+          "value": {
+            "type": "text",
+            "value": "assembled-after-the-fire"
+          },
+          "contentHash": "eeb403e00b03ff26618b8a29344de02dccd2b818906cb276237321debf3b477c",
+          "discoveredAt": "2026-09-14T18:11:52.443Z",
+          "owned": true,
+          "source": {
+            "kind": "coordination_discovery",
+            "root": "foundry.impression"
+          },
+          "aclRevision": 1,
+          "grants": [
+            {
+              "id": "8d0f52e1-f7d2-447d-bb5b-c045d06226df",
+              "kind": "account",
+              "label": "Demo Archivist"
+            }
+          ]
+        },
+        "replayed": false
+      }
+    },
+    {
+      "title": "Both sources visible",
+      "method": "GET",
+      "url": "/v1/coordination/knowledge",
+      "status": 200,
+      "body": {
+        "claims": [
+          {
+            "id": "55544d6a-76a8-49fc-87fd-d13d86198600",
+            "domain": "omerta.knowledge.split-ledger",
+            "proposition": "ledger.assembly",
+            "value": {
+              "type": "text",
+              "value": "assembled-after-the-fire"
+            },
+            "contentHash": "eeb403e00b03ff26618b8a29344de02dccd2b818906cb276237321debf3b477c",
+            "discoveredAt": "2026-09-14T18:11:52.406Z",
+            "owned": true,
+            "source": {
+              "kind": "coordination_discovery",
+              "root": "docks.manifest"
+            },
+            "aclRevision": 0,
+            "grants": []
+          },
+          {
+            "id": "6de85f70-1e67-4e3e-ba36-d59c611af655",
+            "domain": "omerta.knowledge.split-ledger",
+            "proposition": "ledger.assembly",
+            "value": {
+              "type": "text",
+              "value": "assembled-after-the-fire"
+            },
+            "contentHash": "eeb403e00b03ff26618b8a29344de02dccd2b818906cb276237321debf3b477c",
+            "discoveredAt": "2026-09-14T18:11:52.443Z",
+            "owned": false,
+            "source": {
+              "kind": "coordination_discovery",
+              "root": "foundry.impression"
+            }
+          }
+        ],
+        "nextCursor": null
+      }
+    },
+    {
+      "title": "Evidence unlocks the gate",
+      "method": "GET",
+      "url": "/v1/coordination/instances/a4b8cb0f-799d-4463-8fd8-e04b05912011",
+      "status": 200,
+      "body": {
+        "id": "a4b8cb0f-799d-4463-8fd8-e04b05912011",
+        "graphId": "omerta.coordination.split-ledger",
+        "graphVersion": 1,
+        "contentHash": "eeb403e00b03ff26618b8a29344de02dccd2b818906cb276237321debf3b477c",
+        "title": "The Split Ledger",
+        "status": "active",
+        "revision": 3,
+        "createdAt": "2026-09-14T18:11:52.300Z",
+        "updatedAt": "2026-09-14T18:11:52.482Z",
+        "historical": false,
+        "canCancel": true,
+        "directOnly": true,
+        "nodes": [
+          {
+            "id": "briefing",
+            "title": "Read the case notes",
+            "status": "completed",
+            "description": "A shipping manifest and a printer’s impression tell the same story. Each source needs its own discoverer."
+          },
+          {
+            "id": "docks-source",
+            "title": "Read the surviving manifest",
+            "status": "completed",
+            "description": "The manifest dates the ledger’s assembly after the warehouse fire. Its original discovery remains yours."
+          }
+        ],
+        "actions": [
+          {
+            "id": "coord_e4e62d867200abdb7d232f7ce5c08dcb54acb7c6148dbe8f932264f81e72d597",
+            "kind": "discover",
+            "label": "Follow a lead"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Advance investigation",
+      "method": "POST",
+      "url": "/v1/coordination/instances/a4b8cb0f-799d-4463-8fd8-e04b05912011/act",
+      "status": 200,
+      "requestBody": {
+        "expectedRevision": 3,
+        "actionId": "coord_e4e62d867200abdb7d232f7ce5c08dcb54acb7c6148dbe8f932264f81e72d597"
+      },
+      "body": {
+        "instance": {
+          "id": "a4b8cb0f-799d-4463-8fd8-e04b05912011",
+          "graphId": "omerta.coordination.split-ledger",
+          "graphVersion": 1,
+          "contentHash": "eeb403e00b03ff26618b8a29344de02dccd2b818906cb276237321debf3b477c",
+          "title": "The Split Ledger",
+          "status": "active",
+          "revision": 4,
+          "createdAt": "2026-09-14T18:11:52.300Z",
+          "updatedAt": "2026-09-14T18:11:52.624Z",
+          "historical": false,
+          "canCancel": true,
+          "directOnly": true,
+          "nodes": [
+            {
+              "id": "briefing",
+              "title": "Read the case notes",
+              "status": "completed",
+              "description": "A shipping manifest and a printer’s impression tell the same story. Each source needs its own discoverer."
+            },
+            {
+              "id": "conclusion",
+              "title": "Record the corroborated account",
+              "status": "available",
+              "description": "Two original discoverers, two surviving sources, one corroborated account. This record pays no reward."
+            },
+            {
+              "id": "docks-source",
+              "title": "Read the surviving manifest",
+              "status": "completed",
+              "description": "The manifest dates the ledger’s assembly after the warehouse fire. Its original discovery remains yours."
+            }
+          ],
+          "actions": [
+            {
+              "id": "coord_a364e6274ab999f3389a1a292120bbcaf8ff972237d9c1a54419f7b43f905b9e",
+              "kind": "complete",
+              "label": "Complete: Record the corroborated account",
+              "nodeId": "conclusion"
+            }
+          ]
+        },
+        "replayed": false
+      }
+    },
+    {
+      "title": "Advance investigation",
+      "method": "POST",
+      "url": "/v1/coordination/instances/a4b8cb0f-799d-4463-8fd8-e04b05912011/act",
+      "status": 200,
+      "requestBody": {
+        "expectedRevision": 4,
+        "actionId": "coord_a364e6274ab999f3389a1a292120bbcaf8ff972237d9c1a54419f7b43f905b9e"
+      },
+      "body": {
+        "instance": {
+          "id": "a4b8cb0f-799d-4463-8fd8-e04b05912011",
+          "graphId": "omerta.coordination.split-ledger",
+          "graphVersion": 1,
+          "contentHash": "eeb403e00b03ff26618b8a29344de02dccd2b818906cb276237321debf3b477c",
+          "title": "The Split Ledger",
+          "status": "completed",
+          "revision": 5,
+          "createdAt": "2026-09-14T18:11:52.300Z",
+          "updatedAt": "2026-09-14T18:11:52.649Z",
+          "historical": false,
+          "canCancel": false,
+          "directOnly": true,
+          "nodes": [
+            {
+              "id": "briefing",
+              "title": "Read the case notes",
+              "status": "completed",
+              "description": "A shipping manifest and a printer’s impression tell the same story. Each source needs its own discoverer."
+            },
+            {
+              "id": "conclusion",
+              "title": "Record the corroborated account",
+              "status": "completed",
+              "description": "Two original discoverers, two surviving sources, one corroborated account. This record pays no reward."
+            },
+            {
+              "id": "docks-source",
+              "title": "Read the surviving manifest",
+              "status": "completed",
+              "description": "The manifest dates the ledger’s assembly after the warehouse fire. Its original discovery remains yours."
+            }
+          ],
+          "actions": []
+        },
+        "replayed": false
+      }
+    },
+    {
+      "title": "Investigation result",
+      "method": "GET",
+      "url": "/v1/coordination/instances/a4b8cb0f-799d-4463-8fd8-e04b05912011",
+      "status": 200,
+      "body": {
+        "id": "a4b8cb0f-799d-4463-8fd8-e04b05912011",
+        "graphId": "omerta.coordination.split-ledger",
+        "graphVersion": 1,
+        "contentHash": "eeb403e00b03ff26618b8a29344de02dccd2b818906cb276237321debf3b477c",
+        "title": "The Split Ledger",
+        "status": "completed",
+        "revision": 5,
+        "createdAt": "2026-09-14T18:11:52.300Z",
+        "updatedAt": "2026-09-14T18:11:52.649Z",
+        "historical": false,
+        "canCancel": false,
+        "directOnly": true,
+        "nodes": [
+          {
+            "id": "briefing",
+            "title": "Read the case notes",
+            "status": "completed",
+            "description": "A shipping manifest and a printer’s impression tell the same story. Each source needs its own discoverer."
+          },
+          {
+            "id": "conclusion",
+            "title": "Record the corroborated account",
+            "status": "completed",
+            "description": "Two original discoverers, two surviving sources, one corroborated account. This record pays no reward."
+          },
+          {
+            "id": "docks-source",
+            "title": "Read the surviving manifest",
+            "status": "completed",
+            "description": "The manifest dates the ledger’s assembly after the warehouse fire. Its original discovery remains yours."
+          }
+        ],
+        "actions": []
+      }
+    }
+  ]
+}

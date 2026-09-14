@@ -1,0 +1,22 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:10.900
+This is Omerta running locally, with synthetic accounts and real API handlers. We will salvage a wreck, craft a material, and complete a shared investigation.
+
+00:00:10.900 --> 00:00:21.600
+The World Graph records the change. This salvage recipe consumes one wreck and produces six scrap steel, two wire, and two salvage parts.
+
+00:00:21.600 --> 00:00:31.700
+Crafting hardened steel consumes four scrap steel and three hundred in game cash. The resulting inventory holds one hardened steel and two remaining scrap steel.
+
+00:00:31.700 --> 00:00:43.400
+Two investigators uncover different original sources: the Docks manifest and the Foundry impression. Independence belongs to the source. Copying a discovery cannot create another one.
+
+00:00:43.400 --> 00:00:54.033
+The second investigator shares the Foundry evidence. The first account can now see both sources. The engine checks access before using that evidence to unlock the next step.
+
+00:00:54.033 --> 00:01:05.300
+The real response now marks the Split Ledger completed. Two original discoverers and two surviving sources support one corroborated account. This pilot pays no reward.
+
+00:01:05.300 --> 00:01:18.100
+World Graph phase one is implemented. Coordination pilots are default off. Market version two remains an implementation candidate, not deployed or funded. Explore the connected city at omerta dot fun.

@@ -1,0 +1,78 @@
+{
+  "model": "fal-ai/minimax/speech-02-hd",
+  "voice": "Deep_Voice_Man",
+  "clips": {
+    "0": {
+      "text": "Omerta. The city is connected. The Hook. The World Graph. The Coordination Engine.",
+      "status": "downloaded",
+      "duration": 7.444898,
+      "sha256": "b4c949809381584249044aaaa522e506918ff21298f9736049afaeae7bf5d286"
+    },
+    "1": {
+      "text": "Every cut has a job. The canonical market design routes its nine percent base sell fee into four fixed buckets.",
+      "status": "downloaded",
+      "duration": 6.50449,
+      "sha256": "cd96acac0b326f79245c9cd2bc242da0d2d898eaf2347da7d37526ee47090523"
+    },
+    "2": {
+      "text": "The reserve has limits. Finite capacity, cooldowns, and market checks govern deployment. There is no bottomless vault.",
+      "status": "downloaded",
+      "duration": 8.515918,
+      "sha256": "660ac5b000be731c8c3ffc525e87477c69496579d5b9a781843470fc59f8dac7"
+    },
+    "3": {
+      "text": "Capital has terms. Funded inventory bonds. Solver-funded arbitrage. Real liquidity commitments with prefunded campaigns.",
+      "status": "downloaded",
+      "duration": 8.071837,
+      "sha256": "fff771da540286a265a08ee7c3617333c5ff483f4a2422db3b394d6f758f0bbb"
+    },
+    "4": {
+      "text": "Hold Turf. Claim allocated fees. Families control future fee rights. The protocol keeps the liquidity principal.",
+      "status": "downloaded",
+      "duration": 8.045714,
+      "sha256": "4569b4ed97799f31d94e41b31628936bc491a16d6d8ab3caa860b62206613fc3"
+    },
+    "5": {
+      "text": "The World Graph connects sources, materials, recipes, evidence, and social gates. Every dependency has a place.",
+      "status": "downloaded",
+      "duration": 8.359184,
+      "sha256": "5497b80af06f8611b4c5063e0724dee2fe443bff089568a08d4ab335dc181b84"
+    },
+    "6": {
+      "text": "The wreck is a beginning. Salvage consumes the car once. Crafting consumes its inputs. Quality stays in the ledger.",
+      "status": "downloaded",
+      "duration": 7.627755,
+      "sha256": "3686c06ae3a7d56641b731ef28a7491cb58724d8f9ac1f74d66b16fdb6ee804d"
+    },
+    "7": {
+      "text": "Some doors take a crew. Evidence unlocks dependencies. Four distinct accounts contribute to a shared operation.",
+      "status": "downloaded",
+      "duration": 7.105306,
+      "sha256": "8f36ba112856ee762ae2967419cd019b2abb3bf80465e2d50157916f1d90e67b"
+    },
+    "8": {
+      "text": "The Docks needs the Foundry. Two investigators. Two original sources. The Split Ledger needs independent evidence.",
+      "status": "downloaded",
+      "duration": 7.915102,
+      "sha256": "3f5212e82443983dc244f7bdd0be69358e74bab6b3457fdba382c3ece02ff0ad"
+    },
+    "9": {
+      "text": "A copy is not a source. Discoveries keep their identity. Archives and assertions cannot manufacture independent evidence.",
+      "status": "downloaded",
+      "duration": 7.549388,
+      "sha256": "94920b71d3837f6930b06f98de91fb82939d17c49a7744d71ec64b60cad89d31"
+    },
+    "10": {
+      "text": "Choose who knows what. Share with an account, Crew, or Family. Current permissions are checked when evidence is used.",
+      "status": "downloaded",
+      "duration": 7.314286,
+      "sha256": "d38989658bbdceccd5c65816abf924e24b0be382e9d5aaf18c8d64c41a0d543c"
+    },
+    "11": {
+      "text": "Every action. A connection. Explore Omerta, and follow the next chapter at omerta dot fun.",
+      "status": "downloaded",
+      "duration": 6.739592,
+      "sha256": "62194b35ea1e9f35fcb397952ab71b64caa47a765c97d51c99d20ec8186bb3dd"
+    }
+  }
+}

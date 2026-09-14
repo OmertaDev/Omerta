@@ -1,0 +1,274 @@
+[
+  {
+    "id": "hook",
+    "name": "Every cut has a job",
+    "status": "MARKET V2 CANDIDATE · NOT DEPLOYED OR FUNDED",
+    "post": "Every cut has a job. Explore the 9% base sell-fee split, bounded surge and finite reserve design in Omertà Market V2. Implementation candidate; not deployed or funded. LP fees are additional. Follow @OmertaOnRH.",
+    "slides": [
+      {
+        "title": [
+          "EVERY CUT",
+          "HAS A JOB."
+        ],
+        "sub": "Follow the canonical market’s fee flow.",
+        "kind": "hero",
+        "items": [
+          "9% BASE SELL FEE",
+          "FOUR FIXED DESTINATIONS"
+        ],
+        "note": "ETH / OMR · Uniswap v4 · Market V2"
+      },
+      {
+        "title": [
+          "FOUR ORDERS.",
+          "ONE BASE FEE."
+        ],
+        "sub": "9% is the total base sell fee.",
+        "kind": "fee",
+        "items": [
+          "2% Developer",
+          "1.6% RWA recipient",
+          "2.4% Community",
+          "3% Protocol liquidity"
+        ],
+        "note": "LP fees are additional. Other pools have their own policies."
+      },
+      {
+        "title": [
+          "PRESSURE",
+          "LEAVES A TRACE."
+        ],
+        "sub": "Extra sell pressure can add a bounded charge.",
+        "kind": "steps",
+        "items": [
+          "Tick pressure accumulates",
+          "Surge adds 0–1%",
+          "Surge receipts go to stability"
+        ],
+        "note": "Pressure decays over time. Buys cannot instantly reset it."
+      },
+      {
+        "title": [
+          "FUNDING",
+          "HAS A DESTINATION."
+        ],
+        "sub": "Actual receipts enter defined compartments.",
+        "kind": "steps",
+        "items": [
+          "3% POL bucket → Core",
+          "Surge + bonds → War Chest",
+          "Arbitrage reserve share → War Chest"
+        ],
+        "note": "Funding does not reset lifetime deployment limits."
+      },
+      {
+        "title": [
+          "NO BOTTOMLESS",
+          "VAULT."
+        ],
+        "sub": "Reserves use finite inventory and explicit limits.",
+        "kind": "steps",
+        "items": [
+          "Capacity + cooldowns",
+          "Spot + liquidity checks",
+          "Funded partial recovery"
+        ],
+        "note": "No guaranteed floor, promised yield or MEV immunity."
+      },
+      {
+        "title": [
+          "THE CITY",
+          "KEEPS ACCOUNTS."
+        ],
+        "sub": "See the whole system in the film.",
+        "kind": "hero",
+        "items": [
+          "EXPLORE OMERTA.FUN",
+          "FOLLOW @OMERTAONRH"
+        ],
+        "note": "Hook rules and companion contracts have separate responsibilities."
+      }
+    ]
+  },
+  {
+    "id": "world-graph",
+    "name": "The wreck is a beginning",
+    "status": "PHASE 1 IMPLEMENTED · PHASE 2A IN DEVELOPMENT",
+    "post": "The wreck is a beginning. Omertà’s World Graph connects salvage, conserved materials, crafting and item history. Phase 1 is implemented and OMR-neutral. Phase 2A remains in development; NFT export is not live.",
+    "slides": [
+      {
+        "title": [
+          "THE WRECK IS",
+          "A BEGINNING."
+        ],
+        "sub": "An object can be the start of another story.",
+        "kind": "hero",
+        "items": [
+          "SALVAGE → MATERIALS",
+          "MATERIALS → CRAFTING"
+        ],
+        "note": "World Graph · Phase 1"
+      },
+      {
+        "title": [
+          "START WITH",
+          "WHAT EXISTS."
+        ],
+        "sub": "Salvage consumes an eligible car once.",
+        "kind": "steps",
+        "items": [
+          "Car enters the salvage action",
+          "The car is consumed",
+          "Materials enter the inventory ledger"
+        ],
+        "note": "This is a conceptual flow, not a universal yield recipe."
+      },
+      {
+        "title": [
+          "KEEP TRACK",
+          "OF THE MATERIAL."
+        ],
+        "sub": "The item ledger is inventory authority.",
+        "kind": "steps",
+        "items": [
+          "Conserved quantities",
+          "Recorded material quality",
+          "Replay-safe mutation records"
+        ],
+        "note": "Collection status is separate from actual inventory."
+      },
+      {
+        "title": [
+          "CRAFT FROM",
+          "REAL INPUTS."
+        ],
+        "sub": "Graph-defined recipes declare what they consume.",
+        "kind": "steps",
+        "items": [
+          "Required materials",
+          "Validated recipe",
+          "Recorded crafting result"
+        ],
+        "note": "Phase 1 is OMR-neutral. Hardened steel has a $300 game-cash sink."
+      },
+      {
+        "title": [
+          "THE OBJECT",
+          "KEEPS ITS HISTORY."
+        ],
+        "sub": "Unique identity and custody remain recorded.",
+        "kind": "steps",
+        "items": [
+          "Permanent unique item identity",
+          "Ordered custody transitions",
+          "Mystery + four-account Crew gates"
+        ],
+        "note": "Default inventory is off-chain. NFT export is not live."
+      },
+      {
+        "title": [
+          "FOLLOW",
+          "THE CONNECTIONS."
+        ],
+        "sub": "Next: a deeper materials and salvage system.",
+        "kind": "hero",
+        "items": [
+          "PHASE 2A: IN DEVELOPMENT",
+          "EXPLORE OMERTA.FUN"
+        ],
+        "note": "Immutable definitions, material lots and expanded salvage are next."
+      }
+    ]
+  },
+  {
+    "id": "coordination",
+    "name": "No one has the whole story",
+    "status": "PHASES 00–01 IMPLEMENTED · API PILOTS DEFAULT OFF",
+    "post": "No one has the whole story. The Split Ledger needs original evidence from two different accounts. Share deliberately; copies cannot manufacture independence. Coordination Phases 00–01 are implemented for review. Value-neutral API pilots default off.",
+    "slides": [
+      {
+        "title": [
+          "NO ONE HAS",
+          "THE WHOLE STORY."
+        ],
+        "sub": "Meet the Omerta Coordination Engine.",
+        "kind": "hero",
+        "items": [
+          "PRIVATE PROGRESS",
+          "SHARED EVIDENCE"
+        ],
+        "note": "The Dead Letter + The Split Ledger"
+      },
+      {
+        "title": [
+          "THE DOCKS",
+          "HAS ONE HALF."
+        ],
+        "sub": "One investigator discovers a local source.",
+        "kind": "steps",
+        "items": [
+          "Investigator A",
+          "Required district: the Docks",
+          "Original source: manifest"
+        ],
+        "note": "The Split Ledger uses server-required district sources."
+      },
+      {
+        "title": [
+          "THE FOUNDRY",
+          "HAS THE OTHER."
+        ],
+        "sub": "A different account discovers the second source.",
+        "kind": "steps",
+        "items": [
+          "Investigator B",
+          "Required district: the Foundry",
+          "Original source: impression"
+        ],
+        "note": "One account collecting both sources does not supply independence."
+      },
+      {
+        "title": [
+          "SHARE",
+          "DELIBERATELY."
+        ],
+        "sub": "Evidence moves through live permissions.",
+        "kind": "steps",
+        "items": [
+          "Choose an account, Crew or Family",
+          "Current membership is checked",
+          "Revocation blocks future access"
+        ],
+        "note": "Permissions are rechecked when evidence is read or used."
+      },
+      {
+        "title": [
+          "TWO SOURCES.",
+          "ONE CONCLUSION."
+        ],
+        "sub": "Independent original evidence unlocks the gate.",
+        "kind": "evidence",
+        "items": [
+          "DOCKS / ACCOUNT A",
+          "FOUNDRY / ACCOUNT B",
+          "MATCHING ORIGINAL SOURCES",
+          "CONCLUSION UNLOCKS"
+        ],
+        "note": "Copies, personal archives and player assertions add no new source."
+      },
+      {
+        "title": [
+          "CONNECT",
+          "THE EVIDENCE."
+        ],
+        "sub": "Explore what is built. Follow what comes next.",
+        "kind": "hero",
+        "items": [
+          "VALUE-NEUTRAL API PILOTS",
+          "FOLLOW @OMERTAONRH"
+        ],
+        "note": "Delegation, economic adapters and AI generation remain planned."
+      }
+    ]
+  }
+]

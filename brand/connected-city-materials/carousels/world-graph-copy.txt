@@ -1,0 +1,25 @@
+The wreck is a beginning
+
+POST COPY
+The wreck is a beginning. Omertà’s World Graph connects salvage, conserved materials, crafting and item history. Phase 1 is implemented and OMR-neutral. Phase 2A remains in development; NFT export is not live.
+
+POSTING ORDER + ALT TEXT
+1. world-graph-01.png
+THE WRECK IS A BEGINNING.. An object can be the start of another story. SALVAGE → MATERIALS. MATERIALS → CRAFTING. World Graph · Phase 1 PHASE 1 IMPLEMENTED · PHASE 2A IN DEVELOPMENT
+
+2. world-graph-02.png
+START WITH WHAT EXISTS.. Salvage consumes an eligible car once. Car enters the salvage action. The car is consumed. Materials enter the inventory ledger. This is a conceptual flow, not a universal yield recipe. PHASE 1 IMPLEMENTED · PHASE 2A IN DEVELOPMENT
+
+3. world-graph-03.png
+KEEP TRACK OF THE MATERIAL.. The item ledger is inventory authority. Conserved quantities. Recorded material quality. Replay-safe mutation records. Collection status is separate from actual inventory. PHASE 1 IMPLEMENTED · PHASE 2A IN DEVELOPMENT
+
+4. world-graph-04.png
+CRAFT FROM REAL INPUTS.. Graph-defined recipes declare what they consume. Required materials. Validated recipe. Recorded crafting result. Phase 1 is OMR-neutral. Hardened steel has a $300 game-cash sink. PHASE 1 IMPLEMENTED · PHASE 2A IN DEVELOPMENT
+
+5. world-graph-05.png
+THE OBJECT KEEPS ITS HISTORY.. Unique identity and custody remain recorded. Permanent unique item identity. Ordered custody transitions. Mystery + four-account Crew gates. Default inventory is off-chain. NFT export is not live. PHASE 1 IMPLEMENTED · PHASE 2A IN DEVELOPMENT
+
+6. world-graph-06.png
+FOLLOW THE CONNECTIONS.. Next: a deeper materials and salvage system. PHASE 2A: IN DEVELOPMENT. EXPLORE OMERTA.FUN. Immutable definitions, material lots and expanded salvage are next. PHASE 1 IMPLEMENTED · PHASE 2A IN DEVELOPMENT
+
+Use the six PNGs in numbered order. Add the matching alt text to each image. Status language is part of the copy. No posting or scheduling has been performed.

@@ -1,0 +1,11 @@
+import {AbsoluteFill,Composition,Sequence,registerRoot,staticFile} from 'remotion';
+import {Video} from '@remotion/media';
+import '../fonts';
+import {TeaserOpening,TeaserMechanism,TeaserClose,type TeaserData} from './TeaserScenes';
+const data:TeaserData[]=[
+ {id:'Teaser-Hook',title:'Every cut has a job',art:'city',headline:'EVERY CUT\nHAS A JOB.',mechanism:'9% BASE SELL FEE.\nFOUR DESTINATIONS.',detail:'2% developer · 1.6% RWA recipient · 2.4% community · 3% protocol liquidity. LP fees are additional.',status:'MARKET V2 CANDIDATE\nNot deployed or funded.'},
+ {id:'Teaser-WorldGraph',title:'The wreck is a beginning',art:'reserve',headline:'THE WRECK IS\nA BEGINNING.',mechanism:'SALVAGE.\nTRACK.\nCRAFT.',detail:'Conserved materials. Declared inputs. Recorded item history.',status:'WORLD GRAPH PHASE 1 IMPLEMENTED\nPhase 2A in development. NFT export not live.'},
+ {id:'Teaser-Coordination',title:'No one has the whole story',art:'turf',headline:'NO ONE HAS\nTHE WHOLE STORY.',mechanism:'TWO ACCOUNTS.\nORIGINAL SOURCES.\nONE CONCLUSION.',detail:'Copies cannot manufacture independent evidence.',status:'COORDINATION PHASES 00–01\nValue-neutral API pilots. Default off.'},
+];
+const Teaser=({data}:{data:TeaserData})=><AbsoluteFill style={{background:'#101616',fontFamily:'Arial',color:'#eee8db'}}><Video src={staticFile(`art/hook-campaign/${data.art}.mp4`)} loop muted objectFit="cover" style={{width:'100%',height:'100%',opacity:0.68}}/><AbsoluteFill style={{background:'linear-gradient(0deg,#101616 5%,transparent 100%)'}}/><Sequence durationInFrames={150}><TeaserOpening data={data}/></Sequence><Sequence from={150} durationInFrames={210}><TeaserMechanism data={data}/></Sequence><Sequence from={360} durationInFrames={90}><TeaserClose/></Sequence><div style={{position:'absolute',left:88,top:100,fontFamily:'Omerta Display',fontWeight:700,fontSize:50,letterSpacing:7}}>OMERTÀ</div><div style={{position:'absolute',left:88,right:88,bottom:115,fontSize:27,lineHeight:1.45,whiteSpace:'pre-line',color:'#c7af79',borderTop:'1px solid #c7af7955',paddingTop:25}}>{data.status}</div></AbsoluteFill>;
+registerRoot(()=> <>{data.map(d=><Composition key={d.id} id={d.id} component={Teaser} defaultProps={{data:d}} width={1080} height={1920} fps={30} durationInFrames={450}/>)}</>);
