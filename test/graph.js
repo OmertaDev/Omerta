@@ -88,7 +88,7 @@ assert(has('Reason:whack:loot'), 'whack:loot is a ledger reason');
 assert(has('Check:ring poker escrow'), 'the ring poker escrow check was extracted');
 assert(has('Module:src/invariants.js') && has('Suite:test/ring.js'), 'modules and suites resolve');
 
-// CITES is the query CLAUDE.md exists to serve by hand. The whack:loot precedent is invoked from
+// CITES is the query docs/LOG.md exists to serve by hand. The whack:loot precedent is invoked from
 // three separate modules; if the pattern extractor breaks, this is what notices.
 const whack = g.edges.filter((e) => e.type === 'CITES' && e.to === 'Pattern:whack:loot precedent');
 assert(whack.length >= 3, `expected the whack:loot precedent cited from 3+ sites, got ${whack.length}`);
