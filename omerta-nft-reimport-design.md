@@ -75,7 +75,7 @@ Two shapes, pick one at build:
 - **(a) `redeem(uint256 tokenId, uint256 amount)`** — the holder calls it; it `_burn`s their token and
   emits `Redeemed(msg.sender, tokenId, amount)`. Simplest; the burn is the proof.
 - **(b) Deposit-to-custody** — transfer the token to a vault-owned address that can't move it. Weaker
-  (custody is a rug surface, the CLAUDE.md escrow rule frowns on it) — prefer (a).
+  (custody is a rug surface, the `omerta-contracts/CLAUDE.md` escrow rule frowns on it) — prefer (a).
 
 **The supply-cap decision (state it explicitly):** GearVault's per-tokenId `cap`/`minted` bounds
 LIFETIME mints. On a burn, does `minted` decrement (freeing cap headroom for a future extraction) or

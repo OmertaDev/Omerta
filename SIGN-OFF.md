@@ -120,7 +120,7 @@ indexing) I build the day you nod.
 # ✅ ANSWERED — all 15, 2026-08-02
 
 Jorge answered every fork. Recorded here as the decision; the build state of each is tracked in
-`CLAUDE.md` and `BALANCE.md`.
+`docs/LOG.md` and `BALANCE.md`.
 
 | # | answer | what it means |
 |---|---|---|
@@ -149,7 +149,7 @@ the number is wrong.
 # 📄 THE QUESTIONS AS THEY WERE PUT — D1–D15, all answered above (2026-08-02)
 
 > **NOT OPEN.** Every one of these fifteen was answered on 2026-08-02 — the answers are the table
-> directly above, and the build state of each is tracked in `CLAUDE.md` and `BALANCE.md`. This block
+> directly above, and the build state of each is tracked in `docs/LOG.md` and `BALANCE.md`. This block
 > is kept because the reasoning behind an answer is worth more than the letter: it records the
 > situation, why the call was the founder's, and what the alternatives cost. **Read it as the
 > record, never as a to-do list.** It carried the heading *"🔴 LIVE SHEET — the 15 decisions

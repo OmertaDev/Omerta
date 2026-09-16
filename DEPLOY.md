@@ -560,7 +560,7 @@ limits; nothing in this stack needs it except your own laptop running a restore 
 
 ## 9. Still gated (NOT part of the off-chain alpha)
 Mainnet / on-chain extraction — `forge test` on a real toolchain, the third-party audit of the contracts
-**and** the off-chain signer, and the launch checklist on the Risk-to-Earn / RWA line. See CLAUDE.md + `SIGN-OFF.md`.
+**and** the off-chain signer, and the launch checklist on the Risk-to-Earn / RWA line. See `docs/LOG.md` + `SIGN-OFF.md`.
 Founder balance sign-offs (`BALANCE.md` / `SIGN-OFF.md`) are numbers, not blockers, for the alpha.
 
 ## 3c. Seasonal League Modifiers (slate #6) — ARMED by default since 2026-08-02
