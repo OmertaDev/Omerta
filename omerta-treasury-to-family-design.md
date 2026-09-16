@@ -136,7 +136,7 @@ levers with **no contract change**.
 **Custody rule (do not skip):** the sell-tax community recipient and the community-buyback keeper wallet
 must be the **same** address (or the keeper must control it), or the ledger books family backing against
 ETH the keeper cannot spend — the `allocated ≤ held` class of drift, one system over. Same discipline as
-the bond four-slice fix (CLAUDE.md §0.5): a slice's on-chain recipient and its off-chain consumer share
+the bond four-slice fix (`CHAIN-DEPLOY.md` §0.5): a slice's on-chain recipient and its off-chain consumer share
 one custody.
 
 ---

@@ -96,5 +96,5 @@ layer, a status legend, and a console screen** — the shape of the deep systems
 
 **Build order (by leverage):** Duels (machinery exists) → Heists → Territory → Clue Scrolls →
 Sovereignty → Marriages/Soldiers/Secrets. Commit per system. Combined red-team + docs at the end
-(`AUDIT-tier1-deepening.md`, BALANCE flags, CLAUDE.md, codex). §10.4 stays drift-0 throughout; every
+(`AUDIT-tier1-deepening.md`, BALANCE flags, `docs/LOG.md`, codex). §10.4 stays drift-0 throughout; every
 new faucet is bounded + flagged for the sim.

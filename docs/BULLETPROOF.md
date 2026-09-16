@@ -213,7 +213,7 @@ trail is docs/AUDITS.md (85+ reports) and the cited files.
 | Clock Skew | ◐ | The one-clock rule applied at every known combat/economy timer site (JS-set AND JS-read); a tree-wide guard DEFERRED (§4) |
 | Production Incidents | ✅ | Real runbooks encoding lived incidents (DEPLOY §7b/§7d), plus §8b-§8e from this change |
 | On-call | ◐ | Webhook alert delivery drill-provable; escalation past a chat webhook DEFERRED (§4 — one founder IS the escalation chain) |
-| Postmortems | ✅ | Every production incident has a written RCA with reproduction, root cause, fix AND a permanent enforcement (the CLAUDE.md chronicle + 85 audit reports) |
+| Postmortems | ✅ | Every production incident has a written RCA with reproduction, root cause, fix AND a permanent enforcement (the `docs/LOG.md` chronicle + 96 audit reports) |
 
 ---
 

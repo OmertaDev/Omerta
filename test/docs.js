@@ -431,7 +431,7 @@ assert(!/RE-APPLY THIS LINE/i.test(tail),
 assert(/export const levelOf/.test(tail), 'levelOf is defined in the hand-written half');
 assert(!/export const levelOf/.test(read('src/rules.generated.js')),
   'levelOf moved into the generated half — the seam changed, so every doc describing it must change too');
-for (const f of ['src/rules.tail.js', 'CLAUDE.md', 'SPEC.md']) {
+for (const f of ['src/rules.tail.js', 'CLAUDE.md', 'docs/LOG.md', 'SPEC.md']) {
   const body = read(f);
   for (const m of body.matchAll(/levelOf/g)) {
     const around = body.slice(Math.max(0, m.index - 220), m.index + 220);
@@ -1228,8 +1228,10 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
 // direction for a security review: an auditor told a contract does not exist does not attack it.
 //
 // Scope is deliberately CHAIN-DEPLOY + DEPLOY, the two documents whose only value is being
-// accurate about the tree RIGHT NOW. CLAUDE.md is excluded on purpose: it is a chronological log
-// where "not built" is a true statement about the day it was written and later entries supersede.
+// accurate about the tree RIGHT NOW. `docs/LOG.md` is excluded on purpose: it is a chronological
+// log where "not built" is a true statement about the day it was written and later entries
+// supersede. (That exclusion used to name CLAUDE.md, because the log lived there; it moved, and
+// the exclusion moved with it — the reason was always the log's shape, never the filename.)
 //
 // Present tense only, for the same reason: "this paragraph SAID X WAS unwritten" is a correction
 // naming its own fix, and a guard that fires on the correction is one people route around.
@@ -3919,21 +3921,31 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
 // ── GRAPH.md's own evidence, against the tree ───────────────────────────────────────────────────
 //
 // GRAPH.md exists to argue two things: that the engineering memory should be a graph, and that the
-// largest fixed token cost is CLAUDE.md. Both arguments are carried entirely by measured figures —
-// and every one of them had rotted in the same direction, understating the case:
+// largest fixed token cost was the drop log. Both arguments are carried entirely by measured figures
+// — and every one of them had rotted in the same direction, understating the case:
 //
-//     CLAUDE.md      5,630 → 17,224 lines   (206% out; the log tripled underneath the sentence)
-//     audit reports     57 → 96
-//     levers           769 → 727 pinned     (a different metric, restated to the mechanical one)
+//     the log         5,630 → 18,572 lines   (230% out; it tripled underneath the sentence)
+//     audit reports      57 → 96
+//     levers            769 → 727 pinned     (a different metric, restated to the mechanical one)
 //
 // So the document written to argue for the lever was making the case at a third of its true size.
 // That is the class this file exists for, and it is why the figures are now measured rather than
 // remembered.
 //
-// THE BAND IS WIDER THAN SPEC'S 2%, DELIBERATELY. CLAUDE.md is append-only by design and grows by
-// hundreds of lines in a working session, so a 2% band (344 lines) would fire on unrelated work —
-// and a guard that nags on unrelated work gets deleted, which catches nothing. 10% still catches the
-// drift that actually happened by a factor of twenty.
+// THE LEVER HAS SINCE BEEN PULLED, which is why there are now TWO figures rather than one. The log
+// moved to `docs/LOG.md` and is no longer loaded into a session; `CLAUDE.md` keeps only the binding
+// rules and a pointer. Both must be pinned, because each answers a different question — the log's
+// size is what the argument was ABOUT, and CLAUDE.md's is what it COST once the argument was acted
+// on. A guard that pinned only the first would pass unchanged while CLAUDE.md quietly grew back into
+// a log, which is the exact drift the split exists to prevent.
+//
+// THE TWO BANDS DIFFER, DELIBERATELY, AND FOR OPPOSITE REASONS. `docs/LOG.md` is append-only by
+// design and grows by hundreds of lines in a working session, so a 2% band (371 lines) would fire on
+// unrelated work — and a guard that nags on unrelated work gets deleted, which catches nothing. 10%
+// still catches the drift that actually happened by a factor of twenty. `CLAUDE.md` is the opposite:
+// it is now append-RARELY (a drop's entry goes to the log; only a new BINDING rule lands here), so
+// it should barely move, and 20% of 155 lines is about one new ground rule — loose enough not to nag
+// on the change it is meant to allow, tight enough that a returning log trips it immediately.
 {
   const graphDoc = read('GRAPH.md');
   const figure = (label, re) => {
@@ -3943,20 +3955,36 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
     return Number(m[1].replace(/,/g, ''));
   };
   const band = (claimed, real, what, tol) => assert(Math.abs(claimed - real) / Math.max(real, 1) < tol,
-    `GRAPH.md says ${claimed} ${what}; it is ${real} — more than ${tol * 100}% out, so restate it. `
-    + 'Its whole argument is carried by these numbers.');
+    `GRAPH.md says ${claimed} ${what}; it is ${real} — more than ${Math.round(tol * 100)}% out, so `
+    + 'restate it. Its whole argument is carried by these numbers.');
 
-  // Stated three times in the document; all three must move together, or §6's lever argument is
-  // made against a size §2 has already contradicted.
+  // The log's size, stated three times in the document; all three must move together, or §6's lever
+  // argument is made against a size §2 has already contradicted.
+  //
+  // The five-digit floor is what keeps CLAUDE.md's own (three-digit) figure out of this set. That is
+  // an accident of the current sizes rather than a rule, so the disjointness is asserted below
+  // instead of relied upon — if CLAUDE.md ever grew past 10,000 lines this pattern would swallow it
+  // and the two arguments would be checked against each other rather than against the tree.
   const claimedLog = [...graphDoc.matchAll(/\*\*?([\d,]{5,})\*?\*? ?lines?\b|\b([\d,]{5,})-line\b/g)]
     .map((m) => Number((m[1] || m[2]).replace(/,/g, '')));
-  assert(claimedLog.length >= 3, 'GRAPH.md must state the CLAUDE.md line count where it argues from '
+  assert(claimedLog.length >= 3, 'GRAPH.md must state the docs/LOG.md line count where it argues from '
     + `it (§2 evidence, §4 aside, §6 token cost); found ${claimedLog.length} such figures`);
-  const realLog = lines('CLAUDE.md');
-  for (const c of claimedLog) band(c, realLog, 'lines in CLAUDE.md', 0.10);
+  const realLog = lines('docs/LOG.md');
+  for (const c of claimedLog) band(c, realLog, 'lines in docs/LOG.md', 0.10);
   assert(new Set(claimedLog).size === 1,
-    `GRAPH.md states the CLAUDE.md size as ${[...new Set(claimedLog)].join(' and ')} in different `
+    `GRAPH.md states the docs/LOG.md size as ${[...new Set(claimedLog)].join(' and ')} in different `
     + 'sections; one of them is stale and the two arguments disagree');
+
+  // What the lever actually bought, and the half that can rot back. Named `claudeNow` rather than
+  // `claudeReal` on purpose — the outer scope already binds that name for the size-claim guard above.
+  const claudeNow = lines('CLAUDE.md');
+  const claimedClaude = figure('the post-split CLAUDE.md line count',
+    /CLAUDE\.md`? is now \*\*(\d+) lines\*\*/);
+  band(claimedClaude, claudeNow, 'lines in CLAUDE.md after the split', 0.20);
+  assert(!claimedLog.includes(claimedClaude),
+    'GRAPH.md\'s CLAUDE.md figure is being read as one of its docs/LOG.md figures — the five-digit '
+    + 'floor above no longer separates them, so the two claims are checking each other rather than '
+    + 'the tree. Give each its own pattern.');
 
   // Audit reports move only when an audit is written — worth restating, so this one is exact.
   const audits = fs.readdirSync('.').filter((f) => /^AUDIT-.*\.md$/.test(f)).length;
@@ -3984,11 +4012,12 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
     + 'the register, and a count of nothing reads exactly like a count that agrees');
   band(figure('the signed-lever count', /\*\*([\d,]+) signed levers\*\*/), pinned, 'signed levers', 0.10);
 
-  // §6 says the precondition for trimming the log has been met because the knowledge plane shipped.
-  // If that plane is ever removed, the section is claiming a thing that no longer exists.
+  // §6 says the precondition for trimming the log was met because the knowledge plane shipped, and
+  // that the trim then happened. If that plane is ever removed, the section is claiming a thing that
+  // no longer exists — and the pointer CLAUDE.md now leaves in its place would point at nothing.
   assert(fs.existsSync('tools/knowledge.js') && fs.existsSync('knowledge/generated/graph.json'),
-    "GRAPH.md §6 says the knowledge plane shipped and so the stated reason to defer trimming CLAUDE.md "
-    + 'is spent; that claim requires tools/knowledge.js and knowledge/generated/graph.json to exist');
+    'GRAPH.md §6 says the knowledge plane is what made trimming the log safe; that claim requires '
+    + 'tools/knowledge.js and knowledge/generated/graph.json to exist');
 
   console.log('✓ GRAPH.md argues from measured figures, not remembered ones');
 }

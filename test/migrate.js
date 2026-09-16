@@ -396,7 +396,7 @@ assert(idStmt && !/PRIMARY KEY/i.test(idStmt), 'column-level PRIMARY KEY is stri
     [/^INSERT INTO [\s\S]*\bWHERE NOT EXISTS\b/i, 'INSERT … WHERE NOT EXISTS'],
     // An UPDATE is idempotent when it sets constants under a predicate that stops matching (or keeps
     // producing the same result). The occupation seeds are the recorded case — see the E1 note in
-    // CLAUDE.md about a re-boot re-occupying a district players had liberated.
+    // docs/LOG.md about a re-boot re-occupying a district players had liberated.
     [/^UPDATE [\s\S]*\bSET\b[\s\S]*\bWHERE\b/i, 'UPDATE … WHERE (converges)'],
     // A widening to TEXT is idempotent by the type's own definition: text→text is a no-op (Postgres
     // rewrites nothing, relfilenodes are unchanged, PKs over the column are kept), so the second

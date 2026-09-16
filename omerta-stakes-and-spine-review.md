@@ -184,7 +184,7 @@ shipped too (THE APPROACH). The other verbs (endgame collect/bet) stay idle-shap
 - **#4 — THE CITY STANDING (a unifying "who's winning" spine).** 35 leaderboards, no spine → one
   aggregate metric + `GET /v1/leaderboard/city` that ranks players across the axes, so the endgame has a
   single answer to "what am I climbing." Pure status aggregation, zero §10.4. *(see the City Standing
-  commit / CLAUDE.md entry.)*
+  commit / `docs/LOG.md` entry.)*
 - **#5 — free-path legibility (BUILT).** The wage card now carries a plain "Free trial vs Made Man —
   straight facts, no promises" disclosure (a free account plays the WHOLE game; minting unlocks the
   wage payroll + on-chain extraction, nothing else). Facts, not earnings marketing — the gated

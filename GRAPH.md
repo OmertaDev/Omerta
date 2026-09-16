@@ -5,8 +5,9 @@ Workflow Infrastructure* (independent synthesis, 11pp). This file is the operati
 this project's workflow what `program.md` is to Karpathy's autoresearch harness: a natural-language
 control specification, which the paper calls *programming the program*.
 
-`CLAUDE.md` remains the chronological log and the precedent dictionary. This file governs **how work
-is done**, not what has been built.
+`docs/LOG.md` is the chronological log and the precedent dictionary — it moved out of `CLAUDE.md`
+when §6's lever was pulled, and is searched rather than loaded. This file governs **how work is
+done**, not what has been built.
 
 ---
 
@@ -54,10 +55,12 @@ loop, the tools, the planning and the roles are already in place, and it is wher
 Memory here is transcript-shaped, which is precisely the abstraction AgentHub identifies as the
 first to fail once work becomes numerous. The evidence is in the artifacts:
 
-- `CLAUDE.md` is **17,224 lines**, loaded into every session, and states its own job outright:
-  *"precedent lookup: ~414 comments in `src/` cite a pattern by name, and this log is where those
-  names are defined. Read it that way — search it for the precedent you need, don't read it front to
-  back."* That is a graph query, performed by hand, against prose.
+- The drop log is **18,572 lines**, was loaded into every session until §6's lever was pulled, and
+  states its own job outright: *"Its job is PRECEDENT LOOKUP: ~439 comments in `src/` cite a pattern
+  by name … and this file is where those names are defined."* — followed by *"**How to read it:
+  DON'T.** Search it."* That is a graph query, performed by hand, against prose. It now lives in
+  `docs/LOG.md` and is not injected, which removes the cost but not the shape: the lookup is still
+  prose search, and the graph is what answers it structurally.
 - **96 audit reports**, each explicitly point-in-time, holding their findings as prose. "Which
   findings are still open?" cannot be answered without reading all of them — and it cannot be
   answered mechanically either: the reports do not share a finding-header format, so counting them
@@ -190,7 +193,7 @@ tokens, retries, and the **minimum evidence required to finalise**. And the rule
 Control (objectives, plans, budgets) · Execution (tools, tests, sub-agents) · Artifact (immutable
 versioned outputs) · Graph (entities, claims, provenance, lineage) · Evaluation (deterministic
 checks, evaluators, human review). *"The separation prevents one chat transcript from becoming the
-database, workflow engine, and audit log."* — which is exactly what a 17,224-line log is on its way
+database, workflow engine, and audit log."* — which is exactly what an 18,572-line log is on its way
 to becoming.
 
 ### Standing rules
@@ -275,20 +278,30 @@ register's evidence to another's decision.
 should not become a new form of context dumping. Each worker needs a task-specific subgraph…
 serialize within a token budget."*
 
-The largest fixed token cost in this project is `CLAUDE.md` — **17,224 lines**, every session, mostly
-to serve lookups the graph now answers directly. That is the lever, and it is the paper's point
-exactly: place memory outside the context window and retrieve the connected state the current
-decision needs, rather than replaying the whole history.
+The largest fixed token cost in this project was the drop log — **18,572 lines**, injected every
+session inside `CLAUDE.md`, mostly to serve lookups the graph now answers directly. That was the
+lever, and it is the paper's point exactly: place memory outside the context window and retrieve the
+connected state the current decision needs, rather than replaying the whole history.
 
-**Still not acted on — but the precondition it set has been met.** This section said trimming should
-follow the graph proving itself rather than precede it. Since then the knowledge plane shipped
-(`tools/knowledge.js`, ~5,590 nodes and ~24,460 edges over the engineering corpus), it is gated in
-CI, and its artifacts are regenerated on every merge. The stated reason to wait is therefore spent,
-and what remains is the change itself.
+**ACTED ON.** This section said trimming should follow the graph proving itself rather than precede
+it. The knowledge plane shipped (`tools/knowledge.js`, ~5,590 nodes and ~24,460 edges over the
+engineering corpus), it is gated in CI, and its artifacts are regenerated on every merge — so the
+stated reason to wait was spent, and the log moved to `docs/LOG.md`. `CLAUDE.md` is now **155 lines**:
+the ground rules, the sensitive product rules, and a pointer. Roughly 370k tokens of every window
+came back.
+
+**The log was NOT deleted, and the distinction is the whole design.** SPEC §D7 had argued against
+moving it on two grounds — that it is the precedent lookup table, and that it *"only works because it
+is the file a session loads automatically."* The first half the graph now answers. The second half is
+real and survives: a name nobody can find is a name nobody cites, so `CLAUDE.md` keeps a short block
+saying where the log is and how to query it (`grep`, and `node tools/knowledge.js` for the `CITES`
+edges). Discoverability is preserved; the token cost is not.
 
 **The figure above is the third thing this section has understated.** It read 5,630 for long enough
 that the log tripled underneath it, so the case for the lever was being made at a third of its true
 size in the one document written to argue for it. Every figure in §2 was stale in the same
-direction. They are measured from the tree now and pinned by `test/docs.js`, because a document
-whose only value is being accurate is exactly the kind that goes quietly wrong — the same argument
-that put a guard on the launch checklist's ETH prices and on SPEC §1's file counts.
+direction. They are measured from the tree now and pinned by `test/docs.js` — both of them, since the
+lever leaves two numbers rather than one: the log's size is what the argument was about, and
+`CLAUDE.md`'s is what it cost once the argument was acted on. A document whose only value is being
+accurate is exactly the kind that goes quietly wrong — the same argument that put a guard on the
+launch checklist's ETH prices and on SPEC §1's file counts.
