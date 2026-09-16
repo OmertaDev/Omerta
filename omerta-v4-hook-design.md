@@ -188,7 +188,7 @@ for the swap call" — but that is the msg.sender **to the PoolManager**, which 
 is the **router**, not the person. Uniswap documents an `IMsgSender(sender).msgSender()` pattern for
 recovering the real initiator, with a try/catch for routers that don't implement it.
 
-This matters because `CLAUDE.md` records, correctly, that age-based sell rates are **impossible at the
+This matters because `docs/LOG.md` records, correctly, that age-based sell rates are **impossible at the
 ERC-20 layer** — the token sees only `router → pool` and cannot know who is selling. That is why the
 48h `EARLY_SELL_TAX_BPS` decay lives at the game boundary (`tax.js:earlySurcharge`, a FIFO replay of
 the account's own `$OMR` ledger) rather than on-chain.

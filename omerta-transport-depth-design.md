@@ -9,7 +9,7 @@ bonds, watches, etc a bit repetitive … compared to doctor or drug cooking / bo
 the port's heat raises interdiction, a convoy lane's heat sheds the shipper's guard defense — emission-safe,
 pushing route variety) + THE SMUGGLER'S REPUTATION (the existing Teamster/Smuggler legends grant tiered perks
 that MANAGE the heat — faster decay / lower gain — plus a §10.4-neutral docks-toll break). Zero new faucet;
-all numbers founder sign-off levers. See CLAUDE.md + BALANCE.md for the full record.
+all numbers founder sign-off levers. See `docs/LOG.md` + BALANCE.md for the full record.
 
 ## 1. The problem, diagnosed
 

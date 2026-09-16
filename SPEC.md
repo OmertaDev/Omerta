@@ -20,7 +20,7 @@ Census refreshed 2026-09-13 from this workspace, including preexisting untracked
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |
 | Smart contracts | **39** top-level Solidity files, **11379** lines, **1046** declared top-level Foundry test functions; the release gate re-measures the passing suite |
 | Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/bond-dials.js` (sizing the on-chain mint walls), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |
-| Design + audit docs | **589** markdown files, **147414** lines — indexed in `docs/AUDITS.md`, which states they are point-in-time |
+| Design + audit docs | **590** markdown files, **147028** lines — indexed in `docs/AUDITS.md`, which states they are point-in-time |
 | Ledger invariants | **51** checks — **45** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |
 
 Roughly **218,000 lines** of backend code, tests, schema and top-level contracts.
@@ -521,8 +521,10 @@ looks superlinear and produces deadlocks). So capacity here is bought with CPU, 
 rewrite. D6 stays accepted-as-is; the convention is now known to hold under load, not just under review.
 
 ### D7 — Documentation mass **(LOW-MEDIUM, partly addressed)**
-208 markdown files, 60k lines, with CLAUDE.md alone 15156 lines of dense prose. Two codices already
-drifted once (a test now guards it). Onboarding a second developer means reading a novel.
+590 markdown files, 147k lines. Two codices already drifted once (a test now guards it). Onboarding a
+second developer means reading a novel. `CLAUDE.md` — the one file a session loads automatically, so the
+only one whose size is a per-session tax — is now **155 lines**; the drop log it used to carry lives in
+`docs/LOG.md` and is searched rather than loaded (see the reversal below).
 
 **Addressed: the prose that a reader could ACT on is now machine-checked.** Stale prose does not fail
 loudly — it makes the next maintainer confidently do the wrong thing, and this pass found five live
@@ -536,18 +538,27 @@ report; `test/routes.js` asserts the route count, which needs the app booted. Al
 mutation-tested. File COUNTS are exact; LINE totals get a 2% band, because a guard that nags on every
 unrelated edit gets deleted, and every error worth catching here was off by 27%, 140% or 5×.
 
-`docs/AUDITS.md` indexes all 63 audit reports with dates and subjects, and says plainly that they are
-point-in-time records while this file is what is current. They were deliberately NOT relocated: 68
-source comments name a design doc and 32 name an audit report, so moving them would stale 100 references
-to gain a tidier root. CLAUDE.md's chronological drop log was likewise kept in place, for a sharper
-reason — ~414 comments in `src/` cite a pattern by name ("the fade pattern", "the refundPot discipline"),
-and that log is where those names are defined, so it is the codebase's precedent lookup table and it
-only works because it is the file a session loads automatically. It instead gained a header saying what
-it is and how to read it (search it; do not read it front to back), and its stale opening claim that the
-chain is Solana was corrected.
+`docs/AUDITS.md` indexes all 96 audit reports with dates and subjects, and says plainly that they are
+point-in-time records while this file is what is current. They were deliberately NOT relocated: 138
+source comment lines name a design doc and 58 name an audit report, so moving them would stale ~196
+references to gain a tidier root. **That still holds. The matching decision about the drop log has been
+REVERSED, and the halves of its reasoning came apart.** The log was kept inside `CLAUDE.md` because ~439
+comments in `src/` cite a pattern by name ("the fade pattern", "the refundPot discipline", "the
+casino:pvp transfer"), that log is where those names are defined, and — the load-bearing clause — it
+"only works because it is the file a session loads automatically." **The knowledge plane retired that
+clause**: `tools/graph.js` reads every markdown file as a `Source` and its `CITES` edges resolve a named
+precedent to the entry that defines it, so a precedent is findable without the log being injected.
+**What survived is discoverability** — a session that has never seen the file will not think to grep it —
+so `CLAUDE.md` keeps a pointer with the three commands, and the log moved to `docs/LOG.md` (18,572 lines)
+with a header saying what it is and how to read it (search it; do not read it front to back). The cost
+that forced it is the one `GRAPH.md` §6 had already argued and deferred: an always-loaded 18.6k-line
+file is ~370k tokens of every context window, spent before any work begins, to answer questions a grep
+answers in one line.
 
-What remains is the mass itself. 26k lines of markdown is a lot to hand a second developer, and the only
-real reduction would be deleting history, which costs more than it saves.
+What remains is the mass itself. 147k lines of markdown is a lot to hand a second developer, and the only
+real reduction would be deleting history, which costs more than it saves. The reduction that mattered was
+not a deletion but a MOVE: what a session pays for is the always-loaded file, and
+`CLAUDE.md` is 155 lines now.
 
 ### D8 — No real migration tooling **(LOW, guarded)**
 `schema.sql` is all `CREATE TABLE IF NOT EXISTS` plus a derived `ADD COLUMN IF NOT EXISTS` pass. It
@@ -729,11 +740,12 @@ onboarding docs — not for retyping 55,000 lines.
 5. ~~**Split `social.js`** along death/estate | contracts | gangs | combat (D4).~~ **DONE** — seven
    layered modules under `src/social/`, byte-identical bodies, unchanged public surface.
 6. ~~**Consolidate the docs** (D7).~~ **DONE, differently than planned** — the plan was to archive the
-   audit reports; measurement said not to (100 source comments cite a design doc or an audit by name, and
-   CLAUDE.md's log is the precedent lookup table for ~414 more). So the docs were INDEXED rather than
+   audit reports; measurement said not to (~196 source comments cite a design doc or an audit by name, and
+   the drop log is the precedent lookup table for 439 more). So the docs were INDEXED rather than
    moved (`docs/AUDITS.md`, which states they are point-in-time), and every load-bearing figure is now
    machine-checked by `test/docs.js` + `test/routes.js` — five stale claims found and fixed, nine
-   tripwires mutation-tested. See D7.
+   tripwires mutation-tested. The log itself was later MOVED out of `CLAUDE.md` into `docs/LOG.md` —
+   indexed, not archived, and searched rather than loaded. See D7.
 
 ### D13 — One unidentified suite flake **(LOW, open)**
 On 2026-08-02 a full `npm test` failed once with `AssertionError … operator: '==' … expected: 984924900`

@@ -228,4 +228,5 @@ behind the game launch and the two gates.
    sooner they're in motion, the sooner "mainnet" has a real date.
 
 *Runbooks referenced: `DEPLOY.md` (the game), `CHAIN-DEPLOY.md` (mainnet), `SIGN-OFF.md` (economy decisions),
-`CLAUDE.md` (the full system-of-record). Hand the runbooks to your developer; keep this file as your map.*
+`CLAUDE.md` (the ground rules) and `docs/LOG.md` (the drop log — searched, not read front to back).
+Hand the runbooks to your developer; keep this file as your map.*

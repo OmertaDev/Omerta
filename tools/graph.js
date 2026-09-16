@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 // THE GRAPH PLANE — the project's work-and-knowledge graph, built from the repo itself.
 //
-// Why this exists (Graph Engineering, §V and §VI-E): this project's memory is a 17,000-line
-// chronological log plus ~96 point-in-time audit reports plus three decision registers that share one
-// id namespace (see the `open-findings` query for what that costs). CLAUDE.md states
-// its own job outright — "precedent lookup: ~414 comments in src/ cite a pattern by name, and this
-// log is where those names are defined. Read it that way — search it for the precedent you need,
-// don't read it front to back." That is a graph query being performed by hand against prose.
+// Why this exists (Graph Engineering, §V and §VI-E): this project's memory is an 18,572-line
+// chronological log (`docs/LOG.md`) plus ~96 point-in-time audit reports plus three decision registers
+// that share one id namespace (see the `open-findings` query for what that costs). CLAUDE.md states
+// that log's job outright — it is the codebase's PRECEDENT DICTIONARY: ~439 comments in src/ cite a
+// pattern by name ("the fade pattern", "the refundPot discipline"), and the log is where those names
+// are defined, so you grep it for the precedent you need rather than reading it front to back. That
+// is a graph query being performed by hand against prose.
 //
 // The paper's diagnosis is that the bottleneck is not the next model call, it is the PLACEMENT of
 // memory and evaluation. Evaluation here is already strong: a suite per system, a dozen measurement
@@ -199,7 +200,7 @@ export function build() {
 
     lines.forEach((line, i) => {
       const prov = { file: r, line: i + 1 };
-      // CITES — a named precedent. This is the latent ontology CLAUDE.md was built to serve: the
+      // CITES — a named precedent. This is the latent ontology `docs/LOG.md` was built to serve: the
       // codebase talks about "the refundPot discipline" and "the casino:pvp transfer" as if they
       // were types, because they are. Normalised to lowercase so "the Store precedent" and "the
       // store precedent" resolve to one node (the paper's resolution step, done the cheap way that
@@ -324,7 +325,7 @@ export function build() {
   // THE TRAP, and the reason this query reports rather than concludes: those two registers SHARE the
   // D1–D8 namespace. BALANCE's D3 is the public-wash cap (BUILT 2026-07-16); the sheet's D3 is
   // whether the early-exit toll follows the token on-chain (open — its own body still lists options
-  // A/B/C and a recommendation). A naive extractor sees `D3 — BUILT**` in CLAUDE.md and closes the
+  // A/B/C and a recommendation). A naive extractor sees `D3 — BUILT**` in `docs/LOG.md` and closes the
   // wrong one. So an id carried by more than one register is marked AMBIGUOUS and its evidence is
   // shown, never applied. A confidently wrong verdict is worse here than an honest "go and look".
   const DECIDED = /\b(?:SIGNED|BUILT|SHIPPED|CLOSED|DECIDED|RESOLVED|APPLIED|ANSWERED)\b/i;
@@ -580,7 +581,7 @@ const QUERIES = {
   // It REPORTS; it does not adjudicate, and that is a decision rather than an omission. Two things
   // make a verdict unjustifiable here. (1) SIGN-OFF.md and BALANCE.md share the D1–D8 id namespace —
   // BALANCE's D3 is the public-wash cap (BUILT), the sheet's D3 is whether the early-exit toll
-  // follows the token on-chain (its body still lists options A/B/C), so `D3 — BUILT` in CLAUDE.md
+  // follows the token on-chain (its body still lists options A/B/C), so `D3 — BUILT` in `docs/LOG.md`
   // closes one and says nothing about the other. Any id both registers carry is marked AMBIGUOUS and
   // its evidence is shown, never applied. (2) A resolution word in a row's own body is weak: "it is
   // already built that way" inside an argument for option A is not a closure. So a row's status is
