@@ -152,6 +152,7 @@ export async function runBelladonnaPgChecks({
       [crewId, `${prefix}-name`, accounts[0]],
     );
     for (let index = 0; index < accounts.length; index += 1) {
+      await pool.query('INSERT INTO accounts(id,auth_provider,auth_subject) VALUES($1,$2,$1)', [accounts[index], 'test']);
       await pool.query(
         `INSERT INTO characters (id,account_id,name,season,loc,respect,cash)
          VALUES ($1,$2,$3,1,'foundry',10000,10000)`,
@@ -496,6 +497,7 @@ export async function runBelladonnaPgChecks({
       }
       for (const accountId of accounts) {
         await pool.query('DELETE FROM account_persistent WHERE account_id=$1', [accountId]);
+        await pool.query('DELETE FROM accounts WHERE id=$1', [accountId]);
       }
 
       let residueCount = 0;
@@ -510,6 +512,7 @@ export async function runBelladonnaPgChecks({
         );
       }
       for (const accountId of accounts) {
+        residueCount += await n('SELECT COUNT(*) AS n FROM accounts WHERE id=$1', [accountId]);
         residueCount += await n(
           'SELECT COUNT(*) AS n FROM account_persistent WHERE account_id=$1', [accountId],
         );

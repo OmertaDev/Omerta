@@ -5,6 +5,7 @@ import { GameError } from '../game.js';
 import { canonicalBytes } from '../content/canonical.js';
 import { assertPhase2Client, phase2ContextIdentity, registerPhase2Undo } from '../content/phase2-transactions.js';
 import { compileCoordinationGraph, coordinationEvidenceKey } from './graph.js';
+import { normalizeKnowledgeRequirement } from '../world-knowledge.js';
 
 const fail = (code) => { throw new GameError(code, 'The knowledge request could not complete.'); };
 const parse = (value) => typeof value === 'string' ? JSON.parse(value) : value;
@@ -177,6 +178,33 @@ export function createCoordinationKnowledge({ enabled = false, sharingEnabled = 
   }
   function cursor(ctx, purpose, after) { return seal({ purpose, accountId: ctx.accountId, after, expiresAt: Date.now() + TOKEN_MS }); }
 
+  async function matchesRequirements(client, token, inputs) {
+    const ctx = checked(client, token);
+    if (!Array.isArray(inputs) || inputs.length > 16) fail('bad_knowledge_requirement');
+    const requirements = inputs.map(normalizeKnowledgeRequirement);
+    if (!enabledFor(ctx.accountId)) return requirements.map(() => false);
+    const selected = [], ids = new Set();
+    for (const requirement of requirements) {
+      const values = [requirement.contentHash, requirement.domain, requirement.proposition, requirement.sourceRoot];
+      const filter = visibleSql(ctx, values);
+      const candidates = (await client.query(`SELECT c.id FROM coordination_claims c
+        WHERE c.content_hash=$1 AND c.domain=$2 AND c.proposition=$3 AND c.source_root=$4
+          AND ${filter} ORDER BY c.id LIMIT ${MAX_EVIDENCE + 1}`, values)).rows;
+      for (const row of candidates) ids.add(row.id);
+      if (ids.size > MAX_EVIDENCE) return requirements.map(() => false);
+      selected.push(candidates.map((row) => row.id));
+    }
+    // One global claim-lock order across all predicates, matching ACL commands.
+    const locked = await lockClaims(client, [...ids]), eligible = new Map(), cache = new Map();
+    for (const [claimId, claim] of locked) if (await readable(client, ctx, claim)) {
+      eligible.set(claimId, await authentic(client, claim, cache));
+    }
+    return requirements.map((requirement, index) => {
+      const values = selected[index].filter((claimId) => eligible.has(claimId)).map((claimId) => eligible.get(claimId));
+      return values.length > 0 && values.every((value) => hash(value) === hash(requirement.value));
+    });
+  }
+
   return Object.freeze({
     enabledFor, sharingEnabledFor,
     async prelock(client, accountId) { assertPhase2Client(client); id(accountId); return null; },
@@ -226,6 +254,10 @@ export function createCoordinationKnowledge({ enabled = false, sharingEnabled = 
       ctx.issuedClaims.set(claim.id, claim);
       return projectClaim(client, ctx, claim);
     },
+    // Cross-domain predicates use the same live ACL, immutable-source proof and
+    // claim mutex as coordination. Never trust a caller-supplied claim value.
+    matchesRequirements,
+    async matchesRequirement(client, token, input) { return (await matchesRequirements(client, token, [input]))[0]; },
     async resolveGates(client, token, graph) {
       const ctx = checked(client, token), result = new Map();
       if (!enabledFor(ctx.accountId)) return result;

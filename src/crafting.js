@@ -20,13 +20,17 @@ import {
   grantStack,
   registerItemTransactionUndo,
   withItemMutation,
+  inventoryBoard,
 } from './items.js';
 import { levelOf } from './rules.js';
 import { isWorldGraphRegistry, loadGraphPackages, nodeOf } from './worldgraph.js';
 import { validateGraph } from './worldgraph-validate.js';
 import { PHASE1_WORLD_GRAPH_PACKAGES } from './content/phase1.js';
+import { createCoordinationKnowledge } from './coordination/knowledge.js';
+import { normalizeKnowledgeRequirement, knowledgeRequirementKey } from './world-knowledge.js';
 
-const RECIPE_ADAPTERS = new Set(['location', 'skill', 'level', 'owns_car']);
+const RECIPE_ADAPTERS = new Set(['location', 'skill', 'level', 'owns_car', 'knowledge']);
+const CRAFTING_KNOWLEDGE = new WeakMap();
 const CASH_COST_KEYS = new Set(['cashcost', 'costcash', 'cost']);
 const OMR_COST_KEYS = new Set(['omrcost', 'costomr']);
 const CRAFT_CAP_KEYS = new Set(['maxcrafts', 'claimcap', 'cap']);
@@ -153,6 +157,12 @@ function normalizedRecipeEntry(registry, recipe, entry, direction) {
 }
 
 function normalizedRecipeCondition(recipe, condition) {
+  if (condition?.adapter === 'knowledge') {
+    if (Object.keys(condition).some((key) => !['adapter', 'requirement'].includes(key))) {
+      fail('unsupported_recipe_semantics', 'Knowledge conditions contain only a pinned requirement.');
+    }
+    return Object.freeze({ adapter: 'knowledge', requirement: normalizeKnowledgeRequirement(condition.requirement) });
+  }
   if (!condition || typeof condition !== 'object' || Array.isArray(condition)
     || Object.getPrototypeOf(condition) !== Object.prototype) {
     fail('unsupported_recipe_adapter', `Recipe ${recipe.id} has a malformed condition.`);
@@ -348,11 +358,16 @@ export function validateCraftingDefinitions(registry) {
 }
 
 /** Mint opaque runtime authority from an authentic, validated graph registry. */
-export function createCraftingContext({ registry } = {}) {
+export function createCraftingContext({ registry, knowledgeEnabled = false, sharingEnabled = false, accountIds = [] } = {}) {
+  if (typeof knowledgeEnabled !== 'boolean' || typeof sharingEnabled !== 'boolean'
+    || !Array.isArray(accountIds) || accountIds.some((id) => typeof id !== 'string' || !id)) {
+    fail('bad_crafting_context', 'Invalid crafting knowledge policy.');
+  }
   const definitions = normalizedCraftingDefinitions(registry);
   const context = Object.freeze({ registry });
   CRAFTING_CONTEXTS.add(context);
   CRAFTING_DEFINITIONS.set(context, definitions);
+  CRAFTING_KNOWLEDGE.set(context, createCoordinationKnowledge({ enabled: knowledgeEnabled, sharingEnabled, accountIds }));
   return context;
 }
 
@@ -416,12 +431,16 @@ function previewContext(ctx = {}) {
       level,
     },
     skills: asSkillSet(ctx.skills ?? ctx.owned?.skills),
+    knowledge: ctx.knowledge instanceof Set ? ctx.knowledge : new Set(),
     cars: (ctx.cars ?? ctx.owned?.cars ?? []).map(normalizedCar).filter(Boolean),
   };
 }
 
 function blockerFor(condition, context, { selectedCarId = null, deferOwnsCar = false } = {}) {
   const adapter = conditionAdapter(condition);
+  if (adapter === 'knowledge') {
+    return context.knowledge?.has(knowledgeRequirementKey(condition.requirement)) ? null : { adapter: 'knowledge' };
+  }
   if (!RECIPE_ADAPTERS.has(adapter)) {
     fail('unsupported_recipe_adapter', `Unsupported crafting condition adapter ${String(adapter)}.`);
   }
@@ -530,6 +549,7 @@ export function recipeResourceBlockers(recipe, ctx, craftingContext = DEFAULT_CR
 }
 
 function throwBlocker(blocker) {
+  if (blocker.adapter === 'knowledge') fail('knowledge_required', 'Required knowledge is unavailable.');
   if (blocker.adapter === 'location') {
     fail('location', 'That work must be done at the declared facility.', {
       district: blocker.required,
@@ -592,11 +612,13 @@ export function recipeCatalog(ctx = {}, craftingContext = DEFAULT_CRAFTING_CONTE
 
 async function actorContext(client, accountId) {
   const character = (await client.query(
-    `SELECT id, account_id, loc, respect, cash
+    `SELECT id, account_id, loc, respect, cash, alive
        FROM characters WHERE account_id=$1 AND alive FOR UPDATE`,
     [accountId],
   )).rows[0];
   if (!character) fail('no_character', 'Create a character first.');
+  const account = (await client.query('SELECT status FROM accounts WHERE id=$1 FOR SHARE', [accountId])).rows[0];
+  if (account?.status !== 'active') fail('crafting_unavailable', 'Crafting is unavailable.');
   // One node-pg client executes sequentially. Overlapping queries on a checked-out client are
   // deprecated and disappear in pg@9; pg-mem would hide that production-only failure mode.
   const skills = await client.query(
@@ -609,6 +631,8 @@ async function actorContext(client, accountId) {
   );
   return {
     owner: { scope: 'account', id: accountId },
+    knowledgeCharacter: character,
+    knowledge: new Set(),
     character: {
       id: character.id,
       loc: character.loc,
@@ -734,6 +758,38 @@ async function produceRecipeOutputs(client, context, owner, recipe, mutation, pr
   return produced;
 }
 
+async function resolveRecipeKnowledge(client, context, recipe, accountId, actor) {
+  const conditions = conditionsOf(recipe).filter((condition) => condition.adapter === 'knowledge');
+  if (!conditions.length) return;
+  const knowledge = CRAFTING_KNOWLEDGE.get(context);
+  const token = await knowledge.context(client, { accountId, character: actor.knowledgeCharacter, lock: true });
+  const requirements = conditions.map((condition) => condition.requirement);
+  const matches = await knowledge.matchesRequirements(client, token, requirements);
+  matches.forEach((matched, index) => { if (matched) actor.knowledge.add(knowledgeRequirementKey(requirements[index])); });
+}
+
+// Authoritative catalog for routes that offer knowledge-gated recipes. The pure
+// catalog remains a presentation function; mutations always re-evaluate facts.
+export async function recipeCatalogForPlayer(client, accountId, craftingContext, recipeIds) {
+  const context = contextOf(craftingContext);
+  if (!Array.isArray(recipeIds) || recipeIds.length > 50 || recipeIds.some((id) => typeof id !== 'string')) {
+    fail('bad_crafting_request', 'A bounded recipe selection is required.');
+  }
+  const actor = await actorContext(client, canonicalString(accountId, 'Authenticated account id'));
+  const requirements = new Map();
+  for (const recipeId of recipeIds) for (const condition of conditionsOf(recipeOf(context, recipeId))) {
+    if (condition.adapter === 'knowledge') requirements.set(knowledgeRequirementKey(condition.requirement), condition.requirement);
+  }
+  if (requirements.size) {
+    const knowledge = CRAFTING_KNOWLEDGE.get(context);
+    const token = await knowledge.context(client, { accountId, character: actor.knowledgeCharacter, lock: true });
+    const keys = [...requirements.keys()], matched = await knowledge.matchesRequirements(client, token, [...requirements.values()]);
+    matched.forEach((yes, index) => { if (yes) actor.knowledge.add(keys[index]); });
+  }
+  const inventory = await inventoryBoard(client, actor.owner);
+  return recipeCatalog({ ...actor, inventory }, context).filter((recipe) => recipeIds.includes(recipe.id));
+}
+
 /** Execute one non-salvage recipe inside an active `withItemTransaction` callback. */
 export async function craftWorldGraphRecipe(
   client, h, recipeId, idempotencyKey, craftingContext = DEFAULT_CRAFTING_CONTEXT,
@@ -754,6 +810,7 @@ export async function craftWorldGraphRecipe(
     graphMutationAuthority(context, recipe),
     async (mutation) => {
       const actor = await actorContext(client, accountId);
+      await resolveRecipeKnowledge(client, context, recipe, accountId, actor);
       assertRequirements(recipe, actor);
       const cash = await debitRecipeCash(client, actor, recipe);
       const inputs = await consumeRecipeInputs(client, context, owner, recipe, mutation);
@@ -800,6 +857,7 @@ export async function salvageCar(
       // The locked car helper is the sole mutation authority for owns_car. Deferring only this
       // adapter preserves specific listed/pledged/on-chain/race errors while all other gates are
       // still enforced from the actor's locked server state.
+      await resolveRecipeKnowledge(client, context, recipe, accountId, actor);
       assertRequirements(recipe, actor, { selectedCarId: carId, deferOwnsCar: true });
       const cash = await debitRecipeCash(client, actor, recipe);
       const car = await consumeOwnedCarForItemMutation(

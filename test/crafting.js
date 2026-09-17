@@ -11,6 +11,7 @@ import {
   createCraftingContext,
   craftWorldGraphRecipe,
   recipeCatalog,
+  recipeCatalogForPlayer,
   recipeResourceBlockers,
   salvageCar,
   validateCraftingDefinitions,
@@ -271,6 +272,9 @@ try {
     required: 8, current: 6,
   }], 'recipe discovery aggregates repeated exact-quality material requirements');
 
+  for (const accountId of [ACCOUNT, ROLLBACK_ACCOUNT]) {
+    await pool.query('INSERT INTO accounts(id,auth_provider,auth_subject) VALUES($1,$2,$1)', [accountId, 'test']);
+  }
   await pool.query(
     `INSERT INTO characters (id,account_id,name,season,loc,respect,cash)
      VALUES ($1,$2,'Crafting Carla',1,'docks',0,7777),
@@ -736,6 +740,46 @@ try {
     (error) => error?.code === 'idempotency_conflict',
     'a completed key cannot replay for another account owner',
   );
+
+  // A living character, inventory and a car cannot replace a current active account.
+  // These fixtures are otherwise executable so refusal exercises account authority itself.
+  const guardedAccount = 'crafting-account-status', guardedCharacter = 'crafting-account-status-ch';
+  const guardedCar = 'crafting-account-status-car', guardedOwner = { scope: 'account', id: guardedAccount };
+  await pool.query(`INSERT INTO characters(id,account_id,name,season,loc,respect,cash)
+    VALUES($1,$2,'Account Status Crafter',1,'foundry',10000,1000)`, [guardedCharacter, guardedAccount]);
+  await pool.query("INSERT INTO cars(id,character_id,model_id,trim_id,dmg) VALUES($1,$2,'junker','stock',20)",
+    [guardedCar, guardedCharacter]);
+  await tx((client) => grantStack(client, guardedOwner, 'mat:scrap_steel', 4, 'standard',
+    'account status fixture', 'crafting-account-status-seed'));
+  const guardedH = { accountId: guardedAccount, account: { status: 'active' } };
+  const guardedState = async () => ({
+    inventory: await inventoryBoard(pool, guardedOwner),
+    characters: (await pool.query('SELECT * FROM characters WHERE id=$1', [guardedCharacter])).rows,
+    cars: (await pool.query('SELECT * FROM cars WHERE id=$1', [guardedCar])).rows,
+    transactions: (await pool.query('SELECT * FROM transactions WHERE character_id=$1 ORDER BY id', [guardedCharacter])).rows,
+    guards: (await pool.query("SELECT * FROM item_mutation_guards WHERE idempotency_key LIKE 'crafting-account-status-%' ORDER BY idempotency_key")).rows,
+    events: (await pool.query("SELECT * FROM item_events WHERE idempotency_key LIKE 'crafting-account-status-%' ORDER BY sequence")).rows,
+  });
+  for (const status of ['missing', 'banned']) {
+    if (status === 'banned') await pool.query(
+      "INSERT INTO accounts(id,auth_provider,auth_subject,status) VALUES($1,'test',$1,'banned')", [guardedAccount]);
+    const before = await guardedState();
+    await assert.rejects(tx((client) => craftWorldGraphRecipe(client, guardedH,
+      'recipe:hardened_steel', 'crafting-account-status-craft')), { code: 'crafting_unavailable' }, status);
+    await assert.rejects(tx((client) => salvageCar(client, guardedH, guardedCar,
+      'recipe:car_salvage_basic', 'crafting-account-status-salvage')), { code: 'crafting_unavailable' }, status);
+    await assert.rejects(tx((client) => recipeCatalogForPlayer(client, guardedAccount,
+      EXTENDED_CRAFTING, ['recipe:hardened_steel'])), { code: 'crafting_unavailable' }, status);
+    assert.deepEqual(await guardedState(), before,
+      `${status} account refuses craft/salvage/catalog without changing cash, inventory, car, provenance or replay authority`);
+  }
+  await pool.query("UPDATE accounts SET status='active' WHERE id=$1", [guardedAccount]);
+  assert.equal((await tx((client) => craftWorldGraphRecipe(client, guardedH,
+    'recipe:hardened_steel', 'crafting-account-status-craft'))).ok, true,
+  'Account activation admits the previously refused craft key once');
+  assert.equal((await tx((client) => salvageCar(client, guardedH, guardedCar,
+    'recipe:car_salvage_basic', 'crafting-account-status-salvage'))).ok, true,
+  'Account activation admits the previously refused salvage key once');
 
   console.log('✓ graph crafting and atomic automotive salvage passed');
 } finally {

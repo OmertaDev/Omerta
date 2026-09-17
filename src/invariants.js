@@ -957,6 +957,10 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('world graph unique custody and provenance', itemIssues.length, 0, 0,
     { issues: [...new Set(itemIssues)].sort() });
 
+  const { worldKernelInvariants } = await import('./world-kernel-invariants.js');
+  const worldState = await worldKernelInvariants(pool);
+  push('world graph object transitions', worldState.issues.length, 0, 0, { issues: worldState.issues });
+
   // The only Phase 1 cash movement is the exact $300 hardening sink. A completed craft guard is the
   // exactly-once logical action; its matching cash row is the value audit. Mystery and operation
   // mutations have no currency adapter, and any OMR row using their/crafting vocabulary is a hard

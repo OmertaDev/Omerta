@@ -16,7 +16,7 @@ import { compareItemLockEntries } from './item-lock-trace.js';
 const OWNER_SCOPES = new Set(['character', 'account', 'operation']);
 const COMPOSITE_MUTATION_KINDS = new Set([
   'assign_current_character', 'craft', 'salvage_car', 'mystery_action', 'operation_action',
-  'reward_claim',
+  'reward_claim', 'world_action',
 ]);
 const CREATION_PROVENANCE_KINDS = new Set(['crafted', 'salvaged', 'awarded', 'imported']);
 const ESCROW_PROVENANCE_KINDS = new Set(['used_in_mystery', 'used_in_operation']);

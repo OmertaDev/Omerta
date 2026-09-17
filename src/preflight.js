@@ -77,6 +77,7 @@ export const OPERATIONAL_ENV = [
   // Inert coordination pilot: disabled by default; optional account cohort only narrows access.
   'COORDINATION_ENGINE', 'COORDINATION_ACCOUNT_IDS',
   'COORDINATION_KNOWLEDGE', 'COORDINATION_KNOWLEDGE_SHARING',
+  'WORLD_GRAPH_KERNEL',
   // infrastructure
   'DATABASE_URL', 'NODE_ENV', 'PORT', 'PG_POOL_MAX', 'REDIS_URL', 'TRUST_PROXY', 'PUBLIC_URL',
   // Postgres safety valves (db.js). Operational, not gameplay: they bound how long anything may hold

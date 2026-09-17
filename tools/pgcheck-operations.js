@@ -571,6 +571,7 @@ export async function runOperationPgChecks({ pool, check }) {
       [otherCrewId, `${prefix}-other-crew-name`, accounts[4]],
     );
     for (let index = 0; index < accounts.length; index += 1) {
+      await pool.query('INSERT INTO accounts(id,auth_provider,auth_subject) VALUES($1,$2,$1)', [accounts[index], 'test']);
       await pool.query(
         'INSERT INTO account_persistent (account_id) VALUES ($1)', [accounts[index]],
       );
@@ -1340,5 +1341,6 @@ export async function runOperationPgChecks({ pool, check }) {
     await pool.query('DELETE FROM transactions WHERE character_id = ANY($1::text[])', [characters]);
     await pool.query('DELETE FROM characters WHERE id = ANY($1::text[])', [characters]);
     await pool.query('DELETE FROM account_persistent WHERE account_id = ANY($1::text[])', [accounts]);
+    await pool.query('DELETE FROM accounts WHERE id = ANY($1::text[])', [accounts]);
   }
 }

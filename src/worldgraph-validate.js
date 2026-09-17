@@ -1,5 +1,7 @@
 import { loadGraphPackages } from './worldgraph.js';
 
+import { normalizeKnowledgeRequirement } from './world-knowledge.js';
+
 const CONDITION_ADAPTERS = new Set([
   'graph_dependency',
   'location',
@@ -12,6 +14,7 @@ const CONDITION_ADAPTERS = new Set([
   'time_window',
   'explicit_interaction',
   'owns_car',
+  'knowledge',
 ]);
 
 const QUANTITY_FIELDS = [
@@ -298,7 +301,15 @@ function validateConditionList({
 
     let targetId = null;
     let targetType = null;
-    if (adapter === 'graph_dependency') {
+    if (adapter === 'knowledge') {
+      try {
+        if (Object.keys(condition).some((key) => !['adapter', 'requirement'].includes(key))
+          || condition.adapter !== 'knowledge') throw new Error();
+        normalizeKnowledgeRequirement(condition.requirement);
+      } catch {
+        fail('malformed_condition', `${owner} has an invalid pinned knowledge requirement`, { nodeId, roleId, adapter });
+      }
+    } else if (adapter === 'graph_dependency') {
       targetId = field(['nodeId', 'id', 'value']);
     } else if (adapter === 'item_ownership' || adapter === 'owns_item') {
       targetId = field(['templateId', 'itemTemplateId', 'nodeId']);

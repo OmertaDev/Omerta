@@ -842,6 +842,9 @@ console.log('\n7a2. GRAPH CRAFTING AND SALVAGE HOLD UNDER REAL ROW LOCKS');
     board.stacks.find((stack) => stack.templateId === templateId)?.qty || 0,
   );
 
+  for (const accountId of [craftAccount, salvageAccount]) {
+    await pool.query('INSERT INTO accounts(id,auth_provider,auth_subject) VALUES($1,$2,$1)', [accountId, 'test']);
+  }
   await pool.query(
     `INSERT INTO characters (id,account_id,name,season,loc,respect,cash)
      VALUES ($1,$2,$3,1,'foundry',10000,1000),
@@ -1012,6 +1015,7 @@ console.log('\n7a2. GRAPH CRAFTING AND SALVAGE HOLD UNDER REAL ROW LOCKS');
     [[sameCar, differentCar, rollbackCar]]);
   await pool.query('DELETE FROM characters WHERE id = ANY($1::text[])',
     [[craftCharacter, salvageCharacter]]);
+  await pool.query('DELETE FROM accounts WHERE id = ANY($1::text[])', [[craftAccount, salvageAccount]]);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

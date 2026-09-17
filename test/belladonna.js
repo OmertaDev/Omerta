@@ -154,6 +154,7 @@ async function prepareRecoveryOperation(label) {
     [crewId, `${prefix}-name`, accounts[0]],
   );
   for (let index = 0; index < accounts.length; index += 1) {
+    await pool.query('INSERT INTO accounts(id,auth_provider,auth_subject) VALUES($1,$2,$1)', [accounts[index], 'test']);
     await pool.query(
       `INSERT INTO characters (id,account_id,name,season,loc,respect,cash)
        VALUES ($1,$2,$3,1,'foundry',10000,1000)`,
@@ -224,6 +225,7 @@ try {
     [CREW_ID, ACCOUNTS[0]],
   );
   for (let index = 0; index < ACCOUNTS.length; index += 1) {
+    await pool.query('INSERT INTO accounts(id,auth_provider,auth_subject) VALUES($1,$2,$1)', [ACCOUNTS[index], 'test']);
     await pool.query(
       `INSERT INTO characters (id,account_id,name,season,loc,respect,cash)
        VALUES ($1,$2,$3,1,'foundry',10000,10000)`,

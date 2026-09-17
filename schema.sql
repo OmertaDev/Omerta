@@ -4554,7 +4554,7 @@ CREATE TABLE IF NOT EXISTS item_mutation_guards (
   CONSTRAINT item_guard_key CHECK (char_length(idempotency_key) BETWEEN 1 AND 200),
   CONSTRAINT item_guard_kind CHECK (mutation_kind IN (
     'grant_stack','consume_stack','create_item','transfer_item','consume_item','escrow_item','release_escrow',
-    'assign_current_character','craft','salvage_car','mystery_action','operation_action','reward_claim'
+    'assign_current_character','craft','salvage_car','mystery_action','operation_action','reward_claim','world_action'
   )),
   CONSTRAINT item_guard_owner_scope CHECK (owner_scope IN ('character','account','operation')),
   CONSTRAINT item_guard_owner_id CHECK (char_length(owner_id) BETWEEN 1 AND 200),
@@ -4588,7 +4588,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS ix_item_mutation_v2_scope
 ALTER TABLE item_mutation_guards DROP CONSTRAINT IF EXISTS item_guard_kind;
 ALTER TABLE item_mutation_guards ADD CONSTRAINT item_guard_kind CHECK (mutation_kind IN (
   'grant_stack','consume_stack','create_item','transfer_item','consume_item','escrow_item','release_escrow',
-  'assign_current_character','craft','salvage_car','mystery_action','operation_action','reward_claim'
+  'assign_current_character','craft','salvage_car','mystery_action','operation_action','reward_claim','world_action'
 ));
 
 -- All stack movements are recorded too, but unique-item provenance is the hard contract: every
@@ -7121,3 +7121,34 @@ ALTER TABLE item_mutation_outputs DROP CONSTRAINT IF EXISTS item_output_unique_e
 ALTER TABLE item_mutation_outputs ADD CONSTRAINT item_output_unique_event_fk
   FOREIGN KEY (event_id,mutation_id,output_ordinal,event_branch,definition_hash,item_id)
   REFERENCES item_events(id,mutation_id,event_ordinal,event_branch,definition_hash,item_id);
+
+-- World Graph runtime objects. Existing actors, inventories, territories and
+-- knowledge are resolved from their domain tables rather than copied here.
+CREATE TABLE IF NOT EXISTS world_kernel_objects (
+  id TEXT PRIMARY KEY,
+  object_kind TEXT NOT NULL CHECK (object_kind IN ('facility','workshop','world_object')),
+  location_id TEXT NOT NULL,
+  definition_hash TEXT NOT NULL CHECK (char_length(definition_hash)=64),
+  state TEXT NOT NULL,
+  revision INT NOT NULL DEFAULT 0 CHECK (revision >= 0),
+  controller_family_id TEXT REFERENCES gangs(id) ON DELETE SET NULL,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE TABLE IF NOT EXISTS world_kernel_events (
+  id TEXT PRIMARY KEY,
+  object_id TEXT NOT NULL REFERENCES world_kernel_objects(id),
+  revision INT NOT NULL CHECK (revision > 0),
+  mutation_id UUID NOT NULL REFERENCES item_mutation_guards(mutation_id),
+  actor_account_id TEXT NOT NULL,
+  actor_character_id TEXT NOT NULL,
+  crew_id TEXT NOT NULL,
+  family_id TEXT NOT NULL,
+  action_id TEXT NOT NULL,
+  prior_state TEXT NOT NULL,
+  next_state TEXT NOT NULL,
+  item_id TEXT NOT NULL REFERENCES item_instances(id),
+  definition_hash TEXT NOT NULL CHECK (char_length(definition_hash)=64),
+  occurred_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (object_id,revision),
+  UNIQUE (mutation_id)
+);
