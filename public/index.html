@@ -1187,6 +1187,29 @@
   font:inherit;font-size:12px;padding:4px 10px;cursor:pointer;white-space:nowrap}
 .toast-x{margin-left:6px;background:none;border:0;color:inherit;opacity:.6;cursor:pointer;font-size:13px}
 
+  .world-board { max-width: 1180px; margin: auto; }
+  .world-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 18px; margin-bottom: 18px; }
+  .world-heading h2 { font-size: clamp(28px, 4vw, 44px); margin: 4px 0 8px; }
+  .world-heading p { color: var(--dim); max-width: 620px; line-height: 1.6; margin: 0; }
+  .world-summary { display: flex; flex-wrap: wrap; gap: 10px 24px; padding: 14px 0 20px; }
+  .world-columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: start; }
+  .world-card, .world-notice { border: 1px solid #383238; border-radius: 12px; padding: 20px; background: #151217; overflow-wrap: anywhere; }
+  .world-card h3 { margin: 0 0 12px; color: var(--ink); }
+  .world-card h3:not(:first-child) { margin-top: 24px; }
+  .world-card h4 { margin: 0 0 8px; font-size: 15px; }
+  .world-entry { padding: 16px 0; border-top: 1px solid #302930; }
+  .world-entry p { line-height: 1.5; margin: 6px 0 12px; }
+  .world-entry small { display: block; line-height: 1.5; margin-top: 7px; }
+  .world-actions, .world-readiness { display: flex; flex-wrap: wrap; gap: 8px 12px; margin: 12px 0; }
+  .world-readiness { font-size: 12px; }
+  .world-ready { color: var(--ok); }
+  .world-instance { display: block; width: 100%; margin: 8px 0; text-align: left; }
+  .world-notice { border-color: #8c7543; margin-bottom: 16px; }
+  .world-board button { min-height: 42px; }
+  .world-board button:disabled { opacity: .5; cursor: not-allowed; }
+  .world-board details { margin-top: 12px; }
+  .world-board summary { cursor: pointer; min-height: 32px; color: var(--dim); }
+  @media (max-width: 760px) { .world-columns { grid-template-columns: 1fr; } .world-heading { flex-wrap: wrap; } .world-card { padding: 16px; } }
 </style>
 <link rel="stylesheet" href="/omerta-ui.css?v=20260829-content-desk">
 <style id="district-refresh-style">
@@ -1733,6 +1756,7 @@
   // lang= stamp invited Chrome's Google Translate to machine-translate the English game prose,
   // which mangles the noir jargon and breaks the live-updating DOM). A language is applied ONLY
   // when the player explicitly picks one from the 🌐 menu; the choice is remembered.
+  I18N.en.t_world = 'World';
   const LANG = (() => {
     const saved = localStorage.getItem('omerta_lang');
     return (saved && I18N[saved]) ? saved : 'en';
@@ -4574,6 +4598,91 @@
   }
 
   // ── plumbing ──
+  // Production refresh coordinator; test/world-projection-client.js executes this
+  // exact function in a VM with deferred network responses.
+  function createProjectionRefresh({ request, apply, clear, unauthorized }) {
+    let credential = null, epoch = 0, characterId = null;
+    const lanes = Object.fromEntries(['player', 'world'].map((kind) => [kind,
+      { version: 0, loop: 0, running: false, pending: null, waiters: [], argument: null, interested: false }]));
+    const snapshot = () => ({ epoch, token: credential, characterId });
+    const current = (stamp) => !!credential && stamp.epoch === epoch && stamp.token === credential;
+    function reset(kind, freshLoop = false) {
+      const lane = lanes[kind];
+      lane.version++; lane.pending = null;
+      for (const resolve of lane.waiters.splice(0)) resolve({ ignored: true, code: 499 });
+      if (freshLoop) { lane.loop++; lane.running = false; }
+      if (kind === 'world') clear('world');
+    }
+    function setSession(value) {
+      if (credential === value) return;
+      credential = value || null; characterId = null; epoch++;
+      reset('player', true); reset('world', true);
+      lanes.world.interested = false; lanes.world.argument = null;
+      clear('session');
+    }
+    function invalidate(kind, reload = false) {
+      reset(kind);
+      return reload && credential ? refresh(kind, lanes[kind].argument) : Promise.resolve({ ignored: true, code: 499 });
+    }
+    function refresh(kind, argument = null) {
+      if (!credential) return Promise.resolve({ ignored: true, code: 499 });
+      const lane = lanes[kind];
+      lane.version++; lane.argument = argument; lane.interested = true;
+      lane.pending = { ...snapshot(), version: lane.version, argument };
+      if (kind === 'world') clear('world');
+      const result = new Promise((resolve) => lane.waiters.push(resolve));
+      drain(kind);
+      return result;
+    }
+    async function drain(kind) {
+      const lane = lanes[kind];
+      if (lane.running) return;
+      lane.running = true;
+      const loop = lane.loop;
+      try {
+        while (lane.pending && loop === lane.loop) {
+          const ticket = lane.pending; lane.pending = null;
+          const isCurrent = () => current(ticket) && lane.version === ticket.version && lane.loop === loop;
+          const path = kind === 'player' ? '/v1/projections/player'
+            : '/v1/projections/world' + (ticket.argument ? '?operationId=' + encodeURIComponent(ticket.argument) : '');
+          let result;
+          try { result = await request(path, { ...ticket, isCurrent }); }
+          catch { result = { code: 503, body: { error: 'offline' } }; }
+          if (!isCurrent()) continue;
+          if (result.code === 401 || (kind === 'player' && result.code === 403)) { setSession(null); unauthorized(); continue; }
+          if (result.code < 400 && result.body?.schemaVersion !== 1) {
+            result = { code: 502, body: { error: 'projection_invalid' } };
+          }
+          if (kind === 'player' && result.code < 400) {
+            const who = result.body.player?.character || result.body.player;
+            if (!who || typeof who.id !== 'string' || typeof who.name !== 'string') {
+              result = { code: 502, body: { error: 'projection_invalid' } };
+            } else if (who.id !== characterId) {
+              characterId = who.id; epoch++;
+              reset('world', true);
+              if (lanes.world.interested) refresh('world', lanes.world.argument);
+            }
+          }
+          if (kind === 'player' && result.code === 404) {
+            characterId = null; epoch++; reset('world', true); clear('player');
+          }
+          if (kind === 'world' && result.code < 400 && characterId
+            && result.body.player?.character?.id !== characterId) {
+            clear('world');
+            result = { code: 409, body: { error: 'projection_character_changed' } };
+            refresh('player');
+          }
+          apply(kind, result);
+          const delivered = { ...result, stamp: snapshot() };
+          for (const resolve of lane.waiters.splice(0)) resolve(delivered);
+        }
+      } finally { if (loop === lane.loop) lane.running = false; }
+    }
+    return Object.freeze({ setSession, invalidate, snapshot, current,
+      player: () => refresh('player'), world: (operationId = null) => refresh('world', operationId) });
+  }
+  // End projection refresh coordinator.
+
   const uuid = () => (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random());
   // ONE AUTHED REQUEST AT A TIME. Every authed call runs through withCharacter, which takes an
   // EXCLUSIVE row lock on your character (`SELECT … FOR UPDATE`) — because even a read does lazy
@@ -4590,8 +4699,19 @@
   // KEYLESS calls stay parallel — /v1/rules, /v1/city, /v1/online take no lock and needn't wait.
   let _authQueue = Promise.resolve();
   async function api(method, path, body, options = {}) {
-    if (!token) return apiNow(method, path, body, options);
-    const mine = _authQueue.then(() => apiNow(method, path, body, options));
+    const authToken = token;
+    const valid = () => token === authToken && (!options.isCurrent || options.isCurrent());
+    const run = async () => {
+      const neutral = { ignored: true, code: 499, body: { error: 'session_changed' } };
+      if (!valid()) return neutral;
+      const result = await apiNow(method, path, body, { ...options, authToken });
+      return valid() ? result : neutral;
+    };
+    if (method !== 'GET' && !path.startsWith('/v1/auth/') && !path.startsWith('/v1/access/')) {
+      projections.invalidate('player'); projections.invalidate('world');
+    }
+    if (!authToken) return run();
+    const mine = _authQueue.then(run);
     // the chain must survive a rejection, or one failed call wedges every later one
     _authQueue = mine.catch(() => {});
     return mine;
@@ -4606,7 +4726,7 @@
       r = await fetch(path, { method,
         headers: { ...(body !== undefined ? { 'content-type': 'application/json' } : {}),
           ...(mutating ? { 'Idempotency-Key': options.idempotencyKey || uuid() } : {}),
-          ...(token ? { authorization: 'Bearer ' + token } : {}) },
+          ...(options.authToken ? { authorization: 'Bearer ' + options.authToken } : {}) },
         body: body === undefined ? undefined : JSON.stringify(body) });
     } catch {
       // The request never REACHED a server — the box is down, the deploy is restarting, the phone lost
@@ -4621,6 +4741,188 @@
     // the 30s poll) all call api() and would clobber it with a GET /v1/me dump after every action.
     // act() writes #resp with the ACTION's result instead, so the viewer shows what you actually did.
     return { code: r.status, body: j };
+  }
+  let worldProjection = null, worldSelection = null, worldBusy = false, worldRetry = null;
+  let worldStoredRetry = null;
+  try { worldStoredRetry = JSON.parse(sessionStorage.getItem('omerta_world_pending') || 'null'); } catch { /* storage unavailable */ }
+  let worldStatus = 'Open the World board to see your current operation.';
+  const projections = createProjectionRefresh({
+    request: (path, ticket) => path === '/v1/projections/player'
+      ? api('GET', '/v1/projections/player', undefined, { isCurrent: ticket.isCurrent })
+      : api('GET', '/v1/projections/world' + path.slice('/v1/projections/world'.length), undefined, { isCurrent: ticket.isCurrent }),
+    clear: (kind) => {
+      worldProjection = null;
+      worldStatus = 'Refreshing your world…';
+      if (kind === 'session') {
+        if (me || session || worldRetry) {
+          worldStoredRetry = null;
+          try { sessionStorage.removeItem('omerta_world_pending'); } catch { /* storage unavailable */ }
+        }
+        _authQueue = Promise.resolve(); me = null; session = null;
+        if (ws) { const previousSocket = ws; ws = null; previousSocket.close(); }
+        worldSelection = null; worldRetry = null; worldBusy = false;
+      }
+      if (kind === 'player') me = null;
+      paintWorld();
+    },
+    apply: (kind, result) => {
+      if (kind === 'player') {
+        if (result.code === 404) show('screen-create');
+        if (result.code < 400) {
+          const previousGeneration = me?.generation;
+          me = result.body.player?.character || result.body.player;
+          if (worldStoredRetry) {
+            if (worldStoredRetry.characterId === me.id && typeof worldStoredRetry.idempotencyKey === 'string'
+              && /^\/v1\/(worldgraph|coordination\/operations)(\/|$)/.test(worldStoredRetry.path || '')) worldRetry = worldStoredRetry;
+            else { try { sessionStorage.removeItem('omerta_world_pending'); } catch { /* storage unavailable */ } }
+            worldStoredRetry = null;
+          }
+          if (worldRetry && worldRetry.characterId !== me.id) {
+            worldRetry = null; worldBusy = false;
+            try { sessionStorage.removeItem('omerta_world_pending'); } catch { /* storage unavailable */ }
+          }
+          if (rules) { try { renderSheet(); applyTabVisibility(); } catch (error) { console.error('projection render failed', error); } }
+          if (previousGeneration != null && me.generation > previousGeneration) backfillFeed();
+        }
+        return;
+      }
+      worldProjection = result.code < 400 ? result.body : null;
+      worldStatus = result.code < 400 ? '' : result.code === 404 || result.code === 403
+        ? 'The World board is unavailable for this session.'
+        : result.code === 409 ? 'Your character changed. Refreshing your current street…'
+        : 'The city could not refresh this board. Try again.';
+      paintWorld();
+    },
+    unauthorized: () => {
+      token = null; localStorage.removeItem('omerta_token');
+      if (ws) { ws.close(); ws = null; }
+      show('screen-auth');
+    },
+  });
+
+  async function renderWorld() {
+    paintWorld();
+    if (token && me) await projections.world(worldSelection);
+  }
+  async function worldMutation(move, retry = false) {
+    if (worldBusy || !token || !me || (worldRetry && !retry)) return;
+    const stamp = projections.snapshot();
+    const pending = retry ? worldRetry : { ...move, characterId: me.id, idempotencyKey: uuid() };
+    if (!pending || pending.characterId !== me.id) return;
+    worldBusy = true; worldRetry = pending;
+    try { sessionStorage.setItem('omerta_world_pending', JSON.stringify(pending)); } catch { /* memory retains the same key */ }
+    paintWorld();
+    const options = { idempotencyKey: pending.idempotencyKey,
+      isCurrent: () => projections.current(stamp) && me?.id === pending.characterId };
+    const parts = pending.path.split('/');
+    let result;
+    // Keep the supported command surface explicit, including restored retries.
+    if (parts.length === 7 && parts[2] === 'worldgraph' && parts[3] === 'objects' && parts[5] === 'actions')
+      result = await api('POST', `/v1/worldgraph/objects/${parts[4]}/actions/${parts[6]}`, pending.body || {}, options);
+    else if (parts.length === 7 && parts[2] === 'worldgraph' && parts[3] === 'kernel' && parts[4] === 'recipes' && parts[6] === 'craft')
+      result = await api('POST', `/v1/worldgraph/kernel/recipes/${parts[5]}/craft`, pending.body || {}, options);
+    else if (pending.path === '/v1/coordination/operations')
+      result = await api('POST', '/v1/coordination/operations', pending.body || {}, options);
+    else if (parts.length === 7 && parts[2] === 'coordination' && parts[3] === 'operations' && parts[5] === 'actions')
+      result = await api('POST', `/v1/coordination/operations/${parts[4]}/actions/${parts[6]}`, pending.body || {}, options);
+    else result = { code: 400, body: { message: 'This saved move is no longer supported.' } };
+    if (!projections.current(stamp)) return;
+    worldBusy = false;
+    const uncertain = result.code >= 500 || ['idempotency_in_progress', 'item_commit_unknown', 'item_recovery_required'].includes(result.body?.error);
+    if (!uncertain) {
+      worldRetry = null;
+      try { sessionStorage.removeItem('omerta_world_pending'); } catch { /* storage unavailable */ }
+    }
+    if (result.code < 400) {
+      if (result.body?.operationId) worldSelection = result.body.operationId;
+      toast(pending.label + ' — confirmed.');
+    } else toast(uncertain ? 'The outcome is not confirmed. Retry this move with its saved request key.'
+      : result.body?.message || 'The move could not complete. Refresh the board and review its requirements.', true);
+    await refresh();
+    if (projections.current(stamp)) await projections.world(worldSelection);
+  }
+  function paintWorld() {
+    const target = $('#tab-world');
+    if (!target) return;
+    const board = worldProjection;
+    const moves = [];
+    const name = (value) => String(value ?? '').replace(/^[a-z]+:/, '').replaceAll('_', ' ');
+    const time = (value) => { const date = new Date(value); return Number.isFinite(date.getTime()) ? date.toLocaleString() : ''; };
+    const reasons = (missing) => (missing || []).map((value) => name(typeof value === 'string' ? value : value.code)).join(', ');
+    const button = (label, move, available = true, missing = []) => {
+      const index = moves.push(move) - 1;
+      return `<button class="act" data-world-move="${index}" ${!available || worldBusy || worldRetry ? 'disabled' : ''}>${esc(label)}</button>`
+        + (!available && missing.length ? `<small class="dim">${esc(reasons(missing))}</small>` : '');
+    };
+    const list = (values, render, empty) => values?.length ? values.map(render).join('') : `<p class="dim">${esc(empty)}</p>`;
+    const terms = (values) => (values || []).map((entry) => `${entry.quantity} ${name(entry.templateId)}`).join(' + ');
+    const familyMove = (action, label, operationId) => button(label || name(action.action), {
+      label: label || name(action.action), path: '/v1/coordination/operations/' + encodeURIComponent(operationId)
+        + '/actions/' + encodeURIComponent(action.action), body: action.input || {},
+    }, action.canAttempt === true, action.missing || []);
+    const selected = board?.operations?.selected;
+    const readinessLabels = { rolesFilled: 'Roles filled', participantsEligible: 'Participants eligible', promisesMet: 'Promises made',
+      contributionsMet: 'Contributions delivered', requirementsMet: 'Requirements met', worldReady: 'World ready', approved: 'Approved', ready: 'Ready to execute' };
+    const limited = (value) => value === true || (value && typeof value === 'object' && Object.values(value).some(limited));
+    target.innerHTML = `<div class="world-board">
+      <header class="world-heading"><div><div class="dim">YOUR SHARED CITY</div><h2>World</h2>
+        <p>Bring evidence, equipment and people together. Every move is checked against the current world.</p></div>
+        <button class="act" id="world-refresh" ${worldBusy ? 'disabled' : ''}>Refresh world</button></header>
+      ${worldRetry ? `<div class="world-notice" role="status"><b>A move needs confirmation</b><p>${esc(worldRetry.label)}. Retry uses the same request key.</p>
+        <button class="act" id="world-retry" ${worldBusy ? 'disabled' : ''}>${worldBusy ? 'Checking…' : 'Retry saved move'}</button></div>` : ''}
+      ${!board ? `<div class="world-card" role="status"><p>${esc(worldStatus)}</p></div>` : `
+      <div class="world-summary"><span>${esc(board.player?.character?.name || me?.name || '')} · ${esc(name(board.player?.character?.locationId))}</span>
+        <span>Crew: ${esc(board.crew?.name || 'None')}</span><span>Family: ${esc(board.family?.name || 'None')}</span>
+        <small class="dim">Updated ${esc(time(board.asOf))}</small></div>
+      ${limited(board.truncated) || limited(board.inventory?.truncated) || board.knowledge?.truncated || board.operations?.truncated
+        ? '<p class="dim">This is a limited view of your available records.</p>' : ''}
+      <div class="world-columns"><section class="world-card"><h3>Places you can change</h3>
+        ${list(board.worldObjects, (object) => `<article class="world-entry"><h4>${esc(object.title)}</h4>
+          <p>${esc(name(object.locationId))} · <b>${esc(name(object.state))}</b></p>
+          ${(object.actions || []).map((action) => button(name(action.actionId), { label: name(action.actionId),
+            path: '/v1/worldgraph/objects/' + encodeURIComponent(object.id) + '/actions/' + encodeURIComponent(action.actionId),
+            body: { itemId: action.itemId, expectedRevision: action.expectedRevision } }, action.canAttempt === true, action.missing || [])).join('')}</article>`,
+        'No available places are visible to you yet. Explore and gather evidence.')}
+        <h3>Workshop</h3>${list(board.recipes, (recipe) => `<article class="world-entry"><h4>${esc(recipe.title || name(recipe.id))}</h4>
+          <p class="dim">${esc(terms(recipe.consumes))}${recipe.cashCost ? ` · $${esc(recipe.cashCost)}` : ''} → ${esc(terms(recipe.produces))}</p>
+          ${button('Craft', { label: `Craft ${recipe.title || name(recipe.id)}`, path: '/v1/worldgraph/kernel/recipes/' + encodeURIComponent(recipe.id) + '/craft', body: {} },
+            recipe.canAttempt === true, recipe.missing || [])}</article>`, 'No recipes are available.')}</section>
+      <section class="world-card"><h3>Family operations</h3><p class="dim">Choose a role, commit to its requirements, then deliver your contribution.</p>
+        ${list(board.operations?.catalog, (definition) => `<article class="world-entry"><h4>${esc(definition.title)}</h4>
+          <p class="dim">${esc((definition.roles || []).map((role) => role.title).join(' · '))}</p>
+          ${button('Create operation', { label: 'Create operation', path: '/v1/coordination/operations', body: { definitionId: definition.id } },
+            definition.canCreate === true, definition.missing || [])}</article>`, 'No Family operations are available for this session.')}
+        ${list(board.operations?.instances, (instance, index) => `<button class="act world-instance" data-world-instance="${index}">
+          ${esc(board.operations.catalog?.find((entry) => entry.id === instance.definitionId)?.title || 'Family operation')} · ${esc(name(instance.status))}</button>`, 'No operations have been started.')}
+        ${selected ? `<article class="world-entry"><h3>${esc(selected.title)}</h3><p><b>${esc(name(selected.status))}</b> · expires ${esc(time(selected.expiresAt))}</p>
+          <div class="world-readiness">${Object.entries(readinessLabels).filter(([key]) => selected.readiness && Object.hasOwn(selected.readiness, key)).map(([key, label]) =>
+            `<span class="${selected.readiness[key] ? 'world-ready' : 'dim'}">${selected.readiness[key] ? '✓' : '○'} ${esc(label)}</span>`).join('')}</div>
+          ${(selected.roles || []).map((role) => `<div class="world-entry"><h4>${esc(role.title)} ${role.mine ? '· your role' : role.filled ? '· filled' : '· open'}</h4>
+            ${(role.actions || []).map((action) => familyMove(action, 'Join as ' + role.title, selected.id)).join('')}
+            ${(role.requirements || []).map((required) => `<p>${esc(required.quantity)} ${esc(name(required.templateId || required.kind))} · ${esc(name(required.state))}</p>
+              <div class="world-actions">${(required.actions || []).map((action) => familyMove(action, name(action.action), selected.id)).join('')}</div>`).join('')}</div>`).join('')}
+          <div class="world-actions">${(selected.actions || []).map((action) => familyMove(action, name(action.action), selected.id)).join('')}</div>
+          ${selected.history?.length ? `<details><summary>Operation history</summary>${selected.history.slice(0, 12).map((event) =>
+            `<p>${esc(name(event.kind))} ${event.roleId ? '· ' + esc(name(event.roleId)) : ''}<small class="dim"> ${esc(time(event.at))}</small></p>`).join('')}</details>` : ''}</article>` : ''}</section>
+      <section class="world-card"><h3>Equipment & materials</h3>
+        ${list(board.inventory?.resources, (resource) => `<p><b>${esc(resource.quantity)}</b> ${esc(name(resource.templateId))} <small class="dim">${esc(resource.quality)}</small></p>`, 'No materials held.')}
+        ${list(board.inventory?.items, (item) => `<article class="world-entry"><h4>${esc(name(item.templateId))}</h4><p class="dim">${esc(name(item.state))}</p>
+          <details><summary>Provenance · ${(item.provenance || []).length} records</summary>${(item.provenance || []).map((event) =>
+            `<p>${esc(name(event.kind))} · ${esc(name(event.provenance))}<small class="dim"> ${esc(time(event.occurredAt))}</small></p>`).join('') || '<p class="dim">No visible history.</p>'}</details></article>`, 'No unique equipment held.')}</section>
+      <section class="world-card"><h3>What you know</h3>
+        ${list(board.knowledge?.claims, (claim) => `<article class="world-entry"><h4>${esc(name(claim.proposition))}</h4>
+          <p>${esc(String(claim.value?.value ?? ''))}</p><small class="dim">${esc(name(claim.domain))} · ${claim.owned ? 'Your discovery' : 'Shared with you'} · ${esc(time(claim.discoveredAt))}</small></article>`,
+          'No evidence is currently visible to this character.')}
+        <h3>Recent activity</h3>${list(board.activity, (event) => `<p>${esc(name(event.kind))}<small class="dim"> ${esc(time(event.occurredAt))}</small></p>`, 'No recent visible activity.')}
+        ${board.territories?.length ? `<h3>Territories</h3><p class="dim">${esc(board.territories.map((territory) => territory.name || name(territory.id)).join(' · '))}</p>` : ''}</section></div>`}
+      </div>`;
+    target.querySelector('#world-refresh')?.addEventListener('click', () => projections.world(worldSelection));
+    target.querySelector('#world-retry')?.addEventListener('click', () => worldMutation(worldRetry, true));
+    target.querySelectorAll('[data-world-move]').forEach((node) => node.addEventListener('click', () => worldMutation(moves[Number(node.dataset.worldMove)])));
+    target.querySelectorAll('[data-world-instance]').forEach((node) => node.addEventListener('click', () => {
+      worldSelection = board.operations.instances[Number(node.dataset.worldInstance)].id;
+      projections.world(worldSelection);
+    }));
   }
   // A toast can carry the WAY OUT. Tester feedback (2026-08-11): a refusal that names a place you
   // are not standing in leaves the player hunting for the travel control, and a 3.4s toast is the
@@ -5247,9 +5549,10 @@
   };
 
   async function boot() {
+    projections.setSession(token);
     if (!token) return show('screen-auth');
-    const r = await api('GET', '/v1/me');
-    if (r.code === 401) { token = null; localStorage.removeItem('omerta_token'); return show('screen-auth'); }
+    const r = await projections.player();
+    if (r.ignored || !projections.current(r.stamp)) return;
     if (r.code === 404 || r.body?.error === 'no_character') {
       // a ?ref link stashed a referrer — show it IN the field so link arrivals see it working
       const stashed = localStorage.getItem('omerta_ref');
@@ -5266,12 +5569,14 @@
     // escaped boot(), buildTabs()/connectWs()/backfillFeed() never ran: no tab rail, no bottom nav,
     // no content, and nothing on screen saying why. Reported from production on a phone (a deploy
     // restart), reproduced exactly. A player is never shown a corpse: say it, and heal.
-    const who = r.body?.character || r.body;
+    const who = r.body?.player?.character || r.body?.player;
     if (r.code >= 400 || !who || typeof who.name !== 'string') return showDown(r);
     downStop();
-    me = who;
-    session = (await api('GET', '/v1/session')).body || null;
+    const sessionResult = await api('GET', '/v1/session', undefined, { isCurrent: () => projections.current(r.stamp) });
+    if (!projections.current(r.stamp)) return;
+    session = sessionResult.body || null;
     if (!rules) rules = (await api('GET', '/v1/rules')).body;
+    if (!projections.current(r.stamp)) return;
     show('screen-main');
     // the sheet must never be able to take NAVIGATION down with it — a player with a stale field
     // and a working tab rail can still play; a player with neither can only reload and hope.
@@ -5310,7 +5615,7 @@
   $('#btn-down-retry').onclick = () => { downStop(); $('#down-tick').textContent = 'trying again…'; boot(); };
 
   const landToken = (r) => {
-    if (r.body?.token) { token = r.body.token; localStorage.setItem('omerta_token', token); api('POST', '/v1/access/session', {}).then(() => boot()); return true; }
+    if (r.body?.token) { token = r.body.token; projections.setSession(token); localStorage.setItem('omerta_token', token); api('POST', '/v1/access/session', {}).then(() => boot()); return true; }
     if (r.body?.error === 'invite') { $('#invite-row').classList.remove('hidden'); toast(r.body.message || 'invite only', true); }
     else toast(r.body?.message || r.body?.error || 'no dice', true);
     return false;
@@ -5419,14 +5724,20 @@
       { yes: guest ? 'lose this street' : 'sign out here', no: 'stay', danger: guest,
         alt: guest ? null : 'everywhere' });
     if (!answer) return;
+    const logoutToken = token;
+    projections.setSession(null);
+    show('screen-auth');
     if (answer === 'alt') {
       // Only clear on a CONFIRMED revoke. Telling a worried player their sessions are dead when the
       // call failed is the worst possible lie on this particular button.
       const r = await api('POST', '/v1/auth/logout-all');
-      if (r.code >= 400) { toast(ERRMAP[r.body?.error] || 'couldn’t reach the city to kill those sessions — try again', true); return; }
+      if (token !== logoutToken) return;
+      if (r.code >= 400) { boot(); toast(ERRMAP[r.body?.error] || 'couldn’t reach the city to kill those sessions — try again', true); return; }
     }
     const cleared = await api('POST', '/v1/access/logout', {});
-    if (cleared.code >= 400) { toast('Could not sign out of this browser. Try again.', true); return; }
+    if (token !== logoutToken) return;
+    if (cleared.code >= 400) { boot(); toast('Could not sign out of this browser. Try again.', true); return; }
+    token = null; projections.setSession(null);
     localStorage.removeItem('omerta_token'); location.reload();
   };
   $('#btn-refresh').onclick = () => refresh();
@@ -5897,7 +6208,10 @@
 
   // recent history into the wire so a fresh page isn't blind to what happened while away
   async function backfillFeed() {
-    const r = await api('GET', '/v1/notifications');
+    const stamp = projections.snapshot();
+    if (!projections.current(stamp)) return;
+    const r = await api('GET', '/v1/notifications', undefined, { isCurrent: () => projections.current(stamp) });
+    if (!projections.current(stamp)) return;
     const notes = r.body?.notifications || [];
     for (const n of notes.slice(-20))
       feedLine('me', { type: n.type, ...(typeof n.payload === 'object' ? n.payload : {}) });
@@ -5905,20 +6219,11 @@
     if (!notes.length && $('#feed') && $('#feed').childElementCount === 0)
       statusLine("the wire's quiet — pull a job and the city starts talking.");
     // light the phone badge with any unread DMs waiting from while we were away
-    api('GET', '/v1/phone').then((p) => { if (p.code < 400) phoneBadge(p.body.unreadDm); }).catch(() => {});
+    api('GET', '/v1/phone').then((p) => { if (projections.current(stamp) && p.code < 400) phoneBadge(p.body.unreadDm); }).catch(() => {});
   }
 
   async function refresh() {
-    const r = await api('GET', '/v1/me');
-    if (r.code < 400) {
-      const prevGen = me?.generation; // (F2) capture before the reassign — a bump means the street died
-      me = r.body.character || r.body;
-      renderSheet(); applyTabVisibility();
-      // a generation bump = the street died while we were online. The estate notification is still
-      // undelivered (/v1/notifications is one-shot), so pull it in — feedLine routes `estate` to showDeath.
-      if (prevGen != null && me.generation > prevGen) backfillFeed();
-    }
-    return r;
+    return projections.player();
   }
   // (F2) the death/heir moment — the client never hits screen-create on death (the estate txn auto-
   // creates the heir), so this is the "play for keeps" beat. Rendered from the estate report as it
@@ -6281,7 +6586,7 @@
   // tab labels come from the language packs (T falls back to English if a pack misses a key)
   const TABS = Object.fromEntries(['start', 'profile', 'streets', 'pvp', 'kitchen', 'family', 'map', 'deeds', 'crew', 'discover', 'market', 'garage', 'empire',
     'speakeasy', 'boxing', 'races', 'stable', 'scores', 'loans', 'portfolio', 'estate', 'life', 'pen', 'law',
-    'wire', 'store', 'city', 'den', 'port', 'desk', 'deck'].map((id) => [id, T('t_' + id)]));
+    'wire', 'store', 'city', 'den', 'port', 'desk', 'world', 'deck'].map((id) => [id, T('t_' + id)]));
   // Player language, not implementation taxonomy. Quick jump accepts the job somebody has in mind.
   const TAB_SEARCH = {
     start: ['now', 'today', 'next move', 'home', 'missions'],
@@ -6314,6 +6619,7 @@
     estate: ['safe assets', 'legacy', 'heir', 'country estate'],
     store: ['buy omr', 'shop', 'made man', 'subscription'],
     desk: ['story', 'case', 'content', 'workshop', 'crafting', 'material exchange', 'archive', 'memento'],
+    world: ['world objects', 'knowledge', 'evidence', 'provenance', 'cooperative operation', 'foundry archive'],
     deck: ['raw json', 'api response', 'console', 'developer'],
   };
   // grouped + journey-ordered so the 22 screens read as clusters, not a flat wall
@@ -6323,7 +6629,7 @@
     ['Earners', ['kitchen', 'empire', 'scores', 'market', 'port']],
     ['Vice', ['den', 'speakeasy', 'boxing', 'races', 'stable']],
     ['Blood', ['pvp', 'loans', 'law', 'pen', 'wire']],
-    ['Family', ['family', 'map', 'deeds', 'crew', 'discover', 'profile']],
+    ['Family', ['family', 'world', 'map', 'deeds', 'crew', 'discover', 'profile']],
     ['Legit', ['portfolio', 'estate', 'store']],
     ['Desk', ['desk']],
     ['', ['deck']],
@@ -6358,7 +6664,7 @@
   // (the choice sticks per browser). Veterans are untouched. My Profile stays visible in simple
   // mode ON PURPOSE — it carries the referral share link, and hiding it from exactly the new
   // players who should be sharing it defeats the growth loop.
-  const SIMPLE_TABS = ['start', 'profile', 'streets', 'garage', 'city', 'family', 'desk'];
+  const SIMPLE_TABS = ['start', 'profile', 'streets', 'garage', 'city', 'family', 'world', 'desk'];
   const simpleMode = () => !localStorage.getItem('omerta_alltabs') && (me?.level || 1) < 8;
   // THE TWO-TIER NAV (tester feedback): full mode shows the GROUP rail + only the active group's
   // screens beneath it — never all 24 at once. Simple mode keeps the flat five-tab starter rail
@@ -6482,7 +6788,7 @@
     garage: renderGarage, empire: renderEmpire, speakeasy: renderSpeakeasy, boxing: renderBoxing,
     scores: renderScores, loans: renderLoans, portfolio: renderPortfolio, estate: renderEstate,
     life: renderLife, pen: renderPen, wire: renderWire, store: renderStore, races: renderRaces, port: renderPort, stable: renderStable,
-    crew: renderCrew, discover: renderDiscover, map: renderMap, deeds: renderDeeds, desk: renderContentDesk };
+    crew: renderCrew, discover: renderDiscover, map: renderMap, deeds: renderDeeds, desk: renderContentDesk, world: renderWorld };
   // ── FIRST-VISIT SYSTEM INTROS — the tutorial, scaled across the whole city: the first time a
   // player opens a system they get ONE illustrated sentence on what it is and what to do first.
   // Dismiss is remembered per tab. Prose is English like all game prose (the i18n chrome rule).
@@ -12868,16 +13174,23 @@
     return Math.round(base * (0.7 + Math.random() * 0.6));
   };
   function connectWs() {
-    if (ws) return;
+    if (ws || !token || projections.snapshot().token !== token) return;
+    const socketToken = token;
     try {
       const proto = location.protocol === 'https:' ? 'wss' : 'ws';
       // (red-team R12 F2) pass the session JWT as a subprotocol value, NOT in the URL — a WS URL lands in
       // access/proxy logs + browser history, and this is the same full bearer token (→ account takeover).
-      ws = new WebSocket(`${proto}://${location.host}/v1/ws`, ['bearer', token]);
-      ws.onopen = () => { wsRetries = 0; const d = $('#ws-dot'); d.style.color = 'var(--ok)'; d.classList.add('live'); pollOnline(); };
-      ws.onmessage = (m) => {
+      const socket = new WebSocket(`${proto}://${location.host}/v1/ws`, ['bearer', token]);
+      ws = socket;
+      socket.onopen = () => { if (ws !== socket || token !== socketToken) return; wsRetries = 0; const d = $('#ws-dot'); d.style.color = 'var(--ok)'; d.classList.add('live'); pollOnline(); projections.world(worldSelection); };
+      socket.onmessage = (m) => {
         try {
+          if (ws !== socket || token !== socketToken || projections.snapshot().token !== token) return;
           const ev = JSON.parse(m.data);
+          if (ev.channel === 'projection') {
+            if (ev.changed === true) projections.world(worldSelection);
+            return;
+          }
           feedLine(ev.channel || '?', ev);
           // CONTEXTUAL PUSH OPT-IN — a LIVE urgent event (a contract on your head, a body, an
           // indictment) is the moment alerts obviously matter. Ask once; backfilled history never
@@ -12889,7 +13202,8 @@
           else renderActive();
         } catch { /* noise */ }
       };
-      ws.onclose = () => { const d = $('#ws-dot'); d.style.color = 'var(--bad)'; d.classList.remove('live'); ws = null; wsRetries++; setTimeout(connectWs, wsRetryMs()); };
+      socket.onclose = () => { if (ws !== socket) return; const d = $('#ws-dot'); d.style.color = 'var(--bad)'; d.classList.remove('live'); ws = null;
+        if (token === socketToken && projections.snapshot().token === token) { wsRetries++; setTimeout(connectWs, wsRetryMs()); } };
     } catch { /* headless */ }
   }
 

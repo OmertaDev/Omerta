@@ -2,7 +2,8 @@
 // The caller supplies accountId from server authentication, never from a request owner field.
 import { GameError } from './game.js';
 import { dbCaps } from './db.js';
-import { withItemRead, withItemTransaction } from './items.js';
+import { withItemRead, withItemTransaction, assertItemRead } from './items.js';
+import { assertKnowledgeSnapshot } from './coordination/knowledge.js';
 import { isWorldGraphRegistry } from './worldgraph.js';
 import { DIPLOMACY, dayOf, weekOf, crewObjectiveOf } from './rules.js';
 
@@ -44,6 +45,18 @@ export function createWorldKernelQuery({ pool, knowledge = null, registry = null
       || typeof knowledge.context !== 'function' || typeof knowledge.board !== 'function')) fail();
   if (registry !== null && !isWorldGraphRegistry(registry)) fail();
   return Object.freeze({
+    async readSnapshot(client, authenticatedAccountId, options) {
+      assertItemRead(client);
+      if (!canonical(authenticatedAccountId) || !options || ![Object.prototype, null].includes(Object.getPrototypeOf(options))) fail();
+      for (const key of Reflect.ownKeys(options)) {
+        const descriptor = Object.getOwnPropertyDescriptor(options, key);
+        if (!['limit', 'knowledgeSnapshot', 'asOf'].includes(key) || !descriptor?.enumerable || !Object.hasOwn(descriptor, 'value')) fail();
+      }
+      const { limit } = optionsOf({ limit: options.limit });
+      if (!Number.isSafeInteger(options.asOf) || options.asOf < 0 || options.asOf > 8.64e15) fail();
+      assertKnowledgeSnapshot(client, options.knowledgeSnapshot, authenticatedAccountId);
+      return neighborhood(client, authenticatedAccountId, limit, null, registry, options.knowledgeSnapshot, options.asOf);
+    },
     async snapshot(authenticatedAccountId, options = {}) {
       if (!canonical(authenticatedAccountId)) fail();
       const { limit } = optionsOf(options);
@@ -58,25 +71,23 @@ export function createWorldKernelQuery({ pool, knowledge = null, registry = null
   });
 }
 
-async function neighborhood(client, accountId, limit, knowledge, registry) {
+async function neighborhood(client, accountId, limit, knowledge, registry, knowledgeSnapshot = null, asOf = Date.now()) {
   // One server-owned instant governs expiry and the weekly goal for the whole snapshot.
-  const at = new Date();
+  const at = new Date(asOf);
   // Character -> account -> membership matches the existing coordination knowledge lock order.
   // A dying/replaced street makes REPEATABLE READ fail with contention, rather than mixing heirs.
-  const characters = (await client.query(
-    `SELECT id,account_id,name,loc,alive FROM characters
-      WHERE account_id=$1 AND alive=true ORDER BY id LIMIT 2 FOR SHARE`, [accountId],
-  )).rows;
-  const account = (await client.query('SELECT id,status FROM accounts WHERE id=$1 FOR SHARE', [accountId])).rows[0];
+  const characters = (knowledgeSnapshot
+    ? await client.query('SELECT id,account_id,name,loc,alive FROM characters WHERE account_id=$1 AND alive=true ORDER BY id LIMIT 2', [accountId])
+    : await client.query('SELECT id,account_id,name,loc,alive FROM characters WHERE account_id=$1 AND alive=true ORDER BY id LIMIT 2 FOR SHARE', [accountId])).rows;
+  const account = (knowledgeSnapshot ? await client.query('SELECT id,status FROM accounts WHERE id=$1', [accountId])
+    : await client.query('SELECT id,status FROM accounts WHERE id=$1 FOR SHARE', [accountId])).rows[0];
   if (!account || account.status !== 'active') fail('world_query_unavailable');
   if (characters.length > 1) fail('world_query_corrupt');
   const character = characters[0] ?? null;
-  const membership = (await client.query(
-    'SELECT crew_id FROM crew_members WHERE account_id=$1 FOR SHARE', [accountId],
-  )).rows[0];
-  const familyMembership = character && (await client.query(
-    'SELECT gang_id FROM gang_members WHERE character_id=$1 FOR SHARE', [character.id],
-  )).rows[0];
+  const membership = (knowledgeSnapshot ? await client.query('SELECT crew_id FROM crew_members WHERE account_id=$1', [accountId])
+    : await client.query('SELECT crew_id FROM crew_members WHERE account_id=$1 FOR SHARE', [accountId])).rows[0];
+  const familyMembership = character && (knowledgeSnapshot ? await client.query('SELECT gang_id FROM gang_members WHERE character_id=$1', [character.id])
+    : await client.query('SELECT gang_id FROM gang_members WHERE character_id=$1 FOR SHARE', [character.id])).rows[0];
   const nodes = new Map(), relationships = new Map();
   const truncated = { items: false, resources: false, events: false, knowledge: false,
     crewAffiliation: false, definitions: false, definitionRelationships: false, operations: false, mysteries: false,
@@ -299,11 +310,11 @@ async function neighborhood(client, accountId, limit, knowledge, registry) {
       edge('provenance', worldRef('item', row.item_id), event);
     }
   }
-  if (knowledge?.enabledFor(accountId)) {
-    const ctx = await knowledge.context(client, { accountId, character, lock: true });
-    const board = await knowledge.board(client, ctx, { limit });
-    truncated.knowledge = board.nextCursor !== null;
-    for (const claim of board.claims) {
+  if (knowledgeSnapshot || knowledge?.enabledFor(accountId)) {
+    const board = knowledgeSnapshot ? knowledgeSnapshot.board
+      : await knowledge.board(client, await knowledge.context(client, { accountId, character, lock: true }), { limit });
+    truncated.knowledge = board.nextCursor !== null || board.claims.length > limit;
+    for (const claim of board.claims.slice(0, limit)) {
       const ref = add('knowledge', claim.id, { domain: claim.domain, proposition: claim.proposition,
         value: claim.value, contentHash: claim.contentHash, discoveredAt: claim.discoveredAt });
       edge(claim.owned ? 'discovery' : 'visibility', player, ref);

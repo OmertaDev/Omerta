@@ -114,6 +114,8 @@ import { register as registerContent } from './routes/content.js';
 import { register as registerCoordination } from './routes/coordination.js';
 import { register as registerWorldKernel } from './routes/world-kernel.js';
 import { register as registerFamilyOperations } from './routes/family-operations.js';
+import { register as registerProjections } from './routes/projections.js';
+import { registerProjectionEvents } from './projection-events.js';
 import { register as registerWorldGraph, WORLD_GRAPH_CAPABILITIES } from './routes/worldgraph.js';
 import * as Phone from './phone.js';
 import * as Mega from './megaproject.js';
@@ -1004,6 +1006,10 @@ export async function buildServer() {
   // ban left an already-open socket feeding streets/gang chatter until the client chose to disconnect,
   // falsifying the documented "banned-WS close" guarantee. The ban handler closes every open socket.
   const wsClients = new Map(); // accountId -> Set<socket>
+  const projectionEvents = registerProjectionEvents(app, { pool, bus: G.bus, clients: wsClients,
+    enabled: process.env.WORLD_GRAPH_KERNEL === 'on',
+    accountIds: String(process.env.COORDINATION_ACCOUNT_IDS || '').split(',').map((id) => id.trim()).filter(Boolean),
+    sendable: wsSendable });
   // Coverage needs the same human-only presence boundary as Collision/Discovery. Keep only the
   // already-read classification/context beside the socket registry; no new presence query enters
   // the Agent Turn polling path and no account/character id is returned to a client.
@@ -2134,6 +2140,8 @@ export async function buildServer() {
   registerWorldGraph(app, { pool, auth });
   registerWorldKernel(app, { pool, auth, receiptTrust: coordinationReceiptTrust });
   registerFamilyOperations(app, { pool, auth, receiptTrust: coordinationReceiptTrust });
+  registerProjections(app, { pool, auth,
+    readPlayer: (accountId) => G.readCharacter(pool, accountId, async () => ({})) });
   app.post('/v1/loans/square', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Loans.squareWanted(ch, client, h)));
   // buy is two-party (buyer pays the current lender, becomes the new lender): look up the seller, lock both.
@@ -2804,10 +2812,14 @@ export async function buildServer() {
       // with WS_MAX_BUFFER queued gets its bus events DROPPED, not queued — the 30s poll backfill
       // re-derives anything durable, so the drop costs a live tick and never a notification.
       const send = (channel) => (event) => { try { if (wsSendable(socket)) socket.send(JSON.stringify({ channel, ...event })); } catch { /* gone */ } };
+      const privateSend = (kind, groupId, channel) => (event) => projectionEvents.forwardPrivate({
+        accountId, characterId: me.id, tokenVersion: tokenTv, kind, groupId, event, send: send(channel),
+        close: () => { try { socket.close(4009, 'membership_changed'); } catch { /* gone */ } },
+      });
       const subs = [[`me:${me.id}`, send('me')], ['streets', send('streets')],
         ['activity', send('activity')], ['chat', send('chat')]]; // the public wire: town-wide action ticker + the troll box
-      if (gm?.gang_id) subs.push([`gang:${gm.gang_id}`, send('gang')]);
-      if (cm?.crew_id) subs.push([`crew:${cm.crew_id}`, send('crew')]); // THE CREW ROOM — the small-group live feed
+      if (gm?.gang_id) subs.push([`gang:${gm.gang_id}`, privateSend('family', gm.gang_id, 'gang')]);
+      if (cm?.crew_id) subs.push([`crew:${cm.crew_id}`, privateSend('crew', cm.crew_id, 'crew')]); // THE CREW ROOM — the small-group live feed
       for (const [ev, fn] of subs) G.bus.on(ev, fn);
       let set = wsClients.get(accountId); if (!set) wsClients.set(accountId, set = new Set()); set.add(socket);
       wsCoverage.set(accountId, { accountId, characterId: me.id, loc: me.loc, gangId: gm?.gang_id || null,

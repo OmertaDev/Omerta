@@ -4,11 +4,12 @@ import crypto from 'node:crypto';
 import { GameError, bus } from './game.js';
 import { dbCaps } from './db.js';
 import { canonicalBytes } from './content/canonical.js';
-import { createCoordinationKnowledge, assertKnowledgeProof, knowledgeProofMatches } from './coordination/knowledge.js';
+import { createCoordinationKnowledge, assertKnowledgeProof, knowledgeProofMatches,
+  assertKnowledgeSnapshot, snapshotRequirementMatches } from './coordination/knowledge.js';
 import { normalizeKnowledgeRequirement } from './world-knowledge.js';
 import { isWorldGraphRegistry, nodeOf } from './worldgraph.js';
 import { withItemTransaction, withItemMutation, consumeItem, consumeStack,
-  registerItemTransactionUndo, itemMutationContext, assertItemTransaction, assertOperationMutation, awaitItemReadBarrier } from './items.js';
+  registerItemTransactionUndo, itemMutationContext, assertItemTransaction, assertOperationMutation, awaitItemReadBarrier, assertItemRead } from './items.js';
 
 const fail = (code = 'world_unavailable') => { throw new GameError(code, 'The world request could not complete.'); };
 const text = (value) => {
@@ -202,8 +203,76 @@ export function createWorldKernel({ pool, registry, objects = [], enabled = fals
     pendingNotifications.set(receipt, { client, objectId: row.id, revision, eventId });
     return receipt;
   }
+  async function storedObjects(client) {
+    if (!definitions.length) return [];
+    return (await client.query(`SELECT * FROM world_kernel_objects WHERE id IN
+      (${definitions.map((_, index) => `$${index + 1}`).join(',')})`, definitions.map((definition) => definition.id))).rows;
+  }
   const service = Object.freeze({
     definitions,
+    async readSnapshot(client, accountId, options) {
+      assertItemRead(client); text(accountId);
+      closed(options, ['knowledgeSnapshot', 'asOf'], ['limit']);
+      const snapshot = options.knowledgeSnapshot, asOf = options.asOf, limit = options.limit ?? 50;
+      if (!Number.isSafeInteger(asOf) || asOf < 0 || asOf > 8.64e15
+        || !Number.isSafeInteger(limit) || limit < 1 || limit > 50) fail('bad_world_request');
+      assertKnowledgeSnapshot(client, snapshot, accountId);
+      if (!allowed(accountId)) return { objects: [], truncated: false };
+      const characters = (await client.query('SELECT id,account_id,alive,loc FROM characters WHERE account_id=$1 AND alive=true LIMIT 2', [accountId])).rows;
+      const account = (await client.query('SELECT status FROM accounts WHERE id=$1', [accountId])).rows[0];
+      if (account?.status !== 'active' || characters.length > 1) fail();
+      if (!characters.length) return { objects: [], truncated: false };
+      const ch = characters[0];
+      const membership = (await client.query(`SELECT cm.crew_id FROM crew_members cm
+        JOIN crews c ON c.id=cm.crew_id WHERE cm.account_id=$1`, [accountId])).rows[0];
+      const family = (await client.query(`SELECT gm.gang_id,gm.role FROM gang_members gm
+        JOIN gangs g ON g.id=gm.gang_id WHERE gm.character_id=$1`, [ch.id])).rows[0];
+      const roster = membership ? (await client.query(`SELECT cm.account_id,c.id,a.status,gm.gang_id FROM crew_members cm
+        LEFT JOIN characters c ON c.account_id=cm.account_id AND c.alive=true
+        JOIN accounts a ON a.id=cm.account_id LEFT JOIN gang_members gm ON gm.character_id=c.id
+        WHERE cm.crew_id=$1 ORDER BY cm.account_id LIMIT 5`, [membership.crew_id])).rows : [];
+      const uniformCrew = !!family && roster.length > 0 && roster.length <= 4
+        && new Set(roster.map((member) => member.account_id)).size === roster.length
+        && roster.some((member) => member.account_id === accountId)
+        && roster.every((member) => member.id && member.status === 'active' && member.gang_id === family.gang_id);
+      const stored = new Map((await storedObjects(client)).map((row) => [row.id, row]));
+      const visible = [];
+      for (const definition of definitions) {
+        const state = stateOf(definition, stored.get(definition.id));
+        const known = !definition.knowledge.length || (knowledge.enabledFor(accountId)
+          && definition.knowledge.every((requirement) => snapshotRequirementMatches(client, snapshot,
+            { accountId, characterId: ch.id, requirement, sharingEnabled: knowledge.sharingEnabledFor(accountId) })));
+        if (definition.publicStates.includes(state.state) || known) visible.push({ definition, state, known });
+      }
+      const shown = visible.slice(0, limit);
+      const itemTemplates = [...new Set(shown.flatMap(({ definition, state }) => definition.actions
+        .filter((action) => action.from === state.state).map((action) => action.itemTemplateId)))].sort();
+      const materialTemplates = [...new Set(shown.flatMap(({ definition, state }) => definition.actions
+        .filter((action) => action.from === state.state).flatMap((action) => action.materials.map((material) => material.templateId))))].sort();
+      // The compiler bounds these template sets. Query actual custody over the full
+      // owned inventory, independently of the inventory card's pagination window.
+      const itemRows = itemTemplates.length ? (await client.query(`SELECT template_id,MIN(id) AS item_id FROM item_instances
+        WHERE owner_scope='account' AND owner_id=$1 AND state='active' AND definition_hash IS NULL
+          AND template_id IN (${itemTemplates.map((_, index) => `$${index + 2}`).join(',')}) GROUP BY template_id`, [accountId, ...itemTemplates])).rows : [];
+      const stackRows = materialTemplates.length ? (await client.query(`SELECT template_id,quantity FROM item_stacks
+        WHERE owner_scope='account' AND owner_id=$1 AND quality='standard'
+          AND template_id IN (${materialTemplates.map((_, index) => `$${index + 2}`).join(',')})`, [accountId, ...materialTemplates])).rows : [];
+      const itemIds = new Map(itemRows.map((row) => [row.template_id, row.item_id]));
+      const quantities = new Map(stackRows.map((row) => [row.template_id, Number(row.quantity)]));
+      const objects = shown.map(({ definition, state, known }) => ({ ...project(definition, state),
+        actions: definition.actions.filter((action) => action.from === state.state).map((action) => {
+          const missing = [];
+          if (!family || !['boss', 'underboss'].includes(family.role)) missing.push('family_authority');
+          if (!uniformCrew) missing.push('crew_affiliation');
+          if (ch.loc !== definition.locationId) missing.push('location');
+          if (!known) missing.push('knowledge');
+          if (!itemIds.has(action.itemTemplateId)) missing.push('item');
+          if (action.materials.some((material) => (quantities.get(material.templateId) || 0) < material.quantity)) missing.push('materials');
+          return { actionId: action.id, canAttempt: missing.length === 0, missing,
+            expectedRevision: Number(state.revision), ...(missing.length ? {} : { itemId: itemIds.get(action.itemTemplateId) }) };
+        }) }));
+      return { objects, truncated: visible.length > limit };
+    },
     async list(accountId) {
       if (!allowed(accountId)) fail();
       return withItemTransaction(pool, async (client) => {
@@ -216,8 +285,7 @@ export function createWorldKernel({ pool, registry, objects = [], enabled = fals
     async visibleObjects(client, accountId, character) {
       assertItemTransaction(client);
       if (!allowed(accountId) || !character || character.account_id !== accountId || !character.alive || !definitions.length) return [];
-      const rows = (await client.query(`SELECT * FROM world_kernel_objects WHERE id IN
-        (${definitions.map((_, index) => `$${index + 1}`).join(',')})`, definitions.map((definition) => definition.id))).rows;
+      const rows = await storedObjects(client);
       const stored = new Map(rows.map((row) => [row.id, row]));
       const states = definitions.map((definition) => stateOf(definition, stored.get(definition.id)));
       const requirements = new Map();

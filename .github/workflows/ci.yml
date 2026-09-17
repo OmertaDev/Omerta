@@ -225,6 +225,12 @@ jobs:
           COORDINATION_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check
         run: npm run test:family-operations:postgres
 
+      - name: Player projections and visibility snapshots (real PostgreSQL)
+        if: '!cancelled()'
+        env:
+          WORLD_KERNEL_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check
+        run: npm run test:world-projections:postgres
+
       - name: stock catalog v2 finalized-observation consumer (real PostgreSQL)
         if: '!cancelled()'
         env:

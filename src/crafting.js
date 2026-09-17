@@ -21,12 +21,13 @@ import {
   registerItemTransactionUndo,
   withItemMutation,
   inventoryBoard,
+  assertItemRead,
 } from './items.js';
 import { levelOf } from './rules.js';
 import { isWorldGraphRegistry, loadGraphPackages, nodeOf } from './worldgraph.js';
 import { validateGraph } from './worldgraph-validate.js';
 import { PHASE1_WORLD_GRAPH_PACKAGES } from './content/phase1.js';
-import { createCoordinationKnowledge } from './coordination/knowledge.js';
+import { createCoordinationKnowledge, assertKnowledgeSnapshot, snapshotRequirementMatches } from './coordination/knowledge.js';
 import { normalizeKnowledgeRequirement, knowledgeRequirementKey } from './world-knowledge.js';
 
 const RECIPE_ADAPTERS = new Set(['location', 'skill', 'level', 'owns_car', 'knowledge']);
@@ -770,6 +771,61 @@ async function resolveRecipeKnowledge(client, context, recipe, accountId, actor)
 
 // Authoritative catalog for routes that offer knowledge-gated recipes. The pure
 // catalog remains a presentation function; mutations always re-evaluate facts.
+export async function planCraftingSnapshot(client, accountId, craftingContext, recipeIds) {
+  const scope = assertItemRead(client), runtime = contextOf(craftingContext);
+  if (!Array.isArray(recipeIds) || recipeIds.length > 50 || recipeIds.some((id) => typeof id !== 'string')) fail('bad_crafting_request', 'A bounded recipe selection is required.');
+  const account = (await client.query('SELECT status FROM accounts WHERE id=$1', [accountId])).rows[0];
+  if (account?.status !== 'active') fail('crafting_unavailable', 'Crafting is unavailable.');
+  const rows = (await client.query('SELECT id,account_id,loc,respect,cash,alive FROM characters WHERE account_id=$1 AND alive=true ORDER BY id LIMIT 2', [accountId])).rows;
+  if (rows.length > 1) fail('crafting_unavailable', 'Crafting is unavailable.');
+  const character = rows[0];
+  if (!character) return { groups: [], render: async () => [] };
+  // A public recipe does not declassify its input/output definitions. This public
+  // crafting board omits recipes whose entries would name hidden objects.
+  const recipes = recipeIds.map((recipeId) => recipeOf(runtime, recipeId)).filter((recipe) => recipe.visibility === 'public'
+    && [...inputsOf(recipe), ...outputsOf(recipe)].every((entry) => entry.assetType || nodeOf(runtime.registry, entry.templateId)?.visibility === 'public'));
+  for (const recipe of recipes) {
+    assertNoUnsupportedEconomy(recipe);
+    if (inputsOf(recipe).some((entry) => entry.assetType)) fail('unsupported_salvage_recipe', 'Salvage uses its dedicated board.');
+  }
+  const skills = new Set((await client.query('SELECT skill_id FROM character_skills WHERE character_id=$1', [character.id])).rows.map((r) => r.skill_id));
+  const requirements = new Map();
+  for (const recipe of recipes) for (const condition of conditionsOf(recipe)) if (condition.adapter === 'knowledge') requirements.set(knowledgeRequirementKey(condition.requirement), condition.requirement);
+  return { groups: requirements.size ? [{ accountId, characterId: character.id, requirements: [...requirements.values()] }] : [],
+    render: async (snapshot) => {
+      if (assertItemRead(client) !== scope) fail('bad_crafting_request', 'The recipe snapshot expired.');
+      assertKnowledgeSnapshot(client, snapshot, accountId);
+      const knowledge = new Set(), policy = CRAFTING_KNOWLEDGE.get(runtime);
+      for (const [key, requirement] of requirements) if (policy.enabledFor(accountId)
+        && snapshotRequirementMatches(client, snapshot, { accountId, characterId: character.id, requirement,
+          sharingEnabled: policy.sharingEnabledFor(accountId) })) knowledge.add(key);
+      const cards = [];
+      for (const recipe of recipes) {
+        const context = { character: { id: character.id, loc: character.loc, level: levelOf(Number(character.respect || 0)), cash: Number(character.cash) }, skills, knowledge, cars: [] };
+        const missing = new Set(recipeBlockers(recipe, context).map((b) => b.adapter));
+        if (Number(character.cash) < cashCostOf(recipe)) missing.add('cash');
+        const totals = new Map();
+        for (const entry of inputsOf(recipe)) {
+          const key = JSON.stringify([entry.templateId, entry.quality || QUALITY]);
+          const total = totals.get(key) || { ...entry, quality: entry.quality || QUALITY, quantity: 0 };
+          total.quantity += entry.quantity; totals.set(key, total);
+        }
+        for (const entry of totals.values()) {
+          if (nodeOf(runtime.registry, entry.templateId)?.type === 'material') {
+            const row = (await client.query("SELECT quantity FROM item_stacks WHERE owner_scope='account' AND owner_id=$1 AND template_id=$2 AND quality=$3", [accountId, entry.templateId, entry.quality])).rows[0];
+            if (Number(row?.quantity || 0) < entry.quantity) missing.add('materials');
+          } else {
+            const row = (await client.query("SELECT COUNT(*) AS n FROM item_instances WHERE owner_scope='account' AND owner_id=$1 AND template_id=$2 AND state='active' AND definition_hash IS NULL", [accountId, entry.templateId])).rows[0];
+            if (Number(row?.n || 0) < entry.quantity) missing.add('item');
+          }
+        }
+        cards.push({ id: recipe.id, title: recipe.metadata?.title || recipe.id, canAttempt: missing.size === 0,
+          missing: [...missing], consumes: inputsOf(recipe).map(publicEntry), produces: outputsOf(recipe).map(publicEntry), cashCost: cashCostOf(recipe) });
+      }
+      return cards;
+    } };
+}
+
 export async function recipeCatalogForPlayer(client, accountId, craftingContext, recipeIds) {
   const context = contextOf(craftingContext);
   if (!Array.isArray(recipeIds) || recipeIds.length > 50 || recipeIds.some((id) => typeof id !== 'string')) {

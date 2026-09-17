@@ -232,10 +232,18 @@ export async function withItemRead(queryable, action) {
   if (!registryContext(queryable)) await waitForPgMemTransactions(queryable);
   return withPhase2Read(queryable, async (client) => {
     const release = await acquirePgMemTransaction();
-    const scope = { client, active: true };
+    const scope = { client, active: true, identity: Object.freeze({}) };
     try { return await READ_SCOPE.run(scope, () => action(client)); }
     finally { scope.active = false; release(); }
   });
+}
+
+/** Projection adapters require the caller's active composed read boundary. */
+export function assertItemRead(client) {
+  const scope = READ_SCOPE.getStore();
+  if (!scope?.active || scope.client !== client) fail('item_read_required', 'An active item read snapshot is required.');
+  assertPhase2Client(client);
+  return scope.identity;
 }
 
 function registryContext(client) {

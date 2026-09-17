@@ -4,9 +4,9 @@ import crypto from 'node:crypto';
 import { GameError, bus } from '../game.js';
 import { dbCaps } from '../db.js';
 import { canonicalBytes } from '../content/canonical.js';
-import { withItemTransaction, withItemMutation, registerItemTransactionUndo, itemMutationContext,
+import { withItemTransaction, withItemMutation, registerItemTransactionUndo, itemMutationContext, assertItemRead,
   escrowItem, releaseEscrow, consumeItem, consumeStack, grantStack } from '../items.js';
-import { createCoordinationKnowledge, knowledgeProofMatches } from './knowledge.js';
+import { createCoordinationKnowledge, knowledgeProofMatches, assertKnowledgeSnapshot, snapshotRequirementMatches } from './knowledge.js';
 import { depositCapital, refundCapital, settleCapital } from './capital.js';
 import { compileFamilyOperations, operationSkillValue } from './operation-definitions.js';
 
@@ -55,7 +55,8 @@ const bounded = (roles, promises, cash) => {
 // Lock the complete participant/original-depositor union before Family and operation rows.
 // NOWAIT avoids the existing invite-accept character -> Crew order. A changed union retries;
 // it never acquires a newly discovered participant behind an already locked operation.
-async function authority(client, accountId, operationId = null, assignedAccountId = null, deferChanged = false) {
+async function authority(client, accountId, operationId = null, assignedAccountId = null, deferChanged = false, readOnly = false) {
+  if (readOnly) assertItemRead(client);
   const before = operationId ? await operationRow(client, operationId) : null;
   if (operationId && !before) fail();
   const roles = operationId ? await roster(client, operationId) : [];
@@ -63,7 +64,10 @@ async function authority(client, accountId, operationId = null, assignedAccountI
   const cash = operationId ? await capital(client, operationId) : [];
   bounded(roles, promises, cash);
   const membership = (await client.query('SELECT crew_id FROM crew_members WHERE account_id=$1', [accountId])).rows[0];
-  const crew = membership && (await client.query('SELECT id FROM crews WHERE id=$1 FOR UPDATE', [membership.crew_id])).rows[0];
+  let crew;
+  if (membership) crew = readOnly
+    ? (await client.query('SELECT id FROM crews WHERE id=$1', [membership.crew_id])).rows[0]
+    : (await client.query('SELECT id FROM crews WHERE id=$1 FOR UPDATE', [membership.crew_id])).rows[0];
   const crewAccounts = crew ? (await client.query('SELECT account_id FROM crew_members WHERE crew_id=$1 ORDER BY account_id', [crew.id])).rows.map((r) => r.account_id) : [];
   if (crewAccounts.length > 4) fail('coordination_operation_corrupt');
   const accounts = [...new Set([accountId, ...(assignedAccountId ? [assignedAccountId] : []), ...crewAccounts, ...roles.map((r) => r.account_id),
@@ -77,7 +81,9 @@ async function authority(client, accountId, operationId = null, assignedAccountI
   const characterIds = [...new Set([...current.values(), ...roles.map((r) => r.character_id),
     ...promises.map((r) => r.character_id), ...cash.map((r) => r.character_id)].filter(Boolean))].sort();
   for (const characterId of characterIds) {
-    const locked = dbCaps.skipLocked
+    const locked = readOnly
+      ? await client.query('SELECT * FROM characters WHERE id=$1', [characterId])
+      : dbCaps.skipLocked
       ? await client.query('SELECT * FROM characters WHERE id=$1 FOR UPDATE NOWAIT', [characterId])
       : await client.query('SELECT * FROM characters WHERE id=$1 FOR UPDATE', [characterId]);
     const row = locked.rows[0];
@@ -85,7 +91,9 @@ async function authority(client, accountId, operationId = null, assignedAccountI
   }
   const accountRows = new Map();
   for (const account of accounts) {
-    const locked = dbCaps.skipLocked
+    const locked = readOnly
+      ? await client.query('SELECT id,status FROM accounts WHERE id=$1', [account])
+      : dbCaps.skipLocked
       ? await client.query('SELECT id,status FROM accounts WHERE id=$1 FOR SHARE NOWAIT', [account])
       : await client.query('SELECT id,status FROM accounts WHERE id=$1 FOR SHARE', [account]);
     const row = locked.rows[0];
@@ -97,15 +105,23 @@ async function authority(client, accountId, operationId = null, assignedAccountI
   const ch = chars.get(current.get(accountId));
   const actorFamily = ch && (await client.query('SELECT gang_id,role FROM gang_members WHERE character_id=$1', [ch.id])).rows[0];
   const familyId = before?.family_id || actorFamily?.gang_id;
-  const family = familyId && (await client.query('SELECT id FROM gangs WHERE id=$1 FOR SHARE', [familyId])).rows[0];
+  let family;
+  if (familyId) family = readOnly
+    ? (await client.query('SELECT id FROM gangs WHERE id=$1', [familyId])).rows[0]
+    : (await client.query('SELECT id FROM gangs WHERE id=$1 FOR SHARE', [familyId])).rows[0];
   const families = new Map();
   for (const characterId of characterIds) {
-    families.set(characterId, (await client.query('SELECT gang_id,role FROM gang_members WHERE character_id=$1 FOR SHARE', [characterId])).rows[0]);
+    const membershipRow = readOnly
+      ? await client.query('SELECT gang_id,role FROM gang_members WHERE character_id=$1', [characterId])
+      : await client.query('SELECT gang_id,role FROM gang_members WHERE character_id=$1 FOR SHARE', [characterId]);
+    families.set(characterId, membershipRow.rows[0]);
   }
-  const actualCrew = (await client.query('SELECT crew_id FROM crew_members WHERE account_id=$1 FOR SHARE', [accountId])).rows[0];
+  const actualCrew = readOnly
+    ? (await client.query('SELECT crew_id FROM crew_members WHERE account_id=$1', [accountId])).rows[0]
+    : (await client.query('SELECT crew_id FROM crew_members WHERE account_id=$1 FOR SHARE', [accountId])).rows[0];
   if ((actualCrew?.crew_id ?? null) !== (crew?.id ?? null)) fail('contention');
   if (crew && !same(crewAccounts, (await client.query('SELECT account_id FROM crew_members WHERE crew_id=$1 ORDER BY account_id', [crew.id])).rows.map((r) => r.account_id))) fail('contention');
-  const row = operationId ? await operationRow(client, operationId, true) : null;
+  const row = operationId ? await operationRow(client, operationId, !readOnly) : null;
   if (operationId && (!row || row.family_id !== before.family_id)) fail('contention');
   const changed = operationId && (!same(roleIdentity(roles), roleIdentity(await roster(client, operationId)))
     || !same(promiseIdentity(promises), promiseIdentity(await commitments(client, operationId)))
@@ -118,7 +134,7 @@ async function authority(client, accountId, operationId = null, assignedAccountI
     return accountRows.get(account)?.status === 'active' && currentCh?.alive && families.get(currentCh.id)?.gang_id === familyId;
   });
   return { accountId, row, roles, promises, cash, chars, current, accountRows, families, ch,
-    familyId, family, member, officer, crewId: crew?.id ?? null, uniformCrew, changed };
+    familyId, family, member, officer, crewId: crew?.id ?? null, crewAccounts, uniformCrew, changed };
 }
 
 // Explicit compensation mirrors only this operation's rows for pg-mem. PostgreSQL uses ROLLBACK.
@@ -193,12 +209,13 @@ export function createFamilyOperations({ pool, registry, kernel, definitions = [
     }
     return knowledge.prepareRequirementProof(client, groups);
   }
-  function factMatches(client, proof, a, seat, requirement) {
+  function factMatches(client, proof, a, seat, requirement, readOnlySnapshot = null) {
     return eligible(a, seat) && knowledge.enabledFor(seat.account_id)
-      && knowledgeProofMatches(client, proof, { accountId: seat.account_id, characterId: seat.character_id,
+      && (readOnlySnapshot ? snapshotRequirementMatches : knowledgeProofMatches)(client, readOnlySnapshot || proof, { accountId: seat.account_id, characterId: seat.character_id,
         requirement, sharingEnabled: knowledge.sharingEnabledFor(seat.account_id) });
   }
-  async function readiness(client, a, definition, proof, executing = false) {
+  async function readiness(client, a, definition, proof, executing = false, readOnlySnapshot = null, asOf = Date.now()) {
+    if (readOnlySnapshot) { assertItemRead(client); assertKnowledgeSnapshot(client, readOnlySnapshot, a.accountId); }
     const promises = await commitments(client, a.row.id), cash = await capital(client, a.row.id);
     const rolesFilled = definition.roles.every((role) => a.roles.some((r) => r.role_id === role.id));
     const participantsEligible = rolesFilled && a.roles.every((r) => eligible(a, r));
@@ -209,7 +226,7 @@ export function createFamilyOperations({ pool, registry, kernel, definitions = [
         && r.account_id === seat?.account_id && r.character_id === seat?.character_id);
       promised &&= !!commitment && ['promised', 'fulfilled'].includes(commitment.state);
       fulfilled &&= commitment?.state === 'fulfilled';
-      if (required.kind === 'information') requirementsMet &&= factMatches(client, proof, a, seat, required.knowledge);
+      if (required.kind === 'information') requirementsMet &&= factMatches(client, proof, a, seat, required.knowledge, readOnlySnapshot);
       if (required.kind === 'capability') requirementsMet &&= eligible(a, seat)
         && operationSkillValue(a.chars.get(seat.character_id), required.skill) >= required.minimum;
       if (commitment?.state !== 'fulfilled') continue;
@@ -227,6 +244,7 @@ export function createFamilyOperations({ pool, registry, kernel, definitions = [
     let worldResult;
     if (executing && dbCaps.skipLocked) worldResult = await client.query('SELECT state,revision,definition_hash FROM world_kernel_objects WHERE id=$1 FOR UPDATE NOWAIT', [world.id]);
     else if (executing) worldResult = await client.query('SELECT state,revision,definition_hash FROM world_kernel_objects WHERE id=$1 FOR UPDATE', [world.id]);
+    else if (readOnlySnapshot) worldResult = await client.query('SELECT state,revision,definition_hash FROM world_kernel_objects WHERE id=$1', [world.id]);
     else worldResult = await client.query('SELECT state,revision,definition_hash FROM world_kernel_objects WHERE id=$1 FOR SHARE', [world.id]);
     const worldRow = worldResult.rows[0];
     const executor = a.roles.find((r) => r.role_id === definition.executorRoleId);
@@ -235,14 +253,14 @@ export function createFamilyOperations({ pool, registry, kernel, definitions = [
     let worldReady = executorOfficer && executorCh?.loc === world.locationId
       && (!worldRow || worldRow.definition_hash === world.contentHash)
       && (worldRow?.state ?? world.initialState) === action.from;
-    worldReady &&= world.knowledge.every((requirement) => factMatches(client, proof, a, executor, requirement));
+    worldReady &&= world.knowledge.every((requirement) => factMatches(client, proof, a, executor, requirement, readOnlySnapshot));
     for (const material of action.materials) {
       const row = (await client.query("SELECT quantity FROM item_stacks WHERE owner_scope='operation' AND owner_id=$1 AND template_id=$2 AND quality='standard'", [a.row.id, material.templateId])).rows[0];
       requirementsMet &&= Number(row?.quantity || 0) >= material.quantity;
     }
     const approved = !!a.row.approved_at;
     const ready = rolesFilled && participantsEligible && promised && fulfilled && requirementsMet && worldReady && approved
-      && new Date(a.row.expires_at).getTime() > Date.now() && !TERMINAL.has(a.row.status) && a.row.status !== 'draft';
+      && new Date(a.row.expires_at).getTime() > asOf && !TERMINAL.has(a.row.status) && a.row.status !== 'draft';
     return { rolesFilled, participantsEligible, promisesMet: promised, contributionsMet: fulfilled,
       requirementsMet, worldReady: !!worldReady, approved, ready, expectedWorldRevision: Number(worldRow?.revision || 0) };
   }
@@ -304,6 +322,88 @@ export function createFamilyOperations({ pool, registry, kernel, definitions = [
 
   const api = {
     definitions: compiled,
+    // Two-stage read adapter: plan every predicate before the shared knowledge snapshot.
+    // The closure is bound to this active read and never confers command authority.
+    async planSnapshot(client, accountId, { operationId = null, asOf } = {}) {
+      const readScope = assertItemRead(client);
+      if (!Number.isSafeInteger(asOf) || asOf < 0) fail('bad_coordination_operation_request');
+      if (!enabled || (cohort.size && !cohort.has(accountId))) return { groups: [], render: async () => ({ catalog: [], instances: [], selected: null, truncated: false }) };
+      allowed(accountId); if (operationId !== null) id(operationId);
+      const a = await authority(client, accountId, operationId, null, false, true);
+      if (operationId && !canRead(a)) fail();
+      // Historical selection has its own authorization. Catalog membership always
+      // follows the viewer's current Family, independently of the selected run.
+      const currentFamilyId = a.ch?.alive ? a.families.get(a.ch.id)?.gang_id : null;
+      const currentFamily = currentFamilyId && (await client.query('SELECT id FROM gangs WHERE id=$1', [currentFamilyId])).rows[0];
+      const currentOfficer = !!currentFamily && ['boss', 'underboss'].includes(a.families.get(a.ch.id)?.role);
+      const currentUniformCrew = !!currentFamily && !!a.crewId && a.crewAccounts.length > 0 && a.crewAccounts.every((account) => {
+        const character = a.chars.get(a.current.get(account));
+        return a.accountRows.get(account)?.status === 'active' && character?.alive && a.families.get(character.id)?.gang_id === currentFamilyId;
+      });
+      const definition = a.row ? definitionOf(a.row, true) : null;
+      const groups = [];
+      if (definition && !TERMINAL.has(a.row.status)) for (const role of definition.roles) {
+        const seat = a.roles.find((r) => r.role_id === role.id);
+        if (!eligible(a, seat)) continue;
+        const requirements = role.requirements.filter((r) => r.kind === 'information').map((r) => r.knowledge);
+        if (role.id === definition.executorRoleId) requirements.push(...kernel.definitions.find((d) => d.id === definition.world.objectId).knowledge);
+        if (requirements.length) groups.push({ accountId: seat.account_id, characterId: seat.character_id, requirements });
+      }
+      const rows = (await client.query(`SELECT id,graph_id,status,revision,expires_at FROM world_operations
+        WHERE coordination_mode='family' AND (family_id=$2 OR opened_by_account_id=$1
+          OR id IN (SELECT operation_id FROM world_operation_roles WHERE account_id=$1)
+          OR id IN (SELECT operation_id FROM world_operation_commitments WHERE account_id=$1))
+        ORDER BY created_at DESC,id LIMIT 51`, [accountId, currentFamily ? currentFamilyId : null])).rows;
+      return { groups, render: async (snapshot) => {
+        if (assertItemRead(client) !== readScope) fail('bad_coordination_operation_request');
+        assertKnowledgeSnapshot(client, snapshot, accountId);
+        const state = definition && !TERMINAL.has(a.row.status)
+          ? await readiness(client, a, definition, null, false, snapshot, asOf) : null;
+        let selected = a.row ? await project(client, a, definition, state) : null;
+        if (selected) {
+          const open = !TERMINAL.has(a.row.status), current = open && !!definition && new Date(a.row.expires_at).getTime() > asOf;
+          const seat = a.roles.find((r) => r.account_id === accountId);
+          const action = (name, canAttempt, body = {}, missing = 'operation_requirements') => ({ action: name, canAttempt: !!canAttempt, input: body, missing: canAttempt ? [] : [missing] });
+          selected.actions = [
+            action('publish', current && a.officer && a.row.status === 'draft'),
+            action('approve', current && a.officer && a.row.status !== 'draft'),
+            action('execute', current && a.officer && a.uniformCrew && seat?.role_id === definition?.executorRoleId && state?.ready),
+            action('leave', open && !!seat),
+            action('cancel', open && (a.officer || a.row.opened_by_account_id === accountId)),
+            action('expire', open && new Date(a.row.expires_at).getTime() <= asOf),
+          ];
+          for (const role of selected.roles) {
+            role.actions = [action('join', current && a.member && a.row.status !== 'draft' && !seat && !role.filled, { roleId: role.id })];
+            for (const required of role.requirements) {
+              required.actions = [];
+              if (!role.mine) continue;
+              const declaration = definition?.roles.find((r) => r.id === role.id)?.requirements.find((r) => r.id === required.id);
+              const activePromise = ['promised', 'fulfilled'].includes(required.state);
+              const canCommit = current && a.member && eligible(a, seat) && !activePromise;
+              let canContribute = current && a.member && eligible(a, seat) && required.state === 'promised', itemId = null;
+              if (canContribute && declaration?.kind === 'information') canContribute = factMatches(client, null, a, seat, declaration.knowledge, snapshot);
+              if (canContribute && declaration?.kind === 'capability') canContribute = operationSkillValue(a.ch, declaration.skill) >= declaration.minimum;
+              if (canContribute && declaration?.kind === 'capital') canContribute = Number(a.ch.cash) >= declaration.quantity;
+              if (canContribute && declaration?.kind === 'item') {
+                itemId = (await client.query("SELECT id FROM item_instances WHERE owner_scope='account' AND owner_id=$1 AND template_id=$2 AND state='active' AND definition_hash IS NULL ORDER BY id LIMIT 1", [accountId, declaration.templateId])).rows[0]?.id ?? null;
+                canContribute = !!itemId;
+              }
+              if (canContribute && declaration?.kind === 'resource') {
+                const stack = (await client.query("SELECT quantity FROM item_stacks WHERE owner_scope='account' AND owner_id=$1 AND template_id=$2 AND quality='standard'", [accountId, declaration.templateId])).rows[0];
+                canContribute = Number(stack?.quantity || 0) >= declaration.quantity;
+              }
+              required.actions = [action('commit', canCommit, { requirementId: required.id }),
+                action('contribute', canContribute, { requirementId: required.id, ...(canContribute && itemId ? { itemId } : {}) }),
+                action('withdraw', open && activePromise, { requirementId: required.id })];
+            }
+          }
+        }
+        return { catalog: currentFamily ? compiled.map((d) => ({ ...catalogProjection(d),
+          canCreate: currentOfficer && currentUniformCrew, missing: currentOfficer && currentUniformCrew ? [] : ['family_authority'] })) : [],
+        instances: rows.slice(0, 50).map((r) => ({ id: r.id, definitionId: r.graph_id, status: r.status,
+          revision: Number(r.revision), expiresAt: new Date(r.expires_at).toISOString() })), selected, truncated: rows.length > 50 };
+      } };
+    },
     async catalog(accountId) {
       allowed(accountId);
       return withItemTransaction(pool, async (client) => {

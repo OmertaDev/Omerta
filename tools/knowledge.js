@@ -427,6 +427,17 @@ function routeRegistrationArguments(snippet) {
   return args;
 }
 
+function inlineRouteAuth(routeOptions) {
+  try {
+    const node = parse(`(${routeOptions})`, { ecmaVersion: 'latest' }).body[0].expression;
+    if (node.type !== 'ObjectExpression' || node.properties.some((p) => p.type !== 'Property' || p.computed || p.kind !== 'init')) return false;
+    const fields = node.properties.filter((p) => (p.key.name || p.key.value) === 'preHandler');
+    if (fields.length !== 1 || fields[0].value.type !== 'ArrayExpression') return false;
+    const handlers = fields[0].value.elements;
+    return handlers.length > 0 && handlers.every((handler) => handler?.type === 'Identifier') && handlers[0].name === 'auth';
+  } catch { return false; }
+}
+
 // These two registrars close over auth and use preValidation for their logical
 // receipt key. Recognize the actual AST path, not the spelling of options().
 function guardedRouteSecurity(file, source, routeOptions, method) {
@@ -1027,7 +1038,7 @@ function build(options = {}) {
           || /^\s*guarded\(\s*modAuth\b/.test(routeOptions) ? 'moderator'
         : /preHandler:\s*auth/.test(routeOptions)
           || /^\s*guarded\(\s*auth\b/.test(routeOptions)
-          || worldGraphMutationAuth || guardedSecurity.authenticated ? 'authenticated'
+          || inlineRouteAuth(routeOptions) || worldGraphMutationAuth || guardedSecurity.authenticated ? 'authenticated'
         : /websocket:\s*true/.test(snippet) ? 'token-query'
         : 'public';
       const routeId = `${method} ${url}`;
@@ -1389,6 +1400,6 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
 }
 
 export {
-  build, buildForCheck, callbackFactoryHandlers, currentBranchForSnapshot, finalCallbackCall, guardedRouteSecurity, repositorySnapshotFromState,
+  build, buildForCheck, callbackFactoryHandlers, currentBranchForSnapshot, finalCallbackCall, guardedRouteSecurity, inlineRouteAuth, repositorySnapshotFromState,
   sourceRevisionForSnapshot, validate, render,
 };

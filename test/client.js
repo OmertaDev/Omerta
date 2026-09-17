@@ -6703,7 +6703,7 @@ const ACTFNS = new Map();   // route path → the handler names its registration
     'the WS reconnect must not be a fixed-delay retry — that is the reconnect herd the backoff replaced');
   assert(/wsRetryMs/.test(html) && /Math\.pow\(/.test(html.slice(html.indexOf('wsRetryMs'), html.indexOf('wsRetryMs') + 400)),
     'the WS reconnect uses the jittered exponential wsRetryMs schedule');
-  assert(/onopen\s*=\s*\(\)\s*=>\s*\{\s*wsRetries\s*=\s*0/.test(html),
+  assert(/socket\.onopen\s*=\s*\(\)\s*=>\s*\{\s*if \(ws !== socket \|\| token !== socketToken\) return;\s*wsRetries\s*=\s*0/.test(html),
     'a successful open RESETS the backoff — an ordinary blip must still reconnect fast');
 }
 

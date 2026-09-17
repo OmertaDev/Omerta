@@ -6,6 +6,7 @@ import { canonicalBytes } from '../content/canonical.js';
 import { assertPhase2Client, phase2ContextIdentity, registerPhase2Undo } from '../content/phase2-transactions.js';
 import { compileCoordinationGraph, coordinationEvidenceKey } from './graph.js';
 import { normalizeKnowledgeRequirement } from '../world-knowledge.js';
+import { assertItemRead } from '../items.js';
 
 const fail = (code) => { throw new GameError(code, 'The knowledge request could not complete.'); };
 const parse = (value) => typeof value === 'string' ? JSON.parse(value) : value;
@@ -14,6 +15,8 @@ const iso = (value) => new Date(value).toISOString();
 const contexts = new WeakMap();
 // Server-private capabilities for one complete claim-lock batch and transaction.
 const requirementProofs = new WeakMap(), requirementBatches = new WeakMap();
+// Snapshot-only facts cannot enter the independent executable-proof capability map.
+const readSnapshots = new WeakMap();
 const MAX_PROOF_GROUPS = 8, MAX_PROOF_REQUIREMENTS = 32;
 const MAX_PAGE = 50, MAX_EVIDENCE = 256, MAX_LINKS = 100, MAX_GRANTS = 64, MAX_REBUILD = 2048;
 const MAX_REBUILD_WORK = 4096;
@@ -39,6 +42,31 @@ function checked(client, ctx) {
   return value;
 }
 const proofKey = (accountId, characterId, requirement) => hash([accountId, characterId, requirement]);
+export function assertKnowledgeSnapshot(client, snapshot, viewerAccountId) {
+  const readIdentity = assertItemRead(client);
+  const value = snapshot && readSnapshots.get(snapshot);
+  if (!value || value.client !== client || value.identity !== phase2ContextIdentity(client) || value.readIdentity !== readIdentity
+    || (viewerAccountId !== undefined && value.viewerAccountId !== viewerAccountId)) fail('bad_knowledge_snapshot');
+}
+export function snapshotRequirementMatches(client, snapshot, input) {
+  assertKnowledgeSnapshot(client, snapshot);
+  record(input, ['accountId', 'characterId', 'requirement', 'sharingEnabled'], ['accountId', 'characterId', 'requirement']);
+  id(input.accountId); id(input.characterId);
+  if (input.sharingEnabled !== undefined && typeof input.sharingEnabled !== 'boolean') fail('bad_knowledge_request');
+  const key = proofKey(input.accountId, input.characterId, normalizeKnowledgeRequirement(input.requirement));
+  const matches = readSnapshots.get(snapshot).matches;
+  if (!matches.has(key)) fail('knowledge_snapshot_scope');
+  const entry = matches.get(key);
+  if (input.sharingEnabled !== undefined && entry.sharingEnabled !== input.sharingEnabled) fail('bad_knowledge_snapshot');
+  return entry.matches;
+}
+function freezeData(value) {
+  if (value && typeof value === 'object') {
+    for (const child of Object.values(value)) freezeData(child);
+    Object.freeze(value);
+  }
+  return value;
+}
 export function assertKnowledgeProof(client, proof) {
   assertPhase2Client(client);
   const value = proof && requirementProofs.get(proof);
@@ -128,14 +156,18 @@ export function createCoordinationKnowledge({ enabled = false, sharingEnabled = 
     return `(${alias}.owner_account_id=${owner}${clauses.length ? ` OR ${alias}.id IN
       (SELECT claim_id FROM coordination_claim_grants WHERE active=true AND (${clauses.join(' OR ')}))` : ''})`;
   }
-  async function readable(client, ctx, claim) {
+  async function readable(client, ctx, claim, grantsCache = null) {
     if (!claim) return false;
     if (claim.owner_account_id === ctx.accountId) return true;
     const readers = audience(ctx);
     if (!readers.length) return false;
     // Fresh after immutable claim lock: a pre-lock subquery snapshot alone is not
     // revocation authority at READ COMMITTED isolation.
-    const grants = (await client.query('SELECT * FROM coordination_claim_grants WHERE claim_id=$1 AND active=true', [claim.id])).rows;
+    let grants = grantsCache?.get(claim.id);
+    if (!grants) {
+      grants = (await client.query('SELECT * FROM coordination_claim_grants WHERE claim_id=$1 AND active=true', [claim.id])).rows;
+      grantsCache?.set(claim.id, grants);
+    }
     return grants.some((grant) => readers.some(([kind, principal]) => grant.recipient_kind === kind && grant.recipient_id === principal));
   }
   async function authentic(client, claim, cache = new Map()) {
@@ -265,6 +297,112 @@ export function createCoordinationKnowledge({ enabled = false, sharingEnabled = 
 
   return Object.freeze({
     enabledFor, sharingEnabledFor, prepareRequirementProof,
+    async readSnapshot(client, input) {
+      assertItemRead(client);
+      record(input, ['viewer', 'groups', 'limit'], ['viewer', 'groups']);
+      record(input.viewer, ['accountId', 'characterId'], ['accountId']);
+      const viewer = Object.freeze({ accountId: id(input.viewer.accountId), characterId: input.viewer.characterId });
+      if (viewer.characterId !== undefined && viewer.characterId !== null) id(viewer.characterId);
+      const limit = input.limit ?? MAX_PAGE;
+      if (!Number.isSafeInteger(limit) || limit < 1 || limit > MAX_PAGE
+        || !Array.isArray(input.groups) || input.groups.length > 9) fail('bad_knowledge_request');
+      let count = 0;
+      const groups = input.groups.map((group) => {
+        record(group, ['accountId', 'characterId', 'requirements']);
+        if (!Array.isArray(group.requirements) || group.requirements.length > 64) fail('bad_knowledge_requirement');
+        count += group.requirements.length;
+        return Object.freeze({ accountId: id(group.accountId), characterId: id(group.characterId),
+          requirements: Object.freeze(group.requirements.map(normalizeKnowledgeRequirement)) });
+      });
+      if (count > 64 || new Set([viewer.accountId, ...groups.map((g) => g.accountId)]).size > 9) fail('bad_knowledge_requirement');
+      const readers = new Map();
+      async function reader(accountId, characterId, allowEmpty = false) {
+        if (!readers.has(accountId)) {
+          const account = (await client.query('SELECT status FROM accounts WHERE id=$1', [accountId])).rows[0];
+          const current = (await client.query('SELECT id FROM characters WHERE account_id=$1 AND alive=true LIMIT 2', [accountId])).rows;
+          if (account?.status !== 'active' || current.length > 1) fail('knowledge_unavailable');
+          const actualId = current[0]?.id ?? null;
+          const crew = (await client.query('SELECT crew_id FROM crew_members WHERE account_id=$1', [accountId])).rows[0];
+          const family = actualId && (await client.query('SELECT gang_id FROM gang_members WHERE character_id=$1', [actualId])).rows[0];
+          readers.set(accountId, { accountId, characterId: actualId, crewId: crew?.crew_id ?? null, familyId: family?.gang_id ?? null });
+        }
+        const ctx = readers.get(accountId);
+        if ((!allowEmpty && !ctx.characterId) || (characterId !== undefined && characterId !== ctx.characterId)) fail('knowledge_unavailable');
+        return ctx;
+      }
+      const viewerContext = await reader(viewer.accountId, viewer.characterId, true);
+      const selected = [], union = new Set(), boardIds = [];
+      const addCandidates = (rows) => {
+        for (const row of rows) union.add(row.id);
+        if (union.size > MAX_EVIDENCE) fail('knowledge_snapshot_limit');
+        return rows.map((row) => row.id);
+      };
+      if (enabledFor(viewer.accountId)) {
+        const values = [limit + 1], filter = visibleSql(viewerContext, values);
+        const rows = (await client.query(`SELECT c.id FROM coordination_claims c WHERE ${filter}
+          ORDER BY c.id LIMIT $1`, values)).rows;
+        boardIds.push(...addCandidates(rows));
+      }
+      const queries = new Map();
+      for (const group of groups) {
+        const ctx = await reader(group.accountId, group.characterId);
+        for (const requirement of group.requirements) {
+          let ids = [];
+          const queryKey = hash([group.accountId, requirement.contentHash, requirement.domain, requirement.proposition, requirement.sourceRoot]);
+          if (enabledFor(group.accountId)) {
+            if (!queries.has(queryKey)) {
+              const values = [requirement.contentHash, requirement.domain, requirement.proposition, requirement.sourceRoot];
+              const filter = visibleSql(ctx, values);
+              const rows = (await client.query(`SELECT c.id FROM coordination_claims c
+                WHERE c.content_hash=$1 AND c.domain=$2 AND c.proposition=$3 AND c.source_root=$4
+                  AND ${filter} ORDER BY c.id LIMIT 257`, values)).rows;
+              queries.set(queryKey, addCandidates(rows));
+            }
+            ids = queries.get(queryKey);
+          }
+          selected.push({ ctx, requirement, ids });
+        }
+      }
+      // Plain MVCC reads share the caller's REPEATABLE READ snapshot. No row mutex,
+      // reselection or executable proof is introduced by composing view adapters.
+      const claims = new Map(), values = new Map(), cache = new Map(), grantsCache = new Map();
+      for (const claimId of [...union].sort()) {
+        const claim = (await client.query('SELECT * FROM coordination_claims WHERE id=$1', [claimId])).rows[0];
+        if (!claim) fail('knowledge_corrupt');
+        claims.set(claimId, claim); values.set(claimId, await authentic(client, claim, cache));
+      }
+      const matches = new Map();
+      for (const { ctx, requirement, ids } of selected) {
+        const eligible = [];
+        for (const claimId of ids) if (await readable(client, ctx, claims.get(claimId), grantsCache)) eligible.push(values.get(claimId));
+        matches.set(proofKey(ctx.accountId, ctx.characterId, requirement), {
+          matches: eligible.length > 0 && eligible.every((value) => hash(value) === hash(requirement.value)),
+          sharingEnabled: sharingEnabledFor(ctx.accountId),
+        });
+      }
+      const boardClaims = [];
+      for (const claimId of boardIds.slice(0, limit)) {
+        const claim = claims.get(claimId);
+        if (!await readable(client, viewerContext, claim, grantsCache)) fail('knowledge_unavailable');
+        const card = { id: claim.id, domain: claim.domain, proposition: claim.proposition,
+          value: values.get(claimId), contentHash: claim.content_hash, discoveredAt: iso(claim.discovered_at),
+          owned: claim.owner_account_id === viewer.accountId,
+          source: { kind: 'coordination_discovery', root: claim.source_root } };
+        if (card.owned) {
+          const state = (await client.query('SELECT revision FROM coordination_claim_acl_state WHERE claim_id=$1', [claim.id])).rows[0];
+          if (!state || !Number.isSafeInteger(Number(state.revision))) fail('knowledge_corrupt');
+          const grants = grantsCache.get(claim.id) || (await client.query('SELECT * FROM coordination_claim_grants WHERE claim_id=$1 AND active=true ORDER BY id', [claim.id])).rows;
+          card.aclRevision = Number(state.revision);
+          card.grants = grants.map((grant) => ({ id: grant.id, kind: grant.recipient_kind, label: grant.recipient_label }));
+        }
+        boardClaims.push(card);
+      }
+      const snapshot = freezeData({ board: { claims: boardClaims,
+        nextCursor: boardIds.length > limit ? cursor(viewerContext, 'board', boardClaims.at(-1).id) : null } });
+      readSnapshots.set(snapshot, { client, identity: phase2ContextIdentity(client), readIdentity: assertItemRead(client),
+        viewerAccountId: viewer.accountId, matches });
+      return snapshot;
+    },
     async prelock(client, accountId) { assertPhase2Client(client); id(accountId); return null; },
     async context(client, { accountId, character = null, lock = false }) {
       assertPhase2Client(client); id(accountId);

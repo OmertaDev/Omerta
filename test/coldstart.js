@@ -48,6 +48,7 @@ const DECLARED = {
   '/v1/worldgraph/objects': 'the kernel pilot is explicitly disabled by default; its authenticated object catalog refuses with world_unavailable',
   '/v1/worldgraph/kernel/recipes': 'the kernel pilot is explicitly disabled by default; its authenticated recipe catalog refuses with world_unavailable',
   '/v1/coordination/operations': 'Family operation coordination is explicitly disabled by default; its authenticated catalog refuses with coordination_operation_unavailable',
+  '/v1/projections/world': 'World projections reuse the explicitly disabled kernel rollout and refuse with projection_unavailable',
   // Not an endpoint: the websocket upgrade path. A plain GET is correctly not a thing it serves.
   '/v1/ws': 'the websocket upgrade path, not a GET endpoint',
 };
@@ -79,6 +80,7 @@ const defaultOff = new Map([
   ['/v1/worldgraph/objects', 'world_unavailable'],
   ['/v1/worldgraph/kernel/recipes', 'world_unavailable'],
   ['/v1/coordination/operations', 'coordination_operation_unavailable'],
+  ['/v1/projections/world', 'projection_unavailable'],
 ]);
 for (const p of defaultOff.keys()) assert(paths.includes(p), `default-off route disappeared: ${p}`);
 

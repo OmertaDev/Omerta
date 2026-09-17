@@ -9,6 +9,12 @@ const {
   buildForCheck, currentBranchForSnapshot, repositorySnapshotFromState,
   sourceRevisionForSnapshot, validate, render,
 } = knowledge;
+assert.equal(knowledge.inlineRouteAuth('{ preHandler: [auth, admit], preValidation: validate(true) }'), true);
+for (const options of ['{ preHandler: [admit] }', '{ preHandler: ["auth"] }',
+  '{ preHandler: [auth], ...later }', '{ preHandler: [auth], preHandler: [admit] }',
+  '{ preHandler: [auth, ...later] }', '{ description: "preHandler: [auth]" }']) {
+  assert.equal(knowledge.inlineRouteAuth(options), false, 'only the actual unambiguous inline auth handler supplies provenance');
+}
 for (const [file, mutationOptions] of [
   ['src/routes/world-kernel.js', "options(['itemId', 'expectedRevision'])"],
   ['src/routes/family-operations.js', 'options(true, true)'],
@@ -322,6 +328,15 @@ for (const route of familyRoutes) {
   assert.equal(route.access, 'authenticated');
   assert.equal(route.mutationAuthenticated, route.method === 'POST');
   assert.equal(route.idempotentMutation, route.method === 'POST');
+}
+const projectionRoutes = model.routes.filter(({ file }) => file === 'src/routes/projections.js');
+assert.deepEqual(projectionRoutes.map(({ method, url }) => `${method} ${url}`).sort(), [
+  'GET /v1/projections/player', 'GET /v1/projections/world',
+], 'both projection routes retain their source provenance');
+for (const route of projectionRoutes) {
+  assert.equal(route.access, 'authenticated');
+  assert.equal(route.mutationAuthenticated, false);
+  assert.equal(route.idempotentMutation, false);
 }
 const contentRouteProvenance = [
   ['GET /v1/content', 'authenticated', 'contentBoard'],
