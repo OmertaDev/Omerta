@@ -9,6 +9,8 @@ import { withItemTransaction, withItemMutation, registerItemTransactionUndo, ite
 import { createCoordinationKnowledge, knowledgeProofMatches, assertKnowledgeSnapshot, snapshotRequirementMatches } from './knowledge.js';
 import { depositCapital, refundCapital, settleCapital } from './capital.js';
 import { compileFamilyOperations, operationSkillValue } from './operation-definitions.js';
+import { createWorldPrerequisites, prerequisiteMatches } from '../world-prerequisites.js';
+import { knowledgeRequirementKey } from '../world-knowledge.js';
 
 const TERMINAL = new Set(['completed', 'failed', 'canceled', 'expired']);
 const hash = (value) => crypto.createHash('sha256').update(canonicalBytes(value)).digest('hex');
@@ -165,13 +167,16 @@ async function restoreParticipants(client, operationId) {
 }
 
 export function createFamilyOperations({ pool, registry, kernel, definitions = [], enabled = false,
-  knowledgeEnabled = false, sharingEnabled = false, accountIds = [] } = {}) {
-  if (!pool || !kernel || [enabled, knowledgeEnabled, sharingEnabled].some((v) => typeof v !== 'boolean')
+  knowledgeEnabled = false, sharingEnabled = false, prerequisitesEnabled = false, accountIds = [] } = {}) {
+  if (!pool || !kernel || [enabled, knowledgeEnabled, sharingEnabled, prerequisitesEnabled].some((v) => typeof v !== 'boolean')
     || !Array.isArray(accountIds)) fail('bad_coordination_operation_definition');
   const compiled = compileFamilyOperations(registry, kernel.definitions, definitions);
   const byId = new Map(compiled.map((d) => [d.id, d])), cohort = new Set(accountIds);
   const knowledge = createCoordinationKnowledge({ enabled: enabled && knowledgeEnabled,
     sharingEnabled: enabled && knowledgeEnabled && sharingEnabled, accountIds });
+  const prerequisites = createWorldPrerequisites({ enabled: enabled && prerequisitesEnabled,
+    accountIds, worldDefinitions: kernel.definitions, knowledgeEnabled: enabled && knowledgeEnabled,
+    sharingEnabled: enabled && knowledgeEnabled && sharingEnabled });
   const allowed = (accountId) => { id(accountId); if (!enabled || (cohort.size && !cohort.has(accountId))) fail(); };
   const logicalKey = (accountId, key) => `family-operation:${hash([id(accountId), id(key)])}`;
   const definitionOf = (row, recovery = false) => {
@@ -193,28 +198,51 @@ export function createFamilyOperations({ pool, registry, kernel, definitions = [
       && a.accountRows.get(role.account_id)?.status === 'active' && a.family
       && a.families.get(ch.id)?.gang_id === a.familyId);
   };
+  function roleKnowledge(definition, role) {
+    const requirements = role.requirements.filter((r) => r.kind === 'information').map((r) => r.knowledge);
+    requirements.push(...prerequisites.knowledgeRequirements(role.requirements.filter((r) => r.kind === 'prerequisite').map((r) => r.predicate)));
+    if (role.id === definition.executorRoleId) requirements.push(...kernel.definitions.find((d) => d.id === definition.world.objectId).knowledge);
+    return [...new Map(requirements.map((requirement) => [knowledgeRequirementKey(requirement), requirement])).values()];
+  }
+  function externalPlan(a, definition) {
+    const subjects = definition.roles.flatMap((role) => {
+      const seat = a.roles.find((r) => r.role_id === role.id);
+      return eligible(a, seat) ? [{ key: role.id, accountId: seat.account_id, characterId: seat.character_id }] : [];
+    });
+    const keys = new Set(subjects.map((subject) => subject.key));
+    return { subjects, groups: definition.roles.filter((role) => keys.has(role.id)).map((role) => ({ subjectKey: role.id,
+      requirements: role.requirements.filter((r) => r.kind === 'prerequisite').map((r) => r.predicate)
+        .filter((predicate) => predicate.adapter !== 'social' || !predicate.requirement.subject || keys.has(predicate.requirement.subject)) })) };
+  }
   async function prepareProof(client, a, definition) {
     const groups = [];
     for (const role of definition.roles) {
       const seat = a.roles.find((r) => r.role_id === role.id);
       if (!eligible(a, seat)) continue;
-      const requirements = role.requirements.filter((r) => r.kind === 'information').map((r) => r.knowledge);
-      if (role.id === definition.executorRoleId) {
-        requirements.push(...kernel.definitions.find((d) => d.id === definition.world.objectId).knowledge);
-      }
+      const requirements = roleKnowledge(definition, role);
       if (!requirements.length) continue;
       const context = await knowledge.context(client, { accountId: seat.account_id,
         character: a.chars.get(seat.character_id), lock: true });
       groups.push({ context, requirements });
     }
-    return knowledge.prepareRequirementProof(client, groups);
+    const knowledgeProof = await knowledge.prepareRequirementProof(client, groups);
+    const plan = externalPlan(a, definition);
+    const facts = plan.groups.some((group) => group.requirements.length)
+      ? await prerequisites.prepare(client, { ...plan, asOf: Date.now(), knowledgeProof }) : null;
+    return { knowledge: knowledgeProof, facts };
   }
   function factMatches(client, proof, a, seat, requirement, readOnlySnapshot = null) {
     return eligible(a, seat) && knowledge.enabledFor(seat.account_id)
-      && (readOnlySnapshot ? snapshotRequirementMatches : knowledgeProofMatches)(client, readOnlySnapshot || proof, { accountId: seat.account_id, characterId: seat.character_id,
+      && (readOnlySnapshot ? snapshotRequirementMatches : knowledgeProofMatches)(client, readOnlySnapshot || proof?.knowledge, { accountId: seat.account_id, characterId: seat.character_id,
         requirement, sharingEnabled: knowledge.sharingEnabledFor(seat.account_id) });
   }
-  async function readiness(client, a, definition, proof, executing = false, readOnlySnapshot = null, asOf = Date.now()) {
+  function externalMatches(client, facts, a, seat, predicate, readOnly = false) {
+    if (!facts || !eligible(a, seat)) return false;
+    if (predicate.adapter === 'social' && predicate.requirement.subject
+      && !eligible(a, a.roles.find((role) => role.role_id === predicate.requirement.subject))) return false;
+    return prerequisiteMatches(client, facts, { subjectKey: seat.role_id, requirement: predicate, mode: readOnly ? 'read' : 'write' });
+  }
+  async function readiness(client, a, definition, proof, executing = false, readOnlySnapshot = null, asOf = Date.now(), readFacts = null) {
     if (readOnlySnapshot) { assertItemRead(client); assertKnowledgeSnapshot(client, readOnlySnapshot, a.accountId); }
     const promises = await commitments(client, a.row.id), cash = await capital(client, a.row.id);
     const rolesFilled = definition.roles.every((role) => a.roles.some((r) => r.role_id === role.id));
@@ -227,6 +255,7 @@ export function createFamilyOperations({ pool, registry, kernel, definitions = [
       promised &&= !!commitment && ['promised', 'fulfilled'].includes(commitment.state);
       fulfilled &&= commitment?.state === 'fulfilled';
       if (required.kind === 'information') requirementsMet &&= factMatches(client, proof, a, seat, required.knowledge, readOnlySnapshot);
+      if (required.kind === 'prerequisite') requirementsMet &&= externalMatches(client, readFacts || proof?.facts, a, seat, required.predicate, !!readOnlySnapshot);
       if (required.kind === 'capability') requirementsMet &&= eligible(a, seat)
         && operationSkillValue(a.chars.get(seat.character_id), required.skill) >= required.minimum;
       if (commitment?.state !== 'fulfilled') continue;
@@ -300,6 +329,13 @@ export function createFamilyOperations({ pool, registry, kernel, definitions = [
   const catalogProjection = (d) => ({ id: d.id, version: d.version, title: d.title, lifetimeSeconds: d.lifetimeSeconds,
     roles: d.roles.map((r) => ({ id: r.id, title: r.title, requirements: r.requirements.map((q) => ({ id: q.id, kind: q.kind,
       quantity: q.quantity, ...(q.templateId ? { templateId: q.templateId } : {}) })) })) });
+  const admitted = (client, a, definition) => !definition.admission ? true : a.ch?.alive
+    ? prerequisites.admitsMysteryState(client, { accountId: a.accountId, characterId: a.ch.id, requirements: definition.admission }) : false;
+  async function admittedCatalog(client, a) {
+    const result = [];
+    for (const definition of compiled) if (await admitted(client, a, definition)) result.push(definition);
+    return result;
+  }
   async function project(client, a, definition, state) {
     const promises = await commitments(client, a.row.id);
     const rows = (await client.query(`SELECT event_kind,role_id,requirement_id,payload_json,actor_account_id,revision,ordinal,occurred_at
@@ -336,6 +372,7 @@ export function createFamilyOperations({ pool, registry, kernel, definitions = [
       const currentFamilyId = a.ch?.alive ? a.families.get(a.ch.id)?.gang_id : null;
       const currentFamily = currentFamilyId && (await client.query('SELECT id FROM gangs WHERE id=$1', [currentFamilyId])).rows[0];
       const currentOfficer = !!currentFamily && ['boss', 'underboss'].includes(a.families.get(a.ch.id)?.role);
+      const visibleCatalog = currentFamily ? await admittedCatalog(client, a) : [];
       const currentUniformCrew = !!currentFamily && !!a.crewId && a.crewAccounts.length > 0 && a.crewAccounts.every((account) => {
         const character = a.chars.get(a.current.get(account));
         return a.accountRows.get(account)?.status === 'active' && character?.alive && a.families.get(character.id)?.gang_id === currentFamilyId;
@@ -345,8 +382,7 @@ export function createFamilyOperations({ pool, registry, kernel, definitions = [
       if (definition && !TERMINAL.has(a.row.status)) for (const role of definition.roles) {
         const seat = a.roles.find((r) => r.role_id === role.id);
         if (!eligible(a, seat)) continue;
-        const requirements = role.requirements.filter((r) => r.kind === 'information').map((r) => r.knowledge);
-        if (role.id === definition.executorRoleId) requirements.push(...kernel.definitions.find((d) => d.id === definition.world.objectId).knowledge);
+        const requirements = roleKnowledge(definition, role);
         if (requirements.length) groups.push({ accountId: seat.account_id, characterId: seat.character_id, requirements });
       }
       const rows = (await client.query(`SELECT id,graph_id,status,revision,expires_at FROM world_operations
@@ -357,8 +393,11 @@ export function createFamilyOperations({ pool, registry, kernel, definitions = [
       return { groups, render: async (snapshot) => {
         if (assertItemRead(client) !== readScope) fail('bad_coordination_operation_request');
         assertKnowledgeSnapshot(client, snapshot, accountId);
+        const plan = definition && !TERMINAL.has(a.row.status) ? externalPlan(a, definition) : null;
+        const facts = plan?.groups.some((group) => group.requirements.length)
+          ? await prerequisites.readSnapshot(client, { ...plan, asOf, knowledgeSnapshot: snapshot }) : null;
         const state = definition && !TERMINAL.has(a.row.status)
-          ? await readiness(client, a, definition, null, false, snapshot, asOf) : null;
+          ? await readiness(client, a, definition, null, false, snapshot, asOf, facts) : null;
         let selected = a.row ? await project(client, a, definition, state) : null;
         if (selected) {
           const open = !TERMINAL.has(a.row.status), current = open && !!definition && new Date(a.row.expires_at).getTime() > asOf;
@@ -382,6 +421,7 @@ export function createFamilyOperations({ pool, registry, kernel, definitions = [
               const canCommit = current && a.member && eligible(a, seat) && !activePromise;
               let canContribute = current && a.member && eligible(a, seat) && required.state === 'promised', itemId = null;
               if (canContribute && declaration?.kind === 'information') canContribute = factMatches(client, null, a, seat, declaration.knowledge, snapshot);
+              if (canContribute && declaration?.kind === 'prerequisite') canContribute = externalMatches(client, facts, a, seat, declaration.predicate, true);
               if (canContribute && declaration?.kind === 'capability') canContribute = operationSkillValue(a.ch, declaration.skill) >= declaration.minimum;
               if (canContribute && declaration?.kind === 'capital') canContribute = Number(a.ch.cash) >= declaration.quantity;
               if (canContribute && declaration?.kind === 'item') {
@@ -398,7 +438,7 @@ export function createFamilyOperations({ pool, registry, kernel, definitions = [
             }
           }
         }
-        return { catalog: currentFamily ? compiled.map((d) => ({ ...catalogProjection(d),
+        return { catalog: currentFamily ? visibleCatalog.map((d) => ({ ...catalogProjection(d),
           canCreate: currentOfficer && currentUniformCrew, missing: currentOfficer && currentUniformCrew ? [] : ['family_authority'] })) : [],
         instances: rows.slice(0, 50).map((r) => ({ id: r.id, definitionId: r.graph_id, status: r.status,
           revision: Number(r.revision), expiresAt: new Date(r.expires_at).toISOString() })), selected, truncated: rows.length > 50 };
@@ -411,7 +451,7 @@ export function createFamilyOperations({ pool, registry, kernel, definitions = [
         if (!a.member) fail();
         const rows = (await client.query(`SELECT id,graph_id,status,revision,expires_at FROM world_operations
           WHERE family_id=$1 AND coordination_mode='family' ORDER BY created_at DESC,id LIMIT 51`, [a.familyId])).rows;
-        return { operations: compiled.map(catalogProjection), instances: rows.slice(0, 50).map((r) => ({
+        return { operations: (await admittedCatalog(client, a)).map(catalogProjection), instances: rows.slice(0, 50).map((r) => ({
           id: r.id, definitionId: r.graph_id, status: r.status, revision: Number(r.revision),
           expiresAt: new Date(r.expires_at).toISOString() })), truncated: rows.length > 50 };
       });
@@ -437,6 +477,7 @@ export function createFamilyOperations({ pool, registry, kernel, definitions = [
         if (!a.officer || !a.uniformCrew) fail('coordination_operation_forbidden');
         return withItemMutation(client, own(accountId), 'operation_action', logicalKey(accountId, key),
           { domain: 'family-coordination', action: 'create', definitionId: definition.id, version: definition.version }, async (mutation) => {
+            if (!await admitted(client, a, definition)) fail();
             const operationId = crypto.randomUUID(), now = new Date(), expires = new Date(now.getTime() + definition.lifetimeSeconds * 1000);
             registerItemTransactionUndo(client, () => client.query('DELETE FROM world_operations WHERE id=$1', [operationId]));
             await client.query(`INSERT INTO world_operations(id,graph_id,graph_version,operation_node_id,crew_id,
@@ -478,6 +519,10 @@ export function createFamilyOperations({ pool, registry, kernel, definitions = [
           const expired = new Date(a.row.expires_at).getTime() <= Date.now();
           if (expired && !['expire', 'cancel', 'withdraw', 'leave'].includes(action)) fail('coordination_operation_expired');
           if (!recovery && !a.member) fail('coordination_operation_forbidden');
+          // Complete knowledge/physical fact planning precedes any inventory movement.
+          // Joining changes the already locked seat union, but performs no inventory writes.
+          let proof = definition && !['join', 'assign', 'cancel', 'expire'].includes(action)
+            ? await prepareProof(client, a, definition) : null;
           restoreOperation(client, a.row); await restoreParticipants(client, operationId);
           if (Number(a.row.revision) >= 2147483647) fail('coordination_operation_limit');
           a.row.revision = Number(a.row.revision) + 1; a.eventOrdinal = 0;
@@ -527,6 +572,8 @@ export function createFamilyOperations({ pool, registry, kernel, definitions = [
                 if (required.kind === 'capital') await depositCapital(client, { operationId, roleId: seat.role_id,
                   requirementId: required.id, characterId: seat.character_id, amount: required.quantity }, mutation);
                 if (required.kind === 'capability' && operationSkillValue(a.ch, required.skill) < required.minimum) fail('coordination_operation_requirements');
+                if (required.kind === 'information' && !factMatches(client, proof, a, seat, required.knowledge)) fail('coordination_operation_requirements');
+                if (required.kind === 'prerequisite' && !externalMatches(client, proof?.facts, a, seat, required.predicate)) fail('coordination_operation_requirements');
                 await client.query("UPDATE world_operation_commitments SET state='fulfilled',item_id=$4,updated_at=now() WHERE operation_id=$1 AND role_id=$2 AND requirement_id=$3",
                   [operationId, seat.role_id, required.id, value.itemId ?? null]);
                 await client.query(`INSERT INTO world_operation_contributions(operation_id,node_id,role_id,account_id,character_id)
@@ -551,11 +598,7 @@ export function createFamilyOperations({ pool, registry, kernel, definitions = [
           // A joining actor was included in the original union; no new character lock is needed.
           let state = null;
           if (definition && !TERMINAL.has(a.row.status)) {
-            const proof = await prepareProof(client, a, definition);
-            if (action === 'contribute') {
-              const required = definition.roles.find((r) => r.id === seat.role_id).requirements.find((r) => r.id === value.requirementId);
-              if (required.kind === 'information' && !factMatches(client, proof, a, seat, required.knowledge)) fail('coordination_operation_requirements');
-            }
+            proof ??= await prepareProof(client, a, definition);
             state = await readiness(client, a, definition, proof, action === 'execute');
             if (action === 'execute') {
               if (!a.officer || !a.uniformCrew || !seat || seat.role_id !== definition.executorRoleId || !state.ready) fail('coordination_operation_not_ready');
@@ -570,7 +613,7 @@ export function createFamilyOperations({ pool, registry, kernel, definitions = [
               const primary = held.find((r) => r.role_id === definition.world.itemRoleId && r.requirement_id === definition.world.itemRequirementId);
               if (success) worldReceipt = await kernel.executeInTransaction(client, accountId, {
                 objectId: definition.world.objectId, actionId: definition.world.actionId, itemId: primary.item_id,
-                expectedRevision: state.expectedWorldRevision }, mutation, { operationId, knowledgeProof: proof });
+                expectedRevision: state.expectedWorldRevision }, mutation, { operationId, knowledgeProof: proof.knowledge });
               else {
                 await consumeItem(client, custody(operationId), primary.item_id, 'Family operation failed', mutation);
                 for (const promise of held.filter((r) => r.kind === 'resource' && r.state === 'fulfilled'))

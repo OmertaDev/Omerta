@@ -2,6 +2,7 @@
 // private foundation; schema 2 adds exact-source knowledge declarations, never economic effects.
 import crypto from 'node:crypto';
 import { canonicalBytes, compareCanonicalText } from '../content/canonical.js';
+import { normalizeWorldPrerequisite, worldPrerequisiteKey } from '../world-knowledge.js';
 
 export const COORDINATION_GRAPH_LIMITS = Object.freeze({
   nodes: 64, ruleDepth: 8, rules: 512, identifierLength: 128,
@@ -174,7 +175,7 @@ export function compileCoordinationGraph(source) {
   const dependencies = new Map();
   const nodes = source.nodes.map((node) => {
     const required = ['id', 'kind', 'title', 'visibility', 'discover', 'requires'];
-    record(node, [...required, 'description', ...(source.schemaVersion === 2 ? ['claim'] : [])], required, code);
+    record(node, [...required, 'description', ...(source.schemaVersion === 2 ? ['claim', 'admission'] : [])], required, code);
     const id = identifier(node.id, code);
     if (dependencies.has(id)) fail('coordination_graph_duplicate', 'Node identifiers must be unique.');
     if (!['task', 'terminal'].includes(node.kind) || !['public', 'hidden'].includes(node.visibility)) {
@@ -182,6 +183,14 @@ export function compileCoordinationGraph(source) {
     }
     if (Object.hasOwn(node, 'claim') && (node.kind !== 'task' || node.visibility !== 'hidden')) {
       fail('coordination_claim_invalid', 'Only an explicit hidden-task discovery can issue a claim.');
+    }
+    let admission;
+    if (Object.hasOwn(node, 'admission')) {
+      array(node.admission, 16, code);
+      try { admission = node.admission.map(normalizeWorldPrerequisite); } catch { fail(code, 'Invalid domain admission prerequisite.'); }
+      if (admission.some((p) => !['item_ownership', 'mystery_state', 'social'].includes(p.adapter)
+        || (p.adapter === 'social' && p.requirement.subject))) fail(code, 'Coordination admission uses only the current actor and owned domain facts.');
+      if (new Set(admission.map(worldPrerequisiteKey)).size !== admission.length) fail(code, 'Admission predicates must be distinct.');
     }
     budget.references = new Set();
     const result = {
@@ -191,10 +200,14 @@ export function compileCoordinationGraph(source) {
       visibility: node.visibility,
       discover: normalizeRule(node.discover, budget), requires: normalizeRule(node.requires, budget),
       ...(Object.hasOwn(node, 'claim') ? { claim: normalizeClaim(node.claim) } : {}),
+      ...(admission ? { admission } : {}),
     };
     dependencies.set(id, budget.references);
     return result;
   }).sort((left, right) => compareCanonicalText(left.id, right.id));
+  if (new Set(nodes.flatMap((node) => (node.admission || []).map(worldPrerequisiteKey))).size > 16) {
+    fail('coordination_definition_limit', 'A graph supports at most sixteen domain admission predicates.');
+  }
   const terminals = nodes.filter((node) => node.kind === 'terminal');
   if (terminals.length !== 1) fail(code, 'A coordination graph requires exactly one terminal.');
   const claimSources = new Map();

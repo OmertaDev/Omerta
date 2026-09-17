@@ -7,6 +7,8 @@ import { canonicalBytes } from '../content/canonical.js';
 import { withPhase2Read, withPhase2Transaction, registerPhase2Undo } from '../content/phase2-transactions.js';
 import { compileCoordinationGraph, coordinationGraph, coordinationGraphs, evaluateRule } from './graph.js';
 import { createCoordinationKnowledge } from './knowledge.js';
+import { createWorldPrerequisites, prerequisiteMatches, prerequisiteReceipt } from '../world-prerequisites.js';
+import { worldPrerequisiteKey } from '../world-knowledge.js';
 
 const fail = (code) => { throw new GameError(code, 'The coordination request could not complete.'); };
 const hash = (value) => crypto.createHash('sha256').update(canonicalBytes(value)).digest('hex');
@@ -107,12 +109,13 @@ function ruleState(instance, state, ch, now, evidence) {
     contentHash: instance.content_hash, evidence,
     elapsedSeconds: Math.max(0, Math.floor((now - new Date(instance.created_at).getTime()) / 1000)) };
 }
-function actionsFor(instance, graph, state, ch, now, enabled, evidence = new Map()) {
+function actionsFor(instance, graph, state, ch, now, enabled, evidence = new Map(), admitted = new Set()) {
   if (!enabled || !ch || ch.id !== instance.owner_character_id || instance.status !== 'active') return [];
   const context = ruleState(instance, state, ch, now, evidence);
   const actions = [];
   for (const node of graph.nodes) {
     if (state.completed.includes(node.id)) continue;
+    if (node.admission?.length && !admitted.has(node.id)) continue;
     const discovered = state.discovered.includes(node.id);
     let kind;
     if (node.visibility === 'hidden' && !discovered) {
@@ -126,9 +129,9 @@ function actionsFor(instance, graph, state, ch, now, enabled, evidence = new Map
   }
   return actions;
 }
-function project(instance, graph, ch, now, enabled, evidence = new Map()) {
+function project(instance, graph, ch, now, enabled, evidence = new Map(), admitted = new Set()) {
   const state = stateOf(instance, graph);
-  const actions = actionsFor(instance, graph, state, ch, now, enabled, evidence);
+  const actions = actionsFor(instance, graph, state, ch, now, enabled, evidence, admitted);
   const nodes = graph.nodes.filter((node) => node.visibility === 'public' || state.discovered.includes(node.id))
     .map((node) => ({ id: node.id, title: node.title, ...(node.description ? { description: node.description } : {}),
       status: state.completed.includes(node.id) ? 'completed'
@@ -179,9 +182,9 @@ async function saveInstance(client, prior, next) {
 }
 
 export function createCoordinationService({ pool, registry, enabled = false, accountIds = [],
-  knowledgeEnabled = false, sharingEnabled = false }) {
+  knowledgeEnabled = false, sharingEnabled = false, prerequisitesEnabled = false }) {
   coordinationGraphs(registry); // Reject forged registries at the trusted construction boundary.
-  if ([enabled, knowledgeEnabled, sharingEnabled].some((value) => typeof value !== 'boolean')
+  if ([enabled, knowledgeEnabled, sharingEnabled, prerequisitesEnabled].some((value) => typeof value !== 'boolean')
       || !Array.isArray(accountIds) || accountIds.some((id) => textId(id) !== id)) {
     throw new TypeError('Invalid coordination rollout policy');
   }
@@ -191,6 +194,8 @@ export function createCoordinationService({ pool, registry, enabled = false, acc
   const graphAllowed = (id, graph) => allowed(id) && (graph.schemaVersion === 1 || knowledgeAllowed(id));
   const knowledge = createCoordinationKnowledge({ enabled: enabled && knowledgeEnabled,
     sharingEnabled: enabled && knowledgeEnabled && sharingEnabled, accountIds });
+  const prerequisites = createWorldPrerequisites({ enabled: enabled && prerequisitesEnabled, accountIds });
+  const admissions = new WeakMap();
   const requireEnabled = (id) => { if (!allowed(id)) fail('coordination_disabled'); };
   // Knowledge holds caller membership leaves after the actor lock, then claim
   // authority; it never acquires organization or foreign-character locks later.
@@ -203,8 +208,24 @@ export function createCoordinationService({ pool, registry, enabled = false, acc
   });
   const evidenceFor = (client, ctx, graph) => graph.schemaVersion === 2 && knowledgeAllowed(ctx.accountId)
     ? knowledge.resolveGates(client, ctx, graph) : new Map();
+  async function admissionFor(client, ctx, graph, ch, now) {
+    if (!ch || !graph.nodes.some((node) => node.admission?.length)) return { proof: null, admitted: new Set() };
+    if (admissions.has(ctx)) {
+      const cached = admissions.get(ctx);
+      if (cached.hash !== graph.contentHash) fail('coordination_corrupt');
+      return cached;
+    }
+    const requirements = [...new Map(graph.nodes.flatMap((node) => (node.admission || []).map((p) => [worldPrerequisiteKey(p), p]))).values()];
+    const proof = await prerequisites.prepare(client, { subjects: [{ key: 'actor', accountId: ctx.accountId, characterId: ch.id }],
+      groups: [{ subjectKey: 'actor', requirements }], asOf: now });
+    const admitted = new Set(graph.nodes.filter((node) => (node.admission || []).every((requirement) =>
+      prerequisiteMatches(client, proof, { subjectKey: 'actor', requirement, mode: 'write' }))).map((node) => node.id));
+    const result = { hash: graph.contentHash, proof, admitted }; admissions.set(ctx, result); return result;
+  }
   async function projectCurrent(client, instance, graph, ch, now, ctx, accountId) {
-    return project(instance, graph, ch, now, graphAllowed(accountId, graph), await evidenceFor(client, ctx, graph));
+    const evidence = await evidenceFor(client, ctx, graph);
+    const admission = await admissionFor(client, ctx, graph, ch, now);
+    return project(instance, graph, ch, now, graphAllowed(accountId, graph), evidence, admission.admitted);
   }
   const getInstance = (accountId, id) => read(accountId, async (client, ch, ctx) => {
     const instance = await ownedInstance(client, accountId, id);
@@ -299,7 +320,8 @@ export function createCoordinationService({ pool, registry, enabled = false, acc
         if (!graphAllowed(accountId, graph)) fail('coordination_disabled');
         const state = stateOf(instance, graph);
         const evidence = await evidenceFor(client, ctx, graph);
-        const action = actionsFor(instance, graph, state, ch, now, true, evidence).find((candidate) => candidate.id === input.actionId);
+        const admission = await admissionFor(client, ctx, graph, ch, now);
+        const action = actionsFor(instance, graph, state, ch, now, true, evidence, admission.admitted).find((candidate) => candidate.id === input.actionId);
         if (!action) fail('coordination_action_unavailable');
         if (!state.discovered.includes(action.node.id)) state.discovered.push(action.node.id);
         if (action.kind === 'complete') state.completed.push(action.node.id);
@@ -310,7 +332,8 @@ export function createCoordinationService({ pool, registry, enabled = false, acc
         await saveInstance(client, instance, next);
         const sourceEventId = await event(client, next, accountId, commandId,
           action.kind === 'discover' ? 'coordination.node.discovered' : 'coordination.node.completed',
-          { nodeId: action.node.id, ...(graph.schemaVersion === 2 ? { knowledgeEvidence: [...evidence.entries()]
+          { nodeId: action.node.id, ...(action.node.admission?.length ? { prerequisiteAdmission: prerequisiteReceipt(client, admission.proof,
+            { subjectKey: 'actor', requirements: action.node.admission }) } : {}), ...(graph.schemaVersion === 2 ? { knowledgeEvidence: [...evidence.entries()]
             .filter(([, proof]) => proof.satisfied).map(([ruleKey, proof]) => ({ ruleKey, receiptIds: proof.receiptIds })) } : {}) }, 0, now);
         if (action.kind === 'discover' && action.node.claim) await knowledge.issueClaim(client, ctx,
           { instanceId: next.id, nodeId: action.node.id, sourceEventId, commandId, now });

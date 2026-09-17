@@ -45,8 +45,10 @@ const policy = { enabled: true, knowledgeEnabled: true, sharingEnabled: true };
 const crafting = createCraftingContext({ registry: WORLD_KERNEL_REGISTRY, ...policy });
 const knowledgeCommands = createCoordinationService({ pool, registry: COORDINATION_KNOWLEDGE_PILOT, ...policy });
 const graph = coordinationGraphs(COORDINATION_KNOWLEDGE_PILOT)[0], secret = WORLD_KERNEL_OBJECTS[0].knowledge[0];
+const projectionObjects = WORLD_KERNEL_OBJECTS.map((object) => ({ ...object,
+  actions: object.actions.map((action) => ({ ...action, execution: 'family_operation' })) }));
 function services(selectedPool = pool) {
-  const kernel = createWorldKernel({ pool: selectedPool, registry: WORLD_KERNEL_REGISTRY, objects: WORLD_KERNEL_OBJECTS, ...policy });
+  const kernel = createWorldKernel({ pool: selectedPool, registry: WORLD_KERNEL_REGISTRY, objects: projectionObjects, ...policy });
   const knowledge = createCoordinationKnowledge({ enabled: true, sharingEnabled: true });
   const query = createWorldKernelQuery({ pool: selectedPool, registry: WORLD_KERNEL_REGISTRY, knowledge });
   const operations = createFamilyOperations({ pool: selectedPool, registry: WORLD_KERNEL_REGISTRY, kernel,
@@ -119,6 +121,9 @@ try {
   let view = await projection.snapshot(b);
   assert.equal(view.knowledge.claims[0].id, claimId); assert.equal(view.knowledge.claims[0].owned, false);
   assert.equal(view.worldObjects[0].id, WORLD_KERNEL_OBJECTS[0].id); assert.equal(recipe(view).canAttempt, true);
+  assert(view.worldObjects[0].actions.every((action) => !action.canAttempt
+    && action.missing.includes('family_operation') && !Object.hasOwn(action, 'itemId')),
+  'Collective-only consequences never expose an executable direct-action projection');
   assert(!JSON.stringify(view).includes(secret.sourceRoot), 'Source roots are not part of player presentation');
   assert(!Object.hasOwn(view, 'nodes') && !Object.hasOwn(view, 'relationships'));
   hiddenKnowledge(await projection.snapshot(outsider), claimId);

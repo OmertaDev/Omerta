@@ -4,7 +4,7 @@ import { GameError } from '../game.js';
 import { isDbDown } from '../dbhealth.js';
 import { COORDINATION_SCHEMAS } from '../agentgateway.js';
 import { createCoordinationService } from '../coordination/runtime.js';
-import { COORDINATION_ALL_PILOTS } from '../coordination/pilot.js';
+import { coreProgressionContent } from '../content/core-progression.js';
 import { KNOWLEDGE_INPUTS, KNOWLEDGE_QUERIES } from '../coordination/http-contract.js';
 
 const identifier = { type: 'string', minLength: 1, maxLength: 200, pattern: '^[!-~]+$' };
@@ -87,8 +87,9 @@ function safeError(error, _req, reply) {
 const fastifySchema = (value) => JSON.parse(JSON.stringify(value).replaceAll('#/components/schemas/', ''));
 
 export function register(app, { pool, auth, modAuth, service = null, receiptTrust = null }) {
+  const content = coreProgressionContent();
   const coordination = service || createCoordinationService({
-    pool, registry: COORDINATION_ALL_PILOTS,
+    pool, registry: content.coordinationRegistry, prerequisitesEnabled: content.progression,
     enabled: process.env.COORDINATION_ENGINE === 'on',
     knowledgeEnabled: process.env.COORDINATION_KNOWLEDGE === 'on',
     sharingEnabled: process.env.COORDINATION_KNOWLEDGE_SHARING === 'on',

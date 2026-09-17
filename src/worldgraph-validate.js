@@ -1,6 +1,7 @@
 import { loadGraphPackages } from './worldgraph.js';
 
-import { normalizeKnowledgeRequirement, normalizeOperationOutcomeRequirement } from './world-knowledge.js';
+import { normalizeKnowledgeRequirement, normalizeOperationOutcomeRequirement, normalizeWorldPrerequisite } from './world-knowledge.js';
+import { normalizeRecipePolicy } from './recipe-policy.js';
 
 const CONDITION_ADAPTERS = new Set([
   'graph_dependency',
@@ -16,6 +17,9 @@ const CONDITION_ADAPTERS = new Set([
   'owns_car',
   'knowledge',
   'family_operation_outcome',
+  'mystery_state',
+  'social',
+  'world_state',
 ]);
 
 const QUANTITY_FIELDS = [
@@ -316,6 +320,17 @@ function validateConditionList({
         normalizeOperationOutcomeRequirement(condition.requirement);
       } catch {
         fail('malformed_condition', `${owner} has an invalid pinned operation outcome`, { nodeId, roleId, adapter });
+      }
+    } else if (['mystery_state', 'social', 'world_state'].includes(adapter)
+      || (adapter === 'item_ownership' && Object.hasOwn(condition, 'requirement'))) {
+      try {
+        const predicate = normalizeWorldPrerequisite(condition);
+        if (adapter === 'item_ownership') {
+          targetId = predicate.requirement.templateId;
+          targetType = 'item_template';
+        }
+      } catch {
+        fail('malformed_condition', `${owner} has an invalid world prerequisite`, { nodeId, roleId, adapter });
       }
     } else if (adapter === 'graph_dependency') {
       targetId = field(['nodeId', 'id', 'value']);
@@ -641,6 +656,9 @@ function validateRecipeClasses(registry, quantityByNode) {
     if (node.type !== 'recipe') continue;
     recipes += 1;
     recipePolicy(node);
+    try { normalizeRecipePolicy(node); } catch {
+      fail('invalid_recipe_policy', `Recipe ${nodeId} has an invalid discovery or scarcity policy`, { nodeId });
+    }
     const quantities = quantityByNode.get(nodeId);
     for (const field of [
       'consumes', 'inputs', 'catalysts', 'catalystInputs', 'produces', 'outputs',

@@ -188,6 +188,9 @@ export function createCoordinationKnowledge({ enabled = false, sharingEnabled = 
     let value, payload, state;
     try { value = parse(claim.value_json); payload = event && parse(event.payload_json);
       state = parse(source.instance.state_json); } catch { fail('knowledge_corrupt'); }
+    if (node?.admission?.length && hash(payload?.prerequisiteAdmission ?? null) !== hash({
+      accountId: claim.owner_account_id, characterId: claim.origin_character_id, predicatesHash: hash(node.admission),
+    })) fail('knowledge_corrupt');
     if (!node?.claim || claim.source_kind !== 'coordination_discovery' || !event
         || event.event_type !== 'coordination.node.discovered' || Number(event.event_version) !== 1
         || event.instance_id !== claim.instance_id || payload?.nodeId !== claim.node_id

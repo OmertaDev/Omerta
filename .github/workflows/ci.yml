@@ -231,6 +231,12 @@ jobs:
           WORLD_KERNEL_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check
         run: npm run test:world-projections:postgres
 
+      - name: Authored progression, scarce recipes and social prerequisites (real PostgreSQL)
+        if: '!cancelled()'
+        env:
+          WORLD_KERNEL_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check
+        run: npm run test:core-progression:postgres
+
       - name: stock catalog v2 finalized-observation consumer (real PostgreSQL)
         if: '!cancelled()'
         env:

@@ -18,6 +18,7 @@ import {
   transferItem,
   withItemMutation,
   withItemTransaction,
+  withItemRead,
 } from '../items.js';
 import {
   cancelMystery,
@@ -40,6 +41,8 @@ import {
   roleBoard,
 } from '../operations.js';
 import { loadAndValidatePhase1WorldGraph } from '../content/phase1-validation.js';
+import { coreProgressionContent } from '../content/core-progression.js';
+import { compileWorldObjects } from '../world-kernel.js';
 
 // Module initialization is the server boot boundary: the same complete graph, executable adapter,
 // and economy-policy gate used by CI must pass before these routes can be registered.
@@ -219,13 +222,13 @@ function safeInventory(board) {
   };
 }
 
-function graphPackages(kind) {
+function graphPackages(kind, registry = PHASE1_WORLD_GRAPH) {
   const types = new Set(['mystery_step', 'world_gate', 'choice']);
   const operationRoots = kind === 'operation'
-    ? new Set(operationDefinitions(PHASE1_WORLD_GRAPH).map(({ root }) => root))
+    ? new Set(operationDefinitions(registry).map(({ root }) => root))
     : null;
-  return [...PHASE1_WORLD_GRAPH.byPackage.values()].filter((pkg) => (
-    [...PHASE1_WORLD_GRAPH.nodes.values()].some((node) => (
+  return [...registry.byPackage.values()].filter((pkg) => (
+    [...registry.nodes.values()].some((node) => (
       node.packageId === pkg.id && (kind === 'mystery'
         ? types.has(node.type)
         : operationRoots.has(node))
@@ -233,15 +236,15 @@ function graphPackages(kind) {
   ));
 }
 
-function publicMysteryNodes(graphId) {
-  return [...PHASE1_WORLD_GRAPH.nodes.values()].filter((node) => (
+function publicMysteryNodes(graphId, registry = PHASE1_WORLD_GRAPH) {
+  return [...registry.nodes.values()].filter((node) => (
     node.packageId === graphId
     && ['mystery_step', 'world_gate', 'choice'].includes(node.type)
     && node.visibility === 'public'
   ));
 }
 
-async function mysteryDiscovery(client, accountId, characterId) {
+async function mysteryDiscovery(client, accountId, characterId, registry = PHASE1_WORLD_GRAPH) {
   const instances = (await client.query(
     `SELECT id,graph_id,graph_version,status,created_at,completed_at,canceled_at
        FROM mystery_instances
@@ -251,9 +254,9 @@ async function mysteryDiscovery(client, accountId, characterId) {
   const byGraphVersion = new Map(instances.map((row) => [
     `${row.graph_id}:${Number(row.graph_version)}`, row,
   ]));
-  return graphPackages('mystery').map((pkg) => {
+  return graphPackages('mystery', registry).map((pkg) => {
     const entry = byGraphVersion.get(`${pkg.id}:${Number(pkg.version)}`);
-    const publicNodes = publicMysteryNodes(pkg.id);
+    const publicNodes = publicMysteryNodes(pkg.id, registry);
     return {
       graphId: pkg.id,
       version: Number(pkg.version),
@@ -420,9 +423,6 @@ async function requireCurrentCrewOperation(client, accountId, operationId) {
   if (!accessible) fail('operation_unavailable', 'That operation is unavailable.');
 }
 
-const mysteryContext = (accountId) => createMysteryContext({
-  registry: PHASE1_WORLD_GRAPH, accountId, now: new Date().toISOString(),
-});
 const operationContext = (accountId) => createOperationContext({
   registry: PHASE1_WORLD_GRAPH, accountId, now: new Date().toISOString(),
 });
@@ -450,6 +450,16 @@ async function readForPlayer(pool, accountId, action, { locked = false } = {}) {
 }
 
 export function register(app, { pool, auth }) {
+  const content = coreProgressionContent();
+  const accountIds = (process.env.COORDINATION_ACCOUNT_IDS || '').split(',').map((id) => id.trim()).filter(Boolean);
+  const cohort = new Set(accountIds);
+  const progressionFor = (accountId) => content.progression && (!cohort.size || cohort.has(accountId));
+  const registryFor = (accountId) => progressionFor(accountId) ? content.registry : PHASE1_WORLD_GRAPH;
+  const worldDefinitions = content.progression ? compileWorldObjects(content.registry, content.objects) : [];
+  const mysteryContext = (accountId) => createMysteryContext({ registry: registryFor(accountId), accountId,
+    now: new Date().toISOString(), knowledgeEnabled: progressionFor(accountId), sharingEnabled: progressionFor(accountId),
+    operationOutcomesEnabled: progressionFor(accountId), prerequisitesEnabled: progressionFor(accountId),
+    worldDefinitions, accountIds });
   app.post('/v1/worldgraph/items/:itemId/assign-current-character', mutationOptions(auth),
     async (req, reply) => mutate(pool, reply, (client) => assignItemToCurrentCharacter(
       client,
@@ -489,13 +499,13 @@ export function register(app, { pool, auth }) {
 
   app.get('/v1/worldgraph/mysteries', { preHandler: auth }, async (req) =>
     readForPlayer(pool, req.user.sub, async (ch, client) => ({
-      mysteries: await mysteryDiscovery(client, req.user.sub, ch.id),
+      mysteries: await mysteryDiscovery(client, req.user.sub, ch.id, registryFor(req.user.sub)),
     })));
 
   app.post('/v1/worldgraph/mysteries/:graphId/start', mutationOptions(auth), async (req, reply) =>
     mutate(pool, reply, async (client) => {
       const owner = await currentCharacterOwner(client, req.user.sub);
-      const pkg = PHASE1_WORLD_GRAPH.byPackage.get(req.params.graphId);
+      const pkg = registryFor(req.user.sub).byPackage.get(req.params.graphId);
       if (!pkg) fail('mystery_graph', 'No such mystery graph package.');
       return startMystery(
         client, mysteryContext(req.user.sub), owner, req.params.graphId, Number(pkg.version),
@@ -503,10 +513,18 @@ export function register(app, { pool, auth }) {
       );
     }));
 
-  app.get('/v1/worldgraph/mysteries/:graphId', { preHandler: auth }, async (req) =>
-    readForPlayer(pool, req.user.sub, async (ch, client) => safeValue(await mysteryBoard(
+  app.get('/v1/worldgraph/mysteries/:graphId', { preHandler: auth }, async (req, reply) => {
+    if (progressionFor(req.user.sub)) {
+      reply.header('cache-control', 'no-store');
+      try {
+        return await withItemRead(pool, async (client) => safeValue(await mysteryBoard(client,
+          mysteryContext(req.user.sub), await currentCharacterOwner(client, req.user.sub), req.params.graphId)));
+      } catch (error) { throw publicError(error); }
+    }
+    return readForPlayer(pool, req.user.sub, async (ch, client) => safeValue(await mysteryBoard(
       client, mysteryContext(req.user.sub), { scope: 'character', id: ch.id }, req.params.graphId,
-    )), { locked: true }));
+    )), { locked: true });
+  });
 
   app.post('/v1/worldgraph/mysteries/:graphId/nodes/:nodeId/discover',
     mutationOptions(auth, INTERACTION_BODY), async (req, reply) => mutate(pool, reply, async (client) => {

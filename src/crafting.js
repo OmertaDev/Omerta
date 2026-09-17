@@ -27,11 +27,17 @@ import { levelOf } from './rules.js';
 import { isWorldGraphRegistry, loadGraphPackages, nodeOf } from './worldgraph.js';
 import { validateGraph } from './worldgraph-validate.js';
 import { PHASE1_WORLD_GRAPH_PACKAGES } from './content/phase1.js';
-import { createCoordinationKnowledge, assertKnowledgeSnapshot, snapshotRequirementMatches } from './coordination/knowledge.js';
-import { normalizeKnowledgeRequirement, knowledgeRequirementKey } from './world-knowledge.js';
+import { createCoordinationKnowledge, assertKnowledgeSnapshot, snapshotRequirementMatches, knowledgeProofMatches } from './coordination/knowledge.js';
+import { normalizeKnowledgeRequirement, knowledgeRequirementKey, worldPrerequisiteKey } from './world-knowledge.js';
+import { createWorldPrerequisites, prerequisiteMatches } from './world-prerequisites.js';
+import { normalizeRecipePolicy, normalizeRecipeRequirement } from './recipe-policy.js';
+import { recipeScarcityAvailable, reserveRecipeScarcity } from './recipe-scarcity.js';
 
 const RECIPE_ADAPTERS = new Set(['location', 'skill', 'level', 'owns_car', 'knowledge']);
 const CRAFTING_KNOWLEDGE = new WeakMap();
+const CRAFTING_PREREQUISITES = new WeakMap();
+const SHARED_ADAPTERS = new Set(['mystery_state', 'social', 'world_state', 'item_ownership', 'family_operation_outcome']);
+const SERVER_PREVIEWS = new WeakSet();
 const CASH_COST_KEYS = new Set(['cashcost', 'costcash', 'cost']);
 const OMR_COST_KEYS = new Set(['omrcost', 'costomr']);
 const CRAFT_CAP_KEYS = new Set(['maxcrafts', 'claimcap', 'cap']);
@@ -44,6 +50,7 @@ const RECIPE_FIELDS = new Set([
   'conditions', 'metadata', 'packageId', 'title', 'description', 'lore',
   'cashCost', 'costCash', 'cost', 'omrCost', 'costOmr',
   'maxCrafts', 'claimCap', 'cap',
+  'discovery', 'scarcity',
 ]);
 const RECIPE_METADATA_FIELDS = new Set([
   'title', 'description', 'lore',
@@ -158,6 +165,7 @@ function normalizedRecipeEntry(registry, recipe, entry, direction) {
 }
 
 function normalizedRecipeCondition(recipe, condition) {
+  if (SHARED_ADAPTERS.has(condition?.adapter)) return normalizeRecipeRequirement(condition);
   if (condition?.adapter === 'knowledge') {
     if (Object.keys(condition).some((key) => !['adapter', 'requirement'].includes(key))) {
       fail('unsupported_recipe_semantics', 'Knowledge conditions contain only a pinned requirement.');
@@ -215,12 +223,17 @@ function graphIdentity(context, recipe) {
 }
 
 function graphMutationAuthority(context, recipe) {
+  const source = nodeOf(context.registry, recipe.id);
   return {
     ...graphIdentity(context, recipe),
     consumes: inputsOf(recipe),
     produces: outputsOf(recipe),
     conditions: conditionsOf(recipe),
     cashCost: cashCostOf(recipe),
+    // Version-one receipts bind the exact original request envelope. Runtime
+    // defaults must not change old hashes; explicitly authored policies do bind.
+    ...(Object.hasOwn(source, 'discovery') ? { discovery: recipe.discovery } : {}),
+    ...(Object.hasOwn(source, 'scarcity') ? { scarcity: recipe.scarcity } : {}),
   };
 }
 
@@ -316,6 +329,13 @@ function normalizedCraftingDefinitions(registry) {
     const produces = outputsOf(node).map((entry) => (
       normalizedRecipeEntry(registry, node, entry, 'output')
     ));
+    const policy = normalizeRecipePolicy(node);
+    if (conditions.length + policy.discovery.requirements.length > 24) fail('bad_recipe_policy', 'Too many recipe requirements.');
+    for (const condition of [...conditions, ...policy.discovery.requirements]) {
+      if (condition.adapter === 'item_ownership' && consumes.some((entry) => entry.templateId === condition.requirement.templateId)) {
+        fail('bad_recipe_policy', 'Retained crafting tools cannot also be consumed inputs.');
+      }
+    }
     const externalInputs = consumes.filter((entry) => entry.assetType !== undefined);
     const ownsCar = conditions.filter((condition) => conditionAdapter(condition) === 'owns_car');
     if (externalInputs.length > 0) {
@@ -341,6 +361,7 @@ function normalizedCraftingDefinitions(registry) {
       consumes,
       produces,
       conditions,
+      ...policy,
       cashCost: cashCostOf(node),
       metadata: node.metadata,
     }));
@@ -359,7 +380,7 @@ export function validateCraftingDefinitions(registry) {
 }
 
 /** Mint opaque runtime authority from an authentic, validated graph registry. */
-export function createCraftingContext({ registry, knowledgeEnabled = false, sharingEnabled = false, accountIds = [] } = {}) {
+export function createCraftingContext({ registry, knowledgeEnabled = false, sharingEnabled = false, accountIds = [], worldDefinitions = [] } = {}) {
   if (typeof knowledgeEnabled !== 'boolean' || typeof sharingEnabled !== 'boolean'
     || !Array.isArray(accountIds) || accountIds.some((id) => typeof id !== 'string' || !id)) {
     fail('bad_crafting_context', 'Invalid crafting knowledge policy.');
@@ -369,6 +390,12 @@ export function createCraftingContext({ registry, knowledgeEnabled = false, shar
   CRAFTING_CONTEXTS.add(context);
   CRAFTING_DEFINITIONS.set(context, definitions);
   CRAFTING_KNOWLEDGE.set(context, createCoordinationKnowledge({ enabled: knowledgeEnabled, sharingEnabled, accountIds }));
+  const prerequisites = createWorldPrerequisites({ enabled: true, accountIds, worldDefinitions, knowledgeEnabled, sharingEnabled });
+  CRAFTING_PREREQUISITES.set(context, prerequisites);
+  for (const recipe of definitions.values()) {
+    const requirements = combinedKnowledge(context, [recipe]);
+    if (requirements.length > 16) fail('bad_recipe_policy', 'Too many recipe knowledge requirements.');
+  }
   return context;
 }
 
@@ -433,12 +460,14 @@ function previewContext(ctx = {}) {
     },
     skills: asSkillSet(ctx.skills ?? ctx.owned?.skills),
     knowledge: ctx.knowledge instanceof Set ? ctx.knowledge : new Set(),
+    prerequisites: SERVER_PREVIEWS.has(ctx) ? ctx.prerequisites : new Set(),
     cars: (ctx.cars ?? ctx.owned?.cars ?? []).map(normalizedCar).filter(Boolean),
   };
 }
 
 function blockerFor(condition, context, { selectedCarId = null, deferOwnsCar = false } = {}) {
   const adapter = conditionAdapter(condition);
+  if (SHARED_ADAPTERS.has(adapter)) return context.prerequisites?.has(worldPrerequisiteKey(condition)) ? null : { adapter };
   if (adapter === 'knowledge') {
     return context.knowledge?.has(knowledgeRequirementKey(condition.requirement)) ? null : { adapter: 'knowledge' };
   }
@@ -550,6 +579,7 @@ export function recipeResourceBlockers(recipe, ctx, craftingContext = DEFAULT_CR
 }
 
 function throwBlocker(blocker) {
+  if (SHARED_ADAPTERS.has(blocker.adapter)) fail('recipe_requirements', 'Required crafting prerequisites are unavailable.');
   if (blocker.adapter === 'knowledge') fail('knowledge_required', 'Required knowledge is unavailable.');
   if (blocker.adapter === 'location') {
     fail('location', 'That work must be done at the declared facility.', {
@@ -593,10 +623,14 @@ export function recipeCatalog(ctx = {}, craftingContext = DEFAULT_CRAFTING_CONTE
   const runtime = contextOf(craftingContext);
   const context = previewContext(ctx);
   return [...CRAFTING_DEFINITIONS.get(runtime).values()]
-    .map((recipe) => {
+    .filter((recipe) => recipe.visibility === 'public')
+    .flatMap((recipe) => {
+      const revealed = recipe.discovery.mode === 'public' || (SERVER_PREVIEWS.has(ctx) && discovered(recipe, ctx));
+      if (!revealed) return recipe.discovery.mode === 'partial' ? [{ ...partialRecipe(recipe), available: false, blockedBy: [{ adapter: 'discovery' }] }] : [];
       const blockedBy = [
         ...recipeBlockers(recipe, context),
         ...recipeResourceBlockers(recipe, ctx, runtime),
+        ...(recipe.scarcity.caps.length && (!SERVER_PREVIEWS.has(ctx) || ctx.scarcity?.get(recipe.id) !== true) ? [{ adapter: 'scarcity' }] : []),
       ];
       return {
         ...graphIdentity(runtime, recipe),
@@ -759,19 +793,53 @@ async function produceRecipeOutputs(client, context, owner, recipe, mutation, pr
   return produced;
 }
 
-async function resolveRecipeKnowledge(client, context, recipe, accountId, actor) {
-  const conditions = conditionsOf(recipe).filter((condition) => condition.adapter === 'knowledge');
-  if (!conditions.length) return;
-  const knowledge = CRAFTING_KNOWLEDGE.get(context);
-  const token = await knowledge.context(client, { accountId, character: actor.knowledgeCharacter, lock: true });
-  const requirements = conditions.map((condition) => condition.requirement);
-  const matches = await knowledge.matchesRequirements(client, token, requirements);
-  matches.forEach((matched, index) => { if (matched) actor.knowledge.add(knowledgeRequirementKey(requirements[index])); });
+function recipeFacts(recipe) { return [...conditionsOf(recipe), ...recipe.discovery.requirements]; }
+function sharedFacts(recipes) {
+  const facts = new Map();
+  for (const recipe of recipes) for (const fact of recipeFacts(recipe)) if (SHARED_ADAPTERS.has(fact.adapter)) facts.set(worldPrerequisiteKey(fact), fact);
+  return [...facts.values()];
+}
+function combinedKnowledge(context, recipes) {
+  const requirements = new Map();
+  for (const recipe of recipes) for (const fact of recipeFacts(recipe)) if (fact.adapter === 'knowledge') requirements.set(knowledgeRequirementKey(fact.requirement), fact.requirement);
+  for (const requirement of CRAFTING_PREREQUISITES.get(context).knowledgeRequirements(sharedFacts(recipes))) requirements.set(knowledgeRequirementKey(requirement), requirement);
+  return [...requirements.values()];
+}
+function discovered(recipe, actor) {
+  return recipe.discovery.requirements.every((fact) => fact.adapter === 'knowledge'
+    ? actor.knowledge?.has(knowledgeRequirementKey(fact.requirement))
+    : actor.prerequisites?.has(worldPrerequisiteKey(fact)));
+}
+function publicRecipe(context, recipe) {
+  // Explicit discovery authorizes revealing the declared recipe only after its
+  // authentic gate passes. An ordinary public recipe cannot declassify entries.
+  return recipe.visibility === 'public' && (recipe.discovery.mode !== 'public' || [...inputsOf(recipe), ...outputsOf(recipe)]
+    .every((entry) => entry.assetType || nodeOf(context.registry, entry.templateId)?.visibility === 'public'));
+}
+function partialRecipe(recipe) { return { id: recipe.id, title: recipe.metadata?.title || recipe.id,
+  discovered: false, canAttempt: false, missing: ['discovery'] }; }
+async function resolveRecipeAuthority(client, context, recipes, accountId, actor, asOf) {
+  const knowledge = CRAFTING_KNOWLEDGE.get(context), requirements = combinedKnowledge(context, recipes);
+  let knowledgeProof;
+  if (requirements.length) {
+    const ctx = await knowledge.context(client, { accountId, character: actor.knowledgeCharacter, lock: true });
+    knowledgeProof = await knowledge.prepareRequirementProof(client, [{ context: ctx, requirements }]);
+    for (const requirement of requirements) if (knowledge.enabledFor(accountId) && knowledgeProofMatches(client, knowledgeProof,
+      { accountId, characterId: actor.character.id, requirement, sharingEnabled: knowledge.sharingEnabledFor(accountId) })) actor.knowledge.add(knowledgeRequirementKey(requirement));
+  }
+  const facts = sharedFacts(recipes); actor.prerequisites = new Set();
+  if (facts.length) {
+    const token = await CRAFTING_PREREQUISITES.get(context).prepare(client, {
+      subjects: [{ key: 'actor', accountId, characterId: actor.character.id }], groups: [{ subjectKey: 'actor', requirements: facts }], asOf, knowledgeProof,
+    });
+    for (const requirement of facts) if (prerequisiteMatches(client, token, { subjectKey: 'actor', requirement, mode: 'write' })) actor.prerequisites.add(worldPrerequisiteKey(requirement));
+  }
+  SERVER_PREVIEWS.add(actor);
 }
 
 // Authoritative catalog for routes that offer knowledge-gated recipes. The pure
 // catalog remains a presentation function; mutations always re-evaluate facts.
-export async function planCraftingSnapshot(client, accountId, craftingContext, recipeIds) {
+export async function planCraftingSnapshot(client, accountId, craftingContext, recipeIds, { asOf = Date.now() } = {}) {
   const scope = assertItemRead(client), runtime = contextOf(craftingContext);
   if (!Array.isArray(recipeIds) || recipeIds.length > 50 || recipeIds.some((id) => typeof id !== 'string')) fail('bad_crafting_request', 'A bounded recipe selection is required.');
   const account = (await client.query('SELECT status FROM accounts WHERE id=$1', [accountId])).rows[0];
@@ -782,15 +850,15 @@ export async function planCraftingSnapshot(client, accountId, craftingContext, r
   if (!character) return { groups: [], render: async () => [] };
   // A public recipe does not declassify its input/output definitions. This public
   // crafting board omits recipes whose entries would name hidden objects.
-  const recipes = recipeIds.map((recipeId) => recipeOf(runtime, recipeId)).filter((recipe) => recipe.visibility === 'public'
-    && [...inputsOf(recipe), ...outputsOf(recipe)].every((entry) => entry.assetType || nodeOf(runtime.registry, entry.templateId)?.visibility === 'public'));
+  const recipes = recipeIds.map((recipeId) => recipeOf(runtime, recipeId)).filter((recipe) => publicRecipe(runtime, recipe));
   for (const recipe of recipes) {
     assertNoUnsupportedEconomy(recipe);
     if (inputsOf(recipe).some((entry) => entry.assetType)) fail('unsupported_salvage_recipe', 'Salvage uses its dedicated board.');
   }
   const skills = new Set((await client.query('SELECT skill_id FROM character_skills WHERE character_id=$1', [character.id])).rows.map((r) => r.skill_id));
-  const requirements = new Map();
-  for (const recipe of recipes) for (const condition of conditionsOf(recipe)) if (condition.adapter === 'knowledge') requirements.set(knowledgeRequirementKey(condition.requirement), condition.requirement);
+  const requirements = new Map(combinedKnowledge(runtime, recipes).map((r) => [knowledgeRequirementKey(r), r]));
+  const facts = sharedFacts(recipes);
+  if (requirements.size > 64 || facts.length > 64) fail('bad_recipe_policy', 'The recipe projection exceeds its predicate limit.');
   return { groups: requirements.size ? [{ accountId, characterId: character.id, requirements: [...requirements.values()] }] : [],
     render: async (snapshot) => {
       if (assertItemRead(client) !== scope) fail('bad_crafting_request', 'The recipe snapshot expired.');
@@ -799,11 +867,24 @@ export async function planCraftingSnapshot(client, accountId, craftingContext, r
       for (const [key, requirement] of requirements) if (policy.enabledFor(accountId)
         && snapshotRequirementMatches(client, snapshot, { accountId, characterId: character.id, requirement,
           sharingEnabled: policy.sharingEnabledFor(accountId) })) knowledge.add(key);
+      const predicates = new Set();
+      if (facts.length) {
+        const token = await CRAFTING_PREREQUISITES.get(runtime).readSnapshot(client, {
+          subjects: [{ key: 'actor', accountId, characterId: character.id }], groups: [{ subjectKey: 'actor', requirements: facts }], asOf, knowledgeSnapshot: snapshot,
+        });
+        for (const requirement of facts) if (prerequisiteMatches(client, token, { subjectKey: 'actor', requirement, mode: 'read' })) predicates.add(worldPrerequisiteKey(requirement));
+      }
       const cards = [];
       for (const recipe of recipes) {
-        const context = { character: { id: character.id, loc: character.loc, level: levelOf(Number(character.respect || 0)), cash: Number(character.cash) }, skills, knowledge, cars: [] };
+        const context = { owner: { scope: 'account', id: accountId },
+          character: { id: character.id, loc: character.loc, level: levelOf(Number(character.respect || 0)), cash: Number(character.cash) }, skills, knowledge, prerequisites: predicates, cars: [] };
+        if (!discovered(recipe, context)) {
+          if (recipe.discovery.mode === 'partial') cards.push(partialRecipe(recipe));
+          continue;
+        }
         const missing = new Set(recipeBlockers(recipe, context).map((b) => b.adapter));
         if (Number(character.cash) < cashCostOf(recipe)) missing.add('cash');
+        if (!await recipeScarcityAvailable(client, recipe, context, asOf)) missing.add('scarcity');
         const totals = new Map();
         for (const entry of inputsOf(recipe)) {
           const key = JSON.stringify([entry.templateId, entry.quality || QUALITY]);
@@ -832,18 +913,14 @@ export async function recipeCatalogForPlayer(client, accountId, craftingContext,
     fail('bad_crafting_request', 'A bounded recipe selection is required.');
   }
   const actor = await actorContext(client, canonicalString(accountId, 'Authenticated account id'));
-  const requirements = new Map();
-  for (const recipeId of recipeIds) for (const condition of conditionsOf(recipeOf(context, recipeId))) {
-    if (condition.adapter === 'knowledge') requirements.set(knowledgeRequirementKey(condition.requirement), condition.requirement);
-  }
-  if (requirements.size) {
-    const knowledge = CRAFTING_KNOWLEDGE.get(context);
-    const token = await knowledge.context(client, { accountId, character: actor.knowledgeCharacter, lock: true });
-    const keys = [...requirements.keys()], matched = await knowledge.matchesRequirements(client, token, [...requirements.values()]);
-    matched.forEach((yes, index) => { if (yes) actor.knowledge.add(keys[index]); });
-  }
+  const recipes = recipeIds.map((recipeId) => recipeOf(context, recipeId)).filter((recipe) => publicRecipe(context, recipe)), asOf = Date.now();
+  await resolveRecipeAuthority(client, context, recipes, accountId, actor, asOf);
+  actor.scarcity = new Map();
+  for (const recipe of recipes) actor.scarcity.set(recipe.id, await recipeScarcityAvailable(client, recipe, actor, asOf));
   const inventory = await inventoryBoard(client, actor.owner);
-  return recipeCatalog({ ...actor, inventory }, context).filter((recipe) => recipeIds.includes(recipe.id));
+  actor.inventory = inventory;
+  const selected = new Set(recipes.map((recipe) => recipe.id));
+  return recipeCatalog(actor, context).filter((recipe) => selected.has(recipe.id));
 }
 
 /** Execute one non-salvage recipe inside an active `withItemTransaction` callback. */
@@ -866,8 +943,11 @@ export async function craftWorldGraphRecipe(
     graphMutationAuthority(context, recipe),
     async (mutation) => {
       const actor = await actorContext(client, accountId);
-      await resolveRecipeKnowledge(client, context, recipe, accountId, actor);
+      const asOf = Date.now();
+      await resolveRecipeAuthority(client, context, [recipe], accountId, actor, asOf);
+      if (!discovered(recipe, actor)) fail('recipe_unavailable', 'That recipe is unavailable.');
       assertRequirements(recipe, actor);
+      await reserveRecipeScarcity(client, recipe, actor, asOf);
       const cash = await debitRecipeCash(client, actor, recipe);
       const inputs = await consumeRecipeInputs(client, context, owner, recipe, mutation);
       const outputs = await produceRecipeOutputs(
@@ -913,8 +993,11 @@ export async function salvageCar(
       // The locked car helper is the sole mutation authority for owns_car. Deferring only this
       // adapter preserves specific listed/pledged/on-chain/race errors while all other gates are
       // still enforced from the actor's locked server state.
-      await resolveRecipeKnowledge(client, context, recipe, accountId, actor);
+      const asOf = Date.now();
+      await resolveRecipeAuthority(client, context, [recipe], accountId, actor, asOf);
+      if (!discovered(recipe, actor)) fail('recipe_unavailable', 'That recipe is unavailable.');
       assertRequirements(recipe, actor, { selectedCarId: carId, deferOwnsCar: true });
+      await reserveRecipeScarcity(client, recipe, actor, asOf);
       const cash = await debitRecipeCash(client, actor, recipe);
       const car = await consumeOwnedCarForItemMutation(
         client, h, actor.character.id, carId, ownsCarSelectors(recipe),

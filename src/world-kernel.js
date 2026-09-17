@@ -46,7 +46,8 @@ export function compileWorldObjects(registry, inputs) {
     if (!Array.isArray(input.actions) || input.actions.length > 16) fail('bad_world_definition');
     const actionIds = new Set();
     const actions = Object.freeze(input.actions.map((action) => {
-      closed(action, ['id', 'from', 'to', 'itemTemplateId', 'materials']);
+      closed(action, ['id', 'from', 'to', 'itemTemplateId', 'materials'], ['execution']);
+      if (Object.hasOwn(action, 'execution') && action.execution !== 'family_operation') fail('bad_world_definition');
       text(action.id);
       if (actionIds.has(action.id) || !states.includes(action.from) || !states.includes(action.to)
         || action.from === action.to) fail('bad_world_definition');
@@ -60,7 +61,8 @@ export function compileWorldObjects(registry, inputs) {
         return Object.freeze({ templateId: material.templateId, quantity: material.quantity });
       }).sort((a, b) => a.templateId.localeCompare(b.templateId)));
       if (new Set(materials.map((entry) => entry.templateId)).size !== materials.length) fail('bad_world_definition');
-      return Object.freeze({ id: action.id, from: action.from, to: action.to, itemTemplateId: action.itemTemplateId, materials });
+      return Object.freeze({ id: action.id, from: action.from, to: action.to, itemTemplateId: action.itemTemplateId, materials,
+        ...(action.execution ? { execution: action.execution } : {}) });
     }));
     const definition = { id, type: input.type, title: input.title, locationId: input.locationId,
       states, initialState: input.initialState, publicStates: Object.freeze([...input.publicStates]), knowledge, actions };
@@ -151,6 +153,7 @@ export function createWorldKernel({ pool, registry, objects = [], enabled = fals
     const mutationContext = itemMutationContext(client, mutation);
     const definition = byId.get(input.objectId), action = definition?.actions.find((entry) => entry.id === input.actionId);
     if (!allowed(accountId) || !action) fail();
+    if (action.execution === 'family_operation' && !operationId) fail('world_forbidden');
     if (operationId && (mutationContext.mutationKind !== 'operation_action' || mutationContext.owner.scope !== 'account'
       || mutationContext.owner.id !== accountId)) fail('world_forbidden');
     if (operationId) assertOperationMutation(client, mutation, operationId);
@@ -262,6 +265,7 @@ export function createWorldKernel({ pool, registry, objects = [], enabled = fals
       const objects = shown.map(({ definition, state, known }) => ({ ...project(definition, state),
         actions: definition.actions.filter((action) => action.from === state.state).map((action) => {
           const missing = [];
+          if (action.execution === 'family_operation') missing.push('family_operation');
           if (!family || !['boss', 'underboss'].includes(family.role)) missing.push('family_authority');
           if (!uniformCrew) missing.push('crew_affiliation');
           if (ch.loc !== definition.locationId) missing.push('location');
@@ -321,6 +325,9 @@ export function createWorldKernel({ pool, registry, objects = [], enabled = fals
       input = commandInput(input);
       const definition = byId.get(input.objectId), action = definition?.actions.find((entry) => entry.id === input.actionId);
       if (!allowed(accountId) || !action) fail();
+      // A guessed collective-only action must be indistinguishable from an
+      // absent hidden object; the authorized projection explains the Family route.
+      if (action.execution === 'family_operation') fail();
       const key = keyFor(accountId, idempotencyKey), owner = { scope: 'account', id: accountId };
       const result = await withItemTransaction(pool, (client) => withItemMutation(client, owner, 'world_action', key,
         { ...input, contentHash: definition.contentHash }, (mutation) => applyCommand(client, accountId, input, mutation)));

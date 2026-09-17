@@ -18,6 +18,8 @@
 //   createdb omerta_check
 //   DATABASE_URL=postgres://localhost/omerta_check JWT_SECRET=x MOD_KEY=yyyyyyyyyyyy \
 //     MARKET_SEED='<32 random chars>' SOCIAL_VERIFY_MODE=off node tools/pgcheck.js
+// The isolated runner needs SET privilege for deadlock_timeout (CI uses its
+// disposable PostgreSQL superuser); §9e changes it only inside the fixture holder.
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { SHIPMENT, TREASURY } from '../src/rules.js'; // read live prices/floors, never restate them
@@ -1503,8 +1505,10 @@ console.log('\n9d. THE RETENTION SWEEPS DO NOT SCAN');
 //
 // Driven by HOLDING the funder row rather than by racing a real sweep — §9's reason: a race depends
 // on two backends overlapping inside a millisecond-wide window and timing luck reads exactly like a
-// proof. Observe the exact player refund blocked by this fixture's holder, then close the cycle at
-// once. That puts the cycle in place before the already-waiting player's deadlock timer fires.
+// proof. For the bounty probe, pause the exact player refund BEFORE sending its SQL, observe the
+// holder waiting on the player's pot, then release that refund. The player's fresh deadlock timer
+// now sees an established cycle. Merely observing a waiting player was insufficient: its one-shot
+// detector may already have run before the holder closes the cycle, making the holder the victim.
 function observePromiseOutcome(promise, onSettled) {
   return promise.then(
     (value) => { onSettled(); return { ok: true, value }; },
@@ -1515,6 +1519,58 @@ function valueAfterCleanup(outcome, fixtureError) {
   if (outcome?.ok === false) throw outcome.error;
   if (fixtureError) throw fixtureError;
   return outcome?.value;
+}
+// Harness-only scheduling: no query is changed, skipped, or fabricated. Restore
+// the pool hook on capture and every client method on release, including failure.
+function pausePlayerRefundBeforeSend(funderId) {
+  const refundSql = 'UPDATE characters SET cash = cash + $2 WHERE id=$1';
+  const connect = pool.connect;
+  let resume, reachedPid = null;
+  const gate = new Promise((resolve) => { resume = resolve; });
+  const restorations = new Set();
+  function restorePool() { if (pool.connect === interceptedConnect) pool.connect = connect; }
+  function interceptedConnect(...args) {
+    // Pool.query uses callback checkout; only the real request's promise checkout
+    // needs instrumentation. Observer/holder queries retain the normal pool path.
+    if (args.length) return connect.apply(this, args);
+    return connect.apply(this, args).then((client) => {
+      const query = client.query, release = client.release;
+      const restore = () => { client.query = query; client.release = release; restorations.delete(restore); };
+      restorations.add(restore);
+      client.query = function (...queryArgs) {
+        if (reachedPid === null && queryArgs[0] === refundSql && queryArgs[1]?.[0] === funderId) {
+          reachedPid = Number(client.processID); restorePool();
+          return gate.then(() => query.apply(client, queryArgs));
+        }
+        return query.apply(this, queryArgs);
+      };
+      client.release = function (...releaseArgs) { restore(); return release.apply(this, releaseArgs); };
+      return client;
+    });
+  }
+  pool.connect = interceptedConnect;
+  return {
+    async reached(requestSettled) {
+      const deadline = Date.now() + 5000;
+      while (reachedPid === null && Date.now() < deadline && !requestSettled()) await new Promise((r) => setTimeout(r, 25));
+      if (!Number.isInteger(reachedPid) || reachedPid < 1) throw new Error('bounty player never reached the exact paused refund boundary');
+      return reachedPid;
+    },
+    resume,
+    restore() { resume(); restorePool(); for (const restore of restorations) restore(); },
+  };
+}
+async function waitForHolderBlockedByPlayer(holderPid, playerPid, queryText) {
+  const deadline = Date.now() + 5000;
+  while (Date.now() < deadline) {
+    const { rows } = await pool.query(`SELECT 1 FROM pg_stat_activity a
+      WHERE a.datname=current_database() AND a.pid=$1 AND a.query=$3
+        AND a.state='active' AND a.wait_event_type='Lock' AND $2::int=ANY(pg_blocking_pids(a.pid))`,
+    [holderPid, playerPid, queryText]);
+    if (rows.length === 1) return;
+    await new Promise((r) => setTimeout(r, 25));
+  }
+  throw new Error(`bounty holder PID ${holderPid} never blocked behind paused player PID ${playerPid}`);
 }
 const waitForPlayerRefundBlockedBy = async ({ holderPid, startedAfter, requestSettled, label }) => {
   const deadline = Date.now() + 5000;
@@ -1584,29 +1640,35 @@ console.log('\n9e. THE POT/FUNDER CYCLE LANDS AS CONTENTION, NEVER A 500');
   let inflight = null, requestOutcome = null, holderTook = null, holderResult = null;
   let fixtureError = null, raced = null;
   let holderPid = null, waiterPid = null;
+  let refundBoundary = null;
   try {
     await holder.query('BEGIN');
+    // Only this artificial holder defers detection. The player's production
+    // detector and both production lock_timeout/statement_timeout valves stay intact.
+    await holder.query("SET LOCAL deadlock_timeout = '1min'");
     // exactly what sweepExpiredBounties (and runEstate, through refundPot) does first: the funder's row.
     await holder.query('SELECT 1 FROM characters WHERE id=$1 FOR UPDATE', [funder.id]);
     const identity = (await holder.query(
       'SELECT pg_backend_pid() AS pid, clock_timestamp() AS started_after')).rows[0];
     holderPid = Number(identity.pid);
-    // the poster takes the pot, then blocks reaching the funder inside refundPot.
+    // The poster takes the pot, then pauses just before its real funder UPDATE.
+    refundBoundary = pausePlayerRefundBeforeSend(funder.id);
     let requestSettled = false;
     inflight = observePromiseOutcome(call('POST', `/v1/streets/${mark.id}/bounty`, {
       token: poster.token, body: { amount: stake, kind: 'kill' },
     }), () => { requestSettled = true; });
-    waiterPid = await waitForPlayerRefundBlockedBy({
-      holderPid, startedAfter: identity.started_after, requestSettled: () => requestSettled,
-      label: 'section 9e bounty refund',
-    });
-    // close the cycle: we hold the funder and now want the pot the player is holding.
-    holderTook = holder.query('SELECT 1 FROM bounties WHERE target_character=$1 AND kind=$2 FOR UPDATE', [mark.id, 'kill'])
+    waiterPid = await refundBoundary.reached(() => requestSettled);
+    // Establish the reverse wait first, without starting the player's detector.
+    const potSql = 'SELECT 1 FROM bounties WHERE target_character=$1 AND kind=$2 FOR UPDATE';
+    holderTook = holder.query(potSql, [mark.id, 'kill'])
       .then(() => ({ ok: true }), (error) => ({ ok: false, error }));
+    await waitForHolderBlockedByPlayer(holderPid, waiterPid, potSql);
+    refundBoundary.resume(); // Actual UPDATE creates the cycle; player detects it.
     [requestOutcome, holderResult] = await Promise.all([inflight, holderTook]);
   } catch (error) {
     fixtureError = error;
   } finally {
+    refundBoundary?.restore();
     // If readiness itself failed, release the held character before draining the blocked request.
     if (!holderTook) await holder.query('ROLLBACK').catch(() => {});
     await Promise.allSettled([inflight, holderTook].filter(Boolean));

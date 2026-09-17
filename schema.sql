@@ -7215,7 +7215,7 @@ CREATE TABLE IF NOT EXISTS world_operation_commitments (
   requirement_id TEXT NOT NULL,
   account_id TEXT NOT NULL,
   character_id TEXT NOT NULL,
-  kind TEXT NOT NULL CHECK (kind IN ('participation','item','resource','capital','information','capability')),
+  kind TEXT NOT NULL CONSTRAINT world_operation_commitments_kind_check CHECK (kind IN ('participation','item','resource','capital','information','capability','prerequisite')),
   quantity INT NOT NULL CHECK (quantity BETWEEN 1 AND 1000000),
   template_id TEXT,
   item_id TEXT REFERENCES item_instances(id),
@@ -7223,6 +7223,9 @@ CREATE TABLE IF NOT EXISTS world_operation_commitments (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   PRIMARY KEY (operation_id,role_id,requirement_id)
 );
+ALTER TABLE world_operation_commitments DROP CONSTRAINT IF EXISTS world_operation_commitments_kind_check;
+ALTER TABLE world_operation_commitments ADD CONSTRAINT world_operation_commitments_kind_check
+  CHECK (kind IN ('participation','item','resource','capital','information','capability','prerequisite'));
 CREATE TABLE IF NOT EXISTS world_operation_capital (
   operation_id TEXT NOT NULL REFERENCES world_operations(id),
   role_id TEXT NOT NULL,
@@ -7248,4 +7251,18 @@ CREATE TABLE IF NOT EXISTS world_operation_events (
   payload_json TEXT NOT NULL,
   occurred_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   UNIQUE (operation_id,revision,ordinal)
+);
+
+-- Core recipe limits retain their identity across content revisions. Inventory,
+-- provenance and usage commit together under the existing item mutation root.
+CREATE TABLE IF NOT EXISTS world_recipe_usage (
+  recipe_id TEXT NOT NULL,
+  scope TEXT NOT NULL CHECK (scope IN ('account','global','territory')),
+  subject_id TEXT NOT NULL,
+  period_kind TEXT NOT NULL CHECK (period_kind IN ('lifetime','day','week','season')),
+  period_key TEXT NOT NULL,
+  used INT NOT NULL CHECK (used BETWEEN 0 AND 1000000),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (recipe_id,scope,subject_id,period_kind,period_key),
+  CHECK ((scope='global' AND subject_id='*') OR (scope<>'global' AND subject_id<>'*' AND char_length(subject_id)>0))
 );

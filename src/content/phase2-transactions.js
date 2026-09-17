@@ -17,6 +17,9 @@ function context(client) {
   return active;
 }
 export function assertPhase2Client(client) { context(client); }
+export function assertPhase2Write(client) {
+  if (!context(client).write) throw failure('content_transaction_required');
+}
 export function phase2ContextIdentity(client) { return context(client).identity; }
 export function registerPhase2Undo(client, undo) {
   const active = context(client);

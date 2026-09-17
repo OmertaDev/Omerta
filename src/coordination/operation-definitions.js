@@ -5,7 +5,7 @@ import { GameError } from '../game.js';
 import { levelOf } from '../rules.js';
 import { canonicalBytes } from '../content/canonical.js';
 import { isWorldGraphRegistry, nodeOf } from '../worldgraph.js';
-import { normalizeKnowledgeRequirement } from '../world-knowledge.js';
+import { normalizeKnowledgeRequirement, normalizeWorldPrerequisite, knowledgeRequirementKey, worldPrerequisiteKey } from '../world-knowledge.js';
 import { compileWorldObjects } from '../world-kernel.js';
 
 export const FAMILY_OPERATION_SKILLS = Object.freeze(['level', 'muscle', 'cunning', 'speed']);
@@ -67,8 +67,8 @@ function requirement(registry, input) {
   const kind = kindDescriptor.value;
   if (typeof kind !== 'string') fail();
   const extra = ({ participation: [], item: ['templateId'], resource: ['templateId'], capital: [],
-    information: ['knowledge'], capability: ['skill', 'minimum'] })[kind];
-  if (!Object.hasOwn({ participation: 1, item: 1, resource: 1, capital: 1, information: 1, capability: 1 }, kind)) fail();
+    information: ['knowledge'], capability: ['skill', 'minimum'], prerequisite: ['predicate'] })[kind];
+  if (!Object.hasOwn({ participation: 1, item: 1, resource: 1, capital: 1, information: 1, capability: 1, prerequisite: 1 }, kind)) fail();
   record(input, ['id', 'kind', 'quantity', ...extra]);
   const result = { id: id(input.id), kind, quantity: integer(input.quantity, 1,
     ['capital', 'resource'].includes(kind) ? 1000000 : 1) };
@@ -80,6 +80,8 @@ function requirement(registry, input) {
   } else if (kind === 'capability') {
     result.skill = skill(input.skill);
     result.minimum = integer(input.minimum, 1, 1000000);
+  } else if (kind === 'prerequisite') {
+    try { result.predicate = normalizeWorldPrerequisite(input.predicate); } catch { fail(); }
   }
   return Object.freeze(result);
 }
@@ -104,8 +106,19 @@ export function compileFamilyOperations(registry, worldDefinitions, inputs) {
   } catch { fail(); }
   const worldById = new Map(worlds.map((definition) => [definition.id, definition]));
   const ids = new Set();
+  let admissionCount = 0;
   return Object.freeze(inputs.map((input) => {
-    record(input, ['id', 'version', 'title', 'lifetimeSeconds', 'executorRoleId', 'roles', 'world', 'resolution']);
+    const hasAdmission = input !== null && typeof input === 'object' && Object.hasOwn(input, 'admission');
+    record(input, ['id', 'version', 'title', 'lifetimeSeconds', 'executorRoleId', 'roles', 'world', 'resolution',
+      ...(hasAdmission ? ['admission'] : [])]);
+    let admission;
+    if (hasAdmission) {
+      try { admission = Object.freeze(array(input.admission, 1, 16).map(normalizeWorldPrerequisite)); } catch { fail(); }
+      if (admission.some((predicate) => predicate.adapter !== 'mystery_state')
+        || new Set(admission.map(worldPrerequisiteKey)).size !== admission.length) fail();
+      admissionCount += admission.length;
+      if (admissionCount > 32) fail();
+    }
     const definitionId = id(input.id);
     if (ids.has(definitionId)) fail();
     ids.add(definitionId);
@@ -123,6 +136,17 @@ export function compileFamilyOperations(registry, worldDefinitions, inputs) {
       return Object.freeze({ id: roleId, title: title(role.title), requirements });
     }));
     if (requirementCount > 32 || !roleIds.has(input.executorRoleId)) fail();
+    for (const role of roles) for (const entry of role.requirements) if (entry.kind === 'prerequisite') {
+      const predicate = entry.predicate;
+      // Physical contributions already use the operation's custody requirements.
+      if (predicate.adapter === 'item_ownership') fail();
+      if (predicate.adapter === 'social' && predicate.requirement.subject
+        && (!roleIds.has(predicate.requirement.subject) || predicate.requirement.subject === role.id)) fail();
+      if (predicate.adapter === 'world_state') {
+        const source = worldById.get(predicate.requirement.objectId);
+        if (!source || source.contentHash !== predicate.requirement.definitionHash || !source.states.includes(predicate.requirement.state)) fail();
+      }
+    }
     record(input.world, ['objectId', 'actionId', 'itemRoleId', 'itemRequirementId']);
     const world = Object.freeze({ objectId: id(input.world.objectId), actionId: id(input.world.actionId),
       itemRoleId: id(input.world.itemRoleId), itemRequirementId: id(input.world.itemRequirementId) });
@@ -135,6 +159,13 @@ export function compileFamilyOperations(registry, worldDefinitions, inputs) {
     if (requirements.filter((entry) => entry.kind === 'information').length + worldDefinition.knowledge.length > 32
       || roles.some((role) => role.requirements.filter((entry) => entry.kind === 'information').length
         + (role.id === input.executorRoleId ? worldDefinition.knowledge.length : 0) > 16)) fail();
+    const planned = roles.map((role) => [...new Map([
+      ...role.requirements.filter((entry) => entry.kind === 'information').map((entry) => entry.knowledge),
+      ...role.requirements.filter((entry) => entry.kind === 'prerequisite' && entry.predicate.adapter === 'world_state')
+        .flatMap((entry) => worldById.get(entry.predicate.requirement.objectId).knowledge),
+      ...(role.id === input.executorRoleId ? worldDefinition.knowledge : []),
+    ].map((entry) => [knowledgeRequirementKey(entry), entry])).values()]);
+    if (planned.some((group) => group.length > 16) || planned.reduce((count, group) => count + group.length, 0) > 32) fail();
     const items = requirements.filter((entry) => entry.kind === 'item');
     if (items.length !== 1 || items[0].roleId !== world.itemRoleId || items[0].id !== world.itemRequirementId
       || items[0].templateId !== action.itemTemplateId) fail();
@@ -154,6 +185,7 @@ export function compileFamilyOperations(registry, worldDefinitions, inputs) {
     const definition = { id: definitionId, version: integer(input.version, 1, 2147483647),
       title: title(input.title), lifetimeSeconds: integer(input.lifetimeSeconds, 60, 604800),
       executorRoleId: input.executorRoleId, roles, world,
+      ...(admission ? { admission } : {}),
       resolution: Object.freeze({ chancePermille: integer(input.resolution.chancePermille, 0, 1000), skillBonuses }) };
     let contentHash;
     try {

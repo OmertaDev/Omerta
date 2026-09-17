@@ -215,6 +215,12 @@ try {
   assert.equal(provenance.length, 5); assert(provenance.every(({ provenance_kind }) => provenance_kind === 'crafted'));
   await tx((client) => transferItem(client, owner(boss), owner(outsider), items[4], 'fixture foreign custody', key()));
   const main = input(objects[0].id, items[0]);
+  const collectiveObject = structuredClone(objects[0]);
+  collectiveObject.actions[0].execution = 'family_operation';
+  const collectiveOnly = service({ objects: [collectiveObject] });
+  await denied(boss, main, 'world_unavailable', collectiveOnly);
+  assert.notEqual(collectiveOnly.definitions[0].contentHash, engine.definitions[0].contentHash,
+    'Collective-only authorization is part of the pinned object definition');
   await denied(boss, main); // Actor is still in docks, while the physical object is in foundry.
   await social(boss, (ch, client, h) => travel(ch, 'foundry', client, h));
   await denied(boss, input(objects[0].id, items[4]));
@@ -302,6 +308,8 @@ try {
     (definition) => { definition.actions[0].materials.push({ ...definition.actions[0].materials[0] }); },
     (definition) => { definition.actions[0].to = definition.actions[0].from; },
     (definition) => { definition.actions[0].familyId = family.gangId; },
+    (definition) => { definition.actions[0].execution = 'direct'; },
+    (definition) => { definition.actions[0].execution = undefined; },
   ];
   for (const alter of invalidDefinitions) {
     const definition = structuredClone(objects[0]); alter(definition);

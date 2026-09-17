@@ -28,8 +28,9 @@ import {
 import { levelOf } from './rules.js';
 import { isWorldGraphRegistry, nodeOf } from './worldgraph.js';
 import { rewardAssetDeclarations, validateGraph } from './worldgraph-validate.js';
-import { createCoordinationKnowledge, snapshotRequirementMatches } from './coordination/knowledge.js';
-import { normalizeKnowledgeRequirement, knowledgeRequirementKey, normalizeOperationOutcomeRequirement } from './world-knowledge.js';
+import { createCoordinationKnowledge, snapshotRequirementMatches, knowledgeProofMatches } from './coordination/knowledge.js';
+import { normalizeKnowledgeRequirement, knowledgeRequirementKey, normalizeWorldPrerequisite, worldPrerequisiteKey } from './world-knowledge.js';
+import { createWorldPrerequisites, prerequisiteMatches } from './world-prerequisites.js';
 import { canonicalBytes } from './content/canonical.js';
 
 const CONTEXTS = new WeakSet();
@@ -50,6 +51,9 @@ const CONDITION_ADAPTERS = new Set([
   'explicit_interaction',
   'knowledge',
   'family_operation_outcome',
+  'mystery_state',
+  'social',
+  'world_state',
 ]);
 const CONDITION_ALIASES = Object.freeze({
   graph_dependency: Object.freeze({ target: ['nodeId', 'id', 'value'] }),
@@ -263,11 +267,14 @@ function normalizeMysteryCondition(registry, node, condition, { timeWindows = nu
     }
     return Object.freeze({ adapter, requirement: normalizeKnowledgeRequirement(condition.requirement) });
   }
-  if (adapter === 'family_operation_outcome') {
+  if (['family_operation_outcome', 'mystery_state', 'social', 'world_state'].includes(adapter)
+    || (adapter === 'item_ownership' && Object.hasOwn(condition, 'requirement'))) {
     if (condition.adapter !== adapter || Reflect.ownKeys(condition).length !== 2 || !Object.hasOwn(condition, 'requirement')) {
       fail('bad_mystery_condition', 'Operation outcomes require an exact pinned requirement.');
     }
-    return Object.freeze({ adapter, requirement: normalizeOperationOutcomeRequirement(condition.requirement) });
+    const normalized = normalizeWorldPrerequisite(condition);
+    if (normalized.adapter === 'social' && normalized.requirement.subject) fail('bad_mystery_condition', 'Solo mystery predicates cannot nominate other actors.');
+    return normalized;
   }
   if (!CONDITION_ADAPTERS.has(adapter)) {
     fail('unsupported_mystery_condition',
@@ -548,7 +555,7 @@ export function validateMysteryDefinitions(registry, { timeWindows = null } = {}
     }
     for (const condition of node.conditions || []) {
       const normalized = normalizeMysteryCondition(registry, node, condition, { timeWindows });
-      if (['knowledge', 'family_operation_outcome'].includes(normalized.adapter)) {
+      if (normalized.requirement) {
         if (!knowledgeByPackage.has(node.packageId)) knowledgeByPackage.set(node.packageId, new Set());
         const requirements = knowledgeByPackage.get(node.packageId);
         requirements.add(canonicalBytes(normalized).toString('utf8'));
@@ -645,9 +652,11 @@ export function createMysteryContext({
   knowledgeEnabled = false,
   sharingEnabled = false,
   operationOutcomesEnabled = false,
+  prerequisitesEnabled = false,
+  worldDefinitions = [],
   accountIds = [],
 } = {}) {
-  if (typeof knowledgeEnabled !== 'boolean' || typeof sharingEnabled !== 'boolean' || typeof operationOutcomesEnabled !== 'boolean'
+  if (typeof knowledgeEnabled !== 'boolean' || typeof sharingEnabled !== 'boolean' || typeof operationOutcomesEnabled !== 'boolean' || typeof prerequisitesEnabled !== 'boolean'
     || !Array.isArray(accountIds) || accountIds.some((id) => typeof id !== 'string' || !id)) {
     fail('bad_mystery_context', 'Invalid mystery knowledge policy.');
   }
@@ -670,6 +679,25 @@ export function createMysteryContext({
     timeWindows: immutableTimeWindows,
   });
   CONTEXTS.add(context);
+  const pins = mysteryPins(registry, immutableTimeWindows);
+  const prerequisites = createWorldPrerequisites({ enabled: prerequisitesEnabled || operationOutcomesEnabled,
+    accountIds, worldDefinitions, knowledgeEnabled, sharingEnabled });
+  for (const pkg of registry.byPackage.values()) {
+    const external = [...registry.nodes.values()].filter((node) => node.packageId === pkg.id
+      && (ACTION_NODE_TYPES.has(node.type) || node.type === 'choice')).flatMap((node) => (node.conditions || [])
+      .map((condition) => normalizeMysteryCondition(registry, node, condition, { timeWindows: immutableTimeWindows }))
+      .filter((condition) => condition.requirement && condition.adapter !== 'knowledge'));
+    const knowledge = [...registry.nodes.values()].filter((node) => node.packageId === pkg.id
+      && (ACTION_NODE_TYPES.has(node.type) || node.type === 'choice'))
+      .flatMap((node) => (node.conditions || []).filter((condition) => condition.adapter === 'knowledge').map((condition) => condition.requirement));
+    if (new Set([...knowledge, ...prerequisites.knowledgeRequirements(external)].map(knowledgeRequirementKey)).size > 16) fail('bad_mystery_condition', 'Mystery knowledge requirements exceed the proof bound.');
+  }
+  MYSTERY_KNOWLEDGE.set(context, { policy: createCoordinationKnowledge({ enabled: knowledgeEnabled, sharingEnabled, accountIds }), pins,
+    operationOutcomesEnabled, prerequisitesEnabled, prerequisites });
+  return context;
+}
+
+function mysteryPins(registry, immutableTimeWindows) {
   const pins = new Map();
   const nodesByPackage = new Map([...registry.byPackage.keys()].map((id) => [id, []]));
   for (const node of registry.nodes.values()) nodesByPackage.get(node.packageId).push(node);
@@ -687,11 +715,20 @@ export function createMysteryContext({
       if (normalized.adapter === 'time_window' && normalized.windowId) namedWindows[normalized.windowId] = immutableTimeWindows[normalized.windowId];
     }
     pins.set(pkg.id, Object.freeze({ hash: crypto.createHash('sha256').update(canonicalBytes({ definitions, namedWindows })).digest('hex'),
-      requiresKnowledge: mysteryNodes.some((node) => (node.conditions || []).some((condition) => ['knowledge', 'family_operation_outcome'].includes(condition.adapter))) }));
+      requiresKnowledge: mysteryNodes.some((node) => (node.conditions || []).some((condition) =>
+        normalizeMysteryCondition(registry, node, condition, { timeWindows: immutableTimeWindows }).requirement)) }));
   }
-  MYSTERY_KNOWLEDGE.set(context, { policy: createCoordinationKnowledge({ enabled: knowledgeEnabled, sharingEnabled, accountIds }), pins,
-    operationOutcomesEnabled, accountIds: Object.freeze([...accountIds]) });
-  return context;
+  return pins;
+}
+
+export function mysteryDefinitionHash(registry, graphId, { timeWindows = {} } = {}) {
+  if (!isWorldGraphRegistry(registry)) fail('bad_mystery_context', 'An immutable mystery registry is required.');
+  validateGraph(registry);
+  const windows = plainFrozenWindows(timeWindows);
+  validateMysteryDefinitions(registry, { timeWindows: windows });
+  const pin = mysteryPins(registry, windows).get(graphId);
+  if (!pin) fail('mystery_graph', 'That package does not define a mystery graph.');
+  return pin.hash;
 }
 
 function contextOf(value) {
@@ -757,7 +794,7 @@ async function actorOf(client, context, owner, { lock = true } = {}) {
     skills: new Set(skills.rows.map(({ skill_id: id }) => id)),
     knowledgeCharacter: row,
     knowledge: new Set(),
-    operationOutcomes: new Set(),
+    prerequisites: new Set(),
   });
 }
 
@@ -767,48 +804,42 @@ async function actorOf(client, context, owner, { lock = true } = {}) {
 async function resolveMysteryKnowledge(client, context, actor, nodes, { readOnly = false } = {}) {
   if (!actor) return;
   const requirements = new Map();
-  const outcomes = new Map();
+  const external = new Map();
   for (const node of nodes) for (const condition of node.conditions || []) {
     const normalized = normalizeMysteryCondition(context.registry, node, condition, { timeWindows: context.timeWindows });
     if (normalized.adapter === 'knowledge') requirements.set(knowledgeRequirementKey(normalized.requirement), normalized.requirement);
-    if (normalized.adapter === 'family_operation_outcome') outcomes.set(canonicalBytes(normalized.requirement).toString('utf8'), normalized.requirement);
+    else if (normalized.requirement) external.set(worldPrerequisiteKey(normalized), normalized);
   }
-  const { policy, operationOutcomesEnabled, accountIds } = MYSTERY_KNOWLEDGE.get(context);
-  if (operationOutcomesEnabled && (!accountIds.length || accountIds.includes(context.accountId)) && outcomes.size) {
-    let account;
-    if (readOnly) account = (await client.query('SELECT status FROM accounts WHERE id=$1', [context.accountId])).rows[0];
-    else account = (await client.query('SELECT status FROM accounts WHERE id=$1 FOR SHARE', [context.accountId])).rows[0];
-    if (account?.status !== 'active') fail('operation_outcome_unavailable', 'Operation history is unavailable.');
-    for (const [key, outcome] of outcomes) {
-      // Terminal Family histories and their final role assignments are immutable through commands.
-      // Require a durable resolved-event receipt and this living character's own recorded seat.
-      const row = (await client.query(`SELECT o.id FROM world_operations o
-        JOIN world_operation_roles r ON r.operation_id=o.id
-        JOIN world_operation_events e ON e.operation_id=o.id AND e.event_kind='resolved'
-        JOIN item_mutation_guards g ON g.mutation_id=e.mutation_id AND g.mutation_kind='operation_action'
-        WHERE o.coordination_mode='family' AND o.graph_id=$1 AND o.coordination_definition_hash=$2 AND o.status=$3
-          AND r.account_id=$4 AND r.character_id=$5 AND g.result_json IS NOT NULL LIMIT 1`,
-      [outcome.definitionId, outcome.definitionHash, outcome.outcome, context.accountId, actor.id])).rows[0];
-      if (row) actor.operationOutcomes.add(key);
-    }
-  }
-  if (!requirements.size || !policy.enabledFor(context.accountId)) return;
+  const { policy, operationOutcomesEnabled, prerequisitesEnabled, prerequisites } = MYSTERY_KNOWLEDGE.get(context);
+  const predicates = [...external.values()].filter((predicate) => predicate.adapter === 'family_operation_outcome' ? operationOutcomesEnabled : prerequisitesEnabled);
+  for (const requirement of prerequisites.knowledgeRequirements(predicates)) requirements.set(knowledgeRequirementKey(requirement), requirement);
   const values = [...requirements.values()], keys = [...requirements.keys()];
-  let matches;
-  if (readOnly) {
-    const snapshot = await policy.readSnapshot(client, { viewer: { accountId: context.accountId },
+  let matches = [], proof = null;
+  if (requirements.size && policy.enabledFor(context.accountId) && readOnly) {
+    proof = await policy.readSnapshot(client, { viewer: { accountId: context.accountId },
       groups: [{ accountId: context.accountId, characterId: actor.id, requirements: values }], limit: 1 });
-    matches = values.map((requirement) => snapshotRequirementMatches(client, snapshot, {
+    matches = values.map((requirement) => snapshotRequirementMatches(client, proof, {
       accountId: context.accountId, characterId: actor.id, requirement,
       sharingEnabled: policy.sharingEnabledFor(context.accountId),
     }));
-  } else {
+  } else if (requirements.size && policy.enabledFor(context.accountId)) {
     const account = (await client.query('SELECT status FROM accounts WHERE id=$1 FOR SHARE', [context.accountId])).rows[0];
     if (account?.status !== 'active') fail('knowledge_unavailable', 'Required knowledge is unavailable.');
     const token = await policy.context(client, { accountId: context.accountId, character: actor.knowledgeCharacter, lock: true });
-    matches = await policy.matchesRequirements(client, token, values);
+    proof = await policy.prepareRequirementProof(client, [{ context: token, requirements: values }]);
+    matches = values.map((requirement) => knowledgeProofMatches(client, proof, { accountId: context.accountId,
+      characterId: actor.id, requirement, sharingEnabled: policy.sharingEnabledFor(context.accountId) }));
   }
   matches.forEach((matched, index) => { if (matched) actor.knowledge.add(keys[index]); });
+  if (predicates.length) {
+    const facts = await prerequisites[readOnly ? 'readSnapshot' : 'prepare'](client, {
+      subjects: [{ key: 'actor', accountId: context.accountId, characterId: actor.id }],
+      groups: [{ subjectKey: 'actor', requirements: predicates }], asOf: context.nowMs,
+      ...(readOnly ? { knowledgeSnapshot: proof } : { knowledgeProof: proof }) });
+    for (const requirement of predicates) if (prerequisiteMatches(client, facts, { subjectKey: 'actor', requirement, mode: readOnly ? 'read' : 'write' })) {
+      actor.prerequisites.add(worldPrerequisiteKey(requirement));
+    }
+  }
 }
 
 function graphIdentity(pkg) {
@@ -1033,9 +1064,7 @@ async function conditionBlocker({
   if (adapter === 'knowledge') {
     return actor?.knowledge.has(knowledgeRequirementKey(normalized.requirement)) ? null : { adapter };
   }
-  if (adapter === 'family_operation_outcome') {
-    return actor?.operationOutcomes.has(canonicalBytes(normalized.requirement).toString('utf8')) ? null : { adapter };
-  }
+  if (normalized.requirement) return actor?.prerequisites.has(worldPrerequisiteKey(normalized)) ? null : { adapter };
   if (adapter === 'graph_dependency') {
     const nodeId = normalized.target;
     return states.get(nodeId)?.state === 'completed' ? null : { adapter, nodeId };
@@ -1131,6 +1160,7 @@ async function nodeBlockers({
 function throwBlocker(blocker) {
   if (blocker.adapter === 'family_operation_outcome') fail('operation_outcome_required', 'Required operation participation is unavailable.');
   if (blocker.adapter === 'knowledge') fail('knowledge_required', 'Required knowledge is unavailable.');
+  if (['mystery_state', 'social', 'world_state'].includes(blocker.adapter)) fail('prerequisite_required', 'Required progression is unavailable.');
   if (blocker.adapter === 'excluded' || blocker.adapter === 'excluded_by') {
     fail('mystery_excluded', 'That mystery branch is closed.');
   }
@@ -1743,18 +1773,23 @@ async function readMysteryBoard(client, contextValue, ownerValue, graphIdValue) 
     if (error?.code !== 'no_character') throw error;
   }
   const nodes = [];
-  const visibleNodes = [...context.registry.nodes.values()].filter((node) => {
+  const affordances = MYSTERY_KNOWLEDGE.get(context).prerequisitesEnabled;
+  const boardNodes = [...context.registry.nodes.values()].filter((node) => node.packageId === graphId
+    && isMysteryStateNode(context.registry, node) && node.visibility !== 'role_private');
+  const visibleNodes = boardNodes.filter((node) => {
     if (node.packageId !== graphId || !isMysteryStateNode(context.registry, node)
       || node.visibility === 'role_private') return false;
     const row = states.get(node.id);
     return node.visibility === 'public' || !!row?.discovered_at || row?.state === 'completed';
   });
-  if (!readOnly && visibleNodes.some((node) => (node.conditions || []).some((condition) => ['knowledge', 'family_operation_outcome'].includes(condition.adapter)))) {
+  const candidates = affordances ? boardNodes.filter((node) => ACTION_NODE_TYPES.has(node.type) || node.type === 'choice') : visibleNodes;
+  if (!readOnly && candidates.some((node) => (node.conditions || []).some((condition) =>
+    normalizeMysteryCondition(context.registry, node, condition, { timeWindows: context.timeWindows }).requirement))) {
     // A board composed after another mutation could acquire a second, reversed claim-lock set.
     // Knowledge-aware boards require their own read boundary, or the shared projection read scope.
     fail('mystery_read_required', 'Read this mystery outside an item mutation.');
   }
-  await resolveMysteryKnowledge(client, context, actor, visibleNodes, { readOnly });
+  await resolveMysteryKnowledge(client, context, actor, candidates, { readOnly });
   for (const node of visibleNodes) {
     const row = states.get(node.id);
     const blockers = await nodeBlockers({
@@ -1773,11 +1808,34 @@ async function readMysteryBoard(client, contextValue, ownerValue, graphIdValue) 
     const state = states.get(row.node_id);
     return choice.visibility === 'public' || !!state?.discovered_at || state?.state === 'completed';
   }).map((row) => ({ nodeId: row.node_id, choiceId: row.choice_id }));
+  const actions = [];
+  if (affordances && actor && instance.status === 'active') {
+    const committed = new Set(choices.map((choice) => choice.nodeId));
+    for (const node of candidates) {
+      const row = states.get(node.id);
+      if (['completed', 'excluded', 'failed'].includes(row?.state) || committed.has(node.id)) continue;
+      const interactions = (node.conditions || []).map((condition) => normalizeMysteryCondition(context.registry, node, condition,
+        { timeWindows: context.timeWindows })).filter((condition) => condition.adapter === 'explicit_interaction');
+      const interactionId = interactions[0]?.target ?? null;
+      const blockers = await nodeBlockers({ client, context, owner, actor, instance, states, node,
+        interactionId, lock: false, knowledgeResolved: true });
+      if (blockers.length) continue;
+      const action = { nodeId: node.id, ...(interactionId ? { interactionId } : {}) };
+      if (node.visibility !== 'public' && row?.state !== 'discovered') actions.push({ kind: 'discover', ...action });
+      else if (node.type === 'choice') {
+        for (const option of node.options) if (![...(node.excludes || []), ...(option.excludes || [])]
+          .some((excluded) => states.get(excluded)?.state === 'completed' || committed.has(excluded))) {
+          actions.push({ kind: 'choice', ...action, optionId: option.id });
+        }
+      } else actions.push({ kind: 'complete', ...action });
+    }
+  }
   return {
     ...instanceProjection(instance),
     graph: { ...graphIdentity(pkg), version: Number(instance.graph_version) },
     nodes,
     choices,
+    ...(affordances ? { actions } : {}),
   };
 }
 

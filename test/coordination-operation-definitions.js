@@ -25,6 +25,22 @@ assert.equal(pilot.roles.length, 4);
 assert.equal(pilot.resolution.chancePermille, 1000);
 assert.equal(pilot.executorRoleId, 'organizer');
 assert.match(pilot.contentHash, /^[a-f0-9]{64}$/);
+const admission = { adapter: 'mystery_state', requirement: { graphId: 'mystery-fixture', graphVersion: 1,
+  definitionHash: 'a'.repeat(64), nodeId: 'm:deduction', ownerScope: 'current_character', state: 'completed' } };
+const privateDefinition = fresh(); privateDefinition.admission = [admission];
+const [privateCompiled] = compile([privateDefinition]);
+assert.notEqual(privateCompiled.contentHash, pilot.contentHash, 'Admission is part of the executable pin');
+frozen(privateCompiled);
+invalid((value) => { value.admission = []; }, 'An empty admission declaration is not a hidden policy');
+invalid((value) => { value.admission = [admission, admission]; }, 'Duplicate admission facts are rejected');
+invalid((value) => { value.admission = [{ adapter: 'social', requirement: { relation: 'crew_member' } }]; },
+  'Catalog admission cannot add a second mutable social/knowledge proof batch');
+invalid((value) => { value.roles[1].requirements.push({ id: 'other-crew', kind: 'prerequisite', quantity: 1,
+  predicate: { adapter: 'social', requirement: { relation: 'different_crew', subject: 'unresolved' } } }); },
+  'Authored subject aliases must resolve to another operation role');
+invalid((value) => { value.roles[1].requirements.push({ id: 'retained-tool', kind: 'prerequisite', quantity: 1,
+  predicate: { adapter: 'item_ownership', requirement: { templateId: 'item:archive_turn_key', provenance: 'crafted' } } }); },
+  'Family physical requirements use custody, not a cached pre-contribution retained-item fact');
 const reversed = Object.fromEntries(Object.entries(fresh()).reverse());
 assert.equal(compile([reversed])[0].contentHash, pilot.contentHash, 'source property order cannot alter the pin');
 const mutable = fresh();

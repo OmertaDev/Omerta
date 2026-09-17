@@ -6,8 +6,7 @@ import { createWorldKernelQuery } from '../world-kernel-query.js';
 import { createCoordinationKnowledge } from '../coordination/knowledge.js';
 import { createFamilyOperations } from '../coordination/operations.js';
 import { createCraftingContext } from '../crafting.js';
-import { WORLD_KERNEL_REGISTRY, WORLD_KERNEL_OBJECTS, WORLD_KERNEL_RECIPE } from '../content/world-kernel-pilot.js';
-import { COORDINATION_OPERATION_PILOT } from '../content/coordination-operation-pilot.js';
+import { coreProgressionContent } from '../content/core-progression.js';
 
 const invalid = () => { throw new GameError('bad_projection_request', 'Invalid projection request.'); };
 const identifier = (value) => typeof value === 'string' && /^[\x21-\x7e]{1,160}$/.test(value);
@@ -31,19 +30,21 @@ function safeError(error, _req, reply) {
   return reply.code(500).send({ error: 'internal', message: 'The view could not be loaded.' });
 }
 export function register(app, { pool, auth, readPlayer }) {
+  const content = coreProgressionContent();
   const enabled = process.env.WORLD_GRAPH_KERNEL === 'on';
   const knowledgeEnabled = enabled && process.env.COORDINATION_ENGINE === 'on' && process.env.COORDINATION_KNOWLEDGE === 'on';
   const sharingEnabled = knowledgeEnabled && process.env.COORDINATION_KNOWLEDGE_SHARING === 'on';
   const accountIds = (process.env.COORDINATION_ACCOUNT_IDS || '').split(',').map((s) => s.trim()).filter(Boolean);
   const cohort = new Set(accountIds), policy = { enabled, knowledgeEnabled, sharingEnabled, accountIds };
-  const kernel = createWorldKernel({ pool, registry: WORLD_KERNEL_REGISTRY, objects: WORLD_KERNEL_OBJECTS, ...policy });
+  const kernel = createWorldKernel({ pool, registry: content.registry, objects: content.objects, ...policy });
   const knowledge = createCoordinationKnowledge({ enabled: knowledgeEnabled, sharingEnabled, accountIds });
-  const query = createWorldKernelQuery({ pool, knowledge, registry: WORLD_KERNEL_REGISTRY });
-  const crafting = createCraftingContext({ registry: WORLD_KERNEL_REGISTRY, knowledgeEnabled, sharingEnabled, accountIds });
-  const familyOperations = createFamilyOperations({ pool, registry: WORLD_KERNEL_REGISTRY, kernel,
-    definitions: COORDINATION_OPERATION_PILOT, ...policy,
+  const query = createWorldKernelQuery({ pool, knowledge, registry: content.registry });
+  const crafting = createCraftingContext({ registry: content.registry, knowledgeEnabled, sharingEnabled, accountIds,
+    worldDefinitions: kernel.definitions });
+  const familyOperations = createFamilyOperations({ pool, registry: content.registry, kernel,
+    definitions: content.operations, prerequisitesEnabled: content.progression, ...policy,
     enabled: enabled && process.env.COORDINATION_ENGINE === 'on' && process.env.COORDINATION_OPERATIONS === 'on' });
-  const service = createWorldProjection({ pool, query, kernel, knowledge, familyOperations, crafting, recipeIds: [WORLD_KERNEL_RECIPE] });
+  const service = createWorldProjection({ pool, query, kernel, knowledge, familyOperations, crafting, recipeIds: content.recipeIds });
   const admit = async (req) => {
     if (!enabled || (cohort.size && !cohort.has(req.user.sub))) throw new GameError('projection_unavailable', 'That view is unavailable.');
   };

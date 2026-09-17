@@ -2,8 +2,7 @@ import { GameError } from '../game.js';
 import { isDbDown } from '../dbhealth.js';
 import { createWorldKernel } from '../world-kernel.js';
 import { createFamilyOperations } from '../coordination/operations.js';
-import { WORLD_KERNEL_REGISTRY, WORLD_KERNEL_OBJECTS } from '../content/world-kernel-pilot.js';
-import { COORDINATION_OPERATION_PILOT } from '../content/coordination-operation-pilot.js';
+import { coreProgressionContent } from '../content/core-progression.js';
 
 const canonical = (value) => typeof value === 'string' && /^[\x21-\x7e]{1,160}$/.test(value);
 const invalid = () => { throw new GameError('bad_coordination_operation_request', 'Invalid operation request.'); };
@@ -41,14 +40,16 @@ function safeError(error, _req, reply) {
   return reply.code(500).send({ error: 'internal', message: 'The operation request could not complete.' });
 }
 export function register(app, { pool, auth, receiptTrust = null }) {
+  const content = coreProgressionContent();
   const enabled = process.env.COORDINATION_OPERATIONS === 'on' && process.env.COORDINATION_ENGINE === 'on'
     && process.env.WORLD_GRAPH_KERNEL === 'on';
   const knowledgeEnabled = enabled && process.env.COORDINATION_KNOWLEDGE === 'on';
   const sharingEnabled = knowledgeEnabled && process.env.COORDINATION_KNOWLEDGE_SHARING === 'on';
   const accountIds = (process.env.COORDINATION_ACCOUNT_IDS || '').split(',').map((s) => s.trim()).filter(Boolean);
   const policy = { enabled, knowledgeEnabled, sharingEnabled, accountIds };
-  const kernel = createWorldKernel({ pool, registry: WORLD_KERNEL_REGISTRY, objects: WORLD_KERNEL_OBJECTS, ...policy });
-  const service = createFamilyOperations({ pool, registry: WORLD_KERNEL_REGISTRY, kernel, definitions: COORDINATION_OPERATION_PILOT, ...policy });
+  const kernel = createWorldKernel({ pool, registry: content.registry, objects: content.objects, ...policy });
+  const service = createFamilyOperations({ pool, registry: content.registry, kernel, definitions: content.operations,
+    prerequisitesEnabled: content.progression, ...policy });
   const cohort = new Set(accountIds);
   const admit = async (req) => {
     if (!enabled || (cohort.size && !cohort.has(req.user.sub))) throw new GameError('coordination_operation_unavailable', 'Operation unavailable.');

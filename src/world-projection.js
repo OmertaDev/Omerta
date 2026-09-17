@@ -22,7 +22,7 @@ export function createWorldProjection({ pool, query, kernel, knowledge, familyOp
       const characterId = characters[0]?.id ?? null;
       const operationPlan = familyOperations ? await familyOperations.planSnapshot(client, accountId, { operationId: options.operationId ?? null, asOf })
         : { groups: [], render: async () => emptyOperations() };
-      const recipePlan = await planCraftingSnapshot(client, accountId, crafting, recipeIds);
+      const recipePlan = await planCraftingSnapshot(client, accountId, crafting, recipeIds, { asOf });
       const groups = new Map();
       for (const group of [...operationPlan.groups, ...recipePlan.groups,
         ...(characterId ? [{ accountId, characterId, requirements: kernel.definitions.flatMap((d) => d.knowledge) }] : [])]) {
