@@ -13,6 +13,7 @@ import { loadAndValidateGraphPackages } from '../src/worldgraph-validate.js';
 import { createCraftingContext, craftWorldGraphRecipe, recipeCatalog } from '../src/crafting.js';
 import { grantStack, inventoryBoard, withItemTransaction } from '../src/items.js';
 import { knowledgeRequirementKey, normalizeKnowledgeRequirement } from '../src/world-knowledge.js';
+import { createMysteryContext, startMystery, completeNode, discoverNode, commitChoice, mysteryBoard } from '../src/mysteries.js';
 
 let pool, cleanup;
 const postgres = process.argv.includes('--postgres');
@@ -223,6 +224,162 @@ try {
   assert.deepEqual(await craft(member, memberKey), memberReceipt);
   assert.deepEqual(await economy(), afterLeave, 'Membership loss does not let replay spend again');
   console.log(`world-knowledge-crafting: sharing opt-in, revocation and live crew membership pass (${postgres ? 'postgres' : 'pg-mem'})`);
+
+  // The same learned fact must govern private mystery discovery and irreversible deduction.
+  // Reuse real discovery/crafting/sharing, never insert a trusted knowledge flag.
+  const mysteryGraphId = 'knowledge-mystery-fixture';
+  const knowledgeCondition = { adapter: 'knowledge', requirement };
+  const mysteryNodes = [
+    { id: 'm:knowledge-start', type: 'mystery_step', visibility: 'public', conditions: [knowledgeCondition] },
+    { id: 'm:knowledge-hidden', type: 'mystery_step', visibility: 'hidden', requires: ['m:knowledge-start'],
+      conditions: [{ adapter: 'item_ownership', templateId: 'item:precision_lock_tool' }, knowledgeCondition] },
+    { id: 'm:knowledge-choice', type: 'choice', visibility: 'public', requires: ['m:knowledge-hidden'],
+      conditions: [knowledgeCondition], options: [{ id: 'left', excludes: ['m:knowledge-right'] },
+        { id: 'right', excludes: ['m:knowledge-left'] }] },
+    { id: 'm:knowledge-left', type: 'mystery_step', visibility: 'public', requires: ['m:knowledge-choice'],
+      conditions: [{ adapter: 'item_ownership', templateId: 'item:precision_lock_tool' }, knowledgeCondition],
+      effects: [{ adapter: 'item_consume', templateId: 'item:precision_lock_tool' }], metadata: { terminal: true } },
+    { id: 'm:knowledge-right', type: 'mystery_step', visibility: 'public', requires: ['m:knowledge-choice'],
+      conditions: [knowledgeCondition], metadata: { terminal: true } },
+  ];
+  const mysteryRegistry = (nodes = mysteryNodes) => loadAndValidateGraphPackages([...PHASE1_WORLD_GRAPH_PACKAGES, {
+    id: mysteryGraphId, version: 1, dependsOn: ['core-materials', 'automotive-salvage'], nodes,
+  }]);
+  const mysteryRegistryValue = mysteryRegistry();
+  const mixedPackages = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+  mixedPackages.find((pkg) => pkg.id === 'automotive-salvage').nodes.push({
+    id: 'm:mixed-salvage-step', type: 'mystery_step', visibility: 'public', metadata: { terminal: true },
+  });
+  assert.doesNotThrow(() => createMysteryContext({ registry: loadAndValidateGraphPackages(mixedPackages), accountId: author }),
+    'Mixed packages retain their recipe-only condition vocabulary while mystery definitions are pinned');
+  const mysteryContextFor = (accountId, policy = {}) => createMysteryContext({ registry: mysteryRegistryValue,
+    accountId, knowledgeEnabled: true, sharingEnabled: true, ...policy });
+  const mysteryAuthor = await player('mystery-author'), mysteryReader = await player('mystery-reader');
+  const mysteryAuthorContext = mysteryContextFor(mysteryAuthor), mysteryReaderContext = mysteryContextFor(mysteryReader);
+  const mysteryAct = (fn, accountId, nodeId, requestKey = key(), runtime = mysteryContextFor(accountId), extra = {}) =>
+    withItemTransaction(pool, (client) => fn(client, runtime, owner(accountId), mysteryGraphId, nodeId,
+      { idempotencyKey: requestKey, ...extra }));
+  const board = (accountId, runtime = mysteryContextFor(accountId)) => mysteryBoard(pool, runtime, owner(accountId), mysteryGraphId);
+  for (const accountId of [mysteryAuthor, mysteryReader]) await withItemTransaction(pool, (client) =>
+    startMystery(client, mysteryContextFor(accountId), owner(accountId), mysteryGraphId, 1, key()));
+  const beforeDiscovery = await board(mysteryReader);
+  await reject(withItemTransaction(pool, (client) => mysteryBoard(client, mysteryReaderContext, owner(mysteryReader), mysteryGraphId)), 'mystery_read_required');
+  assertPrivateProjection(beforeDiscovery);
+  assert(!beforeDiscovery.nodes.some((node) => node.id === 'm:knowledge-hidden'));
+  assert.deepEqual(beforeDiscovery.nodes.find((node) => node.id === 'm:knowledge-start').blockedBy, [{ adapter: 'knowledge' }]);
+  await reject(mysteryAct(completeNode, mysteryReader, 'm:knowledge-start'), 'knowledge_required');
+  await reject(mysteryAct(completeNode, mysteryReader, 'm:knowledge-start', key(), { ...mysteryReaderContext }), 'bad_mystery_context');
+  const mysteryClaim = await discover(mysteryAuthor);
+  await reject(mysteryAct(completeNode, mysteryAuthor, 'm:knowledge-start', key(), mysteryContextFor(mysteryAuthor, { knowledgeEnabled: false })), 'knowledge_required');
+  await reject(mysteryAct(completeNode, mysteryAuthor, 'm:knowledge-start', key(), mysteryContextFor(mysteryAuthor, { accountIds: [mysteryReader] })), 'knowledge_required');
+  assert.equal((await board(mysteryAuthor)).nodes.find((node) => node.id === 'm:knowledge-start').available, true);
+  await share(mysteryAuthor, mysteryClaim, mysteryReader);
+  assert.equal((await board(mysteryReader)).nodes.find((node) => node.id === 'm:knowledge-start').available, true);
+  assert.equal((await board(mysteryReader, mysteryContextFor(mysteryReader, { sharingEnabled: false }))).nodes.find((node) => node.id === 'm:knowledge-start').available, false);
+  for (const accountId of [mysteryAuthor, mysteryReader]) {
+    await mysteryAct(completeNode, accountId, 'm:knowledge-start');
+    await reject(mysteryAct(discoverNode, accountId, 'm:knowledge-hidden'), 'item_unavailable');
+    await craft(accountId);
+    await mysteryAct(discoverNode, accountId, 'm:knowledge-hidden');
+    await mysteryAct(completeNode, accountId, 'm:knowledge-hidden');
+  }
+  await revoke(mysteryAuthor, mysteryClaim);
+  const afterRevocation = await board(mysteryReader);
+  assert(afterRevocation.nodes.some((node) => node.id === 'm:knowledge-hidden'), 'Past discoveries persist after source sharing is revoked');
+  assert.deepEqual(afterRevocation.nodes.find((node) => node.id === 'm:knowledge-choice').blockedBy, [{ adapter: 'knowledge' }]);
+  await reject(withItemTransaction(pool, (client) => commitChoice(client, mysteryReaderContext, owner(mysteryReader), mysteryGraphId,
+    'm:knowledge-choice', 'left', { idempotencyKey: key() })), 'knowledge_required');
+  await share(mysteryAuthor, mysteryClaim, mysteryReader);
+  for (const accountId of [mysteryAuthor, mysteryReader]) {
+    const choiceKey = key();
+    const choose = () => withItemTransaction(pool, (client) => commitChoice(client, mysteryContextFor(accountId), owner(accountId),
+      mysteryGraphId, 'm:knowledge-choice', 'left', { idempotencyKey: choiceKey }));
+    assert.deepEqual(await choose(), await choose(), 'An irreversible deduction replays its original receipt');
+    await reject(mysteryAct(completeNode, accountId, 'm:knowledge-right'), 'mystery_excluded');
+  }
+  const mysteryTrace = [];
+  let injectMysteryFailure = false;
+  const observedPool = { query: (...args) => pool.query(...args), async connect() {
+    const client = await pool.connect();
+    return { release: () => client.release(), async query(sql, params) {
+      mysteryTrace.push(String(sql));
+      const result = await client.query(sql, params);
+      if (injectMysteryFailure && /UPDATE mystery_node_state SET result_json/.test(String(sql)) && params[1] === 'm:knowledge-left') {
+        throw new Error('mystery failure after completion write');
+      }
+      return result;
+    } };
+  } };
+  assertPrivateProjection(await mysteryBoard(observedPool, mysteryReaderContext, owner(mysteryReader), mysteryGraphId), mysteryClaim);
+  assert(!mysteryTrace.some((sql) => /FOR UPDATE|FOR SHARE|^\s*(INSERT|UPDATE|DELETE)\b/i.test(sql)), 'Mystery boards cannot lock rows or write state');
+  if (postgres) assert.equal(mysteryTrace.filter((sql) => /BEGIN ISOLATION LEVEL REPEATABLE READ, READ ONLY/.test(sql)).length, 1);
+  const beforeFault = await economy();
+  const mysteryBeforeFault = (await pool.query('SELECT * FROM mystery_node_state ORDER BY instance_id,node_id')).rows;
+  injectMysteryFailure = true;
+  await assert.rejects(withItemTransaction(observedPool, (client) => completeNode(client, mysteryReaderContext, owner(mysteryReader),
+    mysteryGraphId, 'm:knowledge-left', { idempotencyKey: key() })), /mystery failure after completion write/);
+  injectMysteryFailure = false;
+  assert.deepEqual(await economy(), beforeFault, 'Failed completion restores the consumed crafted item, events and replay guard');
+  assert.deepEqual((await pool.query('SELECT * FROM mystery_node_state ORDER BY instance_id,node_id')).rows, mysteryBeforeFault);
+  assert.equal((await board(mysteryReader)).status, 'active');
+  const finalKey = key();
+  let finalReceipt;
+  if (postgres) {
+    let signalWritten, releaseCommit;
+    const written = new Promise((resolve) => { signalWritten = resolve; });
+    const commit = new Promise((resolve) => { releaseCommit = resolve; });
+    const completing = withItemTransaction(pool, async (client) => {
+      const value = await completeNode(client, mysteryReaderContext, owner(mysteryReader), mysteryGraphId,
+        'm:knowledge-left', { idempotencyKey: finalKey });
+      signalWritten(); await commit; return value;
+    });
+    await written;
+    const revoking = revoke(mysteryAuthor, mysteryClaim);
+    try {
+      let blocked = false;
+      for (let attempt = 0; attempt < 100; attempt++) {
+        blocked = (await pool.query(`SELECT 1 FROM pg_stat_activity WHERE pid<>pg_backend_pid()
+          AND wait_event_type='Lock' AND query LIKE '%coordination_claims%'`)).rows.length > 0;
+        if (blocked) break;
+        await new Promise((resolve) => setTimeout(resolve, 20));
+      }
+      assert(blocked, 'A real concurrent ACL revocation waits for the mystery predicate claim mutex');
+    } finally { releaseCommit(); }
+    finalReceipt = await completing; await revoking;
+  } else {
+    finalReceipt = await mysteryAct(completeNode, mysteryReader, 'm:knowledge-left', finalKey);
+    await revoke(mysteryAuthor, mysteryClaim);
+  }
+  assert.equal(finalReceipt.status, 'completed');
+  assertPrivateProjection(finalReceipt, mysteryClaim);
+  assert.deepEqual(await mysteryAct(completeNode, mysteryReader, 'm:knowledge-left', finalKey), finalReceipt);
+  const consumed = (await pool.query(`SELECT state FROM item_instances WHERE owner_scope='account' AND owner_id=$1
+    AND template_id='item:precision_lock_tool'`, [mysteryReader])).rows;
+  assert.equal(consumed.length, 1); assert.equal(consumed[0].state, 'consumed');
+  assertPrivateProjection(await board(mysteryReader), mysteryClaim);
+  const freshContext = createMysteryContext({ registry: mysteryRegistry(), accountId: mysteryReader, knowledgeEnabled: true, sharingEnabled: true });
+  assert.equal((await board(mysteryReader, freshContext)).status, 'completed', 'A recreated runtime reads the persisted ending');
+  await pool.query("UPDATE accounts SET status='banned' WHERE id=$1", [mysteryAuthor]);
+  await reject(mysteryAct(completeNode, mysteryAuthor, 'm:knowledge-left'), 'knowledge_unavailable');
+  await pool.query("UPDATE accounts SET status='active' WHERE id=$1", [mysteryAuthor]);
+  for (const mismatch of [{ contentHash: '0'.repeat(64) }, { sourceRoot: 'other.source' }]) {
+    const nodes = structuredClone(mysteryNodes);
+    nodes[3].conditions[1].requirement = { ...requirement, ...mismatch };
+    const changed = createMysteryContext({ registry: mysteryRegistry(nodes), accountId: mysteryAuthor, knowledgeEnabled: true });
+    await reject(mysteryAct(completeNode, mysteryAuthor, 'm:knowledge-left', key(), changed), 'graph_definition_drift');
+  }
+  const originalPin = (await pool.query('SELECT definition_hash FROM mystery_instances WHERE authority_account_id=$1', [mysteryAuthor])).rows[0].definition_hash;
+  assert.match(originalPin, /^[a-f0-9]{64}$/);
+  await pool.query('UPDATE mystery_instances SET definition_hash=NULL WHERE authority_account_id=$1', [mysteryAuthor]);
+  await reject(mysteryAct(completeNode, mysteryAuthor, 'm:knowledge-left'), 'mystery_definition_unpinned');
+  await reject(board(mysteryAuthor), 'mystery_definition_unpinned');
+  await pool.query('UPDATE mystery_instances SET definition_hash=$2 WHERE authority_account_id=$1', [mysteryAuthor, originalPin]);
+  await pool.query(fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8'));
+  assert.equal((await board(mysteryReader)).status, 'completed', 'Schema reapplication retains new pins and prior completion');
+  const overflow = Array.from({ length: 17 }, (_, index) => ({ id: `m:knowledge-bound-${index}`, type: 'mystery_step', visibility: 'public',
+    conditions: [{ adapter: 'knowledge', requirement: { ...requirement, proposition: `bound.${index}` } }] }));
+  assert.throws(() => createMysteryContext({ registry: mysteryRegistry(overflow), accountId: mysteryAuthor }), { code: 'bad_mystery_condition' });
+  console.log(`world-knowledge-mysteries: authenticated prerequisites, private discovery, crafting, branching, revocation, replay and persistence pass (${postgres ? 'postgres' : 'pg-mem'})`);
 } finally {
   await cleanup();
 }

@@ -4703,6 +4703,11 @@ CREATE TABLE IF NOT EXISTS mystery_instances (
   )
 );
 ALTER TABLE mystery_instances ADD COLUMN IF NOT EXISTS canceled_at TIMESTAMPTZ;
+-- New instances pin executable package/dependency definitions. Legacy hashes cannot be inferred.
+ALTER TABLE mystery_instances ADD COLUMN IF NOT EXISTS definition_hash TEXT;
+ALTER TABLE mystery_instances DROP CONSTRAINT IF EXISTS mystery_instance_definition_hash;
+ALTER TABLE mystery_instances ADD CONSTRAINT mystery_instance_definition_hash
+  CHECK (definition_hash IS NULL OR (char_length(definition_hash)=64 AND definition_hash=lower(definition_hash)));
 -- Pre-Phase1 candidates keyed only owner+graph and permanently stranded later package versions.
 -- Preserve every historical row, replace only the uniqueness authority, and let each immutable
 -- graph version own one independently replay-safe lifecycle.

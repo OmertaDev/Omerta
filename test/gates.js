@@ -3600,6 +3600,7 @@ scopedSocialContext = async function(db) {
     'coordination/knowledge.js:readSnapshots': 'cache: immutable viewer facts bound to one active read scope and client; every process derives its own snapshot from PostgreSQL and this marker cannot authorize a command',
     'projection-events.js:requestContext': 'cache: request-local authenticated actor and pre-mutation audience; durable committed rows and fresh membership determine post-response recipients, while hints confer no authority',
     'mysteries.js:CONTEXTS': 'cache: per-context-object authenticity marker; every box recognizes only contexts it creates',
+    'mysteries.js:MYSTERY_KNOWLEDGE': 'cache: immutable server rollout policy and executable package hashes keyed by authenticated mystery context; actor, knowledge and ACL authority are re-read inside the active database boundary',
     'operations.js:CONTEXTS': 'cache: per-context-object authenticity marker; every box recognizes only contexts it creates',
     'worldgraph.js:WORLD_GRAPH_REGISTRIES': 'cache: per-registry-object authenticity marker; every box recognizes its own immutable registries',
     'content/discovery.js:DISCOVERED_PACKAGES': 'cache: per-descriptor authenticity marker; every box recognizes only descriptors its own walker created',
