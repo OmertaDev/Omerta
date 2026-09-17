@@ -31,3 +31,19 @@ export function normalizeKnowledgeRequirement(input) {
 }
 
 export const knowledgeRequirementKey = (input) => canonicalBytes(normalizeKnowledgeRequirement(input)).toString('utf8');
+
+// A prerequisite over domain history; this does not issue a coordination knowledge claim.
+export function normalizeOperationOutcomeRequirement(input) {
+  const fields = ['definitionId', 'definitionHash', 'outcome'];
+  if (!input || ![Object.prototype, null].includes(Object.getPrototypeOf(input))
+    || Reflect.ownKeys(input).length !== fields.length
+    || fields.some((key) => !Object.hasOwn(input, key)
+      || !Object.getOwnPropertyDescriptor(input, key)?.enumerable
+      || !Object.hasOwn(Object.getOwnPropertyDescriptor(input, key), 'value'))
+    || typeof input.definitionId !== 'string' || !/^[\x21-\x7e]{1,200}$/.test(input.definitionId)
+    || typeof input.definitionHash !== 'string' || !/^[a-f0-9]{64}$/.test(input.definitionHash)
+    || !['completed', 'failed'].includes(input.outcome)) {
+    throw new GameError('bad_operation_outcome_requirement', 'Invalid pinned operation outcome requirement.');
+  }
+  return Object.freeze({ definitionId: input.definitionId, definitionHash: input.definitionHash, outcome: input.outcome });
+}

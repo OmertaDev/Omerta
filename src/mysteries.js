@@ -29,7 +29,7 @@ import { levelOf } from './rules.js';
 import { isWorldGraphRegistry, nodeOf } from './worldgraph.js';
 import { rewardAssetDeclarations, validateGraph } from './worldgraph-validate.js';
 import { createCoordinationKnowledge, snapshotRequirementMatches } from './coordination/knowledge.js';
-import { normalizeKnowledgeRequirement, knowledgeRequirementKey } from './world-knowledge.js';
+import { normalizeKnowledgeRequirement, knowledgeRequirementKey, normalizeOperationOutcomeRequirement } from './world-knowledge.js';
 import { canonicalBytes } from './content/canonical.js';
 
 const CONTEXTS = new WeakSet();
@@ -49,6 +49,7 @@ const CONDITION_ADAPTERS = new Set([
   'time_window',
   'explicit_interaction',
   'knowledge',
+  'family_operation_outcome',
 ]);
 const CONDITION_ALIASES = Object.freeze({
   graph_dependency: Object.freeze({ target: ['nodeId', 'id', 'value'] }),
@@ -261,6 +262,12 @@ function normalizeMysteryCondition(registry, node, condition, { timeWindows = nu
       fail('bad_mystery_condition', 'Knowledge conditions require an exact pinned requirement.');
     }
     return Object.freeze({ adapter, requirement: normalizeKnowledgeRequirement(condition.requirement) });
+  }
+  if (adapter === 'family_operation_outcome') {
+    if (condition.adapter !== adapter || Reflect.ownKeys(condition).length !== 2 || !Object.hasOwn(condition, 'requirement')) {
+      fail('bad_mystery_condition', 'Operation outcomes require an exact pinned requirement.');
+    }
+    return Object.freeze({ adapter, requirement: normalizeOperationOutcomeRequirement(condition.requirement) });
   }
   if (!CONDITION_ADAPTERS.has(adapter)) {
     fail('unsupported_mystery_condition',
@@ -541,11 +548,11 @@ export function validateMysteryDefinitions(registry, { timeWindows = null } = {}
     }
     for (const condition of node.conditions || []) {
       const normalized = normalizeMysteryCondition(registry, node, condition, { timeWindows });
-      if (normalized.adapter === 'knowledge') {
+      if (['knowledge', 'family_operation_outcome'].includes(normalized.adapter)) {
         if (!knowledgeByPackage.has(node.packageId)) knowledgeByPackage.set(node.packageId, new Set());
         const requirements = knowledgeByPackage.get(node.packageId);
-        requirements.add(knowledgeRequirementKey(normalized.requirement));
-        if (requirements.size > 16) fail('bad_mystery_condition', 'A mystery supports at most 16 distinct knowledge requirements.');
+        requirements.add(canonicalBytes(normalized).toString('utf8'));
+        if (requirements.size > 16) fail('bad_mystery_condition', 'A mystery supports at most 16 distinct external requirements.');
       }
     }
     for (const requiredId of [
@@ -637,9 +644,10 @@ export function createMysteryContext({
   timeWindows = {},
   knowledgeEnabled = false,
   sharingEnabled = false,
+  operationOutcomesEnabled = false,
   accountIds = [],
 } = {}) {
-  if (typeof knowledgeEnabled !== 'boolean' || typeof sharingEnabled !== 'boolean'
+  if (typeof knowledgeEnabled !== 'boolean' || typeof sharingEnabled !== 'boolean' || typeof operationOutcomesEnabled !== 'boolean'
     || !Array.isArray(accountIds) || accountIds.some((id) => typeof id !== 'string' || !id)) {
     fail('bad_mystery_context', 'Invalid mystery knowledge policy.');
   }
@@ -679,9 +687,10 @@ export function createMysteryContext({
       if (normalized.adapter === 'time_window' && normalized.windowId) namedWindows[normalized.windowId] = immutableTimeWindows[normalized.windowId];
     }
     pins.set(pkg.id, Object.freeze({ hash: crypto.createHash('sha256').update(canonicalBytes({ definitions, namedWindows })).digest('hex'),
-      requiresKnowledge: mysteryNodes.some((node) => (node.conditions || []).some((condition) => condition.adapter === 'knowledge')) }));
+      requiresKnowledge: mysteryNodes.some((node) => (node.conditions || []).some((condition) => ['knowledge', 'family_operation_outcome'].includes(condition.adapter))) }));
   }
-  MYSTERY_KNOWLEDGE.set(context, { policy: createCoordinationKnowledge({ enabled: knowledgeEnabled, sharingEnabled, accountIds }), pins });
+  MYSTERY_KNOWLEDGE.set(context, { policy: createCoordinationKnowledge({ enabled: knowledgeEnabled, sharingEnabled, accountIds }), pins,
+    operationOutcomesEnabled, accountIds: Object.freeze([...accountIds]) });
   return context;
 }
 
@@ -748,6 +757,7 @@ async function actorOf(client, context, owner, { lock = true } = {}) {
     skills: new Set(skills.rows.map(({ skill_id: id }) => id)),
     knowledgeCharacter: row,
     knowledge: new Set(),
+    operationOutcomes: new Set(),
   });
 }
 
@@ -757,11 +767,31 @@ async function actorOf(client, context, owner, { lock = true } = {}) {
 async function resolveMysteryKnowledge(client, context, actor, nodes, { readOnly = false } = {}) {
   if (!actor) return;
   const requirements = new Map();
+  const outcomes = new Map();
   for (const node of nodes) for (const condition of node.conditions || []) {
     const normalized = normalizeMysteryCondition(context.registry, node, condition, { timeWindows: context.timeWindows });
     if (normalized.adapter === 'knowledge') requirements.set(knowledgeRequirementKey(normalized.requirement), normalized.requirement);
+    if (normalized.adapter === 'family_operation_outcome') outcomes.set(canonicalBytes(normalized.requirement).toString('utf8'), normalized.requirement);
   }
-  const { policy } = MYSTERY_KNOWLEDGE.get(context);
+  const { policy, operationOutcomesEnabled, accountIds } = MYSTERY_KNOWLEDGE.get(context);
+  if (operationOutcomesEnabled && (!accountIds.length || accountIds.includes(context.accountId)) && outcomes.size) {
+    let account;
+    if (readOnly) account = (await client.query('SELECT status FROM accounts WHERE id=$1', [context.accountId])).rows[0];
+    else account = (await client.query('SELECT status FROM accounts WHERE id=$1 FOR SHARE', [context.accountId])).rows[0];
+    if (account?.status !== 'active') fail('operation_outcome_unavailable', 'Operation history is unavailable.');
+    for (const [key, outcome] of outcomes) {
+      // Terminal Family histories and their final role assignments are immutable through commands.
+      // Require a durable resolved-event receipt and this living character's own recorded seat.
+      const row = (await client.query(`SELECT o.id FROM world_operations o
+        JOIN world_operation_roles r ON r.operation_id=o.id
+        JOIN world_operation_events e ON e.operation_id=o.id AND e.event_kind='resolved'
+        JOIN item_mutation_guards g ON g.mutation_id=e.mutation_id AND g.mutation_kind='operation_action'
+        WHERE o.coordination_mode='family' AND o.graph_id=$1 AND o.coordination_definition_hash=$2 AND o.status=$3
+          AND r.account_id=$4 AND r.character_id=$5 AND g.result_json IS NOT NULL LIMIT 1`,
+      [outcome.definitionId, outcome.definitionHash, outcome.outcome, context.accountId, actor.id])).rows[0];
+      if (row) actor.operationOutcomes.add(key);
+    }
+  }
   if (!requirements.size || !policy.enabledFor(context.accountId)) return;
   const values = [...requirements.values()], keys = [...requirements.keys()];
   let matches;
@@ -854,7 +884,7 @@ function assertPinned(instance, pkg, context) {
     fail('graph_definition_drift', 'The mystery definition changed without a new version.');
   }
   if (!instance.definition_hash && pin.requiresKnowledge) {
-    fail('mystery_definition_unpinned', 'Knowledge-gated mysteries require a new pinned instance version.');
+    fail('mystery_definition_unpinned', 'External mystery prerequisites require a new pinned instance version.');
   }
 }
 
@@ -1003,6 +1033,9 @@ async function conditionBlocker({
   if (adapter === 'knowledge') {
     return actor?.knowledge.has(knowledgeRequirementKey(normalized.requirement)) ? null : { adapter };
   }
+  if (adapter === 'family_operation_outcome') {
+    return actor?.operationOutcomes.has(canonicalBytes(normalized.requirement).toString('utf8')) ? null : { adapter };
+  }
   if (adapter === 'graph_dependency') {
     const nodeId = normalized.target;
     return states.get(nodeId)?.state === 'completed' ? null : { adapter, nodeId };
@@ -1096,6 +1129,7 @@ async function nodeBlockers({
 }
 
 function throwBlocker(blocker) {
+  if (blocker.adapter === 'family_operation_outcome') fail('operation_outcome_required', 'Required operation participation is unavailable.');
   if (blocker.adapter === 'knowledge') fail('knowledge_required', 'Required knowledge is unavailable.');
   if (blocker.adapter === 'excluded' || blocker.adapter === 'excluded_by') {
     fail('mystery_excluded', 'That mystery branch is closed.');
@@ -1715,7 +1749,7 @@ async function readMysteryBoard(client, contextValue, ownerValue, graphIdValue) 
     const row = states.get(node.id);
     return node.visibility === 'public' || !!row?.discovered_at || row?.state === 'completed';
   });
-  if (!readOnly && visibleNodes.some((node) => (node.conditions || []).some((condition) => condition.adapter === 'knowledge'))) {
+  if (!readOnly && visibleNodes.some((node) => (node.conditions || []).some((condition) => ['knowledge', 'family_operation_outcome'].includes(condition.adapter)))) {
     // A board composed after another mutation could acquire a second, reversed claim-lock set.
     // Knowledge-aware boards require their own read boundary, or the shared projection read scope.
     fail('mystery_read_required', 'Read this mystery outside an item mutation.');

@@ -20,6 +20,9 @@ import { COORDINATION_OPERATION_PILOT } from '../src/content/coordination-operat
 import { createFamilyOperations } from '../src/coordination/operations.js';
 import { familyOperationInvariants } from '../src/coordination/operation-invariants.js';
 import { worldKernelInvariants } from '../src/world-kernel-invariants.js';
+import { createMysteryContext, startMystery, completeNode, mysteryBoard } from '../src/mysteries.js';
+import { loadAndValidateGraphPackages } from '../src/worldgraph-validate.js';
+import { normalizeOperationOutcomeRequirement } from '../src/world-knowledge.js';
 
 const postgres = process.argv.includes('--postgres');
 let pool, cleanup, reopen;
@@ -228,6 +231,24 @@ try {
   await refused(() => command(main, 'organizer', 'execute'), 'coordination_operation_not_ready');
   await social(actors.researcher, (ch, client, h) => joinGang(ch, family.gangId, client, h));
   await command(main, 'organizer', 'approve');
+  const sourceOperation = (await pool.query('SELECT graph_id,coordination_definition_hash FROM world_operations WHERE id=$1', [main.id])).rows[0];
+  const outcomeRequirement = { definitionId: sourceOperation.graph_id, definitionHash: sourceOperation.coordination_definition_hash, outcome: 'completed' };
+  const outcomeRegistry = loadAndValidateGraphPackages([{ id: 'family-outcome-mystery', version: 1, dependsOn: [], nodes: [
+    { id: 'outcome:ending', type: 'mystery_step', visibility: 'public', metadata: { terminal: true },
+      conditions: [{ adapter: 'family_operation_outcome', requirement: outcomeRequirement }] },
+  ] }]);
+  const outcomeContext = (accountId, operationOutcomesEnabled = true, accountIds = []) => createMysteryContext({
+    registry: outcomeRegistry, accountId, operationOutcomesEnabled, accountIds,
+  });
+  const outcomeBoard = (accountId) => mysteryBoard(pool, outcomeContext(accountId), owner(accountId), 'family-outcome-mystery');
+  const outcomeAct = (accountId, context = outcomeContext(accountId), idempotencyKey = key()) => tx((client) =>
+    completeNode(client, context, owner(accountId), 'family-outcome-mystery', 'outcome:ending', { idempotencyKey }));
+  for (const accountId of [boss, actors.researcher, outsider]) await tx((client) =>
+    startMystery(client, outcomeContext(accountId), owner(accountId), 'family-outcome-mystery', 1, key()));
+  assert.equal((await outcomeBoard(boss)).nodes[0].available, false, 'Readiness is not a completed operation outcome');
+  await assert.rejects(outcomeAct(boss), { code: 'operation_outcome_required' });
+  for (const wrong of [{ ...outcomeRequirement, outcome: 'ready' }, { ...outcomeRequirement, definitionHash: 'untrusted' },
+    { ...outcomeRequirement, accountId: boss }]) assert.throws(() => normalizeOperationOutcomeRequirement(wrong), { code: 'bad_operation_outcome_requirement' });
   const executeKey = key(), beforeHints = notifications.length;
   const resolved = await Promise.all([command(main, 'organizer', 'execute', {}, executeKey), command(main, 'organizer', 'execute', {}, executeKey)]);
   assert.deepEqual(resolved[0], resolved[1]); assert.equal(resolved[0].status, 'completed');
@@ -237,6 +258,19 @@ try {
   assert.equal(itemHistory[0].provenance_kind, 'crafted'); assert.equal(itemHistory.at(-1).event_kind, 'consumed');
   assert.equal((await main.kernel.get(outsider, main.object.id)).state, 'open');
   await invariants('completed operation and nested world mutation');
+  assert.equal((await outcomeBoard(boss)).nodes[0].available, true);
+  assert.equal((await outcomeBoard(actors.researcher)).nodes[0].available, true);
+  const outsiderBoard = await outcomeBoard(outsider);
+  assert.deepEqual(outsiderBoard.nodes[0].blockedBy, [{ adapter: 'family_operation_outcome' }]);
+  assert(!JSON.stringify(outsiderBoard).includes(main.id));
+  assert(!JSON.stringify(outsiderBoard).includes(outcomeRequirement.definitionHash));
+  await assert.rejects(outcomeAct(outsider), { code: 'operation_outcome_required' });
+  await assert.rejects(outcomeAct(boss, outcomeContext(boss, false)), { code: 'operation_outcome_required' });
+  await assert.rejects(outcomeAct(boss, outcomeContext(boss, true, [outsider])), { code: 'operation_outcome_required' });
+  const endingKey = key(), ending = await outcomeAct(boss, outcomeContext(boss), endingKey);
+  assert.equal(ending.status, 'completed');
+  assert.deepEqual(await outcomeAct(boss, outcomeContext(boss), endingKey), ending);
+  console.log('family-operations: pinned participant outcome unlocks persistent mystery ending; outsider, uncommitted and disabled sources fail closed');
   const completed = await snapshot();
   assert.deepEqual(await command(main, 'organizer', 'execute', {}, executeKey), resolved[0]);
   sameSnapshot(await snapshot(), completed, 'Replay cannot mutate committed operation');
@@ -318,6 +352,15 @@ try {
   assert.equal(await capitalState(death), 'forfeited');
   assert.equal(await accountCash(boss, 'family-organizer-heir'), 91);
   assert.equal((await death.api.get(boss, death.id)).status, 'canceled');
+  const heirGraph = 'heir-outcome-mystery';
+  const heirContext = createMysteryContext({ accountId: boss, operationOutcomesEnabled: true,
+    registry: loadAndValidateGraphPackages([{ id: heirGraph, version: 1, dependsOn: [], nodes: [
+      { id: 'heir:ending', type: 'mystery_step', visibility: 'public', conditions: [{ adapter: 'family_operation_outcome', requirement: outcomeRequirement }] },
+    ] }]),
+  });
+  await tx((client) => startMystery(client, heirContext, owner(boss), heirGraph, 1, key()));
+  await assert.rejects(tx((client) => completeNode(client, heirContext, owner(boss), heirGraph, 'heir:ending',
+    { idempotencyKey: key() })), { code: 'operation_outcome_required' });
   assert.equal((await pool.query('SELECT owner_id,state FROM item_instances WHERE id=$1', [death.itemId])).rows[0].owner_id, actors.locksmith);
   assert.equal((await pool.query('SELECT id FROM transactions WHERE currency=$1', ['omr'])).rows.length, 0);
   await invariants('death cancellation and forfeiture');

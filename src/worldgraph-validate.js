@@ -1,6 +1,6 @@
 import { loadGraphPackages } from './worldgraph.js';
 
-import { normalizeKnowledgeRequirement } from './world-knowledge.js';
+import { normalizeKnowledgeRequirement, normalizeOperationOutcomeRequirement } from './world-knowledge.js';
 
 const CONDITION_ADAPTERS = new Set([
   'graph_dependency',
@@ -15,6 +15,7 @@ const CONDITION_ADAPTERS = new Set([
   'explicit_interaction',
   'owns_car',
   'knowledge',
+  'family_operation_outcome',
 ]);
 
 const QUANTITY_FIELDS = [
@@ -308,6 +309,13 @@ function validateConditionList({
         normalizeKnowledgeRequirement(condition.requirement);
       } catch {
         fail('malformed_condition', `${owner} has an invalid pinned knowledge requirement`, { nodeId, roleId, adapter });
+      }
+    } else if (adapter === 'family_operation_outcome') {
+      try {
+        if (Reflect.ownKeys(condition).length !== 2 || condition.adapter !== adapter) throw new Error();
+        normalizeOperationOutcomeRequirement(condition.requirement);
+      } catch {
+        fail('malformed_condition', `${owner} has an invalid pinned operation outcome`, { nodeId, roleId, adapter });
       }
     } else if (adapter === 'graph_dependency') {
       targetId = field(['nodeId', 'id', 'value']);
