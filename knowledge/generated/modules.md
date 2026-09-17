@@ -139,7 +139,7 @@
 | [src/megaproject.js](../../src/megaproject.js) | 296 | enterprise-logistics | 4 / 4 | 6 | 7 | 0 |
 | [src/memo.js](../../src/memo.js) | 39 | economy-ledger | 0 / 3 | 0 | 0 | 1 |
 | [src/mentor.js](../../src/mentor.js) | 233 | social-combat | 2 / 5 | 7 | 7 | 1 |
-| [src/mysteries.js](../../src/mysteries.js) | 1752 | world-graph | 7 / 3 | 0 | 10 | 2 |
+| [src/mysteries.js](../../src/mysteries.js) | 1786 | world-graph | 7 / 4 | 0 | 14 | 3 |
 | [src/nft.js](../../src/nft.js) | 123 | chain-economy | 3 / 3 | 0 | 2 | 1 |
 | [src/notoriety.js](../../src/notoriety.js) | 31 | world-progression | 1 / 2 | 0 | 2 | 0 |
 | [src/npcwar.js](../../src/npcwar.js) | 586 | world-progression | 2 / 8 | 7 | 8 | 1 |
@@ -250,8 +250,8 @@
 | [src/world-kernel-invariants.js](../../src/world-kernel-invariants.js) | 40 | platform-core | 1 / 3 | 0 | 5 | 2 |
 | [src/world-kernel-query.js](../../src/world-kernel-query.js) | 326 | platform-core | 6 / 5 | 0 | 20 | 3 |
 | [src/world-kernel.js](../../src/world-kernel.js) | 362 | platform-core | 5 / 16 | 0 | 12 | 10 |
-| [src/world-knowledge.js](../../src/world-knowledge.js) | 34 | platform-core | 2 / 8 | 0 | 0 | 1 |
+| [src/world-knowledge.js](../../src/world-knowledge.js) | 50 | platform-core | 2 / 9 | 0 | 0 | 2 |
 | [src/world-projection.js](../../src/world-projection.js) | 85 | platform-core | 4 / 2 | 0 | 3 | 1 |
 | [src/world.js](../../src/world.js) | 806 | world-progression | 3 / 11 | 14 | 10 | 2 |
-| [src/worldgraph-validate.js](../../src/worldgraph-validate.js) | 1880 | world-graph | 2 / 17 | 0 | 1 | 10 |
+| [src/worldgraph-validate.js](../../src/worldgraph-validate.js) | 1888 | world-graph | 2 / 18 | 0 | 1 | 11 |
 | [src/worldgraph.js](../../src/worldgraph.js) | 111 | world-graph | 0 / 16 | 0 | 0 | 9 |

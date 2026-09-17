@@ -351,7 +351,7 @@
 | [docs/coordination-engine/SECURITY_INVARIANTS.md](../../docs/coordination-engine/SECURITY_INVARIANTS.md) | documentation | 34 | 2026-09-14 |
 | [docs/coordination-engine/tasks/TASK_INDEX.md](../../docs/coordination-engine/tasks/TASK_INDEX.md) | documentation | 218 | 2026-09-14 |
 | [docs/coordination-engine/TEST_STRATEGY.md](../../docs/coordination-engine/TEST_STRATEGY.md) | documentation | 28 | 2026-09-14 |
-| [docs/core-architecture/IMPLEMENTATION.md](../../docs/core-architecture/IMPLEMENTATION.md) | documentation | 131 | 2026-09-17 |
+| [docs/core-architecture/IMPLEMENTATION.md](../../docs/core-architecture/IMPLEMENTATION.md) | documentation | 139 | 2026-09-17 |
 | [docs/core-architecture/review-phase1.md](../../docs/core-architecture/review-phase1.md) | documentation | 127 | 2026-09-17 |
 | [docs/core-architecture/review-phase2.md](../../docs/core-architecture/review-phase2.md) | documentation | 76 | 2026-09-17 |
 | [docs/core-architecture/review-phase3.md](../../docs/core-architecture/review-phase3.md) | documentation | 37 | 2026-09-17 |

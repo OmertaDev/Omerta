@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "bf0cbc444a490e3d14885f7e9b77034155b413fc",
+  "sourceRevision": "eff753bba0b09a741409a066da7b643bc42f8838",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 7312,
-    "edges": 31991,
+    "nodes": 7314,
+    "edges": 32016,
     "byNodeType": {
       "Artifact": 2841,
       "Command": 87,
-      "Commit": 1466,
+      "Commit": 1468,
       "Contract": 79,
       "Document": 580,
       "Domain": 13,
@@ -65,22 +65,22 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 2404,
-      "CHANGED": 12318,
+      "CHANGED": 12331,
       "CONTAINS": 2862,
       "DECLARES": 87,
       "DEFINED_IN": 1237,
       "DEPENDS_ON": 65,
       "EXECUTES": 340,
       "HANDLED_BY": 705,
-      "HAS_COMMIT": 1466,
+      "HAS_COMMIT": 1468,
       "IMPLEMENTS": 124,
-      "IMPORTS": 2409,
+      "IMPORTS": 2412,
       "INHERITS": 17,
       "REFERENCES": 4004,
       "REPRESENTS": 1163,
-      "TESTS": 918,
+      "TESTS": 921,
       "TRACKS": 126,
-      "USES_TABLE": 1746
+      "USES_TABLE": 1750
     }
   },
   "nodes": [
@@ -26082,20 +26082,20 @@
       "path": "docs/core-architecture/IMPLEMENTATION.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 29648,
-      "lines": 131,
-      "version": "db4ad50fbf874c89",
+      "bytes": 31277,
+      "lines": 139,
+      "version": "cc84bd6db91857d6",
       "text": true,
       "provenance": [
         {
           "file": "docs/core-architecture/IMPLEMENTATION.md",
           "line": 1,
-          "version": "db4ad50fbf874c89"
+          "version": "cc84bd6db91857d6"
         }
       ],
-      "lastChangedAt": "2026-09-17T22:12:40.000Z",
+      "lastChangedAt": "2026-09-17T22:26:31.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "bf0cbc444a490e3d14885f7e9b77034155b413fc"
+      "lastChangedCommit": "eff753bba0b09a741409a066da7b643bc42f8838"
     },
     {
       "key": "Artifact:docs/core-architecture/review-phase1.md",
@@ -55355,20 +55355,20 @@
       "path": "src/mysteries.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 79188,
-      "lines": 1752,
-      "version": "b2336061949053ab",
+      "bytes": 81928,
+      "lines": 1786,
+      "version": "cd4cbfdab7360eae",
       "text": true,
       "provenance": [
         {
           "file": "src/mysteries.js",
           "line": 1,
-          "version": "b2336061949053ab"
+          "version": "cd4cbfdab7360eae"
         }
       ],
-      "lastChangedAt": "2026-09-17T22:12:40.000Z",
+      "lastChangedAt": "2026-09-17T22:26:31.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "bf0cbc444a490e3d14885f7e9b77034155b413fc"
+      "lastChangedCommit": "eff753bba0b09a741409a066da7b643bc42f8838"
     },
     {
       "key": "Artifact:src/nft.js",
@@ -57908,20 +57908,20 @@
       "path": "src/world-knowledge.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 1935,
-      "lines": 34,
-      "version": "14b610b6264ccc27",
+      "bytes": 2983,
+      "lines": 50,
+      "version": "5e3e76175f8e479f",
       "text": true,
       "provenance": [
         {
           "file": "src/world-knowledge.js",
           "line": 1,
-          "version": "14b610b6264ccc27"
+          "version": "5e3e76175f8e479f"
         }
       ],
-      "lastChangedAt": "2026-09-17T20:00:22.000Z",
+      "lastChangedAt": "2026-09-17T22:26:31.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "1dffc80ec702d2d75f9258e381d4b3affe555de8"
+      "lastChangedCommit": "eff753bba0b09a741409a066da7b643bc42f8838"
     },
     {
       "key": "Artifact:src/world-projection.js",
@@ -57977,20 +57977,20 @@
       "path": "src/worldgraph-validate.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 74989,
-      "lines": 1880,
-      "version": "d5dca2030287a06d",
+      "bytes": 75442,
+      "lines": 1888,
+      "version": "551101fa17db0d01",
       "text": true,
       "provenance": [
         {
           "file": "src/worldgraph-validate.js",
           "line": 1,
-          "version": "d5dca2030287a06d"
+          "version": "551101fa17db0d01"
         }
       ],
-      "lastChangedAt": "2026-09-17T20:00:22.000Z",
+      "lastChangedAt": "2026-09-17T22:26:31.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "1dffc80ec702d2d75f9258e381d4b3affe555de8"
+      "lastChangedCommit": "eff753bba0b09a741409a066da7b643bc42f8838"
     },
     {
       "key": "Artifact:src/worldgraph.js",
@@ -59886,20 +59886,20 @@
       "path": "test/family-operations.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 23341,
-      "lines": 329,
-      "version": "55e894ef4b49b9dd",
+      "bytes": 27310,
+      "lines": 372,
+      "version": "d3536f5f1ce78661",
       "text": true,
       "provenance": [
         {
           "file": "test/family-operations.js",
           "line": 1,
-          "version": "55e894ef4b49b9dd"
+          "version": "d3536f5f1ce78661"
         }
       ],
-      "lastChangedAt": "2026-09-17T20:50:12.000Z",
+      "lastChangedAt": "2026-09-17T22:26:31.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "bccda7b0e57bbc1f38fa3e19e97abcb8c939482f"
+      "lastChangedCommit": "eff753bba0b09a741409a066da7b643bc42f8838"
     },
     {
       "key": "Artifact:test/favors.js",
@@ -83945,6 +83945,22 @@
       ]
     },
     {
+      "key": "Commit:b79a291f61334ef9b332a9e6521a85a57d2dbd9f",
+      "type": "Commit",
+      "id": "b79a291f61334ef9b332a9e6521a85a57d2dbd9f",
+      "label": "docs(knowledge): index authenticated mystery prerequisite checkpoint",
+      "title": "docs(knowledge): index authenticated mystery prerequisite checkpoint",
+      "date": "2026-09-17T22:15:45.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/b79a291f61334ef9b332a9e6521a85a57d2dbd9f",
+      "provenance": [
+        {
+          "commit": "b79a291f61334ef9b332a9e6521a85a57d2dbd9f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/b79a291f61334ef9b332a9e6521a85a57d2dbd9f"
+        }
+      ]
+    },
+    {
       "key": "Commit:b7b855a118788b48d5278d95995746ffcf4b4195",
       "type": "Commit",
       "id": "b7b855a118788b48d5278d95995746ffcf4b4195",
@@ -88597,6 +88613,22 @@
         {
           "commit": "efcb97fc4940e5f536ae744fdee5695b18d37a6d",
           "url": "https://github.com/OmertaDev/Omerta/commit/efcb97fc4940e5f536ae744fdee5695b18d37a6d"
+        }
+      ]
+    },
+    {
+      "key": "Commit:eff753bba0b09a741409a066da7b643bc42f8838",
+      "type": "Commit",
+      "id": "eff753bba0b09a741409a066da7b643bc42f8838",
+      "label": "feat(mysteries): require pinned Family participant outcomes",
+      "title": "feat(mysteries): require pinned Family participant outcomes",
+      "date": "2026-09-17T22:26:31.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/eff753bba0b09a741409a066da7b643bc42f8838",
+      "provenance": [
+        {
+          "commit": "eff753bba0b09a741409a066da7b643bc42f8838",
+          "url": "https://github.com/OmertaDev/Omerta/commit/eff753bba0b09a741409a066da7b643bc42f8838"
         }
       ]
     },
@@ -97339,13 +97371,13 @@
       "id": "docs/core-architecture/IMPLEMENTATION.md",
       "label": "docs/core-architecture/IMPLEMENTATION.md",
       "documentType": "documentation",
-      "lines": 131,
-      "version": "db4ad50fbf874c89",
+      "lines": 139,
+      "version": "cc84bd6db91857d6",
       "provenance": [
         {
           "file": "docs/core-architecture/IMPLEMENTATION.md",
           "line": 1,
-          "version": "db4ad50fbf874c89"
+          "version": "cc84bd6db91857d6"
         }
       ]
     },
@@ -101230,7 +101262,7 @@
         },
         {
           "file": "test/family-operations.js",
-          "line": 30
+          "line": 33
         },
         {
           "file": "test/liquidityindexer.js",
@@ -106260,6 +106292,9 @@
           "commit": "b419fdb8ffaf9b051c367f5b8edd590c60797922"
         },
         {
+          "commit": "b79a291f61334ef9b332a9e6521a85a57d2dbd9f"
+        },
+        {
           "commit": "b9118553fa68ccba9e2f930756bfbce91a1b9d1d"
         },
         {
@@ -106816,6 +106851,9 @@
         },
         {
           "commit": "b60942fe8c68a923c288e27b279596409bb6ee18"
+        },
+        {
+          "commit": "b79a291f61334ef9b332a9e6521a85a57d2dbd9f"
         },
         {
           "commit": "b9118553fa68ccba9e2f930756bfbce91a1b9d1d"
@@ -107448,6 +107486,9 @@
           "commit": "b60942fe8c68a923c288e27b279596409bb6ee18"
         },
         {
+          "commit": "b79a291f61334ef9b332a9e6521a85a57d2dbd9f"
+        },
+        {
           "commit": "b9118553fa68ccba9e2f930756bfbce91a1b9d1d"
         },
         {
@@ -108078,6 +108119,9 @@
           "commit": "b60942fe8c68a923c288e27b279596409bb6ee18"
         },
         {
+          "commit": "b79a291f61334ef9b332a9e6521a85a57d2dbd9f"
+        },
+        {
           "commit": "b9118553fa68ccba9e2f930756bfbce91a1b9d1d"
         },
         {
@@ -108322,6 +108366,9 @@
         },
         {
           "commit": "b560adf924bfee3e13ebf58c742f55158aa1040d"
+        },
+        {
+          "commit": "b79a291f61334ef9b332a9e6521a85a57d2dbd9f"
         },
         {
           "commit": "baa2d0c1ae0b2fc76cc426b598ec4ce4fedb64c2"
@@ -108843,6 +108890,9 @@
           "commit": "b60942fe8c68a923c288e27b279596409bb6ee18"
         },
         {
+          "commit": "b79a291f61334ef9b332a9e6521a85a57d2dbd9f"
+        },
+        {
           "commit": "b9118553fa68ccba9e2f930756bfbce91a1b9d1d"
         },
         {
@@ -109161,6 +109211,9 @@
           "commit": "b560adf924bfee3e13ebf58c742f55158aa1040d"
         },
         {
+          "commit": "b79a291f61334ef9b332a9e6521a85a57d2dbd9f"
+        },
+        {
           "commit": "b9118553fa68ccba9e2f930756bfbce91a1b9d1d"
         },
         {
@@ -109381,6 +109434,9 @@
         },
         {
           "commit": "b560adf924bfee3e13ebf58c742f55158aa1040d"
+        },
+        {
+          "commit": "b79a291f61334ef9b332a9e6521a85a57d2dbd9f"
         },
         {
           "commit": "dee7593a66b955d677656afab4516cb68edb918d"
@@ -111531,13 +111587,13 @@
       "type": "Module",
       "id": "src/mysteries.js",
       "label": "src/mysteries.js",
-      "lines": 1752,
-      "version": "b2336061949053ab",
+      "lines": 1786,
+      "version": "cd4cbfdab7360eae",
       "provenance": [
         {
           "file": "src/mysteries.js",
           "line": 1,
-          "version": "b2336061949053ab"
+          "version": "cd4cbfdab7360eae"
         }
       ]
     },
@@ -113196,13 +113252,13 @@
       "type": "Module",
       "id": "src/world-knowledge.js",
       "label": "src/world-knowledge.js",
-      "lines": 34,
-      "version": "14b610b6264ccc27",
+      "lines": 50,
+      "version": "5e3e76175f8e479f",
       "provenance": [
         {
           "file": "src/world-knowledge.js",
           "line": 1,
-          "version": "14b610b6264ccc27"
+          "version": "5e3e76175f8e479f"
         }
       ]
     },
@@ -113241,13 +113297,13 @@
       "type": "Module",
       "id": "src/worldgraph-validate.js",
       "label": "src/worldgraph-validate.js",
-      "lines": 1880,
-      "version": "d5dca2030287a06d",
+      "lines": 1888,
+      "version": "551101fa17db0d01",
       "provenance": [
         {
           "file": "src/worldgraph-validate.js",
           "line": 1,
-          "version": "d5dca2030287a06d"
+          "version": "551101fa17db0d01"
         }
       ]
     },
@@ -116421,7 +116477,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "bf0cbc444a490e3d14885f7e9b77034155b413fc",
+      "revision": "eff753bba0b09a741409a066da7b643bc42f8838",
       "currentBranch": "codex/core-progression-20260917",
       "defaultBranch": "main",
       "visibility": "public",
@@ -144860,13 +144916,13 @@
       "type": "TestSuite",
       "id": "test/family-operations.js",
       "label": "test/family-operations.js",
-      "lines": 329,
-      "version": "55e894ef4b49b9dd",
+      "lines": 372,
+      "version": "d3536f5f1ce78661",
       "provenance": [
         {
           "file": "test/family-operations.js",
           "line": 1,
-          "version": "55e894ef4b49b9dd"
+          "version": "d3536f5f1ce78661"
         }
       ]
     },
@@ -241678,6 +241734,70 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:b79a291f61334ef9b332a9e6521a85a57d2dbd9f",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "b79a291f61334ef9b332a9e6521a85a57d2dbd9f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b79a291f61334ef9b332a9e6521a85a57d2dbd9f",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "b79a291f61334ef9b332a9e6521a85a57d2dbd9f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b79a291f61334ef9b332a9e6521a85a57d2dbd9f",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "b79a291f61334ef9b332a9e6521a85a57d2dbd9f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b79a291f61334ef9b332a9e6521a85a57d2dbd9f",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "b79a291f61334ef9b332a9e6521a85a57d2dbd9f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b79a291f61334ef9b332a9e6521a85a57d2dbd9f",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "b79a291f61334ef9b332a9e6521a85a57d2dbd9f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b79a291f61334ef9b332a9e6521a85a57d2dbd9f",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "b79a291f61334ef9b332a9e6521a85a57d2dbd9f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b79a291f61334ef9b332a9e6521a85a57d2dbd9f",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "b79a291f61334ef9b332a9e6521a85a57d2dbd9f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b79a291f61334ef9b332a9e6521a85a57d2dbd9f",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "b79a291f61334ef9b332a9e6521a85a57d2dbd9f"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:b7b855a118788b48d5278d95995746ffcf4b4195",
       "to": "Artifact:CHAIN-DEPLOY.md",
       "provenance": {
@@ -262386,6 +262506,46 @@
       "to": "Artifact:SPEC.md",
       "provenance": {
         "commit": "efcb97fc4940e5f536ae744fdee5695b18d37a6d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:eff753bba0b09a741409a066da7b643bc42f8838",
+      "to": "Artifact:docs/core-architecture/IMPLEMENTATION.md",
+      "provenance": {
+        "commit": "eff753bba0b09a741409a066da7b643bc42f8838"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:eff753bba0b09a741409a066da7b643bc42f8838",
+      "to": "Artifact:src/mysteries.js",
+      "provenance": {
+        "commit": "eff753bba0b09a741409a066da7b643bc42f8838"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:eff753bba0b09a741409a066da7b643bc42f8838",
+      "to": "Artifact:src/world-knowledge.js",
+      "provenance": {
+        "commit": "eff753bba0b09a741409a066da7b643bc42f8838"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:eff753bba0b09a741409a066da7b643bc42f8838",
+      "to": "Artifact:src/worldgraph-validate.js",
+      "provenance": {
+        "commit": "eff753bba0b09a741409a066da7b643bc42f8838"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:eff753bba0b09a741409a066da7b643bc42f8838",
+      "to": "Artifact:test/family-operations.js",
+      "provenance": {
+        "commit": "eff753bba0b09a741409a066da7b643bc42f8838"
       }
     },
     {
@@ -304992,7 +305152,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 674
+      "weight": 675
     },
     {
       "type": "DEPENDS_ON",
@@ -305010,7 +305170,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:world-graph",
-      "weight": 86
+      "weight": 88
     },
     {
       "type": "DEPENDS_ON",
@@ -324121,6 +324281,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:b79a291f61334ef9b332a9e6521a85a57d2dbd9f",
+      "provenance": {
+        "commit": "b79a291f61334ef9b332a9e6521a85a57d2dbd9f"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:b7b855a118788b48d5278d95995746ffcf4b4195",
       "provenance": {
         "commit": "b7b855a118788b48d5278d95995746ffcf4b4195"
@@ -326444,6 +326612,14 @@
       "to": "Commit:efcb97fc4940e5f536ae744fdee5695b18d37a6d",
       "provenance": {
         "commit": "efcb97fc4940e5f536ae744fdee5695b18d37a6d"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:eff753bba0b09a741409a066da7b643bc42f8838",
+      "provenance": {
+        "commit": "eff753bba0b09a741409a066da7b643bc42f8838"
       }
     },
     {
@@ -341510,6 +341686,15 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/family-operations.js",
+      "to": "Artifact:src/mysteries.js",
+      "provenance": {
+        "file": "test/family-operations.js",
+        "line": 23
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/family-operations.js",
       "to": "Artifact:src/social.js",
       "provenance": {
         "file": "test/family-operations.js",
@@ -341537,6 +341722,24 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/family-operations.js",
+      "to": "Artifact:src/world-knowledge.js",
+      "provenance": {
+        "file": "test/family-operations.js",
+        "line": 25
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/family-operations.js",
+      "to": "Artifact:src/worldgraph-validate.js",
+      "provenance": {
+        "file": "test/family-operations.js",
+        "line": 24
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/family-operations.js",
       "to": "ExternalDependency:pg-mem",
       "provenance": {
         "file": "test/family-operations.js",
@@ -341549,7 +341752,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "test/family-operations.js",
-        "line": 30
+        "line": 33
       }
     },
     {
@@ -399389,6 +399592,15 @@
     {
       "type": "TESTS",
       "from": "Artifact:test/family-operations.js",
+      "to": "Artifact:src/mysteries.js",
+      "provenance": {
+        "file": "test/family-operations.js",
+        "line": 23
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/family-operations.js",
       "to": "Artifact:src/social.js",
       "provenance": {
         "file": "test/family-operations.js",
@@ -399411,6 +399623,24 @@
       "provenance": {
         "file": "test/family-operations.js",
         "line": 17
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/family-operations.js",
+      "to": "Artifact:src/world-knowledge.js",
+      "provenance": {
+        "file": "test/family-operations.js",
+        "line": 25
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/family-operations.js",
+      "to": "Artifact:src/worldgraph-validate.js",
+      "provenance": {
+        "file": "test/family-operations.js",
+        "line": 24
       }
     },
     {
@@ -413603,7 +413833,7 @@
       "to": "Table:accounts",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 776
+        "line": 779
       }
     },
     {
@@ -413612,7 +413842,7 @@
       "to": "Table:character_skills",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 741
+        "line": 750
       }
     },
     {
@@ -413621,7 +413851,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 116
+        "line": 117
       }
     },
     {
@@ -413630,7 +413860,7 @@
       "to": "Table:idempotency",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 891
+        "line": 921
       }
     },
     {
@@ -413639,7 +413869,16 @@
       "to": "Table:item_instances",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 1026
+        "line": 1059
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/mysteries.js",
+      "to": "Table:item_mutation_guards",
+      "provenance": {
+        "file": "src/mysteries.js",
+        "line": 788
       }
     },
     {
@@ -413648,7 +413887,7 @@
       "to": "Table:item_stacks",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 1041
+        "line": 1074
       }
     },
     {
@@ -413657,7 +413896,7 @@
       "to": "Table:mystery_choices",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 906
+        "line": 936
       }
     },
     {
@@ -413666,7 +413905,7 @@
       "to": "Table:mystery_instances",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 813
+        "line": 843
       }
     },
     {
@@ -413675,7 +413914,7 @@
       "to": "Table:mystery_node_state",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 907
+        "line": 937
       }
     },
     {
@@ -413684,7 +413923,34 @@
       "to": "Table:operation_escrow",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 1257
+        "line": 1291
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/mysteries.js",
+      "to": "Table:world_operation_events",
+      "provenance": {
+        "file": "src/mysteries.js",
+        "line": 787
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/mysteries.js",
+      "to": "Table:world_operation_roles",
+      "provenance": {
+        "file": "src/mysteries.js",
+        "line": 786
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/mysteries.js",
+      "to": "Table:world_operations",
+      "provenance": {
+        "file": "src/mysteries.js",
+        "line": 785
       }
     },
     {
@@ -421460,7 +421726,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/worldgraph-validate.js",
-        "line": 1723
+        "line": 1731
       }
     }
   ]
