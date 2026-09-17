@@ -246,7 +246,7 @@
 | [src/wire.js](../../src/wire.js) | 463 | law-intelligence | 4 / 7 | 11 | 18 | 2 |
 | [src/worker.js](../../src/worker.js) | 1038 | platform-core | 58 / 10 | 0 | 31 | 9 |
 | [src/world-kernel-invariants.js](../../src/world-kernel-invariants.js) | 40 | platform-core | 1 / 3 | 0 | 5 | 2 |
-| [src/world-kernel-query.js](../../src/world-kernel-query.js) | 309 | platform-core | 5 / 2 | 0 | 19 | 1 |
+| [src/world-kernel-query.js](../../src/world-kernel-query.js) | 315 | platform-core | 5 / 2 | 0 | 20 | 1 |
 | [src/world-kernel.js](../../src/world-kernel.js) | 294 | platform-core | 6 / 13 | 0 | 11 | 8 |
 | [src/world-knowledge.js](../../src/world-knowledge.js) | 34 | platform-core | 2 / 6 | 0 | 0 | 1 |
 | [src/world.js](../../src/world.js) | 806 | world-progression | 3 / 11 | 14 | 10 | 2 |
