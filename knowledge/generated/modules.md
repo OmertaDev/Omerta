@@ -45,7 +45,7 @@
 | [src/content/artifacts.js](../../src/content/artifacts.js) | 200 | platform-core | 5 / 8 | 0 | 6 | 8 |
 | [src/content/automotive-salvage.js](../../src/content/automotive-salvage.js) | 72 | world-graph | 0 / 4 | 0 | 0 | 2 |
 | [src/content/belladonna.js](../../src/content/belladonna.js) | 241 | world-graph | 0 / 3 | 0 | 0 | 1 |
-| [src/content/canonical.js](../../src/content/canonical.js) | 214 | platform-core | 0 / 21 | 0 | 0 | 4 |
+| [src/content/canonical.js](../../src/content/canonical.js) | 214 | platform-core | 0 / 22 | 0 | 0 | 4 |
 | [src/content/compiler.js](../../src/content/compiler.js) | 1222 | platform-core | 1 / 13 | 0 | 0 | 9 |
 | [src/content/coordination-operation-pilot.js](../../src/content/coordination-operation-pilot.js) | 32 | platform-core | 3 / 6 | 0 | 1 | 4 |
 | [src/content/core-materials.js](../../src/content/core-materials.js) | 39 | world-graph | 0 / 4 | 0 | 0 | 2 |
@@ -67,7 +67,7 @@
 | [src/coordination/capital.js](../../src/coordination/capital.js) | 153 | platform-core | 2 / 2 | 0 | 3 | 1 |
 | [src/coordination/graph.js](../../src/coordination/graph.js) | 332 | platform-core | 1 / 17 | 0 | 0 | 12 |
 | [src/coordination/http-contract.js](../../src/coordination/http-contract.js) | 71 | platform-core | 0 / 2 | 0 | 0 | 0 |
-| [src/coordination/knowledge.js](../../src/coordination/knowledge.js) | 738 | platform-core | 6 / 12 | 0 | 16 | 6 |
+| [src/coordination/knowledge.js](../../src/coordination/knowledge.js) | 738 | platform-core | 6 / 13 | 0 | 16 | 6 |
 | [src/coordination/operation-definitions.js](../../src/coordination/operation-definitions.js) | 166 | platform-core | 6 / 3 | 0 | 1 | 1 |
 | [src/coordination/operation-invariants.js](../../src/coordination/operation-invariants.js) | 103 | platform-core | 1 / 5 | 0 | 9 | 4 |
 | [src/coordination/operations.js](../../src/coordination/operations.js) | 602 | world-graph | 6 / 6 | 0 | 15 | 4 |
@@ -139,7 +139,7 @@
 | [src/megaproject.js](../../src/megaproject.js) | 296 | enterprise-logistics | 4 / 4 | 6 | 7 | 0 |
 | [src/memo.js](../../src/memo.js) | 39 | economy-ledger | 0 / 3 | 0 | 0 | 1 |
 | [src/mentor.js](../../src/mentor.js) | 233 | social-combat | 2 / 5 | 7 | 7 | 1 |
-| [src/mysteries.js](../../src/mysteries.js) | 1635 | world-graph | 4 / 2 | 0 | 9 | 1 |
+| [src/mysteries.js](../../src/mysteries.js) | 1752 | world-graph | 7 / 3 | 0 | 10 | 2 |
 | [src/nft.js](../../src/nft.js) | 123 | chain-economy | 3 / 3 | 0 | 2 | 1 |
 | [src/notoriety.js](../../src/notoriety.js) | 31 | world-progression | 1 / 2 | 0 | 2 | 0 |
 | [src/npcwar.js](../../src/npcwar.js) | 586 | world-progression | 2 / 8 | 7 | 8 | 1 |
@@ -250,7 +250,7 @@
 | [src/world-kernel-invariants.js](../../src/world-kernel-invariants.js) | 40 | platform-core | 1 / 3 | 0 | 5 | 2 |
 | [src/world-kernel-query.js](../../src/world-kernel-query.js) | 326 | platform-core | 6 / 5 | 0 | 20 | 3 |
 | [src/world-kernel.js](../../src/world-kernel.js) | 362 | platform-core | 5 / 16 | 0 | 12 | 10 |
-| [src/world-knowledge.js](../../src/world-knowledge.js) | 34 | platform-core | 2 / 7 | 0 | 0 | 1 |
+| [src/world-knowledge.js](../../src/world-knowledge.js) | 34 | platform-core | 2 / 8 | 0 | 0 | 1 |
 | [src/world-projection.js](../../src/world-projection.js) | 85 | platform-core | 4 / 2 | 0 | 3 | 1 |
 | [src/world.js](../../src/world.js) | 806 | world-progression | 3 / 11 | 14 | 10 | 2 |
 | [src/worldgraph-validate.js](../../src/worldgraph-validate.js) | 1880 | world-graph | 2 / 17 | 0 | 1 | 10 |

@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "e23c312249bc06bcfb7d340a2c54dfa17c29ccf9",
+  "sourceRevision": "bf0cbc444a490e3d14885f7e9b77034155b413fc",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 7310,
-    "edges": 31968,
+    "nodes": 7312,
+    "edges": 31991,
     "byNodeType": {
       "Artifact": 2841,
       "Command": 87,
-      "Commit": 1464,
+      "Commit": 1466,
       "Contract": 79,
       "Document": 580,
       "Domain": 13,
@@ -65,22 +65,22 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 2404,
-      "CHANGED": 12304,
+      "CHANGED": 12318,
       "CONTAINS": 2862,
       "DECLARES": 87,
       "DEFINED_IN": 1237,
       "DEPENDS_ON": 65,
       "EXECUTES": 340,
       "HANDLED_BY": 705,
-      "HAS_COMMIT": 1464,
+      "HAS_COMMIT": 1466,
       "IMPLEMENTS": 124,
-      "IMPORTS": 2405,
+      "IMPORTS": 2409,
       "INHERITS": 17,
-      "REFERENCES": 4003,
+      "REFERENCES": 4004,
       "REPRESENTS": 1163,
-      "TESTS": 917,
+      "TESTS": 918,
       "TRACKS": 126,
-      "USES_TABLE": 1745
+      "USES_TABLE": 1746
     }
   },
   "nodes": [
@@ -26082,20 +26082,20 @@
       "path": "docs/core-architecture/IMPLEMENTATION.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 24911,
-      "lines": 117,
-      "version": "b9807f3400659a4e",
+      "bytes": 29648,
+      "lines": 131,
+      "version": "db4ad50fbf874c89",
       "text": true,
       "provenance": [
         {
           "file": "docs/core-architecture/IMPLEMENTATION.md",
           "line": 1,
-          "version": "b9807f3400659a4e"
+          "version": "db4ad50fbf874c89"
         }
       ],
-      "lastChangedAt": "2026-09-17T21:36:31.000Z",
+      "lastChangedAt": "2026-09-17T22:12:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e23c312249bc06bcfb7d340a2c54dfa17c29ccf9"
+      "lastChangedCommit": "bf0cbc444a490e3d14885f7e9b77034155b413fc"
     },
     {
       "key": "Artifact:docs/core-architecture/review-phase1.md",
@@ -52158,20 +52158,20 @@
       "path": "schema.sql",
       "kind": "data-schema",
       "extension": ".sql",
-      "bytes": 446868,
-      "lines": 7247,
-      "version": "8bce4dab630d1b1a",
+      "bytes": 447326,
+      "lines": 7252,
+      "version": "3d25fb08bc24d3cd",
       "text": true,
       "provenance": [
         {
           "file": "schema.sql",
           "line": 1,
-          "version": "8bce4dab630d1b1a"
+          "version": "3d25fb08bc24d3cd"
         }
       ],
-      "lastChangedAt": "2026-09-17T20:50:12.000Z",
+      "lastChangedAt": "2026-09-17T22:12:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "bccda7b0e57bbc1f38fa3e19e97abcb8c939482f"
+      "lastChangedCommit": "bf0cbc444a490e3d14885f7e9b77034155b413fc"
     },
     {
       "key": "Artifact:SIGN-OFF.md",
@@ -55355,20 +55355,20 @@
       "path": "src/mysteries.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 71473,
-      "lines": 1635,
-      "version": "117544823f702109",
+      "bytes": 79188,
+      "lines": 1752,
+      "version": "b2336061949053ab",
       "text": true,
       "provenance": [
         {
           "file": "src/mysteries.js",
           "line": 1,
-          "version": "117544823f702109"
+          "version": "b2336061949053ab"
         }
       ],
-      "lastChangedAt": "2026-09-08T02:23:21.000Z",
+      "lastChangedAt": "2026-09-17T22:12:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "35e8917bed2ab9050900c6c6fb53dd55885759f5"
+      "lastChangedCommit": "bf0cbc444a490e3d14885f7e9b77034155b413fc"
     },
     {
       "key": "Artifact:src/nft.js",
@@ -60231,20 +60231,20 @@
       "path": "test/gates.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 273483,
-      "lines": 4139,
-      "version": "3219a6cfc9292ebe",
+      "bytes": 273716,
+      "lines": 4140,
+      "version": "13efb80883125d7d",
       "text": true,
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "3219a6cfc9292ebe"
+          "version": "13efb80883125d7d"
         }
       ],
-      "lastChangedAt": "2026-09-17T21:36:31.000Z",
+      "lastChangedAt": "2026-09-17T22:12:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e23c312249bc06bcfb7d340a2c54dfa17c29ccf9"
+      "lastChangedCommit": "bf0cbc444a490e3d14885f7e9b77034155b413fc"
     },
     {
       "key": "Artifact:test/genesiscca.js",
@@ -63313,20 +63313,20 @@
       "path": "test/world-knowledge-crafting.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 13960,
-      "lines": 229,
-      "version": "13b3958805a97a59",
+      "bytes": 26655,
+      "lines": 386,
+      "version": "6b58d804a98028f5",
       "text": true,
       "provenance": [
         {
           "file": "test/world-knowledge-crafting.js",
           "line": 1,
-          "version": "13b3958805a97a59"
+          "version": "6b58d804a98028f5"
         }
       ],
-      "lastChangedAt": "2026-09-17T20:00:22.000Z",
+      "lastChangedAt": "2026-09-17T22:12:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "1dffc80ec702d2d75f9258e381d4b3affe555de8"
+      "lastChangedCommit": "bf0cbc444a490e3d14885f7e9b77034155b413fc"
     },
     {
       "key": "Artifact:test/world-projection-api.js",
@@ -81465,6 +81465,22 @@
       ]
     },
     {
+      "key": "Commit:9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496",
+      "type": "Commit",
+      "id": "9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496",
+      "label": "docs(knowledge): index verified player projection checkpoint",
+      "title": "docs(knowledge): index verified player projection checkpoint",
+      "date": "2026-09-17T21:37:22.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496",
+      "provenance": [
+        {
+          "commit": "9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496"
+        }
+      ]
+    },
+    {
       "key": "Commit:9cc01c8435062a03f625382aecb3c83d90f8d277",
       "type": "Commit",
       "id": "9cc01c8435062a03f625382aecb3c83d90f8d277",
@@ -84709,6 +84725,22 @@
         {
           "commit": "bed312b892527aa40fe7f5d73ad42108af4dea35",
           "url": "https://github.com/OmertaDev/Omerta/commit/bed312b892527aa40fe7f5d73ad42108af4dea35"
+        }
+      ]
+    },
+    {
+      "key": "Commit:bf0cbc444a490e3d14885f7e9b77034155b413fc",
+      "type": "Commit",
+      "id": "bf0cbc444a490e3d14885f7e9b77034155b413fc",
+      "label": "feat(mysteries): gate pinned progression with authenticated knowledge",
+      "title": "feat(mysteries): gate pinned progression with authenticated knowledge",
+      "date": "2026-09-17T22:12:40.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/bf0cbc444a490e3d14885f7e9b77034155b413fc",
+      "provenance": [
+        {
+          "commit": "bf0cbc444a490e3d14885f7e9b77034155b413fc",
+          "url": "https://github.com/OmertaDev/Omerta/commit/bf0cbc444a490e3d14885f7e9b77034155b413fc"
         }
       ]
     },
@@ -97307,13 +97339,13 @@
       "id": "docs/core-architecture/IMPLEMENTATION.md",
       "label": "docs/core-architecture/IMPLEMENTATION.md",
       "documentType": "documentation",
-      "lines": 117,
-      "version": "b9807f3400659a4e",
+      "lines": 131,
+      "version": "db4ad50fbf874c89",
       "provenance": [
         {
           "file": "docs/core-architecture/IMPLEMENTATION.md",
           "line": 1,
-          "version": "b9807f3400659a4e"
+          "version": "db4ad50fbf874c89"
         }
       ]
     },
@@ -101250,7 +101282,7 @@
         },
         {
           "file": "test/world-knowledge-crafting.js",
-          "line": 23
+          "line": 24
         },
         {
           "file": "test/world-projection-read.js",
@@ -106204,6 +106236,9 @@
           "commit": "9bc5cb12a95a68f3bbdc05b3b5bc742afd610636"
         },
         {
+          "commit": "9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496"
+        },
+        {
           "commit": "a8101834df0e19afb218429142526d347fc74602"
         },
         {
@@ -106724,6 +106759,9 @@
         },
         {
           "commit": "9c7a416f15bcec681eb4a88526ebb6107a53a36a"
+        },
+        {
+          "commit": "9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496"
         },
         {
           "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
@@ -107353,6 +107391,9 @@
           "commit": "9c7a416f15bcec681eb4a88526ebb6107a53a36a"
         },
         {
+          "commit": "9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496"
+        },
+        {
           "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
         },
         {
@@ -107980,6 +108021,9 @@
           "commit": "9c7a416f15bcec681eb4a88526ebb6107a53a36a"
         },
         {
+          "commit": "9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496"
+        },
+        {
           "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
         },
         {
@@ -108263,6 +108307,9 @@
         },
         {
           "commit": "9b5e1f54d084547bb33600f5934391191726a3c1"
+        },
+        {
+          "commit": "9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496"
         },
         {
           "commit": "a8101834df0e19afb218429142526d347fc74602"
@@ -108739,6 +108786,9 @@
           "commit": "9c7a416f15bcec681eb4a88526ebb6107a53a36a"
         },
         {
+          "commit": "9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496"
+        },
+        {
           "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
         },
         {
@@ -109087,6 +109137,9 @@
           "commit": "9b5e1f54d084547bb33600f5934391191726a3c1"
         },
         {
+          "commit": "9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496"
+        },
+        {
           "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
         },
         {
@@ -109222,6 +109275,9 @@
           "commit": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9"
         },
         {
+          "commit": "9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496"
+        },
+        {
           "commit": "ab4ab2583c21ec6bdd9fddec90fc8cd3dd60904a"
         },
         {
@@ -109313,6 +109369,9 @@
         },
         {
           "commit": "9b5e1f54d084547bb33600f5934391191726a3c1"
+        },
+        {
+          "commit": "9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496"
         },
         {
           "commit": "a8101834df0e19afb218429142526d347fc74602"
@@ -111472,13 +111531,13 @@
       "type": "Module",
       "id": "src/mysteries.js",
       "label": "src/mysteries.js",
-      "lines": 1635,
-      "version": "117544823f702109",
+      "lines": 1752,
+      "version": "b2336061949053ab",
       "provenance": [
         {
           "file": "src/mysteries.js",
           "line": 1,
-          "version": "117544823f702109"
+          "version": "b2336061949053ab"
         }
       ]
     },
@@ -116362,8 +116421,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "e23c312249bc06bcfb7d340a2c54dfa17c29ccf9",
-      "currentBranch": "codex/core-projections-20260917",
+      "revision": "bf0cbc444a490e3d14885f7e9b77034155b413fc",
+      "currentBranch": "codex/core-progression-20260917",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -136809,13 +136868,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6560
+          "line": 6565
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6560
+          "line": 6565
         }
       ]
     },
@@ -136845,13 +136904,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6595
+          "line": 6600
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6595
+          "line": 6600
         }
       ]
     },
@@ -136863,13 +136922,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6459
+          "line": 6464
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6459
+          "line": 6464
         }
       ]
     },
@@ -136881,13 +136940,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6544
+          "line": 6549
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6544
+          "line": 6549
         }
       ]
     },
@@ -136917,13 +136976,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5078
+          "line": 5083
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5078
+          "line": 5083
         }
       ]
     },
@@ -136935,13 +136994,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5051
+          "line": 5056
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5051
+          "line": 5056
         }
       ]
     },
@@ -137043,13 +137102,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4875
+          "line": 4880
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4875
+          "line": 4880
         }
       ]
     },
@@ -137061,13 +137120,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5033
+          "line": 5038
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5033
+          "line": 5038
         }
       ]
     },
@@ -137079,13 +137138,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4922
+          "line": 4927
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4922
+          "line": 4927
         }
       ]
     },
@@ -137097,13 +137156,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4908
+          "line": 4913
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4908
+          "line": 4913
         }
       ]
     },
@@ -137133,13 +137192,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4936
+          "line": 4941
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4936
+          "line": 4941
         }
       ]
     },
@@ -137151,13 +137210,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5009
+          "line": 5014
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5009
+          "line": 5014
         }
       ]
     },
@@ -137169,13 +137228,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4985
+          "line": 4990
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4985
+          "line": 4990
         }
       ]
     },
@@ -137187,13 +137246,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4956
+          "line": 4961
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4956
+          "line": 4961
         }
       ]
     },
@@ -137295,13 +137354,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6860
+          "line": 6865
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6860
+          "line": 6865
         }
       ]
     },
@@ -137313,13 +137372,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6852
+          "line": 6857
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6852
+          "line": 6857
         }
       ]
     },
@@ -137331,13 +137390,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6804
+          "line": 6809
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6804
+          "line": 6809
         }
       ]
     },
@@ -137349,13 +137408,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6800
+          "line": 6805
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6800
+          "line": 6805
         }
       ]
     },
@@ -137367,13 +137426,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6820
+          "line": 6825
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6820
+          "line": 6825
         }
       ]
     },
@@ -137385,13 +137444,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6832
+          "line": 6837
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6832
+          "line": 6837
         }
       ]
     },
@@ -137403,13 +137462,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6780
+          "line": 6785
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6780
+          "line": 6785
         }
       ]
     },
@@ -137421,13 +137480,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6751
+          "line": 6756
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6751
+          "line": 6756
         }
       ]
     },
@@ -137439,13 +137498,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6725
+          "line": 6730
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6725
+          "line": 6730
         }
       ]
     },
@@ -137457,13 +137516,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6759
+          "line": 6764
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6759
+          "line": 6764
         }
       ]
     },
@@ -137475,13 +137534,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6733
+          "line": 6738
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6733
+          "line": 6738
         }
       ]
     },
@@ -137493,13 +137552,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6846
+          "line": 6851
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6846
+          "line": 6851
         }
       ]
     },
@@ -137961,13 +138020,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5108
+          "line": 5113
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5108
+          "line": 5113
         }
       ]
     },
@@ -137979,13 +138038,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5124
+          "line": 5129
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5124
+          "line": 5129
         }
       ]
     },
@@ -138177,13 +138236,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5181
+          "line": 5186
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5181
+          "line": 5186
         }
       ]
     },
@@ -138663,13 +138722,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6611
+          "line": 6616
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6611
+          "line": 6616
         }
       ]
     },
@@ -138681,13 +138740,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6505
+          "line": 6510
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6505
+          "line": 6510
         }
       ]
     },
@@ -138735,13 +138794,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6869
+          "line": 6874
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6869
+          "line": 6874
         }
       ]
     },
@@ -138771,13 +138830,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 7026
+          "line": 7031
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 7026
+          "line": 7031
         }
       ]
     },
@@ -138789,13 +138848,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 7062
+          "line": 7067
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 7062
+          "line": 7067
         }
       ]
     },
@@ -138825,13 +138884,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6631
+          "line": 6636
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6631
+          "line": 6636
         }
       ]
     },
@@ -138897,13 +138956,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6688
+          "line": 6693
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6688
+          "line": 6693
         }
       ]
     },
@@ -138915,13 +138974,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6709
+          "line": 6714
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6709
+          "line": 6714
         }
       ]
     },
@@ -138933,13 +138992,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6667
+          "line": 6672
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6667
+          "line": 6672
         }
       ]
     },
@@ -138951,13 +139010,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6703
+          "line": 6708
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6703
+          "line": 6708
         }
       ]
     },
@@ -139239,13 +139298,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4754
+          "line": 4759
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4754
+          "line": 4759
         }
       ]
     },
@@ -139275,13 +139334,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4731
+          "line": 4736
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4731
+          "line": 4736
         }
       ]
     },
@@ -140031,13 +140090,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5525
+          "line": 5530
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5525
+          "line": 5530
         }
       ]
     },
@@ -140049,13 +140108,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5552
+          "line": 5557
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5552
+          "line": 5557
         }
       ]
     },
@@ -140067,13 +140126,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5901
+          "line": 5906
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5901
+          "line": 5906
         }
       ]
     },
@@ -140085,13 +140144,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5979
+          "line": 5984
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5979
+          "line": 5984
         }
       ]
     },
@@ -140103,13 +140162,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5993
+          "line": 5998
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5993
+          "line": 5998
         }
       ]
     },
@@ -140121,13 +140180,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6368
+          "line": 6373
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6368
+          "line": 6373
         }
       ]
     },
@@ -140139,13 +140198,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6268
+          "line": 6273
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6268
+          "line": 6273
         }
       ]
     },
@@ -140157,13 +140216,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6177
+          "line": 6182
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6177
+          "line": 6182
         }
       ]
     },
@@ -140175,13 +140234,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5634
+          "line": 5639
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5634
+          "line": 5639
         }
       ]
     },
@@ -140193,13 +140252,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6093
+          "line": 6098
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6093
+          "line": 6098
         }
       ]
     },
@@ -140211,13 +140270,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5818
+          "line": 5823
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5818
+          "line": 5823
         }
       ]
     },
@@ -140229,13 +140288,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5793
+          "line": 5798
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5793
+          "line": 5798
         }
       ]
     },
@@ -140247,13 +140306,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5697
+          "line": 5702
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5697
+          "line": 5702
         }
       ]
     },
@@ -140265,13 +140324,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6053
+          "line": 6058
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6053
+          "line": 6058
         }
       ]
     },
@@ -140283,13 +140342,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5840
+          "line": 5845
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5840
+          "line": 5845
         }
       ]
     },
@@ -140301,13 +140360,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6073
+          "line": 6078
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6073
+          "line": 6078
         }
       ]
     },
@@ -140319,13 +140378,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5692
+          "line": 5697
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5692
+          "line": 5697
         }
       ]
     },
@@ -140337,13 +140396,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5741
+          "line": 5746
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5741
+          "line": 5746
         }
       ]
     },
@@ -140355,13 +140414,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5618
+          "line": 5623
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5618
+          "line": 5623
         }
       ]
     },
@@ -140373,13 +140432,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5603
+          "line": 5608
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5603
+          "line": 5608
         }
       ]
     },
@@ -140391,13 +140450,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6140
+          "line": 6145
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6140
+          "line": 6145
         }
       ]
     },
@@ -140409,13 +140468,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5530
+          "line": 5535
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5530
+          "line": 5535
         }
       ]
     },
@@ -140517,13 +140576,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5294
+          "line": 5299
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5294
+          "line": 5299
         }
       ]
     },
@@ -140535,13 +140594,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5341
+          "line": 5346
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5341
+          "line": 5346
         }
       ]
     },
@@ -140553,13 +140612,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5396
+          "line": 5401
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5396
+          "line": 5401
         }
       ]
     },
@@ -140571,13 +140630,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5501
+          "line": 5506
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5501
+          "line": 5506
         }
       ]
     },
@@ -140589,13 +140648,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5208
+          "line": 5213
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5208
+          "line": 5213
         }
       ]
     },
@@ -140607,13 +140666,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5421
+          "line": 5426
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5421
+          "line": 5426
         }
       ]
     },
@@ -140625,13 +140684,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5243
+          "line": 5248
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5243
+          "line": 5248
         }
       ]
     },
@@ -140643,13 +140702,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5203
+          "line": 5208
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5203
+          "line": 5208
         }
       ]
     },
@@ -140661,13 +140720,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5457
+          "line": 5462
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5457
+          "line": 5462
         }
       ]
     },
@@ -140679,13 +140738,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5382
+          "line": 5387
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5382
+          "line": 5387
         }
       ]
     },
@@ -140697,13 +140756,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5368
+          "line": 5373
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5368
+          "line": 5373
         }
       ]
     },
@@ -140751,13 +140810,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5192
+          "line": 5197
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5192
+          "line": 5197
         }
       ]
     },
@@ -141759,13 +141818,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5148
+          "line": 5153
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5148
+          "line": 5153
         }
       ]
     },
@@ -141867,13 +141926,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 7137
+          "line": 7142
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 7137
+          "line": 7142
         }
       ]
     },
@@ -141885,13 +141944,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 7127
+          "line": 7132
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 7127
+          "line": 7132
         }
       ]
     },
@@ -141921,13 +141980,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 7221
+          "line": 7226
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 7221
+          "line": 7226
         }
       ]
     },
@@ -141939,13 +141998,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 7206
+          "line": 7211
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 7206
+          "line": 7211
         }
       ]
     },
@@ -141957,13 +142016,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4851
+          "line": 4856
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4851
+          "line": 4856
         }
       ]
     },
@@ -141975,13 +142034,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 7232
+          "line": 7237
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 7232
+          "line": 7237
         }
       ]
     },
@@ -141993,13 +142052,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4833
+          "line": 4838
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4833
+          "line": 4838
         }
       ]
     },
@@ -142011,13 +142070,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4819
+          "line": 4824
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4819
+          "line": 4824
         }
       ]
     },
@@ -142029,13 +142088,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4771
+          "line": 4776
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4771
+          "line": 4776
         }
       ]
     },
@@ -144876,13 +144935,13 @@
       "type": "TestSuite",
       "id": "test/gates.js",
       "label": "test/gates.js",
-      "lines": 4139,
-      "version": "3219a6cfc9292ebe",
+      "lines": 4140,
+      "version": "13efb80883125d7d",
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "3219a6cfc9292ebe"
+          "version": "13efb80883125d7d"
         }
       ]
     },
@@ -146886,13 +146945,13 @@
       "type": "TestSuite",
       "id": "test/world-knowledge-crafting.js",
       "label": "test/world-knowledge-crafting.js",
-      "lines": 229,
-      "version": "13b3958805a97a59",
+      "lines": 386,
+      "version": "6b58d804a98028f5",
       "provenance": [
         {
           "file": "test/world-knowledge-crafting.js",
           "line": 1,
-          "version": "13b3958805a97a59"
+          "version": "6b58d804a98028f5"
         }
       ]
     },
@@ -233955,6 +234014,78 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496",
+      "to": "HistoricalArtifact:knowledge/generated/routes.md",
+      "provenance": {
+        "commit": "9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:9cc01c8435062a03f625382aecb3c83d90f8d277",
       "to": "Artifact:AUDIT-nusd-market.md",
       "provenance": {
@@ -244751,6 +244882,46 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "bed312b892527aa40fe7f5d73ad42108af4dea35"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:bf0cbc444a490e3d14885f7e9b77034155b413fc",
+      "to": "Artifact:docs/core-architecture/IMPLEMENTATION.md",
+      "provenance": {
+        "commit": "bf0cbc444a490e3d14885f7e9b77034155b413fc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:bf0cbc444a490e3d14885f7e9b77034155b413fc",
+      "to": "Artifact:schema.sql",
+      "provenance": {
+        "commit": "bf0cbc444a490e3d14885f7e9b77034155b413fc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:bf0cbc444a490e3d14885f7e9b77034155b413fc",
+      "to": "Artifact:src/mysteries.js",
+      "provenance": {
+        "commit": "bf0cbc444a490e3d14885f7e9b77034155b413fc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:bf0cbc444a490e3d14885f7e9b77034155b413fc",
+      "to": "Artifact:test/gates.js",
+      "provenance": {
+        "commit": "bf0cbc444a490e3d14885f7e9b77034155b413fc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:bf0cbc444a490e3d14885f7e9b77034155b413fc",
+      "to": "Artifact:test/world-knowledge-crafting.js",
+      "provenance": {
+        "commit": "bf0cbc444a490e3d14885f7e9b77034155b413fc"
       }
     },
     {
@@ -302102,7 +302273,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6560
+        "line": 6565
       }
     },
     {
@@ -302120,7 +302291,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6595
+        "line": 6600
       }
     },
     {
@@ -302129,7 +302300,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6459
+        "line": 6464
       }
     },
     {
@@ -302138,7 +302309,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6544
+        "line": 6549
       }
     },
     {
@@ -302156,7 +302327,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5078
+        "line": 5083
       }
     },
     {
@@ -302165,7 +302336,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5051
+        "line": 5056
       }
     },
     {
@@ -302219,7 +302390,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4875
+        "line": 4880
       }
     },
     {
@@ -302228,7 +302399,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5033
+        "line": 5038
       }
     },
     {
@@ -302237,7 +302408,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4922
+        "line": 4927
       }
     },
     {
@@ -302246,7 +302417,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4908
+        "line": 4913
       }
     },
     {
@@ -302264,7 +302435,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4936
+        "line": 4941
       }
     },
     {
@@ -302273,7 +302444,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5009
+        "line": 5014
       }
     },
     {
@@ -302282,7 +302453,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4985
+        "line": 4990
       }
     },
     {
@@ -302291,7 +302462,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4956
+        "line": 4961
       }
     },
     {
@@ -302345,7 +302516,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6860
+        "line": 6865
       }
     },
     {
@@ -302354,7 +302525,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6852
+        "line": 6857
       }
     },
     {
@@ -302363,7 +302534,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6804
+        "line": 6809
       }
     },
     {
@@ -302372,7 +302543,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6800
+        "line": 6805
       }
     },
     {
@@ -302381,7 +302552,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6820
+        "line": 6825
       }
     },
     {
@@ -302390,7 +302561,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6832
+        "line": 6837
       }
     },
     {
@@ -302399,7 +302570,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6780
+        "line": 6785
       }
     },
     {
@@ -302408,7 +302579,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6751
+        "line": 6756
       }
     },
     {
@@ -302417,7 +302588,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6725
+        "line": 6730
       }
     },
     {
@@ -302426,7 +302597,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6759
+        "line": 6764
       }
     },
     {
@@ -302435,7 +302606,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6733
+        "line": 6738
       }
     },
     {
@@ -302444,7 +302615,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6846
+        "line": 6851
       }
     },
     {
@@ -302678,7 +302849,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5108
+        "line": 5113
       }
     },
     {
@@ -302687,7 +302858,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5124
+        "line": 5129
       }
     },
     {
@@ -302786,7 +302957,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5181
+        "line": 5186
       }
     },
     {
@@ -303029,7 +303200,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6611
+        "line": 6616
       }
     },
     {
@@ -303038,7 +303209,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6505
+        "line": 6510
       }
     },
     {
@@ -303065,7 +303236,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6869
+        "line": 6874
       }
     },
     {
@@ -303083,7 +303254,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 7026
+        "line": 7031
       }
     },
     {
@@ -303092,7 +303263,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 7062
+        "line": 7067
       }
     },
     {
@@ -303110,7 +303281,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6631
+        "line": 6636
       }
     },
     {
@@ -303146,7 +303317,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6688
+        "line": 6693
       }
     },
     {
@@ -303155,7 +303326,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6709
+        "line": 6714
       }
     },
     {
@@ -303164,7 +303335,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6667
+        "line": 6672
       }
     },
     {
@@ -303173,7 +303344,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6703
+        "line": 6708
       }
     },
     {
@@ -303317,7 +303488,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4754
+        "line": 4759
       }
     },
     {
@@ -303335,7 +303506,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4731
+        "line": 4736
       }
     },
     {
@@ -303713,7 +303884,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5525
+        "line": 5530
       }
     },
     {
@@ -303722,7 +303893,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5552
+        "line": 5557
       }
     },
     {
@@ -303731,7 +303902,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5901
+        "line": 5906
       }
     },
     {
@@ -303740,7 +303911,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5979
+        "line": 5984
       }
     },
     {
@@ -303749,7 +303920,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5993
+        "line": 5998
       }
     },
     {
@@ -303758,7 +303929,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6368
+        "line": 6373
       }
     },
     {
@@ -303767,7 +303938,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6268
+        "line": 6273
       }
     },
     {
@@ -303776,7 +303947,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6177
+        "line": 6182
       }
     },
     {
@@ -303785,7 +303956,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5634
+        "line": 5639
       }
     },
     {
@@ -303794,7 +303965,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6093
+        "line": 6098
       }
     },
     {
@@ -303803,7 +303974,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5818
+        "line": 5823
       }
     },
     {
@@ -303812,7 +303983,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5793
+        "line": 5798
       }
     },
     {
@@ -303821,7 +303992,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5697
+        "line": 5702
       }
     },
     {
@@ -303830,7 +304001,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6053
+        "line": 6058
       }
     },
     {
@@ -303839,7 +304010,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5840
+        "line": 5845
       }
     },
     {
@@ -303848,7 +304019,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6073
+        "line": 6078
       }
     },
     {
@@ -303857,7 +304028,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5692
+        "line": 5697
       }
     },
     {
@@ -303866,7 +304037,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5741
+        "line": 5746
       }
     },
     {
@@ -303875,7 +304046,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5618
+        "line": 5623
       }
     },
     {
@@ -303884,7 +304055,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5603
+        "line": 5608
       }
     },
     {
@@ -303893,7 +304064,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6140
+        "line": 6145
       }
     },
     {
@@ -303902,7 +304073,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5530
+        "line": 5535
       }
     },
     {
@@ -303956,7 +304127,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5294
+        "line": 5299
       }
     },
     {
@@ -303965,7 +304136,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5341
+        "line": 5346
       }
     },
     {
@@ -303974,7 +304145,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5396
+        "line": 5401
       }
     },
     {
@@ -303983,7 +304154,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5501
+        "line": 5506
       }
     },
     {
@@ -303992,7 +304163,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5208
+        "line": 5213
       }
     },
     {
@@ -304001,7 +304172,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5421
+        "line": 5426
       }
     },
     {
@@ -304010,7 +304181,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5243
+        "line": 5248
       }
     },
     {
@@ -304019,7 +304190,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5203
+        "line": 5208
       }
     },
     {
@@ -304028,7 +304199,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5457
+        "line": 5462
       }
     },
     {
@@ -304037,7 +304208,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5382
+        "line": 5387
       }
     },
     {
@@ -304046,7 +304217,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5368
+        "line": 5373
       }
     },
     {
@@ -304073,7 +304244,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5192
+        "line": 5197
       }
     },
     {
@@ -304577,7 +304748,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5148
+        "line": 5153
       }
     },
     {
@@ -304631,7 +304802,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 7137
+        "line": 7142
       }
     },
     {
@@ -304640,7 +304811,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 7127
+        "line": 7132
       }
     },
     {
@@ -304658,7 +304829,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 7221
+        "line": 7226
       }
     },
     {
@@ -304667,7 +304838,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 7206
+        "line": 7211
       }
     },
     {
@@ -304676,7 +304847,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4851
+        "line": 4856
       }
     },
     {
@@ -304685,7 +304856,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 7232
+        "line": 7237
       }
     },
     {
@@ -304694,7 +304865,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4833
+        "line": 4838
       }
     },
     {
@@ -304703,7 +304874,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4819
+        "line": 4824
       }
     },
     {
@@ -304712,7 +304883,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4771
+        "line": 4776
       }
     },
     {
@@ -304839,7 +305010,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:world-graph",
-      "weight": 85
+      "weight": 86
     },
     {
       "type": "DEPENDS_ON",
@@ -305097,7 +305268,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:world-graph",
       "to": "Domain:platform-core",
-      "weight": 27
+      "weight": 30
     },
     {
       "type": "DEPENDS_ON",
@@ -322710,6 +322881,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496",
+      "provenance": {
+        "commit": "9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:9cc01c8435062a03f625382aecb3c83d90f8d277",
       "provenance": {
         "commit": "9cc01c8435062a03f625382aecb3c83d90f8d277"
@@ -324329,6 +324508,14 @@
       "to": "Commit:bed312b892527aa40fe7f5d73ad42108af4dea35",
       "provenance": {
         "commit": "bed312b892527aa40fe7f5d73ad42108af4dea35"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:bf0cbc444a490e3d14885f7e9b77034155b413fc",
+      "provenance": {
+        "commit": "bf0cbc444a490e3d14885f7e9b77034155b413fc"
       }
     },
     {
@@ -332305,6 +332492,24 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:src/mysteries.js",
+      "to": "Artifact:src/content/canonical.js",
+      "provenance": {
+        "file": "src/mysteries.js",
+        "line": 33
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/mysteries.js",
+      "to": "Artifact:src/coordination/knowledge.js",
+      "provenance": {
+        "file": "src/mysteries.js",
+        "line": 31
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/mysteries.js",
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "src/mysteries.js",
@@ -332317,7 +332522,16 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 26
+        "line": 28
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/mysteries.js",
+      "to": "Artifact:src/world-knowledge.js",
+      "provenance": {
+        "file": "src/mysteries.js",
+        "line": 32
       }
     },
     {
@@ -332326,7 +332540,7 @@
       "to": "Artifact:src/worldgraph-validate.js",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 28
+        "line": 30
       }
     },
     {
@@ -332335,7 +332549,7 @@
       "to": "Artifact:src/worldgraph.js",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 27
+        "line": 29
       }
     },
     {
@@ -347137,6 +347351,15 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/world-knowledge-crafting.js",
+      "to": "Artifact:src/mysteries.js",
+      "provenance": {
+        "file": "test/world-knowledge-crafting.js",
+        "line": 16
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/world-knowledge-crafting.js",
       "to": "Artifact:src/world-knowledge.js",
       "provenance": {
         "file": "test/world-knowledge-crafting.js",
@@ -347167,7 +347390,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "test/world-knowledge-crafting.js",
-        "line": 23
+        "line": 24
       }
     },
     {
@@ -374150,6 +374373,15 @@
       "provenance": {
         "file": "docs/core-architecture/IMPLEMENTATION.md",
         "line": 56
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/core-architecture/IMPLEMENTATION.md",
+      "to": "Artifact:test/world-knowledge-crafting.js",
+      "provenance": {
+        "file": "docs/core-architecture/IMPLEMENTATION.md",
+        "line": 126
       }
     },
     {
@@ -404134,6 +404366,15 @@
     {
       "type": "TESTS",
       "from": "Artifact:test/world-knowledge-crafting.js",
+      "to": "Artifact:src/mysteries.js",
+      "provenance": {
+        "file": "test/world-knowledge-crafting.js",
+        "line": 16
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/world-knowledge-crafting.js",
       "to": "Artifact:src/world-knowledge.js",
       "provenance": {
         "file": "test/world-knowledge-crafting.js",
@@ -413359,10 +413600,19 @@
     {
       "type": "USES_TABLE",
       "from": "Artifact:src/mysteries.js",
+      "to": "Table:accounts",
+      "provenance": {
+        "file": "src/mysteries.js",
+        "line": 776
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/mysteries.js",
       "to": "Table:character_skills",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 689
+        "line": 741
       }
     },
     {
@@ -413371,7 +413621,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 108
+        "line": 116
       }
     },
     {
@@ -413380,7 +413630,7 @@
       "to": "Table:idempotency",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 799
+        "line": 891
       }
     },
     {
@@ -413389,7 +413639,7 @@
       "to": "Table:item_instances",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 930
+        "line": 1026
       }
     },
     {
@@ -413398,7 +413648,7 @@
       "to": "Table:item_stacks",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 945
+        "line": 1041
       }
     },
     {
@@ -413407,7 +413657,7 @@
       "to": "Table:mystery_choices",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 814
+        "line": 906
       }
     },
     {
@@ -413416,7 +413666,7 @@
       "to": "Table:mystery_instances",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 729
+        "line": 813
       }
     },
     {
@@ -413425,7 +413675,7 @@
       "to": "Table:mystery_node_state",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 815
+        "line": 907
       }
     },
     {
@@ -413434,7 +413684,7 @@
       "to": "Table:operation_escrow",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 1158
+        "line": 1257
       }
     },
     {
