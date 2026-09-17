@@ -285,6 +285,69 @@ try {
   assert.equal(fallback.kind, drawn.kind); assert.equal(fallback.target, drawn.target); assert.equal(fallback.progress, 0);
   assert.equal((await pool.query("SELECT 1 FROM crew_objectives WHERE crew_id='query-crew' AND week=$1", [week])).rows.length, 0,
     'Querying a not-yet-materialized objective uses existing draw semantics without persisting a duplicate');
+
+  // Family operations have a different read authority from legacy Crew operations.
+  // A later Crew join must not disclose the previous Family's operation references.
+  for (const id of ['owner', 'new-crewmate', 'family-reader', 'former-promiser', 'role-holder']) {
+    await player(`boundary-${id}`, `Boundary ${id}`);
+  }
+  for (const id of ['one', 'two']) await pool.query('INSERT INTO gangs(id,name,tag) VALUES($1,$1,$2)',
+    [`boundary-family-${id}`, `B${id}`]);
+  for (const [account, familyId] of [['owner', 'one'], ['new-crewmate', 'two'], ['family-reader', 'one'],
+    ['former-promiser', 'two'], ['role-holder', 'two']]) {
+    await pool.query('INSERT INTO gang_members(gang_id,character_id) VALUES($1,$2)',
+      [`boundary-family-${familyId}`, `boundary-${account}-ch`]);
+  }
+  for (const [crewId, leader] of [['recorded', 'owner'], ['other', 'family-reader']]) {
+    await pool.query('INSERT INTO crews(id,name,leader_account) VALUES($1,$1,$2)',
+      [`boundary-crew-${crewId}`, `boundary-${leader}`]);
+  }
+  for (const [account, crewId] of [['owner', 'recorded'], ['new-crewmate', 'recorded'], ['family-reader', 'other']]) {
+    await pool.query('INSERT INTO crew_members(crew_id,account_id,name) VALUES($1,$2,$2)',
+      [`boundary-crew-${crewId}`, `boundary-${account}`]);
+  }
+  const familyOperations = ['boundary-family-operation-a', 'boundary-family-operation-b'];
+  for (const operationId of familyOperations) await pool.query(`INSERT INTO world_operations
+    (id,graph_id,graph_version,operation_node_id,crew_id,opened_by_account_id,status,coordination_mode,
+      family_id,run_key,coordination_definition_hash,coordination_definition_json,expires_at,resolution_seed)
+    VALUES($1,'boundary-family-private-graph',1,$1,'boundary-crew-recorded','boundary-owner','recruiting','family',
+      'boundary-family-one',$1,$2,'{}',$3,'boundary-seed')`, [operationId, 'a'.repeat(64), future]);
+  await pool.query(`INSERT INTO world_operations(id,graph_id,graph_version,operation_node_id,crew_id,opened_by_account_id)
+    VALUES('boundary-legacy-operation','boundary-legacy-graph',1,'boundary-legacy-objective','boundary-crew-recorded','boundary-owner')`);
+  await pool.query(`INSERT INTO world_operation_roles(operation_id,role_id,account_id,character_id)
+    VALUES($1,'historical-role','boundary-role-holder','boundary-role-holder-ch')`, [familyOperations[0]]);
+  await pool.query(`INSERT INTO world_operation_commitments(operation_id,role_id,requirement_id,account_id,
+    character_id,kind,quantity,state) VALUES($1,'former-role','presence','boundary-former-promiser',
+    'boundary-former-promiser-ch','participation',1,'withdrawn')`, [familyOperations[0]]);
+  const crewOnly = await query.snapshot('boundary-new-crewmate', { limit: 1 }); closedGraph(crewOnly);
+  assert(has(crewOnly, 'operation', 'boundary-legacy-operation'), 'Legacy Crew visibility remains available');
+  for (const hidden of [...familyOperations, 'boundary-family-private-graph']) {
+    assert(!JSON.stringify(crewOnly).includes(hidden), `A new Crew member must not infer ${hidden}`);
+  }
+  assert.equal(crewOnly.truncated.operations, false, 'Hidden Family operations do not consume page slots or expose their count');
+  const familyOnly = await query.snapshot('boundary-family-reader'); closedGraph(familyOnly);
+  assert(familyOperations.every((operationId) => has(familyOnly, 'operation', operationId)),
+    'Current Family members see their Family operations from another Crew');
+  assert(!has(familyOnly, 'operation', 'boundary-legacy-operation'));
+  assert.equal((await query.snapshot('boundary-family-reader', { limit: 1 })).truncated.operations, true);
+  for (const actor of ['former-promiser', 'role-holder']) {
+    const historical = await query.snapshot(`boundary-${actor}`); closedGraph(historical);
+    assert(has(historical, 'operation', familyOperations[0]), 'Historical participation retains its authorized reference');
+    assert(!has(historical, 'operation', familyOperations[1]));
+    assert(!has(historical, 'operation', 'boundary-legacy-operation'));
+  }
+  await pool.query("DELETE FROM gang_members WHERE character_id='boundary-family-reader-ch'");
+  assert(!has(await query.snapshot('boundary-family-reader'), 'operation', familyOperations[0]),
+    'Leaving the Family removes a membership-only reference immediately');
+  await pool.query("DELETE FROM gang_members WHERE character_id='boundary-owner-ch'");
+  await pool.query("DELETE FROM crew_members WHERE account_id='boundary-owner'");
+  const originalOpener = await query.snapshot('boundary-owner');
+  assert(familyOperations.every((operationId) => has(originalOpener, 'operation', operationId)));
+  assert(has(originalOpener, 'operation', 'boundary-legacy-operation'), 'Opener history survives both social memberships');
+  await pool.query("UPDATE characters SET alive=false WHERE id='boundary-former-promiser-ch'");
+  assert(has(await query.snapshot('boundary-former-promiser'), 'operation', familyOperations[0]),
+    'A historical promiser needs no current character to retain its own operation reference');
+  console.log('world-kernel-query: Family operation visibility matches current Family/opener/role/historical promise; legacy Crew policy retained');
   console.log(`world-kernel-query: authoritative refs, bounded graph, affiliation and knowledge visibility passed (${explicitDatabase ? 'PostgreSQL' : 'pg-mem'})`);
 } finally {
   await pool.end();

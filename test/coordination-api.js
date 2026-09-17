@@ -168,7 +168,12 @@ const reserveHttpKey = async (accountId, key, url, body) => {
 try {
   const ownerToken = await fixture(owner), outsiderToken = await fixture(outsider);
   const mounted = live.routes.filter(({ url }) => url.includes('/coordination'));
-  assert.equal(mounted.length, 15);
+  assert.equal(mounted.length, 19);
+  for (const [method, url] of [
+    ['GET', '/v1/coordination/operations'], ['POST', '/v1/coordination/operations'],
+    ['GET', '/v1/coordination/operations/:operationId'],
+    ['POST', '/v1/coordination/operations/:operationId/actions/:action'],
+  ]) assert(mounted.some((route) => route.method === method && route.url === url), `${method} ${url}`);
   for (const route of mounted) assert.equal(route.hasAuth, true, route.url);
   const liveSpec = (await inject(live, 'GET', '/openapi.json', { token: null })).json();
   assert(liveSpec.paths['/v1/coordination/instances/{instanceId}/act']);

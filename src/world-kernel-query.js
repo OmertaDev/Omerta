@@ -239,11 +239,17 @@ async function neighborhood(client, accountId, limit, knowledge, registry) {
   truncated.mysteries = mysteries.length > limit;
   for (const row of mysteries.slice(0, limit)) edge('authorization', player,
     add('mystery', row.id, { status: row.status, graphId: row.graph_id, graphVersion: Number(row.graph_version) }));
+  // Family coordination retains the board's Family/opener/role/promise visibility.
+  // Joining the recorded Crew grants access only to legacy Crew operations.
   const operations = (await client.query(
     `SELECT id,status,graph_id,graph_version FROM world_operations
-      WHERE opened_by_account_id=$1 OR crew_id=$2
+      WHERE opened_by_account_id=$1
         OR id IN (SELECT operation_id FROM world_operation_roles WHERE account_id=$1)
-      ORDER BY id LIMIT $3`, [accountId, membership?.crew_id ?? null, limit + 1],
+        OR (coordination_mode='crew' AND crew_id=$2)
+        OR (coordination_mode='family' AND (family_id=$3
+          OR id IN (SELECT operation_id FROM world_operation_commitments WHERE account_id=$1)))
+      ORDER BY id LIMIT $4`, [accountId, membership?.crew_id ?? null,
+      family ? familyMembership.gang_id : null, limit + 1],
   )).rows;
   truncated.operations = operations.length > limit;
   for (const row of operations.slice(0, limit)) edge('authorization', player,
