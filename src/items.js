@@ -83,8 +83,16 @@ function mutationState(client, token) {
   return state;
 }
 export function itemMutationContext(client, token) {
-  const { guard } = mutationState(client, token);
-  return Object.freeze({ key: guard.key, mutationId: guard.mutationId, envelopeVersion: guard.envelopeVersion });
+  const { guard, mutationKind, rootOwner } = mutationState(client, token);
+  return Object.freeze({ key: guard.key, mutationId: guard.mutationId, envelopeVersion: guard.envelopeVersion,
+    mutationKind, owner: Object.freeze({ ...rootOwner }) });
+}
+export function assertOperationMutation(client, token, operationId) {
+  const state = mutationState(client, token);
+  if (state.mutationKind !== 'operation_action' || !state.authority.operations.has(operationId)) {
+    fail('item_mutation_authority', 'The mutation did not bind that operation.');
+  }
+  return Object.freeze({ owner: Object.freeze({ ...state.rootOwner }), kind: state.mutationKind });
 }
 export function nextItemMutationOrdinal(client, token) {
   return mutationState(client, token).ioOrdinal++;
@@ -439,6 +447,18 @@ function compositeAuthority(request) {
 }
 
 function assertCompositeAuthority(composite, kind, owner, request) {
+  if (composite.mutationKind === 'operation_action') {
+    const operation = owner.scope === 'operation' && composite.authority.operations.has(owner.id);
+    if (operation && ['consume_item', 'consume_stack'].includes(kind)) return;
+    if (kind === 'grant_stack' && (ownerKey(owner) === ownerKey(composite.rootOwner)
+      || operation || composite.authority.destinations.has(ownerKey(owner)))) {
+      const key = JSON.stringify([request.templateId, request.quality]);
+      const credit = composite.stackCredits.get(key) || 0;
+      if (credit < request.qty) fail('item_mutation_authority', 'Transferred materials require a conserved input.');
+      composite.stackCredits.set(key, credit - request.qty);
+      return;
+    }
+  }
   if (kind === 'release_escrow') {
     if (owner.scope !== 'operation' || !composite.authority.operations.has(owner.id)) {
       fail('item_mutation_authority', 'The compound mutation did not bind that escrow operation.');
@@ -494,9 +514,14 @@ async function executeMutation(client, kind, owner, key, request, action) {
       assertCompositeAuthority(composite, kind, owner, request);
       composite.ordinal += 1;
       nextItemMutationOrdinal(client, key);
-      return await action(
+      const result = await action(
         composite.guard, `${String(composite.ordinal).padStart(4, '0')}:${kind}`,
       );
+      if (kind === 'consume_stack' && composite.mutationKind === 'operation_action') {
+        const creditKey = JSON.stringify([request.templateId, request.quality]);
+        composite.stackCredits.set(creditKey, (composite.stackCredits.get(creditKey) || 0) + request.qty);
+      }
+      return result;
     } catch (error) {
       composite.failed = error;
       transactionClient(client).failed ||= error;
@@ -553,7 +578,7 @@ async function runMutation(client, guard, owner, mutationKind, authority, action
   const context = Object.freeze({});
   const state = {
     client, guard, rootOwner: owner, authority: null, mutationKind, transaction: transactionClient(client),
-    ordinal: 0, ioOrdinal: 0, closed: false, failed: null, lotRoot, usedLotTransitions: new Set(),
+    ordinal: 0, ioOrdinal: 0, closed: false, failed: null, lotRoot, usedLotTransitions: new Set(), stackCredits: new Map(),
   };
   MUTATION_CONTEXTS.set(context, state);
   state.transaction.mutation = state;

@@ -18,6 +18,8 @@
 // endpoints behind them answer at all when the world is empty.
 process.env.MOD_KEY = 'test-mod-key';
 process.env.POPULATION_OFF = 'on';   // no residents: the emptiest world the game can be in
+process.env.WORLD_GRAPH_KERNEL = 'off';
+process.env.COORDINATION_OPERATIONS = 'off';
 import assert from 'node:assert';
 import { buildServer } from '../src/server.js';
 
@@ -42,6 +44,10 @@ const DECLARED = {
   '/v1/leaderboard/portfolio': 'retired with the portfolio (D11)',
   '/v1/leaderboard/family-portfolio': 'retired with the portfolio (D11)',
   '/v1/rwa/health': 'dormant until the finalized StockTokenRegistryV2 authority is configured; failing closed with health_registry_unavailable is safer than publishing fabricated health for an unknown registry',
+  '/v1/worldgraph/state': 'the kernel pilot is explicitly disabled by default; its authenticated state facade refuses with world_unavailable',
+  '/v1/worldgraph/objects': 'the kernel pilot is explicitly disabled by default; its authenticated object catalog refuses with world_unavailable',
+  '/v1/worldgraph/kernel/recipes': 'the kernel pilot is explicitly disabled by default; its authenticated recipe catalog refuses with world_unavailable',
+  '/v1/coordination/operations': 'Family operation coordination is explicitly disabled by default; its authenticated catalog refuses with coordination_operation_unavailable',
   // Not an endpoint: the websocket upgrade path. A plain GET is correctly not a thing it serves.
   '/v1/ws': 'the websocket upgrade path, not a GET endpoint',
 };
@@ -68,6 +74,13 @@ assert.deepEqual(reviewerGets.map((r) => r.url), ['/v1/rwa/reviewer/queue'],
 const paths = [...new Set(parameterlessGets
   .filter((r) => r.authKind !== 'rwaReviewerAuth')
   .map((r) => r.url))].sort();
+const defaultOff = new Map([
+  ['/v1/worldgraph/state', 'world_unavailable'],
+  ['/v1/worldgraph/objects', 'world_unavailable'],
+  ['/v1/worldgraph/kernel/recipes', 'world_unavailable'],
+  ['/v1/coordination/operations', 'coordination_operation_unavailable'],
+]);
+for (const p of defaultOff.keys()) assert(paths.includes(p), `default-off route disappeared: ${p}`);
 
 // Anti-vacuity: an empty list is what a broken route registry looks like, and it would pass silently.
 assert(paths.length >= 120,
@@ -79,7 +92,13 @@ const declaredHit = new Set();
 for (const p of paths) {
   const r = await j('GET', p, token);
   if (r.code < 400) continue;
-  if (DECLARED[p]) { declaredHit.add(p); continue; }
+  if (DECLARED[p]) {
+    if (defaultOff.has(p)) {
+      assert.equal(r.code, 404, `${p} must fail closed for its disabled rollout`);
+      assert.equal(r.body?.error, defaultOff.get(p), `${p} must return its declared rollout refusal`);
+    }
+    declaredHit.add(p); continue;
+  }
   broke.push(`${p} → ${r.code} ${JSON.stringify(r.body).slice(0, 120)}`);
 }
 

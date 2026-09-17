@@ -9,6 +9,7 @@
 // floor (the extractor really found the things we know are there) or a MECHANISM check on a
 // synthetic graph (the query really fires when the condition it looks for is true).
 import assert from 'node:assert';
+import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
@@ -61,13 +62,20 @@ assert.deepEqual(inv.mute.sort(), [
   'agent acquisition budget accounting',
   'character cash',
   'desk inventory backed',
+  'family operation capital',
+  'family operation custody',
+  'family operation history',
   'reason vocabulary',
+  'world graph object transitions',
   'world graph salvage car audit',
   'world graph stack conservation',
   'world graph unique custody and provenance',
 ],
   `unexpected checks reconcile no reason — the SQL term parser missed a shape: ${inv.mute.join(', ')}`);
 const NON_CURRENCY_WORLD_GRAPH_CHECKS = new Map([
+  ['family operation custody', 'Family promise, actual contribution, and escrow conservation'],
+  ['family operation history', 'Family operation revision and replay receipt authority'],
+  ['world graph object transitions', 'world object history and consumed-item receipt authority'],
   ['world graph salvage car audit', 'authoritative noncurrency salvage sink'],
   ['world graph stack conservation', 'custody conservation'],
   ['world graph unique custody and provenance', 'unique custody/provenance'],
@@ -78,6 +86,24 @@ for (const [name, taxonomy] of NON_CURRENCY_WORLD_GRAPH_CHECKS) {
     edge.type === 'RECONCILES' && edge.from === `Check:${name}`
   )), false, `${taxonomy} SQL must not be misclassified as a transaction currency/reason term`);
 }
+// This imported helper reconciles cash with grouped SQL and BigInt, beyond the
+// lexical term parser. Keep that currency blind spot explicit, separately from
+// the noncurrency checks, and pin its real ledger vocabulary and equation.
+assert(g.nodes.has('Check:family operation capital'));
+assert.equal(g.edges.some((edge) => edge.type === 'RECONCILES' && edge.from === 'Check:family operation capital'), false);
+const familyCapitalAudit = fs.readFileSync(new URL('../src/coordination/operation-invariants.js', import.meta.url), 'utf8');
+assert.match(familyCapitalAudit, /FROM transactions WHERE reason LIKE 'coordination:capital:%'/);
+assert.match(familyCapitalAudit, /row\.currency !== 'cash'/);
+assert.match(familyCapitalAudit, /\['deposit', 'refund', 'spend', 'forfeit'\]\.includes\(reason\)/);
+assert.match(familyCapitalAudit, /BigInt\(row\.amount\)/);
+assert.match(familyCapitalAudit, /heldCash\.reduce\(\(sum, r\) => sum \+ BigInt\(r\.amount\), 0n\) !== \(balances\.get\(operation\.id\) \|\| 0n\)/);
+const invariantSource = fs.readFileSync(new URL('../src/invariants.js', import.meta.url), 'utf8');
+for (const reason of ['deposit', 'refund', 'spend', 'forfeit']) {
+  assert(invariantSource.includes(`'coordination:capital:${reason}'`), `Family capital vocabulary lost ${reason}`);
+}
+assert(g.unparsed.some((entry) => entry.file === 'src/coordination/capital.js'
+  && entry.kind === 'interpolated-reason' && entry.text === 'coordination:capital:${reason}'),
+'dynamic Family capital ledger reasons must remain visible as an extractor limitation');
 console.log('✓ write invariants: provenance, authoring run, content hash, named rubrics, no dangling edges');
 
 // ── extraction really found the things we know are in the tree ───────────────────────────────────

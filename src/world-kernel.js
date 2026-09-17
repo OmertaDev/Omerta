@@ -4,11 +4,11 @@ import crypto from 'node:crypto';
 import { GameError, bus } from './game.js';
 import { dbCaps } from './db.js';
 import { canonicalBytes } from './content/canonical.js';
-import { createCoordinationKnowledge } from './coordination/knowledge.js';
+import { createCoordinationKnowledge, assertKnowledgeProof, knowledgeProofMatches } from './coordination/knowledge.js';
 import { normalizeKnowledgeRequirement } from './world-knowledge.js';
 import { isWorldGraphRegistry, nodeOf } from './worldgraph.js';
 import { withItemTransaction, withItemMutation, consumeItem, consumeStack,
-  registerItemTransactionUndo, itemMutationContext, assertItemTransaction } from './items.js';
+  registerItemTransactionUndo, itemMutationContext, assertItemTransaction, assertOperationMutation, awaitItemReadBarrier } from './items.js';
 
 const fail = (code = 'world_unavailable') => { throw new GameError(code, 'The world request could not complete.'); };
 const text = (value) => {
@@ -120,6 +120,13 @@ const stateOf = (definition, row) => {
 };
 const project = (definition, row) => ({ id: definition.id, type: definition.type, title: definition.title,
   locationId: definition.locationId, state: row.state, revision: Number(row.revision), controllerFamilyId: row.controller_family_id });
+function commandInput(input) {
+  closed(input, ['objectId', 'actionId', 'itemId', 'expectedRevision']);
+  input = Object.freeze({ ...input });
+  text(input.objectId); text(input.actionId); text(input.itemId);
+  if (!Number.isSafeInteger(input.expectedRevision) || input.expectedRevision < 0) fail('bad_world_request');
+  return input;
+}
 
 export function createWorldKernel({ pool, registry, objects = [], enabled = false,
   knowledgeEnabled = false, sharingEnabled = false, accountIds = [] } = {}) {
@@ -132,10 +139,68 @@ export function createWorldKernel({ pool, registry, objects = [], enabled = fals
     sharingEnabled: enabled && knowledgeEnabled && sharingEnabled, accountIds });
   const allowed = (accountId) => enabled && (!cohort.size || cohort.has(accountId));
   const keyFor = (accountId, key) => `world:${digest([text(accountId), text(key)])}`;
+  const pendingNotifications = new WeakMap();
   async function known(client, accountId, ch, definition) {
     if (!definition.knowledge.length) return true;
     const ctx = await knowledge.context(client, { accountId, character: ch, lock: true });
     return (await knowledge.matchesRequirements(client, ctx, definition.knowledge)).every(Boolean);
+  }
+  async function applyCommand(client, accountId, input, mutation, operationId = null, knowledgeProof = null) {
+    assertItemTransaction(client);
+    const mutationContext = itemMutationContext(client, mutation);
+    const definition = byId.get(input.objectId), action = definition?.actions.find((entry) => entry.id === input.actionId);
+    if (!allowed(accountId) || !action) fail();
+    if (operationId && (mutationContext.mutationKind !== 'operation_action' || mutationContext.owner.scope !== 'account'
+      || mutationContext.owner.id !== accountId)) fail('world_forbidden');
+    if (operationId) assertOperationMutation(client, mutation, operationId);
+    const authority = await actor(client, accountId, true);
+    if (authority.ch.loc !== definition.locationId) fail();
+    const owner = operationId ? { scope: 'operation', id: operationId } : { scope: 'account', id: accountId };
+    if (operationId) {
+      const operation = (await client.query(
+        'SELECT coordination_mode,family_id,status FROM world_operations WHERE id=$1 FOR UPDATE', [operationId],
+      )).rows[0];
+      if (operation?.coordination_mode !== 'family' || operation.family_id !== authority.familyId
+        || operation.status !== 'resolving') fail('world_forbidden');
+      assertKnowledgeProof(client, knowledgeProof);
+      if (definition.knowledge.length && (!knowledge.enabledFor(accountId) || !definition.knowledge.every((requirement) =>
+        knowledgeProofMatches(client, knowledgeProof, { accountId, characterId: authority.ch.id, requirement,
+          sharingEnabled: knowledge.sharingEnabledFor(accountId) })))) fail();
+    } else if (!await known(client, accountId, authority.ch, definition)) fail();
+    if (!(await client.query('SELECT id FROM districts WHERE id=$1', [definition.locationId])).rows.length) fail();
+    const existing = (await client.query('SELECT id FROM world_kernel_objects WHERE id=$1 FOR UPDATE', [definition.id])).rows[0];
+    // pg-mem reports a RETURNING row even on DO NOTHING; an existing row
+    // must never be registered as transaction-owned compensation work.
+    const inserted = !existing && (await client.query(`INSERT INTO world_kernel_objects
+      (id,object_kind,location_id,definition_hash,state,revision) VALUES ($1,$2,$3,$4,$5,0)
+      ON CONFLICT (id) DO NOTHING RETURNING id`, [definition.id, definition.type,
+      definition.locationId, definition.contentHash, definition.initialState])).rows.length > 0;
+    if (inserted) registerItemTransactionUndo(client, () => client.query('DELETE FROM world_kernel_objects WHERE id=$1', [definition.id]));
+    const row = stateOf(definition, (await client.query('SELECT * FROM world_kernel_objects WHERE id=$1 FOR UPDATE', [definition.id])).rows[0]);
+    if (Number(row.revision) !== input.expectedRevision || row.state !== action.from) fail('world_stale');
+    if (Number(row.revision) >= 2147483647) fail('world_revision_limit');
+    const item = (await client.query('SELECT template_id,owner_scope,owner_id,state,definition_hash FROM item_instances WHERE id=$1 FOR UPDATE', [input.itemId])).rows[0];
+    if (!item || item.template_id !== action.itemTemplateId || item.owner_scope !== owner.scope
+      || item.owner_id !== owner.id || item.state !== (operationId ? 'escrowed' : 'active') || item.definition_hash !== null) fail();
+    for (const material of action.materials) await consumeStack(client, owner, material.templateId,
+      material.quantity, 'standard', `world ${definition.id} ${action.id}`, mutation);
+    await consumeItem(client, owner, input.itemId, `world ${definition.id} ${action.id}`, mutation);
+    registerItemTransactionUndo(client, () => client.query(`UPDATE world_kernel_objects SET state=$2,revision=$3,
+      controller_family_id=$4,updated_at=$5 WHERE id=$1`, [row.id, row.state, row.revision, row.controller_family_id, row.updated_at]));
+    const next = (await client.query(`UPDATE world_kernel_objects SET state=$2,revision=revision+1,
+      controller_family_id=$3,updated_at=now() WHERE id=$1 AND revision=$4 RETURNING *`,
+    [row.id, action.to, authority.familyId, input.expectedRevision])).rows[0];
+    if (!next) fail('world_stale');
+    const eventId = crypto.randomUUID(), revision = Number(next.revision);
+    registerItemTransactionUndo(client, () => client.query('DELETE FROM world_kernel_events WHERE id=$1', [eventId]));
+    await client.query(`INSERT INTO world_kernel_events
+      (id,object_id,revision,mutation_id,actor_account_id,actor_character_id,crew_id,family_id,action_id,
+        prior_state,next_state,item_id,definition_hash,operation_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)`,
+    [eventId, row.id, revision, mutationContext.mutationId, accountId, authority.ch.id, authority.crewId, authority.familyId,
+      action.id, row.state, action.to, input.itemId, definition.contentHash, operationId]);
+    const receipt = Object.freeze({ objectId: row.id, state: next.state, revision, eventId });
+    pendingNotifications.set(receipt, { client, objectId: row.id, revision, eventId });
+    return receipt;
   }
   const service = Object.freeze({
     definitions,
@@ -184,59 +249,44 @@ export function createWorldKernel({ pool, registry, objects = [], enabled = fals
       });
     },
     async execute(accountId, input, idempotencyKey) {
-      closed(input, ['objectId', 'actionId', 'itemId', 'expectedRevision']);
-      // Bind execution to the exact immutable scalar command hashed by the
-      // receipt, even if a trusted in-process caller mutates its original object.
-      input = Object.freeze({ ...input });
-      text(input.objectId); text(input.actionId); text(input.itemId);
-      if (!Number.isSafeInteger(input.expectedRevision) || input.expectedRevision < 0) fail('bad_world_request');
+      // Snapshot scalar authority before any asynchronous boundary or receipt reservation.
+      input = commandInput(input);
       const definition = byId.get(input.objectId), action = definition?.actions.find((entry) => entry.id === input.actionId);
       if (!allowed(accountId) || !action) fail();
       const key = keyFor(accountId, idempotencyKey), owner = { scope: 'account', id: accountId };
-      let changed = null;
       const result = await withItemTransaction(pool, (client) => withItemMutation(client, owner, 'world_action', key,
-        { ...input, contentHash: definition.contentHash }, async (mutation) => {
-          const authority = await actor(client, accountId, true);
-          if (authority.ch.loc !== definition.locationId || !await known(client, accountId, authority.ch, definition)) fail();
-          if (!(await client.query('SELECT id FROM districts WHERE id=$1', [definition.locationId])).rows.length) fail();
-          const existing = (await client.query('SELECT id FROM world_kernel_objects WHERE id=$1 FOR UPDATE', [definition.id])).rows[0];
-          // pg-mem reports a RETURNING row even on DO NOTHING; an existing row
-          // must never be registered as transaction-owned compensation work.
-          const inserted = !existing && (await client.query(`INSERT INTO world_kernel_objects
-            (id,object_kind,location_id,definition_hash,state,revision) VALUES ($1,$2,$3,$4,$5,0)
-            ON CONFLICT (id) DO NOTHING RETURNING id`, [definition.id, definition.type,
-            definition.locationId, definition.contentHash, definition.initialState])).rows.length > 0;
-          if (inserted) registerItemTransactionUndo(client, () => client.query('DELETE FROM world_kernel_objects WHERE id=$1', [definition.id]));
-          const row = stateOf(definition, (await client.query('SELECT * FROM world_kernel_objects WHERE id=$1 FOR UPDATE', [definition.id])).rows[0]);
-          if (Number(row.revision) !== input.expectedRevision || row.state !== action.from) fail('world_stale');
-          if (Number(row.revision) >= 2147483647) fail('world_revision_limit');
-          const item = (await client.query('SELECT template_id,owner_scope,owner_id,state,definition_hash FROM item_instances WHERE id=$1 FOR UPDATE', [input.itemId])).rows[0];
-          if (!item || item.template_id !== action.itemTemplateId || item.owner_scope !== 'account'
-            || item.owner_id !== accountId || item.state !== 'active' || item.definition_hash !== null) fail();
-          for (const material of action.materials) await consumeStack(client, owner, material.templateId,
-            material.quantity, 'standard', `world ${definition.id} ${action.id}`, mutation);
-          await consumeItem(client, owner, input.itemId, `world ${definition.id} ${action.id}`, mutation);
-          registerItemTransactionUndo(client, () => client.query(`UPDATE world_kernel_objects SET state=$2,revision=$3,
-            controller_family_id=$4,updated_at=$5 WHERE id=$1`, [row.id, row.state, row.revision, row.controller_family_id, row.updated_at]));
-          const next = (await client.query(`UPDATE world_kernel_objects SET state=$2,revision=revision+1,
-            controller_family_id=$3,updated_at=now() WHERE id=$1 AND revision=$4 RETURNING *`,
-          [row.id, action.to, authority.familyId, input.expectedRevision])).rows[0];
-          if (!next) fail('world_stale');
-          const eventId = crypto.randomUUID(), revision = Number(next.revision);
-          const mutationId = itemMutationContext(client, mutation).mutationId;
-          registerItemTransactionUndo(client, () => client.query('DELETE FROM world_kernel_events WHERE id=$1', [eventId]));
-          await client.query(`INSERT INTO world_kernel_events
-            (id,object_id,revision,mutation_id,actor_account_id,actor_character_id,crew_id,family_id,action_id,
-              prior_state,next_state,item_id,definition_hash) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`,
-          [eventId, row.id, revision, mutationId, accountId, authority.ch.id, authority.crewId, authority.familyId,
-            action.id, row.state, action.to, input.itemId, definition.contentHash]);
-          changed = { objectId: row.id, revision };
-          return { objectId: row.id, state: next.state, revision, eventId };
-        }));
-      // Durable event is authority. This process-local notification is only an
-      // invalidation hint, sent after COMMIT; a lost hint is recovered by reads.
-      if (changed) { try { bus.emit('world:changed', changed); } catch { /* committed state remains queryable */ } }
+        { ...input, contentHash: definition.contentHash }, (mutation) => applyCommand(client, accountId, input, mutation)));
+      await service.notifyCommitted(result);
       return result;
+    },
+    async executeInTransaction(client, accountId, input, mutation, options) {
+      input = commandInput(input);
+      closed(options, ['operationId', 'knowledgeProof']);
+      const operationId = text(options.operationId), knowledgeProof = options.knowledgeProof;
+      // No nested root mutation or transaction. The coordinator owns all participant/social
+      // locks and the complete knowledge proof before entering this operation-escrow adapter.
+      return applyCommand(client, accountId, input, mutation, operationId, knowledgeProof);
+    },
+    async notifyCommitted(receipt) {
+      const pending = receipt && pendingNotifications.get(receipt);
+      if (!pending) return false;
+      let active = false;
+      try { assertItemTransaction(pending.client); active = true; } catch { /* transaction has left its owning scope */ }
+      if (active) fail('world_transaction_active');
+      try {
+        // pg-mem exposes uncommitted writes, so join its transaction barrier before reading.
+        // Native PostgreSQL independently requires a durable event visible to a new client.
+        await awaitItemReadBarrier(pool);
+        const client = await pool.connect();
+        let event;
+        try { event = (await client.query(
+          'SELECT object_id,revision FROM world_kernel_events WHERE id=$1', [pending.eventId],
+        )).rows[0]; } finally { client.release(); }
+        if (event?.object_id !== pending.objectId || Number(event.revision) !== pending.revision) return false;
+        pendingNotifications.delete(receipt);
+        try { bus.emit('world:changed', { objectId: pending.objectId, revision: pending.revision }); } catch { /* durable state remains queryable */ }
+        return true;
+      } catch { return false; } // A lost invalidation hint must never turn a committed mutation into failure.
     },
   });
   return service;

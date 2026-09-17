@@ -12,6 +12,9 @@ const parse = (value) => typeof value === 'string' ? JSON.parse(value) : value;
 const hash = (value) => crypto.createHash('sha256').update(canonicalBytes(value)).digest('hex');
 const iso = (value) => new Date(value).toISOString();
 const contexts = new WeakMap();
+// Server-private capabilities for one complete claim-lock batch and transaction.
+const requirementProofs = new WeakMap(), requirementBatches = new WeakMap();
+const MAX_PROOF_GROUPS = 8, MAX_PROOF_REQUIREMENTS = 32;
 const MAX_PAGE = 50, MAX_EVIDENCE = 256, MAX_LINKS = 100, MAX_GRANTS = 64, MAX_REBUILD = 2048;
 const MAX_REBUILD_WORK = 4096;
 const TOKEN_MS = 10 * 60 * 1000;
@@ -34,6 +37,22 @@ function checked(client, ctx) {
     fail('content_transaction_required');
   }
   return value;
+}
+const proofKey = (accountId, characterId, requirement) => hash([accountId, characterId, requirement]);
+export function assertKnowledgeProof(client, proof) {
+  assertPhase2Client(client);
+  const value = proof && requirementProofs.get(proof);
+  if (!value || value.client !== client || value.identity !== phase2ContextIdentity(client)) fail('bad_knowledge_proof');
+}
+/** Check an already locked/authenticated predicate; never query or expand its claim set. */
+export function knowledgeProofMatches(client, proof, input) {
+  assertKnowledgeProof(client, proof);
+  record(input, ['accountId', 'characterId', 'requirement', 'sharingEnabled'], ['accountId', 'characterId', 'requirement']);
+  id(input.accountId); if (input.characterId !== null) id(input.characterId);
+  if (input.sharingEnabled !== undefined && typeof input.sharingEnabled !== 'boolean') fail('bad_knowledge_request');
+  const entry = requirementProofs.get(proof).matches.get(proofKey(input.accountId, input.characterId,
+    normalizeKnowledgeRequirement(input.requirement)));
+  return !!entry?.matches && (input.sharingEnabled === undefined || input.sharingEnabled === entry.sharingEnabled);
 }
 function command(input, fields) {
   record(input, [...fields, 'commandId', 'now']); id(input.commandId);
@@ -178,35 +197,74 @@ export function createCoordinationKnowledge({ enabled = false, sharingEnabled = 
   }
   function cursor(ctx, purpose, after) { return seal({ purpose, accountId: ctx.accountId, after, expiresAt: Date.now() + TOKEN_MS }); }
 
+  async function matchGroups(client, groups) {
+    const selected = [], ids = new Set();
+    for (const { ctx, requirements } of groups) {
+      const group = []; selected.push(group);
+      for (const requirement of requirements) {
+        if (!enabledFor(ctx.accountId)) { group.push([]); continue; }
+        const values = [requirement.contentHash, requirement.domain, requirement.proposition, requirement.sourceRoot];
+        const filter = visibleSql(ctx, values);
+        const candidates = (await client.query(`SELECT c.id FROM coordination_claims c
+          WHERE c.content_hash=$1 AND c.domain=$2 AND c.proposition=$3 AND c.source_root=$4
+            AND ${filter} ORDER BY c.id LIMIT ${MAX_EVIDENCE + 1}`, values)).rows;
+        for (const row of candidates) ids.add(row.id);
+        if (ids.size > MAX_EVIDENCE) return groups.map(({ requirements: entries }) => entries.map(() => false));
+        group.push(candidates.map((row) => row.id));
+      }
+    }
+    // Select every actor's candidates before the first claim lock. ACL writers share this
+    // sorted immutable-row mutex; later projection rechecks grants without reselection.
+    const locked = await lockClaims(client, [...ids]), cache = new Map(), authenticValues = new Map(), results = [];
+    for (let groupIndex = 0; groupIndex < groups.length; groupIndex++) {
+      const { ctx, requirements } = groups[groupIndex], eligible = new Map();
+      for (const claimId of new Set(selected[groupIndex].flat())) {
+        const claim = locked.get(claimId);
+        if (!await readable(client, ctx, claim)) continue;
+        if (!authenticValues.has(claimId)) authenticValues.set(claimId, await authentic(client, claim, cache));
+        eligible.set(claimId, authenticValues.get(claimId));
+      }
+      results.push(requirements.map((requirement, index) => {
+        const values = selected[groupIndex][index].filter((claimId) => eligible.has(claimId)).map((claimId) => eligible.get(claimId));
+        return values.length > 0 && values.every((value) => hash(value) === hash(requirement.value));
+      }));
+    }
+    return results;
+  }
   async function matchesRequirements(client, token, inputs) {
     const ctx = checked(client, token);
     if (!Array.isArray(inputs) || inputs.length > 16) fail('bad_knowledge_requirement');
-    const requirements = inputs.map(normalizeKnowledgeRequirement);
-    if (!enabledFor(ctx.accountId)) return requirements.map(() => false);
-    const selected = [], ids = new Set();
-    for (const requirement of requirements) {
-      const values = [requirement.contentHash, requirement.domain, requirement.proposition, requirement.sourceRoot];
-      const filter = visibleSql(ctx, values);
-      const candidates = (await client.query(`SELECT c.id FROM coordination_claims c
-        WHERE c.content_hash=$1 AND c.domain=$2 AND c.proposition=$3 AND c.source_root=$4
-          AND ${filter} ORDER BY c.id LIMIT ${MAX_EVIDENCE + 1}`, values)).rows;
-      for (const row of candidates) ids.add(row.id);
-      if (ids.size > MAX_EVIDENCE) return requirements.map(() => false);
-      selected.push(candidates.map((row) => row.id));
-    }
-    // One global claim-lock order across all predicates, matching ACL commands.
-    const locked = await lockClaims(client, [...ids]), eligible = new Map(), cache = new Map();
-    for (const [claimId, claim] of locked) if (await readable(client, ctx, claim)) {
-      eligible.set(claimId, await authentic(client, claim, cache));
-    }
-    return requirements.map((requirement, index) => {
-      const values = selected[index].filter((claimId) => eligible.has(claimId)).map((claimId) => eligible.get(claimId));
-      return values.length > 0 && values.every((value) => hash(value) === hash(requirement.value));
+    return (await matchGroups(client, [{ ctx, requirements: inputs.map(normalizeKnowledgeRequirement) }]))[0];
+  }
+  async function prepareRequirementProof(client, inputs) {
+    assertPhase2Client(client);
+    if (!Array.isArray(inputs) || inputs.length > MAX_PROOF_GROUPS) fail('bad_knowledge_requirement');
+    let total = 0;
+    const groups = inputs.map((input) => {
+      record(input, ['context', 'requirements']);
+      const ctx = checked(client, input.context);
+      if (!Array.isArray(input.requirements) || input.requirements.length > 16) fail('bad_knowledge_requirement');
+      total += input.requirements.length;
+      return { ctx, requirements: input.requirements.map(normalizeKnowledgeRequirement) };
     });
+    if (total > MAX_PROOF_REQUIREMENTS) fail('bad_knowledge_requirement');
+    const identity = phase2ContextIdentity(client);
+    // A second preparation could acquire a lower claim after a higher one. Even a failed
+    // preparation cannot be enlarged/reselected within this transaction.
+    if (requirementBatches.has(identity)) fail('knowledge_proof_already_prepared');
+    requirementBatches.set(identity, true);
+    const results = await matchGroups(client, groups), matches = new Map(), proof = Object.freeze({});
+    groups.forEach(({ ctx, requirements }, groupIndex) => requirements.forEach((requirement, index) => {
+      const key = proofKey(ctx.accountId, ctx.characterId, requirement), prior = matches.get(key);
+      matches.set(key, { matches: results[groupIndex][index] && prior?.matches !== false,
+        sharingEnabled: sharingEnabledFor(ctx.accountId) });
+    }));
+    requirementProofs.set(proof, { client, identity, matches });
+    return proof;
   }
 
   return Object.freeze({
-    enabledFor, sharingEnabledFor,
+    enabledFor, sharingEnabledFor, prepareRequirementProof,
     async prelock(client, accountId) { assertPhase2Client(client); id(accountId); return null; },
     async context(client, { accountId, character = null, lock = false }) {
       assertPhase2Client(client); id(accountId);

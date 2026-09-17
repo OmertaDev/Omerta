@@ -9,6 +9,26 @@ const {
   buildForCheck, currentBranchForSnapshot, repositorySnapshotFromState,
   sourceRevisionForSnapshot, validate, render,
 } = knowledge;
+for (const [file, mutationOptions] of [
+  ['src/routes/world-kernel.js', "options(['itemId', 'expectedRevision'])"],
+  ['src/routes/family-operations.js', 'options(true, true)'],
+]) {
+  const source = fs.readFileSync(new URL(`../${file}`, import.meta.url), 'utf8');
+  assert.deepEqual(knowledge.guardedRouteSecurity(file, source, mutationOptions, 'POST'), {
+    authenticated: true, mutationAuthenticated: true, idempotentMutation: true,
+  }, `${file} must prove closed wrapper auth and the executed idempotency-key validator`);
+  assert.deepEqual(knowledge.guardedRouteSecurity(file, source, 'options()', 'GET'), {
+    authenticated: true, mutationAuthenticated: false, idempotentMutation: false,
+  });
+  assert.equal(knowledge.guardedRouteSecurity(file, source.replace('preHandler: [auth, admit]', 'preHandler: [admit]'),
+    mutationOptions, 'POST').authenticated, false, 'removing auth must remove extracted authority');
+  assert.equal(knowledge.guardedRouteSecurity(file, source.replace("req.headers['idempotency-key']", "req.headers['other-key']"),
+    mutationOptions, 'POST').idempotentMutation, false, 'an unrelated validated header cannot be mistaken for the receipt key');
+  assert.equal(knowledge.guardedRouteSecurity(file, source.replace('preValidation: validate(', 'preValidation: other('),
+    mutationOptions, 'POST').idempotentMutation, false, 'a disconnected validator cannot supply idempotency evidence');
+  assert.equal(knowledge.guardedRouteSecurity('src/routes/unrelated.js', source, mutationOptions, 'POST').authenticated,
+    false, 'same-named helpers elsewhere acquire no inferred authority');
+}
 assert.equal(typeof knowledge.finalCallbackCall, 'function',
   'the final-callback parser must be directly regression-testable with controlled callback inputs');
 const finalCallbackCases = [
@@ -273,20 +293,36 @@ assert(gitDates.some(([, date]) => date.endsWith('Z')), 'THE TOOLCHAIN-INDEPENDE
 
 const routeById = new Map(model.routes.map((route) => [`${route.method} ${route.url}`, route]));
 const worldGraphRoutes = model.routes.filter(({ url }) => url.startsWith('/v1/worldgraph'));
-assert.equal(worldGraphRoutes.length, 20,
+assert.equal(worldGraphRoutes.length, 26,
   'the knowledge graph must retain the complete Phase 1 world-graph route surface');
 assert.equal(worldGraphRoutes.every(({ access }) => access === 'authenticated'), true,
   'every Phase 1 world-graph route must be represented as authenticated');
 const worldGraphMutations = worldGraphRoutes.filter(({ method }) => method === 'POST');
-assert.equal(worldGraphMutations.length, 13,
-  'the Phase 1 world-graph route surface has exactly thirteen mutations');
+assert.equal(worldGraphMutations.length, 15,
+  'the world-graph route surface has exactly fifteen mutations, including the opt-in kernel');
 assert.equal(worldGraphMutations.every(({ mutationAuthenticated, idempotentMutation }) => (
   mutationAuthenticated === true && idempotentMutation === true
-)), true, 'every Phase 1 mutation must derive both auth and idempotency from mutationOptions(auth)');
+)), true, 'every world-graph mutation must derive both auth and idempotency from its verified local wrapper');
 assert.equal(worldGraphRoutes.filter(({ method }) => method === 'GET')
   .every(({ mutationAuthenticated, idempotentMutation }) => (
     mutationAuthenticated === false && idempotentMutation === false
   )), true, 'world-graph reads are authenticated without being mislabeled as mutation wrappers');
+const kernelRoutes = worldGraphRoutes.filter(({ file }) => file === 'src/routes/world-kernel.js');
+assert.deepEqual(kernelRoutes.map(({ method, url }) => `${method} ${url}`).sort(), [
+  'GET /v1/worldgraph/state', 'GET /v1/worldgraph/objects', 'GET /v1/worldgraph/objects/:objectId',
+  'POST /v1/worldgraph/objects/:objectId/actions/:actionId', 'GET /v1/worldgraph/kernel/recipes',
+  'POST /v1/worldgraph/kernel/recipes/:recipeId/craft',
+].sort(), 'all six kernel routes retain their source provenance');
+const familyRoutes = model.routes.filter(({ file }) => file === 'src/routes/family-operations.js');
+assert.deepEqual(familyRoutes.map(({ method, url }) => `${method} ${url}`).sort(), [
+  'GET /v1/coordination/operations', 'GET /v1/coordination/operations/:operationId',
+  'POST /v1/coordination/operations', 'POST /v1/coordination/operations/:operationId/actions/:action',
+].sort(), 'all four Family routes retain their source provenance');
+for (const route of familyRoutes) {
+  assert.equal(route.access, 'authenticated');
+  assert.equal(route.mutationAuthenticated, route.method === 'POST');
+  assert.equal(route.idempotentMutation, route.method === 'POST');
+}
 const contentRouteProvenance = [
   ['GET /v1/content', 'authenticated', 'contentBoard'],
   ['POST /v1/content/:namespace/instances', 'authenticated', 'createContentInstance'],
@@ -351,10 +387,10 @@ for (const route of ['GET /admin', 'GET /wiki', 'GET /arena', 'GET /play', 'GET 
     `${route} must resolve its direct or proven common callback-factory handler`);
 }
 assert.equal(routeById.get('GET /')?.handlerFile, 'src/server.js',
-  'the invite-gated root page remains owned by its local servePage factory');
+  'the invite-gated root page remains owned by its local serveLaunchPage handler');
 assert.deepEqual(model.graph.edges.filter(edge => edge.type === 'HANDLED_BY' && edge.from === 'Route:GET /')
-  .map(edge => ({ to: edge.to, symbol: edge.symbol })), [{ to: 'Artifact:src/server.js', symbol: 'servePage' }],
-'the root page has exactly one factory provenance edge, without promoting the invitation predicate');
+  .map(edge => ({ to: edge.to, symbol: edge.symbol })), [{ to: 'Artifact:src/server.js', symbol: 'serveLaunchPage' }],
+'the root page has exactly one launch-handler provenance edge, without promoting the invitation predicate');
 for (const route of ['POST /v1/auth/x', 'POST /v1/auth/privy']) {
   assert.equal(routeById.get(route)?.handler, 'providerLogin',
     `${route} must resolve its direct callback-factory handler argument`);

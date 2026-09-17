@@ -427,6 +427,68 @@ function routeRegistrationArguments(snippet) {
   return args;
 }
 
+// These two registrars close over auth and use preValidation for their logical
+// receipt key. Recognize the actual AST path, not the spelling of options().
+function guardedRouteSecurity(file, source, routeOptions, method) {
+  const none = { authenticated: false, mutationAuthenticated: false, idempotentMutation: false };
+  const kernel = file === 'src/routes/world-kernel.js';
+  if (!kernel && file !== 'src/routes/family-operations.js') return none;
+  try {
+    const ast = parse(source, { ecmaVersion: 'latest', sourceType: 'module' });
+    const declarations = ast.body.map((node) => node.type === 'ExportNamedDeclaration' ? node.declaration : node);
+    const register = declarations.find((node) => node?.type === 'FunctionDeclaration' && node.id.name === 'register');
+    const options = register?.body.body.flatMap((node) => node.type === 'VariableDeclaration' ? node.declarations : [])
+      .find((node) => node.id.name === 'options')?.init;
+    const property = (node, key) => node?.type === 'ObjectExpression'
+      ? node.properties.find((entry) => entry.type === 'Property' && !entry.computed
+        && entry.kind === 'init' && (entry.key.name || entry.key.value) === key)?.value : null;
+    const named = (node, name) => node?.type === 'Identifier' && node.name === name;
+    const literal = (node, value) => node?.type === 'Literal' && node.value === value;
+    const call = parse(`(${routeOptions})`, { ecmaVersion: 'latest' }).body[0].expression;
+    if (options?.type !== 'ArrowFunctionExpression' || call.type !== 'CallExpression' || !named(call.callee, 'options')) return none;
+    const handlers = property(options.body, 'preHandler');
+    const authenticated = handlers?.type === 'ArrayExpression' && named(handlers.elements[0], 'auth');
+    const mutation = method === 'POST' && (kernel ? call.arguments[0]?.type === 'ArrayExpression' : literal(call.arguments[0], true));
+    const preValidation = property(options.body, 'preValidation');
+    const parameter = kernel ? 'fields' : 'mutation';
+    const validator = declarations.find((node) => node?.type === 'FunctionDeclaration' && node.id.name === 'validate');
+    const returned = validator?.body.body.find((node) => node.type === 'ReturnStatement')?.argument;
+    const statements = returned?.type === 'ArrowFunctionExpression' && returned.body.type === 'BlockStatement' ? returned.body.body : [];
+    const keyCheck = (node) => {
+      const predicate = node?.type === 'IfStatement' && !node.alternate && node.test.type === 'UnaryExpression'
+        && node.test.operator === '!' ? node.test.argument : null;
+      const header = predicate?.type === 'CallExpression' && named(predicate.callee, kernel ? 'identifier' : 'canonical')
+        && predicate.arguments.length === 1 ? predicate.arguments[0] : null;
+      const refusal = node?.consequent;
+      return header?.type === 'MemberExpression' && header.computed && literal(header.property, 'idempotency-key')
+        && header.object.type === 'MemberExpression' && !header.object.computed
+        && named(header.object.object, 'req') && named(header.object.property, 'headers')
+        && refusal?.type === 'ExpressionStatement' && refusal.expression.type === 'CallExpression'
+        && named(refusal.expression.callee, 'invalid') && refusal.expression.arguments.length === 0;
+    };
+    const parameterMatches = options.params[0]?.type === 'AssignmentPattern'
+      && named(options.params[0].left, parameter) && literal(options.params[0].right, kernel ? null : false)
+      && validator?.params[0]?.type === 'AssignmentPattern' && named(validator.params[0].left, parameter)
+      && literal(validator.params[0].right, kernel ? null : false);
+    let validatesKey = false;
+    if (kernel) {
+      const block = statements.find((node) => node.type === 'IfStatement' && !node.alternate
+        && node.test.type === 'BinaryExpression' && node.test.operator === '!=='
+        && named(node.test.left, 'fields') && literal(node.test.right, null));
+      validatesKey = block?.consequent.type === 'BlockStatement' && block.consequent.body.some(keyCheck);
+    } else {
+      const index = statements.findIndex((node) => node.type === 'IfStatement' && !node.alternate
+        && node.test.type === 'UnaryExpression' && node.test.operator === '!'
+        && named(node.test.argument, 'mutation') && node.consequent.type === 'ReturnStatement' && node.consequent.argument === null);
+      validatesKey = index >= 0 && keyCheck(statements[index + 1]);
+    }
+    const boundValidator = preValidation?.type === 'CallExpression' && named(preValidation.callee, 'validate')
+      && named(preValidation.arguments[0], parameter);
+    return { authenticated, mutationAuthenticated: authenticated && mutation,
+      idempotentMutation: authenticated && mutation && parameterMatches && boundValidator && validatesKey };
+  } catch { return none; }
+}
+
 function codeMask(source) {
   // Scanner offsets are UTF-16 code units. `split('')` preserves that indexing;
   // string spread would collapse astral characters and shift every later mask.
@@ -960,11 +1022,12 @@ function build(options = {}) {
       const routeOptions = registrationArguments[1] || '';
       const worldGraphMutationAuth = hasWorldGraphMutationWrapper
         && /^\s*mutationOptions\(\s*auth(?:\s*,|\s*\))/.test(routeOptions);
+      const guardedSecurity = guardedRouteSecurity(rel, text, routeOptions, method);
       const access = /preHandler:\s*modAuth/.test(routeOptions)
           || /^\s*guarded\(\s*modAuth\b/.test(routeOptions) ? 'moderator'
         : /preHandler:\s*auth/.test(routeOptions)
           || /^\s*guarded\(\s*auth\b/.test(routeOptions)
-          || worldGraphMutationAuth ? 'authenticated'
+          || worldGraphMutationAuth || guardedSecurity.authenticated ? 'authenticated'
         : /websocket:\s*true/.test(snippet) ? 'token-query'
         : 'public';
       const routeId = `${method} ${url}`;
@@ -1012,8 +1075,8 @@ function build(options = {}) {
         || (handlerMatch ? `${handlerMatch[1]}.${handlerMatch[2]}` : null);
       const n = node('Route', routeId, {
         label: routeId, method, url, access, domain,
-        mutationAuthenticated: worldGraphMutationAuth,
-        idempotentMutation: worldGraphMutationAuth,
+        mutationAuthenticated: worldGraphMutationAuth || guardedSecurity.mutationAuthenticated,
+        idempotentMutation: worldGraphMutationAuth || guardedSecurity.idempotentMutation,
         definitions: [],
       }, { file: rel, line });
       n.definitions.push({ file: rel, line });
@@ -1022,8 +1085,8 @@ function build(options = {}) {
       if (handlerFile) edge('HANDLED_BY', n.key, `Artifact:${handlerFile}`, { file: rel, line }, { symbol: handler });
       routes.push({
         method, url, access, domain, file: rel, line, handler, handlerFile,
-        mutationAuthenticated: worldGraphMutationAuth,
-        idempotentMutation: worldGraphMutationAuth,
+        mutationAuthenticated: worldGraphMutationAuth || guardedSecurity.mutationAuthenticated,
+        idempotentMutation: worldGraphMutationAuth || guardedSecurity.idempotentMutation,
       });
     }
   }
@@ -1326,6 +1389,6 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
 }
 
 export {
-  build, buildForCheck, callbackFactoryHandlers, currentBranchForSnapshot, finalCallbackCall, repositorySnapshotFromState,
+  build, buildForCheck, callbackFactoryHandlers, currentBranchForSnapshot, finalCallbackCall, guardedRouteSecurity, repositorySnapshotFromState,
   sourceRevisionForSnapshot, validate, render,
 };

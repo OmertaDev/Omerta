@@ -3443,7 +3443,7 @@ scopedSocialContext = async function(db) {
   };
   const expectedNativeCommands = [
     'pgquery', 'pgcheck', 'phase2:definitions:postgres', 'phase2:lots:postgres',
-    'test:coordination:postgres', 'test:world-kernel:postgres',
+    'test:coordination:postgres', 'test:world-kernel:postgres', 'test:family-operations:postgres',
     'test:stockcatalogv2:postgres', 'test:rwahealth:postgres',
     'test:rwaregistrylifecycle:postgres', 'test:audit:mint-dev:postgres',
     'test:audit:deed-reimport:postgres', 'backup:selftest', 'chaos', 'loadtest', 'concurrency',
@@ -3595,6 +3595,8 @@ scopedSocialContext = async function(db) {
     'crafting.js:CRAFTING_CONTEXTS': 'cache: per-context-object authenticity marker; every box recognizes only contexts it creates',
     'crafting.js:CRAFTING_DEFINITIONS': 'cache: immutable normalized recipes keyed by each locally authenticated context object',
     'crafting.js:CRAFTING_KNOWLEDGE': 'cache: server-private knowledge service with fixed rollout policy keyed by each locally authenticated frozen crafting context; claims and current membership/ACL authority are re-read under PostgreSQL locks',
+    'coordination/knowledge.js:requirementProofs': 'cache: opaque proof identity is bound to one branded active transaction and its authenticated actor/predicate checks; PostgreSQL claim locks and live ACL checks remain authoritative',
+    'coordination/knowledge.js:requirementBatches': 'cache: one local proof preparation marker per active transaction prevents expanding its globally ordered claim-lock union; a fresh transaction must authenticate and lock its own evidence',
     'mysteries.js:CONTEXTS': 'cache: per-context-object authenticity marker; every box recognizes only contexts it creates',
     'operations.js:CONTEXTS': 'cache: per-context-object authenticity marker; every box recognizes only contexts it creates',
     'worldgraph.js:WORLD_GRAPH_REGISTRIES': 'cache: per-registry-object authenticity marker; every box recognizes its own immutable registries',

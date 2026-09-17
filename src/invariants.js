@@ -20,6 +20,7 @@ import {
 // prefix here is an unenumerated faucet/sink — the loudest possible §10.4 alarm.
 const KNOWN_REASONS = {
   cash: ['crime:', 'racket:income', 'racket:upgrade', 'bank:interest', 'bank:', 'heal', 'checkin', 'travel', 'heist',
+    'coordination:capital:deposit', 'coordination:capital:refund', 'coordination:capital:spend', 'coordination:capital:forfeit',
     // `racket:retire:` is the walk-away refund (economy.js `retireRacket`, the `business:shutter` twin). It
     // ships behind RACKET_RETIRE_BPS 0 and so has never written a row — but the day that lever is raised the
     // first refund would be an unknown reason, and check (g) has ZERO tolerance and reads the whole ledger,
@@ -960,6 +961,11 @@ async function collectLedgerChecks(pool, activationPolicy) {
   const { worldKernelInvariants } = await import('./world-kernel-invariants.js');
   const worldState = await worldKernelInvariants(pool);
   push('world graph object transitions', worldState.issues.length, 0, 0, { issues: worldState.issues });
+  const { familyOperationInvariants } = await import('./coordination/operation-invariants.js');
+  const collective = await familyOperationInvariants(pool);
+  push('family operation history', collective.historyIssues.length, 0, 0, { issues: collective.historyIssues });
+  push('family operation custody', collective.custodyIssues.length, 0, 0, { issues: collective.custodyIssues });
+  push('family operation capital', collective.capitalIssues.length, 0, 0, { issues: collective.capitalIssues });
 
   // The only Phase 1 cash movement is the exact $300 hardening sink. A completed craft guard is the
   // exactly-once logical action; its matching cash row is the value audit. Mystery and operation

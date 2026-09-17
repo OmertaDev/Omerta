@@ -841,7 +841,7 @@ try {
     },
   ));
   const operationLockIndex = authorityTrace.findIndex((sql) => (
-    /FROM world_operations WHERE id=\$1 FOR UPDATE/i.test(sql)
+    /FROM world_operations WHERE id=\$1 AND coordination_mode='crew' FOR UPDATE/i.test(sql)
   ));
   const characterLockIndex = authorityTrace.findIndex((sql) => (
     /FROM characters\s+WHERE id=\$1 FOR UPDATE/i.test(sql)
@@ -950,7 +950,7 @@ try {
     'the recovery receipt retains the stored immutable version');
   assert.equal(versionCanceled.releasedEscrowCount, 1);
   const versionOperationLock = versionCancelTrace.findIndex((sql) => (
-    /FROM world_operations WHERE id=\$1 FOR UPDATE/i.test(sql)
+    /FROM world_operations WHERE id=\$1 AND coordination_mode='crew' FOR UPDATE/i.test(sql)
   ));
   const versionCharacterLock = versionCancelTrace.findIndex((sql) => (
     /FROM characters\s+WHERE id=\$1 FOR UPDATE/i.test(sql)

@@ -828,16 +828,18 @@ function assertRootGraphGate(root, states) {
 
 async function operationRow(client, operationIdValue, { lock = false } = {}) {
   const id = canonical(operationIdValue, 'Operation id');
+  // Legacy Crew operations own only this mode. Filter before taking an operation
+  // lock: Family coordination locks its participant union before its operation.
   if (lock) return (await client.query(
-    `SELECT id,graph_id,graph_version,operation_node_id,crew_id,opened_by_account_id,status,
+    `SELECT id,coordination_mode,graph_id,graph_version,operation_node_id,crew_id,opened_by_account_id,status,
             close_reason,created_at,updated_at,activated_at,completed_at,canceled_at,abandoned_at
-       FROM world_operations WHERE id=$1 FOR UPDATE`,
+       FROM world_operations WHERE id=$1 AND coordination_mode='crew' FOR UPDATE`,
     [id],
   )).rows[0] || null;
   return (await client.query(
-    `SELECT id,graph_id,graph_version,operation_node_id,crew_id,opened_by_account_id,status,
+    `SELECT id,coordination_mode,graph_id,graph_version,operation_node_id,crew_id,opened_by_account_id,status,
             close_reason,created_at,updated_at,activated_at,completed_at,canceled_at,abandoned_at
-       FROM world_operations WHERE id=$1`,
+       FROM world_operations WHERE id=$1 AND coordination_mode='crew'`,
     [id],
   )).rows[0] || null;
 }
@@ -884,6 +886,7 @@ async function authorizeOperation(client, context, operationId, {
 
 const operationAuthorityIdentity = (row) => [
   row.id,
+  row.coordination_mode,
   row.graph_id,
   Number(row.graph_version),
   row.operation_node_id,
@@ -1008,6 +1011,9 @@ async function setStatus(client, row, status, closeReason = null) {
 }
 
 async function destinationsFor(client, operationId) {
+  // This seam runs before replay resolution as well as fresh mutation authority.
+  // A Family receipt or escrow must never enter the legacy release-only path.
+  if (!await operationRow(client, operationId)) fail('operation_not_found', 'No such social operation.');
   const rows = (await client.query(
     `SELECT depositor_scope AS scope,depositor_id AS id FROM operation_escrow
       WHERE operation_id=$1
@@ -1259,10 +1265,11 @@ export async function openOperation(
     async () => {
       const crew = await lockOpenCrew(client, context);
       const existing = (await client.query(
-        `SELECT id,graph_id,graph_version,operation_node_id,crew_id,opened_by_account_id,status,
+        `SELECT id,coordination_mode,graph_id,graph_version,operation_node_id,crew_id,opened_by_account_id,status,
                 close_reason,created_at,updated_at,activated_at,completed_at,canceled_at,abandoned_at
            FROM world_operations
-          WHERE crew_id=$1 AND graph_id=$2 AND graph_version=$3 AND operation_node_id=$4 FOR UPDATE`,
+          WHERE crew_id=$1 AND graph_id=$2 AND graph_version=$3 AND operation_node_id=$4
+            AND coordination_mode='crew' FOR UPDATE`,
         [crew.id, pkg.id, Number(pkg.version), root.id],
       )).rows[0];
       const actor = await lockOpenActor(client, context, crew.id);
@@ -1276,9 +1283,9 @@ export async function openOperation(
       ));
       const row = (await client.query(
         `INSERT INTO world_operations
-           (id,graph_id,graph_version,operation_node_id,crew_id,opened_by_account_id)
-         VALUES ($1,$2,$3,$4,$5,$6)
-         RETURNING id,graph_id,graph_version,operation_node_id,crew_id,opened_by_account_id,status,
+           (id,graph_id,graph_version,operation_node_id,crew_id,opened_by_account_id,coordination_mode)
+         VALUES ($1,$2,$3,$4,$5,$6,'crew')
+         RETURNING id,coordination_mode,graph_id,graph_version,operation_node_id,crew_id,opened_by_account_id,status,
                    close_reason,created_at,updated_at,activated_at,completed_at,canceled_at,abandoned_at`,
         [id, pkg.id, Number(pkg.version), root.id, actor.crewId, context.accountId],
       )).rows[0];

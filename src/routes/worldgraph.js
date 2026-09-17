@@ -302,7 +302,8 @@ async function operationDiscovery(client, accountId, characterId) {
     const pkg = PHASE1_WORLD_GRAPH.byPackage.get(root.packageId);
     const existing = membership ? (await client.query(
       `SELECT id,status FROM world_operations
-        WHERE crew_id=$1 AND graph_id=$2 AND graph_version=$3 AND operation_node_id=$4`,
+        WHERE crew_id=$1 AND graph_id=$2 AND graph_version=$3 AND operation_node_id=$4
+          AND coordination_mode='crew'`,
       [membership.crew_id, root.packageId, Number(pkg.version), root.id],
     )).rows[0] : null;
     const blockedBy = [];
@@ -413,7 +414,7 @@ async function requireCurrentCrewOperation(client, accountId, operationId) {
   const accessible = (await client.query(
     `SELECT 1 FROM world_operations operation
        JOIN crew_members membership ON membership.crew_id=operation.crew_id
-      WHERE operation.id=$1 AND membership.account_id=$2`,
+      WHERE operation.id=$1 AND operation.coordination_mode='crew' AND membership.account_id=$2`,
     [operationId, accountId],
   )).rowCount === 1;
   if (!accessible) fail('operation_unavailable', 'That operation is unavailable.');

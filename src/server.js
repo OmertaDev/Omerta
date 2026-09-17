@@ -113,6 +113,7 @@ import { registerRwa } from './routes/rwa.js';
 import { register as registerContent } from './routes/content.js';
 import { register as registerCoordination } from './routes/coordination.js';
 import { register as registerWorldKernel } from './routes/world-kernel.js';
+import { register as registerFamilyOperations } from './routes/family-operations.js';
 import { register as registerWorldGraph, WORLD_GRAPH_CAPABILITIES } from './routes/worldgraph.js';
 import * as Phone from './phone.js';
 import * as Mega from './megaproject.js';
@@ -2132,6 +2133,7 @@ export async function buildServer() {
   registerCoordination(app, { pool, auth, modAuth, receiptTrust: coordinationReceiptTrust });
   registerWorldGraph(app, { pool, auth });
   registerWorldKernel(app, { pool, auth, receiptTrust: coordinationReceiptTrust });
+  registerFamilyOperations(app, { pool, auth, receiptTrust: coordinationReceiptTrust });
   app.post('/v1/loans/square', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Loans.squareWanted(ch, client, h)));
   // buy is two-party (buyer pays the current lender, becomes the new lender): look up the seller, lock both.

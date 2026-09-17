@@ -4783,7 +4783,7 @@ CREATE TABLE IF NOT EXISTS world_operations (
   completed_at TIMESTAMPTZ,
   canceled_at TIMESTAMPTZ,
   abandoned_at TIMESTAMPTZ,
-  UNIQUE (crew_id, graph_id, graph_version, operation_node_id),
+  CONSTRAINT world_operation_identity UNIQUE (crew_id, graph_id, graph_version, operation_node_id),
   CONSTRAINT world_operation_id CHECK (char_length(id) BETWEEN 1 AND 200),
   CONSTRAINT world_operation_graph CHECK (
     char_length(graph_id) BETWEEN 1 AND 200 AND graph_version > 0
@@ -7151,4 +7151,96 @@ CREATE TABLE IF NOT EXISTS world_kernel_events (
   occurred_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   UNIQUE (object_id,revision),
   UNIQUE (mutation_id)
+);
+
+-- Collective Family operations extend the existing operation authority. Legacy Crew runs
+-- retain their original identity and lifecycle; Family runs pin a separate immutable blueprint.
+ALTER TABLE world_operations ADD COLUMN IF NOT EXISTS coordination_mode TEXT NOT NULL DEFAULT 'crew';
+ALTER TABLE world_operations ADD COLUMN IF NOT EXISTS family_id TEXT;
+ALTER TABLE world_operations ADD COLUMN IF NOT EXISTS run_key TEXT NOT NULL DEFAULT '';
+ALTER TABLE world_operations ADD COLUMN IF NOT EXISTS coordination_definition_hash TEXT;
+ALTER TABLE world_operations ADD COLUMN IF NOT EXISTS coordination_definition_json TEXT;
+ALTER TABLE world_operations ADD COLUMN IF NOT EXISTS revision INT NOT NULL DEFAULT 0;
+ALTER TABLE world_operations ADD COLUMN IF NOT EXISTS expires_at TIMESTAMPTZ;
+ALTER TABLE world_operations ADD COLUMN IF NOT EXISTS approved_at TIMESTAMPTZ;
+ALTER TABLE world_operations ADD COLUMN IF NOT EXISTS resolved_at TIMESTAMPTZ;
+ALTER TABLE world_operations ADD COLUMN IF NOT EXISTS resolution_seed TEXT;
+ALTER TABLE world_operations DROP CONSTRAINT IF EXISTS world_operations_crew_id_graph_id_graph_version_operation_n_key;
+ALTER TABLE world_operations DROP CONSTRAINT IF EXISTS world_operation_identity;
+CREATE UNIQUE INDEX IF NOT EXISTS ix_world_operation_identity
+  ON world_operations (crew_id,graph_id,graph_version,operation_node_id,run_key);
+ALTER TABLE world_operations DROP CONSTRAINT IF EXISTS world_operation_status;
+ALTER TABLE world_operations ADD CONSTRAINT world_operation_status CHECK (
+  (coordination_mode='crew' AND status IN ('forming','active','completed','canceled','abandoned'))
+  OR (coordination_mode='family' AND status IN ('draft','recruiting','committed','ready',
+    'executing','resolving','completed','failed','canceled','expired'))
+);
+ALTER TABLE world_operations DROP CONSTRAINT IF EXISTS world_operation_status_time;
+ALTER TABLE world_operations ADD CONSTRAINT world_operation_status_time CHECK (
+  coordination_mode='family'
+  OR (status='forming' AND activated_at IS NULL AND completed_at IS NULL
+    AND canceled_at IS NULL AND abandoned_at IS NULL AND close_reason IS NULL)
+  OR (status='active' AND activated_at IS NOT NULL AND completed_at IS NULL
+    AND canceled_at IS NULL AND abandoned_at IS NULL AND close_reason IS NULL)
+  OR (status='completed' AND activated_at IS NOT NULL AND completed_at IS NOT NULL
+    AND canceled_at IS NULL AND abandoned_at IS NULL AND close_reason='completed')
+  OR (status='canceled' AND completed_at IS NULL AND canceled_at IS NOT NULL
+    AND abandoned_at IS NULL AND close_reason='canceled')
+  OR (status='abandoned' AND completed_at IS NULL AND canceled_at IS NULL
+    AND abandoned_at IS NOT NULL AND close_reason IN ('participant_dead','crew_changed'))
+);
+ALTER TABLE world_operations DROP CONSTRAINT IF EXISTS world_operation_coordination_pin;
+ALTER TABLE world_operations ADD CONSTRAINT world_operation_coordination_pin CHECK (
+  revision>=0 AND ((coordination_mode='crew' AND family_id IS NULL AND run_key=''
+    AND coordination_definition_hash IS NULL AND coordination_definition_json IS NULL)
+  OR (coordination_mode='family' AND family_id IS NOT NULL AND char_length(family_id)>0
+    AND char_length(run_key)>0 AND coordination_definition_hash IS NOT NULL AND char_length(coordination_definition_hash)=64
+    AND coordination_definition_json IS NOT NULL AND expires_at IS NOT NULL
+    AND resolution_seed IS NOT NULL
+    AND ((status IN ('completed','failed','canceled','expired') AND resolved_at IS NOT NULL)
+      OR (status NOT IN ('completed','failed','canceled','expired') AND resolved_at IS NULL))))
+);
+CREATE INDEX IF NOT EXISTS ix_world_operations_family
+  ON world_operations (family_id,coordination_mode,status,created_at);
+ALTER TABLE world_kernel_events ADD COLUMN IF NOT EXISTS operation_id TEXT REFERENCES world_operations(id);
+
+CREATE TABLE IF NOT EXISTS world_operation_commitments (
+  operation_id TEXT NOT NULL REFERENCES world_operations(id),
+  role_id TEXT NOT NULL,
+  requirement_id TEXT NOT NULL,
+  account_id TEXT NOT NULL,
+  character_id TEXT NOT NULL,
+  kind TEXT NOT NULL CHECK (kind IN ('participation','item','resource','capital','information','capability')),
+  quantity INT NOT NULL CHECK (quantity BETWEEN 1 AND 1000000),
+  template_id TEXT,
+  item_id TEXT REFERENCES item_instances(id),
+  state TEXT NOT NULL CHECK (state IN ('promised','fulfilled','withdrawn','spent','returned')),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (operation_id,role_id,requirement_id)
+);
+CREATE TABLE IF NOT EXISTS world_operation_capital (
+  operation_id TEXT NOT NULL REFERENCES world_operations(id),
+  role_id TEXT NOT NULL,
+  requirement_id TEXT NOT NULL,
+  account_id TEXT NOT NULL,
+  character_id TEXT NOT NULL,
+  amount INT NOT NULL CHECK (amount BETWEEN 1 AND 1000000),
+  state TEXT NOT NULL CHECK (state IN ('held','refunded','spent','forfeited')),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (operation_id,role_id,requirement_id)
+);
+CREATE TABLE IF NOT EXISTS world_operation_events (
+  id TEXT PRIMARY KEY,
+  operation_id TEXT NOT NULL REFERENCES world_operations(id),
+  revision INT NOT NULL CHECK (revision>0),
+  ordinal INT NOT NULL CHECK (ordinal>=0),
+  mutation_id UUID NOT NULL REFERENCES item_mutation_guards(mutation_id),
+  actor_account_id TEXT NOT NULL,
+  actor_character_id TEXT,
+  event_kind TEXT NOT NULL,
+  role_id TEXT,
+  requirement_id TEXT,
+  payload_json TEXT NOT NULL,
+  occurred_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (operation_id,revision,ordinal)
 );
