@@ -1,39 +1,39 @@
 # Generated repository inventory
 
-> Source: worktree at `2b83ceb37730`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `e23c312249bc`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 2,830 |
-| Text lines | 821,405 |
-| Repository bytes inventoried | 824,019,846 |
-| Backend/route modules | 248 |
-| HTTP route registrations / unique routes | 796 / 796 |
+| Current artifacts | 2,841 |
+| Text lines | 823,457 |
+| Repository bytes inventoried | 824,183,816 |
+| Backend/route modules | 251 |
+| HTTP route registrations / unique routes | 798 / 798 |
 | Database tables | 360 |
 | Solidity declarations | 79 |
-| Git commits | 1,462 |
+| Git commits | 1,464 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 7,283 / 31,761 |
+| Graph nodes / edges | 7,310 / 31,968 |
 
 ## Artifact kinds
 
 | Kind | Files |
 |---|---:|
 | media-asset | 1,202 |
-| documentation | 307 |
+| documentation | 308 |
+| test-suite | 229 |
 | artifact | 227 |
-| test-suite | 223 |
-| backend-module | 222 |
+| backend-module | 224 |
 | contract-project | 146 |
 | audit | 98 |
 | contract-test | 98 |
 | design | 91 |
-| engineering-harness | 81 |
+| engineering-harness | 82 |
 | contract-source | 59 |
-| route-module | 26 |
+| route-module | 27 |
 | web-surface | 15 |
 | operations | 11 |
 | knowledge-base | 11 |
@@ -50,9 +50,9 @@
 | [omerta-contracts/audits/2026-09-08-comprehensive/shared-static-triage.json](../../omerta-contracts/audits/2026-09-08-comprehensive/shared-static-triage.json) | 52,258 | contract-project | 2026-09-09 |
 | [omerta-contracts/audits/2026-09-08-comprehensive/hook-retest-static.json](../../omerta-contracts/audits/2026-09-08-comprehensive/hook-retest-static.json) | 47,392 | contract-project | 2026-09-09 |
 | [CLAUDE.md](../../CLAUDE.md) | 18,679 | documentation | 2026-09-06 |
-| [public/index.html](../../public/index.html) | 12,904 | web-surface | 2026-09-14 |
+| [public/index.html](../../public/index.html) | 13,218 | web-surface | 2026-09-17 |
 | [omerta-contracts/audits/2026-09-08-liquidity-automation/package-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/package-manifest.json) | 10,623 | contract-project | 2026-09-09 |
-| [test/client.js](../../test/client.js) | 9,441 | test-suite | 2026-09-08 |
+| [test/client.js](../../test/client.js) | 9,441 | test-suite | 2026-09-17 |
 | [omerta-contracts/x-ray/slither-vars-and-auth.json](../../omerta-contracts/x-ray/slither-vars-and-auth.json) | 9,374 | contract-project | 2026-08-25 |
 | [omerta-contracts/audits/2026-09-08-liquidity-automation/source-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/source-manifest.json) | 8,690 | contract-project | 2026-09-09 |
 | [.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
@@ -71,9 +71,9 @@
 | [omerta-contracts/audits/2026-09-09-genesis-bootstrap/artifact-manifest.json](../../omerta-contracts/audits/2026-09-09-genesis-bootstrap/artifact-manifest.json) | 4,402 | contract-project | 2026-09-09 |
 | [reference-prototype-v24.jsx](../../reference-prototype-v24.jsx) | 4,235 | artifact | 2026-08-11 |
 | [test/docs.js](../../test/docs.js) | 4,205 | test-suite | 2026-09-14 |
-| [test/gates.js](../../test/gates.js) | 4,137 | test-suite | 2026-09-17 |
+| [test/gates.js](../../test/gates.js) | 4,139 | test-suite | 2026-09-17 |
 | [omerta-contracts/test/AcquisitionConstellationTask3B.t.sol](../../omerta-contracts/test/AcquisitionConstellationTask3B.t.sol) | 3,743 | contract-test | 2026-08-28 |
-| [src/server.js](../../src/server.js) | 3,598 | backend-module | 2026-09-17 |
+| [src/server.js](../../src/server.js) | 3,610 | backend-module | 2026-09-17 |
 | [test/phase2-review-regressions.js](../../test/phase2-review-regressions.js) | 3,440 | test-suite | 2026-09-07 |
 | [package-lock.json](../../package-lock.json) | 3,260 | package-config | 2026-09-07 |
 
