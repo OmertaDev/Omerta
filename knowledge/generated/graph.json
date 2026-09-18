@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "b068a581ffa39e101047ac1b10db42e844262bdf",
+  "sourceRevision": "e3332bf493345328695c2fbc9745f94b12b12f45",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 7483,
-    "edges": 33107,
+    "nodes": 7492,
+    "edges": 33135,
     "byNodeType": {
-      "Artifact": 2926,
+      "Artifact": 2933,
       "Command": 97,
-      "Commit": 1478,
+      "Commit": 1480,
       "Contract": 79,
       "Document": 590,
       "Domain": 13,
@@ -64,15 +64,15 @@
       "Workflow": 5
     },
     "byEdgeType": {
-      "BELONGS_TO": 2455,
-      "CHANGED": 12560,
-      "CONTAINS": 2947,
+      "BELONGS_TO": 2462,
+      "CHANGED": 12572,
+      "CONTAINS": 2954,
       "DECLARES": 97,
       "DEFINED_IN": 1248,
       "DEPENDS_ON": 65,
       "EXECUTES": 403,
       "HANDLED_BY": 705,
-      "HAS_COMMIT": 1478,
+      "HAS_COMMIT": 1480,
       "IMPLEMENTS": 124,
       "IMPORTS": 2722,
       "INHERITS": 17,
@@ -31894,6 +31894,167 @@
       "lastChangedCommit": "7911d7c691f5044de52e1a283df567dab7da4ffe"
     },
     {
+      "key": "Artifact:omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/compiled-source-hashes.json",
+      "type": "Artifact",
+      "id": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/compiled-source-hashes.json",
+      "label": "compiled-source-hashes.json",
+      "path": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/compiled-source-hashes.json",
+      "kind": "contract-project",
+      "extension": ".json",
+      "bytes": 12894,
+      "lines": 335,
+      "version": "c045a2bf051caf78",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/compiled-source-hashes.json",
+          "line": 1,
+          "version": "c045a2bf051caf78"
+        }
+      ],
+      "lastChangedAt": "2026-09-18T06:02:20.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "e3332bf493345328695c2fbc9745f94b12b12f45"
+    },
+    {
+      "key": "Artifact:omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/exact-after.txt",
+      "type": "Artifact",
+      "id": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/exact-after.txt",
+      "label": "exact-after.txt",
+      "path": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/exact-after.txt",
+      "kind": "contract-project",
+      "extension": ".txt",
+      "bytes": 12871,
+      "lines": 213,
+      "version": "32f87dce1969c480",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/exact-after.txt",
+          "line": 1,
+          "version": "32f87dce1969c480"
+        }
+      ],
+      "lastChangedAt": "2026-09-18T06:02:20.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "e3332bf493345328695c2fbc9745f94b12b12f45"
+    },
+    {
+      "key": "Artifact:omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/exact-before.txt",
+      "type": "Artifact",
+      "id": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/exact-before.txt",
+      "label": "exact-before.txt",
+      "path": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/exact-before.txt",
+      "kind": "contract-project",
+      "extension": ".txt",
+      "bytes": 7381,
+      "lines": 123,
+      "version": "19ac286af02eeae6",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/exact-before.txt",
+          "line": 1,
+          "version": "19ac286af02eeae6"
+        }
+      ],
+      "lastChangedAt": "2026-09-18T06:02:20.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "e3332bf493345328695c2fbc9745f94b12b12f45"
+    },
+    {
+      "key": "Artifact:omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/execution-status.json",
+      "type": "Artifact",
+      "id": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/execution-status.json",
+      "label": "execution-status.json",
+      "path": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/execution-status.json",
+      "kind": "contract-project",
+      "extension": ".json",
+      "bytes": 65,
+      "lines": 6,
+      "version": "37758f5c0f0cc7ba",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/execution-status.json",
+          "line": 1,
+          "version": "37758f5c0f0cc7ba"
+        }
+      ],
+      "lastChangedAt": "2026-09-18T06:02:20.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "e3332bf493345328695c2fbc9745f94b12b12f45"
+    },
+    {
+      "key": "Artifact:omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/review.json",
+      "type": "Artifact",
+      "id": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/review.json",
+      "label": "review.json",
+      "path": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/review.json",
+      "kind": "contract-project",
+      "extension": ".json",
+      "bytes": 14410,
+      "lines": 256,
+      "version": "a56b0b4823afab9d",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/review.json",
+          "line": 1,
+          "version": "a56b0b4823afab9d"
+        }
+      ],
+      "lastChangedAt": "2026-09-18T06:02:20.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "e3332bf493345328695c2fbc9745f94b12b12f45"
+    },
+    {
+      "key": "Artifact:omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/suite-boundary-seed.txt",
+      "type": "Artifact",
+      "id": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/suite-boundary-seed.txt",
+      "label": "suite-boundary-seed.txt",
+      "path": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/suite-boundary-seed.txt",
+      "kind": "contract-project",
+      "extension": ".txt",
+      "bytes": 2694,
+      "lines": 50,
+      "version": "cb153826a316a8cc",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/suite-boundary-seed.txt",
+          "line": 1,
+          "version": "cb153826a316a8cc"
+        }
+      ],
+      "lastChangedAt": "2026-09-18T06:02:20.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "e3332bf493345328695c2fbc9745f94b12b12f45"
+    },
+    {
+      "key": "Artifact:omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/suite-ci-seed.txt",
+      "type": "Artifact",
+      "id": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/suite-ci-seed.txt",
+      "label": "suite-ci-seed.txt",
+      "path": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/suite-ci-seed.txt",
+      "kind": "contract-project",
+      "extension": ".txt",
+      "bytes": 2753,
+      "lines": 52,
+      "version": "b3ce63a626c2eea3",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/suite-ci-seed.txt",
+          "line": 1,
+          "version": "b3ce63a626c2eea3"
+        }
+      ],
+      "lastChangedAt": "2026-09-18T06:02:20.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "e3332bf493345328695c2fbc9745f94b12b12f45"
+    },
+    {
       "key": "Artifact:omerta-contracts/run-forge-test-sandboxed.sh",
       "type": "Artifact",
       "id": "omerta-contracts/run-forge-test-sandboxed.sh",
@@ -35834,20 +35995,20 @@
       "path": "omerta-contracts/test/OmrV4TwapOracle.t.sol",
       "kind": "contract-test",
       "extension": ".sol",
-      "bytes": 21191,
-      "lines": 497,
-      "version": "6bffdd1687d028d0",
+      "bytes": 22211,
+      "lines": 514,
+      "version": "079d6ea80ac376e4",
       "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/test/OmrV4TwapOracle.t.sol",
           "line": 1,
-          "version": "6bffdd1687d028d0"
+          "version": "079d6ea80ac376e4"
         }
       ],
-      "lastChangedAt": "2026-09-09T15:41:10.000Z",
+      "lastChangedAt": "2026-09-18T06:02:20.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "641af48e212b91a8b989f931bb8e8038623ff229"
+      "lastChangedCommit": "e3332bf493345328695c2fbc9745f94b12b12f45"
     },
     {
       "key": "Artifact:omerta-contracts/test/ProtocolLiquidityVault.t.sol",
@@ -72670,6 +72831,22 @@
       ]
     },
     {
+      "key": "Commit:2c75183198ffec8423e4bbb3eeeed5ce31169c00",
+      "type": "Commit",
+      "id": "2c75183198ffec8423e4bbb3eeeed5ce31169c00",
+      "label": "chore(knowledge): index release rehearsal correction",
+      "title": "chore(knowledge): index release rehearsal correction",
+      "date": "2026-09-18T05:10:09.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/2c75183198ffec8423e4bbb3eeeed5ce31169c00",
+      "provenance": [
+        {
+          "commit": "2c75183198ffec8423e4bbb3eeeed5ce31169c00",
+          "url": "https://github.com/OmertaDev/Omerta/commit/2c75183198ffec8423e4bbb3eeeed5ce31169c00"
+        }
+      ]
+    },
+    {
       "key": "Commit:2c799011f9c9f34ec9ef83e9c7cfb7c6290d55ac",
       "type": "Commit",
       "id": "2c799011f9c9f34ec9ef83e9c7cfb7c6290d55ac",
@@ -89850,6 +90027,22 @@
         {
           "commit": "e33107a4ea429b621f7d95b3830fc17a71933201",
           "url": "https://github.com/OmertaDev/Omerta/commit/e33107a4ea429b621f7d95b3830fc17a71933201"
+        }
+      ]
+    },
+    {
+      "key": "Commit:e3332bf493345328695c2fbc9745f94b12b12f45",
+      "type": "Commit",
+      "id": "e3332bf493345328695c2fbc9745f94b12b12f45",
+      "label": "test: preserve source checkpoints across bootstrap fuzz history",
+      "title": "test: preserve source checkpoints across bootstrap fuzz history",
+      "date": "2026-09-18T06:02:20.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/e3332bf493345328695c2fbc9745f94b12b12f45",
+      "provenance": [
+        {
+          "commit": "e3332bf493345328695c2fbc9745f94b12b12f45",
+          "url": "https://github.com/OmertaDev/Omerta/commit/e3332bf493345328695c2fbc9745f94b12b12f45"
         }
       ]
     },
@@ -108990,6 +109183,9 @@
           "commit": "2b3feb7c807848564094c9b56d13fd7e41f97bae"
         },
         {
+          "commit": "2c75183198ffec8423e4bbb3eeeed5ce31169c00"
+        },
+        {
           "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
         },
         {
@@ -109638,6 +109834,9 @@
           "commit": "2b3feb7c807848564094c9b56d13fd7e41f97bae"
         },
         {
+          "commit": "2c75183198ffec8423e4bbb3eeeed5ce31169c00"
+        },
+        {
           "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
         },
         {
@@ -110284,6 +110483,9 @@
         },
         {
           "commit": "2b3feb7c807848564094c9b56d13fd7e41f97bae"
+        },
+        {
+          "commit": "2c75183198ffec8423e4bbb3eeeed5ce31169c00"
         },
         {
           "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
@@ -111085,6 +111287,9 @@
         },
         {
           "commit": "2b3feb7c807848564094c9b56d13fd7e41f97bae"
+        },
+        {
+          "commit": "2c75183198ffec8423e4bbb3eeeed5ce31169c00"
         },
         {
           "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
@@ -119337,12 +119542,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "b068a581ffa39e101047ac1b10db42e844262bdf",
-      "currentBranch": "codex/living-world-director",
+      "revision": "e3332bf493345328695c2fbc9745f94b12b12f45",
+      "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 2926,
+      "currentArtifactCount": 2933,
       "provenance": [
         {
           "file": "README.md",
@@ -146456,13 +146661,13 @@
       "type": "TestSuite",
       "id": "omerta-contracts/test/OmrV4TwapOracle.t.sol",
       "label": "omerta-contracts/test/OmrV4TwapOracle.t.sol",
-      "lines": 497,
-      "version": "6bffdd1687d028d0",
+      "lines": 514,
+      "version": "079d6ea80ac376e4",
       "provenance": [
         {
           "file": "omerta-contracts/test/OmrV4TwapOracle.t.sol",
           "line": 1,
-          "version": "6bffdd1687d028d0"
+          "version": "079d6ea80ac376e4"
         }
       ]
     },
@@ -152456,6 +152661,69 @@
       "to": "Domain:chain-economy",
       "provenance": {
         "file": "omerta-contracts/reference/README.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/compiled-source-hashes.json",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/compiled-source-hashes.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/exact-after.txt",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/exact-after.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/exact-before.txt",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/exact-before.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/execution-status.json",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/execution-status.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/review.json",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/review.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/suite-boundary-seed.txt",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/suite-boundary-seed.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/suite-ci-seed.txt",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/suite-ci-seed.txt",
         "line": 1
       }
     },
@@ -191721,6 +191989,38 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "commit": "2c550c7c8afb3f709eea492abd9938e5941bf2f2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2c75183198ffec8423e4bbb3eeeed5ce31169c00",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "2c75183198ffec8423e4bbb3eeeed5ce31169c00"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2c75183198ffec8423e4bbb3eeeed5ce31169c00",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "2c75183198ffec8423e4bbb3eeeed5ce31169c00"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2c75183198ffec8423e4bbb3eeeed5ce31169c00",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "2c75183198ffec8423e4bbb3eeeed5ce31169c00"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2c75183198ffec8423e4bbb3eeeed5ce31169c00",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "2c75183198ffec8423e4bbb3eeeed5ce31169c00"
       }
     },
     {
@@ -264461,6 +264761,70 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:e3332bf493345328695c2fbc9745f94b12b12f45",
+      "to": "Artifact:omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/compiled-source-hashes.json",
+      "provenance": {
+        "commit": "e3332bf493345328695c2fbc9745f94b12b12f45"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e3332bf493345328695c2fbc9745f94b12b12f45",
+      "to": "Artifact:omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/exact-after.txt",
+      "provenance": {
+        "commit": "e3332bf493345328695c2fbc9745f94b12b12f45"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e3332bf493345328695c2fbc9745f94b12b12f45",
+      "to": "Artifact:omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/exact-before.txt",
+      "provenance": {
+        "commit": "e3332bf493345328695c2fbc9745f94b12b12f45"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e3332bf493345328695c2fbc9745f94b12b12f45",
+      "to": "Artifact:omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/execution-status.json",
+      "provenance": {
+        "commit": "e3332bf493345328695c2fbc9745f94b12b12f45"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e3332bf493345328695c2fbc9745f94b12b12f45",
+      "to": "Artifact:omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/review.json",
+      "provenance": {
+        "commit": "e3332bf493345328695c2fbc9745f94b12b12f45"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e3332bf493345328695c2fbc9745f94b12b12f45",
+      "to": "Artifact:omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/suite-boundary-seed.txt",
+      "provenance": {
+        "commit": "e3332bf493345328695c2fbc9745f94b12b12f45"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e3332bf493345328695c2fbc9745f94b12b12f45",
+      "to": "Artifact:omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/suite-ci-seed.txt",
+      "provenance": {
+        "commit": "e3332bf493345328695c2fbc9745f94b12b12f45"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e3332bf493345328695c2fbc9745f94b12b12f45",
+      "to": "Artifact:omerta-contracts/test/OmrV4TwapOracle.t.sol",
+      "provenance": {
+        "commit": "e3332bf493345328695c2fbc9745f94b12b12f45"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:e374d609ec97087fa09614f52a8d3fd33a1e6cf6",
       "to": "Artifact:CLAUDE.md",
       "provenance": {
@@ -276642,6 +277006,69 @@
       "to": "Artifact:omerta-contracts/reference/README.md",
       "provenance": {
         "file": "omerta-contracts/reference/README.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/compiled-source-hashes.json",
+      "provenance": {
+        "file": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/compiled-source-hashes.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/exact-after.txt",
+      "provenance": {
+        "file": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/exact-after.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/exact-before.txt",
+      "provenance": {
+        "file": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/exact-before.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/execution-status.json",
+      "provenance": {
+        "file": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/execution-status.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/review.json",
+      "provenance": {
+        "file": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/review.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/suite-boundary-seed.txt",
+      "provenance": {
+        "file": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/suite-boundary-seed.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/suite-ci-seed.txt",
+      "provenance": {
+        "file": "omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/suite-ci-seed.txt",
         "line": 1
       }
     },
@@ -324873,6 +325300,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:2c75183198ffec8423e4bbb3eeeed5ce31169c00",
+      "provenance": {
+        "commit": "2c75183198ffec8423e4bbb3eeeed5ce31169c00"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:2c799011f9c9f34ec9ef83e9c7cfb7c6290d55ac",
       "provenance": {
         "commit": "2c799011f9c9f34ec9ef83e9c7cfb7c6290d55ac"
@@ -333460,6 +333895,14 @@
       "to": "Commit:e33107a4ea429b621f7d95b3830fc17a71933201",
       "provenance": {
         "commit": "e33107a4ea429b621f7d95b3830fc17a71933201"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:e3332bf493345328695c2fbc9745f94b12b12f45",
+      "provenance": {
+        "commit": "e3332bf493345328695c2fbc9745f94b12b12f45"
       }
     },
     {
