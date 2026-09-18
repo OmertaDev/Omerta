@@ -15,6 +15,7 @@ import { createPublicClient, createWalletClient, http, parseEther, formatEther, 
   getContractAddress, encodeAbiParameters, decodeEventLog, keccak256, zeroAddress } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import pg from 'pg';
+import { loadLiquidityE2EArtifact } from './liquidity-e2e-artifacts.js';
 
 const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const dbUrl=new URL(process.env.LIQUIDITY_E2E_DATABASE_URL||'postgres://omerta_audit@127.0.0.1:55439/omerta_liquidity_e2e_test');
@@ -50,11 +51,14 @@ const walletClient=createWalletClient({chain,account,transport:http(RPC,{retryCo
 const clients={publicClient,walletClient,account};
 const deployer=createWalletClient({chain,transport:http(RPC),account:privateKeyToAccount('0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80')});
 const SAFE=deployer.account.address,E=10n**18n,PERMIT2='0x000000000022D473030F116dDEE9F6B43aC78BA3';
-const addresses={},artifacts={},steps=[],txs=[];
+const addresses={},artifacts={},artifactHashes={},steps=[],txs=[];
 const json=(v)=>JSON.stringify(v,(_k,x)=>typeof x==='bigint'?x.toString():x,2);
 const step=(name,detail={})=>{steps.push({name,...detail});console.log(`PASS ${name}`);};
 const rpc=(method,params=[])=>publicClient.request({method,params});
-const art=(name)=>artifacts[name]||=(JSON.parse(fs.readFileSync(path.join(ROOT,'omerta-contracts','out',`${name}.sol`,`${name}.json`),'utf8')));
+const art=(name)=>{
+  if(!artifacts[name]){const loaded=loadLiquidityE2EArtifact(path.join(ROOT,'omerta-contracts'),name);artifacts[name]=loaded.artifact;artifactHashes[name]=loaded.sha256;}
+  return artifacts[name];
+};
 const read=(name,fn,args=[])=>publicClient.readContract({address:addresses[name],abi:art(name).abi,functionName:fn,args});
 async function send(name,fn,args=[],opts={}) {
   const hash=await deployer.writeContract({address:addresses[name],abi:art(name).abi,functionName:fn,args,...opts});
@@ -115,7 +119,14 @@ try {
   await send('OmertaHook','setRecipients',[recipients.dev,recipients.treasury,addresses.communityExecutor,addresses.ProtocolLiquidityVault]);
   await send('OmertaHook','setSellTax',[400n,100n,100n,100n]);
   await transferNative(addresses.ProtocolLiquidityVault,1000n*E);await send('OMR','transfer',[addresses.ProtocolLiquidityVault,1000n*E]);
-  await send('ProtocolLiquidityVault','mintFoundation',[1000n*E,1000n*E,999n*E,BigInt(Math.floor(Date.now()/1000))]);
+  // Anvil starts behind wall time; Date.now() sits at the vault's deadline bound.
+  // Use the actual chain clock and retain the original wall-clock offset as evidence.
+  const foundationBlock=await publicClient.getBlock(),maxDeadlineDelay=await read('ProtocolLiquidityVault','MAX_DEADLINE_DELAY');
+  const foundationDeadline=foundationBlock.timestamp+maxDeadlineDelay/2n;
+  assert(foundationDeadline>foundationBlock.timestamp&&foundationDeadline<=foundationBlock.timestamp+maxDeadlineDelay);
+  step('foundation deadline uses the actual Anvil clock',{blockTimestamp:String(foundationBlock.timestamp),wallTimestamp:String(Math.floor(Date.now()/1000)),deadline:String(foundationDeadline),maxDeadlineDelay:String(maxDeadlineDelay)});
+  console.log(json({foundationClock:steps.at(-1)}));
+  await send('ProtocolLiquidityVault','mintFoundation',[1000n*E,1000n*E,999n*E,foundationDeadline]);
   const positionId=await read('ProtocolLiquidityVault','positionId');assert.equal(await read('PositionManager','ownerOf',[positionId]),addresses.ProtocolLiquidityVault);
   assert.equal(await read('OMR','allowance',[addresses.ProtocolLiquidityVault,PERMIT2]),0n);
   step('actual v4 full-range foundation held by the fixed vault; approvals reset',{positionId:String(positionId)});
@@ -200,7 +211,9 @@ try {
   assert.equal(automationCycle.indexed.caughtUp,true);
   assert(!automationCycle.indexed.alert);
   assert.deepEqual(automationCycle.queue,{enabled:false,signed:0,reason:'voucher_signing_dormant'});
-  assert.deepEqual(automationCycle.offering,{created:false,reason:'daily_policy_unset'});
+  // This fixture has no bond contract and requires bond_ready=false below. That
+  // readiness refusal precedes the separate unset-daily-policy check.
+  assert.deepEqual(automationCycle.offering,{created:false,reason:'liquidity_unavailable'});
   assert.equal(automationCycle.plan.actions.length,0);
   assert.equal(automationCycle.plan.blocked.length,manifest.jobs.length);
   assert(automationCycle.plan.blocked.every(job=>job.reason==='interval_already_attempted'));
@@ -251,6 +264,6 @@ try {
   const out=path.join(ROOT,'output','liquidity-automation');fs.mkdirSync(out,{recursive:true});
   const report={scope:'local actual-contract E2E; no production transactions',chainId:4663,steps,transactions:txs,keeperTransactions:rows.map(({raw_tx,...rest})=>rest),automationCycle,heldHookTransaction:rejected[0],ledger:twice,manifest,
     boundaries:['GenesisOracle administered price','EOA governance stand-in','Permit2 upstream runtime etched on disposable Anvil','Fresh loopback PostgreSQL database','No LBP/GenesisController, Bank or daily offering integration in this script'],
-    artifacts:Object.fromEntries(Object.keys(artifacts).map(name=>[name,createHash('sha256').update(fs.readFileSync(path.join(ROOT,'omerta-contracts','out',`${name}.sol`,`${name}.json`))).digest('hex')]))};
+    artifacts:artifactHashes};
   fs.writeFileSync(path.join(out,'e2e-report.json'),json(report)+'\n');console.log(`PASS ${steps.length} E2E assertions; ${rows.length} actual keeper transactions`);
 } finally {await pool.end();anvil.kill();}

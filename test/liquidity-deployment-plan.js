@@ -1,11 +1,14 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
+import os from 'node:os';
+import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { decodeAbiParameters, decodeFunctionData, encodeAbiParameters, getContractAddress, getAddress, keccak256, zeroAddress } from 'viem';
 import { buildLiquidityDeploymentPlan, liquidityDeploymentInputTemplate, loadReviewedArtifact,
   verifyLiquidityDeploymentStartup } from '../tools/liquidity-deployment-plan.js';
+import { loadLiquidityE2EArtifact } from '../tools/liquidity-e2e-artifacts.js';
 
 const A = (n) => getAddress(`0x${BigInt(n).toString(16).padStart(40, '0')}`);
 const H = `0x${'19'.repeat(32)}`;
@@ -62,6 +65,49 @@ function fixture({ genesis = true, bank = true } = {}) {
 
 const input = fixture();
 const plan = buildLiquidityDeploymentPlan(input);
+
+test('E2E swap fixture selects the exact IR profile and hashes its actual artifact bytes', () => {
+  const fixtureRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'omerta-liquidity-artifacts-'));
+  const directory = path.join(fixtureRoot, 'out', 'PoolSwapTest.sol');
+  fs.mkdirSync(directory, { recursive: true });
+  const artifact = { abi: [], bytecode: { object: '0x60006000', linkReferences: {} }, metadata: {
+    compiler: { version: '0.8.26+commit.8a97fa7a' }, settings: {
+      compilationTarget: { 'lib/v4-core/src/test/PoolSwapTest.sol': 'PoolSwapTest' },
+      optimizer: { enabled: true, runs: 800 }, evmVersion: 'cancun', viaIR: true,
+    },
+  } };
+  const profiled = path.join(directory, 'PoolSwapTest.constellation-via-ir.json');
+  const plain = path.join(directory, 'PoolSwapTest.json');
+  const write = (file, value) => fs.writeFileSync(file, JSON.stringify(value));
+  try {
+    const wrongProfile = clone(artifact); wrongProfile.metadata.settings.viaIR = false;
+    write(path.join(directory, 'PoolSwapTest.default.json'), wrongProfile);
+    write(profiled, artifact);
+    const loaded = loadLiquidityE2EArtifact(fixtureRoot, 'PoolSwapTest');
+    assert.deepEqual(loaded.artifact, artifact);
+    assert.equal(loaded.sha256, createHash('sha256').update(fs.readFileSync(profiled)).digest('hex'));
+    write(plain, wrongProfile);
+    assert.deepEqual(loadLiquidityE2EArtifact(fixtureRoot, 'PoolSwapTest').artifact, artifact, 'A stale unsuffixed file cannot override the declared profile');
+    for (const edit of [
+      (a) => { a.metadata.settings.compilationTarget = { 'src/PoolSwapTest.sol': 'PoolSwapTest' }; },
+      (a) => { a.metadata.compiler.version = '0.8.27+commit.fake'; },
+      (a) => { a.metadata.settings.optimizer.runs = 1; },
+      (a) => { a.metadata.settings.evmVersion = 'prague'; },
+      (a) => { a.metadata.settings.viaIR = false; },
+      (a) => { a.bytecode.object = '0x'; },
+    ]) {
+      const changed = clone(artifact); edit(changed); write(profiled, changed);
+      assert.throws(() => loadLiquidityE2EArtifact(fixtureRoot, 'PoolSwapTest'), /pinned Solidity/);
+    }
+    fs.unlinkSync(profiled);
+    assert.throws(() => loadLiquidityE2EArtifact(fixtureRoot, 'PoolSwapTest'), /pinned Solidity/, 'Legacy files must satisfy the same profile');
+    write(plain, artifact);
+    assert.deepEqual(loadLiquidityE2EArtifact(fixtureRoot, 'PoolSwapTest').artifact, artifact, 'Single-profile legacy builds remain usable');
+    fs.unlinkSync(plain);
+    assert.throws(() => loadLiquidityE2EArtifact(fixtureRoot, 'PoolSwapTest'), { code: 'ENOENT' }, 'Never select an arbitrary default-profile artifact');
+    assert.throws(() => loadLiquidityE2EArtifact(fixtureRoot, '../PoolSwapTest'), /Invalid E2E artifact name/);
+  } finally { fs.rmSync(fixtureRoot, { recursive: true, force: true }); }
+});
 
 test('deterministic EOA CREATE nonces, bytecode and immutable future recipients', () => {
   assert.deepEqual(plan, buildLiquidityDeploymentPlan(clone(input)));
