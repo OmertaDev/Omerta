@@ -1,0 +1,1230 @@
+
+> omerta-backend@1.2.0 pretest
+> node test/current-copy.js && node test/operation-read-paths.js && node test/world-projection-mysteries.js && node test/world-projection-mysteries-api.js && node test/world-projection-read.js && node test/world-projection.js && node test/world-projection-api.js && node test/projection-events.js && node test/projection-events-ws.js && node test/world-projection-client.js && node test/coordination-operation-definitions.js && node test/coordination-mode-boundary.js && node test/coordination-capital.js && node test/coordination-materials.js && node test/coordination-knowledge-proof.js && node test/world-kernel-transaction.js && node test/family-operations.js && node test/family-operations-api.js && node test/world-knowledge-crafting.js && node test/world-kernel-query.js && node test/world-kernel-input.js && node test/world-kernel.js && node test/world-kernel-api.js && node test/coordination-graph.js && node test/coordination.js && node test/coordination-api.js && node test/coordination-http-receipts.js && node test/coordination-knowledge.js && node test/coordination-knowledge-runtime.js && node test/coordination-knowledge-api.js && node test/finalizedobservation.js && node test/stockballotv2.js && node test/rwanominations.js && node test/rwaroutes.js && node test/rwahealth.js && node test/rwahealth.integration.js && node test/rwahealthclearance.js && node test/rwahealthclearancecontext.js && node test/rwahealthoverlay.readiness.js && node test/rwahealthoverlay.schema.js && node test/rwahealthoverlay.vector.js && node test/rwaregistrylifecycle.js && node test/rwaregistrylifecycle.sync.js && node test/agent-referral-cash.js && node test/phase2-discovery.js && node test/phase2-compiler.js && node test/phase2-review-regressions.js && node test/phase2-scale.js && node test/content-graph.js && node test/content-runtime.js && node test/content-social.js && node test/content-seasonal.js && node test/content-seasonal-case.js && node test/content-crafting.js && node test/content-crafting-jobs.js && node test/content-crafting-tools.js && node test/content-exchange.js && node test/content-api.js && node test/v4oraclekeeper.js && node test/genesiscca.js && node test/genesislaunch.js && node test/genesisrelease.js && node test/worldgraph.js && node test/worldgraph-validation.js && node test/items.js && node test/crafting.js && node test/mysteries.js && node test/operations.js && node test/belladonna.js && node test/worldgraph-api.js && node tools/pgcheck-belladonna.js --pg-mem && node test/phase2-definition-schema.js && node test/phase2-definitions.js && node test/phase2-activation.js && node test/phase2-definition-invariants.js && node test/phase2-lot-boundary.js && node test/keepertransactions.js && node test/liquiditykeeper.js && node test/genesiskeeper.js && node test/liquidityaccounting.js --memory && node test/liquidityaccounting-review.js && node test/liquiditypolicy.js --memory && node test/bond-unlimited.js --memory && node test/bondquoteexpiry.js && node test/liquidityrpc.js && node tools/liquidity-manifest-example.js --self-test && node test/liquiditypolicy-review.js && node test/liquidityqueue.js --memory && node test/liquidityqueue-review.js && node test/character-mint-policy.js && node test/phase2-lots.js && node test/phase2-lots-property.js && node test/audit/mint-dev-allocation.js --memory && node test/audit/deed-reimport-order.js --memory && node test/progression-admission.js && node test/world-prerequisites.js && node test/recipe-policy.js && node test/furnace-ledger.js && node test/core-progression-api.js && node test/player-commands.js && node test/player-command-journey.js && node test/player-command-api.js && node test/player-command-client.js && npm run test:director
+
+Current copy: shared system status, Codex links, staking rules, release labels and inline scripts passed.
+operation-read-paths: Family/opener/role/returned-promise/legacy-Crew ACL equality, duplicate branches, membership removal, ordering and truncation pass
+operation-read-paths: pass (pg-mem)
+world-projection-mysteries pg-mem: composition, privacy, eligibility, scope and current-character isolation PASS
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+world-projection-mysteries-api: auth, rollout, cohort, strict selection, public prose and current-character isolation PASS
+world-projection-read: branded scoped facts, one authentic union, no row locks/writes, private views and actual custody passed (pg-mem)
+world-projection: real discovery/Crew sharing/crafting/Family resolution, safe cards and one read-only snapshot passed (pg-mem)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+world-projection-api: mounted auth/default-off/cohort/no-store, strict queries, private=missing, player compatibility and HTTP discovery/sharing/revocation passed
+projection-events: private discovery, share/revoke, committed hints, cohort, current WS authority and cleanup pass (pg-mem)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+projection-events-ws: actual Crew leave/rejoin, stale Family feed suppression and coarse socket hints pass
+world-projection-client: stale/session/selection/revocation queues and queued mutation isolation PASS
+coordination-operation-definitions: closed data, pins, custody/material matching, bounds, and skills PASS
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+coordination-mode-boundary: Family reads, mutation, replay, discovery, and open isolation PASS
+coordination-capital: root authority, cash bounds, duplicate commands, refund and role replacement pass
+coordination-capital: cash/escrow/ledger rollback, caught-error poisoning and overflow refusal pass
+coordination-capital: deterministic settlement, death forfeiture and signed cash reconciliation pass (pg-mem)
+coordination-materials: conserved mixed-owner deposit/refund, exact identity, root-owner double-grant refusal, atomic rollback and concurrent replay pass (pg-mem)
+coordination-knowledge-proof: global claim order, bounded authenticated actor predicates, transaction isolation and live ACLs passed (pg-mem)
+world-kernel-transaction: caller-owned atomicity, multi-owner escrow, proof/operation authority, replay and postcommit hints passed (pg-mem)
+family-operations: pinned participant outcome unlocks persistent mystery ending; outsider, uncommitted and disabled sources fail closed
+family-operations: real four-player journey, private views, live revalidation, concurrent replay and restart pass
+family-operations: competing execution, withdrawal/rejoin, cancellation, expiry and deterministic failure pass
+family-operations: after-write rollback/retry, original-character death forfeiture and no OMR movement pass (pg-mem)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+idempotency: store UPDATE failed — key left in-progress, value may have committed Injected lost HTTP receipt acknowledgement
+family-operations-api: mounted policy, strict inputs, assignment, redaction, capital and lost HTTP receipt recovery passed
+world-knowledge-crafting: definition validation, authentic discovery, private projection, exact source and replay pass
+world-knowledge-crafting: sharing opt-in, revocation and live crew membership pass (pg-mem)
+world-knowledge-mysteries: authenticated prerequisites, private discovery, crafting, branching, revocation, replay and persistence pass (pg-mem)
+world-kernel-query: Family operation visibility matches current Family/opener/role/historical promise; legacy Crew policy retained
+world-kernel-query: authoritative refs, bounded graph, affiliation and knowledge visibility passed (pg-mem)
+world-kernel-input: command snapshot survives mutation after replay reservation
+world-kernel: real Crew/Family, salvage/discovery/crafting, provenance and authority gates pass
+world-kernel: Family dissolution clears control and preserves state and event provenance
+world-kernel: persistent public state, replay/race, both write rollbacks and post-commit hints pass (pg-mem)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+idempotency: store UPDATE failed — key left in-progress, value may have committed kernel API proof: lost HTTP receipt acknowledgement
+idempotency: store UPDATE failed — key left in-progress, value may have committed kernel API proof: lost HTTP receipt acknowledgement
+world-kernel-api: mounted auth/cohort, strict input, HTTP discovery/craft/action, hidden state and receipt recovery passed
+coordination-graph: isolated immutable definitions, canonical identity and registry authority pass
+coordination-graph: AND, OR, every M-of-N truth table, clocks and missing state pass
+coordination-graph: hostile schemas, hidden references, cycles and disconnected branches pass
+coordination-graph: node, depth and aggregate predicate limits pass
+coordination-graph: schema 2 typed claims, exact source dependencies, contradictions and v1 hash stability pass
+coordination-graph: pure exact-rule/hash-bound evidence result evaluation rejects callbacks and malformed receipts
+coordination-graph: schema 2 preserves node, depth and total-rule bounds
+coordination: pg-mem journey, visibility, replay, races, pins, historical recovery, zero-value and 10 rollback boundaries pass
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+idempotency: store UPDATE failed — key left in-progress, value may have committed injected lost HTTP receipt-store acknowledgement
+coordination API: strict inputs, auth, safe projections, OpenAPI, cohort, replay, privacy, and stopped-rollout recovery passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+coordination HTTP receipts: delayed success/failure cannot overwrite or delete a replacement reservation; first finalized receipt wins
+coordination-knowledge: checked contexts, immutable provenance, encrypted targets, filtered pages with revoke retry, 12 rollback boundaries, aggregate rebuild bound and disabled recovery pass
+coordination-knowledge-runtime: two-account journey, private projections and live gate revocation pass
+coordination-knowledge-runtime: own-root and same-account heir non-independence, historical recovery pass
+coordination-knowledge-runtime: exact-hash isolation and retired-definition resolution pass
+coordination-knowledge-runtime: incompatible readable source blocks qualification until revoked pass
+coordination-knowledge-runtime: engine/cohort/knowledge/private-only sharing flags pass
+coordination-knowledge-runtime: pg-mem complete journeys, lifecycle/flags, races, discovery rollback and ambiguous commit recovery pass
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+idempotency: store UPDATE failed — key left in-progress, value may have committed injected knowledge HTTP receipt-store failure
+coordination knowledge API: full shared pilot, strict inputs, private projections, stale authority, receipt recovery, archive/link revocation and dormant recovery pass
+finalized observation tests passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ stock ballot v2: DB-time immutable snapshot, exact version votes/standing, ABI tally, durable close/skip preparation
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ RWA nominations v2 domain tests passed — immutable candidate identity, current-seat support, fixed threshold/review ownership, deadline precedence, PostgreSQL duplicate SQL, and bounded stable cursors.
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ RWA HTTP routes passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ RWA reviewer classification requires an unforgeable server-created trust token
+✅ RWA Safe package validation rejects types, not valid BigInt text
+✅ RWA disposition compares exact DB wall time before whole-second packaging
+✅ RWA reviewer queue ranks a dense current-support snapshot without stale holes
+✅ RWA reviewer queue cleanup remains chunk-bounded at the 5,000-row wall
+✅ RWA reviewer queue batches every cleanup transition with exact event payloads
+✅ RWA reviewer queue batches 100 cleanup transitions with exact events
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ RWA reviewer GETs have their own pre/post-auth limiter and no player-read path
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[500] POST /v1/rwa/reviewer/nominations/rwa-completion-store-failure/claim Error: injected reviewer completion-store failure
+    at live.pool.query (file:///C:/Users/Jorge/Documents/Omerta-director/test/rwaroutes.js:833:13)
+    at Object.rwaReviewerMutation (file:///C:/Users/Jorge/Documents/Omerta-director/src/routes/rwa.js:151:33)
+✅ RWA reviewer auth, exact package, replay, and submission routes passed
+✅ RWA approval package failure rolls review, event, and proposal back together
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ RWA reviewer mutations have a bounded reviewer-only rate namespace
+rwahealth: 13 passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ RWA health H1 integration: healthy/action wall, sticky quarantine, source failure, crash resume/replay/evidence, zero-active
+rwa health H2 clearance package tests passed (31 assertions/groups)
+rwahealthclearancecontext: 5 passed
+rwahealthoverlay readiness: 15 passed
+✅ RWA health H2 schema passed — 12 tables, 12 operational indexes, 3 applied-only unique tuples, 3 exact H1 foreign keys, fresh pg-mem materialization, and fail-closed production migration verification.
+rwa health overlay cross-language vector passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+rwaregistrylifecycle: 28 passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+rwaregistrylifecycle sync: finalized RPC, inbox, reconciliation, readiness, and mismatch rollback passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✓ qualified agents receive bounded referral cash; exhausted/reviewed claims hold and agent recruits stay excluded
+✓ package discovery is canonically ordered and fixture authority is server-owned
+✓ new and nested production packages cannot be omitted or shadowed
+✓ review-requested identity, path, race, bound, UTF, diagnostic, and empty-corpus gates pass
+✓ duplicate and case-normalized package identities fail closed
+✓ malformed, duplicate, and prototype-dangerous JSON fails before materialization
+✓ authored JSON byte, depth, string, and container bounds are enforced
+✓ unsupported manifests and oversized authored files are rejected
+✓ symbolic-link escapes are rejected where the platform supports links
+✓ corpus CLI discovers a newly copied production package without script edits
+phase2 discovery tests passed
+✓ canonical bytes and seven-domain typed frames are deterministic and collision-resistant
+✓ package-local identities qualify, ordinals stabilize, and every hash excludes itself
+✓ author ordering is invariant and semantic definition changes propagate without hash recursion
+✓ imports resolve only through exact offline definition and dependency bundle hashes
+✓ duplicate identities, floating/drifted imports, and package cycles fail with stable codes
+✓ direct and stored-byte validation independently reject tampering and noncanonical artifacts
+✓ overlays are snapshotted in canonical package order and absent/empty bytes are distinct
+✓ the closed profile rejects the complete executable/authority/OMR/cash attack vocabulary
+✓ parser, direct discovery/compile, check-corpus, and build-corpus preserve one raw error code
+✓ schema, profile, OMR, cash, and prototype failures retain direct/check/build parity
+✓ build-corpus writes the exact immutable bytes accepted by stored-artifact verification
+✓ only walker provenance grants non-activatable fixture authority and corpus limits stay server-owned
+✓ semantic reference/component/edge/report limits fire before unbounded validation work
+phase2 compiler tests passed
+✓ I1/I2 overlays reject every non-empty payload while absent and empty remain distinct
+✓ I5/spec-I2 adapter registry pins versions, pairings, bounded value, and report authority
+✓ I6/spec-I3 separator-insensitive OMR aliases reject semantic fields and reports derive zero
+✓ spec-I4 package kinds enforce one primary experience and activation closure
+✓ re-review I1 exports are exact owned definitions across direct, CLI, and stored paths
+✓ re-review M1 adapter registry is independently OMR-safe and prototype-closed
+✓ quality value declarations, quantities, and derived report paths are closed
+✓ I3/spec-I5 dependencies prove direct imports and complete transitive closure
+✓ I4 stored validation separately bounds authored source and compiler-owned envelope bytes
+✓ I4b canonical author source does not over-qualify local adapter definition IDs
+✓ re-review R-I3 every effective-corpus aggregate accepts exact limit and rejects plus one
+✓ re-review R-I3 catalog accounting stops on the first byte-budget crossing
+✓ I8/M2 build-corpus emits/reopens transitive bundles and conflicts have stable code
+✓ re-review M2 immutable corpus path types fail with one bounded stable code
+✓ re-review R-M1 staged publication survives an injected interrupted write
+✓ third-review economy reports prove lifecycle closure and block orphan or cyclic activation
+✓ final-review economy proof spans entrypoints, imports, issuance, and operational deltas
+✓ definitive-review profitable subcycles cannot hide behind an optional same-SCC sink
+✓ third-review artifact publication rejects hard links and staged-file swaps
+✓ publisher-race held lock permits live contender stages without deleting them
+✓ publisher-race contender classification rejects foreign stages and changed held locks
+✓ final-review post-verification link substitution is removed by exact inode and retries cleanly
+✓ final-review publisher rejects count and byte budgets before cloning any view
+✓ definitive-review publisher admission is accessor and resizable-view race safe
+✓ definitive-review exact linked-stage crash residue completes without foreign deletion
+✓ definitive-review output names reject portable aliases and Windows-equivalent names before filesystem access
+✓ third-review real high-duplication roots reserve canonical output before graph work
+✓ definitive-review imported semantic snapshots are reserved before callbacks and build
+✓ definitive-spec shared same-corpus imports reserve actual bounded semantics without artificial report ceilings
+✓ definitive-spec exact raw authored-byte limit succeeds and plus one stops before overlay work
+✓ definitive-spec public manifests bind safe dependency import and export identities
+✓ final-review public node ordinals are dense and independent of omitted private topology
+✓ third-review lock identity commits to complete used adapter capabilities
+✓ M1 canonical ordering rejects lone surrogates and diagnostics are UTF-8-byte bounded
+✓ M3 stored and catalog verification require trusted authority and exact identity
+phase2 review regressions passed (35/35 groups)
+✓ linear 10k-node builds are iterative, bounded, and deterministic
+{"fixture":"linear","first":{"fixture":"linear","profile":"phase2_economy","compilerVersion":"phase2a.1","packageCount":1,"nodeCount":10000,"rootNodeCount":10000,"catalogNodeCount":0,"effectiveNodeCount":10000,"effectivePackageCount":1,"dependencyCount":0,"edgeCount":9999,"componentCount":1,"sccCount":10000,"maximumSccSize":1,"maximumWitnessIds":1,"witnessBytes":34,"bundleHash":"9f5068ee26cd48f882319a605f2b2e8da0ba695a137e102cc66daf4dd0963ba0","irHash":"6f905d245678201f647353e3b94030e98d13f418fe81f183499eb9118e6449a3","dependencyLockHash":"02298c62a4b16303f13663ed82bf5d0e13ed975624b156cba4e0eab60fe5be03","publicManifestHash":"5f323061ccc41ab7e7b0d6c7412cf687d84f93db409772ec60793a4954642d91","knowledgeManifestHash":"42f2b89affdaf95a9dc8a8ad21d3938f8f291d4f8425c8c2e6e78e3fa66976a6","reportHashes":{"validation":"c61649d3672b143eb358d2bf96482b8166817b5c68a7fc709c2bc372fb2fcf81","economy":"a50dc536f150f67b6540b4c7a331aeea0eb4d3649ce5d19a0ab1fafc1db65a27"},"reportBytes":{"validation":304,"economy":847},"sealedBundleBytes":5756329,"elapsedMs":10509.2286,"peakRssKilobytes":372024,"peakHeapUsedBytes":null,"endHeapUsedBytes":101819352,"endRssBytes":346771456,"totalOutputBytes":5757990,"summaryOutputBytes":1193},"second":{"fixture":"linear","profile":"phase2_economy","compilerVersion":"phase2a.1","packageCount":1,"nodeCount":10000,"rootNodeCount":10000,"catalogNodeCount":0,"effectiveNodeCount":10000,"effectivePackageCount":1,"dependencyCount":0,"edgeCount":9999,"componentCount":1,"sccCount":10000,"maximumSccSize":1,"maximumWitnessIds":1,"witnessBytes":34,"bundleHash":"9f5068ee26cd48f882319a605f2b2e8da0ba695a137e102cc66daf4dd0963ba0","irHash":"6f905d245678201f647353e3b94030e98d13f418fe81f183499eb9118e6449a3","dependencyLockHash":"02298c62a4b16303f13663ed82bf5d0e13ed975624b156cba4e0eab60fe5be03","publicManifestHash":"5f323061ccc41ab7e7b0d6c7412cf687d84f93db409772ec60793a4954642d91","knowledgeManifestHash":"42f2b89affdaf95a9dc8a8ad21d3938f8f291d4f8425c8c2e6e78e3fa66976a6","reportHashes":{"validation":"c61649d3672b143eb358d2bf96482b8166817b5c68a7fc709c2bc372fb2fcf81","economy":"a50dc536f150f67b6540b4c7a331aeea0eb4d3649ce5d19a0ab1fafc1db65a27"},"reportBytes":{"validation":304,"economy":847},"sealedBundleBytes":5756329,"elapsedMs":10786.6014,"peakRssKilobytes":386632,"peakHeapUsedBytes":null,"endHeapUsedBytes":149590096,"endRssBytes":348299264,"totalOutputBytes":5757990,"summaryOutputBytes":1193}}
+✓ branching 10k-node builds are iterative, bounded, and deterministic
+{"fixture":"branching","first":{"fixture":"branching","profile":"phase2_economy","compilerVersion":"phase2a.1","packageCount":1,"nodeCount":10000,"rootNodeCount":10000,"catalogNodeCount":0,"effectiveNodeCount":10000,"effectivePackageCount":1,"dependencyCount":0,"edgeCount":14000,"componentCount":1,"sccCount":9745,"maximumSccSize":256,"maximumWitnessIds":128,"witnessBytes":4863,"bundleHash":"40ea8da76ffc08a6f2b9c1e81ab23b21152c4e3a139d2d734d31a144dfd97576","irHash":"e53909493d534c3037b55eb95c92c9d8b2c2addf54b7ca86ff47e52b65d8095b","dependencyLockHash":"eed1768fd8dda8aeab29260a8aed1392fa9b4d1b74147a91feb2996f64f7c96a","publicManifestHash":"346de75beecb6b3b4370d5ebed01a37b268360f3b888ba24c3b5dc25a39efd3d","knowledgeManifestHash":"6879a01f516c2ae67c42155e5cad1683275e20d099f7a227e64480f463391c88","reportHashes":{"validation":"aba4a52783318c0e96265fdb7b51490a86f30a28c24a3e7f714798392369d953","economy":"a53ea04a8fab993ec458dbd29fa9f1772545c0d4984eb2168e111931ce37f638"},"reportBytes":{"validation":5138,"economy":850},"sealedBundleBytes":7168936,"elapsedMs":12736.9871,"peakRssKilobytes":398388,"peakHeapUsedBytes":null,"endHeapUsedBytes":138365584,"endRssBytes":360534016,"totalOutputBytes":7175440,"summaryOutputBytes":1203},"second":{"fixture":"branching","profile":"phase2_economy","compilerVersion":"phase2a.1","packageCount":1,"nodeCount":10000,"rootNodeCount":10000,"catalogNodeCount":0,"effectiveNodeCount":10000,"effectivePackageCount":1,"dependencyCount":0,"edgeCount":14000,"componentCount":1,"sccCount":9745,"maximumSccSize":256,"maximumWitnessIds":128,"witnessBytes":4863,"bundleHash":"40ea8da76ffc08a6f2b9c1e81ab23b21152c4e3a139d2d734d31a144dfd97576","irHash":"e53909493d534c3037b55eb95c92c9d8b2c2addf54b7ca86ff47e52b65d8095b","dependencyLockHash":"eed1768fd8dda8aeab29260a8aed1392fa9b4d1b74147a91feb2996f64f7c96a","publicManifestHash":"346de75beecb6b3b4370d5ebed01a37b268360f3b888ba24c3b5dc25a39efd3d","knowledgeManifestHash":"6879a01f516c2ae67c42155e5cad1683275e20d099f7a227e64480f463391c88","reportHashes":{"validation":"aba4a52783318c0e96265fdb7b51490a86f30a28c24a3e7f714798392369d953","economy":"a53ea04a8fab993ec458dbd29fa9f1772545c0d4984eb2168e111931ce37f638"},"reportBytes":{"validation":5138,"economy":850},"sealedBundleBytes":7168936,"elapsedMs":12973.5236,"peakRssKilobytes":392056,"peakHeapUsedBytes":null,"endHeapUsedBytes":186553024,"endRssBytes":373338112,"totalOutputBytes":7175440,"summaryOutputBytes":1203}}
+✓ aggregate catalog-plus-root 10k-node builds are bounded and deterministic
+{"fixture":"aggregate","first":{"fixture":"aggregate","profile":"phase2_economy","compilerVersion":"phase2a.1","packageCount":1,"nodeCount":7000,"rootNodeCount":7000,"catalogNodeCount":3000,"effectiveNodeCount":10000,"effectivePackageCount":2,"dependencyCount":1,"edgeCount":6999,"componentCount":1,"sccCount":7000,"maximumSccSize":1,"maximumWitnessIds":1,"witnessBytes":42,"bundleHash":"bdbfa3064054e265b2fc1244ac600f65b2313237d09d42a19ff5aa7fac4b9b47","irHash":"62f6fa4fa15dfc366b34067943f0d61206ca71e1fb89fcde347608453f166ced","dependencyLockHash":"710f21756c512c02ca9c87b613c228179cdcb910b6f1f7c2652747ea23732495","publicManifestHash":"95cf2a0c511880448f3830bfd8740753decfce6535a778457ddba96a6dc612ab","knowledgeManifestHash":"bcda70239fac527d0adfd463781d3fa69863857fdd1f33a4effb1631c0a0db6b","reportHashes":{"validation":"6b3325451e701b5ac1b0aea137bcde13b9b5c7dd47d35f3993f4344fef2f4846","economy":"874aba258e210f0731fd77296ac3442aa9fb6e2e93f5c183ee1f86cdcffa7db7"},"reportBytes":{"validation":318,"economy":855},"sealedBundleBytes":4362431,"elapsedMs":12977.8705,"peakRssKilobytes":351152,"peakHeapUsedBytes":null,"endHeapUsedBytes":117386616,"endRssBytes":301641728,"totalOutputBytes":6279700,"summaryOutputBytes":1196},"second":{"fixture":"aggregate","profile":"phase2_economy","compilerVersion":"phase2a.1","packageCount":1,"nodeCount":7000,"rootNodeCount":7000,"catalogNodeCount":3000,"effectiveNodeCount":10000,"effectivePackageCount":2,"dependencyCount":1,"edgeCount":6999,"componentCount":1,"sccCount":7000,"maximumSccSize":1,"maximumWitnessIds":1,"witnessBytes":42,"bundleHash":"bdbfa3064054e265b2fc1244ac600f65b2313237d09d42a19ff5aa7fac4b9b47","irHash":"62f6fa4fa15dfc366b34067943f0d61206ca71e1fb89fcde347608453f166ced","dependencyLockHash":"710f21756c512c02ca9c87b613c228179cdcb910b6f1f7c2652747ea23732495","publicManifestHash":"95cf2a0c511880448f3830bfd8740753decfce6535a778457ddba96a6dc612ab","knowledgeManifestHash":"bcda70239fac527d0adfd463781d3fa69863857fdd1f33a4effb1631c0a0db6b","reportHashes":{"validation":"6b3325451e701b5ac1b0aea137bcde13b9b5c7dd47d35f3993f4344fef2f4846","economy":"874aba258e210f0731fd77296ac3442aa9fb6e2e93f5c183ee1f86cdcffa7db7"},"reportBytes":{"validation":318,"economy":855},"sealedBundleBytes":4362431,"elapsedMs":14568.0657,"peakRssKilobytes":353684,"peakHeapUsedBytes":null,"endHeapUsedBytes":95919960,"endRssBytes":312348672,"totalOutputBytes":6279700,"summaryOutputBytes":1195}}
+phase2 scale tests passed
+✓ content CLI validates a non-vacuous pack and emits its deterministic bundle identity
+✓ canonical bundle identity is independent of author/object/node/edge ordering
+✓ dangling authored dependencies fail closed with the exact edge named
+✓ node ontology is allowlisted; authored executable kinds fail closed
+✓ edge ontology is allowlisted; unknown dependency verbs fail closed
+✓ duplicate node identities fail closed before dependency resolution
+✓ duplicate dependencies fail closed before hashing or runtime application
+✓ arbitrary authored gate evaluators cannot enter the compiled bundle
+✓ arbitrary authored effects cannot execute through the content runtime
+✓ growth intent is mandatory even for intentionally internal content
+✓ agent cash is confined to qualified activation/retention, never raw signup
+✓ agent referral cash must fit inside an explicit reserved liability
+✓ the reviewed graph explicitly compiles cash rewards for agent recruiters
+✓ accidental content dependency cycles fail with the exact cycle path
+✓ build emits a byte-identical immutable bundle and supports idempotent rebuilds
+✓ recruitment graphs cannot authorize autonomous outreach or publication
+✓ the compiler rejects time-based OMR faucets
+✓ collectible export is optional and gameplay-inert by construction
+✓ crafting recipes cannot compile with impossible ingredients
+✓ raw material sources compile only with finite epoch budgets
+✓ collaboration graphs require distinct agent and consenting human roles
+✓ Sixth Chair vertical slice spans mysteries, social growth, items, export, and finite OMR
+✓ live runtime manifests are strict, capability-gated, private-answer-complete, and single-authority
+✓ Sixth Chair v2 activates only its complete, private-answer-backed, value-neutral mystery spine
+✓ six district storylets are personal, location-gated, sequential, private-answer-safe, and value-neutral
+✓ late-game content declarations are rank-gated, build-reactive, optionally social, and narratively persistent
+✓ identity content declarations are closed over canonical Path, skill, regimen, honor, and Underworld catalogs
+✓ seven Don Cases form a rank-gated, build-reactive, persistent, value-neutral late-game spine
+✓ six Path Cases are identity-gated, build-reactive, persistent, and value-neutral
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✓ content runtime pins bundles, enforces party authority, resolves the graph, and claims value-neutral rewards exactly once
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✓ The Two-Man Rule enforces two-seat organization authority, parallel role branches, and exact-once value-neutral claims
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ seasonal authored-content runtime contract passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ The Books Open at Midnight seasonal case contract passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ The Bellini Restoration authored crafting and supply-chain contract passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ authored work orders and exact-hash skill progression contract passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ exact-hash authored durable tools and location facilities contract passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ exact-hash authored material exchange contract passed
+✅ authored content API and OpenAPI contracts passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ v4 oracle keeper passed — health states, uint32 wrap, early no-op, atomic race, persist-before-send, byte-identical retry, pending/revert recovery, overlong rebaseline, and wrong-chain refusal
+PASS 2006 schedule conservation/monotonicity/encoding cases; seed 0x168c0de
+✅ Automated Genesis bootstrap/binding: coherent uninitialized oracle accepted, exact factory/strategy proof, unsigned simulated Safe payload, and 47 rejection cases.
+✅ Genesis CCA config/preflight test passed — exact allocation, schedule, pricing, pinned stack, zero-tax hook, splitter, one-shot allowances, and unsigned atomic launcher calldata.
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ Genesis launch gate test passed — Desk and bonds close through auction/migration/oracle warm-up, prepare drains existing fills, and live reopens normal operations.
+✅ Automated Genesis release: 75 source files and 13 artifacts,
+  mandatory automated audit/rehearsal scope, pinned POL custody, distinct auction clocks, and pending/verified binding stages.
+✅ Genesis production release gate passed — fresh chain cadence, source/bytecode freeze, audit scope, governance custody, fork evidence, and independent Safe ceremony all fail closed and bind exact unsigned calldata.
+✓ world graph registry and dependency evaluator passed
+✓ world graph static validation passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ test/items.js — conserved stacks, permanent unique items, single-custody operation escrow, provenance, and conflict-safe logical replay
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✓ graph crafting and atomic automotive salvage passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✓ data-defined mystery runtime passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+operations ok
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+belladonna ok
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ world-graph Phase 1 HTTP authority, replay, privacy, and economy contract passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+  ✓ Belladonna same-key salvage consumes one real car into exact graph quantities
+  ✓ Belladonna salvage, replay, and failed fresh action move held car and one guard sink together
+  ✓ Belladonna salvage, replay, and failure create no currency row
+  ✓ Belladonna production consumes the exact inputs into one permanent precision tool
+  ✓ Belladonna production has one $300 cash sink, one ledger row, and zero OMR movement
+  ✓ Belladonna mystery escrows the exact crafted tool under its pinned instance
+  ✓ Belladonna terminal closes the character/account/version-pinned Task 5 bridge
+  ✓ Belladonna assigns four distinct accounts under database authority
+  ✓ Belladonna delivers two distinct role-private evidence branches
+  ✓ Belladonna converges four ordered branches with the mechanic tool in custody
+  ✓ pg-mem control terminal rollback removes awards, status, release, and guard
+  ✓ Belladonna pg-mem control executes the same completion race
+  ✓ Belladonna concurrent convergence awards one inert artifact/status and returns custody once
+  ✓ Belladonna mystery and operation add zero cash, OMR, or currency-ledger movement
+  ✓ Belladonna retains one exact unique-item provenance chain end to end
+  ✓ Belladonna PostgreSQL fixture cleanup leaves no run-owned rows
+  ✓ Belladonna same-key salvage consumes one real car into exact graph quantities
+  ✓ Belladonna salvage, replay, and failed fresh action move held car and one guard sink together
+  ✓ Belladonna salvage, replay, and failure create no currency row
+  ✓ Belladonna production consumes the exact inputs into one permanent precision tool
+  ✓ Belladonna production has one $300 cash sink, one ledger row, and zero OMR movement
+  ✓ Belladonna mystery escrows the exact crafted tool under its pinned instance
+  ✓ Belladonna terminal closes the character/account/version-pinned Task 5 bridge
+  ✓ Belladonna assigns four distinct accounts under database authority
+  ✓ Belladonna delivers two distinct role-private evidence branches
+  ✓ Belladonna converges four ordered branches with the mechanic tool in custody
+  ✓ pg-mem control terminal rollback removes awards, status, release, and guard
+  ✓ Belladonna pg-mem control executes the same completion race
+  ✓ Belladonna concurrent convergence awards one inert artifact/status and returns custody once
+  ✓ Belladonna mystery and operation add zero cash, OMR, or currency-ledger movement
+  ✓ Belladonna retains one exact unique-item provenance chain end to end
+  ✓ Belladonna PostgreSQL fixture cleanup leaves no run-owned rows
+✅ Belladonna pg-mem harness control passed
+phase2-definition-schema: clean schema, repeat application and translate pass
+phase2-definitions: admission, atomic registration, replay, versions and no-repair pass
+phase2-definitions: snapshots, every-write compensation, interleavings, recovery and optional matrix pass
+phase2-definitions: malformed dependency admission, independent resource ceilings and root verifier codes pass
+phase2-definitions: exact dependency DAGs, resource ceilings, corruption and intrinsic safe projection pass
+phase2-definitions: ambiguous commit replay, unconfirmed rollback and extraneous membership pass
+phase2-activation: trusted policy, immutable admission, fixture refusal and legacy separation pass
+phase2-activation: exact CAS table, ABA, audit history and complete namespace replacement pass
+phase2-activation: all eleven post-write recovery points and pre-delete abort restore exact six-table snapshots
+phase2-activation: COMMIT recovery, current-policy denial and coherent cross-alias read/write orderings pass
+phase2-activation: corrupt selections fail closed, one exact join and canonical historical evidence pass
+phase2-activation: production experiences, exact pinned dependencies and safe revision ceiling pass
+phase2-activation: immutable-read operational failures preserve boundary mapping and cleanup; intrinsic refusals remain inactive
+phase2-definition-invariants: legacy, register-only, selected policy and historical/current separation pass
+phase2-definition-invariants: 30 operational/unexpected verifier read refusals preserve safe owner errors, no alerts, state and gate usability
+phase2-definition-invariants: 34 independently restored corruption cases pass
+phase2-definition-invariants: whole-callback cross-alias reads and commit/compensation interleavings pass
+phase2-definition-invariants: populated legacy R2 refusal, pinned R1, Bellini lots/jobs/skill/tool/exchange, Phase 1 custody/replay and ledger equal after every Phase 2 boundary
+phase2-definition-invariants: alert delivery occurs after gate release
+phase2-lot-boundary: closed optional transitions, exact-use assertions and empty-versus-absent replay pass
+phase2-lot-boundary: v1 callback same-transaction retry recovery, fresh retry once and pre-existing receipt preservation pass
+phase2-lot-boundary: v1 after-insert same-transaction retry recovery, fresh retry once and pre-existing receipt preservation pass
+phase2-lot-boundary: v1 before-insert same-transaction retry recovery, fresh retry once and pre-existing receipt preservation pass
+phase2-lot-boundary: v2 callback same-transaction retry recovery, fresh retry once and pre-existing receipt preservation pass
+phase2-lot-boundary: v2 after-insert same-transaction retry recovery, fresh retry once and pre-existing receipt preservation pass
+phase2-lot-boundary: v2 before-insert same-transaction retry recovery, fresh retry once and pre-existing receipt preservation pass
+phase2-lot-boundary: raw/registry/nested authority, null-ID v2 SQL refusal and distinct-client pinned definition participation pass
+phase2-lot-boundary: legacy exact digest/result, raw-key conflicts, replay before authority and unchanged guards/events pass
+phase2-lot-boundary: v2 private snapshot, every authority conflict, permanent detached result and account/action independence pass
+phase2-lot-boundary: before/after guard/event faults and swallowed leaf/root poison restore exact snapshots
+phase2-lot-boundary: S2 reserved own-data keys reject recursively before callback or guard insertion
+phase2-lot-boundary: S4 exact hashes reject arrays and other inert non-string values without state changes
+phase2-lot-boundary: actual craft audit after-INSERT failure restores exact cash/ledger/item snapshot; same-key retry spends once
+phase2-lot-boundary: permanent v1 dead/replaced actor, deleted car, participant drift and retired cancellation receipt fixtures pass
+phase2-lot-boundary: S1 Crew admission/locks precede owner/aggregate locks and separate item admission; late or repeated sets reject
+phase2-lot-boundary: both gate directions and alias recovery exclude interleaving for whole callbacks
+phase2-lot-boundary: PASS
+phase2-lot-boundary: failed inverse poisons queued/acquired handles and every read/write/invariant alias until process recreation
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+PASS native Hook settlement requires historical proof; rotation/RPC refusal holds revenue and wallet until verified without rebroadcast
+PASS canonical receipt is rechecked after historical RPC proof before opening bookkeeping transaction
+PASS real signed request persists before send; replay settles once; payload rebinding and raw status leakage refused
+PASS timeout before broadcast retries identical signed bytes and blocks sibling jobs
+PASS lost response after broadcast reconciles exact receipt without a second action
+PASS consumed nonce without our receipt halts the wallet and never signs a replacement
+PASS pending transaction restart retries the same nonce/hash/bytes
+PASS confirmation depth precedes settlement; changed finalized block halts future sends
+PASS pre-finality reorg does not book or rebroadcast under uncertain authority
+PASS finalized revert never books and releases asset reservation while retaining gas budget
+PASS confirmed spend and pending reservations share a bounded budget before signing
+PASS failed database booking retains confirmed transaction and blocks all new wallet jobs until settled
+PASS required typed settlement acknowledgement and unjournaled consumed nonces fail closed
+PASS wrong chain, changed runtime, tampered signed payload and external pending nonce refuse before send
+PASS concurrent same-process jobs serialize across the entire wallet nonce domain
+PASS exact planning keys retain long-cadence action authority beyond the 100-row status window
+PASS keeper transport: 16 cases (pg-mem); no live transactions
+PASS manifest rejects arbitrary calls, wrong chain, unpinned targets, custody drift, duplicate lanes, gas dust and excessive slippage
+PASS typed calldata pins recipients, oracle floor, fixed POL position and zero keeper value with bounded asset budgets
+PASS RPC domain/code/reorg failures reject observations and owner/recipient binding failures cannot authorize jobs
+PASS unhealthy foundation, emergency latch, pause and executor cooldown stop dependent asset spending
+PASS stale observations, unseeded keeper gas, uneconomic sweeps, over-cap refills and stale token valuation fail closed
+PASS Desk requires explicit database band strategy and preserves its approved anchor in receipt metadata
+PASS Bank service jobs use predeclared borrower/market/asset bindings, positive debt service and accrued-fee floors without a fictional asset price
+PASS Bank buffer funding uses the prefunded fixed-market vault with no caller amount, full action-cap reservation and zero residual allowance
+PASS Bond daily issuance requires exact manifest/cap parity; unlimited preserves owner/token/minter/health/oracle/price/pause/runtime guards and existing manifest hashes
+PASS read-only default needs no signer, manifest byte digest and dedicated signer are enforced, disabled mode is inert
+PASS liquidity keeper: 10 cases; no live transactions
+PASS successful migration discovers and simulates only the actual full-range foundation NFT using distinct L2 log bounds
+PASS wrong custody/pool/range/floor/subscription, ambiguous candidates and absent or failed migration proof never authorize foundation adoption
+PASS permissionless external migration works through indexed strategy receipt, paged scans remain bounded, stale discovery does not block gas work
+PASS phase progression is permissionless only after owner binding, migration failure exposes fixed recovery, stopped launches stay stopped and phase remains observable without jobs
+PASS genesis keeper: 4 cases; no live transactions
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+PASS all four confirmed swap streams settle actual custody exactly once
+PASS direct OMR fees credit only delivered amounts and never invent an ETH price
+PASS odd wei and sub-micro dust cannot increase signable capacity
+PASS missing, forged and wrong-destination transfer receipts are rejected
+PASS a receipt from a changed executor sequence cannot replay a settlement
+PASS inflow-index lag holds accounting without partial pool or reserve writes
+PASS reserve, desk and community invariants include direct tokens as explicit backing
+{"suite":"liquidity accounting","passed":7,"postgres":false}
+PASS canonical nested target metadata accepts an actual permissionless outer call
+PASS selected executor sequence validates only its own exact delivery segment
+PASS POL token-denominated fees need exact OMR delivery to both fixed recipients
+PASS hook token sweeps need exact token delivery instead of an unsupported event-only credit
+PASS Desk accounting preserves the existing lower-band and sanity-floor gates
+PASS backfilled Vig prices retain their actual block time instead of becoming fresh at ingestion
+PASS micro-unit flooring never rounds a physical token allocation upward through Number
+PASS Vig historical price continuity remains bounded before a new canonical print is published
+{"suite":"liquidity accounting adversarial regressions","passed":8,"failed":0}
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+PASS absent, expired and deployment-mismatched observations close authority
+PASS bond pause leaves general market health available but prevents daily authority
+PASS read-only planning does not publish a heartbeat or open issuance
+PASS daily offering requires explicit policy and clips to the contract cap
+PASS a manual emergency stop survives automatic retries even while unhealthy
+PASS the next day clips to exact remaining lifetime capacity and never refills it
+PASS Genesis warmup, failed migration and unhealthy foundation do not open markets
+PASS explicit unlimited heartbeat requires zero cap and creates no daily offering row
+PASS unlimited readiness still fails for positive cap, bond pause and unhealthy foundation
+PASS unlimited mode rejects legacy daily controls instead of reporting an ineffective pause
+10 liquidity policy checks passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+PASS two customers sign 5000 and 10000 OMR on the same day without an offering row
+PASS used quotes transition to committed without double counting or releasing allocation
+PASS manual booking of a quoted nonce is not counted again as outstanding
+PASS exact payout rounding cannot overallocate at signing or release dust when booked
+PASS discretionary booking cannot consume another outstanding quote reservation
+PASS wall-clock-expired quotes remain reserved when chain proof is unavailable
+PASS a later quote automatically releases finalized unused reservations with durable domain proof
+PASS a used nonce before expiry holds its allocation while the watcher is behind
+PASS unlimited mode ignores old daily rows and rejects ineffective daily stop controls
+PASS missing or capped manifest policy retains daily offering checks
+PASS paused, unhealthy, stale and cap-mismatched observations never sign
+PASS live oracle failure, wrong RPC chain, missing wallet and nonfinite principal cannot sign
+PASS heartbeat expiry during price RPC and a different signing contract both refuse quotes
+13 unlimited bond checks passed (pg-mem; no concurrency proof)
+PASS additive schema migrations include nullable deployment domain and expiry evidence
+PASS a finalized unused expired quote releases once and retains complete proof without RPC under a lock
+PASS wrong RPC chain retains the reservation
+PASS wrong runtime retains the reservation
+PASS missing runtime retains the reservation
+PASS unsupported finalized block retains the reservation
+PASS RPC failure during nonce lookup retains the reservation
+PASS changed canonical finalized hash retains the reservation
+PASS future finalized timestamp retains the reservation
+PASS used nonce awaiting watcher retains the reservation
+PASS exact deadline boundary retains the reservation
+PASS wall-clock expiry before finalized chain expiry retains the reservation
+PASS configured contract mismatch refuses recovery before RPC
+PASS configured chain mismatch refuses recovery before RPC
+PASS invalid manifest policy refuses recovery before RPC
+PASS missing manifest bond runtime pin refuses recovery before RPC
+PASS legacy missing domain remains reserved without current-contract inference
+PASS another deployment remains reserved without current-contract inference
+PASS another chain remains reserved without current-contract inference
+PASS database recheck preserves a watcher consumed status race
+PASS database recheck preserves a deadline changed race
+PASS database recheck preserves a deployment changed race
+PASS database recheck preserves a bond booked without updating quote status race
+PASS one recovery call considers at most the oldest 100 candidates
+24 bond quote expiry checks passed with deterministic finalized-RPC fixtures and disposable pg-mem SQL; no live network or broadcasts.
+PASS failed primary RPC falls back to the next endpoint without creating a signer
+PASS read-only watcher constructor and chain probe share fallback for fee inflow reads
+PASS repeated chain probes refuse outage/wrong chain and recover on the next healthy probe
+PASS unsigned manifest schema: 22 typed jobs; placeholders rejected; no network or signer
+PASS an older healthy observation cannot reopen the process-local phase after a newer unhealthy one
+PASS Desk minimum output rounds against the exact approved band ceiling
+PASS a Vig print timestamped after the snapshot cannot authorize the Desk strategy
+{"suite":"liquidity policy adversarial review","passed":3,"failed":0}
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+PASS missing existing signer or extraction domain remains dormant without RPC or queue writes
+PASS backlog and unresolved keeper receipts cannot cause signing
+PASS funded existing queue drains FIFO with exact EIP-712 signer and domain
+PASS already claimed obligations continue to consume lifetime funding
+PASS physical claim balance bounds unclaimed signatures and new queue completion together
+PASS claimed history is excluded from physical obligations but cannot restore lifetime capacity
+PASS configured chain and claim must exactly match the approved manifest
+PASS wrong RPC chain, runtime, signer, token and owner preserve all queued requests
+PASS claim pause and stale or reorganized reads never sign
+PASS a signing configuration change during verification cannot change the approved domain
+{"suite":"confirmed liquidity queue completion","passed":10,"postgres":false,"signer":"public synthetic fixture only"}
+PASS exact reserve edge cannot sign a six-decimal claim one micro above backing
+PASS character mint preflight: exact 10000 DEV policy; stale or unreadable deployments unready
+invariant correction: 34 persisted SQL-valid corruptions rejected, exact fixture restoration and clean rechecks PASS
+invariant correction: observed active/escrowed/released/transferred/consumed histories and exact transitions PASS
+invariant correction: C custody index visits plus U exact-unique lookups at two scales PASS
+fifo-correction drift: quantity, identity, earlier prefix, changed shortfall, irrelevant tail, zero-write abort and same-key retry/replay PASS
+fifo-correction filtering: ten exact economic dimensions, null/non-null SQL selection and scalar binds PASS
+fifo-correction overlap: sufficient prefix, repeated/partial/explicit/exact ordering, unchanged shortage and replay PASS
+external-correction crafting: exact-only refusal, exact-first collision selects legacy, exact history and replay PASS
+external-correction mysteries: exact-only refusal, exact-first collision selects legacy, exact history and replay PASS
+external-correction operations: exact-only refusal, exact-first collision selects legacy, exact history and replay PASS
+external-correction paging: 4097 complete grants, FIFO 1/100 pages, page-local groups, hidden details, exhausted anchor, closed cursor PASS
+fifo-correction bounds: 4097 real compatible holdings, unrelated/explicit selection, shared overflow/shortage, 4096 mixed-key success and replay PASS (17 bounded queries, max 4097 returned rows; no row-visit/index-performance claim)
+external-correction ids: 200/201/258 exact lot/unique grants, events, transition/replay and legacy bounds PASS
+external-correction error observation: {"mode":"registry","actualCode":"content_registry_corrupt","expected":"content_registry_corrupt"}
+external-correction error observation: {"mode":"missing","actualCode":"definition_not_found","expected":"definition_not_found"}
+external-correction error observation: {"mode":"integrity","actualCode":"item_integrity_error","expected":"item_integrity_error"}
+external-correction error observation: {"mode":"operational","actualCode":"42P01","expected":"42P01"}
+external-correction error observation: {"mode":"operational-aborted","actualCode":"42P01","expected":"42P01"}
+external-correction error observation: {"mode":"malformed","actualCode":"bad_item_request","expected":"bad_item_request"}
+external-correction error observation: {"mode":"candidate","actualCode":"contention","expected":"contention"}
+external-correction errors: revalidation classification, poisoned-root rollback and same-key retry PASS
+external-correction legacy-board: exact unique stays stored and invisible to legacy inventory PASS
+external-correction assignment: corrupted legacy-shaped alias on exact row refused at precheck PASS
+phase2-lots: exact lots/uniques, complete mixed candidates, custody/owner transitions, historical lineage, SQL constraints, recovery and replay PASS
+phase2-lots-property: 1/100 seeds, 250 actions, 9.6s elapsed
+phase2-lots-property: 10/100 seeds, 2500 actions, 89.6s elapsed
+phase2-lots-property: 20/100 seeds, 5000 actions, 171.6s elapsed
+phase2-lots-property: 30/100 seeds, 7500 actions, 255.5s elapsed
+phase2-lots-property: 40/100 seeds, 10000 actions, 338.1s elapsed
+phase2-lots-property: 50/100 seeds, 12500 actions, 420.4s elapsed
+phase2-lots-property: 60/100 seeds, 15000 actions, 502.0s elapsed
+phase2-lots-property: 70/100 seeds, 17500 actions, 584.2s elapsed
+phase2-lots-property: 80/100 seeds, 20000 actions, 666.5s elapsed
+phase2-lots-property: 90/100 seeds, 22500 actions, 750.0s elapsed
+phase2-lots-property: 100/100 seeds, 25000 actions, 841.8s elapsed
+phase2-lots-property: FULL 100 seeds x 250 actions {"grant_lot":3450,"grant_unique":4048,"split":1755,"consume_lot":1800,"escrow_lot":1840,"escrow_unique":1793,"release_lot":910,"release_unique":870,"consume_escrow_lot":902,"consume_unique":1655,"consume_escrow_unique":837,"transfer_unique":1690,"fault_grant":1718,"bad_quantity":1732,"retry":1718,"replay":2342}
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{"ok":true,"database":"pg-mem","mintGrossEth":0.02,"mintDevEth":0.02,"historicalAndNonMintGrossEth":0.03,"mintCredits":4,"historicalRowsPreserved":true,"allocationInvariantDetectsPhantomRevenue":true}
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+burn before Extracted: status=pending
+pg-mem: sequential recovery checked; concurrency requires the Postgres run
+PASS deed reimport event ordering (pg-mem): signed extraction, durable pending burn, exact recipient, once-only recovery and replay
+progression-admission: exact cross-engine pins, dependency cycles, branch/collective policy, hidden deadends, privacy and canonical snapshot PASS
+world-prerequisites pg-mem: PASS
+recipe-policy: baseline V1 craft and salvage receipts replay across upgrade; explicit policy changes still conflict
+recipe-policy: authentic discovery, redacted partial cards, hidden learned outputs, read parity and revoked replay pass
+recipe-policy: live Crew/Family membership, real mystery completion, retained crafted provenance and world facility state pass
+recipe-policy: authoritative account/global/territory caps, period rollover and serialized duplicate debit pass
+recipe-policy: quota insert/update and late inventory failure compensation, retry and restart durability pass
+furnace-ledger preserve: acquisition, hidden craft/clue, distinct original sources, Crew sharing, different-Crew Family roles, irreversible choice, collective consequence, replay/restart and outsider boundaries PASS
+furnace-ledger expose: acquisition, hidden craft/clue, distinct original sources, Crew sharing, different-Crew Family roles, irreversible choice, collective consequence, replay/restart and outsider boundaries PASS
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+core-progression-api: default-off/cohort, shared admission, mystery snapshot, replay and collective-only HTTP gates pass
+PASS stable versioned command contract and server-derived opportunities
+PASS hidden prerequisite privacy, account-bound issuance, opaque identity and request substitution denials
+PASS bounded identity mutation fuzzing cannot manufacture authorization
+PASS stable issuance, duplicate, double click and durable replay
+PASS stale location, revoked account authority and dead-character revalidation
+PASS expired unexecuted opportunity cannot mutate the world
+PASS confirmation, consumed asset removal and timeout retry without economic duplication
+PASS item consumed after projection denies execution without partial economy effects
+PASS new database connection and engine restart preserve replay identity
+PASS indexed entity window, command/opportunity caps and deterministic relevance ranking
+player-commands: 10 groups passed (memory)
+player-command-journey preserve: personalized lead, discovery, hidden prerequisites, salvage, craft, knowledge revocation, Crew changes, roles, commitments, persistent branch, feedback, differential views and restart PASS
+player-command-journey expose: personalized lead, discovery, hidden prerequisites, salvage, craft, knowledge revocation, Crew changes, roles, commitments, persistent branch, feedback, differential views and restart PASS
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+player-command-api: authentication, cohort, strict request shape, account binding, no-store, exact HTTP retries, current projection and character isolation PASS
+player-command-client: issued commands, all availability states, context actions, confirmation, retry/restart identity, double clicks, session isolation and private rendering PASS
+
+> omerta-backend@1.2.0 test:director
+> node test/director-definitions.js && node test/director-config.js && node test/director-runtime.js && node test/director-recovery.js && node test/director-dock-world.js && node test/director-commands.js && node test/director-api.js && node test/director-journey.js && node test/director-security.js && node test/director-simulation.js
+
+director definitions: 53 rejection checks, immutable admission, semantic pressures, three canonical campaign branches passed
+PASS Director configuration: disabled default, prerequisite/cohort gates, no shadow content exposure, retained foundation interfaces
+PASS Director runtime: real pressure, disabled/simulation/shadow, durable creation/restart/replay, escalation, expiry and recovery
+Director recovery: expired aftermath resumes once after cooldown with durable recovery lineage
+Director recovery: season change records explicit recovery while preserving world consequences
+Director recovery: multiple physical outcomes between evaluations catch up to canonical campaign completion
+Dock War protected: real domain branch, retry, custody and canonical history passed
+Dock War intercepted: real domain branch, retry, custody and canonical history passed
+Dock War alternate_route: real domain branch, retry, custody and canonical history passed
+Dock War opposition: concurrent Family operations, single canonical outcome and losing-side recovery passed
+director-commands: shared knowledge snapshot, authorized cards, opaque issuance, delegated discovery, stale/forged/expired denial, durable replay and succession PASS
+director-api: authenticated composed content, per-audience DTO, no enumeration/definition leak, strict opaque dispatch, real discovery, retry and account revocation PASS
+director-journey protected: commands, shared situation, knowledge, coordination, canonical consequences, second generation, restart and completion PASS
+director-journey intercepted: commands, shared situation, knowledge, coordination, canonical consequences, second generation, restart and completion PASS
+director-journey alternate_route: commands, shared situation, knowledge, coordination, canonical consequences, second generation, restart and completion PASS
+Director security: enumeration, ACL revocation, membership, forged/stale actions, duplicate workers, restart, expiry and definition tamper passed
+{"ok":true,"runs":36,"scenarioCount":9,"periods":[1,7,30,180],"maximumActive":10,"maximumStartsPerTick":4,"maximumRepetitionWithinWindow":2,"directorMinted":0,"wireBalanceErrors":0,"deadEnds":0,"results180Days":[{"scenario":"low_population","generated":21,"completed":12,"ignored":9,"campaignsCompleted":6,"campaignsAbandoned":9,"recoveryUse":9,"playerOpportunityVolume":111,"unfundedResponseScopes":0},{"scenario":"medium_population","generated":59,"completed":48,"ignored":11,"campaignsCompleted":24,"campaignsAbandoned":11,"recoveryUse":11,"playerOpportunityVolume":2069,"unfundedResponseScopes":0},{"scenario":"high_population","generated":154,"completed":144,"ignored":10,"campaignsCompleted":72,"campaignsAbandoned":10,"recoveryUse":10,"playerOpportunityVolume":38466,"unfundedResponseScopes":0},{"scenario":"family_dominated","generated":121,"completed":96,"ignored":25,"campaignsCompleted":48,"campaignsAbandoned":25,"recoveryUse":25,"playerOpportunityVolume":8631,"unfundedResponseScopes":0},{"scenario":"fragmented_crew","generated":212,"completed":84,"ignored":127,"campaignsCompleted":42,"campaignsAbandoned":127,"recoveryUse":127,"playerOpportunityVolume":13550,"unfundedResponseScopes":0},{"scenario":"economic_shortage","generated":251,"completed":51,"ignored":197,"campaignsCompleted":15,"campaignsAbandoned":197,"recoveryUse":197,"playerOpportunityVolume":8055,"unfundedResponseScopes":3},{"scenario":"territory_war","generated":99,"completed":96,"ignored":3,"campaignsCompleted":48,"campaignsAbandoned":3,"recoveryUse":3,"playerOpportunityVolume":4374,"unfundedResponseScopes":0},{"scenario":"quiet_world","generated":0,"completed":0,"ignored":0,"campaignsCompleted":0,"campaignsAbandoned":0,"recoveryUse":0,"playerOpportunityVolume":0,"unfundedResponseScopes":0},{"scenario":"high_mystery_activity","generated":78,"completed":72,"ignored":6,"campaignsCompleted":36,"campaignsAbandoned":6,"recoveryUse":6,"playerOpportunityVolume":3736,"unfundedResponseScopes":0}]}
+
+> omerta-backend@1.2.0 test
+> node test/smoke.js && node test/persist.js && node test/economy.js && node test/social.js && node test/growth.js && node test/hardening.js && node test/agent-alpha.js && node test/agentturn.js && node test/security.js && node test/chain.js && node test/watcher.js && node test/vig.js && node test/casino.js && node test/heists.js && node test/convoy.js && node test/commission.js && node test/stockcatalog.js && node test/stockcatalogv2.js && node test/market.js && node test/skills.js && node test/underworld.js && node test/law.js && node test/world.js && node test/npcwar.js && node test/pen.js && node test/loans.js && node test/portfolio.js && node test/estate.js && node test/deeds.js && node test/auction.js && node test/wire.js && node test/store.js && node test/pass.js && node test/landmarks.js && node test/speakeasy.js && node test/boxing.js && node test/bonds.js && node test/races.js && node test/port.js && node test/stable.js && node test/migrate.js && node test/emission.js && node test/desk.js && node test/made.js && node test/nft.js && node test/reimport.js && node test/walletforge.js && node test/expansion.js && node test/dynasty.js && node test/intrigue.js && node test/megaproject.js && node test/duels.js && node test/clues.js && node test/seasons.js && node test/ring.js && node test/standing.js && node test/sacking.js && node test/shields.js && node test/population.js && node test/tokenomics.js && node test/treasury.js && node test/stockdeliver.js && node test/dexbot.js && node test/mastery.js && node test/activity.js && node test/brokers.js && node test/bank.js && node test/community.js && node test/tokenhealth.js && node test/regimen.js && node test/career.js && node test/favors.js && node test/crew.js && node test/firstblood.js && node test/discovery.js && node test/mentor.js && node test/events.js && node test/results.js && node test/vouch.js && node test/streak.js && node test/circle.js && node test/collision.js && node test/firsts.js && node test/runs.js && node test/shipment.js && node test/avatar.js && node test/portrait.js && node test/push.js && node test/dispatch.js && node test/pwa.js && node test/people.js && node test/citywire.js && node test/bulletin.js && node test/explore.js && node test/primetime.js && node test/citymap.js && node test/day.js && node test/payroll.js && node test/home.js && node test/streets.js && node test/citywide.js && node test/drop.js && node test/sweeps.js && node test/tax.js && node test/router.js && node test/auth.js && node test/rules.js && node test/path-funnel.js && node test/routes.js && node test/diagram-renderer.js && node test/coldstart.js && node test/preflight.js && node test/client.js && node test/engagement.js && node test/levers.js && node test/graph.js && node test/gates.js && node test/chainparams.js && node test/docs.js && node test/playthrough-truth.js && node tools/knowledge-test.js
+
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ M1 smoke test passed — auth, character, crimes (both outcomes), train, bank, travel, check-in, gates, ledger invariant, lazy accrual
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+  ✓ 66 character + 18 account persist columns exist on the schema, none duplicated
+  ✓ ESTATE_ACCOUNT_FIELDS covers every field runEstate assigns (prestige, deaths, omr, unbonding)
+  ✓ persistAccountFields writes the named subset, applies defaults, refuses an unknown field
+  ✓ no hand-rolled estate persist outside game.js
+persist: PASS
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ M2 economy test passed — market, garage (+car conservation), workshop, goods, rackets (+lazy income), assets, THE RETIRED AMM (both directions + the private wash rail refuse; the pool is left alone), staking (principal returns whole, yield retired to the families), gear, the 12h cash-sink tick (the whole take to the window) + the legacy-pool MERGE (idempotent), ledger invariants, Risk-to-Earn bank-interest daily cap, Business Empire (catalog, level gate, buy/collect/upgrade with income cap, §10.4 faucet/sink ledgering) + the step-two PvE risk layer LIVE AGAIN (scrutiny is income-sourced — banking the take heats the front, a hot front is raided at the collect touch with the pending seized + a ledgered business:raid fine, and the view carries the real raid line) with shakedown/takeover PvP intact + THE STREET WAR (rob-a-front on the SHARED shakedown window — 15% skim ledgered business:rob, the owner keeps ~85%, a miss is lockup; PvP car theft — a pure ownership move conserving cars by row count, consent flags cleared on transfer, the victim shield + the shared GTA clock + rookie protection; and THE RIVALS LEDGER naming the aggressor bloodline via its living street with no account UUID exposed) + RECURRING SINKS "the pad" (upkeep rate/owed in the view, paying is a ledgered business:upkeep sink resetting the clock, a front unpaid past the cold window produces nothing / no upgrades until the pad thaws it) + BALANCE sign-off (safehouse blocks deposits/collection, the >$10M bank-interest taper) + BUSINESS EMPIRE → Tier 4 (THE LAUNDERER legend now a FROZEN historical board, THE ACCOUNTANT (halves the income heat) + THE FIXER back on the shelf now the Bureau layer has a feed, THE FORTRESS unchanged, the TYCOON fold-in on collect, read-derived Front-Set titles, THE HOSTILE TAKEOVER — a taxed buyout transfer + fee burn + reset handover + level/have_kind gates, §10.4 vocabulary closed) + STREET WAR step two (TRUNK ROBBERY — a goods ownership move capped by the robber's free trunk space, units conserved, zero ledger rows, the victim's own 24h shield, a miss is lockup; BOAT THEFT at the docks — a row move on the SHARED vehicle shield + GTA clock with the rendezvous consent flag cleared; SABOTAGE — a random fit racer laid up, pure pacing; REVENGE TEETH — the net-owed mark's payback strike pays honor while the net aggressor earns nothing; and the coach naming fresh malice inside the 48h window)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ M3 social test passed — gangs, tribute+weekly, turf (+perks), melt tithe, exchange, jumps, bounty, contract board, hit→death/estate, busting, notifications, websocket push, buyback family split, §10.4 invariants, M7 assassin rep + NPC hitmen + safehouse/fire-heat/war-kills + family contracts (treasury-funded, member lockout, refunds) + bodyguards (hire/absorb/betrayal, before-insurance ordering) + M8 Tailor & Engraver vanity sinks (name/title/plate/crest/rename — ledgered vanity:* burns) + M8 intel sinks (anon fee, peek pierces anon) + M8 family seals ($OMR tribute → pooled reserve → sequential ladder, ledgered burns) + THE FOUNDATION (family charity: rank gate, empty-reserve rejection, sequential tiers from the reserve, badge on all three views + philanthropy leaderboard, softens members' RICO odds, ledgered foundation:tier burns; STEP TWO: freeload gate — the trial-soften only helps a member who joined before the case was filed) + M7-P3 territory rackets (establish/collect/upgrade, income cap, SEIZURE transfers the operation to the victor, treasury §10.4 reconcile) + VENDETTAS (heir born owing blood, feud ledger, waived directed floor, 2x settlement rep, the cycle turns, lapsed = nothing; STEP TWO: ESCALATION (a repeat kill deepens the feud — kills++ / a higher tier / a longer TTL), THE SIT-DOWN (consensual peace gates + the both-direction clear), and the blood-debt leaderboard — all pure status)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ M4 growth test passed — paths, kitchen (makings/cook/collect/deal/crew/raid/laylow/cleanpapers), heist, missions (+$OMR faucet), dailies (+all-three bonus), First Week (+capstone), referrals (+milestones, agent-recruit exclusion), telemetry, mod tools, M8 stat respec (sum-conserving, floor-gated, ledgered burn), THE HUSTLE (the three-stop chain: location gates, legwork delta, ledgered once-a-day payoff), WORD ON THE STREET (per-district seed boards, conflict guaranteed, accept/delta/claim, ledgered corner:job, the MAX_DAY cap) + THE MARK (every job names a victim; residents in your district get named) + THE CAPO'S LICENSE (agent recruiting perks: minted+retained+levelled gates, the tier board, the wire-slot perk, zero ledger rows)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"character cash","lhs":147614,"rhs":135269,"drift":12345,"ok":false}]
+✓ X integrations: full PKCE exchange + replay, upgrade + identity collision, x_busy transient semantics, post author binding, follow pagination
+[db] unreachable: connect ECONNREFUSED
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"character cash","lhs":1477500,"rhs":-22500,"drift":1500000,"ok":false}]
+🚨 BACKUP INVARIANT DRIFT: [{"name":"wal archiving off","archiveMode":"off","note":"no PITR"}]
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"character cash","lhs":1477500,"rhs":-22500,"drift":1500000,"ok":false}]
+🚨 WORKER INVARIANT DRIFT: [{"name":"worker heartbeat","ok":true,"detail":"recovered — beat 12s ago."}]
+🚨 WORKER INVARIANT DRIFT: [{"name":"worker heartbeat","ok":false,"detail":"no beat in 880 minutes."}]
+🚨 TEST INVARIANT DRIFT: [{"name":"test alert","note":"fired from /admin — this is a drill, nothing is wrong"}]
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"character cash","lhs":1477500,"rhs":-22500,"drift":1500000,"ok":false}]
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"character cash","lhs":1477500,"rhs":-22500,"drift":1500000,"ok":false}]
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"character cash","lhs":1477500,"rhs":-22500,"drift":1500000,"ok":false}]
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"character cash","lhs":1477500,"rhs":-22500,"drift":1500000,"ok":false}]
+invariant webhook failed after 3 attempts EAI_AGAIN
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"x","ok":false}]
+[db] ⚠ this build (v1.2.0) is OLDER than the build that last migrated this database (v999.0.0) — likely a rollback in progress. Additive-only schema discipline makes this safe to run; see DEPLOY.md § Rolling back a bad deploy.
+✅ the API watches the worker: pages on the dark edge, latches, announces recovery, and pages again on the next episode
+✅ M5 hardening test passed — §10.4 invariant job (zero drift on an earned economy, drift alarm fires), idempotency keys, invite codes, X OAuth + guest upgrade, season rollover, rate limits (human burst / agent 1-per-3s / swap 6-per-min), catalog item art (105 icons — 105 generated photos, SVG emblem fallback), THE BROADCAST (dossier/cards/profile, no exact-wealth leak, clean fallbacks), PRESENCE + THE TROLL BOX (online counter, city + family-gated chat, sanitized + flood-braked), ONE-CLICK X SIGN-IN (PKCE start/state/callback surface, dormant without env), THE CELLPHONE (DM send/gates/flood brake, threads + unread + seen, inbox peek without flipping delivered, zero ledger rows) + STEP TWO BLOCKED LINES (block/unblock, dead tone both directions, board + thread surfacing, history stands, self/double gates), DB-DOWN LEGIBILITY (503 db_down not 500 internal, GET /health up+down+recovery, real bugs still report as bugs), THE LOCK-FREE READ PATH (D1: a clean read is served without FOR UPDATE, a read with real accrual behind it declines and the route re-runs under the lock so the banked state and the rendered view agree, a read still CHECKPOINTS accrual while a read with nothing to bank leaves the clock alone, and the write guard refuses ten write/lock forms including MERGE, COPY, SELECT-INTO, setval and FOR UPDATE without refusing three legitimate reads), BACKUP HEALTH (pg_stat_archiver: shipping/failing/healed-not-realarming/quiet/unsupported, surfaced on the ops dashboard, and archive_mode=off reads as NOT RUNNING rather than healthy — the worker alerts on both), STREET LIFE (the black book: no_number gate, a jump-meeting is mutual, blocks precede the number gate; THE CALL: contact-only generation, one-open-call PK, located freight fulfilment paid from the contact's own pocket — contact:* legs net to zero, broke-void, expiry sweep) + STEP TWO THE BOOK (a ladder derived from the lines you hold, per-contact STANDING deepening with every settled call so a regular's next request is BIGGER — capped, and still refused outright when they can't cover it, so recycle-only holds at every tier — plus the lines-held leaderboard with residents excluded)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+agent-alpha tests passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ agent turn contract passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ security regression suite passed — exchange escrow §10.4, sub-cent bank interest, swap-sell dust, bounty-funder self-pay, mission $OMR re-mint, wallet validation, idempotency (concurrency/release/body-bind), invite race, identity race, agent throttle, banned websocket, revoked-token websocket, gang-leave socket drop, name uniqueness, JWT/seed/DATABASE_URL boot guards
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+reclaim: 1 expired voucher(s) but no on-chain reader (CHAIN_RPC_URL unset/down) — skipping to avoid a blind refund; set the RPC so usedNonce can confirm before refunding
+🚨 §10.4 CHAIN-BOUNDARY ALARM: Claimed(8) arrived for an already-EXPIRED (refunded) voucher — double-resolution
+  ✓ F1 clamp: rounding the ceiling breaches it 50% of the time; rounding the oracle price never does
+  ✓ v4 oracle watchdog: unset/healthy/due/keeper_late/rebaselining/skew classified + dormant end-to-end + mod view
+  ✓ quoteBond reads the oracle before it opens a transaction (no RPC under a held row lock)
+  ✓ the identity NFT has an entrance: a made account signs one MintVoucher, EIP-712 parity holds, and the reclaim rail ignores it
+  ✓ identity replacement uses the correct chain and a confirmed block strictly beyond the signed deadline
+  ✓ chain parity: all five values the chain holds and the backend restates are crossed (the two splits, the two fee prices, the withdrawal cap and the sell tax on both layers)
+✅ M6-B chain test passed — SIWE wallet link, EIP-712 voucher signing parity (recovers the signer), full-reserve withdrawal queue (debit→queue→fund→drain→sign), $OMR ledger conservation, gear-mint vouchers, Claimed reserve release, expired-voucher reclaim (OMR refund + reserve free + gear restore, §10.4 exact), §11 mint-gate + fee reconcile + concurrent-credit safety, bond-quote signing parity (recovers the signer) + watcher enrichment + wallet-submit calldata (server-encoded bond() for MetaMask/Robinhood Wallet), and THE EXIT TOLL (gross debit → net voucher, tax:dev/tax:buyback transfers, dev-fund claim, conservation exact)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+watcher: skipping poison harvest log (amount) amount must be > 0
+✅ watcher test passed — confirmation-depth gating (reorg-safe), downtime backfill, cursor advance and idempotent reprocessing for the fee + Claimed + reserve-bond + PackagePaid + Dynasty streams; the retired-sku payment holds its cursor for a human while a MALFORMED log is skipped so it can never wedge a stream; and a sold Dynasty portrait is a PHOTOGRAPH (frozen at first transfer, one-way)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ Vig test passed — real revenue → 60/40 split → buyback (spend ≤ inflow) → reserve+prize → prize payout → the PLEX bridge (the MINT is ETH only — and the Store door beside it is shut; the respawn pays in earned $OMR, and the freshness check is narrowed to the dead rail so it cannot fire on the live one) → real Vig-funded withdrawal + TIER A: a TRADE-fee source (the afterSwap→Vig hook rail) splits/buys/reconciles end-to-end and WIDENS extraction≤inflow, §10.4 untouched — the extraction-≤-inflow invariant + §10.4 conservation holding throughout
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ Gambling Den test passed — neon-located tables, limits, 31W/29L craps session fully ledgered (stakes/payouts/profit-capped street cut exact — the mint-on-top fix), $OMR untouched, Numbers ticket lifecycle (one/day, lazy 600:1 claim, idempotent settle), step two: back-room PvP dice (1W/1L, exact transfer + 5% rake, half to the street), the weekly fight (capped book, neon-family fix from the treasury — and the Madame docks the buying boss 5, Underworld rivalry #3 — fixed + seed-drawn settlements), casino-front rakeback (cursor-exact, no history claims), step three: BLACKJACK (28W/57L, 15 bust, 14 doubled, 4 naturals — deal/hit/stand/double, cash-delta==net, every hand ledgered casino:*blackjack, book identity holds) + heads-up HOLD'EM (1W/2L/0 split — 5-of-7 showdown, raked pot, tie splits), step four: the POKER TOURNAMENT (buy-in escrow, short-field refund, closed-window gate, double-entry gate, a 3-handed settle with a dead entrant's stake burned + the top places splitting net of rake, and the new poker-tourney-escrow §10.4 check), THE TRACK (the dogs & the ponies — a daily seed-drawn card, uniform ~15% takeout, one WIN bet per race per day, lazy claim at the LOCKED odds, winning + losing tickets ledgered casino:*:track) + step three RUN IN THE CARD (a player enters a fit racer into the day's card — the district/one-per-card gates + the casino:track:entry nomination sink, the merged field showing the maxed racer as the short-priced favorite flagged player:true, a bet paid at the locked odds, and the worker banking the racer's card win to its record + the owner legend, idempotent) + step four THE FUTURITY (the crowd-bet marquee — owners nominate player racers for a burned casino:futurity:nom fee, the town bets parimutuel, the worker races the field and pays the winner's backers the losing pool net of vig / the owner a promoter purse / half-vig→buyback; the district/own_event/bad_runner/already_bet gates, the distinct-posts regression + slot cap, and the new futurity-escrow §10.4 check mid-window + closing to 0), THE FAIR DRAW (keyless commit/reveal board — today SEALED to exactly {day, commitment, recorded}, yesterday's reveal recomputed by an OUTSIDE verifier with node's own crypto, the worker stamp idempotent, a tampered record surfaced as mismatch, the den fold, zero ledger rows), §10.4 identity + vocabulary + treasury + den + tourney-escrow + futurity-escrow checks hold
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ Crew heists test passed — board/gates, scored job (weighted split, exact ledgered shares, shared cooldown), shared-jail bust, THE RAT, disband/leave/stale refunds + STEP TWO: roles + the INSIDE JOB + TIER-4: the 12-job ladder, THE CASING phase (energy spent, board flag, no double-case), THE FENCE (a hot score banks loot not cash, fenced to cash at the drifting rate, hot loot on the board), the NOTORIETY gate on the marquee jobs + the crew leaderboard, and §10.4 (heist:fence rides the heist prefix)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ Convoy test passed — bulk loading beyond the trunk, guard-fee sink ledgered, band-only road board, ambush gates (own/family/safehouse/once/spent), deterministic hijack (trunk-capped transfer, remainder rolls on, shipper notified), deterministic repel (hospital, freight untouched), arrival + at-destination collect + STEP TWO: destination toll (treasury credit, §10.4 exact), degrading multi-ambush (per-character once, 3-cap, wear in the audit), insured freight (premium → pool, pool-capped claim, §10.4 pool check), vocabulary; STEP THREE: NPC TRUCKING (the worker tops the road to TARGET unmarked trucks, no over-spawn, an NPC truck on the public board, a deterministic hijack landing goods in the raider trunk with no owner to notify, and an arrived NPC convoy despawning with its cargo — no faucet on a delivered truck)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ Commission test passed — five seats by SEASON standing (the purchasable-standing fix: rollover re-contests the chamber), public cast-and-change votes, lazy majority tally + tie deadlock, real-cast lifecycle ballot, OPEN SEASON (half safehouse), THE PAX (war blocked), AMNESTY (half laylow, ledger exact), LOCKDOWN (+20 in the audit trail) + STEP TWO (audit-hardened): standing-ranked ballots (top two beat bottom three, stale head ballots outranked, electorate bounded at five, weighted ties deadlock), dissolution kills the ghost ballot, the head-of-table veto (rank/head/once gates, public record, touchpoint dead), vocabulary closed + STEP THREE: proposals with deposits (rank/no_seat/bad_decree/treasury gates, escrowed treasury deposit, one motion per family, public table, votes for unproposed decrees discarded, settle refunds the enacted motion + forfeits the rest to the pool, the commission-escrow §10.4 check exact) and THE LEVY (the buyback family split redirected to the seated chamber, head seat 5× the last) + TIER-4: THE STATESMAN (vote/veto/propose/override/enacted political-capital legend — survives death, leaderboard + view, once-per-week vote), THE OVERRIDE (the floor musters 7 seat-weight to overrule the head veto — RESTORED; head/rank/no_seat/no_veto/again gates), THE RECORD (chamber history), the 3 new decrees on the books, and §10.4 exact across it all (statecraft/override move no money) + THE TICKER BALLOT (the Stock Machine's Phase-A record): rank/bad_ticker/no_seat gates, cast + same-day change on the public keyless board, the standing-ranked SEATS..1 weighted tally (head seat outweighs a raw 1–1 — non-vacuous under the drop-the-weighting mutation), the city board carrying the day's buy, the roll sweeping YESTERDAY into the permanent keeper record (once, idempotent, streets-announced, decided_by naming chamber vs default), the everVoted guard (no pre-feature DEFAULT backfill), DEADLOCK buying the DEFAULT broad market, dissolution killing the daily ghost ballot too, and the whole ballot writing ZERO ledger rows
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ stock token catalog: chain-dormant allowlist, Safe-registry sync, active-only family ballot, and last-known-good outage behavior
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ stock catalog v2: canonical keys/calldata, finalized complete mirror, atomic LKG, stale fail-closed, unsigned CLI
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ Black Market test passed — listing gates (fee/floor/escrow guards: melt+fence refuse listed iron), car auction (bid floor, 5% min-raise, outbid refund exact, self-raise diff-only, buy-now instant settle, 2% take carved FROM the hammer as one NULL row), goods district-pinned partial buys + trunk-space reclaim, worker expiry settle + lapse, death (seller listings void with bids refunded, dead man's bids burn) + STEP TWO: hidden reserves (board flags met/not, under-reserve lapse refunds the bidder), anti-snipe soft close, standing BUY ORDERS (escrow at post, dock-pinned fills paid minus the take, warehouse claim, un-filled cancel/expiry refunds, dead-poster burn) + AUDIT: buying a buy-order rejected (no minting from escrow, C1), a self-raise never extends the clock (M2), the broker fee never dips below the floor (LOW-1), §10.4 market escrow + vocabulary
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ Skills test passed — twelve-skill tree (three branches × four tiers), level-derived points (6 @ lvl 25), learn gates (bad/owned/prereq/points), FAST TALKER laylow ×0.8 ledger-exact, BROKER half listing fees, PACK MULE trunk 13, ROAD CAPTAIN 480s road, GETAWAY stints ≤80%, EXECUTIONER ~8s search clock, DOC'S FRIEND heal ×0.75, respec (ledgered 10 $OMR burn, points restored, shared daily cooldown), STEP TWO: MADE MAN capstone (needs lvl 40 / 10 points, unlocks Adrenaline Rush), active-ability gates + energy burst to the level-scaled cap + shared cooldown, per-skill respec (leaf-first, not_known, ledgered, daily cooldown), STEP FOUR: GRANDMASTERY (two maxed branches → a Grandmaster: the combined ULTIMATE fires energy AND nerve to the cap, the locked ultimate is refused, the shared active cooldown is shorter), STEP THREE: prestige points (+2 @ prestige 24) + MUSCLE MEMORY (the heir keeps the three tier-1 basics; a prestige-0 line stays unschooled), estate wipes the build, vocabulary closed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ Underworld test passed — six-fixture board (+ Mickey the Corner, boxing step four), actor-side bumps (heal+2/gun+3/craft+1/ammo+1/listing+1), gifts ($5k sink, capped at 50, refused above), DOC heal ×0.9 + discharge $150/min (T2 half stay, T3 walk-out), VINNIE NPC-hit ×0.9 + waived post fee (tax stands) + ~9s search, BELLA gun ×0.9 cash + craft ×0.9 + 30% buyback (row gone, no double-sell), BIG TUNA guards ×0.9 + 72h listings + a fourth slot (fifth refused) + STEP TWO: the MADAME (den bumps, T1 comped nerve, T2 velvet rope at any level, T3 whispers count hunters — never names), the daily LEAD (+5 on first business with your best, gifts never claim it, once a day, strangers get none), DECAY (1/day past a week idle, floored at tier 1, materializes on the next bump), RIVALRY (an NPC hire costs the Doc −2), BLOODLINE MEMORY (the heir inherits floor(25%) of every standing; the dead street's rows are gone) + STEP THREE: rotating lead TASKS (seed-drawn per day, off-task business pays flat, the drawn job claims +5), RIVALRY #2 (an ambush attempt: Bella +2 / Big Tuna −2, win or lose), GRUDGES (whacking a T2+ friend of a fixture docks the killer 5 with that fixture — acquaintances forgive, strangers floor at 0, Vinnie never grudges) + STEP FOUR: grudges with TEETH (open grudge caps the tier at 2 — standing 95 reads tier 2, no favors — until a $25k ledgered penance squares it, once per grudge, clean refused), the WEEKLY FAVOR (one per street per week from any un-grudged T3 fixture: Doc patch-up, Madame nerve, Big Tuna energy, Bella repairs the worst iron — a refused errand never burns the week; Vinnie deals in debts, not gifts), and lead STREAKS (consecutive days pay +1 each on the +5, capped at +10 — streak rows advance, day 10 pays the cap) + STEP FIVE: GRUDGE DECAY (one grudge heals per 14 idle days — 2@15d reads 1, 1@30d reads 0 and the tier uncaps; penance settles the EFFECTIVE count and materializes it; no paying for what time healed), the ERRAND CHAIN (tier-1+ fixture hands a storyline: the drawn task on 3 separate days → +15; no double-step in a day; the board tracks step/task; done → notify + clean slate; restarting replaces the half-done job; strangers refused), vocabulary closed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ test/law.js — the Law/RICO/informants across all four phases + THE ENVELOPE (the standing graft: a $OMR sink that slows the case build, ledgered law:envelope burn, window extends on re-pay, jailed/broke gates)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ test/world.js — the Living World across all four phases + STEP TWO (roster 3→5, THE WAR EFFORT, ENRAGED CARTELS) + STEP THREE — CO-OP CREW RAIDS (plan/board/join/go, solo-outfit + crew_short + not_leader gates, a crew ROUTS an apex outfit, leader-weighted world:raid shares ledgered per head + ammo sink, war effort banked to both) + THE FRONTIER (the routing family plants its flag — board heldBy + the conquest leaderboard, dies with the family) + STEP FOUR — THE FRONTIER MADE REAL (a rout installs a garrison + tribute clock; a member collects the outpost’s TRIBUTE to the treasury — a ledgered world:tribute faucet capped at 24h; a rival INVADES by outbidding the garrison — a ledgered world:invade sink transferring the flag/garrison/clock; rank/unheld/held gates; the gang-treasuries §10.4 check reconciles both) + STEP SIX — THE UPRISING (the cartels push back: a seed-drawn forecast-able uprising raises an outfit’s defense + suspends its tribute; REINFORCE the garrison — a ledgered world:reinforce treasury SINK, not_held/amount gates; THE RECKONING — an undefended held outpost is RECLAIMED by the rising outfit (§10.4-neutral), a reinforced one REPELS it; idempotent worker sweep; the gang-treasuries §10.4 check reconciles the reinforce sink)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ THE BLOOD WAR test passed — the board (strength/defense/loot, player family excluded), a landed raid (bounded family:raid loot + legend + pool drain + ammo sink + cooldown), THE SEVERANCE (no season_wars → no Commission seat), the interlock (a beaten family reads weaker), THE DEFENCE (a counter hospitalizes the raider), THE MANHUNT (an escaped raider is hunted down later, shield-honouring, one-shot), a repel (hospitalized, pool untouched), THE CONQUEST (routing claims the family as a vassal → bounded family:tribute to the treasury, gang-treasuries reconciled, the conquest board), the gates (level/own_family/cooldown/bad_target), the leaderboard, THE FAMILY WAR (formal: the rank gate, the gang:war war-chest sink with NO season_wars, one campaign per family, the board decoration, scoring WIN_SCORE raids to WIN a status trophy for the declarer, the war-chief leaderboard, the worker lapse of an expired campaign, and the gang-treasuries reconcile), THE OFFENSIVE (step four: an NPC family opens hostilities on a real player family unprompted → members notified + a peace/cooldown window + the board surfaces who to hit back, not piled on by a second, a due strike enqueues a shield-honouring family_aggro hit — a safe-housed mark is a clean miss, an unshielded one is hospitalized — §10.4-NEUTRAL (zero ledger rows), counterplay: routing the outfit ends its aggression, and an expired hostility lapses), NPC-FAMILY DIPLOMACY (sue an NPC family for peace → the worker signs it, signing ENDS its live OFFENSIVE, the board shows the peace, the raid is blocked by the pact, NPC↔NPC alliances form + surface on the board, the picker keeps the OFFENSIVE off a pacted pair and reopens once the peace is gone — all §10.4-neutral), ALLIES JOIN THE OFFENSIVE (the aggressor's NPC ally sends guns at the same target — both strike a member — the board names the joiner, and suing that ally for peace keeps it out), and §10.4 (family: vocabulary closed)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ test/pen.js — the prison meta-game + step two (the hole, yard incidents, the burner phone) + step three THE BREAKOUT (cutkit sink, free/no-kit/lockdown gates, forced fail → the hole + longer stretch + beating + kit spent + NOT wanted, forced win → sentence cleared + WANTED fugitive + heat spike) + step four THE CO-OP BREAKOUT (plan stakes a cutkit, crew joins, crew_short/not_leader gates, forced win → the whole crew out + WANTED, forced fail → the whole crew in the hole + longer stretch, leader-disband + stale-sweep refund the staked kit) + step five PRISON FACTIONS (join/leave, free/bad/already gates, the board cover + SHOT-CALLER derivation moving to the most-feared, yard omertà blocking a same-crew shank while a rival stays fair game) + THE BREAK RAT (a crew member tips the guards → the break blows, the honest crew eats the hole + a longer stretch, the rat cuts a deal for time OFF but is holed WITH the crew so the roster never outs them, the feed only says somebody talked) + step six THE YARD LIVES (the iron pile trains the physical disciplines on the SHARED gym clock with the street gym still jail-gated, cards with the crew pays gambling mastery XP for energy, the daily seed-drawn yard character talks once a day with the seed's own effect — and the whole step writes ZERO ledger rows)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ test/loans.js — loan sharking (offer/take/repay/cancel/collect, welsher, sweep, death, §10.4) + STEP FIVE THE LOAN HOUSE (mod funding from the confiscation pool, the vig split feeding the window, level/floor/cap/welsher/one-debt gates, a pool-bounded take + a full repay cycle growing the pool, THE WALL (never lends past the pool), the sweep auto-collecting a default (partial seize, welsher + WANTED, the pool eats the bounded shortfall), and the loan-house-pool §10.4 check exact throughout) + DROP 5 THE $OMR PLEDGE (demand cap, board terms, liquid-only take gate, the pledge escrowed into the row + the escrow §10.4 check, repay round-trip, default seize, grace-forfeit, the death split at the IDLE loot rate + the headless all-to-lender path — every leg a transfer, conservation drift ZERO end to end)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✓ THE VAULT — backed with ETH: allocated <= held on both sides, the ledgered burn, the daily cap, the honest clamp, the RICO window survives D11
+✅ Portfolio RETIRED (D11) test passed — 9 tombstone routes, direct-call payers throw, grantShares deleted, /v1/rules portfolio:null, the view carries no book, a historical rwa:invest row reconciles while a fresh one trips the "portfolio retired" alarm (and a live rwa:vault burn never does), the stranded family pool drains to the family yield, and THE VAULT block holds whole
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ Estate ("the compound") test passed — the board + tier ladder + feature catalog, sequential tier upgrades (exact ledgered estate:tier burns), feature tier-gates + no-double-buy, naming (needs a place first), trophies from real holdings, the sheet summary, estate value = every $OMR sunk, DEATH SURVIVAL (the heir inherits the compound), spends == ledgered estate:* burns, and §10.4 (estate: vocabulary + $OMR conservation — drift == the test grant only) + TIER-4: the Palazzo tier-6 + Gallery/Observatory/Archivist catalog growth, and THE COLLECTOR legend (lifetime $OMR sunk == the estate burns, a derived rank, the survives-death collectors leaderboard + the Patron of the Season)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+deeds: PASS
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ Auction House ("the sit-down") test passed — weekly lot determinism, the block, first bid (floor + escrow), the +5% min-raise, OUTBID (loser refunded exactly), SELF-RAISE (net = new−old), the auction-escrow §10.4 check mid-auction (bids/refunds are transfers), SETTLE (worker burns the winning bid + grants the account trophy, no extra debit), the loser kept his $OMR, DEATH SURVIVAL (heir inherits the trophy), and §10.4 (escrow empties, the win is a burn, vocabulary closed) + TIER-4: the LEGENDARY marquee lot (LOTS_PER_WEEK+1, from the rare set), COLLECTION SETS (read-derived), and PLAYER CONSIGNMENT (list a trophy — fee burns; bid/outbid-refund/own-bid gates; the escrow spans both auctions+consignments; settle reassigns the trophy to the buyer, pays the seller NET, BURNS the house take, bumps the buyer's Collector legend; the collectors leaderboard + Patron; pull a no-bid lot; §10.4 exact — consign is a transfer, take + fee proper burns)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ The Wire test passed — the terminal (costs, empty state), the wiretap sink (self/gone/cap gates + exact intel:wiretap burn), tap INTEL (law stage, wealth band, ops counts, the huntingYou money-signal), bugs-on-you + SWEEP (free when clean, charged + clears when bugged), the Street Wire subscription (intel:wire burn + the premium feed: forecast, threat-chatter COUNT, open contracts), the worker sweep of expired taps, STEP TWO — THE BUG TRACE (names your watchers without clearing, free when clean), THE DOSSIER (a deep read: kill record / flags / family role / who they tap — banded wealth, never exact), THE SPYMASTER (lifetime intel ops + rank + the leaderboard, account-level), STEP THREE — the counter-intel triad: DISINFORMATION (an intel:disinfo sink that cooks a wiretap’s private signals — the hunt hidden, the indictment flag false) and THE INFORMANT (an intel:informant retainer that PIERCES the disinfo — the true read + who they’re hunting — self/gone/cap gates + worker sweep of lapsed retainers), STEP FOUR — THE SPYMASTER’S TRADECRAFT (the earned rank grants +wire-slots + an intel-read discount — the discounted amount is what’s ledgered) and THE WATCHDOG (a SUBSCRIBED watcher is pushed a wire_alert when a tapped mark turns hot — once per event per tap, reset on a re-tap, un-subscribers get nothing), STEP FIVE — THE TIERED SUBSCRIPTION LADDER (subscribe at a tier — a bigger intel:wire burn — surfacing the tier/slots/catalog) and THE STANDING WATCH (enroll a mark so the worker auto-renews the tap from your $OMR — self/no_sub/tier/watch_full gates, the worker renewing ONLY a near-lapse tap as a ledgered intel:watch burn, a broke watcher pausing, and cancel), and §10.4 (intel:* vocabulary + $OMR conservation — drift == the test grant only)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ THE PATRON PROGRAM (Store Tier-4) test passed — the patron ladder (a REAL purchase bumps patron_spent, a COMP does not, the tier climbs Friend→Benefactor), the retired PLEX rail (the Store is ETH only), THE BENEFACTORS league + THE HOUSE'S FAVOR crown (agents excluded, families aggregate a roster), THE LEDGER PRESTIGE (a completed-then-renewed track bumps pass_seasons, an unfinished one does not), and DEATH SURVIVAL of both status axes
+✅ The Store (ETH revenue packages) test passed — the catalog board, the three-way revenue split (founder/buyback/rwa, exact math), idempotent ingestion (re-delivered nonce = no-op), per-SKU grants (mint credit, revive bundle, ETH Street Wire window, the season pass + patron, the permanent patron badge), pay-before-link reconcile (claim-then-grant, exactly-once), zero-value no-grant, §10.4 NEUTRALITY (every check drift-0 — the Store mints no currency), and the buyback share funding the EXISTING Vig flywheel (spend ≤ revenue holds; RWA recorded-only, R2 dormant)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ The Ledger (Season Pass reward track) test passed — the pass gate, the board, the daily claim (title / revive tokens / energy refill), the ~daily cooldown, the BACKED $OMR stipend (paid through the pool the pass buyback funded, pool-bounded, never minted), completing the track + the complete gate, §10.4 (prize:omr reconciles, drift-0), DEATH SURVIVAL (the heir inherits the track), and the fresh-season reset
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ Named landmarks test passed — the public map (a plaque per district), the dedicate (min floor + ledgered vanity:landmark burn), the takeover (must strictly beat the current flex; plaque + name change; no refund to the ousted), bad-district + too-low gates, the dynasty name borne, DEATH SURVIVAL (the monument outlives the man), and §10.4 (vanity:landmark rides vanity:% — drift == the test grants only)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ The Speakeasy test passed — open gates, the base bar take (lazy income + 24h cap + safehouse gate), the decor ladder, naming (vanity:speakeasy burn + no-op guard), buying a ROUND (two-party taxed patron→owner transfer + guest list + prestige + cooldown/travel/self/jail gates), the REGULAR status, BOTTLE service (a pure $OMR burn) + STEP TWO: the BACK-ROOM TABLE (min/max gates, the owner rake carved from the stake, win/lose, notoriety drawn, travel gate) and the PROHIBITION RAID (a hot club seized + fined + SHUTTERED on collect, the shutter blocking rounds/table/income) + STEP THREE: cross-club RENOWN (derived from patronage + ownership, the leaderboard), the ETH COSMETIC DECOR tier (an owned unlock + own-gate + apply/clear + survives death; the $OMR rail retired), and the P2P BUYOUT (list/not_for_sale/travel gates, a taxed transfer, ownership + guest-list reset, the seller freed, the club keeps its build) + STEP FOUR: renown-EARNED decor (unlocked by renown, not bought) and the STANDOVER (a hostile forced-sale — cash gate, the fee burns win/lose, a loss keeps the club + sets a cooldown, a win forces a taxed sale at the assessed build value + transfers ownership), the nightlife board, DEATH (the club goes dark + guest list clears + district reopens; the cosmetic unlock survives), and §10.4 (the per-character cash check reconciles speakeasy: incl. table:bet/rake/win + raid + buyout + standover; bottles/naming ride vanity:%)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ The Fight Circuit test passed — recruit/THE STABLE (level/name/cash gates + cap at STABLE_MAX + rolled stats), train-by-id (gates + sink + ownership), the NPC EXHIBITION (bad-tier gate, fee-sink + purse-faucet on a win, the career-win bank, the per-fighter cooldown), the PvP BOUT (ownership/self/limit gates, the taxed transfer + rake split half→buyback, records + injury), THE TITLE BELT (claimed vacant, chip on the board, vacated on the champion's death), the MANAGER LEGEND (lifetime wins, leaderboard, SURVIVES death), STEP THREE — THE MAIN EVENT (announce gates + consent-by-listing, booked-form freeze, CASH parimutuel betting with escrow + gates, the worker resolution: winners split the losers net of vig / the promoter purse / half-vig→buyback / the manager legend, the board pools, DEATH cancels a booked card + refunds the crowd, and the boxing-bet-escrow §10.4 check), STEP FOUR — THE CORNERMAN (Underworld fixture — training ×0.9 cash at tier 1, +2 build at tier 3, the weekly stable patch-up favor) + BELT DEFENSE (a win while holding the belt is a DEFENSE that grows the reign; the mandatory-defense clock + #1 contender on the board; an inactive champion is STRIPPED by the worker), STEP FIVE — THE CALLOUT (only the #1 contender can call out the champ, self/not-contender/one-at-a-time gates, the board shows the pending challenge + accept clock; DUCK IT → the belt forfeits straight to the challenger; ACCEPT IT → a TITLE main event is booked, the callout consumed, both fighters locked, the board flags the title fight), the board + leaderboard, DEATH (the stable dies with the street), and §10.4 (per-character cash reconciles boxing: incl. the exhibition faucet)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ THE LP LEAGUE test passed — the dormant-without-a-reader posture, the two-tick depth-time accrual (STORED liquidity × elapsed, so a deposit just before a sync earns nothing for the window it missed), the underwriter-score fold + the board/league surfaces (an LP-only backer earns a seat), a pulled position keeping what it earned and earning no more, an unlinked wallet scoring nobody, and zero ledger rows (status only)
+✅ THE UNDERWRITER (Reserve Bond Tier-4) test passed — THE PLEDGE (min gate, ledgered bond:pledge burn, over-pledge → omr), THE CHARTER (sequential Bronze→Silver seals, not_backer gate, ledgered bond:charter), backer-tier derivation (pledge + bondedEth×ETH_SCORE_OMR → Financier), THE UNDERWRITERS LEAGUE + the read-derived Financier crown (agent excluded, the crown flips on a bigger pledge), THE FAMILY SYNDICATE (summed roster score), §10.4 (bond: enumerated + every burn reconciles + the only drift is the SQL seed), and DEATH SURVIVAL (pledged_omr/bond_charter/bonded_eth all survive the estate)
+✅ The Reserve Bond test passed — fund the tranche, record a bond (the discounted payout + the 37.5/15/25/22.5 POL/Dev/RWA/Vig ETH split, the treasury slice mirrored into rwa_revenue), the ANTI-PONZI cap (committed ≤ capacity → over_capacity), idempotency (duplicate nonce = no-op), the bond invariant (committed==Σpayout, ≤capacity, claimed≤committed, ETH-split==principal, discounts capped), the Vig integration (bond ETH feeds the buyback → reserve+prizes), CLAIM (linear vesting → full claim → nothing left), the Treasury Backer status, and §10.4 IN-GAME UNTOUCHED (bonds are out-of-band real value — zero transactions rows — so the sweep stays drift-free through the whole lifecycle)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ Street Races test passed — car power (sqrt value + tune + wheelman speed), the PvE circuit (fee BURNS win/lose + bounded purse on a win, level/tier gates), tuning (cash sink + power gain + the cap), PvP wager races (the casino:pvp taxed transfer — winner nets wager minus rake, half to the street tax, the loser car damaged; self/min/max/not_listed/limit gates), THE WHEEL legend + the leaderboard; STEP TWO: NITROUS (a per-car cash-sink charge, capped, consumed win/lose for a power bump) and PINK SLIPS (race for the car itself — the winner TAKES the loser car, a §10.4-neutral ownership transfer: car conservation holds, no ledger row, no cash moves); STEP THREE: THE GRAND PRIX (a scheduled cash parimutuel — the poker-tournament twin: buy-in escrow, level/no-car/double-entry gates, a full grid settled by the worker with a dead entrant's stake burned + the top places splitting net of rake, a short grid refunded, and the new grand-prix-escrow §10.4 check), and section 10.4 (race: vocabulary + the per-character cash check reconciles — drift equals the seeded stake only)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ The Port test passed — buy/sell boats + gates, the RUN + the lazy COLLECT (clean faucet / interdicted seize+fine+sink), the SUPPLY CAP, the board, boats DIE WITH THE STREET; STEP TWO: NAVAL UPGRADES + PIRACY (seas band / win-cut-void / loss / level+once gates) + the offshore RENDEZVOUS; STEP THREE: THE SMUGGLER'S LEGEND + THE HARBORMASTER (a docks-holding family tolls a clean landing 5% to its treasury — the convoy-toll twin); STEP FOUR: THE CONTRABAND MARKET (warehouse a clean landing as a commodity, fence later at a drifting daily rate == book × fenceMult, empties the warehouse; nothing-to-fence gate) + BERTHS (a rented slip raises the fleet cap); and section 10.4 (port: cash + ammo vocabulary + the per-character cash + gang-treasuries checks reconcile — drift equals the seeded stake only)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ The Stable test passed — own the dogs & the ponies: buy (level/kind/name/cash/full gates + the ledgered sink), train (bad-stat/energy/cap/ownership + sink), the PvE circuit (bad-meet/cooldown gates, a win's purse faucet + a loss's fee-only burn + injury, the owner legend), the PvP match race (self/kind/limit gates, the casino:pvp taxed transfer + the rake split half-to-the-street, injury-on-loss, the legend), the board + leaderboard, STEP TWO — BREEDING (same/kind gates, a foal inheriting a head-start-not-a-cap-skip, the two parents consumed, the ledgered stud-fee sink) + THE STAKES (buy-in escrow, a short-field refund, one-runner-per-owner gate, the worker settling a full field to the top places net of rake, and the stakes-escrow §10.4 check reconciling), DEATH (the stable wiped, the legend survives), and the §10.4 per-character cash reconcile + vocabulary
+  ✓ all 886 statements in schema.sql are re-apply safe (the file is applied at every boot)
+✅ Schema-integrity test passed — MED-1: 2956 idempotent ADD COLUMN IF NOT EXISTS statements derived from schema.sql (no leakage, clean no-op on a fresh DB, a dropped later-added column is RE-ADDED). MED-2: all 93 character-scoped tables (character_id OR a named %_character role) have a documented death disposition (57 wiped / 17 special / 8 escrow / 10 ledger — a new unclassified table fails CI closed, and every wiped/special table has a DELETE or a resolving status UPDATE in src). Phase 1: 12 world-graph tables and 8 generic owner/depositor tuple roles have explicit fail-closed no-inheritance dispositions.
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✓ the wage machinery is gone (no payer, no eligibility predicate, no epoch accounting)
+✓ the emission schedule is gone from rules.js (no endowment, no epoch budget, no halving)
+✓ no worker tick pays a wage
+✓ /v1/wage and /v1/rules both say the printer is off, and why
+✓ historical wage rows still reconcile, and do not trip the retirement check
+✓ a NEW emission row trips `emission faucet retired` while conservation stays exact
+
+✅ THE FAUCET IS RETIRED — the wage machinery, its schedule and its worker tick are gone; /v1/wage and /v1/rules say so and say what replaced it; and §10.4 keeps counting the rows it already wrote while a single NEW one now trips an alarm. That is v3 wall 1 (no faucet) made checkable rather than promised.
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✓ one list decides both what §10.4 counts as a sink and what feeds the desk
+✓ a real sink (30 $OMR) moved to the desk instead of the fire, ledgered both sides
+✓ §10.4 holds: a recycled sink is a transfer, not a burn and not a mint
+✓ a pre-recycle burn row still reconciles — the change is safe on a live database
+✓ only a debit recycles — a positive row with a sink reason feeds the desk nothing
+✓ withdrawing to the chain still BURNS in-game supply — the desk takes no cut of it
+✓ GET /v1/desk publishes the shelf, what feeds it, and what does not
+✓ the reason vocabulary is closed with desk:recycle in it
+✓ fail-closed: no print and a stale print both refuse, the board names the reason, and the worker raises it
+✓ the lot is min(returned 18030, floatCap 6000, shelf 18030) = 6000
+✓ the clock runs 0.0015 → 0.001 ETH, and the reserve is the band
+✓ 5 $OMR sold for 0.0075 ETH: a transfer off the shelf, one ledgered row, identity unmoved
+✓ ETH splits 50/50 POL/founder, and a comp books none of it
+✓ wall 2 holds at the ledger: the lot clamps and then refuses, with stock still on the shelf
+✓ a re-delivered fill is idempotent on its ref
+✓ the vest needs no timer: $OMR bought at the desk exits at 50% surcharge, fading over 48h
+✓ GET /v1/desk publishes the live clock, the lot, and the band it is selling against
+✓ 12030 unsold $OMR rolls to tomorrow — the lot was a right to sell, never an escrow
+✓ the shelf clamp binds: a 6000 lot on a 300 shelf sells 300
+✓ the buyback spends POL fees and nothing else; a comp adds none to the budget
+✓ the band gates the buy side: below 0.0008 ETH only, and above a sanity floor
+✓ 1 ETH restocked 2000 $OMR: a mint into the shelf, matched by hard OMR in the reserve
+✓ the backing is checked from three sides: the desk's books, the ledger, and the reserve sandwich
+✓ the root cap holds and the ingest is idempotent
+✓ a comp restocks the shelf and funds no reserve — the anti-fabrication gate, checked from both sides
+✓ bought inventory goes back up for sale — the desk is a rental business, not a vault
+✓ THE UPPER LEG: thin window asleep, noise inside the band, 1.8x euphoria sells a 1.8x lot, a 10x spike clips at 3x, the wall stretches but never disappears
+
+✅ THE DESK passed — a $OMR sink lands on the desk instead of the fire (the pair of rows cancels inside the burn term while desk_inventory holds the value, so conservation is untouched, and a pre-recycle burn row still counts as the burn it was); the one sink that must NOT recycle — the on-chain withdrawal — still burns; and the desk now SELLS. The auction is fail-closed on its oracle, its reserve IS the band s sell side, the sale is a transfer off a shelf we hold rather than a mint, a comp books no ETH, and the 48h vest needed no timer because a sale credit is already a fresh FIFO lot.
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ THE FLOAT + THE LADDER (economy v3 step 5, D8=D) test passed — the dues are a classified sink that RECYCLES to the desk, the board publishes the price/term/gates and makes the CEILING claim instead of the retired no-power one, the burn is exact and the window extends from later-of(now, end), both ACCESS gates are back and asserted from BOTH sides (an unmade man is refused a club then admitted the moment he pays; level alone will not seat a whale at the big table until he HOLDS the stake), THE PAD PAYS ITSELF still deducts the same cash for the same income (TIME, never a discount), and THE LADDER is real — the top rung grows the trunk/energy/nerve caps and the garage and pays its fence edge at a real till against an identical twin car, dues climb it by exactly MADE_RUNGS and CLAMP at the top so paying is a shortcut and never a higher ceiling, and the ceiling itself is pinned against the LIVE mission table so the copy's claim stays true through any retune — THE COMMITMENT is real (a locked stake counts ×mult at the sheet's own energy-cap till, wrote zero ledger rows, refuses to unstake with the time left as data, only ever upgrades, and lapses back to the raw read on its own) — and §10.4 holds, vocabulary closed, drift == the SQL grants only
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+reclaim: 2 expired voucher(s) but no on-chain reader (CHAIN_RPC_URL unset/down) — skipping to avoid a blind refund; set the RPC so usedNonce can confirm before refunding
+OK
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+reimport: undecodable token 99999 gearIdOfToken: no gear class for token 99999
+reimport.js OK
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+wallet forge read failed rpc down
+walletforge: PASS — twelve archetypes (family + hashed variant), the affinity schooling, the budget law (+perk), the once-per-wallet latch, banded storage, fail-closed readers, the credit gate, §10.4 zero
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✓ honor axis + tiers (5→7 ladder + legend fields)
+✓ Mad Dog bodyguard refusal
+✓ pacts: propose/accept/block-war/oathbreak + the honor legend + reputation boards
+✓ coalitions: dominance gate + halved war chest + mad-dog lockout (accept/join)
+✓ sovereignty: build/upgrade/siege + sov points + per-attacker cooldown + safehouse gate + TIER-4 (6-tier ladder, sov income faucet, crumbling earns nothing, §10.4 reconcile) + VALUE-AT-STAKE (siege scales with the stronghold build cost, war with the target treasury; floored at the low end)
+✓ campaigns: six-fixer catalog + Mickey start + gate/advance/choose/claim-once
+✓ bloodline: death record + heir echo + hall
+✓ §10.4 conservation holds with sov:/campaign: in the ledger (vocabulary closed, sink+faucet exact)
+✅ Five Pillars test passed — honor (axis/tiers/teeth/echo), diplomacy (pacts + oathbreak + coalitions), sovereignty (build/upgrade/siege/points), campaigns (gate/advance/choose/claim-once), the bloodline (record + heir echo + hall), and §10.4 conservation with the new reasons live.
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✓ marriage: fees ledgered + gates + buried feud + monogamy
+✓ the scandal: killing your in-law dissolves the marriage + brands you
+✓ divorce honor + mad-dog lockout + consigliere both ways + the scandal grace window
+✓ soldiers: hire sink + cap + assign + crime cut/xp + permadeath + memorial
+✓ soldiers die with the street
+✓ §10.4 holds with dynasty:/soldier: in the ledger
+✅ Marriages & Soldiers test passed — the marriage flow (fees ledgered, gates, the wedding burying the feud, monogamy), THE SCANDAL (killing your in-law dissolves the marriage + the honor brand), divorce + the Mad Dog lockout, the consigliere (both chairs), soldiers (hire sink + roster cap + assign, the crime cut/xp assist, pinned permadeath + the memorial, death-with-the-street), and §10.4 conservation with the new reasons live.
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✓ the dig: gates + burn + real dirt + disinfo defense
+✓ extortion + the hush (taxed transfer, §10.4 delta-0, consumed)
+✓ exposure feeds the RICO meter (and leaks no number)
+✓ the worker sweep blows an unpaid demand
+✓ secrets die with the mark
+✓ a dead holder's demand drops off the mark's board
+✓ the Collection: log sites + idempotent + board + leaderboard + death survival
+✅ Secrets & Collection test passed — the dig (gates/burn/real dirt/disinfo), extortion + the taxed hush transfer (§10.4 delta-0, consumed), exposure feeding the RICO meter, the worker blowing unpaid demands, dirt dying with the mark; the Collection log sites (crime/district/gun/goods) firing idempotently, the board + completionist leaderboard, and account-level death survival.
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ THE MEGAPROJECT test passed — the announced board (catalog monument, unstarted), the three contribution rails as pure sinks (ledgered megaproject:cash burn · goods deleted from the trunk at catalog base · megaproject:omr burned at the fixed rate), the gates (floors/jailed/bad-good/empty-trunk), the plaque (account-level, Architect tier, your share), the CLAMP + COMPLETION (the crossing brick finishes it exactly — no overpay — skyline WITH the kept plaque + Architect notify + the next monument announced), a brick landing on the new wall, DEATH SURVIVAL (the dynasty keeps the plaque), and §10.4 (vocabularies closed, $OMR drift == the SQL grant only)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ THE DUELING LADDER test passed — list/unlist (level gate + stake floor), the board (rating + nearest rivals), the duel gates (rookie/amount/limit), a pinned strong-vs-weak duel with the EXACT casino:pvp taxed transfer (winner nets stake − rake, half the rake → the buyback), ±16 elo at even ratings, the per-pair daily K-diminishing rematch, the ELO floor, the lifetime legend vs a real opponent, the ladder leaderboard, the SEASONAL rollover reset, and §10.4 (duel: vocabulary + per-character cash reconciling — drift == the SQL seeds only)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ CLUE SCROLLS test passed — the forced crime drop (one hunt at a time), the salt-derived riddle board, the COLD dig (wrong district — energy spent, step holds), the TIMED cold dig (right ground, wrong hour), the full trail to THE CASKET (in-band take, ledgered clue:casket faucet, lifetime legend, scroll spent), the post-casket cooldown silencing the next drop, the diggers leaderboard, DEATH (the scroll dies, the legend survives), and §10.4 (clue: vocabulary + zero cash drift — the faucet reconciles exactly)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ SEASONAL MODIFIERS test passed — the deterministic seed draw + the SEASON_MOD test-only override, the /v1/city + /v1/rules surfaces, THE CRACKDOWN (laylow ×0.75 ledger-exact), THE GOLD RUSH (goods sell ×1.03 vs the vanilla baseline, under the 4% round-trip fee wall), BLOOD IN THE STREETS (safehouse ×1.25 ledger-exact + a real §9 kill looting at the ×1.15 rate, clamped), and §10.4 exact throughout (the modified numbers ride the normal ledger rails — drift == the SQL seeds only)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ RING POKER + THE BRACKET test passed — the lobby + stakes/buy-in/one-table gates, the ESCROW boundary (sit/leave ledgered, stacks+pots reconciling at every stage), a full 3-handed hand (antes, order enforcement, the raise CLAMPED to the smallest live stack so every call is affordable — no side pots, hole-card redaction, showdown paying the winner's STACK net of a capped ledgered rake), the fold-win, THE TURN CLOCK auto-folding a staller, cash-out, DEATH (the stack burns casino:ring:death + the hand resolves), an empty table folding up, THE ALL-IN RULE in all five shapes it can take (a short stack all-in at seat 1 and at seat 0, a whole table all-in, and all-in from the ante at seat 0 or across the table) — a player with no chips is never handed the action, so the turn clock can never fold him off a pot he is already all-in in, and when nobody can bet the board RUNS OUT and the cards decide, its rake ledgered in the same transaction, and THE BRACKET (format locked at materialization, an 8-runner field cut by heats then settled by a final paying winners + take == every buy-in — the tourney escrow §10.4 identity intact)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+ok - city standing: spine board, breadth>depth, pillar breakdown, agent+banned exclusion, personal rank, no-legend zero, the cache (single-flight, TTL, no per-player leak)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+ok - THE SACKING (L3a): fire-kill seizes the most-valuable holdable front (survives the wipe, rest die), occupied-slot + level gates fall through clean, §10.4-neutral
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+ok - THE SHIELDS (L3b + L3c): safehouse daily cap (3 stays then refused, board surfaces the bucket) + the contract covers half the bullets on a paid kill (ledgered faucet), none on a standalone kill
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ THE POPULATION passed — residents spawn as real flagged characters on the streets roster (flag exposed), the npc:seed faucet + npc:retire sink keep §10.4 drift-0, the worker tops the city up and retires old lines, and residents never hold $OMR (nothing pays them any) and are excluded from City Standing, ops and the funnel; STEP TWO: they advertise consent limits, post SECURED loan offers and standing buy orders, and retire without stranding escrow — all pure recycling, zero new faucet; JAILBIRDS: the worker keeps TARGET residents in lockup (never over-fills, refills after a bust) so the §7.8 bust verb + the bust dailies work on a solo run — the reward is the signed ledgered bust:reward faucet; MARKS (Street War step two): residents spawn holding band-priced beaters (counted into car conservation via rng_audit npc:car grant/retire rows), sleepy-joint fronts whose rob cut prices at FRONT_INCOME_BPS of the catalog curve, dinghies at the docks, and self-bought freight (goods:buy, recycle-only, budget-floored above the picked-clean line) — stealable/robbable through the ordinary verbs with conservation exact through the whole grant→steal→retire cycle; STEP FOUR: residents at the Neon Mile FILL a human-started poker tournament (reactive — they never open one, so /v1/online stays honest), paying their OWN buy-in into the same escrow so a solo player gets a real field instead of a refund and the poker-tourney-escrow §10.4 identity is untouched — even when a resident retires mid-tournament (its buy-in burns at resolve, its remaining cash at retire); and the SAME pattern fills the other scheduled fields — the GRAND PRIX + THE STAKES (escrow buy-ins, the grand-prix/stakes escrow identities untouched, resolved to a real grid) and THE FUTURITY (nominations, a sink to the buyback, filling the runner field without touching the bet escrow)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ tokenomics v2 test passed — THE EXCHANGE burns $OMR for cash out of a pool that only real sinks fund (a dry till burns NOTHING, the daily cap holds, and `exchange pool backed` proves paid <= funded, so the cash side is a bounded redistribution rather than inflation), and THE FAMILY YIELD moves the pot into the top family's reserve as a pure transfer that leaves the $OMR bucket sum exactly where it was.
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ treasury test passed — `allocated <= held` is back, PER TICKER in UNITS, it can actually fail, a surplus in one ticker cannot cover a shortfall in another, a comp books ZERO units, ETH spent on stock stops backing ETH claims, and §10.4 never sees any of it. Plus THE BUY KEEPER (step 5): wall 4 CLAMPS a spend to the budget rather than overdrawing it and halts when it is empty, wall 3 refuses a rate above the ceiling AND below the floor, HALTS on a print older than the age bound rather than widening to accommodate it, and refuses a first buy on a ticker with nothing to be continuous with — every refusal driven, not assumed.
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+  ✓ a stock token's decimals are read off the token, bounded, cached, and never guessed
+✅ stock delivery rail: the deed-required gate, permanent non-expiring allocations, stage→confirm (real flips / comp never), idempotency, the delivered<=allocated wall, the board, the secondary-market exclusion, THE DELIVERY KEEPER (claim-then-send, named skips, retry-on-release), and §10.4-neutrality
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+dexbot: THE TWO DEX BOTS pass — buyback (budget/slippage/journal/book/reserve + root cap + fail-closed oracle + crash recovery), POL pairing (root cap + remainder-only + comps consume nothing), the board, the invariants failing by name, §10.4 zero rows, and dormancy.
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ THE TRADES test passed — step one (the ten-track board + catalog, the funnel at real hook sites with the legend mirroring every point, the level-up ding, DEATH echo at HEIR_KEEP_BPS with the legend surviving whole, the agents-excluded leaderboard) AND step two (the den STAKE FLOOR refusing min-bet XP, the milestone perk reading neutral → the exact rung on the board, the wheels perk charging the DISCOUNTED tune price at a real till, the commerce fee relation, the trait gates level/bad_track/bad_trait/chosen, the VIRTUOSO deepening to the mastered rung, the DYNAST echoing HALF that one trade while the rest echo the quarter, and traits dying with the street) AND step four (STATS BY USE: a clean job builds +1 cunning rng-audited, the CAP_DAY bucket fills then grants NOTHING, the board headroom reads the same rolling math, a day of refill restores the allowance, P=0 lands nothing), plus §10.4: zero ledger rows — XP is not a currency
+▶ the activity metric
+  ✔ LINEARITY: splitting effort across accounts gains nothing (0.6329ms)
+  ✔ THE SEVERANCE WALL: cash-bounded actions score nothing (0.2876ms)
+  ✔ FAIL-CLOSED: an unlisted tag scores zero (0.1232ms)
+  ✔ THE GATE: breadth is required, and it is a gate rather than a cap (0.1873ms)
+  ✔ every scoring tag is real, mapped, and every mapped track exists (0.1951ms)
+  ✔ THE STAKING WALL: a multiplier may not reach the distribution key (0.3435ms)
+  ✔ the dust floor is a floor, never a ceiling (0.198ms)
+✔ the activity metric (3.845ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9.1612
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ brokers test passed — the weight is tier x play, activation alone buys NOTHING (the wealth-weighted case this design deliberately does not pay), the burn recycles to the desk, the allocator publishes and delivers nothing, the recorder logs COUNTS so no progression multiplier can ever reach the distribution key, and THE DISTRIBUTION splits a real buy pro-rata over the FROZEN epoch exactly once (a post-buy epoch can never receive it, a comp refuses by name, a buy with no frozen epoch consumes its latch with zero, and the whole thing writes not one ledger row).
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+bank ok — the split gains nothing, the comp books zero, and every token paid was bought
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+community: Phase 1 defaults byte-identical, the five earmarks exact (comps zero), the keeper capped/walled/clamped per currency crediting the pool through the one implementation, §10.4 absolute with yield:buyback minted, the runner + router fail by name, the flip guard proven both ways, the worker wired — and the red-team's two: a real buy with nothing to check its price against is REFUSED (an ETH buy anchors on the Vig print the rest of the game already reads; an unanchored currency is seeded deliberately, once), and a stranded budget names itself instead of reading like an empty one.
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+tokenhealth: a fresh database reads DORMANT rather than crying wolf; velocity divides by the PLAYER float (never the house pools it grows); a transfer is not a sink and a withdrawal is; the agent/human split names WHICH sinks each cohort pays for; clearance is driven through a real auction; the queue is the shock gauge off chain.js own reserveStatus; and the whole board writes zero ledger rows behind the mod key.
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+regimen: all assertions passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ THE CAREER passed — five tiers of once-ever server-verified tasks: tier 1 open / the rest locked, not_done refusals teach their own HOW, a claim pays a ledgered career: faucet row and latches on the account PK, 4 claims open the next tier (a declinable task never walls a solo player), the capstone rides the SIXTH claim in one ledger row, Σ rows == Σ pays with the vocabulary closed, and the ladder SURVIVES DEATH — the heir keeps the climb and cannot re-farm a claimed rung
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ THE FAVOR test passed — the player-posted call: pay ESCROWED at post (out of the pocket, ledgered favor:post) with the gates (good/qty/pay bounds, the safehouse loot-proof-vault rule, MAX_OPEN); the black book is the REACH (a contact sees it, a stranger never does, the poster sees only their own book); running it is located + stocked and pays the runner net of a take carved FROM the pay (half to the buyback pool, half burned — never minted on top) with the freight conserved; cancel and the worker sweep both send the escrow home; a dead poster's escrow is the LOOT surface (killer's cut ledgered favor:loot, the rest burns); and the `favor escrow` identity holds at every step — mid-flight, after a fill, a cancel, a sweep and a looted death.
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+  ✓ refused Crew action settles once before Crew-first locks and preserves Crew state
+crew: PASS
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ THE AHA MOMENT (first blood): assign, coach, idempotent, settle, once-ever, §10.4
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+discovery: PASS
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+mentor: PASS
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+events: PASS
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+results: PASS
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+vouch: PASS
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+streak: PASS
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+circle: PASS
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ THE COLLISION: here/nearby split, residents+agents excluded, hot districts, online flag, §10.4-free
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+firsts: PASS
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+runs: PASS
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+shipment: PASS
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+avatar: PASS
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ THE MADE MAN (identity phase 1) — the bloodline portrait composites six slots live from PUBLIC state only: the bright line is structural (its one data source may expose no field publicDossier does not, so the district/build/rat leaks the design's slot table would have shipped fail by name), the plate escapes every untrusted string and clamps rather than overflowing, the engraved generation is never a lie, ids are seed-unique so a grid cannot self-clip, the frame is re-sourced off the RETIRED dynastyTierOf to generation, wealth is absent in any form, and the whole surface moves no value.
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+push: PASS
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+dispatch: PASS
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+pwa: PASS
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ people test passed — the cast reads every relationship the game remembers (nemesis enriched with the blood ledger + vendetta state, spouse/consigliere both directions, the family, the bodyguard pair by NAME both ways, worked-for bonds), the story merges both bloodlines' record newest-first with the fallen named and the detail JSONB withheld (the info-economy rule), THE MORNING PAPER digests an absence (headlines grouped, the take and the bleed folded separately so the pad is never netted away, a read never consumes its own window, folding is explicit), the mod-only coach census aggregates the live population onto rungs with dead streets excluded, a dead line keeps its name, self/gone refuse cleanly, account UUIDs never leave, and the whole layer moves zero value.
+✅ THE CITY WIRE test passed — the curated allowlist formats the marquee drama (a kill names both, an anonymous hit stays anonymous), drops everything mundane and every malformed/missing-field event cleanly, NEVER carries a dollar figure on the public channel, is DORMANT without the webhook env, reaches the delivery seam with the right content + url when configured, and throttles a flood to the window cap — all §10.4-free, no network.
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ THE WEEKLY BULLETIN test passed — the week's theme is a deterministic pure function on the public city board (no dollar figure — it is a status challenge, not cash), the board SNAPSHOTS the account legend on first pickup so progress is a delta (prior wins never count), a claim is refused while short, crossing the target awards the rotating weekly TITLE onto the living character, the title is claimed ONCE per week, and the whole flow writes ZERO transactions rows — pure status, §10.4-free.
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+explore: canonical 40-system coverage ok
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+primetime: PRIME TIME step one (THE RALLY) + step two (HAPPY HOUR) + step three (THE SIEGE) ok
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+citymap: THE MAP ok
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+day: THE DAY ok
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+payroll: THE PAYROLL ok — one page, one vocabulary, every row agreeing with its own tab to the dollar, the real till flipping the row, and a §10.4-free read.
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+board crew (/v1/crew) failed (non-fatal) RelationNotFound [Error]: relation "zz_no_such_table_home" does not exist
+
+🐜 This seems to be an execution error, which means that your request syntax seems okay,
+    but the resulting statement cannot be executed → Probably not a pg-mem error.
+
+*️⃣ Failed SQL statement: SELECT * FROM zz_no_such_table_home;
+
+👉 You can file an issue at https://github.com/oguimbal/pg-mem along with a way to reproduce this error (if you can), and  the stacktrace:
+
+
+    at chk (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:7761:23)
+    at DbSchema.getObject (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:7783:16)
+    at getSelectable (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:3156:69)
+    at buildRawSelectSubject (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:3050:24)
+    at buildRawSelect (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:3110:15)
+    at buildSelect (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:3011:20)
+    at buildWithable (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:2992:20)
+    at new SelectExec (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:3195:67)
+    at StatementExec._getExecutor (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:5794:24)
+    at C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:5886:195 {
+  data: {
+    error: 'relation "zz_no_such_table_home" does not exist',
+    code: undefined
+  },
+  code: undefined,
+  location: { start: 0, end: 0 },
+  Symbol(errorDetailsIncluded): true
+}
+board crew (/v1/crew) failed (non-fatal) RelationNotFound [Error]: relation "zz_no_such_table_home" does not exist
+
+🐜 This seems to be an execution error, which means that your request syntax seems okay,
+    but the resulting statement cannot be executed → Probably not a pg-mem error.
+
+*️⃣ Failed SQL statement: SELECT * FROM zz_no_such_table_home;
+
+👉 You can file an issue at https://github.com/oguimbal/pg-mem along with a way to reproduce this error (if you can), and  the stacktrace:
+
+
+    at chk (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:7761:23)
+    at DbSchema.getObject (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:7783:16)
+    at getSelectable (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:3156:69)
+    at buildRawSelectSubject (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:3050:24)
+    at buildRawSelect (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:3110:15)
+    at buildSelect (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:3011:20)
+    at buildWithable (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:2992:20)
+    at new SelectExec (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:3195:67)
+    at StatementExec._getExecutor (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:5794:24)
+    at C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:5886:195 {
+  data: {
+    error: 'relation "zz_no_such_table_home" does not exist',
+    code: undefined
+  },
+  code: undefined,
+  location: { start: 0, end: 0 },
+  Symbol(errorDetailsIncluded): true
+}
+✓ THE HOME AGGREGATE — 15 boards in one read, each value for value what its own route serves (a ticking *Seconds leaf is held to a few seconds rather than exact equality — two fetches are two moments, and demanding byte equality of a countdown is a flake, not a check); every board side-effect free, proven by the write-REFUSING read path answering, which is also what keeps the writing /v1/bulletin out; the whole set builds inside the locked transaction too; one broken board is isolated, NAMED and leaves the other fourteen standing on BOTH paths; and the read moves no value
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+board corner (/v1/corner) failed (non-fatal) RelationNotFound [Error]: relation "zz_no_such_table_block" does not exist
+
+🐜 This seems to be an execution error, which means that your request syntax seems okay,
+    but the resulting statement cannot be executed → Probably not a pg-mem error.
+
+*️⃣ Failed SQL statement: SELECT * FROM zz_no_such_table_block;
+
+👉 You can file an issue at https://github.com/oguimbal/pg-mem along with a way to reproduce this error (if you can), and  the stacktrace:
+
+
+    at chk (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:7761:23)
+    at DbSchema.getObject (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:7783:16)
+    at getSelectable (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:3156:69)
+    at buildRawSelectSubject (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:3050:24)
+    at buildRawSelect (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:3110:15)
+    at buildSelect (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:3011:20)
+    at buildWithable (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:2992:20)
+    at new SelectExec (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:3195:67)
+    at StatementExec._getExecutor (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:5794:24)
+    at C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:5886:195 {
+  data: {
+    error: 'relation "zz_no_such_table_block" does not exist',
+    code: undefined
+  },
+  code: undefined,
+  location: { start: 0, end: 0 },
+  Symbol(errorDetailsIncluded): true
+}
+board corner (/v1/corner) failed (non-fatal) RelationNotFound [Error]: relation "zz_no_such_table_block" does not exist
+
+🐜 This seems to be an execution error, which means that your request syntax seems okay,
+    but the resulting statement cannot be executed → Probably not a pg-mem error.
+
+*️⃣ Failed SQL statement: SELECT * FROM zz_no_such_table_block;
+
+👉 You can file an issue at https://github.com/oguimbal/pg-mem along with a way to reproduce this error (if you can), and  the stacktrace:
+
+
+    at chk (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:7761:23)
+    at DbSchema.getObject (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:7783:16)
+    at getSelectable (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:3156:69)
+    at buildRawSelectSubject (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:3050:24)
+    at buildRawSelect (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:3110:15)
+    at buildSelect (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:3011:20)
+    at buildWithable (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:2992:20)
+    at new SelectExec (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:3195:67)
+    at StatementExec._getExecutor (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:5794:24)
+    at C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:5886:195 {
+  data: {
+    error: 'relation "zz_no_such_table_block" does not exist',
+    code: undefined
+  },
+  code: undefined,
+  location: { start: 0, end: 0 },
+  Symbol(errorDetailsIncluded): true
+}
+✓ THE BLOCK — 7 boards in one read for the screen players live on, each value for value what its own route serves (a ticking *Seconds leaf is held to a few seconds rather than exact equality — two fetches are two moments); the price board has ONE implementation, asserted by value rather than by reading the source; every board side-effect free, proven by the write-REFUSING read path answering — which covers the two that do not arrive through readCharacter as well; the whole set builds inside the locked transaction too; one broken board is isolated, NAMED and leaves the other six standing on BOTH paths; and the read moves no value
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+board npcfamily (/v1/npcfamily) failed (non-fatal) RelationNotFound [Error]: relation "zz_no_such_table_citywide" does not exist
+
+🐜 This seems to be an execution error, which means that your request syntax seems okay,
+    but the resulting statement cannot be executed → Probably not a pg-mem error.
+
+*️⃣ Failed SQL statement: SELECT * FROM zz_no_such_table_citywide;
+
+👉 You can file an issue at https://github.com/oguimbal/pg-mem along with a way to reproduce this error (if you can), and  the stacktrace:
+
+
+    at chk (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:7761:23)
+    at DbSchema.getObject (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:7783:16)
+    at getSelectable (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:3156:69)
+    at buildRawSelectSubject (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:3050:24)
+    at buildRawSelect (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:3110:15)
+    at buildSelect (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:3011:20)
+    at buildWithable (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:2992:20)
+    at new SelectExec (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:3195:67)
+    at StatementExec._getExecutor (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:5794:24)
+    at C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:5886:195 {
+  data: {
+    error: 'relation "zz_no_such_table_citywide" does not exist',
+    code: undefined
+  },
+  code: undefined,
+  location: { start: 0, end: 0 },
+  Symbol(errorDetailsIncluded): true
+}
+board npcfamily (/v1/npcfamily) failed (non-fatal) RelationNotFound [Error]: relation "zz_no_such_table_citywide" does not exist
+
+🐜 This seems to be an execution error, which means that your request syntax seems okay,
+    but the resulting statement cannot be executed → Probably not a pg-mem error.
+
+*️⃣ Failed SQL statement: SELECT * FROM zz_no_such_table_citywide;
+
+👉 You can file an issue at https://github.com/oguimbal/pg-mem along with a way to reproduce this error (if you can), and  the stacktrace:
+
+
+    at chk (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:7761:23)
+    at DbSchema.getObject (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:7783:16)
+    at getSelectable (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:3156:69)
+    at buildRawSelectSubject (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:3050:24)
+    at buildRawSelect (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:3110:15)
+    at buildSelect (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:3011:20)
+    at buildWithable (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:2992:20)
+    at new SelectExec (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:3195:67)
+    at StatementExec._getExecutor (C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:5794:24)
+    at C:\Users\Jorge\Documents\Omerta-director\node_modules\pg-mem\index.js:5886:195 {
+  data: {
+    error: 'relation "zz_no_such_table_citywide" does not exist',
+    code: undefined
+  },
+  code: undefined,
+  location: { start: 0, end: 0 },
+  Symbol(errorDetailsIncluded): true
+}
+✓ CITYWIDE — 5 boards in one read, each value for value what its own route serves (a ticking *Seconds leaf is held to a few seconds rather than exact equality — two fetches are two moments); /v1/city deliberately STAYS OUT and stays keyless, pinned rather than explained, because it is already cached for everybody and no per-player aggregate can beat that; every board side-effect free, proven by the write-REFUSING read path answering — which covers the one that does not arrive through readCharacter as well; the whole set builds inside the locked transaction too; one broken board is isolated, NAMED and leaves the other four standing on BOTH paths; and the read moves no value
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+drop: THE COMMUNITY DROP ok — the tools' pure folds (erc20/erc721 replay, the RULED coin shape, the merge), the sealed-then-open claim rail (once per wallet ever, the enumerated drop:claim mint, the free mint that never advances the paid tranche, no dead credits), §10.4 + the drop check reconciling, and the clawback being nothing but the window closing.
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ all 34 worker sweeps run clean on an empty DB and are safe to re-run
+✅ sweepDiplomacy reaps expired coalitions + members, keeps the live one, idempotent
+✅ sweepRivals drops grudges past the retention window, keeps fresh ones, idempotent
+✅ sweepSocialClaims drops spent/lapsed rows, keeps live registrations, idempotent
+✅ sweepStaleRaids clears stale co-op raid plans, keeps fresh ones, idempotent
+✅ sweepUncreditedFees grants a parked fee exactly once; a re-run mints nothing
+✅ sweepUncreditedStore grants a parked package exactly once; a re-run grants nothing
+✅ worker-sweep suite passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ a just-credited balance pays the full age-0 rate on exit
+✅ a half-window-aged token pays half the age-0 rate (linear decay)
+✅ a token older than the fresh window exits with no surcharge
+✅ a balance with no window credits (SQL grant / pre-window) is aged and surcharge-free
+✅ newest-first: an aged buffer cannot shelter a fresh dump (D2)
+✅ a fresh token consumed by an earlier exit is not taxed again (newest-first replay)
+✅ the surcharge is 6dp-quantised, never leaking a crumb
+✅ EARLY_SELL_TAX_BPS=0 disables the surcharge (kill switch)
+✅ early-exit surcharge (tax.js) suite passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ THE MONEY ROUTER test passed — one declared waterfall over every real-value inflow (9 sources, each summing exactly, derived from the LIVE levers), the cross-source invariants the five per-system runners cannot see (source membership on all THREE revenue ledgers naming an unknown source, the two orphan 'fee'/'store' mirrors reconciled against the declared splits, the retired trade rail staying retired — the freshness shape that replaced the F1 constant-vs-wiring check, with the declaration kept so history still has something to reconcile against — and the dev-fund balance==ledger identity on both legs), the WHERE-A-DOLLAR-GOES board (real-only grosses, implicit remainders labelled, the sell-tax remainder rule summing exactly), and the mod-gated surface. The router moves NO money — declare, verify, display.
+✅ verifyPrivy: scalar+array aud accepted, wrong-aud/alg/sig/iss/exp/malformed all fail-closed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ accountForIdentity: create/adopt, ban gate, and the atomic invite consume
+✅ consumeInvite: off passes, on consumes one use, exhaustion refuses without going negative
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ guest→provider upgrade keeps the same account+character and its cash; re-upgrade and identity-clash refused
+✅ X OAuth2/PKCE: dormant without config, state persists on start, an unknown state fails clean
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ BLUE-TEAM M3 token revocation (tv claim, logout-all, grandfather, mod revoke, the OAuth-start bypass) + M2 mod audit log passed
+✅ auth surface suite passed
+✅ rules seam test passed — the generated half holds exactly the 22 extractor tables and imports nothing, the extractor writes only that file and never opens the hand-written half, the two halves share no export name (so no star re-export silently resolves to undefined), every table reaches callers through the facade, a tail helper reading a generated table proves the seam is live, and the retired "Star the repo" task stays retired across a regeneration.
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ Path funnel contract passed — six complete dossiers inherit every signed rule, and seven deterministic decisions resolve all six Paths with inspectable integer scoring and stable ties
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ Mounted-surface test passed — 800 registrations, 770 under /v1: every one authenticated except the 42 declared public, each with a stated reason, (checked BOTH ways, so neither a dropped auth preHandler nor a stale allowlist entry can hide), every /v1/mod route behind modAuth rather than a player token, and no route registered twice; plus every src/routes module self-contained (no identifier read that it never binds).
+✅ the envelope survives all 62 enveloped routes (1 of them param routes; 14 params this cannot synthesise are named, not skipped) — none replaces `character`, and none carries an `events` key except 1 board that owns the name by declaration
+✅ every immutable research-sheet reference is versioned by its current content hash
+✅ landing media is responsive, all three below-fold videos are deferred, and each film range-streams
+✅ the wire: the 1277 KB shell ships as 380 KB and revalidates to a 304; identity is byte-exact; binary and sub-threshold payloads are untouched
+✅ the diagram renderer discovers every supported research-sheet family
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ cold start passed — all 176 parameterless authed GET routes answer for the FIRST player on a world with no season, no monument, no event, no leaderboard and not even a resident to fill the boards; the 12 that refuse are declared tombstones, checked in both directions so a waiver cannot outlive the thing it waives.
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: unclassified environment variable(s): LIVING_WORLD_DIRECTOR. Add each to src/preflight.js — TEST_ONLY_ENV if it pins a roll or collapses a timer (it will then refuse to boot in production), REQUIRED_ENV / EXPLICIT_ENV if a live server needs it, else OPERATIONAL_ENV. This guard exists because the pacing-pass knobs shipped unguarded — a knob must not be able to reach production by being forgotten.
+    at file:///C:/Users/Jorge/Documents/Omerta-director/test/preflight.js:205:8
+    at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+    at async node:internal/modules/esm/loader:643:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: [ 'LIVING_WORLD_DIRECTOR' ],
+  expected: [],
+  operator: 'deepEqual',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

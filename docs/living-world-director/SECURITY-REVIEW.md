@@ -1,0 +1,33 @@
+# Director review: disabled pilot
+
+Base revision: `44f48a743e549591bd125a1f678099b8382dd78f`. Final working-tree hashes are retained in `evidence/source-manifest.json`. This review is limited to the Director pilot and its changed adapters, not a new blanket audit of Omerta or authorization to deploy.
+
+The repository [agent-led policy](../../omerta-contracts/SECURITY-REVIEW-POLICY.md) applies. Adapted passes were trust-boundary mapping and specification comparison, adversarial lifecycle/access-control traces, native concurrent execution, immutable-content validation, source gate analysis, SQL preparation and economic invariants. The pinned Pashov/Plamen/Trail of Bits methods informed those passes; no claim is made that their complete upstream orchestration or a Solidity analyzer ran. Solidity/reentrancy/oracle tests are inapplicable: this change adds no contract, signer, transfer callback or price writer.
+
+## Trust boundaries
+
+Client input ends at the existing issued command identity and confirmation. Authenticated account and current living character are revalidated. Situation IDs do not grant discovery or access. Knowledge and current Crew/Family membership determine each signal inside the existing read snapshot. Existing domain receipts are completion authority. World Kernel events are resolution authority. The global scheduler row and canonical object locks serialize independent workers and physical mutation observations. Static definitions cannot execute JavaScript or declare new money effects.
+
+Director action intents are durable proposals, not authority caches. Fresh domain work invokes a trusted callback inside the locked domain transaction. Minimal replay returns no historic private DTO; current projections are rebuilt. A successor cannot execute a deceased character's intent. Expired or stale world revisions cannot create a fresh Director objective.
+
+## Findings and retests
+
+| ID | Severity | Finding | Disposition and evidence |
+| --- | --- | --- | --- |
+| DSEC-01 | High | An operation between the canonical fact sample and event read could resolve a situation but incorrectly abandon its campaign under stale branch facts. | Fixed by shared locks on declared canonical objects through lifecycle commit. The native forced-barrier regression verifies deferred physical execution, exact-key retry and the correct subsequent branch. |
+| DSEC-02 | Medium | A world outcome before the next scheduler tick left a stale situation capable of creating an impossible new operation draft. | Fresh action admission now verifies the canonical object revision and hash inside the domain transaction. Native regression rejects post-outcome creation before tick. |
+| DSEC-03 | Medium | Declared signal actions included adapters without executable dispatch. | Mystery delegates through its existing service; unsupported adapters are rejected by the compiler. Clue sharing uses existing owned-claim commands. Complete three-branch journey tests exercise each admitted adapter. |
+| DSEC-04 | Medium | Adding authored content in shadow mode could expose discovery/mystery catalogs through existing APIs despite no Director cards. | Player content composition is restricted to exposed stages; shadow compiles privately. Config tests assert unchanged catalog identity and exact limited-cohort gate alignment. |
+| DSEC-05 | Medium | A failed followup could leave a protected/captured route without a future eligible campaign entry. | Recovery can resume the last abandoned, currently eligible aftermath and records its predecessor; it never rewinds world state. Recovery/model tests exercise retained outcomes. |
+| DSEC-06 | Low | Concurrent existing Player Command retries could both report a fresh result despite one economic effect. | Existing issued-board row lock plus domain receipt reread ensures one fresh response. Connection admission is bounded to avoid filling the pool with lock holders. Native command and Director concurrency tests retain exact-key semantics. |
+| DSEC-07 | Low | Pressure catalog lookup accepted inherited object properties before producing an unstable failure. | Own-property admission precedes lookup; repository prototype-key gate and malformed-definition tests pass. |
+| DSEC-08 | Medium | Completing an operation and its restoration between evaluations made a completed campaign appear abandoned. | Canonical-only predicates can be reconstructed from the referenced event chain; already completed followups are recorded atomically without exposed stale work or repeated effects. Memory and PostgreSQL regressions passed after reproducing the failure on both. |
+| DSEC-09 | Medium | A worker resuming after the campaign deadline abandoned work completed before it; an unfinished aftermath could also lose its eligible recovery node. | Canonical event timestamps determine whether completion preceded the deadline. Timely terminal work settles before abandonment; genuine late work retains its physical consequences without receiving completion. An abandoned campaign retains an eligible aftermath node for recovery. Dedicated memory/native outage and deadline regressions cover these cases. |
+
+The canonical-world races were found through concrete code traces and retained native regressions; no pre-fix exploit run is implied where none was retained. Test fixture selection also needed correction: two independently sourced clues can share a proposition, so tests now share the intended evidence rather than depend on UUID row order. This was a fixture issue; the knowledge service correctly refused missing independent evidence.
+
+The final timestamp-query change also required updating the native race harness's observation matcher. Its old exact column list never reached the barrier and Node exited with an unsettled-await failure. The matcher now identifies the canonical event query by its object/revision predicate, and explicitly fails if evaluation completes without reaching the barrier. The failed harness output and corrected retest are retained separately; the failed run is not counted as concurrency evidence.
+
+## Limits
+
+Metrics have no account, Family, Crew, definition or object labels. Private selection receipts contain canonical references and are not exposed through player routes. Static authoring checks cannot recognize every secret encoded in literal prose, so authored text still needs review. Native tests prove the tested PostgreSQL 16 transactions; modeled 180-day simulations do not establish production traffic capacity. Physical action services retain authority outside scheduled situations. New NPC/economic capabilities, content-version migrations or production activation reopen their relevant review scope.

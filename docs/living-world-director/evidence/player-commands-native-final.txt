@@ -1,0 +1,18 @@
+PASS stable versioned command contract and server-derived opportunities
+PASS hidden prerequisite privacy, account-bound issuance, opaque identity and request substitution denials
+PASS bounded identity mutation fuzzing cannot manufacture authorization
+PASS stable issuance, duplicate, double click and durable replay
+PASS stale location, revoked account authority and dead-character revalidation
+PASS expired unexecuted opportunity cannot mutate the world
+PASS confirmation, consumed asset removal and timeout retry without economic duplication
+PASS item consumed after projection denies execution without partial economy effects
+PASS eight PostgreSQL concurrent submissions, contention retry and one economic effect
+PASS native domain partial failure rolls back and the original command safely retries
+PASS post-commit projection failure reports committed success and reconciles without duplicate effects
+PASS succession across composed snapshot reads refuses before any board is issued
+PASS character replacement after final admission is denied by the locked native authority
+PASS new database connection and engine restart preserve replay identity
+PASS independent server process authenticates an HTTP replay against persisted PostgreSQL without new economic effects
+PASS populated PostgreSQL schema applies twice while preserving command and economic receipts
+PASS indexed entity window, command/opportunity caps and deterministic relevance ranking
+player-commands: 17 groups passed (PostgreSQL)

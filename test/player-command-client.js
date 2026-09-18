@@ -132,6 +132,10 @@ const commands = [command('Investigate lead'), command('Choose: Public route', {
   command('Unknown lead', { availability: 'LOCKED', blockers: [{ message: 'secret prerequisite must never appear' }] }),
   command('Run started', { availability: 'IN_PROGRESS' }), command('Closed move', { availability: 'COMPLETED' }), command('Expired move', { availability: 'EXPIRED' })];
 const fixtureBoard = { ...board(commands),
+  situations: [{ id: 'shipment', title: 'Dock <script>unsafe</script>', description: 'A shipment is overdue.',
+    objective: 'Find a safe route.', knownFacts: ['The north pier is closed.'], helpers: [{ label: 'Your Crew <img src=x>' }],
+    expiresAt: '2026-09-20T12:00:00Z', outcome: 'Cargo reached its destination.',
+    actions: [{ id: 'unissued-situation-action', label: 'Unissued shipment move', canAttempt: true }], internalWeight: 917 }],
   opportunities: [{ opportunityId: 'lead', kind: 'mystery_lead', label: 'A note on your desk', description: 'Someone has been asking questions.', commandIds: ['Investigate lead'] }],
   crew: { id: 'crew-one', name: 'Docks Crew', members: [{ name: 'Sal' }], objective: { kind: 'evidence', progress: 1, target: 2 } }, family: { name: 'Bellini', role: 'soldier', relations: [] },
   knowledge: { claims: [{ id: 'claim-one', proposition: 'Known mark', owned: true, value: { value: 'left' } }] },
@@ -160,6 +164,9 @@ assert(surface.html.includes('Case &lt;script&gt;unsafe&lt;/script&gt;')); asser
 assert(!surface.html.includes('<script>') && !surface.html.includes('<img '), 'all server prose remains escaped');
 for (const hidden of ['secret prerequisite', 'private:dispatch-only', 'Unissued route', 'secret_adapter', 'private:do-not-render']) assert(!surface.html.includes(hidden), hidden);
 assert(surface.html.includes('A role is unfilled.')); assert(surface.html.includes('1 knowledge changes'));
+for (const text of ['What is happening around us?', 'Dock &lt;script&gt;unsafe&lt;/script&gt;', 'Your stake:',
+  'The north pier is closed.', 'Your Crew &lt;img src=x&gt;', 'Aftermath:', 'Cargo reached its destination.']) assert(surface.html.includes(text), text);
+assert(!surface.html.includes('Unissued shipment move') && !surface.html.includes('internalWeight'), 'world prose cannot invent actions or expose scheduler metadata');
 for (const control of surface.querySelectorAll('[data-world-move]')) if (!control.disabled) control.listeners.click();
 assert(moves.length > 3, 'shared commands appear in attention, action and entity context');
 assert(moves.every((move) => commands.includes(move) && move.availability === 'AVAILABLE'), 'all buttons use exact server-issued commands');

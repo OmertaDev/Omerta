@@ -1,0 +1,592 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-09-18T04:22:20.671Z",
+  "sourceRevision": "44f48a743e549591bd125a1f678099b8382dd78f",
+  "inspectedMain": "44f48a743e549591bd125a1f678099b8382dd78f",
+  "playerCommandMilestone": "979519c5640061f45584e926c56d8bc36cc4476f",
+  "branch": "codex/living-world-director",
+  "worktreeDirty": true,
+  "releasePhase": "disabled implementation; no deployment or activation",
+  "scope": "Living World Director, Dock War content, changed command/coordination/projection/worker adapters, additive schema and tests",
+  "excluded": [
+    "Production activation",
+    "Solidity/contracts/signers",
+    "Unchanged unrelated game protocols",
+    "Generated knowledge and execution reports are not authored runtime source"
+  ],
+  "authority": {
+    "physicalWorld": "World Kernel objects/events",
+    "knowledge": "Authenticated Coordination Knowledge",
+    "economicEffects": "Existing item/economy mutation services",
+    "execution": "Existing Player Commands and domain receipts",
+    "director": "Definition admission, selection audit, campaign/situation lifecycle and delegated intent only"
+  },
+  "tools": {
+    "node": "v24.19.0",
+    "npm": "11.17.0",
+    "postgres": "16.15"
+  },
+  "dependencyVersions": {
+    "pg": "8.22.0",
+    "pg-mem": "3.0.14",
+    "fastify": "5.12.1",
+    "acorn": "8.18.0",
+    "playwright-core": "1.62.0"
+  },
+  "reviewedFiles": [
+    {
+      "file": ".github/workflows/ci.yml",
+      "sha256": "97dad80982e50fadf93905bc6359ba3ab798973c79e345f05d2966640cde7973",
+      "bytes": 21734,
+      "gitBlob": "504fcf2ab48b264a09f6f00e7a43d429a0a93e9c"
+    },
+    {
+      "file": "MARKETING-POSTS.md",
+      "sha256": "43a3ffef90bd4843249b199308a7908bfa9571177aff6b8939c29f415812b065",
+      "bytes": 7184,
+      "gitBlob": "665aa102cab866cdb5e2ba69742505b841ce703e"
+    },
+    {
+      "file": "SPEC.md",
+      "sha256": "811ee59308f57e86139eecbb1e5b3c5c74087d8f8419ab1c09a0814d22fea1e6",
+      "bytes": 57406,
+      "gitBlob": "55dd49504951fec53445399f231c6608970a4558"
+    },
+    {
+      "file": "docs/living-world-director/HANDOFF.md",
+      "sha256": "30363539306240d5502cde6dba46a4193cb2970a5695efcaf170c0f065a6782f",
+      "bytes": 16550,
+      "gitBlob": "658c570e14680b98957fd99dc732320836354830"
+    },
+    {
+      "file": "docs/living-world-director/SECURITY-REVIEW.md",
+      "sha256": "bbdb91d0678e53dbde06f8daee42f24ded8eaad5f27d5e6ca7e340ce8c500fc8",
+      "bytes": 6701,
+      "gitBlob": "5eb133f4631fde0f759fbbc8b43feac672d93f7d"
+    },
+    {
+      "file": "package.json",
+      "sha256": "1e8951d99a3302801edf4df38b106823f439ec3dd9ec29e4ed1ce17c8e6d699f",
+      "bytes": 19552,
+      "gitBlob": "77c9648bd6d5bca8ca23614e5f51b0dac2fdc0fa"
+    },
+    {
+      "file": "public/index.html",
+      "sha256": "8490205ef29b1d8e8a5df1d8e399539788f3940fd08b56fd4e18929a580d888c",
+      "bytes": 1307897,
+      "gitBlob": "4ed1b2a0b0a61faeac279a775aecdb91b632f498"
+    },
+    {
+      "file": "schema.sql",
+      "sha256": "ffd410b7c8ba81f97b93d1bea88096bac747ffcc5e02728040f1dc812216f627",
+      "bytes": 460113,
+      "gitBlob": "1795bda72bdefe6415848eae6e2214704d01a1ac"
+    },
+    {
+      "file": "src/content/core-progression.js",
+      "sha256": "0a17cf10d0bd47699f5093d491654fd06dd829f0e087d031429e81d8aeb88d4b",
+      "bytes": 2855,
+      "exportedFunctions": [
+        "coreProgressionContent"
+      ],
+      "gitBlob": "5c6a00e0d1f117e4265f73de4e4b522fc122e69e"
+    },
+    {
+      "file": "src/content/dock-war.js",
+      "sha256": "a86140fb9bae13b7f4a92a49f22c4a530a45589180284c4fde05b5e28d7ba73f",
+      "bytes": 12838,
+      "exportedFunctions": [
+        "createDockWarContent"
+      ],
+      "gitBlob": "e3baf568f6ee0ab9cb67dec2478318c263a4b04d"
+    },
+    {
+      "file": "src/coordination/operations.js",
+      "sha256": "6b54fe3b2922c5eaf6643cad8071048267d0dc6758250530159c2d7d63536647",
+      "bytes": 53104,
+      "exportedFunctions": [
+        "createFamilyOperations"
+      ],
+      "gitBlob": "d9c9d783c47f9ab648564792ca38e43bfacc83e0"
+    },
+    {
+      "file": "src/coordination/runtime.js",
+      "sha256": "5056e60fa5630491c21e2d0d6511a87e29e4d821b2d31333168008fa084875a9",
+      "bytes": 26975,
+      "exportedFunctions": [
+        "createCoordinationService"
+      ],
+      "gitBlob": "2e950628b3d55c9d691c2847ca4ef572c444eed8"
+    },
+    {
+      "file": "src/director/config.js",
+      "sha256": "3f1300a347a789ffbd40e36bc24c39528888748fd31843f344e8f5fb82b40c78",
+      "bytes": 2969,
+      "exportedFunctions": [
+        "directorConfiguration",
+        "createConfiguredDirector"
+      ],
+      "gitBlob": "d53c44c203b95a6e92e05804f6bc31b80360bc81"
+    },
+    {
+      "file": "src/director/definitions.js",
+      "sha256": "88e56e749b82632a201f1bbf18c05db137c61140ed3a04f5b1b34c1b0cb094be",
+      "bytes": 28834,
+      "exportedFunctions": [
+        "definitionHash",
+        "verifyDirectorDefinition",
+        "evaluateDirectorPredicate",
+        "matchesDirectorFacts",
+        "evaluateDirectorPressures",
+        "compileSituationDefinitions",
+        "compileCampaignDefinitions",
+        "compileDirectorDefinitions"
+      ],
+      "gitBlob": "9c6c5948b878127d1d0480c2fdab4f3c4a45c082"
+    },
+    {
+      "file": "src/director/dock-war.js",
+      "sha256": "d1cd5529e4a275eafd5ac2a9dd66f6bf5f40d0db029c5e09252ef87f084d17cf",
+      "bytes": 10790,
+      "exportedFunctions": [
+        "dockWarDefinitionSources",
+        "dockWarDefinitionCatalog",
+        "createDockWarDefinitions"
+      ],
+      "gitBlob": "b6308346ae52e90eea1da085b6113ccc629e42f0"
+    },
+    {
+      "file": "src/director/pressures.js",
+      "sha256": "ac6fdca947ff93a20affe024acab85922769139fe00a4ec0a08185a59f9f6a26",
+      "bytes": 5385,
+      "exportedFunctions": [
+        "pressuresFromFacts",
+        "observeDirectorWorld"
+      ],
+      "gitBlob": "eca4ca9d121cae33bd11713b0068e17416c98e4e"
+    },
+    {
+      "file": "src/director/runtime.js",
+      "sha256": "59131be815c3c7e6b3165c79a38ce9f2562b7ce607bb2b5bca2df9558d07764a",
+      "bytes": 34104,
+      "exportedFunctions": [
+        "createLivingWorldDirector"
+      ],
+      "gitBlob": "8498004967dfc03fc361254fb30bf0eb2a88068c"
+    },
+    {
+      "file": "src/director/selection.js",
+      "sha256": "c116358048c6c31b444d11e0ab42b0fa0417458cba75d4bf62ff10d5e3860301",
+      "bytes": 3790,
+      "exportedFunctions": [
+        "selectDirectorCandidates"
+      ],
+      "gitBlob": "e7fc4852c995656b52203fca99387bc494938568"
+    },
+    {
+      "file": "src/director/storage.js",
+      "sha256": "15586a5ab7884ce613c76cac73f8f1f9b6396a10f9f470fe964260b89dd9f606",
+      "bytes": 5670,
+      "exportedFunctions": [
+        "admitDefinitions",
+        "directorReceipt",
+        "changeSituation",
+        "changeCampaign",
+        "startSituation"
+      ],
+      "gitBlob": "5319567a2e14bd0fb0d30e1270f506ca3b7f6fc1"
+    },
+    {
+      "file": "src/player-commands.js",
+      "sha256": "c3af3116e48cf7e750c5fe5dfe56d96972d6f61af88ecadc86fdb02dd0c9b0a6",
+      "bytes": 26648,
+      "exportedFunctions": [
+        "createPlayerCommandEngine"
+      ],
+      "gitBlob": "edd6c1c59f6f58f973eda7081aac798499c728ad"
+    },
+    {
+      "file": "src/player-opportunities.js",
+      "sha256": "8ae748555cc5a667230859a1ec2e4a3f1a2362270f14ec16e347f39faa0d2bdc",
+      "bytes": 1824,
+      "exportedFunctions": [
+        "playerOpportunities"
+      ],
+      "gitBlob": "188635b10f6f6445617112bab8927d81952360f0"
+    },
+    {
+      "file": "src/preflight.js",
+      "sha256": "36d8ed57f4557f3fef0c0e063ed6463f1a01e91ec741304c9d7a4242eb9394d4",
+      "bytes": 35982,
+      "exportedFunctions": [
+        "testOnlyLeaks",
+        "normalizeRwaReviewerConfig",
+        "preflight"
+      ],
+      "gitBlob": "b55135adab2220b5d87ea3c4a892b7d323046d1f"
+    },
+    {
+      "file": "src/routes/commands.js",
+      "sha256": "51faf0f6fac7055228ba144d5bf63b459275d149c9f9ddf901d190fbaa960ce5",
+      "bytes": 3575,
+      "exportedFunctions": [
+        "register"
+      ],
+      "gitBlob": "8518b0986007aed60bad6749319a0ce0b9d18e82"
+    },
+    {
+      "file": "src/routes/projections.js",
+      "sha256": "f417127c3c16c7f0648e6cb1ac7f59d7c1046c30da25e62fda1adffa77ed0257",
+      "bytes": 5324,
+      "exportedFunctions": [
+        "register"
+      ],
+      "gitBlob": "a58faced76f71d5979e64ebde5789347bdaab709"
+    },
+    {
+      "file": "src/worker.js",
+      "sha256": "5ee65722fd3806e982f0441a45bd46b9d1268dfdcecd9990a70244d4ffea1bd2",
+      "bytes": 84420,
+      "exportedFunctions": [
+        "runBuyback",
+        "mergeLegacyPools",
+        "sweepTelemetry",
+        "runSeasonRollover"
+      ],
+      "gitBlob": "cabcc5888a2f3a478366d3507fba3b013844f823"
+    },
+    {
+      "file": "src/world-projection.js",
+      "sha256": "60db0eb6eb61d02fa61e34b9b2c222fef995a3aaa1a468ab08a6c5b90143e675",
+      "bytes": 10556,
+      "exportedFunctions": [
+        "createWorldProjection"
+      ],
+      "gitBlob": "091c67b7ab34bfa82e0e26ffc2fe1a527f25235c"
+    },
+    {
+      "file": "test/director-api.js",
+      "sha256": "b47690b4e20a84a8d7c426ce710c2dd32d029741c2cdd216cc3d893a689b5f1e",
+      "bytes": 4844,
+      "exportedFunctions": [],
+      "gitBlob": "86830a19f4bfae1d8bfc3269ab7c821757547cf6"
+    },
+    {
+      "file": "test/director-commands.js",
+      "sha256": "559c03387fe7d2dbaaf96f0cc8f19dbd62d5e6c8bf1f4c8965111cf0cb99a447",
+      "bytes": 7506,
+      "exportedFunctions": [],
+      "gitBlob": "81e9790233049bc27a374300d17b2b64f9c07df5"
+    },
+    {
+      "file": "test/director-config.js",
+      "sha256": "dbc16dd17383c6afa408e66c58ef31c8acf64ebc989c19ad34ad11692ea6fc7c",
+      "bytes": 2223,
+      "exportedFunctions": [],
+      "gitBlob": "a3b9e7acfe30202aa2aa7c98be104e2ce133c375"
+    },
+    {
+      "file": "test/director-definitions.js",
+      "sha256": "93600d6c0aecf2f09b33903037bd8e91d9bb625748b52283a7e181deab25cb80",
+      "bytes": 10769,
+      "exportedFunctions": [],
+      "gitBlob": "d4edcfda72cb171bf99d50d2fec57477ad525d2f"
+    },
+    {
+      "file": "test/director-dock-world.js",
+      "sha256": "c260bbdc213e7c38987f1bec8eb19834c2c7e817c1de7b8997575299bb8dc31c",
+      "bytes": 7764,
+      "exportedFunctions": [],
+      "gitBlob": "406ac5d33b4c3a5ba11376186fd2f31d7e1c7ee0"
+    },
+    {
+      "file": "test/director-journey.js",
+      "sha256": "43438e2781d991712bdd86f8202c680e9e95bba301428396b68e41d32b898bf5",
+      "bytes": 11546,
+      "exportedFunctions": [],
+      "gitBlob": "b187fab1ac7cf5b9d290ebd157750fb70e589ad7"
+    },
+    {
+      "file": "test/director-migration.js",
+      "sha256": "d66701924252958b9b36a47f6c6486513ac5e7451166af94ec95fa520e07c727",
+      "bytes": 9774,
+      "exportedFunctions": [],
+      "gitBlob": "903d96be35d6684f650df41b8bbc7a601e26c49a"
+    },
+    {
+      "file": "test/director-recovery.js",
+      "sha256": "6652eb496acd16c368fd165f4452be1b8a59b11d9c320d08913eb6f2d9dfb312",
+      "bytes": 13898,
+      "exportedFunctions": [],
+      "gitBlob": "d98074d3039623b25d6b0d9a2cbe035819295221"
+    },
+    {
+      "file": "test/director-runtime.js",
+      "sha256": "37068d39948e43f6ca0406234bdfd76ca96f179eda90a9fd1c3860a85595a4ee",
+      "bytes": 3420,
+      "exportedFunctions": [],
+      "gitBlob": "3bbedb3df775ce5b871ccae8e1b530027a57e658"
+    },
+    {
+      "file": "test/director-security.js",
+      "sha256": "8eb0663bfdabc0d1a660f0265b72927d8daeb40db00fee2ca309260b9379f1df",
+      "bytes": 11621,
+      "exportedFunctions": [],
+      "gitBlob": "4c5b96fd6060ae86979129e8bce47e43b0d33f54"
+    },
+    {
+      "file": "test/director-simulation.js",
+      "sha256": "ffd41c748ec5d88af1977951575886662cefc3862f57a746cd7fc338792e589b",
+      "bytes": 3281,
+      "exportedFunctions": [],
+      "gitBlob": "f7284f45753c7f144d3fa23a1590ca2927d3aff9"
+    },
+    {
+      "file": "test/gates.js",
+      "sha256": "453c7c2d33d0635c42846af5b30736ecdd585031231796f2332222b95e15bcee",
+      "bytes": 284047,
+      "exportedFunctions": [
+        "startWorkerWatch"
+      ],
+      "gitBlob": "f44638928fe936022c82d48b90b8d4a1dac63d3d"
+    },
+    {
+      "file": "test/lib/director-support.js",
+      "sha256": "573c43897191cc333e345103458a3e8709111a8d1280a21665a06f3cea24f410",
+      "bytes": 9701,
+      "exportedFunctions": [
+        "dockFixture"
+      ],
+      "gitBlob": "1a9b911f526b0018afac5c7a3c58435fc11dd098"
+    },
+    {
+      "file": "test/lib/phase2-architecture-upgrade-catalog.json",
+      "sha256": "1a71187960759db301877d70a01fcb3b2f114c87138bc86bfc399cc2e91c162d",
+      "bytes": 36065,
+      "gitBlob": "b92d6d416e5574105904845c4e1e41674e736fa6"
+    },
+    {
+      "file": "test/migrate.js",
+      "sha256": "c7a8ea9a55b35e8b5d3294617ad8c48c735274dbe6739eeac8998fc2bd38aec5",
+      "bytes": 73625,
+      "exportedFunctions": [],
+      "gitBlob": "c2bc135e5a71fe3aedb7b72b7ada378c6e572bdc"
+    },
+    {
+      "file": "test/player-command-client.js",
+      "sha256": "845fd662511ebf5737f41acec2ecd4731107c1face910e1355a940fe775ab6a5",
+      "bytes": 18382,
+      "exportedFunctions": [],
+      "gitBlob": "a40786b3faccb8f85a8c64a7228c5ed4dba62386"
+    },
+    {
+      "file": "tools/director-sim.js",
+      "sha256": "cb54e8347a6a80f93ed75940ae001ccfb31ec1dc1d9dcdb14b1f843cc9609fdc",
+      "bytes": 27330,
+      "exportedFunctions": [
+        "simulateDirectorScenario",
+        "runDirectorSimulation"
+      ],
+      "gitBlob": "b3672cb2d6102ce78f6bad4a74dee40de016a06d"
+    },
+    {
+      "file": "tools/director-validate.js",
+      "sha256": "5e8d3a87c03564e112ecad6788f9e3100caf70c33b0d44c9ac90497beff5f99c",
+      "bytes": 1240,
+      "exportedFunctions": [],
+      "gitBlob": "9b2e342c2a8e733800b08e0203889d9914c5e56f"
+    }
+  ],
+  "includedFoundationDependencies": [
+    {
+      "file": "package-lock.json",
+      "sha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+      "bytes": 119402,
+      "gitBlob": "e86f6a975ef5ebc89b23234c70ec44228ca4240e"
+    },
+    {
+      "file": "src/items.js",
+      "sha256": "f086d9a45ab5cb7bbd063bf84e91886ebc754efc7acc1a39dc6858e2634ae5e8",
+      "bytes": 62974,
+      "exportedFunctions": [
+        "assertItemTransaction",
+        "itemMutationContext",
+        "assertOperationMutation",
+        "nextItemMutationOrdinal",
+        "assertLotCandidateRoot",
+        "assertLotDefinitionPin",
+        "assertAndUseLotTransition",
+        "poisonItemTransaction",
+        "withItemRead",
+        "assertItemRead",
+        "awaitItemReadBarrier",
+        "withItemTransaction",
+        "registerItemTransactionUndo",
+        "withLotMutation",
+        "inventoryBoard"
+      ],
+      "gitBlob": "2c9eb10021204d08b7489460be19d4a041577dd9"
+    },
+    {
+      "file": "src/world-kernel.js",
+      "sha256": "d73455c6c13d1c1d6da624fb6fb486e850ee675df8114d96cd9e4cfbb0d4d052",
+      "bytes": 27058,
+      "exportedFunctions": [
+        "compileWorldObjects",
+        "createWorldKernel"
+      ],
+      "gitBlob": "eea22c3047688f968aff02a796ff4ddf87c50831"
+    },
+    {
+      "file": "src/world-kernel-query.js",
+      "sha256": "4b5d98ad87d905c9aad893f0c6fc447ee7b5870a216e76acbc73bb4b8eb16245",
+      "bytes": 21270,
+      "exportedFunctions": [
+        "worldRef",
+        "createWorldKernelQuery"
+      ],
+      "gitBlob": "5701e7a0ab31e536bf02e453a76e4efcfae35053"
+    },
+    {
+      "file": "src/coordination/knowledge.js",
+      "sha256": "46aa18d88dbf25e9c80adf2646e71ff4b7501cbaba5b556609e6caabd970e7e3",
+      "bytes": 52410,
+      "exportedFunctions": [
+        "assertKnowledgeSnapshot",
+        "snapshotRequirementMatches",
+        "assertKnowledgeProof",
+        "knowledgeProofMatches",
+        "createCoordinationKnowledge"
+      ],
+      "gitBlob": "91756e763465f8a42bc0d06db6201873fefe29fc"
+    },
+    {
+      "file": "src/coordination/operation-invariants.js",
+      "sha256": "39e7d12c02728cb82eede0c1263e494ce2ea2576553767b7c01cde0c125b6b85",
+      "bytes": 7573,
+      "exportedFunctions": [
+        "familyOperationInvariants"
+      ],
+      "gitBlob": "4b24fbf9383a09be6f1027430c6b2b600ca8c4e0"
+    },
+    {
+      "file": "src/coordination/graph.js",
+      "sha256": "f2c0841a1fe995826f5c79843a0aee00bce41c70ce8fb20629c3276852b5ae5d",
+      "bytes": 17804,
+      "exportedFunctions": [
+        "compileCoordinationGraph",
+        "coordinationEvidenceKey",
+        "evaluateRule",
+        "createCoordinationRegistry",
+        "coordinationGraphs",
+        "coordinationGraph"
+      ],
+      "gitBlob": "441e062eb6537612e320fbf23374147045ae2d02"
+    },
+    {
+      "file": "src/mysteries.js",
+      "sha256": "9906386dff887b4ab528c6472418b00ae3d8b65ba971379e74065833bf2ea66b",
+      "bytes": 89490,
+      "exportedFunctions": [
+        "validateMysteryDefinitions",
+        "createMysteryContext",
+        "mysteryDefinitionHash",
+        "startMystery",
+        "discoverNode",
+        "completeNode",
+        "commitChoice",
+        "cancelMystery",
+        "mysteryBoard",
+        "planMysterySnapshot"
+      ],
+      "gitBlob": "32324011de40c91a7da2ab936f05d6f1867dfc3c"
+    },
+    {
+      "file": "src/crafting.js",
+      "sha256": "68bc2f9f430b8b5d274a89ac1a6e4c330febcdccc58825c84058276dfaf035e8",
+      "bytes": 48963,
+      "exportedFunctions": [
+        "validateCraftingDefinitions",
+        "createCraftingContext",
+        "recipeResourceBlockers",
+        "recipeCatalog",
+        "planCraftingSnapshot",
+        "recipeCatalogForPlayer",
+        "craftWorldGraphRecipe",
+        "salvageCar"
+      ],
+      "gitBlob": "24d06cbc6fd8ec826950683bd0bae0ed02200977"
+    },
+    {
+      "file": "src/db.js",
+      "sha256": "2ef8926323ad266ef685856ebf7192f8005cc733eb104d5ddabf2bdc14fe1d52",
+      "bytes": 61568,
+      "exportedFunctions": [
+        "registerPgMemCompatibility",
+        "stampSchema",
+        "columnMigrations",
+        "migrateColumns",
+        "migrateTask5BallotV2",
+        "migrateRwaHealthOverlayV2",
+        "migrateSchemaUnderLock",
+        "verifyPhase2DefinitionSchema",
+        "makeDb"
+      ],
+      "gitBlob": "63c92eb351aef360985017250079504290661021"
+    },
+    {
+      "file": "src/game.js",
+      "sha256": "7829195c2235b24d2a8e5d0c879e4c58ca31525a5d80884603ce4c15394d7fc4",
+      "bytes": 218275,
+      "exportedFunctions": [
+        "assertStreetActor",
+        "notify",
+        "notifyOnce",
+        "bumpFamilyTask",
+        "ledger",
+        "rngLog",
+        "loadOwned",
+        "bestNpc",
+        "bumpStanding",
+        "masteryFx",
+        "bumpMastery",
+        "bumpCrewObjective",
+        "assignedSoldier",
+        "soldierResult",
+        "accrueInMemory",
+        "track",
+        "bumpDaily",
+        "gainRespect",
+        "withCharacter",
+        "withCharacterRead",
+        "readCharacter",
+        "persistAccountFields",
+        "withTwoCharacters",
+        "view",
+        "doCrime",
+        "train",
+        "healCostOf",
+        "heal",
+        "checkinQuoteOf",
+        "checkin",
+        "bank",
+        "travel",
+        "maybeQualifyReferral",
+        "maybeSparkReferral",
+        "referralPushMult",
+        "referralPushStatus",
+        "startReferralPush",
+        "maybeGrandReferral",
+        "sweepGrandReferrals"
+      ],
+      "gitBlob": "06102cb6f5ec9171c295131315c34a279ccf4c94"
+    },
+    {
+      "file": "omerta-contracts/SECURITY-REVIEW-POLICY.md",
+      "sha256": "ef206cfb784b22563c8a4b43770bc989f2d0af35a244f36ad9495a38cde77f3b",
+      "bytes": 7411,
+      "gitBlob": "73da4b454bc538d37168cc75db795796ec474516"
+    }
+  ],
+  "gitBlobSemantics": "Git blob identity after repository line-ending normalization; sha256 records reviewed local bytes."
+}

@@ -1,0 +1,20 @@
+
+> omerta-backend@1.2.0 test:director:postgres
+> node test/director-runtime.js --postgres && node test/director-recovery.js --postgres && node test/director-dock-world.js --postgres && node test/director-commands.js --postgres && node test/director-api.js --postgres && node test/director-journey.js --postgres && node test/director-security.js --postgres && node test/director-migration.js --postgres
+
+PASS Director runtime: real pressure, disabled/simulation/shadow, durable creation/restart/replay, escalation, expiry and recovery
+Director recovery: expired aftermath resumes once after cooldown with durable recovery lineage
+Director recovery: season change records explicit recovery while preserving world consequences
+Director recovery: multiple physical outcomes between evaluations catch up to canonical campaign completion
+Dock War protected: real domain branch, retry, custody and canonical history passed
+Dock War intercepted: real domain branch, retry, custody and canonical history passed
+Dock War alternate_route: real domain branch, retry, custody and canonical history passed
+Dock War opposition: concurrent Family operations, single canonical outcome and losing-side recovery passed
+director-commands: shared knowledge snapshot, authorized cards, opaque issuance, delegated discovery, stale/forged/expired denial, durable replay and succession PASS
+director-api: authenticated composed content, per-audience DTO, no enumeration/definition leak, strict opaque dispatch, real discovery, retry and account revocation PASS
+director-journey protected: commands, shared situation, knowledge, coordination, canonical consequences, second generation, restart and completion PASS
+director-journey intercepted: commands, shared situation, knowledge, coordination, canonical consequences, second generation, restart and completion PASS
+director-journey alternate_route: commands, shared situation, knowledge, coordination, canonical consequences, second generation, restart and completion PASS
+Director security: enumeration, ACL revocation, membership, forged/stale actions, duplicate workers, restart, expiry and definition tamper passed
+Director security: native canonical fact/event race preserves the campaign outcome branch
+director-migration: populated 44f48a743e549591bd125a1f678099b8382dd78f, two production migrations, canonical/Director receipt preservation and exact 17-constraint catalog PASS (PostgreSQL 160015)

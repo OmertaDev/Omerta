@@ -2,6 +2,7 @@
 // to the existing domain services. Stored boards are expiring suggestions, never authority.
 import crypto from 'node:crypto';
 import { GameError } from './game.js';
+import { dbCaps } from './db.js';
 import { canonicalBytes } from './content/canonical.js';
 import { createWorldKernel } from './world-kernel.js';
 import { createWorldKernelQuery } from './world-kernel-query.js';
@@ -20,6 +21,47 @@ const identifier = (value) => typeof value === 'string' && /^[\x21-\x7e]{1,160}$
 const ref = (type, id) => ({ type, id });
 const title = (value) => String(value || '').replace(/[_:.-]+/g, ' ').replace(/^./, (letter) => letter.toUpperCase());
 const LIFETIME_MS = 10 * 60 * 1000;
+const memoryExecutions = new Set();
+const boardExecutions = new WeakMap();
+// Domain services may return an identical result when they win or replay their
+// own mutation guard. Serialize fresh submissions against the existing issued
+// board so only the winner reports a new execution. Never wait while occupying
+// a connection needed by a domain transaction; callers retry the same identity.
+async function withIssuedBoard(pool, boardId, accountId, action) {
+  if (!dbCaps.skipLocked) {
+    if (memoryExecutions.has(boardId)) fail('contention');
+    memoryExecutions.add(boardId);
+    try { return await action(); } finally { memoryExecutions.delete(boardId); }
+  }
+  // A board lock and a domain transaction require separate connections. Bound
+  // admission before awaiting a connection so distinct boards cannot fill the
+  // pool with lock holders all waiting for their own domain connection.
+  const capacity = Math.floor((pool.options?.max ?? 20) / 2);
+  const running = boardExecutions.get(pool) || 0;
+  if (running >= capacity) fail('contention');
+  boardExecutions.set(pool, running + 1);
+  let client;
+  let discard = false;
+  try {
+    client = await pool.connect();
+    await client.query('BEGIN');
+    const row = (await client.query('SELECT id FROM player_command_boards WHERE id=$1 AND account_id=$2 FOR UPDATE NOWAIT',
+      [boardId, accountId])).rows[0];
+    if (!row) fail();
+    return await action();
+  } catch (error) {
+    if (['55P03', '40P01', '40001'].includes(error?.code)) fail('contention');
+    throw error;
+  } finally {
+    // This boundary changes no data. Failure to release its lock must not turn a
+    // known committed domain action into a request for a different retry key.
+    if (client) {
+      try { await client.query('ROLLBACK'); } catch { discard = true; }
+      client.release(discard);
+    }
+    boardExecutions.set(pool, (boardExecutions.get(pool) || 1) - 1);
+  }
+}
 const BLOCKERS = Object.freeze({ location: 'Travel to the required district.', materials: 'Gather the required materials.',
   cash: 'You need more cash.', item: 'Obtain the required equipment.', level: 'Build your reputation.',
   skill: 'Learn the required skill.', scarcity: 'This recipe is currently at its production limit.',
@@ -102,6 +144,15 @@ function commandsFor(board) {
     add('world.execute', ref('world_object', object.id), title(action.actionId),
       { objectId: object.id, actionId: action.actionId, itemId: action.itemId, expectedRevision: action.expectedRevision },
       action.canAttempt === true, action.missing || [], { target: ref('territory', object.locationId) });
+  for (const situation of board.situations || []) for (const action of situation.actions || [])
+    add('situation.act', ref('situation', situation.id), action.label,
+      { situationId: situation.id, actionId: action.id, expectedRevision: situation.revision },
+      action.canAttempt === true, action.missing || [], {
+        description: action.description || situation.description,
+        expiresAt: situation.expiresAt,
+        requiredRoles: action.requiredRoles || [],
+        ...(action.confirmation ? { confirmation: action.confirmation } : {}),
+      });
   for (const definition of board.operations.catalog) add('operation.create', ref('operation', definition.id), `Organize: ${definition.title}`,
     { definitionId: definition.id }, definition.canCreate === true, definition.missing || [], { requiredRoles: definition.roles || [] });
   const operation = board.operations.selected;
@@ -135,7 +186,7 @@ const fingerprint = (board) => hash(JSON.parse(JSON.stringify(board, (key, value
 const diff = (before, after, key = 'id') => after.filter((entry) => !before.some((old) => old[key] === entry[key] && hash(old) === hash(entry)));
 
 export function createPlayerCommandEngine({ pool, content, enabled = false, knowledgeEnabled = false, sharingEnabled = false,
-  operationsEnabled = enabled, discoveryEnabled = enabled, accountIds = [] }) {
+  operationsEnabled = enabled, discoveryEnabled = enabled, accountIds = [], director = null }) {
   const policy = { enabled, knowledgeEnabled, sharingEnabled, accountIds };
   const kernel = createWorldKernel({ pool, registry: content.registry, objects: content.objects, ...policy });
   const knowledge = createCoordinationKnowledge(policy);
@@ -146,7 +197,7 @@ export function createPlayerCommandEngine({ pool, content, enabled = false, know
   const discovery = createCoordinationService({ pool, registry: content.coordinationRegistry,
     prerequisitesEnabled: content.progression === true, ...policy, enabled: discoveryEnabled });
   const projection = createWorldProjection({ pool, query, kernel, knowledge, familyOperations: family, crafting,
-    recipeIds: content.recipeIds, mysteries: content.progression ? { registry: content.registry, graphIds: content.mysteryGraphIds,
+    recipeIds: content.recipeIds, director, mysteries: content.progression ? { registry: content.registry, graphIds: content.mysteryGraphIds,
       knowledgeEnabled, sharingEnabled, accountIds, worldDefinitions: kernel.definitions } : null });
   const admit = async (accountId, expectedCharacterId = null) => {
     if (!enabled || !identifier(accountId) || (accountIds.length && !accountIds.includes(accountId))) fail();
@@ -177,12 +228,14 @@ export function createPlayerCommandEngine({ pool, content, enabled = false, know
     await pool.query(`INSERT INTO player_command_boards(id,account_id,character_id,state_hash,options_json,commands_json,expires_at)
       VALUES($1,$2,$3,$4,$5,$6,$7) ON CONFLICT(id) DO NOTHING`,
     [boardId, accountId, board.player.character.id, stateHash, JSON.stringify(options), JSON.stringify(draft.commands), expiresAt]);
-    const commands = draft.commands.map((command) => ({ ...command, expiresAt,
+    const commands = draft.commands.map((command) => ({ ...command,
+      expiresAt: command.expiresAt && new Date(command.expiresAt).getTime() < new Date(expiresAt).getTime() ? command.expiresAt : expiresAt,
       executionIdentity: command.availability === 'AVAILABLE' ? { executionId: `${boardId}.${command.commandId}` } : null }));
     return { ...board, commandSchemaVersion: 1, commands, commandsTruncated: draft.commandsTruncated, ...playerOpportunities(board, commands) };
   }
   const domainKey = (executionId) => `player-command:${hash(executionId)}`;
-  async function receipt(accountId, command, key) {
+  async function receipt(accountId, command, key, characterId) {
+    if (command.commandType === 'situation.act') return director ? director.receipt(accountId, key, characterId) : null;
     if (command.commandType.startsWith('discovery.') || command.commandType.startsWith('knowledge.')) return (await pool.query(
       'SELECT response_json FROM coordination_commands WHERE account_id=$1 AND command_key=$2', [accountId, key])).rows[0]?.response_json ?? null;
     const receiptKey = command.commandType.startsWith('operation.') ? `family-operation:${hash([accountId, key])}`
@@ -191,6 +244,10 @@ export function createPlayerCommandEngine({ pool, content, enabled = false, know
   }
   async function dispatch(accountId, characterId, command, key) {
     const p = command.parameters, type = command.commandType;
+    if (type === 'situation.act') {
+      if (!director) fail();
+      return director.command(accountId, p.situationId, p.actionId, { expectedRevision: p.expectedRevision }, key, characterId);
+    }
     if (type === 'discovery.start') return discovery.create(accountId, p.graphId, { expectedContentHash: p.expectedContentHash }, key, characterId);
     if (type === 'discovery.act') return discovery.act(accountId, p.instanceId, { actionId: p.actionId, expectedRevision: p.expectedRevision }, key, characterId);
     if (type === 'knowledge.share') return discovery.shareKnowledgeWithGroup(accountId, p.claimId,
@@ -230,22 +287,25 @@ export function createPlayerCommandEngine({ pool, content, enabled = false, know
     if (!command || command.availability !== 'AVAILABLE') fail();
     if (command.confirmation.required && !input.confirmed) fail('command_confirmation_required');
     const options = JSON.parse(issued.options_json), actionKey = domainKey(input.executionId);
-    let raw = await receipt(accountId, command, actionKey), replayed = raw !== null, before = null;
-    if (!replayed) {
+    let raw = await receipt(accountId, command, actionKey, issued.character_id), replayed = raw !== null, before = null;
+    if (!replayed) await withIssuedBoard(pool, boardId, accountId, async () => {
+      raw = await receipt(accountId, command, actionKey, issued.character_id); replayed = raw !== null;
+      if (replayed) return;
       if (new Date(issued.expires_at).getTime() <= Date.now()) fail('command_expired');
+      if (command.expiresAt && new Date(command.expiresAt).getTime() <= Date.now()) fail('command_expired');
       before = await read(accountId, options);
       if (fingerprint(before) !== issued.state_hash) {
         // A concurrent attempt may have committed while this read was in flight.
-        raw = await receipt(accountId, command, actionKey); replayed = raw !== null;
+        raw = await receipt(accountId, command, actionKey, issued.character_id); replayed = raw !== null;
         if (!replayed) fail('command_stale');
       }
       if (!replayed) raw = await dispatch(accountId, issued.character_id, command, actionKey);
-    }
+    });
     // Domain COMMIT already happened. A failed read must never invite a new key.
     const outcome = typeof raw === 'string' ? JSON.parse(raw) : raw;
     const nextOptions = { ...options,
       ...(command.commandType === 'mystery.start' ? { mysteryGraphId: command.parameters.graphId } : {}),
-      ...(command.commandType === 'operation.create' && outcome?.operationId ? { operationId: outcome.operationId } : {}) };
+      ...(['operation.create', 'situation.act'].includes(command.commandType) && outcome?.operationId ? { operationId: outcome.operationId } : {}) };
     let next = null;
     try { next = await snapshot(accountId, nextOptions); } catch { /* exact retry reconciles the existing domain receipt */ }
     const priorCommands = before ? commandsFor(before).commands : [];
@@ -262,6 +322,7 @@ export function createPlayerCommandEngine({ pool, content, enabled = false, know
       relationshipChanges: next && before && hash([before.crew, before.family]) !== hash([next.crew, next.family])
         ? [{ crew: next.crew, family: next.family }] : [],
       operationChanges: next && before ? diff(before.operations.instances, next.operations.instances) : [],
+      ...(director ? { situationChanges: next && before ? diff(before.situations || [], next.situations || []) : [] } : {}),
       mysteryProgression: next && before ? [...diff(before.cases?.catalog || [], next.cases?.catalog || [], 'graphId'),
         ...diff(before.cases?.selected?.nodes || [], next.cases?.selected?.nodes || [])] : [],
       newOpportunities: next && before ? next.opportunities.filter((entry) => !priorOpportunities.some((old) => old.opportunityId === entry.opportunityId)) : [],

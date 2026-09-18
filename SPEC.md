@@ -12,18 +12,18 @@ Census refreshed 2026-09-17 from this workspace, including untracked source and 
 
 | | |
 |---|---|
-| Backend modules | **260** files, **103782** lines (`src/`, including routes and social modules) |
-| Test suites | **243** files, **111359** lines (`test/`) |
+| Backend modules | **268** files, **105273** lines (`src/`, including routes and social modules) |
+| Test suites | **255** files, **112675** lines (`test/`) |
 | HTTP routes | **800** registrations (**800** unique) |
-| Database tables | **362** (`schema.sql`, 7288 lines) |
-| Client | **13326** lines (`public/index.html`, single file, zero dependencies) |
+| Database tables | **369** (`schema.sql`, 7371 lines) |
+| Client | **13335** lines (`public/index.html`, single file, zero dependencies) |
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |
 | Smart contracts | **39** top-level Solidity files, **11340** lines, **1046** declared top-level Foundry test functions; the release gate re-measures the passing suite |
 | Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/bond-dials.js` (sizing the on-chain mint walls), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |
-| Design + audit docs | **600** markdown files, **148072** lines — indexed in `docs/AUDITS.md`, which states they are point-in-time |
+| Design + audit docs | **603** markdown files, **148288** lines — indexed in `docs/AUDITS.md`, which states they are point-in-time |
 | Ledger invariants | **55** checks — **49** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |
 
-Roughly **224,000 lines** of backend code, tests, schema and top-level contracts.
+Roughly **237,000 lines** of backend code, tests, schema and top-level contracts.
 
 ---
 

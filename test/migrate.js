@@ -541,6 +541,9 @@ const DISPOSITION = {
   // Execution binds the original living character; the command race/API suites
   // prove that succession cannot execute or recover the old character's view.
   player_command_boards: 'ledger',
+  // Durable command intent is account-bound reconciliation history; an heir
+  // cannot execute the deceased character's intent (runtime revalidates identity).
+  director_action_intents: 'ledger',
   batches: 'wiped', blackjack_hands: 'wiped', boats: 'wiped', businesses: 'wiped', cars: 'wiped',
   character_assets: 'wiped', character_cargo: 'wiped', character_guns: 'wiped', character_items: 'wiped',
   character_rackets: 'wiped', character_skills: 'wiped', convoy_ambushes: 'wiped', crew_heist_members: 'wiped',

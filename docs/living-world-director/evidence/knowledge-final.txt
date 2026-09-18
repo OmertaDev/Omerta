@@ -1,0 +1,8 @@
+
+> omerta-backend@1.2.0 knowledge
+> node tools/knowledge.js build
+
+knowledge base built — 7475 nodes, 33013 edges
+  2921 artifacts, 800 route registrations (800 unique), 369 tables, 79 Solidity declarations, 1475 commits
+✓ checkout stability: all 4848 graph timestamps are canonical UTC (4347 read from git), so regenerating under a different git version cannot drift them
+✓ repository knowledge plane: 7475 nodes, 33013 edges; provenance, endpoints, links and generated artifacts valid

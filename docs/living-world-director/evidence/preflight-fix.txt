@@ -1,0 +1,2 @@
+PASS Director configuration: disabled default, prerequisite/cohort gates, no shadow content exposure, retained foundation interfaces
+✅ PREFLIGHT passed — every env var in src/ is classified (the drift that shipped the pacing knobs unguarded is now caught by a test), the required secrets and the public dev fallbacks fail closed, every test-only roll/timer knob refuses a production boot, and a dev-safe default that is wrong in production must be stated rather than inherited

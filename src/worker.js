@@ -10,6 +10,8 @@
 // ERRORS but never its LATENCY — inline, it held every alarm on this tick behind it.
 // All three are exported, so the tests drive them directly rather than via a tick.
 import crypto from 'node:crypto';
+import { createConfiguredDirector } from './director/config.js';
+import { coreProgressionContent } from './content/core-progression.js';
 import { makeDb } from './db.js';
 import { testOnlyLeaks } from './preflight.js';
 import { pingDb, archiverHealth } from './dbhealth.js';
@@ -276,6 +278,25 @@ if (process.argv[1] && process.argv[1].endsWith('worker.js')) {
     process.exit(1);
   }
   const pool = await makeDb();
+  const director = createConfiguredDirector(pool, coreProgressionContent());
+  if (director && !['DIRECTOR_DISABLED', 'INTERNAL_SIMULATION'].includes(director.mode)) {
+    let evaluatingDirector = false;
+    const directorTick = async () => {
+      if (evaluatingDirector) return;
+      evaluatingDirector = true;
+      try {
+        await director.tick();
+        // Fixed aggregate fields only: no audiences, object IDs, accounts or facts.
+        console.log('[director]', JSON.stringify(director.metrics()));
+      } catch (error) {
+        console.error('[director]', JSON.stringify({ errors: director.metrics().errors,
+          code: ['director_capacity', 'director_history_limit', 'director_history_gap', 'director_definition_changed']
+            .includes(error?.code) ? error.code : 'evaluation_failed' }));
+      } finally { evaluatingDirector = false; }
+    };
+    setInterval(directorTick, 300000);
+    void directorTick();
+  }
   console.log('OMERTÀ worker up — hourly: buyback + season check; daily: §10.4 invariant sweep.');
   let lastInvariantDay = -1;
   // Each job is individually transactional, so a failure in one must NOT starve the others —

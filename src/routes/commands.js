@@ -1,6 +1,7 @@
 import { createPlayerCommandEngine } from '../player-commands.js';
 import { coreProgressionContent } from '../content/core-progression.js';
 import { isDbDown } from '../dbhealth.js';
+import { createConfiguredDirector } from '../director/config.js';
 
 const invalid = () => { const error = new Error('Invalid command request'); error.code = 'bad_command_request'; throw error; };
 
@@ -23,7 +24,9 @@ export function register(app, { pool, auth, receiptTrust = null }) {
   const enabled = process.env.WORLD_GRAPH_KERNEL === 'on';
   const discoveryEnabled = enabled && process.env.COORDINATION_ENGINE === 'on';
   const knowledgeEnabled = discoveryEnabled && process.env.COORDINATION_KNOWLEDGE === 'on';
-  const service = createPlayerCommandEngine({ pool, content: coreProgressionContent(), enabled, discoveryEnabled,
+  const content = coreProgressionContent();
+  const director = createConfiguredDirector(pool, content);
+  const service = createPlayerCommandEngine({ pool, content, director, enabled, discoveryEnabled,
     operationsEnabled: discoveryEnabled && process.env.COORDINATION_OPERATIONS === 'on', knowledgeEnabled,
     sharingEnabled: knowledgeEnabled && process.env.COORDINATION_KNOWLEDGE_SHARING === 'on',
     accountIds: (process.env.COORDINATION_ACCOUNT_IDS || '').split(',').map((id) => id.trim()).filter(Boolean) });

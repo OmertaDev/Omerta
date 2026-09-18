@@ -7261,6 +7261,89 @@ CREATE TABLE IF NOT EXISTS world_operation_events (
 -- provenance and usage commit together under the existing item mutation root.
 -- Expiring, player-bound command suggestions. Domain ledgers remain the sole
 -- mutation/replay authority; these rows cannot authorize an effect by themselves.
+-- The Director stores scheduling decisions and lifecycle identities, never inventory,
+-- knowledge, territory authority or duplicated world history.
+CREATE TABLE IF NOT EXISTS director_definitions (
+  kind TEXT NOT NULL CHECK (kind IN ('situation','campaign')),
+  definition_id TEXT NOT NULL,
+  version INT NOT NULL CHECK (version > 0),
+  content_hash TEXT NOT NULL CHECK (char_length(content_hash)=64),
+  definition_json TEXT NOT NULL,
+  PRIMARY KEY(kind,definition_id,version)
+);
+CREATE TABLE IF NOT EXISTS director_clock (
+  id TEXT PRIMARY KEY,
+  evaluated_at TIMESTAMPTZ NOT NULL
+);
+CREATE TABLE IF NOT EXISTS director_campaigns (
+  id TEXT PRIMARY KEY,
+  definition_id TEXT NOT NULL,
+  definition_version INT NOT NULL,
+  definition_hash TEXT NOT NULL,
+  object_id TEXT NOT NULL,
+  node_id TEXT NOT NULL,
+  status TEXT NOT NULL CHECK (status IN ('active','completed','abandoned')),
+  revision INT NOT NULL CHECK (revision > 0),
+  created_at TIMESTAMPTZ NOT NULL,
+  updated_at TIMESTAMPTZ NOT NULL,
+  expires_at TIMESTAMPTZ NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_director_campaigns_active ON director_campaigns(status,object_id,created_at);
+CREATE INDEX IF NOT EXISTS ix_director_campaigns_history ON director_campaigns(definition_id,object_id,created_at,id);
+CREATE TABLE IF NOT EXISTS director_situations (
+  id TEXT PRIMARY KEY,
+  definition_id TEXT NOT NULL,
+  definition_version INT NOT NULL,
+  definition_hash TEXT NOT NULL,
+  campaign_id TEXT NOT NULL REFERENCES director_campaigns(id),
+  node_id TEXT NOT NULL,
+  object_id TEXT NOT NULL,
+  starting_world_revision INT NOT NULL,
+  controller_family_id TEXT,
+  season INT NOT NULL,
+  state TEXT NOT NULL,
+  revision INT NOT NULL CHECK (revision > 0),
+  terminal BOOLEAN NOT NULL DEFAULT false,
+  outcome TEXT,
+  world_event_id TEXT REFERENCES world_kernel_events(id),
+  created_at TIMESTAMPTZ NOT NULL,
+  updated_at TIMESTAMPTZ NOT NULL,
+  expires_at TIMESTAMPTZ NOT NULL,
+  UNIQUE(campaign_id,node_id)
+);
+CREATE INDEX IF NOT EXISTS ix_director_situations_active ON director_situations(terminal,created_at,id);
+CREATE INDEX IF NOT EXISTS ix_director_situations_scope ON director_situations(object_id,definition_id,created_at);
+CREATE TABLE IF NOT EXISTS director_receipts (
+  execution_id TEXT PRIMARY KEY,
+  kind TEXT NOT NULL,
+  subject_id TEXT NOT NULL,
+  result_json TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL
+);
+CREATE TABLE IF NOT EXISTS director_selections (
+  id TEXT PRIMARY KEY,
+  mode TEXT NOT NULL,
+  evaluated_at TIMESTAMPTZ NOT NULL,
+  facts_json TEXT NOT NULL,
+  candidates_json TEXT NOT NULL,
+  selected_json TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_director_selections_time ON director_selections(evaluated_at);
+CREATE TABLE IF NOT EXISTS director_action_intents (
+  account_id TEXT NOT NULL,
+  command_key TEXT NOT NULL,
+  character_id TEXT NOT NULL,
+  situation_id TEXT NOT NULL REFERENCES director_situations(id),
+  action_id TEXT NOT NULL,
+  command_type TEXT NOT NULL,
+  target_id TEXT NOT NULL,
+  expected_revision INT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL,
+  PRIMARY KEY(account_id,command_key)
+);
+CREATE INDEX IF NOT EXISTS ix_director_intents_situation ON director_action_intents(situation_id,account_id);
+CREATE INDEX IF NOT EXISTS ix_director_claim_observation ON coordination_claims(discovered_at,source_root);
+
 CREATE TABLE IF NOT EXISTS player_command_boards (
   id TEXT PRIMARY KEY,
   account_id TEXT NOT NULL REFERENCES accounts(id),

@@ -1,0 +1,78 @@
+{
+  "sourceBase": "44f48a743e549591bd125a1f678099b8382dd78f",
+  "sourceState": "working tree with Living World Director changes; no tracked source edits by this release-gate run",
+  "recordedAtUtc": "2026-09-18T04:23:28.6545579Z",
+  "database": {
+    "host": "127.0.0.1",
+    "port": 55439,
+    "version": "PostgreSQL 16.15",
+    "isolated": true,
+    "finalState": "stopped",
+    "poolMax": 40
+  },
+  "loadtest": {
+    "exit": 0,
+    "players": 30,
+    "seconds": 20,
+    "operations": 6664,
+    "requestsPerSecond": 332,
+    "http5xx": 0,
+    "deadlocks": 0,
+    "poolFailures": 0,
+    "stableLedgerChecks": 55,
+    "log": "release-loadtest.txt",
+    "sha256": "7b967c61970a86d1b00d96ffe26b0293f7e33270b37382b26715b9c0422e8996",
+    "gitBlob": "9b4efd990065b3db4a0d44a325cc6edd3cbb288c"
+  },
+  "concurrency": {
+    "exit": 0,
+    "scenariosPassed": 4,
+    "deadlocks": 0,
+    "log": "release-concurrency.txt",
+    "sha256": "9d96698b320a364e72a6a61bcabe305846488072eb18c6fc8c7c4333bbc5cf1c",
+    "gitBlob": "d339610601d624acd5a79aff3c8eb2a71c0f5b5e"
+  },
+  "chaos": {
+    "exit": 1,
+    "fullDatabaseStopStart": "passed",
+    "outageResponses": "503 db_down x6",
+    "recoveryResponses": "200 x6",
+    "workerKillResume": "passed",
+    "killedBackends": 80,
+    "interruptedTwoPartyTransfers": "passed",
+    "deployDrain": "failed on Windows: SIGTERM terminated child without drain; in-flight ECONNRESET",
+    "retiredWageScenario": "skipped: retired functionality",
+    "log": "release-chaos.txt",
+    "sha256": "15f472342f63e19c02bdb0bb2fdc58d1cae0b97c5502c92d2f44015a08e035a1",
+    "gitBlob": "c93deb8419c70af0f10c95dca3425a97cce3571a"
+  },
+  "requiredFollowup": "Retain failing Windows chaos result; obtain Linux deploy-drain evidence from the release CI run before treating chaos gate as satisfied.",
+  "sourceHashes": [
+    {
+      "path": "tools/loadtest.js",
+      "sha256": "C345D4963C9835409F122A3B1221EF793656D9D023299A4BFA0E8C6EFA3082C2",
+      "gitBlob": "128d8f9252b46d82abcb62a74aac28cedf007369"
+    },
+    {
+      "path": "tools/concurrency.js",
+      "sha256": "F5E362CE9FAB63A1B3A8011DF825529F20169FF7ABD68F20536F947F1DCFA1BE",
+      "gitBlob": "a2726379598a063605b77c4b4dc2d88470a69be6"
+    },
+    {
+      "path": "tools/chaos.js",
+      "sha256": "862C7C0D29915E9263DFF5320A7937F5BD8720BF2BC92375A80810A7D981A392",
+      "gitBlob": "8fe3b6f9f52332b401fe5ccb18e6b546aa012a5d"
+    },
+    {
+      "path": "src/db.js",
+      "sha256": "2EF8926323AD266EF685856EBF7192F8005CC733EB104D5DDABF2BDC14FE1D52",
+      "gitBlob": "63c92eb351aef360985017250079504290661021"
+    },
+    {
+      "path": "src/player-commands.js",
+      "sha256": "C3AF3116E48CF7E750C5FE5DFE56D96972D6F61AF88ECADC86FDB02DD0C9B0A6",
+      "gitBlob": "edd6c1c59f6f58f973eda7081aac798499c728ad"
+    }
+  ],
+  "retainedOutputNormalization": "Only redundant whitespace at EOF removed. Git blobs account for repository line-ending normalization."
+}

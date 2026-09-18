@@ -6,11 +6,12 @@ import { WORLD_KERNEL_REGISTRY, WORLD_KERNEL_OBJECTS, WORLD_KERNEL_RECIPE } from
 import { COORDINATION_OPERATION_PILOT } from './coordination-operation-pilot.js';
 import { COORDINATION_ALL_PILOTS } from '../coordination/pilot.js';
 import { createCoordinationRegistry, coordinationGraphs } from '../coordination/graph.js';
+import { createDockWarContent } from './dock-war.js';
 
 const legacy = Object.freeze({ registry: WORLD_KERNEL_REGISTRY, objects: WORLD_KERNEL_OBJECTS,
   operations: COORDINATION_OPERATION_PILOT, recipeIds: Object.freeze([WORLD_KERNEL_RECIPE]),
   coordinationRegistry: COORDINATION_ALL_PILOTS, mysteryGraphIds: Object.freeze([]), progression: false });
-let admitted;
+let admitted, directorAdmitted;
 export function coreProgressionContent() {
   const enabled = process.env.CORE_PROGRESSION === 'on' && ['WORLD_GRAPH_KERNEL', 'COORDINATION_ENGINE',
     'COORDINATION_KNOWLEDGE', 'COORDINATION_KNOWLEDGE_SHARING', 'COORDINATION_OPERATIONS']
@@ -27,5 +28,18 @@ export function coreProgressionContent() {
       ].map(({ contentHash: _hash, ...definition }) => definition)),
     });
   }
-  return admitted;
+  if (!['LIMITED_COHORT', 'LIVE'].includes(process.env.LIVING_WORLD_DIRECTOR)) return admitted;
+  if (!directorAdmitted) {
+    const dock = createDockWarContent(admitted);
+    directorAdmitted = Object.freeze({ ...admitted, registry: dock.registry, directorContent: dock,
+      objects: Object.freeze([...admitted.objects, ...dock.objects]),
+      operations: Object.freeze([...admitted.operations, ...dock.operations]),
+      recipeIds: Object.freeze([...admitted.recipeIds, ...dock.recipeIds]),
+      mysteryGraphIds: Object.freeze([...admitted.mysteryGraphIds, ...dock.mysteryGraphIds]),
+      coordinationRegistry: createCoordinationRegistry([
+        ...coordinationGraphs(admitted.coordinationRegistry), ...coordinationGraphs(dock.coordinationRegistry),
+      ].map(({ contentHash: _hash, ...definition }) => definition)),
+    });
+  }
+  return directorAdmitted;
 }

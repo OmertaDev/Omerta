@@ -3481,7 +3481,7 @@ scopedSocialContext = async function(db) {
   const expectedNativeCommands = [
     'pgquery', 'pgcheck', 'phase2:definitions:postgres', 'phase2:lots:postgres',
     'test:coordination:postgres', 'test:world-kernel:postgres', 'test:family-operations:postgres', 'test:world-projections:postgres',
-    'test:core-progression:postgres', 'test:player-commands:postgres',
+    'test:core-progression:postgres', 'test:player-commands:postgres', 'test:director:postgres',
     'test:stockcatalogv2:postgres', 'test:rwahealth:postgres',
     'test:rwaregistrylifecycle:postgres', 'test:audit:mint-dev:postgres',
     'test:audit:deed-reimport:postgres', 'backup:selftest', 'chaos', 'loadtest', 'concurrency',
@@ -3615,6 +3615,9 @@ scopedSocialContext = async function(db) {
   // a same-process fast path whose real guard is a DB constraint is correct anywhere; genuine
   // cross-request state is not.
   const POSTURE = {
+    'director/definitions.js:ADMITTED': 'cache: immutable compiler-issued definitions are authenticated per object; every process compiles the same hashes and verifies durable admission pins',
+    'player-commands.js:memoryExecutions': 'db-backstopped: pg-mem-only in-flight throttle; PostgreSQL uses the issued-board row lock and existing durable domain receipts',
+    'player-commands.js:boardExecutions': 'db-backstopped: per-pool connection-capacity throttle only; issued-board row locks and domain receipt uniqueness remain cross-process execution authority',
     'aggregate.js:validated': 'cache: a WeakSet of board maps already validated — a second box re-validates, same answer',
     'stockdeliver.js:decCache': 'cache: ERC-20 decimals are immutable on-chain, so every box reads the same value',
     'cardpng.js:CACHE': 'cache: content-hash-keyed PNG renders of a deterministic SVG; a second box re-renders',

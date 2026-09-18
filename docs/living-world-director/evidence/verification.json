@@ -1,0 +1,235 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-09-18T04:22:20.671Z",
+  "sourceManifestSha256": "c98aaff7cbd17fe369ca7ca5484e81e6a533b94ab59bfa4068fc74d43c6d843f",
+  "featureFlag": "DIRECTOR_DISABLED",
+  "verificationSummary": {
+    "unresolvedFailures": 0,
+    "pending": 0,
+    "regressionSequence": "Full package.json sequence covered by original passing prefix, repaired preflight/tail, repaired documentation/playthrough, and final knowledge check. No single uninterrupted npm-test success is claimed."
+  },
+  "environment": "Windows; loopback disposable PostgreSQL16.15; isolated schemas/databases; no production credentials",
+  "model": {
+    "seed": "director-model-v1",
+    "runs": 36,
+    "days": [
+      1,
+      7,
+      30,
+      180
+    ],
+    "reportSha256": "c999660cee36e1d3f41a6a82fb95d17493e2af303c8a5072b89423b3162a0d6c",
+    "realDatabaseSimulation": false
+  },
+  "staticAnalysis": {
+    "gateDiagnostics": "gates-final.txt",
+    "sqlDiagnostics": "pgquery-final.txt",
+    "disposition": "DSEC-07 prototype lookup fixed; no remaining actionable gate/SQL diagnostics. Dynamic SQL counted separately, not represented as prepared."
+  },
+  "executions": [
+    {
+      "command": "npm test",
+      "notes": "Full pretest chain and main suites through coldstart passed; stopped at missing Director preflight environment classification. Fixed and exact remaining sequence rerun in npm-test-tail, then final knowledge test. Deadline fixes covered by post-review/recovery runs.",
+      "exitCode": 1,
+      "status": "failed",
+      "supersededBy": [
+        "preflight-fix.txt",
+        "npm-test-tail.txt",
+        "knowledge-final.txt"
+      ],
+      "resolved": true,
+      "finishedAt": "2026-09-18T03:47:48.559Z",
+      "retainedOutput": "npm-test.txt",
+      "outputSha256": "44baf8eb3fe3538c373177f9515a212c8b8bac0c191e55cf999692c6636e38df"
+    },
+    {
+      "command": "node test/director-config.js && node test/preflight.js",
+      "notes": "Final configuration and environment-inventory fix.",
+      "exitCode": 0,
+      "status": "passed",
+      "finishedAt": "2026-09-18T03:49:10.780Z",
+      "retainedOutput": "preflight-fix.txt",
+      "outputSha256": "10df16478fd488541ac9f1ea689bfbc565d747541584fba73827d53a967d3f36"
+    },
+    {
+      "command": "package.json scripts.test from node test/preflight.js through node test/playthrough-truth.js",
+      "notes": "Exact remaining test sequence after the repaired preflight gate. Final tools/knowledge-test.js appears in the knowledge run after evidence refresh.",
+      "exitCode": 1,
+      "status": "failed",
+      "supersededBy": [
+        "docs-fix.txt",
+        "knowledge-final.txt"
+      ],
+      "resolved": true,
+      "finishedAt": "2026-09-18T03:50:52.333Z",
+      "retainedOutput": "npm-test-tail.txt",
+      "outputSha256": "38a14a3d149c7927314b2a9eb1e8958ffeb255bdeabe79cb801583a67e06a079"
+    },
+    {
+      "command": "node test/docs.js",
+      "notes": "Historical required-doc census failure; corrected SPEC.md measurements and MARKETING-POSTS.md suite count, then passed docs-fix.",
+      "exitCode": 1,
+      "status": "failed",
+      "supersededBy": [
+        "docs-fix.txt",
+        "knowledge-final.txt"
+      ],
+      "resolved": true,
+      "finishedAt": "2026-09-18T03:52:33.364Z",
+      "retainedOutput": "docs-census-failure.txt",
+      "outputSha256": "d124a1b5357a861e3ab054da190b89c7aec34dd19c416d4eb09716547f5b75ba"
+    },
+    {
+      "command": "node test/docs.js && node test/playthrough-truth.js",
+      "notes": "Final documentation census and playthrough checks passed after measured claim updates.",
+      "exitCode": 0,
+      "status": "passed",
+      "finishedAt": "2026-09-18T03:53:12.039Z",
+      "retainedOutput": "docs-fix.txt",
+      "outputSha256": "a33b25f2431bdc289d98346dcd87ee29d7ca1be14000f1fd3028681d1de3bc72"
+    },
+    {
+      "command": "npm run test:director:postgres",
+      "notes": "Full native Director suite before the final deadline fix; affected paths rerun below.",
+      "exitCode": 0,
+      "status": "passed",
+      "finishedAt": "2026-09-18T03:28:10.058Z",
+      "retainedOutput": "native-director-final.txt",
+      "outputSha256": "8130067747268749418606f28ba534f65ddf14da4993462a0813e271175b12aa"
+    },
+    {
+      "command": "node test/director-runtime.js --postgres && node test/director-journey.js --postgres && node test/director-security.js --postgres",
+      "notes": "Final lifecycle, all three complete command journeys and adversarial native race after deadline fix.",
+      "exitCode": 0,
+      "status": "passed",
+      "finishedAt": "2026-09-18T03:39:15.547Z",
+      "retainedOutput": "native-post-review.txt",
+      "outputSha256": "4e498cdc673741e840b62cb7889a2efa91610a7311202518703d098d0c7ef037"
+    },
+    {
+      "command": "node test/director-runtime.js --postgres && node test/director-journey.js --postgres && node test/director-security.js --postgres",
+      "notes": "Historical failed harness run: exact SQL column matcher missed the event query after occurred_at was added. Fixed matcher plus explicit missing-barrier assertion; superseded by native-post-review. Not counted as passing evidence. Retained output removes only redundant blank lines at EOF.",
+      "exitCode": 13,
+      "status": "failed",
+      "supersededBy": "native-post-review.txt",
+      "resolved": true,
+      "finishedAt": "2026-09-18T03:36:10.927Z",
+      "retainedOutput": "native-post-review-barrier-failure.txt",
+      "outputSha256": "78791152911e3d67dc8c24b2772e01a6beb4030b4e13b31dbe2b7218bf5093c5"
+    },
+    {
+      "command": "node test/director-recovery.js",
+      "notes": "Seven final recovery/deadline scenarios using real canonical services.",
+      "exitCode": 0,
+      "status": "passed",
+      "finishedAt": "2026-09-18T03:34:44.057Z",
+      "retainedOutput": "recovery-final.txt",
+      "outputSha256": "b09018d16fb70b29c0db4a5a785184e70b6885bb1769cfc4d429596e5d10dbb6"
+    },
+    {
+      "command": "node test/director-recovery.js --postgres",
+      "notes": "The same seven final recovery cases on PostgreSQL.",
+      "exitCode": 0,
+      "status": "passed",
+      "finishedAt": "2026-09-18T03:35:16.609Z",
+      "retainedOutput": "recovery-native-final.txt",
+      "outputSha256": "b09018d16fb70b29c0db4a5a785184e70b6885bb1769cfc4d429596e5d10dbb6"
+    },
+    {
+      "command": "node test/player-commands.js --postgres",
+      "notes": "17 groups, eight concurrent submissions, process/connection restart and persisted HTTP replay.",
+      "exitCode": 0,
+      "status": "passed",
+      "finishedAt": "2026-09-18T03:27:14.398Z",
+      "retainedOutput": "player-commands-native-final.txt",
+      "outputSha256": "b342ead39fd95ce35576ea9361494e6f1b964ab37d7f363d81458cd79b3a2040"
+    },
+    {
+      "command": "node tools/pgcheck.js",
+      "notes": "203 passed, zero failed, full-server native PostgreSQL.",
+      "exitCode": 0,
+      "status": "passed",
+      "finishedAt": "2026-09-18T03:14:42.090Z",
+      "retainedOutput": "pgcheck.txt",
+      "outputSha256": "a48c38a0cffb063aa485215c4852839cff3ba559c236bff75c010569d2ea2188"
+    },
+    {
+      "command": "node tools/pgquery.js",
+      "notes": "4056 prepared SQL statements; dynamic/interpolated statements explicitly excluded.",
+      "exitCode": 0,
+      "status": "passed",
+      "finishedAt": "2026-09-18T03:31:56.859Z",
+      "retainedOutput": "pgquery-final.txt",
+      "outputSha256": "3ffe30003e53a153c4d312a8a874dbd4e6b36a0e67afc9225f5564fa7b0d7e4b"
+    },
+    {
+      "command": "node test/gates.js",
+      "notes": "Repository static-analysis and release wiring gates.",
+      "exitCode": 0,
+      "status": "passed",
+      "finishedAt": "2026-09-18T03:39:50.692Z",
+      "retainedOutput": "gates-final.txt",
+      "outputSha256": "30d1f9ffcc95f07d28ad7e27d432d81be907f5e80ef7ff66512fb6356b328a5f"
+    },
+    {
+      "command": "node test/migrate.js",
+      "notes": "886 schema statements, 2956 additive columns, 93 character-disposition tables.",
+      "exitCode": 0,
+      "status": "passed",
+      "finishedAt": "2026-09-18T03:19:36.762Z",
+      "retainedOutput": "migrate.txt",
+      "outputSha256": "bdb8a85806e92f993b686d44de731f7ff93d0e0983323d077fcbe74ba1e66c9a"
+    },
+    {
+      "command": "npm run sim",
+      "notes": "Existing earned-economy conservation simulation; zero section10.4 drift.",
+      "exitCode": 0,
+      "status": "passed",
+      "finishedAt": "2026-09-18T03:09:53.169Z",
+      "retainedOutput": "economy-sim.txt",
+      "outputSha256": "3f8099e22fc92d63cfcc7d2533d90b6f367e01011c9855314815975d4e40e3c5"
+    },
+    {
+      "command": "npm run director:check",
+      "notes": "Four situations and one campaign compiled.",
+      "exitCode": 0,
+      "status": "passed",
+      "finishedAt": "2026-09-18T03:28:55.342Z",
+      "retainedOutput": "compiler-final.txt",
+      "outputSha256": "6b113d8d8c88f0633aeecef3d25ed34ccd626b794d0a2fa80838f12c9a4208e8"
+    },
+    {
+      "command": "node tools/director-sim.js --output director-simulation-report.json",
+      "notes": "Report moved into this evidence directory; 36 deterministic scenarios/horizons.",
+      "exitCode": 0,
+      "status": "passed",
+      "finishedAt": "2026-09-18T03:11:06.406Z",
+      "retainedOutput": "simulation.txt",
+      "outputSha256": "8912450de6f0c3a6b92937bdd333e9311cc6a4c8105d0ab33e98e1a41031001c"
+    },
+    {
+      "command": "npm run knowledge && node tools/knowledge-test.js",
+      "notes": "Regenerated working-tree knowledge and final package.json test command; rerun after evidence refresh to avoid stale provenance.",
+      "exitCode": 0,
+      "status": "passed",
+      "finishedAt": "2026-09-18T03:55:24.646Z",
+      "retainedOutput": "knowledge-final.txt",
+      "outputSha256": "a974b4bc4f984bbdd028ddcf010ef177e4e1d71c20f18d86321db8d2f7f31918"
+    },
+    {
+      "command": "node test/phase2-postgres.js --definitions",
+      "environment": "TEST_DATABASE_URL pointing at the isolated PostgreSQL16 cluster",
+      "exitCode": 0,
+      "status": "passed",
+      "retainedOutput": null,
+      "evidence": "Executed tool session15753; agent director_integration confirmed final exit0 and terminal assertion output. No raw file retained.",
+      "assertions": [
+        "79 Phase2 constraints",
+        "Fresh and populated legacy exact catalogs",
+        "Twelve causal negatives",
+        "Twice-applied migrations",
+        "Scalar and missing-unique startup rejection"
+      ]
+    }
+  ]
+}

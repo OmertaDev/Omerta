@@ -11,7 +11,7 @@ const unavailable = () => { throw new GameError('projection_unavailable', 'That 
 const identifier = (value) => typeof value === 'string' && /^[\x21-\x7e]{1,160}$/.test(value);
 const emptyOperations = () => ({ catalog: [], instances: [], selected: null, truncated: false });
 
-export function createWorldProjection({ pool, query, kernel, knowledge, familyOperations = null, crafting, recipeIds = [], mysteries = null }) {
+export function createWorldProjection({ pool, query, kernel, knowledge, familyOperations = null, crafting, recipeIds = [], mysteries = null, director = null }) {
   if (!pool || !query || !kernel || !knowledge || !crafting) unavailable();
   const caseDefinitions = [];
   if (mysteries) {
@@ -59,9 +59,11 @@ export function createWorldProjection({ pool, query, kernel, knowledge, familyOp
       }
       const operationPlan = familyOperations ? await familyOperations.planSnapshot(client, accountId, { operationId: options.operationId ?? null, asOf })
         : { groups: [], render: async () => emptyOperations() };
+      const situationPlan = director ? await director.planSnapshot(client, accountId, { expectedCharacterId: characterId, asOf })
+        : { groups: [], render: async () => [] };
       const recipePlan = await planCraftingSnapshot(client, accountId, crafting, recipeIds, { asOf });
       const groups = new Map();
-      for (const group of [...operationPlan.groups, ...recipePlan.groups, ...mysteryPlan.groups,
+      for (const group of [...operationPlan.groups, ...recipePlan.groups, ...mysteryPlan.groups, ...situationPlan.groups,
         ...(characterId ? [{ accountId, characterId, requirements: kernel.definitions.flatMap((d) => d.knowledge) }] : [])]) {
         const key = JSON.stringify([group.accountId, group.characterId]);
         const merged = groups.get(key) || { accountId: group.accountId, characterId: group.characterId, requirements: new Map() };
@@ -75,6 +77,7 @@ export function createWorldProjection({ pool, query, kernel, knowledge, familyOp
       const operations = await operationPlan.render(knowledgeSnapshot);
       const recipes = await recipePlan.render(knowledgeSnapshot);
       const selectedCase = await mysteryPlan.render(knowledgeSnapshot);
+      const situations = await situationPlan.render(knowledgeSnapshot, { operations });
       const byRef = new Map(graph.nodes.map((node) => [node.ref, node]));
       const linked = (from, type) => graph.relationships.filter((edge) => edge.from === from && edge.type === type).map((edge) => ({ edge, node: byRef.get(edge.to) })).filter((entry) => entry.node);
       const street = linked(graph.root, 'current_character')[0]?.node ?? null;
@@ -111,6 +114,7 @@ export function createWorldProjection({ pool, query, kernel, knowledge, familyOp
           controlledByFamilyId: graph.relationships.some((e) => e.type === 'control' && e.to === n.ref && e.from === familyNode?.ref) ? familyNode.id : null })),
         inventory: { items, resources, truncated: { items: graph.truncated.items, resources: graph.truncated.resources, provenance: graph.truncated.events } },
         knowledge: { claims, truncated: knowledgeSnapshot.board.nextCursor !== null }, operations,
+        ...(director ? { situations } : {}),
         activity: graph.nodes.filter((n) => n.type === 'event').map(eventCard),
         worldObjects: world.objects, recipes,
         ...(mysteries ? { cases: { catalog, selected: selectedCase } } : {}),

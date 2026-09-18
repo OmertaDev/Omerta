@@ -1,0 +1,7 @@
+Director recovery: expired aftermath resumes once after cooldown with durable recovery lineage
+Director recovery: season change records explicit recovery while preserving world consequences
+Director recovery: multiple physical outcomes between evaluations catch up to canonical campaign completion
+Director recovery: complete canonical chain committed before deadline survives a late worker restart
+Director recovery: terminal follow-up committed before deadline survives a late worker restart
+Director recovery: canonical outcomes committed after deadline remain late without erasing world consequences
+Director recovery: timely protection observed after campaign expiry preserves and resumes its unresolved aftermath

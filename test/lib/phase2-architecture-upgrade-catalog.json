@@ -2,6 +2,91 @@
   "note": "Exact additive/replaced schema constraints after the original Phase2 slice, reviewed against schema.sql; never inferred from the backend at test time.",
   "added": [
     {
+      "table_name": "director_action_intents",
+      "name": "director_action_intents_pkey",
+      "definition": "PRIMARY KEY (account_id, command_key)"
+    },
+    {
+      "table_name": "director_action_intents",
+      "name": "director_action_intents_situation_id_fkey",
+      "definition": "FOREIGN KEY (situation_id) REFERENCES director_situations(id)"
+    },
+    {
+      "table_name": "director_campaigns",
+      "name": "director_campaigns_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "director_campaigns",
+      "name": "director_campaigns_revision_check",
+      "definition": "CHECK (revision > 0)"
+    },
+    {
+      "table_name": "director_campaigns",
+      "name": "director_campaigns_status_check",
+      "definition": "CHECK (status = ANY (ARRAY['active'::text, 'completed'::text, 'abandoned'::text]))"
+    },
+    {
+      "table_name": "director_clock",
+      "name": "director_clock_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "director_definitions",
+      "name": "director_definitions_content_hash_check",
+      "definition": "CHECK (char_length(content_hash) = 64)"
+    },
+    {
+      "table_name": "director_definitions",
+      "name": "director_definitions_kind_check",
+      "definition": "CHECK (kind = ANY (ARRAY['situation'::text, 'campaign'::text]))"
+    },
+    {
+      "table_name": "director_definitions",
+      "name": "director_definitions_pkey",
+      "definition": "PRIMARY KEY (kind, definition_id, version)"
+    },
+    {
+      "table_name": "director_definitions",
+      "name": "director_definitions_version_check",
+      "definition": "CHECK (version > 0)"
+    },
+    {
+      "table_name": "director_receipts",
+      "name": "director_receipts_pkey",
+      "definition": "PRIMARY KEY (execution_id)"
+    },
+    {
+      "table_name": "director_selections",
+      "name": "director_selections_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "director_situations",
+      "name": "director_situations_campaign_id_fkey",
+      "definition": "FOREIGN KEY (campaign_id) REFERENCES director_campaigns(id)"
+    },
+    {
+      "table_name": "director_situations",
+      "name": "director_situations_campaign_id_node_id_key",
+      "definition": "UNIQUE (campaign_id, node_id)"
+    },
+    {
+      "table_name": "director_situations",
+      "name": "director_situations_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "director_situations",
+      "name": "director_situations_revision_check",
+      "definition": "CHECK (revision > 0)"
+    },
+    {
+      "table_name": "director_situations",
+      "name": "director_situations_world_event_id_fkey",
+      "definition": "FOREIGN KEY (world_event_id) REFERENCES world_kernel_events(id)"
+    },
+    {
       "table_name": "coordination_archive_entries",
       "name": "coordination_archive_entries_archive_id_claim_id_key",
       "definition": "UNIQUE (archive_id, claim_id)"
@@ -615,6 +700,73 @@
     }
   ],
   "notNullColumns": {
+    "director_action_intents": [
+      "account_id",
+      "action_id",
+      "character_id",
+      "command_key",
+      "command_type",
+      "created_at",
+      "expected_revision",
+      "situation_id",
+      "target_id"
+    ],
+    "director_campaigns": [
+      "created_at",
+      "definition_hash",
+      "definition_id",
+      "definition_version",
+      "expires_at",
+      "id",
+      "node_id",
+      "object_id",
+      "revision",
+      "status",
+      "updated_at"
+    ],
+    "director_clock": [
+      "evaluated_at",
+      "id"
+    ],
+    "director_definitions": [
+      "content_hash",
+      "definition_id",
+      "definition_json",
+      "kind",
+      "version"
+    ],
+    "director_receipts": [
+      "created_at",
+      "execution_id",
+      "kind",
+      "result_json",
+      "subject_id"
+    ],
+    "director_selections": [
+      "candidates_json",
+      "evaluated_at",
+      "facts_json",
+      "id",
+      "mode",
+      "selected_json"
+    ],
+    "director_situations": [
+      "campaign_id",
+      "created_at",
+      "definition_hash",
+      "definition_id",
+      "definition_version",
+      "expires_at",
+      "id",
+      "node_id",
+      "object_id",
+      "revision",
+      "season",
+      "starting_world_revision",
+      "state",
+      "terminal",
+      "updated_at"
+    ],
     "coordination_archive_entries": [
       "added_at",
       "archive_id",

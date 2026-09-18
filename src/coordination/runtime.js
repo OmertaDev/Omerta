@@ -279,7 +279,7 @@ export function createCoordinationService({ pool, registry, enabled = false, acc
     async get(accountId, id) {
       return getInstance(accountId, id);
     },
-    async create(accountId, graphId, input, key, expectedCharacterId = null) {
+    async create(accountId, graphId, input, key, expectedCharacterId = null, admission = null) {
       textId(graphId); body(input, ['expectedContentHash']);
       return command(accountId, key, { kind: 'create', graphId, ...input }, async (client, ch, commandId, now, ctx) => {
         requireEnabled(accountId);
@@ -288,6 +288,12 @@ export function createCoordinationService({ pool, registry, enabled = false, acc
         if (!graph) fail('coordination_unavailable');
         if (!graphAllowed(accountId, graph)) fail('coordination_disabled');
         if (input.expectedContentHash !== graph.contentHash) fail('stale_coordination_content');
+        // Optional trusted server adapter; never part of the HTTP request body.
+        // Recheck a scheduled situation inside the domain transaction itself.
+        if (admission !== null) {
+          if (typeof admission !== 'function') fail('coordination_unavailable');
+          await admission(client, { accountId, characterId: ch.id, graphId });
+        }
         const prior = (await client.query(
           'SELECT * FROM coordination_instances WHERE owner_character_id=$1 AND graph_id=$2', [ch.id, graphId],
         )).rows[0];

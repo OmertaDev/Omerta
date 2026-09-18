@@ -1,0 +1,6 @@
+PASS Director runtime: real pressure, disabled/simulation/shadow, durable creation/restart/replay, escalation, expiry and recovery
+director-journey protected: commands, shared situation, knowledge, coordination, canonical consequences, second generation, restart and completion PASS
+director-journey intercepted: commands, shared situation, knowledge, coordination, canonical consequences, second generation, restart and completion PASS
+director-journey alternate_route: commands, shared situation, knowledge, coordination, canonical consequences, second generation, restart and completion PASS
+Director security: enumeration, ACL revocation, membership, forged/stale actions, duplicate workers, restart, expiry and definition tamper passed
+Director security: native canonical fact/event race preserves the campaign outcome branch

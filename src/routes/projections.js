@@ -7,6 +7,7 @@ import { createCoordinationKnowledge } from '../coordination/knowledge.js';
 import { createFamilyOperations } from '../coordination/operations.js';
 import { createCraftingContext } from '../crafting.js';
 import { coreProgressionContent } from '../content/core-progression.js';
+import { createConfiguredDirector } from '../director/config.js';
 
 const invalid = () => { throw new GameError('bad_projection_request', 'Invalid projection request.'); };
 const identifier = (value) => typeof value === 'string' && /^[\x21-\x7e]{1,160}$/.test(value);
@@ -47,6 +48,7 @@ export function register(app, { pool, auth, readPlayer }) {
     definitions: content.operations, prerequisitesEnabled: content.progression, ...policy,
     enabled: enabled && process.env.COORDINATION_ENGINE === 'on' && process.env.COORDINATION_OPERATIONS === 'on' });
   const service = createWorldProjection({ pool, query, kernel, knowledge, familyOperations, crafting, recipeIds: content.recipeIds,
+    director: createConfiguredDirector(pool, content),
     mysteries: content.progression ? { registry: content.registry, graphIds: content.mysteryGraphIds,
       knowledgeEnabled, sharingEnabled, accountIds, worldDefinitions: kernel.definitions } : null });
   const admit = async (req) => {

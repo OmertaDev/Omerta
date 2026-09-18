@@ -1,0 +1,36 @@
+
+> omerta-backend@1.2.0 director:check
+> node tools/director-validate.js
+
+{
+  "valid": true,
+  "situations": [
+    {
+      "id": "situation:dock_shortage",
+      "version": 1,
+      "contentHash": "0b55682621082f46941b1661fff2fb2ade953ea9fb979727d27cdaaef9d5d8d2"
+    },
+    {
+      "id": "situation:dock_protected_aftermath",
+      "version": 1,
+      "contentHash": "de03fe54410e4ddfdbb78427113b23f57f4fc036eb0d587921040468e85dc67c"
+    },
+    {
+      "id": "situation:dock_intercepted_aftermath",
+      "version": 1,
+      "contentHash": "9327ae517a624808d3fc7a26cc4c6aea7ea5963628c2937e37b0f8d1e95a08ff"
+    },
+    {
+      "id": "situation:dock_alternate_route_aftermath",
+      "version": 1,
+      "contentHash": "c5232d7af752c02a665bd5a4c9d17822305794015f77c6440d84981ff8ff9b5e"
+    }
+  ],
+  "campaigns": [
+    {
+      "id": "campaign:the_dock_war",
+      "version": 1,
+      "contentHash": "d31ce266baf8e0b8f7fb79b454d4477b4b0959886d98e2bf752785f9336c7c57"
+    }
+  ]
+}

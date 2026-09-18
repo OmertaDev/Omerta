@@ -4934,7 +4934,7 @@
     const limited = (value) => value === true || (value && typeof value === 'object' && Object.values(value).some(limited));
     const feedbackLabels = { worldChanges: 'world changes', inventoryChanges: 'equipment changes', knowledgeChanges: 'knowledge changes',
       relationshipChanges: 'relationship changes', operationChanges: 'operation changes', newOpportunities: 'new opportunities',
-      removedOpportunities: 'opportunities closed', mysteryProgression: 'case developments' };
+      removedOpportunities: 'opportunities closed', mysteryProgression: 'case developments', situationChanges: 'developments on the street' };
     target.innerHTML = `<div class="world-board">
       <header class="world-heading"><div><div class="dim">YOUR STREET · YOUR PEOPLE · YOUR NEXT MOVE</div><h2>Command Center</h2>
         <p>The city's business, as it reaches your desk. Follow the evidence. Put your people to work.</p></div>
@@ -4954,6 +4954,15 @@
           <p>${esc(Object.entries(feedbackLabels).filter(([key]) => worldFeedback[key]?.length).map(([key, label]) => `${worldFeedback[key].length} ${label}`).join(' · '))}</p>
           ${worldFeedback.refreshRequired ? '<p class="dim">Your move is recorded. Refresh to confirm the latest consequences.</p>' : ''}</div>` : ''}
         ${list(board.activity, (event) => `<p>${esc(name(event.kind))}<small class="dim"> ${esc(time(event.occurredAt))}</small></p>`, 'No recent visible activity. The street is quiet.')}</section>
+      ${board.situations?.length ? `<section class="world-card"><h3>What is happening around us?</h3>
+        ${board.situations.slice(0, 24).map((situation) => `<article class="world-entry"><h4>${esc(situation.title)}</h4>
+          <p>${esc(situation.description)}</p>
+          ${situation.objective ? `<p><b>Your stake:</b> ${esc(situation.objective)}</p>` : ''}
+          ${situation.knownFacts?.length ? `<p><b>What you know:</b> ${esc(situation.knownFacts.map(prose).filter(Boolean).join(' · '))}</p>` : ''}
+          ${situation.helpers?.length ? `<p><b>Who can help:</b> ${esc(situation.helpers.map(prose).filter(Boolean).join(' · '))}</p>` : ''}
+          ${situation.expiresAt ? `<small class="dim">Until ${esc(time(situation.expiresAt))}</small>` : ''}
+          ${situation.outcome ? `<p><b>Aftermath:</b> ${esc(prose(situation.outcome))}</p>` : ''}
+          ${contextual('situation', situation.id)}</article>`).join('')}</section>` : ''}
       <section class="world-card"><h3>What needs my attention?</h3>
         ${list(opportunities.slice(0, 5), opportunityCard, 'No new leads are on your desk.')}
         ${opportunities.length > 5 ? `<details><summary>${opportunities.length - 5} more pieces of business</summary>${opportunities.slice(5).map(opportunityCard).join('')}</details>` : ''}</section>

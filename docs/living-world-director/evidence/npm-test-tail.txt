@@ -1,0 +1,124 @@
+Resuming the exact package.json test sequence at the repaired preflight gate; knowledge-test runs after the final evidence refresh.
+✅ PREFLIGHT passed — every env var in src/ is classified (the drift that shipped the pacing knobs unguarded is now caught by a test), the required secrets and the public dev fallbacks fail closed, every test-only roll/timer knob refuses a production boot, and a dev-safe default that is wrong in production must be stated rather than inherited
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+  deep reads: 388 chains, 276 walked to the leaf, 112 parent absent/null (empty-state, not a finding)
+  ✓ wave 60: 6 catalog lines name the rung instead of its key
+  ✓ silence ledger: 63 replies render the catch-all, 5 of them on act()-pressed routes and each declared — none of 307 pressed handlers is mute
+  ✓ collision ledger: 513 act()-reachable replies over 355 describe() branches — 14 deliberately shared, none colliding
+  ✓ wave 61: eight lines the collision fixes now produce read for their own system
+  ✓ wave 62: the article rule reads off the NAME, and seven replies name what they moved
+  ✓ wave 73: the pen — a break BLOWN by a rat read as bad luck at the fence, a tipper told nothing, and a hired gun that stated its price twice
+  ✓ wave 74: the daily buttons — a burst that named no clock, a burn reported as a balance, a rung that paid twice and a drill run by a storage key
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+  ✓ wave 73: the market — a pulled lot said nothing, a bid named neither the iron nor the escrow, and a cancel dropped the quantity it gates on
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+  ✓ wave 73: the shylock — a collect paid the wrong man’s number and hid what it did to the mark; a pledged take stapled the deadline to the wrong sentence
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+  ✓ wave 73: the world — a raid that put a strike on your own head read as a clean score, a war burned the treasury in silence, a plaque hid its burn and its displacement, and a dismissed gun hid the forfeit
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+  ✓ wave 73: politics — a repelled raid put the block on alert for eight hours and told the loser nothing, and the win never named how long
+  ✓ wave 64: thirteen act()-pressed routes that said nothing now name what they did
+  ✓ wave 65: two shared clocks and a fare that were charged without being named
+  ✓ wave 66: a paid activation that never named its window, and a burn that read as a deposit
+  ✓ wave 67: four entries that took the money and never named when the bell rings
+  ✓ wave 68: the hired gun — a fee that burned whether or not anybody died, and never said so
+  ✓ wave 69: six purchases that named what they bought and left the price off — four of the five $OMR burns in one file, plus founding a family and the envelope
+  ✓ wave 70: the den — a stake taken at the deal and never named, and a whole pass line reported as one net figure
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+  ✓ wave 73: freight — an offshore handoff and a tip-off that said "done.", a refund with no currency on it, a hull that said less than its own tune-up, and a refusal that named the district by its storage key
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+  ✓ wave 73: empire — a front named by its storage key, a beating nobody was told about, a refusal that named one of three live specs, and the biggest purchase on the screen quoting only what the seller walked away with
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+  ✓ wave 73: chain — a voucher signed (or not signed at all) for "done.", a one-per-bloodline portrait mint that said nothing, a vested release with no word on what stayed locked, a paid credit spent in silence, and a signing payload rendered as a toast
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+  ✓ wave 75: the parallel sweep's 15 findings driven — the buy verbs price themselves, the crackdown stopped reading as an empty till, the loss lines state the lay-up, the cast-off and the hire carry their terms, the high-stakes refusal explains itself both ways, and the co-op rout splits its material with the database agreeing
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+  ✓ wave 76: the deed receipt names the seven figures it charged, and the crew room stopped swallowing a refusal that costs a player their typed line
+✅ client wiring test passed — across the console AND /admin: of 656 routes they can call, 651 resolve to a really-mounted route (segment-wise, so /v1/streets/:id/jump cannot match /v1/streets/roster) and the 5 that build their action at runtime are expanded over every value the client can pick — 18 concrete routes, all mounted, none left unverifiable; all 30 catalog-backed values they hardcode are ids the server recognises; and every field in 209 request bodies is one its own route actually reads — including the ones that hand the whole body to a module, followed a file deeper to the parameter it lands in — through a barrel re-export if it takes one. And the mirror: the 851 TOP-LEVEL fields the screens read off 151 boards are fields those boards really return, observed by fetching each one — plus the 871 fields they read off the ELEMENTS of 152 lists, which is where most board rendering lives and which needed a fixture that makes one of everything, because an empty list must never read as a pass. And the fifth way, which is not death but a lie: of those lists, 90 hang a CLICK on each row, and where the server sends that row a gate the renderer has to read it — a control that looks live and only refuses once pressed is the game withholding its own rule. And the SIXTH, which is not a lie but a silence: where a board states an ONGOING cost — the pad, the nut, the cold clock — the screen rendering it has to read that too, because a card that takes your money without mentioning what it keeps costing is how both of those reached a tester. Those are the ways a button lies — this has found four dead routes, seven ignored fields, two element fields the board never sent (a LEGENDARY chip that had never once rendered) and a lane picker that offered every route to a level-6 player and refused on press, among them a broken action, an ammo box sold by a control that asked for a quantity it could not honour, and an unstake box that emptied the whole stake whatever you typed. And the SEVENTH, which is not a bug but the door one walks through: the tight allowlists 5 and 6 enforce cannot see a gate or a cost shipped under a name they do not yet know, so a completeness sweep flags every field across all 151 boards whose NAME reads like a gate or an ongoing cost — each must be enforced above or waived here with a reason (19 are), so a new one is a decision on the record, not a silent regression. And the EIGHTH, which is not a lie but a shrug: a button that works and then says nothing. act() toasts describe() with no override, so 285 driven actions must each read back as something a player can act on — a play session found 65 that said nothing usable, among them an unstake that had just opened a six-hour window in which that $OMR can be looted off you, and a bank deposit that rides in transit and is lootable until it clears — both TERMS, not flavour — and an errand that signs a player up for a THREE-DAY job while carrying the very task it would not name. 16 fields have catalogs and every other literal field is either an i18n key or declared not-an-API-value, so a new one forces that decision instead of being skipped in silence. And the NINTH, which check 5 is satisfied by and cannot see: reading a wall is not enforcing it. 8 clickable rows state a LEVEL requirement, and each must compare it to the player's level — directly, through a helper its renderer defines, or by deferring to a boolean the server derived from it. Printing the number in the label satisfies "the renderer reads the gate" while leaving the control live, which is worse than silence because the player reads a wall as trivia: a play session found four that way — the heist picker, the open crew board, the world crew raid and the Empire catalog all stated a level over a live button and refused on press. And the TENTH, the same class on the family's other axis: 30 routes can refuse rank, and the 11 data-do controls and 17 wired controls reaching one are each drawn behind a rank test — checked at the CONDITION that drew them, walking out through the enclosing interpolations, because a byte window reads the neighbouring button's gate as this one's. A soldier was offered "sue for peace" and "declare a family war (boss only)" thirty lines below the frontier controls that read the server's own canCommand, and both answered 400 rank. And the ELEVENTH, the same class on a wall a player raises themselves: a safehouse is a shield, not a bunker, so 14 routes that turn what you own into money refuse while you are to ground — and the 6 data-do plus 6 wired take-controls reaching one now each read that state, the figure still on screen because it is the reason to surface. The Empire read "$120,017 READY TO COLLECT - collect before the pad or a raid eats it" over a live button while the server answered safe, on a screen whose own warning advises going to ground. And the TWELFTH, which is the EIGHTH swept instead of driven: check 8 proves the 285 actions it DRIVES read as something, and nineteen play waves found the rest one cluster at a time. This runs every act()-reachable reply in src/ through the real describe() and flags the ones that render the catch-all — 7 of them sit on routes the console presses, and each is declared with the property that makes the silence right. It found thirteen live: the WINDOW, the one rail turning $OMR back into cash, said "done." over the burn, the rate and the family's cut; squaring your name read "paid $50,000" for a purchase that lifts the WANTED mark and the welsher brand together; fencing a score framed money RECEIVED as money spent; and the sovereignty pad's nothing-owed early return had dropped the one field its own branch reads, so the line written for exactly that case was unreachable.
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+  ✓ WAVE 77: three rolling buckets name the REMAINDER (and when they reopen), on the board and at the till
+  ✓ WAVE 78: an auction bid names the ESCROW, the one way back, and the figure that beats it
+  ✓ WAVE 79: cooldown refusals name the wait AND carry it as data (fire + boost, both clock shapes)
+  ✓ WAVE 80: the SUCCESS reply names the clock it just armed (the cutman's rest + all three race verbs)
+  ✓ WAVE 80: the SUCCESS reply names what it CHARGED too (the shovel on cold ground, the jump's energy + the bed, the board's take at post and at cancel)
+  ✓ WAVE 80: the shared front window, the fighter who took it, the paper's net and the fill's house take all reach the player
+  ✓ WAVE 81: founding and joining a crew name the pact they bind and the seats; the crew hit names its kind
+✓ catalog: all 161 track() events in src/ are claimed by exactly one of 40 systems (or declared non-engagement); no phantoms
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✓ live read: 8 humans, streets/crime shows 1 account(s) / 2 event(s)
+✓ dead list: 36 systems with zero distinct players; 0 untracked (no events declared)
+✓ adoption is distinct accounts, not event volume
+✓ retention: young accounts pending (not churned); an aged no-show reports a real 0% D1
+✓ agents counted separately — an agent returning says nothing about whether the game is fun
+✓ GET /v1/mod/engagement is mod-gated and serves the report
+✅ ENGAGEMENT test passed — the system catalog claims every one of 161 track() events in src/ exactly once (so a new system cannot silently read as dead, and a renamed event cannot leave a phantom), the report reads real telemetry through the public API, THE DEAD LIST names systems with zero distinct players while keeping untracked systems separate from unused ones, adoption counts distinct humans rather than event volume, retention reports young cohorts as pending instead of churned, agents and NPC residents are excluded from the human population, and the endpoint is mod-gated
+✓ 728 signed levers hold their signed values
+✓ register complete: every lever named in BALANCE.md/SIGN-OFF.md that resolves to a value is pinned
+✓ manifest is well-formed (no duplicate paths, no undefined pins)
+✅ THE SIGNED LEVERS test passed — 728 founder-signed numbers are pinned to the values BALANCE.md and SIGN-OFF.md sign off on, so a retune can no longer happen silently: changing one now requires editing the pin in the same commit. The register is also asserted COMPLETE, so a newly signed lever cannot skip the pin and quietly reopen the gap, and no pin dangles at a renamed constant.
+✓ readers: all 720 live levers are read by src/; 8 are inert with a stated reason
+✓ census: 3063 nodes / 10285 edges across 9 node and 8 edge types
+✓ write invariants: provenance, authoring run, content hash, named rubrics, no dangling edges
+✓ precedent lookup: "whack:loot precedent" resolves to 4 sites in 3 modules
+✓ reason coverage: mechanism fires on a synthetic hole; the real tree is clean
+✓ honesty rule: 43 unresolvable constructs counted and listed (interpolated-reason, computed-currency)
+✓ lever trace: declaration, readers, pins and deciding documents resolve for a real lever
+✓ open-findings: 38 register rows across three D-namespace registers, 37 flagged ambiguous, audit coverage stated as 81 of 96 reports
+✓ CLI boundary: direct queries execute and CRLF registers parse on this host
+✅ THE GRAPH PLANE test passed — the work-and-knowledge graph builds from the tree with 3063 nodes and 10285 edges, every node carries provenance + an authoring run + a content hash, every invariant check names what it reconciles, precedent lookup resolves a named pattern to its call sites, the §10.4 coverage query fires on a synthetic hole and reports the real tree clean, the lever trace answers the paper's tracing question end to end, and everything the extractor cannot read is counted and listed rather than skipped in silence
+✓ 73 gate requirements hold across 5 families
+✓ completeness: 14 street crimes and every collect* action are classified
+✓ 4 participation cash faucets exclude agents at the point of payment (3 waived with a stated reason)
+✓ no site hand-rolls a gate
+✓ no module re-defines jailed/hospitalized/safeHoused — every gate resolves to the one definition
+✓ all 28 wrong-location refusals carry the destination as data — the client turns every one into a "go there" button
+✅ THE GATE MATRIX passed — every verb in a family enforces the gates its siblings do, checked through direct calls, shared assert helpers and inline column comparisons alike; the membership is derived from the code rather than trusted, so a new street crime or collect action cannot slip past unclassified; the sites that hand-roll a gate instead of calling the helper are named rather than quietly accepted; and no module may re-define a canonical predicate, which is the shape the inline check structurally cannot see. Scope: it proves a gate is REACHED, not that it is correct.
+✓ all 9 real-value price surfaces are walled or waived with a stated bound
+✓ all 126 pooled connections are released before their function returns
+✓ all 9 vehicle handovers clear the consent flags and the consumable
+✓ all 35 human status boards exclude residents (11 waived with a stated reason)
+✓ every code 11 watcher recorders can throw is classified poison or waived
+✓ all 81 worker jobs are isolated and every wrapped result is read null-safely
+✓ all 4 guarded worker schedulers are registered before they are first run
+✓ the season rollover -- the one job linear in the population -- runs off the alarm tick
+✓ the worker watchdog names the job it is stuck in, across 123 un-nested safe() jobs, and restarts the process after 30m
+✓ the API watches the worker heartbeat and shouts on the founder channel, one shared threshold
+✓ all 21 catalog gates test membership, not truthiness (6 waived with a stated reason)
+✓ all 12 watched event signatures match their contract declaration on type, indexed-ness AND parameter name (2 external)
+✓ all 38 decoded-log field reads name a parameter their own event declares
+✓ all 118 multi-lock transactions agree on one order for each of 131 pairs, and no contended row (186 lock sites, 105 of them write-form) is taken before a character row
+✓ all 42 Promise.all sites are exact-classified as genuine-pool/non-PG concurrency; no shared pg client is waived by syntax inference
+✓ all 178 personal notification types render a sentence, and every multi-shape type branches (329 emit sites, 250 types)
+✓ every money figure across all 2121 GameError refusals is formatted for a player
+✓ all 34 refusal messages naming a catalog rung let the NAME supply its own article
+✓ all 73 client lines naming a catalog rung let the NAME supply its own article
+✓ all 163 catalog ids in player-visible payloads carry a name (28 declared handles)
+  ✓ no wire line renders a raw catalog id (37 rendered id fields across 228 templates)
+  ✓ no query binds a JS array to ANY/SOME($n); 6 exact scalar-literal expressions and 73 IN(…) sites govern the rule
+  ✓ all 229 SQL interpolations are shape-safe (150) or declared (55) — no user string can reach SQL text
+  ✓ all 248 test suites are run (246) or declared (2), and all 30 scripts the workflow calls exist
+  ✓ CI keeps exactly two jobs: suites at 60m and pgcheck at 20m, with every lane intact
+  ✓ the web-push key pair is declared once, in the shared group both services pull, and the panel says its LIVE reading only covers this process
+  ✓ all 47 module-scope collections carry a single-instance posture (2 shared, each named in render.yaml); numInstances stays undeclared
+  ✓ the alarm channel reaches the API, so the watchdog that covers a dark worker can page
+✓ all 13 awaited child exits are captured at spawn (1 declared: reads exitCode first, with a timeout)
+✓ every relative import reachable from 1 publishable package (1 source file) is in the tarball npm would publish
+✓ all 39 cooldown refusals carry the remainder — none says only "not yet"
+✓ all 11 rolling token buckets classified — 4 refuse and name what is left, 7 refuse nobody
+✅ THE CONTROL ROOM passed — the panel can read every on-chain parameter and prepare a change, and is structurally incapable of executing one: no signing client, no key, no execute route, so a compromised admin session is still bounded by the Safe. The calldata is decoded back with an independent encoder because a human signs it believing the screen; the walls refuse a bad value before the Safe has to; the lockstep mirrors quote LIVE backend levers rather than restated literals (the drift that made the bond treasury slice zero on every real bond while both invariants stayed green); and with no RPC it reports dormant rather than misstating the contract.
+Current copy: shared system status, Codex links, staking rules, release labels and inline scripts passed.
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: SPEC says 260 backend modules; src/ has 268
+    at file:///C:/Users/Jorge/Documents/Omerta-director/test/docs.js:324:8 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 260,
+  expected: 268,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

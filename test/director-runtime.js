@@ -1,0 +1,53 @@
+import assert from 'node:assert/strict';
+import { dockFixture, ids } from './lib/director-support.js';
+import { createLivingWorldDirector } from '../src/director/runtime.js';
+import { createDockWarDefinitions } from '../src/director/dock-war.js';
+import { observeDirectorWorld, pressuresFromFacts } from '../src/director/pressures.js';
+import { withItemRead } from '../src/items.js';
+
+const f = await dockFixture('director_runtime');
+let now = Date.now();
+const definitions = createDockWarDefinitions(f.content);
+const create = (mode = 'LIVE') => createLivingWorldDirector({ pool: f.pool, content: f.content, definitions, mode, clock: () => now });
+try {
+  assert.equal((await create('DIRECTOR_DISABLED').tick()).skipped, true);
+  assert.equal((await create('INTERNAL_SIMULATION').tick()).skipped, true);
+  assert.equal((await f.pool.query('SELECT id FROM director_situations')).rowCount, 0);
+  await f.establish();
+  const before = await f.pool.query('SELECT * FROM world_kernel_objects');
+  const shadow = await create('SHADOW_MODE').tick();
+  assert.equal(shadow.selected.length, 1);
+  assert.equal((await f.pool.query('SELECT id FROM director_situations')).rowCount, 0);
+  assert.equal((await f.pool.query('SELECT id FROM director_campaigns')).rowCount, 0);
+  assert.deepEqual((await f.pool.query('SELECT * FROM world_kernel_objects')).rows, before.rows);
+  const facts = await withItemRead(f.pool, (client) => observeDirectorWorld(client,
+    { ...f.content, objects: f.kernel.definitions }, [ids.object], now));
+  assert.equal(facts[0].resourceDemand, 2);
+  assert.equal(facts[0].resourceQuantity, 1);
+  assert.equal(facts[0].pressures.resourceDeficit, 0.5);
+  assert(Object.values(pressuresFromFacts(facts[0])).every((n) => Number.isFinite(n) && n >= 0 && n <= 1));
+  const director = create(), first = await director.tick();
+  assert.equal(first.selected.length, 1);
+  const replay = await director.tick();
+  assert.equal(replay.replayed, true);
+  assert.equal((await f.pool.query('SELECT id FROM director_situations')).rowCount, 1);
+  assert.equal((await create().tick()).replayed, true, 'new worker reuses durable evaluation');
+  now += 3600001;
+  const escalated = await director.tick();
+  assert.equal(escalated.transitions[0].kind, 'escalation');
+  assert.equal((await f.pool.query('SELECT state FROM director_situations')).rows[0].state, 'mobilizing');
+  now += 21600001;
+  await director.tick();
+  assert.equal((await f.pool.query('SELECT state FROM director_situations')).rows[0].state, 'urgent');
+  now += 172800001;
+  const expired = await director.tick();
+  assert.equal(expired.transitions[0].kind, 'expiry');
+  assert.equal((await f.pool.query('SELECT status FROM director_campaigns')).rows[0].status, 'abandoned');
+  assert.deepEqual((await f.pool.query('SELECT * FROM world_kernel_objects')).rows, before.rows, 'expiry never erases consequence');
+  now += 300001;
+  assert.equal((await director.tick()).selected.length, 1, 'missing participant/expired critical work may be reoffered after quiet time');
+  assert.equal((await f.pool.query('SELECT id FROM director_situations WHERE terminal=false')).rowCount, 1);
+  assert.equal(director.metrics().expired, 1);
+  assert.equal(director.metrics().activeSituations, 1);
+  console.log('PASS Director runtime: real pressure, disabled/simulation/shadow, durable creation/restart/replay, escalation, expiry and recovery');
+} finally { await f.cleanup(); }

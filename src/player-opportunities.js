@@ -6,9 +6,9 @@ export function playerOpportunities(projection, commands) {
   const result = commands.filter((command) => !['COMPLETED', 'EXPIRED'].includes(command.availability)).map((command) => {
     const family = command.commandType.split('.')[0];
     const kind = { operation: 'operation', mystery: 'mystery_lead', discovery: 'new_intelligence', knowledge: 'social_request',
-      recipe: 'crafting', item: 'resource', world: 'territory' }[family] || 'world_change';
+      recipe: 'crafting', item: 'resource', world: 'territory', situation: 'world_event' }[family] || 'world_change';
     const priority = command.availability === 'AVAILABLE'
-      ? command.commandType === 'operation.execute' ? 100 : family === 'discovery' ? 90 : family === 'mystery' ? 85 : 70
+      ? command.commandType === 'operation.execute' ? 100 : family === 'discovery' ? 90 : family === 'situation' ? 88 : family === 'mystery' ? 85 : 70
       : command.availability === 'IN_PROGRESS' ? 45 : 30;
     return { opportunityId: command.commandId, kind, priority, label: command.label,
       description: command.description, subject: command.subject, availability: command.availability,

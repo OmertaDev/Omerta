@@ -480,8 +480,9 @@ export function createFamilyOperations({ pool, registry, kernel, definitions = [
         return project(client, a, definition, state);
       });
     },
-    async create(accountId, value, key, expectedCharacterId = null) {
+    async create(accountId, value, key, expectedCharacterId = null, admission = null) {
       allowed(accountId); value = input(value, ['definitionId']); id(value.definitionId);
+      if (admission !== null && typeof admission !== 'function') fail('bad_coordination_operation_request');
       const definition = byId.get(value.definitionId);
       if (!definition) fail();
       let fresh = false;
@@ -492,6 +493,9 @@ export function createFamilyOperations({ pool, registry, kernel, definitions = [
         return withItemMutation(client, own(accountId), 'operation_action', logicalKey(accountId, key),
           { domain: 'family-coordination', action: 'create', definitionId: definition.id, version: definition.version }, async (mutation) => {
             if (!await admitted(client, a, definition)) fail();
+            // A trusted orchestrator can bind creation to a currently locked
+            // situation. Caller JSON never supplies this transaction callback.
+            if (admission) await admission(client, { accountId, characterId: a.ch.id, definitionId: definition.id });
             const operationId = crypto.randomUUID(), now = new Date(), expires = new Date(now.getTime() + definition.lifetimeSeconds * 1000);
             registerItemTransactionUndo(client, () => client.query('DELETE FROM world_operations WHERE id=$1', [operationId]));
             await client.query(`INSERT INTO world_operations(id,graph_id,graph_version,operation_node_id,crew_id,

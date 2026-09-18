@@ -1,0 +1,30 @@
+⚠️  preflight: Neither PUBLIC_URL nor SOCIAL_GAME_URL is set — every referral link, share prompt and social card will point at the built-in default domain, not yours. Set PUBLIC_URL to this server's own origin (it is also what one-click X sign-in derives its callback from).
+⚠️  preflight: INVARIANT_WEBHOOK_URL is not set — the §10.4 economy-drift, backup-failure, oracle-halt and real-value-invariant alarms have nowhere to shout and reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+
+THE CONCURRENCY HARNESS — lost-update correctness on real Postgres
+
+S1 — one idempotency key, fired concurrently, executes exactly once
+  ✓ no 500 among 12 concurrent same-key calls — got 0
+  ✓ every concurrent duplicate is a defined idempotency response (200 replay or 409 in_progress)
+  ✓ bank moved by exactly $1,000 once (got $1000)
+  ✓ cash debited exactly once (got $999000)
+  ✓ S1: no §10.4 check drifted (all stable)
+S2 — one loan offer, many takers, exactly one wins
+  ✓ the offer posted
+  ✓ exactly one borrower took the loan (got 1)
+  ✓ the offer is marked taken by exactly one borrower
+  ✓ the principal was paid out exactly once (1 loan:take rows for this offer)
+  ✓ S2: no §10.4 check drifted (all stable)
+S3 — A↔B symmetric two-party writes (the AB-BA surface), absorbed with no 500
+  ✓ no 500 across 6 symmetric rounds (the retry absorbed the AB-BA) — got 0
+  ✓ S3: no §10.4 check drifted (all stable)
+S4 — concurrent bodyguard hires: the house take is exact, value conserved
+  ✓ all 10 hires landed (got 10)
+  ✓ participants net-lost to the house (net Δ = $-2000)
+  ✓ street_tax received the buyback half of the take ($1000)
+  ✓ S4: no §10.4 check drifted (all stable)
+
+real deadlocks during the run (pg_stat_database): 0
+
+✅ concurrency harness passed — idempotency exactly-once, single-winner escrow, AB-BA absorbed, exact house take, §10.4 conserved throughout

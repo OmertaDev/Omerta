@@ -1,0 +1,41 @@
+⚠️  preflight: Neither PUBLIC_URL nor SOCIAL_GAME_URL is set — every referral link, share prompt and social card will point at the built-in default domain, not yours. Set PUBLIC_URL to this server's own origin (it is also what one-click X sign-in derives its callback from).
+⚠️  preflight: INVARIANT_WEBHOOK_URL is not set — the §10.4 economy-drift, backup-failure, oracle-halt and real-value-invariant alarms have nowhere to shout and reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+
+THE CONCURRENCY HARNESS — 30 players, 20s storm, real Postgres
+
+  seating 30 players… done
+[slow] POST /v1/casino/dice 200 1051ms
+  storm running (20s)… done — 6664 operations in 20.1s
+
+THROUGHPUT
+  332 requests/sec sustained across 30 concurrent players
+
+LATENCY (ms) — what a player feels
+  (absolute values depend on the machine — server, database and 30 clients all share this
+   box. The RATIOS between classes are the signal, and so is the shape as PLAYERS rises.)
+  class               n     p50     p95     p99     max
+  read             2305      26      90     208     885
+  read:board       1037      11      21      37     417
+  write:bank        682      53     137     233     526
+  write:casino      644     216     579     772    1058
+  write:crime       323      73     158     232     862
+  write:pvp        1673     129     379     566     928
+
+OUTCOMES
+  200×5948  400×716
+
+  error taxonomy (top 12):
+       407 × hosp_self
+       309 × hosp
+
+CONTENTION, measured at the database
+  real deadlocks (pg_stat_database):        0
+  transaction rollbacks:                    3381  (vs 716 refused actions — a refusal rolls back by design, so these should track each other)
+  players who SAW a 'contention' retry:     0
+  pool/connection failures:                 0
+
+§10.4 UNDER CONCURRENCY — the delta must be zero
+  ✓ all 55 checks unmoved by 6664 concurrent operations
+
+✅ loadtest passed — 30 concurrent players, 6664 operations, 332 req/s: no 5xx, no pool exhaustion, and §10.4 conservation unmoved (0 real deadlock(s) absorbed by the retry mapping).
