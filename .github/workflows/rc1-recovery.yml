@@ -1,0 +1,46 @@
+name: RC1 Linux termination and recovery
+
+on:
+  push:
+    branches: [codex/rc1-release-validation]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  linux-sigterm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: rc1_recovery
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      COORDINATION_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/rc1_recovery
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Nine production-process termination barriers
+        run: node tools/rc1-shutdown.js
+      - name: Retain exact-revision process logs and verdict
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc1-linux-sigterm-${{ github.sha }}
+          path: docs/release/evidence/graceful-shutdown/
+          if-no-files-found: error
+          retention-days: 30
