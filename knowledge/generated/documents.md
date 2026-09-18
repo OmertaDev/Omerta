@@ -364,6 +364,9 @@
 | [docs/core-architecture/review-phase5.md](../../docs/core-architecture/review-phase5.md) | documentation | 31 | 2026-09-18 |
 | [docs/GAMEPLAY-MARKETING-PACK.md](../../docs/GAMEPLAY-MARKETING-PACK.md) | documentation | 55 | 2026-08-24 |
 | [docs/LAUNCH-TWEETS.md](../../docs/LAUNCH-TWEETS.md) | documentation | 131 | 2026-08-29 |
+| [docs/living-world-director/evidence/README.md](../../docs/living-world-director/evidence/README.md) | documentation | 34 | 2026-09-18 |
+| [docs/living-world-director/HANDOFF.md](../../docs/living-world-director/HANDOFF.md) | documentation | 118 | 2026-09-18 |
+| [docs/living-world-director/SECURITY-REVIEW.md](../../docs/living-world-director/SECURITY-REVIEW.md) | documentation | 34 | 2026-09-18 |
 | [docs/OMR-MACHINE-CAMPAIGN.md](../../docs/OMR-MACHINE-CAMPAIGN.md) | documentation | 249 | 2026-08-26 |
 | [docs/OMR-MARKETING-PACK.md](../../docs/OMR-MARKETING-PACK.md) | documentation | 346 | 2026-08-24 |
 | [docs/superpowers/plans/2026-08-23-discovery-integrity.md](../../docs/superpowers/plans/2026-08-23-discovery-integrity.md) | documentation | 65 | 2026-08-24 |

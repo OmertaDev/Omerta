@@ -321,8 +321,8 @@
 | GET | `/v1/clues` | authenticated | platform-core | [src/server.js:3529](../../src/server.js#L3529) | `Clues.clueBoard` |
 | POST | `/v1/clues/dig` | authenticated | platform-core | [src/server.js:3531](../../src/server.js#L3531) | `Clues.dig` |
 | GET | `/v1/collection` | authenticated | law-intelligence | [src/server.js:3303](../../src/server.js#L3303) | `Collection.collectionBoard` |
-| GET | `/v1/commands` | public | platform-core | [src/routes/commands.js:36](../../src/routes/commands.js#L36) | — |
-| POST | `/v1/commands/execute` | public | platform-core | [src/routes/commands.js:37](../../src/routes/commands.js#L37) | — |
+| GET | `/v1/commands` | public | platform-core | [src/routes/commands.js:39](../../src/routes/commands.js#L39) | — |
+| POST | `/v1/commands/execute` | public | platform-core | [src/routes/commands.js:40](../../src/routes/commands.js#L40) | — |
 | GET | `/v1/commission` | public | platform-core | [src/server.js:2071](../../src/server.js#L2071) | `Commission.commissionBoard` |
 | POST | `/v1/commission/override` | authenticated | platform-core | [src/server.js:2080](../../src/server.js#L2080) | `Commission.overrideVeto` |
 | POST | `/v1/commission/propose` | authenticated | platform-core | [src/server.js:2077](../../src/server.js#L2077) | `Commission.proposeDecree` |
@@ -773,8 +773,8 @@
 | POST | `/v1/primetime/round` | authenticated | engagement-growth | [src/server.js:3147](../../src/server.js#L3147) | `Prime.buyRound` |
 | POST | `/v1/primetime/siege` | authenticated | engagement-growth | [src/server.js:3149](../../src/server.js#L3149) | `Prime.joinSiege` |
 | GET | `/v1/profile` | authenticated | engagement-growth | [src/server.js:3224](../../src/server.js#L3224) | `W.myProfile` |
-| GET | `/v1/projections/player` | authenticated | platform-core | [src/routes/projections.js:55](../../src/routes/projections.js#L55) | — |
-| GET | `/v1/projections/world` | authenticated | platform-core | [src/routes/projections.js:60](../../src/routes/projections.js#L60) | — |
+| GET | `/v1/projections/player` | authenticated | platform-core | [src/routes/projections.js:57](../../src/routes/projections.js#L57) | — |
+| GET | `/v1/projections/world` | authenticated | platform-core | [src/routes/projections.js:62](../../src/routes/projections.js#L62) | — |
 | GET | `/v1/provenance` | authenticated | engagement-growth | [src/server.js:2447](../../src/server.js#L2447) | `Drop.colorsBoard` |
 | POST | `/v1/provenance` | authenticated | engagement-growth | [src/server.js:2449](../../src/server.js#L2449) | `Drop.claimColors` |
 | POST | `/v1/push/subscribe` | authenticated | engagement-growth | [src/server.js:3162](../../src/server.js#L3162) | `Push.saveSubscription` |

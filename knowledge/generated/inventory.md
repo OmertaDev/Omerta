@@ -1,37 +1,37 @@
 # Generated repository inventory
 
-> Source: worktree at `979519c56400`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `553619b5a188`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 2,874 |
-| Text lines | 829,740 |
-| Repository bytes inventoried | 824,678,327 |
-| Backend/route modules | 260 |
+| Current artifacts | 2,925 |
+| Text lines | 839,516 |
+| Repository bytes inventoried | 825,410,614 |
+| Backend/route modules | 268 |
 | HTTP route registrations / unique routes | 800 / 800 |
-| Database tables | 362 |
+| Database tables | 369 |
 | Solidity declarations | 79 |
-| Git commits | 1,474 |
+| Git commits | 1,476 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 7,393 / 32,652 |
+| Graph nodes / edges | 7,480 / 33,089 |
 
 ## Artifact kinds
 
 | Kind | Files |
 |---|---:|
 | media-asset | 1,202 |
-| documentation | 315 |
-| test-suite | 243 |
-| backend-module | 232 |
-| artifact | 228 |
+| documentation | 318 |
+| test-suite | 255 |
+| artifact | 254 |
+| backend-module | 240 |
 | contract-project | 146 |
 | audit | 98 |
 | contract-test | 98 |
 | design | 91 |
-| engineering-harness | 84 |
+| engineering-harness | 86 |
 | contract-source | 59 |
 | route-module | 28 |
 | web-surface | 15 |
@@ -50,7 +50,7 @@
 | [omerta-contracts/audits/2026-09-08-comprehensive/shared-static-triage.json](../../omerta-contracts/audits/2026-09-08-comprehensive/shared-static-triage.json) | 52,258 | contract-project | 2026-09-09 |
 | [omerta-contracts/audits/2026-09-08-comprehensive/hook-retest-static.json](../../omerta-contracts/audits/2026-09-08-comprehensive/hook-retest-static.json) | 47,392 | contract-project | 2026-09-09 |
 | [CLAUDE.md](../../CLAUDE.md) | 18,679 | documentation | 2026-09-06 |
-| [public/index.html](../../public/index.html) | 13,327 | web-surface | 2026-09-18 |
+| [public/index.html](../../public/index.html) | 13,336 | web-surface | 2026-09-18 |
 | [omerta-contracts/audits/2026-09-08-liquidity-automation/package-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/package-manifest.json) | 10,623 | contract-project | 2026-09-09 |
 | [test/client.js](../../test/client.js) | 9,441 | test-suite | 2026-09-17 |
 | [omerta-contracts/x-ray/slither-vars-and-auth.json](../../omerta-contracts/x-ray/slither-vars-and-auth.json) | 9,374 | contract-project | 2026-08-25 |
@@ -60,7 +60,7 @@
 | [.agents/skills/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [omerta-contracts/audits/2026-09-08-liquidity-automation/artifact-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/artifact-manifest.json) | 7,385 | contract-project | 2026-09-09 |
-| [schema.sql](../../schema.sql) | 7,289 | data-schema | 2026-09-18 |
+| [schema.sql](../../schema.sql) | 7,372 | data-schema | 2026-09-18 |
 | [BALANCE.md](../../BALANCE.md) | 6,855 | documentation | 2026-09-06 |
 | [omerta-contracts/audits/2026-09-08-comprehensive/package-manifest.json](../../omerta-contracts/audits/2026-09-08-comprehensive/package-manifest.json) | 6,609 | contract-project | 2026-09-09 |
 | [omerta-contracts/audits/2026-09-08-comprehensive/forge-lint-triage.json](../../omerta-contracts/audits/2026-09-08-comprehensive/forge-lint-triage.json) | 6,203 | contract-project | 2026-09-09 |
@@ -71,7 +71,7 @@
 | [omerta-contracts/audits/2026-09-09-genesis-bootstrap/artifact-manifest.json](../../omerta-contracts/audits/2026-09-09-genesis-bootstrap/artifact-manifest.json) | 4,402 | contract-project | 2026-09-09 |
 | [reference-prototype-v24.jsx](../../reference-prototype-v24.jsx) | 4,235 | artifact | 2026-08-11 |
 | [test/docs.js](../../test/docs.js) | 4,205 | test-suite | 2026-09-14 |
-| [test/gates.js](../../test/gates.js) | 4,185 | test-suite | 2026-09-18 |
+| [test/gates.js](../../test/gates.js) | 4,188 | test-suite | 2026-09-18 |
 | [omerta-contracts/test/AcquisitionConstellationTask3B.t.sol](../../omerta-contracts/test/AcquisitionConstellationTask3B.t.sol) | 3,743 | contract-test | 2026-08-28 |
 | [src/server.js](../../src/server.js) | 3,619 | backend-module | 2026-09-18 |
 | [test/phase2-review-regressions.js](../../test/phase2-review-regressions.js) | 3,440 | test-suite | 2026-09-07 |
