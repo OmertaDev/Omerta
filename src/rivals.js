@@ -82,7 +82,7 @@ export async function rivalsBoard(pool, accountId) {
 
 // Row hygiene — the ledger's memory is RETENTION_D days (grudges older than a season fade).
 export async function sweepRivals(pool) {
-  const r = await pool.query(`DELETE FROM rival_events WHERE at < now() - interval '${Number(RIVALS.RETENTION_D)} days'`);
+  const r = await pool.query('DELETE FROM rival_events WHERE at < now() - $1::interval', [`${Number(RIVALS.RETENTION_D)} days`]);
   return { swept: r.rowCount || 0 };
 }
 

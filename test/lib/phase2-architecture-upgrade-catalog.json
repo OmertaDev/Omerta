@@ -1,0 +1,882 @@
+{
+  "note": "Exact additive/replaced schema constraints after the original Phase2 slice, reviewed against schema.sql; never inferred from the backend at test time.",
+  "added": [
+    {
+      "table_name": "coordination_archive_entries",
+      "name": "coordination_archive_entries_archive_id_claim_id_key",
+      "definition": "UNIQUE (archive_id, claim_id)"
+    },
+    {
+      "table_name": "coordination_archive_entries",
+      "name": "coordination_archive_entries_archive_id_fkey",
+      "definition": "FOREIGN KEY (archive_id) REFERENCES coordination_knowledge_archives(id)"
+    },
+    {
+      "table_name": "coordination_archive_entries",
+      "name": "coordination_archive_entries_claim_id_fkey",
+      "definition": "FOREIGN KEY (claim_id) REFERENCES coordination_claims(id)"
+    },
+    {
+      "table_name": "coordination_archive_entries",
+      "name": "coordination_archive_entries_id_fkey",
+      "definition": "FOREIGN KEY (id) REFERENCES coordination_archive_events(id)"
+    },
+    {
+      "table_name": "coordination_archive_entries",
+      "name": "coordination_archive_entries_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "coordination_archive_events",
+      "name": "coordination_archive_events_archive_id_claim_id_key",
+      "definition": "UNIQUE (archive_id, claim_id)"
+    },
+    {
+      "table_name": "coordination_archive_events",
+      "name": "coordination_archive_events_archive_id_fkey",
+      "definition": "FOREIGN KEY (archive_id) REFERENCES coordination_knowledge_archives(id)"
+    },
+    {
+      "table_name": "coordination_archive_events",
+      "name": "coordination_archive_events_claim_id_fkey",
+      "definition": "FOREIGN KEY (claim_id) REFERENCES coordination_claims(id)"
+    },
+    {
+      "table_name": "coordination_archive_events",
+      "name": "coordination_archive_events_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "coordination_claim_acl_events",
+      "name": "coordination_claim_acl_events_author_account_id_fkey",
+      "definition": "FOREIGN KEY (author_account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "coordination_claim_acl_events",
+      "name": "coordination_claim_acl_events_claim_id_fkey",
+      "definition": "FOREIGN KEY (claim_id) REFERENCES coordination_claims(id)"
+    },
+    {
+      "table_name": "coordination_claim_acl_events",
+      "name": "coordination_claim_acl_events_claim_id_revision_key",
+      "definition": "UNIQUE (claim_id, revision)"
+    },
+    {
+      "table_name": "coordination_claim_acl_events",
+      "name": "coordination_claim_acl_events_operation_check",
+      "definition": "CHECK (operation = ANY (ARRAY['grant'::text, 'revoke'::text]))"
+    },
+    {
+      "table_name": "coordination_claim_acl_events",
+      "name": "coordination_claim_acl_events_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "coordination_claim_acl_events",
+      "name": "coordination_claim_acl_events_recipient_kind_check",
+      "definition": "CHECK (recipient_kind = ANY (ARRAY['account'::text, 'crew'::text, 'family'::text]))"
+    },
+    {
+      "table_name": "coordination_claim_acl_events",
+      "name": "coordination_claim_acl_events_revision_check",
+      "definition": "CHECK (revision > 0)"
+    },
+    {
+      "table_name": "coordination_claim_acl_state",
+      "name": "coordination_claim_acl_state_claim_id_fkey",
+      "definition": "FOREIGN KEY (claim_id) REFERENCES coordination_claims(id)"
+    },
+    {
+      "table_name": "coordination_claim_acl_state",
+      "name": "coordination_claim_acl_state_pkey",
+      "definition": "PRIMARY KEY (claim_id)"
+    },
+    {
+      "table_name": "coordination_claim_acl_state",
+      "name": "coordination_claim_acl_state_revision_check",
+      "definition": "CHECK (revision >= 0)"
+    },
+    {
+      "table_name": "coordination_claim_grants",
+      "name": "coordination_claim_grants_claim_id_fkey",
+      "definition": "FOREIGN KEY (claim_id) REFERENCES coordination_claims(id)"
+    },
+    {
+      "table_name": "coordination_claim_grants",
+      "name": "coordination_claim_grants_claim_id_recipient_kind_recipient_key",
+      "definition": "UNIQUE (claim_id, recipient_kind, recipient_id)"
+    },
+    {
+      "table_name": "coordination_claim_grants",
+      "name": "coordination_claim_grants_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "coordination_claim_grants",
+      "name": "coordination_claim_grants_recipient_kind_check",
+      "definition": "CHECK (recipient_kind = ANY (ARRAY['account'::text, 'crew'::text, 'family'::text]))"
+    },
+    {
+      "table_name": "coordination_claim_grants",
+      "name": "coordination_claim_grants_revision_check",
+      "definition": "CHECK (revision > 0)"
+    },
+    {
+      "table_name": "coordination_claim_links",
+      "name": "coordination_claim_links_assertion_check",
+      "definition": "CHECK (assertion = 'player'::text)"
+    },
+    {
+      "table_name": "coordination_claim_links",
+      "name": "coordination_claim_links_author_account_id_fkey",
+      "definition": "FOREIGN KEY (author_account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "coordination_claim_links",
+      "name": "coordination_claim_links_author_account_id_from_claim_id_to_key",
+      "definition": "UNIQUE (author_account_id, from_claim_id, to_claim_id, relation)"
+    },
+    {
+      "table_name": "coordination_claim_links",
+      "name": "coordination_claim_links_check",
+      "definition": "CHECK (from_claim_id <> to_claim_id)"
+    },
+    {
+      "table_name": "coordination_claim_links",
+      "name": "coordination_claim_links_from_claim_id_fkey",
+      "definition": "FOREIGN KEY (from_claim_id) REFERENCES coordination_claims(id)"
+    },
+    {
+      "table_name": "coordination_claim_links",
+      "name": "coordination_claim_links_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "coordination_claim_links",
+      "name": "coordination_claim_links_relation_check",
+      "definition": "CHECK (relation = ANY (ARRAY['corroborates'::text, 'contradicts'::text]))"
+    },
+    {
+      "table_name": "coordination_claim_links",
+      "name": "coordination_claim_links_to_claim_id_fkey",
+      "definition": "FOREIGN KEY (to_claim_id) REFERENCES coordination_claims(id)"
+    },
+    {
+      "table_name": "coordination_claims",
+      "name": "coordination_claims_discovery_receipt_key",
+      "definition": "UNIQUE (discovery_receipt)"
+    },
+    {
+      "table_name": "coordination_claims",
+      "name": "coordination_claims_instance_id_fkey",
+      "definition": "FOREIGN KEY (instance_id) REFERENCES coordination_instances(id)"
+    },
+    {
+      "table_name": "coordination_claims",
+      "name": "coordination_claims_instance_id_node_id_key",
+      "definition": "UNIQUE (instance_id, node_id)"
+    },
+    {
+      "table_name": "coordination_claims",
+      "name": "coordination_claims_origin_character_id_fkey",
+      "definition": "FOREIGN KEY (origin_character_id) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "coordination_claims",
+      "name": "coordination_claims_owner_account_id_fkey",
+      "definition": "FOREIGN KEY (owner_account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "coordination_claims",
+      "name": "coordination_claims_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "coordination_claims",
+      "name": "coordination_claims_source_event_id_fkey",
+      "definition": "FOREIGN KEY (source_event_id) REFERENCES coordination_events(id)"
+    },
+    {
+      "table_name": "coordination_claims",
+      "name": "coordination_claims_source_event_id_key",
+      "definition": "UNIQUE (source_event_id)"
+    },
+    {
+      "table_name": "coordination_claims",
+      "name": "coordination_claims_source_kind_check",
+      "definition": "CHECK (source_kind = 'coordination_discovery'::text)"
+    },
+    {
+      "table_name": "coordination_commands",
+      "name": "coordination_commands_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "coordination_commands",
+      "name": "coordination_commands_command_id_key",
+      "definition": "UNIQUE (command_id)"
+    },
+    {
+      "table_name": "coordination_commands",
+      "name": "coordination_commands_pkey",
+      "definition": "PRIMARY KEY (account_id, command_key)"
+    },
+    {
+      "table_name": "coordination_definitions",
+      "name": "coordination_definitions_graph_id_graph_version_content_has_key",
+      "definition": "UNIQUE (graph_id, graph_version, content_hash)"
+    },
+    {
+      "table_name": "coordination_definitions",
+      "name": "coordination_definitions_graph_version_check",
+      "definition": "CHECK (graph_version > 0)"
+    },
+    {
+      "table_name": "coordination_definitions",
+      "name": "coordination_definitions_pkey",
+      "definition": "PRIMARY KEY (graph_id, graph_version)"
+    },
+    {
+      "table_name": "coordination_events",
+      "name": "coordination_events_actor_account_id_fkey",
+      "definition": "FOREIGN KEY (actor_account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "coordination_events",
+      "name": "coordination_events_actor_character_id_fkey",
+      "definition": "FOREIGN KEY (actor_character_id) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "coordination_events",
+      "name": "coordination_events_event_type_check",
+      "definition": "CHECK (event_type = ANY (ARRAY['coordination.created'::text, 'coordination.node.discovered'::text, 'coordination.node.completed'::text, 'coordination.completed'::text, 'coordination.cancelled'::text]))"
+    },
+    {
+      "table_name": "coordination_events",
+      "name": "coordination_events_event_version_check",
+      "definition": "CHECK (event_version = 1)"
+    },
+    {
+      "table_name": "coordination_events",
+      "name": "coordination_events_instance_id_fkey",
+      "definition": "FOREIGN KEY (instance_id) REFERENCES coordination_instances(id)"
+    },
+    {
+      "table_name": "coordination_events",
+      "name": "coordination_events_instance_id_revision_ordinal_key",
+      "definition": "UNIQUE (instance_id, revision, ordinal)"
+    },
+    {
+      "table_name": "coordination_events",
+      "name": "coordination_events_ordinal_check",
+      "definition": "CHECK (ordinal >= 0 AND ordinal <= 1)"
+    },
+    {
+      "table_name": "coordination_events",
+      "name": "coordination_events_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "coordination_events",
+      "name": "coordination_events_revision_check",
+      "definition": "CHECK (revision >= 0)"
+    },
+    {
+      "table_name": "coordination_instances",
+      "name": "coordination_instances_graph_id_graph_version_content_hash_fkey",
+      "definition": "FOREIGN KEY (graph_id, graph_version, content_hash) REFERENCES coordination_definitions(graph_id, graph_version, content_hash)"
+    },
+    {
+      "table_name": "coordination_instances",
+      "name": "coordination_instances_owner_account_id_fkey",
+      "definition": "FOREIGN KEY (owner_account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "coordination_instances",
+      "name": "coordination_instances_owner_character_id_fkey",
+      "definition": "FOREIGN KEY (owner_character_id) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "coordination_instances",
+      "name": "coordination_instances_owner_character_id_graph_id_key",
+      "definition": "UNIQUE (owner_character_id, graph_id)"
+    },
+    {
+      "table_name": "coordination_instances",
+      "name": "coordination_instances_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "coordination_instances",
+      "name": "coordination_instances_revision_check",
+      "definition": "CHECK (revision >= 0)"
+    },
+    {
+      "table_name": "coordination_instances",
+      "name": "coordination_instances_status_check",
+      "definition": "CHECK (status = ANY (ARRAY['active'::text, 'completed'::text, 'cancelled'::text]))"
+    },
+    {
+      "table_name": "coordination_knowledge_archives",
+      "name": "coordination_knowledge_archives_custodian_account_id_fkey",
+      "definition": "FOREIGN KEY (custodian_account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "coordination_knowledge_archives",
+      "name": "coordination_knowledge_archives_custodian_account_id_key",
+      "definition": "UNIQUE (custodian_account_id)"
+    },
+    {
+      "table_name": "coordination_knowledge_archives",
+      "name": "coordination_knowledge_archives_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "coordination_knowledge_archives",
+      "name": "coordination_knowledge_archives_policy_check",
+      "definition": "CHECK (policy = 'personal_reference'::text)"
+    },
+    {
+      "table_name": "keeper_transactions",
+      "name": "keeper_transactions_chain_id_wallet_nonce_key",
+      "definition": "UNIQUE (chain_id, wallet, nonce)"
+    },
+    {
+      "table_name": "keeper_transactions",
+      "name": "keeper_transactions_check",
+      "definition": "CHECK (chain_id > 0 AND nonce >= 0 AND confirmations > 0 AND broadcast_attempts >= 0)"
+    },
+    {
+      "table_name": "keeper_transactions",
+      "name": "keeper_transactions_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "keeper_transactions",
+      "name": "keeper_transactions_status_check",
+      "definition": "CHECK (status = ANY (ARRAY['prepared'::text, 'submitted'::text, 'ambiguous'::text, 'mined'::text, 'confirmed'::text, 'settled'::text, 'reverted'::text, 'nonce_conflict'::text, 'reorged'::text]))"
+    },
+    {
+      "table_name": "keeper_transactions",
+      "name": "keeper_transactions_tx_hash_key",
+      "definition": "UNIQUE (tx_hash)"
+    },
+    {
+      "table_name": "liquidity_flow_receipts",
+      "name": "liquidity_flow_receipts_chain_id_contract_address_tx_hash_l_key",
+      "definition": "UNIQUE (chain_id, contract_address, tx_hash, log_index)"
+    },
+    {
+      "table_name": "liquidity_flow_receipts",
+      "name": "liquidity_flow_receipts_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "liquidity_market_status",
+      "name": "liquidity_market_status_pkey",
+      "definition": "PRIMARY KEY (chain_id, manifest_hash)"
+    },
+    {
+      "table_name": "liquidity_settlements",
+      "name": "liquidity_settlements_chain_id_executor_sequence_key",
+      "definition": "UNIQUE (chain_id, executor, sequence)"
+    },
+    {
+      "table_name": "liquidity_settlements",
+      "name": "liquidity_settlements_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "liquidity_sync_cursors",
+      "name": "liquidity_sync_cursors_pkey",
+      "definition": "PRIMARY KEY (domain)"
+    },
+    {
+      "table_name": "player_command_boards",
+      "name": "player_command_boards_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "player_command_boards",
+      "name": "player_command_boards_character_id_fkey",
+      "definition": "FOREIGN KEY (character_id) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "player_command_boards",
+      "name": "player_command_boards_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "world_kernel_events",
+      "name": "world_kernel_events_definition_hash_check",
+      "definition": "CHECK (char_length(definition_hash) = 64)"
+    },
+    {
+      "table_name": "world_kernel_events",
+      "name": "world_kernel_events_item_id_fkey",
+      "definition": "FOREIGN KEY (item_id) REFERENCES item_instances(id)"
+    },
+    {
+      "table_name": "world_kernel_events",
+      "name": "world_kernel_events_mutation_id_fkey",
+      "definition": "FOREIGN KEY (mutation_id) REFERENCES item_mutation_guards(mutation_id)"
+    },
+    {
+      "table_name": "world_kernel_events",
+      "name": "world_kernel_events_mutation_id_key",
+      "definition": "UNIQUE (mutation_id)"
+    },
+    {
+      "table_name": "world_kernel_events",
+      "name": "world_kernel_events_object_id_fkey",
+      "definition": "FOREIGN KEY (object_id) REFERENCES world_kernel_objects(id)"
+    },
+    {
+      "table_name": "world_kernel_events",
+      "name": "world_kernel_events_object_id_revision_key",
+      "definition": "UNIQUE (object_id, revision)"
+    },
+    {
+      "table_name": "world_kernel_events",
+      "name": "world_kernel_events_operation_id_fkey",
+      "definition": "FOREIGN KEY (operation_id) REFERENCES world_operations(id)"
+    },
+    {
+      "table_name": "world_kernel_events",
+      "name": "world_kernel_events_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "world_kernel_events",
+      "name": "world_kernel_events_revision_check",
+      "definition": "CHECK (revision > 0)"
+    },
+    {
+      "table_name": "world_kernel_objects",
+      "name": "world_kernel_objects_controller_family_id_fkey",
+      "definition": "FOREIGN KEY (controller_family_id) REFERENCES gangs(id) ON DELETE SET NULL"
+    },
+    {
+      "table_name": "world_kernel_objects",
+      "name": "world_kernel_objects_definition_hash_check",
+      "definition": "CHECK (char_length(definition_hash) = 64)"
+    },
+    {
+      "table_name": "world_kernel_objects",
+      "name": "world_kernel_objects_object_kind_check",
+      "definition": "CHECK (object_kind = ANY (ARRAY['facility'::text, 'workshop'::text, 'world_object'::text]))"
+    },
+    {
+      "table_name": "world_kernel_objects",
+      "name": "world_kernel_objects_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "world_kernel_objects",
+      "name": "world_kernel_objects_revision_check",
+      "definition": "CHECK (revision >= 0)"
+    },
+    {
+      "table_name": "world_operation_capital",
+      "name": "world_operation_capital_amount_check",
+      "definition": "CHECK (amount >= 1 AND amount <= 1000000)"
+    },
+    {
+      "table_name": "world_operation_capital",
+      "name": "world_operation_capital_operation_id_fkey",
+      "definition": "FOREIGN KEY (operation_id) REFERENCES world_operations(id)"
+    },
+    {
+      "table_name": "world_operation_capital",
+      "name": "world_operation_capital_pkey",
+      "definition": "PRIMARY KEY (operation_id, role_id, requirement_id)"
+    },
+    {
+      "table_name": "world_operation_capital",
+      "name": "world_operation_capital_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['held'::text, 'refunded'::text, 'spent'::text, 'forfeited'::text]))"
+    },
+    {
+      "table_name": "world_operation_commitments",
+      "name": "world_operation_commitments_item_id_fkey",
+      "definition": "FOREIGN KEY (item_id) REFERENCES item_instances(id)"
+    },
+    {
+      "table_name": "world_operation_commitments",
+      "name": "world_operation_commitments_kind_check",
+      "definition": "CHECK (kind = ANY (ARRAY['participation'::text, 'item'::text, 'resource'::text, 'capital'::text, 'information'::text, 'capability'::text, 'prerequisite'::text]))"
+    },
+    {
+      "table_name": "world_operation_commitments",
+      "name": "world_operation_commitments_operation_id_fkey",
+      "definition": "FOREIGN KEY (operation_id) REFERENCES world_operations(id)"
+    },
+    {
+      "table_name": "world_operation_commitments",
+      "name": "world_operation_commitments_pkey",
+      "definition": "PRIMARY KEY (operation_id, role_id, requirement_id)"
+    },
+    {
+      "table_name": "world_operation_commitments",
+      "name": "world_operation_commitments_quantity_check",
+      "definition": "CHECK (quantity >= 1 AND quantity <= 1000000)"
+    },
+    {
+      "table_name": "world_operation_commitments",
+      "name": "world_operation_commitments_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['promised'::text, 'fulfilled'::text, 'withdrawn'::text, 'spent'::text, 'returned'::text]))"
+    },
+    {
+      "table_name": "world_operation_events",
+      "name": "world_operation_events_mutation_id_fkey",
+      "definition": "FOREIGN KEY (mutation_id) REFERENCES item_mutation_guards(mutation_id)"
+    },
+    {
+      "table_name": "world_operation_events",
+      "name": "world_operation_events_operation_id_fkey",
+      "definition": "FOREIGN KEY (operation_id) REFERENCES world_operations(id)"
+    },
+    {
+      "table_name": "world_operation_events",
+      "name": "world_operation_events_operation_id_revision_ordinal_key",
+      "definition": "UNIQUE (operation_id, revision, ordinal)"
+    },
+    {
+      "table_name": "world_operation_events",
+      "name": "world_operation_events_ordinal_check",
+      "definition": "CHECK (ordinal >= 0)"
+    },
+    {
+      "table_name": "world_operation_events",
+      "name": "world_operation_events_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "world_operation_events",
+      "name": "world_operation_events_revision_check",
+      "definition": "CHECK (revision > 0)"
+    },
+    {
+      "table_name": "world_operations",
+      "name": "world_operation_coordination_pin",
+      "definition": "CHECK (revision >= 0 AND (coordination_mode = 'crew'::text AND family_id IS NULL AND run_key = ''::text AND coordination_definition_hash IS NULL AND coordination_definition_json IS NULL OR coordination_mode = 'family'::text AND family_id IS NOT NULL AND char_length(family_id) > 0 AND char_length(run_key) > 0 AND coordination_definition_hash IS NOT NULL AND char_length(coordination_definition_hash) = 64 AND coordination_definition_json IS NOT NULL AND expires_at IS NOT NULL AND resolution_seed IS NOT NULL AND ((status = ANY (ARRAY['completed'::text, 'failed'::text, 'canceled'::text, 'expired'::text])) AND resolved_at IS NOT NULL OR (status <> ALL (ARRAY['completed'::text, 'failed'::text, 'canceled'::text, 'expired'::text])) AND resolved_at IS NULL)))"
+    },
+    {
+      "table_name": "world_operations",
+      "name": "world_operation_status",
+      "definition": "CHECK (coordination_mode = 'crew'::text AND (status = ANY (ARRAY['forming'::text, 'active'::text, 'completed'::text, 'canceled'::text, 'abandoned'::text])) OR coordination_mode = 'family'::text AND (status = ANY (ARRAY['draft'::text, 'recruiting'::text, 'committed'::text, 'ready'::text, 'executing'::text, 'resolving'::text, 'completed'::text, 'failed'::text, 'canceled'::text, 'expired'::text])))"
+    },
+    {
+      "table_name": "world_operations",
+      "name": "world_operation_status_time",
+      "definition": "CHECK (coordination_mode = 'family'::text OR status = 'forming'::text AND activated_at IS NULL AND completed_at IS NULL AND canceled_at IS NULL AND abandoned_at IS NULL AND close_reason IS NULL OR status = 'active'::text AND activated_at IS NOT NULL AND completed_at IS NULL AND canceled_at IS NULL AND abandoned_at IS NULL AND close_reason IS NULL OR status = 'completed'::text AND activated_at IS NOT NULL AND completed_at IS NOT NULL AND canceled_at IS NULL AND abandoned_at IS NULL AND close_reason = 'completed'::text OR status = 'canceled'::text AND completed_at IS NULL AND canceled_at IS NOT NULL AND abandoned_at IS NULL AND close_reason = 'canceled'::text OR status = 'abandoned'::text AND completed_at IS NULL AND canceled_at IS NULL AND abandoned_at IS NOT NULL AND (close_reason = ANY (ARRAY['participant_dead'::text, 'crew_changed'::text])))"
+    },
+    {
+      "table_name": "world_recipe_usage",
+      "name": "world_recipe_usage_check",
+      "definition": "CHECK (scope = 'global'::text AND subject_id = '*'::text OR scope <> 'global'::text AND subject_id <> '*'::text AND char_length(subject_id) > 0)"
+    },
+    {
+      "table_name": "world_recipe_usage",
+      "name": "world_recipe_usage_period_kind_check",
+      "definition": "CHECK (period_kind = ANY (ARRAY['lifetime'::text, 'day'::text, 'week'::text, 'season'::text]))"
+    },
+    {
+      "table_name": "world_recipe_usage",
+      "name": "world_recipe_usage_pkey",
+      "definition": "PRIMARY KEY (recipe_id, scope, subject_id, period_kind, period_key)"
+    },
+    {
+      "table_name": "world_recipe_usage",
+      "name": "world_recipe_usage_scope_check",
+      "definition": "CHECK (scope = ANY (ARRAY['account'::text, 'global'::text, 'territory'::text]))"
+    },
+    {
+      "table_name": "world_recipe_usage",
+      "name": "world_recipe_usage_used_check",
+      "definition": "CHECK (used >= 0 AND used <= 1000000)"
+    }
+  ],
+  "removed": [
+    {
+      "table_name": "world_operations",
+      "name": "world_operation_identity",
+      "definition": "UNIQUE (crew_id, graph_id, graph_version, operation_node_id)"
+    },
+    {
+      "table_name": "world_operations",
+      "name": "world_operation_status",
+      "definition": "CHECK (status = ANY (ARRAY['forming'::text, 'active'::text, 'completed'::text, 'canceled'::text, 'abandoned'::text]))"
+    },
+    {
+      "table_name": "world_operations",
+      "name": "world_operation_status_time",
+      "definition": "CHECK (status = 'forming'::text AND activated_at IS NULL AND completed_at IS NULL AND canceled_at IS NULL AND abandoned_at IS NULL AND close_reason IS NULL OR status = 'active'::text AND activated_at IS NOT NULL AND completed_at IS NULL AND canceled_at IS NULL AND abandoned_at IS NULL AND close_reason IS NULL OR status = 'completed'::text AND activated_at IS NOT NULL AND completed_at IS NOT NULL AND canceled_at IS NULL AND abandoned_at IS NULL AND close_reason = 'completed'::text OR status = 'canceled'::text AND completed_at IS NULL AND canceled_at IS NOT NULL AND abandoned_at IS NULL AND close_reason = 'canceled'::text OR status = 'abandoned'::text AND completed_at IS NULL AND canceled_at IS NULL AND abandoned_at IS NOT NULL AND (close_reason = ANY (ARRAY['participant_dead'::text, 'crew_changed'::text])))"
+    }
+  ],
+  "notNullColumns": {
+    "coordination_archive_entries": [
+      "added_at",
+      "archive_id",
+      "claim_id",
+      "id"
+    ],
+    "coordination_archive_events": [
+      "added_at",
+      "archive_id",
+      "claim_id",
+      "command_id",
+      "id"
+    ],
+    "coordination_claim_acl_events": [
+      "author_account_id",
+      "claim_id",
+      "command_id",
+      "grant_id",
+      "id",
+      "occurred_at",
+      "operation",
+      "recipient_id",
+      "recipient_kind",
+      "recipient_label",
+      "revision"
+    ],
+    "coordination_claim_acl_state": [
+      "claim_id",
+      "revision"
+    ],
+    "coordination_claim_grants": [
+      "active",
+      "claim_id",
+      "id",
+      "recipient_id",
+      "recipient_kind",
+      "recipient_label",
+      "revision"
+    ],
+    "coordination_claim_links": [
+      "assertion",
+      "author_account_id",
+      "command_id",
+      "created_at",
+      "from_claim_id",
+      "id",
+      "relation",
+      "to_claim_id"
+    ],
+    "coordination_claims": [
+      "content_hash",
+      "discovered_at",
+      "discovery_receipt",
+      "domain",
+      "id",
+      "instance_id",
+      "node_id",
+      "origin_character_id",
+      "owner_account_id",
+      "proposition",
+      "source_event_id",
+      "source_kind",
+      "source_root",
+      "value_json"
+    ],
+    "coordination_commands": [
+      "account_id",
+      "command_id",
+      "command_key",
+      "fingerprint",
+      "response_json"
+    ],
+    "coordination_definitions": [
+      "content_hash",
+      "definition_json",
+      "graph_id",
+      "graph_version"
+    ],
+    "coordination_events": [
+      "actor_account_id",
+      "content_hash",
+      "correlation_id",
+      "event_type",
+      "event_version",
+      "id",
+      "instance_id",
+      "occurred_at",
+      "ordinal",
+      "payload_json",
+      "revision"
+    ],
+    "coordination_instances": [
+      "content_hash",
+      "created_at",
+      "graph_id",
+      "graph_version",
+      "id",
+      "owner_account_id",
+      "owner_character_id",
+      "revision",
+      "state_json",
+      "status",
+      "updated_at"
+    ],
+    "coordination_knowledge_archives": [
+      "created_at",
+      "custodian_account_id",
+      "id",
+      "policy"
+    ],
+    "keeper_transactions": [
+      "accounting_required",
+      "action_hash",
+      "broadcast_attempts",
+      "budget_json",
+      "chain_id",
+      "confirmations",
+      "created_at",
+      "gas_limit",
+      "id",
+      "job_key",
+      "max_fee_per_gas",
+      "metadata_json",
+      "nonce",
+      "priority_fee_per_gas",
+      "raw_tx",
+      "request_json",
+      "status",
+      "target",
+      "target_code_hash",
+      "tx_hash",
+      "updated_at",
+      "wallet"
+    ],
+    "liquidity_flow_receipts": [
+      "block_hash",
+      "block_number",
+      "chain_id",
+      "contract_address",
+      "created_at",
+      "currency",
+      "details_json",
+      "gross_wei",
+      "id",
+      "kind",
+      "log_index",
+      "tx_hash"
+    ],
+    "liquidity_market_status": [
+      "block_hash",
+      "block_number",
+      "bond_daily_cap_wei",
+      "bond_ready",
+      "chain_id",
+      "expires_at",
+      "manifest_hash",
+      "observed_at",
+      "phase",
+      "ready"
+    ],
+    "liquidity_settlements": [
+      "chain_id",
+      "created_at",
+      "eth_wei",
+      "executor",
+      "id",
+      "omr_wei",
+      "primary_booked",
+      "primary_wei",
+      "receipt_block",
+      "receipt_hash",
+      "secondary_booked",
+      "secondary_wei",
+      "sequence",
+      "stream",
+      "tx_hash"
+    ],
+    "liquidity_sync_cursors": [
+      "domain",
+      "next_block",
+      "updated_at"
+    ],
+    "player_command_boards": [
+      "account_id",
+      "character_id",
+      "commands_json",
+      "created_at",
+      "expires_at",
+      "id",
+      "options_json",
+      "state_hash"
+    ],
+    "world_kernel_events": [
+      "action_id",
+      "actor_account_id",
+      "actor_character_id",
+      "crew_id",
+      "definition_hash",
+      "family_id",
+      "id",
+      "item_id",
+      "mutation_id",
+      "next_state",
+      "object_id",
+      "occurred_at",
+      "prior_state",
+      "revision"
+    ],
+    "world_kernel_objects": [
+      "definition_hash",
+      "id",
+      "location_id",
+      "object_kind",
+      "revision",
+      "state",
+      "updated_at"
+    ],
+    "world_operation_capital": [
+      "account_id",
+      "amount",
+      "character_id",
+      "operation_id",
+      "requirement_id",
+      "role_id",
+      "state",
+      "updated_at"
+    ],
+    "world_operation_commitments": [
+      "account_id",
+      "character_id",
+      "kind",
+      "operation_id",
+      "quantity",
+      "requirement_id",
+      "role_id",
+      "state",
+      "updated_at"
+    ],
+    "world_operation_events": [
+      "actor_account_id",
+      "event_kind",
+      "id",
+      "mutation_id",
+      "occurred_at",
+      "operation_id",
+      "ordinal",
+      "payload_json",
+      "revision"
+    ],
+    "world_operations": [
+      "coordination_mode",
+      "revision",
+      "run_key"
+    ],
+    "world_recipe_usage": [
+      "period_key",
+      "period_kind",
+      "recipe_id",
+      "scope",
+      "subject_id",
+      "updated_at",
+      "used"
+    ]
+  }
+}

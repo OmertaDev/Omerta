@@ -583,7 +583,7 @@ for (const vp of VIEWPORTS) {
 // envelope as the character, so the sheet rendered `undefined · gen undefined` / `$NaN`, threw on
 // `me.eff.muscle`, and the throw escaped boot() — buildTabs()/connectWs() never ran, leaving NO tab
 // rail and NO bottom nav with nothing on screen saying why. Every deploy did this to whoever was
-// loading. Deterministic by construction (a click, never the auto-retry timer): with /v1/me failing
+// loading. Deterministic by construction (a click, never the auto-retry timer): with the player projection failing
 // the player must get the honest screen and NO page error; with the server back, navigation returns.
 {
   const browser = await chromium.launch({ executablePath: exe });
@@ -601,7 +601,7 @@ for (const vp of VIEWPORTS) {
   await page.click('#btn-create');
   await page.waitForSelector('#screen-main:not(.hidden)', { timeout: 20000 });
 
-  await page.route('**/v1/me', (r) => r.fulfill({ status: 503, contentType: 'application/json',
+  await page.route('**/v1/projections/player', (r) => r.fulfill({ status: 503, contentType: 'application/json',
     body: JSON.stringify({ error: 'db_down', message: 'unreachable' }) }));
   await page.goto(BASE, { waitUntil: 'domcontentloaded' });
   await page.waitForTimeout(1200);
@@ -611,7 +611,7 @@ for (const vp of VIEWPORTS) {
     corpse: /undefined|NaN/.test(document.querySelector('#whoami')?.textContent || ''),
   }));
   if (!down.shown || down.main) {
-    fail('(server unreachable)', vp, 'a player whose /v1/me fails is not told — expected the '
+    fail('(server unreachable)', vp, 'a player whose /v1/projections/player fails is not told — expected the '
       + `unreachable screen, got ${JSON.stringify(down)}`);
   }
   if (down.corpse) fail('(server unreachable)', vp, 'the sheet rendered a CORPSE (undefined/NaN) instead of an honest screen');
@@ -622,7 +622,7 @@ for (const vp of VIEWPORTS) {
   // Only reachable if the screen appeared at all — otherwise the click below times out and the harness
   // DIES on a follow-on step instead of reporting the finding it already has, which is the difference
   // between "the run named your bug" and "the run blew up" at 2am.
-  await page.unroute('**/v1/me');
+  await page.unroute('**/v1/projections/player');
   if (down.shown) {
     await page.click('#btn-down-retry');
     await page.waitForSelector('#screen-main:not(.hidden)', { timeout: 20000 });

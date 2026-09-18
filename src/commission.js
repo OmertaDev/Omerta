@@ -934,8 +934,8 @@ export async function castTickerVoteV2(ch, selection, client, h) {
   if (!updated.rowCount) {
     const work = (await client.query(
       `SELECT family_id FROM commission_ticker_votes_v2
-        WHERE day=$1 ORDER BY family_id ASC LIMIT ${BALLOT_VOTE_READ_LIMIT_V2}`,
-      [day],
+        WHERE day=$1 ORDER BY family_id ASC LIMIT $2`,
+      [day, BALLOT_VOTE_READ_LIMIT_V2],
     )).rows;
     if (work.length >= BALLOT_VOTE_WORK_MAX_V2) {
       ballotFail('ballot_overloaded', 'This ballot has reached its fixed vote-work limit.');
@@ -1106,8 +1106,8 @@ async function ballotTallyClientV2(client, day, suppliedClock) {
     `SELECT v.day,v.family_id,v.asset_version_key,v.ticker,v.standing::text AS standing,
             v.created_at,v.updated_at,g.name,g.tag
        FROM commission_ticker_votes_v2 v LEFT JOIN gangs g ON g.id=v.family_id
-      WHERE v.day=$1 ORDER BY v.family_id ASC LIMIT ${BALLOT_VOTE_READ_LIMIT_V2}`,
-    [day],
+      WHERE v.day=$1 ORDER BY v.family_id ASC LIMIT $2`,
+    [day, BALLOT_VOTE_READ_LIMIT_V2],
   )).rows);
   const votes = rows.map((row) => {
     const key = String(row.asset_version_key);
@@ -1299,8 +1299,8 @@ async function closedVoteViewsV2(client, day) {
             v.closed_exclusion_reason,g.name,g.tag
        FROM commission_ticker_votes_v2 v LEFT JOIN gangs g ON g.id=v.family_id
       WHERE v.day=$1 ORDER BY v.standing DESC,v.family_id ASC
-      LIMIT ${BALLOT_VOTE_READ_LIMIT_V2}`,
-    [day],
+      LIMIT $2`,
+    [day, BALLOT_VOTE_READ_LIMIT_V2],
   )).rows);
   if (rows.some((row) => row.closed_valid == null || row.closed_counted == null
       || row.closed_weight == null)) {

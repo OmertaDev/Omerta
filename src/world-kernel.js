@@ -148,7 +148,7 @@ export function createWorldKernel({ pool, registry, objects = [], enabled = fals
     const ctx = await knowledge.context(client, { accountId, character: ch, lock: true });
     return (await knowledge.matchesRequirements(client, ctx, definition.knowledge)).every(Boolean);
   }
-  async function applyCommand(client, accountId, input, mutation, operationId = null, knowledgeProof = null) {
+  async function applyCommand(client, accountId, input, mutation, operationId = null, knowledgeProof = null, expectedCharacterId = null) {
     assertItemTransaction(client);
     const mutationContext = itemMutationContext(client, mutation);
     const definition = byId.get(input.objectId), action = definition?.actions.find((entry) => entry.id === input.actionId);
@@ -158,6 +158,7 @@ export function createWorldKernel({ pool, registry, objects = [], enabled = fals
       || mutationContext.owner.id !== accountId)) fail('world_forbidden');
     if (operationId) assertOperationMutation(client, mutation, operationId);
     const authority = await actor(client, accountId, true);
+    if (expectedCharacterId && authority.ch.id !== expectedCharacterId) fail('world_forbidden');
     if (authority.ch.loc !== definition.locationId) fail();
     const owner = operationId ? { scope: 'operation', id: operationId } : { scope: 'account', id: accountId };
     if (operationId) {
@@ -320,7 +321,7 @@ export function createWorldKernel({ pool, registry, objects = [], enabled = fals
         return project(definition, row);
       });
     },
-    async execute(accountId, input, idempotencyKey) {
+    async execute(accountId, input, idempotencyKey, expectedCharacterId = null) {
       // Snapshot scalar authority before any asynchronous boundary or receipt reservation.
       input = commandInput(input);
       const definition = byId.get(input.objectId), action = definition?.actions.find((entry) => entry.id === input.actionId);
@@ -330,7 +331,7 @@ export function createWorldKernel({ pool, registry, objects = [], enabled = fals
       if (action.execution === 'family_operation') fail();
       const key = keyFor(accountId, idempotencyKey), owner = { scope: 'account', id: accountId };
       const result = await withItemTransaction(pool, (client) => withItemMutation(client, owner, 'world_action', key,
-        { ...input, contentHash: definition.contentHash }, (mutation) => applyCommand(client, accountId, input, mutation)));
+        { ...input, contentHash: definition.contentHash }, (mutation) => applyCommand(client, accountId, input, mutation, null, null, expectedCharacterId)));
       await service.notifyCommitted(result);
       return result;
     },

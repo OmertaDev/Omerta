@@ -154,11 +154,11 @@ export async function bodyguardAbsorbs(client, h, attacker, victim) {
   // no in-memory copy of the guard exists, so direct SQL is the record of truth (the refundPot rule).
   const g = (await client.query(
     `UPDATE characters SET health=10, hosp_until=$2,
-            honor = LEAST(${HONOR.MAX}, honor + ${HONOR.BODYGUARD_SAVE}) -- #1: taking the bullet is the honorable deed (set-based, NUMERIC-safe, same guarded write)
+            honor = LEAST($3, honor + $4) -- #1: taking the bullet is the honorable deed (set-based, NUMERIC-safe, same guarded write)
       WHERE id=$1 AND alive
        AND (hosp_until IS NULL OR hosp_until <= now()) AND (jail_until IS NULL OR jail_until <= now())
      RETURNING id, name`,
-    [victim.guarded_by, new Date(Date.now() + M3.BODYGUARD_HOSP_MS)])).rows[0];
+    [victim.guarded_by, new Date(Date.now() + M3.BODYGUARD_HOSP_MS), HONOR.MAX, HONOR.BODYGUARD_SAVE])).rows[0];
   if (!g) return null; // guard gone/jailed/or already took a bullet this instant — nobody between you and it
   victim.guarded_by = null; victim.guarded_until = null; // one bullet per contract
   await h.notify(client, g.id, 'took_bullet', { for: victim.name });

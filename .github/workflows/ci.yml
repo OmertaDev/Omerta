@@ -237,6 +237,12 @@ jobs:
           WORLD_KERNEL_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check
         run: npm run test:core-progression:postgres
 
+      - name: Player commands, replay and both playable story branches (real PostgreSQL)
+        if: '!cancelled()'
+        env:
+          COORDINATION_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check
+        run: npm run test:player-commands:postgres
+
       - name: stock catalog v2 finalized-observation consumer (real PostgreSQL)
         if: '!cancelled()'
         env:

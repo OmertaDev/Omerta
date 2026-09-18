@@ -433,10 +433,20 @@ console.log('\n6. SIGTERM MID-REQUEST — the deploy drain');
     `never came up inside ${BOOT_DEADLINE_MS / 1000}s — child said: ${childOut.join('').slice(-1500)}`);
 
   if (up) {
-    const g = await guest(cbase, `Chaos D${RUN}`);
-    const c = await (await fetch(cbase + '/v1/character', { method: 'POST',
+    // Scenario 3 already owns Chaos D when the full outage runs. A name collision there
+    // used to leave c.id undefined and make the drain's supposed locked request vacuous.
+    const name = `Chaos Drain${RUN}`;
+    const g = await guest(cbase, name);
+    const created = await fetch(cbase + '/v1/character', { method: 'POST',
       headers: { authorization: `Bearer ${g.token}`, 'content-type': 'application/json' },
-      body: JSON.stringify({ name: `Chaos D${RUN}` }) })).json();
+      body: JSON.stringify({ name }) });
+    const c = await created.json();
+    const hasCharacter = created.status === 200 && c.ok === true && typeof c.id === 'string' && c.id.length > 0;
+    check(hasCharacter, 'the drain fixture created its own character', `HTTP ${created.status}: ${JSON.stringify(c)}`);
+    if (!hasCharacter) {
+      child.kill('SIGKILL');
+      throw new Error('The drain fixture has no character; its row-lock proof cannot run.');
+    }
 
     // park the player's next request on their own row lock. A MUTATING action, deliberately —
     // withCharacter takes FOR UPDATE and blocks on the held lock. The first cut used GET /v1/me and
@@ -446,7 +456,13 @@ console.log('\n6. SIGTERM MID-REQUEST — the deploy drain');
     await pool.query('UPDATE characters SET cash = 100000 WHERE id=$1', [c.id]);
     const holder = await pool.connect();
     await holder.query('BEGIN');
-    await holder.query('SELECT id FROM characters WHERE id=$1 FOR UPDATE', [c.id]);
+    const held = await holder.query('SELECT id FROM characters WHERE id=$1 FOR UPDATE', [c.id]);
+    check(held.rows.length === 1 && held.rows[0].id === c.id, 'the drain fixture holds exactly its character row');
+    if (held.rows.length !== 1 || held.rows[0].id !== c.id) {
+      await holder.query('ROLLBACK'); holder.release();
+      child.kill('SIGKILL');
+      throw new Error('The drain fixture did not acquire its character row.');
+    }
 
     const inFlight = fetch(cbase + '/v1/bank/deposit', { method: 'POST',
       headers: { authorization: `Bearer ${g.token}`, 'content-type': 'application/json',

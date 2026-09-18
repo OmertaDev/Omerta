@@ -1067,8 +1067,9 @@ export async function sabotage(ch, victim, client, h) {
   if (atk > def) {
     const t = targets[Math.floor(Math.random() * targets.length)];
     // absolute timestamp computed in JS (the pg-mem discipline)
-    await client.query(`UPDATE ${t.what === 'racer' ? 'racers' : 'fighters'} SET injured_until=$2 WHERE id=$1`,
-      [t.id, new Date(Date.now() + SB.INJURY_MS)]);
+    const injuredUntil = new Date(Date.now() + SB.INJURY_MS);
+    if (t.what === 'racer') await client.query('UPDATE racers SET injured_until=$2 WHERE id=$1', [t.id, injuredUntil]);
+    else await client.query('UPDATE fighters SET injured_until=$2 WHERE id=$1', [t.id, injuredUntil]);
     await client.query('UPDATE characters SET sabotaged_at=now() WHERE id=$1', [victim.id]);
     await h.notify(client, victim.id, 'sabotaged', { from: ch.name, name: t.name, what: t.what });
     await recordRival(client, victim.account_id, ch, 'sabotage', { name: t.name, what: t.what });

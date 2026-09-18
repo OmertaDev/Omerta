@@ -14,7 +14,8 @@ const hash = (value) => crypto.createHash('sha256').update(canonicalBytes(value)
 const iso = (value) => new Date(value).toISOString();
 const contexts = new WeakMap();
 // Server-private capabilities for one complete claim-lock batch and transaction.
-const requirementProofs = new WeakMap(), requirementBatches = new WeakMap();
+const requirementProofs = new WeakMap();
+const requirementBatches = new WeakMap();
 // Snapshot-only facts cannot enter the independent executable-proof capability map.
 const readSnapshots = new WeakMap();
 const MAX_PROOF_GROUPS = 8, MAX_PROOF_REQUIREMENTS = 32;
@@ -521,9 +522,9 @@ export function createCoordinationKnowledge({ enabled = false, sharingEnabled = 
     },
     async board(client, token, input = {}) {
       const ctx = checked(client, token), { limit, after } = pageInput(input, ctx, 'board');
-      const values = [after], filter = visibleSql(ctx, values);
+      const values = [after, limit + 1], filter = visibleSql(ctx, values);
       const candidates = (await client.query(`SELECT c.id FROM coordination_claims c WHERE c.id>$1 AND ${filter}
-        ORDER BY c.id LIMIT ${limit + 1}`, values)).rows;
+        ORDER BY c.id LIMIT $2`, values)).rows;
       const locked = await lockClaims(client, candidates.map((row) => row.id)), claims = [], cache = new Map();
       // A revoke between filtering and row acquisition must not silently consume
       // a page slot or make nextCursor end early. Retry the complete read instead.
@@ -567,6 +568,14 @@ export function createCoordinationKnowledge({ enabled = false, sharingEnabled = 
         if (recipient && recipient.account_id !== ctx.accountId) add('account', recipient.account_id, recipient.name);
       }
       return { targets, expiresAt: iso(expiresAt) };
+    },
+    currentGroupTarget(client, token, input) {
+      const ctx = checked(client, token); requireEnabled(ctx, true);
+      record(input, ['kind', 'groupId']);
+      const principal = input.kind === 'crew' ? ctx.crewId : input.kind === 'family' ? ctx.familyId : null;
+      if (!principal || principal !== input.groupId) fail('knowledge_stale_target');
+      return seal({ purpose: 'target', accountId: ctx.accountId, kind: input.kind, principal,
+        label: input.kind === 'crew' ? 'Current Crew' : 'Current family', expiresAt: Date.now() + TOKEN_MS });
     },
     async share(client, token, input) {
       const ctx = checked(client, token); requireEnabled(ctx, true);
@@ -641,10 +650,10 @@ export function createCoordinationKnowledge({ enabled = false, sharingEnabled = 
     },
     async archiveBoard(client, token, input = {}) {
       const ctx = checked(client, token), { limit, after } = pageInput(input, ctx, 'archive');
-      const values = [ctx.accountId, after], filter = visibleSql(ctx, values);
+      const values = [ctx.accountId, after, limit + 1], filter = visibleSql(ctx, values);
       const rows = (await client.query(`SELECT e.* FROM coordination_archive_entries e
         JOIN coordination_knowledge_archives a ON a.id=e.archive_id JOIN coordination_claims c ON c.id=e.claim_id
-        WHERE a.custodian_account_id=$1 AND e.id>$2 AND ${filter} ORDER BY e.id LIMIT ${limit + 1}`, values)).rows;
+        WHERE a.custodian_account_id=$1 AND e.id>$2 AND ${filter} ORDER BY e.id LIMIT $3`, values)).rows;
       const locked = await lockClaims(client, rows.map((row) => row.claim_id)), entries = [], cache = new Map();
       for (const row of rows) {
         if (!await readable(client, ctx, locked.get(row.claim_id))) fail('contention');
@@ -655,10 +664,10 @@ export function createCoordinationKnowledge({ enabled = false, sharingEnabled = 
     },
     async rebuild(client, token, input) {
       const ctx = checked(client, token); command(input, []);
-      const claims = (await client.query(`SELECT id FROM coordination_claims WHERE owner_account_id=$1 ORDER BY id LIMIT ${MAX_REBUILD + 1}`, [ctx.accountId])).rows;
+      const claims = (await client.query('SELECT id FROM coordination_claims WHERE owner_account_id=$1 ORDER BY id LIMIT $2', [ctx.accountId, MAX_REBUILD + 1])).rows;
       if (claims.length > MAX_REBUILD) fail('knowledge_limit');
       const archive = (await client.query('SELECT * FROM coordination_knowledge_archives WHERE custodian_account_id=$1', [ctx.accountId])).rows[0];
-      const archiveEvents = archive ? (await client.query(`SELECT * FROM coordination_archive_events WHERE archive_id=$1 ORDER BY id LIMIT ${MAX_REBUILD + 1}`, [archive.id])).rows : [];
+      const archiveEvents = archive ? (await client.query('SELECT * FROM coordination_archive_events WHERE archive_id=$1 ORDER BY id LIMIT $2', [archive.id, MAX_REBUILD + 1])).rows : [];
       if (archiveEvents.length > MAX_REBUILD) fail('knowledge_limit');
       let remainingWork = MAX_REBUILD_WORK;
       const charge = (count) => { remainingWork -= count; if (remainingWork < 0) fail('knowledge_limit'); };
@@ -668,7 +677,7 @@ export function createCoordinationKnowledge({ enabled = false, sharingEnabled = 
       await lockClaims(client, [...claims.map((claim) => claim.id), ...archiveEvents.map((event) => event.claim_id)]);
       let grants = 0, archiveEntries = 0;
       for (const claim of claims) {
-        const events = (await client.query(`SELECT * FROM coordination_claim_acl_events WHERE claim_id=$1 ORDER BY revision LIMIT ${Math.min(MAX_REBUILD, remainingWork) + 1}`, [claim.id])).rows;
+        const events = (await client.query('SELECT * FROM coordination_claim_acl_events WHERE claim_id=$1 ORDER BY revision LIMIT $2', [claim.id, Math.min(MAX_REBUILD, remainingWork) + 1])).rows;
         if (events.length > MAX_REBUILD) fail('knowledge_limit');
         charge(events.length);
         const latest = new Map(); let revision = 0;
@@ -681,12 +690,13 @@ export function createCoordinationKnowledge({ enabled = false, sharingEnabled = 
           latest.set(event.grant_id, { id: event.grant_id, claim_id: claim.id, recipient_kind: event.recipient_kind,
             recipient_id: event.recipient_id, recipient_label: event.recipient_label, active: event.operation === 'grant', revision });
         }
-        const current = (await client.query(`SELECT * FROM coordination_claim_grants WHERE claim_id=$1 LIMIT ${remainingWork + 1}`, [claim.id])).rows;
+        const current = (await client.query('SELECT * FROM coordination_claim_grants WHERE claim_id=$1 LIMIT $2', [claim.id, remainingWork + 1])).rows;
         charge(current.length);
         for (const prior of current) if (!latest.has(prior.id)) {
           await client.query('DELETE FROM coordination_claim_grants WHERE id=$1', [prior.id]);
-          registerPhase2Undo(client, () => client.query(`INSERT INTO coordination_claim_grants (${Object.keys(prior).join(',')})
-            VALUES (${Object.keys(prior).map((_, i) => `$${i + 1}`).join(',')})`, Object.values(prior)));
+          registerPhase2Undo(client, () => client.query(`INSERT INTO coordination_claim_grants
+            (id,claim_id,recipient_kind,recipient_id,recipient_label,active,revision) VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+          [prior.id, prior.claim_id, prior.recipient_kind, prior.recipient_id, prior.recipient_label, prior.active, prior.revision]));
           grants++;
         }
         for (const next of latest.values()) {
@@ -701,7 +711,7 @@ export function createCoordinationKnowledge({ enabled = false, sharingEnabled = 
       }
       if (archive) {
         const events = archiveEvents;
-        const current = (await client.query(`SELECT * FROM coordination_archive_entries WHERE archive_id=$1 LIMIT ${remainingWork + 1}`, [archive.id])).rows;
+        const current = (await client.query('SELECT * FROM coordination_archive_entries WHERE archive_id=$1 LIMIT $2', [archive.id, remainingWork + 1])).rows;
         charge(current.length);
         for (const prior of current) if (!events.some((event) => event.id === prior.id)) {
           await client.query('DELETE FROM coordination_archive_entries WHERE id=$1', [prior.id]);

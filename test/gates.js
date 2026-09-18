@@ -461,6 +461,7 @@ console.log('✅ THE GATE MATRIX passed — every verb in a family enforces the 
     // (fail-closed at 0), MAX_DISCOUNT_BPS and dailyCapOMR. A rate wall here would be a fourth
     // bound on a path that has three.
     'bonds.js:recordBond': 'the tranche cap off-chain; maxOmrPerEth + discount ceiling + daily cap on-chain',
+    'bonds.js:bondQuoteBudgetAmount': 'pure upward-rounded budget arithmetic; its caller refuses issuance above locked bond_reserve capacity and bounds price against the live oracle before signing; persisted quotes only reconstruct reserved budget',
     // The price is not the caller's at all: it is the descending Dutch clock read off the auction
     // row (`auctionPriceAt`), clamped at both ends, so the reserve IS the floor. The caller supplies
     // a QUANTITY, itself clamped to the lot and the shelf. Nothing to be continuous with.
@@ -1134,6 +1135,11 @@ const SCENERY_WAIVED = {
   const stale = Object.keys(CATALOG_WAIVED).filter((k) => !seenKeys.has(k));
   assert.equal(stale.length, 0,
     `catalog gate waiver(s) for a gate that no longer exists — drop them: ${stale.join(', ')}`);
+  const { protocolAddress, buildAdminDefiTransaction } = await import('../src/defi.js');
+  for (const inherited of ['__proto__', 'constructor', 'toString', 'valueOf', 'hasOwnProperty']) {
+    assert.throws(() => protocolAddress(inherited, {}), { code: 'unknown_protocol_contract' });
+    assert.throws(() => buildAdminDefiTransaction(inherited, {}), { code: 'unknown_defi_admin_action' });
+  }
   console.log(`✓ all ${gates} catalog gates test membership, not truthiness `
     + `(${Object.keys(CATALOG_WAIVED).length} waived with a stated reason)`);
 }
@@ -1495,8 +1501,32 @@ const SCENERY_WAIVED = {
     { file: 'src/chain.js', mark: "functionName: 'polBps'", why: "viem, OmertaBond's three immutable bps" },
     { file: 'src/chainparams.js', mark: 'abi: abiFor(p), functionName: p.read',
       why: 'viem, independent control-room live-value RPC reads' },
-    { file: 'src/v4oraclekeeper.js', mark: "functionName: 'MAX_WINDOW_MULT'",
+    { file: 'src/v4oraclekeeper.js', mark: "['PERIOD', 'MAX_WINDOW_MULT', 'blockTimestampLast'",
       why: 'viem, one read-only oracle snapshot assembled from independent contract and block RPC reads' },
+    { file: 'src/bondquoteexpiry.js', mark: 'candidates.map(async (quote)',
+      why: 'viem only; finalized-block usedNonce reads after runtime verification; no database client in the callback' },
+    { file: 'src/defi.js', mark: "publicClient.getChainId(), publicClient.getBlock({ blockTag: 'latest' })",
+      why: 'viem only; network identity and snapshot head reads' },
+    { file: 'src/defi.js', mark: 'READS.map(async ([path, contractName, signature, argRef, optional])',
+      why: 'viem only; declared contract getters pinned to the snapshot block through local read helper' },
+    { file: 'src/defi.js', mark: 'Object.entries(MAINNET_DEPLOYMENT.contracts).map(async ([key, item])',
+      why: 'viem only; runtime and owner reads pinned to one block, in-memory projection assembly' },
+    { file: 'src/defi.js', mark: "balance('governance.nativeBalance', MAINNET_DEPLOYMENT.governance.safe)",
+      why: 'viem only; native balance RPCs at the pinned snapshot block' },
+    { file: 'src/defi.js', mark: "safeRead('governance.owners', 'getOwners() view returns (address[])')",
+      why: 'viem only; Safe getters at the pinned snapshot block' },
+    { file: 'src/defi.js', mark: "balance('account.nativeBalance', wallet)",
+      why: 'viem only; wallet native and contract balance/position RPC reads' },
+    { file: 'src/marketv2keeper.js', mark: "read('manager'), read('poolId')",
+      why: 'viem only; immutable controller bindings pinned to the supplied block' },
+    { file: 'src/marketv2keeper.js', mark: "client.getBalance({ address: target.address, blockNumber: block.number })",
+      why: 'viem only; funding target native and OMR balances at one block' },
+    { file: 'src/marketv2keeper.js', mark: 'Object.values(m.contracts).map(async c =>',
+      why: 'viem only; exact runtime hashes from pinned-block getCode reads' },
+    { file: 'src/marketv2solver.js', mark: '[...Object.values(m.upkeep.contracts), m.quoter, m.poolManager, m.omr].map(async c =>',
+      why: 'viem only; exact runtime hashes from pinned-block getCode reads' },
+    { file: 'src/marketv2solver.js', mark: "read('manager'), read('omr'), read('poolKey'), read('reserveProfitBps')",
+      why: 'viem only; arbitrage and quoter bindings at one snapshot block' },
     { file: 'src/genesiskeeper.js', mark: 'names.map(name=>r(',
       why: 'viem only; r delegates to the pinned block readContract closure for five immutable genesis addresses' },
     { file: 'src/genesiskeeper.js', mark: "r('currentBlock() view returns (uint256)')",
@@ -2057,6 +2087,8 @@ const SCENERY_WAIVED = {
     'game.js:approach':     'published on /v1/rules; the client COMPARES it to pick a phrase, never renders it',
     'combat.js:intent':     'published on /v1/rules; compared, never rendered (the approach precedent)',
     'rules.tail.js:rarity': 'a catalog helper return — its callers attach the display name',
+    'graph.js:kind': 'bounded declarative prerequisite discriminator from the Coordination compiler; server predicates branch on it, and player projection labels are separately authored',
+    'operations.js:subjectKey': 'server-private Family prerequisite plan key for a declared role; never rendered as a role display name',
     // ── the `.kind` half. The rule was widened from `X.id` to `X.id|X.kind` after the business
     // TAKEOVER shipped `kind: r.kind` and the wire read "took your nightclub" as "took your
     // nightclub" only by luck of the id reading like a word — seven feedText templates were
@@ -3183,6 +3215,11 @@ scopedSocialContext = async function(db) {
     'src/rwanominations.js|placeholders': 'same — a generated $n list; values bound',
     'src/rwanominations.js|conditions.join(\' OR \')': 'OR of generated $n comparisons; values bound',
     'src/coordination/knowledge.js|filter': 'visibleSql builds fixed owner/grant predicates with numbered placeholders from the authenticated membership context; account, crew and family recipient values are bound, and every alias call site is a literal',
+    'src/coordination/knowledge.js|left': "visibleSql with literal alias 'a'; authenticated membership values are bound as numbered parameters",
+    'src/coordination/knowledge.js|right': "visibleSql with literal alias 'b'; authenticated membership values are bound as numbered parameters",
+    'src/coordination/knowledge.js|table': 'module-local insert helper; every caller supplies one of eight literal coordination table names, never a request field',
+    "src/coordination/knowledge.js|keys.join(',')": 'insert helper row keys are fixed source-owned object properties; values including player-authored text are separately bound, and rebuild rows come only from those same fixed event schemas',
+    'src/coordination/knowledge.js|key': "insert undo predicate is only the literal 'id' or 'claim_id', chosen by own-property presence",
     'src/coordination/knowledge.js|MAX_EVIDENCE + 1': 'module-private constant MAX_EVIDENCE=256 plus one overflow sentinel; neither term comes from the request or mutable state',
 
     // LOCALLY-BUILT PAGINATION FRAGMENTS. Each is a template containing only $n placeholders; the
@@ -3444,6 +3481,7 @@ scopedSocialContext = async function(db) {
   const expectedNativeCommands = [
     'pgquery', 'pgcheck', 'phase2:definitions:postgres', 'phase2:lots:postgres',
     'test:coordination:postgres', 'test:world-kernel:postgres', 'test:family-operations:postgres', 'test:world-projections:postgres',
+    'test:core-progression:postgres', 'test:player-commands:postgres',
     'test:stockcatalogv2:postgres', 'test:rwahealth:postgres',
     'test:rwaregistrylifecycle:postgres', 'test:audit:mint-dev:postgres',
     'test:audit:deed-reimport:postgres', 'backup:selftest', 'chaos', 'loadtest', 'concurrency',
@@ -3607,6 +3645,9 @@ scopedSocialContext = async function(db) {
     'mysteries.js:MYSTERY_KNOWLEDGE': 'cache: immutable server rollout policy and executable package hashes keyed by authenticated mystery context; actor, knowledge and ACL authority are re-read inside the active database boundary',
     'operations.js:CONTEXTS': 'cache: per-context-object authenticity marker; every box recognizes only contexts it creates',
     'worldgraph.js:WORLD_GRAPH_REGISTRIES': 'cache: per-registry-object authenticity marker; every box recognizes its own immutable registries',
+    'coordination/graph.js:REGISTRIES': 'cache: per-registry-object authenticity marker for locally compiled immutable graph registries; persistent definition hashes bind database state',
+    'coordination/knowledge.js:contexts': 'cache: opaque context capability bound to one active client and transaction; persisted claims, membership and grants remain authoritative',
+    'defi.js:ABI_CACHE': 'cache: deterministic viem ABI parsing keyed by source-owned fixed function signatures; no gameplay or authorization state',
     'content/discovery.js:DISCOVERED_PACKAGES': 'cache: per-descriptor authenticity marker; every box recognizes only descriptors its own walker created',
     'content/phase2-transactions.js:CONTEXTS': 'cache: per-client active callback authority, matched to its async scope; PostgreSQL transactions and namespace row locks supply cross-process serialization',
     'content/artifact-storage.js:VERIFIED': 'cache: per-opaque-artifact verification result tied to its active client; sealed bytes and exact memberships are persisted in PostgreSQL',

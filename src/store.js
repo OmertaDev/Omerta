@@ -93,7 +93,7 @@ async function grantPackage(client, accountId, sku, ref = null, real = false) {
     if (wasActive) await client.query('UPDATE account_persistent SET pass_until=$2 WHERE account_id=$1', [accountId, until]);
     else {
       const completed = Number(cur?.pass_tier || 0) >= PASS.TRACK.length;
-      await client.query(`UPDATE account_persistent SET pass_until=$2, pass_tier=0, pass_at=NULL${completed ? ', pass_seasons = pass_seasons + 1' : ''} WHERE account_id=$1`, [accountId, until]);
+      await client.query('UPDATE account_persistent SET pass_until=$2, pass_tier=0, pass_at=NULL, pass_seasons=pass_seasons+$3 WHERE account_id=$1', [accountId, until, completed ? 1 : 0]);
     }
   }
   if (g.wireDays) {
@@ -325,7 +325,7 @@ export async function payPackagePlex(ch, sku, client, h) {
     if (wasActive) await client.query('UPDATE account_persistent SET pass_until=$2 WHERE account_id=$1', [ch.account_id, until]);
     else {
       const completed = Number(cur?.pass_tier || 0) >= PASS.TRACK.length; // THE LEDGER PRESTIGE: a finished track → +1 season
-      await client.query(`UPDATE account_persistent SET pass_until=$2, pass_tier=0, pass_at=NULL${completed ? ', pass_seasons = pass_seasons + 1' : ''} WHERE account_id=$1`, [ch.account_id, until]);
+      await client.query('UPDATE account_persistent SET pass_until=$2, pass_tier=0, pass_at=NULL, pass_seasons=pass_seasons+$3 WHERE account_id=$1', [ch.account_id, until, completed ? 1 : 0]);
     }
   }
   if (g.wireDays) ch.wire_until = new Date(laterMs(now, ch.wire_until) + g.wireDays * 86400000); // persistCharacter commits

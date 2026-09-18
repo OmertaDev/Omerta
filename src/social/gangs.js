@@ -457,7 +457,7 @@ export async function chooseCharter(ch, charterId, client, h) {
   // the cooldown is armed by a PAID re-founding, never by the free first pick — the trap the free
   // pick exists to avoid is the decision made before you knew what the choices meant, and a week's
   // lock on correcting it would put that trap straight back.
-  await client.query(`UPDATE gangs SET charter=$2, omr_reserve = omr_reserve - $3${cost > 0 ? ', charter_at=now()' : ''} WHERE id=$1`,
+  await client.query('UPDATE gangs SET charter=$2, omr_reserve=omr_reserve-$3, charter_at=CASE WHEN $3 > 0 THEN now() ELSE charter_at END WHERE id=$1',
     [g.id, pick.id, cost]);
   if (cost > 0) await h.ledger(client, { currency: 'omr', amount: -cost, reason: 'vanity:charter', counterparty: g.id });
   if (h.owned.gang) { h.owned.gang.charter = pick.id; h.owned.gang.omr_reserve = Number(g.omr_reserve) - cost; }

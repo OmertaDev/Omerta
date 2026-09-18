@@ -147,7 +147,7 @@ function clockedQuery(query, wall, currentDay = DAY) {
   };
 }
 
-function clockedPool(pool, wall, statements = null, currentDay = DAY) {
+function clockedPool(pool, wall, statements = null, currentDay = DAY, boundQueries = null) {
   return {
     query: clockedQuery(pool.query.bind(pool), wall, currentDay),
     async connect() {
@@ -156,6 +156,7 @@ function clockedPool(pool, wall, statements = null, currentDay = DAY) {
       return {
         query: async (sql, params) => {
           statements?.push(sql);
+          boundQueries?.push({ sql, params });
           return query(sql, params);
         },
         release: () => client.release(),
@@ -852,10 +853,11 @@ async function overloadedBallotFixture() {
 await fixRegression('tally reads at most limit plus one and fails closed on planted row 101', async () => {
   const { pool } = await overloadedBallotFixture();
   try {
-    const statements = [];
-    await expectCode(tallyTickerBallotV2(clockedPool(pool, WALL, statements), DAY), 'ballot_overloaded');
-    assert(statements.some((sql) => sql.includes('commission_ticker_votes_v2') && /LIMIT\s+101/i.test(sql)),
-      'the tally authority query carries the literal limit+1 sentinel');
+    const queries = [];
+    await expectCode(tallyTickerBallotV2(clockedPool(pool, WALL, null, DAY, queries), DAY), 'ballot_overloaded');
+    assert(queries.some(({ sql, params }) => sql.includes('commission_ticker_votes_v2')
+      && /LIMIT\s+\$2/i.test(sql) && params[1] === 101),
+      'the tally authority query binds the exact limit+1 sentinel');
   } finally { await pool.end(); }
 });
 
@@ -916,13 +918,13 @@ await fixRegression('rolled last-result evidence keeps the same limit plus one f
     await pool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-04T23:59:59Z',verified_at='2026-09-04T23:59:59Z',ready_verified_at='2026-09-04T23:59:59Z',caught_up=true WHERE id=1");
     await closeTickerBallotV2(clockedPool(pool, CLOSE), DAY);
     await plantBallotVotes(pool, DAY, hash('1'), 101, { prefix: 'rolled-overflow' });
-    const statements = [];
+    const queries = [];
     await expectCode(
-      tickerBallotBoardV2(clockedPool(pool, '2026-09-06T00:00:00Z', statements)),
+      tickerBallotBoardV2(clockedPool(pool, '2026-09-06T00:00:00Z', null, DAY, queries)),
       'ballot_overloaded',
     );
-    assert(statements.some((sql) => sql.includes('commission_ticker_votes_v2')
-      && /LIMIT\s+101/i.test(sql)), 'rolled evidence uses the literal limit+1 sentinel');
+    assert(queries.some(({ sql, params }) => sql.includes('commission_ticker_votes_v2')
+      && /LIMIT\s+\$2/i.test(sql) && params[1] === 101), 'rolled evidence binds the exact limit+1 sentinel');
   } finally { await pool.end(); }
 });
 

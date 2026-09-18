@@ -943,6 +943,7 @@ export async function craftWorldGraphRecipe(
     graphMutationAuthority(context, recipe),
     async (mutation) => {
       const actor = await actorContext(client, accountId);
+      if (h.expectedCharacterId && actor.character.id !== h.expectedCharacterId) fail('crafting_unavailable', 'Crafting is unavailable.');
       const asOf = Date.now();
       await resolveRecipeAuthority(client, context, [recipe], accountId, actor, asOf);
       if (!discovered(recipe, actor)) fail('recipe_unavailable', 'That recipe is unavailable.');
@@ -990,6 +991,7 @@ export async function salvageCar(
     { ...graphMutationAuthority(context, recipe), carId },
     async (mutation) => {
       const actor = await actorContext(client, accountId);
+      if (h.expectedCharacterId && actor.character.id !== h.expectedCharacterId) fail('crafting_unavailable', 'Crafting is unavailable.');
       // The locked car helper is the sole mutation authority for owns_car. Deferring only this
       // adapter preserves specific listed/pledged/on-chain/race errors while all other gates are
       // still enforced from the actor's locked server state.

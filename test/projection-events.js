@@ -48,6 +48,7 @@ try {
     CREATE TABLE gang_members(gang_id TEXT,character_id TEXT);
     CREATE TABLE coordination_claims(id TEXT PRIMARY KEY,owner_account_id TEXT);
     CREATE TABLE coordination_claim_grants(id TEXT PRIMARY KEY,claim_id TEXT,recipient_kind TEXT,recipient_id TEXT,active BOOLEAN);
+    CREATE TABLE player_command_boards(id TEXT PRIMARY KEY,account_id TEXT,commands_json TEXT);
     CREATE TABLE world_operations(id TEXT PRIMARY KEY,opened_by_account_id TEXT,family_id TEXT,crew_id TEXT,coordination_mode TEXT);
     CREATE TABLE world_operation_roles(operation_id TEXT,account_id TEXT);
     CREATE TABLE world_operation_commitments(operation_id TEXT,account_id TEXT);
@@ -76,10 +77,24 @@ try {
     return { ok: true };
   });
   app.post('/v1/coordination/instances/:instanceId/cancel', async (_req, reply) => reply.code(500).send({ error: 'rollback' }));
+  await pool.query('INSERT INTO player_command_boards VALUES($1,$2,$3)', ['board', 'owner', JSON.stringify([
+    { commandId: 'share', commandType: 'knowledge.share', parameters: { claimId: 'private-claim' } },
+    { commandId: 'revoke', commandType: 'knowledge.revoke', parameters: { claimId: 'private-claim', grantId: 'crew-grant' } },
+  ])]);
+  app.post('/v1/commands/execute', async (req, reply) => {
+    if (req.body.fail) return reply.code(409).send({ error: 'unavailable' });
+    await pool.query("UPDATE coordination_claim_grants SET active=$1 WHERE id='crew-grant'", [req.body.executionId === 'board.share']);
+    return { status: 'COMPLETED', secret: 'never-forward-a-response' };
+  });
 
   await request('POST', '/v1/coordination/instances/private-run/act'); hinted(['owner']);
   reset(); await request('POST', '/v1/coordination/knowledge/private-claim/share'); hinted(['owner', 'reader']);
   reset(); await request('POST', '/v1/coordination/knowledge/private-claim/revoke', 'owner', { grantId: 'crew-grant' }); hinted(['owner', 'reader']);
+  reset(); await request('POST', '/v1/commands/execute', 'owner', { executionId: 'board.share' }); hinted(['owner', 'reader']);
+  reset(); await request('POST', '/v1/commands/execute', 'owner', { executionId: 'board.revoke' }); hinted(['owner', 'reader']);
+  reset(); await request('POST', '/v1/commands/execute', 'outsider', { executionId: 'board.share' }); hinted(['outsider']);
+  reset(); await request('POST', '/v1/commands/execute', 'owner', { executionId: 'board.share', fail: true }); hinted([]);
+  await pool.query("UPDATE coordination_claim_grants SET active=false WHERE id='crew-grant'");
   reset(); await request('POST', '/v1/coordination/instances/private-run/act'); hinted(['owner']);
   reset(); await request('POST', '/v1/action', 'owner', { fail: true }); hinted([]);
   await request('POST', '/v1/action', 'owner', { replay: true }); hinted([]);

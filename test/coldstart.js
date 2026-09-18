@@ -49,6 +49,7 @@ const DECLARED = {
   '/v1/worldgraph/kernel/recipes': 'the kernel pilot is explicitly disabled by default; its authenticated recipe catalog refuses with world_unavailable',
   '/v1/coordination/operations': 'Family operation coordination is explicitly disabled by default; its authenticated catalog refuses with coordination_operation_unavailable',
   '/v1/projections/world': 'World projections reuse the explicitly disabled kernel rollout and refuse with projection_unavailable',
+  '/v1/commands': 'the command pilot reuses the explicitly disabled kernel rollout; its opaque command_unavailable refusal intentionally does not distinguish disabled rollout, excluded cohort or unavailable current state',
   // Not an endpoint: the websocket upgrade path. A plain GET is correctly not a thing it serves.
   '/v1/ws': 'the websocket upgrade path, not a GET endpoint',
 };
@@ -81,6 +82,7 @@ const defaultOff = new Map([
   ['/v1/worldgraph/kernel/recipes', 'world_unavailable'],
   ['/v1/coordination/operations', 'coordination_operation_unavailable'],
   ['/v1/projections/world', 'projection_unavailable'],
+  ['/v1/commands', 'command_unavailable'],
 ]);
 for (const p of defaultOff.keys()) assert(paths.includes(p), `default-off route disappeared: ${p}`);
 
@@ -96,7 +98,7 @@ for (const p of paths) {
   if (r.code < 400) continue;
   if (DECLARED[p]) {
     if (defaultOff.has(p)) {
-      assert.equal(r.code, 404, `${p} must fail closed for its disabled rollout`);
+      assert.equal(r.code, p === '/v1/commands' ? 409 : 404, `${p} must fail closed for its disabled rollout`);
       assert.equal(r.body?.error, defaultOff.get(p), `${p} must return its declared rollout refusal`);
     }
     declaredHit.add(p); continue;

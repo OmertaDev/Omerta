@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
@@ -10,6 +11,9 @@ import { storeSealedBundle, activateStoredBundle } from '../src/content/artifact
 import { definitionByHash,activeDefinition } from '../src/itemdefinitions.js';
 import { createActivationPolicy } from '../src/content/activation-policy.js';
 import { runLedgerInvariants } from '../src/invariants.js';
+
+const architectureUpgradeCatalog = JSON.parse(fs.readFileSync(
+  new URL('./lib/phase2-architecture-upgrade-catalog.json', import.meta.url), 'utf8'));
 
 function endpoint() {
   assert(process.argv.length === 3 && ['--definitions', '--lots'].includes(process.argv[2]),
@@ -194,8 +198,8 @@ async function child(url) {
       const upgradedConstraints = await legacyConstraints(pool);
       verifyUpgradeConstraintCatalog(oldConstraints,upgradedConstraints,Number(settings.server_version_num));
       verifyUpgradeConstraintCausalNegatives(oldConstraints,upgradedConstraints,Number(settings.server_version_num));
-      console.log('phase2-postgres: populated legacy hashes/pointer and complete legacy constraint catalog unchanged except exact lot/IO additions and four branch-aware replacements');
-      console.log('phase2-postgres: nine upgrade catalog causal negatives reject unrelated/replacement/new removal or alteration and unexpected addition');
+      console.log('phase2-postgres: populated legacy hashes/pointer and complete constraint catalog match exact lot/IO and later architecture additions/replacements');
+      console.log('phase2-postgres: twelve upgrade catalog causal negatives reject unrelated/replacement/new/architecture removal or alteration and unexpected additions');
       return;
     }
     const failureTarget = fixture('read-failure');
@@ -299,11 +303,13 @@ const orderedCatalog = (rows) => [...rows].sort((left,right) => catalogIdentity(
 function expectedUpgradeConstraintCatalog(before,serverVersionNum) {
   const replacements = new Map(replacedUpgradeConstraints.map(({ before: prior,after }) => [catalogIdentity(prior),{ prior,after }]));
   for (const { prior } of replacements.values()) assert.deepEqual(before.find((row) => catalogIdentity(row) === catalogIdentity(prior)),prior);
-  const additions = [...requiredUpgradeConstraints,...replacedUpgradeConstraints.map(({ after }) => after)];
-  if (serverVersionNum >= 180000) for (const [table,columns] of Object.entries(upgradeNotNullColumns)) {
+  const removed = new Map(architectureUpgradeCatalog.removed.map((prior) => [catalogIdentity(prior), prior]));
+  for (const prior of removed.values()) assert.deepEqual(before.find((row) => catalogIdentity(row) === catalogIdentity(prior)), prior);
+  const additions = [...requiredUpgradeConstraints,...replacedUpgradeConstraints.map(({ after }) => after), ...architectureUpgradeCatalog.added];
+  if (serverVersionNum >= 180000) for (const [table,columns] of Object.entries({ ...upgradeNotNullColumns, ...architectureUpgradeCatalog.notNullColumns })) {
     for (const column of columns) additions.push(constraintRow(table,`${table}_${column}_not_null`,`NOT NULL ${column}`));
   }
-  return orderedCatalog([...before.filter((row) => !replacements.has(catalogIdentity(row))),...additions]);
+  return orderedCatalog([...before.filter((row) => !replacements.has(catalogIdentity(row)) && !removed.has(catalogIdentity(row))),...additions]);
 }
 function verifyUpgradeConstraintCatalog(before,after,serverVersionNum) {
   assert.deepEqual(orderedCatalog(after),expectedUpgradeConstraintCatalog(before,serverVersionNum));
@@ -324,6 +330,11 @@ function verifyUpgradeConstraintCausalNegatives(before,after,serverVersionNum) {
   rejected('required addition removal',mutate('item_lots','item_lot_quantity_ck',(rows,index) => rows.splice(index,1)));
   rejected('required addition alteration',mutate('item_lots','item_lot_quantity_ck',(rows,index) => { rows[index].definition += ' altered'; }));
   rejected('unexpected addition',[...after,constraintRow('item_events','unexpected_upgrade_constraint','CHECK (true)')]);
+  rejected('command board primary key removal',mutate('player_command_boards','player_command_boards_pkey',(rows,index) => rows.splice(index,1)));
+  rejected('knowledge audience boundary alteration',mutate('coordination_claim_grants','coordination_claim_grants_recipient_kind_check',
+    (rows,index) => { rows[index].definition += ' altered'; }));
+  rejected('retired Crew-only operation identity restored',[...after,
+    architectureUpgradeCatalog.removed.find((row) => row.name === 'world_operation_identity')]);
 }
 async function constraints(pool) {
   console.log('phase2-postgres: beginning direct constraints');

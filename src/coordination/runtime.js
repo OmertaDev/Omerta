@@ -39,19 +39,18 @@ function body(value, fields) {
 // keys and new runs for the same account; every actor predicate comes from SQL.
 async function actor(client, accountId, lock = false) {
   textId(accountId);
-  let ch = (await client.query(
-    `SELECT id, account_id, respect, loc, alive FROM characters
-      WHERE account_id=$1 AND alive=true${lock ? ' FOR UPDATE' : ''}`, [accountId],
-  )).rows[0] || null;
+  let ch = (lock
+    ? await client.query('SELECT id, account_id, respect, loc, alive FROM characters WHERE account_id=$1 AND alive=true FOR UPDATE', [accountId])
+    : await client.query('SELECT id, account_id, respect, loc, alive FROM characters WHERE account_id=$1 AND alive=true', [accountId])).rows[0] || null;
   // READ COMMITTED can wait on a dying street and then return no row: the heir
   // inserted by that transaction was not in the first statement's snapshot.
   if (lock && !ch) ch = (await client.query(
     'SELECT id, account_id, respect, loc, alive FROM characters WHERE account_id=$1 AND alive=true FOR UPDATE',
     [accountId],
   )).rows[0] || null;
-  const account = (await client.query(
-    `SELECT id, status FROM accounts WHERE id=$1${lock ? ' FOR UPDATE' : ''}`, [accountId],
-  )).rows[0];
+  const account = (lock
+    ? await client.query('SELECT id, status FROM accounts WHERE id=$1 FOR UPDATE', [accountId])
+    : await client.query('SELECT id, status FROM accounts WHERE id=$1', [accountId])).rows[0];
   if (!account || account.status !== 'active') fail('coordination_unavailable');
   return ch;
 }
@@ -147,10 +146,9 @@ function project(instance, graph, ch, now, enabled, evidence = new Map(), admitt
 }
 async function ownedInstance(client, accountId, id, lock = false) {
   textId(id);
-  const row = (await client.query(
-    `SELECT * FROM coordination_instances WHERE id=$1 AND owner_account_id=$2${lock ? ' FOR UPDATE' : ''}`,
-    [id, accountId],
-  )).rows[0];
+  const row = (lock
+    ? await client.query('SELECT * FROM coordination_instances WHERE id=$1 AND owner_account_id=$2 FOR UPDATE', [id, accountId])
+    : await client.query('SELECT * FROM coordination_instances WHERE id=$1 AND owner_account_id=$2', [id, accountId])).rows[0];
   if (!row) fail('coordination_unavailable');
   return row;
 }
@@ -231,12 +229,13 @@ export function createCoordinationService({ pool, registry, enabled = false, acc
     const instance = await ownedInstance(client, accountId, id);
     return projectCurrent(client, instance, await loadDefinition(client, instance), ch, Date.now(), ctx, accountId);
   });
-  async function command(accountId, key, request, action, raw = false) {
+  async function command(accountId, key, request, action, raw = false, expectedCharacterId = null) {
     textId(key);
     const fingerprint = hash(['omerta:coordination:command:v1', request]);
     return withPhase2Transaction(pool, async (client) => {
       const crewId = await knowledge.prelock(client, accountId);
       const ch = await actor(client, accountId, true);
+      if (expectedCharacterId && ch?.id !== expectedCharacterId) fail('coordination_unavailable');
       const prior = (await client.query(
         'SELECT * FROM coordination_commands WHERE account_id=$1 AND command_key=$2', [accountId, key],
       )).rows[0];
@@ -280,7 +279,7 @@ export function createCoordinationService({ pool, registry, enabled = false, acc
     async get(accountId, id) {
       return getInstance(accountId, id);
     },
-    async create(accountId, graphId, input, key) {
+    async create(accountId, graphId, input, key, expectedCharacterId = null) {
       textId(graphId); body(input, ['expectedContentHash']);
       return command(accountId, key, { kind: 'create', graphId, ...input }, async (client, ch, commandId, now, ctx) => {
         requireEnabled(accountId);
@@ -307,9 +306,9 @@ export function createCoordinationService({ pool, registry, enabled = false, acc
         registerPhase2Undo(client, () => client.query('DELETE FROM coordination_instances WHERE id=$1', [instance.id]));
         await event(client, instance, accountId, commandId, 'coordination.created', {}, 0, now);
         return projectCurrent(client, instance, graph, ch, now, ctx, accountId);
-      });
+      }, false, expectedCharacterId);
     },
-    async act(accountId, id, input, key) {
+    async act(accountId, id, input, key, expectedCharacterId = null) {
       textId(id); body(input, ['expectedRevision', 'actionId']);
       return command(accountId, key, { kind: 'act', id, ...input }, async (client, ch, commandId, now, ctx) => {
         const instance = await ownedInstance(client, accountId, id, true);
@@ -341,7 +340,7 @@ export function createCoordinationService({ pool, registry, enabled = false, acc
         // The resolver reuses this context's locked candidate set, including only
         // this transaction's own new claim; it never expands to concurrent grants.
         return projectCurrent(client, next, graph, ch, now, ctx, accountId);
-      });
+      }, false, expectedCharacterId);
     },
     async cancel(accountId, id, input, key) {
       textId(id); body(input, ['expectedRevision']);
@@ -371,10 +370,17 @@ export function createCoordinationService({ pool, registry, enabled = false, acc
       return command(accountId, key, { kind: 'knowledge.share', claimId, ...input },
         (client, _ch, commandId, now, ctx) => knowledge.share(client, ctx, { claimId, ...input, commandId, now }), true);
     },
-    revokeKnowledge(accountId, claimId, input, key) {
+    shareKnowledgeWithGroup(accountId, claimId, input, key, expectedCharacterId = null) {
+      textId(claimId); body(input, ['kind', 'groupId', 'expectedAclRevision']);
+      return command(accountId, key, { kind: 'knowledge.share_group', claimId, target: input },
+        (client, _ch, commandId, now, ctx) => knowledge.share(client, ctx, { claimId,
+          targetId: knowledge.currentGroupTarget(client, ctx, { kind: input.kind, groupId: input.groupId }),
+          expectedAclRevision: input.expectedAclRevision, commandId, now }), true, expectedCharacterId);
+    },
+    revokeKnowledge(accountId, claimId, input, key, expectedCharacterId = null) {
       textId(claimId); body(input, ['grantId', 'expectedAclRevision']);
       return command(accountId, key, { kind: 'knowledge.revoke', claimId, ...input },
-        (client, _ch, commandId, now, ctx) => knowledge.revoke(client, ctx, { claimId, ...input, commandId, now }), true);
+        (client, _ch, commandId, now, ctx) => knowledge.revoke(client, ctx, { claimId, ...input, commandId, now }), true, expectedCharacterId);
     },
     linkKnowledge(accountId, input, key) {
       body(input, ['fromClaimId', 'toClaimId', 'relation']);

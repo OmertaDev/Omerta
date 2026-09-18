@@ -99,7 +99,15 @@ export function createProjectionEvents({ pool, bus, clients, enabled = false, ac
         const { accountId, path, prior } = context;
         // Route-owned claim/operation ids determine audiences; response bodies and
         // caller-supplied account ids never select hint recipients.
-        if (/^\/v1\/coordination\/knowledge\/:claimId\/(share|revoke)$/.test(path)) {
+        if (path === '/v1/commands/execute') {
+          const [boardId, commandId] = String(req.body?.executionId || '').split('.');
+          const row = (await pool.query('SELECT commands_json FROM player_command_boards WHERE id=$1 AND account_id=$2',
+            [boardId, accountId])).rows[0];
+          const command = row && JSON.parse(row.commands_json).find((entry) => entry.commandId === commandId);
+          const knowledgeChange = ['knowledge.share', 'knowledge.revoke'].includes(command?.commandType);
+          await hint(knowledgeChange ? [accountId, ...await claimAudience(command.parameters.claimId,
+            command.commandType === 'knowledge.revoke' ? command.parameters.grantId : undefined)] : [accountId]);
+        } else if (/^\/v1\/coordination\/knowledge\/:claimId\/(share|revoke)$/.test(path)) {
           const revoked = path.endsWith('/revoke') ? req.body?.grantId : undefined;
           await hint([accountId, ...await claimAudience(req.params.claimId, revoked)]);
         } else if (path.startsWith('/v1/coordination/operations/') && req.params.operationId) {

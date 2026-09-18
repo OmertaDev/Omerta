@@ -338,10 +338,9 @@ console.log(`✅ Mounted-surface test passed — ${app.routes.length} registrati
     .update(readFileSync(new URL(`../public/art/${name}`, import.meta.url))).digest('hex').slice(0, 12)]));
   const surfaces = [
     ['/', new Set([
-      'omr-03-money-router.png', 'omr-04-reserve-rwa.png', 'omr-05-ohm-contrast.png',
       'gameplay-01-choose-your-path.png',
     ])],
-    ['/wiki', new Set(diagrams)],
+    ['/wiki', new Set(gameplayDiagrams)],
   ];
 
   for (const [url, expectedNames] of surfaces) {
@@ -363,10 +362,10 @@ console.log(`✅ Mounted-surface test passed — ${app.routes.length} registrati
 {
   const landing = (await app.inject({ method: 'GET', url: '/' })).body;
   for (const claim of [
-    'A MODIFIED OHM-STYLE MODEL', 'Protocol-owned liquidity', 'Agentic finance',
-    'Real-world assets', 'Tokenomics', 'Value flow chart', 'THE CRYPTO STACK BEHIND THE CITY',
+    'BUILD YOUR EMPIRE. KNOW THE RULES.', 'The Canonical Market', 'The Omerta Coordination Engine',
+    'The World Graph', 'Know what is at stake', 'cash cannot buy $OMR',
   ]) assert(landing.includes(claim), `the landing must explain ${claim}`);
-  assert(landing.includes('CHAIN RAIL DORMANT') && landing.includes('production EVM chain is not configured'),
+  assert(landing.includes('PRODUCTION CHAIN RAILS GATED') && landing.includes('source code and passing tests do not activate it'),
     'the landing must place the production-chain caveat beside the OMR model');
   assert(landing.includes('<picture class="hero-art" aria-hidden="true">'),
     'the LCP hero must be a real responsive picture, not a fixed desktop CSS background');
@@ -375,45 +374,36 @@ console.log(`✅ Mounted-surface test passed — ${app.routes.length} registrati
     'the hero must publish mobile-through-desktop WebP candidates');
   assert(landing.includes('<div id="tour-art" aria-hidden="true"></div>'),
     'the hidden first-session tour must not fetch its hero art before the tour opens');
-  assert(landing.includes('data-video-poster="/art/hype-money-poster-960.webp"'),
-    'the below-fold video poster must wait for the landing media observer');
-  assert(landing.includes('data-video-poster-mobile="/art/hype-money-poster-640.webp"'),
-    'the deferred video poster must also have a phone-sized source');
-  assert(landing.includes('data-src="/art/hype-money-720.mp4"'),
-    'the narrated money map must provide a lighter phone encode');
-  assert(landing.includes('data-video-poster="/art/hype-flywheel-v3-poster-960.webp"')
-    && landing.includes('data-video-poster-mobile="/art/hype-flywheel-v3-poster-640.webp"'),
-  'the narrated flywheel must defer responsive campaign-specific posters');
-  assert(landing.includes('media="(max-width: 760px)" data-src="/art/hype-flywheel-v3-720.mp4"')
-    && landing.includes('data-src="/art/hype-flywheel-v3.mp4"'),
-  'the narrated flywheel must publish mobile and master sources');
-  assert(!/<video[^>]+(?:\sposter|\ssrc)="\/art\/hype-money/.test(landing),
-    'the below-fold video must not eagerly expose a poster or source on the cold visit');
-  assert(!/<video[^>]+(?:\sposter|\ssrc)="\/art\/hype-flywheel-v3/.test(landing),
-    'the flywheel must not eagerly expose a poster or source on the cold visit');
+  const films = [
+    ['hype.mp4', 'hero-poster-960.webp', 'hero-poster-640.webp'],
+    ['hype-streets.mp4', 'landing-break-960.webp', 'landing-break-640.webp'],
+    ['hype-earn.mp4', 'interior-scores-1024.webp', 'interior-scores-640.webp'],
+  ];
+  const videos = [...landing.matchAll(/<video\b[^>]*>[\s\S]*?<\/video>/g)].map((match) => match[0]);
+  for (const [film, poster, mobilePoster] of films) {
+    const video = videos.find((body) => body.includes(`data-src="/art/${film}"`));
+    assert(video, `${film} must expose its source only to the landing media observer`);
+    assert(video.includes(`data-video-poster="/art/${poster}"`)
+      && video.includes(`data-video-poster-mobile="/art/${mobilePoster}"`),
+    `${film} must defer responsive desktop and mobile posters`);
+    assert(video.includes('preload="none"') && !/\s(?:poster|src)="/.test(video),
+      `${film} must not eagerly download a poster or source on the cold visit`);
+    const streamed = await app.inject({ method: 'GET', url: `/art/${film}`, headers: { range: 'bytes=0-1023' } });
+    assert.equal(streamed.statusCode, 206, `${film} must preserve range streaming`);
+    assert.equal(streamed.headers['content-length'], '1024');
+  }
   for (const name of [
     'hero-poster-640.webp',
     'hero-poster-1920.webp',
     'landing-break-640.webp',
     'gameplay-01-choose-your-path-1080.webp',
-    'omr-03-money-router-1080.webp',
-    'hype-money-poster-960.webp',
-    'hype-flywheel-v3-poster-960.webp',
-    'hype-flywheel-v3-poster-640.webp',
+    ...films.flatMap(([, poster, mobilePoster]) => [poster, mobilePoster]),
   ]) {
     const asset = await app.inject({ method: 'GET', url: `/art/${name}` });
     assert.equal(asset.statusCode, 200, `responsive landing asset ${name} must be mounted by /art`);
     assert.equal(asset.headers['content-type'], 'image/webp', `${name} must be served as WebP`);
   }
-  const mobileVideo = await app.inject({ method: 'GET', url: '/art/hype-money-720.mp4', headers: { range: 'bytes=0-1023' } });
-  assert.equal(mobileVideo.statusCode, 206, 'the lighter phone video must preserve range streaming');
-  assert.equal(mobileVideo.headers['content-length'], '1024');
-  const flywheelVideo = await app.inject({
-    method: 'GET', url: '/art/hype-flywheel-v3-720.mp4', headers: { range: 'bytes=0-1023' },
-  });
-  assert.equal(flywheelVideo.statusCode, 206, 'the flywheel phone video must preserve range streaming');
-  assert.equal(flywheelVideo.headers['content-length'], '1024');
-  console.log('✅ landing media is responsive, below-fold video is deferred, and the phone encode range-streams');
+  console.log('✅ landing media is responsive, all three below-fold videos are deferred, and each film range-streams');
 }
 
 // What the player DOWNLOADS. tools/pageweight.js measured a cold load of the landing at 5.3 MB on a

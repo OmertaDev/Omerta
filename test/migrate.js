@@ -537,6 +537,10 @@ assert.equal((await migrateColumns(pool, SCHEMA)).failed, 0, 're-running the mig
 // resolve with a `*:death` burn — deliberately NOT wiped so the frozen field resolves), ledger/log
 // (immutable §10.4/audit/historical rows — intentionally never wiped; a dead id is a valid historical ref).
 const DISPOSITION = {
+  // Durable command/receipt linkage is historical, never inherited authority.
+  // Execution binds the original living character; the command race/API suites
+  // prove that succession cannot execute or recover the old character's view.
+  player_command_boards: 'ledger',
   batches: 'wiped', blackjack_hands: 'wiped', boats: 'wiped', businesses: 'wiped', cars: 'wiped',
   character_assets: 'wiped', character_cargo: 'wiped', character_guns: 'wiped', character_items: 'wiped',
   character_rackets: 'wiped', character_skills: 'wiped', convoy_ambushes: 'wiped', crew_heist_members: 'wiped',

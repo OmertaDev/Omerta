@@ -90,7 +90,7 @@ export function validateMainnetDeployment(raw) {
 export const MAINNET_DEPLOYMENT = validateMainnetDeployment(JSON.parse(readFileSync(MANIFEST_URL, 'utf8')));
 
 export function protocolAddress(name, env = process.env) {
-  const canonical = MAINNET_DEPLOYMENT.contracts[name]?.address;
+  const canonical = Object.hasOwn(MAINNET_DEPLOYMENT.contracts, name) ? MAINNET_DEPLOYMENT.contracts[name]?.address : null;
   if (!canonical) throw errorOf('unknown_protocol_contract', name);
   const envName = ENV_ADDRESS[name];
   const configured = envName && env[envName];
@@ -579,7 +579,7 @@ export function adminDefiActions() {
 }
 
 export function buildAdminDefiTransaction(actionId, env = process.env) {
-  const action = ADMIN_ACTIONS[actionId];
+  const action = Object.hasOwn(ADMIN_ACTIONS, actionId) ? ADMIN_ACTIONS[actionId] : null;
   if (!action) throw errorOf('unknown_defi_admin_action', 'action');
   const to = protocolAddress(action.target, env);
   return {

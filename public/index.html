@@ -1193,6 +1193,7 @@
   .world-heading p { color: var(--dim); max-width: 620px; line-height: 1.6; margin: 0; }
   .world-summary { display: flex; flex-wrap: wrap; gap: 10px 24px; padding: 14px 0 20px; }
   .world-columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: start; }
+  .world-column { display: grid; gap: 16px; min-width: 0; }
   .world-card, .world-notice { border: 1px solid #383238; border-radius: 12px; padding: 20px; background: #151217; overflow-wrap: anywhere; }
   .world-card h3 { margin: 0 0 12px; color: var(--ink); }
   .world-card h3:not(:first-child) { margin-top: 24px; }
@@ -1200,6 +1201,11 @@
   .world-entry { padding: 16px 0; border-top: 1px solid #302930; }
   .world-entry p { line-height: 1.5; margin: 6px 0 12px; }
   .world-entry small { display: block; line-height: 1.5; margin-top: 7px; }
+  .world-command { border-left: 2px solid #8c7543; margin: 14px 0; padding: 4px 0 4px 14px; }
+  .world-command p { margin: 8px 0; line-height: 1.5; }
+  .world-command-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .world-command-heading small { font-size: 10px; letter-spacing: .06em; }
+  .world-command button { margin-top: 8px; }
   .world-actions, .world-readiness { display: flex; flex-wrap: wrap; gap: 8px 12px; margin: 12px 0; }
   .world-readiness { font-size: 12px; }
   .world-ready { color: var(--ok); }
@@ -1756,7 +1762,7 @@
   // lang= stamp invited Chrome's Google Translate to machine-translate the English game prose,
   // which mangles the noir jargon and breaks the live-updating DOM). A language is applied ONLY
   // when the player explicitly picks one from the 🌐 menu; the choice is remembered.
-  I18N.en.t_world = 'World';
+  I18N.en.t_world = 'Command Center';
   const LANG = (() => {
     const saved = localStorage.getItem('omerta_lang');
     return (saved && I18N[saved]) ? saved : 'en';
@@ -4600,7 +4606,7 @@
   // ── plumbing ──
   // Production refresh coordinator; test/world-projection-client.js executes this
   // exact function in a VM with deferred network responses.
-  function createProjectionRefresh({ request, apply, clear, unauthorized }) {
+  function createProjectionRefresh({ request, apply, clear, unauthorized, worldPath = '/v1/projections/world' }) {
     let credential = null, epoch = 0, characterId = null;
     const lanes = Object.fromEntries(['player', 'world'].map((kind) => [kind,
       { version: 0, loop: 0, running: false, pending: null, waiters: [], argument: null, interested: false }]));
@@ -4646,7 +4652,7 @@
           const selection = ticket.argument || {};
           const query = ['operationId', 'mysteryGraphId'].filter((field) => selection[field])
             .map((field) => field + '=' + encodeURIComponent(selection[field])).join('&');
-          const path = kind === 'player' ? '/v1/projections/player' : '/v1/projections/world' + (query ? '?' + query : '');
+          const path = kind === 'player' ? '/v1/projections/player' : worldPath + (query ? '?' + query : '');
           let result;
           try { result = await request(path, { ...ticket, isCurrent }); }
           catch { result = { code: 503, body: { error: 'offline' } }; }
@@ -4654,6 +4660,10 @@
           if (result.code === 401 || (kind === 'player' && result.code === 403)) { setSession(null); unauthorized(); continue; }
           if (result.code < 400 && result.body?.schemaVersion !== 1) {
             result = { code: 502, body: { error: 'projection_invalid' } };
+          }
+          if (kind === 'world' && worldPath === '/v1/commands' && result.code < 400
+            && (result.body?.commandSchemaVersion !== 1 || !Array.isArray(result.body.commands) || !Array.isArray(result.body.opportunities))) {
+            result = { code: 502, body: { error: 'command_board_invalid' } };
           }
           if (kind === 'player' && result.code < 400) {
             const who = result.body.player?.character || result.body.player;
@@ -4747,18 +4757,28 @@
     return { code: r.status, body: j };
   }
   let worldProjection = null, worldSelection = null, worldMysterySelection = null, worldBusy = false, worldRetry = null;
-  let worldChoiceConfirmation = null;
+  let worldAccountId = null, worldFeedback = null, worldChoiceConfirmation = null;
   let worldStoredRetry = null;
   try { worldStoredRetry = JSON.parse(sessionStorage.getItem('omerta_world_pending') || 'null'); } catch { /* storage unavailable */ }
-  let worldStatus = 'Open the World board to see your current operation.';
+  let worldStatus = 'Open your Command Center to see the next move.';
+  function restoreWorldCommand(saved, board) {
+    if (!saved || !board?.player?.id || !board.player.character?.id || saved.accountId !== board.player.id
+      || saved.characterId !== board.player.character.id || typeof saved.executionId !== 'string'
+      || !saved.executionId || saved.idempotencyKey !== saved.executionId || typeof saved.confirmed !== 'boolean') return null;
+    // Never restore arbitrary paths, request bodies or bearer credentials from browser storage.
+    return { accountId: saved.accountId, characterId: saved.characterId, executionId: saved.executionId,
+      idempotencyKey: saved.executionId, confirmed: saved.confirmed,
+      label: typeof saved.label === 'string' ? saved.label : 'Saved move' };
+  }
   const projections = createProjectionRefresh({
+    worldPath: '/v1/commands',
     request: (path, ticket) => path === '/v1/projections/player'
       ? api('GET', '/v1/projections/player', undefined, { isCurrent: ticket.isCurrent })
-      : api('GET', '/v1/projections/world' + path.slice('/v1/projections/world'.length), undefined, { isCurrent: ticket.isCurrent }),
+      : api('GET', '/v1/commands' + path.slice('/v1/commands'.length), undefined, { isCurrent: ticket.isCurrent }),
     clear: (kind) => {
       worldChoiceConfirmation?.();
-      worldProjection = null;
-      worldStatus = 'Refreshing your world…';
+      worldProjection = null; worldFeedback = null;
+      worldStatus = 'Refreshing your street…';
       if (kind === 'session') {
         if (me || session || worldRetry) {
           worldStoredRetry = null;
@@ -4766,10 +4786,10 @@
         }
         _authQueue = Promise.resolve(); me = null; session = null;
         if (ws) { const previousSocket = ws; ws = null; previousSocket.close(); }
-        worldSelection = null; worldMysterySelection = null; worldRetry = null; worldBusy = false;
+        worldSelection = null; worldMysterySelection = null; worldRetry = null; worldBusy = false; worldAccountId = null;
       }
       if (kind === 'character') {
-        worldSelection = null; worldMysterySelection = null; worldRetry = null; worldBusy = false; worldStoredRetry = null;
+        worldSelection = null; worldMysterySelection = null; worldRetry = null; worldBusy = false; worldStoredRetry = null; worldAccountId = null;
         try { sessionStorage.removeItem('omerta_world_pending'); } catch { /* storage unavailable */ }
       }
       if (kind === 'player') me = null;
@@ -4781,12 +4801,6 @@
         if (result.code < 400) {
           const previousGeneration = me?.generation;
           me = result.body.player?.character || result.body.player;
-          if (worldStoredRetry) {
-            if (worldStoredRetry.characterId === me.id && typeof worldStoredRetry.idempotencyKey === 'string'
-              && /^\/v1\/(worldgraph|coordination\/operations)(\/|$)/.test(worldStoredRetry.path || '')) worldRetry = worldStoredRetry;
-            else { try { sessionStorage.removeItem('omerta_world_pending'); } catch { /* storage unavailable */ } }
-            worldStoredRetry = null;
-          }
           if (worldRetry && worldRetry.characterId !== me.id) {
             worldRetry = null; worldBusy = false;
             try { sessionStorage.removeItem('omerta_world_pending'); } catch { /* storage unavailable */ }
@@ -4797,10 +4811,23 @@
         return;
       }
       worldProjection = result.code < 400 ? result.body : null;
+      if (worldProjection) {
+        worldAccountId = worldProjection.player.id;
+        if (worldStoredRetry) {
+          worldRetry = restoreWorldCommand(worldStoredRetry, worldProjection);
+          if (!worldRetry) { try { sessionStorage.removeItem('omerta_world_pending'); } catch { /* storage unavailable */ } }
+          worldStoredRetry = null;
+        }
+        if (worldRetry && !restoreWorldCommand(worldRetry, worldProjection)) {
+          worldRetry = null; worldBusy = false;
+          try { sessionStorage.removeItem('omerta_world_pending'); } catch { /* storage unavailable */ }
+        }
+      }
       worldStatus = result.code < 400 ? '' : result.code === 404 && (worldSelection || worldMysterySelection)
         ? 'This selection is no longer available. Return to the World overview.' : result.code === 404 || result.code === 403
-        ? 'The World board is unavailable for this session.'
-        : result.code === 409 ? 'Your character changed. Refreshing your current street…'
+        ? 'The Command Center is unavailable for this session.'
+        : result.body?.error === 'projection_character_changed' ? 'Your character changed. Refreshing your current street…'
+        : result.code === 409 ? 'This board is no longer current. Refresh or return to the World overview.'
         : 'The city could not refresh this board. Try again.';
       paintWorld();
     },
@@ -4817,10 +4844,10 @@
   }
   function confirmWorldChoice(move) {
     return new Promise((resolve) => {
-      const { bg, close } = dialog(`<h2>Commit to this choice?</h2><p>${esc(move.label)}</p>
-        <p class="dim">This choice is permanent for this case. Other branches may close.</p>
+      const { bg, close } = dialog(`<h2>Commit to this move?</h2><p>${esc(move.label)}</p>
+        <p class="dim">${esc(move.confirmation?.message || 'Review the stakes before you commit.')}</p>
         <div class="world-actions"><button class="act" data-world-choice-back>Keep investigating</button>
-          <button class="act danger" data-world-choice-confirm>Commit choice</button></div>`);
+          <button class="act danger" data-world-choice-confirm>Confirm move</button></div>`);
       let finished = false;
       const finish = (confirmed) => {
         if (finished) return; finished = true; worldChoiceConfirmation = null; close(); resolve(confirmed);
@@ -4832,175 +4859,164 @@
     });
   }
   async function worldMutation(move, retry = false) {
-    if (worldBusy || worldChoiceConfirmation || !token || !me || (worldRetry && !retry)) return;
-    const stamp = projections.snapshot();
-    const actorId = me.id, sourceBoard = worldProjection;
-    if (!retry && move?.irreversible) {
+    if (worldBusy || worldChoiceConfirmation || !token || !me || !worldAccountId || (worldRetry && !retry)) return;
+    const stamp = projections.snapshot(), actorId = me.id, accountId = worldAccountId, sourceBoard = worldProjection;
+    if (!retry && (!sourceBoard?.commands?.includes(move) || move.availability !== 'AVAILABLE' || !move.executionIdentity?.executionId)) return;
+    if (!retry && move.confirmation?.required) {
       if (!await confirmWorldChoice(move)) return;
-      if (!projections.current(stamp) || me?.id !== actorId || worldProjection !== sourceBoard) return;
+      if (!projections.current(stamp) || me?.id !== actorId || worldProjection !== sourceBoard || worldAccountId !== accountId) return;
     }
-    const pending = retry ? worldRetry : { ...move, characterId: me.id, idempotencyKey: uuid() };
-    if (!pending || pending.characterId !== me.id) return;
+    const pending = retry ? worldRetry : { label: move.label, characterId: actorId, accountId,
+      executionId: move.executionIdentity.executionId, idempotencyKey: move.executionIdentity.executionId,
+      confirmed: move.confirmation?.required === true };
+    if (!pending || pending.characterId !== me.id || pending.accountId !== worldAccountId
+      || typeof pending.executionId !== 'string' || pending.idempotencyKey !== pending.executionId) return;
     worldBusy = true; worldRetry = pending;
-    try { sessionStorage.setItem('omerta_world_pending', JSON.stringify(pending)); } catch { /* memory retains the same key */ }
+    try { sessionStorage.setItem('omerta_world_pending', JSON.stringify(pending)); } catch { /* memory retains the same identity */ }
     paintWorld();
-    const options = { idempotencyKey: pending.idempotencyKey,
-      isCurrent: () => projections.current(stamp) && me?.id === pending.characterId };
-    const parts = String(pending.path || '').split('/');
-    let result;
-    // Keep the supported command surface explicit, including restored retries.
-    if (parts.length === 7 && parts[2] === 'worldgraph' && parts[3] === 'objects' && parts[5] === 'actions')
-      result = await api('POST', `/v1/worldgraph/objects/${parts[4]}/actions/${parts[6]}`, pending.body || {}, options);
-    else if (parts.length === 7 && parts[2] === 'worldgraph' && parts[3] === 'kernel' && parts[4] === 'recipes' && parts[6] === 'craft')
-      result = await api('POST', `/v1/worldgraph/kernel/recipes/${parts[5]}/craft`, pending.body || {}, options);
-    else if (pending.path === '/v1/coordination/operations')
-      result = await api('POST', '/v1/coordination/operations', pending.body || {}, options);
-    else if (parts.length === 7 && parts[2] === 'coordination' && parts[3] === 'operations' && parts[5] === 'actions')
-      result = await api('POST', `/v1/coordination/operations/${parts[4]}/actions/${parts[6]}`, pending.body || {}, options);
-    else if (parts.length === 6 && parts[2] === 'worldgraph' && parts[3] === 'mysteries' && parts[5] === 'start')
-      result = await api('POST', `/v1/worldgraph/mysteries/${parts[4]}/start`, pending.body || {}, options);
-    else if (parts.length === 8 && parts[2] === 'worldgraph' && parts[3] === 'mysteries' && parts[5] === 'nodes' && parts[7] === 'discover')
-      result = await api('POST', `/v1/worldgraph/mysteries/${parts[4]}/nodes/${parts[6]}/discover`, pending.body || {}, options);
-    else if (parts.length === 8 && parts[2] === 'worldgraph' && parts[3] === 'mysteries' && parts[5] === 'nodes' && parts[7] === 'complete')
-      result = await api('POST', `/v1/worldgraph/mysteries/${parts[4]}/nodes/${parts[6]}/complete`, pending.body || {}, options);
-    else if (parts.length === 7 && parts[2] === 'worldgraph' && parts[3] === 'mysteries' && parts[5] === 'choices')
-      result = await api('POST', `/v1/worldgraph/mysteries/${parts[4]}/choices/${parts[6]}`, pending.body || {}, options);
-    else result = { code: 400, body: { message: 'This saved move is no longer supported.' } };
-    if (!projections.current(stamp)) return;
+    const options = { idempotencyKey: pending.executionId,
+      isCurrent: () => projections.current(stamp) && me?.id === pending.characterId && worldAccountId === pending.accountId };
+    const result = await api('POST', '/v1/commands/execute', { executionId: pending.executionId, confirmed: pending.confirmed === true }, options);
+    if (!options.isCurrent()) return;
     worldBusy = false;
-    const uncertain = result.code >= 500 || ['idempotency_in_progress', 'item_commit_unknown', 'item_recovery_required'].includes(result.body?.error);
+    const uncertain = result.code >= 500 || ['idempotency_in_progress', 'command_in_progress', 'item_commit_unknown', 'item_recovery_required'].includes(result.body?.error);
     if (!uncertain) {
       worldRetry = null;
       try { sessionStorage.removeItem('omerta_world_pending'); } catch { /* storage unavailable */ }
     }
     if (result.code < 400) {
-      if (result.body?.operationId) worldSelection = result.body.operationId;
-      if (pending.mysteryGraphId) worldMysterySelection = pending.mysteryGraphId;
-      toast(pending.label + ' — confirmed.');
-    } else toast(uncertain ? 'The outcome is not confirmed. Retry this move with its saved request key.'
+      const selectedOperation = result.body?.projection?.operations?.selected?.id;
+      if (selectedOperation) worldSelection = selectedOperation;
+      const selectedMystery = result.body?.projection?.cases?.selected?.graph?.id;
+      if (selectedMystery) worldMysterySelection = selectedMystery;
+      toast(pending.label + (result.body?.replayed ? ' — already recorded.' : ' — recorded.'));
+    } else toast(uncertain ? 'The outcome is not confirmed. Retry the saved move to check it.'
       : result.body?.message || 'The move could not complete. Refresh the board and review its requirements.', true);
     await refresh();
-    if (projections.current(stamp)) await projections.world(worldSelection, worldMysterySelection);
+    if (!options.isCurrent()) return;
+    const refreshed = await projections.world(worldSelection, worldMysterySelection);
+    if (options.isCurrent() && refreshed?.code < 400 && result.code < 400) {
+      // The refreshed board owns visible details; feedback carries only the authorized action report.
+      worldFeedback = result.body?.feedback || null;
+      paintWorld();
+    }
   }
   function paintWorld() {
     const target = $('#tab-world');
     if (!target) return;
-    const board = worldProjection;
-    const moves = [];
+    const board = worldProjection, moves = [];
     const name = (value) => String(value ?? '').replace(/^[a-z]+:/, '').replaceAll('_', ' ');
     const time = (value) => { const date = new Date(value); return Number.isFinite(date.getTime()) ? date.toLocaleString() : ''; };
-    const reasons = (missing) => (missing || []).map((value) => name(typeof value === 'string' ? value : value.code || value.adapter)).join(', ');
-    const button = (label, move, available = true, missing = []) => {
-      const index = moves.push(move) - 1;
-      return `<button class="act" data-world-move="${index}" ${!available || worldBusy || worldRetry ? 'disabled' : ''}>${esc(label)}</button>`
-        + (!available && missing.length ? `<small class="dim">${esc(reasons(missing))}</small>` : '');
-    };
     const list = (values, render, empty) => values?.length ? values.map(render).join('') : `<p class="dim">${esc(empty)}</p>`;
-    const terms = (values) => (values || []).map((entry) => `${entry.quantity} ${name(entry.templateId)}`).join(' + ');
-    const familyMove = (action, label, operationId) => button(label || name(action.action), {
-      label: label || name(action.action), path: '/v1/coordination/operations/' + encodeURIComponent(operationId)
-        + '/actions/' + encodeURIComponent(action.action), body: action.input || {},
-    }, action.canAttempt === true, action.missing || []);
-    const selected = board?.operations?.selected;
-    const selectedCase = board?.cases?.selected;
-    const caseCatalog = board?.cases?.catalog || [];
-    const caseTitle = (graphId) => caseCatalog.find((entry) => entry.graphId === graphId)?.title || 'Case';
-    const caseAction = (action) => {
-      if (!selectedCase?.graph?.id || !['discover', 'complete', 'choice'].includes(action.kind) || typeof action.nodeId !== 'string') return '';
-      const graphId = selectedCase.graph.id, node = selectedCase.nodes?.find((entry) => entry.id === action.nodeId);
-      const option = node?.options?.find((entry) => entry.id === action.optionId);
-      if (action.kind === 'choice' && typeof action.optionId !== 'string') return '';
-      const label = action.kind === 'discover' ? 'Investigate lead' : action.kind === 'choice'
-        ? 'Choose: ' + (option?.title || name(action.optionId)) : 'Complete: ' + (node?.title || 'case step');
-      return button(label, { label, mysteryGraphId: graphId,
-        path: '/v1/worldgraph/mysteries/' + encodeURIComponent(graphId)
-          + (action.kind === 'choice' ? '/choices/' + encodeURIComponent(action.nodeId)
-            : '/nodes/' + encodeURIComponent(action.nodeId) + '/' + action.kind),
-        body: { ...(action.kind === 'choice' ? { optionId: action.optionId } : {}),
-          ...(typeof action.interactionId === 'string' ? { interactionId: action.interactionId } : {}) },
-        ...(action.kind === 'choice' ? { irreversible: true } : {}),
-      });
+    const prose = (entry) => typeof entry === 'string' ? name(entry) : entry?.label || entry?.message || entry?.description || '';
+    const terms = (values) => (values || []).map((entry) => `${entry.quantity} ${name(entry.templateId || entry.kind)}`).join(' + ');
+    const commands = board?.commands || [], opportunities = board?.opportunities || [];
+    const commandCard = (command) => {
+      const index = moves.push(command) - 1, available = command.availability === 'AVAILABLE';
+      const knownBlockers = command.availability === 'LOCKED' ? [] : (command.blockers || []).map(prose).filter(Boolean);
+      return `<div class="world-command"><div class="world-command-heading"><b>${esc(command.label)}</b><small class="${available ? 'world-ready' : 'dim'}">${esc(name(command.availability))}</small></div>
+        ${command.description && command.description !== command.label ? `<p class="dim">${esc(command.description)}</p>` : ''}
+        ${knownBlockers.length ? `<p class="dim">${esc(knownBlockers.join(' · '))}</p>` : ''}
+        ${command.availability === 'LOCKED' ? '<p class="dim">Keep investigating. No further details are known.</p>' : ''}
+        ${command.costs?.length ? `<p class="dim">Cost: ${esc(terms(command.costs))}</p>` : ''}
+        ${command.committedResources?.length ? `<p class="dim">Committed: ${esc(terms(command.committedResources))}</p>` : ''}
+        ${command.risk?.length ? `<p class="dim">${esc(command.risk.map(prose).filter(Boolean).join(' · '))}</p>` : ''}
+        ${command.expiresAt ? `<small class="dim">Until ${esc(time(command.expiresAt))}</small>` : ''}
+        <button class="act" data-world-move="${index}" ${!available || !command.executionIdentity?.executionId || worldBusy || worldRetry ? 'disabled' : ''}>${esc(command.label)}</button></div>`;
     };
+    const contextual = (type, id) => commands.filter((command) => [command.subject, command.target].some((ref) => ref?.type === type && ref.id === id)).map(commandCard).join('');
+    const opportunityCard = (opportunity) => `<article class="world-entry"><h4>${esc(opportunity.label)}</h4>
+      ${opportunity.description && opportunity.description !== opportunity.label ? `<p class="dim">${esc(opportunity.description)}</p>` : ''}
+      <small class="dim">${esc(name(opportunity.kind))} · ${esc(name(opportunity.availability))}</small></article>`;
+    const selected = board?.operations?.selected, selectedCase = board?.cases?.selected, caseCatalog = board?.cases?.catalog || [];
     const readinessLabels = { rolesFilled: 'Roles filled', participantsEligible: 'Participants eligible', promisesMet: 'Promises made',
       contributionsMet: 'Contributions delivered', requirementsMet: 'Requirements met', worldReady: 'World ready', approved: 'Approved', ready: 'Ready to execute' };
     const limited = (value) => value === true || (value && typeof value === 'object' && Object.values(value).some(limited));
+    const feedbackLabels = { worldChanges: 'world changes', inventoryChanges: 'equipment changes', knowledgeChanges: 'knowledge changes',
+      relationshipChanges: 'relationship changes', operationChanges: 'operation changes', newOpportunities: 'new opportunities',
+      removedOpportunities: 'opportunities closed', mysteryProgression: 'case developments' };
     target.innerHTML = `<div class="world-board">
-      <header class="world-heading"><div><div class="dim">YOUR SHARED CITY</div><h2>World</h2>
-        <p>Bring evidence, equipment and people together. Every move is checked against the current world.</p></div>
+      <header class="world-heading"><div><div class="dim">YOUR STREET · YOUR PEOPLE · YOUR NEXT MOVE</div><h2>Command Center</h2>
+        <p>The city's business, as it reaches your desk. Follow the evidence. Put your people to work.</p></div>
         <button class="act" id="world-refresh" ${worldBusy ? 'disabled' : ''}>Refresh world</button></header>
-      ${worldRetry ? `<div class="world-notice" role="status"><b>A move needs confirmation</b><p>${esc(worldRetry.label)}. Retry uses the same request key.</p>
+      ${worldRetry ? `<div class="world-notice" role="status"><b>A move needs checking</b><p>${esc(worldRetry.label)}. Its outcome is not yet confirmed.</p>
         <button class="act" id="world-retry" ${worldBusy ? 'disabled' : ''}>${worldBusy ? 'Checking…' : 'Retry saved move'}</button></div>` : ''}
       ${!board ? `<div class="world-card" role="status"><p>${esc(worldStatus)}</p>
         ${worldSelection || worldMysterySelection ? '<button class="act" id="world-overview">Back to World overview</button>' : ''}</div>` : `
       <div class="world-summary"><span>${esc(board.player?.character?.name || me?.name || '')} · ${esc(name(board.player?.character?.locationId))}</span>
         <span>Crew: ${esc(board.crew?.name || 'None')}</span><span>Family: ${esc(board.family?.name || 'None')}</span>
         <small class="dim">Updated ${esc(time(board.asOf))}</small></div>
-      ${limited(board.truncated) || limited(board.inventory?.truncated) || board.knowledge?.truncated || board.operations?.truncated
+      ${limited(board.truncated) || limited(board.inventory?.truncated) || board.knowledge?.truncated || board.operations?.truncated || board.commandsTruncated || board.opportunitiesTruncated || board.vehiclesTruncated
         ? '<p class="dim">This is a limited view of your available records.</p>' : ''}
-      <div class="world-columns">${board.cases ? `<section class="world-card" aria-labelledby="world-cases-title"><h3 id="world-cases-title">Cases</h3>
-        <p class="dim">Follow the evidence. Only leads currently available to you appear here.</p>
-        ${list(caseCatalog, (entry, index) => `<article class="world-entry" data-world-mystery="${esc(entry.graphId)}"><h4>${esc(entry.title)}</h4>
-          <p class="dim">${entry.started ? esc(name(entry.status)) : 'Not started'}</p>
-          ${entry.started ? `<button class="act" data-world-case="${index}" aria-pressed="${entry.graphId === worldMysterySelection}" ${worldBusy ? 'disabled' : ''}>
-            ${entry.graphId === worldMysterySelection ? 'Selected case' : 'Open case'}</button>`
-            : button('Start case', { label: 'Start ' + entry.title, mysteryGraphId: entry.graphId,
-              path: '/v1/worldgraph/mysteries/' + encodeURIComponent(entry.graphId) + '/start', body: {} }, entry.canStart === true)}
-        </article>`, 'No cases are available to this character yet.')}
-        ${selectedCase ? `<article class="world-entry" data-world-selected-case="${esc(selectedCase.graph.id)}"><h3>${esc(caseTitle(selectedCase.graph.id))}</h3>
-          <p role="status">Case ${esc(name(selectedCase.status))}</p>
-          ${list(selectedCase.nodes, (node) => `<div class="world-entry"><h4>${esc(node.title || 'Case note')}</h4>
-            ${node.description ? `<p>${esc(node.description)}</p>` : ''}<small class="dim">${esc(name(node.status))}
-            ${!['completed', 'excluded', 'failed'].includes(node.status) && node.blockedBy?.length ? ' · Requires: ' + esc(reasons(node.blockedBy)) : ''}</small></div>`, 'No notes have been revealed in this case.')}
-          ${selectedCase.choices?.length ? `<h4>Choices made</h4>${selectedCase.choices.map((choice) => {
-            const node = selectedCase.nodes?.find((entry) => entry.id === choice.nodeId);
-            const option = node?.options?.find((entry) => entry.id === choice.choiceId);
-            return `<p>${esc(node?.title || 'Case choice')} · ${esc(option?.title || name(choice.choiceId))}</p>`;
-          }).join('')}` : ''}
-          <div class="world-actions">${(selectedCase.actions || []).map(caseAction).join('')}</div>
-          ${!selectedCase.actions?.length ? `<p class="dim" role="status">${selectedCase.status === 'active'
-            ? 'No leads are ready. Review your evidence, location and shared knowledge, then refresh.' : 'This case is closed. Your revealed notes and choices remain here.'}</p>` : ''}
-        </article>` : `<p class="dim" role="status">${worldMysterySelection && caseCatalog.some((entry) => entry.graphId === worldMysterySelection && !entry.started)
-          ? 'Start this case to open its notes.' : caseCatalog.length ? 'Choose a case to review its notes.' : 'Explore the city to find a lead.'}</p>`}</section>` : ''}
-      <section class="world-card"><h3>Places you can change</h3>
-        ${list(board.worldObjects, (object) => `<article class="world-entry"><h4>${esc(object.title)}</h4>
-          <p>${esc(name(object.locationId))} · <b>${esc(name(object.state))}</b></p>
-          ${(object.actions || []).map((action) => button(name(action.actionId), { label: name(action.actionId),
-            path: '/v1/worldgraph/objects/' + encodeURIComponent(object.id) + '/actions/' + encodeURIComponent(action.actionId),
-            body: { itemId: action.itemId, expectedRevision: action.expectedRevision } }, action.canAttempt === true, action.missing || [])).join('')}</article>`,
-        'No available places are visible to you yet. Explore and gather evidence.')}
-        <h3>Workshop</h3>${list(board.recipes, (recipe) => `<article class="world-entry"><h4>${esc(recipe.title || name(recipe.id))}</h4>
-          <p class="dim">${esc(terms(recipe.consumes))}${recipe.cashCost ? ` · $${esc(recipe.cashCost)}` : ''} → ${esc(terms(recipe.produces))}</p>
-          ${button('Craft', { label: `Craft ${recipe.title || name(recipe.id)}`, path: '/v1/worldgraph/kernel/recipes/' + encodeURIComponent(recipe.id) + '/craft', body: {} },
-            recipe.canAttempt === true, recipe.missing || [])}</article>`, 'No recipes are available.')}</section>
-      <section class="world-card"><h3>Family operations</h3><p class="dim">Choose a role, commit to its requirements, then deliver your contribution.</p>
+      <div class="world-columns"><div class="world-column">
+      <section class="world-card"><h3>What changed?</h3>
+        ${worldFeedback ? `<div class="world-notice" role="status"><b>${esc(worldFeedback.immediateResult?.label || 'Your move was recorded.')}</b>
+          <p>${esc(Object.entries(feedbackLabels).filter(([key]) => worldFeedback[key]?.length).map(([key, label]) => `${worldFeedback[key].length} ${label}`).join(' · '))}</p>
+          ${worldFeedback.refreshRequired ? '<p class="dim">Your move is recorded. Refresh to confirm the latest consequences.</p>' : ''}</div>` : ''}
+        ${list(board.activity, (event) => `<p>${esc(name(event.kind))}<small class="dim"> ${esc(time(event.occurredAt))}</small></p>`, 'No recent visible activity. The street is quiet.')}</section>
+      <section class="world-card"><h3>What needs my attention?</h3>
+        ${list(opportunities.slice(0, 5), opportunityCard, 'No new leads are on your desk.')}
+        ${opportunities.length > 5 ? `<details><summary>${opportunities.length - 5} more pieces of business</summary>${opportunities.slice(5).map(opportunityCard).join('')}</details>` : ''}</section>
+      <section class="world-card"><h3>What can I do?</h3>
+        ${list(commands.filter((command) => command.availability === 'AVAILABLE'), commandCard, 'No moves are ready. Review your cases and waiting business below.')}</section></div><div class="world-column">
+      <section class="world-card"><h3>What am I waiting for?</h3>
+        ${list(commands.filter((command) => ['BLOCKED', 'LOCKED', 'IN_PROGRESS'].includes(command.availability)), commandCard, 'Nothing is waiting on this board.')}
+        ${commands.some((command) => ['EXPIRED', 'COMPLETED'].includes(command.availability)) ? `<details><summary>Closed business</summary>${commands.filter((command) => ['EXPIRED', 'COMPLETED'].includes(command.availability)).map(commandCard).join('')}</details>` : ''}</section>
+      <section class="world-card"><h3>What is my Crew doing?</h3>
+        ${board.crew ? `<h4>${esc(board.crew.name)}</h4><p>${esc((board.crew.members || []).map((member) => member.name).join(' · '))}</p>
+          ${board.crew.objective ? `<p>${esc(name(board.crew.objective.kind))} · ${esc(board.crew.objective.progress)} / ${esc(board.crew.objective.target)}${board.crew.objective.done ? ' · complete' : ''}</p>` : '<p class="dim">No current Crew objective is visible.</p>'}
+          ${contextual('crew', board.crew.id)}` : '<p class="dim">You are working alone. Find your people in the Crew room.</p>'}</section>
+      <section class="world-card"><h3>What is my Family doing?</h3>
+        <p>${esc(board.family?.name || 'No Family membership')} ${board.family?.role ? '· ' + esc(name(board.family.role)) : ''}</p>
+        ${board.family ? contextual('family', board.family.id) : ''}
+        ${list(board.family?.relations, (relation) => `<p>${esc(name(relation.kind))} · ${esc(relation.name)}</p>`, 'No visible Family relations.')}
         ${list(board.operations?.catalog, (definition) => `<article class="world-entry"><h4>${esc(definition.title)}</h4>
-          <p class="dim">${esc((definition.roles || []).map((role) => role.title).join(' · '))}</p>
-          ${button('Create operation', { label: 'Create operation', path: '/v1/coordination/operations', body: { definitionId: definition.id } },
-            definition.canCreate === true, definition.missing || [])}</article>`, 'No Family operations are available for this session.')}
-        ${list(board.operations?.instances, (instance, index) => `<button class="act world-instance" data-world-instance="${index}">
+          <p class="dim">${esc((definition.roles || []).map((role) => role.title).join(' · '))}</p>${contextual('operation', definition.id)}</article>`, 'No Family operations are available for this session.')}
+        ${list(board.operations?.instances, (instance, index) => `<button class="act world-instance" data-world-instance="${index}" ${worldBusy ? 'disabled' : ''}>
           ${esc(board.operations.catalog?.find((entry) => entry.id === instance.definitionId)?.title || 'Family operation')} · ${esc(name(instance.status))}</button>`, 'No operations have been started.')}
         ${selected ? `<article class="world-entry"><h3>${esc(selected.title)}</h3><p><b>${esc(name(selected.status))}</b> · expires ${esc(time(selected.expiresAt))}</p>
           <div class="world-readiness">${Object.entries(readinessLabels).filter(([key]) => selected.readiness && Object.hasOwn(selected.readiness, key)).map(([key, label]) =>
             `<span class="${selected.readiness[key] ? 'world-ready' : 'dim'}">${selected.readiness[key] ? '✓' : '○'} ${esc(label)}</span>`).join('')}</div>
           ${(selected.roles || []).map((role) => `<div class="world-entry"><h4>${esc(role.title)} ${role.mine ? '· your role' : role.filled ? '· filled' : '· open'}</h4>
-            ${(role.actions || []).map((action) => familyMove(action, 'Join as ' + role.title, selected.id)).join('')}
-            ${(role.requirements || []).map((required) => `<p>${esc(required.quantity)} ${esc(name(required.templateId || required.kind))} · ${esc(name(required.state))}</p>
-              <div class="world-actions">${(required.actions || []).map((action) => familyMove(action, name(action.action), selected.id)).join('')}</div>`).join('')}</div>`).join('')}
-          <div class="world-actions">${(selected.actions || []).map((action) => familyMove(action, name(action.action), selected.id)).join('')}</div>
+            ${(role.requirements || []).map((required) => `<p>${esc(required.quantity)} ${esc(name(required.templateId || required.kind))} · ${esc(name(required.state))}</p>`).join('')}</div>`).join('')}
+          ${contextual('operation', selected.id)}
           ${selected.history?.length ? `<details><summary>Operation history</summary>${selected.history.slice(0, 12).map((event) =>
-            `<p>${esc(name(event.kind))} ${event.roleId ? '· ' + esc(name(event.roleId)) : ''}<small class="dim"> ${esc(time(event.at))}</small></p>`).join('')}</details>` : ''}</article>` : ''}</section>
-      <section class="world-card"><h3>Equipment & materials</h3>
+            `<p>${esc(name(event.kind))}<small class="dim"> ${esc(time(event.at))}</small></p>`).join('')}</details>` : ''}</article>` : ''}</section>
+      <section class="world-card"><h3>What have I discovered?</h3>
+        ${list(board.discovery?.instances, (instance) => `<article class="world-entry"><h4>${esc(instance.title || 'Investigation')}</h4>
+          <p class="dim">${esc(name(instance.status))}</p>${(instance.nodes || []).map((node) => `<p><b>${esc(node.title || 'Evidence')}</b>${node.description ? ' · ' + esc(node.description) : ''}</p>`).join('')}
+          ${contextual('discovery', instance.id)}</article>`, 'No open investigations are visible.')}
+        ${list(board.knowledge?.claims, (claim) => `<article class="world-entry"><h4>${esc(name(claim.proposition))}</h4>
+          <p>${esc(String(claim.value?.value ?? ''))}</p><small class="dim">${esc(name(claim.domain))} · ${claim.owned ? 'Your discovery' : 'Shared with you'} · ${esc(time(claim.discoveredAt))}</small>
+          ${contextual('clue', claim.id)}${contextual('discovery', claim.id)}</article>`, 'No evidence is currently visible to this character.')}
+        ${board.cases ? `<h3>Cases</h3>${list(caseCatalog, (entry, index) => `<article class="world-entry" data-world-mystery="${esc(entry.graphId)}"><h4>${esc(entry.title)}</h4>
+          <p class="dim">${entry.started ? esc(name(entry.status)) : 'Not started'}</p>
+          ${entry.started ? `<button class="act" data-world-case="${index}" aria-pressed="${entry.graphId === worldMysterySelection}" ${worldBusy ? 'disabled' : ''}>
+            ${entry.graphId === worldMysterySelection ? 'Selected case' : 'Open case'}</button>` : ''}${entry.graphId !== selectedCase?.graph?.id ? contextual('mystery', entry.graphId) : ''}</article>`, 'No cases are available to this character yet.')}
+          ${selectedCase ? `<article class="world-entry" data-world-selected-case="${esc(selectedCase.graph.id)}"><h3>${esc(caseCatalog.find((entry) => entry.graphId === selectedCase.graph.id)?.title || 'Case')}</h3>
+            <p role="status">Case ${esc(name(selectedCase.status))}</p>
+            ${list(selectedCase.nodes, (node) => `<div class="world-entry"><h4>${esc(node.title || 'Case note')}</h4>
+              ${node.description ? `<p>${esc(node.description)}</p>` : ''}<small class="dim">${esc(name(node.status))}</small></div>`, 'No notes have been revealed in this case.')}
+            ${selectedCase.choices?.length ? `<h4>Choices made</h4>${selectedCase.choices.map((choice) => {
+              const node = selectedCase.nodes?.find((entry) => entry.id === choice.nodeId), option = node?.options?.find((entry) => entry.id === choice.choiceId);
+              return `<p>${esc(node?.title || 'Case choice')} · ${esc(option?.title || 'Recorded choice')}</p>`;
+            }).join('')}` : ''}${contextual('mystery', selectedCase.graph.id)}</article>` : '<p class="dim">Choose a case to review its notes.</p>'}` : ''}</section>
+      <section class="world-card"><h3>Places you can change</h3>
+        ${list(board.worldObjects, (object) => `<article class="world-entry"><h4>${esc(object.title)}</h4>
+          <p>${esc(name(object.locationId))} · <b>${esc(name(object.state))}</b></p>${contextual('world_object', object.id)}</article>`, 'No available places are visible to you yet. Explore and gather evidence.')}
+        ${list(board.territories, (territory) => `<article class="world-entry"><h4>${esc(territory.name || name(territory.id))}</h4>
+          ${contextual('territory', territory.id)}</article>`, 'No territories are visible.')}
+        <h3>Workshop</h3>${list(board.recipes, (recipe) => `<article class="world-entry"><h4>${esc(recipe.title || name(recipe.id))}</h4>
+          <p class="dim">${esc(terms(recipe.consumes))}${recipe.cashCost ? ` · $${esc(recipe.cashCost)}` : ''} → ${esc(terms(recipe.produces))}</p>
+          ${contextual('recipe', recipe.id)}</article>`, 'No recipes are available.')}
+        <h3>Equipment & materials</h3>
+        ${board.vehicles?.length ? list(board.vehicles, (vehicle) => `<article class="world-entry"><h4>Salvage vehicle</h4>
+          <p class="dim">${vehicle.committed ? 'Already committed elsewhere' : 'In your custody'}</p>${contextual('item', vehicle.id)}</article>`, '') : ''}
         ${list(board.inventory?.resources, (resource) => `<p><b>${esc(resource.quantity)}</b> ${esc(name(resource.templateId))} <small class="dim">${esc(resource.quality)}</small></p>`, 'No materials held.')}
         ${list(board.inventory?.items, (item) => `<article class="world-entry"><h4>${esc(name(item.templateId))}</h4><p class="dim">${esc(name(item.state))}</p>
-          <details><summary>Provenance · ${(item.provenance || []).length} records</summary>${(item.provenance || []).map((event) =>
+          ${contextual('item', item.id)}<details><summary>Provenance · ${(item.provenance || []).length} records</summary>${(item.provenance || []).map((event) =>
             `<p>${esc(name(event.kind))} · ${esc(name(event.provenance))}<small class="dim"> ${esc(time(event.occurredAt))}</small></p>`).join('') || '<p class="dim">No visible history.</p>'}</details></article>`, 'No unique equipment held.')}</section>
-      <section class="world-card"><h3>What you know</h3>
-        ${list(board.knowledge?.claims, (claim) => `<article class="world-entry"><h4>${esc(name(claim.proposition))}</h4>
-          <p>${esc(String(claim.value?.value ?? ''))}</p><small class="dim">${esc(name(claim.domain))} · ${claim.owned ? 'Your discovery' : 'Shared with you'} · ${esc(time(claim.discoveredAt))}</small></article>`,
-          'No evidence is currently visible to this character.')}
-        <h3>Recent activity</h3>${list(board.activity, (event) => `<p>${esc(name(event.kind))}<small class="dim"> ${esc(time(event.occurredAt))}</small></p>`, 'No recent visible activity.')}
-        ${board.territories?.length ? `<h3>Territories</h3><p class="dim">${esc(board.territories.map((territory) => territory.name || name(territory.id)).join(' · '))}</p>` : ''}</section></div>`}
-      </div>`;
+      </div></div>`}</div>`;
     target.querySelector('#world-refresh')?.addEventListener('click', () => projections.world(worldSelection, worldMysterySelection));
     target.querySelector('#world-overview')?.addEventListener('click', () => {
       worldSelection = null; worldMysterySelection = null;

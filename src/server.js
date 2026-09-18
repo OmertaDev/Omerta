@@ -115,6 +115,7 @@ import { register as registerCoordination } from './routes/coordination.js';
 import { register as registerWorldKernel } from './routes/world-kernel.js';
 import { register as registerFamilyOperations } from './routes/family-operations.js';
 import { register as registerProjections } from './routes/projections.js';
+import { register as registerCommands } from './routes/commands.js';
 import { registerProjectionEvents } from './projection-events.js';
 import { register as registerWorldGraph, WORLD_GRAPH_CAPABILITIES } from './routes/worldgraph.js';
 import * as Phone from './phone.js';
@@ -1144,6 +1145,13 @@ export async function buildServer() {
         if (!row) continue; // released between our INSERT and this SELECT — loop and re-reserve, never proceed unreserved
         if (row.body_hash !== bodyHash)
           return reply.code(422).send({ error: 'idempotency_key_reuse', message: 'This Idempotency-Key was used with a different request.' });
+        if (req.routeOptions?.config?.currentCommandProjection === coordinationReceiptTrust) {
+          // A Command Center reply includes private, revocable projections. Even
+          // completed retries must reauthenticate/reproject; the domain receipt
+          // prevents effects from running twice. Never return the cached board.
+          req._idem = { key, bodyHash };
+          return;
+        }
         if (row.status === 0 && req.routeOptions?.config?.coordinationReceipts === coordinationReceiptTrust) {
           // Only these source-registered handlers commit a durable command receipt
           // atomically with state/events under the account lock. They can resolve an
@@ -2142,6 +2150,7 @@ export async function buildServer() {
   registerFamilyOperations(app, { pool, auth, receiptTrust: coordinationReceiptTrust });
   registerProjections(app, { pool, auth,
     readPlayer: (accountId) => G.readCharacter(pool, accountId, async () => ({})) });
+  registerCommands(app, { pool, auth, receiptTrust: coordinationReceiptTrust });
   app.post('/v1/loans/square', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Loans.squareWanted(ch, client, h)));
   // buy is two-party (buyer pays the current lender, becomes the new lender): look up the seller, lock both.

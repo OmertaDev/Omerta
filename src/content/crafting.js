@@ -314,12 +314,9 @@ function contentSkillBlocks(graph, payload, skillXp) {
 }
 
 async function activeWorkOrder(client, accountId, namespace, { lock = false } = {}) {
-  const row = (await client.query(
-    `SELECT * FROM content_work_order_runs
-      WHERE account_id=$1 AND namespace=$2 AND status='active'
-      ORDER BY started_at, id LIMIT 1${lock ? ' FOR UPDATE' : ''}`,
-    [accountId, namespace],
-  )).rows[0];
+  const row = (lock
+    ? await client.query("SELECT * FROM content_work_order_runs WHERE account_id=$1 AND namespace=$2 AND status='active' ORDER BY started_at, id LIMIT 1 FOR UPDATE", [accountId, namespace])
+    : await client.query("SELECT * FROM content_work_order_runs WHERE account_id=$1 AND namespace=$2 AND status='active' ORDER BY started_at, id LIMIT 1", [accountId, namespace])).rows[0];
   return row || null;
 }
 

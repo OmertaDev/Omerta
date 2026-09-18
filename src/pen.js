@@ -514,7 +514,7 @@ export async function sweepStaleBreaks(pool) {
   let swept = 0;
   try {
     const staleRows = (await client.query(
-      `SELECT id, leader_character FROM pen_breaks WHERE status='planning' AND created_at < now() - interval '${Math.floor(PEN.COOP_TTL_MS / 1000)} seconds'`)).rows;
+      "SELECT id, leader_character FROM pen_breaks WHERE status='planning' AND created_at < now() - $1::interval", [`${Math.floor(PEN.COOP_TTL_MS / 1000)} seconds`])).rows;
     for (const s of staleRows) {
       await client.query('BEGIN');
       try {

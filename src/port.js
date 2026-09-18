@@ -128,7 +128,8 @@ export async function upgradeBoat(ch, boatId, part, client, h) {
   if (Number(ch.cash) < cost) throw new GameError('cash', `That refit runs ${usd(cost)}.`);
   ch.cash = Number(ch.cash) - cost;
   await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -cost, reason: 'port:upgrade' });
-  await client.query(`UPDATE boats SET ${part === 'hull' ? 'hull' : 'engine'}=$2 WHERE id=$1`, [boatId, lvl + 1]);
+  if (part === 'hull') await client.query('UPDATE boats SET hull=$2 WHERE id=$1', [boatId, lvl + 1]);
+  else await client.query('UPDATE boats SET engine=$2 WHERE id=$1', [boatId, lvl + 1]);
   await h.track(client, ch.account_id, 'port', { act: 'upgrade', part, level: lvl + 1 });
   const nb = { ...boat, [part]: lvl + 1 };
   return { ok: true, part, level: lvl + 1, spent: cost, hold: effHold(nb, spec), speed: effSpeed(nb, spec) };

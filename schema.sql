@@ -7259,6 +7259,22 @@ CREATE TABLE IF NOT EXISTS world_operation_events (
 
 -- Core recipe limits retain their identity across content revisions. Inventory,
 -- provenance and usage commit together under the existing item mutation root.
+-- Expiring, player-bound command suggestions. Domain ledgers remain the sole
+-- mutation/replay authority; these rows cannot authorize an effect by themselves.
+CREATE TABLE IF NOT EXISTS player_command_boards (
+  id TEXT PRIMARY KEY,
+  account_id TEXT NOT NULL REFERENCES accounts(id),
+  character_id TEXT NOT NULL REFERENCES characters(id),
+  state_hash TEXT NOT NULL,
+  options_json TEXT NOT NULL,
+  commands_json TEXT NOT NULL,
+  expires_at TIMESTAMPTZ NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS player_command_boards_expiry_idx ON player_command_boards(expires_at,id);
+CREATE INDEX IF NOT EXISTS player_command_boards_account_idx ON player_command_boards(account_id,character_id,created_at);
+CREATE INDEX IF NOT EXISTS cars_character_command_idx ON cars(character_id,model_id,id);
+
 CREATE TABLE IF NOT EXISTS world_recipe_usage (
   recipe_id TEXT NOT NULL,
   scope TEXT NOT NULL CHECK (scope IN ('account','global','territory')),

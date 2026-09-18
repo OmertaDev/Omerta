@@ -480,13 +480,14 @@ export function createFamilyOperations({ pool, registry, kernel, definitions = [
         return project(client, a, definition, state);
       });
     },
-    async create(accountId, value, key) {
+    async create(accountId, value, key, expectedCharacterId = null) {
       allowed(accountId); value = input(value, ['definitionId']); id(value.definitionId);
       const definition = byId.get(value.definitionId);
       if (!definition) fail();
       let fresh = false;
       const result = await withItemTransaction(pool, async (client) => {
         const a = await authority(client, accountId);
+        if (expectedCharacterId && a.ch?.id !== expectedCharacterId) fail('coordination_operation_forbidden');
         if (!a.officer || !a.uniformCrew) fail('coordination_operation_forbidden');
         return withItemMutation(client, own(accountId), 'operation_action', logicalKey(accountId, key),
           { domain: 'family-coordination', action: 'create', definitionId: definition.id, version: definition.version }, async (mutation) => {
@@ -507,7 +508,7 @@ export function createFamilyOperations({ pool, registry, kernel, definitions = [
       if (fresh) { try { bus.emit('coordination:changed', { operationId: result.operationId, revision: result.revision }); } catch { /* durable receipt is authoritative */ } }
       return result;
     },
-    async command(accountId, operationId, action, value, key) {
+    async command(accountId, operationId, action, value, key, expectedCharacterId = null) {
       allowed(accountId); id(operationId); id(action);
       const fields = { publish: [], join: ['roleId'], assign: ['roleId', 'accountId'], leave: [], commit: ['requirementId'],
         contribute: ['requirementId'], withdraw: ['requirementId'], approve: [], execute: [], cancel: [], expire: [] };
@@ -517,6 +518,7 @@ export function createFamilyOperations({ pool, registry, kernel, definitions = [
       let fresh = false, worldReceipt = null;
       const result = await withItemTransaction(pool, async (client) => {
         const a = await authority(client, accountId, operationId, action === 'assign' ? value.accountId : null, true);
+        if (expectedCharacterId && a.ch?.id !== expectedCharacterId) fail('coordination_operation_forbidden');
         if (!canRead(a)) fail();
         const recovery = ['cancel', 'expire', 'withdraw', 'leave'].includes(action);
         return withItemMutation(client, own(accountId), 'operation_action', logicalKey(accountId, key), {
