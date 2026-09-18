@@ -6,7 +6,7 @@ import { dbCaps } from './db.js';
 import { canonicalBytes } from './content/canonical.js';
 import { createWorldKernel } from './world-kernel.js';
 import { createWorldKernelQuery } from './world-kernel-query.js';
-import { createWorldProjection } from './world-projection.js';
+import { createWorldProjection, publicWorldProjection } from './world-projection.js';
 import { createCoordinationKnowledge } from './coordination/knowledge.js';
 import { createCoordinationService } from './coordination/runtime.js';
 import { createFamilyOperations } from './coordination/operations.js';
@@ -197,7 +197,8 @@ export function createPlayerCommandEngine({ pool, content, enabled = false, know
   const discovery = createCoordinationService({ pool, registry: content.coordinationRegistry,
     prerequisitesEnabled: content.progression === true, ...policy, enabled: discoveryEnabled });
   const projection = createWorldProjection({ pool, query, kernel, knowledge, familyOperations: family, crafting,
-    recipeIds: content.recipeIds, director, mysteries: content.progression ? { registry: content.registry, graphIds: content.mysteryGraphIds,
+    recipeIds: content.recipeIds, director, consequencePolicies: content.consequencePolicies,
+    mysteries: content.progression ? { registry: content.registry, graphIds: content.mysteryGraphIds,
       knowledgeEnabled, sharingEnabled, accountIds, worldDefinitions: kernel.definitions } : null });
   const admit = async (accountId, expectedCharacterId = null) => {
     if (!enabled || !identifier(accountId) || (accountIds.length && !accountIds.includes(accountId))) fail();
@@ -229,9 +230,12 @@ export function createPlayerCommandEngine({ pool, content, enabled = false, know
       VALUES($1,$2,$3,$4,$5,$6,$7) ON CONFLICT(id) DO NOTHING`,
     [boardId, accountId, board.player.character.id, stateHash, JSON.stringify(options), JSON.stringify(draft.commands), expiresAt]);
     const commands = draft.commands.map((command) => ({ ...command,
+      ...(command.commandType === 'situation.act' ? { parameters: {
+        situationId: command.parameters.situationId, actionId: command.parameters.actionId,
+      } } : {}),
       expiresAt: command.expiresAt && new Date(command.expiresAt).getTime() < new Date(expiresAt).getTime() ? command.expiresAt : expiresAt,
       executionIdentity: command.availability === 'AVAILABLE' ? { executionId: `${boardId}.${command.commandId}` } : null }));
-    return { ...board, commandSchemaVersion: 1, commands, commandsTruncated: draft.commandsTruncated, ...playerOpportunities(board, commands) };
+    return { ...publicWorldProjection(board), commandSchemaVersion: 1, commands, commandsTruncated: draft.commandsTruncated, ...playerOpportunities(board, commands) };
   }
   const domainKey = (executionId) => `player-command:${hash(executionId)}`;
   async function receipt(accountId, command, key, characterId) {
@@ -322,7 +326,7 @@ export function createPlayerCommandEngine({ pool, content, enabled = false, know
       relationshipChanges: next && before && hash([before.crew, before.family]) !== hash([next.crew, next.family])
         ? [{ crew: next.crew, family: next.family }] : [],
       operationChanges: next && before ? diff(before.operations.instances, next.operations.instances) : [],
-      ...(director ? { situationChanges: next && before ? diff(before.situations || [], next.situations || []) : [] } : {}),
+      ...(director ? { situationChanges: next && before ? diff(publicWorldProjection(before).situations || [], next.situations || []) : [] } : {}),
       mysteryProgression: next && before ? [...diff(before.cases?.catalog || [], next.cases?.catalog || [], 'graphId'),
         ...diff(before.cases?.selected?.nodes || [], next.cases?.selected?.nodes || [])] : [],
       newOpportunities: next && before ? next.opportunities.filter((entry) => !priorOpportunities.some((old) => old.opportunityId === entry.opportunityId)) : [],

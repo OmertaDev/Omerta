@@ -11,9 +11,12 @@ import { compileDirectorDefinitions } from '../src/director/definitions.js';
 import { dockWarDefinitionSources, dockWarDefinitionCatalog } from '../src/director/dock-war.js';
 import { selectDirectorCandidates, situationEligible, predicatesMatch, directorHash, DIRECTOR_LIMITS } from '../src/director/selection.js';
 import { pressuresFromFacts } from '../src/director/pressures.js';
+import { aggregatePressureMemory, PRESSURE_MEMORY } from '../src/director/memory.js';
+import { runCampaignNetworkSimulation } from './campaign-network-sim.js';
 
 const DAY = 86400000, HOUR = 3600000, EPOCH = Date.UTC(2026, 0, 1);
 export const DIRECTOR_SIMULATION_PERIODS = Object.freeze([1, 7, 30, 180]);
+export const DIRECTOR_SIMULATION_SEED = 'director-model-v1';
 export const DIRECTOR_SIMULATION_SCENARIOS = Object.freeze([
   { id: 'low_population', players: 2, families: 1, crews: 1, territories: 1, responsePercent: 65, delayHours: 30, branches: ['alternate'], discoveries: 2 },
   { id: 'medium_population', players: 24, families: 4, crews: 6, territories: 4, responsePercent: 80, delayHours: 4, branches: ['protect', 'intercept', 'alternate'], discoveries: 10 },
@@ -24,9 +27,13 @@ export const DIRECTOR_SIMULATION_SCENARIOS = Object.freeze([
   { id: 'territory_war', players: 64, families: 8, crews: 16, territories: 8, responsePercent: 95, delayHours: 3, branches: ['protect', 'intercept'], discoveries: 8 },
   { id: 'quiet_world', players: 12, families: 2, crews: 3, territories: 4, responsePercent: 0, delayHours: 8, branches: ['protect'], discoveries: 0, quiet: true },
   { id: 'high_mystery_activity', players: 48, families: 6, crews: 12, territories: 6, responsePercent: 90, delayHours: 6, branches: ['alternate', 'alternate', 'protect'], discoveries: 32 },
+  { id: 'new_world', players: 4, families: 2, crews: 2, territories: 2, responsePercent: 40, delayHours: 24, branches: ['protect'], discoveries: 1, limitedStock: true },
+  { id: 'resource_abundance', players: 64, families: 8, crews: 16, territories: 8, responsePercent: 90, delayHours: 4, branches: ['protect'], discoveries: 12, quiet: true },
+  { id: 'high_law_pressure', players: 80, families: 8, crews: 20, territories: 8, responsePercent: 75, delayHours: 6, branches: ['intercept', 'protect'], discoveries: 24 },
+  { id: 'low_law_pressure', players: 16, families: 2, crews: 4, territories: 4, responsePercent: 70, delayHours: 12, branches: ['alternate'], discoveries: 4, quiet: true },
 ].map(Object.freeze));
 const stripHash = ({ contentHash: _hash, ...source }) => source;
-const sample = (identity) => Number.parseInt(directorHash(['director-model-v1', identity]).slice(0, 8), 16);
+const sample = (identity, seed) => Number.parseInt(directorHash([seed, identity]).slice(0, 8), 16);
 const sum = (values) => values.reduce((total, value) => total + value, 0);
 
 /** Compile each fixture scope against the actual World/operation compilers.
@@ -89,9 +96,9 @@ function makeScope(base, scenario, season, index) {
     controllerFamilyId: scenario.quiet ? null : controllerId, originalController: controllerId, rivalId,
     holdings, initialWire: sum([...holdings.values()]), initialSeals: 6, seals: 6, consumedWire: 0,
     transferredWire: 0, operations: 0, failedOperations: 0, events: [], campaign: null, campaignHistory: [],
-    attempts: 0, eligibleSince: null };
+    attempts: 0, eligibleSince: null, pressureSamples: [], pressurePeaks: {}, maximumMemorySamples: 0 };
 }
-function observedFacts(scope, scenario) {
+function observedFacts(scope, scenario, at) {
   const demand = Math.max(0, ...scope.world.actions.flatMap((action) => action.materials).map((material) => material.quantity));
   const resourceQuantity = scope.holdings.get(scope.controllerFamilyId) || 0;
   const last = scope.events.at(-1);
@@ -102,13 +109,32 @@ function observedFacts(scope, scenario) {
     completedOperations: scope.operations, failedOperations: scope.failedOperations,
     discoveredSources: scenario.discoveries, priorWorldAction: last?.actionId || 'establish_route',
     priorOutcome: last?.toState || scope.state, season: scope.modelSeason, familyActivity: scope.operations };
-  return { ...facts, pressures: pressuresFromFacts(facts) };
+  const memory = aggregatePressureMemory({ objectId: scope.id, controllerFamilyId: scope.controllerFamilyId, at,
+    samples: scope.pressureSamples, discoveries: scenario.discoveries,
+    events: scope.events.slice(-PRESSURE_MEMORY.events).map((event) => ({ ...event,
+      action_id: event.actionId, family_id: event.familyId })),
+    operations: scope.events.slice(-PRESSURE_MEMORY.operations).map((event) => ({
+      status: 'completed', resolved_at: event.occurred_at })),
+    actionSignals: Object.fromEntries(scope.situations.flatMap((definition) => (definition.network?.implications || [])
+      .map((entry) => [definition.consequenceContracts.find((contract) => contract.id === entry.consequenceId).actionId,
+        entry.signals || []]))) });
+  const entry = { ...facts, ...memory };
+  const width = PRESSURE_MEMORY.bucketSeconds * 1000;
+  if (scope.pressureSamples.at(-1)?.at < Math.floor(at / width) * width || !scope.pressureSamples.length) {
+    scope.pressureSamples.push({ at, facts: [facts] });
+    scope.pressureSamples = scope.pressureSamples.filter((sample) => sample.at >= at - PRESSURE_MEMORY.windowSeconds * 1000)
+      .slice(-PRESSURE_MEMORY.buckets);
+  }
+  const pressures = pressuresFromFacts(entry);
+  for (const [name, value] of Object.entries(pressures)) scope.pressurePeaks[name] = Math.max(scope.pressurePeaks[name] || 0, value);
+  scope.maximumMemorySamples = Math.max(scope.maximumMemorySamples, scope.pressureSamples.length);
+  return { ...entry, pressures };
 }
 
 // A modeled PLAYER operation first transfers already existing wire, then spends
 // exactly the admitted action's declared wire and one existing crafted seal.
 // This is deliberately separate from selecting or advancing Director rows.
-function performModeledOperation(scope, resolution, metrics) {
+function performModeledOperation(scope, resolution, metrics, at) {
   const consequence = scope.situations.flatMap((situation) => situation.consequenceContracts)
     .find((entry) => entry.id === resolution.consequenceId && entry.fromState === scope.state);
   assert(consequence, 'The model cannot invent an operation consequence');
@@ -135,7 +161,10 @@ function performModeledOperation(scope, resolution, metrics) {
   scope.revision++; scope.state = action.to;
   // Existing World Kernel Family actions record the executing Family controller.
   scope.controllerFamilyId = payer;
-  scope.events.push({ actionId: action.id, fromState: action.from, toState: action.to, revision: scope.revision });
+  scope.events.push({ id: `${scope.id}:${scope.revision}`, actionId: action.id, fromState: action.from,
+    toState: action.to, revision: scope.revision, consumedWire: wire, consumedSeals: 1,
+    familyId: payer, occurred_at: new Date(at).toISOString(),
+    materialTemplateId: 'mat:wire', authority: 'modeled_player_operation' });
   metrics.operationVolume++; metrics.outcomes[resolution.id] = (metrics.outcomes[resolution.id] || 0) + 1;
   assert.equal(scope.initialWire, sum([...scope.holdings.values()]) + scope.consumedWire);
   assert([...scope.holdings.values()].every((quantity) => quantity >= 0));
@@ -153,8 +182,10 @@ function authorizedAdapter(adapter, definition, scope, player) {
   return adapter.commandType !== 'operation.create' || player.leader;
 }
 
-export function simulateDirectorScenario(scenario, { periods = DIRECTOR_SIMULATION_PERIODS, tickSeconds = 3600 } = {}) {
+export function simulateDirectorScenario(scenario, { periods = DIRECTOR_SIMULATION_PERIODS, tickSeconds = 3600,
+  seed = DIRECTOR_SIMULATION_SEED } = {}) {
   assert(DIRECTOR_SIMULATION_SCENARIOS.includes(scenario), 'Choose an admitted scenario');
+  assert(typeof seed === 'string' && seed.length > 0 && seed.length <= 128, 'A bounded, declared simulation seed is required');
   assert(Array.isArray(periods) && periods.length && periods.every((day) => Number.isInteger(day) && day >= 1 && day <= 180));
   assert(Number.isInteger(tickSeconds) && tickSeconds >= DIRECTOR_LIMITS.tickSeconds && tickSeconds <= 3600 && 3600 % tickSeconds === 0);
   const base = createDockWarContent(), players = playersFor(scenario), step = tickSeconds * 1000;
@@ -199,8 +230,15 @@ export function simulateDirectorScenario(scenario, { periods = DIRECTOR_SIMULATI
     const initialWire = sum(scopes.map((scope) => scope.initialWire)), remainingWire = sum(scopes.map((scope) => sum([...scope.holdings.values()])));
     const wireConsumed = sum(scopes.map((scope) => scope.consumedWire)), initialSeals = sum(scopes.map((scope) => scope.initialSeals));
     const remainingSeals = sum(scopes.map((scope) => scope.seals));
+    const consumptionEvents = scopes.flatMap((scope) => scope.events);
+    const duplicateReceipts = consumptionEvents.length - new Set(consumptionEvents.map((event) => event.id)).size;
+    const unexplainedWire = wireConsumed - sum(consumptionEvents.map((event) => event.consumedWire));
+    const unexplainedSeals = initialSeals - remainingSeals - sum(consumptionEvents.map((event) => event.consumedSeals));
     assert.equal(initialWire, remainingWire + wireConsumed);
     assert.equal(initialSeals - remainingSeals, metrics.operationVolume);
+    assert.equal(duplicateReceipts, 0);
+    assert.equal(unexplainedWire, 0);
+    assert.equal(unexplainedSeals, 0);
     const unfinished = scopes.filter((scope) => scope.activeSeason && !['settled', 'idle'].includes(scope.state));
     const unfundedResponseScopes = unfinished.filter((scope) => {
       const actions = scope.world.actions.filter((action) => action.from === scope.state);
@@ -212,10 +250,15 @@ export function simulateDirectorScenario(scenario, { periods = DIRECTOR_SIMULATI
       familyConcentration: metrics.generated ? Math.max(...Object.values(metrics.familyEvents)) / metrics.generated : 0,
       deadEndRate: metrics.generated ? metrics.deadEnds / metrics.generated : 0,
       unfinishedCanonicalScopes: unfinished.length, unfundedResponseScopes,
+      pressureMemory: { maximumSamples: Math.max(0, ...scopes.map((scope) => scope.maximumMemorySamples)),
+        peaks: Object.fromEntries(Object.keys(scopes[0]?.pressurePeaks || {}).map((name) => [name,
+          Math.max(0, ...scopes.map((scope) => scope.pressurePeaks[name] || 0))])) },
       resourceEffects: { initialFixtureWire: initialWire, remainingWire, wireConsumed,
         wireTransferred: sum(scopes.map((scope) => scope.transferredWire)), initialFixtureSeals: initialSeals,
         remainingSeals, sealsConsumed: initialSeals - remainingSeals, directorMinted: 0, omrDelta: 0,
-        wireBalanceError: initialWire - remainingWire - wireConsumed } };
+        wireBalanceError: initialWire - remainingWire - wireConsumed, duplicateReceipts,
+        unexplainedWire, unexplainedSeals,
+        provenanceHash: directorHash(consumptionEvents) } };
   };
 
   for (let elapsed = 0; elapsed < horizon; elapsed += step) {
@@ -228,7 +271,7 @@ export function simulateDirectorScenario(scenario, { periods = DIRECTOR_SIMULATI
     metrics.evaluationTicks++;
     for (const row of [...active]) {
       const scope = scopes.find((entry) => entry.id === row.object_id), definition = row.definition;
-      const facts = observedFacts(scope, scenario), age = now - new Date(row.created_at).getTime();
+      const facts = observedFacts(scope, scenario, now), age = now - new Date(row.created_at).getTime();
       if (scope.modelSeason !== row.season) {
         finish(row, 'recovery', 'recovery', definition.recoveryPolicy.to, now); continue;
       }
@@ -236,7 +279,7 @@ export function simulateDirectorScenario(scenario, { periods = DIRECTOR_SIMULATI
         row.operationAttempted = true;
         const resolution = definition.possibleResolutions.find((entry) => entry.id === row.desiredOutcome);
         assert(resolution && resolution.from.includes(row.state));
-        if (performModeledOperation(scope, resolution, metrics)) {
+        if (performModeledOperation(scope, resolution, metrics, now)) {
           const committed = scope.events.at(-1);
           assert(committed.revision > row.starting_world_revision);
           finish(row, 'resolution', resolution.id, resolution.to, now); continue;
@@ -266,7 +309,7 @@ export function simulateDirectorScenario(scenario, { periods = DIRECTOR_SIMULATI
             finishCampaign(scope, 'completed', now); campaign = null;
           } else {
             const branch = campaignDefinition.branches.find((entry) => entry.from === campaign.nodeId
-              && entry.outcome === prior.outcome && predicatesMatch(entry.when, observedFacts(scope, scenario)));
+              && entry.outcome === prior.outcome && predicatesMatch(entry.when, observedFacts(scope, scenario, now)));
             if (!branch) { finishCampaign(scope, 'abandoned', now); campaign = null; }
             else campaign.nodeId = branch.to;
           }
@@ -280,7 +323,7 @@ export function simulateDirectorScenario(scenario, { periods = DIRECTOR_SIMULATI
           >= campaignDefinition.cooldownPolicy.maximumPerWindow) continue;
       }
       let node = campaignDefinition.nodes.find((entry) => entry.id === (campaign?.nodeId || campaignDefinition.entryNode));
-      const facts = observedFacts(scope, scenario);
+      const facts = observedFacts(scope, scenario, now);
       if (!campaign && !situationEligible(scope.situations.find((entry) => entry.id === node.situationId), facts)) {
         // Match runtime retained-outcome recovery: a new receipt can reoffer the
         // last abandoned node without pretending the shortage happened again.
@@ -312,7 +355,7 @@ export function simulateDirectorScenario(scenario, { periods = DIRECTOR_SIMULATI
       metrics.maxRepetitionWithinWindow = Math.max(metrics.maxRepetitionWithinWindow, repetitions);
       if (previous.length) metrics.eventRepetition++;
       const attempt = scope.attempts++, response = scope.index !== scenario.unresponsiveTerritory
-        && sample(`${scope.id}/${definition.id}/${attempt}`) % 100 < scenario.responsePercent;
+        && sample(`${scope.id}/${definition.id}/${attempt}`, seed) % 100 < scenario.responsePercent;
       const row = { id: `situation:${metrics.generated}`, definition, definition_id: definition.id, object_id: scope.id,
         controller_family_id: scope.controllerFamilyId, state: definition.initialState, terminal: false,
         created_at: new Date(now).toISOString(), updated_at: new Date(now).toISOString(),
@@ -344,10 +387,12 @@ export function simulateDirectorScenario(scenario, { periods = DIRECTOR_SIMULATI
   return snapshots;
 }
 
-export function runDirectorSimulation({ periods = DIRECTOR_SIMULATION_PERIODS, scenarios = DIRECTOR_SIMULATION_SCENARIOS, tickSeconds = 3600 } = {}) {
-  const results = scenarios.flatMap((scenario) => simulateDirectorScenario(scenario, { periods, tickSeconds }));
-  return { schemaVersion: 1, model: 'deterministic canonical-observation model', seed: 'director-model-v1', tickSeconds,
-    productionFunctions: ['selectDirectorCandidates', 'pressuresFromFacts'],
+export function runDirectorSimulation({ periods = DIRECTOR_SIMULATION_PERIODS, scenarios = DIRECTOR_SIMULATION_SCENARIOS,
+  tickSeconds = 3600, seed = DIRECTOR_SIMULATION_SEED } = {}) {
+  const results = scenarios.flatMap((scenario) => simulateDirectorScenario(scenario, { periods, tickSeconds, seed }));
+  return { schemaVersion: 2, model: 'deterministic canonical-observation model', seed, tickSeconds,
+    productionFunctions: ['compileWorldObjects', 'compileFamilyOperations', 'compileDirectorDefinitions',
+      'selectDirectorCandidates', 'pressuresFromFacts', 'aggregatePressureMemory'],
     assumptions: ['Each 30-day season introduces separate pre-existing scoped fixtures; canonical route states never reset.',
       'Modeled player responses use deterministic policies; those policies do not choose Director situations.',
       'Operations consume declared action materials and a pre-existing crafted seal; transfers only move existing stock.',
@@ -357,6 +402,7 @@ export function runDirectorSimulation({ periods = DIRECTOR_SIMULATION_PERIODS, s
       'Model conservation does not prove database inventory custody, economy sources/sinks, authentication, or concurrent execution.',
       'A bounded content slice eventually settles or becomes quiet; the model does not fabricate new world conflict to maintain activity.'],
     scenarios: scenarios.map((scenario) => ({ ...scenario })), results,
+    campaignNetwork: runCampaignNetworkSimulation({ scenarios, seed }),
     summary: { runs: results.length, scenarioCount: scenarios.length, periods: [...periods],
       maximumActive: Math.max(0, ...results.map((row) => row.maxActive)), maximumStartsPerTick: Math.max(0, ...results.map((row) => row.maxStartsPerTick)),
       maximumRepetitionWithinWindow: Math.max(0, ...results.map((row) => row.maxRepetitionWithinWindow)),

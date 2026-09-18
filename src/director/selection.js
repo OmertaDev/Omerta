@@ -10,6 +10,8 @@ export const situationEligible = (definition, facts) => !!facts
   && facts.objectId === definition.objectId
   && predicatesMatch(definition.eligibility, facts) && predicatesMatch(definition.requiredWorldFacts, facts)
   && !definition.excludedWorldFacts.some((p) => evaluateDirectorPredicate(p, facts))
+  && (definition.network?.relatedWorld || []).every((rule) => rule.states.includes(facts.relatedWorld?.[rule.objectId]?.state))
+  && !(definition.network?.competition.includes('CONTESTED') && (facts.historyAvailable !== 1 || facts.recentActivity === 0))
   && facts.activePlayers >= definition.participants.minimumPlayers
   && facts.activeFamilies >= definition.participants.minimumFamilies
   && facts.activeCrews >= definition.participants.minimumCrews;
@@ -20,7 +22,8 @@ export function selectDirectorCandidates(candidates, active, history, now, limit
   const ranked = candidates.filter(({ definition, facts }) => situationEligible(definition, facts)).map((candidate) => {
     const { definition, facts } = candidate;
     return { ...candidate, score: definition.pressureInputs.reduce((sum, name) => sum + (facts.pressures[name] || 0), 0)
-      * definition.weight / ({ common: 1, uncommon: 2, rare: 4 }[definition.rarity]),
+      * definition.weight / ({ common: 1, uncommon: 2, rare: 4 }[definition.rarity])
+      * (definition.network?.competition.includes('CONTESTED') && facts.historyAvailable === 1 ? Math.min(1, facts.recentActivity / 4) : 1),
       tie: directorHash([definition.id, facts.objectId, candidate.campaignId || '']) };
   }).sort((a, b) => Number(!!b.campaignId) - Number(!!a.campaignId) || b.score - a.score
     || a.tie.localeCompare(b.tie));

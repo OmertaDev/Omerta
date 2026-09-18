@@ -8,7 +8,7 @@ import { createFamilyOperations } from '../coordination/operations.js';
 import { createCoordinationService } from '../coordination/runtime.js';
 import { coordinationGraphs } from '../coordination/graph.js';
 import { createCoordinationKnowledge, assertKnowledgeSnapshot, snapshotRequirementMatches } from '../coordination/knowledge.js';
-import { createMysteryContext, startMystery } from '../mysteries.js';
+import { createMysteryContext, startMystery, mysteryDefinitionHash } from '../mysteries.js';
 import { verifyDirectorDefinition } from './definitions.js';
 import { observeDirectorWorld } from './pressures.js';
 import { DIRECTOR_LIMITS, directorHash, predicatesMatch, situationEligible, selectDirectorCandidates } from './selection.js';
@@ -20,10 +20,24 @@ const identity = (s) => typeof s === 'string' && /^[\x21-\x7e]{1,160}$/.test(s);
 const parse = (v) => typeof v === 'string' ? JSON.parse(v) : v;
 
 export function createLivingWorldDirector({ pool, content, definitions, mode = 'DIRECTOR_DISABLED', accountIds = [],
-  clock = Date.now, limits = DIRECTOR_LIMITS } = {}) {
+  clock = Date.now, limits = DIRECTOR_LIMITS, retainedDefinitions = [] } = {}) {
   if (!pool || !content || !definitions || !DIRECTOR_MODES.includes(mode) || !Array.isArray(accountIds)
     || accountIds.some((id) => !identity(id)) || (mode === 'LIMITED_COHORT' && !accountIds.length)
     || [...definitions.situations, ...definitions.campaigns].some((d) => !verifyDirectorDefinition(d))) fail('bad_director_configuration');
+  if (!Array.isArray(retainedDefinitions) || retainedDefinitions.length > 8
+    || retainedDefinitions.some((bundle) => !Array.isArray(bundle?.situations) || !Array.isArray(bundle?.campaigns)
+      || [...bundle.situations, ...bundle.campaigns].some((d) => !verifyDirectorDefinition(d)))) fail('bad_director_configuration');
+  const allDefinitions = { situations: [...definitions.situations, ...retainedDefinitions.flatMap((b) => b.situations)],
+    campaigns: [...definitions.campaigns, ...retainedDefinitions.flatMap((b) => b.campaigns)] };
+  if (allDefinitions.situations.length > 128 || allDefinitions.campaigns.length > 128) fail('bad_director_configuration');
+  for (const entries of [allDefinitions.situations, allDefinitions.campaigns]) {
+    const pins = new Map();
+    for (const d of entries) {
+      const key = `${d.id}/${d.version}`;
+      if (pins.has(key) && pins.get(key) !== d.contentHash) fail('director_definition_changed');
+      pins.set(key, d.contentHash);
+    }
+  }
   // Limits can only be tightened by internal simulations/operators.
   limits = Object.freeze(Object.fromEntries(Object.entries(DIRECTOR_LIMITS).map(([key, max]) => {
     const n = limits[key] ?? max;
@@ -39,19 +53,33 @@ export function createLivingWorldDirector({ pool, content, definitions, mode = '
     prerequisitesEnabled: true, ...policy });
   const discovery = createCoordinationService({ pool, registry: content.coordinationRegistry, prerequisitesEnabled: true, ...policy });
   const worldContent = { ...content, objects: kernel.definitions };
-  const byId = new Map(definitions.situations.map((d) => [d.id, d]));
-  const campaignById = new Map(definitions.campaigns.map((d) => [d.id, d]));
+  for (const d of allDefinitions.situations) {
+    if (kernel.definitions.find((w) => w.id === d.objectId)?.contentHash !== d.dependencyHashes.world
+      || (d.dependencyHashes.relatedWorld || []).some((pin) => kernel.definitions.find((w) => w.id === pin.id)?.contentHash !== pin.hash)
+      || d.dependencyHashes.operations.some((pin) => family.definitions.find((op) => op.id === pin.id)?.contentHash !== pin.hash)
+      || d.dependencyHashes.profiles.some((pin) => coordinationGraphs(content.coordinationRegistry).find((g) => g.id === pin.id)?.contentHash !== pin.hash)
+      || d.dependencyHashes.mysteries.some((pin) => mysteryDefinitionHash(content.registry, pin.id) !== pin.hash))
+      fail('director_definition_changed');
+  }
+  const byHash = new Map(allDefinitions.situations.map((d) => [d.contentHash, d]));
+  const campaignByHash = new Map(allDefinitions.campaigns.map((d) => [d.contentHash, d]));
+  const campaignSituation = (campaign, node) => {
+    const pin = campaign.situationHashes.find((s) => s.id === node.situationId), d = byHash.get(pin?.hash);
+    if (!d || d.id !== node.situationId) fail('director_definition_changed');
+    return d;
+  };
+  for (const campaign of allDefinitions.campaigns) for (const node of campaign.nodes) campaignSituation(campaign, node);
   const metrics = { activeSituations: 0, activeCampaigns: 0, generated: 0, resolved: 0, expired: 0,
     recovered: 0, errors: 0, selections: 0, selectionLatencyMs: 0, evaluationLatencyMs: 0, eventBacklog: 0 };
   const started = performance.now();
   const definitionFor = (row) => {
-    const d = byId.get(row.definition_id);
-    if (!d || d.version !== Number(row.definition_version) || d.contentHash !== row.definition_hash) fail('director_definition_changed');
+    const d = byHash.get(row.definition_hash);
+    if (!d || d.id !== row.definition_id || d.version !== Number(row.definition_version)) fail('director_definition_changed');
     return d;
   };
   const campaignFor = (row) => {
-    const d = campaignById.get(row.definition_id);
-    if (!d || d.version !== Number(row.definition_version) || d.contentHash !== row.definition_hash) fail('director_definition_changed');
+    const d = campaignByHash.get(row.definition_hash);
+    if (!d || d.id !== row.definition_id || d.version !== Number(row.definition_version)) fail('director_definition_changed');
     return d;
   };
 
@@ -101,7 +129,9 @@ export function createLivingWorldDirector({ pool, content, definitions, mode = '
         if (cards.length >= Math.min(limits.player, policy.perPlayer, a.crewId ? policy.perCrew : policy.perPlayer,
           a.familyId ? policy.perFamily : policy.perPlayer)) continue;
         const audienceIds = new Set(d.audiences.filter((audience) => audienceMatches(audience, a, row, hasKnowledge)).map((audience) => audience.id));
-        const signals = d.initialSignals.filter((signal) => audienceIds.has(signal.audienceId));
+        const signals = d.initialSignals.filter((signal) => audienceIds.has(signal.audienceId)
+          && (d.network?.information.find((info) => info.signalId === signal.id)?.layer !== 'LOCAL_RUMOR'
+            || kernel.definitions.find((world) => world.id === row.object_id)?.locationId === a.ch.loc));
         if (!signals.length) continue;
         const actionIds = new Set(signals.flatMap((signal) => signal.commandAdapterIds));
         const actions = d.commandAdapters.filter((adapter) => actionIds.has(adapter.id) && audienceIds.has(adapter.audienceId)).map((adapter) => {
@@ -115,7 +145,10 @@ export function createLivingWorldDirector({ pool, content, definitions, mode = '
             confirmation: { required: adapter.commandType === 'operation.create',
               message: adapter.commandType === 'operation.create' ? 'Organize this response with your Family?' : null } };
         });
+        const information = (d.network?.information || []).filter((entry) => signals.some((signal) => signal.id === entry.signalId))
+          .map(({ layer, whyKnown, stakes }) => ({ layer, whyKnown, stakes }));
         cards.push({ id: row.id, title: signals[0].title, description: signals[0].description,
+          ...(information.length ? { information, whyKnown: information[0].whyKnown, stakes: information[0].stakes } : {}),
           objective: signals[0].description, status: row.state, revision: Number(row.revision), expiresAt: new Date(row.expires_at).toISOString(),
           knownFacts: signals.map((signal) => signal.description), helpers: a.crewId ? ['Your Crew', ...(a.familyId ? ['Your Family'] : [])] : [], actions });
       }
@@ -133,9 +166,17 @@ export function createLivingWorldDirector({ pool, content, definitions, mode = '
     const audience = d.audiences.find((entry) => entry.id === adapter?.audienceId);
     const world = kernel.definitions.find((entry) => entry.id === row.object_id);
     if (!adapter || !audience || !world || (a.ch.loc !== world.locationId && a.familyId !== row.controller_family_id)) fail();
-    const canonical = (await client.query('SELECT revision,definition_hash FROM world_kernel_objects WHERE id=$1 FOR SHARE', [row.object_id])).rows[0];
+    // Acquire cross-object prerequisites in the same order as worker observation.
+    const canonicalRows = new Map();
+    for (const objectId of [row.object_id, ...(d.network?.relatedWorld || []).map((rule) => rule.objectId)].sort())
+      canonicalRows.set(objectId, (await client.query('SELECT state,revision,definition_hash FROM world_kernel_objects WHERE id=$1 FOR SHARE', [objectId])).rows[0]);
+    const canonical = canonicalRows.get(row.object_id);
     if (!canonical || Number(canonical.revision) !== Number(row.starting_world_revision)
       || canonical.definition_hash !== world.contentHash) fail();
+    for (const rule of d.network?.relatedWorld || []) {
+      const related = canonicalRows.get(rule.objectId), hash = d.dependencyHashes.relatedWorld.find((pin) => pin.id === rule.objectId)?.hash;
+      if (!related || related.definition_hash !== hash || !rule.states.includes(related.state)) fail();
+    }
     const ctx = await knowledge.context(client, { accountId, character: a.ch, lock: true });
     const known = !audience.knowledge || (await knowledge.matchesRequirements(client, ctx, [audience.knowledge]))[0];
     if (!audienceMatches(audience, a, row, () => known)) fail();
@@ -224,13 +265,14 @@ export function createLivingWorldDirector({ pool, content, definitions, mode = '
         if (prior) return { ...parse(prior.result_json), replayed: true };
         const last = (await client.query("SELECT evaluated_at FROM director_clock WHERE id='global'")).rows[0];
         if (at < new Date(last.evaluated_at).getTime()) fail('director_clock_regression');
-        if (exposed) await admitDefinitions(client, definitions);
+        if (exposed) await admitDefinitions(client, allDefinitions);
         // Pin each physical object through lifecycle/branch commit. Without this
         // lock an operation could settle between fact and event reads, making a
         // valid campaign branch look impossible under the earlier facts.
-        for (const objectId of [...new Set(definitions.situations.map((d) => d.objectId))].sort())
+        const observedIds = [...new Set(allDefinitions.situations.flatMap((d) => [d.objectId, ...(d.network?.relatedWorld || []).map((rule) => rule.objectId)]))].sort();
+        for (const objectId of observedIds)
           await client.query('SELECT id FROM world_kernel_objects WHERE id=$1 FOR SHARE', [objectId]);
-        const facts = await observeDirectorWorld(client, worldContent, definitions.situations.map((d) => d.objectId), at);
+        const facts = await observeDirectorWorld(client, worldContent, observedIds, at, allDefinitions.situations);
         const factByObject = new Map(facts.map((f) => [f.objectId, f]));
         let active = (await client.query('SELECT * FROM director_situations WHERE terminal=false ORDER BY created_at,id LIMIT 33')).rows;
         let campaigns = (await client.query("SELECT * FROM director_campaigns WHERE status='active' ORDER BY created_at,id LIMIT 33")).rows;
@@ -296,8 +338,9 @@ export function createLivingWorldDirector({ pool, content, definitions, mode = '
                   'priorWorldAction', 'priorOutcome'].includes(rule.fact));
                 let caughtUp = false;
                 if (historicalFacts) for (const edge of d.branches.filter((b) => b.from === campaign.node_id && b.outcome === current.outcome)) {
-                  const node = d.nodes.find((n) => n.id === edge.to), target = byId.get(node.situationId);
+                  const node = d.nodes.find((n) => n.id === edge.to), target = campaignSituation(d, node);
                   if (target.objectId !== campaign.object_id || !canonicalOnly(edge.when)
+                    || target.network?.relatedWorld.length
                     || !canonicalOnly([...target.eligibility, ...target.requiredWorldFacts, ...target.excludedWorldFacts])
                     || !predicatesMatch(edge.when, historicalFacts) || !predicatesMatch(target.eligibility, historicalFacts)
                     || !predicatesMatch(target.requiredWorldFacts, historicalFacts)
@@ -340,14 +383,14 @@ export function createLivingWorldDirector({ pool, content, definitions, mode = '
             }
             if (!current || current.terminal) {
               const node = d.nodes.find((n) => n.id === campaign.node_id);
-              candidates.push({ definition: byId.get(node.situationId), facts: f, campaignDefinition: d,
+              candidates.push({ definition: campaignSituation(d, node), facts: f, campaignDefinition: d,
                 campaignId: campaign.id, nodeId: node.id });
             }
           }
         }
         const currentCampaigns = exposed ? (await client.query("SELECT * FROM director_campaigns WHERE status='active' ORDER BY created_at,id LIMIT 33")).rows : campaigns;
         for (const campaign of definitions.campaigns) {
-          let node = campaign.nodes.find((n) => n.id === campaign.entryNode), d = byId.get(node.situationId);
+          let node = campaign.nodes.find((n) => n.id === campaign.entryNode), d = campaignSituation(campaign, node);
           const f = factByObject.get(d.objectId);
           if (currentCampaigns.some((c) => c.object_id === d.objectId) || currentCampaigns.length >= limits.campaigns
             || currentCampaigns.filter((c) => c.definition_id === campaign.id).length >= campaign.maxActive) continue;
@@ -364,14 +407,14 @@ export function createLivingWorldDirector({ pool, content, definitions, mode = '
           // its eligible aftermath, never rewinds a captured/protected route.
           let recoveryOf = null;
           if (lastCampaign?.status === 'abandoned' && f && !situationEligible(d, f)) {
-            const resume = campaign.nodes.find((n) => n.id === lastCampaign.node_id && situationEligible(byId.get(n.situationId), f));
-            if (resume) { node = resume; d = byId.get(node.situationId); recoveryOf = lastCampaign.id; }
+            const resume = campaign.nodes.find((n) => n.id === lastCampaign.node_id && situationEligible(campaignSituation(campaign, n), f));
+            if (resume) { node = resume; d = campaignSituation(campaign, node); recoveryOf = lastCampaign.id; }
           }
           candidates.push({ definition: d, facts: f, campaignDefinition: campaign, nodeId: node.id, recoveryOf });
         }
         // Aggregate-free bounded history: saturating fails closed, never silently
         // drops older cooldown evidence to allow more generation.
-        const window = Math.max(...definitions.situations.map((d) => d.cooldownPolicy.repetitionWindowSeconds), 86400);
+        const window = Math.max(...allDefinitions.situations.map((d) => d.cooldownPolicy.repetitionWindowSeconds), 86400);
         const history = (await client.query('SELECT * FROM director_situations WHERE created_at >= $1 ORDER BY created_at DESC,id LIMIT 2049',
           [new Date(at - window * 1000)])).rows;
         if (history.length > 2048) fail('director_history_limit');

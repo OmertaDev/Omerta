@@ -6,7 +6,7 @@ import { WORLD_KERNEL_REGISTRY, WORLD_KERNEL_OBJECTS, WORLD_KERNEL_RECIPE } from
 import { COORDINATION_OPERATION_PILOT } from './coordination-operation-pilot.js';
 import { COORDINATION_ALL_PILOTS } from '../coordination/pilot.js';
 import { createCoordinationRegistry, coordinationGraphs } from '../coordination/graph.js';
-import { createDockWarContent } from './dock-war.js';
+import { createCampaignNetworkContent } from './campaign-network.js';
 
 const legacy = Object.freeze({ registry: WORLD_KERNEL_REGISTRY, objects: WORLD_KERNEL_OBJECTS,
   operations: COORDINATION_OPERATION_PILOT, recipeIds: Object.freeze([WORLD_KERNEL_RECIPE]),
@@ -30,8 +30,9 @@ export function coreProgressionContent() {
   }
   if (!['LIMITED_COHORT', 'LIVE'].includes(process.env.LIVING_WORLD_DIRECTOR)) return admitted;
   if (!directorAdmitted) {
-    const dock = createDockWarContent(admitted);
+    const dock = createCampaignNetworkContent(admitted);
     directorAdmitted = Object.freeze({ ...admitted, registry: dock.registry, directorContent: dock,
+      consequencePolicies: dock.consequencePolicies,
       objects: Object.freeze([...admitted.objects, ...dock.objects]),
       operations: Object.freeze([...admitted.operations, ...dock.operations]),
       recipeIds: Object.freeze([...admitted.recipeIds, ...dock.recipeIds]),

@@ -270,7 +270,9 @@ try {
   const bounded = await snapshot();
   assert.equal(bounded.vehicles.length, 20); assert.equal(bounded.vehiclesTruncated, true);
   assert(bounded.commands.length <= 128); assert(bounded.opportunities.length <= 80);
-  assert(bounded.opportunities.every((entry, index, array) => index === 0 || array[index - 1].priority >= entry.priority));
+  assert(bounded.opportunities.every((entry) => !Object.hasOwn(entry, 'priority') && !Object.hasOwn(entry, 'score')));
+  assert.deepEqual(bounded.opportunityGroups.flatMap((group) => group.opportunityIds).sort(),
+    bounded.opportunities.map((entry) => entry.opportunityId).sort());
   check('indexed entity window, command/opportunity caps and deterministic relevance ranking');
   console.log(`player-commands: ${passed.length} groups passed (${postgres ? 'PostgreSQL' : 'memory'})`);
 } finally { await database.cleanup(pool); }

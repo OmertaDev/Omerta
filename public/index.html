@@ -1206,6 +1206,11 @@
   .world-command-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
   .world-command-heading small { font-size: 10px; letter-spacing: .06em; }
   .world-command button { margin-top: 8px; }
+  .world-opportunity-group { margin: 16px 0; }
+  .world-opportunity-group > h4 { letter-spacing: .08em; text-transform: uppercase; color: var(--gold); }
+  .world-opportunity-requirements { margin: 10px 0; padding-left: 20px; font-size: 13px; line-height: 1.6; }
+  .world-opportunity-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .world-opportunity-actions .act { max-width: 100%; white-space: normal; min-height: 44px; }
   .world-actions, .world-readiness { display: flex; flex-wrap: wrap; gap: 8px 12px; margin: 12px 0; }
   .world-readiness { font-size: 12px; }
   .world-ready { color: var(--ok); }
@@ -4925,9 +4930,36 @@
         <button class="act" data-world-move="${index}" ${!available || !command.executionIdentity?.executionId || worldBusy || worldRetry ? 'disabled' : ''}>${esc(command.label)}</button></div>`;
     };
     const contextual = (type, id) => commands.filter((command) => [command.subject, command.target].some((ref) => ref?.type === type && ref.id === id)).map(commandCard).join('');
+    const remainingTime = (seconds) => seconds === 0 ? 'This window has closed.' : seconds < 60 ? 'Less than a minute remains.'
+      : seconds < 3600 ? `${Math.ceil(seconds / 60)} minutes remain.` : seconds < 86400 ? `${Math.ceil(seconds / 3600)} hours remain.` : `${Math.ceil(seconds / 86400)} days remain.`;
+    const opportunityMoves = (opportunity) => commands.filter((command) => (opportunity.commandIds || []).includes(command.commandId)).map((command) => {
+      const index = moves.push(command) - 1;
+      return `<button class="act" data-world-move="${index}" ${command.availability !== 'AVAILABLE' || !command.executionIdentity?.executionId || worldBusy || worldRetry ? 'disabled' : ''}>${esc(command.label)}</button>`;
+    }).join('');
     const opportunityCard = (opportunity) => `<article class="world-entry"><h4>${esc(opportunity.label)}</h4>
       ${opportunity.description && opportunity.description !== opportunity.label ? `<p class="dim">${esc(opportunity.description)}</p>` : ''}
-      <small class="dim">${esc(name(opportunity.kind))} · ${esc(name(opportunity.availability))}</small></article>`;
+      ${opportunity.whyKnown ? `<small class="dim">${esc(opportunity.whyKnown)}</small>` : ''}
+      ${opportunity.whyItMatters ? `<p>${esc(opportunity.whyItMatters)}</p>` : ''}
+      ${opportunity.requirements?.length ? `<ul class="world-opportunity-requirements">${opportunity.requirements.map((entry) => `<li>${entry.status === 'SATISFIED' ? '✓ In place: ' : entry.status === 'MISSING' ? 'Still needed: ' : ''}${esc(entry.description)}</li>`).join('')}</ul>` : ''}
+      ${opportunity.peopleNeeded ? '<p class="dim">Other people are needed for this work.</p>' : ''}
+      ${opportunity.helpers?.length ? `<p class="dim">Who can help: ${esc(opportunity.helpers.map(prose).filter(Boolean).join(' · '))}</p>` : ''}
+      ${opportunity.progress?.description ? `<small class="dim">${esc(opportunity.progress.description)}${opportunity.progress.total > 0 ? ` · ${esc(opportunity.progress.completed)} / ${esc(opportunity.progress.total)}` : ''}</small>` : ''}
+      ${opportunity.timeRemainingSeconds != null ? `<small class="${opportunity.category === 'URGENT' ? 'world-ready' : 'dim'}">${esc(remainingTime(opportunity.timeRemainingSeconds))}</small>` : ''}
+      ${opportunity.risk?.length ? `<p class="dim">${esc(opportunity.risk.map(prose).filter(Boolean).join(' · '))}</p>` : ''}
+      <div class="world-opportunity-actions">${opportunityMoves(opportunity)}</div></article>`;
+    const opportunityGroups = board?.opportunityGroups?.length ? board.opportunityGroups
+      : opportunities.length ? [{ category: 'WORLD', opportunityIds: opportunities.map((entry) => entry.opportunityId) }] : [];
+    const attention = opportunityGroups.map((group) => {
+      const entries = opportunities.filter((entry) => group.opportunityIds.includes(entry.opportunityId));
+      return entries.length ? `<div class="world-opportunity-group"><h4>${esc(name(group.category).toLowerCase())}</h4>${entries.slice(0, 2).map(opportunityCard).join('')}
+        ${entries.length > 2 ? `<details><summary>${entries.length - 2} more pieces of business</summary>${entries.slice(2).map(opportunityCard).join('')}</details>` : ''}</div>` : '';
+    }).join('');
+    const consequenceMoves = (event) => {
+      const related = opportunities.filter((entry) => (event.opportunityIds || []).includes(entry.opportunityId));
+      return related.length ? `<small class="dim">Related business</small><div class="world-opportunity-actions">${related.map(opportunityMoves).join('')}</div>` : '';
+    };
+    const compactCommands = (entries, count, empty) => list(entries.slice(0, count), commandCard, empty)
+      + (entries.length > count ? `<details><summary>${entries.length - count} more moves</summary>${entries.slice(count).map(commandCard).join('')}</details>` : '');
     const selected = board?.operations?.selected, selectedCase = board?.cases?.selected, caseCatalog = board?.cases?.catalog || [];
     const readinessLabels = { rolesFilled: 'Roles filled', participantsEligible: 'Participants eligible', promisesMet: 'Promises made',
       contributionsMet: 'Contributions delivered', requirementsMet: 'Requirements met', worldReady: 'World ready', approved: 'Approved', ready: 'Ready to execute' };
@@ -4946,14 +4978,19 @@
       <div class="world-summary"><span>${esc(board.player?.character?.name || me?.name || '')} · ${esc(name(board.player?.character?.locationId))}</span>
         <span>Crew: ${esc(board.crew?.name || 'None')}</span><span>Family: ${esc(board.family?.name || 'None')}</span>
         <small class="dim">Updated ${esc(time(board.asOf))}</small></div>
-      ${limited(board.truncated) || limited(board.inventory?.truncated) || board.knowledge?.truncated || board.operations?.truncated || board.commandsTruncated || board.opportunitiesTruncated || board.vehiclesTruncated
+      ${limited(board.truncated) || limited(board.inventory?.truncated) || board.knowledge?.truncated || board.operations?.truncated || board.commandsTruncated || board.opportunitiesTruncated || board.vehiclesTruncated || board.consequencesTruncated
         ? '<p class="dim">This is a limited view of your available records.</p>' : ''}
       <div class="world-columns"><div class="world-column">
       <section class="world-card"><h3>What changed?</h3>
         ${worldFeedback ? `<div class="world-notice" role="status"><b>${esc(worldFeedback.immediateResult?.label || 'Your move was recorded.')}</b>
           <p>${esc(Object.entries(feedbackLabels).filter(([key]) => worldFeedback[key]?.length).map(([key, label]) => `${worldFeedback[key].length} ${label}`).join(' · '))}</p>
           ${worldFeedback.refreshRequired ? '<p class="dim">Your move is recorded. Refresh to confirm the latest consequences.</p>' : ''}</div>` : ''}
-        ${list(board.activity, (event) => `<p>${esc(name(event.kind))}<small class="dim"> ${esc(time(event.occurredAt))}</small></p>`, 'No recent visible activity. The street is quiet.')}</section>
+        ${list(board.consequences?.slice(0, 6), (event) => `<article class="world-entry"><p>${esc(event.description)}</p>
+          <small class="dim">${esc(event.whyKnown)} · ${esc(time(event.occurredAt))}</small>
+          ${event.cause ? `<p class="dim">${esc(event.cause)}</p>` : ''}
+          ${event.remainsActive ? '<small class="dim">This change still shapes the street.</small>' : ''}${consequenceMoves(event)}</article>`, 'No recent world changes have reached you.')}
+        ${board.consequences?.length > 6 ? `<details><summary>Earlier changes</summary>${board.consequences.slice(6).map((event) => `<p>${esc(event.description)}<small class="dim">${esc(event.whyKnown)} · ${esc(time(event.occurredAt))}</small></p>`).join('')}</details>` : ''}
+        ${board.activity?.length ? `<details><summary>Your equipment history</summary>${list(board.activity, (event) => `<p>${esc(name(event.kind))}<small class="dim"> ${esc(time(event.occurredAt))}</small></p>`, '')}</details>` : ''}</section>
       ${board.situations?.length ? `<section class="world-card"><h3>What is happening around us?</h3>
         ${board.situations.slice(0, 24).map((situation) => `<article class="world-entry"><h4>${esc(situation.title)}</h4>
           <p>${esc(situation.description)}</p>
@@ -4964,12 +5001,11 @@
           ${situation.outcome ? `<p><b>Aftermath:</b> ${esc(prose(situation.outcome))}</p>` : ''}
           ${contextual('situation', situation.id)}</article>`).join('')}</section>` : ''}
       <section class="world-card"><h3>What needs my attention?</h3>
-        ${list(opportunities.slice(0, 5), opportunityCard, 'No new leads are on your desk.')}
-        ${opportunities.length > 5 ? `<details><summary>${opportunities.length - 5} more pieces of business</summary>${opportunities.slice(5).map(opportunityCard).join('')}</details>` : ''}</section>
+        ${attention || '<p class="dim">No new leads are on your desk.</p>'}</section>
       <section class="world-card"><h3>What can I do?</h3>
-        ${list(commands.filter((command) => command.availability === 'AVAILABLE'), commandCard, 'No moves are ready. Review your cases and waiting business below.')}</section></div><div class="world-column">
+        ${compactCommands(commands.filter((command) => command.availability === 'AVAILABLE'), 6, 'No moves are ready. Review your cases and waiting business below.')}</section></div><div class="world-column">
       <section class="world-card"><h3>What am I waiting for?</h3>
-        ${list(commands.filter((command) => ['BLOCKED', 'LOCKED', 'IN_PROGRESS'].includes(command.availability)), commandCard, 'Nothing is waiting on this board.')}
+        ${compactCommands(commands.filter((command) => ['BLOCKED', 'LOCKED', 'IN_PROGRESS'].includes(command.availability)), 4, 'Nothing is waiting on this board.')}
         ${commands.some((command) => ['EXPIRED', 'COMPLETED'].includes(command.availability)) ? `<details><summary>Closed business</summary>${commands.filter((command) => ['EXPIRED', 'COMPLETED'].includes(command.availability)).map(commandCard).join('')}</details>` : ''}</section>
       <section class="world-card"><h3>What is my Crew doing?</h3>
         ${board.crew ? `<h4>${esc(board.crew.name)}</h4><p>${esc((board.crew.members || []).map((member) => member.name).join(' · '))}</p>

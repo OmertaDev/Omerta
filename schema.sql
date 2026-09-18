@@ -7158,6 +7158,9 @@ CREATE TABLE IF NOT EXISTS world_kernel_events (
   UNIQUE (mutation_id)
 );
 
+CREATE INDEX IF NOT EXISTS ix_world_kernel_event_visibility
+  ON world_kernel_events(object_id,next_state,definition_hash,occurred_at DESC,revision DESC);
+
 -- Collective Family operations extend the existing operation authority. Legacy Crew runs
 -- retain their original identity and lifecycle; Family runs pin a separate immutable blueprint.
 ALTER TABLE world_operations ADD COLUMN IF NOT EXISTS coordination_mode TEXT NOT NULL DEFAULT 'crew';
@@ -7343,6 +7346,7 @@ CREATE TABLE IF NOT EXISTS director_action_intents (
 );
 CREATE INDEX IF NOT EXISTS ix_director_intents_situation ON director_action_intents(situation_id,account_id);
 CREATE INDEX IF NOT EXISTS ix_director_claim_observation ON coordination_claims(discovered_at,source_root);
+CREATE INDEX IF NOT EXISTS ix_director_resolved_operations ON world_operations(family_id,coordination_mode,resolved_at DESC,id);
 
 CREATE TABLE IF NOT EXISTS player_command_boards (
   id TEXT PRIMARY KEY,

@@ -1,0 +1,2310 @@
+{
+  "schemaVersion": 1,
+  "status": "source verification passed; generated knowledge checkpoint requires clean-tree verification",
+  "capturedAt": "2026-09-18T18:30:43.753Z",
+  "pathsRelativeTo": "repository root",
+  "source": {
+    "baseRevision": "621cfbb4070e0fded63ce0a0a7fc91e7b00a2b4e",
+    "headRevision": "621cfbb4070e0fded63ce0a0a7fc91e7b00a2b4e",
+    "phase": "disabled implementation; no deployment or production activation",
+    "workingTree": "modified",
+    "hashScope": "Changed and new implementation, test, tool, UI, schema and package files; unchanged dependencies are pinned by the base. Documentation, generated output and this package are excluded.",
+    "codeHashes": {
+      "package.json": "77de9364580c07e75c9768d7ab77158de24b372812caf2130f397c7147479d58",
+      "public/index.html": "0f647ab873b8b12963bce54b963c369f4ac7b2e63f73af3de9c3e428c0ca8bfb",
+      "schema.sql": "ffef6ed747ca21e61e218aa1f743d99bba36c3a18852e80d468e31f10ca7a01a",
+      "src/content/campaign-network.js": "9df353f3d4fefde32b44a410fd367cbd474fd2c23e3fbd2b4a9409789c00e1aa",
+      "src/content/core-progression.js": "9fefa5299f80fd8da29b7e483afccf86081ed9b0a4b6b1a22171217cf55cbc36",
+      "src/director/campaign-network.js": "518b1779963179e67714e3391f5d2b6ebc88b4e6e94b7701ab55f8fde98f76a3",
+      "src/director/config.js": "2d7f367368974f5816609498bd401e8ea142ec99a98704927f376a7c68e05978",
+      "src/director/definitions.js": "c779234783f36f60d43e340bc8acd73a0e6c71f76f85aca3f29b705d0e434f53",
+      "src/director/memory.js": "9b4827a7342aed209612da44c672c76eb00cb6b825fa8f864743c98d0260fc88",
+      "src/director/pressures.js": "8d3503af37ab0060a6f0175ab45e3294dd51bb027e69ddd6b42ccb178bfd90e3",
+      "src/director/runtime.js": "5ae4168c385221e837d70fb67b3b34cf0863f343c2c6ae7bbacada9426359eb4",
+      "src/director/selection.js": "8106e1d61a2a163b1442179680f5973c36cba88989a4e29f8dc216f472376d2e",
+      "src/player-commands.js": "28b69a423c780d4b947578893b9759270025926b9847c4f848495edb21a778b7",
+      "src/player-opportunities.js": "1a077fca4f67bf5e80fcfe1d8b14cd67ee542027657195eaec1c6865ad192453",
+      "src/routes/projections.js": "3861508d40c4fda557cc8c01b09e035def8203b7f5225ce87336edde542a63bd",
+      "src/world-consequences.js": "fb1783a7db257d8cfd038961d244e3ad2370d911a2bde5198d9890fec3a0fd67",
+      "src/world-projection.js": "c0407a72247930605b44b5c7c4f4b4b61283d5c1f1d00d10b8104403cdec7184",
+      "test/campaign-network-journey.js": "f11dcabf79e74ab5fbb8d953d0804dd6e370ac0eec8cb79feb23b70eac3d41d8",
+      "test/director-api.js": "154aef3bf57a11e58c7ee658e78a9ab3b8819fe71dddee9ff3017a64077700bc",
+      "test/director-commands.js": "7a58dec29c8b03e6c12a609118dee89807f69e109a37fc5b6be39c564b311ced",
+      "test/director-migration.js": "cb2fddf4c9aa8684ec18af9221cd8ea5be59423ca8b0a5727e0a274cc61547b0",
+      "test/director-network-recovery.js": "badaf1387afac73b1bb1b945a71c0f31ba5d41dd388c6e6d4fea802f42b6c111",
+      "test/director-network.js": "0482835dc192e8dc4674dbf4b0659b8d6abe8f747cf3784e0ef558db2a93a930",
+      "test/director-simulation.js": "3069edf24eb7a70b886ee7828d4c200b829297ae7aa11563444101e7e35c430c",
+      "test/lib/campaign-network-support.js": "aeb77f96eae6d55a2011ed63f14724e6659738892c533ea00365007f3224844a",
+      "test/lib/director-support.js": "1688f2bbabcd953958d5c6633698ae41fca452e7e5b9727f6169b8b3d6004678",
+      "test/player-command-client.js": "a4836e3912ffd7d18a04b6bee0fbb4a99f062f4cbe26fc84374060c2db1c8aaa",
+      "test/player-commands.js": "9867436dc657fc1509b4a1ae550203f6898ea1e734a199fd7df344ca853dfb08",
+      "test/player-opportunities.js": "d4a7fac09eb7ee136689336b5dc5688d7da103b1b3bd255c50d001e4e017cd74",
+      "test/world-consequences.js": "e0e055f20877e4ebc3e38bfad459a3d4462007376f1c614fb084c96052ba5302",
+      "test/world-projection.js": "1b6329c9cb7e9dec70bce5a76659dc9af6c71411021e81bf93b5bd418bb722e2",
+      "tools/campaign-network-sim.js": "25515a1ea8fb042dbfba05bb9bc286439e610eca0e55fc41a23ec308a2cded6e",
+      "tools/director-sim.js": "65a41febce3575c9f87dab6ebfabc89fa0889b09a323ab10a4a59ce845b175a5",
+      "tools/director-validate.js": "92bf0b4061d95ce7bd70ab8993fc19e5d2e86f6f4136c11d0a292e88f8e3a269"
+    },
+    "fingerprint": "24251a928e393d44d30f6c7be9f794b00d68f1f107a2cd8eadd737713bd3b4e6"
+  },
+  "tools": {
+    "node": "v24.19.0",
+    "npm": "11.17.0",
+    "postgres": "18.4 (server_version_num 180004)",
+    "pg": "8.22.0",
+    "pgMem": "3.0.14",
+    "playwrightCore": "1.62.0",
+    "chrome": "153.0.8010.48",
+    "platform": "Windows; PowerShell",
+    "note": "Installed versions observed while packaging; browser logs establish executed checks."
+  },
+  "isolation": {
+    "database": "New disposable PostgreSQL cluster under output/campaign-network/postgres; loopback127.0.0.1:55439; fresh per-test schemas",
+    "environment": "Domain test commands leave DATABASE_URL empty, remove inherited test database/PG variables, and use explicit loopback test URLs. SQL preparation/migration tools use the same disposable loopback cluster. Native wrapper arguments retain --postgres.",
+    "maxLocksPerTransaction": 512,
+    "productionFlagsActivated": false,
+    "contractsDeployed": false,
+    "productionDataModified": false,
+    "scratchClusterStoppedAfterNativeTests": true
+  },
+  "baseline": {
+    "revision": "621cfbb4070e0fded63ce0a0a7fc91e7b00a2b4e",
+    "memory": {
+      "passed": 57,
+      "failed": 0,
+      "commands": [
+        "node test/director-config.js",
+        "node test/director-definitions.js",
+        "node test/director-runtime.js",
+        "node test/director-commands.js",
+        "node test/director-dock-world.js",
+        "node test/director-recovery.js",
+        "node test/director-api.js",
+        "node test/director-security.js",
+        "node test/director-simulation.js",
+        "node test/player-commands.js",
+        "node test/player-command-api.js",
+        "node test/player-command-client.js",
+        "node test/world-knowledge-crafting.js",
+        "node test/world-kernel-query.js",
+        "node test/world-kernel-input.js",
+        "node test/world-kernel.js",
+        "node test/world-kernel-api.js",
+        "node test/world-projection-read.js",
+        "node test/director-journey.js",
+        "node test/world-projection.js",
+        "node test/world-projection-api.js",
+        "node test/projection-events.js",
+        "node test/world-projection-client.js",
+        "node test/player-command-journey.js",
+        "node test/world-projection-mysteries.js",
+        "node test/projection-events-ws.js",
+        "node test/coordination-graph.js",
+        "node test/world-projection-mysteries-api.js",
+        "node test/operation-read-paths.js",
+        "node test/coordination.js",
+        "node test/coordination-api.js",
+        "node test/coordination-http-receipts.js",
+        "node test/coordination-knowledge.js",
+        "node test/coordination-operation-definitions.js",
+        "node test/coordination-knowledge-runtime.js",
+        "node test/coordination-knowledge-api.js",
+        "node test/coordination-mode-boundary.js",
+        "node test/coordination-capital.js",
+        "node test/coordination-knowledge-proof.js",
+        "node test/coordination-materials.js",
+        "node test/world-kernel-transaction.js",
+        "node test/progression-admission.js",
+        "node test/world-prerequisites.js",
+        "node test/family-operations-api.js",
+        "node test/recipe-policy.js",
+        "node test/family-operations.js",
+        "node test/mysteries.js",
+        "node test/core-progression-api.js",
+        "node test/crafting.js",
+        "node test/furnace-ledger.js",
+        "node test/content-crafting.js",
+        "node test/content-crafting-tools.js",
+        "node test/content-crafting-jobs.js",
+        "node test/items.js",
+        "node tools/director-validate.js",
+        "node test/discovery.js",
+        "node test/economy.js"
+      ],
+      "manifest": {
+        "path": "output/campaign-network/baseline/memory-manifest.json",
+        "sha256": "4424c48d93216d155b45aa47f70a379586c2e41f6ab092319423fa0a2abb3186"
+      }
+    },
+    "native": {
+      "passed": 33,
+      "failed": 0,
+      "commands": [
+        "node test/director-runtime.js --postgres",
+        "node test/director-dock-world.js --postgres",
+        "node test/director-commands.js --postgres",
+        "node test/director-recovery.js --postgres",
+        "node test/director-api.js --postgres",
+        "node test/director-security.js --postgres",
+        "node test/director-migration.js --postgres",
+        "node test/director-journey.js --postgres",
+        "node test/player-commands.js --postgres",
+        "node test/player-command-journey.js --postgres",
+        "node test/world-kernel-query.js --postgres",
+        "node test/world-knowledge-crafting.js --postgres",
+        "node test/world-kernel.js --postgres",
+        "node test/world-kernel-migration.js --postgres",
+        "node test/world-projection-read.js --postgres",
+        "node test/projection-events.js --postgres",
+        "node test/world-projection.js --postgres",
+        "node test/world-projection-mysteries.js --postgres",
+        "node test/operation-read-paths.js --postgres",
+        "node test/coordination.js --postgres",
+        "node test/coordination-knowledge-runtime.js --postgres",
+        "node test/coordination-knowledge-postgres.js",
+        "node test/coordination-capital.js --postgres",
+        "node test/coordination-materials.js --postgres",
+        "node test/coordination-knowledge-proof.js --postgres",
+        "node test/world-kernel-transaction.js --postgres",
+        "node test/family-operation-migration.js --postgres",
+        "node test/family-operations.js --postgres",
+        "node test/family-operation-concurrency.js --postgres",
+        "node test/world-prerequisites.js --postgres",
+        "node test/recipe-policy.js --postgres",
+        "node test/core-progression-migration.js --postgres",
+        "node test/furnace-ledger.js --postgres"
+      ],
+      "manifest": {
+        "path": "output/campaign-network/baseline/postgres-manifest.json",
+        "sha256": "5413f19834f24ecc81e0e8e3dc5a9ec646850dbbbd0ef8e111793059f115c76c"
+      },
+      "source": "Untouched baseline worktree while implementation continued separately"
+    },
+    "summary": "output/campaign-network/baseline/README.txt"
+  },
+  "finalAffected": {
+    "native": {
+      "passed": 30,
+      "failed": 0,
+      "results": [
+        {
+          "command": "node test/director-runtime.js --postgres",
+          "exitCode": 0,
+          "log": "output/campaign-network/final-native/director-runtime.log"
+        },
+        {
+          "command": "node test/director-dock-world.js --postgres",
+          "exitCode": 0,
+          "log": "output/campaign-network/final-native/director-dock-world.log"
+        },
+        {
+          "command": "node test/director-commands.js --postgres",
+          "exitCode": 0,
+          "log": "output/campaign-network/final-native/director-commands.log"
+        },
+        {
+          "command": "node test/director-recovery.js --postgres",
+          "exitCode": 0,
+          "log": "output/campaign-network/final-native/director-recovery.log"
+        },
+        {
+          "command": "node test/director-api.js --postgres",
+          "exitCode": 0,
+          "log": "output/campaign-network/final-native/director-api.log"
+        },
+        {
+          "command": "node test/director-security.js --postgres",
+          "exitCode": 0,
+          "log": "output/campaign-network/final-native/director-security.log"
+        },
+        {
+          "command": "node test/director-migration.js --postgres",
+          "exitCode": 0,
+          "log": "output/campaign-network/final-native/director-migration-retest.log"
+        },
+        {
+          "command": "node test/director-network.js --postgres",
+          "exitCode": 0,
+          "log": "output/campaign-network/final-native/director-network-resolved-window.log"
+        },
+        {
+          "command": "node test/director-journey.js --postgres",
+          "exitCode": 0,
+          "log": "output/campaign-network/final-native/director-journey.log"
+        },
+        {
+          "command": "node test/director-network-recovery.js --postgres",
+          "exitCode": 0,
+          "log": "output/campaign-network/final-native/director-network-recovery.log"
+        },
+        {
+          "command": "node test/campaign-network-journey.js --postgres",
+          "exitCode": 0,
+          "log": "output/campaign-network/final-native/campaign-network-journey.log"
+        },
+        {
+          "command": "node test/player-commands.js --postgres",
+          "exitCode": 0,
+          "log": "output/campaign-network/final-native/player-commands.log"
+        },
+        {
+          "command": "node test/world-consequences.js --postgres",
+          "exitCode": 0,
+          "log": "output/campaign-network/final-native/world-consequences.log"
+        },
+        {
+          "command": "node test/world-projection-read.js --postgres",
+          "exitCode": 0,
+          "log": "output/campaign-network/final-native/world-projection-read.log"
+        },
+        {
+          "command": "node test/world-projection.js --postgres",
+          "exitCode": 0,
+          "log": "output/campaign-network/final-native/world-projection.log"
+        },
+        {
+          "command": "node test/player-command-journey.js --postgres",
+          "exitCode": 0,
+          "log": "output/campaign-network/final-native/player-command-journey.log"
+        },
+        {
+          "command": "node test/projection-events.js --postgres",
+          "exitCode": 0,
+          "log": "output/campaign-network/final-native/projection-events.log"
+        },
+        {
+          "command": "node test/world-projection-mysteries.js --postgres",
+          "exitCode": 0,
+          "log": "output/campaign-network/final-native/world-projection-mysteries.log"
+        },
+        {
+          "command": "node test/operation-read-paths.js --postgres",
+          "exitCode": 0,
+          "log": "output/campaign-network/final-native/operation-read-paths.log"
+        },
+        {
+          "command": "node test/world-knowledge-crafting.js --postgres",
+          "exitCode": 0,
+          "log": "output/campaign-network/final-native/world-knowledge-crafting.log"
+        },
+        {
+          "command": "node test/world-kernel-query.js --postgres",
+          "exitCode": 0,
+          "log": "output/campaign-network/final-native/world-kernel-query.log"
+        },
+        {
+          "command": "node test/world-kernel.js --postgres",
+          "exitCode": 0,
+          "log": "output/campaign-network/final-native/world-kernel.log"
+        },
+        {
+          "command": "node test/world-kernel-migration.js --postgres",
+          "exitCode": 0,
+          "log": "output/campaign-network/final-native/world-kernel-migration.log"
+        },
+        {
+          "command": "node test/coordination-capital.js --postgres",
+          "exitCode": 0,
+          "log": "output/campaign-network/final-native/coordination-capital.log"
+        },
+        {
+          "command": "node test/coordination-materials.js --postgres",
+          "exitCode": 0,
+          "log": "output/campaign-network/final-native/coordination-materials.log"
+        },
+        {
+          "command": "node test/coordination-knowledge-proof.js --postgres",
+          "exitCode": 0,
+          "log": "output/campaign-network/final-native/coordination-knowledge-proof.log"
+        },
+        {
+          "command": "node test/world-kernel-transaction.js --postgres",
+          "exitCode": 0,
+          "log": "output/campaign-network/final-native/world-kernel-transaction.log"
+        },
+        {
+          "command": "node test/family-operation-migration.js --postgres",
+          "exitCode": 0,
+          "log": "output/campaign-network/final-native/family-operation-migration.log"
+        },
+        {
+          "command": "node test/family-operations.js --postgres",
+          "exitCode": 0,
+          "log": "output/campaign-network/final-native/family-operations.log"
+        },
+        {
+          "command": "node test/family-operation-concurrency.js --postgres",
+          "exitCode": 0,
+          "log": "output/campaign-network/final-native/family-operation-concurrency.log"
+        }
+      ],
+      "manifest": {
+        "path": "output/campaign-network/final-native/manifest.json",
+        "sha256": "7103555801b68293b91f902bc732b4a5c0d928389bc10a8738381917a73ec41f"
+      }
+    },
+    "supplemental": [
+      {
+        "command": "node test/director-network.js --postgres",
+        "exitCode": 0,
+        "log": "output/campaign-network/final-native/director-network-resolved-window.log",
+        "coverage": "Actual failed operation; observer clock places creation outside seven-day window while resolution remains inside; canonical timestamps and resources unchanged"
+      },
+      {
+        "command": "node test/director-network.js",
+        "exitCode": 0,
+        "log": "output/campaign-network/network-final-memory.txt"
+      },
+      {
+        "command": "node test/director-definitions.js",
+        "exitCode": 0,
+        "rejectionChecks": 53,
+        "log": "output/campaign-network/definitions-final-memory.txt"
+      },
+      {
+        "command": "node test/campaign-network-journey.js --postgres",
+        "exitCode": 0,
+        "groups": 6,
+        "log": "output/campaign-network/gold-journeys-native.txt",
+        "coverage": "Final authored journeys and mystery enumeration correction"
+      }
+    ],
+    "laterChange": "src/director/definitions.js pressure-fact bounds changed after the original native runs. Root reran the memory compiler and network suites successfully on that change. The30-file native result is retained as executed, not represented as a complete native rerun after this later bound adjustment."
+  },
+  "simulation": {
+    "commands": [
+      {
+        "command": "node test/director-simulation.js",
+        "exitCode": 0,
+        "log": "output/campaign-network/simulation-test.log"
+      },
+      {
+        "command": "node tools/director-sim.js --output output/campaign-network/simulation.json",
+        "exitCode": 0,
+        "log": "output/campaign-network/simulation-summary.log"
+      }
+    ],
+    "seed": "director-model-v1",
+    "periodDays": [
+      1,
+      7,
+      30,
+      180
+    ],
+    "archetypes": [
+      "low_population",
+      "medium_population",
+      "high_population",
+      "family_dominated",
+      "fragmented_crew",
+      "economic_shortage",
+      "territory_war",
+      "quiet_world",
+      "high_mystery_activity",
+      "new_world",
+      "resource_abundance",
+      "high_law_pressure",
+      "low_law_pressure"
+    ],
+    "horizonRuns": 52,
+    "authoredNetworkScenarios": 13,
+    "summary": {
+      "runs": 52,
+      "scenarioCount": 13,
+      "periods": [
+        1,
+        7,
+        30,
+        180
+      ],
+      "maximumActive": 10,
+      "maximumStartsPerTick": 4,
+      "maximumRepetitionWithinWindow": 2,
+      "directorMinted": 0,
+      "wireBalanceErrors": 0,
+      "deadEnds": 0
+    },
+    "conservation": {
+      "directorMinted": 0,
+      "modeledOmrDelta": 0,
+      "wireBalanceErrors": 0,
+      "unexplainedWire": 0,
+      "unexplainedSeals": 0,
+      "duplicateReceipts": 0,
+      "networkMaterialBalanceErrors": 0
+    },
+    "productionFunctions": [
+      "compileWorldObjects",
+      "compileFamilyOperations",
+      "compileDirectorDefinitions",
+      "selectDirectorCandidates",
+      "pressuresFromFacts",
+      "aggregatePressureMemory"
+    ],
+    "limitations": [
+      "Hourly model ticks are coarser than the production 300-second scheduler.",
+      "Model conservation does not prove database inventory custody, economy sources/sinks, authentication, or concurrent execution.",
+      "A bounded content slice eventually settles or becomes quiet; the model does not fabricate new world conflict to maintain activity.",
+      "Fixture history and player response policies are synthetic and explicit.",
+      "This model accounts for declared materials but does not execute database custody, Knowledge authorization or concurrent commands.",
+      "Native campaign journey, recovery and concurrency tests provide the separate authoritative execution evidence.",
+      "Model monetary zeros are not a proof of production balances. Actual cash/OMR equality, custody, refunds and replay are separately asserted in native domain-service tests.",
+      "Immutable Dock definitions have no invented violence labels; positive Law pressure is asserted only against actual authored network implications."
+    ],
+    "report": {
+      "path": "output/campaign-network/simulation.json",
+      "sha256": "5330c1ae922b8d427ae35d52c90045975f6632e3ad9b16d87fb23ea2ed58e2c4"
+    },
+    "verification": {
+      "path": "output/campaign-network/simulation-recovery-verification.json",
+      "sha256": "05f632a536993e1c3e370ea818b8b9468bb8091946ff407918c2265c1f3b7034"
+    }
+  },
+  "browser": {
+    "runs": [
+      {
+        "command": "node tools/mobile.js",
+        "exitCode": 0,
+        "screenChecks": 175,
+        "viewports": [
+          "320x568",
+          "375x667",
+          "360x780"
+        ],
+        "log": "output/campaign-network/feed/mobile.log"
+      },
+      {
+        "command": "node tools/public-ui.js",
+        "exitCode": 0,
+        "log": "output/campaign-network/feed/public-ui.log"
+      },
+      {
+        "command": "node output/campaign-network/feed/opportunity-renderer-browser.mjs",
+        "exitCode": 0,
+        "checks": [
+          {
+            "width": 320,
+            "overflow": false,
+            "opportunityActions": 2,
+            "minimumActionHeight": 44
+          },
+          {
+            "width": 390,
+            "overflow": false,
+            "opportunityActions": 2,
+            "minimumActionHeight": 44
+          },
+          {
+            "width": 1440,
+            "overflow": false,
+            "opportunityActions": 2,
+            "minimumActionHeight": 44
+          }
+        ],
+        "issuedCommandClick": true,
+        "pageErrors": [],
+        "result": {
+          "path": "output/campaign-network/feed/opportunity-browser-results.json",
+          "sha256": "04dbd4809480e0cf64ee635c1f9803e98c1c1419d6b0cc929f228e9d958e2b63"
+        }
+      }
+    ],
+    "screenshots": [
+      "output/campaign-network/feed/opportunity-feed-320.png",
+      "output/campaign-network/feed/opportunity-feed-390.png",
+      "output/campaign-network/feed/opportunity-feed-1440.png"
+    ],
+    "scope": "Production renderer and CSS with authorized command client test fixture; separate native suites prove domain execution."
+  },
+  "sql": {
+    "command": "node tools/pgquery.js",
+    "exitCode": 0,
+    "preparedStaticStatements": 4059,
+    "interpolatedStatements": 168,
+    "nonliteralCallSites": 38,
+    "nonDmlStatements": 557,
+    "log": "output/campaign-network/pgquery.txt",
+    "limit": "Interpolated and nonliteral sites are inventoried, not claimed as prepared static SQL."
+  },
+  "retainedFailuresAndRetests": [
+    {
+      "id": "SCRATCH-LOCK-CAPACITY",
+      "classification": "Baseline harness setup; no reproduced baseline gameplay assertion failure",
+      "failure": "SQLSTATE53200 during concurrent full-schema cleanup at default max_locks_per_transaction64",
+      "firstManifest": {
+        "path": "output/campaign-network/baseline/postgres-first-run.json",
+        "sha256": "da3903d0b5996c12fbc5af10b2e3f0ce792742ab25086eb2cb00914afea57d54"
+      },
+      "failureLogs": [
+        "output/campaign-network/baseline/director-recovery-postgres.log",
+        "output/campaign-network/baseline/director-dock-world-postgres.log"
+      ],
+      "fix": "Raised only disposable cluster max_locks_per_transaction to512",
+      "retest": "All33 baseline native files rerun successfully from untouched base"
+    },
+    {
+      "id": "MIGRATION-CLOCK-FIXTURE",
+      "classification": "Inherited time-dependent fixture exposed during final verification; baseline migration run passed",
+      "failure": "Migration replay assertion crossed a five-minute scheduler bucket while using live Date.now",
+      "failureLog": "output/campaign-network/final-native/director-migration.log",
+      "fix": "Pinned migration fixture observation clock; production scheduler and runtime tests unchanged",
+      "retestCommand": "node test/director-migration.js --postgres",
+      "retestExitCode": 0,
+      "retestLog": "output/campaign-network/final-native/director-migration-retest.log"
+    },
+    {
+      "id": "MODEL-LABEL-MISMATCH",
+      "failure": "Legacy model classified Dock interception as violence without authored implication labels",
+      "fix": "Removed invented labels and derive only admitted implications; legacy Dock pressure zero and authored network pressure positive are both asserted",
+      "retestCommand": "node test/director-simulation.js",
+      "retestExitCode": 0,
+      "log": "output/campaign-network/simulation-test.log"
+    },
+    {
+      "id": "BASELINE-DOC-CENSUS",
+      "classification": "Reproduced on untouched base",
+      "failure": "Documentation declared 1046 Foundry tests but source contains 1048",
+      "failureLog": "output/campaign-network/baseline/docs-census.txt",
+      "fix": "Corrected measured documentation census; no contract or contract test changed",
+      "retestCommand": "node test/docs.js",
+      "retestExitCode": 0,
+      "retestLog": "output/campaign-network/verification/test_docs.js.log"
+    },
+    {
+      "id": "GENERATED-CHECKPOINT-DRIFT",
+      "classification": "Required generated artifact refresh after authored changes",
+      "failure": "Knowledge artifacts still describe the base commit while authored source is modified",
+      "failureLog": "output/campaign-network/verification/tools_knowledge-test.js.log",
+      "resolution": "Follow the repository source-commit and generated-only checkpoint workflow, then execute both knowledge checks; final logs are linked above."
+    }
+  ],
+  "review": {
+    "scope": "Campaign network pressure, canonical dependencies, authorization, enumeration, custody, replay and recovery; no blanket contract audit",
+    "method": "Source/trust-boundary inspection, specification comparison, concrete adversarial traces, PostgreSQL transaction/concurrency proofs and model conservation checks",
+    "report": "docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md",
+    "pressureFindings": {
+      "path": "output/campaign-network/review-pressure-memory.json",
+      "sha256": "562532203f93d55fa72b030c6010b8145e689c1a664516a39b2cf9195b825a51"
+    },
+    "resolved": [
+      "Unavailable history cannot increase contested generation",
+      "Recent failure memory uses resolution-time sampling",
+      "Discovery reads bound raw rows before deduplication",
+      "Model cannot invent Dock implication labels",
+      "Mystery catalogs do not assert hidden historical facts"
+    ],
+    "limits": "Claims apply to the pinned base plus captured working-tree hashes and executed checks. Production rollout, staging rehearsal and unrelated financial contracts are outside this package."
+  },
+  "fullRepositorySequence": {
+    "status": "completed before authored checkpoint",
+    "total": 239,
+    "passed": 238,
+    "failed": 1,
+    "execution": "Union of package pretest and test commands, each executed once with two isolated process workers; test database environment removed.",
+    "results": [
+      {
+        "command": "node test/current-copy.js",
+        "exitCode": 0,
+        "elapsedMs": 220,
+        "log": "output/campaign-network/verification/test_current-copy.js.log",
+        "logSha256": "75c3c90cfaf403dcd3444a62e349dd144fffda3db2f439036989bbc77d274ea6"
+      },
+      {
+        "command": "node test/world-projection-mysteries.js",
+        "exitCode": 0,
+        "elapsedMs": 3377,
+        "log": "output/campaign-network/verification/test_world-projection-mysteries.js.log",
+        "logSha256": "e132dc3b73a514eea6b3ac4f13d0dadcfd6f429e210c07025d63a01e42f11e58"
+      },
+      {
+        "command": "node test/operation-read-paths.js",
+        "exitCode": 0,
+        "elapsedMs": 4816,
+        "log": "output/campaign-network/verification/test_operation-read-paths.js.log",
+        "logSha256": "5f234d2bd362441f8d71e844f4385e0477e3d71acfa998f565c3a25555b6c5a3"
+      },
+      {
+        "command": "node test/world-projection-read.js",
+        "exitCode": 0,
+        "elapsedMs": 2443,
+        "log": "output/campaign-network/verification/test_world-projection-read.js.log",
+        "logSha256": "fa3a5983170b161e6527869462c5203349baa323ee8e8c2fdba01cf1e9cfc037"
+      },
+      {
+        "command": "node test/world-projection-mysteries-api.js",
+        "exitCode": 0,
+        "elapsedMs": 6397,
+        "log": "output/campaign-network/verification/test_world-projection-mysteries-api.js.log",
+        "logSha256": "4d947ceffde9a5a932c0bae6cf7f7cbc77a2bbd64e7681824e6aed3bd0faefd0"
+      },
+      {
+        "command": "node test/world-projection.js",
+        "exitCode": 0,
+        "elapsedMs": 6707,
+        "log": "output/campaign-network/verification/test_world-projection.js.log",
+        "logSha256": "636156e99f0d9dfcb8a5c6da468f63f1286e65dc1ac94979222b6082d8f8332c"
+      },
+      {
+        "command": "node test/projection-events.js",
+        "exitCode": 0,
+        "elapsedMs": 1134,
+        "log": "output/campaign-network/verification/test_projection-events.js.log",
+        "logSha256": "d8af06d91f89e133287298ac836f0536e191a5586098169e25b6574cd3a14fe9"
+      },
+      {
+        "command": "node test/world-projection-api.js",
+        "exitCode": 0,
+        "elapsedMs": 7159,
+        "log": "output/campaign-network/verification/test_world-projection-api.js.log",
+        "logSha256": "de82eba380471db12a82b5890c3f820c9c3562bde0131706af2528aba3abcaa1"
+      },
+      {
+        "command": "node test/world-projection-client.js",
+        "exitCode": 0,
+        "elapsedMs": 276,
+        "log": "output/campaign-network/verification/test_world-projection-client.js.log",
+        "logSha256": "31b8649b31ea7010b5d91e9f977b19a88cd1ea682137c118835964b2b72b8808"
+      },
+      {
+        "command": "node test/coordination-operation-definitions.js",
+        "exitCode": 0,
+        "elapsedMs": 257,
+        "log": "output/campaign-network/verification/test_coordination-operation-definitions.js.log",
+        "logSha256": "444f96373b90870a48c82db9a235db697a24236ebfef4f0d7bc8baa0d9e9fb62"
+      },
+      {
+        "command": "node test/projection-events-ws.js",
+        "exitCode": 0,
+        "elapsedMs": 5405,
+        "log": "output/campaign-network/verification/test_projection-events-ws.js.log",
+        "logSha256": "65599745a12d8924ace54907421b50855679f1554c75de6c5723be2f0f5cd329"
+      },
+      {
+        "command": "node test/coordination-mode-boundary.js",
+        "exitCode": 0,
+        "elapsedMs": 3185,
+        "log": "output/campaign-network/verification/test_coordination-mode-boundary.js.log",
+        "logSha256": "2af25f48e76f9df7ec02e8a2555ae87c5655e3fc1961ac86b0ebc5633ab1f438"
+      },
+      {
+        "command": "node test/coordination-materials.js",
+        "exitCode": 0,
+        "elapsedMs": 2287,
+        "log": "output/campaign-network/verification/test_coordination-materials.js.log",
+        "logSha256": "024b3133c70bf04d266ca6f20b1fe7f1317e1d63090caf158aa9f28c8a13bfc9"
+      },
+      {
+        "command": "node test/coordination-capital.js",
+        "exitCode": 0,
+        "elapsedMs": 2726,
+        "log": "output/campaign-network/verification/test_coordination-capital.js.log",
+        "logSha256": "6c04944ceee633a6215919182cee8031718934b05698b9be0eafae37456e9e76"
+      },
+      {
+        "command": "node test/coordination-knowledge-proof.js",
+        "exitCode": 0,
+        "elapsedMs": 2201,
+        "log": "output/campaign-network/verification/test_coordination-knowledge-proof.js.log",
+        "logSha256": "4f4ced7da6338edf51a9d4ced8bb180087cce6d81af7cb48897d522984d02dc1"
+      },
+      {
+        "command": "node test/world-kernel-transaction.js",
+        "exitCode": 0,
+        "elapsedMs": 2797,
+        "log": "output/campaign-network/verification/test_world-kernel-transaction.js.log",
+        "logSha256": "488212dbd6696e837d24be70b70b48e23b9cb8279e199192b1c877d49f52c726"
+      },
+      {
+        "command": "node test/family-operations-api.js",
+        "exitCode": 0,
+        "elapsedMs": 5674,
+        "log": "output/campaign-network/verification/test_family-operations-api.js.log",
+        "logSha256": "988db9c001a7bd2ab75ae0743db3470127186fe9d58f1a23aae80a4ed5c72729"
+      },
+      {
+        "command": "node test/family-operations.js",
+        "exitCode": 0,
+        "elapsedMs": 9490,
+        "log": "output/campaign-network/verification/test_family-operations.js.log",
+        "logSha256": "30497886d424aa16eaefa1927b11f4df79fa226d9303192ded0bd861ae1d2d66"
+      },
+      {
+        "command": "node test/world-knowledge-crafting.js",
+        "exitCode": 0,
+        "elapsedMs": 3188,
+        "log": "output/campaign-network/verification/test_world-knowledge-crafting.js.log",
+        "logSha256": "c77f5ca72c1e433fe6648180cb874f7fe14df2e6e1353c5b01cf547d10683871"
+      },
+      {
+        "command": "node test/world-kernel-input.js",
+        "exitCode": 0,
+        "elapsedMs": 1765,
+        "log": "output/campaign-network/verification/test_world-kernel-input.js.log",
+        "logSha256": "0c8fa059e3aeacd748e267c45576eaef859cd2c70ff768aff5bf454976d36e80"
+      },
+      {
+        "command": "node test/world-kernel-query.js",
+        "exitCode": 0,
+        "elapsedMs": 2958,
+        "log": "output/campaign-network/verification/test_world-kernel-query.js.log",
+        "logSha256": "24b2e703a05533de72011d0d2eea43b8ec02baad9a88c6dbc08965c65295c397"
+      },
+      {
+        "command": "node test/world-kernel.js",
+        "exitCode": 0,
+        "elapsedMs": 3726,
+        "log": "output/campaign-network/verification/test_world-kernel.js.log",
+        "logSha256": "79af4e86bc064e7c01de0d814f64491f170852df79f1e8d6e999b06b8e3bb55e"
+      },
+      {
+        "command": "node test/coordination-graph.js",
+        "exitCode": 0,
+        "elapsedMs": 190,
+        "log": "output/campaign-network/verification/test_coordination-graph.js.log",
+        "logSha256": "e6f9d5ab8ae43cc0b2c69c59ce977aa5facf372e9419d09fbc427dbe5d08b6d6"
+      },
+      {
+        "command": "node test/coordination.js",
+        "exitCode": 0,
+        "elapsedMs": 2030,
+        "log": "output/campaign-network/verification/test_coordination.js.log",
+        "logSha256": "b074c1e728f843a0994465fc95fb1a63916314946c3db070804bffc39ed51462"
+      },
+      {
+        "command": "node test/world-kernel-api.js",
+        "exitCode": 0,
+        "elapsedMs": 5478,
+        "log": "output/campaign-network/verification/test_world-kernel-api.js.log",
+        "logSha256": "b6c2089570bc65a98f3a9289ae34b290245e77e40f26ac57b3a6d64ace31cbec"
+      },
+      {
+        "command": "node test/coordination-api.js",
+        "exitCode": 0,
+        "elapsedMs": 4730,
+        "log": "output/campaign-network/verification/test_coordination-api.js.log",
+        "logSha256": "7f26bedbc5695058322ba2335bcee89a529c5165caf082acf327cdc2f3de9c64"
+      },
+      {
+        "command": "node test/coordination-http-receipts.js",
+        "exitCode": 0,
+        "elapsedMs": 4223,
+        "log": "output/campaign-network/verification/test_coordination-http-receipts.js.log",
+        "logSha256": "d6a143fed8169a4af8b23ae28a7109324e85a72ffa49626a2f262ebcfd64a78c"
+      },
+      {
+        "command": "node test/coordination-knowledge-runtime.js",
+        "exitCode": 0,
+        "elapsedMs": 3103,
+        "log": "output/campaign-network/verification/test_coordination-knowledge-runtime.js.log",
+        "logSha256": "400e47e1dcf518db4ca9023e37109b401a67ddecca2cfa87755976bc66bf2dcb"
+      },
+      {
+        "command": "node test/coordination-knowledge.js",
+        "exitCode": 0,
+        "elapsedMs": 6604,
+        "log": "output/campaign-network/verification/test_coordination-knowledge.js.log",
+        "logSha256": "55be77801d63e8a2fd091c6dee541ed7a482cf13632cc2c298b4c1fd32e22bd5"
+      },
+      {
+        "command": "node test/finalizedobservation.js",
+        "exitCode": 0,
+        "elapsedMs": 1015,
+        "log": "output/campaign-network/verification/test_finalizedobservation.js.log",
+        "logSha256": "12b77c3b39e8121312ec4203ca6033a5b6b9b6d3524aec11c1e00621f1dcded0"
+      },
+      {
+        "command": "node test/coordination-knowledge-api.js",
+        "exitCode": 0,
+        "elapsedMs": 5293,
+        "log": "output/campaign-network/verification/test_coordination-knowledge-api.js.log",
+        "logSha256": "6f205a8b9add181e4bf1e76bab56aae6c93aedb98feec53ee5a4708ae801e0ae"
+      },
+      {
+        "command": "node test/stockballotv2.js",
+        "exitCode": 0,
+        "elapsedMs": 19254,
+        "log": "output/campaign-network/verification/test_stockballotv2.js.log",
+        "logSha256": "b12205147ce0fcbe1125fcc5857ff13c18575702c63c91bf2e7176350a9faa7b"
+      },
+      {
+        "command": "node test/rwanominations.js",
+        "exitCode": 0,
+        "elapsedMs": 31277,
+        "log": "output/campaign-network/verification/test_rwanominations.js.log",
+        "logSha256": "2257cb6341341f00ab9df86d9929fb80e2883d73267468084c37ea4912222a4d"
+      },
+      {
+        "command": "node test/rwaroutes.js",
+        "exitCode": 0,
+        "elapsedMs": 13107,
+        "log": "output/campaign-network/verification/test_rwaroutes.js.log",
+        "logSha256": "0b632d20b41db72307ef66789c96e4369d36fb473594d138edf5881270a1c777"
+      },
+      {
+        "command": "node test/rwahealth.integration.js",
+        "exitCode": 0,
+        "elapsedMs": 4446,
+        "log": "output/campaign-network/verification/test_rwahealth.integration.js.log",
+        "logSha256": "782885b55d5e2cb77318f90436dafdab1261b83bf1f054ce83588d8c2bd44a96"
+      },
+      {
+        "command": "node test/rwahealthclearance.js",
+        "exitCode": 0,
+        "elapsedMs": 669,
+        "log": "output/campaign-network/verification/test_rwahealthclearance.js.log",
+        "logSha256": "4219d9b6bea6a57b9ac830401a455d0cddd7d8dbe42c54c9dfea210a9ec2943f"
+      },
+      {
+        "command": "node test/rwahealthclearancecontext.js",
+        "exitCode": 0,
+        "elapsedMs": 632,
+        "log": "output/campaign-network/verification/test_rwahealthclearancecontext.js.log",
+        "logSha256": "c97d4f3feafe44f3247cf4fafdddd2289130d9969d3fd4a01e8deb6161ad7880"
+      },
+      {
+        "command": "node test/rwahealthoverlay.readiness.js",
+        "exitCode": 0,
+        "elapsedMs": 621,
+        "log": "output/campaign-network/verification/test_rwahealthoverlay.readiness.js.log",
+        "logSha256": "c91ba685081fc7741a332ebd76256abff8f57bdf5c8e99ad48036f3ffb79ec04"
+      },
+      {
+        "command": "node test/rwahealthoverlay.schema.js",
+        "exitCode": 0,
+        "elapsedMs": 1591,
+        "log": "output/campaign-network/verification/test_rwahealthoverlay.schema.js.log",
+        "logSha256": "e6bcf79d3cb5f0719f34e4fb3d5e43ed7a3942f17e1fcf051de222a4d373020d"
+      },
+      {
+        "command": "node test/rwahealthoverlay.vector.js",
+        "exitCode": 0,
+        "elapsedMs": 614,
+        "log": "output/campaign-network/verification/test_rwahealthoverlay.vector.js.log",
+        "logSha256": "03b06d4d40a71b4258f869c79a8e8eafd0016d4f208285a59e7bc8d266b52e86"
+      },
+      {
+        "command": "node test/rwahealth.js",
+        "exitCode": 0,
+        "elapsedMs": 15914,
+        "log": "output/campaign-network/verification/test_rwahealth.js.log",
+        "logSha256": "43f9074e4e408c4ff9d9d8fc60eb02e9bd4f4aa1d5bb9e25f197e6ac8d797e9e"
+      },
+      {
+        "command": "node test/rwaregistrylifecycle.sync.js",
+        "exitCode": 0,
+        "elapsedMs": 5142,
+        "log": "output/campaign-network/verification/test_rwaregistrylifecycle.sync.js.log",
+        "logSha256": "78cfec05968a65b786c6da2e231be0639a8a2866a50d26e5cd845ce1094d4adb"
+      },
+      {
+        "command": "node test/agent-referral-cash.js",
+        "exitCode": 0,
+        "elapsedMs": 4655,
+        "log": "output/campaign-network/verification/test_agent-referral-cash.js.log",
+        "logSha256": "3c33fde5fb6ddca0d2ab7229d29b9fc1d6831c1dde59c6c0e071f4c98e66eb8f"
+      },
+      {
+        "command": "node test/rwaregistrylifecycle.js",
+        "exitCode": 0,
+        "elapsedMs": 17267,
+        "log": "output/campaign-network/verification/test_rwaregistrylifecycle.js.log",
+        "logSha256": "1eb0da0f6af132ea09a2bc872fca7a3d459d6f175d58f054daf08c5cdfc975c9"
+      },
+      {
+        "command": "node test/phase2-discovery.js",
+        "exitCode": 0,
+        "elapsedMs": 938,
+        "log": "output/campaign-network/verification/test_phase2-discovery.js.log",
+        "logSha256": "b2fa6e8405721199b1c96995123b5bdd94c7cce24d17ac7f279c2c9ee3035b56"
+      },
+      {
+        "command": "node test/phase2-compiler.js",
+        "exitCode": 0,
+        "elapsedMs": 4402,
+        "log": "output/campaign-network/verification/test_phase2-compiler.js.log",
+        "logSha256": "8e2e08462e0a57362d98271f8c94fcb18b290786b0c8d3e518044e741d7520f0"
+      },
+      {
+        "command": "node test/phase2-review-regressions.js",
+        "exitCode": 0,
+        "elapsedMs": 27119,
+        "log": "output/campaign-network/verification/test_phase2-review-regressions.js.log",
+        "logSha256": "de277f8e1b4555f40b154502a0de1b747d7e9c35e2fbe72d998bde7535b14a39"
+      },
+      {
+        "command": "node test/content-graph.js",
+        "exitCode": 0,
+        "elapsedMs": 1095,
+        "log": "output/campaign-network/verification/test_content-graph.js.log",
+        "logSha256": "5f66c115d6c356e0a92864bcd069ea9320101c2e8ba2f3a7e289650335e9c3e8"
+      },
+      {
+        "command": "node test/content-runtime.js",
+        "exitCode": 0,
+        "elapsedMs": 4766,
+        "log": "output/campaign-network/verification/test_content-runtime.js.log",
+        "logSha256": "599271e8ff27e77f32e200259796ea68bd481f8c0c2367c556c0c5ffbc09e89b"
+      },
+      {
+        "command": "node test/content-social.js",
+        "exitCode": 0,
+        "elapsedMs": 2633,
+        "log": "output/campaign-network/verification/test_content-social.js.log",
+        "logSha256": "f7854aff4fcd3f8729390c313ee5e40232d8fe17e2baf8720d988f63b6646baa"
+      },
+      {
+        "command": "node test/content-seasonal.js",
+        "exitCode": 0,
+        "elapsedMs": 4590,
+        "log": "output/campaign-network/verification/test_content-seasonal.js.log",
+        "logSha256": "2397cdc5a4919a6399103c83ff8bc976013f5c26839a19f1b0591b0865d10fac"
+      },
+      {
+        "command": "node test/content-seasonal-case.js",
+        "exitCode": 0,
+        "elapsedMs": 4665,
+        "log": "output/campaign-network/verification/test_content-seasonal-case.js.log",
+        "logSha256": "753c9d574c2bdcb6e6dcdb5910ffab43290cfd09076beed662ae9e12dc325cd6"
+      },
+      {
+        "command": "node test/content-crafting.js",
+        "exitCode": 0,
+        "elapsedMs": 4697,
+        "log": "output/campaign-network/verification/test_content-crafting.js.log",
+        "logSha256": "32267d99005d2044f9b7184930ea43b9ca2d9ffdbaa57f1fc7eb7c8bfde3c246"
+      },
+      {
+        "command": "node test/content-crafting-jobs.js",
+        "exitCode": 0,
+        "elapsedMs": 5581,
+        "log": "output/campaign-network/verification/test_content-crafting-jobs.js.log",
+        "logSha256": "8ad9ef52e7403a3b5d50a2584254fb31fa33f390087c1e69126124ff6476ca9c"
+      },
+      {
+        "command": "node test/content-crafting-tools.js",
+        "exitCode": 0,
+        "elapsedMs": 5730,
+        "log": "output/campaign-network/verification/test_content-crafting-tools.js.log",
+        "logSha256": "df0219750548cb2a2227f30ef0ccefa98cb0110e1254b3b28e6c0dfd8ab6f9d4"
+      },
+      {
+        "command": "node test/content-exchange.js",
+        "exitCode": 0,
+        "elapsedMs": 5676,
+        "log": "output/campaign-network/verification/test_content-exchange.js.log",
+        "logSha256": "d872ef78060c646436cd764c100ee2f58fb12157af89cd7eee1ec00b3f9940fb"
+      },
+      {
+        "command": "node test/content-api.js",
+        "exitCode": 0,
+        "elapsedMs": 603,
+        "log": "output/campaign-network/verification/test_content-api.js.log",
+        "logSha256": "457b58424f973c221ec169c5f9332abbfe73a7d3845035dbce8de5f7c12c7ab6"
+      },
+      {
+        "command": "node test/v4oraclekeeper.js",
+        "exitCode": 0,
+        "elapsedMs": 2935,
+        "log": "output/campaign-network/verification/test_v4oraclekeeper.js.log",
+        "logSha256": "d4024131b839c98743a33b97e83773670a804bf7f85280c792fbc889dcaa67fb"
+      },
+      {
+        "command": "node test/genesiscca.js",
+        "exitCode": 0,
+        "elapsedMs": 1184,
+        "log": "output/campaign-network/verification/test_genesiscca.js.log",
+        "logSha256": "73eba3d997b7909149f5ba050fd45a0463d3f575a78cb14c87fd16cdd40a4b2e"
+      },
+      {
+        "command": "node test/genesislaunch.js",
+        "exitCode": 0,
+        "elapsedMs": 2754,
+        "log": "output/campaign-network/verification/test_genesislaunch.js.log",
+        "logSha256": "9096158ab5714053c414ae3a661a0ae3e13efe3697b48973c31dfb6361156c7c"
+      },
+      {
+        "command": "node test/genesisrelease.js",
+        "exitCode": 0,
+        "elapsedMs": 832,
+        "log": "output/campaign-network/verification/test_genesisrelease.js.log",
+        "logSha256": "85891ef826d28ab5ce71dd5115c892ab37ad46035510622661df34bf505b3559"
+      },
+      {
+        "command": "node test/worldgraph.js",
+        "exitCode": 0,
+        "elapsedMs": 69,
+        "log": "output/campaign-network/verification/test_worldgraph.js.log",
+        "logSha256": "5b74e5472b2e198b1e67bb4325a8b754bc981b19f32a2f99c8b0fd38907b1f38"
+      },
+      {
+        "command": "node test/worldgraph-validation.js",
+        "exitCode": 0,
+        "elapsedMs": 1037,
+        "log": "output/campaign-network/verification/test_worldgraph-validation.js.log",
+        "logSha256": "ac182ea537416e8f276316c4168787abada7cfbc28b6259263a814b7372edb73"
+      },
+      {
+        "command": "node test/items.js",
+        "exitCode": 0,
+        "elapsedMs": 4466,
+        "log": "output/campaign-network/verification/test_items.js.log",
+        "logSha256": "833b2007964ac47f38c5bd0f8a72c87fd58bd157eac4d31bc928e090f968b4ca"
+      },
+      {
+        "command": "node test/phase2-scale.js",
+        "exitCode": 0,
+        "elapsedMs": 78959,
+        "log": "output/campaign-network/verification/test_phase2-scale.js.log",
+        "logSha256": "47f0553cd80477fc26245f9cf5b6e6d49452aeecb6705a5755521838c535df1b"
+      },
+      {
+        "command": "node test/crafting.js",
+        "exitCode": 0,
+        "elapsedMs": 2614,
+        "log": "output/campaign-network/verification/test_crafting.js.log",
+        "logSha256": "af6db4077662e5c95be4abe2f5252ce0c66c810a9e7b4125e4d7bb66cfaffb70"
+      },
+      {
+        "command": "node test/mysteries.js",
+        "exitCode": 0,
+        "elapsedMs": 2677,
+        "log": "output/campaign-network/verification/test_mysteries.js.log",
+        "logSha256": "1118cae6314506ef438a2a0e9f5797e17c79c33a1ef5f17ad60c2c45739299c5"
+      },
+      {
+        "command": "node test/operations.js",
+        "exitCode": 0,
+        "elapsedMs": 3330,
+        "log": "output/campaign-network/verification/test_operations.js.log",
+        "logSha256": "113c3fc5b6a9bea8cb1e35b93148e79c8004254143aa439a30fc57bad7496aa5"
+      },
+      {
+        "command": "node test/belladonna.js",
+        "exitCode": 0,
+        "elapsedMs": 3688,
+        "log": "output/campaign-network/verification/test_belladonna.js.log",
+        "logSha256": "7bf1d87e2ebc0dd0a468668526cf99c67f843b7e4f4f82910da1635cc25566e4"
+      },
+      {
+        "command": "node test/worldgraph-api.js",
+        "exitCode": 0,
+        "elapsedMs": 6059,
+        "log": "output/campaign-network/verification/test_worldgraph-api.js.log",
+        "logSha256": "b021767b84eda97e230b03544771c81c608bcdc77fbf45969384bf50c5042a21"
+      },
+      {
+        "command": "node tools/pgcheck-belladonna.js --pg-mem",
+        "exitCode": 0,
+        "elapsedMs": 3836,
+        "log": "output/campaign-network/verification/tools_pgcheck-belladonna.js.log",
+        "logSha256": "7b52c8a3cce786849e227d720570753a76bc4772c244e496602ac09a35e2309a"
+      },
+      {
+        "command": "node test/phase2-definition-schema.js",
+        "exitCode": 0,
+        "elapsedMs": 2959,
+        "log": "output/campaign-network/verification/test_phase2-definition-schema.js.log",
+        "logSha256": "606f26cad9292c84995d0671aed99ea27e59636a0db80f5be716ef81c98fd7bf"
+      },
+      {
+        "command": "node test/phase2-activation.js",
+        "exitCode": 0,
+        "elapsedMs": 9634,
+        "log": "output/campaign-network/verification/test_phase2-activation.js.log",
+        "logSha256": "069d6e71355ff7c09282c1c9baba1c57767816a28dc2bf591f2679fedd0f3b6f"
+      },
+      {
+        "command": "node test/phase2-definitions.js",
+        "exitCode": 0,
+        "elapsedMs": 13305,
+        "log": "output/campaign-network/verification/test_phase2-definitions.js.log",
+        "logSha256": "46204ca94f9eee7faa83acf81e5fec1a801c01bf7d596bebce0a69719bb7b001"
+      },
+      {
+        "command": "node test/phase2-lot-boundary.js",
+        "exitCode": 0,
+        "elapsedMs": 5220,
+        "log": "output/campaign-network/verification/test_phase2-lot-boundary.js.log",
+        "logSha256": "10f0194705f761fb93ca0be12d773aa30a1db9a3cef680fa484cc58a051aa46e"
+      },
+      {
+        "command": "node test/phase2-definition-invariants.js",
+        "exitCode": 0,
+        "elapsedMs": 10543,
+        "log": "output/campaign-network/verification/test_phase2-definition-invariants.js.log",
+        "logSha256": "e132d6514198f423728fc11e66f91bf917e9922c809af7ca2faa6579a8f7d2d5"
+      },
+      {
+        "command": "node test/liquiditykeeper.js",
+        "exitCode": 0,
+        "elapsedMs": 949,
+        "log": "output/campaign-network/verification/test_liquiditykeeper.js.log",
+        "logSha256": "8e7dbcc9f9db72a9ac7474267ae0a537f628e330db86f6c26fcb0e1d97d9c3aa"
+      },
+      {
+        "command": "node test/keepertransactions.js",
+        "exitCode": 0,
+        "elapsedMs": 5669,
+        "log": "output/campaign-network/verification/test_keepertransactions.js.log",
+        "logSha256": "fe0a5a3d6955d174ff02bcced0aab28e1aa9bbf96020637dbf690fd3384d5f40"
+      },
+      {
+        "command": "node test/genesiskeeper.js",
+        "exitCode": 0,
+        "elapsedMs": 897,
+        "log": "output/campaign-network/verification/test_genesiskeeper.js.log",
+        "logSha256": "da2283eedba9d9072dfba60de6c5dc7a8c67a23f01113b1430aed3308f1bf825"
+      },
+      {
+        "command": "node test/liquidityaccounting-review.js",
+        "exitCode": 0,
+        "elapsedMs": 768,
+        "log": "output/campaign-network/verification/test_liquidityaccounting-review.js.log",
+        "logSha256": "3675beff8ee2dc383e93cc358f2da4b8e34f2334fad3b7de669c29a8bf5b196a"
+      },
+      {
+        "command": "node test/liquidityaccounting.js --memory",
+        "exitCode": 0,
+        "elapsedMs": 2933,
+        "log": "output/campaign-network/verification/test_liquidityaccounting.js.log",
+        "logSha256": "84bfd8e0bcb286c1b727391419e8683151affebac93d926188b656be8ffdbc47"
+      },
+      {
+        "command": "node test/liquiditypolicy.js --memory",
+        "exitCode": 0,
+        "elapsedMs": 3098,
+        "log": "output/campaign-network/verification/test_liquiditypolicy.js.log",
+        "logSha256": "1de740308f6393f52fc129703aefb702b0263f6bbc712872b1c05901a62e1807"
+      },
+      {
+        "command": "node test/bondquoteexpiry.js",
+        "exitCode": 0,
+        "elapsedMs": 2007,
+        "log": "output/campaign-network/verification/test_bondquoteexpiry.js.log",
+        "logSha256": "03765684992116c545d145b3e8d966fe06e5d1994a2ca12cf73131474184843f"
+      },
+      {
+        "command": "node test/liquidityrpc.js",
+        "exitCode": 0,
+        "elapsedMs": 1242,
+        "log": "output/campaign-network/verification/test_liquidityrpc.js.log",
+        "logSha256": "0c239bb65229a4a82d4c10963a8c075627f354aec75369eda141e1ba8630ba0c"
+      },
+      {
+        "command": "node test/bond-unlimited.js --memory",
+        "exitCode": 0,
+        "elapsedMs": 4760,
+        "log": "output/campaign-network/verification/test_bond-unlimited.js.log",
+        "logSha256": "3c97c6e25fa8d202331a0713d4150b8e1dafec9cabcb3d21a23a143415857d29"
+      },
+      {
+        "command": "node tools/liquidity-manifest-example.js --self-test",
+        "exitCode": 0,
+        "elapsedMs": 789,
+        "log": "output/campaign-network/verification/tools_liquidity-manifest-example.js.log",
+        "logSha256": "84627b1e13f9a0b293c1fbf2516d51f3c1341e93d85ea0d41eb03f8a9173baf7"
+      },
+      {
+        "command": "node test/liquiditypolicy-review.js",
+        "exitCode": 0,
+        "elapsedMs": 880,
+        "log": "output/campaign-network/verification/test_liquiditypolicy-review.js.log",
+        "logSha256": "a7f8ea42fa4e1465dd0f8da8d0395e239acb6ef88d19f67b167bc59d8d9ad8c7"
+      },
+      {
+        "command": "node test/liquidityqueue-review.js",
+        "exitCode": 0,
+        "elapsedMs": 901,
+        "log": "output/campaign-network/verification/test_liquidityqueue-review.js.log",
+        "logSha256": "c12c3586db9903ce13ad459170436390ab907f8c934422762c15268273a8b218"
+      },
+      {
+        "command": "node test/character-mint-policy.js",
+        "exitCode": 0,
+        "elapsedMs": 760,
+        "log": "output/campaign-network/verification/test_character-mint-policy.js.log",
+        "logSha256": "5a2d15f6b3f1d7e6be6893a702b5e58a227e137e785b47cbb7d1af4276a30599"
+      },
+      {
+        "command": "node test/liquidityqueue.js --memory",
+        "exitCode": 0,
+        "elapsedMs": 2892,
+        "log": "output/campaign-network/verification/test_liquidityqueue.js.log",
+        "logSha256": "966048e4d64589c1ecf684fdb29fd24c3cacc440f93d46a6337b473123a22708"
+      },
+      {
+        "command": "node test/phase2-lots.js",
+        "exitCode": 0,
+        "elapsedMs": 142452,
+        "log": "output/campaign-network/verification/test_phase2-lots.js.log",
+        "logSha256": "14ee0e2bf0e5267c88062d4e227cf24a384cebe1e60df4e993fd67d2f4151e72"
+      },
+      {
+        "command": "node test/audit/mint-dev-allocation.js --memory",
+        "exitCode": 0,
+        "elapsedMs": 2935,
+        "log": "output/campaign-network/verification/test_audit_mint-dev-allocation.js.log",
+        "logSha256": "8582789de710e781421364d279c1ccd0314cbe62ea17e604c0aa81c4a3dad50a"
+      },
+      {
+        "command": "node test/audit/deed-reimport-order.js --memory",
+        "exitCode": 0,
+        "elapsedMs": 2830,
+        "log": "output/campaign-network/verification/test_audit_deed-reimport-order.js.log",
+        "logSha256": "ab102c6858468c5ee323c6b06038faf0d493c7faf5fd25d695d9afb1e9c951f1"
+      },
+      {
+        "command": "node test/progression-admission.js",
+        "exitCode": 0,
+        "elapsedMs": 513,
+        "log": "output/campaign-network/verification/test_progression-admission.js.log",
+        "logSha256": "1e3d9df7c27dbc57bc0c2f39c4ab9ec9e7a7685868eafc9734f2f1c6ee27f126"
+      },
+      {
+        "command": "node test/world-prerequisites.js",
+        "exitCode": 0,
+        "elapsedMs": 2417,
+        "log": "output/campaign-network/verification/test_world-prerequisites.js.log",
+        "logSha256": "77332c3554dbf897b8e50036b619d8da4b9fa9faf582646cc9892891bda1d656"
+      },
+      {
+        "command": "node test/recipe-policy.js",
+        "exitCode": 0,
+        "elapsedMs": 3982,
+        "log": "output/campaign-network/verification/test_recipe-policy.js.log",
+        "logSha256": "922260438239d74725f75e3635c641b252e488a1c1d6e35fa816d2b84df5ec72"
+      },
+      {
+        "command": "node test/furnace-ledger.js",
+        "exitCode": 0,
+        "elapsedMs": 9631,
+        "log": "output/campaign-network/verification/test_furnace-ledger.js.log",
+        "logSha256": "39d9b3b8d5743aaefc5a332beef4cdee5ed76637f08f1f4259c3b4c2269065e1"
+      },
+      {
+        "command": "node test/core-progression-api.js",
+        "exitCode": 0,
+        "elapsedMs": 5115,
+        "log": "output/campaign-network/verification/test_core-progression-api.js.log",
+        "logSha256": "936b017f5529589eaa2058015d2243240e45f1963b3598fddd577742a07e6bbe"
+      },
+      {
+        "command": "node test/player-commands.js",
+        "exitCode": 0,
+        "elapsedMs": 2470,
+        "log": "output/campaign-network/verification/test_player-commands.js.log",
+        "logSha256": "aa8ad71cc31c3ee604eb971238f4263ca5d5511d404c957d88c252f9e638df06"
+      },
+      {
+        "command": "node test/player-command-journey.js",
+        "exitCode": 0,
+        "elapsedMs": 32153,
+        "log": "output/campaign-network/verification/test_player-command-journey.js.log",
+        "logSha256": "d1bbe3ef1d74ce21a21e19b434bfa9f19b6f34a4a664e5701cbee20f69ec03f2"
+      },
+      {
+        "command": "node test/player-command-api.js",
+        "exitCode": 0,
+        "elapsedMs": 4197,
+        "log": "output/campaign-network/verification/test_player-command-api.js.log",
+        "logSha256": "d3631e4029ee881bd219c6c1527afb749ddf7221239dd956a102f293b7471b64"
+      },
+      {
+        "command": "node test/player-command-client.js",
+        "exitCode": 0,
+        "elapsedMs": 239,
+        "log": "output/campaign-network/verification/test_player-command-client.js.log",
+        "logSha256": "137e8e2ccea1910e35ee286cd1ec4a4f63acada0f99fdf5c8b2e644efa7ab767"
+      },
+      {
+        "command": "node test/director-definitions.js",
+        "exitCode": 0,
+        "elapsedMs": 349,
+        "log": "output/campaign-network/verification/test_director-definitions.js.log",
+        "logSha256": "8b8a7f1ac5bb8066a8cd445fde9fa83bbe71a6014b28bbcc16c7807d4b2c1ccf"
+      },
+      {
+        "command": "node test/director-config.js",
+        "exitCode": 0,
+        "elapsedMs": 361,
+        "log": "output/campaign-network/verification/test_director-config.js.log",
+        "logSha256": "d1ff5e9daa43d4abee778c9408ca3fb2d0921dc1c708fa2b923a1e665b836c3d"
+      },
+      {
+        "command": "node test/director-runtime.js",
+        "exitCode": 0,
+        "elapsedMs": 3147,
+        "log": "output/campaign-network/verification/test_director-runtime.js.log",
+        "logSha256": "b5daa4cd2a55bad77144c89735b2c15237918ffada0a75888917c0d35ebbe3e4"
+      },
+      {
+        "command": "node test/director-recovery.js",
+        "exitCode": 0,
+        "elapsedMs": 13022,
+        "log": "output/campaign-network/verification/test_director-recovery.js.log",
+        "logSha256": "5ec937913baeb5e97e337694d290d70a2bd63a45f0aff5b8fc018bd5c94d622b"
+      },
+      {
+        "command": "node test/director-dock-world.js",
+        "exitCode": 0,
+        "elapsedMs": 8856,
+        "log": "output/campaign-network/verification/test_director-dock-world.js.log",
+        "logSha256": "679409b06f3a1a2b1e1195603ea0a1ff5ebb61398a0d9bd436785b24ffa18dee"
+      },
+      {
+        "command": "node test/director-commands.js",
+        "exitCode": 0,
+        "elapsedMs": 2042,
+        "log": "output/campaign-network/verification/test_director-commands.js.log",
+        "logSha256": "c9efd33b38bdbc36b8f7b873fbc65d8d64b9a6f7a793ed182ea22daecbde5b2c"
+      },
+      {
+        "command": "node test/director-api.js",
+        "exitCode": 0,
+        "elapsedMs": 4600,
+        "log": "output/campaign-network/verification/test_director-api.js.log",
+        "logSha256": "2787237f4c9976c5fd7adf96458fa84d27eae2b145884f24736013daa8338507"
+      },
+      {
+        "command": "node test/director-journey.js",
+        "exitCode": 0,
+        "elapsedMs": 39300,
+        "log": "output/campaign-network/verification/test_director-journey.js.log",
+        "logSha256": "96bb41c3b580c84a99bc93a03d2b0894ed2fc527bbe30f6021a4801c9a96aaee"
+      },
+      {
+        "command": "node test/director-security.js",
+        "exitCode": 0,
+        "elapsedMs": 3327,
+        "log": "output/campaign-network/verification/test_director-security.js.log",
+        "logSha256": "c6f8226c1fbf649c833e15f2221e856d30e0396a43c7b761ad0f8484f745c96e"
+      },
+      {
+        "command": "node test/director-simulation.js",
+        "exitCode": 0,
+        "elapsedMs": 10949,
+        "log": "output/campaign-network/verification/test_director-simulation.js.log",
+        "logSha256": "4b8912a5c9e3417b826dfdc5279f894fd26f8b87d3801ad74e473152eab54972"
+      },
+      {
+        "command": "node test/director-network.js",
+        "exitCode": 0,
+        "elapsedMs": 3290,
+        "log": "output/campaign-network/verification/test_director-network.js.log",
+        "logSha256": "19ee3a99f6f4c0d90200156909af89e9dc13bcd35cec3e4205442f7934ba35fa"
+      },
+      {
+        "command": "node test/campaign-network-journey.js",
+        "exitCode": 0,
+        "elapsedMs": 58814,
+        "log": "output/campaign-network/verification/test_campaign-network-journey.js.log",
+        "logSha256": "e5e78113312840f2e08ad5057b662c0b9b1ce24e60c0bd9f7eed58972c5f7bd3"
+      },
+      {
+        "command": "node test/director-network-recovery.js",
+        "exitCode": 0,
+        "elapsedMs": 13804,
+        "log": "output/campaign-network/verification/test_director-network-recovery.js.log",
+        "logSha256": "475529a3f07e1871c7b35f390e10f6918aaba793fea6cbcf3df191095414f0a8"
+      },
+      {
+        "command": "node test/player-opportunities.js",
+        "exitCode": 0,
+        "elapsedMs": 70,
+        "log": "output/campaign-network/verification/test_player-opportunities.js.log",
+        "logSha256": "70ea58015d8fafb13292a637da4c474928e9ca28466cd61a258dbe464b709e32"
+      },
+      {
+        "command": "node test/world-consequences.js",
+        "exitCode": 0,
+        "elapsedMs": 3181,
+        "log": "output/campaign-network/verification/test_world-consequences.js.log",
+        "logSha256": "68c7263a1251acb0da397e10448d6ead2c264f6a0927b7643f9dc1cdcd74c4bb"
+      },
+      {
+        "command": "node test/smoke.js",
+        "exitCode": 0,
+        "elapsedMs": 5359,
+        "log": "output/campaign-network/verification/test_smoke.js.log",
+        "logSha256": "f90bc00dbda60d9a7a8980eac8aa202a82869d90f5b65d2bd2a74083a520c56b"
+      },
+      {
+        "command": "node test/persist.js",
+        "exitCode": 0,
+        "elapsedMs": 4455,
+        "log": "output/campaign-network/verification/test_persist.js.log",
+        "logSha256": "83806deeab430a936cf64e0d4d0e1837bf373531ea678755016195d16a6052c3"
+      },
+      {
+        "command": "node test/economy.js",
+        "exitCode": 0,
+        "elapsedMs": 17975,
+        "log": "output/campaign-network/verification/test_economy.js.log",
+        "logSha256": "a9f029bc1481ad27bbadab77b6fb1c7a75124b01306715d0d5bd630507e31f74"
+      },
+      {
+        "command": "node test/social.js",
+        "exitCode": 0,
+        "elapsedMs": 38061,
+        "log": "output/campaign-network/verification/test_social.js.log",
+        "logSha256": "660e50f5a0292bc88d48ef3df88a3a4625dc6b0b3afeb525004d6155d39e1d3e"
+      },
+      {
+        "command": "node test/growth.js",
+        "exitCode": 0,
+        "elapsedMs": 61325,
+        "log": "output/campaign-network/verification/test_growth.js.log",
+        "logSha256": "b78e9025bd3df72f800e181e99f2d788721ec2e447f388f2d55151a28d75a446"
+      },
+      {
+        "command": "node test/hardening.js",
+        "exitCode": 0,
+        "elapsedMs": 17321,
+        "log": "output/campaign-network/verification/test_hardening.js.log",
+        "logSha256": "cdb74655302805b0688d802466134776581c097bb28c69bcefdfcb65947354b9"
+      },
+      {
+        "command": "node test/agent-alpha.js",
+        "exitCode": 0,
+        "elapsedMs": 441270,
+        "log": "output/campaign-network/verification/test_agent-alpha.js.log",
+        "logSha256": "c81e6fe4d409ccaf449ad83ee293d14e6467da57513c1dce4e7b7bb2a8c345b8"
+      },
+      {
+        "command": "node test/agentturn.js",
+        "exitCode": 0,
+        "elapsedMs": 5369,
+        "log": "output/campaign-network/verification/test_agentturn.js.log",
+        "logSha256": "cd062360ce7c882ef045ad16e82e5a11aa28737dda345924fc808f9f0a8a8447"
+      },
+      {
+        "command": "node test/security.js",
+        "exitCode": 0,
+        "elapsedMs": 12958,
+        "log": "output/campaign-network/verification/test_security.js.log",
+        "logSha256": "87ef9653a68780a328a1e0e28ba8ebbfa0b156ede32e927f3ab020a5e79a24c0"
+      },
+      {
+        "command": "node test/phase2-lots-property.js",
+        "exitCode": 0,
+        "elapsedMs": 977865,
+        "log": "output/campaign-network/verification/test_phase2-lots-property.js.log",
+        "logSha256": "3cf22465e2d0bc6a77fd71380cd480e75185d38e6c16afaa64d6566e8fa0b26f"
+      },
+      {
+        "command": "node test/watcher.js",
+        "exitCode": 0,
+        "elapsedMs": 3934,
+        "log": "output/campaign-network/verification/test_watcher.js.log",
+        "logSha256": "0bab7e3ae6f8ee3f50fb3b431c510ba0c9a1e6a618454ea6fbcb8e49d4ae75ed"
+      },
+      {
+        "command": "node test/chain.js",
+        "exitCode": 0,
+        "elapsedMs": 5876,
+        "log": "output/campaign-network/verification/test_chain.js.log",
+        "logSha256": "aff63e31906ccb0a5c23e9b0ae339f5471ed69f5f87fc8ccf39b7473b80fac83"
+      },
+      {
+        "command": "node test/vig.js",
+        "exitCode": 0,
+        "elapsedMs": 4756,
+        "log": "output/campaign-network/verification/test_vig.js.log",
+        "logSha256": "5600748cd1dcb47252da697c82b0fc6fc12bf6fb9b2a39871017206c278c29f8"
+      },
+      {
+        "command": "node test/heists.js",
+        "exitCode": 0,
+        "elapsedMs": 6531,
+        "log": "output/campaign-network/verification/test_heists.js.log",
+        "logSha256": "95cc89b23ecff8e7635a8c5658c10f2d8bd9e19ea0eac886c731327afd6366cf"
+      },
+      {
+        "command": "node test/convoy.js",
+        "exitCode": 0,
+        "elapsedMs": 8148,
+        "log": "output/campaign-network/verification/test_convoy.js.log",
+        "logSha256": "446b5c538bc6dd0d41a75e8d520886e4892a8071f0c91e8a7010db1850e0c52f"
+      },
+      {
+        "command": "node test/casino.js",
+        "exitCode": 0,
+        "elapsedMs": 20022,
+        "log": "output/campaign-network/verification/test_casino.js.log",
+        "logSha256": "d26bb1ace7afa7dd59d3993cd944bed6036ce2c17d68fef2c17e731e7a226e5e"
+      },
+      {
+        "command": "node test/stockcatalog.js",
+        "exitCode": 0,
+        "elapsedMs": 2624,
+        "log": "output/campaign-network/verification/test_stockcatalog.js.log",
+        "logSha256": "9e3a4a91104305f0074106c2ef0519848f7360a28bac12e00288246d6a2a12f4"
+      },
+      {
+        "command": "node test/commission.js",
+        "exitCode": 0,
+        "elapsedMs": 6895,
+        "log": "output/campaign-network/verification/test_commission.js.log",
+        "logSha256": "ba883c7c285e623a559e235c1c34928044a75282ec6b4d9db3d9210903d564d1"
+      },
+      {
+        "command": "node test/stockcatalogv2.js",
+        "exitCode": 0,
+        "elapsedMs": 5561,
+        "log": "output/campaign-network/verification/test_stockcatalogv2.js.log",
+        "logSha256": "0a7c7fe9f710de95731c7e54e3444226a823145b46e2c9bb794d227c2f133113"
+      },
+      {
+        "command": "node test/market.js",
+        "exitCode": 0,
+        "elapsedMs": 8388,
+        "log": "output/campaign-network/verification/test_market.js.log",
+        "logSha256": "537cca44f04a72021c59336ae7e68bfb70a77143075e63f40d6bcce0df00b57f"
+      },
+      {
+        "command": "node test/skills.js",
+        "exitCode": 0,
+        "elapsedMs": 6291,
+        "log": "output/campaign-network/verification/test_skills.js.log",
+        "logSha256": "48cf3a1d52a41dc5bd3854f6d7f4d6ac195b897e2419885064f83ab9c8e37e47"
+      },
+      {
+        "command": "node test/law.js",
+        "exitCode": 0,
+        "elapsedMs": 5937,
+        "log": "output/campaign-network/verification/test_law.js.log",
+        "logSha256": "67a0d46ac19f3b56b6e771773c9436eb0322069fa21b3104b4a5005c0299c7cf"
+      },
+      {
+        "command": "node test/underworld.js",
+        "exitCode": 0,
+        "elapsedMs": 9742,
+        "log": "output/campaign-network/verification/test_underworld.js.log",
+        "logSha256": "69c8a412b304f653198b2872a9191637791cd60925d6c52a88f112afced3ac76"
+      },
+      {
+        "command": "node test/world.js",
+        "exitCode": 0,
+        "elapsedMs": 6863,
+        "log": "output/campaign-network/verification/test_world.js.log",
+        "logSha256": "1948158a27e0ca074a6a74b746095927597e176b969c1129b7b85f1c971bdb43"
+      },
+      {
+        "command": "node test/npcwar.js",
+        "exitCode": 0,
+        "elapsedMs": 6444,
+        "log": "output/campaign-network/verification/test_npcwar.js.log",
+        "logSha256": "626f55a635a60c1e7acb2fe9e6944d941bb6e6629b4b0caeecd124e6707b798a"
+      },
+      {
+        "command": "node test/pen.js",
+        "exitCode": 0,
+        "elapsedMs": 10809,
+        "log": "output/campaign-network/verification/test_pen.js.log",
+        "logSha256": "e00249862c87bc27ff14ed000d6d758bd1ff7e122e334d3290e0f8efa8224348"
+      },
+      {
+        "command": "node test/loans.js",
+        "exitCode": 0,
+        "elapsedMs": 12675,
+        "log": "output/campaign-network/verification/test_loans.js.log",
+        "logSha256": "f0a0ce491e55b3d6650891c32d2ae6339c8e09ce57fe177ea2e224206daeaa7f"
+      },
+      {
+        "command": "node test/portfolio.js",
+        "exitCode": 0,
+        "elapsedMs": 4956,
+        "log": "output/campaign-network/verification/test_portfolio.js.log",
+        "logSha256": "b5fd2949be5f4b749b9610e58bc4ba46252057ce830db3a186e95a1752d455bf"
+      },
+      {
+        "command": "node test/estate.js",
+        "exitCode": 0,
+        "elapsedMs": 5052,
+        "log": "output/campaign-network/verification/test_estate.js.log",
+        "logSha256": "ff8cfdf9ad4107cd41b4aeba9ad3c5365ba5c69ea31c0ef77085333ddc32d668"
+      },
+      {
+        "command": "node test/deeds.js",
+        "exitCode": 0,
+        "elapsedMs": 6846,
+        "log": "output/campaign-network/verification/test_deeds.js.log",
+        "logSha256": "56b02c5b21a27dcd3acc927b35e624e4c4a285045c2387223d37d0bfd8523a34"
+      },
+      {
+        "command": "node test/auction.js",
+        "exitCode": 0,
+        "elapsedMs": 5357,
+        "log": "output/campaign-network/verification/test_auction.js.log",
+        "logSha256": "dd7dec94f16e26292d810709b9c09f12c35f7b087ea75deaa0d1212b793ce562"
+      },
+      {
+        "command": "node test/store.js",
+        "exitCode": 0,
+        "elapsedMs": 5099,
+        "log": "output/campaign-network/verification/test_store.js.log",
+        "logSha256": "0affb1a73a54c0d09d9544a6cf7bb8ae8e3c99a6bdce1941a54e1570a23d4d4e"
+      },
+      {
+        "command": "node test/wire.js",
+        "exitCode": 0,
+        "elapsedMs": 7966,
+        "log": "output/campaign-network/verification/test_wire.js.log",
+        "logSha256": "a537bf82ccc8d75255244ab0c56e8c608ebc59f0f87304d2422e68733806bf17"
+      },
+      {
+        "command": "node test/landmarks.js",
+        "exitCode": 0,
+        "elapsedMs": 4297,
+        "log": "output/campaign-network/verification/test_landmarks.js.log",
+        "logSha256": "32397c2e046ba66c1d925900242942a861079dd70d57248ec131a9af206aaba9"
+      },
+      {
+        "command": "node test/pass.js",
+        "exitCode": 0,
+        "elapsedMs": 4522,
+        "log": "output/campaign-network/verification/test_pass.js.log",
+        "logSha256": "8ef5b9bd51bf2a7facfdb6e3802b8b58c2bc5a70a5ac7e4f495af44885064efd"
+      },
+      {
+        "command": "node test/speakeasy.js",
+        "exitCode": 0,
+        "elapsedMs": 7326,
+        "log": "output/campaign-network/verification/test_speakeasy.js.log",
+        "logSha256": "0929b7fd09c499a4cc77c08fdd7c36246191879b5267ead38a6004cf62e133d3"
+      },
+      {
+        "command": "node test/boxing.js",
+        "exitCode": 0,
+        "elapsedMs": 7395,
+        "log": "output/campaign-network/verification/test_boxing.js.log",
+        "logSha256": "247c5b3b51e8436a67ce858d30d45583c008d622ccc55678193cd67942f9af34"
+      },
+      {
+        "command": "node test/bonds.js",
+        "exitCode": 0,
+        "elapsedMs": 4916,
+        "log": "output/campaign-network/verification/test_bonds.js.log",
+        "logSha256": "fb5dcef44108de1d65ce37f337b7290c3be7c653e7ba17bba3c0f80e5acb01c3"
+      },
+      {
+        "command": "node test/races.js",
+        "exitCode": 0,
+        "elapsedMs": 6840,
+        "log": "output/campaign-network/verification/test_races.js.log",
+        "logSha256": "fcd7895ce47764e7aafa902e88c5cedac44a846de72ecbc1cd539a103830182f"
+      },
+      {
+        "command": "node test/port.js",
+        "exitCode": 0,
+        "elapsedMs": 6549,
+        "log": "output/campaign-network/verification/test_port.js.log",
+        "logSha256": "70d3f290dfed2c8581e831dca477941e26bce22b436dc91cb6cfa20d9d0f1b7e"
+      },
+      {
+        "command": "node test/stable.js",
+        "exitCode": 0,
+        "elapsedMs": 7078,
+        "log": "output/campaign-network/verification/test_stable.js.log",
+        "logSha256": "951bc5b15eafb3d982e1185a441a038ff200ae1b405fc6861a1961171d1e7d41"
+      },
+      {
+        "command": "node test/emission.js",
+        "exitCode": 0,
+        "elapsedMs": 4121,
+        "log": "output/campaign-network/verification/test_emission.js.log",
+        "logSha256": "8d0ef5281583135d9bb153f992a6fee5f97019b468fc884a4778aa3b5a8fd653"
+      },
+      {
+        "command": "node test/migrate.js",
+        "exitCode": 0,
+        "elapsedMs": 11366,
+        "log": "output/campaign-network/verification/test_migrate.js.log",
+        "logSha256": "7d2180bf577cb036ac35955fab7f28005799d3bb5ff430baac5bd1dc50bd869a"
+      },
+      {
+        "command": "node test/desk.js",
+        "exitCode": 0,
+        "elapsedMs": 5345,
+        "log": "output/campaign-network/verification/test_desk.js.log",
+        "logSha256": "c4196a6b2338a50ead765f033e8294b5a36685d7d86d8ca5b80d892e7db024f8"
+      },
+      {
+        "command": "node test/nft.js",
+        "exitCode": 0,
+        "elapsedMs": 4746,
+        "log": "output/campaign-network/verification/test_nft.js.log",
+        "logSha256": "405033b4659b058609a967b17107bc4c24288dd4894ab90d4bdc1139049b426d"
+      },
+      {
+        "command": "node test/made.js",
+        "exitCode": 0,
+        "elapsedMs": 5670,
+        "log": "output/campaign-network/verification/test_made.js.log",
+        "logSha256": "ee1120fd0b285efdde0bd061baf4a34ab3db8504ece36e588e7bcf18474b1d15"
+      },
+      {
+        "command": "node test/reimport.js",
+        "exitCode": 0,
+        "elapsedMs": 3922,
+        "log": "output/campaign-network/verification/test_reimport.js.log",
+        "logSha256": "c0c7442605fa30f53edb75c4cb1229b6a216539dbb6a9f88c609c38aaf100d05"
+      },
+      {
+        "command": "node test/walletforge.js",
+        "exitCode": 0,
+        "elapsedMs": 4216,
+        "log": "output/campaign-network/verification/test_walletforge.js.log",
+        "logSha256": "c9c495783226d584f702e091d51bf3dcd22d7bde508febe060d1de02c5cb1a76"
+      },
+      {
+        "command": "node test/dynasty.js",
+        "exitCode": 0,
+        "elapsedMs": 6123,
+        "log": "output/campaign-network/verification/test_dynasty.js.log",
+        "logSha256": "cc19bd1fef9671f39f27c1e4d38fc40010ee638d07ec757b6a8e97839a463965"
+      },
+      {
+        "command": "node test/expansion.js",
+        "exitCode": 0,
+        "elapsedMs": 7706,
+        "log": "output/campaign-network/verification/test_expansion.js.log",
+        "logSha256": "740460136df339cd5b0f67da7454ef317646600b560647d2284b0ac8d4735390"
+      },
+      {
+        "command": "node test/intrigue.js",
+        "exitCode": 0,
+        "elapsedMs": 5475,
+        "log": "output/campaign-network/verification/test_intrigue.js.log",
+        "logSha256": "32de128dafac01d77be76ff540125aeb17c7424357f556e9d51b97f44410d7e7"
+      },
+      {
+        "command": "node test/megaproject.js",
+        "exitCode": 0,
+        "elapsedMs": 4527,
+        "log": "output/campaign-network/verification/test_megaproject.js.log",
+        "logSha256": "e013db3ef2180246d572b955a039bb1a31936f9ab6ffc62b43b00b26ae0d88d7"
+      },
+      {
+        "command": "node test/clues.js",
+        "exitCode": 0,
+        "elapsedMs": 4665,
+        "log": "output/campaign-network/verification/test_clues.js.log",
+        "logSha256": "0bd8b9ae6c3342a982b32431d9bc983abda5d17b6be49f1086bbe58537a89814"
+      },
+      {
+        "command": "node test/duels.js",
+        "exitCode": 0,
+        "elapsedMs": 4996,
+        "log": "output/campaign-network/verification/test_duels.js.log",
+        "logSha256": "18688d86a20ebf7893b340200cd5ef95c1031778178ca0a744314e9588de239d"
+      },
+      {
+        "command": "node test/seasons.js",
+        "exitCode": 0,
+        "elapsedMs": 5358,
+        "log": "output/campaign-network/verification/test_seasons.js.log",
+        "logSha256": "664474d53c226b4dd8bffa080fe33c1b986e17b724a438cfa26d4d306ebc252e"
+      },
+      {
+        "command": "node test/standing.js",
+        "exitCode": 0,
+        "elapsedMs": 4178,
+        "log": "output/campaign-network/verification/test_standing.js.log",
+        "logSha256": "e0687aa32fcc02e92ead6e6caa82335a80feaf6db72af6ab2ba4f8e4efd321d8"
+      },
+      {
+        "command": "node test/ring.js",
+        "exitCode": 0,
+        "elapsedMs": 11998,
+        "log": "output/campaign-network/verification/test_ring.js.log",
+        "logSha256": "c966dbcbe27a4eea272b67123d6c323fa9b2aff8a9265eb194903bfc64cfca0f"
+      },
+      {
+        "command": "node test/sacking.js",
+        "exitCode": 0,
+        "elapsedMs": 5184,
+        "log": "output/campaign-network/verification/test_sacking.js.log",
+        "logSha256": "f4ae92df5cc0f9a567d3093c914a04836b1fcd92928f3da0828760c03f5fe9a8"
+      },
+      {
+        "command": "node test/shields.js",
+        "exitCode": 0,
+        "elapsedMs": 4751,
+        "log": "output/campaign-network/verification/test_shields.js.log",
+        "logSha256": "f092dea866a21dca2f0017f768103046b47bdb78938edee615fc1d4bd01b9164"
+      },
+      {
+        "command": "node test/tokenomics.js",
+        "exitCode": 0,
+        "elapsedMs": 5113,
+        "log": "output/campaign-network/verification/test_tokenomics.js.log",
+        "logSha256": "26b2726a21cd1f252742f7038bdbe93910e7bdb2a53a2c065f4f9bb2c8344af0"
+      },
+      {
+        "command": "node test/population.js",
+        "exitCode": 0,
+        "elapsedMs": 10862,
+        "log": "output/campaign-network/verification/test_population.js.log",
+        "logSha256": "7d00953ef460e6d3d47088979a9334a08d569697b0b7f33a787e4bee06034faf"
+      },
+      {
+        "command": "node test/treasury.js",
+        "exitCode": 0,
+        "elapsedMs": 4037,
+        "log": "output/campaign-network/verification/test_treasury.js.log",
+        "logSha256": "99c788ee976673517a2a7763f9043da0ab518dd497befd37b8e1c5ad6245ac05"
+      },
+      {
+        "command": "node test/stockdeliver.js",
+        "exitCode": 0,
+        "elapsedMs": 2655,
+        "log": "output/campaign-network/verification/test_stockdeliver.js.log",
+        "logSha256": "a4814f9c22dcde9caa322c540832600ce2a3dc54fd29e7804c22f2a264bd3a00"
+      },
+      {
+        "command": "node test/dexbot.js",
+        "exitCode": 0,
+        "elapsedMs": 2433,
+        "log": "output/campaign-network/verification/test_dexbot.js.log",
+        "logSha256": "a334ff0b028ffe5df61eb7e052de41259018e7a67a1699299bfb375aaca58f5a"
+      },
+      {
+        "command": "node test/activity.js",
+        "exitCode": 0,
+        "elapsedMs": 88,
+        "log": "output/campaign-network/verification/test_activity.js.log",
+        "logSha256": "835af5247736c47c15644952b0a3b74a5f60826d8b702600365244dbc8aee387"
+      },
+      {
+        "command": "node test/brokers.js",
+        "exitCode": 0,
+        "elapsedMs": 4977,
+        "log": "output/campaign-network/verification/test_brokers.js.log",
+        "logSha256": "5ca0a775659a26577f2ea3157609ee05da3608c8946f76da409b192db9b5c977"
+      },
+      {
+        "command": "node test/mastery.js",
+        "exitCode": 0,
+        "elapsedMs": 6654,
+        "log": "output/campaign-network/verification/test_mastery.js.log",
+        "logSha256": "6246f5cb2252940b53ec2be4c61b40cd8699587897cbc9a20f59cc3ecbab4de1"
+      },
+      {
+        "command": "node test/bank.js",
+        "exitCode": 0,
+        "elapsedMs": 4404,
+        "log": "output/campaign-network/verification/test_bank.js.log",
+        "logSha256": "ba1277978385c609e90f65a5592edaab32272f011ceaadbebb86a4f830e2992c"
+      },
+      {
+        "command": "node test/community.js",
+        "exitCode": 0,
+        "elapsedMs": 4213,
+        "log": "output/campaign-network/verification/test_community.js.log",
+        "logSha256": "77bbd0b7aa47cdaf8efd766be041885ae1b9e10d93d3d8b537042f88f20a154b"
+      },
+      {
+        "command": "node test/tokenhealth.js",
+        "exitCode": 0,
+        "elapsedMs": 5051,
+        "log": "output/campaign-network/verification/test_tokenhealth.js.log",
+        "logSha256": "0bdd5df6f929b08ab10b22b3142dd805aa9cfea191949cd7b193685000d3550e"
+      },
+      {
+        "command": "node test/regimen.js",
+        "exitCode": 0,
+        "elapsedMs": 5899,
+        "log": "output/campaign-network/verification/test_regimen.js.log",
+        "logSha256": "aadb38f282edb5826122f5eaeddecf199bac1fc5d4450c1481a04a97d81f7583"
+      },
+      {
+        "command": "node test/career.js",
+        "exitCode": 0,
+        "elapsedMs": 6008,
+        "log": "output/campaign-network/verification/test_career.js.log",
+        "logSha256": "5f096800b5592fddc06f935b24e96896daed1ca108c7ff62cb77d37df011087a"
+      },
+      {
+        "command": "node test/favors.js",
+        "exitCode": 0,
+        "elapsedMs": 6341,
+        "log": "output/campaign-network/verification/test_favors.js.log",
+        "logSha256": "dab5c1c36942bf933940ae88941e90ef16123f718465bf9e53ed8da381d195d4"
+      },
+      {
+        "command": "node test/firstblood.js",
+        "exitCode": 0,
+        "elapsedMs": 4665,
+        "log": "output/campaign-network/verification/test_firstblood.js.log",
+        "logSha256": "5b74f784e06f33c17618ef500d3d26cea92ff3afa8c95e74e57d3281c024c9ce"
+      },
+      {
+        "command": "node test/crew.js",
+        "exitCode": 0,
+        "elapsedMs": 7760,
+        "log": "output/campaign-network/verification/test_crew.js.log",
+        "logSha256": "97cb524a3e80c28999db2321d790f6ffd2d7715ea035fa6e94f1e86587c40fff"
+      },
+      {
+        "command": "node test/discovery.js",
+        "exitCode": 0,
+        "elapsedMs": 5783,
+        "log": "output/campaign-network/verification/test_discovery.js.log",
+        "logSha256": "d4477927d02cadc390af4ce48fd89bff88996d13d96242b14fff41eb55a3d0f7"
+      },
+      {
+        "command": "node test/mentor.js",
+        "exitCode": 0,
+        "elapsedMs": 5410,
+        "log": "output/campaign-network/verification/test_mentor.js.log",
+        "logSha256": "9a7c95e6b2f94e9aa2719711937d3c8f4076e7f63e486b4c123f3f8e41258837"
+      },
+      {
+        "command": "node test/events.js",
+        "exitCode": 0,
+        "elapsedMs": 3607,
+        "log": "output/campaign-network/verification/test_events.js.log",
+        "logSha256": "d800d1710c78d0b42c1bf49ada0dd385b696119434fcec2bc84a92c7c11453db"
+      },
+      {
+        "command": "node test/results.js",
+        "exitCode": 0,
+        "elapsedMs": 4140,
+        "log": "output/campaign-network/verification/test_results.js.log",
+        "logSha256": "28a7b98e4d8370516947aea0ecdbc67b7c5dc1443a7ff13cca9a4229bfa28d43"
+      },
+      {
+        "command": "node test/streak.js",
+        "exitCode": 0,
+        "elapsedMs": 4553,
+        "log": "output/campaign-network/verification/test_streak.js.log",
+        "logSha256": "7c57af2461c2fb8984a07e06a38a5d76843828efc7e13c47edef8dee14fadd25"
+      },
+      {
+        "command": "node test/vouch.js",
+        "exitCode": 0,
+        "elapsedMs": 5591,
+        "log": "output/campaign-network/verification/test_vouch.js.log",
+        "logSha256": "5e82d0644e93499f688f4bdf9256c111f845c6735fdae59f4481b78eb14f4a86"
+      },
+      {
+        "command": "node test/circle.js",
+        "exitCode": 0,
+        "elapsedMs": 3966,
+        "log": "output/campaign-network/verification/test_circle.js.log",
+        "logSha256": "8a3421395e41b133cb5a1b246b2d1d23fb49470416008cd0178579080234688b"
+      },
+      {
+        "command": "node test/collision.js",
+        "exitCode": 0,
+        "elapsedMs": 4511,
+        "log": "output/campaign-network/verification/test_collision.js.log",
+        "logSha256": "07a207ef7a91e8b6d01a03cdb386c99d9a24d18e80c81068ab2058c087d6cb89"
+      },
+      {
+        "command": "node test/firsts.js",
+        "exitCode": 0,
+        "elapsedMs": 4320,
+        "log": "output/campaign-network/verification/test_firsts.js.log",
+        "logSha256": "2248d24ce883d10639da31a0a88100410d7e98882d4c5e2dddecd5cb66bdc01b"
+      },
+      {
+        "command": "node test/runs.js",
+        "exitCode": 0,
+        "elapsedMs": 4078,
+        "log": "output/campaign-network/verification/test_runs.js.log",
+        "logSha256": "043c7f8e7883e03ee604aaa8bfaea06e9ce50a183588ae3fbccff02ee2674f59"
+      },
+      {
+        "command": "node test/avatar.js",
+        "exitCode": 0,
+        "elapsedMs": 3547,
+        "log": "output/campaign-network/verification/test_avatar.js.log",
+        "logSha256": "e64207e9cf757c154aa094ffbc88a5532cb2fba728b5f8ac9cb5f7d5726e2910"
+      },
+      {
+        "command": "node test/shipment.js",
+        "exitCode": 0,
+        "elapsedMs": 5358,
+        "log": "output/campaign-network/verification/test_shipment.js.log",
+        "logSha256": "3ac38b370350e1a10d59587d035c4e0b70c15d39ce6d19d2b73c753ab9905bd0"
+      },
+      {
+        "command": "node test/portrait.js",
+        "exitCode": 0,
+        "elapsedMs": 3752,
+        "log": "output/campaign-network/verification/test_portrait.js.log",
+        "logSha256": "573b6f6bf535108bb383ea2a7ff2f9d0790bc0af916ea973477c8e22dfc8b091"
+      },
+      {
+        "command": "node test/push.js",
+        "exitCode": 0,
+        "elapsedMs": 4113,
+        "log": "output/campaign-network/verification/test_push.js.log",
+        "logSha256": "cb4c16c1326936d53b6a3fd37d29f23aef4debb4409e2a61f466c48c09b57faa"
+      },
+      {
+        "command": "node test/dispatch.js",
+        "exitCode": 0,
+        "elapsedMs": 4255,
+        "log": "output/campaign-network/verification/test_dispatch.js.log",
+        "logSha256": "d0d61f398c7269577158b35f76e9b5d9f39c4b604a807e5048ed821c09276385"
+      },
+      {
+        "command": "node test/pwa.js",
+        "exitCode": 0,
+        "elapsedMs": 3680,
+        "log": "output/campaign-network/verification/test_pwa.js.log",
+        "logSha256": "82e224391aaeccf69955908d985f68dc2cb61dacbbc09e7ee73dda5c2a99296c"
+      },
+      {
+        "command": "node test/citywire.js",
+        "exitCode": 0,
+        "elapsedMs": 66,
+        "log": "output/campaign-network/verification/test_citywire.js.log",
+        "logSha256": "a19a6a6ced532a15248db87093d13292b54cefd957e745558c0370cc83659fd7"
+      },
+      {
+        "command": "node test/people.js",
+        "exitCode": 0,
+        "elapsedMs": 4308,
+        "log": "output/campaign-network/verification/test_people.js.log",
+        "logSha256": "ba290bc0a242cd000de78204fa152df6b158fc17f7bf62887b58840fe1067acb"
+      },
+      {
+        "command": "node test/bulletin.js",
+        "exitCode": 0,
+        "elapsedMs": 4059,
+        "log": "output/campaign-network/verification/test_bulletin.js.log",
+        "logSha256": "c769d36a0846ebc99a4711f1bf3fc7acd79b8f576cabb93be2252be6122f451b"
+      },
+      {
+        "command": "node test/primetime.js",
+        "exitCode": 0,
+        "elapsedMs": 5758,
+        "log": "output/campaign-network/verification/test_primetime.js.log",
+        "logSha256": "38ff0907d6e76021b7e1481fdebc82dea8b02a1478ac0894b4f17d2dab0f4b56"
+      },
+      {
+        "command": "node test/explore.js",
+        "exitCode": 0,
+        "elapsedMs": 7087,
+        "log": "output/campaign-network/verification/test_explore.js.log",
+        "logSha256": "56f8431508a5dd94fce3178861fb3ace5cd345dc2764fdf371049c539ccfd1ce"
+      },
+      {
+        "command": "node test/citymap.js",
+        "exitCode": 0,
+        "elapsedMs": 4114,
+        "log": "output/campaign-network/verification/test_citymap.js.log",
+        "logSha256": "bd3075e06b3005c4f565a0257aa993a0931bb0a634c3927d5eda0f7abe46005e"
+      },
+      {
+        "command": "node test/day.js",
+        "exitCode": 0,
+        "elapsedMs": 4107,
+        "log": "output/campaign-network/verification/test_day.js.log",
+        "logSha256": "5cbca457d200daea598027a9e5b5cbee3ac062de602857f7652270209d11d2b1"
+      },
+      {
+        "command": "node test/payroll.js",
+        "exitCode": 0,
+        "elapsedMs": 4221,
+        "log": "output/campaign-network/verification/test_payroll.js.log",
+        "logSha256": "40942ec98f3fc4f6272c1ed5f643335ae67f07f2e1bc788b75ea2f328dff6d59"
+      },
+      {
+        "command": "node test/home.js",
+        "exitCode": 0,
+        "elapsedMs": 5049,
+        "log": "output/campaign-network/verification/test_home.js.log",
+        "logSha256": "490963e8641aeec1680385ca50ad23f08484aa6d858ede5a9e8d2402618e0cd1"
+      },
+      {
+        "command": "node test/streets.js",
+        "exitCode": 0,
+        "elapsedMs": 4382,
+        "log": "output/campaign-network/verification/test_streets.js.log",
+        "logSha256": "49f142e44d14042056b634d664c30e03d6799f3e96419d21210d570a21a7be1d"
+      },
+      {
+        "command": "node test/citywide.js",
+        "exitCode": 0,
+        "elapsedMs": 4404,
+        "log": "output/campaign-network/verification/test_citywide.js.log",
+        "logSha256": "c659df054f92fbb7f7524a65e55b020e70812edb4f5623b73c6d381fac5dcf61"
+      },
+      {
+        "command": "node test/drop.js",
+        "exitCode": 0,
+        "elapsedMs": 5403,
+        "log": "output/campaign-network/verification/test_drop.js.log",
+        "logSha256": "c0f7c9e484d0b96ae121bfa2d2ddeaa3db42620d6ca102d00ca3388aa24e5534"
+      },
+      {
+        "command": "node test/sweeps.js",
+        "exitCode": 0,
+        "elapsedMs": 4314,
+        "log": "output/campaign-network/verification/test_sweeps.js.log",
+        "logSha256": "5f2a629f7639b3d3afd2c4e2bbd24aa2e417d9877c1954ed74f7d8705faeca78"
+      },
+      {
+        "command": "node test/tax.js",
+        "exitCode": 0,
+        "elapsedMs": 1611,
+        "log": "output/campaign-network/verification/test_tax.js.log",
+        "logSha256": "f78933cbc251a65eb6a3a53f2b1b70aad4a5b74a01f68ae2b8b9718d618a4516"
+      },
+      {
+        "command": "node test/router.js",
+        "exitCode": 0,
+        "elapsedMs": 3754,
+        "log": "output/campaign-network/verification/test_router.js.log",
+        "logSha256": "a6b4657d039709052332be5f0fe8a67c481e4441a452c6b3b6e1ed8df707af21"
+      },
+      {
+        "command": "node test/rules.js",
+        "exitCode": 0,
+        "elapsedMs": 85,
+        "log": "output/campaign-network/verification/test_rules.js.log",
+        "logSha256": "f0028f16ebeb148cf1ed6d93d2ec9c3302bfff03c5cc36baebd7fcf509b859a2"
+      },
+      {
+        "command": "node test/auth.js",
+        "exitCode": 0,
+        "elapsedMs": 5675,
+        "log": "output/campaign-network/verification/test_auth.js.log",
+        "logSha256": "c00079b84ffbbfcfc6f4164ea0a8f2ed6142eff2c95dc3c873b98b5011e99074"
+      },
+      {
+        "command": "node test/path-funnel.js",
+        "exitCode": 0,
+        "elapsedMs": 3666,
+        "log": "output/campaign-network/verification/test_path-funnel.js.log",
+        "logSha256": "dd89512fb27a6b9722ee1b39fc44402a911730355ec2c80b420be76261a4bb6d"
+      },
+      {
+        "command": "node test/diagram-renderer.js",
+        "exitCode": 0,
+        "elapsedMs": 445,
+        "log": "output/campaign-network/verification/test_diagram-renderer.js.log",
+        "logSha256": "5d8e476964a9bf513524368364b9ba1a1ba9d2da0af537e9d1171b240f4e8bae"
+      },
+      {
+        "command": "node test/routes.js",
+        "exitCode": 0,
+        "elapsedMs": 5980,
+        "log": "output/campaign-network/verification/test_routes.js.log",
+        "logSha256": "66802f2128c26ff2290e0dcbd427397dbca46ac62a179e4959d213fbe296572f"
+      },
+      {
+        "command": "node test/coldstart.js",
+        "exitCode": 0,
+        "elapsedMs": 5795,
+        "log": "output/campaign-network/verification/test_coldstart.js.log",
+        "logSha256": "1373cb0719e744904630355590153746071802d16989b6d3826acc8453b17a6e"
+      },
+      {
+        "command": "node test/preflight.js",
+        "exitCode": 0,
+        "elapsedMs": 868,
+        "log": "output/campaign-network/verification/test_preflight.js.log",
+        "logSha256": "f01d16f1cfd4bf7d09fb73db1b2b716c4a7b6f21fc08541ac4482e7ce740d503"
+      },
+      {
+        "command": "node test/engagement.js",
+        "exitCode": 0,
+        "elapsedMs": 4616,
+        "log": "output/campaign-network/verification/test_engagement.js.log",
+        "logSha256": "8ad0bdd0a8a098ebed90a93ee5a5208476440ff2a2c829f47b0bb24cb9b03ebd"
+      },
+      {
+        "command": "node test/levers.js",
+        "exitCode": 0,
+        "elapsedMs": 648,
+        "log": "output/campaign-network/verification/test_levers.js.log",
+        "logSha256": "2de02f881f697caa19daeff43f8f36baa99a335e12b28dd04ba9c94daf03757c"
+      },
+      {
+        "command": "node test/graph.js",
+        "exitCode": 0,
+        "elapsedMs": 14872,
+        "log": "output/campaign-network/verification/test_graph.js.log",
+        "logSha256": "72bdebecffc6d95dd75b6e52f65c47a94c51a0363646deed7d30c5ec67c71b8a"
+      },
+      {
+        "command": "node test/gates.js",
+        "exitCode": 0,
+        "elapsedMs": 6861,
+        "log": "output/campaign-network/verification/test_gates.js.log",
+        "logSha256": "7a063bfaa22e18747850b7ad2f01111825dd87bd2490d4353acaaa93fc449109"
+      },
+      {
+        "command": "node test/chainparams.js",
+        "exitCode": 0,
+        "elapsedMs": 664,
+        "log": "output/campaign-network/verification/test_chainparams.js.log",
+        "logSha256": "f6af562e73db5457c4eebf687be497b439386a4973bb7dabc3dbc818c5998020"
+      },
+      {
+        "command": "node test/docs.js",
+        "exitCode": 0,
+        "elapsedMs": 4370,
+        "log": "output/campaign-network/verification/test_docs.js.log",
+        "logSha256": "cff8bf39dfa2df7d194e2c9be144b650d820cc86c634694101445bcbedd2f26e"
+      },
+      {
+        "command": "node test/playthrough-truth.js",
+        "exitCode": 0,
+        "elapsedMs": 56,
+        "log": "output/campaign-network/verification/test_playthrough-truth.js.log",
+        "logSha256": "386a5380f9d9f412fc6b595b348a9c23ec7603ae85d558581bb04d59540a5b31"
+      },
+      {
+        "command": "node test/client.js",
+        "exitCode": 0,
+        "elapsedMs": 49643,
+        "log": "output/campaign-network/verification/test_client.js.log",
+        "logSha256": "7ab884b8d13f282b1f40ed212ddd818656a9be4961e8193d6d42221f030158cb"
+      },
+      {
+        "command": "node tools/knowledge-test.js",
+        "exitCode": 1,
+        "elapsedMs": 43249,
+        "log": "output/campaign-network/verification/tools_knowledge-test.js.log",
+        "logSha256": "35093be92b0f1a2703ddbb393dc6d9e722eb47175a48bf2d1e7dd4ba1d9cc948"
+      }
+    ],
+    "manifest": {
+      "path": "output/campaign-network/verification/manifest.json",
+      "sha256": "7805678f912151971826670760a7715958f5a359b71e39f6494437ab6c263dde"
+    },
+    "generatedCheckpoint": {
+      "status": "required after source commit",
+      "commands": [
+        "node tools/knowledge.js build",
+        "git commit -- knowledge/generated",
+        "node tools/knowledge.js check",
+        "node tools/knowledge-test.js"
+      ],
+      "logs": [
+        "output/campaign-network/knowledge-build.txt",
+        "output/campaign-network/knowledge-check.txt",
+        "output/campaign-network/knowledge-test.txt"
+      ],
+      "note": "The repository requires a clean authored source commit followed by a separate generated-only checkpoint; generated artifacts cannot describe their own source commit. Clean checkpoint results are retained in these local logs."
+    }
+  },
+  "compiler": {
+    "command": "node tools/director-validate.js",
+    "exitCode": 0,
+    "valid": true,
+    "situations": 9,
+    "campaignDefinitions": 5,
+    "report": {
+      "path": "output/campaign-network/definitions.json",
+      "sha256": "cdfda7753eb5f7465c1c38021fcf1e236986324ae3d639d2ba2dbbf253261891"
+    }
+  }
+}

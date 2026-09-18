@@ -16,8 +16,8 @@ import { createMysteryContext, startMystery, mysteryBoard, discoverNode, complet
 import { createDockWarContent, DOCK_WAR_IDS as ids } from '../../src/content/dock-war.js';
 
 export { key, characterId, ids };
-export async function dockFixture(tag = 'dock') {
-  const db = await commandDatabase(tag), pool = db.pool, content = createDockWarContent();
+export async function dockFixture(tag = 'dock', suppliedContent = null) {
+  const db = await commandDatabase(tag), pool = db.pool, content = suppliedContent || createDockWarContent();
   const actors = Object.fromEntries(['aBoss', 'aRunner', 'bBoss', 'bRunner', 'outsider'].map((role) => [role, `${tag}-${role}`]));
   const names = Object.fromEntries(Object.keys(actors).map((role) => [role, `${tag} ${role}`]));
   const social = (account, work, hooks) => withCharacter(pool, account, work, hooks);
@@ -36,7 +36,7 @@ export async function dockFixture(tag = 'dock') {
     knowledgeEnabled: true, sharingEnabled: true, operationOutcomesEnabled: true, prerequisitesEnabled: true,
     worldDefinitions: kernel.definitions });
   const owner = (account) => ({ scope: 'character', id: characterId(account) });
-  const graph = coordinationGraphs(content.coordinationRegistry)[0], runs = new Map(), salvaged = new Set();
+  const graph = coordinationGraphs(content.coordinationRegistry).find((entry) => entry.id === ids.coordination), runs = new Map(), salvaged = new Set();
   const crews = {}, families = {};
   for (const [role, account] of Object.entries(actors)) await addPlayer(pool, account, names[role]);
   for (const prefix of ['a', 'b']) {

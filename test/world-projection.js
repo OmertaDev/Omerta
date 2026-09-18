@@ -180,6 +180,10 @@ try {
   assert.equal(done.operations.selected.status, 'completed'); assert.equal(done.worldObjects[0].state, 'open');
   const publicView = await projection.snapshot(outsider);
   assert.equal(publicView.worldObjects[0].state, 'open'); assert.equal(publicView.knowledge.claims.length, 0);
+  assert.equal(publicView.consequences.length, 1);
+  assert(publicView.consequences[0].description.includes('open'));
+  assert.equal(publicView.consequences[0].cause, null, 'Public aftermath does not name private actors or causes');
+  assert.equal(publicView.consequences[0].remainsActive, true);
   assert.deepEqual(publicView.inventory, outsiderInventory); assert.deepEqual((await projection.snapshot(b)).inventory, bInventory);
   assert(!JSON.stringify(publicView).includes(item.id)); assert(!JSON.stringify(publicView).includes(claimId));
   assert.equal((await pool.query('SELECT state FROM item_instances WHERE id=$1', [item.id])).rows[0].state, 'consumed');

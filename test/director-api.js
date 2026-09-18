@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import Fastify from 'fastify';
 import jwt from '@fastify/jwt';
 import { register } from '../src/routes/commands.js';
+import { register as registerProjections } from '../src/routes/projections.js';
 import { createLivingWorldDirector } from '../src/director/runtime.js';
 import { createDockWarDefinitions } from '../src/director/dock-war.js';
 import { dockFixture } from './lib/director-support.js';
@@ -22,6 +23,7 @@ try {
   const situationId = (await director.tick()).selected[0].situationId;
   app = Fastify(); await app.register(jwt, { secret: 'isolated-director-api-test-only' });
   register(app, { pool, auth: (request) => request.jwtVerify() });
+  registerProjections(app, { pool, auth: (request) => request.jwtVerify(), readPlayer: async () => ({}) });
   const tokens = Object.fromEntries(Object.values(actors).map((accountId) => [accountId, app.jwt.sign({ sub: accountId })]));
   const request = (account, method, url, payload, key) => app.inject({ method, url,
     headers: { ...(account ? { authorization: `Bearer ${tokens[account]}` } : {}), ...(key ? { 'idempotency-key': key } : {}) },
@@ -36,6 +38,13 @@ try {
   assert.equal(hidden.situations.length, 0); assert(!JSON.stringify(hidden).includes(situationId));
   const boss = await view(actors.aBoss), runner = await view(actors.aRunner);
   assert(boss.situations.some((entry) => entry.id === situationId));
+  assert(boss.situations.every((entry) => !Object.hasOwn(entry, 'revision')));
+  assert(boss.commands.filter((entry) => entry.commandType === 'situation.act')
+    .every((entry) => !Object.hasOwn(entry.parameters, 'expectedRevision')));
+  const directProjection = await request(actors.aBoss, 'GET', '/v1/projections/world');
+  assert.equal(directProjection.statusCode, 200, directProjection.body);
+  assert(directProjection.json().situations.some((entry) => entry.id === situationId));
+  assert(directProjection.json().situations.every((entry) => !Object.hasOwn(entry, 'revision')));
   assert(!JSON.stringify(runner.situations).includes('Your dock shipment needs protection'));
   for (const value of [situationId, 'forged', 'situation:dock_shortage']) {
     const probe = await request(actors.outsider, 'GET', `/v1/commands?situationId=${encodeURIComponent(value)}`);

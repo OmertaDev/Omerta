@@ -107,7 +107,10 @@ try {
   assert.deepEqual(await family.create(account, { definitionId: ids.protectOperation }, createKey), operation,
     'Pre-upgrade Family execution identity still reconciles after migration');
 
-  const director = createLivingWorldDirector({ pool, content, definitions: createDockWarDefinitions(content), mode: 'LIVE' });
+  // This assertion is about migration/replay, not the wall clock crossing the
+  // scheduler's five-minute bucket while two real migrations run.
+  const observedAt = Date.now();
+  const director = createLivingWorldDirector({ pool, content, definitions: createDockWarDefinitions(content), mode: 'LIVE', clock: () => observedAt });
   const tick = await director.tick(); assert.equal(tick.selected.length, 1);
   commands = engine(director);
   await act('situation.act', { actionId: 'protect' });

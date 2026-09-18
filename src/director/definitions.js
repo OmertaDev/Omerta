@@ -13,6 +13,9 @@ export const DIRECTOR_FACTS = Object.freeze({
   activeFamilies: 'number', activeCrews: 'number', completedOperations: 'number',
   failedOperations: 'number', discoveredSources: 'number', priorWorldAction: 'nullable_text',
   priorOutcome: 'nullable_text', season: 'number', familyActivity: 'number',
+  historicalSamples: 'number', shortageWindows: 'number', repeatedFamilyFailures: 'number',
+  dominanceSeconds: 'number', recentTerritoryChanges: 'number', recentMysteryDiscoveries: 'number',
+  peacefulResolutions: 'number', violentEvents: 'number', recentActivity: 'number', historyAvailable: 'number',
 });
 export const DIRECTOR_PRESSURES = Object.freeze({
   resourceDeficit: Object.freeze({ category: 'economic', inputs: Object.freeze(['resourceQuantity', 'resourceDemand']),
@@ -23,7 +26,28 @@ export const DIRECTOR_PRESSURES = Object.freeze({
     semantics: 'Failed operations divided by completed plus failed operations in the observation window.' }),
   discoveryActivity: Object.freeze({ category: 'information', inputs: Object.freeze(['discoveredSources']),
     semantics: 'Distinct observed discovery sources divided by the bounded sample size of 32, capped at one.' }),
+  instability: Object.freeze({ category: 'family', inputs: Object.freeze(['historyAvailable', 'repeatedFamilyFailures', 'recentTerritoryChanges']),
+    semantics: 'Verified recent failures and control changes, capped at eight; unavailable history contributes zero.' }),
+  smuggling: Object.freeze({ category: 'economic', inputs: Object.freeze(['historyAvailable', 'shortageWindows']),
+    semantics: 'Six-hour canonical shortage observations within seven days, capped at eight.' }),
+  resistance: Object.freeze({ category: 'territory', inputs: Object.freeze(['historyAvailable', 'dominanceSeconds', 'activeFamilies', 'recentActivity']),
+    semantics: 'Observed continuous control up to seven days, only with active rivals and recent canonical activity.' }),
+  law: Object.freeze({ category: 'law', inputs: Object.freeze(['historyAvailable', 'violentEvents']),
+    semantics: 'Authored violence labels on committed world events within seven days, capped at eight.' }),
+  diplomacy: Object.freeze({ category: 'family', inputs: Object.freeze(['historyAvailable', 'peacefulResolutions']),
+    semantics: 'Authored peaceful labels on committed world events within seven days, capped at eight.' }),
+  investigation: Object.freeze({ category: 'information', inputs: Object.freeze(['historyAvailable', 'recentMysteryDiscoveries']),
+    semantics: 'Authenticated recent discovery sources, capped at 32; unavailable history contributes zero.' }),
 });
+const factMaximum = (fact) => fact === 'worldRevision' ? Number.MAX_SAFE_INTEGER
+  : ({ historicalSamples: 28, shortageWindows: 28, repeatedFamilyFailures: 128, dominanceSeconds: 604800,
+    recentTerritoryChanges: 31, recentMysteryDiscoveries: 32, peacefulResolutions: 32, violentEvents: 32,
+    recentActivity: 192, historyAvailable: 1 }[fact] ?? 1000000);
+export const COMPETITION_CLASSES = Object.freeze(['EXCLUSIVE', 'CONTESTED', 'COOPERATIVE', 'PARALLEL', 'SECRET', 'ESCALATING', 'CASCADE']);
+export const INFORMATION_LAYERS = Object.freeze(['PUBLIC_SIGNAL', 'LOCAL_RUMOR', 'FAMILY_INTELLIGENCE', 'CREW_INTELLIGENCE',
+  'DISCOVERED_INTELLIGENCE', 'SECRET_KNOWLEDGE', 'PUBLIC_AFTERMATH']);
+export const CONSEQUENCE_KINDS = Object.freeze(['territory_control', 'route_access', 'infrastructure', 'material_availability',
+  'family_relations', 'law_pressure', 'knowledge', 'evidence', 'operation_availability']);
 export const DIRECTOR_RECOVERY_TRIGGERS = Object.freeze(['participant_unavailable', 'crew_dissolved',
   'membership_changed', 'item_lost', 'expiry', 'restart', 'season_changed']);
 // Other player commands are derived by their existing authority. A Director
@@ -32,6 +56,22 @@ export const DIRECTOR_COMMAND_TYPES = Object.freeze(['discovery.start', 'operati
 
 export class DirectorDefinitionError extends Error {
   constructor(message) { super(message); this.name = 'DirectorDefinitionError'; this.code = 'bad_director_definition'; }
+}
+function atField(field, work) {
+  try { return work(); } catch (error) {
+    if (error instanceof DirectorDefinitionError && !error.field) error.field = field;
+    throw error;
+  }
+}
+function atDefinition(kind, source, work) {
+  const context = { field: 'definition' };
+  try { return work(context); } catch (error) {
+    if (error instanceof DirectorDefinitionError) {
+      error.definitionId = source.id; error.definitionKind = kind; error.field ||= context.field;
+      error.message = `${kind} ${source.id || '(unnamed)'}, field ${error.field}: ${error.message}`;
+    }
+    throw error;
+  }
 }
 const fail = (message) => { throw new DirectorDefinitionError(message); };
 const id = (value) => {
@@ -47,6 +87,12 @@ const text = (value, maximum = 600) => {
     || /[\u0000-\u001f\u007f-\u009f]/u.test(value)) fail('Invalid bounded text.');
   return value;
 };
+function playerText(value, maximum = 600) {
+  text(value, maximum);
+  if (/\$\{|\{\{|contentHash|definitionHash|definition_hash|dependencyHashes|valuePermille|pressureInputs|selectorWeight|worldRevision|world_revision|director_receipts|starting_world_revision/.test(value))
+    fail('Player text cannot expose canonical or scheduler internals.');
+  return value;
+}
 const choice = (value, values) => {
   if (!values.includes(value)) fail('Unknown closed catalog value.');
   return value;
@@ -103,7 +149,7 @@ function predicate(input) {
   const type = DIRECTOR_FACTS[input.fact];
   if (input.op === 'present') {
     if (typeof input.value !== 'boolean' || type !== 'nullable_text') fail('Presence applies only to optional canonical references.');
-  } else if (type === 'number') integer(input.value, 0, input.fact === 'worldRevision' ? Number.MAX_SAFE_INTEGER : 1000000);
+  } else if (type === 'number') integer(input.value, 0, factMaximum(input.fact));
   else {
     if (input.op !== 'eq') fail('Text facts support equality only.');
     if (input.value !== null || type !== 'nullable_text') id(input.value);
@@ -120,7 +166,7 @@ function satisfiable(required, excluded = []) {
     const rules = required.filter((rule) => rule.fact === fact);
     const forbidden = excluded.filter((rule) => rule.fact === fact);
     if (DIRECTOR_FACTS[fact] === 'number') {
-      let low = 0, high = fact === 'worldRevision' ? Number.MAX_SAFE_INTEGER : 1000000;
+      let low = 0, high = factMaximum(fact);
       for (const rule of rules) {
         if (rule.op === 'eq' || rule.op === 'gte') low = Math.max(low, rule.value);
         if (rule.op === 'eq' || rule.op === 'lte') high = Math.min(high, rule.value);
@@ -152,26 +198,89 @@ export function evaluateDirectorPredicate(rule, facts) {
   predicate(rule);
   if (!facts || !Object.hasOwn(facts, rule.fact)) return false;
   const value = facts[rule.fact], type = DIRECTOR_FACTS[rule.fact];
-  if (type === 'number' && (!Number.isSafeInteger(value) || value < 0 || value > (rule.fact === 'worldRevision' ? Number.MAX_SAFE_INTEGER : 1000000))) return false;
+  if (type === 'number' && (!Number.isSafeInteger(value) || value < 0 || value > factMaximum(rule.fact))) return false;
   if (type === 'text' && typeof value !== 'string' || type === 'nullable_text' && value !== null && typeof value !== 'string') return false;
   return testPredicate(rule, value);
 }
 export function matchesDirectorFacts(rules, facts) { return rules.every((rule) => evaluateDirectorPredicate(rule, facts)); }
+function pressureRatio(input, facts) {
+  if (input === 'resourceDeficit') return facts.resourceDemand ? Math.max(0, facts.resourceDemand - facts.resourceQuantity) / facts.resourceDemand : 0;
+  if (input === 'territoryControl') return facts.controllerFamilyId === null ? 0 : 1;
+  if (input === 'operationFailure') return facts.completedOperations + facts.failedOperations
+    ? facts.failedOperations / (facts.completedOperations + facts.failedOperations) : 0;
+  if (input === 'discoveryActivity') return facts.discoveredSources / 32;
+  if (facts.historyAvailable !== 1) return 0;
+  if (input === 'instability') return (facts.repeatedFamilyFailures + facts.recentTerritoryChanges) / 8;
+  if (input === 'smuggling') return facts.shortageWindows / 8;
+  if (input === 'resistance') return facts.activeFamilies > 1 && facts.recentActivity > 0 ? facts.dominanceSeconds / 604800 : 0;
+  if (input === 'law') return facts.violentEvents / 8;
+  if (input === 'diplomacy') return facts.peacefulResolutions / 8;
+  if (input === 'investigation') return facts.recentMysteryDiscoveries / 32;
+  return 0;
+}
 export function evaluateDirectorPressures(inputs, facts) {
   return inputs.map((input) => {
     if (!Object.hasOwn(DIRECTOR_PRESSURES, input)) fail('Unknown pressure input.');
     const definition = DIRECTOR_PRESSURES[input];
     const valid = definition.inputs.every((fact) => Object.hasOwn(facts, fact)
       && (DIRECTOR_FACTS[fact] === 'nullable_text' ? facts[fact] === null || typeof facts[fact] === 'string'
-        : Number.isSafeInteger(facts[fact]) && facts[fact] >= 0 && facts[fact] <= 1000000));
+        : Number.isSafeInteger(facts[fact]) && facts[fact] >= 0 && facts[fact] <= factMaximum(fact)));
     if (!valid) return { id: input, valuePermille: 0, available: false, facts: definition.inputs };
-    const ratio = input === 'resourceDeficit' ? facts.resourceDemand === 0 ? 0
-      : Math.max(0, facts.resourceDemand - facts.resourceQuantity) / facts.resourceDemand
-      : input === 'territoryControl' ? facts.controllerFamilyId === null ? 0 : 1
-        : input === 'operationFailure' ? facts.completedOperations + facts.failedOperations === 0 ? 0
-          : facts.failedOperations / (facts.completedOperations + facts.failedOperations)
-          : Math.min(1, facts.discoveredSources / 32);
+    const ratio = pressureRatio(input, facts);
     return { id: input, valuePermille: Math.floor(Math.min(1, Math.max(0, ratio)) * 1000), available: true, facts: definition.inputs };
+  });
+}
+
+// Optional for existing immutable definitions; required by network authors. This
+// is descriptive content and read dependencies, never a new execution authority.
+function networkContract(source, worlds, world) {
+  const n = source.network;
+  record(n, ['competition', 'domains', 'relatedWorld', 'information', 'implications']);
+  atField('network.competition', () => {
+    unique(array(n.competition, 1, COMPETITION_CLASSES.length)).forEach((value) => choice(value, COMPETITION_CLASSES));
+    if (n.competition.includes('EXCLUSIVE') && n.competition.includes('PARALLEL')) fail('Exclusive and parallel ownership conflict.');
+    if (n.competition.includes('SECRET') && source.audiences.some((a) => !a.knowledge)) fail('Secret opportunities require knowledge for every audience.');
+    if (n.competition.includes('COOPERATIVE') && (source.participants.minimumPlayers < 2 || !source.coordinationAdapters.length)) fail('Cooperation needs participants and a coordination authority.');
+    if (n.competition.includes('ESCALATING') && !source.possibleEscalations.length) fail('Escalation needs a bounded transition.');
+    if (n.competition.includes('CASCADE') && !n.implications.length) fail('Cascade needs a canonical implication.');
+  });
+  atField('network.domains', () => unique(array(n.domains, 1, 6)).forEach((value) => choice(value,
+    ['territory', 'family', 'economy', 'law', 'mystery', 'infrastructure'])));
+  atField('network.relatedWorld', () => {
+    unique(array(n.relatedWorld, 0, 8), (rule) => rule.objectId);
+    for (const rule of n.relatedWorld) {
+      record(rule, ['objectId', 'states']); const dependency = worlds.get(rule.objectId);
+      if (!dependency || rule.objectId === world.id) fail('Related prerequisites require another admitted world object.');
+      unique(array(rule.states, 1, 16));
+      if (rule.states.some((state) => !dependency.states.includes(state))) fail('Unknown related world state.');
+    }
+  });
+  atField('network.information', () => {
+    unique(array(n.information, source.initialSignals.length, source.initialSignals.length), (entry) => entry.signalId);
+    for (const entry of n.information) {
+      record(entry, ['signalId', 'layer', 'whyKnown', 'stakes']);
+      const signal = source.initialSignals.find((s) => s.id === entry.signalId);
+      const audience = source.audiences.find((a) => a.id === signal?.audienceId);
+      if (!signal || !audience) fail('Information must name an authorized signal.');
+      choice(entry.layer, INFORMATION_LAYERS); playerText(entry.whyKnown); playerText(entry.stakes);
+      const publicLayer = ['PUBLIC_SIGNAL', 'PUBLIC_AFTERMATH'].includes(entry.layer);
+      if (publicLayer !== (audience.kind === 'public')) fail('Information layer exceeds its audience.');
+      if (entry.layer === 'LOCAL_RUMOR' && signal.knowledgeLevel !== 'rumor') fail('Local rumor must be a rumor signal.');
+      if (!publicLayer && entry.layer !== 'LOCAL_RUMOR' && !audience.knowledge) fail('Intelligence requires exact knowledge.');
+      if (entry.layer === 'FAMILY_INTELLIGENCE' && !['controller_family', 'rival_family'].includes(audience.kind)) fail('Family intelligence requires a Family audience.');
+      if (entry.layer === 'CREW_INTELLIGENCE' && audience.kind !== 'crew') fail('Crew intelligence requires a Crew audience.');
+      if (entry.layer === 'PUBLIC_AFTERMATH' && !source.eligibility.some((rule) => rule.fact === 'worldState'
+        && rule.op === 'eq' && world.publicStates.includes(rule.value) && rule.value !== world.initialState)) fail('Public aftermath requires a public canonical consequence state.');
+    }
+  });
+  atField('network.implications', () => {
+    unique(array(n.implications, 0, 32), (entry) => `${entry.consequenceId}/${entry.kind}`);
+    for (const entry of n.implications) {
+      record(entry, ['consequenceId', 'kind', ...(Object.hasOwn(entry, 'signals') ? ['signals'] : [])]);
+      if (!source.consequenceContracts.some((c) => c.id === entry.consequenceId)) fail('Implication requires an existing canonical consequence.');
+      choice(entry.kind, CONSEQUENCE_KINDS);
+      if (entry.signals) unique(array(entry.signals, 0, 4)).forEach((signal) => choice(signal, ['violence', 'peaceful', 'route_disruption', 'investigation']));
+    }
   });
 }
 function cooldown(value) {
@@ -228,22 +337,26 @@ export function compileSituationDefinitions(inputs, catalog = {}) {
   const worlds = catalogMap(catalog.worldDefinitions), operations = catalogMap(catalog.operationDefinitions);
   const profiles = catalogMap(catalog.coordinationProfiles), mysteries = catalogMap(catalog.mysteryDefinitions);
   const knowledge = (catalog.knowledgeSources || []).map((requirement) => canonicalBytes(normalizeKnowledgeRequirement(requirement)).toString());
-  return Object.freeze(sources.map((source) => {
+  return Object.freeze(sources.map((source) => atDefinition('situation', source, (context) => {
     record(source, ['id', 'version', 'category', 'scope', 'objectId', 'eligibility', 'pressureInputs',
       'requiredWorldFacts', 'excludedWorldFacts', 'audiences', 'initialSignals', 'states', 'initialState',
       'terminalStates', 'possibleEscalations', 'possibleResolutions', 'expiryPolicy', 'recoveryPolicy',
       'cooldownPolicy', 'consequenceContracts', 'commandAdapters', 'coordinationAdapters', 'mysteryAdapters',
-      'rarity', 'weight', 'concurrencyPolicy', 'participants']);
-    id(source.id); integer(source.version, 1, 2147483647);
-    choice(source.category, ['territory', 'economic', 'social', 'criminal', 'information', 'operational', 'world_history']);
-    choice(source.scope, ['territory']); id(source.objectId);
+      'rarity', 'weight', 'concurrencyPolicy', 'participants', ...(Object.hasOwn(source, 'network') ? ['network'] : [])]);
+    context.field = 'id'; id(source.id); context.field = 'version'; integer(source.version, 1, 2147483647);
+    context.field = 'category';
+    choice(source.category, ['territory', 'economic', 'social', 'criminal', 'information', 'operational', 'world_history', 'family', 'law', 'mystery', 'infrastructure']);
+    context.field = 'scope'; choice(source.scope, ['territory']); context.field = 'objectId'; id(source.objectId);
     const world = worlds.get(source.objectId);
     if (!world || !/^[a-f0-9]{64}$/.test(world.contentHash)) fail('Situation must bind an admitted canonical world object.');
-    predicates(source.eligibility); predicates(source.requiredWorldFacts); predicates(source.excludedWorldFacts);
-    satisfiable([...source.eligibility, ...source.requiredWorldFacts], source.excludedWorldFacts);
+    atField('eligibility', () => predicates(source.eligibility));
+    atField('requiredWorldFacts', () => predicates(source.requiredWorldFacts));
+    atField('excludedWorldFacts', () => predicates(source.excludedWorldFacts));
+    context.field = 'eligibility'; satisfiable([...source.eligibility, ...source.requiredWorldFacts], source.excludedWorldFacts);
     worldPredicates([...source.eligibility, ...source.requiredWorldFacts, ...source.excludedWorldFacts], world);
-    unique(array(source.pressureInputs, 1, 4)); source.pressureInputs.forEach((input) => choice(input, Object.keys(DIRECTOR_PRESSURES)));
-    const audiences = new Map();
+    atField('pressureInputs', () => unique(array(source.pressureInputs, 1, Object.keys(DIRECTOR_PRESSURES).length))
+      .forEach((input) => choice(input, Object.keys(DIRECTOR_PRESSURES))));
+    context.field = 'audiences'; const audiences = new Map();
     for (const audience of array(source.audiences, 1, DIRECTOR_LIMITS.audiences)) {
       record(audience, ['id', 'kind', 'knowledge']); id(audience.id);
       choice(audience.kind, ['controller_family', 'rival_family', 'crew', 'informed', 'public']);
@@ -257,10 +370,10 @@ export function compileSituationDefinitions(inputs, catalog = {}) {
       } else if (audience.kind === 'informed') fail('Informed audiences require an exact knowledge source.');
       audiences.set(audience.id, audience);
     }
-    unique(array(source.states, 2, DIRECTOR_LIMITS.states)); source.states.forEach(id); id(source.initialState);
+    context.field = 'states'; unique(array(source.states, 2, DIRECTOR_LIMITS.states)); source.states.forEach(id); id(source.initialState);
     unique(array(source.terminalStates, 1, DIRECTOR_LIMITS.states));
     if (source.terminalStates.some((state) => !source.states.includes(state)) || source.terminalStates.includes(source.initialState)) fail('Invalid terminal declaration.');
-    const consequences = new Map();
+    context.field = 'consequenceContracts'; const consequences = new Map();
     for (const consequence of array(source.consequenceContracts, 1, DIRECTOR_LIMITS.adapters)) {
       record(consequence, ['id', 'adapter', 'objectId', 'actionId', 'fromState', 'toState', 'economicEffects']);
       id(consequence.id); choice(consequence.adapter, ['world_action']); choice(consequence.economicEffects, ['existing_action_only']);
@@ -269,14 +382,14 @@ export function compileSituationDefinitions(inputs, catalog = {}) {
         || action.from !== consequence.fromState || action.to !== consequence.toState) fail('Unknown or contradictory canonical consequence.');
       consequences.set(consequence.id, consequence);
     }
-    const edges = [];
+    context.field = 'possibleEscalations'; const edges = [];
     unique(array(source.possibleEscalations, 0, DIRECTOR_LIMITS.transitions), (entry) => entry.id);
     for (const escalation of source.possibleEscalations) {
       record(escalation, ['id', 'from', 'to', 'afterSeconds', 'when']); id(escalation.id);
       integer(escalation.afterSeconds, 1, 15552000); predicates(escalation.when); satisfiable(escalation.when); worldPredicates(escalation.when, world);
       edges.push(escalation);
     }
-    unique(array(source.possibleResolutions, 1, DIRECTOR_LIMITS.transitions), (entry) => entry.id);
+    context.field = 'possibleResolutions'; unique(array(source.possibleResolutions, 1, DIRECTOR_LIMITS.transitions), (entry) => entry.id);
     unique([...source.possibleEscalations, ...source.possibleResolutions], (entry) => entry.id);
     const usedConsequences = new Set();
     for (const resolution of source.possibleResolutions) {
@@ -288,14 +401,26 @@ export function compileSituationDefinitions(inputs, catalog = {}) {
       for (const from of resolution.from) edges.push({ from, to: resolution.to });
     }
     if (usedConsequences.size !== consequences.size) fail('Unused consequence contract.');
-    record(source.expiryPolicy, ['afterSeconds', 'to']); integer(source.expiryPolicy.afterSeconds, 60, 15552000);
+    context.field = 'expiryPolicy'; record(source.expiryPolicy, ['afterSeconds', 'to']); integer(source.expiryPolicy.afterSeconds, 60, 15552000);
     if (!source.terminalStates.includes(source.expiryPolicy.to)) fail('Expiry must be terminal.');
-    recovery(source.recoveryPolicy, source.terminalStates); cooldown(source.cooldownPolicy);
+    context.field = 'recoveryPolicy'; recovery(source.recoveryPolicy, source.terminalStates);
+    atField('cooldownPolicy', () => cooldown(source.cooldownPolicy));
     if (source.recoveryPolicy.afterSeconds !== source.expiryPolicy.afterSeconds) fail('Expire recovery must use the implemented expiry deadline.');
+    atField('possibleEscalations', () => {
+      const earliest = new Map([[source.initialState, 0]]);
+      for (let pass = 0; pass < source.states.length; pass++) for (const edge of source.possibleEscalations) {
+        if (!earliest.has(edge.from)) continue;
+        earliest.set(edge.to, Math.min(earliest.get(edge.to) ?? Infinity, earliest.get(edge.from) + edge.afterSeconds));
+      }
+      for (const edge of source.possibleEscalations)
+        if (!earliest.has(edge.from) || earliest.get(edge.from) + edge.afterSeconds >= source.expiryPolicy.afterSeconds)
+          fail('Escalation cannot occur before its expiry.');
+    });
     for (const state of source.states.filter((entry) => !source.terminalStates.includes(entry))) {
       edges.push({ from: state, to: source.expiryPolicy.to }, { from: state, to: source.recoveryPolicy.to });
     }
-    dag(source.states, edges, source.initialState, source.terminalStates);
+    context.field = 'states'; dag(source.states, edges, source.initialState, source.terminalStates);
+    context.field = 'participants';
     record(source.participants, ['minimumPlayers', 'minimumFamilies', 'minimumCrews']);
     integer(source.participants.minimumPlayers, 1, 32); integer(source.participants.minimumFamilies, 0, 8);
     integer(source.participants.minimumCrews, 0, 8);
@@ -304,10 +429,11 @@ export function compileSituationDefinitions(inputs, catalog = {}) {
       { fact: 'activePlayers', op: 'gte', value: source.participants.minimumPlayers },
       { fact: 'activeFamilies', op: 'gte', value: source.participants.minimumFamilies },
       { fact: 'activeCrews', op: 'gte', value: source.participants.minimumCrews }], source.excludedWorldFacts);
-    record(source.concurrencyPolicy, ['global', 'perScope', 'perPlayer', 'perCrew', 'perFamily', 'perTerritory']);
+    context.field = 'concurrencyPolicy'; record(source.concurrencyPolicy, ['global', 'perScope', 'perPlayer', 'perCrew', 'perFamily', 'perTerritory']);
     for (const [key, value] of Object.entries(source.concurrencyPolicy)) integer(value, 1, key === 'global' ? 100 : 8);
     if (Object.values(source.concurrencyPolicy).some((value) => value > source.concurrencyPolicy.global)) fail('Local budget exceeds global budget.');
-    choice(source.rarity, ['common', 'uncommon', 'rare']); integer(source.weight, 1, 1000);
+    context.field = 'rarity'; choice(source.rarity, ['common', 'uncommon', 'rare']); context.field = 'weight'; integer(source.weight, 1, 1000);
+    context.field = 'coordinationAdapters';
     unique(array(source.coordinationAdapters, 0, DIRECTOR_LIMITS.adapters), (entry) => entry.id);
     for (const adapter of source.coordinationAdapters) {
       record(adapter, ['id', 'kind', 'definitionId']); id(adapter.id); choice(adapter.kind, ['family_operation', 'crew_profile']);
@@ -315,13 +441,13 @@ export function compileSituationDefinitions(inputs, catalog = {}) {
       if (!target || adapter.kind === 'family_operation' && target.world.objectId !== world.id) fail('Unknown coordination adapter.');
       if (adapter.kind === 'family_operation' && target.roles.length > source.participants.minimumPlayers) fail('Required operation roles exceed eligible population.');
     }
-    unique(array(source.mysteryAdapters, 0, DIRECTOR_LIMITS.adapters), (entry) => entry.id);
+    context.field = 'mysteryAdapters'; unique(array(source.mysteryAdapters, 0, DIRECTOR_LIMITS.adapters), (entry) => entry.id);
     for (const adapter of source.mysteryAdapters) {
       record(adapter, ['id', 'graphId', 'nodeId']); id(adapter.id);
       const target = mysteries.get(adapter.graphId);
       if (!target || !target.nodes.some((node) => node.id === adapter.nodeId)) fail('Unknown authored mystery adapter.');
     }
-    const commands = new Map();
+    context.field = 'commandAdapters'; const commands = new Map();
     for (const adapter of array(source.commandAdapters, 1, DIRECTOR_LIMITS.adapters)) {
       record(adapter, ['id', 'commandType', 'targetId', 'audienceId']); id(adapter.id); id(adapter.targetId);
       choice(adapter.commandType, DIRECTOR_COMMAND_TYPES);
@@ -331,52 +457,57 @@ export function compileSituationDefinitions(inputs, catalog = {}) {
         || adapter.commandType === 'world.execute' && !world.actions.some((entry) => entry.id === adapter.targetId && entry.execution !== 'family_operation')
         || adapter.commandType === 'mystery.start' && !mysteries.has(adapter.targetId)
         || adapter.commandType === 'knowledge.share' && !profiles.has(adapter.targetId)) fail('Command does not resolve to an existing authority.');
+      if (adapter.commandType === 'mystery.start' && !source.mysteryAdapters.some((entry) => entry.graphId === adapter.targetId))
+        atField('commandAdapters', () => fail('Mystery commands require a pinned mystery adapter.'));
       commands.set(adapter.id, adapter);
     }
-    unique(array(source.initialSignals, 1, DIRECTOR_LIMITS.signals), (entry) => entry.id);
+    context.field = 'initialSignals'; unique(array(source.initialSignals, 1, DIRECTOR_LIMITS.signals), (entry) => entry.id);
     for (const signal of source.initialSignals) {
       record(signal, ['id', 'audienceId', 'title', 'description', 'knowledgeLevel', 'commandAdapterIds']); id(signal.id);
-      text(signal.title, 120); text(signal.description); choice(signal.knowledgeLevel, ['rumor', 'known', 'public']);
+      playerText(signal.title, 120); playerText(signal.description); choice(signal.knowledgeLevel, ['rumor', 'known', 'public']);
       const audience = audiences.get(signal.audienceId);
       if (!audience || (audience.kind === 'public') !== (signal.knowledgeLevel === 'public')
         || signal.knowledgeLevel === 'known' && !audience.knowledge) fail('Signal disclosure exceeds its audience authority.');
       unique(array(signal.commandAdapterIds, 0, DIRECTOR_LIMITS.adapters));
       if (signal.commandAdapterIds.some((command) => commands.get(command)?.audienceId !== signal.audienceId)) fail('Signal leaks another audience objective.');
-      if (/\$\{|\{\{|contentHash|definitionHash|valuePermille|pressureInputs/.test(`${signal.title} ${signal.description}`)) fail('Signals cannot interpolate canonical or scheduler internals.');
     }
+    if (source.network) atField('network', () => networkContract(source, worlds, world));
     // Dependency pins change when an authority changes even when source text does not.
-    const dependencyHashes = { world: world.contentHash,
+    context.field = 'dependencyHashes'; const dependencyHashes = { world: world.contentHash,
       operations: source.coordinationAdapters.filter((entry) => entry.kind === 'family_operation').map((entry) => ({ id: entry.definitionId, hash: operations.get(entry.definitionId).contentHash })),
       profiles: [...new Set(source.commandAdapters.filter((entry) => entry.commandType.startsWith('discovery.') || entry.commandType === 'knowledge.share').map((entry) => entry.targetId))]
         .map((profileId) => ({ id: profileId, hash: profiles.get(profileId).contentHash })),
       mysteries: [...new Set(source.mysteryAdapters.map((entry) => entry.graphId))].map((graphId) => ({ id: graphId, hash: mysteries.get(graphId).contentHash })),
+      ...(source.network ? { relatedWorld: source.network.relatedWorld.map((rule) => ({ id: rule.objectId, hash: worlds.get(rule.objectId).contentHash })) } : {}),
     };
-    for (const dependency of [...dependencyHashes.operations, ...dependencyHashes.profiles, ...dependencyHashes.mysteries]) {
+    for (const dependency of [...dependencyHashes.operations, ...dependencyHashes.profiles, ...dependencyHashes.mysteries, ...(dependencyHashes.relatedWorld || [])]) {
       if (!/^[a-f0-9]{64}$/.test(dependency.hash)) fail('Dependency lacks an admitted content hash.');
     }
     return admit({ ...source, dependencyHashes });
-  }));
+  })));
 }
 
 export function compileCampaignDefinitions(inputs, situations) {
   const sources = inertCopy(inputs); array(sources, 0, DIRECTOR_LIMITS.definitions); unique(sources, (source) => source.id);
   const catalog = catalogMap(situations);
   if (situations.some((entry) => !verifyDirectorDefinition(entry))) fail('Campaign situations must be admitted definitions.');
-  return Object.freeze(sources.map((source) => {
+  return Object.freeze(sources.map((source) => atDefinition('campaign', source, (context) => {
     record(source, ['id', 'version', 'title', 'entryNode', 'nodes', 'branches', 'maxDurationSeconds', 'recoveryPolicy', 'cooldownPolicy', 'maxActive']);
-    id(source.id); integer(source.version, 1, 2147483647); text(source.title, 120); id(source.entryNode);
+    context.field = 'id'; id(source.id); context.field = 'version'; integer(source.version, 1, 2147483647);
+    context.field = 'title'; text(source.title, 120); context.field = 'entryNode'; id(source.entryNode);
+    context.field = 'maxDurationSeconds';
     integer(source.maxDurationSeconds, 3600, 15552000); integer(source.maxActive, 1, 16);
-    cooldown(source.cooldownPolicy); recovery(source.recoveryPolicy);
+    atField('cooldownPolicy', () => cooldown(source.cooldownPolicy)); context.field = 'recoveryPolicy'; recovery(source.recoveryPolicy);
     if (source.recoveryPolicy.afterSeconds !== source.maxDurationSeconds) fail('Campaign recovery must use the implemented campaign deadline.');
     if (source.recoveryPolicy.to !== 'abandoned') fail('Campaign recovery must retain an abandoned receipt.');
-    unique(array(source.nodes, 1, DIRECTOR_LIMITS.campaignNodes), (node) => node.id);
+    context.field = 'nodes'; unique(array(source.nodes, 1, DIRECTOR_LIMITS.campaignNodes), (node) => node.id);
     const nodes = new Map();
     for (const node of source.nodes) {
       record(node, ['id', 'situationId', 'terminal']); id(node.id);
       if (typeof node.terminal !== 'boolean' || !catalog.has(node.situationId)) fail('Unknown campaign situation.');
       nodes.set(node.id, node);
     }
-    unique(array(source.branches, 0, DIRECTOR_LIMITS.campaignBranches), (branch) => branch.id);
+    context.field = 'branches'; unique(array(source.branches, 0, DIRECTOR_LIMITS.campaignBranches), (branch) => branch.id);
     for (const branch of source.branches) {
       record(branch, ['id', 'from', 'to', 'outcome', 'when']); id(branch.id); id(branch.outcome);
       predicates(branch.when); satisfiable(branch.when);
@@ -400,7 +531,7 @@ export function compileCampaignDefinitions(inputs, situations) {
     dag(source.nodes.map((node) => node.id), source.branches, source.entryNode,
       source.nodes.filter((node) => node.terminal).map((node) => node.id));
     return admit({ ...source, situationHashes: source.nodes.map((node) => ({ id: node.situationId, hash: catalog.get(node.situationId).contentHash })) });
-  }));
+  })));
 }
 
 export function compileDirectorDefinitions(input, catalog) {

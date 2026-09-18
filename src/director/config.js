@@ -1,7 +1,7 @@
 import { GameError } from '../game.js';
 import { createLivingWorldDirector, DIRECTOR_MODES } from './runtime.js';
-import { createDockWarDefinitions } from './dock-war.js';
-import { createDockWarContent } from '../content/dock-war.js';
+import { createCampaignNetworkDefinitions } from './campaign-network.js';
+import { createCampaignNetworkContent } from '../content/campaign-network.js';
 
 // Snapshot only declared deployment inputs. Direct reads keep every operational
 // switch visible to the repository's preflight environment inventory.
@@ -35,9 +35,9 @@ export function directorConfiguration(env = {
 export function createConfiguredDirector(pool, content) {
   const config = directorConfiguration();
   if (config.mode === 'DIRECTOR_DISABLED') return null;
-  const dock = content.directorContent || createDockWarContent(content);
+  const network = content.directorContent || createCampaignNetworkContent(content);
   // Shadow/simulation compile privately; ordinary player catalogs retain their
   // existing content. A shadow evaluation can never expose these definitions.
-  return createLivingWorldDirector({ pool, content: content.directorContent ? content : dock,
-    definitions: createDockWarDefinitions(dock), ...config });
+  return createLivingWorldDirector({ pool, content: content.directorContent ? content : network,
+    definitions: createCampaignNetworkDefinitions(network), ...config });
 }

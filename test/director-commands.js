@@ -57,7 +57,10 @@ try {
   assert(!disabled.commands.some((command) => command.commandType === 'situation.act'));
   const service = engine(), initial = await service.snapshot(actor);
   const move = findCommand(initial, 'situation.act');
-  assert.deepEqual(move.parameters, { situationId: 'situation-docks', actionId: 'investigate', expectedRevision: 1 });
+  assert.deepEqual(move.parameters, { situationId: 'situation-docks', actionId: 'investigate' });
+  assert(!Object.hasOwn(initial.situations[0], 'revision'), 'Director freshness metadata remains server-side');
+  assert(!JSON.stringify(initial.situations).includes('internal-definition'));
+  assert(!JSON.stringify(initial.situations).includes(stranger));
   assert.equal(move.subject.type, 'situation');
   assert(new Date(move.expiresAt).getTime() <= new Date(state.expiresAt).getTime());
   assert(initial.opportunities.some((entry) => entry.kind === 'world_event' && entry.commandIds.includes(move.commandId)));
@@ -82,7 +85,8 @@ try {
   assert.equal(successes.filter((entry) => !entry.value.replayed).length, 1);
   const result = successes.find((entry) => !entry.value.replayed).value;
   assert.equal(result.status, 'COMPLETED'); assert(result.result.instanceId);
-  assert.equal(dispatches, 1); assert.equal(result.feedback.situationChanges.length, 1);
+  assert.equal(dispatches, 1); assert.equal(result.feedback.situationChanges.length, 0,
+    'A revision-only change is not an additional player-visible consequence');
   assert(!JSON.stringify(result.result).includes('internal-definition'));
   const restarted = await executeIssued(engine(), actor, current);
   assert.equal(restarted.replayed, true); assert.equal(dispatches, 1);

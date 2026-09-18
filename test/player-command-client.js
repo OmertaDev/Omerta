@@ -136,7 +136,14 @@ const fixtureBoard = { ...board(commands),
     objective: 'Find a safe route.', knownFacts: ['The north pier is closed.'], helpers: [{ label: 'Your Crew <img src=x>' }],
     expiresAt: '2026-09-20T12:00:00Z', outcome: 'Cargo reached its destination.',
     actions: [{ id: 'unissued-situation-action', label: 'Unissued shipment move', canAttempt: true }], internalWeight: 917 }],
-  opportunities: [{ opportunityId: 'lead', kind: 'mystery_lead', label: 'A note on your desk', description: 'Someone has been asking questions.', commandIds: ['Investigate lead'] }],
+  opportunities: [{ opportunityId: 'lead', kind: 'mystery_lead', category: 'URGENT', label: 'A note on your desk', description: 'Someone has been asking questions.', commandIds: ['Investigate lead'],
+    whyKnown: 'Your contact sent a note <img src=x>.', whyItMatters: 'The workshop may close.', timeRemainingSeconds: 120,
+    requirements: [{ description: 'Evidence in hand', status: 'SATISFIED' }, { description: 'One more witness', status: 'MISSING' }],
+    peopleNeeded: true, helpers: ['Your Crew'], progress: { description: 'Corroboration', completed: 1, total: 2 }, risk: ['The lead may disappear.'] }],
+  opportunityGroups: [{ category: 'URGENT', opportunityIds: ['lead'] }],
+  consequences: [{ id: 'consequence-one', description: 'The Canal workshop is open <script>bad</script>.',
+    whyKnown: 'Word has reached your district.', cause: null, remainsActive: true, occurredAt: '2026-09-18T12:00:00Z', opportunityIds: ['lead'],
+    internalRevision: 'do-not-print-world-revision', hiddenActor: 'do-not-print-world-actor' }],
   crew: { id: 'crew-one', name: 'Docks Crew', members: [{ name: 'Sal' }], objective: { kind: 'evidence', progress: 1, target: 2 } }, family: { name: 'Bellini', role: 'soldier', relations: [] },
   knowledge: { claims: [{ id: 'claim-one', proposition: 'Known mark', owned: true, value: { value: 'left' } }] },
   cases: { catalog: [{ graphId: 'case-one', title: 'Case <script>unsafe</script>', started: true, status: 'active' },
@@ -167,6 +174,10 @@ assert(surface.html.includes('A role is unfilled.')); assert(surface.html.includ
 for (const text of ['What is happening around us?', 'Dock &lt;script&gt;unsafe&lt;/script&gt;', 'Your stake:',
   'The north pier is closed.', 'Your Crew &lt;img src=x&gt;', 'Aftermath:', 'Cargo reached its destination.']) assert(surface.html.includes(text), text);
 assert(!surface.html.includes('Unissued shipment move') && !surface.html.includes('internalWeight'), 'world prose cannot invent actions or expose scheduler metadata');
+for (const text of ['urgent', 'Your contact sent a note &lt;img src=x&gt;.', 'The workshop may close.', '2 minutes remain.',
+  '✓ In place:', 'Still needed:', 'Other people are needed', 'Corroboration', '1 / 2',
+  'The Canal workshop is open &lt;script&gt;bad&lt;/script&gt;.', 'Word has reached your district.', 'Related business']) assert(surface.html.includes(text), text);
+assert(!surface.html.includes('do-not-print-world-'), 'Consequence cards use only the disclosed presentation fields');
 for (const control of surface.querySelectorAll('[data-world-move]')) if (!control.disabled) control.listeners.click();
 assert(moves.length > 3, 'shared commands appear in attention, action and entity context');
 assert(moves.every((move) => commands.includes(move) && move.availability === 'AVAILABLE'), 'all buttons use exact server-issued commands');

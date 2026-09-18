@@ -1,6 +1,6 @@
 import { GameError } from '../game.js';
 import { isDbDown } from '../dbhealth.js';
-import { createWorldProjection } from '../world-projection.js';
+import { createWorldProjection, publicWorldProjection } from '../world-projection.js';
 import { createWorldKernel } from '../world-kernel.js';
 import { createWorldKernelQuery } from '../world-kernel-query.js';
 import { createCoordinationKnowledge } from '../coordination/knowledge.js';
@@ -48,6 +48,7 @@ export function register(app, { pool, auth, readPlayer }) {
     definitions: content.operations, prerequisitesEnabled: content.progression, ...policy,
     enabled: enabled && process.env.COORDINATION_ENGINE === 'on' && process.env.COORDINATION_OPERATIONS === 'on' });
   const service = createWorldProjection({ pool, query, kernel, knowledge, familyOperations, crafting, recipeIds: content.recipeIds,
+    consequencePolicies: content.consequencePolicies,
     director: createConfiguredDirector(pool, content),
     mysteries: content.progression ? { registry: content.registry, graphIds: content.mysteryGraphIds,
       knowledgeEnabled, sharingEnabled, accountIds, worldDefinitions: kernel.definitions } : null });
@@ -61,5 +62,5 @@ export function register(app, { pool, auth, readPlayer }) {
   });
   app.get('/v1/projections/world', { preHandler: [auth, admit], preValidation: validate(true), errorHandler: safeError }, (req) =>
     service.snapshot(req.user.sub, { ...(req.query?.operationId === undefined ? {} : { operationId: req.query.operationId }),
-      ...(req.query?.mysteryGraphId === undefined ? {} : { mysteryGraphId: req.query.mysteryGraphId }) }));
+      ...(req.query?.mysteryGraphId === undefined ? {} : { mysteryGraphId: req.query.mysteryGraphId }) }).then(publicWorldProjection));
 }

@@ -6,13 +6,26 @@ import { planCraftingSnapshot } from './crafting.js';
 import { knowledgeRequirementKey } from './world-knowledge.js';
 import { createMysteryContext, planMysterySnapshot } from './mysteries.js';
 import { isWorldGraphRegistry } from './worldgraph.js';
+import { createWorldConsequences } from './world-consequences.js';
 
 const unavailable = () => { throw new GameError('projection_unavailable', 'That view is unavailable.'); };
 const identifier = (value) => typeof value === 'string' && /^[\x21-\x7e]{1,160}$/.test(value);
 const emptyOperations = () => ({ catalog: [], instances: [], selected: null, truncated: false });
 
-export function createWorldProjection({ pool, query, kernel, knowledge, familyOperations = null, crafting, recipeIds = [], mysteries = null, director = null }) {
+// Situation revisions belong to server-issued descriptors. The internal snapshot
+// retains them for freshness and dispatch; neither public read path needs them.
+export function publicWorldProjection(projection) {
+  const pick = (entry, fields) => Object.fromEntries(fields.filter((field) => Object.hasOwn(entry, field)).map((field) => [field, entry[field]]));
+  return { ...projection, ...(Array.isArray(projection.situations) ? { situations: projection.situations.map((situation) => ({
+    ...pick(situation, ['id', 'title', 'description', 'objective', 'status', 'expiresAt', 'knownFacts', 'helpers', 'whyKnown', 'stakes', 'outcome']),
+    ...(Array.isArray(situation.information) ? { information: situation.information.map((entry) => pick(entry, ['layer', 'whyKnown', 'stakes'])) } : {}),
+    actions: (situation.actions || []).map((action) => pick(action, ['id', 'label', 'description', 'canAttempt', 'requiredRoles', 'missing', 'confirmation'])),
+  })) } : {}) };
+}
+
+export function createWorldProjection({ pool, query, kernel, knowledge, familyOperations = null, crafting, recipeIds = [], mysteries = null, director = null, consequencePolicies = [] }) {
   if (!pool || !query || !kernel || !knowledge || !crafting) unavailable();
+  const consequences = createWorldConsequences({ definitions: kernel.definitions, policies: consequencePolicies });
   const caseDefinitions = [];
   if (mysteries) {
     if (!isWorldGraphRegistry(mysteries.registry) || !Array.isArray(mysteries.graphIds)
@@ -108,6 +121,8 @@ export function createWorldProjection({ pool, query, kernel, knowledge, familyOp
       const claims = knowledgeSnapshot.board.claims.map((claim) => ({ id: claim.id, domain: claim.domain,
         proposition: claim.proposition, value: claim.value, contentHash: claim.contentHash, discoveredAt: claim.discoveredAt,
         owned: claim.owned, ...(claim.owned ? { aclRevision: claim.aclRevision, grants: claim.grants } : {}) }));
+      const history = await consequences.readSnapshot(client, { accountId, characterId, locationId: location?.id ?? null,
+        worldObjects: world.objects, knowledge, knowledgeSnapshot, asOf });
       return { schemaVersion: 1, asOf,
         player: { id: accountId, character: street ? { id: street.id, name: street.name, locationId: location?.id ?? null } : null },
         crew, family, territories: graph.nodes.filter((n) => n.type === 'territory').map((n) => ({ id: n.id,
@@ -116,6 +131,7 @@ export function createWorldProjection({ pool, query, kernel, knowledge, familyOp
         knowledge: { claims, truncated: knowledgeSnapshot.board.nextCursor !== null }, operations,
         ...(director ? { situations } : {}),
         activity: graph.nodes.filter((n) => n.type === 'event').map(eventCard),
+        consequences: history.entries, consequencesTruncated: history.truncated,
         worldObjects: world.objects, recipes,
         ...(mysteries ? { cases: { catalog, selected: selectedCase } } : {}),
         objectives: graph.nodes.filter((n) => n.type === 'objective').map((n) => ({ id: n.id, kind: n.kind, target: n.target, progress: n.progress, done: n.done })),
