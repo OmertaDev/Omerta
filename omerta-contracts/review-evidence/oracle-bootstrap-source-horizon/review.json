@@ -1,0 +1,255 @@
+{
+  "schemaVersion": 1,
+  "reviewId": "oracle-bootstrap-source-horizon-2026-09-18",
+  "sourceRevision": "2c75183198ffec8423e4bbb3eeeed5ce31169c00",
+  "reviewedWorkingTree": "Only OmrV4TwapOracle.t.sol differs from the pinned source revision; this evidence package is additional. No production Solidity or workflow changes.",
+  "reviewPhase": "Backend release gate correction. No contracts deployed, configured, funded or activated; this does not authorize chain activation.",
+  "reviewedSources": [
+    {
+      "path": "omerta-contracts/test/OmrV4TwapOracle.t.sol",
+      "unchanged": false,
+      "beforeSha256LF": "6bffdd1687d028d0402285d854c90f868eb29ecb9ee3118dc7f50cde35c5451b",
+      "afterSha256LF": "079d6ea80ac376e40cb1dd1022e2c2b2d913fa3705ed4484f97e7dedf7832c4a",
+      "beforeCanonicalBlobSha1": "38d4659b1ce7c4b37ac430b6b953adc7a22473a4",
+      "afterCanonicalBlobSha1": "30caea10832e7c4880ed96ab5bbad113899e7fa2"
+    },
+    {
+      "path": "omerta-contracts/src/OmrV4TwapOracle.sol",
+      "unchanged": true,
+      "beforeSha256LF": "ece190226bdf1f99ea4ce914387f97fb62284a05e38c623631fd8ac995788bf6",
+      "afterSha256LF": "ece190226bdf1f99ea4ce914387f97fb62284a05e38c623631fd8ac995788bf6",
+      "beforeCanonicalBlobSha1": "3599979cc0921ebb22c38b649bf30750702d1bf7",
+      "afterCanonicalBlobSha1": "3599979cc0921ebb22c38b649bf30750702d1bf7"
+    },
+    {
+      "path": "omerta-contracts/src/OmertaHook.sol",
+      "unchanged": true,
+      "beforeSha256LF": "aa185334f198da4b12b8661f39ef00b4e17edd10bc2dfbf7dc456d91cd1520b1",
+      "afterSha256LF": "aa185334f198da4b12b8661f39ef00b4e17edd10bc2dfbf7dc456d91cd1520b1",
+      "beforeCanonicalBlobSha1": "f67cc8a0515177242aec5d2ed8ecf734847d9a66",
+      "afterCanonicalBlobSha1": "f67cc8a0515177242aec5d2ed8ecf734847d9a66"
+    },
+    {
+      "path": "omerta-contracts/src/interfaces/IOmrV4ObservationSource.sol",
+      "unchanged": true,
+      "beforeSha256LF": "a272583e3f972af7707a0fdb7a79a1573741e36c880018a0f0584602bd8f5c0e",
+      "afterSha256LF": "a272583e3f972af7707a0fdb7a79a1573741e36c880018a0f0584602bd8f5c0e",
+      "beforeCanonicalBlobSha1": "ced68ade744c67bf27698436256e9262f6bb1cca",
+      "afterCanonicalBlobSha1": "ced68ade744c67bf27698436256e9262f6bb1cca"
+    }
+  ],
+  "scope": {
+    "included": [
+      "OmrV4TwapOracleTest.testFuzz_no_prepool_or_prebaseline_time_qualifies",
+      "MockV4ObservationSource.initialize/setTick/_accrue/currentTickCumulative",
+      "OmrV4TwapOracle._update/_setBaseline",
+      "OmertaHook.currentTickCumulative/_writeTickAccumulator/pokeObserver"
+    ],
+    "excluded": [
+      "Full repository contract audit",
+      "Deployment or activation of chain rails",
+      "A production fix for the uint32 idle-source horizon",
+      "Full local Solidity release suite (required CI gate remains authoritative)",
+      "Economic or database behavior; no such code is changed"
+    ]
+  },
+  "tooling": {
+    "forge": "1.7.1",
+    "forgeCommit": "4072e48705af9d93e3c0f6e29e93b5e9a40caed8",
+    "forgeBuild": "2026-05-08T07:54:39.315067700Z",
+    "solc": "0.8.26+commit.8a97fa7a.Windows.msvc",
+    "compilerSettings": {
+      "remappings": [
+        "@openzeppelin/=lib/openzeppelin-contracts/",
+        "@uniswap/v4-core/=lib/v4-core/",
+        "forge-std/=lib/forge-std/src/",
+        "openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+        "permit2/=lib/permit2/",
+        "solmate/=lib/v4-core/lib/solmate/",
+        "v4-core/=lib/v4-core/src/"
+      ],
+      "optimizer": {
+        "enabled": true,
+        "runs": 800
+      },
+      "metadata": {
+        "bytecodeHash": "ipfs"
+      },
+      "compilationTarget": {
+        "src/OmrV4TwapOracle.sol": "OmrV4TwapOracle"
+      },
+      "evmVersion": "cancun",
+      "libraries": {}
+    },
+    "dependencyPinsFromWorkflow": {
+      "forgeStd": "v1.9.6",
+      "openzeppelin": "v5.6.1",
+      "uniswapV4Core": "1.0.2"
+    },
+    "dependencyEvidence": "Actual compiled source bytes are pinned in compiled-source-hashes.json; source dependencies were copied physically from the existing local dependency installation. Package manifests for forge-std/OpenZeppelin were not present, so their requested versions are workflow pins, not independently inferred from missing metadata.",
+    "probe": "output/director/release/oracle-fuzz-probe",
+    "probeSetup": "Physical recursive import closure (82 source files) copied into a disposable isolated Foundry project. src/test came from this worktree, lib sources from the existing dependency installation. No writes through omerta-contracts/out junction. The local probe uses default non-IR optimization 800/Cancun, matching this suite production compilation profile; it omits unrelated multi-profile restrictions and extra_output fields.",
+    "oracleArtifact": {
+      "deployedBytecodeSha256": "f1cf5068b702add5d65cf6939ed9e10eb56fc5330baf6de903306f8c183515ab",
+      "deployedBytecodeBytes": 3773,
+      "scope": "Probe compilation; not a deployment artifact or deployed address."
+    }
+  },
+  "incident": {
+    "ciRunId": 35309835219,
+    "ciResult": "1244 passed, 1 failed",
+    "test": "testFuzz_no_prepool_or_prebaseline_time_qualifies(uint64,uint32,int24,bool)",
+    "seed": "0x9f0acb4c6c5b9c998677ec4e5af87fcf6edcf6d99126bc04a0e465aec790164b",
+    "rawArguments": [
+      4294967295,
+      17160,
+      25,
+      true
+    ],
+    "boundedArguments": {
+      "delay": 4294967295,
+      "early": 960,
+      "tick": 25,
+      "observe": true
+    },
+    "originalFailure": "InvalidTick(7456565)",
+    "counterexampleWrapper": "contract OracleCounterexample is OmrV4TwapOracleTest { function test_exact_CI_counterexample() public { testFuzz_no_prepool_or_prebaseline_time_qualifies(4294967295, 17160, 25, true); } }",
+    "originalTrace": {
+      "initialTimestamp": 1000000,
+      "baselineTimestamp": 8590934590,
+      "baselineTimestampUint32": 999998,
+      "baselineCumulative": 107374182375,
+      "earlyCumulative": 23975,
+      "fullWindowCumulative": 44975,
+      "derivedInvalidTick": 7456565
+    },
+    "cause": "The second arbitrary delay left the initialized source without a persisted checkpoint for uint32.max seconds. The oracle seeded immediately before the source elapsed counter wrapped. During the otherwise valid 1800-second oracle window the source counterfactual cumulative then dropped. Mock and real Hook both use uint32 elapsed since the last persisted source checkpoint; observer notifications do not persist that checkpoint. This is not a false positive for an unlimited-idle source guarantee."
+  },
+  "correction": {
+    "productionBehaviorChanged": false,
+    "testChange": "Keep both arbitrary delays and all original oracle assertions. Split the initialized-history delay into floor(delay/2) and the remainder, persisting the same tick after each interval; both intervals are at most uint32.max for the unchanged delay range. Assert the full cumulative equals tick * fullDelay and the baseline captures it. Add exact-input deterministic tests for both observer and direct-update seeding.",
+    "preservedProperties": [
+      "No pre-pool or initialized prebaseline time qualifies toward the first quote",
+      "The entire arbitrary initialized history is accumulated, including delays exceeding one uint32 wrap",
+      "The first quote remains unavailable at baseline and before PERIOD",
+      "Early direct updates revert with the expected PeriodNotElapsed arguments",
+      "One full fresh PERIOD yields the unchanged tick and a fresh positive quote",
+      "Delay bounds [0, 2*uint32.max], tick bounds [-100000,100000] and early bounds [0,PERIOD-1] are unchanged"
+    ],
+    "sourceModelAssumption": "Each persisted source interval must fit uint32 elapsed. A same-tick mock setTick write models the real Hook accumulator write after a successful swap with unchanged tick; it is not a new keeper capability. pokeObserver does not update the Hook accumulator.",
+    "exactCorrectedTrace": {
+      "discardedCumulative": 107374182375,
+      "baselineCumulative": 107374182375,
+      "fullWindowCumulative": 107374227375,
+      "arithmeticMeanTick": 25,
+      "omrPerEth": "1002503002301265531",
+      "updatedAt": 8590936390
+    }
+  },
+  "executions": [
+    {
+      "name": "Original exact counterexample",
+      "command": "forge test --root output/director/release/oracle-fuzz-probe --use <solc-0.8.26.exe> --match-test test_exact_CI_counterexample -vvvv",
+      "source": "Original pinned test plus the wrapper in incident.counterexampleWrapper",
+      "exitCode": 1,
+      "passed": 0,
+      "failed": 1,
+      "log": "exact-before.txt"
+    },
+    {
+      "name": "Corrected full oracle suite seed 1",
+      "command": "forge test --root output/director/release/oracle-fuzz-probe --use <solc-0.8.26.exe> --match-contract '^OmrV4TwapOracleTest$' --fuzz-seed 0x9f0acb4c6c5b9c998677ec4e5af87fcf6edcf6d99126bc04a0e465aec790164b --fuzz-runs 4096 -vv",
+      "seed": "0x9f0acb4c6c5b9c998677ec4e5af87fcf6edcf6d99126bc04a0e465aec790164b",
+      "fuzzRunsPerProperty": 4096,
+      "fuzzProperties": 2,
+      "exitCode": 0,
+      "passed": 25,
+      "failed": 0,
+      "skipped": 0,
+      "log": "suite-ci-seed.txt"
+    },
+    {
+      "name": "Corrected full oracle suite seed 2",
+      "command": "forge test --root output/director/release/oracle-fuzz-probe --use <solc-0.8.26.exe> --match-contract '^OmrV4TwapOracleTest$' --fuzz-seed 0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef --fuzz-runs 4096 -vv",
+      "seed": "0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+      "fuzzRunsPerProperty": 4096,
+      "fuzzProperties": 2,
+      "exitCode": 0,
+      "passed": 25,
+      "failed": 0,
+      "skipped": 0,
+      "log": "suite-boundary-seed.txt"
+    },
+    {
+      "name": "Corrected deterministic exact regressions",
+      "command": "forge test --root output/director/release/oracle-fuzz-probe --use <solc-0.8.26.exe> --match-contract '^OmrV4TwapOracleTest$' --match-test 'test_bootstrap_discards_checkpointed_history_at_source_elapsed_wrap' -vvvv",
+      "exitCode": 0,
+      "passed": 2,
+      "failed": 0,
+      "log": "exact-after.txt"
+    }
+  ],
+  "policyAdaptation": {
+    "policy": "omerta-contracts/SECURITY-REVIEW-POLICY.md",
+    "performed": [
+      "Focused context and caller/callee inspection for source accumulation, observer notification and oracle baseline/window logic",
+      "Boundary arithmetic cross-check independently by parent and implementation agent",
+      "Exact CI counterexample replay before any tracked change",
+      "Specification/property preservation comparison and deterministic regression after change",
+      "Fixed-seed property fuzzing at 4096 cases per property under two seeds",
+      "Manual static arithmetic and diff review; no automated static analyzer was run for this test-only correction"
+    ],
+    "methodScope": "Adapted boundary/trace, specification and false-positive triage methods from the repository policy; no claim that a whole upstream skill or audit ran.",
+    "notApplicable": {
+      "reentrancy": "No new external call or callback introduced in production",
+      "accessControl": "No production authorization change",
+      "economicConservation": "Only test-time source checkpoints changed; no token/economy path modified",
+      "databaseConcurrency": "No persistence/database code in scope"
+    }
+  },
+  "findings": [
+    {
+      "id": "ORACLE-SOURCE-HORIZON-001",
+      "severity": "low",
+      "status": "open residual risk; unchanged production behavior",
+      "classification": "Real source horizon limitation, not a dismissed fuzz false positive",
+      "prerequisites": "An initialized pool source has no persisted tick accumulator write for nearly 2^32 seconds (roughly 136 years), then an otherwise valid oracle window crosses that source elapsed wrap.",
+      "affected": [
+        "OmertaHook.currentTickCumulative",
+        "OmertaHook._writeTickAccumulator",
+        "OmrV4TwapOracle._update"
+      ],
+      "impact": "The reproduced source cumulative discontinuity causes InvalidTick(7456565), so the first quote cannot be published for that window. Source correctness beyond the no-write uint32 horizon is not established; the test correction does not repair this production limitation.",
+      "severityRationale": "The observed failure requires approximately 136 years without a source write. No active chain rail is changed or activated by this backend release; immediate production exploitability or economic loss is not claimed.",
+      "disposition": "Retained as a pre-chain risk. A production source horizon policy or fix requires separate review before any claim of unlimited-idle reliability. The corrected bootstrap property assumes faithful persisted checkpoints within the representable source interval."
+    }
+  ],
+  "conclusion": "The scoped bootstrap test now exercises complete arbitrary historical accumulation under the source representability assumption, then independently proves a fresh full oracle period is required. The exact failing CI input passes for both baseline entry points; all 25 oracle tests pass under both fixed seeds (16,384 total fuzz executions). Production Solidity is unchanged. The full impacted contract CI gate is still required; this package does not claim complete repository audit coverage or chain activation readiness.",
+  "retainedFiles": [
+    {
+      "path": "exact-before.txt",
+      "sha256": "19ac286af02eeae60dd450417f6d2620c48040833d0a047e2446e77d78668e0b"
+    },
+    {
+      "path": "exact-after.txt",
+      "sha256": "32f87dce1969c480ac129731b0f5165091f24addfdc7a4b19f8efda6ae3356b2"
+    },
+    {
+      "path": "suite-ci-seed.txt",
+      "sha256": "b3ce63a626c2eea3c38884afcffd9e9aa36a9496164574bd1fd9169b3dc79d86"
+    },
+    {
+      "path": "suite-boundary-seed.txt",
+      "sha256": "cb153826a316a8cc2a2b761c75bc88a624cdb7f4290764b8df06c730fb341946"
+    },
+    {
+      "path": "execution-status.json",
+      "sha256": "37758f5c0f0cc7bac0965d8844155a1618c4c464358b4c919707a7f82a7c3e45"
+    },
+    {
+      "path": "compiled-source-hashes.json",
+      "sha256": "c045a2bf051caf784838ce35495e756febb2ab672e129a295d616d45177e6beb"
+    }
+  ],
+  "checksumNormalization": "Retained text and JSON are UTF-8 LF with one final newline. reviewedSources use that normalization and include canonical Git blob SHA-1 values; retainedFiles SHA-256 hashes refer to exact retained LF bytes."
+}

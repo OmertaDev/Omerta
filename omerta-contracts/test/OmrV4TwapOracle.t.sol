@@ -292,8 +292,16 @@ contract OmrV4TwapOracleTest is Test {
         (MockV4ObservationSource unopenedSource, PoolKey memory unopenedKey, OmrV4TwapOracle bootstrap) = _bootstrap();
         vm.warp(block.timestamp + delay);
         unopenedSource.initialize(unopenedKey.toId(), tick);
-        // The same arbitrary delay exercises initialized history that must be discarded at seeding.
-        vm.warp(block.timestamp + delay);
+        // Persist the full arbitrary initialized history, as same-tick hook swaps do.
+        // Each interval fits uint32 elapsed even when the full delay exceeds one wrap.
+        // Leaving the source idle across a full wrap is a separate source-horizon limitation.
+        uint256 firstCheckpoint = uint256(delay) / 2;
+        vm.warp(block.timestamp + firstCheckpoint);
+        unopenedSource.setTick(tick);
+        vm.warp(block.timestamp + uint256(delay) - firstCheckpoint);
+        unopenedSource.setTick(tick);
+        (int56 discardedCumulative,,) = unopenedSource.currentTickCumulative(unopenedKey.toId());
+        assertEq(discardedCumulative, int56(tick) * int56(uint56(delay)));
         if (observe) {
             vm.prank(address(unopenedSource));
             bootstrap.observe(unopenedKey);
@@ -302,6 +310,7 @@ contract OmrV4TwapOracleTest is Test {
         }
         uint256 seedAt = block.timestamp;
         assertTrue(bootstrap.baselineInitialized());
+        assertEq(bootstrap.tickCumulativeLast(), discardedCumulative);
         _assertUnavailable(bootstrap);
         vm.warp(seedAt + early);
         vm.prank(address(unopenedSource));
@@ -315,6 +324,14 @@ contract OmrV4TwapOracleTest is Test {
         (uint256 price, uint256 updatedAt) = bootstrap.consult();
         assertGt(price, 0);
         assertEq(updatedAt, block.timestamp);
+    }
+
+    function test_bootstrap_discards_checkpointed_history_at_source_elapsed_wrap_observe() public {
+        testFuzz_no_prepool_or_prebaseline_time_qualifies(4_294_967_295, 17_160, 25, true);
+    }
+
+    function test_bootstrap_discards_checkpointed_history_at_source_elapsed_wrap_update() public {
+        testFuzz_no_prepool_or_prebaseline_time_qualifies(4_294_967_295, 17_160, 25, false);
     }
 
     function test_tick_zero_closes_at_one_omr_per_eth() public {

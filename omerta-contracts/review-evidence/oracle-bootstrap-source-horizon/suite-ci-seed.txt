@@ -1,0 +1,51 @@
+Compiling 1 files with Solc 0.8.26
+Solc 0.8.26 finished in 3.44s
+Compiler run successful!
+
+Ran 25 tests for test/OmrV4TwapOracle.t.sol:OmrV4TwapOracleTest
+[PASS] testFuzz_no_prepool_or_prebaseline_time_qualifies(uint64,uint32,int24,bool) (runs: 4096, μ: 1185822, ~: 1185776)
+Logs:
+  Bound result 23159
+  Bound result 576
+  Bound result 8389
+
+[PASS] testFuzz_tick_conversion_matches_the_independent_fixed_point_price(int24) (runs: 4096, μ: 83322, ~: 83358)
+Logs:
+  Bound result 24076
+
+[PASS] test_a_short_spike_is_averaged_not_adopted() (gas: 78907)
+[PASS] test_an_extreme_sub_wei_price_invalidates_instead_of_republishing_old_data() (gas: 63165)
+[PASS] test_bootstrap_deploys_before_pool_initialization_and_has_no_quote() (gas: 1048169)
+[PASS] test_bootstrap_discards_checkpointed_history_at_source_elapsed_wrap_observe() (gas: 1186029)
+Logs:
+  Bound result 4294967295
+  Bound result 960
+  Bound result 25
+
+[PASS] test_bootstrap_discards_checkpointed_history_at_source_elapsed_wrap_update() (gas: 1184555)
+Logs:
+  Bound result 4294967295
+  Bound result 960
+  Bound result 25
+
+[PASS] test_constructor_rejects_short_period_unsupported_source_and_bad_decimals() (gas: 660293)
+[PASS] test_deferred_baseline_at_uint32_zero_remains_initialized() (gas: 1163346)
+[PASS] test_deferred_baseline_window_crosses_timestamp_wrap() (gas: 1158794)
+[PASS] test_deferred_bootstrap_retains_overlong_reset_and_honest_recovery() (gas: 1170681)
+[PASS] test_direct_update_refuses_to_close_a_short_window() (gas: 19741)
+[PASS] test_first_initialized_observe_seeds_without_quote() (gas: 1168183)
+[PASS] test_first_initialized_update_discards_all_prebaseline_time() (gas: 1171606)
+[PASS] test_initialized_constructor_at_timestamp_zero_does_not_reseed() (gas: 1155848)
+[PASS] test_negative_fractional_mean_tick_rounds_toward_negative_infinity() (gas: 81150)
+[PASS] test_observer_notifications_noop_early_then_close_the_window() (gas: 84499)
+[PASS] test_only_the_exact_source_and_pool_may_use_the_observer_entry() (gas: 21967)
+[PASS] test_overlong_window_is_discarded_and_recovers_after_one_honest_window() (gas: 103226)
+[PASS] test_pins_the_native_pool_and_starts_unavailable() (gas: 37341)
+[PASS] test_sustained_tick_is_converted_to_omr_per_eth() (gas: 77816)
+[PASS] test_tick_zero_closes_at_one_omr_per_eth() (gas: 72756)
+[PASS] test_timestamp_wrap_preserves_the_elapsed_window() (gas: 1154059)
+[PASS] test_uninitialized_identity_cannot_adopt_another_open_pool() (gas: 825080)
+[PASS] test_uninitialized_update_reverts_observe_noops_and_identity_is_still_enforced() (gas: 1054323)
+Suite result: ok. 25 passed; 0 failed; 0 skipped; finished in 187.45ms (391.66ms CPU time)
+
+Ran 1 test suite in 188.91ms (187.45ms CPU time): 25 tests passed, 0 failed, 0 skipped (25 total tests)

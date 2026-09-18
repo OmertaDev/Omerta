@@ -1,0 +1,212 @@
+No files changed, compilation skipped
+
+Ran 2 tests for test/OmrV4TwapOracle.t.sol:OmrV4TwapOracleTest
+[PASS] test_bootstrap_discards_checkpointed_history_at_source_elapsed_wrap_observe() (gas: 1186029)
+Logs:
+  Bound result 4294967295
+  Bound result 960
+  Bound result 25
+
+Traces:
+  [1186029] OmrV4TwapOracleTest::test_bootstrap_discards_checkpointed_history_at_source_elapsed_wrap_observe()
+    ├─ [0] console::log("Bound result", 4294967295 [4.294e9]) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [0] console::log("Bound result", 960) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [0] VM::toString(25) [staticcall]
+    │   └─ ← [Return] "25"
+    ├─ [0] console::log("Bound result", "25") [staticcall]
+    │   └─ ← [Stop]
+    ├─ [192250] → new MockV4ObservationSource@0xc7183455a4C133Ae270771860664b6B7ec320bB1
+    │   └─ ← [Return] 959 bytes of code
+    ├─ [767611] → new OmrV4TwapOracle@0xa0Cb889707d426A7A386870A03bc70d1b0697598
+    │   ├─ [386] MockV4ObservationSource::supportsInterface(0xa4f7792a) [staticcall]
+    │   │   └─ ← [Return] true
+    │   ├─ [247] MockV4ObservationSource::poolManager() [staticcall]
+    │   │   └─ ← [Return] PoolManager: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f]
+    │   ├─ [205] MockV4OracleToken::decimals() [staticcall]
+    │   │   └─ ← [Return] 18
+    │   ├─ [2619] MockV4ObservationSource::currentTickCumulative(0x77fc17c52e66d00cbadeed7232684c44b608095805a3003e7e72b2d4eeab70f3) [staticcall]
+    │   │   └─ ← [Return] 0, 0, false
+    │   └─ ← [Return] 3773 bytes of code
+    ├─ [0] VM::warp(4295967295 [4.295e9])
+    │   └─ ← [Return]
+    ├─ [42658] MockV4ObservationSource::initialize(0x77fc17c52e66d00cbadeed7232684c44b608095805a3003e7e72b2d4eeab70f3, 25)
+    │   └─ ← [Stop]
+    ├─ [0] VM::warp(6443450942 [6.443e9])
+    │   └─ ← [Return]
+    ├─ [899] MockV4ObservationSource::setTick(25)
+    │   └─ ← [Stop]
+    ├─ [0] VM::warp(8590934590 [8.59e9])
+    │   └─ ← [Return]
+    ├─ [899] MockV4ObservationSource::setTick(25)
+    │   └─ ← [Stop]
+    ├─ [904] MockV4ObservationSource::currentTickCumulative(0x77fc17c52e66d00cbadeed7232684c44b608095805a3003e7e72b2d4eeab70f3) [staticcall]
+    │   └─ ← [Return] 107374182375 [1.073e11], 999998 [9.999e5], true
+    ├─ [0] VM::assertEq(107374182375 [1.073e11], 107374182375 [1.073e11]) [staticcall]
+    │   └─ ← [Return]
+    ├─ [0] VM::prank(MockV4ObservationSource: [0xc7183455a4C133Ae270771860664b6B7ec320bB1])
+    │   └─ ← [Return]
+    ├─ [26522] OmrV4TwapOracle::observe(PoolKey({ currency0: 0x0000000000000000000000000000000000000000, currency1: 0x2e234DAe75C793f67A35089C9d99245E1C58470b, fee: 3000, tickSpacing: 60, hooks: 0xc7183455a4C133Ae270771860664b6B7ec320bB1 }))
+    │   ├─ [904] MockV4ObservationSource::currentTickCumulative(0x77fc17c52e66d00cbadeed7232684c44b608095805a3003e7e72b2d4eeab70f3) [staticcall]
+    │   │   └─ ← [Return] 107374182375 [1.073e11], 999998 [9.999e5], true
+    │   ├─ emit BaselineInitialized(tickCumulative: 107374182375 [1.073e11], blockTimestamp: 999998 [9.999e5])
+    │   └─ ← [Stop]
+    ├─ [338] OmrV4TwapOracle::baselineInitialized() [staticcall]
+    │   └─ ← [Return] true
+    ├─ [0] VM::assertTrue(true) [staticcall]
+    │   └─ ← [Return]
+    ├─ [363] OmrV4TwapOracle::tickCumulativeLast() [staticcall]
+    │   └─ ← [Return] 107374182375 [1.073e11]
+    ├─ [0] VM::assertEq(107374182375 [1.073e11], 107374182375 [1.073e11]) [staticcall]
+    │   └─ ← [Return]
+    ├─ [4474] OmrV4TwapOracle::consult() [staticcall]
+    │   └─ ← [Return] 0, 0
+    ├─ [0] VM::assertEq(0, 0, "quote available before an eligible window") [staticcall]
+    │   └─ ← [Return]
+    ├─ [0] VM::assertEq(0, 0, "ineligible window stamped fresh") [staticcall]
+    │   └─ ← [Return]
+    ├─ [0] VM::warp(8590935550 [8.59e9])
+    │   └─ ← [Return]
+    ├─ [0] VM::prank(MockV4ObservationSource: [0xc7183455a4C133Ae270771860664b6B7ec320bB1])
+    │   └─ ← [Return]
+    ├─ [2910] OmrV4TwapOracle::observe(PoolKey({ currency0: 0x0000000000000000000000000000000000000000, currency1: 0x2e234DAe75C793f67A35089C9d99245E1C58470b, fee: 3000, tickSpacing: 60, hooks: 0xc7183455a4C133Ae270771860664b6B7ec320bB1 }))
+    │   ├─ [904] MockV4ObservationSource::currentTickCumulative(0x77fc17c52e66d00cbadeed7232684c44b608095805a3003e7e72b2d4eeab70f3) [staticcall]
+    │   │   └─ ← [Return] 107374206375 [1.073e11], 1000958 [1e6], true
+    │   └─ ← [Stop]
+    ├─ [474] OmrV4TwapOracle::consult() [staticcall]
+    │   └─ ← [Return] 0, 0
+    ├─ [0] VM::assertEq(0, 0, "quote available before an eligible window") [staticcall]
+    │   └─ ← [Return]
+    ├─ [0] VM::assertEq(0, 0, "ineligible window stamped fresh") [staticcall]
+    │   └─ ← [Return]
+    ├─ [0] VM::expectRevert(PeriodNotElapsed(960, 1800))
+    │   └─ ← [Return]
+    ├─ [2117] OmrV4TwapOracle::update()
+    │   ├─ [904] MockV4ObservationSource::currentTickCumulative(0x77fc17c52e66d00cbadeed7232684c44b608095805a3003e7e72b2d4eeab70f3) [staticcall]
+    │   │   └─ ← [Return] 107374206375 [1.073e11], 1000958 [1e6], true
+    │   └─ ← [Revert] PeriodNotElapsed(960, 1800)
+    ├─ [0] VM::warp(8590936390 [8.59e9])
+    │   └─ ← [Return]
+    ├─ [45853] OmrV4TwapOracle::update()
+    │   ├─ [904] MockV4ObservationSource::currentTickCumulative(0x77fc17c52e66d00cbadeed7232684c44b608095805a3003e7e72b2d4eeab70f3) [staticcall]
+    │   │   └─ ← [Return] 107374227375 [1.073e11], 1001798 [1.001e6], true
+    │   ├─ emit Updated(arithmeticMeanTick: 25, omrPerEth: 1002503002301265531 [1.002e18], timeElapsed: 1800)
+    │   └─ ← [Stop]
+    ├─ [374] OmrV4TwapOracle::arithmeticMeanTick() [staticcall]
+    │   └─ ← [Return] 25
+    ├─ [0] VM::assertEq(25, 25) [staticcall]
+    │   └─ ← [Return]
+    ├─ [474] OmrV4TwapOracle::consult() [staticcall]
+    │   └─ ← [Return] 1002503002301265531 [1.002e18], 8590936390 [8.59e9]
+    ├─ [0] VM::assertGt(1002503002301265531 [1.002e18], 0) [staticcall]
+    │   └─ ← [Return]
+    ├─ [0] VM::assertEq(8590936390 [8.59e9], 8590936390 [8.59e9]) [staticcall]
+    │   └─ ← [Return]
+    └─ ← [Stop]
+
+[PASS] test_bootstrap_discards_checkpointed_history_at_source_elapsed_wrap_update() (gas: 1184555)
+Logs:
+  Bound result 4294967295
+  Bound result 960
+  Bound result 25
+
+Traces:
+  [1184555] OmrV4TwapOracleTest::test_bootstrap_discards_checkpointed_history_at_source_elapsed_wrap_update()
+    ├─ [0] console::log("Bound result", 4294967295 [4.294e9]) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [0] console::log("Bound result", 960) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [0] VM::toString(25) [staticcall]
+    │   └─ ← [Return] "25"
+    ├─ [0] console::log("Bound result", "25") [staticcall]
+    │   └─ ← [Stop]
+    ├─ [192250] → new MockV4ObservationSource@0xc7183455a4C133Ae270771860664b6B7ec320bB1
+    │   └─ ← [Return] 959 bytes of code
+    ├─ [767611] → new OmrV4TwapOracle@0xa0Cb889707d426A7A386870A03bc70d1b0697598
+    │   ├─ [386] MockV4ObservationSource::supportsInterface(0xa4f7792a) [staticcall]
+    │   │   └─ ← [Return] true
+    │   ├─ [247] MockV4ObservationSource::poolManager() [staticcall]
+    │   │   └─ ← [Return] PoolManager: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f]
+    │   ├─ [205] MockV4OracleToken::decimals() [staticcall]
+    │   │   └─ ← [Return] 18
+    │   ├─ [2619] MockV4ObservationSource::currentTickCumulative(0x77fc17c52e66d00cbadeed7232684c44b608095805a3003e7e72b2d4eeab70f3) [staticcall]
+    │   │   └─ ← [Return] 0, 0, false
+    │   └─ ← [Return] 3773 bytes of code
+    ├─ [0] VM::warp(4295967295 [4.295e9])
+    │   └─ ← [Return]
+    ├─ [42658] MockV4ObservationSource::initialize(0x77fc17c52e66d00cbadeed7232684c44b608095805a3003e7e72b2d4eeab70f3, 25)
+    │   └─ ← [Stop]
+    ├─ [0] VM::warp(6443450942 [6.443e9])
+    │   └─ ← [Return]
+    ├─ [899] MockV4ObservationSource::setTick(25)
+    │   └─ ← [Stop]
+    ├─ [0] VM::warp(8590934590 [8.59e9])
+    │   └─ ← [Return]
+    ├─ [899] MockV4ObservationSource::setTick(25)
+    │   └─ ← [Stop]
+    ├─ [904] MockV4ObservationSource::currentTickCumulative(0x77fc17c52e66d00cbadeed7232684c44b608095805a3003e7e72b2d4eeab70f3) [staticcall]
+    │   └─ ← [Return] 107374182375 [1.073e11], 999998 [9.999e5], true
+    ├─ [0] VM::assertEq(107374182375 [1.073e11], 107374182375 [1.073e11]) [staticcall]
+    │   └─ ← [Return]
+    ├─ [25662] OmrV4TwapOracle::update()
+    │   ├─ [904] MockV4ObservationSource::currentTickCumulative(0x77fc17c52e66d00cbadeed7232684c44b608095805a3003e7e72b2d4eeab70f3) [staticcall]
+    │   │   └─ ← [Return] 107374182375 [1.073e11], 999998 [9.999e5], true
+    │   ├─ emit BaselineInitialized(tickCumulative: 107374182375 [1.073e11], blockTimestamp: 999998 [9.999e5])
+    │   └─ ← [Stop]
+    ├─ [338] OmrV4TwapOracle::baselineInitialized() [staticcall]
+    │   └─ ← [Return] true
+    ├─ [0] VM::assertTrue(true) [staticcall]
+    │   └─ ← [Return]
+    ├─ [363] OmrV4TwapOracle::tickCumulativeLast() [staticcall]
+    │   └─ ← [Return] 107374182375 [1.073e11]
+    ├─ [0] VM::assertEq(107374182375 [1.073e11], 107374182375 [1.073e11]) [staticcall]
+    │   └─ ← [Return]
+    ├─ [4474] OmrV4TwapOracle::consult() [staticcall]
+    │   └─ ← [Return] 0, 0
+    ├─ [0] VM::assertEq(0, 0, "quote available before an eligible window") [staticcall]
+    │   └─ ← [Return]
+    ├─ [0] VM::assertEq(0, 0, "ineligible window stamped fresh") [staticcall]
+    │   └─ ← [Return]
+    ├─ [0] VM::warp(8590935550 [8.59e9])
+    │   └─ ← [Return]
+    ├─ [0] VM::prank(MockV4ObservationSource: [0xc7183455a4C133Ae270771860664b6B7ec320bB1])
+    │   └─ ← [Return]
+    ├─ [2910] OmrV4TwapOracle::observe(PoolKey({ currency0: 0x0000000000000000000000000000000000000000, currency1: 0x2e234DAe75C793f67A35089C9d99245E1C58470b, fee: 3000, tickSpacing: 60, hooks: 0xc7183455a4C133Ae270771860664b6B7ec320bB1 }))
+    │   ├─ [904] MockV4ObservationSource::currentTickCumulative(0x77fc17c52e66d00cbadeed7232684c44b608095805a3003e7e72b2d4eeab70f3) [staticcall]
+    │   │   └─ ← [Return] 107374206375 [1.073e11], 1000958 [1e6], true
+    │   └─ ← [Stop]
+    ├─ [474] OmrV4TwapOracle::consult() [staticcall]
+    │   └─ ← [Return] 0, 0
+    ├─ [0] VM::assertEq(0, 0, "quote available before an eligible window") [staticcall]
+    │   └─ ← [Return]
+    ├─ [0] VM::assertEq(0, 0, "ineligible window stamped fresh") [staticcall]
+    │   └─ ← [Return]
+    ├─ [0] VM::expectRevert(PeriodNotElapsed(960, 1800))
+    │   └─ ← [Return]
+    ├─ [2117] OmrV4TwapOracle::update()
+    │   ├─ [904] MockV4ObservationSource::currentTickCumulative(0x77fc17c52e66d00cbadeed7232684c44b608095805a3003e7e72b2d4eeab70f3) [staticcall]
+    │   │   └─ ← [Return] 107374206375 [1.073e11], 1000958 [1e6], true
+    │   └─ ← [Revert] PeriodNotElapsed(960, 1800)
+    ├─ [0] VM::warp(8590936390 [8.59e9])
+    │   └─ ← [Return]
+    ├─ [45853] OmrV4TwapOracle::update()
+    │   ├─ [904] MockV4ObservationSource::currentTickCumulative(0x77fc17c52e66d00cbadeed7232684c44b608095805a3003e7e72b2d4eeab70f3) [staticcall]
+    │   │   └─ ← [Return] 107374227375 [1.073e11], 1001798 [1.001e6], true
+    │   ├─ emit Updated(arithmeticMeanTick: 25, omrPerEth: 1002503002301265531 [1.002e18], timeElapsed: 1800)
+    │   └─ ← [Stop]
+    ├─ [374] OmrV4TwapOracle::arithmeticMeanTick() [staticcall]
+    │   └─ ← [Return] 25
+    ├─ [0] VM::assertEq(25, 25) [staticcall]
+    │   └─ ← [Return]
+    ├─ [474] OmrV4TwapOracle::consult() [staticcall]
+    │   └─ ← [Return] 1002503002301265531 [1.002e18], 8590936390 [8.59e9]
+    ├─ [0] VM::assertGt(1002503002301265531 [1.002e18], 0) [staticcall]
+    │   └─ ← [Return]
+    ├─ [0] VM::assertEq(8590936390 [8.59e9], 8590936390 [8.59e9]) [staticcall]
+    │   └─ ← [Return]
+    └─ ← [Stop]
+
+Suite result: ok. 2 passed; 0 failed; 0 skipped; finished in 1.44ms (958.50µs CPU time)
+
+Ran 1 test suite in 7.08ms (1.44ms CPU time): 2 tests passed, 0 failed, 0 skipped (2 total tests)
