@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "553619b5a18854dfac416e364953436f5a902781",
+  "sourceRevision": "b068a581ffa39e101047ac1b10db42e844262bdf",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 7480,
-    "edges": 33089,
+    "nodes": 7483,
+    "edges": 33107,
     "byNodeType": {
-      "Artifact": 2925,
+      "Artifact": 2926,
       "Command": 97,
-      "Commit": 1476,
+      "Commit": 1478,
       "Contract": 79,
       "Document": 590,
       "Domain": 13,
@@ -64,17 +64,17 @@
       "Workflow": 5
     },
     "byEdgeType": {
-      "BELONGS_TO": 2454,
-      "CHANGED": 12548,
-      "CONTAINS": 2946,
+      "BELONGS_TO": 2455,
+      "CHANGED": 12560,
+      "CONTAINS": 2947,
       "DECLARES": 97,
       "DEFINED_IN": 1248,
       "DEPENDS_ON": 65,
       "EXECUTES": 403,
       "HANDLED_BY": 705,
-      "HAS_COMMIT": 1476,
+      "HAS_COMMIT": 1478,
       "IMPLEMENTS": 124,
-      "IMPORTS": 2720,
+      "IMPORTS": 2722,
       "INHERITS": 17,
       "REFERENCES": 4064,
       "REPRESENTS": 1216,
@@ -62324,20 +62324,20 @@
       "path": "test/liquidity-deployment-plan.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 25879,
-      "lines": 373,
-      "version": "11fb7892ce623577",
+      "bytes": 28850,
+      "lines": 419,
+      "version": "7d5b14f46d961ba9",
       "text": true,
       "provenance": [
         {
           "file": "test/liquidity-deployment-plan.js",
           "line": 1,
-          "version": "11fb7892ce623577"
+          "version": "7d5b14f46d961ba9"
         }
       ],
-      "lastChangedAt": "2026-09-10T19:36:34.000Z",
+      "lastChangedAt": "2026-09-18T05:08:51.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "2b3feb7c807848564094c9b56d13fd7e41f97bae"
+      "lastChangedCommit": "b068a581ffa39e101047ac1b10db42e844262bdf"
     },
     {
       "key": "Artifact:test/liquidityaccounting-review.js",
@@ -66365,6 +66365,29 @@
       "lastChangedCommit": "2b3feb7c807848564094c9b56d13fd7e41f97bae"
     },
     {
+      "key": "Artifact:tools/liquidity-e2e-artifacts.js",
+      "type": "Artifact",
+      "id": "tools/liquidity-e2e-artifacts.js",
+      "label": "liquidity-e2e-artifacts.js",
+      "path": "tools/liquidity-e2e-artifacts.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 2092,
+      "lines": 36,
+      "version": "dfb3447091335c3d",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/liquidity-e2e-artifacts.js",
+          "line": 1,
+          "version": "dfb3447091335c3d"
+        }
+      ],
+      "lastChangedAt": "2026-09-18T05:08:51.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "b068a581ffa39e101047ac1b10db42e844262bdf"
+    },
+    {
       "key": "Artifact:tools/liquidity-e2e.js",
       "type": "Artifact",
       "id": "tools/liquidity-e2e.js",
@@ -66372,20 +66395,20 @@
       "path": "tools/liquidity-e2e.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 26543,
-      "lines": 257,
-      "version": "8d5146e33bf185df",
+      "bytes": 27456,
+      "lines": 270,
+      "version": "cb5a9dd02e9068cb",
       "text": true,
       "provenance": [
         {
           "file": "tools/liquidity-e2e.js",
           "line": 1,
-          "version": "8d5146e33bf185df"
+          "version": "cb5a9dd02e9068cb"
         }
       ],
-      "lastChangedAt": "2026-09-09T15:41:10.000Z",
+      "lastChangedAt": "2026-09-18T05:08:51.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "641af48e212b91a8b989f931bb8e8038623ff229"
+      "lastChangedCommit": "b068a581ffa39e101047ac1b10db42e844262bdf"
     },
     {
       "key": "Artifact:tools/liquidity-keeper.js",
@@ -85399,6 +85422,22 @@
       ]
     },
     {
+      "key": "Commit:b068a581ffa39e101047ac1b10db42e844262bdf",
+      "type": "Commit",
+      "id": "b068a581ffa39e101047ac1b10db42e844262bdf",
+      "label": "fix: make liquidity release rehearsal independent of artifact cache and wall clock",
+      "title": "fix: make liquidity release rehearsal independent of artifact cache and wall clock",
+      "date": "2026-09-18T05:08:51.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/b068a581ffa39e101047ac1b10db42e844262bdf",
+      "provenance": [
+        {
+          "commit": "b068a581ffa39e101047ac1b10db42e844262bdf",
+          "url": "https://github.com/OmertaDev/Omerta/commit/b068a581ffa39e101047ac1b10db42e844262bdf"
+        }
+      ]
+    },
+    {
       "key": "Commit:b0761aa902da39cf0d0f93c0a65f10651a3b5990",
       "type": "Commit",
       "id": "b0761aa902da39cf0d0f93c0a65f10651a3b5990",
@@ -91683,6 +91722,22 @@
         {
           "commit": "f91a19d9fe353b1e81bdb6f1d6c47c7f9860b927",
           "url": "https://github.com/OmertaDev/Omerta/commit/f91a19d9fe353b1e81bdb6f1d6c47c7f9860b927"
+        }
+      ]
+    },
+    {
+      "key": "Commit:f92c9029903b5890a7cf3cc18bfcdd92001367f2",
+      "type": "Commit",
+      "id": "f92c9029903b5890a7cf3cc18bfcdd92001367f2",
+      "label": "chore(knowledge): index Living World Director milestone",
+      "title": "chore(knowledge): index Living World Director milestone",
+      "date": "2026-09-18T04:26:42.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f92c9029903b5890a7cf3cc18bfcdd92001367f2",
+      "provenance": [
+        {
+          "commit": "f92c9029903b5890a7cf3cc18bfcdd92001367f2",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f92c9029903b5890a7cf3cc18bfcdd92001367f2"
         }
       ]
     },
@@ -104216,7 +104271,7 @@
         },
         {
           "file": "test/liquidity-deployment-plan.js",
-          "line": 6
+          "line": 8
         },
         {
           "file": "test/liquidityaccounting-review.js",
@@ -108788,6 +108843,9 @@
           "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
         },
         {
+          "commit": "f92c9029903b5890a7cf3cc18bfcdd92001367f2"
+        },
+        {
           "commit": "fd41232dffa31491628830869916fe246609b20f"
         },
         {
@@ -109431,6 +109489,9 @@
         },
         {
           "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
+        },
+        {
+          "commit": "f92c9029903b5890a7cf3cc18bfcdd92001367f2"
         },
         {
           "commit": "fd41232dffa31491628830869916fe246609b20f"
@@ -110078,6 +110139,9 @@
           "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
         },
         {
+          "commit": "f92c9029903b5890a7cf3cc18bfcdd92001367f2"
+        },
+        {
           "commit": "fd41232dffa31491628830869916fe246609b20f"
         },
         {
@@ -110723,6 +110787,9 @@
           "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
         },
         {
+          "commit": "f92c9029903b5890a7cf3cc18bfcdd92001367f2"
+        },
+        {
           "commit": "fd41232dffa31491628830869916fe246609b20f"
         },
         {
@@ -110874,6 +110941,9 @@
         },
         {
           "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
+        },
+        {
+          "commit": "f92c9029903b5890a7cf3cc18bfcdd92001367f2"
         },
         {
           "commit": "fd41232dffa31491628830869916fe246609b20f"
@@ -111518,6 +111588,9 @@
           "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
         },
         {
+          "commit": "f92c9029903b5890a7cf3cc18bfcdd92001367f2"
+        },
+        {
           "commit": "fd41232dffa31491628830869916fe246609b20f"
         },
         {
@@ -111764,6 +111837,9 @@
           "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
         },
         {
+          "commit": "f92c9029903b5890a7cf3cc18bfcdd92001367f2"
+        },
+        {
           "commit": "fd41232dffa31491628830869916fe246609b20f"
         },
         {
@@ -111858,6 +111934,9 @@
         },
         {
           "commit": "f1dea2e9a5ebc29de20dc3e9c927d5c06d2107c8"
+        },
+        {
+          "commit": "f92c9029903b5890a7cf3cc18bfcdd92001367f2"
         },
         {
           "commit": "ff0ff3aaf31e9d9473ea2437e10f26cbfd46a70d"
@@ -111978,6 +112057,9 @@
         },
         {
           "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
+        },
+        {
+          "commit": "f92c9029903b5890a7cf3cc18bfcdd92001367f2"
         },
         {
           "commit": "ff0ff3aaf31e9d9473ea2437e10f26cbfd46a70d"
@@ -119255,12 +119337,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "553619b5a18854dfac416e364953436f5a902781",
+      "revision": "b068a581ffa39e101047ac1b10db42e844262bdf",
       "currentBranch": "codex/living-world-director",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 2925,
+      "currentArtifactCount": 2926,
       "provenance": [
         {
           "file": "README.md",
@@ -148534,13 +148616,13 @@
       "type": "TestSuite",
       "id": "test/liquidity-deployment-plan.js",
       "label": "test/liquidity-deployment-plan.js",
-      "lines": 373,
-      "version": "11fb7892ce623577",
+      "lines": 419,
+      "version": "7d5b14f46d961ba9",
       "provenance": [
         {
           "file": "test/liquidity-deployment-plan.js",
           "line": 1,
-          "version": "11fb7892ce623577"
+          "version": "7d5b14f46d961ba9"
         }
       ]
     },
@@ -165091,6 +165173,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "tools/liquidity-deployment-plan.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/liquidity-e2e-artifacts.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/liquidity-e2e-artifacts.js",
         "line": 1
       }
     },
@@ -244746,6 +244837,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:b068a581ffa39e101047ac1b10db42e844262bdf",
+      "to": "Artifact:test/liquidity-deployment-plan.js",
+      "provenance": {
+        "commit": "b068a581ffa39e101047ac1b10db42e844262bdf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b068a581ffa39e101047ac1b10db42e844262bdf",
+      "to": "Artifact:tools/liquidity-e2e-artifacts.js",
+      "provenance": {
+        "commit": "b068a581ffa39e101047ac1b10db42e844262bdf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b068a581ffa39e101047ac1b10db42e844262bdf",
+      "to": "Artifact:tools/liquidity-e2e.js",
+      "provenance": {
+        "commit": "b068a581ffa39e101047ac1b10db42e844262bdf"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:b0818c3d4591b77087fa97b1bc7402d7950def53",
       "to": "HistoricalArtifact:knowledge/generated/github-history.md",
       "provenance": {
@@ -270890,6 +271005,78 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:f92c9029903b5890a7cf3cc18bfcdd92001367f2",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "f92c9029903b5890a7cf3cc18bfcdd92001367f2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f92c9029903b5890a7cf3cc18bfcdd92001367f2",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "f92c9029903b5890a7cf3cc18bfcdd92001367f2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f92c9029903b5890a7cf3cc18bfcdd92001367f2",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "f92c9029903b5890a7cf3cc18bfcdd92001367f2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f92c9029903b5890a7cf3cc18bfcdd92001367f2",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "f92c9029903b5890a7cf3cc18bfcdd92001367f2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f92c9029903b5890a7cf3cc18bfcdd92001367f2",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "f92c9029903b5890a7cf3cc18bfcdd92001367f2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f92c9029903b5890a7cf3cc18bfcdd92001367f2",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "f92c9029903b5890a7cf3cc18bfcdd92001367f2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f92c9029903b5890a7cf3cc18bfcdd92001367f2",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "f92c9029903b5890a7cf3cc18bfcdd92001367f2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f92c9029903b5890a7cf3cc18bfcdd92001367f2",
+      "to": "HistoricalArtifact:knowledge/generated/routes.md",
+      "provenance": {
+        "commit": "f92c9029903b5890a7cf3cc18bfcdd92001367f2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f92c9029903b5890a7cf3cc18bfcdd92001367f2",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "f92c9029903b5890a7cf3cc18bfcdd92001367f2"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:f978e76e9ee3ded41be95b7d1c316e1b26b45d47",
       "to": "Artifact:test/levers.js",
       "provenance": {
@@ -288142,6 +288329,15 @@
       "to": "Artifact:tools/liquidity-deployment-plan.js",
       "provenance": {
         "file": "tools/liquidity-deployment-plan.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/liquidity-e2e-artifacts.js",
+      "provenance": {
+        "file": "tools/liquidity-e2e-artifacts.js",
         "line": 1
       }
     },
@@ -331053,6 +331249,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:b068a581ffa39e101047ac1b10db42e844262bdf",
+      "provenance": {
+        "commit": "b068a581ffa39e101047ac1b10db42e844262bdf"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:b0761aa902da39cf0d0f93c0a65f10651a3b5990",
       "provenance": {
         "commit": "b0761aa902da39cf0d0f93c0a65f10651a3b5990"
@@ -334192,6 +334396,14 @@
       "to": "Commit:f91a19d9fe353b1e81bdb6f1d6c47c7f9860b927",
       "provenance": {
         "commit": "f91a19d9fe353b1e81bdb6f1d6c47c7f9860b927"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:f92c9029903b5890a7cf3cc18bfcdd92001367f2",
+      "provenance": {
+        "commit": "f92c9029903b5890a7cf3cc18bfcdd92001367f2"
       }
     },
     {
@@ -351868,10 +352080,19 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/liquidity-deployment-plan.js",
+      "to": "Artifact:tools/liquidity-e2e-artifacts.js",
+      "provenance": {
+        "file": "test/liquidity-deployment-plan.js",
+        "line": 11
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/liquidity-deployment-plan.js",
       "to": "ExternalDependency:viem",
       "provenance": {
         "file": "test/liquidity-deployment-plan.js",
-        "line": 6
+        "line": 8
       }
     },
     {
@@ -358558,7 +358779,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "tools/liquidity-e2e.js",
-        "line": 28
+        "line": 29
       }
     },
     {
@@ -358567,7 +358788,7 @@
       "to": "Artifact:src/fees.js",
       "provenance": {
         "file": "tools/liquidity-e2e.js",
-        "line": 29
+        "line": 30
       }
     },
     {
@@ -358576,7 +358797,7 @@
       "to": "Artifact:src/liquidityaccounting.js",
       "provenance": {
         "file": "tools/liquidity-e2e.js",
-        "line": 31
+        "line": 32
       }
     },
     {
@@ -358585,7 +358806,7 @@
       "to": "Artifact:src/liquidityautomation.js",
       "provenance": {
         "file": "tools/liquidity-e2e.js",
-        "line": 34
+        "line": 35
       }
     },
     {
@@ -358594,7 +358815,7 @@
       "to": "Artifact:src/liquidityindexer.js",
       "provenance": {
         "file": "tools/liquidity-e2e.js",
-        "line": 32
+        "line": 33
       }
     },
     {
@@ -358603,7 +358824,7 @@
       "to": "Artifact:src/liquiditykeeper.js",
       "provenance": {
         "file": "tools/liquidity-e2e.js",
-        "line": 30
+        "line": 31
       }
     },
     {
@@ -358612,7 +358833,16 @@
       "to": "Artifact:src/liquiditypolicy.js",
       "provenance": {
         "file": "tools/liquidity-e2e.js",
-        "line": 33
+        "line": 34
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/liquidity-e2e.js",
+      "to": "Artifact:tools/liquidity-e2e-artifacts.js",
+      "provenance": {
+        "file": "tools/liquidity-e2e.js",
+        "line": 18
       }
     },
     {
