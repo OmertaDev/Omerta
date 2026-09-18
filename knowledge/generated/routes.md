@@ -773,8 +773,8 @@
 | POST | `/v1/primetime/round` | authenticated | engagement-growth | [src/server.js:3147](../../src/server.js#L3147) | `Prime.buyRound` |
 | POST | `/v1/primetime/siege` | authenticated | engagement-growth | [src/server.js:3149](../../src/server.js#L3149) | `Prime.joinSiege` |
 | GET | `/v1/profile` | authenticated | engagement-growth | [src/server.js:3224](../../src/server.js#L3224) | `W.myProfile` |
-| GET | `/v1/projections/player` | authenticated | platform-core | [src/routes/projections.js:57](../../src/routes/projections.js#L57) | — |
-| GET | `/v1/projections/world` | authenticated | platform-core | [src/routes/projections.js:62](../../src/routes/projections.js#L62) | — |
+| GET | `/v1/projections/player` | authenticated | platform-core | [src/routes/projections.js:58](../../src/routes/projections.js#L58) | — |
+| GET | `/v1/projections/world` | authenticated | platform-core | [src/routes/projections.js:63](../../src/routes/projections.js#L63) | — |
 | GET | `/v1/provenance` | authenticated | engagement-growth | [src/server.js:2447](../../src/server.js#L2447) | `Drop.colorsBoard` |
 | POST | `/v1/provenance` | authenticated | engagement-growth | [src/server.js:2449](../../src/server.js#L2449) | `Drop.claimColors` |
 | POST | `/v1/push/subscribe` | authenticated | engagement-growth | [src/server.js:3162](../../src/server.js#L3162) | `Push.saveSubscription` |

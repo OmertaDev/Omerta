@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "e3332bf493345328695c2fbc9745f94b12b12f45",
+  "sourceRevision": "39a51716b9c99bc5964d83efddd7616477bb8947",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,44 +43,44 @@
     ]
   },
   "census": {
-    "nodes": 7492,
-    "edges": 33135,
+    "nodes": 7521,
+    "edges": 33370,
     "byNodeType": {
-      "Artifact": 2933,
-      "Command": 97,
-      "Commit": 1480,
+      "Artifact": 2947,
+      "Command": 98,
+      "Commit": 1482,
       "Contract": 79,
-      "Document": 590,
+      "Document": 592,
       "Domain": 13,
       "ExternalDependency": 27,
       "HistoricalArtifact": 343,
-      "Module": 268,
+      "Module": 272,
       "PullRequest": 126,
       "Repository": 1,
       "Route": 800,
       "Subsystem": 8,
       "Table": 369,
-      "TestSuite": 353,
+      "TestSuite": 359,
       "Workflow": 5
     },
     "byEdgeType": {
-      "BELONGS_TO": 2462,
-      "CHANGED": 12572,
-      "CONTAINS": 2954,
-      "DECLARES": 97,
+      "BELONGS_TO": 2473,
+      "CHANGED": 12615,
+      "CONTAINS": 2968,
+      "DECLARES": 98,
       "DEFINED_IN": 1248,
       "DEPENDS_ON": 65,
-      "EXECUTES": 403,
+      "EXECUTES": 422,
       "HANDLED_BY": 705,
-      "HAS_COMMIT": 1480,
+      "HAS_COMMIT": 1482,
       "IMPLEMENTS": 124,
-      "IMPORTS": 2722,
+      "IMPORTS": 2802,
       "INHERITS": 17,
-      "REFERENCES": 4064,
-      "REPRESENTS": 1216,
-      "TESTS": 1083,
+      "REFERENCES": 4069,
+      "REPRESENTS": 1228,
+      "TESTS": 1128,
       "TRACKS": 126,
-      "USES_TABLE": 1797
+      "USES_TABLE": 1800
     }
   },
   "nodes": [
@@ -27754,6 +27754,29 @@
       "lastChangedCommit": "553619b5a18854dfac416e364953436f5a902781"
     },
     {
+      "key": "Artifact:docs/living-world-director/evidence/world-campaign-network.json",
+      "type": "Artifact",
+      "id": "docs/living-world-director/evidence/world-campaign-network.json",
+      "label": "world-campaign-network.json",
+      "path": "docs/living-world-director/evidence/world-campaign-network.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 96736,
+      "lines": 2311,
+      "version": "16750fde49a2c5e6",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/living-world-director/evidence/world-campaign-network.json",
+          "line": 1,
+          "version": "16750fde49a2c5e6"
+        }
+      ],
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+    },
+    {
       "key": "Artifact:docs/living-world-director/HANDOFF.md",
       "type": "Artifact",
       "id": "docs/living-world-director/HANDOFF.md",
@@ -27777,6 +27800,29 @@
       "lastChangedCommit": "553619b5a18854dfac416e364953436f5a902781"
     },
     {
+      "key": "Artifact:docs/living-world-director/OPPORTUNITY-FEED.md",
+      "type": "Artifact",
+      "id": "docs/living-world-director/OPPORTUNITY-FEED.md",
+      "label": "OPPORTUNITY-FEED.md",
+      "path": "docs/living-world-director/OPPORTUNITY-FEED.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 4547,
+      "lines": 71,
+      "version": "81f3e10ee355aeff",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/living-world-director/OPPORTUNITY-FEED.md",
+          "line": 1,
+          "version": "81f3e10ee355aeff"
+        }
+      ],
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+    },
+    {
       "key": "Artifact:docs/living-world-director/SECURITY-REVIEW.md",
       "type": "Artifact",
       "id": "docs/living-world-director/SECURITY-REVIEW.md",
@@ -27798,6 +27844,29 @@
       "lastChangedAt": "2026-09-18T04:25:45.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "553619b5a18854dfac416e364953436f5a902781"
+    },
+    {
+      "key": "Artifact:docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md",
+      "type": "Artifact",
+      "id": "docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md",
+      "label": "WORLD-CAMPAIGN-NETWORK.md",
+      "path": "docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 13058,
+      "lines": 67,
+      "version": "93936837be9857c5",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md",
+          "line": 1,
+          "version": "93936837be9857c5"
+        }
+      ],
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
     },
     {
       "key": "Artifact:docs/OMERTA-Whitepaper.docx",
@@ -29465,18 +29534,18 @@
       "extension": ".md",
       "bytes": 7058,
       "lines": 128,
-      "version": "4667491a179e1069",
+      "version": "8503c3e913a3d55b",
       "text": true,
       "provenance": [
         {
           "file": "MARKETING-POSTS.md",
           "line": 1,
-          "version": "4667491a179e1069"
+          "version": "8503c3e913a3d55b"
         }
       ],
-      "lastChangedAt": "2026-09-18T04:25:45.000Z",
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "553619b5a18854dfac416e364953436f5a902781"
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
     },
     {
       "key": "Artifact:MARKETING.md",
@@ -38657,20 +38726,20 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 19427,
-      "lines": 126,
-      "version": "bb486810507ac6ca",
+      "bytes": 20215,
+      "lines": 127,
+      "version": "77de9364580c07e7",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "bb486810507ac6ca"
+          "version": "77de9364580c07e7"
         }
       ],
-      "lastChangedAt": "2026-09-18T04:25:45.000Z",
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "553619b5a18854dfac416e364953436f5a902781"
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
     },
     {
       "key": "Artifact:Procfile",
@@ -52917,20 +52986,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1294576,
-      "lines": 13336,
-      "version": "e6182b50993f6487",
+      "bytes": 1299026,
+      "lines": 13372,
+      "version": "26a1e6d397b742bc",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "e6182b50993f6487"
+          "version": "26a1e6d397b742bc"
         }
       ],
-      "lastChangedAt": "2026-09-18T04:25:45.000Z",
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "553619b5a18854dfac416e364953436f5a902781"
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
     },
     {
       "key": "Artifact:public/invite.html",
@@ -53147,20 +53216,20 @@
       "path": "schema.sql",
       "kind": "data-schema",
       "extension": ".sql",
-      "bytes": 452826,
-      "lines": 7372,
-      "version": "1647a154ad8e6cc3",
+      "bytes": 453111,
+      "lines": 7376,
+      "version": "b126f2832cc793bd",
       "text": true,
       "provenance": [
         {
           "file": "schema.sql",
           "line": 1,
-          "version": "1647a154ad8e6cc3"
+          "version": "b126f2832cc793bd"
         }
       ],
-      "lastChangedAt": "2026-09-18T04:25:45.000Z",
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "553619b5a18854dfac416e364953436f5a902781"
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
     },
     {
       "key": "Artifact:SIGN-OFF.md",
@@ -53218,18 +53287,18 @@
       "extension": ".md",
       "bytes": 56651,
       "lines": 756,
-      "version": "98df001d82ba6dc3",
+      "version": "6bb52640945f9e16",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "98df001d82ba6dc3"
+          "version": "6bb52640945f9e16"
         }
       ],
-      "lastChangedAt": "2026-09-18T04:25:45.000Z",
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "553619b5a18854dfac416e364953436f5a902781"
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
     },
     {
       "key": "Artifact:src/access.js",
@@ -54175,6 +54244,29 @@
       "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
+      "key": "Artifact:src/content/campaign-network.js",
+      "type": "Artifact",
+      "id": "src/content/campaign-network.js",
+      "label": "campaign-network.js",
+      "path": "src/content/campaign-network.js",
+      "kind": "backend-module",
+      "extension": ".js",
+      "bytes": 17508,
+      "lines": 200,
+      "version": "9df353f3d4fefde3",
+      "text": true,
+      "provenance": [
+        {
+          "file": "src/content/campaign-network.js",
+          "line": 1,
+          "version": "9df353f3d4fefde3"
+        }
+      ],
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+    },
+    {
       "key": "Artifact:src/content/canonical.js",
       "type": "Artifact",
       "id": "src/content/canonical.js",
@@ -54274,20 +54366,20 @@
       "path": "src/content/core-progression.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 2828,
-      "lines": 46,
-      "version": "86e298ba527f3cc3",
+      "bytes": 2905,
+      "lines": 47,
+      "version": "7516f9b5cc0c9a24",
       "text": true,
       "provenance": [
         {
           "file": "src/content/core-progression.js",
           "line": 1,
-          "version": "86e298ba527f3cc3"
+          "version": "7516f9b5cc0c9a24"
         }
       ],
-      "lastChangedAt": "2026-09-18T04:25:45.000Z",
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "553619b5a18854dfac416e364953436f5a902781"
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
     },
     {
       "key": "Artifact:src/content/corpus.js",
@@ -55164,6 +55256,29 @@
       "lastChangedCommit": "8e10ae57f0f6fab872951580eded6054b6995cfb"
     },
     {
+      "key": "Artifact:src/director/campaign-network.js",
+      "type": "Artifact",
+      "id": "src/director/campaign-network.js",
+      "label": "campaign-network.js",
+      "path": "src/director/campaign-network.js",
+      "kind": "backend-module",
+      "extension": ".js",
+      "bytes": 16201,
+      "lines": 173,
+      "version": "518b1779963179e6",
+      "text": true,
+      "provenance": [
+        {
+          "file": "src/director/campaign-network.js",
+          "line": 1,
+          "version": "518b1779963179e6"
+        }
+      ],
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+    },
+    {
       "key": "Artifact:src/director/config.js",
       "type": "Artifact",
       "id": "src/director/config.js",
@@ -55171,20 +55286,20 @@
       "path": "src/director/config.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 2969,
+      "bytes": 3026,
       "lines": 44,
-      "version": "3f1300a347a789ff",
+      "version": "cca4c34e6e1fa359",
       "text": true,
       "provenance": [
         {
           "file": "src/director/config.js",
           "line": 1,
-          "version": "3f1300a347a789ff"
+          "version": "cca4c34e6e1fa359"
         }
       ],
-      "lastChangedAt": "2026-09-18T04:25:45.000Z",
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "553619b5a18854dfac416e364953436f5a902781"
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
     },
     {
       "key": "Artifact:src/director/definitions.js",
@@ -55194,20 +55309,20 @@
       "path": "src/director/definitions.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 28834,
-      "lines": 411,
-      "version": "88e56e749b82632a",
+      "bytes": 39620,
+      "lines": 542,
+      "version": "bad84caa79aa08de",
       "text": true,
       "provenance": [
         {
           "file": "src/director/definitions.js",
           "line": 1,
-          "version": "88e56e749b82632a"
+          "version": "bad84caa79aa08de"
         }
       ],
-      "lastChangedAt": "2026-09-18T04:25:45.000Z",
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "553619b5a18854dfac416e364953436f5a902781"
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
     },
     {
       "key": "Artifact:src/director/dock-war.js",
@@ -55233,6 +55348,29 @@
       "lastChangedCommit": "553619b5a18854dfac416e364953436f5a902781"
     },
     {
+      "key": "Artifact:src/director/memory.js",
+      "type": "Artifact",
+      "id": "src/director/memory.js",
+      "label": "memory.js",
+      "path": "src/director/memory.js",
+      "kind": "backend-module",
+      "extension": ".js",
+      "bytes": 4403,
+      "lines": 64,
+      "version": "9b4827a7342aed20",
+      "text": true,
+      "provenance": [
+        {
+          "file": "src/director/memory.js",
+          "line": 1,
+          "version": "9b4827a7342aed20"
+        }
+      ],
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+    },
+    {
       "key": "Artifact:src/director/pressures.js",
       "type": "Artifact",
       "id": "src/director/pressures.js",
@@ -55240,20 +55378,20 @@
       "path": "src/director/pressures.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 5385,
-      "lines": 76,
-      "version": "ac6fdca947ff93a2",
+      "bytes": 8206,
+      "lines": 105,
+      "version": "7460bde525a25c29",
       "text": true,
       "provenance": [
         {
           "file": "src/director/pressures.js",
           "line": 1,
-          "version": "ac6fdca947ff93a2"
+          "version": "7460bde525a25c29"
         }
       ],
-      "lastChangedAt": "2026-09-18T04:25:45.000Z",
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "553619b5a18854dfac416e364953436f5a902781"
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
     },
     {
       "key": "Artifact:src/director/runtime.js",
@@ -55263,20 +55401,20 @@
       "path": "src/director/runtime.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 34104,
-      "lines": 426,
-      "version": "59131be815c3c7e6",
+      "bytes": 37624,
+      "lines": 469,
+      "version": "04ff17562903a359",
       "text": true,
       "provenance": [
         {
           "file": "src/director/runtime.js",
           "line": 1,
-          "version": "59131be815c3c7e6"
+          "version": "04ff17562903a359"
         }
       ],
-      "lastChangedAt": "2026-09-18T04:25:45.000Z",
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "553619b5a18854dfac416e364953436f5a902781"
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
     },
     {
       "key": "Artifact:src/director/selection.js",
@@ -55286,20 +55424,20 @@
       "path": "src/director/selection.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 3790,
-      "lines": 49,
-      "version": "c116358048c6c31b",
+      "bytes": 4184,
+      "lines": 52,
+      "version": "878fbe91a7f838a9",
       "text": true,
       "provenance": [
         {
           "file": "src/director/selection.js",
           "line": 1,
-          "version": "c116358048c6c31b"
+          "version": "878fbe91a7f838a9"
         }
       ],
-      "lastChangedAt": "2026-09-18T04:25:45.000Z",
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "553619b5a18854dfac416e364953436f5a902781"
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
     },
     {
       "key": "Artifact:src/director/storage.js",
@@ -56919,20 +57057,20 @@
       "path": "src/player-commands.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 26397,
-      "lines": 337,
-      "version": "e8cbc950bfa016bb",
+      "bytes": 26697,
+      "lines": 341,
+      "version": "5efa876101514638",
       "text": true,
       "provenance": [
         {
           "file": "src/player-commands.js",
           "line": 1,
-          "version": "e8cbc950bfa016bb"
+          "version": "5efa876101514638"
         }
       ],
-      "lastChangedAt": "2026-09-18T04:25:45.000Z",
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "553619b5a18854dfac416e364953436f5a902781"
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
     },
     {
       "key": "Artifact:src/player-opportunities.js",
@@ -56942,20 +57080,20 @@
       "path": "src/player-opportunities.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 1803,
-      "lines": 25,
-      "version": "50546ea76dd6de7d",
+      "bytes": 9035,
+      "lines": 104,
+      "version": "1a077fca4f67bf5e",
       "text": true,
       "provenance": [
         {
           "file": "src/player-opportunities.js",
           "line": 1,
-          "version": "50546ea76dd6de7d"
+          "version": "1a077fca4f67bf5e"
         }
       ],
-      "lastChangedAt": "2026-09-18T04:25:45.000Z",
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "553619b5a18854dfac416e364953436f5a902781"
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
     },
     {
       "key": "Artifact:src/population.js",
@@ -57770,20 +57908,20 @@
       "path": "src/routes/projections.js",
       "kind": "route-module",
       "extension": ".js",
-      "bytes": 5263,
-      "lines": 66,
-      "version": "7bdaceb91c8420e5",
+      "bytes": 5368,
+      "lines": 67,
+      "version": "fd9920aa5164b0de",
       "text": true,
       "provenance": [
         {
           "file": "src/routes/projections.js",
           "line": 1,
-          "version": "7bdaceb91c8420e5"
+          "version": "fd9920aa5164b0de"
         }
       ],
-      "lastChangedAt": "2026-09-18T04:25:45.000Z",
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "553619b5a18854dfac416e364953436f5a902781"
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
     },
     {
       "key": "Artifact:src/routes/races.js",
@@ -59189,6 +59327,29 @@
       "lastChangedCommit": "553619b5a18854dfac416e364953436f5a902781"
     },
     {
+      "key": "Artifact:src/world-consequences.js",
+      "type": "Artifact",
+      "id": "src/world-consequences.js",
+      "label": "world-consequences.js",
+      "path": "src/world-consequences.js",
+      "kind": "backend-module",
+      "extension": ".js",
+      "bytes": 5427,
+      "lines": 77,
+      "version": "fb1783a7db257d8c",
+      "text": true,
+      "provenance": [
+        {
+          "file": "src/world-consequences.js",
+          "line": 1,
+          "version": "fb1783a7db257d8c"
+        }
+      ],
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+    },
+    {
       "key": "Artifact:src/world-kernel-invariants.js",
       "type": "Artifact",
       "id": "src/world-kernel-invariants.js",
@@ -59311,20 +59472,20 @@
       "path": "src/world-projection.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 10439,
-      "lines": 128,
-      "version": "45f13faaebfab11b",
+      "bytes": 11900,
+      "lines": 144,
+      "version": "212fcd8530472f9b",
       "text": true,
       "provenance": [
         {
           "file": "src/world-projection.js",
           "line": 1,
-          "version": "45f13faaebfab11b"
+          "version": "212fcd8530472f9b"
         }
       ],
-      "lastChangedAt": "2026-09-18T04:25:45.000Z",
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "553619b5a18854dfac416e364953436f5a902781"
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
     },
     {
       "key": "Artifact:src/world.js",
@@ -59785,6 +59946,29 @@
       "lastChangedAt": "2026-08-07T21:20:13.000Z",
       "lastChangedBy": "Claude",
       "lastChangedCommit": "41a3e1219dcdcacc1b4cdaeea1494a87f920067e"
+    },
+    {
+      "key": "Artifact:test/campaign-network-journey.js",
+      "type": "Artifact",
+      "id": "test/campaign-network-journey.js",
+      "label": "campaign-network-journey.js",
+      "path": "test/campaign-network-journey.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 13907,
+      "lines": 179,
+      "version": "f11dcabf79e74ab5",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/campaign-network-journey.js",
+          "line": 1,
+          "version": "f11dcabf79e74ab5"
+        }
+      ],
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
     },
     {
       "key": "Artifact:test/career.js",
@@ -60944,20 +61128,20 @@
       "path": "test/director-api.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 4844,
-      "lines": 71,
-      "version": "b47690b4e20a84a8",
+      "bytes": 5616,
+      "lines": 80,
+      "version": "093fd696cedceafb",
       "text": true,
       "provenance": [
         {
           "file": "test/director-api.js",
           "line": 1,
-          "version": "b47690b4e20a84a8"
+          "version": "093fd696cedceafb"
         }
       ],
-      "lastChangedAt": "2026-09-18T04:25:45.000Z",
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "553619b5a18854dfac416e364953436f5a902781"
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
     },
     {
       "key": "Artifact:test/director-commands.js",
@@ -60967,20 +61151,20 @@
       "path": "test/director-commands.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 7506,
-      "lines": 105,
-      "version": "559c03387fe7d2db",
+      "bytes": 7820,
+      "lines": 109,
+      "version": "8f202b4e342f7157",
       "text": true,
       "provenance": [
         {
           "file": "test/director-commands.js",
           "line": 1,
-          "version": "559c03387fe7d2db"
+          "version": "8f202b4e342f7157"
         }
       ],
-      "lastChangedAt": "2026-09-18T04:25:45.000Z",
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "553619b5a18854dfac416e364953436f5a902781"
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
     },
     {
       "key": "Artifact:test/director-config.js",
@@ -61082,20 +61266,66 @@
       "path": "test/director-migration.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 9774,
-      "lines": 130,
-      "version": "d66701924252958b",
+      "bytes": 9978,
+      "lines": 133,
+      "version": "9ccb54e8086483b4",
       "text": true,
       "provenance": [
         {
           "file": "test/director-migration.js",
           "line": 1,
-          "version": "d66701924252958b"
+          "version": "9ccb54e8086483b4"
         }
       ],
-      "lastChangedAt": "2026-09-18T04:25:45.000Z",
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "553619b5a18854dfac416e364953436f5a902781"
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+    },
+    {
+      "key": "Artifact:test/director-network-recovery.js",
+      "type": "Artifact",
+      "id": "test/director-network-recovery.js",
+      "label": "director-network-recovery.js",
+      "path": "test/director-network-recovery.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 13181,
+      "lines": 185,
+      "version": "badaf1387afac73b",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/director-network-recovery.js",
+          "line": 1,
+          "version": "badaf1387afac73b"
+        }
+      ],
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+    },
+    {
+      "key": "Artifact:test/director-network.js",
+      "type": "Artifact",
+      "id": "test/director-network.js",
+      "label": "director-network.js",
+      "path": "test/director-network.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 14585,
+      "lines": 185,
+      "version": "0482835dc192e8dc",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/director-network.js",
+          "line": 1,
+          "version": "0482835dc192e8dc"
+        }
+      ],
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
     },
     {
       "key": "Artifact:test/director-recovery.js",
@@ -61174,20 +61404,20 @@
       "path": "test/director-simulation.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 3281,
-      "lines": 46,
-      "version": "ffd41c748ec5d88a",
+      "bytes": 5597,
+      "lines": 78,
+      "version": "43d8c4ac2b634dca",
       "text": true,
       "provenance": [
         {
           "file": "test/director-simulation.js",
           "line": 1,
-          "version": "ffd41c748ec5d88a"
+          "version": "43d8c4ac2b634dca"
         }
       ],
-      "lastChangedAt": "2026-09-18T04:25:45.000Z",
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "553619b5a18854dfac416e364953436f5a902781"
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
     },
     {
       "key": "Artifact:test/discovery.js",
@@ -62340,6 +62570,29 @@
       "lastChangedCommit": "baa2d0c1ae0b2fc76cc426b598ec4ce4fedb64c2"
     },
     {
+      "key": "Artifact:test/lib/campaign-network-support.js",
+      "type": "Artifact",
+      "id": "test/lib/campaign-network-support.js",
+      "label": "campaign-network-support.js",
+      "path": "test/lib/campaign-network-support.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 8970,
+      "lines": 135,
+      "version": "aeb77f96eae6d55a",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/lib/campaign-network-support.js",
+          "line": 1,
+          "version": "aeb77f96eae6d55a"
+        }
+      ],
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+    },
+    {
       "key": "Artifact:test/lib/director-support.js",
       "type": "Artifact",
       "id": "test/lib/director-support.js",
@@ -62347,20 +62600,20 @@
       "path": "test/lib/director-support.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 9701,
+      "bytes": 9788,
       "lines": 141,
-      "version": "573c43897191cc33",
+      "version": "2b6e6ae90526ebd0",
       "text": true,
       "provenance": [
         {
           "file": "test/lib/director-support.js",
           "line": 1,
-          "version": "573c43897191cc33"
+          "version": "2b6e6ae90526ebd0"
         }
       ],
-      "lastChangedAt": "2026-09-18T04:25:45.000Z",
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "553619b5a18854dfac416e364953436f5a902781"
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
     },
     {
       "key": "Artifact:test/lib/phase2-architecture-upgrade-catalog.json",
@@ -63520,20 +63773,20 @@
       "path": "test/player-command-client.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 18187,
-      "lines": 205,
-      "version": "0e497089e4a809dd",
+      "bytes": 19535,
+      "lines": 216,
+      "version": "ffa4eb24f6012560",
       "text": true,
       "provenance": [
         {
           "file": "test/player-command-client.js",
           "line": 1,
-          "version": "0e497089e4a809dd"
+          "version": "ffa4eb24f6012560"
         }
       ],
-      "lastChangedAt": "2026-09-18T04:25:45.000Z",
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "553619b5a18854dfac416e364953436f5a902781"
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
     },
     {
       "key": "Artifact:test/player-command-journey.js",
@@ -63566,20 +63819,43 @@
       "path": "test/player-commands.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 18959,
-      "lines": 277,
-      "version": "0b2659b57569a3a8",
+      "bytes": 19119,
+      "lines": 279,
+      "version": "76d79ae8bbd5f1f6",
       "text": true,
       "provenance": [
         {
           "file": "test/player-commands.js",
           "line": 1,
-          "version": "0b2659b57569a3a8"
+          "version": "76d79ae8bbd5f1f6"
         }
       ],
-      "lastChangedAt": "2026-09-18T01:30:11.000Z",
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "979519c5640061f45584e926c56d8bc36cc4476f"
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+    },
+    {
+      "key": "Artifact:test/player-opportunities.js",
+      "type": "Artifact",
+      "id": "test/player-opportunities.js",
+      "label": "player-opportunities.js",
+      "path": "test/player-opportunities.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 5165,
+      "lines": 52,
+      "version": "d4a7fac09eb7ee13",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/player-opportunities.js",
+          "line": 1,
+          "version": "d4a7fac09eb7ee13"
+        }
+      ],
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
     },
     {
       "key": "Artifact:test/playthrough-truth.js",
@@ -65100,6 +65376,29 @@
       "lastChangedCommit": "75bab0b18ca25130e86a9706726ca801a4fc8dbf"
     },
     {
+      "key": "Artifact:test/world-consequences.js",
+      "type": "Artifact",
+      "id": "test/world-consequences.js",
+      "label": "world-consequences.js",
+      "path": "test/world-consequences.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 11208,
+      "lines": 142,
+      "version": "e0e055f20877e4eb",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/world-consequences.js",
+          "line": 1,
+          "version": "e0e055f20877e4eb"
+        }
+      ],
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+    },
+    {
       "key": "Artifact:test/world-kernel-api.js",
       "type": "Artifact",
       "id": "test/world-kernel-api.js",
@@ -65406,20 +65705,20 @@
       "path": "test/world-projection.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 20348,
-      "lines": 248,
-      "version": "a4c6f1e68ea25b22",
+      "bytes": 20645,
+      "lines": 252,
+      "version": "035bac7e51f08c07",
       "text": true,
       "provenance": [
         {
           "file": "test/world-projection.js",
           "line": 1,
-          "version": "a4c6f1e68ea25b22"
+          "version": "035bac7e51f08c07"
         }
       ],
-      "lastChangedAt": "2026-09-17T23:52:47.000Z",
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9862a3f671cf68cc5a17af17a69f41e872df52c0"
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
     },
     {
       "key": "Artifact:test/world.js",
@@ -65767,6 +66066,29 @@
       "lastChangedCommit": "87b06b66243b57c224385dc26907721b784f4d2b"
     },
     {
+      "key": "Artifact:tools/campaign-network-sim.js",
+      "type": "Artifact",
+      "id": "tools/campaign-network-sim.js",
+      "label": "campaign-network-sim.js",
+      "path": "tools/campaign-network-sim.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 9577,
+      "lines": 128,
+      "version": "25515a1ea8fb042d",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/campaign-network-sim.js",
+          "line": 1,
+          "version": "25515a1ea8fb042d"
+        }
+      ],
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+    },
+    {
       "key": "Artifact:tools/chain-e2e.js",
       "type": "Artifact",
       "id": "tools/chain-e2e.js",
@@ -66096,20 +66418,20 @@
       "path": "tools/director-sim.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 27330,
-      "lines": 375,
-      "version": "cb54e8347a6a80f9",
+      "bytes": 31287,
+      "lines": 421,
+      "version": "f6166a283e79eb5a",
       "text": true,
       "provenance": [
         {
           "file": "tools/director-sim.js",
           "line": 1,
-          "version": "cb54e8347a6a80f9"
+          "version": "f6166a283e79eb5a"
         }
       ],
-      "lastChangedAt": "2026-09-18T04:25:45.000Z",
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "553619b5a18854dfac416e364953436f5a902781"
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
     },
     {
       "key": "Artifact:tools/director-validate.js",
@@ -66119,20 +66441,20 @@
       "path": "tools/director-validate.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 1240,
-      "lines": 19,
-      "version": "5e8d3a87c03564e1",
+      "bytes": 1388,
+      "lines": 20,
+      "version": "560fc625908ec848",
       "text": true,
       "provenance": [
         {
           "file": "tools/director-validate.js",
           "line": 1,
-          "version": "5e8d3a87c03564e1"
+          "version": "560fc625908ec848"
         }
       ],
-      "lastChangedAt": "2026-09-18T04:25:45.000Z",
+      "lastChangedAt": "2026-09-18T18:31:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "553619b5a18854dfac416e364953436f5a902781"
+      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
     },
     {
       "key": "Artifact:tools/econ-sim.js",
@@ -68283,7 +68605,7 @@
       "type": "Command",
       "id": "npm:pretest",
       "label": "npm run pretest",
-      "command": "node test/current-copy.js && node test/operation-read-paths.js && node test/world-projection-mysteries.js && node test/world-projection-mysteries-api.js && node test/world-projection-read.js && node test/world-projection.js && node test/world-projection-api.js && node test/projection-events.js && node test/projection-events-ws.js && node test/world-projection-client.js && node test/coordination-operation-definitions.js && node test/coordination-mode-boundary.js && node test/coordination-capital.js && node test/coordination-materials.js && node test/coordination-knowledge-proof.js && node test/world-kernel-transaction.js && node test/family-operations.js && node test/family-operations-api.js && node test/world-knowledge-crafting.js && node test/world-kernel-query.js && node test/world-kernel-input.js && node test/world-kernel.js && node test/world-kernel-api.js && node test/coordination-graph.js && node test/coordination.js && node test/coordination-api.js && node test/coordination-http-receipts.js && node test/coordination-knowledge.js && node test/coordination-knowledge-runtime.js && node test/coordination-knowledge-api.js && node test/finalizedobservation.js && node test/stockballotv2.js && node test/rwanominations.js && node test/rwaroutes.js && node test/rwahealth.js && node test/rwahealth.integration.js && node test/rwahealthclearance.js && node test/rwahealthclearancecontext.js && node test/rwahealthoverlay.readiness.js && node test/rwahealthoverlay.schema.js && node test/rwahealthoverlay.vector.js && node test/rwaregistrylifecycle.js && node test/rwaregistrylifecycle.sync.js && node test/agent-referral-cash.js && node test/phase2-discovery.js && node test/phase2-compiler.js && node test/phase2-review-regressions.js && node test/phase2-scale.js && node test/content-graph.js && node test/content-runtime.js && node test/content-social.js && node test/content-seasonal.js && node test/content-seasonal-case.js && node test/content-crafting.js && node test/content-crafting-jobs.js && node test/content-crafting-tools.js && node test/content-exchange.js && node test/content-api.js && node test/v4oraclekeeper.js && node test/genesiscca.js && node test/genesislaunch.js && node test/genesisrelease.js && node test/worldgraph.js && node test/worldgraph-validation.js && node test/items.js && node test/crafting.js && node test/mysteries.js && node test/operations.js && node test/belladonna.js && node test/worldgraph-api.js && node tools/pgcheck-belladonna.js --pg-mem && node test/phase2-definition-schema.js && node test/phase2-definitions.js && node test/phase2-activation.js && node test/phase2-definition-invariants.js && node test/phase2-lot-boundary.js && node test/keepertransactions.js && node test/liquiditykeeper.js && node test/genesiskeeper.js && node test/liquidityaccounting.js --memory && node test/liquidityaccounting-review.js && node test/liquiditypolicy.js --memory && node test/bond-unlimited.js --memory && node test/bondquoteexpiry.js && node test/liquidityrpc.js && node tools/liquidity-manifest-example.js --self-test && node test/liquiditypolicy-review.js && node test/liquidityqueue.js --memory && node test/liquidityqueue-review.js && node test/character-mint-policy.js && node test/phase2-lots.js && node test/phase2-lots-property.js && node test/audit/mint-dev-allocation.js --memory && node test/audit/deed-reimport-order.js --memory && node test/progression-admission.js && node test/world-prerequisites.js && node test/recipe-policy.js && node test/furnace-ledger.js && node test/core-progression-api.js && node test/player-commands.js && node test/player-command-journey.js && node test/player-command-api.js && node test/player-command-client.js && node test/director-definitions.js && node test/director-config.js && node test/director-runtime.js && node test/director-recovery.js && node test/director-dock-world.js && node test/director-commands.js && node test/director-api.js && node test/director-journey.js && node test/director-security.js && node test/director-simulation.js",
+      "command": "node test/current-copy.js && node test/operation-read-paths.js && node test/world-projection-mysteries.js && node test/world-projection-mysteries-api.js && node test/world-projection-read.js && node test/world-projection.js && node test/world-projection-api.js && node test/projection-events.js && node test/projection-events-ws.js && node test/world-projection-client.js && node test/coordination-operation-definitions.js && node test/coordination-mode-boundary.js && node test/coordination-capital.js && node test/coordination-materials.js && node test/coordination-knowledge-proof.js && node test/world-kernel-transaction.js && node test/family-operations.js && node test/family-operations-api.js && node test/world-knowledge-crafting.js && node test/world-kernel-query.js && node test/world-kernel-input.js && node test/world-kernel.js && node test/world-kernel-api.js && node test/coordination-graph.js && node test/coordination.js && node test/coordination-api.js && node test/coordination-http-receipts.js && node test/coordination-knowledge.js && node test/coordination-knowledge-runtime.js && node test/coordination-knowledge-api.js && node test/finalizedobservation.js && node test/stockballotv2.js && node test/rwanominations.js && node test/rwaroutes.js && node test/rwahealth.js && node test/rwahealth.integration.js && node test/rwahealthclearance.js && node test/rwahealthclearancecontext.js && node test/rwahealthoverlay.readiness.js && node test/rwahealthoverlay.schema.js && node test/rwahealthoverlay.vector.js && node test/rwaregistrylifecycle.js && node test/rwaregistrylifecycle.sync.js && node test/agent-referral-cash.js && node test/phase2-discovery.js && node test/phase2-compiler.js && node test/phase2-review-regressions.js && node test/phase2-scale.js && node test/content-graph.js && node test/content-runtime.js && node test/content-social.js && node test/content-seasonal.js && node test/content-seasonal-case.js && node test/content-crafting.js && node test/content-crafting-jobs.js && node test/content-crafting-tools.js && node test/content-exchange.js && node test/content-api.js && node test/v4oraclekeeper.js && node test/genesiscca.js && node test/genesislaunch.js && node test/genesisrelease.js && node test/worldgraph.js && node test/worldgraph-validation.js && node test/items.js && node test/crafting.js && node test/mysteries.js && node test/operations.js && node test/belladonna.js && node test/worldgraph-api.js && node tools/pgcheck-belladonna.js --pg-mem && node test/phase2-definition-schema.js && node test/phase2-definitions.js && node test/phase2-activation.js && node test/phase2-definition-invariants.js && node test/phase2-lot-boundary.js && node test/keepertransactions.js && node test/liquiditykeeper.js && node test/genesiskeeper.js && node test/liquidityaccounting.js --memory && node test/liquidityaccounting-review.js && node test/liquiditypolicy.js --memory && node test/bond-unlimited.js --memory && node test/bondquoteexpiry.js && node test/liquidityrpc.js && node tools/liquidity-manifest-example.js --self-test && node test/liquiditypolicy-review.js && node test/liquidityqueue.js --memory && node test/liquidityqueue-review.js && node test/character-mint-policy.js && node test/phase2-lots.js && node test/phase2-lots-property.js && node test/audit/mint-dev-allocation.js --memory && node test/audit/deed-reimport-order.js --memory && node test/progression-admission.js && node test/world-prerequisites.js && node test/recipe-policy.js && node test/furnace-ledger.js && node test/core-progression-api.js && node test/player-commands.js && node test/player-command-journey.js && node test/player-command-api.js && node test/player-command-client.js && node test/director-definitions.js && node test/director-config.js && node test/director-runtime.js && node test/director-recovery.js && node test/director-dock-world.js && node test/director-commands.js && node test/director-api.js && node test/director-journey.js && node test/director-security.js && node test/director-simulation.js && node test/director-network.js && node test/campaign-network-journey.js && node test/director-network-recovery.js && node test/player-opportunities.js && node test/world-consequences.js",
       "provenance": [
         {
           "file": "package.json",
@@ -68422,6 +68744,19 @@
       ]
     },
     {
+      "key": "Command:npm:test:campaign-network",
+      "type": "Command",
+      "id": "npm:test:campaign-network",
+      "label": "npm run test:campaign-network",
+      "command": "node test/director-network.js && node test/campaign-network-journey.js && node test/director-network-recovery.js && node test/player-opportunities.js && node test/world-consequences.js",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
       "key": "Command:npm:test:coordination",
       "type": "Command",
       "id": "npm:test:coordination",
@@ -68491,7 +68826,7 @@
       "type": "Command",
       "id": "npm:test:director",
       "label": "npm run test:director",
-      "command": "node test/director-definitions.js && node test/director-config.js && node test/director-runtime.js && node test/director-recovery.js && node test/director-dock-world.js && node test/director-commands.js && node test/director-api.js && node test/director-journey.js && node test/director-security.js && node test/director-simulation.js",
+      "command": "node test/director-definitions.js && node test/director-config.js && node test/director-runtime.js && node test/director-recovery.js && node test/director-dock-world.js && node test/director-commands.js && node test/director-api.js && node test/director-journey.js && node test/director-security.js && node test/director-simulation.js && node test/director-network.js && node test/campaign-network-journey.js && node test/director-network-recovery.js",
       "provenance": [
         {
           "file": "package.json",
@@ -68504,7 +68839,7 @@
       "type": "Command",
       "id": "npm:test:director:postgres",
       "label": "npm run test:director:postgres",
-      "command": "node test/director-runtime.js --postgres && node test/director-recovery.js --postgres && node test/director-dock-world.js --postgres && node test/director-commands.js --postgres && node test/director-api.js --postgres && node test/director-journey.js --postgres && node test/director-security.js --postgres && node test/director-migration.js --postgres",
+      "command": "node test/director-runtime.js --postgres && node test/director-recovery.js --postgres && node test/director-dock-world.js --postgres && node test/director-commands.js --postgres && node test/director-api.js --postgres && node test/director-journey.js --postgres && node test/director-security.js --postgres && node test/director-migration.js --postgres && node test/director-network.js --postgres && node test/campaign-network-journey.js --postgres && node test/director-network-recovery.js --postgres",
       "provenance": [
         {
           "file": "package.json",
@@ -68621,7 +68956,7 @@
       "type": "Command",
       "id": "npm:test:player-commands",
       "label": "npm run test:player-commands",
-      "command": "node test/player-commands.js && node test/player-command-journey.js && node test/player-command-api.js && node test/player-command-client.js",
+      "command": "node test/player-commands.js && node test/player-command-journey.js && node test/player-command-api.js && node test/player-command-client.js && node test/player-opportunities.js && node test/world-consequences.js",
       "provenance": [
         {
           "file": "package.json",
@@ -68634,7 +68969,7 @@
       "type": "Command",
       "id": "npm:test:player-commands:postgres",
       "label": "npm run test:player-commands:postgres",
-      "command": "node test/player-commands.js --postgres && node test/player-command-journey.js --postgres",
+      "command": "node test/player-commands.js --postgres && node test/player-command-journey.js --postgres && node test/world-consequences.js --postgres",
       "provenance": [
         {
           "file": "package.json",
@@ -74191,6 +74526,22 @@
       ]
     },
     {
+      "key": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "type": "Commit",
+      "id": "39a51716b9c99bc5964d83efddd7616477bb8947",
+      "label": "Add world campaign network and authorized opportunity feeds",
+      "title": "Add world campaign network and authorized opportunity feeds",
+      "date": "2026-09-18T18:31:14.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/39a51716b9c99bc5964d83efddd7616477bb8947",
+      "provenance": [
+        {
+          "commit": "39a51716b9c99bc5964d83efddd7616477bb8947",
+          "url": "https://github.com/OmertaDev/Omerta/commit/39a51716b9c99bc5964d83efddd7616477bb8947"
+        }
+      ]
+    },
+    {
       "key": "Commit:39ba471904501c22e1356f238ce7b0d814d0cf8e",
       "type": "Commit",
       "id": "39ba471904501c22e1356f238ce7b0d814d0cf8e",
@@ -78123,6 +78474,22 @@
         {
           "commit": "620c89af51987d036622075a1fee882b065bae55",
           "url": "https://github.com/OmertaDev/Omerta/commit/620c89af51987d036622075a1fee882b065bae55"
+        }
+      ]
+    },
+    {
+      "key": "Commit:621cfbb4070e0fded63ce0a0a7fc91e7b00a2b4e",
+      "type": "Commit",
+      "id": "621cfbb4070e0fded63ce0a0a7fc91e7b00a2b4e",
+      "label": "chore(knowledge): refresh generated artifacts for e3332bf4",
+      "title": "chore(knowledge): refresh generated artifacts for e3332bf4",
+      "date": "2026-09-18T06:03:42.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/621cfbb4070e0fded63ce0a0a7fc91e7b00a2b4e",
+      "provenance": [
+        {
+          "commit": "621cfbb4070e0fded63ce0a0a7fc91e7b00a2b4e",
+          "url": "https://github.com/OmertaDev/Omerta/commit/621cfbb4070e0fded63ce0a0a7fc91e7b00a2b4e"
         }
       ]
     },
@@ -100044,6 +100411,22 @@
       ]
     },
     {
+      "key": "Document:docs/living-world-director/OPPORTUNITY-FEED.md",
+      "type": "Document",
+      "id": "docs/living-world-director/OPPORTUNITY-FEED.md",
+      "label": "docs/living-world-director/OPPORTUNITY-FEED.md",
+      "documentType": "documentation",
+      "lines": 71,
+      "version": "81f3e10ee355aeff",
+      "provenance": [
+        {
+          "file": "docs/living-world-director/OPPORTUNITY-FEED.md",
+          "line": 1,
+          "version": "81f3e10ee355aeff"
+        }
+      ]
+    },
+    {
       "key": "Document:docs/living-world-director/SECURITY-REVIEW.md",
       "type": "Document",
       "id": "docs/living-world-director/SECURITY-REVIEW.md",
@@ -100056,6 +100439,22 @@
           "file": "docs/living-world-director/SECURITY-REVIEW.md",
           "line": 1,
           "version": "bbdb91d0678e53db"
+        }
+      ]
+    },
+    {
+      "key": "Document:docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md",
+      "type": "Document",
+      "id": "docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md",
+      "label": "docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md",
+      "documentType": "documentation",
+      "lines": 67,
+      "version": "93936837be9857c5",
+      "provenance": [
+        {
+          "file": "docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md",
+          "line": 1,
+          "version": "93936837be9857c5"
         }
       ]
     },
@@ -101186,12 +101585,12 @@
       "label": "MARKETING-POSTS.md",
       "documentType": "documentation",
       "lines": 128,
-      "version": "4667491a179e1069",
+      "version": "8503c3e913a3d55b",
       "provenance": [
         {
           "file": "MARKETING-POSTS.md",
           "line": 1,
-          "version": "4667491a179e1069"
+          "version": "8503c3e913a3d55b"
         }
       ]
     },
@@ -103218,12 +103617,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 756,
-      "version": "98df001d82ba6dc3",
+      "version": "6bb52640945f9e16",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "98df001d82ba6dc3"
+          "version": "6bb52640945f9e16"
         }
       ]
     },
@@ -109324,6 +109723,9 @@
           "commit": "6043999e9840ae86b3167c65e7bcc8c0fd155ca8"
         },
         {
+          "commit": "621cfbb4070e0fded63ce0a0a7fc91e7b00a2b4e"
+        },
+        {
           "commit": "62b32308c476f7616b9e32d30104be07d46a36ca"
         },
         {
@@ -109975,6 +110377,9 @@
           "commit": "6043999e9840ae86b3167c65e7bcc8c0fd155ca8"
         },
         {
+          "commit": "621cfbb4070e0fded63ce0a0a7fc91e7b00a2b4e"
+        },
+        {
           "commit": "62b32308c476f7616b9e32d30104be07d46a36ca"
         },
         {
@@ -110624,6 +111029,9 @@
         },
         {
           "commit": "6043999e9840ae86b3167c65e7bcc8c0fd155ca8"
+        },
+        {
+          "commit": "621cfbb4070e0fded63ce0a0a7fc91e7b00a2b4e"
         },
         {
           "commit": "62b32308c476f7616b9e32d30104be07d46a36ca"
@@ -111428,6 +111836,9 @@
         },
         {
           "commit": "6043999e9840ae86b3167c65e7bcc8c0fd155ca8"
+        },
+        {
+          "commit": "621cfbb4070e0fded63ce0a0a7fc91e7b00a2b4e"
         },
         {
           "commit": "62b32308c476f7616b9e32d30104be07d46a36ca"
@@ -112983,6 +113394,21 @@
       ]
     },
     {
+      "key": "Module:src/content/campaign-network.js",
+      "type": "Module",
+      "id": "src/content/campaign-network.js",
+      "label": "src/content/campaign-network.js",
+      "lines": 200,
+      "version": "9df353f3d4fefde3",
+      "provenance": [
+        {
+          "file": "src/content/campaign-network.js",
+          "line": 1,
+          "version": "9df353f3d4fefde3"
+        }
+      ]
+    },
+    {
       "key": "Module:src/content/canonical.js",
       "type": "Module",
       "id": "src/content/canonical.js",
@@ -113047,13 +113473,13 @@
       "type": "Module",
       "id": "src/content/core-progression.js",
       "label": "src/content/core-progression.js",
-      "lines": 46,
-      "version": "86e298ba527f3cc3",
+      "lines": 47,
+      "version": "7516f9b5cc0c9a24",
       "provenance": [
         {
           "file": "src/content/core-progression.js",
           "line": 1,
-          "version": "86e298ba527f3cc3"
+          "version": "7516f9b5cc0c9a24"
         }
       ]
     },
@@ -113628,17 +114054,32 @@
       ]
     },
     {
+      "key": "Module:src/director/campaign-network.js",
+      "type": "Module",
+      "id": "src/director/campaign-network.js",
+      "label": "src/director/campaign-network.js",
+      "lines": 173,
+      "version": "518b1779963179e6",
+      "provenance": [
+        {
+          "file": "src/director/campaign-network.js",
+          "line": 1,
+          "version": "518b1779963179e6"
+        }
+      ]
+    },
+    {
       "key": "Module:src/director/config.js",
       "type": "Module",
       "id": "src/director/config.js",
       "label": "src/director/config.js",
       "lines": 44,
-      "version": "3f1300a347a789ff",
+      "version": "cca4c34e6e1fa359",
       "provenance": [
         {
           "file": "src/director/config.js",
           "line": 1,
-          "version": "3f1300a347a789ff"
+          "version": "cca4c34e6e1fa359"
         }
       ]
     },
@@ -113647,13 +114088,13 @@
       "type": "Module",
       "id": "src/director/definitions.js",
       "label": "src/director/definitions.js",
-      "lines": 411,
-      "version": "88e56e749b82632a",
+      "lines": 542,
+      "version": "bad84caa79aa08de",
       "provenance": [
         {
           "file": "src/director/definitions.js",
           "line": 1,
-          "version": "88e56e749b82632a"
+          "version": "bad84caa79aa08de"
         }
       ]
     },
@@ -113673,17 +114114,32 @@
       ]
     },
     {
+      "key": "Module:src/director/memory.js",
+      "type": "Module",
+      "id": "src/director/memory.js",
+      "label": "src/director/memory.js",
+      "lines": 64,
+      "version": "9b4827a7342aed20",
+      "provenance": [
+        {
+          "file": "src/director/memory.js",
+          "line": 1,
+          "version": "9b4827a7342aed20"
+        }
+      ]
+    },
+    {
       "key": "Module:src/director/pressures.js",
       "type": "Module",
       "id": "src/director/pressures.js",
       "label": "src/director/pressures.js",
-      "lines": 76,
-      "version": "ac6fdca947ff93a2",
+      "lines": 105,
+      "version": "7460bde525a25c29",
       "provenance": [
         {
           "file": "src/director/pressures.js",
           "line": 1,
-          "version": "ac6fdca947ff93a2"
+          "version": "7460bde525a25c29"
         }
       ]
     },
@@ -113692,13 +114148,13 @@
       "type": "Module",
       "id": "src/director/runtime.js",
       "label": "src/director/runtime.js",
-      "lines": 426,
-      "version": "59131be815c3c7e6",
+      "lines": 469,
+      "version": "04ff17562903a359",
       "provenance": [
         {
           "file": "src/director/runtime.js",
           "line": 1,
-          "version": "59131be815c3c7e6"
+          "version": "04ff17562903a359"
         }
       ]
     },
@@ -113707,13 +114163,13 @@
       "type": "Module",
       "id": "src/director/selection.js",
       "label": "src/director/selection.js",
-      "lines": 49,
-      "version": "c116358048c6c31b",
+      "lines": 52,
+      "version": "878fbe91a7f838a9",
       "provenance": [
         {
           "file": "src/director/selection.js",
           "line": 1,
-          "version": "c116358048c6c31b"
+          "version": "878fbe91a7f838a9"
         }
       ]
     },
@@ -114772,13 +115228,13 @@
       "type": "Module",
       "id": "src/player-commands.js",
       "label": "src/player-commands.js",
-      "lines": 337,
-      "version": "e8cbc950bfa016bb",
+      "lines": 341,
+      "version": "5efa876101514638",
       "provenance": [
         {
           "file": "src/player-commands.js",
           "line": 1,
-          "version": "e8cbc950bfa016bb"
+          "version": "5efa876101514638"
         }
       ]
     },
@@ -114787,13 +115243,13 @@
       "type": "Module",
       "id": "src/player-opportunities.js",
       "label": "src/player-opportunities.js",
-      "lines": 25,
-      "version": "50546ea76dd6de7d",
+      "lines": 104,
+      "version": "1a077fca4f67bf5e",
       "provenance": [
         {
           "file": "src/player-opportunities.js",
           "line": 1,
-          "version": "50546ea76dd6de7d"
+          "version": "1a077fca4f67bf5e"
         }
       ]
     },
@@ -115327,13 +115783,13 @@
       "type": "Module",
       "id": "src/routes/projections.js",
       "label": "src/routes/projections.js",
-      "lines": 66,
-      "version": "7bdaceb91c8420e5",
+      "lines": 67,
+      "version": "fd9920aa5164b0de",
       "provenance": [
         {
           "file": "src/routes/projections.js",
           "line": 1,
-          "version": "7bdaceb91c8420e5"
+          "version": "fd9920aa5164b0de"
         }
       ]
     },
@@ -116253,6 +116709,21 @@
       ]
     },
     {
+      "key": "Module:src/world-consequences.js",
+      "type": "Module",
+      "id": "src/world-consequences.js",
+      "label": "src/world-consequences.js",
+      "lines": 77,
+      "version": "fb1783a7db257d8c",
+      "provenance": [
+        {
+          "file": "src/world-consequences.js",
+          "line": 1,
+          "version": "fb1783a7db257d8c"
+        }
+      ]
+    },
+    {
       "key": "Module:src/world-kernel-invariants.js",
       "type": "Module",
       "id": "src/world-kernel-invariants.js",
@@ -116332,13 +116803,13 @@
       "type": "Module",
       "id": "src/world-projection.js",
       "label": "src/world-projection.js",
-      "lines": 128,
-      "version": "45f13faaebfab11b",
+      "lines": 144,
+      "version": "212fcd8530472f9b",
       "provenance": [
         {
           "file": "src/world-projection.js",
           "line": 1,
-          "version": "45f13faaebfab11b"
+          "version": "212fcd8530472f9b"
         }
       ]
     },
@@ -119542,12 +120013,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "e3332bf493345328695c2fbc9745f94b12b12f45",
-      "currentBranch": "main",
+      "revision": "39a51716b9c99bc5964d83efddd7616477bb8947",
+      "currentBranch": "codex/world-campaign-network",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 2933,
+      "currentArtifactCount": 2947,
       "provenance": [
         {
           "file": "README.md",
@@ -125257,13 +125728,13 @@
       "definitions": [
         {
           "file": "src/routes/projections.js",
-          "line": 57
+          "line": 58
         }
       ],
       "provenance": [
         {
           "file": "src/routes/projections.js",
-          "line": 57
+          "line": 58
         }
       ]
     },
@@ -125281,13 +125752,13 @@
       "definitions": [
         {
           "file": "src/routes/projections.js",
-          "line": 62
+          "line": 63
         }
       ],
       "provenance": [
         {
           "file": "src/routes/projections.js",
-          "line": 62
+          "line": 63
         }
       ]
     },
@@ -141117,13 +141588,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 7332
+          "line": 7335
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 7332
+          "line": 7335
         }
       ]
     },
@@ -141135,13 +141606,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 7278
+          "line": 7281
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 7278
+          "line": 7281
         }
       ]
     },
@@ -141153,13 +141624,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 7274
+          "line": 7277
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 7274
+          "line": 7277
         }
       ]
     },
@@ -141171,13 +141642,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 7266
+          "line": 7269
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 7266
+          "line": 7269
         }
       ]
     },
@@ -141189,13 +141660,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 7316
+          "line": 7319
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 7316
+          "line": 7319
         }
       ]
     },
@@ -141207,13 +141678,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 7323
+          "line": 7326
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 7323
+          "line": 7326
         }
       ]
     },
@@ -141225,13 +141696,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 7293
+          "line": 7296
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 7293
+          "line": 7296
         }
       ]
     },
@@ -142989,13 +143460,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 7346
+          "line": 7350
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 7346
+          "line": 7350
         }
       ]
     },
@@ -145293,13 +145764,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 7233
+          "line": 7236
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 7233
+          "line": 7236
         }
       ]
     },
@@ -145311,13 +145782,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 7213
+          "line": 7216
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 7213
+          "line": 7216
         }
       ]
     },
@@ -145347,13 +145818,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 7244
+          "line": 7247
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 7244
+          "line": 7247
         }
       ]
     },
@@ -145455,13 +145926,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 7360
+          "line": 7364
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 7360
+          "line": 7364
         }
       ]
     },
@@ -147227,6 +147698,21 @@
       ]
     },
     {
+      "key": "TestSuite:test/campaign-network-journey.js",
+      "type": "TestSuite",
+      "id": "test/campaign-network-journey.js",
+      "label": "test/campaign-network-journey.js",
+      "lines": 179,
+      "version": "f11dcabf79e74ab5",
+      "provenance": [
+        {
+          "file": "test/campaign-network-journey.js",
+          "line": 1,
+          "version": "f11dcabf79e74ab5"
+        }
+      ]
+    },
+    {
       "key": "TestSuite:test/career.js",
       "type": "TestSuite",
       "id": "test/career.js",
@@ -147981,13 +148467,13 @@
       "type": "TestSuite",
       "id": "test/director-api.js",
       "label": "test/director-api.js",
-      "lines": 71,
-      "version": "b47690b4e20a84a8",
+      "lines": 80,
+      "version": "093fd696cedceafb",
       "provenance": [
         {
           "file": "test/director-api.js",
           "line": 1,
-          "version": "b47690b4e20a84a8"
+          "version": "093fd696cedceafb"
         }
       ]
     },
@@ -147996,13 +148482,13 @@
       "type": "TestSuite",
       "id": "test/director-commands.js",
       "label": "test/director-commands.js",
-      "lines": 105,
-      "version": "559c03387fe7d2db",
+      "lines": 109,
+      "version": "8f202b4e342f7157",
       "provenance": [
         {
           "file": "test/director-commands.js",
           "line": 1,
-          "version": "559c03387fe7d2db"
+          "version": "8f202b4e342f7157"
         }
       ]
     },
@@ -148071,13 +148557,43 @@
       "type": "TestSuite",
       "id": "test/director-migration.js",
       "label": "test/director-migration.js",
-      "lines": 130,
-      "version": "d66701924252958b",
+      "lines": 133,
+      "version": "9ccb54e8086483b4",
       "provenance": [
         {
           "file": "test/director-migration.js",
           "line": 1,
-          "version": "d66701924252958b"
+          "version": "9ccb54e8086483b4"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/director-network-recovery.js",
+      "type": "TestSuite",
+      "id": "test/director-network-recovery.js",
+      "label": "test/director-network-recovery.js",
+      "lines": 185,
+      "version": "badaf1387afac73b",
+      "provenance": [
+        {
+          "file": "test/director-network-recovery.js",
+          "line": 1,
+          "version": "badaf1387afac73b"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/director-network.js",
+      "type": "TestSuite",
+      "id": "test/director-network.js",
+      "label": "test/director-network.js",
+      "lines": 185,
+      "version": "0482835dc192e8dc",
+      "provenance": [
+        {
+          "file": "test/director-network.js",
+          "line": 1,
+          "version": "0482835dc192e8dc"
         }
       ]
     },
@@ -148131,13 +148647,13 @@
       "type": "TestSuite",
       "id": "test/director-simulation.js",
       "label": "test/director-simulation.js",
-      "lines": 46,
-      "version": "ffd41c748ec5d88a",
+      "lines": 78,
+      "version": "43d8c4ac2b634dca",
       "provenance": [
         {
           "file": "test/director-simulation.js",
           "line": 1,
-          "version": "ffd41c748ec5d88a"
+          "version": "43d8c4ac2b634dca"
         }
       ]
     },
@@ -148742,17 +149258,32 @@
       ]
     },
     {
+      "key": "TestSuite:test/lib/campaign-network-support.js",
+      "type": "TestSuite",
+      "id": "test/lib/campaign-network-support.js",
+      "label": "test/lib/campaign-network-support.js",
+      "lines": 135,
+      "version": "aeb77f96eae6d55a",
+      "provenance": [
+        {
+          "file": "test/lib/campaign-network-support.js",
+          "line": 1,
+          "version": "aeb77f96eae6d55a"
+        }
+      ]
+    },
+    {
       "key": "TestSuite:test/lib/director-support.js",
       "type": "TestSuite",
       "id": "test/lib/director-support.js",
       "label": "test/lib/director-support.js",
       "lines": 141,
-      "version": "573c43897191cc33",
+      "version": "2b6e6ae90526ebd0",
       "provenance": [
         {
           "file": "test/lib/director-support.js",
           "line": 1,
-          "version": "573c43897191cc33"
+          "version": "2b6e6ae90526ebd0"
         }
       ]
     },
@@ -149496,13 +150027,13 @@
       "type": "TestSuite",
       "id": "test/player-command-client.js",
       "label": "test/player-command-client.js",
-      "lines": 205,
-      "version": "0e497089e4a809dd",
+      "lines": 216,
+      "version": "ffa4eb24f6012560",
       "provenance": [
         {
           "file": "test/player-command-client.js",
           "line": 1,
-          "version": "0e497089e4a809dd"
+          "version": "ffa4eb24f6012560"
         }
       ]
     },
@@ -149526,13 +150057,28 @@
       "type": "TestSuite",
       "id": "test/player-commands.js",
       "label": "test/player-commands.js",
-      "lines": 277,
-      "version": "0b2659b57569a3a8",
+      "lines": 279,
+      "version": "76d79ae8bbd5f1f6",
       "provenance": [
         {
           "file": "test/player-commands.js",
           "line": 1,
-          "version": "0b2659b57569a3a8"
+          "version": "76d79ae8bbd5f1f6"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/player-opportunities.js",
+      "type": "TestSuite",
+      "id": "test/player-opportunities.js",
+      "label": "test/player-opportunities.js",
+      "lines": 52,
+      "version": "d4a7fac09eb7ee13",
+      "provenance": [
+        {
+          "file": "test/player-opportunities.js",
+          "line": 1,
+          "version": "d4a7fac09eb7ee13"
         }
       ]
     },
@@ -150527,6 +151073,21 @@
       ]
     },
     {
+      "key": "TestSuite:test/world-consequences.js",
+      "type": "TestSuite",
+      "id": "test/world-consequences.js",
+      "label": "test/world-consequences.js",
+      "lines": 142,
+      "version": "e0e055f20877e4eb",
+      "provenance": [
+        {
+          "file": "test/world-consequences.js",
+          "line": 1,
+          "version": "e0e055f20877e4eb"
+        }
+      ]
+    },
+    {
       "key": "TestSuite:test/world-kernel-api.js",
       "type": "TestSuite",
       "id": "test/world-kernel-api.js",
@@ -150726,13 +151287,13 @@
       "type": "TestSuite",
       "id": "test/world-projection.js",
       "label": "test/world-projection.js",
-      "lines": 248,
-      "version": "a4c6f1e68ea25b22",
+      "lines": 252,
+      "version": "035bac7e51f08c07",
       "provenance": [
         {
           "file": "test/world-projection.js",
           "line": 1,
-          "version": "a4c6f1e68ea25b22"
+          "version": "035bac7e51f08c07"
         }
       ]
     },
@@ -160613,6 +161174,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:src/content/campaign-network.js",
+      "to": "Domain:platform-core",
+      "provenance": {
+        "file": "src/content/campaign-network.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:src/content/canonical.js",
       "to": "Domain:platform-core",
       "provenance": {
@@ -161000,6 +161570,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:src/director/campaign-network.js",
+      "to": "Domain:platform-core",
+      "provenance": {
+        "file": "src/director/campaign-network.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:src/director/config.js",
       "to": "Domain:platform-core",
       "provenance": {
@@ -161022,6 +161601,15 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/director/dock-war.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:src/director/memory.js",
+      "to": "Domain:platform-core",
+      "provenance": {
+        "file": "src/director/memory.js",
         "line": 1
       }
     },
@@ -162575,6 +163163,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:src/world-consequences.js",
+      "to": "Domain:platform-core",
+      "provenance": {
+        "file": "src/world-consequences.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:src/world-kernel-invariants.js",
       "to": "Domain:platform-core",
       "provenance": {
@@ -162804,6 +163401,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "test/bulletin.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/campaign-network-journey.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/campaign-network-journey.js",
         "line": 1
       }
     },
@@ -163322,6 +163928,24 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/director-network-recovery.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/director-network-recovery.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/director-network.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/director-network.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/director-recovery.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -163808,6 +164432,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/lib/campaign-network-support.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/lib/campaign-network-support.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/lib/director-support.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -164289,6 +164922,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "test/player-commands.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/player-opportunities.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/player-opportunities.js",
         "line": 1
       }
     },
@@ -164888,6 +165530,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/world-consequences.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/world-consequences.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/world-kernel-api.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -165144,6 +165795,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "tools/bond-dials.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/campaign-network-sim.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/campaign-network-sim.js",
         "line": 1
       }
     },
@@ -167970,7 +168630,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/projections.js",
-        "line": 57
+        "line": 58
       }
     },
     {
@@ -167979,7 +168639,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/projections.js",
-        "line": 62
+        "line": 63
       }
     },
     {
@@ -195697,6 +196357,318 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:docs/living-world-director/evidence/world-campaign-network.json",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:docs/living-world-director/OPPORTUNITY-FEED.md",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:MARKETING-POSTS.md",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:schema.sql",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:src/content/campaign-network.js",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:src/content/core-progression.js",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:src/director/campaign-network.js",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:src/director/config.js",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:src/director/definitions.js",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:src/director/memory.js",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:src/director/pressures.js",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:src/director/runtime.js",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:src/director/selection.js",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:src/player-commands.js",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:src/player-opportunities.js",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:src/routes/projections.js",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:src/world-consequences.js",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:src/world-projection.js",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:test/campaign-network-journey.js",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:test/director-api.js",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:test/director-commands.js",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:test/director-migration.js",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:test/director-network-recovery.js",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:test/director-network.js",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:test/director-simulation.js",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:test/lib/campaign-network-support.js",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:test/lib/director-support.js",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:test/player-command-client.js",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:test/player-commands.js",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:test/player-opportunities.js",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:test/world-consequences.js",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:test/world-projection.js",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:tools/campaign-network-sim.js",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:tools/director-sim.js",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "to": "Artifact:tools/director-validate.js",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:39ba471904501c22e1356f238ce7b0d814d0cf8e",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -212981,6 +213953,38 @@
       "to": "Artifact:SPEC.md",
       "provenance": {
         "commit": "620c89af51987d036622075a1fee882b065bae55"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:621cfbb4070e0fded63ce0a0a7fc91e7b00a2b4e",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "621cfbb4070e0fded63ce0a0a7fc91e7b00a2b4e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:621cfbb4070e0fded63ce0a0a7fc91e7b00a2b4e",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "621cfbb4070e0fded63ce0a0a7fc91e7b00a2b4e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:621cfbb4070e0fded63ce0a0a7fc91e7b00a2b4e",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "621cfbb4070e0fded63ce0a0a7fc91e7b00a2b4e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:621cfbb4070e0fded63ce0a0a7fc91e7b00a2b4e",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "621cfbb4070e0fded63ce0a0a7fc91e7b00a2b4e"
       }
     },
     {
@@ -274060,6 +275064,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:backend",
+      "to": "Artifact:src/content/campaign-network.js",
+      "provenance": {
+        "file": "src/content/campaign-network.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:backend",
       "to": "Artifact:src/content/canonical.js",
       "provenance": {
         "file": "src/content/canonical.js",
@@ -274447,6 +275460,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:backend",
+      "to": "Artifact:src/director/campaign-network.js",
+      "provenance": {
+        "file": "src/director/campaign-network.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:backend",
       "to": "Artifact:src/director/config.js",
       "provenance": {
         "file": "src/director/config.js",
@@ -274468,6 +275490,15 @@
       "to": "Artifact:src/director/dock-war.js",
       "provenance": {
         "file": "src/director/dock-war.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:backend",
+      "to": "Artifact:src/director/memory.js",
+      "provenance": {
+        "file": "src/director/memory.js",
         "line": 1
       }
     },
@@ -276016,6 +277047,15 @@
       "to": "Artifact:src/worker.js",
       "provenance": {
         "file": "src/worker.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:backend",
+      "to": "Artifact:src/world-consequences.js",
+      "provenance": {
+        "file": "src/world-consequences.js",
         "line": 1
       }
     },
@@ -283461,6 +284501,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:docs/living-world-director/evidence/world-campaign-network.json",
+      "provenance": {
+        "file": "docs/living-world-director/evidence/world-campaign-network.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:docs/living-world-director/HANDOFF.md",
       "provenance": {
         "file": "docs/living-world-director/HANDOFF.md",
@@ -283470,9 +284519,27 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:docs/living-world-director/OPPORTUNITY-FEED.md",
+      "provenance": {
+        "file": "docs/living-world-director/OPPORTUNITY-FEED.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:docs/living-world-director/SECURITY-REVIEW.md",
       "provenance": {
         "file": "docs/living-world-director/SECURITY-REVIEW.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md",
+      "provenance": {
+        "file": "docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md",
         "line": 1
       }
     },
@@ -286224,6 +287291,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/campaign-network-journey.js",
+      "provenance": {
+        "file": "test/campaign-network-journey.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/career.js",
       "provenance": {
         "file": "test/career.js",
@@ -286737,6 +287813,24 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/director-network-recovery.js",
+      "provenance": {
+        "file": "test/director-network-recovery.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/director-network.js",
+      "provenance": {
+        "file": "test/director-network.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/director-recovery.js",
       "provenance": {
         "file": "test/director-recovery.js",
@@ -287127,6 +288221,15 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "file": "test/levers.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/lib/campaign-network-support.js",
+      "provenance": {
+        "file": "test/lib/campaign-network-support.js",
         "line": 1
       }
     },
@@ -287604,6 +288707,15 @@
       "to": "Artifact:test/player-commands.js",
       "provenance": {
         "file": "test/player-commands.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/player-opportunities.js",
+      "provenance": {
+        "file": "test/player-opportunities.js",
         "line": 1
       }
     },
@@ -288204,6 +289316,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/world-consequences.js",
+      "provenance": {
+        "file": "test/world-consequences.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/world-kernel-api.js",
       "provenance": {
         "file": "test/world-kernel-api.js",
@@ -288459,6 +289580,15 @@
       "to": "Artifact:tools/bond-dials.js",
       "provenance": {
         "file": "tools/bond-dials.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/campaign-network-sim.js",
+      "provenance": {
+        "file": "tools/campaign-network-sim.js",
         "line": 1
       }
     },
@@ -300724,6 +301854,15 @@
     {
       "type": "DECLARES",
       "from": "Artifact:package.json",
+      "to": "Command:npm:test:campaign-network",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
       "to": "Command:npm:test:coordination",
       "provenance": {
         "file": "package.json",
@@ -303832,7 +304971,7 @@
       "to": "Artifact:src/routes/projections.js",
       "provenance": {
         "file": "src/routes/projections.js",
-        "line": 57
+        "line": 58
       }
     },
     {
@@ -303841,7 +304980,7 @@
       "to": "Artifact:src/routes/projections.js",
       "provenance": {
         "file": "src/routes/projections.js",
-        "line": 62
+        "line": 63
       }
     },
     {
@@ -310024,7 +311163,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 7332
+        "line": 7335
       }
     },
     {
@@ -310033,7 +311172,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 7278
+        "line": 7281
       }
     },
     {
@@ -310042,7 +311181,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 7274
+        "line": 7277
       }
     },
     {
@@ -310051,7 +311190,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 7266
+        "line": 7269
       }
     },
     {
@@ -310060,7 +311199,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 7316
+        "line": 7319
       }
     },
     {
@@ -310069,7 +311208,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 7323
+        "line": 7326
       }
     },
     {
@@ -310078,7 +311217,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 7293
+        "line": 7296
       }
     },
     {
@@ -310960,7 +312099,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 7346
+        "line": 7350
       }
     },
     {
@@ -312112,7 +313251,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 7233
+        "line": 7236
       }
     },
     {
@@ -312121,7 +313260,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 7213
+        "line": 7216
       }
     },
     {
@@ -312139,7 +313278,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 7244
+        "line": 7247
       }
     },
     {
@@ -312193,7 +313332,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 7360
+        "line": 7364
       }
     },
     {
@@ -312260,7 +313399,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:economy-ledger",
-      "weight": 169
+      "weight": 170
     },
     {
       "type": "DEPENDS_ON",
@@ -312284,13 +313423,13 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 800
+      "weight": 841
     },
     {
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:social-combat",
-      "weight": 47
+      "weight": 50
     },
     {
       "type": "DEPENDS_ON",
@@ -312302,7 +313441,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:world-graph",
-      "weight": 119
+      "weight": 126
     },
     {
       "type": "DEPENDS_ON",
@@ -312494,7 +313633,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:platform-core",
       "to": "Domain:world-graph",
-      "weight": 41
+      "weight": 45
     },
     {
       "type": "DEPENDS_ON",
@@ -313219,6 +314358,15 @@
     {
       "type": "EXECUTES",
       "from": "Command:npm:pretest",
+      "to": "Artifact:test/campaign-network-journey.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:pretest",
       "to": "Artifact:test/character-mint-policy.js",
       "provenance": {
         "file": "package.json",
@@ -313499,6 +314647,24 @@
       "type": "EXECUTES",
       "from": "Command:npm:pretest",
       "to": "Artifact:test/director-journey.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:pretest",
+      "to": "Artifact:test/director-network-recovery.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:pretest",
+      "to": "Artifact:test/director-network.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -313867,6 +315033,15 @@
     {
       "type": "EXECUTES",
       "from": "Command:npm:pretest",
+      "to": "Artifact:test/player-opportunities.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:pretest",
       "to": "Artifact:test/progression-admission.js",
       "provenance": {
         "file": "package.json",
@@ -314012,6 +315187,15 @@
       "type": "EXECUTES",
       "from": "Command:npm:pretest",
       "to": "Artifact:test/v4oraclekeeper.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:pretest",
+      "to": "Artifact:test/world-consequences.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -315351,6 +316535,51 @@
     },
     {
       "type": "EXECUTES",
+      "from": "Command:npm:test:campaign-network",
+      "to": "Artifact:test/campaign-network-journey.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:campaign-network",
+      "to": "Artifact:test/director-network-recovery.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:campaign-network",
+      "to": "Artifact:test/director-network.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:campaign-network",
+      "to": "Artifact:test/player-opportunities.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:campaign-network",
+      "to": "Artifact:test/world-consequences.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
       "from": "Command:npm:test:coordination",
       "to": "Artifact:test/coordination-api.js",
       "provenance": {
@@ -315523,6 +316752,15 @@
     {
       "type": "EXECUTES",
       "from": "Command:npm:test:director",
+      "to": "Artifact:test/campaign-network-journey.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:director",
       "to": "Artifact:test/director-api.js",
       "provenance": {
         "file": "package.json",
@@ -315577,6 +316815,24 @@
     {
       "type": "EXECUTES",
       "from": "Command:npm:test:director",
+      "to": "Artifact:test/director-network-recovery.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:director",
+      "to": "Artifact:test/director-network.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:director",
       "to": "Artifact:test/director-recovery.js",
       "provenance": {
         "file": "package.json",
@@ -315605,6 +316861,15 @@
       "type": "EXECUTES",
       "from": "Command:npm:test:director",
       "to": "Artifact:test/director-simulation.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:director:postgres",
+      "to": "Artifact:test/campaign-network-journey.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -315650,6 +316915,24 @@
       "type": "EXECUTES",
       "from": "Command:npm:test:director:postgres",
       "to": "Artifact:test/director-migration.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:director:postgres",
+      "to": "Artifact:test/director-network-recovery.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:director:postgres",
+      "to": "Artifact:test/director-network.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -315999,6 +317282,24 @@
     },
     {
       "type": "EXECUTES",
+      "from": "Command:npm:test:player-commands",
+      "to": "Artifact:test/player-opportunities.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:player-commands",
+      "to": "Artifact:test/world-consequences.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
       "from": "Command:npm:test:player-commands:postgres",
       "to": "Artifact:test/player-command-journey.js",
       "provenance": {
@@ -316010,6 +317311,15 @@
       "type": "EXECUTES",
       "from": "Command:npm:test:player-commands:postgres",
       "to": "Artifact:test/player-commands.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:player-commands:postgres",
+      "to": "Artifact:test/world-consequences.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -325980,6 +327290,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:39a51716b9c99bc5964d83efddd7616477bb8947",
+      "provenance": {
+        "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:39ba471904501c22e1356f238ce7b0d814d0cf8e",
       "provenance": {
         "commit": "39ba471904501c22e1356f238ce7b0d814d0cf8e"
@@ -327943,6 +329261,14 @@
       "to": "Commit:620c89af51987d036622075a1fee882b065bae55",
       "provenance": {
         "commit": "620c89af51987d036622075a1fee882b065bae55"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:621cfbb4070e0fded63ce0a0a7fc91e7b00a2b4e",
+      "provenance": {
+        "commit": "621cfbb4070e0fded63ce0a0a7fc91e7b00a2b4e"
       }
     },
     {
@@ -337798,6 +339124,69 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:src/content/campaign-network.js",
+      "to": "Artifact:src/content/dock-war.js",
+      "provenance": {
+        "file": "src/content/campaign-network.js",
+        "line": 3
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/content/campaign-network.js",
+      "to": "Artifact:src/coordination/graph.js",
+      "provenance": {
+        "file": "src/content/campaign-network.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/content/campaign-network.js",
+      "to": "Artifact:src/coordination/operation-definitions.js",
+      "provenance": {
+        "file": "src/content/campaign-network.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/content/campaign-network.js",
+      "to": "Artifact:src/crafting.js",
+      "provenance": {
+        "file": "src/content/campaign-network.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/content/campaign-network.js",
+      "to": "Artifact:src/mysteries.js",
+      "provenance": {
+        "file": "src/content/campaign-network.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/content/campaign-network.js",
+      "to": "Artifact:src/world-kernel.js",
+      "provenance": {
+        "file": "src/content/campaign-network.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/content/campaign-network.js",
+      "to": "Artifact:src/worldgraph-validate.js",
+      "provenance": {
+        "file": "src/content/campaign-network.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:src/content/compiler.js",
       "to": "Artifact:src/rules.js",
       "provenance": {
@@ -337835,19 +339224,19 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:src/content/core-progression.js",
-      "to": "Artifact:src/content/coordination-operation-pilot.js",
+      "to": "Artifact:src/content/campaign-network.js",
       "provenance": {
         "file": "src/content/core-progression.js",
-        "line": 6
+        "line": 9
       }
     },
     {
       "type": "IMPORTS",
       "from": "Artifact:src/content/core-progression.js",
-      "to": "Artifact:src/content/dock-war.js",
+      "to": "Artifact:src/content/coordination-operation-pilot.js",
       "provenance": {
         "file": "src/content/core-progression.js",
-        "line": 9
+        "line": 6
       }
     },
     {
@@ -339121,8 +340510,44 @@
     },
     {
       "type": "IMPORTS",
-      "from": "Artifact:src/director/config.js",
+      "from": "Artifact:src/director/campaign-network.js",
+      "to": "Artifact:src/content/campaign-network.js",
+      "provenance": {
+        "file": "src/director/campaign-network.js",
+        "line": 3
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/director/campaign-network.js",
       "to": "Artifact:src/content/dock-war.js",
+      "provenance": {
+        "file": "src/director/campaign-network.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/director/campaign-network.js",
+      "to": "Artifact:src/director/definitions.js",
+      "provenance": {
+        "file": "src/director/campaign-network.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/director/campaign-network.js",
+      "to": "Artifact:src/director/dock-war.js",
+      "provenance": {
+        "file": "src/director/campaign-network.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/director/config.js",
+      "to": "Artifact:src/content/campaign-network.js",
       "provenance": {
         "file": "src/director/config.js",
         "line": 4
@@ -339131,7 +340556,7 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:src/director/config.js",
-      "to": "Artifact:src/director/dock-war.js",
+      "to": "Artifact:src/director/campaign-network.js",
       "provenance": {
         "file": "src/director/config.js",
         "line": 3
@@ -339207,6 +340632,24 @@
       "provenance": {
         "file": "src/director/dock-war.js",
         "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/director/pressures.js",
+      "to": "Artifact:src/director/definitions.js",
+      "provenance": {
+        "file": "src/director/pressures.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/director/pressures.js",
+      "to": "Artifact:src/director/memory.js",
+      "provenance": {
+        "file": "src/director/pressures.js",
+        "line": 5
       }
     },
     {
@@ -346798,6 +348241,33 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:src/world-consequences.js",
+      "to": "Artifact:src/coordination/knowledge.js",
+      "provenance": {
+        "file": "src/world-consequences.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/world-consequences.js",
+      "to": "Artifact:src/game.js",
+      "provenance": {
+        "file": "src/world-consequences.js",
+        "line": 2
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/world-consequences.js",
+      "to": "Artifact:src/items.js",
+      "provenance": {
+        "file": "src/world-consequences.js",
+        "line": 3
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:src/world-kernel-invariants.js",
       "to": "Artifact:src/items.js",
       "provenance": {
@@ -347019,6 +348489,15 @@
       "provenance": {
         "file": "src/world-projection.js",
         "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/world-projection.js",
+      "to": "Artifact:src/world-consequences.js",
+      "provenance": {
+        "file": "src/world-projection.js",
+        "line": 9
       }
     },
     {
@@ -347757,6 +349236,114 @@
       "provenance": {
         "file": "test/bulletin.js",
         "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/campaign-network-journey.js",
+      "to": "Artifact:src/content/campaign-network.js",
+      "provenance": {
+        "file": "test/campaign-network-journey.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/campaign-network-journey.js",
+      "to": "Artifact:src/content/canonical.js",
+      "provenance": {
+        "file": "test/campaign-network-journey.js",
+        "line": 3
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/campaign-network-journey.js",
+      "to": "Artifact:src/content/dock-war.js",
+      "provenance": {
+        "file": "test/campaign-network-journey.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/campaign-network-journey.js",
+      "to": "Artifact:src/coordination/operation-invariants.js",
+      "provenance": {
+        "file": "test/campaign-network-journey.js",
+        "line": 11
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/campaign-network-journey.js",
+      "to": "Artifact:src/director/campaign-network.js",
+      "provenance": {
+        "file": "test/campaign-network-journey.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/campaign-network-journey.js",
+      "to": "Artifact:src/director/dock-war.js",
+      "provenance": {
+        "file": "test/campaign-network-journey.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/campaign-network-journey.js",
+      "to": "Artifact:src/director/runtime.js",
+      "provenance": {
+        "file": "test/campaign-network-journey.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/campaign-network-journey.js",
+      "to": "Artifact:src/mysteries.js",
+      "provenance": {
+        "file": "test/campaign-network-journey.js",
+        "line": 12
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/campaign-network-journey.js",
+      "to": "Artifact:src/player-commands.js",
+      "provenance": {
+        "file": "test/campaign-network-journey.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/campaign-network-journey.js",
+      "to": "Artifact:src/world-kernel-invariants.js",
+      "provenance": {
+        "file": "test/campaign-network-journey.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/campaign-network-journey.js",
+      "to": "Artifact:test/lib/campaign-network-support.js",
+      "provenance": {
+        "file": "test/campaign-network-journey.js",
+        "line": 14
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/campaign-network-journey.js",
+      "to": "Artifact:test/lib/player-command-support.js",
+      "provenance": {
+        "file": "test/campaign-network-journey.js",
+        "line": 13
       }
     },
     {
@@ -349601,7 +351188,7 @@
       "to": "Artifact:src/director/dock-war.js",
       "provenance": {
         "file": "test/director-api.js",
-        "line": 6
+        "line": 7
       }
     },
     {
@@ -349610,7 +351197,7 @@
       "to": "Artifact:src/director/runtime.js",
       "provenance": {
         "file": "test/director-api.js",
-        "line": 5
+        "line": 6
       }
     },
     {
@@ -349625,10 +351212,19 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/director-api.js",
+      "to": "Artifact:src/routes/projections.js",
+      "provenance": {
+        "file": "test/director-api.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/director-api.js",
       "to": "Artifact:test/lib/director-support.js",
       "provenance": {
         "file": "test/director-api.js",
-        "line": 7
+        "line": 8
       }
     },
     {
@@ -349637,7 +351233,7 @@
       "to": "Artifact:test/lib/player-command-support.js",
       "provenance": {
         "file": "test/director-api.js",
-        "line": 8
+        "line": 9
       }
     },
     {
@@ -349962,6 +351558,213 @@
       "provenance": {
         "file": "test/director-migration.js",
         "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/director-network-recovery.js",
+      "to": "Artifact:src/coordination/operation-invariants.js",
+      "provenance": {
+        "file": "test/director-network-recovery.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/director-network-recovery.js",
+      "to": "Artifact:src/crew.js",
+      "provenance": {
+        "file": "test/director-network-recovery.js",
+        "line": 12
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/director-network-recovery.js",
+      "to": "Artifact:src/director/campaign-network.js",
+      "provenance": {
+        "file": "test/director-network-recovery.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/director-network-recovery.js",
+      "to": "Artifact:src/director/runtime.js",
+      "provenance": {
+        "file": "test/director-network-recovery.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/director-network-recovery.js",
+      "to": "Artifact:src/items.js",
+      "provenance": {
+        "file": "test/director-network-recovery.js",
+        "line": 13
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/director-network-recovery.js",
+      "to": "Artifact:src/player-commands.js",
+      "provenance": {
+        "file": "test/director-network-recovery.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/director-network-recovery.js",
+      "to": "Artifact:src/social.js",
+      "provenance": {
+        "file": "test/director-network-recovery.js",
+        "line": 11
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/director-network-recovery.js",
+      "to": "Artifact:src/world-kernel-invariants.js",
+      "provenance": {
+        "file": "test/director-network-recovery.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/director-network-recovery.js",
+      "to": "Artifact:test/lib/campaign-network-support.js",
+      "provenance": {
+        "file": "test/director-network-recovery.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/director-network-recovery.js",
+      "to": "Artifact:test/lib/player-command-support.js",
+      "provenance": {
+        "file": "test/director-network-recovery.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/director-network.js",
+      "to": "Artifact:src/content/canonical.js",
+      "provenance": {
+        "file": "test/director-network.js",
+        "line": 11
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/director-network.js",
+      "to": "Artifact:src/content/dock-war.js",
+      "provenance": {
+        "file": "test/director-network.js",
+        "line": 2
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/director-network.js",
+      "to": "Artifact:src/director/campaign-network.js",
+      "provenance": {
+        "file": "test/director-network.js",
+        "line": 15
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/director-network.js",
+      "to": "Artifact:src/director/definitions.js",
+      "provenance": {
+        "file": "test/director-network.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/director-network.js",
+      "to": "Artifact:src/director/dock-war.js",
+      "provenance": {
+        "file": "test/director-network.js",
+        "line": 3
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/director-network.js",
+      "to": "Artifact:src/director/memory.js",
+      "provenance": {
+        "file": "test/director-network.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/director-network.js",
+      "to": "Artifact:src/director/pressures.js",
+      "provenance": {
+        "file": "test/director-network.js",
+        "line": 14
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/director-network.js",
+      "to": "Artifact:src/director/runtime.js",
+      "provenance": {
+        "file": "test/director-network.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/director-network.js",
+      "to": "Artifact:src/director/selection.js",
+      "provenance": {
+        "file": "test/director-network.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/director-network.js",
+      "to": "Artifact:src/worldgraph-validate.js",
+      "provenance": {
+        "file": "test/director-network.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/director-network.js",
+      "to": "Artifact:test/lib/campaign-network-support.js",
+      "provenance": {
+        "file": "test/director-network.js",
+        "line": 12
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/director-network.js",
+      "to": "Artifact:test/lib/director-support.js",
+      "provenance": {
+        "file": "test/director-network.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/director-network.js",
+      "to": "Artifact:test/lib/player-command-support.js",
+      "provenance": {
+        "file": "test/director-network.js",
+        "line": 13
       }
     },
     {
@@ -352158,6 +353961,69 @@
       "provenance": {
         "file": "test/levers.js",
         "line": 25
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/campaign-network-support.js",
+      "to": "Artifact:src/content/campaign-network.js",
+      "provenance": {
+        "file": "test/lib/campaign-network-support.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/campaign-network-support.js",
+      "to": "Artifact:src/coordination/graph.js",
+      "provenance": {
+        "file": "test/lib/campaign-network-support.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/campaign-network-support.js",
+      "to": "Artifact:src/crafting.js",
+      "provenance": {
+        "file": "test/lib/campaign-network-support.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/campaign-network-support.js",
+      "to": "Artifact:src/economy.js",
+      "provenance": {
+        "file": "test/lib/campaign-network-support.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/campaign-network-support.js",
+      "to": "Artifact:src/mysteries.js",
+      "provenance": {
+        "file": "test/lib/campaign-network-support.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/campaign-network-support.js",
+      "to": "Artifact:test/lib/director-support.js",
+      "provenance": {
+        "file": "test/lib/campaign-network-support.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/campaign-network-support.js",
+      "to": "Artifact:test/lib/player-command-support.js",
+      "provenance": {
+        "file": "test/lib/campaign-network-support.js",
+        "line": 5
       }
     },
     {
@@ -354462,6 +356328,15 @@
       "provenance": {
         "file": "test/player-commands.js",
         "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/player-opportunities.js",
+      "to": "Artifact:src/player-opportunities.js",
+      "provenance": {
+        "file": "test/player-opportunities.js",
+        "line": 2
       }
     },
     {
@@ -357166,6 +359041,105 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:test/world-consequences.js",
+      "to": "Artifact:src/coordination/graph.js",
+      "provenance": {
+        "file": "test/world-consequences.js",
+        "line": 11
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/world-consequences.js",
+      "to": "Artifact:src/coordination/knowledge.js",
+      "provenance": {
+        "file": "test/world-consequences.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/world-consequences.js",
+      "to": "Artifact:src/coordination/pilot.js",
+      "provenance": {
+        "file": "test/world-consequences.js",
+        "line": 12
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/world-consequences.js",
+      "to": "Artifact:src/coordination/runtime.js",
+      "provenance": {
+        "file": "test/world-consequences.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/world-consequences.js",
+      "to": "Artifact:src/crew.js",
+      "provenance": {
+        "file": "test/world-consequences.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/world-consequences.js",
+      "to": "Artifact:src/game.js",
+      "provenance": {
+        "file": "test/world-consequences.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/world-consequences.js",
+      "to": "Artifact:src/items.js",
+      "provenance": {
+        "file": "test/world-consequences.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/world-consequences.js",
+      "to": "Artifact:src/world-consequences.js",
+      "provenance": {
+        "file": "test/world-consequences.js",
+        "line": 13
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/world-consequences.js",
+      "to": "Artifact:src/world-kernel.js",
+      "provenance": {
+        "file": "test/world-consequences.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/world-consequences.js",
+      "to": "Artifact:src/worldgraph.js",
+      "provenance": {
+        "file": "test/world-consequences.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/world-consequences.js",
+      "to": "Artifact:test/lib/player-command-support.js",
+      "provenance": {
+        "file": "test/world-consequences.js",
+        "line": 3
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:test/world-kernel-api.js",
       "to": "Artifact:src/content/world-kernel-pilot.js",
       "provenance": {
@@ -358633,6 +360607,60 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:tools/campaign-network-sim.js",
+      "to": "Artifact:src/content/campaign-network.js",
+      "provenance": {
+        "file": "tools/campaign-network-sim.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/campaign-network-sim.js",
+      "to": "Artifact:src/content/dock-war.js",
+      "provenance": {
+        "file": "tools/campaign-network-sim.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/campaign-network-sim.js",
+      "to": "Artifact:src/director/campaign-network.js",
+      "provenance": {
+        "file": "tools/campaign-network-sim.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/campaign-network-sim.js",
+      "to": "Artifact:src/director/memory.js",
+      "provenance": {
+        "file": "tools/campaign-network-sim.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/campaign-network-sim.js",
+      "to": "Artifact:src/director/pressures.js",
+      "provenance": {
+        "file": "tools/campaign-network-sim.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/campaign-network-sim.js",
+      "to": "Artifact:src/director/selection.js",
+      "provenance": {
+        "file": "tools/campaign-network-sim.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:tools/chain-e2e.js",
       "to": "Artifact:src/chain.js",
       "provenance": {
@@ -358976,6 +361004,15 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:tools/director-sim.js",
+      "to": "Artifact:src/director/memory.js",
+      "provenance": {
+        "file": "tools/director-sim.js",
+        "line": 14
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/director-sim.js",
       "to": "Artifact:src/director/pressures.js",
       "provenance": {
         "file": "tools/director-sim.js",
@@ -359002,11 +361039,29 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:tools/director-sim.js",
+      "to": "Artifact:tools/campaign-network-sim.js",
+      "provenance": {
+        "file": "tools/director-sim.js",
+        "line": 15
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:tools/director-validate.js",
-      "to": "Artifact:src/content/dock-war.js",
+      "to": "Artifact:src/content/campaign-network.js",
       "provenance": {
         "file": "tools/director-validate.js",
         "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/director-validate.js",
+      "to": "Artifact:src/director/campaign-network.js",
+      "provenance": {
+        "file": "tools/director-validate.js",
+        "line": 5
       }
     },
     {
@@ -359016,15 +361071,6 @@
       "provenance": {
         "file": "tools/director-validate.js",
         "line": 6
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:tools/director-validate.js",
-      "to": "Artifact:src/director/dock-war.js",
-      "provenance": {
-        "file": "tools/director-validate.js",
-        "line": 5
       }
     },
     {
@@ -385867,11 +387913,56 @@
     },
     {
       "type": "REFERENCES",
+      "from": "Artifact:docs/living-world-director/OPPORTUNITY-FEED.md",
+      "to": "Artifact:test/player-opportunities.js",
+      "provenance": {
+        "file": "docs/living-world-director/OPPORTUNITY-FEED.md",
+        "line": 61
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/living-world-director/OPPORTUNITY-FEED.md",
+      "to": "Artifact:test/world-consequences.js",
+      "provenance": {
+        "file": "docs/living-world-director/OPPORTUNITY-FEED.md",
+        "line": 62
+      }
+    },
+    {
+      "type": "REFERENCES",
       "from": "Artifact:docs/living-world-director/SECURITY-REVIEW.md",
       "to": "Artifact:omerta-contracts/SECURITY-REVIEW-POLICY.md",
       "provenance": {
         "file": "docs/living-world-director/SECURITY-REVIEW.md",
         "line": 5
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md",
+      "to": "Artifact:docs/living-world-director/evidence/world-campaign-network.json",
+      "provenance": {
+        "file": "docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md",
+        "line": 66
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md",
+      "to": "Artifact:omerta-contracts/SECURITY-REVIEW-POLICY.md",
+      "provenance": {
+        "file": "docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md",
+        "line": 47
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md",
+      "to": "Artifact:tools/knowledge-test.js",
+      "provenance": {
+        "file": "docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md",
+        "line": 64
       }
     },
     {
@@ -400843,10 +402934,28 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Document:docs/living-world-director/OPPORTUNITY-FEED.md",
+      "to": "Artifact:docs/living-world-director/OPPORTUNITY-FEED.md",
+      "provenance": {
+        "file": "docs/living-world-director/OPPORTUNITY-FEED.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Document:docs/living-world-director/SECURITY-REVIEW.md",
       "to": "Artifact:docs/living-world-director/SECURITY-REVIEW.md",
       "provenance": {
         "file": "docs/living-world-director/SECURITY-REVIEW.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md",
+      "to": "Artifact:docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md",
+      "provenance": {
+        "file": "docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md",
         "line": 1
       }
     },
@@ -403021,6 +405130,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Module:src/content/campaign-network.js",
+      "to": "Artifact:src/content/campaign-network.js",
+      "provenance": {
+        "file": "src/content/campaign-network.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Module:src/content/canonical.js",
       "to": "Artifact:src/content/canonical.js",
       "provenance": {
@@ -403408,6 +405526,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Module:src/director/campaign-network.js",
+      "to": "Artifact:src/director/campaign-network.js",
+      "provenance": {
+        "file": "src/director/campaign-network.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Module:src/director/config.js",
       "to": "Artifact:src/director/config.js",
       "provenance": {
@@ -403430,6 +405557,15 @@
       "to": "Artifact:src/director/dock-war.js",
       "provenance": {
         "file": "src/director/dock-war.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Module:src/director/memory.js",
+      "to": "Artifact:src/director/memory.js",
+      "provenance": {
+        "file": "src/director/memory.js",
         "line": 1
       }
     },
@@ -404983,6 +407119,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Module:src/world-consequences.js",
+      "to": "Artifact:src/world-consequences.js",
+      "provenance": {
+        "file": "src/world-consequences.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Module:src/world-kernel-invariants.js",
       "to": "Artifact:src/world-kernel-invariants.js",
       "provenance": {
@@ -406099,6 +408244,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/campaign-network-journey.js",
+      "to": "Artifact:test/campaign-network-journey.js",
+      "provenance": {
+        "file": "test/campaign-network-journey.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/career.js",
       "to": "Artifact:test/career.js",
       "provenance": {
@@ -406612,6 +408766,24 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/director-network-recovery.js",
+      "to": "Artifact:test/director-network-recovery.js",
+      "provenance": {
+        "file": "test/director-network-recovery.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/director-network.js",
+      "to": "Artifact:test/director-network.js",
+      "provenance": {
+        "file": "test/director-network.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/director-recovery.js",
       "to": "Artifact:test/director-recovery.js",
       "provenance": {
@@ -407003,6 +409175,15 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "file": "test/levers.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/lib/campaign-network-support.js",
+      "to": "Artifact:test/lib/campaign-network-support.js",
+      "provenance": {
+        "file": "test/lib/campaign-network-support.js",
         "line": 1
       }
     },
@@ -407480,6 +409661,15 @@
       "to": "Artifact:test/player-commands.js",
       "provenance": {
         "file": "test/player-commands.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/player-opportunities.js",
+      "to": "Artifact:test/player-opportunities.js",
+      "provenance": {
+        "file": "test/player-opportunities.js",
         "line": 1
       }
     },
@@ -408074,6 +410264,15 @@
       "to": "Artifact:test/wire.js",
       "provenance": {
         "file": "test/wire.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/world-consequences.js",
+      "to": "Artifact:test/world-consequences.js",
+      "provenance": {
+        "file": "test/world-consequences.js",
         "line": 1
       }
     },
@@ -408867,6 +411066,96 @@
       "provenance": {
         "file": "test/bulletin.js",
         "line": 8
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/campaign-network-journey.js",
+      "to": "Artifact:src/content/campaign-network.js",
+      "provenance": {
+        "file": "test/campaign-network-journey.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/campaign-network-journey.js",
+      "to": "Artifact:src/content/canonical.js",
+      "provenance": {
+        "file": "test/campaign-network-journey.js",
+        "line": 3
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/campaign-network-journey.js",
+      "to": "Artifact:src/content/dock-war.js",
+      "provenance": {
+        "file": "test/campaign-network-journey.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/campaign-network-journey.js",
+      "to": "Artifact:src/coordination/operation-invariants.js",
+      "provenance": {
+        "file": "test/campaign-network-journey.js",
+        "line": 11
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/campaign-network-journey.js",
+      "to": "Artifact:src/director/campaign-network.js",
+      "provenance": {
+        "file": "test/campaign-network-journey.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/campaign-network-journey.js",
+      "to": "Artifact:src/director/dock-war.js",
+      "provenance": {
+        "file": "test/campaign-network-journey.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/campaign-network-journey.js",
+      "to": "Artifact:src/director/runtime.js",
+      "provenance": {
+        "file": "test/campaign-network-journey.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/campaign-network-journey.js",
+      "to": "Artifact:src/mysteries.js",
+      "provenance": {
+        "file": "test/campaign-network-journey.js",
+        "line": 12
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/campaign-network-journey.js",
+      "to": "Artifact:src/player-commands.js",
+      "provenance": {
+        "file": "test/campaign-network-journey.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/campaign-network-journey.js",
+      "to": "Artifact:src/world-kernel-invariants.js",
+      "provenance": {
+        "file": "test/campaign-network-journey.js",
+        "line": 10
       }
     },
     {
@@ -410468,7 +412757,7 @@
       "to": "Artifact:src/director/dock-war.js",
       "provenance": {
         "file": "test/director-api.js",
-        "line": 6
+        "line": 7
       }
     },
     {
@@ -410477,7 +412766,7 @@
       "to": "Artifact:src/director/runtime.js",
       "provenance": {
         "file": "test/director-api.js",
-        "line": 5
+        "line": 6
       }
     },
     {
@@ -410487,6 +412776,15 @@
       "provenance": {
         "file": "test/director-api.js",
         "line": 4
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/director-api.js",
+      "to": "Artifact:src/routes/projections.js",
+      "provenance": {
+        "file": "test/director-api.js",
+        "line": 5
       }
     },
     {
@@ -410739,6 +413037,168 @@
       "provenance": {
         "file": "test/director-migration.js",
         "line": 13
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/director-network-recovery.js",
+      "to": "Artifact:src/coordination/operation-invariants.js",
+      "provenance": {
+        "file": "test/director-network-recovery.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/director-network-recovery.js",
+      "to": "Artifact:src/crew.js",
+      "provenance": {
+        "file": "test/director-network-recovery.js",
+        "line": 12
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/director-network-recovery.js",
+      "to": "Artifact:src/director/campaign-network.js",
+      "provenance": {
+        "file": "test/director-network-recovery.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/director-network-recovery.js",
+      "to": "Artifact:src/director/runtime.js",
+      "provenance": {
+        "file": "test/director-network-recovery.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/director-network-recovery.js",
+      "to": "Artifact:src/items.js",
+      "provenance": {
+        "file": "test/director-network-recovery.js",
+        "line": 13
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/director-network-recovery.js",
+      "to": "Artifact:src/player-commands.js",
+      "provenance": {
+        "file": "test/director-network-recovery.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/director-network-recovery.js",
+      "to": "Artifact:src/social.js",
+      "provenance": {
+        "file": "test/director-network-recovery.js",
+        "line": 11
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/director-network-recovery.js",
+      "to": "Artifact:src/world-kernel-invariants.js",
+      "provenance": {
+        "file": "test/director-network-recovery.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/director-network.js",
+      "to": "Artifact:src/content/canonical.js",
+      "provenance": {
+        "file": "test/director-network.js",
+        "line": 11
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/director-network.js",
+      "to": "Artifact:src/content/dock-war.js",
+      "provenance": {
+        "file": "test/director-network.js",
+        "line": 2
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/director-network.js",
+      "to": "Artifact:src/director/campaign-network.js",
+      "provenance": {
+        "file": "test/director-network.js",
+        "line": 15
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/director-network.js",
+      "to": "Artifact:src/director/definitions.js",
+      "provenance": {
+        "file": "test/director-network.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/director-network.js",
+      "to": "Artifact:src/director/dock-war.js",
+      "provenance": {
+        "file": "test/director-network.js",
+        "line": 3
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/director-network.js",
+      "to": "Artifact:src/director/memory.js",
+      "provenance": {
+        "file": "test/director-network.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/director-network.js",
+      "to": "Artifact:src/director/pressures.js",
+      "provenance": {
+        "file": "test/director-network.js",
+        "line": 14
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/director-network.js",
+      "to": "Artifact:src/director/runtime.js",
+      "provenance": {
+        "file": "test/director-network.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/director-network.js",
+      "to": "Artifact:src/director/selection.js",
+      "provenance": {
+        "file": "test/director-network.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/director-network.js",
+      "to": "Artifact:src/worldgraph-validate.js",
+      "provenance": {
+        "file": "test/director-network.js",
+        "line": 9
       }
     },
     {
@@ -412678,6 +415138,51 @@
     },
     {
       "type": "TESTS",
+      "from": "Artifact:test/lib/campaign-network-support.js",
+      "to": "Artifact:src/content/campaign-network.js",
+      "provenance": {
+        "file": "test/lib/campaign-network-support.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/lib/campaign-network-support.js",
+      "to": "Artifact:src/coordination/graph.js",
+      "provenance": {
+        "file": "test/lib/campaign-network-support.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/lib/campaign-network-support.js",
+      "to": "Artifact:src/crafting.js",
+      "provenance": {
+        "file": "test/lib/campaign-network-support.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/lib/campaign-network-support.js",
+      "to": "Artifact:src/economy.js",
+      "provenance": {
+        "file": "test/lib/campaign-network-support.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/lib/campaign-network-support.js",
+      "to": "Artifact:src/mysteries.js",
+      "provenance": {
+        "file": "test/lib/campaign-network-support.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "TESTS",
       "from": "Artifact:test/lib/director-support.js",
       "to": "Artifact:src/content/dock-war.js",
       "provenance": {
@@ -414528,6 +417033,15 @@
       "provenance": {
         "file": "test/player-commands.js",
         "line": 5
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/player-opportunities.js",
+      "to": "Artifact:src/player-opportunities.js",
+      "provenance": {
+        "file": "test/player-opportunities.js",
+        "line": 2
       }
     },
     {
@@ -416913,6 +419427,96 @@
       "provenance": {
         "file": "test/wire.js",
         "line": 13
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/world-consequences.js",
+      "to": "Artifact:src/coordination/graph.js",
+      "provenance": {
+        "file": "test/world-consequences.js",
+        "line": 11
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/world-consequences.js",
+      "to": "Artifact:src/coordination/knowledge.js",
+      "provenance": {
+        "file": "test/world-consequences.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/world-consequences.js",
+      "to": "Artifact:src/coordination/pilot.js",
+      "provenance": {
+        "file": "test/world-consequences.js",
+        "line": 12
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/world-consequences.js",
+      "to": "Artifact:src/coordination/runtime.js",
+      "provenance": {
+        "file": "test/world-consequences.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/world-consequences.js",
+      "to": "Artifact:src/crew.js",
+      "provenance": {
+        "file": "test/world-consequences.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/world-consequences.js",
+      "to": "Artifact:src/game.js",
+      "provenance": {
+        "file": "test/world-consequences.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/world-consequences.js",
+      "to": "Artifact:src/items.js",
+      "provenance": {
+        "file": "test/world-consequences.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/world-consequences.js",
+      "to": "Artifact:src/world-consequences.js",
+      "provenance": {
+        "file": "test/world-consequences.js",
+        "line": 13
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/world-consequences.js",
+      "to": "Artifact:src/world-kernel.js",
+      "provenance": {
+        "file": "test/world-consequences.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/world-consequences.js",
+      "to": "Artifact:src/worldgraph.js",
+      "provenance": {
+        "file": "test/world-consequences.js",
+        "line": 7
       }
     },
     {
@@ -423127,35 +425731,26 @@
     },
     {
       "type": "USES_TABLE",
+      "from": "Artifact:src/director/definitions.js",
+      "to": "Table:director_receipts",
+      "provenance": {
+        "file": "src/director/definitions.js",
+        "line": 92
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/director/memory.js",
+      "to": "Table:director_selections",
+      "provenance": {
+        "file": "src/director/memory.js",
+        "line": 13
+      }
+    },
+    {
+      "type": "USES_TABLE",
       "from": "Artifact:src/director/pressures.js",
       "to": "Table:accounts",
-      "provenance": {
-        "file": "src/director/pressures.js",
-        "line": 27
-      }
-    },
-    {
-      "type": "USES_TABLE",
-      "from": "Artifact:src/director/pressures.js",
-      "to": "Table:characters",
-      "provenance": {
-        "file": "src/director/pressures.js",
-        "line": 26
-      }
-    },
-    {
-      "type": "USES_TABLE",
-      "from": "Artifact:src/director/pressures.js",
-      "to": "Table:coordination_claims",
-      "provenance": {
-        "file": "src/director/pressures.js",
-        "line": 57
-      }
-    },
-    {
-      "type": "USES_TABLE",
-      "from": "Artifact:src/director/pressures.js",
-      "to": "Table:crew_members",
       "provenance": {
         "file": "src/director/pressures.js",
         "line": 29
@@ -423164,7 +425759,7 @@
     {
       "type": "USES_TABLE",
       "from": "Artifact:src/director/pressures.js",
-      "to": "Table:gang_members",
+      "to": "Table:characters",
       "provenance": {
         "file": "src/director/pressures.js",
         "line": 28
@@ -423173,10 +425768,37 @@
     {
       "type": "USES_TABLE",
       "from": "Artifact:src/director/pressures.js",
+      "to": "Table:coordination_claims",
+      "provenance": {
+        "file": "src/director/pressures.js",
+        "line": 38
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/director/pressures.js",
+      "to": "Table:crew_members",
+      "provenance": {
+        "file": "src/director/pressures.js",
+        "line": 31
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/director/pressures.js",
+      "to": "Table:gang_members",
+      "provenance": {
+        "file": "src/director/pressures.js",
+        "line": 30
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/director/pressures.js",
       "to": "Table:item_stacks",
       "provenance": {
         "file": "src/director/pressures.js",
-        "line": 48
+        "line": 56
       }
     },
     {
@@ -423185,7 +425807,7 @@
       "to": "Table:world_kernel_events",
       "provenance": {
         "file": "src/director/pressures.js",
-        "line": 41
+        "line": 49
       }
     },
     {
@@ -423194,7 +425816,7 @@
       "to": "Table:world_kernel_objects",
       "provenance": {
         "file": "src/director/pressures.js",
-        "line": 37
+        "line": 45
       }
     },
     {
@@ -423203,7 +425825,7 @@
       "to": "Table:world_operations",
       "provenance": {
         "file": "src/director/pressures.js",
-        "line": 54
+        "line": 62
       }
     },
     {
@@ -423212,7 +425834,7 @@
       "to": "Table:accounts",
       "provenance": {
         "file": "src/director/runtime.js",
-        "line": 65
+        "line": 93
       }
     },
     {
@@ -423221,7 +425843,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/director/runtime.js",
-        "line": 61
+        "line": 89
       }
     },
     {
@@ -423230,7 +425852,7 @@
       "to": "Table:coordination_commands",
       "provenance": {
         "file": "src/director/runtime.js",
-        "line": 152
+        "line": 193
       }
     },
     {
@@ -423239,7 +425861,7 @@
       "to": "Table:crew_members",
       "provenance": {
         "file": "src/director/runtime.js",
-        "line": 70
+        "line": 98
       }
     },
     {
@@ -423248,7 +425870,7 @@
       "to": "Table:director_action_intents",
       "provenance": {
         "file": "src/director/runtime.js",
-        "line": 162
+        "line": 203
       }
     },
     {
@@ -423257,7 +425879,7 @@
       "to": "Table:director_campaigns",
       "provenance": {
         "file": "src/director/runtime.js",
-        "line": 236
+        "line": 278
       }
     },
     {
@@ -423266,7 +425888,7 @@
       "to": "Table:director_clock",
       "provenance": {
         "file": "src/director/runtime.js",
-        "line": 217
+        "line": 258
       }
     },
     {
@@ -423275,7 +425897,7 @@
       "to": "Table:director_receipts",
       "provenance": {
         "file": "src/director/runtime.js",
-        "line": 223
+        "line": 264
       }
     },
     {
@@ -423284,7 +425906,7 @@
       "to": "Table:director_selections",
       "provenance": {
         "file": "src/director/runtime.js",
-        "line": 390
+        "line": 433
       }
     },
     {
@@ -423293,7 +425915,7 @@
       "to": "Table:director_situations",
       "provenance": {
         "file": "src/director/runtime.js",
-        "line": 86
+        "line": 114
       }
     },
     {
@@ -423302,7 +425924,7 @@
       "to": "Table:gang_members",
       "provenance": {
         "file": "src/director/runtime.js",
-        "line": 68
+        "line": 96
       }
     },
     {
@@ -423311,7 +425933,7 @@
       "to": "Table:item_mutation_guards",
       "provenance": {
         "file": "src/director/runtime.js",
-        "line": 148
+        "line": 189
       }
     },
     {
@@ -423320,7 +425942,7 @@
       "to": "Table:world_kernel_events",
       "provenance": {
         "file": "src/director/runtime.js",
-        "line": 241
+        "line": 283
       }
     },
     {
@@ -423329,7 +425951,7 @@
       "to": "Table:world_kernel_objects",
       "provenance": {
         "file": "src/director/runtime.js",
-        "line": 136
+        "line": 172
       }
     },
     {
@@ -428081,7 +430703,7 @@
       "to": "Table:accounts",
       "provenance": {
         "file": "src/player-commands.js",
-        "line": 204
+        "line": 205
       }
     },
     {
@@ -428090,7 +430712,7 @@
       "to": "Table:cars",
       "provenance": {
         "file": "src/player-commands.js",
-        "line": 215
+        "line": 216
       }
     },
     {
@@ -428099,7 +430721,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/player-commands.js",
-        "line": 205
+        "line": 206
       }
     },
     {
@@ -428108,7 +430730,7 @@
       "to": "Table:coordination_commands",
       "provenance": {
         "file": "src/player-commands.js",
-        "line": 240
+        "line": 244
       }
     },
     {
@@ -428117,7 +430739,7 @@
       "to": "Table:item_mutation_guards",
       "provenance": {
         "file": "src/player-commands.js",
-        "line": 243
+        "line": 247
       }
     },
     {
@@ -434620,6 +437242,15 @@
     },
     {
       "type": "USES_TABLE",
+      "from": "Artifact:src/world-consequences.js",
+      "to": "Table:world_kernel_events",
+      "provenance": {
+        "file": "src/world-consequences.js",
+        "line": 48
+      }
+    },
+    {
+      "type": "USES_TABLE",
       "from": "Artifact:src/world-kernel-invariants.js",
       "to": "Table:item_instances",
       "provenance": {
@@ -435083,7 +437714,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/world-projection.js",
-        "line": 39
+        "line": 52
       }
     },
     {
@@ -435092,7 +437723,7 @@
       "to": "Table:crew_members",
       "provenance": {
         "file": "src/world-projection.js",
-        "line": 90
+        "line": 103
       }
     },
     {
@@ -435101,7 +437732,7 @@
       "to": "Table:gang_members",
       "provenance": {
         "file": "src/world-projection.js",
-        "line": 98
+        "line": 111
       }
     },
     {
@@ -435110,7 +437741,7 @@
       "to": "Table:mystery_instances",
       "provenance": {
         "file": "src/world-projection.js",
-        "line": 46
+        "line": 59
       }
     },
     {
