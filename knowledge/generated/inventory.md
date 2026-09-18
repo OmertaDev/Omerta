@@ -1,30 +1,30 @@
 # Generated repository inventory
 
-> Source: worktree at `9862a3f671cf`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `238c9b8476c5`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 2,856 |
-| Text lines | 826,294 |
-| Repository bytes inventoried | 824,412,227 |
+| Current artifacts | 2,860 |
+| Text lines | 827,111 |
+| Repository bytes inventoried | 824,481,616 |
 | Backend/route modules | 257 |
 | HTTP route registrations / unique routes | 798 / 798 |
 | Database tables | 361 |
 | Solidity declarations | 79 |
-| Git commits | 1,470 |
+| Git commits | 1,472 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 7,348 / 32,306 |
+| Graph nodes / edges | 7,358 / 32,413 |
 
 ## Artifact kinds
 
 | Kind | Files |
 |---|---:|
 | media-asset | 1,202 |
-| documentation | 309 |
-| test-suite | 235 |
+| documentation | 310 |
+| test-suite | 238 |
 | backend-module | 230 |
 | artifact | 227 |
 | contract-project | 146 |
@@ -50,7 +50,7 @@
 | [omerta-contracts/audits/2026-09-08-comprehensive/shared-static-triage.json](../../omerta-contracts/audits/2026-09-08-comprehensive/shared-static-triage.json) | 52,258 | contract-project | 2026-09-09 |
 | [omerta-contracts/audits/2026-09-08-comprehensive/hook-retest-static.json](../../omerta-contracts/audits/2026-09-08-comprehensive/hook-retest-static.json) | 47,392 | contract-project | 2026-09-09 |
 | [CLAUDE.md](../../CLAUDE.md) | 18,679 | documentation | 2026-09-06 |
-| [public/index.html](../../public/index.html) | 13,218 | web-surface | 2026-09-17 |
+| [public/index.html](../../public/index.html) | 13,311 | web-surface | 2026-09-18 |
 | [omerta-contracts/audits/2026-09-08-liquidity-automation/package-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/package-manifest.json) | 10,623 | contract-project | 2026-09-09 |
 | [test/client.js](../../test/client.js) | 9,441 | test-suite | 2026-09-17 |
 | [omerta-contracts/x-ray/slither-vars-and-auth.json](../../omerta-contracts/x-ray/slither-vars-and-auth.json) | 9,374 | contract-project | 2026-08-25 |
@@ -60,7 +60,7 @@
 | [.agents/skills/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [omerta-contracts/audits/2026-09-08-liquidity-automation/artifact-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/artifact-manifest.json) | 7,385 | contract-project | 2026-09-09 |
-| [schema.sql](../../schema.sql) | 7,269 | data-schema | 2026-09-17 |
+| [schema.sql](../../schema.sql) | 7,273 | data-schema | 2026-09-18 |
 | [BALANCE.md](../../BALANCE.md) | 6,855 | documentation | 2026-09-06 |
 | [omerta-contracts/audits/2026-09-08-comprehensive/package-manifest.json](../../omerta-contracts/audits/2026-09-08-comprehensive/package-manifest.json) | 6,609 | contract-project | 2026-09-09 |
 | [omerta-contracts/audits/2026-09-08-comprehensive/forge-lint-triage.json](../../omerta-contracts/audits/2026-09-08-comprehensive/forge-lint-triage.json) | 6,203 | contract-project | 2026-09-09 |

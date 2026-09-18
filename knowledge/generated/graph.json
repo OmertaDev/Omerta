@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "9862a3f671cf68cc5a17af17a69f41e872df52c0",
+  "sourceRevision": "238c9b8476c5351776f3e6e22073dbb0f8c639e9",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,14 +43,14 @@
     ]
   },
   "census": {
-    "nodes": 7348,
-    "edges": 32306,
+    "nodes": 7358,
+    "edges": 32413,
     "byNodeType": {
-      "Artifact": 2856,
+      "Artifact": 2860,
       "Command": 90,
-      "Commit": 1470,
+      "Commit": 1472,
       "Contract": 79,
-      "Document": 581,
+      "Document": 582,
       "Domain": 13,
       "ExternalDependency": 27,
       "HistoricalArtifact": 343,
@@ -60,25 +60,25 @@
       "Route": 798,
       "Subsystem": 8,
       "Table": 361,
-      "TestSuite": 333,
+      "TestSuite": 336,
       "Workflow": 5
     },
     "byEdgeType": {
-      "BELONGS_TO": 2418,
-      "CHANGED": 12382,
-      "CONTAINS": 2877,
+      "BELONGS_TO": 2421,
+      "CHANGED": 12410,
+      "CONTAINS": 2881,
       "DECLARES": 90,
       "DEFINED_IN": 1238,
       "DEPENDS_ON": 65,
-      "EXECUTES": 348,
+      "EXECUTES": 354,
       "HANDLED_BY": 705,
-      "HAS_COMMIT": 1470,
+      "HAS_COMMIT": 1472,
       "IMPLEMENTS": 124,
-      "IMPORTS": 2523,
+      "IMPORTS": 2555,
       "INHERITS": 17,
-      "REFERENCES": 4006,
-      "REPRESENTS": 1176,
-      "TESTS": 980,
+      "REFERENCES": 4008,
+      "REPRESENTS": 1180,
+      "TESTS": 1006,
       "TRACKS": 126,
       "USES_TABLE": 1761
     }
@@ -26082,20 +26082,20 @@
       "path": "docs/core-architecture/IMPLEMENTATION.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 35936,
-      "lines": 157,
-      "version": "e5f6d24e71f69014",
+      "bytes": 38011,
+      "lines": 167,
+      "version": "dff5b7913c21ac1b",
       "text": true,
       "provenance": [
         {
           "file": "docs/core-architecture/IMPLEMENTATION.md",
           "line": 1,
-          "version": "e5f6d24e71f69014"
+          "version": "dff5b7913c21ac1b"
         }
       ],
-      "lastChangedAt": "2026-09-17T23:52:47.000Z",
+      "lastChangedAt": "2026-09-18T00:13:19.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9862a3f671cf68cc5a17af17a69f41e872df52c0"
+      "lastChangedCommit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
     },
     {
       "key": "Artifact:docs/core-architecture/review-phase1.md",
@@ -26188,6 +26188,29 @@
       "lastChangedAt": "2026-09-17T23:52:47.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "9862a3f671cf68cc5a17af17a69f41e872df52c0"
+    },
+    {
+      "key": "Artifact:docs/core-architecture/review-phase5.md",
+      "type": "Artifact",
+      "id": "docs/core-architecture/review-phase5.md",
+      "label": "review-phase5.md",
+      "path": "docs/core-architecture/review-phase5.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 6267,
+      "lines": 31,
+      "version": "0e00b4ce89ca7f68",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/core-architecture/review-phase5.md",
+          "line": 1,
+          "version": "0e00b4ce89ca7f68"
+        }
+      ],
+      "lastChangedAt": "2026-09-18T00:13:19.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
     },
     {
       "key": "Artifact:docs/diagrams/gameplay-01-choose-your-path.excalidraw",
@@ -28660,18 +28683,18 @@
       "extension": ".md",
       "bytes": 7058,
       "lines": 128,
-      "version": "cc1e8ef72bca1ccb",
+      "version": "c924539db68e58bc",
       "text": true,
       "provenance": [
         {
           "file": "MARKETING-POSTS.md",
           "line": 1,
-          "version": "cc1e8ef72bca1ccb"
+          "version": "c924539db68e58bc"
         }
       ],
-      "lastChangedAt": "2026-09-17T21:36:31.000Z",
+      "lastChangedAt": "2026-09-18T00:13:19.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e23c312249bc06bcfb7d340a2c54dfa17c29ccf9"
+      "lastChangedCommit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
     },
     {
       "key": "Artifact:MARKETING.md",
@@ -37691,20 +37714,20 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 17179,
+      "bytes": 17497,
       "lines": 119,
-      "version": "7af2c2018c113dca",
+      "version": "cc1f1e40b6412a06",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "7af2c2018c113dca"
+          "version": "cc1f1e40b6412a06"
         }
       ],
-      "lastChangedAt": "2026-09-17T23:52:47.000Z",
+      "lastChangedAt": "2026-09-18T00:13:19.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9862a3f671cf68cc5a17af17a69f41e872df52c0"
+      "lastChangedCommit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
     },
     {
       "key": "Artifact:Procfile",
@@ -51951,20 +51974,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1282425,
-      "lines": 13218,
-      "version": "20a52a37efa87d59",
+      "bytes": 1290804,
+      "lines": 13311,
+      "version": "5d6d13ae9dcea64b",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "20a52a37efa87d59"
+          "version": "5d6d13ae9dcea64b"
         }
       ],
-      "lastChangedAt": "2026-09-17T21:36:31.000Z",
+      "lastChangedAt": "2026-09-18T00:13:19.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e23c312249bc06bcfb7d340a2c54dfa17c29ccf9"
+      "lastChangedCommit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
     },
     {
       "key": "Artifact:public/invite.html",
@@ -52181,20 +52204,20 @@
       "path": "schema.sql",
       "kind": "data-schema",
       "extension": ".sql",
-      "bytes": 448442,
-      "lines": 7269,
-      "version": "524ce017ad3ab813",
+      "bytes": 448671,
+      "lines": 7273,
+      "version": "561414e2df4810c3",
       "text": true,
       "provenance": [
         {
           "file": "schema.sql",
           "line": 1,
-          "version": "524ce017ad3ab813"
+          "version": "561414e2df4810c3"
         }
       ],
-      "lastChangedAt": "2026-09-17T23:52:47.000Z",
+      "lastChangedAt": "2026-09-18T00:13:19.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9862a3f671cf68cc5a17af17a69f41e872df52c0"
+      "lastChangedCommit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
     },
     {
       "key": "Artifact:SIGN-OFF.md",
@@ -52252,18 +52275,18 @@
       "extension": ".md",
       "bytes": 56677,
       "lines": 756,
-      "version": "715a4fbffbafd290",
+      "version": "2b9f6019bcb11ad2",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "715a4fbffbafd290"
+          "version": "2b9f6019bcb11ad2"
         }
       ],
-      "lastChangedAt": "2026-09-17T23:52:47.000Z",
+      "lastChangedAt": "2026-09-18T00:13:19.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9862a3f671cf68cc5a17af17a69f41e872df52c0"
+      "lastChangedCommit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
     },
     {
       "key": "Artifact:src/access.js",
@@ -53860,20 +53883,20 @@
       "path": "src/coordination/operations.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 50858,
-      "lines": 645,
-      "version": "f2a8343937d8a1e3",
+      "bytes": 51768,
+      "lines": 658,
+      "version": "57f36ccdc3ba4bcd",
       "text": true,
       "provenance": [
         {
           "file": "src/coordination/operations.js",
           "line": 1,
-          "version": "f2a8343937d8a1e3"
+          "version": "57f36ccdc3ba4bcd"
         }
       ],
-      "lastChangedAt": "2026-09-17T23:52:47.000Z",
+      "lastChangedAt": "2026-09-18T00:13:19.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9862a3f671cf68cc5a17af17a69f41e872df52c0"
+      "lastChangedCommit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
     },
     {
       "key": "Artifact:src/coordination/pilot.js",
@@ -55447,20 +55470,20 @@
       "path": "src/mysteries.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 86033,
-      "lines": 1844,
-      "version": "b74c08f83521a6ed",
+      "bytes": 87623,
+      "lines": 1868,
+      "version": "c520c727c15bd582",
       "text": true,
       "provenance": [
         {
           "file": "src/mysteries.js",
           "line": 1,
-          "version": "b74c08f83521a6ed"
+          "version": "c520c727c15bd582"
         }
       ],
-      "lastChangedAt": "2026-09-17T23:52:47.000Z",
+      "lastChangedAt": "2026-09-18T00:13:19.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9862a3f671cf68cc5a17af17a69f41e872df52c0"
+      "lastChangedCommit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
     },
     {
       "key": "Artifact:src/nft.js",
@@ -55907,20 +55930,20 @@
       "path": "src/projection-events.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 10197,
+      "bytes": 10209,
       "lines": 168,
-      "version": "2dca6d6b8c5a2a12",
+      "version": "e0bb8a8a3712672c",
       "text": true,
       "provenance": [
         {
           "file": "src/projection-events.js",
           "line": 1,
-          "version": "2dca6d6b8c5a2a12"
+          "version": "e0bb8a8a3712672c"
         }
       ],
-      "lastChangedAt": "2026-09-17T21:36:31.000Z",
+      "lastChangedAt": "2026-09-18T00:13:19.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e23c312249bc06bcfb7d340a2c54dfa17c29ccf9"
+      "lastChangedCommit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
     },
     {
       "key": "Artifact:src/push.js",
@@ -56551,20 +56574,20 @@
       "path": "src/routes/projections.js",
       "kind": "route-module",
       "extension": ".js",
-      "bytes": 4584,
-      "lines": 59,
-      "version": "e3b9f4fb0f0835c2",
+      "bytes": 5142,
+      "lines": 64,
+      "version": "ac561a448a3feaac",
       "text": true,
       "provenance": [
         {
           "file": "src/routes/projections.js",
           "line": 1,
-          "version": "e3b9f4fb0f0835c2"
+          "version": "ac561a448a3feaac"
         }
       ],
-      "lastChangedAt": "2026-09-17T23:52:47.000Z",
+      "lastChangedAt": "2026-09-18T00:13:19.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9862a3f671cf68cc5a17af17a69f41e872df52c0"
+      "lastChangedCommit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
     },
     {
       "key": "Artifact:src/routes/races.js",
@@ -58000,20 +58023,20 @@
       "path": "src/world-kernel-query.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 20323,
-      "lines": 326,
-      "version": "71a4eda56c75cdc3",
+      "bytes": 20934,
+      "lines": 337,
+      "version": "1a4baaab9bf8985f",
       "text": true,
       "provenance": [
         {
           "file": "src/world-kernel-query.js",
           "line": 1,
-          "version": "71a4eda56c75cdc3"
+          "version": "1a4baaab9bf8985f"
         }
       ],
-      "lastChangedAt": "2026-09-17T21:36:31.000Z",
+      "lastChangedAt": "2026-09-18T00:13:19.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e23c312249bc06bcfb7d340a2c54dfa17c29ccf9"
+      "lastChangedCommit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
     },
     {
       "key": "Artifact:src/world-kernel.js",
@@ -58092,20 +58115,20 @@
       "path": "src/world-projection.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 7326,
-      "lines": 85,
-      "version": "bb5ca44c91fe49a3",
+      "bytes": 10084,
+      "lines": 124,
+      "version": "a688f7fb3bc54805",
       "text": true,
       "provenance": [
         {
           "file": "src/world-projection.js",
           "line": 1,
-          "version": "bb5ca44c91fe49a3"
+          "version": "a688f7fb3bc54805"
         }
       ],
-      "lastChangedAt": "2026-09-17T23:52:47.000Z",
+      "lastChangedAt": "2026-09-18T00:13:19.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9862a3f671cf68cc5a17af17a69f41e872df52c0"
+      "lastChangedCommit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
     },
     {
       "key": "Artifact:src/world.js",
@@ -61489,6 +61512,29 @@
       "lastChangedCommit": "64046f8ea429ebe1f6a2561f10d536975f957173"
     },
     {
+      "key": "Artifact:test/operation-read-paths.js",
+      "type": "Artifact",
+      "id": "test/operation-read-paths.js",
+      "label": "operation-read-paths.js",
+      "path": "test/operation-read-paths.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 10519,
+      "lines": 134,
+      "version": "eb58f09b7e3c6b05",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/operation-read-paths.js",
+          "line": 1,
+          "version": "eb58f09b7e3c6b05"
+        }
+      ],
+      "lastChangedAt": "2026-09-18T00:13:19.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
+    },
+    {
       "key": "Artifact:test/operations.js",
       "type": "Artifact",
       "id": "test/operations.js",
@@ -62140,20 +62186,20 @@
       "path": "test/projection-events.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 11632,
-      "lines": 149,
-      "version": "eaa403a734bd1223",
+      "bytes": 13654,
+      "lines": 180,
+      "version": "67af05e9dfc12bb5",
       "text": true,
       "provenance": [
         {
           "file": "test/projection-events.js",
           "line": 1,
-          "version": "eaa403a734bd1223"
+          "version": "67af05e9dfc12bb5"
         }
       ],
-      "lastChangedAt": "2026-09-17T21:36:31.000Z",
+      "lastChangedAt": "2026-09-18T00:13:19.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e23c312249bc06bcfb7d340a2c54dfa17c29ccf9"
+      "lastChangedCommit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
     },
     {
       "key": "Artifact:test/push.js",
@@ -63658,20 +63704,66 @@
       "path": "test/world-projection-client.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 8186,
-      "lines": 140,
-      "version": "f243f47db6aa1112",
+      "bytes": 22122,
+      "lines": 315,
+      "version": "fb6adc12a61782e5",
       "text": true,
       "provenance": [
         {
           "file": "test/world-projection-client.js",
           "line": 1,
-          "version": "f243f47db6aa1112"
+          "version": "fb6adc12a61782e5"
         }
       ],
-      "lastChangedAt": "2026-09-17T21:36:31.000Z",
+      "lastChangedAt": "2026-09-18T00:13:19.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e23c312249bc06bcfb7d340a2c54dfa17c29ccf9"
+      "lastChangedCommit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
+    },
+    {
+      "key": "Artifact:test/world-projection-mysteries-api.js",
+      "type": "Artifact",
+      "id": "test/world-projection-mysteries-api.js",
+      "label": "world-projection-mysteries-api.js",
+      "path": "test/world-projection-mysteries-api.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 5918,
+      "lines": 76,
+      "version": "af989519b76ef313",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/world-projection-mysteries-api.js",
+          "line": 1,
+          "version": "af989519b76ef313"
+        }
+      ],
+      "lastChangedAt": "2026-09-18T00:13:19.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
+    },
+    {
+      "key": "Artifact:test/world-projection-mysteries.js",
+      "type": "Artifact",
+      "id": "test/world-projection-mysteries.js",
+      "label": "world-projection-mysteries.js",
+      "path": "test/world-projection-mysteries.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 13217,
+      "lines": 171,
+      "version": "b5ef22b031e420fc",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/world-projection-mysteries.js",
+          "line": 1,
+          "version": "b5ef22b031e420fc"
+        }
+      ],
+      "lastChangedAt": "2026-09-18T00:13:19.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
     },
     {
       "key": "Artifact:test/world-projection-read.js",
@@ -65705,20 +65797,20 @@
       "path": "tools/world-projections-postgres.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 1115,
+      "bytes": 1185,
       "lines": 15,
-      "version": "d0539d6ea68867a0",
+      "version": "0561530183ef68ff",
       "text": true,
       "provenance": [
         {
           "file": "tools/world-projections-postgres.js",
           "line": 1,
-          "version": "d0539d6ea68867a0"
+          "version": "0561530183ef68ff"
         }
       ],
-      "lastChangedAt": "2026-09-17T21:36:31.000Z",
+      "lastChangedAt": "2026-09-18T00:13:19.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e23c312249bc06bcfb7d340a2c54dfa17c29ccf9"
+      "lastChangedCommit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
     },
     {
       "key": "Artifact:tools/worldgraph-content.js",
@@ -66486,7 +66578,7 @@
       "type": "Command",
       "id": "npm:pretest",
       "label": "npm run pretest",
-      "command": "node test/world-projection-read.js && node test/world-projection.js && node test/world-projection-api.js && node test/projection-events.js && node test/projection-events-ws.js && node test/world-projection-client.js && node test/coordination-operation-definitions.js && node test/coordination-mode-boundary.js && node test/coordination-capital.js && node test/coordination-materials.js && node test/coordination-knowledge-proof.js && node test/world-kernel-transaction.js && node test/family-operations.js && node test/family-operations-api.js && node test/world-knowledge-crafting.js && node test/world-kernel-query.js && node test/world-kernel-input.js && node test/world-kernel.js && node test/world-kernel-api.js && node test/coordination-graph.js && node test/coordination.js && node test/coordination-api.js && node test/coordination-http-receipts.js && node test/coordination-knowledge.js && node test/coordination-knowledge-runtime.js && node test/coordination-knowledge-api.js && node test/finalizedobservation.js && node test/stockballotv2.js && node test/rwanominations.js && node test/rwaroutes.js && node test/rwahealth.js && node test/rwahealth.integration.js && node test/rwahealthclearance.js && node test/rwahealthclearancecontext.js && node test/rwahealthoverlay.readiness.js && node test/rwahealthoverlay.schema.js && node test/rwahealthoverlay.vector.js && node test/rwaregistrylifecycle.js && node test/rwaregistrylifecycle.sync.js && node test/agent-referral-cash.js && node test/phase2-discovery.js && node test/phase2-compiler.js && node test/phase2-review-regressions.js && node test/phase2-scale.js && node test/content-graph.js && node test/content-runtime.js && node test/content-social.js && node test/content-seasonal.js && node test/content-seasonal-case.js && node test/content-crafting.js && node test/content-crafting-jobs.js && node test/content-crafting-tools.js && node test/content-exchange.js && node test/content-api.js && node test/v4oraclekeeper.js && node test/genesiscca.js && node test/genesislaunch.js && node test/genesisrelease.js && node test/worldgraph.js && node test/worldgraph-validation.js && node test/items.js && node test/crafting.js && node test/mysteries.js && node test/operations.js && node test/belladonna.js && node test/worldgraph-api.js && node tools/pgcheck-belladonna.js --pg-mem && node test/phase2-definition-schema.js && node test/phase2-definitions.js && node test/phase2-activation.js && node test/phase2-definition-invariants.js && node test/phase2-lot-boundary.js && node test/keepertransactions.js && node test/liquiditykeeper.js && node test/genesiskeeper.js && node test/liquidityaccounting.js --memory && node test/liquidityaccounting-review.js && node test/liquiditypolicy.js --memory && node test/bond-unlimited.js --memory && node test/bondquoteexpiry.js && node test/liquidityrpc.js && node tools/liquidity-manifest-example.js --self-test && node test/liquiditypolicy-review.js && node test/liquidityqueue.js --memory && node test/liquidityqueue-review.js && node test/character-mint-policy.js && node test/phase2-lots.js && node test/phase2-lots-property.js && node test/audit/mint-dev-allocation.js --memory && node test/audit/deed-reimport-order.js --memory && npm run test:core-progression",
+      "command": "node test/operation-read-paths.js && node test/world-projection-mysteries.js && node test/world-projection-mysteries-api.js && node test/world-projection-read.js && node test/world-projection.js && node test/world-projection-api.js && node test/projection-events.js && node test/projection-events-ws.js && node test/world-projection-client.js && node test/coordination-operation-definitions.js && node test/coordination-mode-boundary.js && node test/coordination-capital.js && node test/coordination-materials.js && node test/coordination-knowledge-proof.js && node test/world-kernel-transaction.js && node test/family-operations.js && node test/family-operations-api.js && node test/world-knowledge-crafting.js && node test/world-kernel-query.js && node test/world-kernel-input.js && node test/world-kernel.js && node test/world-kernel-api.js && node test/coordination-graph.js && node test/coordination.js && node test/coordination-api.js && node test/coordination-http-receipts.js && node test/coordination-knowledge.js && node test/coordination-knowledge-runtime.js && node test/coordination-knowledge-api.js && node test/finalizedobservation.js && node test/stockballotv2.js && node test/rwanominations.js && node test/rwaroutes.js && node test/rwahealth.js && node test/rwahealth.integration.js && node test/rwahealthclearance.js && node test/rwahealthclearancecontext.js && node test/rwahealthoverlay.readiness.js && node test/rwahealthoverlay.schema.js && node test/rwahealthoverlay.vector.js && node test/rwaregistrylifecycle.js && node test/rwaregistrylifecycle.sync.js && node test/agent-referral-cash.js && node test/phase2-discovery.js && node test/phase2-compiler.js && node test/phase2-review-regressions.js && node test/phase2-scale.js && node test/content-graph.js && node test/content-runtime.js && node test/content-social.js && node test/content-seasonal.js && node test/content-seasonal-case.js && node test/content-crafting.js && node test/content-crafting-jobs.js && node test/content-crafting-tools.js && node test/content-exchange.js && node test/content-api.js && node test/v4oraclekeeper.js && node test/genesiscca.js && node test/genesislaunch.js && node test/genesisrelease.js && node test/worldgraph.js && node test/worldgraph-validation.js && node test/items.js && node test/crafting.js && node test/mysteries.js && node test/operations.js && node test/belladonna.js && node test/worldgraph-api.js && node tools/pgcheck-belladonna.js --pg-mem && node test/phase2-definition-schema.js && node test/phase2-definitions.js && node test/phase2-activation.js && node test/phase2-definition-invariants.js && node test/phase2-lot-boundary.js && node test/keepertransactions.js && node test/liquiditykeeper.js && node test/genesiskeeper.js && node test/liquidityaccounting.js --memory && node test/liquidityaccounting-review.js && node test/liquiditypolicy.js --memory && node test/bond-unlimited.js --memory && node test/bondquoteexpiry.js && node test/liquidityrpc.js && node tools/liquidity-manifest-example.js --self-test && node test/liquiditypolicy-review.js && node test/liquidityqueue.js --memory && node test/liquidityqueue-review.js && node test/character-mint-policy.js && node test/phase2-lots.js && node test/phase2-lots-property.js && node test/audit/mint-dev-allocation.js --memory && node test/audit/deed-reimport-order.js --memory && npm run test:core-progression",
       "provenance": [
         {
           "file": "package.json",
@@ -66850,7 +66942,7 @@
       "type": "Command",
       "id": "npm:test:world-projections",
       "label": "npm run test:world-projections",
-      "command": "node test/world-projection-read.js && node test/world-projection.js && node test/world-projection-api.js && node test/projection-events.js && node test/projection-events-ws.js && node test/world-projection-client.js",
+      "command": "node test/world-projection-read.js && node test/world-projection.js && node test/world-projection-api.js && node test/projection-events.js && node test/projection-events-ws.js && node test/world-projection-client.js && node test/world-projection-mysteries.js && node test/world-projection-mysteries-api.js && node test/operation-read-paths.js",
       "provenance": [
         {
           "file": "package.json",
@@ -66863,7 +66955,7 @@
       "type": "Command",
       "id": "npm:test:world-projections:postgres",
       "label": "npm run test:world-projections:postgres",
-      "command": "node tools/world-projections-postgres.js test/world-projection-read.js test/world-projection.js test/projection-events.js",
+      "command": "node tools/world-projections-postgres.js test/world-projection-read.js test/world-projection.js test/projection-events.js test/world-projection-mysteries.js test/operation-read-paths.js",
       "provenance": [
         {
           "file": "package.json",
@@ -69941,6 +70033,22 @@
         {
           "commit": "238847cd25fe02ee88f8e65ebe33a156f7f92e5d",
           "url": "https://github.com/OmertaDev/Omerta/commit/238847cd25fe02ee88f8e65ebe33a156f7f92e5d"
+        }
+      ]
+    },
+    {
+      "key": "Commit:238c9b8476c5351776f3e6e22073dbb0f8c639e9",
+      "type": "Commit",
+      "id": "238c9b8476c5351776f3e6e22073dbb0f8c639e9",
+      "label": "feat(world): integrate safe mystery cases and bound operation reads",
+      "title": "feat(world): integrate safe mystery cases and bound operation reads",
+      "date": "2026-09-18T00:13:19.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/238c9b8476c5351776f3e6e22073dbb0f8c639e9",
+      "provenance": [
+        {
+          "commit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9",
+          "url": "https://github.com/OmertaDev/Omerta/commit/238c9b8476c5351776f3e6e22073dbb0f8c639e9"
         }
       ]
     },
@@ -85273,6 +85381,22 @@
       ]
     },
     {
+      "key": "Commit:c0331dd25850335421ac097e15c3907f6515cee5",
+      "type": "Commit",
+      "id": "c0331dd25850335421ac097e15c3907f6515cee5",
+      "label": "docs(knowledge): index completed core progression framework",
+      "title": "docs(knowledge): index completed core progression framework",
+      "date": "2026-09-17T23:54:07.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/c0331dd25850335421ac097e15c3907f6515cee5",
+      "provenance": [
+        {
+          "commit": "c0331dd25850335421ac097e15c3907f6515cee5",
+          "url": "https://github.com/OmertaDev/Omerta/commit/c0331dd25850335421ac097e15c3907f6515cee5"
+        }
+      ]
+    },
+    {
       "key": "Commit:c04b380a663d103a21d23d9ee5073724b392c88f",
       "type": "Commit",
       "id": "c04b380a663d103a21d23d9ee5073724b392c88f",
@@ -97787,13 +97911,13 @@
       "id": "docs/core-architecture/IMPLEMENTATION.md",
       "label": "docs/core-architecture/IMPLEMENTATION.md",
       "documentType": "documentation",
-      "lines": 157,
-      "version": "e5f6d24e71f69014",
+      "lines": 167,
+      "version": "dff5b7913c21ac1b",
       "provenance": [
         {
           "file": "docs/core-architecture/IMPLEMENTATION.md",
           "line": 1,
-          "version": "e5f6d24e71f69014"
+          "version": "dff5b7913c21ac1b"
         }
       ]
     },
@@ -97858,6 +97982,22 @@
           "file": "docs/core-architecture/review-phase4.md",
           "line": 1,
           "version": "c2e49ed091877314"
+        }
+      ]
+    },
+    {
+      "key": "Document:docs/core-architecture/review-phase5.md",
+      "type": "Document",
+      "id": "docs/core-architecture/review-phase5.md",
+      "label": "docs/core-architecture/review-phase5.md",
+      "documentType": "documentation",
+      "lines": 31,
+      "version": "0e00b4ce89ca7f68",
+      "provenance": [
+        {
+          "file": "docs/core-architecture/review-phase5.md",
+          "line": 1,
+          "version": "0e00b4ce89ca7f68"
         }
       ]
     },
@@ -99020,12 +99160,12 @@
       "label": "MARKETING-POSTS.md",
       "documentType": "documentation",
       "lines": 128,
-      "version": "cc1e8ef72bca1ccb",
+      "version": "c924539db68e58bc",
       "provenance": [
         {
           "file": "MARKETING-POSTS.md",
           "line": 1,
-          "version": "cc1e8ef72bca1ccb"
+          "version": "c924539db68e58bc"
         }
       ]
     },
@@ -101052,12 +101192,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 756,
-      "version": "715a4fbffbafd290",
+      "version": "2b9f6019bcb11ad2",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "715a4fbffbafd290"
+          "version": "2b9f6019bcb11ad2"
         }
       ]
     },
@@ -101713,6 +101853,10 @@
           "line": 304
         },
         {
+          "file": "test/operation-read-paths.js",
+          "line": 22
+        },
+        {
           "file": "test/phase2-definition-schema.js",
           "line": 3
         },
@@ -101722,7 +101866,7 @@
         },
         {
           "file": "test/projection-events.js",
-          "line": 15
+          "line": 16
         },
         {
           "file": "test/recipe-policy.js",
@@ -101762,6 +101906,10 @@
         },
         {
           "file": "test/world-prerequisites.js",
+          "line": 28
+        },
+        {
+          "file": "test/world-projection-mysteries.js",
           "line": 28
         },
         {
@@ -101857,6 +102005,10 @@
           "line": 12
         },
         {
+          "file": "test/operation-read-paths.js",
+          "line": 6
+        },
+        {
           "file": "test/projection-events.js",
           "line": 6
         },
@@ -101898,6 +102050,10 @@
         },
         {
           "file": "test/world-prerequisites.js",
+          "line": 5
+        },
+        {
+          "file": "test/world-projection-mysteries.js",
           "line": 5
         },
         {
@@ -106767,6 +106923,9 @@
           "commit": "baaeb2427195c496dc61699f53a1c7ce7fa452cc"
         },
         {
+          "commit": "c0331dd25850335421ac097e15c3907f6515cee5"
+        },
+        {
           "commit": "c290b64f774d4c1ed57080a198f40ea7f23d9225"
         },
         {
@@ -107338,6 +107497,9 @@
         },
         {
           "commit": "bed312b892527aa40fe7f5d73ad42108af4dea35"
+        },
+        {
+          "commit": "c0331dd25850335421ac097e15c3907f6515cee5"
         },
         {
           "commit": "c175ce5dd8574f02c80ff6d3fd6372a95928a5cc"
@@ -107976,6 +108138,9 @@
           "commit": "bed312b892527aa40fe7f5d73ad42108af4dea35"
         },
         {
+          "commit": "c0331dd25850335421ac097e15c3907f6515cee5"
+        },
+        {
           "commit": "c175ce5dd8574f02c80ff6d3fd6372a95928a5cc"
         },
         {
@@ -108612,6 +108777,9 @@
           "commit": "bed312b892527aa40fe7f5d73ad42108af4dea35"
         },
         {
+          "commit": "c0331dd25850335421ac097e15c3907f6515cee5"
+        },
+        {
           "commit": "c175ce5dd8574f02c80ff6d3fd6372a95928a5cc"
         },
         {
@@ -108847,6 +109015,9 @@
         },
         {
           "commit": "baa2d0c1ae0b2fc76cc426b598ec4ce4fedb64c2"
+        },
+        {
+          "commit": "c0331dd25850335421ac097e15c3907f6515cee5"
         },
         {
           "commit": "dee7593a66b955d677656afab4516cb68edb918d"
@@ -109389,6 +109560,9 @@
           "commit": "bed312b892527aa40fe7f5d73ad42108af4dea35"
         },
         {
+          "commit": "c0331dd25850335421ac097e15c3907f6515cee5"
+        },
+        {
           "commit": "c175ce5dd8574f02c80ff6d3fd6372a95928a5cc"
         },
         {
@@ -109701,6 +109875,9 @@
           "commit": "baa2d0c1ae0b2fc76cc426b598ec4ce4fedb64c2"
         },
         {
+          "commit": "c0331dd25850335421ac097e15c3907f6515cee5"
+        },
+        {
           "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
         },
         {
@@ -109821,6 +109998,9 @@
           "commit": "baa2d0c1ae0b2fc76cc426b598ec4ce4fedb64c2"
         },
         {
+          "commit": "c0331dd25850335421ac097e15c3907f6515cee5"
+        },
+        {
           "commit": "dee7593a66b955d677656afab4516cb68edb918d"
         },
         {
@@ -109921,6 +110101,9 @@
         },
         {
           "commit": "b79a291f61334ef9b332a9e6521a85a57d2dbd9f"
+        },
+        {
+          "commit": "c0331dd25850335421ac097e15c3907f6515cee5"
         },
         {
           "commit": "dee7593a66b955d677656afab4516cb68edb918d"
@@ -111081,13 +111264,13 @@
       "type": "Module",
       "id": "src/coordination/operations.js",
       "label": "src/coordination/operations.js",
-      "lines": 645,
-      "version": "f2a8343937d8a1e3",
+      "lines": 658,
+      "version": "57f36ccdc3ba4bcd",
       "provenance": [
         {
           "file": "src/coordination/operations.js",
           "line": 1,
-          "version": "f2a8343937d8a1e3"
+          "version": "57f36ccdc3ba4bcd"
         }
       ]
     },
@@ -112116,13 +112299,13 @@
       "type": "Module",
       "id": "src/mysteries.js",
       "label": "src/mysteries.js",
-      "lines": 1844,
-      "version": "b74c08f83521a6ed",
+      "lines": 1868,
+      "version": "c520c727c15bd582",
       "provenance": [
         {
           "file": "src/mysteries.js",
           "line": 1,
-          "version": "b74c08f83521a6ed"
+          "version": "c520c727c15bd582"
         }
       ]
     },
@@ -112417,12 +112600,12 @@
       "id": "src/projection-events.js",
       "label": "src/projection-events.js",
       "lines": 168,
-      "version": "2dca6d6b8c5a2a12",
+      "version": "e0bb8a8a3712672c",
       "provenance": [
         {
           "file": "src/projection-events.js",
           "line": 1,
-          "version": "2dca6d6b8c5a2a12"
+          "version": "e0bb8a8a3712672c"
         }
       ]
     },
@@ -112836,13 +113019,13 @@
       "type": "Module",
       "id": "src/routes/projections.js",
       "label": "src/routes/projections.js",
-      "lines": 59,
-      "version": "e3b9f4fb0f0835c2",
+      "lines": 64,
+      "version": "ac561a448a3feaac",
       "provenance": [
         {
           "file": "src/routes/projections.js",
           "line": 1,
-          "version": "e3b9f4fb0f0835c2"
+          "version": "ac561a448a3feaac"
         }
       ]
     },
@@ -113781,13 +113964,13 @@
       "type": "Module",
       "id": "src/world-kernel-query.js",
       "label": "src/world-kernel-query.js",
-      "lines": 326,
-      "version": "71a4eda56c75cdc3",
+      "lines": 337,
+      "version": "1a4baaab9bf8985f",
       "provenance": [
         {
           "file": "src/world-kernel-query.js",
           "line": 1,
-          "version": "71a4eda56c75cdc3"
+          "version": "1a4baaab9bf8985f"
         }
       ]
     },
@@ -113841,13 +114024,13 @@
       "type": "Module",
       "id": "src/world-projection.js",
       "label": "src/world-projection.js",
-      "lines": 85,
-      "version": "bb5ca44c91fe49a3",
+      "lines": 124,
+      "version": "a688f7fb3bc54805",
       "provenance": [
         {
           "file": "src/world-projection.js",
           "line": 1,
-          "version": "bb5ca44c91fe49a3"
+          "version": "a688f7fb3bc54805"
         }
       ]
     },
@@ -117051,12 +117234,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "9862a3f671cf68cc5a17af17a69f41e872df52c0",
-      "currentBranch": "codex/core-progression-20260917",
+      "revision": "238c9b8476c5351776f3e6e22073dbb0f8c639e9",
+      "currentBranch": "codex/core-ux-20260917",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 2856,
+      "currentArtifactCount": 2860,
       "provenance": [
         {
           "file": "README.md",
@@ -122742,13 +122925,13 @@
       "definitions": [
         {
           "file": "src/routes/projections.js",
-          "line": 51
+          "line": 55
         }
       ],
       "provenance": [
         {
           "file": "src/routes/projections.js",
-          "line": 51
+          "line": 55
         }
       ]
     },
@@ -122766,13 +122949,13 @@
       "definitions": [
         {
           "file": "src/routes/projections.js",
-          "line": 56
+          "line": 60
         }
       ],
       "provenance": [
         {
           "file": "src/routes/projections.js",
-          "line": 56
+          "line": 60
         }
       ]
     },
@@ -142610,13 +142793,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 7229
+          "line": 7233
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 7229
+          "line": 7233
         }
       ]
     },
@@ -142628,13 +142811,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 7211
+          "line": 7213
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 7211
+          "line": 7213
         }
       ]
     },
@@ -142664,13 +142847,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 7240
+          "line": 7244
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 7240
+          "line": 7244
         }
       ]
     },
@@ -142772,13 +142955,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 7258
+          "line": 7262
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 7258
+          "line": 7262
         }
       ]
     },
@@ -146299,6 +146482,21 @@
       ]
     },
     {
+      "key": "TestSuite:test/operation-read-paths.js",
+      "type": "TestSuite",
+      "id": "test/operation-read-paths.js",
+      "label": "test/operation-read-paths.js",
+      "lines": 134,
+      "version": "eb58f09b7e3c6b05",
+      "provenance": [
+        {
+          "file": "test/operation-read-paths.js",
+          "line": 1,
+          "version": "eb58f09b7e3c6b05"
+        }
+      ]
+    },
+    {
       "key": "TestSuite:test/operations.js",
       "type": "TestSuite",
       "id": "test/operations.js",
@@ -146723,13 +146921,13 @@
       "type": "TestSuite",
       "id": "test/projection-events.js",
       "label": "test/projection-events.js",
-      "lines": 149,
-      "version": "eaa403a734bd1223",
+      "lines": 180,
+      "version": "67af05e9dfc12bb5",
       "provenance": [
         {
           "file": "test/projection-events.js",
           "line": 1,
-          "version": "eaa403a734bd1223"
+          "version": "67af05e9dfc12bb5"
         }
       ]
     },
@@ -147713,13 +147911,43 @@
       "type": "TestSuite",
       "id": "test/world-projection-client.js",
       "label": "test/world-projection-client.js",
-      "lines": 140,
-      "version": "f243f47db6aa1112",
+      "lines": 315,
+      "version": "fb6adc12a61782e5",
       "provenance": [
         {
           "file": "test/world-projection-client.js",
           "line": 1,
-          "version": "f243f47db6aa1112"
+          "version": "fb6adc12a61782e5"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/world-projection-mysteries-api.js",
+      "type": "TestSuite",
+      "id": "test/world-projection-mysteries-api.js",
+      "label": "test/world-projection-mysteries-api.js",
+      "lines": 76,
+      "version": "af989519b76ef313",
+      "provenance": [
+        {
+          "file": "test/world-projection-mysteries-api.js",
+          "line": 1,
+          "version": "af989519b76ef313"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/world-projection-mysteries.js",
+      "type": "TestSuite",
+      "id": "test/world-projection-mysteries.js",
+      "label": "test/world-projection-mysteries.js",
+      "lines": 171,
+      "version": "b5ef22b031e420fc",
+      "provenance": [
+        {
+          "file": "test/world-projection-mysteries.js",
+          "line": 1,
+          "version": "b5ef22b031e420fc"
         }
       ]
     },
@@ -160807,6 +161035,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/operation-read-paths.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/operation-read-paths.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/operations.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -161657,6 +161894,24 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "test/world-projection-client.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/world-projection-mysteries-api.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/world-projection-mysteries-api.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/world-projection-mysteries.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
         "line": 1
       }
     },
@@ -164600,7 +164855,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/projections.js",
-        "line": 51
+        "line": 55
       }
     },
     {
@@ -164609,7 +164864,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/projections.js",
-        "line": 56
+        "line": 60
       }
     },
     {
@@ -183018,6 +183273,158 @@
       "to": "Artifact:test/pen.js",
       "provenance": {
         "commit": "238847cd25fe02ee88f8e65ebe33a156f7f92e5d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:238c9b8476c5351776f3e6e22073dbb0f8c639e9",
+      "to": "Artifact:docs/core-architecture/IMPLEMENTATION.md",
+      "provenance": {
+        "commit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:238c9b8476c5351776f3e6e22073dbb0f8c639e9",
+      "to": "Artifact:docs/core-architecture/review-phase5.md",
+      "provenance": {
+        "commit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:238c9b8476c5351776f3e6e22073dbb0f8c639e9",
+      "to": "Artifact:MARKETING-POSTS.md",
+      "provenance": {
+        "commit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:238c9b8476c5351776f3e6e22073dbb0f8c639e9",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:238c9b8476c5351776f3e6e22073dbb0f8c639e9",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:238c9b8476c5351776f3e6e22073dbb0f8c639e9",
+      "to": "Artifact:schema.sql",
+      "provenance": {
+        "commit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:238c9b8476c5351776f3e6e22073dbb0f8c639e9",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:238c9b8476c5351776f3e6e22073dbb0f8c639e9",
+      "to": "Artifact:src/coordination/operations.js",
+      "provenance": {
+        "commit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:238c9b8476c5351776f3e6e22073dbb0f8c639e9",
+      "to": "Artifact:src/mysteries.js",
+      "provenance": {
+        "commit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:238c9b8476c5351776f3e6e22073dbb0f8c639e9",
+      "to": "Artifact:src/projection-events.js",
+      "provenance": {
+        "commit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:238c9b8476c5351776f3e6e22073dbb0f8c639e9",
+      "to": "Artifact:src/routes/projections.js",
+      "provenance": {
+        "commit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:238c9b8476c5351776f3e6e22073dbb0f8c639e9",
+      "to": "Artifact:src/world-kernel-query.js",
+      "provenance": {
+        "commit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:238c9b8476c5351776f3e6e22073dbb0f8c639e9",
+      "to": "Artifact:src/world-projection.js",
+      "provenance": {
+        "commit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:238c9b8476c5351776f3e6e22073dbb0f8c639e9",
+      "to": "Artifact:test/operation-read-paths.js",
+      "provenance": {
+        "commit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:238c9b8476c5351776f3e6e22073dbb0f8c639e9",
+      "to": "Artifact:test/projection-events.js",
+      "provenance": {
+        "commit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:238c9b8476c5351776f3e6e22073dbb0f8c639e9",
+      "to": "Artifact:test/world-projection-client.js",
+      "provenance": {
+        "commit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:238c9b8476c5351776f3e6e22073dbb0f8c639e9",
+      "to": "Artifact:test/world-projection-mysteries-api.js",
+      "provenance": {
+        "commit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:238c9b8476c5351776f3e6e22073dbb0f8c639e9",
+      "to": "Artifact:test/world-projection-mysteries.js",
+      "provenance": {
+        "commit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:238c9b8476c5351776f3e6e22073dbb0f8c639e9",
+      "to": "Artifact:tools/world-projections-postgres.js",
+      "provenance": {
+        "commit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
       }
     },
     {
@@ -246510,6 +246917,78 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:c0331dd25850335421ac097e15c3907f6515cee5",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "c0331dd25850335421ac097e15c3907f6515cee5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c0331dd25850335421ac097e15c3907f6515cee5",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "c0331dd25850335421ac097e15c3907f6515cee5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c0331dd25850335421ac097e15c3907f6515cee5",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "c0331dd25850335421ac097e15c3907f6515cee5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c0331dd25850335421ac097e15c3907f6515cee5",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "c0331dd25850335421ac097e15c3907f6515cee5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c0331dd25850335421ac097e15c3907f6515cee5",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "c0331dd25850335421ac097e15c3907f6515cee5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c0331dd25850335421ac097e15c3907f6515cee5",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "c0331dd25850335421ac097e15c3907f6515cee5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c0331dd25850335421ac097e15c3907f6515cee5",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "c0331dd25850335421ac097e15c3907f6515cee5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c0331dd25850335421ac097e15c3907f6515cee5",
+      "to": "HistoricalArtifact:knowledge/generated/routes.md",
+      "provenance": {
+        "commit": "c0331dd25850335421ac097e15c3907f6515cee5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c0331dd25850335421ac097e15c3907f6515cee5",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "c0331dd25850335421ac097e15c3907f6515cee5"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:c04b380a663d103a21d23d9ee5073724b392c88f",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -277788,6 +278267,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:docs/core-architecture/review-phase5.md",
+      "provenance": {
+        "file": "docs/core-architecture/review-phase5.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:docs/diagrams/gameplay-01-choose-your-path.excalidraw",
       "provenance": {
         "file": "docs/diagrams/gameplay-01-choose-your-path.excalidraw",
@@ -281892,6 +282380,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/operation-read-paths.js",
+      "provenance": {
+        "file": "test/operation-read-paths.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/operations.js",
       "provenance": {
         "file": "test/operations.js",
@@ -282741,6 +283238,24 @@
       "to": "Artifact:test/world-projection-client.js",
       "provenance": {
         "file": "test/world-projection-client.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/world-projection-mysteries-api.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries-api.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/world-projection-mysteries.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
         "line": 1
       }
     },
@@ -298168,7 +298683,7 @@
       "to": "Artifact:src/routes/projections.js",
       "provenance": {
         "file": "src/routes/projections.js",
-        "line": 51
+        "line": 55
       }
     },
     {
@@ -298177,7 +298692,7 @@
       "to": "Artifact:src/routes/projections.js",
       "provenance": {
         "file": "src/routes/projections.js",
-        "line": 56
+        "line": 60
       }
     },
     {
@@ -306367,7 +306882,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 7229
+        "line": 7233
       }
     },
     {
@@ -306376,7 +306891,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 7211
+        "line": 7213
       }
     },
     {
@@ -306394,7 +306909,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 7240
+        "line": 7244
       }
     },
     {
@@ -306448,7 +306963,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 7258
+        "line": 7262
       }
     },
     {
@@ -306539,7 +307054,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 715
+      "weight": 734
     },
     {
       "type": "DEPENDS_ON",
@@ -306557,7 +307072,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:world-graph",
-      "weight": 104
+      "weight": 111
     },
     {
       "type": "DEPENDS_ON",
@@ -306749,7 +307264,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:platform-core",
       "to": "Domain:world-graph",
-      "weight": 27
+      "weight": 29
     },
     {
       "type": "DEPENDS_ON",
@@ -307834,6 +308349,15 @@
     {
       "type": "EXECUTES",
       "from": "Command:npm:pretest",
+      "to": "Artifact:test/operation-read-paths.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:pretest",
       "to": "Artifact:test/operations.js",
       "provenance": {
         "file": "package.json",
@@ -308141,6 +308665,24 @@
       "type": "EXECUTES",
       "from": "Command:npm:pretest",
       "to": "Artifact:test/world-projection-client.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:pretest",
+      "to": "Artifact:test/world-projection-mysteries-api.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:pretest",
+      "to": "Artifact:test/world-projection-mysteries.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -309886,6 +310428,15 @@
     {
       "type": "EXECUTES",
       "from": "Command:npm:test:world-projections",
+      "to": "Artifact:test/operation-read-paths.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:world-projections",
       "to": "Artifact:test/projection-events-ws.js",
       "provenance": {
         "file": "package.json",
@@ -309914,6 +310465,24 @@
       "type": "EXECUTES",
       "from": "Command:npm:test:world-projections",
       "to": "Artifact:test/world-projection-client.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:world-projections",
+      "to": "Artifact:test/world-projection-mysteries-api.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:world-projections",
+      "to": "Artifact:test/world-projection-mysteries.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -318548,6 +319117,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:238c9b8476c5351776f3e6e22073dbb0f8c639e9",
+      "provenance": {
+        "commit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:23b00b9c5f7ed44cbc0e231d55e634c5940b7b4f",
       "provenance": {
         "commit": "23b00b9c5f7ed44cbc0e231d55e634c5940b7b4f"
@@ -326207,6 +326784,14 @@
       "to": "Commit:c01be9ede06525d1f020d81343a94dcece18bff7",
       "provenance": {
         "commit": "c01be9ede06525d1f020d81343a94dcece18bff7"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:c0331dd25850335421ac097e15c3907f6515cee5",
+      "provenance": {
+        "commit": "c0331dd25850335421ac097e15c3907f6515cee5"
       }
     },
     {
@@ -335034,7 +335619,7 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:src/projection-events.js",
-      "to": "Artifact:src/content/world-kernel-pilot.js",
+      "to": "Artifact:src/content/core-progression.js",
       "provenance": {
         "file": "src/projection-events.js",
         "line": 4
@@ -340182,10 +340767,28 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:src/world-projection.js",
+      "to": "Artifact:src/mysteries.js",
+      "provenance": {
+        "file": "src/world-projection.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/world-projection.js",
       "to": "Artifact:src/world-knowledge.js",
       "provenance": {
         "file": "src/world-projection.js",
         "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/world-projection.js",
+      "to": "Artifact:src/worldgraph.js",
+      "provenance": {
+        "file": "src/world-projection.js",
+        "line": 8
       }
     },
     {
@@ -345689,6 +346292,96 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:test/operation-read-paths.js",
+      "to": "Artifact:src/content/coordination-operation-pilot.js",
+      "provenance": {
+        "file": "test/operation-read-paths.js",
+        "line": 14
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/operation-read-paths.js",
+      "to": "Artifact:src/content/world-kernel-pilot.js",
+      "provenance": {
+        "file": "test/operation-read-paths.js",
+        "line": 13
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/operation-read-paths.js",
+      "to": "Artifact:src/coordination/knowledge.js",
+      "provenance": {
+        "file": "test/operation-read-paths.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/operation-read-paths.js",
+      "to": "Artifact:src/coordination/operations.js",
+      "provenance": {
+        "file": "test/operation-read-paths.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/operation-read-paths.js",
+      "to": "Artifact:src/db.js",
+      "provenance": {
+        "file": "test/operation-read-paths.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/operation-read-paths.js",
+      "to": "Artifact:src/items.js",
+      "provenance": {
+        "file": "test/operation-read-paths.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/operation-read-paths.js",
+      "to": "Artifact:src/world-kernel-query.js",
+      "provenance": {
+        "file": "test/operation-read-paths.js",
+        "line": 12
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/operation-read-paths.js",
+      "to": "Artifact:src/world-kernel.js",
+      "provenance": {
+        "file": "test/operation-read-paths.js",
+        "line": 11
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/operation-read-paths.js",
+      "to": "ExternalDependency:pg-mem",
+      "provenance": {
+        "file": "test/operation-read-paths.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/operation-read-paths.js",
+      "to": "ExternalDependency:pg",
+      "provenance": {
+        "file": "test/operation-read-paths.js",
+        "line": 22
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:test/operations.js",
       "to": "Artifact:src/crew.js",
       "provenance": {
@@ -347112,6 +347805,15 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/projection-events.js",
+      "to": "Artifact:src/content/furnace-ledger.js",
+      "provenance": {
+        "file": "test/projection-events.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/projection-events.js",
       "to": "Artifact:src/projection-events.js",
       "provenance": {
         "file": "test/projection-events.js",
@@ -347142,7 +347844,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "test/projection-events.js",
-        "line": 15
+        "line": 16
       }
     },
     {
@@ -350077,6 +350779,177 @@
       "provenance": {
         "file": "test/world-projection-client.js",
         "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/world-projection-mysteries-api.js",
+      "to": "Artifact:src/content/furnace-ledger.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries-api.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/world-projection-mysteries-api.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries-api.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/world-projection-mysteries.js",
+      "to": "Artifact:src/content/coordination-operation-pilot.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
+        "line": 17
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/world-projection-mysteries.js",
+      "to": "Artifact:src/content/world-kernel-pilot.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
+        "line": 18
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/world-projection-mysteries.js",
+      "to": "Artifact:src/coordination/graph.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
+        "line": 15
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/world-projection-mysteries.js",
+      "to": "Artifact:src/coordination/knowledge.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
+        "line": 12
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/world-projection-mysteries.js",
+      "to": "Artifact:src/coordination/operations.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
+        "line": 14
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/world-projection-mysteries.js",
+      "to": "Artifact:src/coordination/pilot.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
+        "line": 16
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/world-projection-mysteries.js",
+      "to": "Artifact:src/coordination/runtime.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
+        "line": 13
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/world-projection-mysteries.js",
+      "to": "Artifact:src/crafting.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
+        "line": 11
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/world-projection-mysteries.js",
+      "to": "Artifact:src/db.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/world-projection-mysteries.js",
+      "to": "Artifact:src/items.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/world-projection-mysteries.js",
+      "to": "Artifact:src/mysteries.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
+        "line": 20
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/world-projection-mysteries.js",
+      "to": "Artifact:src/world-kernel-query.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/world-projection-mysteries.js",
+      "to": "Artifact:src/world-kernel.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/world-projection-mysteries.js",
+      "to": "Artifact:src/world-projection.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/world-projection-mysteries.js",
+      "to": "Artifact:src/worldgraph-validate.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
+        "line": 19
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/world-projection-mysteries.js",
+      "to": "ExternalDependency:pg-mem",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/world-projection-mysteries.js",
+      "to": "ExternalDependency:pg",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
+        "line": 28
       }
     },
     {
@@ -377046,6 +377919,15 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/core-architecture/IMPLEMENTATION.md",
+      "to": "Artifact:docs/core-architecture/review-phase5.md",
+      "provenance": {
+        "file": "docs/core-architecture/IMPLEMENTATION.md",
+        "line": 166
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/core-architecture/IMPLEMENTATION.md",
       "to": "Artifact:test/gates.js",
       "provenance": {
         "file": "docs/core-architecture/IMPLEMENTATION.md",
@@ -377212,6 +378094,15 @@
       "provenance": {
         "file": "docs/core-architecture/review-phase4.md",
         "line": 17
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/core-architecture/review-phase5.md",
+      "to": "Artifact:docs/core-architecture/review-phase4.md",
+      "provenance": {
+        "file": "docs/core-architecture/review-phase5.md",
+        "line": 7
       }
     },
     {
@@ -392120,6 +393011,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Document:docs/core-architecture/review-phase5.md",
+      "to": "Artifact:docs/core-architecture/review-phase5.md",
+      "provenance": {
+        "file": "docs/core-architecture/review-phase5.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Document:docs/GAMEPLAY-MARKETING-PACK.md",
       "to": "Artifact:docs/GAMEPLAY-MARKETING-PACK.md",
       "provenance": {
@@ -398339,6 +399239,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/operation-read-paths.js",
+      "to": "Artifact:test/operation-read-paths.js",
+      "provenance": {
+        "file": "test/operation-read-paths.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/operations.js",
       "to": "Artifact:test/operations.js",
       "provenance": {
@@ -399189,6 +400098,24 @@
       "to": "Artifact:test/world-projection-client.js",
       "provenance": {
         "file": "test/world-projection-client.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/world-projection-mysteries-api.js",
+      "to": "Artifact:test/world-projection-mysteries-api.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries-api.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/world-projection-mysteries.js",
+      "to": "Artifact:test/world-projection-mysteries.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
         "line": 1
       }
     },
@@ -404000,6 +404927,78 @@
     },
     {
       "type": "TESTS",
+      "from": "Artifact:test/operation-read-paths.js",
+      "to": "Artifact:src/content/coordination-operation-pilot.js",
+      "provenance": {
+        "file": "test/operation-read-paths.js",
+        "line": 14
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/operation-read-paths.js",
+      "to": "Artifact:src/content/world-kernel-pilot.js",
+      "provenance": {
+        "file": "test/operation-read-paths.js",
+        "line": 13
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/operation-read-paths.js",
+      "to": "Artifact:src/coordination/knowledge.js",
+      "provenance": {
+        "file": "test/operation-read-paths.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/operation-read-paths.js",
+      "to": "Artifact:src/coordination/operations.js",
+      "provenance": {
+        "file": "test/operation-read-paths.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/operation-read-paths.js",
+      "to": "Artifact:src/db.js",
+      "provenance": {
+        "file": "test/operation-read-paths.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/operation-read-paths.js",
+      "to": "Artifact:src/items.js",
+      "provenance": {
+        "file": "test/operation-read-paths.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/operation-read-paths.js",
+      "to": "Artifact:src/world-kernel-query.js",
+      "provenance": {
+        "file": "test/operation-read-paths.js",
+        "line": 12
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/operation-read-paths.js",
+      "to": "Artifact:src/world-kernel.js",
+      "provenance": {
+        "file": "test/operation-read-paths.js",
+        "line": 11
+      }
+    },
+    {
+      "type": "TESTS",
       "from": "Artifact:test/operations.js",
       "to": "Artifact:src/crew.js",
       "provenance": {
@@ -405211,6 +406210,15 @@
       "provenance": {
         "file": "test/projection-events-ws.js",
         "line": 7
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/projection-events.js",
+      "to": "Artifact:src/content/furnace-ledger.js",
+      "provenance": {
+        "file": "test/projection-events.js",
+        "line": 8
       }
     },
     {
@@ -407785,6 +408793,159 @@
       "provenance": {
         "file": "test/world-projection-api.js",
         "line": 4
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/world-projection-mysteries-api.js",
+      "to": "Artifact:src/content/furnace-ledger.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries-api.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/world-projection-mysteries-api.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries-api.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/world-projection-mysteries.js",
+      "to": "Artifact:src/content/coordination-operation-pilot.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
+        "line": 17
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/world-projection-mysteries.js",
+      "to": "Artifact:src/content/world-kernel-pilot.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
+        "line": 18
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/world-projection-mysteries.js",
+      "to": "Artifact:src/coordination/graph.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
+        "line": 15
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/world-projection-mysteries.js",
+      "to": "Artifact:src/coordination/knowledge.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
+        "line": 12
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/world-projection-mysteries.js",
+      "to": "Artifact:src/coordination/operations.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
+        "line": 14
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/world-projection-mysteries.js",
+      "to": "Artifact:src/coordination/pilot.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
+        "line": 16
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/world-projection-mysteries.js",
+      "to": "Artifact:src/coordination/runtime.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
+        "line": 13
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/world-projection-mysteries.js",
+      "to": "Artifact:src/crafting.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
+        "line": 11
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/world-projection-mysteries.js",
+      "to": "Artifact:src/db.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/world-projection-mysteries.js",
+      "to": "Artifact:src/items.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/world-projection-mysteries.js",
+      "to": "Artifact:src/mysteries.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
+        "line": 20
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/world-projection-mysteries.js",
+      "to": "Artifact:src/world-kernel-query.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/world-projection-mysteries.js",
+      "to": "Artifact:src/world-kernel.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/world-projection-mysteries.js",
+      "to": "Artifact:src/world-projection.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/world-projection-mysteries.js",
+      "to": "Artifact:src/worldgraph-validate.js",
+      "provenance": {
+        "file": "test/world-projection-mysteries.js",
+        "line": 19
       }
     },
     {
@@ -417000,7 +418161,7 @@
       "to": "Table:accounts",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 826
+        "line": 832
       }
     },
     {
@@ -417027,7 +418188,7 @@
       "to": "Table:idempotency",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 952
+        "line": 958
       }
     },
     {
@@ -417036,7 +418197,7 @@
       "to": "Table:item_instances",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 1088
+        "line": 1094
       }
     },
     {
@@ -417045,7 +418206,7 @@
       "to": "Table:item_stacks",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 1103
+        "line": 1109
       }
     },
     {
@@ -417054,7 +418215,7 @@
       "to": "Table:mystery_choices",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 967
+        "line": 973
       }
     },
     {
@@ -417063,7 +418224,7 @@
       "to": "Table:mystery_instances",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 874
+        "line": 880
       }
     },
     {
@@ -417072,7 +418233,7 @@
       "to": "Table:mystery_node_state",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 968
+        "line": 974
       }
     },
     {
@@ -417081,7 +418242,7 @@
       "to": "Table:operation_escrow",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 1321
+        "line": 1327
       }
     },
     {
@@ -418558,15 +419719,6 @@
       "provenance": {
         "file": "src/projection-events.js",
         "line": 75
-      }
-    },
-    {
-      "type": "USES_TABLE",
-      "from": "Artifact:src/projection-events.js",
-      "to": "Table:world_kernel_objects",
-      "provenance": {
-        "file": "src/projection-events.js",
-        "line": 4
       }
     },
     {
@@ -424542,7 +425694,7 @@
       "to": "Table:item_events",
       "provenance": {
         "file": "src/world-kernel-query.js",
-        "line": 298
+        "line": 309
       }
     },
     {
@@ -424551,7 +425703,7 @@
       "to": "Table:item_instances",
       "provenance": {
         "file": "src/world-kernel-query.js",
-        "line": 272
+        "line": 283
       }
     },
     {
@@ -424560,7 +425712,7 @@
       "to": "Table:item_stacks",
       "provenance": {
         "file": "src/world-kernel-query.js",
-        "line": 283
+        "line": 294
       }
     },
     {
@@ -424578,7 +425730,7 @@
       "to": "Table:secrets",
       "provenance": {
         "file": "src/world-kernel-query.js",
-        "line": 306
+        "line": 317
       }
     },
     {
@@ -424587,7 +425739,7 @@
       "to": "Table:world_operation_commitments",
       "provenance": {
         "file": "src/world-kernel-query.js",
-        "line": 261
+        "line": 270
       }
     },
     {
@@ -424596,7 +425748,7 @@
       "to": "Table:world_operation_roles",
       "provenance": {
         "file": "src/world-kernel-query.js",
-        "line": 258
+        "line": 261
       }
     },
     {
@@ -424605,7 +425757,7 @@
       "to": "Table:world_operations",
       "provenance": {
         "file": "src/world-kernel-query.js",
-        "line": 256
+        "line": 257
       }
     },
     {
@@ -424848,7 +426000,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/world-projection.js",
-        "line": 20
+        "line": 39
       }
     },
     {
@@ -424857,7 +426009,7 @@
       "to": "Table:crew_members",
       "provenance": {
         "file": "src/world-projection.js",
-        "line": 49
+        "line": 87
       }
     },
     {
@@ -424866,7 +426018,16 @@
       "to": "Table:gang_members",
       "provenance": {
         "file": "src/world-projection.js",
-        "line": 57
+        "line": 95
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/world-projection.js",
+      "to": "Table:mystery_instances",
+      "provenance": {
+        "file": "src/world-projection.js",
+        "line": 46
       }
     },
     {
