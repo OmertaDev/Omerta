@@ -14,8 +14,9 @@ function validate(world = false) {
   return async (req, reply) => {
     reply.header('cache-control', 'no-store');
     const query = req.query || {};
-    if (Object.keys(query).some((key) => !world || key !== 'operationId')
-      || (query.operationId !== undefined && !identifier(query.operationId))) invalid();
+    if (Object.keys(query).some((key) => !world || !['operationId', 'mysteryGraphId'].includes(key))
+      || (query.operationId !== undefined && !identifier(query.operationId))
+      || (query.mysteryGraphId !== undefined && !identifier(query.mysteryGraphId))) invalid();
   };
 }
 function safeError(error, _req, reply) {
@@ -24,7 +25,8 @@ function safeError(error, _req, reply) {
   if (isDbDown(error)) return reply.code(503).send({ error: 'db_down', message: 'The database is temporarily unavailable.' });
   if (error?.code === 'bad_projection_request' || error?.validation) return reply.code(400).send({ error: 'bad_projection_request', message: 'Invalid projection request.' });
   if (error?.code === 'no_character') return reply.code(404).send({ error: 'no_character', message: 'Create a character first.' });
-  if (['projection_unavailable', 'world_query_unavailable', 'world_unavailable', 'crafting_unavailable', 'coordination_operation_unavailable'].includes(error?.code))
+  if (['projection_unavailable', 'world_query_unavailable', 'world_unavailable', 'crafting_unavailable', 'coordination_operation_unavailable',
+    'mystery_not_started', 'mystery_owner_forbidden', 'mystery_definition_unpinned', 'graph_definition_drift', 'stale_graph_version'].includes(error?.code))
     return reply.code(404).send({ error: 'projection_unavailable', message: 'That view is unavailable.' });
   if (['contention', '40001', '40P01', '55P03'].includes(error?.code)) return reply.code(409).send({ error: 'contention', message: 'Refresh the view before trying again.' });
   return reply.code(500).send({ error: 'internal', message: 'The view could not be loaded.' });
@@ -44,7 +46,9 @@ export function register(app, { pool, auth, readPlayer }) {
   const familyOperations = createFamilyOperations({ pool, registry: content.registry, kernel,
     definitions: content.operations, prerequisitesEnabled: content.progression, ...policy,
     enabled: enabled && process.env.COORDINATION_ENGINE === 'on' && process.env.COORDINATION_OPERATIONS === 'on' });
-  const service = createWorldProjection({ pool, query, kernel, knowledge, familyOperations, crafting, recipeIds: content.recipeIds });
+  const service = createWorldProjection({ pool, query, kernel, knowledge, familyOperations, crafting, recipeIds: content.recipeIds,
+    mysteries: content.progression ? { registry: content.registry, graphIds: content.mysteryGraphIds,
+      knowledgeEnabled, sharingEnabled, accountIds, worldDefinitions: kernel.definitions } : null });
   const admit = async (req) => {
     if (!enabled || (cohort.size && !cohort.has(req.user.sub))) throw new GameError('projection_unavailable', 'That view is unavailable.');
   };
@@ -54,5 +58,6 @@ export function register(app, { pool, auth, readPlayer }) {
     return { schemaVersion: 1, asOf: Date.now(), player: result.character || result };
   });
   app.get('/v1/projections/world', { preHandler: [auth, admit], preValidation: validate(true), errorHandler: safeError }, (req) =>
-    service.snapshot(req.user.sub, req.query?.operationId === undefined ? {} : { operationId: req.query.operationId }));
+    service.snapshot(req.user.sub, { ...(req.query?.operationId === undefined ? {} : { operationId: req.query.operationId }),
+      ...(req.query?.mysteryGraphId === undefined ? {} : { mysteryGraphId: req.query.mysteryGraphId }) }));
 }

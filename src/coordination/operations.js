@@ -385,11 +385,24 @@ export function createFamilyOperations({ pool, registry, kernel, definitions = [
         const requirements = roleKnowledge(definition, role);
         if (requirements.length) groups.push({ accountId: seat.account_id, characterId: seat.character_id, requirements });
       }
-      const rows = (await client.query(`SELECT id,graph_id,status,revision,expires_at FROM world_operations
-        WHERE coordination_mode='family' AND (family_id=$2 OR opened_by_account_id=$1
-          OR id IN (SELECT operation_id FROM world_operation_roles WHERE account_id=$1)
-          OR id IN (SELECT operation_id FROM world_operation_commitments WHERE account_id=$1))
-        ORDER BY created_at DESC,id LIMIT 51`, [accountId, currentFamily ? currentFamilyId : null])).rows;
+      // Each authorization branch uses its own lookup index. LIMIT after a broad
+      // OR still scanned unrelated global history; branch limits preserve the
+      // same top 51 because every branch uses the final total ordering.
+      const rows = (await client.query(`SELECT id,graph_id,status,revision,expires_at FROM (
+        (SELECT id,graph_id,status,revision,expires_at,created_at FROM world_operations
+          WHERE coordination_mode='family' AND family_id=$2 ORDER BY created_at DESC,id LIMIT 51)
+        UNION
+        (SELECT id,graph_id,status,revision,expires_at,created_at FROM world_operations
+          WHERE coordination_mode='family' AND opened_by_account_id=$1 ORDER BY created_at DESC,id LIMIT 51)
+        UNION
+        (SELECT id,graph_id,status,revision,expires_at,created_at FROM world_operations
+          WHERE coordination_mode='family' AND id IN (SELECT operation_id FROM world_operation_roles WHERE account_id=$1)
+          ORDER BY created_at DESC,id LIMIT 51)
+        UNION
+        (SELECT id,graph_id,status,revision,expires_at,created_at FROM world_operations
+          WHERE coordination_mode='family' AND id IN (SELECT operation_id FROM world_operation_commitments WHERE account_id=$1)
+          ORDER BY created_at DESC,id LIMIT 51)
+        ) authorized ORDER BY created_at DESC,id LIMIT 51`, [accountId, currentFamily ? currentFamilyId : null])).rows;
       return { groups, render: async (snapshot) => {
         if (assertItemRead(client) !== readScope) fail('bad_coordination_operation_request');
         assertKnowledgeSnapshot(client, snapshot, accountId);

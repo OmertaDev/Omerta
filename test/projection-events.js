@@ -5,6 +5,7 @@ import { EventEmitter } from 'node:events';
 import Fastify from 'fastify';
 import { newDb } from 'pg-mem';
 import { registerProjectionEvents, createProjectionEvents } from '../src/projection-events.js';
+import { FURNACE_IDS } from '../src/content/furnace-ledger.js';
 
 const native = process.argv.includes('--postgres');
 let pool, cleanup;
@@ -144,5 +145,35 @@ try {
   assert.equal(bus.listenerCount('world:changed'), 1); assert.equal(bus.listenerCount('coordination:changed'), 1);
   await app.close(); assert.equal(bus.listenerCount('world:changed'), 0); assert.equal(bus.listenerCount('coordination:changed'), 0);
   reset(); bus.emit('world:changed', { objectId: 'secret-object', revision: 2 }); await events.settled(); hinted([]);
+  // Default gateway composition must track admitted content, rather than only
+  // the original pilot. A public Furnace consequence refreshes unrelated viewers;
+  // its sealed state and disabled content never reveal timing to those viewers.
+  const flags = ['CORE_PROGRESSION', 'WORLD_GRAPH_KERNEL', 'COORDINATION_ENGINE',
+    'COORDINATION_KNOWLEDGE', 'COORDINATION_KNOWLEDGE_SHARING', 'COORDINATION_OPERATIONS'];
+  const prior = Object.fromEntries(flags.map((flag) => [flag, process.env[flag]]));
+  const progressionBus = new EventEmitter();
+  let progressionEvents;
+  try {
+    for (const flag of flags) process.env[flag] = 'on';
+    await pool.query('INSERT INTO world_kernel_events VALUES($1,1,$2,$3,$4,$5)',
+      [FURNACE_IDS.object, 'owner', 'crew-secret', 'family-secret', 'sealed']);
+    progressionEvents = createProjectionEvents({ pool, bus: progressionBus, clients, enabled: true, accountIds });
+    progressionBus.emit('world:changed', { objectId: FURNACE_IDS.object, revision: 1 });
+    await progressionEvents.settled(); hinted(['owner']);
+    reset(); await pool.query('INSERT INTO world_kernel_events VALUES($1,2,$2,$3,$4,$5)',
+      [FURNACE_IDS.object, 'owner', 'crew-secret', 'family-secret', 'preserved']);
+    progressionBus.emit('world:changed', { objectId: FURNACE_IDS.object, revision: 2 });
+    await progressionEvents.settled(); hinted(['owner', 'reader', 'outsider']);
+    await progressionEvents.close();
+    process.env.CORE_PROGRESSION = 'off';
+    progressionEvents = createProjectionEvents({ pool, bus: progressionBus, clients, enabled: true, accountIds });
+    reset(); progressionBus.emit('world:changed', { objectId: FURNACE_IDS.object, revision: 2 });
+    await progressionEvents.settled(); hinted(['owner']);
+  } finally {
+    await progressionEvents?.close();
+    for (const [flag, value] of Object.entries(prior)) {
+      if (value === undefined) delete process.env[flag]; else process.env[flag] = value;
+    }
+  }
   console.log(`projection-events: private discovery, share/revoke, committed hints, cohort, current WS authority and cleanup pass (${native ? 'PostgreSQL' : 'pg-mem'})`);
 } finally { await app.close(); await cleanup(); }

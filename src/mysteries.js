@@ -28,7 +28,7 @@ import {
 import { levelOf } from './rules.js';
 import { isWorldGraphRegistry, nodeOf } from './worldgraph.js';
 import { rewardAssetDeclarations, validateGraph } from './worldgraph-validate.js';
-import { createCoordinationKnowledge, snapshotRequirementMatches, knowledgeProofMatches } from './coordination/knowledge.js';
+import { createCoordinationKnowledge, assertKnowledgeSnapshot, snapshotRequirementMatches, knowledgeProofMatches } from './coordination/knowledge.js';
 import { normalizeKnowledgeRequirement, knowledgeRequirementKey, normalizeWorldPrerequisite, worldPrerequisiteKey } from './world-knowledge.js';
 import { createWorldPrerequisites, prerequisiteMatches } from './world-prerequisites.js';
 import { canonicalBytes } from './content/canonical.js';
@@ -801,8 +801,7 @@ async function actorOf(client, context, owner, { lock = true } = {}) {
 // Resolve the complete predicate union before any prerequisite can lock inventory. Neither the
 // caller nor authored content can supply learned facts. Boards use the same authenticated sources
 // through the private read snapshot; mutations share the existing sorted claim/ACL mutex.
-async function resolveMysteryKnowledge(client, context, actor, nodes, { readOnly = false } = {}) {
-  if (!actor) return;
+function mysteryKnowledgePlan(context, nodes) {
   const requirements = new Map();
   const external = new Map();
   for (const node of nodes) for (const condition of node.conditions || []) {
@@ -814,15 +813,22 @@ async function resolveMysteryKnowledge(client, context, actor, nodes, { readOnly
   const predicates = [...external.values()].filter((predicate) => predicate.adapter === 'family_operation_outcome' ? operationOutcomesEnabled : prerequisitesEnabled);
   for (const requirement of prerequisites.knowledgeRequirements(predicates)) requirements.set(knowledgeRequirementKey(requirement), requirement);
   const values = [...requirements.values()], keys = [...requirements.keys()];
+  return { policy, prerequisites, predicates, values, keys };
+}
+
+async function resolveMysteryKnowledge(client, context, actor, nodes, { readOnly = false, knowledgeSnapshot = null } = {}) {
+  if (!actor) return;
+  const { policy, prerequisites, predicates, values, keys } = mysteryKnowledgePlan(context, nodes);
   let matches = [], proof = null;
-  if (requirements.size && policy.enabledFor(context.accountId) && readOnly) {
-    proof = await policy.readSnapshot(client, { viewer: { accountId: context.accountId },
+  if (values.length && policy.enabledFor(context.accountId) && readOnly) {
+    proof = knowledgeSnapshot || await policy.readSnapshot(client, { viewer: { accountId: context.accountId },
       groups: [{ accountId: context.accountId, characterId: actor.id, requirements: values }], limit: 1 });
+    assertKnowledgeSnapshot(client, proof, context.accountId);
     matches = values.map((requirement) => snapshotRequirementMatches(client, proof, {
       accountId: context.accountId, characterId: actor.id, requirement,
       sharingEnabled: policy.sharingEnabledFor(context.accountId),
     }));
-  } else if (requirements.size && policy.enabledFor(context.accountId)) {
+  } else if (values.length && policy.enabledFor(context.accountId)) {
     const account = (await client.query('SELECT status FROM accounts WHERE id=$1 FOR SHARE', [context.accountId])).rows[0];
     if (account?.status !== 'active') fail('knowledge_unavailable', 'Required knowledge is unavailable.');
     const token = await policy.context(client, { accountId: context.accountId, character: actor.knowledgeCharacter, lock: true });
@@ -1713,6 +1719,7 @@ function publicNode(node, row, blockers) {
     id: node.id,
     type: node.type,
     title: node.metadata?.title || node.id,
+    ...(typeof node.metadata?.description === 'string' ? { description: node.metadata.description } : {}),
     status,
     available: actionable && status !== 'excluded' && status !== 'failed'
       && status !== 'completed' && blockers.length === 0,
@@ -1746,10 +1753,21 @@ function publicBlocker(context, states, blocker) {
 
 /** Read a safe board. Hidden nodes require discovery; role-private nodes belong to Task 6. */
 export async function mysteryBoard(client, contextValue, ownerValue, graphIdValue) {
-  return withItemRead(client, (reader) => readMysteryBoard(reader, contextValue, ownerValue, graphIdValue));
+  return withItemRead(client, async (reader) => (await prepareMysteryBoard(reader, contextValue, ownerValue, graphIdValue)).render());
 }
 
-async function readMysteryBoard(client, contextValue, ownerValue, graphIdValue) {
+/** Plan all hidden and visible eligibility before the caller's single knowledge snapshot. */
+export async function planMysterySnapshot(client, contextValue, ownerValue, graphIdValue) {
+  const scope = assertItemRead(client), context = contextOf(contextValue);
+  const plan = await prepareMysteryBoard(client, context, ownerValue, graphIdValue);
+  return { groups: plan.groups, render: async (snapshot) => {
+    if (assertItemRead(client) !== scope) fail('mystery_read_required', 'The mystery snapshot expired.');
+    assertKnowledgeSnapshot(client, snapshot, context.accountId);
+    return plan.render(snapshot);
+  } };
+}
+
+async function prepareMysteryBoard(client, contextValue, ownerValue, graphIdValue) {
   const context = contextOf(contextValue);
   const owner = ownerOf(ownerValue);
   const graphId = canonical(graphIdValue, 'Mystery graph id');
@@ -1772,7 +1790,6 @@ async function readMysteryBoard(client, contextValue, ownerValue, graphIdValue) 
   try { actor = await actorOf(client, context, owner, { lock: !readOnly }); } catch (error) {
     if (error?.code !== 'no_character') throw error;
   }
-  const nodes = [];
   const affordances = MYSTERY_KNOWLEDGE.get(context).prerequisitesEnabled;
   const boardNodes = [...context.registry.nodes.values()].filter((node) => node.packageId === graphId
     && isMysteryStateNode(context.registry, node) && node.visibility !== 'role_private');
@@ -1789,11 +1806,17 @@ async function readMysteryBoard(client, contextValue, ownerValue, graphIdValue) 
     // Knowledge-aware boards require their own read boundary, or the shared projection read scope.
     fail('mystery_read_required', 'Read this mystery outside an item mutation.');
   }
-  await resolveMysteryKnowledge(client, context, actor, candidates, { readOnly });
+  const planned = mysteryKnowledgePlan(context, candidates);
+  const groups = actor && planned.policy.enabledFor(context.accountId) && planned.values.length
+    ? [{ accountId: context.accountId, characterId: actor.id, requirements: planned.values }] : [];
+  return { groups, render: async (knowledgeSnapshot = null) => {
+  const nodes = [];
+  const readActor = actor ? Object.freeze({ ...actor, knowledge: new Set(), prerequisites: new Set() }) : null;
+  await resolveMysteryKnowledge(client, context, readActor, candidates, { readOnly, knowledgeSnapshot });
   for (const node of visibleNodes) {
     const row = states.get(node.id);
     const blockers = await nodeBlockers({
-      client, context, owner, actor, instance, states, node, lock: false, knowledgeResolved: true,
+      client, context, owner, actor: readActor, instance, states, node, lock: false, knowledgeResolved: true,
     });
     nodes.push(publicNode(
       node, row, blockers.map((blocker) => publicBlocker(context, states, blocker)),
@@ -1809,7 +1832,7 @@ async function readMysteryBoard(client, contextValue, ownerValue, graphIdValue) 
     return choice.visibility === 'public' || !!state?.discovered_at || state?.state === 'completed';
   }).map((row) => ({ nodeId: row.node_id, choiceId: row.choice_id }));
   const actions = [];
-  if (affordances && actor && instance.status === 'active') {
+  if (affordances && readActor && instance.status === 'active') {
     const committed = new Set(choices.map((choice) => choice.nodeId));
     for (const node of candidates) {
       const row = states.get(node.id);
@@ -1817,7 +1840,7 @@ async function readMysteryBoard(client, contextValue, ownerValue, graphIdValue) 
       const interactions = (node.conditions || []).map((condition) => normalizeMysteryCondition(context.registry, node, condition,
         { timeWindows: context.timeWindows })).filter((condition) => condition.adapter === 'explicit_interaction');
       const interactionId = interactions[0]?.target ?? null;
-      const blockers = await nodeBlockers({ client, context, owner, actor, instance, states, node,
+      const blockers = await nodeBlockers({ client, context, owner, actor: readActor, instance, states, node,
         interactionId, lock: false, knowledgeResolved: true });
       if (blockers.length) continue;
       const action = { nodeId: node.id, ...(interactionId ? { interactionId } : {}) };
@@ -1837,6 +1860,7 @@ async function readMysteryBoard(client, contextValue, ownerValue, graphIdValue) 
     choices,
     ...(affordances ? { actions } : {}),
   };
+  } };
 }
 
 export const SUPPORTED_MYSTERY_CONDITION_ADAPTERS = Object.freeze([...CONDITION_ADAPTERS]);

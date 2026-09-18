@@ -253,13 +253,24 @@ async function neighborhood(client, accountId, limit, knowledge, registry, knowl
   // Family coordination retains the board's Family/opener/role/promise visibility.
   // Joining the recorded Crew grants access only to legacy Crew operations.
   const operations = (await client.query(
-    `SELECT id,status,graph_id,graph_version FROM world_operations
-      WHERE opened_by_account_id=$1
-        OR id IN (SELECT operation_id FROM world_operation_roles WHERE account_id=$1)
-        OR (coordination_mode='crew' AND crew_id=$2)
-        OR (coordination_mode='family' AND (family_id=$3
-          OR id IN (SELECT operation_id FROM world_operation_commitments WHERE account_id=$1)))
-      ORDER BY id LIMIT $4`, [accountId, membership?.crew_id ?? null,
+    `SELECT id,status,graph_id,graph_version FROM (
+      (SELECT id,status,graph_id,graph_version FROM world_operations
+        WHERE opened_by_account_id=$1 ORDER BY id LIMIT $4)
+      UNION
+      (SELECT id,status,graph_id,graph_version FROM world_operations
+        WHERE id IN (SELECT operation_id FROM world_operation_roles WHERE account_id=$1) ORDER BY id LIMIT $4)
+      UNION
+      (SELECT id,status,graph_id,graph_version FROM world_operations
+        WHERE coordination_mode='crew' AND crew_id=$2 ORDER BY id LIMIT $4)
+      UNION
+      (SELECT id,status,graph_id,graph_version FROM world_operations
+        WHERE coordination_mode='family' AND family_id=$3 ORDER BY id LIMIT $4)
+      UNION
+      (SELECT o.id,o.status,o.graph_id,o.graph_version FROM
+        (SELECT DISTINCT operation_id FROM world_operation_commitments WHERE account_id=$1) promises
+        JOIN world_operations o ON o.id=promises.operation_id
+        WHERE o.coordination_mode='family' ORDER BY o.id LIMIT $4)
+      ) authorized ORDER BY id LIMIT $4`, [accountId, membership?.crew_id ?? null,
       family ? familyMembership.gang_id : null, limit + 1],
   )).rows;
   truncated.operations = operations.length > limit;

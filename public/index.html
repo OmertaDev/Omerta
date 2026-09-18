@@ -4643,8 +4643,10 @@
         while (lane.pending && loop === lane.loop) {
           const ticket = lane.pending; lane.pending = null;
           const isCurrent = () => current(ticket) && lane.version === ticket.version && lane.loop === loop;
-          const path = kind === 'player' ? '/v1/projections/player'
-            : '/v1/projections/world' + (ticket.argument ? '?operationId=' + encodeURIComponent(ticket.argument) : '');
+          const selection = ticket.argument || {};
+          const query = ['operationId', 'mysteryGraphId'].filter((field) => selection[field])
+            .map((field) => field + '=' + encodeURIComponent(selection[field])).join('&');
+          const path = kind === 'player' ? '/v1/projections/player' : '/v1/projections/world' + (query ? '?' + query : '');
           let result;
           try { result = await request(path, { ...ticket, isCurrent }); }
           catch { result = { code: 503, body: { error: 'offline' } }; }
@@ -4658,12 +4660,14 @@
             if (!who || typeof who.id !== 'string' || typeof who.name !== 'string') {
               result = { code: 502, body: { error: 'projection_invalid' } };
             } else if (who.id !== characterId) {
+              if (characterId !== null) { lanes.world.argument = null; clear('character'); }
               characterId = who.id; epoch++;
               reset('world', true);
               if (lanes.world.interested) refresh('world', lanes.world.argument);
             }
           }
           if (kind === 'player' && result.code === 404) {
+            if (characterId !== null) { lanes.world.argument = null; clear('character'); }
             characterId = null; epoch++; reset('world', true); clear('player');
           }
           if (kind === 'world' && result.code < 400 && characterId
@@ -4679,7 +4683,7 @@
       } finally { if (loop === lane.loop) lane.running = false; }
     }
     return Object.freeze({ setSession, invalidate, snapshot, current,
-      player: () => refresh('player'), world: (operationId = null) => refresh('world', operationId) });
+      player: () => refresh('player'), world: (operationId = null, mysteryGraphId = null) => refresh('world', { operationId, mysteryGraphId }) });
   }
   // End projection refresh coordinator.
 
@@ -4742,7 +4746,8 @@
     // act() writes #resp with the ACTION's result instead, so the viewer shows what you actually did.
     return { code: r.status, body: j };
   }
-  let worldProjection = null, worldSelection = null, worldBusy = false, worldRetry = null;
+  let worldProjection = null, worldSelection = null, worldMysterySelection = null, worldBusy = false, worldRetry = null;
+  let worldChoiceConfirmation = null;
   let worldStoredRetry = null;
   try { worldStoredRetry = JSON.parse(sessionStorage.getItem('omerta_world_pending') || 'null'); } catch { /* storage unavailable */ }
   let worldStatus = 'Open the World board to see your current operation.';
@@ -4751,6 +4756,7 @@
       ? api('GET', '/v1/projections/player', undefined, { isCurrent: ticket.isCurrent })
       : api('GET', '/v1/projections/world' + path.slice('/v1/projections/world'.length), undefined, { isCurrent: ticket.isCurrent }),
     clear: (kind) => {
+      worldChoiceConfirmation?.();
       worldProjection = null;
       worldStatus = 'Refreshing your world…';
       if (kind === 'session') {
@@ -4760,7 +4766,11 @@
         }
         _authQueue = Promise.resolve(); me = null; session = null;
         if (ws) { const previousSocket = ws; ws = null; previousSocket.close(); }
-        worldSelection = null; worldRetry = null; worldBusy = false;
+        worldSelection = null; worldMysterySelection = null; worldRetry = null; worldBusy = false;
+      }
+      if (kind === 'character') {
+        worldSelection = null; worldMysterySelection = null; worldRetry = null; worldBusy = false; worldStoredRetry = null;
+        try { sessionStorage.removeItem('omerta_world_pending'); } catch { /* storage unavailable */ }
       }
       if (kind === 'player') me = null;
       paintWorld();
@@ -4787,7 +4797,8 @@
         return;
       }
       worldProjection = result.code < 400 ? result.body : null;
-      worldStatus = result.code < 400 ? '' : result.code === 404 || result.code === 403
+      worldStatus = result.code < 400 ? '' : result.code === 404 && (worldSelection || worldMysterySelection)
+        ? 'This selection is no longer available. Return to the World overview.' : result.code === 404 || result.code === 403
         ? 'The World board is unavailable for this session.'
         : result.code === 409 ? 'Your character changed. Refreshing your current street…'
         : 'The city could not refresh this board. Try again.';
@@ -4802,11 +4813,32 @@
 
   async function renderWorld() {
     paintWorld();
-    if (token && me) await projections.world(worldSelection);
+    if (token && me) await projections.world(worldSelection, worldMysterySelection);
+  }
+  function confirmWorldChoice(move) {
+    return new Promise((resolve) => {
+      const { bg, close } = dialog(`<h2>Commit to this choice?</h2><p>${esc(move.label)}</p>
+        <p class="dim">This choice is permanent for this case. Other branches may close.</p>
+        <div class="world-actions"><button class="act" data-world-choice-back>Keep investigating</button>
+          <button class="act danger" data-world-choice-confirm>Commit choice</button></div>`);
+      let finished = false;
+      const finish = (confirmed) => {
+        if (finished) return; finished = true; worldChoiceConfirmation = null; close(); resolve(confirmed);
+      };
+      worldChoiceConfirmation = () => finish(false);
+      bg.querySelector('[data-world-choice-back]').onclick = () => finish(false);
+      bg.querySelector('[data-world-choice-confirm]').onclick = () => finish(true);
+      bg.onclick = (event) => { if (event.target === bg) finish(false); };
+    });
   }
   async function worldMutation(move, retry = false) {
-    if (worldBusy || !token || !me || (worldRetry && !retry)) return;
+    if (worldBusy || worldChoiceConfirmation || !token || !me || (worldRetry && !retry)) return;
     const stamp = projections.snapshot();
+    const actorId = me.id, sourceBoard = worldProjection;
+    if (!retry && move?.irreversible) {
+      if (!await confirmWorldChoice(move)) return;
+      if (!projections.current(stamp) || me?.id !== actorId || worldProjection !== sourceBoard) return;
+    }
     const pending = retry ? worldRetry : { ...move, characterId: me.id, idempotencyKey: uuid() };
     if (!pending || pending.characterId !== me.id) return;
     worldBusy = true; worldRetry = pending;
@@ -4814,7 +4846,7 @@
     paintWorld();
     const options = { idempotencyKey: pending.idempotencyKey,
       isCurrent: () => projections.current(stamp) && me?.id === pending.characterId };
-    const parts = pending.path.split('/');
+    const parts = String(pending.path || '').split('/');
     let result;
     // Keep the supported command surface explicit, including restored retries.
     if (parts.length === 7 && parts[2] === 'worldgraph' && parts[3] === 'objects' && parts[5] === 'actions')
@@ -4825,6 +4857,14 @@
       result = await api('POST', '/v1/coordination/operations', pending.body || {}, options);
     else if (parts.length === 7 && parts[2] === 'coordination' && parts[3] === 'operations' && parts[5] === 'actions')
       result = await api('POST', `/v1/coordination/operations/${parts[4]}/actions/${parts[6]}`, pending.body || {}, options);
+    else if (parts.length === 6 && parts[2] === 'worldgraph' && parts[3] === 'mysteries' && parts[5] === 'start')
+      result = await api('POST', `/v1/worldgraph/mysteries/${parts[4]}/start`, pending.body || {}, options);
+    else if (parts.length === 8 && parts[2] === 'worldgraph' && parts[3] === 'mysteries' && parts[5] === 'nodes' && parts[7] === 'discover')
+      result = await api('POST', `/v1/worldgraph/mysteries/${parts[4]}/nodes/${parts[6]}/discover`, pending.body || {}, options);
+    else if (parts.length === 8 && parts[2] === 'worldgraph' && parts[3] === 'mysteries' && parts[5] === 'nodes' && parts[7] === 'complete')
+      result = await api('POST', `/v1/worldgraph/mysteries/${parts[4]}/nodes/${parts[6]}/complete`, pending.body || {}, options);
+    else if (parts.length === 7 && parts[2] === 'worldgraph' && parts[3] === 'mysteries' && parts[5] === 'choices')
+      result = await api('POST', `/v1/worldgraph/mysteries/${parts[4]}/choices/${parts[6]}`, pending.body || {}, options);
     else result = { code: 400, body: { message: 'This saved move is no longer supported.' } };
     if (!projections.current(stamp)) return;
     worldBusy = false;
@@ -4835,11 +4875,12 @@
     }
     if (result.code < 400) {
       if (result.body?.operationId) worldSelection = result.body.operationId;
+      if (pending.mysteryGraphId) worldMysterySelection = pending.mysteryGraphId;
       toast(pending.label + ' — confirmed.');
     } else toast(uncertain ? 'The outcome is not confirmed. Retry this move with its saved request key.'
       : result.body?.message || 'The move could not complete. Refresh the board and review its requirements.', true);
     await refresh();
-    if (projections.current(stamp)) await projections.world(worldSelection);
+    if (projections.current(stamp)) await projections.world(worldSelection, worldMysterySelection);
   }
   function paintWorld() {
     const target = $('#tab-world');
@@ -4848,7 +4889,7 @@
     const moves = [];
     const name = (value) => String(value ?? '').replace(/^[a-z]+:/, '').replaceAll('_', ' ');
     const time = (value) => { const date = new Date(value); return Number.isFinite(date.getTime()) ? date.toLocaleString() : ''; };
-    const reasons = (missing) => (missing || []).map((value) => name(typeof value === 'string' ? value : value.code)).join(', ');
+    const reasons = (missing) => (missing || []).map((value) => name(typeof value === 'string' ? value : value.code || value.adapter)).join(', ');
     const button = (label, move, available = true, missing = []) => {
       const index = moves.push(move) - 1;
       return `<button class="act" data-world-move="${index}" ${!available || worldBusy || worldRetry ? 'disabled' : ''}>${esc(label)}</button>`
@@ -4861,6 +4902,25 @@
         + '/actions/' + encodeURIComponent(action.action), body: action.input || {},
     }, action.canAttempt === true, action.missing || []);
     const selected = board?.operations?.selected;
+    const selectedCase = board?.cases?.selected;
+    const caseCatalog = board?.cases?.catalog || [];
+    const caseTitle = (graphId) => caseCatalog.find((entry) => entry.graphId === graphId)?.title || 'Case';
+    const caseAction = (action) => {
+      if (!selectedCase?.graph?.id || !['discover', 'complete', 'choice'].includes(action.kind) || typeof action.nodeId !== 'string') return '';
+      const graphId = selectedCase.graph.id, node = selectedCase.nodes?.find((entry) => entry.id === action.nodeId);
+      const option = node?.options?.find((entry) => entry.id === action.optionId);
+      if (action.kind === 'choice' && typeof action.optionId !== 'string') return '';
+      const label = action.kind === 'discover' ? 'Investigate lead' : action.kind === 'choice'
+        ? 'Choose: ' + (option?.title || name(action.optionId)) : 'Complete: ' + (node?.title || 'case step');
+      return button(label, { label, mysteryGraphId: graphId,
+        path: '/v1/worldgraph/mysteries/' + encodeURIComponent(graphId)
+          + (action.kind === 'choice' ? '/choices/' + encodeURIComponent(action.nodeId)
+            : '/nodes/' + encodeURIComponent(action.nodeId) + '/' + action.kind),
+        body: { ...(action.kind === 'choice' ? { optionId: action.optionId } : {}),
+          ...(typeof action.interactionId === 'string' ? { interactionId: action.interactionId } : {}) },
+        ...(action.kind === 'choice' ? { irreversible: true } : {}),
+      });
+    };
     const readinessLabels = { rolesFilled: 'Roles filled', participantsEligible: 'Participants eligible', promisesMet: 'Promises made',
       contributionsMet: 'Contributions delivered', requirementsMet: 'Requirements met', worldReady: 'World ready', approved: 'Approved', ready: 'Ready to execute' };
     const limited = (value) => value === true || (value && typeof value === 'object' && Object.values(value).some(limited));
@@ -4870,13 +4930,38 @@
         <button class="act" id="world-refresh" ${worldBusy ? 'disabled' : ''}>Refresh world</button></header>
       ${worldRetry ? `<div class="world-notice" role="status"><b>A move needs confirmation</b><p>${esc(worldRetry.label)}. Retry uses the same request key.</p>
         <button class="act" id="world-retry" ${worldBusy ? 'disabled' : ''}>${worldBusy ? 'Checking…' : 'Retry saved move'}</button></div>` : ''}
-      ${!board ? `<div class="world-card" role="status"><p>${esc(worldStatus)}</p></div>` : `
+      ${!board ? `<div class="world-card" role="status"><p>${esc(worldStatus)}</p>
+        ${worldSelection || worldMysterySelection ? '<button class="act" id="world-overview">Back to World overview</button>' : ''}</div>` : `
       <div class="world-summary"><span>${esc(board.player?.character?.name || me?.name || '')} · ${esc(name(board.player?.character?.locationId))}</span>
         <span>Crew: ${esc(board.crew?.name || 'None')}</span><span>Family: ${esc(board.family?.name || 'None')}</span>
         <small class="dim">Updated ${esc(time(board.asOf))}</small></div>
       ${limited(board.truncated) || limited(board.inventory?.truncated) || board.knowledge?.truncated || board.operations?.truncated
         ? '<p class="dim">This is a limited view of your available records.</p>' : ''}
-      <div class="world-columns"><section class="world-card"><h3>Places you can change</h3>
+      <div class="world-columns">${board.cases ? `<section class="world-card" aria-labelledby="world-cases-title"><h3 id="world-cases-title">Cases</h3>
+        <p class="dim">Follow the evidence. Only leads currently available to you appear here.</p>
+        ${list(caseCatalog, (entry, index) => `<article class="world-entry" data-world-mystery="${esc(entry.graphId)}"><h4>${esc(entry.title)}</h4>
+          <p class="dim">${entry.started ? esc(name(entry.status)) : 'Not started'}</p>
+          ${entry.started ? `<button class="act" data-world-case="${index}" aria-pressed="${entry.graphId === worldMysterySelection}" ${worldBusy ? 'disabled' : ''}>
+            ${entry.graphId === worldMysterySelection ? 'Selected case' : 'Open case'}</button>`
+            : button('Start case', { label: 'Start ' + entry.title, mysteryGraphId: entry.graphId,
+              path: '/v1/worldgraph/mysteries/' + encodeURIComponent(entry.graphId) + '/start', body: {} }, entry.canStart === true)}
+        </article>`, 'No cases are available to this character yet.')}
+        ${selectedCase ? `<article class="world-entry" data-world-selected-case="${esc(selectedCase.graph.id)}"><h3>${esc(caseTitle(selectedCase.graph.id))}</h3>
+          <p role="status">Case ${esc(name(selectedCase.status))}</p>
+          ${list(selectedCase.nodes, (node) => `<div class="world-entry"><h4>${esc(node.title || 'Case note')}</h4>
+            ${node.description ? `<p>${esc(node.description)}</p>` : ''}<small class="dim">${esc(name(node.status))}
+            ${!['completed', 'excluded', 'failed'].includes(node.status) && node.blockedBy?.length ? ' · Requires: ' + esc(reasons(node.blockedBy)) : ''}</small></div>`, 'No notes have been revealed in this case.')}
+          ${selectedCase.choices?.length ? `<h4>Choices made</h4>${selectedCase.choices.map((choice) => {
+            const node = selectedCase.nodes?.find((entry) => entry.id === choice.nodeId);
+            const option = node?.options?.find((entry) => entry.id === choice.choiceId);
+            return `<p>${esc(node?.title || 'Case choice')} · ${esc(option?.title || name(choice.choiceId))}</p>`;
+          }).join('')}` : ''}
+          <div class="world-actions">${(selectedCase.actions || []).map(caseAction).join('')}</div>
+          ${!selectedCase.actions?.length ? `<p class="dim" role="status">${selectedCase.status === 'active'
+            ? 'No leads are ready. Review your evidence, location and shared knowledge, then refresh.' : 'This case is closed. Your revealed notes and choices remain here.'}</p>` : ''}
+        </article>` : `<p class="dim" role="status">${worldMysterySelection && caseCatalog.some((entry) => entry.graphId === worldMysterySelection && !entry.started)
+          ? 'Start this case to open its notes.' : caseCatalog.length ? 'Choose a case to review its notes.' : 'Explore the city to find a lead.'}</p>`}</section>` : ''}
+      <section class="world-card"><h3>Places you can change</h3>
         ${list(board.worldObjects, (object) => `<article class="world-entry"><h4>${esc(object.title)}</h4>
           <p>${esc(name(object.locationId))} · <b>${esc(name(object.state))}</b></p>
           ${(object.actions || []).map((action) => button(name(action.actionId), { label: name(action.actionId),
@@ -4916,12 +5001,20 @@
         <h3>Recent activity</h3>${list(board.activity, (event) => `<p>${esc(name(event.kind))}<small class="dim"> ${esc(time(event.occurredAt))}</small></p>`, 'No recent visible activity.')}
         ${board.territories?.length ? `<h3>Territories</h3><p class="dim">${esc(board.territories.map((territory) => territory.name || name(territory.id)).join(' · '))}</p>` : ''}</section></div>`}
       </div>`;
-    target.querySelector('#world-refresh')?.addEventListener('click', () => projections.world(worldSelection));
+    target.querySelector('#world-refresh')?.addEventListener('click', () => projections.world(worldSelection, worldMysterySelection));
+    target.querySelector('#world-overview')?.addEventListener('click', () => {
+      worldSelection = null; worldMysterySelection = null;
+      projections.world(worldSelection, worldMysterySelection);
+    });
     target.querySelector('#world-retry')?.addEventListener('click', () => worldMutation(worldRetry, true));
     target.querySelectorAll('[data-world-move]').forEach((node) => node.addEventListener('click', () => worldMutation(moves[Number(node.dataset.worldMove)])));
     target.querySelectorAll('[data-world-instance]').forEach((node) => node.addEventListener('click', () => {
       worldSelection = board.operations.instances[Number(node.dataset.worldInstance)].id;
-      projections.world(worldSelection);
+      projections.world(worldSelection, worldMysterySelection);
+    }));
+    target.querySelectorAll('[data-world-case]').forEach((node) => node.addEventListener('click', () => {
+      worldMysterySelection = caseCatalog[Number(node.dataset.worldCase)].graphId;
+      projections.world(worldSelection, worldMysterySelection);
     }));
   }
   // A toast can carry the WAY OUT. Tester feedback (2026-08-11): a refusal that names a place you
@@ -13182,13 +13275,13 @@
       // access/proxy logs + browser history, and this is the same full bearer token (→ account takeover).
       const socket = new WebSocket(`${proto}://${location.host}/v1/ws`, ['bearer', token]);
       ws = socket;
-      socket.onopen = () => { if (ws !== socket || token !== socketToken) return; wsRetries = 0; const d = $('#ws-dot'); d.style.color = 'var(--ok)'; d.classList.add('live'); pollOnline(); projections.world(worldSelection); };
+      socket.onopen = () => { if (ws !== socket || token !== socketToken) return; wsRetries = 0; const d = $('#ws-dot'); d.style.color = 'var(--ok)'; d.classList.add('live'); pollOnline(); projections.world(worldSelection, worldMysterySelection); };
       socket.onmessage = (m) => {
         try {
           if (ws !== socket || token !== socketToken || projections.snapshot().token !== token) return;
           const ev = JSON.parse(m.data);
           if (ev.channel === 'projection') {
-            if (ev.changed === true) projections.world(worldSelection);
+            if (ev.changed === true) projections.world(worldSelection, worldMysterySelection);
             return;
           }
           feedLine(ev.channel || '?', ev);

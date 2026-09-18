@@ -1,7 +1,7 @@
 // Refresh hints carry no domain identifiers or state. Every client must re-read its
 // authorized projection. Existing Crew bus events are intentionally not hint sources:
 // those legacy producers can emit before their transaction commits.
-import { WORLD_KERNEL_OBJECTS } from './content/world-kernel-pilot.js';
+import { coreProgressionContent } from './content/core-progression.js';
 
 const HINT = JSON.stringify({ channel: 'projection', changed: true });
 const mutations = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
@@ -14,7 +14,7 @@ const membershipMutations = new Set([
 ]);
 
 export function createProjectionEvents({ pool, bus, clients, enabled = false, accountIds = [],
-  sendable = (socket) => socket.readyState === 1, objects = WORLD_KERNEL_OBJECTS }) {
+  sendable = (socket) => socket.readyState === 1, objects = coreProgressionContent().objects }) {
   const cohort = new Set(accountIds), tasks = new Set();
   let closed = false;
   const allowed = (accountId) => enabled && (!cohort.size || cohort.has(accountId));

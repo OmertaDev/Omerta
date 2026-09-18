@@ -5,7 +5,7 @@ assert(process.env.WORLD_KERNEL_TEST_DATABASE_URL, 'Explicit WORLD_KERNEL_TEST_D
 const endpoint = new URL(process.env.WORLD_KERNEL_TEST_DATABASE_URL);
 assert(['postgres:', 'postgresql:'].includes(endpoint.protocol)
   && ['127.0.0.1', 'localhost', '[::1]'].includes(endpoint.hostname), 'Only isolated loopback PostgreSQL is allowed');
-const tests = ['test/world-projection-read.js', 'test/world-projection.js', 'test/projection-events.js'];
+const tests = ['test/world-projection-read.js', 'test/world-projection.js', 'test/projection-events.js', 'test/world-projection-mysteries.js', 'test/operation-read-paths.js'];
 assert.deepEqual(process.argv.slice(2), tests, 'Pass every supported native projection test in order');
 const env = { ...process.env, DATABASE_URL: '', WORLD_KERNEL_TEST_DATABASE_URL: endpoint.toString(), COORDINATION_TEST_DATABASE_URL: endpoint.toString() };
 for (const test of tests) {

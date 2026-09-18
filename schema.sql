@@ -7207,6 +7207,8 @@ ALTER TABLE world_operations ADD CONSTRAINT world_operation_coordination_pin CHE
 );
 CREATE INDEX IF NOT EXISTS ix_world_operations_family
   ON world_operations (family_id,coordination_mode,status,created_at);
+CREATE INDEX IF NOT EXISTS ix_world_operations_opener
+  ON world_operations (opened_by_account_id,id);
 ALTER TABLE world_kernel_events ADD COLUMN IF NOT EXISTS operation_id TEXT REFERENCES world_operations(id);
 
 CREATE TABLE IF NOT EXISTS world_operation_commitments (
@@ -7226,6 +7228,8 @@ CREATE TABLE IF NOT EXISTS world_operation_commitments (
 ALTER TABLE world_operation_commitments DROP CONSTRAINT IF EXISTS world_operation_commitments_kind_check;
 ALTER TABLE world_operation_commitments ADD CONSTRAINT world_operation_commitments_kind_check
   CHECK (kind IN ('participation','item','resource','capital','information','capability','prerequisite'));
+CREATE INDEX IF NOT EXISTS ix_world_operation_commitments_account
+  ON world_operation_commitments (account_id,operation_id);
 CREATE TABLE IF NOT EXISTS world_operation_capital (
   operation_id TEXT NOT NULL REFERENCES world_operations(id),
   role_id TEXT NOT NULL,
