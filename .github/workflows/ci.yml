@@ -90,6 +90,9 @@ jobs:
       - name: Invite-only launch admission and Crew allowance
         run: npm run test:invites
 
+      - name: RC1 telemetry isolation and complementary campaign regressions
+        run: npm run test:rc1
+
       - name: economy sim (§10.4 drift-0)
         run: npm run sim
 
@@ -242,6 +245,12 @@ jobs:
         env:
           COORDINATION_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check
         run: npm run test:player-commands:postgres
+
+      - name: RC1 telemetry cannot delay commands or establish permission (real PostgreSQL)
+        if: '!cancelled()'
+        env:
+          COORDINATION_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check
+        run: npm run test:rc1:telemetry:postgres
 
       - name: Living World Director, three campaign branches and adversarial concurrency (real PostgreSQL)
         env:

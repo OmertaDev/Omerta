@@ -1,0 +1,17 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+FAIL 320px: AssertionError [ERR_ASSERTION]: No reachable enabled UI control for Strip a wreck for materials
+    at executeVisible (file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-mobile-journeys.js:88:7)
+    at async file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-mobile-journeys.js:218:7
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+node:internal/process/promises:394
+    triggerUncaughtException(err, true /* fromPromise */);
+    ^
+
+page.waitForResponse: Timeout 30000ms exceeded while waiting for event "response"
+    at executeVisible (C:\Users\Jorge\Documents\Omerta-rc1\tools\rc1-mobile-journeys.js:89:36)
+    at async file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-mobile-journeys.js:218:7 {
+  log: [],
+  name: 'TimeoutError'
+}
+
+Node.js v24.19.0

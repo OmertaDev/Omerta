@@ -1,0 +1,588 @@
+recovery	Set up job	﻿2026-09-18T23:38:55.7374142Z Current runner version: '2.337.0'
+recovery	Set up job	2026-09-18T23:38:55.7411632Z ##[group]Runner Image Provisioner
+recovery	Set up job	2026-09-18T23:38:55.7413058Z Hosted Compute Agent
+recovery	Set up job	2026-09-18T23:38:55.7414679Z Version: 20260828.587
+recovery	Set up job	2026-09-18T23:38:55.7415844Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
+recovery	Set up job	2026-09-18T23:38:55.7417188Z Build Date: 2026-08-28T16:44:25Z
+recovery	Set up job	2026-09-18T23:38:55.7418869Z Worker ID: {01f8abfa-188f-49f8-87fd-8063b85a7332}
+recovery	Set up job	2026-09-18T23:38:55.7420184Z Azure Region: eastus
+recovery	Set up job	2026-09-18T23:38:55.7421409Z ##[endgroup]
+recovery	Set up job	2026-09-18T23:38:55.7424406Z ##[group]Operating System
+recovery	Set up job	2026-09-18T23:38:55.7425452Z Ubuntu
+recovery	Set up job	2026-09-18T23:38:55.7426400Z 24.04.5
+recovery	Set up job	2026-09-18T23:38:55.7427293Z LTS
+recovery	Set up job	2026-09-18T23:38:55.7428650Z ##[endgroup]
+recovery	Set up job	2026-09-18T23:38:55.7429722Z ##[group]Runner Image
+recovery	Set up job	2026-09-18T23:38:55.7430899Z Image: ubuntu-24.04
+recovery	Set up job	2026-09-18T23:38:55.7431954Z Version: 20260907.300.1
+recovery	Set up job	2026-09-18T23:38:55.7433988Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260907.300/images/ubuntu/Ubuntu2404-Readme.md
+recovery	Set up job	2026-09-18T23:38:55.7437359Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260907.300
+recovery	Set up job	2026-09-18T23:38:55.7439639Z ##[endgroup]
+recovery	Set up job	2026-09-18T23:38:55.7441816Z ##[group]GITHUB_TOKEN Permissions
+recovery	Set up job	2026-09-18T23:38:55.7445062Z Contents: read
+recovery	Set up job	2026-09-18T23:38:55.7446092Z Metadata: read
+recovery	Set up job	2026-09-18T23:38:55.7447258Z Packages: read
+recovery	Set up job	2026-09-18T23:38:55.7448561Z ##[endgroup]
+recovery	Set up job	2026-09-18T23:38:55.7451727Z Secret source: Actions
+recovery	Set up job	2026-09-18T23:38:55.7453387Z Cache mode: write
+recovery	Set up job	2026-09-18T23:38:55.7455020Z Prepare workflow directory
+recovery	Set up job	2026-09-18T23:38:55.8110777Z Prepare all required actions
+recovery	Set up job	2026-09-18T23:38:55.8183106Z Getting action download info
+recovery	Set up job	2026-09-18T23:38:55.9699989Z Download action repository 'actions/checkout@v7' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+recovery	Set up job	2026-09-18T23:38:56.0915551Z Download action repository 'actions/setup-node@v6' (SHA:249970729cb0ef3589644e2896645e5dc5ba9c38)
+recovery	Set up job	2026-09-18T23:38:56.2915268Z Complete job name: recovery
+recovery	Initialize containers	﻿2026-09-18T23:38:56.3428519Z ##[group]Checking docker version
+recovery	Initialize containers	2026-09-18T23:38:56.3441659Z ##[command]/usr/bin/docker version --format '{{.Server.APIVersion}}'
+recovery	Initialize containers	2026-09-18T23:38:56.4447337Z '1.48'
+recovery	Initialize containers	2026-09-18T23:38:56.4461409Z Docker daemon API version: '1.48'
+recovery	Initialize containers	2026-09-18T23:38:56.4462348Z ##[command]/usr/bin/docker version --format '{{.Client.APIVersion}}'
+recovery	Initialize containers	2026-09-18T23:38:56.4623799Z '1.48'
+recovery	Initialize containers	2026-09-18T23:38:56.4636317Z Docker client API version: '1.48'
+recovery	Initialize containers	2026-09-18T23:38:56.4641020Z ##[endgroup]
+recovery	Initialize containers	2026-09-18T23:38:56.4643835Z ##[group]Clean up resources from previous jobs
+recovery	Initialize containers	2026-09-18T23:38:56.4649348Z ##[command]/usr/bin/docker ps --all --quiet --no-trunc --filter "label=285b09"
+recovery	Initialize containers	2026-09-18T23:38:56.4794614Z ##[command]/usr/bin/docker network prune --force --filter "label=285b09"
+recovery	Initialize containers	2026-09-18T23:38:56.4919843Z ##[endgroup]
+recovery	Initialize containers	2026-09-18T23:38:56.4920374Z ##[group]Create local container network
+recovery	Initialize containers	2026-09-18T23:38:56.4929889Z ##[command]/usr/bin/docker network create --label 285b09 github_network_58751fddc21d4a3aba0d0eff6ab23e93
+recovery	Initialize containers	2026-09-18T23:38:56.5467854Z 3b3a9ae04b355d67ddd0b6dd78f7479b23cad64365a969479c289445fef2c3d3
+recovery	Initialize containers	2026-09-18T23:38:56.5487963Z ##[endgroup]
+recovery	Initialize containers	2026-09-18T23:38:56.5512869Z ##[group]Starting postgres service container
+recovery	Initialize containers	2026-09-18T23:38:56.5533837Z ##[command]/usr/bin/docker pull postgres:18
+recovery	Initialize containers	2026-09-18T23:38:56.8193644Z 18: Pulling from library/postgres
+recovery	Initialize containers	2026-09-18T23:38:56.8917238Z 6310eb16bf42: Pulling fs layer
+recovery	Initialize containers	2026-09-18T23:38:56.8919125Z 6463c6b5c703: Pulling fs layer
+recovery	Initialize containers	2026-09-18T23:38:56.8920314Z 8d6422da287d: Pulling fs layer
+recovery	Initialize containers	2026-09-18T23:38:56.8921376Z 2fc0e69f8d7d: Pulling fs layer
+recovery	Initialize containers	2026-09-18T23:38:56.8922324Z 5fa29c524b4e: Pulling fs layer
+recovery	Initialize containers	2026-09-18T23:38:56.8923003Z ace4b5b96a91: Pulling fs layer
+recovery	Initialize containers	2026-09-18T23:38:56.8923886Z af2a6480a058: Pulling fs layer
+recovery	Initialize containers	2026-09-18T23:38:56.8924870Z 5ee6c6ca7fd9: Pulling fs layer
+recovery	Initialize containers	2026-09-18T23:38:56.8925803Z c5694bff1357: Pulling fs layer
+recovery	Initialize containers	2026-09-18T23:38:56.8926736Z aedab7177504: Pulling fs layer
+recovery	Initialize containers	2026-09-18T23:38:56.8927662Z a4635eaec9b8: Pulling fs layer
+recovery	Initialize containers	2026-09-18T23:38:56.8928819Z 46e663abc8f5: Pulling fs layer
+recovery	Initialize containers	2026-09-18T23:38:56.8929851Z 1bb54e8f7727: Pulling fs layer
+recovery	Initialize containers	2026-09-18T23:38:56.8930468Z 5ee6c6ca7fd9: Waiting
+recovery	Initialize containers	2026-09-18T23:38:56.8931088Z c5694bff1357: Waiting
+recovery	Initialize containers	2026-09-18T23:38:56.8931597Z aedab7177504: Waiting
+recovery	Initialize containers	2026-09-18T23:38:56.8932216Z a4635eaec9b8: Waiting
+recovery	Initialize containers	2026-09-18T23:38:56.8932777Z 46e663abc8f5: Waiting
+recovery	Initialize containers	2026-09-18T23:38:56.8933355Z 1bb54e8f7727: Waiting
+recovery	Initialize containers	2026-09-18T23:38:56.8933905Z 2fc0e69f8d7d: Waiting
+recovery	Initialize containers	2026-09-18T23:38:56.8934467Z 5fa29c524b4e: Waiting
+recovery	Initialize containers	2026-09-18T23:38:56.8935053Z ace4b5b96a91: Waiting
+recovery	Initialize containers	2026-09-18T23:38:56.8935552Z af2a6480a058: Waiting
+recovery	Initialize containers	2026-09-18T23:38:56.9195520Z 6463c6b5c703: Verifying Checksum
+recovery	Initialize containers	2026-09-18T23:38:56.9198227Z 6463c6b5c703: Download complete
+recovery	Initialize containers	2026-09-18T23:38:56.9509255Z 8d6422da287d: Verifying Checksum
+recovery	Initialize containers	2026-09-18T23:38:56.9511226Z 8d6422da287d: Download complete
+recovery	Initialize containers	2026-09-18T23:38:56.9673736Z 2fc0e69f8d7d: Verifying Checksum
+recovery	Initialize containers	2026-09-18T23:38:56.9675315Z 2fc0e69f8d7d: Download complete
+recovery	Initialize containers	2026-09-18T23:38:57.0100415Z ace4b5b96a91: Verifying Checksum
+recovery	Initialize containers	2026-09-18T23:38:57.0102759Z ace4b5b96a91: Download complete
+recovery	Initialize containers	2026-09-18T23:38:57.0219789Z 5fa29c524b4e: Verifying Checksum
+recovery	Initialize containers	2026-09-18T23:38:57.0220968Z 5fa29c524b4e: Download complete
+recovery	Initialize containers	2026-09-18T23:38:57.0310234Z 6310eb16bf42: Download complete
+recovery	Initialize containers	2026-09-18T23:38:57.0377444Z af2a6480a058: Verifying Checksum
+recovery	Initialize containers	2026-09-18T23:38:57.0378732Z af2a6480a058: Download complete
+recovery	Initialize containers	2026-09-18T23:38:57.0469467Z 5ee6c6ca7fd9: Verifying Checksum
+recovery	Initialize containers	2026-09-18T23:38:57.0473224Z 5ee6c6ca7fd9: Download complete
+recovery	Initialize containers	2026-09-18T23:38:57.0638653Z aedab7177504: Verifying Checksum
+recovery	Initialize containers	2026-09-18T23:38:57.0640296Z aedab7177504: Download complete
+recovery	Initialize containers	2026-09-18T23:38:57.0784608Z a4635eaec9b8: Download complete
+recovery	Initialize containers	2026-09-18T23:38:57.0923784Z 46e663abc8f5: Download complete
+recovery	Initialize containers	2026-09-18T23:38:57.1098835Z 1bb54e8f7727: Verifying Checksum
+recovery	Initialize containers	2026-09-18T23:38:57.1100343Z 1bb54e8f7727: Download complete
+recovery	Initialize containers	2026-09-18T23:38:57.4837973Z c5694bff1357: Verifying Checksum
+recovery	Initialize containers	2026-09-18T23:38:57.4839483Z c5694bff1357: Download complete
+recovery	Initialize containers	2026-09-18T23:38:58.1463454Z 6310eb16bf42: Pull complete
+recovery	Initialize containers	2026-09-18T23:39:00.9806782Z 6463c6b5c703: Pull complete
+recovery	Initialize containers	2026-09-18T23:39:01.2026942Z 8d6422da287d: Pull complete
+recovery	Initialize containers	2026-09-18T23:39:01.2492224Z 2fc0e69f8d7d: Pull complete
+recovery	Initialize containers	2026-09-18T23:39:01.5819756Z 5fa29c524b4e: Pull complete
+recovery	Initialize containers	2026-09-18T23:39:01.6690133Z ace4b5b96a91: Pull complete
+recovery	Initialize containers	2026-09-18T23:39:01.6779272Z af2a6480a058: Pull complete
+recovery	Initialize containers	2026-09-18T23:39:01.6889591Z 5ee6c6ca7fd9: Pull complete
+recovery	Initialize containers	2026-09-18T23:39:04.7652940Z c5694bff1357: Pull complete
+recovery	Initialize containers	2026-09-18T23:39:04.7788397Z aedab7177504: Pull complete
+recovery	Initialize containers	2026-09-18T23:39:04.7910251Z a4635eaec9b8: Pull complete
+recovery	Initialize containers	2026-09-18T23:39:04.8001744Z 46e663abc8f5: Pull complete
+recovery	Initialize containers	2026-09-18T23:39:04.8094237Z 1bb54e8f7727: Pull complete
+recovery	Initialize containers	2026-09-18T23:39:04.8134258Z Digest: sha256:4ef4dbc939d61acea57712655ddb4b4ab27419c913f94cca0cd57cb3ea3c2280
+recovery	Initialize containers	2026-09-18T23:39:04.8145009Z Status: Downloaded newer image for postgres:18
+recovery	Initialize containers	2026-09-18T23:39:04.8153137Z docker.io/library/postgres:18
+recovery	Initialize containers	2026-09-18T23:39:04.8215150Z ##[command]/usr/bin/docker create --name cb4b48e73532433c933d4f8f8135d5cc_postgres18_3cadab --label 285b09 --network github_network_58751fddc21d4a3aba0d0eff6ab23e93 --network-alias postgres -p 5432:5432 --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5 -e "POSTGRES_USER=postgres" -e "POSTGRES_PASSWORD=postgres" -e GITHUB_ACTIONS=true -e CI=true postgres:18
+recovery	Initialize containers	2026-09-18T23:39:04.8473377Z 07140acf5cc5d301fbc9ea17a65c2ae903b90ff9e8753f94d58372b8f15b8b42
+recovery	Initialize containers	2026-09-18T23:39:04.8493902Z ##[command]/usr/bin/docker start 07140acf5cc5d301fbc9ea17a65c2ae903b90ff9e8753f94d58372b8f15b8b42
+recovery	Initialize containers	2026-09-18T23:39:05.0741676Z 07140acf5cc5d301fbc9ea17a65c2ae903b90ff9e8753f94d58372b8f15b8b42
+recovery	Initialize containers	2026-09-18T23:39:05.0763674Z ##[command]/usr/bin/docker ps --all --filter id=07140acf5cc5d301fbc9ea17a65c2ae903b90ff9e8753f94d58372b8f15b8b42 --filter status=running --no-trunc --format "{{.ID}} {{.Status}}"
+recovery	Initialize containers	2026-09-18T23:39:05.0913260Z 07140acf5cc5d301fbc9ea17a65c2ae903b90ff9e8753f94d58372b8f15b8b42 Up Less than a second (health: starting)
+recovery	Initialize containers	2026-09-18T23:39:05.0936746Z ##[command]/usr/bin/docker port 07140acf5cc5d301fbc9ea17a65c2ae903b90ff9e8753f94d58372b8f15b8b42
+recovery	Initialize containers	2026-09-18T23:39:05.1074414Z 5432/tcp -> 0.0.0.0:5432
+recovery	Initialize containers	2026-09-18T23:39:05.1075505Z 5432/tcp -> [::]:5432
+recovery	Initialize containers	2026-09-18T23:39:05.1133680Z ##[endgroup]
+recovery	Initialize containers	2026-09-18T23:39:05.1145672Z ##[group]Waiting for all services to be ready
+recovery	Initialize containers	2026-09-18T23:39:05.1159522Z ##[command]/usr/bin/docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" 07140acf5cc5d301fbc9ea17a65c2ae903b90ff9e8753f94d58372b8f15b8b42
+recovery	Initialize containers	2026-09-18T23:39:05.1337779Z starting
+recovery	Initialize containers	2026-09-18T23:39:05.1361884Z postgres service is starting, waiting 2 seconds before checking again.
+recovery	Initialize containers	2026-09-18T23:39:07.1371126Z ##[command]/usr/bin/docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" 07140acf5cc5d301fbc9ea17a65c2ae903b90ff9e8753f94d58372b8f15b8b42
+recovery	Initialize containers	2026-09-18T23:39:07.1496281Z starting
+recovery	Initialize containers	2026-09-18T23:39:07.1509870Z postgres service is starting, waiting 4 seconds before checking again.
+recovery	Initialize containers	2026-09-18T23:39:11.3170163Z ##[command]/usr/bin/docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" 07140acf5cc5d301fbc9ea17a65c2ae903b90ff9e8753f94d58372b8f15b8b42
+recovery	Initialize containers	2026-09-18T23:39:11.3294747Z starting
+recovery	Initialize containers	2026-09-18T23:39:11.3308017Z postgres service is starting, waiting 8 seconds before checking again.
+recovery	Initialize containers	2026-09-18T23:39:20.1359745Z ##[command]/usr/bin/docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" 07140acf5cc5d301fbc9ea17a65c2ae903b90ff9e8753f94d58372b8f15b8b42
+recovery	Initialize containers	2026-09-18T23:39:20.1486709Z healthy
+recovery	Initialize containers	2026-09-18T23:39:20.1501747Z postgres service is healthy.
+recovery	Initialize containers	2026-09-18T23:39:20.1502451Z ##[endgroup]
+recovery	Run actions/checkout@v7	﻿2026-09-18T23:39:20.1790910Z ##[group]Run actions/checkout@v7
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.1791493Z with:
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.1791713Z   repository: OmertaDev/Omerta
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.1794754Z   token: ***
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.1794992Z   ssh-strict: true
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.1795199Z   ssh-user: git
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.1795412Z   persist-credentials: true
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.1795659Z   clean: true
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.1795894Z   sparse-checkout-cone-mode: true
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.1796154Z   fetch-depth: 1
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.1857021Z   fetch-tags: false
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.1857289Z   show-progress: true
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.1857518Z   lfs: false
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.1857713Z   submodules: false
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.1857929Z   set-safe-directory: true
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.1858470Z   allow-unsafe-pr-checkout: false
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.1859186Z env:
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.1859389Z   PGHOST: 127.0.0.1
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.1859626Z   PGUSER: postgres
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.1859909Z   PGPASSWORD: postgres
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.1860181Z ##[endgroup]
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.2891509Z Syncing repository: OmertaDev/Omerta
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.2893491Z ##[group]Getting Git version info
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.2894109Z Working directory is '/home/runner/work/Omerta/Omerta'
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.2895046Z [command]/usr/bin/git version
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.2963776Z git version 2.55.0
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.2985175Z ##[endgroup]
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.2997004Z Temporarily overriding HOME='/home/runner/work/_temp/1120b51c-0da5-43a2-ad19-c0408cf42e8e' before making global git config changes
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.2998660Z Adding repository directory to the temporary git global config as a safe directory
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.3001700Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Omerta/Omerta
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.3056617Z Deleting the contents of '/home/runner/work/Omerta/Omerta'
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.3060242Z ##[group]Determining repository object format
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.3061817Z ##[endgroup]
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.3062546Z ##[group]Initializing the repository
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.3066154Z [command]/usr/bin/git init /home/runner/work/Omerta/Omerta
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.3198993Z hint: Using 'master' as the name for the initial branch. This default branch name
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.3200278Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.3201297Z hint: to use in all of your new repositories, which will suppress this warning,
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.3202301Z hint: call:
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.3202624Z hint:
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.3203117Z hint: 	git config --global init.defaultBranch <name>
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.3203728Z hint:
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.3204264Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.3205219Z hint: 'development'. The just-created branch can be renamed via this command:
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.3206022Z hint:
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.3206419Z hint: 	git branch -m <name>
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.3206868Z hint:
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.3207524Z hint: Disable this message with "git config set advice.defaultBranchName false"
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.3208930Z Initialized empty Git repository in /home/runner/work/Omerta/Omerta/.git/
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.3217146Z [command]/usr/bin/git remote add origin https://github.com/OmertaDev/Omerta
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.3269879Z ##[endgroup]
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.3270587Z ##[group]Disabling automatic garbage collection
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.3274807Z [command]/usr/bin/git config --local gc.auto 0
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.3311089Z ##[endgroup]
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.3311858Z ##[group]Setting up auth
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.3312364Z Removing SSH command configuration
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.3313079Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.3348707Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.3742278Z Removing HTTP extra header
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.3760278Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.3797607Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.4021424Z Removing includeIf entries pointing to credentials config files
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.4026206Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.4061052Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.4294107Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-dfe81132-6c1d-4ea7-9556-2102db13a1c1.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.4333774Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/Omerta/Omerta/.git.path /home/runner/work/_temp/git-credentials-dfe81132-6c1d-4ea7-9556-2102db13a1c1.config
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.4366395Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/Omerta/Omerta/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-dfe81132-6c1d-4ea7-9556-2102db13a1c1.config
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.4404648Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-dfe81132-6c1d-4ea7-9556-2102db13a1c1.config
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.4439294Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-dfe81132-6c1d-4ea7-9556-2102db13a1c1.config
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.4469410Z ##[endgroup]
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.4470070Z ##[group]Fetching the repository
+recovery	Run actions/checkout@v7	2026-09-18T23:39:20.4475500Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +626e61b9ab2b14a9dc45566983b70cdc65692839:refs/remotes/origin/codex/rc1-release-validation
+recovery	Run actions/checkout@v7	2026-09-18T23:39:46.2317874Z From https://github.com/OmertaDev/Omerta
+recovery	Run actions/checkout@v7	2026-09-18T23:39:46.2320223Z  * [new ref]         626e61b9ab2b14a9dc45566983b70cdc65692839 -> origin/codex/rc1-release-validation
+recovery	Run actions/checkout@v7	2026-09-18T23:39:46.2333288Z [command]/usr/bin/git branch --list --remote origin/codex/rc1-release-validation
+recovery	Run actions/checkout@v7	2026-09-18T23:39:46.2361291Z   origin/codex/rc1-release-validation
+recovery	Run actions/checkout@v7	2026-09-18T23:39:46.2368905Z [command]/usr/bin/git rev-parse refs/remotes/origin/codex/rc1-release-validation
+recovery	Run actions/checkout@v7	2026-09-18T23:39:46.2394936Z 626e61b9ab2b14a9dc45566983b70cdc65692839
+recovery	Run actions/checkout@v7	2026-09-18T23:39:46.2399610Z ##[endgroup]
+recovery	Run actions/checkout@v7	2026-09-18T23:39:46.2400384Z ##[group]Determining the checkout info
+recovery	Run actions/checkout@v7	2026-09-18T23:39:46.2406286Z ##[endgroup]
+recovery	Run actions/checkout@v7	2026-09-18T23:39:46.2417474Z [command]/usr/bin/git sparse-checkout disable
+recovery	Run actions/checkout@v7	2026-09-18T23:39:46.2465097Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+recovery	Run actions/checkout@v7	2026-09-18T23:39:46.2497869Z ##[group]Checking out the ref
+recovery	Run actions/checkout@v7	2026-09-18T23:39:46.2502517Z [command]/usr/bin/git checkout --progress --force -B codex/rc1-release-validation refs/remotes/origin/codex/rc1-release-validation
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.3603447Z Updating files:  34% (1123/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.4831350Z Updating files:  35% (1150/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.5463381Z Updating files:  36% (1182/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.5644526Z Updating files:  37% (1215/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.5880173Z Updating files:  38% (1248/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.5895159Z Updating files:  39% (1281/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.5915777Z Updating files:  40% (1314/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.5956447Z Updating files:  41% (1347/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.5991063Z Updating files:  42% (1379/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.6026091Z Updating files:  43% (1412/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.6044863Z Updating files:  44% (1445/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.6073713Z Updating files:  45% (1478/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.6097987Z Updating files:  46% (1511/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.6144322Z Updating files:  47% (1544/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.6202088Z Updating files:  48% (1576/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.6429915Z Updating files:  49% (1609/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.6525502Z Updating files:  50% (1642/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.6576922Z Updating files:  51% (1675/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.6606482Z Updating files:  52% (1708/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.6633181Z Updating files:  53% (1740/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.6661550Z Updating files:  54% (1773/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.6703143Z Updating files:  55% (1806/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.6737549Z Updating files:  56% (1839/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.6756295Z Updating files:  57% (1872/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.6776306Z Updating files:  58% (1905/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.6918146Z Updating files:  59% (1937/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.6952802Z Updating files:  60% (1970/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.7003958Z Updating files:  61% (2003/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.7119555Z Updating files:  62% (2036/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.7264430Z Updating files:  63% (2069/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.7387848Z Updating files:  64% (2102/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.7498328Z Updating files:  65% (2134/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.7746476Z Updating files:  66% (2167/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.7948266Z Updating files:  67% (2200/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.8295021Z Updating files:  68% (2233/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:47.8688967Z Updating files:  69% (2266/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.1445908Z Updating files:  70% (2299/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.1622436Z Updating files:  71% (2331/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.1759326Z Updating files:  72% (2364/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.1971823Z Updating files:  73% (2397/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.2083429Z Updating files:  74% (2430/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.2302965Z Updating files:  75% (2463/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.2574718Z Updating files:  76% (2496/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.2611484Z Updating files:  76% (2524/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.2801146Z Updating files:  77% (2528/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.3056483Z Updating files:  78% (2561/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.3326346Z Updating files:  79% (2594/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.3459282Z Updating files:  80% (2627/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.3499153Z Updating files:  81% (2660/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.3533099Z Updating files:  82% (2693/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.3574384Z Updating files:  83% (2725/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.3622891Z Updating files:  84% (2758/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.3667209Z Updating files:  85% (2791/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.3690482Z Updating files:  86% (2824/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.3763459Z Updating files:  87% (2857/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.3811175Z Updating files:  88% (2890/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.3874662Z Updating files:  89% (2922/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.3909907Z Updating files:  90% (2955/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.3955396Z Updating files:  91% (2988/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.4017080Z Updating files:  92% (3021/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.4054724Z Updating files:  93% (3054/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.4102039Z Updating files:  94% (3087/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.4140309Z Updating files:  95% (3119/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.4188868Z Updating files:  96% (3152/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.4227183Z Updating files:  97% (3185/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.4261004Z Updating files:  98% (3218/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.4302819Z Updating files:  99% (3251/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.4303321Z Updating files: 100% (3283/3283)
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.4303801Z Updating files: 100% (3283/3283), done.
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.4349645Z Switched to a new branch 'codex/rc1-release-validation'
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.4357903Z branch 'codex/rc1-release-validation' set up to track 'origin/codex/rc1-release-validation'.
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.4472455Z ##[endgroup]
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.4522717Z [command]/usr/bin/git log -1 --format=%H
+recovery	Run actions/checkout@v7	2026-09-18T23:39:48.4552603Z 626e61b9ab2b14a9dc45566983b70cdc65692839
+recovery	Run actions/setup-node@v6	﻿2026-09-18T23:39:48.4799802Z ##[group]Run actions/setup-node@v6
+recovery	Run actions/setup-node@v6	2026-09-18T23:39:48.4800101Z with:
+recovery	Run actions/setup-node@v6	2026-09-18T23:39:48.4800299Z   node-version: 22
+recovery	Run actions/setup-node@v6	2026-09-18T23:39:48.4800505Z   cache: npm
+recovery	Run actions/setup-node@v6	2026-09-18T23:39:48.4800703Z   check-latest: false
+recovery	Run actions/setup-node@v6	2026-09-18T23:39:48.4803319Z   token: ***
+recovery	Run actions/setup-node@v6	2026-09-18T23:39:48.4803538Z   package-manager-cache: true
+recovery	Run actions/setup-node@v6	2026-09-18T23:39:48.4803786Z env:
+recovery	Run actions/setup-node@v6	2026-09-18T23:39:48.4803972Z   PGHOST: 127.0.0.1
+recovery	Run actions/setup-node@v6	2026-09-18T23:39:48.4804187Z   PGUSER: postgres
+recovery	Run actions/setup-node@v6	2026-09-18T23:39:48.4804393Z   PGPASSWORD: postgres
+recovery	Run actions/setup-node@v6	2026-09-18T23:39:48.4804607Z ##[endgroup]
+recovery	Run actions/setup-node@v6	2026-09-18T23:39:48.6184266Z Found in cache @ /opt/hostedtoolcache/node/22.23.2/x64
+recovery	Run actions/setup-node@v6	2026-09-18T23:39:48.6187238Z ##[group]Environment details
+recovery	Run actions/setup-node@v6	2026-09-18T23:39:49.0493757Z node: v22.23.2
+recovery	Run actions/setup-node@v6	2026-09-18T23:39:49.0494252Z npm: 10.9.8
+recovery	Run actions/setup-node@v6	2026-09-18T23:39:49.0494624Z yarn: 1.22.22
+recovery	Run actions/setup-node@v6	2026-09-18T23:39:49.0495683Z ##[endgroup]
+recovery	Run actions/setup-node@v6	2026-09-18T23:39:49.0516346Z [command]/opt/hostedtoolcache/node/22.23.2/x64/bin/npm config get cache
+recovery	Run actions/setup-node@v6	2026-09-18T23:39:49.1643530Z /home/runner/.npm
+recovery	Run actions/setup-node@v6	2026-09-18T23:39:49.2422872Z Cache hit for: node-cache-Linux-x64-npm-08335a2c38c1e792b2f470fe8262ee4aed19102649a638186cb6f1a346595d77
+recovery	Run actions/setup-node@v6	2026-09-18T23:39:49.4946759Z Received 23793481 of 23793481 (100.0%), 110.7 MBs/sec
+recovery	Run actions/setup-node@v6	2026-09-18T23:39:49.4947379Z Cache Size: ~23 MB (23793481 B)
+recovery	Run actions/setup-node@v6	2026-09-18T23:39:49.4998247Z [command]/usr/bin/tar -xf /home/runner/work/_temp/cd4f86d3-4fcc-4220-b9b9-d9f5267c6a7b/cache.tzst -P -C /home/runner/work/Omerta/Omerta --use-compress-program unzstd
+recovery	Run actions/setup-node@v6	2026-09-18T23:39:49.5815499Z Cache restored successfully
+recovery	Run actions/setup-node@v6	2026-09-18T23:39:49.5830419Z Cache restored from key: node-cache-Linux-x64-npm-08335a2c38c1e792b2f470fe8262ee4aed19102649a638186cb6f1a346595d77
+recovery	Run npm ci	﻿2026-09-18T23:39:49.5983444Z ##[group]Run npm ci
+recovery	Run npm ci	2026-09-18T23:39:49.5983758Z ^[[36;1mnpm ci^[[0m
+recovery	Run npm ci	2026-09-18T23:39:49.6034075Z shell: /usr/bin/bash -e {0}
+recovery	Run npm ci	2026-09-18T23:39:49.6034356Z env:
+recovery	Run npm ci	2026-09-18T23:39:49.6034550Z   PGHOST: 127.0.0.1
+recovery	Run npm ci	2026-09-18T23:39:49.6034776Z   PGUSER: postgres
+recovery	Run npm ci	2026-09-18T23:39:49.6034995Z   PGPASSWORD: postgres
+recovery	Run npm ci	2026-09-18T23:39:49.6035216Z ##[endgroup]
+recovery	Run npm ci	2026-09-18T23:39:56.2785989Z 
+recovery	Run npm ci	2026-09-18T23:39:56.2793481Z added 248 packages, and audited 249 packages in 7s
+recovery	Run npm ci	2026-09-18T23:39:56.2794146Z 
+recovery	Run npm ci	2026-09-18T23:39:56.2794793Z 70 packages are looking for funding
+recovery	Run npm ci	2026-09-18T23:39:56.2795312Z   run `npm fund` for details
+recovery	Run npm ci	2026-09-18T23:39:56.2796735Z 
+recovery	Run npm ci	2026-09-18T23:39:56.2796943Z found 0 vulnerabilities
+recovery	create dedicated disposable databases	﻿2026-09-18T23:39:56.3384587Z ##[group]Run createdb omerta_keeper_transport_test
+recovery	create dedicated disposable databases	2026-09-18T23:39:56.3385050Z ^[[36;1mcreatedb omerta_keeper_transport_test^[[0m
+recovery	create dedicated disposable databases	2026-09-18T23:39:56.3385382Z ^[[36;1mcreatedb omerta_liquidity_test^[[0m
+recovery	create dedicated disposable databases	2026-09-18T23:39:56.3385699Z ^[[36;1mcreatedb omerta_liquidity_indexer_test^[[0m
+recovery	create dedicated disposable databases	2026-09-18T23:39:56.3386032Z ^[[36;1mcreatedb omerta_liquidity_policy_test^[[0m
+recovery	create dedicated disposable databases	2026-09-18T23:39:56.3428587Z shell: /usr/bin/bash -e {0}
+recovery	create dedicated disposable databases	2026-09-18T23:39:56.3428855Z env:
+recovery	create dedicated disposable databases	2026-09-18T23:39:56.3429048Z   PGHOST: 127.0.0.1
+recovery	create dedicated disposable databases	2026-09-18T23:39:56.3429272Z   PGUSER: postgres
+recovery	create dedicated disposable databases	2026-09-18T23:39:56.3429485Z   PGPASSWORD: postgres
+recovery	create dedicated disposable databases	2026-09-18T23:39:56.3429704Z ##[endgroup]
+recovery	durable nonce and cross-process transaction recovery	﻿2026-09-18T23:39:56.7233754Z ##[group]Run node test/keepertransactions.js
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:39:56.7234389Z ^[[36;1mnode test/keepertransactions.js^[[0m
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:39:56.7234906Z ^[[36;1mnode test/liquiditykeeper.js^[[0m
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:39:56.7283434Z shell: /usr/bin/bash -e {0}
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:39:56.7283844Z env:
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:39:56.7284160Z   PGHOST: 127.0.0.1
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:39:56.7284517Z   PGUSER: postgres
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:39:56.7284872Z   PGPASSWORD: postgres
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:39:56.7285701Z   DATABASE_URL: ***127.0.0.1:5432/omerta_keeper_transport_test
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:39:56.7286283Z ##[endgroup]
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:39:58.9715551Z [db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:39:59.0607248Z PASS native Hook settlement requires historical proof; rotation/RPC refusal holds revenue and wallet until verified without rebroadcast
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:39:59.0796759Z PASS canonical receipt is rechecked after historical RPC proof before opening bookkeeping transaction
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:39:59.1059005Z PASS real signed request persists before send; replay settles once; payload rebinding and raw status leakage refused
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:39:59.1301020Z PASS timeout before broadcast retries identical signed bytes and blocks sibling jobs
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:39:59.1472731Z PASS lost response after broadcast reconciles exact receipt without a second action
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:39:59.1638999Z PASS consumed nonce without our receipt halts the wallet and never signs a replacement
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:39:59.1835970Z PASS pending transaction restart retries the same nonce/hash/bytes
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:39:59.2063861Z PASS confirmation depth precedes settlement; changed finalized block halts future sends
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:39:59.2233584Z PASS pre-finality reorg does not book or rebroadcast under uncertain authority
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:39:59.2502690Z PASS finalized revert never books and releases asset reservation while retaining gas budget
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:39:59.2678365Z PASS confirmed spend and pending reservations share a bounded budget before signing
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:39:59.2894920Z PASS failed database booking retains confirmed transaction and blocks all new wallet jobs until settled
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:39:59.3123923Z PASS required typed settlement acknowledgement and unjournaled consumed nonces fail closed
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:39:59.3256666Z PASS wrong chain, changed runtime, tampered signed payload and external pending nonce refuse before send
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:39:59.3592313Z PASS concurrent same-process jobs serialize across the entire wallet nonce domain
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:40:00.7332896Z PASS exact planning keys retain long-cadence action authority beyond the 100-row status window
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:40:00.7524836Z PASS PostgreSQL rollback atomically undoes bookkeeping before retry and final journal settlement
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:40:00.8173699Z PASS PostgreSQL advisory lock serializes independent worker module instances
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:40:00.8174519Z PASS keeper transport: 18 cases (PostgreSQL); no live transactions
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:40:01.0867216Z PASS manifest rejects arbitrary calls, wrong chain, unpinned targets, custody drift, duplicate lanes, gas dust and excessive slippage
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:40:01.1006255Z PASS typed calldata pins recipients, oracle floor, fixed POL position and zero keeper value with bounded asset budgets
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:40:01.1119245Z PASS RPC domain/code/reorg failures reject observations and owner/recipient binding failures cannot authorize jobs
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:40:01.1181565Z PASS unhealthy foundation, emergency latch, pause and executor cooldown stop dependent asset spending
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:40:01.1308391Z PASS stale observations, unseeded keeper gas, uneconomic sweeps, over-cap refills and stale token valuation fail closed
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:40:01.1327915Z PASS Desk requires explicit database band strategy and preserves its approved anchor in receipt metadata
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:40:01.1388370Z PASS Bank service jobs use predeclared borrower/market/asset bindings, positive debt service and accrued-fee floors without a fictional asset price
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:40:01.1453088Z PASS Bank buffer funding uses the prefunded fixed-market vault with no caller amount, full action-cap reservation and zero residual allowance
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:40:01.1823292Z PASS Bond daily issuance requires exact manifest/cap parity; unlimited preserves owner/token/minter/health/oracle/price/pause/runtime guards and existing manifest hashes
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:40:01.1887753Z PASS read-only default needs no signer, manifest byte digest and dedicated signer are enforced, disabled mode is inert
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:40:01.2671872Z PASS read-only PostgreSQL planning context computes policy without writing a heartbeat or running schema migrations
+recovery	durable nonce and cross-process transaction recovery	2026-09-18T23:40:01.2674576Z PASS liquidity keeper: 11 cases; no live transactions
+recovery	exact custody-backed books	﻿2026-09-18T23:40:01.2826578Z ##[group]Run node test/liquidityaccounting.js
+recovery	exact custody-backed books	2026-09-18T23:40:01.2826980Z ^[[36;1mnode test/liquidityaccounting.js^[[0m
+recovery	exact custody-backed books	2026-09-18T23:40:01.2863921Z shell: /usr/bin/bash -e {0}
+recovery	exact custody-backed books	2026-09-18T23:40:01.2864182Z env:
+recovery	exact custody-backed books	2026-09-18T23:40:01.2864376Z   PGHOST: 127.0.0.1
+recovery	exact custody-backed books	2026-09-18T23:40:01.2864606Z   PGUSER: postgres
+recovery	exact custody-backed books	2026-09-18T23:40:01.2864823Z   PGPASSWORD: postgres
+recovery	exact custody-backed books	2026-09-18T23:40:01.2865344Z   DATABASE_URL: ***127.0.0.1:5432/omerta_liquidity_test
+recovery	exact custody-backed books	2026-09-18T23:40:01.2865658Z ##[endgroup]
+recovery	exact custody-backed books	2026-09-18T23:40:04.3901533Z [db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+recovery	exact custody-backed books	2026-09-18T23:40:04.4260247Z PASS all four confirmed swap streams settle actual custody exactly once
+recovery	exact custody-backed books	2026-09-18T23:40:04.4405247Z PASS direct OMR fees credit only delivered amounts and never invent an ETH price
+recovery	exact custody-backed books	2026-09-18T23:40:04.4443917Z PASS odd wei and sub-micro dust cannot increase signable capacity
+recovery	exact custody-backed books	2026-09-18T23:40:04.4481745Z PASS missing, forged and wrong-destination transfer receipts are rejected
+recovery	exact custody-backed books	2026-09-18T23:40:04.4547729Z PASS a receipt from a changed executor sequence cannot replay a settlement
+recovery	exact custody-backed books	2026-09-18T23:40:04.4630516Z PASS inflow-index lag holds accounting without partial pool or reserve writes
+recovery	exact custody-backed books	2026-09-18T23:40:04.4747129Z PASS reserve, desk and community invariants include direct tokens as explicit backing
+recovery	exact custody-backed books	2026-09-18T23:40:04.4748775Z {"suite":"liquidity accounting","passed":7,"postgres":true}
+recovery	canonical indexer and existing queue recovery	﻿2026-09-18T23:40:04.4954446Z ##[group]Run node test/liquidityindexer.js
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:04.4954847Z ^[[36;1mnode test/liquidityindexer.js^[[0m
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:04.4955151Z ^[[36;1mnode test/liquidityqueue.js^[[0m
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:04.4991742Z shell: /usr/bin/bash -e {0}
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:04.4992017Z env:
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:04.4992211Z   PGHOST: 127.0.0.1
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:04.4992437Z   PGUSER: postgres
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:04.4992660Z   PGPASSWORD: postgres
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:04.4993243Z   DATABASE_URL: ***127.0.0.1:5432/omerta_liquidity_indexer_test
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:04.4993600Z ##[endgroup]
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:06.6865186Z [db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:06.7335056Z PASS nested permissionless native sweep books exact wei and canonical time
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:06.7576510Z PASS OMR hook sweep proves all four deliveries without fabricating native revenue
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:06.7787297Z PASS missing OMR fee deliveries reject a forged event and keep the cursor
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:06.8119364Z PASS POL collection and immediate nested token distribution settle in canonical order
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:06.8343719Z PASS one outer transaction may contain two independently delivered executor sequences
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:06.8566274Z PASS one missing later delivery rolls back earlier receipt accounting and cursor
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:06.8768433Z PASS exact RPC duplicate logs are deduplicated
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:06.8954785Z PASS conflicting RPC duplicates cannot enter accounting
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:06.9132301Z PASS removed logs are rejected before cursor advancement
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:06.9332819Z PASS wrong chain and historical code changes fail closed
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:06.9528971Z PASS historical fixed recipient mismatch cannot relabel native inflow
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:06.9743967Z PASS same-block Hook recipient rotation and restoration cannot fabricate native revenue
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:06.9980033Z PASS changed canonical receipt hash and failed receipts are rejected
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:07.0178909Z PASS an indexed log must exactly occur in its canonical receipt
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:07.0374478Z PASS partial provider pages cannot omit another supported event from a discovered receipt
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:07.0587607Z PASS reorg observed after accounting rolls back both book and cursor
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:07.0826257Z PASS a reorg behind the saved cursor is detected before scanning onward
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:07.1093214Z PASS backlog keeps caughtUp false and pages never exceed confirmed head
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:07.1449559Z PASS same-transaction token flows can be replayed after cursor recovery without double credit
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:07.1714904Z PASS POL principal and fee legs use separate receipt delivery segments
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:07.1917232Z PASS undeclared watched-currency events hold the whole page
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:07.2176295Z PASS historical Desk recovery uses only a preceding real price and preserves receipt time
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:07.2383048Z PASS a future Vig print cannot authorize historical Desk recovery
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:07.2628685Z PASS an approved matching keeper journal supplies the historical Desk strategy
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:07.2842370Z PASS PostgreSQL micro-unit credits never exceed a large exact physical delivery
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:07.3060785Z PASS sub-micro physical token receipts settle with zero signable credit
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:07.6793974Z PASS two independent processes serialize on PostgreSQL domain locks and settle once
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:07.6795588Z {"suite":"canonical liquidity indexer","passed":27,"postgres":true,"rpc":"deterministic fixture","crossProcessLock":true}
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:09.6315518Z [db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:09.6354964Z PASS missing existing signer or extraction domain remains dormant without RPC or queue writes
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:09.6383943Z PASS backlog and unresolved keeper receipts cannot cause signing
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:09.6593668Z PASS funded existing queue drains FIFO with exact EIP-712 signer and domain
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:09.6647440Z PASS already claimed obligations continue to consume lifetime funding
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:09.6735549Z PASS physical claim balance bounds unclaimed signatures and new queue completion together
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:09.6814526Z PASS claimed history is excluded from physical obligations but cannot restore lifetime capacity
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:09.6846739Z PASS configured chain and claim must exactly match the approved manifest
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:09.6916751Z PASS wrong RPC chain, runtime, signer, token and owner preserve all queued requests
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:09.6985185Z PASS claim pause and stale or reorganized reads never sign
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:09.7024084Z PASS a signing configuration change during verification cannot change the approved domain
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:09.7078559Z PASS large adjacent micro amounts cannot make an underfunded voucher signable
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:09.7348994Z PASS concurrent queue completions serialize on the existing reserve lock
+recovery	canonical indexer and existing queue recovery	2026-09-18T23:40:09.7350505Z {"suite":"confirmed liquidity queue completion","passed":12,"postgres":true,"signer":"public synthetic fixture only"}
+recovery	concurrent daily policy and expired observations	﻿2026-09-18T23:40:09.7565742Z ##[group]Run node test/liquiditypolicy.js
+recovery	concurrent daily policy and expired observations	2026-09-18T23:40:09.7566136Z ^[[36;1mnode test/liquiditypolicy.js^[[0m
+recovery	concurrent daily policy and expired observations	2026-09-18T23:40:09.7602705Z shell: /usr/bin/bash -e {0}
+recovery	concurrent daily policy and expired observations	2026-09-18T23:40:09.7602966Z env:
+recovery	concurrent daily policy and expired observations	2026-09-18T23:40:09.7603162Z   PGHOST: 127.0.0.1
+recovery	concurrent daily policy and expired observations	2026-09-18T23:40:09.7603380Z   PGUSER: postgres
+recovery	concurrent daily policy and expired observations	2026-09-18T23:40:09.7603596Z   PGPASSWORD: postgres
+recovery	concurrent daily policy and expired observations	2026-09-18T23:40:09.7604139Z   DATABASE_URL: ***127.0.0.1:5432/omerta_liquidity_policy_test
+recovery	concurrent daily policy and expired observations	2026-09-18T23:40:09.7604509Z ##[endgroup]
+recovery	concurrent daily policy and expired observations	2026-09-18T23:40:11.9673400Z [db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+recovery	concurrent daily policy and expired observations	2026-09-18T23:40:11.9730431Z PASS absent, expired and deployment-mismatched observations close authority
+recovery	concurrent daily policy and expired observations	2026-09-18T23:40:11.9754648Z PASS bond pause leaves general market health available but prevents daily authority
+recovery	concurrent daily policy and expired observations	2026-09-18T23:40:11.9764570Z PASS read-only planning does not publish a heartbeat or open issuance
+recovery	concurrent daily policy and expired observations	2026-09-18T23:40:11.9823254Z PASS daily offering requires explicit policy and clips to the contract cap
+recovery	concurrent daily policy and expired observations	2026-09-18T23:40:11.9973603Z PASS a manual emergency stop survives automatic retries even while unhealthy
+recovery	concurrent daily policy and expired observations	2026-09-18T23:40:12.0010823Z PASS the next day clips to exact remaining lifetime capacity and never refills it
+recovery	concurrent daily policy and expired observations	2026-09-18T23:40:12.0061390Z PASS Genesis warmup, failed migration and unhealthy foundation do not open markets
+recovery	concurrent daily policy and expired observations	2026-09-18T23:40:12.0272041Z PASS concurrent workers publish only one offering under the lifetime reserve lock
+recovery	concurrent daily policy and expired observations	2026-09-18T23:40:12.0315702Z PASS explicit unlimited heartbeat requires zero cap and creates no daily offering row
+recovery	concurrent daily policy and expired observations	2026-09-18T23:40:12.0365163Z PASS unlimited readiness still fails for positive cap, bond pause and unhealthy foundation
+recovery	concurrent daily policy and expired observations	2026-09-18T23:40:12.0387286Z PASS unlimited mode rejects legacy daily controls instead of reporting an ineffective pause
+recovery	concurrent daily policy and expired observations	2026-09-18T23:40:12.0388472Z 11 liquidity policy checks passed
+recovery	Post Run actions/setup-node@v6	﻿2026-09-18T23:40:12.0666743Z Post job cleanup.
+recovery	Post Run actions/setup-node@v6	2026-09-18T23:40:12.1856280Z Cache hit occurred on the primary key node-cache-Linux-x64-npm-08335a2c38c1e792b2f470fe8262ee4aed19102649a638186cb6f1a346595d77, not saving cache.
+recovery	Post Run actions/checkout@v7	﻿2026-09-18T23:40:12.2000237Z Post job cleanup.
+recovery	Post Run actions/checkout@v7	2026-09-18T23:40:12.2855711Z [command]/usr/bin/git version
+recovery	Post Run actions/checkout@v7	2026-09-18T23:40:12.2896324Z git version 2.55.0
+recovery	Post Run actions/checkout@v7	2026-09-18T23:40:12.2942129Z Temporarily overriding HOME='/home/runner/work/_temp/710eefa3-8dbb-4f02-a7da-22bdfa1542c9' before making global git config changes
+recovery	Post Run actions/checkout@v7	2026-09-18T23:40:12.2944168Z Adding repository directory to the temporary git global config as a safe directory
+recovery	Post Run actions/checkout@v7	2026-09-18T23:40:12.2948601Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Omerta/Omerta
+recovery	Post Run actions/checkout@v7	2026-09-18T23:40:12.2979845Z Removing SSH command configuration
+recovery	Post Run actions/checkout@v7	2026-09-18T23:40:12.2987664Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+recovery	Post Run actions/checkout@v7	2026-09-18T23:40:12.3024557Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+recovery	Post Run actions/checkout@v7	2026-09-18T23:40:12.3265874Z Removing HTTP extra header
+recovery	Post Run actions/checkout@v7	2026-09-18T23:40:12.3272421Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+recovery	Post Run actions/checkout@v7	2026-09-18T23:40:12.3308834Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+recovery	Post Run actions/checkout@v7	2026-09-18T23:40:12.3555982Z Removing includeIf entries pointing to credentials config files
+recovery	Post Run actions/checkout@v7	2026-09-18T23:40:12.3564731Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+recovery	Post Run actions/checkout@v7	2026-09-18T23:40:12.3594306Z includeif.gitdir:/home/runner/work/Omerta/Omerta/.git.path
+recovery	Post Run actions/checkout@v7	2026-09-18T23:40:12.3595523Z includeif.gitdir:/home/runner/work/Omerta/Omerta/.git/worktrees/*.path
+recovery	Post Run actions/checkout@v7	2026-09-18T23:40:12.3596683Z includeif.gitdir:/github/workspace/.git.path
+recovery	Post Run actions/checkout@v7	2026-09-18T23:40:12.3597734Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+recovery	Post Run actions/checkout@v7	2026-09-18T23:40:12.3606546Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/Omerta/Omerta/.git.path
+recovery	Post Run actions/checkout@v7	2026-09-18T23:40:12.3632973Z /home/runner/work/_temp/git-credentials-dfe81132-6c1d-4ea7-9556-2102db13a1c1.config
+recovery	Post Run actions/checkout@v7	2026-09-18T23:40:12.3686040Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/Omerta/Omerta/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-dfe81132\-6c1d\-4ea7\-9556\-2102db13a1c1\.config
+recovery	Post Run actions/checkout@v7	2026-09-18T23:40:12.3719957Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/Omerta/Omerta/.git/worktrees/*.path
+recovery	Post Run actions/checkout@v7	2026-09-18T23:40:12.3769553Z /home/runner/work/_temp/git-credentials-dfe81132-6c1d-4ea7-9556-2102db13a1c1.config
+recovery	Post Run actions/checkout@v7	2026-09-18T23:40:12.3781512Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/Omerta/Omerta/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-dfe81132\-6c1d\-4ea7\-9556\-2102db13a1c1\.config
+recovery	Post Run actions/checkout@v7	2026-09-18T23:40:12.3828728Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+recovery	Post Run actions/checkout@v7	2026-09-18T23:40:12.3864073Z /github/runner_temp/git-credentials-dfe81132-6c1d-4ea7-9556-2102db13a1c1.config
+recovery	Post Run actions/checkout@v7	2026-09-18T23:40:12.3875115Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-dfe81132\-6c1d\-4ea7\-9556\-2102db13a1c1\.config
+recovery	Post Run actions/checkout@v7	2026-09-18T23:40:12.3914253Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+recovery	Post Run actions/checkout@v7	2026-09-18T23:40:12.3944092Z /github/runner_temp/git-credentials-dfe81132-6c1d-4ea7-9556-2102db13a1c1.config
+recovery	Post Run actions/checkout@v7	2026-09-18T23:40:12.3962330Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-dfe81132\-6c1d\-4ea7\-9556\-2102db13a1c1\.config
+recovery	Post Run actions/checkout@v7	2026-09-18T23:40:12.3997378Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+recovery	Post Run actions/checkout@v7	2026-09-18T23:40:12.4243234Z Removing credentials config '/home/runner/work/_temp/git-credentials-dfe81132-6c1d-4ea7-9556-2102db13a1c1.config'
+recovery	Stop containers	﻿2026-09-18T23:40:12.4367142Z Print service container logs: cb4b48e73532433c933d4f8f8135d5cc_postgres18_3cadab
+recovery	Stop containers	2026-09-18T23:40:12.4372020Z ##[command]/usr/bin/docker logs --details 07140acf5cc5d301fbc9ea17a65c2ae903b90ff9e8753f94d58372b8f15b8b42
+recovery	Stop containers	2026-09-18T23:40:12.4508032Z  The files belonging to this database system will be owned by user "postgres".
+recovery	Stop containers	2026-09-18T23:40:12.4509993Z  initdb: warning: enabling "trust" authentication for local connections
+recovery	Stop containers	2026-09-18T23:40:12.4510789Z  This user must also own the server process.
+recovery	Stop containers	2026-09-18T23:40:12.4511930Z  initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+recovery	Stop containers	2026-09-18T23:40:12.4513016Z  
+recovery	Stop containers	2026-09-18T23:40:12.4513516Z  The database cluster will be initialized with locale "en_US.utf8".
+recovery	Stop containers	2026-09-18T23:40:12.4514327Z  The default database encoding has accordingly been set to "UTF8".
+recovery	Stop containers	2026-09-18T23:40:12.4515091Z  The default text search configuration will be set to "english".
+recovery	Stop containers	2026-09-18T23:40:12.4515680Z  
+recovery	Stop containers	2026-09-18T23:40:12.4516051Z  Data page checksums are enabled.
+recovery	Stop containers	2026-09-18T23:40:12.4516474Z  
+recovery	Stop containers	2026-09-18T23:40:12.4517035Z  fixing permissions on existing directory /var/lib/postgresql/18/docker ... ok
+recovery	Stop containers	2026-09-18T23:40:12.4517765Z  creating subdirectories ... ok
+recovery	Stop containers	2026-09-18T23:40:12.4528709Z  selecting dynamic shared memory implementation ... posix
+recovery	Stop containers	2026-09-18T23:40:12.4529357Z  selecting default "max_connections" ... 100
+recovery	Stop containers	2026-09-18T23:40:12.4529814Z  selecting default "shared_buffers" ... 128MB
+recovery	Stop containers	2026-09-18T23:40:12.4530125Z  selecting default time zone ... Etc/UTC
+recovery	Stop containers	2026-09-18T23:40:12.4530417Z  creating configuration files ... ok
+recovery	Stop containers	2026-09-18T23:40:12.4530705Z  running bootstrap script ... ok
+recovery	Stop containers	2026-09-18T23:40:12.4531011Z  performing post-bootstrap initialization ... ok
+recovery	Stop containers	2026-09-18T23:40:12.4531342Z  syncing data to disk ... ok
+recovery	Stop containers	2026-09-18T23:40:12.4531574Z  
+recovery	Stop containers	2026-09-18T23:40:12.4531747Z  
+recovery	Stop containers	2026-09-18T23:40:12.4531984Z  Success. You can now start the database server using:
+recovery	Stop containers	2026-09-18T23:40:12.4532287Z  
+recovery	Stop containers	2026-09-18T23:40:12.4532545Z      pg_ctl -D /var/lib/postgresql/18/docker -l logfile start
+recovery	Stop containers	2026-09-18T23:40:12.4532876Z  
+recovery	Stop containers	2026-09-18T23:40:12.4533542Z  waiting for server to start....2026-09-18 23:39:05.724 UTC [53] LOG:  starting PostgreSQL 18.6 (Debian 18.6-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+recovery	Stop containers	2026-09-18T23:40:12.4534436Z  2026-09-18 23:39:05.725 UTC [53] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+recovery	Stop containers	2026-09-18T23:40:12.4535229Z  2026-09-18 23:39:05.728 UTC [59] LOG:  database system was shut down at 2026-09-18 23:39:05 UTC
+recovery	Stop containers	2026-09-18T23:40:12.4535755Z  2026-09-18 23:39:05.731 UTC [53] LOG:  database system is ready to accept connections
+recovery	Stop containers	2026-09-18T23:40:12.4536132Z   done
+recovery	Stop containers	2026-09-18T23:40:12.4536778Z  2026-09-18 23:39:05.963 UTC [1] LOG:  starting PostgreSQL 18.6 (Debian 18.6-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+recovery	Stop containers	2026-09-18T23:40:12.4537495Z  2026-09-18 23:39:05.963 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+recovery	Stop containers	2026-09-18T23:40:12.4537977Z  2026-09-18 23:39:05.963 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+recovery	Stop containers	2026-09-18T23:40:12.4539027Z  2026-09-18 23:39:05.964 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+recovery	Stop containers	2026-09-18T23:40:12.4539978Z  2026-09-18 23:39:05.968 UTC [73] LOG:  database system was shut down at 2026-09-18 23:39:05 UTC
+recovery	Stop containers	2026-09-18T23:40:12.4540719Z  2026-09-18 23:39:05.971 UTC [1] LOG:  database system is ready to accept connections
+recovery	Stop containers	2026-09-18T23:40:12.4541176Z  2026-09-18 23:39:15.133 UTC [84] FATAL:  role "root" does not exist
+recovery	Stop containers	2026-09-18T23:40:12.4541576Z  2026-09-18 23:39:25.194 UTC [92] FATAL:  role "root" does not exist
+recovery	Stop containers	2026-09-18T23:40:12.4541977Z  2026-09-18 23:39:35.254 UTC [100] FATAL:  role "root" does not exist
+recovery	Stop containers	2026-09-18T23:40:12.4542370Z  2026-09-18 23:39:45.313 UTC [109] FATAL:  role "root" does not exist
+recovery	Stop containers	2026-09-18T23:40:12.4542757Z  2026-09-18 23:39:55.401 UTC [116] FATAL:  role "root" does not exist
+recovery	Stop containers	2026-09-18T23:40:12.4543141Z  2026-09-18 23:40:05.471 UTC [134] FATAL:  role "root" does not exist
+recovery	Stop containers	2026-09-18T23:40:12.4543802Z  2026-09-18 23:40:07.678 UTC [125] WARNING:  there is no transaction in progress
+recovery	Stop containers	2026-09-18T23:40:12.4544187Z  server started
+recovery	Stop containers	2026-09-18T23:40:12.4544398Z  
+recovery	Stop containers	2026-09-18T23:40:12.4544730Z  /usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+recovery	Stop containers	2026-09-18T23:40:12.4545125Z  
+recovery	Stop containers	2026-09-18T23:40:12.4545377Z  2026-09-18 23:39:05.841 UTC [53] LOG:  received fast shutdown request
+recovery	Stop containers	2026-09-18T23:40:12.4545919Z  waiting for server to shut down....2026-09-18 23:39:05.842 UTC [53] LOG:  aborting any active transactions
+recovery	Stop containers	2026-09-18T23:40:12.4546983Z  2026-09-18 23:39:05.843 UTC [53] LOG:  background worker "logical replication launcher" (PID 62) exited with exit code 1
+recovery	Stop containers	2026-09-18T23:40:12.4547971Z  2026-09-18 23:39:05.844 UTC [57] LOG:  shutting down
+recovery	Stop containers	2026-09-18T23:40:12.4548809Z  2026-09-18 23:39:05.845 UTC [57] LOG:  checkpoint starting: shutdown immediate
+recovery	Stop containers	2026-09-18T23:40:12.4550792Z  2026-09-18 23:39:05.847 UTC [57] LOG:  checkpoint complete: wrote 0 buffers (0.0%), wrote 3 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.001 s, total=0.003 s; sync files=2, longest=0.001 s, average=0.001 s; distance=0 kB, estimate=0 kB; lsn=0/1761918, redo lsn=0/1761918
+recovery	Stop containers	2026-09-18T23:40:12.4552620Z  2026-09-18 23:39:05.855 UTC [53] LOG:  database system is shut down
+recovery	Stop containers	2026-09-18T23:40:12.4553215Z   done
+recovery	Stop containers	2026-09-18T23:40:12.4553540Z  server stopped
+recovery	Stop containers	2026-09-18T23:40:12.4553766Z  
+recovery	Stop containers	2026-09-18T23:40:12.4554009Z  PostgreSQL init process complete; ready for start up.
+recovery	Stop containers	2026-09-18T23:40:12.4554321Z  
+recovery	Stop containers	2026-09-18T23:40:12.4559952Z Stop and remove container: cb4b48e73532433c933d4f8f8135d5cc_postgres18_3cadab
+recovery	Stop containers	2026-09-18T23:40:12.4564259Z ##[command]/usr/bin/docker rm --force 07140acf5cc5d301fbc9ea17a65c2ae903b90ff9e8753f94d58372b8f15b8b42
+recovery	Stop containers	2026-09-18T23:40:12.6880074Z 07140acf5cc5d301fbc9ea17a65c2ae903b90ff9e8753f94d58372b8f15b8b42
+recovery	Stop containers	2026-09-18T23:40:12.6911043Z Remove container network: github_network_58751fddc21d4a3aba0d0eff6ab23e93
+recovery	Stop containers	2026-09-18T23:40:12.6915419Z ##[command]/usr/bin/docker network rm github_network_58751fddc21d4a3aba0d0eff6ab23e93
+recovery	Stop containers	2026-09-18T23:40:12.7952104Z github_network_58751fddc21d4a3aba0d0eff6ab23e93
+recovery	Complete job	﻿2026-09-18T23:40:12.8022696Z Cleaning up orphan processes

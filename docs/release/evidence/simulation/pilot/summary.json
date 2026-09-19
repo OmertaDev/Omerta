@@ -1,0 +1,139 @@
+{
+  "revision": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+  "harnessSha256": "4903c919495cf40932b771d203642f4718e718d3c6541dc8cff344df801e6f08",
+  "generatedAt": "2026-09-18T23:40:07.210Z",
+  "invocation": [
+    "--postgres",
+    "--populations=25",
+    "--seeds=rc1-alpha",
+    "--replicates=1",
+    "--rounds=2",
+    "--output=docs/release/evidence/simulation/pilot"
+  ],
+  "populations": [
+    25
+  ],
+  "seeds": [
+    "rc1-alpha"
+  ],
+  "replicates": 1,
+  "rounds": 2,
+  "status": "PASS_SCOPED",
+  "phase4ReleaseGate": "INCOMPLETE",
+  "results": [
+    {
+      "population": 25,
+      "seed": "rc1-alpha",
+      "replicate": 0,
+      "rounds": 2,
+      "database": "postgresql",
+      "status": "PASS_SCOPED",
+      "durationMs": 12070,
+      "archetypes": {
+        "aggressive": 2,
+        "cooperative": 2,
+        "crew_focused": 1,
+        "disappearing": 2,
+        "economic": 2,
+        "family_focused": 2,
+        "high_activity": 1,
+        "hoarder": 1,
+        "information_focused": 2,
+        "low_activity": 1,
+        "opportunistic": 2,
+        "repeated_failure": 1,
+        "solo": 1
+      },
+      "fixturePlayers": 5,
+      "actorsExecutingCommands": 19,
+      "metrics": {
+        "snapshots": 61,
+        "commandsIssuedAvailable": 957,
+        "commandsExecuted": 51,
+        "commandReplays": 4,
+        "rejectedCommands": {
+          "command_unavailable": 3,
+          "command_stale": 2
+        },
+        "opportunityCardsShown": 1461,
+        "opportunityCardsUniquePerActor": 306,
+        "visitsWithoutAvailableOpportunity": 0,
+        "truncatedOpportunityVisits": 0,
+        "maximumCardsPerVisit": 63,
+        "knowledgePrivacyProbes": 20,
+        "unauthorizedKnowledgeDisclosures": 0,
+        "foreignCommandProbes": 3,
+        "staleCommandProbes": 2,
+        "replayStateChecks": 4,
+        "disappearedBeforeCommand": 2,
+        "directorTicks": 2,
+        "directorSelections": 2,
+        "directorTransitions": 2,
+        "completedOpportunityCommandLinks": 34
+      },
+      "actions": [
+        "recover_shipment"
+      ],
+      "authoritative": {
+        "situationsGenerated": 2,
+        "situationStates": {
+          "mobilizing": 1,
+          "recovered": 1
+        },
+        "situationsWithCanonicalResolution": 1,
+        "campaignsStarted": 2,
+        "campaignStatuses": {
+          "active": 1,
+          "completed": 1
+        },
+        "distinctCampaignDefinitions": 2,
+        "operationsCreated": 2,
+        "operationStatuses": {
+          "completed": 2
+        },
+        "uniqueOperationParticipants": 2,
+        "knowledgeClaims": 3,
+        "itemsCreated": 3,
+        "itemsConsumed": 3,
+        "stackUnitsCreated": 63,
+        "stackUnitsConsumed": 16,
+        "worldChanges": 3,
+        "worldActions": [
+          {
+            "object": "infrastructure:canal_supply_depot",
+            "revision": 1,
+            "action": "register_shipment"
+          },
+          {
+            "object": "infrastructure:canal_supply_depot",
+            "revision": 2,
+            "action": "recover_shipment"
+          },
+          {
+            "object": "territory:dock_supply_route",
+            "revision": 1,
+            "action": "establish_route"
+          }
+        ],
+        "duplicateCanonicalConsequences": 0,
+        "omrTransactions": 0,
+        "negativeInventoryRows": 0
+      },
+      "notMeasured": [
+        "concurrent world object contention",
+        "SQL row-lock contention",
+        "long-term starvation",
+        "retention",
+        "real-player opportunity abandonment",
+        "disappearing operation participant recovery",
+        "independent Crew/Family population dynamics",
+        "engine-caused irreversible dead ends across every branch",
+        "reward-bearing operations",
+        "nonzero OMR movement",
+        "Knowledge revocation races"
+      ],
+      "revision": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+      "harnessSha256": "4903c919495cf40932b771d203642f4718e718d3c6541dc8cff344df801e6f08"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "capturedAt": "2026-09-18T23:46:13.585Z",
+  "sourceCommit": "cf661c399d02290dd1bb4b031c87a9235a65371f",
+  "files": {
+    "src/server.js": "9f8966d3fd0375fbe8ebd06ec48c7fbc089aeee5e5d14d16a3cb944f9cab819d",
+    "src/worker.js": "2717d60f0382f3bdc868af293b7653394ac56e152902fa205e055e1c837c71c6",
+    "src/player-commands.js": "915939ff8db9ad6c550cb4effe2910bf4977937ae8cbda5606cfc65c23571fc1",
+    "src/routes/commands.js": "2c8d059cc15ea72ea33bdf3181eaa1a69b3e325ce8ff7e7fa02220fe6da6ff3d",
+    "src/world-kernel.js": "d73455c6c13d1c1d6da624fb6fb486e850ee675df8114d96cd9e4cfbb0d4d052",
+    "src/coordination/operations.js": "0e422fa588b74797cd424c83e0829d64f9eb3b759a31ff18250642e05cc00095",
+    "src/coordination/knowledge.js": "46aa18d88dbf25e9c80adf2646e71ff4b7501cbaba5b556609e6caabd970e7e3",
+    "src/items.js": "f086d9a45ab5cb7bbd063bf84e91886ebc754efc7acc1a39dc6858e2634ae5e8",
+    "src/crafting.js": "68bc2f9f430b8b5d274a89ac1a6e4c330febcdccc58825c84058276dfaf035e8",
+    "src/director/runtime.js": "e6afb1e070646df207087b1d64af9264f857d053123fd720c43b21307e3edad4",
+    "src/director/config.js": "0028a11faefcd9a5953ac30793dbf5b5e644df77706f9944e32aa152aad36826",
+    "src/director/storage.js": "5b4107e521f6da72485bd378b2363b02bd03a1983f1f110d23cb14c683d673d0",
+    "src/world-consequences.js": "96318d2d25a12bdce2d23dd5a3933d39d40b518211619be7d2479e261d4e2701",
+    "src/player-opportunities.js": "6390fb110c8de470f9072a8e41c1b3b110d4edd9206d0cf2e935518e584acedc",
+    "test/director-security.js": "b77535e7c8bcc87ddaf45a1774b9fe719223aab56cf4ea1e00d2822333fd73ad",
+    "test/player-commands.js": "bc33328bba4af6e0b0f047a6bb3c73328eae90c23a8380da1c5c4e11f19f3f53",
+    "test/director-network-recovery.js": "a67ceb40c403b6163dbd36a3ff08092ee85ab86e502b07f43c790627df251d67",
+    "tools/rc1-shutdown.js": "97f3ddad5ed2637780b2bab758f47c38a46fffd978dd2522f7775904dd695e12"
+  }
+}

@@ -1,0 +1,48 @@
+[
+  {
+    "command": "node test/world-projection-client.js",
+    "log": "world-projection-client.log",
+    "exitCode": 0,
+    "logWrittenAt": "2026-09-19T00:04:00.816Z"
+  },
+  {
+    "command": "node test/world-telemetry.js --postgres",
+    "log": "world-telemetry-final-postgres.log",
+    "exitCode": 0,
+    "logWrittenAt": "2026-09-19T00:04:08.066Z"
+  },
+  {
+    "command": "node test/projection-events.js --postgres",
+    "log": "projection-events-final-postgres.log",
+    "exitCode": 0,
+    "logWrittenAt": "2026-09-19T00:04:39.398Z"
+  },
+  {
+    "command": "node tools/pgquery.js",
+    "log": "pgquery-telemetry.log",
+    "exitCode": 0,
+    "logWrittenAt": "2026-09-19T00:02:14.388Z"
+  },
+  {
+    "command": "node test/preflight.js",
+    "log": "preflight-telemetry.log",
+    "exitCode": 0,
+    "logWrittenAt": "2026-09-19T00:02:27.622Z"
+  },
+  {
+    "command": "node test/gates.js",
+    "log": "gates-telemetry.log",
+    "exitCode": 1,
+    "logWrittenAt": "2026-09-19T00:02:31.090Z",
+    "classification": "NEW REGRESSION",
+    "disposition": "query fan-out corrected; see retest"
+  },
+  {
+    "command": "node test/gates.js",
+    "log": "gates-telemetry-retest.log",
+    "exitCode": 1,
+    "logWrittenAt": "2026-09-19T00:03:18.633Z",
+    "classification": "NEW REGRESSION",
+    "disposition": "release suite registration pending package workstream"
+  }
+]

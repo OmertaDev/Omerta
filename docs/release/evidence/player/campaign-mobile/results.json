@@ -1,0 +1,51 @@
+{
+  "scope": "Seeded social/campaign setup; actual rendered mobile command and confirmation controls, PostgreSQL persistence. Not fresh-account acquisition or a human comprehension study.",
+  "results": [
+    {
+      "width": 320,
+      "scenario": "shipment-redistribution",
+      "status": "FAIL",
+      "commands": [
+        {
+          "account": "rc1_browser_320_shipment_redistribution-aBoss",
+          "type": "mystery.start",
+          "label": "Open case: The Dispatch Register",
+          "confirmed": false
+        },
+        {
+          "account": "rc1_browser_320_shipment_redistribution-aBoss",
+          "type": "mystery.complete",
+          "label": "Complete: The Dispatch Register",
+          "confirmed": false
+        },
+        {
+          "account": "rc1_browser_320_shipment_redistribution-aBoss",
+          "type": "recipe.craft",
+          "label": "Craft: Stamp a Canal Cargo Seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1_browser_320_shipment_redistribution-aBoss",
+          "type": "mystery.discover",
+          "label": "Investigate lead",
+          "confirmed": false
+        },
+        {
+          "account": "rc1_browser_320_shipment_redistribution-aBoss",
+          "type": "mystery.complete",
+          "label": "Complete: The Cargo Seal Impressions",
+          "confirmed": false
+        }
+      ],
+      "errors": [],
+      "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#tour-skip')\u001b[22m\n\u001b[2m    - locator resolved to <button id=\"tour-skip\" class=\"act ghostbtn\">skip</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div id=\"tour-body\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div id=\"tour-art\" aria-hidden=\"true\"></div> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    13 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div id=\"tour-art\" aria-hidden=\"true\"></div> intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div id=\"tour-body\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div id=\"tour-art\" aria-hidden=\"true\"></div> intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div id=\"tour-art\" aria-hidden=\"true\"></div> intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div id=\"tour-art\" aria-hidden=\"true\"></div> intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div id=\"tour-body\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div id=\"tour-art\" aria-hidden=\"true\"></div> intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\n    at pageFor (C:\\Users\\Jorge\\Documents\\Omerta-rc1\\tools\\rc1-campaign-mobile.js:59:103)\n    at async Object.snapshot (C:\\Users\\Jorge\\Documents\\Omerta-rc1\\tools\\rc1-campaign-mobile.js:72:27)\n    at async learn (C:\\Users\\Jorge\\Documents\\Omerta-rc1\\test\\lib\\campaign-network-support.js:22:19)\n    at async Object.prepare (C:\\Users\\Jorge\\Documents\\Omerta-rc1\\test\\lib\\campaign-network-support.js:73:77)\n    at async file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-campaign-mobile.js:130:27"
+    },
+    {
+      "width": 390,
+      "scenario": "shipment-redistribution",
+      "status": "FAIL",
+      "commands": [],
+      "errors": []
+    }
+  ]
+}

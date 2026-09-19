@@ -1,0 +1,16 @@
+Current copy: shared system status, Codex links, staking rules, release labels and inline scripts passed.
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: SPEC says 272 backend modules; src/ has 273
+    at file:///C:/Users/Jorge/Documents/Omerta-rc1/test/docs.js:324:8 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 272,
+  expected: 273,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

@@ -90,6 +90,14 @@ export async function checkReadLimit({ accountId }) {
   return r.ok ? null : { retryAfter: r.retryAfter };
 }
 
+// Passive RC1 observations have no gameplay effect and must not spend the
+// player's mutation allowance. Keep their own bounded authenticated bucket.
+export async function checkObservationLimit({ accountId }) {
+  const take = redis ? takeRedis : takeMemory;
+  const result = await take(`observation:${accountId}`, 3, 32);
+  return result.ok ? null : { retryAfter: result.retryAfter };
+}
+
 // (red-team R13 F1/F2) The keyless public render routes (/card, /u, /v1/u) do real work per hit (an
 // SVG→PNG raster + a DB dossier) and sit OUTSIDE the /v1 read-limiter, so an unauthenticated flood from
 // one origin could pin the server. A per-IP bucket, generous enough for legit OG-crawler unfurls (a share

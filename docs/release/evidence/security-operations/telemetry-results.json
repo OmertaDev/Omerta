@@ -1,0 +1,44 @@
+[
+  {
+    "test": "world-telemetry-postgres",
+    "command": "node test/world-telemetry.js --postgres",
+    "exitCode": 0,
+    "startedAt": "2026-09-18T23:58:34.7256813Z",
+    "finishedAt": "2026-09-18T23:59:11.4322664Z"
+  },
+  {
+    "test": "projection-events-postgres",
+    "command": "node test/projection-events.js --postgres",
+    "exitCode": 0,
+    "startedAt": "2026-09-18T23:59:11.4820044Z",
+    "finishedAt": "2026-09-18T23:59:12.7377636Z"
+  },
+  {
+    "test": "player-command-api",
+    "command": "node test/player-command-api.js ",
+    "exitCode": 0,
+    "startedAt": "2026-09-18T23:59:12.7429980Z",
+    "finishedAt": "2026-09-18T23:59:18.5777096Z"
+  },
+  {
+    "test": "hardening",
+    "command": "node test/hardening.js ",
+    "exitCode": 0,
+    "startedAt": "2026-09-18T23:59:18.5807389Z",
+    "finishedAt": "2026-09-18T23:59:34.4309091Z"
+  },
+  {
+    "test": "routes",
+    "command": "node test/routes.js ",
+    "exitCode": 0,
+    "startedAt": "2026-09-18T23:59:34.4342986Z",
+    "finishedAt": "2026-09-18T23:59:41.4321351Z"
+  },
+  {
+    "test": "engagement",
+    "command": "node test/engagement.js ",
+    "exitCode": 0,
+    "startedAt": "2026-09-18T23:59:41.4359867Z",
+    "finishedAt": "2026-09-18T23:59:48.5786307Z"
+  }
+]

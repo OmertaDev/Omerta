@@ -7,6 +7,26 @@ export const WORLD_CONSEQUENCE_LIMITS = Object.freeze({ cards: 24, queries: 64, 
 const fail = () => { throw new GameError('bad_consequence_policy', 'Invalid world history policy.'); };
 const compare = (a, b) => a < b ? -1 : a > b ? 1 : 0;
 const words = (value) => String(value).replace(/[_:.-]+/g, ' ');
+// Player-facing explanations of already-authorized states. These add no actors,
+// event identifiers, private causes, permissions, or promised follow-up actions.
+const CANAL_STATE_DESCRIPTIONS = Object.freeze({
+  idle: 'The canal depot has no registered shipment.',
+  stranded: 'A registered shipment is stranded at the canal depot.',
+  recovered: 'The missing shipment was recovered at the canal depot.',
+  diverted: 'The missing shipment was intercepted and diverted from its registered route.',
+  destroyed: 'The stranded canal depot was destroyed.',
+  redistributed: 'The shipment was redistributed to reopen the community supply route.',
+  market_open: 'An alternate market has opened at the canal depot.',
+  market_supplied: 'The canal market received supplies. The contributed wire stays committed to the depot.',
+  market_seized: 'The canal market route was seized.',
+  restored: 'The registered supply route was restored.',
+  exposed: 'The canal market route was exposed publicly. This disclosure does not establish who betrayed an operation.',
+  public_trace: 'Independent records corroborate how the route became public. They do not establish betrayal or a guilty player.',
+  secured: 'The shipping records are secured. This outcome does not establish that anyone betrayed the operation.',
+  unproven: 'The shipping concern remains unresolved. The record does not establish betrayal or anyone\'s guilt.',
+});
+const describeState = (definition, state) => definition.id === 'infrastructure:canal_supply_depot'
+  && CANAL_STATE_DESCRIPTIONS[state] || `${definition.title}: ${words(state)}.`;
 
 export function createWorldConsequences({ definitions, policies = [] }) {
   if (!Array.isArray(definitions) || definitions.length > 100 || !Array.isArray(policies) || policies.length > 100) fail();
@@ -57,7 +77,7 @@ export function createWorldConsequences({ definitions, policies = [] }) {
         const local = isPublic && locationId === definition.locationId;
         const own = row.actor_character_id === characterId;
         entries.push({ id: row.id, kind: 'world_change', title: definition.title,
-          description: `${definition.title}: ${words(row.next_state)}.`, occurredAt: new Date(row.occurred_at).toISOString(),
+          description: describeState(definition, row.next_state), occurredAt: new Date(row.occurred_at).toISOString(),
           informationLayer: isPublic ? local ? 'LOCAL_RUMOR' : 'PUBLIC_AFTERMATH' : 'DISCOVERED_INTELLIGENCE',
           whyKnown: own ? 'This change is recorded in your own actions.'
             : isPublic ? local ? 'Word of this change has reached your district.' : 'The visible aftermath is now public.'

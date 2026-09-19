@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+  "platform": "win32",
+  "node": "v24.19.0",
+  "startedAt": "2026-09-18T23:44:48.328Z",
+  "scenarios": [
+    {
+      "name": "campaign-progression",
+      "barrier": {
+        "table": "director_campaigns",
+        "event": "UPDATE"
+      },
+      "status": "PROBE_ONLY",
+      "postgres": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+      "beforeHash": "b35bc96ed232a98df7a5eeb280609de733c929f18090d3b3c8c5b5452e498266",
+      "blockedBackendPid": 22848,
+      "note": "SQL barrier reached; no Linux signal or recovery claim"
+    }
+  ],
+  "status": "BLOCKED",
+  "reason": "Probe validates setup only. Linux SIGTERM evidence remains required.",
+  "finishedAt": "2026-09-18T23:45:01.313Z"
+}

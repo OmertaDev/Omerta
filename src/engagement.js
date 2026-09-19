@@ -159,6 +159,8 @@ export const SYSTEM_IDS = Object.freeze({
 export const NON_ENGAGEMENT = [
   'mod_kill_reason',
   'screen_open',
+  'world_view',
+  'world_command',
   'agent_turn_action',
   // Anonymous acquisition-funnel instruments. They measure whether the Path explainer moves a
   // visitor from first decision to guest play; counting them as player-system use would inflate DAU

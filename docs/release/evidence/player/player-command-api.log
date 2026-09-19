@@ -1,0 +1,2 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+player-command-api: authentication, cohort, strict request shape, account binding, no-store, exact HTTP retries, current projection and character isolation PASS

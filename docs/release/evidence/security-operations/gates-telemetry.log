@@ -1,0 +1,37 @@
+✓ 73 gate requirements hold across 5 families
+✓ completeness: 14 street crimes and every collect* action are classified
+✓ 4 participation cash faucets exclude agents at the point of payment (3 waived with a stated reason)
+✓ no site hand-rolls a gate
+✓ no module re-defines jailed/hospitalized/safeHoused — every gate resolves to the one definition
+✓ all 28 wrong-location refusals carry the destination as data — the client turns every one into a "go there" button
+✅ THE GATE MATRIX passed — every verb in a family enforces the gates its siblings do, checked through direct calls, shared assert helpers and inline column comparisons alike; the membership is derived from the code rather than trusted, so a new street crime or collect action cannot slip past unclassified; the sites that hand-roll a gate instead of calling the helper are named rather than quietly accepted; and no module may re-define a canonical predicate, which is the shape the inline check structurally cannot see. Scope: it proves a gate is REACHED, not that it is correct.
+✓ all 9 real-value price surfaces are walled or waived with a stated bound
+✓ all 126 pooled connections are released before their function returns
+✓ all 9 vehicle handovers clear the consent flags and the consumable
+✓ all 35 human status boards exclude residents (11 waived with a stated reason)
+✓ every code 11 watcher recorders can throw is classified poison or waived
+✓ all 81 worker jobs are isolated and every wrapped result is read null-safely
+✓ all 4 guarded worker schedulers are registered before they are first run
+✓ the season rollover -- the one job linear in the population -- runs off the alarm tick
+✓ the worker watchdog names the job it is stuck in, across 123 un-nested safe() jobs, and restarts the process after 30m
+✓ the API watches the worker heartbeat and shouts on the founder channel, one shared threshold
+✓ all 22 catalog gates test membership, not truthiness (6 waived with a stated reason)
+✓ all 12 watched event signatures match their contract declaration on type, indexed-ness AND parameter name (2 external)
+✓ all 38 decoded-log field reads name a parameter their own event declares
+✓ all 118 multi-lock transactions agree on one order for each of 131 pairs, and no contended row (186 lock sites, 105 of them write-form) is taken before a character row
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: an UNCLASSIFIED Promise.all may issue concurrent queries on a SHARED pg client. One connection cannot do that: node-pg queues them behind a deprecation warning today and THROWS from pg@9, and the parallel form buys no speed because the connection serializes them either way. Await them in sequence — do NOT hand each one its own connection (it would read outside the request's transaction, and N connections per request is the pool-exhaustion shape):
+   - src/world-telemetry.js:98
+    at file:///C:/Users/Jorge/Documents/Omerta-rc1/test/gates.js:1786:10 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: [ 'src/world-telemetry.js:98' ],
+  expected: [],
+  operator: 'deepEqual',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

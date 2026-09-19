@@ -1,0 +1,37 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+FAIL 320px: locator.click: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator('[data-world-choice-confirm]')
+    - locator resolved to <button class="act danger" data-world-choice-confirm="">Confirm move</button>
+  - attempting click action
+    - waiting for element to be visible, enabled and stable
+  - element was detached from the DOM, retrying
+
+    at executeVisible (C:\Users\Jorge\Documents\Omerta-rc1\tools\rc1-mobile-journeys.js:96:93)
+    at async file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-mobile-journeys.js:222:7
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+FAIL 390px: locator.click: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator('[data-world-choice-confirm]')
+    - locator resolved to <button class="act danger" data-world-choice-confirm="">Confirm move</button>
+  - attempting click action
+    - waiting for element to be visible, enabled and stable
+  - element was detached from the DOM, retrying
+
+    at executeVisible (C:\Users\Jorge\Documents\Omerta-rc1\tools\rc1-mobile-journeys.js:96:93)
+    at async file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-mobile-journeys.js:222:7
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: RC1 mobile entry/recovery journey failed; see evidence
+    at file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-mobile-journeys.js:257:1 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

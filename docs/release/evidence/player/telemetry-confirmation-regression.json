@@ -1,0 +1,4138 @@
+{
+  "database": "disposable pg-mem",
+  "browser": "153.0.8010.48",
+  "contentMode": "LIVE with existing foundation flags enabled; no chain/economic activation",
+  "results": [
+    {
+      "width": 320,
+      "steps": [
+        "new-player-command-center",
+        "response-lost",
+        "recovered-after-refresh",
+        "first-case-completed",
+        "solo-preparation-requirements",
+        "failure"
+      ],
+      "errors": [],
+      "requests": [
+        {
+          "body": {
+            "executionId": "505fb9a6c17da85c2c2d85ca5b105e29b420d07736597ea63349bedf645fc1b7.fd9c03b54928594c7b2b47f85f80a3161bc9c948d3aaff4c1c21fbcd8ca81435",
+            "confirmed": false
+          },
+          "key": "505fb9a6c17da85c2c2d85ca5b105e29b420d07736597ea63349bedf645fc1b7.fd9c03b54928594c7b2b47f85f80a3161bc9c948d3aaff4c1c21fbcd8ca81435"
+        },
+        {
+          "body": {
+            "executionId": "505fb9a6c17da85c2c2d85ca5b105e29b420d07736597ea63349bedf645fc1b7.fd9c03b54928594c7b2b47f85f80a3161bc9c948d3aaff4c1c21fbcd8ca81435",
+            "confirmed": false
+          },
+          "key": "505fb9a6c17da85c2c2d85ca5b105e29b420d07736597ea63349bedf645fc1b7.fd9c03b54928594c7b2b47f85f80a3161bc9c948d3aaff4c1c21fbcd8ca81435"
+        },
+        {
+          "body": {
+            "executionId": "86bd4d05054c49300e30de6b57390abf1cc70f574d473114214e56aeca688987.ed432f6dd000f91b50c4708c08f83a47905cdb8ae7efbc9fdc17508dc59b68a5",
+            "confirmed": false
+          },
+          "key": "86bd4d05054c49300e30de6b57390abf1cc70f574d473114214e56aeca688987.ed432f6dd000f91b50c4708c08f83a47905cdb8ae7efbc9fdc17508dc59b68a5"
+        },
+        {
+          "body": {
+            "executionId": "37237421cb5dac53c593aecc2173d87d60ebf08402a32419807bd9588062a1eb.5ca7df4210fe21b70e88d7ee8b57531d37901fc10b138c55af9d2b2f487ec160",
+            "confirmed": false
+          },
+          "key": "37237421cb5dac53c593aecc2173d87d60ebf08402a32419807bd9588062a1eb.5ca7df4210fe21b70e88d7ee8b57531d37901fc10b138c55af9d2b2f487ec160"
+        },
+        {
+          "body": {
+            "executionId": "fe0de08844a7402426c0cf7de4447fcdcf3edf6ce0e392795a14be0e25a8a81a.1cbfaa33a78271a19bc20b35c07143fc53029497e9f69e509b635e9c10b3c107",
+            "confirmed": false
+          },
+          "key": "fe0de08844a7402426c0cf7de4447fcdcf3edf6ce0e392795a14be0e25a8a81a.1cbfaa33a78271a19bc20b35c07143fc53029497e9f69e509b635e9c10b3c107"
+        },
+        {
+          "body": {
+            "executionId": "6c92df0c1af33bff8149864e349d96b1a9b7bb24bd6c52a5a97a83ab7c3242af.5aa2c3d04939f02c6c3f44c9716333a1fc8edbd779d5503d2da976a19b525217",
+            "confirmed": false
+          },
+          "key": "6c92df0c1af33bff8149864e349d96b1a9b7bb24bd6c52a5a97a83ab7c3242af.5aa2c3d04939f02c6c3f44c9716333a1fc8edbd779d5503d2da976a19b525217"
+        }
+      ],
+      "telemetry": [
+        {
+          "status": 200,
+          "body": {
+            "phase": "session",
+            "session": "39d12c54-dc5b-4050-938a-d9afd79a708a",
+            "count": 1
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "command_center",
+            "session": "39d12c54-dc5b-4050-938a-d9afd79a708a",
+            "count": 1
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "opportunities_shown",
+            "session": "39d12c54-dc5b-4050-938a-d9afd79a708a",
+            "count": 18,
+            "reference": "26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89|5ca7df4210fe21b70e88d7ee8b57531d37901fc10b138c55af9d2b2f487ec160|69c16dddffef2c457fd07fe33a3be52619120170f983e4d9dae98aa4244c16ff|6cf4d"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "opportunity_open",
+            "session": "39d12c54-dc5b-4050-938a-d9afd79a708a",
+            "count": 1,
+            "reference": "fd9c03b54928594c7b2b47f85f80a3161bc9c948d3aaff4c1c21fbcd8ca81435"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "preparation",
+            "session": "39d12c54-dc5b-4050-938a-d9afd79a708a",
+            "count": 1,
+            "reference": "fd9c03b54928594c7b2b47f85f80a3161bc9c948d3aaff4c1c21fbcd8ca81435"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "session",
+            "session": "78292bb1-8532-4aa0-9ce4-008e191703cd",
+            "count": 1
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "command_center",
+            "session": "78292bb1-8532-4aa0-9ce4-008e191703cd",
+            "count": 1
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "opportunities_shown",
+            "session": "78292bb1-8532-4aa0-9ce4-008e191703cd",
+            "count": 18,
+            "reference": "26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89|5ca7df4210fe21b70e88d7ee8b57531d37901fc10b138c55af9d2b2f487ec160|69c16dddffef2c457fd07fe33a3be52619120170f983e4d9dae98aa4244c16ff|6cf4d"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "opportunities_shown",
+            "session": "78292bb1-8532-4aa0-9ce4-008e191703cd",
+            "count": 19,
+            "reference": "ed432f6dd000f91b50c4708c08f83a47905cdb8ae7efbc9fdc17508dc59b68a5|26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89|5ca7df4210fe21b70e88d7ee8b57531d37901fc10b138c55af9d2b2f487ec160|69c16"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "opportunity_open",
+            "session": "78292bb1-8532-4aa0-9ce4-008e191703cd",
+            "count": 1,
+            "reference": "ed432f6dd000f91b50c4708c08f83a47905cdb8ae7efbc9fdc17508dc59b68a5"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "preparation",
+            "session": "78292bb1-8532-4aa0-9ce4-008e191703cd",
+            "count": 1,
+            "reference": "ed432f6dd000f91b50c4708c08f83a47905cdb8ae7efbc9fdc17508dc59b68a5"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "opportunity_open",
+            "session": "78292bb1-8532-4aa0-9ce4-008e191703cd",
+            "count": 1,
+            "reference": "5ca7df4210fe21b70e88d7ee8b57531d37901fc10b138c55af9d2b2f487ec160"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "preparation",
+            "session": "78292bb1-8532-4aa0-9ce4-008e191703cd",
+            "count": 1,
+            "reference": "5ca7df4210fe21b70e88d7ee8b57531d37901fc10b138c55af9d2b2f487ec160"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "opportunities_shown",
+            "session": "78292bb1-8532-4aa0-9ce4-008e191703cd",
+            "count": 18,
+            "reference": "1cbfaa33a78271a19bc20b35c07143fc53029497e9f69e509b635e9c10b3c107|26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89|69c16dddffef2c457fd07fe33a3be52619120170f983e4d9dae98aa4244c16ff|6cf4d"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "opportunity_open",
+            "session": "78292bb1-8532-4aa0-9ce4-008e191703cd",
+            "count": 1,
+            "reference": "1cbfaa33a78271a19bc20b35c07143fc53029497e9f69e509b635e9c10b3c107"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "preparation",
+            "session": "78292bb1-8532-4aa0-9ce4-008e191703cd",
+            "count": 1,
+            "reference": "1cbfaa33a78271a19bc20b35c07143fc53029497e9f69e509b635e9c10b3c107"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "opportunities_shown",
+            "session": "78292bb1-8532-4aa0-9ce4-008e191703cd",
+            "count": 18,
+            "reference": "26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89|5aa2c3d04939f02c6c3f44c9716333a1fc8edbd779d5503d2da976a19b525217|69c16dddffef2c457fd07fe33a3be52619120170f983e4d9dae98aa4244c16ff|6cf4d"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "opportunity_open",
+            "session": "78292bb1-8532-4aa0-9ce4-008e191703cd",
+            "count": 1,
+            "reference": "5aa2c3d04939f02c6c3f44c9716333a1fc8edbd779d5503d2da976a19b525217"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "preparation",
+            "session": "78292bb1-8532-4aa0-9ce4-008e191703cd",
+            "count": 1,
+            "reference": "5aa2c3d04939f02c6c3f44c9716333a1fc8edbd779d5503d2da976a19b525217"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "opportunities_shown",
+            "session": "78292bb1-8532-4aa0-9ce4-008e191703cd",
+            "count": 19,
+            "reference": "26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89|69c16dddffef2c457fd07fe33a3be52619120170f983e4d9dae98aa4244c16ff|6cf4d88b32056d683bb3d729a23322a0f25e8ce64459b611968f7128a4eb29c8|caa88"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "opportunity_open",
+            "session": "78292bb1-8532-4aa0-9ce4-008e191703cd",
+            "count": 1,
+            "reference": "f9ebe179c4a9ab907abb3866e3fa23313012d2296886d1e926df78d242e9d336"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "preparation",
+            "session": "78292bb1-8532-4aa0-9ce4-008e191703cd",
+            "count": 1,
+            "reference": "f9ebe179c4a9ab907abb3866e3fa23313012d2296886d1e926df78d242e9d336"
+          }
+        }
+      ],
+      "initial": {
+        "opportunities": [
+          {
+            "opportunityId": "26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+            "kind": "new_intelligence",
+            "category": "INTELLIGENCE",
+            "label": "Investigate: The Missing Carbon Index",
+            "description": "Investigate: The Missing Carbon Index",
+            "subject": {
+              "type": "discovery",
+              "id": "omerta.coordination.furnace-archive"
+            },
+            "availability": "AVAILABLE",
+            "commandIds": [
+              "26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "This lead comes from the evidence and investigations available to you.",
+            "whyItMatters": "Your next move is ready.",
+            "reasons": [
+              "Your next move is ready."
+            ],
+            "requirements": [],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Ready for your next move."
+            }
+          },
+          {
+            "opportunityId": "5ca7df4210fe21b70e88d7ee8b57531d37901fc10b138c55af9d2b2f487ec160",
+            "kind": "new_intelligence",
+            "category": "INTELLIGENCE",
+            "label": "Investigate: The Split Ledger",
+            "description": "Investigate: The Split Ledger",
+            "subject": {
+              "type": "discovery",
+              "id": "omerta.coordination.split-ledger"
+            },
+            "availability": "AVAILABLE",
+            "commandIds": [
+              "5ca7df4210fe21b70e88d7ee8b57531d37901fc10b138c55af9d2b2f487ec160"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "This lead comes from the evidence and investigations available to you.",
+            "whyItMatters": "Your next move is ready.",
+            "reasons": [
+              "Your next move is ready."
+            ],
+            "requirements": [],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Ready for your next move."
+            }
+          },
+          {
+            "opportunityId": "69c16dddffef2c457fd07fe33a3be52619120170f983e4d9dae98aa4244c16ff",
+            "kind": "new_intelligence",
+            "category": "INTELLIGENCE",
+            "label": "Investigate: The Informant: Compare the Records",
+            "description": "Investigate: The Informant: Compare the Records",
+            "subject": {
+              "type": "discovery",
+              "id": "omerta.coordination.informant-review"
+            },
+            "availability": "AVAILABLE",
+            "commandIds": [
+              "69c16dddffef2c457fd07fe33a3be52619120170f983e4d9dae98aa4244c16ff"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "This lead comes from the evidence and investigations available to you.",
+            "whyItMatters": "Your next move is ready.",
+            "reasons": [
+              "Your next move is ready."
+            ],
+            "requirements": [],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Ready for your next move."
+            }
+          },
+          {
+            "opportunityId": "6cf4d88b32056d683bb3d729a23322a0f25e8ce64459b611968f7128a4eb29c8",
+            "kind": "new_intelligence",
+            "category": "INTELLIGENCE",
+            "label": "Investigate: The Dock War",
+            "description": "Investigate: The Dock War",
+            "subject": {
+              "type": "discovery",
+              "id": "omerta.coordination.dock-war"
+            },
+            "availability": "AVAILABLE",
+            "commandIds": [
+              "6cf4d88b32056d683bb3d729a23322a0f25e8ce64459b611968f7128a4eb29c8"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "This lead comes from the evidence and investigations available to you.",
+            "whyItMatters": "Your next move is ready.",
+            "reasons": [
+              "Your next move is ready."
+            ],
+            "requirements": [],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Ready for your next move."
+            }
+          },
+          {
+            "opportunityId": "caa88b1be55ab2af2aeea32f9b1b558b788eaf58fdb93ebfe9fe48a290c389d8",
+            "kind": "new_intelligence",
+            "category": "INTELLIGENCE",
+            "label": "Investigate: The Dead Letter",
+            "description": "Investigate: The Dead Letter",
+            "subject": {
+              "type": "discovery",
+              "id": "omerta.coordination.dead-letter"
+            },
+            "availability": "AVAILABLE",
+            "commandIds": [
+              "caa88b1be55ab2af2aeea32f9b1b558b788eaf58fdb93ebfe9fe48a290c389d8"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "This lead comes from the evidence and investigations available to you.",
+            "whyItMatters": "Your next move is ready.",
+            "reasons": [
+              "Your next move is ready."
+            ],
+            "requirements": [],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Ready for your next move."
+            }
+          },
+          {
+            "opportunityId": "d2c5123ed53c879f240c464de8786f0eb22c0cb50d3969981ec533d16715e6b4",
+            "kind": "new_intelligence",
+            "category": "INTELLIGENCE",
+            "label": "Investigate: The Canal Shipping Register",
+            "description": "Investigate: The Canal Shipping Register",
+            "subject": {
+              "type": "discovery",
+              "id": "omerta.coordination.canal-register"
+            },
+            "availability": "AVAILABLE",
+            "commandIds": [
+              "d2c5123ed53c879f240c464de8786f0eb22c0cb50d3969981ec533d16715e6b4"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "This lead comes from the evidence and investigations available to you.",
+            "whyItMatters": "Your next move is ready.",
+            "reasons": [
+              "Your next move is ready."
+            ],
+            "requirements": [],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Ready for your next move."
+            }
+          },
+          {
+            "opportunityId": "2eeeb5b0ccc482d2430ebd7100d6021f9b745e59aa375da7e4d0c569c77b2cdc",
+            "kind": "mystery_lead",
+            "category": "INTELLIGENCE",
+            "label": "Open case: Review a Recovery Plan",
+            "description": "Open case: Review a Recovery Plan",
+            "subject": {
+              "type": "mystery",
+              "id": "informant-failed-plan"
+            },
+            "availability": "AVAILABLE",
+            "commandIds": [
+              "2eeeb5b0ccc482d2430ebd7100d6021f9b745e59aa375da7e4d0c569c77b2cdc"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "This lead comes from the evidence and investigations available to you.",
+            "whyItMatters": "Your next move is ready.",
+            "reasons": [
+              "Your next move is ready."
+            ],
+            "requirements": [],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Ready for your next move."
+            }
+          },
+          {
+            "opportunityId": "4e0b5241c185d099f38485d4a0184e2b0d72e2c7d195fc34f53d721c32f06030",
+            "kind": "mystery_lead",
+            "category": "INTELLIGENCE",
+            "label": "Open case: The Dock Noticeboard",
+            "description": "Open case: The Dock Noticeboard",
+            "subject": {
+              "type": "mystery",
+              "id": "informant-public-trail"
+            },
+            "availability": "AVAILABLE",
+            "commandIds": [
+              "4e0b5241c185d099f38485d4a0184e2b0d72e2c7d195fc34f53d721c32f06030"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "This lead comes from the evidence and investigations available to you.",
+            "whyItMatters": "Your next move is ready.",
+            "reasons": [
+              "Your next move is ready."
+            ],
+            "requirements": [],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Ready for your next move."
+            }
+          },
+          {
+            "opportunityId": "6a8d08dee06949f146d59072f83795e0ed83fedc6114c24df3d636efcfde4d44",
+            "kind": "mystery_lead",
+            "category": "INTELLIGENCE",
+            "label": "Open case: The Dispatch Register",
+            "description": "Open case: The Dispatch Register",
+            "subject": {
+              "type": "mystery",
+              "id": "missing-shipment-evidence"
+            },
+            "availability": "AVAILABLE",
+            "commandIds": [
+              "6a8d08dee06949f146d59072f83795e0ed83fedc6114c24df3d636efcfde4d44"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "This lead comes from the evidence and investigations available to you.",
+            "whyItMatters": "Your next move is ready.",
+            "reasons": [
+              "Your next move is ready."
+            ],
+            "requirements": [],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Ready for your next move."
+            }
+          },
+          {
+            "opportunityId": "6efd00796138ec2ee1dbc61dbe7ff79ddb7f0c2c232e437e5a46208c61d3dada",
+            "kind": "mystery_lead",
+            "category": "INTELLIGENCE",
+            "label": "Open case: Dock War Aftermath",
+            "description": "Open case: Dock War Aftermath",
+            "subject": {
+              "type": "mystery",
+              "id": "dock-war-aftermath"
+            },
+            "availability": "AVAILABLE",
+            "commandIds": [
+              "6efd00796138ec2ee1dbc61dbe7ff79ddb7f0c2c232e437e5a46208c61d3dada"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "This lead comes from the evidence and investigations available to you.",
+            "whyItMatters": "Your next move is ready.",
+            "reasons": [
+              "Your next move is ready."
+            ],
+            "requirements": [],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Ready for your next move."
+            }
+          },
+          {
+            "opportunityId": "7367f555d8bd1082a8264e41d2c6c27904a415996b26f3e6e03ac63d89f8aeaa",
+            "kind": "mystery_lead",
+            "category": "INTELLIGENCE",
+            "label": "Open case: Your Shipping Records",
+            "description": "Open case: Your Shipping Records",
+            "subject": {
+              "type": "mystery",
+              "id": "canal-shipping-records"
+            },
+            "availability": "AVAILABLE",
+            "commandIds": [
+              "7367f555d8bd1082a8264e41d2c6c27904a415996b26f3e6e03ac63d89f8aeaa"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "This lead comes from the evidence and investigations available to you.",
+            "whyItMatters": "Your next move is ready.",
+            "reasons": [
+              "Your next move is ready."
+            ],
+            "requirements": [],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Ready for your next move."
+            }
+          },
+          {
+            "opportunityId": "b211aa87f5a9a22926d3402702f54f586a56814ec3cc934626bc312ee17798fb",
+            "kind": "mystery_lead",
+            "category": "INTELLIGENCE",
+            "label": "Open case: The Tide Ledger",
+            "description": "Open case: The Tide Ledger",
+            "subject": {
+              "type": "mystery",
+              "id": "dock-war-evidence"
+            },
+            "availability": "AVAILABLE",
+            "commandIds": [
+              "b211aa87f5a9a22926d3402702f54f586a56814ec3cc934626bc312ee17798fb"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "This lead comes from the evidence and investigations available to you.",
+            "whyItMatters": "Your next move is ready.",
+            "reasons": [
+              "Your next move is ready."
+            ],
+            "requirements": [],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Ready for your next move."
+            }
+          },
+          {
+            "opportunityId": "c50c7c04ebae92d64a2dcc2b6ed74e9ce5ba65c04567f7df79ba513a596e1011",
+            "kind": "mystery_lead",
+            "category": "INTELLIGENCE",
+            "label": "Open case: Furnace Archive Aftermath",
+            "description": "Open case: Furnace Archive Aftermath",
+            "subject": {
+              "type": "mystery",
+              "id": "furnace-archive-aftermath"
+            },
+            "availability": "AVAILABLE",
+            "commandIds": [
+              "c50c7c04ebae92d64a2dcc2b6ed74e9ce5ba65c04567f7df79ba513a596e1011"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "This lead comes from the evidence and investigations available to you.",
+            "whyItMatters": "Your next move is ready.",
+            "reasons": [
+              "Your next move is ready."
+            ],
+            "requirements": [],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Ready for your next move."
+            }
+          },
+          {
+            "opportunityId": "dca6ca790a26c68ed10dbccf2f3c7b5615ccc33edc8d14e8f0ab451501f75592",
+            "kind": "mystery_lead",
+            "category": "INTELLIGENCE",
+            "label": "Open case: Furnace Archive Deduction",
+            "description": "Open case: Furnace Archive Deduction",
+            "subject": {
+              "type": "mystery",
+              "id": "furnace-archive-deduction"
+            },
+            "availability": "AVAILABLE",
+            "commandIds": [
+              "dca6ca790a26c68ed10dbccf2f3c7b5615ccc33edc8d14e8f0ab451501f75592"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "This lead comes from the evidence and investigations available to you.",
+            "whyItMatters": "Your next move is ready.",
+            "reasons": [
+              "Your next move is ready."
+            ],
+            "requirements": [],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Ready for your next move."
+            }
+          },
+          {
+            "opportunityId": "fd9c03b54928594c7b2b47f85f80a3161bc9c948d3aaff4c1c21fbcd8ca81435",
+            "kind": "mystery_lead",
+            "category": "INTELLIGENCE",
+            "label": "Open case: A Carbon Copy Survives",
+            "description": "Open case: A Carbon Copy Survives",
+            "subject": {
+              "type": "mystery",
+              "id": "furnace-archive-inspection"
+            },
+            "availability": "AVAILABLE",
+            "commandIds": [
+              "fd9c03b54928594c7b2b47f85f80a3161bc9c948d3aaff4c1c21fbcd8ca81435"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "This lead comes from the evidence and investigations available to you.",
+            "whyItMatters": "Your next move is ready.",
+            "reasons": [
+              "Your next move is ready."
+            ],
+            "requirements": [],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Ready for your next move."
+            }
+          },
+          {
+            "opportunityId": "098ee05c410631fe55afa48631ce693b3f06c47330834b539287d6e88f1bb645",
+            "kind": "territory",
+            "category": "WORLD",
+            "label": "Register shipment",
+            "description": "Register shipment",
+            "subject": {
+              "type": "world_object",
+              "id": "infrastructure:canal_supply_depot"
+            },
+            "availability": "LOCKED",
+            "commandIds": [
+              "098ee05c410631fe55afa48631ce693b3f06c47330834b539287d6e88f1bb645"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "You can see this part of the city.",
+            "whyItMatters": "This work is waiting for your attention.",
+            "reasons": [],
+            "requirements": [
+              {
+                "description": "Keep investigating. Further requirements are not yet known.",
+                "status": "UNKNOWN"
+              }
+            ],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Preparation is still needed."
+            }
+          },
+          {
+            "opportunityId": "59ecffb3fae911f9b41caeee516b3620d07d88f00e412afc5f6872b7115d5c48",
+            "kind": "territory",
+            "category": "WORLD",
+            "label": "Establish route",
+            "description": "Establish route",
+            "subject": {
+              "type": "world_object",
+              "id": "territory:dock_supply_route"
+            },
+            "availability": "LOCKED",
+            "commandIds": [
+              "59ecffb3fae911f9b41caeee516b3620d07d88f00e412afc5f6872b7115d5c48"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "You can see this part of the city.",
+            "whyItMatters": "This work is waiting for your attention.",
+            "reasons": [],
+            "requirements": [
+              {
+                "description": "Keep investigating. Further requirements are not yet known.",
+                "status": "UNKNOWN"
+              }
+            ],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Preparation is still needed."
+            }
+          },
+          {
+            "opportunityId": "e3fc8938bd4881de4eec94785cfc1dfb9146bb38ed8adac1b515d9e0fc84c19f",
+            "kind": "crafting",
+            "category": "PERSONAL",
+            "label": "Craft: Cut an Archive Turn Key",
+            "description": "Craft: Cut an Archive Turn Key",
+            "subject": {
+              "type": "recipe",
+              "id": "recipe:archive_turn_key"
+            },
+            "availability": "LOCKED",
+            "commandIds": [
+              "e3fc8938bd4881de4eec94785cfc1dfb9146bb38ed8adac1b515d9e0fc84c19f"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "Your equipment and workshop records make this work visible.",
+            "whyItMatters": "This work is waiting for your attention.",
+            "reasons": [],
+            "requirements": [
+              {
+                "description": "Keep investigating. Further requirements are not yet known.",
+                "status": "UNKNOWN"
+              }
+            ],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Preparation is still needed."
+            }
+          }
+        ],
+        "commands": [
+          {
+            "commandId": "26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+            "commandType": "discovery.start",
+            "subject": {
+              "type": "discovery",
+              "id": "omerta.coordination.furnace-archive"
+            },
+            "target": {
+              "type": "discovery",
+              "id": "omerta.coordination.furnace-archive"
+            },
+            "label": "Investigate: The Missing Carbon Index",
+            "description": "Investigate: The Missing Carbon Index",
+            "parameters": {
+              "graphId": "omerta.coordination.furnace-archive",
+              "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+            },
+            "availability": "AVAILABLE",
+            "requirements": [],
+            "blockers": [],
+            "costs": [],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          },
+          {
+            "commandId": "2eeeb5b0ccc482d2430ebd7100d6021f9b745e59aa375da7e4d0c569c77b2cdc",
+            "commandType": "mystery.start",
+            "subject": {
+              "type": "mystery",
+              "id": "informant-failed-plan"
+            },
+            "target": {
+              "type": "mystery",
+              "id": "informant-failed-plan"
+            },
+            "label": "Open case: Review a Recovery Plan",
+            "description": "Open case: Review a Recovery Plan",
+            "parameters": {
+              "graphId": "informant-failed-plan"
+            },
+            "availability": "AVAILABLE",
+            "requirements": [],
+            "blockers": [],
+            "costs": [],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          },
+          {
+            "commandId": "4e0b5241c185d099f38485d4a0184e2b0d72e2c7d195fc34f53d721c32f06030",
+            "commandType": "mystery.start",
+            "subject": {
+              "type": "mystery",
+              "id": "informant-public-trail"
+            },
+            "target": {
+              "type": "mystery",
+              "id": "informant-public-trail"
+            },
+            "label": "Open case: The Dock Noticeboard",
+            "description": "Open case: The Dock Noticeboard",
+            "parameters": {
+              "graphId": "informant-public-trail"
+            },
+            "availability": "AVAILABLE",
+            "requirements": [],
+            "blockers": [],
+            "costs": [],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          },
+          {
+            "commandId": "5ca7df4210fe21b70e88d7ee8b57531d37901fc10b138c55af9d2b2f487ec160",
+            "commandType": "discovery.start",
+            "subject": {
+              "type": "discovery",
+              "id": "omerta.coordination.split-ledger"
+            },
+            "target": {
+              "type": "discovery",
+              "id": "omerta.coordination.split-ledger"
+            },
+            "label": "Investigate: The Split Ledger",
+            "description": "Investigate: The Split Ledger",
+            "parameters": {
+              "graphId": "omerta.coordination.split-ledger",
+              "expectedContentHash": "eeb403e00b03ff26618b8a29344de02dccd2b818906cb276237321debf3b477c"
+            },
+            "availability": "AVAILABLE",
+            "requirements": [],
+            "blockers": [],
+            "costs": [],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          },
+          {
+            "commandId": "69c16dddffef2c457fd07fe33a3be52619120170f983e4d9dae98aa4244c16ff",
+            "commandType": "discovery.start",
+            "subject": {
+              "type": "discovery",
+              "id": "omerta.coordination.informant-review"
+            },
+            "target": {
+              "type": "discovery",
+              "id": "omerta.coordination.informant-review"
+            },
+            "label": "Investigate: The Informant: Compare the Records",
+            "description": "Investigate: The Informant: Compare the Records",
+            "parameters": {
+              "graphId": "omerta.coordination.informant-review",
+              "expectedContentHash": "c48b6ac4f710a2ed34212adee6524e2cbf1b324fac731e856fda4c06f99ee6f5"
+            },
+            "availability": "AVAILABLE",
+            "requirements": [],
+            "blockers": [],
+            "costs": [],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          },
+          {
+            "commandId": "6a8d08dee06949f146d59072f83795e0ed83fedc6114c24df3d636efcfde4d44",
+            "commandType": "mystery.start",
+            "subject": {
+              "type": "mystery",
+              "id": "missing-shipment-evidence"
+            },
+            "target": {
+              "type": "mystery",
+              "id": "missing-shipment-evidence"
+            },
+            "label": "Open case: The Dispatch Register",
+            "description": "Open case: The Dispatch Register",
+            "parameters": {
+              "graphId": "missing-shipment-evidence"
+            },
+            "availability": "AVAILABLE",
+            "requirements": [],
+            "blockers": [],
+            "costs": [],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          },
+          {
+            "commandId": "6cf4d88b32056d683bb3d729a23322a0f25e8ce64459b611968f7128a4eb29c8",
+            "commandType": "discovery.start",
+            "subject": {
+              "type": "discovery",
+              "id": "omerta.coordination.dock-war"
+            },
+            "target": {
+              "type": "discovery",
+              "id": "omerta.coordination.dock-war"
+            },
+            "label": "Investigate: The Dock War",
+            "description": "Investigate: The Dock War",
+            "parameters": {
+              "graphId": "omerta.coordination.dock-war",
+              "expectedContentHash": "39187f23744989c070fe28554a3e3cad27f4c954d5305ad85ec75e10a0ff50da"
+            },
+            "availability": "AVAILABLE",
+            "requirements": [],
+            "blockers": [],
+            "costs": [],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          },
+          {
+            "commandId": "6efd00796138ec2ee1dbc61dbe7ff79ddb7f0c2c232e437e5a46208c61d3dada",
+            "commandType": "mystery.start",
+            "subject": {
+              "type": "mystery",
+              "id": "dock-war-aftermath"
+            },
+            "target": {
+              "type": "mystery",
+              "id": "dock-war-aftermath"
+            },
+            "label": "Open case: Dock War Aftermath",
+            "description": "Open case: Dock War Aftermath",
+            "parameters": {
+              "graphId": "dock-war-aftermath"
+            },
+            "availability": "AVAILABLE",
+            "requirements": [],
+            "blockers": [],
+            "costs": [],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          },
+          {
+            "commandId": "7367f555d8bd1082a8264e41d2c6c27904a415996b26f3e6e03ac63d89f8aeaa",
+            "commandType": "mystery.start",
+            "subject": {
+              "type": "mystery",
+              "id": "canal-shipping-records"
+            },
+            "target": {
+              "type": "mystery",
+              "id": "canal-shipping-records"
+            },
+            "label": "Open case: Your Shipping Records",
+            "description": "Open case: Your Shipping Records",
+            "parameters": {
+              "graphId": "canal-shipping-records"
+            },
+            "availability": "AVAILABLE",
+            "requirements": [],
+            "blockers": [],
+            "costs": [],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          },
+          {
+            "commandId": "b211aa87f5a9a22926d3402702f54f586a56814ec3cc934626bc312ee17798fb",
+            "commandType": "mystery.start",
+            "subject": {
+              "type": "mystery",
+              "id": "dock-war-evidence"
+            },
+            "target": {
+              "type": "mystery",
+              "id": "dock-war-evidence"
+            },
+            "label": "Open case: The Tide Ledger",
+            "description": "Open case: The Tide Ledger",
+            "parameters": {
+              "graphId": "dock-war-evidence"
+            },
+            "availability": "AVAILABLE",
+            "requirements": [],
+            "blockers": [],
+            "costs": [],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          },
+          {
+            "commandId": "c50c7c04ebae92d64a2dcc2b6ed74e9ce5ba65c04567f7df79ba513a596e1011",
+            "commandType": "mystery.start",
+            "subject": {
+              "type": "mystery",
+              "id": "furnace-archive-aftermath"
+            },
+            "target": {
+              "type": "mystery",
+              "id": "furnace-archive-aftermath"
+            },
+            "label": "Open case: Furnace Archive Aftermath",
+            "description": "Open case: Furnace Archive Aftermath",
+            "parameters": {
+              "graphId": "furnace-archive-aftermath"
+            },
+            "availability": "AVAILABLE",
+            "requirements": [],
+            "blockers": [],
+            "costs": [],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          },
+          {
+            "commandId": "caa88b1be55ab2af2aeea32f9b1b558b788eaf58fdb93ebfe9fe48a290c389d8",
+            "commandType": "discovery.start",
+            "subject": {
+              "type": "discovery",
+              "id": "omerta.coordination.dead-letter"
+            },
+            "target": {
+              "type": "discovery",
+              "id": "omerta.coordination.dead-letter"
+            },
+            "label": "Investigate: The Dead Letter",
+            "description": "Investigate: The Dead Letter",
+            "parameters": {
+              "graphId": "omerta.coordination.dead-letter",
+              "expectedContentHash": "519695a8262ee96126dfa378ebdd4d7010a489b59e76d924f35900964c51e3c6"
+            },
+            "availability": "AVAILABLE",
+            "requirements": [],
+            "blockers": [],
+            "costs": [],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          },
+          {
+            "commandId": "d2c5123ed53c879f240c464de8786f0eb22c0cb50d3969981ec533d16715e6b4",
+            "commandType": "discovery.start",
+            "subject": {
+              "type": "discovery",
+              "id": "omerta.coordination.canal-register"
+            },
+            "target": {
+              "type": "discovery",
+              "id": "omerta.coordination.canal-register"
+            },
+            "label": "Investigate: The Canal Shipping Register",
+            "description": "Investigate: The Canal Shipping Register",
+            "parameters": {
+              "graphId": "omerta.coordination.canal-register",
+              "expectedContentHash": "2e70c29a4492270b4fb7a595c12a444fd151f296f78db298a00b64b2b7bfaccc"
+            },
+            "availability": "AVAILABLE",
+            "requirements": [],
+            "blockers": [],
+            "costs": [],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          },
+          {
+            "commandId": "dca6ca790a26c68ed10dbccf2f3c7b5615ccc33edc8d14e8f0ab451501f75592",
+            "commandType": "mystery.start",
+            "subject": {
+              "type": "mystery",
+              "id": "furnace-archive-deduction"
+            },
+            "target": {
+              "type": "mystery",
+              "id": "furnace-archive-deduction"
+            },
+            "label": "Open case: Furnace Archive Deduction",
+            "description": "Open case: Furnace Archive Deduction",
+            "parameters": {
+              "graphId": "furnace-archive-deduction"
+            },
+            "availability": "AVAILABLE",
+            "requirements": [],
+            "blockers": [],
+            "costs": [],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          },
+          {
+            "commandId": "fd9c03b54928594c7b2b47f85f80a3161bc9c948d3aaff4c1c21fbcd8ca81435",
+            "commandType": "mystery.start",
+            "subject": {
+              "type": "mystery",
+              "id": "furnace-archive-inspection"
+            },
+            "target": {
+              "type": "mystery",
+              "id": "furnace-archive-inspection"
+            },
+            "label": "Open case: A Carbon Copy Survives",
+            "description": "Open case: A Carbon Copy Survives",
+            "parameters": {
+              "graphId": "furnace-archive-inspection"
+            },
+            "availability": "AVAILABLE",
+            "requirements": [],
+            "blockers": [],
+            "costs": [],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          },
+          {
+            "commandId": "098ee05c410631fe55afa48631ce693b3f06c47330834b539287d6e88f1bb645",
+            "commandType": "world.execute",
+            "subject": {
+              "type": "world_object",
+              "id": "infrastructure:canal_supply_depot"
+            },
+            "target": {
+              "type": "territory",
+              "id": "docks"
+            },
+            "label": "Register shipment",
+            "description": "Register shipment",
+            "parameters": {
+              "objectId": "infrastructure:canal_supply_depot",
+              "actionId": "register_shipment",
+              "expectedRevision": 0
+            },
+            "availability": "LOCKED",
+            "requirements": [
+              {
+                "kind": "known",
+                "code": "family_authority",
+                "description": "This requires current Family leadership and an eligible Crew."
+              },
+              {
+                "kind": "known",
+                "code": "item",
+                "description": "Obtain the required equipment."
+              },
+              {
+                "kind": "known",
+                "code": "materials",
+                "description": "Gather the required materials."
+              }
+            ],
+            "blockers": [
+              {
+                "kind": "undiscovered",
+                "code": "undiscovered_requirement",
+                "description": "Keep investigating."
+              },
+              {
+                "kind": "known",
+                "code": "family_authority",
+                "description": "This requires current Family leadership and an eligible Crew."
+              },
+              {
+                "kind": "undiscovered",
+                "code": "undiscovered_requirement",
+                "description": "Keep investigating."
+              },
+              {
+                "kind": "undiscovered",
+                "code": "undiscovered_requirement",
+                "description": "Keep investigating."
+              },
+              {
+                "kind": "known",
+                "code": "item",
+                "description": "Obtain the required equipment."
+              },
+              {
+                "kind": "known",
+                "code": "materials",
+                "description": "Gather the required materials."
+              }
+            ],
+            "costs": [],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          },
+          {
+            "commandId": "59ecffb3fae911f9b41caeee516b3620d07d88f00e412afc5f6872b7115d5c48",
+            "commandType": "world.execute",
+            "subject": {
+              "type": "world_object",
+              "id": "territory:dock_supply_route"
+            },
+            "target": {
+              "type": "territory",
+              "id": "docks"
+            },
+            "label": "Establish route",
+            "description": "Establish route",
+            "parameters": {
+              "objectId": "territory:dock_supply_route",
+              "actionId": "establish_route",
+              "expectedRevision": 0
+            },
+            "availability": "LOCKED",
+            "requirements": [
+              {
+                "kind": "known",
+                "code": "family_authority",
+                "description": "This requires current Family leadership and an eligible Crew."
+              },
+              {
+                "kind": "known",
+                "code": "item",
+                "description": "Obtain the required equipment."
+              },
+              {
+                "kind": "known",
+                "code": "materials",
+                "description": "Gather the required materials."
+              }
+            ],
+            "blockers": [
+              {
+                "kind": "known",
+                "code": "family_authority",
+                "description": "This requires current Family leadership and an eligible Crew."
+              },
+              {
+                "kind": "undiscovered",
+                "code": "undiscovered_requirement",
+                "description": "Keep investigating."
+              },
+              {
+                "kind": "undiscovered",
+                "code": "undiscovered_requirement",
+                "description": "Keep investigating."
+              },
+              {
+                "kind": "known",
+                "code": "item",
+                "description": "Obtain the required equipment."
+              },
+              {
+                "kind": "known",
+                "code": "materials",
+                "description": "Gather the required materials."
+              }
+            ],
+            "costs": [],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          },
+          {
+            "commandId": "e3fc8938bd4881de4eec94785cfc1dfb9146bb38ed8adac1b515d9e0fc84c19f",
+            "commandType": "recipe.craft",
+            "subject": {
+              "type": "recipe",
+              "id": "recipe:archive_turn_key"
+            },
+            "target": {
+              "type": "recipe",
+              "id": "recipe:archive_turn_key"
+            },
+            "label": "Craft: Cut an Archive Turn Key",
+            "description": "Craft: Cut an Archive Turn Key",
+            "parameters": {
+              "recipeId": "recipe:archive_turn_key"
+            },
+            "availability": "LOCKED",
+            "requirements": [
+              {
+                "kind": "known",
+                "code": "location",
+                "description": "Travel to the required district."
+              },
+              {
+                "kind": "known",
+                "code": "materials",
+                "description": "Gather the required materials."
+              }
+            ],
+            "blockers": [
+              {
+                "kind": "known",
+                "code": "location",
+                "description": "Travel to the required district."
+              },
+              {
+                "kind": "undiscovered",
+                "code": "undiscovered_requirement",
+                "description": "Keep investigating."
+              },
+              {
+                "kind": "known",
+                "code": "materials",
+                "description": "Gather the required materials."
+              }
+            ],
+            "costs": [
+              {
+                "templateId": "mat:scrap_steel",
+                "quantity": 2,
+                "quality": "standard"
+              },
+              {
+                "templateId": "mat:wire",
+                "quantity": 1,
+                "quality": "standard"
+              }
+            ],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          }
+        ],
+        "cases": {
+          "catalog": [
+            {
+              "graphId": "furnace-archive-inspection",
+              "title": "A Carbon Copy Survives",
+              "status": "available",
+              "started": false,
+              "canStart": true
+            },
+            {
+              "graphId": "furnace-archive-deduction",
+              "title": "Furnace Archive Deduction",
+              "status": "available",
+              "started": false,
+              "canStart": true
+            },
+            {
+              "graphId": "furnace-archive-aftermath",
+              "title": "Furnace Archive Aftermath",
+              "status": "available",
+              "started": false,
+              "canStart": true
+            },
+            {
+              "graphId": "dock-war-evidence",
+              "title": "The Tide Ledger",
+              "status": "available",
+              "started": false,
+              "canStart": true
+            },
+            {
+              "graphId": "dock-war-aftermath",
+              "title": "Dock War Aftermath",
+              "status": "available",
+              "started": false,
+              "canStart": true
+            },
+            {
+              "graphId": "missing-shipment-evidence",
+              "title": "The Dispatch Register",
+              "status": "available",
+              "started": false,
+              "canStart": true
+            },
+            {
+              "graphId": "informant-public-trail",
+              "title": "The Dock Noticeboard",
+              "status": "available",
+              "started": false,
+              "canStart": true
+            },
+            {
+              "graphId": "informant-failed-plan",
+              "title": "Review a Recovery Plan",
+              "status": "available",
+              "started": false,
+              "canStart": true
+            },
+            {
+              "graphId": "canal-shipping-records",
+              "title": "Your Shipping Records",
+              "status": "available",
+              "started": false,
+              "canStart": true
+            }
+          ],
+          "selected": null
+        },
+        "consequences": []
+      },
+      "firstCommand": {
+        "type": "mystery.start",
+        "label": "Open case: A Carbon Copy Survives",
+        "parameters": {
+          "graphId": "furnace-archive-inspection"
+        }
+      },
+      "preparation": [
+        {
+          "commandId": "098ee05c410631fe55afa48631ce693b3f06c47330834b539287d6e88f1bb645",
+          "commandType": "world.execute",
+          "subject": {
+            "type": "world_object",
+            "id": "infrastructure:canal_supply_depot"
+          },
+          "target": {
+            "type": "territory",
+            "id": "docks"
+          },
+          "label": "Register shipment",
+          "description": "Register shipment",
+          "parameters": {
+            "objectId": "infrastructure:canal_supply_depot",
+            "actionId": "register_shipment",
+            "expectedRevision": 0
+          },
+          "availability": "LOCKED",
+          "requirements": [
+            {
+              "kind": "known",
+              "code": "family_authority",
+              "description": "This requires current Family leadership and an eligible Crew."
+            },
+            {
+              "kind": "known",
+              "code": "item",
+              "description": "Obtain the required equipment."
+            },
+            {
+              "kind": "known",
+              "code": "materials",
+              "description": "Gather the required materials."
+            }
+          ],
+          "blockers": [
+            {
+              "kind": "undiscovered",
+              "code": "undiscovered_requirement",
+              "description": "Keep investigating."
+            },
+            {
+              "kind": "known",
+              "code": "family_authority",
+              "description": "This requires current Family leadership and an eligible Crew."
+            },
+            {
+              "kind": "undiscovered",
+              "code": "undiscovered_requirement",
+              "description": "Keep investigating."
+            },
+            {
+              "kind": "undiscovered",
+              "code": "undiscovered_requirement",
+              "description": "Keep investigating."
+            },
+            {
+              "kind": "known",
+              "code": "item",
+              "description": "Obtain the required equipment."
+            },
+            {
+              "kind": "known",
+              "code": "materials",
+              "description": "Gather the required materials."
+            }
+          ],
+          "costs": [],
+          "committedResources": [],
+          "requiredKnowledge": [],
+          "requiredItems": [],
+          "requiredRoles": [],
+          "requiredParticipants": [],
+          "authorization": {
+            "revalidatedOnExecution": true
+          },
+          "risk": [],
+          "expiresAt": "2026-09-19T00:00:00.000Z",
+          "confirmation": {
+            "required": false,
+            "message": null
+          },
+          "resultContract": {
+            "schemaVersion": 1,
+            "currentAuthorizedProjection": true,
+            "exactRetry": true
+          }
+        },
+        {
+          "commandId": "230dab9a966fb63dceebcb6541568cdcbe0f5916156baf607de3b2164d4b0ff8",
+          "commandType": "world.execute",
+          "subject": {
+            "type": "world_object",
+            "id": "facility:foundry_archive"
+          },
+          "target": {
+            "type": "territory",
+            "id": "foundry"
+          },
+          "label": "Open archive",
+          "description": "Open archive",
+          "parameters": {
+            "objectId": "facility:foundry_archive",
+            "actionId": "open_archive",
+            "expectedRevision": 0
+          },
+          "availability": "LOCKED",
+          "requirements": [
+            {
+              "kind": "known",
+              "code": "family_authority",
+              "description": "This requires current Family leadership and an eligible Crew."
+            },
+            {
+              "kind": "known",
+              "code": "location",
+              "description": "Travel to the required district."
+            },
+            {
+              "kind": "known",
+              "code": "item",
+              "description": "Obtain the required equipment."
+            },
+            {
+              "kind": "known",
+              "code": "materials",
+              "description": "Gather the required materials."
+            }
+          ],
+          "blockers": [
+            {
+              "kind": "known",
+              "code": "family_authority",
+              "description": "This requires current Family leadership and an eligible Crew."
+            },
+            {
+              "kind": "undiscovered",
+              "code": "undiscovered_requirement",
+              "description": "Keep investigating."
+            },
+            {
+              "kind": "known",
+              "code": "location",
+              "description": "Travel to the required district."
+            },
+            {
+              "kind": "known",
+              "code": "item",
+              "description": "Obtain the required equipment."
+            },
+            {
+              "kind": "known",
+              "code": "materials",
+              "description": "Gather the required materials."
+            }
+          ],
+          "costs": [],
+          "committedResources": [],
+          "requiredKnowledge": [],
+          "requiredItems": [],
+          "requiredRoles": [],
+          "requiredParticipants": [],
+          "authorization": {
+            "revalidatedOnExecution": true
+          },
+          "risk": [],
+          "expiresAt": "2026-09-19T00:00:00.000Z",
+          "confirmation": {
+            "required": false,
+            "message": null
+          },
+          "resultContract": {
+            "schemaVersion": 1,
+            "currentAuthorizedProjection": true,
+            "exactRetry": true
+          }
+        },
+        {
+          "commandId": "59ecffb3fae911f9b41caeee516b3620d07d88f00e412afc5f6872b7115d5c48",
+          "commandType": "world.execute",
+          "subject": {
+            "type": "world_object",
+            "id": "territory:dock_supply_route"
+          },
+          "target": {
+            "type": "territory",
+            "id": "docks"
+          },
+          "label": "Establish route",
+          "description": "Establish route",
+          "parameters": {
+            "objectId": "territory:dock_supply_route",
+            "actionId": "establish_route",
+            "expectedRevision": 0
+          },
+          "availability": "LOCKED",
+          "requirements": [
+            {
+              "kind": "known",
+              "code": "family_authority",
+              "description": "This requires current Family leadership and an eligible Crew."
+            },
+            {
+              "kind": "known",
+              "code": "item",
+              "description": "Obtain the required equipment."
+            },
+            {
+              "kind": "known",
+              "code": "materials",
+              "description": "Gather the required materials."
+            }
+          ],
+          "blockers": [
+            {
+              "kind": "known",
+              "code": "family_authority",
+              "description": "This requires current Family leadership and an eligible Crew."
+            },
+            {
+              "kind": "undiscovered",
+              "code": "undiscovered_requirement",
+              "description": "Keep investigating."
+            },
+            {
+              "kind": "undiscovered",
+              "code": "undiscovered_requirement",
+              "description": "Keep investigating."
+            },
+            {
+              "kind": "known",
+              "code": "item",
+              "description": "Obtain the required equipment."
+            },
+            {
+              "kind": "known",
+              "code": "materials",
+              "description": "Gather the required materials."
+            }
+          ],
+          "costs": [],
+          "committedResources": [],
+          "requiredKnowledge": [],
+          "requiredItems": [],
+          "requiredRoles": [],
+          "requiredParticipants": [],
+          "authorization": {
+            "revalidatedOnExecution": true
+          },
+          "risk": [],
+          "expiresAt": "2026-09-19T00:00:00.000Z",
+          "confirmation": {
+            "required": false,
+            "message": null
+          },
+          "resultContract": {
+            "schemaVersion": 1,
+            "currentAuthorizedProjection": true,
+            "exactRetry": true
+          }
+        },
+        {
+          "commandId": "e3fc8938bd4881de4eec94785cfc1dfb9146bb38ed8adac1b515d9e0fc84c19f",
+          "commandType": "recipe.craft",
+          "subject": {
+            "type": "recipe",
+            "id": "recipe:archive_turn_key"
+          },
+          "target": {
+            "type": "recipe",
+            "id": "recipe:archive_turn_key"
+          },
+          "label": "Craft: Cut an Archive Turn Key",
+          "description": "Craft: Cut an Archive Turn Key",
+          "parameters": {
+            "recipeId": "recipe:archive_turn_key"
+          },
+          "availability": "BLOCKED",
+          "requirements": [
+            {
+              "kind": "known",
+              "code": "location",
+              "description": "Travel to the required district."
+            },
+            {
+              "kind": "known",
+              "code": "materials",
+              "description": "Gather the required materials."
+            }
+          ],
+          "blockers": [
+            {
+              "kind": "known",
+              "code": "location",
+              "description": "Travel to the required district."
+            },
+            {
+              "kind": "known",
+              "code": "materials",
+              "description": "Gather the required materials."
+            }
+          ],
+          "costs": [
+            {
+              "templateId": "mat:scrap_steel",
+              "quantity": 2,
+              "quality": "standard"
+            },
+            {
+              "templateId": "mat:wire",
+              "quantity": 1,
+              "quality": "standard"
+            }
+          ],
+          "committedResources": [],
+          "requiredKnowledge": [],
+          "requiredItems": [],
+          "requiredRoles": [],
+          "requiredParticipants": [],
+          "authorization": {
+            "revalidatedOnExecution": true
+          },
+          "risk": [],
+          "expiresAt": "2026-09-19T00:00:00.000Z",
+          "confirmation": {
+            "required": false,
+            "message": null
+          },
+          "resultContract": {
+            "schemaVersion": 1,
+            "currentAuthorizedProjection": true,
+            "exactRetry": true
+          }
+        }
+      ],
+      "status": "FAIL",
+      "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-world-choice-confirm]')\u001b[22m\n\u001b[2m    - locator resolved to <button class=\"act danger\" data-world-choice-confirm=\"\">Confirm move</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m  - element was detached from the DOM, retrying\u001b[22m\n\n    at executeVisible (C:\\Users\\Jorge\\Documents\\Omerta-rc1\\tools\\rc1-mobile-journeys.js:96:93)\n    at async file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-mobile-journeys.js:222:7"
+    },
+    {
+      "width": 390,
+      "steps": [
+        "new-player-command-center",
+        "response-lost",
+        "recovered-after-refresh",
+        "first-case-completed",
+        "solo-preparation-requirements",
+        "failure"
+      ],
+      "errors": [],
+      "requests": [
+        {
+          "body": {
+            "executionId": "627a3d02097ba53d31013984a0546d914b4443a6015579ad7202de523027410b.fd9c03b54928594c7b2b47f85f80a3161bc9c948d3aaff4c1c21fbcd8ca81435",
+            "confirmed": false
+          },
+          "key": "627a3d02097ba53d31013984a0546d914b4443a6015579ad7202de523027410b.fd9c03b54928594c7b2b47f85f80a3161bc9c948d3aaff4c1c21fbcd8ca81435"
+        },
+        {
+          "body": {
+            "executionId": "627a3d02097ba53d31013984a0546d914b4443a6015579ad7202de523027410b.fd9c03b54928594c7b2b47f85f80a3161bc9c948d3aaff4c1c21fbcd8ca81435",
+            "confirmed": false
+          },
+          "key": "627a3d02097ba53d31013984a0546d914b4443a6015579ad7202de523027410b.fd9c03b54928594c7b2b47f85f80a3161bc9c948d3aaff4c1c21fbcd8ca81435"
+        },
+        {
+          "body": {
+            "executionId": "578c59d6ceabc4969f23e2c98ab61822898b9365f507d9508ba4303212bab68d.ed432f6dd000f91b50c4708c08f83a47905cdb8ae7efbc9fdc17508dc59b68a5",
+            "confirmed": false
+          },
+          "key": "578c59d6ceabc4969f23e2c98ab61822898b9365f507d9508ba4303212bab68d.ed432f6dd000f91b50c4708c08f83a47905cdb8ae7efbc9fdc17508dc59b68a5"
+        },
+        {
+          "body": {
+            "executionId": "c9194e3b30ff39607ef34c0f623abfa8430835e2d47e312ca8e312ed99344318.5ca7df4210fe21b70e88d7ee8b57531d37901fc10b138c55af9d2b2f487ec160",
+            "confirmed": false
+          },
+          "key": "c9194e3b30ff39607ef34c0f623abfa8430835e2d47e312ca8e312ed99344318.5ca7df4210fe21b70e88d7ee8b57531d37901fc10b138c55af9d2b2f487ec160"
+        },
+        {
+          "body": {
+            "executionId": "24f79a0cf9e4ea116d1a3f180f0b8a2cac6c97933b605a751576f28976e14288.389887a57f6ff00254baea162799c1459b948792449d62716b033ff43d5b660b",
+            "confirmed": false
+          },
+          "key": "24f79a0cf9e4ea116d1a3f180f0b8a2cac6c97933b605a751576f28976e14288.389887a57f6ff00254baea162799c1459b948792449d62716b033ff43d5b660b"
+        },
+        {
+          "body": {
+            "executionId": "69348003d612e4a7eb180643994cfc0d9d31c23b5b611c805ea945c5b0055e13.277d27467f80c600744b989c0741b71b10496293fb288d3e4367e77604002f3a",
+            "confirmed": false
+          },
+          "key": "69348003d612e4a7eb180643994cfc0d9d31c23b5b611c805ea945c5b0055e13.277d27467f80c600744b989c0741b71b10496293fb288d3e4367e77604002f3a"
+        }
+      ],
+      "telemetry": [
+        {
+          "status": 200,
+          "body": {
+            "phase": "session",
+            "session": "4e061f1a-74e5-4f69-baec-e90b4119232f",
+            "count": 1
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "command_center",
+            "session": "4e061f1a-74e5-4f69-baec-e90b4119232f",
+            "count": 1
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "opportunities_shown",
+            "session": "4e061f1a-74e5-4f69-baec-e90b4119232f",
+            "count": 18,
+            "reference": "26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89|5ca7df4210fe21b70e88d7ee8b57531d37901fc10b138c55af9d2b2f487ec160|69c16dddffef2c457fd07fe33a3be52619120170f983e4d9dae98aa4244c16ff|6cf4d"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "opportunity_open",
+            "session": "4e061f1a-74e5-4f69-baec-e90b4119232f",
+            "count": 1,
+            "reference": "fd9c03b54928594c7b2b47f85f80a3161bc9c948d3aaff4c1c21fbcd8ca81435"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "preparation",
+            "session": "4e061f1a-74e5-4f69-baec-e90b4119232f",
+            "count": 1,
+            "reference": "fd9c03b54928594c7b2b47f85f80a3161bc9c948d3aaff4c1c21fbcd8ca81435"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "session",
+            "session": "098237ee-bc1b-4d34-ac3d-d3d0bfabdac5",
+            "count": 1
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "command_center",
+            "session": "098237ee-bc1b-4d34-ac3d-d3d0bfabdac5",
+            "count": 1
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "opportunities_shown",
+            "session": "098237ee-bc1b-4d34-ac3d-d3d0bfabdac5",
+            "count": 18,
+            "reference": "26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89|5ca7df4210fe21b70e88d7ee8b57531d37901fc10b138c55af9d2b2f487ec160|69c16dddffef2c457fd07fe33a3be52619120170f983e4d9dae98aa4244c16ff|6cf4d"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "opportunities_shown",
+            "session": "098237ee-bc1b-4d34-ac3d-d3d0bfabdac5",
+            "count": 19,
+            "reference": "ed432f6dd000f91b50c4708c08f83a47905cdb8ae7efbc9fdc17508dc59b68a5|26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89|5ca7df4210fe21b70e88d7ee8b57531d37901fc10b138c55af9d2b2f487ec160|69c16"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "opportunity_open",
+            "session": "098237ee-bc1b-4d34-ac3d-d3d0bfabdac5",
+            "count": 1,
+            "reference": "ed432f6dd000f91b50c4708c08f83a47905cdb8ae7efbc9fdc17508dc59b68a5"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "preparation",
+            "session": "098237ee-bc1b-4d34-ac3d-d3d0bfabdac5",
+            "count": 1,
+            "reference": "ed432f6dd000f91b50c4708c08f83a47905cdb8ae7efbc9fdc17508dc59b68a5"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "opportunity_open",
+            "session": "098237ee-bc1b-4d34-ac3d-d3d0bfabdac5",
+            "count": 1,
+            "reference": "5ca7df4210fe21b70e88d7ee8b57531d37901fc10b138c55af9d2b2f487ec160"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "preparation",
+            "session": "098237ee-bc1b-4d34-ac3d-d3d0bfabdac5",
+            "count": 1,
+            "reference": "5ca7df4210fe21b70e88d7ee8b57531d37901fc10b138c55af9d2b2f487ec160"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "opportunities_shown",
+            "session": "098237ee-bc1b-4d34-ac3d-d3d0bfabdac5",
+            "count": 18,
+            "reference": "26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89|389887a57f6ff00254baea162799c1459b948792449d62716b033ff43d5b660b|69c16dddffef2c457fd07fe33a3be52619120170f983e4d9dae98aa4244c16ff|6cf4d"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "opportunity_open",
+            "session": "098237ee-bc1b-4d34-ac3d-d3d0bfabdac5",
+            "count": 1,
+            "reference": "389887a57f6ff00254baea162799c1459b948792449d62716b033ff43d5b660b"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "preparation",
+            "session": "098237ee-bc1b-4d34-ac3d-d3d0bfabdac5",
+            "count": 1,
+            "reference": "389887a57f6ff00254baea162799c1459b948792449d62716b033ff43d5b660b"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "opportunities_shown",
+            "session": "098237ee-bc1b-4d34-ac3d-d3d0bfabdac5",
+            "count": 18,
+            "reference": "26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89|277d27467f80c600744b989c0741b71b10496293fb288d3e4367e77604002f3a|69c16dddffef2c457fd07fe33a3be52619120170f983e4d9dae98aa4244c16ff|6cf4d"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "opportunity_open",
+            "session": "098237ee-bc1b-4d34-ac3d-d3d0bfabdac5",
+            "count": 1,
+            "reference": "277d27467f80c600744b989c0741b71b10496293fb288d3e4367e77604002f3a"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "preparation",
+            "session": "098237ee-bc1b-4d34-ac3d-d3d0bfabdac5",
+            "count": 1,
+            "reference": "277d27467f80c600744b989c0741b71b10496293fb288d3e4367e77604002f3a"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "opportunities_shown",
+            "session": "098237ee-bc1b-4d34-ac3d-d3d0bfabdac5",
+            "count": 19,
+            "reference": "26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89|69c16dddffef2c457fd07fe33a3be52619120170f983e4d9dae98aa4244c16ff|6cf4d88b32056d683bb3d729a23322a0f25e8ce64459b611968f7128a4eb29c8|caa88"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "opportunities_shown",
+            "session": "098237ee-bc1b-4d34-ac3d-d3d0bfabdac5",
+            "count": 21,
+            "reference": "26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89|69c16dddffef2c457fd07fe33a3be52619120170f983e4d9dae98aa4244c16ff|6cf4d88b32056d683bb3d729a23322a0f25e8ce64459b611968f7128a4eb29c8|bf0d9"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "opportunity_open",
+            "session": "098237ee-bc1b-4d34-ac3d-d3d0bfabdac5",
+            "count": 1,
+            "reference": "55ea9a315e220391b2b00c4a5344ec77aa635e2c19ce2ecc4eb54e2b157359a6"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "phase": "preparation",
+            "session": "098237ee-bc1b-4d34-ac3d-d3d0bfabdac5",
+            "count": 1,
+            "reference": "55ea9a315e220391b2b00c4a5344ec77aa635e2c19ce2ecc4eb54e2b157359a6"
+          }
+        }
+      ],
+      "initial": {
+        "opportunities": [
+          {
+            "opportunityId": "26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+            "kind": "new_intelligence",
+            "category": "INTELLIGENCE",
+            "label": "Investigate: The Missing Carbon Index",
+            "description": "Investigate: The Missing Carbon Index",
+            "subject": {
+              "type": "discovery",
+              "id": "omerta.coordination.furnace-archive"
+            },
+            "availability": "AVAILABLE",
+            "commandIds": [
+              "26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "This lead comes from the evidence and investigations available to you.",
+            "whyItMatters": "Your next move is ready.",
+            "reasons": [
+              "Your next move is ready."
+            ],
+            "requirements": [],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Ready for your next move."
+            }
+          },
+          {
+            "opportunityId": "5ca7df4210fe21b70e88d7ee8b57531d37901fc10b138c55af9d2b2f487ec160",
+            "kind": "new_intelligence",
+            "category": "INTELLIGENCE",
+            "label": "Investigate: The Split Ledger",
+            "description": "Investigate: The Split Ledger",
+            "subject": {
+              "type": "discovery",
+              "id": "omerta.coordination.split-ledger"
+            },
+            "availability": "AVAILABLE",
+            "commandIds": [
+              "5ca7df4210fe21b70e88d7ee8b57531d37901fc10b138c55af9d2b2f487ec160"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "This lead comes from the evidence and investigations available to you.",
+            "whyItMatters": "Your next move is ready.",
+            "reasons": [
+              "Your next move is ready."
+            ],
+            "requirements": [],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Ready for your next move."
+            }
+          },
+          {
+            "opportunityId": "69c16dddffef2c457fd07fe33a3be52619120170f983e4d9dae98aa4244c16ff",
+            "kind": "new_intelligence",
+            "category": "INTELLIGENCE",
+            "label": "Investigate: The Informant: Compare the Records",
+            "description": "Investigate: The Informant: Compare the Records",
+            "subject": {
+              "type": "discovery",
+              "id": "omerta.coordination.informant-review"
+            },
+            "availability": "AVAILABLE",
+            "commandIds": [
+              "69c16dddffef2c457fd07fe33a3be52619120170f983e4d9dae98aa4244c16ff"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "This lead comes from the evidence and investigations available to you.",
+            "whyItMatters": "Your next move is ready.",
+            "reasons": [
+              "Your next move is ready."
+            ],
+            "requirements": [],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Ready for your next move."
+            }
+          },
+          {
+            "opportunityId": "6cf4d88b32056d683bb3d729a23322a0f25e8ce64459b611968f7128a4eb29c8",
+            "kind": "new_intelligence",
+            "category": "INTELLIGENCE",
+            "label": "Investigate: The Dock War",
+            "description": "Investigate: The Dock War",
+            "subject": {
+              "type": "discovery",
+              "id": "omerta.coordination.dock-war"
+            },
+            "availability": "AVAILABLE",
+            "commandIds": [
+              "6cf4d88b32056d683bb3d729a23322a0f25e8ce64459b611968f7128a4eb29c8"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "This lead comes from the evidence and investigations available to you.",
+            "whyItMatters": "Your next move is ready.",
+            "reasons": [
+              "Your next move is ready."
+            ],
+            "requirements": [],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Ready for your next move."
+            }
+          },
+          {
+            "opportunityId": "caa88b1be55ab2af2aeea32f9b1b558b788eaf58fdb93ebfe9fe48a290c389d8",
+            "kind": "new_intelligence",
+            "category": "INTELLIGENCE",
+            "label": "Investigate: The Dead Letter",
+            "description": "Investigate: The Dead Letter",
+            "subject": {
+              "type": "discovery",
+              "id": "omerta.coordination.dead-letter"
+            },
+            "availability": "AVAILABLE",
+            "commandIds": [
+              "caa88b1be55ab2af2aeea32f9b1b558b788eaf58fdb93ebfe9fe48a290c389d8"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "This lead comes from the evidence and investigations available to you.",
+            "whyItMatters": "Your next move is ready.",
+            "reasons": [
+              "Your next move is ready."
+            ],
+            "requirements": [],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Ready for your next move."
+            }
+          },
+          {
+            "opportunityId": "d2c5123ed53c879f240c464de8786f0eb22c0cb50d3969981ec533d16715e6b4",
+            "kind": "new_intelligence",
+            "category": "INTELLIGENCE",
+            "label": "Investigate: The Canal Shipping Register",
+            "description": "Investigate: The Canal Shipping Register",
+            "subject": {
+              "type": "discovery",
+              "id": "omerta.coordination.canal-register"
+            },
+            "availability": "AVAILABLE",
+            "commandIds": [
+              "d2c5123ed53c879f240c464de8786f0eb22c0cb50d3969981ec533d16715e6b4"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "This lead comes from the evidence and investigations available to you.",
+            "whyItMatters": "Your next move is ready.",
+            "reasons": [
+              "Your next move is ready."
+            ],
+            "requirements": [],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Ready for your next move."
+            }
+          },
+          {
+            "opportunityId": "2eeeb5b0ccc482d2430ebd7100d6021f9b745e59aa375da7e4d0c569c77b2cdc",
+            "kind": "mystery_lead",
+            "category": "INTELLIGENCE",
+            "label": "Open case: Review a Recovery Plan",
+            "description": "Open case: Review a Recovery Plan",
+            "subject": {
+              "type": "mystery",
+              "id": "informant-failed-plan"
+            },
+            "availability": "AVAILABLE",
+            "commandIds": [
+              "2eeeb5b0ccc482d2430ebd7100d6021f9b745e59aa375da7e4d0c569c77b2cdc"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "This lead comes from the evidence and investigations available to you.",
+            "whyItMatters": "Your next move is ready.",
+            "reasons": [
+              "Your next move is ready."
+            ],
+            "requirements": [],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Ready for your next move."
+            }
+          },
+          {
+            "opportunityId": "4e0b5241c185d099f38485d4a0184e2b0d72e2c7d195fc34f53d721c32f06030",
+            "kind": "mystery_lead",
+            "category": "INTELLIGENCE",
+            "label": "Open case: The Dock Noticeboard",
+            "description": "Open case: The Dock Noticeboard",
+            "subject": {
+              "type": "mystery",
+              "id": "informant-public-trail"
+            },
+            "availability": "AVAILABLE",
+            "commandIds": [
+              "4e0b5241c185d099f38485d4a0184e2b0d72e2c7d195fc34f53d721c32f06030"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "This lead comes from the evidence and investigations available to you.",
+            "whyItMatters": "Your next move is ready.",
+            "reasons": [
+              "Your next move is ready."
+            ],
+            "requirements": [],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Ready for your next move."
+            }
+          },
+          {
+            "opportunityId": "6a8d08dee06949f146d59072f83795e0ed83fedc6114c24df3d636efcfde4d44",
+            "kind": "mystery_lead",
+            "category": "INTELLIGENCE",
+            "label": "Open case: The Dispatch Register",
+            "description": "Open case: The Dispatch Register",
+            "subject": {
+              "type": "mystery",
+              "id": "missing-shipment-evidence"
+            },
+            "availability": "AVAILABLE",
+            "commandIds": [
+              "6a8d08dee06949f146d59072f83795e0ed83fedc6114c24df3d636efcfde4d44"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "This lead comes from the evidence and investigations available to you.",
+            "whyItMatters": "Your next move is ready.",
+            "reasons": [
+              "Your next move is ready."
+            ],
+            "requirements": [],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Ready for your next move."
+            }
+          },
+          {
+            "opportunityId": "6efd00796138ec2ee1dbc61dbe7ff79ddb7f0c2c232e437e5a46208c61d3dada",
+            "kind": "mystery_lead",
+            "category": "INTELLIGENCE",
+            "label": "Open case: Dock War Aftermath",
+            "description": "Open case: Dock War Aftermath",
+            "subject": {
+              "type": "mystery",
+              "id": "dock-war-aftermath"
+            },
+            "availability": "AVAILABLE",
+            "commandIds": [
+              "6efd00796138ec2ee1dbc61dbe7ff79ddb7f0c2c232e437e5a46208c61d3dada"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "This lead comes from the evidence and investigations available to you.",
+            "whyItMatters": "Your next move is ready.",
+            "reasons": [
+              "Your next move is ready."
+            ],
+            "requirements": [],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Ready for your next move."
+            }
+          },
+          {
+            "opportunityId": "7367f555d8bd1082a8264e41d2c6c27904a415996b26f3e6e03ac63d89f8aeaa",
+            "kind": "mystery_lead",
+            "category": "INTELLIGENCE",
+            "label": "Open case: Your Shipping Records",
+            "description": "Open case: Your Shipping Records",
+            "subject": {
+              "type": "mystery",
+              "id": "canal-shipping-records"
+            },
+            "availability": "AVAILABLE",
+            "commandIds": [
+              "7367f555d8bd1082a8264e41d2c6c27904a415996b26f3e6e03ac63d89f8aeaa"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "This lead comes from the evidence and investigations available to you.",
+            "whyItMatters": "Your next move is ready.",
+            "reasons": [
+              "Your next move is ready."
+            ],
+            "requirements": [],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Ready for your next move."
+            }
+          },
+          {
+            "opportunityId": "b211aa87f5a9a22926d3402702f54f586a56814ec3cc934626bc312ee17798fb",
+            "kind": "mystery_lead",
+            "category": "INTELLIGENCE",
+            "label": "Open case: The Tide Ledger",
+            "description": "Open case: The Tide Ledger",
+            "subject": {
+              "type": "mystery",
+              "id": "dock-war-evidence"
+            },
+            "availability": "AVAILABLE",
+            "commandIds": [
+              "b211aa87f5a9a22926d3402702f54f586a56814ec3cc934626bc312ee17798fb"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "This lead comes from the evidence and investigations available to you.",
+            "whyItMatters": "Your next move is ready.",
+            "reasons": [
+              "Your next move is ready."
+            ],
+            "requirements": [],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Ready for your next move."
+            }
+          },
+          {
+            "opportunityId": "c50c7c04ebae92d64a2dcc2b6ed74e9ce5ba65c04567f7df79ba513a596e1011",
+            "kind": "mystery_lead",
+            "category": "INTELLIGENCE",
+            "label": "Open case: Furnace Archive Aftermath",
+            "description": "Open case: Furnace Archive Aftermath",
+            "subject": {
+              "type": "mystery",
+              "id": "furnace-archive-aftermath"
+            },
+            "availability": "AVAILABLE",
+            "commandIds": [
+              "c50c7c04ebae92d64a2dcc2b6ed74e9ce5ba65c04567f7df79ba513a596e1011"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "This lead comes from the evidence and investigations available to you.",
+            "whyItMatters": "Your next move is ready.",
+            "reasons": [
+              "Your next move is ready."
+            ],
+            "requirements": [],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Ready for your next move."
+            }
+          },
+          {
+            "opportunityId": "dca6ca790a26c68ed10dbccf2f3c7b5615ccc33edc8d14e8f0ab451501f75592",
+            "kind": "mystery_lead",
+            "category": "INTELLIGENCE",
+            "label": "Open case: Furnace Archive Deduction",
+            "description": "Open case: Furnace Archive Deduction",
+            "subject": {
+              "type": "mystery",
+              "id": "furnace-archive-deduction"
+            },
+            "availability": "AVAILABLE",
+            "commandIds": [
+              "dca6ca790a26c68ed10dbccf2f3c7b5615ccc33edc8d14e8f0ab451501f75592"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "This lead comes from the evidence and investigations available to you.",
+            "whyItMatters": "Your next move is ready.",
+            "reasons": [
+              "Your next move is ready."
+            ],
+            "requirements": [],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Ready for your next move."
+            }
+          },
+          {
+            "opportunityId": "fd9c03b54928594c7b2b47f85f80a3161bc9c948d3aaff4c1c21fbcd8ca81435",
+            "kind": "mystery_lead",
+            "category": "INTELLIGENCE",
+            "label": "Open case: A Carbon Copy Survives",
+            "description": "Open case: A Carbon Copy Survives",
+            "subject": {
+              "type": "mystery",
+              "id": "furnace-archive-inspection"
+            },
+            "availability": "AVAILABLE",
+            "commandIds": [
+              "fd9c03b54928594c7b2b47f85f80a3161bc9c948d3aaff4c1c21fbcd8ca81435"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "This lead comes from the evidence and investigations available to you.",
+            "whyItMatters": "Your next move is ready.",
+            "reasons": [
+              "Your next move is ready."
+            ],
+            "requirements": [],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Ready for your next move."
+            }
+          },
+          {
+            "opportunityId": "098ee05c410631fe55afa48631ce693b3f06c47330834b539287d6e88f1bb645",
+            "kind": "territory",
+            "category": "WORLD",
+            "label": "Register shipment",
+            "description": "Register shipment",
+            "subject": {
+              "type": "world_object",
+              "id": "infrastructure:canal_supply_depot"
+            },
+            "availability": "LOCKED",
+            "commandIds": [
+              "098ee05c410631fe55afa48631ce693b3f06c47330834b539287d6e88f1bb645"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "You can see this part of the city.",
+            "whyItMatters": "This work is waiting for your attention.",
+            "reasons": [],
+            "requirements": [
+              {
+                "description": "Keep investigating. Further requirements are not yet known.",
+                "status": "UNKNOWN"
+              }
+            ],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Preparation is still needed."
+            }
+          },
+          {
+            "opportunityId": "59ecffb3fae911f9b41caeee516b3620d07d88f00e412afc5f6872b7115d5c48",
+            "kind": "territory",
+            "category": "WORLD",
+            "label": "Establish route",
+            "description": "Establish route",
+            "subject": {
+              "type": "world_object",
+              "id": "territory:dock_supply_route"
+            },
+            "availability": "LOCKED",
+            "commandIds": [
+              "59ecffb3fae911f9b41caeee516b3620d07d88f00e412afc5f6872b7115d5c48"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "You can see this part of the city.",
+            "whyItMatters": "This work is waiting for your attention.",
+            "reasons": [],
+            "requirements": [
+              {
+                "description": "Keep investigating. Further requirements are not yet known.",
+                "status": "UNKNOWN"
+              }
+            ],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Preparation is still needed."
+            }
+          },
+          {
+            "opportunityId": "e3fc8938bd4881de4eec94785cfc1dfb9146bb38ed8adac1b515d9e0fc84c19f",
+            "kind": "crafting",
+            "category": "PERSONAL",
+            "label": "Craft: Cut an Archive Turn Key",
+            "description": "Craft: Cut an Archive Turn Key",
+            "subject": {
+              "type": "recipe",
+              "id": "recipe:archive_turn_key"
+            },
+            "availability": "LOCKED",
+            "commandIds": [
+              "e3fc8938bd4881de4eec94785cfc1dfb9146bb38ed8adac1b515d9e0fc84c19f"
+            ],
+            "expiresAt": null,
+            "timeRemainingSeconds": null,
+            "whyKnown": "Your equipment and workshop records make this work visible.",
+            "whyItMatters": "This work is waiting for your attention.",
+            "reasons": [],
+            "requirements": [
+              {
+                "description": "Keep investigating. Further requirements are not yet known.",
+                "status": "UNKNOWN"
+              }
+            ],
+            "peopleNeeded": false,
+            "helpers": [],
+            "risk": [],
+            "progress": {
+              "description": "Preparation is still needed."
+            }
+          }
+        ],
+        "commands": [
+          {
+            "commandId": "26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+            "commandType": "discovery.start",
+            "subject": {
+              "type": "discovery",
+              "id": "omerta.coordination.furnace-archive"
+            },
+            "target": {
+              "type": "discovery",
+              "id": "omerta.coordination.furnace-archive"
+            },
+            "label": "Investigate: The Missing Carbon Index",
+            "description": "Investigate: The Missing Carbon Index",
+            "parameters": {
+              "graphId": "omerta.coordination.furnace-archive",
+              "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+            },
+            "availability": "AVAILABLE",
+            "requirements": [],
+            "blockers": [],
+            "costs": [],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          },
+          {
+            "commandId": "2eeeb5b0ccc482d2430ebd7100d6021f9b745e59aa375da7e4d0c569c77b2cdc",
+            "commandType": "mystery.start",
+            "subject": {
+              "type": "mystery",
+              "id": "informant-failed-plan"
+            },
+            "target": {
+              "type": "mystery",
+              "id": "informant-failed-plan"
+            },
+            "label": "Open case: Review a Recovery Plan",
+            "description": "Open case: Review a Recovery Plan",
+            "parameters": {
+              "graphId": "informant-failed-plan"
+            },
+            "availability": "AVAILABLE",
+            "requirements": [],
+            "blockers": [],
+            "costs": [],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          },
+          {
+            "commandId": "4e0b5241c185d099f38485d4a0184e2b0d72e2c7d195fc34f53d721c32f06030",
+            "commandType": "mystery.start",
+            "subject": {
+              "type": "mystery",
+              "id": "informant-public-trail"
+            },
+            "target": {
+              "type": "mystery",
+              "id": "informant-public-trail"
+            },
+            "label": "Open case: The Dock Noticeboard",
+            "description": "Open case: The Dock Noticeboard",
+            "parameters": {
+              "graphId": "informant-public-trail"
+            },
+            "availability": "AVAILABLE",
+            "requirements": [],
+            "blockers": [],
+            "costs": [],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          },
+          {
+            "commandId": "5ca7df4210fe21b70e88d7ee8b57531d37901fc10b138c55af9d2b2f487ec160",
+            "commandType": "discovery.start",
+            "subject": {
+              "type": "discovery",
+              "id": "omerta.coordination.split-ledger"
+            },
+            "target": {
+              "type": "discovery",
+              "id": "omerta.coordination.split-ledger"
+            },
+            "label": "Investigate: The Split Ledger",
+            "description": "Investigate: The Split Ledger",
+            "parameters": {
+              "graphId": "omerta.coordination.split-ledger",
+              "expectedContentHash": "eeb403e00b03ff26618b8a29344de02dccd2b818906cb276237321debf3b477c"
+            },
+            "availability": "AVAILABLE",
+            "requirements": [],
+            "blockers": [],
+            "costs": [],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          },
+          {
+            "commandId": "69c16dddffef2c457fd07fe33a3be52619120170f983e4d9dae98aa4244c16ff",
+            "commandType": "discovery.start",
+            "subject": {
+              "type": "discovery",
+              "id": "omerta.coordination.informant-review"
+            },
+            "target": {
+              "type": "discovery",
+              "id": "omerta.coordination.informant-review"
+            },
+            "label": "Investigate: The Informant: Compare the Records",
+            "description": "Investigate: The Informant: Compare the Records",
+            "parameters": {
+              "graphId": "omerta.coordination.informant-review",
+              "expectedContentHash": "c48b6ac4f710a2ed34212adee6524e2cbf1b324fac731e856fda4c06f99ee6f5"
+            },
+            "availability": "AVAILABLE",
+            "requirements": [],
+            "blockers": [],
+            "costs": [],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          },
+          {
+            "commandId": "6a8d08dee06949f146d59072f83795e0ed83fedc6114c24df3d636efcfde4d44",
+            "commandType": "mystery.start",
+            "subject": {
+              "type": "mystery",
+              "id": "missing-shipment-evidence"
+            },
+            "target": {
+              "type": "mystery",
+              "id": "missing-shipment-evidence"
+            },
+            "label": "Open case: The Dispatch Register",
+            "description": "Open case: The Dispatch Register",
+            "parameters": {
+              "graphId": "missing-shipment-evidence"
+            },
+            "availability": "AVAILABLE",
+            "requirements": [],
+            "blockers": [],
+            "costs": [],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          },
+          {
+            "commandId": "6cf4d88b32056d683bb3d729a23322a0f25e8ce64459b611968f7128a4eb29c8",
+            "commandType": "discovery.start",
+            "subject": {
+              "type": "discovery",
+              "id": "omerta.coordination.dock-war"
+            },
+            "target": {
+              "type": "discovery",
+              "id": "omerta.coordination.dock-war"
+            },
+            "label": "Investigate: The Dock War",
+            "description": "Investigate: The Dock War",
+            "parameters": {
+              "graphId": "omerta.coordination.dock-war",
+              "expectedContentHash": "39187f23744989c070fe28554a3e3cad27f4c954d5305ad85ec75e10a0ff50da"
+            },
+            "availability": "AVAILABLE",
+            "requirements": [],
+            "blockers": [],
+            "costs": [],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          },
+          {
+            "commandId": "6efd00796138ec2ee1dbc61dbe7ff79ddb7f0c2c232e437e5a46208c61d3dada",
+            "commandType": "mystery.start",
+            "subject": {
+              "type": "mystery",
+              "id": "dock-war-aftermath"
+            },
+            "target": {
+              "type": "mystery",
+              "id": "dock-war-aftermath"
+            },
+            "label": "Open case: Dock War Aftermath",
+            "description": "Open case: Dock War Aftermath",
+            "parameters": {
+              "graphId": "dock-war-aftermath"
+            },
+            "availability": "AVAILABLE",
+            "requirements": [],
+            "blockers": [],
+            "costs": [],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          },
+          {
+            "commandId": "7367f555d8bd1082a8264e41d2c6c27904a415996b26f3e6e03ac63d89f8aeaa",
+            "commandType": "mystery.start",
+            "subject": {
+              "type": "mystery",
+              "id": "canal-shipping-records"
+            },
+            "target": {
+              "type": "mystery",
+              "id": "canal-shipping-records"
+            },
+            "label": "Open case: Your Shipping Records",
+            "description": "Open case: Your Shipping Records",
+            "parameters": {
+              "graphId": "canal-shipping-records"
+            },
+            "availability": "AVAILABLE",
+            "requirements": [],
+            "blockers": [],
+            "costs": [],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          },
+          {
+            "commandId": "b211aa87f5a9a22926d3402702f54f586a56814ec3cc934626bc312ee17798fb",
+            "commandType": "mystery.start",
+            "subject": {
+              "type": "mystery",
+              "id": "dock-war-evidence"
+            },
+            "target": {
+              "type": "mystery",
+              "id": "dock-war-evidence"
+            },
+            "label": "Open case: The Tide Ledger",
+            "description": "Open case: The Tide Ledger",
+            "parameters": {
+              "graphId": "dock-war-evidence"
+            },
+            "availability": "AVAILABLE",
+            "requirements": [],
+            "blockers": [],
+            "costs": [],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          },
+          {
+            "commandId": "c50c7c04ebae92d64a2dcc2b6ed74e9ce5ba65c04567f7df79ba513a596e1011",
+            "commandType": "mystery.start",
+            "subject": {
+              "type": "mystery",
+              "id": "furnace-archive-aftermath"
+            },
+            "target": {
+              "type": "mystery",
+              "id": "furnace-archive-aftermath"
+            },
+            "label": "Open case: Furnace Archive Aftermath",
+            "description": "Open case: Furnace Archive Aftermath",
+            "parameters": {
+              "graphId": "furnace-archive-aftermath"
+            },
+            "availability": "AVAILABLE",
+            "requirements": [],
+            "blockers": [],
+            "costs": [],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          },
+          {
+            "commandId": "caa88b1be55ab2af2aeea32f9b1b558b788eaf58fdb93ebfe9fe48a290c389d8",
+            "commandType": "discovery.start",
+            "subject": {
+              "type": "discovery",
+              "id": "omerta.coordination.dead-letter"
+            },
+            "target": {
+              "type": "discovery",
+              "id": "omerta.coordination.dead-letter"
+            },
+            "label": "Investigate: The Dead Letter",
+            "description": "Investigate: The Dead Letter",
+            "parameters": {
+              "graphId": "omerta.coordination.dead-letter",
+              "expectedContentHash": "519695a8262ee96126dfa378ebdd4d7010a489b59e76d924f35900964c51e3c6"
+            },
+            "availability": "AVAILABLE",
+            "requirements": [],
+            "blockers": [],
+            "costs": [],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          },
+          {
+            "commandId": "d2c5123ed53c879f240c464de8786f0eb22c0cb50d3969981ec533d16715e6b4",
+            "commandType": "discovery.start",
+            "subject": {
+              "type": "discovery",
+              "id": "omerta.coordination.canal-register"
+            },
+            "target": {
+              "type": "discovery",
+              "id": "omerta.coordination.canal-register"
+            },
+            "label": "Investigate: The Canal Shipping Register",
+            "description": "Investigate: The Canal Shipping Register",
+            "parameters": {
+              "graphId": "omerta.coordination.canal-register",
+              "expectedContentHash": "2e70c29a4492270b4fb7a595c12a444fd151f296f78db298a00b64b2b7bfaccc"
+            },
+            "availability": "AVAILABLE",
+            "requirements": [],
+            "blockers": [],
+            "costs": [],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          },
+          {
+            "commandId": "dca6ca790a26c68ed10dbccf2f3c7b5615ccc33edc8d14e8f0ab451501f75592",
+            "commandType": "mystery.start",
+            "subject": {
+              "type": "mystery",
+              "id": "furnace-archive-deduction"
+            },
+            "target": {
+              "type": "mystery",
+              "id": "furnace-archive-deduction"
+            },
+            "label": "Open case: Furnace Archive Deduction",
+            "description": "Open case: Furnace Archive Deduction",
+            "parameters": {
+              "graphId": "furnace-archive-deduction"
+            },
+            "availability": "AVAILABLE",
+            "requirements": [],
+            "blockers": [],
+            "costs": [],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          },
+          {
+            "commandId": "fd9c03b54928594c7b2b47f85f80a3161bc9c948d3aaff4c1c21fbcd8ca81435",
+            "commandType": "mystery.start",
+            "subject": {
+              "type": "mystery",
+              "id": "furnace-archive-inspection"
+            },
+            "target": {
+              "type": "mystery",
+              "id": "furnace-archive-inspection"
+            },
+            "label": "Open case: A Carbon Copy Survives",
+            "description": "Open case: A Carbon Copy Survives",
+            "parameters": {
+              "graphId": "furnace-archive-inspection"
+            },
+            "availability": "AVAILABLE",
+            "requirements": [],
+            "blockers": [],
+            "costs": [],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          },
+          {
+            "commandId": "098ee05c410631fe55afa48631ce693b3f06c47330834b539287d6e88f1bb645",
+            "commandType": "world.execute",
+            "subject": {
+              "type": "world_object",
+              "id": "infrastructure:canal_supply_depot"
+            },
+            "target": {
+              "type": "territory",
+              "id": "docks"
+            },
+            "label": "Register shipment",
+            "description": "Register shipment",
+            "parameters": {
+              "objectId": "infrastructure:canal_supply_depot",
+              "actionId": "register_shipment",
+              "expectedRevision": 0
+            },
+            "availability": "LOCKED",
+            "requirements": [
+              {
+                "kind": "known",
+                "code": "family_authority",
+                "description": "This requires current Family leadership and an eligible Crew."
+              },
+              {
+                "kind": "known",
+                "code": "item",
+                "description": "Obtain the required equipment."
+              },
+              {
+                "kind": "known",
+                "code": "materials",
+                "description": "Gather the required materials."
+              }
+            ],
+            "blockers": [
+              {
+                "kind": "undiscovered",
+                "code": "undiscovered_requirement",
+                "description": "Keep investigating."
+              },
+              {
+                "kind": "known",
+                "code": "family_authority",
+                "description": "This requires current Family leadership and an eligible Crew."
+              },
+              {
+                "kind": "undiscovered",
+                "code": "undiscovered_requirement",
+                "description": "Keep investigating."
+              },
+              {
+                "kind": "undiscovered",
+                "code": "undiscovered_requirement",
+                "description": "Keep investigating."
+              },
+              {
+                "kind": "known",
+                "code": "item",
+                "description": "Obtain the required equipment."
+              },
+              {
+                "kind": "known",
+                "code": "materials",
+                "description": "Gather the required materials."
+              }
+            ],
+            "costs": [],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          },
+          {
+            "commandId": "59ecffb3fae911f9b41caeee516b3620d07d88f00e412afc5f6872b7115d5c48",
+            "commandType": "world.execute",
+            "subject": {
+              "type": "world_object",
+              "id": "territory:dock_supply_route"
+            },
+            "target": {
+              "type": "territory",
+              "id": "docks"
+            },
+            "label": "Establish route",
+            "description": "Establish route",
+            "parameters": {
+              "objectId": "territory:dock_supply_route",
+              "actionId": "establish_route",
+              "expectedRevision": 0
+            },
+            "availability": "LOCKED",
+            "requirements": [
+              {
+                "kind": "known",
+                "code": "family_authority",
+                "description": "This requires current Family leadership and an eligible Crew."
+              },
+              {
+                "kind": "known",
+                "code": "item",
+                "description": "Obtain the required equipment."
+              },
+              {
+                "kind": "known",
+                "code": "materials",
+                "description": "Gather the required materials."
+              }
+            ],
+            "blockers": [
+              {
+                "kind": "known",
+                "code": "family_authority",
+                "description": "This requires current Family leadership and an eligible Crew."
+              },
+              {
+                "kind": "undiscovered",
+                "code": "undiscovered_requirement",
+                "description": "Keep investigating."
+              },
+              {
+                "kind": "undiscovered",
+                "code": "undiscovered_requirement",
+                "description": "Keep investigating."
+              },
+              {
+                "kind": "known",
+                "code": "item",
+                "description": "Obtain the required equipment."
+              },
+              {
+                "kind": "known",
+                "code": "materials",
+                "description": "Gather the required materials."
+              }
+            ],
+            "costs": [],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          },
+          {
+            "commandId": "e3fc8938bd4881de4eec94785cfc1dfb9146bb38ed8adac1b515d9e0fc84c19f",
+            "commandType": "recipe.craft",
+            "subject": {
+              "type": "recipe",
+              "id": "recipe:archive_turn_key"
+            },
+            "target": {
+              "type": "recipe",
+              "id": "recipe:archive_turn_key"
+            },
+            "label": "Craft: Cut an Archive Turn Key",
+            "description": "Craft: Cut an Archive Turn Key",
+            "parameters": {
+              "recipeId": "recipe:archive_turn_key"
+            },
+            "availability": "LOCKED",
+            "requirements": [
+              {
+                "kind": "known",
+                "code": "location",
+                "description": "Travel to the required district."
+              },
+              {
+                "kind": "known",
+                "code": "materials",
+                "description": "Gather the required materials."
+              }
+            ],
+            "blockers": [
+              {
+                "kind": "known",
+                "code": "location",
+                "description": "Travel to the required district."
+              },
+              {
+                "kind": "undiscovered",
+                "code": "undiscovered_requirement",
+                "description": "Keep investigating."
+              },
+              {
+                "kind": "known",
+                "code": "materials",
+                "description": "Gather the required materials."
+              }
+            ],
+            "costs": [
+              {
+                "templateId": "mat:scrap_steel",
+                "quantity": 2,
+                "quality": "standard"
+              },
+              {
+                "templateId": "mat:wire",
+                "quantity": 1,
+                "quality": "standard"
+              }
+            ],
+            "committedResources": [],
+            "requiredKnowledge": [],
+            "requiredItems": [],
+            "requiredRoles": [],
+            "requiredParticipants": [],
+            "authorization": {
+              "revalidatedOnExecution": true
+            },
+            "risk": [],
+            "expiresAt": "2026-09-19T00:00:00.000Z",
+            "confirmation": {
+              "required": false,
+              "message": null
+            },
+            "resultContract": {
+              "schemaVersion": 1,
+              "currentAuthorizedProjection": true,
+              "exactRetry": true
+            }
+          }
+        ],
+        "cases": {
+          "catalog": [
+            {
+              "graphId": "furnace-archive-inspection",
+              "title": "A Carbon Copy Survives",
+              "status": "available",
+              "started": false,
+              "canStart": true
+            },
+            {
+              "graphId": "furnace-archive-deduction",
+              "title": "Furnace Archive Deduction",
+              "status": "available",
+              "started": false,
+              "canStart": true
+            },
+            {
+              "graphId": "furnace-archive-aftermath",
+              "title": "Furnace Archive Aftermath",
+              "status": "available",
+              "started": false,
+              "canStart": true
+            },
+            {
+              "graphId": "dock-war-evidence",
+              "title": "The Tide Ledger",
+              "status": "available",
+              "started": false,
+              "canStart": true
+            },
+            {
+              "graphId": "dock-war-aftermath",
+              "title": "Dock War Aftermath",
+              "status": "available",
+              "started": false,
+              "canStart": true
+            },
+            {
+              "graphId": "missing-shipment-evidence",
+              "title": "The Dispatch Register",
+              "status": "available",
+              "started": false,
+              "canStart": true
+            },
+            {
+              "graphId": "informant-public-trail",
+              "title": "The Dock Noticeboard",
+              "status": "available",
+              "started": false,
+              "canStart": true
+            },
+            {
+              "graphId": "informant-failed-plan",
+              "title": "Review a Recovery Plan",
+              "status": "available",
+              "started": false,
+              "canStart": true
+            },
+            {
+              "graphId": "canal-shipping-records",
+              "title": "Your Shipping Records",
+              "status": "available",
+              "started": false,
+              "canStart": true
+            }
+          ],
+          "selected": null
+        },
+        "consequences": []
+      },
+      "firstCommand": {
+        "type": "mystery.start",
+        "label": "Open case: A Carbon Copy Survives",
+        "parameters": {
+          "graphId": "furnace-archive-inspection"
+        }
+      },
+      "preparation": [
+        {
+          "commandId": "098ee05c410631fe55afa48631ce693b3f06c47330834b539287d6e88f1bb645",
+          "commandType": "world.execute",
+          "subject": {
+            "type": "world_object",
+            "id": "infrastructure:canal_supply_depot"
+          },
+          "target": {
+            "type": "territory",
+            "id": "docks"
+          },
+          "label": "Register shipment",
+          "description": "Register shipment",
+          "parameters": {
+            "objectId": "infrastructure:canal_supply_depot",
+            "actionId": "register_shipment",
+            "expectedRevision": 0
+          },
+          "availability": "LOCKED",
+          "requirements": [
+            {
+              "kind": "known",
+              "code": "family_authority",
+              "description": "This requires current Family leadership and an eligible Crew."
+            },
+            {
+              "kind": "known",
+              "code": "item",
+              "description": "Obtain the required equipment."
+            },
+            {
+              "kind": "known",
+              "code": "materials",
+              "description": "Gather the required materials."
+            }
+          ],
+          "blockers": [
+            {
+              "kind": "undiscovered",
+              "code": "undiscovered_requirement",
+              "description": "Keep investigating."
+            },
+            {
+              "kind": "known",
+              "code": "family_authority",
+              "description": "This requires current Family leadership and an eligible Crew."
+            },
+            {
+              "kind": "undiscovered",
+              "code": "undiscovered_requirement",
+              "description": "Keep investigating."
+            },
+            {
+              "kind": "undiscovered",
+              "code": "undiscovered_requirement",
+              "description": "Keep investigating."
+            },
+            {
+              "kind": "known",
+              "code": "item",
+              "description": "Obtain the required equipment."
+            },
+            {
+              "kind": "known",
+              "code": "materials",
+              "description": "Gather the required materials."
+            }
+          ],
+          "costs": [],
+          "committedResources": [],
+          "requiredKnowledge": [],
+          "requiredItems": [],
+          "requiredRoles": [],
+          "requiredParticipants": [],
+          "authorization": {
+            "revalidatedOnExecution": true
+          },
+          "risk": [],
+          "expiresAt": "2026-09-19T00:00:00.000Z",
+          "confirmation": {
+            "required": false,
+            "message": null
+          },
+          "resultContract": {
+            "schemaVersion": 1,
+            "currentAuthorizedProjection": true,
+            "exactRetry": true
+          }
+        },
+        {
+          "commandId": "230dab9a966fb63dceebcb6541568cdcbe0f5916156baf607de3b2164d4b0ff8",
+          "commandType": "world.execute",
+          "subject": {
+            "type": "world_object",
+            "id": "facility:foundry_archive"
+          },
+          "target": {
+            "type": "territory",
+            "id": "foundry"
+          },
+          "label": "Open archive",
+          "description": "Open archive",
+          "parameters": {
+            "objectId": "facility:foundry_archive",
+            "actionId": "open_archive",
+            "expectedRevision": 0
+          },
+          "availability": "LOCKED",
+          "requirements": [
+            {
+              "kind": "known",
+              "code": "family_authority",
+              "description": "This requires current Family leadership and an eligible Crew."
+            },
+            {
+              "kind": "known",
+              "code": "location",
+              "description": "Travel to the required district."
+            },
+            {
+              "kind": "known",
+              "code": "item",
+              "description": "Obtain the required equipment."
+            },
+            {
+              "kind": "known",
+              "code": "materials",
+              "description": "Gather the required materials."
+            }
+          ],
+          "blockers": [
+            {
+              "kind": "known",
+              "code": "family_authority",
+              "description": "This requires current Family leadership and an eligible Crew."
+            },
+            {
+              "kind": "undiscovered",
+              "code": "undiscovered_requirement",
+              "description": "Keep investigating."
+            },
+            {
+              "kind": "known",
+              "code": "location",
+              "description": "Travel to the required district."
+            },
+            {
+              "kind": "known",
+              "code": "item",
+              "description": "Obtain the required equipment."
+            },
+            {
+              "kind": "known",
+              "code": "materials",
+              "description": "Gather the required materials."
+            }
+          ],
+          "costs": [],
+          "committedResources": [],
+          "requiredKnowledge": [],
+          "requiredItems": [],
+          "requiredRoles": [],
+          "requiredParticipants": [],
+          "authorization": {
+            "revalidatedOnExecution": true
+          },
+          "risk": [],
+          "expiresAt": "2026-09-19T00:00:00.000Z",
+          "confirmation": {
+            "required": false,
+            "message": null
+          },
+          "resultContract": {
+            "schemaVersion": 1,
+            "currentAuthorizedProjection": true,
+            "exactRetry": true
+          }
+        },
+        {
+          "commandId": "59ecffb3fae911f9b41caeee516b3620d07d88f00e412afc5f6872b7115d5c48",
+          "commandType": "world.execute",
+          "subject": {
+            "type": "world_object",
+            "id": "territory:dock_supply_route"
+          },
+          "target": {
+            "type": "territory",
+            "id": "docks"
+          },
+          "label": "Establish route",
+          "description": "Establish route",
+          "parameters": {
+            "objectId": "territory:dock_supply_route",
+            "actionId": "establish_route",
+            "expectedRevision": 0
+          },
+          "availability": "LOCKED",
+          "requirements": [
+            {
+              "kind": "known",
+              "code": "family_authority",
+              "description": "This requires current Family leadership and an eligible Crew."
+            },
+            {
+              "kind": "known",
+              "code": "item",
+              "description": "Obtain the required equipment."
+            },
+            {
+              "kind": "known",
+              "code": "materials",
+              "description": "Gather the required materials."
+            }
+          ],
+          "blockers": [
+            {
+              "kind": "known",
+              "code": "family_authority",
+              "description": "This requires current Family leadership and an eligible Crew."
+            },
+            {
+              "kind": "undiscovered",
+              "code": "undiscovered_requirement",
+              "description": "Keep investigating."
+            },
+            {
+              "kind": "undiscovered",
+              "code": "undiscovered_requirement",
+              "description": "Keep investigating."
+            },
+            {
+              "kind": "known",
+              "code": "item",
+              "description": "Obtain the required equipment."
+            },
+            {
+              "kind": "known",
+              "code": "materials",
+              "description": "Gather the required materials."
+            }
+          ],
+          "costs": [],
+          "committedResources": [],
+          "requiredKnowledge": [],
+          "requiredItems": [],
+          "requiredRoles": [],
+          "requiredParticipants": [],
+          "authorization": {
+            "revalidatedOnExecution": true
+          },
+          "risk": [],
+          "expiresAt": "2026-09-19T00:00:00.000Z",
+          "confirmation": {
+            "required": false,
+            "message": null
+          },
+          "resultContract": {
+            "schemaVersion": 1,
+            "currentAuthorizedProjection": true,
+            "exactRetry": true
+          }
+        },
+        {
+          "commandId": "e3fc8938bd4881de4eec94785cfc1dfb9146bb38ed8adac1b515d9e0fc84c19f",
+          "commandType": "recipe.craft",
+          "subject": {
+            "type": "recipe",
+            "id": "recipe:archive_turn_key"
+          },
+          "target": {
+            "type": "recipe",
+            "id": "recipe:archive_turn_key"
+          },
+          "label": "Craft: Cut an Archive Turn Key",
+          "description": "Craft: Cut an Archive Turn Key",
+          "parameters": {
+            "recipeId": "recipe:archive_turn_key"
+          },
+          "availability": "BLOCKED",
+          "requirements": [
+            {
+              "kind": "known",
+              "code": "location",
+              "description": "Travel to the required district."
+            },
+            {
+              "kind": "known",
+              "code": "materials",
+              "description": "Gather the required materials."
+            }
+          ],
+          "blockers": [
+            {
+              "kind": "known",
+              "code": "location",
+              "description": "Travel to the required district."
+            },
+            {
+              "kind": "known",
+              "code": "materials",
+              "description": "Gather the required materials."
+            }
+          ],
+          "costs": [
+            {
+              "templateId": "mat:scrap_steel",
+              "quantity": 2,
+              "quality": "standard"
+            },
+            {
+              "templateId": "mat:wire",
+              "quantity": 1,
+              "quality": "standard"
+            }
+          ],
+          "committedResources": [],
+          "requiredKnowledge": [],
+          "requiredItems": [],
+          "requiredRoles": [],
+          "requiredParticipants": [],
+          "authorization": {
+            "revalidatedOnExecution": true
+          },
+          "risk": [],
+          "expiresAt": "2026-09-19T00:00:00.000Z",
+          "confirmation": {
+            "required": false,
+            "message": null
+          },
+          "resultContract": {
+            "schemaVersion": 1,
+            "currentAuthorizedProjection": true,
+            "exactRetry": true
+          }
+        }
+      ],
+      "status": "FAIL",
+      "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-world-choice-confirm]')\u001b[22m\n\u001b[2m    - locator resolved to <button class=\"act danger\" data-world-choice-confirm=\"\">Confirm move</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m  - element was detached from the DOM, retrying\u001b[22m\n\n    at executeVisible (C:\\Users\\Jorge\\Documents\\Omerta-rc1\\tools\\rc1-mobile-journeys.js:96:93)\n    at async file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-mobile-journeys.js:222:7"
+    }
+  ]
+}

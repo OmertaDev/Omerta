@@ -1,0 +1,5 @@
+PASS recover_shipment: recovered, issued command/replay, visible consequence, custody/kernel invariants; downstream selections=0
+PASS destroy_shipment: destroyed, issued command/replay, visible consequence, custody/kernel invariants; downstream selections=0
+PASS secure_records: secured, issued command/replay, visible consequence, custody/kernel invariants; downstream selections=0
+PASS publish_allegation: unproven, issued command/replay, visible consequence, custody/kernel invariants; downstream selections=0
+PASS preserve_uncertainty: unproven, issued command/replay, visible consequence, custody/kernel invariants; downstream selections=0

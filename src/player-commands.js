@@ -131,6 +131,8 @@ function commandsFor(board) {
   }
   for (const recipe of board.recipes) add('recipe.craft', ref('recipe', recipe.id), `Craft: ${recipe.title || title(recipe.id)}`,
     { recipeId: recipe.id }, recipe.canAttempt === true, recipe.missing || ['undiscovered_requirement'], {
+      ...(recipe.id === 'recipe:archive_turn_key' && (recipe.missing || []).every((code) => Object.hasOwn(BLOCKERS, code))
+        ? { description: 'Find a junker through the Garage. At the Foundry, strip it for scrap steel and wire, then craft this key there.' } : {}),
       costs: [...(recipe.consumes || []), ...(recipe.cashCost ? [{ kind: 'cash', quantity: recipe.cashCost }] : [])],
       requiredItems: (recipe.consumes || []).filter((entry) => entry.templateId?.startsWith('item:')),
     });

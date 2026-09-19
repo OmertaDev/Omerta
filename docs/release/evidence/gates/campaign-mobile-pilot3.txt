@@ -1,0 +1,144 @@
+⚠️  preflight: Neither PUBLIC_URL nor SOCIAL_GAME_URL is set — every referral link, share prompt and social card will point at the built-in default domain, not yours. Set PUBLIC_URL to this server's own origin (it is also what one-click X sign-in derives its callback from).
+⚠️  preflight: INVARIANT_WEBHOOK_URL is not set — the §10.4 economy-drift, backup-failure, oracle-halt and real-value-invariant alarms have nowhere to shout and reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+locator.click: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator('#grouprail [data-group="start"]')
+    - locator resolved to <button class="on" type="button" data-group="start" aria-pressed="true">Start Here</button>
+  - attempting click action
+    2 × waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div id="tour-art" aria-hidden="true"></div> from <div id="welcome" class="modal-bg" aria-hidden="false" data-modal-close="#tour-skip">…</div> subtree intercepts pointer events
+    - retrying click action
+    - waiting 20ms
+    2 × waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div id="tour-art" aria-hidden="true"></div> from <div id="welcome" class="modal-bg" aria-hidden="false" data-modal-close="#tour-skip">…</div> subtree intercepts pointer events
+    - retrying click action
+      - waiting 100ms
+    13 × waiting for element to be visible, enabled and stable
+       - element is visible, enabled and stable
+       - scrolling into view if needed
+       - done scrolling
+       - <div id="welcome" class="modal-bg" aria-hidden="false" data-modal-close="#tour-skip">…</div> intercepts pointer events
+     - retrying click action
+       - waiting 500ms
+       - waiting for element to be visible, enabled and stable
+       - element is visible, enabled and stable
+       - scrolling into view if needed
+       - done scrolling
+       - <div id="welcome" class="modal-bg" aria-hidden="false" data-modal-close="#tour-skip">…</div> intercepts pointer events
+     - retrying click action
+       - waiting 500ms
+       - waiting for element to be visible, enabled and stable
+       - element is visible, enabled and stable
+       - scrolling into view if needed
+       - done scrolling
+       - <div id="tour-art" aria-hidden="true"></div> from <div id="welcome" class="modal-bg" aria-hidden="false" data-modal-close="#tour-skip">…</div> subtree intercepts pointer events
+     - retrying click action
+       - waiting 500ms
+       - waiting for element to be visible, enabled and stable
+       - element is visible, enabled and stable
+       - scrolling into view if needed
+       - done scrolling
+       - <div id="tour-art" aria-hidden="true"></div> from <div id="welcome" class="modal-bg" aria-hidden="false" data-modal-close="#tour-skip">…</div> subtree intercepts pointer events
+     - retrying click action
+       - waiting 500ms
+    2 × waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div id="welcome" class="modal-bg" aria-hidden="false" data-modal-close="#tour-skip">…</div> intercepts pointer events
+    - retrying click action
+      - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <div id="tour-art" aria-hidden="true"></div> from <div id="welcome" class="modal-bg" aria-hidden="false" data-modal-close="#tour-skip">…</div> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+
+    at pageFor (C:\Users\Jorge\Documents\Omerta-rc1\tools\rc1-campaign-mobile.js:60:68)
+    at async Object.snapshot (C:\Users\Jorge\Documents\Omerta-rc1\tools\rc1-campaign-mobile.js:69:27)
+    at async learn (C:\Users\Jorge\Documents\Omerta-rc1\test\lib\campaign-network-support.js:22:19)
+    at async Object.prepare (C:\Users\Jorge\Documents\Omerta-rc1\test\lib\campaign-network-support.js:73:77)
+    at async file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-campaign-mobile.js:119:27
+⚠️  preflight: Neither PUBLIC_URL nor SOCIAL_GAME_URL is set — every referral link, share prompt and social card will point at the built-in default domain, not yours. Set PUBLIC_URL to this server's own origin (it is also what one-click X sign-in derives its callback from).
+⚠️  preflight: INVARIANT_WEBHOOK_URL is not set — the §10.4 economy-drift, backup-failure, oracle-halt and real-value-invariant alarms have nowhere to shout and reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+locator.click: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator('#grouprail [data-group="start"]')
+    - locator resolved to <button class="on" type="button" data-group="start" aria-pressed="true">Start Here</button>
+  - attempting click action
+    2 × waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div id="tour-art" aria-hidden="true"></div> from <div id="welcome" class="modal-bg" aria-hidden="false" data-modal-close="#tour-skip">…</div> subtree intercepts pointer events
+    - retrying click action
+    - waiting 20ms
+    2 × waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div id="tour-art" aria-hidden="true"></div> from <div id="welcome" class="modal-bg" aria-hidden="false" data-modal-close="#tour-skip">…</div> subtree intercepts pointer events
+    - retrying click action
+      - waiting 100ms
+    - waiting for element to be visible, enabled and stable
+    - element is not stable
+  13 × retrying click action
+       - waiting 500ms
+       - waiting for element to be visible, enabled and stable
+       - element is visible, enabled and stable
+       - scrolling into view if needed
+       - done scrolling
+       - <div id="welcome" class="modal-bg" aria-hidden="false" data-modal-close="#tour-skip">…</div> intercepts pointer events
+     - retrying click action
+       - waiting 500ms
+       - waiting for element to be visible, enabled and stable
+       - element is visible, enabled and stable
+       - scrolling into view if needed
+       - done scrolling
+       - <div id="tour-art" aria-hidden="true"></div> from <div id="welcome" class="modal-bg" aria-hidden="false" data-modal-close="#tour-skip">…</div> subtree intercepts pointer events
+     - retrying click action
+       - waiting 500ms
+       - waiting for element to be visible, enabled and stable
+       - element is visible, enabled and stable
+       - scrolling into view if needed
+       - done scrolling
+       - <div id="tour-art" aria-hidden="true"></div> from <div id="welcome" class="modal-bg" aria-hidden="false" data-modal-close="#tour-skip">…</div> subtree intercepts pointer events
+     - retrying click action
+       - waiting 500ms
+       - waiting for element to be visible, enabled and stable
+       - element is visible, enabled and stable
+       - scrolling into view if needed
+       - done scrolling
+       - <div id="welcome" class="modal-bg" aria-hidden="false" data-modal-close="#tour-skip">…</div> intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <div id="welcome" class="modal-bg" aria-hidden="false" data-modal-close="#tour-skip">…</div> intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <div id="tour-art" aria-hidden="true"></div> from <div id="welcome" class="modal-bg" aria-hidden="false" data-modal-close="#tour-skip">…</div> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+
+    at pageFor (C:\Users\Jorge\Documents\Omerta-rc1\tools\rc1-campaign-mobile.js:60:68)
+    at async Object.snapshot (C:\Users\Jorge\Documents\Omerta-rc1\tools\rc1-campaign-mobile.js:69:27)
+    at async learn (C:\Users\Jorge\Documents\Omerta-rc1\test\lib\campaign-network-support.js:22:19)
+    at async Object.prepare (C:\Users\Jorge\Documents\Omerta-rc1\test\lib\campaign-network-support.js:73:77)
+    at async file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-campaign-mobile.js:119:27

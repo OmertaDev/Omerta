@@ -42,6 +42,7 @@ const token = (account, secret) => {
 const physical = async (pool) => {
   const queries = {
     accounts: 'SELECT account_id,omr,staked,rewards,unbonding FROM account_persistent ORDER BY account_id',
+    cash: 'SELECT id,cash,bank FROM characters ORDER BY id',
     inventory: 'SELECT * FROM item_instances ORDER BY id',
     resources: 'SELECT * FROM item_stacks ORDER BY owner_scope,owner_id,template_id,quality',
     provenance: 'SELECT * FROM item_events ORDER BY sequence',

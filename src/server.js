@@ -144,7 +144,7 @@ import { arenaBoard } from './arena.js';
 import { agentTurn } from './agentturn.js';
 import { postCityWire } from './citywire.js';
 import { bulletinPublic, bulletinBoard, claimBulletin } from './bulletin.js';
-import { rateLimitsEnabled, initRateLimiter, checkRateLimit, checkAuthRateLimit, checkReadLimit, checkPublicRateLimit } from './ratelimit.js';
+import { rateLimitsEnabled, initRateLimiter, checkRateLimit, checkAuthRateLimit, checkReadLimit, checkPublicRateLimit, checkObservationLimit } from './ratelimit.js';
 import { runLedgerInvariants, alertDrift } from './invariants.js';
 import { dayOf, cityEventOf, priceBlock, goodPriceOf, demandOf, makingsPriceOf,
          levelOf, GOODS, DRUGS, DISTRICTS, CONSTANTS, sealOf, CRIMES, GUNS, VESTS, CARS, KITCHENS, CONSUMABLES, TRADE_RANKS, M3, M4, M8, PATHS,
@@ -1113,8 +1113,10 @@ export async function buildServer() {
     if (req.user.tv !== undefined && Number(req.user.tv) !== Number(acct.token_version))
       return reply.code(401).send({ error: 'token_revoked' });
     if (rateLimitsEnabled()) {
-      const limited = await checkRateLimit({ accountId: req.user.sub, agent: !!acct.agent_flag,
-        path: req.routeOptions?.url || req.url, capoRecruits: Number(acct.capo_recruits || 0) });
+      const limited = ['/v1/commands/observations', '/v1/screens'].includes(req.routeOptions?.url)
+        ? await checkObservationLimit({ accountId: req.user.sub })
+        : await checkRateLimit({ accountId: req.user.sub, agent: !!acct.agent_flag,
+          path: req.routeOptions?.url || req.url, capoRecruits: Number(acct.capo_recruits || 0) });
       if (limited) return reply.code(429).header('retry-after', limited.retryAfter)
         .send({ error: 'rate_limited', retryAfter: limited.retryAfter });
     }

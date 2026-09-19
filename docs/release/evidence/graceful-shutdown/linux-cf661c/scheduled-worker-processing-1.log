@@ -1,0 +1,9 @@
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+OMERTÀ worker up — hourly: buyback + season check; daily: §10.4 invariant sweep.
+[director] {"activeSituations":1,"activeCampaigns":1,"generated":0,"resolved":0,"expired":0,"recovered":0,"errors":0,"selections":0,"selectionLatencyMs":0,"evaluationLatencyMs":14.72876899999983,"eventBacklog":0,"generationRatePerHour":0,"resolutionRatePerHour":0,"expiryRatePerHour":0,"recoveryRatePerHour":0}
+🔨 no auction today (no_price)
+the desk is dormant (no $OMR price print yet — expected pre-mainnet)
+⚔️ family war: 1 campaign(s) lapsed
+🚚 convoy: NPC trucks −0 +2
+🏙️  population: +4 −0 residents (0 picked clean; 4 on the streets, 24 replacements left today)
+🏙️  residents: 2 listed

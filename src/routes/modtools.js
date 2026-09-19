@@ -3,6 +3,7 @@
 // closure it used to read directly (pool, auth), so nothing about what is mounted or how it is
 // authenticated moves with it; test/routes.js asserts the mounted surface is identical either way.
 import crypto from 'node:crypto';
+import { worldReleaseMetrics } from '../world-telemetry.js';
 import { generateInviteCode } from '../invites.js';
 import { runLedgerInvariants, alertDrift } from '../invariants.js';
 import { TAX, withdrawTaxBps } from '../rules.js';
@@ -162,6 +163,7 @@ export function register(app, { pool, auth, modAuth, closeAccountSockets }) {
     // which systems anyone actually uses + whether players come back. Reads telemetry that was
     // already being written — the reader was the missing half, not the instrumentation.
     app.get('/v1/mod/engagement', { preHandler: modAuth }, async (req) => opsEngagement(pool, req.query?.days));
+    app.get('/v1/mod/release-funnel', { preHandler: modAuth }, async (req) => worldReleaseMetrics(pool, req.query?.days));
     app.get('/v1/mod/audit', { preHandler: modAuth }, async (req) => {
       const cid = req.query?.characterId;
       const tx = await pool.query('SELECT * FROM transactions WHERE ($1::text IS NULL OR character_id=$1) ORDER BY at DESC LIMIT 100', [cid || null]);
