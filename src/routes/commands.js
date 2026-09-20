@@ -2,10 +2,12 @@ import { createPlayerCommandEngine } from '../player-commands.js';
 import { coreProgressionContent } from '../content/core-progression.js';
 import { isDbDown } from '../dbhealth.js';
 import { createConfiguredDirector } from '../director/config.js';
+import { commandRequestStart, commandRequestEnd, commandRequestFailure, traceAuthorizedCommand } from '../command-diagnostics.js';
 
 const invalid = () => { const error = new Error('Invalid command request'); error.code = 'bad_command_request'; throw error; };
 
-function safeError(error, _req, reply) {
+function safeError(error, req, reply) {
+  commandRequestFailure(req, { unauthorized: error?.statusCode === 401, database: isDbDown(error) });
   reply.header('cache-control', 'no-store');
   if (error?.statusCode === 401) return reply.code(401).send({ error: 'unauthorized', message: 'A valid bearer token is required.' });
   if (isDbDown(error)) return reply.code(503).send({ error: 'db_down', message: 'Retry this move using its original identity.' });
@@ -31,17 +33,19 @@ export function register(app, { pool, auth, receiptTrust = null }) {
     sharingEnabled: knowledgeEnabled && process.env.COORDINATION_KNOWLEDGE_SHARING === 'on',
     accountIds: (process.env.COORDINATION_ACCOUNT_IDS || '').split(',').map((id) => id.trim()).filter(Boolean) });
   const options = { preHandler: auth, errorHandler: safeError,
+    onRequest: commandRequestStart, onResponse: commandRequestEnd,
     preValidation: async (req, reply) => {
       reply.header('cache-control', 'no-store');
       if (Object.entries(req.query || {}).some(([key, value]) => !['operationId', 'mysteryGraphId'].includes(key)
         || typeof value !== 'string' || !/^[\x21-\x7e]{1,160}$/.test(value))) invalid();
     } };
-  app.get('/v1/commands', options, (req) => service.snapshot(req.user.sub, { ...req.query }));
+  app.get('/v1/commands', options, (req) => traceAuthorizedCommand(req, () => service.snapshot(req.user.sub, { ...req.query })));
   app.post('/v1/commands/execute', { ...options,
     ...(typeof receiptTrust === 'symbol' ? { config: { coordinationReceipts: receiptTrust, currentCommandProjection: receiptTrust } } : {}),
     preValidation: async (req, reply) => {
       reply.header('cache-control', 'no-store');
       if (Object.keys(req.query || {}).length || !req.body || typeof req.body !== 'object' || Array.isArray(req.body)
         || Object.keys(req.body).sort().join(',') !== 'confirmed,executionId') invalid();
-    } }, (req) => service.execute(req.user.sub, { executionId: req.body.executionId, confirmed: req.body.confirmed }, req.headers['idempotency-key']));
+    } }, (req) => traceAuthorizedCommand(req, () => service.execute(req.user.sub,
+      { executionId: req.body.executionId, confirmed: req.body.confirmed }, req.headers['idempotency-key'])));
 }

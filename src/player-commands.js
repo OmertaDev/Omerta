@@ -1,3 +1,4 @@
+import { commandDiagnostic } from './command-diagnostics.js';
 // Discoverability and orchestration only: all effects and replay receipts belong
 // to the existing domain services. Stored boards are expiring suggestions, never authority.
 import crypto from 'node:crypto';
@@ -279,6 +280,7 @@ export function createPlayerCommandEngine({ pool, content, enabled = false, know
     });
   }
   async function execute(accountId, input, key) {
+    commandDiagnostic('command');
     if (!input || ![Object.prototype, null].includes(Object.getPrototypeOf(input))
       || Object.keys(input).sort().join(',') !== 'confirmed,executionId' || typeof input.confirmed !== 'boolean'
       || typeof input.executionId !== 'string' || !/^[a-f0-9]{64}\.[a-f0-9]{64}$/.test(input.executionId)
@@ -305,6 +307,7 @@ export function createPlayerCommandEngine({ pool, content, enabled = false, know
       }
       if (!replayed) raw = await dispatch(accountId, issued.character_id, command, actionKey);
     });
+    commandDiagnostic('mutation', { outcome: 'completed', replayed });
     // Domain COMMIT already happened. A failed read must never invite a new key.
     const outcome = typeof raw === 'string' ? JSON.parse(raw) : raw;
     const nextOptions = { ...options,
@@ -332,6 +335,8 @@ export function createPlayerCommandEngine({ pool, content, enabled = false, know
       newOpportunities: next && before ? next.opportunities.filter((entry) => !priorOpportunities.some((old) => old.opportunityId === entry.opportunityId)) : [],
       removedOpportunities: next && before ? priorOpportunities.filter((entry) => !next.opportunities.some((current) => current.opportunityId === entry.opportunityId))
         .map((entry) => ({ opportunityId: entry.opportunityId })) : [] };
+    commandDiagnostic('consequence', { changes: Object.values(feedback).reduce((n, value) => n + (Array.isArray(value) ? value.length : 0), 0), replayed });
+    commandDiagnostic('opportunity', { changes: feedback.newOpportunities.length + feedback.removedOpportunities.length, replayed });
     const result = { ...(outcome?.operationId ? { operationId: outcome.operationId } : {}),
       ...(outcome?.instance?.id ? { instanceId: outcome.instance.id } : {}) };
     return { schemaVersion: 1, executionId: input.executionId, status: 'COMPLETED', replayed, result, feedback, projection: next };

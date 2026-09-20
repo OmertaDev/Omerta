@@ -46,11 +46,13 @@ process.env.RATE_LIMIT = 'off';
 // the real calendar. A harness whose figures mean something different depending on the week it
 // was run is not a measurement, so the baseline is pinned. Run with SEASON_MOD=<id> to measure
 // a specific season deliberately.
-process.env.SEASON_MOD = process.env.SEASON_MOD || 'dead_quiet';
+if (!process.env.DATABASE_URL) process.env.SEASON_MOD = process.env.SEASON_MOD || 'dead_quiet';
 // …and the PHASE, for the same reason: THE SEASON HAS AN ENDING makes the last week of every
 // season discount the turf floor and shorten the windows, derived from the real calendar. A run in
 // the reckoning is measuring a different game than a run in week two.
-process.env.SEASON_PHASE = process.env.SEASON_PHASE || 'long_game';
+if (!process.env.DATABASE_URL) process.env.SEASON_PHASE = process.env.SEASON_PHASE || 'long_game';
+// Real PostgreSQL runs use the production calendar: startup correctly rejects
+// test-only season overrides. Do not bypass that guard to run a release proof.
 import assert from 'node:assert';
 import { buildServer } from '../src/server.js';
 import { runLedgerInvariants } from '../src/invariants.js';
@@ -71,10 +73,19 @@ const REAL_PG = !!process.env.DATABASE_URL;   // a database that honours ROLLBAC
 async function runTown({ players: PLAYERS, days: DAYS, verbose = true }) {
 const app = await buildServer();
 const pool = app.pool;
+let transitionBaseline = null, transitionChecks = 0;
+const checkTransition = async (label) => {
+  if (!transitionBaseline || process.env.SCALE_ASSERT_EACH_TRANSITION !== 'on') return;
+  const current = await runLedgerInvariants(pool, { alert: false });
+  const changed = current.checks.filter((check) => Math.abs(check.drift - (transitionBaseline[check.name] ?? 0)) > 0.01);
+  transitionChecks++;
+  assert.equal(changed.length, 0, `${label}: conservation changed at transition ${transitionChecks}: ${JSON.stringify(changed)}`);
+};
 
 const call = async (method, url, token, body) => {
   const res = await app.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: body });
   let json = null; try { json = res.json(); } catch { /* empty body */ }
+  await checkTransition(`${method} ${url} -> ${res.statusCode}`);
   return { code: res.statusCode, body: json || {} };
 };
 
@@ -137,6 +148,7 @@ for (let i = 0; i < players.length; i++) {
 
 const before = await runLedgerInvariants(pool, { alert: false });
 const baseline = Object.fromEntries(before.checks.map((c) => [c.name, c.drift]));
+transitionBaseline = baseline;
 
 // ── the days ────────────────────────────────────────────────────────────────────────────────────
 // Each round: every player takes one archetype action, then the world ticks (NPC residents act, the
@@ -425,7 +437,9 @@ for (let day = 0; day < DAYS; day++) {
     for (const p of players) await traceCoach(p);
   }
   await runPopulation(pool);          // the city tops itself up and retires drained residents
+  await checkTransition('population worker');
   await runResidentBehaviour(pool);   // residents advertise consent limits, post offers/orders
+  await checkTransition('resident worker');
   // Warp a day. Everything here is lazy-accrual off `last_accrued_at`, so pulling that clock back IS
   // moving time — the same trick tools/sim.js uses. Energy and nerve are refilled because a real day
   // regenerates them; without that the population starves after round one and measures nothing.
@@ -585,6 +599,7 @@ const moved = after.checks.filter((c) => Math.abs(c.drift - (baseline[c.name] ??
   .map((c) => `${c.name}: ${baseline[c.name] ?? 0} → ${c.drift}`);
 assert.equal(moved.length, 0, `§10.4 MOVED during the run — a lost update or torn transfer:\n  ${moved.join('\n  ')}`);
 if (verbose) console.log(`\n✓ §10.4 held: all ${after.checks.length} checks moved by exactly nothing across ${DAYS} simulated days`);
+if (transitionChecks) console.log(`✓ conservation also checked after each of ${transitionChecks} API/worker transitions`);
 
 // (2) reachability: a market nobody could even POST into is a gate bug, not a quiet town. Reported
 // per-market above; asserted here only for the ones this harness actually drives a post for.
