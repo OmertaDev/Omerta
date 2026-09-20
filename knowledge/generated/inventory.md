@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `4d35c8e8b3a1`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `5f735c573ff1`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 2,961 |
-| Text lines | 847,659 |
-| Repository bytes inventoried | 825,936,029 |
+| Current artifacts | 2,963 |
+| Text lines | 847,937 |
+| Repository bytes inventoried | 825,957,140 |
 | Backend/route modules | 273 |
 | HTTP route registrations / unique routes | 800 / 800 |
 | Database tables | 369 |
 | Solidity declarations | 79 |
-| Git commits | 1,484 |
+| Git commits | 1,488 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 7,548 / 33,486 |
+| Graph nodes / edges | 7,555 / 33,524 |
 
 ## Artifact kinds
 
@@ -24,13 +24,13 @@
 |---|---:|
 | media-asset | 1,202 |
 | documentation | 320 |
-| test-suite | 266 |
+| test-suite | 267 |
 | artifact | 256 |
 | backend-module | 245 |
 | contract-project | 153 |
 | audit | 98 |
 | contract-test | 98 |
-| engineering-harness | 94 |
+| engineering-harness | 95 |
 | design | 91 |
 | contract-source | 59 |
 | route-module | 28 |
@@ -50,7 +50,7 @@
 | [omerta-contracts/audits/2026-09-08-comprehensive/shared-static-triage.json](../../omerta-contracts/audits/2026-09-08-comprehensive/shared-static-triage.json) | 52,258 | contract-project | 2026-09-09 |
 | [omerta-contracts/audits/2026-09-08-comprehensive/hook-retest-static.json](../../omerta-contracts/audits/2026-09-08-comprehensive/hook-retest-static.json) | 47,392 | contract-project | 2026-09-09 |
 | [CLAUDE.md](../../CLAUDE.md) | 18,679 | documentation | 2026-09-06 |
-| [public/index.html](../../public/index.html) | 13,372 | web-surface | 2026-09-18 |
+| [public/index.html](../../public/index.html) | 13,373 | web-surface | 2026-09-20 |
 | [omerta-contracts/audits/2026-09-08-liquidity-automation/package-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/package-manifest.json) | 10,623 | contract-project | 2026-09-09 |
 | [test/client.js](../../test/client.js) | 9,441 | test-suite | 2026-09-17 |
 | [omerta-contracts/x-ray/slither-vars-and-auth.json](../../omerta-contracts/x-ray/slither-vars-and-auth.json) | 9,374 | contract-project | 2026-08-25 |
@@ -71,7 +71,7 @@
 | [omerta-contracts/audits/2026-09-09-genesis-bootstrap/artifact-manifest.json](../../omerta-contracts/audits/2026-09-09-genesis-bootstrap/artifact-manifest.json) | 4,402 | contract-project | 2026-09-09 |
 | [reference-prototype-v24.jsx](../../reference-prototype-v24.jsx) | 4,235 | artifact | 2026-08-11 |
 | [test/docs.js](../../test/docs.js) | 4,205 | test-suite | 2026-09-14 |
-| [test/gates.js](../../test/gates.js) | 4,188 | test-suite | 2026-09-18 |
+| [test/gates.js](../../test/gates.js) | 4,188 | test-suite | 2026-09-20 |
 | [omerta-contracts/test/AcquisitionConstellationTask3B.t.sol](../../omerta-contracts/test/AcquisitionConstellationTask3B.t.sol) | 3,743 | contract-test | 2026-08-28 |
 | [src/server.js](../../src/server.js) | 3,619 | backend-module | 2026-09-18 |
 | [test/phase2-review-regressions.js](../../test/phase2-review-regressions.js) | 3,440 | test-suite | 2026-09-07 |

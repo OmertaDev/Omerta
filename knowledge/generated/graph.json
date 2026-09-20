@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+  "sourceRevision": "5f735c573ff17fa3b8f4c9d7ad3c45181ae13d7d",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 7548,
-    "edges": 33486,
+    "nodes": 7555,
+    "edges": 33524,
     "byNodeType": {
-      "Artifact": 2961,
+      "Artifact": 2963,
       "Command": 102,
-      "Commit": 1484,
+      "Commit": 1488,
       "Contract": 79,
       "Document": 592,
       "Domain": 13,
@@ -60,27 +60,27 @@
       "Route": 800,
       "Subsystem": 8,
       "Table": 369,
-      "TestSuite": 364,
+      "TestSuite": 365,
       "Workflow": 6
     },
     "byEdgeType": {
-      "BELONGS_TO": 2486,
-      "CHANGED": 12646,
-      "CONTAINS": 2982,
+      "BELONGS_TO": 2488,
+      "CHANGED": 12663,
+      "CONTAINS": 2984,
       "DECLARES": 102,
       "DEFINED_IN": 1248,
       "DEPENDS_ON": 65,
-      "EXECUTES": 426,
+      "EXECUTES": 427,
       "HANDLED_BY": 707,
-      "HAS_COMMIT": 1484,
+      "HAS_COMMIT": 1488,
       "IMPLEMENTS": 124,
-      "IMPORTS": 2835,
+      "IMPORTS": 2844,
       "INHERITS": 17,
       "REFERENCES": 4069,
-      "REPRESENTS": 1235,
-      "TESTS": 1134,
+      "REPRESENTS": 1236,
+      "TESTS": 1135,
       "TRACKS": 126,
-      "USES_TABLE": 1800
+      "USES_TABLE": 1801
     }
   },
   "nodes": [
@@ -7636,20 +7636,20 @@
       "path": ".github/workflows/rc1-recovery.yml",
       "kind": "workflow",
       "extension": ".yml",
-      "bytes": 2305,
-      "lines": 67,
-      "version": "c7d2d1d42a6b981d",
+      "bytes": 2867,
+      "lines": 77,
+      "version": "4579f1516d964c43",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/rc1-recovery.yml",
           "line": 1,
-          "version": "c7d2d1d42a6b981d"
+          "version": "4579f1516d964c43"
         }
       ],
-      "lastChangedAt": "2026-09-20T23:04:48.000Z",
+      "lastChangedAt": "2026-09-20T23:18:08.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1"
+      "lastChangedCommit": "1f0767e95db8a487a19e7c966a03577f0928fde1"
     },
     {
       "key": "Artifact:.gitignore",
@@ -38772,20 +38772,20 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 20486,
+      "bytes": 20525,
       "lines": 131,
-      "version": "1d1eda66df0d6f0d",
+      "version": "164ab331f9987331",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "1d1eda66df0d6f0d"
+          "version": "164ab331f9987331"
         }
       ],
-      "lastChangedAt": "2026-09-20T23:04:48.000Z",
+      "lastChangedAt": "2026-09-20T23:18:08.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1"
+      "lastChangedCommit": "1f0767e95db8a487a19e7c966a03577f0928fde1"
     },
     {
       "key": "Artifact:Procfile",
@@ -53032,20 +53032,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1299026,
-      "lines": 13372,
-      "version": "26a1e6d397b742bc",
+      "bytes": 1299082,
+      "lines": 13373,
+      "version": "8d74e34e3eed249b",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "26a1e6d397b742bc"
+          "version": "8d74e34e3eed249b"
         }
       ],
-      "lastChangedAt": "2026-09-18T18:31:14.000Z",
+      "lastChangedAt": "2026-09-20T23:18:08.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      "lastChangedCommit": "1f0767e95db8a487a19e7c966a03577f0928fde1"
     },
     {
       "key": "Artifact:public/invite.html",
@@ -53333,18 +53333,18 @@
       "extension": ".md",
       "bytes": 56651,
       "lines": 756,
-      "version": "6bb52640945f9e16",
+      "version": "bccea94ef3d00384",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "6bb52640945f9e16"
+          "version": "bccea94ef3d00384"
         }
       ],
-      "lastChangedAt": "2026-09-18T18:31:14.000Z",
+      "lastChangedAt": "2026-09-20T23:18:08.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      "lastChangedCommit": "1f0767e95db8a487a19e7c966a03577f0928fde1"
     },
     {
       "key": "Artifact:src/access.js",
@@ -54113,20 +54113,20 @@
       "path": "src/command-diagnostics.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 2362,
+      "bytes": 2390,
       "lines": 49,
-      "version": "9d7d68fe79ed73eb",
+      "version": "f7be24eb60c6a397",
       "text": true,
       "provenance": [
         {
           "file": "src/command-diagnostics.js",
           "line": 1,
-          "version": "9d7d68fe79ed73eb"
+          "version": "f7be24eb60c6a397"
         }
       ],
-      "lastChangedAt": "2026-09-20T23:04:48.000Z",
+      "lastChangedAt": "2026-09-20T23:23:15.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1"
+      "lastChangedCommit": "cb927fd4693ac5d78c4a48fcdd92b73a06541b48"
     },
     {
       "key": "Artifact:src/commission.js",
@@ -57310,20 +57310,20 @@
       "path": "src/projection-events.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 10948,
-      "lines": 176,
-      "version": "58d1b201cf6263e1",
+      "bytes": 11097,
+      "lines": 178,
+      "version": "7aae369b421986c1",
       "text": true,
       "provenance": [
         {
           "file": "src/projection-events.js",
           "line": 1,
-          "version": "58d1b201cf6263e1"
+          "version": "7aae369b421986c1"
         }
       ],
-      "lastChangedAt": "2026-09-18T01:30:11.000Z",
+      "lastChangedAt": "2026-09-20T23:18:08.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "979519c5640061f45584e926c56d8bc36cc4476f"
+      "lastChangedCommit": "1f0767e95db8a487a19e7c966a03577f0928fde1"
     },
     {
       "key": "Artifact:src/push.js",
@@ -62232,20 +62232,20 @@
       "path": "test/gates.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 279865,
+      "bytes": 279895,
       "lines": 4188,
-      "version": "f81b0eb3d96851a4",
+      "version": "4104cdd0f37f3cf9",
       "text": true,
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "f81b0eb3d96851a4"
+          "version": "4104cdd0f37f3cf9"
         }
       ],
-      "lastChangedAt": "2026-09-18T04:25:45.000Z",
+      "lastChangedAt": "2026-09-20T23:18:08.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "553619b5a18854dfac416e364953436f5a902781"
+      "lastChangedCommit": "1f0767e95db8a487a19e7c966a03577f0928fde1"
     },
     {
       "key": "Artifact:test/genesiscca.js",
@@ -62761,20 +62761,20 @@
       "path": "test/lib/player-command-support.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 3812,
-      "lines": 71,
-      "version": "e557b7537d224e22",
+      "bytes": 4273,
+      "lines": 81,
+      "version": "fd214f8c03b9bc0c",
       "text": true,
       "provenance": [
         {
           "file": "test/lib/player-command-support.js",
           "line": 1,
-          "version": "e557b7537d224e22"
+          "version": "fd214f8c03b9bc0c"
         }
       ],
-      "lastChangedAt": "2026-09-18T01:30:11.000Z",
+      "lastChangedAt": "2026-09-20T23:24:06.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "979519c5640061f45584e926c56d8bc36cc4476f"
+      "lastChangedCommit": "5f735c573ff17fa3b8f4c9d7ad3c45181ae13d7d"
     },
     {
       "key": "Artifact:test/lib/srcfiles.js",
@@ -64293,6 +64293,29 @@
       "lastChangedAt": "2026-09-20T23:04:48.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1"
+    },
+    {
+      "key": "Artifact:test/rc1-passive-projection.js",
+      "type": "Artifact",
+      "id": "test/rc1-passive-projection.js",
+      "label": "rc1-passive-projection.js",
+      "path": "test/rc1-passive-projection.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 2680,
+      "lines": 41,
+      "version": "d313f3195b100648",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/rc1-passive-projection.js",
+          "line": 1,
+          "version": "d313f3195b100648"
+        }
+      ],
+      "lastChangedAt": "2026-09-20T23:18:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "1f0767e95db8a487a19e7c966a03577f0928fde1"
     },
     {
       "key": "Artifact:test/rc1-postgres-migration-failure.js",
@@ -67584,6 +67607,29 @@
       "lastChangedCommit": "dfd2f6ed3d0fef00beb28a7401e090e0351ad2e7"
     },
     {
+      "key": "Artifact:tools/rc1-campaign-mobile.js",
+      "type": "Artifact",
+      "id": "tools/rc1-campaign-mobile.js",
+      "label": "rc1-campaign-mobile.js",
+      "path": "tools/rc1-campaign-mobile.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 17106,
+      "lines": 214,
+      "version": "fe95c1aa2c3d8bdc",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/rc1-campaign-mobile.js",
+          "line": 1,
+          "version": "fe95c1aa2c3d8bdc"
+        }
+      ],
+      "lastChangedAt": "2026-09-20T23:24:06.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "5f735c573ff17fa3b8f4c9d7ad3c45181ae13d7d"
+    },
+    {
       "key": "Artifact:tools/rc1-command-population.js",
       "type": "Artifact",
       "id": "tools/rc1-command-population.js",
@@ -69330,7 +69376,7 @@
       "type": "Command",
       "id": "npm:test:rc1:observability",
       "label": "npm run test:rc1:observability",
-      "command": "node test/rc1-observability.js",
+      "command": "node test/rc1-observability.js && node test/rc1-passive-projection.js",
       "provenance": [
         {
           "file": "package.json",
@@ -72180,6 +72226,22 @@
       ]
     },
     {
+      "key": "Commit:1f0767e95db8a487a19e7c966a03577f0928fde1",
+      "type": "Commit",
+      "id": "1f0767e95db8a487a19e7c966a03577f0928fde1",
+      "label": "fix(rc1): preserve mobile confirmations during passive screen telemetry",
+      "title": "fix(rc1): preserve mobile confirmations during passive screen telemetry",
+      "date": "2026-09-20T23:18:08.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/1f0767e95db8a487a19e7c966a03577f0928fde1",
+      "provenance": [
+        {
+          "commit": "1f0767e95db8a487a19e7c966a03577f0928fde1",
+          "url": "https://github.com/OmertaDev/Omerta/commit/1f0767e95db8a487a19e7c966a03577f0928fde1"
+        }
+      ]
+    },
+    {
       "key": "Commit:1f0ccca3d93b06d60e617fbb49efda48b355b4b2",
       "type": "Commit",
       "id": "1f0ccca3d93b06d60e617fbb49efda48b355b4b2",
@@ -73200,6 +73262,22 @@
         {
           "commit": "297f4fc97d20053dec27472e28b82081c9fb4e4a",
           "url": "https://github.com/OmertaDev/Omerta/commit/297f4fc97d20053dec27472e28b82081c9fb4e4a"
+        }
+      ]
+    },
+    {
+      "key": "Commit:29a49c6b7673b22c2e803dd2473dc5c7fa03f46a",
+      "type": "Commit",
+      "id": "29a49c6b7673b22c2e803dd2473dc5c7fa03f46a",
+      "label": "chore(knowledge): freeze RC1 proof candidate artifacts",
+      "title": "chore(knowledge): freeze RC1 proof candidate artifacts",
+      "date": "2026-09-20T23:07:14.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/29a49c6b7673b22c2e803dd2473dc5c7fa03f46a",
+      "provenance": [
+        {
+          "commit": "29a49c6b7673b22c2e803dd2473dc5c7fa03f46a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/29a49c6b7673b22c2e803dd2473dc5c7fa03f46a"
         }
       ]
     },
@@ -78608,6 +78686,22 @@
         {
           "commit": "5f1dc687f2883bb84cf6e44f5b43f9fa79cb6328",
           "url": "https://github.com/OmertaDev/Omerta/commit/5f1dc687f2883bb84cf6e44f5b43f9fa79cb6328"
+        }
+      ]
+    },
+    {
+      "key": "Commit:5f735c573ff17fa3b8f4c9d7ad3c45181ae13d7d",
+      "type": "Commit",
+      "id": "5f735c573ff17fa3b8f4c9d7ad3c45181ae13d7d",
+      "label": "Exercise mobile campaign controls and bounded stale-command recovery",
+      "title": "Exercise mobile campaign controls and bounded stale-command recovery",
+      "date": "2026-09-20T23:24:06.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/5f735c573ff17fa3b8f4c9d7ad3c45181ae13d7d",
+      "provenance": [
+        {
+          "commit": "5f735c573ff17fa3b8f4c9d7ad3c45181ae13d7d",
+          "url": "https://github.com/OmertaDev/Omerta/commit/5f735c573ff17fa3b8f4c9d7ad3c45181ae13d7d"
         }
       ]
     },
@@ -88864,6 +88958,22 @@
         {
           "commit": "cb59712a5e200eaef73841affc77cce3f84db3f9",
           "url": "https://github.com/OmertaDev/Omerta/commit/cb59712a5e200eaef73841affc77cce3f84db3f9"
+        }
+      ]
+    },
+    {
+      "key": "Commit:cb927fd4693ac5d78c4a48fcdd92b73a06541b48",
+      "type": "Commit",
+      "id": "cb927fd4693ac5d78c4a48fcdd92b73a06541b48",
+      "label": "Keep RC1 diagnostic context request scoped for release guard",
+      "title": "Keep RC1 diagnostic context request scoped for release guard",
+      "date": "2026-09-20T23:23:15.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/cb927fd4693ac5d78c4a48fcdd92b73a06541b48",
+      "provenance": [
+        {
+          "commit": "cb927fd4693ac5d78c4a48fcdd92b73a06541b48",
+          "url": "https://github.com/OmertaDev/Omerta/commit/cb927fd4693ac5d78c4a48fcdd92b73a06541b48"
         }
       ]
     },
@@ -104023,12 +104133,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 756,
-      "version": "6bb52640945f9e16",
+      "version": "bccea94ef3d00384",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "6bb52640945f9e16"
+          "version": "bccea94ef3d00384"
         }
       ]
     },
@@ -104880,6 +104990,10 @@
           "line": 6
         },
         {
+          "file": "test/rc1-passive-projection.js",
+          "line": 6
+        },
+        {
           "file": "test/recipe-policy.js",
           "line": 6
         },
@@ -104966,6 +105080,10 @@
         {
           "file": "tools/public-ui.js",
           "line": 4
+        },
+        {
+          "file": "tools/rc1-campaign-mobile.js",
+          "line": 11
         },
         {
           "file": "tools/render-omr-excalidraw.mjs",
@@ -110001,6 +110119,9 @@
           "commit": "28e56135435df2e8fbe1a5605c97e02d560551cf"
         },
         {
+          "commit": "29a49c6b7673b22c2e803dd2473dc5c7fa03f46a"
+        },
+        {
           "commit": "2b3f17df9ac44573c23654a19d5be62a6ff5a461"
         },
         {
@@ -110656,6 +110777,9 @@
         },
         {
           "commit": "28e56135435df2e8fbe1a5605c97e02d560551cf"
+        },
+        {
+          "commit": "29a49c6b7673b22c2e803dd2473dc5c7fa03f46a"
         },
         {
           "commit": "2b3f17df9ac44573c23654a19d5be62a6ff5a461"
@@ -111315,6 +111439,9 @@
           "commit": "28e56135435df2e8fbe1a5605c97e02d560551cf"
         },
         {
+          "commit": "29a49c6b7673b22c2e803dd2473dc5c7fa03f46a"
+        },
+        {
           "commit": "2b3f17df9ac44573c23654a19d5be62a6ff5a461"
         },
         {
@@ -111870,6 +111997,9 @@
           "commit": "26af16cb261f693d6f08f71349b3a61e495b6214"
         },
         {
+          "commit": "29a49c6b7673b22c2e803dd2473dc5c7fa03f46a"
+        },
+        {
           "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
         },
         {
@@ -112126,6 +112256,9 @@
         },
         {
           "commit": "28e56135435df2e8fbe1a5605c97e02d560551cf"
+        },
+        {
+          "commit": "29a49c6b7673b22c2e803dd2473dc5c7fa03f46a"
         },
         {
           "commit": "2b3f17df9ac44573c23654a19d5be62a6ff5a461"
@@ -112704,6 +112837,9 @@
           "commit": "27f81c38122be5c0bf9dc9a153e233379ed61ff8"
         },
         {
+          "commit": "29a49c6b7673b22c2e803dd2473dc5c7fa03f46a"
+        },
+        {
           "commit": "2b3feb7c807848564094c9b56d13fd7e41f97bae"
         },
         {
@@ -112933,6 +113069,9 @@
         },
         {
           "commit": "27f81c38122be5c0bf9dc9a153e233379ed61ff8"
+        },
+        {
+          "commit": "29a49c6b7673b22c2e803dd2473dc5c7fa03f46a"
         },
         {
           "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
@@ -113728,12 +113867,12 @@
       "id": "src/command-diagnostics.js",
       "label": "src/command-diagnostics.js",
       "lines": 49,
-      "version": "9d7d68fe79ed73eb",
+      "version": "f7be24eb60c6a397",
       "provenance": [
         {
           "file": "src/command-diagnostics.js",
           "line": 1,
-          "version": "9d7d68fe79ed73eb"
+          "version": "f7be24eb60c6a397"
         }
       ]
     },
@@ -115812,13 +115951,13 @@
       "type": "Module",
       "id": "src/projection-events.js",
       "label": "src/projection-events.js",
-      "lines": 176,
-      "version": "58d1b201cf6263e1",
+      "lines": 178,
+      "version": "7aae369b421986c1",
       "provenance": [
         {
           "file": "src/projection-events.js",
           "line": 1,
-          "version": "58d1b201cf6263e1"
+          "version": "7aae369b421986c1"
         }
       ]
     },
@@ -120477,12 +120616,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+      "revision": "5f735c573ff17fa3b8f4c9d7ad3c45181ae13d7d",
       "currentBranch": "codex/rc1-closure-proof",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 2961,
+      "currentArtifactCount": 2963,
       "provenance": [
         {
           "file": "README.md",
@@ -149457,12 +149596,12 @@
       "id": "test/gates.js",
       "label": "test/gates.js",
       "lines": 4188,
-      "version": "f81b0eb3d96851a4",
+      "version": "4104cdd0f37f3cf9",
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "f81b0eb3d96851a4"
+          "version": "4104cdd0f37f3cf9"
         }
       ]
     },
@@ -149786,13 +149925,13 @@
       "type": "TestSuite",
       "id": "test/lib/player-command-support.js",
       "label": "test/lib/player-command-support.js",
-      "lines": 71,
-      "version": "e557b7537d224e22",
+      "lines": 81,
+      "version": "fd214f8c03b9bc0c",
       "provenance": [
         {
           "file": "test/lib/player-command-support.js",
           "line": 1,
-          "version": "e557b7537d224e22"
+          "version": "fd214f8c03b9bc0c"
         }
       ]
     },
@@ -150783,6 +150922,21 @@
           "file": "test/rc1-observability.js",
           "line": 1,
           "version": "bb85881822270e14"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/rc1-passive-projection.js",
+      "type": "TestSuite",
+      "id": "test/rc1-passive-projection.js",
+      "label": "test/rc1-passive-projection.js",
+      "lines": 41,
+      "version": "d313f3195b100648",
+      "provenance": [
+        {
+          "file": "test/rc1-passive-projection.js",
+          "line": 1,
+          "version": "d313f3195b100648"
         }
       ]
     },
@@ -151976,13 +152130,13 @@
       "type": "Workflow",
       "id": ".github/workflows/rc1-recovery.yml",
       "label": ".github/workflows/rc1-recovery.yml",
-      "lines": 67,
-      "version": "c7d2d1d42a6b981d",
+      "lines": 77,
+      "version": "4579f1516d964c43",
       "provenance": [
         {
           "file": ".github/workflows/rc1-recovery.yml",
           "line": 1,
-          "version": "c7d2d1d42a6b981d"
+          "version": "4579f1516d964c43"
         }
       ]
     }
@@ -165652,6 +165806,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/rc1-passive-projection.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/rc1-passive-projection.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/rc1-postgres-migration-failure.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -166934,6 +167097,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "tools/public-ui.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/rc1-campaign-mobile.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/rc1-campaign-mobile.js",
         "line": 1
       }
     },
@@ -187036,6 +187208,62 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:1f0767e95db8a487a19e7c966a03577f0928fde1",
+      "to": "Artifact:.github/workflows/rc1-recovery.yml",
+      "provenance": {
+        "commit": "1f0767e95db8a487a19e7c966a03577f0928fde1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1f0767e95db8a487a19e7c966a03577f0928fde1",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "1f0767e95db8a487a19e7c966a03577f0928fde1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1f0767e95db8a487a19e7c966a03577f0928fde1",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "1f0767e95db8a487a19e7c966a03577f0928fde1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1f0767e95db8a487a19e7c966a03577f0928fde1",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "1f0767e95db8a487a19e7c966a03577f0928fde1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1f0767e95db8a487a19e7c966a03577f0928fde1",
+      "to": "Artifact:src/projection-events.js",
+      "provenance": {
+        "commit": "1f0767e95db8a487a19e7c966a03577f0928fde1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1f0767e95db8a487a19e7c966a03577f0928fde1",
+      "to": "Artifact:test/gates.js",
+      "provenance": {
+        "commit": "1f0767e95db8a487a19e7c966a03577f0928fde1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1f0767e95db8a487a19e7c966a03577f0928fde1",
+      "to": "Artifact:test/rc1-passive-projection.js",
+      "provenance": {
+        "commit": "1f0767e95db8a487a19e7c966a03577f0928fde1"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:1f0ccca3d93b06d60e617fbb49efda48b355b4b2",
       "to": "Artifact:CLAUDE.md",
       "provenance": {
@@ -191472,6 +191700,62 @@
       "to": "Artifact:src/fees.js",
       "provenance": {
         "commit": "297f4fc97d20053dec27472e28b82081c9fb4e4a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:29a49c6b7673b22c2e803dd2473dc5c7fa03f46a",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "29a49c6b7673b22c2e803dd2473dc5c7fa03f46a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:29a49c6b7673b22c2e803dd2473dc5c7fa03f46a",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "29a49c6b7673b22c2e803dd2473dc5c7fa03f46a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:29a49c6b7673b22c2e803dd2473dc5c7fa03f46a",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "29a49c6b7673b22c2e803dd2473dc5c7fa03f46a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:29a49c6b7673b22c2e803dd2473dc5c7fa03f46a",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "29a49c6b7673b22c2e803dd2473dc5c7fa03f46a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:29a49c6b7673b22c2e803dd2473dc5c7fa03f46a",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "29a49c6b7673b22c2e803dd2473dc5c7fa03f46a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:29a49c6b7673b22c2e803dd2473dc5c7fa03f46a",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "29a49c6b7673b22c2e803dd2473dc5c7fa03f46a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:29a49c6b7673b22c2e803dd2473dc5c7fa03f46a",
+      "to": "HistoricalArtifact:knowledge/generated/routes.md",
+      "provenance": {
+        "commit": "29a49c6b7673b22c2e803dd2473dc5c7fa03f46a"
       }
     },
     {
@@ -214240,6 +214524,22 @@
       "to": "Artifact:test/social.js",
       "provenance": {
         "commit": "5f1dc687f2883bb84cf6e44f5b43f9fa79cb6328"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5f735c573ff17fa3b8f4c9d7ad3c45181ae13d7d",
+      "to": "Artifact:test/lib/player-command-support.js",
+      "provenance": {
+        "commit": "5f735c573ff17fa3b8f4c9d7ad3c45181ae13d7d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5f735c573ff17fa3b8f4c9d7ad3c45181ae13d7d",
+      "to": "Artifact:tools/rc1-campaign-mobile.js",
+      "provenance": {
+        "commit": "5f735c573ff17fa3b8f4c9d7ad3c45181ae13d7d"
       }
     },
     {
@@ -257292,6 +257592,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:cb927fd4693ac5d78c4a48fcdd92b73a06541b48",
+      "to": "Artifact:src/command-diagnostics.js",
+      "provenance": {
+        "commit": "cb927fd4693ac5d78c4a48fcdd92b73a06541b48"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:cb95a53007a02d9371130605d04c5e43a2ef9189",
       "to": "Artifact:public/index.html",
       "provenance": {
@@ -289812,6 +290120,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/rc1-passive-projection.js",
+      "provenance": {
+        "file": "test/rc1-passive-projection.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/rc1-postgres-migration-failure.js",
       "provenance": {
         "file": "test/rc1-postgres-migration-failure.js",
@@ -291093,6 +291410,15 @@
       "to": "Artifact:tools/public-ui.js",
       "provenance": {
         "file": "tools/public-ui.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/rc1-campaign-mobile.js",
+      "provenance": {
+        "file": "tools/rc1-campaign-mobile.js",
         "line": 1
       }
     },
@@ -314504,7 +314830,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 856
+      "weight": 862
     },
     {
       "type": "DEPENDS_ON",
@@ -318428,6 +318754,15 @@
       "type": "EXECUTES",
       "from": "Command:npm:test:rc1:observability",
       "to": "Artifact:test/rc1-observability.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:observability",
+      "to": "Artifact:test/rc1-passive-projection.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -327067,6 +327402,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:1f0767e95db8a487a19e7c966a03577f0928fde1",
+      "provenance": {
+        "commit": "1f0767e95db8a487a19e7c966a03577f0928fde1"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:1f0ccca3d93b06d60e617fbb49efda48b355b4b2",
       "provenance": {
         "commit": "1f0ccca3d93b06d60e617fbb49efda48b355b4b2"
@@ -327574,6 +327917,14 @@
       "to": "Commit:297f4fc97d20053dec27472e28b82081c9fb4e4a",
       "provenance": {
         "commit": "297f4fc97d20053dec27472e28b82081c9fb4e4a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:29a49c6b7673b22c2e803dd2473dc5c7fa03f46a",
+      "provenance": {
+        "commit": "29a49c6b7673b22c2e803dd2473dc5c7fa03f46a"
       }
     },
     {
@@ -330278,6 +330629,14 @@
       "to": "Commit:5f1dc687f2883bb84cf6e44f5b43f9fa79cb6328",
       "provenance": {
         "commit": "5f1dc687f2883bb84cf6e44f5b43f9fa79cb6328"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:5f735c573ff17fa3b8f4c9d7ad3c45181ae13d7d",
+      "provenance": {
+        "commit": "5f735c573ff17fa3b8f4c9d7ad3c45181ae13d7d"
       }
     },
     {
@@ -335406,6 +335765,14 @@
       "to": "Commit:cb59712a5e200eaef73841affc77cce3f84db3f9",
       "provenance": {
         "commit": "cb59712a5e200eaef73841affc77cce3f84db3f9"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:cb927fd4693ac5d78c4a48fcdd92b73a06541b48",
+      "provenance": {
+        "commit": "cb927fd4693ac5d78c4a48fcdd92b73a06541b48"
       }
     },
     {
@@ -358196,6 +358563,24 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:test/rc1-passive-projection.js",
+      "to": "Artifact:src/projection-events.js",
+      "provenance": {
+        "file": "test/rc1-passive-projection.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-passive-projection.js",
+      "to": "ExternalDependency:pg-mem",
+      "provenance": {
+        "file": "test/rc1-passive-projection.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:test/rc1-postgres-migration-failure.js",
       "to": "Artifact:src/db.js",
       "provenance": {
@@ -363295,6 +363680,69 @@
       "provenance": {
         "file": "tools/public-ui.js",
         "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-campaign-mobile.js",
+      "to": "Artifact:src/coordination/operation-invariants.js",
+      "provenance": {
+        "file": "tools/rc1-campaign-mobile.js",
+        "line": 16
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-campaign-mobile.js",
+      "to": "Artifact:src/director/campaign-network.js",
+      "provenance": {
+        "file": "tools/rc1-campaign-mobile.js",
+        "line": 14
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-campaign-mobile.js",
+      "to": "Artifact:src/director/runtime.js",
+      "provenance": {
+        "file": "tools/rc1-campaign-mobile.js",
+        "line": 13
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-campaign-mobile.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "tools/rc1-campaign-mobile.js",
+        "line": 12
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-campaign-mobile.js",
+      "to": "Artifact:src/world-kernel-invariants.js",
+      "provenance": {
+        "file": "tools/rc1-campaign-mobile.js",
+        "line": 15
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-campaign-mobile.js",
+      "to": "Artifact:test/lib/campaign-network-support.js",
+      "provenance": {
+        "file": "tools/rc1-campaign-mobile.js",
+        "line": 20
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-campaign-mobile.js",
+      "to": "ExternalDependency:playwright-core",
+      "provenance": {
+        "file": "tools/rc1-campaign-mobile.js",
+        "line": 11
       }
     },
     {
@@ -411278,6 +411726,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/rc1-passive-projection.js",
+      "to": "Artifact:test/rc1-passive-projection.js",
+      "provenance": {
+        "file": "test/rc1-passive-projection.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/rc1-postgres-migration-failure.js",
       "to": "Artifact:test/rc1-postgres-migration-failure.js",
       "provenance": {
@@ -419122,6 +419579,15 @@
       "provenance": {
         "file": "test/rc1-observability.js",
         "line": 3
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-passive-projection.js",
+      "to": "Artifact:src/projection-events.js",
+      "provenance": {
+        "file": "test/rc1-passive-projection.js",
+        "line": 7
       }
     },
     {
@@ -432963,7 +433429,16 @@
       "to": "Table:player_command_boards",
       "provenance": {
         "file": "src/projection-events.js",
-        "line": 104
+        "line": 106
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/projection-events.js",
+      "to": "Table:telemetry",
+      "provenance": {
+        "file": "src/projection-events.js",
+        "line": 91
       }
     },
     {
