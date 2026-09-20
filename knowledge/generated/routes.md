@@ -321,8 +321,8 @@
 | GET | `/v1/clues` | authenticated | platform-core | [src/server.js:3529](../../src/server.js#L3529) | `Clues.clueBoard` |
 | POST | `/v1/clues/dig` | authenticated | platform-core | [src/server.js:3531](../../src/server.js#L3531) | `Clues.dig` |
 | GET | `/v1/collection` | authenticated | law-intelligence | [src/server.js:3303](../../src/server.js#L3303) | `Collection.collectionBoard` |
-| GET | `/v1/commands` | public | platform-core | [src/routes/commands.js:39](../../src/routes/commands.js#L39) | — |
-| POST | `/v1/commands/execute` | public | platform-core | [src/routes/commands.js:40](../../src/routes/commands.js#L40) | — |
+| GET | `/v1/commands` | public | platform-core | [src/routes/commands.js:42](../../src/routes/commands.js#L42) | `traceAuthorizedCommand` |
+| POST | `/v1/commands/execute` | public | platform-core | [src/routes/commands.js:43](../../src/routes/commands.js#L43) | `traceAuthorizedCommand` |
 | GET | `/v1/commission` | public | platform-core | [src/server.js:2071](../../src/server.js#L2071) | `Commission.commissionBoard` |
 | POST | `/v1/commission/override` | authenticated | platform-core | [src/server.js:2080](../../src/server.js#L2080) | `Commission.overrideVeto` |
 | POST | `/v1/commission/propose` | authenticated | platform-core | [src/server.js:2077](../../src/server.js#L2077) | `Commission.proposeDecree` |
