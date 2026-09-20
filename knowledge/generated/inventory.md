@@ -1,43 +1,43 @@
 # Generated repository inventory
 
-> Source: worktree at `39a51716b9c9`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `d0a5b2c5f33d`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 2,947 |
-| Text lines | 845,092 |
-| Repository bytes inventoried | 825,747,030 |
-| Backend/route modules | 272 |
-| HTTP route registrations / unique routes | 800 / 800 |
+| Current artifacts | 3,235 |
+| Text lines | 1,040,104 |
+| Repository bytes inventoried | 900,782,690 |
+| Backend/route modules | 273 |
+| HTTP route registrations / unique routes | 802 / 802 |
 | Database tables | 369 |
 | Solidity declarations | 79 |
-| Git commits | 1,482 |
+| Git commits | 1,488 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 7,521 / 33,370 |
+| Graph nodes / edges | 7,837 / 34,186 |
 
 ## Artifact kinds
 
 | Kind | Files |
 |---|---:|
 | media-asset | 1,202 |
-| documentation | 320 |
-| test-suite | 261 |
-| artifact | 255 |
-| backend-module | 244 |
+| artifact | 520 |
+| documentation | 330 |
+| test-suite | 264 |
+| backend-module | 245 |
 | contract-project | 153 |
 | audit | 98 |
 | contract-test | 98 |
+| engineering-harness | 96 |
 | design | 91 |
-| engineering-harness | 88 |
 | contract-source | 59 |
 | route-module | 28 |
 | web-surface | 15 |
 | operations | 11 |
 | knowledge-base | 11 |
-| workflow | 5 |
+| workflow | 6 |
 | agent-interface | 4 |
 | package-config | 3 |
 | data-schema | 1 |
@@ -49,9 +49,17 @@
 | [omerta-contracts/x-ray/slither.json](../../omerta-contracts/x-ray/slither.json) | 64,621 | contract-project | 2026-08-25 |
 | [omerta-contracts/audits/2026-09-08-comprehensive/shared-static-triage.json](../../omerta-contracts/audits/2026-09-08-comprehensive/shared-static-triage.json) | 52,258 | contract-project | 2026-09-09 |
 | [omerta-contracts/audits/2026-09-08-comprehensive/hook-retest-static.json](../../omerta-contracts/audits/2026-09-08-comprehensive/hook-retest-static.json) | 47,392 | contract-project | 2026-09-09 |
+| [docs/release/evidence/simulation/quality/projection-samples.json](../../docs/release/evidence/simulation/quality/projection-samples.json) | 33,646 | artifact | 2026-09-19 |
+| [docs/release/evidence/gates/fresh-forge-linux.txt](../../docs/release/evidence/gates/fresh-forge-linux.txt) | 18,797 | artifact | 2026-09-20 |
 | [CLAUDE.md](../../CLAUDE.md) | 18,679 | documentation | 2026-09-06 |
-| [public/index.html](../../public/index.html) | 13,372 | web-surface | 2026-09-18 |
+| [docs/release/evidence/gates/baseline-forge-linux.txt](../../docs/release/evidence/gates/baseline-forge-linux.txt) | 18,663 | artifact | 2026-09-19 |
+| [docs/release/evidence/simulation/model/matrix.json](../../docs/release/evidence/simulation/model/matrix.json) | 18,188 | artifact | 2026-09-19 |
+| [public/index.html](../../public/index.html) | 13,412 | web-surface | 2026-09-19 |
+| [docs/release/evidence/gates/baseline-ci-linux.txt](../../docs/release/evidence/gates/baseline-ci-linux.txt) | 13,189 | artifact | 2026-09-19 |
+| [docs/release/evidence/gates/fresh-ci-linux.txt](../../docs/release/evidence/gates/fresh-ci-linux.txt) | 13,110 | artifact | 2026-09-20 |
+| [docs/release/evidence/gates/corrected-ci-linux.txt](../../docs/release/evidence/gates/corrected-ci-linux.txt) | 12,917 | artifact | 2026-09-20 |
 | [omerta-contracts/audits/2026-09-08-liquidity-automation/package-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/package-manifest.json) | 10,623 | contract-project | 2026-09-09 |
+| [docs/release/evidence/gates/fresh-postgres-linux.txt](../../docs/release/evidence/gates/fresh-postgres-linux.txt) | 10,278 | artifact | 2026-09-20 |
 | [test/client.js](../../test/client.js) | 9,441 | test-suite | 2026-09-17 |
 | [omerta-contracts/x-ray/slither-vars-and-auth.json](../../omerta-contracts/x-ray/slither-vars-and-auth.json) | 9,374 | contract-project | 2026-08-25 |
 | [omerta-contracts/audits/2026-09-08-liquidity-automation/source-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/source-manifest.json) | 8,690 | contract-project | 2026-09-09 |
@@ -62,20 +70,12 @@
 | [omerta-contracts/audits/2026-09-08-liquidity-automation/artifact-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/artifact-manifest.json) | 7,385 | contract-project | 2026-09-09 |
 | [schema.sql](../../schema.sql) | 7,376 | data-schema | 2026-09-18 |
 | [BALANCE.md](../../BALANCE.md) | 6,855 | documentation | 2026-09-06 |
+| [docs/release/evidence/freeze/definitions.json](../../docs/release/evidence/freeze/definitions.json) | 6,847 | artifact | 2026-09-19 |
 | [omerta-contracts/audits/2026-09-08-comprehensive/package-manifest.json](../../omerta-contracts/audits/2026-09-08-comprehensive/package-manifest.json) | 6,609 | contract-project | 2026-09-09 |
 | [omerta-contracts/audits/2026-09-08-comprehensive/forge-lint-triage.json](../../omerta-contracts/audits/2026-09-08-comprehensive/forge-lint-triage.json) | 6,203 | contract-project | 2026-09-09 |
 | [src/rules.tail.js](../../src/rules.tail.js) | 6,145 | backend-module | 2026-09-02 |
 | [brand/hype-flywheel-video/package-lock.json](../../brand/hype-flywheel-video/package-lock.json) | 5,901 | media-asset | 2026-09-14 |
-| [omerta-contracts/audits/2026-09-08-comprehensive/source-manifest.json](../../omerta-contracts/audits/2026-09-08-comprehensive/source-manifest.json) | 4,877 | contract-project | 2026-09-09 |
-| [omerta-contracts/audits/2026-09-08-comprehensive/source-before.json](../../omerta-contracts/audits/2026-09-08-comprehensive/source-before.json) | 4,687 | contract-project | 2026-09-09 |
-| [omerta-contracts/audits/2026-09-09-genesis-bootstrap/artifact-manifest.json](../../omerta-contracts/audits/2026-09-09-genesis-bootstrap/artifact-manifest.json) | 4,402 | contract-project | 2026-09-09 |
-| [reference-prototype-v24.jsx](../../reference-prototype-v24.jsx) | 4,235 | artifact | 2026-08-11 |
-| [test/docs.js](../../test/docs.js) | 4,205 | test-suite | 2026-09-14 |
-| [test/gates.js](../../test/gates.js) | 4,188 | test-suite | 2026-09-18 |
-| [omerta-contracts/test/AcquisitionConstellationTask3B.t.sol](../../omerta-contracts/test/AcquisitionConstellationTask3B.t.sol) | 3,743 | contract-test | 2026-08-28 |
-| [src/server.js](../../src/server.js) | 3,619 | backend-module | 2026-09-18 |
-| [test/phase2-review-regressions.js](../../test/phase2-review-regressions.js) | 3,440 | test-suite | 2026-09-07 |
-| [package-lock.json](../../package-lock.json) | 3,260 | package-config | 2026-09-07 |
+| [docs/release/evidence/player/mobile/results.json](../../docs/release/evidence/player/mobile/results.json) | 5,177 | artifact | 2026-09-19 |
 
 ## Media estate
 

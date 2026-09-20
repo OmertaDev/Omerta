@@ -1,0 +1,309 @@
+{
+  "scope": "Seeded social/campaign setup; actual rendered mobile command and confirmation controls, PostgreSQL persistence. Not fresh-account acquisition or a human comprehension study.",
+  "results": [
+    {
+      "width": 320,
+      "scenario": "shipment-redistribution",
+      "status": "PASS",
+      "commands": [
+        {
+          "account": "rc1m_320_0-aBoss",
+          "type": "mystery.start",
+          "label": "Open case: The Dispatch Register",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aBoss",
+          "type": "mystery.complete",
+          "label": "Complete: The Dispatch Register",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aBoss",
+          "type": "recipe.craft",
+          "label": "Craft: Stamp a Canal Cargo Seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aBoss",
+          "type": "mystery.discover",
+          "label": "Investigate lead",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aBoss",
+          "type": "mystery.complete",
+          "label": "Complete: The Cargo Seal Impressions",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aRunner",
+          "type": "recipe.craft",
+          "label": "Craft: Stamp a Canal Cargo Seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aBoss",
+          "type": "operation.create",
+          "label": "Organize: Reopen the Community Supply Route",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aBoss",
+          "type": "operation.publish",
+          "label": "Publish",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aBoss",
+          "type": "operation.join",
+          "label": "Join as Route Organizer",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aRunner",
+          "type": "operation.join",
+          "label": "Join as Cargo Runner",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aBoss",
+          "type": "operation.commit",
+          "label": "Commit: Participation",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Participation",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aBoss",
+          "type": "operation.commit",
+          "label": "Commit: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aBoss",
+          "type": "operation.commit",
+          "label": "Commit: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aRunner",
+          "type": "operation.commit",
+          "label": "Commit: Item canal cargo seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aRunner",
+          "type": "operation.contribute",
+          "label": "Contribute: Item canal cargo seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aRunner",
+          "type": "operation.commit",
+          "label": "Commit: Mat wire",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aRunner",
+          "type": "operation.contribute",
+          "label": "Contribute: Mat wire",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aRunner",
+          "type": "operation.commit",
+          "label": "Commit: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aRunner",
+          "type": "operation.contribute",
+          "label": "Contribute: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aBoss",
+          "type": "operation.approve",
+          "label": "Approve",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aBoss",
+          "type": "operation.execute",
+          "label": "Execute",
+          "confirmed": true
+        }
+      ],
+      "errors": []
+    },
+    {
+      "width": 390,
+      "scenario": "shipment-redistribution",
+      "status": "PASS",
+      "commands": [
+        {
+          "account": "rc1m_390_0-aBoss",
+          "type": "mystery.start",
+          "label": "Open case: The Dispatch Register",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aBoss",
+          "type": "mystery.complete",
+          "label": "Complete: The Dispatch Register",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aBoss",
+          "type": "recipe.craft",
+          "label": "Craft: Stamp a Canal Cargo Seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aBoss",
+          "type": "mystery.discover",
+          "label": "Investigate lead",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aBoss",
+          "type": "mystery.complete",
+          "label": "Complete: The Cargo Seal Impressions",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aRunner",
+          "type": "recipe.craft",
+          "label": "Craft: Stamp a Canal Cargo Seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aBoss",
+          "type": "operation.create",
+          "label": "Organize: Reopen the Community Supply Route",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aBoss",
+          "type": "operation.publish",
+          "label": "Publish",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aBoss",
+          "type": "operation.join",
+          "label": "Join as Route Organizer",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aRunner",
+          "type": "operation.join",
+          "label": "Join as Cargo Runner",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aBoss",
+          "type": "operation.commit",
+          "label": "Commit: Participation",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Participation",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aBoss",
+          "type": "operation.commit",
+          "label": "Commit: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aBoss",
+          "type": "operation.commit",
+          "label": "Commit: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aRunner",
+          "type": "operation.commit",
+          "label": "Commit: Item canal cargo seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aRunner",
+          "type": "operation.contribute",
+          "label": "Contribute: Item canal cargo seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aRunner",
+          "type": "operation.commit",
+          "label": "Commit: Mat wire",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aRunner",
+          "type": "operation.contribute",
+          "label": "Contribute: Mat wire",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aRunner",
+          "type": "operation.commit",
+          "label": "Commit: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aRunner",
+          "type": "operation.contribute",
+          "label": "Contribute: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aBoss",
+          "type": "operation.approve",
+          "label": "Approve",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aBoss",
+          "type": "operation.execute",
+          "label": "Execute",
+          "confirmed": true
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

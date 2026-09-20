@@ -1,0 +1,1340 @@
+{
+  "generatedAt": "2026-09-20T16:05:05.912Z",
+  "algorithm": "SHA-256",
+  "scope": "Exact bytes of every docs/release/evidence file except this index; raw logs intentionally retain original failures. Reports outside this folder are pinned by the package Git commit and archive checksum.",
+  "frozenSource": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+  "testedCorrectedSource": "f31b5290080506f6407a9b7f9a514e2ea020a9d4",
+  "status": "RC1_STATUS=BLOCKED",
+  "files": [
+    {
+      "path": "docs/release/evidence/freeze/definitions.json",
+      "bytes": 195247,
+      "sha256": "628d1a9ac5a7a4b7972a3bdb1e8c207b1b34d2836f8a2211ea4260478e9221c0"
+    },
+    {
+      "path": "docs/release/evidence/freeze/manifest.json",
+      "bytes": 63805,
+      "sha256": "14b1dd625b96f92ff6431d845fc83dbd26214fc27b2c7772b34cf725e4522b63"
+    },
+    {
+      "path": "docs/release/evidence/gates/INDEX.json",
+      "bytes": 19103,
+      "sha256": "5a5ad3650454506417d45fabfd6b367fcf3def68aaaa86b48e65cf6fbb69abf4"
+    },
+    {
+      "path": "docs/release/evidence/gates/baseline-checkout.txt",
+      "bytes": 3167,
+      "sha256": "f08bb19cbcd2275e234b1626b8a1726630c2c55e662c36320f1b35809d732196"
+    },
+    {
+      "path": "docs/release/evidence/gates/baseline-ci-linux.txt",
+      "bytes": 2096692,
+      "sha256": "fb3daf0233b0af904e6dffb9c369be91f8675b45eddd5fad7c2d074690b48aa0"
+    },
+    {
+      "path": "docs/release/evidence/gates/baseline-forge-linux.txt",
+      "bytes": 1913209,
+      "sha256": "4e4bc520767a9b06cf36494868b1ca12ae9d7c7b3168dc13f20825b266f37aff"
+    },
+    {
+      "path": "docs/release/evidence/gates/baseline-liquidity-linux.txt",
+      "bytes": 62018,
+      "sha256": "6c580ed60c68f535d6e50b3a8c79d9a79d645c3b0c9cf3cf671816031025d069"
+    },
+    {
+      "path": "docs/release/evidence/gates/baseline-npm-ci.txt",
+      "bytes": 151,
+      "sha256": "01fb4c207f6595410ce962dd4f27e166b9715cd6b0f6d94906e59cda8c2e82eb"
+    },
+    {
+      "path": "docs/release/evidence/gates/campaign-mobile-final1.txt",
+      "bytes": 11016,
+      "sha256": "d5cf785b1ac984da6d7fb18ea87c91f63e9b5e9e2ec94f3fcfff5f609aad0379"
+    },
+    {
+      "path": "docs/release/evidence/gates/campaign-mobile-pilot.txt",
+      "bytes": 1362,
+      "sha256": "aeae3919d32bd621427346e827602b88f2df5798b1760be5374132221ccad781"
+    },
+    {
+      "path": "docs/release/evidence/gates/campaign-mobile-pilot2.txt",
+      "bytes": 2514,
+      "sha256": "cf57ad374f9816242167e03421276755430b17a6687bcf401ebeb9f1f139f107"
+    },
+    {
+      "path": "docs/release/evidence/gates/campaign-mobile-pilot3.txt",
+      "bytes": 9371,
+      "sha256": "85a2c038492c1856c4c45858ba1a0685798735f170033a4bcfcd4590a26966cc"
+    },
+    {
+      "path": "docs/release/evidence/gates/campaign-mobile-pilot4.txt",
+      "bytes": 9589,
+      "sha256": "bc7cc13141408830e85ab6fc0d6a675da91fd1057e7f95116e99bb54cc085e45"
+    },
+    {
+      "path": "docs/release/evidence/gates/campaign-mobile-pilot5.txt",
+      "bytes": 5656,
+      "sha256": "e2d77805c9410413ea2a7e3afb1dc8304c74df75cb28f380dbef9e8c6f4f9057"
+    },
+    {
+      "path": "docs/release/evidence/gates/campaign-mobile-pilot6.txt",
+      "bytes": 1538,
+      "sha256": "75a9294aeca913c36c216cf7fddb06a53e890b7883bc7a3f1e252a63cfda03e2"
+    },
+    {
+      "path": "docs/release/evidence/gates/campaign-mobile-retest.txt",
+      "bytes": 3076,
+      "sha256": "eb1e7fdf77f1d29f24e873858f34ba23745728c3cd328a386526d8dc3762c571"
+    },
+    {
+      "path": "docs/release/evidence/gates/campaign-mobile-supply-retest.txt",
+      "bytes": 1750,
+      "sha256": "ec1dbc941d75368133db9a397677cad40a4b8306388286939218feb7fb633e25"
+    },
+    {
+      "path": "docs/release/evidence/gates/command-client-initial.txt",
+      "bytes": 546,
+      "sha256": "f7d07a8b727ec6835c19b638d7e73a6029462bcbb61f3f26da1c33a8f3b4171f"
+    },
+    {
+      "path": "docs/release/evidence/gates/corrected-ci-linux.json",
+      "bytes": 9938,
+      "sha256": "0d60166c12dfe5813088957fe10f5a498f86a4c6efb0f1e1cf649aa6af7c2717"
+    },
+    {
+      "path": "docs/release/evidence/gates/corrected-ci-linux.txt",
+      "bytes": 1897195,
+      "sha256": "cf7ee683ad23f5f585c8e9f11f1ecfd5cc6605ab3a44ff1bc77001fff9586886"
+    },
+    {
+      "path": "docs/release/evidence/gates/corrected-docs-retest.txt",
+      "bytes": 4378,
+      "sha256": "f1173046eb4add561065c9d6bacd950f8449587706c2ae47c2932874c360f5b5"
+    },
+    {
+      "path": "docs/release/evidence/gates/corrected-docs.txt",
+      "bytes": 4767,
+      "sha256": "bed9a3c7bc388b115269ac1d27a70d20d689fe929f7c3a4270c21685778f08ef"
+    },
+    {
+      "path": "docs/release/evidence/gates/corrected-gates-final.txt",
+      "bytes": 4294,
+      "sha256": "68ec43ba4b9363b943992190fa342d8e5e468c9cc16a58f197395ccbf73a9d2a"
+    },
+    {
+      "path": "docs/release/evidence/gates/corrected-gates-retest.txt",
+      "bytes": 4177,
+      "sha256": "b27a53b45b61b5e338c676e57e8b5357804cc2e66d9aa71d7dc4f870ad346a2b"
+    },
+    {
+      "path": "docs/release/evidence/gates/corrected-gates.txt",
+      "bytes": 3931,
+      "sha256": "e9d8bce5fb4a09dea1ccb4a88437c55cc3c1f348abb418bb7d6952df3b169ad6"
+    },
+    {
+      "path": "docs/release/evidence/gates/corrected-knowledge-build.txt",
+      "bytes": 229,
+      "sha256": "190f2b4e0487244c3133fdd64a692dfdec380269df78135de115d377dfd9f9be"
+    },
+    {
+      "path": "docs/release/evidence/gates/corrected-knowledge-check.txt",
+      "bytes": 157,
+      "sha256": "f866dd8f7b238ff74e9f66f654cc67b65da691ff6007e4bc0f97ebc901f6203c"
+    },
+    {
+      "path": "docs/release/evidence/gates/corrected-npm-ci.txt",
+      "bytes": 151,
+      "sha256": "b2da05e4e56cb4b863ba2d5fff6e1fb519e30ab1d5771f340ac2325788fc419c"
+    },
+    {
+      "path": "docs/release/evidence/gates/docs-census-initial.txt",
+      "bytes": 481,
+      "sha256": "a1e8e2153466ee84f9be564ffb644a3df8e0773222e8d282905cc06df37c00e8"
+    },
+    {
+      "path": "docs/release/evidence/gates/final-shutdown-linux.json",
+      "bytes": 2332,
+      "sha256": "b70f13aa74054bf7d5e26de7497ba462f08f82033906c6a3c8de3b053a27a707"
+    },
+    {
+      "path": "docs/release/evidence/gates/freeze.txt",
+      "bytes": 355,
+      "sha256": "bf54fb533ba230c796e4357ab14bc884f3a4680be11f32b3e0c316adad01a54a"
+    },
+    {
+      "path": "docs/release/evidence/gates/fresh-ci-jobs.json",
+      "bytes": 9024,
+      "sha256": "90690d4ccdc41720bb620217180f2e9c594560913f5d91e012acd11106c456e9"
+    },
+    {
+      "path": "docs/release/evidence/gates/fresh-ci-linux.json",
+      "bytes": 9519,
+      "sha256": "14a847ef358a20f5d34132969b1ebda2194663daa22ae3f6ec92dce1c1ed982e"
+    },
+    {
+      "path": "docs/release/evidence/gates/fresh-ci-linux.txt",
+      "bytes": 1931560,
+      "sha256": "99e2d65792caa04d4ae67d547269e784a7b5cddf0c3deb3f931a3e85f7c89e06"
+    },
+    {
+      "path": "docs/release/evidence/gates/fresh-forge-linux.json",
+      "bytes": 3383,
+      "sha256": "be1a9e8c4cd1abc14cd306d9a7e2eea4e61f0b4eb23f5553105f08c8bfbad38f"
+    },
+    {
+      "path": "docs/release/evidence/gates/fresh-forge-linux.txt",
+      "bytes": 2117044,
+      "sha256": "0b82871253c922abecf04b9fd6c3e0dd6a6a5c715209f63327a932a2b2da58ce"
+    },
+    {
+      "path": "docs/release/evidence/gates/fresh-liquidity-linux.json",
+      "bytes": 2902,
+      "sha256": "284d8adf7e8783d48f6653e788b600f57239bfde7558639aa1f1644cf37140ff"
+    },
+    {
+      "path": "docs/release/evidence/gates/fresh-liquidity-linux.txt",
+      "bytes": 71066,
+      "sha256": "f40e621cb5c8ec4b64433009fc7a60cdd83c7eab1c9db5b089db3692444d8ba1"
+    },
+    {
+      "path": "docs/release/evidence/gates/fresh-postgres-linux.txt",
+      "bytes": 1400204,
+      "sha256": "4315df8434cc1f5b0bb778620b0aca98199bad033ce6542103168da356d6121b"
+    },
+    {
+      "path": "docs/release/evidence/gates/npm-ci.log",
+      "bytes": 151,
+      "sha256": "a353c4035aac627305ec204734a37969a9d8059a1dd764d367928f4e6d817b04"
+    },
+    {
+      "path": "docs/release/evidence/gates/npm-test.txt",
+      "bytes": 87100,
+      "sha256": "0c8ed05eeae66d49a2ee33e7bde1b8662a3827d890c8f6727ca5fc23c0b603ac"
+    },
+    {
+      "path": "docs/release/evidence/gates/package-docs-check.txt",
+      "bytes": 4378,
+      "sha256": "faf48d38522421e71d2624d5728930b04eabbc9750781ff3db2293754fa9023f"
+    },
+    {
+      "path": "docs/release/evidence/gates/package-gates-check.txt",
+      "bytes": 4294,
+      "sha256": "68ec43ba4b9363b943992190fa342d8e5e468c9cc16a58f197395ccbf73a9d2a"
+    },
+    {
+      "path": "docs/release/evidence/gates/postgres-init.txt",
+      "bytes": 949,
+      "sha256": "1429505614324b88d579f23ebbc0142287e1b60d21f0492bb44045c55e8915df"
+    },
+    {
+      "path": "docs/release/evidence/gates/rc1-dispatched-runs.json",
+      "bytes": 412,
+      "sha256": "4111a635ae5fad6ed9f903751ba0741836c3f690974189d5d5acddc430ebe4c0"
+    },
+    {
+      "path": "docs/release/evidence/gates/routes-initial.txt",
+      "bytes": 1077,
+      "sha256": "b59cb088fce0db544106c973c9fb8cee6d380a4b9c2877b3695b65ce720b218f"
+    },
+    {
+      "path": "docs/release/evidence/gates/simulation-environmental-retest.txt",
+      "bytes": 733,
+      "sha256": "5d9120af51c96d44433840cb380adf596897ccf20aa89fb700bc19232d9fca8c"
+    },
+    {
+      "path": "docs/release/evidence/gates/source-comparison.json",
+      "bytes": 3115,
+      "sha256": "3f7293d84f3e5acfb93b8586511bc058a62f992c3a3d5af154ee19ce1fab72c9"
+    },
+    {
+      "path": "docs/release/evidence/gates/telemetry-engagement.txt",
+      "bytes": 1245,
+      "sha256": "1180e5f6aad27ec40ed37c73b47a83c3a441ba1fe0eface7a2af431caf34fbe8"
+    },
+    {
+      "path": "docs/release/evidence/gates/world-telemetry-initial.txt",
+      "bytes": 289,
+      "sha256": "d5b4f6fb51e6a46580775f6019fec84717a9f93820a2636d262d3b20f4a418dc"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/README.md",
+      "bytes": 4494,
+      "sha256": "b32dc8af398def5ff24e41861eea657fcb08dbb8a410bf4a61c1a536871e2eb4"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-cf661c/campaign-progression-0.log",
+      "bytes": 172,
+      "sha256": "bed3a85518c30b91682482dba7d7a2d3339118be5166deea86253ed95b036888"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-cf661c/campaign-progression-1.log",
+      "bytes": 515,
+      "sha256": "f0ba713fb56bc0418038cee8beb673fdf4bc8e410fb2f798bab70d9440fe5c6e"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-cf661c/campaign-progression-2.log",
+      "bytes": 484,
+      "sha256": "a1d0d06d8ad28dad96a7f7145de9608adf34e6e8e587316ebb06ad2b59bc91db"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-cf661c/consequence-generation-0.log",
+      "bytes": 995,
+      "sha256": "6ed7c0cd6057eb553b4a5d77b688cd2ae910408019d0f5d9daef7fbb07f03ad4"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-cf661c/consequence-generation-1.log",
+      "bytes": 995,
+      "sha256": "6ed7c0cd6057eb553b4a5d77b688cd2ae910408019d0f5d9daef7fbb07f03ad4"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-cf661c/crafting-0.log",
+      "bytes": 995,
+      "sha256": "14284b9086d690cfc56dd93769eb6b38ce8b36d968caeca51a4cefc38714b32e"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-cf661c/crafting-1.log",
+      "bytes": 995,
+      "sha256": "14284b9086d690cfc56dd93769eb6b38ce8b36d968caeca51a4cefc38714b32e"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-cf661c/director-selection-0.log",
+      "bytes": 172,
+      "sha256": "bed3a85518c30b91682482dba7d7a2d3339118be5166deea86253ed95b036888"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-cf661c/director-selection-1.log",
+      "bytes": 517,
+      "sha256": "c13e52093c424199475159e960219d2698f2340cee734edbf8c8b527055b04a1"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-cf661c/director-selection-2.log",
+      "bytes": 484,
+      "sha256": "62e87baa6b16bd6be29575d7a768b74bdae38883ad8e55662c569ba5981754fb"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-cf661c/item-consumption-0.log",
+      "bytes": 995,
+      "sha256": "9fee08a99e39ebdeec24b93e14bc0a2eae01cca87af5acdaa5311b5c01e56c6e"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-cf661c/item-consumption-1.log",
+      "bytes": 995,
+      "sha256": "9fee08a99e39ebdeec24b93e14bc0a2eae01cca87af5acdaa5311b5c01e56c6e"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-cf661c/operation-resolution-0.log",
+      "bytes": 995,
+      "sha256": "4e3291261537a9d6905f48b20c063cd6fb31e05f4a7e568e984cef49461cc4b3"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-cf661c/operation-resolution-1.log",
+      "bytes": 995,
+      "sha256": "4e3291261537a9d6905f48b20c063cd6fb31e05f4a7e568e984cef49461cc4b3"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-cf661c/player-command-0.log",
+      "bytes": 995,
+      "sha256": "2f3f9a2d26ee25d19334bdea2b58e01cdedd437d84b8517d9d6ef6bcf753b0a7"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-cf661c/player-command-1.log",
+      "bytes": 995,
+      "sha256": "2f3f9a2d26ee25d19334bdea2b58e01cdedd437d84b8517d9d6ef6bcf753b0a7"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-cf661c/result.json",
+      "bytes": 5083,
+      "sha256": "a39b76cf3bd6e6b98e005efe8f4b3fe314014f64b2d4ea0fc7179166e1030b76"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-cf661c/scheduled-worker-processing-0.log",
+      "bytes": 677,
+      "sha256": "4903925817cf35eb866f3036533fd120ef067fb1434d1e41104b0c2b74b6d09e"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-cf661c/scheduled-worker-processing-1.log",
+      "bytes": 790,
+      "sha256": "21ae5b478ad06deb5ee395eeede091d74cfd957f3a936643f5410a0c315a3839"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-cf661c/scheduled-worker-processing-2.log",
+      "bytes": 1391,
+      "sha256": "1acc60a550a69b94866a62401127e953bd062fbf6496a410b66de38c7511b12a"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-cf661c/workflow.txt",
+      "bytes": 69143,
+      "sha256": "8ed023d0e24c308ba659dbfadfe468fa046f07e9208da59f1045c811017a971d"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-cf661c/world-kernel-mutation-0.log",
+      "bytes": 995,
+      "sha256": "0d7412ef615304697007d01161f40315deca27b8faff6e512b9c2d5bb16f4f89"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-cf661c/world-kernel-mutation-1.log",
+      "bytes": 995,
+      "sha256": "0d7412ef615304697007d01161f40315deca27b8faff6e512b9c2d5bb16f4f89"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-f31b529/campaign-progression-0.log",
+      "bytes": 172,
+      "sha256": "bed3a85518c30b91682482dba7d7a2d3339118be5166deea86253ed95b036888"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-f31b529/campaign-progression-1.log",
+      "bytes": 516,
+      "sha256": "614f2040dfe9532bfe2a54a7458379748af23d38d760cfd228779e6defefec88"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-f31b529/campaign-progression-2.log",
+      "bytes": 484,
+      "sha256": "8bd3865514d666d12fab98d4a43c0d442e80e7fd21e0feb49626474779fac458"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-f31b529/consequence-generation-0.log",
+      "bytes": 995,
+      "sha256": "6ed7c0cd6057eb553b4a5d77b688cd2ae910408019d0f5d9daef7fbb07f03ad4"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-f31b529/consequence-generation-1.log",
+      "bytes": 995,
+      "sha256": "6ed7c0cd6057eb553b4a5d77b688cd2ae910408019d0f5d9daef7fbb07f03ad4"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-f31b529/crafting-0.log",
+      "bytes": 995,
+      "sha256": "14284b9086d690cfc56dd93769eb6b38ce8b36d968caeca51a4cefc38714b32e"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-f31b529/crafting-1.log",
+      "bytes": 995,
+      "sha256": "14284b9086d690cfc56dd93769eb6b38ce8b36d968caeca51a4cefc38714b32e"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-f31b529/director-selection-0.log",
+      "bytes": 172,
+      "sha256": "bed3a85518c30b91682482dba7d7a2d3339118be5166deea86253ed95b036888"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-f31b529/director-selection-1.log",
+      "bytes": 518,
+      "sha256": "af4d953f03b04059ee987265a0aabc098e299ad38df34fabf7fa1b91a398350c"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-f31b529/director-selection-2.log",
+      "bytes": 500,
+      "sha256": "26e60e8bf2ded15e72aae1a050586f6c341f1c1b444b3f78f777f0c538bc321d"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-f31b529/item-consumption-0.log",
+      "bytes": 995,
+      "sha256": "9fee08a99e39ebdeec24b93e14bc0a2eae01cca87af5acdaa5311b5c01e56c6e"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-f31b529/item-consumption-1.log",
+      "bytes": 995,
+      "sha256": "9fee08a99e39ebdeec24b93e14bc0a2eae01cca87af5acdaa5311b5c01e56c6e"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-f31b529/operation-resolution-0.log",
+      "bytes": 995,
+      "sha256": "4e3291261537a9d6905f48b20c063cd6fb31e05f4a7e568e984cef49461cc4b3"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-f31b529/operation-resolution-1.log",
+      "bytes": 995,
+      "sha256": "4e3291261537a9d6905f48b20c063cd6fb31e05f4a7e568e984cef49461cc4b3"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-f31b529/player-command-0.log",
+      "bytes": 995,
+      "sha256": "2f3f9a2d26ee25d19334bdea2b58e01cdedd437d84b8517d9d6ef6bcf753b0a7"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-f31b529/player-command-1.log",
+      "bytes": 995,
+      "sha256": "2f3f9a2d26ee25d19334bdea2b58e01cdedd437d84b8517d9d6ef6bcf753b0a7"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-f31b529/result.json",
+      "bytes": 5083,
+      "sha256": "de4b52fca0c36e1011042c3e68bd0372adb3de2f553b8196dc05f1cffda45c7a"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-f31b529/scheduled-worker-processing-0.log",
+      "bytes": 678,
+      "sha256": "690f68c013c20dc079f9c51a973961763a646fb844e76a2836c9833dba246fda"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-f31b529/scheduled-worker-processing-1.log",
+      "bytes": 660,
+      "sha256": "8a84285c650c81f81180ba0dfeadab90599c99104479c58df3e97af657617947"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-f31b529/scheduled-worker-processing-2.log",
+      "bytes": 1373,
+      "sha256": "c48008453073033e86d6d70c28f508d67148fe3a5ca792f8329e0f584b73ae2c"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-f31b529/workflow.txt",
+      "bytes": 64048,
+      "sha256": "538145b2d92b7972392d9bdacb9409177550b574740fd6a0461e5d53480d25d3"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-f31b529/world-kernel-mutation-0.log",
+      "bytes": 995,
+      "sha256": "0d7412ef615304697007d01161f40315deca27b8faff6e512b9c2d5bb16f4f89"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/linux-f31b529/world-kernel-mutation-1.log",
+      "bytes": 995,
+      "sha256": "0d7412ef615304697007d01161f40315deca27b8faff6e512b9c2d5bb16f4f89"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/windows-current-season-probe.json",
+      "bytes": 807,
+      "sha256": "e5af28125e2a823506fb4826865d811eeb51430f21b3558651d2cc2b6bfbd2e2"
+    },
+    {
+      "path": "docs/release/evidence/graceful-shutdown/windows-probe.json",
+      "bytes": 4457,
+      "sha256": "13a0194d6132e4d00a7384d88db098adebfd0f52c07fa91d67b7d51e38d35c7d"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile-matrix.json",
+      "bytes": 4134,
+      "sha256": "c9277c673643e8f9b9b9c78963e85a0ee0c835f3e1e796a92d89f864656afd46"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile-retest/320-black-market-supply-establish_market.png",
+      "bytes": 1466265,
+      "sha256": "6f705910adffc0d154c5a8a6526c7fd510779335c52c39922416e24abcbfca85"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile-retest/320-black-market-supply-intercept_shipment.png",
+      "bytes": 1410040,
+      "sha256": "d99bf3d104e8309aeb9ed5662b860c9fbc769849eff3325680277eb0096c9e7d"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile-retest/320-black-market-supply-supply_market.png",
+      "bytes": 1342772,
+      "sha256": "592ab5419919a83ce1d6dc91b65e101ff66c3ef0e5ca90b8389740f6aa64c46a"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile-retest/320-informant-public-disclosure-establish_market.png",
+      "bytes": 1397572,
+      "sha256": "6a0a3c2fe987af7362b9e242ed4c35211da093364e025e681dbf1e17fba94e9b"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile-retest/320-informant-public-disclosure-expose_market.png",
+      "bytes": 1493499,
+      "sha256": "64264d82b579f93a49f5148a428d63d6688a8549192f628ece9be7be4efaebe9"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile-retest/320-informant-public-disclosure-intercept_shipment.png",
+      "bytes": 1348776,
+      "sha256": "104fb684a5bff4983642ff257919c694653cd80fc13c87b768664ddf05b8d05a"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile-retest/320-informant-public-disclosure-trace_disclosure.png",
+      "bytes": 1632594,
+      "sha256": "b28c941fdeb14da430552f69ee7e25479bb24d71727360d966b7a1331e395e6e"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile-retest/390-black-market-supply-establish_market.png",
+      "bytes": 1536562,
+      "sha256": "69d9af4650ff198135e593b40ba404d3f37ba9b9c18fb55ad0c59f2639aa5333"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile-retest/390-black-market-supply-intercept_shipment.png",
+      "bytes": 1477554,
+      "sha256": "263a16a50154f8c6e8a872faa08d978a4f18fbed7e8fdf1ae1f70d0bb6f30f4b"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile-retest/390-black-market-supply-supply_market.png",
+      "bytes": 1448824,
+      "sha256": "b3800450a5a6c1352dda9bbb58b648b4a83f76ae14ea7043ae79746bee5a5e25"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile-retest/390-informant-public-disclosure-establish_market.png",
+      "bytes": 1537789,
+      "sha256": "68ffe3b5332d6ddff08d2ed4d56aa0e9daf6c8e22c76f4e4011e7fb3dd4496e4"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile-retest/390-informant-public-disclosure-expose_market.png",
+      "bytes": 1562066,
+      "sha256": "b12dd29b5a8a9650508609e3fe872fab26f3722b488cb88e2077f7dc214f0621"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile-retest/390-informant-public-disclosure-intercept_shipment.png",
+      "bytes": 1477042,
+      "sha256": "32f14329bfec26184eab222d173d2e7bacae061146ef950ab07758aea5466059"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile-retest/390-informant-public-disclosure-trace_disclosure.png",
+      "bytes": 1681509,
+      "sha256": "97be45cfc45922b1af744d6315053de61ace731faf335330a0d43a81fd49641b"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile-retest/results.json",
+      "bytes": 82734,
+      "sha256": "6efe6d9cb9059fb341c4adc496f29a23819d2c47e18038be2420296d45a520b3"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile-supply-retest/320-black-market-supply-establish_market.png",
+      "bytes": 1470809,
+      "sha256": "9fef2464d108324c427f9786131caf9889d5e2fbd086c3b7af0100511a3c5e66"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile-supply-retest/320-black-market-supply-intercept_shipment.png",
+      "bytes": 1431339,
+      "sha256": "03741591533d921850d57253a7f90d6383b16265f3d46deb4c3af7e665fa00a0"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile-supply-retest/320-black-market-supply-supply_market.png",
+      "bytes": 1342713,
+      "sha256": "d6a7abd5d0e6873e23004354cb319ffef879f7a002bd7882d303ff49d7f89398"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile-supply-retest/results.json",
+      "bytes": 14342,
+      "sha256": "9c63372873d59f1c179768fb2abd2b02b686c2070751bbb65c3fe86f27848e5c"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/320-black-market-seizure-establish_market.png",
+      "bytes": 1470741,
+      "sha256": "fdc0274407405b79b0bf81873ca719f0ae8cdef8de462cefdc651f436fb7ded1"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/320-black-market-seizure-intercept_shipment.png",
+      "bytes": 1434271,
+      "sha256": "3576f16364f358c9c5b826f1ff2d72bcd852253aed5df72da1ddc95caf98b8b1"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/320-black-market-seizure-seize_market.png",
+      "bytes": 1344284,
+      "sha256": "d425d61c7e70e8539189bbedb66eb379dc06ca65190716e759dd065c982b0fa5"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/320-black-market-supply-failure-0.png",
+      "bytes": 123634,
+      "sha256": "b4030f75966cde5b4bb08c0b2e0ff175b361987662d94841adab460e0a124a1f"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/320-black-market-supply-failure-0.txt",
+      "bytes": 1004,
+      "sha256": "4904d315abfcafb27ce3320f5ec6858e4a29c93ac0dc3c29384bf2726edf3534"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/320-black-market-supply-failure-1.png",
+      "bytes": 1531774,
+      "sha256": "c83f249a12fcbc4d84decc74972dda59997a347823704c10c60fa00fd9c45f11"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/320-black-market-supply-failure-1.txt",
+      "bytes": 20084,
+      "sha256": "ecda5dc52dcc60ad85c1051588c85d2b87bc0107819be6aebf2420b6aa715a96"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/320-informant-public-disclosure-failure-0.png",
+      "bytes": 124824,
+      "sha256": "db2c498a612f69975b4ba0fcc4fcdd9310bc9ac2de33bbd82f639abfc9a3c332"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/320-informant-public-disclosure-failure-0.txt",
+      "bytes": 1004,
+      "sha256": "a66187d2e1e23c80520de3add7928265c67ca9b6d2e1f6207825cd54ad8f11f0"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/320-informant-public-disclosure-failure-1.png",
+      "bytes": 1531526,
+      "sha256": "b929382abe78b33656b40330cb17c22a0c6d9a29ad4f9d563f61f6ed78070d80"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/320-informant-public-disclosure-failure-1.txt",
+      "bytes": 20042,
+      "sha256": "cb30f8909d6b04a828e1e80355ea7ff64ffd4514d77053c763b34bef172018f3"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/320-shipment-destruction-destroy_shipment.png",
+      "bytes": 1350782,
+      "sha256": "0f509fab36e8465724d24af4c5b595256db1cb4f8cdd18fc6c6cf35fa642aa9f"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/320-shipment-redistribution-failure-0.png",
+      "bytes": 1552500,
+      "sha256": "802e8bdc6678ab96f7d8637f9ac2003349b1d62d6bae8ce3673076995570c9ee"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/320-shipment-redistribution-failure-0.txt",
+      "bytes": 20229,
+      "sha256": "21be73fe47c2165392cc8a50c64963917d63d26f12953e494589ed0c72652407"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/320-shipment-redistribution-failure-1.png",
+      "bytes": 1263517,
+      "sha256": "05350c39106317dc6ff2d6e7a6e26a11535bc990de3026d9f00e7b689794e2ef"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/320-shipment-redistribution-failure-1.txt",
+      "bytes": 11470,
+      "sha256": "1667e38268b849840dd8030d333c01c65c75642fe920e4ef2c0afdeb7dc849e0"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/320-shipment-redistribution-redistribute_shipment.png",
+      "bytes": 1472041,
+      "sha256": "fc7e080a2ebc79185bcd715b07e5134c27bcdc76cf9aa156e75135983634c2d4"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/390-black-market-seizure-establish_market.png",
+      "bytes": 1499811,
+      "sha256": "2f0306b0055f5d63b0367da723e5e2c7297a8370183e7a52be012b87920d3677"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/390-black-market-seizure-intercept_shipment.png",
+      "bytes": 1444015,
+      "sha256": "d808191552aefe64b94e46916d3cd5a29c068df76819c7b1e4ad3a49e175d52f"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/390-black-market-seizure-seize_market.png",
+      "bytes": 1410600,
+      "sha256": "ff6b96709daa1d98220d13280576811ad866ef0feaab1f2083d209ce38ec7739"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/390-black-market-supply-failure-0.png",
+      "bytes": 142163,
+      "sha256": "314d3ff03455a906359583d3119b729171303c93bc7363cb51579c3f392fa48c"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/390-black-market-supply-failure-0.txt",
+      "bytes": 1004,
+      "sha256": "73b61baad015017fde38d9f0e60073432d23fa36c0982d013471ead57b2f0b24"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/390-black-market-supply-failure-1.png",
+      "bytes": 1469055,
+      "sha256": "241c4f936928bf44cd57e91c57fb58111ae69e49d79698a76ca6bedeb92cb0a3"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/390-black-market-supply-failure-1.txt",
+      "bytes": 20001,
+      "sha256": "62200a8413165ae4a44ee4f35938f343061092d6f342075b509227a9d541a9bc"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/390-informant-public-disclosure-failure-0.png",
+      "bytes": 1350782,
+      "sha256": "ee0698b2d9d37e6d9cb4df2935796ec90c3380f1828472d3d5ad39968d265b95"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/390-informant-public-disclosure-failure-0.txt",
+      "bytes": 16040,
+      "sha256": "3fa21d5ce894acd6c1b5481cc720fea8f4bcca9f37a099ca4efd3feebc1c7a83"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/390-informant-public-disclosure-failure-1.png",
+      "bytes": 967538,
+      "sha256": "013b6503ea093027f402be5fd87546555efbec8a931eb7472c15c68fa4a0d005"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/390-informant-public-disclosure-failure-1.txt",
+      "bytes": 13207,
+      "sha256": "06dd9d12c4c1ef7d9bc8596eaf8ebfe0e63e1321086e38c16e4afd099326815f"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/390-shipment-destruction-destroy_shipment.png",
+      "bytes": 1503106,
+      "sha256": "33c4df3b30f227fa3f52af67d0143d0f1dae7ff7272db0ec40f277f279041e38"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/390-shipment-redistribution-failure-0.png",
+      "bytes": 153878,
+      "sha256": "b484587a3164c5213cd842765becedc01f104f9ef525234e8526763b18f536c9"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/390-shipment-redistribution-failure-0.txt",
+      "bytes": 1101,
+      "sha256": "60a59c818e80efd043066ffcb6733875d4a7fc1866805e16bb9a4e627fa75f21"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/390-shipment-redistribution-failure-1.png",
+      "bytes": 1563025,
+      "sha256": "c3ff2214f316901c0760429805fc688714a5f4b5786c318463f64851b2e29bab"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/390-shipment-redistribution-failure-1.txt",
+      "bytes": 20824,
+      "sha256": "bf77758ac1652a2ff38d41c550d339d6b4973b6035515590db8da72f06f8e7cc"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/390-shipment-redistribution-redistribute_shipment.png",
+      "bytes": 1495990,
+      "sha256": "0a1020b65fdcba48a0f1cc5954ef6becda90b0bcaee3b25e4656d4b15d5fba51"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/pilot4-results.json",
+      "bytes": 11408,
+      "sha256": "f0ef98c355d7a9d0c7721e1bc9ccaec516cce7cd4ca8a4883c27a2e35de348fd"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/pilot5-results.json",
+      "bytes": 9615,
+      "sha256": "de60928a414540d270004e5084fbb55002d3e5d5e91ac11fe5d0906c7aed1c73"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/pilot6-results.json",
+      "bytes": 8977,
+      "sha256": "04ee16447ecc44b05e6c5d9625a12654926d867a4094c7ef156c5e4f645588ce"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-mobile/results.json",
+      "bytes": 67197,
+      "sha256": "cc6a0dcdd7472b87e8a0f95e1f92a6609dd0b14d8e4605fff06fabb3c74ffc8e"
+    },
+    {
+      "path": "docs/release/evidence/player/campaign-network-journey.log",
+      "bytes": 795,
+      "sha256": "dff7ddfa48472c691b9ec6ebe02594730819f7daaff6cb732910887623f1564d"
+    },
+    {
+      "path": "docs/release/evidence/player/director-journey.log",
+      "bytes": 467,
+      "sha256": "9cc35abdda867412abcc2abf3aa9e9d5d0a08bcdd7bdcfbd76823a718559e433"
+    },
+    {
+      "path": "docs/release/evidence/player/existing-mobile.log",
+      "bytes": 1032,
+      "sha256": "37b7534d56ab7068fb0df8b3475ca13592d8876aeaccb1aa9a9603733b6ee9e7"
+    },
+    {
+      "path": "docs/release/evidence/player/invite/390.png",
+      "bytes": 136580,
+      "sha256": "fb3abde89cf555f3e2a05730667917c1bddf3fa5cf9bcb020ea9512f2a531fd1"
+    },
+    {
+      "path": "docs/release/evidence/player/invite/desktop.png",
+      "bytes": 696638,
+      "sha256": "522ab29bcfed0fb0d89bd9d15ae3e3565c147c18aad3f4b5510e7e00a8fa157e"
+    },
+    {
+      "path": "docs/release/evidence/player/launch-invites-browser.log",
+      "bytes": 288,
+      "sha256": "04c51db0d908328b2aebdfa272aad328d69ba9b6c92027aeb3b8409a3a415747"
+    },
+    {
+      "path": "docs/release/evidence/player/mobile/320-failure.json",
+      "bytes": 10497,
+      "sha256": "0433f54f022f0bb46661e2dc2e1feda628cf7070efc3262fa852a540d6313f9c"
+    },
+    {
+      "path": "docs/release/evidence/player/mobile/320-failure.png",
+      "bytes": 613090,
+      "sha256": "319e5695298c14a4d8523fa5e4abe129231aff45e9f6a08fe09fbbcfc3aa2192"
+    },
+    {
+      "path": "docs/release/evidence/player/mobile/320-first-case-completed.json",
+      "bytes": 9218,
+      "sha256": "86a65725f3deee37fc9231cbf9f162746ea63bd3ae47ecbbc11e4faba1a14480"
+    },
+    {
+      "path": "docs/release/evidence/player/mobile/320-first-case-completed.png",
+      "bytes": 552838,
+      "sha256": "253ce9a30aa75a1fff7870752dea06dfb1c17e937c1f9ec00aeea931da65d8c6"
+    },
+    {
+      "path": "docs/release/evidence/player/mobile/320-new-player-command-center.json",
+      "bytes": 9039,
+      "sha256": "dfbf214402ad88cfb9cee0b5cfc5e0d17540de2d2ca2450c52b7308f5ae4daa9"
+    },
+    {
+      "path": "docs/release/evidence/player/mobile/320-new-player-command-center.png",
+      "bytes": 552126,
+      "sha256": "989136eb9a8b9528dabba1370440415abd11ce71f7e271c64331fa4145a1690d"
+    },
+    {
+      "path": "docs/release/evidence/player/mobile/320-recovered-after-refresh.json",
+      "bytes": 9544,
+      "sha256": "bdabe56b6a8d3dc7e955fd12cd943b901fa4696f9645ab66a3b3e2e808d38c03"
+    },
+    {
+      "path": "docs/release/evidence/player/mobile/320-recovered-after-refresh.png",
+      "bytes": 562283,
+      "sha256": "2273b6d1080d4bb458850fc3b2777f68e57535010408ecc8f3c6ea2dba7cccbb"
+    },
+    {
+      "path": "docs/release/evidence/player/mobile/320-response-lost.json",
+      "bytes": 382,
+      "sha256": "aec55f02adaeb9ed6c53cc87e4cdb360ae3df8b68fb2c768fc4dc76ed8e45b13"
+    },
+    {
+      "path": "docs/release/evidence/player/mobile/320-response-lost.png",
+      "bytes": 142630,
+      "sha256": "cda204a1fdc2f714b5ce6b00b3d5258a53c7022ce4e24608506747a95a439b46"
+    },
+    {
+      "path": "docs/release/evidence/player/mobile/320-solo-preparation-requirements.json",
+      "bytes": 10314,
+      "sha256": "57157f0e935d2ebc0bf3289d5df73aaca5cd547135df446b334a2f8051d94bca"
+    },
+    {
+      "path": "docs/release/evidence/player/mobile/320-solo-preparation-requirements.png",
+      "bytes": 606360,
+      "sha256": "d9b1fff390d78597a30494bc25b1638538bf0a6e4d9cd1d47283cf15aec575c8"
+    },
+    {
+      "path": "docs/release/evidence/player/mobile/320-solo-ready-equipment-world-gate.json",
+      "bytes": 10497,
+      "sha256": "0433f54f022f0bb46661e2dc2e1feda628cf7070efc3262fa852a540d6313f9c"
+    },
+    {
+      "path": "docs/release/evidence/player/mobile/320-solo-ready-equipment-world-gate.png",
+      "bytes": 612522,
+      "sha256": "b3491797e4501db46a3c19259954e6c1b51c1d7a43dc939b0535998ef909cf16"
+    },
+    {
+      "path": "docs/release/evidence/player/mobile/390-failure.json",
+      "bytes": 10669,
+      "sha256": "0623a9cb2d98971f9d2580759d46acbb2d088d68f497c6f095ccedecb3c80a76"
+    },
+    {
+      "path": "docs/release/evidence/player/mobile/390-failure.png",
+      "bytes": 656370,
+      "sha256": "bc74c171003697a8348123749a9c2d66e9c3f87c751dc50f6b4095bb6620960b"
+    },
+    {
+      "path": "docs/release/evidence/player/mobile/390-first-case-completed.json",
+      "bytes": 9242,
+      "sha256": "4b0cd61c69fef0aa33d3643306060647cb54c8ae0ba019121bf756fda871dd58"
+    },
+    {
+      "path": "docs/release/evidence/player/mobile/390-first-case-completed.png",
+      "bytes": 575277,
+      "sha256": "10dfbc1da5b993340c003063a0d74d9253515b3b8f6395ace9e1e5c0cabe2f84"
+    },
+    {
+      "path": "docs/release/evidence/player/mobile/390-new-player-command-center.json",
+      "bytes": 9083,
+      "sha256": "e22039cb06619bb37d19d6dd8a9b59750ec010ddc6c6a907a2baf5578585f91f"
+    },
+    {
+      "path": "docs/release/evidence/player/mobile/390-new-player-command-center.png",
+      "bytes": 582195,
+      "sha256": "f24df510d4591336828a018d97f4810c63a61aa0216db1100fbab3153aea82a7"
+    },
+    {
+      "path": "docs/release/evidence/player/mobile/390-recovered-after-refresh.json",
+      "bytes": 9574,
+      "sha256": "1ea8b9bc3ff7712a854007cacbc8db177e9e68aa33137781eb7c446a9e58bc35"
+    },
+    {
+      "path": "docs/release/evidence/player/mobile/390-recovered-after-refresh.png",
+      "bytes": 613002,
+      "sha256": "939f42f8a0c26dffe616420d51ee10e4d7b8ecd9e5973ed68637f50d24f5e948"
+    },
+    {
+      "path": "docs/release/evidence/player/mobile/390-response-lost.json",
+      "bytes": 382,
+      "sha256": "23d15e43d171d1e298e847c42d305700e41c8ecabba10079e920537938ead066"
+    },
+    {
+      "path": "docs/release/evidence/player/mobile/390-response-lost.png",
+      "bytes": 170023,
+      "sha256": "13a7f17ca47b4ece5e9c1e177a4bdfcc8685ed2e70a444c150aa632d36694927"
+    },
+    {
+      "path": "docs/release/evidence/player/mobile/390-solo-preparation-requirements.json",
+      "bytes": 10306,
+      "sha256": "b0ccb3acc648a87d82c1f34db8af6b2890a5da557622731d75deb262ac720364"
+    },
+    {
+      "path": "docs/release/evidence/player/mobile/390-solo-preparation-requirements.png",
+      "bytes": 630119,
+      "sha256": "2f9064250316a2957c3ca0c484dd0128f9ec26672d8f9e04544a01d7934b4bcc"
+    },
+    {
+      "path": "docs/release/evidence/player/mobile/390-solo-ready-equipment-world-gate.json",
+      "bytes": 10669,
+      "sha256": "0623a9cb2d98971f9d2580759d46acbb2d088d68f497c6f095ccedecb3c80a76"
+    },
+    {
+      "path": "docs/release/evidence/player/mobile/390-solo-ready-equipment-world-gate.png",
+      "bytes": 655520,
+      "sha256": "10ea1d4714c6b00f0445235bb35e17f4bf40b647cc1a1777362dc2d0d4f50dae"
+    },
+    {
+      "path": "docs/release/evidence/player/mobile/results.json",
+      "bytes": 179828,
+      "sha256": "ba719d1d24e7587e57722195fd69e1ab7bbf3aba7d41b5d7a7706e7b2cabc105"
+    },
+    {
+      "path": "docs/release/evidence/player/player-command-api.log",
+      "bytes": 226,
+      "sha256": "94d053c121a5280b3be16c794e17b6988fe98fcc9532004e82ddca62d40df510"
+    },
+    {
+      "path": "docs/release/evidence/player/player-command-client-retest.log",
+      "bytes": 181,
+      "sha256": "3b451fcb835e5e51df6f49660a3a2151e0781664f9aec13677bd20005a68f473"
+    },
+    {
+      "path": "docs/release/evidence/player/player-command-client.log",
+      "bytes": 546,
+      "sha256": "f7d07a8b727ec6835c19b638d7e73a6029462bcbb61f3f26da1c33a8f3b4171f"
+    },
+    {
+      "path": "docs/release/evidence/player/player-command-journey.log",
+      "bytes": 444,
+      "sha256": "cc242f8ceb2d12951e3b999f8d613eb260e6a98bc4d4b7b2c11e840ac62e1b64"
+    },
+    {
+      "path": "docs/release/evidence/player/player-commands-postgres.log",
+      "bytes": 1517,
+      "sha256": "b342ead39fd95ce35576ea9361494e6f1b964ab37d7f363d81458cd79b3a2040"
+    },
+    {
+      "path": "docs/release/evidence/player/player-commands.log",
+      "bytes": 845,
+      "sha256": "6f1a1b32c1e2f94a5e81eaa1d61392c14d8c8cb83f057a84f2135cf85830520a"
+    },
+    {
+      "path": "docs/release/evidence/player/player-opportunities.log",
+      "bytes": 133,
+      "sha256": "066ca3dfa1a5b24f19174480ae8f33673d1e85eb19136cf0d38ddfec8ae65460"
+    },
+    {
+      "path": "docs/release/evidence/player/rc1-branches-before-ux-fix.json",
+      "bytes": 19331,
+      "sha256": "f1b48fb0812cb724aa25ab26325488f590e774f8d89ae2c67560d97f18715481"
+    },
+    {
+      "path": "docs/release/evidence/player/rc1-branches-harness-development.log",
+      "bytes": 386,
+      "sha256": "ddd7e9f3ca2cf6dcbdff0ccb7b4d0a333386854d607074c9df9bf66b7666084e"
+    },
+    {
+      "path": "docs/release/evidence/player/rc1-branches-postgres.json",
+      "bytes": 19589,
+      "sha256": "17505b626d90a488c290e8e278a7a2bf7526f776d9aa4409b0f86ebf39cf25c3"
+    },
+    {
+      "path": "docs/release/evidence/player/rc1-branches-postgres.log",
+      "bytes": 650,
+      "sha256": "bfe350c37f4a15f9f969422f7d88279de9ad15afd6855bafb0bf9774ed6acbf8"
+    },
+    {
+      "path": "docs/release/evidence/player/rc1-branches.json",
+      "bytes": 19555,
+      "sha256": "25b91f590b04b9fc80c3d621518272e63823d0dc2b0d52a0e5d11ad35011db0c"
+    },
+    {
+      "path": "docs/release/evidence/player/rc1-branches.log",
+      "bytes": 650,
+      "sha256": "bfe350c37f4a15f9f969422f7d88279de9ad15afd6855bafb0bf9774ed6acbf8"
+    },
+    {
+      "path": "docs/release/evidence/player/rc1-mobile-harness-development-followup.log",
+      "bytes": 1074,
+      "sha256": "bc6dc72961849edc654e54e203501fe004d382e8134ad3b7c8c14d043cfd3931"
+    },
+    {
+      "path": "docs/release/evidence/player/rc1-mobile-harness-development-solo.log",
+      "bytes": 871,
+      "sha256": "d53a49ab91bd295e2624475df3301c06be37d90c7b148e43e0c6a3b51b1f4f6b"
+    },
+    {
+      "path": "docs/release/evidence/player/rc1-mobile-harness-development.log",
+      "bytes": 834,
+      "sha256": "213ec127410aa262cf1ff8a8f9becbe2ab6a55d35de17e80e309d360b232602a"
+    },
+    {
+      "path": "docs/release/evidence/player/rc1-mobile.log",
+      "bytes": 1071,
+      "sha256": "321ce25bc1024a099f68bb7d63e08a77f16b87bba3f02045c2b2c831d61084b5"
+    },
+    {
+      "path": "docs/release/evidence/player/screen-beacon-confirmation-regression.log",
+      "bytes": 2022,
+      "sha256": "1342b35d570149121713cf63b7f6c29c2f073e3fedba01b5297a6b8aa36613f4"
+    },
+    {
+      "path": "docs/release/evidence/player/solo-world-authority-first-repro.log",
+      "bytes": 1292,
+      "sha256": "d6cb4e0539422d9f7d3e68f1022110aa01e0f8b45e0c7357cd9a0dac11165f6e"
+    },
+    {
+      "path": "docs/release/evidence/player/summary.json",
+      "bytes": 8879,
+      "sha256": "4cfa1c306a2198f52dcbd2fe0697b26233db2ab659f3adb5a615ea0a5dfe7f38"
+    },
+    {
+      "path": "docs/release/evidence/player/telemetry-confirmation-regression.json",
+      "bytes": 148080,
+      "sha256": "2e18e70dbe07c9b2bff7f2d1aeb2c721c102eaaee9a13cb3fed124452d42a6a0"
+    },
+    {
+      "path": "docs/release/evidence/player/telemetry-confirmation-regression.log",
+      "bytes": 1644,
+      "sha256": "d37bf4e64c3695930c16ed1d778cd6359da907748841608be9e5cde0e62970e6"
+    },
+    {
+      "path": "docs/release/evidence/player/world-consequences-postgres.log",
+      "bytes": 125,
+      "sha256": "f6e3b60e00f35d2876a6d3e92d9183f1edd5a03bd5b725d93666b8092d20880d"
+    },
+    {
+      "path": "docs/release/evidence/player/world-consequences.log",
+      "bytes": 121,
+      "sha256": "03e657cde0844a4dd35eb0dfba35ba3ef590a49faac3ba2296021135f8c64d6b"
+    },
+    {
+      "path": "docs/release/evidence/security-operations/director-network-recovery.log",
+      "bytes": 414,
+      "sha256": "b9934a06e1de6b23b9faad233194c89b91326bb2b6007c313dbf4a1a1e108f88"
+    },
+    {
+      "path": "docs/release/evidence/security-operations/director-security.log",
+      "bytes": 238,
+      "sha256": "fc377c54132eda9c1fa9f74a11c5a362c6d78fd1a36c75d1f83ee9a73260e0ab"
+    },
+    {
+      "path": "docs/release/evidence/security-operations/engagement.log",
+      "bytes": 1245,
+      "sha256": "1180e5f6aad27ec40ed37c73b47a83c3a441ba1fe0eface7a2af431caf34fbe8"
+    },
+    {
+      "path": "docs/release/evidence/security-operations/final-review-results.json",
+      "bytes": 1361,
+      "sha256": "5caeb94dbf8355a577210b33decd12ce3b06cca96422f60f3291a9d0dfc34311"
+    },
+    {
+      "path": "docs/release/evidence/security-operations/gates-telemetry-retest.log",
+      "bytes": 4202,
+      "sha256": "ee2464012900b6596c66dd2a00fab003a53e92c5db260b84fd2a41ba39c5a789"
+    },
+    {
+      "path": "docs/release/evidence/security-operations/gates-telemetry.log",
+      "bytes": 3250,
+      "sha256": "4b545e4205d7a61d83fa7b695db5a4925e2baebfa3d635ef91799a2c398ff1ca"
+    },
+    {
+      "path": "docs/release/evidence/security-operations/hardening.log",
+      "bytes": 4230,
+      "sha256": "83e56106005cc12deb125593aceb0bf000786f361269851c792a838e28ddb6b8"
+    },
+    {
+      "path": "docs/release/evidence/security-operations/pgquery-telemetry.log",
+      "bytes": 504,
+      "sha256": "6805f7567b9b2180aca1fbc176ee263df54c3d3486a1368b66d6c9c0802f6c49"
+    },
+    {
+      "path": "docs/release/evidence/security-operations/player-command-api.log",
+      "bytes": 226,
+      "sha256": "94d053c121a5280b3be16c794e17b6988fe98fcc9532004e82ddca62d40df510"
+    },
+    {
+      "path": "docs/release/evidence/security-operations/player-commands.log",
+      "bytes": 1517,
+      "sha256": "b342ead39fd95ce35576ea9361494e6f1b964ab37d7f363d81458cd79b3a2040"
+    },
+    {
+      "path": "docs/release/evidence/security-operations/preflight-telemetry.log",
+      "bytes": 349,
+      "sha256": "00e901860e06ea7b5281664a948ccfa63e22e3f4ebd089d3223379c38c72a2ab"
+    },
+    {
+      "path": "docs/release/evidence/security-operations/projection-events-final-postgres.log",
+      "bytes": 129,
+      "sha256": "237baae61c9f5cb6605d231ee95a23ac283f94536c9dbb3f212e16f540819675"
+    },
+    {
+      "path": "docs/release/evidence/security-operations/projection-events-postgres.log",
+      "bytes": 129,
+      "sha256": "237baae61c9f5cb6605d231ee95a23ac283f94536c9dbb3f212e16f540819675"
+    },
+    {
+      "path": "docs/release/evidence/security-operations/results.json",
+      "bytes": 695,
+      "sha256": "253f6ae384fd716c726fba14fbf9b0f27a63732a7cb7f1cfd6d2a173b97cd18e"
+    },
+    {
+      "path": "docs/release/evidence/security-operations/routes.log",
+      "bytes": 1077,
+      "sha256": "8aead7f2430b13d1c434f36fd781f1eb0c5d1f32eedac9693d29c4c044abe48e"
+    },
+    {
+      "path": "docs/release/evidence/security-operations/source-hashes.json",
+      "bytes": 1891,
+      "sha256": "8fbf9611b0edc727c225a67c3dd30390f9a076e146ef93808b41219794e8519d"
+    },
+    {
+      "path": "docs/release/evidence/security-operations/telemetry-regressions.md",
+      "bytes": 7130,
+      "sha256": "6e209c4dfd989f1cb62ca3dfc6ec41f10938abb4c7f66306a49ab3ea2f1b4c6b"
+    },
+    {
+      "path": "docs/release/evidence/security-operations/telemetry-results.json",
+      "bytes": 1285,
+      "sha256": "7a773aafc766077f461573321501fbf3e45ba13611a2881f149e7c49fc0a7a20"
+    },
+    {
+      "path": "docs/release/evidence/security-operations/telemetry-source-hashes.json",
+      "bytes": 1236,
+      "sha256": "7a249841db15f58c0ae10191fcbbce70dee9884231a6775a88333d32a6a464f0"
+    },
+    {
+      "path": "docs/release/evidence/security-operations/world-projection-client.log",
+      "bytes": 103,
+      "sha256": "dc51af3016f1900aa155dc3d479c384ad481bd0f2f216fbe46ae3264f78fb55b"
+    },
+    {
+      "path": "docs/release/evidence/security-operations/world-telemetry-final-postgres.log",
+      "bytes": 1124,
+      "sha256": "40ec2e7950401289bd8a7dd07489071b7d5fd98f002f5f364d8c87453ac9bf5c"
+    },
+    {
+      "path": "docs/release/evidence/security-operations/world-telemetry-postgres.log",
+      "bytes": 1124,
+      "sha256": "40ec2e7950401289bd8a7dd07489071b7d5fd98f002f5f364d8c87453ac9bf5c"
+    },
+    {
+      "path": "docs/release/evidence/simulation/harness-development.json",
+      "bytes": 2059,
+      "sha256": "6b6b7d52a98ff7e30f30de4219c79b144fb7350af883484600bc6ed93699940d"
+    },
+    {
+      "path": "docs/release/evidence/simulation/model/matrix.json",
+      "bytes": 581099,
+      "sha256": "5cd7008af60f38b7683cb052e5b8322373178618f1856f23a35523b983d3f5f7"
+    },
+    {
+      "path": "docs/release/evidence/simulation/native/100-rc1-alpha-0.json",
+      "bytes": 11024,
+      "sha256": "5ebd59e25acbc8f13c47ea12a40c10554029e8c3bad5c0fa7b5b8ef82c1a4cd5"
+    },
+    {
+      "path": "docs/release/evidence/simulation/native/100-rc1-alpha-1.json",
+      "bytes": 11024,
+      "sha256": "b2603f46db25c28a70f4abe0a5a53ee8763ed3234fd4120ac2d07bc87e190ae0"
+    },
+    {
+      "path": "docs/release/evidence/simulation/native/100-rc1-beta-0.json",
+      "bytes": 11879,
+      "sha256": "d516b5b9fa5a9bb1f4253a4bd9e421ece70fb4f098a5ff6417b4bebffaa32a9b"
+    },
+    {
+      "path": "docs/release/evidence/simulation/native/100-rc1-beta-1.json",
+      "bytes": 11882,
+      "sha256": "a28cd2ee17c956318b54b5d995ecb9347db97f6c5c04c3112b44b2dc55f756b5"
+    },
+    {
+      "path": "docs/release/evidence/simulation/native/1000-rc1-alpha-0.json",
+      "bytes": 10920,
+      "sha256": "7184870a9a7c942ae0a88c5e580ddff264593e60bde754e92a5b04fc9d647548"
+    },
+    {
+      "path": "docs/release/evidence/simulation/native/1000-rc1-alpha-1.json",
+      "bytes": 825,
+      "sha256": "ab7f5983408ace1423dae321adf4452487e24249d45e5b4d2527bdc322f53f40"
+    },
+    {
+      "path": "docs/release/evidence/simulation/native/1000-rc1-beta-0.json",
+      "bytes": 11898,
+      "sha256": "7550faad51fe06e6e3f08229fa69daeb38020aafb6c657834adacb04b0077e2d"
+    },
+    {
+      "path": "docs/release/evidence/simulation/native/1000-rc1-beta-1.json",
+      "bytes": 11895,
+      "sha256": "558c0f3b0cd64b9bc940a7a0d1b319f4b9398d3bbadb9739a318bf4f959c2103"
+    },
+    {
+      "path": "docs/release/evidence/simulation/native/25-rc1-alpha-0.json",
+      "bytes": 11006,
+      "sha256": "1638e1830c6c0aceaf19be8c3b126b4f814c2faf9fead26b0fd84d1f6f6cca4e"
+    },
+    {
+      "path": "docs/release/evidence/simulation/native/25-rc1-alpha-1.json",
+      "bytes": 11005,
+      "sha256": "03a2af46a46d9fe117c5cd4a401456c7bc51cdd8c2329de0963d0ab8ea80e6ee"
+    },
+    {
+      "path": "docs/release/evidence/simulation/native/25-rc1-beta-0.json",
+      "bytes": 11861,
+      "sha256": "bd308f0af1e240efde83a77e8a654b2ef00c6a3af59bbffdabae97f7f0dad332"
+    },
+    {
+      "path": "docs/release/evidence/simulation/native/25-rc1-beta-1.json",
+      "bytes": 11864,
+      "sha256": "97c803024fa639ac0b5f1fd0d0eba66f2bcaf26cf4ab494ebee8aa52962379e1"
+    },
+    {
+      "path": "docs/release/evidence/simulation/native/500-rc1-alpha-0.json",
+      "bytes": 11048,
+      "sha256": "984b66840673079ed4576363fe077e0e7a56938ceb7d66e101fb1c874e4e92be"
+    },
+    {
+      "path": "docs/release/evidence/simulation/native/500-rc1-alpha-1.json",
+      "bytes": 11048,
+      "sha256": "1415946f19024df0add7d187bbbccd966333fd551b72c82f16866daa6001bff6"
+    },
+    {
+      "path": "docs/release/evidence/simulation/native/500-rc1-beta-0.json",
+      "bytes": 11903,
+      "sha256": "db0f7caf48df8eec456e86460d40f07f5bea10cff539155d8de7a49679361ed0"
+    },
+    {
+      "path": "docs/release/evidence/simulation/native/500-rc1-beta-1.json",
+      "bytes": 11906,
+      "sha256": "d8f98bc2102be82c4beb57cd12d3bd0eba650d743e1bef3af44d0c38b0f9b31a"
+    },
+    {
+      "path": "docs/release/evidence/simulation/native/summary.json",
+      "bytes": 78255,
+      "sha256": "255d633aff396553a920972e7433efae32742afe70075837e5448f64cf301a8d"
+    },
+    {
+      "path": "docs/release/evidence/simulation/pilot/25-rc1-alpha-0.json",
+      "bytes": 9987,
+      "sha256": "c0947dee857d75b765e0e56f13ed6d141241ef2de8dbc068e648e5f24a8b57a2"
+    },
+    {
+      "path": "docs/release/evidence/simulation/pilot/summary.json",
+      "bytes": 4021,
+      "sha256": "80ae5629663858b7190cd145c421605343a5811135f5140803c0813cfb531f49"
+    },
+    {
+      "path": "docs/release/evidence/simulation/pilot2/25-rc1-alpha-0.json",
+      "bytes": 1095,
+      "sha256": "7763c621ff68d53cf1aad0e5aef8f0148c80767a0fd19c6df60e4fc39247b5db"
+    },
+    {
+      "path": "docs/release/evidence/simulation/pilot2/summary.json",
+      "bytes": 1701,
+      "sha256": "5c41878c8efc557853e57049ca44f3306613ae65c660ed08da1f2e61b4f6c382"
+    },
+    {
+      "path": "docs/release/evidence/simulation/pilot3/25-rc1-alpha-0.json",
+      "bytes": 10863,
+      "sha256": "ccf0fb506e6b1abe3ee97d66c783a9209b3fdb1037798dbfe2c6d022df9a3a2c"
+    },
+    {
+      "path": "docs/release/evidence/simulation/pilot3/summary.json",
+      "bytes": 4990,
+      "sha256": "e8c9e3e6647e9f06df5ea1169062b037d6fdf90200b09806319ab2d82179dbd6"
+    },
+    {
+      "path": "docs/release/evidence/simulation/quality/projection-samples.json",
+      "bytes": 1209194,
+      "sha256": "e2faf9d99f323f8b5392ee4cd865fd4112a58c89c0fbebd9c8fa92979256f3d9"
+    },
+    {
+      "path": "docs/release/evidence/simulation/retest/1000-rc1-alpha-1.json",
+      "bytes": 11327,
+      "sha256": "b549ab2c80bffef1d6c0f981e50f7b0c41b337d4b73576fc6f7488c5bdfbbdfd"
+    },
+    {
+      "path": "docs/release/evidence/simulation/retest/runner.mjs",
+      "bytes": 1162,
+      "sha256": "8873f3e6017940d748c263c0592d6c40547ba0aabebd9c07eb516775968e0526"
+    }
+  ]
+}

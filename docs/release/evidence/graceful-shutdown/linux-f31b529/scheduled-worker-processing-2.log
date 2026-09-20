@@ -1,0 +1,12 @@
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+OMERTÀ worker up — hourly: buyback + season check; daily: §10.4 invariant sweep.
+[director] {"activeSituations":1,"activeCampaigns":1,"generated":0,"resolved":0,"expired":0,"recovered":0,"errors":0,"selections":0,"selectionLatencyMs":0,"evaluationLatencyMs":16.252898000000187,"eventBacklog":0,"generationRatePerHour":0,"resolutionRatePerHour":0,"expiryRatePerHour":0,"recoveryRatePerHour":0}
+🔨 no auction today (no_price)
+the desk is dormant (no $OMR price print yet — expected pre-mainnet)
+🏙️  population: +4 −0 residents (0 picked clean; 4 on the streets, 24 replacements left today)
+🏙️  residents: 2 listed
+🚨 BACKUPS ARE NOT RUNNING (off) — archive_mode is OFF — this database has NO point-in-time recovery. TAKE A MANUAL DUMP (npm run backup) and raise it with your database host.
+🚨 BACKUP INVARIANT DRIFT: [{"name":"wal archiving off","archiveMode":"off","lastArchivedWal":null,"lastFailedWal":null,"secondsSinceArchived":null,"failedCount":0,"note":"Backups are not being shipped. The database is fine; RESTORING it may not be. Take a manual dump."}]
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"character cash","lhs":579123,"rhs":81623,"drift":497500,"ok":false}]
+🚨 §10.4 DRIFT — see alert above
+✅ vig + bond (real-value) invariants hold

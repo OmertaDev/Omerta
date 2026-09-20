@@ -1,0 +1,4 @@
+Campaign network: native concurrent contested operations, conserved provenance, refund replay and late restart PASS
+Campaign network: membership departure revalidation and domain custody recovery PASS
+Campaign network: issued Crew, item and deadline changes reject without partial effects PASS
+Campaign network: native transactional interruption, original issued retry and simultaneous duplicate commands PASS

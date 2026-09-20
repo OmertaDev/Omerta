@@ -1,0 +1,6 @@
+
+> omerta-backend@1.2.0 knowledge
+> node tools/knowledge.js build
+
+knowledge base built — 7731 nodes, 33930 edges
+  3132 artifacts, 802 route registrations (802 unique), 369 tables, 79 Solidity declarations, 1486 commits

@@ -144,6 +144,17 @@ let resolveApi;
 const apiContext = vm.createContext({ token: 'old', _authQueue: Promise.resolve(), projections: { invalidate() {} },
   apiNow: () => new Promise((resolve) => { resolveApi = resolve; }) });
 vm.runInContext(main.slice(apiStart, apiEnd) + '\nthis.callApi = api;', apiContext);
+{
+  const invalidations = [];
+  const passive = vm.createContext({ token: 'current', _authQueue: Promise.resolve(),
+    projections: { invalidate: (kind) => invalidations.push(kind) }, apiNow: async () => ({ code: 200, body: { ok: true } }) });
+  vm.runInContext(main.slice(apiStart, apiEnd) + '\nthis.callApi = api;', passive);
+  await passive.callApi('POST', '/v1/screens', { screens: ['world'] });
+  await passive.callApi('POST', '/v1/commands/observations', { phase: 'opportunity_open' });
+  assert.deepEqual(invalidations, [], 'passive beacons cannot clear a pending player confirmation');
+  await passive.callApi('POST', '/v1/commands/execute', {});
+  assert.deepEqual(invalidations, ['player', 'world'], 'the exact observation exception does not exempt gameplay commands');
+}
 const oldApi = apiContext.callApi('GET', '/private'); await flush();
 apiContext.token = 'new'; resolveApi({ code: 200, body: { private: 'old session' } });
 assert.equal((await oldApi).code, 499, 'even non-projection API responses discard private bodies after session replacement');

@@ -1,0 +1,5 @@
+
+> omerta-backend@1.2.0 knowledge:check
+> node tools/knowledge.js check
+
+knowledge base current — 7731 nodes, 33930 edges; provenance and links valid

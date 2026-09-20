@@ -1,0 +1,18 @@
+{
+  "capturedAt": "2026-09-19T00:05:36.863Z",
+  "sourceCommit": "cf661c399d02290dd1bb4b031c87a9235a65371f",
+  "workingTreeChanges": true,
+  "files": {
+    "src/world-telemetry.js": "888b3695c2aef0b05c2414392885705bbab21b26898830cf2e017379a92f7335",
+    "src/routes/commands.js": "d8002fc7869d387b133ff35f724c7742ecc205e8435cc3c28b9011dc6c168326",
+    "src/routes/modtools.js": "983647b26664e87c5846f7f4086931b14d5c067120496700489b3b188d923d91",
+    "src/server.js": "da74bd6b3c2c435760391d66023e34005e19a04803aac35c58286d98573fb1a0",
+    "src/ratelimit.js": "5e629e671b0bfcc072200b13078e822ff7f4a549a4624dca9abc7f3640233831",
+    "src/projection-events.js": "62571a68234c53e640c507a0787b08088fd181e2c6df5d102981f3772b9e1560",
+    "public/index.html": "6a2a30455b6c845a56065c43938644ab6c8119d0e6c17d448f16f17904c70f39",
+    "test/world-telemetry.js": "1bee08af3fe79e097652dee2f8cd470dced90a3cc1da117a87654176fbdd6b81",
+    "test/player-command-client.js": "54ec6ef7d113bb5f93e4039095aa174c6be2641ee3c319cbd4e911fb7ebbd24e",
+    "test/world-projection-client.js": "7648b4dee09c01c75e8b3f8f47eae919e734202a8c7f0efb07ba76c2e8f63429",
+    "test/projection-events.js": "bd5814bf51a7acc598b05b2bfc404c45e68bc719f63efaa59401c17e8671862f"
+  }
+}

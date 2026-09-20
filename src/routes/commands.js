@@ -2,6 +2,7 @@ import { createPlayerCommandEngine } from '../player-commands.js';
 import { coreProgressionContent } from '../content/core-progression.js';
 import { isDbDown } from '../dbhealth.js';
 import { createConfiguredDirector } from '../director/config.js';
+import { recordWorldObservation, recordWorldCommand, commandConsequenceReferences } from '../world-telemetry.js';
 
 const invalid = () => { const error = new Error('Invalid command request'); error.code = 'bad_command_request'; throw error; };
 
@@ -36,12 +37,33 @@ export function register(app, { pool, auth, receiptTrust = null }) {
       if (Object.entries(req.query || {}).some(([key, value]) => !['operationId', 'mysteryGraphId'].includes(key)
         || typeof value !== 'string' || !/^[\x21-\x7e]{1,160}$/.test(value))) invalid();
     } };
-  app.get('/v1/commands', options, (req) => service.snapshot(req.user.sub, { ...req.query }));
+  app.get('/v1/commands', options, async (req) => {
+    const board = await service.snapshot(req.user.sub, { ...req.query });
+    await recordWorldCommand(pool, req.user.sub, { phase: 'issued', count: board.commands.filter((command) => command.executionIdentity).length });
+    return board;
+  });
+  // Presentation observations are untrusted, bounded counters. They never feed
+  // admission, discovery, selection, or command execution.
+  app.post('/v1/commands/observations', { preHandler: auth, errorHandler: safeError }, async (req) => {
+    if (Object.keys(req.query || {}).length) invalid();
+    await recordWorldObservation(pool, req.user.sub, req.body);
+    return { ok: true };
+  });
   app.post('/v1/commands/execute', { ...options,
     ...(typeof receiptTrust === 'symbol' ? { config: { coordinationReceipts: receiptTrust, currentCommandProjection: receiptTrust } } : {}),
     preValidation: async (req, reply) => {
       reply.header('cache-control', 'no-store');
       if (Object.keys(req.query || {}).length || !req.body || typeof req.body !== 'object' || Array.isArray(req.body)
         || Object.keys(req.body).sort().join(',') !== 'confirmed,executionId') invalid();
-    } }, (req) => service.execute(req.user.sub, { executionId: req.body.executionId, confirmed: req.body.confirmed }, req.headers['idempotency-key']));
+    } }, async (req) => {
+      try {
+        const result = await service.execute(req.user.sub, { executionId: req.body.executionId, confirmed: req.body.confirmed }, req.headers['idempotency-key']);
+        await recordWorldCommand(pool, req.user.sub, { phase: 'completed', executionId: req.body.executionId, replayed: result.replayed,
+          consequenceReferences: commandConsequenceReferences(result) });
+        return result;
+      } catch (error) {
+        await recordWorldCommand(pool, req.user.sub, { phase: 'rejected', executionId: req.body.executionId, reason: error?.code });
+        throw error;
+      }
+    });
 }

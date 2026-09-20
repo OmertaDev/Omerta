@@ -1,0 +1,726 @@
+
+> omerta-backend@1.2.0 pretest
+> node test/current-copy.js && node test/operation-read-paths.js && node test/world-projection-mysteries.js && node test/world-projection-mysteries-api.js && node test/world-projection-read.js && node test/world-projection.js && node test/world-projection-api.js && node test/projection-events.js && node test/projection-events-ws.js && node test/world-projection-client.js && node test/coordination-operation-definitions.js && node test/coordination-mode-boundary.js && node test/coordination-capital.js && node test/coordination-materials.js && node test/coordination-knowledge-proof.js && node test/world-kernel-transaction.js && node test/family-operations.js && node test/family-operations-api.js && node test/world-knowledge-crafting.js && node test/world-kernel-query.js && node test/world-kernel-input.js && node test/world-kernel.js && node test/world-kernel-api.js && node test/coordination-graph.js && node test/coordination.js && node test/coordination-api.js && node test/coordination-http-receipts.js && node test/coordination-knowledge.js && node test/coordination-knowledge-runtime.js && node test/coordination-knowledge-api.js && node test/finalizedobservation.js && node test/stockballotv2.js && node test/rwanominations.js && node test/rwaroutes.js && node test/rwahealth.js && node test/rwahealth.integration.js && node test/rwahealthclearance.js && node test/rwahealthclearancecontext.js && node test/rwahealthoverlay.readiness.js && node test/rwahealthoverlay.schema.js && node test/rwahealthoverlay.vector.js && node test/rwaregistrylifecycle.js && node test/rwaregistrylifecycle.sync.js && node test/agent-referral-cash.js && node test/phase2-discovery.js && node test/phase2-compiler.js && node test/phase2-review-regressions.js && node test/phase2-scale.js && node test/content-graph.js && node test/content-runtime.js && node test/content-social.js && node test/content-seasonal.js && node test/content-seasonal-case.js && node test/content-crafting.js && node test/content-crafting-jobs.js && node test/content-crafting-tools.js && node test/content-exchange.js && node test/content-api.js && node test/v4oraclekeeper.js && node test/genesiscca.js && node test/genesislaunch.js && node test/genesisrelease.js && node test/worldgraph.js && node test/worldgraph-validation.js && node test/items.js && node test/crafting.js && node test/mysteries.js && node test/operations.js && node test/belladonna.js && node test/worldgraph-api.js && node tools/pgcheck-belladonna.js --pg-mem && node test/phase2-definition-schema.js && node test/phase2-definitions.js && node test/phase2-activation.js && node test/phase2-definition-invariants.js && node test/phase2-lot-boundary.js && node test/keepertransactions.js && node test/liquiditykeeper.js && node test/genesiskeeper.js && node test/liquidityaccounting.js --memory && node test/liquidityaccounting-review.js && node test/liquiditypolicy.js --memory && node test/bond-unlimited.js --memory && node test/bondquoteexpiry.js && node test/liquidityrpc.js && node tools/liquidity-manifest-example.js --self-test && node test/liquiditypolicy-review.js && node test/liquidityqueue.js --memory && node test/liquidityqueue-review.js && node test/character-mint-policy.js && node test/phase2-lots.js && node test/phase2-lots-property.js && node test/audit/mint-dev-allocation.js --memory && node test/audit/deed-reimport-order.js --memory && node test/progression-admission.js && node test/world-prerequisites.js && node test/recipe-policy.js && node test/furnace-ledger.js && node test/core-progression-api.js && node test/player-commands.js && node test/player-command-journey.js && node test/player-command-api.js && node test/player-command-client.js && node test/director-definitions.js && node test/director-config.js && node test/director-runtime.js && node test/director-recovery.js && node test/director-dock-world.js && node test/director-commands.js && node test/director-api.js && node test/director-journey.js && node test/director-security.js && node test/director-simulation.js && node test/director-network.js && node test/campaign-network-journey.js && node test/director-network-recovery.js && node test/player-opportunities.js && node test/world-consequences.js
+
+Current copy: shared system status, Codex links, staking rules, release labels and inline scripts passed.
+operation-read-paths: Family/opener/role/returned-promise/legacy-Crew ACL equality, duplicate branches, membership removal, ordering and truncation pass
+operation-read-paths: pass (pg-mem)
+world-projection-mysteries pg-mem: composition, privacy, eligibility, scope and current-character isolation PASS
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+world-projection-mysteries-api: auth, rollout, cohort, strict selection, public prose and current-character isolation PASS
+world-projection-read: branded scoped facts, one authentic union, no row locks/writes, private views and actual custody passed (pg-mem)
+world-projection: real discovery/Crew sharing/crafting/Family resolution, safe cards and one read-only snapshot passed (pg-mem)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+world-projection-api: mounted auth/default-off/cohort/no-store, strict queries, private=missing, player compatibility and HTTP discovery/sharing/revocation passed
+projection-events: private discovery, share/revoke, committed hints, cohort, current WS authority and cleanup pass (pg-mem)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+projection-events-ws: actual Crew leave/rejoin, stale Family feed suppression and coarse socket hints pass
+world-projection-client: stale/session/selection/revocation queues and queued mutation isolation PASS
+coordination-operation-definitions: closed data, pins, custody/material matching, bounds, and skills PASS
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+coordination-mode-boundary: Family reads, mutation, replay, discovery, and open isolation PASS
+coordination-capital: root authority, cash bounds, duplicate commands, refund and role replacement pass
+coordination-capital: cash/escrow/ledger rollback, caught-error poisoning and overflow refusal pass
+coordination-capital: deterministic settlement, death forfeiture and signed cash reconciliation pass (pg-mem)
+coordination-materials: conserved mixed-owner deposit/refund, exact identity, root-owner double-grant refusal, atomic rollback and concurrent replay pass (pg-mem)
+coordination-knowledge-proof: global claim order, bounded authenticated actor predicates, transaction isolation and live ACLs passed (pg-mem)
+world-kernel-transaction: caller-owned atomicity, multi-owner escrow, proof/operation authority, replay and postcommit hints passed (pg-mem)
+family-operations: pinned participant outcome unlocks persistent mystery ending; outsider, uncommitted and disabled sources fail closed
+family-operations: real four-player journey, private views, live revalidation, concurrent replay and restart pass
+family-operations: competing execution, withdrawal/rejoin, cancellation, expiry and deterministic failure pass
+family-operations: after-write rollback/retry, original-character death forfeiture and no OMR movement pass (pg-mem)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+idempotency: store UPDATE failed — key left in-progress, value may have committed Injected lost HTTP receipt acknowledgement
+family-operations-api: mounted policy, strict inputs, assignment, redaction, capital and lost HTTP receipt recovery passed
+world-knowledge-crafting: definition validation, authentic discovery, private projection, exact source and replay pass
+world-knowledge-crafting: sharing opt-in, revocation and live crew membership pass (pg-mem)
+world-knowledge-mysteries: authenticated prerequisites, private discovery, crafting, branching, revocation, replay and persistence pass (pg-mem)
+world-kernel-query: Family operation visibility matches current Family/opener/role/historical promise; legacy Crew policy retained
+world-kernel-query: authoritative refs, bounded graph, affiliation and knowledge visibility passed (pg-mem)
+world-kernel-input: command snapshot survives mutation after replay reservation
+world-kernel: real Crew/Family, salvage/discovery/crafting, provenance and authority gates pass
+world-kernel: Family dissolution clears control and preserves state and event provenance
+world-kernel: persistent public state, replay/race, both write rollbacks and post-commit hints pass (pg-mem)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+idempotency: store UPDATE failed — key left in-progress, value may have committed kernel API proof: lost HTTP receipt acknowledgement
+idempotency: store UPDATE failed — key left in-progress, value may have committed kernel API proof: lost HTTP receipt acknowledgement
+world-kernel-api: mounted auth/cohort, strict input, HTTP discovery/craft/action, hidden state and receipt recovery passed
+coordination-graph: isolated immutable definitions, canonical identity and registry authority pass
+coordination-graph: AND, OR, every M-of-N truth table, clocks and missing state pass
+coordination-graph: hostile schemas, hidden references, cycles and disconnected branches pass
+coordination-graph: node, depth and aggregate predicate limits pass
+coordination-graph: schema 2 typed claims, exact source dependencies, contradictions and v1 hash stability pass
+coordination-graph: pure exact-rule/hash-bound evidence result evaluation rejects callbacks and malformed receipts
+coordination-graph: schema 2 preserves node, depth and total-rule bounds
+coordination: pg-mem journey, visibility, replay, races, pins, historical recovery, zero-value and 10 rollback boundaries pass
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+idempotency: store UPDATE failed — key left in-progress, value may have committed injected lost HTTP receipt-store acknowledgement
+coordination API: strict inputs, auth, safe projections, OpenAPI, cohort, replay, privacy, and stopped-rollout recovery passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+coordination HTTP receipts: delayed success/failure cannot overwrite or delete a replacement reservation; first finalized receipt wins
+coordination-knowledge: checked contexts, immutable provenance, encrypted targets, filtered pages with revoke retry, 12 rollback boundaries, aggregate rebuild bound and disabled recovery pass
+coordination-knowledge-runtime: two-account journey, private projections and live gate revocation pass
+coordination-knowledge-runtime: own-root and same-account heir non-independence, historical recovery pass
+coordination-knowledge-runtime: exact-hash isolation and retired-definition resolution pass
+coordination-knowledge-runtime: incompatible readable source blocks qualification until revoked pass
+coordination-knowledge-runtime: engine/cohort/knowledge/private-only sharing flags pass
+coordination-knowledge-runtime: pg-mem complete journeys, lifecycle/flags, races, discovery rollback and ambiguous commit recovery pass
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+idempotency: store UPDATE failed — key left in-progress, value may have committed injected knowledge HTTP receipt-store failure
+coordination knowledge API: full shared pilot, strict inputs, private projections, stale authority, receipt recovery, archive/link revocation and dormant recovery pass
+finalized observation tests passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ stock ballot v2: DB-time immutable snapshot, exact version votes/standing, ABI tally, durable close/skip preparation
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ RWA nominations v2 domain tests passed — immutable candidate identity, current-seat support, fixed threshold/review ownership, deadline precedence, PostgreSQL duplicate SQL, and bounded stable cursors.
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ RWA HTTP routes passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ RWA reviewer classification requires an unforgeable server-created trust token
+✅ RWA Safe package validation rejects types, not valid BigInt text
+✅ RWA disposition compares exact DB wall time before whole-second packaging
+✅ RWA reviewer queue ranks a dense current-support snapshot without stale holes
+✅ RWA reviewer queue cleanup remains chunk-bounded at the 5,000-row wall
+✅ RWA reviewer queue batches every cleanup transition with exact event payloads
+✅ RWA reviewer queue batches 100 cleanup transitions with exact events
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ RWA reviewer GETs have their own pre/post-auth limiter and no player-read path
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[500] POST /v1/rwa/reviewer/nominations/rwa-completion-store-failure/claim Error: injected reviewer completion-store failure
+    at live.pool.query (file:///C:/Users/Jorge/Documents/Omerta-rc1-baseline/test/rwaroutes.js:833:13)
+    at Object.rwaReviewerMutation (file:///C:/Users/Jorge/Documents/Omerta-rc1-baseline/src/routes/rwa.js:151:33)
+✅ RWA reviewer auth, exact package, replay, and submission routes passed
+✅ RWA approval package failure rolls review, event, and proposal back together
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ RWA reviewer mutations have a bounded reviewer-only rate namespace
+rwahealth: 13 passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ RWA health H1 integration: healthy/action wall, sticky quarantine, source failure, crash resume/replay/evidence, zero-active
+rwa health H2 clearance package tests passed (31 assertions/groups)
+rwahealthclearancecontext: 5 passed
+rwahealthoverlay readiness: 15 passed
+✅ RWA health H2 schema passed — 12 tables, 12 operational indexes, 3 applied-only unique tuples, 3 exact H1 foreign keys, fresh pg-mem materialization, and fail-closed production migration verification.
+rwa health overlay cross-language vector passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+rwaregistrylifecycle: 28 passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+rwaregistrylifecycle sync: finalized RPC, inbox, reconciliation, readiness, and mismatch rollback passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✓ qualified agents receive bounded referral cash; exhausted/reviewed claims hold and agent recruits stay excluded
+✓ package discovery is canonically ordered and fixture authority is server-owned
+✓ new and nested production packages cannot be omitted or shadowed
+✓ review-requested identity, path, race, bound, UTF, diagnostic, and empty-corpus gates pass
+✓ duplicate and case-normalized package identities fail closed
+✓ malformed, duplicate, and prototype-dangerous JSON fails before materialization
+✓ authored JSON byte, depth, string, and container bounds are enforced
+✓ unsupported manifests and oversized authored files are rejected
+✓ symbolic-link escapes are rejected where the platform supports links
+✓ corpus CLI discovers a newly copied production package without script edits
+phase2 discovery tests passed
+✓ canonical bytes and seven-domain typed frames are deterministic and collision-resistant
+✓ package-local identities qualify, ordinals stabilize, and every hash excludes itself
+✓ author ordering is invariant and semantic definition changes propagate without hash recursion
+✓ imports resolve only through exact offline definition and dependency bundle hashes
+✓ duplicate identities, floating/drifted imports, and package cycles fail with stable codes
+✓ direct and stored-byte validation independently reject tampering and noncanonical artifacts
+✓ overlays are snapshotted in canonical package order and absent/empty bytes are distinct
+✓ the closed profile rejects the complete executable/authority/OMR/cash attack vocabulary
+✓ parser, direct discovery/compile, check-corpus, and build-corpus preserve one raw error code
+✓ schema, profile, OMR, cash, and prototype failures retain direct/check/build parity
+✓ build-corpus writes the exact immutable bytes accepted by stored-artifact verification
+✓ only walker provenance grants non-activatable fixture authority and corpus limits stay server-owned
+✓ semantic reference/component/edge/report limits fire before unbounded validation work
+phase2 compiler tests passed
+✓ I1/I2 overlays reject every non-empty payload while absent and empty remain distinct
+✓ I5/spec-I2 adapter registry pins versions, pairings, bounded value, and report authority
+✓ I6/spec-I3 separator-insensitive OMR aliases reject semantic fields and reports derive zero
+✓ spec-I4 package kinds enforce one primary experience and activation closure
+✓ re-review I1 exports are exact owned definitions across direct, CLI, and stored paths
+✓ re-review M1 adapter registry is independently OMR-safe and prototype-closed
+✓ quality value declarations, quantities, and derived report paths are closed
+✓ I3/spec-I5 dependencies prove direct imports and complete transitive closure
+✓ I4 stored validation separately bounds authored source and compiler-owned envelope bytes
+✓ I4b canonical author source does not over-qualify local adapter definition IDs
+✓ re-review R-I3 every effective-corpus aggregate accepts exact limit and rejects plus one
+✓ re-review R-I3 catalog accounting stops on the first byte-budget crossing
+✓ I8/M2 build-corpus emits/reopens transitive bundles and conflicts have stable code
+✓ re-review M2 immutable corpus path types fail with one bounded stable code
+✓ re-review R-M1 staged publication survives an injected interrupted write
+✓ third-review economy reports prove lifecycle closure and block orphan or cyclic activation
+✓ final-review economy proof spans entrypoints, imports, issuance, and operational deltas
+✓ definitive-review profitable subcycles cannot hide behind an optional same-SCC sink
+✓ third-review artifact publication rejects hard links and staged-file swaps
+✓ publisher-race held lock permits live contender stages without deleting them
+✓ publisher-race contender classification rejects foreign stages and changed held locks
+✓ final-review post-verification link substitution is removed by exact inode and retries cleanly
+✓ final-review publisher rejects count and byte budgets before cloning any view
+✓ definitive-review publisher admission is accessor and resizable-view race safe
+✓ definitive-review exact linked-stage crash residue completes without foreign deletion
+✓ definitive-review output names reject portable aliases and Windows-equivalent names before filesystem access
+✓ third-review real high-duplication roots reserve canonical output before graph work
+✓ definitive-review imported semantic snapshots are reserved before callbacks and build
+✓ definitive-spec shared same-corpus imports reserve actual bounded semantics without artificial report ceilings
+✓ definitive-spec exact raw authored-byte limit succeeds and plus one stops before overlay work
+✓ definitive-spec public manifests bind safe dependency import and export identities
+✓ final-review public node ordinals are dense and independent of omitted private topology
+✓ third-review lock identity commits to complete used adapter capabilities
+✓ M1 canonical ordering rejects lone surrogates and diagnostics are UTF-8-byte bounded
+✓ M3 stored and catalog verification require trusted authority and exact identity
+phase2 review regressions passed (35/35 groups)
+✓ linear 10k-node builds are iterative, bounded, and deterministic
+{"fixture":"linear","first":{"fixture":"linear","profile":"phase2_economy","compilerVersion":"phase2a.1","packageCount":1,"nodeCount":10000,"rootNodeCount":10000,"catalogNodeCount":0,"effectiveNodeCount":10000,"effectivePackageCount":1,"dependencyCount":0,"edgeCount":9999,"componentCount":1,"sccCount":10000,"maximumSccSize":1,"maximumWitnessIds":1,"witnessBytes":34,"bundleHash":"9f5068ee26cd48f882319a605f2b2e8da0ba695a137e102cc66daf4dd0963ba0","irHash":"6f905d245678201f647353e3b94030e98d13f418fe81f183499eb9118e6449a3","dependencyLockHash":"02298c62a4b16303f13663ed82bf5d0e13ed975624b156cba4e0eab60fe5be03","publicManifestHash":"5f323061ccc41ab7e7b0d6c7412cf687d84f93db409772ec60793a4954642d91","knowledgeManifestHash":"42f2b89affdaf95a9dc8a8ad21d3938f8f291d4f8425c8c2e6e78e3fa66976a6","reportHashes":{"validation":"c61649d3672b143eb358d2bf96482b8166817b5c68a7fc709c2bc372fb2fcf81","economy":"a50dc536f150f67b6540b4c7a331aeea0eb4d3649ce5d19a0ab1fafc1db65a27"},"reportBytes":{"validation":304,"economy":847},"sealedBundleBytes":5756329,"elapsedMs":10697.8349,"peakRssKilobytes":360052,"peakHeapUsedBytes":null,"endHeapUsedBytes":155537232,"endRssBytes":360869888,"totalOutputBytes":5757990,"summaryOutputBytes":1193},"second":{"fixture":"linear","profile":"phase2_economy","compilerVersion":"phase2a.1","packageCount":1,"nodeCount":10000,"rootNodeCount":10000,"catalogNodeCount":0,"effectiveNodeCount":10000,"effectivePackageCount":1,"dependencyCount":0,"edgeCount":9999,"componentCount":1,"sccCount":10000,"maximumSccSize":1,"maximumWitnessIds":1,"witnessBytes":34,"bundleHash":"9f5068ee26cd48f882319a605f2b2e8da0ba695a137e102cc66daf4dd0963ba0","irHash":"6f905d245678201f647353e3b94030e98d13f418fe81f183499eb9118e6449a3","dependencyLockHash":"02298c62a4b16303f13663ed82bf5d0e13ed975624b156cba4e0eab60fe5be03","publicManifestHash":"5f323061ccc41ab7e7b0d6c7412cf687d84f93db409772ec60793a4954642d91","knowledgeManifestHash":"42f2b89affdaf95a9dc8a8ad21d3938f8f291d4f8425c8c2e6e78e3fa66976a6","reportHashes":{"validation":"c61649d3672b143eb358d2bf96482b8166817b5c68a7fc709c2bc372fb2fcf81","economy":"a50dc536f150f67b6540b4c7a331aeea0eb4d3649ce5d19a0ab1fafc1db65a27"},"reportBytes":{"validation":304,"economy":847},"sealedBundleBytes":5756329,"elapsedMs":11273.6431,"peakRssKilobytes":374752,"peakHeapUsedBytes":null,"endHeapUsedBytes":101490464,"endRssBytes":347627520,"totalOutputBytes":5757990,"summaryOutputBytes":1193}}
+✓ branching 10k-node builds are iterative, bounded, and deterministic
+{"fixture":"branching","first":{"fixture":"branching","profile":"phase2_economy","compilerVersion":"phase2a.1","packageCount":1,"nodeCount":10000,"rootNodeCount":10000,"catalogNodeCount":0,"effectiveNodeCount":10000,"effectivePackageCount":1,"dependencyCount":0,"edgeCount":14000,"componentCount":1,"sccCount":9745,"maximumSccSize":256,"maximumWitnessIds":128,"witnessBytes":4863,"bundleHash":"40ea8da76ffc08a6f2b9c1e81ab23b21152c4e3a139d2d734d31a144dfd97576","irHash":"e53909493d534c3037b55eb95c92c9d8b2c2addf54b7ca86ff47e52b65d8095b","dependencyLockHash":"eed1768fd8dda8aeab29260a8aed1392fa9b4d1b74147a91feb2996f64f7c96a","publicManifestHash":"346de75beecb6b3b4370d5ebed01a37b268360f3b888ba24c3b5dc25a39efd3d","knowledgeManifestHash":"6879a01f516c2ae67c42155e5cad1683275e20d099f7a227e64480f463391c88","reportHashes":{"validation":"aba4a52783318c0e96265fdb7b51490a86f30a28c24a3e7f714798392369d953","economy":"a53ea04a8fab993ec458dbd29fa9f1772545c0d4984eb2168e111931ce37f638"},"reportBytes":{"validation":5138,"economy":850},"sealedBundleBytes":7168936,"elapsedMs":13485.3517,"peakRssKilobytes":401856,"peakHeapUsedBytes":null,"endHeapUsedBytes":157176848,"endRssBytes":357834752,"totalOutputBytes":7175440,"summaryOutputBytes":1203},"second":{"fixture":"branching","profile":"phase2_economy","compilerVersion":"phase2a.1","packageCount":1,"nodeCount":10000,"rootNodeCount":10000,"catalogNodeCount":0,"effectiveNodeCount":10000,"effectivePackageCount":1,"dependencyCount":0,"edgeCount":14000,"componentCount":1,"sccCount":9745,"maximumSccSize":256,"maximumWitnessIds":128,"witnessBytes":4863,"bundleHash":"40ea8da76ffc08a6f2b9c1e81ab23b21152c4e3a139d2d734d31a144dfd97576","irHash":"e53909493d534c3037b55eb95c92c9d8b2c2addf54b7ca86ff47e52b65d8095b","dependencyLockHash":"eed1768fd8dda8aeab29260a8aed1392fa9b4d1b74147a91feb2996f64f7c96a","publicManifestHash":"346de75beecb6b3b4370d5ebed01a37b268360f3b888ba24c3b5dc25a39efd3d","knowledgeManifestHash":"6879a01f516c2ae67c42155e5cad1683275e20d099f7a227e64480f463391c88","reportHashes":{"validation":"aba4a52783318c0e96265fdb7b51490a86f30a28c24a3e7f714798392369d953","economy":"a53ea04a8fab993ec458dbd29fa9f1772545c0d4984eb2168e111931ce37f638"},"reportBytes":{"validation":5138,"economy":850},"sealedBundleBytes":7168936,"elapsedMs":13809.141,"peakRssKilobytes":396656,"peakHeapUsedBytes":null,"endHeapUsedBytes":169091456,"endRssBytes":345530368,"totalOutputBytes":7175440,"summaryOutputBytes":1202}}
+✓ aggregate catalog-plus-root 10k-node builds are bounded and deterministic
+{"fixture":"aggregate","first":{"fixture":"aggregate","profile":"phase2_economy","compilerVersion":"phase2a.1","packageCount":1,"nodeCount":7000,"rootNodeCount":7000,"catalogNodeCount":3000,"effectiveNodeCount":10000,"effectivePackageCount":2,"dependencyCount":1,"edgeCount":6999,"componentCount":1,"sccCount":7000,"maximumSccSize":1,"maximumWitnessIds":1,"witnessBytes":42,"bundleHash":"bdbfa3064054e265b2fc1244ac600f65b2313237d09d42a19ff5aa7fac4b9b47","irHash":"62f6fa4fa15dfc366b34067943f0d61206ca71e1fb89fcde347608453f166ced","dependencyLockHash":"710f21756c512c02ca9c87b613c228179cdcb910b6f1f7c2652747ea23732495","publicManifestHash":"95cf2a0c511880448f3830bfd8740753decfce6535a778457ddba96a6dc612ab","knowledgeManifestHash":"bcda70239fac527d0adfd463781d3fa69863857fdd1f33a4effb1631c0a0db6b","reportHashes":{"validation":"6b3325451e701b5ac1b0aea137bcde13b9b5c7dd47d35f3993f4344fef2f4846","economy":"874aba258e210f0731fd77296ac3442aa9fb6e2e93f5c183ee1f86cdcffa7db7"},"reportBytes":{"validation":318,"economy":855},"sealedBundleBytes":4362431,"elapsedMs":13435.5797,"peakRssKilobytes":354580,"peakHeapUsedBytes":null,"endHeapUsedBytes":102954104,"endRssBytes":315068416,"totalOutputBytes":6279700,"summaryOutputBytes":1196},"second":{"fixture":"aggregate","profile":"phase2_economy","compilerVersion":"phase2a.1","packageCount":1,"nodeCount":7000,"rootNodeCount":7000,"catalogNodeCount":3000,"effectiveNodeCount":10000,"effectivePackageCount":2,"dependencyCount":1,"edgeCount":6999,"componentCount":1,"sccCount":7000,"maximumSccSize":1,"maximumWitnessIds":1,"witnessBytes":42,"bundleHash":"bdbfa3064054e265b2fc1244ac600f65b2313237d09d42a19ff5aa7fac4b9b47","irHash":"62f6fa4fa15dfc366b34067943f0d61206ca71e1fb89fcde347608453f166ced","dependencyLockHash":"710f21756c512c02ca9c87b613c228179cdcb910b6f1f7c2652747ea23732495","publicManifestHash":"95cf2a0c511880448f3830bfd8740753decfce6535a778457ddba96a6dc612ab","knowledgeManifestHash":"bcda70239fac527d0adfd463781d3fa69863857fdd1f33a4effb1631c0a0db6b","reportHashes":{"validation":"6b3325451e701b5ac1b0aea137bcde13b9b5c7dd47d35f3993f4344fef2f4846","economy":"874aba258e210f0731fd77296ac3442aa9fb6e2e93f5c183ee1f86cdcffa7db7"},"reportBytes":{"validation":318,"economy":855},"sealedBundleBytes":4362431,"elapsedMs":13533.2663,"peakRssKilobytes":338464,"peakHeapUsedBytes":null,"endHeapUsedBytes":78390408,"endRssBytes":302940160,"totalOutputBytes":6279700,"summaryOutputBytes":1195}}
+phase2 scale tests passed
+✓ content CLI validates a non-vacuous pack and emits its deterministic bundle identity
+✓ canonical bundle identity is independent of author/object/node/edge ordering
+✓ dangling authored dependencies fail closed with the exact edge named
+✓ node ontology is allowlisted; authored executable kinds fail closed
+✓ edge ontology is allowlisted; unknown dependency verbs fail closed
+✓ duplicate node identities fail closed before dependency resolution
+✓ duplicate dependencies fail closed before hashing or runtime application
+✓ arbitrary authored gate evaluators cannot enter the compiled bundle
+✓ arbitrary authored effects cannot execute through the content runtime
+✓ growth intent is mandatory even for intentionally internal content
+✓ agent cash is confined to qualified activation/retention, never raw signup
+✓ agent referral cash must fit inside an explicit reserved liability
+✓ the reviewed graph explicitly compiles cash rewards for agent recruiters
+✓ accidental content dependency cycles fail with the exact cycle path
+✓ build emits a byte-identical immutable bundle and supports idempotent rebuilds
+✓ recruitment graphs cannot authorize autonomous outreach or publication
+✓ the compiler rejects time-based OMR faucets
+✓ collectible export is optional and gameplay-inert by construction
+✓ crafting recipes cannot compile with impossible ingredients
+✓ raw material sources compile only with finite epoch budgets
+✓ collaboration graphs require distinct agent and consenting human roles
+✓ Sixth Chair vertical slice spans mysteries, social growth, items, export, and finite OMR
+✓ live runtime manifests are strict, capability-gated, private-answer-complete, and single-authority
+✓ Sixth Chair v2 activates only its complete, private-answer-backed, value-neutral mystery spine
+✓ six district storylets are personal, location-gated, sequential, private-answer-safe, and value-neutral
+✓ late-game content declarations are rank-gated, build-reactive, optionally social, and narratively persistent
+✓ identity content declarations are closed over canonical Path, skill, regimen, honor, and Underworld catalogs
+✓ seven Don Cases form a rank-gated, build-reactive, persistent, value-neutral late-game spine
+✓ six Path Cases are identity-gated, build-reactive, persistent, and value-neutral
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✓ content runtime pins bundles, enforces party authority, resolves the graph, and claims value-neutral rewards exactly once
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✓ The Two-Man Rule enforces two-seat organization authority, parallel role branches, and exact-once value-neutral claims
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ seasonal authored-content runtime contract passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ The Books Open at Midnight seasonal case contract passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ The Bellini Restoration authored crafting and supply-chain contract passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ authored work orders and exact-hash skill progression contract passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ exact-hash authored durable tools and location facilities contract passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ exact-hash authored material exchange contract passed
+✅ authored content API and OpenAPI contracts passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ v4 oracle keeper passed — health states, uint32 wrap, early no-op, atomic race, persist-before-send, byte-identical retry, pending/revert recovery, overlong rebaseline, and wrong-chain refusal
+PASS 2006 schedule conservation/monotonicity/encoding cases; seed 0x168c0de
+✅ Automated Genesis bootstrap/binding: coherent uninitialized oracle accepted, exact factory/strategy proof, unsigned simulated Safe payload, and 47 rejection cases.
+✅ Genesis CCA config/preflight test passed — exact allocation, schedule, pricing, pinned stack, zero-tax hook, splitter, one-shot allowances, and unsigned atomic launcher calldata.
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ Genesis launch gate test passed — Desk and bonds close through auction/migration/oracle warm-up, prepare drains existing fills, and live reopens normal operations.
+✅ Automated Genesis release: 75 source files and 13 artifacts,
+  mandatory automated audit/rehearsal scope, pinned POL custody, distinct auction clocks, and pending/verified binding stages.
+✅ Genesis production release gate passed — fresh chain cadence, source/bytecode freeze, audit scope, governance custody, fork evidence, and independent Safe ceremony all fail closed and bind exact unsigned calldata.
+✓ world graph registry and dependency evaluator passed
+✓ world graph static validation passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ test/items.js — conserved stacks, permanent unique items, single-custody operation escrow, provenance, and conflict-safe logical replay
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✓ graph crafting and atomic automotive salvage passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✓ data-defined mystery runtime passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+operations ok
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+belladonna ok
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ world-graph Phase 1 HTTP authority, replay, privacy, and economy contract passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+  ✓ Belladonna same-key salvage consumes one real car into exact graph quantities
+  ✓ Belladonna salvage, replay, and failed fresh action move held car and one guard sink together
+  ✓ Belladonna salvage, replay, and failure create no currency row
+  ✓ Belladonna production consumes the exact inputs into one permanent precision tool
+  ✓ Belladonna production has one $300 cash sink, one ledger row, and zero OMR movement
+  ✓ Belladonna mystery escrows the exact crafted tool under its pinned instance
+  ✓ Belladonna terminal closes the character/account/version-pinned Task 5 bridge
+  ✓ Belladonna assigns four distinct accounts under database authority
+  ✓ Belladonna delivers two distinct role-private evidence branches
+  ✓ Belladonna converges four ordered branches with the mechanic tool in custody
+  ✓ pg-mem control terminal rollback removes awards, status, release, and guard
+  ✓ Belladonna pg-mem control executes the same completion race
+  ✓ Belladonna concurrent convergence awards one inert artifact/status and returns custody once
+  ✓ Belladonna mystery and operation add zero cash, OMR, or currency-ledger movement
+  ✓ Belladonna retains one exact unique-item provenance chain end to end
+  ✓ Belladonna PostgreSQL fixture cleanup leaves no run-owned rows
+  ✓ Belladonna same-key salvage consumes one real car into exact graph quantities
+  ✓ Belladonna salvage, replay, and failed fresh action move held car and one guard sink together
+  ✓ Belladonna salvage, replay, and failure create no currency row
+  ✓ Belladonna production consumes the exact inputs into one permanent precision tool
+  ✓ Belladonna production has one $300 cash sink, one ledger row, and zero OMR movement
+  ✓ Belladonna mystery escrows the exact crafted tool under its pinned instance
+  ✓ Belladonna terminal closes the character/account/version-pinned Task 5 bridge
+  ✓ Belladonna assigns four distinct accounts under database authority
+  ✓ Belladonna delivers two distinct role-private evidence branches
+  ✓ Belladonna converges four ordered branches with the mechanic tool in custody
+  ✓ pg-mem control terminal rollback removes awards, status, release, and guard
+  ✓ Belladonna pg-mem control executes the same completion race
+  ✓ Belladonna concurrent convergence awards one inert artifact/status and returns custody once
+  ✓ Belladonna mystery and operation add zero cash, OMR, or currency-ledger movement
+  ✓ Belladonna retains one exact unique-item provenance chain end to end
+  ✓ Belladonna PostgreSQL fixture cleanup leaves no run-owned rows
+✅ Belladonna pg-mem harness control passed
+phase2-definition-schema: clean schema, repeat application and translate pass
+phase2-definitions: admission, atomic registration, replay, versions and no-repair pass
+phase2-definitions: snapshots, every-write compensation, interleavings, recovery and optional matrix pass
+phase2-definitions: malformed dependency admission, independent resource ceilings and root verifier codes pass
+phase2-definitions: exact dependency DAGs, resource ceilings, corruption and intrinsic safe projection pass
+phase2-definitions: ambiguous commit replay, unconfirmed rollback and extraneous membership pass
+phase2-activation: trusted policy, immutable admission, fixture refusal and legacy separation pass
+phase2-activation: exact CAS table, ABA, audit history and complete namespace replacement pass
+phase2-activation: all eleven post-write recovery points and pre-delete abort restore exact six-table snapshots
+phase2-activation: COMMIT recovery, current-policy denial and coherent cross-alias read/write orderings pass
+phase2-activation: corrupt selections fail closed, one exact join and canonical historical evidence pass
+phase2-activation: production experiences, exact pinned dependencies and safe revision ceiling pass
+phase2-activation: immutable-read operational failures preserve boundary mapping and cleanup; intrinsic refusals remain inactive
+phase2-definition-invariants: legacy, register-only, selected policy and historical/current separation pass
+phase2-definition-invariants: 30 operational/unexpected verifier read refusals preserve safe owner errors, no alerts, state and gate usability
+phase2-definition-invariants: 34 independently restored corruption cases pass
+phase2-definition-invariants: whole-callback cross-alias reads and commit/compensation interleavings pass
+phase2-definition-invariants: populated legacy R2 refusal, pinned R1, Bellini lots/jobs/skill/tool/exchange, Phase 1 custody/replay and ledger equal after every Phase 2 boundary
+phase2-definition-invariants: alert delivery occurs after gate release
+phase2-lot-boundary: closed optional transitions, exact-use assertions and empty-versus-absent replay pass
+phase2-lot-boundary: v1 callback same-transaction retry recovery, fresh retry once and pre-existing receipt preservation pass
+phase2-lot-boundary: v1 after-insert same-transaction retry recovery, fresh retry once and pre-existing receipt preservation pass
+phase2-lot-boundary: v1 before-insert same-transaction retry recovery, fresh retry once and pre-existing receipt preservation pass
+phase2-lot-boundary: v2 callback same-transaction retry recovery, fresh retry once and pre-existing receipt preservation pass
+phase2-lot-boundary: v2 after-insert same-transaction retry recovery, fresh retry once and pre-existing receipt preservation pass
+phase2-lot-boundary: v2 before-insert same-transaction retry recovery, fresh retry once and pre-existing receipt preservation pass
+phase2-lot-boundary: raw/registry/nested authority, null-ID v2 SQL refusal and distinct-client pinned definition participation pass
+phase2-lot-boundary: legacy exact digest/result, raw-key conflicts, replay before authority and unchanged guards/events pass
+phase2-lot-boundary: v2 private snapshot, every authority conflict, permanent detached result and account/action independence pass
+phase2-lot-boundary: before/after guard/event faults and swallowed leaf/root poison restore exact snapshots
+phase2-lot-boundary: S2 reserved own-data keys reject recursively before callback or guard insertion
+phase2-lot-boundary: S4 exact hashes reject arrays and other inert non-string values without state changes
+phase2-lot-boundary: actual craft audit after-INSERT failure restores exact cash/ledger/item snapshot; same-key retry spends once
+phase2-lot-boundary: permanent v1 dead/replaced actor, deleted car, participant drift and retired cancellation receipt fixtures pass
+phase2-lot-boundary: S1 Crew admission/locks precede owner/aggregate locks and separate item admission; late or repeated sets reject
+phase2-lot-boundary: both gate directions and alias recovery exclude interleaving for whole callbacks
+phase2-lot-boundary: PASS
+phase2-lot-boundary: failed inverse poisons queued/acquired handles and every read/write/invariant alias until process recreation
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+PASS native Hook settlement requires historical proof; rotation/RPC refusal holds revenue and wallet until verified without rebroadcast
+PASS canonical receipt is rechecked after historical RPC proof before opening bookkeeping transaction
+PASS real signed request persists before send; replay settles once; payload rebinding and raw status leakage refused
+PASS timeout before broadcast retries identical signed bytes and blocks sibling jobs
+PASS lost response after broadcast reconciles exact receipt without a second action
+PASS consumed nonce without our receipt halts the wallet and never signs a replacement
+PASS pending transaction restart retries the same nonce/hash/bytes
+PASS confirmation depth precedes settlement; changed finalized block halts future sends
+PASS pre-finality reorg does not book or rebroadcast under uncertain authority
+PASS finalized revert never books and releases asset reservation while retaining gas budget
+PASS confirmed spend and pending reservations share a bounded budget before signing
+PASS failed database booking retains confirmed transaction and blocks all new wallet jobs until settled
+PASS required typed settlement acknowledgement and unjournaled consumed nonces fail closed
+PASS wrong chain, changed runtime, tampered signed payload and external pending nonce refuse before send
+PASS concurrent same-process jobs serialize across the entire wallet nonce domain
+PASS exact planning keys retain long-cadence action authority beyond the 100-row status window
+PASS keeper transport: 16 cases (pg-mem); no live transactions
+PASS manifest rejects arbitrary calls, wrong chain, unpinned targets, custody drift, duplicate lanes, gas dust and excessive slippage
+PASS typed calldata pins recipients, oracle floor, fixed POL position and zero keeper value with bounded asset budgets
+PASS RPC domain/code/reorg failures reject observations and owner/recipient binding failures cannot authorize jobs
+PASS unhealthy foundation, emergency latch, pause and executor cooldown stop dependent asset spending
+PASS stale observations, unseeded keeper gas, uneconomic sweeps, over-cap refills and stale token valuation fail closed
+PASS Desk requires explicit database band strategy and preserves its approved anchor in receipt metadata
+PASS Bank service jobs use predeclared borrower/market/asset bindings, positive debt service and accrued-fee floors without a fictional asset price
+PASS Bank buffer funding uses the prefunded fixed-market vault with no caller amount, full action-cap reservation and zero residual allowance
+PASS Bond daily issuance requires exact manifest/cap parity; unlimited preserves owner/token/minter/health/oracle/price/pause/runtime guards and existing manifest hashes
+PASS read-only default needs no signer, manifest byte digest and dedicated signer are enforced, disabled mode is inert
+PASS liquidity keeper: 10 cases; no live transactions
+PASS successful migration discovers and simulates only the actual full-range foundation NFT using distinct L2 log bounds
+PASS wrong custody/pool/range/floor/subscription, ambiguous candidates and absent or failed migration proof never authorize foundation adoption
+PASS permissionless external migration works through indexed strategy receipt, paged scans remain bounded, stale discovery does not block gas work
+PASS phase progression is permissionless only after owner binding, migration failure exposes fixed recovery, stopped launches stay stopped and phase remains observable without jobs
+PASS genesis keeper: 4 cases; no live transactions
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+PASS all four confirmed swap streams settle actual custody exactly once
+PASS direct OMR fees credit only delivered amounts and never invent an ETH price
+PASS odd wei and sub-micro dust cannot increase signable capacity
+PASS missing, forged and wrong-destination transfer receipts are rejected
+PASS a receipt from a changed executor sequence cannot replay a settlement
+PASS inflow-index lag holds accounting without partial pool or reserve writes
+PASS reserve, desk and community invariants include direct tokens as explicit backing
+{"suite":"liquidity accounting","passed":7,"postgres":false}
+PASS canonical nested target metadata accepts an actual permissionless outer call
+PASS selected executor sequence validates only its own exact delivery segment
+PASS POL token-denominated fees need exact OMR delivery to both fixed recipients
+PASS hook token sweeps need exact token delivery instead of an unsupported event-only credit
+PASS Desk accounting preserves the existing lower-band and sanity-floor gates
+PASS backfilled Vig prices retain their actual block time instead of becoming fresh at ingestion
+PASS micro-unit flooring never rounds a physical token allocation upward through Number
+PASS Vig historical price continuity remains bounded before a new canonical print is published
+{"suite":"liquidity accounting adversarial regressions","passed":8,"failed":0}
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+PASS absent, expired and deployment-mismatched observations close authority
+PASS bond pause leaves general market health available but prevents daily authority
+PASS read-only planning does not publish a heartbeat or open issuance
+PASS daily offering requires explicit policy and clips to the contract cap
+PASS a manual emergency stop survives automatic retries even while unhealthy
+PASS the next day clips to exact remaining lifetime capacity and never refills it
+PASS Genesis warmup, failed migration and unhealthy foundation do not open markets
+PASS explicit unlimited heartbeat requires zero cap and creates no daily offering row
+PASS unlimited readiness still fails for positive cap, bond pause and unhealthy foundation
+PASS unlimited mode rejects legacy daily controls instead of reporting an ineffective pause
+10 liquidity policy checks passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+PASS two customers sign 5000 and 10000 OMR on the same day without an offering row
+PASS used quotes transition to committed without double counting or releasing allocation
+PASS manual booking of a quoted nonce is not counted again as outstanding
+PASS exact payout rounding cannot overallocate at signing or release dust when booked
+PASS discretionary booking cannot consume another outstanding quote reservation
+PASS wall-clock-expired quotes remain reserved when chain proof is unavailable
+PASS a later quote automatically releases finalized unused reservations with durable domain proof
+PASS a used nonce before expiry holds its allocation while the watcher is behind
+PASS unlimited mode ignores old daily rows and rejects ineffective daily stop controls
+PASS missing or capped manifest policy retains daily offering checks
+PASS paused, unhealthy, stale and cap-mismatched observations never sign
+PASS live oracle failure, wrong RPC chain, missing wallet and nonfinite principal cannot sign
+PASS heartbeat expiry during price RPC and a different signing contract both refuse quotes
+13 unlimited bond checks passed (pg-mem; no concurrency proof)
+PASS additive schema migrations include nullable deployment domain and expiry evidence
+PASS a finalized unused expired quote releases once and retains complete proof without RPC under a lock
+PASS wrong RPC chain retains the reservation
+PASS wrong runtime retains the reservation
+PASS missing runtime retains the reservation
+PASS unsupported finalized block retains the reservation
+PASS RPC failure during nonce lookup retains the reservation
+PASS changed canonical finalized hash retains the reservation
+PASS future finalized timestamp retains the reservation
+PASS used nonce awaiting watcher retains the reservation
+PASS exact deadline boundary retains the reservation
+PASS wall-clock expiry before finalized chain expiry retains the reservation
+PASS configured contract mismatch refuses recovery before RPC
+PASS configured chain mismatch refuses recovery before RPC
+PASS invalid manifest policy refuses recovery before RPC
+PASS missing manifest bond runtime pin refuses recovery before RPC
+PASS legacy missing domain remains reserved without current-contract inference
+PASS another deployment remains reserved without current-contract inference
+PASS another chain remains reserved without current-contract inference
+PASS database recheck preserves a watcher consumed status race
+PASS database recheck preserves a deadline changed race
+PASS database recheck preserves a deployment changed race
+PASS database recheck preserves a bond booked without updating quote status race
+PASS one recovery call considers at most the oldest 100 candidates
+24 bond quote expiry checks passed with deterministic finalized-RPC fixtures and disposable pg-mem SQL; no live network or broadcasts.
+PASS failed primary RPC falls back to the next endpoint without creating a signer
+PASS read-only watcher constructor and chain probe share fallback for fee inflow reads
+PASS repeated chain probes refuse outage/wrong chain and recover on the next healthy probe
+PASS unsigned manifest schema: 22 typed jobs; placeholders rejected; no network or signer
+PASS an older healthy observation cannot reopen the process-local phase after a newer unhealthy one
+PASS Desk minimum output rounds against the exact approved band ceiling
+PASS a Vig print timestamped after the snapshot cannot authorize the Desk strategy
+{"suite":"liquidity policy adversarial review","passed":3,"failed":0}
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+PASS missing existing signer or extraction domain remains dormant without RPC or queue writes
+PASS backlog and unresolved keeper receipts cannot cause signing
+PASS funded existing queue drains FIFO with exact EIP-712 signer and domain
+PASS already claimed obligations continue to consume lifetime funding
+PASS physical claim balance bounds unclaimed signatures and new queue completion together
+PASS claimed history is excluded from physical obligations but cannot restore lifetime capacity
+PASS configured chain and claim must exactly match the approved manifest
+PASS wrong RPC chain, runtime, signer, token and owner preserve all queued requests
+PASS claim pause and stale or reorganized reads never sign
+PASS a signing configuration change during verification cannot change the approved domain
+{"suite":"confirmed liquidity queue completion","passed":10,"postgres":false,"signer":"public synthetic fixture only"}
+PASS exact reserve edge cannot sign a six-decimal claim one micro above backing
+PASS character mint preflight: exact 10000 DEV policy; stale or unreadable deployments unready
+invariant correction: 34 persisted SQL-valid corruptions rejected, exact fixture restoration and clean rechecks PASS
+invariant correction: observed active/escrowed/released/transferred/consumed histories and exact transitions PASS
+invariant correction: C custody index visits plus U exact-unique lookups at two scales PASS
+fifo-correction drift: quantity, identity, earlier prefix, changed shortfall, irrelevant tail, zero-write abort and same-key retry/replay PASS
+fifo-correction filtering: ten exact economic dimensions, null/non-null SQL selection and scalar binds PASS
+fifo-correction overlap: sufficient prefix, repeated/partial/explicit/exact ordering, unchanged shortage and replay PASS
+external-correction crafting: exact-only refusal, exact-first collision selects legacy, exact history and replay PASS
+external-correction mysteries: exact-only refusal, exact-first collision selects legacy, exact history and replay PASS
+external-correction operations: exact-only refusal, exact-first collision selects legacy, exact history and replay PASS
+external-correction paging: 4097 complete grants, FIFO 1/100 pages, page-local groups, hidden details, exhausted anchor, closed cursor PASS
+fifo-correction bounds: 4097 real compatible holdings, unrelated/explicit selection, shared overflow/shortage, 4096 mixed-key success and replay PASS (17 bounded queries, max 4097 returned rows; no row-visit/index-performance claim)
+external-correction ids: 200/201/258 exact lot/unique grants, events, transition/replay and legacy bounds PASS
+external-correction error observation: {"mode":"registry","actualCode":"content_registry_corrupt","expected":"content_registry_corrupt"}
+external-correction error observation: {"mode":"missing","actualCode":"definition_not_found","expected":"definition_not_found"}
+external-correction error observation: {"mode":"integrity","actualCode":"item_integrity_error","expected":"item_integrity_error"}
+external-correction error observation: {"mode":"operational","actualCode":"42P01","expected":"42P01"}
+external-correction error observation: {"mode":"operational-aborted","actualCode":"42P01","expected":"42P01"}
+external-correction error observation: {"mode":"malformed","actualCode":"bad_item_request","expected":"bad_item_request"}
+external-correction error observation: {"mode":"candidate","actualCode":"contention","expected":"contention"}
+external-correction errors: revalidation classification, poisoned-root rollback and same-key retry PASS
+external-correction legacy-board: exact unique stays stored and invisible to legacy inventory PASS
+external-correction assignment: corrupted legacy-shaped alias on exact row refused at precheck PASS
+phase2-lots: exact lots/uniques, complete mixed candidates, custody/owner transitions, historical lineage, SQL constraints, recovery and replay PASS
+phase2-lots-property: 1/100 seeds, 250 actions, 9.9s elapsed
+phase2-lots-property: 10/100 seeds, 2500 actions, 101.8s elapsed
+phase2-lots-property: 20/100 seeds, 5000 actions, 206.7s elapsed
+phase2-lots-property: 30/100 seeds, 7500 actions, 308.2s elapsed
+phase2-lots-property: 40/100 seeds, 10000 actions, 400.3s elapsed
+phase2-lots-property: 50/100 seeds, 12500 actions, 493.0s elapsed
+phase2-lots-property: 60/100 seeds, 15000 actions, 593.7s elapsed
+phase2-lots-property: 70/100 seeds, 17500 actions, 695.0s elapsed
+phase2-lots-property: 80/100 seeds, 20000 actions, 789.8s elapsed
+phase2-lots-property: 90/100 seeds, 22500 actions, 888.6s elapsed
+phase2-lots-property: 100/100 seeds, 25000 actions, 985.8s elapsed
+phase2-lots-property: FULL 100 seeds x 250 actions {"grant_lot":3450,"grant_unique":4048,"split":1755,"consume_lot":1800,"escrow_lot":1840,"escrow_unique":1793,"release_lot":910,"release_unique":870,"consume_escrow_lot":902,"consume_unique":1655,"consume_escrow_unique":837,"transfer_unique":1690,"fault_grant":1718,"bad_quantity":1732,"retry":1718,"replay":2342}
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{"ok":true,"database":"pg-mem","mintGrossEth":0.02,"mintDevEth":0.02,"historicalAndNonMintGrossEth":0.03,"mintCredits":4,"historicalRowsPreserved":true,"allocationInvariantDetectsPhantomRevenue":true}
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+burn before Extracted: status=pending
+pg-mem: sequential recovery checked; concurrency requires the Postgres run
+PASS deed reimport event ordering (pg-mem): signed extraction, durable pending burn, exact recipient, once-only recovery and replay
+progression-admission: exact cross-engine pins, dependency cycles, branch/collective policy, hidden deadends, privacy and canonical snapshot PASS
+world-prerequisites pg-mem: PASS
+recipe-policy: baseline V1 craft and salvage receipts replay across upgrade; explicit policy changes still conflict
+recipe-policy: authentic discovery, redacted partial cards, hidden learned outputs, read parity and revoked replay pass
+recipe-policy: live Crew/Family membership, real mystery completion, retained crafted provenance and world facility state pass
+recipe-policy: authoritative account/global/territory caps, period rollover and serialized duplicate debit pass
+recipe-policy: quota insert/update and late inventory failure compensation, retry and restart durability pass
+furnace-ledger preserve: acquisition, hidden craft/clue, distinct original sources, Crew sharing, different-Crew Family roles, irreversible choice, collective consequence, replay/restart and outsider boundaries PASS
+furnace-ledger expose: acquisition, hidden craft/clue, distinct original sources, Crew sharing, different-Crew Family roles, irreversible choice, collective consequence, replay/restart and outsider boundaries PASS
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+core-progression-api: default-off/cohort, shared admission, mystery snapshot, replay and collective-only HTTP gates pass
+PASS stable versioned command contract and server-derived opportunities
+PASS hidden prerequisite privacy, account-bound issuance, opaque identity and request substitution denials
+PASS bounded identity mutation fuzzing cannot manufacture authorization
+PASS stable issuance, duplicate, double click and durable replay
+PASS stale location, revoked account authority and dead-character revalidation
+PASS expired unexecuted opportunity cannot mutate the world
+PASS confirmation, consumed asset removal and timeout retry without economic duplication
+PASS item consumed after projection denies execution without partial economy effects
+PASS new database connection and engine restart preserve replay identity
+PASS indexed entity window, command/opportunity caps and deterministic relevance ranking
+player-commands: 10 groups passed (memory)
+player-command-journey preserve: personalized lead, discovery, hidden prerequisites, salvage, craft, knowledge revocation, Crew changes, roles, commitments, persistent branch, feedback, differential views and restart PASS
+player-command-journey expose: personalized lead, discovery, hidden prerequisites, salvage, craft, knowledge revocation, Crew changes, roles, commitments, persistent branch, feedback, differential views and restart PASS
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+player-command-api: authentication, cohort, strict request shape, account binding, no-store, exact HTTP retries, current projection and character isolation PASS
+player-command-client: issued commands, all availability states, context actions, confirmation, retry/restart identity, double clicks, session isolation and private rendering PASS
+director definitions: 53 rejection checks, immutable admission, semantic pressures, three canonical campaign branches passed
+PASS Director configuration: disabled default, prerequisite/cohort gates, no shadow content exposure, retained foundation interfaces
+PASS Director runtime: real pressure, disabled/simulation/shadow, durable creation/restart/replay, escalation, expiry and recovery
+Director recovery: expired aftermath resumes once after cooldown with durable recovery lineage
+Director recovery: season change records explicit recovery while preserving world consequences
+Director recovery: multiple physical outcomes between evaluations catch up to canonical campaign completion
+Director recovery: complete canonical chain committed before deadline survives a late worker restart
+Director recovery: terminal follow-up committed before deadline survives a late worker restart
+Director recovery: canonical outcomes committed after deadline remain late without erasing world consequences
+Director recovery: timely protection observed after campaign expiry preserves and resumes its unresolved aftermath
+Dock War protected: real domain branch, retry, custody and canonical history passed
+Dock War intercepted: real domain branch, retry, custody and canonical history passed
+Dock War alternate_route: real domain branch, retry, custody and canonical history passed
+Dock War opposition: concurrent Family operations, single canonical outcome and losing-side recovery passed
+director-commands: shared knowledge snapshot, authorized cards, opaque issuance, delegated discovery, stale/forged/expired denial, durable replay and succession PASS
+director-api: authenticated composed content, per-audience DTO, no enumeration/definition leak, strict opaque dispatch, real discovery, retry and account revocation PASS
+director-journey protected: commands, shared situation, knowledge, coordination, canonical consequences, second generation, restart and completion PASS
+director-journey intercepted: commands, shared situation, knowledge, coordination, canonical consequences, second generation, restart and completion PASS
+director-journey alternate_route: commands, shared situation, knowledge, coordination, canonical consequences, second generation, restart and completion PASS
+Director security: enumeration, ACL revocation, membership, forged/stale actions, duplicate workers, restart, expiry and definition tamper passed
+{"ok":true,"runs":52,"scenarioCount":13,"periods":[1,7,30,180],"maximumActive":10,"maximumStartsPerTick":4,"maximumRepetitionWithinWindow":2,"directorMinted":0,"wireBalanceErrors":0,"deadEnds":0,"results180Days":[{"scenario":"low_population","generated":21,"completed":12,"ignored":9,"campaignsCompleted":6,"campaignsAbandoned":9,"recoveryUse":9,"playerOpportunityVolume":111,"unfundedResponseScopes":0},{"scenario":"medium_population","generated":59,"completed":48,"ignored":11,"campaignsCompleted":24,"campaignsAbandoned":11,"recoveryUse":11,"playerOpportunityVolume":2069,"unfundedResponseScopes":0},{"scenario":"high_population","generated":154,"completed":144,"ignored":10,"campaignsCompleted":72,"campaignsAbandoned":10,"recoveryUse":10,"playerOpportunityVolume":38466,"unfundedResponseScopes":0},{"scenario":"family_dominated","generated":121,"completed":96,"ignored":25,"campaignsCompleted":48,"campaignsAbandoned":25,"recoveryUse":25,"playerOpportunityVolume":8631,"unfundedResponseScopes":0},{"scenario":"fragmented_crew","generated":212,"completed":84,"ignored":127,"campaignsCompleted":42,"campaignsAbandoned":127,"recoveryUse":127,"playerOpportunityVolume":13550,"unfundedResponseScopes":0},{"scenario":"economic_shortage","generated":251,"completed":51,"ignored":197,"campaignsCompleted":15,"campaignsAbandoned":197,"recoveryUse":197,"playerOpportunityVolume":8055,"unfundedResponseScopes":3},{"scenario":"territory_war","generated":99,"completed":96,"ignored":3,"campaignsCompleted":48,"campaignsAbandoned":3,"recoveryUse":3,"playerOpportunityVolume":4374,"unfundedResponseScopes":0},{"scenario":"quiet_world","generated":0,"completed":0,"ignored":0,"campaignsCompleted":0,"campaignsAbandoned":0,"recoveryUse":0,"playerOpportunityVolume":0,"unfundedResponseScopes":0},{"scenario":"high_mystery_activity","generated":78,"completed":72,"ignored":6,"campaignsCompleted":36,"campaignsAbandoned":6,"recoveryUse":6,"playerOpportunityVolume":3736,"unfundedResponseScopes":0},{"scenario":"new_world","generated":120,"completed":12,"ignored":106,"campaignsCompleted":0,"campaignsAbandoned":106,"recoveryUse":106,"playerOpportunityVolume":863,"unfundedResponseScopes":2},{"scenario":"resource_abundance","generated":0,"completed":0,"ignored":0,"campaignsCompleted":0,"campaignsAbandoned":0,"recoveryUse":0,"playerOpportunityVolume":0,"unfundedResponseScopes":0},{"scenario":"high_law_pressure","generated":136,"completed":96,"ignored":40,"campaignsCompleted":48,"campaignsAbandoned":40,"recoveryUse":40,"playerOpportunityVolume":10236,"unfundedResponseScopes":0},{"scenario":"low_law_pressure","generated":0,"completed":0,"ignored":0,"campaignsCompleted":0,"campaignsAbandoned":0,"recoveryUse":0,"playerOpportunityVolume":0,"unfundedResponseScopes":0}]}
+PASS network compiler, audience contracts, bounded pressure memory, saturation and quiet-world selection
+PASS immutable running version, future version admission, historical pins, restart and replay
+PASS recent resolved-operation pressure survives creation-window boundary without altering canonical timestamps or resources
+campaign-network-journey: Dock v1 preserved; issued-command shipment → market → corroborated non-traitor Informant; private evidence, conserved custody, restart and replay PASS
+campaign-network-journey supply_market: materially distinct canonical state and actual inventory custody PASS
+campaign-network-journey restore_supply: materially distinct canonical state and actual inventory custody PASS
+campaign-network-journey seize_market: materially distinct canonical state and actual inventory custody PASS
+campaign-network-journey redistribution: solo investigation, crafted evidence and same-Crew operation restore a distinct route PASS
+campaign-network-journey failed plan: actual failed-operation evidence, restricted participants, non-traitor correction and preserved losses PASS
+Campaign network: sequential memory contested operations, conserved provenance, refund replay and late restart PASS
+Campaign network: membership departure revalidation and domain custody recovery PASS
+Campaign network: issued Crew, item and deadline changes reject without partial effects PASS
+player-opportunities: deterministic ranking, six categories, real deadlines, disclosed preparation, secret omission and bounds PASS
+world-consequences memory: canonical history, private-state/actor redaction, delayed aftermath, bounds and restart PASS
+
+> omerta-backend@1.2.0 test
+> node test/smoke.js && node test/persist.js && node test/economy.js && node test/social.js && node test/growth.js && node test/hardening.js && node test/agent-alpha.js && node test/agentturn.js && node test/security.js && node test/chain.js && node test/watcher.js && node test/vig.js && node test/casino.js && node test/heists.js && node test/convoy.js && node test/commission.js && node test/stockcatalog.js && node test/stockcatalogv2.js && node test/market.js && node test/skills.js && node test/underworld.js && node test/law.js && node test/world.js && node test/npcwar.js && node test/pen.js && node test/loans.js && node test/portfolio.js && node test/estate.js && node test/deeds.js && node test/auction.js && node test/wire.js && node test/store.js && node test/pass.js && node test/landmarks.js && node test/speakeasy.js && node test/boxing.js && node test/bonds.js && node test/races.js && node test/port.js && node test/stable.js && node test/migrate.js && node test/emission.js && node test/desk.js && node test/made.js && node test/nft.js && node test/reimport.js && node test/walletforge.js && node test/expansion.js && node test/dynasty.js && node test/intrigue.js && node test/megaproject.js && node test/duels.js && node test/clues.js && node test/seasons.js && node test/ring.js && node test/standing.js && node test/sacking.js && node test/shields.js && node test/population.js && node test/tokenomics.js && node test/treasury.js && node test/stockdeliver.js && node test/dexbot.js && node test/mastery.js && node test/activity.js && node test/brokers.js && node test/bank.js && node test/community.js && node test/tokenhealth.js && node test/regimen.js && node test/career.js && node test/favors.js && node test/crew.js && node test/firstblood.js && node test/discovery.js && node test/mentor.js && node test/events.js && node test/results.js && node test/vouch.js && node test/streak.js && node test/circle.js && node test/collision.js && node test/firsts.js && node test/runs.js && node test/shipment.js && node test/avatar.js && node test/portrait.js && node test/push.js && node test/dispatch.js && node test/pwa.js && node test/people.js && node test/citywire.js && node test/bulletin.js && node test/explore.js && node test/primetime.js && node test/citymap.js && node test/day.js && node test/payroll.js && node test/home.js && node test/streets.js && node test/citywide.js && node test/drop.js && node test/sweeps.js && node test/tax.js && node test/router.js && node test/auth.js && node test/rules.js && node test/path-funnel.js && node test/routes.js && node test/diagram-renderer.js && node test/coldstart.js && node test/preflight.js && node test/client.js && node test/engagement.js && node test/levers.js && node test/graph.js && node test/gates.js && node test/chainparams.js && node test/docs.js && node test/playthrough-truth.js && node tools/knowledge-test.js
+
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ M1 smoke test passed — auth, character, crimes (both outcomes), train, bank, travel, check-in, gates, ledger invariant, lazy accrual
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+  ✓ 66 character + 18 account persist columns exist on the schema, none duplicated
+  ✓ ESTATE_ACCOUNT_FIELDS covers every field runEstate assigns (prestige, deaths, omr, unbonding)
+  ✓ persistAccountFields writes the named subset, applies defaults, refuses an unknown field
+  ✓ no hand-rolled estate persist outside game.js
+persist: PASS
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ M2 economy test passed — market, garage (+car conservation), workshop, goods, rackets (+lazy income), assets, THE RETIRED AMM (both directions + the private wash rail refuse; the pool is left alone), staking (principal returns whole, yield retired to the families), gear, the 12h cash-sink tick (the whole take to the window) + the legacy-pool MERGE (idempotent), ledger invariants, Risk-to-Earn bank-interest daily cap, Business Empire (catalog, level gate, buy/collect/upgrade with income cap, §10.4 faucet/sink ledgering) + the step-two PvE risk layer LIVE AGAIN (scrutiny is income-sourced — banking the take heats the front, a hot front is raided at the collect touch with the pending seized + a ledgered business:raid fine, and the view carries the real raid line) with shakedown/takeover PvP intact + THE STREET WAR (rob-a-front on the SHARED shakedown window — 15% skim ledgered business:rob, the owner keeps ~85%, a miss is lockup; PvP car theft — a pure ownership move conserving cars by row count, consent flags cleared on transfer, the victim shield + the shared GTA clock + rookie protection; and THE RIVALS LEDGER naming the aggressor bloodline via its living street with no account UUID exposed) + RECURRING SINKS "the pad" (upkeep rate/owed in the view, paying is a ledgered business:upkeep sink resetting the clock, a front unpaid past the cold window produces nothing / no upgrades until the pad thaws it) + BALANCE sign-off (safehouse blocks deposits/collection, the >$10M bank-interest taper) + BUSINESS EMPIRE → Tier 4 (THE LAUNDERER legend now a FROZEN historical board, THE ACCOUNTANT (halves the income heat) + THE FIXER back on the shelf now the Bureau layer has a feed, THE FORTRESS unchanged, the TYCOON fold-in on collect, read-derived Front-Set titles, THE HOSTILE TAKEOVER — a taxed buyout transfer + fee burn + reset handover + level/have_kind gates, §10.4 vocabulary closed) + STREET WAR step two (TRUNK ROBBERY — a goods ownership move capped by the robber's free trunk space, units conserved, zero ledger rows, the victim's own 24h shield, a miss is lockup; BOAT THEFT at the docks — a row move on the SHARED vehicle shield + GTA clock with the rendezvous consent flag cleared; SABOTAGE — a random fit racer laid up, pure pacing; REVENGE TEETH — the net-owed mark's payback strike pays honor while the net aggressor earns nothing; and the coach naming fresh malice inside the 48h window)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ M3 social test passed — gangs, tribute+weekly, turf (+perks), melt tithe, exchange, jumps, bounty, contract board, hit→death/estate, busting, notifications, websocket push, buyback family split, §10.4 invariants, M7 assassin rep + NPC hitmen + safehouse/fire-heat/war-kills + family contracts (treasury-funded, member lockout, refunds) + bodyguards (hire/absorb/betrayal, before-insurance ordering) + M8 Tailor & Engraver vanity sinks (name/title/plate/crest/rename — ledgered vanity:* burns) + M8 intel sinks (anon fee, peek pierces anon) + M8 family seals ($OMR tribute → pooled reserve → sequential ladder, ledgered burns) + THE FOUNDATION (family charity: rank gate, empty-reserve rejection, sequential tiers from the reserve, badge on all three views + philanthropy leaderboard, softens members' RICO odds, ledgered foundation:tier burns; STEP TWO: freeload gate — the trial-soften only helps a member who joined before the case was filed) + M7-P3 territory rackets (establish/collect/upgrade, income cap, SEIZURE transfers the operation to the victor, treasury §10.4 reconcile) + VENDETTAS (heir born owing blood, feud ledger, waived directed floor, 2x settlement rep, the cycle turns, lapsed = nothing; STEP TWO: ESCALATION (a repeat kill deepens the feud — kills++ / a higher tier / a longer TTL), THE SIT-DOWN (consensual peace gates + the both-direction clear), and the blood-debt leaderboard — all pure status)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ M4 growth test passed — paths, kitchen (makings/cook/collect/deal/crew/raid/laylow/cleanpapers), heist, missions (+$OMR faucet), dailies (+all-three bonus), First Week (+capstone), referrals (+milestones, agent-recruit exclusion), telemetry, mod tools, M8 stat respec (sum-conserving, floor-gated, ledgered burn), THE HUSTLE (the three-stop chain: location gates, legwork delta, ledgered once-a-day payoff), WORD ON THE STREET (per-district seed boards, conflict guaranteed, accept/delta/claim, ledgered corner:job, the MAX_DAY cap) + THE MARK (every job names a victim; residents in your district get named) + THE CAPO'S LICENSE (agent recruiting perks: minted+retained+levelled gates, the tier board, the wire-slot perk, zero ledger rows)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"character cash","lhs":253936,"rhs":241591,"drift":12345,"ok":false}]
+[slow] GET /card/legend/Broadcast%20Bruno.png 200 1091ms
+✓ X integrations: full PKCE exchange + replay, upgrade + identity collision, x_busy transient semantics, post author binding, follow pagination
+[db] unreachable: connect ECONNREFUSED
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"character cash","lhs":1477500,"rhs":-22500,"drift":1500000,"ok":false}]
+🚨 BACKUP INVARIANT DRIFT: [{"name":"wal archiving off","archiveMode":"off","note":"no PITR"}]
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"character cash","lhs":1477500,"rhs":-22500,"drift":1500000,"ok":false}]
+🚨 WORKER INVARIANT DRIFT: [{"name":"worker heartbeat","ok":true,"detail":"recovered — beat 12s ago."}]
+🚨 WORKER INVARIANT DRIFT: [{"name":"worker heartbeat","ok":false,"detail":"no beat in 880 minutes."}]
+🚨 TEST INVARIANT DRIFT: [{"name":"test alert","note":"fired from /admin — this is a drill, nothing is wrong"}]
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"character cash","lhs":1477500,"rhs":-22500,"drift":1500000,"ok":false}]
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"character cash","lhs":1477500,"rhs":-22500,"drift":1500000,"ok":false}]
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"character cash","lhs":1477500,"rhs":-22500,"drift":1500000,"ok":false}]
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"character cash","lhs":1477500,"rhs":-22500,"drift":1500000,"ok":false}]
+invariant webhook failed after 3 attempts EAI_AGAIN
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"x","ok":false}]
+[db] ⚠ this build (v1.2.0) is OLDER than the build that last migrated this database (v999.0.0) — likely a rollback in progress. Additive-only schema discipline makes this safe to run; see DEPLOY.md § Rolling back a bad deploy.
+✅ the API watches the worker: pages on the dark edge, latches, announces recovery, and pages again on the next episode
+✅ M5 hardening test passed — §10.4 invariant job (zero drift on an earned economy, drift alarm fires), idempotency keys, invite codes, X OAuth + guest upgrade, season rollover, rate limits (human burst / agent 1-per-3s / swap 6-per-min), catalog item art (105 icons — 105 generated photos, SVG emblem fallback), THE BROADCAST (dossier/cards/profile, no exact-wealth leak, clean fallbacks), PRESENCE + THE TROLL BOX (online counter, city + family-gated chat, sanitized + flood-braked), ONE-CLICK X SIGN-IN (PKCE start/state/callback surface, dormant without env), THE CELLPHONE (DM send/gates/flood brake, threads + unread + seen, inbox peek without flipping delivered, zero ledger rows) + STEP TWO BLOCKED LINES (block/unblock, dead tone both directions, board + thread surfacing, history stands, self/double gates), DB-DOWN LEGIBILITY (503 db_down not 500 internal, GET /health up+down+recovery, real bugs still report as bugs), THE LOCK-FREE READ PATH (D1: a clean read is served without FOR UPDATE, a read with real accrual behind it declines and the route re-runs under the lock so the banked state and the rendered view agree, a read still CHECKPOINTS accrual while a read with nothing to bank leaves the clock alone, and the write guard refuses ten write/lock forms including MERGE, COPY, SELECT-INTO, setval and FOR UPDATE without refusing three legitimate reads), BACKUP HEALTH (pg_stat_archiver: shipping/failing/healed-not-realarming/quiet/unsupported, surfaced on the ops dashboard, and archive_mode=off reads as NOT RUNNING rather than healthy — the worker alerts on both), STREET LIFE (the black book: no_number gate, a jump-meeting is mutual, blocks precede the number gate; THE CALL: contact-only generation, one-open-call PK, located freight fulfilment paid from the contact's own pocket — contact:* legs net to zero, broke-void, expiry sweep) + STEP TWO THE BOOK (a ladder derived from the lines you hold, per-contact STANDING deepening with every settled call so a regular's next request is BIGGER — capped, and still refused outright when they can't cover it, so recycle-only holds at every tier — plus the lines-held leaderboard with residents excluded)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)

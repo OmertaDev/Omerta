@@ -1,0 +1,128 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "cf661c399d02290dd1bb4b031c87a9235a65371f",
+  "platform": "linux",
+  "node": "v22.23.2",
+  "startedAt": "2026-09-18T23:46:33.726Z",
+  "scenarios": [
+    {
+      "name": "director-selection",
+      "barrier": {
+        "table": "director_selections",
+        "event": "INSERT"
+      },
+      "status": "PASS",
+      "postgres": "PostgreSQL 16.15 (Debian 16.15-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+      "beforeHash": "d7b8e625d344cc573259f8a53b33e2f5a82d1b357e790b95c928cfb4f7199fe2",
+      "blockedBackendPid": 144,
+      "signal": "SIGTERM",
+      "afterHash": "d7b8e625d344cc573259f8a53b33e2f5a82d1b357e790b95c928cfb4f7199fe2"
+    },
+    {
+      "name": "campaign-progression",
+      "barrier": {
+        "table": "director_campaigns",
+        "event": "UPDATE"
+      },
+      "status": "PASS",
+      "postgres": "PostgreSQL 16.15 (Debian 16.15-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+      "beforeHash": "32d7424241b7ef63fbfb902dd6164776d2acf0d59cc7472e2391ec9477ff602a",
+      "blockedBackendPid": 206,
+      "signal": "SIGTERM",
+      "afterHash": "32d7424241b7ef63fbfb902dd6164776d2acf0d59cc7472e2391ec9477ff602a"
+    },
+    {
+      "name": "world-kernel-mutation",
+      "barrier": {
+        "table": "world_kernel_objects",
+        "event": "UPDATE"
+      },
+      "status": "PASS",
+      "postgres": "PostgreSQL 16.15 (Debian 16.15-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+      "beforeHash": "1b7293c2831c41b81ea17d1a43b45344ca6a6571c3c856f7d4eefe026ca6bed2",
+      "blockedBackendPid": 284,
+      "signal": "SIGTERM",
+      "afterHash": "8d5bbd0e21557c2f0a5d9830aa11c73e571a3086f3b129f7165eb2ce9b6f4e19"
+    },
+    {
+      "name": "operation-resolution",
+      "barrier": {
+        "table": "world_operations",
+        "event": "UPDATE"
+      },
+      "status": "PASS",
+      "postgres": "PostgreSQL 16.15 (Debian 16.15-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+      "beforeHash": "5d2d6520f571f52fda2dba82380913d83ef3bb297aa70dee5f47cf160e3b521b",
+      "blockedBackendPid": 307,
+      "signal": "SIGTERM",
+      "afterHash": "be4defda8661d4308ae012f93382093afa0978c4ba034bd1eb4faa6045c6995a"
+    },
+    {
+      "name": "item-consumption",
+      "barrier": {
+        "table": "item_instances",
+        "event": "UPDATE"
+      },
+      "status": "PASS",
+      "postgres": "PostgreSQL 16.15 (Debian 16.15-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+      "beforeHash": "3b02714b646ca31e919c50f25e277fb630014fc13aa9932eb0f3266f89c56a77",
+      "blockedBackendPid": 333,
+      "signal": "SIGTERM",
+      "afterHash": "7f3db3fc8430ccc08bef23ad4ec17e1f0fc59152e6fb1c761b3fe0161820dc48"
+    },
+    {
+      "name": "crafting",
+      "barrier": {
+        "table": "item_instances",
+        "event": "INSERT"
+      },
+      "status": "PASS",
+      "postgres": "PostgreSQL 16.15 (Debian 16.15-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+      "beforeHash": "b66d41fde16c7a752e2cec2ad66ec6d5cc75394e61940ca9294cf7462dfe214f",
+      "blockedBackendPid": 356,
+      "signal": "SIGTERM",
+      "afterHash": "7a14757a66427c19186737df82fd6ee206a5793d4a83dfa39c3c27c8dfdf8e55"
+    },
+    {
+      "name": "player-command",
+      "barrier": {
+        "table": "item_mutation_guards",
+        "event": "UPDATE"
+      },
+      "status": "PASS",
+      "postgres": "PostgreSQL 16.15 (Debian 16.15-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+      "beforeHash": "6db6808a2ea9f357edab3e2bd6bca54746c41573409f023d5341646608ce1344",
+      "blockedBackendPid": 380,
+      "signal": "SIGTERM",
+      "afterHash": "1351ad595eb7fc6ea6ed989d4389babcec0b029026eea1830293c2f8c2f47711"
+    },
+    {
+      "name": "consequence-generation",
+      "barrier": {
+        "table": "world_kernel_events",
+        "event": "INSERT"
+      },
+      "status": "PASS",
+      "postgres": "PostgreSQL 16.15 (Debian 16.15-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+      "beforeHash": "16fc7958f193dad06bd5277973c634a95ce60a7d50b77a162de277e1084a1c23",
+      "blockedBackendPid": 404,
+      "signal": "SIGTERM",
+      "afterHash": "8752515d9851977f4937435ddb3b512026a51ca0a23f6d54aa9744b49fcb6d1d"
+    },
+    {
+      "name": "scheduled-worker-processing",
+      "barrier": {
+        "table": "npc_wars",
+        "event": "UPDATE"
+      },
+      "status": "PASS",
+      "postgres": "PostgreSQL 16.15 (Debian 16.15-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+      "beforeHash": "f1204f557adf53549011022ec292d75d9e8d3ceabe5f4e063d74938261a1a354",
+      "blockedBackendPid": 429,
+      "signal": "SIGTERM",
+      "afterHash": "f9345463be73f6184d25f55eab6927569853886a79af92a52d136dc112dab729"
+    }
+  ],
+  "status": "PASS",
+  "finishedAt": "2026-09-18T23:49:02.764Z"
+}

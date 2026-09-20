@@ -371,6 +371,16 @@
 | [docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md](../../docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md) | documentation | 67 | 2026-09-18 |
 | [docs/OMR-MACHINE-CAMPAIGN.md](../../docs/OMR-MACHINE-CAMPAIGN.md) | documentation | 249 | 2026-08-26 |
 | [docs/OMR-MARKETING-PACK.md](../../docs/OMR-MARKETING-PACK.md) | documentation | 346 | 2026-08-24 |
+| [docs/release/evidence/graceful-shutdown/README.md](../../docs/release/evidence/graceful-shutdown/README.md) | documentation | 73 | 2026-09-20 |
+| [docs/release/evidence/security-operations/telemetry-regressions.md](../../docs/release/evidence/security-operations/telemetry-regressions.md) | documentation | 136 | 2026-09-19 |
+| [docs/release/RC1-MANIFEST.md](../../docs/release/RC1-MANIFEST.md) | documentation | 58 | 2026-09-19 |
+| [docs/release/RC1-OPPORTUNITY-QUALITY.md](../../docs/release/RC1-OPPORTUNITY-QUALITY.md) | documentation | 54 | 2026-09-19 |
+| [docs/release/RC1-PLAYER-VALIDATION.md](../../docs/release/RC1-PLAYER-VALIDATION.md) | documentation | 128 | 2026-09-20 |
+| [docs/release/RC1-POST-LAUNCH-BACKLOG.md](../../docs/release/RC1-POST-LAUNCH-BACKLOG.md) | documentation | 11 | 2026-09-19 |
+| [docs/release/RC1-READINESS.md](../../docs/release/RC1-READINESS.md) | documentation | 181 | 2026-09-20 |
+| [docs/release/RC1-REPRODUCE.md](../../docs/release/RC1-REPRODUCE.md) | documentation | 104 | 2026-09-20 |
+| [docs/release/RC1-SECURITY-OPERATIONS.md](../../docs/release/RC1-SECURITY-OPERATIONS.md) | documentation | 166 | 2026-09-20 |
+| [docs/release/RC1-SIMULATION-REPORT.md](../../docs/release/RC1-SIMULATION-REPORT.md) | documentation | 91 | 2026-09-20 |
 | [docs/superpowers/plans/2026-08-23-discovery-integrity.md](../../docs/superpowers/plans/2026-08-23-discovery-integrity.md) | documentation | 65 | 2026-08-24 |
 | [docs/superpowers/plans/2026-08-23-first-action-onboarding.md](../../docs/superpowers/plans/2026-08-23-first-action-onboarding.md) | documentation | 311 | 2026-08-24 |
 | [docs/superpowers/plans/2026-08-24-robinhood-testnet-bank-rehearsal.md](../../docs/superpowers/plans/2026-08-24-robinhood-testnet-bank-rehearsal.md) | documentation | 142 | 2026-08-24 |
@@ -439,7 +449,7 @@
 | [LAUNCH-READINESS.md](../../LAUNCH-READINESS.md) | operations | 292 | 2026-09-09 |
 | [LAUNCH.md](../../LAUNCH.md) | operations | 232 | 2026-08-27 |
 | [MARKETING-COPY.md](../../MARKETING-COPY.md) | documentation | 432 | 2026-08-27 |
-| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 128 | 2026-09-18 |
+| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 128 | 2026-09-19 |
 | [MARKETING.md](../../MARKETING.md) | documentation | 368 | 2026-08-29 |
 | [NIGHT-SESSION-LOG.md](../../NIGHT-SESSION-LOG.md) | documentation | 45 | 2026-08-13 |
 | [omerta-backend-spec.md](../../omerta-backend-spec.md) | documentation | 373 | 2026-07-12 |
@@ -527,5 +537,5 @@
 | [PRODUCT.md](../../PRODUCT.md) | documentation | 50 | 2026-08-24 |
 | [README.md](../../README.md) | documentation | 171 | 2026-09-14 |
 | [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 918 | 2026-09-06 |
-| [SPEC.md](../../SPEC.md) | documentation | 756 | 2026-09-18 |
+| [SPEC.md](../../SPEC.md) | documentation | 756 | 2026-09-20 |
 | [UNISWAP-ROUTING.md](../../UNISWAP-ROUTING.md) | documentation | 37 | 2026-08-25 |

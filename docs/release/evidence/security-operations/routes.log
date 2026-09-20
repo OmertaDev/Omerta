@@ -1,0 +1,6 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ Mounted-surface test passed — 802 registrations, 772 under /v1: every one authenticated except the 42 declared public, each with a stated reason, (checked BOTH ways, so neither a dropped auth preHandler nor a stale allowlist entry can hide), every /v1/mod route behind modAuth rather than a player token, and no route registered twice; plus every src/routes module self-contained (no identifier read that it never binds).
+✅ the envelope survives all 62 enveloped routes (1 of them param routes; 14 params this cannot synthesise are named, not skipped) — none replaces `character`, and none carries an `events` key except 1 board that owns the name by declaration
+✅ every immutable research-sheet reference is versioned by its current content hash
+✅ landing media is responsive, all three below-fold videos are deferred, and each film range-streams
+✅ the wire: the 1284 KB shell ships as 382 KB and revalidates to a 304; identity is byte-exact; binary and sub-threshold payloads are untouched

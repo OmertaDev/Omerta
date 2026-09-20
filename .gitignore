@@ -2,6 +2,8 @@ node_modules/
 .env
 .env.txt
 *.log
+!docs/release/evidence/**/*.log
+/tmp/rc1-*
 econ-sim.json
 
 # Database dumps — `npm run backup` writes here (default BACKUP_DIR=./backups). A dump is a COMPLETE

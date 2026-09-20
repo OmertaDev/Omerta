@@ -1,0 +1,18 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+
+── 320x568  (small legacy phone — the hard floor)
+   45 screens checked so far, 0 failure(s)
+
+── 375x667  (iPhone SE / 8 — the tightest common phone)
+   90 screens checked so far, 0 failure(s)
+
+── 360x780  (small Android)
+   135 screens checked so far, 0 failure(s)
+   restart-window check done, 0 failure(s)
+   /admin check done (17 panels), 0 failure(s)
+   cooldown-freshness check done (quiet 0 → crossing 4), 0 failure(s)
+   deep-city integration check done, 0 failure(s)
+   lockup cold-load check done (landed on pen), 0 failure(s)
+   stored-XSS sweep done (4451 strings poisoned over 151 responses, marker rendered as text 787× on 34 screens), 0 failure(s)
+
+✅ mobile harness passed — 175 screen checks across 3 phone sizes: no screen scrolls sideways, every screen you pick opens above the fold, every primary nav target clears 44px, and no page threw. (Layout only — whether a screen reads WELL still needs a person.)

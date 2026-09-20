@@ -27,11 +27,11 @@ for (const changed of [{ accountId: 'other-account' }, { characterId: 'heir' }, 
 assert.equal(restoreContext.restore(saved, null), null, 'no retry restoration without a current authenticated board');
 
 function mutationHarness(commands = [command('craft')]) {
-  const calls = [], storage = new Map(), toasts = [], dialogs = [], selections = [];
+  const calls = [], storage = new Map(), toasts = [], dialogs = [], selections = [], observations = [];
   let reply = () => ({ code: 200, body: { status: 'COMPLETED', feedback: { immediateResult: { label: 'Move recorded' } } } });
   const context = vm.createContext({ token: 'session-A', me: { id: 'one' }, worldAccountId: 'account-one', worldBusy: false,
     worldRetry: null, worldFeedback: null, worldSelection: 'operation-one', worldMysterySelection: 'case-one',
-    worldProjection: board(commands), worldChoiceConfirmation: null,
+    worldProjection: board(commands), worldChoiceConfirmation: null, observeWorld: (...args) => observations.push(args),
     projections: { snapshot: () => ({}), current: () => true, world: async (...selection) => { selections.push(selection); return { code: 200 }; } },
     esc: escape, paintWorld() {}, toast: (...args) => toasts.push(args), refresh: async () => {},
     sessionStorage: { setItem: (key, value) => storage.set(key, value), removeItem: (key) => storage.delete(key) },
@@ -43,7 +43,16 @@ function mutationHarness(commands = [command('craft')]) {
     },
   });
   vm.runInContext(extract('  function confirmWorldChoice(', '  function paintWorld(') + '\nthis.mutate = worldMutation;', context);
-  return { context, calls, storage, toasts, dialogs, selections, respond: (fn) => { reply = fn; } };
+  return { context, calls, storage, toasts, dialogs, selections, observations, respond: (fn) => { reply = fn; } };
+}
+{
+  const h = mutationHarness([command('Prepare seal', { commandType: 'recipe.craft' })]);
+  await h.context.mutate(h.context.worldProjection.commands[0]);
+  assert.deepEqual(h.observations.map(([phase]) => phase), ['opportunity_open', 'preparation']);
+  assert.equal(h.context.worldFeedback.observedConsequences.length, 0, 'a successful preparation does not invent a world consequence');
+  const ordinary = mutationHarness();
+  await ordinary.context.mutate(ordinary.context.worldProjection.commands[0]);
+  assert(!ordinary.observations.some(([phase]) => phase === 'preparation'), 'an arbitrary command is not preparation');
 }
 {
   const h = mutationHarness();
@@ -158,13 +167,15 @@ const fixtureBoard = { ...board(commands),
   inventory: { resources: [], items: [{ id: 'tool-one', templateId: 'key', state: 'available', provenance: [] }] },
   worldObjects: [{ id: 'safe', title: 'Closed safe', state: 'locked', actions: [{ actionId: 'bypass', canAttempt: true }] }],
 };
-const moves = [], selections = [];
+const moves = [], selections = [], observedViews = [];
 const renderContext = vm.createContext({ worldProjection: fixtureBoard, worldSelection: 'op-one', worldMysterySelection: 'case-one', worldBusy: false,
   worldRetry: null, worldFeedback: { immediateResult: { label: 'Evidence recorded' }, knowledgeChanges: ['private:do-not-render'] },
   worldStatus: 'Refreshing your world…', me: { name: 'One' }, $: (selector) => selector === '#tab-world' ? surface : null,
-  esc: escape, worldMutation: (move) => moves.push(move), projections: { world: (...selection) => selections.push(selection) } });
+  esc: escape, worldMutation: (move) => moves.push(move), currentTab: 'world', observeWorld: (...args) => observedViews.push(args),
+  projections: { world: (...selection) => selections.push(selection) } });
 vm.runInContext(extract('  function paintWorld(', '  // A toast can carry') + '\nthis.paint = paintWorld;', renderContext);
 renderContext.paint();
+assert(!observedViews.some(([phase]) => phase === 'consequence'), 'rendering historical consequence cards does not credit the current command');
 for (const heading of ['What changed?', 'What needs my attention?', 'What can I do?', 'What am I waiting for?', 'What is my Crew doing?', 'What is my Family doing?', 'What have I discovered?']) assert(surface.html.includes(heading));
 assert(surface.html.includes('data-world-mystery="case-one"')); assert(surface.html.includes('data-world-selected-case="case-one"'));
 assert(surface.html.includes('Case &lt;script&gt;unsafe&lt;/script&gt;')); assert(surface.html.includes('&lt;img src=x onerror=alert(1)&gt;'));

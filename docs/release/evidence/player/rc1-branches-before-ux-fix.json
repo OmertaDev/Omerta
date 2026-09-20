@@ -1,0 +1,500 @@
+{
+  "database": "pg-mem",
+  "scope": "Complementary domain journeys, not new-account browser journeys; initial stats and bounded outcome selection are fixtures",
+  "results": [
+    {
+      "action": "recover_shipment",
+      "state": "recovered",
+      "status": "PASS",
+      "operationId": "539edb37-7c2b-4646-807c-8af5181b517b",
+      "events": [
+        {
+          "id": "7ac813a4-3856-4c1b-b9e6-08b398c9f694",
+          "action_id": "register_shipment",
+          "next_state": "stranded",
+          "operation_id": "6090cbc6-5a6f-45ac-bec2-9b1f9772ab71"
+        },
+        {
+          "id": "db9ab0ba-b44d-4aa7-8d10-92de8aefab48",
+          "action_id": "recover_shipment",
+          "next_state": "recovered",
+          "operation_id": "539edb37-7c2b-4646-807c-8af5181b517b"
+        }
+      ],
+      "consequences": [
+        {
+          "id": "db9ab0ba-b44d-4aa7-8d10-92de8aefab48",
+          "kind": "world_change",
+          "title": "The Canal Supply Depot",
+          "description": "The Canal Supply Depot: recovered.",
+          "occurredAt": "2026-09-18T23:43:10.548Z",
+          "informationLayer": "DISCOVERED_INTELLIGENCE",
+          "whyKnown": "This change is recorded in your own actions.",
+          "cause": "You helped bring about this change.",
+          "remainsActive": true,
+          "subject": {
+            "type": "world_object",
+            "id": "infrastructure:canal_supply_depot"
+          },
+          "opportunityIds": []
+        }
+      ],
+      "newOpportunities": [
+        {
+          "opportunityId": "33a20696b87eefb873322bcf70b912e998ff59e9fef99f5b5018a1a20df815ff",
+          "kind": "world_event",
+          "category": "WORLD",
+          "label": "investigate",
+          "description": "A dock worker is asking for careful readers of the shipping register. Your Crew can investigate the record and compare the tide ledger.",
+          "subject": {
+            "type": "situation",
+            "id": "6034d44076c01616748e6e3ab1e1298e98f20823a3321edbca04b6fcd1c5487a"
+          },
+          "availability": "AVAILABLE",
+          "commandIds": [
+            "33a20696b87eefb873322bcf70b912e998ff59e9fef99f5b5018a1a20df815ff"
+          ],
+          "expiresAt": "2026-09-21T00:53:09.084Z",
+          "timeRemainingSeconds": 176999,
+          "whyKnown": "You can see this part of the city.",
+          "whyItMatters": "Your next move is ready.",
+          "reasons": [
+            "Your next move is ready.",
+            "There is unfinished business here."
+          ],
+          "requirements": [],
+          "peopleNeeded": false,
+          "helpers": [
+            "Your Crew",
+            "Your Family"
+          ],
+          "risk": [],
+          "progress": {
+            "description": "Ready for your next move."
+          }
+        },
+        {
+          "opportunityId": "465391085b7d4b91209a44c58fa68b52bcc1bf5f21aab6a292d7809b1621d9fa",
+          "kind": "world_event",
+          "category": "WORLD",
+          "label": "tide ledger",
+          "description": "A dock worker is asking for careful readers of the shipping register. Your Crew can investigate the record and compare the tide ledger.",
+          "subject": {
+            "type": "situation",
+            "id": "6034d44076c01616748e6e3ab1e1298e98f20823a3321edbca04b6fcd1c5487a"
+          },
+          "availability": "AVAILABLE",
+          "commandIds": [
+            "465391085b7d4b91209a44c58fa68b52bcc1bf5f21aab6a292d7809b1621d9fa"
+          ],
+          "expiresAt": "2026-09-21T00:53:09.084Z",
+          "timeRemainingSeconds": 176999,
+          "whyKnown": "You can see this part of the city.",
+          "whyItMatters": "Your next move is ready.",
+          "reasons": [
+            "Your next move is ready.",
+            "There is unfinished business here."
+          ],
+          "requirements": [],
+          "peopleNeeded": false,
+          "helpers": [
+            "Your Crew",
+            "Your Family"
+          ],
+          "risk": [],
+          "progress": {
+            "description": "Ready for your next move."
+          }
+        },
+        {
+          "opportunityId": "9fd8f2634c26e7cca884e6667a2790f47020c0ad6b739fed9a1592fc2da30294",
+          "kind": "world_event",
+          "category": "WORLD",
+          "label": "protect",
+          "description": "Your Family controls the route, but available wire cannot cover a complete shipment response. Gather a runner, a crafted route seal and the missing supplies to protect it.",
+          "subject": {
+            "type": "situation",
+            "id": "6034d44076c01616748e6e3ab1e1298e98f20823a3321edbca04b6fcd1c5487a"
+          },
+          "availability": "AVAILABLE",
+          "commandIds": [
+            "9fd8f2634c26e7cca884e6667a2790f47020c0ad6b739fed9a1592fc2da30294"
+          ],
+          "expiresAt": "2026-09-21T00:53:09.084Z",
+          "timeRemainingSeconds": 176999,
+          "whyKnown": "You can see this part of the city.",
+          "whyItMatters": "Your next move is ready.",
+          "reasons": [
+            "Your next move is ready.",
+            "There is unfinished business here."
+          ],
+          "requirements": [
+            {
+              "description": "Route Organizer",
+              "status": "REQUIRED"
+            },
+            {
+              "description": "Shipment Runner",
+              "status": "REQUIRED"
+            }
+          ],
+          "peopleNeeded": true,
+          "helpers": [
+            "Your Crew",
+            "Your Family"
+          ],
+          "risk": [],
+          "progress": {
+            "description": "Ready for your next move."
+          }
+        }
+      ],
+      "downstreamSelections": [],
+      "remainingSituations": [
+        {
+          "title": "A dock worker wants a quiet word",
+          "description": "A dock worker is asking for careful readers of the shipping register. Your Crew can investigate the record and compare the tide ledger.",
+          "objective": "A dock worker is asking for careful readers of the shipping register. Your Crew can investigate the record and compare the tide ledger."
+        }
+      ]
+    },
+    {
+      "action": "destroy_shipment",
+      "state": "destroyed",
+      "status": "PASS",
+      "operationId": "1219187b-d4ad-407a-bcdf-ee202ddd94f7",
+      "events": [
+        {
+          "id": "243b059e-572d-4b0f-b63e-005d1d7c40be",
+          "action_id": "register_shipment",
+          "next_state": "stranded",
+          "operation_id": "a997983a-297e-456c-83dd-50d925f1a769"
+        },
+        {
+          "id": "b432ec38-0783-41f4-8b24-28921ec45817",
+          "action_id": "destroy_shipment",
+          "next_state": "destroyed",
+          "operation_id": "1219187b-d4ad-407a-bcdf-ee202ddd94f7"
+        }
+      ],
+      "consequences": [
+        {
+          "id": "b432ec38-0783-41f4-8b24-28921ec45817",
+          "kind": "world_change",
+          "title": "The Canal Supply Depot",
+          "description": "The Canal Supply Depot: destroyed.",
+          "occurredAt": "2026-09-18T23:43:19.780Z",
+          "informationLayer": "DISCOVERED_INTELLIGENCE",
+          "whyKnown": "This change is recorded in your own actions.",
+          "cause": "You helped bring about this change.",
+          "remainsActive": true,
+          "subject": {
+            "type": "world_object",
+            "id": "infrastructure:canal_supply_depot"
+          },
+          "opportunityIds": []
+        }
+      ],
+      "newOpportunities": [
+        {
+          "opportunityId": "33a20696b87eefb873322bcf70b912e998ff59e9fef99f5b5018a1a20df815ff",
+          "kind": "world_event",
+          "category": "WORLD",
+          "label": "investigate",
+          "description": "A dock worker is asking for careful readers of the shipping register. Your Crew can investigate the record and compare the tide ledger.",
+          "subject": {
+            "type": "situation",
+            "id": "6034d44076c01616748e6e3ab1e1298e98f20823a3321edbca04b6fcd1c5487a"
+          },
+          "availability": "AVAILABLE",
+          "commandIds": [
+            "33a20696b87eefb873322bcf70b912e998ff59e9fef99f5b5018a1a20df815ff"
+          ],
+          "expiresAt": "2026-09-21T00:53:13.797Z",
+          "timeRemainingSeconds": 176994,
+          "whyKnown": "You can see this part of the city.",
+          "whyItMatters": "Your next move is ready.",
+          "reasons": [
+            "Your next move is ready.",
+            "There is unfinished business here."
+          ],
+          "requirements": [],
+          "peopleNeeded": false,
+          "helpers": [
+            "Your Crew",
+            "Your Family"
+          ],
+          "risk": [],
+          "progress": {
+            "description": "Ready for your next move."
+          }
+        },
+        {
+          "opportunityId": "465391085b7d4b91209a44c58fa68b52bcc1bf5f21aab6a292d7809b1621d9fa",
+          "kind": "world_event",
+          "category": "WORLD",
+          "label": "tide ledger",
+          "description": "A dock worker is asking for careful readers of the shipping register. Your Crew can investigate the record and compare the tide ledger.",
+          "subject": {
+            "type": "situation",
+            "id": "6034d44076c01616748e6e3ab1e1298e98f20823a3321edbca04b6fcd1c5487a"
+          },
+          "availability": "AVAILABLE",
+          "commandIds": [
+            "465391085b7d4b91209a44c58fa68b52bcc1bf5f21aab6a292d7809b1621d9fa"
+          ],
+          "expiresAt": "2026-09-21T00:53:13.797Z",
+          "timeRemainingSeconds": 176994,
+          "whyKnown": "You can see this part of the city.",
+          "whyItMatters": "Your next move is ready.",
+          "reasons": [
+            "Your next move is ready.",
+            "There is unfinished business here."
+          ],
+          "requirements": [],
+          "peopleNeeded": false,
+          "helpers": [
+            "Your Crew",
+            "Your Family"
+          ],
+          "risk": [],
+          "progress": {
+            "description": "Ready for your next move."
+          }
+        },
+        {
+          "opportunityId": "9fd8f2634c26e7cca884e6667a2790f47020c0ad6b739fed9a1592fc2da30294",
+          "kind": "world_event",
+          "category": "WORLD",
+          "label": "protect",
+          "description": "Your Family controls the route, but available wire cannot cover a complete shipment response. Gather a runner, a crafted route seal and the missing supplies to protect it.",
+          "subject": {
+            "type": "situation",
+            "id": "6034d44076c01616748e6e3ab1e1298e98f20823a3321edbca04b6fcd1c5487a"
+          },
+          "availability": "AVAILABLE",
+          "commandIds": [
+            "9fd8f2634c26e7cca884e6667a2790f47020c0ad6b739fed9a1592fc2da30294"
+          ],
+          "expiresAt": "2026-09-21T00:53:13.797Z",
+          "timeRemainingSeconds": 176994,
+          "whyKnown": "You can see this part of the city.",
+          "whyItMatters": "Your next move is ready.",
+          "reasons": [
+            "Your next move is ready.",
+            "There is unfinished business here."
+          ],
+          "requirements": [
+            {
+              "description": "Route Organizer",
+              "status": "REQUIRED"
+            },
+            {
+              "description": "Shipment Runner",
+              "status": "REQUIRED"
+            }
+          ],
+          "peopleNeeded": true,
+          "helpers": [
+            "Your Crew",
+            "Your Family"
+          ],
+          "risk": [],
+          "progress": {
+            "description": "Ready for your next move."
+          }
+        }
+      ],
+      "downstreamSelections": [],
+      "remainingSituations": [
+        {
+          "title": "A dock worker wants a quiet word",
+          "description": "A dock worker is asking for careful readers of the shipping register. Your Crew can investigate the record and compare the tide ledger.",
+          "objective": "A dock worker is asking for careful readers of the shipping register. Your Crew can investigate the record and compare the tide ledger."
+        }
+      ]
+    },
+    {
+      "action": "secure_records",
+      "state": "secured",
+      "status": "PASS",
+      "operationId": "1eda4bef-6c6d-4205-994e-7bfccb084692",
+      "events": [
+        {
+          "id": "27053f36-e646-4a30-8325-caec585ffc55",
+          "action_id": "register_shipment",
+          "next_state": "stranded",
+          "operation_id": "bd7dbf09-571e-4c1f-b920-e9674baf09d0"
+        },
+        {
+          "id": "5c5b8b4d-b518-4939-bed1-35ad04016648",
+          "action_id": "intercept_shipment",
+          "next_state": "diverted",
+          "operation_id": "e489ebbb-0aa6-486c-9007-bd2cd8f39dc3"
+        },
+        {
+          "id": "451dd9b2-4dc3-4ca5-8d30-996ae9033fdb",
+          "action_id": "establish_market",
+          "next_state": "market_open",
+          "operation_id": "ac2f4bac-2662-423f-afd7-46dbbd5a6424"
+        },
+        {
+          "id": "0f32f8a1-c2b6-4f13-bbf0-cb33a4c80ced",
+          "action_id": "expose_market",
+          "next_state": "exposed",
+          "operation_id": "f4d7b914-e7af-46bc-a901-8c155f9c3dbf"
+        },
+        {
+          "id": "b86a0658-b56c-4323-ab49-2ce6591e10e2",
+          "action_id": "secure_records",
+          "next_state": "secured",
+          "operation_id": "1eda4bef-6c6d-4205-994e-7bfccb084692"
+        }
+      ],
+      "consequences": [
+        {
+          "id": "b86a0658-b56c-4323-ab49-2ce6591e10e2",
+          "kind": "world_change",
+          "title": "The Canal Supply Depot",
+          "description": "The Canal Supply Depot: secured.",
+          "occurredAt": "2026-09-18T23:43:51.615Z",
+          "informationLayer": "DISCOVERED_INTELLIGENCE",
+          "whyKnown": "This change is recorded in your own actions.",
+          "cause": "You helped bring about this change.",
+          "remainsActive": true,
+          "subject": {
+            "type": "world_object",
+            "id": "infrastructure:canal_supply_depot"
+          },
+          "opportunityIds": []
+        }
+      ],
+      "newOpportunities": [],
+      "downstreamSelections": [],
+      "remainingSituations": [
+        {
+          "title": "A dock worker wants a quiet word",
+          "description": "A dock worker is asking for careful readers of the shipping register. Your Crew can investigate the record and compare the tide ledger.",
+          "objective": "A dock worker is asking for careful readers of the shipping register. Your Crew can investigate the record and compare the tide ledger."
+        }
+      ]
+    },
+    {
+      "action": "publish_allegation",
+      "state": "unproven",
+      "status": "PASS",
+      "operationId": "d62b44b6-0cdb-4e06-bf7c-d7d8b9bb83b3",
+      "events": [
+        {
+          "id": "11c9f400-dd63-4520-b005-8d5f623d9e39",
+          "action_id": "register_shipment",
+          "next_state": "stranded",
+          "operation_id": "21e25b2c-0b90-47b9-a0a4-7c0ef2f5bde1"
+        },
+        {
+          "id": "67b9f7ff-0842-4cd1-90e9-d7212f600e58",
+          "action_id": "intercept_shipment",
+          "next_state": "diverted",
+          "operation_id": "8b8caec5-af5d-40d4-bb0d-c03611fbf4dd"
+        },
+        {
+          "id": "3dd8b2be-a315-444d-ab23-dfaf16e0e376",
+          "action_id": "establish_market",
+          "next_state": "market_open",
+          "operation_id": "87b7a38a-3612-4008-b18d-98b6b09a1c15"
+        },
+        {
+          "id": "de867379-e97e-4cfd-b6f4-64a843ac73bf",
+          "action_id": "expose_market",
+          "next_state": "exposed",
+          "operation_id": "d93f3d92-f7f9-4483-903f-2d9a14ef56fe"
+        },
+        {
+          "id": "0f02d5ed-95bb-447e-80dd-db09e57c6f2c",
+          "action_id": "publish_allegation",
+          "next_state": "unproven",
+          "operation_id": "d62b44b6-0cdb-4e06-bf7c-d7d8b9bb83b3"
+        }
+      ],
+      "consequences": [
+        {
+          "id": "0f02d5ed-95bb-447e-80dd-db09e57c6f2c",
+          "kind": "world_change",
+          "title": "The Canal Supply Depot",
+          "description": "The Canal Supply Depot: unproven.",
+          "occurredAt": "2026-09-18T23:44:31.649Z",
+          "informationLayer": "DISCOVERED_INTELLIGENCE",
+          "whyKnown": "This change is recorded in your own actions.",
+          "cause": "You helped bring about this change.",
+          "remainsActive": true,
+          "subject": {
+            "type": "world_object",
+            "id": "infrastructure:canal_supply_depot"
+          },
+          "opportunityIds": []
+        }
+      ],
+      "newOpportunities": [],
+      "downstreamSelections": [],
+      "remainingSituations": [
+        {
+          "title": "A dock worker wants a quiet word",
+          "description": "A dock worker is asking for careful readers of the shipping register. Your Crew can investigate the record and compare the tide ledger.",
+          "objective": "A dock worker is asking for careful readers of the shipping register. Your Crew can investigate the record and compare the tide ledger."
+        }
+      ]
+    },
+    {
+      "action": "preserve_uncertainty",
+      "state": "unproven",
+      "status": "PASS",
+      "operationId": "c52dc9a0-4557-4fa6-bc09-7d4dd76d47df",
+      "events": [
+        {
+          "id": "72a35083-ca4b-4509-bf81-babe6cc15275",
+          "action_id": "register_shipment",
+          "next_state": "stranded",
+          "operation_id": "57649b9d-f693-4762-b564-4c6649438f93"
+        },
+        {
+          "id": "61391a26-b4c7-4ab9-86a7-a612ed6a5f6f",
+          "action_id": "preserve_uncertainty",
+          "next_state": "unproven",
+          "operation_id": "c52dc9a0-4557-4fa6-bc09-7d4dd76d47df"
+        }
+      ],
+      "consequences": [
+        {
+          "id": "61391a26-b4c7-4ab9-86a7-a612ed6a5f6f",
+          "kind": "world_change",
+          "title": "The Canal Supply Depot",
+          "description": "The Canal Supply Depot: unproven.",
+          "occurredAt": "2026-09-18T23:44:43.065Z",
+          "informationLayer": "DISCOVERED_INTELLIGENCE",
+          "whyKnown": "This change is recorded in your own actions.",
+          "cause": "You helped bring about this change.",
+          "remainsActive": true,
+          "subject": {
+            "type": "world_object",
+            "id": "infrastructure:canal_supply_depot"
+          },
+          "opportunityIds": []
+        }
+      ],
+      "newOpportunities": [],
+      "downstreamSelections": [],
+      "remainingSituations": [
+        {
+          "title": "A dock worker wants a quiet word",
+          "description": "A dock worker is asking for careful readers of the shipping register. Your Crew can investigate the record and compare the tide ledger.",
+          "objective": "A dock worker is asking for careful readers of the shipping register. Your Crew can investigate the record and compare the tide ledger."
+        },
+        {
+          "title": "The Missing Shipment",
+          "description": "Your Family's load is stranded behind a blocked dock route. Recover the depot, or compare the dispatch records and reopen supplies to the neighborhood. Bring a runner, a stamped cargo seal and wire.",
+          "objective": "Your Family's load is stranded behind a blocked dock route. Recover the depot, or compare the dispatch records and reopen supplies to the neighborhood. Bring a runner, a stamped cargo seal and wire."
+        }
+      ]
+    }
+  ]
+}

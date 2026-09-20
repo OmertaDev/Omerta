@@ -1,0 +1,38 @@
+{
+  "revision": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+  "harnessSha256": "ffb5bc6a71af6b66e22135e808d12dcd9bb154444aa5da9a1d796748bf9da6c5",
+  "generatedAt": "2026-09-18T23:42:12.713Z",
+  "invocation": [
+    "--postgres",
+    "--populations=25",
+    "--seeds=rc1-alpha",
+    "--replicates=1",
+    "--rounds=2",
+    "--output=docs/release/evidence/simulation/pilot2"
+  ],
+  "populations": [
+    25
+  ],
+  "seeds": [
+    "rc1-alpha"
+  ],
+  "replicates": 1,
+  "rounds": 2,
+  "status": "FAIL",
+  "phase4ReleaseGate": "INCOMPLETE",
+  "results": [
+    {
+      "population": 25,
+      "seed": "rc1-alpha",
+      "replicate": 0,
+      "status": "FAIL",
+      "error": {
+        "message": "Refresh your commands before trying again.",
+        "code": "contention",
+        "stack": "Error: Refresh your commands before trying again.\n    at fail (file:///C:/Users/Jorge/Documents/Omerta-rc1/src/player-commands.js:19:56)\n    at withIssuedBoard (file:///C:/Users/Jorge/Documents/Omerta-rc1/src/player-commands.js:53:60)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Object.execute (file:///C:/Users/Jorge/Documents/Omerta-rc1/src/player-commands.js:295:20)\n    at async Object.execute (file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-sim.js:62:26)\n    at async Promise.all (index 1)\n    at async runNativeSimulation (file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-sim.js:175:19)\n    at async file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-sim.js:254:20"
+      },
+      "revision": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+      "harnessSha256": "ffb5bc6a71af6b66e22135e808d12dcd9bb154444aa5da9a1d796748bf9da6c5"
+    }
+  ]
+}

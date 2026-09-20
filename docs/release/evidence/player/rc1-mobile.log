@@ -1,0 +1,21 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+FAIL 320px: AssertionError [ERR_ASSERTION]: RELEASE BLOCKER: a fresh solo player has the key and wire at the Foundry, but every world action still requires Family/Crew authority
+    at file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-mobile-journeys.js:255:7
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+FAIL 390px: AssertionError [ERR_ASSERTION]: RELEASE BLOCKER: a fresh solo player has the key and wire at the Foundry, but every world action still requires Family/Crew authority
+    at file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-mobile-journeys.js:255:7
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: RC1 golden solo journey failed; see recorded release blockers
+    at file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-mobile-journeys.js:284:1 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

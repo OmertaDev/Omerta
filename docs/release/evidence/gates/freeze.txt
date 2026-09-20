@@ -1,0 +1,12 @@
+{
+  "revision": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+  "schema": {
+    "path": "schema.sql",
+    "sha256": "b126f2832cc793bdca43b5655500cd123bcf884cd5f715aa63bf7af3eb5d6fba",
+    "bytes": 453111
+  },
+  "sourceFiles": 370,
+  "situations": 9,
+  "campaigns": 5,
+  "snapshotSha256": "628d1a9ac5a7a4b7972a3bdb1e8c207b1b34d2836f8a2211ea4260478e9221c0"
+}

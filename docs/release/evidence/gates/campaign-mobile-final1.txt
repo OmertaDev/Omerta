@@ -1,0 +1,81 @@
+⚠️  preflight: Neither PUBLIC_URL nor SOCIAL_GAME_URL is set — every referral link, share prompt and social card will point at the built-in default domain, not yours. Set PUBLIC_URL to this server's own origin (it is also what one-click X sign-in derives its callback from).
+⚠️  preflight: INVARIANT_WEBHOOK_URL is not set — the §10.4 economy-drift, backup-failure, oracle-halt and real-value-invariant alarms have nowhere to shout and reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+PASS 320px shipment-redistribution: 24 rendered commands
+⚠️  preflight: Neither PUBLIC_URL nor SOCIAL_GAME_URL is set — every referral link, share prompt and social card will point at the built-in default domain, not yours. Set PUBLIC_URL to this server's own origin (it is also what one-click X sign-in derives its callback from).
+⚠️  preflight: INVARIANT_WEBHOOK_URL is not set — the §10.4 economy-drift, backup-failure, oracle-halt and real-value-invariant alarms have nowhere to shout and reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+PASS 320px shipment-destruction: 17 rendered commands
+⚠️  preflight: Neither PUBLIC_URL nor SOCIAL_GAME_URL is set — every referral link, share prompt and social card will point at the built-in default domain, not yours. Set PUBLIC_URL to this server's own origin (it is also what one-click X sign-in derives its callback from).
+⚠️  preflight: INVARIANT_WEBHOOK_URL is not set — the §10.4 economy-drift, backup-failure, oracle-halt and real-value-invariant alarms have nowhere to shout and reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+AssertionError [ERR_ASSERTION]: Clicked control must execute the requested identity
++ actual - expected
+
++ '10b4cdaa0d21ac378471dc8b208ef36226169519b08eb55576abd5aca9ca6a02.8f4a4219f1f1a7286c6a7a284ce921f49d45a330e792767b1eeb66181e192b88'
+- '10b4cdaa0d21ac378471dc8b208ef36226169519b08eb55576abd5aca9ca6a02.a19800877e8c5088c9de72a2cdd04810cb047eeb739ded6a7c43a7c6867b733e'
+
+    at Object.execute (file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-campaign-mobile.js:112:70)
+    at runNextTicks (node:internal/process/task_queues:65:5)
+    at process.processImmediate (node:internal/timers:502:9)
+    at async issueAndExecute (file:///C:/Users/Jorge/Documents/Omerta-rc1/test/lib/player-command-support.js:66:20)
+    at async Object.prepare [as networkPrepare] (file:///C:/Users/Jorge/Documents/Omerta-rc1/test/lib/campaign-network-support.js:92:7)
+    at async file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-campaign-mobile.js:132:27
+⚠️  preflight: Neither PUBLIC_URL nor SOCIAL_GAME_URL is set — every referral link, share prompt and social card will point at the built-in default domain, not yours. Set PUBLIC_URL to this server's own origin (it is also what one-click X sign-in derives its callback from).
+⚠️  preflight: INVARIANT_WEBHOOK_URL is not set — the §10.4 economy-drift, backup-failure, oracle-halt and real-value-invariant alarms have nowhere to shout and reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+PASS 320px black-market-seizure: 59 rendered commands
+⚠️  preflight: Neither PUBLIC_URL nor SOCIAL_GAME_URL is set — every referral link, share prompt and social card will point at the built-in default domain, not yours. Set PUBLIC_URL to this server's own origin (it is also what one-click X sign-in derives its callback from).
+⚠️  preflight: INVARIANT_WEBHOOK_URL is not set — the §10.4 economy-drift, backup-failure, oracle-halt and real-value-invariant alarms have nowhere to shout and reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+AssertionError [ERR_ASSERTION]: Clicked control must execute the requested identity
++ actual - expected
+
++ 'ff6c7129f4c9989500187b70d184fc1788e0e279fdc8dd06d618b6a1ed256410.454708b4970e8f8bd53a730b7b97d4971790677f85e764df0150ef2a16babff1'
+- 'ff6c7129f4c9989500187b70d184fc1788e0e279fdc8dd06d618b6a1ed256410.b2d3ac268eeaab72b6cb83e58a29bd24754cf08b4c7de5bd65ed92f1b63dc6fd'
+
+    at Object.execute (file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-campaign-mobile.js:112:70)
+    at runNextTicks (node:internal/process/task_queues:65:5)
+    at process.processImmediate (node:internal/timers:502:9)
+    at async issueAndExecute (file:///C:/Users/Jorge/Documents/Omerta-rc1/test/lib/player-command-support.js:66:20)
+    at async Object.prepare [as networkPrepare] (file:///C:/Users/Jorge/Documents/Omerta-rc1/test/lib/campaign-network-support.js:92:7)
+    at async file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-campaign-mobile.js:132:27
+⚠️  preflight: Neither PUBLIC_URL nor SOCIAL_GAME_URL is set — every referral link, share prompt and social card will point at the built-in default domain, not yours. Set PUBLIC_URL to this server's own origin (it is also what one-click X sign-in derives its callback from).
+⚠️  preflight: INVARIANT_WEBHOOK_URL is not set — the §10.4 economy-drift, backup-failure, oracle-halt and real-value-invariant alarms have nowhere to shout and reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+PASS 390px shipment-redistribution: 24 rendered commands
+⚠️  preflight: Neither PUBLIC_URL nor SOCIAL_GAME_URL is set — every referral link, share prompt and social card will point at the built-in default domain, not yours. Set PUBLIC_URL to this server's own origin (it is also what one-click X sign-in derives its callback from).
+⚠️  preflight: INVARIANT_WEBHOOK_URL is not set — the §10.4 economy-drift, backup-failure, oracle-halt and real-value-invariant alarms have nowhere to shout and reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+PASS 390px shipment-destruction: 17 rendered commands
+⚠️  preflight: Neither PUBLIC_URL nor SOCIAL_GAME_URL is set — every referral link, share prompt and social card will point at the built-in default domain, not yours. Set PUBLIC_URL to this server's own origin (it is also what one-click X sign-in derives its callback from).
+⚠️  preflight: INVARIANT_WEBHOOK_URL is not set — the §10.4 economy-drift, backup-failure, oracle-halt and real-value-invariant alarms have nowhere to shout and reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+AssertionError [ERR_ASSERTION]: Clicked control must execute the requested identity
++ actual - expected
+
++ 'd0ee228e1b8d8f30b3b8f300cb3714d93966919768a4576001a1fae7b9946611.9244cf1032fd646720fbbb2d9a2f88ae3a0bd703ae1ea2d7c35c91331acb846e'
+- 'd0ee228e1b8d8f30b3b8f300cb3714d93966919768a4576001a1fae7b9946611.9b91c10be8b3479291fb84f1879328bf1f8042820f7559316a943a0c330b5a1d'
+
+    at Object.execute (file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-campaign-mobile.js:112:70)
+    at async issueAndExecute (file:///C:/Users/Jorge/Documents/Omerta-rc1/test/lib/player-command-support.js:66:20)
+    at async Object.prepare [as networkPrepare] (file:///C:/Users/Jorge/Documents/Omerta-rc1/test/lib/campaign-network-support.js:92:7)
+    at async file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-campaign-mobile.js:132:27
+⚠️  preflight: Neither PUBLIC_URL nor SOCIAL_GAME_URL is set — every referral link, share prompt and social card will point at the built-in default domain, not yours. Set PUBLIC_URL to this server's own origin (it is also what one-click X sign-in derives its callback from).
+⚠️  preflight: INVARIANT_WEBHOOK_URL is not set — the §10.4 economy-drift, backup-failure, oracle-halt and real-value-invariant alarms have nowhere to shout and reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+PASS 390px black-market-seizure: 59 rendered commands
+⚠️  preflight: Neither PUBLIC_URL nor SOCIAL_GAME_URL is set — every referral link, share prompt and social card will point at the built-in default domain, not yours. Set PUBLIC_URL to this server's own origin (it is also what one-click X sign-in derives its callback from).
+⚠️  preflight: INVARIANT_WEBHOOK_URL is not set — the §10.4 economy-drift, backup-failure, oracle-halt and real-value-invariant alarms have nowhere to shout and reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+AssertionError [ERR_ASSERTION]: {"error":"command_unavailable","message":"Refresh your commands before trying again."}
+
+409 !== 200
+
+    at Object.execute (file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-campaign-mobile.js:111:50)
+    at runNextTicks (node:internal/process/task_queues:65:5)
+    at process.processImmediate (node:internal/timers:502:9)
+    at async issueAndExecute (file:///C:/Users/Jorge/Documents/Omerta-rc1/test/lib/player-command-support.js:66:20)
+    at async learn (file:///C:/Users/Jorge/Documents/Omerta-rc1/test/lib/campaign-network-support.js:25:9)
+    at async Object.prepare [as networkPrepare] (file:///C:/Users/Jorge/Documents/Omerta-rc1/test/lib/campaign-network-support.js:73:77)
+    at async file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-campaign-mobile.js:132:27

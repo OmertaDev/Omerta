@@ -1,0 +1,289 @@
+{
+  "baseRevision": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+  "scope": "Player validation; final release commit must be pinned separately",
+  "sourceSha256": {
+    "src/world-consequences.js": "1e9c55ec341f54d634f938d82b7bff8ba442c9e68e21e94b97b4214721d74af5",
+    "src/player-commands.js": "0a6c4418d9dd8d967680386f584b4d6f65d1611bbb02bf4b968295b8d7bf88ce",
+    "test/rc1-journeys.js": "152f7dc5092c726875a86cbeda536bc0d39474fb67209da7e42daaf7fabd1616",
+    "tools/rc1-mobile-journeys.js": "287931e242520e21d41bd098c22ea13d92a6ec0380ca5c3a821ebe5031095a50"
+  },
+  "passed": [
+    "existing mobile: 175 screen checks at 320/375/360",
+    "invite browser: desktop and390",
+    "player-command-journey: preserve/expose",
+    "director-journey: protected/intercepted/alternate_route",
+    "campaign-network-journey",
+    "player-opportunities",
+    "world-consequences: memory and PostgreSQL",
+    "rc1-journeys: five branches in memory and PostgreSQL",
+    "player-command-api",
+    "player-commands: memory and PostgreSQL",
+    "player-command-client retest"
+  ],
+  "soloGolden": [
+    {
+      "width": 320,
+      "status": "FAIL",
+      "pageErrors": [],
+      "phases": [
+        "new-player-command-center",
+        "response-lost",
+        "recovered-after-refresh",
+        "first-case-completed",
+        "solo-preparation-requirements",
+        "solo-ready-equipment-world-gate",
+        "failure"
+      ],
+      "telemetryRequests": 26,
+      "telemetryStatuses": [
+        200
+      ],
+      "worldAction": {
+        "commandId": "230dab9a966fb63dceebcb6541568cdcbe0f5916156baf607de3b2164d4b0ff8",
+        "commandType": "world.execute",
+        "subject": {
+          "type": "world_object",
+          "id": "facility:foundry_archive"
+        },
+        "target": {
+          "type": "territory",
+          "id": "foundry"
+        },
+        "label": "Open archive",
+        "description": "Open archive",
+        "parameters": {
+          "objectId": "facility:foundry_archive",
+          "actionId": "open_archive",
+          "expectedRevision": 0
+        },
+        "availability": "LOCKED",
+        "requirements": [
+          {
+            "kind": "known",
+            "code": "family_authority",
+            "description": "This requires current Family leadership and an eligible Crew."
+          }
+        ],
+        "blockers": [
+          {
+            "kind": "known",
+            "code": "family_authority",
+            "description": "This requires current Family leadership and an eligible Crew."
+          },
+          {
+            "kind": "undiscovered",
+            "code": "undiscovered_requirement",
+            "description": "Keep investigating."
+          }
+        ],
+        "costs": [],
+        "committedResources": [],
+        "requiredKnowledge": [],
+        "requiredItems": [],
+        "requiredRoles": [],
+        "requiredParticipants": [],
+        "authorization": {
+          "revalidatedOnExecution": true
+        },
+        "risk": [],
+        "expiresAt": "2026-09-19T00:10:00.000Z",
+        "confirmation": {
+          "required": false,
+          "message": null
+        },
+        "resultContract": {
+          "schemaVersion": 1,
+          "currentAuthorizedProjection": true,
+          "exactRetry": true
+        }
+      },
+      "heldInventory": {
+        "items": [
+          {
+            "id": "5802edce-3fc7-41fe-ad04-3957dc845239",
+            "templateId": "item:archive_turn_key",
+            "state": "active",
+            "createdAt": "2026-09-19T00:02:18.899Z",
+            "consumedAt": null,
+            "provenance": [
+              {
+                "id": "8bf4b1a2-4582-42bc-bc7f-ecccba776abd",
+                "kind": "created",
+                "provenance": "crafted",
+                "occurredAt": "2026-09-19T00:02:18.901Z"
+              }
+            ]
+          }
+        ],
+        "resources": [
+          {
+            "templateId": "mat:salvage_parts",
+            "quality": "standard",
+            "quantity": 2
+          },
+          {
+            "templateId": "mat:scrap_steel",
+            "quality": "standard",
+            "quantity": 4
+          },
+          {
+            "templateId": "mat:wire",
+            "quality": "standard",
+            "quantity": 1
+          }
+        ],
+        "truncated": {
+          "items": false,
+          "resources": false,
+          "provenance": false
+        }
+      },
+      "crew": null,
+      "family": null
+    },
+    {
+      "width": 390,
+      "status": "FAIL",
+      "pageErrors": [],
+      "phases": [
+        "new-player-command-center",
+        "response-lost",
+        "recovered-after-refresh",
+        "first-case-completed",
+        "solo-preparation-requirements",
+        "solo-ready-equipment-world-gate",
+        "failure"
+      ],
+      "telemetryRequests": 24,
+      "telemetryStatuses": [
+        200
+      ],
+      "worldAction": {
+        "commandId": "230dab9a966fb63dceebcb6541568cdcbe0f5916156baf607de3b2164d4b0ff8",
+        "commandType": "world.execute",
+        "subject": {
+          "type": "world_object",
+          "id": "facility:foundry_archive"
+        },
+        "target": {
+          "type": "territory",
+          "id": "foundry"
+        },
+        "label": "Open archive",
+        "description": "Open archive",
+        "parameters": {
+          "objectId": "facility:foundry_archive",
+          "actionId": "open_archive",
+          "expectedRevision": 0
+        },
+        "availability": "LOCKED",
+        "requirements": [
+          {
+            "kind": "known",
+            "code": "family_authority",
+            "description": "This requires current Family leadership and an eligible Crew."
+          }
+        ],
+        "blockers": [
+          {
+            "kind": "known",
+            "code": "family_authority",
+            "description": "This requires current Family leadership and an eligible Crew."
+          },
+          {
+            "kind": "undiscovered",
+            "code": "undiscovered_requirement",
+            "description": "Keep investigating."
+          }
+        ],
+        "costs": [],
+        "committedResources": [],
+        "requiredKnowledge": [],
+        "requiredItems": [],
+        "requiredRoles": [],
+        "requiredParticipants": [],
+        "authorization": {
+          "revalidatedOnExecution": true
+        },
+        "risk": [],
+        "expiresAt": "2026-09-19T00:10:00.000Z",
+        "confirmation": {
+          "required": false,
+          "message": null
+        },
+        "resultContract": {
+          "schemaVersion": 1,
+          "currentAuthorizedProjection": true,
+          "exactRetry": true
+        }
+      },
+      "heldInventory": {
+        "items": [
+          {
+            "id": "ec741f8f-2dbb-4115-99c7-4143aef585b2",
+            "templateId": "item:archive_turn_key",
+            "state": "active",
+            "createdAt": "2026-09-19T00:02:40.574Z",
+            "consumedAt": null,
+            "provenance": [
+              {
+                "id": "5b3d44d9-1063-404f-8a03-a24a72204b25",
+                "kind": "created",
+                "provenance": "crafted",
+                "occurredAt": "2026-09-19T00:02:40.576Z"
+              }
+            ]
+          }
+        ],
+        "resources": [
+          {
+            "templateId": "mat:salvage_parts",
+            "quality": "standard",
+            "quantity": 2
+          },
+          {
+            "templateId": "mat:scrap_steel",
+            "quality": "standard",
+            "quantity": 4
+          },
+          {
+            "templateId": "mat:wire",
+            "quality": "standard",
+            "quantity": 1
+          }
+        ],
+        "truncated": {
+          "items": false,
+          "resources": false,
+          "provenance": false
+        }
+      },
+      "crew": null,
+      "family": null
+    }
+  ],
+  "blockers": [
+    {
+      "id": "SOLO-WORLD-AUTHORITY",
+      "classification": "RELEASE BLOCKER",
+      "baseline": true,
+      "reproduction": "node tools/rc1-mobile-journeys.js",
+      "evidence": "mobile/results.json",
+      "message": "Prepared fresh solo players cannot execute canonical world actions without Family leadership and eligible Crew authority."
+    },
+    {
+      "id": "PLAYER-FOLLOWUP",
+      "classification": "RELEASE BLOCKER",
+      "reproduction": "node test/rc1-journeys.js",
+      "evidence": "rc1-branches.json",
+      "message": "Sampled terminal branches have no linked opportunity IDs or new Director selections in four601-second ticks."
+    }
+  ],
+  "remainingCoverage": [
+    "Complete novice B-G browser journeys at both widths; complementary fixture-browser results belong to root lane",
+    "First30-minute comprehension and continuation intent",
+    "Expired/stale opportunity and background/foreground real-mobile interactions",
+    "Second independently chosen player session"
+  ],
+  "playerValidationStatus": "BLOCKED"
+}

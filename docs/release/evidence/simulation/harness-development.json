@@ -1,0 +1,23 @@
+{
+  "classification": "NEW REGRESSION",
+  "scope": "New validation harness only; no production behavior changed",
+  "failures": [
+    {
+      "reproduction": "Initial 25-player PostgreSQL pilot used Promise.all for two identical in-flight operation execution requests and required both promises to fulfill.",
+      "result": "The issuance lock returned contention for one request. Its peer committed once.",
+      "evidence": "pilot2/25-rc1-alpha-0.json",
+      "resolution": "Use Promise.allSettled, require exactly one new completion, allow only contention or replay for the duplicate, retry the exact receipt and verify canonical history does not change. Final matrix retains this assertion."
+    },
+    {
+      "reproduction": "Initial supplementary model invoked runDirectorSimulation with a new scenario object outside DIRECTOR_SIMULATION_SCENARIOS.",
+      "result": "AssertionError: Choose an admitted scenario at tools/director-sim.js:187.",
+      "resolution": "Retain the admitted-scenario assertion. Run the frozen catalog for horizon evidence and use runCampaignNetworkSimulation for declared population scenarios."
+    },
+    {
+      "reproduction": "Initial opportunity-quality journey attempted establish_market immediately after the tick that resolved the prior shipment situation.",
+      "result": "AssertionError: Expected AVAILABLE situation.act with actionId establish_market. The quiet interval had not yet admitted the next selection.",
+      "resolution": "Use the same bounded four-tick selection wait as the existing canonical campaign journey before asking for the authored situation command. Follow-up quality observations include this next scheduler selection and retain the canonical event evidence."
+    }
+  ],
+  "model_input_correction": "The Campaign Network model initially received synthetic discoveries above 32 at 500/1000 players, unlike the production adapter. The final model limits this synthetic source count to the production cap; models do not represent actual source-row saturation or replace native evidence."
+}

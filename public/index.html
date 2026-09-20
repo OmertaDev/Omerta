@@ -4726,7 +4726,8 @@
       const result = await apiNow(method, path, body, { ...options, authToken });
       return valid() ? result : neutral;
     };
-    if (method !== 'GET' && !path.startsWith('/v1/auth/') && !path.startsWith('/v1/access/')) {
+    if (method !== 'GET' && !['/v1/screens', '/v1/commands/observations'].includes(path)
+      && !path.startsWith('/v1/auth/') && !path.startsWith('/v1/access/')) {
       projections.invalidate('player'); projections.invalidate('world');
     }
     if (!authToken) return run();
@@ -4766,6 +4767,22 @@
   let worldStoredRetry = null;
   try { worldStoredRetry = JSON.parse(sessionStorage.getItem('omerta_world_pending') || 'null'); } catch { /* storage unavailable */ }
   let worldStatus = 'Open your Command Center to see the next move.';
+  let worldObservationSession = crypto.randomUUID(), worldObservationQueue = Promise.resolve(), worldObservationPending = 0;
+  const worldObserved = new Set();
+  function observeWorld(phase, reference = '', count = 1) {
+    if (!token || worldObservationPending >= 32) return;
+    const identity = `${token}:${phase}:${reference}`;
+    if (phase !== 'opportunity_open' && worldObserved.has(identity)) return;
+    if (phase !== 'opportunity_open') worldObserved.add(identity);
+    const bearer = token, observation = { phase, session: worldObservationSession, count, ...(reference ? { reference } : {}) };
+    // Separate from the command queue: a telemetry outage cannot turn a
+    // committed action into an apparent failure, or clear its retry identity.
+    worldObservationPending++;
+    worldObservationQueue = worldObservationQueue.then(() => fetch('/v1/commands/observations', {
+      method: 'POST', headers: { 'content-type': 'application/json', authorization: `Bearer ${bearer}` },
+      body: JSON.stringify(observation), signal: AbortSignal.timeout(3000),
+    })).catch(() => {}).finally(() => { worldObservationPending--; });
+  }
   function restoreWorldCommand(saved, board) {
     if (!saved || !board?.player?.id || !board.player.character?.id || saved.accountId !== board.player.id
       || saved.characterId !== board.player.character.id || typeof saved.executionId !== 'string'
@@ -4867,6 +4884,10 @@
     if (worldBusy || worldChoiceConfirmation || !token || !me || !worldAccountId || (worldRetry && !retry)) return;
     const stamp = projections.snapshot(), actorId = me.id, accountId = worldAccountId, sourceBoard = worldProjection;
     if (!retry && (!sourceBoard?.commands?.includes(move) || move.availability !== 'AVAILABLE' || !move.executionIdentity?.executionId)) return;
+    if (!retry) {
+      const opportunity = sourceBoard.opportunities?.find((entry) => entry.commandIds?.includes(move.commandId));
+      observeWorld('opportunity_open', opportunity?.opportunityId || move.commandId);
+    }
     if (!retry && move.confirmation?.required) {
       if (!await confirmWorldChoice(move)) return;
       if (!projections.current(stamp) || me?.id !== actorId || worldProjection !== sourceBoard || worldAccountId !== accountId) return;
@@ -4876,6 +4897,8 @@
       confirmed: move.confirmation?.required === true };
     if (!pending || pending.characterId !== me.id || pending.accountId !== worldAccountId
       || typeof pending.executionId !== 'string' || pending.idempotencyKey !== pending.executionId) return;
+    if (!retry && ['recipe.craft', 'item.salvage', 'discovery.act', 'knowledge.share', 'operation.join',
+      'operation.commit', 'operation.contribute'].includes(move.commandType)) observeWorld('preparation', move.commandId);
     worldBusy = true; worldRetry = pending;
     try { sessionStorage.setItem('omerta_world_pending', JSON.stringify(pending)); } catch { /* memory retains the same identity */ }
     paintWorld();
@@ -4902,7 +4925,11 @@
     const refreshed = await projections.world(worldSelection, worldMysterySelection);
     if (options.isCurrent() && refreshed?.code < 400 && result.code < 400) {
       // The refreshed board owns visible details; feedback carries only the authorized action report.
-      worldFeedback = result.body?.feedback || null;
+      worldFeedback = result.body?.feedback ? { ...result.body.feedback,
+        observedConsequences: result.body.replayed ? [] : (result.body.feedback.worldChanges || []).flatMap((change) => {
+          const event = result.body.projection?.consequences?.find((entry) => entry.subject?.id === change.id);
+          return event?.cause ? [event.id] : [];
+        }) } : null;
       paintWorld();
     }
   }
@@ -4936,7 +4963,7 @@
       const index = moves.push(command) - 1;
       return `<button class="act" data-world-move="${index}" ${command.availability !== 'AVAILABLE' || !command.executionIdentity?.executionId || worldBusy || worldRetry ? 'disabled' : ''}>${esc(command.label)}</button>`;
     }).join('');
-    const opportunityCard = (opportunity) => `<article class="world-entry"><h4>${esc(opportunity.label)}</h4>
+    const opportunityCard = (opportunity) => `<article class="world-entry" data-world-opportunity="${esc(opportunity.opportunityId)}"><h4>${esc(opportunity.label)}</h4>
       ${opportunity.description && opportunity.description !== opportunity.label ? `<p class="dim">${esc(opportunity.description)}</p>` : ''}
       ${opportunity.whyKnown ? `<small class="dim">${esc(opportunity.whyKnown)}</small>` : ''}
       ${opportunity.whyItMatters ? `<p>${esc(opportunity.whyItMatters)}</p>` : ''}
@@ -5069,6 +5096,14 @@
     });
     target.querySelector('#world-retry')?.addEventListener('click', () => worldMutation(worldRetry, true));
     target.querySelectorAll('[data-world-move]').forEach((node) => node.addEventListener('click', () => worldMutation(moves[Number(node.dataset.worldMove)])));
+    target.querySelectorAll('[data-world-opportunity]').forEach((node) => node.addEventListener('click', () => observeWorld('opportunity_open', node.dataset.worldOpportunity)));
+    if (board && currentTab === 'world') {
+      observeWorld('session'); observeWorld('command_center');
+      observeWorld('opportunities_shown', opportunities.map((entry) => entry.opportunityId).join('|').slice(0, 200), Math.min(opportunities.length, 200));
+      for (const consequence of (board.consequences || []).slice(0, 6)) {
+        if (worldFeedback?.observedConsequences?.includes(consequence.id)) observeWorld('consequence', consequence.id);
+      }
+    }
     target.querySelectorAll('[data-world-instance]').forEach((node) => node.addEventListener('click', () => {
       worldSelection = board.operations.instances[Number(node.dataset.worldInstance)].id;
       projections.world(worldSelection, worldMysterySelection);
@@ -7028,9 +7063,14 @@
     // funnel and the /admin panel all tested green. Optional chaining made it silent.
     if (!pendingScreens.size || !token) return;
     const batch = [...pendingScreens]; pendingScreens = new Set();
-    try { api('POST', '/v1/screens', { screens: batch }); } catch {}
+    // A delayed screen beacon must not invalidate a command confirmation or
+    // occupy the gameplay request queue while its telemetry write is blocked.
+    try { fetch('/v1/screens', { method: 'POST', headers: { 'content-type': 'application/json', authorization: `Bearer ${token}` },
+      body: JSON.stringify({ screens: batch }), signal: AbortSignal.timeout(3000) }).catch(() => {}); } catch {}
   }
   function noteScreen(id) {
+    observeWorld('session');
+    if (id === 'world') observeWorld('command_center');
     if (!id || reported.has(id)) return;
     reported.add(id); pendingScreens.add(id);
     if (!flushTimer) flushTimer = setTimeout(flushScreens, 15000);

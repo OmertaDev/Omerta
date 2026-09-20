@@ -1,0 +1,43 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+FAIL 320px: locator.click: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator('[data-world-choice-confirm]')
+    - locator resolved to <button class="act danger" data-world-choice-confirm="">Confirm move</button>
+  - attempting click action
+    2 × waiting for element to be visible, enabled and stable
+      - element is not stable
+    - retrying click action
+    - waiting 20ms
+    2 × waiting for element to be visible, enabled and stable
+      - element is not stable
+    - retrying click action
+      - waiting 100ms
+    - waiting for element to be visible, enabled and stable
+  - element was detached from the DOM, retrying
+
+    at executeVisible (C:\Users\Jorge\Documents\Omerta-rc1\tools\rc1-mobile-journeys.js:101:59)
+    at async file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-mobile-journeys.js:234:7
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+node:internal/process/promises:394
+    triggerUncaughtException(err, true /* fromPromise */);
+    ^
+
+AssertionError [ERR_ASSERTION]: {"error":"command_unavailable","message":"Refresh your commands before trying again."}
+
+409 !== 200
+
+    at file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-mobile-journeys.js:143:16
+    at async Promise.all (index 1)
+    at async RouteHandler._handleInternal (C:\Users\Jorge\Documents\Omerta-rc1\node_modules\playwright-core\lib\coreBundle.js:59784:27)
+    at async RouteHandler._handleImpl (C:\Users\Jorge\Documents\Omerta-rc1\node_modules\playwright-core\lib\coreBundle.js:59753:18)
+    at async RouteHandler.handle (C:\Users\Jorge\Documents\Omerta-rc1\node_modules\playwright-core\lib\coreBundle.js:59747:16)
+    at async _Page._onRoute (C:\Users\Jorge\Documents\Omerta-rc1\node_modules\playwright-core\lib\coreBundle.js:61037:27) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 409,
+  expected: 200,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

@@ -1,0 +1,39 @@
+Current copy: shared system status, Codex links, staking rules, release labels and inline scripts passed.
+✅ docs test passed — every number in SPEC.md's size table checked against the tree (273 src files / 106279 lines, 264 suites, 369 tables, 614 markdown files), the rules-seam figures are current, the false "re-apply by hand" warning cannot come back, no doc misstates its own size by more than 25%, and all 96 audit reports are indexed as point-in-time with none phantom.
+✓ all 26 ownable contracts hand ownership over in two steps
+✓ the risk register's 7 lever-derived figures match the live levers in both codices
+✓ no launch-gating doc calls an existing contract unwritten (205 mentions), and the batch matches the tree (38 contracts + 1 interface)
+✓ the audit packet agrees with itself (21 contracts + 3 interfaces, 387/22 tests/suites, measured 2026-08-27)
+✓ the O1 audit packet matches the tree (48 contracts + 11 interfaces, 59 files), agrees with itself (896/43 tests/suites under forge v1.7.1, measured 2026-09-14), and every gate doc points at it
+✓ corporate-action policy stays fail-closed, pro-rata, cohort-bound, and aligned across both Codices plus launch docs
+✓ post-close Stock Token ineligibility skips without substitution, preserves bounded ETH, and stays public
+✓ pre-close Stock Token removal invalidates only affected votes without restarting or extending the ballot
+✓ skipped-day ETH remains pooled acquisition capital under fresh daily caps, never catch-up authority
+✓ Stock Token identities are immutable/versioned, forward-only, singly active per ticker, and allocation-neutral
+✓ Stock Token version keys deterministically bind chain/ticker/token/provider identity, never metadata or status
+✓ Stock Token history may reuse identity fields while the registry atomically preserves active-set uniqueness
+✓ an empty production Stock Token catalog stops visibly, preserves pooled ETH, and never replays
+✓ seated families may publicly nominate and endorse RWA candidates without bypassing Safe approval
+✓ family RWA nominations are weekly, endorsements reversible, and 30-day history append-only
+✓ RWA nomination history survives seat turnover while current support follows the live Commission
+✓ pending RWA nominations deduplicate by exact version key without spending cooldown or hiding conflicts
+✓ each RWA nomination has one sponsor and at most five current supporting families with no double count
+✓ three current family supporters request RWA review without binding the Safe or cancelling claimed work
+✓ automatic RWA review always requires three distinct seated families, regardless of occupied seats
+✓ unresolved RWA nominations expire at a hard 30-day deadline, including under review
+✓ approved RWA Safe calldata binds identity/evidence and expires after seven days without renewal
+✓ RWA activation handles evidence drift, atomic uniqueness, and canonical-chain finality
+✓ one reviewer disposes nominations; quarantine fails closed and recovers under Safe control
+✓ quarantine entry, health freshness, and in-flight purchase ordering are deterministic
+✓ paused deliveries resume FIFO; undeliverable assets conserve value; users may hold delivery
+✓ Stock Token allocations bind whole to a deed, follow its transfer, and resist redirection
+✓ delivery gas is non-dilutive; atomic-unit rounding conserves; recipient failures isolate
+✓ custody delta controls units; spend/refunds reconcile; each ballot gets one on-time fill
+✓ independent fresh pricing, evidence-based availability, and exact adapters gate purchases
+✓ pooled ETH is capped/accounted by default but main operator retains arbitrary transfer power
+✓ RWA budget is pre-vote fixed, MVP holdings are spot/units-first, and the OMR-staking rule is complete with implementation pending
+✓ GRAPH.md argues from measured figures, not remembered ones
+✓ DEPLOY.md §8 states the smoke-debris window the code enforces, the asymmetry it warns about, and that no sweep exists
+✓ DEPLOY.md states the webhook belongs on BOTH services, and the drill it names exists
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+  ✓ the public drafts' 5 tree-claims are measured (802 routes, 55 invariants, 97 reports, 237 suites) and the MCP receipt matches omerta-mcp@1.3.0's 9 tools

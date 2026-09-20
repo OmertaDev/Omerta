@@ -86,7 +86,12 @@ try {
     await pool.query("UPDATE coordination_claim_grants SET active=$1 WHERE id='crew-grant'", [req.body.executionId === 'board.share']);
     return { status: 'COMPLETED', secret: 'never-forward-a-response' };
   });
+  app.post('/v1/commands/observations', async () => ({ ok: true }));
+  app.post('/v1/screens', async () => ({ ok: true }));
 
+  await request('POST', '/v1/commands/observations', 'owner', { phase: 'opportunity_open', session: 'player-session' });
+  hinted([]); // passive telemetry cannot refresh/close a player's confirmation
+  await request('POST', '/v1/screens', 'owner', { screens: ['world'] }); hinted([]);
   await request('POST', '/v1/coordination/instances/private-run/act'); hinted(['owner']);
   reset(); await request('POST', '/v1/coordination/knowledge/private-claim/share'); hinted(['owner', 'reader']);
   reset(); await request('POST', '/v1/coordination/knowledge/private-claim/revoke', 'owner', { grantId: 'crew-grant' }); hinted(['owner', 'reader']);

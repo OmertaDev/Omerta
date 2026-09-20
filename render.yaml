@@ -134,6 +134,8 @@ services:
     #   · the per-account flood brakes (phone.js `lastDmAt`, server.js `lastChatAt`) — the same
     #     class as the buckets above and NOT covered by REDIS_URL: N instances = N× the allowed rate
     #   · the /health request-metrics ring — per-instance numbers, harmless but misleading
+    #   · world-telemetry.js `writers` — bounded observation queues and drop/failure counters
+    #     are per process; the release funnel reports this limit and never grants permission
     # Scaling OUT (vs upgrading the database, which is the measured dial below) needs REDIS_URL for
     # the rate limiter + a cross-process fanout for the bus. Until that exists, more instances make
     # the game WORSE, not faster. Scale the DATABASE plan instead (+50% per doubling — see below).

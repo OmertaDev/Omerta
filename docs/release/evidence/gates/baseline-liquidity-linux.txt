@@ -1,0 +1,591 @@
+recovery	UNKNOWN STEP	﻿2026-09-18T18:58:43.5671654Z Current runner version: '2.337.0'
+recovery	UNKNOWN STEP	2026-09-18T18:58:43.5696413Z ##[group]Runner Image Provisioner
+recovery	UNKNOWN STEP	2026-09-18T18:58:43.5697203Z Hosted Compute Agent
+recovery	UNKNOWN STEP	2026-09-18T18:58:43.5697829Z Version: 20260828.587
+recovery	UNKNOWN STEP	2026-09-18T18:58:43.5698408Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
+recovery	UNKNOWN STEP	2026-09-18T18:58:43.5699421Z Build Date: 2026-08-28T16:44:25Z
+recovery	UNKNOWN STEP	2026-09-18T18:58:43.5700105Z Worker ID: {bfa43c15-d615-4548-a0fe-4a19db482e23}
+recovery	UNKNOWN STEP	2026-09-18T18:58:43.5700778Z Azure Region: westcentralus
+recovery	UNKNOWN STEP	2026-09-18T18:58:43.5701352Z ##[endgroup]
+recovery	UNKNOWN STEP	2026-09-18T18:58:43.5702867Z ##[group]Operating System
+recovery	UNKNOWN STEP	2026-09-18T18:58:43.5703454Z Ubuntu
+recovery	UNKNOWN STEP	2026-09-18T18:58:43.5703948Z 24.04.5
+recovery	UNKNOWN STEP	2026-09-18T18:58:43.5704415Z LTS
+recovery	UNKNOWN STEP	2026-09-18T18:58:43.5704908Z ##[endgroup]
+recovery	UNKNOWN STEP	2026-09-18T18:58:43.5705560Z ##[group]Runner Image
+recovery	UNKNOWN STEP	2026-09-18T18:58:43.5706108Z Image: ubuntu-24.04
+recovery	UNKNOWN STEP	2026-09-18T18:58:43.5706692Z Version: 20260907.300.1
+recovery	UNKNOWN STEP	2026-09-18T18:58:43.5707783Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260907.300/images/ubuntu/Ubuntu2404-Readme.md
+recovery	UNKNOWN STEP	2026-09-18T18:58:43.5709207Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260907.300
+recovery	UNKNOWN STEP	2026-09-18T18:58:43.5710111Z ##[endgroup]
+recovery	UNKNOWN STEP	2026-09-18T18:58:43.5711178Z ##[group]GITHUB_TOKEN Permissions
+recovery	UNKNOWN STEP	2026-09-18T18:58:43.5713107Z Contents: read
+recovery	UNKNOWN STEP	2026-09-18T18:58:43.5713669Z Metadata: read
+recovery	UNKNOWN STEP	2026-09-18T18:58:43.5714181Z Packages: read
+recovery	UNKNOWN STEP	2026-09-18T18:58:43.5714696Z ##[endgroup]
+recovery	UNKNOWN STEP	2026-09-18T18:58:43.5716943Z Secret source: Actions
+recovery	UNKNOWN STEP	2026-09-18T18:58:43.5717848Z Cache mode: write
+recovery	UNKNOWN STEP	2026-09-18T18:58:43.5718494Z Prepare workflow directory
+recovery	UNKNOWN STEP	2026-09-18T18:58:43.6189048Z Prepare all required actions
+recovery	UNKNOWN STEP	2026-09-18T18:58:43.6237393Z Getting action download info
+recovery	UNKNOWN STEP	2026-09-18T18:58:43.9126222Z Download action repository 'actions/checkout@v7' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+recovery	UNKNOWN STEP	2026-09-18T18:58:44.0239857Z Download action repository 'actions/setup-node@v6' (SHA:249970729cb0ef3589644e2896645e5dc5ba9c38)
+recovery	UNKNOWN STEP	2026-09-18T18:58:44.2274916Z Complete job name: recovery
+recovery	UNKNOWN STEP	2026-09-18T18:58:44.2722424Z ##[group]Checking docker version
+recovery	UNKNOWN STEP	2026-09-18T18:58:44.2735452Z ##[command]/usr/bin/docker version --format '{{.Server.APIVersion}}'
+recovery	UNKNOWN STEP	2026-09-18T18:58:45.0617122Z '1.48'
+recovery	UNKNOWN STEP	2026-09-18T18:58:45.0632921Z Docker daemon API version: '1.48'
+recovery	UNKNOWN STEP	2026-09-18T18:58:45.0633909Z ##[command]/usr/bin/docker version --format '{{.Client.APIVersion}}'
+recovery	UNKNOWN STEP	2026-09-18T18:58:45.0861690Z '1.48'
+recovery	UNKNOWN STEP	2026-09-18T18:58:45.0871268Z Docker client API version: '1.48'
+recovery	UNKNOWN STEP	2026-09-18T18:58:45.0879524Z ##[endgroup]
+recovery	UNKNOWN STEP	2026-09-18T18:58:45.0885126Z ##[group]Clean up resources from previous jobs
+recovery	UNKNOWN STEP	2026-09-18T18:58:45.0891035Z ##[command]/usr/bin/docker ps --all --quiet --no-trunc --filter "label=97a437"
+recovery	UNKNOWN STEP	2026-09-18T18:58:45.1058875Z ##[command]/usr/bin/docker network prune --force --filter "label=97a437"
+recovery	UNKNOWN STEP	2026-09-18T18:58:45.1183312Z ##[endgroup]
+recovery	UNKNOWN STEP	2026-09-18T18:58:45.1184176Z ##[group]Create local container network
+recovery	UNKNOWN STEP	2026-09-18T18:58:45.1195399Z ##[command]/usr/bin/docker network create --label 97a437 github_network_fce696ff9ffd49b093544affc0ba99f5
+recovery	UNKNOWN STEP	2026-09-18T18:58:45.1685943Z b8ef6425010684e21e91d8f0764bcfbc95ecb65e371a194ae35cbec9c2c878ed
+recovery	UNKNOWN STEP	2026-09-18T18:58:45.1703059Z ##[endgroup]
+recovery	UNKNOWN STEP	2026-09-18T18:58:45.1729246Z ##[group]Starting postgres service container
+recovery	UNKNOWN STEP	2026-09-18T18:58:45.1750723Z ##[command]/usr/bin/docker pull postgres:18
+recovery	UNKNOWN STEP	2026-09-18T18:58:45.9072979Z 18: Pulling from library/postgres
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.1239677Z 6310eb16bf42: Pulling fs layer
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.1240855Z 6463c6b5c703: Pulling fs layer
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.1243002Z 8d6422da287d: Pulling fs layer
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.1243835Z 2fc0e69f8d7d: Pulling fs layer
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.1244259Z 5fa29c524b4e: Pulling fs layer
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.1244612Z ace4b5b96a91: Pulling fs layer
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.1244982Z af2a6480a058: Pulling fs layer
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.1245634Z 5ee6c6ca7fd9: Pulling fs layer
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.1246115Z c5694bff1357: Pulling fs layer
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.1246453Z aedab7177504: Pulling fs layer
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.1246788Z a4635eaec9b8: Pulling fs layer
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.1247200Z 46e663abc8f5: Pulling fs layer
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.1247904Z 1bb54e8f7727: Pulling fs layer
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.1248279Z 2fc0e69f8d7d: Waiting
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.1248696Z 5fa29c524b4e: Waiting
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.1249023Z ace4b5b96a91: Waiting
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.1249330Z c5694bff1357: Waiting
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.1249630Z aedab7177504: Waiting
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.1249932Z a4635eaec9b8: Waiting
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.1250231Z 46e663abc8f5: Waiting
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.1250528Z 1bb54e8f7727: Waiting
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.1250812Z af2a6480a058: Waiting
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.1251104Z 5ee6c6ca7fd9: Waiting
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.3286766Z 6463c6b5c703: Verifying Checksum
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.5390919Z 6463c6b5c703: Download complete
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.5391341Z 8d6422da287d: Verifying Checksum
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.5391618Z 8d6422da287d: Download complete
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.5944824Z 6310eb16bf42: Verifying Checksum
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.5946574Z 6310eb16bf42: Download complete
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.6491252Z 2fc0e69f8d7d: Verifying Checksum
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.6492261Z 2fc0e69f8d7d: Download complete
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.8564867Z af2a6480a058: Verifying Checksum
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.8570705Z af2a6480a058: Download complete
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.9251716Z ace4b5b96a91: Verifying Checksum
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.9252142Z ace4b5b96a91: Download complete
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.9506246Z 5fa29c524b4e: Verifying Checksum
+recovery	UNKNOWN STEP	2026-09-18T18:58:46.9527107Z 5fa29c524b4e: Download complete
+recovery	UNKNOWN STEP	2026-09-18T18:58:47.0601176Z 5ee6c6ca7fd9: Verifying Checksum
+recovery	UNKNOWN STEP	2026-09-18T18:58:47.0602260Z 5ee6c6ca7fd9: Download complete
+recovery	UNKNOWN STEP	2026-09-18T18:58:47.1504547Z aedab7177504: Verifying Checksum
+recovery	UNKNOWN STEP	2026-09-18T18:58:47.1505107Z aedab7177504: Download complete
+recovery	UNKNOWN STEP	2026-09-18T18:58:47.2689741Z a4635eaec9b8: Verifying Checksum
+recovery	UNKNOWN STEP	2026-09-18T18:58:47.2690294Z a4635eaec9b8: Download complete
+recovery	UNKNOWN STEP	2026-09-18T18:58:47.3593452Z 46e663abc8f5: Verifying Checksum
+recovery	UNKNOWN STEP	2026-09-18T18:58:47.3606309Z 46e663abc8f5: Download complete
+recovery	UNKNOWN STEP	2026-09-18T18:58:47.4059056Z 6310eb16bf42: Pull complete
+recovery	UNKNOWN STEP	2026-09-18T18:58:47.4476615Z 6463c6b5c703: Pull complete
+recovery	UNKNOWN STEP	2026-09-18T18:58:47.4907531Z 1bb54e8f7727: Verifying Checksum
+recovery	UNKNOWN STEP	2026-09-18T18:58:47.4908085Z 1bb54e8f7727: Download complete
+recovery	UNKNOWN STEP	2026-09-18T18:58:47.7050950Z c5694bff1357: Verifying Checksum
+recovery	UNKNOWN STEP	2026-09-18T18:58:47.7051297Z c5694bff1357: Download complete
+recovery	UNKNOWN STEP	2026-09-18T18:58:50.4236353Z 8d6422da287d: Pull complete
+recovery	UNKNOWN STEP	2026-09-18T18:58:50.4580460Z 2fc0e69f8d7d: Pull complete
+recovery	UNKNOWN STEP	2026-09-18T18:58:50.7016084Z 5fa29c524b4e: Pull complete
+recovery	UNKNOWN STEP	2026-09-18T18:58:50.7677983Z ace4b5b96a91: Pull complete
+recovery	UNKNOWN STEP	2026-09-18T18:58:50.7746669Z af2a6480a058: Pull complete
+recovery	UNKNOWN STEP	2026-09-18T18:58:50.7842180Z 5ee6c6ca7fd9: Pull complete
+recovery	UNKNOWN STEP	2026-09-18T18:58:53.4299129Z c5694bff1357: Pull complete
+recovery	UNKNOWN STEP	2026-09-18T18:58:53.4411867Z aedab7177504: Pull complete
+recovery	UNKNOWN STEP	2026-09-18T18:58:53.4716182Z a4635eaec9b8: Pull complete
+recovery	UNKNOWN STEP	2026-09-18T18:58:53.4782999Z 46e663abc8f5: Pull complete
+recovery	UNKNOWN STEP	2026-09-18T18:58:53.4861544Z 1bb54e8f7727: Pull complete
+recovery	UNKNOWN STEP	2026-09-18T18:58:53.4893978Z Digest: sha256:4ef4dbc939d61acea57712655ddb4b4ab27419c913f94cca0cd57cb3ea3c2280
+recovery	UNKNOWN STEP	2026-09-18T18:58:53.4901449Z Status: Downloaded newer image for postgres:18
+recovery	UNKNOWN STEP	2026-09-18T18:58:53.4909712Z docker.io/library/postgres:18
+recovery	UNKNOWN STEP	2026-09-18T18:58:53.4971830Z ##[command]/usr/bin/docker create --name 9b54854d1a9c4b8e8c6c2ac486d62765_postgres18_249bd5 --label 97a437 --network github_network_fce696ff9ffd49b093544affc0ba99f5 --network-alias postgres -p 5432:5432 --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5 -e "POSTGRES_USER=postgres" -e "POSTGRES_PASSWORD=postgres" -e GITHUB_ACTIONS=true -e CI=true postgres:18
+recovery	UNKNOWN STEP	2026-09-18T18:58:53.5197916Z 7e137fde5ec0a205b4d6c63a966b6a7da5d5055e39106998b1cbd406ce5b9f42
+recovery	UNKNOWN STEP	2026-09-18T18:58:53.5218388Z ##[command]/usr/bin/docker start 7e137fde5ec0a205b4d6c63a966b6a7da5d5055e39106998b1cbd406ce5b9f42
+recovery	UNKNOWN STEP	2026-09-18T18:58:53.7703337Z 7e137fde5ec0a205b4d6c63a966b6a7da5d5055e39106998b1cbd406ce5b9f42
+recovery	UNKNOWN STEP	2026-09-18T18:58:53.7718335Z ##[command]/usr/bin/docker ps --all --filter id=7e137fde5ec0a205b4d6c63a966b6a7da5d5055e39106998b1cbd406ce5b9f42 --filter status=running --no-trunc --format "{{.ID}} {{.Status}}"
+recovery	UNKNOWN STEP	2026-09-18T18:58:53.7841398Z 7e137fde5ec0a205b4d6c63a966b6a7da5d5055e39106998b1cbd406ce5b9f42 Up Less than a second (health: starting)
+recovery	UNKNOWN STEP	2026-09-18T18:58:53.7857019Z ##[command]/usr/bin/docker port 7e137fde5ec0a205b4d6c63a966b6a7da5d5055e39106998b1cbd406ce5b9f42
+recovery	UNKNOWN STEP	2026-09-18T18:58:53.7979029Z 5432/tcp -> 0.0.0.0:5432
+recovery	UNKNOWN STEP	2026-09-18T18:58:53.7979799Z 5432/tcp -> [::]:5432
+recovery	UNKNOWN STEP	2026-09-18T18:58:53.8019939Z ##[endgroup]
+recovery	UNKNOWN STEP	2026-09-18T18:58:53.8028407Z ##[group]Waiting for all services to be ready
+recovery	UNKNOWN STEP	2026-09-18T18:58:53.8042031Z ##[command]/usr/bin/docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" 7e137fde5ec0a205b4d6c63a966b6a7da5d5055e39106998b1cbd406ce5b9f42
+recovery	UNKNOWN STEP	2026-09-18T18:58:53.8241493Z starting
+recovery	UNKNOWN STEP	2026-09-18T18:58:53.8252050Z postgres service is starting, waiting 2 seconds before checking again.
+recovery	UNKNOWN STEP	2026-09-18T18:58:55.8249497Z ##[command]/usr/bin/docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" 7e137fde5ec0a205b4d6c63a966b6a7da5d5055e39106998b1cbd406ce5b9f42
+recovery	UNKNOWN STEP	2026-09-18T18:58:55.8382455Z starting
+recovery	UNKNOWN STEP	2026-09-18T18:58:55.8390337Z postgres service is starting, waiting 3 seconds before checking again.
+recovery	UNKNOWN STEP	2026-09-18T18:58:59.5136181Z ##[command]/usr/bin/docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" 7e137fde5ec0a205b4d6c63a966b6a7da5d5055e39106998b1cbd406ce5b9f42
+recovery	UNKNOWN STEP	2026-09-18T18:58:59.5260134Z starting
+recovery	UNKNOWN STEP	2026-09-18T18:58:59.5270830Z postgres service is starting, waiting 7 seconds before checking again.
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.3352027Z ##[command]/usr/bin/docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" 7e137fde5ec0a205b4d6c63a966b6a7da5d5055e39106998b1cbd406ce5b9f42
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.3478853Z healthy
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.3491472Z postgres service is healthy.
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.3492179Z ##[endgroup]
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.3760621Z ##[group]Run actions/checkout@v7
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.3761134Z with:
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.3761359Z   repository: OmertaDev/Omerta
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.3763994Z   token: ***
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.3764210Z   ssh-strict: true
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.3764407Z   ssh-user: git
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.3764618Z   persist-credentials: true
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.3764842Z   clean: true
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.3765051Z   sparse-checkout-cone-mode: true
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.3765498Z   fetch-depth: 1
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.3765704Z   fetch-tags: false
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.3765906Z   show-progress: true
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.3766108Z   lfs: false
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.3766289Z   submodules: false
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.3766491Z   set-safe-directory: true
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.3766726Z   allow-unsafe-pr-checkout: false
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.3767192Z env:
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.3767369Z   PGHOST: 127.0.0.1
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.3767566Z   PGUSER: postgres
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.3767760Z   PGPASSWORD: postgres
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.3768022Z ##[endgroup]
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.4779452Z Syncing repository: OmertaDev/Omerta
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.4781722Z ##[group]Getting Git version info
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.4782338Z Working directory is '/home/runner/work/Omerta/Omerta'
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.4783301Z [command]/usr/bin/git version
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.4791481Z git version 2.55.0
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.4810871Z ##[endgroup]
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.4820687Z Temporarily overriding HOME='/home/runner/work/_temp/fd24fb45-aefd-4614-a8d7-4097d07f2124' before making global git config changes
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.4822149Z Adding repository directory to the temporary git global config as a safe directory
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.4826248Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Omerta/Omerta
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.4865738Z Deleting the contents of '/home/runner/work/Omerta/Omerta'
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.4869118Z ##[group]Determining repository object format
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.4870088Z ##[endgroup]
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.4870780Z ##[group]Initializing the repository
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.4874251Z [command]/usr/bin/git init /home/runner/work/Omerta/Omerta
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.4958765Z hint: Using 'master' as the name for the initial branch. This default branch name
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.4964593Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.4965708Z hint: to use in all of your new repositories, which will suppress this warning,
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.4966442Z hint: call:
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.4966802Z hint:
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.4967285Z hint: 	git config --global init.defaultBranch <name>
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.4967862Z hint:
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.4968409Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.4969365Z hint: 'development'. The just-created branch can be renamed via this command:
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.4970158Z hint:
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.4970528Z hint: 	git branch -m <name>
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.4970952Z hint:
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.4971587Z hint: Disable this message with "git config set advice.defaultBranchName false"
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.4972585Z Initialized empty Git repository in /home/runner/work/Omerta/Omerta/.git/
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.4974366Z [command]/usr/bin/git remote add origin https://github.com/OmertaDev/Omerta
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.5007809Z ##[endgroup]
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.5008534Z ##[group]Disabling automatic garbage collection
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.5011238Z [command]/usr/bin/git config --local gc.auto 0
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.5036987Z ##[endgroup]
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.5037568Z ##[group]Setting up auth
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.5038002Z Removing SSH command configuration
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.5043135Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.5069507Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.5369967Z Removing HTTP extra header
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.5375735Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.5405964Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.5595954Z Removing includeIf entries pointing to credentials config files
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.5601010Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.5630534Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.5809092Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-1cbac7f1-e4ee-4656-8574-b75102a410b5.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.5839953Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/Omerta/Omerta/.git.path /home/runner/work/_temp/git-credentials-1cbac7f1-e4ee-4656-8574-b75102a410b5.config
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.5865971Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/Omerta/Omerta/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-1cbac7f1-e4ee-4656-8574-b75102a410b5.config
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.5894736Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-1cbac7f1-e4ee-4656-8574-b75102a410b5.config
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.5920042Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-1cbac7f1-e4ee-4656-8574-b75102a410b5.config
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.5943270Z ##[endgroup]
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.5943854Z ##[group]Fetching the repository
+recovery	UNKNOWN STEP	2026-09-18T18:59:07.5950487Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +626e61b9ab2b14a9dc45566983b70cdc65692839:refs/remotes/origin/main
+recovery	UNKNOWN STEP	2026-09-18T18:59:39.1345958Z From https://github.com/OmertaDev/Omerta
+recovery	UNKNOWN STEP	2026-09-18T18:59:39.1347030Z  * [new ref]         626e61b9ab2b14a9dc45566983b70cdc65692839 -> origin/main
+recovery	UNKNOWN STEP	2026-09-18T18:59:39.1357243Z [command]/usr/bin/git branch --list --remote origin/main
+recovery	UNKNOWN STEP	2026-09-18T18:59:39.1380399Z   origin/main
+recovery	UNKNOWN STEP	2026-09-18T18:59:39.1394942Z [command]/usr/bin/git rev-parse refs/remotes/origin/main
+recovery	UNKNOWN STEP	2026-09-18T18:59:39.1409207Z 626e61b9ab2b14a9dc45566983b70cdc65692839
+recovery	UNKNOWN STEP	2026-09-18T18:59:39.1412521Z ##[endgroup]
+recovery	UNKNOWN STEP	2026-09-18T18:59:39.1413187Z ##[group]Determining the checkout info
+recovery	UNKNOWN STEP	2026-09-18T18:59:39.1413948Z ##[endgroup]
+recovery	UNKNOWN STEP	2026-09-18T18:59:39.1441724Z [command]/usr/bin/git sparse-checkout disable
+recovery	UNKNOWN STEP	2026-09-18T18:59:39.1462628Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+recovery	UNKNOWN STEP	2026-09-18T18:59:39.1489345Z ##[group]Checking out the ref
+recovery	UNKNOWN STEP	2026-09-18T18:59:39.1502667Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.2751340Z Updating files:  34% (1120/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.4029138Z Updating files:  35% (1150/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.4664333Z Updating files:  36% (1182/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.4844708Z Updating files:  37% (1215/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.5088134Z Updating files:  38% (1248/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.5095050Z Updating files:  39% (1281/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.5103275Z Updating files:  40% (1314/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.5124855Z Updating files:  41% (1347/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.5151110Z Updating files:  42% (1379/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.5181596Z Updating files:  43% (1412/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.5194772Z Updating files:  44% (1445/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.5217916Z Updating files:  45% (1478/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.5237285Z Updating files:  46% (1511/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.5277042Z Updating files:  47% (1544/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.5323125Z Updating files:  48% (1576/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.5552704Z Updating files:  49% (1609/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.5648296Z Updating files:  50% (1642/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.5693471Z Updating files:  51% (1675/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.5714394Z Updating files:  52% (1708/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.5735817Z Updating files:  53% (1740/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.5759012Z Updating files:  54% (1773/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.5794284Z Updating files:  55% (1806/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.5823241Z Updating files:  56% (1839/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.5836343Z Updating files:  57% (1872/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.5851160Z Updating files:  58% (1905/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.5986354Z Updating files:  59% (1937/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.6014709Z Updating files:  60% (1970/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.6060033Z Updating files:  61% (2003/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.6170935Z Updating files:  62% (2036/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.6310034Z Updating files:  63% (2069/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.6425106Z Updating files:  64% (2102/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.6526407Z Updating files:  65% (2134/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.6781293Z Updating files:  66% (2167/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.6983532Z Updating files:  67% (2200/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.7338104Z Updating files:  68% (2233/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:40.7718007Z Updating files:  69% (2266/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.0638213Z Updating files:  70% (2299/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.0811492Z Updating files:  71% (2331/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.0941490Z Updating files:  72% (2364/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.1143303Z Updating files:  73% (2397/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.1249514Z Updating files:  74% (2430/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.1455870Z Updating files:  75% (2463/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.1555520Z Updating files:  76% (2496/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.1754424Z Updating files:  76% (2503/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.1946751Z Updating files:  77% (2528/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.2212485Z Updating files:  78% (2561/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.2485657Z Updating files:  79% (2594/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.2617579Z Updating files:  80% (2627/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.2650693Z Updating files:  81% (2660/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.2679206Z Updating files:  82% (2693/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.2715519Z Updating files:  83% (2725/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.2758418Z Updating files:  84% (2758/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.2797119Z Updating files:  85% (2791/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.2814815Z Updating files:  86% (2824/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.2882787Z Updating files:  87% (2857/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.2926076Z Updating files:  88% (2890/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.2986158Z Updating files:  89% (2922/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.3015635Z Updating files:  90% (2955/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.3055645Z Updating files:  91% (2988/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.3110721Z Updating files:  92% (3021/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.3141916Z Updating files:  93% (3054/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.3184257Z Updating files:  94% (3087/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.3216059Z Updating files:  95% (3119/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.3259028Z Updating files:  96% (3152/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.3291771Z Updating files:  97% (3185/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.3321538Z Updating files:  98% (3218/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.3358274Z Updating files:  99% (3251/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.3358777Z Updating files: 100% (3283/3283)
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.3359230Z Updating files: 100% (3283/3283), done.
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.3400904Z Switched to a new branch 'main'
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.3404767Z branch 'main' set up to track 'origin/main'.
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.3483289Z ##[endgroup]
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.3524425Z [command]/usr/bin/git log -1 --format=%H
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.3547888Z 626e61b9ab2b14a9dc45566983b70cdc65692839
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.3779306Z ##[group]Run actions/setup-node@v6
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.3779575Z with:
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.3779764Z   node-version: 22
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.3779967Z   cache: npm
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.3780159Z   check-latest: false
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.3782575Z   token: ***
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.3782787Z   package-manager-cache: true
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.3783029Z env:
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.3783215Z   PGHOST: 127.0.0.1
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.3783421Z   PGUSER: postgres
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.3783638Z   PGPASSWORD: postgres
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.3783841Z ##[endgroup]
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.5147651Z Found in cache @ /opt/hostedtoolcache/node/22.23.2/x64
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.5151536Z ##[group]Environment details
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.8737534Z node: v22.23.2
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.8737882Z npm: 10.9.8
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.8738078Z yarn: 1.22.22
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.8739026Z ##[endgroup]
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.8753933Z [command]/opt/hostedtoolcache/node/22.23.2/x64/bin/npm config get cache
+recovery	UNKNOWN STEP	2026-09-18T18:59:41.9742898Z /home/runner/.npm
+recovery	UNKNOWN STEP	2026-09-18T18:59:42.2041673Z Cache hit for: node-cache-Linux-x64-npm-08335a2c38c1e792b2f470fe8262ee4aed19102649a638186cb6f1a346595d77
+recovery	UNKNOWN STEP	2026-09-18T18:59:43.3622055Z Received 23793481 of 23793481 (100.0%), 24.7 MBs/sec
+recovery	UNKNOWN STEP	2026-09-18T18:59:43.3622940Z Cache Size: ~23 MB (23793481 B)
+recovery	UNKNOWN STEP	2026-09-18T18:59:43.3657522Z [command]/usr/bin/tar -xf /home/runner/work/_temp/b8d65531-c0cc-42ca-af46-854d1a5f7e63/cache.tzst -P -C /home/runner/work/Omerta/Omerta --use-compress-program unzstd
+recovery	UNKNOWN STEP	2026-09-18T18:59:43.4231406Z Cache restored successfully
+recovery	UNKNOWN STEP	2026-09-18T18:59:43.4244088Z Cache restored from key: node-cache-Linux-x64-npm-08335a2c38c1e792b2f470fe8262ee4aed19102649a638186cb6f1a346595d77
+recovery	UNKNOWN STEP	2026-09-18T18:59:43.4369415Z ##[group]Run npm ci
+recovery	UNKNOWN STEP	2026-09-18T18:59:43.4369715Z ^[[36;1mnpm ci^[[0m
+recovery	UNKNOWN STEP	2026-09-18T18:59:43.4401291Z shell: /usr/bin/bash -e {0}
+recovery	UNKNOWN STEP	2026-09-18T18:59:43.4401573Z env:
+recovery	UNKNOWN STEP	2026-09-18T18:59:43.4401779Z   PGHOST: 127.0.0.1
+recovery	UNKNOWN STEP	2026-09-18T18:59:43.4401999Z   PGUSER: postgres
+recovery	UNKNOWN STEP	2026-09-18T18:59:43.4402211Z   PGPASSWORD: postgres
+recovery	UNKNOWN STEP	2026-09-18T18:59:43.4402434Z ##[endgroup]
+recovery	UNKNOWN STEP	2026-09-18T18:59:48.3864040Z 
+recovery	UNKNOWN STEP	2026-09-18T18:59:48.3871520Z added 248 packages, and audited 249 packages in 5s
+recovery	UNKNOWN STEP	2026-09-18T18:59:48.3871886Z 
+recovery	UNKNOWN STEP	2026-09-18T18:59:48.3872090Z 70 packages are looking for funding
+recovery	UNKNOWN STEP	2026-09-18T18:59:48.3872423Z   run `npm fund` for details
+recovery	UNKNOWN STEP	2026-09-18T18:59:48.3874010Z 
+recovery	UNKNOWN STEP	2026-09-18T18:59:48.3874316Z found 0 vulnerabilities
+recovery	UNKNOWN STEP	2026-09-18T18:59:48.4184695Z ##[group]Run createdb omerta_keeper_transport_test
+recovery	UNKNOWN STEP	2026-09-18T18:59:48.4185080Z ^[[36;1mcreatedb omerta_keeper_transport_test^[[0m
+recovery	UNKNOWN STEP	2026-09-18T18:59:48.4185728Z ^[[36;1mcreatedb omerta_liquidity_test^[[0m
+recovery	UNKNOWN STEP	2026-09-18T18:59:48.4186245Z ^[[36;1mcreatedb omerta_liquidity_indexer_test^[[0m
+recovery	UNKNOWN STEP	2026-09-18T18:59:48.4186796Z ^[[36;1mcreatedb omerta_liquidity_policy_test^[[0m
+recovery	UNKNOWN STEP	2026-09-18T18:59:48.4210148Z shell: /usr/bin/bash -e {0}
+recovery	UNKNOWN STEP	2026-09-18T18:59:48.4210419Z env:
+recovery	UNKNOWN STEP	2026-09-18T18:59:48.4210611Z   PGHOST: 127.0.0.1
+recovery	UNKNOWN STEP	2026-09-18T18:59:48.4210819Z   PGUSER: postgres
+recovery	UNKNOWN STEP	2026-09-18T18:59:48.4211025Z   PGPASSWORD: postgres
+recovery	UNKNOWN STEP	2026-09-18T18:59:48.4211245Z ##[endgroup]
+recovery	UNKNOWN STEP	2026-09-18T18:59:48.7177372Z ##[group]Run node test/keepertransactions.js
+recovery	UNKNOWN STEP	2026-09-18T18:59:48.7177730Z ^[[36;1mnode test/keepertransactions.js^[[0m
+recovery	UNKNOWN STEP	2026-09-18T18:59:48.7178030Z ^[[36;1mnode test/liquiditykeeper.js^[[0m
+recovery	UNKNOWN STEP	2026-09-18T18:59:48.7200430Z shell: /usr/bin/bash -e {0}
+recovery	UNKNOWN STEP	2026-09-18T18:59:48.7200708Z env:
+recovery	UNKNOWN STEP	2026-09-18T18:59:48.7200899Z   PGHOST: 127.0.0.1
+recovery	UNKNOWN STEP	2026-09-18T18:59:48.7201111Z   PGUSER: postgres
+recovery	UNKNOWN STEP	2026-09-18T18:59:48.7201319Z   PGPASSWORD: postgres
+recovery	UNKNOWN STEP	2026-09-18T18:59:48.7201839Z   DATABASE_URL: ***127.0.0.1:5432/omerta_keeper_transport_test
+recovery	UNKNOWN STEP	2026-09-18T18:59:48.7202162Z ##[endgroup]
+recovery	UNKNOWN STEP	2026-09-18T18:59:52.1842837Z [db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+recovery	UNKNOWN STEP	2026-09-18T18:59:52.2692004Z PASS native Hook settlement requires historical proof; rotation/RPC refusal holds revenue and wallet until verified without rebroadcast
+recovery	UNKNOWN STEP	2026-09-18T18:59:52.2853858Z PASS canonical receipt is rechecked after historical RPC proof before opening bookkeeping transaction
+recovery	UNKNOWN STEP	2026-09-18T18:59:52.3097683Z PASS real signed request persists before send; replay settles once; payload rebinding and raw status leakage refused
+recovery	UNKNOWN STEP	2026-09-18T18:59:52.3314729Z PASS timeout before broadcast retries identical signed bytes and blocks sibling jobs
+recovery	UNKNOWN STEP	2026-09-18T18:59:52.3457906Z PASS lost response after broadcast reconciles exact receipt without a second action
+recovery	UNKNOWN STEP	2026-09-18T18:59:52.3613010Z PASS consumed nonce without our receipt halts the wallet and never signs a replacement
+recovery	UNKNOWN STEP	2026-09-18T18:59:52.3824255Z PASS pending transaction restart retries the same nonce/hash/bytes
+recovery	UNKNOWN STEP	2026-09-18T18:59:52.4051113Z PASS confirmation depth precedes settlement; changed finalized block halts future sends
+recovery	UNKNOWN STEP	2026-09-18T18:59:52.4213193Z PASS pre-finality reorg does not book or rebroadcast under uncertain authority
+recovery	UNKNOWN STEP	2026-09-18T18:59:52.4466481Z PASS finalized revert never books and releases asset reservation while retaining gas budget
+recovery	UNKNOWN STEP	2026-09-18T18:59:52.4626007Z PASS confirmed spend and pending reservations share a bounded budget before signing
+recovery	UNKNOWN STEP	2026-09-18T18:59:52.4815991Z PASS failed database booking retains confirmed transaction and blocks all new wallet jobs until settled
+recovery	UNKNOWN STEP	2026-09-18T18:59:52.5021451Z PASS required typed settlement acknowledgement and unjournaled consumed nonces fail closed
+recovery	UNKNOWN STEP	2026-09-18T18:59:52.5148511Z PASS wrong chain, changed runtime, tampered signed payload and external pending nonce refuse before send
+recovery	UNKNOWN STEP	2026-09-18T18:59:52.5465762Z PASS concurrent same-process jobs serialize across the entire wallet nonce domain
+recovery	UNKNOWN STEP	2026-09-18T18:59:53.8258510Z PASS exact planning keys retain long-cadence action authority beyond the 100-row status window
+recovery	UNKNOWN STEP	2026-09-18T18:59:53.8438822Z PASS PostgreSQL rollback atomically undoes bookkeeping before retry and final journal settlement
+recovery	UNKNOWN STEP	2026-09-18T18:59:53.9084524Z PASS PostgreSQL advisory lock serializes independent worker module instances
+recovery	UNKNOWN STEP	2026-09-18T18:59:53.9085851Z PASS keeper transport: 18 cases (PostgreSQL); no live transactions
+recovery	UNKNOWN STEP	2026-09-18T18:59:54.1503596Z PASS manifest rejects arbitrary calls, wrong chain, unpinned targets, custody drift, duplicate lanes, gas dust and excessive slippage
+recovery	UNKNOWN STEP	2026-09-18T18:59:54.1638761Z PASS typed calldata pins recipients, oracle floor, fixed POL position and zero keeper value with bounded asset budgets
+recovery	UNKNOWN STEP	2026-09-18T18:59:54.1727260Z PASS RPC domain/code/reorg failures reject observations and owner/recipient binding failures cannot authorize jobs
+recovery	UNKNOWN STEP	2026-09-18T18:59:54.1791792Z PASS unhealthy foundation, emergency latch, pause and executor cooldown stop dependent asset spending
+recovery	UNKNOWN STEP	2026-09-18T18:59:54.1909068Z PASS stale observations, unseeded keeper gas, uneconomic sweeps, over-cap refills and stale token valuation fail closed
+recovery	UNKNOWN STEP	2026-09-18T18:59:54.1928520Z PASS Desk requires explicit database band strategy and preserves its approved anchor in receipt metadata
+recovery	UNKNOWN STEP	2026-09-18T18:59:54.1985037Z PASS Bank service jobs use predeclared borrower/market/asset bindings, positive debt service and accrued-fee floors without a fictional asset price
+recovery	UNKNOWN STEP	2026-09-18T18:59:54.2048078Z PASS Bank buffer funding uses the prefunded fixed-market vault with no caller amount, full action-cap reservation and zero residual allowance
+recovery	UNKNOWN STEP	2026-09-18T18:59:54.2392212Z PASS Bond daily issuance requires exact manifest/cap parity; unlimited preserves owner/token/minter/health/oracle/price/pause/runtime guards and existing manifest hashes
+recovery	UNKNOWN STEP	2026-09-18T18:59:54.2460085Z PASS read-only default needs no signer, manifest byte digest and dedicated signer are enforced, disabled mode is inert
+recovery	UNKNOWN STEP	2026-09-18T18:59:54.3193496Z PASS read-only PostgreSQL planning context computes policy without writing a heartbeat or running schema migrations
+recovery	UNKNOWN STEP	2026-09-18T18:59:54.3195579Z PASS liquidity keeper: 11 cases; no live transactions
+recovery	UNKNOWN STEP	2026-09-18T18:59:54.3307879Z ##[group]Run node test/liquidityaccounting.js
+recovery	UNKNOWN STEP	2026-09-18T18:59:54.3308252Z ^[[36;1mnode test/liquidityaccounting.js^[[0m
+recovery	UNKNOWN STEP	2026-09-18T18:59:54.3330416Z shell: /usr/bin/bash -e {0}
+recovery	UNKNOWN STEP	2026-09-18T18:59:54.3330680Z env:
+recovery	UNKNOWN STEP	2026-09-18T18:59:54.3330883Z   PGHOST: 127.0.0.1
+recovery	UNKNOWN STEP	2026-09-18T18:59:54.3331092Z   PGUSER: postgres
+recovery	UNKNOWN STEP	2026-09-18T18:59:54.3331300Z   PGPASSWORD: postgres
+recovery	UNKNOWN STEP	2026-09-18T18:59:54.3331817Z   DATABASE_URL: ***127.0.0.1:5432/omerta_liquidity_test
+recovery	UNKNOWN STEP	2026-09-18T18:59:54.3332114Z ##[endgroup]
+recovery	UNKNOWN STEP	2026-09-18T18:59:56.0607227Z [db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+recovery	UNKNOWN STEP	2026-09-18T18:59:56.0934335Z PASS all four confirmed swap streams settle actual custody exactly once
+recovery	UNKNOWN STEP	2026-09-18T18:59:56.1050624Z PASS direct OMR fees credit only delivered amounts and never invent an ETH price
+recovery	UNKNOWN STEP	2026-09-18T18:59:56.1080505Z PASS odd wei and sub-micro dust cannot increase signable capacity
+recovery	UNKNOWN STEP	2026-09-18T18:59:56.1110140Z PASS missing, forged and wrong-destination transfer receipts are rejected
+recovery	UNKNOWN STEP	2026-09-18T18:59:56.1172453Z PASS a receipt from a changed executor sequence cannot replay a settlement
+recovery	UNKNOWN STEP	2026-09-18T18:59:56.1237452Z PASS inflow-index lag holds accounting without partial pool or reserve writes
+recovery	UNKNOWN STEP	2026-09-18T18:59:56.1336972Z PASS reserve, desk and community invariants include direct tokens as explicit backing
+recovery	UNKNOWN STEP	2026-09-18T18:59:56.1337760Z {"suite":"liquidity accounting","passed":7,"postgres":true}
+recovery	UNKNOWN STEP	2026-09-18T18:59:56.1491576Z ##[group]Run node test/liquidityindexer.js
+recovery	UNKNOWN STEP	2026-09-18T18:59:56.1492136Z ^[[36;1mnode test/liquidityindexer.js^[[0m
+recovery	UNKNOWN STEP	2026-09-18T18:59:56.1492604Z ^[[36;1mnode test/liquidityqueue.js^[[0m
+recovery	UNKNOWN STEP	2026-09-18T18:59:56.1526875Z shell: /usr/bin/bash -e {0}
+recovery	UNKNOWN STEP	2026-09-18T18:59:56.1527266Z env:
+recovery	UNKNOWN STEP	2026-09-18T18:59:56.1527571Z   PGHOST: 127.0.0.1
+recovery	UNKNOWN STEP	2026-09-18T18:59:56.1527904Z   PGUSER: postgres
+recovery	UNKNOWN STEP	2026-09-18T18:59:56.1528244Z   PGPASSWORD: postgres
+recovery	UNKNOWN STEP	2026-09-18T18:59:56.1529086Z   DATABASE_URL: ***127.0.0.1:5432/omerta_liquidity_indexer_test
+recovery	UNKNOWN STEP	2026-09-18T18:59:56.1529641Z ##[endgroup]
+recovery	UNKNOWN STEP	2026-09-18T18:59:58.0447997Z [db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+recovery	UNKNOWN STEP	2026-09-18T18:59:58.0816668Z PASS nested permissionless native sweep books exact wei and canonical time
+recovery	UNKNOWN STEP	2026-09-18T18:59:58.1018309Z PASS OMR hook sweep proves all four deliveries without fabricating native revenue
+recovery	UNKNOWN STEP	2026-09-18T18:59:58.1174390Z PASS missing OMR fee deliveries reject a forged event and keep the cursor
+recovery	UNKNOWN STEP	2026-09-18T18:59:58.1448877Z PASS POL collection and immediate nested token distribution settle in canonical order
+recovery	UNKNOWN STEP	2026-09-18T18:59:58.1631599Z PASS one outer transaction may contain two independently delivered executor sequences
+recovery	UNKNOWN STEP	2026-09-18T18:59:58.1804733Z PASS one missing later delivery rolls back earlier receipt accounting and cursor
+recovery	UNKNOWN STEP	2026-09-18T18:59:58.1997478Z PASS exact RPC duplicate logs are deduplicated
+recovery	UNKNOWN STEP	2026-09-18T18:59:58.2141770Z PASS conflicting RPC duplicates cannot enter accounting
+recovery	UNKNOWN STEP	2026-09-18T18:59:58.2288862Z PASS removed logs are rejected before cursor advancement
+recovery	UNKNOWN STEP	2026-09-18T18:59:58.2449393Z PASS wrong chain and historical code changes fail closed
+recovery	UNKNOWN STEP	2026-09-18T18:59:58.2611387Z PASS historical fixed recipient mismatch cannot relabel native inflow
+recovery	UNKNOWN STEP	2026-09-18T18:59:58.2768091Z PASS same-block Hook recipient rotation and restoration cannot fabricate native revenue
+recovery	UNKNOWN STEP	2026-09-18T18:59:58.2943505Z PASS changed canonical receipt hash and failed receipts are rejected
+recovery	UNKNOWN STEP	2026-09-18T18:59:58.3115984Z PASS an indexed log must exactly occur in its canonical receipt
+recovery	UNKNOWN STEP	2026-09-18T18:59:58.3244796Z PASS partial provider pages cannot omit another supported event from a discovered receipt
+recovery	UNKNOWN STEP	2026-09-18T18:59:58.3415774Z PASS reorg observed after accounting rolls back both book and cursor
+recovery	UNKNOWN STEP	2026-09-18T18:59:58.3600846Z PASS a reorg behind the saved cursor is detected before scanning onward
+recovery	UNKNOWN STEP	2026-09-18T18:59:58.3802415Z PASS backlog keeps caughtUp false and pages never exceed confirmed head
+recovery	UNKNOWN STEP	2026-09-18T18:59:58.4103567Z PASS same-transaction token flows can be replayed after cursor recovery without double credit
+recovery	UNKNOWN STEP	2026-09-18T18:59:58.4341807Z PASS POL principal and fee legs use separate receipt delivery segments
+recovery	UNKNOWN STEP	2026-09-18T18:59:58.4506937Z PASS undeclared watched-currency events hold the whole page
+recovery	UNKNOWN STEP	2026-09-18T18:59:58.4717773Z PASS historical Desk recovery uses only a preceding real price and preserves receipt time
+recovery	UNKNOWN STEP	2026-09-18T18:59:58.4906728Z PASS a future Vig print cannot authorize historical Desk recovery
+recovery	UNKNOWN STEP	2026-09-18T18:59:58.5062761Z PASS an approved matching keeper journal supplies the historical Desk strategy
+recovery	UNKNOWN STEP	2026-09-18T18:59:58.5220431Z PASS PostgreSQL micro-unit credits never exceed a large exact physical delivery
+recovery	UNKNOWN STEP	2026-09-18T18:59:58.5380817Z PASS sub-micro physical token receipts settle with zero signable credit
+recovery	UNKNOWN STEP	2026-09-18T18:59:58.9036589Z PASS two independent processes serialize on PostgreSQL domain locks and settle once
+recovery	UNKNOWN STEP	2026-09-18T18:59:58.9037457Z {"suite":"canonical liquidity indexer","passed":27,"postgres":true,"rpc":"deterministic fixture","crossProcessLock":true}
+recovery	UNKNOWN STEP	2026-09-18T19:00:00.1897998Z [db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+recovery	UNKNOWN STEP	2026-09-18T19:00:00.1933778Z PASS missing existing signer or extraction domain remains dormant without RPC or queue writes
+recovery	UNKNOWN STEP	2026-09-18T19:00:00.1959012Z PASS backlog and unresolved keeper receipts cannot cause signing
+recovery	UNKNOWN STEP	2026-09-18T19:00:00.2156088Z PASS funded existing queue drains FIFO with exact EIP-712 signer and domain
+recovery	UNKNOWN STEP	2026-09-18T19:00:00.2205297Z PASS already claimed obligations continue to consume lifetime funding
+recovery	UNKNOWN STEP	2026-09-18T19:00:00.2284479Z PASS physical claim balance bounds unclaimed signatures and new queue completion together
+recovery	UNKNOWN STEP	2026-09-18T19:00:00.2356926Z PASS claimed history is excluded from physical obligations but cannot restore lifetime capacity
+recovery	UNKNOWN STEP	2026-09-18T19:00:00.2387575Z PASS configured chain and claim must exactly match the approved manifest
+recovery	UNKNOWN STEP	2026-09-18T19:00:00.2471364Z PASS wrong RPC chain, runtime, signer, token and owner preserve all queued requests
+recovery	UNKNOWN STEP	2026-09-18T19:00:00.2530401Z PASS claim pause and stale or reorganized reads never sign
+recovery	UNKNOWN STEP	2026-09-18T19:00:00.2565572Z PASS a signing configuration change during verification cannot change the approved domain
+recovery	UNKNOWN STEP	2026-09-18T19:00:00.2610446Z PASS large adjacent micro amounts cannot make an underfunded voucher signable
+recovery	UNKNOWN STEP	2026-09-18T19:00:00.2862727Z PASS concurrent queue completions serialize on the existing reserve lock
+recovery	UNKNOWN STEP	2026-09-18T19:00:00.2863726Z {"suite":"confirmed liquidity queue completion","passed":12,"postgres":true,"signer":"public synthetic fixture only"}
+recovery	UNKNOWN STEP	2026-09-18T19:00:00.3012050Z ##[group]Run node test/liquiditypolicy.js
+recovery	UNKNOWN STEP	2026-09-18T19:00:00.3012385Z ^[[36;1mnode test/liquiditypolicy.js^[[0m
+recovery	UNKNOWN STEP	2026-09-18T19:00:00.3035061Z shell: /usr/bin/bash -e {0}
+recovery	UNKNOWN STEP	2026-09-18T19:00:00.3035567Z env:
+recovery	UNKNOWN STEP	2026-09-18T19:00:00.3035773Z   PGHOST: 127.0.0.1
+recovery	UNKNOWN STEP	2026-09-18T19:00:00.3035984Z   PGUSER: postgres
+recovery	UNKNOWN STEP	2026-09-18T19:00:00.3036195Z   PGPASSWORD: postgres
+recovery	UNKNOWN STEP	2026-09-18T19:00:00.3036962Z   DATABASE_URL: ***127.0.0.1:5432/omerta_liquidity_policy_test
+recovery	UNKNOWN STEP	2026-09-18T19:00:00.3037487Z ##[endgroup]
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.0637862Z [db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.0692538Z PASS absent, expired and deployment-mismatched observations close authority
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.0716301Z PASS bond pause leaves general market health available but prevents daily authority
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.0725787Z PASS read-only planning does not publish a heartbeat or open issuance
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.0771901Z PASS daily offering requires explicit policy and clips to the contract cap
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.0915660Z PASS a manual emergency stop survives automatic retries even while unhealthy
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.0943972Z PASS the next day clips to exact remaining lifetime capacity and never refills it
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.0985292Z PASS Genesis warmup, failed migration and unhealthy foundation do not open markets
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.1179901Z PASS concurrent workers publish only one offering under the lifetime reserve lock
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.1221633Z PASS explicit unlimited heartbeat requires zero cap and creates no daily offering row
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.1265345Z PASS unlimited readiness still fails for positive cap, bond pause and unhealthy foundation
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.1288171Z PASS unlimited mode rejects legacy daily controls instead of reporting an ineffective pause
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.1426665Z 11 liquidity policy checks passed
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.1505126Z Post job cleanup.
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.2643071Z Cache hit occurred on the primary key node-cache-Linux-x64-npm-08335a2c38c1e792b2f470fe8262ee4aed19102649a638186cb6f1a346595d77, not saving cache.
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.2750795Z Post job cleanup.
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.3541541Z [command]/usr/bin/git version
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.3582387Z git version 2.55.0
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.3625892Z Temporarily overriding HOME='/home/runner/work/_temp/5becfcdf-8dc9-40d7-9f22-3c0d4e2f3719' before making global git config changes
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.3627516Z Adding repository directory to the temporary git global config as a safe directory
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.3632672Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Omerta/Omerta
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.3661987Z Removing SSH command configuration
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.3669281Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.3702799Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.3910486Z Removing HTTP extra header
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.3916424Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.3945928Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4157147Z Removing includeIf entries pointing to credentials config files
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4167595Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4190688Z includeif.gitdir:/home/runner/work/Omerta/Omerta/.git.path
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4192434Z includeif.gitdir:/home/runner/work/Omerta/Omerta/.git/worktrees/*.path
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4193748Z includeif.gitdir:/github/workspace/.git.path
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4194981Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4202145Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/Omerta/Omerta/.git.path
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4221381Z /home/runner/work/_temp/git-credentials-1cbac7f1-e4ee-4656-8574-b75102a410b5.config
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4230978Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/Omerta/Omerta/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-1cbac7f1\-e4ee\-4656\-8574\-b75102a410b5\.config
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4292556Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/Omerta/Omerta/.git/worktrees/*.path
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4313555Z /home/runner/work/_temp/git-credentials-1cbac7f1-e4ee-4656-8574-b75102a410b5.config
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4329392Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/Omerta/Omerta/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-1cbac7f1\-e4ee\-4656\-8574\-b75102a410b5\.config
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4360094Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4382301Z /github/runner_temp/git-credentials-1cbac7f1-e4ee-4656-8574-b75102a410b5.config
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4395141Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-1cbac7f1\-e4ee\-4656\-8574\-b75102a410b5\.config
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4437705Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4469958Z /github/runner_temp/git-credentials-1cbac7f1-e4ee-4656-8574-b75102a410b5.config
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4482188Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-1cbac7f1\-e4ee\-4656\-8574\-b75102a410b5\.config
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4524151Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4734699Z Removing credentials config '/home/runner/work/_temp/git-credentials-1cbac7f1-e4ee-4656-8574-b75102a410b5.config'
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4842918Z Print service container logs: 9b54854d1a9c4b8e8c6c2ac486d62765_postgres18_249bd5
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4847911Z ##[command]/usr/bin/docker logs --details 7e137fde5ec0a205b4d6c63a966b6a7da5d5055e39106998b1cbd406ce5b9f42
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4967450Z  The files belonging to this database system will be owned by user "postgres".
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4969376Z  initdb: warning: enabling "trust" authentication for local connections
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4970529Z  This user must also own the server process.
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4971185Z  initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4972047Z  2026-09-18 18:58:54.550 UTC [1] LOG:  starting PostgreSQL 18.6 (Debian 18.6-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4972732Z  2026-09-18 18:58:54.550 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4973224Z  2026-09-18 18:58:54.550 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4973706Z  2026-09-18 18:58:54.553 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4974227Z  2026-09-18 18:58:54.561 UTC [73] LOG:  database system was shut down at 2026-09-18 18:58:54 UTC
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4974710Z  2026-09-18 18:58:54.564 UTC [1] LOG:  database system is ready to accept connections
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4975129Z  2026-09-18 18:59:03.822 UTC [84] FATAL:  role "root" does not exist
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4975659Z  2026-09-18 18:59:13.877 UTC [92] FATAL:  role "root" does not exist
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4976047Z  2026-09-18 18:59:23.931 UTC [100] FATAL:  role "root" does not exist
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4976417Z  2026-09-18 18:59:33.991 UTC [109] FATAL:  role "root" does not exist
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4976781Z  2026-09-18 18:59:44.055 UTC [117] FATAL:  role "root" does not exist
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4977154Z  2026-09-18 18:59:54.116 UTC [132] FATAL:  role "root" does not exist
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4977558Z  2026-09-18 18:59:58.903 UTC [136] WARNING:  there is no transaction in progress
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4977935Z  
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4986964Z  The database cluster will be initialized with locale "en_US.utf8".
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4987868Z  The default database encoding has accordingly been set to "UTF8".
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4988870Z  The default text search configuration will be set to "english".
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4989359Z  
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4989824Z  Data page checksums are enabled.
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4990170Z  
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4990577Z  fixing permissions on existing directory /var/lib/postgresql/18/docker ... ok
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4991063Z  creating subdirectories ... ok
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4991457Z  selecting dynamic shared memory implementation ... posix
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4991891Z  selecting default "max_connections" ... 100
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4992275Z  selecting default "shared_buffers" ... 128MB
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4992661Z  selecting default time zone ... Etc/UTC
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4993023Z  creating configuration files ... ok
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4993373Z  running bootstrap script ... ok
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4993830Z  performing post-bootstrap initialization ... ok
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4994212Z  syncing data to disk ... ok
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4994518Z  
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4994777Z  
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4995111Z  Success. You can now start the database server using:
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4995998Z  
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4996434Z      pg_ctl -D /var/lib/postgresql/18/docker -l logfile start
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4996970Z  
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4998038Z  waiting for server to start....2026-09-18 18:58:54.311 UTC [53] LOG:  starting PostgreSQL 18.6 (Debian 18.6-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4998953Z  2026-09-18 18:58:54.312 UTC [53] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.4999660Z  2026-09-18 18:58:54.314 UTC [59] LOG:  database system was shut down at 2026-09-18 18:58:54 UTC
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.5000148Z  2026-09-18 18:58:54.316 UTC [53] LOG:  database system is ready to accept connections
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.5000496Z   done
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.5000679Z  server started
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.5000875Z  
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.5001179Z  /usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.5001549Z  
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.5001807Z  2026-09-18 18:58:54.429 UTC [53] LOG:  received fast shutdown request
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.5002289Z  waiting for server to shut down....2026-09-18 18:58:54.429 UTC [53] LOG:  aborting any active transactions
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.5002918Z  2026-09-18 18:58:54.432 UTC [53] LOG:  background worker "logical replication launcher" (PID 62) exited with exit code 1
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.5003415Z  2026-09-18 18:58:54.432 UTC [57] LOG:  shutting down
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.5003780Z  2026-09-18 18:58:54.432 UTC [57] LOG:  checkpoint starting: shutdown immediate
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.5004793Z  2026-09-18 18:58:54.434 UTC [57] LOG:  checkpoint complete: wrote 0 buffers (0.0%), wrote 3 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.001 s, total=0.003 s; sync files=2, longest=0.001 s, average=0.001 s; distance=0 kB, estimate=0 kB; lsn=0/1761918, redo lsn=0/1761918
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.5006161Z  2026-09-18 18:58:54.439 UTC [53] LOG:  database system is shut down
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.5006474Z   done
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.5006655Z  server stopped
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.5006861Z  
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.5007096Z  PostgreSQL init process complete; ready for start up.
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.5007388Z  
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.5013128Z Stop and remove container: 9b54854d1a9c4b8e8c6c2ac486d62765_postgres18_249bd5
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.5018271Z ##[command]/usr/bin/docker rm --force 7e137fde5ec0a205b4d6c63a966b6a7da5d5055e39106998b1cbd406ce5b9f42
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.6625409Z 7e137fde5ec0a205b4d6c63a966b6a7da5d5055e39106998b1cbd406ce5b9f42
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.6650115Z Remove container network: github_network_fce696ff9ffd49b093544affc0ba99f5
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.6654572Z ##[command]/usr/bin/docker network rm github_network_fce696ff9ffd49b093544affc0ba99f5
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.7445582Z github_network_fce696ff9ffd49b093544affc0ba99f5
+recovery	UNKNOWN STEP	2026-09-18T19:00:02.7514094Z Cleaning up orphan processes

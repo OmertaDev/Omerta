@@ -88,6 +88,9 @@ export function createProjectionEvents({ pool, bus, clients, enabled = false, ac
     async before(req, accountId) {
       if (!accountId || !mutations.has(req.method)) return;
       const path = req.routeOptions?.url || '';
+      // Observing a card changes no game state. Refreshing on its own beacon
+      // would close an active confirmation dialog and create a feedback loop.
+      if (path === '/v1/commands/observations' || path === '/v1/screens') return;
       if (!path.startsWith('/v1/') || (!enabled && !membershipMutations.has(`${req.method} ${path}`))) return;
       const prior = enabled && membershipPath(path) ? await peers(accountId) : new Set([accountId]);
       requestContext.set(req, { accountId, path, prior });

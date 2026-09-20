@@ -1,0 +1,603 @@
+{
+  "capturedAt": "2026-09-20T15:51:40.109Z",
+  "baseline": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+  "corrected": "f31b5290080506f6407a9b7f9a514e2ea020a9d4",
+  "rc1Status": "BLOCKED",
+  "runs": [
+    {
+      "name": "fresh-ci-linux",
+      "runId": 35406507577,
+      "revision": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+      "status": "success",
+      "url": "https://github.com/OmertaDev/Omerta/actions/runs/35406507577",
+      "jobs": [
+        {
+          "name": "real Postgres",
+          "status": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "success"
+            },
+            {
+              "name": "Initialize containers",
+              "status": "success"
+            },
+            {
+              "name": "Run actions/checkout@v7",
+              "status": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v7",
+              "status": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "status": "success"
+            },
+            {
+              "name": "pgquery (every SQL string parses on real Postgres)",
+              "status": "success"
+            },
+            {
+              "name": "pgcheck (pooling, row locks, timeouts, migration, ledger)",
+              "status": "success"
+            },
+            {
+              "name": "Phase 2 definition registry (real PostgreSQL)",
+              "status": "success"
+            },
+            {
+              "name": "Phase 2 dormant item boundary (real PostgreSQL)",
+              "status": "success"
+            },
+            {
+              "name": "Coordination foundation and knowledge (real PostgreSQL)",
+              "status": "success"
+            },
+            {
+              "name": "World Graph kernel, knowledge gates, and migration (real PostgreSQL)",
+              "status": "success"
+            },
+            {
+              "name": "Family operations, escrow, migration and concurrency (real PostgreSQL)",
+              "status": "success"
+            },
+            {
+              "name": "Player projections and visibility snapshots (real PostgreSQL)",
+              "status": "success"
+            },
+            {
+              "name": "Authored progression, scarce recipes and social prerequisites (real PostgreSQL)",
+              "status": "success"
+            },
+            {
+              "name": "Player commands, replay and both playable story branches (real PostgreSQL)",
+              "status": "success"
+            },
+            {
+              "name": "Living World Director, three campaign branches and adversarial concurrency (real PostgreSQL)",
+              "status": "success"
+            },
+            {
+              "name": "stock catalog v2 finalized-observation consumer (real PostgreSQL)",
+              "status": "success"
+            },
+            {
+              "name": "RWA health H1 sweep, 2,048 versions (real PostgreSQL)",
+              "status": "success"
+            },
+            {
+              "name": "RWA registry lifecycle persistence (real PostgreSQL)",
+              "status": "success"
+            },
+            {
+              "name": "create throwaway databases for fee allocation and deed recovery",
+              "status": "success"
+            },
+            {
+              "name": "character mint DEV allocation and migration (real PostgreSQL)",
+              "status": "success"
+            },
+            {
+              "name": "deed event ordering and concurrent recovery (real PostgreSQL)",
+              "status": "success"
+            },
+            {
+              "name": "backup self-test (dump, verify, refuse, restore)",
+              "status": "success"
+            },
+            {
+              "name": "create throwaway databases for the interruption + concurrency harnesses",
+              "status": "success"
+            },
+            {
+              "name": "chaos (interrupted sweeps, killed backends, torn two-party transfers)",
+              "status": "success"
+            },
+            {
+              "name": "loadtest (concurrent players, deadlock counter, §10.4 delta)",
+              "status": "success"
+            },
+            {
+              "name": "concurrency (idempotency exactly-once, single-winner escrow, AB-BA, exact take)",
+              "status": "success"
+            },
+            {
+              "name": "Stop containers",
+              "status": "success"
+            }
+          ]
+        },
+        {
+          "name": "suites + sim (pg-mem)",
+          "status": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "success"
+            },
+            {
+              "name": "Run actions/checkout@v7",
+              "status": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v7",
+              "status": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "status": "success"
+            },
+            {
+              "name": "Phase 1 world graph (deterministic package validation)",
+              "status": "success"
+            },
+            {
+              "name": "knowledge artifacts carry the merge's own revision (main only)",
+              "status": "skipped"
+            },
+            {
+              "name": "npm test (the full suite, on pg-mem)",
+              "status": "success"
+            },
+            {
+              "name": "Invite-only launch admission and Crew allowance",
+              "status": "success"
+            },
+            {
+              "name": "economy sim (§10.4 drift-0)",
+              "status": "success"
+            },
+            {
+              "name": "scale (population-scale market reachability + §10.4)",
+              "status": "success"
+            },
+            {
+              "name": "install chromium for the client harness",
+              "status": "success"
+            },
+            {
+              "name": "Invite gate and Crew invitation controls in the browser",
+              "status": "success"
+            },
+            {
+              "name": "mobile (every screen at phone size — overflow, the fold, nav targets, page errors)",
+              "status": "success"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "corrected-ci-linux",
+      "runId": 35408648650,
+      "revision": "f31b5290080506f6407a9b7f9a514e2ea020a9d4",
+      "status": "success",
+      "url": "https://github.com/OmertaDev/Omerta/actions/runs/35408648650",
+      "jobs": [
+        {
+          "name": "suites + sim (pg-mem)",
+          "status": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "success"
+            },
+            {
+              "name": "Run actions/checkout@v7",
+              "status": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v7",
+              "status": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "status": "success"
+            },
+            {
+              "name": "Phase 1 world graph (deterministic package validation)",
+              "status": "success"
+            },
+            {
+              "name": "knowledge artifacts carry the merge's own revision (main only)",
+              "status": "skipped"
+            },
+            {
+              "name": "npm test (the full suite, on pg-mem)",
+              "status": "success"
+            },
+            {
+              "name": "Invite-only launch admission and Crew allowance",
+              "status": "success"
+            },
+            {
+              "name": "RC1 telemetry isolation and complementary campaign regressions",
+              "status": "success"
+            },
+            {
+              "name": "economy sim (§10.4 drift-0)",
+              "status": "success"
+            },
+            {
+              "name": "scale (population-scale market reachability + §10.4)",
+              "status": "success"
+            },
+            {
+              "name": "install chromium for the client harness",
+              "status": "success"
+            },
+            {
+              "name": "Invite gate and Crew invitation controls in the browser",
+              "status": "success"
+            },
+            {
+              "name": "mobile (every screen at phone size — overflow, the fold, nav targets, page errors)",
+              "status": "success"
+            }
+          ]
+        },
+        {
+          "name": "real Postgres",
+          "status": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "success"
+            },
+            {
+              "name": "Initialize containers",
+              "status": "success"
+            },
+            {
+              "name": "Run actions/checkout@v7",
+              "status": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v7",
+              "status": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "status": "success"
+            },
+            {
+              "name": "pgquery (every SQL string parses on real Postgres)",
+              "status": "success"
+            },
+            {
+              "name": "pgcheck (pooling, row locks, timeouts, migration, ledger)",
+              "status": "success"
+            },
+            {
+              "name": "Phase 2 definition registry (real PostgreSQL)",
+              "status": "success"
+            },
+            {
+              "name": "Phase 2 dormant item boundary (real PostgreSQL)",
+              "status": "success"
+            },
+            {
+              "name": "Coordination foundation and knowledge (real PostgreSQL)",
+              "status": "success"
+            },
+            {
+              "name": "World Graph kernel, knowledge gates, and migration (real PostgreSQL)",
+              "status": "success"
+            },
+            {
+              "name": "Family operations, escrow, migration and concurrency (real PostgreSQL)",
+              "status": "success"
+            },
+            {
+              "name": "Player projections and visibility snapshots (real PostgreSQL)",
+              "status": "success"
+            },
+            {
+              "name": "Authored progression, scarce recipes and social prerequisites (real PostgreSQL)",
+              "status": "success"
+            },
+            {
+              "name": "Player commands, replay and both playable story branches (real PostgreSQL)",
+              "status": "success"
+            },
+            {
+              "name": "RC1 telemetry cannot delay commands or establish permission (real PostgreSQL)",
+              "status": "success"
+            },
+            {
+              "name": "Living World Director, three campaign branches and adversarial concurrency (real PostgreSQL)",
+              "status": "success"
+            },
+            {
+              "name": "stock catalog v2 finalized-observation consumer (real PostgreSQL)",
+              "status": "success"
+            },
+            {
+              "name": "RWA health H1 sweep, 2,048 versions (real PostgreSQL)",
+              "status": "success"
+            },
+            {
+              "name": "RWA registry lifecycle persistence (real PostgreSQL)",
+              "status": "success"
+            },
+            {
+              "name": "create throwaway databases for fee allocation and deed recovery",
+              "status": "success"
+            },
+            {
+              "name": "character mint DEV allocation and migration (real PostgreSQL)",
+              "status": "success"
+            },
+            {
+              "name": "deed event ordering and concurrent recovery (real PostgreSQL)",
+              "status": "success"
+            },
+            {
+              "name": "backup self-test (dump, verify, refuse, restore)",
+              "status": "success"
+            },
+            {
+              "name": "create throwaway databases for the interruption + concurrency harnesses",
+              "status": "success"
+            },
+            {
+              "name": "chaos (interrupted sweeps, killed backends, torn two-party transfers)",
+              "status": "success"
+            },
+            {
+              "name": "loadtest (concurrent players, deadlock counter, §10.4 delta)",
+              "status": "success"
+            },
+            {
+              "name": "concurrency (idempotency exactly-once, single-winner escrow, AB-BA, exact take)",
+              "status": "success"
+            },
+            {
+              "name": "Stop containers",
+              "status": "success"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "fresh-forge-linux",
+      "runId": 35406508964,
+      "revision": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+      "status": "success",
+      "url": "https://github.com/OmertaDev/Omerta/actions/runs/35406508964",
+      "jobs": [
+        {
+          "name": "forge",
+          "status": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "success"
+            },
+            {
+              "name": "Initialize containers",
+              "status": "success"
+            },
+            {
+              "name": "Run actions/checkout@v7",
+              "status": "success"
+            },
+            {
+              "name": "Install Foundry",
+              "status": "success"
+            },
+            {
+              "name": "forge --version (what actually ran)",
+              "status": "success"
+            },
+            {
+              "name": "Fetch dependencies",
+              "status": "success"
+            },
+            {
+              "name": "forge build",
+              "status": "success"
+            },
+            {
+              "name": "Market V2 artifact contracts and keeper orchestration",
+              "status": "success"
+            },
+            {
+              "name": "forge test (unit + fuzz)",
+              "status": "success"
+            },
+            {
+              "name": "v4 encodings on a real pool (dexbot-e2e)",
+              "status": "success"
+            },
+            {
+              "name": "the stock rail on a real chain (stock-e2e)",
+              "status": "success"
+            },
+            {
+              "name": "unsigned liquidity deployment plan and actual keeper flow",
+              "status": "success"
+            },
+            {
+              "name": "forge build --sizes (EIP-170)",
+              "status": "success"
+            },
+            {
+              "name": "Stop containers",
+              "status": "success"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "fresh-liquidity-linux",
+      "runId": 35406510710,
+      "revision": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+      "status": "success",
+      "url": "https://github.com/OmertaDev/Omerta/actions/runs/35406510710",
+      "jobs": [
+        {
+          "name": "recovery",
+          "status": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "success"
+            },
+            {
+              "name": "Initialize containers",
+              "status": "success"
+            },
+            {
+              "name": "Run actions/checkout@v7",
+              "status": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v6",
+              "status": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "status": "success"
+            },
+            {
+              "name": "create dedicated disposable databases",
+              "status": "success"
+            },
+            {
+              "name": "durable nonce and cross-process transaction recovery",
+              "status": "success"
+            },
+            {
+              "name": "exact custody-backed books",
+              "status": "success"
+            },
+            {
+              "name": "canonical indexer and existing queue recovery",
+              "status": "success"
+            },
+            {
+              "name": "concurrent daily policy and expired observations",
+              "status": "success"
+            },
+            {
+              "name": "Stop containers",
+              "status": "success"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "final-shutdown-linux",
+      "runId": 35408617560,
+      "revision": "f31b5290080506f6407a9b7f9a514e2ea020a9d4",
+      "status": "success",
+      "url": "https://github.com/OmertaDev/Omerta/actions/runs/35408617560",
+      "jobs": [
+        {
+          "name": "linux-sigterm",
+          "status": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "success"
+            },
+            {
+              "name": "Initialize containers",
+              "status": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "status": "success"
+            },
+            {
+              "name": "Nine production-process termination barriers",
+              "status": "success"
+            },
+            {
+              "name": "Retain exact-revision process logs and verdict",
+              "status": "success"
+            },
+            {
+              "name": "Stop containers",
+              "status": "success"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "localWindowsFullSuite": {
+    "status": "INCOMPLETE",
+    "classification": "ENVIRONMENTAL",
+    "log": "npm-test.txt",
+    "reason": "The local run ended without a recorded exit status during the interrupted validation session. It is not counted as a pass; fresh hosted full suites passed at both revisions."
+  },
+  "releaseBlockers": [
+    "SOLO-WORLD-AUTHORITY",
+    "PLAYER-FOLLOWUP",
+    "MOBILE-B-G",
+    "SIMULATION-COVERAGE"
+  ],
+  "sourceComparison": "source-comparison.json",
+  "protectedDomainSourcesUnchanged": true,
+  "supplemental": {
+    "simulation": {
+      "finalPassingRuns": 16,
+      "expectedRuns": 16,
+      "commandCompletions": 23557,
+      "invariantEvaluations": 880,
+      "phase4ReleaseGate": "INCOMPLETE",
+      "originalBatchPassingRuns": 15,
+      "environmentalRetest": "../simulation/retest/1000-rc1-alpha-1.json"
+    },
+    "mobile": {
+      "passingSupplementalScenarios": 10,
+      "expectedSupplementalScenarios": 10,
+      "renderedCommands": 514,
+      "fullGoldenMobileGate": "INCOMPLETE",
+      "matrix": "../player/campaign-mobile-matrix.json"
+    },
+    "solo": {
+      "status": "RELEASE BLOCKER",
+      "widths": [
+        320,
+        390
+      ],
+      "evidence": "../player/mobile/results.json"
+    }
+  }
+}

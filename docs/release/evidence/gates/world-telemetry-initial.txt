@@ -1,0 +1,3 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[world-telemetry] observation write failed
+world-telemetry: authenticated bounded observations, moderator-only funnel, seven ordered stages, replay deduplication, no permission authority, and write-failure isolation passed

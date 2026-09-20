@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+  "platform": "win32",
+  "node": "v24.19.0",
+  "startedAt": "2026-09-18T23:42:55.896Z",
+  "scenarios": [
+    {
+      "name": "director-selection",
+      "barrier": {
+        "table": "director_selections",
+        "event": "INSERT"
+      },
+      "status": "PROBE_ONLY",
+      "postgres": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+      "beforeHash": "79a1da5f0eaec13a6eb339aad6b934f2d8982db94a15e2f71067badac8821927",
+      "blockedBackendPid": 1116,
+      "note": "SQL barrier reached; no Linux signal or recovery claim"
+    },
+    {
+      "name": "campaign-progression",
+      "barrier": {
+        "table": "director_campaigns",
+        "event": "UPDATE"
+      },
+      "status": "PROBE_ONLY",
+      "postgres": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+      "beforeHash": "f2df469975ff4fc1e2ccab383766f915af6ded3f78669e9a72c07ab82ac12ae8",
+      "blockedBackendPid": 25456,
+      "note": "SQL barrier reached; no Linux signal or recovery claim"
+    },
+    {
+      "name": "world-kernel-mutation",
+      "barrier": {
+        "table": "world_kernel_objects",
+        "event": "UPDATE"
+      },
+      "status": "PROBE_ONLY",
+      "postgres": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+      "beforeHash": "7298e24ade33985b2e1ec1f8bdc40ab830c6385098775af88cffd9b13c83f49e",
+      "blockedBackendPid": 17880,
+      "note": "SQL barrier reached; no Linux signal or recovery claim"
+    },
+    {
+      "name": "operation-resolution",
+      "barrier": {
+        "table": "world_operations",
+        "event": "UPDATE"
+      },
+      "status": "PROBE_ONLY",
+      "postgres": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+      "beforeHash": "308f9f5efd6e66cb9241a174586b8f2c865811888ffd0a45d2670b51f87b1e20",
+      "blockedBackendPid": 1344,
+      "note": "SQL barrier reached; no Linux signal or recovery claim"
+    },
+    {
+      "name": "item-consumption",
+      "barrier": {
+        "table": "item_instances",
+        "event": "UPDATE"
+      },
+      "status": "PROBE_ONLY",
+      "postgres": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+      "beforeHash": "9e2a37153a8262c3ca233b5431f673c7643e6ad52e62586ac49890ac868de02f",
+      "blockedBackendPid": 25064,
+      "note": "SQL barrier reached; no Linux signal or recovery claim"
+    },
+    {
+      "name": "crafting",
+      "barrier": {
+        "table": "item_instances",
+        "event": "INSERT"
+      },
+      "status": "PROBE_ONLY",
+      "postgres": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+      "beforeHash": "8de4fcb36673059c9a98cd2cf59382f8817449ba210c9934213711a0bc2e7638",
+      "blockedBackendPid": 14232,
+      "note": "SQL barrier reached; no Linux signal or recovery claim"
+    },
+    {
+      "name": "player-command",
+      "barrier": {
+        "table": "item_mutation_guards",
+        "event": "UPDATE"
+      },
+      "status": "PROBE_ONLY",
+      "postgres": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+      "beforeHash": "662f98137ddb75ecd8da868ccafcded2d21d47b5cbdd606e70beea0f4a0b21f4",
+      "blockedBackendPid": 18944,
+      "note": "SQL barrier reached; no Linux signal or recovery claim"
+    },
+    {
+      "name": "consequence-generation",
+      "barrier": {
+        "table": "world_kernel_events",
+        "event": "INSERT"
+      },
+      "status": "PROBE_ONLY",
+      "postgres": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+      "beforeHash": "1e2ff5ca1d24d887b00fa66c50cc9c2ea8ccc3f2bc9361beb39d885819187dc7",
+      "blockedBackendPid": 19648,
+      "note": "SQL barrier reached; no Linux signal or recovery claim"
+    },
+    {
+      "name": "scheduled-worker-processing",
+      "barrier": {
+        "table": "npc_wars",
+        "event": "UPDATE"
+      },
+      "status": "PROBE_ONLY",
+      "postgres": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+      "beforeHash": "923a575f4d4c7aa24722a9d9f7ea26ef61243d051be07824af15551d6c9283ad",
+      "blockedBackendPid": 17096,
+      "note": "SQL barrier reached; no Linux signal or recovery claim"
+    }
+  ],
+  "status": "BLOCKED",
+  "reason": "Probe validates setup only. Linux SIGTERM evidence remains required.",
+  "finishedAt": "2026-09-18T23:44:35.801Z"
+}

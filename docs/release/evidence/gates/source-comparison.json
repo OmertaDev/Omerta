@@ -1,0 +1,79 @@
+{
+  "baseline": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+  "corrected": "f31b5290080506f6407a9b7f9a514e2ea020a9d4",
+  "encoding": "SHA-256 of exact Git blob bytes",
+  "protectedPaths": [
+    "schema.sql",
+    "omerta-contracts",
+    "src/content",
+    "src/coordination",
+    "src/world-kernel.js",
+    "src/items.js",
+    "src/crafting.js",
+    "src/rules.js",
+    "src/economy.js",
+    "src/tokenomics.js",
+    "src/director",
+    "package-lock.json"
+  ],
+  "protectedDiff": [],
+  "compared": 370,
+  "unchanged": 359,
+  "changed": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "baselineSha256": "25a3a0956c249de556be5ce696d7543d41b0c72427abb222bea33fbaf4dfd145",
+      "correctedSha256": "9e191944cfefad7b2d318410576ffb525f756a52170846d84cb3cea0a707aa2d"
+    },
+    {
+      "path": "package.json",
+      "baselineSha256": "77de9364580c07e75c9768d7ab77158de24b372812caf2130f397c7147479d58",
+      "correctedSha256": "ec9c875db8b698ea3750386eaa4768c4ac7a266bd3b7f77ef32ac67d5978c537"
+    },
+    {
+      "path": "render.yaml",
+      "baselineSha256": "538de42a04949979bf42caf9179b6397dd76c812fafa82f2c4543c9a58b1595d",
+      "correctedSha256": "26f9e8e4d9a2b26c23d330994a7a9e5871a0bf4734515cf68c0d17549df08b70"
+    },
+    {
+      "path": "src/engagement.js",
+      "baselineSha256": "19a2ee76c0f7937b92531b09d2493692bd89b98a99aa867e63d2c61b56ad8775",
+      "correctedSha256": "be93e17092e49ea295d06c49e1eccdbd6cb57a639117c7fe813d6d37b71eda9f"
+    },
+    {
+      "path": "src/player-commands.js",
+      "baselineSha256": "5efa876101514638d34616e1598e28b2ae898cfcd92ade1c4c498c84244e4a24",
+      "correctedSha256": "ac5b843807b7710a444880270e62e6815ee92543cb40f1fd1da0f90eb8624336"
+    },
+    {
+      "path": "src/projection-events.js",
+      "baselineSha256": "58d1b201cf6263e14e76c96f93221dbfd19fe565099423f75be018cc47f8a426",
+      "correctedSha256": "1f94bfe212f4b9fc4436409df4b302809a83e49287cbf7cfe2789ff3add27596"
+    },
+    {
+      "path": "src/ratelimit.js",
+      "baselineSha256": "baf9527583d7036d2482d799a727e248b939ea1346af332cd48e2b6e685c3eaf",
+      "correctedSha256": "a430d7231b81f9dfb28ab6858d8175a0a258d735ac736077eb1fcb86a8dffd08"
+    },
+    {
+      "path": "src/routes/commands.js",
+      "baselineSha256": "c90574269d3456d9f093eb9a665c622d41893602a42a4f8c189063962bcd4914",
+      "correctedSha256": "aacd0862d13432aa70c56e9e88d6387f52e0231b94a69bdf66dc30c0b255f9a8"
+    },
+    {
+      "path": "src/routes/modtools.js",
+      "baselineSha256": "1c3cf7f4fd211b8c9c7d0e2b98940f2e29be4feb2348227e32f62e077f19eefa",
+      "correctedSha256": "d875224bfe4091f33b9302cb1b126c0dd6405f706e0c1d9c813280053641a508"
+    },
+    {
+      "path": "src/server.js",
+      "baselineSha256": "c52799dd749fb4045f82f0d3e52700588fcfa77ac8d3789e7ddd657c2d479105",
+      "correctedSha256": "0e472eefc46e6756e8e68682de1260050561a26a763f2e75d8a88959f3ff3642"
+    },
+    {
+      "path": "src/world-consequences.js",
+      "baselineSha256": "fb1783a7db257d8cfd038961d244e3ad2370d911a2bde5198d9890fec3a0fd67",
+      "correctedSha256": "8a68f290ed8379dcf2cdebd76f32306bc27928c5031301015fceee8da1efaf78"
+    }
+  ]
+}

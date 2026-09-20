@@ -1,0 +1,23 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+FAIL 320px: AssertionError [ERR_ASSERTION]: The first case provides a playable follow-up
+    at file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-mobile-journeys.js:137:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+FAIL 390px: AssertionError [ERR_ASSERTION]: The first case provides a playable follow-up
+    at file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-mobile-journeys.js:137:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: RC1 mobile entry/recovery journey failed; see evidence
+    at file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-mobile-journeys.js:169:1
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

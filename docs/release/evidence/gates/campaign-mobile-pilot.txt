@@ -1,0 +1,12 @@
+Error: Refusing to boot — deploy preflight failed:
+  - JWT_SECRET must be set for a real deployment — signs player tokens — the dev fallback is public, so anyone could forge a session.
+  - MARKET_SEED must be set for a real deployment — the §7.11 secret behind every seeded draw (Numbers 600:1, the Track, the Fight, goods prices).
+  - MOD_KEY must be set for a real deployment — the only credential on the mod perimeter; unset means every mod route 401s and the admin dashboard is unusable.
+    at buildServer (file:///C:/Users/Jorge/Documents/Omerta-rc1/src/server.js:263:11)
+    at file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-campaign-mobile.js:46:19
+Error: Refusing to boot — deploy preflight failed:
+  - JWT_SECRET must be set for a real deployment — signs player tokens — the dev fallback is public, so anyone could forge a session.
+  - MARKET_SEED must be set for a real deployment — the §7.11 secret behind every seeded draw (Numbers 600:1, the Track, the Fight, goods prices).
+  - MOD_KEY must be set for a real deployment — the only credential on the mod perimeter; unset means every mod route 401s and the admin dashboard is unusable.
+    at buildServer (file:///C:/Users/Jorge/Documents/Omerta-rc1/src/server.js:263:11)
+    at file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-campaign-mobile.js:46:19

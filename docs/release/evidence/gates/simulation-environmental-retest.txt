@@ -1,0 +1,10 @@
+{"population":1000,"seed":"rc1-alpha","replicate":1,"playersVisited":100}
+{"population":1000,"seed":"rc1-alpha","replicate":1,"playersVisited":200}
+{"population":1000,"seed":"rc1-alpha","replicate":1,"playersVisited":300}
+{"population":1000,"seed":"rc1-alpha","replicate":1,"playersVisited":400}
+{"population":1000,"seed":"rc1-alpha","replicate":1,"playersVisited":500}
+{"population":1000,"seed":"rc1-alpha","replicate":1,"playersVisited":600}
+{"population":1000,"seed":"rc1-alpha","replicate":1,"playersVisited":700}
+{"population":1000,"seed":"rc1-alpha","replicate":1,"playersVisited":800}
+{"population":1000,"seed":"rc1-alpha","replicate":1,"playersVisited":900}
+{"status":"PASS_SCOPED","checks":55,"durationMs":313349}
