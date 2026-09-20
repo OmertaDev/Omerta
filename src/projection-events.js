@@ -88,6 +88,8 @@ export function createProjectionEvents({ pool, bus, clients, enabled = false, ac
     async before(req, accountId) {
       if (!accountId || !mutations.has(req.method)) return;
       const path = req.routeOptions?.url || '';
+      // Passive screen telemetry must not cancel a pending command confirmation.
+      if (req.method === 'POST' && path === '/v1/screens') return;
       if (!path.startsWith('/v1/') || (!enabled && !membershipMutations.has(`${req.method} ${path}`))) return;
       const prior = enabled && membershipPath(path) ? await peers(accountId) : new Set([accountId]);
       requestContext.set(req, { accountId, path, prior });
