@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `d0a5b2c5f33d`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `468516d8d6f3`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1488 |
+| Commits in clone | 1490 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-20 — docs(release): package RC1 evidence and blocked readiness decision |
+| Latest commit | 2026-09-20 — Merge pull request #183 from OmertaDev/codex/rc1-release-validation |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 613 |
+| OmertaDev | 615 |
 | Claude | 156 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 30 |
@@ -36,10 +36,10 @@
 | [SPEC.md](../../SPEC.md) | 323 | yes |
 | [schema.sql](../../schema.sql) | 296 | yes |
 | [BALANCE.md](../../BALANCE.md) | 254 | yes |
-| knowledge/generated/github-history.md | 217 | historical |
-| knowledge/generated/graph-summary.md | 217 | historical |
-| knowledge/generated/graph.json | 217 | historical |
-| knowledge/generated/inventory.md | 217 | historical |
+| knowledge/generated/github-history.md | 218 | historical |
+| knowledge/generated/graph-summary.md | 218 | historical |
+| knowledge/generated/graph.json | 218 | historical |
+| knowledge/generated/inventory.md | 218 | historical |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 177 | yes |
 | [package.json](../../package.json) | 171 | yes |
@@ -48,7 +48,7 @@
 | [src/invariants.js](../../src/invariants.js) | 124 | yes |
 | [test/client.js](../../test/client.js) | 117 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 117 | yes |
-| knowledge/generated/documents.md | 96 | historical |
+| knowledge/generated/documents.md | 97 | historical |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
 | [public/wiki.html](../../public/wiki.html) | 85 | yes |
 | [test/social.js](../../test/social.js) | 85 | yes |
