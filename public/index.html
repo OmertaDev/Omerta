@@ -4726,7 +4726,8 @@
       const result = await apiNow(method, path, body, { ...options, authToken });
       return valid() ? result : neutral;
     };
-    if (method !== 'GET' && !path.startsWith('/v1/auth/') && !path.startsWith('/v1/access/')) {
+    if (method !== 'GET' && !(method === 'POST' && path === '/v1/screens')
+      && !path.startsWith('/v1/auth/') && !path.startsWith('/v1/access/')) {
       projections.invalidate('player'); projections.invalidate('world');
     }
     if (!authToken) return run();

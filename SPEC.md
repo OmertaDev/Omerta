@@ -12,8 +12,8 @@ Census refreshed 2026-09-18 from this workspace, including untracked source and 
 
 | | |
 |---|---|
-| Backend modules | **272** files, **106358** lines (`src/`, including routes and social modules) |
-| Test suites | **261** files, **113845** lines (`test/`) |
+| Backend modules | **273** files, **106153** lines (`src/`, including routes and social modules) |
+| Test suites | **267** files, **114031** lines (`test/`) |
 | HTTP routes | **800** registrations (**800** unique) |
 | Database tables | **369** (`schema.sql`, 7371 lines) |
 | Client | **13372** lines (`public/index.html`, single file, zero dependencies) |

@@ -6,7 +6,7 @@
     "node": ">=20"
   },
   "scripts": {
-    "test:rc1:observability": "node test/rc1-observability.js",
+    "test:rc1:observability": "node test/rc1-observability.js && node test/rc1-passive-projection.js",
     "test:rc1:simulation": "node test/rc1-simulation.js",
     "test:rc1:mobile:postgres": "node test/rc1-mobile-postgres.js",
     "test:market-v2": "node test/market-v2-deployment-plan.js && node test/marketv2keeper.js && node test/marketv2solver.js",

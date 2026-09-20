@@ -46,6 +46,16 @@ jobs:
         run: |
           set -o pipefail
           npm run test:db-migration:postgres 2>&1 | tee "$RC1_SHUTDOWN_EVIDENCE/migration-failure.log"
+      - name: RC1 command tampering and concurrent replay on PostgreSQL
+        env:
+          RC1_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
+        run: node test/rc1-command-redteam.js
+      - name: Install Chromium for the real PostgreSQL phone journey
+        run: npx playwright-core install --with-deps chromium
+      - name: RC1 newcomer and returning phone journey on PostgreSQL
+        env:
+          RC1_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
+        run: npm run test:rc1:mobile:postgres
       - name: Native backup, private file permissions and restore on Linux
         if: '!cancelled()'
         run: |
