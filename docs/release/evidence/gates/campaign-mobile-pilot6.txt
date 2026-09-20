@@ -1,0 +1,8 @@
+⚠️  preflight: Neither PUBLIC_URL nor SOCIAL_GAME_URL is set — every referral link, share prompt and social card will point at the built-in default domain, not yours. Set PUBLIC_URL to this server's own origin (it is also what one-click X sign-in derives its callback from).
+⚠️  preflight: INVARIANT_WEBHOOK_URL is not set — the §10.4 economy-drift, backup-failure, oracle-halt and real-value-invariant alarms have nowhere to shout and reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+PASS 320px shipment-redistribution: 24 rendered commands
+⚠️  preflight: Neither PUBLIC_URL nor SOCIAL_GAME_URL is set — every referral link, share prompt and social card will point at the built-in default domain, not yours. Set PUBLIC_URL to this server's own origin (it is also what one-click X sign-in derives its callback from).
+⚠️  preflight: INVARIANT_WEBHOOK_URL is not set — the §10.4 economy-drift, backup-failure, oracle-halt and real-value-invariant alarms have nowhere to shout and reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+PASS 390px shipment-redistribution: 24 rendered commands

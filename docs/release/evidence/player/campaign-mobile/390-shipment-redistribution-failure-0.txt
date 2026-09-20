@@ -6,13 +6,13 @@ CODEX
 sign out
 Pull your first job
 OPEN STREETS →
-$74,500
+$74,000
 100hp
-48nrg
-13nrv
+44nrg
+11nrv
 0heat
 THE SHEET
-$74,500
+$74,000
 bank
 $0
 $OMR
@@ -34,40 +34,23 @@ FAMILY
 LEGIT
 DESK
 THE CONSOLE
-The Kitchen
-The Empire
-Big Scores
-Black Market
-The Port
-STREETS
-FIRST TIME HERE
+The Family
+Command Center
+The Map
+Street Deeds
+The Crew
+Find People
+My Profile
+YOUR STREET · YOUR PEOPLE · YOUR NEXT MOVE
+COMMAND CENTER
 
-The drug game: buy makings, cook a batch, deal it on the corner. Deals draw heat, heat draws the Law — lay low when it climbs. Hire crew and they sell for you while you sleep.
+The city's business, as it reaches your desk. Follow the evidence. Put your people to work.
 
-got it
-The Kitchen is the deepest money in the game
-Cook product, hire a crew, and move weight while you're offline. You need a lab (buy one below) and it pays to declare The Kitchen as your Path first. Mind your heat and the crew's wages (the nut).
-THE TRADE
-Corner Boy
-gross moved $0 · rank bonus +0% · next: Runner at $25,000
-THE KINGPIN — Nobody · lifetime empire $0 (survives death) · the biggest distributors →
-THE LAB
-no kitchen
-even a bathtub beats the corner
-upgrade → Bathtub Rig ($20,000)
-THE SUPPLIER
-makings — today's prices
-THE BURNER
-VIM
-  cook 1 crate packs 20 units — crates: 0
-THE CORNER
-(DEMAND AT DOCKS)
-the stash is empty — cook something
-THE CREW
-they move the cheapest lines while you sleep — mind the nut
-HEAT (0)
-Heat fades on its own. Lay low takes a bite out of it for cash; clean papers wipes the file to zero for $OMR. The cash price is the base — the Fast Talker skill, a Man of Honor's standing and a Commission amnesty each cut it.
-lay low — $5,000, cools 25 · 25 energy clean papers — 60 $OMR · wipes it all
+Refresh world
+
+Refreshing your street…
+
+Back to World overview
 THE STREET
 ●
 ● 1 in the city
@@ -88,8 +71,5 @@ EARNERS
 FAMILY
 •••
 MORE
-THAT POCKET IS LOOTABLE
-
-A killer takes a cut of what you CARRY — pocket cash and deposits still in transit. Bank deposits clear in exactly two hours; cleared cash is outside the killer's cut, but it still does not survive your street.
-
-got it
+✓
+Commit: Prerequisite — recorded.

@@ -1,0 +1,140 @@
+{
+  "generatedAt": "2026-09-20T16:04:00.156Z",
+  "productionSource": "f31b5290080506f6407a9b7f9a514e2ea020a9d4",
+  "retestProvenance": {
+    "revision": "f31b5290080506f6407a9b7f9a514e2ea020a9d4",
+    "harnessSha256": "17f51a85e0b1797f239aaa4db4631edc68d624bd784115b68e1448d1cd94c7ad",
+    "node": "v24.19.0",
+    "platform": "win32",
+    "startedAt": "2026-09-20T15:56:19.365Z"
+  },
+  "scope": "Seeded accounts, social structures and initial world. Travel, vehicle acquisition/salvage and disclosure sharing use existing domain services. Discovery, mystery, crafting and operation commands use rendered mobile controls against real PostgreSQL. Not fresh-account onboarding or a human comprehension study.",
+  "originalResultsRetained": true,
+  "originalHarnessHashNotCaptured": true,
+  "results": [
+    {
+      "width": 320,
+      "scenario": "shipment-redistribution",
+      "status": "PASS",
+      "commands": 24,
+      "actions": [
+        "redistribute_shipment"
+      ],
+      "evidence": "docs/release/evidence/player/campaign-mobile/results.json",
+      "hasInvariantResults": true
+    },
+    {
+      "width": 320,
+      "scenario": "shipment-destruction",
+      "status": "PASS",
+      "commands": 17,
+      "actions": [
+        "destroy_shipment"
+      ],
+      "evidence": "docs/release/evidence/player/campaign-mobile/results.json",
+      "hasInvariantResults": true
+    },
+    {
+      "width": 320,
+      "scenario": "black-market-supply",
+      "status": "PASS",
+      "commands": 59,
+      "actions": [
+        "intercept_shipment",
+        "establish_market",
+        "supply_market"
+      ],
+      "evidence": "docs/release/evidence/player/campaign-mobile-retest/results.json",
+      "hasInvariantResults": true
+    },
+    {
+      "width": 320,
+      "scenario": "black-market-seizure",
+      "status": "PASS",
+      "commands": 59,
+      "actions": [
+        "intercept_shipment",
+        "establish_market",
+        "seize_market"
+      ],
+      "evidence": "docs/release/evidence/player/campaign-mobile/results.json",
+      "hasInvariantResults": true
+    },
+    {
+      "width": 320,
+      "scenario": "informant-public-disclosure",
+      "status": "PASS",
+      "commands": 98,
+      "actions": [
+        "intercept_shipment",
+        "establish_market",
+        "expose_market",
+        "trace_disclosure"
+      ],
+      "evidence": "docs/release/evidence/player/campaign-mobile-retest/results.json",
+      "hasInvariantResults": true
+    },
+    {
+      "width": 390,
+      "scenario": "shipment-redistribution",
+      "status": "PASS",
+      "commands": 24,
+      "actions": [
+        "redistribute_shipment"
+      ],
+      "evidence": "docs/release/evidence/player/campaign-mobile/results.json",
+      "hasInvariantResults": true
+    },
+    {
+      "width": 390,
+      "scenario": "shipment-destruction",
+      "status": "PASS",
+      "commands": 17,
+      "actions": [
+        "destroy_shipment"
+      ],
+      "evidence": "docs/release/evidence/player/campaign-mobile/results.json",
+      "hasInvariantResults": true
+    },
+    {
+      "width": 390,
+      "scenario": "black-market-supply",
+      "status": "PASS",
+      "commands": 59,
+      "actions": [
+        "intercept_shipment",
+        "establish_market",
+        "supply_market"
+      ],
+      "evidence": "docs/release/evidence/player/campaign-mobile-retest/results.json",
+      "hasInvariantResults": true
+    },
+    {
+      "width": 390,
+      "scenario": "black-market-seizure",
+      "status": "PASS",
+      "commands": 59,
+      "actions": [
+        "intercept_shipment",
+        "establish_market",
+        "seize_market"
+      ],
+      "evidence": "docs/release/evidence/player/campaign-mobile/results.json",
+      "hasInvariantResults": true
+    },
+    {
+      "width": 390,
+      "scenario": "informant-public-disclosure",
+      "status": "PASS",
+      "commands": 98,
+      "actions": [
+        "intercept_shipment",
+        "establish_market",
+        "expose_market",
+        "trace_disclosure"
+      ],
+      "evidence": "docs/release/evidence/player/campaign-mobile-retest/results.json",
+      "hasInvariantResults": true
+    }
+  ]
+}

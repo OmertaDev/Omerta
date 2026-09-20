@@ -1,8 +1,23 @@
 import fs from 'node:fs/promises';
+import assert from 'node:assert/strict';
 
 const folder = 'docs/release/evidence/simulation';
 const native = JSON.parse(await fs.readFile(`${folder}/native/summary.json`, 'utf8'));
 const model = JSON.parse(await fs.readFile(`${folder}/model/matrix.json`, 'utf8'));
+const originalResults = native.results;
+let environmentalRetest = null;
+try { environmentalRetest = JSON.parse(await fs.readFile(`${folder}/retest/1000-rc1-alpha-1.json`, 'utf8')); }
+catch (error) { if (error.code !== 'ENOENT') throw error; }
+if (environmentalRetest) {
+  assert.equal(environmentalRetest.revision, native.revision);
+  assert.equal(environmentalRetest.harnessSha256, native.harnessSha256);
+  assert.equal(environmentalRetest.status, 'PASS_SCOPED');
+  const original = originalResults.find((row) => row.population === environmentalRetest.population
+    && row.seed === environmentalRetest.seed && row.replicate === environmentalRetest.replicate);
+  assert.equal(original?.error?.code, '53200');
+  assert(original.error.stack.includes('cleanup'));
+  native.results = originalResults.map((row) => row === original ? environmentalRetest : row);
+}
 const rows = native.results.filter((row) => row.status === 'PASS_SCOPED');
 const sum = (values) => values.reduce((a, b) => a + Number(b || 0), 0);
 const metric = (name) => sum(rows.map((r) => r.metrics[name]));
@@ -19,6 +34,8 @@ const catalog = model.directorCatalog.flatMap((r) => r.results);
 const doc = `# RC1 multiplayer simulation evidence
 
 **Decision: supplementary simulation checks ${full ? 'PASS' : 'INCOMPLETE'}; Phase 4 remains INCOMPLETE.** The measured native workload has ${rows.length}/16 passing runs. It does not prove every required long-term or adversarial population behavior. Do not substitute model invariants or missing measurements for zero failures.
+
+${environmentalRetest ? 'The original batch passed 15/16 runs. The remaining 1,000-player run failed during schema cleanup with PostgreSQL 53200 (lock-table exhaustion while concurrent release harnesses shared the disposable cluster). Its complete isolated rerun passed all 55 invariants on the same frozen source and harness, with the default max_locks_per_transaction=64. Original failure and summary remain unchanged in native/; retest evidence is in [retest/1000-rc1-alpha-1.json](evidence/simulation/retest/1000-rc1-alpha-1.json). The table below uses that successful rerun. Classification: ENVIRONMENTAL, reproduced workload retested successfully; no production setting or assertion was relaxed.' : ''}
 
 ## Tested source and environment
 

@@ -1,51 +1,2073 @@
 {
-  "scope": "Seeded social/campaign setup; actual rendered mobile command and confirmation controls, PostgreSQL persistence. Not fresh-account acquisition or a human comprehension study.",
+  "scope": "Seeded accounts, social structures and initial world. Travel, vehicle acquisition/salvage and disclosure sharing use existing domain services. Discovery, mystery, crafting and operation commands use rendered mobile controls against real PostgreSQL. Not fresh-account onboarding or a human comprehension study.",
   "results": [
     {
       "width": 320,
       "scenario": "shipment-redistribution",
-      "status": "FAIL",
+      "status": "PASS",
       "commands": [
         {
-          "account": "rc1_browser_320_shipment_redistribution-aBoss",
+          "account": "rc1m_320_0-aBoss",
           "type": "mystery.start",
           "label": "Open case: The Dispatch Register",
           "confirmed": false
         },
         {
-          "account": "rc1_browser_320_shipment_redistribution-aBoss",
+          "account": "rc1m_320_0-aBoss",
           "type": "mystery.complete",
           "label": "Complete: The Dispatch Register",
           "confirmed": false
         },
         {
-          "account": "rc1_browser_320_shipment_redistribution-aBoss",
+          "account": "rc1m_320_0-aBoss",
           "type": "recipe.craft",
           "label": "Craft: Stamp a Canal Cargo Seal",
           "confirmed": false
         },
         {
-          "account": "rc1_browser_320_shipment_redistribution-aBoss",
+          "account": "rc1m_320_0-aBoss",
           "type": "mystery.discover",
           "label": "Investigate lead",
           "confirmed": false
         },
         {
-          "account": "rc1_browser_320_shipment_redistribution-aBoss",
+          "account": "rc1m_320_0-aBoss",
           "type": "mystery.complete",
           "label": "Complete: The Cargo Seal Impressions",
           "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aRunner",
+          "type": "recipe.craft",
+          "label": "Craft: Stamp a Canal Cargo Seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aBoss",
+          "type": "operation.create",
+          "label": "Organize: Reopen the Community Supply Route",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aBoss",
+          "type": "operation.publish",
+          "label": "Publish",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aBoss",
+          "type": "operation.join",
+          "label": "Join as Route Organizer",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aRunner",
+          "type": "operation.join",
+          "label": "Join as Cargo Runner",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aBoss",
+          "type": "operation.commit",
+          "label": "Commit: Participation",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Participation",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aBoss",
+          "type": "operation.commit",
+          "label": "Commit: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aBoss",
+          "type": "operation.commit",
+          "label": "Commit: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aRunner",
+          "type": "operation.commit",
+          "label": "Commit: Item canal cargo seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aRunner",
+          "type": "operation.contribute",
+          "label": "Contribute: Item canal cargo seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aRunner",
+          "type": "operation.commit",
+          "label": "Commit: Mat wire",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aRunner",
+          "type": "operation.contribute",
+          "label": "Contribute: Mat wire",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aRunner",
+          "type": "operation.commit",
+          "label": "Commit: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aRunner",
+          "type": "operation.contribute",
+          "label": "Contribute: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aBoss",
+          "type": "operation.approve",
+          "label": "Approve",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_0-aBoss",
+          "type": "operation.execute",
+          "label": "Execute",
+          "confirmed": true
+        }
+      ],
+      "outcomes": [
+        {
+          "action": "redistribute_shipment",
+          "state": "redistributed",
+          "consequences": [
+            {
+              "title": "The Canal Supply Depot",
+              "description": "The shipment was redistributed to reopen the community supply route.",
+              "opportunityIds": []
+            },
+            {
+              "title": "The Canal Supply Depot",
+              "description": "A registered shipment is stranded at the canal depot.",
+              "opportunityIds": []
+            },
+            {
+              "title": "The Dock Supply Route",
+              "description": "The Dock Supply Route: shortage.",
+              "opportunityIds": [
+                "58c88c94d9a0e344a08f67fa3605560e2f900c0481c98b73ff5c65e3cca9cc4a",
+                "d4615a591fa1ea6ba48f1148f4ee0e3f98b1ca1d2e7674292058602b4964fdc4",
+                "e64e85cf669eff0530e750f589da4233bac3688abc815539acc01293723a2a56"
+              ]
+            }
+          ]
         }
       ],
       "errors": [],
-      "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#tour-skip')\u001b[22m\n\u001b[2m    - locator resolved to <button id=\"tour-skip\" class=\"act ghostbtn\">skip</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div id=\"tour-body\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div id=\"tour-art\" aria-hidden=\"true\"></div> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    13 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div id=\"tour-art\" aria-hidden=\"true\"></div> intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div id=\"tour-body\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div id=\"tour-art\" aria-hidden=\"true\"></div> intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div id=\"tour-art\" aria-hidden=\"true\"></div> intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div id=\"tour-art\" aria-hidden=\"true\"></div> intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div id=\"tour-body\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div id=\"tour-art\" aria-hidden=\"true\"></div> intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\n    at pageFor (C:\\Users\\Jorge\\Documents\\Omerta-rc1\\tools\\rc1-campaign-mobile.js:59:103)\n    at async Object.snapshot (C:\\Users\\Jorge\\Documents\\Omerta-rc1\\tools\\rc1-campaign-mobile.js:72:27)\n    at async learn (C:\\Users\\Jorge\\Documents\\Omerta-rc1\\test\\lib\\campaign-network-support.js:22:19)\n    at async Object.prepare (C:\\Users\\Jorge\\Documents\\Omerta-rc1\\test\\lib\\campaign-network-support.js:73:77)\n    at async file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-campaign-mobile.js:130:27"
+      "invariants": {
+        "world": {
+          "ok": true,
+          "issues": []
+        },
+        "operations": {
+          "ok": true,
+          "historyIssues": [],
+          "custodyIssues": [],
+          "capitalIssues": []
+        }
+      }
+    },
+    {
+      "width": 320,
+      "scenario": "shipment-destruction",
+      "status": "PASS",
+      "commands": [
+        {
+          "account": "rc1m_320_1-aRunner",
+          "type": "recipe.craft",
+          "label": "Craft: Stamp a Canal Cargo Seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_1-aBoss",
+          "type": "operation.create",
+          "label": "Organize: Destroy the Stranded Depot",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_1-aBoss",
+          "type": "operation.publish",
+          "label": "Publish",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_1-aBoss",
+          "type": "operation.join",
+          "label": "Join as Route Organizer",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_1-aRunner",
+          "type": "operation.join",
+          "label": "Join as Cargo Runner",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_1-aBoss",
+          "type": "operation.commit",
+          "label": "Commit: Participation",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_1-aBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Participation",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_1-aBoss",
+          "type": "operation.commit",
+          "label": "Commit: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_1-aBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_1-aBoss",
+          "type": "operation.commit",
+          "label": "Commit: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_1-aBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_1-aRunner",
+          "type": "operation.commit",
+          "label": "Commit: Item canal cargo seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_1-aRunner",
+          "type": "operation.contribute",
+          "label": "Contribute: Item canal cargo seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_1-aRunner",
+          "type": "operation.commit",
+          "label": "Commit: Mat wire",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_1-aRunner",
+          "type": "operation.contribute",
+          "label": "Contribute: Mat wire",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_1-aBoss",
+          "type": "operation.approve",
+          "label": "Approve",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_1-aBoss",
+          "type": "operation.execute",
+          "label": "Execute",
+          "confirmed": true
+        }
+      ],
+      "outcomes": [
+        {
+          "action": "destroy_shipment",
+          "state": "destroyed",
+          "consequences": [
+            {
+              "title": "The Canal Supply Depot",
+              "description": "The stranded canal depot was destroyed.",
+              "opportunityIds": []
+            },
+            {
+              "title": "The Canal Supply Depot",
+              "description": "A registered shipment is stranded at the canal depot.",
+              "opportunityIds": []
+            },
+            {
+              "title": "The Dock Supply Route",
+              "description": "The Dock Supply Route: shortage.",
+              "opportunityIds": [
+                "58c88c94d9a0e344a08f67fa3605560e2f900c0481c98b73ff5c65e3cca9cc4a",
+                "d4615a591fa1ea6ba48f1148f4ee0e3f98b1ca1d2e7674292058602b4964fdc4",
+                "e64e85cf669eff0530e750f589da4233bac3688abc815539acc01293723a2a56"
+              ]
+            }
+          ]
+        }
+      ],
+      "errors": [],
+      "invariants": {
+        "world": {
+          "ok": true,
+          "issues": []
+        },
+        "operations": {
+          "ok": true,
+          "historyIssues": [],
+          "custodyIssues": [],
+          "capitalIssues": []
+        }
+      }
+    },
+    {
+      "width": 320,
+      "scenario": "black-market-supply",
+      "status": "FAIL",
+      "commands": [
+        {
+          "account": "rc1m_320_2-bBoss",
+          "type": "discovery.start",
+          "label": "Investigate: The Canal Shipping Register",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_2-bBoss",
+          "type": "discovery.act",
+          "label": "Complete: Read the Canal Register",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_2-bBoss",
+          "type": "discovery.act",
+          "label": "Follow a lead",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_2-bBoss",
+          "type": "discovery.act",
+          "label": "Complete: Copy the Depot Instructions",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_2-bBoss",
+          "type": "discovery.act",
+          "label": "Follow a lead",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_2-bBoss",
+          "type": "discovery.act",
+          "label": "Complete: Keep the Shipping Instructions",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_2-bRunner",
+          "type": "discovery.start",
+          "label": "Investigate: The Canal Shipping Register",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_2-bRunner",
+          "type": "discovery.act",
+          "label": "Complete: Read the Canal Register",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_2-bRunner",
+          "type": "discovery.act",
+          "label": "Follow a lead",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_2-bRunner",
+          "type": "discovery.act",
+          "label": "Complete: Copy the Depot Instructions",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_2-bRunner",
+          "type": "discovery.act",
+          "label": "Follow a lead",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_2-bRunner",
+          "type": "discovery.act",
+          "label": "Complete: Keep the Shipping Instructions",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_2-bRunner",
+          "type": "recipe.craft",
+          "label": "Craft: Stamp a Canal Cargo Seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_2-bBoss",
+          "type": "operation.create",
+          "label": "Organize: Intercept the Missing Shipment",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_2-bBoss",
+          "type": "operation.publish",
+          "label": "Publish",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_2-bBoss",
+          "type": "operation.join",
+          "label": "Join as Route Organizer",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_2-bRunner",
+          "type": "operation.join",
+          "label": "Join as Cargo Runner",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_2-bBoss",
+          "type": "operation.commit",
+          "label": "Commit: Participation",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_2-bBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Participation",
+          "confirmed": false
+        }
+      ],
+      "outcomes": [],
+      "errors": [],
+      "error": "AssertionError [ERR_ASSERTION]: Clicked control must execute the requested identity\n+ actual - expected\n\n+ '10b4cdaa0d21ac378471dc8b208ef36226169519b08eb55576abd5aca9ca6a02.8f4a4219f1f1a7286c6a7a284ce921f49d45a330e792767b1eeb66181e192b88'\n- '10b4cdaa0d21ac378471dc8b208ef36226169519b08eb55576abd5aca9ca6a02.a19800877e8c5088c9de72a2cdd04810cb047eeb739ded6a7c43a7c6867b733e'\n\n    at Object.execute (file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-campaign-mobile.js:112:70)\n    at runNextTicks (node:internal/process/task_queues:65:5)\n    at process.processImmediate (node:internal/timers:502:9)\n    at async issueAndExecute (file:///C:/Users/Jorge/Documents/Omerta-rc1/test/lib/player-command-support.js:66:20)\n    at async Object.prepare [as networkPrepare] (file:///C:/Users/Jorge/Documents/Omerta-rc1/test/lib/campaign-network-support.js:92:7)\n    at async file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-campaign-mobile.js:132:27"
+    },
+    {
+      "width": 320,
+      "scenario": "black-market-seizure",
+      "status": "PASS",
+      "commands": [
+        {
+          "account": "rc1m_320_3-bBoss",
+          "type": "discovery.start",
+          "label": "Investigate: The Canal Shipping Register",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bBoss",
+          "type": "discovery.act",
+          "label": "Complete: Read the Canal Register",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bBoss",
+          "type": "discovery.act",
+          "label": "Follow a lead",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bBoss",
+          "type": "discovery.act",
+          "label": "Complete: Copy the Depot Instructions",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bBoss",
+          "type": "discovery.act",
+          "label": "Follow a lead",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bBoss",
+          "type": "discovery.act",
+          "label": "Complete: Keep the Shipping Instructions",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bRunner",
+          "type": "discovery.start",
+          "label": "Investigate: The Canal Shipping Register",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bRunner",
+          "type": "discovery.act",
+          "label": "Complete: Read the Canal Register",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bRunner",
+          "type": "discovery.act",
+          "label": "Follow a lead",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bRunner",
+          "type": "discovery.act",
+          "label": "Complete: Copy the Depot Instructions",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bRunner",
+          "type": "discovery.act",
+          "label": "Follow a lead",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bRunner",
+          "type": "discovery.act",
+          "label": "Complete: Keep the Shipping Instructions",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bRunner",
+          "type": "recipe.craft",
+          "label": "Craft: Stamp a Canal Cargo Seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bBoss",
+          "type": "operation.create",
+          "label": "Organize: Intercept the Missing Shipment",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bBoss",
+          "type": "operation.publish",
+          "label": "Publish",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bBoss",
+          "type": "operation.join",
+          "label": "Join as Route Organizer",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bRunner",
+          "type": "operation.join",
+          "label": "Join as Cargo Runner",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bBoss",
+          "type": "operation.commit",
+          "label": "Commit: Participation",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Participation",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bBoss",
+          "type": "operation.commit",
+          "label": "Commit: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bBoss",
+          "type": "operation.commit",
+          "label": "Commit: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bRunner",
+          "type": "operation.commit",
+          "label": "Commit: Item canal cargo seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bRunner",
+          "type": "operation.contribute",
+          "label": "Contribute: Item canal cargo seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bRunner",
+          "type": "operation.commit",
+          "label": "Commit: Mat wire",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bRunner",
+          "type": "operation.contribute",
+          "label": "Contribute: Mat wire",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bBoss",
+          "type": "operation.approve",
+          "label": "Approve",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bBoss",
+          "type": "operation.execute",
+          "label": "Execute",
+          "confirmed": true
+        },
+        {
+          "account": "rc1m_320_3-bRunner",
+          "type": "recipe.craft",
+          "label": "Craft: Stamp a Canal Cargo Seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bBoss",
+          "type": "operation.create",
+          "label": "Organize: Establish the Canal Black Market",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bBoss",
+          "type": "operation.publish",
+          "label": "Publish",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bBoss",
+          "type": "operation.join",
+          "label": "Join as Route Organizer",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bRunner",
+          "type": "operation.join",
+          "label": "Join as Cargo Runner",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bBoss",
+          "type": "operation.commit",
+          "label": "Commit: Participation",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Participation",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bBoss",
+          "type": "operation.commit",
+          "label": "Commit: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bRunner",
+          "type": "operation.commit",
+          "label": "Commit: Item canal cargo seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bRunner",
+          "type": "operation.contribute",
+          "label": "Contribute: Item canal cargo seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bRunner",
+          "type": "operation.commit",
+          "label": "Commit: Mat wire",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bRunner",
+          "type": "operation.contribute",
+          "label": "Contribute: Mat wire",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bBoss",
+          "type": "operation.approve",
+          "label": "Approve",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-bBoss",
+          "type": "operation.execute",
+          "label": "Execute",
+          "confirmed": true
+        },
+        {
+          "account": "rc1m_320_3-aRunner",
+          "type": "recipe.craft",
+          "label": "Craft: Stamp a Canal Cargo Seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-aBoss",
+          "type": "operation.create",
+          "label": "Organize: Seize the Canal Market Route",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-aBoss",
+          "type": "operation.publish",
+          "label": "Publish",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-aBoss",
+          "type": "operation.join",
+          "label": "Join as Route Organizer",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-aRunner",
+          "type": "operation.join",
+          "label": "Join as Cargo Runner",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-aBoss",
+          "type": "operation.commit",
+          "label": "Commit: Participation",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-aBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Participation",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-aBoss",
+          "type": "operation.commit",
+          "label": "Commit: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-aBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-aRunner",
+          "type": "operation.commit",
+          "label": "Commit: Item canal cargo seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-aRunner",
+          "type": "operation.contribute",
+          "label": "Contribute: Item canal cargo seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-aRunner",
+          "type": "operation.commit",
+          "label": "Commit: Mat wire",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-aRunner",
+          "type": "operation.contribute",
+          "label": "Contribute: Mat wire",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-aBoss",
+          "type": "operation.approve",
+          "label": "Approve",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_3-aBoss",
+          "type": "operation.execute",
+          "label": "Execute",
+          "confirmed": true
+        }
+      ],
+      "outcomes": [
+        {
+          "action": "intercept_shipment",
+          "state": "diverted",
+          "consequences": [
+            {
+              "title": "The Canal Supply Depot",
+              "description": "The missing shipment was intercepted and diverted from its registered route.",
+              "opportunityIds": [
+                "2dab8a160c1faea90e4916aa6b9a68ef03f39137070111a54b97cab246af7b09"
+              ]
+            },
+            {
+              "title": "The Canal Supply Depot",
+              "description": "A registered shipment is stranded at the canal depot.",
+              "opportunityIds": [
+                "2dab8a160c1faea90e4916aa6b9a68ef03f39137070111a54b97cab246af7b09"
+              ]
+            },
+            {
+              "title": "The Dock Supply Route",
+              "description": "The Dock Supply Route: shortage.",
+              "opportunityIds": [
+                "58c88c94d9a0e344a08f67fa3605560e2f900c0481c98b73ff5c65e3cca9cc4a",
+                "d4615a591fa1ea6ba48f1148f4ee0e3f98b1ca1d2e7674292058602b4964fdc4",
+                "e64e85cf669eff0530e750f589da4233bac3688abc815539acc01293723a2a56"
+              ]
+            }
+          ]
+        },
+        {
+          "action": "establish_market",
+          "state": "market_open",
+          "consequences": [
+            {
+              "title": "The Canal Supply Depot",
+              "description": "An alternate market has opened at the canal depot.",
+              "opportunityIds": [
+                "271ceeb6b4a11a2488c96acd58f4f71d2f31a6e315c4347c104cf04a34de8728",
+                "458e294f0e4359fcc2eba1e0970358aa52908d03e5fcf3e3f704b3545b76ec24",
+                "cc77a673791aa2d941945d67c1373b0a0229821d3978668a64bd9acfb1d28e2a",
+                "cffc298b133622b61c098f196a084525c534e7c196d1cf87b713730c99de7538"
+              ]
+            },
+            {
+              "title": "The Canal Supply Depot",
+              "description": "The missing shipment was intercepted and diverted from its registered route.",
+              "opportunityIds": [
+                "271ceeb6b4a11a2488c96acd58f4f71d2f31a6e315c4347c104cf04a34de8728",
+                "458e294f0e4359fcc2eba1e0970358aa52908d03e5fcf3e3f704b3545b76ec24",
+                "cc77a673791aa2d941945d67c1373b0a0229821d3978668a64bd9acfb1d28e2a",
+                "cffc298b133622b61c098f196a084525c534e7c196d1cf87b713730c99de7538"
+              ]
+            },
+            {
+              "title": "The Canal Supply Depot",
+              "description": "A registered shipment is stranded at the canal depot.",
+              "opportunityIds": [
+                "271ceeb6b4a11a2488c96acd58f4f71d2f31a6e315c4347c104cf04a34de8728",
+                "458e294f0e4359fcc2eba1e0970358aa52908d03e5fcf3e3f704b3545b76ec24",
+                "cc77a673791aa2d941945d67c1373b0a0229821d3978668a64bd9acfb1d28e2a",
+                "cffc298b133622b61c098f196a084525c534e7c196d1cf87b713730c99de7538"
+              ]
+            },
+            {
+              "title": "The Dock Supply Route",
+              "description": "The Dock Supply Route: shortage.",
+              "opportunityIds": [
+                "58c88c94d9a0e344a08f67fa3605560e2f900c0481c98b73ff5c65e3cca9cc4a",
+                "d4615a591fa1ea6ba48f1148f4ee0e3f98b1ca1d2e7674292058602b4964fdc4",
+                "e64e85cf669eff0530e750f589da4233bac3688abc815539acc01293723a2a56"
+              ]
+            }
+          ]
+        },
+        {
+          "action": "seize_market",
+          "state": "market_seized",
+          "consequences": [
+            {
+              "title": "The Canal Supply Depot",
+              "description": "The canal market route was seized.",
+              "opportunityIds": []
+            },
+            {
+              "title": "The Canal Supply Depot",
+              "description": "An alternate market has opened at the canal depot.",
+              "opportunityIds": []
+            },
+            {
+              "title": "The Canal Supply Depot",
+              "description": "The missing shipment was intercepted and diverted from its registered route.",
+              "opportunityIds": []
+            },
+            {
+              "title": "The Canal Supply Depot",
+              "description": "A registered shipment is stranded at the canal depot.",
+              "opportunityIds": []
+            },
+            {
+              "title": "The Dock Supply Route",
+              "description": "The Dock Supply Route: shortage.",
+              "opportunityIds": [
+                "58c88c94d9a0e344a08f67fa3605560e2f900c0481c98b73ff5c65e3cca9cc4a",
+                "d4615a591fa1ea6ba48f1148f4ee0e3f98b1ca1d2e7674292058602b4964fdc4",
+                "e64e85cf669eff0530e750f589da4233bac3688abc815539acc01293723a2a56"
+              ]
+            }
+          ]
+        }
+      ],
+      "errors": [],
+      "invariants": {
+        "world": {
+          "ok": true,
+          "issues": []
+        },
+        "operations": {
+          "ok": true,
+          "historyIssues": [],
+          "custodyIssues": [],
+          "capitalIssues": []
+        }
+      }
+    },
+    {
+      "width": 320,
+      "scenario": "informant-public-disclosure",
+      "status": "FAIL",
+      "commands": [
+        {
+          "account": "rc1m_320_4-bBoss",
+          "type": "discovery.start",
+          "label": "Investigate: The Canal Shipping Register",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_4-bBoss",
+          "type": "discovery.act",
+          "label": "Complete: Read the Canal Register",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_4-bBoss",
+          "type": "discovery.act",
+          "label": "Follow a lead",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_4-bBoss",
+          "type": "discovery.act",
+          "label": "Complete: Copy the Depot Instructions",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_4-bBoss",
+          "type": "discovery.act",
+          "label": "Follow a lead",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_4-bBoss",
+          "type": "discovery.act",
+          "label": "Complete: Keep the Shipping Instructions",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_4-bRunner",
+          "type": "discovery.start",
+          "label": "Investigate: The Canal Shipping Register",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_4-bRunner",
+          "type": "discovery.act",
+          "label": "Complete: Read the Canal Register",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_4-bRunner",
+          "type": "discovery.act",
+          "label": "Follow a lead",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_4-bRunner",
+          "type": "discovery.act",
+          "label": "Complete: Copy the Depot Instructions",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_4-bRunner",
+          "type": "discovery.act",
+          "label": "Follow a lead",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_4-bRunner",
+          "type": "discovery.act",
+          "label": "Complete: Keep the Shipping Instructions",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_4-bRunner",
+          "type": "recipe.craft",
+          "label": "Craft: Stamp a Canal Cargo Seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_4-bBoss",
+          "type": "operation.create",
+          "label": "Organize: Intercept the Missing Shipment",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_4-bBoss",
+          "type": "operation.publish",
+          "label": "Publish",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_4-bBoss",
+          "type": "operation.join",
+          "label": "Join as Route Organizer",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_4-bRunner",
+          "type": "operation.join",
+          "label": "Join as Cargo Runner",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_4-bBoss",
+          "type": "operation.commit",
+          "label": "Commit: Participation",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_320_4-bBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Participation",
+          "confirmed": false
+        }
+      ],
+      "outcomes": [],
+      "errors": [],
+      "error": "AssertionError [ERR_ASSERTION]: Clicked control must execute the requested identity\n+ actual - expected\n\n+ 'ff6c7129f4c9989500187b70d184fc1788e0e279fdc8dd06d618b6a1ed256410.454708b4970e8f8bd53a730b7b97d4971790677f85e764df0150ef2a16babff1'\n- 'ff6c7129f4c9989500187b70d184fc1788e0e279fdc8dd06d618b6a1ed256410.b2d3ac268eeaab72b6cb83e58a29bd24754cf08b4c7de5bd65ed92f1b63dc6fd'\n\n    at Object.execute (file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-campaign-mobile.js:112:70)\n    at runNextTicks (node:internal/process/task_queues:65:5)\n    at process.processImmediate (node:internal/timers:502:9)\n    at async issueAndExecute (file:///C:/Users/Jorge/Documents/Omerta-rc1/test/lib/player-command-support.js:66:20)\n    at async Object.prepare [as networkPrepare] (file:///C:/Users/Jorge/Documents/Omerta-rc1/test/lib/campaign-network-support.js:92:7)\n    at async file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-campaign-mobile.js:132:27"
     },
     {
       "width": 390,
       "scenario": "shipment-redistribution",
+      "status": "PASS",
+      "commands": [
+        {
+          "account": "rc1m_390_0-aBoss",
+          "type": "mystery.start",
+          "label": "Open case: The Dispatch Register",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aBoss",
+          "type": "mystery.complete",
+          "label": "Complete: The Dispatch Register",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aBoss",
+          "type": "recipe.craft",
+          "label": "Craft: Stamp a Canal Cargo Seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aBoss",
+          "type": "mystery.discover",
+          "label": "Investigate lead",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aBoss",
+          "type": "mystery.complete",
+          "label": "Complete: The Cargo Seal Impressions",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aRunner",
+          "type": "recipe.craft",
+          "label": "Craft: Stamp a Canal Cargo Seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aBoss",
+          "type": "operation.create",
+          "label": "Organize: Reopen the Community Supply Route",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aBoss",
+          "type": "operation.publish",
+          "label": "Publish",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aBoss",
+          "type": "operation.join",
+          "label": "Join as Route Organizer",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aRunner",
+          "type": "operation.join",
+          "label": "Join as Cargo Runner",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aBoss",
+          "type": "operation.commit",
+          "label": "Commit: Participation",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Participation",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aBoss",
+          "type": "operation.commit",
+          "label": "Commit: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aBoss",
+          "type": "operation.commit",
+          "label": "Commit: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aRunner",
+          "type": "operation.commit",
+          "label": "Commit: Item canal cargo seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aRunner",
+          "type": "operation.contribute",
+          "label": "Contribute: Item canal cargo seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aRunner",
+          "type": "operation.commit",
+          "label": "Commit: Mat wire",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aRunner",
+          "type": "operation.contribute",
+          "label": "Contribute: Mat wire",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aRunner",
+          "type": "operation.commit",
+          "label": "Commit: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aRunner",
+          "type": "operation.contribute",
+          "label": "Contribute: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aBoss",
+          "type": "operation.approve",
+          "label": "Approve",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_0-aBoss",
+          "type": "operation.execute",
+          "label": "Execute",
+          "confirmed": true
+        }
+      ],
+      "outcomes": [
+        {
+          "action": "redistribute_shipment",
+          "state": "redistributed",
+          "consequences": [
+            {
+              "title": "The Canal Supply Depot",
+              "description": "The shipment was redistributed to reopen the community supply route.",
+              "opportunityIds": []
+            },
+            {
+              "title": "The Canal Supply Depot",
+              "description": "A registered shipment is stranded at the canal depot.",
+              "opportunityIds": []
+            },
+            {
+              "title": "The Dock Supply Route",
+              "description": "The Dock Supply Route: shortage.",
+              "opportunityIds": [
+                "58c88c94d9a0e344a08f67fa3605560e2f900c0481c98b73ff5c65e3cca9cc4a",
+                "d4615a591fa1ea6ba48f1148f4ee0e3f98b1ca1d2e7674292058602b4964fdc4",
+                "e64e85cf669eff0530e750f589da4233bac3688abc815539acc01293723a2a56"
+              ]
+            }
+          ]
+        }
+      ],
+      "errors": [],
+      "invariants": {
+        "world": {
+          "ok": true,
+          "issues": []
+        },
+        "operations": {
+          "ok": true,
+          "historyIssues": [],
+          "custodyIssues": [],
+          "capitalIssues": []
+        }
+      }
+    },
+    {
+      "width": 390,
+      "scenario": "shipment-destruction",
+      "status": "PASS",
+      "commands": [
+        {
+          "account": "rc1m_390_1-aRunner",
+          "type": "recipe.craft",
+          "label": "Craft: Stamp a Canal Cargo Seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_1-aBoss",
+          "type": "operation.create",
+          "label": "Organize: Destroy the Stranded Depot",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_1-aBoss",
+          "type": "operation.publish",
+          "label": "Publish",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_1-aBoss",
+          "type": "operation.join",
+          "label": "Join as Route Organizer",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_1-aRunner",
+          "type": "operation.join",
+          "label": "Join as Cargo Runner",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_1-aBoss",
+          "type": "operation.commit",
+          "label": "Commit: Participation",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_1-aBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Participation",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_1-aBoss",
+          "type": "operation.commit",
+          "label": "Commit: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_1-aBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_1-aBoss",
+          "type": "operation.commit",
+          "label": "Commit: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_1-aBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_1-aRunner",
+          "type": "operation.commit",
+          "label": "Commit: Item canal cargo seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_1-aRunner",
+          "type": "operation.contribute",
+          "label": "Contribute: Item canal cargo seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_1-aRunner",
+          "type": "operation.commit",
+          "label": "Commit: Mat wire",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_1-aRunner",
+          "type": "operation.contribute",
+          "label": "Contribute: Mat wire",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_1-aBoss",
+          "type": "operation.approve",
+          "label": "Approve",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_1-aBoss",
+          "type": "operation.execute",
+          "label": "Execute",
+          "confirmed": true
+        }
+      ],
+      "outcomes": [
+        {
+          "action": "destroy_shipment",
+          "state": "destroyed",
+          "consequences": [
+            {
+              "title": "The Canal Supply Depot",
+              "description": "The stranded canal depot was destroyed.",
+              "opportunityIds": []
+            },
+            {
+              "title": "The Canal Supply Depot",
+              "description": "A registered shipment is stranded at the canal depot.",
+              "opportunityIds": []
+            },
+            {
+              "title": "The Dock Supply Route",
+              "description": "The Dock Supply Route: shortage.",
+              "opportunityIds": [
+                "58c88c94d9a0e344a08f67fa3605560e2f900c0481c98b73ff5c65e3cca9cc4a",
+                "d4615a591fa1ea6ba48f1148f4ee0e3f98b1ca1d2e7674292058602b4964fdc4",
+                "e64e85cf669eff0530e750f589da4233bac3688abc815539acc01293723a2a56"
+              ]
+            }
+          ]
+        }
+      ],
+      "errors": [],
+      "invariants": {
+        "world": {
+          "ok": true,
+          "issues": []
+        },
+        "operations": {
+          "ok": true,
+          "historyIssues": [],
+          "custodyIssues": [],
+          "capitalIssues": []
+        }
+      }
+    },
+    {
+      "width": 390,
+      "scenario": "black-market-supply",
       "status": "FAIL",
-      "commands": [],
-      "errors": []
+      "commands": [
+        {
+          "account": "rc1m_390_2-bBoss",
+          "type": "discovery.start",
+          "label": "Investigate: The Canal Shipping Register",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_2-bBoss",
+          "type": "discovery.act",
+          "label": "Complete: Read the Canal Register",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_2-bBoss",
+          "type": "discovery.act",
+          "label": "Follow a lead",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_2-bBoss",
+          "type": "discovery.act",
+          "label": "Complete: Copy the Depot Instructions",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_2-bBoss",
+          "type": "discovery.act",
+          "label": "Follow a lead",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_2-bBoss",
+          "type": "discovery.act",
+          "label": "Complete: Keep the Shipping Instructions",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_2-bRunner",
+          "type": "discovery.start",
+          "label": "Investigate: The Canal Shipping Register",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_2-bRunner",
+          "type": "discovery.act",
+          "label": "Complete: Read the Canal Register",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_2-bRunner",
+          "type": "discovery.act",
+          "label": "Follow a lead",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_2-bRunner",
+          "type": "discovery.act",
+          "label": "Complete: Copy the Depot Instructions",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_2-bRunner",
+          "type": "discovery.act",
+          "label": "Follow a lead",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_2-bRunner",
+          "type": "discovery.act",
+          "label": "Complete: Keep the Shipping Instructions",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_2-bRunner",
+          "type": "recipe.craft",
+          "label": "Craft: Stamp a Canal Cargo Seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_2-bBoss",
+          "type": "operation.create",
+          "label": "Organize: Intercept the Missing Shipment",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_2-bBoss",
+          "type": "operation.publish",
+          "label": "Publish",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_2-bBoss",
+          "type": "operation.join",
+          "label": "Join as Route Organizer",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_2-bRunner",
+          "type": "operation.join",
+          "label": "Join as Cargo Runner",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_2-bBoss",
+          "type": "operation.commit",
+          "label": "Commit: Participation",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_2-bBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Participation",
+          "confirmed": false
+        }
+      ],
+      "outcomes": [],
+      "errors": [],
+      "error": "AssertionError [ERR_ASSERTION]: Clicked control must execute the requested identity\n+ actual - expected\n\n+ 'd0ee228e1b8d8f30b3b8f300cb3714d93966919768a4576001a1fae7b9946611.9244cf1032fd646720fbbb2d9a2f88ae3a0bd703ae1ea2d7c35c91331acb846e'\n- 'd0ee228e1b8d8f30b3b8f300cb3714d93966919768a4576001a1fae7b9946611.9b91c10be8b3479291fb84f1879328bf1f8042820f7559316a943a0c330b5a1d'\n\n    at Object.execute (file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-campaign-mobile.js:112:70)\n    at async issueAndExecute (file:///C:/Users/Jorge/Documents/Omerta-rc1/test/lib/player-command-support.js:66:20)\n    at async Object.prepare [as networkPrepare] (file:///C:/Users/Jorge/Documents/Omerta-rc1/test/lib/campaign-network-support.js:92:7)\n    at async file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-campaign-mobile.js:132:27"
+    },
+    {
+      "width": 390,
+      "scenario": "black-market-seizure",
+      "status": "PASS",
+      "commands": [
+        {
+          "account": "rc1m_390_3-bBoss",
+          "type": "discovery.start",
+          "label": "Investigate: The Canal Shipping Register",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bBoss",
+          "type": "discovery.act",
+          "label": "Complete: Read the Canal Register",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bBoss",
+          "type": "discovery.act",
+          "label": "Follow a lead",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bBoss",
+          "type": "discovery.act",
+          "label": "Complete: Copy the Depot Instructions",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bBoss",
+          "type": "discovery.act",
+          "label": "Follow a lead",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bBoss",
+          "type": "discovery.act",
+          "label": "Complete: Keep the Shipping Instructions",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bRunner",
+          "type": "discovery.start",
+          "label": "Investigate: The Canal Shipping Register",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bRunner",
+          "type": "discovery.act",
+          "label": "Complete: Read the Canal Register",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bRunner",
+          "type": "discovery.act",
+          "label": "Follow a lead",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bRunner",
+          "type": "discovery.act",
+          "label": "Complete: Copy the Depot Instructions",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bRunner",
+          "type": "discovery.act",
+          "label": "Follow a lead",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bRunner",
+          "type": "discovery.act",
+          "label": "Complete: Keep the Shipping Instructions",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bRunner",
+          "type": "recipe.craft",
+          "label": "Craft: Stamp a Canal Cargo Seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bBoss",
+          "type": "operation.create",
+          "label": "Organize: Intercept the Missing Shipment",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bBoss",
+          "type": "operation.publish",
+          "label": "Publish",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bBoss",
+          "type": "operation.join",
+          "label": "Join as Route Organizer",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bRunner",
+          "type": "operation.join",
+          "label": "Join as Cargo Runner",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bBoss",
+          "type": "operation.commit",
+          "label": "Commit: Participation",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Participation",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bBoss",
+          "type": "operation.commit",
+          "label": "Commit: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bBoss",
+          "type": "operation.commit",
+          "label": "Commit: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bRunner",
+          "type": "operation.commit",
+          "label": "Commit: Item canal cargo seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bRunner",
+          "type": "operation.contribute",
+          "label": "Contribute: Item canal cargo seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bRunner",
+          "type": "operation.commit",
+          "label": "Commit: Mat wire",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bRunner",
+          "type": "operation.contribute",
+          "label": "Contribute: Mat wire",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bBoss",
+          "type": "operation.approve",
+          "label": "Approve",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bBoss",
+          "type": "operation.execute",
+          "label": "Execute",
+          "confirmed": true
+        },
+        {
+          "account": "rc1m_390_3-bRunner",
+          "type": "recipe.craft",
+          "label": "Craft: Stamp a Canal Cargo Seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bBoss",
+          "type": "operation.create",
+          "label": "Organize: Establish the Canal Black Market",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bBoss",
+          "type": "operation.publish",
+          "label": "Publish",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bBoss",
+          "type": "operation.join",
+          "label": "Join as Route Organizer",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bRunner",
+          "type": "operation.join",
+          "label": "Join as Cargo Runner",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bBoss",
+          "type": "operation.commit",
+          "label": "Commit: Participation",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Participation",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bBoss",
+          "type": "operation.commit",
+          "label": "Commit: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bRunner",
+          "type": "operation.commit",
+          "label": "Commit: Item canal cargo seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bRunner",
+          "type": "operation.contribute",
+          "label": "Contribute: Item canal cargo seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bRunner",
+          "type": "operation.commit",
+          "label": "Commit: Mat wire",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bRunner",
+          "type": "operation.contribute",
+          "label": "Contribute: Mat wire",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bBoss",
+          "type": "operation.approve",
+          "label": "Approve",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-bBoss",
+          "type": "operation.execute",
+          "label": "Execute",
+          "confirmed": true
+        },
+        {
+          "account": "rc1m_390_3-aRunner",
+          "type": "recipe.craft",
+          "label": "Craft: Stamp a Canal Cargo Seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-aBoss",
+          "type": "operation.create",
+          "label": "Organize: Seize the Canal Market Route",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-aBoss",
+          "type": "operation.publish",
+          "label": "Publish",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-aBoss",
+          "type": "operation.join",
+          "label": "Join as Route Organizer",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-aRunner",
+          "type": "operation.join",
+          "label": "Join as Cargo Runner",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-aBoss",
+          "type": "operation.commit",
+          "label": "Commit: Participation",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-aBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Participation",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-aBoss",
+          "type": "operation.commit",
+          "label": "Commit: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-aBoss",
+          "type": "operation.contribute",
+          "label": "Contribute: Prerequisite",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-aRunner",
+          "type": "operation.commit",
+          "label": "Commit: Item canal cargo seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-aRunner",
+          "type": "operation.contribute",
+          "label": "Contribute: Item canal cargo seal",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-aRunner",
+          "type": "operation.commit",
+          "label": "Commit: Mat wire",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-aRunner",
+          "type": "operation.contribute",
+          "label": "Contribute: Mat wire",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-aBoss",
+          "type": "operation.approve",
+          "label": "Approve",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_3-aBoss",
+          "type": "operation.execute",
+          "label": "Execute",
+          "confirmed": true
+        }
+      ],
+      "outcomes": [
+        {
+          "action": "intercept_shipment",
+          "state": "diverted",
+          "consequences": [
+            {
+              "title": "The Canal Supply Depot",
+              "description": "The missing shipment was intercepted and diverted from its registered route.",
+              "opportunityIds": [
+                "2dab8a160c1faea90e4916aa6b9a68ef03f39137070111a54b97cab246af7b09"
+              ]
+            },
+            {
+              "title": "The Canal Supply Depot",
+              "description": "A registered shipment is stranded at the canal depot.",
+              "opportunityIds": [
+                "2dab8a160c1faea90e4916aa6b9a68ef03f39137070111a54b97cab246af7b09"
+              ]
+            },
+            {
+              "title": "The Dock Supply Route",
+              "description": "The Dock Supply Route: shortage.",
+              "opportunityIds": [
+                "58c88c94d9a0e344a08f67fa3605560e2f900c0481c98b73ff5c65e3cca9cc4a",
+                "d4615a591fa1ea6ba48f1148f4ee0e3f98b1ca1d2e7674292058602b4964fdc4",
+                "e64e85cf669eff0530e750f589da4233bac3688abc815539acc01293723a2a56"
+              ]
+            }
+          ]
+        },
+        {
+          "action": "establish_market",
+          "state": "market_open",
+          "consequences": [
+            {
+              "title": "The Canal Supply Depot",
+              "description": "An alternate market has opened at the canal depot.",
+              "opportunityIds": [
+                "271ceeb6b4a11a2488c96acd58f4f71d2f31a6e315c4347c104cf04a34de8728",
+                "458e294f0e4359fcc2eba1e0970358aa52908d03e5fcf3e3f704b3545b76ec24",
+                "cc77a673791aa2d941945d67c1373b0a0229821d3978668a64bd9acfb1d28e2a",
+                "cffc298b133622b61c098f196a084525c534e7c196d1cf87b713730c99de7538"
+              ]
+            },
+            {
+              "title": "The Canal Supply Depot",
+              "description": "The missing shipment was intercepted and diverted from its registered route.",
+              "opportunityIds": [
+                "271ceeb6b4a11a2488c96acd58f4f71d2f31a6e315c4347c104cf04a34de8728",
+                "458e294f0e4359fcc2eba1e0970358aa52908d03e5fcf3e3f704b3545b76ec24",
+                "cc77a673791aa2d941945d67c1373b0a0229821d3978668a64bd9acfb1d28e2a",
+                "cffc298b133622b61c098f196a084525c534e7c196d1cf87b713730c99de7538"
+              ]
+            },
+            {
+              "title": "The Canal Supply Depot",
+              "description": "A registered shipment is stranded at the canal depot.",
+              "opportunityIds": [
+                "271ceeb6b4a11a2488c96acd58f4f71d2f31a6e315c4347c104cf04a34de8728",
+                "458e294f0e4359fcc2eba1e0970358aa52908d03e5fcf3e3f704b3545b76ec24",
+                "cc77a673791aa2d941945d67c1373b0a0229821d3978668a64bd9acfb1d28e2a",
+                "cffc298b133622b61c098f196a084525c534e7c196d1cf87b713730c99de7538"
+              ]
+            },
+            {
+              "title": "The Dock Supply Route",
+              "description": "The Dock Supply Route: shortage.",
+              "opportunityIds": [
+                "58c88c94d9a0e344a08f67fa3605560e2f900c0481c98b73ff5c65e3cca9cc4a",
+                "d4615a591fa1ea6ba48f1148f4ee0e3f98b1ca1d2e7674292058602b4964fdc4",
+                "e64e85cf669eff0530e750f589da4233bac3688abc815539acc01293723a2a56"
+              ]
+            }
+          ]
+        },
+        {
+          "action": "seize_market",
+          "state": "market_seized",
+          "consequences": [
+            {
+              "title": "The Canal Supply Depot",
+              "description": "The canal market route was seized.",
+              "opportunityIds": []
+            },
+            {
+              "title": "The Canal Supply Depot",
+              "description": "An alternate market has opened at the canal depot.",
+              "opportunityIds": []
+            },
+            {
+              "title": "The Canal Supply Depot",
+              "description": "The missing shipment was intercepted and diverted from its registered route.",
+              "opportunityIds": []
+            },
+            {
+              "title": "The Canal Supply Depot",
+              "description": "A registered shipment is stranded at the canal depot.",
+              "opportunityIds": []
+            },
+            {
+              "title": "The Dock Supply Route",
+              "description": "The Dock Supply Route: shortage.",
+              "opportunityIds": [
+                "58c88c94d9a0e344a08f67fa3605560e2f900c0481c98b73ff5c65e3cca9cc4a",
+                "d4615a591fa1ea6ba48f1148f4ee0e3f98b1ca1d2e7674292058602b4964fdc4",
+                "e64e85cf669eff0530e750f589da4233bac3688abc815539acc01293723a2a56"
+              ]
+            }
+          ]
+        }
+      ],
+      "errors": [],
+      "invariants": {
+        "world": {
+          "ok": true,
+          "issues": []
+        },
+        "operations": {
+          "ok": true,
+          "historyIssues": [],
+          "custodyIssues": [],
+          "capitalIssues": []
+        }
+      }
+    },
+    {
+      "width": 390,
+      "scenario": "informant-public-disclosure",
+      "status": "FAIL",
+      "commands": [
+        {
+          "account": "rc1m_390_4-bBoss",
+          "type": "discovery.start",
+          "label": "Investigate: The Canal Shipping Register",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_4-bBoss",
+          "type": "discovery.act",
+          "label": "Complete: Read the Canal Register",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_4-bBoss",
+          "type": "discovery.act",
+          "label": "Follow a lead",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_4-bBoss",
+          "type": "discovery.act",
+          "label": "Complete: Copy the Depot Instructions",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_4-bBoss",
+          "type": "discovery.act",
+          "label": "Follow a lead",
+          "confirmed": false
+        },
+        {
+          "account": "rc1m_390_4-bBoss",
+          "type": "discovery.act",
+          "label": "Complete: Keep the Shipping Instructions",
+          "confirmed": false
+        }
+      ],
+      "outcomes": [],
+      "errors": [],
+      "error": "AssertionError [ERR_ASSERTION]: {\"error\":\"command_unavailable\",\"message\":\"Refresh your commands before trying again.\"}\n\n409 !== 200\n\n    at Object.execute (file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-campaign-mobile.js:111:50)\n    at runNextTicks (node:internal/process/task_queues:65:5)\n    at process.processImmediate (node:internal/timers:502:9)\n    at async issueAndExecute (file:///C:/Users/Jorge/Documents/Omerta-rc1/test/lib/player-command-support.js:66:20)\n    at async learn (file:///C:/Users/Jorge/Documents/Omerta-rc1/test/lib/campaign-network-support.js:25:9)\n    at async Object.prepare [as networkPrepare] (file:///C:/Users/Jorge/Documents/Omerta-rc1/test/lib/campaign-network-support.js:73:77)\n    at async file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-campaign-mobile.js:132:27"
     }
   ]
 }

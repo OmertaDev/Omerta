@@ -78,3 +78,13 @@ Call log:
 ⚠️  preflight: Neither PUBLIC_URL nor SOCIAL_GAME_URL is set — every referral link, share prompt and social card will point at the built-in default domain, not yours. Set PUBLIC_URL to this server's own origin (it is also what one-click X sign-in derives its callback from).
 ⚠️  preflight: INVARIANT_WEBHOOK_URL is not set — the §10.4 economy-drift, backup-failure, oracle-halt and real-value-invariant alarms have nowhere to shout and reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
 [db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+AssertionError [ERR_ASSERTION]: Clicked control must execute the requested identity
++ actual - expected
+
++ '6922fa42d90132635f1dab761f04325a98ee9b0c180d588c19021548bd96c3ac.7bfb67d674720ce5dc14c75948cadd18c06833c5d7bb65acab37c54c46c2549a'
+- '6922fa42d90132635f1dab761f04325a98ee9b0c180d588c19021548bd96c3ac.833d215380ec8b9b81927c0d4bbabc8311eb1608d4cfd279dd36c4dc7497a88b'
+
+    at Object.execute (file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-campaign-mobile.js:111:70)
+    at async issueAndExecute (file:///C:/Users/Jorge/Documents/Omerta-rc1/test/lib/player-command-support.js:66:20)
+    at async Object.prepare [as networkPrepare] (file:///C:/Users/Jorge/Documents/Omerta-rc1/test/lib/campaign-network-support.js:92:7)
+    at async file:///C:/Users/Jorge/Documents/Omerta-rc1/tools/rc1-campaign-mobile.js:130:27

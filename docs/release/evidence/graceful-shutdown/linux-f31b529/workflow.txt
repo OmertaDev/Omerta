@@ -1,0 +1,556 @@
+linux-sigterm	UNKNOWN STEP	﻿2026-09-19T00:13:44.2188533Z Current runner version: '2.337.0'
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:44.2224415Z ##[group]Runner Image Provisioner
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:44.2225783Z Hosted Compute Agent
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:44.2227022Z Version: 20260828.587
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:44.2228187Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:44.2229559Z Build Date: 2026-08-28T16:44:25Z
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:44.2230672Z Worker ID: {d3da32f6-6ac6-4b14-b046-57f9702c4ab7}
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:44.2231866Z Azure Region: eastus2
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:44.2232848Z ##[endgroup]
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:44.2235083Z ##[group]Operating System
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:44.2236244Z Ubuntu
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:44.2237434Z 24.04.5
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:44.2238293Z LTS
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:44.2239181Z ##[endgroup]
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:44.2240138Z ##[group]Runner Image
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:44.2241180Z Image: ubuntu-24.04
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:44.2242111Z Version: 20260907.300.1
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:44.2244323Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260907.300/images/ubuntu/Ubuntu2404-Readme.md
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:44.2247306Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260907.300
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:44.2249148Z ##[endgroup]
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:44.2250937Z ##[group]GITHUB_TOKEN Permissions
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:44.2253596Z Contents: read
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:44.2254567Z Metadata: read
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:44.2255585Z ##[endgroup]
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:44.2258693Z Secret source: Actions
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:44.2260337Z Cache mode: write
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:44.2261408Z Prepare workflow directory
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:44.2851709Z Prepare all required actions
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:44.2899757Z Getting action download info
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:44.4689095Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:44.5789989Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:44.6635445Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:44.8832704Z Complete job name: linux-sigterm
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:44.9291724Z ##[group]Checking docker version
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:44.9304815Z ##[command]/usr/bin/docker version --format '{{.Server.APIVersion}}'
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.0435490Z '1.48'
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.0448636Z Docker daemon API version: '1.48'
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.0449432Z ##[command]/usr/bin/docker version --format '{{.Client.APIVersion}}'
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.0609626Z '1.48'
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.0622217Z Docker client API version: '1.48'
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.0626951Z ##[endgroup]
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.0630352Z ##[group]Clean up resources from previous jobs
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.0635468Z ##[command]/usr/bin/docker ps --all --quiet --no-trunc --filter "label=1adb8a"
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.0780054Z ##[command]/usr/bin/docker network prune --force --filter "label=1adb8a"
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.0910420Z ##[endgroup]
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.0910948Z ##[group]Create local container network
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.0921306Z ##[command]/usr/bin/docker network create --label 1adb8a github_network_d80a91c238d84507a4dd9fd59d7a71bd
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.1431155Z f37724f5194a3c6c2a61dba11483eea843fd3113303f3d87527cbc2d63df1e89
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.1450590Z ##[endgroup]
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.1474750Z ##[group]Starting postgres service container
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.1496268Z ##[command]/usr/bin/docker pull postgres:16
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.4441187Z 16: Pulling from library/postgres
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.5372853Z 6310eb16bf42: Pulling fs layer
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.5374489Z 4d710b756578: Pulling fs layer
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.5375645Z 3fa541d8cac9: Pulling fs layer
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.5376988Z b3ffe1fd6e79: Pulling fs layer
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.5378244Z f122bc3261fc: Pulling fs layer
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.5379494Z 5322d81b9b21: Pulling fs layer
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.5380925Z 9bd242f25e75: Pulling fs layer
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.5381902Z 9d1e9c1e61f4: Pulling fs layer
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.5382889Z 48dd761b6bfe: Pulling fs layer
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.5383558Z 00034b17b963: Pulling fs layer
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.5384320Z 8a082189cfe1: Pulling fs layer
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.5385465Z 988d57697ad2: Pulling fs layer
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.5386146Z 9f809ec5ff35: Pulling fs layer
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.5387422Z af7708f26521: Pulling fs layer
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.5388207Z f122bc3261fc: Waiting
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.5388787Z 5322d81b9b21: Waiting
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.5389295Z 9bd242f25e75: Waiting
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.5389811Z 9d1e9c1e61f4: Waiting
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.5390325Z 48dd761b6bfe: Waiting
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.5390821Z 8a082189cfe1: Waiting
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.5391321Z 00034b17b963: Waiting
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.5391824Z 988d57697ad2: Waiting
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.5392321Z 9f809ec5ff35: Waiting
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.5392831Z af7708f26521: Waiting
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.5393337Z b3ffe1fd6e79: Waiting
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.6420626Z 4d710b756578: Verifying Checksum
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.6422047Z 4d710b756578: Download complete
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.7045605Z 3fa541d8cac9: Verifying Checksum
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.7047016Z 3fa541d8cac9: Download complete
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.7368527Z b3ffe1fd6e79: Verifying Checksum
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.7369726Z b3ffe1fd6e79: Download complete
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.7745995Z 6310eb16bf42: Verifying Checksum
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.7748333Z 6310eb16bf42: Download complete
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.8228485Z 9bd242f25e75: Verifying Checksum
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.8230752Z 9bd242f25e75: Download complete
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.8274008Z f122bc3261fc: Verifying Checksum
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.8275704Z f122bc3261fc: Download complete
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.8293328Z 5322d81b9b21: Verifying Checksum
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.8295256Z 5322d81b9b21: Download complete
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.8721220Z 9d1e9c1e61f4: Verifying Checksum
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.8722787Z 9d1e9c1e61f4: Download complete
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.8798105Z 00034b17b963: Verifying Checksum
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.8800088Z 00034b17b963: Download complete
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.9244160Z 8a082189cfe1: Verifying Checksum
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.9245746Z 8a082189cfe1: Download complete
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.9324331Z 988d57697ad2: Verifying Checksum
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.9326830Z 988d57697ad2: Download complete
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.9773837Z 9f809ec5ff35: Verifying Checksum
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.9775785Z 9f809ec5ff35: Download complete
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.9857500Z af7708f26521: Verifying Checksum
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:45.9858805Z af7708f26521: Download complete
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:46.3014030Z 48dd761b6bfe: Verifying Checksum
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:46.3015276Z 48dd761b6bfe: Download complete
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:46.8769186Z 6310eb16bf42: Pull complete
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:47.1915431Z 4d710b756578: Pull complete
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:47.3657744Z 3fa541d8cac9: Pull complete
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:47.4088406Z b3ffe1fd6e79: Pull complete
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:47.7094791Z f122bc3261fc: Pull complete
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:47.7905372Z 5322d81b9b21: Pull complete
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:47.7988717Z 9bd242f25e75: Pull complete
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:47.8092664Z 9d1e9c1e61f4: Pull complete
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:50.7679543Z 48dd761b6bfe: Pull complete
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:50.7836745Z 00034b17b963: Pull complete
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:50.7983363Z 8a082189cfe1: Pull complete
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:50.8070995Z 988d57697ad2: Pull complete
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:50.8170226Z 9f809ec5ff35: Pull complete
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:50.8262890Z af7708f26521: Pull complete
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:50.8312263Z Digest: sha256:f1c3376c26f2609ab9f29f71f824103fe2fcd8ee0346485cb6122a4f93df6f94
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:50.8322959Z Status: Downloaded newer image for postgres:16
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:50.8331771Z docker.io/library/postgres:16
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:50.8393447Z ##[command]/usr/bin/docker create --name b3a7fa2ed7f64257b9278978ea6348f4_postgres16_051781 --label 1adb8a --network github_network_d80a91c238d84507a4dd9fd59d7a71bd --network-alias postgres -p 5432:5432 --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 12 -e "POSTGRES_USER=postgres" -e "POSTGRES_PASSWORD=postgres" -e "POSTGRES_DB=rc1_recovery" -e GITHUB_ACTIONS=true -e CI=true postgres:16
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:50.8663034Z e978cecf1802fbff08da0abeb7ddce75d65e6253ead4c5cfedebbc84729f5c84
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:50.8684935Z ##[command]/usr/bin/docker start e978cecf1802fbff08da0abeb7ddce75d65e6253ead4c5cfedebbc84729f5c84
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:51.1886872Z e978cecf1802fbff08da0abeb7ddce75d65e6253ead4c5cfedebbc84729f5c84
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:51.1907129Z ##[command]/usr/bin/docker ps --all --filter id=e978cecf1802fbff08da0abeb7ddce75d65e6253ead4c5cfedebbc84729f5c84 --filter status=running --no-trunc --format "{{.ID}} {{.Status}}"
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:51.2047819Z e978cecf1802fbff08da0abeb7ddce75d65e6253ead4c5cfedebbc84729f5c84 Up Less than a second (health: starting)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:51.2070951Z ##[command]/usr/bin/docker port e978cecf1802fbff08da0abeb7ddce75d65e6253ead4c5cfedebbc84729f5c84
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:51.2207484Z 5432/tcp -> 0.0.0.0:5432
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:51.2207982Z 5432/tcp -> [::]:5432
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:51.2255453Z ##[endgroup]
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:51.2267963Z ##[group]Waiting for all services to be ready
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:51.2286993Z ##[command]/usr/bin/docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" e978cecf1802fbff08da0abeb7ddce75d65e6253ead4c5cfedebbc84729f5c84
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:51.2424560Z starting
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:51.2446519Z postgres service is starting, waiting 2 seconds before checking again.
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:53.2458442Z ##[command]/usr/bin/docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" e978cecf1802fbff08da0abeb7ddce75d65e6253ead4c5cfedebbc84729f5c84
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:53.2584045Z starting
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:53.2596071Z postgres service is starting, waiting 4 seconds before checking again.
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.5062399Z ##[command]/usr/bin/docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" e978cecf1802fbff08da0abeb7ddce75d65e6253ead4c5cfedebbc84729f5c84
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.5190085Z healthy
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.5206034Z postgres service is healthy.
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.5207043Z ##[endgroup]
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.5542873Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.5551136Z ##[group]Run actions/checkout@v4
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.5551583Z with:
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.5551800Z   repository: OmertaDev/Omerta
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.5554056Z   token: ***
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.5554262Z   ssh-strict: true
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.5554466Z   ssh-user: git
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.5554671Z   persist-credentials: true
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.5554909Z   clean: true
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.5555124Z   sparse-checkout-cone-mode: true
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.5555375Z   fetch-depth: 1
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.5555574Z   fetch-tags: false
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.5555786Z   show-progress: true
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.5555991Z   lfs: false
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.5556213Z   submodules: false
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.5556628Z   set-safe-directory: true
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.5556871Z   allow-unsafe-pr-checkout: false
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.5557352Z env:
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.5557839Z   COORDINATION_TEST_DATABASE_URL: ***127.0.0.1:5432/rc1_recovery
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.5558309Z   RC1_SHUTDOWN_EVIDENCE: /home/runner/work/Omerta/Omerta/tmp/rc1-linux-sigterm
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.5558709Z ##[endgroup]
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.6555444Z Syncing repository: OmertaDev/Omerta
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.6557084Z ##[group]Getting Git version info
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.6557484Z Working directory is '/home/runner/work/Omerta/Omerta'
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.6558075Z [command]/usr/bin/git version
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.6656739Z git version 2.55.0
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.6680470Z ##[endgroup]
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.6698909Z Temporarily overriding HOME='/home/runner/work/_temp/bb83276a-d7a5-4a4c-9c0b-87dfd16dd228' before making global git config changes
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.6700184Z Adding repository directory to the temporary git global config as a safe directory
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.6705081Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Omerta/Omerta
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.6760690Z Deleting the contents of '/home/runner/work/Omerta/Omerta'
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.6766050Z ##[group]Initializing the repository
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.6770672Z [command]/usr/bin/git init /home/runner/work/Omerta/Omerta
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.6907032Z hint: Using 'master' as the name for the initial branch. This default branch name
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.6908036Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.6908912Z hint: to use in all of your new repositories, which will suppress this warning,
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.6909594Z hint: call:
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.6909911Z hint:
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.6910392Z hint: 	git config --global init.defaultBranch <name>
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.6910983Z hint:
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.6911481Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.6912451Z hint: 'development'. The just-created branch can be renamed via this command:
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.6913156Z hint:
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.6913514Z hint: 	git branch -m <name>
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.6913883Z hint:
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.6914460Z hint: Disable this message with "git config set advice.defaultBranchName false"
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.6915363Z Initialized empty Git repository in /home/runner/work/Omerta/Omerta/.git/
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.6922988Z [command]/usr/bin/git remote add origin https://github.com/OmertaDev/Omerta
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.6974405Z ##[endgroup]
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.6974916Z ##[group]Disabling automatic garbage collection
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.6979465Z [command]/usr/bin/git config --local gc.auto 0
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.7021388Z ##[endgroup]
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.7022035Z ##[group]Setting up auth
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.7023531Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.7060874Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.7472727Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.7522800Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.7764144Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.7801307Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.8027291Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.8067410Z ##[endgroup]
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.8068029Z ##[group]Fetching the repository
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:13:57.8077129Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +f31b5290080506f6407a9b7f9a514e2ea020a9d4:refs/remotes/origin/codex/rc1-release-validation
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:24.0616784Z From https://github.com/OmertaDev/Omerta
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:24.0632497Z  * [new ref]         f31b5290080506f6407a9b7f9a514e2ea020a9d4 -> origin/codex/rc1-release-validation
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:24.0634596Z ##[endgroup]
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:24.0635312Z ##[group]Determining the checkout info
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:24.0636242Z ##[endgroup]
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:24.0636987Z [command]/usr/bin/git sparse-checkout disable
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:24.0695486Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:24.0728515Z ##[group]Checking out the ref
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:24.0742593Z [command]/usr/bin/git checkout --progress --force -B codex/rc1-release-validation refs/remotes/origin/codex/rc1-release-validation
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.1685988Z Updating files:  32% (1123/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.3040155Z Updating files:  33% (1145/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.3757893Z Updating files:  34% (1180/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.3945137Z Updating files:  35% (1214/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.4183045Z Updating files:  36% (1249/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.4197655Z Updating files:  37% (1284/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.4213392Z Updating files:  38% (1318/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.4245747Z Updating files:  39% (1353/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.4289779Z Updating files:  40% (1388/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.4313108Z Updating files:  41% (1422/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.4341736Z Updating files:  42% (1457/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.4365034Z Updating files:  43% (1492/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.4394201Z Updating files:  44% (1526/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.4555258Z Updating files:  45% (1561/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.4658915Z Updating files:  46% (1596/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.4983194Z Updating files:  47% (1630/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.5014549Z Updating files:  48% (1665/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.5052264Z Updating files:  49% (1700/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.5114385Z Updating files:  50% (1734/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.5354636Z Updating files:  51% (1769/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.5441769Z Updating files:  52% (1804/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.5503554Z Updating files:  53% (1839/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.5536464Z Updating files:  54% (1873/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.5564132Z Updating files:  55% (1908/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.5594502Z Updating files:  56% (1943/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.5637535Z Updating files:  57% (1977/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.5673262Z Updating files:  58% (2012/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.5692520Z Updating files:  59% (2047/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.5823862Z Updating files:  60% (2081/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.5858901Z Updating files:  61% (2116/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.5895516Z Updating files:  62% (2151/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.5972273Z Updating files:  63% (2185/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.6113351Z Updating files:  64% (2220/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.6248557Z Updating files:  65% (2255/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.6378882Z Updating files:  66% (2289/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.6528659Z Updating files:  67% (2324/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.6812231Z Updating files:  68% (2359/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.7183990Z Updating files:  69% (2393/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:25.7416756Z Updating files:  70% (2428/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.0187876Z Updating files:  71% (2463/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.0531233Z Updating files:  72% (2497/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.0696827Z Updating files:  73% (2532/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.0811976Z Updating files:  74% (2567/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.0915301Z Updating files:  74% (2587/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.1032004Z Updating files:  75% (2601/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.1267307Z Updating files:  76% (2636/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.1626084Z Updating files:  77% (2671/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.1764400Z Updating files:  78% (2706/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.2181677Z Updating files:  79% (2740/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.2307099Z Updating files:  80% (2775/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.2423513Z Updating files:  81% (2810/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.2465654Z Updating files:  82% (2844/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.2506215Z Updating files:  83% (2879/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.2556934Z Updating files:  84% (2914/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.2600124Z Updating files:  85% (2948/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.2635568Z Updating files:  86% (2983/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.2699272Z Updating files:  87% (3018/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.2751708Z Updating files:  88% (3052/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.2796025Z Updating files:  89% (3087/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.2856018Z Updating files:  90% (3122/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.2905681Z Updating files:  91% (3156/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.2966285Z Updating files:  92% (3191/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.3006400Z Updating files:  93% (3226/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.3057912Z Updating files:  94% (3260/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.3104424Z Updating files:  95% (3295/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.3146525Z Updating files:  96% (3330/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.3187445Z Updating files:  97% (3364/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.3224725Z Updating files:  98% (3399/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.3265562Z Updating files:  99% (3434/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.3266771Z Updating files: 100% (3468/3468)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.3267326Z Updating files: 100% (3468/3468), done.
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.3314119Z Switched to a new branch 'codex/rc1-release-validation'
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.3320784Z branch 'codex/rc1-release-validation' set up to track 'origin/codex/rc1-release-validation'.
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.3438893Z ##[endgroup]
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.3497232Z [command]/usr/bin/git log -1 --format=%H
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.3526220Z f31b5290080506f6407a9b7f9a514e2ea020a9d4
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.3782802Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.3784366Z ##[group]Run actions/setup-node@v4
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.3784620Z with:
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.3784808Z   node-version: 22
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.3785024Z   cache: npm
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.3785218Z   always-auth: false
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.3785434Z   check-latest: false
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.3787972Z   token: ***
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.3788178Z env:
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.3788603Z   COORDINATION_TEST_DATABASE_URL: ***127.0.0.1:5432/rc1_recovery
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.3789072Z   RC1_SHUTDOWN_EVIDENCE: /home/runner/work/Omerta/Omerta/tmp/rc1-linux-sigterm
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.3789458Z ##[endgroup]
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.5222490Z (node:2773) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.5223200Z (Use `node --trace-deprecation ...` to show where the warning was created)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.5227493Z Found in cache @ /opt/hostedtoolcache/node/22.23.2/x64
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.5228225Z ##[group]Environment details
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.9857565Z node: v22.23.2
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.9858115Z npm: 10.9.8
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.9858451Z yarn: 1.22.22
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.9859844Z ##[endgroup]
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:26.9903919Z [command]/opt/hostedtoolcache/node/22.23.2/x64/bin/npm config get cache
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:27.1016573Z /home/runner/.npm
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:27.1951476Z Cache hit for: node-cache-Linux-x64-npm-08335a2c38c1e792b2f470fe8262ee4aed19102649a638186cb6f1a346595d77
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:27.2108005Z (node:2773) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:27.4915037Z Received 23793481 of 23793481 (100.0%), 94.5 MBs/sec
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:27.4915808Z Cache Size: ~23 MB (23793481 B)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:27.4947412Z [command]/usr/bin/tar -xf /home/runner/work/_temp/c1a955a8-c462-4819-bf27-650021518e9c/cache.tzst -P -C /home/runner/work/Omerta/Omerta --use-compress-program unzstd
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:27.5927028Z Cache restored successfully
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:27.5942022Z Cache restored from key: node-cache-Linux-x64-npm-08335a2c38c1e792b2f470fe8262ee4aed19102649a638186cb6f1a346595d77
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:27.6135555Z ##[group]Run npm ci
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:27.6135934Z ^[[36;1mnpm ci^[[0m
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:27.6187071Z shell: /usr/bin/bash -e {0}
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:27.6187343Z env:
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:27.6187884Z   COORDINATION_TEST_DATABASE_URL: ***127.0.0.1:5432/rc1_recovery
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:27.6188375Z   RC1_SHUTDOWN_EVIDENCE: /home/runner/work/Omerta/Omerta/tmp/rc1-linux-sigterm
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:27.6188771Z ##[endgroup]
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:34.2879447Z 
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:34.2889022Z added 248 packages, and audited 249 packages in 7s
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:34.2889513Z 
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:34.2889807Z 70 packages are looking for funding
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:34.2890298Z   run `npm fund` for details
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:34.2890879Z 
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:34.2891086Z found 0 vulnerabilities
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:34.3495394Z ##[group]Run node tools/rc1-shutdown.js
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:34.3495769Z ^[[36;1mnode tools/rc1-shutdown.js^[[0m
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:34.3533558Z shell: /usr/bin/bash -e {0}
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:34.3533987Z env:
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:34.3534515Z   COORDINATION_TEST_DATABASE_URL: ***127.0.0.1:5432/rc1_recovery
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:34.3535008Z   RC1_SHUTDOWN_EVIDENCE: /home/runner/work/Omerta/Omerta/tmp/rc1-linux-sigterm
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:14:34.3535417Z ##[endgroup]
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:15:08.1600910Z PASS director-selection: barrier, SIGTERM, restart, replay and invariants
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:15:41.2919947Z PASS campaign-progression: barrier, SIGTERM, restart, replay and invariants
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:15:50.5255176Z PASS world-kernel-mutation: barrier, SIGTERM, restart, replay and invariants
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:15:59.7114897Z PASS operation-resolution: barrier, SIGTERM, restart, replay and invariants
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:08.8488090Z PASS item-consumption: barrier, SIGTERM, restart, replay and invariants
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:17.3801900Z PASS crafting: barrier, SIGTERM, restart, replay and invariants
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:26.4069413Z PASS player-command: barrier, SIGTERM, restart, replay and invariants
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:35.5020092Z PASS consequence-generation: barrier, SIGTERM, restart, replay and invariants
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:52.6445710Z PASS scheduled-worker-processing: barrier, SIGTERM, restart, replay and invariants
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:52.9740349Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:52.9741636Z ##[group]Run actions/upload-artifact@v4
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:52.9741906Z with:
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:52.9742192Z   name: rc1-linux-sigterm-f31b5290080506f6407a9b7f9a514e2ea020a9d4
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:52.9742564Z   path: tmp/rc1-linux-sigterm/
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:52.9742813Z   if-no-files-found: error
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:52.9743038Z   retention-days: 30
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:52.9743249Z   compression-level: 6
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:52.9743461Z   overwrite: false
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:52.9743672Z   include-hidden-files: false
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:52.9743915Z env:
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:52.9744388Z   COORDINATION_TEST_DATABASE_URL: ***127.0.0.1:5432/rc1_recovery
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:52.9744884Z   RC1_SHUTDOWN_EVIDENCE: /home/runner/work/Omerta/Omerta/tmp/rc1-linux-sigterm
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:52.9745273Z ##[endgroup]
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:53.1432854Z (node:3845) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:53.1433710Z (Use `node --trace-deprecation ...` to show where the warning was created)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:53.1544903Z With the provided path, there will be 22 files uploaded
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:53.1550888Z Artifact name is valid!
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:53.1551545Z Root directory input is valid!
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:53.3848001Z Beginning upload of artifact content to blob storage
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:53.4281334Z (node:3845) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:53.4536620Z Uploaded bytes 15543
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:53.4665716Z Finished uploading artifact content to blob storage!
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:53.4667207Z SHA256 digest of uploaded artifact zip is 6e4b256822d83bfab7ff8cbaed2dd879be0435d7b334e36cec6e0753deb65657
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:53.4668858Z Finalizing artifact upload
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:53.6418762Z Artifact rc1-linux-sigterm-f31b5290080506f6407a9b7f9a514e2ea020a9d4.zip successfully finalized. Artifact ID 10573068734
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:53.6420061Z Artifact rc1-linux-sigterm-f31b5290080506f6407a9b7f9a514e2ea020a9d4 has been successfully uploaded! Final size is 15543 bytes. Artifact ID is 10573068734
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:53.6437803Z Artifact download URL: https://github.com/OmertaDev/Omerta/actions/runs/35408617560/artifacts/10573068734
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:53.6693779Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:53.6696258Z Post job cleanup.
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:53.7952290Z (node:3876) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:53.7953357Z (Use `node --trace-deprecation ...` to show where the warning was created)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:53.7955834Z Cache hit occurred on the primary key node-cache-Linux-x64-npm-08335a2c38c1e792b2f470fe8262ee4aed19102649a638186cb6f1a346595d77, not saving cache.
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:53.8082041Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:53.8083329Z Post job cleanup.
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:53.9005843Z [command]/usr/bin/git version
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:53.9069013Z git version 2.55.0
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:53.9114192Z Temporarily overriding HOME='/home/runner/work/_temp/18bdfc0c-7bc2-46cc-a347-fd17c29272dd' before making global git config changes
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:53.9116082Z Adding repository directory to the temporary git global config as a safe directory
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:53.9120421Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Omerta/Omerta
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:53.9169777Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:53.9215744Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:53.9559821Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:53.9599374Z http.https://github.com/.extraheader
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:53.9609045Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:53.9675021Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0008061Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0077892Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0491561Z Print service container logs: b3a7fa2ed7f64257b9278978ea6348f4_postgres16_051781
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0496075Z ##[command]/usr/bin/docker logs --details e978cecf1802fbff08da0abeb7ddce75d65e6253ead4c5cfedebbc84729f5c84
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0640828Z  initdb: warning: enabling "trust" authentication for local connections
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0641584Z  The files belonging to this database system will be owned by user "postgres".
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0642386Z  initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0643402Z  2026-09-19 00:13:52.108 UTC [1] LOG:  starting PostgreSQL 16.15 (Debian 16.15-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0644152Z  2026-09-19 00:13:52.108 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0644681Z  2026-09-19 00:13:52.108 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0645218Z  2026-09-19 00:13:52.109 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0645802Z  2026-09-19 00:13:52.112 UTC [64] LOG:  database system was shut down at 2026-09-19 00:13:52 UTC
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0646574Z  2026-09-19 00:13:52.116 UTC [1] LOG:  database system is ready to accept connections
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0647709Z  2026-09-19 00:13:56.247 UTC [75] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0648411Z  2026-09-19 00:14:01.306 UTC [83] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0649088Z  2026-09-19 00:14:06.367 UTC [91] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0649766Z  2026-09-19 00:14:11.426 UTC [99] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0650445Z  2026-09-19 00:14:16.505 UTC [107] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0651133Z  2026-09-19 00:14:21.575 UTC [115] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0651822Z  2026-09-19 00:14:26.658 UTC [124] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0652506Z  2026-09-19 00:14:31.745 UTC [132] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0653181Z  2026-09-19 00:14:36.818 UTC [144] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0653854Z  2026-09-19 00:14:41.878 UTC [155] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0654529Z  2026-09-19 00:14:46.938 UTC [163] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0655279Z  2026-09-19 00:14:48.021 UTC [147] ERROR:  canceling statement due to lock timeout
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0656238Z  2026-09-19 00:14:48.021 UTC [147] CONTEXT:  SQL statement "SELECT pg_advisory_xact_lock(1901000, 2)"
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0657465Z  	PL/pgSQL function rc1_heartbeat_barrier() line 2 at PERFORM
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0658347Z  2026-09-19 00:14:48.021 UTC [147] STATEMENT:  UPDATE worker_heartbeat SET beat_at = now() WHERE id = 1
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0659307Z  2026-09-19 00:14:48.060 UTC [145] ERROR:  canceling statement due to lock timeout
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0660379Z  2026-09-19 00:14:48.060 UTC [145] CONTEXT:  SQL statement "SELECT pg_advisory_xact_lock(1901000, 1)"
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0661256Z  	PL/pgSQL function rc1_target_barrier() line 2 at PERFORM
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0662357Z  2026-09-19 00:14:48.060 UTC [145] STATEMENT:  INSERT INTO director_selections(id,mode,evaluated_at,facts_json,candidates_json,selected_json)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0663365Z  	          VALUES($1,$2,$3,$4,$5,$6)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0663924Z  2026-09-19 00:14:51.998 UTC [174] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0664559Z  2026-09-19 00:14:57.059 UTC [183] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0665052Z  2026-09-19 00:14:58.088 UTC [166] ERROR:  canceling statement due to lock timeout
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0665600Z  2026-09-19 00:14:58.088 UTC [166] CONTEXT:  SQL statement "SELECT pg_advisory_xact_lock(1901000, 2)"
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0666144Z  	PL/pgSQL function rc1_heartbeat_barrier() line 2 at PERFORM
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0667394Z  2026-09-19 00:14:58.088 UTC [166] STATEMENT:  UPDATE worker_heartbeat SET beat_at = now() WHERE id = 1
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0668121Z  2026-09-19 00:15:02.118 UTC [194] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0668699Z  2026-09-19 00:15:07.178 UTC [202] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0669243Z  2026-09-19 00:15:08.106 UTC [186] ERROR:  canceling statement due to lock timeout
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0669897Z  2026-09-19 00:15:08.106 UTC [186] CONTEXT:  SQL statement "SELECT pg_advisory_xact_lock(1901000, 2)"
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0670603Z  	PL/pgSQL function rc1_heartbeat_barrier() line 2 at PERFORM
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0671251Z  2026-09-19 00:15:08.106 UTC [186] STATEMENT:  UPDATE worker_heartbeat SET beat_at = now() WHERE id = 1
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0671900Z  2026-09-19 00:15:12.250 UTC [215] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0672428Z  2026-09-19 00:15:17.311 UTC [225] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0673034Z  2026-09-19 00:15:21.051 UTC [217] ERROR:  canceling statement due to lock timeout
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0673778Z  2026-09-19 00:15:21.051 UTC [217] CONTEXT:  SQL statement "SELECT pg_advisory_xact_lock(1901001, 2)"
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0674376Z  	PL/pgSQL function rc1_heartbeat_barrier() line 2 at PERFORM
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0675072Z  2026-09-19 00:15:21.051 UTC [217] STATEMENT:  UPDATE worker_heartbeat SET beat_at = now() WHERE id = 1
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0687679Z  2026-09-19 00:15:21.080 UTC [207] ERROR:  canceling statement due to lock timeout
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0688645Z  2026-09-19 00:15:21.080 UTC [207] CONTEXT:  SQL statement "SELECT pg_advisory_xact_lock(1901001, 1)"
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0689314Z  	PL/pgSQL function rc1_target_barrier() line 2 at PERFORM
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0690027Z  2026-09-19 00:15:21.080 UTC [207] STATEMENT:  UPDATE director_campaigns SET node_id=$2,status=$3,revision=$4,updated_at=$5 WHERE id=$1
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0690810Z  2026-09-19 00:15:22.374 UTC [227] LOG:  skipping analyze of "world_operations" --- lock not available
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0691340Z  2026-09-19 00:15:22.390 UTC [234] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0691748Z  2026-09-19 00:15:27.450 UTC [244] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0692180Z  2026-09-19 00:15:31.146 UTC [236] ERROR:  canceling statement due to lock timeout
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0692713Z  2026-09-19 00:15:31.146 UTC [236] CONTEXT:  SQL statement "SELECT pg_advisory_xact_lock(1901001, 2)"
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0693229Z  	PL/pgSQL function rc1_heartbeat_barrier() line 2 at PERFORM
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0693739Z  2026-09-19 00:15:31.146 UTC [236] STATEMENT:  UPDATE worker_heartbeat SET beat_at = now() WHERE id = 1
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0694252Z  2026-09-19 00:15:32.526 UTC [254] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0694646Z  2026-09-19 00:15:37.587 UTC [264] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0695092Z  2026-09-19 00:15:41.228 UTC [256] ERROR:  canceling statement due to lock timeout
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0695635Z  2026-09-19 00:15:41.228 UTC [256] CONTEXT:  SQL statement "SELECT pg_advisory_xact_lock(1901001, 2)"
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0696142Z  	PL/pgSQL function rc1_heartbeat_barrier() line 2 at PERFORM
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0696985Z  2026-09-19 00:15:41.228 UTC [256] STATEMENT:  UPDATE worker_heartbeat SET beat_at = now() WHERE id = 1
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0697533Z  2026-09-19 00:15:42.665 UTC [276] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0697937Z  2026-09-19 00:15:47.732 UTC [288] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0698466Z  2026-09-19 00:15:50.320 UTC [289] ERROR:  duplicate key value violates unique constraint "idempotency_pkey"
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0699587Z  2026-09-19 00:15:50.320 UTC [289] DETAIL:  Key (account_id, key)=(rc1_shutdown_2-aBoss, f620a8e67d1f6a985b46e99a19af9d50696e44557205028c4e3ab692fbd690b0.e78697c1d735c3c917748932718c11512cfa86f6efb53b24d37be626f2286116) already exists.
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0701013Z  2026-09-19 00:15:50.320 UTC [289] STATEMENT:  INSERT INTO idempotency (account_id, key, status, body_hash, response) VALUES ($1,$2,0,$3,$4)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0701665Z  2026-09-19 00:15:52.807 UTC [302] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0702062Z  2026-09-19 00:15:57.886 UTC [314] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0702575Z  2026-09-19 00:15:59.507 UTC [306] ERROR:  duplicate key value violates unique constraint "idempotency_pkey"
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0703696Z  2026-09-19 00:15:59.507 UTC [306] DETAIL:  Key (account_id, key)=(rc1_shutdown_3-aBoss, deee9ad50df89ba398cb4e4c583824057f806fe5be55144136d74194eb6e3965.48acf25d008f0dfd4846525e9683b5eb4fbee720e2a3367863dfc486cfc80115) already exists.
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0704906Z  2026-09-19 00:15:59.507 UTC [306] STATEMENT:  INSERT INTO idempotency (account_id, key, status, body_hash, response) VALUES ($1,$2,0,$3,$4)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0705528Z  2026-09-19 00:16:02.950 UTC [328] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0705925Z  2026-09-19 00:16:08.017 UTC [339] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0706688Z  2026-09-19 00:16:08.647 UTC [332] ERROR:  duplicate key value violates unique constraint "idempotency_pkey"
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0707814Z  2026-09-19 00:16:08.647 UTC [332] DETAIL:  Key (account_id, key)=(rc1_shutdown_4-aBoss, 3f8cae48b310e205bdeb72be070494ef33c9b3c2f721eef2f7d2e99ae2b63505.2d978a294bdfe4c34551ec7032d8eab91029e0eb7d89a8ee6ec420af3b47f7e6) already exists.
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0709185Z  2026-09-19 00:16:08.647 UTC [332] STATEMENT:  INSERT INTO idempotency (account_id, key, status, body_hash, response) VALUES ($1,$2,0,$3,$4)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0709806Z  2026-09-19 00:16:13.101 UTC [353] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0710333Z  2026-09-19 00:16:17.202 UTC [355] ERROR:  duplicate key value violates unique constraint "idempotency_pkey"
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0711462Z  2026-09-19 00:16:17.202 UTC [355] DETAIL:  Key (account_id, key)=(rc1_shutdown_5-aRunner, c8c0cbc64d4720bd1ae3f8b8f0f2702d5f6fcc9335403139e1f5169aaed9a651.511e674b41efe2112a2544c4760e915a3f11acbb26dab797a72a0406db2d4ec9) already exists.
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0712681Z  2026-09-19 00:16:17.202 UTC [355] STATEMENT:  INSERT INTO idempotency (account_id, key, status, body_hash, response) VALUES ($1,$2,0,$3,$4)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0713310Z  2026-09-19 00:16:18.168 UTC [367] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0713711Z  2026-09-19 00:16:23.241 UTC [380] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0714221Z  2026-09-19 00:16:26.206 UTC [381] ERROR:  duplicate key value violates unique constraint "idempotency_pkey"
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0715334Z  2026-09-19 00:16:26.206 UTC [381] DETAIL:  Key (account_id, key)=(rc1_shutdown_6-aBoss, bbb9d7440e40a700a880857d2e6fa4ea0504a6d301c41a9b514f7439b7835904.733bab0c443eea05d53a0b5e4e5d3db852929378acf96cc4ad1950657000d47a) already exists.
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0716870Z  2026-09-19 00:16:26.206 UTC [381] STATEMENT:  INSERT INTO idempotency (account_id, key, status, body_hash, response) VALUES ($1,$2,0,$3,$4)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0717540Z  2026-09-19 00:16:28.323 UTC [395] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0717948Z  2026-09-19 00:16:33.401 UTC [408] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0718471Z  2026-09-19 00:16:35.299 UTC [399] ERROR:  duplicate key value violates unique constraint "idempotency_pkey"
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0719552Z  2026-09-19 00:16:35.299 UTC [399] DETAIL:  Key (account_id, key)=(rc1_shutdown_7-aBoss, 28933579e78fc52e03453580a69548a31e6c5375545221082261b60bc10c74fd.6521294b602584d2835d040fc8ff0a74678980698b2a7d0148ca0227a137185c) already exists.
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0720735Z  2026-09-19 00:16:35.299 UTC [399] STATEMENT:  INSERT INTO idempotency (account_id, key, status, body_hash, response) VALUES ($1,$2,0,$3,$4)
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0721353Z  2026-09-19 00:16:38.478 UTC [422] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0721755Z  2026-09-19 00:16:43.538 UTC [434] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0722326Z  2026-09-19 00:16:48.141 UTC [425] ERROR:  canceling statement due to lock timeout
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0722869Z  2026-09-19 00:16:48.141 UTC [425] CONTEXT:  SQL statement "SELECT pg_advisory_xact_lock(1901008, 1)"
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0723372Z  	PL/pgSQL function rc1_target_barrier() line 2 at PERFORM
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0723940Z  2026-09-19 00:16:48.141 UTC [425] STATEMENT:  UPDATE npc_wars SET resolved=true WHERE attacker_gang=$1 AND npc_gang=$2
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0724512Z  2026-09-19 00:16:48.612 UTC [443] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0724909Z  2026-09-19 00:16:53.684 UTC [457] FATAL:  role "root" does not exist
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0725295Z  This user must also own the server process.
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0725576Z  
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0725865Z  The database cluster will be initialized with locale "en_US.utf8".
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0726565Z  The default database encoding has accordingly been set to "UTF8".
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0727036Z  The default text search configuration will be set to "english".
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0727383Z  
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0727586Z  Data page checksums are disabled.
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0727846Z  
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0728148Z  fixing permissions on existing directory /var/lib/postgresql/data ... ok
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0728544Z  creating subdirectories ... ok
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0728867Z  selecting dynamic shared memory implementation ... posix
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0729377Z  selecting default max_connections ... 100
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0729681Z  selecting default shared_buffers ... 128MB
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0729972Z  selecting default time zone ... Etc/UTC
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0730258Z  creating configuration files ... ok
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0730531Z  running bootstrap script ... ok
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0730827Z  performing post-bootstrap initialization ... ok
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0731141Z  syncing data to disk ... ok
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0731374Z  
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0731549Z  
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0731779Z  Success. You can now start the database server using:
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0732084Z  
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0732329Z      pg_ctl -D /var/lib/postgresql/data -l logfile start
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0732633Z  
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0733289Z  waiting for server to start....2026-09-19 00:13:51.805 UTC [48] LOG:  starting PostgreSQL 16.15 (Debian 16.15-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0734173Z  2026-09-19 00:13:51.805 UTC [48] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0734763Z  2026-09-19 00:13:51.808 UTC [51] LOG:  database system was shut down at 2026-09-19 00:13:51 UTC
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0735282Z  2026-09-19 00:13:51.811 UTC [48] LOG:  database system is ready to accept connections
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0735665Z   done
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0735851Z  server started
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0736058Z  CREATE DATABASE
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0736252Z  
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0736678Z  
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0737014Z  /usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0737422Z  
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0737792Z  waiting for server to shut down...2026-09-19 00:13:51.988 UTC [48] LOG:  received fast shutdown request
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0738329Z  .2026-09-19 00:13:51.989 UTC [48] LOG:  aborting any active transactions
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0738917Z  2026-09-19 00:13:51.990 UTC [48] LOG:  background worker "logical replication launcher" (PID 54) exited with exit code 1
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0739461Z  2026-09-19 00:13:51.992 UTC [49] LOG:  shutting down
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0739855Z  2026-09-19 00:13:51.993 UTC [49] LOG:  checkpoint starting: shutdown immediate
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0740968Z  2026-09-19 00:13:52.008 UTC [49] LOG:  checkpoint complete: wrote 926 buffers (5.7%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.012 s, sync=0.003 s, total=0.017 s; sync files=301, longest=0.001 s, average=0.001 s; distance=4273 kB, estimate=4273 kB; lsn=0/191F0F0, redo lsn=0/191F0F0
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0742055Z  2026-09-19 00:13:52.015 UTC [48] LOG:  database system is shut down
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0742521Z   done
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0742718Z  server stopped
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0742920Z  
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0743164Z  PostgreSQL init process complete; ready for start up.
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0743484Z  
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0748968Z Stop and remove container: b3a7fa2ed7f64257b9278978ea6348f4_postgres16_051781
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.0753483Z ##[command]/usr/bin/docker rm --force e978cecf1802fbff08da0abeb7ddce75d65e6253ead4c5cfedebbc84729f5c84
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.2278488Z e978cecf1802fbff08da0abeb7ddce75d65e6253ead4c5cfedebbc84729f5c84
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.2304807Z Remove container network: github_network_d80a91c238d84507a4dd9fd59d7a71bd
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.2310549Z ##[command]/usr/bin/docker network rm github_network_d80a91c238d84507a4dd9fd59d7a71bd
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.3360916Z github_network_d80a91c238d84507a4dd9fd59d7a71bd
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.3432972Z Cleaning up orphan processes
+linux-sigterm	UNKNOWN STEP	2026-09-19T00:16:54.3761034Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

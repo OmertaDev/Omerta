@@ -1,0 +1,501 @@
+{
+  "population": 1000,
+  "seed": "rc1-alpha",
+  "replicate": 1,
+  "rounds": 2,
+  "database": "postgresql",
+  "status": "PASS_SCOPED",
+  "durationMs": 313349,
+  "archetypes": {
+    "aggressive": 76,
+    "cooperative": 76,
+    "crew_focused": 77,
+    "disappearing": 76,
+    "economic": 77,
+    "family_focused": 77,
+    "high_activity": 77,
+    "hoarder": 77,
+    "information_focused": 76,
+    "low_activity": 77,
+    "opportunistic": 76,
+    "repeated_failure": 76,
+    "solo": 77
+  },
+  "fixturePlayers": 5,
+  "actorsExecutingCommands": 845,
+  "metrics": {
+    "snapshots": 6390,
+    "commandsIssuedAvailable": 107466,
+    "commandsExecuted": 3555,
+    "commandReplays": 154,
+    "rejectedCommands": {
+      "command_unavailable": 152,
+      "command_stale": 152,
+      "contention": 1
+    },
+    "opportunityCardsShown": 170873,
+    "opportunityCardsUniquePerActor": 19474,
+    "visitsWithoutAvailableOpportunity": 0,
+    "truncatedOpportunityVisits": 0,
+    "maximumCardsPerVisit": 63,
+    "knowledgePrivacyProbes": 1225,
+    "unauthorizedKnowledgeDisclosures": 0,
+    "foreignCommandProbes": 152,
+    "staleCommandProbes": 152,
+    "replayStateChecks": 154,
+    "disappearedBeforeCommand": 76,
+    "directorTicks": 2,
+    "directorSelections": 2,
+    "directorTransitions": 2,
+    "completedOpportunityCommandLinks": 1686,
+    "knowledgeShares": 230,
+    "authorizedKnowledgeReads": 230,
+    "abandonedOperationsRecovered": 1,
+    "concurrentOperationExecuteBursts": 1
+  },
+  "actions": [
+    "destroy_shipment"
+  ],
+  "authoritative": {
+    "situationsGenerated": 2,
+    "situationStates": {
+      "destroyed": 1,
+      "mobilizing": 1
+    },
+    "situationsWithCanonicalResolution": 1,
+    "campaignsStarted": 2,
+    "campaignStatuses": {
+      "active": 1,
+      "completed": 1
+    },
+    "distinctCampaignDefinitions": 2,
+    "operationsCreated": 3,
+    "operationStatuses": {
+      "completed": 2,
+      "expired": 1
+    },
+    "uniqueOperationParticipants": 2,
+    "knowledgeClaims": 310,
+    "knowledgeGrants": 230,
+    "crews": 117,
+    "families": 117,
+    "operationReceipts": [
+      {
+        "id": "d43a2ce7-ef3b-4f58-8e48-1bcec363aabb",
+        "graph_id": "operation:canal_register_shipment",
+        "status": "completed",
+        "resolution_seed": "4c5db7d7d21050fb6ee2dc93fb5df674a3349a59d218ba1d32f57af0e3722c61"
+      },
+      {
+        "id": "3b15d8e0-2e37-40a1-8840-e76f91325c75",
+        "graph_id": "operation:canal_recover_shipment",
+        "status": "expired",
+        "resolution_seed": "219a15fe0c37024206ea9c371730d2b313b76d51feb90fa74363f51da9198648"
+      },
+      {
+        "id": "590f1a48-1e3a-4877-801e-aba7212f4fb5",
+        "graph_id": "operation:canal_destroy_shipment",
+        "status": "completed",
+        "resolution_seed": "4093d18135b4188f3fa63a971c361ff90b89b3e7b64e13f73b2540bfb247a1eb"
+      }
+    ],
+    "itemsCreated": 4,
+    "itemsConsumed": 3,
+    "stackUnitsCreated": 1575,
+    "stackUnitsConsumed": 21,
+    "worldChanges": 3,
+    "worldActions": [
+      {
+        "object": "infrastructure:canal_supply_depot",
+        "revision": 1,
+        "action": "register_shipment"
+      },
+      {
+        "object": "infrastructure:canal_supply_depot",
+        "revision": 2,
+        "action": "destroy_shipment"
+      },
+      {
+        "object": "territory:dock_supply_route",
+        "revision": 1,
+        "action": "establish_route"
+      }
+    ],
+    "duplicateCanonicalConsequences": 0,
+    "omrTransactions": 0,
+    "negativeInventoryRows": 0
+  },
+  "invariantChecks": [
+    {
+      "name": "character cash",
+      "baselineDrift": 99500000,
+      "finalDrift": 99500000,
+      "ok": true
+    },
+    {
+      "name": "gang treasuries",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true
+    },
+    {
+      "name": "commission escrow",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true
+    },
+    {
+      "name": "bounty escrow",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true
+    },
+    {
+      "name": "$OMR conservation",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true
+    },
+    {
+      "name": "emission faucet retired",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true
+    },
+    {
+      "name": "plex mint retired",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true
+    },
+    {
+      "name": "portfolio retired",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true
+    },
+    {
+      "name": "desk inventory backed",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true
+    },
+    {
+      "name": "desk inventory ledgered",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true
+    },
+    {
+      "name": "desk sales ledgered",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true
+    },
+    {
+      "name": "auction escrow",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true
+    },
+    {
+      "name": "world graph salvage car audit",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "car conservation",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true
+    },
+    {
+      "name": "cb conservation",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true
+    },
+    {
+      "name": "ammo conservation",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true
+    },
+    {
+      "name": "convoy insurance pool",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true
+    },
+    {
+      "name": "market escrow",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true
+    },
+    {
+      "name": "loan escrow",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true
+    },
+    {
+      "name": "loan omr pledge escrow",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true
+    },
+    {
+      "name": "drop claims ledgered",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true
+    },
+    {
+      "name": "favor escrow",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true
+    },
+    {
+      "name": "turf contest escrow",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true
+    },
+    {
+      "name": "loan house pool",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true
+    },
+    {
+      "name": "boxing bet escrow",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true
+    },
+    {
+      "name": "den profit",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true
+    },
+    {
+      "name": "den distributions",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true
+    },
+    {
+      "name": "poker tourney escrow",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true
+    },
+    {
+      "name": "ring poker escrow",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true
+    },
+    {
+      "name": "grand prix escrow",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true
+    },
+    {
+      "name": "stakes escrow",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true
+    },
+    {
+      "name": "futurity escrow",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true
+    },
+    {
+      "name": "agent acquisition budget accounting",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "agent referral claim ledger",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true
+    },
+    {
+      "name": "world graph stack conservation",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "world graph unique custody and provenance",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "world graph object transitions",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "family operation history",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "family operation custody",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "family operation capital",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "world graph hardening cash sink",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true
+    },
+    {
+      "name": "world graph currency boundary",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "reason vocabulary",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true
+    },
+    {
+      "name": "content_artifact_integrity",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item_definition_integrity",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "content_membership_integrity",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "content_activation_chain_integrity",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "content_selection_integrity",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "content_activation_history_policy",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "content_activation_policy_drift",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item lot definition integrity",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item lot quantity integrity",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item lot custody integrity",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item lot lineage parity",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item lot conservation",
+      "baselineDrift": 0,
+      "finalDrift": 0,
+      "ok": true,
+      "issues": []
+    }
+  ],
+  "notMeasured": [
+    "distinct commands contending for the same world object",
+    "sustained concurrent population load",
+    "long-term starvation",
+    "retention",
+    "real-player opportunity abandonment",
+    "independent Crew/Family campaign dynamics",
+    "engine-caused irreversible dead ends across every branch",
+    "reward-bearing operations",
+    "nonzero OMR movement",
+    "Knowledge revocation races"
+  ],
+  "revision": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+  "harnessSha256": "835ccd1b9d58203cb44009f389e492d0cfa3b859ef223f43c918132527aec616",
+  "retest": {
+    "reason": "Original run failed during schema cleanup with PostgreSQL 53200 while other release harnesses shared the disposable cluster.",
+    "startedWithRestartedCluster": true,
+    "maxLocksPerTransaction": 64,
+    "concurrentHarnesses": 0
+  }
+}

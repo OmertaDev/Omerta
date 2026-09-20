@@ -1,5 +1,11 @@
 # RC1 termination evidence
 
+Final corrected-source result: **PASS**, all nine scenarios at
+`f31b5290080506f6407a9b7f9a514e2ea020a9d4`, Node 22.23.2 and PostgreSQL 16.15.
+See [result.json](linux-f31b529/result.json) and its adjacent production-process
+logs. Hosted workflow run: `35408617560`. Earlier source and Windows probe
+results remain separately labelled below.
+
 `tools/rc1-shutdown.js` starts the actual `src/server.js` and `src/worker.js`
 production entry points against disposable PostgreSQL schemas. It installs
 schema-local `AFTER` triggers which wait on harness-held advisory locks. A query

@@ -1,13 +1,15 @@
 # RC1 multiplayer simulation evidence
 
-**Decision: supplementary simulation checks INCOMPLETE; Phase 4 remains INCOMPLETE.** The measured native workload has 12/16 passing runs. It does not prove every required long-term or adversarial population behavior. Do not substitute model invariants or missing measurements for zero failures.
+**Decision: supplementary simulation checks PASS; Phase 4 remains INCOMPLETE.** The measured native workload has 16/16 passing runs. It does not prove every required long-term or adversarial population behavior. Do not substitute model invariants or missing measurements for zero failures.
+
+The original batch passed 15/16 runs. The remaining 1,000-player run failed during schema cleanup with PostgreSQL 53200 (lock-table exhaustion while concurrent release harnesses shared the disposable cluster). Its complete isolated rerun passed all 55 invariants on the same frozen source and harness, with the default max_locks_per_transaction=64. Original failure and summary remain unchanged in native/; retest evidence is in [retest/1000-rc1-alpha-1.json](evidence/simulation/retest/1000-rc1-alpha-1.json). The table below uses that successful rerun. Classification: ENVIRONMENTAL, reproduced workload retested successfully; no production setting or assertion was relaxed.
 
 ## Tested source and environment
 
 - Frozen application revision: `626e61b9ab2b14a9dc45566983b70cdc65692839`.
 - Native harness SHA-256 (UTF-8 JSON string representation): `835ccd1b9d58203cb44009f389e492d0cfa3b859ef223f43c918132527aec616`; the individual run files retain the same identity.
 - Windows host, Node.js v24.19.0, PostgreSQL 18, isolated fresh schema per run. Each fixture loads the complete schema and drops its own schema on completion.
-- Two policy seeds (`rc1-alpha`, `rc1-beta`), two independent replicates each, four population sizes; 2500 account participations across completed runs. Five designated actors in each run establish the initial world and execute campaign operations. Other accounts execute their own issued commands.
+- Two policy seeds (`rc1-alpha`, `rc1-beta`), two independent replicates each, four population sizes; 6500 account participations across completed runs. Five designated actors in each run establish the initial world and execute campaign operations. Other accounts execute their own issued commands.
 - The roster uses all 13 requested archetypes. Activity, acquisition, sharing, stale/foreign attempts, hoarding and disappearance policies differ. Social actors form real Crews and Families through domain services. Independent population campaigns are not yet simulated.
 - Explicit fixture starting wealth is $100,000 and 10,000 respect per actor. Initial character-cash drift is exactly population × $99,500; that same drift must remain unchanged. All other 54 production ledger/provenance checks must pass without a baseline exception. No inventory, world state, claim, operation outcome or OMR balance is seeded or rewritten.
 - Acquisition uses the existing deterministic successful boost/salvage fixture. Native operation resolution retains cryptographic production randomness; operation IDs and resolution seeds are saved. Policy seeds reproduce the workload recipe, not UUIDs, exact schedules or every random operation outcome.
@@ -33,27 +35,27 @@ The harness calls production command issuance/execution, Knowledge authorization
 | 25 | 4/4 | 488 | 16 | 16 | 104.8 |
 | 100 | 4/4 | 1554 | 86 | 16 | 215.6 |
 | 500 | 4/4 | 7227 | 456 | 16 | 839.8 |
-| 1000 | 0/4 | NOT_RUN | NOT_RUN | NOT_RUN | NOT_RUN |
+| 1000 | 4/4 | 14288 | 916 | 15 | 1374.6 |
 
 Durations include fixture creation, setup, service work, invariants and local competing test activity. They are not production latency or capacity measurements.
 
 | Requested measurement | Observed native result |
 | --- | --- |
-| Opportunities generated | 36 Director situations; 452787 card impressions and 50217 distinct actor/card pairs |
-| Opportunities completed | 24 situations have canonical resolution; 4127 successful command/card links; these are different units |
-| Opportunities abandoned | NOT_MEASURED as an opportunity lifecycle; 189 visits stop before issuing a command |
-| Campaigns started/completed/abandoned | 30 / 18 / 0; canonical campaign schema uses abandoned, not failed |
+| Opportunities generated | 46 Director situations; 1139949 card impressions and 128406 distinct actor/card pairs |
+| Opportunities completed | 29 situations have canonical resolution; 10861 successful command/card links; these are different units |
+| Opportunities abandoned | NOT_MEASURED as an opportunity lifecycle; 496 visits stop before issuing a command |
+| Campaigns started/completed/abandoned | 40 / 21 / 0; canonical campaign schema uses abandoned, not failed |
 | Campaign failure | NOT_MEASURED beyond operation failures below |
 | Cross-campaign propagation | Retained world action sequences and Director states in each run; no aggregate causal propagation counter |
-| Operations created/completed/failed/expired | 48 / 36 / 0 / 12 |
-| Coordination participation | 36 run-local distinct participant counts, restricted to designated fixture actors |
-| Knowledge propagation | 806 claims, 558 grants; 558 authorized group reads checked |
-| Resource consumption | 330 stack debit units and 4351 credit units. These include escrow transfers/refunds; net manufacture/sink totals NOT_MEASURED separately |
-| Item creation/destruction | 60 unique items created; 48 consumed |
-| World state changes | 48 canonical events |
-| Player commands executed | 9269 distinct completions; 388 replay responses |
-| Stale command rejection | 374 stale probes; 374 stale rejections |
-| Replay rejection/suppression | 388 unchanged-history checks; 12 duplicate bursts; safe in-flight contention then durable replay is accepted |
+| Operations created/completed/failed/expired | 64 / 47 / 1 / 16 |
+| Coordination participation | 48 run-local distinct participant counts, restricted to designated fixture actors |
+| Knowledge propagation | 2051 claims, 1474 grants; 1474 authorized group reads checked |
+| Resource consumption | 440 stack debit units and 10678 credit units. These include escrow transfers/refunds; net manufacture/sink totals NOT_MEASURED separately |
+| Item creation/destruction | 80 unique items created; 64 consumed |
+| World state changes | 63 canonical events |
+| Player commands executed | 23557 distinct completions; 1005 replay responses |
+| Stale command rejection | 986 stale probes; 986 stale rejections |
+| Replay rejection/suppression | 1005 unchanged-history checks; 16 duplicate bursts; safe in-flight contention then durable replay is accepted |
 | Dead ends and Director starvation | NOT_MEASURED over a sustained native horizon |
 | Opportunity starvation | 0 sampled visits have no AVAILABLE command; this does not prove practical resource acquisition paths |
 | Opportunity flooding | Maximum 63 cards in a sampled board; 0 truncated boards. No player-tested flood threshold |
@@ -62,11 +64,11 @@ Durations include fixture creation, setup, service work, invariants and local co
 
 ## Integrity evidence and limits
 
-- 660 final production invariant evaluations passed in completed runs, including material conservation, unique custody/provenance, World Kernel history and operation capital/custody/history. Harness tests verify that a missing invariant, new OMR drift, cash drift or custody failure makes the run fail.
-- 2998 unrelated-reader probes found 0 private claim identity disclosures. These inspect specific undisclosed claims and shared grants; they are not an exhaustive noninterference proof.
-- 376 account-bound command attempts were refused and left canonical histories unchanged.
+- 880 final production invariant evaluations passed in completed runs, including material conservation, unique custody/provenance, World Kernel history and operation capital/custody/history. Harness tests verify that a missing invariant, new OMR drift, cash drift or custody failure makes the run fail.
+- 7894 unrelated-reader probes found 0 private claim identity disclosures. These inspect specific undisclosed claims and shared grants; they are not an exhaustive noninterference proof.
+- 988 account-bound command attempts were refused and left canonical histories unchanged.
 - 0 negative inventory rows and 0 duplicate object/revision consequences observed.
-- 12 committed operations expired through the authoritative recovery command; inventory custody was re-audited. Test time crosses the stored deadline; no canonical deadline row is edited.
+- 16 committed operations expired through the authoritative recovery command; inventory custody was re-audited. Test time crosses the stored deadline; no canonical deadline row is edited.
 - All measured OMR conservation checks passed, with 0 OMR transaction rows. OMR-moving or reward-bearing gameplay is not exercised by this content slice; this cannot replace economic/contract gates.
 - Each Director was recreated and the same tick replayed without adding canonical history. Process termination and database interruption belong to separate release gates.
 

@@ -5,6 +5,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import { chromium } from 'playwright-core';
 import { buildServer } from '../src/server.js';
 import { createLivingWorldDirector } from '../src/director/runtime.js';
@@ -23,7 +24,10 @@ const output = path.resolve(process.env.RC1_CAMPAIGN_MOBILE_OUTPUT || 'docs/rele
 fs.mkdirSync(output, { recursive: true });
 const binary = [process.env.CHROMIUM_PATH, 'C:/Program Files/Google/Chrome/Application/chrome.exe', '/usr/bin/chromium'].find((file) => file && fs.existsSync(file));
 const browser = await chromium.launch({ ...(binary ? { executablePath: binary } : {}), headless: true });
-const report = { scope: 'Seeded social/campaign setup; actual rendered mobile command and confirmation controls, PostgreSQL persistence. Not fresh-account acquisition or a human comprehension study.', results: [] };
+const report = { revision: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
+  harnessSha256: crypto.createHash('sha256').update(fs.readFileSync(new URL(import.meta.url))).digest('hex'),
+  node: process.version, platform: process.platform, startedAt: new Date().toISOString(),
+  scope: 'Seeded accounts, social structures and initial world. Travel, vehicle acquisition/salvage and disclosure sharing use existing domain services. Discovery, mystery, crafting and operation commands use rendered mobile controls against real PostgreSQL. Not fresh-account onboarding or a human comprehension study.', results: [] };
 const save = () => fs.writeFileSync(path.join(output, 'results.json'), JSON.stringify(report, null, 2));
 const scenarios = [
   { name: 'shipment-redistribution', actions: [['redistribute_shipment', 'a']] },
@@ -34,10 +38,10 @@ const scenarios = [
 ];
 try {
   for (const width of [320, 390]) for (const scenario of scenarios) {
-    if (process.env.RC1_CAMPAIGN_MOBILE_CASE && scenario.name !== process.env.RC1_CAMPAIGN_MOBILE_CASE) continue;
-    const f = await campaignNetworkFixture(`rc1_browser_${width}_${scenario.name.replaceAll('-', '_')}`);
+    if (process.env.RC1_CAMPAIGN_MOBILE_CASE && !process.env.RC1_CAMPAIGN_MOBILE_CASE.split(',').includes(scenario.name)) continue;
+    const f = await campaignNetworkFixture(`rc1m_${width}_${scenarios.indexOf(scenario)}`);
     let app; const contexts = [], sessions = new Map();
-    const result = { width, scenario: scenario.name, status: 'FAIL', commands: [], errors: [] }; report.results.push(result); save();
+    const result = { width, scenario: scenario.name, status: 'RUNNING', commands: [], outcomes: [], errors: [] }; report.results.push(result); save();
     try {
       await f.networkEstablish();
       const director = createLivingWorldDirector({ pool: f.pool, content: f.content, definitions: createCampaignNetworkDefinitions(f.content), mode: 'LIVE', clock: f.clock });
@@ -54,6 +58,7 @@ try {
         const token = app.jwt.sign({ sub: account, tv: 0 });
         await page.addInitScript((value) => localStorage.setItem('omerta_token', value), token);
         await page.addLocatorHandler(page.locator('[data-tipok]'), async () => page.locator('[data-tipok]').click());
+        await page.addLocatorHandler(page.locator('#welcome:not(.hidden)'), async () => page.locator('#tour-skip').click());
         await page.goto(origin, { waitUntil: 'networkidle' });
         await page.waitForSelector('#screen-main:not(.hidden)');
         if (await page.locator('#welcome:not(.hidden)').isVisible()) await page.locator('#tour-skip').click();
@@ -70,11 +75,13 @@ try {
       const engine = {
         snapshot: async (account, options = {}) => {
           const session = await pageFor(account), { page } = session;
+          await page.waitForLoadState('networkidle');
           const update = async (control) => {
             const waiting = page.waitForResponse((response) => response.request().method() === 'GET' && new URL(response.url()).pathname === '/v1/commands');
             waiting.catch(() => {}); await control.click(); const response = await waiting;
             assert.equal(response.status(), 200, await response.text());
             session.board = await response.json(); await page.waitForSelector('#tab-world .world-summary');
+            await page.waitForLoadState('networkidle');
           };
           await update(page.locator('#world-refresh'));
           if (options.operationId && session.board.operations.selected?.id !== options.operationId) {
@@ -91,7 +98,26 @@ try {
           assert.equal(key, input.executionId); const { page, board } = await pageFor(account);
           const command = board.commands.find((entry) => entry.executionIdentity?.executionId === input.executionId);
           assert(command, 'Issued identity must belong to the rendered board');
-          const buttons = page.locator('#tab-world').getByRole('button', { name: command.label, exact: true });
+          let buttons = page.locator('#tab-world').getByRole('button', { name: command.label, exact: true });
+          // Several requirement controls share a label. Select the command's
+          // position in its visible context, then still verify the exact HTTP
+          // identity below. Choosing the first same-label button is ambiguous.
+          const contextual = (type, id) => board.commands.filter((entry) => [entry.subject, entry.target]
+            .some((reference) => reference?.type === type && reference.id === id));
+          if (command.parameters?.operationId && board.operations.selected?.id === command.parameters.operationId) {
+            const selected = board.operations.selected;
+            const context = page.locator('#tab-world article.world-entry').filter({ has: page.getByRole('heading', { level: 3, name: selected.title, exact: true }) });
+            const index = contextual('operation', selected.id).findIndex((entry) => entry.commandId === command.commandId);
+            assert(index >= 0); buttons = context.locator(':scope > .world-command > button').nth(index);
+          } else if (command.commandType === 'discovery.act') {
+            const id = command.parameters.instanceId;
+            const instanceIndex = board.discovery.instances.findIndex((entry) => entry.id === id);
+            const index = contextual('discovery', id).findIndex((entry) => entry.commandId === command.commandId);
+            assert(instanceIndex >= 0 && index >= 0);
+            const context = page.locator('#tab-world section.world-card').filter({ has: page.getByRole('heading', { level: 3, name: 'What have I discovered?', exact: true }) })
+              .locator(':scope > article.world-entry').nth(instanceIndex);
+            buttons = context.locator(':scope > .world-command > button').nth(index);
+          }
           let chosen;
           const reachable = async () => { for (const button of await buttons.all()) if (await button.isVisible() && await button.isEnabled()) return button; };
           chosen = await reachable();
@@ -112,9 +138,11 @@ try {
           const body = await response.json(); assert.equal(body.status, 'COMPLETED');
           await page.waitForFunction(() => sessionStorage.getItem('omerta_world_pending') === null);
           await page.waitForSelector('#tab-world .world-summary');
+          await page.waitForLoadState('networkidle');
           const layout = await page.evaluate(() => ({ width: innerWidth, scrollWidth: document.documentElement.scrollWidth }));
           assert(layout.scrollWidth <= width + 1, 'No Command Center horizontal overflow');
           result.commands.push({ account, type: command.commandType, label: command.label, confirmed: command.confirmation.required });
+          save();
           return body;
         },
       };
@@ -132,21 +160,36 @@ try {
         f.advance(601); await director.tick();
         const board = await engine.snapshot(operation.boss);
         assert(board.consequences.length, 'A participant must receive authorized consequences');
+        result.outcomes.push({ action, state: (await f.kernel.get(operation.boss, f.ids.object)).state,
+          consequences: board.consequences.map(({ title, description, opportunityIds }) => ({ title, description, opportunityIds })) });
         const { page } = await pageFor(operation.boss);
         await page.screenshot({ path: path.join(output, `${width}-${scenario.name}-${action}.png`), fullPage: true });
       }
+      if (scenario.name === 'informant-public-disclosure') {
+        const seal = await f.publicTrail('b', engine);
+        const trace = await f.networkPrepare('trace_disclosure', { prefix: 'b', engine, preparedItem: seal });
+        await trace.command('organizer', 'execute');
+        f.advance(601); await director.tick();
+        const board = await engine.snapshot(trace.boss);
+        assert.equal((await f.kernel.get(trace.boss, f.ids.object)).state, 'public_trace');
+        result.outcomes.push({ action: 'trace_disclosure', state: 'public_trace',
+          consequences: board.consequences.map(({ title, description, opportunityIds }) => ({ title, description, opportunityIds })) });
+        const { page } = await pageFor(trace.boss);
+        await page.screenshot({ path: path.join(output, `${width}-${scenario.name}-trace_disclosure.png`), fullPage: true });
+      }
       const worldChecks = await worldKernelInvariants(f.pool); assert.equal(worldChecks.ok, true, JSON.stringify(worldChecks));
       const operationChecks = await familyOperationInvariants(f.pool); assert.equal(operationChecks.ok, true, JSON.stringify(operationChecks));
+      result.invariants = { world: worldChecks, operations: operationChecks };
       assert.deepEqual(result.errors, []); result.status = 'PASS';
       console.log(`PASS ${width}px ${scenario.name}: ${result.commands.length} rendered commands`);
     } catch (error) {
-      result.error = error.stack; console.error(result.error);
+      result.status = 'FAIL'; result.error = error.stack; console.error(result.error);
       for (const [index, context] of contexts.entries()) for (const page of context.pages()) {
         await page.screenshot({ path: path.join(output, `${width}-${scenario.name}-failure-${index}.png`), fullPage: true }).catch(() => {});
         fs.writeFileSync(path.join(output, `${width}-${scenario.name}-failure-${index}.txt`), await page.locator('body').innerText().catch(() => 'unavailable'));
       }
     }
-    finally { for (const context of contexts) await context.close(); if (app) await app.close(); delete process.env.DATABASE_URL; await f.cleanup(); save(); }
+    finally { for (const context of contexts) await context.close(); if (app) { await app.close(); await app.pool.end(); } delete process.env.DATABASE_URL; await f.cleanup(); save(); }
   }
 } finally { await browser.close(); }
 if (report.results.some((result) => result.status !== 'PASS')) process.exitCode = 1;

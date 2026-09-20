@@ -1,0 +1,3 @@
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+OMERTÀ worker up — hourly: buyback + season check; daily: §10.4 invariant sweep.
+[director] {"activeSituations":0,"activeCampaigns":0,"generated":0,"resolved":0,"expired":0,"recovered":0,"errors":0,"selections":0,"selectionLatencyMs":0,"evaluationLatencyMs":15.147267000000056,"eventBacklog":0,"generationRatePerHour":0,"resolutionRatePerHour":0,"expiryRatePerHour":0,"recoveryRatePerHour":0}

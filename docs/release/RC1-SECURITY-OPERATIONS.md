@@ -66,8 +66,20 @@ not establish POSIX signal behavior. The initial Linux workflow
 `35406921227` passed all nine at
 `cf661c399d02290dd1bb4b031c87a9235a65371f`; retained results are in
 [`linux-cf661c/result.json`](evidence/graceful-shutdown/linux-cf661c/result.json).
-Subsequent production route/telemetry changes require the final candidate's
-Linux rerun; the earlier pass must not be relabeled as that later source.
+The final corrected source `f31b5290080506f6407a9b7f9a514e2ea020a9d4`
+passed all nine scenarios in run `35408617560`, using Node 22.23.2 and
+PostgreSQL 16.15. Its complete result and process logs are retained in
+[`linux-f31b529/result.json`](evidence/graceful-shutdown/linux-f31b529/result.json).
+The final fingerprint also includes character cash and bank balances.
+
+Fresh hosted full application and native PostgreSQL gates passed at this same
+corrected revision in run `35408648650`, including the telemetry, command,
+Director, campaign, concurrency, chaos, migration and backup/restore checks.
+Foundry passed 1,247 tests in 82 suites at frozen main; liquidity recovery also
+passed there. [Source comparison](evidence/gates/source-comparison.json)
+confirms no changes to contract sources, economic rules, schema, item/crafting,
+Coordination, Director or World Kernel authority between those revisions.
+See [gate index](evidence/gates/INDEX.json) for exact per-step results.
 
 ## Adversarial coverage and remaining scope
 
@@ -131,8 +143,9 @@ Retained native/memory retest results are in
 [`evidence/security-operations/telemetry-results.json`](evidence/security-operations/telemetry-results.json).
 The correction history and reproduction conditions are retained in
 [`telemetry-regressions.md`](evidence/security-operations/telemetry-regressions.md).
-The final mobile/browser rerun remains independently required; native proofs
-do not replace it.
+The corrected hosted mobile sweep and invite browser gate passed. The separate
+fresh-account browser story reaches the documented solo authority blocker;
+these security proofs do not replace incomplete golden/mobile journeys.
 
 ## Findings disposition
 

@@ -6,7 +6,7 @@ Frozen baseline: `626e61b9ab2b14a9dc45566983b70cdc65692839` (main). Validation t
 
 - Windows, Node `v24.19.0`, installed Chromium `153.0.8010.48`, repository lockfile dependencies.
 - Mobile evidence is Chromium viewport/touch emulation, not physical-device or Safari/WebKit validation.
-- Existing and new browser harnesses boot the production server on localhost against disposable `pg-mem`. No production account or database is used.
+- The existing browser harnesses and fresh solo harness boot the production server on localhost against disposable `pg-mem`. The supplemental `rc1-campaign-mobile` harness uses real PostgreSQL with a private schema per scenario. No production account or database is used.
 - Native PostgreSQL 18 tests use `COORDINATION_TEST_DATABASE_URL=postgres://postgres@127.0.0.1:55439/rc1_check`, a private schema per story, and cleanup after each story. This URL is a local disposable test instance, not a deployment setting.
 - New browser harness enables `CORE_PROGRESSION`, `WORLD_GRAPH_KERNEL`, `COORDINATION_ENGINE`, `COORDINATION_KNOWLEDGE`, `COORDINATION_KNOWLEDGE_SHARING`, and `COORDINATION_OPERATIONS`; Director mode is `LIVE` only inside the disposable process. It does not enable chain/economic functionality. Deployment cohort admission is a separate gate.
 
@@ -26,6 +26,7 @@ node tools/rc1-mobile-journeys.js
 $env:COORDINATION_TEST_DATABASE_URL='postgres://postgres@127.0.0.1:55439/rc1_check'
 node test/world-consequences.js --postgres
 node test/rc1-journeys.js --postgres
+node tools/rc1-campaign-mobile.js
 ```
 
 Raw logs and structured reports: [`evidence/player/`](evidence/player/). Each log is named for the executed harness. Development logs retain incorrect new-harness assumptions and synchronization failures; they are not silently discarded or classified as existing application failures. The player-command-client seam regression caused by the telemetry patch is recorded separately in `player-command-client.log` and owned by the telemetry validation lane.
@@ -43,6 +44,8 @@ Raw logs and structured reports: [`evidence/player/`](evidence/player/). Each lo
 | G: Dock War | `director-journey` executes protected/intercepted/alternate-route branches, restoration, Director restart, second generation and completed campaign. Network journey demonstrates shipment→market→informant on the combined content catalog. | A single browser campaign that starts from a fresh player, completes Dock War, and follows its resulting state into the network. The two existing domain tests are not that single story. |
 
 The existing domain fixtures seed account/character stats (including respect and cash), then use real social, acquisition, crafting and operation services. They are valuable integrity evidence, but are not new-player onboarding tests. Recovery branch selection creates/cancels ordinary operations until the existing deterministic seed yields the needed success/failure; it never rewrites the outcome, rewards, inventory or operation seed.
+
+The supplemental campaign mobile harness uses the same seeded actors and initial world. It signs local fixture sessions and dismisses the real welcome/tip controls, then clicks actual rendered Command Center actions and confirmation dialogs against the production HTTP server and PostgreSQL. Each POST must match the execution identity issued to that rendered board. Its browser path covers discovery, mystery steps, recipe crafting, operation creation, publication, role joining, commitments, contributions, approval and execution. Travel, vehicle acquisition/salvage, initial social/world formation and the two corroborating evidence shares use existing domain helpers. They are not browser coverage. No production source is changed to enable the harness.
 
 ## Verified results
 
@@ -99,3 +102,26 @@ The three cards after recovery/destruction are existing Dock War business, not e
 - Mobile expired/stale opportunities, Crew/Family multi-tab execution, app background/foreground transitions, operation connection loss and confirmation cancellation/re-entry have not all been covered by the new browser harness. Existing unit/domain security assertions must not be relabeled as mobile execution evidence.
 
 These gaps must be included in `RC1-READINESS.md`. This report does not authorize a broader player release or claim that all A–G mobile stories passed.
+
+## Completed supplemental mobile evidence (2026-09-20)
+
+Production source remains `f31b5290080506f6407a9b7f9a514e2ea020a9d4`. The matrix combines the six initially passing scenarios with four targeted retests of corrected harness selectors; original results are retained. The final retest records its harness hash and runtime. Earlier supplemental results did not record a harness hash, so their source provenance is less complete and is not silently upgraded.
+
+| Width | Scenario | Result | Rendered commands |
+| --- | --- | --- | ---: |
+| 320 | shipment-redistribution | PASS | 24 |
+| 320 | shipment-destruction | PASS | 17 |
+| 320 | black-market-supply | PASS | 59 |
+| 320 | black-market-seizure | PASS | 59 |
+| 320 | informant-public-disclosure | PASS | 98 |
+| 390 | shipment-redistribution | PASS | 24 |
+| 390 | shipment-destruction | PASS | 17 |
+| 390 | black-market-supply | PASS | 59 |
+| 390 | black-market-seizure | PASS | 59 |
+| 390 | informant-public-disclosure | PASS | 98 |
+
+[Machine-readable matrix](evidence/player/campaign-mobile-matrix.json) links each result to its raw evidence. These are fixture-assisted browser paths, not completed fresh-player A–G journeys. Passing cases include canonical world/custody checks, visible participant consequences, confirmation fit and no horizontal overflow or uncaught browser errors. No primary action or assertion was bypassed.
+
+Original same-label operation/discovery selector failures are **NEW REGRESSION (validation harness)**: the harness selected the first matching label rather than the intended command in its displayed context. Exact HTTP identity checks caught the wrong selection. Retests select within that context and retain the strict identity assertion. The initial 390px disclosure path also received a safe409 refusal; that individual cause was not separately isolated, so its original failure remains visible even if the corrected scenario passes.
+
+The earlier standalone supply retest reached its320px PASS message but failed schema cleanup with PostgreSQL53200. It is **ENVIRONMENTAL / INCOMPLETE**, not a completed passing run. The final harness closes its own server pool and runs serially. The same-label controls are also a usability concern: fixture knowledge of command order does not establish that a novice can distinguish them.
