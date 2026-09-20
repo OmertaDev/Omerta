@@ -61,10 +61,20 @@ export const executeIssued = (engine, accountId, command, confirmed = true) => e
   { executionId: command.executionIdentity.executionId, confirmed }, command.executionIdentity.executionId);
 
 export async function issueAndExecute(engine, accountId, type, parameters = {}, options = {}) {
-  const view = await engine.snapshot(accountId, options);
-  const command = findCommand(view, type, parameters);
-  const response = await executeIssued(engine, accountId, command);
-  assert.equal(response.status, 'COMPLETED');
-  assert.equal(response.executionId, command.executionIdentity.executionId);
-  return { response, command, before: view };
+  for (let attempt = 0; ; attempt++) {
+    const view = await engine.snapshot(accountId, options);
+    const command = findCommand(view, type, parameters);
+    let response;
+    try { response = await executeIssued(engine, accountId, command); }
+    catch (error) {
+      // Browser journey adapters may exercise the visible refresh/reissue path.
+      // Every attempt still verifies its own exact server-issued identity; native
+      // engines have no hook and retain the original fail-on-error behavior.
+      if (attempt === 0 && await engine.retryIssuedCommand?.(accountId, command, error)) continue;
+      throw error;
+    }
+    assert.equal(response.status, 'COMPLETED');
+    assert.equal(response.executionId, command.executionIdentity.executionId);
+    return { response, command, before: view };
+  }
 }
