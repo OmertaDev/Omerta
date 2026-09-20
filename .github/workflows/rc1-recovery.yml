@@ -71,6 +71,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: rc1-linux-recovery-${{ github.sha }}
-          path: tmp/rc1-linux-recovery/
+          path: |
+            tmp/rc1-linux-recovery/
+            docs/release/evidence/mobile/
           if-no-files-found: error
           retention-days: 30
