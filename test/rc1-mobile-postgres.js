@@ -43,9 +43,16 @@ try {
     await crime.click(); const first = await firstResponse;
     assert.equal(first.status(), 200, await first.text());
     const firstActionMs = Date.now() - started;
-    await page.waitForTimeout(2500); // let the actual action vignette and result sheet arrive
-    const closeResult = page.locator('.modal-bg[data-managed-dialog] [data-x]');
-    if (await closeResult.isVisible()) await closeResult.click();
+    // The response can precede the client's queued refresh/result UI on slower hosts.
+    await page.locator('#operation-desk[aria-busy="false"]').waitFor({ state: 'attached' });
+    await page.locator('.vignette').waitFor({ state: 'hidden' });
+    for (let dialogs = 0; dialogs < 4; dialogs++) {
+      const closeResult = page.locator('.modal-bg[data-managed-dialog]:visible').last().locator('[data-x], [data-tipok]');
+      if (!await closeResult.isVisible()) break;
+      await closeResult.click();
+    }
+    assert.equal(await page.locator('.modal-bg[data-managed-dialog]:visible').count(), 0,
+      'all first-action result/onboarding dialogs must have a real dismissal control');
     await page.locator('#bnav [data-go="family"]').click();
     await page.locator('#tabs [data-tab="world"]').click();
     await page.locator('#tab-world .world-summary').waitFor();
