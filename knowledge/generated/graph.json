@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "5f735c573ff17fa3b8f4c9d7ad3c45181ae13d7d",
+  "sourceRevision": "b6b94599d8fba950807e7f647142f1a164b29236",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 7555,
-    "edges": 33524,
+    "nodes": 7557,
+    "edges": 33536,
     "byNodeType": {
       "Artifact": 2963,
       "Command": 102,
-      "Commit": 1488,
+      "Commit": 1490,
       "Contract": 79,
       "Document": 592,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 2488,
-      "CHANGED": 12663,
+      "CHANGED": 12673,
       "CONTAINS": 2984,
       "DECLARES": 102,
       "DEFINED_IN": 1248,
       "DEPENDS_ON": 65,
       "EXECUTES": 427,
       "HANDLED_BY": 707,
-      "HAS_COMMIT": 1488,
+      "HAS_COMMIT": 1490,
       "IMPLEMENTS": 124,
       "IMPORTS": 2844,
       "INHERITS": 17,
@@ -7636,20 +7636,20 @@
       "path": ".github/workflows/rc1-recovery.yml",
       "kind": "workflow",
       "extension": ".yml",
-      "bytes": 2867,
-      "lines": 77,
-      "version": "4579f1516d964c43",
+      "bytes": 2923,
+      "lines": 79,
+      "version": "d7d545ed3c634f59",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/rc1-recovery.yml",
           "line": 1,
-          "version": "4579f1516d964c43"
+          "version": "d7d545ed3c634f59"
         }
       ],
-      "lastChangedAt": "2026-09-20T23:18:08.000Z",
+      "lastChangedAt": "2026-09-20T23:40:21.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "1f0767e95db8a487a19e7c966a03577f0928fde1"
+      "lastChangedCommit": "b6b94599d8fba950807e7f647142f1a164b29236"
     },
     {
       "key": "Artifact:.gitignore",
@@ -64256,20 +64256,20 @@
       "path": "test/rc1-mobile-postgres.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 6684,
-      "lines": 92,
-      "version": "97be989f92c9b345",
+      "bytes": 7129,
+      "lines": 99,
+      "version": "b72a6345ce0ee727",
       "text": true,
       "provenance": [
         {
           "file": "test/rc1-mobile-postgres.js",
           "line": 1,
-          "version": "97be989f92c9b345"
+          "version": "b72a6345ce0ee727"
         }
       ],
-      "lastChangedAt": "2026-09-20T23:04:48.000Z",
+      "lastChangedAt": "2026-09-20T23:40:21.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1"
+      "lastChangedCommit": "b6b94599d8fba950807e7f647142f1a164b29236"
     },
     {
       "key": "Artifact:test/rc1-observability.js",
@@ -72446,6 +72446,22 @@
         {
           "commit": "21c4575ddb731702f480cea437f04347f8e880f9",
           "url": "https://github.com/OmertaDev/Omerta/commit/21c4575ddb731702f480cea437f04347f8e880f9"
+        }
+      ]
+    },
+    {
+      "key": "Commit:21d0589a8b1f15cbb712e574becd507b813e4b0c",
+      "type": "Commit",
+      "id": "21d0589a8b1f15cbb712e574becd507b813e4b0c",
+      "label": "Refresh knowledge artifacts for repaired RC1 proof candidate",
+      "title": "Refresh knowledge artifacts for repaired RC1 proof candidate",
+      "date": "2026-09-20T23:25:29.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/21d0589a8b1f15cbb712e574becd507b813e4b0c",
+      "provenance": [
+        {
+          "commit": "21d0589a8b1f15cbb712e574becd507b813e4b0c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/21d0589a8b1f15cbb712e574becd507b813e4b0c"
         }
       ]
     },
@@ -87070,6 +87086,22 @@
         {
           "commit": "b6b608e4e51afe21ccac881f905178f92c0741dc",
           "url": "https://github.com/OmertaDev/Omerta/commit/b6b608e4e51afe21ccac881f905178f92c0741dc"
+        }
+      ]
+    },
+    {
+      "key": "Commit:b6b94599d8fba950807e7f647142f1a164b29236",
+      "type": "Commit",
+      "id": "b6b94599d8fba950807e7f647142f1a164b29236",
+      "label": "Wait for real first-action UI and dismiss onboarding dialogs in phone proof",
+      "title": "Wait for real first-action UI and dismiss onboarding dialogs in phone proof",
+      "date": "2026-09-20T23:40:21.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/b6b94599d8fba950807e7f647142f1a164b29236",
+      "provenance": [
+        {
+          "commit": "b6b94599d8fba950807e7f647142f1a164b29236",
+          "url": "https://github.com/OmertaDev/Omerta/commit/b6b94599d8fba950807e7f647142f1a164b29236"
         }
       ]
     },
@@ -109753,6 +109785,9 @@
           "commit": "1d333b79f43c427ebc9d6733df79a124fe82fe0d"
         },
         {
+          "commit": "21d0589a8b1f15cbb712e574becd507b813e4b0c"
+        },
+        {
           "commit": "24788d5e57d959ba59eb66d5b992334b18e33ec7"
         },
         {
@@ -110096,6 +110131,9 @@
         },
         {
           "commit": "21c4575ddb731702f480cea437f04347f8e880f9"
+        },
+        {
+          "commit": "21d0589a8b1f15cbb712e574becd507b813e4b0c"
         },
         {
           "commit": "24788d5e57d959ba59eb66d5b992334b18e33ec7"
@@ -110758,6 +110796,9 @@
           "commit": "21c4575ddb731702f480cea437f04347f8e880f9"
         },
         {
+          "commit": "21d0589a8b1f15cbb712e574becd507b813e4b0c"
+        },
+        {
           "commit": "24788d5e57d959ba59eb66d5b992334b18e33ec7"
         },
         {
@@ -111418,6 +111459,9 @@
           "commit": "21c4575ddb731702f480cea437f04347f8e880f9"
         },
         {
+          "commit": "21d0589a8b1f15cbb712e574becd507b813e4b0c"
+        },
+        {
           "commit": "24788d5e57d959ba59eb66d5b992334b18e33ec7"
         },
         {
@@ -111991,6 +112035,9 @@
           "commit": "18738f0238abac2204c0d201ea4ce93acefcd781"
         },
         {
+          "commit": "21d0589a8b1f15cbb712e574becd507b813e4b0c"
+        },
+        {
           "commit": "24788d5e57d959ba59eb66d5b992334b18e33ec7"
         },
         {
@@ -112235,6 +112282,9 @@
         },
         {
           "commit": "21c4575ddb731702f480cea437f04347f8e880f9"
+        },
+        {
+          "commit": "21d0589a8b1f15cbb712e574becd507b813e4b0c"
         },
         {
           "commit": "24788d5e57d959ba59eb66d5b992334b18e33ec7"
@@ -112828,6 +112878,9 @@
           "commit": "1d868547fb310e02e7dfe7daa7a11315d85b6b29"
         },
         {
+          "commit": "21d0589a8b1f15cbb712e574becd507b813e4b0c"
+        },
+        {
           "commit": "24a015ace8f4d8f1c1683b6fe8810f5ebd6a74fa"
         },
         {
@@ -113162,6 +113215,9 @@
         },
         {
           "commit": "18738f0238abac2204c0d201ea4ce93acefcd781"
+        },
+        {
+          "commit": "21d0589a8b1f15cbb712e574becd507b813e4b0c"
         },
         {
           "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
@@ -120616,7 +120672,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "5f735c573ff17fa3b8f4c9d7ad3c45181ae13d7d",
+      "revision": "b6b94599d8fba950807e7f647142f1a164b29236",
       "currentBranch": "codex/rc1-closure-proof",
       "defaultBranch": "main",
       "visibility": "public",
@@ -150900,13 +150956,13 @@
       "type": "TestSuite",
       "id": "test/rc1-mobile-postgres.js",
       "label": "test/rc1-mobile-postgres.js",
-      "lines": 92,
-      "version": "97be989f92c9b345",
+      "lines": 99,
+      "version": "b72a6345ce0ee727",
       "provenance": [
         {
           "file": "test/rc1-mobile-postgres.js",
           "line": 1,
-          "version": "97be989f92c9b345"
+          "version": "b72a6345ce0ee727"
         }
       ]
     },
@@ -152130,13 +152186,13 @@
       "type": "Workflow",
       "id": ".github/workflows/rc1-recovery.yml",
       "label": ".github/workflows/rc1-recovery.yml",
-      "lines": 77,
-      "version": "4579f1516d964c43",
+      "lines": 79,
+      "version": "d7d545ed3c634f59",
       "provenance": [
         {
           "file": ".github/workflows/rc1-recovery.yml",
           "line": 1,
-          "version": "4579f1516d964c43"
+          "version": "d7d545ed3c634f59"
         }
       ]
     }
@@ -187652,6 +187708,70 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "21c4575ddb731702f480cea437f04347f8e880f9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:21d0589a8b1f15cbb712e574becd507b813e4b0c",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "21d0589a8b1f15cbb712e574becd507b813e4b0c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:21d0589a8b1f15cbb712e574becd507b813e4b0c",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "21d0589a8b1f15cbb712e574becd507b813e4b0c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:21d0589a8b1f15cbb712e574becd507b813e4b0c",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "21d0589a8b1f15cbb712e574becd507b813e4b0c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:21d0589a8b1f15cbb712e574becd507b813e4b0c",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "21d0589a8b1f15cbb712e574becd507b813e4b0c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:21d0589a8b1f15cbb712e574becd507b813e4b0c",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "21d0589a8b1f15cbb712e574becd507b813e4b0c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:21d0589a8b1f15cbb712e574becd507b813e4b0c",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "21d0589a8b1f15cbb712e574becd507b813e4b0c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:21d0589a8b1f15cbb712e574becd507b813e4b0c",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "21d0589a8b1f15cbb712e574becd507b813e4b0c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:21d0589a8b1f15cbb712e574becd507b813e4b0c",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "21d0589a8b1f15cbb712e574becd507b813e4b0c"
       }
     },
     {
@@ -249348,6 +249468,22 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "commit": "b6b608e4e51afe21ccac881f905178f92c0741dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b6b94599d8fba950807e7f647142f1a164b29236",
+      "to": "Artifact:.github/workflows/rc1-recovery.yml",
+      "provenance": {
+        "commit": "b6b94599d8fba950807e7f647142f1a164b29236"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b6b94599d8fba950807e7f647142f1a164b29236",
+      "to": "Artifact:test/rc1-mobile-postgres.js",
+      "provenance": {
+        "commit": "b6b94599d8fba950807e7f647142f1a164b29236"
       }
     },
     {
@@ -327514,6 +327650,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:21d0589a8b1f15cbb712e574becd507b813e4b0c",
+      "provenance": {
+        "commit": "21d0589a8b1f15cbb712e574becd507b813e4b0c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:21e8a13b8bd7ed0f3149a7f1a6b3391ad233b254",
       "provenance": {
         "commit": "21e8a13b8bd7ed0f3149a7f1a6b3391ad233b254"
@@ -334821,6 +334965,14 @@
       "to": "Commit:b6b608e4e51afe21ccac881f905178f92c0741dc",
       "provenance": {
         "commit": "b6b608e4e51afe21ccac881f905178f92c0741dc"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:b6b94599d8fba950807e7f647142f1a164b29236",
+      "provenance": {
+        "commit": "b6b94599d8fba950807e7f647142f1a164b29236"
       }
     },
     {

@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `5f735c573ff1`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `b6b94599d8fb`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1488 |
+| Commits in clone | 1490 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-20 — Exercise mobile campaign controls and bounded stale-command recovery |
+| Latest commit | 2026-09-20 — Wait for real first-action UI and dismiss onboarding dialogs in phone proof |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 613 |
+| OmertaDev | 615 |
 | Claude | 156 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 30 |
@@ -36,10 +36,10 @@
 | [SPEC.md](../../SPEC.md) | 322 | yes |
 | [schema.sql](../../schema.sql) | 296 | yes |
 | [BALANCE.md](../../BALANCE.md) | 254 | yes |
-| knowledge/generated/github-history.md | 217 | historical |
-| knowledge/generated/graph-summary.md | 217 | historical |
-| knowledge/generated/graph.json | 217 | historical |
-| knowledge/generated/inventory.md | 217 | historical |
+| knowledge/generated/github-history.md | 218 | historical |
+| knowledge/generated/graph-summary.md | 218 | historical |
+| knowledge/generated/graph.json | 218 | historical |
+| knowledge/generated/inventory.md | 218 | historical |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 177 | yes |
 | [package.json](../../package.json) | 172 | yes |
@@ -48,11 +48,11 @@
 | [src/invariants.js](../../src/invariants.js) | 124 | yes |
 | [test/client.js](../../test/client.js) | 117 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 117 | yes |
+| knowledge/generated/documents.md | 96 | historical |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
-| knowledge/generated/documents.md | 95 | historical |
 | [public/wiki.html](../../public/wiki.html) | 85 | yes |
 | [test/social.js](../../test/social.js) | 85 | yes |
-| knowledge/generated/modules.md | 82 | historical |
+| knowledge/generated/modules.md | 83 | historical |
 | [test/growth.js](../../test/growth.js) | 80 | yes |
 | [test/gates.js](../../test/gates.js) | 76 | yes |
 | [docs/WIKI.md](../../docs/WIKI.md) | 73 | yes |
@@ -62,8 +62,8 @@
 | [README.md](../../README.md) | 58 | yes |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 56 | yes |
 | [src/growth.js](../../src/growth.js) | 54 | yes |
+| knowledge/generated/graph.mmd | 51 | historical |
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 51 | yes |
-| knowledge/generated/graph.mmd | 50 | historical |
 | [src/economy.js](../../src/economy.js) | 50 | yes |
 | [test/docs.js](../../test/docs.js) | 47 | yes |
 | [src/casino.js](../../src/casino.js) | 46 | yes |
