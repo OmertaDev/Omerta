@@ -40,16 +40,20 @@ export function assertCarMeltSources() {
 // Composition is INSIDE the existing observer's native call. Thus rows are
 // copied before gameplay can mutate them and before COMMITTED is delivered.
 // AsyncLocalStorage binds the actual client, not coincidentally matching IDs.
-export function createCarMeltCommitObserver({ onBoundary, onAttempt, context, maxQueries = 1024, maxBytes = 8 * 1024 * 1024 }) {
+export function createCarMeltCommitObserver({ onBoundary, onAttempt, context, maxQueries = 1024, maxBytes = 8 * 1024 * 1024,
+  queryOrigin = null, provenanceExtensions = null }) {
   assertCarMeltSources();
   assert(Number.isSafeInteger(maxQueries) && maxQueries > 0);
   assert(Number.isSafeInteger(maxBytes) && maxBytes > 0);
+  assert(queryOrigin === null || typeof queryOrigin === 'function');
+  const extensions = provenanceExtensions === null ? null : json(provenanceExtensions);
   const current = new AsyncLocalStorage(), transactions = new WeakMap();
   let armed = false;
   const base = createNativeCommitObserver({ onAttempt, context, async onBoundary(boundary) {
     const client = current.getStore(), trace = transactions.get(client);
     const carMeltProvenance = boundary.outcome === 'COMMITTED' && trace
-      ? { format: 1, sourcePins: CAR_MELT_SOURCE_PINS, boundary: json(boundary), ...trace } : null;
+      ? { format: 1, sourcePins: CAR_MELT_SOURCE_PINS, boundary: json(boundary), ...trace,
+        ...(extensions ? { extensions: json(extensions) } : {}) } : null;
     try { await onBoundary(boundary, carMeltProvenance); }
     finally { if (['COMMITTED', 'ROLLED_BACK'].includes(boundary.outcome)) transactions.delete(client); }
   } });
@@ -61,6 +65,9 @@ export function createCarMeltCommitObserver({ onBoundary, onAttempt, context, ma
         // Snapshot input BEFORE native dispatch (driver/caller may reuse objects).
         const text = typeof sql === 'string' ? sql : sql.text;
         const parameters = json(values ?? (typeof sql === 'object' ? sql.values : null) ?? []);
+        // Optional test-only origin annotation shares this one bounded native
+        // trace. It sees SQL identity only and cannot alter parameters/results.
+        const origin = armed && queryOrigin ? queryOrigin(text) : null;
         let result;
         try { result = await query(sql, values); }
         catch (error) { if (armed && transactions.has(client)) transactions.get(client).unsupported = 'native-query-failure'; throw error; }
@@ -69,7 +76,8 @@ export function createCarMeltCommitObserver({ onBoundary, onAttempt, context, ma
         const trace = transactions.get(client);
         if (trace && !trace.unsupported) {
           const entry = { sql: text.replaceAll('\r\n', '\n'), parameters, command: result.command,
-            rowCount: result.rowCount ?? null, rows: json(result.rows), logicalAt: Date.now() };
+            rowCount: result.rowCount ?? null, rows: json(result.rows), logicalAt: Date.now(),
+            ...(origin === null ? {} : { origin: json(origin) }) };
           const bytes = Buffer.byteLength(JSON.stringify(entry));
           if (trace.queries.length >= maxQueries || trace.bytes + bytes > maxBytes) trace.unsupported = 'bounded-trace-overflow';
           else { trace.queries.push(entry); trace.bytes += bytes; }

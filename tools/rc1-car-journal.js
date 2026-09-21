@@ -5,6 +5,7 @@ import crypto from 'node:crypto';
 import { rollRarity } from '../src/rules.js';
 import { exactSum } from './rc1-resource-journal.js';
 import { verifySoloCarMelt } from './rc1-car-melt-provenance.js';
+import { verifyNpcCarAcquisition } from './rc1-npc-car-acquisition.js';
 
 const rows = (state, table) => { assert(Array.isArray(state.tables[table]), `Missing car evidence table ${table}`); return state.tables[table]; };
 const index = (values, key, label) => {
@@ -38,7 +39,7 @@ export function basicCarSalvageRequestHash(accountId, carId) {
     request: { ...BASIC_CAR_SALVAGE, carId } })).digest('hex');
 }
 
-export function reconcileCarResources(before, after, { carMeltProvenance = null } = {}) {
+export function reconcileCarResources(before, after, { carMeltProvenance = null, carAcquisitionProvenance = null } = {}) {
   const prior = byId(before, 'cars'), final = byId(after, 'cars');
   const people = byId(before, 'characters'), nextPeople = byId(after, 'characters');
   const audits = appended(before, after, 'rng_audit'), receipts = appended(before, after, 'transactions');
@@ -124,13 +125,23 @@ export function reconcileCarResources(before, after, { carMeltProvenance = null 
     lineage.push({ kind: locked ? 'market-lock' : 'market-cancel-release', carId: a.id, owner: a.character_id, authority });
   }
 
-  const sourceAudits = audits.filter(row => row.action === 'gta' && row.outcome === 'success' || row.action === 'npc:car' && row.outcome === 'grant');
+  const acquisition = verifyNpcCarAcquisition(before, after, carAcquisitionProvenance);
+  if (acquisition) {
+    const car = final.get(acquisition.carId), grant = audits.find(r => r.id === acquisition.grantId), rarity = audits.find(r => r.id === acquisition.rarityId);
+    assert(car && grant && rarity, 'Exact NPC acquisition lacks its fresh car/receipts');
+    claim(car); use('rng_audit', [grant, rarity]);
+    const authority = reference('rng_audit', [grant, rarity]);
+    parity('car-exact-npc-spawn-source', acquisition.owner, 0, 1, 1, authority);
+    lineage.push({ ...acquisition, authority });
+  }
+  const sourceAudits = audits.filter(row => !used.has('rng_audit:' + row.id)
+    && (row.action === 'gta' && row.outcome === 'success' || row.action === 'npc:car' && row.outcome === 'grant'));
   for (const owner of new Set(sourceAudits.map(row => row.character_id))) {
     const matches = sourceAudits.filter(row => row.character_id === owner), cars = added.filter(row => row.character_id === owner && !claimed.has(row.id));
     assert.equal(cars.length, matches.length, `Car grant/boost receipt cardinality differs for ${owner}`);
     assert(nextPeople.has(owner), 'Car source owner is missing');
     if (matches.some(row => row.action === 'npc:car')) assert.equal(nextPeople.get(owner).is_npc, true, 'Resident car grant has non-resident owner');
-    const rarity = audits.filter(row => row.character_id === owner && row.action === 'rarity:car');
+    const rarity = audits.filter(row => row.character_id === owner && row.action === 'rarity:car' && !used.has('rng_audit:' + row.id));
     assert.equal(rarity.length, cars.length, 'Car rarity receipt cardinality differs');
     for (const receipt of rarity) assert.equal(rollRarity(Number(receipt.roll)), receipt.outcome, 'Car rarity roll/outcome mismatch');
     assert.deepEqual(cars.map(row => row.rarity).sort(), rarity.map(row => row.outcome).sort(), 'Car rarity differs from native audit');
@@ -172,5 +183,5 @@ export function reconcileCarResources(before, after, { carMeltProvenance = null 
     incomplete('car-disposition-unclassified', car.character_id, [car.id], [],
       `No supported identity-bound authority for ${!prior.has(car.id) ? 'creation' : !final.has(car.id) ? 'destruction' : changedFields(car, final.get(car.id)).join(',')}`);
   return { format: 1, checks, lineage, unsupported, fullyClassifiedChanges: lineage.filter(row => !row.kind.endsWith('count-only')).length,
-    scope: 'Serial isolated boundary only. Exact basic salvage, market list/cancel custody, and source-pinned instrumented neutral solo melt; other audit parity is explicitly partial.' };
+    scope: 'Serial isolated boundary only. Exact basic salvage, market list/cancel custody, source-pinned neutral solo melt and default worker NPC-spawn car; other audit parity is explicitly partial.' };
 }

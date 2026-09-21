@@ -14,7 +14,8 @@ import { sourceIdentity, createProofRecorder, verifyArtifactIndex, restoreCheckp
 import { createRecordedActors, compareActorReplay, actorValueHash } from '../tools/rc1-native-actor-replay.js';
 import { activeQuietRoster, chooseAuthorizedCommand, choosePublicCrime, observedOpportunityTracker } from '../tools/rc1-native-player-policy.js';
 import { collectWorldDiagnostics } from '../tools/rc1-world-diagnostics.js';
-import { createCarMeltCommitObserver, CAR_MELT_SOURCE_PINS } from '../tools/rc1-car-melt-provenance.js';
+import { CAR_MELT_SOURCE_PINS } from '../tools/rc1-car-melt-provenance.js';
+import { createNpcCarAcquisitionCommitObserver, NPC_CAR_SOURCE_PINS } from '../tools/rc1-npc-car-acquisition.js';
 import { collectKnowledgeDiagnostics } from '../tools/rc1-knowledge-diagnostics.js';
 import { createMysteryPolicy, MYSTERY_POLICY_CONTRACT } from '../tools/rc1-mystery-policies.js';
 import { createRunGuardrails } from '../tools/rc1-native-run-guardrails.js';
@@ -122,6 +123,8 @@ const configuration = { scenario: 'quiet_world', population, seed, hours, source
   resourceObservation: observeResources ? 'Experimental exact committed-boundary parity with explicit unsupported lineage; serial native queries only' : 'Disabled',
   carMeltWitness: observeResources ? { format: 1, sourcePins: CAR_MELT_SOURCE_PINS,
     scope: 'Native COMMIT provenance for neutral solo human melt only. Retain full car-deletion/melt-candidate and bounded-overflow witnesses privately; all other commits keep ordinary resource evidence. No added actor actions or grants.' } : null,
+  npcCarAcquisitionWitness: observeResources ? { format: 1, sourcePins: NPC_CAR_SOURCE_PINS,
+    scope: 'Same bounded native transaction witness, annotated with actual source caller frames. Exact default runPopulation NPC car grant only; all other acquisition branches remain unknown.' } : null,
   resourceBootstrap: 'Both original makeDb initializations precede per-commit observation; exact authoritative resource state must agree before/after second bootstrap. Arm before every queued boot job.',
   epoch: new Date(epoch).toISOString(), start: new Date(start).toISOString(), finish: new Date(finish).toISOString(),
   replay: replay ? { runSha256: sha256(await fs.readFile(path.join(replay, 'run.json'))), source: replayRun.source,
@@ -166,6 +169,7 @@ if (replay) {
   assert.equal(replayRun.configuration.hours, hours);
   assert.equal(replayRun.configuration.resourceObservation, configuration.resourceObservation);
   assert.deepEqual(replayRun.configuration.carMeltWitness, configuration.carMeltWitness);
+  assert.deepEqual(replayRun.configuration.npcCarAcquisitionWitness, configuration.npcCarAcquisitionWitness);
   assert.deepEqual(replayRun.configuration.guardrails, configuration.guardrails, 'Replay operational limits differ');
   assert.deepEqual(replayRun.configuration.priorFailedRun, configuration.priorFailedRun, 'Replay predecessor linkage differs');
   assert.deepEqual(replayRun.configuration.parentCheckpoint, configuration.parentCheckpoint, 'Replay continuation parent differs');
@@ -189,10 +193,11 @@ let priorResources, firstResourceError, workPhase = 'initialization';
 const resourceSummary = { boundaries: 0, unsupportedEntries: 0, unsupportedKinds: {}, qualifyingFullResourcePass: false };
 const carMeltWitnessSummary = { committedWitnesses: 0, retainedCandidateWitnesses: 0, collectorUnsupportedWitnesses: 0,
   exactMeltTransitions: 0, unclassifiedCandidateBoundaries: 0 };
+const carAcquisitionWitnessSummary = { retainedCandidateWitnesses: 0, exactAcquisitions: 0, unclassifiedCandidateBoundaries: 0 };
 const resourceStream = crypto.createHash('sha256');
 const resourceCost = { observedBoundaryWallMs: 0, maximumBoundaryWallMs: 0, serializedJournalBytes: 0, serializedRestrictedChangeBytes: 0 };
 // BEGIN source-bound car witness integration control.
-const commitObserver = observeResources ? createCarMeltCommitObserver({
+const commitObserver = observeResources ? createNpcCarAcquisitionCommitObserver({
   context: () => currentInvocation || { authority: 'original-worker', logicalAt: at, ...(allianceEnabled ? { workPhase } : {}) },
   onBoundary: async (event, carMeltProvenance = null) => {
     const started = performance.now();
@@ -208,8 +213,10 @@ const commitObserver = observeResources ? createCarMeltCommitObserver({
         /^\s*DELETE\s+FROM\s+cars\b/i.test(query.sql)
         || /^\s*INSERT\s+INTO\s+transactions\b/i.test(query.sql) && /^melt(?::|$)/.test(String(query.parameters[5] || ''))))
         ? carMeltProvenance : null;
+      const acquisitionWitness = carMeltProvenance?.queries.some(query => /^\s*INSERT\s+INTO\s+cars\b/i.test(query.sql))
+        ? carMeltProvenance : null;
       const { restrictedChanges, ...journal } = reconcileWorldResources(before, after,
-        { identity: event, includeRestrictedChanges: true, carMeltProvenance: retainedWitness });
+        { identity: event, includeRestrictedChanges: true, carMeltProvenance: retainedWitness, carAcquisitionProvenance: acquisitionWitness });
       if (retainedWitness) {
         const artifact = `restricted-car-melt-witness-${String(resourceSummary.boundaries + 1).padStart(7, '0')}.json`;
         await proof.artifact(artifact, { event, carMeltProvenance: retainedWitness });
@@ -219,6 +226,15 @@ const commitObserver = observeResources ? createCarMeltCommitObserver({
         const exact = journal.cars.lineage.filter(row => row.kind === 'exact-solo-melt-sink').length;
         carMeltWitnessSummary.exactMeltTransitions += exact;
         if (!exact) carMeltWitnessSummary.unclassifiedCandidateBoundaries++;
+      }
+      if (acquisitionWitness) {
+        const artifact = `restricted-car-acquisition-witness-${String(resourceSummary.boundaries + 1).padStart(7, '0')}.json`;
+        await proof.artifact(artifact, { event, carAcquisitionProvenance: acquisitionWitness });
+        journal.carAcquisitionWitness = { artifact, sha256: sha256(canonicalJson(acquisitionWitness)) };
+        carAcquisitionWitnessSummary.retainedCandidateWitnesses++;
+        const exact = journal.cars.lineage.filter(row => row.kind === 'exact-npc-spawn-car-source').length;
+        carAcquisitionWitnessSummary.exactAcquisitions += exact;
+        if (!exact) carAcquisitionWitnessSummary.unclassifiedCandidateBoundaries++;
       }
       if (restrictedChanges) {
         const artifact = `restricted-resource-change-${String(resourceSummary.boundaries + 1).padStart(7, '0')}.json`;
@@ -617,6 +633,7 @@ try {
   if (commitObserver) {
     commitObserver.assertComplete(); await proof.artifact('resource-observer.json', { ...resourceSummary, diagnostic: commitObserver.diagnostic() });
     await proof.artifact('car-melt-witness-summary.json', { ...carMeltWitnessSummary, scope: configuration.carMeltWitness });
+    await proof.artifact('car-acquisition-witness-summary.json', { ...carAcquisitionWitnessSummary, scope: configuration.npcCarAcquisitionWitness });
   }
   const trace = controller.diagnostic(); assert.equal(trace.failures.length, 0);
   const timerCounts = Object.fromEntries(['directorTick', 'guardedTick', 'guardedSeasonTick', 'health-boundary']
@@ -658,6 +675,7 @@ try {
     resourceJournalSha256: observeResources ? resourceStream.copy().digest('hex') : null,
     resourceObservation: observeResources ? resourceSummary : null,
     carMeltWitnessObservation: observeResources ? carMeltWitnessSummary : null,
+    carAcquisitionWitnessObservation: observeResources ? carAcquisitionWitnessSummary : null,
     statement: 'Completed only the declared ' + actorPolicy + ' workload; no matrix qualification or dead-world clearance' };
   if (allianceEnabled) {
     result.continuation = { mode: configuration.continuation.mode, totalLogicalHours: (finish - epoch) / 3600000,
@@ -678,6 +696,7 @@ try {
   if (replay) {
     result.replayComparison = compareActorReplay(result, replayRun.result);
     assert.deepEqual(result.carMeltWitnessObservation, replayRun.result.carMeltWitnessObservation, 'Car COMMIT witness replay differs');
+    assert.deepEqual(result.carAcquisitionWitnessObservation, replayRun.result.carAcquisitionWitnessObservation, 'Car acquisition witness replay differs');
     result.carMeltWitnessReplayEqual = true;
   }
   await guardBoundary('final');

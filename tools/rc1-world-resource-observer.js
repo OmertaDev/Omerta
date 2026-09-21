@@ -615,7 +615,7 @@ function reconcileTurfTerminal(before, after, receipts, checks, unsupported) {
   districtFields.set(districtId, fields); settledDistricts.add(districtId); return result;
 }
 
-export function reconcileWorldResources(before, after, { identity = null, includeRestrictedChanges = false, carMeltProvenance = null, npcFamilyProvenance = null } = {}) {
+export function reconcileWorldResources(before, after, { identity = null, includeRestrictedChanges = false, carMeltProvenance = null, carAcquisitionProvenance = null, npcFamilyProvenance = null } = {}) {
   assert.equal(before.format, 1); assert.equal(after.format, 1);
   const checks = [], unsupported = [];
   const receipts = appendOnly(before, after, 'transactions');
@@ -763,7 +763,7 @@ export function reconcileWorldResources(before, after, { identity = null, includ
     expectedDelta: exactSum([negate(net(receipts, r => r.currency === 'cash' && ['loan:offer', 'loan:take', 'loan:refund'].includes(r.reason))),
       net(receipts, r => r.currency === 'cash' && ['loan:death', 'loan:loot'].includes(r.reason))]),
     authority: reference('transactions', receipts.filter(r => r.reason.startsWith('loan:'))) });
-  const cars = reconcileCarResources(before, after, { carMeltProvenance });
+  const cars = reconcileCarResources(before, after, { carMeltProvenance, carAcquisitionProvenance });
   checks.push(...cars.checks); unsupported.push(...cars.unsupported);
   const seasonConversions = reconcileSeasonConversions(before, after);
   checks.push(...seasonConversions.checks); unsupported.push(...seasonConversions.unsupported);
