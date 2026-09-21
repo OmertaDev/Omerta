@@ -9,7 +9,8 @@ import { createWorkerSchedule, installWorkerInstrumentation, makeWorkerDatabase,
 import { planOwnedWorldDatabase } from '../tools/rc1-native-database.js';
 import { createRecordedQueryOrder, QUERY_ORDER_SCOPE } from '../tools/rc1-native-query-order.js';
 import { installSerialRuntime } from '../tools/rc1-native-determinism.js';
-import { sourceIdentity, createProofRecorder, verifyArtifactIndex, canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
+import { sourceIdentity, createProofRecorder, verifyArtifactIndex, restoreCheckpoint, canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
+import { createRecordedActors, compareActorReplay, actorValueHash } from '../tools/rc1-native-actor-replay.js';
 import { activeQuietRoster, chooseAuthorizedCommand, choosePublicCrime, observedOpportunityTracker } from '../tools/rc1-native-player-policy.js';
 import { collectWorldDiagnostics } from '../tools/rc1-world-diagnostics.js';
 import { createNativeCommitObserver } from '../tools/rc1-native-commit-observer.js';
@@ -24,6 +25,30 @@ assert(Number.isSafeInteger(hours) && hours > 0 && hours <= 2161);
 assert([25, 100, 250, 500, 1000].includes(population));
 const seed = argument('seed') || 'rc1-alpha'; assert(['rc1-alpha', 'rc1-beta', 'rc1-gamma'].includes(seed));
 const source = await sourceIdentity(), controlUrl = process.env.COORDINATION_TEST_DATABASE_URL;
+const replay = argument('replay'), resume = argument('resume');
+const injectActorMismatch = process.argv.includes('--inject-actor-input-mismatch');
+assert(!injectActorMismatch || replay, 'Actor mismatch control requires recorded replay');
+async function readPrior(directory) {
+  const run = JSON.parse(await fs.readFile(path.join(directory, 'run.json'), 'utf8'));
+  await verifyArtifactIndex(directory, run); assert.equal(run.status, 'PASS_SCOPED');
+  assert.equal(run.scenarioId, 'scoped-quiet-world-active-players-and-workers');
+  assert.equal(run.source.revision, source.revision, 'Actor replay and continuation require exactly the same source');
+  assert.equal(run.configuration.population, population); assert.equal(run.configuration.seed, seed);
+  return run;
+}
+const replayRun = replay ? await readPrior(replay) : null, parentRun = resume ? await readPrior(resume) : null;
+const readArtifact = async (directory, name) => JSON.parse(await fs.readFile(path.join(directory, name), 'utf8'));
+const retainedActors = replay ? await readArtifact(replay, 'actor-tape.json') : null;
+const retainedOrder = replay ? await readArtifact(replay, 'query-order.json') : null;
+const parentCheckpoint = resume ? await readArtifact(resume, 'final-checkpoint.json') : null;
+const parentTape = resume ? (await readArtifact(resume, 'random-tape.json')).draws : null;
+const parentPolicy = resume ? await readArtifact(resume, 'actor-policy-final.json') : null;
+if (resume) {
+  assert.equal(parentCheckpoint.stateSha256, parentRun.result.finalStateSha256);
+  assert.equal(sha256(canonicalJson(parentTape)), parentRun.result.deterministicRandomTapeSha256);
+  assert.equal(sha256(canonicalJson(parentPolicy)), parentRun.result.policyStateSha256);
+  assert(/^rc1_worker_world_[a-z_0-9]+$/.test(parentCheckpoint.schema));
+}
 assert(controlUrl, 'Explicit disposable local PostgreSQL control database required');
 for (const key of ['CHAIN_RPC_URL', 'INVARIANT_WEBHOOK_URL', 'LIQUIDITY_RPC_URL', 'LIQUIDITY_RPC_FALLBACK_URL'])
   assert(!process.env[key], `No external integration is authorized for this isolated workload: ${key}`);
@@ -36,13 +61,20 @@ const declared = { DATABASE_URL: url, CORE_PROGRESSION: 'on', WORLD_GRAPH_KERNEL
 const previousEnv = Object.fromEntries(Object.keys(declared).map((key) => [key, process.env[key]]));
 Object.assign(process.env, declared);
 const seasonMs = 28 * 86400000;
-const epoch = Math.ceil(Date.parse('2026-09-20T12:00:00.000Z') / seasonMs) * seasonMs - 3600000;
+const epoch = resume ? parentPolicy.epoch : Math.ceil(Date.parse('2026-09-20T12:00:00.000Z') / seasonMs) * seasonMs - 3600000;
+const start = resume ? Date.parse(parentRun.configuration.finish) : epoch, finish = start + hours * 3600000;
 const expectedDormant = [{ label: 'RWA health', code: 'health_registry_unavailable' }];
 const configuration = { scenario: 'quiet_world', population, seed, hours, sourcePins: WORKER_SOURCE_PINS,
+  failureControl: injectActorMismatch ? 'Change the first authorized snapshot comparison input only; no canonical write or command executes from the altered projection.' : null,
   databaseIsolation: database.descriptor,
   resourceObservation: observeResources ? 'Experimental exact committed-boundary parity with explicit unsupported lineage; serial native queries only' : 'Disabled',
   resourceBootstrap: 'Both original makeDb initializations precede per-commit observation; exact authoritative resource state must agree before/after second bootstrap. Arm before every queued boot job.',
-  epoch: new Date(epoch).toISOString(), finish: new Date(epoch + hours * 3600000).toISOString(),
+  epoch: new Date(epoch).toISOString(), start: new Date(start).toISOString(), finish: new Date(finish).toISOString(),
+  replay: replay ? { runSha256: sha256(await fs.readFile(path.join(replay, 'run.json'))), source: replayRun.source,
+    semantics: 'Recorded actor decisions and PostgreSQL subset selection; exact inputs, outcomes and complete state must match.' } : null,
+  parentCheckpoint: resume ? { runSha256: sha256(await fs.readFile(path.join(resume, 'run.json'))), source: parentRun.source,
+    stateSha256: parentCheckpoint.stateSha256, policyStateSha256: parentRun.result.policyStateSha256,
+    semantics: 'Fresh worker boots from exact database, RNG and actor-policy checkpoint. Boot effects retained; no uninterrupted-schedule equivalence.' } : null,
   policy: { dailyActiveActors: Math.floor(population / 10), proposedFraction: .10,
     realizedFraction: Math.floor(population / 10) / population,
     integerConstraint: '25 actors cannot supply 2.5 active identities; choose the lower integer quiet extreme before execution.',
@@ -57,16 +89,23 @@ const configuration = { scenario: 'quiet_world', population, seed, hours, source
   expectedDormant, queryOrder: QUERY_ORDER_SCOPE, deploymentAttested: false,
   excludedIntegrations: ['Unconfigured chain watcher', 'Disabled liquidity automation', 'Unavailable external RWA registry'],
   coverageMissing: ['All 15 archetypes and 225 runs', 'All 13 resource journals at every worker transition',
-    'Complete opportunity acceptance/ignored linkage', 'Actor-policy checkpoint continuation and recorded replay',
+    'Complete opportunity acceptance/ignored linkage', 'Actor-policy replay across all archetypes and seeds',
     'Dead-world reachability proof and failure minimization',
     'Two executions of every longest lifecycle', 'Production-equivalent 12-hour soak', 'HTTP/provider authentication', 'Deployed environment and real cohort'] };
+if (replay) {
+  assert.equal(replayRun.configuration.hours, hours);
+  assert.equal(replayRun.configuration.resourceObservation, configuration.resourceObservation);
+  assert.deepEqual(replayRun.configuration.parentCheckpoint, configuration.parentCheckpoint, 'Replay continuation parent differs');
+}
 const proof = await createProofRecorder({ directory: output, source, configuration,
   runId: path.basename(output), seed, scenarioId: 'scoped-quiet-world-active-players-and-workers', population });
-const runtime = installSerialRuntime(seed, configuration.epoch); let at = epoch;
+const runtime = installSerialRuntime(seed, configuration.start); let at = start;
 runtime.bindClock(() => at);
-const controller = createWorkerSchedule({ start: epoch, setClock: (value) => { at = value; }, expectedDormant });
-const namespace = `rc1_worker_world_${process.pid}_${Math.floor(performance.now())}`;
-const base = new pg.Pool({ connectionString: url }), queryOrder = createRecordedQueryOrder({ artifact: proof.artifact });
+if (resume) runtime.restoreTape(parentTape);
+const controller = createWorkerSchedule({ start, setClock: (value) => { at = value; }, expectedDormant });
+const namespace = resume ? parentCheckpoint.schema : `rc1_worker_world_${process.pid}_${Math.floor(performance.now())}`;
+const base = new pg.Pool({ connectionString: url }), queryOrder = createRecordedQueryOrder({ replay: retainedOrder, replayDirectory: replay, artifact: proof.artifact });
+const actors = createRecordedActors({ replay: retainedActors, record: proof.record });
 const diagnosticPool = new pg.Pool({ connectionString: url, max: 1,
   options: `-c search_path=${namespace},pg_catalog -c default_transaction_read_only=on` });
 let priorResources, firstResourceError;
@@ -104,18 +143,40 @@ const metrics = { playerSnapshots: 0, ownCharacterReads: 0, freshPlayerCommands:
   crimeSuccesses: 0, crimeLosses: 0, exactReplays: 0, denials: {}, sessionWaits: 0, sessions: 0,
   commandTypes: {}, observedAuthorizedOpportunities: 0 };
 const days = [], latencies = { read: [], command: [] };
-let pool, result, currentInvocation = null, failureInvocation = null;
+let lastDay = -1;
+if (resume) {
+  assert.equal(parentPolicy.format, 1); assert.equal(parentPolicy.seed, seed); assert.deepEqual(parentPolicy.roster, roster);
+  assert.equal(parentPolicy.logicalAt, start); assert(Number.isSafeInteger(parentPolicy.lastDay));
+  for (const [name, target] of [['actorOptions', actorOptions], ['actorActions', actorActions]]) {
+    assert.deepEqual(Object.keys(parentPolicy[name]).sort(), [...roster].sort());
+    for (const [key, value] of Object.entries(parentPolicy[name])) target.set(key, structuredClone(value));
+  }
+  assert.deepEqual(Object.keys(parentPolicy.metrics).sort(), Object.keys(metrics).sort());
+  Object.assign(metrics, structuredClone(parentPolicy.metrics)); opportunities.restore(parentPolicy.opportunities);
+  days.push(...structuredClone(parentPolicy.days)); lastDay = parentPolicy.lastDay;
+}
+const policyState = () => ({ format: 1, seed, epoch, logicalAt: at, roster, lastDay,
+  actorOptions: Object.fromEntries(actorOptions), actorActions: Object.fromEntries(actorActions),
+  metrics, opportunities: opportunities.checkpoint(), days });
+let pool, result, currentInvocation = null, failureInvocation = null, injectedActorMismatch = false;
 try {
   for (const level of ['log', 'warn', 'error']) console[level] = (...args) => controller.log(level, args);
   await proof.record({ kind: 'database-created', ...await database.create() });
-  await base.query(`CREATE SCHEMA ${namespace}`);
-  const bootstrap = new controller.Pool({ connectionString: url, options: '', max: 20 });
-  await seam.clock.initialize(bootstrap); pool = await makeWorkerDatabase(controller);
-  for (const account of roster) {
+  if (resume) {
+    pool = await restoreCheckpoint(parentCheckpoint, path.join(resume, 'final.dump'), url,
+      { poolFactory: seam.clock.poolFactory }); controller.pools.push(pool);
+    const restoredClock = (await pool.query('SELECT now() AS tx,clock_timestamp() AS statement')).rows[0];
+    assert.equal(restoredClock.tx.getTime(), start); assert.equal(restoredClock.statement.getTime(), start);
+  } else {
+    await base.query(`CREATE SCHEMA ${namespace}`);
+    const bootstrap = new controller.Pool({ connectionString: url, options: '', max: 20 });
+    await seam.clock.initialize(bootstrap); pool = await makeWorkerDatabase(controller);
+    for (const account of roster) {
     await pool.query("INSERT INTO accounts(id,auth_provider,auth_subject) VALUES($1,'test',$1)", [account]);
     await pool.query('INSERT INTO account_persistent(account_id) VALUES($1)', [account]);
     await pool.query('INSERT INTO characters(id,account_id,name,season,loc) VALUES($1,$2,$3,$4,$5)',
       [`${account}-character`, account, account, Math.floor(epoch / seasonMs), 'docks']);
+    }
   }
   const [{ createPlayerCommandEngine }, { coreProgressionContent }, { createConfiguredDirector },
     { readCharacter, withCharacter, doCrime }, { CRIMES }, { runLedgerInvariants }] = await Promise.all([
@@ -127,13 +188,25 @@ try {
   const engine = createPlayerCommandEngine({ pool, content, director, enabled: true,
     knowledgeEnabled: true, sharingEnabled: true, operationsEnabled: true, discoveryEnabled: true });
   const baseline = await runLedgerInvariants(pool, { alert: false }); assert(baseline.ok, 'Birth fixtures must reconcile without baseline drift');
-  await proof.record({ kind: 'measured-initialization', roster, configuration, publicCrimes, fixtureWritesAfterThisRecord: false });
-  await proof.snapshot(pool, 'initial'); await proof.checkpoint(pool, 'initial', url);
+  await proof.record({ kind: 'measured-initialization', roster, configuration, publicCrimes, randomDraws: runtime.tape,
+    logicalAt: at, restoredCheckpoint: configuration.parentCheckpoint, fixtureWritesAfterThisRecord: false });
+  const initial = await proof.snapshot(pool, 'initial'); await proof.checkpoint(pool, 'initial', url);
+  if (resume) assert.equal(initial.stateSha256, parentCheckpoint.stateSha256, 'Restart did not restore exact canonical state');
+  await proof.artifact('actor-policy-initial.json', policyState());
+  const initialRecaps = (await pool.query('SELECT account_id,season FROM season_recaps ORDER BY account_id,season')).rows;
   if (commitObserver) priorResources = await snapshotWorldResources(diagnosticPool);
   async function invoke(authority, identity, work, latencyClass) {
     currentInvocation = { authority, ...identity, logicalAt: at };
     const started = performance.now();
-    try { return await proof.invoke(authority, currentInvocation, work); }
+    try {
+      const value = await proof.invoke(authority, currentInvocation, work);
+      if (injectActorMismatch && !injectedActorMismatch && authority === 'player.snapshot') {
+        injectedActorMismatch = true;
+        await actors.observe('native-outcome', currentInvocation, { ...value, deliberateSemanticMutation: true });
+        throw Error('Actor replay incorrectly accepted the deliberate semantic mutation');
+      }
+      await actors.observe('native-outcome', currentInvocation, value); return value;
+    }
     catch (error) {
       failureInvocation = currentInvocation;
       metrics.denials[error.code || error.name] = (metrics.denials[error.code || error.name] || 0) + 1;
@@ -154,8 +227,11 @@ try {
         () => engine.snapshot(accountId, actorOptions.get(accountId)), 'read');
       metrics.playerSnapshots++; opportunities.observe(accountId, view.opportunities, at);
       metrics.observedAuthorizedOpportunities = opportunities.summarize(at).distinctAuthorizedActorOpportunities;
-      const command = chooseAuthorizedCommand(view, { seed, accountId, day, action });
+      const command = await actors.decide('authorized-command', { accountId, day, action, logicalAt: at }, view,
+        () => chooseAuthorizedCommand(view, { seed, accountId, day, action }));
       if (!command) break;
+      assert(view.commands.some((candidate) => candidate.availability === 'AVAILABLE' && actorValueHash(candidate) === actorValueHash(command)),
+        'Recorded command is not in the current exact authorized view');
       const executionId = command.executionIdentity.executionId;
       await proof.record({ kind: 'authorized-policy-choice', accountId, day, action,
         commandType: command.commandType, commandId: command.commandId, executionId });
@@ -169,8 +245,10 @@ try {
     }
     const own = await invoke('character.read', { accountId }, () => readCharacter(pool, accountId, async () => ({})), 'read');
     metrics.ownCharacterReads++;
-    const crime = choosePublicCrime(own.character, publicCrimes, { seed, accountId, day });
+    const crime = await actors.decide('public-crime', { accountId, day, logicalAt: at }, { character: own.character, publicCrimes },
+      () => choosePublicCrime(own.character, publicCrimes, { seed, accountId, day }));
     if (crime) {
+      assert(publicCrimes.some((candidate) => actorValueHash(candidate) === actorValueHash(crime)), 'Recorded crime is not public catalog content');
       const response = await invoke('canonical-crime', { accountId, crimeId: crime.id, approach: 'standard' },
         () => withCharacter(pool, accountId, (ch, client, hooks) => doCrime(ch, crime.id, client, hooks, 'standard')), 'command');
       metrics.legacyCrimeAttempts++; actions++;
@@ -193,13 +271,14 @@ try {
     assert.equal(worldResourceHash(after), worldResourceHash(priorResources), 'Original worker bootstrap changed authoritative resource state');
     priorResources = after; commitObserver.arm();
   } });
-  let lastDay = -1;
-  await controller.advanceTo(epoch + hours * 3600000, async (logicalAt, label) => {
+  await controller.advanceTo(finish, async (logicalAt, label) => {
     if (label !== 'guardedTick') return;
     const day = Math.floor((logicalAt - epoch) / 86400000);
-    if (day === lastDay || day >= Math.ceil(hours / 24)) return;
+    if (day === lastDay || day >= Math.ceil((finish - epoch) / 86400000)) return;
     lastDay = day;
-    const selected = activeQuietRoster(roster, seed, day);
+    const selected = await actors.decide('quiet-roster', { day, logicalAt }, roster, () => activeQuietRoster(roster, seed, day));
+    assert.equal(selected.length, Math.floor(population / 10)); assert.equal(new Set(selected).size, selected.length);
+    assert(selected.every((account) => roster.includes(account)));
     for (const account of selected) await session(account, day);
     await invariantBoundary(`quiet-day:${day}`);
     const entry = { day, logicalAt, selectedActors: selected, metrics: structuredClone(metrics),
@@ -224,24 +303,34 @@ try {
     .map((label) => [label, trace.events.filter((entry) => entry.kind === 'timer.fire' && entry.label === label).length]));
   assert.deepEqual(timerCounts, { directorTick: hours * 12, guardedTick: hours, guardedSeasonTick: hours, 'health-boundary': hours * 12 });
   const recaps = (await pool.query('SELECT account_id,season FROM season_recaps ORDER BY account_id,season')).rows;
-  const expectedRollovers = Math.floor((epoch + hours * 3600000) / seasonMs) - Math.floor(epoch / seasonMs);
-  for (const actor of roster) assert.equal(recaps.filter((row) => row.account_id === actor).length, expectedRollovers);
+  const expectedRollovers = Math.floor(finish / seasonMs) - Math.floor(start / seasonMs);
+  for (const actor of roster) assert.equal(recaps.filter((row) => row.account_id === actor).length - initialRecaps.filter((row) => row.account_id === actor).length, expectedRollovers);
   await proof.artifact('worker-schedule.json', trace); await proof.artifact('query-order.json', await queryOrder.finish());
   await proof.artifact('random-tape.json', { draws: runtime.tape });
+  const actorTape = actors.finish(), finalPolicy = policyState();
+  await proof.artifact('actor-tape.json', actorTape); await proof.artifact('actor-policy-final.json', finalPolicy);
   await proof.artifact('player-metrics.json', { days, metrics, latencies, actorActions: Object.fromEntries(actorActions),
     opportunities: opportunities.summarize(at), meaningfulActionDefinition: 'Fresh completed domain PlayerCommands plus canonical crime attempts with committed success or loss; excludes reads/replays/denials' });
-  result = { status: 'PASS_SCOPED', hours, population, actualActiveActors: [...actorActions.values()].filter(Boolean).length,
+  result = { status: 'PASS_SCOPED', hours, population, seed, actualActiveActors: [...actorActions.values()].filter(Boolean).length,
     dailySelectedActors: Math.floor(population / 10), seasonalRolloversPerActor: expectedRollovers, metrics,
-    timerCounts, invariantChecks: baseline.checks.length, finalStateSha256: final.stateSha256,
+    timerCounts, invariantChecks: baseline.checks.length, initialStateSha256: initial.stateSha256, finalStateSha256: final.stateSha256,
     workerScheduleSha256: trace.scheduleSha256, missingRequiredProof: configuration.coverageMissing,
+    jobOutcomesSha256: sha256(canonicalJson(trace.jobs)), deterministicRandomTapeSha256: sha256(canonicalJson(runtime.tape)),
+    actorTapeSha256: actorTape.entriesSha256, policyStateSha256: sha256(canonicalJson(finalPolicy)),
+    semanticMetricsSha256: sha256(canonicalJson({ days, metrics, actorActions: Object.fromEntries(actorActions), opportunities: opportunities.summarize(at) })),
+    checkpointRestart: !!resume, recordedActorAndSelectionReplay: !!replay,
     worldDiagnosticsSemanticSha256: sha256(canonicalJson(finalDiagnostics.semantic)),
     resourceObservation: observeResources ? resourceSummary : null,
     statement: 'Completed only the declared quiet-world workload; no matrix qualification or dead-world clearance' };
+  if (replay) result.replayComparison = compareActorReplay(result, replayRun.result);
+  await proof.record({ kind: 'assertions', ...result });
 } catch (error) {
   result = { status: 'FAIL', hours, population, metrics, error: error.message, invocation: failureInvocation, logicalAt: at };
   await proof.record({ kind: 'failure', invocation: failureInvocation, logicalAt: at, message: error.message, stack: error.stack });
   await proof.artifact('failure-worker-schedule.json', controller.diagnostic());
   await proof.artifact('failure-random-tape.json', { draws: runtime.tape });
+  await proof.artifact('failure-actor-tape.json', actors.diagnostic());
+  await proof.artifact('failure-actor-policy.json', policyState());
   await proof.artifact('failure-query-order.json', await queryOrder.diagnostic());
   if (commitObserver) await proof.artifact('failure-resource-observer.json', { capturedAt: 'First failure, before diagnostic state capture', ...resourceSummary, diagnostic: commitObserver.diagnostic() });
   if (pool) {

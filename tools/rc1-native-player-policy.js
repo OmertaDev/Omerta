@@ -31,6 +31,21 @@ export function observedOpportunityTracker({ observationWindowMs = 86400000 } = 
   assert(Number.isSafeInteger(observationWindowMs) && observationWindowMs > 0);
   const rows = new Map();
   return {
+    checkpoint() { return { format: 1, observationWindowMs, rows: structuredClone([...rows.values()]) }; },
+    restore(data) {
+      assert.equal(rows.size, 0, 'Restore observations before adding new sightings');
+      assert.equal(data.format, 1); assert.equal(data.observationWindowMs, observationWindowMs);
+      assert(Array.isArray(data.rows));
+      const retained = new Map();
+      for (const row of data.rows) {
+        assert.deepEqual(Object.keys(row).sort(), ['accountId', 'firstSeen', 'lastSeen', 'opportunityId']);
+        assert.equal(typeof row.accountId, 'string'); assert.equal(typeof row.opportunityId, 'string');
+        assert(Number.isSafeInteger(row.firstSeen) && Number.isSafeInteger(row.lastSeen) && row.lastSeen >= row.firstSeen);
+        const key = JSON.stringify([row.accountId, row.opportunityId]); assert(!retained.has(key), 'Duplicate retained observation');
+        retained.set(key, structuredClone(row));
+      }
+      for (const [key, row] of retained) rows.set(key, row);
+    },
     observe(accountId, cards, logicalAt) {
       for (const card of cards) {
         assert.equal(typeof card.opportunityId, 'string');
