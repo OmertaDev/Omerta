@@ -289,6 +289,91 @@
         "result": "PASS, including old campaign/shipment receipt replay with no heir value",
         "evidence": "expanded-native-results.json"
       }
+    },
+    {
+      "id": "RC1-TOOL-16",
+      "classification": "D tooling defect",
+      "owner": "Codex/root",
+      "failedGate": "Hosted recovery dispatch",
+      "before": "a4a3b9a6 workflow rejected HTTP422: runner.temp unavailable in job-level env.",
+      "repair": "815d02a8 places restricted output variables in step-level env.",
+      "changedSource": [
+        ".github/workflows/rc1-recovery.yml"
+      ],
+      "retest": "c429051d workflow accepted and all four jobs executed; individual failures retained in browser-refresh-retest.json."
+    },
+    {
+      "id": "RC1-TOOL-17",
+      "classification": "D tooling defect",
+      "owner": "Codex/root",
+      "failedGate": "Hosted npm test / test/gates.js",
+      "before": "c429051d CI35562358638 failed because workflow-shape guard expected the old static PostgreSQL job name.",
+      "repair": "4c01e753 asserts both exact16/18.4 matrix entries, matching server images, unchanged20-minute budget and complete expanded native command list.",
+      "changedSource": [
+        "test/gates.js",
+        ".github/workflows/rc1-recovery.yml",
+        "package.json"
+      ],
+      "retest": "Focused test/gates.js PASS; fresh full CI required."
+    },
+    {
+      "id": "RC1-TOOL-18",
+      "classification": "D tooling defect",
+      "owner": "Codex/root",
+      "failedGate": "Hosted connected golden phone journey",
+      "before": "c429051d LinuxPG16/18.4 controls missing during rendered refresh; controlled normal Refresh-world interruption reproduced failure.",
+      "repair": "c537bb4b handles observed rendered loading only, waits for board and reissues once. Stable missing/disabled controls still fail.",
+      "changedSource": [
+        "test/lib/rc1-browser-controls.js",
+        "test/rc1-browser-controls.js"
+      ],
+      "retest": "Four native widths and controlled interruption PASS; browser-refresh-retest.json. Hosted cause remains inference until rerun."
+    },
+    {
+      "id": "RC1-TOOL-19",
+      "classification": "D tooling defect",
+      "owner": "Codex/root",
+      "failedGate": "Original worker full-state replay",
+      "before": "934fcf97 version2 replay diverged at458hours after an NPC job skipped a fixed database-scoped advisory lock during another schema-isolated world.",
+      "repair": "21cc4178/a9f41558 allocate an exclusively owned database and verify exact name/OID/ownership before cleanup.",
+      "changedSource": [
+        "tools/rc1-native-database.js",
+        "test/rc1-native-database.js",
+        "test/rc1-native-worker-schedule.js",
+        "test/rc1-native-world-workload.js"
+      ],
+      "retest": "Native same-database lock interference and separate-database success control PASS; isolated673-hour replay pending."
+    },
+    {
+      "id": "RC1-TOOL-20",
+      "classification": "D tooling defect",
+      "owner": "Codex/root",
+      "failedGate": "Quiet world2160-hour evidence sealing",
+      "before": "db1749d8 finished logical90days but failed with Invalid string length while serializing version2 query tape.",
+      "repair": "61e03b8d writes bounded proof-indexed lossless chunks and reads replay lazily; version3 rejects incomplete/tampered tapes.",
+      "changedSource": [
+        "tools/rc1-native-query-tape.js",
+        "tools/rc1-native-query-order.js",
+        "test/rc1-native-query-tape.js",
+        "test/rc1-native-worker-schedule.js",
+        "test/rc1-native-world-workload.js"
+      ],
+      "retest": "Chunk/large-number/failure/tamper controls PASS; new owned-database90-day run required.",
+      "evidence": "quiet-world-failed-run.json"
+    },
+    {
+      "id": "RC1-TOOL-21",
+      "classification": "D tooling defect",
+      "owner": "Codex/root",
+      "failedGate": "Quiet workload harness review",
+      "before": "7f310378 unused opportunity counter, age/persistence ambiguity, no final invariant boundary and stale command failure context.",
+      "repair": "1639ae6e derives distinct observations, separates age from sightings, adds final invariants and clears invocation context.",
+      "changedSource": [
+        "tools/rc1-native-player-policy.js",
+        "test/rc1-native-player-policy.js",
+        "test/rc1-native-world-workload.js"
+      ],
+      "retest": "Policy controls PASS; db1749d8 executed final invariants but whole run correctly remains FAIL due tape sealing and incomplete isolation."
     }
   ]
 }

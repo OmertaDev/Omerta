@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "runId": "world-resource-b0d907509ed1-222e10162d",
+  "source": {
+    "revision": "b0d907509ed1be08c3db2ffcf3af6d2e800cd9c9",
+    "gitTree": "9683d35b17136f892bbf67bef110337650cebdbe",
+    "checkoutSha256": "d1d59dc89bcba5fe3ffb2a1e8ae4cba543332a53c3ecd0a233300df17347bf7e",
+    "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+    "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+  },
+  "outcome": "SCOPED_PASS",
+  "sourceImmutable": true,
+  "evidenceClass": "NATIVE_FIXTURE_ASSISTED",
+  "startedAt": "2026-09-21T05:25:35.264Z",
+  "endedAt": "2026-09-21T05:25:50.277Z",
+  "databaseVersion": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+  "canonicalBoundaries": 10,
+  "exactParityChecks": 60,
+  "negativeControl": {
+    "outcome": "REJECTED_WITH_RETAINED_BEFORE_AFTER",
+    "quantity": "0.000000001"
+  },
+  "fixture": "One account/character with declared initial cash10000; no progression claim",
+  "executed": [
+    "Canonical loan offer and refund",
+    "Canonical crime attempt with real committed success/loss result",
+    "Declared canonical material grant, exact replay, consume and insufficient-material refusal",
+    "Unique creation, transfer and consumption",
+    "Tiny committed unledgered cash increment rejected with before/after retained"
+  ],
+  "artifacts": [
+    {
+      "file": "initial-state.json",
+      "sha256": "a005db0c7658e7da4f6d794ec0388abb59ce0a189b4c75f48c202ddace822350"
+    },
+    {
+      "file": "movements.ndjson",
+      "sha256": "d3e9e24fbcf162768d7ec021c98ae59b1917726551f609d6002e49c04c36cbfc"
+    },
+    {
+      "file": "pre-injection-state.json",
+      "sha256": "5fbbf86a32d73860493a309da2db95b2b0b1b62c9d2f4f9380485de27f487ece"
+    }
+  ],
+  "resultSha256": "cdd6ef8408e019d89fb487fa6a6be43b3b9b06cb554be340c3051f97ced2d493",
+  "exclusions": [
+    "Original worker integration",
+    "Per-commit proxy hook",
+    "Full resource taxonomy and matrix",
+    "Real deployment and chain backing",
+    "Native lot/capital branches in this focused invocation"
+  ],
+  "resourceGateStatus": "OPEN_REQUIRED_PROOF",
+  "qualifyingFullResourcePass": false,
+  "dependencyCaveat": "Local shared installed dependencies were not independently attested. This source-only native observer test does not attest a later integration, chain, deployment or matrix.",
+  "privacy": "Public-safe aggregate metadata only; no raw actor identities, tokens, connection strings, requests or private paths."
+}

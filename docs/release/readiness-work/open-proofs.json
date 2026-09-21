@@ -17,8 +17,8 @@
     {
       "id": "RC1-01-CONCURRENT-REPLAY",
       "owner": "Backend/test engineer; current engineering assignee Codex/native_harness",
-      "missing": "Recorded native salvage contention/rollback replay is now scoped PASS. Complete production worker replay remains open: a673-hour run crossed two rollovers, but fresh-process repetition diverged in NPC random choices and is retained as FAIL. Full matrix/checkpoint reduction coverage remains required.",
-      "evidence": "harness-concurrent-replay-results.json and expanded-native-results.json; worker failure retained separately by its source",
+      "missing": "Scoped contention/checkpoint replays pass. Original worker repetition exposed unordered LIMIT membership and shared-database advisory locks. Complete eligible-state recording, owned databases and bounded tapes are implemented; a fresh full worker pair and actor-policy restart/replay remain in progress.",
+      "evidence": "harness-worker-results.json;harness-database-isolation.md;expanded-native-results.json",
       "reruns": [
         "concurrent replay",
         "checkpoint/failure reduction",
@@ -40,7 +40,7 @@
     {
       "id": "RC1-03-MATRIX-AND-SOAK",
       "owner": "Simulation engineer; current engineering assignee Codex/native_harness",
-      "missing": "The fifteen distinguishing workload implementations, all 225 qualifying runs, full lifecycle/due-work coverage, metrics/dead-world assertions and 12-hour production-equivalent soak are unfulfilled. Declared matrix cells are not executed proof.",
+      "missing": "Quiet actor workload reached90logicaldays but sealedFAIL on tape storage and lacked full database isolation. No qualifying cells exist. Distinguishing policies, complete resource movement, metrics/reachability,225runs and12-hour production-equivalent soak remain required.",
       "evidence": "scenario-manifest.json",
       "reruns": [
         "225 complete native runs after conservation coverage",
@@ -51,8 +51,8 @@
     {
       "id": "RC1-04-AUTHORITY-INVENTORY",
       "owner": "Security/backend engineer; current engineering assignee Codex/source_repairs",
-      "missing": "All 24 Player Commands have a source-reviewed partial native matrix with executed assertion mappings. 100 HTTP denial probes, native Knowledge read/revoke/kick orderings and additional replay/state checks are retained. Complete per-command branches and reviewed 529 legacy mutation routes remain open.",
-      "evidence": "authority-command-matrix.json and expanded-native-results.json",
+      "missing": "24 PlayerCommands have partial reviewed native coverage. Additional398 denials cover42 moderator,35 selected ownership/account and4reviewer routes. A reproduced pre-parser moderator ingress issue is repaired with retained before/after controls. Remaining legacy routes, complete role/terminal branches and integration review stay open.",
+      "evidence": "authority-command-matrix.json;authority-legacy-review.json;expanded-native-results.json",
       "reruns": [
         "reviewed complete authority matrix",
         "native tampering/denial/replay tests",
@@ -63,7 +63,7 @@
       "id": "RC1-05-MOBILE-AND-JOURNEYS",
       "owner": "Client/QA engineer; physical testers required",
       "missing": "Four widths pass connected fixture-assisted browser B/C/D/E segments. Complete major-action failure/loss/expiry paths, stress counts, physical iPhone/Android keyboard/wallet paths and human A–E comprehension remain required.",
-      "evidence": "golden-browser-regressions.json",
+      "evidence": "golden-browser-regressions.json;browser-refresh-retest.json",
       "reruns": [
         "complete four-width browser matrix",
         "physical device matrix",
