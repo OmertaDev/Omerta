@@ -20,8 +20,8 @@ export function fixture(){
   bid:null,bidder:null,status:'live',expires_at:new Date(at+BLACK_MARKET.MAX_TTL_H*3600000).toISOString(),created_at:new Date(at).toISOString()};
  after.tables.market_listings=[listing];
  const origin=sql=>({kind:'native-npc-market-source-v1',frames:sql===SQL.locked
-  ?[{caller:'runResidentBehaviour',line:line(SQL.locked)}]
-  :[{caller:'residentAct',line:sql===SQL.listing?line(SQL.listing):line('export async function residentAct(')},
+  ?[{caller:'runResidentBehaviour',line:line('const live = (await client.query(')}]
+  :[{caller:'residentAct',line:sql===SQL.listing?line("await client.query(\n        '"+SQL.listing):line('export async function residentAct(')},
     {caller:'runResidentBehaviour',line:line('const did = live ? await residentAct(client, live) : null;')}]});
  const entry=(sql,parameters,command,rowCount=0,rows=[])=>({sql,parameters,command,rowCount,rows,logicalAt:at,origin:origin(sql)});
  const queries=[entry('BEGIN',[],'BEGIN'),entry(SQL.locked,['npc'],'SELECT',1,[Object.fromEntries(['id','cash','loc','npc_seed','guard_price','fade_limit','duel_limit'].map(k=>[k,person[k]]))]),
@@ -40,6 +40,8 @@ reject('foreign boundary',p=>{p.provenance.boundary={...p.event,transactionId:2}
 reject('wrong source',p=>{p.provenance.extensions.npcMarketOrder.sourcePins={wrong:'hash'};});
 reject('rollback cannot qualify',p=>{p.event.outcome='ROLLED_BACK';});
 reject('missing original caller',p=>{p.provenance.queries.at(-2).origin.frames.pop();});
+reject('SQL-literal line is not the call expression',p=>{p.provenance.queries[1].origin.frames[0].line=line(SQL.locked);});
+reject('INSERT-literal line is not the call expression',p=>{p.provenance.queries.at(-2).origin.frames[0].line=line(SQL.listing);});
 reject('changed locked input',p=>{p.provenance.queries[1].rows[0].cash='100001';});
 reject('ineligible NPC',p=>{p.before.tables.characters[0].safe_until='2027-01-01T00:00:00Z';});
 reject('duplicate receipt',p=>{p.receipts.push(structuredClone(p.receipts[0]));});
@@ -65,4 +67,16 @@ const unknown=[];for(const [label,mutate] of [
  ['ordinary player authority',p=>{p.provenance.queries.at(-2).origin=null;}],
  ['native maintenance compound',p=>{p.provenance.queries[2].rowCount=1;}],
 ]){const p=fixture();mutate(p);assert.equal(run(p).movements.length,0);unknown.push(label);}
-console.log(JSON.stringify({status:'PASS_SCOPED_CONTROLS',nativeExecution:false,positivePlacements:1,rejected:rejected.length,explicitUnsupported:unknown.length}));
+const retained=process.argv.find(arg=>arg.startsWith('--retained='));let nativeInputRechecked=false;
+if(retained){
+ const input=JSON.parse(fs.readFileSync(retained.slice('--retained='.length),'utf8'));
+ const ids=new Set(input.before.tables.transactions.map(row=>row.id));
+ const evidence={...input,provenance:input.transaction,receipts:input.after.tables.transactions.filter(row=>!ids.has(row.id))};
+ assert.equal(run(evidence).movements.length,1);
+ for(const sql of [SQL.locked,SQL.listing]){const corrupt=structuredClone(evidence);const entry=corrupt.provenance.queries.find(row=>row.sql===sql);
+  const caller=sql===SQL.locked?'runResidentBehaviour':'residentAct';entry.origin.frames.find(frame=>frame.caller===caller).line=line(sql);
+  assert.throws(()=>run(corrupt));}
+ nativeInputRechecked=true;
+}
+console.log(JSON.stringify({status:'PASS_SCOPED_CONTROLS',nativeExecution:false,positivePlacements:1,rejected:rejected.length,explicitUnsupported:unknown.length,
+ nativeInputRechecked,retainedLiteralLineCorruptions:nativeInputRechecked?2:0}));

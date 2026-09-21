@@ -30,7 +30,9 @@ export function assertNpcMarketSources() {
   }
   const line = needle => { assert.equal(text.split(needle).length, 2); return text.slice(0, text.indexOf(needle)).split('\n').length; };
   sites = { start: line('export async function residentAct('), end: line('export async function runResidentBehaviour(') - 1,
-    call: line('const did = live ? await residentAct(client, live) : null;'), lock: line(NPC_MARKET_SQL.locked), listing: line(NPC_MARKET_SQL.listing) };
+    call: line('const did = live ? await residentAct(client, live) : null;'),
+    lock: line("const live = (await client.query(\n        '" + NPC_MARKET_SQL.locked + "',\n        [r.id])).rows[0];"),
+    listing: line("await client.query(\n        '" + NPC_MARKET_SQL.listing + "',\n        [uid(), r.id, 'order', good.id, qty, r.loc, unit,\n         new Date(Date.now() + BLACK_MARKET.MAX_TTL_H * 3600 * 1000)]);") };
 }
 const populationUrl = new URL('../src/population.js', import.meta.url).href;
 function origin(sql) {
