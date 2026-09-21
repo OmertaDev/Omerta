@@ -1,0 +1,232 @@
+{
+  "format": 1,
+  "owner": "Codex/native_harness",
+  "sourceRevision": "f9a4c84d8847a18dd65603a0dc8972e9b0058a36",
+  "baseRevision": "030e88edab2077917b987a7cb0b464949b175357",
+  "status": "PASS_SCOPED",
+  "matrixQualifying": false,
+  "qualifyingFullResourcePass": false,
+  "productionEdits": 0,
+  "priorFailures": [],
+  "initialSupply": {
+    "scarcity": "Three ordinary entrants:500cash/25ammo/0bank/0cb/0omr/0respect; ordinary-entry scarcity proxy, not minimum-over-all-resources.",
+    "abundance": "Same ordinary entries. Initialization-only respect fixture to canonical level75, followed by actual26250 check-in each =>26750cash each. Nine real2000-for50 ammo purchases. No resource grants or invented maximum."
+  },
+  "commands": [
+    "node test/rc1-resource-pressure-policy.js",
+    "node test/rc1-native-resource-pressure.js --postgres --scenario=resource_scarcity",
+    "node test/rc1-native-resource-pressure.js --postgres --scenario=resource_abundance"
+  ],
+  "environment": {
+    "node": "v24.19.0",
+    "postgres": "18.4",
+    "controlDatabase": "Local PostgreSQL on127.0.0.1:55441; unique owned database per probe",
+    "seed": "rc1-alpha",
+    "logicalEpoch": "2026-09-20T12:00:00.000Z"
+  },
+  "checks": "Unit policy controls; independently reverified all artifact bytes/history hash chains and queried pg_database to confirm both owned databases absent.",
+  "resourceScope": "Focused exact personal cash/bank/ammo/CB and identity-bound player ammo escrow. Shared observer escrow rejections retained; other unsupported receipt classifications remain explicit. At HTTP/original-callback boundaries, not per-commit or complete13-resource qualification.",
+  "replayScope": "Two successful exact HTTP retries per probe preserve all canonical tables/sequences. Pending policy checkpoints restored before every dispatch. No fresh-world observation/replay claim.",
+  "nativeCorruption": "Four counterfactual controls use original native before/after evidence. A fifth commits a balanced one-round transfer to the wrong owner; unchanged global ammo cannot conceal per-owner failure. This is terminal negative control followed only by evidence and cleanup, never repaired.",
+  "workerScope": "Original boot Director/season/hourly callbacks and all six due callbacks over15 logical minutes:3Director and3health. RWA registry unavailable remains EXPECTED_DORMANT. No actual seasonal rollover or hourly due interval occurs within15minutes.",
+  "artifactIndex": {
+    "path": "harness-resource-pressure-artifact-index.json",
+    "sha256": "031109fb7c43a1a5731359455eccdecf4abd5c653cfb07c682b7a648f2c5ce09",
+    "artifactCount": 348,
+    "artifactBytes": 31422001
+  },
+  "runs": [
+    {
+      "scenario": "resource_scarcity",
+      "restrictedDirectory": "C:/Users/Jorge/.codex/rc1-readiness-private-20260921/resource-pressure-f9a4c84d-scarcity-1",
+      "configurationSha256": "c284075976182562bb01f0a835c912072be17dfcd69a6297ced5d6327334c89d",
+      "runJsonSha256": "87479ca0e1f94e498a148e22e8a4a35ce69a0fa94e7aa9e0b4327337b9cfb8dc",
+      "result": {
+        "status": "PASS_SCOPED",
+        "scenario": "resource_scarcity",
+        "ordinaryEntrants": 3,
+        "activeActors": 3,
+        "directResourceGrants": 0,
+        "progressionFixtures": 0,
+        "freshPolicyActions": 20,
+        "crimeAttempts": 10,
+        "staleLotDenials": 1,
+        "exactStateReplays": 2,
+        "corruptionControls": 5,
+        "logicalSeconds": 900,
+        "resourceBoundaries": 137,
+        "sharedObserverEscrowLimitations": 6,
+        "unsupportedResourceClassifications": 4,
+        "invariantBoundaries": 35,
+        "finalPositiveStateSha256": "7c9859221099b7d3b528aa3b955435db588f2640dcd05ec087fed2ed2aa1437a",
+        "terminalState": "Deliberately corrupted native custody retained after positive proof; no continuation or repair",
+        "matrixQualifying": false,
+        "qualifyingFullResourcePass": false
+      },
+      "artifacts": 188,
+      "artifactBytes": 16449334,
+      "historyEntries": 446,
+      "journal": {
+        "equations": 1234,
+        "nonzero": {
+          "cash": 16,
+          "ammo": 7,
+          "cb": 2
+        },
+        "compounds": [
+          {
+            "gross": 500,
+            "net": 490,
+            "tax": 5,
+            "sink": 5
+          }
+        ]
+      },
+      "callbacks": {
+        "boot:director": 1,
+        "boot:season": 1,
+        "boot:hourly": 1,
+        "directorTick": 3,
+        "health-boundary": 3
+      },
+      "invariantChecksPerBoundary": [
+        55
+      ],
+      "unsupported": {
+        "receipt-reason:checkin": 3,
+        "receipt-reason:ammo:buy": 1
+      },
+      "cleanupVerified": true,
+      "finalConcentration": {
+        "ammo": {
+          "values": [
+            "25",
+            "50",
+            "50"
+          ],
+          "total": "125",
+          "topShare": 0.4,
+          "gini": 0.13333333333333333
+        },
+        "cashAndBank": {
+          "values": [
+            "11",
+            "350",
+            "850"
+          ],
+          "total": "1211",
+          "topShare": 0.7018992568125516,
+          "gini": 0.4618772364437104
+        }
+      }
+    },
+    {
+      "scenario": "resource_abundance",
+      "restrictedDirectory": "C:/Users/Jorge/.codex/rc1-readiness-private-20260921/resource-pressure-f9a4c84d-abundance-1",
+      "configurationSha256": "afae61e3813c9ffb09410dacad84e3ced64053aca8530dfb2cb72e78c88e06de",
+      "runJsonSha256": "e22dc9c5abe58b50c55497658d3bdb545e6ee84e68b6480ed3de4b3f427aaf1b",
+      "result": {
+        "status": "PASS_SCOPED",
+        "scenario": "resource_abundance",
+        "ordinaryEntrants": 3,
+        "activeActors": 3,
+        "directResourceGrants": 0,
+        "progressionFixtures": 3,
+        "freshPolicyActions": 23,
+        "crimeAttempts": 0,
+        "staleLotDenials": 1,
+        "exactStateReplays": 2,
+        "corruptionControls": 5,
+        "logicalSeconds": 900,
+        "resourceBoundaries": 108,
+        "sharedObserverEscrowLimitations": 8,
+        "unsupportedResourceClassifications": 15,
+        "invariantBoundaries": 36,
+        "finalPositiveStateSha256": "b83a2e46b37d66a467d6ff5c55bac254950b0399c2f344a3c91d3a3217633544",
+        "terminalState": "Deliberately corrupted native custody retained after positive proof; no continuation or repair",
+        "matrixQualifying": false,
+        "qualifyingFullResourcePass": false
+      },
+      "artifacts": 160,
+      "artifactBytes": 14972667,
+      "historyEntries": 366,
+      "journal": {
+        "equations": 975,
+        "nonzero": {
+          "cash": 18,
+          "ammo": 17
+        },
+        "compounds": [
+          {
+            "gross": 500,
+            "net": 490,
+            "tax": 5,
+            "sink": 5
+          },
+          {
+            "gross": 500,
+            "net": 490,
+            "tax": 5,
+            "sink": 5
+          },
+          {
+            "gross": 500,
+            "net": 490,
+            "tax": 5,
+            "sink": 5
+          }
+        ]
+      },
+      "callbacks": {
+        "boot:director": 1,
+        "boot:season": 1,
+        "boot:hourly": 1,
+        "directorTick": 3,
+        "health-boundary": 3
+      },
+      "invariantChecksPerBoundary": [
+        55
+      ],
+      "unsupported": {
+        "receipt-reason:checkin": 3,
+        "receipt-reason:ammo:buy": 9,
+        "receipt-reason:bank:deposit:22220": 1,
+        "receipt-reason:bank:deposit:19250": 1,
+        "receipt-reason:bank:deposit:20750": 1
+      },
+      "cleanupVerified": true,
+      "finalConcentration": {
+        "ammo": {
+          "values": [
+            "100",
+            "175",
+            "250"
+          ],
+          "total": "525",
+          "topShare": 0.47619047619047616,
+          "gini": 0.19047619047619047
+        },
+        "cashAndBank": {
+          "values": [
+            "19250",
+            "20750",
+            "22220"
+          ],
+          "total": "62220",
+          "topShare": 0.3571198971391835,
+          "gini": 0.03182256509161042
+        }
+      }
+    }
+  ],
+  "limitations": [
+    "Ordinary-entry scarcity proxy is not the full authored scarcity scenario",
+    "Fixture-assisted abundance progression is not naturally earned",
+    "Three actors are not one of the frozen matrix populations",
+    "Only bounded cash/ammo pressure and CB parity exercised; other resource extremes unqualified",
+    "Stale-choice serial contention does not qualify simultaneous races",
+    "Shared observer rejects14 escrow boundaries across the pair; no waiver or pass relabeling",
+    "Checkin, ammo purchase cash and bank receipt classifications remain unsupported in shared observer",
+    "No long-term workload, full fresh-world replay or225-run matrix qualification"
+  ]
+}
