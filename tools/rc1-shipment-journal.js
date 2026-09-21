@@ -1,7 +1,7 @@
 // Read-only exact custody classifier for the explicitly exercised shipment branches.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-import { SHIPMENT, M3, levelOf, commissionOf, shipmentCityCap } from '../src/rules.js';
+import { SHIPMENT, M3, levelOf, commissionOf, shipmentCityCap, seasonIdxOf, seasonModOf } from '../src/rules.js';
 import { equation, exactSum, negate } from './rc1-resource-journal.js';
 export const SHIPMENT_TABLES = ['characters', 'account_persistent', 'transactions', 'shipment_days', 'shipment_takes',
   'bespoke_pieces', 'bespoke_serials', 'idempotency', 'kill_log', 'notifications', 'searches'];
@@ -27,7 +27,7 @@ export async function snapshotShipment(pool) {
 export const shipmentCustodyHash = state => hash({ characters: state.characters.map(row => ({ id: row.id, account: row.account_id, alive: row.alive,
   cash: row.cash, bank: row.bank, ammo: row.ammo, shipment: row.shipment })), transactions: state.transactions, days: state.shipment_days,
   takes: state.shipment_takes, pieces: state.bespoke_pieces, serials: state.bespoke_serials, receipts: state.idempotency });
-export function reconcileShipment(before, after, { commands = [], label = '' } = {}) {
+export function reconcileShipment(before, after, { commands = [], label = '', logicalAt } = {}) {
   const receipts = added(before.transactions, after.transactions, key), durable = added(before.idempotency, after.idempotency, receiptKey);
   const pieces = added(before.bespoke_pieces, after.bespoke_pieces, pieceKey), oldChars = index(before.characters, key), chars = index(after.characters, key);
   const requests = [];
@@ -53,6 +53,23 @@ export function reconcileShipment(before, after, { commands = [], label = '' } =
     assert(!classifiedDeaths.has(victimId)); classifiedDeaths.add(victimId);
     const eligible = levelOf(Number(victim.respect)) >= M3.LOOT_MIN_LVL, loot = eligible ? Math.floor(Number(victim.shipment) * SHIPMENT.LOOT_RATE) : 0;
     assert.equal(response.lootable, eligible); assert.equal(response.matLoot, loot, 'Canonical material loot floor disagrees');
+    // This fixture's cash disposition is pocket-only, with no bounty/chop/escrow
+    // or blood-oath modifier. Wider combat economy is deliberately unsupported.
+    assert(Number.isSafeInteger(logicalAt)); assert.equal(Number(victim.bank), 0); assert.equal(Number(victim.bank_intransit), 0);
+    assert(Number.isSafeInteger(Number(victim.cash)));
+    for (const field of ['chop', 'bounty', 'omrLoot', 'orderLoot']) assert.equal(response[field], 0, `Unsupported combat value: ${field}`);
+    const cashRate = Math.min(0.5, M3.CASH_LOOT_RATE * (seasonModOf(seasonIdxOf(Math.floor(logicalAt / 86400000))).lootMult || 1));
+    const cashLoot = eligible ? Number(BigInt(victim.cash) * BigInt(Math.round(cashRate * 10000)) / 10000n) : 0;
+    assert.equal(response.loot, cashLoot, 'Pocket loot formula disagrees');
+    const lootReceipts = receipts.filter(tx => tx.reason === 'whack:loot' && tx.currency === 'cash');
+    assert.equal(lootReceipts.length, cashLoot ? 2 : 0);
+    if (cashLoot) for (const [owner, counterparty, value] of [[killer.id, victim.id, cashLoot], [victim.id, killer.id, -cashLoot]]) {
+      const matches = lootReceipts.filter(tx => tx.character_id === owner && tx.counterparty === counterparty); assert.equal(matches.length, 1);
+      assert.equal(exactSum([matches[0].amount, negate(value)]), '0', 'Cash loot owner/counterparty amount');
+    }
+    const estateDebit = receipts.filter(tx => tx.reason === 'death:estate' && tx.currency === 'cash' && tx.character_id === victim.id);
+    assert.equal(estateDebit.length, Number(victim.cash) > cashLoot ? 1 : 0);
+    if (estateDebit.length) assert.equal(exactSum([estateDebit[0].amount, victim.cash, negate(cashLoot)]), '0', 'Estate burns exactly unlooted pocket cash');
     const killRows = after.kill_log.filter(kill => !before.kill_log.some(prior => prior.id === kill.id) && kill.killer_account === killer.account_id && kill.victim_account === victim.account_id);
     assert.equal(killRows.length, 1, 'Death requires one canonical owner-linked kill receipt');
     const evidence = { rule: 'src/social/combat.js fire material loot; src/social/estate.js original terminal and heir',
@@ -61,6 +78,7 @@ export function reconcileShipment(before, after, { commands = [], label = '' } =
     if (loot) add(killer.id, loot, 'transferredIn', evidence);
     const heirs = after.characters.filter(ch => ch.alive && ch.account_id === victim.account_id && !oldChars.has(ch.id));
     assert.equal(heirs.length, 1); assert.equal(heirs[0].shipment, 0); assert.equal(heirs[0].generation, victim.generation + 1);
+    assert.equal(heirs[0].id, response.estate.heirId, 'Response must identify the actual same-account heir');
     // Dead rows retain historical values. They are evidence, never spendable custody.
     assert.equal(Number(chars.get(victim.id).shipment), Number(victim.shipment) - loot, 'Unexpected dead material history');
     lineage.push({ kind: 'fire-death', from: victim.id, to: killer.id, transferred: loot, destroyed: Number(victim.shipment) - loot, heir: heirs[0].id, evidence });

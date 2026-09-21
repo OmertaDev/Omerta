@@ -49,6 +49,11 @@ per-owner equations reconcile every later cash/ammo receipt and the original
 newborn defaults. Corruption controls alter copies of native artifacts, never
 world rows: lost/wrong-owner loot, heir material, missing kill/take/debit authority,
 rewritten caps, orphan serial and wrong receipt owner must fail.
+An additional balanced wrong-owner cash control changes both the alleged loot
+receipt and recipient balances; the canonical killer/victim linkage must still
+reject it. The pocket-cash formula includes the original seasonal multiplier,
+and the estate burns exactly the unlooted remainder. Bank/transit, bounty/chop,
+escrow and blood-oath combat variants remain outside this classifier.
 
 No natural entry, apex-rout grant, network/browser, deployed compatibility,
 complete resource matrix or release clearance follows from this bounded proof.

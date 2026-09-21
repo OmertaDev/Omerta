@@ -14,7 +14,7 @@ const source = await sourceIdentity(), seed = arg('seed') || 'rc1-shipment-termi
 const runId = `shipment-terminal-${source.revision.slice(0, 12)}-${crypto.randomBytes(5).toString('hex')}`;
 const output = path.resolve(arg('output') || path.join(os.tmpdir(), 'omerta-rc1-resource-proof', runId));
 const database = planOwnedWorldDatabase({ controlUrl: process.env.RC1_RESOURCE_DATABASE_URL, runId, sourceRevision: source.revision });
-for (const name of ['SEARCH_MS', 'SHOOT_CD_MS', 'GEAR_LOOT_CHANCE', 'CHAIN_RPC_URL', 'CHAIN_SIGNER_PK', 'INVARIANT_WEBHOOK_URL', 'LIQUIDITY_RPC_URL', 'LIQUIDITY_RPC_FALLBACK_URL', 'REDIS_URL']) assert(!process.env[name], `Override/external integration excluded: ${name}`);
+for (const name of ['SEARCH_MS', 'SHOOT_CD_MS', 'GEAR_LOOT_CHANCE', 'SEASON_MOD', 'SEASON_MODS', 'CHAIN_RPC_URL', 'CHAIN_SIGNER_PK', 'INVARIANT_WEBHOOK_URL', 'LIQUIDITY_RPC_URL', 'LIQUIDITY_RPC_FALLBACK_URL', 'REDIS_URL']) assert(!process.env[name], `Override/external integration excluded: ${name}`);
 const epoch = Date.parse('2026-09-20T23:59:59.999Z'), population = 18;
 const configuration = { sourcePins: WORKER_SOURCE_PINS, epoch: new Date(epoch).toISOString(), population, seed,
   authority: 'Canonical HTTP injection, actual PostgreSQL row-lock contention and original local workers; no forced outcomes',
@@ -49,7 +49,7 @@ async function call(accountId, url, key, payload, statuses = [200], method = 'PO
 async function observe(name, work, verify = () => {}) {
   const before = await snapshotShipment(readPool), start = calls.length; let value, after, journal;
   try { value = await work(); after = await snapshotShipment(readPool); const commands = calls.slice(start);
-    journal = reconcileShipment(before, after, { commands, label: name }); await verify({ before, after, value, journal });
+    journal = reconcileShipment(before, after, { commands, label: name, logicalAt: at }); await verify({ before, after, value, journal });
     const input = { name, before, after, commands, logicalAt: at, result: value ?? null }, artifact = `shipment-boundary-${String(++boundaries).padStart(4, '0')}.json`;
     await proof.artifact(artifact, input); await proof.record({ kind: 'shipment-lineage', artifact, journal }); saved.set(name, input);
     equations += journal.equations.length; movements += journal.lineage.length; cases.push({ name, outcome: 'PASS', movements: journal.lineage.length }); return value;
@@ -163,11 +163,17 @@ try {
   await replay('loot-commission:durable-exact-retry', commission);
   await invariant('final');
   const corrupt = async (name, baseline, change) => { const input = structuredClone(saved.get(baseline)); assert(input); change(input);
-    let error; try { reconcileShipment(input.before, input.after, { commands: input.commands, label: input.name }); } catch (caught) { error = caught.message; }
+    let error; try { reconcileShipment(input.before, input.after, { commands: input.commands, label: input.name, logicalAt: input.logicalAt }); } catch (caught) { error = caught.message; }
     assert(error, `Corruption escaped: ${name}`); const artifact = `negative-${name}.json`; await proof.artifact(artifact, input); controls.push({ name, artifact, outcome: 'REJECTED', error }); };
   await corrupt('wrong-loot-owner', 'fire:odd-material-loot-and-replacement', input => { input.after.characters.find(row => row.id === actors[14]).shipment--; input.after.characters.find(row => row.id === actors[16]).shipment++; });
   await corrupt('heir-retains-material', 'fire:odd-material-loot-and-replacement', input => { input.after.characters.find(row => row.account_id === actors[0] && row.alive).shipment = 1; });
   await corrupt('missing-kill-receipt', 'fire:odd-material-loot-and-replacement', input => { input.after.kill_log = input.before.kill_log; });
+  await corrupt('cash-loot-balanced-wrong-owner', 'fire:odd-material-loot-and-replacement', input => {
+    const tx = input.after.transactions.find(row => row.reason === 'whack:loot' && row.currency === 'cash' && row.character_id === actors[14]);
+    const amount = Number(tx.amount); tx.character_id = actors[16];
+    const killer = input.after.characters.find(row => row.id === actors[14]), other = input.after.characters.find(row => row.id === actors[16]);
+    killer.cash = String(Number(killer.cash) - amount); other.cash = String(Number(other.cash) + amount);
+  });
   await corrupt('rewritten-old-day', 'midnight:overlapping-original-day-claims', input => { input.after.shipment_days[0].cap++; });
   await corrupt('missing-take-authority', 'midnight:overlapping-original-day-claims', input => { input.after.shipment_takes = input.before.shipment_takes; });
   await corrupt('orphan-serial', 'loot-commission:same-key-concurrent-duplicate', input => { input.after.bespoke_serials[0].minted++; });
@@ -175,8 +181,10 @@ try {
   await corrupt('missing-cash-debit', 'loot-commission:same-key-concurrent-duplicate', input => { input.after.transactions = input.after.transactions.filter(row => !(row.reason === 'shipment:commission' && row.character_id === actors[14])); });
   await corrupt('wrong-request-owner', 'loot-commission:same-key-concurrent-duplicate', input => { input.after.idempotency.find(row => row.key === 'loot-piece').account_id = actors[16]; });
   const schedule = controller.diagnostic(); assert.equal(schedule.failures.length, 0);
+  const timerCounts = Object.fromEntries(['directorTick', 'guardedTick', 'guardedSeasonTick', 'health-boundary'].map(label => [label, schedule.events.filter(event => event.kind === 'timer.fire' && event.label === label).length]));
+  assert.deepEqual(timerCounts, { directorTick: 36, guardedTick: 3, guardedSeasonTick: 3, 'health-boundary': 36 });
   await proof.artifact('final-state.json', await snapshotShipment(readPool)); await proof.artifact('worker-schedule.json', schedule); await proof.artifact('random-tape.json', runtime.tape);
-  result = { status: 'PASS_SCOPED', boundaries, movements, equations, invariants, cases, controls, midnightBoundaries: 1,
+  result = { status: 'PASS_SCOPED', boundaries, movements, equations, invariants, cases, controls, timerCounts, midnightBoundaries: 1,
     originalSearchMilliseconds: CONSTANTS.SEARCH_MS, terminalDeaths: 2, fullResourceCoverage: false, exclusions: configuration.exclusions };
 } catch (error) { result = { status: 'FAIL', error: error.message, boundaries, movements, equations, invariants, cases, controls };
   await proof.record({ kind: 'failure', message: error.message, stack: error.stack }); await proof.artifact('failure-worker-schedule.json', controller.diagnostic()); process.exitCode = 1;
