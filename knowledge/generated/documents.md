@@ -395,6 +395,7 @@
 | [docs/release/readiness-work/family-player-policy.md](../../docs/release/readiness-work/family-player-policy.md) | documentation | 29 | 2026-09-21 |
 | [docs/release/readiness-work/golden-browser-regressions.md](../../docs/release/readiness-work/golden-browser-regressions.md) | documentation | 25 | 2026-09-21 |
 | [docs/release/readiness-work/harness-actor-replay.md](../../docs/release/readiness-work/harness-actor-replay.md) | documentation | 75 | 2026-09-21 |
+| [docs/release/readiness-work/harness-car-journal.md](../../docs/release/readiness-work/harness-car-journal.md) | documentation | 37 | 2026-09-21 |
 | [docs/release/readiness-work/harness-concurrent-replay.md](../../docs/release/readiness-work/harness-concurrent-replay.md) | documentation | 57 | 2026-09-21 |
 | [docs/release/readiness-work/harness-database-isolation.md](../../docs/release/readiness-work/harness-database-isolation.md) | documentation | 39 | 2026-09-21 |
 | [docs/release/readiness-work/harness-failure-reducer.md](../../docs/release/readiness-work/harness-failure-reducer.md) | documentation | 31 | 2026-09-21 |
@@ -405,6 +406,7 @@
 | [docs/release/readiness-work/market-player-policy.md](../../docs/release/readiness-work/market-player-policy.md) | documentation | 20 | 2026-09-21 |
 | [docs/release/readiness-work/mystery-player-policies.md](../../docs/release/readiness-work/mystery-player-policies.md) | documentation | 91 | 2026-09-21 |
 | [docs/release/readiness-work/omr-custody-journal.md](../../docs/release/readiness-work/omr-custody-journal.md) | documentation | 120 | 2026-09-21 |
+| [docs/release/readiness-work/omr-loan-terminal-journal.md](../../docs/release/readiness-work/omr-loan-terminal-journal.md) | documentation | 95 | 2026-09-21 |
 | [docs/release/readiness-work/quiet-world-workload.md](../../docs/release/readiness-work/quiet-world-workload.md) | documentation | 42 | 2026-09-21 |
 | [docs/release/readiness-work/README.md](../../docs/release/readiness-work/README.md) | documentation | 92 | 2026-09-21 |
 | [docs/release/readiness-work/resource-capital-lifecycles.md](../../docs/release/readiness-work/resource-capital-lifecycles.md) | documentation | 20 | 2026-09-21 |
