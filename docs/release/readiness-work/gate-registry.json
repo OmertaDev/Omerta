@@ -9,6 +9,27 @@
   "note": "Pinned required command inventory across the four source workflows. Preserve each workflow setup, database isolation, platform, environment and budgets. A component regression pass does not clear a full native, deployed, or human proof.",
   "gates": [
     {
+      "id": "rc1-mod-ingress",
+      "command": ["npm", "run", "test:rc1:mod-ingress:postgres"],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": ["Native HTTP injection only; no deployed proxy or external load test"]
+    },
+    {
+      "id": "rc1-legacy-authority",
+      "command": ["npm", "run", "test:rc1:legacy-authority:postgres"],
+      "timeoutMs": 1200000,
+      "scope": "regression",
+      "coverageExclusions": ["42 moderator perimeters and 35 selected ownership surfaces; full role and route transition coverage remains required"]
+    },
+    {
+      "id": "rc1-escrow",
+      "command": ["npm", "run", "test:rc1:escrow:postgres"],
+      "timeoutMs": 4500000,
+      "scope": "regression",
+      "coverageExclusions": ["Original one-hour market and loan, 30-minute GP and Stakes; declared short poker fixture, full branch and simulation coverage remains required"]
+    },
+    {
       "id": "rc1-command-family",
       "command": ["npm", "run", "test:rc1:command-family:postgres"],
       "timeoutMs": 600000,

@@ -122,7 +122,13 @@
     "test:rc1:family:postgres": "node tools/rc1-resource-family.js",
     "test:rc1:shipment:postgres": "node test/rc1-shipment-boundary.js --postgres",
     "test:rc1:golden:postgres": "node test/rc1-golden-browser-postgres.js",
-    "test:rc1:command-family:postgres": "node test/rc1-command-family-postgres.js"
+    "test:rc1:command-family:postgres": "node test/rc1-command-family-postgres.js",
+    "test:rc1:mod-ingress:postgres": "node test/rc1-mod-ingress-postgres.js",
+    "test:rc1:legacy-authority:postgres": "node test/rc1-legacy-authority-postgres.js",
+    "test:rc1:escrow:postgres": "node tools/rc1-resource-escrow.js",
+    "test:rc1:worker": "node test/rc1-native-worker-schedule.js",
+    "test:rc1:worker:postgres": "node test/rc1-native-worker-schedule.js --postgres",
+    "test:rc1:world:postgres": "node test/rc1-native-world-workload.js --postgres"
   },
   "dependencies": {
     "@fastify/jwt": "^10.2.0",

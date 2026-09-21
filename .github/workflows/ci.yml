@@ -219,6 +219,13 @@ jobs:
           RC1_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/postgres
         run: npm run test:rc1:security:postgres
 
+      - name: Moderator authentication and limiter precede body parsing (real PostgreSQL)
+        if: '!cancelled()'
+        env:
+          COORDINATION_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check
+          RC1_MOD_INGRESS_OUTPUT: ${{ runner.temp }}/rc1-mod-ingress
+        run: npm run test:rc1:mod-ingress:postgres
+
       - name: RC1 scoped resource journals, concurrent retries and rollback (real PostgreSQL)
         if: '!cancelled()'
         env:
