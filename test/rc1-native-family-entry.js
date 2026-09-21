@@ -11,7 +11,7 @@ assert(process.argv.includes('--postgres'), 'Native PostgreSQL required');
 const arg = name => process.argv.find(value => value.startsWith(`--${name}=`))?.slice(name.length + 3);
 const source = await sourceIdentity(), seed = 'rc1-family-entry-alpha';
 const runId = `family-entry-${source.revision.slice(0, 12)}-${crypto.randomBytes(5).toString('hex')}`;
-const output = path.resolve(arg('output') || path.join(os.tmpdir(), 'omerta-rc1-resource-proof', runId));
+const output = path.resolve(arg('output') || process.env.RC1_FAMILY_ENTRY_OUTPUT || path.join(os.tmpdir(), 'omerta-rc1-resource-proof', runId));
 const database = planOwnedWorldDatabase({ controlUrl: process.env.RC1_RESOURCE_DATABASE_URL, runId, sourceRevision: source.revision });
 for (const key of ['SEASON_MOD', 'SEASON_MODS', 'SEASON_PHASE', 'LAW_BUST_P', 'CHAIN_RPC_URL', 'CHAIN_SIGNER_PK', 'LIQUIDITY_RPC_URL', 'LIQUIDITY_RPC_FALLBACK_URL', 'INVARIANT_WEBHOOK_URL', 'REDIS_URL'])
   assert(!process.env[key], `Undeclared override or external integration ${key}`);

@@ -3330,6 +3330,10 @@ scopedSocialContext = async function(db) {
       + 'it requires their original restricted actor snapshots, requests and artifact hashes, '
       + 'which are not distributed to hosted CI. The current-source Family custody native '
       + 'suite and pure journal controls are independently invoked by rc1-recovery.yml.',
+    'test/rc1-native-proof-gzip-benchmark.js':
+      'Requires an explicit immutable restricted historical history file and a fresh private output directory. '
+      + 'It measures and verifies every original byte without rerunning gameplay; generic CI lacks that input. '
+      + 'Current gzip transport unit controls and original-worker observation/replay are independently workflow-wired.',
     'test/rc1-native-failure-reduction-postgres.js':
       'Requires explicit --recorded-run and --world-failure restricted historical directories, '
       + 'a selected standing sequence and source-tree/schema/lock equality with that recording. '

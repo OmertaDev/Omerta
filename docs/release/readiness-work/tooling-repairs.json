@@ -526,8 +526,8 @@
         "test/rc1-browser-board-refresh.js",
         "test/lib/rc1-board-diagnostics.js"
       ],
-      "retest": "Integratedf8b9b0d1 widths320/360/390 PASS50commands6interactions each;430 FAIL after32commands because pinned node detached before submission after the generation check. No browser JS errors. Whole golden gate remainsFAIL; failure and causal refinement retained. Hosted rerun required; b0failure retained. Controlled pinned production refresh coordinator and serialized API queue reproduce both pre-submit windows; same-board detachment, loading without GET and submitted mismatch remain failures. Clean2de580f1 native430 PASS50commands6interactions with two observed refresh recoveries and0submissions before reissue. Exact timing of historicalf8 failure remains unproven. Root all-four native and hosted reruns required.",
-      "evidence": "Restricted b0c85c11-linux-pg16-failed.log and b0c85c11-linux-pg16/golden-browser.log; development controls retained; fresh integrated freeze required;harness-board-detachment.md;hosted-b0c85c11-recovery-results.json"
+      "retest": "Integratedf8b9b0d1 widths320/360/390 PASS50commands6interactions each;430 FAIL after32commands because pinned node detached before submission after the generation check. No browser JS errors. Whole golden gate remainsFAIL; failure and causal refinement retained. Hosted rerun required; b0failure retained. Controlled pinned production refresh coordinator and serialized API queue reproduce both pre-submit windows; same-board detachment, loading without GET and submitted mismatch remain failures. Clean2de580f1 native430 PASS50commands6interactions with two observed refresh recoveries and0submissions before reissue. Exact timing of historicalf8 failure remains unproven. Root all-four native and hosted reruns required. Exact4b9db479 integrated affected native gates pass; both hosted Linux recovery lanes pass. Separate hosted PG18.4 alliance replay fails with missing detailed retention; no inherited clearance.",
+      "evidence": "Restricted b0c85c11-linux-pg16-failed.log and b0c85c11-linux-pg16/golden-browser.log; development controls retained; fresh integrated freeze required;harness-board-detachment.md;hosted-b0c85c11-recovery-results.json;integrated-4b9db479-results.json"
     },
     {
       "id": "RC1-TOOL-33",
@@ -541,8 +541,8 @@
         "tools/rc1-native-proof-stream.js",
         "test/rc1-native-proof-stream.js"
       ],
-      "retest": "Independent retained-byte audit verified197artifacts15917events716invocations without changing failed status. Fresh90c80287 native48h observation/replay both exited0/PASS_SCOPED;18fields and complete canonical/resource hashes match without exclusions. Root integrated rerun remains required.",
-      "evidence": "../../rc1-alliance-world.md; retained fc069f31 audit SHA1b6ba15b5dbf6472291c20896ed15792aff6bd302192c5c38f884c386db6af34"
+      "retest": "Independent retained-byte audit verified197artifacts15917events716invocations without changing failed status. Fresh90c80287 native48h observation/replay both exited0/PASS_SCOPED;18fields and complete canonical/resource hashes match without exclusions. Root integrated rerun remains required. Exact4b9db479 integrated affected native gates pass; both hosted Linux recovery lanes pass. Separate hosted PG18.4 alliance replay fails with missing detailed retention; no inherited clearance.",
+      "evidence": "../../rc1-alliance-world.md; retained fc069f31 audit SHA1b6ba15b5dbf6472291c20896ed15792aff6bd302192c5c38f884c386db6af34;integrated-4b9db479-results.json"
     },
     {
       "id": "RC1-TOOL-35",
@@ -584,8 +584,81 @@
         "test/rc1-native-world-workload.js",
         "test/rc1-alliance-response-barrier.js"
       ],
-      "retest": "90c80287 activity and1a42a953 exact second-membership-query causal controls pass with55native invariants. Fresh90c80287 full48h observation/replay pass. Root integrated reruns required.",
-      "evidence": "../../rc1-alliance-world.md; retained failure run SHA366f848961f44899a8b24d10b78815469d4ace490119de74497c3189c2cc6c60"
+      "retest": "90c80287 activity and1a42a953 exact second-membership-query causal controls pass with55native invariants. Fresh90c80287 full48h observation/replay pass. Root integrated reruns required. Exact4b9db479 integrated affected native gates pass; both hosted Linux recovery lanes pass. Separate hosted PG18.4 alliance replay fails with missing detailed retention; no inherited clearance.",
+      "evidence": "../../rc1-alliance-world.md; retained failure run SHA366f848961f44899a8b24d10b78815469d4ace490119de74497c3189c2cc6c60;integrated-4b9db479-results.json"
+    },
+    {
+      "id": "RC1-TOOL-37",
+      "classification": "D integration fixture defect",
+      "owner": "Codex/root",
+      "failedGate": "4b9db479 candidate15 rc1-harness-units; hosted fullCI35586583471/job106291229534",
+      "before": "The old browser integration fixture created a new synthetic session per access and omitted the actual observed board GET generation. The repaired helper correctly refused this missing causal state.",
+      "repair": "5341808f keeps one session, tracks actual held HTTP reads, asserts zero pre-submit POSTs and waits for the real response before testing the settled disabled control. No production helper or criterion relaxed.",
+      "changedSource": [
+        "test/rc1-browser-controls.js"
+      ],
+      "retest": "Focused fixture and complete harness pass on clean5341808f. Candidate15 remains FAIL; current integrated rerun required. Hosted4b fullCI subsequently fails the same fixture; both original native PostgreSQL lanes and full npm test step pass.",
+      "evidence": "integrated-4b9db479-results.json; private browser-controls-generation-development.log, browser-controls-generation-development-2.log, browser-controls-generation-harness.log;hosted-4b9db479-ci-results.json"
+    },
+    {
+      "id": "RC1-TOOL-39",
+      "classification": "D overstrict bootstrap equivalence assertion",
+      "owner": "Codex/mystery_workloads",
+      "failedGate": "85121083 native alliance checkpoint continuation",
+      "before": "Exact native dump restoration passed, but the harness required original application bootstrap to leave every canonical row unchanged; makeDb legitimately stamps schema_meta.applied_at at the resumed clock.",
+      "repair": "c7b23435 preserves strict pre-application restore equality, permits only that exact original schema stamp in a separate aggregate bootstrap comparison and retains all rows and sequence differences. Other mutations fail.",
+      "changedSource": [
+        "tools/rc1-alliance-continuation.js",
+        "test/rc1-alliance-continuation.js",
+        "test/rc1-native-world-workload.js",
+        "test/rc1-alliance-continuation-native-audit.js"
+      ],
+      "retest": "Cleanc7b23435 reference, continuation, continuation replay and independent three-run audit PASS_SCOPED. All18 replay fields match;23-table uninterrupted difference and213 added startup resource boundaries retained. No uninterrupted-equivalence or general restart-safety claim.",
+      "evidence": "../../rc1-alliance-continuation.md"
+    },
+    {
+      "id": "RC1-TOOL-38",
+      "classification": "D incomplete hosted evidence retention",
+      "owner": "Codex/root",
+      "failedGate": "4b9db479 recovery35586586182 PostgreSQL18.4 alliance world replay,job106291241951",
+      "before": "Replay exited1 but the workflow uploaded no complete private run/history/comparison/dump. Public status alone cannot explain the failure. Original restricted artifacts are unavailable.",
+      "repair": "9d36a050 encrypts fixed native evidence roots with a locally held RSA3072 recipient; only authenticated AES256GCM envelopes are uploaded. A diagnostic dispatch copies retention tools outside an exact older checkout and records tested source separately from workflow/helper source.",
+      "changedSource": [
+        "tools/rc1-ci-envelope.js",
+        "tools/rc1-ci-retain.mjs",
+        "test/rc1-ci-envelope.js",
+        ".github/workflows/rc1-recovery.yml"
+      ],
+      "retest": "14 envelope test groups and exact9d36a050 archive/encrypt/decrypt CLI pipeline pass. Hosted reproduction35590753664 is pending, envelope controls passed on Node22. The original run remains failed and incompletely retained.",
+      "evidence": "ci-private-retention.md;../../rc1-ci-envelope.md;integrated-4b9db479-results.json"
+    },
+    {
+      "id": "RC1-TOOL-40",
+      "classification": "D compressed evidence publication barrier defect",
+      "owner": "Codex/root and Codex/native_harness",
+      "failedGate": "ee48d4d8 focused late-artifact source-bound reproduction of f5524e9 recorder",
+      "before": "A delayed admitted snapshot and post-finish artifact wrote physical files after publication, omitted from the sealed artifact index.",
+      "repair": "b5d97db5 closes artifact/snapshot/checkpoint admission and drains all previously admitted operations before verification/publication. Internal checkpoint writes share their admitted operation; any artifact failure retains INCOMPLETE. Pre-finish failure snapshots remain possible after poisoned history.",
+      "changedSource": [
+        "tools/rc1-native-proof-gzip.js",
+        "test/rc1-native-proof-gzip.js"
+      ],
+      "retest": "Focused delayed snapshot/checkpoint, late admission, failed artifact and poisoned-history diagnostic controls pass. Default format1 unchanged. Integrated and native gzip world reruns required.",
+      "evidence": "Restricted gzip-artifact-finish-gap-ee48d4d8-1/reproduction-result.json and run SHAee2641fb13dddac86ce2081bb0083ab9d280f826c766a1effb0deb9a8e0a28ac;harness-gzip-capture.md"
+    },
+    {
+      "id": "RC1-TOOL-41",
+      "classification": "D retained receipt verifier defect",
+      "owner": "Codex/resource_proof",
+      "failedGate": "d92a9198 native Family entry proof after34 boundaries and11 exact movements",
+      "before": "An adversarial duplicate historical durable receipt escaped a verifier that checked only the current command key. Native run correctly remained FAIL on the failed corruption control.",
+      "repair": "361efd90 enforces global account/key uniqueness in durable retained request receipts and updates the original observer regression for exact formation plus explicit unknown seasonal/membership changes.",
+      "changedSource": [
+        "test/lib/rc1-family-entry-controls.js",
+        "test/rc1-world-resource-observer.js"
+      ],
+      "retest": "361efd90 native34boundaries/11movements/33corruption controls and shared-observer native regression pass;124artifacts and two history chains independently verified.",
+      "evidence": "world-family-entry.md;family-entry-observer-summary.json; failed run SHA95b904247c24ed3306d1c395304805b0df564f767f223bca2af790750707db4a; failed history SHA33cea540c710bc2aafda5ce47bffa49a7924858b635d4488311bb093314b16ca"
     }
   ]
 }

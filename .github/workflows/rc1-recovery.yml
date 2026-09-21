@@ -252,6 +252,17 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:world:resources:smoke:postgres
+      - name: Optional compressed proof with original worker callbacks
+        id: gzip_observation
+        if: '!cancelled()'
+        run: |
+          umask 077
+          node test/rc1-native-proof-gzip-worker.js --output="$RUNNER_TEMP/rc1-gzip-worker-observe"
+      - name: Replay complete compressed worker proof
+        if: steps.gzip_observation.outcome == 'success'
+        run: |
+          umask 077
+          node test/rc1-native-proof-gzip-worker.js --output="$RUNNER_TEMP/rc1-gzip-worker-replay" --replay="$RUNNER_TEMP/rc1-gzip-worker-observe"
       - name: Encrypt restricted execution evidence
         if: always()
         env:
@@ -757,6 +768,8 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:resource-scarcity:postgres
+          node test/rc1-world-ammo-escrow.js --evidence="$RC1_PRESSURE_OUTPUT"
+          node test/rc1-world-pressure-cash.js --evidence="$RC1_PRESSURE_OUTPUT"
       - name: Bounded abundance and canonical replenishment
         if: '!cancelled()'
         env:
@@ -764,6 +777,8 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:resource-abundance:postgres
+          node test/rc1-world-ammo-escrow.js --evidence="$RC1_PRESSURE_OUTPUT"
+          node test/rc1-world-pressure-cash.js --evidence="$RC1_PRESSURE_OUTPUT"
       - name: Exact Family OMR custody and original hourly yield
         if: '!cancelled()'
         env:
@@ -780,6 +795,14 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:family-yield-precision:postgres
+      - name: Exact Family formation and cash or OMR tribute
+        if: '!cancelled()'
+        env:
+          RC1_RESOURCE_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
+          RC1_FAMILY_ENTRY_OUTPUT: ${{ runner.temp }}/rc1-family-entry
+        run: |
+          umask 077
+          npm run test:rc1:family-entry:postgres
       - name: Encrypt restricted execution evidence
         if: always()
         env:
@@ -928,6 +951,79 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: rc1-private-reproduction-pg18.4-${{ inputs.replay_source }}
+          path: ${{ runner.temp }}/rc1-retention/evidence.rc1enc
+          if-no-files-found: error
+          retention-days: 30
+
+  alliance-checkpoint-continuation:
+    needs: retention-controls
+    name: Checkpoint continuation and exact replay (PostgreSQL18.4)
+    if: ${{ !inputs.replay_source }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:18.4
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: rc1_continuation_control
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      COORDINATION_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/rc1_continuation_control
+      RC1_CI_POSTGRES: '18.4'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Require restricted evidence recipient
+        run: test -n "$RC1_EVIDENCE_PUBLIC_KEY"
+      - run: npm ci
+      - name: Install matching PostgreSQL checkpoint tools
+        run: bash tools/rc1-postgres-client.sh '18.4'
+      - name: Observe48 hours with actual hour24 checkpoint
+        id: reference
+        env:
+          RC1_WORLD_OUTPUT: ${{ runner.temp }}/rc1-continuation-reference
+        run: |
+          umask 077
+          npm run test:rc1:alliance-world:postgres
+      - name: Resume remaining24 hours including original startup jobs
+        id: continuation
+        if: steps.reference.outcome == 'success'
+        env:
+          RC1_WORLD_OUTPUT: ${{ runner.temp }}/rc1-continuation-observe
+        run: |
+          umask 077
+          npm run test:rc1:alliance-continuation:postgres -- --resume="$RUNNER_TEMP/rc1-continuation-reference" --compare-uninterrupted="$RUNNER_TEMP/rc1-continuation-reference"
+      - name: Replay continuation from the identical native checkpoint
+        id: replay
+        if: steps.continuation.outcome == 'success'
+        env:
+          RC1_WORLD_OUTPUT: ${{ runner.temp }}/rc1-continuation-replay
+        run: |
+          umask 077
+          npm run test:rc1:alliance-continuation:postgres -- --resume="$RUNNER_TEMP/rc1-continuation-reference" --compare-uninterrupted="$RUNNER_TEMP/rc1-continuation-reference" --replay="$RUNNER_TEMP/rc1-continuation-observe"
+      - name: Verify complete prefix lineage and all continuation artifacts
+        if: steps.replay.outcome == 'success'
+        run: |
+          umask 077
+          node test/rc1-alliance-continuation-native-audit.js --reference="$RUNNER_TEMP/rc1-continuation-reference" --continued="$RUNNER_TEMP/rc1-continuation-observe" --replay="$RUNNER_TEMP/rc1-continuation-replay" --output="$RUNNER_TEMP/rc1-continuation-audit.json"
+      - name: Encrypt restricted execution evidence
+        if: always()
+        run: node tools/rc1-ci-retain.mjs
+      - name: Retain authenticated encrypted evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc1-private-continuation-pg18.4-${{ github.sha }}
           path: ${{ runner.temp }}/rc1-retention/evidence.rc1enc
           if-no-files-found: error
           retention-days: 30

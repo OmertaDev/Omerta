@@ -1,0 +1,52 @@
+{
+  "format": 1,
+  "source": "4b9db47901c143f94bd31d9d3159f33695d729c0",
+  "status": "FAIL",
+  "releaseReady": false,
+  "url": "https://github.com/OmertaDev/Omerta/actions/runs/35586583471",
+  "jobs": [
+    {
+      "name": "real Postgres (18.4)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/OmertaDev/Omerta/actions/runs/35586583471/job/106291229381",
+      "steps": []
+    },
+    {
+      "name": "suites + sim (pg-mem)",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/OmertaDev/Omerta/actions/runs/35586583471/job/106291229534",
+      "steps": [
+        {
+          "name": "npm test (the full suite, on pg-mem)",
+          "conclusion": "success"
+        },
+        {
+          "name": "RC1 original worker scheduling and diagnostic harness controls",
+          "conclusion": "failure"
+        }
+      ]
+    },
+    {
+      "name": "real Postgres (16)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/OmertaDev/Omerta/actions/runs/35586583471/job/106291229608",
+      "steps": []
+    }
+  ],
+  "failure": {
+    "id": "RC1-TOOL-37",
+    "location": "test/rc1-browser-controls.js:47",
+    "classification": "Old integration fixture lacks persistent observed board-read generation",
+    "observed": "Expected refreshing true, actual undefined; same failing control as candidate15 local harness.",
+    "repair": "5341808f independently passes focused fixture and full harness; latest integrated/hosted retest required"
+  },
+  "metadataSha256": "e3575da3241cd698fed900f7eb5bde6e9adc51cfa30408a1b06d35f5c031c2b8",
+  "logSha256": "0cec23ba209e0eaab1ea08be06c49f7283a6d25efb6ecbf25f40414f0f96d748",
+  "limits": [
+    "Later source does not inherit these passes",
+    "Other native recovery workflow has a separate unresolved alliance replay failure"
+  ]
+}
