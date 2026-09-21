@@ -94,6 +94,7 @@ assert.equal(await good.proof.invoke('native-control', { command: 'one' }, async
 await good.proof.artifact('result.json', resultValue);
 await assert.rejects(good.proof.artifact('result.json', {}), /Duplicate/);
 await assert.rejects(good.proof.artifact('run.json', {}), /reserved/);
+await assert.rejects(good.proof.artifact('run-unsealed.json', {}), /reserved/);
 const run = await good.proof.finish({ status: 'PASS_SCOPED', checks: 'transport unit only' });
 assert.equal(await verifyArtifactIndex(good.directory, run), true);
 const compressed = await fs.readFile(path.join(good.directory, 'history.jsonl.gz'));
@@ -116,6 +117,7 @@ const target = path.join(root, 'reindexed-logical-corruption.gz');
 await fs.writeFile(target, gzipSync(decoded.toString().replace('José', 'Jose')));
 await assert.rejects(verifyGzipHistory(target, await reindex(target), storage, api));
 await assert.rejects(verifyArtifactIndex(good.directory, { ...run, historyStorageSha256: '0'.repeat(64) }), /configuration/);
+await assert.rejects(verifyArtifactIndex(good.directory, { ...run, format: 3 }), /Unknown compressed evidence format/);
 await assert.rejects(verifyArtifactIndex(good.directory, { ...run, artifacts: [...run.artifacts, history] }), /Duplicate/);
 await assert.rejects(verifyArtifactIndex(good.directory, { ...run, historyVerification: { ...run.historyVerification, events: 99 } }), /summary/);
 await assert.rejects(verifyGzipHistory(path.join(good.directory, history.path), history, { ...storage, maximumStoredBytes: compressed.length - 1 }, api), /stored-byte/);
@@ -151,4 +153,11 @@ await assert.rejects(completion.proof.invoke('native-control', {}, async () => {
 await assert.rejects(completion.proof.finish({ status: 'FAIL', originalError: originalError.message }), /line-byte/);
 const incomplete = JSON.parse(await fs.readFile(path.join(completion.directory, 'capture-failure.json')));
 assert.deepEqual(incomplete.outstandingInvocations, [1]); assert.equal(incomplete.authorityFailure.message, originalError.message);
+const publication = await recorder('publication-failure');
+await publication.proof.record({ kind: 'initialization' });
+await fs.mkdir(path.join(publication.directory, 'run.json'));
+await assert.rejects(publication.proof.finish({ status: 'PASS_SCOPED' }), /exist/i);
+assert.equal((await fs.stat(path.join(publication.directory, 'run.json'))).isDirectory(), true);
+assert.equal(JSON.parse(await fs.readFile(path.join(publication.directory, 'capture-failure.json'))).status, 'INCOMPLETE');
+assert.equal(JSON.parse(await fs.readFile(path.join(publication.directory, 'run-unsealed.json'))).status, 'PASS_SCOPED');
 console.log(JSON.stringify({ status: 'PASS_UNIT', directory: root, controls: 'legacy separate; gzip prefixes/write stall, UTF8, physical/logical corruption, finite bounds, failure identity, source-change FAIL and reserved paths' }));

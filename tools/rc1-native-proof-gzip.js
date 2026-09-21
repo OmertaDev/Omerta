@@ -98,7 +98,7 @@ export async function createGzipProofRecorder(options, api) {
     historyStorage: storage, historyStorageSha256, configurationSha256: sha256(canonicalJson(configuration)),
     incompleteCapture: { history: 'history.jsonl.gz', diagnostic: 'capture-failure.json' } }), { flag: 'wx', mode: 0o600 });
   const writer = await createGzipHistoryWriter(historyPath, storage);
-  const artifacts = [], names = new Set(['run-reserved.json', 'run.json', 'history.jsonl', 'history.jsonl.gz', 'capture-failure.json']);
+  const artifacts = [], names = new Set(['run-reserved.json', 'run.json', 'run-unsealed.json', 'history.jsonl', 'history.jsonl.gz', 'capture-failure.json']);
   const outstanding = new Set(), startedAt = wallTimestamp();
   let sequence = 0, invocation = 0, seenInvocations = 0, previousHash = null, pending = 0, tail = Promise.resolve();
   let closed = false, captureFailure = null, attemptedSequence = null, authorityFailure = null;
@@ -187,7 +187,12 @@ export async function createGzipProofRecorder(options, api) {
           traceSemantics: 'Invocation and response-completion observation order, not PostgreSQL commit order. Raw IDs/results retained in restricted output.' };
         try {
           await verifyArtifactIndex(directory, record);
-          await fs.writeFile(path.join(directory, 'run.json'), `${JSON.stringify(record, null, 2)}\n`, { flag: 'wx', mode: 0o600 });
+          // A failed write/close must not expose a parseable sealed PASS. Publish
+          // the fully closed staging file with a no-overwrite hard link.
+          const staging = path.join(directory, 'run-unsealed.json');
+          await fs.writeFile(staging, `${JSON.stringify(record, null, 2)}\n`, { flag: 'wx', mode: 0o600 });
+          await fs.link(staging, path.join(directory, 'run.json'));
+          try { await fs.unlink(staging); } catch { /* A redundant staging link is harmless after successful publication. */ }
         } catch (error) { fail(error); }
         if (!captureFailure) { if (sourceFailure) throw Error(sourceFailure); return record; }
       }

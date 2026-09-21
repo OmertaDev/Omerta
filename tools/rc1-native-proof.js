@@ -248,11 +248,12 @@ export async function verifyArtifactIndex(directory, record) {
   assert.equal(new Set(record.artifacts.map((artifact) => artifact.path)).size, record.artifacts.length, 'Duplicate artifact index entry');
   const realRoot = await fs.realpath(directory);
   const compressed = record.format === 2;
+  if (Object.hasOwn(record, 'historyStorage')) assert(compressed, 'Unknown compressed evidence format');
   if (compressed) {
     validateHistoryStorage(record.historyStorage);
     assert.equal(record.historyStorageSha256, sha256(canonicalJson(record.historyStorage)), 'History storage configuration changed');
     assert.equal(record.artifacts.filter(item => item.path === 'history.jsonl.gz').length, 1, 'Missing compressed history');
-    assert(!record.artifacts.some(item => ['run-reserved.json', 'run.json', 'history.jsonl', 'capture-failure.json'].includes(item.path)), 'Reserved artifact path');
+    assert(!record.artifacts.some(item => ['run-reserved.json', 'run.json', 'run-unsealed.json', 'history.jsonl', 'capture-failure.json'].includes(item.path)), 'Reserved artifact path');
   }
   for (const artifact of record.artifacts) {
     assert(/^[a-z0-9-]+\.(json|jsonl|dump)$/.test(artifact.path) || (compressed && artifact.path === 'history.jsonl.gz'), 'Invalid evidence path');
