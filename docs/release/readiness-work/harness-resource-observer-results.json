@@ -1,0 +1,213 @@
+{
+  "owner": "Codex/native_harness",
+  "status": "PASS_SCOPED_WITH_EXPLICIT_UNSUPPORTED_RESOURCE_LINEAGE",
+  "matrixQualifying": false,
+  "qualifyingFullResourcePass": false,
+  "coverage": {
+    "boundaries": 1033,
+    "equations": 99827,
+    "committed": 242,
+    "autocommitted": 753,
+    "rolledBackUnchanged": 38,
+    "nonzero": {
+      "cash": 22,
+      "ammo": 12,
+      "cb": 1,
+      "omr": 0
+    },
+    "unsupported": {
+      "cars": 6,
+      "Family": 2,
+      "season_records": 2,
+      "season_recaps": 29
+    }
+  },
+  "history": [
+    {
+      "source": "4165f47f937d0e3d6cff3572db07320044d8bdb4",
+      "failure": "Observer armed before duplicate originalmakeDb migration DDL; true multi-statement bootstrap refused."
+    },
+    {
+      "source": "deffe729e1013b4f760d5f27f09c5219d33e60d7",
+      "failure": "Naive semicolon guard refused canonical loadOwned read containing harmless comment semicolons.",
+      "retainedPartial": {
+        "firstFailureBoundaries": 636,
+        "finalBoundaries": 639,
+        "equations": 59367,
+        "nonzero": {
+          "cash": 9,
+          "ammo": 8,
+          "cb": 0,
+          "omr": 0
+        },
+        "unsupported": {
+          "cars": 4,
+          "Family": 1
+        }
+      }
+    },
+    {
+      "source": "81685c5d2f7a1d572923a1d3d475b6d8107de551",
+      "repair": "Bounded lexical statement guard, exact original SQL bytes, original boot resource equality and beforeCallbacks arm; full2h workload sealedPASS_SCOPED."
+    }
+  ],
+  "sqlReproduction": {
+    "path": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\actor-resource-sql-guard-reproduction.json",
+    "sha256": "445b62a5b46e7e15829001726cf1fc20c5d5d283eeff53cc2f8a41e11960f8be",
+    "canonicalSqlSha256": "8949dfb3b7ca4ded94094d192c80f1814e30e518a0e8ac309c6103a85590123a"
+  },
+  "laterObserverRepair": {
+    "source": "ec895db74e816604b3ef9000b14b4c843e2d2920",
+    "nativeControls": "PASS11boundaries. CommentedBEGIN/START andROLLBACK TO retain transactions; chaining/two-phase/SQL-levelprepared statements rejected before mutation.",
+    "retainedDevelopmentFailure": "First addedSTART control failed because PostgreSQL native tag is START, not BEGIN; accepting both actual native tags fixed the control. Earlier workload uses plainBEGIN and is not relabeled."
+  },
+  "scope": "Every observed committed native boundary reconciled against uninstrumented read-only snapshot; supported parity only, no claim that unsupported table lineage or zero-movement OMR branches are covered.",
+  "runs": [
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\actor-resource-boundary-2h-1",
+      "source": {
+        "revision": "4165f47f937d0e3d6cff3572db07320044d8bdb4",
+        "gitTree": "dd636894fe6b82ecd9bcfdcd27ee588f4d181527",
+        "checkoutSha256": "d341bf763aafb0cc24f8046ce70adcf3330bd6fcfa7125d7af1e85d67e4aa8eb",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "FAIL",
+      "runSha256": "2acb4eddf003ad4dec0ae80d0e7b615b8c94799ffffb5d55023444510be555b0",
+      "result": {
+        "status": "FAIL",
+        "hours": 2,
+        "population": 25,
+        "metrics": {
+          "playerSnapshots": 0,
+          "ownCharacterReads": 0,
+          "freshPlayerCommands": 0,
+          "legacyCrimeAttempts": 0,
+          "crimeSuccesses": 0,
+          "crimeLosses": 0,
+          "exactReplays": 0,
+          "denials": {},
+          "sessionWaits": 0,
+          "sessions": 0,
+          "commandTypes": {},
+          "observedAuthorizedOpportunities": 0
+        },
+        "error": "Observed SQL must contain one statement with at most one trailing semicolon",
+        "invocation": null,
+        "logicalAt": 1790204400000
+      }
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\actor-resource-boundary-2h-retest-1",
+      "source": {
+        "revision": "deffe729e1013b4f760d5f27f09c5219d33e60d7",
+        "gitTree": "7a6a3e379e1802e51ebb63f1256bd7e2c94f2eb3",
+        "checkoutSha256": "ecc40fa368c78674c2c54d80029e9dbd9ec2225743385f36bdb671c2de699831",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "FAIL",
+      "runSha256": "8248da52806a8b84c58fed6a4a291f93ed8f09761c09b7cd140e07b620a5f334",
+      "result": {
+        "status": "FAIL",
+        "hours": 2,
+        "population": 25,
+        "metrics": {
+          "playerSnapshots": 4,
+          "ownCharacterReads": 0,
+          "freshPlayerCommands": 4,
+          "legacyCrimeAttempts": 0,
+          "crimeSuccesses": 0,
+          "crimeLosses": 0,
+          "exactReplays": 0,
+          "denials": {
+            "RC1_COMMIT_OBSERVER_UNSUPPORTED": 1
+          },
+          "sessionWaits": 0,
+          "sessions": 1,
+          "commandTypes": {
+            "discovery.start": 3,
+            "mystery.start": 1
+          },
+          "observedAuthorizedOpportunities": 21
+        },
+        "error": "Observed SQL must contain one statement with at most one trailing semicolon",
+        "invocation": {
+          "authority": "character.read",
+          "accountId": "quiet-player-15",
+          "logicalAt": 1790208000000
+        },
+        "logicalAt": 1790208000000
+      }
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\actor-resource-boundary-2h-lexical-retest-1",
+      "source": {
+        "revision": "81685c5d2f7a1d572923a1d3d475b6d8107de551",
+        "gitTree": "73cb6966ee8d00a8235f274426433503092a93a5",
+        "checkoutSha256": "8f7eda4f648a458c00cc0888a0a5f9c2cad39bce2f0db29a0c531581f9bcad0d",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "runSha256": "a0ccda61bde5ee6bc04c37d65aae2c5db7657ac4125f9342b8699ec7ede07d50",
+      "result": {
+        "status": "PASS_SCOPED",
+        "hours": 2,
+        "population": 25,
+        "actualActiveActors": 2,
+        "dailySelectedActors": 2,
+        "seasonalRolloversPerActor": 1,
+        "metrics": {
+          "playerSnapshots": 8,
+          "ownCharacterReads": 2,
+          "freshPlayerCommands": 8,
+          "legacyCrimeAttempts": 2,
+          "crimeSuccesses": 2,
+          "crimeLosses": 0,
+          "exactReplays": 0,
+          "denials": {},
+          "sessionWaits": 0,
+          "sessions": 2,
+          "commandTypes": {
+            "discovery.start": 4,
+            "mystery.start": 3,
+            "discovery.act": 1
+          },
+          "observedAuthorizedOpportunities": 42
+        },
+        "timerCounts": {
+          "directorTick": 24,
+          "guardedTick": 2,
+          "guardedSeasonTick": 2,
+          "health-boundary": 24
+        },
+        "invariantChecks": 55,
+        "finalStateSha256": "a913b658b9396dc29a330b43cc9e84d07d28ea4cd12895992b66900c117f1628",
+        "workerScheduleSha256": "a5d569231a23d57afa0779f13137c0a87f73b7fa26c15cd0eb0fac557b6b4b41",
+        "missingRequiredProof": [
+          "All 15 archetypes and 225 runs",
+          "All 13 resource journals at every worker transition",
+          "Complete opportunity acceptance/ignored linkage",
+          "Actor-policy checkpoint continuation and recorded replay",
+          "Dead-world reachability proof and failure minimization",
+          "Two executions of every longest lifecycle",
+          "Production-equivalent 12-hour soak",
+          "HTTP/provider authentication",
+          "Deployed environment and real cohort"
+        ],
+        "worldDiagnosticsSemanticSha256": "9c9b2ff846327f494b1132802381df8a8a2131045701f56249ca0a4b14210933",
+        "resourceObservation": {
+          "boundaries": 1033,
+          "unsupportedEntries": 39,
+          "unsupportedKinds": {
+            "observed-table-change": 37,
+            "family-lineage": 2
+          },
+          "qualifyingFullResourcePass": false
+        },
+        "statement": "Completed only the declared quiet-world workload; no matrix qualification or dead-world clearance"
+      }
+    }
+  ]
+}

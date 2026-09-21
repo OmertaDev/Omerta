@@ -1,0 +1,385 @@
+{
+  "owner": "Codex/native_harness",
+  "status": "PASS_SCOPED_RECORDED_ACTOR_REPLAY_AND_FRESH_CONTINUATION",
+  "matrixQualifying": false,
+  "qualifyingMatrixRuns": 0,
+  "scope": "25 initialized actors; quiet day0 and day1 select two actors each. Actual canonical commands, crimes and all configured local worker callbacks execute in uniquely owned PostgreSQL databases.",
+  "semantics": "Observed23h pair and fresh2h continuations of its exact checkpoint. Recorded choices require exact current authorized input and native outcome. Every complete canonical state field retained; no uninterrupted-restart or full-matrix claim.",
+  "controls": {
+    "inputSemanticMutation": "Expected sealedFAIL at first native snapshot comparison; zero fresh commands/crimes from modified input.",
+    "pure": "Changed cash, visibility, timestamps, incomplete/unconsumed tapes and every mandatory comparator field rejected; tracker raw first/last sightings restored."
+  },
+  "exclusions": [
+    "External RWA registry unavailable",
+    "Archive modeoff; no PITR",
+    "Chain/liquidity disabled",
+    "Native wall durations and physical MVCC/size excluded only from semanticcomparison",
+    "Percommitresource observation disabled in thispair",
+    "No full225matrix, productionload or deadworldqualification"
+  ],
+  "runs": [
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\actor-replay-observation-23h-1",
+      "source": {
+        "revision": "e325885ef5676a883c776f83fb1c86d6b53dec9d",
+        "gitTree": "6d9c08b10c37400dcd23d41f4168c364c2d08801",
+        "checkoutSha256": "e80ed94f3a5e03c12cf7f58d8bf29ff19789ece63411e924c03b082519eae3ad",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "runSha256": "26b34b091f55c70b12505882e9e6575c1c1003018e47d8a39c34860276690f44",
+      "result": {
+        "status": "PASS_SCOPED",
+        "hours": 23,
+        "population": 25,
+        "seed": "rc1-alpha",
+        "actualActiveActors": 2,
+        "dailySelectedActors": 2,
+        "seasonalRolloversPerActor": 1,
+        "metrics": {
+          "playerSnapshots": 8,
+          "ownCharacterReads": 2,
+          "freshPlayerCommands": 8,
+          "legacyCrimeAttempts": 2,
+          "crimeSuccesses": 2,
+          "crimeLosses": 0,
+          "exactReplays": 0,
+          "denials": {},
+          "sessionWaits": 0,
+          "sessions": 2,
+          "commandTypes": {
+            "discovery.start": 4,
+            "mystery.start": 3,
+            "discovery.act": 1
+          },
+          "observedAuthorizedOpportunities": 42
+        },
+        "timerCounts": {
+          "directorTick": 276,
+          "guardedTick": 23,
+          "guardedSeasonTick": 23,
+          "health-boundary": 276
+        },
+        "invariantChecks": 55,
+        "initialStateSha256": "4e2854266b63d0c6b667afd82997e8ca45ad3cf41757287d2ef36c148f9b7fed",
+        "finalStateSha256": "46886e37d520ffbfb5b923302a238650ca85690cb60d088122b07d76815ca392",
+        "workerScheduleSha256": "986619c5037a1be2e039956aae8606c6fb4dbc61b69968bcf52c91f7e0075cfe",
+        "missingRequiredProof": [
+          "All 15 archetypes and 225 runs",
+          "All 13 resource journals at every worker transition",
+          "Complete opportunity acceptance/ignored linkage",
+          "Actor-policy replay across all archetypes and seeds",
+          "Dead-world reachability proof and failure minimization",
+          "Two executions of every longest lifecycle",
+          "Production-equivalent 12-hour soak",
+          "HTTP/provider authentication",
+          "Deployed environment and real cohort"
+        ],
+        "jobOutcomesSha256": "5ef864572cb2da8632b2a25d1ba125ea463fd16f5c5e071cdbb30ef0332f1b15",
+        "deterministicRandomTapeSha256": "123c5a9aa633defb53be07e557698a2cfa71de78322a2cc3a00f453d9e520ced",
+        "actorTapeSha256": "e68b8f7cff04c662ad18da6cf8b395fd590dcd6cf53532a30afa52beb1ec5f46",
+        "policyStateSha256": "ffa210c7d3dc4f44d680a9714154cda69e40454987a4e23e4fd557574fb71027",
+        "semanticMetricsSha256": "0bf8f45a77baa669497c671f9f479a0b769b7d9892aa73de8041d796751ebf0d",
+        "checkpointRestart": false,
+        "recordedActorAndSelectionReplay": false,
+        "worldDiagnosticsSemanticSha256": "b2857f9d83ab6d471f168f1dbae70cad24651a3b517760d0767a08a5dd2dea62",
+        "resourceObservation": null,
+        "statement": "Completed only the declared quiet-world workload; no matrix qualification or dead-world clearance"
+      }
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\actor-replay-match-23h-1",
+      "source": {
+        "revision": "e325885ef5676a883c776f83fb1c86d6b53dec9d",
+        "gitTree": "6d9c08b10c37400dcd23d41f4168c364c2d08801",
+        "checkoutSha256": "e80ed94f3a5e03c12cf7f58d8bf29ff19789ece63411e924c03b082519eae3ad",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "runSha256": "54663a7d4b20f751fb3e55b7bf7cacc3ed44cb0add2ad00a207487cc63ab7754",
+      "result": {
+        "status": "PASS_SCOPED",
+        "hours": 23,
+        "population": 25,
+        "seed": "rc1-alpha",
+        "actualActiveActors": 2,
+        "dailySelectedActors": 2,
+        "seasonalRolloversPerActor": 1,
+        "metrics": {
+          "playerSnapshots": 8,
+          "ownCharacterReads": 2,
+          "freshPlayerCommands": 8,
+          "legacyCrimeAttempts": 2,
+          "crimeSuccesses": 2,
+          "crimeLosses": 0,
+          "exactReplays": 0,
+          "denials": {},
+          "sessionWaits": 0,
+          "sessions": 2,
+          "commandTypes": {
+            "discovery.start": 4,
+            "mystery.start": 3,
+            "discovery.act": 1
+          },
+          "observedAuthorizedOpportunities": 42
+        },
+        "timerCounts": {
+          "directorTick": 276,
+          "guardedTick": 23,
+          "guardedSeasonTick": 23,
+          "health-boundary": 276
+        },
+        "invariantChecks": 55,
+        "initialStateSha256": "4e2854266b63d0c6b667afd82997e8ca45ad3cf41757287d2ef36c148f9b7fed",
+        "finalStateSha256": "46886e37d520ffbfb5b923302a238650ca85690cb60d088122b07d76815ca392",
+        "workerScheduleSha256": "986619c5037a1be2e039956aae8606c6fb4dbc61b69968bcf52c91f7e0075cfe",
+        "missingRequiredProof": [
+          "All 15 archetypes and 225 runs",
+          "All 13 resource journals at every worker transition",
+          "Complete opportunity acceptance/ignored linkage",
+          "Actor-policy replay across all archetypes and seeds",
+          "Dead-world reachability proof and failure minimization",
+          "Two executions of every longest lifecycle",
+          "Production-equivalent 12-hour soak",
+          "HTTP/provider authentication",
+          "Deployed environment and real cohort"
+        ],
+        "jobOutcomesSha256": "5ef864572cb2da8632b2a25d1ba125ea463fd16f5c5e071cdbb30ef0332f1b15",
+        "deterministicRandomTapeSha256": "123c5a9aa633defb53be07e557698a2cfa71de78322a2cc3a00f453d9e520ced",
+        "actorTapeSha256": "e68b8f7cff04c662ad18da6cf8b395fd590dcd6cf53532a30afa52beb1ec5f46",
+        "policyStateSha256": "ffa210c7d3dc4f44d680a9714154cda69e40454987a4e23e4fd557574fb71027",
+        "semanticMetricsSha256": "0bf8f45a77baa669497c671f9f479a0b769b7d9892aa73de8041d796751ebf0d",
+        "checkpointRestart": false,
+        "recordedActorAndSelectionReplay": true,
+        "worldDiagnosticsSemanticSha256": "b2857f9d83ab6d471f168f1dbae70cad24651a3b517760d0767a08a5dd2dea62",
+        "resourceObservation": null,
+        "statement": "Completed only the declared quiet-world workload; no matrix qualification or dead-world clearance",
+        "replayComparison": {
+          "fields": [
+            "hours",
+            "population",
+            "seed",
+            "initialStateSha256",
+            "finalStateSha256",
+            "workerScheduleSha256",
+            "jobOutcomesSha256",
+            "deterministicRandomTapeSha256",
+            "actorTapeSha256",
+            "policyStateSha256",
+            "semanticMetricsSha256",
+            "worldDiagnosticsSemanticSha256"
+          ],
+          "exclusions": [
+            "Native wall durations",
+            "Read-only physical MVCC and relation-size diagnostics"
+          ],
+          "canonicalStateExclusions": []
+        }
+      }
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\actor-continuation-2h-1",
+      "source": {
+        "revision": "e325885ef5676a883c776f83fb1c86d6b53dec9d",
+        "gitTree": "6d9c08b10c37400dcd23d41f4168c364c2d08801",
+        "checkoutSha256": "e80ed94f3a5e03c12cf7f58d8bf29ff19789ece63411e924c03b082519eae3ad",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "runSha256": "dee613f854401a200f816bd3bfd2d28587bf1b2f72e66177cb7de2586d5e39b9",
+      "result": {
+        "status": "PASS_SCOPED",
+        "hours": 2,
+        "population": 25,
+        "seed": "rc1-alpha",
+        "actualActiveActors": 4,
+        "dailySelectedActors": 2,
+        "seasonalRolloversPerActor": 0,
+        "metrics": {
+          "playerSnapshots": 16,
+          "ownCharacterReads": 4,
+          "freshPlayerCommands": 16,
+          "legacyCrimeAttempts": 4,
+          "crimeSuccesses": 4,
+          "crimeLosses": 0,
+          "exactReplays": 0,
+          "denials": {},
+          "sessionWaits": 0,
+          "sessions": 4,
+          "commandTypes": {
+            "discovery.start": 7,
+            "mystery.start": 7,
+            "discovery.act": 2
+          },
+          "observedAuthorizedOpportunities": 84
+        },
+        "timerCounts": {
+          "directorTick": 24,
+          "guardedTick": 2,
+          "guardedSeasonTick": 2,
+          "health-boundary": 24
+        },
+        "invariantChecks": 55,
+        "initialStateSha256": "46886e37d520ffbfb5b923302a238650ca85690cb60d088122b07d76815ca392",
+        "finalStateSha256": "f75e469149c043c4078f5273ef767c8a4b35370cede0d38c2dca3f5b71883e73",
+        "workerScheduleSha256": "48cf66ce598e2631fef2776c2d5110655b5a4050163cfc1870c18f5ee11a58e3",
+        "missingRequiredProof": [
+          "All 15 archetypes and 225 runs",
+          "All 13 resource journals at every worker transition",
+          "Complete opportunity acceptance/ignored linkage",
+          "Actor-policy replay across all archetypes and seeds",
+          "Dead-world reachability proof and failure minimization",
+          "Two executions of every longest lifecycle",
+          "Production-equivalent 12-hour soak",
+          "HTTP/provider authentication",
+          "Deployed environment and real cohort"
+        ],
+        "jobOutcomesSha256": "ebddd8880abf73044dd9653f885ff6d39ccc083793b51eedab2894bb733cbea5",
+        "deterministicRandomTapeSha256": "d7e8dd3164b8231631c872578ff17b258482800d84f5cbd3ec7638bf472e26dc",
+        "actorTapeSha256": "6f9b5ca8a814e8f08abafc36f4ff2df3fa3be5b6f6c1d7f0f4cd78bd7118220d",
+        "policyStateSha256": "efc1b8a7b0476be06ee5397056232a483ab4a508606b6959349edeb982c506ee",
+        "semanticMetricsSha256": "7190a20488add321aa54543f9e668c673b147fbe846515cb68be05d5669695a3",
+        "checkpointRestart": true,
+        "recordedActorAndSelectionReplay": false,
+        "worldDiagnosticsSemanticSha256": "3e46d267f96fb73f0c44af489bace84799aa11fd233fb53b06c5158442757589",
+        "resourceObservation": null,
+        "statement": "Completed only the declared quiet-world workload; no matrix qualification or dead-world clearance"
+      }
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\actor-continuation-match-2h-1",
+      "source": {
+        "revision": "e325885ef5676a883c776f83fb1c86d6b53dec9d",
+        "gitTree": "6d9c08b10c37400dcd23d41f4168c364c2d08801",
+        "checkoutSha256": "e80ed94f3a5e03c12cf7f58d8bf29ff19789ece63411e924c03b082519eae3ad",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "runSha256": "2b85100fdfdd55dbdc22f4fb575cf82d53be9c9f09ac30729a60c749ef4571de",
+      "result": {
+        "status": "PASS_SCOPED",
+        "hours": 2,
+        "population": 25,
+        "seed": "rc1-alpha",
+        "actualActiveActors": 4,
+        "dailySelectedActors": 2,
+        "seasonalRolloversPerActor": 0,
+        "metrics": {
+          "playerSnapshots": 16,
+          "ownCharacterReads": 4,
+          "freshPlayerCommands": 16,
+          "legacyCrimeAttempts": 4,
+          "crimeSuccesses": 4,
+          "crimeLosses": 0,
+          "exactReplays": 0,
+          "denials": {},
+          "sessionWaits": 0,
+          "sessions": 4,
+          "commandTypes": {
+            "discovery.start": 7,
+            "mystery.start": 7,
+            "discovery.act": 2
+          },
+          "observedAuthorizedOpportunities": 84
+        },
+        "timerCounts": {
+          "directorTick": 24,
+          "guardedTick": 2,
+          "guardedSeasonTick": 2,
+          "health-boundary": 24
+        },
+        "invariantChecks": 55,
+        "initialStateSha256": "46886e37d520ffbfb5b923302a238650ca85690cb60d088122b07d76815ca392",
+        "finalStateSha256": "f75e469149c043c4078f5273ef767c8a4b35370cede0d38c2dca3f5b71883e73",
+        "workerScheduleSha256": "48cf66ce598e2631fef2776c2d5110655b5a4050163cfc1870c18f5ee11a58e3",
+        "missingRequiredProof": [
+          "All 15 archetypes and 225 runs",
+          "All 13 resource journals at every worker transition",
+          "Complete opportunity acceptance/ignored linkage",
+          "Actor-policy replay across all archetypes and seeds",
+          "Dead-world reachability proof and failure minimization",
+          "Two executions of every longest lifecycle",
+          "Production-equivalent 12-hour soak",
+          "HTTP/provider authentication",
+          "Deployed environment and real cohort"
+        ],
+        "jobOutcomesSha256": "ebddd8880abf73044dd9653f885ff6d39ccc083793b51eedab2894bb733cbea5",
+        "deterministicRandomTapeSha256": "d7e8dd3164b8231631c872578ff17b258482800d84f5cbd3ec7638bf472e26dc",
+        "actorTapeSha256": "6f9b5ca8a814e8f08abafc36f4ff2df3fa3be5b6f6c1d7f0f4cd78bd7118220d",
+        "policyStateSha256": "efc1b8a7b0476be06ee5397056232a483ab4a508606b6959349edeb982c506ee",
+        "semanticMetricsSha256": "7190a20488add321aa54543f9e668c673b147fbe846515cb68be05d5669695a3",
+        "checkpointRestart": true,
+        "recordedActorAndSelectionReplay": true,
+        "worldDiagnosticsSemanticSha256": "3e46d267f96fb73f0c44af489bace84799aa11fd233fb53b06c5158442757589",
+        "resourceObservation": null,
+        "statement": "Completed only the declared quiet-world workload; no matrix qualification or dead-world clearance",
+        "replayComparison": {
+          "fields": [
+            "hours",
+            "population",
+            "seed",
+            "initialStateSha256",
+            "finalStateSha256",
+            "workerScheduleSha256",
+            "jobOutcomesSha256",
+            "deterministicRandomTapeSha256",
+            "actorTapeSha256",
+            "policyStateSha256",
+            "semanticMetricsSha256",
+            "worldDiagnosticsSemanticSha256"
+          ],
+          "exclusions": [
+            "Native wall durations",
+            "Read-only physical MVCC and relation-size diagnostics"
+          ],
+          "canonicalStateExclusions": []
+        }
+      }
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\actor-replay-semantic-rejection-1",
+      "source": {
+        "revision": "e325885ef5676a883c776f83fb1c86d6b53dec9d",
+        "gitTree": "6d9c08b10c37400dcd23d41f4168c364c2d08801",
+        "checkoutSha256": "e80ed94f3a5e03c12cf7f58d8bf29ff19789ece63411e924c03b082519eae3ad",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "FAIL",
+      "runSha256": "b411237fd46532b2f1fd418343a43b05e58e616cbd3f398c8e55a3fd8fdfb958",
+      "result": {
+        "status": "FAIL",
+        "hours": 23,
+        "population": 25,
+        "metrics": {
+          "playerSnapshots": 0,
+          "ownCharacterReads": 0,
+          "freshPlayerCommands": 0,
+          "legacyCrimeAttempts": 0,
+          "crimeSuccesses": 0,
+          "crimeLosses": 0,
+          "exactReplays": 0,
+          "denials": {
+            "ERR_ASSERTION": 1
+          },
+          "sessionWaits": 0,
+          "sessions": 1,
+          "commandTypes": {},
+          "observedAuthorizedOpportunities": 0
+        },
+        "error": "Actor identity or exact authorized input differs\n+ actual - expected\n\n  {\n    identity: {\n      accountId: 'quiet-player-15',\n      authority: 'player.snapshot',\n      logicalAt: 1790208000000,\n      options: {}\n    },\n+   inputSha256: '6cbe3567e088b54771f474eb98292b8d96d100bbca7ed0f12fee0e42c18e5861',\n-   inputSha256: 'b474dbeec87f2a92125363ce9a6dcf45826d277b034fc76b63c29b1654a4dba0',\n    kind: 'native-outcome',\n    sequence: 2\n  }\n",
+        "invocation": {
+          "authority": "player.snapshot",
+          "accountId": "quiet-player-15",
+          "options": {},
+          "logicalAt": 1790208000000
+        },
+        "logicalAt": 1790208000000
+      }
+    }
+  ]
+}
