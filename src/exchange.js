@@ -49,7 +49,27 @@ function spentToday(acct, now) {
   const at = acct?.exchange_at ? new Date(acct.exchange_at).getTime() : 0;
   return Math.max(0, num(acct?.exchange_used) - EXCHANGE.DAILY_CAP_OMR * (Math.max(0, now - at) / 864e5));
 }
-const round6 = (n) => Math.round(n * 1e6) / 1e6;   // $OMR is 6dp, same as the NUMERIC column
+const round6 = (n) => Math.round(n * 1e6) / 1e6;
+// NUMERIC preserves arbitrary scale. Keep this window's six-decimal transfer
+// arithmetic exact, without rounding away dust already present in an account.
+function decimalParts(value) {
+  const match = /^([+-]?)(\d+)(?:\.(\d*))?(?:e([+-]?\d+))?$/i.exec(String(value).trim());
+  if (!match) throw new GameError('amount', 'Invalid $OMR amount.');
+  return { coefficient: BigInt(`${match[1]}${match[2]}${match[3] || ''}`), scale: (match[3] || '').length - Number(match[4] || 0) };
+}
+function windowUnits(value) {
+  const { coefficient, scale } = decimalParts(value);
+  if (scale <= 6) return coefficient * 10n ** BigInt(6 - scale);
+  const divisor = 10n ** BigInt(scale - 6);
+  if (coefficient % divisor) throw new GameError('precision', 'The window takes $OMR amounts with at most six decimal places.');
+  return coefficient / divisor;
+}
+function windowBalanceAfter(balance, debit) {
+  const parsed = decimalParts(balance), scale = Math.max(6, parsed.scale);
+  const remaining = parsed.coefficient * 10n ** BigInt(scale - parsed.scale) - debit * 10n ** BigInt(scale - 6);
+  const sign = remaining < 0n ? '-' : '', digits = (remaining < 0n ? -remaining : remaining).toString().padStart(scale + 1, '0');
+  return `${sign}${digits.slice(0, -scale)}.${digits.slice(-scale)}`;
+}
 
 // What is LEFT of the bucket, and what the till can actually pay — the two numbers a caller must
 // supply to succeed. Both were computed inline at the refusal AND again on the board, and both
@@ -124,8 +144,9 @@ export async function redeem(ch, amount, client, h) {
     { headroomOmr: left, dailyCapOmr: EXCHANGE.DAILY_CAP_OMR });
   }
 
+  const units = windowUnits(amount);
   const p = (await client.query('SELECT balance FROM exchange_pool WHERE id=1 FOR UPDATE')).rows[0];
-  const cash = Math.floor(omr * EXCHANGE.RATE);
+  const cash = Number(units * BigInt(EXCHANGE.RATE) / 1000000n);
   if (num(p?.balance) < cash) {
     // NOTHING is burned on a dry pool. The window is a claim on what was funded, not a promise —
     // burning into an empty till would be taking the token and giving nothing back.
@@ -150,14 +171,12 @@ export async function redeem(ch, amount, client, h) {
   // THE REMAINDER RULE sits on the BURN (the sell-tax discipline): the cut is computed, the burn is
   // whatever is left, so the two always sum to exactly what the player asked to redeem and no dust
   // goes unowned. Sizing is a founder lever — see FAMILY_YIELD.FUND_BPS.
-  const cut = round6(omr * FAMILY_YIELD.FUND_BPS / 10000);
-  const burn = round6(omr - cut);
+  const cutUnits = (units * BigInt(FAMILY_YIELD.FUND_BPS) + 5000n) / 10000n;
+  const cut = Number(cutUnits) / 1e6, burn = Number(units - cutUnits) / 1e6;
+  const originalBalance = h.acct.omr;
   if (cut > 0) {
     await spendOmr(client, h, cut, 'yield:window');
-    // Re-round the in-memory balance before the second debit. Without this, redeeming your ENTIRE
-    // balance can fail: `balance - cut` in float can sit a few 1e-16 BELOW `round6(omr - cut)`, and
-    // spendOmr's own `balance < cost` guard would then refuse the burn on a perfectly funded account.
-    h.acct.omr = round6(Number(h.acct.omr));
+    h.acct.omr = windowBalanceAfter(originalBalance, cutUnits);
     await fundFamilyYield(client, cut);
   }
   // The rest is the house's cut. NOT destroyed: `window:burn` is in DESK.SINK_REASONS, so since
@@ -165,6 +184,7 @@ export async function redeem(ch, amount, client, h) {
   // reason keeps its name (renaming a live reason drifts every historical row) but the economics
   // are revenue, not deflation — do not describe this as burning supply.
   await spendOmr(client, h, burn, 'window:burn');
+  h.acct.omr = windowBalanceAfter(originalBalance, units);
   await client.query(
     'UPDATE exchange_pool SET balance = balance - $1, lifetime_paid = lifetime_paid + $1 WHERE id=1', [cash]);
   ch.cash = num(ch.cash) + cash;
