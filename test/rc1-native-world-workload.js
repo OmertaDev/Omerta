@@ -218,6 +218,7 @@ const days = [], latencies = { read: [], command: [] };
 const knowledgeBoundaries = [];
 const allianceActors = [];
 let allianceAdapter = null, app = null;
+const responseCompletions = new Map(); let responseSequence = 0;
 let lastDay = -1;
 if (resume) {
   assert.equal(parentPolicy.format, 1); assert.equal(parentPolicy.seed, seed); assert.deepEqual(parentPolicy.roster, roster);
@@ -257,6 +258,14 @@ try {
     await seam.clock.initialize(bootstrap);
     if (allianceEnabled) {
       const { buildServer } = await import('../src/server.js'); app = await buildServer(); pool = app.pool;
+      // inject resolves at response delivery, before the original activity-wire
+      // onResponse hook's native SELECT finishes. Retain all original hooks and
+      // wait for their completion before the next serial observed query.
+      app.addHook('onResponse', async req => {
+        const key = req.headers['x-rc1-response-completion'];
+        const complete = responseCompletions.get(key); assert(complete, 'Untracked alliance response');
+        responseCompletions.delete(key); complete();
+      });
       const { PACING } = await import('../src/rules.js'), grants = [];
       for (let index = 0; index < population; index++) {
         const name = 'World Alliance Entry ' + index, bootstrapSecret = crypto.randomBytes(32).toString('base64url');
@@ -338,10 +347,22 @@ try {
   }
   async function http(actor, request) {
     return invoke('ordinary-http', { accountId: actor?.accountId || null, ...request }, async () => {
-      const r = await app.inject({ method: request.method, url: request.path,
-        headers: { ...(actor ? { authorization: 'Bearer ' + actor.token } : {}),
+      const completionKey = String(++responseSequence);
+      let timer;
+      const completed = new Promise((resolve, reject) => {
+        responseCompletions.set(completionKey, resolve);
+        timer = setTimeout(() => reject(Error('Original HTTP response hooks did not complete within 60 seconds')), 60000);
+      });
+      // Attach rejection handling before inject can spend time in native work.
+      completed.catch(() => {});
+      let r;
+      try {
+      r = await app.inject({ method: request.method, url: request.path,
+        headers: { 'x-rc1-response-completion': completionKey, ...(actor ? { authorization: 'Bearer ' + actor.token } : {}),
           ...(request.idempotencyKey ? { 'idempotency-key': request.idempotencyKey } : {}) },
         ...(request.body === undefined ? {} : { payload: request.body }) });
+      await completed;
+      } finally { clearTimeout(timer); }
       const body = r.json(); return { status: r.statusCode,
         replayed: r.headers['x-idempotent-replay'] === 'true' || body.replayed === true, body };
     }, request.method === 'GET' ? 'read' : 'command');
@@ -508,6 +529,7 @@ try {
   await proof.artifact('random-tape.json', { draws: runtime.tape });
   const actorTape = actors.finish(), finalPolicy = policyState();
   if (allianceEnabled) {
+    assert.equal(responseCompletions.size, 0, 'Outstanding original HTTP response hook');
     assert.deepEqual(allianceAdapter.summary().completedStages, [0, 1]);
     assert.equal(allianceAdapter.summary().completions.length, 3);
     assert.equal([...actorActions.values()].filter(Boolean).length, 25);
