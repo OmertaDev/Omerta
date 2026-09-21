@@ -1,12 +1,13 @@
 // Read-only scoped observer. Canonical ledgers remain the resource authorities.
 import assert from 'node:assert/strict';
-import { DESK, DESK_RECYCLE_REASON } from '../src/rules.js';
+import { DESK, DESK_RECYCLE_REASON, CONSTANTS, dayOf } from '../src/rules.js';
+import { checkinQuoteOf } from '../src/game.js';
 import { exactSum, negate, sha256 } from './rc1-resource-journal.js';
 import { reconcileCarResources } from './rc1-car-journal.js';
 
 export const WORLD_RESOURCE_TABLES = Object.freeze([
   'characters', 'account_persistent', 'transactions', 'gangs', 'amm_pool', 'street_tax', 'stake_pool', 'dev_fund',
-  'rwa_dividend_pool', 'rwa_family_dividend_pool', 'family_yield_pool', 'desk_inventory', 'loans', 'auctions', 'auction_consignments',
+  'rwa_dividend_pool', 'rwa_family_dividend_pool', 'family_yield_pool', 'exchange_pool', 'desk_inventory', 'loans', 'auctions', 'auction_consignments',
   'item_stacks', 'item_instances', 'item_lots', 'item_events', 'item_mutation_inputs', 'item_mutation_outputs', 'item_mutation_guards',
   'operation_escrow', 'world_operation_capital', 'world_operation_events', 'world_operation_commitments',
   'cars', 'boats', 'account_gear', 'market_listings', 'listings', 'bounties', 'commission_proposals', 'favors',
@@ -154,7 +155,7 @@ const reasonClasses = [
   ['cash', /^gang:found$/, 'Family formation cash sink'], ['cash', /^loan:(offer|take|refund|repay|death|loot|paper|collect|vig|house:)/, 'loan custody receipt'],
   ['cash', /^coordination:capital:(deposit|refund|spend|forfeit)$/, 'operation capital receipt'],
   ['cash', /^(campaign:|craft:hardening$|death:(estate|legacy)$|travel$)/, 'focused native cash receipt'],
-  ['ammo', /^(melt|craft:ammo|ammo:buy|death:|fire$|jump$)/, 'ammo receipt'], ['cb', /^(crime:|craft:|death:|cook:)/, 'contraband receipt'],
+  ['ammo', /^(melt|craft:ammo|death:|fire$|jump$)/, 'ammo receipt'], ['cb', /^(crime:|craft:|death:|cook:)/, 'contraband receipt'],
   ['omr', /^(loan:|desk:|gang:tribute$|vanity:|rarity:upgrade$|death:duty$|yield:|stake:|swap:|auction:|withdraw:omr$|drop:claim$)/, 'OMR custody or supply receipt'],
 ];
 
@@ -243,6 +244,90 @@ function reconcileAmmoEscrow(before, after, receipts, checks, unsupported) {
     otherListingChanges: changed.some(row => row.lot.item_kind !== 'ammo') || [...old].some(([id, lot]) => current.has(id) && lot.item_kind !== 'ammo' && json(lot) !== json(current.get(id))) };
 }
 
+// Three bounded ordinary routes. A recognized word alone never authorizes a
+// value: check-in needs its original quote/latches, ammo needs the reciprocal
+// cash/rounds pair, and banking needs exact pocket/vault/transit disposition.
+function reconcilePressureCash(before, after, receipts, checks, unsupported) {
+  const priorPeople = indexed(rows(before, 'characters'), row => row.id, 'characters');
+  const people = indexed(rows(after, 'characters'), row => row.id, 'characters');
+  const accounts = indexed(rows(before, 'account_persistent'), row => row.account_id, 'accounts');
+  const finalAccounts = indexed(rows(after, 'account_persistent'), row => row.account_id, 'accounts');
+  const selected = receipts.filter(row => row.reason === 'checkin' || row.reason === 'ammo:buy' || row.reason.startsWith('bank:deposit:'));
+  const usedReceipts = new Set(), movements = [], deposits = new Map(), touched = new Set();
+  const claim = row => { assert(!usedReceipts.has(row.id), 'Pressure cash receipt reused'); usedReceipts.add(row.id); };
+  for (const id of new Set(selected.map(row => row.character_id))) {
+    const prior = priorPeople.get(id), person = people.get(id);
+    assert(prior?.alive && person?.alive && prior.account_id === person.account_id, 'Pressure receipt requires stable living owner');
+    const own = selected.filter(row => row.character_id === id); touched.add(id);
+    for (const row of own) { assert.equal(row.account_id, null); assert.equal(row.counterparty, null); }
+    const checkins = own.filter(row => row.reason === 'checkin');
+    if (checkins.length) {
+      assert.equal(checkins.length, 1, 'Duplicate check-in receipt'); const receipt = checkins[0]; assert.equal(receipt.currency, 'cash');
+      const at = Date.parse(receipt.at); assert(Number.isSafeInteger(at), 'Check-in requires stored receipt time');
+      const today = dayOf(at), quote = checkinQuoteOf(prior, today); assert.equal(quote.done, false, 'Stale check-in receipt');
+      assert.equal(exactSum([receipt.amount]), String(quote.pay), 'Check-in receipt differs from original level/streak quote');
+      assert.equal(person.checkin_day, today); assert.equal(person.streak, quote.streak);
+      assert.equal(exactSum([person.respect]), exactSum([prior.respect]), 'Check-in plus progression requires separate lineage');
+      const oldAccount = accounts.get(prior.account_id), account = finalAccounts.get(prior.account_id); assert(oldAccount && account);
+      assert.equal(exactSum([account.checkins_lifetime, negate(oldAccount.checkins_lifetime)]), '1', 'Check-in lifetime count lacks owner linkage');
+      claim(receipt); movements.push({ kind: 'checkin', characterId: id, accountId: prior.account_id, day: today,
+        priorStreak: prior.streak, streak: quote.streak, cashCreated: String(quote.pay), authority: reference('transactions', [receipt]) });
+    }
+    const ammo = own.filter(row => row.reason === 'ammo:buy');
+    if (ammo.length) {
+      assert.equal(ammo.length, 2, 'Armory requires one cash and one ammo receipt');
+      const cash = ammo.find(row => row.currency === 'cash'), rounds = ammo.find(row => row.currency === 'ammo'); assert(cash && rounds);
+      assert.equal(exactSum([cash.amount]), '-2000', 'Armory cash price must be the authored2000');
+      assert.equal(exactSum([rounds.amount]), '50', 'Armory delivery must be the authored50 rounds');
+      assert.equal(cash.at, rounds.at, 'Armory reciprocal receipts must share the transaction timestamp');
+      claim(cash); claim(rounds); movements.push({ kind: 'armory-ammo', characterId: id, cashDestroyed: '2000', ammoCreated: '50', authority: reference('transactions', ammo) });
+    }
+    const banking = own.filter(row => row.reason.startsWith('bank:deposit:'));
+    if (banking.length) {
+      assert.equal(banking.length, 1, 'Duplicate/compound bank deposit receipts'); const receipt = banking[0];
+      assert.equal(receipt.currency, 'cash'); assert.equal(exactSum([receipt.amount]), '0', 'Bank deposit cannot create or destroy cash');
+      const match = /^bank:deposit:([1-9]\d*)$/.exec(receipt.reason); assert(match, 'Invalid bank deposit marker amount');
+      const amount = match[1]; assert(BigInt(amount) <= BigInt(Number.MAX_SAFE_INTEGER), 'Bank deposit outside verified safe-integer scope');
+      const at = Date.parse(person.bank_intransit_at), receiptAt = Date.parse(receipt.at); assert(Number.isSafeInteger(at) && Number.isSafeInteger(receiptAt));
+      assert(at >= receiptAt, 'Bank transit reset predates its receipt transaction');
+      assert(!(prior.safe_until && Date.parse(prior.safe_until) > at), 'Bank deposit while safehoused');
+      const cleared = prior.bank_intransit_at && at - Date.parse(prior.bank_intransit_at) >= CONSTANTS.BANK_CLEAR_MS;
+      parity(checks, { kind: 'bank-deposit-transit', resource: 'cash-in-transit-marker', owner: `character:${id}`,
+        before: cleared ? '0' : prior.bank_intransit || '0', after: person.bank_intransit, expectedDelta: amount, authority: reference('transactions', [receipt]) });
+      deposits.set(id, amount); claim(receipt); movements.push({ kind: 'bank-deposit', characterId: id, amount, clearedPriorTransit: !!cleared,
+        transitAt: person.bank_intransit_at, authority: reference('transactions', [receipt]), requestBinding: 'Embedded marker and custody checked; HTTP amount requires the separately retained command' });
+    }
+  }
+  for (const id of touched) {
+    const prior = priorPeople.get(id), person = people.get(id), ownCash = receipts.filter(row => row.character_id === id && row.currency === 'cash');
+    // Accrual records interest separately. Its amount is NOT authorized here;
+    // it remains an unsupported reason even while its bank destination is kept.
+    const interest = ownCash.filter(row => row.reason === 'bank:interest'), pocket = ownCash.filter(row => row.reason !== 'bank:interest');
+    parity(checks, { kind: 'pressure-pocket-disposition', resource: 'cash', owner: `pocket:${id}`, before: prior.cash, after: person.cash,
+      expectedDelta: exactSum([...pocket.map(row => row.amount), negate(deposits.get(id) || '0')]), authority: reference('transactions', ownCash) });
+    parity(checks, { kind: 'pressure-vault-disposition', resource: 'cash', owner: `bank:${id}`, before: prior.bank, after: person.bank,
+      expectedDelta: exactSum([deposits.get(id) || '0', ...interest.map(row => row.amount)]), authority: reference('transactions', ownCash) });
+  }
+  for (const [id, person] of people) {
+    const prior = priorPeople.get(id); if (!prior || exactSum([person.bank, negate(prior.bank)]) === '0' || touched.has(id)) continue;
+    const freshCash = receipts.filter(row => row.character_id === id && row.currency === 'cash');
+    assert(freshCash.length, 'Pocket/vault movement lacks a fresh owner receipt; old zero-valued deposit cannot be reused');
+    unsupported.push({ kind: 'bank-vault-lineage', characterId: id, detail: 'Bank changed outside the bounded deposit classifier; total personal cash parity alone does not prove its disposition' });
+  }
+  if (movements.length) {
+    if (receipts.filter(row => row.currency === 'cash').every(row => usedReceipts.has(row.id))) {
+      for (const [table, fields] of [['street_tax', ['pool']], ['exchange_pool', ['balance', 'lifetime_funded', 'lifetime_paid']]])
+        for (const field of fields) {
+          const prior = rows(before, table).find(row => row.id === 1), final = rows(after, table).find(row => row.id === 1);
+          assert(prior && final, `Pressure cash requires the observed ${table} singleton`);
+          parity(checks, { kind: 'pressure-no-pool-diversion', resource: 'cash', owner: `${table}/${field}`, before: prior[field], after: final[field],
+            authority: reference('transactions', selected) });
+        }
+    } else unsupported.push({ kind: 'pressure-cash-compound-pools', detail: 'Known ordinary receipt dispositions checked; other cash receipts prevent complete pool attribution' });
+  }
+  return { usedReceipts, movements };
+}
+
 export function reconcileWorldResources(before, after, { identity = null, includeRestrictedChanges = false } = {}) {
   assert.equal(before.format, 1); assert.equal(after.format, 1);
   const checks = [], unsupported = [];
@@ -266,7 +351,8 @@ export function reconcileWorldResources(before, after, { identity = null, includ
     }
   }
   const ammoEscrow = reconcileAmmoEscrow(before, after, receipts, checks, unsupported);
-  for (const receipt of receipts) if (!ammoEscrow.usedReceipts.has(receipt.id) && !reasonClasses.some(([currency, pattern]) => currency === receipt.currency && pattern.test(receipt.reason)))
+  const pressureCash = reconcilePressureCash(before, after, receipts, checks, unsupported);
+  for (const receipt of receipts) if (!ammoEscrow.usedReceipts.has(receipt.id) && !pressureCash.usedReceipts.has(receipt.id) && !reasonClasses.some(([currency, pattern]) => currency === receipt.currency && pattern.test(receipt.reason)))
     unsupported.push({ kind: 'receipt-reason', currency: receipt.currency, reason: receipt.reason, receiptId: receipt.id });
 
   const priorPeople = indexed(rows(before, 'characters'), r => r.id, 'characters'), finalPeople = indexed(rows(after, 'characters'), r => r.id, 'characters');
@@ -400,7 +486,8 @@ export function reconcileWorldResources(before, after, { identity = null, includ
   const restrictedChanges = unsupported.length ? resourceTableChanges(before, after) : null;
   if (restrictedChanges) verifyResourceTableChanges(before, after, restrictedChanges);
   return { format: 1, identity, beforeHash: worldResourceHash(before), afterHash: worldResourceHash(after), receipts,
-    itemEvents: events, mutationInputs: inputs, mutationOutputs: outputs, checks, cars, ammoEscrow: { movements: ammoEscrow.movements,
+    itemEvents: events, mutationInputs: inputs, mutationOutputs: outputs, checks, cars, pressureCash: { movements: pressureCash.movements,
+      scope: 'Original check-in quote/latches, fixed reciprocal armory purchase, exact pocket/vault/transit deposit. Request binding and unrelated accrued rewards remain outside this classifier.' }, ammoEscrow: { movements: ammoEscrow.movements,
       scope: 'Exact personal plus owned live ammo escrow; list/pull custody and fresh reciprocal purchase receipts. HTTP request binding and other escrow terminals are not reconstructed.' },
     omrBuckets: { before: omrBefore, after: omrAfter, movements: omrMovements },
     unsupported, restrictedChangesSha256: restrictedChanges ? sha256(restrictedChanges) : null,
