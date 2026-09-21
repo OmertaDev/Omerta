@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "6a189cca381ab6de519c9cb49970d157f4389549",
+  "sourceRevision": "b19e9decfcbd765e9a238dca093a8d441a1ccac6",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,16 +43,16 @@
     ]
   },
   "census": {
-    "nodes": 8608,
-    "edges": 36955,
+    "nodes": 8679,
+    "edges": 37191,
     "byNodeType": {
-      "Artifact": 3539,
-      "Command": 165,
-      "Commit": 1740,
+      "Artifact": 3564,
+      "Command": 169,
+      "Commit": 1765,
       "Contract": 79,
-      "Document": 657,
+      "Document": 664,
       "Domain": 13,
-      "ExternalDependency": 27,
+      "ExternalDependency": 28,
       "HistoricalArtifact": 343,
       "Module": 274,
       "PullRequest": 126,
@@ -60,25 +60,25 @@
       "Route": 802,
       "Subsystem": 8,
       "Table": 369,
-      "TestSuite": 459,
+      "TestSuite": 468,
       "Workflow": 6
     },
     "byEdgeType": {
-      "BELONGS_TO": 2646,
-      "CHANGED": 13838,
-      "CONTAINS": 3560,
-      "DECLARES": 165,
+      "BELONGS_TO": 2656,
+      "CHANGED": 13910,
+      "CONTAINS": 3585,
+      "DECLARES": 169,
       "DEFINED_IN": 1250,
       "DEPENDS_ON": 65,
-      "EXECUTES": 540,
+      "EXECUTES": 550,
       "HANDLED_BY": 708,
-      "HAS_COMMIT": 1740,
+      "HAS_COMMIT": 1765,
       "IMPLEMENTS": 124,
-      "IMPORTS": 3456,
+      "IMPORTS": 3508,
       "INHERITS": 17,
-      "REFERENCES": 4219,
-      "REPRESENTS": 1396,
-      "TESTS": 1293,
+      "REFERENCES": 4230,
+      "REPRESENTS": 1412,
+      "TESTS": 1304,
       "TRACKS": 126,
       "USES_TABLE": 1812
     }
@@ -7636,20 +7636,20 @@
       "path": ".github/workflows/rc1-recovery.yml",
       "kind": "workflow",
       "extension": ".yml",
-      "bytes": 39820,
-      "lines": 1039,
-      "version": "0bd1b7f04934ac32",
+      "bytes": 40964,
+      "lines": 1068,
+      "version": "4e26c4945dbaaa01",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/rc1-recovery.yml",
           "line": 1,
-          "version": "0bd1b7f04934ac32"
+          "version": "4e26c4945dbaaa01"
         }
       ],
-      "lastChangedAt": "2026-09-21T11:14:08.000Z",
+      "lastChangedAt": "2026-09-21T12:02:03.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "6a189cca381ab6de519c9cb49970d157f4389549"
+      "lastChangedCommit": "d61e02ebee2258b97560107996d5524bb6a284d0"
     },
     {
       "key": "Artifact:.gitignore",
@@ -28007,6 +28007,29 @@
       "lastChangedCommit": "fcba3b13fd3dc523c201e3ede7821ef4f27532af"
     },
     {
+      "key": "Artifact:docs/rc1-car-melt-commit.md",
+      "type": "Artifact",
+      "id": "docs/rc1-car-melt-commit.md",
+      "label": "rc1-car-melt-commit.md",
+      "path": "docs/rc1-car-melt-commit.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 7427,
+      "lines": 35,
+      "version": "87900d3811b67eb9",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/rc1-car-melt-commit.md",
+          "line": 1,
+          "version": "87900d3811b67eb9"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T11:51:33.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "3dd51d5ab3988f393cd94b904b47dc8397e9c840"
+    },
+    {
       "key": "Artifact:docs/rc1-ci-envelope.md",
       "type": "Artifact",
       "id": "docs/rc1-ci-envelope.md",
@@ -28120,6 +28143,29 @@
       "lastChangedAt": "2026-09-21T08:35:54.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "dcfb07a8226016cac54729b51a3a88df2546cc7f"
+    },
+    {
+      "key": "Artifact:docs/rc1-world-car-melt-witness.md",
+      "type": "Artifact",
+      "id": "docs/rc1-world-car-melt-witness.md",
+      "label": "rc1-world-car-melt-witness.md",
+      "path": "docs/rc1-world-car-melt-witness.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 5871,
+      "lines": 36,
+      "version": "7737d33d99439a9f",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/rc1-world-car-melt-witness.md",
+          "line": 1,
+          "version": "7737d33d99439a9f"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T12:07:13.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "962921099d330733f10168caffe2b4cbe8fd9b39"
     },
     {
       "key": "Artifact:docs/release/evidence/freeze/definitions.json",
@@ -34562,6 +34608,52 @@
       "lastChangedCommit": "559aef51ef476cc4e3677688bd279fb5206f3e7c"
     },
     {
+      "key": "Artifact:docs/release/readiness-work/authority-crew-review.md",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/authority-crew-review.md",
+      "label": "authority-crew-review.md",
+      "path": "docs/release/readiness-work/authority-crew-review.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 5060,
+      "lines": 79,
+      "version": "8034e9b61d1a0bad",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/authority-crew-review.md",
+          "line": 1,
+          "version": "8034e9b61d1a0bad"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T11:33:30.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "8881f7924877e0b47aa70e2b94bedff9b0bda19a"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/authority-crew-summary.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/authority-crew-summary.json",
+      "label": "authority-crew-summary.json",
+      "path": "docs/release/readiness-work/authority-crew-summary.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 4149,
+      "lines": 95,
+      "version": "d9777326592f3e70",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/authority-crew-summary.json",
+          "line": 1,
+          "version": "d9777326592f3e70"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T11:33:30.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "8881f7924877e0b47aa70e2b94bedff9b0bda19a"
+    },
+    {
       "key": "Artifact:docs/release/readiness-work/authority-inventory.json",
       "type": "Artifact",
       "id": "docs/release/readiness-work/authority-inventory.json",
@@ -34884,6 +34976,29 @@
       "lastChangedCommit": "9c530d9981fa0e5319e8ce1097bc539070802ff5"
     },
     {
+      "key": "Artifact:docs/release/readiness-work/family-npc-observer-summary.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/family-npc-observer-summary.json",
+      "label": "family-npc-observer-summary.json",
+      "path": "docs/release/readiness-work/family-npc-observer-summary.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 4523,
+      "lines": 111,
+      "version": "a9d863e4d496192f",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/family-npc-observer-summary.json",
+          "line": 1,
+          "version": "a9d863e4d496192f"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T11:49:17.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "71bfea187db177a06f66f85ef8d4a125dc39bfb2"
+    },
+    {
       "key": "Artifact:docs/release/readiness-work/family-omr-journal.md",
       "type": "Artifact",
       "id": "docs/release/readiness-work/family-omr-journal.md",
@@ -35029,20 +35144,20 @@
       "path": "docs/release/readiness-work/gate-registry.json",
       "kind": "artifact",
       "extension": ".json",
-      "bytes": 34372,
-      "lines": 1328,
-      "version": "241a38d2cada6545",
+      "bytes": 35929,
+      "lines": 1380,
+      "version": "8c1c58b0d80e5e62",
       "text": true,
       "provenance": [
         {
           "file": "docs/release/readiness-work/gate-registry.json",
           "line": 1,
-          "version": "241a38d2cada6545"
+          "version": "8c1c58b0d80e5e62"
         }
       ],
-      "lastChangedAt": "2026-09-21T11:14:08.000Z",
+      "lastChangedAt": "2026-09-21T12:02:03.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "6a189cca381ab6de519c9cb49970d157f4389549"
+      "lastChangedCommit": "d61e02ebee2258b97560107996d5524bb6a284d0"
     },
     {
       "key": "Artifact:docs/release/readiness-work/golden-browser-regressions.json",
@@ -35275,6 +35390,29 @@
       "lastChangedCommit": "030e88edab2077917b987a7cb0b464949b175357"
     },
     {
+      "key": "Artifact:docs/release/readiness-work/harness-city-lock-release.md",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/harness-city-lock-release.md",
+      "label": "harness-city-lock-release.md",
+      "path": "docs/release/readiness-work/harness-city-lock-release.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 6422,
+      "lines": 26,
+      "version": "c047ca9a7251b61d",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/harness-city-lock-release.md",
+          "line": 1,
+          "version": "c047ca9a7251b61d"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T11:54:41.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "1404b48c30b41ca66b757eb2c2b39fc6e2750553"
+    },
+    {
       "key": "Artifact:docs/release/readiness-work/harness-concurrent-replay-results.json",
       "type": "Artifact",
       "id": "docs/release/readiness-work/harness-concurrent-replay-results.json",
@@ -35503,6 +35641,52 @@
       "lastChangedAt": "2026-09-21T06:20:38.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "f01bc2265ea1eb375c39f0b6dd96d9fd6275acc1"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/harness-observer-serialization-index.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/harness-observer-serialization-index.json",
+      "label": "harness-observer-serialization-index.json",
+      "path": "docs/release/readiness-work/harness-observer-serialization-index.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 45570,
+      "lines": 1133,
+      "version": "ea55700fb40846c7",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/harness-observer-serialization-index.json",
+          "line": 1,
+          "version": "ea55700fb40846c7"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T11:54:41.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "1404b48c30b41ca66b757eb2c2b39fc6e2750553"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/harness-observer-serialization.md",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/harness-observer-serialization.md",
+      "label": "harness-observer-serialization.md",
+      "path": "docs/release/readiness-work/harness-observer-serialization.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 8238,
+      "lines": 45,
+      "version": "f91f8f8547fbbae9",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/harness-observer-serialization.md",
+          "line": 1,
+          "version": "f91f8f8547fbbae9"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T11:54:41.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "1404b48c30b41ca66b757eb2c2b39fc6e2750553"
     },
     {
       "key": "Artifact:docs/release/readiness-work/harness-query-order-causal-results.json",
@@ -36011,6 +36195,75 @@
       "lastChangedCommit": "6a189cca381ab6de519c9cb49970d157f4389549"
     },
     {
+      "key": "Artifact:docs/release/readiness-work/hosted-4b9db479-retained-reproduction.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/hosted-4b9db479-retained-reproduction.json",
+      "label": "hosted-4b9db479-retained-reproduction.json",
+      "path": "docs/release/readiness-work/hosted-4b9db479-retained-reproduction.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 1333,
+      "lines": 32,
+      "version": "aff7ba7b8df15072",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/hosted-4b9db479-retained-reproduction.json",
+          "line": 1,
+          "version": "aff7ba7b8df15072"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T12:02:03.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "d61e02ebee2258b97560107996d5524bb6a284d0"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/hosted-6368339e-contract-results.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/hosted-6368339e-contract-results.json",
+      "label": "hosted-6368339e-contract-results.json",
+      "path": "docs/release/readiness-work/hosted-6368339e-contract-results.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 5451,
+      "lines": 185,
+      "version": "8b041d897ed2979d",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/hosted-6368339e-contract-results.json",
+          "line": 1,
+          "version": "8b041d897ed2979d"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T12:03:31.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "6e7ccb47043e8dec766b84337eabcd52383a3d99"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/hosted-6368339e-retained-failures.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/hosted-6368339e-retained-failures.json",
+      "label": "hosted-6368339e-retained-failures.json",
+      "path": "docs/release/readiness-work/hosted-6368339e-retained-failures.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 25654,
+      "lines": 748,
+      "version": "42dbe1520d94b8f0",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/hosted-6368339e-retained-failures.json",
+          "line": 1,
+          "version": "42dbe1520d94b8f0"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T12:02:03.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "d61e02ebee2258b97560107996d5524bb6a284d0"
+    },
+    {
       "key": "Artifact:docs/release/readiness-work/hosted-9e05bf08-ci-results.json",
       "type": "Artifact",
       "id": "docs/release/readiness-work/hosted-9e05bf08-ci-results.json",
@@ -36193,6 +36446,29 @@
       "lastChangedAt": "2026-09-21T09:08:00.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "da35b64360e4b48d4612046da0b72d0e14e02623"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/integrated-6368339e-results.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/integrated-6368339e-results.json",
+      "label": "integrated-6368339e-results.json",
+      "path": "docs/release/readiness-work/integrated-6368339e-results.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 29445,
+      "lines": 800,
+      "version": "fb1334b904d96090",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/integrated-6368339e-results.json",
+          "line": 1,
+          "version": "fb1334b904d96090"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T11:46:36.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "20e9bd0298442909008cc65ff4b0aa93ead6993a"
     },
     {
       "key": "Artifact:docs/release/readiness-work/integrated-8c2e4418-results.json",
@@ -36547,20 +36823,20 @@
       "path": "docs/release/readiness-work/open-proofs.json",
       "kind": "artifact",
       "extension": ".json",
-      "bytes": 12584,
+      "bytes": 13742,
       "lines": 121,
-      "version": "e869c294a8b8b0b3",
+      "version": "ea0cc737de48776e",
       "text": true,
       "provenance": [
         {
           "file": "docs/release/readiness-work/open-proofs.json",
           "line": 1,
-          "version": "e869c294a8b8b0b3"
+          "version": "ea0cc737de48776e"
         }
       ],
-      "lastChangedAt": "2026-09-21T11:14:08.000Z",
+      "lastChangedAt": "2026-09-21T12:02:03.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "6a189cca381ab6de519c9cb49970d157f4389549"
+      "lastChangedCommit": "d61e02ebee2258b97560107996d5524bb6a284d0"
     },
     {
       "key": "Artifact:docs/release/readiness-work/pressure-cash-observer-summary.json",
@@ -37582,20 +37858,20 @@
       "path": "docs/release/readiness-work/tooling-repairs.json",
       "kind": "artifact",
       "extension": ".json",
-      "bytes": 42820,
-      "lines": 694,
-      "version": "e0c032e10e411d3a",
+      "bytes": 50302,
+      "lines": 787,
+      "version": "a9c47a99c5591023",
       "text": true,
       "provenance": [
         {
           "file": "docs/release/readiness-work/tooling-repairs.json",
           "line": 1,
-          "version": "e0c032e10e411d3a"
+          "version": "a9c47a99c5591023"
         }
       ],
-      "lastChangedAt": "2026-09-21T11:14:08.000Z",
+      "lastChangedAt": "2026-09-21T12:02:03.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "6a189cca381ab6de519c9cb49970d157f4389549"
+      "lastChangedCommit": "d61e02ebee2258b97560107996d5524bb6a284d0"
     },
     {
       "key": "Artifact:docs/release/readiness-work/turf-contention-summary.json",
@@ -37619,6 +37895,29 @@
       "lastChangedAt": "2026-09-21T08:58:15.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "6252c27155b44309de6a664f8d2eff4d2bb9f689"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/turf-terminal-observer-summary.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/turf-terminal-observer-summary.json",
+      "label": "turf-terminal-observer-summary.json",
+      "path": "docs/release/readiness-work/turf-terminal-observer-summary.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 5224,
+      "lines": 129,
+      "version": "b76ff62a778b9e05",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/turf-terminal-observer-summary.json",
+          "line": 1,
+          "version": "b76ff62a778b9e05"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T11:49:17.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "71bfea187db177a06f66f85ef8d4a125dc39bfb2"
     },
     {
       "key": "Artifact:docs/release/readiness-work/world-ammo-escrow.md",
@@ -37688,6 +37987,29 @@
       "lastChangedAt": "2026-09-21T10:41:39.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "5a704dcc8af34bd95315e33d950e94212e91e3af"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/world-family-npc-observer.md",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/world-family-npc-observer.md",
+      "label": "world-family-npc-observer.md",
+      "path": "docs/release/readiness-work/world-family-npc-observer.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 2215,
+      "lines": 37,
+      "version": "56a9160b67b237eb",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/world-family-npc-observer.md",
+          "line": 1,
+          "version": "56a9160b67b237eb"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T11:35:13.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "11531870b822283c3b674fcd33c34cad2663cb5b"
     },
     {
       "key": "Artifact:docs/release/readiness-work/world-observers.md",
@@ -37780,6 +38102,29 @@
       "lastChangedAt": "2026-09-21T06:34:03.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "fcaa60765aa816daa18ef6c2484e15e46d06ac63"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/world-turf-terminal-observer.md",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/world-turf-terminal-observer.md",
+      "label": "world-turf-terminal-observer.md",
+      "path": "docs/release/readiness-work/world-turf-terminal-observer.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 5166,
+      "lines": 82,
+      "version": "c983660dc1e47f5b",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/world-turf-terminal-observer.md",
+          "line": 1,
+          "version": "c983660dc1e47f5b"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T11:31:35.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "7debbd0415c7ff0c68400b3cd105926d283099f2"
     },
     {
       "key": "Artifact:docs/superpowers/plans/2026-08-23-discovery-integrity.md",
@@ -48570,20 +48915,20 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 28262,
-      "lines": 194,
-      "version": "ea017a8a9dd7b31b",
+      "bytes": 28867,
+      "lines": 198,
+      "version": "0f96e78b1ef2d068",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "ea017a8a9dd7b31b"
+          "version": "0f96e78b1ef2d068"
         }
       ],
-      "lastChangedAt": "2026-09-21T11:14:08.000Z",
+      "lastChangedAt": "2026-09-21T12:05:20.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "6a189cca381ab6de519c9cb49970d157f4389549"
+      "lastChangedCommit": "f30cce00bcf48158909c7df4be14e4f1742564da"
     },
     {
       "key": "Artifact:Procfile",
@@ -63131,18 +63476,18 @@
       "extension": ".md",
       "bytes": 56651,
       "lines": 756,
-      "version": "81641c6cfd9e60bd",
+      "version": "6510b207eee74a9f",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "81641c6cfd9e60bd"
+          "version": "6510b207eee74a9f"
         }
       ],
-      "lastChangedAt": "2026-09-21T11:14:08.000Z",
+      "lastChangedAt": "2026-09-21T12:07:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "6a189cca381ab6de519c9cb49970d157f4389549"
+      "lastChangedCommit": "b19e9decfcbd765e9a238dca093a8d441a1ccac6"
     },
     {
       "key": "Artifact:src/access.js",
@@ -63405,20 +63750,20 @@
       "path": "src/bank.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 32109,
-      "lines": 519,
-      "version": "be159b75350911fe",
+      "bytes": 32438,
+      "lines": 526,
+      "version": "d27c0d36809fec7e",
       "text": true,
       "provenance": [
         {
           "file": "src/bank.js",
           "line": 1,
-          "version": "be159b75350911fe"
+          "version": "d27c0d36809fec7e"
         }
       ],
-      "lastChangedAt": "2026-08-26T22:53:14.000Z",
+      "lastChangedAt": "2026-09-21T11:38:10.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+      "lastChangedCommit": "c8350fa84688dfd681644bbdb95c1cd7be0848a2"
     },
     {
       "key": "Artifact:src/bloodline.js",
@@ -74530,6 +74875,52 @@
       "lastChangedCommit": "96ee5bca3e94e1b1e27824dc42939d1a7fdce887"
     },
     {
+      "key": "Artifact:test/rc1-car-melt-provenance-postgres.js",
+      "type": "Artifact",
+      "id": "test/rc1-car-melt-provenance-postgres.js",
+      "label": "rc1-car-melt-provenance-postgres.js",
+      "path": "test/rc1-car-melt-provenance-postgres.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 13658,
+      "lines": 155,
+      "version": "d191ab4250986fb2",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/rc1-car-melt-provenance-postgres.js",
+          "line": 1,
+          "version": "d191ab4250986fb2"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T11:47:56.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "f5dcb8886c8010f8ace43ccc47eb64560eebd8e9"
+    },
+    {
+      "key": "Artifact:test/rc1-car-melt-provenance.js",
+      "type": "Artifact",
+      "id": "test/rc1-car-melt-provenance.js",
+      "label": "rc1-car-melt-provenance.js",
+      "path": "test/rc1-car-melt-provenance.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 6919,
+      "lines": 92,
+      "version": "d1ef7665a12a0361",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/rc1-car-melt-provenance.js",
+          "line": 1,
+          "version": "d1ef7665a12a0361"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T11:41:03.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "f6a015b3e4075713c61a0bb532c67ed041a2fc73"
+    },
+    {
       "key": "Artifact:test/rc1-churn-policy.js",
       "type": "Artifact",
       "id": "test/rc1-churn-policy.js",
@@ -74576,6 +74967,29 @@
       "lastChangedCommit": "c9b2aa1d388f7574a85cccb7b7d1481b3b837fed"
     },
     {
+      "key": "Artifact:test/rc1-city-lock-release.js",
+      "type": "Artifact",
+      "id": "test/rc1-city-lock-release.js",
+      "label": "rc1-city-lock-release.js",
+      "path": "test/rc1-city-lock-release.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 11897,
+      "lines": 136,
+      "version": "77d3cff611c536ab",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/rc1-city-lock-release.js",
+          "line": 1,
+          "version": "77d3cff611c536ab"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T12:02:03.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "d61e02ebee2258b97560107996d5524bb6a284d0"
+    },
+    {
       "key": "Artifact:test/rc1-command-family-postgres.js",
       "type": "Artifact",
       "id": "test/rc1-command-family-postgres.js",
@@ -74620,6 +75034,29 @@
       "lastChangedAt": "2026-09-21T03:15:57.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "bce23f23718594b9930f5f18ffd315e114021484"
+    },
+    {
+      "key": "Artifact:test/rc1-crew-authority-postgres.js",
+      "type": "Artifact",
+      "id": "test/rc1-crew-authority-postgres.js",
+      "label": "rc1-crew-authority-postgres.js",
+      "path": "test/rc1-crew-authority-postgres.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 15811,
+      "lines": 160,
+      "version": "44797b3a3d42b863",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/rc1-crew-authority-postgres.js",
+          "line": 1,
+          "version": "44797b3a3d42b863"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T11:26:57.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "d90f3f00e3a47989b0aa09617bc5a7eb226706ae"
     },
     {
       "key": "Artifact:test/rc1-family-cash-ammo-journal.js",
@@ -75726,6 +76163,29 @@
       "lastChangedCommit": "6252c27155b44309de6a664f8d2eff4d2bb9f689"
     },
     {
+      "key": "Artifact:test/rc1-native-turf-terminal.js",
+      "type": "Artifact",
+      "id": "test/rc1-native-turf-terminal.js",
+      "label": "rc1-native-turf-terminal.js",
+      "path": "test/rc1-native-turf-terminal.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 27937,
+      "lines": 270,
+      "version": "e2a4d87ae5d22b6c",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/rc1-native-turf-terminal.js",
+          "line": 1,
+          "version": "e2a4d87ae5d22b6c"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T11:31:35.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "7debbd0415c7ff0c68400b3cd105926d283099f2"
+    },
+    {
       "key": "Artifact:test/rc1-native-worker-schedule.js",
       "type": "Artifact",
       "id": "test/rc1-native-worker-schedule.js",
@@ -75756,20 +76216,20 @@
       "path": "test/rc1-native-world-workload.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 56295,
-      "lines": 693,
-      "version": "f5e83156c3087ea1",
+      "bytes": 58858,
+      "lines": 725,
+      "version": "2a3740d393567e2e",
       "text": true,
       "provenance": [
         {
           "file": "test/rc1-native-world-workload.js",
           "line": 1,
-          "version": "f5e83156c3087ea1"
+          "version": "2a3740d393567e2e"
         }
       ],
-      "lastChangedAt": "2026-09-21T10:53:12.000Z",
+      "lastChangedAt": "2026-09-21T12:01:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "29c2047655b533d4ae7b206452981d9e8d80db64"
+      "lastChangedCommit": "d4743b441c7b6c9994635f5cb280d0c6d980c7d1"
     },
     {
       "key": "Artifact:test/rc1-observability.js",
@@ -75793,6 +76253,29 @@
       "lastChangedAt": "2026-09-21T02:36:23.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
+    },
+    {
+      "key": "Artifact:test/rc1-observer-serialization.js",
+      "type": "Artifact",
+      "id": "test/rc1-observer-serialization.js",
+      "label": "rc1-observer-serialization.js",
+      "path": "test/rc1-observer-serialization.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 9472,
+      "lines": 118,
+      "version": "af72c77047b6e368",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/rc1-observer-serialization.js",
+          "line": 1,
+          "version": "af72c77047b6e368"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T11:21:52.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "4d7b40c9e1699701e1f98f1466d4f8ff4dc0cab1"
     },
     {
       "key": "Artifact:test/rc1-omr-exchange.js",
@@ -76163,6 +76646,29 @@
       "lastChangedCommit": "ba475522dca9bfae7b6b895363a938a50cc3132a"
     },
     {
+      "key": "Artifact:test/rc1-world-car-melt-witness.js",
+      "type": "Artifact",
+      "id": "test/rc1-world-car-melt-witness.js",
+      "label": "rc1-world-car-melt-witness.js",
+      "path": "test/rc1-world-car-melt-witness.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 6988,
+      "lines": 86,
+      "version": "7f382128856c8742",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/rc1-world-car-melt-witness.js",
+          "line": 1,
+          "version": "7f382128856c8742"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T12:01:42.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "d4743b441c7b6c9994635f5cb280d0c6d980c7d1"
+    },
+    {
       "key": "Artifact:test/rc1-world-diagnostics.js",
       "type": "Artifact",
       "id": "test/rc1-world-diagnostics.js",
@@ -76230,6 +76736,29 @@
       "lastChangedAt": "2026-09-21T10:39:36.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "c6797ea55b26f62aeb8e8cb26f9a30071081af98"
+    },
+    {
+      "key": "Artifact:test/rc1-world-family-npc.js",
+      "type": "Artifact",
+      "id": "test/rc1-world-family-npc.js",
+      "label": "rc1-world-family-npc.js",
+      "path": "test/rc1-world-family-npc.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 7880,
+      "lines": 86,
+      "version": "e5edf2110b447ba8",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/rc1-world-family-npc.js",
+          "line": 1,
+          "version": "e5edf2110b447ba8"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T11:35:13.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "11531870b822283c3b674fcd33c34cad2663cb5b"
     },
     {
       "key": "Artifact:test/rc1-world-history-storage.js",
@@ -76322,6 +76851,29 @@
       "lastChangedAt": "2026-09-21T10:41:39.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "5a704dcc8af34bd95315e33d950e94212e91e3af"
+    },
+    {
+      "key": "Artifact:test/rc1-world-turf-terminal.js",
+      "type": "Artifact",
+      "id": "test/rc1-world-turf-terminal.js",
+      "label": "rc1-world-turf-terminal.js",
+      "path": "test/rc1-world-turf-terminal.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 11610,
+      "lines": 113,
+      "version": "04c89ba44fca3d6f",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/rc1-world-turf-terminal.js",
+          "line": 1,
+          "version": "04c89ba44fca3d6f"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T11:26:18.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "fa2b3a9972991f9312e849a4c19021adc8d04a37"
     },
     {
       "key": "Artifact:test/recipe-policy.js",
@@ -79758,20 +80310,43 @@
       "path": "tools/rc1-car-journal.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 13950,
-      "lines": 167,
-      "version": "a2645d6f690e90c0",
+      "bytes": 14610,
+      "lines": 177,
+      "version": "9ad4ceed71bc0400",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-car-journal.js",
           "line": 1,
-          "version": "a2645d6f690e90c0"
+          "version": "9ad4ceed71bc0400"
         }
       ],
-      "lastChangedAt": "2026-09-21T09:09:59.000Z",
+      "lastChangedAt": "2026-09-21T11:41:03.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "96ee5bca3e94e1b1e27824dc42939d1a7fdce887"
+      "lastChangedCommit": "f6a015b3e4075713c61a0bb532c67ed041a2fc73"
+    },
+    {
+      "key": "Artifact:tools/rc1-car-melt-provenance.js",
+      "type": "Artifact",
+      "id": "tools/rc1-car-melt-provenance.js",
+      "label": "rc1-car-melt-provenance.js",
+      "path": "tools/rc1-car-melt-provenance.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 13040,
+      "lines": 170,
+      "version": "e01e39cc42acc56a",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/rc1-car-melt-provenance.js",
+          "line": 1,
+          "version": "e01e39cc42acc56a"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T11:41:03.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "f6a015b3e4075713c61a0bb532c67ed041a2fc73"
     },
     {
       "key": "Artifact:tools/rc1-churn-policy.js",
@@ -80609,20 +81184,20 @@
       "path": "tools/rc1-resource-inventory.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 17473,
-      "lines": 143,
-      "version": "cbfc7c88aaca2ac2",
+      "bytes": 18207,
+      "lines": 151,
+      "version": "a1db0b5a0be65f68",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-resource-inventory.js",
           "line": 1,
-          "version": "cbfc7c88aaca2ac2"
+          "version": "a1db0b5a0be65f68"
         }
       ],
-      "lastChangedAt": "2026-09-21T11:14:08.000Z",
+      "lastChangedAt": "2026-09-21T12:02:03.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "6a189cca381ab6de519c9cb49970d157f4389549"
+      "lastChangedCommit": "d61e02ebee2258b97560107996d5524bb6a284d0"
     },
     {
       "key": "Artifact:tools/rc1-resource-journal.js",
@@ -81000,20 +81575,20 @@
       "path": "tools/rc1-world-resource-observer.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 63334,
-      "lines": 715,
-      "version": "3574c54982b567dc",
+      "bytes": 74451,
+      "lines": 825,
+      "version": "cb71c69c72650516",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-world-resource-observer.js",
           "line": 1,
-          "version": "3574c54982b567dc"
+          "version": "cb71c69c72650516"
         }
       ],
-      "lastChangedAt": "2026-09-21T11:01:04.000Z",
+      "lastChangedAt": "2026-09-21T11:21:52.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "ba1e114060983ad7c22d5c534dfc9edbeca51485"
+      "lastChangedCommit": "4d7b40c9e1699701e1f98f1466d4f8ff4dc0cab1"
     },
     {
       "key": "Artifact:tools/render-omr-excalidraw.html",
@@ -82763,11 +83338,37 @@
       ]
     },
     {
+      "key": "Command:npm:test:rc1:car-melt:postgres",
+      "type": "Command",
+      "id": "npm:test:rc1:car-melt:postgres",
+      "label": "npm run test:rc1:car-melt:postgres",
+      "command": "node test/rc1-car-melt-provenance-postgres.js --postgres",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
       "key": "Command:npm:test:rc1:churn:postgres",
       "type": "Command",
       "id": "npm:test:rc1:churn:postgres",
       "label": "npm run test:rc1:churn:postgres",
       "command": "node test/rc1-churn-policy.js --postgres",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "key": "Command:npm:test:rc1:city-lock:postgres",
+      "type": "Command",
+      "id": "npm:test:rc1:city-lock:postgres",
+      "label": "npm run test:rc1:city-lock:postgres",
+      "command": "node test/rc1-city-lock-release.js --postgres",
       "provenance": [
         {
           "file": "package.json",
@@ -82794,6 +83395,19 @@
       "id": "npm:test:rc1:concurrent:postgres",
       "label": "npm run test:rc1:concurrent:postgres",
       "command": "node test/rc1-native-concurrent-replay.js --postgres",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "key": "Command:npm:test:rc1:crew-authority:postgres",
+      "type": "Command",
+      "id": "npm:test:rc1:crew-authority:postgres",
+      "label": "npm run test:rc1:crew-authority:postgres",
+      "command": "node test/rc1-crew-authority-postgres.js --postgres",
       "provenance": [
         {
           "file": "package.json",
@@ -82962,7 +83576,7 @@
       "type": "Command",
       "id": "npm:test:rc1:harness",
       "label": "npm run test:rc1:harness",
-      "command": "node test/rc1-native-proof.js && node test/rc1-native-worker-schedule.js && node test/rc1-native-query-tape.js && node test/rc1-native-player-policy.js && node test/rc1-native-actor-replay.js && node test/rc1-world-diagnostics.js && node test/rc1-native-commit-observer.js && node test/rc1-world-resource-observer.js && node test/rc1-browser-controls.js && node test/rc1-knowledge-diagnostics.js && node test/rc1-mystery-policies.js && node test/rc1-aggression-policy.js && node test/rc1-loan-lifecycle-journal.js && node test/rc1-churn-policy.js && node test/rc1-capital-lifecycle-journal.js && node test/rc1-browser-receipt.js && node test/rc1-season-journal.js && node test/rc1-market-policy.js && node test/rc1-native-run-guardrails.js && node test/rc1-law-policy.js && node test/rc1-native-query-order.js && node test/rc1-browser-toast-controls.js && node test/rc1-family-policy.js && node test/rc1-family-cash-ammo-journal.js && node test/rc1-omr-journal.js && node test/rc1-omr-exchange.js && node test/rc1-alliance-policy.js && node test/rc1-known-command-blockers.js && node test/rc1-turf-policy.js && node test/rc1-native-failure-reducer.js && node test/rc1-native-proof-stream.js && node test/rc1-browser-board-refresh.js && node test/rc1-car-journal.js && node test/rc1-alliance-world-adapter.js && node test/rc1-resource-pressure-policy.js && node test/rc1-world-ammo-escrow.js && node test/rc1-world-pressure-cash.js && node test/rc1-alliance-continuation.js && node test/rc1-native-proof-gzip.js && node test/rc1-world-family-entry.js && node test/rc1-world-history-storage.js && node test/rc1-world-observer-load-order.js && node test/rc1-world-family-dissolution.js",
+      "command": "node test/rc1-native-proof.js && node test/rc1-native-worker-schedule.js && node test/rc1-native-query-tape.js && node test/rc1-native-player-policy.js && node test/rc1-native-actor-replay.js && node test/rc1-world-diagnostics.js && node test/rc1-native-commit-observer.js && node test/rc1-world-resource-observer.js && node test/rc1-browser-controls.js && node test/rc1-knowledge-diagnostics.js && node test/rc1-mystery-policies.js && node test/rc1-aggression-policy.js && node test/rc1-loan-lifecycle-journal.js && node test/rc1-churn-policy.js && node test/rc1-capital-lifecycle-journal.js && node test/rc1-browser-receipt.js && node test/rc1-season-journal.js && node test/rc1-market-policy.js && node test/rc1-native-run-guardrails.js && node test/rc1-law-policy.js && node test/rc1-native-query-order.js && node test/rc1-browser-toast-controls.js && node test/rc1-family-policy.js && node test/rc1-family-cash-ammo-journal.js && node test/rc1-omr-journal.js && node test/rc1-omr-exchange.js && node test/rc1-alliance-policy.js && node test/rc1-known-command-blockers.js && node test/rc1-turf-policy.js && node test/rc1-native-failure-reducer.js && node test/rc1-native-proof-stream.js && node test/rc1-browser-board-refresh.js && node test/rc1-car-journal.js && node test/rc1-alliance-world-adapter.js && node test/rc1-resource-pressure-policy.js && node test/rc1-world-ammo-escrow.js && node test/rc1-world-pressure-cash.js && node test/rc1-alliance-continuation.js && node test/rc1-native-proof-gzip.js && node test/rc1-world-family-entry.js && node test/rc1-world-history-storage.js && node test/rc1-world-observer-load-order.js && node test/rc1-world-family-dissolution.js && node test/rc1-world-turf-terminal.js && node test/rc1-world-family-npc.js && node test/rc1-observer-serialization.js && node test/rc1-city-lock-release.js && node test/rc1-car-melt-provenance.js && node test/rc1-world-car-melt-witness.js",
       "provenance": [
         {
           "file": "package.json",
@@ -83379,6 +83993,19 @@
       "id": "npm:test:rc1:turf-contention:postgres",
       "label": "npm run test:rc1:turf-contention:postgres",
       "command": "node test/rc1-turf-native.js --postgres",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "key": "Command:npm:test:rc1:turf-terminal:postgres",
+      "type": "Command",
+      "id": "npm:test:rc1:turf-terminal:postgres",
+      "label": "npm run test:rc1:turf-terminal:postgres",
+      "command": "node test/rc1-native-turf-terminal.js --postgres",
       "provenance": [
         {
           "file": "package.json",
@@ -85253,6 +85880,22 @@
       ]
     },
     {
+      "key": "Commit:11531870b822283c3b674fcd33c34cad2663cb5b",
+      "type": "Commit",
+      "id": "11531870b822283c3b674fcd33c34cad2663cb5b",
+      "label": "test(rc1): retain NPC Family formation as explicit unsupported lineage",
+      "title": "test(rc1): retain NPC Family formation as explicit unsupported lineage",
+      "date": "2026-09-21T11:35:13.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/11531870b822283c3b674fcd33c34cad2663cb5b",
+      "provenance": [
+        {
+          "commit": "11531870b822283c3b674fcd33c34cad2663cb5b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/11531870b822283c3b674fcd33c34cad2663cb5b"
+        }
+      ]
+    },
+    {
       "key": "Commit:1153c378e4aaa1e073967e27cfbf202ac36ae54f",
       "type": "Commit",
       "id": "1153c378e4aaa1e073967e27cfbf202ac36ae54f",
@@ -85569,6 +86212,22 @@
         {
           "commit": "13f29e6863221b1daf5c95cd2205bda1fe1fcc75",
           "url": "https://github.com/OmertaDev/Omerta/commit/13f29e6863221b1daf5c95cd2205bda1fe1fcc75"
+        }
+      ]
+    },
+    {
+      "key": "Commit:1404b48c30b41ca66b757eb2c2b39fc6e2750553",
+      "type": "Commit",
+      "id": "1404b48c30b41ca66b757eb2c2b39fc6e2750553",
+      "label": "docs(rc1): retain serialization and City lease repair evidence",
+      "title": "docs(rc1): retain serialization and City lease repair evidence",
+      "date": "2026-09-21T11:54:41.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/1404b48c30b41ca66b757eb2c2b39fc6e2750553",
+      "provenance": [
+        {
+          "commit": "1404b48c30b41ca66b757eb2c2b39fc6e2750553",
+          "url": "https://github.com/OmertaDev/Omerta/commit/1404b48c30b41ca66b757eb2c2b39fc6e2750553"
         }
       ]
     },
@@ -86945,6 +87604,22 @@
         {
           "commit": "209ef02bb4c54188aa7ca5ea3fcff039125a04a9",
           "url": "https://github.com/OmertaDev/Omerta/commit/209ef02bb4c54188aa7ca5ea3fcff039125a04a9"
+        }
+      ]
+    },
+    {
+      "key": "Commit:20e9bd0298442909008cc65ff4b0aa93ead6993a",
+      "type": "Commit",
+      "id": "20e9bd0298442909008cc65ff4b0aa93ead6993a",
+      "label": "Retain failed integrated worlds and scoped candidate 16 results",
+      "title": "Retain failed integrated worlds and scoped candidate 16 results",
+      "date": "2026-09-21T11:46:36.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/20e9bd0298442909008cc65ff4b0aa93ead6993a",
+      "provenance": [
+        {
+          "commit": "20e9bd0298442909008cc65ff4b0aa93ead6993a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/20e9bd0298442909008cc65ff4b0aa93ead6993a"
         }
       ]
     },
@@ -90597,6 +91272,22 @@
       ]
     },
     {
+      "key": "Commit:3dd51d5ab3988f393cd94b904b47dc8397e9c840",
+      "type": "Commit",
+      "id": "3dd51d5ab3988f393cd94b904b47dc8397e9c840",
+      "label": "Record verified car COMMIT evidence and retained TOOL49 TOOL50 failures",
+      "title": "Record verified car COMMIT evidence and retained TOOL49 TOOL50 failures",
+      "date": "2026-09-21T11:51:33.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/3dd51d5ab3988f393cd94b904b47dc8397e9c840",
+      "provenance": [
+        {
+          "commit": "3dd51d5ab3988f393cd94b904b47dc8397e9c840",
+          "url": "https://github.com/OmertaDev/Omerta/commit/3dd51d5ab3988f393cd94b904b47dc8397e9c840"
+        }
+      ]
+    },
+    {
       "key": "Commit:3e05ef9128cac634d41cbc12bec33d280e313469",
       "type": "Commit",
       "id": "3e05ef9128cac634d41cbc12bec33d280e313469",
@@ -92549,6 +93240,22 @@
       ]
     },
     {
+      "key": "Commit:4d7b40c9e1699701e1f98f1466d4f8ff4dc0cab1",
+      "type": "Commit",
+      "id": "4d7b40c9e1699701e1f98f1466d4f8ff4dc0cab1",
+      "label": "Reuse local resource evidence serialization without changing bytes",
+      "title": "Reuse local resource evidence serialization without changing bytes",
+      "date": "2026-09-21T11:21:52.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/4d7b40c9e1699701e1f98f1466d4f8ff4dc0cab1",
+      "provenance": [
+        {
+          "commit": "4d7b40c9e1699701e1f98f1466d4f8ff4dc0cab1",
+          "url": "https://github.com/OmertaDev/Omerta/commit/4d7b40c9e1699701e1f98f1466d4f8ff4dc0cab1"
+        }
+      ]
+    },
+    {
       "key": "Commit:4d89e97ef9f72ac34deff237fcf702beee754807",
       "type": "Commit",
       "id": "4d89e97ef9f72ac34deff237fcf702beee754807",
@@ -94357,6 +95064,22 @@
       ]
     },
     {
+      "key": "Commit:5ed02f9d735a7e07b95ac5b057a70375d07742ed",
+      "type": "Commit",
+      "id": "5ed02f9d735a7e07b95ac5b057a70375d07742ed",
+      "label": "Use recorder-safe flat Crew evidence artifact names",
+      "title": "Use recorder-safe flat Crew evidence artifact names",
+      "date": "2026-09-21T11:25:35.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/5ed02f9d735a7e07b95ac5b057a70375d07742ed",
+      "provenance": [
+        {
+          "commit": "5ed02f9d735a7e07b95ac5b057a70375d07742ed",
+          "url": "https://github.com/OmertaDev/Omerta/commit/5ed02f9d735a7e07b95ac5b057a70375d07742ed"
+        }
+      ]
+    },
+    {
       "key": "Commit:5ee68c063ea851c97d273aaa2e426e017c88e677",
       "type": "Commit",
       "id": "5ee68c063ea851c97d273aaa2e426e017c88e677",
@@ -94897,6 +95620,22 @@
         {
           "commit": "63598c577877d2828e964cb703ff72722bd9d672",
           "url": "https://github.com/OmertaDev/Omerta/commit/63598c577877d2828e964cb703ff72722bd9d672"
+        }
+      ]
+    },
+    {
+      "key": "Commit:6368339e82965679c1d1aae91ecea657489a6414",
+      "type": "Commit",
+      "id": "6368339e82965679c1d1aae91ecea657489a6414",
+      "label": "Refresh Knowledge for Family terminal release checks",
+      "title": "Refresh Knowledge for Family terminal release checks",
+      "date": "2026-09-21T11:15:37.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/6368339e82965679c1d1aae91ecea657489a6414",
+      "provenance": [
+        {
+          "commit": "6368339e82965679c1d1aae91ecea657489a6414",
+          "url": "https://github.com/OmertaDev/Omerta/commit/6368339e82965679c1d1aae91ecea657489a6414"
         }
       ]
     },
@@ -96037,6 +96776,22 @@
       ]
     },
     {
+      "key": "Commit:6e7ccb47043e8dec766b84337eabcd52383a3d99",
+      "type": "Commit",
+      "id": "6e7ccb47043e8dec766b84337eabcd52383a3d99",
+      "label": "Retain exact candidate16 full Foundry and liquidity results",
+      "title": "Retain exact candidate16 full Foundry and liquidity results",
+      "date": "2026-09-21T12:03:31.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/6e7ccb47043e8dec766b84337eabcd52383a3d99",
+      "provenance": [
+        {
+          "commit": "6e7ccb47043e8dec766b84337eabcd52383a3d99",
+          "url": "https://github.com/OmertaDev/Omerta/commit/6e7ccb47043e8dec766b84337eabcd52383a3d99"
+        }
+      ]
+    },
+    {
       "key": "Commit:6ec740da3a7d8852fbfed0d697c0fc8af0c48bf6",
       "type": "Commit",
       "id": "6ec740da3a7d8852fbfed0d697c0fc8af0c48bf6",
@@ -96305,6 +97060,22 @@
         {
           "commit": "71761973c02f1a320e005796ba10e78bb04bb154",
           "url": "https://github.com/OmertaDev/Omerta/commit/71761973c02f1a320e005796ba10e78bb04bb154"
+        }
+      ]
+    },
+    {
+      "key": "Commit:71bfea187db177a06f66f85ef8d4a125dc39bfb2",
+      "type": "Commit",
+      "id": "71bfea187db177a06f66f85ef8d4a125dc39bfb2",
+      "label": "Wire Crew and turf proofs and preserve NPC observer failure boundary",
+      "title": "Wire Crew and turf proofs and preserve NPC observer failure boundary",
+      "date": "2026-09-21T11:49:17.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/71bfea187db177a06f66f85ef8d4a125dc39bfb2",
+      "provenance": [
+        {
+          "commit": "71bfea187db177a06f66f85ef8d4a125dc39bfb2",
+          "url": "https://github.com/OmertaDev/Omerta/commit/71bfea187db177a06f66f85ef8d4a125dc39bfb2"
         }
       ]
     },
@@ -97813,6 +98584,22 @@
       ]
     },
     {
+      "key": "Commit:7debbd0415c7ff0c68400b3cd105926d283099f2",
+      "type": "Commit",
+      "id": "7debbd0415c7ff0c68400b3cd105926d283099f2",
+      "label": "test(rc1): declare an odd-unit turf policy fixture",
+      "title": "test(rc1): declare an odd-unit turf policy fixture",
+      "date": "2026-09-21T11:31:35.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/7debbd0415c7ff0c68400b3cd105926d283099f2",
+      "provenance": [
+        {
+          "commit": "7debbd0415c7ff0c68400b3cd105926d283099f2",
+          "url": "https://github.com/OmertaDev/Omerta/commit/7debbd0415c7ff0c68400b3cd105926d283099f2"
+        }
+      ]
+    },
+    {
       "key": "Commit:7df80cdb3dfda033d75ac6253c583dceb6e07c33",
       "type": "Commit",
       "id": "7df80cdb3dfda033d75ac6253c583dceb6e07c33",
@@ -98789,6 +99576,22 @@
       ]
     },
     {
+      "key": "Commit:86b41c51af71205c4ff17586b83883d25b3e0803",
+      "type": "Commit",
+      "id": "86b41c51af71205c4ff17586b83883d25b3e0803",
+      "label": "Add bounded native Crew role and persistent replay proof",
+      "title": "Add bounded native Crew role and persistent replay proof",
+      "date": "2026-09-21T11:24:02.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/86b41c51af71205c4ff17586b83883d25b3e0803",
+      "provenance": [
+        {
+          "commit": "86b41c51af71205c4ff17586b83883d25b3e0803",
+          "url": "https://github.com/OmertaDev/Omerta/commit/86b41c51af71205c4ff17586b83883d25b3e0803"
+        }
+      ]
+    },
+    {
       "key": "Commit:86c16a900131255cfa426aaf58fcaff61a53329a",
       "type": "Commit",
       "id": "86c16a900131255cfa426aaf58fcaff61a53329a",
@@ -98945,6 +99748,22 @@
         {
           "commit": "887d75a7a67e661eaecb7089eeac172269073b4e",
           "url": "https://github.com/OmertaDev/Omerta/commit/887d75a7a67e661eaecb7089eeac172269073b4e"
+        }
+      ]
+    },
+    {
+      "key": "Commit:8881f7924877e0b47aa70e2b94bedff9b0bda19a",
+      "type": "Commit",
+      "id": "8881f7924877e0b47aa70e2b94bedff9b0bda19a",
+      "label": "Retain scoped Crew authority results and failed harness attempts",
+      "title": "Retain scoped Crew authority results and failed harness attempts",
+      "date": "2026-09-21T11:33:30.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/8881f7924877e0b47aa70e2b94bedff9b0bda19a",
+      "provenance": [
+        {
+          "commit": "8881f7924877e0b47aa70e2b94bedff9b0bda19a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/8881f7924877e0b47aa70e2b94bedff9b0bda19a"
         }
       ]
     },
@@ -100497,6 +101316,22 @@
         {
           "commit": "960975dabd62ce42751e1f45bf7b5e3f0f1143b3",
           "url": "https://github.com/OmertaDev/Omerta/commit/960975dabd62ce42751e1f45bf7b5e3f0f1143b3"
+        }
+      ]
+    },
+    {
+      "key": "Commit:962921099d330733f10168caffe2b4cbe8fd9b39",
+      "type": "Commit",
+      "id": "962921099d330733f10168caffe2b4cbe8fd9b39",
+      "label": "Record independently verified car witness world replay scope",
+      "title": "Record independently verified car witness world replay scope",
+      "date": "2026-09-21T12:07:13.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/962921099d330733f10168caffe2b4cbe8fd9b39",
+      "provenance": [
+        {
+          "commit": "962921099d330733f10168caffe2b4cbe8fd9b39",
+          "url": "https://github.com/OmertaDev/Omerta/commit/962921099d330733f10168caffe2b4cbe8fd9b39"
         }
       ]
     },
@@ -103621,6 +104456,22 @@
       ]
     },
     {
+      "key": "Commit:b19e9decfcbd765e9a238dca093a8d441a1ccac6",
+      "type": "Commit",
+      "id": "b19e9decfcbd765e9a238dca093a8d441a1ccac6",
+      "label": "Refresh source census after car world result",
+      "title": "Refresh source census after car world result",
+      "date": "2026-09-21T12:07:42.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/b19e9decfcbd765e9a238dca093a8d441a1ccac6",
+      "provenance": [
+        {
+          "commit": "b19e9decfcbd765e9a238dca093a8d441a1ccac6",
+          "url": "https://github.com/OmertaDev/Omerta/commit/b19e9decfcbd765e9a238dca093a8d441a1ccac6"
+        }
+      ]
+    },
+    {
       "key": "Commit:b1a133d5259a7615cbd38d243bbdae58b1e08bd8",
       "type": "Commit",
       "id": "b1a133d5259a7615cbd38d243bbdae58b1e08bd8",
@@ -104433,6 +105284,22 @@
         {
           "commit": "b8e561314cf5c9fb9d0fd8c79cf27c817c1a6e58",
           "url": "https://github.com/OmertaDev/Omerta/commit/b8e561314cf5c9fb9d0fd8c79cf27c817c1a6e58"
+        }
+      ]
+    },
+    {
+      "key": "Commit:b8e9f63f5bfa35020ddf90dfae5fe47fd7df9a42",
+      "type": "Commit",
+      "id": "b8e9f63f5bfa35020ddf90dfae5fe47fd7df9a42",
+      "label": "test(rc1): distinguish original boot and hourly turf sweeps",
+      "title": "test(rc1): distinguish original boot and hourly turf sweeps",
+      "date": "2026-09-21T11:29:06.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/b8e9f63f5bfa35020ddf90dfae5fe47fd7df9a42",
+      "provenance": [
+        {
+          "commit": "b8e9f63f5bfa35020ddf90dfae5fe47fd7df9a42",
+          "url": "https://github.com/OmertaDev/Omerta/commit/b8e9f63f5bfa35020ddf90dfae5fe47fd7df9a42"
         }
       ]
     },
@@ -106021,6 +106888,22 @@
       ]
     },
     {
+      "key": "Commit:c8350fa84688dfd681644bbdb95c1cd7be0848a2",
+      "type": "Commit",
+      "id": "c8350fa84688dfd681644bbdb95c1cd7be0848a2",
+      "label": "Release City worker lock clients when acquisition or unlock rejects",
+      "title": "Release City worker lock clients when acquisition or unlock rejects",
+      "date": "2026-09-21T11:38:10.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/c8350fa84688dfd681644bbdb95c1cd7be0848a2",
+      "provenance": [
+        {
+          "commit": "c8350fa84688dfd681644bbdb95c1cd7be0848a2",
+          "url": "https://github.com/OmertaDev/Omerta/commit/c8350fa84688dfd681644bbdb95c1cd7be0848a2"
+        }
+      ]
+    },
+    {
       "key": "Commit:c86412cc3b4d4f0e2cba7c9986edf1e2ad5ede10",
       "type": "Commit",
       "id": "c86412cc3b4d4f0e2cba7c9986edf1e2ad5ede10",
@@ -107013,6 +107896,22 @@
       ]
     },
     {
+      "key": "Commit:d4743b441c7b6c9994635f5cb280d0c6d980c7d1",
+      "type": "Commit",
+      "id": "d4743b441c7b6c9994635f5cb280d0c6d980c7d1",
+      "label": "Wire native car COMMIT witness into resource-observed world runner",
+      "title": "Wire native car COMMIT witness into resource-observed world runner",
+      "date": "2026-09-21T12:01:42.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/d4743b441c7b6c9994635f5cb280d0c6d980c7d1",
+      "provenance": [
+        {
+          "commit": "d4743b441c7b6c9994635f5cb280d0c6d980c7d1",
+          "url": "https://github.com/OmertaDev/Omerta/commit/d4743b441c7b6c9994635f5cb280d0c6d980c7d1"
+        }
+      ]
+    },
+    {
       "key": "Commit:d4ca3d6d3e39a4df0845cd9b0495bddf05edbd5e",
       "type": "Commit",
       "id": "d4ca3d6d3e39a4df0845cd9b0495bddf05edbd5e",
@@ -107153,6 +108052,22 @@
         {
           "commit": "d5f649584698fb45c41bcf89ef1794104f922ed9",
           "url": "https://github.com/OmertaDev/Omerta/commit/d5f649584698fb45c41bcf89ef1794104f922ed9"
+        }
+      ]
+    },
+    {
+      "key": "Commit:d61e02ebee2258b97560107996d5524bb6a284d0",
+      "type": "Commit",
+      "id": "d61e02ebee2258b97560107996d5524bb6a284d0",
+      "label": "Wire native City and car provenance gates and retain hosted failure evidence",
+      "title": "Wire native City and car provenance gates and retain hosted failure evidence",
+      "date": "2026-09-21T12:02:03.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/d61e02ebee2258b97560107996d5524bb6a284d0",
+      "provenance": [
+        {
+          "commit": "d61e02ebee2258b97560107996d5524bb6a284d0",
+          "url": "https://github.com/OmertaDev/Omerta/commit/d61e02ebee2258b97560107996d5524bb6a284d0"
         }
       ]
     },
@@ -107553,6 +108468,22 @@
         {
           "commit": "d90b8ef1fcaa1641ea3fceb4d75b81f8c0a73b9d",
           "url": "https://github.com/OmertaDev/Omerta/commit/d90b8ef1fcaa1641ea3fceb4d75b81f8c0a73b9d"
+        }
+      ]
+    },
+    {
+      "key": "Commit:d90f3f00e3a47989b0aa09617bc5a7eb226706ae",
+      "type": "Commit",
+      "id": "d90f3f00e3a47989b0aa09617bc5a7eb226706ae",
+      "label": "Respect Crew-first lock-hook denial order in native probes",
+      "title": "Respect Crew-first lock-hook denial order in native probes",
+      "date": "2026-09-21T11:26:57.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/d90f3f00e3a47989b0aa09617bc5a7eb226706ae",
+      "provenance": [
+        {
+          "commit": "d90f3f00e3a47989b0aa09617bc5a7eb226706ae",
+          "url": "https://github.com/OmertaDev/Omerta/commit/d90f3f00e3a47989b0aa09617bc5a7eb226706ae"
         }
       ]
     },
@@ -108657,6 +109588,22 @@
         {
           "commit": "e37ca1e3ccfaa59757474b9e3e6aba331994c827",
           "url": "https://github.com/OmertaDev/Omerta/commit/e37ca1e3ccfaa59757474b9e3e6aba331994c827"
+        }
+      ]
+    },
+    {
+      "key": "Commit:e3e2fc19850708ca198af622dcba9f88e948c53e",
+      "type": "Commit",
+      "id": "e3e2fc19850708ca198af622dcba9f88e948c53e",
+      "label": "Acquire measured melt cars through ordinary canonical boosts",
+      "title": "Acquire measured melt cars through ordinary canonical boosts",
+      "date": "2026-09-21T11:46:04.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/e3e2fc19850708ca198af622dcba9f88e948c53e",
+      "provenance": [
+        {
+          "commit": "e3e2fc19850708ca198af622dcba9f88e948c53e",
+          "url": "https://github.com/OmertaDev/Omerta/commit/e3e2fc19850708ca198af622dcba9f88e948c53e"
         }
       ]
     },
@@ -109813,6 +110760,22 @@
       ]
     },
     {
+      "key": "Commit:f101a479fb1d1005ae8ff774b2c29a480b718817",
+      "type": "Commit",
+      "id": "f101a479fb1d1005ae8ff774b2c29a480b718817",
+      "label": "Use explicit invocation identity in City lock native control",
+      "title": "Use explicit invocation identity in City lock native control",
+      "date": "2026-09-21T11:40:00.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f101a479fb1d1005ae8ff774b2c29a480b718817",
+      "provenance": [
+        {
+          "commit": "f101a479fb1d1005ae8ff774b2c29a480b718817",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f101a479fb1d1005ae8ff774b2c29a480b718817"
+        }
+      ]
+    },
+    {
       "key": "Commit:f107791cb8556850edd5e74de6ddbc7c65f0882e",
       "type": "Commit",
       "id": "f107791cb8556850edd5e74de6ddbc7c65f0882e",
@@ -110049,6 +111012,22 @@
         {
           "commit": "f2c7fa65f1def15a4bcfd0cc62b1f7bf4305ee7f",
           "url": "https://github.com/OmertaDev/Omerta/commit/f2c7fa65f1def15a4bcfd0cc62b1f7bf4305ee7f"
+        }
+      ]
+    },
+    {
+      "key": "Commit:f30cce00bcf48158909c7df4be14e4f1742564da",
+      "type": "Commit",
+      "id": "f30cce00bcf48158909c7df4be14e4f1742564da",
+      "label": "Include world car witness controls in the harness lane",
+      "title": "Include world car witness controls in the harness lane",
+      "date": "2026-09-21T12:05:20.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f30cce00bcf48158909c7df4be14e4f1742564da",
+      "provenance": [
+        {
+          "commit": "f30cce00bcf48158909c7df4be14e4f1742564da",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f30cce00bcf48158909c7df4be14e4f1742564da"
         }
       ]
     },
@@ -110341,6 +111320,22 @@
       ]
     },
     {
+      "key": "Commit:f5dcb8886c8010f8ace43ccc47eb64560eebd8e9",
+      "type": "Commit",
+      "id": "f5dcb8886c8010f8ace43ccc47eb64560eebd8e9",
+      "label": "Preserve recorder-owned history sequence in native car proof",
+      "title": "Preserve recorder-owned history sequence in native car proof",
+      "date": "2026-09-21T11:47:56.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f5dcb8886c8010f8ace43ccc47eb64560eebd8e9",
+      "provenance": [
+        {
+          "commit": "f5dcb8886c8010f8ace43ccc47eb64560eebd8e9",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f5dcb8886c8010f8ace43ccc47eb64560eebd8e9"
+        }
+      ]
+    },
+    {
       "key": "Commit:f5fd8b4e0cefb72e1ea20640016b92da76702cd1",
       "type": "Commit",
       "id": "f5fd8b4e0cefb72e1ea20640016b92da76702cd1",
@@ -110433,6 +111428,22 @@
         {
           "commit": "f688a689aba5812eb7dd8852a0f1d171b37844d9",
           "url": "https://github.com/OmertaDev/Omerta/commit/f688a689aba5812eb7dd8852a0f1d171b37844d9"
+        }
+      ]
+    },
+    {
+      "key": "Commit:f6a015b3e4075713c61a0bb532c67ed041a2fc73",
+      "type": "Commit",
+      "id": "f6a015b3e4075713c61a0bb532c67ed041a2fc73",
+      "label": "Add source-bound native COMMIT provenance for neutral solo car melt",
+      "title": "Add source-bound native COMMIT provenance for neutral solo car melt",
+      "date": "2026-09-21T11:41:03.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f6a015b3e4075713c61a0bb532c67ed041a2fc73",
+      "provenance": [
+        {
+          "commit": "f6a015b3e4075713c61a0bb532c67ed041a2fc73",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f6a015b3e4075713c61a0bb532c67ed041a2fc73"
         }
       ]
     },
@@ -110849,6 +111860,22 @@
         {
           "commit": "fa01f1c4e7da901fc2fb51080678fa743ec6ba3e",
           "url": "https://github.com/OmertaDev/Omerta/commit/fa01f1c4e7da901fc2fb51080678fa743ec6ba3e"
+        }
+      ]
+    },
+    {
+      "key": "Commit:fa2b3a9972991f9312e849a4c19021adc8d04a37",
+      "type": "Commit",
+      "id": "fa2b3a9972991f9312e849a4c19021adc8d04a37",
+      "label": "test(rc1): attribute isolated turf settlement custody in shared observer",
+      "title": "test(rc1): attribute isolated turf settlement custody in shared observer",
+      "date": "2026-09-21T11:26:18.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/fa2b3a9972991f9312e849a4c19021adc8d04a37",
+      "provenance": [
+        {
+          "commit": "fa2b3a9972991f9312e849a4c19021adc8d04a37",
+          "url": "https://github.com/OmertaDev/Omerta/commit/fa2b3a9972991f9312e849a4c19021adc8d04a37"
         }
       ]
     },
@@ -119138,6 +120165,22 @@
       ]
     },
     {
+      "key": "Document:docs/rc1-car-melt-commit.md",
+      "type": "Document",
+      "id": "docs/rc1-car-melt-commit.md",
+      "label": "docs/rc1-car-melt-commit.md",
+      "documentType": "documentation",
+      "lines": 35,
+      "version": "87900d3811b67eb9",
+      "provenance": [
+        {
+          "file": "docs/rc1-car-melt-commit.md",
+          "line": 1,
+          "version": "87900d3811b67eb9"
+        }
+      ]
+    },
+    {
       "key": "Document:docs/rc1-ci-envelope.md",
       "type": "Document",
       "id": "docs/rc1-ci-envelope.md",
@@ -119214,6 +120257,22 @@
           "file": "docs/rc1-native-mobile-adversity.md",
           "line": 1,
           "version": "d88057c41a74eea2"
+        }
+      ]
+    },
+    {
+      "key": "Document:docs/rc1-world-car-melt-witness.md",
+      "type": "Document",
+      "id": "docs/rc1-world-car-melt-witness.md",
+      "label": "docs/rc1-world-car-melt-witness.md",
+      "documentType": "documentation",
+      "lines": 36,
+      "version": "7737d33d99439a9f",
+      "provenance": [
+        {
+          "file": "docs/rc1-world-car-melt-witness.md",
+          "line": 1,
+          "version": "7737d33d99439a9f"
         }
       ]
     },
@@ -119410,6 +120469,22 @@
       ]
     },
     {
+      "key": "Document:docs/release/readiness-work/authority-crew-review.md",
+      "type": "Document",
+      "id": "docs/release/readiness-work/authority-crew-review.md",
+      "label": "docs/release/readiness-work/authority-crew-review.md",
+      "documentType": "documentation",
+      "lines": 79,
+      "version": "8034e9b61d1a0bad",
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/authority-crew-review.md",
+          "line": 1,
+          "version": "8034e9b61d1a0bad"
+        }
+      ]
+    },
+    {
       "key": "Document:docs/release/readiness-work/authority-inventory.md",
       "type": "Document",
       "id": "docs/release/readiness-work/authority-inventory.md",
@@ -119602,6 +120677,22 @@
       ]
     },
     {
+      "key": "Document:docs/release/readiness-work/harness-city-lock-release.md",
+      "type": "Document",
+      "id": "docs/release/readiness-work/harness-city-lock-release.md",
+      "label": "docs/release/readiness-work/harness-city-lock-release.md",
+      "documentType": "documentation",
+      "lines": 26,
+      "version": "c047ca9a7251b61d",
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/harness-city-lock-release.md",
+          "line": 1,
+          "version": "c047ca9a7251b61d"
+        }
+      ]
+    },
+    {
       "key": "Document:docs/release/readiness-work/harness-concurrent-replay.md",
       "type": "Document",
       "id": "docs/release/readiness-work/harness-concurrent-replay.md",
@@ -119678,6 +120769,22 @@
           "file": "docs/release/readiness-work/harness-gzip-capture.md",
           "line": 1,
           "version": "06b4e916c57c68eb"
+        }
+      ]
+    },
+    {
+      "key": "Document:docs/release/readiness-work/harness-observer-serialization.md",
+      "type": "Document",
+      "id": "docs/release/readiness-work/harness-observer-serialization.md",
+      "label": "docs/release/readiness-work/harness-observer-serialization.md",
+      "documentType": "documentation",
+      "lines": 45,
+      "version": "f91f8f8547fbbae9",
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/harness-observer-serialization.md",
+          "line": 1,
+          "version": "f91f8f8547fbbae9"
         }
       ]
     },
@@ -120098,6 +121205,22 @@
       ]
     },
     {
+      "key": "Document:docs/release/readiness-work/world-family-npc-observer.md",
+      "type": "Document",
+      "id": "docs/release/readiness-work/world-family-npc-observer.md",
+      "label": "docs/release/readiness-work/world-family-npc-observer.md",
+      "documentType": "documentation",
+      "lines": 37,
+      "version": "56a9160b67b237eb",
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/world-family-npc-observer.md",
+          "line": 1,
+          "version": "56a9160b67b237eb"
+        }
+      ]
+    },
+    {
       "key": "Document:docs/release/readiness-work/world-observers.md",
       "type": "Document",
       "id": "docs/release/readiness-work/world-observers.md",
@@ -120142,6 +121265,22 @@
           "file": "docs/release/readiness-work/world-resource-observer.md",
           "line": 1,
           "version": "81f47c0dcd20edaf"
+        }
+      ]
+    },
+    {
+      "key": "Document:docs/release/readiness-work/world-turf-terminal-observer.md",
+      "type": "Document",
+      "id": "docs/release/readiness-work/world-turf-terminal-observer.md",
+      "label": "docs/release/readiness-work/world-turf-terminal-observer.md",
+      "documentType": "documentation",
+      "lines": 82,
+      "version": "c983660dc1e47f5b",
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/world-turf-terminal-observer.md",
+          "line": 1,
+          "version": "c983660dc1e47f5b"
         }
       ]
     },
@@ -123272,12 +124411,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 756,
-      "version": "81641c6cfd9e60bd",
+      "version": "6510b207eee74a9f",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "81641c6cfd9e60bd"
+          "version": "6510b207eee74a9f"
         }
       ]
     },
@@ -123479,6 +124618,18 @@
         {
           "file": "knowledge/domains.md",
           "line": 1
+        }
+      ]
+    },
+    {
+      "key": "ExternalDependency:, ",
+      "type": "ExternalDependency",
+      "id": ", ",
+      "label": ", ",
+      "provenance": [
+        {
+          "file": "test/rc1-city-lock-release.js",
+          "line": 17
         }
       ]
     },
@@ -123989,6 +125140,14 @@
           "line": 5
         },
         {
+          "file": "test/rc1-car-melt-provenance-postgres.js",
+          "line": 5
+        },
+        {
+          "file": "test/rc1-city-lock-release.js",
+          "line": 6
+        },
+        {
           "file": "test/rc1-command-redteam.js",
           "line": 5
         },
@@ -124071,6 +125230,10 @@
         {
           "file": "test/rc1-native-shipment-terminals.js",
           "line": 5
+        },
+        {
+          "file": "test/rc1-native-turf-terminal.js",
+          "line": 4
         },
         {
           "file": "test/rc1-native-worker-schedule.js",
@@ -124470,7 +125633,7 @@
         },
         {
           "file": "src/bank.js",
-          "line": 375
+          "line": 382
         },
         {
           "file": "src/bondquoteexpiry.js",
@@ -129167,6 +130330,9 @@
           "commit": "62b32308c476f7616b9e32d30104be07d46a36ca"
         },
         {
+          "commit": "6368339e82965679c1d1aae91ecea657489a6414"
+        },
+        {
           "commit": "641af48e212b91a8b989f931bb8e8038623ff229"
         },
         {
@@ -129654,6 +130820,9 @@
         },
         {
           "commit": "630ed0f29b843ae764a74588649f9e6d8df4a56a"
+        },
+        {
+          "commit": "6368339e82965679c1d1aae91ecea657489a6414"
         },
         {
           "commit": "641af48e212b91a8b989f931bb8e8038623ff229"
@@ -130367,6 +131536,9 @@
           "commit": "630ed0f29b843ae764a74588649f9e6d8df4a56a"
         },
         {
+          "commit": "6368339e82965679c1d1aae91ecea657489a6414"
+        },
+        {
           "commit": "641af48e212b91a8b989f931bb8e8038623ff229"
         },
         {
@@ -131078,6 +132250,9 @@
           "commit": "630ed0f29b843ae764a74588649f9e6d8df4a56a"
         },
         {
+          "commit": "6368339e82965679c1d1aae91ecea657489a6414"
+        },
+        {
           "commit": "641af48e212b91a8b989f931bb8e8038623ff229"
         },
         {
@@ -131546,6 +132721,9 @@
           "commit": "62b32308c476f7616b9e32d30104be07d46a36ca"
         },
         {
+          "commit": "6368339e82965679c1d1aae91ecea657489a6414"
+        },
+        {
           "commit": "641af48e212b91a8b989f931bb8e8038623ff229"
         },
         {
@@ -131985,6 +133163,9 @@
         },
         {
           "commit": "630ed0f29b843ae764a74588649f9e6d8df4a56a"
+        },
+        {
+          "commit": "6368339e82965679c1d1aae91ecea657489a6414"
         },
         {
           "commit": "641af48e212b91a8b989f931bb8e8038623ff229"
@@ -132501,6 +133682,9 @@
         },
         {
           "commit": "630ed0f29b843ae764a74588649f9e6d8df4a56a"
+        },
+        {
+          "commit": "6368339e82965679c1d1aae91ecea657489a6414"
         },
         {
           "commit": "641af48e212b91a8b989f931bb8e8038623ff229"
@@ -133190,13 +134374,13 @@
       "type": "Module",
       "id": "src/bank.js",
       "label": "src/bank.js",
-      "lines": 519,
-      "version": "be159b75350911fe",
+      "lines": 526,
+      "version": "d27c0d36809fec7e",
       "provenance": [
         {
           "file": "src/bank.js",
           "line": 1,
-          "version": "be159b75350911fe"
+          "version": "d27c0d36809fec7e"
         }
       ]
     },
@@ -140285,12 +141469,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "6a189cca381ab6de519c9cb49970d157f4389549",
+      "revision": "b19e9decfcbd765e9a238dca093a8d441a1ccac6",
       "currentBranch": "codex/rc1-readiness",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 3539,
+      "currentArtifactCount": 3564,
       "provenance": [
         {
           "file": "README.md",
@@ -170913,6 +172097,36 @@
       ]
     },
     {
+      "key": "TestSuite:test/rc1-car-melt-provenance-postgres.js",
+      "type": "TestSuite",
+      "id": "test/rc1-car-melt-provenance-postgres.js",
+      "label": "test/rc1-car-melt-provenance-postgres.js",
+      "lines": 155,
+      "version": "d191ab4250986fb2",
+      "provenance": [
+        {
+          "file": "test/rc1-car-melt-provenance-postgres.js",
+          "line": 1,
+          "version": "d191ab4250986fb2"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/rc1-car-melt-provenance.js",
+      "type": "TestSuite",
+      "id": "test/rc1-car-melt-provenance.js",
+      "label": "test/rc1-car-melt-provenance.js",
+      "lines": 92,
+      "version": "d1ef7665a12a0361",
+      "provenance": [
+        {
+          "file": "test/rc1-car-melt-provenance.js",
+          "line": 1,
+          "version": "d1ef7665a12a0361"
+        }
+      ]
+    },
+    {
       "key": "TestSuite:test/rc1-churn-policy.js",
       "type": "TestSuite",
       "id": "test/rc1-churn-policy.js",
@@ -170943,6 +172157,21 @@
       ]
     },
     {
+      "key": "TestSuite:test/rc1-city-lock-release.js",
+      "type": "TestSuite",
+      "id": "test/rc1-city-lock-release.js",
+      "label": "test/rc1-city-lock-release.js",
+      "lines": 136,
+      "version": "77d3cff611c536ab",
+      "provenance": [
+        {
+          "file": "test/rc1-city-lock-release.js",
+          "line": 1,
+          "version": "77d3cff611c536ab"
+        }
+      ]
+    },
+    {
       "key": "TestSuite:test/rc1-command-family-postgres.js",
       "type": "TestSuite",
       "id": "test/rc1-command-family-postgres.js",
@@ -170969,6 +172198,21 @@
           "file": "test/rc1-command-redteam.js",
           "line": 1,
           "version": "e60bfca6c3088330"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/rc1-crew-authority-postgres.js",
+      "type": "TestSuite",
+      "id": "test/rc1-crew-authority-postgres.js",
+      "label": "test/rc1-crew-authority-postgres.js",
+      "lines": 160,
+      "version": "44797b3a3d42b863",
+      "provenance": [
+        {
+          "file": "test/rc1-crew-authority-postgres.js",
+          "line": 1,
+          "version": "44797b3a3d42b863"
         }
       ]
     },
@@ -171693,6 +172937,21 @@
       ]
     },
     {
+      "key": "TestSuite:test/rc1-native-turf-terminal.js",
+      "type": "TestSuite",
+      "id": "test/rc1-native-turf-terminal.js",
+      "label": "test/rc1-native-turf-terminal.js",
+      "lines": 270,
+      "version": "e2a4d87ae5d22b6c",
+      "provenance": [
+        {
+          "file": "test/rc1-native-turf-terminal.js",
+          "line": 1,
+          "version": "e2a4d87ae5d22b6c"
+        }
+      ]
+    },
+    {
       "key": "TestSuite:test/rc1-native-worker-schedule.js",
       "type": "TestSuite",
       "id": "test/rc1-native-worker-schedule.js",
@@ -171712,13 +172971,13 @@
       "type": "TestSuite",
       "id": "test/rc1-native-world-workload.js",
       "label": "test/rc1-native-world-workload.js",
-      "lines": 693,
-      "version": "f5e83156c3087ea1",
+      "lines": 725,
+      "version": "2a3740d393567e2e",
       "provenance": [
         {
           "file": "test/rc1-native-world-workload.js",
           "line": 1,
-          "version": "f5e83156c3087ea1"
+          "version": "2a3740d393567e2e"
         }
       ]
     },
@@ -171734,6 +172993,21 @@
           "file": "test/rc1-observability.js",
           "line": 1,
           "version": "517f1d9213deae55"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/rc1-observer-serialization.js",
+      "type": "TestSuite",
+      "id": "test/rc1-observer-serialization.js",
+      "label": "test/rc1-observer-serialization.js",
+      "lines": 118,
+      "version": "af72c77047b6e368",
+      "provenance": [
+        {
+          "file": "test/rc1-observer-serialization.js",
+          "line": 1,
+          "version": "af72c77047b6e368"
         }
       ]
     },
@@ -171978,6 +173252,21 @@
       ]
     },
     {
+      "key": "TestSuite:test/rc1-world-car-melt-witness.js",
+      "type": "TestSuite",
+      "id": "test/rc1-world-car-melt-witness.js",
+      "label": "test/rc1-world-car-melt-witness.js",
+      "lines": 86,
+      "version": "7f382128856c8742",
+      "provenance": [
+        {
+          "file": "test/rc1-world-car-melt-witness.js",
+          "line": 1,
+          "version": "7f382128856c8742"
+        }
+      ]
+    },
+    {
       "key": "TestSuite:test/rc1-world-diagnostics.js",
       "type": "TestSuite",
       "id": "test/rc1-world-diagnostics.js",
@@ -172019,6 +173308,21 @@
           "file": "test/rc1-world-family-entry.js",
           "line": 1,
           "version": "f09cbd571792f8be"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/rc1-world-family-npc.js",
+      "type": "TestSuite",
+      "id": "test/rc1-world-family-npc.js",
+      "label": "test/rc1-world-family-npc.js",
+      "lines": 86,
+      "version": "e5edf2110b447ba8",
+      "provenance": [
+        {
+          "file": "test/rc1-world-family-npc.js",
+          "line": 1,
+          "version": "e5edf2110b447ba8"
         }
       ]
     },
@@ -172079,6 +173383,21 @@
           "file": "test/rc1-world-resource-observer.js",
           "line": 1,
           "version": "ae12daa9cd3f58ef"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/rc1-world-turf-terminal.js",
+      "type": "TestSuite",
+      "id": "test/rc1-world-turf-terminal.js",
+      "label": "test/rc1-world-turf-terminal.js",
+      "lines": 113,
+      "version": "04c89ba44fca3d6f",
+      "provenance": [
+        {
+          "file": "test/rc1-world-turf-terminal.js",
+          "line": 1,
+          "version": "04c89ba44fca3d6f"
         }
       ]
     },
@@ -173257,13 +174576,13 @@
       "type": "Workflow",
       "id": ".github/workflows/rc1-recovery.yml",
       "label": ".github/workflows/rc1-recovery.yml",
-      "lines": 1039,
-      "version": "0bd1b7f04934ac32",
+      "lines": 1068,
+      "version": "4e26c4945dbaaa01",
       "provenance": [
         {
           "file": ".github/workflows/rc1-recovery.yml",
           "line": 1,
-          "version": "0bd1b7f04934ac32"
+          "version": "4e26c4945dbaaa01"
         }
       ]
     }
@@ -187158,6 +188477,24 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/rc1-car-melt-provenance-postgres.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/rc1-car-melt-provenance-postgres.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/rc1-car-melt-provenance.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/rc1-car-melt-provenance.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/rc1-churn-policy.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -187176,6 +188513,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/rc1-city-lock-release.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/rc1-city-lock-release.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/rc1-command-family-postgres.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -187189,6 +188535,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "test/rc1-command-redteam.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/rc1-crew-authority-postgres.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/rc1-crew-authority-postgres.js",
         "line": 1
       }
     },
@@ -187626,6 +188981,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/rc1-native-turf-terminal.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/rc1-native-turf-terminal.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/rc1-native-worker-schedule.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -187648,6 +189012,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "test/rc1-observability.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/rc1-observer-serialization.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/rc1-observer-serialization.js",
         "line": 1
       }
     },
@@ -187797,6 +189170,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/rc1-world-car-melt-witness.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/rc1-world-car-melt-witness.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/rc1-world-diagnostics.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -187819,6 +189201,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "test/rc1-world-family-entry.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/rc1-world-family-npc.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/rc1-world-family-npc.js",
         "line": 1
       }
     },
@@ -187855,6 +189246,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "test/rc1-world-resource-observer.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/rc1-world-turf-terminal.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/rc1-world-turf-terminal.js",
         "line": 1
       }
     },
@@ -189205,6 +190605,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "tools/rc1-car-journal.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/rc1-car-melt-provenance.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/rc1-car-melt-provenance.js",
         "line": 1
       }
     },
@@ -202317,6 +203726,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:11531870b822283c3b674fcd33c34cad2663cb5b",
+      "to": "Artifact:docs/release/readiness-work/world-family-npc-observer.md",
+      "provenance": {
+        "commit": "11531870b822283c3b674fcd33c34cad2663cb5b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:11531870b822283c3b674fcd33c34cad2663cb5b",
+      "to": "Artifact:test/rc1-world-family-npc.js",
+      "provenance": {
+        "commit": "11531870b822283c3b674fcd33c34cad2663cb5b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:11531870b822283c3b674fcd33c34cad2663cb5b",
+      "to": "Artifact:tools/rc1-world-resource-observer.js",
+      "provenance": {
+        "commit": "11531870b822283c3b674fcd33c34cad2663cb5b"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:1153c378e4aaa1e073967e27cfbf202ac36ae54f",
       "to": "Artifact:docs/superpowers/specs/2026-09-03-world-graph-item-economy-design.md",
       "provenance": {
@@ -203593,6 +205026,30 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "commit": "13f29e6863221b1daf5c95cd2205bda1fe1fcc75"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1404b48c30b41ca66b757eb2c2b39fc6e2750553",
+      "to": "Artifact:docs/release/readiness-work/harness-city-lock-release.md",
+      "provenance": {
+        "commit": "1404b48c30b41ca66b757eb2c2b39fc6e2750553"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1404b48c30b41ca66b757eb2c2b39fc6e2750553",
+      "to": "Artifact:docs/release/readiness-work/harness-observer-serialization-index.json",
+      "provenance": {
+        "commit": "1404b48c30b41ca66b757eb2c2b39fc6e2750553"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1404b48c30b41ca66b757eb2c2b39fc6e2750553",
+      "to": "Artifact:docs/release/readiness-work/harness-observer-serialization.md",
+      "provenance": {
+        "commit": "1404b48c30b41ca66b757eb2c2b39fc6e2750553"
       }
     },
     {
@@ -210801,6 +212258,14 @@
       "to": "Artifact:tools/pgcheck.js",
       "provenance": {
         "commit": "207697775905bd0acac68df7f148aaaa8e812d79"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:20e9bd0298442909008cc65ff4b0aa93ead6993a",
+      "to": "Artifact:docs/release/readiness-work/integrated-6368339e-results.json",
+      "provenance": {
+        "commit": "20e9bd0298442909008cc65ff4b0aa93ead6993a"
       }
     },
     {
@@ -225309,6 +226774,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:3dd51d5ab3988f393cd94b904b47dc8397e9c840",
+      "to": "Artifact:docs/rc1-car-melt-commit.md",
+      "provenance": {
+        "commit": "3dd51d5ab3988f393cd94b904b47dc8397e9c840"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:3e05ef9128cac634d41cbc12bec33d280e313469",
       "to": "Artifact:src/heists.js",
       "provenance": {
@@ -231457,6 +232930,38 @@
       "to": "HistoricalArtifact:knowledge/generated/modules.md",
       "provenance": {
         "commit": "4d78d9cad8adb025ca232f4015c2c3ae1d21fc73"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4d7b40c9e1699701e1f98f1466d4f8ff4dc0cab1",
+      "to": "Artifact:docs/release/readiness-work/harness-observer-serialization.md",
+      "provenance": {
+        "commit": "4d7b40c9e1699701e1f98f1466d4f8ff4dc0cab1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4d7b40c9e1699701e1f98f1466d4f8ff4dc0cab1",
+      "to": "Artifact:test/rc1-native-world-workload.js",
+      "provenance": {
+        "commit": "4d7b40c9e1699701e1f98f1466d4f8ff4dc0cab1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4d7b40c9e1699701e1f98f1466d4f8ff4dc0cab1",
+      "to": "Artifact:test/rc1-observer-serialization.js",
+      "provenance": {
+        "commit": "4d7b40c9e1699701e1f98f1466d4f8ff4dc0cab1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4d7b40c9e1699701e1f98f1466d4f8ff4dc0cab1",
+      "to": "Artifact:tools/rc1-world-resource-observer.js",
+      "provenance": {
+        "commit": "4d7b40c9e1699701e1f98f1466d4f8ff4dc0cab1"
       }
     },
     {
@@ -239077,6 +240582,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:5ed02f9d735a7e07b95ac5b057a70375d07742ed",
+      "to": "Artifact:test/rc1-crew-authority-postgres.js",
+      "provenance": {
+        "commit": "5ed02f9d735a7e07b95ac5b057a70375d07742ed"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:5ee68c063ea851c97d273aaa2e426e017c88e677",
       "to": "HistoricalArtifact:knowledge/generated/documents.md",
       "provenance": {
@@ -241961,6 +243474,62 @@
       "to": "Artifact:tools/pgcheck.js",
       "provenance": {
         "commit": "63598c577877d2828e964cb703ff72722bd9d672"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6368339e82965679c1d1aae91ecea657489a6414",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "6368339e82965679c1d1aae91ecea657489a6414"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6368339e82965679c1d1aae91ecea657489a6414",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "6368339e82965679c1d1aae91ecea657489a6414"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6368339e82965679c1d1aae91ecea657489a6414",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "6368339e82965679c1d1aae91ecea657489a6414"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6368339e82965679c1d1aae91ecea657489a6414",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "6368339e82965679c1d1aae91ecea657489a6414"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6368339e82965679c1d1aae91ecea657489a6414",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "6368339e82965679c1d1aae91ecea657489a6414"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6368339e82965679c1d1aae91ecea657489a6414",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "6368339e82965679c1d1aae91ecea657489a6414"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6368339e82965679c1d1aae91ecea657489a6414",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "6368339e82965679c1d1aae91ecea657489a6414"
       }
     },
     {
@@ -247205,6 +248774,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:6e7ccb47043e8dec766b84337eabcd52383a3d99",
+      "to": "Artifact:docs/release/readiness-work/hosted-6368339e-contract-results.json",
+      "provenance": {
+        "commit": "6e7ccb47043e8dec766b84337eabcd52383a3d99"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:6ec740da3a7d8852fbfed0d697c0fc8af0c48bf6",
       "to": "Artifact:src/server.js",
       "provenance": {
@@ -248425,6 +250002,70 @@
       "to": "Artifact:test/routes.js",
       "provenance": {
         "commit": "71761973c02f1a320e005796ba10e78bb04bb154"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:71bfea187db177a06f66f85ef8d4a125dc39bfb2",
+      "to": "Artifact:.github/workflows/rc1-recovery.yml",
+      "provenance": {
+        "commit": "71bfea187db177a06f66f85ef8d4a125dc39bfb2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:71bfea187db177a06f66f85ef8d4a125dc39bfb2",
+      "to": "Artifact:docs/release/readiness-work/family-npc-observer-summary.json",
+      "provenance": {
+        "commit": "71bfea187db177a06f66f85ef8d4a125dc39bfb2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:71bfea187db177a06f66f85ef8d4a125dc39bfb2",
+      "to": "Artifact:docs/release/readiness-work/gate-registry.json",
+      "provenance": {
+        "commit": "71bfea187db177a06f66f85ef8d4a125dc39bfb2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:71bfea187db177a06f66f85ef8d4a125dc39bfb2",
+      "to": "Artifact:docs/release/readiness-work/open-proofs.json",
+      "provenance": {
+        "commit": "71bfea187db177a06f66f85ef8d4a125dc39bfb2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:71bfea187db177a06f66f85ef8d4a125dc39bfb2",
+      "to": "Artifact:docs/release/readiness-work/tooling-repairs.json",
+      "provenance": {
+        "commit": "71bfea187db177a06f66f85ef8d4a125dc39bfb2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:71bfea187db177a06f66f85ef8d4a125dc39bfb2",
+      "to": "Artifact:docs/release/readiness-work/turf-terminal-observer-summary.json",
+      "provenance": {
+        "commit": "71bfea187db177a06f66f85ef8d4a125dc39bfb2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:71bfea187db177a06f66f85ef8d4a125dc39bfb2",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "71bfea187db177a06f66f85ef8d4a125dc39bfb2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:71bfea187db177a06f66f85ef8d4a125dc39bfb2",
+      "to": "Artifact:tools/rc1-resource-inventory.js",
+      "provenance": {
+        "commit": "71bfea187db177a06f66f85ef8d4a125dc39bfb2"
       }
     },
     {
@@ -256261,6 +257902,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:7debbd0415c7ff0c68400b3cd105926d283099f2",
+      "to": "Artifact:docs/release/readiness-work/world-turf-terminal-observer.md",
+      "provenance": {
+        "commit": "7debbd0415c7ff0c68400b3cd105926d283099f2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7debbd0415c7ff0c68400b3cd105926d283099f2",
+      "to": "Artifact:test/rc1-native-turf-terminal.js",
+      "provenance": {
+        "commit": "7debbd0415c7ff0c68400b3cd105926d283099f2"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:7df80cdb3dfda033d75ac6253c583dceb6e07c33",
       "to": "Artifact:CLAUDE.md",
       "provenance": {
@@ -259093,6 +260750,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:86b41c51af71205c4ff17586b83883d25b3e0803",
+      "to": "Artifact:test/rc1-crew-authority-postgres.js",
+      "provenance": {
+        "commit": "86b41c51af71205c4ff17586b83883d25b3e0803"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:86c16a900131255cfa426aaf58fcaff61a53329a",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -259825,6 +261490,22 @@
       "to": "Artifact:tools/public-ui.js",
       "provenance": {
         "commit": "887d75a7a67e661eaecb7089eeac172269073b4e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8881f7924877e0b47aa70e2b94bedff9b0bda19a",
+      "to": "Artifact:docs/release/readiness-work/authority-crew-review.md",
+      "provenance": {
+        "commit": "8881f7924877e0b47aa70e2b94bedff9b0bda19a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8881f7924877e0b47aa70e2b94bedff9b0bda19a",
+      "to": "Artifact:docs/release/readiness-work/authority-crew-summary.json",
+      "provenance": {
+        "commit": "8881f7924877e0b47aa70e2b94bedff9b0bda19a"
       }
     },
     {
@@ -265529,6 +267210,14 @@
       "to": "Artifact:test/explore.js",
       "provenance": {
         "commit": "960975dabd62ce42751e1f45bf7b5e3f0f1143b3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:962921099d330733f10168caffe2b4cbe8fd9b39",
+      "to": "Artifact:docs/rc1-world-car-melt-witness.md",
+      "provenance": {
+        "commit": "962921099d330733f10168caffe2b4cbe8fd9b39"
       }
     },
     {
@@ -274965,6 +276654,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:b19e9decfcbd765e9a238dca093a8d441a1ccac6",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "b19e9decfcbd765e9a238dca093a8d441a1ccac6"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:b1a133d5259a7615cbd38d243bbdae58b1e08bd8",
       "to": "Artifact:DEPLOY.md",
       "provenance": {
@@ -277673,6 +279370,22 @@
       "to": "Artifact:tools/pgquery.js",
       "provenance": {
         "commit": "b8e561314cf5c9fb9d0fd8c79cf27c817c1a6e58"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b8e9f63f5bfa35020ddf90dfae5fe47fd7df9a42",
+      "to": "Artifact:docs/release/readiness-work/world-turf-terminal-observer.md",
+      "provenance": {
+        "commit": "b8e9f63f5bfa35020ddf90dfae5fe47fd7df9a42"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b8e9f63f5bfa35020ddf90dfae5fe47fd7df9a42",
+      "to": "Artifact:test/rc1-native-turf-terminal.js",
+      "provenance": {
+        "commit": "b8e9f63f5bfa35020ddf90dfae5fe47fd7df9a42"
       }
     },
     {
@@ -285957,6 +287670,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:c8350fa84688dfd681644bbdb95c1cd7be0848a2",
+      "to": "Artifact:docs/release/readiness-work/harness-city-lock-release.md",
+      "provenance": {
+        "commit": "c8350fa84688dfd681644bbdb95c1cd7be0848a2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c8350fa84688dfd681644bbdb95c1cd7be0848a2",
+      "to": "Artifact:src/bank.js",
+      "provenance": {
+        "commit": "c8350fa84688dfd681644bbdb95c1cd7be0848a2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c8350fa84688dfd681644bbdb95c1cd7be0848a2",
+      "to": "Artifact:test/rc1-city-lock-release.js",
+      "provenance": {
+        "commit": "c8350fa84688dfd681644bbdb95c1cd7be0848a2"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:c86412cc3b4d4f0e2cba7c9986edf1e2ad5ede10",
       "to": "Artifact:omerta-npc-family-wars-design.md",
       "provenance": {
@@ -289693,6 +291430,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:d4743b441c7b6c9994635f5cb280d0c6d980c7d1",
+      "to": "Artifact:docs/rc1-world-car-melt-witness.md",
+      "provenance": {
+        "commit": "d4743b441c7b6c9994635f5cb280d0c6d980c7d1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d4743b441c7b6c9994635f5cb280d0c6d980c7d1",
+      "to": "Artifact:test/rc1-native-world-workload.js",
+      "provenance": {
+        "commit": "d4743b441c7b6c9994635f5cb280d0c6d980c7d1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d4743b441c7b6c9994635f5cb280d0c6d980c7d1",
+      "to": "Artifact:test/rc1-world-car-melt-witness.js",
+      "provenance": {
+        "commit": "d4743b441c7b6c9994635f5cb280d0c6d980c7d1"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:d4ca3d6d3e39a4df0845cd9b0495bddf05edbd5e",
       "to": "Artifact:CLAUDE.md",
       "provenance": {
@@ -290073,6 +291834,86 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "commit": "d5f649584698fb45c41bcf89ef1794104f922ed9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d61e02ebee2258b97560107996d5524bb6a284d0",
+      "to": "Artifact:.github/workflows/rc1-recovery.yml",
+      "provenance": {
+        "commit": "d61e02ebee2258b97560107996d5524bb6a284d0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d61e02ebee2258b97560107996d5524bb6a284d0",
+      "to": "Artifact:docs/release/readiness-work/gate-registry.json",
+      "provenance": {
+        "commit": "d61e02ebee2258b97560107996d5524bb6a284d0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d61e02ebee2258b97560107996d5524bb6a284d0",
+      "to": "Artifact:docs/release/readiness-work/hosted-4b9db479-retained-reproduction.json",
+      "provenance": {
+        "commit": "d61e02ebee2258b97560107996d5524bb6a284d0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d61e02ebee2258b97560107996d5524bb6a284d0",
+      "to": "Artifact:docs/release/readiness-work/hosted-6368339e-retained-failures.json",
+      "provenance": {
+        "commit": "d61e02ebee2258b97560107996d5524bb6a284d0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d61e02ebee2258b97560107996d5524bb6a284d0",
+      "to": "Artifact:docs/release/readiness-work/open-proofs.json",
+      "provenance": {
+        "commit": "d61e02ebee2258b97560107996d5524bb6a284d0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d61e02ebee2258b97560107996d5524bb6a284d0",
+      "to": "Artifact:docs/release/readiness-work/tooling-repairs.json",
+      "provenance": {
+        "commit": "d61e02ebee2258b97560107996d5524bb6a284d0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d61e02ebee2258b97560107996d5524bb6a284d0",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "d61e02ebee2258b97560107996d5524bb6a284d0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d61e02ebee2258b97560107996d5524bb6a284d0",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "d61e02ebee2258b97560107996d5524bb6a284d0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d61e02ebee2258b97560107996d5524bb6a284d0",
+      "to": "Artifact:test/rc1-city-lock-release.js",
+      "provenance": {
+        "commit": "d61e02ebee2258b97560107996d5524bb6a284d0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d61e02ebee2258b97560107996d5524bb6a284d0",
+      "to": "Artifact:tools/rc1-resource-inventory.js",
+      "provenance": {
+        "commit": "d61e02ebee2258b97560107996d5524bb6a284d0"
       }
     },
     {
@@ -291601,6 +293442,14 @@
       "to": "Artifact:test/population.js",
       "provenance": {
         "commit": "d90b8ef1fcaa1641ea3fceb4d75b81f8c0a73b9d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d90f3f00e3a47989b0aa09617bc5a7eb226706ae",
+      "to": "Artifact:test/rc1-crew-authority-postgres.js",
+      "provenance": {
+        "commit": "d90f3f00e3a47989b0aa09617bc5a7eb226706ae"
       }
     },
     {
@@ -298173,6 +300022,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:e3e2fc19850708ca198af622dcba9f88e948c53e",
+      "to": "Artifact:docs/rc1-car-melt-commit.md",
+      "provenance": {
+        "commit": "e3e2fc19850708ca198af622dcba9f88e948c53e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e3e2fc19850708ca198af622dcba9f88e948c53e",
+      "to": "Artifact:test/rc1-car-melt-provenance-postgres.js",
+      "provenance": {
+        "commit": "e3e2fc19850708ca198af622dcba9f88e948c53e"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:e41aad1e517f9a74742f8f7e1963c56a302b9503",
       "to": "Artifact:package.json",
       "provenance": {
@@ -302189,6 +304054,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:f101a479fb1d1005ae8ff774b2c29a480b718817",
+      "to": "Artifact:test/rc1-city-lock-release.js",
+      "provenance": {
+        "commit": "f101a479fb1d1005ae8ff774b2c29a480b718817"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:f14924b211be5639608d945349eb23b6c8bb95ec",
       "to": "Artifact:test/rc1-native-commit-observer.js",
       "provenance": {
@@ -303017,6 +304890,22 @@
       "to": "HistoricalArtifact:src/rwa.js",
       "provenance": {
         "commit": "f2c7fa65f1def15a4bcfd0cc62b1f7bf4305ee7f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f30cce00bcf48158909c7df4be14e4f1742564da",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "f30cce00bcf48158909c7df4be14e4f1742564da"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f30cce00bcf48158909c7df4be14e4f1742564da",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "f30cce00bcf48158909c7df4be14e4f1742564da"
       }
     },
     {
@@ -304045,6 +305934,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:f5dcb8886c8010f8ace43ccc47eb64560eebd8e9",
+      "to": "Artifact:docs/rc1-car-melt-commit.md",
+      "provenance": {
+        "commit": "f5dcb8886c8010f8ace43ccc47eb64560eebd8e9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f5dcb8886c8010f8ace43ccc47eb64560eebd8e9",
+      "to": "Artifact:test/rc1-car-melt-provenance-postgres.js",
+      "provenance": {
+        "commit": "f5dcb8886c8010f8ace43ccc47eb64560eebd8e9"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:f5fd8b4e0cefb72e1ea20640016b92da76702cd1",
       "to": "Artifact:omerta-bank-protocol-design.md",
       "provenance": {
@@ -304257,6 +306162,54 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "f688a689aba5812eb7dd8852a0f1d171b37844d9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f6a015b3e4075713c61a0bb532c67ed041a2fc73",
+      "to": "Artifact:docs/rc1-car-melt-commit.md",
+      "provenance": {
+        "commit": "f6a015b3e4075713c61a0bb532c67ed041a2fc73"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f6a015b3e4075713c61a0bb532c67ed041a2fc73",
+      "to": "Artifact:test/rc1-car-melt-provenance-postgres.js",
+      "provenance": {
+        "commit": "f6a015b3e4075713c61a0bb532c67ed041a2fc73"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f6a015b3e4075713c61a0bb532c67ed041a2fc73",
+      "to": "Artifact:test/rc1-car-melt-provenance.js",
+      "provenance": {
+        "commit": "f6a015b3e4075713c61a0bb532c67ed041a2fc73"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f6a015b3e4075713c61a0bb532c67ed041a2fc73",
+      "to": "Artifact:tools/rc1-car-journal.js",
+      "provenance": {
+        "commit": "f6a015b3e4075713c61a0bb532c67ed041a2fc73"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f6a015b3e4075713c61a0bb532c67ed041a2fc73",
+      "to": "Artifact:tools/rc1-car-melt-provenance.js",
+      "provenance": {
+        "commit": "f6a015b3e4075713c61a0bb532c67ed041a2fc73"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f6a015b3e4075713c61a0bb532c67ed041a2fc73",
+      "to": "Artifact:tools/rc1-world-resource-observer.js",
+      "provenance": {
+        "commit": "f6a015b3e4075713c61a0bb532c67ed041a2fc73"
       }
     },
     {
@@ -305569,6 +307522,38 @@
       "to": "Artifact:test/walletforge.js",
       "provenance": {
         "commit": "fa01f1c4e7da901fc2fb51080678fa743ec6ba3e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fa2b3a9972991f9312e849a4c19021adc8d04a37",
+      "to": "Artifact:docs/release/readiness-work/world-turf-terminal-observer.md",
+      "provenance": {
+        "commit": "fa2b3a9972991f9312e849a4c19021adc8d04a37"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fa2b3a9972991f9312e849a4c19021adc8d04a37",
+      "to": "Artifact:test/rc1-native-turf-terminal.js",
+      "provenance": {
+        "commit": "fa2b3a9972991f9312e849a4c19021adc8d04a37"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fa2b3a9972991f9312e849a4c19021adc8d04a37",
+      "to": "Artifact:test/rc1-world-turf-terminal.js",
+      "provenance": {
+        "commit": "fa2b3a9972991f9312e849a4c19021adc8d04a37"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fa2b3a9972991f9312e849a4c19021adc8d04a37",
+      "to": "Artifact:tools/rc1-world-resource-observer.js",
+      "provenance": {
+        "commit": "fa2b3a9972991f9312e849a4c19021adc8d04a37"
       }
     },
     {
@@ -317785,6 +319770,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:docs/rc1-car-melt-commit.md",
+      "provenance": {
+        "file": "docs/rc1-car-melt-commit.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:docs/rc1-ci-envelope.md",
       "provenance": {
         "file": "docs/rc1-ci-envelope.md",
@@ -317824,6 +319818,15 @@
       "to": "Artifact:docs/rc1-native-mobile-adversity.md",
       "provenance": {
         "file": "docs/rc1-native-mobile-adversity.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/rc1-world-car-melt-witness.md",
+      "provenance": {
+        "file": "docs/rc1-world-car-melt-witness.md",
         "line": 1
       }
     },
@@ -320350,6 +322353,24 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/authority-crew-review.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/authority-crew-review.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/authority-crew-summary.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/authority-crew-summary.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:docs/release/readiness-work/authority-inventory.json",
       "provenance": {
         "file": "docs/release/readiness-work/authority-inventory.json",
@@ -320470,6 +322491,15 @@
       "to": "Artifact:docs/release/readiness-work/family-entry-observer-summary.json",
       "provenance": {
         "file": "docs/release/readiness-work/family-entry-observer-summary.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/family-npc-observer-summary.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/family-npc-observer-summary.json",
         "line": 1
       }
     },
@@ -320629,6 +322659,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/harness-city-lock-release.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/harness-city-lock-release.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:docs/release/readiness-work/harness-concurrent-replay-results.json",
       "provenance": {
         "file": "docs/release/readiness-work/harness-concurrent-replay-results.json",
@@ -320713,6 +322752,24 @@
       "to": "Artifact:docs/release/readiness-work/harness-mystery-world-replay-results.json",
       "provenance": {
         "file": "docs/release/readiness-work/harness-mystery-world-replay-results.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/harness-observer-serialization-index.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/harness-observer-serialization-index.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/harness-observer-serialization.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/harness-observer-serialization.md",
         "line": 1
       }
     },
@@ -320917,6 +322974,33 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/hosted-4b9db479-retained-reproduction.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/hosted-4b9db479-retained-reproduction.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/hosted-6368339e-contract-results.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/hosted-6368339e-contract-results.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/hosted-6368339e-retained-failures.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/hosted-6368339e-retained-failures.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:docs/release/readiness-work/hosted-9e05bf08-ci-results.json",
       "provenance": {
         "file": "docs/release/readiness-work/hosted-9e05bf08-ci-results.json",
@@ -320983,6 +323067,15 @@
       "to": "Artifact:docs/release/readiness-work/integrated-5097a09d-results.json",
       "provenance": {
         "file": "docs/release/readiness-work/integrated-5097a09d-results.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/integrated-6368339e-results.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/integrated-6368339e-results.json",
         "line": 1
       }
     },
@@ -321547,6 +323640,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/turf-terminal-observer-summary.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/turf-terminal-observer-summary.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:docs/release/readiness-work/world-ammo-escrow.md",
       "provenance": {
         "file": "docs/release/readiness-work/world-ammo-escrow.md",
@@ -321568,6 +323670,15 @@
       "to": "Artifact:docs/release/readiness-work/world-family-entry.md",
       "provenance": {
         "file": "docs/release/readiness-work/world-family-entry.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/world-family-npc-observer.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/world-family-npc-observer.md",
         "line": 1
       }
     },
@@ -321604,6 +323715,15 @@
       "to": "Artifact:docs/release/readiness-work/world-resource-observer.md",
       "provenance": {
         "file": "docs/release/readiness-work/world-resource-observer.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/world-turf-terminal-observer.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/world-turf-terminal-observer.md",
         "line": 1
       }
     },
@@ -326074,6 +328194,24 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/rc1-car-melt-provenance-postgres.js",
+      "provenance": {
+        "file": "test/rc1-car-melt-provenance-postgres.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/rc1-car-melt-provenance.js",
+      "provenance": {
+        "file": "test/rc1-car-melt-provenance.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/rc1-churn-policy.js",
       "provenance": {
         "file": "test/rc1-churn-policy.js",
@@ -326092,6 +328230,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/rc1-city-lock-release.js",
+      "provenance": {
+        "file": "test/rc1-city-lock-release.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/rc1-command-family-postgres.js",
       "provenance": {
         "file": "test/rc1-command-family-postgres.js",
@@ -326104,6 +328251,15 @@
       "to": "Artifact:test/rc1-command-redteam.js",
       "provenance": {
         "file": "test/rc1-command-redteam.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/rc1-crew-authority-postgres.js",
+      "provenance": {
+        "file": "test/rc1-crew-authority-postgres.js",
         "line": 1
       }
     },
@@ -326542,6 +328698,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/rc1-native-turf-terminal.js",
+      "provenance": {
+        "file": "test/rc1-native-turf-terminal.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/rc1-native-worker-schedule.js",
       "provenance": {
         "file": "test/rc1-native-worker-schedule.js",
@@ -326563,6 +328728,15 @@
       "to": "Artifact:test/rc1-observability.js",
       "provenance": {
         "file": "test/rc1-observability.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/rc1-observer-serialization.js",
+      "provenance": {
+        "file": "test/rc1-observer-serialization.js",
         "line": 1
       }
     },
@@ -326713,6 +328887,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/rc1-world-car-melt-witness.js",
+      "provenance": {
+        "file": "test/rc1-world-car-melt-witness.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/rc1-world-diagnostics.js",
       "provenance": {
         "file": "test/rc1-world-diagnostics.js",
@@ -326734,6 +328917,15 @@
       "to": "Artifact:test/rc1-world-family-entry.js",
       "provenance": {
         "file": "test/rc1-world-family-entry.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/rc1-world-family-npc.js",
+      "provenance": {
+        "file": "test/rc1-world-family-npc.js",
         "line": 1
       }
     },
@@ -326770,6 +328962,15 @@
       "to": "Artifact:test/rc1-world-resource-observer.js",
       "provenance": {
         "file": "test/rc1-world-resource-observer.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/rc1-world-turf-terminal.js",
+      "provenance": {
+        "file": "test/rc1-world-turf-terminal.js",
         "line": 1
       }
     },
@@ -328120,6 +330321,15 @@
       "to": "Artifact:tools/rc1-car-journal.js",
       "provenance": {
         "file": "tools/rc1-car-journal.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/rc1-car-melt-provenance.js",
+      "provenance": {
+        "file": "tools/rc1-car-melt-provenance.js",
         "line": 1
       }
     },
@@ -340637,7 +342847,25 @@
     {
       "type": "DECLARES",
       "from": "Artifact:package.json",
+      "to": "Command:npm:test:rc1:car-melt:postgres",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
       "to": "Command:npm:test:rc1:churn:postgres",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
+      "to": "Command:npm:test:rc1:city-lock:postgres",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -340656,6 +342884,15 @@
       "type": "DECLARES",
       "from": "Artifact:package.json",
       "to": "Command:npm:test:rc1:concurrent:postgres",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
+      "to": "Command:npm:test:rc1:crew-authority:postgres",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -341061,6 +343298,15 @@
       "type": "DECLARES",
       "from": "Artifact:package.json",
       "to": "Command:npm:test:rc1:turf-contention:postgres",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
+      "to": "Command:npm:test:rc1:turf-terminal:postgres",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -352524,7 +354770,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:economy-ledger",
-      "weight": 219
+      "weight": 221
     },
     {
       "type": "DEPENDS_ON",
@@ -352548,7 +354794,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 994
+      "weight": 1004
     },
     {
       "type": "DEPENDS_ON",
@@ -356632,8 +358878,26 @@
     },
     {
       "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:car-melt:postgres",
+      "to": "Artifact:test/rc1-car-melt-provenance-postgres.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
       "from": "Command:npm:test:rc1:churn:postgres",
       "to": "Artifact:test/rc1-churn-policy.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:city-lock:postgres",
+      "to": "Artifact:test/rc1-city-lock-release.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -356652,6 +358916,15 @@
       "type": "EXECUTES",
       "from": "Command:npm:test:rc1:concurrent:postgres",
       "to": "Artifact:test/rc1-native-concurrent-replay.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:crew-authority:postgres",
+      "to": "Artifact:test/rc1-crew-authority-postgres.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -356858,7 +359131,25 @@
     {
       "type": "EXECUTES",
       "from": "Command:npm:test:rc1:harness",
+      "to": "Artifact:test/rc1-car-melt-provenance.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:harness",
       "to": "Artifact:test/rc1-churn-policy.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:harness",
+      "to": "Artifact:test/rc1-city-lock-release.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -357038,6 +359329,15 @@
     {
       "type": "EXECUTES",
       "from": "Command:npm:test:rc1:harness",
+      "to": "Artifact:test/rc1-observer-serialization.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:harness",
       "to": "Artifact:test/rc1-omr-exchange.js",
       "provenance": {
         "file": "package.json",
@@ -357092,6 +359392,15 @@
     {
       "type": "EXECUTES",
       "from": "Command:npm:test:rc1:harness",
+      "to": "Artifact:test/rc1-world-car-melt-witness.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:harness",
       "to": "Artifact:test/rc1-world-diagnostics.js",
       "provenance": {
         "file": "package.json",
@@ -357111,6 +359420,15 @@
       "type": "EXECUTES",
       "from": "Command:npm:test:rc1:harness",
       "to": "Artifact:test/rc1-world-family-entry.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:harness",
+      "to": "Artifact:test/rc1-world-family-npc.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -357147,6 +359465,15 @@
       "type": "EXECUTES",
       "from": "Command:npm:test:rc1:harness",
       "to": "Artifact:test/rc1-world-resource-observer.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:harness",
+      "to": "Artifact:test/rc1-world-turf-terminal.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -357453,6 +359780,15 @@
       "type": "EXECUTES",
       "from": "Command:npm:test:rc1:turf-contention:postgres",
       "to": "Artifact:test/rc1-turf-native.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:turf-terminal:postgres",
+      "to": "Artifact:test/rc1-native-turf-terminal.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -365627,6 +367963,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:11531870b822283c3b674fcd33c34cad2663cb5b",
+      "provenance": {
+        "commit": "11531870b822283c3b674fcd33c34cad2663cb5b"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:1153c378e4aaa1e073967e27cfbf202ac36ae54f",
       "provenance": {
         "commit": "1153c378e4aaa1e073967e27cfbf202ac36ae54f"
@@ -365782,6 +368126,14 @@
       "to": "Commit:13f29e6863221b1daf5c95cd2205bda1fe1fcc75",
       "provenance": {
         "commit": "13f29e6863221b1daf5c95cd2205bda1fe1fcc75"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:1404b48c30b41ca66b757eb2c2b39fc6e2750553",
+      "provenance": {
+        "commit": "1404b48c30b41ca66b757eb2c2b39fc6e2750553"
       }
     },
     {
@@ -366470,6 +368822,14 @@
       "to": "Commit:209ef02bb4c54188aa7ca5ea3fcff039125a04a9",
       "provenance": {
         "commit": "209ef02bb4c54188aa7ca5ea3fcff039125a04a9"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:20e9bd0298442909008cc65ff4b0aa93ead6993a",
+      "provenance": {
+        "commit": "20e9bd0298442909008cc65ff4b0aa93ead6993a"
       }
     },
     {
@@ -368299,6 +370659,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:3dd51d5ab3988f393cd94b904b47dc8397e9c840",
+      "provenance": {
+        "commit": "3dd51d5ab3988f393cd94b904b47dc8397e9c840"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:3e05ef9128cac634d41cbc12bec33d280e313469",
       "provenance": {
         "commit": "3e05ef9128cac634d41cbc12bec33d280e313469"
@@ -369275,6 +371643,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:4d7b40c9e1699701e1f98f1466d4f8ff4dc0cab1",
+      "provenance": {
+        "commit": "4d7b40c9e1699701e1f98f1466d4f8ff4dc0cab1"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:4d89e97ef9f72ac34deff237fcf702beee754807",
       "provenance": {
         "commit": "4d89e97ef9f72ac34deff237fcf702beee754807"
@@ -370179,6 +372555,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:5ed02f9d735a7e07b95ac5b057a70375d07742ed",
+      "provenance": {
+        "commit": "5ed02f9d735a7e07b95ac5b057a70375d07742ed"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:5ee68c063ea851c97d273aaa2e426e017c88e677",
       "provenance": {
         "commit": "5ee68c063ea851c97d273aaa2e426e017c88e677"
@@ -370446,6 +372830,14 @@
       "to": "Commit:63598c577877d2828e964cb703ff72722bd9d672",
       "provenance": {
         "commit": "63598c577877d2828e964cb703ff72722bd9d672"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:6368339e82965679c1d1aae91ecea657489a6414",
+      "provenance": {
+        "commit": "6368339e82965679c1d1aae91ecea657489a6414"
       }
     },
     {
@@ -371019,6 +373411,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:6e7ccb47043e8dec766b84337eabcd52383a3d99",
+      "provenance": {
+        "commit": "6e7ccb47043e8dec766b84337eabcd52383a3d99"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:6ec740da3a7d8852fbfed0d697c0fc8af0c48bf6",
       "provenance": {
         "commit": "6ec740da3a7d8852fbfed0d697c0fc8af0c48bf6"
@@ -371150,6 +373550,14 @@
       "to": "Commit:71761973c02f1a320e005796ba10e78bb04bb154",
       "provenance": {
         "commit": "71761973c02f1a320e005796ba10e78bb04bb154"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:71bfea187db177a06f66f85ef8d4a125dc39bfb2",
+      "provenance": {
+        "commit": "71bfea187db177a06f66f85ef8d4a125dc39bfb2"
       }
     },
     {
@@ -371907,6 +374315,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:7debbd0415c7ff0c68400b3cd105926d283099f2",
+      "provenance": {
+        "commit": "7debbd0415c7ff0c68400b3cd105926d283099f2"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:7df80cdb3dfda033d75ac6253c583dceb6e07c33",
       "provenance": {
         "commit": "7df80cdb3dfda033d75ac6253c583dceb6e07c33"
@@ -372395,6 +374811,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:86b41c51af71205c4ff17586b83883d25b3e0803",
+      "provenance": {
+        "commit": "86b41c51af71205c4ff17586b83883d25b3e0803"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:86c16a900131255cfa426aaf58fcaff61a53329a",
       "provenance": {
         "commit": "86c16a900131255cfa426aaf58fcaff61a53329a"
@@ -372470,6 +374894,14 @@
       "to": "Commit:887d75a7a67e661eaecb7089eeac172269073b4e",
       "provenance": {
         "commit": "887d75a7a67e661eaecb7089eeac172269073b4e"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:8881f7924877e0b47aa70e2b94bedff9b0bda19a",
+      "provenance": {
+        "commit": "8881f7924877e0b47aa70e2b94bedff9b0bda19a"
       }
     },
     {
@@ -373246,6 +375678,14 @@
       "to": "Commit:960975dabd62ce42751e1f45bf7b5e3f0f1143b3",
       "provenance": {
         "commit": "960975dabd62ce42751e1f45bf7b5e3f0f1143b3"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:962921099d330733f10168caffe2b4cbe8fd9b39",
+      "provenance": {
+        "commit": "962921099d330733f10168caffe2b4cbe8fd9b39"
       }
     },
     {
@@ -374811,6 +377251,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:b19e9decfcbd765e9a238dca093a8d441a1ccac6",
+      "provenance": {
+        "commit": "b19e9decfcbd765e9a238dca093a8d441a1ccac6"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:b1a133d5259a7615cbd38d243bbdae58b1e08bd8",
       "provenance": {
         "commit": "b1a133d5259a7615cbd38d243bbdae58b1e08bd8"
@@ -375214,6 +377662,14 @@
       "to": "Commit:b8e561314cf5c9fb9d0fd8c79cf27c817c1a6e58",
       "provenance": {
         "commit": "b8e561314cf5c9fb9d0fd8c79cf27c817c1a6e58"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:b8e9f63f5bfa35020ddf90dfae5fe47fd7df9a42",
+      "provenance": {
+        "commit": "b8e9f63f5bfa35020ddf90dfae5fe47fd7df9a42"
       }
     },
     {
@@ -376011,6 +378467,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:c8350fa84688dfd681644bbdb95c1cd7be0848a2",
+      "provenance": {
+        "commit": "c8350fa84688dfd681644bbdb95c1cd7be0848a2"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:c86412cc3b4d4f0e2cba7c9986edf1e2ad5ede10",
       "provenance": {
         "commit": "c86412cc3b4d4f0e2cba7c9986edf1e2ad5ede10"
@@ -376507,6 +378971,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:d4743b441c7b6c9994635f5cb280d0c6d980c7d1",
+      "provenance": {
+        "commit": "d4743b441c7b6c9994635f5cb280d0c6d980c7d1"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:d4ca3d6d3e39a4df0845cd9b0495bddf05edbd5e",
       "provenance": {
         "commit": "d4ca3d6d3e39a4df0845cd9b0495bddf05edbd5e"
@@ -376574,6 +379046,14 @@
       "to": "Commit:d5f649584698fb45c41bcf89ef1794104f922ed9",
       "provenance": {
         "commit": "d5f649584698fb45c41bcf89ef1794104f922ed9"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:d61e02ebee2258b97560107996d5524bb6a284d0",
+      "provenance": {
+        "commit": "d61e02ebee2258b97560107996d5524bb6a284d0"
       }
     },
     {
@@ -376774,6 +379254,14 @@
       "to": "Commit:d90b8ef1fcaa1641ea3fceb4d75b81f8c0a73b9d",
       "provenance": {
         "commit": "d90b8ef1fcaa1641ea3fceb4d75b81f8c0a73b9d"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:d90f3f00e3a47989b0aa09617bc5a7eb226706ae",
+      "provenance": {
+        "commit": "d90f3f00e3a47989b0aa09617bc5a7eb226706ae"
       }
     },
     {
@@ -377326,6 +379814,14 @@
       "to": "Commit:e37ca1e3ccfaa59757474b9e3e6aba331994c827",
       "provenance": {
         "commit": "e37ca1e3ccfaa59757474b9e3e6aba331994c827"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:e3e2fc19850708ca198af622dcba9f88e948c53e",
+      "provenance": {
+        "commit": "e3e2fc19850708ca198af622dcba9f88e948c53e"
       }
     },
     {
@@ -377907,6 +380403,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:f101a479fb1d1005ae8ff774b2c29a480b718817",
+      "provenance": {
+        "commit": "f101a479fb1d1005ae8ff774b2c29a480b718817"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:f107791cb8556850edd5e74de6ddbc7c65f0882e",
       "provenance": {
         "commit": "f107791cb8556850edd5e74de6ddbc7c65f0882e"
@@ -378022,6 +380526,14 @@
       "to": "Commit:f2c7fa65f1def15a4bcfd0cc62b1f7bf4305ee7f",
       "provenance": {
         "commit": "f2c7fa65f1def15a4bcfd0cc62b1f7bf4305ee7f"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:f30cce00bcf48158909c7df4be14e4f1742564da",
+      "provenance": {
+        "commit": "f30cce00bcf48158909c7df4be14e4f1742564da"
       }
     },
     {
@@ -378171,6 +380683,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:f5dcb8886c8010f8ace43ccc47eb64560eebd8e9",
+      "provenance": {
+        "commit": "f5dcb8886c8010f8ace43ccc47eb64560eebd8e9"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:f5fd8b4e0cefb72e1ea20640016b92da76702cd1",
       "provenance": {
         "commit": "f5fd8b4e0cefb72e1ea20640016b92da76702cd1"
@@ -378214,6 +380734,14 @@
       "to": "Commit:f688a689aba5812eb7dd8852a0f1d171b37844d9",
       "provenance": {
         "commit": "f688a689aba5812eb7dd8852a0f1d171b37844d9"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:f6a015b3e4075713c61a0bb532c67ed041a2fc73",
+      "provenance": {
+        "commit": "f6a015b3e4075713c61a0bb532c67ed041a2fc73"
       }
     },
     {
@@ -378422,6 +380950,14 @@
       "to": "Commit:fa01f1c4e7da901fc2fb51080678fa743ec6ba3e",
       "provenance": {
         "commit": "fa01f1c4e7da901fc2fb51080678fa743ec6ba3e"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:fa2b3a9972991f9312e849a4c19021adc8d04a37",
+      "provenance": {
+        "commit": "fa2b3a9972991f9312e849a4c19021adc8d04a37"
       }
     },
     {
@@ -380482,7 +383018,7 @@
       "to": "ExternalDependency:viem",
       "provenance": {
         "file": "src/bank.js",
-        "line": 375
+        "line": 382
       }
     },
     {
@@ -400044,6 +402580,114 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:test/rc1-car-melt-provenance-postgres.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "test/rc1-car-melt-provenance-postgres.js",
+        "line": 71
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-car-melt-provenance-postgres.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/rc1-car-melt-provenance-postgres.js",
+        "line": 11
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-car-melt-provenance-postgres.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "test/rc1-car-melt-provenance-postgres.js",
+        "line": 71
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-car-melt-provenance-postgres.js",
+      "to": "Artifact:tools/rc1-car-melt-provenance.js",
+      "provenance": {
+        "file": "test/rc1-car-melt-provenance-postgres.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-car-melt-provenance-postgres.js",
+      "to": "Artifact:tools/rc1-native-database.js",
+      "provenance": {
+        "file": "test/rc1-car-melt-provenance-postgres.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-car-melt-provenance-postgres.js",
+      "to": "Artifact:tools/rc1-native-determinism.js",
+      "provenance": {
+        "file": "test/rc1-car-melt-provenance-postgres.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-car-melt-provenance-postgres.js",
+      "to": "Artifact:tools/rc1-native-proof.js",
+      "provenance": {
+        "file": "test/rc1-car-melt-provenance-postgres.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-car-melt-provenance-postgres.js",
+      "to": "Artifact:tools/rc1-native-worker.js",
+      "provenance": {
+        "file": "test/rc1-car-melt-provenance-postgres.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-car-melt-provenance-postgres.js",
+      "to": "Artifact:tools/rc1-world-resource-observer.js",
+      "provenance": {
+        "file": "test/rc1-car-melt-provenance-postgres.js",
+        "line": 71
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-car-melt-provenance-postgres.js",
+      "to": "ExternalDependency:pg",
+      "provenance": {
+        "file": "test/rc1-car-melt-provenance-postgres.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-car-melt-provenance.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/rc1-car-melt-provenance.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-car-melt-provenance.js",
+      "to": "Artifact:tools/rc1-car-melt-provenance.js",
+      "provenance": {
+        "file": "test/rc1-car-melt-provenance.js",
+        "line": 3
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:test/rc1-churn-policy.js",
       "to": "Artifact:src/director/config.js",
       "provenance": {
@@ -400103,6 +402747,78 @@
       "provenance": {
         "file": "test/rc1-churn-policy.js",
         "line": 84
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-city-lock-release.js",
+      "to": "Artifact:src/bank.js",
+      "provenance": {
+        "file": "test/rc1-city-lock-release.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-city-lock-release.js",
+      "to": "Artifact:src/db.js",
+      "provenance": {
+        "file": "test/rc1-city-lock-release.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-city-lock-release.js",
+      "to": "Artifact:tools/rc1-native-commit-observer.js",
+      "provenance": {
+        "file": "test/rc1-city-lock-release.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-city-lock-release.js",
+      "to": "Artifact:tools/rc1-native-database.js",
+      "provenance": {
+        "file": "test/rc1-city-lock-release.js",
+        "line": 11
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-city-lock-release.js",
+      "to": "Artifact:tools/rc1-native-proof.js",
+      "provenance": {
+        "file": "test/rc1-city-lock-release.js",
+        "line": 12
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-city-lock-release.js",
+      "to": "Artifact:tools/rc1-native-worker.js",
+      "provenance": {
+        "file": "test/rc1-city-lock-release.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-city-lock-release.js",
+      "to": "ExternalDependency:, ",
+      "provenance": {
+        "file": "test/rc1-city-lock-release.js",
+        "line": 17
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-city-lock-release.js",
+      "to": "ExternalDependency:pg",
+      "provenance": {
+        "file": "test/rc1-city-lock-release.js",
+        "line": 6
       }
     },
     {
@@ -400229,6 +402945,42 @@
       "provenance": {
         "file": "test/rc1-command-redteam.js",
         "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-crew-authority-postgres.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/rc1-crew-authority-postgres.js",
+        "line": 16
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-crew-authority-postgres.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "test/rc1-crew-authority-postgres.js",
+        "line": 15
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-crew-authority-postgres.js",
+      "to": "Artifact:test/lib/player-command-support.js",
+      "provenance": {
+        "file": "test/rc1-crew-authority-postgres.js",
+        "line": 14
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-crew-authority-postgres.js",
+      "to": "Artifact:tools/rc1-native-proof.js",
+      "provenance": {
+        "file": "test/rc1-crew-authority-postgres.js",
+        "line": 6
       }
     },
     {
@@ -402744,6 +405496,132 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-turf-terminal.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "test/rc1-native-turf-terminal.js",
+        "line": 54
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-turf-terminal.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/rc1-native-turf-terminal.js",
+        "line": 54
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-turf-terminal.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "test/rc1-native-turf-terminal.js",
+        "line": 54
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-turf-terminal.js",
+      "to": "Artifact:test/rc1-world-turf-terminal.js",
+      "provenance": {
+        "file": "test/rc1-native-turf-terminal.js",
+        "line": 55
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-turf-terminal.js",
+      "to": "Artifact:tools/rc1-family-cash-ammo-journal.js",
+      "provenance": {
+        "file": "test/rc1-native-turf-terminal.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-turf-terminal.js",
+      "to": "Artifact:tools/rc1-native-database.js",
+      "provenance": {
+        "file": "test/rc1-native-turf-terminal.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-turf-terminal.js",
+      "to": "Artifact:tools/rc1-native-determinism.js",
+      "provenance": {
+        "file": "test/rc1-native-turf-terminal.js",
+        "line": 11
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-turf-terminal.js",
+      "to": "Artifact:tools/rc1-native-proof.js",
+      "provenance": {
+        "file": "test/rc1-native-turf-terminal.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-turf-terminal.js",
+      "to": "Artifact:tools/rc1-native-worker.js",
+      "provenance": {
+        "file": "test/rc1-native-turf-terminal.js",
+        "line": 12
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-turf-terminal.js",
+      "to": "Artifact:tools/rc1-omr-journal.js",
+      "provenance": {
+        "file": "test/rc1-native-turf-terminal.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-turf-terminal.js",
+      "to": "Artifact:tools/rc1-turf-custody.js",
+      "provenance": {
+        "file": "test/rc1-native-turf-terminal.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-turf-terminal.js",
+      "to": "Artifact:tools/rc1-turf-policy.js",
+      "provenance": {
+        "file": "test/rc1-native-turf-terminal.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-turf-terminal.js",
+      "to": "Artifact:tools/rc1-world-resource-observer.js",
+      "provenance": {
+        "file": "test/rc1-native-turf-terminal.js",
+        "line": 54
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-turf-terminal.js",
+      "to": "ExternalDependency:pg",
+      "provenance": {
+        "file": "test/rc1-native-turf-terminal.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:test/rc1-native-worker-schedule.js",
       "to": "Artifact:src/invariants.js",
       "provenance": {
@@ -402811,7 +405689,7 @@
       "to": "Artifact:src/content/core-progression.js",
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
-        "line": 333
+        "line": 359
       }
     },
     {
@@ -402820,7 +405698,7 @@
       "to": "Artifact:src/coordination/runtime.js",
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
-        "line": 340
+        "line": 366
       }
     },
     {
@@ -402829,7 +405707,7 @@
       "to": "Artifact:src/director/config.js",
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
-        "line": 333
+        "line": 359
       }
     },
     {
@@ -402838,7 +405716,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
-        "line": 334
+        "line": 360
       }
     },
     {
@@ -402847,7 +405725,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
-        "line": 334
+        "line": 360
       }
     },
     {
@@ -402856,7 +405734,7 @@
       "to": "Artifact:src/player-commands.js",
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
-        "line": 333
+        "line": 359
       }
     },
     {
@@ -402865,7 +405743,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
-        "line": 303
+        "line": 329
       }
     },
     {
@@ -402874,7 +405752,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
-        "line": 334
+        "line": 360
       }
     },
     {
@@ -402883,7 +405761,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
-        "line": 289
+        "line": 315
       }
     },
     {
@@ -402902,6 +405780,15 @@
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
         "line": 21
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-world-workload.js",
+      "to": "Artifact:tools/rc1-car-melt-provenance.js",
+      "provenance": {
+        "file": "test/rc1-native-world-workload.js",
+        "line": 17
       }
     },
     {
@@ -402929,15 +405816,6 @@
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
         "line": 14
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:test/rc1-native-world-workload.js",
-      "to": "Artifact:tools/rc1-native-commit-observer.js",
-      "provenance": {
-        "file": "test/rc1-native-world-workload.js",
-        "line": 17
       }
     },
     {
@@ -403027,7 +405905,7 @@
       "to": "Artifact:tools/rc1-world-resource-observer.js",
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
-        "line": 273
+        "line": 299
       }
     },
     {
@@ -403073,6 +405951,33 @@
       "provenance": {
         "file": "test/rc1-observability.js",
         "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-observer-serialization.js",
+      "to": "Artifact:tools/rc1-native-history-reader.js",
+      "provenance": {
+        "file": "test/rc1-observer-serialization.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-observer-serialization.js",
+      "to": "Artifact:tools/rc1-native-proof.js",
+      "provenance": {
+        "file": "test/rc1-observer-serialization.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-observer-serialization.js",
+      "to": "Artifact:tools/rc1-world-resource-observer.js",
+      "provenance": {
+        "file": "test/rc1-observer-serialization.js",
+        "line": 9
       }
     },
     {
@@ -403518,6 +406423,24 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:test/rc1-world-car-melt-witness.js",
+      "to": "Artifact:tools/rc1-car-melt-provenance.js",
+      "provenance": {
+        "file": "test/rc1-world-car-melt-witness.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-world-car-melt-witness.js",
+      "to": "Artifact:tools/rc1-native-proof.js",
+      "provenance": {
+        "file": "test/rc1-world-car-melt-witness.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:test/rc1-world-diagnostics.js",
       "to": "Artifact:test/lib/player-command-support.js",
       "provenance": {
@@ -403631,6 +406554,24 @@
       "provenance": {
         "file": "test/rc1-world-family-entry.js",
         "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-world-family-npc.js",
+      "to": "Artifact:tools/rc1-native-proof.js",
+      "provenance": {
+        "file": "test/rc1-world-family-npc.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-world-family-npc.js",
+      "to": "Artifact:tools/rc1-world-resource-observer.js",
+      "provenance": {
+        "file": "test/rc1-world-family-npc.js",
+        "line": 5
       }
     },
     {
@@ -403775,6 +406716,42 @@
       "provenance": {
         "file": "test/rc1-world-resource-observer.js",
         "line": 108
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-world-turf-terminal.js",
+      "to": "Artifact:tools/rc1-native-proof.js",
+      "provenance": {
+        "file": "test/rc1-world-turf-terminal.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-world-turf-terminal.js",
+      "to": "Artifact:tools/rc1-omr-journal.js",
+      "provenance": {
+        "file": "test/rc1-world-turf-terminal.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-world-turf-terminal.js",
+      "to": "Artifact:tools/rc1-resource-journal.js",
+      "provenance": {
+        "file": "test/rc1-world-turf-terminal.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-world-turf-terminal.js",
+      "to": "Artifact:tools/rc1-world-resource-observer.js",
+      "provenance": {
+        "file": "test/rc1-world-turf-terminal.js",
+        "line": 5
       }
     },
     {
@@ -409009,10 +411986,37 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:tools/rc1-car-journal.js",
+      "to": "Artifact:tools/rc1-car-melt-provenance.js",
+      "provenance": {
+        "file": "tools/rc1-car-journal.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-car-journal.js",
       "to": "Artifact:tools/rc1-resource-journal.js",
       "provenance": {
         "file": "tools/rc1-car-journal.js",
         "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-car-melt-provenance.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "tools/rc1-car-melt-provenance.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-car-melt-provenance.js",
+      "to": "Artifact:tools/rc1-native-commit-observer.js",
+      "provenance": {
+        "file": "tools/rc1-car-melt-provenance.js",
+        "line": 7
       }
     },
     {
@@ -436368,6 +439372,24 @@
     },
     {
       "type": "REFERENCES",
+      "from": "Artifact:docs/rc1-world-car-melt-witness.md",
+      "to": "Artifact:test/rc1-car-journal.js",
+      "provenance": {
+        "file": "docs/rc1-world-car-melt-witness.md",
+        "line": 9
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/rc1-world-car-melt-witness.md",
+      "to": "Artifact:test/rc1-car-melt-provenance.js",
+      "provenance": {
+        "file": "docs/rc1-world-car-melt-witness.md",
+        "line": 9
+      }
+    },
+    {
+      "type": "REFERENCES",
       "from": "Artifact:docs/release/evidence/graceful-shutdown/README.md",
       "to": "Artifact:.github/workflows/rc1-recovery.yml",
       "provenance": {
@@ -436935,6 +439957,42 @@
     },
     {
       "type": "REFERENCES",
+      "from": "Artifact:docs/release/readiness-work/authority-crew-review.md",
+      "to": "Artifact:docs/release/readiness-work/authority-crew-summary.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/authority-crew-review.md",
+        "line": 6
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/release/readiness-work/authority-crew-review.md",
+      "to": "Artifact:src/crew.js",
+      "provenance": {
+        "file": "docs/release/readiness-work/authority-crew-review.md",
+        "line": 56
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/release/readiness-work/authority-crew-review.md",
+      "to": "Artifact:src/game.js",
+      "provenance": {
+        "file": "docs/release/readiness-work/authority-crew-review.md",
+        "line": 57
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/release/readiness-work/authority-crew-review.md",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "docs/release/readiness-work/authority-crew-review.md",
+        "line": 56
+      }
+    },
+    {
+      "type": "REFERENCES",
       "from": "Artifact:docs/release/readiness-work/authority-legacy-review.md",
       "to": "Artifact:docs/release/readiness-work/authority-command-matrix.md",
       "provenance": {
@@ -437232,6 +440290,24 @@
     },
     {
       "type": "REFERENCES",
+      "from": "Artifact:docs/release/readiness-work/harness-city-lock-release.md",
+      "to": "Artifact:docs/release/readiness-work/harness-observer-serialization-index.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/harness-city-lock-release.md",
+        "line": 25
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/release/readiness-work/harness-city-lock-release.md",
+      "to": "Artifact:docs/release/readiness-work/harness-observer-serialization.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/harness-city-lock-release.md",
+        "line": 23
+      }
+    },
+    {
+      "type": "REFERENCES",
       "from": "Artifact:docs/release/readiness-work/harness-database-isolation.md",
       "to": "Artifact:test/rc1-native-database.js",
       "provenance": {
@@ -437273,6 +440349,15 @@
       "provenance": {
         "file": "docs/release/readiness-work/harness-gzip-capture.md",
         "line": 50
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/release/readiness-work/harness-observer-serialization.md",
+      "to": "Artifact:docs/release/readiness-work/harness-observer-serialization-index.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/harness-observer-serialization.md",
+        "line": 44
       }
     },
     {
@@ -437583,6 +440668,15 @@
     },
     {
       "type": "REFERENCES",
+      "from": "Artifact:docs/release/readiness-work/world-family-npc-observer.md",
+      "to": "Artifact:test/rc1-world-family-npc.js",
+      "provenance": {
+        "file": "docs/release/readiness-work/world-family-npc-observer.md",
+        "line": 20
+      }
+    },
+    {
+      "type": "REFERENCES",
       "from": "Artifact:docs/release/readiness-work/world-observers.md",
       "to": "Artifact:tools/rc1-knowledge-diagnostics.js",
       "provenance": {
@@ -437615,6 +440709,15 @@
       "provenance": {
         "file": "docs/release/readiness-work/world-resource-observer.md",
         "line": 3
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/release/readiness-work/world-turf-terminal-observer.md",
+      "to": "Artifact:omerta-contracts/SECURITY-REVIEW-POLICY.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/world-turf-terminal-observer.md",
+        "line": 76
       }
     },
     {
@@ -452514,6 +455617,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Document:docs/rc1-car-melt-commit.md",
+      "to": "Artifact:docs/rc1-car-melt-commit.md",
+      "provenance": {
+        "file": "docs/rc1-car-melt-commit.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Document:docs/rc1-ci-envelope.md",
       "to": "Artifact:docs/rc1-ci-envelope.md",
       "provenance": {
@@ -452554,6 +455666,15 @@
       "to": "Artifact:docs/rc1-native-mobile-adversity.md",
       "provenance": {
         "file": "docs/rc1-native-mobile-adversity.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/rc1-world-car-melt-witness.md",
+      "to": "Artifact:docs/rc1-world-car-melt-witness.md",
+      "provenance": {
+        "file": "docs/rc1-world-car-melt-witness.md",
         "line": 1
       }
     },
@@ -452667,6 +455788,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Document:docs/release/readiness-work/authority-crew-review.md",
+      "to": "Artifact:docs/release/readiness-work/authority-crew-review.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/authority-crew-review.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Document:docs/release/readiness-work/authority-inventory.md",
       "to": "Artifact:docs/release/readiness-work/authority-inventory.md",
       "provenance": {
@@ -452775,6 +455905,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Document:docs/release/readiness-work/harness-city-lock-release.md",
+      "to": "Artifact:docs/release/readiness-work/harness-city-lock-release.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/harness-city-lock-release.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Document:docs/release/readiness-work/harness-concurrent-replay.md",
       "to": "Artifact:docs/release/readiness-work/harness-concurrent-replay.md",
       "provenance": {
@@ -452815,6 +455954,15 @@
       "to": "Artifact:docs/release/readiness-work/harness-gzip-capture.md",
       "provenance": {
         "file": "docs/release/readiness-work/harness-gzip-capture.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/release/readiness-work/harness-observer-serialization.md",
+      "to": "Artifact:docs/release/readiness-work/harness-observer-serialization.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/harness-observer-serialization.md",
         "line": 1
       }
     },
@@ -453054,6 +456202,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Document:docs/release/readiness-work/world-family-npc-observer.md",
+      "to": "Artifact:docs/release/readiness-work/world-family-npc-observer.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/world-family-npc-observer.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Document:docs/release/readiness-work/world-observers.md",
       "to": "Artifact:docs/release/readiness-work/world-observers.md",
       "provenance": {
@@ -453076,6 +456233,15 @@
       "to": "Artifact:docs/release/readiness-work/world-resource-observer.md",
       "provenance": {
         "file": "docs/release/readiness-work/world-resource-observer.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/release/readiness-work/world-turf-terminal-observer.md",
+      "to": "Artifact:docs/release/readiness-work/world-turf-terminal-observer.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/world-turf-terminal-observer.md",
         "line": 1
       }
     },
@@ -460101,6 +463267,24 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/rc1-car-melt-provenance-postgres.js",
+      "to": "Artifact:test/rc1-car-melt-provenance-postgres.js",
+      "provenance": {
+        "file": "test/rc1-car-melt-provenance-postgres.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/rc1-car-melt-provenance.js",
+      "to": "Artifact:test/rc1-car-melt-provenance.js",
+      "provenance": {
+        "file": "test/rc1-car-melt-provenance.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/rc1-churn-policy.js",
       "to": "Artifact:test/rc1-churn-policy.js",
       "provenance": {
@@ -460119,6 +463303,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/rc1-city-lock-release.js",
+      "to": "Artifact:test/rc1-city-lock-release.js",
+      "provenance": {
+        "file": "test/rc1-city-lock-release.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/rc1-command-family-postgres.js",
       "to": "Artifact:test/rc1-command-family-postgres.js",
       "provenance": {
@@ -460132,6 +463325,15 @@
       "to": "Artifact:test/rc1-command-redteam.js",
       "provenance": {
         "file": "test/rc1-command-redteam.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/rc1-crew-authority-postgres.js",
+      "to": "Artifact:test/rc1-crew-authority-postgres.js",
+      "provenance": {
+        "file": "test/rc1-crew-authority-postgres.js",
         "line": 1
       }
     },
@@ -460569,6 +463771,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/rc1-native-turf-terminal.js",
+      "to": "Artifact:test/rc1-native-turf-terminal.js",
+      "provenance": {
+        "file": "test/rc1-native-turf-terminal.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/rc1-native-worker-schedule.js",
       "to": "Artifact:test/rc1-native-worker-schedule.js",
       "provenance": {
@@ -460591,6 +463802,15 @@
       "to": "Artifact:test/rc1-observability.js",
       "provenance": {
         "file": "test/rc1-observability.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/rc1-observer-serialization.js",
+      "to": "Artifact:test/rc1-observer-serialization.js",
+      "provenance": {
+        "file": "test/rc1-observer-serialization.js",
         "line": 1
       }
     },
@@ -460740,6 +463960,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/rc1-world-car-melt-witness.js",
+      "to": "Artifact:test/rc1-world-car-melt-witness.js",
+      "provenance": {
+        "file": "test/rc1-world-car-melt-witness.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/rc1-world-diagnostics.js",
       "to": "Artifact:test/rc1-world-diagnostics.js",
       "provenance": {
@@ -460762,6 +463991,15 @@
       "to": "Artifact:test/rc1-world-family-entry.js",
       "provenance": {
         "file": "test/rc1-world-family-entry.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/rc1-world-family-npc.js",
+      "to": "Artifact:test/rc1-world-family-npc.js",
+      "provenance": {
+        "file": "test/rc1-world-family-npc.js",
         "line": 1
       }
     },
@@ -460798,6 +464036,15 @@
       "to": "Artifact:test/rc1-world-resource-observer.js",
       "provenance": {
         "file": "test/rc1-world-resource-observer.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/rc1-world-turf-terminal.js",
+      "to": "Artifact:test/rc1-world-turf-terminal.js",
+      "provenance": {
+        "file": "test/rc1-world-turf-terminal.js",
         "line": 1
       }
     },
@@ -468813,6 +472060,42 @@
     },
     {
       "type": "TESTS",
+      "from": "Artifact:test/rc1-car-melt-provenance-postgres.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "test/rc1-car-melt-provenance-postgres.js",
+        "line": 71
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-car-melt-provenance-postgres.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/rc1-car-melt-provenance-postgres.js",
+        "line": 11
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-car-melt-provenance-postgres.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "test/rc1-car-melt-provenance-postgres.js",
+        "line": 71
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-car-melt-provenance.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/rc1-car-melt-provenance.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "TESTS",
       "from": "Artifact:test/rc1-churn-policy.js",
       "to": "Artifact:src/director/config.js",
       "provenance": {
@@ -468845,6 +472128,24 @@
       "provenance": {
         "file": "test/rc1-churn-policy.js",
         "line": 107
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-city-lock-release.js",
+      "to": "Artifact:src/bank.js",
+      "provenance": {
+        "file": "test/rc1-city-lock-release.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-city-lock-release.js",
+      "to": "Artifact:src/db.js",
+      "provenance": {
+        "file": "test/rc1-city-lock-release.js",
+        "line": 8
       }
     },
     {
@@ -468917,6 +472218,24 @@
       "provenance": {
         "file": "test/rc1-command-redteam.js",
         "line": 6
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-crew-authority-postgres.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/rc1-crew-authority-postgres.js",
+        "line": 16
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-crew-authority-postgres.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "test/rc1-crew-authority-postgres.js",
+        "line": 15
       }
     },
     {
@@ -469749,6 +473068,33 @@
     },
     {
       "type": "TESTS",
+      "from": "Artifact:test/rc1-native-turf-terminal.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "test/rc1-native-turf-terminal.js",
+        "line": 54
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-native-turf-terminal.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/rc1-native-turf-terminal.js",
+        "line": 54
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-native-turf-terminal.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "test/rc1-native-turf-terminal.js",
+        "line": 54
+      }
+    },
+    {
+      "type": "TESTS",
       "from": "Artifact:test/rc1-native-worker-schedule.js",
       "to": "Artifact:src/invariants.js",
       "provenance": {
@@ -469762,7 +473108,7 @@
       "to": "Artifact:src/content/core-progression.js",
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
-        "line": 333
+        "line": 359
       }
     },
     {
@@ -469771,7 +473117,7 @@
       "to": "Artifact:src/coordination/runtime.js",
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
-        "line": 340
+        "line": 366
       }
     },
     {
@@ -469780,7 +473126,7 @@
       "to": "Artifact:src/director/config.js",
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
-        "line": 333
+        "line": 359
       }
     },
     {
@@ -469789,7 +473135,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
-        "line": 334
+        "line": 360
       }
     },
     {
@@ -469798,7 +473144,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
-        "line": 334
+        "line": 360
       }
     },
     {
@@ -469807,7 +473153,7 @@
       "to": "Artifact:src/player-commands.js",
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
-        "line": 333
+        "line": 359
       }
     },
     {
@@ -469816,7 +473162,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
-        "line": 303
+        "line": 329
       }
     },
     {
@@ -469825,7 +473171,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
-        "line": 334
+        "line": 360
       }
     },
     {
@@ -469834,7 +473180,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
-        "line": 289
+        "line": 315
       }
     },
     {
@@ -474568,7 +477914,7 @@
       "to": "Table:account_persistent",
       "provenance": {
         "file": "src/bank.js",
-        "line": 266
+        "line": 273
       }
     },
     {
@@ -474613,7 +477959,7 @@
       "to": "Table:bank_epochs",
       "provenance": {
         "file": "src/bank.js",
-        "line": 241
+        "line": 248
       }
     },
     {
@@ -474622,7 +477968,7 @@
       "to": "Table:bank_payouts",
       "provenance": {
         "file": "src/bank.js",
-        "line": 314
+        "line": 321
       }
     },
     {
@@ -474667,7 +478013,7 @@
       "to": "Table:transactions",
       "provenance": {
         "file": "src/bank.js",
-        "line": 350
+        "line": 357
       }
     },
     {
