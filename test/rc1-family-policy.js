@@ -25,6 +25,10 @@ const fp = createFamilyPolicy(config), found = choose(fp, founder, 'found'); ass
 fp.settle({ idempotencyKey: found.request.idempotencyKey, status: 'COMPLETED', replayed: false, response: { ok: true, gangId: 'new' } });
 fp.settle({ idempotencyKey: found.request.idempotencyKey, status: 'COMPLETED', replayed: true, response: { ok: true, gangId: 'new' } });
 assert.equal(fp.summary().fresh, 1); assert.equal(fp.summary().knownReplays, 1);
+assert.throws(() => fp.settle({ idempotencyKey: found.request.idempotencyKey, status: 'COMPLETED', replayed: true,
+  response: { ok: true, gangId: 'changed' } }), /Conflicting/);
+assert.throws(() => p.settle({ idempotencyKey: 'not-issued', status: 'COMPLETED', replayed: false,
+  response: { ok: true, gangId: 'full' } }), /identity/);
 const member = view(); member.me.character.gang = { id: 'small', role: 'soldier' };
 assert.equal(choose(createFamilyPolicy(config), member).reason, 'already-member');
 assert.equal(choose(createFamilyPolicy(config), member, 'promote').reason, 'not-the-boss');
