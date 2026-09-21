@@ -27,9 +27,14 @@ const rows = [
     ['campaign:save:claim', 'campaign:walk:claim', 'campaign:save:lost-response-retry', 'campaign:walk:lost-response-retry', 'campaign:server-reopen-replay'],
     ['base reward', 'branch reward', 'exact retry', 'concurrent duplicate', 'lost response', 'restart', 'unauthorized', 'rollback between claim/reward'],
     ['concurrent duplicate payout attempt', 'claim/reward fault injection', 'natural earned campaign eligibility']],
-  ['C02-OPERATION-CAPITAL', 'coordinator mutation root; declared operation; original living depositor for refund', 'item_mutation_guards operation_action key plus requirement/role/operation custody identity', [],
+  ['C02-OPERATION-CAPITAL', 'coordinator mutation root; declared operation; original living depositor for refund', 'item_mutation_guards operation_action key plus requirement/role/operation custody identity',
+    ['deposit:ledger-failure-rollback', 'deposit:concurrent-exact-duplicate', 'deposit:lost-response-replay', 'deposit:unauthorized-role',
+      'refund:ledger-failure-rollback', 'refund:withdraw', 'refund:exact-replay', 'cancellation:refund-rollback', 'cancellation:refund', 'cancellation:exact-replay',
+      'spending:world-and-custody-rollback', 'spending:execute', 'spending:exact-replay', 'spending:new-key-terminal-denial',
+      'expiry:early-refused', 'expiry:refund-rollback', 'expiry:canonical-refund', 'expiry:exact-replay',
+      'death:canonical-estate-and-heir', 'death:forfeit-rollback', 'death:replacement-cancellation-forfeits', 'death:forfeit-exact-replay', 'restart:forfeit-receipt'],
     ['deposit', 'refund', 'spend', 'cancel', 'expiry', 'death/replacement forfeit', 'replay', 'concurrent duplicate', 'rollback'],
-    ['retained per-transition native journal for complete operation lifecycle', 'canonical cancellation/expiry/death and replacement at operation service boundary']],
+    ['production 24-hour deadline (native fixture uses validated 60-second definition)', 'natural progression/combat-earned death and full Player Command/HTTP workload']],
   ['C02-HARDENING', 'authenticated current character; foundry, level, resources and recipe gates', 'HTTP account/key/request hash plus item_mutation_guards craft identity',
     ['hardening:concurrent-duplicate', 'hardening:lost-response-retry', 'hardening:insufficient-materials', 'hardening:failure-between-debit-and-output', 'hardening:retry-after-rollback', 'hardening:server-reopen-replay'],
     ['four scrap consumed', 'exact 300 cash charge', 'one hardened steel output', 'rejection', 'concurrent duplicate', 'lost response', 'restart', 'rollback'], []],
@@ -56,6 +61,7 @@ const rows = [
 ];
 export const resourceGaps = rows.map(([id, authorization, replayIdentity, nativeScenarios, requiredBranches, missingNativeBranches]) => ({ id,
   owner: 'Codex/resource_proof', status: 'OPEN_REQUIRED_PROOF', authorization, replayIdentity, nativeScenarios, requiredBranches,
+  nativeHarness: id === 'C02-OPERATION-CAPITAL' ? 'tools/rc1-resource-capital.js' : 'tools/rc1-resource-proof.js',
   missingNativeBranches, simulation: { status: 'MISSING', required: 'Native full-game exercise of every required branch with nonzero movement and retained journal' } }));
 
 export function resourceInventory(nativeReport = null) {

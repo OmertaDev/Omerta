@@ -4,6 +4,10 @@ Owner: Codex/resource_proof. This package adds a read-only resource observer and
 fixture-assisted PostgreSQL API workload. It does not declare RC1-02 complete.
 The previous sealed evidence is unchanged.
 
+The separate [operation-capital proof](resource-capital-proof.md) exercises
+deposit, refund, spend, cancellation, real fixture expiry and canonical
+death/replacement forfeiture through the Family-operation service.
+
 Run from a clean committed checkout with an existing isolated loopback PostgreSQL
 server. The runner creates a fresh random database and retains it for reproduction.
 The URL identifies an administrative database; its credentials are never written
