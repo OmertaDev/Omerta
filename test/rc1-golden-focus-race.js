@@ -69,9 +69,28 @@ try {
   assert.equal(result.after.focused, true, 'Pending crew render lost input focus');
   assert.equal(result.after.value, 'Keep this unsent draft', 'Pending crew render lost draft text');
   assert.deepEqual(result.after.selection, result.before.selection, 'Pending crew render changed text selection');
-  // Blur to the adjacent button using the keyboard. Deferred refresh must make
-  // fresh canonical reads, even though background-only refreshes wait on buttons.
+  // The adjacent Send button is part of the editing interaction. Wait until the
+  // deferred refresh has actually attempted its canonical reads, then check the
+  // same draft and button still exist before ordinary keyboard submission.
   page.on('response', response => { if (new URL(response.url()).pathname === '/v1/circle') responses++; });
+  const send = await page.locator('#crew-send').elementHandle();
+  const buttonRefresh = page.waitForResponse(response => new URL(response.url()).pathname === '/v1/circle'); buttonRefresh.catch(() => {});
+  await page.keyboard.press('Tab'); await buttonRefresh; await settle();
+  result.sendFocus = { ...(await state(input, original)), sameSend: await page.locator('#crew-send').evaluate((node, old) => node === old, send),
+    focusedSend: await page.locator('#crew-send').evaluate(node => document.activeElement === node) }; save();
+  assert.equal(result.sendFocus.sameNode, true, 'Tab-to-Send refresh replaced the unsent draft input');
+  assert.equal(result.sendFocus.sameSend, true, 'Tab-to-Send refresh replaced the activation target');
+  assert.equal(result.sendFocus.focusedSend, true, 'Tab-to-Send refresh lost button focus');
+  assert.equal(result.sendFocus.value, 'Keep this unsent draft', 'Tab-to-Send refresh lost unsent text');
+  let submitted = 0;
+  page.on('request', request => { if (request.method() === 'POST' && new URL(request.url()).pathname === '/v1/crew/chat') submitted++; });
+  const posted = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname === '/v1/crew/chat'); posted.catch(() => {});
+  await page.keyboard.press('Enter'); const receipt = await posted;
+  assert.equal(receipt.status(), 200); assert.equal(receipt.request().postDataJSON().text, 'Keep this unsent draft');
+  await page.locator('#crew-room').getByText('Keep this unsent draft', { exact: false }).waitFor(); await settle();
+  assert.equal(submitted, 1); assert.equal(await input.inputValue(), '');
+  result.submission = { status: receipt.status(), count: submitted, exactDraft: true, rendered: true };
+  // Leaving the completed interaction must still allow a fresh Crew render.
   const refreshed = page.waitForResponse(response => new URL(response.url()).pathname === '/v1/crew/chat'); refreshed.catch(() => {});
   await page.keyboard.press('Tab'); await refreshed; await settle();
   result.deferred = { freshCircleReads: responses, changedNode: !(await input.evaluate((node, old) => node === old, original)),
@@ -100,7 +119,8 @@ try {
   const newer = page.waitForResponse(response => new URL(response.url()).pathname === '/v1/crew/chat'); newer.catch(() => {});
   release(); await current.done; await newer; await settle();
   assert.equal(await input.evaluate((node, prior) => node !== prior, latest), true, 'Newest render must eventually complete');
-  result.checks = ['focused-node-retained', 'draft-retained', 'selection-retained', 'fresh-render-on-focusout', 'older-response-cannot-overwrite-newer-entry'];
+  result.checks = ['focused-node-retained', 'draft-retained', 'selection-retained', 'tab-to-send-node-and-draft-retained',
+    'ordinary-enter-submits-exact-draft-once', 'fresh-render-on-interaction-exit', 'older-response-cannot-overwrite-newer-entry'];
   assert.deepEqual(result.errors, []); result.status = 'PASS_SCOPED';
 } catch (error) { result.status = 'FAIL'; result.error = error.stack; process.exitCode = 1; }
 finally {
