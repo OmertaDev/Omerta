@@ -7,8 +7,18 @@ import path from 'node:path';
 import { chromium } from 'playwright-core';
 import { buildServer } from '../src/server.js';
 import { FURNACE_IDS } from '../src/content/furnace-ledger.js';
+import { browserControls, waitForWorldReceipt } from '../test/lib/rc1-browser-controls.js';
 
-assert(!process.env.DATABASE_URL, 'RC1 browser journeys require a disposable pg-mem database');
+const native = process.argv.includes('--postgres');
+const selectedWidth = process.argv.find(arg => arg.startsWith('--width='))?.slice(8);
+if (native) {
+  const database = new URL(process.env.DATABASE_URL);
+  assert(['localhost', '127.0.0.1', '[::1]'].includes(database.hostname));
+  assert(/^\/rc1_world_[a-f0-9]{24}$/.test(database.pathname), 'Native browser requires the owned-database parent runner');
+  assert(process.env.RC1_MOBILE_JOURNEY_OUTPUT && selectedWidth);
+} else assert(!process.env.DATABASE_URL && !selectedWidth, 'Default browser journeys require disposable pg-mem');
+const widths = native ? [Number(selectedWidth)] : [320, 390];
+assert(widths.every(width => [320, 360, 390, 430].includes(width)));
 for (const flag of ['CORE_PROGRESSION', 'WORLD_GRAPH_KERNEL', 'COORDINATION_ENGINE',
   'COORDINATION_KNOWLEDGE', 'COORDINATION_KNOWLEDGE_SHARING', 'COORDINATION_OPERATIONS']) process.env[flag] = 'on';
 process.env.LIVING_WORLD_DIRECTOR = 'LIVE';
@@ -16,7 +26,8 @@ process.env.INVITE_MODE = 'off';
 process.env.RATE_LIMIT = 'off';
 delete process.env.COORDINATION_ACCOUNT_IDS;
 delete process.env.DIRECTOR_ACCOUNT_IDS;
-const output = path.resolve('docs/release/evidence/player/mobile');
+const output = path.resolve(process.env.RC1_MOBILE_JOURNEY_OUTPUT || 'docs/release/evidence/player/mobile');
+if (native) assert(!fs.existsSync(path.join(output, 'results.json')), 'Never overwrite a retained browser run');
 fs.mkdirSync(output, { recursive: true });
 const executablePath = [process.env.CHROMIUM_PATH, 'C:/Program Files/Google/Chrome/Application/chrome.exe',
   'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe', '/usr/bin/chromium', '/usr/bin/google-chrome']
@@ -26,7 +37,7 @@ let app, origin;
 const browser = await chromium.launch({ executablePath, headless: true });
 const results = [];
 try {
-  for (const width of [320, 390]) {
+  for (const width of widths) {
     app = await buildServer();
     origin = await app.listen({ port: 0, host: '127.0.0.1' });
     const context = await browser.newContext({ viewport: { width, height: width === 320 ? 568 : 844 },
@@ -41,8 +52,9 @@ try {
       if (response.url().endsWith('/v1/commands/observations')) telemetry.push({ status: response.status(), body: response.request().postDataJSON() });
       if (response.request().method() === 'POST') network.push({ at: new Date().toISOString(), path: new URL(response.url()).pathname, status: response.status() });
     });
-    const result = { width, steps: [], errors, requests, telemetry, network };
+    const result = { width, steps: [], controls: [], errors, requests, telemetry, network };
     results.push(result);
+    const { reach } = browserControls({ pageFor: async () => ({ page }), width, result, save: () => {} });
     const snapshot = async (stage) => {
       const layout = await page.evaluate(() => ({ width: innerWidth, scrollWidth: document.documentElement.scrollWidth,
         text: document.querySelector('#tab-world')?.innerText || '',
@@ -93,6 +105,7 @@ try {
         && response.url().endsWith('/v1/commands/execute'));
       // Observe rejection even if clicking a rerendered control itself fails.
       responsePromise.catch(() => {});
+      if (native) await reach(page, chosenButton, command.label);
       await chosenButton.click();
       if (command.confirmation?.required) {
         await page.locator('[data-world-choice-confirm]').waitFor({ state: 'visible' });
@@ -106,6 +119,7 @@ try {
       const body = await response.json(); assert.equal(body.status, 'COMPLETED');
       await page.waitForFunction(() => sessionStorage.getItem('omerta_world_pending') === null);
       await page.waitForSelector('#tab-world .world-summary');
+      if (native) assert.equal(await waitForWorldReceipt(page, command.label), command.label);
       return body;
     };
     try {
@@ -151,8 +165,10 @@ try {
         }
         await route.abort('connectionfailed');
       });
-      await page.locator(`[data-world-mystery="${chosen.parameters.graphId}"]`)
-        .getByRole('button', { name: chosen.label, exact: true }).click();
+      const firstControl = page.locator(`[data-world-mystery="${chosen.parameters.graphId}"]`)
+        .getByRole('button', { name: chosen.label, exact: true });
+      if (native) await reach(page, firstControl, chosen.label);
+      await firstControl.click();
       await page.waitForSelector('#world-retry', { timeout: 30000 });
       await snapshot('response-lost');
       const pending = await page.evaluate(() => JSON.parse(sessionStorage.getItem('omerta_world_pending')));
@@ -162,6 +178,7 @@ try {
       await page.waitForSelector('#world-retry');
       const retryResponse = page.waitForResponse((response) => response.request().method() === 'POST'
         && response.url().endsWith('/v1/commands/execute'));
+      if (native) await reach(page, page.locator('#world-retry'), 'Retry saved move');
       await page.locator('#world-retry').click();
       const replay = await (await retryResponse).json();
       assert.equal(replay.replayed, true, 'Recovery confirms the original committed command');
@@ -180,7 +197,9 @@ try {
       await page.unroute('**/v1/commands/execute');
       await page.route('**/v1/commands/execute', async (route) => {
         const response = await route.fetch();
+        const delayedAt = Date.now();
         await new Promise((resolve) => setTimeout(resolve, 800));
+        result.delayedResponse = { requestedMs: 800, actualMs: Date.now() - delayedAt };
         await route.fulfill({ response });
       });
       const prepared = await commandBoard(chosen.parameters.graphId);
@@ -190,6 +209,7 @@ try {
       const button = page.locator(`[data-world-selected-case="${chosen.parameters.graphId}"]`)
         .getByRole('button', { name: complete.label, exact: true });
       await button.scrollIntoViewIfNeeded();
+      if (native) await reach(page, button, complete.label);
       const bounds = await button.boundingBox(); assert(bounds);
       const completionResponse = page.waitForResponse((response) => response.request().method() === 'POST'
         && response.url().endsWith('/v1/commands/execute'));
@@ -199,6 +219,8 @@ try {
       await page.waitForFunction(() => sessionStorage.getItem('omerta_world_pending') === null);
       await page.waitForSelector(`[data-world-selected-case="${chosen.parameters.graphId}"]`);
       assert.equal(requests.length, 3, 'Repeated taps issue one command while the response is delayed');
+      assert(result.delayedResponse.actualMs >= 750, 'The committed response was withheld for the required latency interval');
+      if (native) assert.equal(await waitForWorldReceipt(page, complete.label), complete.label);
       await snapshot('first-case-completed');
       // Solo world action: follow an existing public investigation, obtain real
       // materials in the garage, and craft at the Foundry. Only the random garage
@@ -274,11 +296,11 @@ try {
       result.status = 'FAIL'; result.error = error.stack;
       await snapshot('failure').catch(() => {});
       console.error(`FAIL ${width}px: ${error.stack}`);
-    } finally { await context.close(); await app.close(); app = null; }
+    } finally { await context.close(); await app.close(); if (native) await app.pool.end(); app = null; }
   }
 } finally {
-  fs.writeFileSync(path.join(output, 'results.json'), JSON.stringify({ database: 'disposable pg-mem', browser: await browser.version(),
+  fs.writeFileSync(path.join(output, 'results.json'), JSON.stringify({ database: native ? 'owned native PostgreSQL' : 'disposable pg-mem', browser: await browser.version(),
     contentMode: 'LIVE with existing foundation flags enabled; no chain/economic activation', results }, null, 2));
-  await browser.close(); if (app) await app.close();
+  await browser.close(); if (app) { await app.close(); if (native) await app.pool.end(); }
 }
-assert(results.length === 2 && results.every((result) => result.status === 'PASS'), 'RC1 golden solo journey failed; see recorded release blockers');
+assert(results.length === widths.length && results.every((result) => result.status === 'PASS'), 'RC1 golden solo journey failed; see recorded release blockers');
