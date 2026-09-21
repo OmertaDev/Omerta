@@ -180,7 +180,8 @@ try {
   const corrupt = async (name, baseName, change) => { const input = structuredClone(saved.get(baseName)); assert(input); change(input);
     let error; try { reconcileOmrLoans(input.before, input.after, input); } catch (caught) { error = caught.message; }
     assert(error, `Corruption escaped ${name}`); const artifact = `negative-${name}.json`; await proof.artifact(artifact, input); controls.push({ name, artifact, outcome: 'REJECTED', error }); };
-  await corrupt('missing-seize-receipt', 'paper:manual-collect-at-exact-due', input => { input.after.transactions = input.after.transactions.filter(row => row.reason !== 'loan:seize:omr'); });
+  await corrupt('missing-seize-receipt', 'paper:manual-collect-at-exact-due', input => { input.after.transactions = input.after.transactions.filter(row =>
+    !(row.reason === 'loan:seize:omr' && row.counterparty === actors.paperBorrower && !input.before.transactions.some(prior => prior.id === row.id))); });
   await corrupt('duplicate-loot-receipt', 'fire:third-party-odd-split', input => { const row = structuredClone(input.after.transactions.find(row => row.reason === 'loan:pledge:loot')); row.id = 'corrupt-duplicate'; input.after.transactions.push(row); });
   await corrupt('wrong-loot-owner-balanced', 'fire:third-party-odd-split', input => { const row = input.after.transactions.find(row => row.reason === 'loan:pledge:loot'); row.account_id = actors.buyer;
     input.after.account_persistent.find(row => row.account_id === actors.killerThird).omr = '0'; input.after.account_persistent.find(row => row.account_id === actors.buyer).omr = '46'; });
@@ -191,6 +192,8 @@ try {
   await corrupt('grace-equality-forfeit', 'workers:grace-next-original-sweep-two-forfeits', input => { input.logicalAt = epoch + 25 * 3600000; });
   await corrupt('paper-missing-owner-receipt', 'paper:buy-concurrent-duplicate', input => { input.after.idempotency.find(row => row.key === 'paper-buy').account_id = actors.lender; });
   await corrupt('paper-wrong-cash-owner', 'paper:buy-concurrent-duplicate', input => { input.after.transactions.find(row => row.reason === 'loan:paper' && row.character_id === actors.lender).character_id = actors.deadLender; });
+  await corrupt('rewritten-historical-receipt', 'paper:exact-retry', input => { input.after.transactions.find(row => row.reason === 'loan:pledge').amount = '-30'; });
+  await corrupt('rewritten-original-due', 'workers:grace-strict-equality', input => { input.after.loans.find(row => row.id === loans['grace-a']).due_at = new Date(epoch).toISOString(); });
   await corrupt('subatomic-drift', 'paper:exact-retry', input => { input.after.account_persistent.find(row => row.account_id === actors.buyer).omr = '0.000000000001'; });
   const schedule = controller.diagnostic(); assert.equal(schedule.failures.length, 0);
   const timerCounts = Object.fromEntries(['directorTick', 'guardedTick', 'guardedSeasonTick', 'health-boundary'].map(label => [label, schedule.events.filter(event => event.kind === 'timer.fire' && event.label === label).length]));

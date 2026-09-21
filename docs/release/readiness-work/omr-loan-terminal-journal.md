@@ -84,3 +84,11 @@ TEXT notification payload as an object at the successful27h forfeiture. The
 native terminal and all four notifications existed; the full gate was FAIL.
 The correction parses the stored JSON text and also checks the borrower-only
 `lost` flag. No runtime bytes or gameplay were changed.
+
+Native `94450ab33c064d91e3185aa9281eb45d7944166d` passed47 boundaries,
+2261 exact equations,16 OMR movements,11 corruption controls and3 canonical
+invariant checkpoints. Its27 logical hours executed324 Director,27 hourly,
+27 seasonal and324 health callbacks. A follow-up control revision removes the
+new manual-seizure receipt specifically (the earlier control also removed an
+old immutable receipt), and adds explicit historical-receipt and original-due
+rewrite controls. Results for that revision require a separate native rerun.
