@@ -511,8 +511,8 @@
       "changedSource": [
         "test/lib/rc1-browser-controls.js"
       ],
-      "retest": "e009b7c2 focused430px native PASS:50commands/151hit-tested controls/6interactions/zero browser errors. Full four-width and hosted integrated reruns remain required.",
-      "evidence": "integrated-9e05bf08-results.json; restricted golden-9e05bf08-1 original failure assets"
+      "retest": "Integratedb0c85c11 allfour native widths PASS with50commands and6interactions each, zero browser errors and actual hit testing. Both hosted workflows dispatched on that exact source; hosted outcomes pending.",
+      "evidence": "integrated-9e05bf08-results.json; restricted golden-9e05bf08-1 original failure assets;integrated-b0c85c11-results.json"
     }
   ]
 }
