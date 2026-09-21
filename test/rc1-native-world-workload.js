@@ -15,7 +15,6 @@ import { createRecordedActors, compareActorReplay, actorValueHash } from '../too
 import { activeQuietRoster, chooseAuthorizedCommand, choosePublicCrime, observedOpportunityTracker } from '../tools/rc1-native-player-policy.js';
 import { collectWorldDiagnostics } from '../tools/rc1-world-diagnostics.js';
 import { createNativeCommitObserver } from '../tools/rc1-native-commit-observer.js';
-import { snapshotWorldResources, reconcileWorldResources, worldResourceHash } from '../tools/rc1-world-resource-observer.js';
 import { collectKnowledgeDiagnostics } from '../tools/rc1-knowledge-diagnostics.js';
 import { createMysteryPolicy, MYSTERY_POLICY_CONTRACT } from '../tools/rc1-mystery-policies.js';
 import { createRunGuardrails } from '../tools/rc1-native-run-guardrails.js';
@@ -182,6 +181,7 @@ const base = new pg.Pool({ connectionString: url }), queryOrder = createRecorded
 const actors = createRecordedActors({ replay: retainedActors, record: proof.record });
 const diagnosticPool = new pg.Pool({ connectionString: url, max: 1,
   options: `-c search_path=${namespace},pg_catalog -c default_transaction_read_only=on` });
+let snapshotWorldResources, reconcileWorldResources, worldResourceHash;
 let priorResources, firstResourceError, workPhase = 'initialization';
 const resourceSummary = { boundaries: 0, unsupportedEntries: 0, unsupportedKinds: {}, qualifyingFullResourcePass: false };
 const resourceStream = crypto.createHash('sha256');
@@ -268,6 +268,9 @@ let pool, result, currentInvocation = null, failureInvocation = null, injectedAc
 let restoredState = null, applicationBootstrap = null;
 try {
   for (const level of ['log', 'warn', 'error']) console[level] = (...args) => controller.log(level, args);
+  // The observer imports canonical check-in rules through game.js -> db.js.
+  // Install the source-pinned DB seam before loading that production module.
+  ({ snapshotWorldResources, reconcileWorldResources, worldResourceHash } = await import('../tools/rc1-world-resource-observer.js'));
   if (priorFailure) await proof.artifact('prior-failed-run.json', priorFailure);
   await guardBoundary('before-initialization');
   await proof.record({ kind: 'database-created', ...await database.create() });
