@@ -12,6 +12,9 @@ const view = (sequence, types = ['mystery.start', 'recipe.craft']) => ({ player:
 const select = (policy, projection) => policy.choose(projection, { logicalAt: at });
 const complete = (policy, decision, extra = {}) => policy.settle({ status: 'COMPLETED', replayed: false,
   executionId: decision.command.executionIdentity.executionId, ...extra });
+const artifactPrefix = (scenario) => scenario.replaceAll('_', '-');
+for (const scenario of ['high_mystery_participation', 'low_mystery_participation'])
+  assert.match(`${artifactPrefix(scenario)}-pending-checkpoint.json`, /^[a-z0-9-]+\.json$/);
 
 for (const scenarioId of ['high_mystery_participation', 'low_mystery_participation']) {
   const policy = createMysteryPolicy(config(scenarioId));
@@ -64,6 +67,8 @@ assert.deepEqual(select(restarted, prohibited), select(guarded, prohibited));
 complete(guarded, select(guarded, prohibited)); complete(restarted, select(restarted, prohibited));
 assert.deepEqual(restarted.checkpoint(), guarded.checkpoint());
 assert.throws(() => createMysteryPolicy(config('low_mystery_participation')).restore(guardedCheckpoint), /another seed/);
+assert.throws(() => createMysteryPolicy({ ...config(), seed: 'rc1-beta' }).restore(guardedCheckpoint), /another seed/);
+assert.throws(() => createMysteryPolicy({ ...config(), accountId: 'foreign' }).restore(guardedCheckpoint), /another seed/);
 const tampered = structuredClone(guardedCheckpoint); tampered.payload.counters.freshCompletions++;
 assert.throws(() => createMysteryPolicy(config()).restore(tampered), /checksum/);
 const unknown = createMysteryPolicy(config());
@@ -94,6 +99,16 @@ for (let index = 23; index < 100; index++) {
   assert.deepEqual(a, b); complete(original, a); complete(resumed, b);
 }
 assert.deepEqual(resumed.checkpoint(), original.checkpoint());
+const beta = createMysteryPolicy({ ...config(), seed: 'rc1-beta' });
+const alpha = createMysteryPolicy(config());
+let differentSeedChoices = 0;
+for (let index = 0; index < 20; index++) {
+  const projection = view(index, ['recipe.craft', 'knowledge.share', 'knowledge.revoke']);
+  const a = select(alpha, projection), b = select(beta, projection);
+  if (a.command.commandId !== b.command.commandId) differentSeedChoices++;
+  complete(alpha, a); complete(beta, b);
+}
+assert(differentSeedChoices > 0, 'Seed must distinguish equivalent authorized alternatives');
 console.log('PASS: mystery quota prefixes, forced choices, deliberate waits, issued projections, denials/replays and deterministic policy restart');
 
 if (process.argv.includes('--postgres')) await nativeExercise();
@@ -133,7 +148,7 @@ async function nativeExercise() {
         const logicalAt = Date.now();
         const decision = policy.choose(projection, { logicalAt });
         if (step === 3) {
-          const saved = policy.checkpoint(); await proof.artifact(`${scenario}-pending-checkpoint.json`, saved);
+          const saved = policy.checkpoint(); await proof.artifact(`${artifactPrefix(scenario)}-pending-checkpoint.json`, saved);
           const restored = createMysteryPolicy(config(scenario, account)).restore(saved);
           // Waits are observations, so compare only pending command recovery.
           if (decision.kind === 'command') assert.deepEqual(restored.choose(projection, { logicalAt }), decision);
@@ -155,7 +170,7 @@ async function nativeExercise() {
         const invariants = await runLedgerInvariants(db.pool, { alert: false });
         await proof.record({ kind: 'canonical-invariants', account, step, checks: invariants.checks }); assert(invariants.ok);
       }
-      const summary = policy.summary(); results.push(summary); await proof.artifact(`${scenario}-final-policy.json`, policy.checkpoint());
+      const summary = policy.summary(); results.push(summary); await proof.artifact(`${artifactPrefix(scenario)}-final-policy.json`, policy.checkpoint());
       assert(scenario.startsWith('high') ? summary.freshInvestigation > 0 : summary.freshInvestigation <= Math.floor(summary.freshCompletions / 20));
     }
     const final = await proof.snapshot(db.pool, 'final');
