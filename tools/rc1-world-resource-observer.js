@@ -4,6 +4,7 @@ import { DESK, DESK_RECYCLE_REASON, CONSTANTS, M3, M8, levelOf, dayOf } from '..
 import { checkinQuoteOf } from '../src/game.js';
 import { exactSum, negate, sha256 } from './rc1-resource-journal.js';
 import { reconcileCarResources } from './rc1-car-journal.js';
+import { reconcileSeasonConversions } from './rc1-season-conversion-journal.js';
 
 export const WORLD_RESOURCE_TABLES = Object.freeze([
   'characters', 'account_persistent', 'transactions', 'gangs', 'gang_members', 'amm_pool', 'street_tax', 'stake_pool', 'dev_fund',
@@ -755,10 +756,12 @@ export function reconcileWorldResources(before, after, { identity = null, includ
     authority: reference('transactions', receipts.filter(r => r.reason.startsWith('loan:'))) });
   const cars = reconcileCarResources(before, after, { carMeltProvenance });
   checks.push(...cars.checks); unsupported.push(...cars.unsupported);
+  const seasonConversions = reconcileSeasonConversions(before, after);
+  checks.push(...seasonConversions.checks); unsupported.push(...seasonConversions.unsupported);
   const observedOnly = ['boats', 'account_gear', 'market_listings', 'exchange_pool', 'bounties', 'commission_proposals', 'favors',
     'loan_house', 'convoy_insurance', 'poker_tournaments', 'poker_entries', 'grand_prix', 'grand_prix_entries', 'stakes_races',
     'stakes_entries', 'shipment_days', 'shipment_takes', 'bespoke_pieces', 'bespoke_serials', 'campaign_progress',
-    'drop_allocations', 'chain_reserve', 'vouchers', 'season_records', 'season_recaps', 'operation_escrow'];
+    'drop_allocations', 'chain_reserve', 'vouchers', 'season_records', 'operation_escrow'];
   for (const table of observedOnly) if (json(rows(before, table)) !== json(rows(after, table)))
     unsupported.push({ kind: 'observed-table-change', table, detail: 'Change observed; complete resource disposition classifier is not implemented' });
   if (ammoEscrow.otherListingChanges) unsupported.push({ kind: 'observed-table-change', table: 'listings', detail: 'Non-ammo escrow lineage remains unsupported' });
@@ -785,7 +788,8 @@ export function reconcileWorldResources(before, after, { identity = null, includ
   const restrictedChanges = unsupported.length ? resourceTableChanges(before, after) : null;
   if (restrictedChanges) verifyResourceTableChanges(before, after, restrictedChanges);
   return { format: 1, identity, beforeHash: worldResourceHash(before), afterHash: worldResourceHash(after), receipts,
-    itemEvents: events, mutationInputs: inputs, mutationOutputs: outputs, checks, cars, turfTerminal: { movements: turfTerminal.movements,
+    itemEvents: events, mutationInputs: inputs, mutationOutputs: outputs, checks, cars, seasonConversions: { movements: seasonConversions.movements,
+      scope: 'One fresh recap bound to its unique season_convert receipt and living character/account, exact canonical resets and positive prestige only. Zero-gain recaps are status-only. Crown, duel-title, existing-recap and compound transitions remain unsupported.' }, turfTerminal: { movements: turfTerminal.movements,
       scope: 'One unchartered contest with live bidders: exact consumed escrow, winner full burn, loser floored refund/remainder burn, treasury and garrison. Original worker authority is separately verified in native evidence. Stakes, charter/dissolved/multiple-contest and territory side effects remain unqualified.' }, familyDissolution: { movements: familyDissolution.movements,
       scope: 'One voluntary living-member Family terminal: cash/ammo destroyed, exact OMR reserve recycled to desk plus lifetime input. Request authorization is independently bound in native proof. Estate/death, territorial/war/governance cleanup, multiple-Family and other compound terminals remain unqualified.' }, familyEntry: { movements: familyEntry.movements,
       scope: 'Ordinary formation cash sink and exact cash/OMR member tribute with original membership and per-Family custody. Ammo banks remain unchanged; no personal ammo-tribute route exists. HTTP body authorization is separately verified in the focused native proof.' }, pressureCash: { movements: pressureCash.movements,
