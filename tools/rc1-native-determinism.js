@@ -68,11 +68,11 @@ export function serialDatabaseOptions() {
       // resolve ahead of builtins. No function in pg_catalog/public is replaced.
       const raw = new pg.Pool({ ...configuration,
         options: configuration.options.replace(`search_path=${namespace}`, `search_path=${namespace},pg_catalog`) });
+      const rawConnect = raw.connect.bind(raw);
       const connect = async () => {
-        const client = await raw.connect();
+        const client = await rawConnect();
         let transactionTime = null, failed = false;
-        return {
-          async query(sql, values) {
+        const query = async (sql, values) => {
             const text = typeof sql === 'string' ? sql : sql.text;
             assert.equal(typeof text, 'string');
             assert(!/\b(?:CURRENT_TIMESTAMP|CURRENT_DATE|CURRENT_TIME|LOCALTIMESTAMP|LOCALTIME)\b/i.test(text),
@@ -91,12 +91,16 @@ export function serialDatabaseOptions() {
               else if (rollbackTo) failed = false;
               return result;
             } catch (error) { failed = transactionTime !== null; throw error; }
-          },
-          release: () => client.release(),
         };
+        // Keep EventEmitter methods, driver identity and symbols on the actual
+        // client so makeDb's once-per-client error hooks remain authoritative.
+        return new Proxy(client, { get(target, key) {
+          if (key === 'query') return query;
+          const value = Reflect.get(target, key); return typeof value === 'function' ? value.bind(target) : value;
+        } });
       };
-      return { connect,
-        async query(sql, values) { const client = await connect(); try { return await client.query(sql, values); } finally { client.release(); } },
+      return { connect, options: raw.options, on: (...args) => raw.on(...args),
+        async query(sql, values) { const client = await this.connect(); try { return await client.query(sql, values); } finally { client.release(); } },
         end: () => raw.end(),
       };
     },
