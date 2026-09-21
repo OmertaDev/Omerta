@@ -15,7 +15,7 @@ import { runLedgerInvariants } from '../src/invariants.js';
 assert(process.argv.includes('--postgres'), 'This proof requires real PostgreSQL');
 const output = process.env.RC1_SHIPMENT_OUTPUT;
 assert(output, 'Set RC1_SHIPMENT_OUTPUT to a new restricted directory outside the checkout');
-const source = await sourceIdentity(), population = 12, seed = 'rc1-shipment-midnight-v1';
+const source = await sourceIdentity(), population = 18, seed = 'rc1-shipment-midnight-v1';
 const epoch = '2026-09-20T23:59:59.999Z', epochMs = Date.parse(epoch);
 const proof = await createProofRecorder({ directory: path.resolve(output), source, runId: 'shipment-boundaries', seed,
   scenarioId: 'scoped-shipment-two-midnights', population, configuration: { epoch, population, seed,
@@ -59,6 +59,9 @@ async function observe(label, work, expectedGrant = 0) {
       takes: after.takes.filter((row) => row.day === dayOf()) }] : [{ rule: 'Read, travel or rejected take creates no material' }] })];
   for (const ch of after.characters) {
     const prior = before.characters.find((row) => row.id === ch.id); assert(prior);
+    movements.push(equation({ resource: 'shipment-material', owner: ch.id, before: prior.shipment, after: ch.shipment,
+      created: ch.id === value?.character?.id ? expectedGrant : 0,
+      authority: [{ rule: expectedGrant ? 'Only the canonical take recipient receives the granted material' : 'No material change permitted' }] }));
     const entries = receipts.filter((row) => row.character_id === ch.id && row.currency === 'cash');
     assert.equal(exactSum([ch.cash, `-${prior.cash}`]), exactSum(entries.map((row) => row.amount)), 'Cash change lacks canonical ledger receipt');
   }
@@ -85,16 +88,17 @@ async function refusal(actor, code) {
 async function emptyDay(label) {
   const cap = shipmentCityCap(population);
   assert.equal(cap % SHIPMENT.PER_PLAYER, 0, 'Adapt this workload if the legal population cap changes');
+  assert(cap / SHIPMENT.PER_PLAYER < population, 'The city-cap probe needs an actor who has not taken material today');
   for (const actor of actors.slice(0, cap / SHIPMENT.PER_PLAYER)) {
     // Policy uses the actor's canonical authorized board to choose its district.
-    const view = await board(actor);
+    const view = await observe(`${label}:board:${actor}`, () => board(actor));
     if (!view.here) await observe(`${label}:travel:${actor}`, () => withCharacter(pool, actor,
       (ch, client, hooks) => travel(ch, view.district, client, hooks)));
     const response = await observe(`${label}:take:${actor}`, () => take(actor), SHIPMENT.PER_PLAYER);
     assert.equal(response.took, SHIPMENT.PER_PLAYER);
   }
   await observe(`${label}:same-player-cap`, () => refusal(actors[0], 'taken'));
-  const spare = actors.at(-1), view = await board(spare);
+  const spare = actors.at(-1), view = await observe(`${label}:spare-board`, () => board(spare));
   if (!view.here) await observe(`${label}:spare-travel`, () => withCharacter(pool, spare,
     (ch, client, hooks) => travel(ch, view.district, client, hooks)));
   await observe(`${label}:city-exhausted`, () => refusal(spare, 'gone'));
@@ -130,7 +134,8 @@ try {
   const final = await proof.snapshot(pool, 'final');
   await proof.record({ kind: 'random-decisions', tape: runtime.tape });
   result = { status: 'PASS_SCOPED', logicalDurationMs: logicalTime - epochMs, midnightBoundaries: 2,
-    population, activeActors: population - 1, canonicalCalls, committedBoundaries: checks.length, checks,
+    population, activeActors: shipmentCityCap(population) / SHIPMENT.PER_PLAYER + 1, canonicalCalls,
+    observedBoundaries: checks.length, checks,
     finalStateSha256: final.stateSha256, invariants: verifyLedgerChecks(baseline, await runLedgerInvariants(pool, { alert: false }), population),
     exclusions: ['No HTTP receipt/key replay in this runner', 'No recorded concurrent boundary race',
       'No shipment loot branch', 'No complete worker schedule, simulation matrix or deployment attestation'] };
