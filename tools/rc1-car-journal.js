@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { rollRarity } from '../src/rules.js';
 import { exactSum } from './rc1-resource-journal.js';
+import { verifySoloCarMelt } from './rc1-car-melt-provenance.js';
 
 const rows = (state, table) => { assert(Array.isArray(state.tables[table]), `Missing car evidence table ${table}`); return state.tables[table]; };
 const index = (values, key, label) => {
@@ -37,7 +38,7 @@ export function basicCarSalvageRequestHash(accountId, carId) {
     request: { ...BASIC_CAR_SALVAGE, carId } })).digest('hex');
 }
 
-export function reconcileCarResources(before, after) {
+export function reconcileCarResources(before, after, { carMeltProvenance = null } = {}) {
   const prior = byId(before, 'cars'), final = byId(after, 'cars');
   const people = byId(before, 'characters'), nextPeople = byId(after, 'characters');
   const audits = appended(before, after, 'rng_audit'), receipts = appended(before, after, 'transactions');
@@ -143,8 +144,17 @@ export function reconcileCarResources(before, after) {
     incomplete('car-acquisition-identity-provenance', owner, cars.map(row => row.id), authority,
       'Receipt binds owner/count/rarity, not car ID, selected model/trim/damage or limited-run allocation; full acquisition lineage remains unsupported');
   }
+  const melt = verifySoloCarMelt(before, after, carMeltProvenance);
+  if (melt) {
+    const car = prior.get(melt.carId), receipt = receipts.find(row => row.id === melt.receiptId);
+    assert(car && receipt, 'Exact melt lacks fresh car/receipt');
+    claim(car); use('transactions', [receipt]);
+    const authority = reference('transactions', [receipt]);
+    parity('car-exact-solo-melt-sink', melt.owner, 1, 0, -1, authority);
+    lineage.push({ ...melt, authority });
+  }
   const sinks = [...audits.filter(row => row.action === 'npc:car' && row.outcome === 'retire').map(row => ({ table: 'rng_audit', row })),
-    ...receipts.filter(row => row.currency === 'ammo' && row.reason === 'melt' && row.character_id).map(row => ({ table: 'transactions', row }))];
+    ...receipts.filter(row => row.currency === 'ammo' && row.reason === 'melt' && row.character_id && !used.has('transactions:' + row.id)).map(row => ({ table: 'transactions', row }))];
   for (const owner of new Set(sinks.map(entry => entry.row.character_id))) {
     const matches = sinks.filter(entry => entry.row.character_id === owner), cars = removed.filter(row => row.character_id === owner && !claimed.has(row.id));
     assert.equal(cars.length, matches.length, `Car melt/retirement receipt cardinality differs for ${owner}`);
@@ -162,5 +172,5 @@ export function reconcileCarResources(before, after) {
     incomplete('car-disposition-unclassified', car.character_id, [car.id], [],
       `No supported identity-bound authority for ${!prior.has(car.id) ? 'creation' : !final.has(car.id) ? 'destruction' : changedFields(car, final.get(car.id)).join(',')}`);
   return { format: 1, checks, lineage, unsupported, fullyClassifiedChanges: lineage.filter(row => !row.kind.endsWith('count-only')).length,
-    scope: 'Serial isolated boundary only. Exact basic salvage and market list/cancel custody; other audit parity is explicitly partial.' };
+    scope: 'Serial isolated boundary only. Exact basic salvage, market list/cancel custody, and source-pinned instrumented neutral solo melt; other audit parity is explicitly partial.' };
 }
