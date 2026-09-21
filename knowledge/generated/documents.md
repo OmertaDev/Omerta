@@ -379,6 +379,7 @@
 | [docs/rc1-family-cash-ammo-journal.md](../../docs/rc1-family-cash-ammo-journal.md) | documentation | 28 | 2026-09-21 |
 | [docs/rc1-multifamily-conflict.md](../../docs/rc1-multifamily-conflict.md) | documentation | 40 | 2026-09-21 |
 | [docs/rc1-native-mobile-adversity.md](../../docs/rc1-native-mobile-adversity.md) | documentation | 46 | 2026-09-21 |
+| [docs/rc1-npc-car-acquisition.md](../../docs/rc1-npc-car-acquisition.md) | documentation | 40 | 2026-09-21 |
 | [docs/rc1-world-car-melt-witness.md](../../docs/rc1-world-car-melt-witness.md) | documentation | 36 | 2026-09-21 |
 | [docs/release/evidence/graceful-shutdown/README.md](../../docs/release/evidence/graceful-shutdown/README.md) | documentation | 73 | 2026-09-20 |
 | [docs/release/evidence/security-operations/telemetry-regressions.md](../../docs/release/evidence/security-operations/telemetry-regressions.md) | documentation | 136 | 2026-09-19 |
@@ -393,9 +394,12 @@
 | [docs/release/readiness-work/aggression-player-policy.md](../../docs/release/readiness-work/aggression-player-policy.md) | documentation | 193 | 2026-09-21 |
 | [docs/release/readiness-work/authority-command-matrix.md](../../docs/release/readiness-work/authority-command-matrix.md) | documentation | 106 | 2026-09-21 |
 | [docs/release/readiness-work/authority-crew-review.md](../../docs/release/readiness-work/authority-crew-review.md) | documentation | 79 | 2026-09-21 |
+| [docs/release/readiness-work/authority-family-review.md](../../docs/release/readiness-work/authority-family-review.md) | documentation | 14 | 2026-09-21 |
 | [docs/release/readiness-work/authority-inventory.md](../../docs/release/readiness-work/authority-inventory.md) | documentation | 29 | 2026-09-21 |
 | [docs/release/readiness-work/authority-legacy-review.md](../../docs/release/readiness-work/authority-legacy-review.md) | documentation | 116 | 2026-09-21 |
+| [docs/release/readiness-work/authority-pending-replay-finding.md](../../docs/release/readiness-work/authority-pending-replay-finding.md) | documentation | 14 | 2026-09-21 |
 | [docs/release/readiness-work/authority-role-regressions.md](../../docs/release/readiness-work/authority-role-regressions.md) | documentation | 83 | 2026-09-21 |
+| [docs/release/readiness-work/candidate18-resource-integration.md](../../docs/release/readiness-work/candidate18-resource-integration.md) | documentation | 111 | 2026-09-21 |
 | [docs/release/readiness-work/churn-player-policy.md](../../docs/release/readiness-work/churn-player-policy.md) | documentation | 34 | 2026-09-21 |
 | [docs/release/readiness-work/ci-private-retention.md](../../docs/release/readiness-work/ci-private-retention.md) | documentation | 51 | 2026-09-21 |
 | [docs/release/readiness-work/crew-input-focus.md](../../docs/release/readiness-work/crew-input-focus.md) | documentation | 60 | 2026-09-21 |
@@ -411,12 +415,16 @@
 | [docs/release/readiness-work/harness-evidence-storage-proposal.md](../../docs/release/readiness-work/harness-evidence-storage-proposal.md) | documentation | 129 | 2026-09-21 |
 | [docs/release/readiness-work/harness-failure-reducer.md](../../docs/release/readiness-work/harness-failure-reducer.md) | documentation | 31 | 2026-09-21 |
 | [docs/release/readiness-work/harness-gzip-capture.md](../../docs/release/readiness-work/harness-gzip-capture.md) | documentation | 68 | 2026-09-21 |
+| [docs/release/readiness-work/harness-history-error-preservation.md](../../docs/release/readiness-work/harness-history-error-preservation.md) | documentation | 62 | 2026-09-21 |
 | [docs/release/readiness-work/harness-observer-serialization.md](../../docs/release/readiness-work/harness-observer-serialization.md) | documentation | 45 | 2026-09-21 |
 | [docs/release/readiness-work/harness-recorded-query-order.md](../../docs/release/readiness-work/harness-recorded-query-order.md) | documentation | 20 | 2026-09-21 |
 | [docs/release/readiness-work/harness-resource-pressure.md](../../docs/release/readiness-work/harness-resource-pressure.md) | documentation | 34 | 2026-09-21 |
+| [docs/release/readiness-work/harness-season-conversion-observer.md](../../docs/release/readiness-work/harness-season-conversion-observer.md) | documentation | 31 | 2026-09-21 |
+| [docs/release/readiness-work/harness-season-crown-observer.md](../../docs/release/readiness-work/harness-season-crown-observer.md) | documentation | 99 | 2026-09-21 |
 | [docs/release/readiness-work/harness-worker-schedule.md](../../docs/release/readiness-work/harness-worker-schedule.md) | documentation | 164 | 2026-09-21 |
 | [docs/release/readiness-work/harness-world-gzip-integration.md](../../docs/release/readiness-work/harness-world-gzip-integration.md) | documentation | 62 | 2026-09-21 |
 | [docs/release/readiness-work/harness.md](../../docs/release/readiness-work/harness.md) | documentation | 142 | 2026-09-21 |
+| [docs/release/readiness-work/integrated-b5c80a4e-results.md](../../docs/release/readiness-work/integrated-b5c80a4e-results.md) | documentation | 27 | 2026-09-21 |
 | [docs/release/readiness-work/law-player-policy.md](../../docs/release/readiness-work/law-player-policy.md) | documentation | 16 | 2026-09-21 |
 | [docs/release/readiness-work/market-player-policy.md](../../docs/release/readiness-work/market-player-policy.md) | documentation | 20 | 2026-09-21 |
 | [docs/release/readiness-work/mystery-player-policies.md](../../docs/release/readiness-work/mystery-player-policies.md) | documentation | 91 | 2026-09-21 |
@@ -439,6 +447,7 @@
 | [docs/release/readiness-work/world-family-dissolution.md](../../docs/release/readiness-work/world-family-dissolution.md) | documentation | 27 | 2026-09-21 |
 | [docs/release/readiness-work/world-family-entry.md](../../docs/release/readiness-work/world-family-entry.md) | documentation | 30 | 2026-09-21 |
 | [docs/release/readiness-work/world-family-npc-observer.md](../../docs/release/readiness-work/world-family-npc-observer.md) | documentation | 37 | 2026-09-21 |
+| [docs/release/readiness-work/world-npc-family-lineage.md](../../docs/release/readiness-work/world-npc-family-lineage.md) | documentation | 64 | 2026-09-21 |
 | [docs/release/readiness-work/world-observers.md](../../docs/release/readiness-work/world-observers.md) | documentation | 54 | 2026-09-21 |
 | [docs/release/readiness-work/world-pressure-cash.md](../../docs/release/readiness-work/world-pressure-cash.md) | documentation | 75 | 2026-09-21 |
 | [docs/release/readiness-work/world-resource-observer.md](../../docs/release/readiness-work/world-resource-observer.md) | documentation | 41 | 2026-09-21 |
