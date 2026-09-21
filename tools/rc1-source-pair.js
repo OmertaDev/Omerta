@@ -25,7 +25,10 @@ if (process.argv.includes('--child')) {
   }
   const origin = await app.listen({ host: '127.0.0.1', port: 0 });
   process.send({ origin });
-  process.once('message', async (message) => {
+  process.on('message', async (message) => {
+    const { flushWorldTelemetry } = await load('src/world-telemetry.js');
+    await flushWorldTelemetry(app.pool);
+    if (message === 'flush') { process.send('flushed'); return; }
     assert.equal(message, 'close');
     await app.close(); await app.pool.end(); process.exit(0);
   });
@@ -63,6 +66,7 @@ if (process.argv.includes('--child')) {
     candidate: candidate.source, predecessor: predecessor.source, startedAt: new Date().toISOString(),
     node: process.version, platform: process.platform, assertions: [],
     normalization: { excludedFields: ['schema_meta.applied_at'],
+      excludedRows: 'Only world_command/completed/replayed:true telemetry observations matching an actual recorded replay, with empty consequences. Raw rows remain retained; non-replay telemetry remains compared.',
       reason: 'stampSchema updates this migration-observation timestamp on every bootstrap; schema hash and version remain compared.',
       retained: 'All other rows, values, sequences, generated IDs, deadlines, balances, state and receipts.' },
     receiptComparison: 'Compare durable result, execution identity, completion status and immediate result. The API recomputes projection/asOf and differential feedback on every replay; retain but do not require byte equality for that fresh view.',
@@ -150,15 +154,28 @@ if (process.argv.includes('--child')) {
     report.assertions.push({ id: label, receipts: receipts.length, status: 'PASS' });
   }
   const normalized = (snapshot) => ({ tables: { ...snapshot.tables, schema_meta: snapshot.tables.schema_meta.map((row) =>
-    row.replace(/("applied_at"\s*:\s*)"[^"]*"/, '$1"<bootstrap-observation>"')) }, sequences: snapshot.sequences });
+    row.replace(/("applied_at"\s*:\s*)"[^"]*"/, '$1"<bootstrap-observation>"')),
+    telemetry: snapshot.tables.telemetry.filter((raw) => {
+      const row = JSON.parse(raw), props = JSON.parse(row.props);
+      if (row.event !== 'world_command' || props.phase !== 'completed' || props.replayed !== true) return true;
+      assert(replays.some((replay) => replay.account === row.account_id && sha256(replay.result.executionId) === props.execution),
+        'Unexplained replay observation');
+      assert.deepEqual(props.consequences, [], 'Replay telemetry must not count a new consequence');
+      return false;
+    }) }, sequences: snapshot.sequences });
   async function snapshot(label) {
+    if (running) await new Promise((resolve, reject) => {
+      const timer = setTimeout(() => reject(new Error('Telemetry flush timed out')), 10000);
+      running.child.once('message', (message) => { clearTimeout(timer); message === 'flushed' ? resolve() : reject(new Error('Invalid flush response')); });
+      running.child.send('flush');
+    });
     const raw = await canonicalDatabaseSnapshot(pool); await put(`${label}.json`, raw);
     const value = normalized(raw); const hash = sha256(canonicalJson(value));
     report.assertions.push({ id: label, stateSha256: hash, rawStateSha256: raw.stateSha256 }); return value;
   }
   const equal = (a, b, label) => {
     const changed = Object.keys(a.tables).filter((name) => canonicalJson(a.tables[name]) !== canonicalJson(b.tables[name]));
-    assert.equal(canonicalJson(a), canonicalJson(b), `${label}; changed tables: ${changed.join(', ')}`);
+    assert(canonicalJson(a) === canonicalJson(b), `${label}; changed tables: ${changed.join(', ')}`);
     report.assertions.push({ id: label, status: 'PASS' });
   };
   try {
