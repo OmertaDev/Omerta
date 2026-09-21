@@ -203,8 +203,9 @@ const commitObserver = observeResources ? createNativeCommitObserver({
         journal.restrictedChangesArtifact = artifact;
       }
       await proof.record({ kind: 'resource-commit-boundary', event, journal });
-      resourceStream.update(`${canonicalJson({ event, journal })}\n`);
-      resourceCost.serializedJournalBytes += Buffer.byteLength(canonicalJson({ event, journal }));
+      const serializedJournal = canonicalJson({ event, journal });
+      resourceStream.update(`${serializedJournal}\n`);
+      resourceCost.serializedJournalBytes += Buffer.byteLength(serializedJournal);
       resourceSummary.boundaries++;
       for (const unsupported of journal.unsupported) {
         resourceSummary.unsupportedEntries++;

@@ -17,7 +17,13 @@ export const WORLD_RESOURCE_TABLES = Object.freeze([
 ]);
 const json = (value) => JSON.stringify(value);
 const tuple = (...parts) => json(parts);
-const sorted = (rows) => rows.sort((a, b) => json(a).localeCompare(json(b)));
+const sorted = (rows) => {
+  // Snapshot rows are already plain JSON. Retain the existing comparator and
+  // stable tie order, but serialize each row only once within this call.
+  const ordered = rows.map(row => ({ row, key: json(row) })).sort((a, b) => a.key.localeCompare(b.key));
+  for (let index = 0; index < rows.length; index++) rows[index] = ordered[index].row;
+  return rows;
+};
 const columnsCache = new WeakMap();
 const selectionsCache = new WeakMap();
 const rows = (state, table) => { assert(Array.isArray(state.tables[table]), `Missing observed table ${table}`); return state.tables[table]; };
