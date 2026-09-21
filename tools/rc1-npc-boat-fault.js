@@ -52,13 +52,12 @@ export function createNpcBoatFault({ enabled = false, proof, stateHash } = {}) {
       assert.equal(event.outcome, 'ROLLED_BACK'); assert.equal(event.context?.authority, 'original-worker');
       assert.equal(event.context.logicalAt, attempt.context.logicalAt); assert(event.sequence > attempt.sequence);
       assert.equal(stateHash(before), stateHash(after), 'Injected boat abort changed authoritative resource projection');
-      assert(provenance, 'Missing native failed transaction trace'); assert.deepEqual(provenance.boundary, event);
-      assert.equal(provenance.unsupported, 'native-query-failure', 'Fault trace was relabeled as committed lineage');
+      assert.equal(provenance, null, 'Aborted SQL must not acquire committed car provenance');
       const artifact = 'restricted-npc-boat-fault-rollback.json';
-      await proof.artifact(artifact, { attempt, event, before, after, provenance,
+      await proof.artifact(artifact, { attempt, event, before, after, committedProvenance: null,
         resourceProjectionOnly: true, beforeSha256: stateHash(before), afterSha256: stateHash(after) });
       rollback = { event: structuredClone(event), artifact, beforeSha256: stateHash(before), afterSha256: stateHash(after),
-        provenanceSha256: sha256(canonicalJson(provenance)) };
+        authority: 'Actual native RNB01 INSERT error and matched native ROLLBACK; committed-only collector intentionally has no aborted witness' };
       await proof.record(append('npc-boat-fault-rollback', rollback));
     },
     acceptConsole(level, args, logicalAt) {

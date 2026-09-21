@@ -8,7 +8,7 @@ const at = 3600000, state = { characters: [], boats: [] };
 const attempt = { sequence: 2, clientId: 1, transactionId: 1, context: { authority: 'original-worker', logicalAt: at },
   sqlSha256: sha256(NPC_BOAT_INSERT), outcome: 'THREW', code: 'RNB01' };
 const rollback = { ...attempt, sequence: 3, sqlSha256: sha256('ROLLBACK'), command: 'ROLLBACK', outcome: 'ROLLED_BACK' }; delete rollback.code;
-const provenance = event => ({ boundary: event, unsupported: 'native-query-failure', queries: [] });
+const provenance = () => null;
 const logs = ['[population] spawn failed', NPC_BOAT_FAULT_MESSAGE];
 const controls = [];
 function setup(enabled = true) {
@@ -31,7 +31,7 @@ for (const [name, mutate] of [
 }
 { const value = await primed(); await assert.rejects(value.fault.onAttempt(attempt), /Repeated/); controls.push('duplicate-error'); }
 { const value = await primed(); await assert.rejects(value.fault.boundary(rollback, state, { corrupt: true }, provenance(rollback)), /projection/); controls.push('rollback-resource-change'); }
-{ const value = await primed(); await assert.rejects(value.fault.boundary(rollback, state, state, provenance({ ...rollback, sequence: 8 })), /deep-equal/); controls.push('stale-rollback-witness'); }
+{ const value = await primed(); await assert.rejects(value.fault.boundary(rollback, state, state, { boundary: rollback, queries: [] }), /committed car provenance/); controls.push('aborted-commit-witness-rejected'); }
 { const value = await primed(); await assert.rejects(value.fault.boundary({ ...rollback, outcome: 'COMMITTED' }, state, state, provenance(rollback))); controls.push('commit-is-not-rollback'); }
 { const value = setup(); assert.equal(value.fault.acceptConsole('error', logs, at), false); await value.fault.installBeforeBaseline(value.pool); await value.fault.onAttempt(attempt);
   assert.equal(value.fault.acceptConsole('error', logs, at), false); controls.push('copied-console-cannot-hide-error'); }
