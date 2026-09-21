@@ -6,6 +6,8 @@ import { planOwnedWorldDatabase } from '../tools/rc1-native-database.js';
 import { createNativeCommitObserver } from '../tools/rc1-native-commit-observer.js';
 
 assert(process.argv.includes('--postgres'), 'Real PostgreSQL required');
+assert(!process.argv[1].endsWith('server.js') && !process.argv[1].endsWith('worker.js'),
+  'Native test entry must not match original server/worker main suffix guards');
 const output = process.env.RC1_CROWN_OUTPUT, controlUrl = process.env.COORDINATION_TEST_DATABASE_URL;
 assert(output && controlUrl, 'Fresh restricted output and explicit local PostgreSQL required');
 const source = await sourceIdentity();
