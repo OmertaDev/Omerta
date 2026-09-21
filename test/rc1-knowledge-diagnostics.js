@@ -44,6 +44,7 @@ if (process.argv.includes('--postgres')) {
       pageSize: 1, concurrency: 'Serial with no worker', actorFeedback: false } });
   let database, result;
   try {
+    await proof.record({ kind: 'scope-start', observation: 'Canonical paginated Knowledge only; no actor feedback' });
     database = await commandDatabase('knowledge_diagnostics');
     const pool = database.pool, roster = ['metric-a', 'metric-b', 'metric-c'];
     await addPlayer(pool, roster[0], 'MetricA', 'docks');
@@ -51,18 +52,19 @@ if (process.argv.includes('--postgres')) {
     await addPlayer(pool, roster[2], 'MetricC', 'docks');
     const api = createCoordinationService({ pool, registry: COORDINATION_KNOWLEDGE_PILOT,
       enabled: true, knowledgeEnabled: true, sharingEnabled: true });
+    const invoke = (method, ...args) => proof.invoke(`coordination.${method}`, { args }, () => api[method](...args));
     const graph = coordinationGraphs(COORDINATION_KNOWLEDGE_PILOT)[0];
     await proof.snapshot(pool, 'fixture');
     for (const accountId of roster.slice(0, 2)) {
-      let instance = (await api.create(accountId, graph.id, { expectedContentHash: graph.contentHash }, key())).instance;
-      instance = (await api.act(accountId, instance.id,
+      let instance = (await invoke('create', accountId, graph.id, { expectedContentHash: graph.contentHash }, key())).instance;
+      instance = (await invoke('act', accountId, instance.id,
         { expectedRevision: instance.revision, actionId: instance.actions[0].id }, key())).instance;
       const action = instance.actions.find((candidate) => candidate.kind === 'discover'); assert(action);
-      await api.act(accountId, instance.id, { expectedRevision: instance.revision, actionId: action.id }, key());
+      await invoke('act', accountId, instance.id, { expectedRevision: instance.revision, actionId: action.id }, key());
     }
     const observe = async (label) => {
       const before = await proof.snapshot(pool, `${label}-before`);
-      const value = await collectKnowledgeDiagnostics({ roster, readPage: api.knowledgeBoard,
+      const value = await collectKnowledgeDiagnostics({ roster, readPage: (...args) => invoke('knowledgeBoard', ...args),
         serialBoundary: label, pageSize: 1 });
       const after = await proof.snapshot(pool, `${label}-after`);
       assert.equal(after.stateSha256, before.stateSha256, 'Knowledge metric mutated canonical state');
@@ -70,16 +72,16 @@ if (process.argv.includes('--postgres')) {
     };
     const own = await observe('owned-only');
     assert.deepEqual(own.perPlayer.map((row) => row.accessibleClaims), [1, 1, 0]);
-    const foreign = (await api.knowledgeBoard(roster[1])).claims[0];
-    const target = (await api.knowledgeTargets(roster[1], { characterName: 'MetricA' })).targets[0]; assert(target);
-    const shared = await api.shareKnowledge(roster[1], foreign.id,
+    const foreign = (await invoke('knowledgeBoard', roster[1])).claims[0];
+    const target = (await invoke('knowledgeTargets', roster[1], { characterName: 'MetricA' })).targets[0]; assert(target);
+    const shared = await invoke('shareKnowledge', roster[1], foreign.id,
       { targetId: target.id, expectedAclRevision: foreign.aclRevision }, key());
     const sharedMetric = await observe('shared');
     assert.deepEqual(sharedMetric.perPlayer.map((row) => row.accessibleClaims), [2, 1, 0]);
     assert.equal(sharedMetric.perPlayer[0].pages, 2);
     assert.equal(sharedMetric.perPlayer[0].sharedClaims, 1);
     assert.equal(sharedMetric.distinctAccessibleClaims, 2);
-    await api.revokeKnowledge(roster[1], foreign.id,
+    await invoke('revokeKnowledge', roster[1], foreign.id,
       { grantId: shared.claim.grants[0].id, expectedAclRevision: shared.claim.aclRevision }, key());
     const revoked = await observe('revoked');
     assert.deepEqual(revoked.perPlayer.map((row) => row.accessibleClaims), [1, 1, 0]);
@@ -90,6 +92,7 @@ if (process.argv.includes('--postgres')) {
         'Full world integration and 225-run matrix'] };
   } catch (error) {
     result = { status: 'FAIL', error: error.message, stack: error.stack };
+    await proof.record({ kind: 'failure', ...result });
     if (database) await proof.snapshot(database.pool, 'first-failure');
     process.exitCode = 1;
   } finally {
