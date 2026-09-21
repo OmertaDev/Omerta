@@ -91,7 +91,10 @@ try {
     const [method, pattern] = route.split(' '), url = pattern.replace(':crewId', a).replace(':characterId', characterId(accounts.requester));
     const payload = { name: names.outsider, text: 'isolated authority probe', on: true, kind: 'kill' };
     await deny(`${route}:anonymous`, null, null, method, url, payload, 401);
-    await deny(`${route}:no-character`, 'no_character', 'fresh', method, url, payload);
+    // Crew-first lock hooks reject missing membership before the character lookup.
+    const crewFirst = ['DELETE /v1/crew/member/:characterId', 'POST /v1/crew/leave',
+      'POST /v1/crew/request/:characterId/accept', 'POST /v1/crew/recruiting'].includes(route);
+    await deny(`${route}:no-character`, crewFirst ? 'no_crew' : 'no_character', 'fresh', method, url, payload);
   }
   const leaderOnly = [['DELETE', `/v1/crew/member/${characterId(accounts.member)}`, {}], ['POST', '/v1/crew/recruiting', { on: false }],
     ['POST', `/v1/crew/request/${characterId(accounts.requester)}/accept`, {}], ['DELETE', `/v1/crew/request/${characterId(accounts.requester)}`, {}],
