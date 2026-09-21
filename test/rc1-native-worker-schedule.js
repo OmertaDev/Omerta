@@ -4,7 +4,8 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import pg from 'pg';
 import crypto from 'node:crypto';
-import { createWorkerSchedule, installWorkerInstrumentation, bootOriginalWorker, dropWorkerSchema, WORKER_SOURCE_PINS } from '../tools/rc1-native-worker.js';
+import { execFileSync } from 'node:child_process';
+import { createWorkerSchedule, installWorkerInstrumentation, makeWorkerDatabase, bootOriginalWorker, dropWorkerSchema, WORKER_SOURCE_PINS } from '../tools/rc1-native-worker.js';
 import { createRecordedQueryOrder, replayRowOrder, QUERY_ORDER_SCOPE } from '../tools/rc1-native-query-order.js';
 import { installSerialRuntime } from '../tools/rc1-native-determinism.js';
 import { sourceIdentity, createProofRecorder, verifyArtifactIndex, restoreCheckpoint, canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
@@ -29,6 +30,19 @@ assert.deepEqual(replayRowOrder([{ id: 'b' }, { id: 'a' }, { id: 'a' }], [{ id: 
 assert.throws(() => replayRowOrder([{ id: 'b' }, { id: 'a' }], [{ id: 'a' }, { id: 'a' }]), /membership\/value/);
 assert.throws(() => replayRowOrder([{ cash: 9 }], [{ cash: 10 }]), /membership\/value/);
 console.log('PASS: recorded SQL reordering preserves values and duplicate multiplicities');
+execFileSync(process.execPath, ['--input-type=module', '-e', `
+  import assert from 'node:assert/strict';
+  import './src/db.js';
+  import { createWorkerSchedule, installWorkerInstrumentation, makeWorkerDatabase, bootOriginalWorker } from './tools/rc1-native-worker.js';
+  const controller = createWorkerSchedule({ start: 0, setClock() {} });
+  const seam = installWorkerInstrumentation(controller, { namespace: 'rc1_worker_cache_guard' });
+  try {
+    await assert.rejects(makeWorkerDatabase(controller), /Cached uninstrumented db.js/);
+    await assert.rejects(bootOriginalWorker(controller), /Cached uninstrumented db.js/);
+    assert.equal(controller.pools.length, 0);
+  } finally { seam.restore(); }
+`], { stdio: 'pipe' });
+console.log('PASS: cached uninstrumented database refuses before creating any pool');
 
 if (process.argv.includes('--postgres')) {
   const argument = (name) => process.argv.find((arg) => arg.startsWith(`--${name}=`))?.slice(name.length + 3);
@@ -109,7 +123,7 @@ if (process.argv.includes('--postgres')) {
       await base.query(`CREATE SCHEMA ${namespace}`); created = true;
       const bootstrap = new controller.Pool({ connectionString: url, options: '', max: 20 });
       await instrumentation.clock.initialize(bootstrap);
-      const { makeDb } = await import('../src/db.js'); pool = await makeDb();
+      pool = await makeWorkerDatabase(controller);
       await pool.query("INSERT INTO accounts(id,auth_provider,auth_subject) VALUES('rc1-worker-actor','test','rc1-worker-actor')");
       await pool.query("INSERT INTO account_persistent(account_id) VALUES('rc1-worker-actor')");
       await pool.query("INSERT INTO characters(id,account_id,name,season,loc,respect,cash) VALUES('rc1-worker-character','rc1-worker-actor','Worker clock fixture',$1,'docks',10000,500)", [initialSeason]);

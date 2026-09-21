@@ -99,8 +99,11 @@ The callable interface for scenario workloads is:
 ```js
 const controller = createWorkerSchedule({ start, setClock, expectedDormant });
 const instrumentation = installWorkerInstrumentation(controller, { namespace, queryOrder });
-// Only now dynamically import makeDb and actor authorities. Initialize the
-// isolated schema/clock and declared roster, then freeze all fixture writes.
+// Initialize the isolated schema/clock first. The wrapper below loads the
+// original makeDb only after proving db.js was instrumented, BEFORE boot writes.
+const pool = await makeWorkerDatabase(controller);
+// Only now dynamically import actor authorities and initialize the declared
+// roster. Freeze all fixture writes before original worker/actor measurement.
 await bootOriginalWorker(controller);
 await controller.advanceTo(deadline, async (logicalAt, workerCallback) => {
   const view = await controller.actor({ authority: 'player.snapshot', accountId },

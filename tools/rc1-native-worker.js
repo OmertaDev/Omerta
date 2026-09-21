@@ -151,8 +151,22 @@ export function installWorkerInstrumentation(controller, { namespace, queryOrder
 }
 
 let workerBoots = 0;
-export async function bootOriginalWorker(controller, { root = new URL('../', import.meta.url) } = {}) {
+async function pinnedDatabaseModule(controller, root) {
   assert.equal(globalThis.__rc1Worker, controller, 'Install source-pinned instrumentation before importing production modules');
+  const module = await import(new URL('src/db.js', root).href);
+  assert(controller.transformations.some((entry) => entry.file === 'src/db.js' && entry.pinnedLfSha256 === WORKER_SOURCE_PINS['src/db.js']),
+    'Cached uninstrumented db.js is forbidden before any database boot');
+  return module;
+}
+
+export async function makeWorkerDatabase(controller, { root = new URL('../', import.meta.url) } = {}) {
+  const { makeDb } = await pinnedDatabaseModule(controller, root); return makeDb();
+}
+
+export async function bootOriginalWorker(controller, { root = new URL('../', import.meta.url) } = {}) {
+  // Reject a cached uninstrumented database module BEFORE worker import can
+  // call makeDb or touch any schema. A post-boot check would be too late.
+  await pinnedDatabaseModule(controller, root);
   const entry = new URL('src/worker.js', root), original = process.argv[1];
   try {
     process.argv[1] = fileURLToPath(entry);
