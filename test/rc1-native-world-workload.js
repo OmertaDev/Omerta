@@ -11,10 +11,14 @@ import { createRecordedQueryOrder, QUERY_ORDER_SCOPE } from '../tools/rc1-native
 import { installSerialRuntime } from '../tools/rc1-native-determinism.js';
 import { sourceIdentity, createProofRecorder, verifyArtifactIndex, canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
 import { activeQuietRoster, chooseAuthorizedCommand, choosePublicCrime, observedOpportunityTracker } from '../tools/rc1-native-player-policy.js';
+import { collectWorldDiagnostics } from '../tools/rc1-world-diagnostics.js';
+import { createNativeCommitObserver } from '../tools/rc1-native-commit-observer.js';
+import { snapshotWorldResources, reconcileWorldResources, worldResourceHash } from '../tools/rc1-world-resource-observer.js';
 
 const argument = (name) => process.argv.find((arg) => arg.startsWith(`--${name}=`))?.slice(name.length + 3);
 assert(process.argv.includes('--postgres'), 'Real PostgreSQL is required');
 const output = argument('output') || process.env.RC1_WORLD_OUTPUT; assert(output, 'Provide a new restricted output directory');
+const observeResources = process.argv.includes('--observe-resources');
 const hours = Number(argument('hours') || 2160), population = Number(argument('population') || 25);
 assert(Number.isSafeInteger(hours) && hours > 0 && hours <= 2161);
 assert([25, 100, 250, 500, 1000].includes(population));
@@ -36,6 +40,7 @@ const epoch = Math.ceil(Date.parse('2026-09-20T12:00:00.000Z') / seasonMs) * sea
 const expectedDormant = [{ label: 'RWA health', code: 'health_registry_unavailable' }];
 const configuration = { scenario: 'quiet_world', population, seed, hours, sourcePins: WORKER_SOURCE_PINS,
   databaseIsolation: database.descriptor,
+  resourceObservation: observeResources ? 'Experimental exact committed-boundary parity with explicit unsupported lineage; serial native queries only' : 'Disabled',
   epoch: new Date(epoch).toISOString(), finish: new Date(epoch + hours * 3600000).toISOString(),
   policy: { dailyActiveActors: Math.floor(population / 10), proposedFraction: .10,
     realizedFraction: Math.floor(population / 10) / population,
@@ -61,7 +66,34 @@ runtime.bindClock(() => at);
 const controller = createWorkerSchedule({ start: epoch, setClock: (value) => { at = value; }, expectedDormant });
 const namespace = `rc1_worker_world_${process.pid}_${Math.floor(performance.now())}`;
 const base = new pg.Pool({ connectionString: url }), queryOrder = createRecordedQueryOrder({ artifact: proof.artifact });
-const seam = installWorkerInstrumentation(controller, { namespace, queryOrder });
+const diagnosticPool = new pg.Pool({ connectionString: url, max: 1,
+  options: `-c search_path=${namespace},pg_catalog -c default_transaction_read_only=on` });
+let priorResources, firstResourceError;
+const resourceSummary = { boundaries: 0, unsupportedEntries: 0, unsupportedKinds: {}, qualifyingFullResourcePass: false };
+const commitObserver = observeResources ? createNativeCommitObserver({
+  context: () => currentInvocation || { authority: 'original-worker', logicalAt: at },
+  onBoundary: async (event) => {
+    if (firstResourceError) throw firstResourceError;
+    const after = await snapshotWorldResources(diagnosticPool), before = priorResources;
+    try {
+      if (['ROLLED_BACK', 'STATEMENT_ABORTED'].includes(event.outcome))
+        assert.equal(worldResourceHash(after), worldResourceHash(before), 'Aborted SQL changed committed world resources');
+      const journal = reconcileWorldResources(before, after, { identity: event });
+      await proof.record({ kind: 'resource-commit-boundary', event, journal });
+      resourceSummary.boundaries++;
+      for (const unsupported of journal.unsupported) {
+        resourceSummary.unsupportedEntries++;
+        resourceSummary.unsupportedKinds[unsupported.kind] = (resourceSummary.unsupportedKinds[unsupported.kind] || 0) + 1;
+      }
+      priorResources = after;
+    } catch (error) {
+      firstResourceError = error;
+      await proof.artifact('first-resource-failure.json', { before, after, event, error: { message: error.message, stack: error.stack } });
+      throw error;
+    }
+  },
+}) : null;
+const seam = installWorkerInstrumentation(controller, { namespace, queryOrder, commitObserver });
 const originalConsole = { log: console.log, warn: console.warn, error: console.error };
 const roster = Array.from({ length: population }, (_, index) => `quiet-player-${index}`);
 const actorOptions = new Map(roster.map((account) => [account, {}]));
@@ -96,6 +128,7 @@ try {
   const baseline = await runLedgerInvariants(pool, { alert: false }); assert(baseline.ok, 'Birth fixtures must reconcile without baseline drift');
   await proof.record({ kind: 'measured-initialization', roster, configuration, publicCrimes, fixtureWritesAfterThisRecord: false });
   await proof.snapshot(pool, 'initial'); await proof.checkpoint(pool, 'initial', url);
+  if (commitObserver) { priorResources = await snapshotWorldResources(diagnosticPool); commitObserver.arm(); }
   async function invoke(authority, identity, work, latencyClass) {
     currentInvocation = { authority, ...identity, logicalAt: at };
     const started = performance.now();
@@ -165,11 +198,19 @@ try {
       opportunityObservation: opportunities.summarize(at) };
     days.push(entry); await proof.record({ kind: 'day-summary', ...entry });
     await proof.snapshot(pool, `day-${day}`);
+    await proof.artifact(`world-diagnostics-day-${day}.json`, await collectWorldDiagnostics(diagnosticPool,
+      { logicalAt: at, roster, actorActions: Object.fromEntries(actorActions) }));
     originalConsole.log(JSON.stringify({ day, sessions: metrics.sessions, commands: metrics.freshPlayerCommands,
       crimes: metrics.legacyCrimeAttempts, actorCoverage: [...actorActions.values()].filter(Boolean).length }));
   });
   await invariantBoundary('final');
   const final = await proof.snapshot(pool, 'final'); await proof.checkpoint(pool, 'final', url);
+  const finalDiagnostics = await collectWorldDiagnostics(diagnosticPool,
+    { logicalAt: at, roster, actorActions: Object.fromEntries(actorActions) });
+  await proof.artifact('world-diagnostics-final.json', finalDiagnostics);
+  if (commitObserver) {
+    commitObserver.assertComplete(); await proof.artifact('resource-observer.json', { ...resourceSummary, diagnostic: commitObserver.diagnostic() });
+  }
   const trace = controller.diagnostic(); assert.equal(trace.failures.length, 0);
   const timerCounts = Object.fromEntries(['directorTick', 'guardedTick', 'guardedSeasonTick', 'health-boundary']
     .map((label) => [label, trace.events.filter((entry) => entry.kind === 'timer.fire' && entry.label === label).length]));
@@ -185,6 +226,8 @@ try {
     dailySelectedActors: Math.floor(population / 10), seasonalRolloversPerActor: expectedRollovers, metrics,
     timerCounts, invariantChecks: baseline.checks.length, finalStateSha256: final.stateSha256,
     workerScheduleSha256: trace.scheduleSha256, missingRequiredProof: configuration.coverageMissing,
+    worldDiagnosticsSemanticSha256: sha256(canonicalJson(finalDiagnostics.semantic)),
+    resourceObservation: observeResources ? resourceSummary : null,
     statement: 'Completed only the declared quiet-world workload; no matrix qualification or dead-world clearance' };
 } catch (error) {
   result = { status: 'FAIL', hours, population, metrics, error: error.message, invocation: failureInvocation, logicalAt: at };
@@ -192,6 +235,7 @@ try {
   await proof.artifact('failure-worker-schedule.json', controller.diagnostic());
   await proof.artifact('failure-random-tape.json', { draws: runtime.tape });
   await proof.artifact('failure-query-order.json', await queryOrder.diagnostic());
+  if (commitObserver) await proof.artifact('failure-resource-observer.json', { ...resourceSummary, diagnostic: commitObserver.diagnostic() });
   if (pool) {
     try { await proof.snapshot(pool, 'first-failure'); await proof.checkpoint(pool, 'first-failure', url); }
     catch (captureError) { await proof.record({ kind: 'failure-capture-error', message: captureError.message, stack: captureError.stack }); }
@@ -199,7 +243,8 @@ try {
   process.exitCode = 1;
 } finally {
   for (const level of ['log', 'warn', 'error']) console[level] = originalConsole[level];
-  for (const close of [() => controller.close(), () => base.end(), async () => proof.record({ kind: 'database-cleanup', ...await database.close() })]) {
+  for (const close of [() => commitObserver?.disarm(), () => controller.close(), () => diagnosticPool.end(), () => base.end(),
+    async () => proof.record({ kind: 'database-cleanup', ...await database.close() })]) {
     try { await close(); }
     catch (error) { await proof.record({ kind: 'cleanup-failure', message: error.message }); result.status = 'FAIL'; result.cleanupFailure = error.message; process.exitCode = 1; }
   }
