@@ -81,6 +81,14 @@ jobs:
         run: |
           set -o pipefail
           npm run backup:selftest 2>&1 | tee "$RC1_SHUTDOWN_EVIDENCE/backup-selftest.log"
+      - name: Crew draft and adjacent Send survive pending canonical reads
+        if: '!cancelled()'
+        env:
+          RC1_GOLDEN_BROWSER_OUTPUT: ${{ runner.temp }}/rc1-crew-focus
+        run: |
+          set -o pipefail
+          umask 077
+          npm run test:rc1:crew-focus:postgres 2>&1 | tee "$RC1_SHUTDOWN_EVIDENCE/crew-focus.log"
       - name: Connected social, investigation and conflict phone journeys
         env:
           RC1_GOLDEN_BROWSER_OUTPUT: ${{ runner.temp }}/rc1-golden-browser
@@ -183,6 +191,13 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:world:smoke:postgres
+      - name: Native seasonal and market query-order causal controls
+        if: '!cancelled()'
+        env:
+          RC1_QUERY_ORDER_OUTPUT: ${{ runner.temp }}/rc1-query-order
+        run: |
+          umask 077
+          npm run test:rc1:query-order:postgres
       - name: Canonical Knowledge distribution and pagination
         if: '!cancelled()'
         env:
@@ -327,6 +342,27 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:market:postgres
+      - name: Natural indictment, plea and original detention recovery
+        if: '!cancelled()'
+        env:
+          RC1_LAW_OUTPUT: ${{ runner.temp }}/rc1-law-policy
+        run: |
+          umask 077
+          npm run test:rc1:law:postgres
+      - name: Ordinary outsiders under a declared Family monopoly
+        if: '!cancelled()'
+        env:
+          RC1_FAMILY_OUTPUT: ${{ runner.temp }}/rc1-family-monopoly
+        run: |
+          umask 077
+          npm run test:rc1:family-monopoly:postgres
+      - name: Ordinary outsiders among ten fragmented Families
+        if: '!cancelled()'
+        env:
+          RC1_FAMILY_OUTPUT: ${{ runner.temp }}/rc1-family-fragmented
+        run: |
+          umask 077
+          npm run test:rc1:family-fragmented:postgres
       - name: Original operation capital expiry and replacement disposition
         if: '!cancelled()'
         env:

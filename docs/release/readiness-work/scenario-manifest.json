@@ -44,8 +44,9 @@
         "initialSupply": "largest legal position",
         "outsiders": "natural entry"
       },
-      "implementationStatus": "UNIMPLEMENTED",
-      "qualifyingRuns": 0
+      "implementationStatus": "PARTIAL_SCOPED",
+      "qualifyingRuns": 0,
+      "implementationEvidence": "family-player-policy.md"
     },
     {
       "id": "fragmented_families",
@@ -55,8 +56,9 @@
         "maximumFamilyActorFraction": 0.2,
         "exception": "Use nearest legal formation extreme; retain invariant-based reason."
       },
-      "implementationStatus": "UNIMPLEMENTED",
-      "qualifyingRuns": 0
+      "implementationStatus": "PARTIAL_SCOPED",
+      "qualifyingRuns": 0,
+      "implementationEvidence": "family-player-policy.md"
     },
     {
       "id": "resource_scarcity",
@@ -180,8 +182,9 @@
           "legal progression"
         ]
       },
-      "implementationStatus": "UNIMPLEMENTED",
-      "qualifyingRuns": 0
+      "implementationStatus": "PARTIAL_SCOPED",
+      "qualifyingRuns": 0,
+      "implementationEvidence": "law-player-policy.md"
     }
   ],
   "requiredRuns": 225,

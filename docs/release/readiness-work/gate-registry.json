@@ -9,6 +9,41 @@
   "note": "Pinned required command inventory across the four source workflows. Preserve each workflow setup, database isolation, platform, environment and budgets. A component regression pass does not clear a full native, deployed, or human proof.",
   "gates": [
     {
+      "id": "rc1-crew-focus",
+      "command": ["npm", "run", "test:rc1:crew-focus:postgres"],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": ["Controlled native Crew pending-read and adjacent-Send interleavings; no physical keyboard, every renderer, hosted cause certainty or real-player qualification"]
+    },
+    {
+      "id": "rc1-family-monopoly",
+      "command": ["npm", "run", "test:rc1:family-monopoly:postgres"],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": ["Declared25-actor20-member fixture, ordinary outsider entry/progression and succession; no elapsed days, all-actor workload, all-resource extreme or full matrix"]
+    },
+    {
+      "id": "rc1-family-fragmented",
+      "command": ["npm", "run", "test:rc1:family-fragmented:postgres"],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": ["Declared25-actor ten-Family fixture, ordinary outsiders and succession; no elapsed days, alliance/war, full resource lineage or full matrix"]
+    },
+    {
+      "id": "rc1-query-order",
+      "command": ["npm", "run", "test:rc1:query-order:postgres"],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": ["Native opposite-order seasonal and market causal controls; no ninety-day integrated replay, complete resource taxonomy or qualifying matrix"]
+    },
+    {
+      "id": "rc1-law-policy",
+      "command": ["npm", "run", "test:rc1:law:postgres"],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": ["One ordinary entrant through natural indictment, plea and original detention expiry; offline forced trial, other Law branches, shared resource taxonomy and full matrix remain incomplete"]
+    },
+    {
       "id": "rc1-season-journal",
       "command": ["npm", "run", "test:rc1:season-journal:postgres"],
       "timeoutMs": 600000,

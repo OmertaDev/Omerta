@@ -7,8 +7,8 @@
     {
       "id": "RC1-05-HOSTED-GOLDEN-FOCUS",
       "owner": "Codex/root",
-      "missing": "fcaa6076 PostgreSQL16 hosted golden journey failed the crew-input focus assertion after reduced420px viewport. Actual input replacement, dialog focus restoration and test timing remain to be distinguished; no product or tooling repair is yet claimed for this failure.",
-      "evidence": "Recovery35569159408 job106236932962; private fcaa6076-workflows/linux-pg16.log",
+      "missing": "Native causal RC1-CREW-INPUT-01 reproduces delayed Crew reads erasing the active draft, then a first repair losing it at adjacent Send. Both runtime fixes and scoped causal/four-width native retests pass in independent checkouts; exact earlier hosted interleaving remains inferred. Integrated and hosted reruns remain required.",
+      "evidence": "Recovery35569159408 job106236932962; private fcaa6076-workflows/linux-pg16.log;crew-input-focus.md;golden-focus-summary.json;hosted-fcaa6076-results.json",
       "reruns": [
         "Causal native browser reproduction",
         "Affected focus/keyboard controls",
@@ -29,7 +29,7 @@
       "id": "RC1-01-CONCURRENT-REPLAY",
       "owner": "Backend/test engineer; current engineering assignee Codex/native_harness",
       "missing": "Scoped contention replay, isolated673-hour original-worker replay, quiet actor replay/checkpoint continuation, and high/low mystery actor/resource-stream replay pass. Arbitrary concurrent failure schedules, reduction, complete policies and full matrix replay remain required. The new90-day exact replay fails due to two recorded-order omissions; their causal repair and fresh integrated-source replay remain required.",
-      "evidence": "harness-worker-results.json;harness-database-isolation.md;expanded-native-results.json;harness-worker-isolated-results.json;harness-actor-replay-results.json;harness-mystery-world-replay-results.json;harness-quiet-90day-regression-results.json",
+      "evidence": "harness-worker-results.json;harness-database-isolation.md;expanded-native-results.json;harness-worker-isolated-results.json;harness-actor-replay-results.json;harness-mystery-world-replay-results.json;harness-quiet-90day-regression-results.json;harness-recorded-query-order.md;harness-query-order-causal-results.json",
       "reruns": [
         "concurrent replay",
         "checkpoint/failure reduction",
@@ -51,8 +51,8 @@
     {
       "id": "RC1-03-MATRIX-AND-SOAK",
       "owner": "Simulation engineer; current engineering assignee Codex/native_harness",
-      "missing": "Isolated25-actor90-day observation at2ac778b3 now sealsPASS_SCOPED with full tape retained, but exact replay sealsFAIL: tied standing selection first differs on day29; final market expiry receipt identity order also differs. Resource observation was disabled for that storage regression, so qualifying runs remain0. Complete policies, resource movement, metrics/reachability,225runs and12-hour production-equivalent soak remain required. Bounded quiet/mystery/aggression/churn/market components exist; full world integration and all distinguishing archetypes remain incomplete.",
-      "evidence": "scenario-manifest.json;harness-quiet-90day-regression-results.json;market-player-policy.md",
+      "missing": "Isolated25-actor90-day observation at2ac778b3 now sealsPASS_SCOPED with full tape retained, but exact replay sealsFAIL: tied standing selection first differs on day29; final market expiry receipt identity order also differs. Resource observation was disabled for that storage regression, so qualifying runs remain0. Complete policies, resource movement, metrics/reachability,225runs and12-hour production-equivalent soak remain required. Bounded quiet/mystery/aggression/churn/market/Law components exist; full world integration and all distinguishing archetypes remain incomplete. Monopoly and fragmented-Family components now have bounded native entry/progression and custody proofs; their clocks did not advance, so no elapsed-day coverage is inferred.",
+      "evidence": "scenario-manifest.json;harness-quiet-90day-regression-results.json;market-player-policy.md;law-player-policy.md;integrated-d012c78a-results.json;family-player-policy.md",
       "reruns": [
         "225 complete native runs after conservation coverage",
         "12-hour 1000-actor soak",
