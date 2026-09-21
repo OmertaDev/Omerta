@@ -23,6 +23,10 @@ const instantiate = new Function('env', `const {observeResources,createNpcFamily
  let priorResources=env.initial,firstResourceError=null;
  ${block}
  return {commitObserver,getError:()=>firstResourceError};`);
+function verifyWitnessBoundary(data) {
+  for (const field of ['carMeltProvenance', 'carAcquisitionProvenance', 'npcFamilyProvenance'])
+    if (data[field]) assert.deepEqual(data[field].boundary, data.event, 'Candidate witness boundary differs from artifact event');
+}
 async function exercise({ enabled = true, carId = 'native-car', scope = 'car', failure = false, overflow = false, rollback = false } = {}) {
   const artifacts = [], records = [], calls = [], native = [];
   let factoryCalls = 0, outerFactoryCalls = 0;
@@ -90,6 +94,7 @@ async function exercise({ enabled = true, carId = 'native-car', scope = 'car', f
       assert.equal(artifacts[0].data.event.outcome, rollback ? 'ROLLED_BACK' : 'COMMITTED');
     }
     for (const artifact of artifacts) {
+      verifyWitnessBoundary(artifact.data);
       assert.deepEqual(artifact.data.before, initial, 'Candidate/failure lost its exact prior snapshot');
       assert.deepEqual(artifact.data.after, initial, 'Candidate/failure lost its exact final snapshot');
     }
@@ -98,6 +103,9 @@ async function exercise({ enabled = true, carId = 'native-car', scope = 'car', f
 }
 await exercise({ enabled: false });
 const observed = await exercise(), replayed = await exercise();
+const staleCarWitness = structuredClone(observed.artifacts[0].data);
+staleCarWitness.carMeltProvenance.boundary.transactionId++;
+assert.throws(() => verifyWitnessBoundary(staleCarWitness), /witness boundary/);
 assert.equal(observed.digest, replayed.digest); assert.deepEqual(observed.witnessSummary, replayed.witnessSummary);
 const changed = await exercise({ carId: 'different-native-car' }); assert.notEqual(observed.digest, changed.digest);
 const ordinary = await exercise({ scope: 'ordinary' }); assert.equal(ordinary.artifacts.length, 0);
@@ -108,6 +116,9 @@ const acquisition = await exercise({ scope: 'acquisition' });
 assert.equal(acquisition.digest, (await exercise({ scope: 'acquisition' })).digest);
 assert.notEqual(acquisition.digest, (await exercise({ scope: 'acquisition', carId: 'wrong-native-created-car' })).digest);
 const family = await exercise({ scope: 'family' });
+const staleFamilyWitness = structuredClone(family.artifacts[0].data);
+staleFamilyWitness.npcFamilyProvenance.boundary.transactionId++;
+assert.throws(() => verifyWitnessBoundary(staleFamilyWitness), /witness boundary/);
 assert.equal(family.digest, (await exercise({ scope: 'family' })).digest);
 assert.notEqual(family.digest, (await exercise({ scope: 'family', carId: 'different-native-family' })).digest);
 await exercise({ scope: 'family', rollback: true });
@@ -118,5 +129,6 @@ console.log(JSON.stringify({ status: 'PASS', sourceBoundBlockSha256: sha256(bloc
   'failure-retains-full-witness', 'overflow-retained-as-unsupported', 'existing-query-wrapper-order-preserved',
   'acquisition-shares-native-witness', 'acquisition-artifact-and-digest-binding',
   'single-inner-collector-and-no-extra-native-queries', 'Family-argument-preservation-and-native-identity-digest',
-  'Family-rollback-and-failure-retention', 'full-candidate-and-failure-snapshots', 'synthetic-candidate-remains-unclassified'],
+  'Family-rollback-and-failure-retention', 'full-candidate-and-failure-snapshots', 'synthetic-candidate-remains-unclassified',
+  'witness-boundary-event-binding-and-stale-rejection'],
   scope: 'Synthetic integration controls only; existing car tests/native proof provide branch-authority checks.' }));

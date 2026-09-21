@@ -32,8 +32,11 @@ for (const formatterThrows of [false, true]) {
   let seenLimit, nativeCalls = 0;
   try {
     Error.stackTraceLimit = 1;
-    Error.prepareStackTrace = () => { seenLimit = Error.stackTraceLimit;
-      if (formatterThrows) throw Error('CONTROL_STACK_FORMAT_FAILURE');
+    Error.prepareStackTrace = () => {
+      // Throw only inside the capture under test; do not break Node's later
+      // assertion/error rendering after the temporary limit has been restored.
+      if (Error.stackTraceLimit === 40) { seenLimit = Error.stackTraceLimit;
+        if (formatterThrows) throw Error('CONTROL_STACK_FORMAT_FAILURE'); }
       return 'Error: synthetic formatter has no original source frames'; };
     const observed = createNpcFamilyCommitObserver({ onBoundary: async () => {} });
     const execute = observed.wrapQuery({}, async () => { nativeCalls++; assert.equal(Error.stackTraceLimit, 1);
