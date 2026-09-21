@@ -1,0 +1,479 @@
+{
+  "format": 1,
+  "kind": "READ_ONLY_PREDECESSOR_ENVIRONMENT_OBSERVATION",
+  "mutationsPerformed": false,
+  "readOnlyEvidenceSha256": "82c1baf07c8bad18bcc938c07662b5cff788058b2f6633b2f11d8fba9d1d09f7",
+  "workspaceId": "tea-d9gkgfbbc2fs738o1jkg",
+  "sourceObservationWindow": {
+    "startedAt": "2026-09-21T09:01:46.557Z",
+    "endedAt": "2026-09-21T09:01:48.393Z"
+  },
+  "services": [
+    {
+      "index": 0,
+      "id": "srv-d9gkiscm0tmc73cc7ah0",
+      "name": "omerta-api",
+      "type": "web_service",
+      "branch": "main",
+      "autoDeploy": "yes",
+      "updatedAt": "2026-09-21T00:28:23.764749Z",
+      "suspended": "not_suspended",
+      "details": {
+        "runtime": "node",
+        "plan": "starter",
+        "numInstances": 1,
+        "region": "oregon",
+        "healthCheckPath": "/"
+      }
+    },
+    {
+      "index": 1,
+      "id": "srv-d9gkiscm0tmc73cc7agg",
+      "name": "omerta-worker",
+      "type": "background_worker",
+      "branch": "main",
+      "autoDeploy": "yes",
+      "updatedAt": "2026-09-21T00:28:11.425908Z",
+      "suspended": "not_suspended",
+      "details": {
+        "runtime": "node",
+        "plan": "starter",
+        "numInstances": 1,
+        "region": "oregon"
+      }
+    }
+  ],
+  "database": {
+    "index": 2,
+    "id": "dpg-d9gkii4m0tmc73cc6uf0-a",
+    "name": "omerta-db",
+    "version": "18",
+    "plan": "pro_4gb",
+    "highAvailability": true,
+    "region": "oregon",
+    "status": "available"
+  },
+  "deployments": [
+    {
+      "serviceId": "srv-d9gkiscm0tmc73cc7ah0",
+      "deployments": [
+        {
+          "id": "dep-dao7j2eq1p3s73d1m680",
+          "status": "live",
+          "source": "468516d8d6f3729514711ad5a0b83e440c5c46f9",
+          "finishedAt": "2026-09-21T00:28:23.763148Z"
+        }
+      ]
+    },
+    {
+      "serviceId": "srv-d9gkiscm0tmc73cc7agg",
+      "deployments": [
+        {
+          "id": "dep-dao7j2eq1p3s73d1m6m0",
+          "status": "live",
+          "source": "468516d8d6f3729514711ad5a0b83e440c5c46f9",
+          "finishedAt": "2026-09-21T00:28:11.422949Z"
+        }
+      ]
+    }
+  ],
+  "postgres": {
+    "observedAt": "2026-09-21T09:02:00.628Z",
+    "data": [
+      {
+        "extensions": [
+          {
+            "name": "plpgsql",
+            "version": "1.0"
+          }
+        ],
+        "server_version": "18.4 (Debian 18.4-1.pgdg12+1)"
+      }
+    ]
+  },
+  "metrics": {
+    "workspaceId": "tea-d9gkgfbbc2fs738o1jkg",
+    "startTime": "2026-09-21T08:50:26.482Z",
+    "endTime": "2026-09-21T09:00:26.483Z",
+    "metrics": [
+      {
+        "resourceId": "srv-d9gkiscm0tmc73cc7ah0",
+        "data": [
+          {
+            "resourceId": "srv-d9gkiscm0tmc73cc7ah0",
+            "timeRange": {
+              "start": "2026-09-21T08:50:26.482Z",
+              "end": "2026-09-21T09:00:26.483Z"
+            },
+            "metrics": [
+              {
+                "type": "cpu_limit",
+                "data": [
+                  {
+                    "labels": [
+                      {
+                        "field": "service",
+                        "value": "srv-d9gkiscm0tmc73cc7ah0"
+                      },
+                      {
+                        "field": "resource",
+                        "value": "srv-d9gkiscm0tmc73cc7ah0"
+                      },
+                      {
+                        "field": "instance",
+                        "value": "srv-d9gkiscm0tmc73cc7ah0-q7wv2"
+                      }
+                    ],
+                    "unit": "cpu",
+                    "values": [
+                      {
+                        "timestamp": "2026-09-21T08:50:26.482Z",
+                        "value": 0.5
+                      },
+                      {
+                        "timestamp": "2026-09-21T08:55:26.482Z",
+                        "value": 0.5
+                      },
+                      {
+                        "timestamp": "2026-09-21T09:00:26.482Z",
+                        "value": 0.5
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "memory_limit",
+                "data": [
+                  {
+                    "labels": [
+                      {
+                        "field": "instance",
+                        "value": "srv-d9gkiscm0tmc73cc7ah0-q7wv2"
+                      },
+                      {
+                        "field": "service",
+                        "value": "srv-d9gkiscm0tmc73cc7ah0"
+                      },
+                      {
+                        "field": "resource",
+                        "value": "srv-d9gkiscm0tmc73cc7ah0"
+                      }
+                    ],
+                    "unit": "bytes",
+                    "values": [
+                      {
+                        "timestamp": "2026-09-21T08:50:26.482Z",
+                        "value": 536870900
+                      },
+                      {
+                        "timestamp": "2026-09-21T08:55:26.482Z",
+                        "value": 536870900
+                      },
+                      {
+                        "timestamp": "2026-09-21T09:00:26.482Z",
+                        "value": 536870900
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "instance_count",
+                "data": [
+                  {
+                    "labels": [
+                      {
+                        "field": "resource",
+                        "value": "srv-d9gkiscm0tmc73cc7ah0"
+                      }
+                    ],
+                    "unit": "unitless",
+                    "values": [
+                      {
+                        "timestamp": "2026-09-21T08:50:26.482Z",
+                        "value": 1
+                      },
+                      {
+                        "timestamp": "2026-09-21T08:55:26.482Z",
+                        "value": 1
+                      },
+                      {
+                        "timestamp": "2026-09-21T09:00:26.482Z",
+                        "value": 1
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "resourceId": "srv-d9gkiscm0tmc73cc7agg",
+        "data": [
+          {
+            "resourceId": "srv-d9gkiscm0tmc73cc7agg",
+            "timeRange": {
+              "start": "2026-09-21T08:50:26.482Z",
+              "end": "2026-09-21T09:00:26.483Z"
+            },
+            "metrics": [
+              {
+                "type": "cpu_limit",
+                "data": [
+                  {
+                    "labels": [
+                      {
+                        "field": "instance",
+                        "value": "srv-d9gkiscm0tmc73cc7agg-7ccqd"
+                      },
+                      {
+                        "field": "service",
+                        "value": "srv-d9gkiscm0tmc73cc7agg"
+                      },
+                      {
+                        "field": "resource",
+                        "value": "srv-d9gkiscm0tmc73cc7agg"
+                      }
+                    ],
+                    "unit": "cpu",
+                    "values": [
+                      {
+                        "timestamp": "2026-09-21T08:50:26.482Z",
+                        "value": 0.5
+                      },
+                      {
+                        "timestamp": "2026-09-21T08:55:26.482Z",
+                        "value": 0.5
+                      },
+                      {
+                        "timestamp": "2026-09-21T09:00:26.482Z",
+                        "value": 0.5
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "memory_limit",
+                "data": [
+                  {
+                    "labels": [
+                      {
+                        "field": "instance",
+                        "value": "srv-d9gkiscm0tmc73cc7agg-7ccqd"
+                      },
+                      {
+                        "field": "service",
+                        "value": "srv-d9gkiscm0tmc73cc7agg"
+                      },
+                      {
+                        "field": "resource",
+                        "value": "srv-d9gkiscm0tmc73cc7agg"
+                      }
+                    ],
+                    "unit": "bytes",
+                    "values": [
+                      {
+                        "timestamp": "2026-09-21T08:50:26.482Z",
+                        "value": 536870900
+                      },
+                      {
+                        "timestamp": "2026-09-21T08:55:26.482Z",
+                        "value": 536870900
+                      },
+                      {
+                        "timestamp": "2026-09-21T09:00:26.482Z",
+                        "value": 536870900
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "instance_count",
+                "data": [
+                  {
+                    "labels": [
+                      {
+                        "field": "resource",
+                        "value": "srv-d9gkiscm0tmc73cc7agg"
+                      }
+                    ],
+                    "unit": "unitless",
+                    "values": [
+                      {
+                        "timestamp": "2026-09-21T08:50:26.482Z",
+                        "value": 1
+                      },
+                      {
+                        "timestamp": "2026-09-21T08:55:26.482Z",
+                        "value": 1
+                      },
+                      {
+                        "timestamp": "2026-09-21T09:00:26.482Z",
+                        "value": 1
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "resourceId": "dpg-d9gkii4m0tmc73cc6uf0-a",
+        "data": [
+          {
+            "resourceId": "dpg-d9gkii4m0tmc73cc6uf0-a",
+            "timeRange": {
+              "start": "2026-09-21T08:50:26.482Z",
+              "end": "2026-09-21T09:00:26.483Z"
+            },
+            "metrics": [
+              {
+                "type": "cpu_limit",
+                "data": [
+                  {
+                    "labels": [
+                      {
+                        "field": "resource",
+                        "value": "dpg-d9gkii4m0tmc73cc6uf0-a"
+                      }
+                    ],
+                    "unit": "cpu",
+                    "values": [
+                      {
+                        "timestamp": "2026-09-21T08:50:26.482Z",
+                        "value": 1
+                      },
+                      {
+                        "timestamp": "2026-09-21T08:55:26.482Z",
+                        "value": 1
+                      },
+                      {
+                        "timestamp": "2026-09-21T09:00:26.482Z",
+                        "value": 1
+                      }
+                    ]
+                  },
+                  {
+                    "labels": [
+                      {
+                        "field": "resource",
+                        "value": "dpg-d9gkii4m0tmc73cc6uf0-a"
+                      }
+                    ],
+                    "unit": "cpu",
+                    "values": [
+                      {
+                        "timestamp": "2026-09-21T08:50:26.482Z",
+                        "value": 1
+                      },
+                      {
+                        "timestamp": "2026-09-21T08:55:26.482Z",
+                        "value": 1
+                      },
+                      {
+                        "timestamp": "2026-09-21T09:00:26.482Z",
+                        "value": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "memory_limit",
+                "data": [
+                  {
+                    "labels": [
+                      {
+                        "field": "resource",
+                        "value": "dpg-d9gkii4m0tmc73cc6uf0-a"
+                      }
+                    ],
+                    "unit": "bytes",
+                    "values": [
+                      {
+                        "timestamp": "2026-09-21T08:50:26.482Z",
+                        "value": 4294967300
+                      },
+                      {
+                        "timestamp": "2026-09-21T08:55:26.482Z",
+                        "value": 4294967300
+                      },
+                      {
+                        "timestamp": "2026-09-21T09:00:26.482Z",
+                        "value": 4294967300
+                      }
+                    ]
+                  },
+                  {
+                    "labels": [
+                      {
+                        "field": "resource",
+                        "value": "dpg-d9gkii4m0tmc73cc6uf0-a"
+                      }
+                    ],
+                    "unit": "bytes",
+                    "values": [
+                      {
+                        "timestamp": "2026-09-21T08:50:26.482Z",
+                        "value": 4294967300
+                      },
+                      {
+                        "timestamp": "2026-09-21T08:55:26.482Z",
+                        "value": 4294967300
+                      },
+                      {
+                        "timestamp": "2026-09-21T09:00:26.482Z",
+                        "value": 4294967300
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "instance_count",
+                "data": [
+                  {
+                    "labels": [
+                      {
+                        "field": "resource",
+                        "value": "dpg-d9gkii4m0tmc73cc6uf0-a"
+                      }
+                    ],
+                    "unit": "unitless",
+                    "values": [
+                      {
+                        "timestamp": "2026-09-21T08:50:26.482Z",
+                        "value": 1
+                      },
+                      {
+                        "timestamp": "2026-09-21T08:55:26.482Z",
+                        "value": 1
+                      },
+                      {
+                        "timestamp": "2026-09-21T09:00:26.482Z",
+                        "value": 1
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "limitations": [
+    "Observed existing live predecessor, not an isolated RC1 candidate",
+    "Environment variables and enabled integration flags were not available from the connector",
+    "PostgreSQL metrics returned duplicate unlabeled CPU/memory series; do not sum or infer an aggregate capacity",
+    "Not a soak, load, recovery, backup, operator-alert or release qualification"
+  ]
+}
