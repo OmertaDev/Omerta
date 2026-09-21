@@ -14,6 +14,7 @@ import { createPlayerCommandEngine } from '../src/player-commands.js';
 import { createLivingWorldDirector } from '../src/director/runtime.js';
 import { createCampaignNetworkDefinitions } from '../src/director/campaign-network.js';
 import { runLedgerInvariants } from '../src/invariants.js';
+import { sourceIdentity, createProofRecorder, validateScenarioManifest } from './rc1-native-proof.js';
 
 export const ARCHETYPES = Object.freeze(['solo', 'high_activity', 'low_activity', 'crew_focused',
   'family_focused', 'economic', 'information_focused', 'aggressive', 'cooperative', 'opportunistic',
@@ -49,7 +50,9 @@ export function verifyLedgerChecks(baseline, final, population) {
   });
 }
 
-export async function runNativeSimulation({ population, seed, replicate, rounds = 2, progress = () => {} }) {
+export async function runNativeSimulation({ population, seed, replicate, rounds = 2, progress = () => {}, proof = null }) {
+  assert(Number.isSafeInteger(rounds) && rounds > 0, 'A run must execute at least one round');
+  if (proof) assert(process.argv.includes('--postgres'), 'Proof artifacts require real PostgreSQL');
   const started = Date.now(), tag = `rc1_${population}_${replicate}_${digest(seed).slice(0, 6)}`;
   const f = await campaignNetworkFixture(tag);
   const roster = rosterFor(population, seed, replicate);
@@ -67,7 +70,8 @@ export async function runNativeSimulation({ population, seed, replicate, rounds 
     enabled: true, knowledgeEnabled: true, sharingEnabled: true });
   const engine = {
     async snapshot(account, options) {
-      const view = await raw.snapshot(account, options);
+      const view = proof ? await proof.invoke('player.snapshot', { account, options: options || {} }, () => raw.snapshot(account, options))
+        : await raw.snapshot(account, options);
       metrics.snapshots++; metrics.commandsIssuedAvailable += view.commands.filter((c) => c.availability === 'AVAILABLE').length;
       metrics.opportunityCardsShown += view.opportunities.length;
       metrics.maximumCardsPerVisit = Math.max(metrics.maximumCardsPerVisit, view.opportunities.length);
@@ -78,7 +82,8 @@ export async function runNativeSimulation({ population, seed, replicate, rounds 
     },
     async execute(account, input, key) {
       try {
-        const response = await raw.execute(account, input, key);
+        const response = proof ? await proof.invoke('player.execute', { account, input, idempotencyKey: key }, () => raw.execute(account, input, key))
+          : await raw.execute(account, input, key);
         if (response.replayed) metrics.commandReplays++;
         else { metrics.commandsExecuted++; playerActions.set(account, (playerActions.get(account) || 0) + 1); }
         return response;
@@ -86,7 +91,8 @@ export async function runNativeSimulation({ population, seed, replicate, rounds 
     },
   };
   const tick = async () => {
-    f.advance(); const result = await director.tick(); metrics.directorTicks++;
+    f.advance(); const result = proof ? await proof.invoke('director.tick', { logicalTime: f.clock() }, () => director.tick())
+      : await director.tick(); metrics.directorTicks++;
     metrics.directorSelections += result.selected?.length || 0;
     metrics.directorTransitions += result.transitions?.length || 0;
     return result;
@@ -111,6 +117,13 @@ export async function runNativeSimulation({ population, seed, replicate, rounds 
         await f.social(mate.id, (ch, client, hooks) => joinGang(ch, family.gangId, client, hooks));
         leader.mate = mate.id; mate.mate = leader.id;
       }
+    }
+    if (proof) {
+      await proof.record({ kind: 'initialization', roster, fixtureActors: f.actors,
+        grants: { perActorCash: 100000, perActorRespect: 10000, perActorMuscleCunningSpeed: 50 },
+        entryMode: 'fixture-assisted', clockScope: 'Director application clock only; database NOW remains wall time' });
+      await proof.snapshot(f.pool, 'initial-state');
+      await proof.checkpoint(f.pool, 'initial', process.env.COORDINATION_TEST_DATABASE_URL || process.env.WORLD_KERNEL_TEST_DATABASE_URL);
     }
     await f.networkEstablish(); await tick();
     const privateClaim = (await f.knowledge.knowledgeBoard(f.actors.aBoss)).claims.find((c) => c.owned);
@@ -221,6 +234,11 @@ export async function runNativeSimulation({ population, seed, replicate, rounds 
     const participation = (await f.pool.query('SELECT character_id FROM world_operation_roles WHERE character_id IS NOT NULL')).rows;
     const claims = (await f.pool.query('SELECT id FROM coordination_claims')).rows;
     metrics.opportunityCardsUniquePerActor = seen.size;
+    if (proof) {
+      await proof.snapshot(f.pool, 'final-state');
+      await proof.checkpoint(f.pool, 'final', process.env.COORDINATION_TEST_DATABASE_URL || process.env.WORLD_KERNEL_TEST_DATABASE_URL);
+      await proof.record({ kind: 'assertions', invariantChecks, logicalTime: f.clock(), metrics });
+    }
     return { population, seed, replicate, rounds, database: process.argv.includes('--postgres') ? 'postgresql' : 'pg-mem',
       status: 'PASS_SCOPED', durationMs: Date.now() - started, archetypes: counts(roster.map((a) => a.archetype)),
       fixturePlayers: 5, actorsExecutingCommands: playerActions.size, metrics, actions: attempts,
@@ -248,6 +266,15 @@ export async function runNativeSimulation({ population, seed, replicate, rounds 
         'independent Crew/Family campaign dynamics', 'engine-caused irreversible dead ends across every branch',
         'reward-bearing operations', 'nonzero OMR movement', 'Knowledge revocation races'],
     };
+  } catch (error) {
+    if (proof) {
+      await proof.record({ kind: 'failure', error: { message: error.message, code: error.code || null, stack: error.stack } });
+      try {
+        await proof.snapshot(f.pool, 'first-failure-state');
+        await proof.checkpoint(f.pool, 'first-failure', process.env.COORDINATION_TEST_DATABASE_URL || process.env.WORLD_KERNEL_TEST_DATABASE_URL);
+      } catch (captureError) { await proof.record({ kind: 'failure-capture-error', message: captureError.message }); }
+    }
+    throw error;
   } finally { await f.cleanup(); }
 }
 
@@ -257,6 +284,15 @@ if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url) 
   const populations = (options.populations || '25,100,500,1000').split(',').map(Number);
   const seeds = (options.seeds || 'rc1-alpha,rc1-beta').split(',');
   const replicates = Number(options.replicates || 2), rounds = Number(options.rounds || 2);
+  assert(populations.length && populations.every((p) => Number.isSafeInteger(p) && p >= 5));
+  assert(seeds.length && seeds.every((seed) => /^[a-z0-9_-]+$/i.test(seed)));
+  assert(Number.isSafeInteger(replicates) && replicates > 0 && Number.isSafeInteger(rounds) && rounds > 0,
+    'Empty, partial, or zero-round campaigns cannot pass');
+  const proofSource = options['proof-directory'] ? await sourceIdentity() : null;
+  if (proofSource) {
+    assert(process.argv.includes('--postgres'), 'Proof artifacts require --postgres');
+    validateScenarioManifest(JSON.parse(await fs.readFile(new URL('../docs/release/readiness-work/scenario-manifest.json', import.meta.url), 'utf8')));
+  }
   const output = path.resolve(options.output || 'docs/release/evidence/simulation');
   await fs.mkdir(output, { recursive: true });
   const revision = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
@@ -265,10 +301,14 @@ if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url) 
   for (const population of populations) for (const seed of seeds) for (let replicate = 0; replicate < replicates; replicate++) {
     const identity = `${population}-${seed}-${replicate}`;
     console.log(JSON.stringify({ event: 'start', identity }));
+    const proof = proofSource ? await createProofRecorder({ directory: path.join(options['proof-directory'], identity),
+      source: proofSource, configuration: { population, seed, replicate, rounds, postgres: true, fixtureAssisted: true },
+      runId: identity, population, seed, scenarioId: 'scoped-campaign-regression' }) : null;
     let result;
     try { result = await runNativeSimulation({ population, seed, replicate, rounds,
-      progress: (data) => console.log(JSON.stringify({ event: 'progress', ...data })) }); }
+      proof, progress: (data) => console.log(JSON.stringify({ event: 'progress', ...data })) }); }
     catch (error) { result = { population, seed, replicate, status: 'FAIL', error: { message: error.message, code: error.code, stack: error.stack } }; }
+    if (proof) await proof.finish(result);
     result.revision = revision; result.harnessSha256 = sourceHash;
     await fs.writeFile(path.join(output, `${identity}.json`), `${JSON.stringify(result, null, 2)}\n`);
     results.push(result);
