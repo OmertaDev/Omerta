@@ -28,9 +28,11 @@ const rows = [
       `campaign:${branch}:claim-reward-rollback`, `campaign:${branch}:claim-reward-fault-reached`,
       ...['same-key', 'distinct-keys'].flatMap((mode) => ['concurrent-claim', 'lost-response-retry', 'new-key-denied']
         .map((event) => `campaign:${branch}:${mode}:${event}`)),
-    ]).concat([0, 1, 4, 5].map((actor) => `campaign:server-reopen-replay:resource-actor-${actor}`)),
+    ]).concat([0, 1, 4, 5].map((actor) => `campaign:server-reopen-replay:resource-actor-${actor}`),
+      ['campaign:canonical-death-and-replacement', 'campaign:replacement-historical-receipt',
+        'campaign:replacement-fresh-claim-denied', 'campaign:replacement-restart-receipt']),
     ['base reward', 'branch reward', 'exact retry', 'concurrent duplicate', 'lost response', 'restart', 'unauthorized', 'rollback between claim/reward'],
-    ['natural earned campaign eligibility', 'death/replacement invalidation of the former character claim']],
+    ['natural earned campaign eligibility']],
   ['C02-OPERATION-CAPITAL', 'coordinator mutation root; declared operation; original living depositor for refund', 'item_mutation_guards operation_action key plus requirement/role/operation custody identity',
     ['deposit:ledger-failure-rollback', 'deposit:concurrent-exact-duplicate', 'deposit:lost-response-replay', 'deposit:unauthorized-role',
       'refund:ledger-failure-rollback', 'refund:withdraw', 'refund:exact-replay', 'cancellation:refund-rollback', 'cancellation:refund', 'cancellation:exact-replay',

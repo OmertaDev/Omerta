@@ -44,7 +44,7 @@ const report = { schemaVersion: 1, runId, source, evidenceClass: development ? '
   population: 18, activeActors: 0, logicalDuration: { mode: 'real wall clock; no deadline or status rewrites after initialization' },
   scenarios: [], fixtureGrants: [], exclusions: ['Full simulation matrix and natural-entry progression',
     'OMR mint/burn/backing and deployed contract attestation', 'Operation capital lifecycle, all market/gambling/loan terminal dispositions',
-    'Family war/turf/dissolution; NFT extraction/expiry/import', 'Shipment midnight boundary, looting and death',
+    'Family war/turf/dissolution; NFT extraction/expiry/import', 'Shipment midnight boundary and looting; natural combat death (canonical estate is exercised)',
     'Native process crash, operating-system restart and checkpoint restore; server reopen only',
     'Boost acquisition compound journal (salvage and hardening are individually journaled)',
     'Complete deployed operational flags, services, secret-source identities and integration attestation; configuration records selected local fixture settings only'] };
@@ -101,10 +101,11 @@ async function observed(name, action, validate) {
     await invariantCheckpoint(`after:${name}`);
     const entry = { name, outcome: 'PASS', databaseBoundaries: [before.databaseBoundary, after.databaseBoundary],
       beforeHash: sha256(stateWithoutBoundary(before)), afterHash: sha256(stateWithoutBoundary(after)),
-      requests: requests.slice(requestStart), receipts, movements };
+      requests: requests.slice(requestStart), receipts, movements,
+      ...(result?.canonicalDomain ? { canonicalInvocation: result } : {}) };
     fs.appendFileSync(path.join(output, 'movements.ndjson'), JSON.stringify(entry) + '\n');
     report.scenarios.push({ name, outcome: 'PASS', requests: entry.requests.length, movements: movements.length,
-      journalSha256: sha256(entry) });
+      journalSha256: sha256(entry), ...(result?.canonicalDomain ? { canonicalDomain: result.canonicalDomain } : {}) });
     report.activeActors = new Set(requests.map((row) => row.actor)).size;
     save();
     return result;
@@ -189,6 +190,11 @@ try {
   await app.pool.query("INSERT INTO gang_members(gang_id,character_id,role) VALUES('resource-family',$1,'boss'),('resource-family',$2,'soldier')", [actors[2].character, actors[3].character]);
   report.fixtureGrants[2].socialMemberships.push({ family: 'resource-family', role: 'boss' });
   report.fixtureGrants[3].socialMemberships.push({ family: 'resource-family', role: 'soldier' });
+  const starterCurrencies = (await app.pool.query('SELECT id,ammo::text,cb::text FROM characters ORDER BY id')).rows;
+  for (const grant of report.fixtureGrants) {
+    const row = starterCurrencies.find((entry) => entry.id === grant.character); assert(row);
+    grant.schemaDefaults = { ammo: row.ammo, cb: row.cb };
+  }
   const baseline = await resourceSnapshot(app.pool);
   fs.writeFileSync(path.join(output, 'initial-state.json'), JSON.stringify(baseline, null, 2) + '\n');
   await invariantCheckpoint('fixture-baseline');
@@ -502,6 +508,89 @@ try {
     const response = await call(actors[2], '/v1/shipment/commission/case', commissionKey); assert(response.replayed); return response;
   }, unchanged);
   await invariantCheckpoint('server-reopen');
+  const oldClaim = campaignClaims.find((claim) => claim.actor === actors[4]);
+  let heirId;
+  await observed('campaign:canonical-death-and-replacement', async () => {
+    const { ledger, notify, loadOwned, persistAccountFields, ESTATE_ACCOUNT_FIELDS } = await import('../src/game.js');
+    const { runEstate } = await import('../src/social/estate.js');
+    const client = await app.pool.connect();
+    try {
+      await client.query('BEGIN');
+      const victim = (await client.query('SELECT * FROM characters WHERE id=$1 AND alive FOR UPDATE', [oldClaim.actor.character])).rows[0];
+      assert(victim); assert.equal(Number(victim.cb), 0);
+      const ammoBefore = String(victim.ammo);
+      const victimAcct = (await client.query('SELECT * FROM account_persistent WHERE account_id=$1 FOR UPDATE', [oldClaim.actor.id])).rows[0];
+      const victimOwned = await loadOwned(client, victim);
+      const estate = await runEstate(client, { ledger, notify, victimAcct, victimOwned }, victim, 'RC1 campaign claim proof');
+      await persistAccountFields(client, oldClaim.actor.id, victimAcct, ESTATE_ACCOUNT_FIELDS);
+      heirId = estate.heirId;
+      const ammoAfter = (await client.query('SELECT id,ammo::text FROM characters WHERE id IN ($1,$2) ORDER BY id', [victim.id, heirId])).rows;
+      const ammoDefault = (await client.query("SELECT column_default FROM information_schema.columns WHERE table_schema=current_schema() AND table_name='characters' AND column_name='ammo'")).rows[0].column_default;
+      assert.match(ammoDefault, /^\d+$/);
+      await client.query('COMMIT');
+      return { canonicalDomain: 'runEstate', heirId, naturalCombatDeath: false, ammoBefore, ammoAfter, ammoDefault };
+    } catch (error) { await client.query('ROLLBACK'); throw error; } finally { client.release(); }
+  }, (proof) => {
+    const dead = proof.after.characters.find((row) => row.id === oldClaim.actor.character);
+    const heir = proof.after.characters.find((row) => row.id === heirId);
+    assert.equal(dead.alive, false); assert(heir?.alive); assert.equal(heir.account_id, oldClaim.actor.id);
+    assert(!proof.after.campaigns.some((row) => [dead.id, heirId].includes(row.character_id)));
+    assert.deepEqual(proof.after.accounts, proof.before.accounts, 'Account-level OMR must not change during this estate');
+    assert.deepEqual(proof.after.pieces, proof.before.pieces, 'Account-level bespoke items survive this estate');
+    const receipts = proof.receipts.transactions;
+    assert(receipts.every((row) => ['cash', 'ammo'].includes(row.currency) && ['death:estate', 'death:legacy'].includes(row.reason)));
+    const cashReceipts = receipts.filter((row) => row.currency === 'cash');
+    const estateReceipt = cashReceipts.filter((row) => row.reason === 'death:estate'); assert.equal(estateReceipt.length, 1);
+    const legacy = cashReceipts.filter((row) => row.reason === 'death:legacy'); assert(legacy.length <= 1);
+    const authority = receipts.map((row) => ({ table: 'transactions', id: row.id, reason: row.reason }));
+    authority.push({ table: 'characters', id: heirId, rule: 'runEstate: one heir receives the existing base 500; extra legacy has its own receipt' });
+    proof.movements.push(equation({ resource: 'cash', owner: dead.id, before: cash(proof.before, oldClaim.actor),
+      after: dead.cash, destroyed: negate(estateReceipt[0].amount), authority }));
+    proof.movements.push(equation({ resource: 'cash', owner: heirId, before: 0, after: heir.cash,
+      created: exactSum([500, ...legacy.map((row) => row.amount)]), authority }));
+    assert.equal(exactSum([summed(proof.after, 'cash'), negate(summed(proof.before, 'cash'))]),
+      exactSum([500, ...cashReceipts.map((row) => row.amount)]), 'Estate and heir explain the aggregate cash movement');
+    const ammoReceipt = receipts.filter((row) => row.currency === 'ammo'); assert.equal(ammoReceipt.length, 1);
+    assert.equal(ammoReceipt[0].reason, 'death:estate'); assert.equal(ammoReceipt[0].amount, negate(proof.result.ammoBefore));
+    const ammoAuthority = [{ table: 'transactions', id: ammoReceipt[0].id, reason: 'death:estate' },
+      { table: 'characters', id: heirId, rule: `New heir inherits the existing schema ammo default (${proof.result.ammoDefault})` }];
+    proof.movements.push(equation({ resource: 'ammo', owner: dead.id, before: proof.result.ammoBefore,
+      after: proof.result.ammoAfter.find((row) => row.id === dead.id).ammo, destroyed: proof.result.ammoBefore, authority: ammoAuthority }));
+    proof.movements.push(equation({ resource: 'ammo', owner: heirId, before: 0,
+      after: proof.result.ammoAfter.find((row) => row.id === heirId).ammo, created: proof.result.ammoDefault, authority: ammoAuthority }));
+    // Dead-character rows retain historical shipment fields, but only living
+    // characters can own spendable material. Retain the raw field in snapshots.
+    proof.movements.push(equation({ resource: 'shipment-material', owner: dead.id,
+      before: material(proof.before, oldClaim.actor), after: 0, destroyed: material(proof.before, oldClaim.actor),
+      authority: [{ table: 'characters', id: dead.id, rule: 'Canonical estate ends the character; historical shipment cannot be used by its heir' }] }));
+    assert.equal(heir.shipment, 0);
+  });
+  await observed('campaign:replacement-historical-receipt', async () => {
+    const response = await call(oldClaim.actor, oldClaim.url, oldClaim.identity); assert(response.replayed);
+    assert.deepEqual(response.body, oldClaim.body); return response;
+  }, unchanged);
+  await observed('campaign:replacement-fresh-claim-denied', async () => {
+    const response = await call(oldClaim.actor, oldClaim.url, key('campaign-heir-fresh'), [400]);
+    assert.equal(response.body.error, 'not_done'); return response;
+  }, unchanged);
+  await app.close(); await app.pool.end(); app = await buildServer();
+  await observed('campaign:replacement-restart-receipt', async () => {
+    const response = await call(oldClaim.actor, oldClaim.url, oldClaim.identity); assert(response.replayed);
+    assert.deepEqual(response.body, oldClaim.body); return response;
+  }, unchanged);
+  await observed('shipment:replacement-historical-take-replay', async () => {
+    const response = await call(oldClaim.actor, '/v1/shipment/take', key(`take-${oldClaim.actor.id}`));
+    assert(response.replayed); return response;
+  }, unchanged);
+  const heirLocation = (await app.pool.query('SELECT loc FROM characters WHERE id=$1 AND alive', [heirId])).rows[0].loc;
+  if (heirLocation !== shipmentDistrictOf()) await observed('shipment:replacement-travel-to-exhausted-drop',
+    () => call(oldClaim.actor, `/v1/travel/${shipmentDistrictOf()}`, key('shipment-heir-travel')), (proof) => {
+      cashMovement(proof, { ...oldClaim.actor, character: heirId }, -proof.result.body.cost, 'travel');
+    });
+  await observed('shipment:replacement-city-cap-denied', async () => {
+    const response = await call(oldClaim.actor, '/v1/shipment/take', key('shipment-heir-fresh'), [400]);
+    assert.equal(response.body.error, 'gone'); return response;
+  }, unchanged);
   fs.writeFileSync(path.join(output, 'final-state.json'), JSON.stringify(await resourceSnapshot(app.pool), null, 2) + '\n');
   report.outcome = 'SCOPED_PASS';
 } catch (error) {
@@ -525,7 +614,8 @@ try {
   report.databaseName = database;
   report.endedAt = new Date().toISOString();
   report.commands = { requests: requests.length, denials: requests.filter((row) => row.status >= 400).length,
-    replays: requests.filter((row) => row.replayed).length };
+    replays: requests.filter((row) => row.replayed).length,
+    directCanonicalDomainCalls: report.scenarios.filter((row) => row.canonicalDomain).length };
   fs.writeFileSync(path.join(output, 'requests.json'), JSON.stringify(requests, null, 2) + '\n');
   fs.writeFileSync(path.join(output, 'coverage-inventory.json'), JSON.stringify(resourceInventory(report), null, 2) + '\n');
   report.artifacts = fs.readdirSync(output).filter((file) => file !== 'result.json').map((file) => ({ file,

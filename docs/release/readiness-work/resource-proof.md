@@ -40,8 +40,13 @@ concurrent claims. A PostgreSQL trigger aborts between the claimed latch and rew
 receipt; a diagnostic sequence verifies that this precise fault point was reached.
 The latch, cash and receipts must roll back together before a successful retry. Four
 claim owners then replay their exact receipts after server reconstruction. Campaign
-completion is a declared initial fixture; natural eligibility and death/replacement
-remain separate proof obligations.
+completion is a declared initial fixture; natural eligibility remains a separate
+proof obligation. A canonical estate then replaces one claimant with its heir.
+Cash and ammunition dispositions include the existing newborn defaults; historical
+shipment on the dead row is retained in raw evidence but cannot pass to the heir.
+The old campaign/take receipt replays without value, a fresh campaign claim fails,
+and after canonical travel the heir cannot take from the exhausted city shipment.
+This is direct canonical estate execution, not a natural combat-death journey.
 
 It also covers OMR paid rarity and desk
 recycling; Family cash/OMR tribute; loan offer/cancel/take/repay with OMR collateral;
