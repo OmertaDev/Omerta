@@ -123,6 +123,8 @@ try {
   const legacyExpected = process.env.RC1_EXPECT_DETACHMENT_RACE === '1', timing = [];
   for (const mode of ['refresh-during-connectivity-await', 'clear-before-queued-get']) {
     board = await reset(); const beforeReads = reads; let release;
+    const actualRead = page.waitForRequest(request => request.method() === 'GET' && new URL(request.url()).pathname === '/v1/commands', { timeout: 5000 });
+    actualRead.catch(() => {});
     const work = async () => {
       if (mode === 'refresh-during-connectivity-await') await page.evaluate(() => refresh());
       else {
@@ -136,7 +138,7 @@ try {
       failure = error; return legacyExpected ? /detached without an observed board refresh/.test(error.message) : error.observedBrowserRefresh === true;
     });
     assert.equal(posts.length, 0, 'No submission in either protocol race');
-    await page.waitForLoadState('networkidle'); assert(reads > beforeReads, 'The test must observe the actual queued board GET');
+    await actualRead; await page.waitForLoadState('networkidle'); assert(reads > beforeReads, 'The test must observe the actual queued board GET');
     timing.push({ mode, zeroSubmissions: true, observedReads: reads - beforeReads, legacyAssertionReproduced: legacyExpected });
     if (!legacyExpected) {
       assert.equal(await engine.retryIssuedCommand('fixture', board.commands[0], failure), true);
