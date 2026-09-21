@@ -19,6 +19,24 @@ import * as Treasury from '../src/treasury.js';
 
 const app = await buildServer();
 const pool = app.pool;
+// pg-mem stores NUMERIC as binary Number: the retained 0.00055 remainder reads
+// 0.0005500000000040473 after subtraction. Production/native PostgreSQL must
+// satisfy the exact invariant. Only this emulator assertion permits one machine
+// epsilon at the counter's magnitude, with STRICT nonnegative/backed checks.
+async function assertFamilyBalanceIdentity(inv, label) {
+  const identity = inv.checks.find(c => c.name === 'family yield balance');
+  for (const check of inv.checks.filter(c => c !== identity)) assert.ok(check.ok, JSON.stringify(check));
+  assert.ok(identity, 'Family balance invariant must exist');
+  if (identity.ok) return;
+  assert.ok(!process.env.DATABASE_URL, `${label}: ${JSON.stringify(identity)}`);
+  const stored = (await pool.query('SELECT balance,lifetime_funded,lifetime_paid FROM family_yield_pool WHERE id=1')).rows[0];
+  const balance = Number(stored.balance), funded = Number(stored.lifetime_funded), paid = Number(stored.lifetime_paid);
+  assert.ok([balance, funded, paid].every(Number.isFinite), JSON.stringify(stored));
+  assert.ok(balance >= 0 && paid <= funded, `pg-mem may never hide negativity or overspending: ${JSON.stringify(stored)}`);
+  const bound = Number.EPSILON * Math.max(1, Math.abs(funded), Math.abs(paid));
+  assert.ok(Math.abs(balance - (funded - paid)) <= bound,
+    `${label}: pg-mem identity differs by more than machine arithmetic (${bound}): ${JSON.stringify(stored)}`);
+}
 const call = async (method, url, token, payload) => {
   const res = await app.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload });
   let body = null; try { body = res.json(); } catch { /* empty */ }
@@ -338,15 +356,14 @@ await pool.query('UPDATE gangs SET season_tribute=5000000 WHERE id=$1', [gid]);
   await pool.query(`INSERT INTO gangs (id,name,tag,season_tribute) VALUES
     ('fy2','Seat Two','FY2',400),('fy3','Seat Three','FY3',300),
     ('fy4','Seat Four','FY4',200),('fy5','Seat Five','FY5',100)`);
-  await pool.query('UPDATE family_yield_pool SET balance=0.23, lifetime_funded = lifetime_funded + 0.23');
+  await pool.query('UPDATE family_yield_pool SET balance = balance + 0.23, lifetime_funded = lifetime_funded + 0.23');
   sqlOmr += 0.23;
   const out = await payFamilyYield(pool);
   const potNow = (await familyYieldPool(pool)).balance;
   assert.ok(out.paid <= 0.23 + 1e-9, `never pay out more than the pot holds: paid ${out.paid} of 0.23`);
   assert.ok(potNow >= -1e-9, `and the pot can never go negative: ${potNow}`);
   const inv = await runExchangeInvariants(pool);
-  const bal = inv.checks.find((c) => c.name === 'family yield balance');
-  assert.ok(bal && bal.ok, `the balance identity must hold: ${JSON.stringify(bal)}`);
+  await assertFamilyBalanceIdentity(inv, 'the balance identity must hold');
 }
 
 { // the public board names who is drawing it and what their share is
@@ -388,8 +405,7 @@ await pool.query('UPDATE gangs SET season_tribute=5000000 WHERE id=$1', [gid]);
   // a DRAIN, so a second run is a no-op — which is what makes running it every tick safe
   assert.equal(await mergeLegacyPools(pool), null, 'draining an empty pool moves nothing');
   const inv = await runExchangeInvariants(pool);
-  assert.ok(inv.checks.find((c) => c.name === 'family yield balance').ok,
-    'the pot identity survives the merge — it is a transfer, not a mint');
+  await assertFamilyBalanceIdentity(inv, 'the pot identity survives the merge — it is a transfer, not a mint');
 }
 
 // ── STEP 3: THE FLOAT, RE-SOURCED ────────────────────────────────────────────────────────────────
