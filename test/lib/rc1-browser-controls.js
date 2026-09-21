@@ -91,7 +91,9 @@ export function browserControls({ pageFor, width, result, save }) {
       const session = await pageFor(account), page = await openTab(account, 'world');
       const update = async (control) => {
         const waiting = page.waitForResponse((response) => response.request().method() === 'GET' && new URL(response.url()).pathname === '/v1/commands');
-        waiting.catch(() => {}); await control.click();
+        waiting.catch(() => {});
+        await reach(page, control, (await control.innerText()).trim());
+        await control.click();
         const response = await waiting; assert.equal(response.status(), 200, await response.text());
         session.board = await response.json(); await page.locator('#tab-world .world-summary').waitFor(); await page.waitForLoadState('networkidle');
       };

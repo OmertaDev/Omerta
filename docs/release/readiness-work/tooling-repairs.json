@@ -500,6 +500,19 @@
       ],
       "retest": "c38fb9bd native causal ten cases and all artifact hashes verified; exact full state differs under reversed native order and matches under recorded replay. Fresh ninety-day pair running; integrated-source and hosted reruns remain required.",
       "evidence": "harness-quiet-90day-regression-results.json;harness-query-order-causal-results.json;harness-recorded-query-order.md"
+    },
+    {
+      "id": "RC1-TOOL-31",
+      "classification": "D browser navigation control omitted reachability preparation",
+      "owner": "Codex/root",
+      "failedGate": "9e05bf08 integrated rc1-golden at430px",
+      "before": "Operation selection used a bare locator.click, unlike mutation controls. Actual trace repeatedly reports bottom navigation/vitals intercepting its target during automatic nearest scrolling.",
+      "repair": "Apply existing centered scroll, bounded stabilization, actual hit-test and unchanged44px reachability guard before read-only board selections. No DOM removal, force click or production UI change.",
+      "changedSource": [
+        "test/lib/rc1-browser-controls.js"
+      ],
+      "retest": "Pending fresh native four-width gate and hosted runs",
+      "evidence": "integrated-9e05bf08-results.json; restricted golden-9e05bf08-1 original failure assets"
     }
   ]
 }
