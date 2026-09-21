@@ -82,7 +82,9 @@ async function installFailure(reason) {
   assert(!injecting); injecting = reason; expectedFaults = [];
   const condition = reason === 'forfeit' ? "OLD.status='active' AND NEW.status='collected'" : `NEW.reason='${reason}'`;
   assert(['forfeit', 'bounty:wanted', 'loan:refund', 'bounty:wanted:refund', 'loan:square'].includes(reason));
-  await pool.query(`CREATE FUNCTION rc1_loan_abort() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF ${condition} THEN RAISE EXCEPTION 'RC1_LIFECYCLE_ABORT'; END IF; RETURN NEW; END $$`);
+  // Bounty sweep deliberately logs SQLSTATE instead of database exception text.
+  // A unique test state identifies only this injected fault, never generic P0001.
+  await pool.query(`CREATE FUNCTION rc1_loan_abort() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF ${condition} THEN RAISE EXCEPTION 'RC1_LIFECYCLE_ABORT' USING ERRCODE='RCL01'; END IF; RETURN NEW; END $$`);
   await pool.query(`CREATE TRIGGER rc1_loan_abort BEFORE ${reason === 'forfeit' ? 'UPDATE ON loans' : 'INSERT ON transactions'} FOR EACH ROW EXECUTE FUNCTION rc1_loan_abort()`);
 }
 async function removeFailure() {
@@ -106,7 +108,9 @@ controller.job = (label, fn) => originalJob(label, async () => {
 });
 try {
   for (const level of ['log', 'warn', 'error']) console[level] = (...args) => {
-    if (level === 'error' && injecting && args.map(String).join(' ').includes('RC1_LIFECYCLE_ABORT')) { expectedFaults.push(args.map(String).join(' ')); return; }
+    if (level === 'error' && injecting && (args.map(String).join(' ').includes('RC1_LIFECYCLE_ABORT') || args.includes('RCL01'))) {
+      expectedFaults.push(args.map(String).join(' ')); return;
+    }
     controller.log(level, args);
   };
   await proof.record({ kind: 'database-created', ...await database.create() });
