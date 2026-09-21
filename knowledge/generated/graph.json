@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "ce3cee655e9c8d0e5732f16a439e899093157142",
+  "sourceRevision": "45082605e23e16f81959cc49b5e55d48e6088779",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 7955,
-    "edges": 34586,
+    "nodes": 7957,
+    "edges": 34596,
     "byNodeType": {
       "Artifact": 3291,
       "Command": 112,
-      "Commit": 1521,
+      "Commit": 1523,
       "Contract": 79,
       "Document": 610,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 2516,
-      "CHANGED": 13111,
+      "CHANGED": 13119,
       "CONTAINS": 3312,
       "DECLARES": 112,
       "DEFINED_IN": 1250,
       "DEPENDS_ON": 65,
       "EXECUTES": 444,
       "HANDLED_BY": 708,
-      "HAS_COMMIT": 1521,
+      "HAS_COMMIT": 1523,
       "IMPLEMENTS": 124,
       "IMPORTS": 2919,
       "INHERITS": 17,
@@ -71386,20 +71386,20 @@
       "path": "test/rc1-journeys.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 8101,
-      "lines": 108,
-      "version": "152f7dc5092c7268",
+      "bytes": 8473,
+      "lines": 114,
+      "version": "0bea4fd66de7c1fa",
       "text": true,
       "provenance": [
         {
           "file": "test/rc1-journeys.js",
           "line": 1,
-          "version": "152f7dc5092c7268"
+          "version": "0bea4fd66de7c1fa"
         }
       ],
-      "lastChangedAt": "2026-09-19T00:08:05.000Z",
+      "lastChangedAt": "2026-09-21T03:43:30.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "bbd022fce6b517fff06b977b79423e9fd6c66413"
+      "lastChangedCommit": "45082605e23e16f81959cc49b5e55d48e6088779"
     },
     {
       "key": "Artifact:test/rc1-mobile-postgres.js",
@@ -81356,6 +81356,22 @@
       ]
     },
     {
+      "key": "Commit:2c469d8593dace9ed0f8c2b18345941a49587e7f",
+      "type": "Commit",
+      "id": "2c469d8593dace9ed0f8c2b18345941a49587e7f",
+      "label": "docs(rc1): regenerate Knowledge for integrated release proof tooling",
+      "title": "docs(rc1): regenerate Knowledge for integrated release proof tooling",
+      "date": "2026-09-21T03:35:31.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/2c469d8593dace9ed0f8c2b18345941a49587e7f",
+      "provenance": [
+        {
+          "commit": "2c469d8593dace9ed0f8c2b18345941a49587e7f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/2c469d8593dace9ed0f8c2b18345941a49587e7f"
+        }
+      ]
+    },
+    {
       "key": "Commit:2c550c7c8afb3f709eea492abd9938e5941bf2f2",
       "type": "Commit",
       "id": "2c550c7c8afb3f709eea492abd9938e5941bf2f2",
@@ -84344,6 +84360,22 @@
         {
           "commit": "450142acae290e050174b1152da90f5698f1d005",
           "url": "https://github.com/OmertaDev/Omerta/commit/450142acae290e050174b1152da90f5698f1d005"
+        }
+      ]
+    },
+    {
+      "key": "Commit:45082605e23e16f81959cc49b5e55d48e6088779",
+      "type": "Commit",
+      "id": "45082605e23e16f81959cc49b5e55d48e6088779",
+      "label": "fix(rc1): preserve sealed journey reports during regression runs",
+      "title": "fix(rc1): preserve sealed journey reports during regression runs",
+      "date": "2026-09-21T03:43:30.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/45082605e23e16f81959cc49b5e55d48e6088779",
+      "provenance": [
+        {
+          "commit": "45082605e23e16f81959cc49b5e55d48e6088779",
+          "url": "https://github.com/OmertaDev/Omerta/commit/45082605e23e16f81959cc49b5e55d48e6088779"
         }
       ]
     },
@@ -118277,6 +118309,9 @@
           "commit": "2b3f17df9ac44573c23654a19d5be62a6ff5a461"
         },
         {
+          "commit": "2c469d8593dace9ed0f8c2b18345941a49587e7f"
+        },
+        {
           "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
         },
         {
@@ -118650,6 +118685,9 @@
         },
         {
           "commit": "2b3feb7c807848564094c9b56d13fd7e41f97bae"
+        },
+        {
+          "commit": "2c469d8593dace9ed0f8c2b18345941a49587e7f"
         },
         {
           "commit": "2c75183198ffec8423e4bbb3eeeed5ce31169c00"
@@ -119321,6 +119359,9 @@
           "commit": "2b3feb7c807848564094c9b56d13fd7e41f97bae"
         },
         {
+          "commit": "2c469d8593dace9ed0f8c2b18345941a49587e7f"
+        },
+        {
           "commit": "2c75183198ffec8423e4bbb3eeeed5ce31169c00"
         },
         {
@@ -119990,6 +120031,9 @@
           "commit": "2b3feb7c807848564094c9b56d13fd7e41f97bae"
         },
         {
+          "commit": "2c469d8593dace9ed0f8c2b18345941a49587e7f"
+        },
+        {
           "commit": "2c75183198ffec8423e4bbb3eeeed5ce31169c00"
         },
         {
@@ -120551,6 +120595,9 @@
           "commit": "26af16cb261f693d6f08f71349b3a61e495b6214"
         },
         {
+          "commit": "2c469d8593dace9ed0f8c2b18345941a49587e7f"
+        },
+        {
           "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
         },
         {
@@ -120819,6 +120866,9 @@
         },
         {
           "commit": "2b3feb7c807848564094c9b56d13fd7e41f97bae"
+        },
+        {
+          "commit": "2c469d8593dace9ed0f8c2b18345941a49587e7f"
         },
         {
           "commit": "2c75183198ffec8423e4bbb3eeeed5ce31169c00"
@@ -121404,6 +121454,9 @@
         },
         {
           "commit": "2b3feb7c807848564094c9b56d13fd7e41f97bae"
+        },
+        {
+          "commit": "2c469d8593dace9ed0f8c2b18345941a49587e7f"
         },
         {
           "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
@@ -129206,7 +129259,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "ce3cee655e9c8d0e5732f16a439e899093157142",
+      "revision": "45082605e23e16f81959cc49b5e55d48e6088779",
       "currentBranch": "codex/rc1-readiness",
       "defaultBranch": "main",
       "visibility": "public",
@@ -159553,13 +159606,13 @@
       "type": "TestSuite",
       "id": "test/rc1-journeys.js",
       "label": "test/rc1-journeys.js",
-      "lines": 108,
-      "version": "152f7dc5092c7268",
+      "lines": 114,
+      "version": "0bea4fd66de7c1fa",
       "provenance": [
         {
           "file": "test/rc1-journeys.js",
           "line": 1,
-          "version": "152f7dc5092c7268"
+          "version": "0bea4fd66de7c1fa"
         }
       ]
     },
@@ -202666,6 +202719,62 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:2c469d8593dace9ed0f8c2b18345941a49587e7f",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "2c469d8593dace9ed0f8c2b18345941a49587e7f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2c469d8593dace9ed0f8c2b18345941a49587e7f",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "2c469d8593dace9ed0f8c2b18345941a49587e7f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2c469d8593dace9ed0f8c2b18345941a49587e7f",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "2c469d8593dace9ed0f8c2b18345941a49587e7f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2c469d8593dace9ed0f8c2b18345941a49587e7f",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "2c469d8593dace9ed0f8c2b18345941a49587e7f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2c469d8593dace9ed0f8c2b18345941a49587e7f",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "2c469d8593dace9ed0f8c2b18345941a49587e7f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2c469d8593dace9ed0f8c2b18345941a49587e7f",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "2c469d8593dace9ed0f8c2b18345941a49587e7f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2c469d8593dace9ed0f8c2b18345941a49587e7f",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "2c469d8593dace9ed0f8c2b18345941a49587e7f"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:2c550c7c8afb3f709eea492abd9938e5941bf2f2",
       "to": "Artifact:CLAUDE.md",
       "provenance": {
@@ -214062,6 +214171,14 @@
       "to": "Artifact:test/boxing.js",
       "provenance": {
         "commit": "450142acae290e050174b1152da90f5698f1d005"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:45082605e23e16f81959cc49b5e55d48e6088779",
+      "to": "Artifact:test/rc1-journeys.js",
+      "provenance": {
+        "commit": "45082605e23e16f81959cc49b5e55d48e6088779"
       }
     },
     {
@@ -343947,6 +344064,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:2c469d8593dace9ed0f8c2b18345941a49587e7f",
+      "provenance": {
+        "commit": "2c469d8593dace9ed0f8c2b18345941a49587e7f"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:2c550c7c8afb3f709eea492abd9938e5941bf2f2",
       "provenance": {
         "commit": "2c550c7c8afb3f709eea492abd9938e5941bf2f2"
@@ -345438,6 +345563,14 @@
       "to": "Commit:450142acae290e050174b1152da90f5698f1d005",
       "provenance": {
         "commit": "450142acae290e050174b1152da90f5698f1d005"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:45082605e23e16f81959cc49b5e55d48e6088779",
+      "provenance": {
+        "commit": "45082605e23e16f81959cc49b5e55d48e6088779"
       }
     },
     {
@@ -374648,7 +374781,7 @@
       "to": "Artifact:src/content/canonical.js",
       "provenance": {
         "file": "test/rc1-journeys.js",
-        "line": 7
+        "line": 9
       }
     },
     {
@@ -374657,7 +374790,7 @@
       "to": "Artifact:src/coordination/operation-invariants.js",
       "provenance": {
         "file": "test/rc1-journeys.js",
-        "line": 12
+        "line": 14
       }
     },
     {
@@ -374666,7 +374799,7 @@
       "to": "Artifact:src/director/campaign-network.js",
       "provenance": {
         "file": "test/rc1-journeys.js",
-        "line": 9
+        "line": 11
       }
     },
     {
@@ -374675,7 +374808,7 @@
       "to": "Artifact:src/director/runtime.js",
       "provenance": {
         "file": "test/rc1-journeys.js",
-        "line": 8
+        "line": 10
       }
     },
     {
@@ -374684,7 +374817,7 @@
       "to": "Artifact:src/player-commands.js",
       "provenance": {
         "file": "test/rc1-journeys.js",
-        "line": 10
+        "line": 12
       }
     },
     {
@@ -374693,7 +374826,7 @@
       "to": "Artifact:src/world-kernel-invariants.js",
       "provenance": {
         "file": "test/rc1-journeys.js",
-        "line": 11
+        "line": 13
       }
     },
     {
@@ -374702,7 +374835,7 @@
       "to": "Artifact:test/lib/campaign-network-support.js",
       "provenance": {
         "file": "test/rc1-journeys.js",
-        "line": 13
+        "line": 15
       }
     },
     {
@@ -374711,7 +374844,7 @@
       "to": "Artifact:test/lib/player-command-support.js",
       "provenance": {
         "file": "test/rc1-journeys.js",
-        "line": 14
+        "line": 16
       }
     },
     {
@@ -437216,7 +437349,7 @@
       "to": "Artifact:src/content/canonical.js",
       "provenance": {
         "file": "test/rc1-journeys.js",
-        "line": 7
+        "line": 9
       }
     },
     {
@@ -437225,7 +437358,7 @@
       "to": "Artifact:src/coordination/operation-invariants.js",
       "provenance": {
         "file": "test/rc1-journeys.js",
-        "line": 12
+        "line": 14
       }
     },
     {
@@ -437234,7 +437367,7 @@
       "to": "Artifact:src/director/campaign-network.js",
       "provenance": {
         "file": "test/rc1-journeys.js",
-        "line": 9
+        "line": 11
       }
     },
     {
@@ -437243,7 +437376,7 @@
       "to": "Artifact:src/director/runtime.js",
       "provenance": {
         "file": "test/rc1-journeys.js",
-        "line": 8
+        "line": 10
       }
     },
     {
@@ -437252,7 +437385,7 @@
       "to": "Artifact:src/player-commands.js",
       "provenance": {
         "file": "test/rc1-journeys.js",
-        "line": 10
+        "line": 12
       }
     },
     {
@@ -437261,7 +437394,7 @@
       "to": "Artifact:src/world-kernel-invariants.js",
       "provenance": {
         "file": "test/rc1-journeys.js",
-        "line": 11
+        "line": 13
       }
     },
     {
