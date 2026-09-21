@@ -78,7 +78,9 @@ export async function verifyGzipHistory(file, artifact, storage, { canonicalJson
   } });
   let verified;
   await pipeline(createReadStream(file), physical, gunzip, decoded, async chunks => {
-    verified = await verifyBoundedHistoryStream(chunks, { canonicalJson, sha256, limits: storage });
+    // Pipeline owns teardown. Node22's default iterator destroys this stream
+    // with AbortError before a validation exception can reach pipeline.
+    verified = await verifyBoundedHistoryStream(chunks.iterator({ destroyOnReturn: false }), { canonicalJson, sha256, limits: storage });
   });
   assert.equal(storedBytes, artifact.bytes, 'History stored size mismatch');
   // zlib accepts trailing zero padding; bytesWritten excludes that padding.
