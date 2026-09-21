@@ -71,6 +71,7 @@ export async function roleKnowledgeProbes({ server, restart }) {
   const created = await execute('boss', create), operationId = created.result.operationId;
   assert(operationId); const operation = `${base}/${operationId}`;
   const action = (name, role, payload = {}, identity = key()) => ok('POST', `${operation}/actions/${name}`, role, payload, identity);
+  await deny('ordinary Family member cannot publish a draft', [403], 'POST', `${operation}/actions/publish`, 'nonparticipant', {});
   await hidden('outsider operation detail', operation, `${base}/rc1-missing-operation`, 'outsider');
   const selectedHidden = await deny('outsider selected operation projection', [409], 'GET', `/v1/commands?operationId=${encodeURIComponent(operationId)}`, 'outsider');
   const selectedMissing = await deny('outsider selected missing operation projection', [409], 'GET', '/v1/commands?operationId=rc1-missing-operation', 'outsider');
@@ -80,6 +81,10 @@ export async function roleKnowledgeProbes({ server, restart }) {
   await deny('outsider guessed operation contribution', [404], 'POST', `${operation}/actions/contribute`, 'outsider', { requirementId: 'funding' });
   await action('publish', 'boss'); await action('join', 'boss', { roleId: 'organizer' });
   await action('join', 'participant', { roleId: 'supplier' });
+  await deny('occupied organizer seat cannot be taken', [409], 'POST', `${operation}/actions/join`, 'nonparticipant', { roleId: 'organizer' });
+  await deny('officer cannot assign a known outsider to Family operation', [409], 'POST', `${operation}/actions/assign`, 'boss', { roleId: 'researcher', accountId: actors.outsider });
+  await deny('same-Family nonparticipant cannot leave another seat', [409], 'POST', `${operation}/actions/leave`, 'nonparticipant', {});
+  await deny('an unexpired operation cannot be expired', [403], 'POST', `${operation}/actions/expire`, 'nonparticipant', {});
   await deny('same-Family nonparticipant cannot commit funding', [409], 'POST', `${operation}/actions/commit`, 'nonparticipant', { requirementId: 'funding' });
   await deny('same-Family nonparticipant cannot contribute funding', [409], 'POST', `${operation}/actions/contribute`, 'nonparticipant', { requirementId: 'funding' });
   await deny('same-Family nonparticipant cannot assign a role', [403], 'POST', `${operation}/actions/assign`, 'nonparticipant', { roleId: 'researcher', accountId: actors.nonparticipant });
@@ -96,6 +101,8 @@ export async function roleKnowledgeProbes({ server, restart }) {
   const contributed = await execute('boss', contribution); assert.equal(contributed.replayed, false);
   assert.equal(Number((await server().pool.query('SELECT cash FROM characters WHERE id=$1', [characterId(actors.boss)])).rows[0].cash), cashBefore - 100);
   assert.equal(Number((await server().pool.query('SELECT amount FROM world_operation_capital WHERE operation_id=$1', [operationId])).rows[0].amount), 100);
+  await deny('same-Family nonparticipant cannot withdraw organizer capital', [409], 'POST', `${operation}/actions/withdraw`, 'nonparticipant', { requirementId: 'funding' });
+  await deny('participant cannot withdraw another role capital', [409], 'POST', `${operation}/actions/withdraw`, 'participant', { requirementId: 'funding' });
   await sameState('contribution exact retry duplicated capital', async () => assert.equal((await execute('boss', contribution)).replayed, true));
   await restart();
   await sameState('restarted contribution duplicated capital', async () => assert.equal((await execute('boss', contribution)).replayed, true));
