@@ -803,6 +803,15 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:family-entry:postgres
+      - name: Exact voluntary Family dissolution dispositions
+        if: '!cancelled()'
+        env:
+          RC1_RESOURCE_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
+          RC1_FAMILY_DISSOLUTION_OUTPUT: ${{ runner.temp }}/rc1-family-dissolution
+        run: |
+          umask 077
+          npm run test:rc1:family-dissolution:postgres
+          node test/rc1-world-family-dissolution.js --evidence="$RC1_FAMILY_DISSOLUTION_OUTPUT"
       - name: Encrypt restricted execution evidence
         if: always()
         env:

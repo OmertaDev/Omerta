@@ -673,6 +673,21 @@
       ],
       "retest": "Two-process controls reject observer-first before Pool construction and accept instrumentation-first up to a deliberately throwing Pool sentinel with zero DB connections. Exact2b47e79d resource-enabled2h observation/replay pass18fields/1085boundaries with39unknowns. Original failure and cleanup retained; integrated rerun required.",
       "evidence": "harness-world-gzip-integration.md;harness-world-gzip-integration-index.json"
+    },
+    {
+      "id": "RC1-TOOL-43",
+      "classification": "D terminal rollback harness precondition error",
+      "owner": "Codex/resource_proof",
+      "failedGate": "bd038f25 Family dissolution native proof after29 boundaries and zero completed terminals",
+      "before": "Full HTTP snapshot rollback assertion compared state before separately committed canonical preaction accrual. The later injected terminal action abort correctly preserved all cash/ammo/OMR custody, membership and receipts.",
+      "repair": "41127506 observes a canonical member GET at the same logical instant before installing the terminal fault. The full observed-state rollback assertion remains strict; no normalization or runtime change.",
+      "changedSource": [
+        "test/rc1-native-family-dissolution.js",
+        "test/rc1-world-family-dissolution.js",
+        "tools/rc1-world-resource-observer.js"
+      ],
+      "retest": "41127506 native40boundaries/two nonzero three-bucket terminals/60corruption controls/four invariant checkpoints pass.159artifacts and two history chains independently verified. Integrated rerun required.",
+      "evidence": "world-family-dissolution.md;family-terminal-observer-summary.json;family-terminal-oracle-finding.json"
     }
   ]
 }

@@ -1309,6 +1309,19 @@
       "coverageExclusions": [
         "Exact ordinary formation and cash/OMR tribute only; remaining Family branches, personal ammo tribute, full resources and matrix are not qualified."
       ]
+    },
+    {
+      "id": "rc1-family-dissolution",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:family-dissolution:postgres"
+      ],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Single-Family voluntary living-member dissolution only; cash/ammo destruction and OMR reserve-to-desk transfer. Death/estate, turf/war/governance and compound terminals remain unqualified."
+      ]
     }
   ]
 }
