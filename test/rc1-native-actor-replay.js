@@ -11,6 +11,8 @@ assert.deepEqual(await replay.decide('choice', identity, view, () => { throw Err
 await replay.observe('outcome', identity, { completed: true, cash: '9007199254740992' });
 assert.equal(replay.finish().entriesSha256, tape.entriesSha256);
 assert.notEqual(actorValueHash(view), actorValueHash({ ...view, deadline: new Date(1001) }), 'Every native timestamp retained');
+for (const invalid of [{ absent: undefined }, { fn: () => {} }, { symbol: Symbol('unsupported') }, [Infinity], [,], new Map(), new Date(NaN)])
+  assert.throws(() => actorValueHash(invalid), 'Actor comparison must not silently omit non-JSON evidence');
 for (const changed of [{ ...view, cash: '9007199254740994' }, { ...view, available: [] }, { ...view, deadline: new Date(1001) }]) {
   const control = createRecordedActors({ replay: tape });
   await assert.rejects(control.decide('choice', identity, changed, () => null), /exact authorized input differs/);

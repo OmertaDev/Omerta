@@ -1,11 +1,24 @@
 // Test-only actor decisions. Exact authorized inputs must match before a recorded
 // choice can be returned; domain authorization still executes in the caller.
 import assert from 'node:assert/strict';
+import { isDate } from 'node:util/types';
 import { canonicalJson, sha256 } from './rc1-native-proof.js';
 
 // Compare the full JSON projection a caller receives, including native Date
 // values as ISO strings. No fields or numerical/string values are normalized.
-export const actorValueHash = (value) => sha256(canonicalJson(JSON.parse(JSON.stringify(value))));
+function actorJson(value) {
+  if (isDate(value)) return value.toISOString();
+  if (Array.isArray(value)) return Array.from(value, actorJson);
+  if (value && typeof value === 'object') {
+    assert([Object.prototype, null].includes(Object.getPrototypeOf(value)), 'Actor evidence requires plain JSON projections');
+    assert.equal(Object.getOwnPropertySymbols(value).length, 0, 'Actor evidence cannot omit symbol fields');
+    return Object.fromEntries(Object.keys(value).map((key) => [key, actorJson(value[key])]));
+  }
+  // Validate before JSON conversion could silently drop undefined/functions or
+  // coerce nonfinite numbers. Only native Date serialization is converted.
+  canonicalJson(value); return value;
+}
+export const actorValueHash = (value) => sha256(canonicalJson(actorJson(value)));
 const hash = actorValueHash;
 export function createRecordedActors({ replay = null, record = async () => {} } = {}) {
   if (replay) {
@@ -24,7 +37,7 @@ export function createRecordedActors({ replay = null, record = async () => {} } 
         assert.deepEqual(request, priorRequest, 'Actor identity or exact authorized input differs');
         choice = structuredClone(priorChoice);
       } else choice = await choose();
-      const entry = { ...request, choice: JSON.parse(JSON.stringify(choice)) };
+      const entry = { ...request, choice: actorJson(choice) };
       entries.push(entry); await record({ kind: 'actor-replay-entry', entry }); return choice;
     } catch (error) {
       const failure = { request, input, expected: replay?.entries[entries.length] || null, message: error.message };
