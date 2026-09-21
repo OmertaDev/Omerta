@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import { DESK, DESK_RECYCLE_REASON } from '../src/rules.js';
 import { exactSum, negate, sha256 } from './rc1-resource-journal.js';
+import { reconcileCarResources } from './rc1-car-journal.js';
 
 export const WORLD_RESOURCE_TABLES = Object.freeze([
   'characters', 'account_persistent', 'transactions', 'gangs', 'amm_pool', 'street_tax', 'stake_pool', 'dev_fund',
@@ -298,7 +299,9 @@ export function reconcileWorldResources(before, after, { identity = null, includ
     expectedDelta: exactSum([negate(net(receipts, r => r.currency === 'cash' && ['loan:offer', 'loan:take', 'loan:refund'].includes(r.reason))),
       net(receipts, r => r.currency === 'cash' && ['loan:death', 'loan:loot'].includes(r.reason))]),
     authority: reference('transactions', receipts.filter(r => r.reason.startsWith('loan:'))) });
-  const observedOnly = ['cars', 'boats', 'account_gear', 'market_listings', 'listings', 'bounties', 'commission_proposals', 'favors',
+  const cars = reconcileCarResources(before, after);
+  checks.push(...cars.checks); unsupported.push(...cars.unsupported);
+  const observedOnly = ['boats', 'account_gear', 'market_listings', 'listings', 'bounties', 'commission_proposals', 'favors',
     'loan_house', 'convoy_insurance', 'poker_tournaments', 'poker_entries', 'grand_prix', 'grand_prix_entries', 'stakes_races',
     'stakes_entries', 'district_bids', 'shipment_days', 'shipment_takes', 'bespoke_pieces', 'bespoke_serials', 'campaign_progress',
     'drop_allocations', 'chain_reserve', 'vouchers', 'season_records', 'season_recaps', 'operation_escrow'];
@@ -309,7 +312,7 @@ export function reconcileWorldResources(before, after, { identity = null, includ
   const restrictedChanges = unsupported.length ? resourceTableChanges(before, after) : null;
   if (restrictedChanges) verifyResourceTableChanges(before, after, restrictedChanges);
   return { format: 1, identity, beforeHash: worldResourceHash(before), afterHash: worldResourceHash(after), receipts,
-    itemEvents: events, mutationInputs: inputs, mutationOutputs: outputs, checks, omrBuckets: { before: omrBefore, after: omrAfter, movements: omrMovements },
+    itemEvents: events, mutationInputs: inputs, mutationOutputs: outputs, checks, cars, omrBuckets: { before: omrBefore, after: omrAfter, movements: omrMovements },
     unsupported, restrictedChangesSha256: restrictedChanges ? sha256(restrictedChanges) : null,
     ...(includeRestrictedChanges && restrictedChanges ? { restrictedChanges } : {}),
     status: unsupported.length ? 'PASS_PARITY_WITH_UNSUPPORTED_LINEAGE' : 'PASS_SCOPED_PARITY', qualifyingFullResourcePass: false,
