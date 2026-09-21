@@ -160,4 +160,44 @@ await assert.rejects(publication.proof.finish({ status: 'PASS_SCOPED' }), /exist
 assert.equal((await fs.stat(path.join(publication.directory, 'run.json'))).isDirectory(), true);
 assert.equal(JSON.parse(await fs.readFile(path.join(publication.directory, 'capture-failure.json'))).status, 'INCOMPLETE');
 assert.equal(JSON.parse(await fs.readFile(path.join(publication.directory, 'run-unsealed.json'))).status, 'PASS_SCOPED');
+
+let releaseSnapshot, releaseCheckpoint;
+const snapshotGate = new Promise(resolve => { releaseSnapshot = resolve; });
+const checkpointGate = new Promise(resolve => { releaseCheckpoint = resolve; });
+const barrier = await recorder('artifact-finish-barrier', {}, {
+  canonicalDatabaseSnapshot: async () => { await snapshotGate; return { sentinel: 'complete snapshot' }; },
+  writeCheckpoint: async (_pool, target) => {
+    await checkpointGate; const bytes = Buffer.from('complete checkpoint'); await fs.writeFile(target, bytes, { flag: 'wx' });
+    return { sha256: sha256(bytes), bytes: bytes.length, sentinel: 'complete metadata' };
+  },
+});
+await barrier.proof.record({ kind: 'initialization' });
+const delayedSnapshot = barrier.proof.snapshot(null, 'late-snapshot'), delayedCheckpoint = barrier.proof.checkpoint(null, 'late-checkpoint', 'test-only');
+let published = false;
+const finishing = barrier.proof.finish({ status: 'PASS_SCOPED' }).then(run => { published = true; return run; });
+await new Promise(resolve => setImmediate(resolve)); assert.equal(published, false);
+await assert.rejects(fs.access(path.join(barrier.directory, 'run.json')));
+for (const work of [() => barrier.proof.artifact('after-finish.json', {}), () => barrier.proof.snapshot(null, 'after-snapshot'),
+  () => barrier.proof.checkpoint(null, 'after-checkpoint', 'test-only')]) await assert.rejects(work(), /admission is closed/);
+releaseSnapshot(); await delayedSnapshot; await new Promise(resolve => setImmediate(resolve)); assert.equal(published, false);
+releaseCheckpoint(); await delayedCheckpoint; const barrierRun = await finishing;
+for (const name of ['late-snapshot.json', 'late-checkpoint.dump', 'late-checkpoint-checkpoint.json'])
+  assert(barrierRun.artifacts.some(item => item.path === name));
+await verifyArtifactIndex(barrier.directory, barrierRun);
+assert(!(await fs.readdir(barrier.directory)).some(name => name.startsWith('after-')));
+
+let rejectArtifact;
+const brokenArtifact = await recorder('admitted-artifact-failure', {}, {
+  canonicalDatabaseSnapshot: () => new Promise((_resolve, reject) => { rejectArtifact = reject; }),
+});
+await brokenArtifact.proof.record({ kind: 'initialization' });
+const admittedFailure = brokenArtifact.proof.snapshot(null, 'failure');
+await new Promise(resolve => setImmediate(resolve));
+const artifactSentinel = Error('admitted snapshot failure sentinel');
+const expectedFailure = assert.rejects(admittedFailure, error => error === artifactSentinel);
+rejectArtifact(artifactSentinel); await expectedFailure;
+await brokenArtifact.proof.artifact('failure-context.json', { retainedAfterPoison: true });
+await assert.rejects(brokenArtifact.proof.finish({ status: 'PASS_SCOPED' }), error => error === artifactSentinel);
+await assert.rejects(fs.access(path.join(brokenArtifact.directory, 'run.json')));
+assert.equal(JSON.parse(await fs.readFile(path.join(brokenArtifact.directory, 'capture-failure.json'))).status, 'INCOMPLETE');
 console.log(JSON.stringify({ status: 'PASS_UNIT', directory: root, controls: 'legacy separate; gzip prefixes/write stall, UTF8, physical/logical corruption, finite bounds, failure identity, source-change FAIL and reserved paths' }));

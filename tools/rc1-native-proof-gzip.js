@@ -99,6 +99,7 @@ export async function createGzipProofRecorder(options, api) {
     incompleteCapture: { history: 'history.jsonl.gz', diagnostic: 'capture-failure.json' } }), { flag: 'wx', mode: 0o600 });
   const writer = await createGzipHistoryWriter(historyPath, storage);
   const artifacts = [], names = new Set(['run-reserved.json', 'run.json', 'run-unsealed.json', 'history.jsonl', 'history.jsonl.gz', 'capture-failure.json']);
+  const artifactOperations = new Set();
   const outstanding = new Set(), startedAt = wallTimestamp();
   let sequence = 0, invocation = 0, seenInvocations = 0, previousHash = null, pending = 0, tail = Promise.resolve();
   let closed = false, captureFailure = null, attemptedSequence = null, authorityFailure = null;
@@ -130,12 +131,25 @@ export async function createGzipProofRecorder(options, api) {
     tail = work.catch(() => {}).finally(() => { pending--; });
     return work;
   };
-  const reserve = name => { assert(!names.has(name), `Duplicate/reserved artifact path: ${name}`); names.add(name); };
-  const put = async (name, value) => {
-    assert(/^[a-z0-9-]+\.json$/.test(name)); reserve(name);
+  const writeJson = async (name, value) => {
     const bytes = `${JSON.stringify(value, null, 2)}\n`;
     await fs.writeFile(path.join(directory, name), bytes, { flag: 'wx', mode: 0o600 });
     artifacts.push({ path: name, sha256: sha256(bytes), bytes: Buffer.byteLength(bytes) });
+  };
+  const artifactOperation = (paths, work) => {
+    assert(!closed, 'Artifact admission is closed');
+    for (const name of paths) assert(!names.has(name), `Duplicate/reserved artifact path: ${name}`);
+    for (const name of paths) names.add(name);
+    // History may already be poisoned: caller failure snapshots are still
+    // admitted until finish. An admitted artifact failure prevents sealing.
+    const operation = Promise.resolve().then(work).catch(error => { throw fail(error); });
+    artifactOperations.add(operation);
+    void operation.finally(() => artifactOperations.delete(operation)).catch(() => {});
+    return operation;
+  };
+  const put = async (name, value) => {
+    assert(/^[a-z0-9-]+\.json$/.test(name));
+    return artifactOperation([name], () => writeJson(name, value));
   };
   return {
     record, artifact: put,
@@ -151,17 +165,25 @@ export async function createGzipProofRecorder(options, api) {
       }
       await record({ kind: 'completion', invocation: id, outcome: 'RETURNED', result: value }); return value;
     },
-    async snapshot(pool, label) { const value = await canonicalDatabaseSnapshot(pool); await put(`${label}.json`, value); return value; },
+    async snapshot(pool, label) {
+      assert(/^[a-z0-9-]+$/.test(label));
+      return artifactOperation([`${label}.json`], async () => {
+        const value = await canonicalDatabaseSnapshot(pool); await writeJson(`${label}.json`, value); return value;
+      });
+    },
     async checkpoint(pool, label, url) {
       assert(/^[a-z0-9-]+$/.test(label)); const name = `${label}.dump`;
-      assert(!names.has(`${label}-checkpoint.json`), 'Duplicate/reserved checkpoint metadata'); reserve(name);
-      const value = await writeCheckpoint(pool, path.join(directory, name), url);
-      artifacts.push({ path: name, sha256: value.sha256, bytes: value.bytes }); await put(`${label}-checkpoint.json`, value); return value;
+      return artifactOperation([name, `${label}-checkpoint.json`], async () => {
+        const value = await writeCheckpoint(pool, path.join(directory, name), url);
+        artifacts.push({ path: name, sha256: value.sha256, bytes: value.bytes });
+        await writeJson(`${label}-checkpoint.json`, value); return value;
+      });
     },
     async finish(result) {
       assert(!closed, 'Recorder already finished'); closed = true;
       assert(['PASS_SCOPED', 'FAIL'].includes(result.status), 'A scoped recorder cannot issue release or matrix clearance');
       await tail;
+      await Promise.allSettled([...artifactOperations]);
       try { await writer.close(); } catch (error) { fail(error); }
       let sourceFailure = null;
       try { await assertSourceUnchanged(source); } catch (error) { sourceFailure = error.message; }
