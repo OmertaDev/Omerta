@@ -877,6 +877,19 @@
       ],
       "retest": "Freshe1 focused crown proof, two native rollback faults, exact retry and six captured-input corruptions pass; seasonal recovery and short world observe/replay pass. Original failed run and postfailure dump remain retained; exact owned process/DB cleanup verified. Fresh integrated-source execution required.",
       "evidence": "harness-season-crown-observer.md;harness-season-crown-index.json"
+    },
+    {
+      "id": "RC1-TOOL-58",
+      "classification": "D synthetic shared-observer fixture omitted required crown latch",
+      "owner": "Codex/root",
+      "failedGate": "Pre-freeze combined candidate18 development harness; exact failure log retained",
+      "before": "rc1-world-ammo-escrow.js synthetic unrelated season row omitted crowned; strict crown classifier rejected undefined instead of boolean",
+      "repair": "Declare schema crowned:false default in existing unknown-season insertion fixture. Original unsupported assertion and strict crown checks remain unchanged.",
+      "changedSource": [
+        "test/rc1-world-ammo-escrow.js"
+      ],
+      "retest": "Focused ammo/crown controls, combined harness and qualification controls pass. Development source only; frozen integrated reruns required.",
+      "evidence": "harness-season-fixture-compatibility.json"
     }
   ]
 }

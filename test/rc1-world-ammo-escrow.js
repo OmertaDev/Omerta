@@ -53,7 +53,7 @@ reject('tax-destination-missing', listed, bought, input => { input.after.tables.
 reject('unknown-escrow-owner', before, listed, input => { input.after.tables.listings[0].seller_character = 'absent'; });
 const otherListing = structuredClone(before); otherListing.tables.listings.push({ id: 'outside', seller_character: 'seller', item_kind: 'item', item_id: 'unsupported', qty: 1, unit_price: '1' });
 assert(reconcileWorldResources(before, otherListing).unsupported.some(row => row.table === 'listings'), 'Other escrow must stay unsupported');
-const unrelated = structuredClone(before); unrelated.tables.season_records.push({ season: 1 });
+const unrelated = structuredClone(before); unrelated.tables.season_records.push({ season: 1, crowned: false });
 assert(reconcileWorldResources(before, unrelated).unsupported.some(row => row.table === 'season_records'), 'Unrelated gaps cannot disappear');
 
 const evidence = process.argv.find(value => value.startsWith('--evidence='))?.slice(11);

@@ -1,0 +1,60 @@
+{
+  "format": 1,
+  "id": "RC1-TOOL-58",
+  "classification": "D synthetic shared-observer fixture omitted required crown latch",
+  "firstFailure": {
+    "parentSource": "ea17330ca8ae4c60cfd3951a7267322181428777",
+    "workingTree": "Pending gate-wiring edits; development run, not a clean native source proof",
+    "command": "npm run test:rc1:harness",
+    "exitCode": 1,
+    "error": "rc1-world-ammo-escrow.js synthetic unrelated season row omitted crowned; strict crown classifier rejected undefined instead of boolean",
+    "log": {
+      "file": "candidate18-harness-development.log",
+      "bytes": 25641,
+      "sha256": "6015b99e7ae3177d541922a7a006118a8564f90077b393782c7df93912b06813"
+    }
+  },
+  "repair": {
+    "file": "test/rc1-world-ammo-escrow.js",
+    "change": "Declare schema crowned:false default in existing unknown-season insertion fixture. Original unsupported assertion and strict crown checks remain unchanged."
+  },
+  "retests": [
+    {
+      "command": "node test/rc1-world-ammo-escrow.js",
+      "result": "PASS_SCOPED",
+      "corruptionControls": 16
+    },
+    {
+      "command": "node test/rc1-season-crown-journal.js",
+      "result": "PASS_SCOPED_CONTROLS",
+      "rejected": 33,
+      "unsupported": 8
+    },
+    {
+      "command": "npm run test:rc1:harness",
+      "result": "PASS_DEVELOPMENT",
+      "exitCode": 0,
+      "log": {
+        "file": "candidate18-harness-development-2.log",
+        "bytes": 30523,
+        "sha256": "6ea9681adc0e4afd59792b69e6744ccc10c65a80ffe4c14a800d2464a5bdd330"
+      }
+    },
+    {
+      "command": "node test/rc1-qualification.js",
+      "result": "PASS_DEVELOPMENT",
+      "exitCode": 0,
+      "log": {
+        "file": "candidate18-qualification-development.log",
+        "bytes": 371,
+        "sha256": "9b41ce389d4dd5dc6a596875c9d301abc0a57210a0b62ddcd23d6b1fb3af33c9"
+      }
+    }
+  ],
+  "limits": [
+    "No runtime/classifier/assertion relaxation",
+    "No native gameplay failure",
+    "Fresh frozen integrated native/hosted reruns required"
+  ],
+  "releaseReady": false
+}
