@@ -535,3 +535,17 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:mobile-adversity:postgres
+      - name: Three Family stakes and original turf settlement
+        if: '!cancelled()'
+        env:
+          RC1_TURF_OUTPUT: ${{ runner.temp }}/rc1-turf-contention
+        run: |
+          umask 077
+          npm run test:rc1:turf-contention:postgres
+      - name: Native shipment midnight contention loot and commission terminals
+        if: '!cancelled()'
+        env:
+          RC1_SHIPMENT_TERMINAL_OUTPUT: ${{ runner.temp }}/rc1-shipment-terminals
+        run: |
+          umask 077
+          npm run test:rc1:shipment-terminals:postgres
