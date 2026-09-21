@@ -6,6 +6,7 @@ import { Pool } from 'pg';
 import { buildServer } from '../src/server.js';
 import { addPlayer, findCommand } from './lib/player-command-support.js';
 import { FURNACE_IDS as ids } from '../src/content/furnace-ledger.js';
+import { authoritativeState, roleKnowledgeProbes } from './lib/rc1-authority-probes.js';
 
 const endpoint = new URL(process.env.RC1_TEST_DATABASE_URL || '');
 assert(['localhost', '127.0.0.1', '[::1]'].includes(endpoint.hostname), 'Use an isolated loopback PostgreSQL instance');
@@ -20,18 +21,13 @@ for (const secret of ['JWT_SECRET', 'MARKET_SEED', 'MOD_KEY']) process.env[secre
 process.env.COORDINATION_ACCOUNT_IDS = '';
 process.env.SOCIAL_VERIFY_MODE = 'off';
 process.env.RATE_LIMIT = 'off';
+process.env.INVITE_MODE = 'off';
+process.env.POPULATION_OFF = 'on';
 let app;
 let denials = 0;
 const owner = 'rc1-security-owner', outsider = 'rc1-security-outsider';
-const state = async () => {
-  const result = {};
-  for (const table of ['characters', 'mystery_instances', 'item_mutation_guards', 'item_instances', 'item_stacks',
-    'world_operations', 'world_kernel_objects', 'coordination_commands', 'transactions']) {
-    const rows = (await app.pool.query(`SELECT * FROM ${table}`)).rows;
-    result[table] = rows.map((row) => JSON.stringify(row)).sort();
-  }
-  return result;
-};
+const state = () => authoritativeState(app.pool);
+const restart = async () => { await app.close(); await app.pool.end(); app = await buildServer(); };
 const call = (token, payload, key, url = '/v1/commands/execute', extra = {}) => app.inject({ method: 'POST', url,
   headers: { ...(token ? { authorization: `Bearer ${token}` } : {}),
     'content-type': 'application/json', ...(key ? { 'idempotency-key': key } : {}), ...extra }, payload });
@@ -87,11 +83,14 @@ try {
   assert.equal(Number((await app.pool.query('SELECT count(*) AS n FROM mystery_instances WHERE authority_account_id=$1 AND graph_id=$2',
     [owner, ids.inspection])).rows[0].n), 1);
   const committed = await state();
-  await app.close(); await app.pool.end(); app = await buildServer();
+  await restart();
   const restarted = await call(token, body, key);
   assert.equal(restarted.statusCode, 200, restarted.body); assert.equal(restarted.json().replayed, true);
   assert.deepEqual(await state(), committed, 'retry after complete server reconstruction must preserve economic state');
-  console.log(JSON.stringify({ gate: 'RC1 command HTTP redteam', database: 'real PostgreSQL', deniedCases: denials,
+  const roleKnowledge = await roleKnowledgeProbes({ server: () => app, restart });
+  console.log(JSON.stringify({ gate: 'RC1 command HTTP redteam', database: 'real PostgreSQL', deniedCases: denials + roleKnowledge.deniedCases,
+    inputTamperingDenials: denials,
+    roleKnowledge,
     concurrentRequests: simultaneous.length, concurrentStatuses: simultaneous.map((r) => r.statusCode), freshExecutions,
     uniqueMysteryInstances: 1, restartReplay: true, gameStateUnchangedOnDenialAndReplay: true, status: 'PASS' }));
 } finally {
