@@ -23,13 +23,14 @@ export function assertNpcBoatSources() {
   return sites;
 }
 const sourceUrl = new URL('../src/population.js', import.meta.url).href;
-export function createNpcBoatAcquisitionCommitObserver({ readRandomTape, seed, ...options }) {
+export function createNpcBoatAcquisitionCommitObserver({ readRandomTape, seed, additionalQueryOrigin = null, additionalProvenanceExtensions = {}, ...options }) {
   assertNpcBoatSources(); assert.equal(typeof readRandomTape, 'function'); assert.equal(typeof seed, 'string'); assert(seed.length);
-  assert(!options.additionalQueryOrigin && !options.additionalProvenanceExtensions, 'Boat extension owns its source annotation');
+  assert(additionalQueryOrigin === null || typeof additionalQueryOrigin === 'function');
+  assert(!Object.hasOwn(additionalProvenanceExtensions, 'npcBoatAcquisition'), 'Cannot replace NPC boat source annotation');
   return createNpcCarAcquisitionCommitObserver({ ...options,
-    additionalProvenanceExtensions: { npcBoatAcquisition: { format: 1, sourcePins: NPC_BOAT_SOURCE_PINS, seed } },
+    additionalProvenanceExtensions: { ...additionalProvenanceExtensions, npcBoatAcquisition: { format: 1, sourcePins: NPC_BOAT_SOURCE_PINS, seed } },
     additionalQueryOrigin(sql) {
-      if (sql !== NPC_BOAT_INSERT) return null;
+      if (sql !== NPC_BOAT_INSERT) return additionalQueryOrigin?.(sql) ?? null;
       const prior = Error.stackTraceLimit; let stack;
       try { Error.stackTraceLimit = 40; stack = new Error('RC1_BOAT_QUERY_ORIGIN').stack; }
       finally { Error.stackTraceLimit = prior; }
@@ -40,7 +41,7 @@ export function createNpcBoatAcquisitionCommitObserver({ readRandomTape, seed, .
         frames.push({ file: 'src/population.js', caller: text.slice(0, at).trim().replace(/^at\s+(?:async\s+)?/, '').replace(/\s*\($/, ''),
           line: Number(numbers[1]), column: Number(numbers[2]) });
       }
-      if (!frames.length) return null;
+      if (!frames.length) return additionalQueryOrigin?.(sql) ?? null;
       const tape = readRandomTape(); assert(Array.isArray(tape)); const draws = [];
       for (let i = tape.length - 1; i >= 0 && draws.length < 2; i--) if (tape[i].stream === 'Math.random') draws.unshift({ index: i, ...structuredClone(tape[i]) });
       return { kind: 'native-stack-source-site-v1', frames, boatRandomInputs: { tapeLength: tape.length, draws,
