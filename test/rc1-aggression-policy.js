@@ -18,7 +18,7 @@ const makeView = (sequence) => {
   return { commands: { player: { id: 'actor', character: { id: 'own-street' } }, commandSchemaVersion: 1,
     commands: [{ commandId: id, commandType: 'discovery.act', availability: 'AVAILABLE', expiresAt: new Date(at + 60000).toISOString(),
       executionIdentity: { executionId }, parameters: {} }] },
-  me: { character: { id: 'own-street', loc: 'docks', health: 100, energy: 50, ammo: 25, cash: 500,
+  me: { character: { id: 'own-street', generation: 1, gun: null, hunt: null, shootCdSeconds: 0, loc: 'docks', health: 100, energy: 50, ammo: 25, cash: 500,
     jailSeconds: 0, hospSeconds: 0, safeSeconds: 0, law: { witproSeconds: 0 }, healCost: null } },
   streets: { streets: [{ id: 'target', loc: 'docks', hospitalized: false, jailed: false, gangTag: null }] },
   rivals: { rivals: [] } };
@@ -104,6 +104,53 @@ const replayChoice = choose(denied, makeView(2));
 denied.settle({ idempotencyKey: replayChoice.request.idempotencyKey, status: 'COMPLETED', replayed: true });
 assert.equal(denied.summary().fresh, 0); assert.throws(() => choose(denied, makeView(3)), /Unresolved/);
 console.log('PASS: aggression quota, public candidate gates, loss accounting, recovery/retaliation, identities and policy restart');
+
+const lethalView = (sequence) => {
+  const view = makeView(sequence); Object.assign(view.me.character, { gun: 'lastresort', ammo: 2025 }); return view;
+};
+const lifecycle = createAggressionPolicy(configuration);
+settle(lifecycle, choose(lifecycle, lethalView(1)));
+const searchChoice = choose(lifecycle, lethalView(2)); assert.equal(searchChoice.type, 'legacy.search');
+const searchResponse = { ok: true, placedAt: new Date(at + 10800000).toISOString() };
+const searchRestart = createAggressionPolicy(configuration).restore(lifecycle.checkpoint());
+assert.deepEqual(choose(searchRestart, lethalView(3)), searchChoice);
+searchRestart.settle({ idempotencyKey: searchChoice.request.idempotencyKey, status: 'COMPLETED', replayed: false, response: searchResponse });
+assert.equal(searchRestart.summary().searches, 1); assert.equal(searchRestart.summary().wins + searchRestart.summary().losses, 0);
+const huntingView = lethalView(4); huntingView.me.character.hunt = { targetId: 'target', placedSeconds: 1 };
+const duringHunt = choose(searchRestart, huntingView); assert.equal(duringHunt.type, 'legacy.jump'); settle(searchRestart, duringHunt, false);
+settle(searchRestart, choose(searchRestart, huntingView));
+const placedView = lethalView(5); placedView.me.character.hunt = { targetId: 'target', placedSeconds: 0 };
+const fireChoice = choose(searchRestart, placedView); assert.equal(fireChoice.type, 'legacy.fire'); assert.equal(fireChoice.request.body.rounds, 2000);
+const fireResponse = { ok: true, kill: true, fired: 2000, shootCdSeconds: 7200, estate: { heirId: 'target-heir' } };
+const fireRestart = createAggressionPolicy(configuration).restore(searchRestart.checkpoint());
+assert.deepEqual(choose(fireRestart, placedView), fireChoice);
+fireRestart.settle({ idempotencyKey: fireChoice.request.idempotencyKey, status: 'COMPLETED', replayed: false, response: fireResponse });
+fireRestart.settle({ idempotencyKey: fireChoice.request.idempotencyKey, status: 'COMPLETED', replayed: true, response: fireResponse });
+assert.equal(fireRestart.summary().knownReplays, 1); assert.equal(fireRestart.summary().kills, 1); assert.equal(fireRestart.summary().fresh, 5);
+assert.throws(() => fireRestart.settle({ idempotencyKey: fireChoice.request.idempotencyKey, status: 'COMPLETED', replayed: true,
+  response: { ...fireResponse, kill: false } }), /conflicting/);
+for (const change of [{ shootCdSeconds: 1 }, { energy: 39 }, { ammo: 49 }, { gun: null },
+  { hunt: { targetId: 'foreign', placedSeconds: 0 } }, { hunt: { targetId: 'target', placedSeconds: 1 } }]) {
+  const view = lethalView(7); Object.assign(view.me.character, { hunt: { targetId: 'target', placedSeconds: 0 } }, change);
+  view.commands.commands = [];
+  const decision = choose(createAggressionPolicy(configuration), view); assert.notEqual(decision.type, 'legacy.fire');
+}
+const waiting = lethalView(8); waiting.commands.commands = []; Object.assign(waiting.me.character,
+  { energy: 0, hunt: { targetId: 'target', placedSeconds: 900 }, shootCdSeconds: 60 });
+const waitDecision = choose(createAggressionPolicy(configuration), waiting);
+assert.equal(waitDecision.kind, 'wait'); assert.equal(waitDecision.recovery.hunt.placedSeconds, 900);
+const replaced = lethalView(9); replaced.commands.player.character.id = 'own-heir';
+Object.assign(replaced.me.character, { id: 'own-heir', generation: 2, gun: null });
+const heirPolicy = createAggressionPolicy(configuration); const oldPending = choose(heirPolicy, makeView(1));
+assert.equal(choose(heirPolicy, replaced).kind, 'wait'); assert.equal(heirPolicy.summary().replacements, 1);
+assert.equal(heirPolicy.checkpoint().payload.pending.request.idempotencyKey, oldPending.request.idempotencyKey);
+const heirRestart = createAggressionPolicy(configuration).restore(heirPolicy.checkpoint());
+assert.equal(choose(heirRestart, replaced).kind, 'wait'); assert.equal(heirRestart.summary().replacements, 1);
+heirRestart.settle({ idempotencyKey: oldPending.request.idempotencyKey, status: 'DENIED' });
+const heirChoice = choose(heirRestart, replaced); assert.equal(heirChoice.actor.characterId, 'own-heir');
+assert.equal(heirRestart.summary().fresh, 0); assert.equal(heirRestart.summary().denials, 1);
+assert.throws(() => choose(heirRestart, makeView(9)), /Replacement/);
+console.log('PASS: canonical search/fire lifecycle gates, replay identities, cooldown waits and same-account heir cursor');
 
 if (process.argv.includes('--postgres')) await nativeExercise();
 

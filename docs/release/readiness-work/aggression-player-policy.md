@@ -1,7 +1,7 @@
 # Scoped high-aggression policy
 
-This RC1-03 component selects actual standard street jumps and ordinary nonviolent
-progression/recovery. It does not qualify the aggression archetype or a matrix cell.
+This RC1-03 component selects standard street jumps, canonical search/fire and
+ordinary nonviolent progression/recovery. It does not qualify the complete aggression archetype or a matrix cell.
 
 ## Source-reviewed conflict inventory
 
@@ -9,7 +9,7 @@ progression/recovery. It does not qualify the aggression archetype or a matrix c
 | --- | --- | --- |
 | Standard jump; rob/message intents | `/v1/streets`, `/v1/me`, `/v1/rivals`; `/v1/streets/:id/jump` | Standard jump only |
 | Car/boat theft, trunk robbery, sabotage | Street roster and public own state; street theft routes | Open |
-| Search and lethal fire | Street roster, own `hunt`; search/fire routes | Open; death and replacement not exercised |
+| Search and lethal fire | Street roster, own `hunt`/cooldown; search/fire routes | Implemented in policy version 2; bounded canonical death/heir exercise retained below |
 | NPC hired hit | Street roster and public contractor catalog; NPC-hit route | Open |
 | Business extortion/robbery/takeover | Public street fronts/business boards; business routes | Open |
 | Convoy ambush, port interception, rival racket raid, NPC war | Their authorized boards and canonical domain routes | Open |
@@ -44,12 +44,17 @@ Among `n` fresh completed choices observed with both implemented classes availab
 incomplete blocks round down. Single-class forced choices have separate counters.
 Report the actual total fraction separately: it need not equal 70%. A losing jump
 is still a committed meaningful conflict. Reads, invalid attempts, waits and exact
-replays never increase the denominator.
+replays never increase the denominator. A completed search is conflict preparation;
+it counts as a committed conflict choice, but never as a shot or combat win. Separate
+search/shot/kill/loss/cancellation counters prevent a preparation-heavy run from
+being described as 70% attacks. A canonical fire cancellation remains a completed
+search-disposition choice with its own counter.
 
 Nonviolent alternatives are issued mystery/discovery, Knowledge sharing/revocation,
 craft/salvage commands and an affordable heal from the actor's canonical quote.
 When the quota selects this class, healing takes priority. Known rivals take
-priority among jump targets; the seed ranks remaining equivalent candidates.
+priority among conflict targets; within that priority, ready fire precedes search,
+then jump. The seed ranks remaining equivalent candidates.
 Generic world/operation/situation types are listed as unclassified, not silently
 counted as alternatives. Consequently this is a scoped denominator, not every
 eligible choice in the full game.
@@ -62,6 +67,32 @@ persist another checkpoint. `restore(checkpoint)` preserves pending requests and
 quota counters. An unknown response stays pending. A replay with no previously
 recorded fresh settlement blocks further choices for external journal/receipt
 reconciliation. The policy never guesses across the database-commit/ack gap.
+
+Version 2 requires the current own-character generation and retains its authorized
+`hunt` and `shootCdSeconds` in the cursor. Search requires an equipped public weapon,
+at least 50 owned rounds, no current hunt and no shot cooldown. Fire requires the
+same visible target, a zero hunt countdown, a zero shot cooldown, 40 energy and at
+least 50 rounds. It commits `min(floor(ownedAmmo),2000)` rounds. Original canonical
+gates remain authoritative. Search/cooldown waits retain their public recovery
+state; they are not evidence of a dead world.
+
+The cursor advances only to a newer authorized generation on the same account.
+Quotas and completion identities survive replacement. An older pending request
+blocks dispatch on the heir until the original receipt/denial is reconciled. Exact
+replay after a recorded fresh settlement must match its response hash and adds only
+to `knownReplays`. Version 1 checkpoints remain tied to their original source;
+version 2 rejects them instead of silently changing their meaning.
+
+`test/rc1-aggression-lifecycle.js --postgres` uses a fresh restricted
+`RC1_AGGRESSION_LIFECYCLE_OUTPUT` and declared initial progression/weapon fixtures:
+shooter level 600, victim level 10, default numeric resources. Canonical check-in
+funds 100 ordinary ammunition boxes; the victim opens actual $2,000 escrow. Twenty
+15-minute policy sessions must each observe both legal implemented classes and
+complete exactly 14 conflict choices. Every request is chosen from fresh authorized
+views; checkpoints restore before dispatch. Original workers run at every due
+logical deadline. A separate victim policy acts before death and continues its
+same-account quota on the actual heir. Forced/denied/waited choices cannot pad this
+block. This bounds the implemented component, not every possible aggression action.
 
 ## Bounded verification
 
