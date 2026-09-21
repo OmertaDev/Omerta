@@ -1,0 +1,40 @@
+import assert from 'node:assert/strict';
+import { createAllianceWorldAdapter } from '../tools/rc1-alliance-world-adapter.js';
+import { actorValueHash } from '../tools/rc1-native-actor-replay.js';
+
+const roster = Array.from({ length: 25 }, (_, n) => ({ accountId: 'actor-' + n, characterId: 'character-' + n, name: 'Actor ' + n }));
+const make = () => createAllianceWorldAdapter({ seed: 'rc1-alpha', roster });
+const view = { accountId: 'actor-0', session: { authed: true, character: { id: 'character-0' } },
+  me: { character: { id: 'character-0', alive: true, level: 75, cash: 26250, jailSeconds: 0, gang: null } },
+  rules: { family: { foundCost: 25000 } } };
+const options = { logicalAt: 1000 }, policy = make();
+assert.deepEqual(policy.roster(0), roster.map(a => a.accountId)); assert.deepEqual(policy.roster(1), policy.roster(0));
+assert.throws(() => policy.roster(2));
+assert.throws(() => createAllianceWorldAdapter({ seed: 'a', roster: roster.slice(1) }));
+assert.throws(() => createAllianceWorldAdapter({ seed: 'a', roster: [...roster.slice(1), roster[1]] }));
+assert.throws(() => policy.choose(0, 'formation', { ...view, diagnostics: {} }, options), /Unapproved/);
+assert.throws(() => policy.choose(0, 'formation', { ...view, accountId: 'actor-1' }, options));
+assert.throws(() => policy.choose(0, 'formation', { ...view, me: { character: { ...view.me.character, cash: 100 } } }, options), /formation cost/);
+assert.throws(() => policy.choose(0, 'formation', { ...view, me: { character: { ...view.me.character, level: 1 } } }, options), /eligibility/);
+const chosen = policy.choose(0, 'formation', view, options), checkpoint = policy.checkpoint();
+assert.equal(chosen.request.path, '/v1/gangs');
+const restored = make().restore(checkpoint); assert.deepEqual(restored.choose(0, 'formation', view, { logicalAt: 2000 }), chosen);
+assert.throws(() => restored.settle(0, { ...chosen, request: { ...chosen.request, idempotencyKey: 'different' } }, { status: 200, replayed: false, body: { ok: true, gangId: 'family-0' } }), /Wrong pending/);
+const response = { status: 200, replayed: false, body: { ok: true, gangId: 'family-0' } };
+restored.settle(0, chosen, response); assert.equal(restored.summary().fresh, 1);
+restored.settle(0, chosen, { ...response, replayed: true }); assert.equal(restored.summary().exactReplays, 1);
+assert.throws(() => restored.settle(0, chosen, { ...response, replayed: true, body: { ok: true, gangId: 'wrong' } }), /Conflicting/);
+assert.equal(restored.summary().fresh, 1);
+const unknown = make().restore(checkpoint); unknown.settle(0, chosen, { ...response, replayed: true });
+assert.equal(unknown.summary().unknownResponses, 1);
+assert.throws(() => unknown.choose(0, 'checkin', view, options), /Unresolved/);
+assert.throws(() => make().restore({ ...checkpoint, sha256: '0'.repeat(64) }), /checksum/);
+const forged = structuredClone(checkpoint); forged.payload.state.configuration.roster[0].characterId = 'other'; forged.sha256 = actorValueHash(forged.payload);
+assert.throws(() => make().restore(forged));
+const component = make(), createView = { ...view, catalog: { graphs: [{ id: 'omerta.coordination.split-ledger', contentHash: 'a'.repeat(64) }] } };
+const create = component.choose(0, 'create', createView, options), pending = component.checkpoint();
+assert.deepEqual(make().restore(pending).choose(0, 'create', createView, options), create);
+assert.deepEqual(pending.payload.policies['actor-0'].payload.pending, create);
+const mismatched = structuredClone(pending); mismatched.payload.state.pending.decision.request.body.expectedContentHash = 'b'.repeat(64);
+mismatched.sha256 = actorValueHash(mismatched.payload); assert.throws(() => make().restore(mismatched), /mismatch/);
+console.log('PASS alliance world adapter: all-25 schedule, actor-only formation, exact pending restore/retry, original component identity, unresolved response and corrupted checkpoint controls');
