@@ -19,7 +19,14 @@ assert.throws(() => validateSchedule({ ...tiny, events: [...tinyEvents, tinyEven
 assert.throws(() => validateSchedule({ ...tiny, scheduleSha256: 'corrupt' }), /schedule hash mismatch/);
 const unfinished = { format: 1, events: tinyEvents.slice(0, 1), scheduleSha256: sha256(canonicalJson(tinyEvents.slice(0, 1))) };
 assert.throws(() => validateSchedule(unfinished), /Unfinished scheduled command/);
-console.log('PASS: schedule hash, duplicate identity and unfinished-command checks');
+const malformedEvents = [tinyEvents[0], { key: 'q:end', type: 'query.complete', query: 'q' }, tinyEvents[1]];
+assert.throws(() => validateSchedule({ format: 1, events: malformedEvents, scheduleSha256: sha256(canonicalJson(malformedEvents)) }), /Unmatched query completion/);
+const simple = createTransactionScheduler();
+await simple.run('a', async () => ({ status: 'COMPLETED', replayed: false, retainedOutcome: 12 }));
+const simpleTrace = simple.finish();
+await assert.rejects(createTransactionScheduler({ replay: simpleTrace }).run('a', async () => ({ status: 'COMPLETED', replayed: false, retainedOutcome: 13 })), /schedule diverged/);
+await assert.rejects(createTransactionScheduler({ replay: simpleTrace, deadlineMs: 10 }).run('wrong-request', async () => ({})), /Schedule timed out/);
+console.log('PASS: schedule integrity, unfinished work, semantic divergence and fail-closed timeout checks');
 
 if (process.argv.includes('--postgres')) {
   const output = process.argv.find((arg) => arg.startsWith('--output='))?.slice('--output='.length);
@@ -96,6 +103,8 @@ if (process.argv.includes('--postgres')) {
       assert.notEqual(held.backendPid, other?.backendPid, 'The contenders must use different PostgreSQL backends');
       assert(schedule.commitOrder.some((entry) => entry.postgresTransactionId), 'Economic commit identity must be retained');
       assert.equal(schedule.injectionFired, fault);
+      assert.equal(schedule.driverCompletions.length, schedule.events.filter((entry) => entry.type === 'query.complete').length,
+        'Every actual driver completion must be retained independently of its scheduled delivery');
       const invariantChecks = verifyLedgerChecks(baseline, await runLedgerInvariants(pool, { alert: false }), 5);
       assert.equal(Number((await pool.query('SELECT count(*) AS n FROM cars WHERE id=$1', [acquired.car.id])).rows[0].n), 0);
       final = await proof.snapshot(pool, 'final-state'); await proof.checkpoint(pool, 'final', url);

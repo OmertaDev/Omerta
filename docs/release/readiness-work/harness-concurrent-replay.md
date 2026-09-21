@@ -18,6 +18,10 @@ Additional read-only metadata queries observe those physical identifiers and
 do not mutate game state. Replay launches the requests in reverse order and
 uses the recorded events to reproduce the overlap without the observation
 barrier. It fails closed on divergence, missing events, or a bounded timeout.
+Ungated driver completion arrivals and elapsed wall time are also retained in
+their actual arrival order. The repeatable stream controls acceptance and
+delivery of those completions; it does not claim control of PostgreSQL kernel
+completion timing. State hashes retain all canonical database values.
 
 A second observed/replayed pair deliberately raises PostgreSQL `P0001` after
 the canonical car debit in the same transaction. The command must fail, all

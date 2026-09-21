@@ -7,12 +7,13 @@ const json = (value) => JSON.parse(JSON.stringify(value));
 const fingerprint = (value) => sha256(canonicalJson(json(value)));
 const deferred = () => { let resolve, reject; const promise = new Promise((a, b) => { resolve = a; reject = b; }); return { promise, resolve, reject }; };
 const BOARD_LOCK = /SELECT id FROM player_command_boards.*FOR UPDATE NOWAIT/s;
-export const SCHEDULE_SCOPE = Object.freeze({ version: 1,
-  boundaries: 'Connection acquisition, SQL dispatch, PostgreSQL completion, application delivery, and command completion.',
+export const SCHEDULE_SCOPE = Object.freeze({ version: 2,
+  boundaries: 'Connection acquisition, SQL dispatch, acceptance of PostgreSQL completion, application delivery, and command completion.',
   observation: 'Winner holds an actual PostgreSQL issued-board row lock while contender executes FOR UPDATE NOWAIT; only observation uses this chosen overlap barrier.',
   replay: 'Replay consumes the retained event order; it does not use the observation barrier. Both requests are launched concurrently in reversed order.',
   transactionOrder: 'Actual BEGIN/COMMIT/ROLLBACK SQL and backend/transaction IDs retained. This single-winner workload has one economic writer; no claim of a global order for unmanaged writers.',
-  diagnosticNormalization: ['backendPid', 'postgresTransactionId', 'observedWallClock'],
+  driverCompletions: 'Ungated driver arrival order and elapsed wall time are retained separately. Replay gates acceptance/delivery; it does not control PostgreSQL kernel completion timing.',
+  diagnosticNormalization: ['backendPid', 'postgresTransactionId', 'driver completion arrival order and elapsed wall time'],
   retained: 'SQL, parameters, result hashes, SQLSTATE, request/connection/query identities, all canonical state and durable receipts.',
   exclusions: ['unobserved production schedules', 'arbitrary races', 'full worker schedule', '225-run world matrix'] });
 
@@ -21,7 +22,10 @@ export function createTransactionScheduler({ replay = null, injectAfterCarDebit 
   const context = new AsyncLocalStorage(), events = [], waiting = [];
   const locked = deferred(), released = deferred();
   let active = false, cursor = 0, failure = null, injectionFired = false;
-  const commitOrder = [], physicalTransactions = [], commandResults = [];
+  const commitOrder = [], physicalTransactions = [], commandResults = [], driverCompletions = [];
+  const started = performance.now();
+  const arrived = (descriptor, outcome) => driverCompletions.push({ request: descriptor.request,
+    connection: descriptor.connection, query: descriptor.query, outcome, elapsedWallMs: performance.now() - started });
   function fail(error) {
     failure ||= error;
     for (const entry of waiting.splice(0)) { clearTimeout(entry.timer); entry.reject(failure); }
@@ -101,11 +105,13 @@ export function createTransactionScheduler({ replay = null, injectAfterCarDebit 
           try {
             result = await client.query(sql, values);
           } catch (error) {
+            arrived(descriptor, 'error');
             await event({ key: `${queryId}:complete`, type: 'query.complete', request: request.label, connection: id,
               query: queryId, outcome: 'error', code: error.code || error.name, message: error.message });
             await event({ key: `${queryId}:deliver`, type: 'query.deliver', request: request.label, connection: id, query: queryId, outcome: 'error' });
             throw error;
           }
+          arrived(descriptor, 'returned');
           if (/^\s*BEGIN\b/i.test(text)) {
             const metadata = (await client.query('SELECT pg_backend_pid() AS pid,txid_current_if_assigned()::text AS txid')).rows[0];
             physicalTransactions.push({ request: request.label, connection: id, transaction,
@@ -141,11 +147,11 @@ export function createTransactionScheduler({ replay = null, injectAfterCarDebit 
       if (failure) throw failure;
       if (replay) assert.equal(cursor, replay.events.length, 'Replay left required schedule events unfinished');
       const result = { format: 1, mode: replay ? 'replay' : 'observe', scope: SCHEDULE_SCOPE,
-        injectionRequested: injectAfterCarDebit, injectionFired, events, commandResults, commitOrder, physicalTransactions,
+        injectionRequested: injectAfterCarDebit, injectionFired, events, commandResults, commitOrder, physicalTransactions, driverCompletions,
         scheduleSha256: fingerprint(events) };
       validateSchedule(result); return result;
     },
-    diagnostic() { return { events, commandResults, commitOrder, physicalTransactions, cursor, failure: failure?.message || null }; },
+    diagnostic() { return { events, commandResults, commitOrder, physicalTransactions, driverCompletions, cursor, failure: failure?.message || null }; },
   };
 }
 
@@ -153,13 +159,23 @@ export function validateSchedule(trace) {
   assert.equal(trace.format, 1); assert(Array.isArray(trace.events) && trace.events.length > 0);
   assert.equal(new Set(trace.events.map((entry) => entry.key)).size, trace.events.length, 'Duplicate schedule event identity');
   assert.equal(trace.scheduleSha256, fingerprint(trace.events), 'Recorded schedule hash mismatch');
-  const commands = new Set(), pending = new Set();
+  const commands = new Set(), pending = new Map();
   for (const event of trace.events) {
-    if (event.type === 'command.start') commands.add(event.request);
+    if (event.type === 'command.start') { assert(!commands.has(event.request), 'Duplicate running command'); commands.add(event.request); }
     if (event.type === 'command.end') assert(commands.delete(event.request), 'Unmatched command completion');
-    if (event.type === 'query.dispatch') pending.add(event.query);
-    if (event.type === 'query.deliver') assert(pending.delete(event.query), 'Unmatched query delivery');
-    if (event.type === 'fault.after-car-debit') assert(pending.delete(event.query), 'Fault lost its debit query');
+    if (event.type === 'query.dispatch') {
+      assert(commands.has(event.request), 'Query outside scheduled command');
+      assert(!pending.has(event.query), 'Duplicate pending query'); pending.set(event.query, 'dispatched');
+    }
+    if (event.type === 'query.complete') {
+      assert.equal(pending.get(event.query), 'dispatched', 'Unmatched query completion'); pending.set(event.query, event.outcome);
+    }
+    if (event.type === 'query.deliver') {
+      assert.equal(pending.get(event.query), event.outcome, 'Query delivery must follow its completion'); pending.delete(event.query);
+    }
+    if (event.type === 'fault.after-car-debit') {
+      assert.equal(pending.get(event.query), 'returned', 'Fault must follow the completed debit query'); pending.delete(event.query);
+    }
   }
   assert.equal(commands.size, 0, 'Unfinished scheduled command'); assert.equal(pending.size, 0, 'Unfinished scheduled query');
   return true;
