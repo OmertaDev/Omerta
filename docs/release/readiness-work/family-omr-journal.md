@@ -69,3 +69,9 @@ redirection, all rank counts/ties, yield racing dissolution/ranking, death/kick
 dissolution, full cash/ammo/turf/war custody, unrelated OMR systems, natural
 progression, provider/local-chain backing, dependency/deployment attestation and
 the full simulation matrix. Source inventory alone is not execution evidence.
+
+Native `ac82b5bac1967ebebccc14775c89d8317213c054` retained a harness FAIL
+after29 completed boundaries: the war-standing spot check concatenated1 onto
+PostgreSQL's NUMERIC string. The control now compares exact BigInt integers.
+The production war had correctly settled; this does not turn the failed full
+gate into a pass or imply anything about the unexecuted fractional-yield case.

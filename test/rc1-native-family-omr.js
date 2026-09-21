@@ -145,7 +145,7 @@ try {
     const oldA = before.gangs.find(row => row.id === families.a), oldB = before.gangs.find(row => row.id === families.b);
     const a = after.gangs.find(row => row.id === families.a), b = after.gangs.find(row => row.id === families.b), spoils = Math.floor(Number(oldB.treasury) * M3.WAR_SPOILS);
     assert(spoils > 0); assert.equal(Number(a.treasury), Number(oldA.treasury) + spoils + 100); assert.equal(Number(b.treasury), Number(oldB.treasury) - spoils);
-    assert.equal(a.season_wars, oldA.season_wars + 1); assert.equal(a.war_with, null); assert.equal(b.war_with, null);
+    assert.equal(BigInt(a.season_wars), BigInt(oldA.season_wars) + 1n); assert.equal(a.war_with, null); assert.equal(b.war_with, null);
   });
   await installFault('yield');
   try { await observe('yield:first-original-hour-abort-after-credits', () => controller.advanceTo(epoch + 3600000).then(() => ({ at })), ({ before, after }) => {
