@@ -163,8 +163,6 @@ jobs:
     env:
       COORDINATION_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/rc1_resources
       RC1_RESOURCE_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
-      RC1_RESOURCE_OUTPUT: ${{ runner.temp }}/rc1-family-original
-      RC1_SHIPMENT_OUTPUT: ${{ runner.temp }}/rc1-shipment-midnight
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -173,10 +171,14 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Original Family war and turf lifetimes with treasury reconciliation
+        env:
+          RC1_RESOURCE_OUTPUT: ${{ runner.temp }}/rc1-family-original
         run: |
           umask 077
           npm run test:rc1:family:postgres
       - name: Two midnight shipment boundaries with aligned application and database clocks
+        env:
+          RC1_SHIPMENT_OUTPUT: ${{ runner.temp }}/rc1-shipment-midnight
         run: |
           umask 077
           npm run test:rc1:shipment:postgres
