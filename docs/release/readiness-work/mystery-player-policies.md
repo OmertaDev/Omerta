@@ -75,6 +75,16 @@ choices, full snapshots and policy checkpoints against a clean committed source.
 It compares resumed decisions on the same authorized projection; it does not claim
 database replay. Native quota alternatives are observed, never fabricated.
 
+The first native execution at `a2688ba6da4cba5bf41476177c1bc637143b43b4`
+failed after three commands because scenario underscores violated the recorder's
+artifact filename grammar. The failed run and snapshot remain retained. The
+filename repair at `972e7f46` passed: 12 fresh discovery commands for high, 12
+deliberate cap waits for low, and all 55 canonical invariants. Both native views
+offered only investigation, so this is **100% forced high investigation and zero
+low selections**, not evidence of 70%/5% native mixed-choice workloads. The next
+revision additionally records the exact foreign-actor denial and its unchanged
+full-state snapshots.
+
 All 90-day runs, complete whole-policy choice accounting, Knowledge contention,
 late-entry recovery, all resource journals, worker lifecycles, full-game replay,
 225-cell completion and the production-equivalent soak remain open.

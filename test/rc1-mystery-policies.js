@@ -161,7 +161,13 @@ async function nativeExercise() {
           assert.equal(after.stateSha256, before.stateSha256); continue;
         }
         const executionId = decision.command.executionIdentity.executionId;
-        if (step === 0) await assert.rejects(() => engine.execute('mystery-low', { executionId, confirmed: true }, executionId));
+        if (step === 0) {
+          const before = await proof.snapshot(db.pool, 'foreign-command-before');
+          await assert.rejects(() => proof.invoke('player.execute', { account: 'mystery-low', executionId, expectedDenial: true },
+            () => engine.execute('mystery-low', { executionId, confirmed: true }, executionId)), { code: 'command_unavailable' });
+          const after = await proof.snapshot(db.pool, 'foreign-command-after');
+          assert.equal(after.stateSha256, before.stateSha256, 'Foreign command changed authoritative state');
+        }
         const response = await proof.invoke('player.execute', { account, executionId }, () =>
           engine.execute(account, { executionId, confirmed: true }, executionId));
         assert.equal(response.status, 'COMPLETED'); assert.equal(response.replayed, false);
