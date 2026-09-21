@@ -8118,10 +8118,12 @@
     // A newer entry owns the panel; an older response must never replace it.
     if (renderRevision !== crewRenderRevision || currentTab !== 'crew') return;
     const editing = document.activeElement;
-    if (t.contains(editing) && (/^(INPUT|SELECT|TEXTAREA)$/.test(editing.tagName) || editing.isContentEditable)) {
+    const sendingDraft = editing?.id === 'crew-send' && t.querySelector('input#crew-say')?.value;
+    if (t.contains(editing) && (/^(INPUT|SELECT|TEXTAREA)$/.test(editing.tagName) || editing.isContentEditable || sendingDraft)) {
       _reRenderNeeded = true;
-      // Complete this deferred render on focusout even when Tab lands on the
-      // adjacent button. The existing mandatory-refresh path restores its panel.
+      // Send belongs to the draft interaction: preserve its node while a player
+      // Tabs to it or holds a pointer down. Refresh after leaving the interaction;
+      // keep the existing action-completion obligation for the eventual refresh.
       _reRenderAfterAction = true;
       return;
     }
