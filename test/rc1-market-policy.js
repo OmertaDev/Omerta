@@ -26,6 +26,13 @@ assert.equal(buyer.summary().denials, 1); assert.equal(buyer.summary().fresh, 0)
 const lost = choose(buyer, view(), 'take');
 buyer.settle({ idempotencyKey: lost.request.idempotencyKey, status: 'COMPLETED', replayed: true, response: { ok: true } });
 assert.equal(buyer.summary().fresh, 0); assert.throws(() => choose(buyer, view(), 'take'), /Unresolved/);
+const unresolved = createMarketPolicy(config).restore(buyer.checkpoint());
+assert.deepEqual(unresolved.checkpoint().payload.unresolved[0].decision, lost);
+assert.deepEqual(unresolved.checkpoint().payload.unresolved[0].response, { ok: true });
+assert.throws(() => choose(unresolved, view(), 'take'), /Unresolved/);
+const retainedPost = restored.summary().retainedOwnPosts[0];
+assert.equal(retainedPost.returnedExpirySeconds, 3600); assert.equal(retainedPost.selectedAt, at);
+assert.equal(Object.hasOwn(retainedPost, 'originallyExpiresAt'), false, 'Selection time cannot prove delayed request deadline');
 for (const mutation of [{ expiresSeconds: 0 }, { sellerId: 'own' }, { district: 'canal' }, { qty: 0 }, { unitPrice: 501 }, { kind: 'car' }]) {
   const v = view(); Object.assign(v.market.listings[0], mutation);
   assert.equal(choose(createMarketPolicy(config), v, 'take').kind, 'wait');

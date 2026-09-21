@@ -4,7 +4,7 @@ import crypto from 'node:crypto';
 const copy = (value) => structuredClone(value);
 const hash = (value) => crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const identity = (value) => typeof value === 'string' && /^[a-zA-Z0-9_-]+$/.test(value);
-export const MARKET_POLICY_CONTRACT = Object.freeze({ version: 1, scenarioId: 'market_stress',
+export const MARKET_POLICY_CONTRACT = Object.freeze({ version: 2, scenarioId: 'market_stress',
   inputs: 'Verified bearer account context, ordinary /v1/session, /v1/me, /v1/market and public /v1/rules goods catalog. No other actor inventory, database diagnostics, hidden reserve or bidder identity.',
   scope: 'One-unit fixed-price goods post/buy, buy-order post/fill, own live listing cancellation and receipt-linked order claim. Auctions, car transfers and hidden market inventory remain excluded.',
   phases: 'Runner records post/take/cancel/claim/mixed phase before choosing. Seed ranks actual publicly plausible candidates; phase is workload scheduling, never evidence of canonical eligibility.',
@@ -15,7 +15,7 @@ export const MARKET_POLICY_CONTRACT = Object.freeze({ version: 1, scenarioId: 'm
   qualification: 'No 100-inflight soak, full resource taxonomy, all market branches, 90-day or matrix qualification.' });
 const counters = () => ({ observations: 0, choices: 0, waits: 0, fresh: 0, denials: 0, knownReplays: 0, unresolvedReplays: 0 });
 function validate(state, configuration) {
-  assert.equal(state.version, 1); assert.deepEqual(state.configuration, configuration);
+  assert.equal(state.version, 2); assert.deepEqual(state.configuration, configuration);
   assert.deepEqual(Object.keys(state.counters).sort(), Object.keys(counters()).sort());
   for (const value of Object.values(state.counters)) assert(Number.isSafeInteger(value) && value >= 0);
   const c = state.counters;
@@ -23,13 +23,18 @@ function validate(state, configuration) {
   assert.equal(c.choices, c.fresh + c.denials + c.unresolvedReplays + Number(!!state.pending));
   assert.equal(state.settled.length, c.fresh + c.denials + c.unresolvedReplays);
   assert.equal(new Set(state.settled).size, state.settled.length);
+  assert.equal(state.unresolved.length, c.unresolvedReplays);
+  for (const receipt of state.unresolved) {
+    assert(state.settled.includes(receipt.decision.request.idempotencyKey));
+    assert.equal(receipt.responseSha256, hash(receipt.response));
+  }
   assert.equal(Object.values(state.completedByType).reduce((a, n) => a + n, 0), c.fresh);
 }
 export function createMarketPolicy(configuration) {
   assert.deepEqual(Object.keys(configuration).sort(), ['accountId', 'seed']);
   assert(identity(configuration.accountId)); assert(typeof configuration.seed === 'string' && configuration.seed.length > 0);
   configuration = copy(configuration);
-  let state = { version: 1, configuration, counters: counters(), pending: null, settled: [], receipts: [], ownedPosts: [], completedByType: {} };
+  let state = { version: 2, configuration, counters: counters(), pending: null, settled: [], receipts: [], unresolved: [], ownedPosts: [], completedByType: {} };
   return {
     choose(view, { logicalAt, phase = 'mixed' }) {
       assert(Number.isSafeInteger(logicalAt) && logicalAt >= 0);
@@ -109,7 +114,7 @@ export function createMarketPolicy(configuration) {
           assert.equal(response.kind === 'good' ? response.qty : response.wanted, 1);
           assert.equal(response.expiresSeconds, 3600);
           state.ownedPosts.push({ id: response.id, characterId: choice.characterId, kind: response.kind, good: response.good,
-            qty: 1, claimed: 0, cancelled: false, originallyExpiresAt: choice.logicalAt + 3600000 });
+            qty: 1, claimed: 0, cancelled: false, selectedAt: choice.logicalAt, returnedExpirySeconds: response.expiresSeconds });
         } else if (choice.type === 'market.cancel') {
           assert.equal(response.cancelled, choice.stableId);
           const own = state.ownedPosts.find((post) => post.id === choice.stableId); if (own) own.cancelled = true;
@@ -119,7 +124,10 @@ export function createMarketPolicy(configuration) {
         else if (choice.type === 'market.fill') assert(response.delivered > 0);
         c.fresh++; state.completedByType[choice.type] = (state.completedByType[choice.type] || 0) + 1;
       } else if (status === 'DENIED') c.denials++;
-      else c.unresolvedReplays++;
+      else {
+        c.unresolvedReplays++;
+        state.unresolved.push({ decision: copy(choice), response: copy(response), responseSha256: hash(response) });
+      }
       if (!replayed || status === 'DENIED') state.receipts.push({ idempotencyKey, status, responseSha256: hash(response) });
       state.settled.push(idempotencyKey); state.pending = null; validate(state, configuration); return this.summary();
     },
