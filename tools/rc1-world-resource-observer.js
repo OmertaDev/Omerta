@@ -485,7 +485,7 @@ function reconcileFamilyDissolution(before, after, receipts, checks, unsupported
     for (const field of new Set([...Object.keys(a[0]), ...Object.keys(b[0])])) if (!['balance', 'lifetime_in'].includes(field))
       assert.deepEqual(b[0][field], a[0][field], `Unattributed desk field in dissolution: ${field}`);
     disposition.find(row => row.currency === 'omr').authority.push(...reference('transactions', [credit]));
-  }
+  } else assert.deepEqual(rows(after, 'desk_inventory'), rows(before, 'desk_inventory'), 'Zero-reserve dissolution changed desk custody/books');
   assert.equal(usedReceipts.size, receipts.length, 'Unattributed Family disposal receipt');
   const key = row => tuple(row.table, row.owner, row.field), a = indexed(omrBuckets(before), key, 'OMR bucket'), b = indexed(omrBuckets(after), key, 'OMR bucket');
   for (const bucket of new Set([...a.keys(), ...b.keys()])) {

@@ -91,6 +91,8 @@ if (fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
   const zero = structuredClone(input); for (const field of ['treasury', 'ammo_bank', 'omr_reserve']) zero.before.tables.gangs[0][field] = '0';
   zero.after.tables.transactions = []; zero.after.tables.desk_inventory = structuredClone(zero.before.tables.desk_inventory);
   assert.equal(verifyFamilyDissolutionBoundary(zero, { expected: 1 }).familyDissolution.movements[0].disposition.length, 0);
+  const zeroDesk = structuredClone(zero); zeroDesk.after.tables.desk_inventory[0].lifetime_in = '21';
+  assert.throws(() => verifyFamilyDissolutionBoundary(zeroDesk, { expected: 1 }), /Zero-reserve/);
   const empty = structuredClone(input); empty.before.tables.gang_members.shift(); assert.throws(() => verifyFamilyDissolutionBoundary(empty, { expected: 1 }), /original owners/);
   const directory = process.argv.find(value => value.startsWith('--evidence='))?.slice(11);
   if (directory) {

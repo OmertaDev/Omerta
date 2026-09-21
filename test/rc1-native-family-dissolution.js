@@ -163,6 +163,10 @@ try {
   await invariant('terminal-baseline'); await proof.artifact('initial-state.json', { phase: 'terminal-baseline', state: initial, directResourceWritesAfterInitialization: 0 }); phase = 'terminal-proof';
   const left = await observe('boss-departs-preserved-custody', () => call('a', '/v1/gangs/leave', 'boss-departs')); assert.equal(left.body.dissolved, false);
   await observe('outsider-leave-refused', () => call('outsider', '/v1/gangs/leave', 'outsider-leave', undefined, [400]), 0);
+  // settleIfDue intentionally commits elapsed accrual BEFORE an action's TX.
+  // Observe that canonical read first, so full-state equality below isolates
+  // the later aborted terminal action without erasing legitimate accrual.
+  await observe('member-canonical-settlement-before-fault', () => call('member', '/v1/me', null, undefined, [200], 'GET'));
   await installFault(); const beforeAbort = await snapshotWorldResources(readPool);
   await observe('last-member-late-abort', () => call('member', '/v1/gangs/leave', 'last-member-leave', undefined, [500]), 0);
   assert.equal(worldResourceHash(await snapshotWorldResources(readPool)), worldResourceHash(beforeAbort), 'Late terminal abort changed authoritative state or receipts');
