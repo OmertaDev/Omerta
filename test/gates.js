@@ -3479,7 +3479,7 @@ scopedSocialContext = async function(db) {
     return commands;
   };
   const expectedNativeCommands = [
-    'pgquery', 'pgcheck', 'phase2:definitions:postgres', 'phase2:lots:postgres',
+    'pgquery', 'pgcheck', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:resource:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
     'test:coordination:postgres', 'test:world-kernel:postgres', 'test:family-operations:postgres', 'test:world-projections:postgres',
     'test:core-progression:postgres', 'test:player-commands:postgres', 'test:rc1:telemetry:postgres', 'test:director:postgres',
     'test:stockcatalogv2:postgres', 'test:rwahealth:postgres',

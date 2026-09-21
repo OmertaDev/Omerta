@@ -6,7 +6,7 @@
     ".github/workflows/liquidity-postgres.yml",
     ".github/workflows/rc1-recovery.yml"
   ],
-  "note": "Command inventory for execution. Workflow setup and environment remain required; additional Foundry E2E/liquidity/size lanes must be reviewed in the final-regression proof.",
+  "note": "Pinned required command inventory across the four source workflows. Preserve each workflow setup, database isolation, platform, environment and budgets. A component regression pass does not clear a full native, deployed, or human proof.",
   "gates": [
     {
       "id": "npm-test",
@@ -471,6 +471,157 @@
       "coverageExclusions": [
         "Does not alone qualify a release proof"
       ]
+    },
+    {
+      "id": "rc1-resource",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:resource:postgres"
+      ],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Full resource transition coverage remains unproven"
+      ]
+    },
+    {
+      "id": "forge-build",
+      "command": [
+        "forge",
+        "build"
+      ],
+      "timeoutMs": 3600000,
+      "cwd": "omerta-contracts"
+    },
+    {
+      "id": "forge-sizes",
+      "command": [
+        "forge",
+        "build",
+        "--sizes",
+        "--skip",
+        "FuzzTester"
+      ],
+      "timeoutMs": 3600000,
+      "cwd": "omerta-contracts"
+    },
+    {
+      "id": "dexbot-e2e",
+      "command": [
+        "npm",
+        "run",
+        "dexbot-e2e"
+      ],
+      "timeoutMs": 3600000
+    },
+    {
+      "id": "stock-e2e",
+      "command": [
+        "npm",
+        "run",
+        "stock-e2e"
+      ],
+      "timeoutMs": 3600000
+    },
+    {
+      "id": "liquidity-e2e",
+      "command": [
+        "node",
+        "tools/liquidity-e2e.js"
+      ],
+      "timeoutMs": 3600000
+    },
+    {
+      "id": "liquidity-deployment-plan",
+      "command": [
+        "node",
+        "test/liquidity-deployment-plan.js"
+      ],
+      "timeoutMs": 3600000
+    },
+    {
+      "id": "native-keepertransactions",
+      "command": [
+        "node",
+        "test/keepertransactions.js"
+      ],
+      "timeoutMs": 900000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Requires workflow-isolated PostgreSQL database and exact recorded environment"
+      ]
+    },
+    {
+      "id": "native-liquiditykeeper",
+      "command": [
+        "node",
+        "test/liquiditykeeper.js"
+      ],
+      "timeoutMs": 900000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Requires workflow-isolated PostgreSQL database and exact recorded environment"
+      ]
+    },
+    {
+      "id": "native-liquidityaccounting",
+      "command": [
+        "node",
+        "test/liquidityaccounting.js"
+      ],
+      "timeoutMs": 900000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Requires workflow-isolated PostgreSQL database and exact recorded environment"
+      ]
+    },
+    {
+      "id": "native-liquidityindexer",
+      "command": [
+        "node",
+        "test/liquidityindexer.js"
+      ],
+      "timeoutMs": 900000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Requires workflow-isolated PostgreSQL database and exact recorded environment"
+      ]
+    },
+    {
+      "id": "native-liquidityqueue",
+      "command": [
+        "node",
+        "test/liquidityqueue.js"
+      ],
+      "timeoutMs": 900000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Requires workflow-isolated PostgreSQL database and exact recorded environment"
+      ]
+    },
+    {
+      "id": "native-liquiditypolicy",
+      "command": [
+        "node",
+        "test/liquiditypolicy.js"
+      ],
+      "timeoutMs": 900000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Requires workflow-isolated PostgreSQL database and exact recorded environment"
+      ]
+    },
+    {
+      "id": "market-v2",
+      "command": [
+        "npm",
+        "run",
+        "test:market-v2"
+      ],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": []
     }
   ]
 }

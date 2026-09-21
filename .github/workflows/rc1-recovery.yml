@@ -69,6 +69,12 @@ jobs:
           npm run backup:selftest 2>&1 | tee "$RC1_SHUTDOWN_EVIDENCE/backup-selftest.log"
       - name: Nine production-process termination barriers
         run: node tools/rc1-shutdown.js
+      - name: Native checkpoint restore, receipt replay and deliberate corruption detection
+        if: '!cancelled()'
+        run: |
+          set -o pipefail
+          umask 077
+          npm run test:rc1:proof:postgres 2>&1 | tee "$RC1_SHUTDOWN_EVIDENCE/checkpoint-proof.log"
       - name: Retain exact-revision process logs and verdict
         if: always()
         uses: actions/upload-artifact@v4

@@ -75,5 +75,14 @@
       "classification": "D tooling",
       "reason": "Connector rejects multiple SELECT statements in a prepared statement; retried individually successfully"
     }
-  ]
+  ],
+  "healthObservation": {
+    "method": "GET https://omerta-api.onrender.com/health",
+    "at": "2026-09-21T02:50:41.152Z",
+    "httpStatus": 200,
+    "db": "up",
+    "workerStale": false,
+    "workerBeatAgoSeconds": 1337,
+    "scope": "Single read-only existing-production health sample; no candidate, load, alert, configuration or recovery proof"
+  }
 }

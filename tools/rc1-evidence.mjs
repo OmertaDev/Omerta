@@ -5,13 +5,24 @@ import path from 'node:path';
 import os from 'node:os';
 import { execFileSync, spawn } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
-import { REQUIRED_PROOFS, sha256 } from './rc1-qualification.mjs';
+import { REQUIRED_PROOFS, sha256, evidencePath, sourceInventory, validateSourceManifest, validateGateRegistry } from './rc1-qualification.mjs';
 
 const git = (...args) => execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 }).trim();
 const json = (file) => JSON.parse(fs.readFileSync(file, 'utf8'));
 const write = (file, value) => fs.writeFileSync(file, JSON.stringify(value, null, 2) + '\n', { flag: 'wx' });
 export const sourceState = () => ({ source: git('rev-parse', 'HEAD'), tree: git('rev-parse', 'HEAD^{tree}'),
   status: git('status', '--porcelain', '--untracked-files=all') });
+
+export function gateWorkingDirectory(gate) {
+  const root = fs.realpathSync(git('rev-parse', '--show-toplevel'));
+  const relative = gate.cwd || '.';
+  assert(typeof relative === 'string' && !path.isAbsolute(relative) && !/^[a-z]:/i.test(relative)
+    && !relative.replaceAll('\\', '/').split('/').includes('..'), 'Gate cwd must stay inside source');
+  const directory = fs.realpathSync(path.resolve(root, relative));
+  assert(directory === root || directory.startsWith(root + path.sep), 'Gate cwd escapes frozen source');
+  assert(fs.statSync(directory).isDirectory(), 'Gate cwd must be a directory');
+  return directory;
+}
 
 export function freeze({ output, configuration, predecessor, registry, scenarioManifest }) {
   assert(!fs.existsSync(output), 'Use a new evidence directory; never overwrite a prior run');
@@ -29,16 +40,17 @@ export function freeze({ output, configuration, predecessor, registry, scenarioM
     }
   };
   inspect(config);
-  const files = git('ls-files').split('\n').filter((file) => /^(src\/|public\/|content\/|tools\/|test\/|\.github\/workflows\/|omerta-contracts\/(src\/|test\/|foundry.toml)|schema.sql$|package(-lock)?\.json$|render.yaml$)/.test(file));
-  const sourceFiles = files.map((file) => ({ path: file, sha256: sha256(fs.readFileSync(file)) }));
+  assert.equal(fs.realpathSync(process.cwd()), fs.realpathSync(git('rev-parse', '--show-toplevel')), 'Freeze from the repository root');
+  const inventory = sourceInventory(state.source);
+  const sourceFiles = inventory.files.map(({ path: file, blob, gitSha256, accepted }) => {
+    const actual = sha256(fs.readFileSync(evidencePath(process.cwd(), file)));
+    assert(accepted.includes(actual), `Checkout bytes differ from Git source: ${file}`);
+    return { path: file, blob, gitSha256, sha256: actual };
+  });
   const gates = json(registry);
-  assert(gates.gates?.length > 0);
-  assert.equal(new Set(gates.gates.map((g) => g.id)).size, gates.gates.length);
-  for (const gate of gates.gates) {
-    assert(/^[a-z0-9-]+$/.test(gate.id));
-    assert(Array.isArray(gate.command) && gate.command.length && gate.command.every((s) => typeof s === 'string'));
-    assert(Number.isSafeInteger(gate.timeoutMs) && gate.timeoutMs > 0);
-  }
+  validateGateRegistry(state.source, gates);
+  for (const gate of gates.gates) gateWorkingDirectory(gate);
+  assert.deepEqual(sourceState(), state, 'Source moved while freezing');
   fs.mkdirSync(output, { recursive: true });
   fs.writeFileSync(path.join(output, 'configuration.json'), configurationBytes, { flag: 'wx' });
   const gateBytes = fs.readFileSync(registry);
@@ -65,21 +77,28 @@ function assertFrozen(manifest) {
   const state = sourceState();
   assert.equal(state.source, manifest.source, 'Source revision moved during evidence capture');
   assert.equal(state.status, '', 'Source checkout changed during evidence capture');
-  for (const file of manifest.sourceFiles) assert.equal(sha256(fs.readFileSync(file.path)), file.sha256, `Source changed: ${file.path}`);
+  validateSourceManifest(manifest);
+  for (const file of manifest.sourceFiles) assert.equal(sha256(fs.readFileSync(evidencePath(process.cwd(), file.path))), file.sha256, `Source changed: ${file.path}`);
 }
 
 export async function runGate(root, id) {
   assert(/^[a-z0-9-]+$/.test(id));
-  const manifest = json(path.join(root, 'candidate.json'));
+  root = fs.realpathSync(root);
+  const manifest = json(evidencePath(root, 'candidate.json'));
   assertFrozen(manifest);
-  const registryBytes = fs.readFileSync(path.join(root, 'gate-registry.json'));
+  const registryBytes = fs.readFileSync(evidencePath(root, 'gate-registry.json'));
   assert.equal(sha256(registryBytes), manifest.gateRegistrySha256, 'Gate registry changed after freeze');
-  assert.equal(sha256(fs.readFileSync(path.join(root, 'configuration.json'))), manifest.configurationSha256);
-  const gate = JSON.parse(registryBytes).gates.find((entry) => entry.id === id);
+  assert.equal(sha256(fs.readFileSync(evidencePath(root, 'configuration.json'))), manifest.configurationSha256);
+  const registry = validateGateRegistry(manifest.source, JSON.parse(registryBytes));
+  const gate = registry.gates.find((entry) => entry.id === id);
   assert(gate, `Unregistered gate: ${id}`);
+  const cwd = gateWorkingDirectory(gate);
+  const gatesDirectory = path.join(root, 'gates');
+  if (!fs.existsSync(gatesDirectory)) fs.mkdirSync(gatesDirectory);
+  assert(fs.realpathSync(gatesDirectory).startsWith(root + path.sep), 'Gate output escapes evidence root');
   const directory = path.join(root, 'gates', id);
   assert(!fs.existsSync(directory), 'Retain failed attempts; use a new freeze for a retest');
-  fs.mkdirSync(directory, { recursive: true });
+  fs.mkdirSync(directory);
   const log = `gates/${id}/output.txt`;
   const fd = fs.openSync(path.join(root, log), 'wx');
   const startedAt = new Date().toISOString();
@@ -95,14 +114,15 @@ export async function runGate(root, id) {
   let timedOut = false, exitCode = null, signal = null, launchError = null;
   try {
     await new Promise((resolve) => {
-      const child = spawn(command, args, { cwd: gate.cwd ? path.resolve(gate.cwd) : process.cwd(),
-        env: { ...process.env, CI: 'true' }, stdio: ['ignore', fd, fd], windowsHide: true });
+      const child = spawn(command, args, { cwd,
+        env: { ...process.env, CI: 'true' }, stdio: ['ignore', fd, fd], windowsHide: true,
+        detached: process.platform !== 'win32' });
       const timer = setTimeout(() => {
         timedOut = true;
         if (process.platform === 'win32') {
           // Scope termination to this newly spawned process tree, never a process-name sweep.
           if (child.pid) spawn('taskkill', ['/PID', String(child.pid), '/T', '/F'], { windowsHide: true, stdio: 'ignore' });
-        } else child.kill('SIGKILL');
+        } else if (child.pid) { try { process.kill(-child.pid, 'SIGKILL'); } catch { /* already exited */ } }
       }, gate.timeoutMs);
       child.once('error', (error) => { launchError = error.message; });
       child.once('close', (code, killedBy) => { clearTimeout(timer); exitCode = code; signal = killedBy; resolve(); });

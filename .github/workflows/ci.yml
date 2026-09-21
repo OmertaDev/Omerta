@@ -212,6 +212,13 @@ jobs:
           RC1_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/postgres
         run: npm run test:rc1:security:postgres
 
+      - name: RC1 scoped resource journals, concurrent retries and rollback (real PostgreSQL)
+        if: '!cancelled()'
+        env:
+          RC1_RESOURCE_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/postgres
+          RC1_RESOURCE_OUTPUT: ${{ runner.temp }}/rc1-resource-proof
+        run: npm run test:rc1:resource:postgres
+
       - name: Phase 2 definition registry (real PostgreSQL)
         if: '!cancelled()'
         env:

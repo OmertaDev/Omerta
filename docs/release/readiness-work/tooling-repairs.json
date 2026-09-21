@@ -1,0 +1,107 @@
+{
+  "format": 1,
+  "phase": "development-regressions-not-release-clearance",
+  "findings": [
+    {
+      "id": "RC1-TOOL-01",
+      "classification": "D tooling defect",
+      "owner": "Codex/root; reviewed and repaired by Codex/source_repairs",
+      "before": "Reduced arbitrary gate registry could be frozen",
+      "repair": "Source-pinned canonical registry deep equality",
+      "changedSource": [
+        "tools/rc1-evidence.mjs",
+        "tools/rc1-qualification.mjs",
+        "test/rc1-qualification.js"
+      ],
+      "developmentRetest": {
+        "command": "node test/rc1-qualification.js",
+        "exitCode": 0,
+        "assertions": "70 negative controls plus real temporary-Git child capture/failure/timeout/source-mutation checks"
+      },
+      "requiredIntegratedReruns": [
+        "test:rc1",
+        "evidence freeze/run/verify/qualify"
+      ]
+    },
+    {
+      "id": "RC1-TOOL-02",
+      "classification": "D tooling defect",
+      "owner": "Codex/root; reviewed and repaired by Codex/source_repairs",
+      "before": "Gate cwd could resolve outside frozen source",
+      "repair": "Lexical and realpath working-directory containment",
+      "changedSource": [
+        "tools/rc1-evidence.mjs",
+        "test/rc1-qualification.js"
+      ],
+      "developmentRetest": {
+        "command": "node test/rc1-qualification.js",
+        "exitCode": 0,
+        "assertions": "70 negative controls plus real temporary-Git child capture/failure/timeout/source-mutation checks"
+      },
+      "requiredIntegratedReruns": [
+        "test:rc1",
+        "evidence freeze/run/verify/qualify"
+      ]
+    },
+    {
+      "id": "RC1-TOOL-03",
+      "classification": "D tooling defect",
+      "owner": "Codex/root; reviewed and repaired by Codex/source_repairs",
+      "before": "Arbitrary JSON and failed/timed-out results could clear an individual proof declaration",
+      "repair": "Typed execution records and complete result/log/hash validation",
+      "changedSource": [
+        "tools/rc1-qualification.mjs",
+        "test/rc1-qualification.js"
+      ],
+      "developmentRetest": {
+        "command": "node test/rc1-qualification.js",
+        "exitCode": 0,
+        "assertions": "70 negative controls plus real temporary-Git child capture/failure/timeout/source-mutation checks"
+      },
+      "requiredIntegratedReruns": [
+        "test:rc1",
+        "evidence freeze/run/verify/qualify"
+      ]
+    },
+    {
+      "id": "RC1-TOOL-04",
+      "classification": "D tooling defect",
+      "owner": "Codex/root; reviewed and repaired by Codex/source_repairs",
+      "before": "Index symlink could escape root",
+      "repair": "Validate SHA256SUMS.json through same realpath boundary as artifacts",
+      "changedSource": [
+        "tools/rc1-qualification.mjs",
+        "test/rc1-qualification.js"
+      ],
+      "developmentRetest": {
+        "command": "node test/rc1-qualification.js",
+        "exitCode": 0,
+        "assertions": "70 negative controls plus real temporary-Git child capture/failure/timeout/source-mutation checks"
+      },
+      "requiredIntegratedReruns": [
+        "test:rc1",
+        "evidence freeze/run/verify/qualify"
+      ]
+    },
+    {
+      "id": "RC1-TOOL-05",
+      "classification": "D tooling defect",
+      "owner": "Codex/root; reviewed and repaired by Codex/source_repairs",
+      "before": "Nonexistent source and fabricated source inventory accepted structurally",
+      "repair": "Resolve source commit/tree and validate full selected Git-blob inventory/hashes",
+      "changedSource": [
+        "tools/rc1-qualification.mjs",
+        "test/rc1-qualification.js"
+      ],
+      "developmentRetest": {
+        "command": "node test/rc1-qualification.js",
+        "exitCode": 0,
+        "assertions": "70 negative controls plus real temporary-Git child capture/failure/timeout/source-mutation checks"
+      },
+      "requiredIntegratedReruns": [
+        "test:rc1",
+        "evidence freeze/run/verify/qualify"
+      ]
+    }
+  ]
+}
