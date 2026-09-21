@@ -3,6 +3,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
+import { createNpcBoatFault } from '../tools/rc1-npc-boat-fault.js';
 import { createNpcCarAcquisitionCommitObserver } from '../tools/rc1-npc-car-acquisition.js';
 import { createNpcBoatAcquisitionCommitObserver } from '../tools/rc1-npc-boat-journal.js';
 import { createNpcMarketOrderCommitObserver, NPC_MARKET_SQL } from '../tools/rc1-npc-market-order-journal.js';
@@ -19,7 +20,7 @@ assert.match(runner, /assert\.deepEqual\(result\.carMeltWitnessObservation, repl
 const worker = fs.readFileSync(new URL('../tools/rc1-native-worker.js', import.meta.url), 'utf8');
 assert(worker.indexOf('const clock = serialDatabaseOptions({ commitObserver });') < worker.indexOf('if (queryOrder) pool = queryOrder.wrapPool(pool);'));
 
-const instantiate = new Function('env', `const {observeResources,createNpcFamilyCommitObserver,createNpcCarAcquisitionCommitObserver,createNpcBoatAcquisitionCommitObserver,createNpcMarketOrderCommitObserver,NPC_MARKET_SQL,seed,runtime,currentInvocation,at,allianceEnabled,
+const instantiate = new Function('env', `const {npcBoatFault,observeResources,createNpcFamilyCommitObserver,createNpcCarAcquisitionCommitObserver,createNpcBoatAcquisitionCommitObserver,createNpcMarketOrderCommitObserver,NPC_MARKET_SQL,seed,runtime,currentInvocation,at,allianceEnabled,
  snapshotWorldResources,diagnosticPool,reconcileWorldResources,worldResourceHash,proof,resourceSummary,resourceCost,
  resourceStream,carMeltWitnessSummary,carAcquisitionWitnessSummary,npcFamilyWitnessSummary,electionProbe,npcBoatWitnessSummary,npcMarketOrderWitnessSummary,canonicalJson,sha256,assert}=env;
  let priorResources=env.initial,firstResourceError=null;
@@ -39,7 +40,7 @@ async function exercise({ enabled = true, carId = 'native-car', scope = 'car', f
   const stream = crypto.createHash('sha256'), initial = { state: 'unchanged' };
   const originalNow = Date.now; Date.now = () => 1000;
   try {
-    const { commitObserver, getError } = instantiate({ observeResources: enabled,
+    const { commitObserver, getError } = instantiate({ npcBoatFault: createNpcBoatFault(), observeResources: enabled,
       createNpcFamilyCommitObserver: options => { outerFactoryCalls++; return createNpcFamilyCommitObserver(options); },
       createNpcCarAcquisitionCommitObserver: options => { factoryCalls++; return createNpcCarAcquisitionCommitObserver({ ...options, ...(overflow ? { maxQueries: 1 } : {}) }); },
       createNpcBoatAcquisitionCommitObserver: options => { factoryCalls++; return createNpcBoatAcquisitionCommitObserver({ ...options, ...(overflow ? { maxQueries: 1 } : {}) }); },

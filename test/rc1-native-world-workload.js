@@ -17,6 +17,7 @@ import { activeQuietRoster, chooseAuthorizedCommand, choosePublicCrime, observed
 import { collectWorldDiagnostics } from '../tools/rc1-world-diagnostics.js';
 import { CAR_MELT_SOURCE_PINS } from '../tools/rc1-car-melt-provenance.js';
 import { createNpcCarAcquisitionCommitObserver, NPC_CAR_SOURCE_PINS } from '../tools/rc1-npc-car-acquisition.js';
+import { createNpcBoatFault, NPC_BOAT_FAULT_CONTRACT } from '../tools/rc1-npc-boat-fault.js';
 import { createNpcBoatAcquisitionCommitObserver, NPC_BOAT_SOURCE_PINS } from '../tools/rc1-npc-boat-journal.js';
 import { createNpcMarketOrderCommitObserver, NPC_MARKET_SOURCE_PINS, NPC_MARKET_SQL } from '../tools/rc1-npc-market-order-journal.js';
 import { createNpcFamilyCommitObserver, NPC_FAMILY_SOURCE_PINS } from '../tools/rc1-npc-family-provenance.js';
@@ -31,6 +32,7 @@ import { parseWorldHistoryStorage, assertWorldHistoryStorage, retainWorldFailure
 const argument = (name) => process.argv.find((arg) => arg.startsWith(`--${name}=`))?.slice(name.length + 3);
 assert(process.argv.includes('--postgres'), 'Real PostgreSQL is required');
 const output = argument('output') || process.env.RC1_WORLD_OUTPUT; assert(output, 'Provide a new restricted output directory');
+const faultNpcBoatGrant = process.argv.includes('--fault-npc-boat-grant');
 const observeResources = process.argv.includes('--observe-resources');
 const historyStorage = parseWorldHistoryStorage(process.argv.slice(2));
 const hours = Number(argument('hours') || 2160), population = Number(argument('population') || 25);
@@ -46,7 +48,11 @@ const seed = argument('seed') || 'rc1-alpha'; assert(['rc1-alpha', 'rc1-beta', '
 const actorPolicy = argument('policy') || 'quiet_world';
 assert(['quiet_world', 'high_mystery_participation', 'low_mystery_participation', 'coordinated_alliance'].includes(actorPolicy));
 const allianceEnabled = actorPolicy === 'coordinated_alliance';
-const scenarioId = allianceEnabled ? 'scoped-coordinated-alliance-world' : 'scoped-quiet-world-active-players-and-workers';
+if (faultNpcBoatGrant) {
+  assert(observeResources && hours === 12 && population === 25 && seed === 'rc1-alpha' && actorPolicy === 'quiet_world');
+  assert(!argument('resume'), 'Fault workload does not support continuation');
+}
+const scenarioId = faultNpcBoatGrant ? 'scoped-quiet-world-npc-boat-late-fault' : allianceEnabled ? 'scoped-coordinated-alliance-world' : 'scoped-quiet-world-active-players-and-workers';
 if (allianceEnabled) {
   assert.equal(population, 25, 'Alliance adapter currently supports the declared 25-actor cohort only');
   assert([24, 48].includes(hours), 'Alliance adapter supports a 24-hour checkpoint or 48-hour observation');
@@ -112,7 +118,7 @@ const seasonMs = 28 * 86400000;
 const epoch = resume ? parentPolicy.epoch : Math.ceil(Date.parse('2026-09-20T12:00:00.000Z') / seasonMs) * seasonMs - 3600000;
 const start = resume ? parentPolicy.logicalAt : epoch, finish = start + hours * 3600000;
 const expectedDormant = [{ label: 'RWA health', code: 'health_registry_unavailable' }];
-const configuration = { scenario: 'quiet_world', population, seed, hours, sourcePins: WORKER_SOURCE_PINS,
+const configuration = { ...(faultNpcBoatGrant ? { npcBoatFault: NPC_BOAT_FAULT_CONTRACT } : {}), scenario: 'quiet_world', population, seed, hours, sourcePins: WORKER_SOURCE_PINS,
   ...(historyStorage ? { historyStorage } : {}),
   actorPolicy, mysteryPolicyContract: actorPolicy.includes('mystery') ? MYSTERY_POLICY_CONTRACT : null,
   priorFailedRun: priorFailure ? { directory: priorFailure.directory, source: priorFailure.source,
@@ -180,6 +186,7 @@ if (allianceEnabled) Object.assign(configuration, {
 });
 if (replay) {
   assert.equal(replayRun.configuration.hours, hours);
+  assert.deepEqual(replayRun.configuration.npcBoatFault, configuration.npcBoatFault);
   assert.equal(replayRun.configuration.resourceObservation, configuration.resourceObservation);
   assert.deepEqual(replayRun.configuration.carMeltWitness, configuration.carMeltWitness);
   assert.deepEqual(replayRun.configuration.npcCarAcquisitionWitness, configuration.npcCarAcquisitionWitness);
@@ -218,11 +225,13 @@ const npcBoatWitnessSummary = { retainedCandidateWitnesses: 0, exactAcquisitions
 const npcMarketOrderWitnessSummary = { retainedCandidateWitnesses: 0, exactPlacements: 0, unclassifiedCandidateBoundaries: 0 };
 const resourceStream = crypto.createHash('sha256');
 const resourceCost = { observedBoundaryWallMs: 0, maximumBoundaryWallMs: 0, serializedJournalBytes: 0, serializedRestrictedChangeBytes: 0 };
+const npcBoatFault = createNpcBoatFault({ enabled: faultNpcBoatGrant, proof, stateHash: value => worldResourceHash(value) });
 // BEGIN source-bound car witness integration control.
 const commitObserver = observeResources ? createNpcFamilyCommitObserver({
   innerObserverFactory: options => createNpcMarketOrderCommitObserver({ ...options,
     innerObserverFactory: extra => createNpcBoatAcquisitionCommitObserver({ ...extra, seed, readRandomTape: () => runtime.tape }) }),
   context: () => currentInvocation || { authority: 'original-worker', logicalAt: at, ...(allianceEnabled ? { workPhase } : {}) },
+  onAttempt: event => npcBoatFault.onAttempt(event),
   onBoundary: async (event, carMeltProvenance = null, npcFamilyProvenance = null) => {
     const started = performance.now();
     if (firstResourceError) throw firstResourceError;
@@ -238,6 +247,7 @@ const commitObserver = observeResources ? createNpcFamilyCommitObserver({
         duelSelectionArtifact = `restricted-duel-selection-${String(resourceSummary.boundaries + 1).padStart(7, '0')}.json`;
         await proof.artifact(duelSelectionArtifact, { event, before, after, duelSelection });
       }
+      await npcBoatFault.boundary(event, before, after, carMeltProvenance);
       if (carMeltProvenance) carMeltWitnessSummary.committedWitnesses++;
       // Keep unknown/overflow scopes explicit. Only original executed SQL can
       // select a candidate; a request label or actor-supplied claim cannot.
@@ -313,6 +323,7 @@ const commitObserver = observeResources ? createNpcFamilyCommitObserver({
         resourceCost.serializedRestrictedChangeBytes += Buffer.byteLength(JSON.stringify({ event, restrictedChanges }));
         journal.restrictedChangesArtifact = artifact;
       }
+      await npcBoatFault.classified(event, journal);
       await proof.record({ kind: 'resource-commit-boundary', event, journal });
       const serializedJournal = canonicalJson({ event, journal });
       resourceStream.update(`${serializedJournal}\n`);
@@ -380,7 +391,9 @@ const policyState = () => ({ format: 1, seed, actorPolicy, epoch, logicalAt: at,
 let pool, result, currentInvocation = null, failureInvocation = null, injectedActorMismatch = false;
 let restoredState = null, applicationBootstrap = null;
 try {
-  for (const level of ['log', 'warn', 'error']) console[level] = (...args) => controller.log(level, args);
+  for (const level of ['log', 'warn', 'error']) console[level] = (...args) => {
+    if (!npcBoatFault.acceptConsole(level, args, at)) controller.log(level, args);
+  };
   // The observer imports canonical check-in rules through game.js -> db.js.
   // Install the source-pinned DB seam before loading that production module.
   ({ snapshotWorldResources, reconcileWorldResources, worldResourceHash } = await import('../tools/rc1-world-resource-observer.js'));
@@ -465,6 +478,7 @@ try {
       diagnosticSha256: sha256(canonicalJson(diagnostic)) };
     knowledgeBoundaries.push(comparison); await proof.record({ kind: 'knowledge-observer-boundary', ...comparison });
   }
+  await npcBoatFault.installBeforeBaseline(pool);
   const baseline = await runLedgerInvariants(pool, { alert: false }); assert(baseline.ok, 'Birth fixtures must reconcile without baseline drift');
   await proof.record({ kind: 'measured-initialization', roster, configuration, publicCrimes, randomDraws: runtime.tape,
     logicalAt: at, restoredCheckpoint: configuration.parentCheckpoint, fixtureWritesAfterThisRecord: false });
@@ -709,6 +723,7 @@ try {
     await proof.artifact('npc-boat-witness-summary.json', { ...npcBoatWitnessSummary, scope: configuration.npcBoatWitness });
     await proof.artifact('npc-market-order-witness-summary.json', { ...npcMarketOrderWitnessSummary, scope: configuration.npcMarketOrderWitness });
   }
+  const npcBoatFaultObservation = await npcBoatFault.finish(pool);
   const trace = controller.diagnostic(); assert.equal(trace.failures.length, 0);
   const timerCounts = Object.fromEntries(['directorTick', 'guardedTick', 'guardedSeasonTick', 'health-boundary']
     .map((label) => [label, trace.events.filter((entry) => entry.kind === 'timer.fire' && entry.label === label).length]));
@@ -733,7 +748,7 @@ try {
   await proof.artifact('player-metrics.json', { days, metrics, latencies, actorActions: Object.fromEntries(actorActions),
     opportunities: opportunities.summarize(at), meaningfulActionDefinition: 'Fresh completed domain PlayerCommands plus canonical crime attempts with committed success or loss'
       + (allianceEnabled ? ' plus fresh completed alliance HTTP operations' : '') + '; excludes reads/replays/denials' });
-  result = { status: 'PASS_SCOPED', hours, population, seed, actorPolicy, mysteryPolicySummaries: mysterySummaries(),
+  result = { ...(faultNpcBoatGrant ? { npcBoatFaultObservation } : {}), status: 'PASS_SCOPED', hours, population, seed, actorPolicy, mysteryPolicySummaries: mysterySummaries(),
     actualActiveActors: [...actorActions.values()].filter(Boolean).length,
     dailySelectedActors: configuration.policy.dailyActiveActors, seasonalRolloversPerActor: expectedRollovers, metrics,
     ...(allianceEnabled ? { alliance: allianceAdapter.summary() } : {}),
@@ -781,6 +796,7 @@ try {
     result.npcBoatWitnessReplayEqual = true;
     assert.deepEqual(result.npcMarketOrderWitnessObservation, replayRun.result.npcMarketOrderWitnessObservation, 'NPC order witness replay differs');
     result.npcMarketOrderWitnessReplayEqual = true;
+    assert.deepEqual(result.npcBoatFaultObservation, replayRun.result.npcBoatFaultObservation, 'NPC boat fault schedule differs');
   }
   await guardBoundary('final');
   if (guardrails) await proof.artifact('operational-guardrails.json', guardrails.diagnostic());
@@ -790,6 +806,7 @@ try {
   await retainWorldFailure(() => proof.record({ kind: 'failure', invocation: failureInvocation, logicalAt: at, message: error.message, stack: error.stack }), { historyStorage, result });
   if (historyStorage && result.captureErrors?.length && commitObserver)
     await retainWorldFailure(async () => commitObserver.disarm(), { historyStorage, result });
+  if (faultNpcBoatGrant) await proof.artifact('failure-npc-boat-fault.json', npcBoatFault.diagnostic());
   await proof.artifact('failure-worker-schedule.json', controller.diagnostic());
   await proof.artifact('failure-random-tape.json', { draws: runtime.tape });
   await proof.artifact('failure-actor-tape.json', actors.diagnostic());

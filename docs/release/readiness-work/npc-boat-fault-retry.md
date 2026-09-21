@@ -1,0 +1,11 @@
+# Scoped NPC boat late-fault continuation
+
+The optional `--fault-npc-boat-grant` workload is predeclared as 12 original logical hours, 25 ordinary quiet-player fixture identities, `rc1-alpha`, and the unchanged `quiet_world` policy. It adds no actor actions, resources, progression, deadline/status edits or production changes. The original failed 12h component and successful normal 8h pair at source 600a825e remain separate evidence.
+
+Before the measured baseline, a diagnostic AFTER INSERT trigger and nontransactional sequence are installed. The first actual dinghy INSERT must observe the original NPC birth/cash predecessors, throw RNB01, and produce a matching native rollback with identical complete resource projections. The failed native transaction trace is retained as unsupported, never promoted to committed provenance. Initial/final full database snapshots retain the diagnostic sequence. Its nontransactional advance is declared, not a resource adjustment.
+
+The only accepted worker error is the exact original population error after that observed native error and matching rollback at the same logical deadline. Copied messages, unrelated errors, duplicates and wrong deadlines retain ordinary failure behavior. Two distinct grants must subsequently pass the exact source/query/RNG/owner classifier at strictly later original hourly deadlines. These are later canonical birth attempts with fresh identities, not idempotent retries of the aborted UUID. Same-deadline grants do not satisfy the target.
+
+The complete fault schedule, exact resource rollback snapshots and candidate grant snapshots are retained privately. Resource-projection equality does not assert every unrelated database table or sequence rolled back. Broader boat dispositions and resource taxonomy/matrix readiness remain open. Serial-only execution is not concurrent authority proof.
+
+Pure checks: `node test/rc1-npc-boat-fault.js`, `node test/rc1-world-car-melt-witness.js`, and existing boat/resource controls. Native observation and exact recorded replay use the existing world runner with `--postgres --hours=12 --population=25 --seed=rc1-alpha --policy=quiet_world --observe-resources --fault-npc-boat-grant` and explicit existing operational/history limits. No result is claimed until a clean committed source and retained independent audit complete.
