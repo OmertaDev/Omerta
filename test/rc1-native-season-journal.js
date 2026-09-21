@@ -32,6 +32,7 @@ const runtime = installSerialRuntime(seed, configuration.epoch); let at = epoch;
 const controller = createWorkerSchedule({ start: epoch, setClock: value => { at = value; }, expectedDormant: [{ label: 'RWA health', code: 'health_registry_unavailable' }] });
 const namespace = `rc1_worker_seasons_${process.pid}`, seam = installWorkerInstrumentation(controller, { namespace });
 const env = { DATABASE_URL: db.url, CORE_PROGRESSION: 'on', WORLD_GRAPH_KERNEL: 'on', COORDINATION_ENGINE: 'on',
+  COORDINATION_KNOWLEDGE: 'on', COORDINATION_KNOWLEDGE_SHARING: 'on', COORDINATION_OPERATIONS: 'on', COORDINATION_ACCOUNT_IDS: '',
   LIVING_WORLD_DIRECTOR: 'LIVE', DIRECTOR_ACCOUNT_IDS: '', POPULATION_OFF: 'on', LIQUIDITY_AUTOMATION_ENABLED: 'off' };
 const priorEnv = Object.fromEntries(Object.keys(env).map(key => [key, process.env[key]])); Object.assign(process.env, env);
 const base = new pg.Pool({ connectionString: db.url });
