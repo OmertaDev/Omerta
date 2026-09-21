@@ -110,8 +110,10 @@ try {
   await openTab(f.actors.aBoss, 'family'); const old = holdNext(); await navigate('crew'); await old.pending;
   await navigate('family');
   await navigate('crew');
-  const latest = await input.elementHandle(); await input.fill('Newer board draft'); await page.keyboard.press('Tab');
-  assert.equal(await input.evaluate(node => document.activeElement === node), false, 'Stale response control must not rely on focused-input deferral');
+  const latest = await input.elementHandle(); await input.fill('Newer board draft');
+  await page.keyboard.press('Tab'); await page.keyboard.press('Tab');
+  assert.equal(await input.evaluate(node => document.activeElement === node || document.activeElement?.id === 'crew-send'), false,
+    'Stale response control must leave both input and Send so editing deferral cannot mask revision ownership');
   const releaseOld = release, current = holdNext(); releaseOld(); await old.done; await current.pending;
   result.stale = await state(input, latest);
   assert.equal(result.stale.sameNode, true, 'Older response replaced the newer crew panel');
