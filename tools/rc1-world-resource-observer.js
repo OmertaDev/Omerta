@@ -616,7 +616,7 @@ function reconcileTurfTerminal(before, after, receipts, checks, unsupported) {
   districtFields.set(districtId, fields); settledDistricts.add(districtId); return result;
 }
 
-export function reconcileWorldResources(before, after, { identity = null, includeRestrictedChanges = false, carMeltProvenance = null, carAcquisitionProvenance = null, npcFamilyProvenance = null } = {}) {
+export function reconcileWorldResources(before, after, { identity = null, includeRestrictedChanges = false, carMeltProvenance = null, carAcquisitionProvenance = null, npcFamilyProvenance = null, seasonElectionProvenance = null } = {}) {
   assert.equal(before.format, 1); assert.equal(after.format, 1);
   const checks = [], unsupported = [];
   const receipts = appendOnly(before, after, 'transactions');
@@ -768,7 +768,7 @@ export function reconcileWorldResources(before, after, { identity = null, includ
   checks.push(...cars.checks); unsupported.push(...cars.unsupported);
   const seasonConversions = reconcileSeasonConversions(before, after);
   checks.push(...seasonConversions.checks); unsupported.push(...seasonConversions.unsupported);
-  const seasonCrowns = reconcileStoredSeasonCrowns(before, after);
+  const seasonCrowns = reconcileStoredSeasonCrowns(before, after, { seasonElectionProvenance, identity });
   checks.push(...seasonCrowns.checks); unsupported.push(...seasonCrowns.unsupported);
   const observedOnly = ['boats', 'account_gear', 'market_listings', 'exchange_pool', 'bounties', 'commission_proposals', 'favors',
     'loan_house', 'convoy_insurance', 'poker_tournaments', 'poker_entries', 'grand_prix', 'grand_prix_entries', 'stakes_races',
@@ -801,7 +801,7 @@ export function reconcileWorldResources(before, after, { identity = null, includ
   if (restrictedChanges) verifyResourceTableChanges(before, after, restrictedChanges);
   return { format: 1, identity, beforeHash: worldResourceHash(before), afterHash: worldResourceHash(after), receipts,
     itemEvents: events, mutationInputs: inputs, mutationOutputs: outputs, checks, cars,
-    seasonCrowns: { movements: seasonCrowns.movements, notificationMetadata: seasonCrowns.notificationMetadata,
+    seasonCrowns: { movements: seasonCrowns.movements, elections: seasonCrowns.elections, notificationMetadata: seasonCrowns.notificationMetadata,
       scope: 'One stored winner, one-way claim, exact account +1 and fresh living-owner notice. Initial winner selection, empty/ambiguous owner and compound awards remain unsupported. Other notifications are metadata, never reward authority.' }, seasonConversions: { movements: seasonConversions.movements,
       scope: 'One fresh recap bound to its unique season_convert receipt and living character/account, exact canonical resets and positive prestige only. Zero-gain recaps are status-only. Crown, duel-title, existing-recap and compound transitions remain unsupported.' }, turfTerminal: { movements: turfTerminal.movements,
       scope: 'One unchartered contest with live bidders: exact consumed escrow, winner full burn, loser floored refund/remainder burn, treasury and garrison. Original worker authority is separately verified in native evidence. Stakes, charter/dissolved/multiple-contest and territory side effects remain unqualified.' }, familyDissolution: { movements: familyDissolution.movements,

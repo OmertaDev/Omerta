@@ -2,6 +2,7 @@
 // requires its own complete eligibility/ordering witness and remains unknown.
 import assert from 'node:assert/strict';
 import { exactSum } from './rc1-resource-journal.js';
+import { verifyColdSeasonElection } from './rc1-season-election-provenance.js';
 
 const rows = (state, table) => { assert(Array.isArray(state.tables[table]), `Missing crown evidence table ${table}`); return state.tables[table]; };
 const index = (values, key, label) => {
@@ -14,11 +15,11 @@ const equal = (a, b) => { try { assert.deepEqual(a, b); return true; } catch { r
 const at = value => { const stamp = Date.parse(value); assert(Number.isFinite(stamp), 'Invalid crown notification timestamp'); return stamp; };
 const notificationFields = ['id', 'character_id', 'type', 'payload', 'delivered', 'created_at', 'pushed'].sort();
 
-export function reconcileStoredSeasonCrowns(before, after) {
+export function reconcileStoredSeasonCrowns(before, after, { seasonElectionProvenance = null, identity = null } = {}) {
   const checks = [], movements = [], unsupported = [];
   const metadata = { unchanged: 0, insertedNonCrown: [], acknowledgements: [],
     scope: 'Notification metadata only: original insert defaults and immutable content; monotone delivered/pushed flags. No request authorization, actual delivery or reward authority is inferred.' };
-  const result = { checks, movements, unsupported, notificationMetadata: metadata };
+  const result = { checks, movements, unsupported, elections: [], notificationMetadata: metadata };
   const people = index(rows(before, 'characters'), row => row.id, 'crown character'), nextPeople = index(rows(after, 'characters'), row => row.id, 'crown character');
   const oldNotices = index(rows(before, 'notifications'), row => row.id, 'notification'), nextNotices = index(rows(after, 'notifications'), row => row.id, 'notification');
   const notices = [];
@@ -56,8 +57,13 @@ export function reconcileStoredSeasonCrowns(before, after) {
     if (!prior.crowned && row.crowned) claims.push({ prior, row });
   }
   for (const season of oldRecords.keys()) assert(newRecords.has(season), 'Saved season intent removed');
-  if (inserted.length) unsupported.push({ kind: 'season-standing-selection', table: 'season_records', seasons: inserted.map(row => row.season),
-    detail: 'Initial winner/Family election remains unsupported: complete eligibility, cached ranking and native tied-row ordering are not reconstructed from saved intent.' });
+  if (inserted.length) {
+    if (seasonElectionProvenance) assert.deepEqual(seasonElectionProvenance.boundary, identity, 'Election witness belongs to another native boundary');
+    const election = verifyColdSeasonElection(before, after, seasonElectionProvenance);
+    if (election && !election.unsupported) result.elections.push(election);
+    else unsupported.push({ kind: 'season-standing-selection', table: 'season_records', seasons: inserted.map(row => row.season),
+      detail: election?.unsupported || 'Initial winner/Family election remains unsupported: complete eligibility, cached ranking and native tied-row ordering are not reconstructed from saved intent.' });
+  }
   const accounts = index(rows(before, 'account_persistent'), row => row.account_id, 'crown account');
   const nextAccounts = index(rows(after, 'account_persistent'), row => row.account_id, 'crown account');
   for (const [id, account] of nextAccounts) if (!accounts.has(id) && account.season_crowns !== undefined)

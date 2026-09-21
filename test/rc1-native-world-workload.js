@@ -7,6 +7,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import pg from 'pg';
 import { createWorkerSchedule, installWorkerInstrumentation, makeWorkerDatabase, bootOriginalWorker, WORKER_SOURCE_PINS } from '../tools/rc1-native-worker.js';
+import { createSeasonElectionProbe, snapshotElectionCandidates, ELECTION_SOURCE_PINS } from '../tools/rc1-season-election-provenance.js';
 import { planOwnedWorldDatabase } from '../tools/rc1-native-database.js';
 import { createRecordedQueryOrder, QUERY_ORDER_SCOPE } from '../tools/rc1-native-query-order.js';
 import { installSerialRuntime } from '../tools/rc1-native-determinism.js';
@@ -128,6 +129,8 @@ const configuration = { scenario: 'quiet_world', population, seed, hours, source
     scope: 'Same bounded native transaction witness, annotated with actual source caller frames. Exact default runPopulation NPC car grant only; all other acquisition branches remain unknown.' } : null,
   npcFamilyWitness: observeResources ? { format: 1, sourcePins: NPC_FAMILY_SOURCE_PINS,
     scope: 'Original worker formation only; exact cash fee/owner/receipt and nonmonetary initial war_pool. Full candidate states retained; other Family changes stay unsupported.' } : null,
+  seasonElectionObservation: observeResources ? { sourcePins: ELECTION_SOURCE_PINS, maximumBytes: 8388608, maximumQueries: 64,
+    scope: 'Original cold all-zero standing cohort with no core Family holder only; cached/shared-flight, nonzero and compound selections remain unsupported' } : null,
   resourceBootstrap: 'Both original makeDb initializations precede per-commit observation; exact authoritative resource state must agree before/after second bootstrap. Arm before every queued boot job.',
   epoch: new Date(epoch).toISOString(), start: new Date(start).toISOString(), finish: new Date(finish).toISOString(),
   replay: replay ? { runSha256: sha256(await fs.readFile(path.join(replay, 'run.json'))), source: replayRun.source,
@@ -192,6 +195,8 @@ const base = new pg.Pool({ connectionString: url }), queryOrder = createRecorded
 const actors = createRecordedActors({ replay: retainedActors, record: proof.record });
 const diagnosticPool = new pg.Pool({ connectionString: url, max: 1,
   options: `-c search_path=${namespace},pg_catalog -c default_transaction_read_only=on` });
+const electionProbe = observeResources ? createSeasonElectionProbe({ snapshot: () => snapshotElectionCandidates(diagnosticPool) }) : null;
+const electionSeam = electionProbe?.install();
 let snapshotWorldResources, reconcileWorldResources, worldResourceHash;
 let priorResources, firstResourceError, workPhase = 'initialization';
 const resourceSummary = { boundaries: 0, unsupportedEntries: 0, unsupportedKinds: {}, qualifyingFullResourcePass: false };
@@ -212,6 +217,7 @@ const commitObserver = observeResources ? createNpcFamilyCommitObserver({
     try {
       if (['ROLLED_BACK', 'STATEMENT_ABORTED'].includes(event.outcome))
         assert.equal(worldResourceHash(after), worldResourceHash(before), 'Aborted SQL changed committed world resources');
+      const seasonElectionProvenance = await electionProbe?.boundary(event);
       if (carMeltProvenance) carMeltWitnessSummary.committedWitnesses++;
       // Keep unknown/overflow scopes explicit. Only original executed SQL can
       // select a candidate; a request label or actor-supplied claim cannot.
@@ -222,7 +228,7 @@ const commitObserver = observeResources ? createNpcFamilyCommitObserver({
       const acquisitionWitness = carMeltProvenance?.queries.some(query => /^\s*INSERT\s+INTO\s+cars\b/i.test(query.sql))
         ? carMeltProvenance : null;
       const { restrictedChanges, ...journal } = reconcileWorldResources(before, after,
-        { identity: event, includeRestrictedChanges: true, carMeltProvenance: retainedWitness, carAcquisitionProvenance: acquisitionWitness, npcFamilyProvenance });
+        { identity: event, includeRestrictedChanges: true, carMeltProvenance: retainedWitness, carAcquisitionProvenance: acquisitionWitness, npcFamilyProvenance, seasonElectionProvenance });
       if (retainedWitness) {
         const artifact = `restricted-car-melt-witness-${String(resourceSummary.boundaries + 1).padStart(7, '0')}.json`;
         await proof.artifact(artifact, { event, before, after, carMeltProvenance: retainedWitness });
@@ -251,6 +257,12 @@ const commitObserver = observeResources ? createNpcFamilyCommitObserver({
         npcFamilyWitnessSummary.exactFormations += exact;
         if (event.outcome === 'ROLLED_BACK') npcFamilyWitnessSummary.rolledBackCandidates++;
         else if (!exact) npcFamilyWitnessSummary.unclassifiedCandidateBoundaries++;
+      }
+      if (seasonElectionProvenance) {
+        const artifact = `restricted-season-election-${String(resourceSummary.boundaries + 1).padStart(7, '0')}.json`;
+        await proof.artifact(artifact, seasonElectionProvenance);
+        journal.seasonCrowns.electionProvenanceArtifact = artifact;
+        journal.seasonCrowns.electionProvenanceSha256 = sha256(canonicalJson(seasonElectionProvenance));
       }
       if (restrictedChanges) {
         const artifact = `restricted-resource-change-${String(resourceSummary.boundaries + 1).padStart(7, '0')}.json`;
@@ -756,7 +768,8 @@ try {
       await retainWorldFailure(() => proof.record({ kind: 'cleanup-failure', message: error.message }), { historyStorage, result });
     }
   }
-  seam.restore(); runtime.restore();
+  if (electionProbe) await retainWorldFailure(() => proof.artifact('season-election-observer-final.json', electionProbe.diagnostic()), { historyStorage, result });
+  electionSeam?.restore(); seam.restore(); runtime.restore();
   for (const [key, value] of Object.entries(previousEnv)) { if (value === undefined) delete process.env[key]; else process.env[key] = value; }
   const record = await proof.finish(result); await verifyArtifactIndex(output, record);
 }
