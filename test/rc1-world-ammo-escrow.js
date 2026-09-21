@@ -58,6 +58,7 @@ assert(reconcileWorldResources(before, unrelated).unsupported.some(row => row.ta
 
 const evidence = process.argv.find(value => value.startsWith('--evidence='))?.slice(11);
 if (evidence) {
+  const pureControls = structuredClone(controls);
   const directory = path.resolve(evidence), currentSource = await sourceIdentity();
   const run = JSON.parse(await fs.readFile(path.join(directory, 'run.json'), 'utf8')); await verifyArtifactIndex(directory, run);
   assert.deepEqual(run.source, currentSource, 'Native proof must use exact clean checked source'); assert.equal(run.status, 'PASS_SCOPED');
@@ -105,7 +106,7 @@ if (evidence) {
   assert.throws(() => reconcileWorldResources(terminal.before, terminal.after), /Unexplained ammo/);
   native.controls.push({ name: 'actual-native-terminal-balanced-wrong-owner', before: terminal.before, after: terminal.after, rejected: true });
   const report = { status: 'PASS_SCOPED', source: currentSource, scenario: run.result.scenario, nativeRunSha256: sha256(await fs.readFile(path.join(directory, 'run.json'))),
-    pureControls: controls, native, qualifyingFullResourcePass: false,
+    pureControls, native, qualifyingFullResourcePass: false,
     exclusions: ['HTTP/response binding supplied separately by focused pressure journal; shared observer has no durable request identity',
       'Non-ammo escrow, death/retirement and ambiguous compound trades, broader creation/destruction taxonomy', 'Actual concurrent market transactions, full resource matrix, deployment and external backing'] };
   const output = path.resolve(process.env.RC1_AMMO_OBSERVER_OUTPUT || `${directory}-shared-ammo-verification.json`);
