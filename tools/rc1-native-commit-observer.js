@@ -3,13 +3,73 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 
+// Lexical validation only; the original SQL is always sent to PostgreSQL intact.
+// Ordinary backslash strings depend on a server setting, so require E strings
+// for that spelling rather than guessing where PostgreSQL closes the literal.
+export function assertSingleSqlStatement(text) {
+  assert.equal(typeof text, 'string', 'Observed SQL must be text');
+  assert(Buffer.byteLength(text) <= 2 * 1024 * 1024, 'Observed SQL exceeds lexical budget');
+  assert(!text.includes('\0'), 'Observed SQL contains NUL');
+  let i = 0, content = false, terminated = false, head = null;
+  const identifier = (char) => !!char && /[a-zA-Z0-9_$]/.test(char);
+  function quoted(quote, escapes = false) {
+    i++;
+    while (i < text.length) {
+      if (text[i] === quote) {
+        if (text[i + 1] === quote) { i += 2; continue; }
+        i++; return;
+      }
+      if (text[i] === '\\' && quote === "'") {
+        assert(escapes, 'Unsupported ordinary SQL backslash string; use explicit E-string semantics');
+        assert(i + 1 < text.length, 'Unterminated SQL E-string escape'); i += 2;
+      } else i++;
+    }
+    throw Error(`Unterminated SQL ${quote === "'" ? 'string' : 'identifier'}`);
+  }
+  while (i < text.length) {
+    if (/\s/.test(text[i])) { i++; continue; }
+    if (text.startsWith('--', i)) { i += 2; while (i < text.length && !/[\r\n]/.test(text[i])) i++; continue; }
+    if (text.startsWith('/*', i)) {
+      let depth = 1; i += 2;
+      while (i < text.length && depth) {
+        if (text.startsWith('/*', i)) { depth++; i += 2; }
+        else if (text.startsWith('*/', i)) { depth--; i += 2; }
+        else i++;
+      }
+      assert.equal(depth, 0, 'Unterminated SQL block comment'); continue;
+    }
+    assert(!terminated, 'Observed SQL must contain one statement with at most one trailing semicolon');
+    if (text[i] === ';') { assert(content, 'Empty observed SQL statement'); terminated = true; i++; continue; }
+    if (!content) head = text.slice(i).match(/^[a-zA-Z_]+/)?.[0]?.toUpperCase() || null;
+    content = true;
+    if ((text[i] === 'E' || text[i] === 'e') && text[i + 1] === "'" && !identifier(text[i - 1])) { i++; quoted("'", true); continue; }
+    assert(!((text[i] === 'U' || text[i] === 'u') && text[i + 1] === '&' && ['"', "'"].includes(text[i + 2])),
+      'Unsupported SQL Unicode escape quoting');
+    if (text[i] === "'" || text[i] === '"') { quoted(text[i]); continue; }
+    if (text[i] === '$' && !identifier(text[i - 1])) {
+      const delimiter = text.slice(i).match(/^\$(?:[A-Za-z_][A-Za-z0-9_]*)?\$/)?.[0];
+      if (delimiter) {
+        const end = text.indexOf(delimiter, i + delimiter.length);
+        assert(end >= 0, 'Unterminated SQL dollar-quoted string'); i = end + delimiter.length; continue;
+      }
+      const parameter = text.slice(i).match(/^\$[1-9][0-9]*/)?.[0];
+      assert(parameter, 'Unsupported SQL dollar token'); i += parameter.length; continue;
+    }
+    assert(text.charCodeAt(i) < 128, 'Unsupported unquoted non-ASCII SQL token');
+    i++;
+  }
+  assert(content, 'Empty observed SQL statement');
+  return { head };
+}
+
 export function createNativeCommitObserver({ onBoundary, onAttempt = async () => {}, context = () => null }) {
   assert.equal(typeof onBoundary, 'function');
   const clients = new WeakMap(), transactions = new Map(), failures = [];
   let armed = false, busy = false, nextClient = 0, sequence = 0, nextTransaction = 0;
-  const unsupported = (message) => {
+  const unsupported = (message, text = null) => {
     const error = Error(message); error.code = 'RC1_COMMIT_OBSERVER_UNSUPPORTED';
-    failures.push({ message }); return error;
+    failures.push({ message, ...(typeof text === 'string' ? { sql: text,
+      sqlSha256: crypto.createHash('sha256').update(text).digest('hex'), context: structuredClone(context()) } : {}) }); return error;
   };
   return {
     arm() { assert(!armed && !busy); armed = true; },
@@ -24,9 +84,12 @@ export function createNativeCommitObserver({ onBoundary, onAttempt = async () =>
         if (busy) throw unsupported('Concurrent native queries cannot claim an isolated per-commit snapshot');
         const text = typeof sql === 'string' ? sql : sql.text;
         // A single driver response cannot expose intermediate commits. Reject
-        // ambiguous text before execution, including semicolons in SQL literals.
-        if (typeof text !== 'string' || text.trim().replace(/;$/, '').includes(';'))
-          throw unsupported('Observed SQL must contain one statement with at most one trailing semicolon');
+        // true separators before execution, preserving quoted/comment text.
+        try {
+          const { head } = assertSingleSqlStatement(text);
+          assert(!['DO', 'CALL'].includes(head), 'Observed SQL procedures can hide intermediate commits');
+        }
+        catch (error) { throw unsupported(error.message, text); }
         busy = true;
         const entry = { sequence: ++sequence, clientId, context: structuredClone(context()),
           sqlSha256: crypto.createHash('sha256').update(text).digest('hex') };

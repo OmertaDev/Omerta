@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import pg from 'pg';
-import { createNativeCommitObserver } from '../tools/rc1-native-commit-observer.js';
+import fs from 'node:fs';
+import { createNativeCommitObserver, assertSingleSqlStatement } from '../tools/rc1-native-commit-observer.js';
 import { installSerialRuntime, serialDatabaseOptions } from '../tools/rc1-native-determinism.js';
 
 let called = false;
@@ -11,6 +12,16 @@ await assert.rejects(guarded('BEGIN; COMMIT'), /one statement/);
 assert.equal(called, false, 'Ambiguous intermediate commits must be rejected before SQL executes');
 assert.throws(() => guard.assertComplete(), /one statement/);
 console.log('PASS: ambiguous SQL fails before execution and remains a recorded observer failure');
+for (const sql of ["SELECT ';'", 'SELECT ";"', "SELECT 'can''t; split'; -- trailing; comment", '/* nested /* ; */ comment; */ SELECT 1;',
+  'SELECT $$one; two$$;', 'SELECT $tag$one; \'two\'$tag$', String.raw`SELECT E'can\'t; split'`, 'SELECT $1::text'])
+  assert.doesNotThrow(() => assertSingleSqlStatement(sql));
+for (const sql of ['SELECT 1; COMMIT', 'SELECT 1;;', "SELECT 'unfinished", 'SELECT "unfinished', 'SELECT $$unfinished',
+  'SELECT /* unfinished', '/* only a comment */', String.raw`SELECT 'ambiguous\'`, 'SELECT U&\'escape\'', 'SELECT $unsupported'])
+  assert.throws(() => assertSingleSqlStatement(sql));
+const canonicalSource = fs.readFileSync(new URL('../src/game.js', import.meta.url), 'utf8').replace(/\r\n/g, '\n');
+const canonicalReadSql = canonicalSource.match(/const bulk = await client\.query\(`([\s\S]*?)`,\n  \[ch\.id, ch\.account_id, today\]\)/)?.[1];
+assert(canonicalReadSql?.includes('free lookup;')); assert.doesNotThrow(() => assertSingleSqlStatement(canonicalReadSql));
+console.log(JSON.stringify({ lexicalGuard: 'PASS', canonicalReadSqlSha256: crypto.createHash('sha256').update(canonicalReadSql).digest('hex') }));
 
 if (process.argv.includes('--postgres')) {
   const url = process.env.COORDINATION_TEST_DATABASE_URL;
@@ -62,6 +73,11 @@ if (process.argv.includes('--postgres')) {
     } finally { second.release(); }
     assert.equal((await reader.query('SELECT amount::text FROM balance')).rows[0].amount, '13');
     assert.throws(() => observer.assertComplete(), /Concurrent native queries/);
+    await client.query("SELECT ';'::text AS quoted /* outer; /* inner; */ comment */; -- trailing; comment");
+    await client.query(String.raw`SELECT E'can\'t; split'::text AS escaped, $tag$literal; semicolon$tag$::text AS dollar`);
+    await assert.rejects(client.query('UPDATE balance SET amount=999; COMMIT; UPDATE balance SET amount=888'), /one statement/);
+    await assert.rejects(client.query('DO $$BEGIN UPDATE balance SET amount=777; COMMIT; END$$'), /hide intermediate commits/);
+    assert.equal((await reader.query('SELECT amount::text FROM balance')).rows[0].amount, '13', 'True multiple statements rejected before any mutation');
     failObserver = true;
     await assert.rejects(client.query('UPDATE balance SET amount=14'), /after durable commit/);
     assert.equal((await reader.query('SELECT amount::text FROM balance')).rows[0].amount, '14');

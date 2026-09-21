@@ -243,7 +243,7 @@ try {
   await proof.artifact('failure-worker-schedule.json', controller.diagnostic());
   await proof.artifact('failure-random-tape.json', { draws: runtime.tape });
   await proof.artifact('failure-query-order.json', await queryOrder.diagnostic());
-  if (commitObserver) await proof.artifact('failure-resource-observer.json', { ...resourceSummary, diagnostic: commitObserver.diagnostic() });
+  if (commitObserver) await proof.artifact('failure-resource-observer.json', { capturedAt: 'First failure, before diagnostic state capture', ...resourceSummary, diagnostic: commitObserver.diagnostic() });
   if (pool) {
     try { await proof.snapshot(pool, 'first-failure'); await proof.checkpoint(pool, 'first-failure', url); }
     catch (captureError) { await proof.record({ kind: 'failure-capture-error', message: captureError.message, stack: captureError.stack }); }
@@ -251,7 +251,11 @@ try {
   process.exitCode = 1;
 } finally {
   for (const level of ['log', 'warn', 'error']) console[level] = originalConsole[level];
-  for (const close of [() => commitObserver?.disarm(), () => controller.close(), () => diagnosticPool.end(), () => base.end(),
+  for (const close of [async () => {
+    if (!commitObserver) return;
+    try { commitObserver.disarm(); }
+    finally { await proof.artifact('resource-observer-final.json', { capturedAt: 'After diagnostic state capture, before cleanup', ...resourceSummary, diagnostic: commitObserver.diagnostic() }); }
+  }, () => controller.close(), () => diagnosticPool.end(), () => base.end(),
     async () => proof.record({ kind: 'database-cleanup', ...await database.close() })]) {
     try { await close(); }
     catch (error) { await proof.record({ kind: 'cleanup-failure', message: error.message }); result.status = 'FAIL'; result.cleanupFailure = error.message; process.exitCode = 1; }
