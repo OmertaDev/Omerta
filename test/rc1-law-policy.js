@@ -33,6 +33,13 @@ const pleaPolicy = createLawPolicy(config), plea = choose(pleaPolicy, indicted, 
 pleaPolicy.settle({ idempotencyKey: plea.request.idempotencyKey, status: 'COMPLETED', replayed: false,
   response: { ok: true, forfeited: 75, jailSeconds: 240 } });
 assert.equal(pleaPolicy.summary().pleaded, 1); assert.equal(pleaPolicy.summary().forfeited, 75);
+for (const convicted of [false, true]) {
+  const trialPolicy = createLawPolicy(config), trial = choose(trialPolicy, indicted, 'trial');
+  trialPolicy.settle({ idempotencyKey: trial.request.idempotencyKey, status: 'COMPLETED', replayed: false,
+    response: { ok: true, convicted, forfeited: convicted ? 150 : 0, jailSeconds: convicted ? 600 : 0 } });
+  assert.equal(trialPolicy.summary()[convicted ? 'convicted' : 'acquitted'], 1);
+  assert.equal(trialPolicy.summary().forfeited, convicted ? 150 : 0);
+}
 const recovery = choose(pleaPolicy, view(), 'recover'); assert.equal(recovery.request.body.approach, 'quiet');
 pleaPolicy.settle({ idempotencyKey: recovery.request.idempotencyKey, status: 'DENIED', replayed: false, response: { error: 'jailed' } });
 assert.equal(pleaPolicy.summary().denials, 1); assert.equal(pleaPolicy.summary().fresh, 1);
