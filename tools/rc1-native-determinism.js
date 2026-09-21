@@ -71,7 +71,7 @@ export function installSerialRuntime(seed, epoch = SERIAL_EPOCH) {
   };
 }
 
-export function serialDatabaseOptions() {
+export function serialDatabaseOptions({ commitObserver = null } = {}) {
   return {
     poolFactory(configuration, namespace) {
       assert(installed, 'The deterministic runtime must be installed first');
@@ -104,10 +104,11 @@ export function serialDatabaseOptions() {
               return result;
             } catch (error) { failed = transactionTime !== null; throw error; }
         };
+        const observedQuery = commitObserver ? commitObserver.wrapQuery(client, query) : query;
         // Keep EventEmitter methods, driver identity and symbols on the actual
         // client so makeDb's once-per-client error hooks remain authoritative.
         return new Proxy(client, { get(target, key) {
-          if (key === 'query') return query;
+          if (key === 'query') return observedQuery;
           const value = Reflect.get(target, key); return typeof value === 'function' ? value.bind(target) : value;
         } });
       };
