@@ -11,6 +11,7 @@ import { createLivingWorldDirector } from '../src/director/runtime.js';
 import { createDockWarDefinitions } from '../src/director/dock-war.js';
 import { DOCK_WAR_IDS as ids } from '../src/content/dock-war.js';
 import { browserControls } from './lib/rc1-browser-controls.js';
+import { installFocusDiagnostics } from './lib/rc1-focus-diagnostics.js';
 import { canonicalDatabaseSnapshot } from '../tools/rc1-native-proof.js';
 import { worldKernelInvariants } from '../src/world-kernel-invariants.js';
 import { familyOperationInvariants } from '../src/coordination/operation-invariants.js';
@@ -35,6 +36,7 @@ const report = { source: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 
   dirty: !!execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).trim(),
   harnessSha256: crypto.createHash('sha256').update(fs.readFileSync(new URL(import.meta.url))).digest('hex'),
   helperSha256: crypto.createHash('sha256').update(fs.readFileSync(new URL('./lib/rc1-browser-controls.js', import.meta.url))).digest('hex'),
+  focusDiagnosticsSha256: crypto.createHash('sha256').update(fs.readFileSync(new URL('./lib/rc1-focus-diagnostics.js', import.meta.url))).digest('hex'),
   startedAt: new Date().toISOString(), node: process.version, browser: browser.version(), results: [],
   requestedWidth: process.env.RC1_GOLDEN_BROWSER_WIDTH ? Number(process.env.RC1_GOLDEN_BROWSER_WIDTH) : null,
   scope: 'Automated Chromium phone viewport segments of returning/social/investigation/Family-conflict journeys, from declared canonical fixtures.',
@@ -72,11 +74,12 @@ try {
         if (sessions.has(account)) return sessions.get(account);
         const context = await browser.newContext({ viewport, isMobile: true, hasTouch: true, locale: 'en-US' }); contexts.push(context);
         const page = await context.newPage(); page.on('pageerror', (error) => result.errors.push(error.message));
+        const focusDiagnostics = await installFocusDiagnostics(page);
         await page.addInitScript((token) => localStorage.setItem('omerta_token', token), app.jwt.sign({ sub: account, tv: 0 }));
         await page.addLocatorHandler(page.locator('[data-tipok]'), async () => page.locator('[data-tipok]').click());
         await page.addLocatorHandler(page.locator('#welcome:not(.hidden)'), async () => page.locator('#tour-skip').click());
         await page.goto(origin, { waitUntil: 'networkidle' }); await page.locator('#screen-main:not(.hidden)').waitFor();
-        const session = { context, page, board: null }; sessions.set(account, session); return session;
+        const session = { context, page, board: null, focusDiagnostics }; sessions.set(account, session); return session;
       };
       const { engine, openTab, clickMutation, reach } = browserControls({ pageFor, width: viewport.width, result, save });
       const act = (account, type, parameters = {}, options = {}) => issueAndExecute(engine, account, type, parameters, options);
@@ -97,7 +100,11 @@ try {
       const crewPage = await openTab(learner, 'crew'); assert((await crewPage.locator('#tab-crew').innerText()).includes('Dock a Crew'));
       // Focus/viewport reduction exercises CSS and focus retention, not a native keyboard.
       const input = crewPage.locator('#crew-say'); await input.fill('Preparing the dock route');
+      const focusDiagnostics = (await pageFor(learner)).focusDiagnostics;
+      await focusDiagnostics.mark('filled-crew-input');
       await crewPage.setViewportSize({ width: viewport.width, height: 420 }); await input.focus();
+      await focusDiagnostics.mark('resized-and-focused-crew-input');
+      result.crewFocusDiagnostics = await focusDiagnostics.read(); save();
       assert(await input.evaluate((element) => document.activeElement === element));
       await reach(crewPage, crewPage.locator('#crew-send'), 'crew input adjacent action with reduced viewport');
       await input.fill(''); await input.press('Tab'); await crewPage.setViewportSize(viewport);
@@ -182,6 +189,7 @@ try {
     } catch (error) {
       result.status = 'FAIL'; result.error = error.stack; console.error(result.error);
       for (const [account, session] of sessions) if (!session.page.isClosed()) {
+        fs.writeFileSync(path.join(directory, `${viewport.width}-${account}-focus-diagnostics.json`), JSON.stringify(await session.focusDiagnostics.read().catch(() => null), null, 2));
         await session.page.screenshot({ path: path.join(directory, `${viewport.width}-${account}-failure.png`), fullPage: true }).catch(() => {});
         fs.writeFileSync(path.join(directory, `${viewport.width}-${account}-failure.txt`), await session.page.locator('body').innerText().catch(() => 'unavailable'));
       }
