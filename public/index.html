@@ -8085,7 +8085,9 @@
   // ── THE CREW (omerta-crew-design.md) — the lightweight 2-4 player mutual-aid pact. Status +
   // coordination only: form/join, a board of your crewmates, a private room, and a rule you don't
   // raise a hand to your own. No money moves anywhere in here. ──
+  let crewRenderRevision = 0;
   async function renderCrew() {
+    const renderRevision = ++crewRenderRevision;
     const t = $('#tab-crew');
     await refresh();
     const b = (await api('GET', '/v1/crew')).body || {};
@@ -8111,6 +8113,18 @@
     // ── THE CIRCLE — the ambient stream of the people you know (crew + mentor + protégés + spouse). Shown
     // on the crew screen whether or not you're in a crew (your mentor/spouse count). Pure read.
     const cir = (await api('GET', '/v1/circle')).body || {};
+    // These reads can finish after the player starts typing in the previous
+    // board. Check again at the DOM commit, not only before renderActive starts.
+    // A newer entry owns the panel; an older response must never replace it.
+    if (renderRevision !== crewRenderRevision || currentTab !== 'crew') return;
+    const editing = document.activeElement;
+    if (t.contains(editing) && (/^(INPUT|SELECT|TEXTAREA)$/.test(editing.tagName) || editing.isContentEditable)) {
+      _reRenderNeeded = true;
+      // Complete this deferred render on focusout even when Tab lands on the
+      // adjacent button. The existing mandatory-refresh path restores its panel.
+      _reRenderAfterAction = true;
+      return;
+    }
     const circleSection = (cir.people && cir.people.length) ? `
       <div class="card" style="margin-top:8px"><span class="t">Your Circle</span> <span class="d" style="font-size:11px">— your people: crew, mentor, protégés, family</span>
         <div class="grid" style="margin-top:6px">${cir.people.map((cp) => `
