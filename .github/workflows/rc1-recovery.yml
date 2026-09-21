@@ -138,6 +138,51 @@ jobs:
           path: tmp/rc1-linux-sigterm/
           if-no-files-found: error
           retention-days: 30
+  isolated-world-smoke:
+    name: Isolated two-hour world smoke (PostgreSQL ${{ matrix.postgres }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        postgres: ['16', '18.4']
+    services:
+      postgres:
+        image: postgres:${{ matrix.postgres }}
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: rc1_world_control
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      COORDINATION_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/rc1_world_control
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Install matching PostgreSQL checkpoint tools
+        run: bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'
+      - name: Native advisory-lock database isolation control
+        env:
+          RC1_DATABASE_OUTPUT: ${{ runner.temp }}/rc1-database-isolation
+        run: |
+          umask 077
+          npm run test:rc1:database:postgres
+      - name: Two-hour authorized-player and original-worker smoke
+        if: '!cancelled()'
+        env:
+          RC1_WORLD_OUTPUT: ${{ runner.temp }}/rc1-world-smoke
+        run: |
+          umask 077
+          npm run test:rc1:world:smoke:postgres
   legacy-authority:
     name: Legacy authority (PostgreSQL ${{ matrix.postgres }})
     runs-on: ubuntu-latest

@@ -7,7 +7,7 @@ import { planOwnedWorldDatabase } from '../tools/rc1-native-database.js';
 import { sourceIdentity, createProofRecorder, verifyArtifactIndex } from '../tools/rc1-native-proof.js';
 
 assert(process.argv.includes('--postgres'), 'Real PostgreSQL required');
-const output = process.argv.find((arg) => arg.startsWith('--output='))?.slice(9);
+const output = process.argv.find((arg) => arg.startsWith('--output='))?.slice(9) || process.env.RC1_DATABASE_OUTPUT;
 assert(output, 'New restricted output directory required');
 const source = await sourceIdentity(), controlUrl = process.env.COORDINATION_TEST_DATABASE_URL;
 const first = planOwnedWorldDatabase({ controlUrl, runId: `${path.basename(output)}-a`, sourceRevision: source.revision });

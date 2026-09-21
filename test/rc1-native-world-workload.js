@@ -14,7 +14,7 @@ import { activeQuietRoster, chooseAuthorizedCommand, choosePublicCrime, observed
 
 const argument = (name) => process.argv.find((arg) => arg.startsWith(`--${name}=`))?.slice(name.length + 3);
 assert(process.argv.includes('--postgres'), 'Real PostgreSQL is required');
-const output = argument('output'); assert(output, 'Provide a new restricted output directory');
+const output = argument('output') || process.env.RC1_WORLD_OUTPUT; assert(output, 'Provide a new restricted output directory');
 const hours = Number(argument('hours') || 2160), population = Number(argument('population') || 25);
 assert(Number.isSafeInteger(hours) && hours > 0 && hours <= 2161);
 assert([25, 100, 250, 500, 1000].includes(population));

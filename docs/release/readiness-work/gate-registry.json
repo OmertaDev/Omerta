@@ -9,6 +9,20 @@
   "note": "Pinned required command inventory across the four source workflows. Preserve each workflow setup, database isolation, platform, environment and budgets. A component regression pass does not clear a full native, deployed, or human proof.",
   "gates": [
     {
+      "id": "rc1-database-isolation",
+      "command": ["npm", "run", "test:rc1:database:postgres"],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": ["Native advisory lock and owned database control; no full world replay"]
+    },
+    {
+      "id": "rc1-world-smoke",
+      "command": ["npm", "run", "test:rc1:world:smoke:postgres"],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": ["Two hours of quiet actors and original local workers; no qualifying matrix cell or full resource journal"]
+    },
+    {
       "id": "rc1-harness-units",
       "command": ["npm", "run", "test:rc1:harness"],
       "timeoutMs": 600000,

@@ -3395,8 +3395,12 @@ scopedSocialContext = async function(db) {
 
   assert.match(suites, /^    name: suites \+ sim \(pg-mem\)\s*$/m,
     'the `suites` job identity changed');
-  assert.match(pgcheck, /^    name: real Postgres\s*$/m,
-    'the `pgcheck` job identity changed');
+  assert.match(pgcheck, /^    name: real Postgres \(\$\{\{ matrix\.postgres \}\}\)\s*$/m,
+    'the `pgcheck` job must identify each required PostgreSQL major');
+  assert.match(pgcheck, /^    strategy:\r?\n      fail-fast: false\r?\n      matrix:\r?\n        postgres: \['16', '18\.4'\]\s*$/m,
+    'retain both the original PostgreSQL 16 lane and observed Render PostgreSQL 18.4 lane');
+  assert.match(pgcheck, /^        image: postgres:\$\{\{ matrix\.postgres \}\}\s*$/m,
+    'each native lane must run its declared PostgreSQL server');
   const timeouts = (block) => [...block.matchAll(/^    timeout-minutes:\s*(\d+)\s*$/gm)]
     .map((m) => Number(m[1]));
   assert.deepEqual(timeouts(suites), [60],
@@ -3469,6 +3473,7 @@ scopedSocialContext = async function(db) {
           continue;
         }
         if (!command || command.startsWith('#') || command === 'npm ci') continue;
+        if (command === "bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'") continue;
         if (command === 'node -e "') { nodeBody = true; continue; }
         const npm = /^npm run ([a-zA-Z0-9:_-]+)$/.exec(command);
         assert(npm, `unsupported pgcheck command shape: \`${command}\``);
@@ -3479,7 +3484,7 @@ scopedSocialContext = async function(db) {
     return commands;
   };
   const expectedNativeCommands = [
-    'pgquery', 'pgcheck', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
+    'pgquery', 'pgcheck', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
     'test:coordination:postgres', 'test:world-kernel:postgres', 'test:family-operations:postgres', 'test:world-projections:postgres',
     'test:core-progression:postgres', 'test:player-commands:postgres', 'test:rc1:telemetry:postgres', 'test:director:postgres',
     'test:stockcatalogv2:postgres', 'test:rwahealth:postgres',
