@@ -11,7 +11,7 @@ const runner = fs.readFileSync(new URL('./rc1-native-world-workload.js', import.
 const start = '// BEGIN source-bound car witness integration control.\n', end = '// END source-bound car witness integration control.';
 assert.equal(runner.split(start).length, 2); assert.equal(runner.split(end).length, 2);
 const block = runner.split(start)[1].split(end)[0];
-assert.equal(sha256(block), '7938cd870c9ece7913e15b71266453cbf5de89f53a5a0af9b093f4aae546f14c', 'Runner witness block changed; review and rebind control');
+assert.equal(sha256(block), '7d9a5f98990f2e673b8bd5122d2e35919cc9009b69b716c7edb2210ebc6f27ee', 'Runner witness block changed; review and rebind control');
 assert.match(runner, /const seam = installWorkerInstrumentation\(controller, \{ namespace, queryOrder, commitObserver \}\);/);
 assert.match(runner, /assert\.deepEqual\(result\.carMeltWitnessObservation, replayRun\.result\.carMeltWitnessObservation/);
 const worker = fs.readFileSync(new URL('../tools/rc1-native-worker.js', import.meta.url), 'utf8');
@@ -19,7 +19,7 @@ assert(worker.indexOf('const clock = serialDatabaseOptions({ commitObserver });'
 
 const instantiate = new Function('env', `const {observeResources,createNpcFamilyCommitObserver,createNpcCarAcquisitionCommitObserver,currentInvocation,at,allianceEnabled,
  snapshotWorldResources,diagnosticPool,reconcileWorldResources,worldResourceHash,proof,resourceSummary,resourceCost,
- resourceStream,carMeltWitnessSummary,carAcquisitionWitnessSummary,npcFamilyWitnessSummary,canonicalJson,sha256,assert}=env;
+ resourceStream,carMeltWitnessSummary,carAcquisitionWitnessSummary,npcFamilyWitnessSummary,electionProbe,canonicalJson,sha256,assert}=env;
  let priorResources=env.initial,firstResourceError=null;
  ${block}
  return {commitObserver,getError:()=>firstResourceError};`);
@@ -27,9 +27,9 @@ function verifyWitnessBoundary(data) {
   for (const field of ['carMeltProvenance', 'carAcquisitionProvenance', 'npcFamilyProvenance'])
     if (data[field]) assert.deepEqual(data[field].boundary, data.event, 'Candidate witness boundary differs from artifact event');
 }
-async function exercise({ enabled = true, carId = 'native-car', scope = 'car', failure = false, overflow = false, rollback = false } = {}) {
+async function exercise({ enabled = true, carId = 'native-car', scope = 'car', failure = false, overflow = false, rollback = false, election = false } = {}) {
   const artifacts = [], records = [], calls = [], native = [];
-  let factoryCalls = 0, outerFactoryCalls = 0;
+  let factoryCalls = 0, outerFactoryCalls = 0, electionCalls = 0;
   const summary = { boundaries: 0, unsupportedEntries: 0, unsupportedKinds: {}, qualifyingFullResourcePass: false };
   const witnessSummary = { committedWitnesses: 0, retainedCandidateWitnesses: 0, collectorUnsupportedWitnesses: 0, exactMeltTransitions: 0, unclassifiedCandidateBoundaries: 0 };
   const acquisitionSummary = { retainedCandidateWitnesses: 0, exactAcquisitions: 0, unclassifiedCandidateBoundaries: 0 };
@@ -41,17 +41,19 @@ async function exercise({ enabled = true, carId = 'native-car', scope = 'car', f
       createNpcFamilyCommitObserver: options => { outerFactoryCalls++; return createNpcFamilyCommitObserver(options); },
       createNpcCarAcquisitionCommitObserver: options => { factoryCalls++; return createNpcCarAcquisitionCommitObserver({ ...options, ...(overflow ? { maxQueries: 1 } : {}) }); },
       currentInvocation: { id: 'ordinary-call' }, at: 1000, allianceEnabled: false,
+      electionProbe: { async boundary(event) { electionCalls++; return election ? { synthetic: true, selectionId: carId,
+        boundary: structuredClone(event), before: structuredClone(initial), after: structuredClone(initial) } : null; } },
       snapshotWorldResources: async () => structuredClone(initial), diagnosticPool: {}, initial,
       worldResourceHash: value => sha256(canonicalJson(value)), reconcileWorldResources(before, after, options) {
         calls.push(options);
         if (failure) throw Error('CONTROL_NATIVE_BOUNDARY_RECONCILIATION_FAILURE');
-        return { checks: [], unsupported: options.carMeltProvenance || options.carAcquisitionProvenance || options.npcFamilyProvenance ? [{ kind: 'declared-synthetic-unknown' }] : [], cars: { lineage: [] }, familyEntry: { movements: [] } };
+        return { checks: [], unsupported: options.carMeltProvenance || options.carAcquisitionProvenance || options.npcFamilyProvenance || options.seasonElectionProvenance ? [{ kind: 'declared-synthetic-unknown' }] : [], cars: { lineage: [] }, familyEntry: { movements: [] }, seasonCrowns: {} };
       },
       proof: { async artifact(name, data) { artifacts.push({ name, data: structuredClone(data) }); },
         async record(data) { records.push(structuredClone(data)); } },
       resourceSummary: summary, resourceCost: { serializedRestrictedChangeBytes: 0, serializedJournalBytes: 0, observedBoundaryWallMs: 0, maximumBoundaryWallMs: 0 },
       resourceStream: stream, carMeltWitnessSummary: witnessSummary, carAcquisitionWitnessSummary: acquisitionSummary, npcFamilyWitnessSummary: familySummary, canonicalJson, sha256, assert });
-    if (!enabled) { assert.equal(commitObserver, null); assert.equal(factoryCalls, 0); assert.equal(outerFactoryCalls, 0); return { disabled: true }; }
+    if (!enabled) { assert.equal(commitObserver, null); assert.equal(factoryCalls, 0); assert.equal(outerFactoryCalls, 0); assert.equal(electionCalls, 0); return { disabled: true }; }
     const query = commitObserver.wrapQuery({}, async (sql, values) => {
       native.push({ sql, values: structuredClone(values ?? []) });
       return { command: sql.split(' ')[0], rowCount: sql.startsWith('DELETE') ? 1 : null, rows: [] };
@@ -63,9 +65,11 @@ async function exercise({ enabled = true, carId = 'native-car', scope = 'car', f
       assert(getError()); assert.equal(artifacts.at(-1).name, 'first-resource-failure.json');
       assert.equal(artifacts.at(-1).data.carMeltProvenance.queries[1].parameters[0], carId);
       if (scope === 'family') assert.equal(artifacts.at(-1).data.npcFamilyProvenance.statements[1].parameters[0], carId);
+      if (election) assert.deepEqual(artifacts.at(-1).data.seasonElectionProvenance, calls[0].seasonElectionProvenance);
     } else { await query(rollback ? 'ROLLBACK' : 'COMMIT'); commitObserver.assertComplete(); }
     commitObserver.disarm();
     assert.equal(factoryCalls, 1); assert.equal(outerFactoryCalls, 1); assert.equal(calls.length, 1);
+    assert.equal(electionCalls, 1); assert.equal(calls[0].seasonElectionProvenance?.selectionId ?? null, election ? carId : null);
     assert.equal(native.length, 3, 'Composition added native queries');
     if (scope === 'car' && !overflow) assert.equal(calls[0].carMeltProvenance.queries[1].parameters[0], carId);
     if (scope !== 'car' && !overflow) assert.equal(calls[0].carMeltProvenance, null);
@@ -92,6 +96,12 @@ async function exercise({ enabled = true, carId = 'native-car', scope = 'car', f
       assert.equal(familySummary.rolledBackCandidates, rollback ? 1 : 0);
       assert.equal(familySummary.unclassifiedCandidateBoundaries, rollback ? 0 : 1);
       assert.equal(artifacts[0].data.event.outcome, rollback ? 'ROLLED_BACK' : 'COMMITTED');
+    }
+    if (election && !failure) {
+      const reference = records[0].journal.seasonCrowns, artifact = artifacts.find(row => row.name === reference.electionProvenanceArtifact);
+      assert(artifact); assert.equal(reference.electionProvenanceSha256, sha256(canonicalJson(artifact.data)));
+      assert.deepEqual(artifact.data, calls[0].seasonElectionProvenance); assert.deepEqual(artifact.data.boundary, records[0].event);
+      assert.equal(summary.unsupportedEntries, 1, 'Synthetic election witness is not gameplay authority');
     }
     for (const artifact of artifacts) {
       verifyWitnessBoundary(artifact.data);
@@ -123,6 +133,10 @@ assert.equal(family.digest, (await exercise({ scope: 'family' })).digest);
 assert.notEqual(family.digest, (await exercise({ scope: 'family', carId: 'different-native-family' })).digest);
 await exercise({ scope: 'family', rollback: true });
 await exercise({ scope: 'family', failure: true });
+const elected = await exercise({ scope: 'ordinary', election: true });
+assert.equal(elected.digest, (await exercise({ scope: 'ordinary', election: true })).digest);
+assert.notEqual(elected.digest, (await exercise({ scope: 'ordinary', election: true, carId: 'different-native-election' })).digest);
+await exercise({ scope: 'ordinary', election: true, failure: true });
 console.log(JSON.stringify({ status: 'PASS', sourceBoundBlockSha256: sha256(block), controls: [
   'disabled-path-no-collector', 'actual-native-parameters-forwarded', 'candidate-witness-artifact-and-stream-binding',
   'same-driver-replay-equality', 'changed-native-identity-changes-stream', 'noncandidate-keeps-ordinary-classification',
@@ -130,5 +144,6 @@ console.log(JSON.stringify({ status: 'PASS', sourceBoundBlockSha256: sha256(bloc
   'acquisition-shares-native-witness', 'acquisition-artifact-and-digest-binding',
   'single-inner-collector-and-no-extra-native-queries', 'Family-argument-preservation-and-native-identity-digest',
   'Family-rollback-and-failure-retention', 'full-candidate-and-failure-snapshots', 'synthetic-candidate-remains-unclassified',
-  'witness-boundary-event-binding-and-stale-rejection'],
+  'witness-boundary-event-binding-and-stale-rejection', 'election-witness-forwarding-and-artifact-binding',
+  'election-same-input-replay-and-changed-input-digest', 'election-failure-retains-provenance', 'election-disabled-and-noncandidate-isolation'],
   scope: 'Synthetic integration controls only; existing car tests/native proof provide branch-authority checks.' }));

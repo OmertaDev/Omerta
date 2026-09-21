@@ -214,10 +214,11 @@ const commitObserver = observeResources ? createNpcFamilyCommitObserver({
     const started = performance.now();
     if (firstResourceError) throw firstResourceError;
     const after = await snapshotWorldResources(diagnosticPool), before = priorResources;
+    let seasonElectionProvenance = null;
     try {
       if (['ROLLED_BACK', 'STATEMENT_ABORTED'].includes(event.outcome))
         assert.equal(worldResourceHash(after), worldResourceHash(before), 'Aborted SQL changed committed world resources');
-      const seasonElectionProvenance = await electionProbe?.boundary(event);
+      seasonElectionProvenance = await electionProbe?.boundary(event) ?? null;
       if (carMeltProvenance) carMeltWitnessSummary.committedWitnesses++;
       // Keep unknown/overflow scopes explicit. Only original executed SQL can
       // select a candidate; a request label or actor-supplied claim cannot.
@@ -284,7 +285,7 @@ const commitObserver = observeResources ? createNpcFamilyCommitObserver({
       resourceCost.observedBoundaryWallMs += elapsed; resourceCost.maximumBoundaryWallMs = Math.max(resourceCost.maximumBoundaryWallMs, elapsed);
     } catch (error) {
       firstResourceError = error;
-      await proof.artifact('first-resource-failure.json', { before, after, event, carMeltProvenance, npcFamilyProvenance, error: { message: error.message, stack: error.stack } });
+      await proof.artifact('first-resource-failure.json', { before, after, event, carMeltProvenance, npcFamilyProvenance, seasonElectionProvenance, error: { message: error.message, stack: error.stack } });
       throw error;
     }
   },

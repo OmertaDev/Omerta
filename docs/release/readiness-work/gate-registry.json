@@ -1413,6 +1413,45 @@
       "coverageExclusions": [
         "Original NPC formation fee, nonmonetary initial war_pool, late rollback and next original hourly retry only; other ecology/resource branches and full matrix remain unsupported."
       ]
+    },
+    {
+      "id": "rc1-season-election",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:season-election:postgres"
+      ],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Cold zero-standing cohort with no core Family holder only; no warm/shared-flight/nonzero/Family election or full duration proof"
+      ]
+    },
+    {
+      "id": "rc1-knowledge-authority",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:knowledge-authority:postgres"
+      ],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Fixture-assisted Knowledge revoke/visibility/replay over30 declared authority tables only; no full route-role matrix or natural entry"
+      ]
+    },
+    {
+      "id": "rc1-choice-confirmation",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:choice-confirmation:postgres"
+      ],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Full HTTP authored preserve choice with fixture-assisted prerequisites and32 declared authority tables; expose success, concurrent choice, full authority and natural entry remain open"
+      ]
     }
   ]
 }

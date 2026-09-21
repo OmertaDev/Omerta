@@ -353,6 +353,22 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:family-authority:postgres
+      - name: Native Knowledge revoke authority and persistent replay
+        if: '!cancelled()'
+        env:
+          RC1_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
+          RC1_KNOWLEDGE_AUTHORITY_OUTPUT: ${{ runner.temp }}/rc1-knowledge-authority
+        run: |
+          umask 077
+          npm run test:rc1:knowledge-authority:postgres
+      - name: Native irreversible mystery choice confirmation
+        if: '!cancelled()'
+        env:
+          RC1_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
+          RC1_KNOWLEDGE_AUTHORITY_OUTPUT: ${{ runner.temp }}/rc1-choice-confirmation
+        run: |
+          umask 077
+          npm run test:rc1:choice-confirmation:postgres
       - name: Encrypt restricted execution evidence
         if: always()
         env:
@@ -443,6 +459,13 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:season-crown:postgres
+      - name: Original cold season election provenance and retry
+        if: '!cancelled()'
+        env:
+          RC1_ELECTION_OUTPUT: ${{ runner.temp }}/rc1-season-election
+        run: |
+          umask 077
+          npm run test:rc1:season-election:postgres
       - name: Ordinary market contention and original order expiry
         if: '!cancelled()'
         env:

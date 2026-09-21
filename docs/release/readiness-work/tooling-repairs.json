@@ -890,6 +890,20 @@
       ],
       "retest": "Focused ammo/crown controls, combined harness and qualification controls pass. Development source only; frozen integrated reruns required.",
       "evidence": "harness-season-fixture-compatibility.json"
+    },
+    {
+      "id": "RC1-TOOL-59",
+      "classification": "D composed observer source binding and retained election provenance",
+      "owner": "Codex/root",
+      "failedGate": "candidate19 pre-freeze composed observer control",
+      "before": "Expected source-bound runner block digest changed when the election callback was composed",
+      "repair": "Preserve car arg2 and NPC Family arg3, adding optional election provenance to the same classifier call; Keep acquired election provenance in first-resource-failure artifact if reconciliation rejects the candidate; Review/rebind exact block guard and retain17 existing controls plus4 election forwarding, replay/digest, failure retention and isolation controls",
+      "changedSource": [
+        "test/rc1-native-world-workload.js",
+        "test/rc1-world-car-melt-witness.js"
+      ],
+      "retest": "21 synthetic composition controls pass; original source-bound first failure retained. Integrated native rerun pending.",
+      "evidence": "harness-election-composition.json"
     }
   ]
 }
