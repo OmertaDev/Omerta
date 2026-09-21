@@ -1,0 +1,197 @@
+{
+  "owner": "Codex/native_harness",
+  "status": "PASS_SCOPED_RECORDED_WORKER_REPLAY",
+  "matrixQualifying": false,
+  "qualifyingMatrixRuns": 0,
+  "scope": "673 logical hours, two canonical seasonal rollovers, one idle player plus48 canonical residents, complete configured local worker timers; each run uses a different owned PostgreSQL database.",
+  "semantics": "Recorded native unordered LIMIT selection and exact full eligible-state verification; not seed-only equivalence or production scheduler concurrency.",
+  "exclusions": [
+    "RWA registry unavailable:8076expected dormant health callbacks retained per run; no external settlement",
+    "Local archive modeoff:alarms retained; noPITR claim",
+    "Chain watcher/liquidity automation disabled",
+    "No active actor policy/full225matrix/all13resourcejournals/productionload qualification",
+    "Daily/final invariants do not imply resource checks at every committed transition"
+  ],
+  "replayStatistics": {
+    "nativeSelectedOrderDifferences": 674,
+    "nativeSelectedMembershipDifferences": 674,
+    "nativeEligibleOrderDifferences": 674,
+    "completeEligibleStateComparison": "Exact full-row value multiset and multiplicities checked before every accepted selection; no semantic values substituted."
+  },
+  "runs": [
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\worker-isolated-chunked-two-seasons-1",
+      "source": {
+        "revision": "aa197b722d99de885a052d4d31746ed5f488b212",
+        "gitTree": "a9d08f6b96c58af482db8a012322490b788766c7",
+        "checkoutSha256": "690f493ada922376c071591f04389245b73d8039049f8cf0324696edcbc6d4be",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "result": {
+        "status": "PASS_SCOPED",
+        "source": "aa197b722d99de885a052d4d31746ed5f488b212",
+        "hours": 673,
+        "canonicalSeasonalRollovers": 2,
+        "checkpointRestart": false,
+        "parentSource": null,
+        "recordedQueryOrderReplay": false,
+        "recordedQuerySelectionReplay": false,
+        "queryReplayScopeVersion": 3,
+        "initialStateSha256": "732de356f937216493fa90cd979f7968ccc889211cac0131b684e8a81acd9750",
+        "finalStateSha256": "99983c989496c3d546ea30411938d3151a6450987c34fb4e431c9f6a32f78356",
+        "timerFirings": {
+          "directorTick": 8076,
+          "guardedTick": 673,
+          "guardedSeasonTick": 673,
+          "health-boundary": 8076
+        },
+        "guardedJobs": 59017,
+        "expectedDormantJobs": 8076,
+        "unexpectedWorkerFailures": 0,
+        "invariantChecks": 55,
+        "matrixQualifying": false,
+        "scheduleSha256": "aa4b67bfad1b53afcbb6807e082fdc13fd02920f194748bcb075c64d43f6f7d9",
+        "jobOutcomesSha256": "feb92eef41fee56415cb52d3021b07dcfb7a94b1635199e3c9b2f9761854b0fa",
+        "deterministicRandomTapeSha256": "42708b33fc6496bea324d81d99b3e307371fb1260bbdaae9042430e64cd302b9",
+        "actorRoster": {
+          "initialCharacters": 1,
+          "finalCharacters": 49,
+          "initialPlayers": 1,
+          "finalPlayers": 1,
+          "finalLivingResidents": 48,
+          "playerPolicyWorkload": "idle; worker-only coverage"
+        }
+      },
+      "runSha256": "c87daee3b99d5bf54f53edf162010b863f5cdc6692732439f50f42f7b42077f1",
+      "artifactIndexVerified": true,
+      "database": "rc1_world_7fbd447616cd99c936aeb8ee",
+      "databaseCleanupVerified": true,
+      "queryTape": {
+        "format": 3,
+        "records": 1348,
+        "chunks": 36,
+        "recordStreamSha256": "aea75caf527874df1f1f95c2b80a8ea4652739d385cbd334444b28fa68d93129",
+        "largestChunkBytes": 8377205
+      }
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\worker-isolated-chunked-two-seasons-replay-1",
+      "source": {
+        "revision": "aa197b722d99de885a052d4d31746ed5f488b212",
+        "gitTree": "a9d08f6b96c58af482db8a012322490b788766c7",
+        "checkoutSha256": "690f493ada922376c071591f04389245b73d8039049f8cf0324696edcbc6d4be",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "result": {
+        "status": "PASS_SCOPED",
+        "source": "aa197b722d99de885a052d4d31746ed5f488b212",
+        "hours": 673,
+        "canonicalSeasonalRollovers": 2,
+        "checkpointRestart": false,
+        "parentSource": null,
+        "recordedQueryOrderReplay": true,
+        "recordedQuerySelectionReplay": true,
+        "queryReplayScopeVersion": 3,
+        "initialStateSha256": "732de356f937216493fa90cd979f7968ccc889211cac0131b684e8a81acd9750",
+        "finalStateSha256": "99983c989496c3d546ea30411938d3151a6450987c34fb4e431c9f6a32f78356",
+        "timerFirings": {
+          "directorTick": 8076,
+          "guardedTick": 673,
+          "guardedSeasonTick": 673,
+          "health-boundary": 8076
+        },
+        "guardedJobs": 59017,
+        "expectedDormantJobs": 8076,
+        "unexpectedWorkerFailures": 0,
+        "invariantChecks": 55,
+        "matrixQualifying": false,
+        "scheduleSha256": "aa4b67bfad1b53afcbb6807e082fdc13fd02920f194748bcb075c64d43f6f7d9",
+        "jobOutcomesSha256": "feb92eef41fee56415cb52d3021b07dcfb7a94b1635199e3c9b2f9761854b0fa",
+        "deterministicRandomTapeSha256": "42708b33fc6496bea324d81d99b3e307371fb1260bbdaae9042430e64cd302b9",
+        "actorRoster": {
+          "initialCharacters": 1,
+          "finalCharacters": 49,
+          "initialPlayers": 1,
+          "finalPlayers": 1,
+          "finalLivingResidents": 48,
+          "playerPolicyWorkload": "idle; worker-only coverage"
+        },
+        "sameSeedFreshWorkerReplay": false,
+        "recordedNondeterminismReplay": true
+      },
+      "runSha256": "2563e6a0ddbe9b7c4d5719a67387f27ef0f04cbbe7b3bf357cfb7ef82c411c93",
+      "artifactIndexVerified": true,
+      "database": "rc1_world_6424a6aa0f72f9260d1f0e49",
+      "databaseCleanupVerified": true,
+      "queryTape": {
+        "format": 3,
+        "records": 1348,
+        "chunks": 36,
+        "recordStreamSha256": "aea75caf527874df1f1f95c2b80a8ea4652739d385cbd334444b28fa68d93129",
+        "largestChunkBytes": 8377205
+      }
+    }
+  ],
+  "databaseIsolationControl": [
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\database-isolation-1",
+      "source": {
+        "revision": "21cc41788c2a7866f8b5fbf808d998738f1d5821",
+        "gitTree": "f25fbed2f1947b750b5c4869a9a2439b7d5b4bc0",
+        "checkoutSha256": "28a554c22c0271c632f448029869609c280889f05c59a65c9c732a20e6f52c05",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "FAIL",
+      "result": {
+        "status": "FAIL",
+        "sameDatabaseDifferentSchema": {
+          "opened": 0,
+          "struck": 0,
+          "lapsed": 0,
+          "skipped": "locked"
+        },
+        "separateDatabaseSameLockAcquired": true,
+        "changedOwnershipCleanupRefused": true,
+        "matrixQualifying": false
+      },
+      "runSha256": "ad826cb86a48a2175bbc0fbfd22b8819806fd22a259b8f1ee8dcb437a0ad820e",
+      "artifactIndexVerified": true
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\database-isolation-retest-1",
+      "source": {
+        "revision": "a9f41558930e022bc4a0b0475fcde0aa125f4a70",
+        "gitTree": "6b03883c99d1a0cc9259a0fa816997e4bc032eed",
+        "checkoutSha256": "f2ae17e0a24d7e9beea7f65024ac71293262a9ed8ae728ef3978cd16495166d3",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "result": {
+        "status": "PASS_SCOPED",
+        "sameDatabaseDifferentSchema": {
+          "opened": 0,
+          "struck": 0,
+          "lapsed": 0,
+          "skipped": "locked"
+        },
+        "separateDatabaseSameLockAcquired": true,
+        "changedOwnershipCleanupRefused": true,
+        "matrixQualifying": false
+      },
+      "runSha256": "14a191612176c4e0fa6c6142b2530431269e76f24f838a097317114397378dc0",
+      "artifactIndexVerified": true
+    }
+  ],
+  "isolationRepair": "Initial21cc4178 correctly preserved ownedDBs when obj_description could not read shared catalog ownership. a9f41558 uses shobj_description; exact source/OID/name/marker verified before separate cleanup of firstattempt. Originalfailureunmodified.",
+  "firstAttemptCleanupReceipt": {
+    "path": "C:/Users/Jorge/.codex/rc1-native-evidence/database-isolation-1-cleanup.json",
+    "sha256": "e94f295901bfc009924e467e759b93ccd14ff9b4cd42b7f12d43b0dfc6df3ebc"
+  },
+  "capacity": "Querytape v3 bounds chunks and replay memory. Larger populations can still exceed whole canonical snapshot/artifact string limits; no capacity claim beyond this scopedrun."
+}
