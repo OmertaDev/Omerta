@@ -1,0 +1,476 @@
+{
+  "format": 1,
+  "sourceWorkflows": [
+    ".github/workflows/ci.yml",
+    ".github/workflows/forge.yml",
+    ".github/workflows/liquidity-postgres.yml",
+    ".github/workflows/rc1-recovery.yml"
+  ],
+  "note": "Command inventory for execution. Workflow setup and environment remain required; additional Foundry E2E/liquidity/size lanes must be reviewed in the final-regression proof.",
+  "gates": [
+    {
+      "id": "npm-test",
+      "command": [
+        "npm",
+        "test"
+      ],
+      "timeoutMs": 3600000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "rc1",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1"
+      ],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "worldgraph",
+      "command": [
+        "npm",
+        "run",
+        "worldgraph:check"
+      ],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "content",
+      "command": [
+        "npm",
+        "run",
+        "content:check"
+      ],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "invites",
+      "command": [
+        "npm",
+        "run",
+        "test:invites"
+      ],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "sim",
+      "command": [
+        "npm",
+        "run",
+        "sim"
+      ],
+      "timeoutMs": 900000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "scale",
+      "command": [
+        "npm",
+        "run",
+        "scale"
+      ],
+      "timeoutMs": 1200000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "mobile",
+      "command": [
+        "npm",
+        "run",
+        "mobile"
+      ],
+      "timeoutMs": 1200000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "invite-browser",
+      "command": [
+        "npm",
+        "run",
+        "test:invites:browser"
+      ],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "pgquery",
+      "command": [
+        "npm",
+        "run",
+        "pgquery"
+      ],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "pgcheck",
+      "command": [
+        "npm",
+        "run",
+        "pgcheck"
+      ],
+      "timeoutMs": 1200000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "phase2-definitions-postgres",
+      "command": [
+        "npm",
+        "run",
+        "phase2:definitions:postgres"
+      ],
+      "timeoutMs": 1200000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "phase2-lots-postgres",
+      "command": [
+        "npm",
+        "run",
+        "phase2:lots:postgres"
+      ],
+      "timeoutMs": 1200000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "test-coordination-postgres",
+      "command": [
+        "npm",
+        "run",
+        "test:coordination:postgres"
+      ],
+      "timeoutMs": 1200000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "test-world-kernel-postgres",
+      "command": [
+        "npm",
+        "run",
+        "test:world-kernel:postgres"
+      ],
+      "timeoutMs": 1200000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "test-family-operations-postgres",
+      "command": [
+        "npm",
+        "run",
+        "test:family-operations:postgres"
+      ],
+      "timeoutMs": 1200000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "test-world-projections-postgres",
+      "command": [
+        "npm",
+        "run",
+        "test:world-projections:postgres"
+      ],
+      "timeoutMs": 1200000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "test-core-progression-postgres",
+      "command": [
+        "npm",
+        "run",
+        "test:core-progression:postgres"
+      ],
+      "timeoutMs": 1200000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "test-player-commands-postgres",
+      "command": [
+        "npm",
+        "run",
+        "test:player-commands:postgres"
+      ],
+      "timeoutMs": 1200000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "test-director-postgres",
+      "command": [
+        "npm",
+        "run",
+        "test:director:postgres"
+      ],
+      "timeoutMs": 1200000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "test-rc1-telemetry-postgres",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:telemetry:postgres"
+      ],
+      "timeoutMs": 1200000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "test-stockcatalogv2-postgres",
+      "command": [
+        "npm",
+        "run",
+        "test:stockcatalogv2:postgres"
+      ],
+      "timeoutMs": 1200000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "test-rwahealth-postgres",
+      "command": [
+        "npm",
+        "run",
+        "test:rwahealth:postgres"
+      ],
+      "timeoutMs": 1200000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "test-rwaregistrylifecycle-postgres",
+      "command": [
+        "npm",
+        "run",
+        "test:rwaregistrylifecycle:postgres"
+      ],
+      "timeoutMs": 1200000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "test-audit-mint-dev-postgres",
+      "command": [
+        "npm",
+        "run",
+        "test:audit:mint-dev:postgres"
+      ],
+      "timeoutMs": 1200000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "test-audit-deed-reimport-postgres",
+      "command": [
+        "npm",
+        "run",
+        "test:audit:deed-reimport:postgres"
+      ],
+      "timeoutMs": 1200000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "backup-selftest",
+      "command": [
+        "npm",
+        "run",
+        "backup:selftest"
+      ],
+      "timeoutMs": 1200000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "chaos",
+      "command": [
+        "npm",
+        "run",
+        "chaos"
+      ],
+      "timeoutMs": 1200000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "loadtest",
+      "command": [
+        "npm",
+        "run",
+        "loadtest"
+      ],
+      "timeoutMs": 1200000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "concurrency",
+      "command": [
+        "npm",
+        "run",
+        "concurrency"
+      ],
+      "timeoutMs": 1200000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "foundry",
+      "command": [
+        "forge",
+        "test",
+        "-vvv"
+      ],
+      "timeoutMs": 3600000,
+      "cwd": "omerta-contracts",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "linux-sigterm",
+      "command": [
+        "node",
+        "tools/rc1-shutdown.js"
+      ],
+      "timeoutMs": 1800000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "rc1-migration",
+      "command": [
+        "node",
+        "test/rc1-postgres-migration-failure.js"
+      ],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "rc1-redteam",
+      "command": [
+        "node",
+        "test/rc1-command-redteam.js"
+      ],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "rc1-phone",
+      "command": [
+        "node",
+        "test/rc1-mobile-postgres.js"
+      ],
+      "timeoutMs": 1200000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    },
+    {
+      "id": "rc1-checkpoint",
+      "command": [
+        "node",
+        "test/rc1-native-proof.js",
+        "--postgres"
+      ],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Does not alone qualify a release proof"
+      ]
+    }
+  ]
+}

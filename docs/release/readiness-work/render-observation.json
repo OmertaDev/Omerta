@@ -1,0 +1,79 @@
+{
+  "format": 1,
+  "kind": "read-only-existing-deployment-observation",
+  "workspace": {
+    "id": "tea-d9gkgfbbc2fs738o1jkg",
+    "name": "My Workspace",
+    "confirmedBy": "user in this task"
+  },
+  "observedAt": "2026-09-21T02:35:25.735Z",
+  "status": "PARTIAL_NOT_CANDIDATE_ATTESTATION",
+  "services": [
+    {
+      "id": "srv-d9gkiscm0tmc73cc7ah0",
+      "name": "omerta-api",
+      "type": "web_service",
+      "source": "468516d8d6f3729514711ad5a0b83e440c5c46f9",
+      "deployId": "dep-dao7j2eq1p3s73d1m680",
+      "plan": "starter",
+      "instances": 1,
+      "branch": "main",
+      "autoDeployTrigger": "checksPass"
+    },
+    {
+      "id": "srv-d9gkiscm0tmc73cc7agg",
+      "name": "omerta-worker",
+      "type": "background_worker",
+      "source": "468516d8d6f3729514711ad5a0b83e440c5c46f9",
+      "deployId": "dep-dao7j2eq1p3s73d1m6m0",
+      "plan": "starter",
+      "instances": 1,
+      "branch": "main",
+      "autoDeployTrigger": "checksPass"
+    }
+  ],
+  "database": {
+    "id": "dpg-d9gkii4m0tmc73cc6uf0-a",
+    "name": "omerta-db",
+    "version": "18.4",
+    "plan": "pro_4gb",
+    "highAvailability": true,
+    "extensions": [
+      {
+        "name": "plpgsql",
+        "version": "1.0"
+      }
+    ],
+    "schemaMeta": {
+      "appVersion": "1.2.0",
+      "schemaSha": "b126f2832cc793bd",
+      "appliedAt": "2026-09-21T00:28:23.577332Z"
+    }
+  },
+  "rollbackPredecessorObserved": "468516d8d6f3729514711ad5a0b83e440c5c46f9",
+  "missing": [
+    "isolated cohort services/database",
+    "candidate deployment",
+    "runtime flag and integration attestation",
+    "configuration sources and operator",
+    "delivered alert",
+    "physical devices and real participants",
+    "deployment-specific backup/restore/rollback"
+  ],
+  "mutationsPerformed": [],
+  "sourceMethods": [
+    "Render list_services",
+    "Render list_postgres_instances",
+    "Render list_deploys",
+    "read-only SELECT version(), current_database()",
+    "read-only SELECT extname,extversion FROM pg_extension",
+    "read-only SELECT * FROM schema_meta"
+  ],
+  "failedAttempts": [
+    {
+      "method": "query_render_postgres",
+      "classification": "D tooling",
+      "reason": "Connector rejects multiple SELECT statements in a prepared statement; retried individually successfully"
+    }
+  ]
+}
