@@ -158,6 +158,91 @@ const reasonClasses = [
   ['omr', /^(loan:|desk:|gang:tribute$|vanity:|rarity:upgrade$|death:duty$|yield:|stake:|swap:|auction:|withdraw:omr$|drop:claim$)/, 'OMR custody or supply receipt'],
 ];
 
+// The original exchange moves rounds into/out of listings WITHOUT an ammo
+// ledger entry. Count the seller's live escrow, then attribute a sale only from
+// fresh, one-use reciprocal cash receipts and the exact consumed lot. This is
+// custody/receipt lineage, not a claim to reconstruct an HTTP request identity.
+function reconcileAmmoEscrow(before, after, receipts, checks, unsupported) {
+  const old = indexed(rows(before, 'listings'), row => row.id, 'listings');
+  const current = indexed(rows(after, 'listings'), row => row.id, 'listings');
+  const priorPeople = indexed(rows(before, 'characters'), row => row.id, 'characters');
+  const people = indexed(rows(after, 'characters'), row => row.id, 'characters');
+  const personal = new Map(), ownership = new Map(), usedReceipts = new Set(), movements = [];
+  const bump = (map, owner, amount) => map.set(owner, exactSum([map.get(owner) || '0', String(amount)]));
+  const integer = (value, label) => { const text = exactSum([value]); assert(/^\d+$/.test(text), `Ammo escrow ${label} must be a nonnegative integer`); return BigInt(text); };
+  const validate = (lot, roster) => {
+    assert.equal(lot.item_id, 'ammo', 'Ammo escrow item identity changed');
+    assert(roster.has(lot.seller_character), 'Ammo escrow has an unobserved owner');
+    assert(integer(lot.qty, 'quantity') > 0n); assert(integer(lot.unit_price, 'price') > 0n);
+  };
+  for (const lot of old.values()) if (lot.item_kind === 'ammo') validate(lot, priorPeople);
+  for (const lot of current.values()) if (lot.item_kind === 'ammo') validate(lot, people);
+  for (const [id, lot] of old) if (current.has(id) && (lot.item_kind === 'ammo' || current.get(id).item_kind === 'ammo'))
+    assert.deepEqual(current.get(id), lot, 'Live ammo escrow rewritten');
+  const changed = [...current.values()].filter(lot => !old.has(lot.id)).map(lot => ({ lot, added: true }))
+    .concat([...old.values()].filter(lot => !current.has(lot.id)).map(lot => ({ lot, added: false })));
+  let totalTax = 0n;
+  for (const { lot, added } of changed.filter(row => row.lot.item_kind === 'ammo')) {
+    const seller = lot.seller_character, qty = integer(lot.qty, 'quantity');
+    assert(priorPeople.get(seller)?.alive && people.get(seller)?.alive,
+      'Ammo escrow death/birth disposition remains unsupported');
+    if (added) {
+      bump(personal, seller, -qty);
+      movements.push({ kind: 'ammo-list', listingId: lot.id, seller, quantity: String(qty), authority: [{ table: 'listings', id: lot.id, state: 'after' }] });
+      continue;
+    }
+    const total = qty * integer(lot.unit_price, 'price');
+    assert(total <= BigInt(Number.MAX_SAFE_INTEGER), 'Ammo escrow price outside verified safe-integer purchase scope');
+    const fee = (total + 99n) / 100n, tax = fee, net = total > fee + tax ? total - fee - tax : 0n;
+    const sales = receipts.filter(row => row.reason === 'exchange:sale' && row.currency === 'cash' && row.character_id === seller
+      && exactSum([row.amount]) === String(net));
+    if (!sales.length) {
+      // A pull preserves the same owner's personal+escrow quantity. A missing
+      // sale receipt cannot hide delivery to a different owner: both parity
+      // equations below still have to hold for every character.
+      bump(personal, seller, qty);
+      movements.push({ kind: 'ammo-cancel', listingId: lot.id, seller, quantity: String(qty), authority: [{ table: 'listings', id: lot.id, state: 'before' }] });
+      continue;
+    }
+    assert.equal(sales.length, 1, 'Ambiguous/duplicate ammo sale receipts'); const sale = sales[0], buyer = sale.counterparty;
+    assert(buyer !== seller && priorPeople.get(buyer)?.alive && people.get(buyer)?.alive, 'Ammo buyer must be a different observed living owner');
+    const buys = receipts.filter(row => row.reason === 'exchange:buy' && row.currency === 'cash' && row.character_id === buyer
+      && row.counterparty === seller && exactSum([row.amount]) === String(-total));
+    assert.equal(buys.length, 1, 'Missing/duplicate exact ammo buy receipt'); const buy = buys[0];
+    assert.equal(sale.account_id, null); assert.equal(buy.account_id, null);
+    assert(!usedReceipts.has(sale.id) && !usedReceipts.has(buy.id), 'Ammo trade receipt reused for another lot');
+    usedReceipts.add(sale.id); usedReceipts.add(buy.id);
+    bump(personal, buyer, qty); bump(ownership, buyer, qty); bump(ownership, seller, -qty);
+    const poolTax = tax < total - net ? tax : total - net; totalTax += poolTax;
+    movements.push({ kind: 'ammo-buy', listingId: lot.id, seller, buyer, quantity: String(qty), gross: String(total), net: String(net),
+      tax: String(poolTax), sink: String(total - net - poolTax), authority: [{ table: 'listings', id: lot.id, state: 'before' }, ...reference('transactions', [buy, sale])] });
+  }
+  // A receipt cannot be spent again on an unchanged/deleted lot. If another
+  // kind of lot was consumed, leave those cash receipts to the unknown inventory;
+  // do not pretend this ammo-only classifier attributed the other trade.
+  if (!changed.some(row => !row.added && row.lot.item_kind !== 'ammo'))
+    for (const receipt of receipts.filter(row => ['exchange:buy', 'exchange:sale'].includes(row.reason)))
+      assert(usedReceipts.has(receipt.id), 'Exchange receipt lacks one-use consumed ammo escrow');
+  const held = (listings, owner) => exactSum([...listings.values()].filter(lot => lot.item_kind === 'ammo' && lot.seller_character === owner).map(lot => lot.qty));
+  for (const [id, person] of people) {
+    const prior = priorPeople.get(id), ammoReceipts = receipts.filter(row => row.character_id === id && row.currency === 'ammo');
+    parity(checks, { kind: 'personal-and-owned-ammo-escrow', resource: 'ammo', owner: `character-and-ammo-escrow:${id}`,
+      before: exactSum([prior?.ammo || '0', held(old, id)]), after: exactSum([person.ammo, held(current, id)]),
+      expectedDelta: exactSum([prior ? '0' : '25', ...ammoReceipts.map(row => row.amount), ownership.get(id) || '0']),
+      authority: [...reference('transactions', ammoReceipts), ...movements.filter(row => row.seller === id || row.buyer === id).flatMap(row => row.authority),
+        ...(!prior ? [{ rule: 'Canonical character default ammo25' }] : [])] });
+  }
+  if (movements.some(row => row.kind === 'ammo-buy')) {
+    if (receipts.filter(row => row.currency === 'cash').every(row => usedReceipts.has(row.id))) {
+      parity(checks, { kind: 'ammo-market-house-tax', resource: 'cash', owner: 'street-tax-ammo-market',
+        before: rows(before, 'street_tax').find(row => row.id === 1)?.pool ?? '0', after: rows(after, 'street_tax').find(row => row.id === 1)?.pool ?? '0',
+        expectedDelta: String(totalTax), authority: reference('transactions', receipts.filter(row => usedReceipts.has(row.id))) });
+    } else unsupported.push({ kind: 'ammo-market-compound-tax', detail: 'Ammo buyer/seller custody checked; unrelated cash receipts prevent complete shared tax attribution' });
+  }
+  return { personal, usedReceipts, movements,
+    otherListingChanges: changed.some(row => row.lot.item_kind !== 'ammo') || [...old].some(([id, lot]) => current.has(id) && lot.item_kind !== 'ammo' && json(lot) !== json(current.get(id))) };
+}
+
 export function reconcileWorldResources(before, after, { identity = null, includeRestrictedChanges = false } = {}) {
   assert.equal(before.format, 1); assert.equal(after.format, 1);
   const checks = [], unsupported = [];
@@ -180,7 +265,8 @@ export function reconcileWorldResources(before, after, { identity = null, includ
       assert.equal(linked[0][creation ? 'output_ordinal' : 'input_ordinal'], event.event_ordinal, 'Mutation ordinal mismatch');
     }
   }
-  for (const receipt of receipts) if (!reasonClasses.some(([currency, pattern]) => currency === receipt.currency && pattern.test(receipt.reason)))
+  const ammoEscrow = reconcileAmmoEscrow(before, after, receipts, checks, unsupported);
+  for (const receipt of receipts) if (!ammoEscrow.usedReceipts.has(receipt.id) && !reasonClasses.some(([currency, pattern]) => currency === receipt.currency && pattern.test(receipt.reason)))
     unsupported.push({ kind: 'receipt-reason', currency: receipt.currency, reason: receipt.reason, receiptId: receipt.id });
 
   const priorPeople = indexed(rows(before, 'characters'), r => r.id, 'characters'), finalPeople = indexed(rows(after, 'characters'), r => r.id, 'characters');
@@ -193,8 +279,9 @@ export function reconcileWorldResources(before, after, { identity = null, includ
       parity(checks, { resource: currency, owner: `character:${id}`,
         before: prior ? currency === 'cash' ? exactSum([prior.cash, prior.bank]) : prior[currency] : '0',
         after: currency === 'cash' ? exactSum([person.cash, person.bank]) : person[currency],
-        expectedDelta: exactSum([birth, ...matched.map(r => r.amount)]),
-        authority: [...reference('transactions', matched), ...(!prior ? [{ rule: 'Canonical character defaults: cash500/ammo25/cb0' }] : [])] });
+        expectedDelta: exactSum([birth, ...matched.map(r => r.amount), currency === 'ammo' ? ammoEscrow.personal.get(id) || '0' : '0']),
+        authority: [...reference('transactions', matched), ...(currency === 'ammo' ? ammoEscrow.movements.filter(r => r.seller === id || r.buyer === id).flatMap(r => r.authority) : []),
+          ...(!prior ? [{ rule: 'Canonical character defaults: cash500/ammo25/cb0' }] : [])] });
     }
   }
   for (const receipt of receipts.filter(r => r.character_id && ['cash', 'ammo', 'cb'].includes(r.currency)))
@@ -301,18 +388,21 @@ export function reconcileWorldResources(before, after, { identity = null, includ
     authority: reference('transactions', receipts.filter(r => r.reason.startsWith('loan:'))) });
   const cars = reconcileCarResources(before, after);
   checks.push(...cars.checks); unsupported.push(...cars.unsupported);
-  const observedOnly = ['boats', 'account_gear', 'market_listings', 'listings', 'bounties', 'commission_proposals', 'favors',
+  const observedOnly = ['boats', 'account_gear', 'market_listings', 'bounties', 'commission_proposals', 'favors',
     'loan_house', 'convoy_insurance', 'poker_tournaments', 'poker_entries', 'grand_prix', 'grand_prix_entries', 'stakes_races',
     'stakes_entries', 'district_bids', 'shipment_days', 'shipment_takes', 'bespoke_pieces', 'bespoke_serials', 'campaign_progress',
     'drop_allocations', 'chain_reserve', 'vouchers', 'season_records', 'season_recaps', 'operation_escrow'];
   for (const table of observedOnly) if (json(rows(before, table)) !== json(rows(after, table)))
     unsupported.push({ kind: 'observed-table-change', table, detail: 'Change observed; complete resource disposition classifier is not implemented' });
+  if (ammoEscrow.otherListingChanges) unsupported.push({ kind: 'observed-table-change', table: 'listings', detail: 'Non-ammo escrow lineage remains unsupported' });
   if (json(rows(before, 'gangs')) !== json(rows(after, 'gangs')))
     unsupported.push({ kind: 'family-lineage', detail: 'Family rows retained; per-Family cash/ammo/spoils attribution is not implemented' });
   const restrictedChanges = unsupported.length ? resourceTableChanges(before, after) : null;
   if (restrictedChanges) verifyResourceTableChanges(before, after, restrictedChanges);
   return { format: 1, identity, beforeHash: worldResourceHash(before), afterHash: worldResourceHash(after), receipts,
-    itemEvents: events, mutationInputs: inputs, mutationOutputs: outputs, checks, cars, omrBuckets: { before: omrBefore, after: omrAfter, movements: omrMovements },
+    itemEvents: events, mutationInputs: inputs, mutationOutputs: outputs, checks, cars, ammoEscrow: { movements: ammoEscrow.movements,
+      scope: 'Exact personal plus owned live ammo escrow; list/pull custody and fresh reciprocal purchase receipts. HTTP request binding and other escrow terminals are not reconstructed.' },
+    omrBuckets: { before: omrBefore, after: omrAfter, movements: omrMovements },
     unsupported, restrictedChangesSha256: restrictedChanges ? sha256(restrictedChanges) : null,
     ...(includeRestrictedChanges && restrictedChanges ? { restrictedChanges } : {}),
     status: unsupported.length ? 'PASS_PARITY_WITH_UNSUPPORTED_LINEAGE' : 'PASS_SCOPED_PARITY', qualifyingFullResourcePass: false,
