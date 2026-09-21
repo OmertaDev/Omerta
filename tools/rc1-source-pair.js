@@ -65,6 +65,7 @@ if (process.argv.includes('--child')) {
     normalization: { excludedFields: ['schema_meta.applied_at'],
       reason: 'stampSchema updates this migration-observation timestamp on every bootstrap; schema hash and version remain compared.',
       retained: 'All other rows, values, sequences, generated IDs, deadlines, balances, state and receipts.' },
+    receiptComparison: 'Compare durable result, execution identity, completion status and immediate result. The API recomputes projection/asOf and differential feedback on every replay; retain but do not require byte equality for that fresh view.',
     coverageExclusions: ['Not deployed Render recovery', 'No worker or Linux signal rehearsal in this tool',
       'Two fixture accounts and mystery.start only; not full resource or journey coverage',
       'No backup restore or recovery-point claim', 'Installed dependencies must independently match their lockfile'] };
@@ -126,7 +127,7 @@ if (process.argv.includes('--child')) {
       ...(payload ? { body: JSON.stringify(payload) } : {}), signal: AbortSignal.timeout(30000) });
     const value = await response.json(); assert.equal(response.status, 200, JSON.stringify(value)); return value;
   };
-  const receipts = [];
+  const receipts = [], replays = [];
   async function execute(account) {
     const board = await request(account, 'GET', '/v1/commands');
     const command = board.commands.find((row) => row.commandType === 'mystery.start' && row.availability === 'AVAILABLE');
@@ -141,7 +142,10 @@ if (process.argv.includes('--child')) {
     for (const receipt of receipts) {
       const result = await request(receipt.account, 'POST', '/v1/commands/execute', receipt.payload, receipt.key);
       assert.equal(result.replayed, true, label);
-      assert.deepEqual({ ...result, replayed: false }, receipt.result, `${label}: durable receipt result changed`);
+      replays.push({ label, account: receipt.account, result });
+      for (const key of ['schemaVersion', 'executionId', 'status', 'result'])
+        assert.deepEqual(result[key], receipt.result[key], `${label}: durable receipt ${key} changed`);
+      assert.deepEqual(result.feedback.immediateResult, receipt.result.feedback.immediateResult, `${label}: completion feedback changed`);
     }
     report.assertions.push({ id: label, receipts: receipts.length, status: 'PASS' });
   }
@@ -176,7 +180,7 @@ if (process.argv.includes('--child')) {
   } finally {
     try { await stop(); } catch (error) { report.shutdownFailure = error.message; report.status = 'FAIL'; process.exitCode = 1; }
     for (const child of children) await fs.writeFile(path.join(output, `${child.label}.log`), child.log(), { flag: 'wx', mode: 0o600 });
-    await put('receipts.json', receipts);
+    await put('receipts.json', receipts); await put('replays.json', replays);
     await pool.end(); await admin.end(); report.endedAt = new Date().toISOString();
     report.durationMs = Date.parse(report.endedAt) - Date.parse(report.startedAt); await put('result.json', report);
     const files = (await fs.readdir(output)).sort(); const index = [];
