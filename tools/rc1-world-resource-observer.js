@@ -7,6 +7,7 @@ import { reconcileCarResources } from './rc1-car-journal.js';
 import { reconcileSeasonConversions } from './rc1-season-conversion-journal.js';
 import { reconcileNpcFamilyFormation } from './rc1-npc-family-journal.js';
 import { reconcileStoredSeasonCrowns } from './rc1-season-crown-journal.js';
+import { reconcileNpcMarketOrder } from './rc1-npc-market-order-journal.js';
 import { reconcileNpcBoats } from './rc1-npc-boat-journal.js';
 import { reconcileWorkerTransitions } from './rc1-world-worker-transitions.js';
 import { reconcileNpcCargo } from './rc1-npc-cargo-journal.js';
@@ -619,7 +620,7 @@ function reconcileTurfTerminal(before, after, receipts, checks, unsupported) {
   districtFields.set(districtId, fields); settledDistricts.add(districtId); return result;
 }
 
-export function reconcileWorldResources(before, after, { identity = null, includeRestrictedChanges = false, carMeltProvenance = null, carAcquisitionProvenance = null, npcFamilyProvenance = null, seasonElectionProvenance = null, npcBoatProvenance = null, duelSelection = null } = {}) {
+export function reconcileWorldResources(before, after, { identity = null, includeRestrictedChanges = false, carMeltProvenance = null, carAcquisitionProvenance = null, npcFamilyProvenance = null, seasonElectionProvenance = null, npcBoatProvenance = null, duelSelection = null, npcMarketOrderProvenance = null } = {}) {
   assert.equal(before.format, 1); assert.equal(after.format, 1);
   const checks = [], unsupported = [];
   const receipts = appendOnly(before, after, 'transactions');
@@ -646,11 +647,13 @@ export function reconcileWorldResources(before, after, { identity = null, includ
   const familyEntry = reconcileFamilyEntry(before, after, receipts, checks, unsupported, npcFamilyProvenance, identity);
   const familyDissolution = reconcileFamilyDissolution(before, after, receipts, checks, unsupported);
   const turfTerminal = reconcileTurfTerminal(before, after, receipts, checks, unsupported);
+  const npcMarketOrder = reconcileNpcMarketOrder(before, after, receipts, npcMarketOrderProvenance, identity);
+  checks.push(...npcMarketOrder.checks);
   const workerTransitions = reconcileWorkerTransitions(before, after, { identity, receipts });
   checks.push(...workerTransitions.checks);
   const npcCargo = reconcileNpcCargo(before, after, { identity, receipts });
   checks.push(...npcCargo.checks);
-  for (const receipt of receipts) if (!npcCargo.usedReceipts.has(receipt.id) && !ammoEscrow.usedReceipts.has(receipt.id) && !pressureCash.usedReceipts.has(receipt.id) && !familyEntry.usedReceipts.has(receipt.id) && !familyDissolution.usedReceipts.has(receipt.id) && !turfTerminal.usedReceipts.has(receipt.id) && !reasonClasses.some(([currency, pattern]) => currency === receipt.currency && pattern.test(receipt.reason)))
+  for (const receipt of receipts) if (!npcMarketOrder.usedReceipts.has(receipt.id) && !npcCargo.usedReceipts.has(receipt.id) && !ammoEscrow.usedReceipts.has(receipt.id) && !pressureCash.usedReceipts.has(receipt.id) && !familyEntry.usedReceipts.has(receipt.id) && !familyDissolution.usedReceipts.has(receipt.id) && !turfTerminal.usedReceipts.has(receipt.id) && !reasonClasses.some(([currency, pattern]) => currency === receipt.currency && pattern.test(receipt.reason)))
     unsupported.push({ kind: 'receipt-reason', currency: receipt.currency, reason: receipt.reason, receiptId: receipt.id });
 
   const priorPeople = indexed(rows(before, 'characters'), r => r.id, 'characters'), finalPeople = indexed(rows(after, 'characters'), r => r.id, 'characters');
@@ -782,12 +785,15 @@ export function reconcileWorldResources(before, after, { identity = null, includ
   const remainingCargo = state => rows(state, 'character_cargo').filter(row => !npcCargo.cargoKeys.has(tuple(row.character_id, row.good_id)));
   if (json(remainingCargo(before)) !== json(remainingCargo(after)))
     unsupported.push({ kind: 'observed-table-change', table: 'character_cargo', detail: 'Cargo movement outside exact resident purchase remains unclassified' });
-  const observedOnly = ['account_gear', 'market_listings', 'exchange_pool', 'bounties', 'commission_proposals', 'favors',
+  const observedOnly = ['account_gear', 'exchange_pool', 'bounties', 'commission_proposals', 'favors',
     'loan_house', 'convoy_insurance', 'poker_tournaments', 'poker_entries', 'grand_prix', 'grand_prix_entries', 'stakes_races',
     'stakes_entries', 'shipment_days', 'shipment_takes', 'bespoke_pieces', 'bespoke_serials', 'campaign_progress',
     'drop_allocations', 'chain_reserve', 'vouchers', 'operation_escrow'];
   for (const table of observedOnly) if (!(table === 'exchange_pool' && workerTransitions.exchange) && json(rows(before, table)) !== json(rows(after, table)))
     unsupported.push({ kind: 'observed-table-change', table, detail: 'Change observed; complete resource disposition classifier is not implemented' });
+  const otherMarket = state => rows(state, 'market_listings').filter(row => !npcMarketOrder.listingIds.has(row.id));
+  if (json(otherMarket(before)) !== json(otherMarket(after))) unsupported.push({ kind: 'observed-table-change', table: 'market_listings',
+    detail: 'Only source-proven isolated NPC buy-order placement is classified; fills, refund, cancellation, death and other custody remain unsupported' });
   if (ammoEscrow.otherListingChanges) unsupported.push({ kind: 'observed-table-change', table: 'listings', detail: 'Non-ammo escrow lineage remains unsupported' });
   const unknownBids = state => rows(state, 'district_bids').filter(row => !turfTerminal.settledDistricts.has(row.district_id));
   if (json(unknownBids(before)) !== json(unknownBids(after))) unsupported.push({ kind: 'observed-table-change', table: 'district_bids', detail: 'Stake/raise and remaining escrow changes are not classified by the terminal subset' });
@@ -813,6 +819,8 @@ export function reconcileWorldResources(before, after, { identity = null, includ
   if (restrictedChanges) verifyResourceTableChanges(before, after, restrictedChanges);
   return { format: 1, identity, beforeHash: worldResourceHash(before), afterHash: worldResourceHash(after), receipts,
     itemEvents: events, mutationInputs: inputs, mutationOutputs: outputs, checks, cars, workerTransitions: { movements: workerTransitions.movements }, npcCargo: { movements: npcCargo.movements },
+    npcMarketOrder: { movements: npcMarketOrder.movements,
+      scope: 'One original residentAct placement in its committed worker transaction: exact personal cash fee sink, owned live order escrow, identity/default custody and deadline. No fill/refund/cancel/death or general market qualification.' },
     boats: { movements: boats.movements, scope: 'One source-pinned default original worker NPC dinghy grant with exact owner/asset and recorded random inputs. No authored boat grant receipt exists. Retirement, sale, estate, NFT and compound dispositions remain unsupported.' },
     seasonCrowns: { movements: seasonCrowns.movements, elections: seasonCrowns.elections, notificationMetadata: seasonCrowns.notificationMetadata,
       scope: 'One stored winner, one-way claim, exact account +1 and fresh living-owner notice. Initial winner selection, empty/ambiguous owner and compound awards remain unsupported. Other notifications are metadata, never reward authority.' }, seasonConversions: { movements: seasonConversions.movements,

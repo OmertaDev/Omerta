@@ -18,6 +18,7 @@ import { collectWorldDiagnostics } from '../tools/rc1-world-diagnostics.js';
 import { CAR_MELT_SOURCE_PINS } from '../tools/rc1-car-melt-provenance.js';
 import { createNpcCarAcquisitionCommitObserver, NPC_CAR_SOURCE_PINS } from '../tools/rc1-npc-car-acquisition.js';
 import { createNpcBoatAcquisitionCommitObserver, NPC_BOAT_SOURCE_PINS } from '../tools/rc1-npc-boat-journal.js';
+import { createNpcMarketOrderCommitObserver, NPC_MARKET_SOURCE_PINS, NPC_MARKET_SQL } from '../tools/rc1-npc-market-order-journal.js';
 import { createNpcFamilyCommitObserver, NPC_FAMILY_SOURCE_PINS } from '../tools/rc1-npc-family-provenance.js';
 import { captureDuelSelection } from '../tools/rc1-duel-selection-provenance.js';
 import { collectKnowledgeDiagnostics } from '../tools/rc1-knowledge-diagnostics.js';
@@ -135,6 +136,8 @@ const configuration = { scenario: 'quiet_world', population, seed, hours, source
     scope: 'Original cold all-zero standing cohort with no core Family holder only; cached/shared-flight, nonzero and compound selections remain unsupported' } : null,
   npcBoatWitness: observeResources ? { format: 1, sourcePins: NPC_BOAT_SOURCE_PINS,
     scope: 'Same native transaction witness; exact default NPC dinghy birth, source caller and original serial RNG tape inputs. No authored boat grant receipt exists; all other boat dispositions remain unsupported.' } : null,
+  npcMarketOrderWitness: observeResources ? { format: 1, sourcePins: NPC_MARKET_SOURCE_PINS,
+    scope: 'Same bounded transaction witness: one original worker NPC buy order, exact fee sink/pocket debit/owned escrow/default custody/deadline. No terminal or human postOrder classification.' } : null,
   resourceBootstrap: 'Both original makeDb initializations precede per-commit observation; exact authoritative resource state must agree before/after second bootstrap. Arm before every queued boot job.',
   epoch: new Date(epoch).toISOString(), start: new Date(start).toISOString(), finish: new Date(finish).toISOString(),
   replay: replay ? { runSha256: sha256(await fs.readFile(path.join(replay, 'run.json'))), source: replayRun.source,
@@ -182,6 +185,7 @@ if (replay) {
   assert.deepEqual(replayRun.configuration.npcCarAcquisitionWitness, configuration.npcCarAcquisitionWitness);
   assert.deepEqual(replayRun.configuration.npcFamilyWitness, configuration.npcFamilyWitness);
   assert.deepEqual(replayRun.configuration.npcBoatWitness, configuration.npcBoatWitness);
+  assert.deepEqual(replayRun.configuration.npcMarketOrderWitness, configuration.npcMarketOrderWitness);
   assert.deepEqual(replayRun.configuration.guardrails, configuration.guardrails, 'Replay operational limits differ');
   assert.deepEqual(replayRun.configuration.priorFailedRun, configuration.priorFailedRun, 'Replay predecessor linkage differs');
   assert.deepEqual(replayRun.configuration.parentCheckpoint, configuration.parentCheckpoint, 'Replay continuation parent differs');
@@ -211,11 +215,13 @@ const carMeltWitnessSummary = { committedWitnesses: 0, retainedCandidateWitnesse
 const carAcquisitionWitnessSummary = { retainedCandidateWitnesses: 0, exactAcquisitions: 0, unclassifiedCandidateBoundaries: 0 };
 const npcFamilyWitnessSummary = { retainedCandidateWitnesses: 0, exactFormations: 0, rolledBackCandidates: 0, unclassifiedCandidateBoundaries: 0 };
 const npcBoatWitnessSummary = { retainedCandidateWitnesses: 0, exactAcquisitions: 0, unclassifiedCandidateBoundaries: 0 };
+const npcMarketOrderWitnessSummary = { retainedCandidateWitnesses: 0, exactPlacements: 0, unclassifiedCandidateBoundaries: 0 };
 const resourceStream = crypto.createHash('sha256');
 const resourceCost = { observedBoundaryWallMs: 0, maximumBoundaryWallMs: 0, serializedJournalBytes: 0, serializedRestrictedChangeBytes: 0 };
 // BEGIN source-bound car witness integration control.
 const commitObserver = observeResources ? createNpcFamilyCommitObserver({
-  innerObserverFactory: options => createNpcBoatAcquisitionCommitObserver({ ...options, seed, readRandomTape: () => runtime.tape }),
+  innerObserverFactory: options => createNpcMarketOrderCommitObserver({ ...options,
+    innerObserverFactory: extra => createNpcBoatAcquisitionCommitObserver({ ...extra, seed, readRandomTape: () => runtime.tape }) }),
   context: () => currentInvocation || { authority: 'original-worker', logicalAt: at, ...(allianceEnabled ? { workPhase } : {}) },
   onBoundary: async (event, carMeltProvenance = null, npcFamilyProvenance = null) => {
     const started = performance.now();
@@ -243,10 +249,19 @@ const commitObserver = observeResources ? createNpcFamilyCommitObserver({
         ? carMeltProvenance : null;
       const boatWitness = carMeltProvenance?.queries.some(query => /^\s*INSERT\s+INTO\s+boats\b/i.test(query.sql))
         ? carMeltProvenance : null;
+      const marketWitness = carMeltProvenance?.queries.some(query => query.sql === NPC_MARKET_SQL.listing) ? carMeltProvenance : null;
       const { restrictedChanges, ...journal } = reconcileWorldResources(before, after,
-        { identity: event, includeRestrictedChanges: true, carMeltProvenance: retainedWitness, carAcquisitionProvenance: acquisitionWitness, npcFamilyProvenance, seasonElectionProvenance, npcBoatProvenance: boatWitness, duelSelection });
+        { identity: event, includeRestrictedChanges: true, carMeltProvenance: retainedWitness, carAcquisitionProvenance: acquisitionWitness, npcFamilyProvenance, seasonElectionProvenance, npcBoatProvenance: boatWitness, npcMarketOrderProvenance: marketWitness, duelSelection });
       if (journal.seasonConversions.movements.some(row => row.kind === 'season-duel-title'))
         journal.duelSelection = { artifact: duelSelectionArtifact, sha256: sha256(canonicalJson(duelSelection)) };
+      if (marketWitness) {
+        const artifact = `restricted-npc-market-order-${String(resourceSummary.boundaries + 1).padStart(7, '0')}.json`;
+        await proof.artifact(artifact, { event, before, after, npcMarketOrderProvenance: marketWitness });
+        journal.npcMarketOrderWitness = { artifact, sha256: sha256(canonicalJson(marketWitness)) };
+        npcMarketOrderWitnessSummary.retainedCandidateWitnesses++;
+        const exact = journal.npcMarketOrder.movements.length; npcMarketOrderWitnessSummary.exactPlacements += exact;
+        if (!exact) npcMarketOrderWitnessSummary.unclassifiedCandidateBoundaries++;
+      }
       if (retainedWitness) {
         const artifact = `restricted-car-melt-witness-${String(resourceSummary.boundaries + 1).padStart(7, '0')}.json`;
         await proof.artifact(artifact, { event, before, after, carMeltProvenance: retainedWitness });
@@ -692,6 +707,7 @@ try {
     await proof.artifact('car-acquisition-witness-summary.json', { ...carAcquisitionWitnessSummary, scope: configuration.npcCarAcquisitionWitness });
     await proof.artifact('npc-family-witness-summary.json', { ...npcFamilyWitnessSummary, scope: configuration.npcFamilyWitness });
     await proof.artifact('npc-boat-witness-summary.json', { ...npcBoatWitnessSummary, scope: configuration.npcBoatWitness });
+    await proof.artifact('npc-market-order-witness-summary.json', { ...npcMarketOrderWitnessSummary, scope: configuration.npcMarketOrderWitness });
   }
   const trace = controller.diagnostic(); assert.equal(trace.failures.length, 0);
   const timerCounts = Object.fromEntries(['directorTick', 'guardedTick', 'guardedSeasonTick', 'health-boundary']
@@ -736,6 +752,7 @@ try {
     carAcquisitionWitnessObservation: observeResources ? carAcquisitionWitnessSummary : null,
     npcFamilyWitnessObservation: observeResources ? npcFamilyWitnessSummary : null,
     npcBoatWitnessObservation: observeResources ? npcBoatWitnessSummary : null,
+    npcMarketOrderWitnessObservation: observeResources ? npcMarketOrderWitnessSummary : null,
     statement: 'Completed only the declared ' + actorPolicy + ' workload; no matrix qualification or dead-world clearance' };
   if (allianceEnabled) {
     result.continuation = { mode: configuration.continuation.mode, totalLogicalHours: (finish - epoch) / 3600000,
@@ -762,6 +779,8 @@ try {
     result.npcFamilyWitnessReplayEqual = true;
     assert.deepEqual(result.npcBoatWitnessObservation, replayRun.result.npcBoatWitnessObservation, 'NPC boat COMMIT witness replay differs');
     result.npcBoatWitnessReplayEqual = true;
+    assert.deepEqual(result.npcMarketOrderWitnessObservation, replayRun.result.npcMarketOrderWitnessObservation, 'NPC order witness replay differs');
+    result.npcMarketOrderWitnessReplayEqual = true;
   }
   await guardBoundary('final');
   if (guardrails) await proof.artifact('operational-guardrails.json', guardrails.diagnostic());

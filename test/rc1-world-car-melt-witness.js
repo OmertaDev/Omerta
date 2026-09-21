@@ -5,6 +5,7 @@ import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { createNpcCarAcquisitionCommitObserver } from '../tools/rc1-npc-car-acquisition.js';
 import { createNpcBoatAcquisitionCommitObserver } from '../tools/rc1-npc-boat-journal.js';
+import { createNpcMarketOrderCommitObserver, NPC_MARKET_SQL } from '../tools/rc1-npc-market-order-journal.js';
 import { createNpcFamilyCommitObserver, NPC_FORMATION_SQL } from '../tools/rc1-npc-family-provenance.js';
 import { canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
 
@@ -18,14 +19,14 @@ assert.match(runner, /assert\.deepEqual\(result\.carMeltWitnessObservation, repl
 const worker = fs.readFileSync(new URL('../tools/rc1-native-worker.js', import.meta.url), 'utf8');
 assert(worker.indexOf('const clock = serialDatabaseOptions({ commitObserver });') < worker.indexOf('if (queryOrder) pool = queryOrder.wrapPool(pool);'));
 
-const instantiate = new Function('env', `const {observeResources,createNpcFamilyCommitObserver,createNpcCarAcquisitionCommitObserver,createNpcBoatAcquisitionCommitObserver,seed,runtime,currentInvocation,at,allianceEnabled,
+const instantiate = new Function('env', `const {observeResources,createNpcFamilyCommitObserver,createNpcCarAcquisitionCommitObserver,createNpcBoatAcquisitionCommitObserver,createNpcMarketOrderCommitObserver,NPC_MARKET_SQL,seed,runtime,currentInvocation,at,allianceEnabled,
  snapshotWorldResources,diagnosticPool,reconcileWorldResources,worldResourceHash,proof,resourceSummary,resourceCost,
- resourceStream,carMeltWitnessSummary,carAcquisitionWitnessSummary,npcFamilyWitnessSummary,electionProbe,npcBoatWitnessSummary,canonicalJson,sha256,assert}=env;
+ resourceStream,carMeltWitnessSummary,carAcquisitionWitnessSummary,npcFamilyWitnessSummary,electionProbe,npcBoatWitnessSummary,npcMarketOrderWitnessSummary,canonicalJson,sha256,assert}=env;
  let priorResources=env.initial,firstResourceError=null;
  ${block}
  return {commitObserver,getError:()=>firstResourceError};`);
 function verifyWitnessBoundary(data) {
-  for (const field of ['carMeltProvenance', 'carAcquisitionProvenance', 'npcFamilyProvenance', 'npcBoatProvenance'])
+  for (const field of ['carMeltProvenance', 'carAcquisitionProvenance', 'npcFamilyProvenance', 'npcBoatProvenance', 'npcMarketOrderProvenance'])
     if (data[field]) assert.deepEqual(data[field].boundary, data.event, 'Candidate witness boundary differs from artifact event');
 }
 async function exercise({ enabled = true, carId = 'native-car', scope = 'car', failure = false, overflow = false, rollback = false, election = false } = {}) {
@@ -42,6 +43,7 @@ async function exercise({ enabled = true, carId = 'native-car', scope = 'car', f
       createNpcFamilyCommitObserver: options => { outerFactoryCalls++; return createNpcFamilyCommitObserver(options); },
       createNpcCarAcquisitionCommitObserver: options => { factoryCalls++; return createNpcCarAcquisitionCommitObserver({ ...options, ...(overflow ? { maxQueries: 1 } : {}) }); },
       createNpcBoatAcquisitionCommitObserver: options => { factoryCalls++; return createNpcBoatAcquisitionCommitObserver({ ...options, ...(overflow ? { maxQueries: 1 } : {}) }); },
+      createNpcMarketOrderCommitObserver, NPC_MARKET_SQL, npcMarketOrderWitnessSummary: { retainedCandidateWitnesses: 0, exactPlacements: 0, unclassifiedCandidateBoundaries: 0 },
       seed: 'synthetic-boat-control', runtime: { tape: [] }, npcBoatWitnessSummary: { retainedCandidateWitnesses: 0, exactAcquisitions: 0, unclassifiedCandidateBoundaries: 0 },
       currentInvocation: { id: 'ordinary-call' }, at: 1000, allianceEnabled: false,
       electionProbe: { async boundary(event) { electionCalls++; return election ? { synthetic: true, selectionId: carId,
@@ -50,7 +52,7 @@ async function exercise({ enabled = true, carId = 'native-car', scope = 'car', f
       worldResourceHash: value => sha256(canonicalJson(value)), reconcileWorldResources(before, after, options) {
         calls.push(options);
         if (failure) throw Error('CONTROL_NATIVE_BOUNDARY_RECONCILIATION_FAILURE');
-        return { checks: [], unsupported: options.carMeltProvenance || options.carAcquisitionProvenance || options.npcFamilyProvenance || options.npcBoatProvenance || options.seasonElectionProvenance ? [{ kind: 'declared-synthetic-unknown' }] : [], cars: { lineage: [] }, familyEntry: { movements: [] }, seasonCrowns: {}, boats: { movements: [] } };
+        return { checks: [], unsupported: options.carMeltProvenance || options.carAcquisitionProvenance || options.npcFamilyProvenance || options.npcBoatProvenance || options.seasonElectionProvenance || options.npcMarketOrderProvenance ? [{ kind: 'declared-synthetic-unknown' }] : [], cars: { lineage: [] }, familyEntry: { movements: [] }, seasonCrowns: {}, boats: { movements: [] }, npcMarketOrder: { movements: [] } };
       },
       proof: { async artifact(name, data) { artifacts.push({ name, data: structuredClone(data) }); },
         async record(data) { records.push(structuredClone(data)); } },
@@ -62,7 +64,7 @@ async function exercise({ enabled = true, carId = 'native-car', scope = 'car', f
       return { command: sql.split(' ')[0], rowCount: sql.startsWith('DELETE') ? 1 : null, rows: [] };
     });
     commitObserver.arm(); await query('BEGIN');
-    await query(scope === 'car' ? 'DELETE FROM cars WHERE id=$1' : scope === 'acquisition' ? 'INSERT INTO cars VALUES ($1)' : scope === 'boat' ? 'INSERT INTO boats VALUES ($1)' : scope === 'family' ? NPC_FORMATION_SQL[11] : 'SELECT $1', scope === 'family' ? [carId, 120000] : [carId]);
+    await query(scope === 'car' ? 'DELETE FROM cars WHERE id=$1' : scope === 'acquisition' ? 'INSERT INTO cars VALUES ($1)' : scope === 'boat' ? 'INSERT INTO boats VALUES ($1)' : scope === 'market' ? NPC_MARKET_SQL.listing : scope === 'family' ? NPC_FORMATION_SQL[11] : 'SELECT $1', scope === 'family' ? [carId, 120000] : [carId]);
     if (failure) {
       await assert.rejects(query('COMMIT'), /CONTROL_NATIVE_BOUNDARY_RECONCILIATION_FAILURE/);
       assert(getError()); assert.equal(artifacts.at(-1).name, 'first-resource-failure.json');
@@ -78,6 +80,7 @@ async function exercise({ enabled = true, carId = 'native-car', scope = 'car', f
     if (scope !== 'car' && !overflow) assert.equal(calls[0].carMeltProvenance, null);
     if (scope === 'acquisition') assert.equal(calls[0].carAcquisitionProvenance.queries[1].parameters[0], carId);
     if (scope === 'boat') assert.equal(calls[0].npcBoatProvenance.queries[1].parameters[0], carId);
+    if (scope === 'market') assert.equal(calls[0].npcMarketOrderProvenance.queries[1].parameters[0], carId);
     if (overflow) assert.equal(calls[0].carMeltProvenance.unsupported, 'bounded-trace-overflow');
     if (scope !== 'family') assert.equal(calls[0].npcFamilyProvenance, null, 'Unrelated transaction acquired a Family witness');
     else assert.equal(calls[0].npcFamilyProvenance.statements[1].parameters[0], carId, 'Family argument lost or replaced by car witness');
@@ -139,6 +142,14 @@ assert(boat.artifacts[0].data.before && boat.artifacts[0].data.after);
 const staleBoatWitness = structuredClone(boat.artifacts[0].data); staleBoatWitness.npcBoatProvenance.boundary.transactionId++;
 assert.throws(() => verifyWitnessBoundary(staleBoatWitness), /witness boundary/);
 await exercise({ scope: 'boat', failure: true });
+const market = await exercise({ scope: 'market' });
+assert.equal(market.digest, (await exercise({ scope: 'market' })).digest);
+assert.notEqual(market.digest, (await exercise({ scope: 'market', carId: 'other-native-order' })).digest);
+assert.equal(market.artifacts.length, 1); assert.match(market.artifacts[0].name, /^restricted-npc-market-order-/);
+assert.equal(market.records[0].journal.npcMarketOrderWitness.sha256,sha256(canonicalJson(market.artifacts[0].data.npcMarketOrderProvenance)));
+const staleMarket = structuredClone(market.artifacts[0].data); staleMarket.npcMarketOrderProvenance.boundary.transactionId++;
+assert.throws(()=>verifyWitnessBoundary(staleMarket),/witness boundary/);
+await exercise({ scope: 'market', failure: true });
 const staleFamilyWitness = structuredClone(family.artifacts[0].data);
 staleFamilyWitness.npcFamilyProvenance.boundary.transactionId++;
 assert.throws(() => verifyWitnessBoundary(staleFamilyWitness), /witness boundary/);
@@ -158,5 +169,6 @@ console.log(JSON.stringify({ status: 'PASS', sourceBoundBlockSha256: sha256(bloc
   'single-inner-collector-and-no-extra-native-queries', 'Family-argument-preservation-and-native-identity-digest',
   'Family-rollback-and-failure-retention', 'full-candidate-and-failure-snapshots', 'synthetic-candidate-remains-unclassified',
   'witness-boundary-event-binding-and-stale-rejection', 'election-witness-forwarding-and-artifact-binding',
-  'election-same-input-replay-and-changed-input-digest', 'election-failure-retains-provenance', 'election-disabled-and-noncandidate-isolation'],
+  'election-same-input-replay-and-changed-input-digest', 'election-failure-retains-provenance', 'election-disabled-and-noncandidate-isolation',
+  'market-forwarding-retention-full-state-stream-and-failure-binding'],
   scope: 'Synthetic integration controls only; existing car tests/native proof provide branch-authority checks.' }));
