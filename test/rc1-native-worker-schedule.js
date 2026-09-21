@@ -4,7 +4,8 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import pg from 'pg';
 import crypto from 'node:crypto';
-import { createWorkerSchedule, installWorkerInstrumentation, WORKER_SOURCE_PINS } from '../tools/rc1-native-worker.js';
+import { createWorkerSchedule, installWorkerInstrumentation, bootOriginalWorker, dropWorkerSchema, WORKER_SOURCE_PINS } from '../tools/rc1-native-worker.js';
+import { createRecordedQueryOrder, replayRowOrder, QUERY_ORDER_SCOPE } from '../tools/rc1-native-query-order.js';
 import { installSerialRuntime } from '../tools/rc1-native-determinism.js';
 import { sourceIdentity, createProofRecorder, verifyArtifactIndex, restoreCheckpoint, canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
 
@@ -24,6 +25,10 @@ random = installSerialRuntime('worker-checkpoint-unit'); random.restoreTape(tape
 random = installSerialRuntime('worker-checkpoint-unit');
 assert.throws(() => random.restoreTape([{ ...tape[0], hex: '00'.repeat(16) }]), /differs from seed/); random.restore();
 console.log('PASS: async timer callbacks, chained deadlines, swallowed failures, random checkpoint restoration and tamper detection');
+assert.deepEqual(replayRowOrder([{ id: 'b' }, { id: 'a' }, { id: 'a' }], [{ id: 'a' }, { id: 'b' }, { id: 'a' }]), [{ id: 'a' }, { id: 'b' }, { id: 'a' }]);
+assert.throws(() => replayRowOrder([{ id: 'b' }, { id: 'a' }], [{ id: 'a' }, { id: 'a' }]), /membership\/value/);
+assert.throws(() => replayRowOrder([{ cash: 9 }], [{ cash: 10 }]), /membership\/value/);
+console.log('PASS: recorded SQL reordering preserves values and duplicate multiplicities');
 
 if (process.argv.includes('--postgres')) {
   const argument = (name) => process.argv.find((arg) => arg.startsWith(`--${name}=`))?.slice(name.length + 3);
@@ -31,7 +36,15 @@ if (process.argv.includes('--postgres')) {
   const hours = Number(argument('hours') || 673); assert(Number.isInteger(hours) && hours > 0 && hours <= 2161);
   const compare = argument('compare');
   const resume = argument('resume');
+  const queryOrderReplay = argument('query-order-replay');
   const source = await sourceIdentity();
+  let retainedOrder;
+  if (queryOrderReplay) {
+    const orderRun = JSON.parse(await fs.readFile(path.join(queryOrderReplay, 'run.json'), 'utf8'));
+    await verifyArtifactIndex(queryOrderReplay, orderRun); assert.equal(orderRun.status, 'PASS_SCOPED');
+    assert.equal(orderRun.source.revision, source.revision, 'Recorded SQL replay requires the same source');
+    retainedOrder = JSON.parse(await fs.readFile(path.join(queryOrderReplay, 'query-order.json'), 'utf8'));
+  }
   let parentRun, parentCheckpoint, parentTape;
   if (resume) {
     parentRun = JSON.parse(await fs.readFile(path.join(resume, 'run.json'), 'utf8'));
@@ -63,6 +76,8 @@ if (process.argv.includes('--postgres')) {
   const expectedDormant = [{ label: 'RWA health', code: 'health_registry_unavailable',
     reason: 'No finalized external stock registry/provider in this local fixture; fail-closed callback execution is retained, settlement coverage is excluded.' }];
   const configuration = { hours, start: new Date(epoch).toISOString(), finish: new Date(epoch + hours * 3600000).toISOString(), seed,
+    queryOrder: { scope: QUERY_ORDER_SCOPE, mode: queryOrderReplay ? 'recorded-order-replay' : 'observe',
+      inputSha256: queryOrderReplay ? sha256(await fs.readFile(path.join(queryOrderReplay, 'query-order.json'))) : null },
     parentCheckpoint: resume ? { directory: path.resolve(resume), source: parentRun.source,
       runSha256: sha256(await fs.readFile(path.join(resume, 'run.json'))), checkpointSha256: parentCheckpoint.sha256,
       stateSha256: parentCheckpoint.stateSha256, randomTapeSha256: parentRun.result.deterministicRandomTapeSha256,
@@ -78,7 +93,8 @@ if (process.argv.includes('--postgres')) {
   const controller = createWorkerSchedule({ start: epoch, setClock: (value) => { at = value; }, expectedDormant });
   const namespace = resume ? parentCheckpoint.schema : `rc1_worker_${process.pid}_${Math.floor(performance.now())}`;
   const base = new pg.Pool({ connectionString: url });
-  const instrumentation = installWorkerInstrumentation(controller, { namespace });
+  const queryOrder = createRecordedQueryOrder({ replay: retainedOrder });
+  const instrumentation = installWorkerInstrumentation(controller, { namespace, queryOrder });
   const originalConsole = { log: console.log, warn: console.warn, error: console.error };
   const originalArgv = process.argv[1]; let pool, result, created = false, firstRollover = false;
   try {
@@ -106,10 +122,7 @@ if (process.argv.includes('--postgres')) {
       randomDraws: runtime.tape, clock: epoch, fixtureWritesAfterThisRecord: false });
     const initial = await proof.snapshot(pool, 'initial-state'); await proof.checkpoint(pool, 'initial', url);
     if (resume) assert.equal(initial.stateSha256, parentCheckpoint.stateSha256, 'Restart did not restore exact canonical state');
-    process.argv[1] = fileURLToPath(new URL('../src/worker.js', import.meta.url));
-    await import('../src/worker.js'); process.argv[1] = originalArgv;
-    assert.equal(controller.transformations.length, 2, 'Both exact pinned instrumentation maps must be applied');
-    await controller.drainBoot();
+    await bootOriginalWorker(controller);
     let reportedDay = Math.floor(epoch / 86400000);
     await controller.advanceTo(epoch + hours * 3600000, async (logicalAt, label) => {
       const today = Math.floor(logicalAt / 86400000);
@@ -138,8 +151,9 @@ if (process.argv.includes('--postgres')) {
     assert.equal(Number((await pool.query('SELECT count(*) n FROM characters WHERE alive AND season < $1', [initialSeason + expectedRollovers])).rows[0].n), 0,
       'Season worker left an eligible living character behind');
     await proof.artifact('worker-schedule.json', trace); await proof.artifact('random-tape.json', { draws: runtime.tape });
+    await proof.artifact('query-order.json', queryOrder.finish());
     result = { status: 'PASS_SCOPED', source: source.revision, hours, canonicalSeasonalRollovers: recaps.length - initialRecaps,
-      checkpointRestart: !!resume, parentSource: parentRun?.source.revision || null,
+      checkpointRestart: !!resume, parentSource: parentRun?.source.revision || null, recordedQueryOrderReplay: !!queryOrderReplay,
       initialStateSha256: initial.stateSha256, finalStateSha256: final.stateSha256, timerFirings: counts,
       guardedJobs: trace.jobs.length, expectedDormantJobs: trace.jobs.filter((job) => job.status === 'EXPECTED_DORMANT').length,
       unexpectedWorkerFailures: trace.failures.length, invariantChecks: finalInvariants.checks.length, matrixQualifying: false,
@@ -155,18 +169,26 @@ if (process.argv.includes('--postgres')) {
       assert.equal(previous.status, 'PASS_SCOPED'); assert.equal(previous.source.revision, source.revision);
       for (const field of ['hours', 'initialStateSha256', 'finalStateSha256', 'scheduleSha256', 'jobOutcomesSha256', 'deterministicRandomTapeSha256'])
         assert.equal(result[field], previous.result[field], `Fresh-worker same-seed replay differed: ${field}`);
-      result.sameSeedFreshWorkerReplay = true;
+      result.sameSeedFreshWorkerReplay = !queryOrderReplay; result.recordedNondeterminismReplay = !!queryOrderReplay;
     }
     await proof.record({ kind: 'assertions', ...result });
   } catch (error) {
     result = { status: 'FAIL', error: { message: error.message, stack: error.stack } };
     await proof.record({ kind: 'failure', ...result.error });
     await proof.artifact('first-failure-schedule.json', controller.diagnostic());
-    if (pool) { await proof.snapshot(pool, 'first-failure-state'); await proof.checkpoint(pool, 'first-failure', url); }
+    await proof.artifact('first-failure-query-order.json', queryOrder.diagnostic());
+    if (pool) {
+      try { await proof.snapshot(pool, 'first-failure-state'); await proof.checkpoint(pool, 'first-failure', url); }
+      catch (captureError) { await proof.record({ kind: 'failure-capture-error', message: captureError.message, stack: captureError.stack }); }
+    }
   } finally {
     Object.assign(console, originalConsole); process.argv[1] = originalArgv;
-    await controller.close(); instrumentation.restore(); runtime.restore();
-    if (created) await base.query(`DROP SCHEMA ${namespace} CASCADE`); await base.end();
+    try { await controller.close(); }
+    catch (error) { result = { status: 'FAIL', error: { message: error.message, stack: error.stack } }; await proof.record({ kind: 'cleanup-failure', ...result.error }); }
+    instrumentation.restore(); runtime.restore();
+    try { if (created) await dropWorkerSchema(base, namespace); }
+    catch (error) { result = { status: 'FAIL', error: { message: error.message, stack: error.stack } }; await proof.record({ kind: 'cleanup-failure', ...result.error }); }
+    await base.end();
     for (const [name, value] of Object.entries(priorEnvironment)) if (value === undefined) delete process.env[name]; else process.env[name] = value;
   }
   const record = await proof.finish(result); await verifyArtifactIndex(output, record);

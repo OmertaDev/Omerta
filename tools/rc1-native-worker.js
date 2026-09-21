@@ -16,7 +16,7 @@ const timeout = globalThis.setTimeout, clearTimeoutNative = globalThis.clearTime
 
 export function createWorkerSchedule({ start, setClock, expectedDormant = [], deadlineMs = 60000 } = {}) {
   let now = start, identity = 0;
-  const timers = new Map(), boots = [], events = [], jobs = [], failures = [], logs = [], pools = [], transformations = [];
+  const timers = new Map(), boots = [], events = [], jobs = [], actors = [], failures = [], logs = [], pools = [], transformations = [];
   const initial = performance.now();
   const record = (kind, fields = {}) => events.push({ sequence: events.length + 1, kind, logicalAt: now, ...fields });
   const register = (repeat, callback, delay, ...args) => {
@@ -65,6 +65,20 @@ export function createWorkerSchedule({ start, setClock, expectedDormant = [], de
         catch (error) { entry.resolve(); throw error; }
       }
     },
+    async actor(identity, work) {
+      assert.equal(typeof identity?.accountId, 'string'); assert(identity.accountId.length > 0);
+      assert(['player.snapshot', 'player.execute'].includes(identity.authority)); assert.equal(typeof work, 'function');
+      if (identity.authority === 'player.execute') assert.equal(typeof identity.executionId, 'string');
+      const entry = { identity: plain(identity), logicalAt: now, status: 'RUNNING' }; actors.push(entry);
+      record('actor.start', { identity: entry.identity });
+      try {
+        const result = await work(); Object.assign(entry, { status: 'RETURNED', result: plain(result) });
+        record('actor.complete', { identity: entry.identity, outcome: 'RETURNED', resultSha256: fingerprint(result) }); return result;
+      } catch (error) {
+        Object.assign(entry, { status: 'THREW', code: error.code || error.name, message: error.message });
+        record('actor.complete', { identity: entry.identity, outcome: 'THREW', code: entry.code, message: entry.message }); throw error;
+      }
+    },
     async advanceTo(until, afterBoundary = async () => {}) {
       assert(Number.isSafeInteger(until) && until >= now);
       while (true) {
@@ -86,7 +100,7 @@ export function createWorkerSchedule({ start, setClock, expectedDormant = [], de
       const declaredLocalBackup = message.startsWith('🚨 BACKUPS ARE NOT RUNNING (off)') || message.startsWith('🚨 BACKUP INVARIANT DRIFT:');
       if (!knownDormant && !declaredLocalBackup) failures.push({ label: 'console.error', message });
     },
-    diagnostic() { return { format: 1, start, logicalAt: now, events, jobs, failures, logs, transformations,
+    diagnostic() { return { format: 1, start, logicalAt: now, events, jobs, actors, failures, logs, transformations,
       activeTimers: [...timers.values()].map(({ callback, args, ...entry }) => entry),
       startedWallClock: new NativeDate().toISOString(), elapsedWallMs: performance.now() - initial,
       scheduleSha256: fingerprint(events.filter((event) => event.kind !== 'callback.wall-duration')) }; },
@@ -96,12 +110,13 @@ export function createWorkerSchedule({ start, setClock, expectedDormant = [], de
   return api;
 }
 
-export function installWorkerInstrumentation(controller, { namespace, root = new URL('../', import.meta.url) } = {}) {
+export function installWorkerInstrumentation(controller, { namespace, queryOrder = null, root = new URL('../', import.meta.url) } = {}) {
   assert(!globalThis.__rc1Worker); assert(/^[a-z_][a-z_0-9]*$/.test(namespace));
   const clock = serialDatabaseOptions();
   controller.Pool = class {
     constructor(configuration) {
-      const pool = clock.poolFactory({ ...configuration, options: `${configuration.options || ''} -c search_path=${namespace}` }, namespace);
+      let pool = clock.poolFactory({ ...configuration, options: `${configuration.options || ''} -c search_path=${namespace}` }, namespace);
+      if (queryOrder) pool = queryOrder.wrapPool(pool);
       controller.pools.push(pool); return pool;
     }
   };
@@ -133,4 +148,34 @@ export function installWorkerInstrumentation(controller, { namespace, root = new
     return { ...result, source };
   } });
   return { clock, restore() { hook.deregister(); delete globalThis.__rc1Worker; } };
+}
+
+let workerBoots = 0;
+export async function bootOriginalWorker(controller, { root = new URL('../', import.meta.url) } = {}) {
+  assert.equal(globalThis.__rc1Worker, controller, 'Install source-pinned instrumentation before importing production modules');
+  const entry = new URL('src/worker.js', root), original = process.argv[1];
+  try {
+    process.argv[1] = fileURLToPath(entry);
+    await import(`${entry.href}?rc1worker=${++workerBoots}`);
+  } finally { process.argv[1] = original; }
+  assert.deepEqual([...new Set(controller.transformations.map((item) => item.file))].sort(), Object.keys(WORKER_SOURCE_PINS).sort(),
+    'Install instrumentation before importing db.js; cached uninstrumented authority is forbidden');
+  await controller.drainBoot(); return controller;
+}
+
+export async function dropWorkerSchema(base, namespace) {
+  assert(/^rc1_worker_[a-z_0-9]+$/.test(namespace), 'Refuse cleanup outside an owned worker fixture schema');
+  const external = await base.query(`SELECT 1 FROM pg_constraint c
+    JOIN pg_class target ON target.oid=c.confrelid JOIN pg_namespace tn ON tn.oid=target.relnamespace
+    JOIN pg_class source ON source.oid=c.conrelid JOIN pg_namespace sn ON sn.oid=source.relnamespace
+    WHERE tn.nspname=$1 AND sn.nspname<>$1 LIMIT 1`, [namespace]);
+  assert.equal(external.rowCount, 0, 'Refuse cascading cleanup of external dependencies');
+  const tables = (await base.query('SELECT tablename FROM pg_tables WHERE schemaname=$1 ORDER BY tablename', [namespace])).rows;
+  // A single DROP SCHEMA transaction can exceed the local server's lock-table
+  // budget after hundreds of indexed tables. Each owned table is its own txn.
+  for (const { tablename } of tables) {
+    assert(/^[a-z_][a-z_0-9]*$/.test(tablename));
+    await base.query(`DROP TABLE IF EXISTS "${namespace}"."${tablename}" CASCADE`);
+  }
+  await base.query(`DROP SCHEMA "${namespace}" CASCADE`);
 }

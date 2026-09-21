@@ -76,7 +76,44 @@ operational telemetry, are retained. There is no claim that restarting equals
 an uninterrupted schedule; two fresh checkpoint continuations must agree exactly.
 Parent source and continuation-tool source identities stay distinct.
 
+The first full seed-only replay on source `7b630340` failed: PostgreSQL's
+unordered JAILBIRDS `LIMIT 24` query changed the array indexed by seeded random
+selection. The first divergence was at hour 2; balances and other semantic
+values were not normalized away. `tools/rc1-native-query-order.js` records that
+one exact SQL query, parameters, and returned order. `--query-order-replay=<run>`
+may reorder native rows only after proving the same exact value multiset with
+duplicate multiplicities. A changed LIMIT membership fails. Raw native arrival
+orders remain retained. This mode is **recorded nondeterminism replay**, not a
+seed-only pass. Its artifact index and original source must verify before use.
+The same attempt also exhausted local PostgreSQL lock memory during monolithic
+schema cleanup; cleanup now drops only owned tables in separate transactions,
+refuses external dependencies, and retains/seals any further cleanup failure.
+
 ```powershell
 node test/rc1-native-worker-schedule.js --postgres --hours=2 --resume=C:/Users/Jorge/.codex/rc1-native-evidence/worker-two-seasons-1 --output=C:/Users/Jorge/.codex/rc1-native-evidence/worker-restart-1
 node test/rc1-native-worker-schedule.js --postgres --hours=2 --resume=C:/Users/Jorge/.codex/rc1-native-evidence/worker-two-seasons-1 --compare=C:/Users/Jorge/.codex/rc1-native-evidence/worker-restart-1 --output=C:/Users/Jorge/.codex/rc1-native-evidence/worker-restart-replay-1
 ```
+
+The callable interface for scenario workloads is:
+
+```js
+const controller = createWorkerSchedule({ start, setClock, expectedDormant });
+const instrumentation = installWorkerInstrumentation(controller, { namespace, queryOrder });
+// Only now dynamically import makeDb and actor authorities. Initialize the
+// isolated schema/clock and declared roster, then freeze all fixture writes.
+await bootOriginalWorker(controller);
+await controller.advanceTo(deadline, async (logicalAt, workerCallback) => {
+  const view = await controller.actor({ authority: 'player.snapshot', accountId },
+    () => playerEngine.snapshot(accountId));
+  const command = chooseAuthorizedIssuedCommand(view);
+  await controller.actor({ authority: 'player.execute', accountId,
+    executionId: command.executionIdentity.executionId }, () => executeIssued(playerEngine, accountId, command));
+});
+```
+
+Actor hooks are awaited between original due worker callbacks and retain their
+actual identities, results and errors. The supplied closure must call the
+canonical player authority, which still performs authorization. The hook does
+not grant permissions or classify gameplay rejection as a worker failure;
+scenario policy/metrics own that classification. Use a fresh process for each
+world so module-level configuration and randomness cannot leak between worlds.
