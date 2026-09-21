@@ -35,11 +35,11 @@ const namespace = `rc1_worker_omr_${process.pid}`, seam = installWorkerInstrumen
 const env = { DATABASE_URL: database.url, CORE_PROGRESSION: 'on', WORLD_GRAPH_KERNEL: 'on', COORDINATION_ENGINE: 'on',
   COORDINATION_KNOWLEDGE: 'on', COORDINATION_KNOWLEDGE_SHARING: 'on', COORDINATION_OPERATIONS: 'on', LIVING_WORLD_DIRECTOR: 'LIVE',
   POPULATION_OFF: 'on', LIQUIDITY_AUTOMATION_ENABLED: 'off', SOCIAL_VERIFY_MODE: 'off', RATE_LIMIT: 'off', INVITE_MODE: 'off',
-  JWT_SECRET: crypto.randomBytes(32).toString('hex'), MOD_KEY: crypto.randomBytes(32).toString('hex'), MARKET_SEED: 'rc1-omr-fixture' };
+  JWT_SECRET: crypto.randomBytes(32).toString('hex'), MOD_KEY: crypto.randomBytes(32).toString('hex'), MARKET_SEED: crypto.randomBytes(32).toString('hex') };
 const previousEnv = Object.fromEntries(Object.keys(env).map(key => [key, process.env[key]])); Object.assign(process.env, env);
 const base = new pg.Pool({ connectionString: database.url }), readPool = new pg.Pool({ connectionString: database.url, options: `-c search_path=${namespace}`, max: 1 });
 const nativeConsole = { log: console.log, warn: console.warn, error: console.error };
-const actors = ['omr-a', 'omr-b', 'omr-c'], tokens = new Map(), calls = [], cases = [], controls = [], saved = new Map();
+const actors = ['omr-a', 'omr-b', 'omr-c'], tokens = new Map(), calls = [], cases = [], controls = [], saved = new Map(), faults = [];
 let pool, app, result, boundaries = 0, equations = 0, movements = 0, invariants = 0, injected = false, firstFailure = false;
 async function call(accountId, url, key, payload, statuses = [200], method = 'POST') {
   const response = await app.inject({ method, url, payload, headers: { authorization: `Bearer ${tokens.get(accountId)}`, ...(key ? { 'idempotency-key': key } : {}) } });
@@ -63,7 +63,9 @@ const unchanged = ({ before, after }) => assert.equal(omrStateHash(after), omrSt
 async function replay(name, account, url, key, payload, expected) { await observe(name, async () => { const value = await call(account, url, key, payload); assert(value.replayed); assert.deepEqual(value.body, expected.body); return value; }, unchanged); }
 try {
   for (const level of ['log', 'warn', 'error']) console[level] = (...args) => {
-    if (injected && args.some(value => String(value?.code || value).includes('RCO01') || String(value).includes('RC1_OMR_ABORT'))) return;
+    if (injected && args.some(value => String(value?.code || value).includes('RCO01') || String(value).includes('RC1_OMR_ABORT'))) {
+      faults.push({ code: 'RCO01', message: args.map(value => value instanceof Error ? `${value.code}: ${value.message}` : String(value)).join(' ') }); return;
+    }
     controller.log(level, args);
   };
   await proof.record({ kind: 'database-created', ...await database.create() }); await base.query(`CREATE SCHEMA ${namespace}`);
@@ -87,10 +89,16 @@ try {
   await observe('window:changed-body-refused', () => call(actors[0], '/v1/window/redeem', 'window-a', { amount: 7 }, [422]), unchanged);
   await observe('window:fractional-round-down', () => call(actors[1], '/v1/window/redeem', 'window-b', { amount: 6.000009 }));
   await observe('window:below-minimum-refused', () => call(actors[2], '/v1/window/redeem', 'window-too-small', { amount: 5.999999 }, [400]), unchanged);
-  await pool.query("CREATE FUNCTION rc1_omr_abort() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW.account_id='omr-a' AND NEW.omr<OLD.omr THEN RAISE EXCEPTION 'RC1_OMR_ABORT' USING ERRCODE='RCO01'; END IF; RETURN NEW; END $$");
+  await pool.query(`CREATE FUNCTION rc1_omr_abort() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN
+    IF NEW.account_id='omr-a' AND NEW.omr<OLD.omr THEN
+      IF NOT EXISTS(SELECT 1 FROM transactions WHERE account_id=NEW.account_id AND currency='omr' AND reason='vanity:name')
+        OR NOT EXISTS(SELECT 1 FROM transactions WHERE currency='omr' AND reason='desk:recycle' AND counterparty='vanity:name')
+        THEN RAISE EXCEPTION 'RC1_WRONG_FAILPOINT' USING ERRCODE='RCO02'; END IF;
+      RAISE EXCEPTION 'RC1_OMR_ABORT_AFTER_RECYCLE' USING ERRCODE='RCO01'; END IF; RETURN NEW; END $$`);
   await pool.query('CREATE TRIGGER rc1_omr_abort BEFORE UPDATE ON account_persistent FOR EACH ROW EXECUTE FUNCTION rc1_omr_abort()'); injected = true;
   try { await observe('sink:abort-after-ledger-and-recycle', () => call(actors[0], '/v1/vanity/name', 'name-a', { name: 'Omr Proof Alpha' }, [500]), unchanged); }
   finally { injected = false; await pool.query('DROP TRIGGER rc1_omr_abort ON account_persistent'); await pool.query('DROP FUNCTION rc1_omr_abort()'); }
+  assert(faults.length > 0, 'Exact after-recycle SQL failure must be observed'); await proof.artifact('expected-rollback-faults.json', faults);
   const rename = await observe('sink:retry-after-rollback', () => call(actors[0], '/v1/vanity/name', 'name-a', { name: 'Omr Proof Alpha' }));
   await replay('sink:lost-response-exact-retry', actors[0], '/v1/vanity/name', 'name-a', { name: 'Omr Proof Alpha' }, rename);
   await observe('sink:concurrent-same-key', async () => {
