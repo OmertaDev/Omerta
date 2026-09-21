@@ -140,11 +140,19 @@ if (process.argv.includes('--postgres')) {
     const familyBefore = await observer.snapshot();
     await watch('canonical-family-found', () => withCharacter(pool, a.id, (ch, client, h) => createGang(ch, 'Observer Family', 'ROBS', client, h)));
     const familyAfter = await observer.snapshot(), familyJournal = reconcileWorldResources(familyBefore, familyAfter, { includeRestrictedChanges: true });
-    assert(familyJournal.unsupported.some(row => row.kind === 'family-lineage'));
-    assert(verifyResourceTableChanges(familyBefore, familyAfter, familyJournal.restrictedChanges));
-    fs.writeFileSync(path.join(output, 'restricted-family-row-changes.json'), json(familyJournal.restrictedChanges));
-    report.restrictedDiagnostics = { nativeBranch: 'canonical Family formation', hash: familyJournal.restrictedChangesSha256,
-      reconstructedExact: true, unsupportedStatusPreserved: true, publicRowsIncluded: false };
+    assert.equal(familyJournal.familyEntry.movements[0]?.kind, 'family-formation-sink');
+    const familyChanges = resourceTableChanges(familyBefore, familyAfter);
+    assert(verifyResourceTableChanges(familyBefore, familyAfter, familyChanges));
+    fs.writeFileSync(path.join(output, 'restricted-family-row-changes.json'), json(familyChanges));
+    // The ordinary formation is now classified. Preserve the diagnostics control
+    // with a separate, explicitly unsupported projection mutation, not a DB edit.
+    const unknownSeason = structuredClone(familyAfter); unknownSeason.tables.gangs[0].season++;
+    const unknownJournal = reconcileWorldResources(familyAfter, unknownSeason, { includeRestrictedChanges: true });
+    assert(unknownJournal.unsupported.some(row => row.kind === 'family-lineage'));
+    assert(verifyResourceTableChanges(familyAfter, unknownSeason, unknownJournal.restrictedChanges));
+    fs.writeFileSync(path.join(output, 'restricted-unknown-season-control.json'), json({ before: familyAfter, after: unknownSeason, journal: unknownJournal }));
+    report.restrictedDiagnostics = { nativeBranch: 'canonical Family formation', formationClassified: true,
+      reconstructedExact: true, unsupportedSeasonControlPreserved: true, publicRowsIncluded: false };
     await watch('crime', () => withCharacter(pool, a.id, (ch, client, h) => doCrime(ch, 'pick', client, h, 'standard')));
     const grant = () => withItemTransaction(pool, client => grantStack(client, a, 'mat:scrap_steel', 10, 'standard', 'declared observer test grant', 'observer-stack-grant'));
     await watch('canonical-stack-grant', grant); await watch('stack-exact-replay', grant);

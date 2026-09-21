@@ -7,6 +7,7 @@ import { omrRequestHash } from '../../tools/rc1-omr-journal.js';
 export function verifyFamilyEntryBoundary(input, { expected = null } = {}) {
   const journal = reconcileWorldResources(input.before, input.after, { includeRestrictedChanges: true });
   const commands = input.commands || [], durable = input.durable || [];
+  assert.equal(new Set(durable.map(row => JSON.stringify([row.account_id, row.key]))).size, durable.length, 'Duplicate durable account/key receipt');
   const successful = commands.filter(row => row.status === 200 && !row.replayed && ['/v1/gangs', '/v1/gangs/tribute', '/v1/gangs/tribute/omr'].includes(row.url));
   for (const command of commands.filter(row => row.status === 200)) {
     const saved = durable.filter(row => row.account_id === command.accountId && row.key === command.key);
