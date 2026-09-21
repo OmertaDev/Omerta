@@ -37,6 +37,13 @@ function frames(stack) {
   }
   return result;
 }
+function captureFrames() {
+  // Composed native/query-order wrappers add frames above ledger→createGang.
+  // Capture synchronously and restore even when a stack formatter throws.
+  const prior = Error.stackTraceLimit;
+  try { Error.stackTraceLimit = 40; return frames(new Error().stack); }
+  finally { Error.stackTraceLimit = prior; }
+}
 export function assertNpcFamilySourcePins() {
   for (const [file, pin] of Object.entries(NPC_FAMILY_SOURCE_PINS))
     assert.equal(hash(fs.readFileSync(new URL('../' + file, import.meta.url), 'utf8').replaceAll('\r\n', '\n')), pin, `NPC provenance source changed: ${file}`);
@@ -69,7 +76,7 @@ export function createNpcFamilyCommitObserver({ innerObserverFactory = createNat
     wrapQuery(client, query) {
       return inner.wrapQuery(client, async (sql, values) => {
         if (!armed) return query(sql, values);
-        const text = typeof sql === 'string' ? sql : sql.text, normalized = normalize(text), callerFrames = frames(new Error().stack);
+        const text = typeof sql === 'string' ? sql : sql.text, normalized = normalize(text), callerFrames = captureFrames();
         const parameters = plain(values ?? (typeof sql === 'object' ? sql.values : undefined) ?? []);
         let returned, error; try { returned = await query(sql, values); } catch (caught) { error = caught; }
         const command = returned?.command ?? null;

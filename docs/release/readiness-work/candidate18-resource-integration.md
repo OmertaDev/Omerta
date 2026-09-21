@@ -42,3 +42,14 @@ matrix, chain/backing, deployment and human-entry qualification remain false.
 Run results and hashes belong to a separate report after the clean implementation
 revision is frozen and tested. Prior component passes are retained as historical scope,
 not inherited as a pass for this integration.
+
+TOOL56: the first integrated native observation at `65ee96b8` failed on the first
+Family COMMIT. Default ten-frame stack capture retained ledger/createGang but truncated
+the required population ancestor after the additional composed wrappers. The original
+caller check correctly refused it. Diagnostic capture now uses a synchronous 40-frame
+limit with `finally` restoration; success and throwing-formatter controls enforce no
+global leak. No caller assertion or runtime behavior is relaxed. The failed run has no
+seal: its 364-event gzip prefix and full first-resource failure are retained. A subsequent
+diagnostic snapshot hit COMMIT-without-BEGIN; that is distinct from the initiating
+provenance rejection. The owned database was independently found already absent, so the
+audit's ownership guard refused dump/drop. No replacement seal or dump was manufactured.

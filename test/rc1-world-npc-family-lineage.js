@@ -25,6 +25,31 @@ assert.deepEqual(deliveries.map(row => row.event.outcome), ['COMMITTED', 'ROLLED
 assert(deliveries.every(row => row.npc === null));
 assert.equal(observer.diagnostic().npcFamilyProvenance.open, 0);
 
+// TOOL56: a deeper composed native chain must not inherit the ambient ten-frame
+// truncation. The temporary diagnostic setting must never leak on either path.
+for (const formatterThrows of [false, true]) {
+  const priorLimit = Error.stackTraceLimit, priorPrepare = Error.prepareStackTrace;
+  let seenLimit, nativeCalls = 0;
+  try {
+    Error.stackTraceLimit = 1;
+    Error.prepareStackTrace = () => { seenLimit = Error.stackTraceLimit;
+      if (formatterThrows) throw Error('CONTROL_STACK_FORMAT_FAILURE');
+      return 'Error: synthetic formatter has no original source frames'; };
+    const observed = createNpcFamilyCommitObserver({ onBoundary: async () => {} });
+    const execute = observed.wrapQuery({}, async () => { nativeCalls++; assert.equal(Error.stackTraceLimit, 1);
+      return { command: 'SELECT', rowCount: 0, rows: [] }; });
+    observed.arm();
+    if (formatterThrows) await assert.rejects(execute('SELECT 1'));
+    else { await execute('SELECT 1'); observed.assertComplete(); }
+    observed.disarm();
+    assert.equal(seenLimit, 40); assert.equal(Error.stackTraceLimit, 1);
+    assert.equal(nativeCalls, formatterThrows ? 0 : 1);
+  } finally {
+    Error.stackTraceLimit = priorLimit;
+    if (priorPrepare === undefined) delete Error.prepareStackTrace; else Error.prepareStackTrace = priorPrepare;
+  }
+}
+
 const directory = process.argv[2]; let nativeCases = 0, negativeControls = 0;
 if (directory) {
   const run = JSON.parse(await fs.readFile(path.join(directory, 'run.json'), 'utf8'));
@@ -37,4 +62,4 @@ if (directory) {
   }
   assert.equal(nativeCases, run.result.committedCount); assert.equal(negativeControls, run.result.controls);
 }
-console.log(JSON.stringify({ status: 'PASS', adapterCompositionAndAbortedCommit: true, nativeCases, negativeControls }));
+console.log(JSON.stringify({ status: 'PASS', adapterCompositionAndAbortedCommit: true, temporaryStackDepthRestoredOnSuccessAndError: true, nativeCases, negativeControls }));
