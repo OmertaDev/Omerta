@@ -31,7 +31,7 @@ const controller = createWorkerSchedule({ start: Date.parse(epoch), setClock: ()
 const namespace = 'rc1_worker_car_melt_' + process.pid;
 let app, diagnostic, result, currentResources, observerModule, armed = false, sequence = 0, label = 'initialization';
 const exact = [], boundaries = [], saved = [], completions = new Map();
-const commitObserver = createCarMeltCommitObserver({ context: () => ({ label }), onAttempt: e => proof.record({ kind: 'native-query-attempt', ...e }),
+const commitObserver = createCarMeltCommitObserver({ context: () => ({ label }), onAttempt: attempt => proof.record({ kind: 'native-query-attempt', attempt }),
   async onBoundary(boundary, carMeltProvenance) {
     const before = currentResources, after = await observerModule.snapshotWorldResources(diagnostic);
     const artifact = 'boundary-' + String(boundaries.length + 1).padStart(4, '0');
