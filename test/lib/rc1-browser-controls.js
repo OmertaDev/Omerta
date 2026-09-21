@@ -64,7 +64,8 @@ export function browserControls({ pageFor, width, result, save }) {
   }
   const engine = {
     async retryIssuedCommand(account, command, error) {
-      if (error.statusCode !== 409 || !['command_stale', 'command_unavailable', 'command_expired'].includes(error.body?.error)) return false;
+      const observedRefresh = error.observedBrowserRefresh === true && error.body?.error === 'browser_board_refresh';
+      if (!observedRefresh && (error.statusCode !== 409 || !['command_stale', 'command_unavailable', 'command_expired'].includes(error.body?.error))) return false;
       result.recoveries.push({ account, type: command.commandType, error: error.body.error, action: 'visible refresh and reissue once' }); save(); return true;
     },
     async snapshot(account, options = {}) {
@@ -107,6 +108,25 @@ export function browserControls({ pageFor, width, result, save }) {
       if (!chosen) for (const details of await page.locator('#tab-world details').all()) {
         if (await details.getAttribute('open') === null) await details.locator('summary').click();
         chosen = await visible(); if (chosen) break;
+      }
+      if (!chosen) {
+        // A websocket/normal refresh can clear the board after snapshot() has
+        // returned. Reissue only when the real loading state is observed; a
+        // settled board with a missing control still fails the assertion below.
+        const refreshing = await page.locator('#tab-world .world-card[role="status"]')
+          .filter({ hasText: 'Refreshing your street' }).isVisible();
+        const diagnostic = { event: 'rc1-golden-control-unavailable', width, commandType: command.commandType,
+          refreshing, matchingButtons: await buttons.count(), summaryPresent: await page.locator('#tab-world .world-summary').count() > 0 };
+        (result.reachabilityDiagnostics ||= []).push(diagnostic); save();
+        // Public-safe aggregate only: no account IDs, issued identities, tokens,
+        // request bodies or private DOM content enters the retained CI log.
+        console.error(JSON.stringify(diagnostic));
+        if (refreshing) {
+          await page.locator('#tab-world .world-summary').waitFor({ state: 'visible', timeout: 5000 });
+          throw Object.assign(new Error('Rendered board refreshed before command selection'), {
+            observedBrowserRefresh: true, statusCode: 409, body: { error: 'browser_board_refresh' },
+          });
+        }
       }
       assert(chosen, `No reachable ${command.commandType}: ${command.label}`);
       const waiting = page.waitForResponse((response) => response.request().method() === 'POST' && new URL(response.url()).pathname === '/v1/commands/execute');
