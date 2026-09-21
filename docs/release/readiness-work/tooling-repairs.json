@@ -659,6 +659,20 @@
       ],
       "retest": "361efd90 native34boundaries/11movements/33corruption controls and shared-observer native regression pass;124artifacts and two history chains independently verified.",
       "evidence": "world-family-entry.md;family-entry-observer-summary.json; failed run SHA95b904247c24ed3306d1c395304805b0df564f767f223bca2af790750707db4a; failed history SHA33cea540c710bc2aafda5ce47bffa49a7924858b635d4488311bb093314b16ca"
+    },
+    {
+      "id": "RC1-TOOL-42",
+      "classification": "D test module load-order defect",
+      "owner": "Codex/native_harness",
+      "failedGate": "8e7ed931 resource-enabled native gzip world bootstrap",
+      "before": "World runner statically imported shared resource observer, whose canonical checkin quote imports game.js then db.js before the required worker instrumentation. The guard correctly refused cached uninstrumented authority before native workload.",
+      "repair": "2b47e79d moves only world observer module loading after instrumentation into the existing guarded try/finally. The original cached-module guard and runtime remain unchanged.",
+      "changedSource": [
+        "test/rc1-native-world-workload.js",
+        "test/rc1-world-observer-load-order.js"
+      ],
+      "retest": "Two-process controls reject observer-first before Pool construction and accept instrumentation-first up to a deliberately throwing Pool sentinel with zero DB connections. Exact2b47e79d resource-enabled2h observation/replay pass18fields/1085boundaries with39unknowns. Original failure and cleanup retained; integrated rerun required.",
+      "evidence": "harness-world-gzip-integration.md;harness-world-gzip-integration-index.json"
     }
   ]
 }
