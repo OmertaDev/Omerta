@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "f674cb7c429727fea70058bb263618318563b0eb",
+  "sourceRevision": "815d02a81194a47f146b121f729c85271356a471",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 8008,
-    "edges": 34787,
+    "nodes": 8010,
+    "edges": 34797,
     "byNodeType": {
       "Artifact": 3309,
       "Command": 117,
-      "Commit": 1542,
+      "Commit": 1544,
       "Contract": 79,
       "Document": 614,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 2524,
-      "CHANGED": 13171,
+      "CHANGED": 13179,
       "CONTAINS": 3330,
       "DECLARES": 117,
       "DEFINED_IN": 1250,
       "DEPENDS_ON": 65,
       "EXECUTES": 449,
       "HANDLED_BY": 708,
-      "HAS_COMMIT": 1542,
+      "HAS_COMMIT": 1544,
       "IMPLEMENTS": 124,
       "IMPORTS": 2968,
       "INHERITS": 17,
@@ -7636,20 +7636,20 @@
       "path": ".github/workflows/rc1-recovery.yml",
       "kind": "workflow",
       "extension": ".yml",
-      "bytes": 7409,
-      "lines": 183,
-      "version": "61e8683211b47746",
+      "bytes": 7443,
+      "lines": 185,
+      "version": "d0dd721faa5fd8cd",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/rc1-recovery.yml",
           "line": 1,
-          "version": "61e8683211b47746"
+          "version": "d0dd721faa5fd8cd"
         }
       ],
-      "lastChangedAt": "2026-09-21T04:43:35.000Z",
+      "lastChangedAt": "2026-09-21T04:47:23.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "f674cb7c429727fea70058bb263618318563b0eb"
+      "lastChangedCommit": "815d02a81194a47f146b121f729c85271356a471"
     },
     {
       "key": "Artifact:.gitignore",
@@ -90699,6 +90699,22 @@
       ]
     },
     {
+      "key": "Commit:815d02a81194a47f146b121f729c85271356a471",
+      "type": "Commit",
+      "id": "815d02a81194a47f146b121f729c85271356a471",
+      "label": "fix(rc1): resolve runner output paths in step environment",
+      "title": "fix(rc1): resolve runner output paths in step environment",
+      "date": "2026-09-21T04:47:23.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/815d02a81194a47f146b121f729c85271356a471",
+      "provenance": [
+        {
+          "commit": "815d02a81194a47f146b121f729c85271356a471",
+          "url": "https://github.com/OmertaDev/Omerta/commit/815d02a81194a47f146b121f729c85271356a471"
+        }
+      ]
+    },
+    {
       "key": "Commit:8175fd0f001d884da9c02ebf4f04924a0ef70ead",
       "type": "Commit",
       "id": "8175fd0f001d884da9c02ebf4f04924a0ef70ead",
@@ -94119,6 +94135,22 @@
         {
           "commit": "a4952992803e6f40ee2ccef240c7ba80d7a28f6b",
           "url": "https://github.com/OmertaDev/Omerta/commit/a4952992803e6f40ee2ccef240c7ba80d7a28f6b"
+        }
+      ]
+    },
+    {
+      "key": "Commit:a4a3b9a683c90bd0429e87272eff0dd294cdf850",
+      "type": "Commit",
+      "id": "a4a3b9a683c90bd0429e87272eff0dd294cdf850",
+      "label": "docs(rc1): regenerate Knowledge for expanded native proof tooling",
+      "title": "docs(rc1): regenerate Knowledge for expanded native proof tooling",
+      "date": "2026-09-21T04:44:56.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a4a3b9a683c90bd0429e87272eff0dd294cdf850",
+      "provenance": [
+        {
+          "commit": "a4a3b9a683c90bd0429e87272eff0dd294cdf850",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a4a3b9a683c90bd0429e87272eff0dd294cdf850"
         }
       ]
     },
@@ -119299,6 +119331,9 @@
           "commit": "a18c63cc0c1eb15c7a89df99d7a1428616eb3b58"
         },
         {
+          "commit": "a4a3b9a683c90bd0429e87272eff0dd294cdf850"
+        },
+        {
           "commit": "a8101834df0e19afb218429142526d347fc74602"
         },
         {
@@ -119873,6 +119908,9 @@
         },
         {
           "commit": "a44fa132d4b79b316022cddf6d6a78eb41341fbe"
+        },
+        {
+          "commit": "a4a3b9a683c90bd0429e87272eff0dd294cdf850"
         },
         {
           "commit": "a5821372d39e6145ce40b5d6ade9cda6325e3a0a"
@@ -120550,6 +120588,9 @@
           "commit": "a44fa132d4b79b316022cddf6d6a78eb41341fbe"
         },
         {
+          "commit": "a4a3b9a683c90bd0429e87272eff0dd294cdf850"
+        },
+        {
           "commit": "a5821372d39e6145ce40b5d6ade9cda6325e3a0a"
         },
         {
@@ -121225,6 +121266,9 @@
           "commit": "a44fa132d4b79b316022cddf6d6a78eb41341fbe"
         },
         {
+          "commit": "a4a3b9a683c90bd0429e87272eff0dd294cdf850"
+        },
+        {
           "commit": "a5821372d39e6145ce40b5d6ade9cda6325e3a0a"
         },
         {
@@ -121535,6 +121579,9 @@
         },
         {
           "commit": "a18c63cc0c1eb15c7a89df99d7a1428616eb3b58"
+        },
+        {
+          "commit": "a4a3b9a683c90bd0429e87272eff0dd294cdf850"
         },
         {
           "commit": "a8101834df0e19afb218429142526d347fc74602"
@@ -122065,6 +122112,9 @@
           "commit": "a44fa132d4b79b316022cddf6d6a78eb41341fbe"
         },
         {
+          "commit": "a4a3b9a683c90bd0429e87272eff0dd294cdf850"
+        },
+        {
           "commit": "a5821372d39e6145ce40b5d6ade9cda6325e3a0a"
         },
         {
@@ -122441,6 +122491,9 @@
         },
         {
           "commit": "a18c63cc0c1eb15c7a89df99d7a1428616eb3b58"
+        },
+        {
+          "commit": "a4a3b9a683c90bd0429e87272eff0dd294cdf850"
         },
         {
           "commit": "a8101834df0e19afb218429142526d347fc74602"
@@ -130126,7 +130179,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "f674cb7c429727fea70058bb263618318563b0eb",
+      "revision": "815d02a81194a47f146b121f729c85271356a471",
       "currentBranch": "codex/rc1-readiness",
       "defaultBranch": "main",
       "visibility": "public",
@@ -161883,13 +161936,13 @@
       "type": "Workflow",
       "id": ".github/workflows/rc1-recovery.yml",
       "label": ".github/workflows/rc1-recovery.yml",
-      "lines": 183,
-      "version": "61e8683211b47746",
+      "lines": 185,
+      "version": "d0dd721faa5fd8cd",
       "provenance": [
         {
           "file": ".github/workflows/rc1-recovery.yml",
           "line": 1,
-          "version": "61e8683211b47746"
+          "version": "d0dd721faa5fd8cd"
         }
       ]
     }
@@ -242517,6 +242570,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:815d02a81194a47f146b121f729c85271356a471",
+      "to": "Artifact:.github/workflows/rc1-recovery.yml",
+      "provenance": {
+        "commit": "815d02a81194a47f146b121f729c85271356a471"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:8175fd0f001d884da9c02ebf4f04924a0ef70ead",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -254993,6 +255054,62 @@
       "to": "Artifact:tools/graph.js",
       "provenance": {
         "commit": "a4952992803e6f40ee2ccef240c7ba80d7a28f6b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a4a3b9a683c90bd0429e87272eff0dd294cdf850",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "a4a3b9a683c90bd0429e87272eff0dd294cdf850"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a4a3b9a683c90bd0429e87272eff0dd294cdf850",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "a4a3b9a683c90bd0429e87272eff0dd294cdf850"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a4a3b9a683c90bd0429e87272eff0dd294cdf850",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "a4a3b9a683c90bd0429e87272eff0dd294cdf850"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a4a3b9a683c90bd0429e87272eff0dd294cdf850",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "a4a3b9a683c90bd0429e87272eff0dd294cdf850"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a4a3b9a683c90bd0429e87272eff0dd294cdf850",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "a4a3b9a683c90bd0429e87272eff0dd294cdf850"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a4a3b9a683c90bd0429e87272eff0dd294cdf850",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "a4a3b9a683c90bd0429e87272eff0dd294cdf850"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a4a3b9a683c90bd0429e87272eff0dd294cdf850",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "a4a3b9a683c90bd0429e87272eff0dd294cdf850"
       }
     },
     {
@@ -350178,6 +350295,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:815d02a81194a47f146b121f729c85271356a471",
+      "provenance": {
+        "commit": "815d02a81194a47f146b121f729c85271356a471"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:8175fd0f001d884da9c02ebf4f04924a0ef70ead",
       "provenance": {
         "commit": "8175fd0f001d884da9c02ebf4f04924a0ef70ead"
@@ -351885,6 +352010,14 @@
       "to": "Commit:a4952992803e6f40ee2ccef240c7ba80d7a28f6b",
       "provenance": {
         "commit": "a4952992803e6f40ee2ccef240c7ba80d7a28f6b"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:a4a3b9a683c90bd0429e87272eff0dd294cdf850",
+      "provenance": {
+        "commit": "a4a3b9a683c90bd0429e87272eff0dd294cdf850"
       }
     },
     {
