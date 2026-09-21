@@ -174,6 +174,8 @@ export async function redeem(ch, amount, client, h) {
   const cutUnits = (units * BigInt(FAMILY_YIELD.FUND_BPS) + 5000n) / 10000n;
   const cut = Number(cutUnits) / 1e6, burn = Number(units - cutUnits) / 1e6;
   const originalBalance = h.acct.omr;
+  const remainingBalance = windowBalanceAfter(originalBalance, units);
+  if (remainingBalance.startsWith('-')) throw new GameError('omr', `That costs ${omr} $OMR. Come back flush.`);
   if (cut > 0) {
     await spendOmr(client, h, cut, 'yield:window');
     h.acct.omr = windowBalanceAfter(originalBalance, cutUnits);
@@ -184,7 +186,7 @@ export async function redeem(ch, amount, client, h) {
   // reason keeps its name (renaming a live reason drifts every historical row) but the economics
   // are revenue, not deflation — do not describe this as burning supply.
   await spendOmr(client, h, burn, 'window:burn');
-  h.acct.omr = windowBalanceAfter(originalBalance, units);
+  h.acct.omr = remainingBalance;
   await client.query(
     'UPDATE exchange_pool SET balance = balance - $1, lifetime_paid = lifetime_paid + $1 WHERE id=1', [cash]);
   ch.cash = num(ch.cash) + cash;
