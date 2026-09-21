@@ -129,6 +129,7 @@
     "test:rc1:harness": "node test/rc1-native-proof.js && node test/rc1-native-worker-schedule.js && node test/rc1-native-query-tape.js && node test/rc1-native-player-policy.js && node test/rc1-native-actor-replay.js && node test/rc1-world-diagnostics.js && node test/rc1-native-commit-observer.js && node test/rc1-world-resource-observer.js && node test/rc1-browser-controls.js && node test/rc1-knowledge-diagnostics.js && node test/rc1-mystery-policies.js && node test/rc1-aggression-policy.js && node test/rc1-loan-lifecycle-journal.js && node test/rc1-churn-policy.js",
     "test:rc1:aggression:postgres": "node test/rc1-aggression-policy.js --postgres",
     "test:rc1:churn:postgres": "node test/rc1-churn-policy.js --postgres",
+    "test:rc1:season:postgres": "node test/rc1-season-recovery.js --postgres",
     "test:rc1:loans:postgres": "node test/rc1-native-loan-lifecycles.js --postgres",
     "test:rc1:knowledge:postgres": "node test/rc1-knowledge-diagnostics.js --postgres",
     "test:rc1:mystery-policies:postgres": "node test/rc1-mystery-policies.js --postgres",

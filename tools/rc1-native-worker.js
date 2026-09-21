@@ -6,7 +6,7 @@ import { canonicalJson, sha256 } from './rc1-native-proof.js';
 import { serialDatabaseOptions } from './rc1-native-determinism.js';
 
 export const WORKER_SOURCE_PINS = Object.freeze({
-  'src/worker.js': 'e523f9a2bdaaa4886f48663f8e57f4fc537876782f3d73b3151cd33f3b9e7746',
+  'src/worker.js': '7072264895a874fbcc1f068c85a8668c4cc34819918868459d71194c5f1eabf6',
   'src/db.js': '6033b850aa9843703b0907c32da9a3032bd501c893ad32835b0fbfe03c3750b8',
 });
 const plain = (value) => value === undefined ? null : JSON.parse(JSON.stringify(value));

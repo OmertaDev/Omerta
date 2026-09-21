@@ -306,6 +306,13 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:churn:postgres
+      - name: Seasonal status interruption and durable retry
+        if: '!cancelled()'
+        env:
+          RC1_SEASON_OUTPUT: ${{ runner.temp }}/rc1-season-recovery
+        run: |
+          umask 077
+          npm run test:rc1:season:postgres
   original-escrow-timers:
     name: Original escrow lifetimes (PostgreSQL ${{ matrix.postgres }})
     runs-on: ubuntu-latest

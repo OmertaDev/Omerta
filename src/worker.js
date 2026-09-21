@@ -195,11 +195,22 @@ export async function runSeasonRollover(pool, opts = {}) {
   // THE RECKONING — close the books on the season that just ENDED (current − 1) before anything is
   // reset, so the record reads the city as it stood. Idempotent on the season PK; run only when a
   // population actually lived through it (a fresh boot in season 100 should not invent a record for
-  // 99). Pure status — the whole write moves no currency, so it needs no txn of the loop's.
+  // 99). A durable uncrowned record must also finish after all characters have converted.
   let reckoning = null;
-  if (rows.length && current > 0) {
-    try { reckoning = await recordReckoning(pool, current - 1); }
-    catch (e) { console.error('reckoning:', e.message); }   // a failed record must never stall the rollover
+  const pendingSeasons = (await pool.query(
+    'SELECT season FROM season_records WHERE NOT crowned AND season < $1 ORDER BY season', [current])).rows
+    .map(row => Number(row.season));
+  if (rows.length && current > 0 && !pendingSeasons.includes(current - 1)) pendingSeasons.push(current - 1);
+  for (const season of pendingSeasons) {
+    try { reckoning = await recordReckoning(pool, season) || reckoning; }
+    catch (e) {
+      console.error('reckoning:', e.message);
+      // Once the chosen standings are saved, individual conversion can continue
+      // and the pending crown is retried next tick. If no record was written,
+      // preserve the pre-conversion standings for the next attempt.
+      const saved = (await pool.query('SELECT season FROM season_records WHERE season=$1', [season])).rows[0];
+      if (!saved) throw e;
+    }
   }
   // THE DUELING BELT — the season CHAMPION (highest-ELO active LISTED duelist rolling over this season)
   // is crowned into the account-level `duel_titles` legend (survives death, the boxing-belt precedent).

@@ -9,6 +9,13 @@
   "note": "Pinned required command inventory across the four source workflows. Preserve each workflow setup, database isolation, platform, environment and budgets. A component regression pass does not clear a full native, deployed, or human proof.",
   "gates": [
     {
+      "id": "rc1-season-recovery",
+      "command": ["npm", "run", "test:rc1:season:postgres"],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": ["Native seasonal status interruption, concurrent claim and lost commit response; explicit season boundary, no elapsed28-day worker or full resource matrix proof"]
+    },
+    {
       "id": "rc1-churn",
       "command": ["npm", "run", "test:rc1:churn:postgres"],
       "timeoutMs": 600000,
