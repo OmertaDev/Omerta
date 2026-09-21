@@ -1336,6 +1336,29 @@
         "queue time",
         "completed rate"
       ]
+    },
+    "recovery": {
+      "acknowledgedWritesLostThroughRestartOrCodeRollback": 0,
+      "maximumRestoreMinutes": 30
+    },
+    "cohort": {
+      "finalCandidateHoursWithoutUnresolvedP0P1": 72,
+      "denominatorUnfamiliarPlayers": 20,
+      "repeatedBlockingEligibleParticipants": 3,
+      "repeatedBlockingAboveAttemptFraction": 0.1,
+      "minimumIndependentRealCompletionsPerJourney": 3,
+      "minimumUnfamiliarPlayers": 20,
+      "consequenceAndNextObjective": 18,
+      "minimumEligibleBlockingAttempts": 20,
+      "minimumVoluntaryLaterDayReturns": 10,
+      "meaningfulActionWithin5Minutes": 16,
+      "initialObservedMinutes": 15,
+      "minimumMobileFirstParticipants": 10,
+      "minimumCompetingFamilies": 2,
+      "minimumParticipants": 30,
+      "consecutiveDays": 7,
+      "meaningfulActionWithin15Minutes": 18,
+      "minimumRealParticipantsPerFamily": 5
     }
   },
   "qualification": {

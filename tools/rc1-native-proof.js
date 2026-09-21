@@ -31,12 +31,32 @@ export async function sourceIdentity() {
 export async function assertSourceUnchanged(source) {
   assert.deepEqual(await sourceIdentity(), source, 'Source changed while evidence was generated');
 }
+const SCENARIO_SETTINGS = [
+  ['quiet_world', 'Quiet world', { dailyActiveFraction: .10 }],
+  ['high_aggression', 'High aggression', { eligibleConflictChoiceFraction: .70 }],
+  ['family_monopoly', 'Family monopoly', { largestFamilyJoinableFraction: .80, initialSupply: 'largest legal position', outsiders: 'natural entry' }],
+  ['fragmented_families', 'Fragmented Families', { minimumFamilies: 10, maximumFamilyActorFraction: .20,
+    exception: 'Use nearest legal formation extreme; retain invariant-based reason.' }],
+  ['resource_scarcity', 'Resource scarcity', { initialSupply: 'lowest valid', replenishment: 'canonical paths' }],
+  ['resource_abundance', 'Resource abundance', { initialSupply: 'high legally valid', observe: ['spending', 'hoarding', 'concentration', 'sinks'] }],
+  ['high_player_churn', 'High player churn', { weeklyActiveReplacementFraction: .30 }],
+  ['mostly_new_players', 'Mostly new players', { newActorFraction: .90, privilegedGrants: false }],
+  ['mostly_veteran_players', 'Mostly veteran players', { validProgressionFixtureFraction: .90, newActorFraction: .10 }],
+  ['coordinated_alliance', 'Coordinated alliance', { minimumFamilies: 3, sharing: 'canonical permissions' }],
+  ['multi_family_war', 'Multi-Family war', { minimumOpposingFamilies: 3, objectives: 'overlapping scarce' }],
+  ['high_mystery_participation', 'High mystery participation', { eligibleInvestigationChoiceFraction: .70 }],
+  ['low_mystery_participation', 'Low mystery participation', { maximumEligibleInvestigationChoiceFraction: .05 }],
+  ['market_stress', 'Market stress', { concurrent: ['posting', 'taking', 'refund', 'expiry', 'escrow settlement'] }],
+  ['law_pressure', 'Law pressure', { pressure: 'sustained canonical Heat/Law', recoveries: ['detention', 'loss', 'legal progression'] }],
+];
 export function validateScenarioManifest(manifest) {
   assert.equal(manifest.format, 1);
   assert.deepEqual(manifest.populations, [25, 100, 250, 500, 1000]);
   assert.deepEqual(manifest.seeds, ['rc1-alpha', 'rc1-beta', 'rc1-gamma']);
   assert.equal(manifest.scenarios.length, 15);
   assert.equal(new Set(manifest.scenarios.map((s) => s.id)).size, 15);
+  assert.deepEqual(manifest.scenarios.map(({ id, label, policy }) => [id, label, policy]), SCENARIO_SETTINGS,
+    'Scenario identities and proposed policies must retain the frozen acceptance specification');
   const expected = manifest.scenarios.flatMap((s) => manifest.populations.flatMap((population) =>
     manifest.seeds.map((seed) => `${s.id}/${population}/${seed}`))).sort();
   assert.deepEqual(manifest.cells.map((c) => `${c.scenarioId}/${c.population}/${c.seed}`).sort(), expected);
@@ -48,6 +68,19 @@ export function validateScenarioManifest(manifest) {
   assert.equal(manifest.thresholds.soak.population, 1000);
   assert.equal(manifest.thresholds.soak.minimumActiveActorsPerHour, 250);
   assert.equal(manifest.thresholds.soak.minimumInFlightBurst, 100);
+  assert.equal(manifest.thresholds.soak.allActorsMustParticipate, true);
+  for (const target of ['maximumUnexplainedResourceDrift', 'maximumDuplicateValue', 'maximumUnclassifiedTransitionGaps',
+    'maximumUnauthorizedDisclosures', 'maximumPersistentDeadWorlds', 'maximumUnresolvedP0P1']) assert.equal(manifest.thresholds[target], 0, target);
+  assert.deepEqual(manifest.thresholds.recovery, { maximumRestoreMinutes: 30, acknowledgedWritesLostThroughRestartOrCodeRollback: 0 });
+  assert.deepEqual(manifest.thresholds.cohort, { minimumParticipants: 30, consecutiveDays: 7, minimumUnfamiliarPlayers: 20,
+    minimumMobileFirstParticipants: 10, minimumCompetingFamilies: 2, minimumRealParticipantsPerFamily: 5,
+    initialObservedMinutes: 15, meaningfulActionWithin5Minutes: 16, meaningfulActionWithin15Minutes: 18,
+    consequenceAndNextObjective: 18, denominatorUnfamiliarPlayers: 20, minimumIndependentRealCompletionsPerJourney: 3,
+    minimumVoluntaryLaterDayReturns: 10, repeatedBlockingEligibleParticipants: 3, repeatedBlockingAboveAttemptFraction: .10,
+    minimumEligibleBlockingAttempts: 20, finalCandidateHoursWithoutUnresolvedP0P1: 72 });
+  assert.equal(manifest.qualification.requiresResourceGate, true);
+  assert.equal(manifest.qualification.requiredDatabase, 'real PostgreSQL');
+  assert.deepEqual(manifest.qualification.forbiddenEvidenceKinds, ['model', 'fixture-only', 'scoped', 'pg-mem', 'skipped', 'pending', 'environment-blocked']);
   return manifest;
 }
 
@@ -189,8 +222,12 @@ export async function createProofRecorder({ directory, source, configuration, ru
 
 export async function verifyArtifactIndex(directory, record) {
   assert(Array.isArray(record.artifacts) && record.artifacts.length > 0, 'Missing artifact index');
+  assert.equal(new Set(record.artifacts.map((artifact) => artifact.path)).size, record.artifacts.length, 'Duplicate artifact index entry');
+  const realRoot = await fs.realpath(directory);
   for (const artifact of record.artifacts) {
     assert(/^[a-z0-9-]+\.(json|jsonl|dump)$/.test(artifact.path), 'Invalid evidence path');
+    const resolved = await fs.realpath(path.join(directory, artifact.path));
+    assert.equal(path.dirname(resolved), realRoot, 'Evidence symlink escapes artifact directory');
     const bytes = await fs.readFile(path.join(directory, artifact.path));
     assert.equal(bytes.length, artifact.bytes, `Artifact size mismatch: ${artifact.path}`);
     assert.equal(sha256(bytes), artifact.sha256, `Artifact hash mismatch: ${artifact.path}`);
@@ -199,14 +236,16 @@ export async function verifyArtifactIndex(directory, record) {
   assert.equal(record.status, record.result.status, 'Result status mismatch');
   assert.equal(record.matrixQualifying, false, 'Scoped harness cannot qualify a matrix cell');
   const history = (await fs.readFile(path.join(directory, 'history.jsonl'), 'utf8')).trim().split('\n').map((line) => JSON.parse(line));
-  const unfinished = new Set();
+  const unfinished = new Set(), invoked = new Set();
   let previousHash = null;
   for (const [index, { hash, ...event }] of history.entries()) {
     assert.equal(event.sequence, index + 1, 'History sequence gap');
     assert.equal(event.previousHash, previousHash, 'History chain gap');
     assert.equal(hash, sha256(canonicalJson(event)), 'History hash mismatch');
     previousHash = hash;
-    if (event.kind === 'invocation') { assert(!unfinished.has(event.invocation), 'Duplicate invocation'); unfinished.add(event.invocation); }
+    if (event.kind === 'invocation') {
+      assert(!invoked.has(event.invocation), 'Duplicate invocation'); invoked.add(event.invocation); unfinished.add(event.invocation);
+    }
     if (event.kind === 'completion') { assert(unfinished.delete(event.invocation), 'Unknown/repeated completion'); }
   }
   assert.equal(unfinished.size, 0, 'Unfinished authority invocations');

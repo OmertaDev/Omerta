@@ -16,6 +16,13 @@ for (const mutation of [
   (m) => m.cells.pop(), (m) => m.cells.push(m.cells[0]), (m) => m.populations.splice(2, 1),
   (m) => { m.thresholds.minimumLogicalDays = 89; }, (m) => { m.thresholds.soak.wallClockHours = 11; },
   (m) => { m.cells[0].seed = 'unknown-seed'; },
+  (m) => { m.scenarios[0].id = 'unrecognized-world'; m.cells.filter((c) => c.scenarioId === 'quiet_world').forEach((c) => { c.scenarioId = 'unrecognized-world'; }); },
+  (m) => { m.scenarios[0].policy.dailyActiveFraction = .50; },
+  (m) => { m.thresholds.maximumUnexplainedResourceDrift = 1; },
+  (m) => { m.thresholds.recovery.maximumRestoreMinutes = 31; },
+  (m) => { m.thresholds.cohort.minimumParticipants = 29; },
+  (m) => { m.thresholds.cohort.finalCandidateHoursWithoutUnresolvedP0P1 = 71; },
+  (m) => { m.qualification.requiresResourceGate = false; },
 ]) { const broken = structuredClone(manifest); mutation(broken); assert.throws(() => validateScenarioManifest(broken)); }
 assert.equal(canonicalJson({ b: 2, a: 1 }), canonicalJson({ a: 1, b: 2 }));
 assert.deepEqual(NORMALIZATION.exclusions, []);
@@ -81,6 +88,7 @@ if (process.argv.includes('--postgres')) {
     const record = await recorder.finish({ status: 'PASS_SCOPED', database: checkpoint.databaseVersion,
       assertionsPassed: 6, deliberateFailureDetected: true, checkpointRestore: true, receiptReplay: true });
     await verifyArtifactIndex(directory, record);
+    await assert.rejects(() => verifyArtifactIndex(directory, { ...record, artifacts: [...record.artifacts, record.artifacts[0]] }), /Duplicate artifact/);
     const bytes = await fs.readFile(path.join(directory, 'before-restart.json'));
     await fs.appendFile(path.join(directory, 'before-restart.json'), ' ');
     await assert.rejects(() => verifyArtifactIndex(directory, record), /Artifact size mismatch/);
