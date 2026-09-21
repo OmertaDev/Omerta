@@ -90,11 +90,12 @@ was connected. After that test process exited, the exact database name, OID and
 ownership marker were checked and the database closed with zero other sessions.
 The harness uses `DIRECTOR_DISABLED` and validates that configuration before server
 allocation. This scoped combat exercise never claimed Director/worker coverage.
-The third attempt at `57a1bfa5` completed the gameplay path but failed the required
-history validator: GET identities included absent `body`/`key` fields as JavaScript
-`undefined`, producing invalid JSONL. Its immutable run file contains the earlier
-provisional gameplay result; the recorded validator rejection invalidates that
-entire proof. The harness now omits absent identity fields, tests their actual
+The third attempt at `57a1bfa5` completed the gameplay path but failed cleanup and
+then independently failed the required history validator: GET identities included
+absent `body`/`key` fields as JavaScript `undefined`, producing invalid JSONL. Its
+immutable run file already records **FAIL**. An initial rejection sidecar incorrectly
+described the stored status as provisional PASS; a retained correction sidecar
+supersedes that wording. The harness now omits absent identity fields, tests their actual
 canonical serialization, and parses the history before assigning a passing result.
 The `6302816f` run passed the gameplay and history checks but failed owned-database
 cleanup: closing Fastify did not close its PostgreSQL pool. The harness now closes
@@ -102,6 +103,15 @@ that exact owned pool explicitly before requesting the guarded database drop.
 The failed run is retained; its post-process cleanup separately verifies ownership
 and zero active sessions. The central evidence guard from `a0f37c74` is also applied
 for subsequent runs so invalid JSON values fail before invoking an action.
+
+The complete repaired execution at
+`4489b023680f0be6eb9ca1999b83c6c2a5668d74` passed its scoped assertions, history/hash
+validator and owned-database cleanup. Eight fresh selections produced four jumps
+(one win, three losses including retaliation), three discovery starts and one heal.
+The exact HTTP retry changed no full-state snapshot. Original hospital protection
+expired after a declared 181-second real wait. All 55 invariants passed after each
+of the eight mutations. Actual conflict share was 4/8; the actors had incomplete
+mixed-choice blocks of five and two, so no exact 70% native-share claim is made.
 
 Death, heirs, replacement, all other conflict authorities, full resource journals,
 complete worker intervals, 90-day lifecycles, all 225 runs, whole-policy accounting
