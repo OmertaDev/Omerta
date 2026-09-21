@@ -10,4 +10,50 @@ The adapter accepts actor projections only. SQL is limited to declared initializ
 
 Process-level database continuation (`--resume`) fails closed for this adapter. Request/checkpoint restore and exact fresh-world replay do not imply interrupted-process continuation coverage. Only the alliance HTTP calls use authentication; ordinary daily crimes retain the runner's canonical domain API. Local rate/invite/social gates are disabled as declared, so this run does not qualify admission, external auth, capacity or production latency. Full resource taxonomy, 90 days, other seeds/populations, the matrix and deployed participants remain unqualified.
 
-Source ancestry starts at `9e05bf089fff68ba6c65b805ac6b1c5c33c26c24`, with prior Family custody, alliance and turf components retained through `73c46cc7af5e14cee1bfaed08b5c71446a08c429`. Native results will be recorded after the immutable observation/replay pair completes.
+Source ancestry starts at `9e05bf089fff68ba6c65b805ac6b1c5c33c26c24`, with prior Family custody, alliance and turf components retained through `73c46cc7af5e14cee1bfaed08b5c71446a08c429`. The native pair below is frozen at `90c8028726a058b41b2d6fc3280a8b8975b87974`. Later membership-control and documentation commits do not inherit a new-source world-run pass. No production runtime, observer equations, package, workflow or shared catalog was changed. The separately authorized shared verifier repair is `f8976fc7` (integrated independently by root as `36900561`).
+
+## Verified 48-hour observation and replay
+
+Both native PostgreSQL processes exited **0**, with `PASS_SCOPED`, complete artifact/history verification and successful owned-database cleanup. The exact source, seed `rc1-alpha` and 25-actor population were unchanged between them. Logical time covered 2026-09-23 23:00 through 2026-09-25 23:00 UTC. Native wall times were 2026-09-21 09:10:37.584–09:17:24.019 UTC for observation and 09:19:14.428–09:25:55.785 UTC for replay.
+
+- 25 ordinary entries, three initial respect-only founder fixtures and 22 unmodified ordinary outsiders. Every actor completed both scheduled crime sessions: 50 attempts, 45 successes and five canonical losses; no session waits.
+- Three measured canonical Family formations, three bilateral pacts, three independent source claims, four explicit account grants contributed by all three investigators, and three no-reward authorized conclusions at hour 24. There were 35 fresh alliance operations, two already-at-district waits, zero unresolved responses and four exact successful retries with full-state equality.
+- Five authorization controls: three pact-only claim denials and the same ordinary outsider denied both before and after intervening workers. These are generic canonical 404s. The broader standalone alliance revocation/no-reshare controls remain separate evidence; this world pair does not repeat them.
+- All 576 original Director callbacks, 48 hourly callbacks, 48 season callbacks and 576 health boundaries executed. Every cohort account received one canonical season recap. External RWA health remains the declared dormant dependency.
+- All 18 existing replay comparison fields match, including authorized inputs/outcomes, RNG, query-selection eligibility, worker schedule/outcomes, complete initial/final canonical state, adapter/component checkpoints, diagnostics and the complete committed-boundary resource stream. Canonical-state exclusions are empty. Existing exclusions are only wall durations and physical MVCC/relation-size diagnostics.
+- Each run retains 194 artifacts and 15,917 history events. The observation records 55 canonical invariants at 92 explicit actor/day/final boundaries, plus original worker checks, and 2,487,540 observer checks over 13,476 committed boundaries. The observer still reports **219 unsupported classifications**: 103 table changes (cars 24, boats nine, market listings 39, season records two, season recaps 29), 12 Family-lineage entries, and 104 cash-receipt reasons (check-in three, market order 39, market list 39, goods purchases 23). This is exact recorded parity/replay with explicit unknown semantics, not full resource qualification.
+
+Restricted evidence basenames and SHA-256 values:
+
+| Artifact | SHA-256 |
+| --- | --- |
+| `alliance-world-90c80287-observe/run.json` | `7e99fd7d864b9aa009ad1c684a2fbd1a27a30c5361934d5929b04a22ea2b7d9c` |
+| Observation configuration | `49a8fa6391f3ab5022412a93bb88efe9463fdeebfa5918a47a656bd117f42bdd` |
+| `alliance-world-90c80287-replay/run.json` | `02103afc47da12ac4bf70ed267e626d2735b6eefe54d33c854a5a57ba9f8ada3` |
+| Replay configuration | `38ef04176b39d050ac8b1b59bf68fbf82eb9733eb37aaa8c27721726b8aa6639` |
+| Matching initial state | `1e8fe22dfb86396b6c76a0e8a0bc9371c5696c34c36eb8be226f2e4f3b06a32a` |
+| Matching final state | `cbbb02c60b9778815feb7be965216345a9c025c267fe02f5056aa393720ba793` |
+| Matching resource stream | `49af50b334443d0fff0f39427d578544456fae3371e4af03bcb92f5b2e88bb46` |
+| Matching actor tape | `beab009a1e491d87d8ba08b867142a1bfb706ff4fc6488d1093af0b77b8e7203` |
+| Matching policy state | `2e1c0a0bbbca67ca709041963b2632b72d9d75b659f801d3a8040deeaca46776` |
+
+The histories retain 1,064,788,406 observation bytes (SHA `cf4b334534f41e9061c22e49747d2abb2f72aa6cbab66090f17dcce2c91348cd`) and 1,064,789,531 replay bytes (SHA `25285cdc73127b375aaa4eca8660f615e64aeff99a6e9ddc16fc1a154bdb1141`). Nothing was sampled or compacted. Operational guards were two hours wall time, 8 GiB output and 2 GiB minimum free space per run.
+
+## Retained failures and narrow repairs
+
+Four pre-initialization launches at `c65938a1` were rejected before any database/proof directory: mixed CRLF/LF bytes twice, then Git's stale index stat cache twice after normalization. Exact Git-blob bytes plus an index refresh resolved this without a semantic commit. The restricted launch-rejection record remains separate.
+
+The first actual native attempt, `alliance-world-c65938a1-observe`, is retained **FAIL** (`run.json` SHA `d77be90c28d5ce41057e5aed17cff8882769eead4a7028e125ce65542a853f51`): `pg_dump` was not on PATH during the initial checkpoint. No measured actor work ran. The installed PostgreSQL 18 directory was explicitly supplied through `RC1_PG_BIN` on later attempts; database cleanup succeeded.
+
+**RC1-TOOL-34:** `alliance-world-c65938a1-observe2` is retained **FAIL** (`run.json` SHA `366f848961f44899a8b24d10b78815469d4ace490119de74497c3189c2cc6c60`; history SHA `32a22f04484e560bbaf2157f456e9a52a25ea77c609eaf5c4023e6d99fad8de2`). After canonical formation, Fastify injection returned while `projection-events`' original response hook still awaited its membership SELECT. The following invariant query overlapped it; the unchanged commit observer correctly rejected isolated-boundary coverage. Observer disarm also failed `assert(!busy)` during cleanup, and that cleanup failure remains recorded; the owned database was nevertheless removed. The actual held SQL hash is `c4ab05947b51c82d1c0f8135cf45716800b5d16601c373e4556ff73a8ffab428`. The earlier activity-hook attribution was an inference and is superseded by this retained query-hash attribution.
+
+Repair `fc069f31` appends a terminal test-only response hook and awaits completion of **all original returned hook promises** before leaving the HTTP invocation. No hook is removed, no fixed sleep is added, no native query/commit is moved and no observer check is bypassed. The exact hook block SHA is `e831c10a2b0cfab13526261975224a9bf35c26f0d1ecb08482879200098e9ec7`.
+
+- `alliance-barrier-90c80287` passed the narrower delayed original activity-name SELECT control with one unmodified ordinary entrant and 55 invariants; run SHA `b9b7421fe66229847649ad663f6ba6832f389f6eb1d63e534ad456b2db0c2d90`.
+- `alliance-membership-barrier-1a42a953` passed the exact failing membership-query control on source `1a42a953ed565358d72f1d249ea7978772a8ff6a`; run SHA `af1570b9bda414e260dfb90a5850f42dbabb3d88e102acf1e8dcd04ba0bc2c08`. One ordinary entrant received only declared initial level-75 respect; canonical check-in funded canonical formation. The first matching pre-handler SELECT ran normally; exactly the second, post-response SELECT was held. The ordinary 200 response returned while terminal completion remained pending. Releasing the explicit gate allowed the actual native SELECT and original lifecycle to finish, then all 55 invariants passed. No post-baseline fixture changes; cleanup verified. Timeout, absent/wrong query occurrence or premature completion fails the test. This control executes the exact source-hash-bound runner hook block and leaves the frozen pair unchanged.
+
+**RC1-TOOL-33:** `alliance-world-fc069f31-observe` remains **POSTSEAL_VERIFICATION_FAILED**. Its immutable `run.json` payload says `PASS_SCOPED`, but the launcher exited **1** because the prior verifier decoded a 1,064,824,650-byte history into one JavaScript string (`RangeError: Invalid string length`). The run SHA is `240fc50d25aa42ca7d2a64f6e41152d86f8eebec6f9873802e88827d2f4fdc21`; history SHA is `e0232de36545710186da2e75e6cd6662c7bcd8a2a0e2da7677abb2b8906c1c20`. Successful gameplay/cleanup assertions do not erase that launcher failure.
+
+Repair `f8976fc7` streams exact artifact bytes for size/SHA and history lines for the same complete sequence/hash-chain/invocation checks. Tests cover every byte split of a Unicode fixture, split CRLF, bare-CR rejection, ordinary parser equivalence, malformed/truncated/duplicate/unfinished histories, binary hashes and corrupt/reindexed artifacts. Independent audit on `90c80287` verified all 197 retained artifacts and 15,917 events/716 complete invocations without changing the original bytes or status. The audit file `alliance-world-fc069f31-postseal-audit-by-90c80287.json` has SHA `1b6ba15b5dbf6472291c20896ed15792aff6bd302192c5c38f884c386db6af34`. The new-source pair above was then run fresh; no source-equality rule was waived to reuse the failed attempt.
+
+Unit verification also passed the alliance adapter, original alliance policy, native actor replay, quiet player policy and native proof checks. Shared package/workflow/catalog integration and fresh root-source retesting remain root-owned. None of these results qualifies full resources, process continuation, a 90-day archetype, other seeds/populations, the 225-run matrix, or release readiness.
