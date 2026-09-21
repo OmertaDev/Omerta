@@ -16,15 +16,18 @@ The controlled transport delay chooses an interleaving; it does not rewrite
 server state, response bytes, clocks, or gameplay outcomes. Initial actor/social
 fixtures remain explicit. The hosted PG16 focus assertion has the same possible
 failure surface, but its exact cause is **inferred**, because that earlier hosted
-log contains no causal DOM trace. This finding does not classify the independent
-hosted PG18 phone failure.
+log contains no causal DOM trace. The separate hosted PG18 phone receipt finding
+is tracked as TOOL28; this repair does not address that pending-notice race.
 
 Runtime repair commit `df5cc3d4cc42d5800879652ce88989332bd9aade` checks current
 Crew render ownership and active editing immediately before committing DOM.
 An active field defers replacement until the existing focusout refresh path can
 fetch fresh data. Newer Crew renders own the panel; an older response cannot
 overwrite it. The native regression verifies node, draft, focus and selection,
-fresh reads after keyboard focusout, and reversed completion of two real reads.
+fresh reads after keyboard focusout, and an older response completing after a
+new Crew entry has started. Authenticated requests are serialized, so the test
+holds the newer read after releasing the older one; it does not claim impossible
+reversed wire completion within that queue.
 It does not claim every renderer or possible focus race is repaired.
 
 A separate native run at `257212c47cbafa9d59d7cb0da3c866bb820e3bc9` passed the

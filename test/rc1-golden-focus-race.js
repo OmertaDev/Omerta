@@ -77,9 +77,9 @@ try {
   result.deferred = { freshCircleReads: responses, changedNode: !(await input.evaluate((node, old) => node === old, original)),
     wired: await page.locator('#crew-send').evaluate(node => typeof node.onclick === 'function') };
   assert(result.deferred.freshCircleReads > 0 && result.deferred.changedNode && result.deferred.wired, 'Focusout must finish the deferred refresh');
-  // Overlap two real entries. The newer response is applied first, then the old
-  // response arrives while focus is outside the input: only revision ownership
-  // can prevent it from overwriting the newer panel and its draft.
+  // Overlap two real entries. Authenticated requests are serialized, so release
+  // the old response after the new entry starts and hold the new circle read.
+  // Outside the input, only revision ownership prevents the stale DOM commit.
   const navigate = async id => {
     if (await page.locator('#tabs-more:not(.hidden)').count()) await page.locator('#tabs-more').click();
     for (const group of await page.locator('#grouprail [data-group]').evaluateAll(nodes => nodes.map(node => node.dataset.group))) {
@@ -90,13 +90,16 @@ try {
   };
   await openTab(f.actors.aBoss, 'family'); const old = holdNext(); await navigate('crew'); await old.pending;
   await navigate('family');
-  const newer = page.waitForResponse(response => new URL(response.url()).pathname === '/v1/crew/chat'); newer.catch(() => {});
-  await navigate('crew'); await newer; await page.waitForFunction(() => typeof document.querySelector('#crew-send')?.onclick === 'function');
+  await navigate('crew');
   const latest = await input.elementHandle(); await input.fill('Newer board draft'); await page.keyboard.press('Tab');
   assert.equal(await input.evaluate(node => document.activeElement === node), false, 'Stale response control must not rely on focused-input deferral');
-  release(); await old.done; await settle(); result.stale = await state(input, latest);
+  const releaseOld = release, current = holdNext(); releaseOld(); await old.done; await current.pending;
+  result.stale = await state(input, latest);
   assert.equal(result.stale.sameNode, true, 'Older response replaced the newer crew panel');
   assert.equal(result.stale.value, 'Newer board draft', 'Older response lost the newer draft');
+  const newer = page.waitForResponse(response => new URL(response.url()).pathname === '/v1/crew/chat'); newer.catch(() => {});
+  release(); await current.done; await newer; await settle();
+  assert.equal(await input.evaluate((node, prior) => node !== prior, latest), true, 'Newest render must eventually complete');
   result.checks = ['focused-node-retained', 'draft-retained', 'selection-retained', 'fresh-render-on-focusout', 'older-response-cannot-overwrite-newer-entry'];
   assert.deepEqual(result.errors, []); result.status = 'PASS_SCOPED';
 } catch (error) { result.status = 'FAIL'; result.error = error.stack; process.exitCode = 1; }
