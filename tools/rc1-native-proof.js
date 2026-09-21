@@ -69,6 +69,12 @@ export function validateScenarioManifest(manifest) {
   assert.equal(manifest.thresholds.soak.minimumActiveActorsPerHour, 250);
   assert.equal(manifest.thresholds.soak.minimumInFlightBurst, 100);
   assert.equal(manifest.thresholds.soak.allActorsMustParticipate, true);
+  assert.deepEqual(manifest.thresholds.load, { maximumReadP95Ms: 500, maximumAuthoritativeCommandP95Ms: 1500,
+    maximumAuthoritativeCommandP99Ms: 3000, unexpected5xxOrTimeoutRateExclusiveUpperBound: .001,
+    rateExcludesDeliberateFaults: true, externalWalletProviderTimeMeasuredSeparately: true,
+    intendedDenialsAndInjectedOutagesHaveSeparateCounters: true,
+    maximumBacklogRecoverySchedulingPeriods: 2,
+    backlogException: 'Only a larger canonical recovery deadline documented before the run' });
   for (const target of ['maximumUnexplainedResourceDrift', 'maximumDuplicateValue', 'maximumUnclassifiedTransitionGaps',
     'maximumUnauthorizedDisclosures', 'maximumPersistentDeadWorlds', 'maximumUnresolvedP0P1']) assert.equal(manifest.thresholds[target], 0, target);
   assert.deepEqual(manifest.thresholds.recovery, { maximumRestoreMinutes: 30, acknowledgedWritesLostThroughRestartOrCodeRollback: 0 });

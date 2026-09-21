@@ -4,7 +4,12 @@ This extends the existing canonical service simulation. It does not replace the 
 introduce an economy journal authority, or qualify the 225 world runs. The committed
 `scenario-manifest.json` freezes all 15 archetypes, five populations, three seeds,
 90-day/two-rollover/two-longest-lifecycle requirements, zero-drift/dead-world targets,
-and the separate 12-hour/1,000-actor soak before acceptance execution. Its 225 cells
+and the separate 12-hour/1,000-actor soak before acceptance execution. The manifest
+also freezes read p95 <=500ms, authoritative command p95 <=1500ms and p99 <=3000ms,
+unexpected 5xx/timeout rate <0.1% outside injected faults, and recovery of due-work
+backlog within two scheduling periods or a larger canonical deadline declared before
+the run. Provider time, intended denials, and injected outages have separate counters.
+These are proposed acceptance targets, not observed measurements. The 225 cells
 remain unimplemented until their full native workloads and prerequisite resource gate
 have passing evidence. No model, scoped fixture, timeout, skip, or missing cell counts.
 
@@ -78,3 +83,18 @@ database time coordination, and automated failure-history reduction. Remaining
 RC1-03 proof: every acceptance workload, the complete 225-run matrix, due worker
 interval/lifecycle coverage, dead-world metrics/assertions, and the production-envelope
 12-hour soak. Checkpoint receipt replay is deliberately narrower than these claims.
+
+## Retained execution results
+
+`harness-results.json` records actual source/configuration identities, exit codes,
+artifact hashes, counters, exclusions, and the failed small-population diagnostic.
+The PostgreSQL 18.4 checkpoint regression passes on `67d33908`. The restored standard
+36-player/five-day population harness also passes on that revision with 6,730
+API/worker transition checks, unchanged drift across all 55 invariants, all nine
+driven markets receiving posts, and reconciled census totals. Its direct time/resource
+warping and fixture grants disqualify it from the required long-term world matrix.
+
+Two fresh serial 25-player scoped PostgreSQL runs on `1b12efb2` each execute 94
+commands. Their 20 seeded actor policy choices match. Their full database hashes
+do not match because no IDs/timestamps or other fields were excluded. This proves
+policy replay only; it leaves complete-state deterministic replay open.

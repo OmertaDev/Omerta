@@ -1359,6 +1359,17 @@
       "consecutiveDays": 7,
       "meaningfulActionWithin15Minutes": 18,
       "minimumRealParticipantsPerFamily": 5
+    },
+    "load": {
+      "maximumBacklogRecoverySchedulingPeriods": 2,
+      "maximumAuthoritativeCommandP99Ms": 3000,
+      "unexpected5xxOrTimeoutRateExclusiveUpperBound": 0.001,
+      "backlogException": "Only a larger canonical recovery deadline documented before the run",
+      "maximumAuthoritativeCommandP95Ms": 1500,
+      "rateExcludesDeliberateFaults": true,
+      "externalWalletProviderTimeMeasuredSeparately": true,
+      "maximumReadP95Ms": 500,
+      "intendedDenialsAndInjectedOutagesHaveSeparateCounters": true
     }
   },
   "qualification": {

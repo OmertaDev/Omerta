@@ -23,6 +23,11 @@ for (const mutation of [
   (m) => { m.thresholds.cohort.minimumParticipants = 29; },
   (m) => { m.thresholds.cohort.finalCandidateHoursWithoutUnresolvedP0P1 = 71; },
   (m) => { m.qualification.requiresResourceGate = false; },
+  (m) => { m.thresholds.load.maximumReadP95Ms = 501; },
+  (m) => { m.thresholds.load.maximumAuthoritativeCommandP95Ms = 1501; },
+  (m) => { m.thresholds.load.maximumAuthoritativeCommandP99Ms = 3001; },
+  (m) => { m.thresholds.load.unexpected5xxOrTimeoutRateExclusiveUpperBound = .002; },
+  (m) => { m.thresholds.load.maximumBacklogRecoverySchedulingPeriods = 3; },
 ]) { const broken = structuredClone(manifest); mutation(broken); assert.throws(() => validateScenarioManifest(broken)); }
 assert.equal(canonicalJson({ b: 2, a: 1 }), canonicalJson({ a: 1, b: 2 }));
 assert.deepEqual(NORMALIZATION.exclusions, []);
