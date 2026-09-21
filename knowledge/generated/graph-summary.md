@@ -4,17 +4,17 @@
 
 ## Census
 
-8,010 nodes and 34,797 edges at `815d02a81194`.
+8,103 nodes and 35,129 edges at `1d02eb2d5816`.
 
 ### Nodes
 
 | Type | Count |
 |---|---:|
-| Artifact | 3309 |
-| Command | 117 |
-| Commit | 1544 |
+| Artifact | 3342 |
+| Command | 129 |
+| Commit | 1573 |
 | Contract | 79 |
-| Document | 614 |
+| Document | 621 |
 | Domain | 13 |
 | ExternalDependency | 27 |
 | HistoricalArtifact | 343 |
@@ -24,28 +24,28 @@
 | Route | 802 |
 | Subsystem | 8 |
 | Table | 369 |
-| TestSuite | 378 |
+| TestSuite | 390 |
 | Workflow | 6 |
 
 ### Edges
 
 | Type | Count |
 |---|---:|
-| BELONGS_TO | 2524 |
-| CHANGED | 13179 |
-| CONTAINS | 3330 |
-| DECLARES | 117 |
+| BELONGS_TO | 2545 |
+| CHANGED | 13265 |
+| CONTAINS | 3363 |
+| DECLARES | 129 |
 | DEFINED_IN | 1250 |
 | DEPENDS_ON | 65 |
-| EXECUTES | 449 |
+| EXECUTES | 468 |
 | HANDLED_BY | 708 |
-| HAS_COMMIT | 1544 |
+| HAS_COMMIT | 1573 |
 | IMPLEMENTS | 124 |
-| IMPORTS | 2968 |
+| IMPORTS | 3044 |
 | INHERITS | 17 |
-| REFERENCES | 4148 |
-| REPRESENTS | 1272 |
-| TESTS | 1165 |
+| REFERENCES | 4167 |
+| REPRESENTS | 1291 |
+| TESTS | 1183 |
 | TRACKS | 126 |
 | USES_TABLE | 1811 |
 
