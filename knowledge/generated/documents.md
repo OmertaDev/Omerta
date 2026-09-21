@@ -382,9 +382,12 @@
 | [docs/release/RC1-SECURITY-OPERATIONS.md](../../docs/release/RC1-SECURITY-OPERATIONS.md) | documentation | 166 | 2026-09-20 |
 | [docs/release/RC1-SIMULATION-REPORT.md](../../docs/release/RC1-SIMULATION-REPORT.md) | documentation | 91 | 2026-09-20 |
 | [docs/release/readiness-work/authority-inventory.md](../../docs/release/readiness-work/authority-inventory.md) | documentation | 29 | 2026-09-21 |
-| [docs/release/readiness-work/harness.md](../../docs/release/readiness-work/harness.md) | documentation | 101 | 2026-09-21 |
-| [docs/release/readiness-work/README.md](../../docs/release/readiness-work/README.md) | documentation | 89 | 2026-09-21 |
-| [docs/release/readiness-work/resource-proof.md](../../docs/release/readiness-work/resource-proof.md) | documentation | 69 | 2026-09-21 |
+| [docs/release/readiness-work/authority-role-regressions.md](../../docs/release/readiness-work/authority-role-regressions.md) | documentation | 83 | 2026-09-21 |
+| [docs/release/readiness-work/harness.md](../../docs/release/readiness-work/harness.md) | documentation | 142 | 2026-09-21 |
+| [docs/release/readiness-work/README.md](../../docs/release/readiness-work/README.md) | documentation | 92 | 2026-09-21 |
+| [docs/release/readiness-work/resource-capital-proof.md](../../docs/release/readiness-work/resource-capital-proof.md) | documentation | 67 | 2026-09-21 |
+| [docs/release/readiness-work/resource-proof.md](../../docs/release/readiness-work/resource-proof.md) | documentation | 73 | 2026-09-21 |
+| [docs/release/readiness-work/resource-runs/resource-capital-e64804ef575f-ce79e1f7e3/reproduction.md](../../docs/release/readiness-work/resource-runs/resource-capital-e64804ef575f-ce79e1f7e3/reproduction.md) | documentation | 37 | 2026-09-21 |
 | [docs/release/readiness-work/source-reconciliation.md](../../docs/release/readiness-work/source-reconciliation.md) | documentation | 137 | 2026-09-21 |
 | [docs/superpowers/plans/2026-08-23-discovery-integrity.md](../../docs/superpowers/plans/2026-08-23-discovery-integrity.md) | documentation | 65 | 2026-08-24 |
 | [docs/superpowers/plans/2026-08-23-first-action-onboarding.md](../../docs/superpowers/plans/2026-08-23-first-action-onboarding.md) | documentation | 311 | 2026-08-24 |
