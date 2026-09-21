@@ -5,6 +5,8 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
 import { execFileSync } from 'node:child_process';
+import { createReadStream } from 'node:fs';
+import { hashEvidenceFile, verifyHistoryStream } from './rc1-native-proof-stream.js';
 const WallDate = globalThis.Date;
 const wallTimestamp = () => new WallDate().toISOString();
 
@@ -217,8 +219,7 @@ export async function createProofRecorder({ directory, source, configuration, ru
       await pendingWrites;
       let sourceFailure;
       try { await assertSourceUnchanged(source); } catch (error) { sourceFailure = error.message; }
-      const history = await fs.readFile(path.join(directory, 'history.jsonl'));
-      artifacts.push({ path: 'history.jsonl', sha256: sha256(history), bytes: history.length });
+      artifacts.push({ path: 'history.jsonl', ...await hashEvidenceFile(path.join(directory, 'history.jsonl')) });
       const record = { format: 1, runId, seed, scenarioId, population, source, configuration,
         configurationSha256: sha256(canonicalJson(configuration)), startedAt, endedAt: wallTimestamp(),
         runtime: { node: process.version, platform: process.platform, architecture: process.arch, cpuCount: os.cpus().length,
@@ -247,26 +248,13 @@ export async function verifyArtifactIndex(directory, record) {
     assert(/^[a-z0-9-]+\.(json|jsonl|dump)$/.test(artifact.path), 'Invalid evidence path');
     const resolved = await fs.realpath(path.join(directory, artifact.path));
     assert.equal(path.dirname(resolved), realRoot, 'Evidence symlink escapes artifact directory');
-    const bytes = await fs.readFile(path.join(directory, artifact.path));
-    assert.equal(bytes.length, artifact.bytes, `Artifact size mismatch: ${artifact.path}`);
-    assert.equal(sha256(bytes), artifact.sha256, `Artifact hash mismatch: ${artifact.path}`);
+    const actual = await hashEvidenceFile(path.join(directory, artifact.path));
+    assert.equal(actual.bytes, artifact.bytes, `Artifact size mismatch: ${artifact.path}`);
+    assert.equal(actual.sha256, artifact.sha256, `Artifact hash mismatch: ${artifact.path}`);
   }
   assert.equal(record.configurationSha256, sha256(canonicalJson(record.configuration)), 'Configuration changed');
   assert.equal(record.status, record.result.status, 'Result status mismatch');
   assert.equal(record.matrixQualifying, false, 'Scoped harness cannot qualify a matrix cell');
-  const history = (await fs.readFile(path.join(directory, 'history.jsonl'), 'utf8')).trim().split('\n').map((line) => JSON.parse(line));
-  const unfinished = new Set(), invoked = new Set();
-  let previousHash = null;
-  for (const [index, { hash, ...event }] of history.entries()) {
-    assert.equal(event.sequence, index + 1, 'History sequence gap');
-    assert.equal(event.previousHash, previousHash, 'History chain gap');
-    assert.equal(hash, sha256(canonicalJson(event)), 'History hash mismatch');
-    previousHash = hash;
-    if (event.kind === 'invocation') {
-      assert(!invoked.has(event.invocation), 'Duplicate invocation'); invoked.add(event.invocation); unfinished.add(event.invocation);
-    }
-    if (event.kind === 'completion') { assert(unfinished.delete(event.invocation), 'Unknown/repeated completion'); }
-  }
-  assert.equal(unfinished.size, 0, 'Unfinished authority invocations');
+  await verifyHistoryStream(createReadStream(path.join(directory, 'history.jsonl')), { canonicalJson, sha256 });
   return true;
 }
