@@ -5,6 +5,7 @@ import { checkinQuoteOf } from '../src/game.js';
 import { exactSum, negate, sha256 } from './rc1-resource-journal.js';
 import { reconcileCarResources } from './rc1-car-journal.js';
 import { reconcileSeasonConversions } from './rc1-season-conversion-journal.js';
+import { reconcileNpcFamilyFormation } from './rc1-npc-family-journal.js';
 
 export const WORLD_RESOURCE_TABLES = Object.freeze([
   'characters', 'account_persistent', 'transactions', 'gangs', 'gang_members', 'amm_pool', 'street_tax', 'stake_pool', 'dev_fund',
@@ -339,7 +340,7 @@ function reconcilePressureCash(before, after, receipts, checks, unsupported) {
 // the focused native proof separately binds requests to durable idempotency rows.
 // There is no personal ammo-tribute route. An ordinary entry boundary must leave
 // every Family ammo bank unchanged; car-melt and other funding stay unclassified.
-function reconcileFamilyEntry(before, after, receipts, checks, unsupported) {
+function reconcileFamilyEntry(before, after, receipts, checks, unsupported, npcFamilyProvenance, identity) {
   const old = indexed(rows(before, 'gangs'), row => row.id, 'Family');
   const current = indexed(rows(after, 'gangs'), row => row.id, 'Family');
   const oldMembers = indexed(rows(before, 'gang_members'), row => row.character_id, 'Family member');
@@ -379,6 +380,14 @@ function reconcileFamilyEntry(before, after, receipts, checks, unsupported) {
         expectedDelta: net(receipts, row => row.character_id === prior.id && row.currency === 'cash'),
         authority: reference('transactions', receipts.filter(row => row.character_id === prior.id && row.currency === 'cash')), kind: 'NPC-formation-cash-parity-only' });
       founders.add(prior.id); families.add(family.id);
+    }
+    if (npcFamilyProvenance && !npcFamilyProvenance.unsupportedShape) {
+      const bound = reconcileNpcFamilyFormation(before, after, receipts, npcFamilyProvenance, identity);
+      usedReceipts.add(receipts[0].id); movements.push(bound.movement); founded.add(bound.familyId);
+      familyFields.set(bound.familyId, bound.fields); founderMembers.add(bound.characterId);
+      const member = members.get(bound.characterId);
+      if (Object.keys(member).some(field => !bound.memberFields.has(field))) unsupported.push({ kind: 'observed-table-change', table: 'gang_members', detail: 'Additional NPC founder membership fields remain unsupported' });
+      return result;
     }
     unsupported.push({ kind: 'family-npc-formation', familyIds: [...families],
       detail: 'Original NPC formation fee/owner cash checked; NPC Family fields, war_pool creation/standing and compound lineage remain unclassified' });
@@ -606,7 +615,7 @@ function reconcileTurfTerminal(before, after, receipts, checks, unsupported) {
   districtFields.set(districtId, fields); settledDistricts.add(districtId); return result;
 }
 
-export function reconcileWorldResources(before, after, { identity = null, includeRestrictedChanges = false, carMeltProvenance = null } = {}) {
+export function reconcileWorldResources(before, after, { identity = null, includeRestrictedChanges = false, carMeltProvenance = null, npcFamilyProvenance = null } = {}) {
   assert.equal(before.format, 1); assert.equal(after.format, 1);
   const checks = [], unsupported = [];
   const receipts = appendOnly(before, after, 'transactions');
@@ -630,7 +639,7 @@ export function reconcileWorldResources(before, after, { identity = null, includ
   }
   const ammoEscrow = reconcileAmmoEscrow(before, after, receipts, checks, unsupported);
   const pressureCash = reconcilePressureCash(before, after, receipts, checks, unsupported);
-  const familyEntry = reconcileFamilyEntry(before, after, receipts, checks, unsupported);
+  const familyEntry = reconcileFamilyEntry(before, after, receipts, checks, unsupported, npcFamilyProvenance, identity);
   const familyDissolution = reconcileFamilyDissolution(before, after, receipts, checks, unsupported);
   const turfTerminal = reconcileTurfTerminal(before, after, receipts, checks, unsupported);
   for (const receipt of receipts) if (!ammoEscrow.usedReceipts.has(receipt.id) && !pressureCash.usedReceipts.has(receipt.id) && !familyEntry.usedReceipts.has(receipt.id) && !familyDissolution.usedReceipts.has(receipt.id) && !turfTerminal.usedReceipts.has(receipt.id) && !reasonClasses.some(([currency, pattern]) => currency === receipt.currency && pattern.test(receipt.reason)))
