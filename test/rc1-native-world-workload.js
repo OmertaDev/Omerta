@@ -41,6 +41,7 @@ const expectedDormant = [{ label: 'RWA health', code: 'health_registry_unavailab
 const configuration = { scenario: 'quiet_world', population, seed, hours, sourcePins: WORKER_SOURCE_PINS,
   databaseIsolation: database.descriptor,
   resourceObservation: observeResources ? 'Experimental exact committed-boundary parity with explicit unsupported lineage; serial native queries only' : 'Disabled',
+  resourceBootstrap: 'Both original makeDb initializations precede per-commit observation; exact authoritative resource state must agree before/after second bootstrap. Arm before every queued boot job.',
   epoch: new Date(epoch).toISOString(), finish: new Date(epoch + hours * 3600000).toISOString(),
   policy: { dailyActiveActors: Math.floor(population / 10), proposedFraction: .10,
     realizedFraction: Math.floor(population / 10) / population,
@@ -128,7 +129,7 @@ try {
   const baseline = await runLedgerInvariants(pool, { alert: false }); assert(baseline.ok, 'Birth fixtures must reconcile without baseline drift');
   await proof.record({ kind: 'measured-initialization', roster, configuration, publicCrimes, fixtureWritesAfterThisRecord: false });
   await proof.snapshot(pool, 'initial'); await proof.checkpoint(pool, 'initial', url);
-  if (commitObserver) { priorResources = await snapshotWorldResources(diagnosticPool); commitObserver.arm(); }
+  if (commitObserver) priorResources = await snapshotWorldResources(diagnosticPool);
   async function invoke(authority, identity, work, latencyClass) {
     currentInvocation = { authority, ...identity, logicalAt: at };
     const started = performance.now();
@@ -184,7 +185,14 @@ try {
       wait: !actions ? { jailSeconds: own.character.jailSeconds, nerve: own.character.nerve,
         classification: 'Observed wait only; no inference that world reachability is proved or disproved' } : null });
   }
-  await bootOriginalWorker(controller);
+  await bootOriginalWorker(controller, { beforeCallbacks: async () => {
+    if (!commitObserver) return;
+    const after = await snapshotWorldResources(diagnosticPool);
+    await proof.artifact('resource-worker-bootstrap.json', { classification: 'Aggregate initialization comparison; not per-commit coverage',
+      before: priorResources, after, beforeHash: worldResourceHash(priorResources), afterHash: worldResourceHash(after) });
+    assert.equal(worldResourceHash(after), worldResourceHash(priorResources), 'Original worker bootstrap changed authoritative resource state');
+    priorResources = after; commitObserver.arm();
+  } });
   let lastDay = -1;
   await controller.advanceTo(epoch + hours * 3600000, async (logicalAt, label) => {
     if (label !== 'guardedTick') return;

@@ -163,7 +163,8 @@ export async function makeWorkerDatabase(controller, { root = new URL('../', imp
   const { makeDb } = await pinnedDatabaseModule(controller, root); return makeDb();
 }
 
-export async function bootOriginalWorker(controller, { root = new URL('../', import.meta.url) } = {}) {
+export async function bootOriginalWorker(controller, { root = new URL('../', import.meta.url), beforeCallbacks = async () => {} } = {}) {
+  assert.equal(typeof beforeCallbacks, 'function');
   // Reject a cached uninstrumented database module BEFORE worker import can
   // call makeDb or touch any schema. A post-boot check would be too late.
   await pinnedDatabaseModule(controller, root);
@@ -174,6 +175,7 @@ export async function bootOriginalWorker(controller, { root = new URL('../', imp
   } finally { process.argv[1] = original; }
   assert.deepEqual([...new Set(controller.transformations.map((item) => item.file))].sort(), Object.keys(WORKER_SOURCE_PINS).sort(),
     'Install instrumentation before importing db.js; cached uninstrumented authority is forbidden');
+  await beforeCallbacks();
   await controller.drainBoot(); return controller;
 }
 
