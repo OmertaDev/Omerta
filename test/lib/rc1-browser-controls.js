@@ -2,6 +2,16 @@
 // measured mutation must be observed from a normal hit-tested browser click.
 import assert from 'node:assert/strict';
 
+export async function waitForWorldReceipt(page, label, { timeout = 30000 } = {}) {
+  assert.equal(typeof label, 'string'); assert(label.trim(), 'Expected completed command label');
+  const exactLabel = new RegExp(`^${label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`);
+  // The same status class also renders the pending request before refresh.
+  // Its "A move needs checking" heading is not the completed action receipt.
+  const heading = page.locator('#tab-world .world-notice[role="status"] > b').filter({ hasText: exactLabel });
+  await heading.waitFor({ state: 'visible', timeout });
+  return heading.innerText({ timeout });
+}
+
 export function browserControls({ pageFor, width, result, save }) {
   async function reach(page, locator, label) {
     const tip = page.locator('[data-tipok]');

@@ -1,8 +1,9 @@
 # RC1-SEASON-01: interrupted crown cannot recover
 
 Owner: Codex/root. Phase: implementation and local native recovery. Reproduced at
-`fcaa60765aa816daa18ef6c2484e15e46d06ac63`; repair retest pending. The affected
-seasonal recovery gate remains unmet until the integrated repair passes.
+`fcaa60765aa816daa18ef6c2484e15e46d06ac63`; repair `5ffc1c30ea01b5ff5336778a07ba72470b7ba707` passed the bounded native recovery
+checks and two-hour original-worker resource smoke. Hosted and original-lifetime
+reruns remain required; see `integrated-fcaa6076-results.json`.
 
 `recordReckoning` committed `season_records.crowned=true` before incrementing the
 champion's `account_persistent.season_crowns`. A native PostgreSQL trigger raising
@@ -40,3 +41,9 @@ and a fresh restricted `RC1_SEASON_OUTPUT`: `npm run test:rc1:season:postgres`.
 The test uses the existing explicit season boundary option and does not claim an
 elapsed28-day world. Contract, external signer and chain checks do not apply to this
 status-only change; the full resource and deployment gates remain open.
+
+Independent native lock-barrier review found no account-to-character lock cycle in
+this schema: notifications have no character foreign key or trigger. Both actual
+account waits completed, concurrent rollover converted/awarded once, and terminal
+retries preserved complete state. Retained review: `season-lock-review-summary.json`.
+A future constraint/trigger change invalidates that lock-order conclusion.

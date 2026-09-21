@@ -3,6 +3,17 @@
   "phase": "development-regressions-not-release-clearance",
   "findings": [
     {
+      "id": "RC1-TOOL-29",
+      "classification": "D evidence generation workflow defect",
+      "owner": "Codex/root",
+      "failedGate": "fcaa6076 CI35569157185 full npm test / Knowledge artifact consistency",
+      "before": "Root incorrectly committed regenerated Knowledge artifacts together with source. Stored graph named4da713ba while the actual source commit wasfcaa6076; the unchanged consistency gate correctly failed.",
+      "repair": "Commit source first, regenerate from the clean tree, and commit generated artifacts alone. Preserve the exact sourceRevision/worktreeDirty guard and all original failure evidence.",
+      "changedSource": ["knowledge/generated"],
+      "retest": "Fresh generated-only commit and full Knowledge consistency test pending, then hosted full-suite rerun.",
+      "evidence": "Private fcaa6076-workflows/ci.json and ci.log"
+    },
+    {
       "id": "RC1-TOOL-01",
       "classification": "D tooling defect",
       "owner": "Codex/root; reviewed and repaired by Codex/source_repairs",
@@ -458,6 +469,21 @@
       ],
       "retest": "Two final independent77-hour native runs at15e6b83d PASS_SCOPED, each327 boundaries/4197 equations. Fifteen movement inputs per run independently reconciled.",
       "evidence": "resource-loan-lifecycle-results.json"
+    },
+    {
+      "id": "RC1-TOOL-28",
+      "classification": "D tooling defect",
+      "owner": "Codex/root",
+      "failedGate": "fcaa6076 hosted native newcomer phone journey,35569159408/job106236932943",
+      "before": "Generic world-notice status wait can return on the pending request; a subsequent read races the cleared refresh state. Native diagnostics observe the pending notice, while retained hosted screenshot shows completed receipt later.",
+      "repair": "Wait for the exact completed heading, assert response label matches selected action; pending and wrong-label notices cannot pass. Stabilize/reach the control before the unchanged44px measurement.",
+      "changedSource": [
+        "test/rc1-mobile-postgres.js",
+        "test/lib/rc1-browser-controls.js",
+        "test/rc1-browser-receipt.js"
+      ],
+      "retest": "Controlled rendered lifecycle and finite-motion negative controls PASS; exact-source native and hosted retests pending.",
+      "evidence": "integrated-fcaa6076-results.json"
     }
   ]
 }

@@ -5,6 +5,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { Pool } from 'pg';
 import { chromium } from 'playwright-core';
+import { waitForWorldReceipt } from './lib/rc1-browser-controls.js';
 
 const url = new URL(process.env.RC1_TEST_DATABASE_URL || '');
 assert(['localhost','127.0.0.1','[::1]'].includes(url.hostname), 'isolated loopback PostgreSQL required');
@@ -62,6 +63,9 @@ try {
     const ready = page.locator('#tab-world [data-world-move]:not([disabled])');
     assert(await ready.count() > 0, 'new players have an available canonical command');
     const chosen = ready.first(), label = await chosen.innerText();
+    // Wait for the tab's finite entrance animation and reach the real control
+    // before measuring its target. The 44px requirement remains exact.
+    await chosen.scrollIntoViewIfNeeded();
     const box = await chosen.boundingBox();
     if (box.height < 44 || box.width < 44) findings.push(`${viewport.width}: critical Command Center action touch target ${box.width}x${box.height}`);
     const resultPromise = page.waitForResponse((response) => new URL(response.url()).pathname === '/v1/commands/execute');
@@ -71,8 +75,8 @@ try {
     const commandResponse = await resultPromise, response = await commandResponse.json();
     assert.equal(commandResponse.status(), 200, JSON.stringify(response));
     assert.equal(response.status, 'COMPLETED');
-    await page.locator('#tab-world .world-notice[role="status"]').waitFor();
-    assert((await page.locator('#tab-world').innerText()).includes(label), 'player sees the action receipt');
+    assert.equal(response.feedback?.immediateResult?.label, label, 'receipt identifies the selected action');
+    assert.equal(await waitForWorldReceipt(page, label), label, 'player sees the completed action receipt');
     assert(Object.values(response.feedback).some((value) => Array.isArray(value) && value.length), 'first canonical command visibly changes a projection');
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
     if (overflow) findings.push(`${viewport.width}: Command Center page overflows horizontally`);

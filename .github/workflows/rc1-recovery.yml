@@ -313,6 +313,27 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:season:postgres
+      - name: Original operation capital expiry and replacement disposition
+        if: '!cancelled()'
+        env:
+          RC1_CAPITAL_LIFECYCLE_OUTPUT: ${{ runner.temp }}/rc1-capital-lifecycles
+        run: |
+          umask 077
+          npm run test:rc1:capital-lifecycles:postgres
+      - name: Canonical death and heir recovery after original search
+        if: '!cancelled()'
+        env:
+          RC1_HEIR_OUTPUT: ${{ runner.temp }}/rc1-heir
+        run: |
+          umask 077
+          npm run test:rc1:heir:postgres
+      - name: Twenty genuine mixed aggression choices and heir policy continuation
+        if: '!cancelled()'
+        env:
+          RC1_AGGRESSION_LIFECYCLE_OUTPUT: ${{ runner.temp }}/rc1-aggression-lifecycle
+        run: |
+          umask 077
+          npm run test:rc1:aggression-lifecycle:postgres
   original-escrow-timers:
     name: Original escrow lifetimes (PostgreSQL ${{ matrix.postgres }})
     runs-on: ubuntu-latest

@@ -9,6 +9,34 @@
   "note": "Pinned required command inventory across the four source workflows. Preserve each workflow setup, database isolation, platform, environment and budgets. A component regression pass does not clear a full native, deployed, or human proof.",
   "gates": [
     {
+      "id": "rc1-mobile-postgres",
+      "command": ["npm", "run", "test:rc1:mobile:postgres"],
+      "timeoutMs": 900000,
+      "scope": "regression",
+      "coverageExclusions": ["Four emulated phone widths with ordinary native entrants; no physical device, wallet or real-human comprehension qualification"]
+    },
+    {
+      "id": "rc1-aggression-lifecycle",
+      "command": ["npm", "run", "test:rc1:aggression-lifecycle:postgres"],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": ["20 mixed canonical choices at70% conflict preference including search preparation; progression/weapon fixtures, incomplete resource taxonomy, no full world matrix"]
+    },
+    {
+      "id": "rc1-capital-lifecycles",
+      "command": ["npm", "run", "test:rc1:capital-lifecycles:postgres"],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": ["Original24-hour canonical operation expiry with declared social roster; no HTTP, natural entry, material/spend re-execution or complete matrix"]
+    },
+    {
+      "id": "rc1-heir",
+      "command": ["npm", "run", "test:rc1:heir:postgres"],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": ["Original3-hour logical search/fire/estate and heir recovery; declared progression/weapon fixtures, incomplete resource taxonomy, no full aggression quota or matrix"]
+    },
+    {
       "id": "rc1-season-recovery",
       "command": ["npm", "run", "test:rc1:season:postgres"],
       "timeoutMs": 600000,

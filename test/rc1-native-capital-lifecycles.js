@@ -15,7 +15,7 @@ assert(process.argv.includes('--postgres'), 'Real PostgreSQL required');
 const argument = name => process.argv.find(arg => arg.startsWith(`--${name}=`))?.slice(name.length + 3);
 const source = await sourceIdentity(), seed = argument('seed') || 'rc1-capital-alpha';
 const runId = `capital-lifecycles-${source.revision.slice(0, 12)}-${crypto.randomBytes(5).toString('hex')}`;
-const output = path.resolve(argument('output') || path.join(os.tmpdir(), 'omerta-rc1-resource-proof', runId));
+const output = path.resolve(argument('output') || process.env.RC1_CAPITAL_LIFECYCLE_OUTPUT || path.join(os.tmpdir(), 'omerta-rc1-resource-proof', runId));
 const controlUrl = process.env.RC1_RESOURCE_DATABASE_URL; assert(controlUrl);
 for (const name of ['CHAIN_RPC_URL', 'INVARIANT_WEBHOOK_URL', 'LIQUIDITY_RPC_URL', 'LIQUIDITY_RPC_FALLBACK_URL']) assert(!process.env[name], `External integration excluded: ${name}`);
 const database = planOwnedWorldDatabase({ controlUrl, runId, sourceRevision: source.revision });

@@ -5,6 +5,13 @@
   "note": "Scoped regressions do not close the required release proofs. Exact run/source references belong in the candidate evidence package. No external operator identities or participants are inferred.",
   "open": [
     {
+      "id": "RC1-05-HOSTED-GOLDEN-FOCUS",
+      "owner": "Codex/root",
+      "missing": "fcaa6076 PostgreSQL16 hosted golden journey failed the crew-input focus assertion after reduced420px viewport. Actual input replacement, dialog focus restoration and test timing remain to be distinguished; no product or tooling repair is yet claimed for this failure.",
+      "evidence": "Recovery35569159408 job106236932962; private fcaa6076-workflows/linux-pg16.log",
+      "reruns": ["Causal native browser reproduction", "Affected focus/keyboard controls", "Complete four-width golden journey and hosted16/18.4 recovery"]
+    },
+    {
       "id": "RC1-00-DEPLOYMENT-CONFIGURATION",
       "owner": "Named release owner/operator required",
       "missing": "My Workspace is selected, but candidate flags, enabled integrations, secret-source identities, isolated services and operator remain unattested.",
@@ -28,8 +35,8 @@
     {
       "id": "RC1-02-FULL-RESOURCE-COVERAGE",
       "owner": "Backend/economy engineer; current engineering assignee Codex/resource_proof",
-      "missing": "All13categories and9originalgaps still require complete branches plus simulation. Scoped original Family/escrow/shipment and two77-hour loan worlds pass, including48h offer refunds,24h collateral grace and funded Wanted72h refunds. Remaining: complete OMR mint/burn/backing and collateral branches, NFT lifecycle/backing, shipment loot/concurrency, original operation-capital lifecycle, compound per-owner lineage and complete simulation. Cars/Family/season changes in full worlds remain explicitly unclassified.",
-      "evidence": "resource-proof.md;resource-family-runs/7df52b3f-summary.json;resource-shipment-boundaries.json;resource-capital-proof.md;resource-escrow-runs/e89e90fd-summary.json;resource-loan-lifecycle-results.json;harness-mystery-world-replay-results.json",
+      "missing": "All13categories and9originalgaps still require complete branches plus simulation. Scoped original Family/escrow/shipment and two77-hour loan worlds pass, including48h offer refunds,24h collateral grace and funded Wanted72h refunds. Remaining: complete OMR mint/burn/backing and collateral branches, NFT lifecycle/backing, shipment loot/concurrency, complete operation material/spend and concurrency coverage, compound per-owner lineage and complete simulation. Cars/Family/season changes in full worlds remain explicitly unclassified.",
+      "evidence": "resource-proof.md;resource-family-runs/7df52b3f-summary.json;resource-shipment-boundaries.json;resource-capital-proof.md;resource-escrow-runs/e89e90fd-summary.json;resource-loan-lifecycle-results.json;harness-mystery-world-replay-results.json;resource-capital-lifecycle-summary.json;integrated-fcaa6076-results.json",
       "reruns": [
         "resource inventory and journals",
         "all affected transition/replay/fault branches",
@@ -40,7 +47,7 @@
     {
       "id": "RC1-03-MATRIX-AND-SOAK",
       "owner": "Simulation engineer; current engineering assignee Codex/native_harness",
-      "missing": "Quiet actor workload reached90logicaldays but sealedFAIL on tape storage and lacked full database isolation. No qualifying cells exist. Distinguishing policies, complete resource movement, metrics/reachability,225runs and12-hour production-equivalent soak remain required.",
+      "missing": "Quiet actor workload reached90logicaldays but sealedFAIL on tape storage and lacked full database isolation. No qualifying cells exist. Distinguishing policies, complete resource movement, metrics/reachability,225runs and12-hour production-equivalent soak remain required. Bounded quiet/mystery/aggression/churn components now exist; native20-choice aggression block met70% conflict preference including search preparation. Full distinguishing archetypes and world integration remain incomplete.",
       "evidence": "scenario-manifest.json",
       "reruns": [
         "225 complete native runs after conservation coverage",
@@ -91,6 +98,18 @@
         "technical admission gates",
         "seven-day cohort",
         "affected journeys and final 72-hour window after repairs"
+      ]
+    },
+    {
+      "id": "RC1-SEASON-01-AFFECTED-RERUNS",
+      "owner": "Codex/root",
+      "missing": "Reproduced interrupted seasonal crown loss repaired at5ffc1c30 with native rollback/concurrency/retry proofs. Full hosted and source-pair recovery plus original-lifetime replay at the integrated repair source remain required.",
+      "evidence": "season-recovery-finding.md;integrated-fcaa6076-results.json;season-lock-review-summary.json",
+      "reruns": [
+        "hosted16/18.4 recovery and full regression",
+        "source-pair upgrade/rollback",
+        "original-lifetime worker replay",
+        "season resource/matrix proofs"
       ]
     }
   ]
