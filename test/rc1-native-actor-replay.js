@@ -22,9 +22,14 @@ assert.throws(() => createRecordedActors({ replay: { ...tape, complete: false } 
 assert.throws(() => createRecordedActors({ replay: { ...tape, entries: [] } }), /hash differs/);
 assert.throws(() => createRecordedActors({ replay: tape }).finish(), /Unconsumed/);
 const compared = Object.fromEntries(ACTOR_REPLAY_COMPARISON_FIELDS.map((key) => [key, 'same']));
+Object.assign(compared, { resourceObservationEnabled: true, resourceJournalCount: 1, resourceJournalSha256: 'a'.repeat(64) });
 compareActorReplay(compared, compared);
 for (const key of ACTOR_REPLAY_COMPARISON_FIELDS)
   assert.throws(() => compareActorReplay({ ...compared, [key]: 'changed' }, compared), /differs/);
+const unobserved = { ...compared, resourceObservationEnabled: false, resourceJournalCount: 0, resourceJournalSha256: null };
+compareActorReplay(unobserved, unobserved);
+assert.throws(() => compareActorReplay({ ...compared, resourceJournalSha256: undefined }, compared), /Missing/);
+assert.throws(() => compareActorReplay({ ...compared, resourceJournalCount: 0 }, { ...compared, resourceJournalCount: 0 }), /empty/);
 const tracker = observedOpportunityTracker();
 tracker.observe('actor', [{ opportunityId: 'visible' }], 10); tracker.observe('actor', [{ opportunityId: 'visible' }], 20);
 const checkpoint = tracker.checkpoint(), restored = observedOpportunityTracker(); restored.restore(checkpoint);

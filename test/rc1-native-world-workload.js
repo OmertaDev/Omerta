@@ -2,6 +2,7 @@
 // worker deadline. It cannot qualify a matrix cell while required metrics,
 // resource branches, lifecycle workloads and deployment scope remain incomplete.
 import assert from 'node:assert/strict';
+import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import pg from 'pg';
@@ -118,6 +119,7 @@ const diagnosticPool = new pg.Pool({ connectionString: url, max: 1,
   options: `-c search_path=${namespace},pg_catalog -c default_transaction_read_only=on` });
 let priorResources, firstResourceError;
 const resourceSummary = { boundaries: 0, unsupportedEntries: 0, unsupportedKinds: {}, qualifyingFullResourcePass: false };
+const resourceStream = crypto.createHash('sha256');
 const resourceCost = { observedBoundaryWallMs: 0, maximumBoundaryWallMs: 0, serializedJournalBytes: 0, serializedRestrictedChangeBytes: 0 };
 const commitObserver = observeResources ? createNativeCommitObserver({
   context: () => currentInvocation || { authority: 'original-worker', logicalAt: at },
@@ -136,6 +138,7 @@ const commitObserver = observeResources ? createNativeCommitObserver({
         journal.restrictedChangesArtifact = artifact;
       }
       await proof.record({ kind: 'resource-commit-boundary', event, journal });
+      resourceStream.update(`${canonicalJson({ event, journal })}\n`);
       resourceCost.serializedJournalBytes += Buffer.byteLength(canonicalJson({ event, journal }));
       resourceSummary.boundaries++;
       for (const unsupported of journal.unsupported) {
@@ -383,6 +386,8 @@ try {
     semanticMetricsSha256: sha256(canonicalJson({ days, metrics, actorActions: Object.fromEntries(actorActions), opportunities: opportunities.summarize(at) })),
     checkpointRestart: !!resume, recordedActorAndSelectionReplay: !!replay,
     worldDiagnosticsSemanticSha256: sha256(canonicalJson(finalDiagnostics.semantic)),
+    resourceObservationEnabled: observeResources, resourceJournalCount: resourceSummary.boundaries,
+    resourceJournalSha256: observeResources ? resourceStream.copy().digest('hex') : null,
     resourceObservation: observeResources ? resourceSummary : null,
     statement: 'Completed only the declared quiet-world workload; no matrix qualification or dead-world clearance' };
   if (replay) result.replayComparison = compareActorReplay(result, replayRun.result);
@@ -407,6 +412,7 @@ try {
     if (!commitObserver) return;
     try { commitObserver.disarm(); }
     finally { await proof.artifact('resource-observer-final.json', { capturedAt: 'After diagnostic state capture, before cleanup', ...resourceSummary,
+      resourceJournalSha256: resourceStream.copy().digest('hex'),
       cost: { ...resourceCost, logicalHours: (at - start) / 3600000,
         note: 'Measured native snapshot/reconciliation/artifact overhead only; linear projection is not a capacity guarantee. Every required boundary retained.' }, diagnostic: commitObserver.diagnostic() }); }
   }, () => controller.close(), () => diagnosticPool.end(), () => base.end(),

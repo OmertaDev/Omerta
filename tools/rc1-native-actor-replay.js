@@ -62,11 +62,19 @@ export const ACTOR_REPLAY_COMPARISON_FIELDS = Object.freeze([
   'workerScheduleSha256', 'jobOutcomesSha256', 'deterministicRandomTapeSha256',
   'actorTapeSha256', 'policyStateSha256', 'semanticMetricsSha256', 'worldDiagnosticsSemanticSha256',
   'mysteryPolicySummarySha256', 'knowledgeDiagnosticsSha256',
+  'resourceObservationEnabled', 'resourceJournalCount', 'resourceJournalSha256',
 ]);
 export function compareActorReplay(actual, expected) {
   for (const field of ACTOR_REPLAY_COMPARISON_FIELDS) {
     assert(actual[field] !== undefined && expected[field] !== undefined, `Missing actor replay comparison: ${field}`);
     assert.deepEqual(actual[field], expected[field], `Actor replay differs: ${field}`);
+  }
+  assert.equal(typeof actual.resourceObservationEnabled, 'boolean', 'Resource observation scope is missing');
+  if (actual.resourceObservationEnabled) {
+    assert(Number.isSafeInteger(actual.resourceJournalCount) && actual.resourceJournalCount > 0, 'Observed resource journal is empty');
+    assert(/^[a-f0-9]{64}$/.test(actual.resourceJournalSha256), 'Observed resource journal digest is missing');
+  } else {
+    assert.equal(actual.resourceJournalCount, 0); assert.equal(actual.resourceJournalSha256, null);
   }
   return { fields: ACTOR_REPLAY_COMPARISON_FIELDS,
     exclusions: ['Native wall durations', 'Read-only physical MVCC and relation-size diagnostics'],
