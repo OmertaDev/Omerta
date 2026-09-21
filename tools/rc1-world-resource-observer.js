@@ -12,7 +12,7 @@ export const WORLD_RESOURCE_TABLES = Object.freeze([
   'operation_escrow', 'world_operation_capital', 'world_operation_events', 'world_operation_commitments',
   'cars', 'boats', 'account_gear', 'market_listings', 'listings', 'bounties', 'commission_proposals', 'favors',
   'loan_house', 'convoy_insurance', 'poker_tournaments', 'poker_entries', 'grand_prix', 'grand_prix_entries',
-  'stakes_races', 'stakes_entries', 'district_bids', 'shipment_days', 'shipment_takes', 'bespoke_pieces', 'bespoke_serials',
+  'stakes_races', 'stakes_entries', 'districts', 'district_bids', 'shipment_days', 'shipment_takes', 'bespoke_pieces', 'bespoke_serials',
   'campaign_progress', 'drop_allocations', 'chain_reserve', 'vouchers', 'rng_audit', 'telemetry', 'season_records', 'season_recaps',
 ]);
 const json = (value) => JSON.stringify(value);
@@ -505,6 +505,69 @@ function reconcileFamilyDissolution(before, after, receipts, checks, unsupported
   return result;
 }
 
+// One completed, unchartered live-bidder contest. The ledger omits district IDs,
+// so multiple or reopening contests cannot be assigned an invented receipt FK.
+function reconcileTurfTerminal(before, after, receipts, checks, unsupported) {
+  const key = row => tuple(row.district_id, row.gang_id), old = indexed(rows(before, 'district_bids'), key, 'district bid');
+  const current = indexed(rows(after, 'district_bids'), key, 'district bid');
+  const removed = [...old].filter(([id]) => !current.has(id)).map(([, row]) => row);
+  const selected = receipts.filter(row => ['turf:claim:refund', 'turf:claim:burn'].includes(row.reason));
+  const usedReceipts = new Set(), districtFields = new Map(), settledDistricts = new Set(), treasuryOwners = new Set(), movements = [];
+  const result = { usedReceipts, districtFields, settledDistricts, treasuryOwners, movements };
+  if (!removed.length && !selected.length) return result;
+  assert(removed.length, 'Orphan turf terminal receipt without consumed escrow');
+  const ids = new Set(removed.map(row => row.district_id));
+  const families = indexed(rows(before, 'gangs'), row => row.id, 'Family'), finalFamilies = indexed(rows(after, 'gangs'), row => row.id, 'Family');
+  const compound = ids.size !== 1 || [...current].some(([id, row]) => !old.has(id) || json(old.get(id)) !== json(row))
+    || receipts.some(row => row.currency === 'cash' && !selected.includes(row))
+    || removed.some(row => !families.has(row.gang_id) || !finalFamilies.has(row.gang_id) || families.get(row.gang_id).charter !== null || finalFamilies.get(row.gang_id).charter !== null);
+  if (compound) { unsupported.push({ kind: 'turf-terminal-compound', detail: 'Multiple/new/changed contests, other cash receipts, charter or dissolved-bidder overlap remains unclassified' }); return result; }
+  const districtId = [...ids][0], prior = rows(before, 'districts').find(row => row.id === districtId), final = rows(after, 'districts').find(row => row.id === districtId);
+  assert(prior && final, 'Unobserved settled district');
+  if (!prior.holder_gang || !families.has(prior.holder_gang)) {
+    unsupported.push({ kind: 'turf-terminal-compound', detail: 'Unowned/dissolved incumbent remains outside this live-incumbent contest subset' }); return result;
+  }
+  assert(!rows(after, 'district_bids').some(row => row.district_id === districtId), 'Terminal retained part of its escrow');
+  const integer = value => { const text = exactSum([value]); assert(/^\d+$/.test(text) && BigInt(text) <= BigInt(Number.MAX_SAFE_INTEGER), 'Turf amount outside authored positive safe-integer scope'); return BigInt(text); };
+  for (const bid of removed) assert(integer(bid.amount) > 0n, 'Nonpositive turf escrow');
+  const ordered = [...removed].sort((a, b) => integer(a.amount) === integer(b.amount)
+    ? a.gang_id === prior.holder_gang ? -1 : b.gang_id === prior.holder_gang ? 1 : a.gang_id.localeCompare(b.gang_id)
+    : integer(a.amount) > integer(b.amount) ? -1 : 1);
+  const winner = ordered[0], winningAmount = integer(winner.amount), oldGarrison = integer(prior.garrison), refunds = new Map();
+  assert.equal(final.holder_gang, winner.gang_id, 'Wrong turf winner'); assert.equal(final.contest_until, null, 'Turf deadline latch not closed');
+  assert.equal(exactSum([final.garrison]), String(winningAmount > oldGarrison ? winningAmount : oldGarrison), 'Wrong nonmonetary garrison');
+  const deadline = Date.parse(prior.contest_until); assert(Number.isFinite(deadline), 'Terminal lacks original contest deadline');
+  const timestamps = new Set(selected.map(row => row.at)); assert.equal(timestamps.size, 1, 'Turf terminal receipts span ambiguous transaction times');
+  const settledAt = Date.parse([...timestamps][0]); assert(Number.isFinite(settledAt) && settledAt >= deadline, 'Turf settled before its original deadline');
+  const claim = (bid, reason, amount) => {
+    const matching = selected.filter(row => !usedReceipts.has(row.id) && row.currency === 'cash' && row.reason === reason && row.counterparty === bid.gang_id);
+    assert.equal(matching.length, 1, `Missing/duplicate ${reason} receipt for exact escrow owner`); const row = matching[0];
+    assert.equal(row.character_id, null); assert.equal(row.account_id, null); assert.equal(exactSum([row.amount]), amount, 'Incorrect exact turf disposition amount');
+    usedReceipts.add(row.id); return row;
+  };
+  for (const bid of removed) {
+    const amount = integer(bid.amount), won = bid.gang_id === winner.gang_id;
+    const refund = won ? 0n : amount * BigInt(10000 - M3.CONTEST_LOSS_BPS) / 10000n, burn = amount - refund, authority = [];
+    if (refund) authority.push(...reference('transactions', [claim(bid, 'turf:claim:refund', String(refund))]));
+    authority.push(...reference('transactions', [claim(bid, 'turf:claim:burn', String(-burn))])); refunds.set(bid.gang_id, String(refund));
+    parity(checks, { resource: 'district-cash-escrow', owner: key(bid), before: bid.amount, after: '0', expectedDelta: String(-refund - burn),
+      authority, kind: 'turf-terminal-owner-custody' });
+    movements.push({ kind: 'turf-contest-terminal', districtId, familyId: bid.gang_id, staked: String(amount), refunded: String(refund), burned: String(burn), won, authority });
+  }
+  assert.equal(usedReceipts.size, selected.length, 'Orphan/extra turf terminal receipt');
+  for (const [id, family] of families) {
+    assert(finalFamilies.has(id), 'Family disappeared during isolated turf terminal');
+    parity(checks, { resource: 'Family.treasury', owner: id, before: family.treasury, after: finalFamilies.get(id).treasury, expectedDelta: refunds.get(id) || '0',
+      authority: movements.filter(row => row.familyId === id).flatMap(row => row.authority), kind: 'turf-terminal-refund' }); treasuryOwners.add(id);
+  }
+  const fields = new Set(['holder_gang', 'garrison', 'contest_until']);
+  if (winner.gang_id !== prior.holder_gang) {
+    assert.equal(final.npc_holder, null); assert.equal(final.watch_hour, null); assert.equal(Date.parse(final.seized_at), settledAt, 'Turf seizure stamp differs from settlement');
+    for (const field of ['npc_holder', 'watch_hour', 'seized_at']) fields.add(field);
+  }
+  districtFields.set(districtId, fields); settledDistricts.add(districtId); return result;
+}
+
 export function reconcileWorldResources(before, after, { identity = null, includeRestrictedChanges = false } = {}) {
   assert.equal(before.format, 1); assert.equal(after.format, 1);
   const checks = [], unsupported = [];
@@ -531,7 +594,8 @@ export function reconcileWorldResources(before, after, { identity = null, includ
   const pressureCash = reconcilePressureCash(before, after, receipts, checks, unsupported);
   const familyEntry = reconcileFamilyEntry(before, after, receipts, checks, unsupported);
   const familyDissolution = reconcileFamilyDissolution(before, after, receipts, checks, unsupported);
-  for (const receipt of receipts) if (!ammoEscrow.usedReceipts.has(receipt.id) && !pressureCash.usedReceipts.has(receipt.id) && !familyEntry.usedReceipts.has(receipt.id) && !familyDissolution.usedReceipts.has(receipt.id) && !reasonClasses.some(([currency, pattern]) => currency === receipt.currency && pattern.test(receipt.reason)))
+  const turfTerminal = reconcileTurfTerminal(before, after, receipts, checks, unsupported);
+  for (const receipt of receipts) if (!ammoEscrow.usedReceipts.has(receipt.id) && !pressureCash.usedReceipts.has(receipt.id) && !familyEntry.usedReceipts.has(receipt.id) && !familyDissolution.usedReceipts.has(receipt.id) && !turfTerminal.usedReceipts.has(receipt.id) && !reasonClasses.some(([currency, pattern]) => currency === receipt.currency && pattern.test(receipt.reason)))
     unsupported.push({ kind: 'receipt-reason', currency: receipt.currency, reason: receipt.reason, receiptId: receipt.id });
 
   const priorPeople = indexed(rows(before, 'characters'), r => r.id, 'characters'), finalPeople = indexed(rows(after, 'characters'), r => r.id, 'characters');
@@ -656,17 +720,25 @@ export function reconcileWorldResources(before, after, { identity = null, includ
   checks.push(...cars.checks); unsupported.push(...cars.unsupported);
   const observedOnly = ['boats', 'account_gear', 'market_listings', 'exchange_pool', 'bounties', 'commission_proposals', 'favors',
     'loan_house', 'convoy_insurance', 'poker_tournaments', 'poker_entries', 'grand_prix', 'grand_prix_entries', 'stakes_races',
-    'stakes_entries', 'district_bids', 'shipment_days', 'shipment_takes', 'bespoke_pieces', 'bespoke_serials', 'campaign_progress',
+    'stakes_entries', 'shipment_days', 'shipment_takes', 'bespoke_pieces', 'bespoke_serials', 'campaign_progress',
     'drop_allocations', 'chain_reserve', 'vouchers', 'season_records', 'season_recaps', 'operation_escrow'];
   for (const table of observedOnly) if (json(rows(before, table)) !== json(rows(after, table)))
     unsupported.push({ kind: 'observed-table-change', table, detail: 'Change observed; complete resource disposition classifier is not implemented' });
   if (ammoEscrow.otherListingChanges) unsupported.push({ kind: 'observed-table-change', table: 'listings', detail: 'Non-ammo escrow lineage remains unsupported' });
+  const unknownBids = state => rows(state, 'district_bids').filter(row => !turfTerminal.settledDistricts.has(row.district_id));
+  if (json(unknownBids(before)) !== json(unknownBids(after))) unsupported.push({ kind: 'observed-table-change', table: 'district_bids', detail: 'Stake/raise and remaining escrow changes are not classified by the terminal subset' });
+  const oldDistricts = indexed(rows(before, 'districts'), row => row.id, 'district'), newDistricts = indexed(rows(after, 'districts'), row => row.id, 'district');
+  if ([...new Set([...oldDistricts.keys(), ...newDistricts.keys()])].some(id => {
+    const a = oldDistricts.get(id), b = newDistricts.get(id); if (!a || !b) return true;
+    return [...new Set([...Object.keys(a), ...Object.keys(b)])].some(field => !turfTerminal.districtFields.get(id)?.has(field) && json(a[field]) !== json(b[field]));
+  })) unsupported.push({ kind: 'observed-table-change', table: 'districts', detail: 'Unclassified district fields retained, including setup/seizure/war/dissolution and other contests' });
   const oldFamilies = indexed(rows(before, 'gangs'), row => row.id, 'Family'), newFamilies = indexed(rows(after, 'gangs'), row => row.id, 'Family');
   const remainingFamilyChanges = [...new Set([...oldFamilies.keys(), ...newFamilies.keys()])].filter(id => {
     if (familyDissolution.dissolved.has(id)) return false;
     if (familyEntry.founded.has(id)) return Object.keys(newFamilies.get(id)).some(field => !familyEntry.familyFields.get(id)?.has(field));
     const a = oldFamilies.get(id), b = newFamilies.get(id); if (!a || !b) return true;
-    return [...new Set([...Object.keys(a), ...Object.keys(b)])].some(field => !familyEntry.familyFields.get(id)?.has(field) && json(a[field]) !== json(b[field]));
+    return [...new Set([...Object.keys(a), ...Object.keys(b)])].some(field => !familyEntry.familyFields.get(id)?.has(field)
+      && !(field === 'treasury' && turfTerminal.treasuryOwners.has(id)) && json(a[field]) !== json(b[field]));
   });
   if (remainingFamilyChanges.length) unsupported.push({ kind: 'family-lineage', familyIds: remainingFamilyChanges,
     detail: 'Remaining Family rows/fields retained; war, turf, dissolution, weekly/seasonal and other lineage remain unsupported' });
@@ -676,7 +748,8 @@ export function reconcileWorldResources(before, after, { identity = null, includ
   const restrictedChanges = unsupported.length ? resourceTableChanges(before, after) : null;
   if (restrictedChanges) verifyResourceTableChanges(before, after, restrictedChanges);
   return { format: 1, identity, beforeHash: worldResourceHash(before), afterHash: worldResourceHash(after), receipts,
-    itemEvents: events, mutationInputs: inputs, mutationOutputs: outputs, checks, cars, familyDissolution: { movements: familyDissolution.movements,
+    itemEvents: events, mutationInputs: inputs, mutationOutputs: outputs, checks, cars, turfTerminal: { movements: turfTerminal.movements,
+      scope: 'One unchartered contest with live bidders: exact consumed escrow, winner full burn, loser floored refund/remainder burn, treasury and garrison. Original worker authority is separately verified in native evidence. Stakes, charter/dissolved/multiple-contest and territory side effects remain unqualified.' }, familyDissolution: { movements: familyDissolution.movements,
       scope: 'One voluntary living-member Family terminal: cash/ammo destroyed, exact OMR reserve recycled to desk plus lifetime input. Request authorization is independently bound in native proof. Estate/death, territorial/war/governance cleanup, multiple-Family and other compound terminals remain unqualified.' }, familyEntry: { movements: familyEntry.movements,
       scope: 'Ordinary formation cash sink and exact cash/OMR member tribute with original membership and per-Family custody. Ammo banks remain unchanged; no personal ammo-tribute route exists. HTTP body authorization is separately verified in the focused native proof.' }, pressureCash: { movements: pressureCash.movements,
       scope: 'Original check-in quote/latches, fixed reciprocal armory purchase, exact pocket/vault/transit deposit. Request binding and unrelated accrued rewards remain outside this classifier.' }, ammoEscrow: { movements: ammoEscrow.movements,
