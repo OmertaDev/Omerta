@@ -3,8 +3,8 @@
 Base: `b5c80a4ed921e58792e78f8c4b51de5635182b74`. This isolated integration combines
 the tested season conversion, NPC Family formation and NPC car-acquisition classifiers.
 It changes evidence tooling only. Production, actor policy, gameplay initialization,
-original deadlines, worker callbacks and operational limits are unchanged. The unverified
-season crown work is excluded.
+original deadlines, worker callbacks and operational limits are unchanged. Separate
+season crown classifier work is excluded.
 
 There is one base native COMMIT observer. `createNpcFamilyCommitObserver` wraps
 `createNpcCarAcquisitionCommitObserver`, which extends the existing car collector.
@@ -53,3 +53,58 @@ seal: its 364-event gzip prefix and full first-resource failure are retained. A 
 diagnostic snapshot hit COMMIT-without-BEGIN; that is distinct from the initiating
 provenance rejection. The owned database was independently found already absent, so the
 audit's ownership guard refused dump/drop. No replacement seal or dump was manufactured.
+
+The fresh native observation and recorded replay both passed at tested source
+`94a1a6cda2491747dee2690a597f8b4ec9a0c71c` on PostgreSQL 18.4. The independent
+audit passed before this separate report change. Each lane retained 38 indexed artifacts,
+1,290 history events and 1,085 resource boundaries: 295 committed, 752 autocommitted and
+38 rolled back. All 18 replay fields, complete initial/final contents of 369 tables and
+three sequences, and every canonical resource journal string including its LF separator
+matched. Resource journal SHA256:
+`04f675fe4b431ccd0e59d4530555636e28eef274ca973eb4c94c9dc5007637ff`.
+
+Each lane independently reclassified six NPC car grants and two NPC Family formations
+from complete retained candidate snapshots and source-pinned returned-query witnesses.
+For all eight actual candidates, the audit required witness boundary = artifact event =
+the exact enclosing history resource event, plus journal/witness digest agreement.
+The stale-boundary negative control exercises this audit helper; it does not add a
+substituted-car-witness rejection inside the composed callback. The reviewed runner
+block hash is `7938cd870c9ece7913e15b71266453cbf5de89f53a5a0af9b093f4aae546f14c`;
+all 17 integration controls passed. Ambient stack-limit restoration passed on success
+and error. The intermediate `ebfc52ee` formatter-control failure is retained separately.
+
+Four NPC seasonal conversions granted exactly 24 prestige; 25 player recaps granted
+zero and are status-only. The quiet policy executed eight fresh commands and two
+successful crimes in two actor sessions. No car melt or Family rollback candidate
+occurred in this workload. The collector's 295 committed witnesses are not 295 car
+actions. Both owned databases were independently confirmed absent after cleanup.
+
+Every actual remaining unknown appears below; observation and replay counts are equal.
+Both have kind `observed-table-change`, table `season_records`, authority
+`original-worker`, and logical time `2026-09-24T00:00:00.000Z`.
+
+| Count per lane | History / native sequence | Outcome | Exact observed change still unsupported |
+| --- | --- | --- | --- |
+| 1 | 984 / 8251 | AUTOCOMMITTED INSERT | Initial season record and chosen standings, crowned=false |
+| 1 | 985 / 8257 | COMMITTED, transaction 226 | Stored crowned false→true and one account season_crowns 0→1 |
+
+Source review identifies `runSeasonRollover` → `recordReckoning` for these changes;
+this integration does not add an authoritative query witness or classify their election,
+crown or notification lineage. Notifications are outside this source's 58 resource
+tables, while complete world-state comparison still includes all 369 tables.
+
+The public-safe result is [harness-candidate18-resource-index.json](harness-candidate18-resource-index.json).
+Its SHA256 is `170ee4f6d5248d2a6060a39ef247a8eb50d8b464290bc98404389978064ce8f6`.
+The restricted evidence directory is `candidate18-resource-integration-94a1a6cd-1`
+under the operator's private RC1 evidence root. It contains the rerunnable audit,
+the exact candidate snapshots, 145-file custody index covering this pair and the prior
+failure, and the public summary. Custody index SHA256:
+`2c5cfdf7799183bfe4ebd80a10a9e706281d036baf3651d0b389ffd4306d4925`.
+The summary contains no raw actors, private state or credentials; 100 exact private
+identifier values from retained states/failure were checked against it.
+
+Scope remains serial-only: the Family collector's last-query handoff proves neither
+concurrent execution nor total concurrent commit order. Counts of remaining unknowns
+describe observed changes only; absent branches remain unexecuted. Full resource,
+matrix and release qualification remain false. The failed `65ee96b8` observation is
+still unsealed and failed; this successful fresh pair does not rewrite it.
