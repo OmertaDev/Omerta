@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "3634432020a73cd903650c524bc07214640cdb23",
+  "sourceRevision": "fcbc21676655f914d47855a3bddbf0d637bc5dcc",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,14 +43,14 @@
     ]
   },
   "census": {
-    "nodes": 8251,
-    "edges": 35689,
+    "nodes": 8303,
+    "edges": 35857,
     "byNodeType": {
-      "Artifact": 3395,
-      "Command": 141,
-      "Commit": 1629,
+      "Artifact": 3413,
+      "Command": 146,
+      "Commit": 1646,
       "Contract": 79,
-      "Document": 630,
+      "Document": 634,
       "Domain": 13,
       "ExternalDependency": 27,
       "HistoricalArtifact": 343,
@@ -60,25 +60,25 @@
       "Route": 802,
       "Subsystem": 8,
       "Table": 369,
-      "TestSuite": 408,
+      "TestSuite": 416,
       "Workflow": 6
     },
     "byEdgeType": {
-      "BELONGS_TO": 2573,
-      "CHANGED": 13448,
-      "CONTAINS": 3416,
-      "DECLARES": 141,
+      "BELONGS_TO": 2583,
+      "CHANGED": 13497,
+      "CONTAINS": 3434,
+      "DECLARES": 146,
       "DEFINED_IN": 1250,
       "DEPENDS_ON": 65,
-      "EXECUTES": 492,
+      "EXECUTES": 501,
       "HANDLED_BY": 708,
-      "HAS_COMMIT": 1629,
+      "HAS_COMMIT": 1646,
       "IMPLEMENTS": 124,
-      "IMPORTS": 3167,
+      "IMPORTS": 3203,
       "INHERITS": 17,
-      "REFERENCES": 4177,
-      "REPRESENTS": 1318,
-      "TESTS": 1226,
+      "REFERENCES": 4181,
+      "REPRESENTS": 1330,
+      "TESTS": 1234,
       "TRACKS": 126,
       "USES_TABLE": 1812
     }
@@ -7636,20 +7636,20 @@
       "path": ".github/workflows/rc1-recovery.yml",
       "kind": "workflow",
       "extension": ".yml",
-      "bytes": 15958,
-      "lines": 432,
-      "version": "5378f8465a2a0f28",
+      "bytes": 17333,
+      "lines": 468,
+      "version": "50a91159cebea8dd",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/rc1-recovery.yml",
           "line": 1,
-          "version": "5378f8465a2a0f28"
+          "version": "50a91159cebea8dd"
         }
       ],
-      "lastChangedAt": "2026-09-21T07:21:33.000Z",
+      "lastChangedAt": "2026-09-21T07:51:16.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3634432020a73cd903650c524bc07214640cdb23"
+      "lastChangedCommit": "fcbc21676655f914d47855a3bddbf0d637bc5dcc"
     },
     {
       "key": "Artifact:.gitignore",
@@ -34562,6 +34562,29 @@
       "lastChangedCommit": "4da713ba36731102a327e535ebd19f6156add294"
     },
     {
+      "key": "Artifact:docs/release/readiness-work/crew-input-focus.md",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/crew-input-focus.md",
+      "label": "crew-input-focus.md",
+      "path": "docs/release/readiness-work/crew-input-focus.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 4055,
+      "lines": 60,
+      "version": "5c3a58e1153aedf6",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/crew-input-focus.md",
+          "line": 1,
+          "version": "5c3a58e1153aedf6"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T07:34:54.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "426facf2b25101e7d00cde0c1c979e0a81c3a89a"
+    },
+    {
       "key": "Artifact:docs/release/readiness-work/expanded-native-results.json",
       "type": "Artifact",
       "id": "docs/release/readiness-work/expanded-native-results.json",
@@ -34585,6 +34608,29 @@
       "lastChangedCommit": "f674cb7c429727fea70058bb263618318563b0eb"
     },
     {
+      "key": "Artifact:docs/release/readiness-work/family-player-policy.md",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/family-player-policy.md",
+      "label": "family-player-policy.md",
+      "path": "docs/release/readiness-work/family-player-policy.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 6684,
+      "lines": 29,
+      "version": "e10e7bbf4ea0e970",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/family-player-policy.md",
+          "line": 1,
+          "version": "e10e7bbf4ea0e970"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T07:45:37.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "f6d07b151ee0bf0e68eddcf9832dcc31b371d2d9"
+    },
+    {
       "key": "Artifact:docs/release/readiness-work/gate-registry.json",
       "type": "Artifact",
       "id": "docs/release/readiness-work/gate-registry.json",
@@ -34592,20 +34638,20 @@
       "path": "docs/release/readiness-work/gate-registry.json",
       "kind": "artifact",
       "extension": ".json",
-      "bytes": 23057,
-      "lines": 831,
-      "version": "d8fd8ded1c1c24dd",
+      "bytes": 24841,
+      "lines": 866,
+      "version": "e4e9f30fbd7feaa6",
       "text": true,
       "provenance": [
         {
           "file": "docs/release/readiness-work/gate-registry.json",
           "line": 1,
-          "version": "d8fd8ded1c1c24dd"
+          "version": "e4e9f30fbd7feaa6"
         }
       ],
-      "lastChangedAt": "2026-09-21T07:21:33.000Z",
+      "lastChangedAt": "2026-09-21T07:51:16.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3634432020a73cd903650c524bc07214640cdb23"
+      "lastChangedCommit": "fcbc21676655f914d47855a3bddbf0d637bc5dcc"
     },
     {
       "key": "Artifact:docs/release/readiness-work/golden-browser-regressions.json",
@@ -34652,6 +34698,29 @@
       "lastChangedAt": "2026-09-21T04:23:00.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "c6bad3f564c09fa3e039fa06723fcd8ee579a2b4"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/golden-focus-summary.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/golden-focus-summary.json",
+      "label": "golden-focus-summary.json",
+      "path": "docs/release/readiness-work/golden-focus-summary.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 13760,
+      "lines": 371,
+      "version": "beb467db91e26fec",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/golden-focus-summary.json",
+          "line": 1,
+          "version": "beb467db91e26fec"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T07:51:16.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "fcbc21676655f914d47855a3bddbf0d637bc5dcc"
     },
     {
       "key": "Artifact:docs/release/readiness-work/harness-actor-replay-results.json",
@@ -34792,6 +34861,29 @@
       "lastChangedCommit": "f01bc2265ea1eb375c39f0b6dd96d9fd6275acc1"
     },
     {
+      "key": "Artifact:docs/release/readiness-work/harness-query-order-causal-results.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/harness-query-order-causal-results.json",
+      "label": "harness-query-order-causal-results.json",
+      "path": "docs/release/readiness-work/harness-query-order-causal-results.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 6165,
+      "lines": 126,
+      "version": "9b181c6f19eba8d0",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/harness-query-order-causal-results.json",
+          "line": 1,
+          "version": "9b181c6f19eba8d0"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T07:51:16.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "fcbc21676655f914d47855a3bddbf0d637bc5dcc"
+    },
+    {
       "key": "Artifact:docs/release/readiness-work/harness-quiet-90day-artifact-index.json",
       "type": "Artifact",
       "id": "docs/release/readiness-work/harness-quiet-90day-artifact-index.json",
@@ -34859,6 +34951,29 @@
       "lastChangedAt": "2026-09-21T07:19:07.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "a188557ef60e02f0bf621fc766d8fa3bfbbc06f0"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/harness-recorded-query-order.md",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/harness-recorded-query-order.md",
+      "label": "harness-recorded-query-order.md",
+      "path": "docs/release/readiness-work/harness-recorded-query-order.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 3667,
+      "lines": 20,
+      "version": "0efbe2fc4b0ddd05",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/harness-recorded-query-order.md",
+          "line": 1,
+          "version": "0efbe2fc4b0ddd05"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T07:27:42.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "339987b96ea8797801de22b8d693919e4dbac6c4"
     },
     {
       "key": "Artifact:docs/release/readiness-work/harness-resource-observer-results.json",
@@ -35022,6 +35137,29 @@
       "lastChangedCommit": "4e8f311ee7b2fc02f4fd98b54873b65af4810c35"
     },
     {
+      "key": "Artifact:docs/release/readiness-work/hosted-fcaa6076-results.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/hosted-fcaa6076-results.json",
+      "label": "hosted-fcaa6076-results.json",
+      "path": "docs/release/readiness-work/hosted-fcaa6076-results.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 7468,
+      "lines": 203,
+      "version": "f33a9f91a51b8356",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/hosted-fcaa6076-results.json",
+          "line": 1,
+          "version": "f33a9f91a51b8356"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T07:51:16.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "fcbc21676655f914d47855a3bddbf0d637bc5dcc"
+    },
+    {
       "key": "Artifact:docs/release/readiness-work/integrated-09119b29-results.json",
       "type": "Artifact",
       "id": "docs/release/readiness-work/integrated-09119b29-results.json",
@@ -35091,6 +35229,29 @@
       "lastChangedCommit": "fcaa60765aa816daa18ef6c2484e15e46d06ac63"
     },
     {
+      "key": "Artifact:docs/release/readiness-work/integrated-d012c78a-results.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/integrated-d012c78a-results.json",
+      "label": "integrated-d012c78a-results.json",
+      "path": "docs/release/readiness-work/integrated-d012c78a-results.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 7809,
+      "lines": 193,
+      "version": "5bfd38d70e7e0b04",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/integrated-d012c78a-results.json",
+          "line": 1,
+          "version": "5bfd38d70e7e0b04"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T07:51:16.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "fcbc21676655f914d47855a3bddbf0d637bc5dcc"
+    },
+    {
       "key": "Artifact:docs/release/readiness-work/integrated-fcaa6076-results.json",
       "type": "Artifact",
       "id": "docs/release/readiness-work/integrated-fcaa6076-results.json",
@@ -35112,6 +35273,29 @@
       "lastChangedAt": "2026-09-21T07:07:05.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "89d4d6b33e3e41201f0463c33eebbd496c0418c8"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/law-player-policy.md",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/law-player-policy.md",
+      "label": "law-player-policy.md",
+      "path": "docs/release/readiness-work/law-player-policy.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 4798,
+      "lines": 16,
+      "version": "3894cf7411779674",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/law-player-policy.md",
+          "line": 1,
+          "version": "3894cf7411779674"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T07:29:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a16310dcedf52fb7d28da87547ce1d4067a8a61a"
     },
     {
       "key": "Artifact:docs/release/readiness-work/market-player-policy.md",
@@ -35167,20 +35351,20 @@
       "path": "docs/release/readiness-work/open-proofs.json",
       "kind": "artifact",
       "extension": ".json",
-      "bytes": 8520,
+      "bytes": 8983,
       "lines": 121,
-      "version": "fbc645985ee77f05",
+      "version": "f773fd695748a038",
       "text": true,
       "provenance": [
         {
           "file": "docs/release/readiness-work/open-proofs.json",
           "line": 1,
-          "version": "fbc645985ee77f05"
+          "version": "f773fd695748a038"
         }
       ],
-      "lastChangedAt": "2026-09-21T07:21:33.000Z",
+      "lastChangedAt": "2026-09-21T07:51:16.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3634432020a73cd903650c524bc07214640cdb23"
+      "lastChangedCommit": "fcbc21676655f914d47855a3bddbf0d637bc5dcc"
     },
     {
       "key": "Artifact:docs/release/readiness-work/quiet-world-failed-run.json",
@@ -35259,20 +35443,20 @@
       "path": "docs/release/readiness-work/render-observation.json",
       "kind": "artifact",
       "extension": ".json",
-      "bytes": 3251,
-      "lines": 100,
-      "version": "f201cc5bae8100a0",
+      "bytes": 4819,
+      "lines": 128,
+      "version": "cb314e8286302449",
       "text": true,
       "provenance": [
         {
           "file": "docs/release/readiness-work/render-observation.json",
           "line": 1,
-          "version": "f201cc5bae8100a0"
+          "version": "cb314e8286302449"
         }
       ],
-      "lastChangedAt": "2026-09-21T06:34:03.000Z",
+      "lastChangedAt": "2026-09-21T07:51:16.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fcaa60765aa816daa18ef6c2484e15e46d06ac63"
+      "lastChangedCommit": "fcbc21676655f914d47855a3bddbf0d637bc5dcc"
     },
     {
       "key": "Artifact:docs/release/readiness-work/resource-capital-lifecycle-summary.json",
@@ -35903,20 +36087,20 @@
       "path": "docs/release/readiness-work/scenario-manifest.json",
       "kind": "artifact",
       "extension": ".json",
-      "bytes": 33325,
-      "lines": 1449,
-      "version": "b145d386a9f3311f",
+      "bytes": 33502,
+      "lines": 1452,
+      "version": "05e1cebc0b9e133f",
       "text": true,
       "provenance": [
         {
           "file": "docs/release/readiness-work/scenario-manifest.json",
           "line": 1,
-          "version": "b145d386a9f3311f"
+          "version": "05e1cebc0b9e133f"
         }
       ],
-      "lastChangedAt": "2026-09-21T07:21:33.000Z",
+      "lastChangedAt": "2026-09-21T07:51:16.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3634432020a73cd903650c524bc07214640cdb23"
+      "lastChangedCommit": "fcbc21676655f914d47855a3bddbf0d637bc5dcc"
     },
     {
       "key": "Artifact:docs/release/readiness-work/season-journal-summary.json",
@@ -36064,20 +36248,20 @@
       "path": "docs/release/readiness-work/tooling-repairs.json",
       "kind": "artifact",
       "extension": ".json",
-      "bytes": 23906,
-      "lines": 492,
-      "version": "61444ea2cd468191",
+      "bytes": 25068,
+      "lines": 506,
+      "version": "9e5665c0faa0e2b6",
       "text": true,
       "provenance": [
         {
           "file": "docs/release/readiness-work/tooling-repairs.json",
           "line": 1,
-          "version": "61444ea2cd468191"
+          "version": "9e5665c0faa0e2b6"
         }
       ],
-      "lastChangedAt": "2026-09-21T07:21:33.000Z",
+      "lastChangedAt": "2026-09-21T07:51:16.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3634432020a73cd903650c524bc07214640cdb23"
+      "lastChangedCommit": "fcbc21676655f914d47855a3bddbf0d637bc5dcc"
     },
     {
       "key": "Artifact:docs/release/readiness-work/world-observers.md",
@@ -46937,20 +47121,20 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 24648,
-      "lines": 170,
-      "version": "142606e4ebd10a36",
+      "bytes": 25270,
+      "lines": 175,
+      "version": "d11a8b9f769f1c2c",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "142606e4ebd10a36"
+          "version": "d11a8b9f769f1c2c"
         }
       ],
-      "lastChangedAt": "2026-09-21T07:21:33.000Z",
+      "lastChangedAt": "2026-09-21T07:51:16.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3634432020a73cd903650c524bc07214640cdb23"
+      "lastChangedCommit": "fcbc21676655f914d47855a3bddbf0d637bc5dcc"
     },
     {
       "key": "Artifact:Procfile",
@@ -61197,20 +61381,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1302138,
-      "lines": 13412,
-      "version": "49d6b3d3e3951800",
+      "bytes": 1303139,
+      "lines": 13428,
+      "version": "bf12d6a2e6552eca",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "49d6b3d3e3951800"
+          "version": "bf12d6a2e6552eca"
         }
       ],
-      "lastChangedAt": "2026-09-19T00:08:05.000Z",
+      "lastChangedAt": "2026-09-21T07:34:53.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "bbd022fce6b517fff06b977b79423e9fd6c66413"
+      "lastChangedCommit": "4386a79cd019c9cf71fe1a793324f48d204d6a29"
     },
     {
       "key": "Artifact:public/invite.html",
@@ -61498,18 +61682,18 @@
       "extension": ".md",
       "bytes": 56651,
       "lines": 756,
-      "version": "a945e83963af8373",
+      "version": "cb2a7a94513abfc8",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "a945e83963af8373"
+          "version": "cb2a7a94513abfc8"
         }
       ],
-      "lastChangedAt": "2026-09-21T07:21:33.000Z",
+      "lastChangedAt": "2026-09-21T07:51:16.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3634432020a73cd903650c524bc07214640cdb23"
+      "lastChangedCommit": "fcbc21676655f914d47855a3bddbf0d637bc5dcc"
     },
     {
       "key": "Artifact:src/access.js",
@@ -70995,20 +71179,43 @@
       "path": "test/lib/rc1-browser-controls.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 11644,
-      "lines": 161,
-      "version": "89e92fec7c3e083d",
+      "bytes": 12302,
+      "lines": 170,
+      "version": "9b17e530748f23f0",
       "text": true,
       "provenance": [
         {
           "file": "test/lib/rc1-browser-controls.js",
           "line": 1,
-          "version": "89e92fec7c3e083d"
+          "version": "9b17e530748f23f0"
         }
       ],
-      "lastChangedAt": "2026-09-21T07:07:05.000Z",
+      "lastChangedAt": "2026-09-21T07:29:33.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "89d4d6b33e3e41201f0463c33eebbd496c0418c8"
+      "lastChangedCommit": "d757217e9841ee0f7813543aecd3ddb81e335cd1"
+    },
+    {
+      "key": "Artifact:test/lib/rc1-focus-diagnostics.js",
+      "type": "Artifact",
+      "id": "test/lib/rc1-focus-diagnostics.js",
+      "label": "rc1-focus-diagnostics.js",
+      "path": "test/lib/rc1-focus-diagnostics.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 3559,
+      "lines": 41,
+      "version": "39b4e8a6c96d1ad4",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/lib/rc1-focus-diagnostics.js",
+          "line": 1,
+          "version": "39b4e8a6c96d1ad4"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T07:15:34.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "772a3af89f6541f8fca34d532b667294eb075d42"
     },
     {
       "key": "Artifact:test/lib/srcfiles.js",
@@ -72575,6 +72782,29 @@
       "lastChangedCommit": "89d4d6b33e3e41201f0463c33eebbd496c0418c8"
     },
     {
+      "key": "Artifact:test/rc1-browser-toast-controls.js",
+      "type": "Artifact",
+      "id": "test/rc1-browser-toast-controls.js",
+      "label": "rc1-browser-toast-controls.js",
+      "path": "test/rc1-browser-toast-controls.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 3694,
+      "lines": 44,
+      "version": "89a6d05fdfe0a757",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/rc1-browser-toast-controls.js",
+          "line": 1,
+          "version": "89a6d05fdfe0a757"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T07:29:47.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "f45325eef8c2b4bcd701b3fc5cf27dc2edf277a1"
+    },
+    {
       "key": "Artifact:test/rc1-capital-lifecycle-journal.js",
       "type": "Artifact",
       "id": "test/rc1-capital-lifecycle-journal.js",
@@ -72667,6 +72897,52 @@
       "lastChangedCommit": "bce23f23718594b9930f5f18ffd315e114021484"
     },
     {
+      "key": "Artifact:test/rc1-family-native.js",
+      "type": "Artifact",
+      "id": "test/rc1-family-native.js",
+      "label": "rc1-family-native.js",
+      "path": "test/rc1-family-native.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 24487,
+      "lines": 270,
+      "version": "ee6f40b2af7d404d",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/rc1-family-native.js",
+          "line": 1,
+          "version": "ee6f40b2af7d404d"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T07:42:17.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "3eee474406ef7867ad140e0590b5a54e98173ea6"
+    },
+    {
+      "key": "Artifact:test/rc1-family-policy.js",
+      "type": "Artifact",
+      "id": "test/rc1-family-policy.js",
+      "label": "rc1-family-policy.js",
+      "path": "test/rc1-family-policy.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 5243,
+      "lines": 49,
+      "version": "acf48c7ee2d6c89d",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/rc1-family-policy.js",
+          "line": 1,
+          "version": "acf48c7ee2d6c89d"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T07:45:37.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "f6d07b151ee0bf0e68eddcf9832dcc31b371d2d9"
+    },
+    {
       "key": "Artifact:test/rc1-golden-browser-postgres.js",
       "type": "Artifact",
       "id": "test/rc1-golden-browser-postgres.js",
@@ -72674,20 +72950,43 @@
       "path": "test/rc1-golden-browser-postgres.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 18355,
-      "lines": 198,
-      "version": "1305331306507895",
+      "bytes": 19129,
+      "lines": 206,
+      "version": "c7fcc91c75a59a46",
       "text": true,
       "provenance": [
         {
           "file": "test/rc1-golden-browser-postgres.js",
           "line": 1,
-          "version": "1305331306507895"
+          "version": "c7fcc91c75a59a46"
         }
       ],
-      "lastChangedAt": "2026-09-21T04:08:31.000Z",
+      "lastChangedAt": "2026-09-21T07:15:34.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "abb4e3ba46fa5dccbcdf06422da8ea636c6b2a1a"
+      "lastChangedCommit": "772a3af89f6541f8fca34d532b667294eb075d42"
+    },
+    {
+      "key": "Artifact:test/rc1-golden-focus-race.js",
+      "type": "Artifact",
+      "id": "test/rc1-golden-focus-race.js",
+      "label": "rc1-golden-focus-race.js",
+      "path": "test/rc1-golden-focus-race.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 12188,
+      "lines": 134,
+      "version": "d6ba8da41d61f7cc",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/rc1-golden-focus-race.js",
+          "line": 1,
+          "version": "d6ba8da41d61f7cc"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T07:43:28.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "43b86f77d68e0e371a5de100aa6537815044ee65"
     },
     {
       "key": "Artifact:test/rc1-journeys.js",
@@ -72734,6 +73033,52 @@
       "lastChangedAt": "2026-09-21T05:54:32.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "3aba7cc32b668b1f52e22322d4e8b22971f05eed"
+    },
+    {
+      "key": "Artifact:test/rc1-law-native.js",
+      "type": "Artifact",
+      "id": "test/rc1-law-native.js",
+      "label": "rc1-law-native.js",
+      "path": "test/rc1-law-native.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 19412,
+      "lines": 225,
+      "version": "b3ce0b6f0776093b",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/rc1-law-native.js",
+          "line": 1,
+          "version": "b3ce0b6f0776093b"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T07:26:42.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "34fc14a998e4c13698fcac2750a844566ef527a3"
+    },
+    {
+      "key": "Artifact:test/rc1-law-policy.js",
+      "type": "Artifact",
+      "id": "test/rc1-law-policy.js",
+      "label": "rc1-law-policy.js",
+      "path": "test/rc1-law-policy.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 5332,
+      "lines": 58,
+      "version": "db89f86af1c5e2c9",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/rc1-law-policy.js",
+          "line": 1,
+          "version": "db89f86af1c5e2c9"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T07:29:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a16310dcedf52fb7d28da87547ce1d4067a8a61a"
     },
     {
       "key": "Artifact:test/rc1-legacy-authority-postgres.js",
@@ -73079,6 +73424,29 @@
       "lastChangedAt": "2026-09-21T06:08:54.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "a0f37c74d41dc90ce061b3f8a42e70074154542b"
+    },
+    {
+      "key": "Artifact:test/rc1-native-query-order.js",
+      "type": "Artifact",
+      "id": "test/rc1-native-query-order.js",
+      "label": "rc1-native-query-order.js",
+      "path": "test/rc1-native-query-order.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 12952,
+      "lines": 162,
+      "version": "9af98e017df243dc",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/rc1-native-query-order.js",
+          "line": 1,
+          "version": "9af98e017df243dc"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T07:27:42.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "339987b96ea8797801de22b8d693919e4dbac6c4"
     },
     {
       "key": "Artifact:test/rc1-native-query-tape.js",
@@ -76922,6 +77290,29 @@
       "lastChangedCommit": "c72c7f6a0f19552b4b25622516eb074cb638bcb1"
     },
     {
+      "key": "Artifact:tools/rc1-family-policy.js",
+      "type": "Artifact",
+      "id": "tools/rc1-family-policy.js",
+      "label": "rc1-family-policy.js",
+      "path": "tools/rc1-family-policy.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 12997,
+      "lines": 137,
+      "version": "0a3c2305d94af91c",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/rc1-family-policy.js",
+          "line": 1,
+          "version": "0a3c2305d94af91c"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T07:42:17.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "3eee474406ef7867ad140e0590b5a54e98173ea6"
+    },
+    {
       "key": "Artifact:tools/rc1-knowledge-diagnostics.js",
       "type": "Artifact",
       "id": "tools/rc1-knowledge-diagnostics.js",
@@ -76943,6 +77334,29 @@
       "lastChangedAt": "2026-09-21T05:52:07.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "54346c919134cd282a82070071020b15b4a12a9a"
+    },
+    {
+      "key": "Artifact:tools/rc1-law-policy.js",
+      "type": "Artifact",
+      "id": "tools/rc1-law-policy.js",
+      "label": "rc1-law-policy.js",
+      "path": "tools/rc1-law-policy.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 10169,
+      "lines": 124,
+      "version": "bc50538e2ec734eb",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/rc1-law-policy.js",
+          "line": 1,
+          "version": "bc50538e2ec734eb"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T07:26:42.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "34fc14a998e4c13698fcac2750a844566ef527a3"
     },
     {
       "key": "Artifact:tools/rc1-loan-lifecycle-journal.js",
@@ -77205,20 +77619,20 @@
       "path": "tools/rc1-native-query-order.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 7638,
-      "lines": 124,
-      "version": "cbd9c95dd9c0e844",
+      "bytes": 12084,
+      "lines": 179,
+      "version": "4488ef6c68a21520",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-native-query-order.js",
           "line": 1,
-          "version": "cbd9c95dd9c0e844"
+          "version": "4488ef6c68a21520"
         }
       ],
-      "lastChangedAt": "2026-09-21T05:29:11.000Z",
+      "lastChangedAt": "2026-09-21T07:27:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3fcc267c10e0e1cc49ff4ac6e2fd5d52a24887c6"
+      "lastChangedCommit": "339987b96ea8797801de22b8d693919e4dbac6c4"
     },
     {
       "key": "Artifact:tools/rc1-native-query-tape.js",
@@ -79412,6 +79826,19 @@
       ]
     },
     {
+      "key": "Command:npm:test:rc1:crew-focus:postgres",
+      "type": "Command",
+      "id": "npm:test:rc1:crew-focus:postgres",
+      "label": "npm run test:rc1:crew-focus:postgres",
+      "command": "node test/rc1-golden-focus-race.js --postgres",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
       "key": "Command:npm:test:rc1:database:postgres",
       "type": "Command",
       "id": "npm:test:rc1:database:postgres",
@@ -79430,6 +79857,32 @@
       "id": "npm:test:rc1:escrow:postgres",
       "label": "npm run test:rc1:escrow:postgres",
       "command": "node tools/rc1-resource-escrow.js",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "key": "Command:npm:test:rc1:family-fragmented:postgres",
+      "type": "Command",
+      "id": "npm:test:rc1:family-fragmented:postgres",
+      "label": "npm run test:rc1:family-fragmented:postgres",
+      "command": "node test/rc1-family-native.js --postgres --scenario=fragmented_families",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "key": "Command:npm:test:rc1:family-monopoly:postgres",
+      "type": "Command",
+      "id": "npm:test:rc1:family-monopoly:postgres",
+      "label": "npm run test:rc1:family-monopoly:postgres",
+      "command": "node test/rc1-family-native.js --postgres --scenario=family_monopoly",
       "provenance": [
         {
           "file": "package.json",
@@ -79468,7 +79921,7 @@
       "type": "Command",
       "id": "npm:test:rc1:harness",
       "label": "npm run test:rc1:harness",
-      "command": "node test/rc1-native-proof.js && node test/rc1-native-worker-schedule.js && node test/rc1-native-query-tape.js && node test/rc1-native-player-policy.js && node test/rc1-native-actor-replay.js && node test/rc1-world-diagnostics.js && node test/rc1-native-commit-observer.js && node test/rc1-world-resource-observer.js && node test/rc1-browser-controls.js && node test/rc1-knowledge-diagnostics.js && node test/rc1-mystery-policies.js && node test/rc1-aggression-policy.js && node test/rc1-loan-lifecycle-journal.js && node test/rc1-churn-policy.js && node test/rc1-capital-lifecycle-journal.js && node test/rc1-browser-receipt.js && node test/rc1-season-journal.js && node test/rc1-market-policy.js && node test/rc1-native-run-guardrails.js",
+      "command": "node test/rc1-native-proof.js && node test/rc1-native-worker-schedule.js && node test/rc1-native-query-tape.js && node test/rc1-native-player-policy.js && node test/rc1-native-actor-replay.js && node test/rc1-world-diagnostics.js && node test/rc1-native-commit-observer.js && node test/rc1-world-resource-observer.js && node test/rc1-browser-controls.js && node test/rc1-knowledge-diagnostics.js && node test/rc1-mystery-policies.js && node test/rc1-aggression-policy.js && node test/rc1-loan-lifecycle-journal.js && node test/rc1-churn-policy.js && node test/rc1-capital-lifecycle-journal.js && node test/rc1-browser-receipt.js && node test/rc1-season-journal.js && node test/rc1-market-policy.js && node test/rc1-native-run-guardrails.js && node test/rc1-law-policy.js && node test/rc1-native-query-order.js && node test/rc1-browser-toast-controls.js && node test/rc1-family-policy.js",
       "provenance": [
         {
           "file": "package.json",
@@ -79495,6 +79948,19 @@
       "id": "npm:test:rc1:knowledge:postgres",
       "label": "npm run test:rc1:knowledge:postgres",
       "command": "node test/rc1-knowledge-diagnostics.js --postgres",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "key": "Command:npm:test:rc1:law:postgres",
+      "type": "Command",
+      "id": "npm:test:rc1:law:postgres",
+      "label": "npm run test:rc1:law:postgres",
+      "command": "node test/rc1-law-native.js --postgres",
       "provenance": [
         {
           "file": "package.json",
@@ -79625,6 +80091,19 @@
       "id": "npm:test:rc1:proof:postgres",
       "label": "npm run test:rc1:proof:postgres",
       "command": "node test/rc1-native-proof.js --postgres",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "key": "Command:npm:test:rc1:query-order:postgres",
+      "type": "Command",
+      "id": "npm:test:rc1:query-order:postgres",
+      "label": "npm run test:rc1:query-order:postgres",
+      "command": "node test/rc1-native-query-order.js --postgres",
       "provenance": [
         {
           "file": "package.json",
@@ -85357,6 +85836,22 @@
       ]
     },
     {
+      "key": "Commit:339987b96ea8797801de22b8d693919e4dbac6c4",
+      "type": "Commit",
+      "id": "339987b96ea8797801de22b8d693919e4dbac6c4",
+      "label": "test(rc1): replay exact native standing and market due order",
+      "title": "test(rc1): replay exact native standing and market due order",
+      "date": "2026-09-21T07:27:42.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/339987b96ea8797801de22b8d693919e4dbac6c4",
+      "provenance": [
+        {
+          "commit": "339987b96ea8797801de22b8d693919e4dbac6c4",
+          "url": "https://github.com/OmertaDev/Omerta/commit/339987b96ea8797801de22b8d693919e4dbac6c4"
+        }
+      ]
+    },
+    {
       "key": "Commit:33abbf6c854f6cc832cbb745b6b0135df27164ad",
       "type": "Commit",
       "id": "33abbf6c854f6cc832cbb745b6b0135df27164ad",
@@ -85513,6 +86008,22 @@
         {
           "commit": "34dea53b58283ada866d17bd0300165a397334c4",
           "url": "https://github.com/OmertaDev/Omerta/commit/34dea53b58283ada866d17bd0300165a397334c4"
+        }
+      ]
+    },
+    {
+      "key": "Commit:34fc14a998e4c13698fcac2750a844566ef527a3",
+      "type": "Commit",
+      "id": "34fc14a998e4c13698fcac2750a844566ef527a3",
+      "label": "Add natural-entry Law pressure policy and native detention proof",
+      "title": "Add natural-entry Law pressure policy and native detention proof",
+      "date": "2026-09-21T07:26:42.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/34fc14a998e4c13698fcac2750a844566ef527a3",
+      "provenance": [
+        {
+          "commit": "34fc14a998e4c13698fcac2750a844566ef527a3",
+          "url": "https://github.com/OmertaDev/Omerta/commit/34fc14a998e4c13698fcac2750a844566ef527a3"
         }
       ]
     },
@@ -86781,6 +87292,22 @@
       ]
     },
     {
+      "key": "Commit:3eee474406ef7867ad140e0590b5a54e98173ea6",
+      "type": "Commit",
+      "id": "3eee474406ef7867ad140e0590b5a54e98173ea6",
+      "label": "Add public Family policies and declared25-actor native extremes",
+      "title": "Add public Family policies and declared25-actor native extremes",
+      "date": "2026-09-21T07:42:17.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/3eee474406ef7867ad140e0590b5a54e98173ea6",
+      "provenance": [
+        {
+          "commit": "3eee474406ef7867ad140e0590b5a54e98173ea6",
+          "url": "https://github.com/OmertaDev/Omerta/commit/3eee474406ef7867ad140e0590b5a54e98173ea6"
+        }
+      ]
+    },
+    {
       "key": "Commit:3ef93c8201ce144f3ed8ddc60b2a4d1b2a6cb7b6",
       "type": "Commit",
       "id": "3ef93c8201ce144f3ed8ddc60b2a4d1b2a6cb7b6",
@@ -87261,6 +87788,22 @@
       ]
     },
     {
+      "key": "Commit:426facf2b25101e7d00cde0c1c979e0a81c3a89a",
+      "type": "Commit",
+      "id": "426facf2b25101e7d00cde0c1c979e0a81c3a89a",
+      "label": "docs(rc1): record adjacent Send draft-loss control",
+      "title": "docs(rc1): record adjacent Send draft-loss control",
+      "date": "2026-09-21T07:34:54.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/426facf2b25101e7d00cde0c1c979e0a81c3a89a",
+      "provenance": [
+        {
+          "commit": "426facf2b25101e7d00cde0c1c979e0a81c3a89a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/426facf2b25101e7d00cde0c1c979e0a81c3a89a"
+        }
+      ]
+    },
+    {
       "key": "Commit:4302d5d37ffc4b486a1d7dbad357f95c16488eee",
       "type": "Commit",
       "id": "4302d5d37ffc4b486a1d7dbad357f95c16488eee",
@@ -87305,6 +87848,22 @@
         {
           "commit": "437f5ebc6364cebf0c579067dd910db500309658",
           "url": "https://github.com/OmertaDev/Omerta/commit/437f5ebc6364cebf0c579067dd910db500309658"
+        }
+      ]
+    },
+    {
+      "key": "Commit:4386a79cd019c9cf71fe1a793324f48d204d6a29",
+      "type": "Commit",
+      "id": "4386a79cd019c9cf71fe1a793324f48d204d6a29",
+      "label": "fix(ui): preserve unsent Crew draft through Send focus",
+      "title": "fix(ui): preserve unsent Crew draft through Send focus",
+      "date": "2026-09-21T07:34:53.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/4386a79cd019c9cf71fe1a793324f48d204d6a29",
+      "provenance": [
+        {
+          "commit": "4386a79cd019c9cf71fe1a793324f48d204d6a29",
+          "url": "https://github.com/OmertaDev/Omerta/commit/4386a79cd019c9cf71fe1a793324f48d204d6a29"
         }
       ]
     },
@@ -87369,6 +87928,22 @@
         {
           "commit": "43b621b557e7b1fa66b7bb41ed572c4ae0cf4afa",
           "url": "https://github.com/OmertaDev/Omerta/commit/43b621b557e7b1fa66b7bb41ed572c4ae0cf4afa"
+        }
+      ]
+    },
+    {
+      "key": "Commit:43b86f77d68e0e371a5de100aa6537815044ee65",
+      "type": "Commit",
+      "id": "43b86f77d68e0e371a5de100aa6537815044ee65",
+      "label": "test(rc1): leave draft interaction for stale ownership control",
+      "title": "test(rc1): leave draft interaction for stale ownership control",
+      "date": "2026-09-21T07:43:28.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/43b86f77d68e0e371a5de100aa6537815044ee65",
+      "provenance": [
+        {
+          "commit": "43b86f77d68e0e371a5de100aa6537815044ee65",
+          "url": "https://github.com/OmertaDev/Omerta/commit/43b86f77d68e0e371a5de100aa6537815044ee65"
         }
       ]
     },
@@ -90973,6 +91548,22 @@
       ]
     },
     {
+      "key": "Commit:67dd21659d7c1029b3cbc3e8a95e6d5a9807f40a",
+      "type": "Commit",
+      "id": "67dd21659d7c1029b3cbc3e8a95e6d5a9807f40a",
+      "label": "fix(ui): preserve Crew input during pending refresh",
+      "title": "fix(ui): preserve Crew input during pending refresh",
+      "date": "2026-09-21T07:23:42.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/67dd21659d7c1029b3cbc3e8a95e6d5a9807f40a",
+      "provenance": [
+        {
+          "commit": "67dd21659d7c1029b3cbc3e8a95e6d5a9807f40a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/67dd21659d7c1029b3cbc3e8a95e6d5a9807f40a"
+        }
+      ]
+    },
+    {
       "key": "Commit:67df77190091ef341cc1f409e947b6a740a33c3d",
       "type": "Commit",
       "id": "67df77190091ef341cc1f409e947b6a740a33c3d",
@@ -92505,6 +93096,22 @@
         {
           "commit": "7722e7001811ffc162ee3c3fdd51fd4a683a014a",
           "url": "https://github.com/OmertaDev/Omerta/commit/7722e7001811ffc162ee3c3fdd51fd4a683a014a"
+        }
+      ]
+    },
+    {
+      "key": "Commit:772a3af89f6541f8fca34d532b667294eb075d42",
+      "type": "Commit",
+      "id": "772a3af89f6541f8fca34d532b667294eb075d42",
+      "label": "test(rc1): retain golden focus and render causality",
+      "title": "test(rc1): retain golden focus and render causality",
+      "date": "2026-09-21T07:15:34.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/772a3af89f6541f8fca34d532b667294eb075d42",
+      "provenance": [
+        {
+          "commit": "772a3af89f6541f8fca34d532b667294eb075d42",
+          "url": "https://github.com/OmertaDev/Omerta/commit/772a3af89f6541f8fca34d532b667294eb075d42"
         }
       ]
     },
@@ -94893,6 +95500,22 @@
       ]
     },
     {
+      "key": "Commit:8cda370f2f93e3bc6b1a4f1c571d648db2ea4253",
+      "type": "Commit",
+      "id": "8cda370f2f93e3bc6b1a4f1c571d648db2ea4253",
+      "label": "test(rc1): expose Crew draft loss at adjacent Send focus",
+      "title": "test(rc1): expose Crew draft loss at adjacent Send focus",
+      "date": "2026-09-21T07:33:39.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/8cda370f2f93e3bc6b1a4f1c571d648db2ea4253",
+      "provenance": [
+        {
+          "commit": "8cda370f2f93e3bc6b1a4f1c571d648db2ea4253",
+          "url": "https://github.com/OmertaDev/Omerta/commit/8cda370f2f93e3bc6b1a4f1c571d648db2ea4253"
+        }
+      ]
+    },
+    {
       "key": "Commit:8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9",
       "type": "Commit",
       "id": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9",
@@ -97081,6 +97704,22 @@
         {
           "commit": "a123495f797356b6d2e1e6583b4037e9beec2d21",
           "url": "https://github.com/OmertaDev/Omerta/commit/a123495f797356b6d2e1e6583b4037e9beec2d21"
+        }
+      ]
+    },
+    {
+      "key": "Commit:a16310dcedf52fb7d28da87547ce1d4067a8a61a",
+      "type": "Commit",
+      "id": "a16310dcedf52fb7d28da87547ce1d4067a8a61a",
+      "label": "Record natural Law pressure and original detention recovery evidence",
+      "title": "Record natural Law pressure and original detention recovery evidence",
+      "date": "2026-09-21T07:29:08.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a16310dcedf52fb7d28da87547ce1d4067a8a61a",
+      "provenance": [
+        {
+          "commit": "a16310dcedf52fb7d28da87547ce1d4067a8a61a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a16310dcedf52fb7d28da87547ce1d4067a8a61a"
         }
       ]
     },
@@ -101661,6 +102300,22 @@
       ]
     },
     {
+      "key": "Commit:cf76729ddf0ecd420bc6d1ab826298e1b8a1a1f2",
+      "type": "Commit",
+      "id": "cf76729ddf0ecd420bc6d1ab826298e1b8a1a1f2",
+      "label": "test(rc1): exercise stale Crew entry through real request queue",
+      "title": "test(rc1): exercise stale Crew entry through real request queue",
+      "date": "2026-09-21T07:31:53.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/cf76729ddf0ecd420bc6d1ab826298e1b8a1a1f2",
+      "provenance": [
+        {
+          "commit": "cf76729ddf0ecd420bc6d1ab826298e1b8a1a1f2",
+          "url": "https://github.com/OmertaDev/Omerta/commit/cf76729ddf0ecd420bc6d1ab826298e1b8a1a1f2"
+        }
+      ]
+    },
+    {
       "key": "Commit:cfc727c4634afa5f7b6d148209e784e33fd995d6",
       "type": "Commit",
       "id": "cfc727c4634afa5f7b6d148209e784e33fd995d6",
@@ -101673,6 +102328,22 @@
         {
           "commit": "cfc727c4634afa5f7b6d148209e784e33fd995d6",
           "url": "https://github.com/OmertaDev/Omerta/commit/cfc727c4634afa5f7b6d148209e784e33fd995d6"
+        }
+      ]
+    },
+    {
+      "key": "Commit:d012c78a1812b3c25547235788fdf65afee68f4e",
+      "type": "Commit",
+      "id": "d012c78a1812b3c25547235788fdf65afee68f4e",
+      "label": "docs(knowledge): regenerate from clean season and market integration",
+      "title": "docs(knowledge): regenerate from clean season and market integration",
+      "date": "2026-09-21T07:22:24.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/d012c78a1812b3c25547235788fdf65afee68f4e",
+      "provenance": [
+        {
+          "commit": "d012c78a1812b3c25547235788fdf65afee68f4e",
+          "url": "https://github.com/OmertaDev/Omerta/commit/d012c78a1812b3c25547235788fdf65afee68f4e"
         }
       ]
     },
@@ -102217,6 +102888,22 @@
         {
           "commit": "d71886f8352fcff3f5bbc2cb1f138957d0906dfa",
           "url": "https://github.com/OmertaDev/Omerta/commit/d71886f8352fcff3f5bbc2cb1f138957d0906dfa"
+        }
+      ]
+    },
+    {
+      "key": "Commit:d757217e9841ee0f7813543aecd3ddb81e335cd1",
+      "type": "Commit",
+      "id": "d757217e9841ee0f7813543aecd3ddb81e335cd1",
+      "label": "test(rc1): cover Crew refresh ownership and finite toast wait",
+      "title": "test(rc1): cover Crew refresh ownership and finite toast wait",
+      "date": "2026-09-21T07:29:33.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/d757217e9841ee0f7813543aecd3ddb81e335cd1",
+      "provenance": [
+        {
+          "commit": "d757217e9841ee0f7813543aecd3ddb81e335cd1",
+          "url": "https://github.com/OmertaDev/Omerta/commit/d757217e9841ee0f7813543aecd3ddb81e335cd1"
         }
       ]
     },
@@ -102793,6 +103480,22 @@
         {
           "commit": "dcbd7a5b94eb92a8553cfed27e04b4121eb8ac09",
           "url": "https://github.com/OmertaDev/Omerta/commit/dcbd7a5b94eb92a8553cfed27e04b4121eb8ac09"
+        }
+      ]
+    },
+    {
+      "key": "Commit:dcf280e59b1123eba3deef2e7471e704b6cc9a34",
+      "type": "Commit",
+      "id": "dcf280e59b1123eba3deef2e7471e704b6cc9a34",
+      "label": "test(rc1): reproduce delayed crew render during input",
+      "title": "test(rc1): reproduce delayed crew render during input",
+      "date": "2026-09-21T07:20:33.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/dcf280e59b1123eba3deef2e7471e704b6cc9a34",
+      "provenance": [
+        {
+          "commit": "dcf280e59b1123eba3deef2e7471e704b6cc9a34",
+          "url": "https://github.com/OmertaDev/Omerta/commit/dcf280e59b1123eba3deef2e7471e704b6cc9a34"
         }
       ]
     },
@@ -104973,6 +105676,22 @@
       ]
     },
     {
+      "key": "Commit:f45325eef8c2b4bcd701b3fc5cf27dc2edf277a1",
+      "type": "Commit",
+      "id": "f45325eef8c2b4bcd701b3fc5cf27dc2edf277a1",
+      "label": "test(rc1): make controlled toast release idempotent",
+      "title": "test(rc1): make controlled toast release idempotent",
+      "date": "2026-09-21T07:29:47.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f45325eef8c2b4bcd701b3fc5cf27dc2edf277a1",
+      "provenance": [
+        {
+          "commit": "f45325eef8c2b4bcd701b3fc5cf27dc2edf277a1",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f45325eef8c2b4bcd701b3fc5cf27dc2edf277a1"
+        }
+      ]
+    },
+    {
       "key": "Commit:f4723c7d70c7d376571f834a3b2e208c6379b7ef",
       "type": "Commit",
       "id": "f4723c7d70c7d376571f834a3b2e208c6379b7ef",
@@ -105193,6 +105912,22 @@
         {
           "commit": "f6a21dccdec05a0fff3454b75f6893a4ab628f3f",
           "url": "https://github.com/OmertaDev/Omerta/commit/f6a21dccdec05a0fff3454b75f6893a4ab628f3f"
+        }
+      ]
+    },
+    {
+      "key": "Commit:f6d07b151ee0bf0e68eddcf9832dcc31b371d2d9",
+      "type": "Commit",
+      "id": "f6d07b151ee0bf0e68eddcf9832dcc31b371d2d9",
+      "label": "Record scoped monopoly and fragmented Family native evidence",
+      "title": "Record scoped monopoly and fragmented Family native evidence",
+      "date": "2026-09-21T07:45:37.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f6d07b151ee0bf0e68eddcf9832dcc31b371d2d9",
+      "provenance": [
+        {
+          "commit": "f6d07b151ee0bf0e68eddcf9832dcc31b371d2d9",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f6d07b151ee0bf0e68eddcf9832dcc31b371d2d9"
         }
       ]
     },
@@ -105721,6 +106456,22 @@
         {
           "commit": "fcb5f634bf658a1e28b3dcea993321dfaa9b62f6",
           "url": "https://github.com/OmertaDev/Omerta/commit/fcb5f634bf658a1e28b3dcea993321dfaa9b62f6"
+        }
+      ]
+    },
+    {
+      "key": "Commit:fcbc21676655f914d47855a3bddbf0d637bc5dcc",
+      "type": "Commit",
+      "id": "fcbc21676655f914d47855a3bddbf0d637bc5dcc",
+      "label": "test(rc1): integrate Crew recovery and Family Law replay gates",
+      "title": "test(rc1): integrate Crew recovery and Family Law replay gates",
+      "date": "2026-09-21T07:51:16.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/fcbc21676655f914d47855a3bddbf0d637bc5dcc",
+      "provenance": [
+        {
+          "commit": "fcbc21676655f914d47855a3bddbf0d637bc5dcc",
+          "url": "https://github.com/OmertaDev/Omerta/commit/fcbc21676655f914d47855a3bddbf0d637bc5dcc"
         }
       ]
     },
@@ -113962,6 +114713,38 @@
       ]
     },
     {
+      "key": "Document:docs/release/readiness-work/crew-input-focus.md",
+      "type": "Document",
+      "id": "docs/release/readiness-work/crew-input-focus.md",
+      "label": "docs/release/readiness-work/crew-input-focus.md",
+      "documentType": "documentation",
+      "lines": 60,
+      "version": "5c3a58e1153aedf6",
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/crew-input-focus.md",
+          "line": 1,
+          "version": "5c3a58e1153aedf6"
+        }
+      ]
+    },
+    {
+      "key": "Document:docs/release/readiness-work/family-player-policy.md",
+      "type": "Document",
+      "id": "docs/release/readiness-work/family-player-policy.md",
+      "label": "docs/release/readiness-work/family-player-policy.md",
+      "documentType": "documentation",
+      "lines": 29,
+      "version": "e10e7bbf4ea0e970",
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/family-player-policy.md",
+          "line": 1,
+          "version": "e10e7bbf4ea0e970"
+        }
+      ]
+    },
+    {
       "key": "Document:docs/release/readiness-work/golden-browser-regressions.md",
       "type": "Document",
       "id": "docs/release/readiness-work/golden-browser-regressions.md",
@@ -114026,6 +114809,22 @@
       ]
     },
     {
+      "key": "Document:docs/release/readiness-work/harness-recorded-query-order.md",
+      "type": "Document",
+      "id": "docs/release/readiness-work/harness-recorded-query-order.md",
+      "label": "docs/release/readiness-work/harness-recorded-query-order.md",
+      "documentType": "documentation",
+      "lines": 20,
+      "version": "0efbe2fc4b0ddd05",
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/harness-recorded-query-order.md",
+          "line": 1,
+          "version": "0efbe2fc4b0ddd05"
+        }
+      ]
+    },
+    {
       "key": "Document:docs/release/readiness-work/harness-worker-schedule.md",
       "type": "Document",
       "id": "docs/release/readiness-work/harness-worker-schedule.md",
@@ -114054,6 +114853,22 @@
           "file": "docs/release/readiness-work/harness.md",
           "line": 1,
           "version": "9c28b9a5df562e98"
+        }
+      ]
+    },
+    {
+      "key": "Document:docs/release/readiness-work/law-player-policy.md",
+      "type": "Document",
+      "id": "docs/release/readiness-work/law-player-policy.md",
+      "label": "docs/release/readiness-work/law-player-policy.md",
+      "documentType": "documentation",
+      "lines": 16,
+      "version": "3894cf7411779674",
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/law-player-policy.md",
+          "line": 1,
+          "version": "3894cf7411779674"
         }
       ]
     },
@@ -117440,12 +118255,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 756,
-      "version": "a945e83963af8373",
+      "version": "cb2a7a94513abfc8",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "a945e83963af8373"
+          "version": "cb2a7a94513abfc8"
         }
       ]
     },
@@ -118153,6 +118968,14 @@
           "line": 5
         },
         {
+          "file": "test/rc1-family-native.js",
+          "line": 5
+        },
+        {
+          "file": "test/rc1-law-native.js",
+          "line": 5
+        },
+        {
           "file": "test/rc1-market-native.js",
           "line": 6
         },
@@ -118461,8 +119284,16 @@
           "line": 5
         },
         {
+          "file": "test/rc1-browser-toast-controls.js",
+          "line": 5
+        },
+        {
           "file": "test/rc1-golden-browser-postgres.js",
           "line": 8
+        },
+        {
+          "file": "test/rc1-golden-focus-race.js",
+          "line": 7
         },
         {
           "file": "test/rc1-mobile-postgres.js",
@@ -123364,6 +124195,9 @@
           "commit": "cf59d38d89841f799f0185d8854932fdd71f7de6"
         },
         {
+          "commit": "d012c78a1812b3c25547235788fdf65afee68f4e"
+        },
+        {
           "commit": "dc00ebd46c2bcd052c7566c1206025ab0db26c9f"
         },
         {
@@ -124010,6 +124844,9 @@
         },
         {
           "commit": "cf59d38d89841f799f0185d8854932fdd71f7de6"
+        },
+        {
+          "commit": "d012c78a1812b3c25547235788fdf65afee68f4e"
         },
         {
           "commit": "d580b9a7f0ead4d386f25c30a90905da7ee9b4ca"
@@ -124702,6 +125539,9 @@
           "commit": "cf59d38d89841f799f0185d8854932fdd71f7de6"
         },
         {
+          "commit": "d012c78a1812b3c25547235788fdf65afee68f4e"
+        },
+        {
           "commit": "d580b9a7f0ead4d386f25c30a90905da7ee9b4ca"
         },
         {
@@ -125392,6 +126232,9 @@
           "commit": "cf59d38d89841f799f0185d8854932fdd71f7de6"
         },
         {
+          "commit": "d012c78a1812b3c25547235788fdf65afee68f4e"
+        },
+        {
           "commit": "d580b9a7f0ead4d386f25c30a90905da7ee9b4ca"
         },
         {
@@ -125627,6 +126470,9 @@
         },
         {
           "commit": "c0331dd25850335421ac097e15c3907f6515cee5"
+        },
+        {
+          "commit": "d012c78a1812b3c25547235788fdf65afee68f4e"
         },
         {
           "commit": "dee7593a66b955d677656afab4516cb68edb918d"
@@ -126259,6 +127105,9 @@
           "commit": "cf59d38d89841f799f0185d8854932fdd71f7de6"
         },
         {
+          "commit": "d012c78a1812b3c25547235788fdf65afee68f4e"
+        },
+        {
           "commit": "d580b9a7f0ead4d386f25c30a90905da7ee9b4ca"
         },
         {
@@ -126575,6 +127424,9 @@
         },
         {
           "commit": "cafce218e6eb7faa6435abf236f4ecf6b601a97a"
+        },
+        {
+          "commit": "d012c78a1812b3c25547235788fdf65afee68f4e"
         },
         {
           "commit": "d641c99d15350fc9ca8f8080ba0e4f12b3d04db4"
@@ -134230,12 +135082,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "3634432020a73cd903650c524bc07214640cdb23",
+      "revision": "fcbc21676655f914d47855a3bddbf0d637bc5dcc",
       "currentBranch": "codex/rc1-readiness",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 3395,
+      "currentArtifactCount": 3413,
       "provenance": [
         {
           "file": "README.md",
@@ -163617,13 +164469,28 @@
       "type": "TestSuite",
       "id": "test/lib/rc1-browser-controls.js",
       "label": "test/lib/rc1-browser-controls.js",
-      "lines": 161,
-      "version": "89e92fec7c3e083d",
+      "lines": 170,
+      "version": "9b17e530748f23f0",
       "provenance": [
         {
           "file": "test/lib/rc1-browser-controls.js",
           "line": 1,
-          "version": "89e92fec7c3e083d"
+          "version": "9b17e530748f23f0"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/lib/rc1-focus-diagnostics.js",
+      "type": "TestSuite",
+      "id": "test/lib/rc1-focus-diagnostics.js",
+      "label": "test/lib/rc1-focus-diagnostics.js",
+      "lines": 41,
+      "version": "39b4e8a6c96d1ad4",
+      "provenance": [
+        {
+          "file": "test/lib/rc1-focus-diagnostics.js",
+          "line": 1,
+          "version": "39b4e8a6c96d1ad4"
         }
       ]
     },
@@ -164648,6 +165515,21 @@
       ]
     },
     {
+      "key": "TestSuite:test/rc1-browser-toast-controls.js",
+      "type": "TestSuite",
+      "id": "test/rc1-browser-toast-controls.js",
+      "label": "test/rc1-browser-toast-controls.js",
+      "lines": 44,
+      "version": "89a6d05fdfe0a757",
+      "provenance": [
+        {
+          "file": "test/rc1-browser-toast-controls.js",
+          "line": 1,
+          "version": "89a6d05fdfe0a757"
+        }
+      ]
+    },
+    {
       "key": "TestSuite:test/rc1-capital-lifecycle-journal.js",
       "type": "TestSuite",
       "id": "test/rc1-capital-lifecycle-journal.js",
@@ -164708,17 +165590,62 @@
       ]
     },
     {
+      "key": "TestSuite:test/rc1-family-native.js",
+      "type": "TestSuite",
+      "id": "test/rc1-family-native.js",
+      "label": "test/rc1-family-native.js",
+      "lines": 270,
+      "version": "ee6f40b2af7d404d",
+      "provenance": [
+        {
+          "file": "test/rc1-family-native.js",
+          "line": 1,
+          "version": "ee6f40b2af7d404d"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/rc1-family-policy.js",
+      "type": "TestSuite",
+      "id": "test/rc1-family-policy.js",
+      "label": "test/rc1-family-policy.js",
+      "lines": 49,
+      "version": "acf48c7ee2d6c89d",
+      "provenance": [
+        {
+          "file": "test/rc1-family-policy.js",
+          "line": 1,
+          "version": "acf48c7ee2d6c89d"
+        }
+      ]
+    },
+    {
       "key": "TestSuite:test/rc1-golden-browser-postgres.js",
       "type": "TestSuite",
       "id": "test/rc1-golden-browser-postgres.js",
       "label": "test/rc1-golden-browser-postgres.js",
-      "lines": 198,
-      "version": "1305331306507895",
+      "lines": 206,
+      "version": "c7fcc91c75a59a46",
       "provenance": [
         {
           "file": "test/rc1-golden-browser-postgres.js",
           "line": 1,
-          "version": "1305331306507895"
+          "version": "c7fcc91c75a59a46"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/rc1-golden-focus-race.js",
+      "type": "TestSuite",
+      "id": "test/rc1-golden-focus-race.js",
+      "label": "test/rc1-golden-focus-race.js",
+      "lines": 134,
+      "version": "d6ba8da41d61f7cc",
+      "provenance": [
+        {
+          "file": "test/rc1-golden-focus-race.js",
+          "line": 1,
+          "version": "d6ba8da41d61f7cc"
         }
       ]
     },
@@ -164749,6 +165676,36 @@
           "file": "test/rc1-knowledge-diagnostics.js",
           "line": 1,
           "version": "bccbf3529fad9580"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/rc1-law-native.js",
+      "type": "TestSuite",
+      "id": "test/rc1-law-native.js",
+      "label": "test/rc1-law-native.js",
+      "lines": 225,
+      "version": "b3ce0b6f0776093b",
+      "provenance": [
+        {
+          "file": "test/rc1-law-native.js",
+          "line": 1,
+          "version": "b3ce0b6f0776093b"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/rc1-law-policy.js",
+      "type": "TestSuite",
+      "id": "test/rc1-law-policy.js",
+      "label": "test/rc1-law-policy.js",
+      "lines": 58,
+      "version": "db89f86af1c5e2c9",
+      "provenance": [
+        {
+          "file": "test/rc1-law-policy.js",
+          "line": 1,
+          "version": "db89f86af1c5e2c9"
         }
       ]
     },
@@ -164974,6 +165931,21 @@
           "file": "test/rc1-native-proof.js",
           "line": 1,
           "version": "121b72acacb0d33b"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/rc1-native-query-order.js",
+      "type": "TestSuite",
+      "id": "test/rc1-native-query-order.js",
+      "label": "test/rc1-native-query-order.js",
+      "lines": 162,
+      "version": "9af98e017df243dc",
+      "provenance": [
+        {
+          "file": "test/rc1-native-query-order.js",
+          "line": 1,
+          "version": "9af98e017df243dc"
         }
       ]
     },
@@ -166437,13 +167409,13 @@
       "type": "Workflow",
       "id": ".github/workflows/rc1-recovery.yml",
       "label": ".github/workflows/rc1-recovery.yml",
-      "lines": 432,
-      "version": "5378f8465a2a0f28",
+      "lines": 468,
+      "version": "50a91159cebea8dd",
       "provenance": [
         {
           "file": ".github/workflows/rc1-recovery.yml",
           "line": 1,
-          "version": "5378f8465a2a0f28"
+          "version": "50a91159cebea8dd"
         }
       ]
     }
@@ -179600,6 +180572,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/lib/rc1-focus-diagnostics.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/lib/rc1-focus-diagnostics.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/lib/srcfiles.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -180212,6 +181193,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/rc1-browser-toast-controls.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/rc1-browser-toast-controls.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/rc1-capital-lifecycle-journal.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -180248,10 +181238,37 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/rc1-family-native.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/rc1-family-native.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/rc1-family-policy.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/rc1-family-policy.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/rc1-golden-browser-postgres.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "test/rc1-golden-browser-postgres.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/rc1-golden-focus-race.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/rc1-golden-focus-race.js",
         "line": 1
       }
     },
@@ -180270,6 +181287,24 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "test/rc1-knowledge-diagnostics.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/rc1-law-native.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/rc1-law-native.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/rc1-law-policy.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/rc1-law-policy.js",
         "line": 1
       }
     },
@@ -180405,6 +181440,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "test/rc1-native-proof.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/rc1-native-query-order.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/rc1-native-query-order.js",
         "line": 1
       }
     },
@@ -181913,10 +182957,28 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:tools/rc1-family-policy.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/rc1-family-policy.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:tools/rc1-knowledge-diagnostics.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "tools/rc1-knowledge-diagnostics.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/rc1-law-policy.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/rc1-law-policy.js",
         "line": 1
       }
     },
@@ -211568,6 +212630,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:339987b96ea8797801de22b8d693919e4dbac6c4",
+      "to": "Artifact:docs/release/readiness-work/harness-recorded-query-order.md",
+      "provenance": {
+        "commit": "339987b96ea8797801de22b8d693919e4dbac6c4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:339987b96ea8797801de22b8d693919e4dbac6c4",
+      "to": "Artifact:test/rc1-native-query-order.js",
+      "provenance": {
+        "commit": "339987b96ea8797801de22b8d693919e4dbac6c4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:339987b96ea8797801de22b8d693919e4dbac6c4",
+      "to": "Artifact:tools/rc1-native-query-order.js",
+      "provenance": {
+        "commit": "339987b96ea8797801de22b8d693919e4dbac6c4"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:33abbf6c854f6cc832cbb745b6b0135df27164ad",
       "to": "Artifact:package-lock.json",
       "provenance": {
@@ -211908,6 +212994,38 @@
       "to": "Artifact:test/events.js",
       "provenance": {
         "commit": "34dea53b58283ada866d17bd0300165a397334c4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:34fc14a998e4c13698fcac2750a844566ef527a3",
+      "to": "Artifact:docs/release/readiness-work/law-player-policy.md",
+      "provenance": {
+        "commit": "34fc14a998e4c13698fcac2750a844566ef527a3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:34fc14a998e4c13698fcac2750a844566ef527a3",
+      "to": "Artifact:test/rc1-law-native.js",
+      "provenance": {
+        "commit": "34fc14a998e4c13698fcac2750a844566ef527a3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:34fc14a998e4c13698fcac2750a844566ef527a3",
+      "to": "Artifact:test/rc1-law-policy.js",
+      "provenance": {
+        "commit": "34fc14a998e4c13698fcac2750a844566ef527a3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:34fc14a998e4c13698fcac2750a844566ef527a3",
+      "to": "Artifact:tools/rc1-law-policy.js",
+      "provenance": {
+        "commit": "34fc14a998e4c13698fcac2750a844566ef527a3"
       }
     },
     {
@@ -217704,6 +218822,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:3eee474406ef7867ad140e0590b5a54e98173ea6",
+      "to": "Artifact:docs/release/readiness-work/family-player-policy.md",
+      "provenance": {
+        "commit": "3eee474406ef7867ad140e0590b5a54e98173ea6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3eee474406ef7867ad140e0590b5a54e98173ea6",
+      "to": "Artifact:test/rc1-family-native.js",
+      "provenance": {
+        "commit": "3eee474406ef7867ad140e0590b5a54e98173ea6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3eee474406ef7867ad140e0590b5a54e98173ea6",
+      "to": "Artifact:test/rc1-family-policy.js",
+      "provenance": {
+        "commit": "3eee474406ef7867ad140e0590b5a54e98173ea6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3eee474406ef7867ad140e0590b5a54e98173ea6",
+      "to": "Artifact:tools/rc1-family-policy.js",
+      "provenance": {
+        "commit": "3eee474406ef7867ad140e0590b5a54e98173ea6"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:3ef93c8201ce144f3ed8ddc60b2a4d1b2a6cb7b6",
       "to": "Artifact:CLAUDE.md",
       "provenance": {
@@ -219456,6 +220606,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:426facf2b25101e7d00cde0c1c979e0a81c3a89a",
+      "to": "Artifact:docs/release/readiness-work/crew-input-focus.md",
+      "provenance": {
+        "commit": "426facf2b25101e7d00cde0c1c979e0a81c3a89a"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:4302d5d37ffc4b486a1d7dbad357f95c16488eee",
       "to": "Artifact:public/admin.html",
       "provenance": {
@@ -219572,6 +220730,14 @@
       "to": "Artifact:test/routes.js",
       "provenance": {
         "commit": "437f5ebc6364cebf0c579067dd910db500309658"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4386a79cd019c9cf71fe1a793324f48d204d6a29",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "4386a79cd019c9cf71fe1a793324f48d204d6a29"
       }
     },
     {
@@ -219772,6 +220938,14 @@
       "to": "Artifact:src/verify.js",
       "provenance": {
         "commit": "43b621b557e7b1fa66b7bb41ed572c4ae0cf4afa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:43b86f77d68e0e371a5de100aa6537815044ee65",
+      "to": "Artifact:test/rc1-golden-focus-race.js",
+      "provenance": {
+        "commit": "43b86f77d68e0e371a5de100aa6537815044ee65"
       }
     },
     {
@@ -236656,6 +237830,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:67dd21659d7c1029b3cbc3e8a95e6d5a9807f40a",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "67dd21659d7c1029b3cbc3e8a95e6d5a9807f40a"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:67df77190091ef341cc1f409e947b6a740a33c3d",
       "to": "Artifact:AUDIT-port-step-two.md",
       "provenance": {
@@ -245328,6 +246510,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:772a3af89f6541f8fca34d532b667294eb075d42",
+      "to": "Artifact:test/lib/rc1-focus-diagnostics.js",
+      "provenance": {
+        "commit": "772a3af89f6541f8fca34d532b667294eb075d42"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:772a3af89f6541f8fca34d532b667294eb075d42",
+      "to": "Artifact:test/rc1-golden-browser-postgres.js",
+      "provenance": {
+        "commit": "772a3af89f6541f8fca34d532b667294eb075d42"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:773018c801581b50b27882e3171e9536c6ca46e6",
       "to": "Artifact:src/auction.js",
       "provenance": {
@@ -253128,6 +254326,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:8cda370f2f93e3bc6b1a4f1c571d648db2ea4253",
+      "to": "Artifact:test/rc1-golden-focus-race.js",
+      "provenance": {
+        "commit": "8cda370f2f93e3bc6b1a4f1c571d648db2ea4253"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9",
       "to": "HistoricalArtifact:knowledge/generated/documents.md",
       "provenance": {
@@ -260748,6 +261954,22 @@
       "to": "Artifact:test/port.js",
       "provenance": {
         "commit": "a123495f797356b6d2e1e6583b4037e9beec2d21"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a16310dcedf52fb7d28da87547ce1d4067a8a61a",
+      "to": "Artifact:docs/release/readiness-work/law-player-policy.md",
+      "provenance": {
+        "commit": "a16310dcedf52fb7d28da87547ce1d4067a8a61a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a16310dcedf52fb7d28da87547ce1d4067a8a61a",
+      "to": "Artifact:test/rc1-law-policy.js",
+      "provenance": {
+        "commit": "a16310dcedf52fb7d28da87547ce1d4067a8a61a"
       }
     },
     {
@@ -278216,6 +279438,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:cf76729ddf0ecd420bc6d1ab826298e1b8a1a1f2",
+      "to": "Artifact:docs/release/readiness-work/crew-input-focus.md",
+      "provenance": {
+        "commit": "cf76729ddf0ecd420bc6d1ab826298e1b8a1a1f2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:cf76729ddf0ecd420bc6d1ab826298e1b8a1a1f2",
+      "to": "Artifact:test/rc1-golden-focus-race.js",
+      "provenance": {
+        "commit": "cf76729ddf0ecd420bc6d1ab826298e1b8a1a1f2"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:cfc727c4634afa5f7b6d148209e784e33fd995d6",
       "to": "Artifact:SPEC.md",
       "provenance": {
@@ -278228,6 +279466,62 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "commit": "cfc727c4634afa5f7b6d148209e784e33fd995d6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d012c78a1812b3c25547235788fdf65afee68f4e",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "d012c78a1812b3c25547235788fdf65afee68f4e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d012c78a1812b3c25547235788fdf65afee68f4e",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "d012c78a1812b3c25547235788fdf65afee68f4e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d012c78a1812b3c25547235788fdf65afee68f4e",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "d012c78a1812b3c25547235788fdf65afee68f4e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d012c78a1812b3c25547235788fdf65afee68f4e",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "d012c78a1812b3c25547235788fdf65afee68f4e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d012c78a1812b3c25547235788fdf65afee68f4e",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "d012c78a1812b3c25547235788fdf65afee68f4e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d012c78a1812b3c25547235788fdf65afee68f4e",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "d012c78a1812b3c25547235788fdf65afee68f4e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d012c78a1812b3c25547235788fdf65afee68f4e",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "d012c78a1812b3c25547235788fdf65afee68f4e"
       }
     },
     {
@@ -280624,6 +281918,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:d757217e9841ee0f7813543aecd3ddb81e335cd1",
+      "to": "Artifact:docs/release/readiness-work/crew-input-focus.md",
+      "provenance": {
+        "commit": "d757217e9841ee0f7813543aecd3ddb81e335cd1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d757217e9841ee0f7813543aecd3ddb81e335cd1",
+      "to": "Artifact:test/lib/rc1-browser-controls.js",
+      "provenance": {
+        "commit": "d757217e9841ee0f7813543aecd3ddb81e335cd1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d757217e9841ee0f7813543aecd3ddb81e335cd1",
+      "to": "Artifact:test/rc1-browser-toast-controls.js",
+      "provenance": {
+        "commit": "d757217e9841ee0f7813543aecd3ddb81e335cd1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d757217e9841ee0f7813543aecd3ddb81e335cd1",
+      "to": "Artifact:test/rc1-golden-focus-race.js",
+      "provenance": {
+        "commit": "d757217e9841ee0f7813543aecd3ddb81e335cd1"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:d75d335aa29204d337826cb85898af558ba10311",
       "to": "Artifact:omerta-transport-depth-design.md",
       "provenance": {
@@ -282884,6 +284210,14 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "commit": "dcbd7a5b94eb92a8553cfed27e04b4121eb8ac09"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:dcf280e59b1123eba3deef2e7471e704b6cc9a34",
+      "to": "Artifact:test/rc1-golden-focus-race.js",
+      "provenance": {
+        "commit": "dcf280e59b1123eba3deef2e7471e704b6cc9a34"
       }
     },
     {
@@ -293592,6 +294926,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:f45325eef8c2b4bcd701b3fc5cf27dc2edf277a1",
+      "to": "Artifact:test/rc1-browser-toast-controls.js",
+      "provenance": {
+        "commit": "f45325eef8c2b4bcd701b3fc5cf27dc2edf277a1"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:f4723c7d70c7d376571f834a3b2e208c6379b7ef",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -294084,6 +295426,22 @@
       "to": "Artifact:omerta-contracts/test/AcquisitionConstellationTask1.t.sol",
       "provenance": {
         "commit": "f6a21dccdec05a0fff3454b75f6893a4ab628f3f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f6d07b151ee0bf0e68eddcf9832dcc31b371d2d9",
+      "to": "Artifact:docs/release/readiness-work/family-player-policy.md",
+      "provenance": {
+        "commit": "f6d07b151ee0bf0e68eddcf9832dcc31b371d2d9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f6d07b151ee0bf0e68eddcf9832dcc31b371d2d9",
+      "to": "Artifact:test/rc1-family-policy.js",
+      "provenance": {
+        "commit": "f6d07b151ee0bf0e68eddcf9832dcc31b371d2d9"
       }
     },
     {
@@ -295980,6 +297338,102 @@
       "to": "Artifact:tools/invites.md",
       "provenance": {
         "commit": "fcb5f634bf658a1e28b3dcea993321dfaa9b62f6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fcbc21676655f914d47855a3bddbf0d637bc5dcc",
+      "to": "Artifact:.github/workflows/rc1-recovery.yml",
+      "provenance": {
+        "commit": "fcbc21676655f914d47855a3bddbf0d637bc5dcc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fcbc21676655f914d47855a3bddbf0d637bc5dcc",
+      "to": "Artifact:docs/release/readiness-work/gate-registry.json",
+      "provenance": {
+        "commit": "fcbc21676655f914d47855a3bddbf0d637bc5dcc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fcbc21676655f914d47855a3bddbf0d637bc5dcc",
+      "to": "Artifact:docs/release/readiness-work/golden-focus-summary.json",
+      "provenance": {
+        "commit": "fcbc21676655f914d47855a3bddbf0d637bc5dcc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fcbc21676655f914d47855a3bddbf0d637bc5dcc",
+      "to": "Artifact:docs/release/readiness-work/harness-query-order-causal-results.json",
+      "provenance": {
+        "commit": "fcbc21676655f914d47855a3bddbf0d637bc5dcc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fcbc21676655f914d47855a3bddbf0d637bc5dcc",
+      "to": "Artifact:docs/release/readiness-work/hosted-fcaa6076-results.json",
+      "provenance": {
+        "commit": "fcbc21676655f914d47855a3bddbf0d637bc5dcc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fcbc21676655f914d47855a3bddbf0d637bc5dcc",
+      "to": "Artifact:docs/release/readiness-work/integrated-d012c78a-results.json",
+      "provenance": {
+        "commit": "fcbc21676655f914d47855a3bddbf0d637bc5dcc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fcbc21676655f914d47855a3bddbf0d637bc5dcc",
+      "to": "Artifact:docs/release/readiness-work/open-proofs.json",
+      "provenance": {
+        "commit": "fcbc21676655f914d47855a3bddbf0d637bc5dcc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fcbc21676655f914d47855a3bddbf0d637bc5dcc",
+      "to": "Artifact:docs/release/readiness-work/render-observation.json",
+      "provenance": {
+        "commit": "fcbc21676655f914d47855a3bddbf0d637bc5dcc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fcbc21676655f914d47855a3bddbf0d637bc5dcc",
+      "to": "Artifact:docs/release/readiness-work/scenario-manifest.json",
+      "provenance": {
+        "commit": "fcbc21676655f914d47855a3bddbf0d637bc5dcc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fcbc21676655f914d47855a3bddbf0d637bc5dcc",
+      "to": "Artifact:docs/release/readiness-work/tooling-repairs.json",
+      "provenance": {
+        "commit": "fcbc21676655f914d47855a3bddbf0d637bc5dcc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fcbc21676655f914d47855a3bddbf0d637bc5dcc",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "fcbc21676655f914d47855a3bddbf0d637bc5dcc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fcbc21676655f914d47855a3bddbf0d637bc5dcc",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "fcbc21676655f914d47855a3bddbf0d637bc5dcc"
       }
     },
     {
@@ -309753,9 +311207,27 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/crew-input-focus.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/crew-input-focus.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:docs/release/readiness-work/expanded-native-results.json",
       "provenance": {
         "file": "docs/release/readiness-work/expanded-native-results.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/family-player-policy.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/family-player-policy.md",
         "line": 1
       }
     },
@@ -309783,6 +311255,15 @@
       "to": "Artifact:docs/release/readiness-work/golden-browser-regressions.md",
       "provenance": {
         "file": "docs/release/readiness-work/golden-browser-regressions.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/golden-focus-summary.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/golden-focus-summary.json",
         "line": 1
       }
     },
@@ -309843,6 +311324,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/harness-query-order-causal-results.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/harness-query-order-causal-results.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:docs/release/readiness-work/harness-quiet-90day-artifact-index.json",
       "provenance": {
         "file": "docs/release/readiness-work/harness-quiet-90day-artifact-index.json",
@@ -309864,6 +311354,15 @@
       "to": "Artifact:docs/release/readiness-work/harness-quiet-90day-regression-results.json",
       "provenance": {
         "file": "docs/release/readiness-work/harness-quiet-90day-regression-results.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/harness-recorded-query-order.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/harness-recorded-query-order.md",
         "line": 1
       }
     },
@@ -309933,6 +311432,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/hosted-fcaa6076-results.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/hosted-fcaa6076-results.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:docs/release/readiness-work/integrated-09119b29-results.json",
       "provenance": {
         "file": "docs/release/readiness-work/integrated-09119b29-results.json",
@@ -309960,9 +311468,27 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/integrated-d012c78a-results.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/integrated-d012c78a-results.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:docs/release/readiness-work/integrated-fcaa6076-results.json",
       "provenance": {
         "file": "docs/release/readiness-work/integrated-fcaa6076-results.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/law-player-policy.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/law-player-policy.md",
         "line": 1
       }
     },
@@ -314100,6 +315626,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/lib/rc1-focus-diagnostics.js",
+      "provenance": {
+        "file": "test/lib/rc1-focus-diagnostics.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/lib/srcfiles.js",
       "provenance": {
         "file": "test/lib/srcfiles.js",
@@ -314712,6 +316247,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/rc1-browser-toast-controls.js",
+      "provenance": {
+        "file": "test/rc1-browser-toast-controls.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/rc1-capital-lifecycle-journal.js",
       "provenance": {
         "file": "test/rc1-capital-lifecycle-journal.js",
@@ -314748,9 +316292,36 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/rc1-family-native.js",
+      "provenance": {
+        "file": "test/rc1-family-native.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/rc1-family-policy.js",
+      "provenance": {
+        "file": "test/rc1-family-policy.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/rc1-golden-browser-postgres.js",
       "provenance": {
         "file": "test/rc1-golden-browser-postgres.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/rc1-golden-focus-race.js",
+      "provenance": {
+        "file": "test/rc1-golden-focus-race.js",
         "line": 1
       }
     },
@@ -314769,6 +316340,24 @@
       "to": "Artifact:test/rc1-knowledge-diagnostics.js",
       "provenance": {
         "file": "test/rc1-knowledge-diagnostics.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/rc1-law-native.js",
+      "provenance": {
+        "file": "test/rc1-law-native.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/rc1-law-policy.js",
+      "provenance": {
+        "file": "test/rc1-law-policy.js",
         "line": 1
       }
     },
@@ -314904,6 +316493,15 @@
       "to": "Artifact:test/rc1-native-proof.js",
       "provenance": {
         "file": "test/rc1-native-proof.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/rc1-native-query-order.js",
+      "provenance": {
+        "file": "test/rc1-native-query-order.js",
         "line": 1
       }
     },
@@ -316413,9 +318011,27 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:tools/rc1-family-policy.js",
+      "provenance": {
+        "file": "tools/rc1-family-policy.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:tools/rc1-knowledge-diagnostics.js",
       "provenance": {
         "file": "tools/rc1-knowledge-diagnostics.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/rc1-law-policy.js",
+      "provenance": {
+        "file": "tools/rc1-law-policy.js",
         "line": 1
       }
     },
@@ -328717,6 +330333,15 @@
     {
       "type": "DECLARES",
       "from": "Artifact:package.json",
+      "to": "Command:npm:test:rc1:crew-focus:postgres",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
       "to": "Command:npm:test:rc1:database:postgres",
       "provenance": {
         "file": "package.json",
@@ -328727,6 +330352,24 @@
       "type": "DECLARES",
       "from": "Artifact:package.json",
       "to": "Command:npm:test:rc1:escrow:postgres",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
+      "to": "Command:npm:test:rc1:family-fragmented:postgres",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
+      "to": "Command:npm:test:rc1:family-monopoly:postgres",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -328772,6 +330415,15 @@
       "type": "DECLARES",
       "from": "Artifact:package.json",
       "to": "Command:npm:test:rc1:knowledge:postgres",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
+      "to": "Command:npm:test:rc1:law:postgres",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -328862,6 +330514,15 @@
       "type": "DECLARES",
       "from": "Artifact:package.json",
       "to": "Command:npm:test:rc1:proof:postgres",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
+      "to": "Command:npm:test:rc1:query-order:postgres",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -340415,7 +342076,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:economy-ledger",
-      "weight": 194
+      "weight": 197
     },
     {
       "type": "DEPENDS_ON",
@@ -340439,7 +342100,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 954
+      "weight": 958
     },
     {
       "type": "DEPENDS_ON",
@@ -340463,7 +342124,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:world-progression",
-      "weight": 32
+      "weight": 33
     },
     {
       "type": "DEPENDS_ON",
@@ -344496,6 +346157,15 @@
     },
     {
       "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:crew-focus:postgres",
+      "to": "Artifact:test/rc1-golden-focus-race.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
       "from": "Command:npm:test:rc1:database:postgres",
       "to": "Artifact:test/rc1-native-database.js",
       "provenance": {
@@ -344507,6 +346177,24 @@
       "type": "EXECUTES",
       "from": "Command:npm:test:rc1:escrow:postgres",
       "to": "Artifact:tools/rc1-resource-escrow.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:family-fragmented:postgres",
+      "to": "Artifact:test/rc1-family-native.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:family-monopoly:postgres",
+      "to": "Artifact:test/rc1-family-native.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -344560,6 +346248,15 @@
     {
       "type": "EXECUTES",
       "from": "Command:npm:test:rc1:harness",
+      "to": "Artifact:test/rc1-browser-toast-controls.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:harness",
       "to": "Artifact:test/rc1-capital-lifecycle-journal.js",
       "provenance": {
         "file": "package.json",
@@ -344578,7 +346275,25 @@
     {
       "type": "EXECUTES",
       "from": "Command:npm:test:rc1:harness",
+      "to": "Artifact:test/rc1-family-policy.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:harness",
       "to": "Artifact:test/rc1-knowledge-diagnostics.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:harness",
+      "to": "Artifact:test/rc1-law-policy.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -344642,6 +346357,15 @@
       "type": "EXECUTES",
       "from": "Command:npm:test:rc1:harness",
       "to": "Artifact:test/rc1-native-proof.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:harness",
+      "to": "Artifact:test/rc1-native-query-order.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -344714,6 +346438,15 @@
       "type": "EXECUTES",
       "from": "Command:npm:test:rc1:knowledge:postgres",
       "to": "Artifact:test/rc1-knowledge-diagnostics.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:law:postgres",
+      "to": "Artifact:test/rc1-law-native.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -344822,6 +346555,15 @@
       "type": "EXECUTES",
       "from": "Command:npm:test:rc1:proof:postgres",
       "to": "Artifact:test/rc1-native-proof.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:query-order:postgres",
+      "to": "Artifact:test/rc1-native-query-order.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -354950,6 +356692,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:339987b96ea8797801de22b8d693919e4dbac6c4",
+      "provenance": {
+        "commit": "339987b96ea8797801de22b8d693919e4dbac6c4"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:33abbf6c854f6cc832cbb745b6b0135df27164ad",
       "provenance": {
         "commit": "33abbf6c854f6cc832cbb745b6b0135df27164ad"
@@ -355025,6 +356775,14 @@
       "to": "Commit:34dea53b58283ada866d17bd0300165a397334c4",
       "provenance": {
         "commit": "34dea53b58283ada866d17bd0300165a397334c4"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:34fc14a998e4c13698fcac2750a844566ef527a3",
+      "provenance": {
+        "commit": "34fc14a998e4c13698fcac2750a844566ef527a3"
       }
     },
     {
@@ -355662,6 +357420,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:3eee474406ef7867ad140e0590b5a54e98173ea6",
+      "provenance": {
+        "commit": "3eee474406ef7867ad140e0590b5a54e98173ea6"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:3ef93c8201ce144f3ed8ddc60b2a4d1b2a6cb7b6",
       "provenance": {
         "commit": "3ef93c8201ce144f3ed8ddc60b2a4d1b2a6cb7b6"
@@ -355902,6 +357668,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:426facf2b25101e7d00cde0c1c979e0a81c3a89a",
+      "provenance": {
+        "commit": "426facf2b25101e7d00cde0c1c979e0a81c3a89a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:4302d5d37ffc4b486a1d7dbad357f95c16488eee",
       "provenance": {
         "commit": "4302d5d37ffc4b486a1d7dbad357f95c16488eee"
@@ -355921,6 +357695,14 @@
       "to": "Commit:437f5ebc6364cebf0c579067dd910db500309658",
       "provenance": {
         "commit": "437f5ebc6364cebf0c579067dd910db500309658"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:4386a79cd019c9cf71fe1a793324f48d204d6a29",
+      "provenance": {
+        "commit": "4386a79cd019c9cf71fe1a793324f48d204d6a29"
       }
     },
     {
@@ -355953,6 +357735,14 @@
       "to": "Commit:43b621b557e7b1fa66b7bb41ed572c4ae0cf4afa",
       "provenance": {
         "commit": "43b621b557e7b1fa66b7bb41ed572c4ae0cf4afa"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:43b86f77d68e0e371a5de100aa6537815044ee65",
+      "provenance": {
+        "commit": "43b86f77d68e0e371a5de100aa6537815044ee65"
       }
     },
     {
@@ -357758,6 +359548,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:67dd21659d7c1029b3cbc3e8a95e6d5a9807f40a",
+      "provenance": {
+        "commit": "67dd21659d7c1029b3cbc3e8a95e6d5a9807f40a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:67df77190091ef341cc1f409e947b6a740a33c3d",
       "provenance": {
         "commit": "67df77190091ef341cc1f409e947b6a740a33c3d"
@@ -358521,6 +360319,14 @@
       "to": "Commit:7722e7001811ffc162ee3c3fdd51fd4a683a014a",
       "provenance": {
         "commit": "7722e7001811ffc162ee3c3fdd51fd4a683a014a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:772a3af89f6541f8fca34d532b667294eb075d42",
+      "provenance": {
+        "commit": "772a3af89f6541f8fca34d532b667294eb075d42"
       }
     },
     {
@@ -359718,6 +361524,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:8cda370f2f93e3bc6b1a4f1c571d648db2ea4253",
+      "provenance": {
+        "commit": "8cda370f2f93e3bc6b1a4f1c571d648db2ea4253"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9",
       "provenance": {
         "commit": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9"
@@ -360809,6 +362623,14 @@
       "to": "Commit:a123495f797356b6d2e1e6583b4037e9beec2d21",
       "provenance": {
         "commit": "a123495f797356b6d2e1e6583b4037e9beec2d21"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:a16310dcedf52fb7d28da87547ce1d4067a8a61a",
+      "provenance": {
+        "commit": "a16310dcedf52fb7d28da87547ce1d4067a8a61a"
       }
     },
     {
@@ -363102,9 +364924,25 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:cf76729ddf0ecd420bc6d1ab826298e1b8a1a1f2",
+      "provenance": {
+        "commit": "cf76729ddf0ecd420bc6d1ab826298e1b8a1a1f2"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:cfc727c4634afa5f7b6d148209e784e33fd995d6",
       "provenance": {
         "commit": "cfc727c4634afa5f7b6d148209e784e33fd995d6"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:d012c78a1812b3c25547235788fdf65afee68f4e",
+      "provenance": {
+        "commit": "d012c78a1812b3c25547235788fdf65afee68f4e"
       }
     },
     {
@@ -363377,6 +365215,14 @@
       "to": "Commit:d71886f8352fcff3f5bbc2cb1f138957d0906dfa",
       "provenance": {
         "commit": "d71886f8352fcff3f5bbc2cb1f138957d0906dfa"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:d757217e9841ee0f7813543aecd3ddb81e335cd1",
+      "provenance": {
+        "commit": "d757217e9841ee0f7813543aecd3ddb81e335cd1"
       }
     },
     {
@@ -363665,6 +365511,14 @@
       "to": "Commit:dcbd7a5b94eb92a8553cfed27e04b4121eb8ac09",
       "provenance": {
         "commit": "dcbd7a5b94eb92a8553cfed27e04b4121eb8ac09"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:dcf280e59b1123eba3deef2e7471e704b6cc9a34",
+      "provenance": {
+        "commit": "dcf280e59b1123eba3deef2e7471e704b6cc9a34"
       }
     },
     {
@@ -364758,6 +366612,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:f45325eef8c2b4bcd701b3fc5cf27dc2edf277a1",
+      "provenance": {
+        "commit": "f45325eef8c2b4bcd701b3fc5cf27dc2edf277a1"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:f4723c7d70c7d376571f834a3b2e208c6379b7ef",
       "provenance": {
         "commit": "f4723c7d70c7d376571f834a3b2e208c6379b7ef"
@@ -364865,6 +366727,14 @@
       "to": "Commit:f6a21dccdec05a0fff3454b75f6893a4ab628f3f",
       "provenance": {
         "commit": "f6a21dccdec05a0fff3454b75f6893a4ab628f3f"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:f6d07b151ee0bf0e68eddcf9832dcc31b371d2d9",
+      "provenance": {
+        "commit": "f6d07b151ee0bf0e68eddcf9832dcc31b371d2d9"
       }
     },
     {
@@ -365129,6 +366999,14 @@
       "to": "Commit:fcb5f634bf658a1e28b3dcea993321dfaa9b62f6",
       "provenance": {
         "commit": "fcb5f634bf658a1e28b3dcea993321dfaa9b62f6"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:fcbc21676655f914d47855a3bddbf0d637bc5dcc",
+      "provenance": {
+        "commit": "fcbc21676655f914d47855a3bddbf0d637bc5dcc"
       }
     },
     {
@@ -386138,6 +388016,24 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:test/rc1-browser-toast-controls.js",
+      "to": "Artifact:test/lib/rc1-browser-controls.js",
+      "provenance": {
+        "file": "test/rc1-browser-toast-controls.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-browser-toast-controls.js",
+      "to": "ExternalDependency:playwright-core",
+      "provenance": {
+        "file": "test/rc1-browser-toast-controls.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:test/rc1-capital-lifecycle-journal.js",
       "to": "Artifact:tools/rc1-capital-lifecycle-journal.js",
       "provenance": {
@@ -386336,6 +388232,105 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:test/rc1-family-native.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "test/rc1-family-native.js",
+        "line": 51
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-family-native.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/rc1-family-native.js",
+        "line": 51
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-family-native.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "test/rc1-family-native.js",
+        "line": 51
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-family-native.js",
+      "to": "Artifact:tools/rc1-family-policy.js",
+      "provenance": {
+        "file": "test/rc1-family-native.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-family-native.js",
+      "to": "Artifact:tools/rc1-native-database.js",
+      "provenance": {
+        "file": "test/rc1-family-native.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-family-native.js",
+      "to": "Artifact:tools/rc1-native-determinism.js",
+      "provenance": {
+        "file": "test/rc1-family-native.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-family-native.js",
+      "to": "Artifact:tools/rc1-native-proof.js",
+      "provenance": {
+        "file": "test/rc1-family-native.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-family-native.js",
+      "to": "Artifact:tools/rc1-native-worker.js",
+      "provenance": {
+        "file": "test/rc1-family-native.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-family-native.js",
+      "to": "Artifact:tools/rc1-world-resource-observer.js",
+      "provenance": {
+        "file": "test/rc1-family-native.js",
+        "line": 51
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-family-native.js",
+      "to": "ExternalDependency:pg",
+      "provenance": {
+        "file": "test/rc1-family-native.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-family-policy.js",
+      "to": "Artifact:tools/rc1-family-policy.js",
+      "provenance": {
+        "file": "test/rc1-family-policy.js",
+        "line": 2
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:test/rc1-golden-browser-postgres.js",
       "to": "Artifact:src/content/dock-war.js",
       "provenance": {
@@ -386349,7 +388344,7 @@
       "to": "Artifact:src/coordination/operation-invariants.js",
       "provenance": {
         "file": "test/rc1-golden-browser-postgres.js",
-        "line": 16
+        "line": 17
       }
     },
     {
@@ -386385,7 +388380,7 @@
       "to": "Artifact:src/world-kernel-invariants.js",
       "provenance": {
         "file": "test/rc1-golden-browser-postgres.js",
-        "line": 15
+        "line": 16
       }
     },
     {
@@ -386394,7 +388389,7 @@
       "to": "Artifact:test/lib/director-support.js",
       "provenance": {
         "file": "test/rc1-golden-browser-postgres.js",
-        "line": 22
+        "line": 23
       }
     },
     {
@@ -386403,7 +388398,7 @@
       "to": "Artifact:test/lib/player-command-support.js",
       "provenance": {
         "file": "test/rc1-golden-browser-postgres.js",
-        "line": 23
+        "line": 24
       }
     },
     {
@@ -386418,10 +388413,19 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/rc1-golden-browser-postgres.js",
-      "to": "Artifact:tools/rc1-native-proof.js",
+      "to": "Artifact:test/lib/rc1-focus-diagnostics.js",
       "provenance": {
         "file": "test/rc1-golden-browser-postgres.js",
         "line": 14
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-golden-browser-postgres.js",
+      "to": "Artifact:tools/rc1-native-proof.js",
+      "provenance": {
+        "file": "test/rc1-golden-browser-postgres.js",
+        "line": 15
       }
     },
     {
@@ -386431,6 +388435,51 @@
       "provenance": {
         "file": "test/rc1-golden-browser-postgres.js",
         "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-golden-focus-race.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "test/rc1-golden-focus-race.js",
+        "line": 15
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-golden-focus-race.js",
+      "to": "Artifact:test/lib/director-support.js",
+      "provenance": {
+        "file": "test/rc1-golden-focus-race.js",
+        "line": 15
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-golden-focus-race.js",
+      "to": "Artifact:test/lib/rc1-browser-controls.js",
+      "provenance": {
+        "file": "test/rc1-golden-focus-race.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-golden-focus-race.js",
+      "to": "Artifact:test/lib/rc1-focus-diagnostics.js",
+      "provenance": {
+        "file": "test/rc1-golden-focus-race.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-golden-focus-race.js",
+      "to": "ExternalDependency:playwright-core",
+      "provenance": {
+        "file": "test/rc1-golden-focus-race.js",
+        "line": 7
       }
     },
     {
@@ -386557,6 +388606,96 @@
       "provenance": {
         "file": "test/rc1-knowledge-diagnostics.js",
         "line": 34
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-law-native.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "test/rc1-law-native.js",
+        "line": 54
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-law-native.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "test/rc1-law-native.js",
+        "line": 54
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-law-native.js",
+      "to": "Artifact:tools/rc1-law-policy.js",
+      "provenance": {
+        "file": "test/rc1-law-native.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-law-native.js",
+      "to": "Artifact:tools/rc1-native-database.js",
+      "provenance": {
+        "file": "test/rc1-law-native.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-law-native.js",
+      "to": "Artifact:tools/rc1-native-determinism.js",
+      "provenance": {
+        "file": "test/rc1-law-native.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-law-native.js",
+      "to": "Artifact:tools/rc1-native-proof.js",
+      "provenance": {
+        "file": "test/rc1-law-native.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-law-native.js",
+      "to": "Artifact:tools/rc1-native-worker.js",
+      "provenance": {
+        "file": "test/rc1-law-native.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-law-native.js",
+      "to": "Artifact:tools/rc1-world-resource-observer.js",
+      "provenance": {
+        "file": "test/rc1-law-native.js",
+        "line": 54
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-law-native.js",
+      "to": "ExternalDependency:pg",
+      "provenance": {
+        "file": "test/rc1-law-native.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-law-policy.js",
+      "to": "Artifact:tools/rc1-law-policy.js",
+      "provenance": {
+        "file": "test/rc1-law-policy.js",
+        "line": 2
       }
     },
     {
@@ -387268,6 +389407,69 @@
       "provenance": {
         "file": "test/rc1-native-proof.js",
         "line": 11
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-query-order.js",
+      "to": "Artifact:src/market.js",
+      "provenance": {
+        "file": "test/rc1-native-query-order.js",
+        "line": 62
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-query-order.js",
+      "to": "Artifact:src/season.js",
+      "provenance": {
+        "file": "test/rc1-native-query-order.js",
+        "line": 61
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-query-order.js",
+      "to": "Artifact:test/lib/player-command-support.js",
+      "provenance": {
+        "file": "test/rc1-native-query-order.js",
+        "line": 60
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-query-order.js",
+      "to": "Artifact:tools/rc1-native-database.js",
+      "provenance": {
+        "file": "test/rc1-native-query-order.js",
+        "line": 58
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-query-order.js",
+      "to": "Artifact:tools/rc1-native-determinism.js",
+      "provenance": {
+        "file": "test/rc1-native-query-order.js",
+        "line": 59
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-query-order.js",
+      "to": "Artifact:tools/rc1-native-proof.js",
+      "provenance": {
+        "file": "test/rc1-native-query-order.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-query-order.js",
+      "to": "Artifact:tools/rc1-native-query-order.js",
+      "provenance": {
+        "file": "test/rc1-native-query-order.js",
+        "line": 5
       }
     },
     {
@@ -420977,6 +423179,42 @@
     },
     {
       "type": "REFERENCES",
+      "from": "Artifact:docs/release/readiness-work/crew-input-focus.md",
+      "to": "Artifact:test/rc1-golden-browser-postgres.js",
+      "provenance": {
+        "file": "docs/release/readiness-work/crew-input-focus.md",
+        "line": 52
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/release/readiness-work/crew-input-focus.md",
+      "to": "Artifact:test/rc1-golden-focus-race.js",
+      "provenance": {
+        "file": "docs/release/readiness-work/crew-input-focus.md",
+        "line": 52
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/release/readiness-work/family-player-policy.md",
+      "to": "Artifact:src/rules.tail.js",
+      "provenance": {
+        "file": "docs/release/readiness-work/family-player-policy.md",
+        "line": 7
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/release/readiness-work/family-player-policy.md",
+      "to": "Artifact:src/social/gangs.js",
+      "provenance": {
+        "file": "docs/release/readiness-work/family-player-policy.md",
+        "line": 7
+      }
+    },
+    {
+      "type": "REFERENCES",
       "from": "Artifact:docs/release/readiness-work/golden-browser-regressions.md",
       "to": "Artifact:docs/release/readiness-work/golden-browser-regressions.json",
       "provenance": {
@@ -436232,6 +438470,24 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Document:docs/release/readiness-work/crew-input-focus.md",
+      "to": "Artifact:docs/release/readiness-work/crew-input-focus.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/crew-input-focus.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/release/readiness-work/family-player-policy.md",
+      "to": "Artifact:docs/release/readiness-work/family-player-policy.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/family-player-policy.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Document:docs/release/readiness-work/golden-browser-regressions.md",
       "to": "Artifact:docs/release/readiness-work/golden-browser-regressions.md",
       "provenance": {
@@ -436268,6 +438524,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Document:docs/release/readiness-work/harness-recorded-query-order.md",
+      "to": "Artifact:docs/release/readiness-work/harness-recorded-query-order.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/harness-recorded-query-order.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Document:docs/release/readiness-work/harness-worker-schedule.md",
       "to": "Artifact:docs/release/readiness-work/harness-worker-schedule.md",
       "provenance": {
@@ -436281,6 +438546,15 @@
       "to": "Artifact:docs/release/readiness-work/harness.md",
       "provenance": {
         "file": "docs/release/readiness-work/harness.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/release/readiness-work/law-player-policy.md",
+      "to": "Artifact:docs/release/readiness-work/law-player-policy.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/law-player-policy.md",
         "line": 1
       }
     },
@@ -442712,6 +444986,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/lib/rc1-focus-diagnostics.js",
+      "to": "Artifact:test/lib/rc1-focus-diagnostics.js",
+      "provenance": {
+        "file": "test/lib/rc1-focus-diagnostics.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/lib/srcfiles.js",
       "to": "Artifact:test/lib/srcfiles.js",
       "provenance": {
@@ -443324,6 +445607,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/rc1-browser-toast-controls.js",
+      "to": "Artifact:test/rc1-browser-toast-controls.js",
+      "provenance": {
+        "file": "test/rc1-browser-toast-controls.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/rc1-capital-lifecycle-journal.js",
       "to": "Artifact:test/rc1-capital-lifecycle-journal.js",
       "provenance": {
@@ -443360,10 +445652,37 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/rc1-family-native.js",
+      "to": "Artifact:test/rc1-family-native.js",
+      "provenance": {
+        "file": "test/rc1-family-native.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/rc1-family-policy.js",
+      "to": "Artifact:test/rc1-family-policy.js",
+      "provenance": {
+        "file": "test/rc1-family-policy.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/rc1-golden-browser-postgres.js",
       "to": "Artifact:test/rc1-golden-browser-postgres.js",
       "provenance": {
         "file": "test/rc1-golden-browser-postgres.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/rc1-golden-focus-race.js",
+      "to": "Artifact:test/rc1-golden-focus-race.js",
+      "provenance": {
+        "file": "test/rc1-golden-focus-race.js",
         "line": 1
       }
     },
@@ -443382,6 +445701,24 @@
       "to": "Artifact:test/rc1-knowledge-diagnostics.js",
       "provenance": {
         "file": "test/rc1-knowledge-diagnostics.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/rc1-law-native.js",
+      "to": "Artifact:test/rc1-law-native.js",
+      "provenance": {
+        "file": "test/rc1-law-native.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/rc1-law-policy.js",
+      "to": "Artifact:test/rc1-law-policy.js",
+      "provenance": {
+        "file": "test/rc1-law-policy.js",
         "line": 1
       }
     },
@@ -443517,6 +445854,15 @@
       "to": "Artifact:test/rc1-native-proof.js",
       "provenance": {
         "file": "test/rc1-native-proof.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/rc1-native-query-order.js",
+      "to": "Artifact:test/rc1-native-query-order.js",
+      "provenance": {
+        "file": "test/rc1-native-query-order.js",
         "line": 1
       }
     },
@@ -451694,6 +454040,33 @@
     },
     {
       "type": "TESTS",
+      "from": "Artifact:test/rc1-family-native.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "test/rc1-family-native.js",
+        "line": 51
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-family-native.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/rc1-family-native.js",
+        "line": 51
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-family-native.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "test/rc1-family-native.js",
+        "line": 51
+      }
+    },
+    {
+      "type": "TESTS",
       "from": "Artifact:test/rc1-golden-browser-postgres.js",
       "to": "Artifact:src/content/dock-war.js",
       "provenance": {
@@ -451707,7 +454080,7 @@
       "to": "Artifact:src/coordination/operation-invariants.js",
       "provenance": {
         "file": "test/rc1-golden-browser-postgres.js",
-        "line": 16
+        "line": 17
       }
     },
     {
@@ -451743,6 +454116,15 @@
       "to": "Artifact:src/world-kernel-invariants.js",
       "provenance": {
         "file": "test/rc1-golden-browser-postgres.js",
+        "line": 16
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-golden-focus-race.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "test/rc1-golden-focus-race.js",
         "line": 15
       }
     },
@@ -451825,6 +454207,24 @@
       "provenance": {
         "file": "test/rc1-knowledge-diagnostics.js",
         "line": 35
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-law-native.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "test/rc1-law-native.js",
+        "line": 54
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-law-native.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "test/rc1-law-native.js",
+        "line": 54
       }
     },
     {
@@ -452095,6 +454495,24 @@
       "provenance": {
         "file": "test/rc1-native-proof.js",
         "line": 8
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-native-query-order.js",
+      "to": "Artifact:src/market.js",
+      "provenance": {
+        "file": "test/rc1-native-query-order.js",
+        "line": 62
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-native-query-order.js",
+      "to": "Artifact:src/season.js",
+      "provenance": {
+        "file": "test/rc1-native-query-order.js",
+        "line": 61
       }
     },
     {

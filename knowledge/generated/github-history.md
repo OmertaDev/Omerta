@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `3634432020a7`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `fcbc21676655`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1629 |
+| Commits in clone | 1646 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-21 — test(rc1): register seasonal and market native lifecycle gates |
+| Latest commit | 2026-09-21 — test(rc1): integrate Crew recovery and Family Law replay gates |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 753 |
+| OmertaDev | 770 |
 | crvydev | 647 |
 | Claude | 156 |
 | CRVYDEV | 41 |
@@ -31,26 +31,26 @@
 | Path | Commits touching path | Current? |
 |---|---:|---|
 | [CLAUDE.md](../../CLAUDE.md) | 514 | yes |
-| [public/index.html](../../public/index.html) | 417 | yes |
+| [public/index.html](../../public/index.html) | 419 | yes |
 | [src/server.js](../../src/server.js) | 365 | yes |
-| [SPEC.md](../../SPEC.md) | 332 | yes |
+| [SPEC.md](../../SPEC.md) | 333 | yes |
 | [schema.sql](../../schema.sql) | 296 | yes |
 | [BALANCE.md](../../BALANCE.md) | 254 | yes |
-| knowledge/generated/github-history.md | 227 | historical |
-| knowledge/generated/graph-summary.md | 227 | historical |
-| knowledge/generated/graph.json | 227 | historical |
-| knowledge/generated/inventory.md | 227 | historical |
+| knowledge/generated/github-history.md | 228 | historical |
+| knowledge/generated/graph-summary.md | 228 | historical |
+| knowledge/generated/graph.json | 228 | historical |
+| knowledge/generated/inventory.md | 228 | historical |
+| [package.json](../../package.json) | 188 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
-| [package.json](../../package.json) | 187 | yes |
 | [src/game.js](../../src/game.js) | 177 | yes |
 | [src/worker.js](../../src/worker.js) | 126 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/invariants.js](../../src/invariants.js) | 124 | yes |
 | [test/client.js](../../test/client.js) | 117 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 117 | yes |
-| knowledge/generated/documents.md | 103 | historical |
+| knowledge/generated/documents.md | 104 | historical |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
-| knowledge/generated/modules.md | 88 | historical |
+| knowledge/generated/modules.md | 89 | historical |
 | [public/wiki.html](../../public/wiki.html) | 85 | yes |
 | [test/social.js](../../test/social.js) | 85 | yes |
 | [test/growth.js](../../test/growth.js) | 80 | yes |
@@ -60,7 +60,7 @@
 | [src/preflight.js](../../src/preflight.js) | 61 | yes |
 | [tools/sim.js](../../tools/sim.js) | 59 | yes |
 | [README.md](../../README.md) | 58 | yes |
-| knowledge/generated/graph.mmd | 56 | historical |
+| knowledge/generated/graph.mmd | 57 | historical |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 56 | yes |
 | [src/growth.js](../../src/growth.js) | 54 | yes |
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 51 | yes |

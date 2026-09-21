@@ -387,12 +387,16 @@
 | [docs/release/readiness-work/authority-legacy-review.md](../../docs/release/readiness-work/authority-legacy-review.md) | documentation | 116 | 2026-09-21 |
 | [docs/release/readiness-work/authority-role-regressions.md](../../docs/release/readiness-work/authority-role-regressions.md) | documentation | 83 | 2026-09-21 |
 | [docs/release/readiness-work/churn-player-policy.md](../../docs/release/readiness-work/churn-player-policy.md) | documentation | 34 | 2026-09-21 |
+| [docs/release/readiness-work/crew-input-focus.md](../../docs/release/readiness-work/crew-input-focus.md) | documentation | 60 | 2026-09-21 |
+| [docs/release/readiness-work/family-player-policy.md](../../docs/release/readiness-work/family-player-policy.md) | documentation | 29 | 2026-09-21 |
 | [docs/release/readiness-work/golden-browser-regressions.md](../../docs/release/readiness-work/golden-browser-regressions.md) | documentation | 25 | 2026-09-21 |
 | [docs/release/readiness-work/harness-actor-replay.md](../../docs/release/readiness-work/harness-actor-replay.md) | documentation | 75 | 2026-09-21 |
 | [docs/release/readiness-work/harness-concurrent-replay.md](../../docs/release/readiness-work/harness-concurrent-replay.md) | documentation | 57 | 2026-09-21 |
 | [docs/release/readiness-work/harness-database-isolation.md](../../docs/release/readiness-work/harness-database-isolation.md) | documentation | 39 | 2026-09-21 |
+| [docs/release/readiness-work/harness-recorded-query-order.md](../../docs/release/readiness-work/harness-recorded-query-order.md) | documentation | 20 | 2026-09-21 |
 | [docs/release/readiness-work/harness-worker-schedule.md](../../docs/release/readiness-work/harness-worker-schedule.md) | documentation | 164 | 2026-09-21 |
 | [docs/release/readiness-work/harness.md](../../docs/release/readiness-work/harness.md) | documentation | 142 | 2026-09-21 |
+| [docs/release/readiness-work/law-player-policy.md](../../docs/release/readiness-work/law-player-policy.md) | documentation | 16 | 2026-09-21 |
 | [docs/release/readiness-work/market-player-policy.md](../../docs/release/readiness-work/market-player-policy.md) | documentation | 20 | 2026-09-21 |
 | [docs/release/readiness-work/mystery-player-policies.md](../../docs/release/readiness-work/mystery-player-policies.md) | documentation | 91 | 2026-09-21 |
 | [docs/release/readiness-work/quiet-world-workload.md](../../docs/release/readiness-work/quiet-world-workload.md) | documentation | 42 | 2026-09-21 |
