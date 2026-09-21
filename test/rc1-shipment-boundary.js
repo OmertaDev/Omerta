@@ -7,7 +7,7 @@ import { installSerialRuntime, serialDatabaseOptions } from '../tools/rc1-native
 import { sourceIdentity, createProofRecorder, verifyArtifactIndex } from '../tools/rc1-native-proof.js';
 import { equation, exactSum, addedRows } from '../tools/rc1-resource-journal.js';
 import { verifyLedgerChecks } from '../tools/rc1-sim.js';
-import { withCharacter, withCharacterRead, travel } from '../src/game.js';
+import { withCharacter, readCharacter, travel } from '../src/game.js';
 import { shipmentBoard, takeShipment } from '../src/shipment.js';
 import { SHIPMENT, dayOf, shipmentDistrictOf, shipmentCityCap } from '../src/rules.js';
 import { runLedgerInvariants } from '../src/invariants.js';
@@ -19,7 +19,7 @@ const source = await sourceIdentity(), population = 18, seed = 'rc1-shipment-mid
 const epoch = '2026-09-20T23:59:59.999Z', epochMs = Date.parse(epoch);
 const proof = await createProofRecorder({ directory: path.resolve(output), source, runId: 'shipment-boundaries', seed,
   scenarioId: 'scoped-shipment-two-midnights', population, configuration: { epoch, population, seed,
-    authority: 'Unmodified withCharacter/withCharacterRead, shipmentBoard, takeShipment and travel',
+    authority: 'Unmodified withCharacter/readCharacter, shipmentBoard, takeShipment and travel',
     clock: 'Test application Date and isolated PostgreSQL transaction/statement clocks advance together',
     entryMode: 'Declared accounts with schema defaults plus 100000 cash, 10000 respect and 50 physical stats',
     workers: 'No background worker executes; no full-world or rollover claim',
@@ -78,7 +78,7 @@ async function observe(label, work, expectedGrant = 0) {
   checks.push(label); return value;
 }
 const take = (actor) => withCharacter(pool, actor, takeShipment);
-const board = (actor) => withCharacterRead(pool, actor, shipmentBoard);
+const board = (actor) => readCharacter(pool, actor, shipmentBoard);
 async function refusal(actor, code) {
   let caught;
   try { await take(actor); } catch (error) { caught = error; }
