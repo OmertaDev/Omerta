@@ -542,6 +542,35 @@
       ],
       "retest": "Independent retained-byte audit and chunk/UTF8/CRLF/malformed/truncated/duplicate/unfinished controls pass. Fresh same-source alliance observation/replay in progress; root integrated freeze pending.",
       "evidence": "Agent sourcef8976fc7; retained fc069f31 manifest hash240fc50d25aa42ca7d2a64f6e41152d86f8eebec6f9873802e88827d2f4fdc21; detailed audit handoff pending"
+    },
+    {
+      "id": "RC1-TOOL-35",
+      "classification": "D tooling integration defect",
+      "owner": "Codex/root",
+      "failedGate": "b0c85c11 fullCI35580189986/job106271028134 test/gates.js suite ledger",
+      "before": "The retained Family historical verifier has no hosted runner or precise DECLARED input requirement. CI correctly rejects the orphan. New private native reducer has the same input property on later integrated source.",
+      "repair": "Declare only the exact restricted historical inputs and source-equality requirements which prevent these two evidence reclassifiers from running in generic CI. Current native Family and pure reducer controls remain workflow-wired. New car tests receive their own native lane/pure script; inventory assertions are unchanged.",
+      "changedSource": [
+        "test/gates.js",
+        "package.json",
+        ".github/workflows/rc1-recovery.yml"
+      ],
+      "retest": "Fresh integrated static gate and full hosted CI required; no pass inherited.",
+      "evidence": "Restricted b0c85c11-ci-failed.log; hosted35580189986"
+    },
+    {
+      "id": "RC1-TOOL-36",
+      "classification": "D tooling defect",
+      "owner": "Codex/resource_proof",
+      "failedGate": "ae7df025 native OMR loan terminals after45 completed boundaries",
+      "before": "Forfeiture notification payload is PostgreSQL TEXT JSON, but observer read it as an object. Native gate failed; historical independent verifier also initially rejected six-decimal strings before exact micro-unit parsing was corrected.",
+      "repair": "Parse canonical notification TEXT before checking its fields; independently parse exact micro-units without rounding. Preserve failed artifacts and add seizure, old-receipt and due-rewrite corruption controls.",
+      "changedSource": [
+        "tools/rc1-omr-loan-journal.js",
+        "test/rc1-native-omr-loan-terminals.js"
+      ],
+      "retest": "13868736 scoped native pass47boundaries2261equations13controls;186 artifacts across all3 attempts independently verified. Root integrated rerun pending.",
+      "evidence": "omr-loan-terminal-summary.json"
     }
   ]
 }

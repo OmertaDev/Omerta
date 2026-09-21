@@ -556,3 +556,10 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:omr-loan-terminals:postgres
+      - name: Exact car salvage and listing custody with corruption controls
+        if: '!cancelled()'
+        env:
+          RC1_CAR_OUTPUT: ${{ runner.temp }}/rc1-car-journal
+        run: |
+          umask 077
+          npm run test:rc1:car-journal:postgres

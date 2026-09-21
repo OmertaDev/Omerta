@@ -9,6 +9,31 @@
   "note": "Pinned required command inventory across the four source workflows. Preserve each workflow setup, database isolation, platform, environment and budgets. A component regression pass does not clear a full native, deployed, or human proof.",
   "gates": [
     {
+      "id": "rc1-car-journal",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:car-journal:postgres"
+      ],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Exact basic salvage and list/cancel custody only. Boost, melt and worker grant/retirement identity/yield provenance remain explicit unknowns; no full resources or matrix."
+      ]
+    },
+    {
+      "id": "rc1-static-gates",
+      "command": [
+        "node",
+        "test/gates.js"
+      ],
+      "timeoutMs": 120000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Static repository safeguards only; no native, deployment or human clearance."
+      ]
+    },
+    {
       "id": "rc1-omr-loan-terminals",
       "command": [
         "npm",

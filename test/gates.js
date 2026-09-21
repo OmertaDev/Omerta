@@ -3325,6 +3325,16 @@ scopedSocialContext = async function(db) {
   // Declared: a suite the chain cannot run, each with the property that makes that true. A reason,
   // not a category — "it fails in CI" is a description of the symptom and would waive a real break.
   const DECLARED = {
+    'test/rc1-family-cash-ammo-retained.js':
+      'Reclassifies three specific historical native runs from the private RC1_RETAINED_ROOT; '
+      + 'it requires their original restricted actor snapshots, requests and artifact hashes, '
+      + 'which are not distributed to hosted CI. The current-source Family custody native '
+      + 'suite and pure journal controls are independently invoked by rc1-recovery.yml.',
+    'test/rc1-native-failure-reduction-postgres.js':
+      'Requires explicit --recorded-run and --world-failure restricted historical directories, '
+      + 'a selected standing sequence and source-tree/schema/lock equality with that recording. '
+      + 'Generic hosted CI has neither private input and must not substitute a different source. '
+      + 'The pure reducer controls run in test:rc1:harness; native trials retain separate evidence.',
     'test/contextplus.js':
       'Windows-only by construction: it spawns %SystemRoot%\\System32\\...\\powershell.exe to drive '
       + 'the ContextPlus .ps1 launcher, so on Linux `join(process.env.SystemRoot, ...)` throws before '

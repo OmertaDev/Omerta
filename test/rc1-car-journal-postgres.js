@@ -14,7 +14,7 @@ import { spawnResident, retireResident } from '../src/population.js';
 import { CONSTANTS, POPULATION } from '../src/rules.js';
 
 assert(process.argv.includes('--postgres'), 'Native PostgreSQL is mandatory');
-const output = process.argv.find(value => value.startsWith('--output='))?.slice(9); assert(output);
+const output = process.argv.find(value => value.startsWith('--output='))?.slice(9) || process.env.RC1_CAR_OUTPUT; assert(output);
 const controlUrl = process.env.COORDINATION_TEST_DATABASE_URL; assert(controlUrl);
 const source = await sourceIdentity(), epoch = '2026-09-23T23:00:00.000Z', seed = 'car-journal-native';
 const lease = planOwnedWorldDatabase({ controlUrl, runId: 'native-car-journal', sourceRevision: source.revision });
