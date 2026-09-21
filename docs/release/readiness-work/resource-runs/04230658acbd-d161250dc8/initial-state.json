@@ -1,0 +1,361 @@
+{
+  "characters": [
+    {
+      "id": "resource-actor-0-character",
+      "account_id": "resource-actor-0",
+      "cash": "5000000",
+      "bank": "0",
+      "shipment": 0,
+      "alive": true
+    },
+    {
+      "id": "resource-actor-1-character",
+      "account_id": "resource-actor-1",
+      "cash": "5000000",
+      "bank": "0",
+      "shipment": 0,
+      "alive": true
+    },
+    {
+      "id": "resource-actor-10-character",
+      "account_id": "resource-actor-10",
+      "cash": "5000000",
+      "bank": "0",
+      "shipment": 0,
+      "alive": true
+    },
+    {
+      "id": "resource-actor-11-character",
+      "account_id": "resource-actor-11",
+      "cash": "5000000",
+      "bank": "0",
+      "shipment": 0,
+      "alive": true
+    },
+    {
+      "id": "resource-actor-12-character",
+      "account_id": "resource-actor-12",
+      "cash": "5000000",
+      "bank": "0",
+      "shipment": 0,
+      "alive": true
+    },
+    {
+      "id": "resource-actor-13-character",
+      "account_id": "resource-actor-13",
+      "cash": "5000000",
+      "bank": "0",
+      "shipment": 0,
+      "alive": true
+    },
+    {
+      "id": "resource-actor-14-character",
+      "account_id": "resource-actor-14",
+      "cash": "5000000",
+      "bank": "0",
+      "shipment": 0,
+      "alive": true
+    },
+    {
+      "id": "resource-actor-15-character",
+      "account_id": "resource-actor-15",
+      "cash": "5000000",
+      "bank": "0",
+      "shipment": 0,
+      "alive": true
+    },
+    {
+      "id": "resource-actor-16-character",
+      "account_id": "resource-actor-16",
+      "cash": "5000000",
+      "bank": "0",
+      "shipment": 0,
+      "alive": true
+    },
+    {
+      "id": "resource-actor-17-character",
+      "account_id": "resource-actor-17",
+      "cash": "5000000",
+      "bank": "0",
+      "shipment": 0,
+      "alive": true
+    },
+    {
+      "id": "resource-actor-2-character",
+      "account_id": "resource-actor-2",
+      "cash": "5000000",
+      "bank": "0",
+      "shipment": 0,
+      "alive": true
+    },
+    {
+      "id": "resource-actor-3-character",
+      "account_id": "resource-actor-3",
+      "cash": "5000000",
+      "bank": "0",
+      "shipment": 0,
+      "alive": true
+    },
+    {
+      "id": "resource-actor-4-character",
+      "account_id": "resource-actor-4",
+      "cash": "5000000",
+      "bank": "0",
+      "shipment": 0,
+      "alive": true
+    },
+    {
+      "id": "resource-actor-5-character",
+      "account_id": "resource-actor-5",
+      "cash": "5000000",
+      "bank": "0",
+      "shipment": 0,
+      "alive": true
+    },
+    {
+      "id": "resource-actor-6-character",
+      "account_id": "resource-actor-6",
+      "cash": "5000000",
+      "bank": "0",
+      "shipment": 0,
+      "alive": true
+    },
+    {
+      "id": "resource-actor-7-character",
+      "account_id": "resource-actor-7",
+      "cash": "5000000",
+      "bank": "0",
+      "shipment": 0,
+      "alive": true
+    },
+    {
+      "id": "resource-actor-8-character",
+      "account_id": "resource-actor-8",
+      "cash": "5000000",
+      "bank": "0",
+      "shipment": 0,
+      "alive": true
+    },
+    {
+      "id": "resource-actor-9-character",
+      "account_id": "resource-actor-9",
+      "cash": "5000000",
+      "bank": "0",
+      "shipment": 0,
+      "alive": true
+    }
+  ],
+  "accounts": [
+    {
+      "account_id": "resource-actor-0",
+      "omr": "0",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    },
+    {
+      "account_id": "resource-actor-1",
+      "omr": "0",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    },
+    {
+      "account_id": "resource-actor-10",
+      "omr": "0",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    },
+    {
+      "account_id": "resource-actor-11",
+      "omr": "0",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    },
+    {
+      "account_id": "resource-actor-12",
+      "omr": "0",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    },
+    {
+      "account_id": "resource-actor-13",
+      "omr": "0",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    },
+    {
+      "account_id": "resource-actor-14",
+      "omr": "0",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    },
+    {
+      "account_id": "resource-actor-15",
+      "omr": "0",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    },
+    {
+      "account_id": "resource-actor-16",
+      "omr": "0",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    },
+    {
+      "account_id": "resource-actor-17",
+      "omr": "0",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    },
+    {
+      "account_id": "resource-actor-2",
+      "omr": "2000",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    },
+    {
+      "account_id": "resource-actor-3",
+      "omr": "2000",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    },
+    {
+      "account_id": "resource-actor-4",
+      "omr": "0",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    },
+    {
+      "account_id": "resource-actor-5",
+      "omr": "0",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    },
+    {
+      "account_id": "resource-actor-6",
+      "omr": "0",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    },
+    {
+      "account_id": "resource-actor-7",
+      "omr": "0",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    },
+    {
+      "account_id": "resource-actor-8",
+      "omr": "0",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    },
+    {
+      "account_id": "resource-actor-9",
+      "omr": "0",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    }
+  ],
+  "transactions": [],
+  "stacks": [],
+  "items": [],
+  "itemEvents": [],
+  "guards": [],
+  "cars": [
+    {
+      "id": "resource-actor-0-car",
+      "character_id": "resource-actor-0-character",
+      "model_id": "junker",
+      "rarity": "common",
+      "minted_onchain": false
+    },
+    {
+      "id": "resource-actor-1-car",
+      "character_id": "resource-actor-1-character",
+      "model_id": "junker",
+      "rarity": "common",
+      "minted_onchain": false
+    },
+    {
+      "id": "resource-rarity-car",
+      "character_id": "resource-actor-2-character",
+      "model_id": "junker",
+      "rarity": "common",
+      "minted_onchain": false
+    }
+  ],
+  "families": [
+    {
+      "id": "resource-family",
+      "treasury": "0",
+      "omr_reserve": "0",
+      "ammo_bank": 0
+    }
+  ],
+  "desk": [
+    {
+      "id": 1,
+      "balance": "0",
+      "lifetime_in": "0",
+      "lifetime_sold": "0",
+      "lifetime_bought": "0"
+    }
+  ],
+  "loans": [],
+  "streetTax": [
+    {
+      "id": 1,
+      "pool": "0"
+    }
+  ],
+  "loanHouse": [
+    {
+      "id": 1,
+      "pool": "0"
+    }
+  ],
+  "shipmentDays": [],
+  "shipmentTakes": [],
+  "pieces": [],
+  "serials": [],
+  "campaigns": [
+    {
+      "character_id": "resource-actor-0-character",
+      "campaign_id": "doc_oath",
+      "step": 3,
+      "done": 0,
+      "branch": "save",
+      "completed": true,
+      "claimed": false,
+      "started_at": "2026-09-21T02:43:00.156Z"
+    },
+    {
+      "character_id": "resource-actor-1-character",
+      "campaign_id": "doc_oath",
+      "step": 3,
+      "done": 0,
+      "branch": "walk",
+      "completed": true,
+      "claimed": false,
+      "started_at": "2026-09-21T02:43:00.158Z"
+    }
+  ],
+  "databaseBoundary": "31490:31490:"
+}

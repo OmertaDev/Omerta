@@ -1,0 +1,36 @@
+⚠️  preflight: Neither PUBLIC_URL nor SOCIAL_GAME_URL is set — every referral link, share prompt and social card will point at the built-in default domain, not yours. Set PUBLIC_URL to this server's own origin (it is also what one-click X sign-in derives its callback from).
+⚠️  preflight: INVARIANT_WEBHOOK_URL is not set — the §10.4 economy-drift, backup-failure, oracle-halt and real-value-invariant alarms have nowhere to shout and reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+[500] POST /v1/worldgraph/recipes/recipe%3Ahardened_steel/craft error: rc1 deliberate output failure
+    at C:\Users\Jorge\Documents\Omerta\node_modules\pg\lib\client.js:652:17
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-resources/src/items.js:890:22
+    at async executeMutation (file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-resources/src/items.js:525:22)
+    at async file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-resources/src/items.js:1178:18
+    at async produceRecipeOutputs (file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-resources/src/crafting.js:782:21)
+    at async file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-resources/src/crafting.js:954:23
+    at async runMutation (file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-resources/src/items.js:595:20)
+    at async file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-resources/src/items.js:1178:18
+    at async ownedAction (file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-resources/src/items.js:306:24) {
+  length: 144,
+  severity: 'ERROR',
+  code: 'P0001',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: 'PL/pgSQL function rc1_fail_output() line 2 at RAISE',
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'pl_exec.c',
+  line: '3923',
+  routine: 'exec_stmt_raise'
+}
+⚠️  preflight: Neither PUBLIC_URL nor SOCIAL_GAME_URL is set — every referral link, share prompt and social card will point at the built-in default domain, not yours. Set PUBLIC_URL to this server's own origin (it is also what one-click X sign-in derives its callback from).
+⚠️  preflight: INVARIANT_WEBHOOK_URL is not set — the §10.4 economy-drift, backup-failure, oracle-halt and real-value-invariant alarms have nowhere to shout and reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+{"runId":"resource-04230658acbd-d161250dc8","outcome":"SCOPED_PASS","gateStatus":"REQUIRED_TRANSITION_PROOF_MISSING","output":"C:\\Users\\Jorge\\.codex\\worktrees\\omerta-rc1-resources\\tmp\\rc1-resource-source-04230658"}
