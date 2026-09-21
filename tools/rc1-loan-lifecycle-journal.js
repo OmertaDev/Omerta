@@ -73,7 +73,7 @@ export function reconcileLoanLifecycle(before, after, { label, result } = {}) {
   check('street-tax-pool', before.street_tax[0].pool, after.street_tax[0].pool,
     exactSum([net(receipts, 'bounty:wanted'), net(receipts, 'bounty:wanted:refund'), negate(net(receipts, 'loan:square')),
       negate(net(receipts, 'loan:vig')), negate(toWindow)]));
-  check('loan-house-pool', before.loan_house[0].pool, after.loan_house[0].pool, negate(net(receipts, 'loan:house:vig')));
+  check('loan-house-pool', before.loan_house[0].pool, after.loan_house[0].pool, net(receipts, 'loan:house:vig'));
   check('redemption-window', before.exchange_pool[0].balance, after.exchange_pool[0].balance, toWindow);
   check('total-declared-cash-custody', total(before), total(after));
   const oldLoans = byId(before.loans), newLoans = byId(after.loans), oldCars = byId(before.cars), newCars = byId(after.cars), carMoves = [];

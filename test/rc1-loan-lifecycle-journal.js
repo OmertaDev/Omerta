@@ -30,4 +30,11 @@ after.bounty_contributors[0].amount = '24999'; assert.throws(() => reconcileLoan
 before = initial(); after = structuredClone(before); after.street_tax[0].pool = '0'; after.exchange_pool[0].balance = '100000';
 reconcileLoanLifecycle(before, after, { label: 'buyback', result: { toWindow: 100000 } });
 assert.throws(() => reconcileLoanLifecycle(before, after, { label: 'buyback', result: null }), /Unreconciled/);
+before = initial(); after = structuredClone(before);
+after.characters[0].cash = '15225'; after.characters[1].cash = '4500';
+after.street_tax[0].pool = '100138'; after.loan_house[0].pool = '137';
+after.transactions.push(receipt('repay-debit', 'loan:repay', '-5500', 'borrower'), receipt('repay-credit', 'loan:repay', '5225', 'lender'),
+  receipt('street-vig', 'loan:vig', '-138'), receipt('house-vig', 'loan:house:vig', '137'));
+reconcileLoanLifecycle(before, after, { label: 'repay' });
+after.loan_house[0].pool = '136'; assert.throws(() => reconcileLoanLifecycle(before, after, { label: 'repay' }), /Unreconciled/);
 console.log('PASS: loan/Wanted cash custody, immutable receipts, collateral owner, deadline and contributor corruption controls');
