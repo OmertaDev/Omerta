@@ -4,7 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { WORLD_RESOURCE_TABLES, reconcileWorldResources, snapshotWorldResources, createWorldResourceObserver,
+import { WORLD_RESOURCE_TABLES, worldResourceHash, reconcileWorldResources, snapshotWorldResources, createWorldResourceObserver,
   resourceTableChanges, verifyResourceTableChanges } from '../tools/rc1-world-resource-observer.js';
 
 const empty = () => ({ format: 1, tables: Object.fromEntries(WORLD_RESOURCE_TABLES.map(table => [table, []])) });
@@ -115,6 +115,18 @@ if (process.argv.includes('--postgres')) {
     await pool.query("INSERT INTO account_persistent(account_id) VALUES('observer-account')");
     await pool.query("INSERT INTO characters(id,account_id,name,season,cash,respect) VALUES('observer-character','observer-account','Observer',1,100000,10000)");
     const before = await snapshotWorldResources(pool); fs.writeFileSync(path.join(output, 'initial-state.json'), json(before));
+    const transportSamples = { batch: [], sequential: [] };
+    for (let round = 0; round < 6; round++) {
+      for (const transport of round % 2 ? ['batch', 'sequential'] : ['sequential', 'batch']) {
+        const started = performance.now(), value = await snapshotWorldResources(pool, { transport });
+        transportSamples[transport].push(performance.now() - started);
+        assert.equal(worldResourceHash(value), worldResourceHash(before),
+          'Batched diagnostics must preserve every typed row and canonical resource hash');
+      }
+    }
+    report.observationTransport = { tables: WORLD_RESOURCE_TABLES.length, equalFullResourceHashes: true,
+      samplesMs: transportSamples, sqlSemantics: 'Identical ordered SELECT list in one READ ONLY repeatable-read transaction',
+      claim: 'Local alternating transport measurements only; no full-matrix capacity or production latency inference' };
     const retained = [];
     const observer = createWorldResourceObserver({ pool, record: async entry => { retained.push(entry); fs.appendFileSync(path.join(output, 'movements.ndjson'), JSON.stringify(entry) + '\n'); } });
     const { withCharacter, doCrime } = await import('../src/game.js');

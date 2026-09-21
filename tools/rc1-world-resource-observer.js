@@ -17,6 +17,7 @@ const json = (value) => JSON.stringify(value);
 const tuple = (...parts) => json(parts);
 const sorted = (rows) => rows.sort((a, b) => json(a).localeCompare(json(b)));
 const columnsCache = new WeakMap();
+const selectionsCache = new WeakMap();
 const rows = (state, table) => { assert(Array.isArray(state.tables[table]), `Missing observed table ${table}`); return state.tables[table]; };
 const stable = ({ boundary, ...value }) => value;
 export const worldResourceHash = (state) => sha256(stable(state));
@@ -68,7 +69,8 @@ export function verifyResourceTableChanges(before, after, changes) {
   return true;
 }
 
-export async function snapshotWorldResources(pool) {
+export async function snapshotWorldResources(pool, { transport = 'batch' } = {}) {
+  assert(['batch', 'sequential'].includes(transport), 'Unknown resource observation transport');
   const client = await pool.connect();
   try {
     await client.query('BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY');
@@ -79,14 +81,33 @@ export async function snapshotWorldResources(pool) {
       for (const table of WORLD_RESOURCE_TABLES) assert(columns.some(c => c.table_name === table), `Required resource table missing: ${table}`);
       columnsCache.set(pool, columns);
     }
+    let selections = selectionsCache.get(pool);
+    if (!selections) {
+      selections = WORLD_RESOURCE_TABLES.map(table => {
+        const selection = columns.filter(c => c.table_name === table).map(c => {
+          assert(/^[a-z_][a-z_0-9]*$/.test(c.column_name));
+          return `"${c.column_name}"${['numeric', 'decimal', 'bigint'].includes(c.data_type) ? '::text' : ''} AS "${c.column_name}"`;
+        }).join(',');
+        return `SELECT ${selection} FROM "${table}"`;
+      });
+      selectionsCache.set(pool, selections);
+    }
+    // This is the separate, READ ONLY diagnostic connection. Batch the exact
+    // unchanged SELECT statements to remove 54 network round trips; preserve all
+    // tables, fields, result sets and the same repeatable-read snapshot. No game
+    // SQL is batched and no commit-observer boundary is skipped.
+    const results = transport === 'batch' ? await client.query(selections.join(';')) : [];
+    if (transport === 'sequential') for (const sql of selections) results.push(await client.query(sql));
+    assert(Array.isArray(results) && results.length === WORLD_RESOURCE_TABLES.length,
+      'Resource observer requires every native SELECT result');
     const tables = {};
-    for (const table of WORLD_RESOURCE_TABLES) {
-      const selection = columns.filter(c => c.table_name === table).map(c => {
-        assert(/^[a-z_][a-z_0-9]*$/.test(c.column_name));
-        return `"${c.column_name}"${['numeric', 'decimal', 'bigint'].includes(c.data_type) ? '::text' : ''} AS "${c.column_name}"`;
-      }).join(',');
+    for (const [index, table] of WORLD_RESOURCE_TABLES.entries()) {
+      assert.equal(results[index].command, 'SELECT');
+      assert.deepEqual(results[index].fields.map(field => field.name),
+        columns.filter(column => column.table_name === table).map(column => column.column_name),
+        `Resource result columns differ: ${table}`);
       // JSON roundtrip normalizes pg Date objects, never NUMERIC (explicitly text).
-      tables[table] = sorted(JSON.parse(json((await client.query(`SELECT ${selection} FROM "${table}"`)).rows)));
+      tables[table] = sorted(JSON.parse(json(results[index].rows)));
     }
     const boundary = (await client.query('SELECT pg_current_snapshot()::text AS snapshot')).rows[0];
     await client.query('COMMIT'); return { format: 1, tables, boundary };
