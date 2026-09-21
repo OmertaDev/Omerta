@@ -94,6 +94,33 @@ logical deadline. A separate victim policy acts before death and continues its
 same-account quota on the actual heir. Forced/denied/waited choices cannot pad this
 block. This bounds the implemented component, not every possible aggression action.
 
+The first version 2 native block passed at source
+`24088c3242f846deb0f87b4e95f53654b54d4077`, 2026-09-21
+06:54:44.189–06:55:38.646 UTC, PostgreSQL 18.4 / Node 24.19.0 / Windows.
+Restricted evidence: `C:/Users/Jorge/.codex/rc1-readiness-private-20260921/aggression-lifecycle-24088c32-native`.
+All 392 indexed artifacts and 1,045 hash-chained history rows validated, source
+remained clean through sealing, and owned-database cleanup succeeded. Configuration
+SHA-256: `69a5e426ffacc5994e25a2cf315be190d85d91003a4ef044db1e2b959339dd90`.
+Run SHA-256: `30a3d89c5322ba86e33a73c37b25c03e0db6360507abb21ca304b19092e334ef`.
+
+The shooter completed 20 genuinely mixed choices: 12 jumps, one search preparation,
+one lethal shot, two mystery starts and four discovery starts. Thus 14/20 (70%) were
+conflict selections, including the separately disclosed preparation; this is not a
+claim of 14 attacks. There were nine combat wins (including the kill), four losses,
+four retaliations, no forced choices/denials/waits and one exact fire replay that
+added no denominator or state mutation. The victim policy completed one pre-death
+mystery start and one post-death retaliatory jump, retaining its account counters
+across the actual generation 1-to-2 cursor transition. Its incomplete two-choice
+block is reported as 1/2, not 70%.
+
+The 4.75 logical hours executed 57 Director, four hourly, four season and 57 health
+timer callbacks, preserving the original search and shot cooldowns. All 55 canonical
+invariants passed across 252 boundaries; 2,896 exact resource checks passed across
+338 observations. The 129 unsupported classifications (check-in/ammunition purchase,
+jump transfers and market/death dispositions) retain their restricted diagnostics.
+Full resource taxonomy, full-game selection, natural fixture acquisition, all
+death branches, same-seed world replay and RC1 matrix qualification remain OPEN.
+
 ## Bounded verification
 
 `node test/rc1-aggression-policy.js` checks 1,000-choice quota prefixes, forced and
