@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "468516d8d6f3729514711ad5a0b83e440c5c46f9",
+  "sourceRevision": "c72c7f6a0f19552b4b25622516eb074cb638bcb1",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,42 +43,42 @@
     ]
   },
   "census": {
-    "nodes": 7839,
-    "edges": 34193,
+    "nodes": 7913,
+    "edges": 34431,
     "byNodeType": {
-      "Artifact": 3235,
-      "Command": 103,
-      "Commit": 1490,
+      "Artifact": 3273,
+      "Command": 109,
+      "Commit": 1506,
       "Contract": 79,
-      "Document": 602,
+      "Document": 607,
       "Domain": 13,
       "ExternalDependency": 27,
       "HistoricalArtifact": 343,
-      "Module": 273,
+      "Module": 274,
       "PullRequest": 126,
       "Repository": 1,
       "Route": 802,
       "Subsystem": 8,
       "Table": 369,
-      "TestSuite": 362,
+      "TestSuite": 370,
       "Workflow": 6
     },
     "byEdgeType": {
-      "BELONGS_TO": 2494,
-      "CHANGED": 12966,
-      "CONTAINS": 3256,
-      "DECLARES": 103,
+      "BELONGS_TO": 2510,
+      "CHANGED": 13053,
+      "CONTAINS": 3294,
+      "DECLARES": 109,
       "DEFINED_IN": 1250,
       "DEPENDS_ON": 65,
-      "EXECUTES": 429,
-      "HANDLED_BY": 706,
-      "HAS_COMMIT": 1490,
+      "EXECUTES": 439,
+      "HANDLED_BY": 708,
+      "HAS_COMMIT": 1506,
       "IMPLEMENTS": 124,
-      "IMPORTS": 2853,
+      "IMPORTS": 2890,
       "INHERITS": 17,
-      "REFERENCES": 4125,
-      "REPRESENTS": 1243,
-      "TESTS": 1135,
+      "REFERENCES": 4127,
+      "REPRESENTS": 1257,
+      "TESTS": 1145,
       "TRACKS": 126,
       "USES_TABLE": 1811
     }
@@ -7498,20 +7498,20 @@
       "path": ".gitattributes",
       "kind": "artifact",
       "extension": "(none)",
-      "bytes": 146,
-      "lines": 4,
-      "version": "c4bc570589f971a3",
+      "bytes": 178,
+      "lines": 5,
+      "version": "36cd7db482cc9d0d",
       "text": true,
       "provenance": [
         {
           "file": ".gitattributes",
           "line": 1,
-          "version": "c4bc570589f971a3"
+          "version": "36cd7db482cc9d0d"
         }
       ],
-      "lastChangedAt": "2026-09-19T00:08:29.000Z",
+      "lastChangedAt": "2026-09-21T02:56:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "06a459b9bc5b534b2780915d28dbb0aaac7a6861"
+      "lastChangedCommit": "c72c7f6a0f19552b4b25622516eb074cb638bcb1"
     },
     {
       "key": "Artifact:.github/workflows/ci.yml",
@@ -7521,20 +7521,20 @@
       "path": ".github/workflows/ci.yml",
       "kind": "workflow",
       "extension": ".yml",
-      "bytes": 21729,
-      "lines": 409,
-      "version": "9e191944cfefad7b",
+      "bytes": 22749,
+      "lines": 431,
+      "version": "119372f33cde34c7",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "9e191944cfefad7b"
+          "version": "119372f33cde34c7"
         }
       ],
-      "lastChangedAt": "2026-09-19T00:08:05.000Z",
+      "lastChangedAt": "2026-09-21T02:56:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "bbd022fce6b517fff06b977b79423e9fd6c66413"
+      "lastChangedCommit": "c72c7f6a0f19552b4b25622516eb074cb638bcb1"
     },
     {
       "key": "Artifact:.github/workflows/forge.yml",
@@ -7636,20 +7636,20 @@
       "path": ".github/workflows/rc1-recovery.yml",
       "kind": "workflow",
       "extension": ".yml",
-      "bytes": 1313,
-      "lines": 48,
-      "version": "afc8ad32c1f12acc",
+      "bytes": 3318,
+      "lines": 86,
+      "version": "4aaf0753f81d9156",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/rc1-recovery.yml",
           "line": 1,
-          "version": "afc8ad32c1f12acc"
+          "version": "4aaf0753f81d9156"
         }
       ],
-      "lastChangedAt": "2026-09-19T00:08:05.000Z",
+      "lastChangedAt": "2026-09-21T02:56:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "bbd022fce6b517fff06b977b79423e9fd6c66413"
+      "lastChangedCommit": "c72c7f6a0f19552b4b25622516eb074cb638bcb1"
     },
     {
       "key": "Artifact:.gitignore",
@@ -34286,6 +34286,512 @@
       "lastChangedCommit": "d0a5b2c5f33d53fbb458eaf085f5a6ee31646f72"
     },
     {
+      "key": "Artifact:docs/release/readiness-work/authority-inventory.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/authority-inventory.json",
+      "label": "authority-inventory.json",
+      "path": "docs/release/readiness-work/authority-inventory.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 672211,
+      "lines": 20579,
+      "version": "a06bd97a259763b0",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/authority-inventory.json",
+          "line": 1,
+          "version": "a06bd97a259763b0"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:43:18.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "9efb77b1622d6c0f5237ca4262216ea3cc4b3b6d"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/authority-inventory.md",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/authority-inventory.md",
+      "label": "authority-inventory.md",
+      "path": "docs/release/readiness-work/authority-inventory.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 1762,
+      "lines": 29,
+      "version": "fc21423a2ccf4540",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/authority-inventory.md",
+          "line": 1,
+          "version": "fc21423a2ccf4540"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:43:18.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "9efb77b1622d6c0f5237ca4262216ea3cc4b3b6d"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/gate-registry.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/gate-registry.json",
+      "label": "gate-registry.json",
+      "path": "docs/release/readiness-work/gate-registry.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 13801,
+      "lines": 628,
+      "version": "b476abbc0afcae70",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/gate-registry.json",
+          "line": 1,
+          "version": "b476abbc0afcae70"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:56:27.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "c72c7f6a0f19552b4b25622516eb074cb638bcb1"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/harness-results.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/harness-results.json",
+      "label": "harness-results.json",
+      "path": "docs/release/readiness-work/harness-results.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 14860,
+      "lines": 377,
+      "version": "4f20c034e08488c4",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/harness-results.json",
+          "line": 1,
+          "version": "4f20c034e08488c4"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:53:03.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "80ce318b0925e40b4299742d13adfe4f429cf527"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/harness.md",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/harness.md",
+      "label": "harness.md",
+      "path": "docs/release/readiness-work/harness.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 6608,
+      "lines": 101,
+      "version": "fb86721705faf393",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/harness.md",
+          "line": 1,
+          "version": "fb86721705faf393"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:53:03.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "80ce318b0925e40b4299742d13adfe4f429cf527"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/README.md",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/README.md",
+      "label": "README.md",
+      "path": "docs/release/readiness-work/README.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 5693,
+      "lines": 89,
+      "version": "3e798aeec121a334",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/README.md",
+          "line": 1,
+          "version": "3e798aeec121a334"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:56:27.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "c72c7f6a0f19552b4b25622516eb074cb638bcb1"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/render-observation.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/render-observation.json",
+      "label": "render-observation.json",
+      "path": "docs/release/readiness-work/render-observation.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 2647,
+      "lines": 89,
+      "version": "39639326e2034cfc",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/render-observation.json",
+          "line": 1,
+          "version": "39639326e2034cfc"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:56:27.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "c72c7f6a0f19552b4b25622516eb074cb638bcb1"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/resource-proof.md",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/resource-proof.md",
+      "label": "resource-proof.md",
+      "path": "docs/release/readiness-work/resource-proof.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 4316,
+      "lines": 69,
+      "version": "3eb057ef11a60dc0",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/resource-proof.md",
+          "line": 1,
+          "version": "3eb057ef11a60dc0"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:52:37.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "bb57427e11615d5d78df90d7805e8067a4268aec"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/resource-runs/.gitattributes",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/resource-runs/.gitattributes",
+      "label": ".gitattributes",
+      "path": "docs/release/readiness-work/resource-runs/.gitattributes",
+      "kind": "artifact",
+      "extension": "(none)",
+      "bytes": 109,
+      "lines": 3,
+      "version": "02c0307d61fdef18",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/resource-runs/.gitattributes",
+          "line": 1,
+          "version": "02c0307d61fdef18"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:45:58.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "2a5ab465c8fd4a7fbe704938107e246c17bdfccb"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/capital.log",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/capital.log",
+      "label": "capital.log",
+      "path": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/capital.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 319,
+      "lines": null,
+      "version": "f561566313427b42",
+      "text": false,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/capital.log",
+          "line": 1,
+          "version": "f561566313427b42"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:45:24.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "d1048046e9be9448174c47904bfe68549d4180d5"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/coverage-inventory.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/coverage-inventory.json",
+      "label": "coverage-inventory.json",
+      "path": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/coverage-inventory.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 22015,
+      "lines": 636,
+      "version": "0bb2c1679125904c",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/coverage-inventory.json",
+          "line": 1,
+          "version": "0bb2c1679125904c"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:43:53.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "6e10782c33b8f376b801e2417698407ffcd80c61"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/execution-manifest.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/execution-manifest.json",
+      "label": "execution-manifest.json",
+      "path": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/execution-manifest.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 1990,
+      "lines": 61,
+      "version": "929d6068c9aa28a0",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/execution-manifest.json",
+          "line": 1,
+          "version": "929d6068c9aa28a0"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:45:24.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "d1048046e9be9448174c47904bfe68549d4180d5"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/final-state.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/final-state.json",
+      "label": "final-state.json",
+      "path": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/final-state.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 28308,
+      "lines": 974,
+      "version": "b65e241ba040ac44",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/final-state.json",
+          "line": 1,
+          "version": "b65e241ba040ac44"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:43:53.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "6e10782c33b8f376b801e2417698407ffcd80c61"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/initial-state.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/initial-state.json",
+      "label": "initial-state.json",
+      "path": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/initial-state.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 7513,
+      "lines": 362,
+      "version": "0318607f273b36d8",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/initial-state.json",
+          "line": 1,
+          "version": "0318607f273b36d8"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:43:53.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "6e10782c33b8f376b801e2417698407ffcd80c61"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/movements.ndjson",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/movements.ndjson",
+      "label": "movements.ndjson",
+      "path": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/movements.ndjson",
+      "kind": "artifact",
+      "extension": ".ndjson",
+      "bytes": 341579,
+      "lines": null,
+      "version": "adfc6274ecafa314",
+      "text": false,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/movements.ndjson",
+          "line": 1,
+          "version": "adfc6274ecafa314"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:43:53.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "6e10782c33b8f376b801e2417698407ffcd80c61"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/native.log",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/native.log",
+      "label": "native.log",
+      "path": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/native.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 3182,
+      "lines": null,
+      "version": "0888144ecc9422e7",
+      "text": false,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/native.log",
+          "line": 1,
+          "version": "0888144ecc9422e7"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:45:24.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "d1048046e9be9448174c47904bfe68549d4180d5"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json",
+      "label": "requests.json",
+      "path": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 414636,
+      "lines": 15946,
+      "version": "b47930b593f723eb",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json",
+          "line": 1,
+          "version": "b47930b593f723eb"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:43:53.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "6e10782c33b8f376b801e2417698407ffcd80c61"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/result.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/result.json",
+      "label": "result.json",
+      "path": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/result.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 597752,
+      "lines": 22972,
+      "version": "7f6b95093652da23",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/result.json",
+          "line": 1,
+          "version": "7f6b95093652da23"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:43:53.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "6e10782c33b8f376b801e2417698407ffcd80c61"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/scenario-manifest.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/scenario-manifest.json",
+      "label": "scenario-manifest.json",
+      "path": "docs/release/readiness-work/scenario-manifest.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 32864,
+      "lines": 1443,
+      "version": "c122ac51f45d8da8",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/scenario-manifest.json",
+          "line": 1,
+          "version": "c122ac51f45d8da8"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:53:03.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "80ce318b0925e40b4299742d13adfe4f429cf527"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/source-reconciliation.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/source-reconciliation.json",
+      "label": "source-reconciliation.json",
+      "path": "docs/release/readiness-work/source-reconciliation.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 25852,
+      "lines": 513,
+      "version": "27b56b05fde12fd3",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/source-reconciliation.json",
+          "line": 1,
+          "version": "27b56b05fde12fd3"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:36:23.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/source-reconciliation.md",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/source-reconciliation.md",
+      "label": "source-reconciliation.md",
+      "path": "docs/release/readiness-work/source-reconciliation.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 10819,
+      "lines": 137,
+      "version": "123687a656949d2f",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/source-reconciliation.md",
+          "line": 1,
+          "version": "123687a656949d2f"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:36:23.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/tooling-repairs.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/tooling-repairs.json",
+      "label": "tooling-repairs.json",
+      "path": "docs/release/readiness-work/tooling-repairs.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 3984,
+      "lines": 108,
+      "version": "8a0d7d0b6b031fe9",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/tooling-repairs.json",
+          "line": 1,
+          "version": "8a0d7d0b6b031fe9"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:56:27.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "c72c7f6a0f19552b4b25622516eb074cb638bcb1"
+    },
+    {
       "key": "Artifact:docs/superpowers/plans/2026-08-23-discovery-integrity.md",
       "type": "Artifact",
       "id": "docs/superpowers/plans/2026-08-23-discovery-integrity.md",
@@ -45074,20 +45580,20 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 20556,
-      "lines": 132,
-      "version": "ec9c875db8b698ea",
+      "bytes": 21127,
+      "lines": 138,
+      "version": "4d7c879d038ccc06",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "ec9c875db8b698ea"
+          "version": "4d7c879d038ccc06"
         }
       ],
-      "lastChangedAt": "2026-09-19T00:08:05.000Z",
+      "lastChangedAt": "2026-09-21T02:56:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "bbd022fce6b517fff06b977b79423e9fd6c66413"
+      "lastChangedCommit": "c72c7f6a0f19552b4b25622516eb074cb638bcb1"
     },
     {
       "key": "Artifact:Procfile",
@@ -59635,18 +60141,18 @@
       "extension": ".md",
       "bytes": 56651,
       "lines": 756,
-      "version": "0c0110a5c407251a",
+      "version": "103e7311f5ac3211",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "0c0110a5c407251a"
+          "version": "103e7311f5ac3211"
         }
       ],
-      "lastChangedAt": "2026-09-20T16:05:08.000Z",
+      "lastChangedAt": "2026-09-21T02:56:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "d0a5b2c5f33d53fbb458eaf085f5a6ee31646f72"
+      "lastChangedCommit": "c72c7f6a0f19552b4b25622516eb074cb638bcb1"
     },
     {
       "key": "Artifact:src/access.js",
@@ -60406,6 +60912,29 @@
       "lastChangedAt": "2026-08-30T17:37:22.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "90a07070d3efd08fe3e70d1c78def530cf79f184"
+    },
+    {
+      "key": "Artifact:src/command-diagnostics.js",
+      "type": "Artifact",
+      "id": "src/command-diagnostics.js",
+      "label": "command-diagnostics.js",
+      "path": "src/command-diagnostics.js",
+      "kind": "backend-module",
+      "extension": ".js",
+      "bytes": 2390,
+      "lines": 49,
+      "version": "f7be24eb60c6a397",
+      "text": true,
+      "provenance": [
+        {
+          "file": "src/command-diagnostics.js",
+          "line": 1,
+          "version": "f7be24eb60c6a397"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:36:23.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
     },
     {
       "key": "Artifact:src/commission.js",
@@ -61450,20 +61979,20 @@
       "path": "src/db.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 60608,
-      "lines": 961,
-      "version": "fe07838889a721c6",
+      "bytes": 60748,
+      "lines": 965,
+      "version": "6033b850aa984370",
       "text": true,
       "provenance": [
         {
           "file": "src/db.js",
           "line": 1,
-          "version": "fe07838889a721c6"
+          "version": "6033b850aa984370"
         }
       ],
-      "lastChangedAt": "2026-09-07T08:34:33.000Z",
+      "lastChangedAt": "2026-09-21T02:36:23.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "5a03f9ef049f424374ae9659fde81c8510c71e87"
+      "lastChangedCommit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
     },
     {
       "key": "Artifact:src/dbhealth.js",
@@ -63405,20 +63934,20 @@
       "path": "src/player-commands.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 26968,
-      "lines": 343,
-      "version": "ac5b843807b7710a",
+      "bytes": 27426,
+      "lines": 348,
+      "version": "79ead5d111f072b3",
       "text": true,
       "provenance": [
         {
           "file": "src/player-commands.js",
           "line": 1,
-          "version": "ac5b843807b7710a"
+          "version": "79ead5d111f072b3"
         }
       ],
-      "lastChangedAt": "2026-09-19T00:08:05.000Z",
+      "lastChangedAt": "2026-09-21T02:36:23.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "bbd022fce6b517fff06b977b79423e9fd6c66413"
+      "lastChangedCommit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
     },
     {
       "key": "Artifact:src/player-opportunities.js",
@@ -63888,20 +64417,20 @@
       "path": "src/routes/commands.js",
       "kind": "route-module",
       "extension": ".js",
-      "bytes": 4721,
-      "lines": 70,
-      "version": "aacd0862d13432aa",
+      "bytes": 5090,
+      "lines": 73,
+      "version": "eef5b46e04e02ddd",
       "text": true,
       "provenance": [
         {
           "file": "src/routes/commands.js",
           "line": 1,
-          "version": "aacd0862d13432aa"
+          "version": "eef5b46e04e02ddd"
         }
       ],
-      "lastChangedAt": "2026-09-19T00:08:05.000Z",
+      "lastChangedAt": "2026-09-21T02:36:23.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "bbd022fce6b517fff06b977b79423e9fd6c66413"
+      "lastChangedCommit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
     },
     {
       "key": "Artifact:src/routes/content.js",
@@ -68534,20 +69063,20 @@
       "path": "test/gates.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 280116,
+      "bytes": 280206,
       "lines": 4189,
-      "version": "a71f520825950116",
+      "version": "dbf8b405170c8054",
       "text": true,
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "a71f520825950116"
+          "version": "dbf8b405170c8054"
         }
       ],
-      "lastChangedAt": "2026-09-19T00:08:05.000Z",
+      "lastChangedAt": "2026-09-21T02:56:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "bbd022fce6b517fff06b977b79423e9fd6c66413"
+      "lastChangedCommit": "c72c7f6a0f19552b4b25622516eb074cb638bcb1"
     },
     {
       "key": "Artifact:test/genesiscca.js",
@@ -69063,20 +69592,20 @@
       "path": "test/lib/player-command-support.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 3812,
-      "lines": 71,
-      "version": "e557b7537d224e22",
+      "bytes": 4273,
+      "lines": 81,
+      "version": "fd214f8c03b9bc0c",
       "text": true,
       "provenance": [
         {
           "file": "test/lib/player-command-support.js",
           "line": 1,
-          "version": "e557b7537d224e22"
+          "version": "fd214f8c03b9bc0c"
         }
       ],
-      "lastChangedAt": "2026-09-18T01:30:11.000Z",
+      "lastChangedAt": "2026-09-21T02:36:23.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "979519c5640061f45584e926c56d8bc36cc4476f"
+      "lastChangedCommit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
     },
     {
       "key": "Artifact:test/lib/srcfiles.js",
@@ -70528,6 +71057,29 @@
       "lastChangedCommit": "1550cc3cf9613d3692abf3c54fb183d097c1ff4b"
     },
     {
+      "key": "Artifact:test/rc1-command-redteam.js",
+      "type": "Artifact",
+      "id": "test/rc1-command-redteam.js",
+      "label": "rc1-command-redteam.js",
+      "path": "test/rc1-command-redteam.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 6950,
+      "lines": 101,
+      "version": "368c7ceb59b8fc72",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/rc1-command-redteam.js",
+          "line": 1,
+          "version": "368c7ceb59b8fc72"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:36:23.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
+    },
+    {
       "key": "Artifact:test/rc1-journeys.js",
       "type": "Artifact",
       "id": "test/rc1-journeys.js",
@@ -70549,6 +71101,167 @@
       "lastChangedAt": "2026-09-19T00:08:05.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "bbd022fce6b517fff06b977b79423e9fd6c66413"
+    },
+    {
+      "key": "Artifact:test/rc1-mobile-postgres.js",
+      "type": "Artifact",
+      "id": "test/rc1-mobile-postgres.js",
+      "label": "rc1-mobile-postgres.js",
+      "path": "test/rc1-mobile-postgres.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 7214,
+      "lines": 99,
+      "version": "10769e85718e5493",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/rc1-mobile-postgres.js",
+          "line": 1,
+          "version": "10769e85718e5493"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:36:23.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
+    },
+    {
+      "key": "Artifact:test/rc1-native-proof.js",
+      "type": "Artifact",
+      "id": "test/rc1-native-proof.js",
+      "label": "rc1-native-proof.js",
+      "path": "test/rc1-native-proof.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 9785,
+      "lines": 129,
+      "version": "f0422f1835c9803f",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/rc1-native-proof.js",
+          "line": 1,
+          "version": "f0422f1835c9803f"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:53:03.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "80ce318b0925e40b4299742d13adfe4f429cf527"
+    },
+    {
+      "key": "Artifact:test/rc1-observability.js",
+      "type": "Artifact",
+      "id": "test/rc1-observability.js",
+      "label": "rc1-observability.js",
+      "path": "test/rc1-observability.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 4895,
+      "lines": 80,
+      "version": "517f1d9213deae55",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/rc1-observability.js",
+          "line": 1,
+          "version": "517f1d9213deae55"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:36:23.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
+    },
+    {
+      "key": "Artifact:test/rc1-passive-projection.js",
+      "type": "Artifact",
+      "id": "test/rc1-passive-projection.js",
+      "label": "rc1-passive-projection.js",
+      "path": "test/rc1-passive-projection.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 2863,
+      "lines": 44,
+      "version": "4b2be45595f1562e",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/rc1-passive-projection.js",
+          "line": 1,
+          "version": "4b2be45595f1562e"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:36:23.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
+    },
+    {
+      "key": "Artifact:test/rc1-postgres-migration-failure.js",
+      "type": "Artifact",
+      "id": "test/rc1-postgres-migration-failure.js",
+      "label": "rc1-postgres-migration-failure.js",
+      "path": "test/rc1-postgres-migration-failure.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 2992,
+      "lines": 47,
+      "version": "ce42f8dbdce63bc5",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/rc1-postgres-migration-failure.js",
+          "line": 1,
+          "version": "ce42f8dbdce63bc5"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:36:23.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
+    },
+    {
+      "key": "Artifact:test/rc1-qualification.js",
+      "type": "Artifact",
+      "id": "test/rc1-qualification.js",
+      "label": "rc1-qualification.js",
+      "path": "test/rc1-qualification.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 9903,
+      "lines": 114,
+      "version": "0be4691396225fcc",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/rc1-qualification.js",
+          "line": 1,
+          "version": "0be4691396225fcc"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:56:27.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "c72c7f6a0f19552b4b25622516eb074cb638bcb1"
+    },
+    {
+      "key": "Artifact:test/rc1-resource-journal.js",
+      "type": "Artifact",
+      "id": "test/rc1-resource-journal.js",
+      "label": "rc1-resource-journal.js",
+      "path": "test/rc1-resource-journal.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 1225,
+      "lines": 14,
+      "version": "9f71ec2c80135aaf",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/rc1-resource-journal.js",
+          "line": 1,
+          "version": "9f71ec2c80135aaf"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:42:27.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "0adc0b3011a9fd5057e6cf4d3b40333f1538ce35"
     },
     {
       "key": "Artifact:test/rc1-simulation.js",
@@ -72858,20 +73571,20 @@
       "path": "tools/director-sim.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 31287,
-      "lines": 421,
-      "version": "f6166a283e79eb5a",
+      "bytes": 31561,
+      "lines": 424,
+      "version": "9d70ae5542003351",
       "text": true,
       "provenance": [
         {
           "file": "tools/director-sim.js",
           "line": 1,
-          "version": "f6166a283e79eb5a"
+          "version": "9d70ae5542003351"
         }
       ],
-      "lastChangedAt": "2026-09-18T18:31:14.000Z",
+      "lastChangedAt": "2026-09-21T02:36:38.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      "lastChangedCommit": "567d922ec8384743fde4104bc88bac74474b1e68"
     },
     {
       "key": "Artifact:tools/director-validate.js",
@@ -73686,20 +74399,20 @@
       "path": "tools/pgcheck.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 134254,
-      "lines": 2063,
-      "version": "65a1bc7ec7441ceb",
+      "bytes": 134597,
+      "lines": 2069,
+      "version": "76589dd2ec9ed05d",
       "text": true,
       "provenance": [
         {
           "file": "tools/pgcheck.js",
           "line": 1,
-          "version": "65a1bc7ec7441ceb"
+          "version": "76589dd2ec9ed05d"
         }
       ],
-      "lastChangedAt": "2026-09-17T23:52:47.000Z",
+      "lastChangedAt": "2026-09-21T02:36:23.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9862a3f671cf68cc5a17af17a69f41e872df52c0"
+      "lastChangedCommit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
     },
     {
       "key": "Artifact:tools/pgquery.js",
@@ -73840,6 +74553,29 @@
       "lastChangedCommit": "dfd2f6ed3d0fef00beb28a7401e090e0351ad2e7"
     },
     {
+      "key": "Artifact:tools/rc1-authority-inventory.js",
+      "type": "Artifact",
+      "id": "tools/rc1-authority-inventory.js",
+      "label": "rc1-authority-inventory.js",
+      "path": "tools/rc1-authority-inventory.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 16329,
+      "lines": 217,
+      "version": "eceec251b06d2ecf",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/rc1-authority-inventory.js",
+          "line": 1,
+          "version": "eceec251b06d2ecf"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:43:18.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "9efb77b1622d6c0f5237ca4262216ea3cc4b3b6d"
+    },
+    {
       "key": "Artifact:tools/rc1-campaign-mobile.js",
       "type": "Artifact",
       "id": "tools/rc1-campaign-mobile.js",
@@ -73847,20 +74583,43 @@
       "path": "tools/rc1-campaign-mobile.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 15712,
-      "lines": 196,
-      "version": "17f51a85e0b1797f",
+      "bytes": 17088,
+      "lines": 214,
+      "version": "ce79cc1bdc7f1b04",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-campaign-mobile.js",
           "line": 1,
-          "version": "17f51a85e0b1797f"
+          "version": "ce79cc1bdc7f1b04"
         }
       ],
-      "lastChangedAt": "2026-09-20T16:05:08.000Z",
+      "lastChangedAt": "2026-09-21T02:36:23.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "d0a5b2c5f33d53fbb458eaf085f5a6ee31646f72"
+      "lastChangedCommit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
+    },
+    {
+      "key": "Artifact:tools/rc1-evidence.mjs",
+      "type": "Artifact",
+      "id": "tools/rc1-evidence.mjs",
+      "label": "rc1-evidence.mjs",
+      "path": "tools/rc1-evidence.mjs",
+      "kind": "engineering-harness",
+      "extension": ".mjs",
+      "bytes": 9384,
+      "lines": 154,
+      "version": "6763d6892559f2bb",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/rc1-evidence.mjs",
+          "line": 1,
+          "version": "6763d6892559f2bb"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:56:27.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "c72c7f6a0f19552b4b25622516eb074cb638bcb1"
     },
     {
       "key": "Artifact:tools/rc1-manifest.mjs",
@@ -73907,6 +74666,121 @@
       "lastChangedAt": "2026-09-19T00:08:05.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "bbd022fce6b517fff06b977b79423e9fd6c66413"
+    },
+    {
+      "key": "Artifact:tools/rc1-native-proof.js",
+      "type": "Artifact",
+      "id": "tools/rc1-native-proof.js",
+      "label": "rc1-native-proof.js",
+      "path": "tools/rc1-native-proof.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 18240,
+      "lines": 260,
+      "version": "dd147032bcd45783",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/rc1-native-proof.js",
+          "line": 1,
+          "version": "dd147032bcd45783"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:53:03.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "80ce318b0925e40b4299742d13adfe4f429cf527"
+    },
+    {
+      "key": "Artifact:tools/rc1-qualification.mjs",
+      "type": "Artifact",
+      "id": "tools/rc1-qualification.mjs",
+      "label": "rc1-qualification.mjs",
+      "path": "tools/rc1-qualification.mjs",
+      "kind": "engineering-harness",
+      "extension": ".mjs",
+      "bytes": 22543,
+      "lines": 360,
+      "version": "e7f11977c033e7bc",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/rc1-qualification.mjs",
+          "line": 1,
+          "version": "e7f11977c033e7bc"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:56:27.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "c72c7f6a0f19552b4b25622516eb074cb638bcb1"
+    },
+    {
+      "key": "Artifact:tools/rc1-resource-inventory.js",
+      "type": "Artifact",
+      "id": "tools/rc1-resource-inventory.js",
+      "label": "rc1-resource-inventory.js",
+      "path": "tools/rc1-resource-inventory.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 11210,
+      "lines": 72,
+      "version": "57c99f07bc9f240f",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/rc1-resource-inventory.js",
+          "line": 1,
+          "version": "57c99f07bc9f240f"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:52:37.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "bb57427e11615d5d78df90d7805e8067a4268aec"
+    },
+    {
+      "key": "Artifact:tools/rc1-resource-journal.js",
+      "type": "Artifact",
+      "id": "tools/rc1-resource-journal.js",
+      "label": "rc1-resource-journal.js",
+      "path": "tools/rc1-resource-journal.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 6430,
+      "lines": 93,
+      "version": "a7965549d5ef78fc",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/rc1-resource-journal.js",
+          "line": 1,
+          "version": "a7965549d5ef78fc"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:42:27.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "0adc0b3011a9fd5057e6cf4d3b40333f1538ce35"
+    },
+    {
+      "key": "Artifact:tools/rc1-resource-proof.js",
+      "type": "Artifact",
+      "id": "tools/rc1-resource-proof.js",
+      "label": "rc1-resource-proof.js",
+      "path": "tools/rc1-resource-proof.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 40140,
+      "lines": 484,
+      "version": "79d6dce9f774e352",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/rc1-resource-proof.js",
+          "line": 1,
+          "version": "79d6dce9f774e352"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T02:52:37.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "bb57427e11615d5d78df90d7805e8067a4268aec"
     },
     {
       "key": "Artifact:tools/rc1-shutdown.js",
@@ -74008,20 +74882,20 @@
       "path": "tools/rc1-sim.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 20789,
-      "lines": 283,
-      "version": "3fca1afc0df3d9aa",
+      "bytes": 25602,
+      "lines": 347,
+      "version": "0bf1ccb25c3f140d",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-sim.js",
           "line": 1,
-          "version": "3fca1afc0df3d9aa"
+          "version": "0bf1ccb25c3f140d"
         }
       ],
-      "lastChangedAt": "2026-09-19T00:08:05.000Z",
+      "lastChangedAt": "2026-09-21T02:49:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "bbd022fce6b517fff06b977b79423e9fd6c66413"
+      "lastChangedCommit": "3ea88ba02fb5ed404c663e9be255f04e0a4d2c9c"
     },
     {
       "key": "Artifact:tools/render-omr-excalidraw.html",
@@ -74169,20 +75043,20 @@
       "path": "tools/scale.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 48736,
-      "lines": 665,
-      "version": "77d97747b6437bbc",
+      "bytes": 49988,
+      "lines": 682,
+      "version": "f75a76223925f777",
       "text": true,
       "provenance": [
         {
           "file": "tools/scale.js",
           "line": 1,
-          "version": "77d97747b6437bbc"
+          "version": "f75a76223925f777"
         }
       ],
-      "lastChangedAt": "2026-08-05T03:01:34.000Z",
-      "lastChangedBy": "Claude",
-      "lastChangedCommit": "7feb393915616ed8b9c1beae44107dc984026be9"
+      "lastChangedAt": "2026-09-21T02:36:38.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "567d922ec8384743fde4104bc88bac74474b1e68"
     },
     {
       "key": "Artifact:tools/setup-contextplus.ps1",
@@ -75459,6 +76333,19 @@
       ]
     },
     {
+      "key": "Command:npm:test:db-migration:postgres",
+      "type": "Command",
+      "id": "npm:test:db-migration:postgres",
+      "label": "npm run test:db-migration:postgres",
+      "command": "node test/rc1-postgres-migration-failure.js",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
       "key": "Command:npm:test:director",
       "type": "Command",
       "id": "npm:test:director",
@@ -75619,7 +76506,7 @@
       "type": "Command",
       "id": "npm:test:rc1",
       "label": "npm run test:rc1",
-      "command": "node test/world-telemetry.js && node test/rc1-simulation.js && node test/rc1-journeys.js",
+      "command": "node test/world-telemetry.js && node test/rc1-simulation.js && node test/rc1-journeys.js && node test/rc1-qualification.js && node test/rc1-native-proof.js && node test/rc1-resource-journal.js",
       "provenance": [
         {
           "file": "package.json",
@@ -75633,6 +76520,71 @@
       "id": "npm:test:rc1:mobile",
       "label": "npm run test:rc1:mobile",
       "command": "node tools/rc1-mobile-journeys.js",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "key": "Command:npm:test:rc1:mobile:postgres",
+      "type": "Command",
+      "id": "npm:test:rc1:mobile:postgres",
+      "label": "npm run test:rc1:mobile:postgres",
+      "command": "node test/rc1-mobile-postgres.js",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "key": "Command:npm:test:rc1:observability",
+      "type": "Command",
+      "id": "npm:test:rc1:observability",
+      "label": "npm run test:rc1:observability",
+      "command": "node test/rc1-observability.js && node test/rc1-passive-projection.js",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "key": "Command:npm:test:rc1:proof:postgres",
+      "type": "Command",
+      "id": "npm:test:rc1:proof:postgres",
+      "label": "npm run test:rc1:proof:postgres",
+      "command": "node test/rc1-native-proof.js --postgres",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "key": "Command:npm:test:rc1:resource:postgres",
+      "type": "Command",
+      "id": "npm:test:rc1:resource:postgres",
+      "label": "npm run test:rc1:resource:postgres",
+      "command": "node tools/rc1-resource-proof.js",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "key": "Command:npm:test:rc1:security:postgres",
+      "type": "Command",
+      "id": "npm:test:rc1:security:postgres",
+      "label": "npm run test:rc1:security:postgres",
+      "command": "node test/rc1-command-redteam.js",
       "provenance": [
         {
           "file": "package.json",
@@ -76651,6 +77603,22 @@
         {
           "commit": "0a63c20b46b5d90b1541b3829af3d0f6e77404f4",
           "url": "https://github.com/OmertaDev/Omerta/commit/0a63c20b46b5d90b1541b3829af3d0f6e77404f4"
+        }
+      ]
+    },
+    {
+      "key": "Commit:0adc0b3011a9fd5057e6cf4d3b40333f1538ce35",
+      "type": "Commit",
+      "id": "0adc0b3011a9fd5057e6cf4d3b40333f1538ce35",
+      "label": "test(rc1): add native resource movements and retained branch inventory",
+      "title": "test(rc1): add native resource movements and retained branch inventory",
+      "date": "2026-09-21T02:42:27.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/0adc0b3011a9fd5057e6cf4d3b40333f1538ce35",
+      "provenance": [
+        {
+          "commit": "0adc0b3011a9fd5057e6cf4d3b40333f1538ce35",
+          "url": "https://github.com/OmertaDev/Omerta/commit/0adc0b3011a9fd5057e6cf4d3b40333f1538ce35"
         }
       ]
     },
@@ -79615,6 +80583,22 @@
       ]
     },
     {
+      "key": "Commit:2a5ab465c8fd4a7fbe704938107e246c17bdfccb",
+      "type": "Commit",
+      "id": "2a5ab465c8fd4a7fbe704938107e246c17bdfccb",
+      "label": "test(rc1): expose fail-closed resource evidence self-check",
+      "title": "test(rc1): expose fail-closed resource evidence self-check",
+      "date": "2026-09-21T02:45:58.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/2a5ab465c8fd4a7fbe704938107e246c17bdfccb",
+      "provenance": [
+        {
+          "commit": "2a5ab465c8fd4a7fbe704938107e246c17bdfccb",
+          "url": "https://github.com/OmertaDev/Omerta/commit/2a5ab465c8fd4a7fbe704938107e246c17bdfccb"
+        }
+      ]
+    },
+    {
       "key": "Commit:2a67d360be1a35fad87da429a20b5cdecd50f015",
       "type": "Commit",
       "id": "2a67d360be1a35fad87da429a20b5cdecd50f015",
@@ -80619,6 +81603,22 @@
         {
           "commit": "3284ae86bb27da4f0bff92b93dc0f79b1cf09506",
           "url": "https://github.com/OmertaDev/Omerta/commit/3284ae86bb27da4f0bff92b93dc0f79b1cf09506"
+        }
+      ]
+    },
+    {
+      "key": "Commit:32859cf7d198d2a003160b2bb1ef005991697d73",
+      "type": "Commit",
+      "id": "32859cf7d198d2a003160b2bb1ef005991697d73",
+      "label": "chore(knowledge): refresh generated artifacts for 468516d8",
+      "title": "chore(knowledge): refresh generated artifacts for 468516d8",
+      "date": "2026-09-20T23:37:28.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/32859cf7d198d2a003160b2bb1ef005991697d73",
+      "provenance": [
+        {
+          "commit": "32859cf7d198d2a003160b2bb1ef005991697d73",
+          "url": "https://github.com/OmertaDev/Omerta/commit/32859cf7d198d2a003160b2bb1ef005991697d73"
         }
       ]
     },
@@ -81919,6 +82919,22 @@
       ]
     },
     {
+      "key": "Commit:3ea88ba02fb5ed404c663e9be255f04e0a4d2c9c",
+      "type": "Commit",
+      "id": "3ea88ba02fb5ed404c663e9be255f04e0a4d2c9c",
+      "label": "Seed actor decisions from authorized semantic choices rather than random IDs",
+      "title": "Seed actor decisions from authorized semantic choices rather than random IDs",
+      "date": "2026-09-21T02:49:14.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/3ea88ba02fb5ed404c663e9be255f04e0a4d2c9c",
+      "provenance": [
+        {
+          "commit": "3ea88ba02fb5ed404c663e9be255f04e0a4d2c9c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/3ea88ba02fb5ed404c663e9be255f04e0a4d2c9c"
+        }
+      ]
+    },
+    {
       "key": "Commit:3eb4f4111453574634bcc57d1a8e9ef17904d10e",
       "type": "Commit",
       "id": "3eb4f4111453574634bcc57d1a8e9ef17904d10e",
@@ -82987,6 +84003,22 @@
         {
           "commit": "47008d39f6aa8a93dcbc4d2e58746e9334d38173",
           "url": "https://github.com/OmertaDev/Omerta/commit/47008d39f6aa8a93dcbc4d2e58746e9334d38173"
+        }
+      ]
+    },
+    {
+      "key": "Commit:4723c2382c601c947615c62f6cc885a13071aced",
+      "type": "Commit",
+      "id": "4723c2382c601c947615c62f6cc885a13071aced",
+      "label": "Enforce complete RC1 acceptance targets and artifact path integrity",
+      "title": "Enforce complete RC1 acceptance targets and artifact path integrity",
+      "date": "2026-09-21T02:40:34.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/4723c2382c601c947615c62f6cc885a13071aced",
+      "provenance": [
+        {
+          "commit": "4723c2382c601c947615c62f6cc885a13071aced",
+          "url": "https://github.com/OmertaDev/Omerta/commit/4723c2382c601c947615c62f6cc885a13071aced"
         }
       ]
     },
@@ -84283,6 +85315,22 @@
         {
           "commit": "56777b9661ea27daa71d57346f33c2af2e451325",
           "url": "https://github.com/OmertaDev/Omerta/commit/56777b9661ea27daa71d57346f33c2af2e451325"
+        }
+      ]
+    },
+    {
+      "key": "Commit:567d922ec8384743fde4104bc88bac74474b1e68",
+      "type": "Commit",
+      "id": "567d922ec8384743fde4104bc88bac74474b1e68",
+      "label": "Restore assessed scale and Director simulation proof safeguards",
+      "title": "Restore assessed scale and Director simulation proof safeguards",
+      "date": "2026-09-21T02:36:38.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/567d922ec8384743fde4104bc88bac74474b1e68",
+      "provenance": [
+        {
+          "commit": "567d922ec8384743fde4104bc88bac74474b1e68",
+          "url": "https://github.com/OmertaDev/Omerta/commit/567d922ec8384743fde4104bc88bac74474b1e68"
         }
       ]
     },
@@ -85711,6 +86759,22 @@
       ]
     },
     {
+      "key": "Commit:6710e20f65ac5561a0ab43cf8632ca3a910c48ba",
+      "type": "Commit",
+      "id": "6710e20f65ac5561a0ab43cf8632ca3a910c48ba",
+      "label": "Test evidence capture against timeouts and source mutation",
+      "title": "Test evidence capture against timeouts and source mutation",
+      "date": "2026-09-21T02:36:42.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/6710e20f65ac5561a0ab43cf8632ca3a910c48ba",
+      "provenance": [
+        {
+          "commit": "6710e20f65ac5561a0ab43cf8632ca3a910c48ba",
+          "url": "https://github.com/OmertaDev/Omerta/commit/6710e20f65ac5561a0ab43cf8632ca3a910c48ba"
+        }
+      ]
+    },
+    {
       "key": "Commit:6715d574e6f30b1506d2c6d85842317499106622",
       "type": "Commit",
       "id": "6715d574e6f30b1506d2c6d85842317499106622",
@@ -86203,6 +87267,22 @@
         {
           "commit": "6e066ffabab0b0f63ac06be141d501474588aace",
           "url": "https://github.com/OmertaDev/Omerta/commit/6e066ffabab0b0f63ac06be141d501474588aace"
+        }
+      ]
+    },
+    {
+      "key": "Commit:6e10782c33b8f376b801e2417698407ffcd80c61",
+      "type": "Commit",
+      "id": "6e10782c33b8f376b801e2417698407ffcd80c61",
+      "label": "docs(rc1): retain pinned native resource branch evidence",
+      "title": "docs(rc1): retain pinned native resource branch evidence",
+      "date": "2026-09-21T02:43:53.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/6e10782c33b8f376b801e2417698407ffcd80c61",
+      "provenance": [
+        {
+          "commit": "6e10782c33b8f376b801e2417698407ffcd80c61",
+          "url": "https://github.com/OmertaDev/Omerta/commit/6e10782c33b8f376b801e2417698407ffcd80c61"
         }
       ]
     },
@@ -88175,6 +89255,22 @@
       ]
     },
     {
+      "key": "Commit:80ce318b0925e40b4299742d13adfe4f429cf527",
+      "type": "Commit",
+      "id": "80ce318b0925e40b4299742d13adfe4f429cf527",
+      "label": "Freeze RC1 load targets and retain scoped native proof results",
+      "title": "Freeze RC1 load targets and retain scoped native proof results",
+      "date": "2026-09-21T02:53:03.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/80ce318b0925e40b4299742d13adfe4f429cf527",
+      "provenance": [
+        {
+          "commit": "80ce318b0925e40b4299742d13adfe4f429cf527",
+          "url": "https://github.com/OmertaDev/Omerta/commit/80ce318b0925e40b4299742d13adfe4f429cf527"
+        }
+      ]
+    },
+    {
       "key": "Commit:80df58c8520b233b6c22d3cc49ca5f5a717804ad",
       "type": "Commit",
       "id": "80df58c8520b233b6c22d3cc49ca5f5a717804ad",
@@ -88427,6 +89523,22 @@
         {
           "commit": "83198536e97822e8b229158337cd9ccba51ad2fb",
           "url": "https://github.com/OmertaDev/Omerta/commit/83198536e97822e8b229158337cd9ccba51ad2fb"
+        }
+      ]
+    },
+    {
+      "key": "Commit:832661e618bafe0c53ab6f86b3768ad1ee3cb7d9",
+      "type": "Commit",
+      "id": "832661e618bafe0c53ab6f86b3768ad1ee3cb7d9",
+      "label": "Add fail-closed native proof capture and frozen RC1 world matrix targets",
+      "title": "Add fail-closed native proof capture and frozen RC1 world matrix targets",
+      "date": "2026-09-21T02:34:16.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/832661e618bafe0c53ab6f86b3768ad1ee3cb7d9",
+      "provenance": [
+        {
+          "commit": "832661e618bafe0c53ab6f86b3768ad1ee3cb7d9",
+          "url": "https://github.com/OmertaDev/Omerta/commit/832661e618bafe0c53ab6f86b3768ad1ee3cb7d9"
         }
       ]
     },
@@ -89487,6 +90599,22 @@
       ]
     },
     {
+      "key": "Commit:8e036f11db919df138029e1adbff0198f2e4e2bf",
+      "type": "Commit",
+      "id": "8e036f11db919df138029e1adbff0198f2e4e2bf",
+      "label": "Add exact-source RC1 gate capture and fail-closed evidence qualification",
+      "title": "Add exact-source RC1 gate capture and fail-closed evidence qualification",
+      "date": "2026-09-21T02:35:40.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/8e036f11db919df138029e1adbff0198f2e4e2bf",
+      "provenance": [
+        {
+          "commit": "8e036f11db919df138029e1adbff0198f2e4e2bf",
+          "url": "https://github.com/OmertaDev/Omerta/commit/8e036f11db919df138029e1adbff0198f2e4e2bf"
+        }
+      ]
+    },
+    {
       "key": "Commit:8e10ae57f0f6fab872951580eded6054b6995cfb",
       "type": "Commit",
       "id": "8e10ae57f0f6fab872951580eded6054b6995cfb",
@@ -89691,6 +90819,22 @@
         {
           "commit": "90a07070d3efd08fe3e70d1c78def530cf79f184",
           "url": "https://github.com/OmertaDev/Omerta/commit/90a07070d3efd08fe3e70d1c78def530cf79f184"
+        }
+      ]
+    },
+    {
+      "key": "Commit:90da79d54588addd315b4c1f5c4bd716961d43d4",
+      "type": "Commit",
+      "id": "90da79d54588addd315b4c1f5c4bd716961d43d4",
+      "label": "fix(rc1): reconcile migration diagnostics and retained release regressions",
+      "title": "fix(rc1): reconcile migration diagnostics and retained release regressions",
+      "date": "2026-09-21T02:36:23.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/90da79d54588addd315b4c1f5c4bd716961d43d4",
+      "provenance": [
+        {
+          "commit": "90da79d54588addd315b4c1f5c4bd716961d43d4",
+          "url": "https://github.com/OmertaDev/Omerta/commit/90da79d54588addd315b4c1f5c4bd716961d43d4"
         }
       ]
     },
@@ -91099,6 +92243,22 @@
         {
           "commit": "9eb5dc28e1bb88bedf0982434d852ad0f5c75fd0",
           "url": "https://github.com/OmertaDev/Omerta/commit/9eb5dc28e1bb88bedf0982434d852ad0f5c75fd0"
+        }
+      ]
+    },
+    {
+      "key": "Commit:9efb77b1622d6c0f5237ca4262216ea3cc4b3b6d",
+      "type": "Commit",
+      "id": "9efb77b1622d6c0f5237ca4262216ea3cc4b3b6d",
+      "label": "feat(rc1): inventory mounted authority boundaries without assuming coverage",
+      "title": "feat(rc1): inventory mounted authority boundaries without assuming coverage",
+      "date": "2026-09-21T02:43:18.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9efb77b1622d6c0f5237ca4262216ea3cc4b3b6d",
+      "provenance": [
+        {
+          "commit": "9efb77b1622d6c0f5237ca4262216ea3cc4b3b6d",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9efb77b1622d6c0f5237ca4262216ea3cc4b3b6d"
         }
       ]
     },
@@ -93999,6 +95159,22 @@
       ]
     },
     {
+      "key": "Commit:bb57427e11615d5d78df90d7805e8067a4268aec",
+      "type": "Commit",
+      "id": "bb57427e11615d5d78df90d7805e8067a4268aec",
+      "label": "test(rc1): prove shipment rollback and concurrent owner serials",
+      "title": "test(rc1): prove shipment rollback and concurrent owner serials",
+      "date": "2026-09-21T02:52:37.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/bb57427e11615d5d78df90d7805e8067a4268aec",
+      "provenance": [
+        {
+          "commit": "bb57427e11615d5d78df90d7805e8067a4268aec",
+          "url": "https://github.com/OmertaDev/Omerta/commit/bb57427e11615d5d78df90d7805e8067a4268aec"
+        }
+      ]
+    },
+    {
       "key": "Commit:bbd022fce6b517fff06b977b79423e9fd6c66413",
       "type": "Commit",
       "id": "bbd022fce6b517fff06b977b79423e9fd6c66413",
@@ -94911,6 +96087,22 @@
       ]
     },
     {
+      "key": "Commit:c72c7f6a0f19552b4b25622516eb074cb638bcb1",
+      "type": "Commit",
+      "id": "c72c7f6a0f19552b4b25622516eb074cb638bcb1",
+      "label": "Harden RC1 evidence provenance and register native readiness checks",
+      "title": "Harden RC1 evidence provenance and register native readiness checks",
+      "date": "2026-09-21T02:56:27.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/c72c7f6a0f19552b4b25622516eb074cb638bcb1",
+      "provenance": [
+        {
+          "commit": "c72c7f6a0f19552b4b25622516eb074cb638bcb1",
+          "url": "https://github.com/OmertaDev/Omerta/commit/c72c7f6a0f19552b4b25622516eb074cb638bcb1"
+        }
+      ]
+    },
+    {
       "key": "Commit:c73c514dc4a113801fe1b45c99b680e897cdaa9f",
       "type": "Commit",
       "id": "c73c514dc4a113801fe1b45c99b680e897cdaa9f",
@@ -95659,6 +96851,22 @@
         {
           "commit": "d0f266c02959bbff96c931671a049901b4a7c59c",
           "url": "https://github.com/OmertaDev/Omerta/commit/d0f266c02959bbff96c931671a049901b4a7c59c"
+        }
+      ]
+    },
+    {
+      "key": "Commit:d1048046e9be9448174c47904bfe68549d4180d5",
+      "type": "Commit",
+      "id": "d1048046e9be9448174c47904bfe68549d4180d5",
+      "label": "test(rc1): retain failed resource boundaries and verify source immutability",
+      "title": "test(rc1): retain failed resource boundaries and verify source immutability",
+      "date": "2026-09-21T02:45:24.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/d1048046e9be9448174c47904bfe68549d4180d5",
+      "provenance": [
+        {
+          "commit": "d1048046e9be9448174c47904bfe68549d4180d5",
+          "url": "https://github.com/OmertaDev/Omerta/commit/d1048046e9be9448174c47904bfe68549d4180d5"
         }
       ]
     },
@@ -107468,6 +108676,86 @@
       ]
     },
     {
+      "key": "Document:docs/release/readiness-work/authority-inventory.md",
+      "type": "Document",
+      "id": "docs/release/readiness-work/authority-inventory.md",
+      "label": "docs/release/readiness-work/authority-inventory.md",
+      "documentType": "documentation",
+      "lines": 29,
+      "version": "fc21423a2ccf4540",
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/authority-inventory.md",
+          "line": 1,
+          "version": "fc21423a2ccf4540"
+        }
+      ]
+    },
+    {
+      "key": "Document:docs/release/readiness-work/harness.md",
+      "type": "Document",
+      "id": "docs/release/readiness-work/harness.md",
+      "label": "docs/release/readiness-work/harness.md",
+      "documentType": "documentation",
+      "lines": 101,
+      "version": "fb86721705faf393",
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/harness.md",
+          "line": 1,
+          "version": "fb86721705faf393"
+        }
+      ]
+    },
+    {
+      "key": "Document:docs/release/readiness-work/README.md",
+      "type": "Document",
+      "id": "docs/release/readiness-work/README.md",
+      "label": "docs/release/readiness-work/README.md",
+      "documentType": "documentation",
+      "lines": 89,
+      "version": "3e798aeec121a334",
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/README.md",
+          "line": 1,
+          "version": "3e798aeec121a334"
+        }
+      ]
+    },
+    {
+      "key": "Document:docs/release/readiness-work/resource-proof.md",
+      "type": "Document",
+      "id": "docs/release/readiness-work/resource-proof.md",
+      "label": "docs/release/readiness-work/resource-proof.md",
+      "documentType": "documentation",
+      "lines": 69,
+      "version": "3eb057ef11a60dc0",
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/resource-proof.md",
+          "line": 1,
+          "version": "3eb057ef11a60dc0"
+        }
+      ]
+    },
+    {
+      "key": "Document:docs/release/readiness-work/source-reconciliation.md",
+      "type": "Document",
+      "id": "docs/release/readiness-work/source-reconciliation.md",
+      "label": "docs/release/readiness-work/source-reconciliation.md",
+      "documentType": "documentation",
+      "lines": 137,
+      "version": "123687a656949d2f",
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/source-reconciliation.md",
+          "line": 1,
+          "version": "123687a656949d2f"
+        }
+      ]
+    },
+    {
       "key": "Document:docs/superpowers/plans/2026-08-23-discovery-integrity.md",
       "type": "Document",
       "id": "docs/superpowers/plans/2026-08-23-discovery-integrity.md",
@@ -110594,12 +111882,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 756,
-      "version": "0c0110a5c407251a",
+      "version": "103e7311f5ac3211",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "0c0110a5c407251a"
+          "version": "103e7311f5ac3211"
         }
       ]
     },
@@ -111049,6 +112337,10 @@
         {
           "file": "tools/knowledge.js",
           "line": 24
+        },
+        {
+          "file": "tools/rc1-authority-inventory.js",
+          "line": 8
         }
       ]
     },
@@ -111212,7 +112504,7 @@
         },
         {
           "file": "src/db.js",
-          "line": 832
+          "line": 836
         },
         {
           "file": "test/coordination-capital.js",
@@ -111291,6 +112583,18 @@
           "line": 16
         },
         {
+          "file": "test/rc1-command-redteam.js",
+          "line": 5
+        },
+        {
+          "file": "test/rc1-mobile-postgres.js",
+          "line": 6
+        },
+        {
+          "file": "test/rc1-postgres-migration-failure.js",
+          "line": 4
+        },
+        {
           "file": "test/recipe-policy.js",
           "line": 31
         },
@@ -111365,6 +112669,14 @@
         {
           "file": "tools/pgcheck.js",
           "line": 1194
+        },
+        {
+          "file": "tools/rc1-native-proof.js",
+          "line": 140
+        },
+        {
+          "file": "tools/rc1-resource-proof.js",
+          "line": 9
         }
       ]
     },
@@ -111376,7 +112688,7 @@
       "provenance": [
         {
           "file": "src/db.js",
-          "line": 950
+          "line": 954
         },
         {
           "file": "test/bondquoteexpiry.js",
@@ -111436,6 +112748,10 @@
         },
         {
           "file": "test/projection-events.js",
+          "line": 6
+        },
+        {
+          "file": "test/rc1-passive-projection.js",
           "line": 6
         },
         {
@@ -111507,6 +112823,10 @@
           "line": 5
         },
         {
+          "file": "test/rc1-mobile-postgres.js",
+          "line": 7
+        },
+        {
           "file": "tools/mobile.js",
           "line": 35
         },
@@ -111524,7 +112844,7 @@
         },
         {
           "file": "tools/rc1-campaign-mobile.js",
-          "line": 9
+          "line": 11
         },
         {
           "file": "tools/rc1-mobile-journeys.js",
@@ -116603,6 +117923,9 @@
           "commit": "3231fb2774e4eeaa410392f23c206064ca6608dd"
         },
         {
+          "commit": "32859cf7d198d2a003160b2bb1ef005991697d73"
+        },
+        {
           "commit": "334da672b7aaf2140d562444f2edad1a52e4f562"
         },
         {
@@ -117266,6 +118589,9 @@
           "commit": "3231fb2774e4eeaa410392f23c206064ca6608dd"
         },
         {
+          "commit": "32859cf7d198d2a003160b2bb1ef005991697d73"
+        },
+        {
           "commit": "334da672b7aaf2140d562444f2edad1a52e4f562"
         },
         {
@@ -117927,6 +119253,9 @@
         },
         {
           "commit": "3231fb2774e4eeaa410392f23c206064ca6608dd"
+        },
+        {
+          "commit": "32859cf7d198d2a003160b2bb1ef005991697d73"
         },
         {
           "commit": "334da672b7aaf2140d562444f2edad1a52e4f562"
@@ -118749,6 +120078,9 @@
         },
         {
           "commit": "3231fb2774e4eeaa410392f23c206064ca6608dd"
+        },
+        {
+          "commit": "32859cf7d198d2a003160b2bb1ef005991697d73"
         },
         {
           "commit": "334da672b7aaf2140d562444f2edad1a52e4f562"
@@ -120328,6 +121660,21 @@
       ]
     },
     {
+      "key": "Module:src/command-diagnostics.js",
+      "type": "Module",
+      "id": "src/command-diagnostics.js",
+      "label": "src/command-diagnostics.js",
+      "lines": 49,
+      "version": "f7be24eb60c6a397",
+      "provenance": [
+        {
+          "file": "src/command-diagnostics.js",
+          "line": 1,
+          "version": "f7be24eb60c6a397"
+        }
+      ]
+    },
+    {
       "key": "Module:src/commission.js",
       "type": "Module",
       "id": "src/commission.js",
@@ -121007,13 +122354,13 @@
       "type": "Module",
       "id": "src/db.js",
       "label": "src/db.js",
-      "lines": 961,
-      "version": "fe07838889a721c6",
+      "lines": 965,
+      "version": "6033b850aa984370",
       "provenance": [
         {
           "file": "src/db.js",
           "line": 1,
-          "version": "fe07838889a721c6"
+          "version": "6033b850aa984370"
         }
       ]
     },
@@ -122282,13 +123629,13 @@
       "type": "Module",
       "id": "src/player-commands.js",
       "label": "src/player-commands.js",
-      "lines": 343,
-      "version": "ac5b843807b7710a",
+      "lines": 348,
+      "version": "79ead5d111f072b3",
       "provenance": [
         {
           "file": "src/player-commands.js",
           "line": 1,
-          "version": "ac5b843807b7710a"
+          "version": "79ead5d111f072b3"
         }
       ]
     },
@@ -122597,13 +123944,13 @@
       "type": "Module",
       "id": "src/routes/commands.js",
       "label": "src/routes/commands.js",
-      "lines": 70,
-      "version": "aacd0862d13432aa",
+      "lines": 73,
+      "version": "eef5b46e04e02ddd",
       "provenance": [
         {
           "file": "src/routes/commands.js",
           "line": 1,
-          "version": "aacd0862d13432aa"
+          "version": "eef5b46e04e02ddd"
         }
       ]
     },
@@ -127082,12 +128429,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "468516d8d6f3729514711ad5a0b83e440c5c46f9",
-      "currentBranch": "main",
+      "revision": "c72c7f6a0f19552b4b25622516eb074cb638bcb1",
+      "currentBranch": "codex/rc1-readiness",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 3235,
+      "currentArtifactCount": 3273,
       "provenance": [
         {
           "file": "README.md",
@@ -128837,13 +130184,13 @@
       "definitions": [
         {
           "file": "src/routes/commands.js",
-          "line": 40
+          "line": 43
         }
       ],
       "provenance": [
         {
           "file": "src/routes/commands.js",
-          "line": 40
+          "line": 43
         }
       ]
     },
@@ -136229,13 +137576,13 @@
       "definitions": [
         {
           "file": "src/routes/commands.js",
-          "line": 52
+          "line": 55
         }
       ],
       "provenance": [
         {
           "file": "src/routes/commands.js",
-          "line": 52
+          "line": 55
         }
       ]
     },
@@ -136253,13 +137600,13 @@
       "definitions": [
         {
           "file": "src/routes/commands.js",
-          "line": 47
+          "line": 50
         }
       ],
       "provenance": [
         {
           "file": "src/routes/commands.js",
-          "line": 47
+          "line": 50
         }
       ]
     },
@@ -156110,12 +157457,12 @@
       "id": "test/gates.js",
       "label": "test/gates.js",
       "lines": 4189,
-      "version": "a71f520825950116",
+      "version": "dbf8b405170c8054",
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "a71f520825950116"
+          "version": "dbf8b405170c8054"
         }
       ]
     },
@@ -156439,13 +157786,13 @@
       "type": "TestSuite",
       "id": "test/lib/player-command-support.js",
       "label": "test/lib/player-command-support.js",
-      "lines": 71,
-      "version": "e557b7537d224e22",
+      "lines": 81,
+      "version": "fd214f8c03b9bc0c",
       "provenance": [
         {
           "file": "test/lib/player-command-support.js",
           "line": 1,
-          "version": "e557b7537d224e22"
+          "version": "fd214f8c03b9bc0c"
         }
       ]
     },
@@ -157395,6 +158742,21 @@
       ]
     },
     {
+      "key": "TestSuite:test/rc1-command-redteam.js",
+      "type": "TestSuite",
+      "id": "test/rc1-command-redteam.js",
+      "label": "test/rc1-command-redteam.js",
+      "lines": 101,
+      "version": "368c7ceb59b8fc72",
+      "provenance": [
+        {
+          "file": "test/rc1-command-redteam.js",
+          "line": 1,
+          "version": "368c7ceb59b8fc72"
+        }
+      ]
+    },
+    {
       "key": "TestSuite:test/rc1-journeys.js",
       "type": "TestSuite",
       "id": "test/rc1-journeys.js",
@@ -157406,6 +158768,111 @@
           "file": "test/rc1-journeys.js",
           "line": 1,
           "version": "152f7dc5092c7268"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/rc1-mobile-postgres.js",
+      "type": "TestSuite",
+      "id": "test/rc1-mobile-postgres.js",
+      "label": "test/rc1-mobile-postgres.js",
+      "lines": 99,
+      "version": "10769e85718e5493",
+      "provenance": [
+        {
+          "file": "test/rc1-mobile-postgres.js",
+          "line": 1,
+          "version": "10769e85718e5493"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/rc1-native-proof.js",
+      "type": "TestSuite",
+      "id": "test/rc1-native-proof.js",
+      "label": "test/rc1-native-proof.js",
+      "lines": 129,
+      "version": "f0422f1835c9803f",
+      "provenance": [
+        {
+          "file": "test/rc1-native-proof.js",
+          "line": 1,
+          "version": "f0422f1835c9803f"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/rc1-observability.js",
+      "type": "TestSuite",
+      "id": "test/rc1-observability.js",
+      "label": "test/rc1-observability.js",
+      "lines": 80,
+      "version": "517f1d9213deae55",
+      "provenance": [
+        {
+          "file": "test/rc1-observability.js",
+          "line": 1,
+          "version": "517f1d9213deae55"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/rc1-passive-projection.js",
+      "type": "TestSuite",
+      "id": "test/rc1-passive-projection.js",
+      "label": "test/rc1-passive-projection.js",
+      "lines": 44,
+      "version": "4b2be45595f1562e",
+      "provenance": [
+        {
+          "file": "test/rc1-passive-projection.js",
+          "line": 1,
+          "version": "4b2be45595f1562e"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/rc1-postgres-migration-failure.js",
+      "type": "TestSuite",
+      "id": "test/rc1-postgres-migration-failure.js",
+      "label": "test/rc1-postgres-migration-failure.js",
+      "lines": 47,
+      "version": "ce42f8dbdce63bc5",
+      "provenance": [
+        {
+          "file": "test/rc1-postgres-migration-failure.js",
+          "line": 1,
+          "version": "ce42f8dbdce63bc5"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/rc1-qualification.js",
+      "type": "TestSuite",
+      "id": "test/rc1-qualification.js",
+      "label": "test/rc1-qualification.js",
+      "lines": 114,
+      "version": "0be4691396225fcc",
+      "provenance": [
+        {
+          "file": "test/rc1-qualification.js",
+          "line": 1,
+          "version": "0be4691396225fcc"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/rc1-resource-journal.js",
+      "type": "TestSuite",
+      "id": "test/rc1-resource-journal.js",
+      "label": "test/rc1-resource-journal.js",
+      "lines": 14,
+      "version": "9f71ec2c80135aaf",
+      "provenance": [
+        {
+          "file": "test/rc1-resource-journal.js",
+          "line": 1,
+          "version": "9f71ec2c80135aaf"
         }
       ]
     },
@@ -158524,13 +159991,13 @@
       "type": "Workflow",
       "id": ".github/workflows/ci.yml",
       "label": ".github/workflows/ci.yml",
-      "lines": 409,
-      "version": "9e191944cfefad7b",
+      "lines": 431,
+      "version": "119372f33cde34c7",
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "9e191944cfefad7b"
+          "version": "119372f33cde34c7"
         }
       ]
     },
@@ -158599,13 +160066,13 @@
       "type": "Workflow",
       "id": ".github/workflows/rc1-recovery.yml",
       "label": ".github/workflows/rc1-recovery.yml",
-      "lines": 48,
-      "version": "afc8ad32c1f12acc",
+      "lines": 86,
+      "version": "4aaf0753f81d9156",
       "provenance": [
         {
           "file": ".github/workflows/rc1-recovery.yml",
           "line": 1,
-          "version": "afc8ad32c1f12acc"
+          "version": "4aaf0753f81d9156"
         }
       ]
     }
@@ -168342,6 +169809,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:src/command-diagnostics.js",
+      "to": "Domain:platform-core",
+      "provenance": {
+        "file": "src/command-diagnostics.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:src/commission.js",
       "to": "Domain:platform-core",
       "provenance": {
@@ -172302,10 +173778,82 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/rc1-command-redteam.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/rc1-command-redteam.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/rc1-journeys.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "test/rc1-journeys.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/rc1-mobile-postgres.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/rc1-mobile-postgres.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/rc1-native-proof.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/rc1-native-proof.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/rc1-observability.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/rc1-observability.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/rc1-passive-projection.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/rc1-passive-projection.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/rc1-postgres-migration-failure.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/rc1-postgres-migration-failure.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/rc1-qualification.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/rc1-qualification.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/rc1-resource-journal.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/rc1-resource-journal.js",
         "line": 1
       }
     },
@@ -173598,10 +175146,28 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:tools/rc1-authority-inventory.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/rc1-authority-inventory.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:tools/rc1-campaign-mobile.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "tools/rc1-campaign-mobile.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/rc1-evidence.mjs",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/rc1-evidence.mjs",
         "line": 1
       }
     },
@@ -173620,6 +175186,51 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "tools/rc1-mobile-journeys.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/rc1-native-proof.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/rc1-native-proof.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/rc1-qualification.mjs",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/rc1-qualification.mjs",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/rc1-resource-inventory.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/rc1-resource-inventory.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/rc1-resource-journal.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/rc1-resource-journal.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/rc1-resource-proof.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/rc1-resource-proof.js",
         "line": 1
       }
     },
@@ -174493,7 +176104,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/commands.js",
-        "line": 40
+        "line": 43
       }
     },
     {
@@ -177265,7 +178876,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/commands.js",
-        "line": 52
+        "line": 55
       }
     },
     {
@@ -177274,7 +178885,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/commands.js",
-        "line": 47
+        "line": 50
       }
     },
     {
@@ -183999,6 +185610,46 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "0a63c20b46b5d90b1541b3829af3d0f6e77404f4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0adc0b3011a9fd5057e6cf4d3b40333f1538ce35",
+      "to": "Artifact:docs/release/readiness-work/resource-proof.md",
+      "provenance": {
+        "commit": "0adc0b3011a9fd5057e6cf4d3b40333f1538ce35"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0adc0b3011a9fd5057e6cf4d3b40333f1538ce35",
+      "to": "Artifact:test/rc1-resource-journal.js",
+      "provenance": {
+        "commit": "0adc0b3011a9fd5057e6cf4d3b40333f1538ce35"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0adc0b3011a9fd5057e6cf4d3b40333f1538ce35",
+      "to": "Artifact:tools/rc1-resource-inventory.js",
+      "provenance": {
+        "commit": "0adc0b3011a9fd5057e6cf4d3b40333f1538ce35"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0adc0b3011a9fd5057e6cf4d3b40333f1538ce35",
+      "to": "Artifact:tools/rc1-resource-journal.js",
+      "provenance": {
+        "commit": "0adc0b3011a9fd5057e6cf4d3b40333f1538ce35"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0adc0b3011a9fd5057e6cf4d3b40333f1538ce35",
+      "to": "Artifact:tools/rc1-resource-proof.js",
+      "provenance": {
+        "commit": "0adc0b3011a9fd5057e6cf4d3b40333f1538ce35"
       }
     },
     {
@@ -198907,6 +200558,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:2a5ab465c8fd4a7fbe704938107e246c17bdfccb",
+      "to": "Artifact:docs/release/readiness-work/resource-proof.md",
+      "provenance": {
+        "commit": "2a5ab465c8fd4a7fbe704938107e246c17bdfccb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2a5ab465c8fd4a7fbe704938107e246c17bdfccb",
+      "to": "Artifact:docs/release/readiness-work/resource-runs/.gitattributes",
+      "provenance": {
+        "commit": "2a5ab465c8fd4a7fbe704938107e246c17bdfccb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2a5ab465c8fd4a7fbe704938107e246c17bdfccb",
+      "to": "Artifact:tools/rc1-resource-proof.js",
+      "provenance": {
+        "commit": "2a5ab465c8fd4a7fbe704938107e246c17bdfccb"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:2a67d360be1a35fad87da429a20b5cdecd50f015",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -202079,6 +203754,38 @@
       "to": "Artifact:CLAUDE.md",
       "provenance": {
         "commit": "3284ae86bb27da4f0bff92b93dc0f79b1cf09506"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:32859cf7d198d2a003160b2bb1ef005991697d73",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "32859cf7d198d2a003160b2bb1ef005991697d73"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:32859cf7d198d2a003160b2bb1ef005991697d73",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "32859cf7d198d2a003160b2bb1ef005991697d73"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:32859cf7d198d2a003160b2bb1ef005991697d73",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "32859cf7d198d2a003160b2bb1ef005991697d73"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:32859cf7d198d2a003160b2bb1ef005991697d73",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "32859cf7d198d2a003160b2bb1ef005991697d73"
       }
     },
     {
@@ -207947,6 +209654,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:3ea88ba02fb5ed404c663e9be255f04e0a4d2c9c",
+      "to": "Artifact:docs/release/readiness-work/harness.md",
+      "provenance": {
+        "commit": "3ea88ba02fb5ed404c663e9be255f04e0a4d2c9c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3ea88ba02fb5ed404c663e9be255f04e0a4d2c9c",
+      "to": "Artifact:test/rc1-native-proof.js",
+      "provenance": {
+        "commit": "3ea88ba02fb5ed404c663e9be255f04e0a4d2c9c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3ea88ba02fb5ed404c663e9be255f04e0a4d2c9c",
+      "to": "Artifact:tools/rc1-sim.js",
+      "provenance": {
+        "commit": "3ea88ba02fb5ed404c663e9be255f04e0a4d2c9c"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:3eb4f4111453574634bcc57d1a8e9ef17904d10e",
       "to": "HistoricalArtifact:knowledge/generated/contracts.md",
       "provenance": {
@@ -211847,6 +213578,30 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "commit": "47008d39f6aa8a93dcbc4d2e58746e9334d38173"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4723c2382c601c947615c62f6cc885a13071aced",
+      "to": "Artifact:docs/release/readiness-work/scenario-manifest.json",
+      "provenance": {
+        "commit": "4723c2382c601c947615c62f6cc885a13071aced"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4723c2382c601c947615c62f6cc885a13071aced",
+      "to": "Artifact:test/rc1-native-proof.js",
+      "provenance": {
+        "commit": "4723c2382c601c947615c62f6cc885a13071aced"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4723c2382c601c947615c62f6cc885a13071aced",
+      "to": "Artifact:tools/rc1-native-proof.js",
+      "provenance": {
+        "commit": "4723c2382c601c947615c62f6cc885a13071aced"
       }
     },
     {
@@ -218583,6 +220338,22 @@
       "to": "Artifact:test/social.js",
       "provenance": {
         "commit": "56777b9661ea27daa71d57346f33c2af2e451325"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:567d922ec8384743fde4104bc88bac74474b1e68",
+      "to": "Artifact:tools/director-sim.js",
+      "provenance": {
+        "commit": "567d922ec8384743fde4104bc88bac74474b1e68"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:567d922ec8384743fde4104bc88bac74474b1e68",
+      "to": "Artifact:tools/scale.js",
+      "provenance": {
+        "commit": "567d922ec8384743fde4104bc88bac74474b1e68"
       }
     },
     {
@@ -226491,6 +228262,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:6710e20f65ac5561a0ab43cf8632ca3a910c48ba",
+      "to": "Artifact:test/rc1-qualification.js",
+      "provenance": {
+        "commit": "6710e20f65ac5561a0ab43cf8632ca3a910c48ba"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:6715d574e6f30b1506d2c6d85842317499106622",
       "to": "Artifact:.github/workflows/ci.yml",
       "provenance": {
@@ -227983,6 +229762,78 @@
       "to": "Artifact:omerta-contracts/test/AcquisitionVaultOperator.t.sol",
       "provenance": {
         "commit": "6e066ffabab0b0f63ac06be141d501474588aace"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6e10782c33b8f376b801e2417698407ffcd80c61",
+      "to": "Artifact:docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/capital.log",
+      "provenance": {
+        "commit": "6e10782c33b8f376b801e2417698407ffcd80c61"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6e10782c33b8f376b801e2417698407ffcd80c61",
+      "to": "Artifact:docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/coverage-inventory.json",
+      "provenance": {
+        "commit": "6e10782c33b8f376b801e2417698407ffcd80c61"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6e10782c33b8f376b801e2417698407ffcd80c61",
+      "to": "Artifact:docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/execution-manifest.json",
+      "provenance": {
+        "commit": "6e10782c33b8f376b801e2417698407ffcd80c61"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6e10782c33b8f376b801e2417698407ffcd80c61",
+      "to": "Artifact:docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/final-state.json",
+      "provenance": {
+        "commit": "6e10782c33b8f376b801e2417698407ffcd80c61"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6e10782c33b8f376b801e2417698407ffcd80c61",
+      "to": "Artifact:docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/initial-state.json",
+      "provenance": {
+        "commit": "6e10782c33b8f376b801e2417698407ffcd80c61"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6e10782c33b8f376b801e2417698407ffcd80c61",
+      "to": "Artifact:docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/movements.ndjson",
+      "provenance": {
+        "commit": "6e10782c33b8f376b801e2417698407ffcd80c61"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6e10782c33b8f376b801e2417698407ffcd80c61",
+      "to": "Artifact:docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/native.log",
+      "provenance": {
+        "commit": "6e10782c33b8f376b801e2417698407ffcd80c61"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6e10782c33b8f376b801e2417698407ffcd80c61",
+      "to": "Artifact:docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json",
+      "provenance": {
+        "commit": "6e10782c33b8f376b801e2417698407ffcd80c61"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6e10782c33b8f376b801e2417698407ffcd80c61",
+      "to": "Artifact:docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/result.json",
+      "provenance": {
+        "commit": "6e10782c33b8f376b801e2417698407ffcd80c61"
       }
     },
     {
@@ -237771,6 +239622,46 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:80ce318b0925e40b4299742d13adfe4f429cf527",
+      "to": "Artifact:docs/release/readiness-work/harness-results.json",
+      "provenance": {
+        "commit": "80ce318b0925e40b4299742d13adfe4f429cf527"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:80ce318b0925e40b4299742d13adfe4f429cf527",
+      "to": "Artifact:docs/release/readiness-work/harness.md",
+      "provenance": {
+        "commit": "80ce318b0925e40b4299742d13adfe4f429cf527"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:80ce318b0925e40b4299742d13adfe4f429cf527",
+      "to": "Artifact:docs/release/readiness-work/scenario-manifest.json",
+      "provenance": {
+        "commit": "80ce318b0925e40b4299742d13adfe4f429cf527"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:80ce318b0925e40b4299742d13adfe4f429cf527",
+      "to": "Artifact:test/rc1-native-proof.js",
+      "provenance": {
+        "commit": "80ce318b0925e40b4299742d13adfe4f429cf527"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:80ce318b0925e40b4299742d13adfe4f429cf527",
+      "to": "Artifact:tools/rc1-native-proof.js",
+      "provenance": {
+        "commit": "80ce318b0925e40b4299742d13adfe4f429cf527"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:80df58c8520b233b6c22d3cc49ca5f5a717804ad",
       "to": "Artifact:CLAUDE.md",
       "provenance": {
@@ -238711,6 +240602,46 @@
       "to": "Artifact:tools/extract-rules.js",
       "provenance": {
         "commit": "83198536e97822e8b229158337cd9ccba51ad2fb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:832661e618bafe0c53ab6f86b3768ad1ee3cb7d9",
+      "to": "Artifact:docs/release/readiness-work/harness.md",
+      "provenance": {
+        "commit": "832661e618bafe0c53ab6f86b3768ad1ee3cb7d9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:832661e618bafe0c53ab6f86b3768ad1ee3cb7d9",
+      "to": "Artifact:docs/release/readiness-work/scenario-manifest.json",
+      "provenance": {
+        "commit": "832661e618bafe0c53ab6f86b3768ad1ee3cb7d9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:832661e618bafe0c53ab6f86b3768ad1ee3cb7d9",
+      "to": "Artifact:test/rc1-native-proof.js",
+      "provenance": {
+        "commit": "832661e618bafe0c53ab6f86b3768ad1ee3cb7d9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:832661e618bafe0c53ab6f86b3768ad1ee3cb7d9",
+      "to": "Artifact:tools/rc1-native-proof.js",
+      "provenance": {
+        "commit": "832661e618bafe0c53ab6f86b3768ad1ee3cb7d9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:832661e618bafe0c53ab6f86b3768ad1ee3cb7d9",
+      "to": "Artifact:tools/rc1-sim.js",
+      "provenance": {
+        "commit": "832661e618bafe0c53ab6f86b3768ad1ee3cb7d9"
       }
     },
     {
@@ -242731,6 +244662,46 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:8e036f11db919df138029e1adbff0198f2e4e2bf",
+      "to": "Artifact:docs/release/readiness-work/gate-registry.json",
+      "provenance": {
+        "commit": "8e036f11db919df138029e1adbff0198f2e4e2bf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8e036f11db919df138029e1adbff0198f2e4e2bf",
+      "to": "Artifact:docs/release/readiness-work/render-observation.json",
+      "provenance": {
+        "commit": "8e036f11db919df138029e1adbff0198f2e4e2bf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8e036f11db919df138029e1adbff0198f2e4e2bf",
+      "to": "Artifact:test/rc1-qualification.js",
+      "provenance": {
+        "commit": "8e036f11db919df138029e1adbff0198f2e4e2bf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8e036f11db919df138029e1adbff0198f2e4e2bf",
+      "to": "Artifact:tools/rc1-evidence.mjs",
+      "provenance": {
+        "commit": "8e036f11db919df138029e1adbff0198f2e4e2bf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8e036f11db919df138029e1adbff0198f2e4e2bf",
+      "to": "Artifact:tools/rc1-qualification.mjs",
+      "provenance": {
+        "commit": "8e036f11db919df138029e1adbff0198f2e4e2bf"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:8e10ae57f0f6fab872951580eded6054b6995cfb",
       "to": "Artifact:public/index.html",
       "provenance": {
@@ -243631,6 +245602,142 @@
       "to": "HistoricalArtifact:knowledge/generated/modules.md",
       "provenance": {
         "commit": "90a07070d3efd08fe3e70d1c78def530cf79f184"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:90da79d54588addd315b4c1f5c4bd716961d43d4",
+      "to": "Artifact:.github/workflows/ci.yml",
+      "provenance": {
+        "commit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:90da79d54588addd315b4c1f5c4bd716961d43d4",
+      "to": "Artifact:.github/workflows/rc1-recovery.yml",
+      "provenance": {
+        "commit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:90da79d54588addd315b4c1f5c4bd716961d43d4",
+      "to": "Artifact:docs/release/readiness-work/source-reconciliation.json",
+      "provenance": {
+        "commit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:90da79d54588addd315b4c1f5c4bd716961d43d4",
+      "to": "Artifact:docs/release/readiness-work/source-reconciliation.md",
+      "provenance": {
+        "commit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:90da79d54588addd315b4c1f5c4bd716961d43d4",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:90da79d54588addd315b4c1f5c4bd716961d43d4",
+      "to": "Artifact:src/command-diagnostics.js",
+      "provenance": {
+        "commit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:90da79d54588addd315b4c1f5c4bd716961d43d4",
+      "to": "Artifact:src/db.js",
+      "provenance": {
+        "commit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:90da79d54588addd315b4c1f5c4bd716961d43d4",
+      "to": "Artifact:src/player-commands.js",
+      "provenance": {
+        "commit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:90da79d54588addd315b4c1f5c4bd716961d43d4",
+      "to": "Artifact:src/routes/commands.js",
+      "provenance": {
+        "commit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:90da79d54588addd315b4c1f5c4bd716961d43d4",
+      "to": "Artifact:test/lib/player-command-support.js",
+      "provenance": {
+        "commit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:90da79d54588addd315b4c1f5c4bd716961d43d4",
+      "to": "Artifact:test/rc1-command-redteam.js",
+      "provenance": {
+        "commit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:90da79d54588addd315b4c1f5c4bd716961d43d4",
+      "to": "Artifact:test/rc1-mobile-postgres.js",
+      "provenance": {
+        "commit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:90da79d54588addd315b4c1f5c4bd716961d43d4",
+      "to": "Artifact:test/rc1-observability.js",
+      "provenance": {
+        "commit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:90da79d54588addd315b4c1f5c4bd716961d43d4",
+      "to": "Artifact:test/rc1-passive-projection.js",
+      "provenance": {
+        "commit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:90da79d54588addd315b4c1f5c4bd716961d43d4",
+      "to": "Artifact:test/rc1-postgres-migration-failure.js",
+      "provenance": {
+        "commit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:90da79d54588addd315b4c1f5c4bd716961d43d4",
+      "to": "Artifact:tools/pgcheck.js",
+      "provenance": {
+        "commit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:90da79d54588addd315b4c1f5c4bd716961d43d4",
+      "to": "Artifact:tools/rc1-campaign-mobile.js",
+      "provenance": {
+        "commit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
       }
     },
     {
@@ -248863,6 +250970,30 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "commit": "9eb5dc28e1bb88bedf0982434d852ad0f5c75fd0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9efb77b1622d6c0f5237ca4262216ea3cc4b3b6d",
+      "to": "Artifact:docs/release/readiness-work/authority-inventory.json",
+      "provenance": {
+        "commit": "9efb77b1622d6c0f5237ca4262216ea3cc4b3b6d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9efb77b1622d6c0f5237ca4262216ea3cc4b3b6d",
+      "to": "Artifact:docs/release/readiness-work/authority-inventory.md",
+      "provenance": {
+        "commit": "9efb77b1622d6c0f5237ca4262216ea3cc4b3b6d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9efb77b1622d6c0f5237ca4262216ea3cc4b3b6d",
+      "to": "Artifact:tools/rc1-authority-inventory.js",
+      "provenance": {
+        "commit": "9efb77b1622d6c0f5237ca4262216ea3cc4b3b6d"
       }
     },
     {
@@ -258259,6 +260390,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:bb57427e11615d5d78df90d7805e8067a4268aec",
+      "to": "Artifact:docs/release/readiness-work/resource-proof.md",
+      "provenance": {
+        "commit": "bb57427e11615d5d78df90d7805e8067a4268aec"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:bb57427e11615d5d78df90d7805e8067a4268aec",
+      "to": "Artifact:tools/rc1-resource-inventory.js",
+      "provenance": {
+        "commit": "bb57427e11615d5d78df90d7805e8067a4268aec"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:bb57427e11615d5d78df90d7805e8067a4268aec",
+      "to": "Artifact:tools/rc1-resource-proof.js",
+      "provenance": {
+        "commit": "bb57427e11615d5d78df90d7805e8067a4268aec"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:bbd022fce6b517fff06b977b79423e9fd6c66413",
       "to": "Artifact:.gitattributes",
       "provenance": {
@@ -264379,6 +266534,110 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:c72c7f6a0f19552b4b25622516eb074cb638bcb1",
+      "to": "Artifact:.gitattributes",
+      "provenance": {
+        "commit": "c72c7f6a0f19552b4b25622516eb074cb638bcb1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c72c7f6a0f19552b4b25622516eb074cb638bcb1",
+      "to": "Artifact:.github/workflows/ci.yml",
+      "provenance": {
+        "commit": "c72c7f6a0f19552b4b25622516eb074cb638bcb1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c72c7f6a0f19552b4b25622516eb074cb638bcb1",
+      "to": "Artifact:.github/workflows/rc1-recovery.yml",
+      "provenance": {
+        "commit": "c72c7f6a0f19552b4b25622516eb074cb638bcb1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c72c7f6a0f19552b4b25622516eb074cb638bcb1",
+      "to": "Artifact:docs/release/readiness-work/gate-registry.json",
+      "provenance": {
+        "commit": "c72c7f6a0f19552b4b25622516eb074cb638bcb1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c72c7f6a0f19552b4b25622516eb074cb638bcb1",
+      "to": "Artifact:docs/release/readiness-work/README.md",
+      "provenance": {
+        "commit": "c72c7f6a0f19552b4b25622516eb074cb638bcb1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c72c7f6a0f19552b4b25622516eb074cb638bcb1",
+      "to": "Artifact:docs/release/readiness-work/render-observation.json",
+      "provenance": {
+        "commit": "c72c7f6a0f19552b4b25622516eb074cb638bcb1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c72c7f6a0f19552b4b25622516eb074cb638bcb1",
+      "to": "Artifact:docs/release/readiness-work/tooling-repairs.json",
+      "provenance": {
+        "commit": "c72c7f6a0f19552b4b25622516eb074cb638bcb1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c72c7f6a0f19552b4b25622516eb074cb638bcb1",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "c72c7f6a0f19552b4b25622516eb074cb638bcb1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c72c7f6a0f19552b4b25622516eb074cb638bcb1",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "c72c7f6a0f19552b4b25622516eb074cb638bcb1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c72c7f6a0f19552b4b25622516eb074cb638bcb1",
+      "to": "Artifact:test/gates.js",
+      "provenance": {
+        "commit": "c72c7f6a0f19552b4b25622516eb074cb638bcb1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c72c7f6a0f19552b4b25622516eb074cb638bcb1",
+      "to": "Artifact:test/rc1-qualification.js",
+      "provenance": {
+        "commit": "c72c7f6a0f19552b4b25622516eb074cb638bcb1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c72c7f6a0f19552b4b25622516eb074cb638bcb1",
+      "to": "Artifact:tools/rc1-evidence.mjs",
+      "provenance": {
+        "commit": "c72c7f6a0f19552b4b25622516eb074cb638bcb1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c72c7f6a0f19552b4b25622516eb074cb638bcb1",
+      "to": "Artifact:tools/rc1-qualification.mjs",
+      "provenance": {
+        "commit": "c72c7f6a0f19552b4b25622516eb074cb638bcb1"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:c73c514dc4a113801fe1b45c99b680e897cdaa9f",
       "to": "HistoricalArtifact:knowledge/generated/github-history.md",
       "provenance": {
@@ -267535,6 +269794,54 @@
       "to": "Artifact:docs/superpowers/specs/2026-08-26-grill-completion.md",
       "provenance": {
         "commit": "d0f266c02959bbff96c931671a049901b4a7c59c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d1048046e9be9448174c47904bfe68549d4180d5",
+      "to": "Artifact:docs/release/readiness-work/resource-proof.md",
+      "provenance": {
+        "commit": "d1048046e9be9448174c47904bfe68549d4180d5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d1048046e9be9448174c47904bfe68549d4180d5",
+      "to": "Artifact:docs/release/readiness-work/resource-runs/.gitattributes",
+      "provenance": {
+        "commit": "d1048046e9be9448174c47904bfe68549d4180d5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d1048046e9be9448174c47904bfe68549d4180d5",
+      "to": "Artifact:docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/capital.log",
+      "provenance": {
+        "commit": "d1048046e9be9448174c47904bfe68549d4180d5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d1048046e9be9448174c47904bfe68549d4180d5",
+      "to": "Artifact:docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/execution-manifest.json",
+      "provenance": {
+        "commit": "d1048046e9be9448174c47904bfe68549d4180d5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d1048046e9be9448174c47904bfe68549d4180d5",
+      "to": "Artifact:docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/native.log",
+      "provenance": {
+        "commit": "d1048046e9be9448174c47904bfe68549d4180d5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d1048046e9be9448174c47904bfe68549d4180d5",
+      "to": "Artifact:tools/rc1-resource-proof.js",
+      "provenance": {
+        "commit": "d1048046e9be9448174c47904bfe68549d4180d5"
       }
     },
     {
@@ -285166,6 +287473,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:backend",
+      "to": "Artifact:src/command-diagnostics.js",
+      "provenance": {
+        "file": "src/command-diagnostics.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:backend",
       "to": "Artifact:src/commission.js",
       "provenance": {
         "file": "src/commission.js",
@@ -297231,6 +299547,204 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/authority-inventory.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/authority-inventory.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/authority-inventory.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/authority-inventory.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/gate-registry.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/gate-registry.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/harness-results.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/harness-results.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/harness.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/harness.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/README.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/README.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/render-observation.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/render-observation.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/resource-proof.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/resource-proof.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/resource-runs/.gitattributes",
+      "provenance": {
+        "file": "docs/release/readiness-work/resource-runs/.gitattributes",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/capital.log",
+      "provenance": {
+        "file": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/capital.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/coverage-inventory.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/coverage-inventory.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/execution-manifest.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/execution-manifest.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/final-state.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/final-state.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/initial-state.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/initial-state.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/movements.ndjson",
+      "provenance": {
+        "file": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/movements.ndjson",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/native.log",
+      "provenance": {
+        "file": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/native.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/result.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/result.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/scenario-manifest.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/scenario-manifest.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/source-reconciliation.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/source-reconciliation.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/source-reconciliation.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/source-reconciliation.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/tooling-repairs.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/tooling-repairs.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:docs/superpowers/plans/2026-08-23-discovery-integrity.md",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-23-discovery-integrity.md",
@@ -301506,9 +304020,81 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/rc1-command-redteam.js",
+      "provenance": {
+        "file": "test/rc1-command-redteam.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/rc1-journeys.js",
       "provenance": {
         "file": "test/rc1-journeys.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/rc1-mobile-postgres.js",
+      "provenance": {
+        "file": "test/rc1-mobile-postgres.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/rc1-native-proof.js",
+      "provenance": {
+        "file": "test/rc1-native-proof.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/rc1-observability.js",
+      "provenance": {
+        "file": "test/rc1-observability.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/rc1-passive-projection.js",
+      "provenance": {
+        "file": "test/rc1-passive-projection.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/rc1-postgres-migration-failure.js",
+      "provenance": {
+        "file": "test/rc1-postgres-migration-failure.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/rc1-qualification.js",
+      "provenance": {
+        "file": "test/rc1-qualification.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/rc1-resource-journal.js",
+      "provenance": {
+        "file": "test/rc1-resource-journal.js",
         "line": 1
       }
     },
@@ -302802,9 +305388,27 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:tools/rc1-authority-inventory.js",
+      "provenance": {
+        "file": "tools/rc1-authority-inventory.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:tools/rc1-campaign-mobile.js",
       "provenance": {
         "file": "tools/rc1-campaign-mobile.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/rc1-evidence.mjs",
+      "provenance": {
+        "file": "tools/rc1-evidence.mjs",
         "line": 1
       }
     },
@@ -302823,6 +305427,51 @@
       "to": "Artifact:tools/rc1-mobile-journeys.js",
       "provenance": {
         "file": "tools/rc1-mobile-journeys.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/rc1-native-proof.js",
+      "provenance": {
+        "file": "tools/rc1-native-proof.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/rc1-qualification.mjs",
+      "provenance": {
+        "file": "tools/rc1-qualification.mjs",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/rc1-resource-inventory.js",
+      "provenance": {
+        "file": "tools/rc1-resource-inventory.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/rc1-resource-journal.js",
+      "provenance": {
+        "file": "tools/rc1-resource-journal.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/rc1-resource-proof.js",
+      "provenance": {
+        "file": "tools/rc1-resource-proof.js",
         "line": 1
       }
     },
@@ -314683,6 +317332,15 @@
     {
       "type": "DECLARES",
       "from": "Artifact:package.json",
+      "to": "Command:npm:test:db-migration:postgres",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
       "to": "Command:npm:test:director",
       "provenance": {
         "file": "package.json",
@@ -314801,6 +317459,51 @@
       "type": "DECLARES",
       "from": "Artifact:package.json",
       "to": "Command:npm:test:rc1:mobile",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
+      "to": "Command:npm:test:rc1:mobile:postgres",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
+      "to": "Command:npm:test:rc1:observability",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
+      "to": "Command:npm:test:rc1:proof:postgres",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
+      "to": "Command:npm:test:rc1:resource:postgres",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
+      "to": "Command:npm:test:rc1:security:postgres",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -316297,7 +319000,7 @@
       "to": "Artifact:src/routes/commands.js",
       "provenance": {
         "file": "src/routes/commands.js",
-        "line": 40
+        "line": 43
       }
     },
     {
@@ -319069,7 +321772,7 @@
       "to": "Artifact:src/routes/commands.js",
       "provenance": {
         "file": "src/routes/commands.js",
-        "line": 52
+        "line": 55
       }
     },
     {
@@ -319078,7 +321781,7 @@
       "to": "Artifact:src/routes/commands.js",
       "provenance": {
         "file": "src/routes/commands.js",
-        "line": 47
+        "line": 50
       }
     },
     {
@@ -326228,7 +328931,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:economy-ledger",
-      "weight": 171
+      "weight": 174
     },
     {
       "type": "DEPENDS_ON",
@@ -326252,7 +328955,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 869
+      "weight": 881
     },
     {
       "type": "DEPENDS_ON",
@@ -329589,6 +332292,15 @@
     },
     {
       "type": "EXECUTES",
+      "from": "Command:npm:test:db-migration:postgres",
+      "to": "Artifact:test/rc1-postgres-migration-failure.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
       "from": "Command:npm:test:director",
       "to": "Artifact:test/campaign-network-journey.js",
       "provenance": {
@@ -330175,6 +332887,33 @@
     {
       "type": "EXECUTES",
       "from": "Command:npm:test:rc1",
+      "to": "Artifact:test/rc1-native-proof.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1",
+      "to": "Artifact:test/rc1-qualification.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1",
+      "to": "Artifact:test/rc1-resource-journal.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1",
       "to": "Artifact:test/rc1-simulation.js",
       "provenance": {
         "file": "package.json",
@@ -330194,6 +332933,60 @@
       "type": "EXECUTES",
       "from": "Command:npm:test:rc1:mobile",
       "to": "Artifact:tools/rc1-mobile-journeys.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:mobile:postgres",
+      "to": "Artifact:test/rc1-mobile-postgres.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:observability",
+      "to": "Artifact:test/rc1-observability.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:observability",
+      "to": "Artifact:test/rc1-passive-projection.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:proof:postgres",
+      "to": "Artifact:test/rc1-native-proof.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:resource:postgres",
+      "to": "Artifact:tools/rc1-resource-proof.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:security:postgres",
+      "to": "Artifact:test/rc1-command-redteam.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -330981,6 +333774,16 @@
       "provenance": {
         "file": "src/server.js",
         "line": 3305
+      }
+    },
+    {
+      "type": "HANDLED_BY",
+      "from": "Route:GET /v1/commands",
+      "to": "Artifact:src/command-diagnostics.js",
+      "symbol": "traceAuthorizedCommand",
+      "provenance": {
+        "file": "src/routes/commands.js",
+        "line": 43
       }
     },
     {
@@ -333611,6 +336414,16 @@
       "provenance": {
         "file": "src/server.js",
         "line": 3533
+      }
+    },
+    {
+      "type": "HANDLED_BY",
+      "from": "Route:POST /v1/commands/execute",
+      "to": "Artifact:src/command-diagnostics.js",
+      "symbol": "traceAuthorizedCommand",
+      "provenance": {
+        "file": "src/routes/commands.js",
+        "line": 55
       }
     },
     {
@@ -337912,6 +340725,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:0adc0b3011a9fd5057e6cf4d3b40333f1538ce35",
+      "provenance": {
+        "commit": "0adc0b3011a9fd5057e6cf4d3b40333f1538ce35"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:0adeb83a2f96a321d390ea98b1967efee1a70f85",
       "provenance": {
         "commit": "0adeb83a2f96a321d390ea98b1967efee1a70f85"
@@ -339392,6 +342213,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:2a5ab465c8fd4a7fbe704938107e246c17bdfccb",
+      "provenance": {
+        "commit": "2a5ab465c8fd4a7fbe704938107e246c17bdfccb"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:2a67d360be1a35fad87da429a20b5cdecd50f015",
       "provenance": {
         "commit": "2a67d360be1a35fad87da429a20b5cdecd50f015"
@@ -339891,6 +342720,14 @@
       "to": "Commit:3284ae86bb27da4f0bff92b93dc0f79b1cf09506",
       "provenance": {
         "commit": "3284ae86bb27da4f0bff92b93dc0f79b1cf09506"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:32859cf7d198d2a003160b2bb1ef005991697d73",
+      "provenance": {
+        "commit": "32859cf7d198d2a003160b2bb1ef005991697d73"
       }
     },
     {
@@ -340544,6 +343381,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:3ea88ba02fb5ed404c663e9be255f04e0a4d2c9c",
+      "provenance": {
+        "commit": "3ea88ba02fb5ed404c663e9be255f04e0a4d2c9c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:3eb4f4111453574634bcc57d1a8e9ef17904d10e",
       "provenance": {
         "commit": "3eb4f4111453574634bcc57d1a8e9ef17904d10e"
@@ -341075,6 +343920,14 @@
       "to": "Commit:47008d39f6aa8a93dcbc4d2e58746e9334d38173",
       "provenance": {
         "commit": "47008d39f6aa8a93dcbc4d2e58746e9334d38173"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:4723c2382c601c947615c62f6cc885a13071aced",
+      "provenance": {
+        "commit": "4723c2382c601c947615c62f6cc885a13071aced"
       }
     },
     {
@@ -341723,6 +344576,14 @@
       "to": "Commit:56777b9661ea27daa71d57346f33c2af2e451325",
       "provenance": {
         "commit": "56777b9661ea27daa71d57346f33c2af2e451325"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:567d922ec8384743fde4104bc88bac74474b1e68",
+      "provenance": {
+        "commit": "567d922ec8384743fde4104bc88bac74474b1e68"
       }
     },
     {
@@ -342440,6 +345301,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:6710e20f65ac5561a0ab43cf8632ca3a910c48ba",
+      "provenance": {
+        "commit": "6710e20f65ac5561a0ab43cf8632ca3a910c48ba"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:6715d574e6f30b1506d2c6d85842317499106622",
       "provenance": {
         "commit": "6715d574e6f30b1506d2c6d85842317499106622"
@@ -342683,6 +345552,14 @@
       "to": "Commit:6e066ffabab0b0f63ac06be141d501474588aace",
       "provenance": {
         "commit": "6e066ffabab0b0f63ac06be141d501474588aace"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:6e10782c33b8f376b801e2417698407ffcd80c61",
+      "provenance": {
+        "commit": "6e10782c33b8f376b801e2417698407ffcd80c61"
       }
     },
     {
@@ -343672,6 +346549,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:80ce318b0925e40b4299742d13adfe4f429cf527",
+      "provenance": {
+        "commit": "80ce318b0925e40b4299742d13adfe4f429cf527"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:80df58c8520b233b6c22d3cc49ca5f5a717804ad",
       "provenance": {
         "commit": "80df58c8520b233b6c22d3cc49ca5f5a717804ad"
@@ -343795,6 +346680,14 @@
       "to": "Commit:83198536e97822e8b229158337cd9ccba51ad2fb",
       "provenance": {
         "commit": "83198536e97822e8b229158337cd9ccba51ad2fb"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:832661e618bafe0c53ab6f86b3768ad1ee3cb7d9",
+      "provenance": {
+        "commit": "832661e618bafe0c53ab6f86b3768ad1ee3cb7d9"
       }
     },
     {
@@ -344328,6 +347221,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:8e036f11db919df138029e1adbff0198f2e4e2bf",
+      "provenance": {
+        "commit": "8e036f11db919df138029e1adbff0198f2e4e2bf"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:8e10ae57f0f6fab872951580eded6054b6995cfb",
       "provenance": {
         "commit": "8e10ae57f0f6fab872951580eded6054b6995cfb"
@@ -344427,6 +347328,14 @@
       "to": "Commit:90a07070d3efd08fe3e70d1c78def530cf79f184",
       "provenance": {
         "commit": "90a07070d3efd08fe3e70d1c78def530cf79f184"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:90da79d54588addd315b4c1f5c4bd716961d43d4",
+      "provenance": {
+        "commit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
       }
     },
     {
@@ -345131,6 +348040,14 @@
       "to": "Commit:9eb5dc28e1bb88bedf0982434d852ad0f5c75fd0",
       "provenance": {
         "commit": "9eb5dc28e1bb88bedf0982434d852ad0f5c75fd0"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:9efb77b1622d6c0f5237ca4262216ea3cc4b3b6d",
+      "provenance": {
+        "commit": "9efb77b1622d6c0f5237ca4262216ea3cc4b3b6d"
       }
     },
     {
@@ -346584,6 +349501,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:bb57427e11615d5d78df90d7805e8067a4268aec",
+      "provenance": {
+        "commit": "bb57427e11615d5d78df90d7805e8067a4268aec"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:bbd022fce6b517fff06b977b79423e9fd6c66413",
       "provenance": {
         "commit": "bbd022fce6b517fff06b977b79423e9fd6c66413"
@@ -347040,6 +349965,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:c72c7f6a0f19552b4b25622516eb074cb638bcb1",
+      "provenance": {
+        "commit": "c72c7f6a0f19552b4b25622516eb074cb638bcb1"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:c73c514dc4a113801fe1b45c99b680e897cdaa9f",
       "provenance": {
         "commit": "c73c514dc4a113801fe1b45c99b680e897cdaa9f"
@@ -347411,6 +350344,14 @@
       "to": "Commit:d0f266c02959bbff96c931671a049901b4a7c59c",
       "provenance": {
         "commit": "d0f266c02959bbff96c931671a049901b4a7c59c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:d1048046e9be9448174c47904bfe68549d4180d5",
+      "provenance": {
+        "commit": "d1048046e9be9448174c47904bfe68549d4180d5"
       }
     },
     {
@@ -353273,7 +356214,7 @@
       "to": "ExternalDependency:pg-mem",
       "provenance": {
         "file": "src/db.js",
-        "line": 950
+        "line": 954
       }
     },
     {
@@ -353282,7 +356223,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "src/db.js",
-        "line": 832
+        "line": 836
       }
     },
     {
@@ -355925,61 +358866,7 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:src/player-commands.js",
-      "to": "Artifact:src/content/canonical.js",
-      "provenance": {
-        "file": "src/player-commands.js",
-        "line": 6
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:src/player-commands.js",
-      "to": "Artifact:src/coordination/knowledge.js",
-      "provenance": {
-        "file": "src/player-commands.js",
-        "line": 10
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:src/player-commands.js",
-      "to": "Artifact:src/coordination/operations.js",
-      "provenance": {
-        "file": "src/player-commands.js",
-        "line": 12
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:src/player-commands.js",
-      "to": "Artifact:src/coordination/runtime.js",
-      "provenance": {
-        "file": "src/player-commands.js",
-        "line": 11
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:src/player-commands.js",
-      "to": "Artifact:src/crafting.js",
-      "provenance": {
-        "file": "src/player-commands.js",
-        "line": 13
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:src/player-commands.js",
-      "to": "Artifact:src/db.js",
-      "provenance": {
-        "file": "src/player-commands.js",
-        "line": 5
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:src/player-commands.js",
-      "to": "Artifact:src/game.js",
+      "to": "Artifact:src/command-diagnostics.js",
       "provenance": {
         "file": "src/player-commands.js",
         "line": 4
@@ -355988,43 +358875,7 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:src/player-commands.js",
-      "to": "Artifact:src/items.js",
-      "provenance": {
-        "file": "src/player-commands.js",
-        "line": 15
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:src/player-commands.js",
-      "to": "Artifact:src/mysteries.js",
-      "provenance": {
-        "file": "src/player-commands.js",
-        "line": 14
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:src/player-commands.js",
-      "to": "Artifact:src/player-opportunities.js",
-      "provenance": {
-        "file": "src/player-commands.js",
-        "line": 16
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:src/player-commands.js",
-      "to": "Artifact:src/world-kernel-query.js",
-      "provenance": {
-        "file": "src/player-commands.js",
-        "line": 8
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:src/player-commands.js",
-      "to": "Artifact:src/world-kernel.js",
+      "to": "Artifact:src/content/canonical.js",
       "provenance": {
         "file": "src/player-commands.js",
         "line": 7
@@ -356033,10 +358884,109 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:src/player-commands.js",
-      "to": "Artifact:src/world-projection.js",
+      "to": "Artifact:src/coordination/knowledge.js",
+      "provenance": {
+        "file": "src/player-commands.js",
+        "line": 11
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/player-commands.js",
+      "to": "Artifact:src/coordination/operations.js",
+      "provenance": {
+        "file": "src/player-commands.js",
+        "line": 13
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/player-commands.js",
+      "to": "Artifact:src/coordination/runtime.js",
+      "provenance": {
+        "file": "src/player-commands.js",
+        "line": 12
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/player-commands.js",
+      "to": "Artifact:src/crafting.js",
+      "provenance": {
+        "file": "src/player-commands.js",
+        "line": 14
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/player-commands.js",
+      "to": "Artifact:src/db.js",
+      "provenance": {
+        "file": "src/player-commands.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/player-commands.js",
+      "to": "Artifact:src/game.js",
+      "provenance": {
+        "file": "src/player-commands.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/player-commands.js",
+      "to": "Artifact:src/items.js",
+      "provenance": {
+        "file": "src/player-commands.js",
+        "line": 16
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/player-commands.js",
+      "to": "Artifact:src/mysteries.js",
+      "provenance": {
+        "file": "src/player-commands.js",
+        "line": 15
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/player-commands.js",
+      "to": "Artifact:src/player-opportunities.js",
+      "provenance": {
+        "file": "src/player-commands.js",
+        "line": 17
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/player-commands.js",
+      "to": "Artifact:src/world-kernel-query.js",
       "provenance": {
         "file": "src/player-commands.js",
         "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/player-commands.js",
+      "to": "Artifact:src/world-kernel.js",
+      "provenance": {
+        "file": "src/player-commands.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/player-commands.js",
+      "to": "Artifact:src/world-projection.js",
+      "provenance": {
+        "file": "src/player-commands.js",
+        "line": 10
       }
     },
     {
@@ -356460,6 +359410,15 @@
       "provenance": {
         "file": "src/routes/casino.js",
         "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/routes/commands.js",
+      "to": "Artifact:src/command-diagnostics.js",
+      "provenance": {
+        "file": "src/routes/commands.js",
+        "line": 6
       }
     },
     {
@@ -369928,6 +372887,42 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:test/rc1-command-redteam.js",
+      "to": "Artifact:src/content/furnace-ledger.js",
+      "provenance": {
+        "file": "test/rc1-command-redteam.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-command-redteam.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "test/rc1-command-redteam.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-command-redteam.js",
+      "to": "Artifact:test/lib/player-command-support.js",
+      "provenance": {
+        "file": "test/rc1-command-redteam.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-command-redteam.js",
+      "to": "ExternalDependency:pg",
+      "provenance": {
+        "file": "test/rc1-command-redteam.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:test/rc1-journeys.js",
       "to": "Artifact:src/content/canonical.js",
       "provenance": {
@@ -369996,6 +372991,168 @@
       "provenance": {
         "file": "test/rc1-journeys.js",
         "line": 14
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-mobile-postgres.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "test/rc1-mobile-postgres.js",
+        "line": 25
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-mobile-postgres.js",
+      "to": "ExternalDependency:pg",
+      "provenance": {
+        "file": "test/rc1-mobile-postgres.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-mobile-postgres.js",
+      "to": "ExternalDependency:playwright-core",
+      "provenance": {
+        "file": "test/rc1-mobile-postgres.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-proof.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "test/rc1-native-proof.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-proof.js",
+      "to": "Artifact:src/player-commands.js",
+      "provenance": {
+        "file": "test/rc1-native-proof.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-proof.js",
+      "to": "Artifact:test/lib/campaign-network-support.js",
+      "provenance": {
+        "file": "test/rc1-native-proof.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-proof.js",
+      "to": "Artifact:test/lib/player-command-support.js",
+      "provenance": {
+        "file": "test/rc1-native-proof.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-proof.js",
+      "to": "Artifact:tools/rc1-sim.js",
+      "provenance": {
+        "file": "test/rc1-native-proof.js",
+        "line": 11
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-observability.js",
+      "to": "Artifact:src/command-diagnostics.js",
+      "provenance": {
+        "file": "test/rc1-observability.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-observability.js",
+      "to": "Artifact:src/content/furnace-ledger.js",
+      "provenance": {
+        "file": "test/rc1-observability.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-observability.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "test/rc1-observability.js",
+        "line": 3
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-observability.js",
+      "to": "Artifact:test/lib/player-command-support.js",
+      "provenance": {
+        "file": "test/rc1-observability.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-passive-projection.js",
+      "to": "Artifact:src/projection-events.js",
+      "provenance": {
+        "file": "test/rc1-passive-projection.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-passive-projection.js",
+      "to": "ExternalDependency:pg-mem",
+      "provenance": {
+        "file": "test/rc1-passive-projection.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-postgres-migration-failure.js",
+      "to": "Artifact:src/db.js",
+      "provenance": {
+        "file": "test/rc1-postgres-migration-failure.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-postgres-migration-failure.js",
+      "to": "ExternalDependency:pg",
+      "provenance": {
+        "file": "test/rc1-postgres-migration-failure.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-qualification.js",
+      "to": "Artifact:tools/rc1-evidence.mjs",
+      "provenance": {
+        "file": "test/rc1-qualification.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-resource-journal.js",
+      "to": "Artifact:tools/rc1-resource-journal.js",
+      "provenance": {
+        "file": "test/rc1-resource-journal.js",
+        "line": 2
       }
     },
     {
@@ -374783,7 +377940,7 @@
       "to": "Artifact:src/auth.js",
       "provenance": {
         "file": "tools/pgcheck.js",
-        "line": 2002
+        "line": 2008
       }
     },
     {
@@ -374846,7 +378003,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "tools/pgcheck.js",
-        "line": 1877
+        "line": 1883
       }
     },
     {
@@ -374873,7 +378030,7 @@
       "to": "Artifact:src/invites.js",
       "provenance": {
         "file": "tools/pgcheck.js",
-        "line": 2001
+        "line": 2007
       }
     },
     {
@@ -374918,7 +378075,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "tools/pgcheck.js",
-        "line": 1878
+        "line": 1884
       }
     },
     {
@@ -375103,11 +378260,29 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-authority-inventory.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "tools/rc1-authority-inventory.js",
+        "line": 158
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-authority-inventory.js",
+      "to": "ExternalDependency:acorn",
+      "provenance": {
+        "file": "tools/rc1-authority-inventory.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:tools/rc1-campaign-mobile.js",
       "to": "Artifact:src/coordination/operation-invariants.js",
       "provenance": {
         "file": "tools/rc1-campaign-mobile.js",
-        "line": 14
+        "line": 16
       }
     },
     {
@@ -375116,7 +378291,7 @@
       "to": "Artifact:src/director/campaign-network.js",
       "provenance": {
         "file": "tools/rc1-campaign-mobile.js",
-        "line": 12
+        "line": 14
       }
     },
     {
@@ -375125,7 +378300,7 @@
       "to": "Artifact:src/director/runtime.js",
       "provenance": {
         "file": "tools/rc1-campaign-mobile.js",
-        "line": 11
+        "line": 13
       }
     },
     {
@@ -375134,7 +378309,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "tools/rc1-campaign-mobile.js",
-        "line": 10
+        "line": 12
       }
     },
     {
@@ -375143,7 +378318,7 @@
       "to": "Artifact:src/world-kernel-invariants.js",
       "provenance": {
         "file": "tools/rc1-campaign-mobile.js",
-        "line": 13
+        "line": 15
       }
     },
     {
@@ -375152,7 +378327,7 @@
       "to": "Artifact:test/lib/campaign-network-support.js",
       "provenance": {
         "file": "tools/rc1-campaign-mobile.js",
-        "line": 18
+        "line": 20
       }
     },
     {
@@ -375161,7 +378336,16 @@
       "to": "ExternalDependency:playwright-core",
       "provenance": {
         "file": "tools/rc1-campaign-mobile.js",
-        "line": 9
+        "line": 11
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-evidence.mjs",
+      "to": "Artifact:tools/rc1-qualification.mjs",
+      "provenance": {
+        "file": "tools/rc1-evidence.mjs",
+        "line": 8
       }
     },
     {
@@ -375225,6 +378409,87 @@
       "provenance": {
         "file": "tools/rc1-mobile-journeys.js",
         "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-native-proof.js",
+      "to": "ExternalDependency:pg",
+      "provenance": {
+        "file": "tools/rc1-native-proof.js",
+        "line": 140
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-qualification.mjs",
+      "to": "Artifact:tools/rc1-native-proof.js",
+      "provenance": {
+        "file": "tools/rc1-qualification.mjs",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-resource-proof.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "tools/rc1-resource-proof.js",
+        "line": 189
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-resource-proof.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "tools/rc1-resource-proof.js",
+        "line": 69
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-resource-proof.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "tools/rc1-resource-proof.js",
+        "line": 143
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-resource-proof.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "tools/rc1-resource-proof.js",
+        "line": 142
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-resource-proof.js",
+      "to": "Artifact:tools/rc1-resource-inventory.js",
+      "provenance": {
+        "file": "tools/rc1-resource-proof.js",
+        "line": 11
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-resource-proof.js",
+      "to": "Artifact:tools/rc1-resource-journal.js",
+      "provenance": {
+        "file": "tools/rc1-resource-proof.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-resource-proof.js",
+      "to": "ExternalDependency:pg",
+      "provenance": {
+        "file": "tools/rc1-resource-proof.js",
+        "line": 9
       }
     },
     {
@@ -375436,6 +378701,15 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-sim.js",
+      "to": "Artifact:tools/rc1-native-proof.js",
+      "provenance": {
+        "file": "tools/rc1-sim.js",
+        "line": 17
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:tools/render-omr-excalidraw.mjs",
       "to": "ExternalDependency:playwright-core",
       "provenance": {
@@ -375467,7 +378741,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "tools/scale.js",
-        "line": 56
+        "line": 58
       }
     },
     {
@@ -375476,7 +378750,7 @@
       "to": "Artifact:src/population.js",
       "provenance": {
         "file": "tools/scale.js",
-        "line": 57
+        "line": 59
       }
     },
     {
@@ -375485,7 +378759,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "tools/scale.js",
-        "line": 58
+        "line": 60
       }
     },
     {
@@ -375494,7 +378768,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "tools/scale.js",
-        "line": 55
+        "line": 57
       }
     },
     {
@@ -402031,6 +405305,24 @@
     },
     {
       "type": "REFERENCES",
+      "from": "Artifact:docs/release/readiness-work/README.md",
+      "to": "Artifact:test/rc1-qualification.js",
+      "provenance": {
+        "file": "docs/release/readiness-work/README.md",
+        "line": 70
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/release/readiness-work/resource-proof.md",
+      "to": "Artifact:tools/rc1-resource-inventory.js",
+      "provenance": {
+        "file": "docs/release/readiness-work/resource-proof.md",
+        "line": 57
+      }
+    },
+    {
+      "type": "REFERENCES",
       "from": "Artifact:docs/superpowers/plans/2026-08-23-discovery-integrity.md",
       "to": "Artifact:public/index.html",
       "provenance": {
@@ -416998,6 +420290,51 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Document:docs/release/readiness-work/authority-inventory.md",
+      "to": "Artifact:docs/release/readiness-work/authority-inventory.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/authority-inventory.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/release/readiness-work/harness.md",
+      "to": "Artifact:docs/release/readiness-work/harness.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/harness.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/release/readiness-work/README.md",
+      "to": "Artifact:docs/release/readiness-work/README.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/README.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/release/readiness-work/resource-proof.md",
+      "to": "Artifact:docs/release/readiness-work/resource-proof.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/resource-proof.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/release/readiness-work/source-reconciliation.md",
+      "to": "Artifact:docs/release/readiness-work/source-reconciliation.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/source-reconciliation.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Document:docs/superpowers/plans/2026-08-23-discovery-integrity.md",
       "to": "Artifact:docs/superpowers/plans/2026-08-23-discovery-integrity.md",
       "provenance": {
@@ -419072,6 +422409,15 @@
       "to": "Artifact:src/collision.js",
       "provenance": {
         "file": "src/collision.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Module:src/command-diagnostics.js",
+      "to": "Artifact:src/command-diagnostics.js",
+      "provenance": {
+        "file": "src/command-diagnostics.js",
         "line": 1
       }
     },
@@ -423820,10 +427166,82 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/rc1-command-redteam.js",
+      "to": "Artifact:test/rc1-command-redteam.js",
+      "provenance": {
+        "file": "test/rc1-command-redteam.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/rc1-journeys.js",
       "to": "Artifact:test/rc1-journeys.js",
       "provenance": {
         "file": "test/rc1-journeys.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/rc1-mobile-postgres.js",
+      "to": "Artifact:test/rc1-mobile-postgres.js",
+      "provenance": {
+        "file": "test/rc1-mobile-postgres.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/rc1-native-proof.js",
+      "to": "Artifact:test/rc1-native-proof.js",
+      "provenance": {
+        "file": "test/rc1-native-proof.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/rc1-observability.js",
+      "to": "Artifact:test/rc1-observability.js",
+      "provenance": {
+        "file": "test/rc1-observability.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/rc1-passive-projection.js",
+      "to": "Artifact:test/rc1-passive-projection.js",
+      "provenance": {
+        "file": "test/rc1-passive-projection.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/rc1-postgres-migration-failure.js",
+      "to": "Artifact:test/rc1-postgres-migration-failure.js",
+      "provenance": {
+        "file": "test/rc1-postgres-migration-failure.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/rc1-qualification.js",
+      "to": "Artifact:test/rc1-qualification.js",
+      "provenance": {
+        "file": "test/rc1-qualification.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/rc1-resource-journal.js",
+      "to": "Artifact:test/rc1-resource-journal.js",
+      "provenance": {
+        "file": "test/rc1-resource-journal.js",
         "line": 1
       }
     },
@@ -431632,6 +435050,24 @@
     },
     {
       "type": "TESTS",
+      "from": "Artifact:test/rc1-command-redteam.js",
+      "to": "Artifact:src/content/furnace-ledger.js",
+      "provenance": {
+        "file": "test/rc1-command-redteam.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-command-redteam.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "test/rc1-command-redteam.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "TESTS",
       "from": "Artifact:test/rc1-journeys.js",
       "to": "Artifact:src/content/canonical.js",
       "provenance": {
@@ -431682,6 +435118,78 @@
       "provenance": {
         "file": "test/rc1-journeys.js",
         "line": 11
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-mobile-postgres.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "test/rc1-mobile-postgres.js",
+        "line": 25
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-native-proof.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "test/rc1-native-proof.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-native-proof.js",
+      "to": "Artifact:src/player-commands.js",
+      "provenance": {
+        "file": "test/rc1-native-proof.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-observability.js",
+      "to": "Artifact:src/command-diagnostics.js",
+      "provenance": {
+        "file": "test/rc1-observability.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-observability.js",
+      "to": "Artifact:src/content/furnace-ledger.js",
+      "provenance": {
+        "file": "test/rc1-observability.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-observability.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "test/rc1-observability.js",
+        "line": 3
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-passive-projection.js",
+      "to": "Artifact:src/projection-events.js",
+      "provenance": {
+        "file": "test/rc1-passive-projection.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-postgres-migration-failure.js",
+      "to": "Artifact:src/db.js",
+      "provenance": {
+        "file": "test/rc1-postgres-migration-failure.js",
+        "line": 5
       }
     },
     {
@@ -439358,7 +442866,7 @@
       "to": "Table:commission_ticker_votes_v2",
       "provenance": {
         "file": "src/db.js",
-        "line": 228
+        "line": 227
       }
     },
     {
@@ -439367,7 +442875,7 @@
       "to": "Table:content_activation_events",
       "provenance": {
         "file": "src/db.js",
-        "line": 677
+        "line": 681
       }
     },
     {
@@ -439376,7 +442884,7 @@
       "to": "Table:content_bundle_activations",
       "provenance": {
         "file": "src/db.js",
-        "line": 716
+        "line": 720
       }
     },
     {
@@ -439385,7 +442893,7 @@
       "to": "Table:content_bundle_artifacts",
       "provenance": {
         "file": "src/db.js",
-        "line": 563
+        "line": 567
       }
     },
     {
@@ -439394,7 +442902,7 @@
       "to": "Table:content_bundle_item_definitions",
       "provenance": {
         "file": "src/db.js",
-        "line": 657
+        "line": 661
       }
     },
     {
@@ -439403,7 +442911,7 @@
       "to": "Table:item_definition_activations",
       "provenance": {
         "file": "src/db.js",
-        "line": 736
+        "line": 740
       }
     },
     {
@@ -439412,7 +442920,7 @@
       "to": "Table:item_definition_versions",
       "provenance": {
         "file": "src/db.js",
-        "line": 614
+        "line": 618
       }
     },
     {
@@ -439421,7 +442929,7 @@
       "to": "Table:rwa_health_current_v2",
       "provenance": {
         "file": "src/db.js",
-        "line": 380
+        "line": 379
       }
     },
     {
@@ -439430,7 +442938,7 @@
       "to": "Table:rwa_health_episode_events_v2",
       "provenance": {
         "file": "src/db.js",
-        "line": 368
+        "line": 367
       }
     },
     {
@@ -439439,7 +442947,7 @@
       "to": "Table:rwa_health_episodes_v2",
       "provenance": {
         "file": "src/db.js",
-        "line": 354
+        "line": 353
       }
     },
     {
@@ -439448,7 +442956,7 @@
       "to": "Table:rwa_health_finalized_clearances_v2",
       "provenance": {
         "file": "src/db.js",
-        "line": 395
+        "line": 394
       }
     },
     {
@@ -439466,7 +442974,7 @@
       "to": "Table:ticker_ballot_candidates_v2",
       "provenance": {
         "file": "src/db.js",
-        "line": 226
+        "line": 225
       }
     },
     {
@@ -439475,7 +442983,7 @@
       "to": "Table:ticker_ballot_days_v2",
       "provenance": {
         "file": "src/db.js",
-        "line": 224
+        "line": 223
       }
     },
     {
@@ -439484,7 +442992,7 @@
       "to": "Table:ticker_ballot_results_v2",
       "provenance": {
         "file": "src/db.js",
-        "line": 230
+        "line": 229
       }
     },
     {
@@ -444830,7 +448338,7 @@
       "to": "Table:accounts",
       "provenance": {
         "file": "src/player-commands.js",
-        "line": 207
+        "line": 208
       }
     },
     {
@@ -444839,7 +448347,7 @@
       "to": "Table:cars",
       "provenance": {
         "file": "src/player-commands.js",
-        "line": 218
+        "line": 219
       }
     },
     {
@@ -444848,7 +448356,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/player-commands.js",
-        "line": 208
+        "line": 209
       }
     },
     {
@@ -444857,7 +448365,7 @@
       "to": "Table:coordination_commands",
       "provenance": {
         "file": "src/player-commands.js",
-        "line": 246
+        "line": 247
       }
     },
     {
@@ -444866,7 +448374,7 @@
       "to": "Table:item_mutation_guards",
       "provenance": {
         "file": "src/player-commands.js",
-        "line": 249
+        "line": 250
       }
     },
     {
@@ -444875,7 +448383,7 @@
       "to": "Table:player_command_boards",
       "provenance": {
         "file": "src/player-commands.js",
-        "line": 48
+        "line": 49
       }
     },
     {
@@ -446063,7 +449571,7 @@
       "to": "Table:idempotency",
       "provenance": {
         "file": "src/routes/commands.js",
-        "line": 60
+        "line": 63
       }
     },
     {

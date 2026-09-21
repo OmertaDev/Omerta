@@ -381,6 +381,11 @@
 | [docs/release/RC1-REPRODUCE.md](../../docs/release/RC1-REPRODUCE.md) | documentation | 104 | 2026-09-20 |
 | [docs/release/RC1-SECURITY-OPERATIONS.md](../../docs/release/RC1-SECURITY-OPERATIONS.md) | documentation | 166 | 2026-09-20 |
 | [docs/release/RC1-SIMULATION-REPORT.md](../../docs/release/RC1-SIMULATION-REPORT.md) | documentation | 91 | 2026-09-20 |
+| [docs/release/readiness-work/authority-inventory.md](../../docs/release/readiness-work/authority-inventory.md) | documentation | 29 | 2026-09-21 |
+| [docs/release/readiness-work/harness.md](../../docs/release/readiness-work/harness.md) | documentation | 101 | 2026-09-21 |
+| [docs/release/readiness-work/README.md](../../docs/release/readiness-work/README.md) | documentation | 89 | 2026-09-21 |
+| [docs/release/readiness-work/resource-proof.md](../../docs/release/readiness-work/resource-proof.md) | documentation | 69 | 2026-09-21 |
+| [docs/release/readiness-work/source-reconciliation.md](../../docs/release/readiness-work/source-reconciliation.md) | documentation | 137 | 2026-09-21 |
 | [docs/superpowers/plans/2026-08-23-discovery-integrity.md](../../docs/superpowers/plans/2026-08-23-discovery-integrity.md) | documentation | 65 | 2026-08-24 |
 | [docs/superpowers/plans/2026-08-23-first-action-onboarding.md](../../docs/superpowers/plans/2026-08-23-first-action-onboarding.md) | documentation | 311 | 2026-08-24 |
 | [docs/superpowers/plans/2026-08-24-robinhood-testnet-bank-rehearsal.md](../../docs/superpowers/plans/2026-08-24-robinhood-testnet-bank-rehearsal.md) | documentation | 142 | 2026-08-24 |
@@ -537,5 +542,5 @@
 | [PRODUCT.md](../../PRODUCT.md) | documentation | 50 | 2026-08-24 |
 | [README.md](../../README.md) | documentation | 171 | 2026-09-14 |
 | [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 918 | 2026-09-06 |
-| [SPEC.md](../../SPEC.md) | documentation | 756 | 2026-09-20 |
+| [SPEC.md](../../SPEC.md) | documentation | 756 | 2026-09-21 |
 | [UNISWAP-ROUTING.md](../../UNISWAP-ROUTING.md) | documentation | 37 | 2026-08-25 |

@@ -1,36 +1,36 @@
 # Generated repository inventory
 
-> Source: worktree at `468516d8d6f3`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `c72c7f6a0f19`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 3,235 |
-| Text lines | 1,040,104 |
-| Repository bytes inventoried | 900,782,690 |
-| Backend/route modules | 273 |
+| Current artifacts | 3,273 |
+| Text lines | 1,107,734 |
+| Repository bytes inventoried | 903,181,207 |
+| Backend/route modules | 274 |
 | HTTP route registrations / unique routes | 802 / 802 |
 | Database tables | 369 |
 | Solidity declarations | 79 |
-| Git commits | 1,490 |
+| Git commits | 1,506 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 7,839 / 34,193 |
+| Graph nodes / edges | 7,913 / 34,431 |
 
 ## Artifact kinds
 
 | Kind | Files |
 |---|---:|
 | media-asset | 1,202 |
-| artifact | 520 |
-| documentation | 330 |
-| test-suite | 264 |
-| backend-module | 245 |
+| artifact | 537 |
+| documentation | 335 |
+| test-suite | 272 |
+| backend-module | 246 |
 | contract-project | 153 |
+| engineering-harness | 103 |
 | audit | 98 |
 | contract-test | 98 |
-| engineering-harness | 96 |
 | design | 91 |
 | contract-source | 59 |
 | route-module | 28 |
@@ -50,10 +50,13 @@
 | [omerta-contracts/audits/2026-09-08-comprehensive/shared-static-triage.json](../../omerta-contracts/audits/2026-09-08-comprehensive/shared-static-triage.json) | 52,258 | contract-project | 2026-09-09 |
 | [omerta-contracts/audits/2026-09-08-comprehensive/hook-retest-static.json](../../omerta-contracts/audits/2026-09-08-comprehensive/hook-retest-static.json) | 47,392 | contract-project | 2026-09-09 |
 | [docs/release/evidence/simulation/quality/projection-samples.json](../../docs/release/evidence/simulation/quality/projection-samples.json) | 33,646 | artifact | 2026-09-19 |
+| [docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/result.json](../../docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/result.json) | 22,972 | artifact | 2026-09-21 |
+| [docs/release/readiness-work/authority-inventory.json](../../docs/release/readiness-work/authority-inventory.json) | 20,579 | artifact | 2026-09-21 |
 | [docs/release/evidence/gates/fresh-forge-linux.txt](../../docs/release/evidence/gates/fresh-forge-linux.txt) | 18,797 | artifact | 2026-09-20 |
 | [CLAUDE.md](../../CLAUDE.md) | 18,679 | documentation | 2026-09-06 |
 | [docs/release/evidence/gates/baseline-forge-linux.txt](../../docs/release/evidence/gates/baseline-forge-linux.txt) | 18,663 | artifact | 2026-09-19 |
 | [docs/release/evidence/simulation/model/matrix.json](../../docs/release/evidence/simulation/model/matrix.json) | 18,188 | artifact | 2026-09-19 |
+| [docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json](../../docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json) | 15,946 | artifact | 2026-09-21 |
 | [public/index.html](../../public/index.html) | 13,412 | web-surface | 2026-09-19 |
 | [docs/release/evidence/gates/baseline-ci-linux.txt](../../docs/release/evidence/gates/baseline-ci-linux.txt) | 13,189 | artifact | 2026-09-19 |
 | [docs/release/evidence/gates/fresh-ci-linux.txt](../../docs/release/evidence/gates/fresh-ci-linux.txt) | 13,110 | artifact | 2026-09-20 |
@@ -73,9 +76,6 @@
 | [docs/release/evidence/freeze/definitions.json](../../docs/release/evidence/freeze/definitions.json) | 6,847 | artifact | 2026-09-19 |
 | [omerta-contracts/audits/2026-09-08-comprehensive/package-manifest.json](../../omerta-contracts/audits/2026-09-08-comprehensive/package-manifest.json) | 6,609 | contract-project | 2026-09-09 |
 | [omerta-contracts/audits/2026-09-08-comprehensive/forge-lint-triage.json](../../omerta-contracts/audits/2026-09-08-comprehensive/forge-lint-triage.json) | 6,203 | contract-project | 2026-09-09 |
-| [src/rules.tail.js](../../src/rules.tail.js) | 6,145 | backend-module | 2026-09-02 |
-| [brand/hype-flywheel-video/package-lock.json](../../brand/hype-flywheel-video/package-lock.json) | 5,901 | media-asset | 2026-09-14 |
-| [docs/release/evidence/player/mobile/results.json](../../docs/release/evidence/player/mobile/results.json) | 5,177 | artifact | 2026-09-19 |
 
 ## Media estate
 
