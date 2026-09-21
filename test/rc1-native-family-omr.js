@@ -25,11 +25,13 @@ const configuration = { seed, epoch: new Date(epoch).toISOString(), sourcePins: 
     'Population off deploy switch; no provider or rail configuration; no postbaseline status/deadline/balance edits'],
   authority: 'Canonical HTTP injection plus original local callbacks; shared logical application and SQL clocks; no forced combat outcome',
   worker: 'Actual family yield executes hourly; old12h source comments are not treated as runtime authority',
+  workerFault: 'Only while the deliberate yield trigger is installed, the scheduler expected-error seam accepts family yield/RFO01. Its EXPECTED_DORMANT label denotes this injected abort, not normal service dormancy.',
   war: 'Canonical declaration, scored jump and original30min resolution affect cash/standing; OMR no-change control only, not full cash custody proof',
   databaseIsolation: database.descriptor, fullResourceCoverage: false };
 const proof = await createProofRecorder({ directory: output, source, configuration, runId, seed, scenarioId: 'family-omr-exact-custody', population: roles.length });
 const runtime = installSerialRuntime(seed, configuration.epoch); let at = epoch; runtime.bindClock(() => at);
-const controller = createWorkerSchedule({ start: epoch, setClock: value => { at = value; }, expectedDormant: [{ label: 'RWA health', code: 'health_registry_unavailable' }] });
+const workerExceptions = [{ label: 'RWA health', code: 'health_registry_unavailable' }];
+const controller = createWorkerSchedule({ start: epoch, setClock: value => { at = value; }, expectedDormant: workerExceptions });
 const namespace = `rc1_worker_familyomr_${process.pid}`, seam = installWorkerInstrumentation(controller, { namespace });
 const env = { DATABASE_URL: database.url, CORE_PROGRESSION: 'on', WORLD_GRAPH_KERNEL: 'on', COORDINATION_ENGINE: 'on',
   COORDINATION_KNOWLEDGE: 'on', COORDINATION_KNOWLEDGE_SHARING: 'on', COORDINATION_OPERATIONS: 'on', LIVING_WORLD_DIRECTOR: 'LIVE',
@@ -77,9 +79,11 @@ async function installFault(kind) {
     RAISE EXCEPTION 'RC1_FAMILYOMR_ABORT_AFTER_VALUE' USING ERRCODE='RFO01'; END IF; RETURN ${returned}; END $$`);
   await pool.query(`CREATE TRIGGER rc1_familyomr_abort BEFORE ${kind === 'seal' ? 'INSERT ON transactions' : kind === 'yield' ? 'UPDATE ON family_yield_pool' : 'DELETE ON gangs'}
     FOR EACH ROW EXECUTE FUNCTION rc1_familyomr_abort()`); faultKind = kind;
+  if (kind === 'yield') workerExceptions.push({ label: 'family yield', code: 'RFO01' });
 }
 async function removeFault() { const table = faultKind === 'seal' ? 'transactions' : faultKind === 'yield' ? 'family_yield_pool' : 'gangs';
-  await pool.query(`DROP TRIGGER rc1_familyomr_abort ON ${table}`); await pool.query('DROP FUNCTION rc1_familyomr_abort()'); faultKind = null; }
+  await pool.query(`DROP TRIGGER rc1_familyomr_abort ON ${table}`); await pool.query('DROP FUNCTION rc1_familyomr_abort()');
+  if (faultKind === 'yield') workerExceptions.splice(workerExceptions.findIndex(row => row.code === 'RFO01'), 1); faultKind = null; }
 try {
   for (const level of ['log', 'warn', 'error']) console[level] = (...args) => {
     if (faultKind && args.some(value => String(value?.code || value).includes('RFO01') || String(value).includes('RC1_FAMILYOMR_ABORT'))) {
@@ -193,7 +197,9 @@ try {
   await corrupt('lost-reserve-on-succession', 'membership:boss-leaves-reserve-preserved', input => { input.after.gangs.find(row => row.id === families.a).omr_reserve = '0'; });
   await corrupt('missing-request-owner', 'tribute:member-concurrent-exact-duplicate', input => { input.after.idempotency.find(row => row.key === 'member-tribute').account_id = actors.donor; });
   await corrupt('subatomic-pool-drift', 'yield:empty-pot-canonical-replay', input => { input.after.family_yield_pool[0].balance = '0.000000000001'; });
-  const schedule = controller.diagnostic(); assert.equal(schedule.failures.length, 1); assert.equal(schedule.failures[0].label, 'family yield'); assert.equal(schedule.failures[0].code, 'RFO01');
+  const schedule = controller.diagnostic(); assert.equal(schedule.failures.length, 0);
+  const injectedJobs = schedule.jobs.filter(row => row.code === 'RFO01'); assert.equal(injectedJobs.length, 1);
+  assert.equal(injectedJobs[0].label, 'family yield'); assert.equal(injectedJobs[0].logicalAt, epoch + 3600000);
   const timerCounts = Object.fromEntries(['directorTick', 'guardedTick', 'guardedSeasonTick', 'health-boundary'].map(label => [label, schedule.events.filter(row => row.kind === 'timer.fire' && row.label === label).length]));
   assert.deepEqual(timerCounts, { directorTick: 36, guardedTick: 3, guardedSeasonTick: 3, 'health-boundary': 36 });
   await proof.artifact('final-state.json', await snapshotFamilyOmr(readPool)); await proof.artifact('worker-schedule.json', schedule);

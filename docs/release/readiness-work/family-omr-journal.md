@@ -75,3 +75,12 @@ after29 completed boundaries: the war-standing spot check concatenated1 onto
 PostgreSQL's NUMERIC string. The control now compares exact BigInt integers.
 The production war had correctly settled; this does not turn the failed full
 gate into a pass or imply anything about the unexecuted fractional-yield case.
+
+Native `32cb0e035ee2122a3f78452d68bc0a3dbddc8f8a` retained a second harness
+FAIL when the scheduler correctly rejected the deliberate yield fault as an
+undeclared job failure. The runner now registers only `family yield/RFO01` in
+the existing expected-error seam while that trigger is installed, then removes
+it. The scheduler calls this status `EXPECTED_DORMANT`; here it is explicitly
+an injected abort. Exactly one such job at the first original hourly callback
+is required. Other worker errors remain fatal, and original safe()/rollback
+behavior is unchanged.
