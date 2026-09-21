@@ -688,6 +688,46 @@
       ],
       "retest": "41127506 native40boundaries/two nonzero three-bucket terminals/60corruption controls/four invariant checkpoints pass.159artifacts and two history chains independently verified. Integrated rerun required.",
       "evidence": "world-family-dissolution.md;family-terminal-observer-summary.json;family-terminal-oracle-finding.json"
+    },
+    {
+      "id": "RC1-TOOL-44",
+      "classification": "D turf terminal harness oracle/precondition errors",
+      "owner": "Codex/resource_proof",
+      "failedGate": "a4bc613b and c1e26872 native single-district terminal proofs",
+      "before": "Original boot adds an empty turf sweep beyond three hourly sweeps; corrected count then exposes an even fixture that never exercised required odd-unit refund rounding. Both full runs remain FAIL despite completed terminal.",
+      "repair": "c1e26872 retains boot separately and selects post-epoch original sweeps; dff63152 declares an odd-unit canonical stake policy before execution. No runtime, deadline, resolver or rounding change.",
+      "changedSource": [
+        "test/rc1-native-turf-terminal.js"
+      ],
+      "retest": "dff63152 passes120resource boundaries,20negative controls, original rollback/retry/empty sweep and odd loser53533→refund26766/burn26767.1129artifacts/3history chains independently verified; integrated rerun required.",
+      "evidence": "world-turf-terminal-observer.md;turf-terminal-observer-summary.json"
+    },
+    {
+      "id": "RC1-TOOL-45",
+      "classification": "D Crew authority harness recorder/precondition errors",
+      "owner": "Codex/root",
+      "failedGate": "547d70e3 artifact admission and dd75db51 first no-character Crew route probe",
+      "before": "Recorder correctly refuses nested evidence names; after flat-name repair, Crew-first hook correctly returns no_crew before the character check while test expects no_character.",
+      "repair": "dd75db51 uses flat safe evidence names and explicit pending diagnostic status;64c3245a requires the exact existing Crew-first denial ordering. Runtime unchanged.",
+      "changedSource": [
+        "test/rc1-crew-authority-postgres.js"
+      ],
+      "retest": "64c3245a passes53denials/13replays/one concurrent fresh kick over368authority tables;67passing artifacts plus both failed histories independently verified. Bootstrap differs only in original schema stamp; integrated rerun required.",
+      "evidence": "authority-crew-review.md;authority-crew-summary.json"
+    },
+    {
+      "id": "RC1-TOOL-46",
+      "classification": "D shared Family observer applies player defaults to NPC formation",
+      "owner": "Codex/resource_proof",
+      "failedGate": "6368339e native raw/gzip/alliance world startup and74b29180 independent world startup",
+      "before": "Original runFamilies uses createGang then marks NPC standing in the same transaction. Player-only npc_flag/default assertions reject the original worker commit.",
+      "repair": "5f506844 validates stable NPC owner, exact formation cash fee and custody, and returns explicit unsupported NPC Family/war_pool lineage before player-only defaults. No NPC classification credit, skipped transition or normalization.",
+      "changedSource": [
+        "tools/rc1-world-resource-observer.js",
+        "test/rc1-world-family-npc.js"
+      ],
+      "retest": "Both original failed inputs and32native corruption variants plus16pure controls/generic57table native observer pass. Original-worker pair passes separately0648d1bd with47repair; fresh integrated qualification remains required.",
+      "evidence": "world-family-npc-observer.md;family-npc-observer-summary.json;integrated-6368339e-results.json"
     }
   ]
 }

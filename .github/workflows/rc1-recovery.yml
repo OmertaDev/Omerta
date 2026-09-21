@@ -332,6 +332,13 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:reviewer-authority:postgres
+      - name: Native Crew roles revocation and persistent retries
+        if: '!cancelled()'
+        env:
+          RC1_CREW_AUTHORITY_OUTPUT: ${{ runner.temp }}/rc1-crew-authority
+        run: |
+          umask 077
+          npm run test:rc1:crew-authority:postgres
       - name: Encrypt restricted execution evidence
         if: always()
         env:
@@ -812,6 +819,14 @@ jobs:
           umask 077
           npm run test:rc1:family-dissolution:postgres
           node test/rc1-world-family-dissolution.js --evidence="$RC1_FAMILY_DISSOLUTION_OUTPUT"
+      - name: Original hourly turf disposition rollback and repeated sweep
+        if: '!cancelled()'
+        env:
+          RC1_TURF_TERMINAL_OUTPUT: ${{ runner.temp }}/rc1-turf-terminal
+        run: |
+          umask 077
+          npm run test:rc1:turf-terminal:postgres
+          node test/rc1-world-turf-terminal.js --evidence="$RC1_TURF_TERMINAL_OUTPUT"
       - name: Encrypt restricted execution evidence
         if: always()
         env:

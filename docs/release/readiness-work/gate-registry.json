@@ -1322,6 +1322,32 @@
       "coverageExclusions": [
         "Single-Family voluntary living-member dissolution only; cash/ammo destruction and OMR reserve-to-desk transfer. Death/estate, turf/war/governance and compound terminals remain unqualified."
       ]
+    },
+    {
+      "id": "rc1-turf-terminal",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:turf-terminal:postgres"
+      ],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Single live-bidder unchartered district terminal only; stake/raise/seize, chartered/multi-district/dissolved/war variants remain unsupported"
+      ]
+    },
+    {
+      "id": "rc1-crew-authority",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:crew-authority:postgres"
+      ],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Fourteen route perimeter and selected Crew roles/replays only; full role/route crossproduct, reward success, expiry and other concurrent schedules remain open"
+      ]
     }
   ]
 }
