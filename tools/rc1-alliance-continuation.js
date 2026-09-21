@@ -55,3 +55,18 @@ export function compareAllianceStates(before, after) {
     sequences: canonicalJson(before.sequences) === canonicalJson(after.sequences) ? null : { before: before.sequences, after: after.sequences },
     exclusions: [], interpretation: 'All exact canonical tables, row values/multiplicities and sequences. Differences are retained diagnostics, never normalized into equivalence.' };
 }
+
+export function assertAllianceApplicationBootstrap(before, after, logicalAt) {
+  const difference = compareAllianceStates(before, after);
+  assert.equal(difference.sequences, null, 'Application bootstrap changed a canonical sequence');
+  assert(difference.changed.every(t => t.table === 'schema_meta'), 'Unexpected application bootstrap canonical mutation');
+  for (const table of difference.changed) {
+    assert.equal(table.removed.length, 1); assert.equal(table.added.length, 1);
+    const a = JSON.parse(table.removed[0]), b = JSON.parse(table.added[0]);
+    const { applied_at: oldAt, ...oldFields } = a, { applied_at: newAt, ...newFields } = b;
+    assert.deepEqual(newFields, oldFields, 'Bootstrap changed schema identity');
+    assert.equal(a.id, 1); assert(Number.isFinite(Date.parse(oldAt))); assert.equal(Date.parse(newAt), logicalAt);
+  }
+  return { ...difference,
+    classification: 'Original makeDb schema_meta.applied_at stamp retained as canonical state. Complete aggregate bootstrap comparison; no per-commit schema/migration coverage.' };
+}

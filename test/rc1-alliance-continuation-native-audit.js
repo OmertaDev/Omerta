@@ -50,7 +50,9 @@ for (const [name, mutate] of [
 }
 for (let i = 1; i < 3; i++) {
   const run = runs[i]; assert.equal(run.configuration.parentCheckpoint.runSha256, identities[0].runSha256);
-  assert.equal(run.result.initialStateSha256, metadata.finalStateSha256);
+  assert.equal(run.result.continuation.restoredStateSha256, metadata.finalStateSha256);
+  assert.equal(run.result.continuation.applicationBootstrap.beforeStateSha256, metadata.finalStateSha256);
+  assert.equal(run.result.initialStateSha256, run.result.continuation.applicationBootstrap.afterStateSha256);
   assert.equal(run.result.continuation.totalLogicalHours, 48);
   assert.deepEqual(run.result.alliance.completedStages, [0, 1]); assert.equal(run.result.alliance.completions.length, 3);
   assert.equal(run.result.alliance.fresh, reference.result.alliance.fresh);

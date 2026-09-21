@@ -20,7 +20,7 @@ import { collectKnowledgeDiagnostics } from '../tools/rc1-knowledge-diagnostics.
 import { createMysteryPolicy, MYSTERY_POLICY_CONTRACT } from '../tools/rc1-mystery-policies.js';
 import { createRunGuardrails } from '../tools/rc1-native-run-guardrails.js';
 import { createAllianceWorldAdapter, ALLIANCE_WORLD_CONTRACT } from '../tools/rc1-alliance-world-adapter.js';
-import { assertAllianceContinuation, compareAllianceStates } from '../tools/rc1-alliance-continuation.js';
+import { assertAllianceContinuation, assertAllianceApplicationBootstrap, compareAllianceStates } from '../tools/rc1-alliance-continuation.js';
 
 const argument = (name) => process.argv.find((arg) => arg.startsWith(`--${name}=`))?.slice(name.length + 3);
 assert(process.argv.includes('--postgres'), 'Real PostgreSQL is required');
@@ -261,6 +261,7 @@ const policyState = () => ({ format: 1, seed, actorPolicy, epoch, logicalAt: at,
   actorOptions: Object.fromEntries(actorOptions), actorActions: Object.fromEntries(actorActions),
   metrics, opportunities: opportunities.checkpoint(), days });
 let pool, result, currentInvocation = null, failureInvocation = null, injectedActorMismatch = false;
+let restoredState = null, applicationBootstrap = null;
 try {
   for (const level of ['log', 'warn', 'error']) console[level] = (...args) => controller.log(level, args);
   if (priorFailure) await proof.artifact('prior-failed-run.json', priorFailure);
@@ -271,7 +272,7 @@ try {
       { poolFactory: seam.clock.poolFactory }); controller.pools.push(pool);
     const restoredClock = (await pool.query('SELECT now() AS tx,clock_timestamp() AS statement')).rows[0];
     assert.equal(restoredClock.tx.getTime(), start); assert.equal(restoredClock.statement.getTime(), start);
-    if (allianceEnabled) await proof.snapshot(pool, 'restored-before-application-bootstrap');
+    if (allianceEnabled) restoredState = await proof.snapshot(pool, 'restored-before-application-bootstrap');
   } else {
     await base.query(`CREATE SCHEMA ${namespace}`);
     const bootstrap = new controller.Pool({ connectionString: url, options: '', max: 20 });
@@ -288,8 +289,9 @@ try {
         responseCompletions.delete(key); complete();
       });
       if (resume) {
-        assert.equal((await canonicalDatabaseSnapshot(pool)).stateSha256, parentCheckpoint.stateSha256,
-          'Application bootstrap changed restored canonical state');
+        const after = await proof.snapshot(pool, 'after-application-bootstrap');
+        applicationBootstrap = assertAllianceApplicationBootstrap(restoredState, after, at);
+        await proof.artifact('alliance-application-bootstrap.json', applicationBootstrap);
       } else {
       const { PACING } = await import('../src/rules.js'), grants = [];
       for (let index = 0; index < population; index++) {
@@ -347,7 +349,8 @@ try {
   await proof.record({ kind: 'measured-initialization', roster, configuration, publicCrimes, randomDraws: runtime.tape,
     logicalAt: at, restoredCheckpoint: configuration.parentCheckpoint, fixtureWritesAfterThisRecord: false });
   const initial = await proof.snapshot(pool, 'initial'); await proof.checkpoint(pool, 'initial', url);
-  if (resume) assert.equal(initial.stateSha256, parentCheckpoint.stateSha256, 'Restart did not restore exact canonical state');
+  if (resume) assert.equal(initial.stateSha256, allianceEnabled ? applicationBootstrap.afterStateSha256 : parentCheckpoint.stateSha256,
+    'Measured state differs from the recorded restore/bootstrap boundary');
   await proof.artifact('actor-policy-initial.json', policyState());
   const initialRecaps = (await pool.query('SELECT account_id,season FROM season_recaps ORDER BY account_id,season')).rows;
   if (commitObserver) {
@@ -623,7 +626,8 @@ try {
     statement: 'Completed only the declared ' + actorPolicy + ' workload; no matrix qualification or dead-world clearance' };
   if (allianceEnabled) {
     result.continuation = { mode: configuration.continuation.mode, totalLogicalHours: (finish - epoch) / 3600000,
-      parent: configuration.parentCheckpoint, startup: startupLineage,
+      parent: configuration.parentCheckpoint, restoredStateSha256: restoredState?.stateSha256 || null,
+      applicationBootstrap, startup: startupLineage,
       resourceLineage: { parentJournalPrefixSha256: parentContinuation?.resourceJournalPrefixSha256 || null,
         parentJournalPrefixCount: parentContinuation?.resourceJournalPrefixCount || 0,
         parentCompleteJournalSha256: parentRun?.result.resourceJournalSha256 || null,

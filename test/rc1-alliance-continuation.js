@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { createAllianceWorldAdapter, ALLIANCE_WORLD_CONTRACT } from '../tools/rc1-alliance-world-adapter.js';
-import { assertAllianceContinuation, compareAllianceStates } from '../tools/rc1-alliance-continuation.js';
+import { assertAllianceContinuation, assertAllianceApplicationBootstrap, compareAllianceStates } from '../tools/rc1-alliance-continuation.js';
 import { actorValueHash } from '../tools/rc1-native-actor-replay.js';
 import { canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
 
@@ -85,4 +85,11 @@ const diff = compareAllianceStates(a, b); assert.equal(diff.equal, false); asser
 assert.deepEqual(diff.changed[0].added, ['{"n":9007199254740994}']); assert.deepEqual(diff.changed[0].removed, ['{"n":9007199254740993}']);
 assert.equal(diff.changed[1].afterPresent, false); assert(diff.sequences); assert.deepEqual(diff.exclusions, []);
 assert.equal(compareAllianceStates(a, a).equal, true); assert.throws(() => compareAllianceStates({ ...a, stateSha256: 'wrong' }, b), /checksum/);
+const stamp = at => JSON.stringify({ id: 1, app_version: '1.2.0', schema_sha: 'native', applied_at: new Date(at).toISOString() });
+const bootBefore = snapshot({ schema_meta: [stamp(0)], cash: a.tables.cash });
+const bootAfter = snapshot({ schema_meta: [stamp(hooks.logicalAt)], cash: a.tables.cash });
+assert.equal(assertAllianceApplicationBootstrap(bootBefore, bootAfter, hooks.logicalAt).equal, false);
+assert.throws(() => assertAllianceApplicationBootstrap(bootBefore, snapshot({ ...bootAfter.tables, cash: b.tables.cash }), hooks.logicalAt), /Unexpected/);
+assert.throws(() => assertAllianceApplicationBootstrap(bootBefore, bootAfter, 1234));
+assert.throws(() => assertAllianceApplicationBootstrap(bootBefore, snapshot(bootAfter.tables, [{ sequencename: 'id', last_value: '2' }]), hooks.logicalAt), /sequence/);
 console.log('PASS alliance continuation: actual stage cursor, selected request restore, no repeated completed action, wrong source/config/unfinished rejection and lossless full-state differences');
