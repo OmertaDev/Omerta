@@ -57,6 +57,14 @@ if (process.argv.includes('--postgres')) {
     await client.query('BEGIN'); await client.query('UPDATE balance SET amount=12'); await client.query('SAVEPOINT retained');
     await client.query('UPDATE balance SET amount=99'); await client.query('ROLLBACK TO retained'); await client.query('COMMIT');
     assert.equal(events.at(-1).balance, '12');
+    const priorBoundaries = events.length;
+    await client.query('/* leading; comment */ BEGIN'); await client.query('UPDATE balance SET amount=21');
+    await client.query('SAVEPOINT commented'); await client.query('UPDATE balance SET amount=90');
+    await client.query('/* leading */ ROLLBACK/* interleaved; */WORK /* still */ TO SAVEPOINT commented');
+    assert.equal(events.length, priorBoundaries, 'Commented transaction and savepoint must not emit a committed boundary');
+    assert.equal((await reader.query('SELECT amount::text FROM balance')).rows[0].amount, '12');
+    await client.query('/* leading */ COMMIT');
+    assert.equal(events.at(-1).balance, '21'); assert.equal(events.at(-1).outcome, 'COMMITTED');
     await client.query('UPDATE balance SET amount=13');
     assert.equal(events.at(-1).outcome, 'AUTOCOMMITTED'); assert.equal(events.at(-1).balance, '13');
     await assert.rejects(client.query('INSERT INTO balance VALUES(1,99)'), { code: '23505' });
@@ -78,6 +86,15 @@ if (process.argv.includes('--postgres')) {
     await assert.rejects(client.query('UPDATE balance SET amount=999; COMMIT; UPDATE balance SET amount=888'), /one statement/);
     await assert.rejects(client.query('DO $$BEGIN UPDATE balance SET amount=777; COMMIT; END$$'), /hide intermediate commits/);
     assert.equal((await reader.query('SELECT amount::text FROM balance')).rows[0].amount, '13', 'True multiple statements rejected before any mutation');
+    await client.query('START/* comment */ TRANSACTION'); await client.query('UPDATE balance SET amount=26');
+    const beforeRefusedSql = observer.diagnostic().observedQueries;
+    for (const sql of ['COMMIT AND CHAIN', 'END/* comment */ AND CHAIN', 'ROLLBACK AND CHAIN',
+      "PREPARE TRANSACTION 'hidden-transaction'", "COMMIT PREPARED 'hidden-transaction'", "ROLLBACK PREPARED 'hidden-transaction'",
+      'PREPARE hidden_statement AS SELECT 1', 'EXECUTE hidden_statement', 'DEALLOCATE hidden_statement'])
+      await assert.rejects(client.query(sql), /outside observed transaction scope/);
+    assert.equal(observer.diagnostic().observedQueries, beforeRefusedSql, 'Unsupported controls refused before native SQL');
+    assert.equal((await reader.query('SELECT amount::text FROM balance')).rows[0].amount, '13', 'Rejected commit/chaining must not expose pending26');
+    await client.query('/* retain actual rollback */ ROLLBACK');
     failObserver = true;
     await assert.rejects(client.query('UPDATE balance SET amount=14'), /after durable commit/);
     assert.equal((await reader.query('SELECT amount::text FROM balance')).rows[0].amount, '14');

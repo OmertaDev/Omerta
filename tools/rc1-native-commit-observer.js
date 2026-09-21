@@ -10,7 +10,8 @@ export function assertSingleSqlStatement(text) {
   assert.equal(typeof text, 'string', 'Observed SQL must be text');
   assert(Buffer.byteLength(text) <= 2 * 1024 * 1024, 'Observed SQL exceeds lexical budget');
   assert(!text.includes('\0'), 'Observed SQL contains NUL');
-  let i = 0, content = false, terminated = false, head = null;
+  let i = 0, content = false, terminated = false;
+  const tokens = [];
   const identifier = (char) => !!char && /[a-zA-Z0-9_$]/.test(char);
   function quoted(quote, escapes = false) {
     i++;
@@ -40,26 +41,29 @@ export function assertSingleSqlStatement(text) {
     }
     assert(!terminated, 'Observed SQL must contain one statement with at most one trailing semicolon');
     if (text[i] === ';') { assert(content, 'Empty observed SQL statement'); terminated = true; i++; continue; }
-    if (!content) head = text.slice(i).match(/^[a-zA-Z_]+/)?.[0]?.toUpperCase() || null;
     content = true;
-    if ((text[i] === 'E' || text[i] === 'e') && text[i + 1] === "'" && !identifier(text[i - 1])) { i++; quoted("'", true); continue; }
+    if ((text[i] === 'E' || text[i] === 'e') && text[i + 1] === "'" && !identifier(text[i - 1])) { tokens.push('<string>'); i++; quoted("'", true); continue; }
     assert(!((text[i] === 'U' || text[i] === 'u') && text[i + 1] === '&' && ['"', "'"].includes(text[i + 2])),
       'Unsupported SQL Unicode escape quoting');
-    if (text[i] === "'" || text[i] === '"') { quoted(text[i]); continue; }
+    if (text[i] === "'" || text[i] === '"') { tokens.push(text[i] === "'" ? '<string>' : '<identifier>'); quoted(text[i]); continue; }
     if (text[i] === '$' && !identifier(text[i - 1])) {
       const delimiter = text.slice(i).match(/^\$(?:[A-Za-z_][A-Za-z0-9_]*)?\$/)?.[0];
       if (delimiter) {
+        tokens.push('<string>');
         const end = text.indexOf(delimiter, i + delimiter.length);
         assert(end >= 0, 'Unterminated SQL dollar-quoted string'); i = end + delimiter.length; continue;
       }
       const parameter = text.slice(i).match(/^\$[1-9][0-9]*/)?.[0];
-      assert(parameter, 'Unsupported SQL dollar token'); i += parameter.length; continue;
+      assert(parameter, 'Unsupported SQL dollar token'); tokens.push('<parameter>'); i += parameter.length; continue;
     }
     assert(text.charCodeAt(i) < 128, 'Unsupported unquoted non-ASCII SQL token');
+    const word = text.slice(i).match(/^[A-Za-z_][A-Za-z0-9_$]*/)?.[0];
+    if (word) { tokens.push(word.toUpperCase()); i += word.length; continue; }
+    tokens.push(text[i]);
     i++;
   }
   assert(content, 'Empty observed SQL statement');
-  return { head };
+  return { head: tokens[0], tokens };
 }
 
 export function createNativeCommitObserver({ onBoundary, onAttempt = async () => {}, context = () => null }) {
@@ -85,9 +89,16 @@ export function createNativeCommitObserver({ onBoundary, onAttempt = async () =>
         const text = typeof sql === 'string' ? sql : sql.text;
         // A single driver response cannot expose intermediate commits. Reject
         // true separators before execution, preserving quoted/comment text.
+        let structural;
         try {
-          const { head } = assertSingleSqlStatement(text);
+          structural = assertSingleSqlStatement(text);
+          const { head, tokens } = structural;
           assert(!['DO', 'CALL'].includes(head), 'Observed SQL procedures can hide intermediate commits');
+          assert(!['PREPARE', 'EXECUTE', 'DEALLOCATE'].includes(head), 'SQL-level prepared statements are outside observed transaction scope');
+          if (['COMMIT', 'END', 'ROLLBACK', 'ABORT'].includes(head)) {
+            assert(!tokens.includes('CHAIN'), 'Transaction chaining is outside observed transaction scope');
+            assert(!tokens.includes('PREPARED'), 'Two-phase transactions are outside observed transaction scope');
+          }
         }
         catch (error) { throw unsupported(error.message, text); }
         busy = true;
@@ -100,14 +111,14 @@ export function createNativeCommitObserver({ onBoundary, onAttempt = async () =>
             error.rc1ObserverError = true; throw error;
           }
         };
-        const begins = /^\s*(?:BEGIN|START\s+TRANSACTION)\b/i.test(text);
-        const rollbackTo = /^\s*ROLLBACK\s+TO\b/i.test(text);
+        const rollbackTo = structural.head === 'ROLLBACK'
+          && structural.tokens[['WORK', 'TRANSACTION'].includes(structural.tokens[1]) ? 2 : 1] === 'TO';
         let nativeReturned = false;
         try {
           const result = await query(sql, values); nativeReturned = true;
           if (Array.isArray(result)) throw unsupported('Multiple PostgreSQL results cannot identify every committed boundary');
           const tag = result.command;
-          if (begins) {
+          if (tag === 'BEGIN' || tag === 'START') {
             if (transactions.has(clientId)) throw unsupported('Nested BEGIN has no independent native transaction');
             transactions.set(clientId, { id: ++nextTransaction, clientId, firstQuery: entry.sequence });
           }
