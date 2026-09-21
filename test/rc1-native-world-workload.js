@@ -14,7 +14,7 @@ import { sourceIdentity, createProofRecorder, verifyArtifactIndex, restoreCheckp
 import { createRecordedActors, compareActorReplay, actorValueHash } from '../tools/rc1-native-actor-replay.js';
 import { activeQuietRoster, chooseAuthorizedCommand, choosePublicCrime, observedOpportunityTracker } from '../tools/rc1-native-player-policy.js';
 import { collectWorldDiagnostics } from '../tools/rc1-world-diagnostics.js';
-import { createNativeCommitObserver } from '../tools/rc1-native-commit-observer.js';
+import { createCarMeltCommitObserver, CAR_MELT_SOURCE_PINS } from '../tools/rc1-car-melt-provenance.js';
 import { collectKnowledgeDiagnostics } from '../tools/rc1-knowledge-diagnostics.js';
 import { createMysteryPolicy, MYSTERY_POLICY_CONTRACT } from '../tools/rc1-mystery-policies.js';
 import { createRunGuardrails } from '../tools/rc1-native-run-guardrails.js';
@@ -120,6 +120,8 @@ const configuration = { scenario: 'quiet_world', population, seed, hours, source
   failureControl: injectActorMismatch ? 'Change the first authorized snapshot comparison input only; no canonical write or command executes from the altered projection.' : null,
   databaseIsolation: database.descriptor,
   resourceObservation: observeResources ? 'Experimental exact committed-boundary parity with explicit unsupported lineage; serial native queries only' : 'Disabled',
+  carMeltWitness: observeResources ? { format: 1, sourcePins: CAR_MELT_SOURCE_PINS,
+    scope: 'Native COMMIT provenance for neutral solo human melt only. Retain full car-deletion/melt-candidate and bounded-overflow witnesses privately; all other commits keep ordinary resource evidence. No added actor actions or grants.' } : null,
   resourceBootstrap: 'Both original makeDb initializations precede per-commit observation; exact authoritative resource state must agree before/after second bootstrap. Arm before every queued boot job.',
   epoch: new Date(epoch).toISOString(), start: new Date(start).toISOString(), finish: new Date(finish).toISOString(),
   replay: replay ? { runSha256: sha256(await fs.readFile(path.join(replay, 'run.json'))), source: replayRun.source,
@@ -163,6 +165,7 @@ if (allianceEnabled) Object.assign(configuration, {
 if (replay) {
   assert.equal(replayRun.configuration.hours, hours);
   assert.equal(replayRun.configuration.resourceObservation, configuration.resourceObservation);
+  assert.deepEqual(replayRun.configuration.carMeltWitness, configuration.carMeltWitness);
   assert.deepEqual(replayRun.configuration.guardrails, configuration.guardrails, 'Replay operational limits differ');
   assert.deepEqual(replayRun.configuration.priorFailedRun, configuration.priorFailedRun, 'Replay predecessor linkage differs');
   assert.deepEqual(replayRun.configuration.parentCheckpoint, configuration.parentCheckpoint, 'Replay continuation parent differs');
@@ -184,18 +187,39 @@ const diagnosticPool = new pg.Pool({ connectionString: url, max: 1,
 let snapshotWorldResources, reconcileWorldResources, worldResourceHash;
 let priorResources, firstResourceError, workPhase = 'initialization';
 const resourceSummary = { boundaries: 0, unsupportedEntries: 0, unsupportedKinds: {}, qualifyingFullResourcePass: false };
+const carMeltWitnessSummary = { committedWitnesses: 0, retainedCandidateWitnesses: 0, collectorUnsupportedWitnesses: 0,
+  exactMeltTransitions: 0, unclassifiedCandidateBoundaries: 0 };
 const resourceStream = crypto.createHash('sha256');
 const resourceCost = { observedBoundaryWallMs: 0, maximumBoundaryWallMs: 0, serializedJournalBytes: 0, serializedRestrictedChangeBytes: 0 };
-const commitObserver = observeResources ? createNativeCommitObserver({
+// BEGIN source-bound car witness integration control.
+const commitObserver = observeResources ? createCarMeltCommitObserver({
   context: () => currentInvocation || { authority: 'original-worker', logicalAt: at, ...(allianceEnabled ? { workPhase } : {}) },
-  onBoundary: async (event) => {
+  onBoundary: async (event, carMeltProvenance = null) => {
     const started = performance.now();
     if (firstResourceError) throw firstResourceError;
     const after = await snapshotWorldResources(diagnosticPool), before = priorResources;
     try {
       if (['ROLLED_BACK', 'STATEMENT_ABORTED'].includes(event.outcome))
         assert.equal(worldResourceHash(after), worldResourceHash(before), 'Aborted SQL changed committed world resources');
-      const { restrictedChanges, ...journal } = reconcileWorldResources(before, after, { identity: event, includeRestrictedChanges: true });
+      if (carMeltProvenance) carMeltWitnessSummary.committedWitnesses++;
+      // Keep unknown/overflow scopes explicit. Only original executed SQL can
+      // select a candidate; a request label or actor-supplied claim cannot.
+      const retainedWitness = carMeltProvenance && (carMeltProvenance.unsupported || carMeltProvenance.queries.some(query =>
+        /^\s*DELETE\s+FROM\s+cars\b/i.test(query.sql)
+        || /^\s*INSERT\s+INTO\s+transactions\b/i.test(query.sql) && /^melt(?::|$)/.test(String(query.parameters[5] || ''))))
+        ? carMeltProvenance : null;
+      const { restrictedChanges, ...journal } = reconcileWorldResources(before, after,
+        { identity: event, includeRestrictedChanges: true, carMeltProvenance: retainedWitness });
+      if (retainedWitness) {
+        const artifact = `restricted-car-melt-witness-${String(resourceSummary.boundaries + 1).padStart(7, '0')}.json`;
+        await proof.artifact(artifact, { event, carMeltProvenance: retainedWitness });
+        journal.carMeltWitness = { artifact, sha256: sha256(canonicalJson(retainedWitness)) };
+        carMeltWitnessSummary.retainedCandidateWitnesses++;
+        if (retainedWitness.unsupported) carMeltWitnessSummary.collectorUnsupportedWitnesses++;
+        const exact = journal.cars.lineage.filter(row => row.kind === 'exact-solo-melt-sink').length;
+        carMeltWitnessSummary.exactMeltTransitions += exact;
+        if (!exact) carMeltWitnessSummary.unclassifiedCandidateBoundaries++;
+      }
       if (restrictedChanges) {
         const artifact = `restricted-resource-change-${String(resourceSummary.boundaries + 1).padStart(7, '0')}.json`;
         await proof.artifact(artifact, { event, restrictedChanges });
@@ -216,11 +240,12 @@ const commitObserver = observeResources ? createNativeCommitObserver({
       resourceCost.observedBoundaryWallMs += elapsed; resourceCost.maximumBoundaryWallMs = Math.max(resourceCost.maximumBoundaryWallMs, elapsed);
     } catch (error) {
       firstResourceError = error;
-      await proof.artifact('first-resource-failure.json', { before, after, event, error: { message: error.message, stack: error.stack } });
+      await proof.artifact('first-resource-failure.json', { before, after, event, carMeltProvenance, error: { message: error.message, stack: error.stack } });
       throw error;
     }
   },
 }) : null;
+// END source-bound car witness integration control.
 const seam = installWorkerInstrumentation(controller, { namespace, queryOrder, commitObserver });
 const originalConsole = { log: console.log, warn: console.warn, error: console.error };
 const roster = allianceEnabled ? [] : Array.from({ length: population }, (_, index) => `quiet-player-${index}`);
@@ -591,6 +616,7 @@ try {
   await proof.artifact('world-diagnostics-final.json', finalDiagnostics);
   if (commitObserver) {
     commitObserver.assertComplete(); await proof.artifact('resource-observer.json', { ...resourceSummary, diagnostic: commitObserver.diagnostic() });
+    await proof.artifact('car-melt-witness-summary.json', { ...carMeltWitnessSummary, scope: configuration.carMeltWitness });
   }
   const trace = controller.diagnostic(); assert.equal(trace.failures.length, 0);
   const timerCounts = Object.fromEntries(['directorTick', 'guardedTick', 'guardedSeasonTick', 'health-boundary']
@@ -631,6 +657,7 @@ try {
     resourceObservationEnabled: observeResources, resourceJournalCount: resourceSummary.boundaries,
     resourceJournalSha256: observeResources ? resourceStream.copy().digest('hex') : null,
     resourceObservation: observeResources ? resourceSummary : null,
+    carMeltWitnessObservation: observeResources ? carMeltWitnessSummary : null,
     statement: 'Completed only the declared ' + actorPolicy + ' workload; no matrix qualification or dead-world clearance' };
   if (allianceEnabled) {
     result.continuation = { mode: configuration.continuation.mode, totalLogicalHours: (finish - epoch) / 3600000,
@@ -648,7 +675,11 @@ try {
       await proof.artifact('alliance-uninterrupted-comparison.json', result.continuation.uninterruptedComparison);
     }
   }
-  if (replay) result.replayComparison = compareActorReplay(result, replayRun.result);
+  if (replay) {
+    result.replayComparison = compareActorReplay(result, replayRun.result);
+    assert.deepEqual(result.carMeltWitnessObservation, replayRun.result.carMeltWitnessObservation, 'Car COMMIT witness replay differs');
+    result.carMeltWitnessReplayEqual = true;
+  }
   await guardBoundary('final');
   if (guardrails) await proof.artifact('operational-guardrails.json', guardrails.diagnostic());
   await proof.record({ kind: 'assertions', ...result });
