@@ -1374,6 +1374,45 @@
       "coverageExclusions": [
         "Two neutral solo non-limited car melts only; modified yields, Family/NPC compounds, acquisitions and the full resource taxonomy remain unqualified."
       ]
+    },
+    {
+      "id": "rc1-family-authority",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:family-authority:postgres"
+      ],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Eleven core Family HTTP routes and selected role/privacy/receipt schedules only; all Family branches, workers, receipt expiry and complete route/role crossproduct remain open."
+      ]
+    },
+    {
+      "id": "rc1-season-crown",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:season-crown:postgres"
+      ],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "One stored-winner award and fresh notice with two native rollback faults; initial winner selection and elapsed seasonal duration remain unsupported."
+      ]
+    },
+    {
+      "id": "rc1-npc-family-lineage",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:npc-family-lineage:postgres"
+      ],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Original NPC formation fee, nonmonetary initial war_pool, late rollback and next original hourly retry only; other ecology/resource branches and full matrix remain unsupported."
+      ]
     }
   ]
 }

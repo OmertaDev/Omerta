@@ -1,0 +1,46 @@
+{
+  "source": "b5c80a4ed921e58792e78f8c4b51de5635182b74",
+  "audit": {
+    "sha256": "4f9a3211afb21a5cc8b23f34cff77757961ed52bb827c445eaf7c3cbe646e572",
+    "bytes": 123138
+  },
+  "completedLauncherRecords": 36,
+  "passedLauncherRecords": 35,
+  "failedLauncherRecords": [
+    {
+      "name": "rc1-crew-authority",
+      "code": 1
+    }
+  ],
+  "fullSourceFileInventory": 1627,
+  "nativeManifests": 25,
+  "nativeArtifactCount": 2047,
+  "nativeHistoryEvents": 52510,
+  "nativeIndexedStoredBytes": 4370475531,
+  "ownedClosedDatabasesIndependentlyAbsent": 10,
+  "sourceUnchanged": true,
+  "launcherResult": {
+    "sha256": "92effdea69f8ed0f627e1a2f76f524270bb6ef0e7bad1027b6acf7e3ee6c33f5",
+    "bytes": 23171
+  },
+  "originalCrewAudit": {
+    "sha256": "7bc06d0420d4549d74f582feda66210568d83cfd1ef46eb11845289f11b9193e",
+    "bytes": 985
+  },
+  "nativeContinuationAudit": {
+    "sha256": "4d4f3524a5343c2848bcbe2afa703389a22255c58dafb680ec78243c8a6e9153",
+    "bytes": 6231
+  },
+  "cleanupAudit": {
+    "sha256": "61737c3d46f92556f463bd1ba8e09425dfdd4ffef55122b68dca0bdc569d5839",
+    "bytes": 1307
+  },
+  "continuation": {
+    "uninterruptedEqual": false,
+    "changedTables": 21,
+    "exactReplayFields": 18,
+    "canonicalStateExclusions": []
+  },
+  "status": "FAIL_NOT_RELEASE_READY",
+  "evidenceIntegrityStatus": "PASS_SCOPED_RETAINED_EVIDENCE_AUDIT"
+}

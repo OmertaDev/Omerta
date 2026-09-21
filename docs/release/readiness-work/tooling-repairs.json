@@ -781,6 +781,102 @@
       ],
       "retest": "Fresh e71eab8a passes30boundaries/2melts/55baseline+55final invariants. All42artifacts and151history events independently verify; integrated rerun required.",
       "evidence": "../../rc1-car-melt-commit.md"
+    },
+    {
+      "id": "RC1-TOOL-51",
+      "classification": "D native NPC fixture eligibility expectation",
+      "owner": "Codex/resource_proof",
+      "failedGate": "3bb7aada original NPC Family lineage probe",
+      "before": "The original boot population has no eligible founder. The test incorrectly required immediate formation and failed after217 resource boundaries with zero formations.",
+      "repair": "8f8f0d6b declares an eight-hour bound before a fresh run and advances original worker callbacks until legal eligibility; no status, progression or deadline rewrite.",
+      "changedSource": [
+        "test/rc1-native-npc-family-lineage.js"
+      ],
+      "retest": "22cca627 fresh native run reaches original rollback at01:00 and two successes at02:00/03:00. Original3bb failure remains retained.",
+      "evidence": "world-npc-family-lineage.md"
+    },
+    {
+      "id": "RC1-TOOL-52",
+      "classification": "D native invariant reader omits instrumented transaction clock",
+      "owner": "Codex/resource_proof",
+      "failedGate": "8f8f0d6b NPC Family lineage invariant read",
+      "before": "OMR fresh-emission SUM on the unclocked snapshot pool fails PostgreSQL42704: unrecognized configuration parameter rc1.transaction_time. Initial readonly/row-lock hypothesis was invalidated.",
+      "repair": "22cca627 uses the ordinary instrumented clocked pool for canonical invariants and retains readonly snapshot collection.",
+      "changedSource": [
+        "test/rc1-native-npc-family-lineage.js"
+      ],
+      "retest": "22cca627 passes855 resource boundaries,42 corruption controls and4345 canonical invariant checks. Both first failures and the invalidated hypothesis remain retained.",
+      "evidence": "world-npc-family-lineage.md"
+    },
+    {
+      "id": "RC1-TOOL-53",
+      "classification": "D concurrent HTTP test assertion and lifecycle race",
+      "owner": "Codex/root",
+      "failedGate": "Candidate17 b5c80a4e local Crew gate and hosted recovery35598247604 legacy authority on PostgreSQL16/18.4",
+      "before": "A second same-key request correctly returns409 in_progress; the test expected two immediate200 responses and could drop its schema before the first request finished.",
+      "repair": "4ad7dbcd holds the genuine reservation before the handler, proves pending409 has no authoritative effect, releases one successful request, verifies exact later replay and drains every HTTP call before teardown.",
+      "changedSource": [
+        "test/rc1-crew-authority-postgres.js",
+        "test/rc1-family-authority-postgres.js"
+      ],
+      "retest": "Fresh source4ad Crew53denials/14replays and Family51denials/15replays pass. All artifacts/history and exact contention effects independently verify. Original local/hosted failures remain failed; integrated and hosted reruns required.",
+      "evidence": "authority-pending-replay-finding.md;authority-family-results.json;authority-family-retention-index.json"
+    },
+    {
+      "id": "RC1-TOOL-54",
+      "classification": "D Node22 gzip verification error identity lost during stream teardown",
+      "owner": "Codex/native_harness",
+      "failedGate": "6368339e hosted CI35593259693 harness/world-history-storage line-byte control on Node22.23.2",
+      "before": "The default async iterator destroys its stream before pipeline receives the intended validation error, replacing it with ABORT_ERR. Unchanged test reproduces on the exact Node22 version.",
+      "repair": "172910e9 uses iterator destroyOnReturn:false for the pipeline-owned consumer; pipeline retains teardown responsibility and preserves the precise first exception.",
+      "changedSource": [
+        "tools/rc1-native-proof-gzip.js",
+        "test/rc1-history-error-preservation.js"
+      ],
+      "retest": "Five suites each pass on Node22.23.2 and Node24.19.0 Windows x64; eleven exact failure controls and all stream-destruction assertions pass. Limits/formats/default-v1 unchanged. Hosted/integrated reruns required.",
+      "evidence": "harness-history-error-preservation.md;harness-history-error-preservation-index.json;hosted-6368339e-final-results.json"
+    },
+    {
+      "id": "RC1-TOOL-55",
+      "classification": "D wrong original NPC caller label in provenance assertion",
+      "owner": "Codex/mystery_workloads",
+      "failedGate": "8295ede1 NPC car acquisition qualification inside scoped world observation",
+      "before": "Source pin is correct but expected wrapper runPopulation does not match actual runPopulationInner at the pinned caller line. Six candidates remain UNKNOWN; no false exact classification.",
+      "repair": "fef9f2e3 binds the actual wrapper/inner/spawnResident chain without relaxing source pins or custody/receipt checks.",
+      "changedSource": [
+        "tools/rc1-npc-car-acquisition.js",
+        "test/rc1-npc-car-acquisition.js"
+      ],
+      "retest": "Fresh fef native two-hour25actor observation/replay each classifies six original NPC car grants, all18 comparisons/full369table3sequence state pass.39other unknowns remain; missing full per-commit snapshots limit retrospective reclassification of that source.",
+      "evidence": "../../rc1-npc-car-acquisition.md"
+    },
+    {
+      "id": "RC1-TOOL-56",
+      "classification": "D composed provenance stack truncated before original ancestor",
+      "owner": "Codex/resource_proof",
+      "failedGate": "65ee96b8 combined original-worker observer before measured actors",
+      "before": "Default ten-frame stack capture retains ledger/createGang but loses the required population caller behind composed wrappers. Strict provenance rejects first NPC Family COMMIT59.",
+      "repair": "ebfc52ee captures40 synchronous stack frames and always restores the ambient setting.94a1a6cd verifies success/throw restoration and stale car/Family boundary rejection without weakening source/caller checks.",
+      "changedSource": [
+        "tools/rc1-npc-family-provenance.js",
+        "test/rc1-world-npc-family-lineage.js",
+        "test/rc1-world-car-melt-witness.js"
+      ],
+      "retest": "Fresh94a observation/replay each completes1085 boundaries with six exact NPC car grants and two formations; two season-record unknowns remain. The65ee prefix independently verifies364 events/360 completed boundaries; first failure and later diagnostic COMMIT-without-BEGIN remain unsealed. Exact DB is independently absent; dump/drop guard refused and no dump was fabricated.",
+      "evidence": "candidate18-resource-integration.md"
+    },
+    {
+      "id": "RC1-TOOL-57",
+      "classification": "D native test entry triggers original server main suffix guard",
+      "owner": "Codex/native_harness",
+      "failedGate": "d00e5575 stored-season-crown native cleanup",
+      "before": "Test filename ending observer.js also ends server.js. Importing the original server starts an unintended extra API/pool; native crown assertions complete but cleanup fails and the run seals overallFAIL.",
+      "repair": "e1caae37 renames the test entry to controls.js and rejects filenames matching the original server/worker main guards. No production or classifier change.",
+      "changedSource": [
+        "test/rc1-native-season-crown-controls.js"
+      ],
+      "retest": "Freshe1 focused crown proof, two native rollback faults, exact retry and six captured-input corruptions pass; seasonal recovery and short world observe/replay pass. Original failed run and postfailure dump remain retained; exact owned process/DB cleanup verified. Fresh integrated-source execution required.",
+      "evidence": "harness-season-crown-observer.md;harness-season-crown-index.json"
     }
   ]
 }

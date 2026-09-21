@@ -346,6 +346,13 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:crew-authority:postgres
+      - name: Native Family roles privacy and persistent retries
+        if: '!cancelled()'
+        env:
+          RC1_FAMILY_AUTHORITY_OUTPUT: ${{ runner.temp }}/rc1-family-authority
+        run: |
+          umask 077
+          npm run test:rc1:family-authority:postgres
       - name: Encrypt restricted execution evidence
         if: always()
         env:
@@ -429,6 +436,13 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:season-journal:postgres
+      - name: Stored season crown and notification attribution with rollback
+        if: '!cancelled()'
+        env:
+          RC1_CROWN_OUTPUT: ${{ runner.temp }}/rc1-season-crown
+        run: |
+          umask 077
+          npm run test:rc1:season-crown:postgres
       - name: Ordinary market contention and original order expiry
         if: '!cancelled()'
         env:
@@ -718,6 +732,13 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:car-melt:postgres
+      - name: Original NPC Family formation provenance and rollback
+        if: '!cancelled()'
+        env:
+          RC1_NPC_FAMILY_OUTPUT: ${{ runner.temp }}/rc1-npc-family-lineage
+        run: |
+          umask 077
+          npm run test:rc1:npc-family-lineage:postgres
       - name: Encrypt restricted execution evidence
         if: always()
         env:
