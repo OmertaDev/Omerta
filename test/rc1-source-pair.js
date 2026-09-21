@@ -6,7 +6,7 @@ import os from 'node:os';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { execFileSync, spawnSync, fork } from 'node:child_process';
-import { sourcePairIdentity, createPrivateOutput, validateMysteryResult, assertDurableMystery,
+import { sourcePairIdentity, createPrivateOutput, validateMysteryResult, assertFreshMysteryStart, assertDurableMystery,
   stopSourcePairChild } from '../tools/rc1-source-pair.js';
 
 const temporary = await fs.mkdtemp(path.join(os.tmpdir(), 'omerta-pair-controls-'));
@@ -41,28 +41,35 @@ try {
 
   const key = `${'a'.repeat(64)}.${'b'.repeat(64)}`, instanceId = crypto.randomUUID();
   const result = { schemaVersion: 1, executionId: key, status: 'COMPLETED', replayed: false,
-    result: { instanceId }, feedback: { immediateResult: { status: 'COMPLETED', label: 'Open fixture' } } };
+    result: {}, feedback: { immediateResult: { status: 'COMPLETED', label: 'Open fixture' } } };
   validateMysteryResult(result, key, false); pass();
   for (const change of [{ schemaVersion: undefined }, { executionId: 'other' }, { status: undefined },
-    { result: {} }, { feedback: {} }, { replayed: true }]) {
+    { result: undefined }, { result: null }, { result: [] }, { result: { instanceId: 'invalid' } }, { feedback: {} }, { replayed: true }]) {
     assert.throws(() => validateMysteryResult({ ...result, ...change }, key, false)); pass();
   }
   assert.throws(() => validateMysteryResult({ replayed: false, feedback: {} }, key, false)); pass();
-  const instance = { id: instanceId, authority_account_id: 'actor', graph_id: 'graph', owner_scope: 'character', owner_id: 'character' };
+  const instance = { id: instanceId, authority_account_id: 'actor', graph_id: 'graph', graph_version: 1, owner_scope: 'character', owner_id: 'character' };
+  const domainResult = { ok: true, instanceId, owner: { scope: 'character', id: 'character' }, graph: { id: 'graph', version: 1 }, status: 'active' };
   const guard = { mutation_kind: 'mystery_action', owner_scope: 'character', owner_id: 'character',
-    completed_at: '2026-01-01T00:00:00Z', result_json: JSON.stringify({ ok: true, instance: { id: instanceId } }) };
+    completed_at: '2026-01-01T00:00:00Z', result_json: JSON.stringify(domainResult) };
   const fakePool = (overrides = {}) => ({ async query(sql, params) {
-    if (sql.includes('mystery_instances')) return { rows: overrides.instances ?? [instance] };
+    if (sql.includes('mystery_instances')) { assert.deepEqual(params, ['actor', 'graph']); return { rows: overrides.instances ?? [instance] }; }
     if (sql.includes('characters')) return { rows: overrides.owners ?? [{ id: 'character' }] };
     assert.equal(params[0], `player-command:${crypto.createHash('sha256').update(JSON.stringify(key)).digest('hex')}`);
     return { rows: overrides.guards ?? [guard] };
   } });
   const receipt = { account: 'actor', graphId: 'graph', key, result };
+  assert.equal(await assertFreshMysteryStart(fakePool({ instances: [] }), 'actor', 'graph'), 0); pass();
+  await assert.rejects(assertFreshMysteryStart(fakePool(), 'actor', 'graph'), /must start with no matching/); pass();
   await assertDurableMystery(fakePool(), receipt); pass();
-  for (const changes of [{ instances: [] }, { instances: [{ ...instance, authority_account_id: 'other' }] },
+  await assertDurableMystery(fakePool(), { ...receipt, result: { ...result, result: { instanceId } } }); pass();
+  await assert.rejects(assertDurableMystery(fakePool(), { ...receipt, result: { ...result, result: { instanceId: crypto.randomUUID() } } })); pass();
+  for (const changes of [{ instances: [] }, { instances: [instance, instance] }, { instances: [{ ...instance, authority_account_id: 'other' }] },
     { instances: [{ ...instance, graph_id: 'other' }] }, { owners: [] }, { guards: [] },
     { guards: [{ ...guard, completed_at: null }] },
-    { guards: [{ ...guard, result_json: JSON.stringify({ ok: true, instance: { id: crypto.randomUUID() } }) }] }]) {
+    ...[{ instanceId: crypto.randomUUID() }, { owner: { scope: 'character', id: 'other' } }, { graph: { id: 'other', version: 1 } },
+      { graph: { id: 'graph', version: 2 } }, { instanceId: undefined, instance: { id: instanceId } }]
+      .map((change) => ({ guards: [{ ...guard, result_json: JSON.stringify({ ...domainResult, ...change }) }] }))]) {
     await assert.rejects(assertDurableMystery(fakePool(changes), receipt)); pass();
   }
 

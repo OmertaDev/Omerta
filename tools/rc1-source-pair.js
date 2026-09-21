@@ -58,17 +58,27 @@ export function validateMysteryResult(result, key, replayed) {
   assert.equal(result.executionId, key, 'Response execution identity differs');
   assert.equal(result.status, 'COMPLETED', 'Command did not complete');
   assert.equal(result.replayed, replayed);
-  assert.match(result.result?.instanceId || '', /^[a-f0-9-]{36}$/, 'Missing mystery instance');
+  assert(Object.hasOwn(result, 'result') && result.result !== null && typeof result.result === 'object'
+    && !Array.isArray(result.result), 'Missing command result object');
+  if (Object.hasOwn(result.result, 'instanceId')) assert.match(result.result.instanceId, /^[a-f0-9-]{36}$/, 'Invalid mystery instance');
   assert.equal(result.feedback?.immediateResult?.status, 'COMPLETED', 'Missing completion feedback');
   assert(typeof result.feedback.immediateResult.label === 'string' && result.feedback.immediateResult.label.length > 0);
+}
+
+export async function assertFreshMysteryStart(pool, account, graphId) {
+  assert(typeof graphId === 'string' && graphId.length > 0);
+  const rows = (await pool.query('SELECT id FROM mystery_instances WHERE authority_account_id=$1 AND graph_id=$2', [account, graphId])).rows;
+  assert.equal(rows.length, 0, 'Fresh command must start with no matching mystery instance');
+  return rows.length;
 }
 
 export async function assertDurableMystery(pool, receipt) {
   const { account, graphId, key, result } = receipt;
   assert(typeof graphId === 'string' && graphId.length > 0);
-  const rows = (await pool.query('SELECT * FROM mystery_instances WHERE id=$1', [result.result.instanceId])).rows;
-  assert.equal(rows.length, 1, 'Acknowledged mystery instance is missing');
+  const rows = (await pool.query('SELECT * FROM mystery_instances WHERE authority_account_id=$1 AND graph_id=$2', [account, graphId])).rows;
+  assert.equal(rows.length, 1, 'Acknowledged command must create exactly one matching mystery instance');
   const instance = rows[0];
+  if (Object.hasOwn(result.result, 'instanceId')) assert.equal(result.result.instanceId, instance.id, 'API mystery instance differs');
   assert.equal(instance.authority_account_id, account, 'Mystery authority differs');
   assert.equal(instance.graph_id, graphId, 'Mystery graph differs');
   assert.equal(instance.owner_scope, 'character');
@@ -82,7 +92,10 @@ export async function assertDurableMystery(pool, receipt) {
   assert.equal(guard.owner_scope, 'character'); assert.equal(guard.owner_id, instance.owner_id);
   assert(guard.completed_at && guard.result_json, 'Mutation receipt is not complete');
   const durable = JSON.parse(guard.result_json);
-  assert.equal(durable.ok, true); assert.equal(durable.instance?.id, instance.id, 'Durable mystery instance differs');
+  assert.equal(durable.ok, true); assert.equal(durable.instanceId, instance.id, 'Durable mystery instance differs');
+  assert.deepEqual(durable.owner, { scope: instance.owner_scope, id: instance.owner_id }, 'Durable mystery owner differs');
+  assert.equal(durable.graph?.id, instance.graph_id, 'Durable mystery graph differs');
+  assert.equal(durable.graph.version, Number(instance.graph_version), 'Durable mystery graph version differs');
   return { instance, guard };
 }
 
@@ -250,9 +263,12 @@ export async function runSourcePair() {
     const command = board.commands.find((row) => row.commandType === 'mystery.start' && row.availability === 'AVAILABLE');
     assert(command, 'Expected ordinary issued mystery.start command');
     const key = command.executionIdentity.executionId, payload = { executionId: key, confirmed: true };
+    const graphId = command.parameters.graphId;
+    const preCommandInstances = await interrupted(assertFreshMysteryStart(pool, account, graphId));
+    put(`before-command-${receipts.length + 1}.json`, { account, graphId, preCommandInstances, key });
     const result = await request(account, 'POST', '/v1/commands/execute', payload, key);
     validateMysteryResult(result, key, false);
-    const receipt = { account, graphId: command.parameters.graphId, key, payload, result };
+    const receipt = { account, graphId, preCommandInstances, key, payload, result };
     receipt.durable = await interrupted(assertDurableMystery(pool, receipt));
     receipts.push(receipt); update('receipts.json', receipts);
     return result;
