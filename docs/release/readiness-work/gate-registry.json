@@ -1348,6 +1348,32 @@
       "coverageExclusions": [
         "Fourteen route perimeter and selected Crew roles/replays only; full role/route crossproduct, reward success, expiry and other concurrent schedules remain open"
       ]
+    },
+    {
+      "id": "rc1-city-lock",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:city-lock:postgres"
+      ],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Eight native session acquisition/release controls only; payout accounting and full recovery remain separate required proofs."
+      ]
+    },
+    {
+      "id": "rc1-car-melt",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:car-melt:postgres"
+      ],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Two neutral solo non-limited car melts only; modified yields, Family/NPC compounds, acquisitions and the full resource taxonomy remain unqualified."
+      ]
     }
   ]
 }

@@ -217,6 +217,13 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:database:postgres
+      - name: City worker session release under native query failures
+        if: '!cancelled()'
+        env:
+          RC1_CITY_LOCK_OUTPUT: ${{ runner.temp }}/rc1-city-lock-release
+        run: |
+          umask 077
+          npm run test:rc1:city-lock:postgres
       - name: Two-hour authorized-player and original-worker smoke
         if: '!cancelled()'
         env:
@@ -704,6 +711,13 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:car-journal:postgres
+      - name: Neutral solo car melt with native transaction provenance
+        if: '!cancelled()'
+        env:
+          RC1_CAR_MELT_OUTPUT: ${{ runner.temp }}/rc1-car-melt
+        run: |
+          umask 077
+          npm run test:rc1:car-melt:postgres
       - name: Encrypt restricted execution evidence
         if: always()
         env:

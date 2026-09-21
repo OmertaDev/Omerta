@@ -629,7 +629,7 @@
         "test/rc1-ci-envelope.js",
         ".github/workflows/rc1-recovery.yml"
       ],
-      "retest": "14 envelope test groups and exact9d36a050 archive/encrypt/decrypt CLI pipeline pass. Hosted reproduction35590753664 is pending, envelope controls passed on Node22. The original run remains failed and incompletely retained.",
+      "retest": "14 envelope test groups and exact9d36a050 archive/encrypt/decrypt CLI pipeline pass. Hosted reproduction35590753664 is pending, envelope controls passed on Node22. The original run remains failed and incompletely retained. Fresh exact4b9db479 reproduction35590753664 passes; authenticated retained evidence verifies all372indexed artifacts/full histories and18comparison fields. Both cancelled6368339e hosted smoke artifacts also authenticate with original unsealed TOOL46 failure prefixes. Original missing4b failed-run artifacts remain unavailable.",
       "evidence": "ci-private-retention.md;../../rc1-ci-envelope.md;integrated-4b9db479-results.json"
     },
     {
@@ -728,6 +728,59 @@
       ],
       "retest": "Both original failed inputs and32native corruption variants plus16pure controls/generic57table native observer pass. Original-worker pair passes separately0648d1bd with47repair; fresh integrated qualification remains required.",
       "evidence": "world-family-npc-observer.md;family-npc-observer-summary.json;integrated-6368339e-results.json"
+    },
+    {
+      "id": "RC1-TOOL-47",
+      "classification": "A required native-proof cleanup blocker; scoped runtime session leak",
+      "owner": "Codex/native_harness",
+      "failedGate": "6368339e world observer failure cleanup; independently reproduced at74b29180",
+      "before": "A successful native advisory-lock SELECT followed by observer rejection occurs before the original try/finally. The actual City worker keeps its checked-out client and lock; scheduler pool.end cannot complete.",
+      "repair": "86dc6ba7 encloses acquisition in cleanup; known false releases, known true unlocks/releases, acquisition or unlock rejection discards only the uncertain borrowed session. Original error identity and accounting remain unchanged.",
+      "changedSource": [
+        "src/bank.js",
+        "test/rc1-city-lock-release.js"
+      ],
+      "retest": "e4d56fc6 passes7pure/8native controls, full canonical state equality, actual scheduler closure, no residual locks and owned database cleanup. Separate0648d1bd original-worker pair passes. Fresh integrated reruns required.",
+      "evidence": "harness-city-lock-release.md;harness-observer-serialization.md;harness-observer-serialization-index.json;integrated-6368339e-results.json"
+    },
+    {
+      "id": "RC1-TOOL-48",
+      "classification": "D native proof invocation arity error",
+      "owner": "Codex/native_harness",
+      "failedGate": "86dc6ba7 City native control after bootstrap and before City invocation",
+      "before": "The test passed two arguments to the three-argument recorder API. Its strict JSON guard correctly rejected a function-valued identity.",
+      "repair": "e4d56fc6 provides authority, identity and work separately. No runtime change.",
+      "changedSource": [
+        "test/rc1-city-lock-release.js"
+      ],
+      "retest": "Fresh e4d56fc6 native controls pass; original unsealed689-byte prefix and database-absence verification retained.",
+      "evidence": "harness-city-lock-release.md;harness-observer-serialization-index.json"
+    },
+    {
+      "id": "RC1-TOOL-49",
+      "classification": "D car workload initialization violates canonical acquisition accounting",
+      "owner": "Codex/mystery_workloads",
+      "failedGate": "2683ebbc car native baseline invariants; zero measured transitions",
+      "before": "Two declared raw car fixtures have no canonical acquisition audit; original car conservation detects +2.",
+      "repair": "ed349b5b acquires both cars with ordinary canonical boosts during declared initialization; original cooldown clock advances are retained. No fabricated grant, receipt, deadline or invariant waiver.",
+      "changedSource": [
+        "test/rc1-car-melt-provenance-postgres.js"
+      ],
+      "retest": "e71eab8a fresh native baseline/final invariants and two melts pass; source-byte preflight failures and failed baseline remain retained.",
+      "evidence": "../../rc1-car-melt-commit.md"
+    },
+    {
+      "id": "RC1-TOOL-50",
+      "classification": "D test metadata overwrites reserved evidence sequence",
+      "owner": "Codex/mystery_workloads",
+      "failedGate": "ed349b5b independent postseal verification after two completed native melts",
+      "before": "A spread of native query metadata replaces recorder-owned sequence. Independent verification rejects the history, launcher exits1 and provisional PASS is invalidated without rewriting it.",
+      "repair": "e71eab8a nests query metadata under attempt. Collector, gameplay and strict verifier unchanged.",
+      "changedSource": [
+        "test/rc1-car-melt-provenance-postgres.js"
+      ],
+      "retest": "Fresh e71eab8a passes30boundaries/2melts/55baseline+55final invariants. All42artifacts and151history events independently verify; integrated rerun required.",
+      "evidence": "../../rc1-car-melt-commit.md"
     }
   ]
 }

@@ -34,7 +34,8 @@ for (const mode of pureCases) {
 if (!process.argv.includes('--postgres')) {
   console.log(JSON.stringify({ status: 'PASS_PURE_CONTROLS', cases: pureCases }));
 } else {
-  const output = process.argv.find(value => value.startsWith('--output='))?.slice(9); assert(output, 'New restricted --output required');
+  const output = process.argv.find(value => value.startsWith('--output='))?.slice(9) || process.env.RC1_CITY_LOCK_OUTPUT;
+  assert(output, 'New restricted --output or RC1_CITY_LOCK_OUTPUT required');
   const controlUrl = process.env.COORDINATION_TEST_DATABASE_URL; assert(controlUrl, 'Disposable local PostgreSQL control URL required');
   const source = await sourceIdentity(), oldUrl = process.env.DATABASE_URL;
   const database = planOwnedWorldDatabase({ controlUrl, runId: path.basename(output), sourceRevision: source.revision });

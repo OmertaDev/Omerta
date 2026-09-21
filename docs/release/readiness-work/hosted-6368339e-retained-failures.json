@@ -1,0 +1,747 @@
+{
+  "format": 1,
+  "status": "VERIFIED_RETAINED_HOSTED_CANCELLATIONS",
+  "source": "6368339e82965679c1d1aae91ecea657489a6414",
+  "runId": "35593262545",
+  "attempt": 1,
+  "workflow": ".github/workflows/rc1-recovery.yml",
+  "cryptographicScope": "GitHub fresh metadata ZIP digest/size, single regular ZIP member, exact-context authenticated envelope with pinned636 helper bytes, all tar paths/types validated before extraction; encrypted transport is not sender/deployment attestation",
+  "lanes": [
+    {
+      "lane": "pg16",
+      "context": {
+        "sourceRevision": "6368339e82965679c1d1aae91ecea657489a6414",
+        "runId": "35593262545",
+        "jobId": "isolated-world-smoke:pg16",
+        "attemptId": "1"
+      },
+      "jobId": 106312400487,
+      "jobConclusion": "cancelled",
+      "artifactId": 10636208261,
+      "custody": {
+        "zip": {
+          "sha256": "c0a8caed136f016c4f091cb495b9c5f4f800a0adc55648aa9d509328ff2262a4",
+          "bytes": 2781830
+        },
+        "envelope": {
+          "sha256": "d58657df1f7c37c410022d7c679aaea15e747e5ef9486b8633589952d17945f5",
+          "bytes": 2780836
+        },
+        "plaintext": {
+          "sha256": "5c24447a0c877f97b0c935ce5325602c5954806137c0e5beebad0e3d02914dd3",
+          "bytes": 2779911
+        },
+        "retentionIndex": {
+          "sha256": "9da8676fe9d2f1ba92cff08487f02e553d32e1f5df8857a24100434ce745f72a",
+          "bytes": 1762
+        },
+        "tarListing": {
+          "sha256": "e5fb5f100079c9bc764671c95746b14d065ce4b36eed60b22a258066f28694c8",
+          "bytes": 24066
+        },
+        "independentAudit": {
+          "sha256": "6b5a833b4d1115461541ed55ebb0b1d18daed0485be99577d87b0467e692395e",
+          "bytes": 77464
+        }
+      },
+      "sealedRuns": [
+        {
+          "path": "rc1-database-isolation",
+          "status": "PASS_SCOPED",
+          "artifacts": 1,
+          "historyEvents": 7,
+          "cleanupRecords": 2,
+          "allRecordedCleanupClosed": true,
+          "manifest": {
+            "sha256": "605152fbdf90cf4defe991a4641adc5a501ac861020c00e26713e2f35f631cf5",
+            "bytes": 3394
+          },
+          "scope": {
+            "matrixQualifying": false,
+            "hours": null,
+            "population": 0,
+            "resourceObservationEnabled": null,
+            "recordedActorAndSelectionReplay": null
+          }
+        },
+        {
+          "path": "rc1-knowledge",
+          "status": "PASS_SCOPED",
+          "artifacts": 11,
+          "historyEvents": 41,
+          "cleanupRecords": 0,
+          "allRecordedCleanupClosed": true,
+          "manifest": {
+            "sha256": "d91080bc213195e1ca441b4ce51cbf30e466c812fff3674860ce2cc381cc713a",
+            "bytes": 4284
+          },
+          "scope": {
+            "matrixQualifying": false,
+            "hours": null,
+            "population": 3,
+            "resourceObservationEnabled": null,
+            "recordedActorAndSelectionReplay": null
+          }
+        },
+        {
+          "path": "rc1-mystery-policies",
+          "status": "PASS_SCOPED",
+          "artifacts": 33,
+          "historyEvents": 111,
+          "cleanupRecords": 0,
+          "allRecordedCleanupClosed": true,
+          "manifest": {
+            "sha256": "6b6b82db06dc8d9fd5ef5221ecd4fc9b5e7ed93bc613db68f3d50f88d74a008f",
+            "bytes": 13317
+          },
+          "scope": {
+            "matrixQualifying": false,
+            "hours": null,
+            "population": 2,
+            "resourceObservationEnabled": null,
+            "recordedActorAndSelectionReplay": null
+          }
+        },
+        {
+          "path": "rc1-query-order/market-extra",
+          "status": "PASS_SCOPED",
+          "artifacts": 6,
+          "historyEvents": 3,
+          "cleanupRecords": 1,
+          "allRecordedCleanupClosed": true,
+          "manifest": {
+            "sha256": "8c4c7faccb2752efb75630fae523fead1c3363489c3ca2bc613de1d0e41f83e8",
+            "bytes": 11873
+          },
+          "scope": {
+            "matrixQualifying": false,
+            "hours": null,
+            "population": 2,
+            "resourceObservationEnabled": null,
+            "recordedActorAndSelectionReplay": null
+          }
+        },
+        {
+          "path": "rc1-query-order/market-missing",
+          "status": "PASS_SCOPED",
+          "artifacts": 6,
+          "historyEvents": 3,
+          "cleanupRecords": 1,
+          "allRecordedCleanupClosed": true,
+          "manifest": {
+            "sha256": "268d26beb2f9f6b42849a2e68eda21c0887cfa717399ff487ffe8cd305c40ad8",
+            "bytes": 11879
+          },
+          "scope": {
+            "matrixQualifying": false,
+            "hours": null,
+            "population": 2,
+            "resourceObservationEnabled": null,
+            "recordedActorAndSelectionReplay": null
+          }
+        },
+        {
+          "path": "rc1-query-order/market-value",
+          "status": "PASS_SCOPED",
+          "artifacts": 6,
+          "historyEvents": 3,
+          "cleanupRecords": 1,
+          "allRecordedCleanupClosed": true,
+          "manifest": {
+            "sha256": "cc0324bbb500de7feac5bd1f994a3d3f4001c62e6067e220a481cc2ba8b8dcc0",
+            "bytes": 11882
+          },
+          "scope": {
+            "matrixQualifying": false,
+            "hours": null,
+            "population": 2,
+            "resourceObservationEnabled": null,
+            "recordedActorAndSelectionReplay": null
+          }
+        },
+        {
+          "path": "rc1-query-order/native-reversed",
+          "status": "PASS_SCOPED",
+          "artifacts": 7,
+          "historyEvents": 7,
+          "cleanupRecords": 1,
+          "allRecordedCleanupClosed": true,
+          "manifest": {
+            "sha256": "a8a5d583944c6d9ba11e42a18a42dd6d4a286c2ca3ea81daef14458d4329c212",
+            "bytes": 12402
+          },
+          "scope": {
+            "matrixQualifying": false,
+            "hours": null,
+            "population": 2,
+            "resourceObservationEnabled": null,
+            "recordedActorAndSelectionReplay": null
+          }
+        },
+        {
+          "path": "rc1-query-order/observed",
+          "status": "PASS_SCOPED",
+          "artifacts": 7,
+          "historyEvents": 7,
+          "cleanupRecords": 1,
+          "allRecordedCleanupClosed": true,
+          "manifest": {
+            "sha256": "d35c167032470bc3ff92092671efa381e418ddbf561ec41969f47cd4f8356396",
+            "bytes": 12381
+          },
+          "scope": {
+            "matrixQualifying": false,
+            "hours": null,
+            "population": 2,
+            "resourceObservationEnabled": null,
+            "recordedActorAndSelectionReplay": null
+          }
+        },
+        {
+          "path": "rc1-query-order/query-identity",
+          "status": "PASS_SCOPED",
+          "artifacts": 6,
+          "historyEvents": 3,
+          "cleanupRecords": 1,
+          "allRecordedCleanupClosed": true,
+          "manifest": {
+            "sha256": "83d153c8a5238d62afbed958b4706d63f71371d8c010a25bac7ab0590d6bce12",
+            "bytes": 11884
+          },
+          "scope": {
+            "matrixQualifying": false,
+            "hours": null,
+            "population": 2,
+            "resourceObservationEnabled": null,
+            "recordedActorAndSelectionReplay": null
+          }
+        },
+        {
+          "path": "rc1-query-order/replayed",
+          "status": "PASS_SCOPED",
+          "artifacts": 7,
+          "historyEvents": 7,
+          "cleanupRecords": 1,
+          "allRecordedCleanupClosed": true,
+          "manifest": {
+            "sha256": "5a2ef6a04eb7fa98a0413729d9bd55b9d2f8ee58e94bdf0e895b83d655873afa",
+            "bytes": 12381
+          },
+          "scope": {
+            "matrixQualifying": false,
+            "hours": null,
+            "population": 2,
+            "resourceObservationEnabled": null,
+            "recordedActorAndSelectionReplay": null
+          }
+        },
+        {
+          "path": "rc1-query-order/standing-extra",
+          "status": "PASS_SCOPED",
+          "artifacts": 6,
+          "historyEvents": 3,
+          "cleanupRecords": 1,
+          "allRecordedCleanupClosed": true,
+          "manifest": {
+            "sha256": "2d01b62735aa4b65ff7c3ea60d6cf365f0a5731962f6043509222a54c4cefae4",
+            "bytes": 11879
+          },
+          "scope": {
+            "matrixQualifying": false,
+            "hours": null,
+            "population": 2,
+            "resourceObservationEnabled": null,
+            "recordedActorAndSelectionReplay": null
+          }
+        },
+        {
+          "path": "rc1-query-order/standing-missing",
+          "status": "PASS_SCOPED",
+          "artifacts": 6,
+          "historyEvents": 3,
+          "cleanupRecords": 1,
+          "allRecordedCleanupClosed": true,
+          "manifest": {
+            "sha256": "3b062527ebf41512419e1f5a4c84cfda786f124e68def36bc97d41dfce5b190f",
+            "bytes": 11885
+          },
+          "scope": {
+            "matrixQualifying": false,
+            "hours": null,
+            "population": 2,
+            "resourceObservationEnabled": null,
+            "recordedActorAndSelectionReplay": null
+          }
+        },
+        {
+          "path": "rc1-query-order/standing-value",
+          "status": "PASS_SCOPED",
+          "artifacts": 6,
+          "historyEvents": 3,
+          "cleanupRecords": 1,
+          "allRecordedCleanupClosed": true,
+          "manifest": {
+            "sha256": "39f189f8f8a04d6cdc7692b6b2e3c973e7e7b8048f44b079de27b058ceb73e3b",
+            "bytes": 11888
+          },
+          "scope": {
+            "matrixQualifying": false,
+            "hours": null,
+            "population": 2,
+            "resourceObservationEnabled": null,
+            "recordedActorAndSelectionReplay": null
+          }
+        },
+        {
+          "path": "rc1-world-smoke",
+          "status": "PASS_SCOPED",
+          "artifacts": 21,
+          "historyEvents": 200,
+          "cleanupRecords": 1,
+          "allRecordedCleanupClosed": true,
+          "manifest": {
+            "sha256": "8d6020b1bd043fe44df4d5365f8e1b9b4a3a7c25ce66eb9fb88489d235ed1f2d",
+            "bytes": 19690
+          },
+          "scope": {
+            "matrixQualifying": false,
+            "hours": 2,
+            "population": 25,
+            "resourceObservationEnabled": false,
+            "recordedActorAndSelectionReplay": false
+          }
+        }
+      ],
+      "indexedArtifacts": 129,
+      "extractedFiles": 180,
+      "resourceFailure": {
+        "status": "FAILED_UNSEALED_PREFIX_NOT_A_RUN_PASS",
+        "files": 20,
+        "history": {
+          "events": 364,
+          "finalHash": "057a0aa0651b505b46c3300294f84016b37f43f35cd7b773ffdc4a6c972ad3fc",
+          "invocations": 0,
+          "unfinishedInvocations": 0,
+          "kinds": {
+            "database-created": 1,
+            "measured-initialization": 1,
+            "resource-commit-boundary": 360,
+            "failure": 1,
+            "failure-capture-error": 1
+          },
+          "resources": {
+            "boundaries": 360,
+            "sha256": "2fedcd0ac766deb98dfb4677b11be547a5c2ad0cf907be12c7e66b312c4ef79b",
+            "unsupportedEntries": 4,
+            "unsupportedKinds": {
+              "car-acquisition-identity-provenance": 4
+            }
+          },
+          "invariantBoundaries": 0,
+          "invariantChecks": 0,
+          "cleanup": [],
+          "failures": [
+            {
+              "kind": "failure",
+              "sequence": 363,
+              "messageSha256": "13f4b15e905ab7a9c2f464fa1a90b799303adc6e52ee83ff3f85f12a44ba7585",
+              "messageExcerpt": "Unexpected production worker failure: [population] found family failed Expected values to be strictly equal:\n\ntrue !== false\n; Expected values to be strictly equal:\n\ntrue !== false"
+            },
+            {
+              "kind": "failure-capture-error",
+              "sequence": 364,
+              "messageSha256": "1193a61e1204c133b50b32e439fb0158c81c6519438418a771b9e928c1e14455",
+              "messageExcerpt": "Observed transaction ended without an observed BEGIN"
+            }
+          ]
+        },
+        "firstResourceFailure": {
+          "sha256": "2b81ee8dd6fa32bc7f6ca80191b52596c74b941a3f0a9e8a8600ca20ee49aefc",
+          "bytes": 415730
+        },
+        "finding": "TOOL46",
+        "cleanup": "NO_DATABASE_CLEANUP_RECORD; runner container stop does not prove per-database verified cleanup",
+        "resourceFinalFileIsNotRunSeal": true
+      }
+    },
+    {
+      "lane": "pg18.4",
+      "context": {
+        "sourceRevision": "6368339e82965679c1d1aae91ecea657489a6414",
+        "runId": "35593262545",
+        "jobId": "isolated-world-smoke:pg18.4",
+        "attemptId": "1"
+      },
+      "jobId": 106312400655,
+      "jobConclusion": "cancelled",
+      "artifactId": 10635857559,
+      "custody": {
+        "zip": {
+          "sha256": "063aefa9885b85adf5eb26b53639fb43c086dc9a52d30698c4f6f2e7617b6ea1",
+          "bytes": 2786808
+        },
+        "envelope": {
+          "sha256": "d80401c5466be1fd2691d4c3a04b421934bef4878ee07d7c766359f3906792e1",
+          "bytes": 2785809
+        },
+        "plaintext": {
+          "sha256": "4e459735db2885ae3f9152a11e09b7fb2920286e015ed1a7f70aa02a640d79f3",
+          "bytes": 2784882
+        },
+        "retentionIndex": {
+          "sha256": "abc1731fa108dcd75467286f28974e16b8dede61dfecb14798a70cfdb959e6d7",
+          "bytes": 1764
+        },
+        "tarListing": {
+          "sha256": "5f1af39740cb3974d0d217ed385499a4689e292a7c8e8993782b0ed2b02a381d",
+          "bytes": 24066
+        },
+        "independentAudit": {
+          "sha256": "b9d37d2cd3ed33f48d2509c940adf92ae72d6e7b6e56181032767be7a74dcfa0",
+          "bytes": 77440
+        }
+      },
+      "sealedRuns": [
+        {
+          "path": "rc1-database-isolation",
+          "status": "PASS_SCOPED",
+          "artifacts": 1,
+          "historyEvents": 7,
+          "cleanupRecords": 2,
+          "allRecordedCleanupClosed": true,
+          "manifest": {
+            "sha256": "9b2e80abb9dba913ee5cf5e76d5cb4761f918f4c90444e47905de7096a5fbd5c",
+            "bytes": 3394
+          },
+          "scope": {
+            "matrixQualifying": false,
+            "hours": null,
+            "population": 0,
+            "resourceObservationEnabled": null,
+            "recordedActorAndSelectionReplay": null
+          }
+        },
+        {
+          "path": "rc1-knowledge",
+          "status": "PASS_SCOPED",
+          "artifacts": 11,
+          "historyEvents": 41,
+          "cleanupRecords": 0,
+          "allRecordedCleanupClosed": true,
+          "manifest": {
+            "sha256": "ed0ea089bdd423ef3b8d82ae007f7099bb589eae6181df8cc1ff520054d45e87",
+            "bytes": 4284
+          },
+          "scope": {
+            "matrixQualifying": false,
+            "hours": null,
+            "population": 3,
+            "resourceObservationEnabled": null,
+            "recordedActorAndSelectionReplay": null
+          }
+        },
+        {
+          "path": "rc1-mystery-policies",
+          "status": "PASS_SCOPED",
+          "artifacts": 33,
+          "historyEvents": 111,
+          "cleanupRecords": 0,
+          "allRecordedCleanupClosed": true,
+          "manifest": {
+            "sha256": "dbd5cc03dda4c53e8ff4bf9470f1589370a4b72884114c985bcdd5d19c4d79f5",
+            "bytes": 13315
+          },
+          "scope": {
+            "matrixQualifying": false,
+            "hours": null,
+            "population": 2,
+            "resourceObservationEnabled": null,
+            "recordedActorAndSelectionReplay": null
+          }
+        },
+        {
+          "path": "rc1-query-order/market-extra",
+          "status": "PASS_SCOPED",
+          "artifacts": 6,
+          "historyEvents": 3,
+          "cleanupRecords": 1,
+          "allRecordedCleanupClosed": true,
+          "manifest": {
+            "sha256": "075e857856624dd8c4aa97ddf009a429523919947740ac36ab9f11931da742ee",
+            "bytes": 11873
+          },
+          "scope": {
+            "matrixQualifying": false,
+            "hours": null,
+            "population": 2,
+            "resourceObservationEnabled": null,
+            "recordedActorAndSelectionReplay": null
+          }
+        },
+        {
+          "path": "rc1-query-order/market-missing",
+          "status": "PASS_SCOPED",
+          "artifacts": 6,
+          "historyEvents": 3,
+          "cleanupRecords": 1,
+          "allRecordedCleanupClosed": true,
+          "manifest": {
+            "sha256": "7d3f0c7ba226d219926ce220218137de91ebb1eb32bd3fecfc6a87142e64df59",
+            "bytes": 11879
+          },
+          "scope": {
+            "matrixQualifying": false,
+            "hours": null,
+            "population": 2,
+            "resourceObservationEnabled": null,
+            "recordedActorAndSelectionReplay": null
+          }
+        },
+        {
+          "path": "rc1-query-order/market-value",
+          "status": "PASS_SCOPED",
+          "artifacts": 6,
+          "historyEvents": 3,
+          "cleanupRecords": 1,
+          "allRecordedCleanupClosed": true,
+          "manifest": {
+            "sha256": "664dc0d6df7d0c4eb74061f2f612f345a6132fabf3df7dfe46add126e6f8681d",
+            "bytes": 11882
+          },
+          "scope": {
+            "matrixQualifying": false,
+            "hours": null,
+            "population": 2,
+            "resourceObservationEnabled": null,
+            "recordedActorAndSelectionReplay": null
+          }
+        },
+        {
+          "path": "rc1-query-order/native-reversed",
+          "status": "PASS_SCOPED",
+          "artifacts": 7,
+          "historyEvents": 7,
+          "cleanupRecords": 1,
+          "allRecordedCleanupClosed": true,
+          "manifest": {
+            "sha256": "c583f9f167b0a9e68c3aef6c76e866c7786beded75824ba44913376578ffe08d",
+            "bytes": 12402
+          },
+          "scope": {
+            "matrixQualifying": false,
+            "hours": null,
+            "population": 2,
+            "resourceObservationEnabled": null,
+            "recordedActorAndSelectionReplay": null
+          }
+        },
+        {
+          "path": "rc1-query-order/observed",
+          "status": "PASS_SCOPED",
+          "artifacts": 7,
+          "historyEvents": 7,
+          "cleanupRecords": 1,
+          "allRecordedCleanupClosed": true,
+          "manifest": {
+            "sha256": "8ec2afb92c19c944025dad18d6d6020a9ffc3cccfca7aad5a1a264e25023bb68",
+            "bytes": 12381
+          },
+          "scope": {
+            "matrixQualifying": false,
+            "hours": null,
+            "population": 2,
+            "resourceObservationEnabled": null,
+            "recordedActorAndSelectionReplay": null
+          }
+        },
+        {
+          "path": "rc1-query-order/query-identity",
+          "status": "PASS_SCOPED",
+          "artifacts": 6,
+          "historyEvents": 3,
+          "cleanupRecords": 1,
+          "allRecordedCleanupClosed": true,
+          "manifest": {
+            "sha256": "28f5d3d5803e3ad8a2892f1c30576f83dcd5ebb19a1fd5356b66a3dda19e5984",
+            "bytes": 11884
+          },
+          "scope": {
+            "matrixQualifying": false,
+            "hours": null,
+            "population": 2,
+            "resourceObservationEnabled": null,
+            "recordedActorAndSelectionReplay": null
+          }
+        },
+        {
+          "path": "rc1-query-order/replayed",
+          "status": "PASS_SCOPED",
+          "artifacts": 7,
+          "historyEvents": 7,
+          "cleanupRecords": 1,
+          "allRecordedCleanupClosed": true,
+          "manifest": {
+            "sha256": "a75b1ab7a91d3552f0d9f7e2785403e441c0b8f5fab50729cffc92b53977df77",
+            "bytes": 12381
+          },
+          "scope": {
+            "matrixQualifying": false,
+            "hours": null,
+            "population": 2,
+            "resourceObservationEnabled": null,
+            "recordedActorAndSelectionReplay": null
+          }
+        },
+        {
+          "path": "rc1-query-order/standing-extra",
+          "status": "PASS_SCOPED",
+          "artifacts": 6,
+          "historyEvents": 3,
+          "cleanupRecords": 1,
+          "allRecordedCleanupClosed": true,
+          "manifest": {
+            "sha256": "a7b4460eac891594ff7d753accafb643e638471e29fa3e09f6e0e8a9f42d9ed2",
+            "bytes": 11879
+          },
+          "scope": {
+            "matrixQualifying": false,
+            "hours": null,
+            "population": 2,
+            "resourceObservationEnabled": null,
+            "recordedActorAndSelectionReplay": null
+          }
+        },
+        {
+          "path": "rc1-query-order/standing-missing",
+          "status": "PASS_SCOPED",
+          "artifacts": 6,
+          "historyEvents": 3,
+          "cleanupRecords": 1,
+          "allRecordedCleanupClosed": true,
+          "manifest": {
+            "sha256": "956a298ceebefb87779f330b842efa7cb5751b0e3d5ff68dc1a4960ee603e854",
+            "bytes": 11885
+          },
+          "scope": {
+            "matrixQualifying": false,
+            "hours": null,
+            "population": 2,
+            "resourceObservationEnabled": null,
+            "recordedActorAndSelectionReplay": null
+          }
+        },
+        {
+          "path": "rc1-query-order/standing-value",
+          "status": "PASS_SCOPED",
+          "artifacts": 6,
+          "historyEvents": 3,
+          "cleanupRecords": 1,
+          "allRecordedCleanupClosed": true,
+          "manifest": {
+            "sha256": "116e8e720fa4512c872621b09bd5fa36e2666f0f3ae730b5a301752535bb37ff",
+            "bytes": 11888
+          },
+          "scope": {
+            "matrixQualifying": false,
+            "hours": null,
+            "population": 2,
+            "resourceObservationEnabled": null,
+            "recordedActorAndSelectionReplay": null
+          }
+        },
+        {
+          "path": "rc1-world-smoke",
+          "status": "PASS_SCOPED",
+          "artifacts": 21,
+          "historyEvents": 200,
+          "cleanupRecords": 1,
+          "allRecordedCleanupClosed": true,
+          "manifest": {
+            "sha256": "211699599bec736e234f136dcf49d4b882342db70c81559fe175cc46640f3cb6",
+            "bytes": 19690
+          },
+          "scope": {
+            "matrixQualifying": false,
+            "hours": 2,
+            "population": 25,
+            "resourceObservationEnabled": false,
+            "recordedActorAndSelectionReplay": false
+          }
+        }
+      ],
+      "indexedArtifacts": 129,
+      "extractedFiles": 180,
+      "resourceFailure": {
+        "status": "FAILED_UNSEALED_PREFIX_NOT_A_RUN_PASS",
+        "files": 20,
+        "history": {
+          "events": 364,
+          "finalHash": "9a6a35781e99fdfe087c06de4b380f03d43ed0960c23c42a297fbfda5dd3a787",
+          "invocations": 0,
+          "unfinishedInvocations": 0,
+          "kinds": {
+            "database-created": 1,
+            "measured-initialization": 1,
+            "resource-commit-boundary": 360,
+            "failure": 1,
+            "failure-capture-error": 1
+          },
+          "resources": {
+            "boundaries": 360,
+            "sha256": "2fedcd0ac766deb98dfb4677b11be547a5c2ad0cf907be12c7e66b312c4ef79b",
+            "unsupportedEntries": 4,
+            "unsupportedKinds": {
+              "car-acquisition-identity-provenance": 4
+            }
+          },
+          "invariantBoundaries": 0,
+          "invariantChecks": 0,
+          "cleanup": [],
+          "failures": [
+            {
+              "kind": "failure",
+              "sequence": 363,
+              "messageSha256": "13f4b15e905ab7a9c2f464fa1a90b799303adc6e52ee83ff3f85f12a44ba7585",
+              "messageExcerpt": "Unexpected production worker failure: [population] found family failed Expected values to be strictly equal:\n\ntrue !== false\n; Expected values to be strictly equal:\n\ntrue !== false"
+            },
+            {
+              "kind": "failure-capture-error",
+              "sequence": 364,
+              "messageSha256": "1193a61e1204c133b50b32e439fb0158c81c6519438418a771b9e928c1e14455",
+              "messageExcerpt": "Observed transaction ended without an observed BEGIN"
+            }
+          ]
+        },
+        "firstResourceFailure": {
+          "sha256": "2b81ee8dd6fa32bc7f6ca80191b52596c74b941a3f0a9e8a8600ca20ee49aefc",
+          "bytes": 415730
+        },
+        "finding": "TOOL46",
+        "cleanup": "NO_DATABASE_CLEANUP_RECORD; runner container stop does not prove per-database verified cleanup",
+        "resourceFinalFileIsNotRunSeal": true
+      }
+    }
+  ],
+  "localDiagnostics": {
+    "helperCRLFByteDifferenceAndRepeatedPinnedAuthentication": {
+      "sha256": "dfacf3bda3df29d4a35b0a484164c98b5b7fa31cac3d27ed51fdacf11a773cbc",
+      "bytes": 1323
+    },
+    "preparationQuotingAttempt": "Initial preparation command failed before writing a script; two absent-script logs retained; prepare-unpack.mjs then validated authentication and identical plaintext before safe-unpack-attempt02"
+  },
+  "exclusions": [
+    "Neither resource smoke is sealed or passing",
+    "No hosted replay or compressed worker proof executed after the cancelled resource step",
+    "Completed earlier scoped components do not clear full resource taxonomy, matrix or deployment",
+    "No per-database successful cleanup evidence for interrupted resource worlds; later container destruction is separate",
+    "No private key material copied or exposed; no old mutator or gameplay replay executed"
+  ],
+  "fullResourceCoverage": false,
+  "releaseReady": false,
+  "publicSafe": {
+    "rawTokens": false,
+    "privateActorIdentifiers": false,
+    "privateBalances": false,
+    "rawRequests": false
+  }
+}
