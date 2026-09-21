@@ -126,7 +126,7 @@
     "test:rc1:mod-ingress:postgres": "node test/rc1-mod-ingress-postgres.js",
     "test:rc1:legacy-authority:postgres": "node test/rc1-legacy-authority-postgres.js",
     "test:rc1:reviewer-authority:postgres": "node test/rc1-reviewer-authority-postgres.js",
-    "test:rc1:harness": "node test/rc1-native-worker-schedule.js && node test/rc1-native-player-policy.js && node test/rc1-world-diagnostics.js && node test/rc1-native-commit-observer.js",
+    "test:rc1:harness": "node test/rc1-native-worker-schedule.js && node test/rc1-native-player-policy.js && node test/rc1-world-diagnostics.js && node test/rc1-native-commit-observer.js && node test/rc1-browser-controls.js",
     "test:rc1:observers:postgres": "node test/rc1-world-diagnostics.js --postgres && node test/rc1-native-commit-observer.js --postgres",
     "test:rc1:escrow:postgres": "node tools/rc1-resource-escrow.js",
     "test:rc1:worker": "node test/rc1-native-worker-schedule.js",
