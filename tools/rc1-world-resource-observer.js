@@ -1,12 +1,12 @@
 // Read-only scoped observer. Canonical ledgers remain the resource authorities.
 import assert from 'node:assert/strict';
-import { DESK, DESK_RECYCLE_REASON, CONSTANTS, dayOf } from '../src/rules.js';
+import { DESK, DESK_RECYCLE_REASON, CONSTANTS, M3, M8, levelOf, dayOf } from '../src/rules.js';
 import { checkinQuoteOf } from '../src/game.js';
 import { exactSum, negate, sha256 } from './rc1-resource-journal.js';
 import { reconcileCarResources } from './rc1-car-journal.js';
 
 export const WORLD_RESOURCE_TABLES = Object.freeze([
-  'characters', 'account_persistent', 'transactions', 'gangs', 'amm_pool', 'street_tax', 'stake_pool', 'dev_fund',
+  'characters', 'account_persistent', 'transactions', 'gangs', 'gang_members', 'amm_pool', 'street_tax', 'stake_pool', 'dev_fund',
   'rwa_dividend_pool', 'rwa_family_dividend_pool', 'family_yield_pool', 'exchange_pool', 'desk_inventory', 'loans', 'auctions', 'auction_consignments',
   'item_stacks', 'item_instances', 'item_lots', 'item_events', 'item_mutation_inputs', 'item_mutation_outputs', 'item_mutation_guards',
   'operation_escrow', 'world_operation_capital', 'world_operation_events', 'world_operation_commitments',
@@ -152,7 +152,7 @@ export function omrBuckets(state) {
 const matches = (reason, pattern) => pattern.endsWith('%') ? reason.startsWith(pattern.slice(0, -1)) : reason === pattern;
 const reasonClasses = [
   ['cash', /^crime:/, 'crime cash receipt'], ['cash', /^npc:seed$/, 'resident birth cash source'],
-  ['cash', /^gang:found$/, 'Family formation cash sink'], ['cash', /^loan:(offer|take|refund|repay|death|loot|paper|collect|vig|house:)/, 'loan custody receipt'],
+  ['cash', /^loan:(offer|take|refund|repay|death|loot|paper|collect|vig|house:)/, 'loan custody receipt'],
   ['cash', /^coordination:capital:(deposit|refund|spend|forfeit)$/, 'operation capital receipt'],
   ['cash', /^(campaign:|craft:hardening$|death:(estate|legacy)$|travel$)/, 'focused native cash receipt'],
   ['ammo', /^(melt|craft:ammo|death:|fire$|jump$)/, 'ammo receipt'], ['cb', /^(crime:|craft:|death:|cook:)/, 'contraband receipt'],
@@ -328,6 +328,113 @@ function reconcilePressureCash(before, after, receipts, checks, unsupported) {
   return { usedReceipts, movements };
 }
 
+// Ordinary Family entry only. Transaction rows prove custody, not the HTTP body:
+// the focused native proof separately binds requests to durable idempotency rows.
+// There is no personal ammo-tribute route. An ordinary entry boundary must leave
+// every Family ammo bank unchanged; car-melt and other funding stay unclassified.
+function reconcileFamilyEntry(before, after, receipts, checks, unsupported) {
+  const old = indexed(rows(before, 'gangs'), row => row.id, 'Family');
+  const current = indexed(rows(after, 'gangs'), row => row.id, 'Family');
+  const oldMembers = indexed(rows(before, 'gang_members'), row => row.character_id, 'Family member');
+  const members = indexed(rows(after, 'gang_members'), row => row.character_id, 'Family member');
+  const oldPeople = indexed(rows(before, 'characters'), row => row.id, 'character');
+  const people = indexed(rows(after, 'characters'), row => row.id, 'character');
+  const accounts = indexed(rows(before, 'account_persistent'), row => row.account_id, 'account');
+  const finalAccounts = indexed(rows(after, 'account_persistent'), row => row.account_id, 'account');
+  const selected = receipts.filter(row => row.reason === 'gang:found' && row.currency === 'cash'
+    || row.reason === 'gang:tribute' && ['cash', 'omr'].includes(row.currency));
+  const usedReceipts = new Set(), movements = [], familyFields = new Map(), founded = new Set(), founderMembers = new Set(), omrKeys = new Set();
+  const result = { usedReceipts, movements, familyFields, founded, founderMembers, omrKeys };
+  if (!selected.length) return result;
+  // Lazy war settlement, weekly rewards and seasonal resets can ride along a
+  // tribute. Their additional custody/standing is not attributed by this subset.
+  const compound = [...old].some(([id, row]) => !current.has(id) || ['war_with', 'war_until', 'weekly_week', 'weekly_progress', 'weekly_done', 'season']
+    .some(field => json(row[field]) !== json(current.get(id)[field])))
+    || receipts.some(row => !selected.includes(row));
+  if (compound) { unsupported.push({ kind: 'family-entry-compound', detail: 'Ordinary entry receipt overlaps other Family/OMR or seasonal/weekly/war transitions; custody attribution remains incomplete' }); return result; }
+  const deltas = new Map(), accountDeltas = new Map();
+  const bump = (id, field, amount) => { const fields = deltas.get(id) || {}; fields[field] = exactSum([fields[field] || '0', amount]); deltas.set(id, fields); };
+  const stablePerson = id => { const a = oldPeople.get(id), b = people.get(id);
+    assert(a?.alive && b?.alive && a.account_id && a.account_id === b.account_id, 'Family entry requires a stable living owner');
+    assert(accounts.has(a.account_id) && finalAccounts.has(a.account_id), 'Family entry account is not observed'); return a; };
+  const memberOf = id => { const a = oldMembers.get(id); assert(a && old.has(a.gang_id), 'Family tribute lacks original membership');
+    assert.deepEqual(members.get(id), a, 'Family tribute membership changed'); return a.gang_id; };
+  for (const receipt of selected) {
+    assert(/^-[1-9]\d*$/.test(exactSum([receipt.amount])), 'Family entry amount must be a negative whole unit');
+    const amount = negate(receipt.amount); assert(BigInt(amount) <= BigInt(Number.MAX_SAFE_INTEGER), 'Family entry exceeds authored safe-integer scope');
+    let character, familyId, kind;
+    if (receipt.reason === 'gang:found') {
+      assert.equal(receipt.account_id, null); assert.equal(receipt.counterparty, null);
+      character = stablePerson(receipt.character_id); assert(!oldMembers.has(character.id), 'Founder already had a Family');
+      assert(levelOf(Number(character.respect)) >= M3.GANG_FOUND_LEVEL, 'Founder lacks original level eligibility');
+      assert.equal(amount, String(M3.GANG_FOUND_COST), 'Wrong Family formation sink');
+      const membership = members.get(character.id); assert(membership?.role === 'boss', 'Founder lacks boss membership');
+      familyId = membership.gang_id; assert(current.has(familyId) && !old.has(familyId) && !founded.has(familyId), 'Formation must create one distinct Family');
+      const family = current.get(familyId); assert.equal(family.npc_flag, false);
+      assert.equal(family.season, Math.floor(dayOf(Date.parse(receipt.at)) / 28), 'Family season differs from original receipt time');
+      for (const field of ['treasury', 'ammo_bank', 'omr_reserve', 'lifetime_tribute', 'season_tribute']) assert.equal(exactSum([family[field]]), '0', `Nonzero newly founded ${field}`);
+      const defaults = { seal: 0, foundation: 0, wars_won: 0, territory_earned: '0', season_wars: '0', weekly_progress: '0', weekly_done: false,
+        war_score_us: 0, war_score_them: 0, rwa_invested: '0', sov_points: '0', war_pool: '0', monument_built: '0',
+        color: null, weekly_week: null, war_with: null, war_until: null, dividend_at: null, dynasty_name: null, oathbreaker_until: null,
+        war_pool_at: null, npc_aggro_until: null, held_by_gang: null, held_since: null, tribute_at: null, charter: null, charter_at: null };
+      for (const [field, value] of Object.entries(defaults)) if (Object.hasOwn(family, field))
+        assert.equal(typeof value === 'string' && value === '0' ? exactSum([family[field]]) : family[field], value, `Unexpected formation field ${field}`);
+      assert(typeof family.name === 'string' && family.name.length >= 3 && family.name.length <= 24 && /^[\w .,'&-]+$/.test(family.name));
+      assert(/^[A-Z0-9]{2,4}$/.test(family.tag));
+      assert.equal(Date.parse(family.created_at), Date.parse(receipt.at), 'Formation time differs from its transaction');
+      assert.equal(Date.parse(membership.joined_at), Date.parse(receipt.at), 'Founder membership time differs from its transaction');
+      familyFields.set(familyId, new Set(['id', 'name', 'tag', 'npc_flag', 'season', 'created_at', 'treasury', 'ammo_bank', 'omr_reserve',
+        'lifetime_tribute', 'season_tribute', ...Object.keys(defaults)]));
+      assert.equal([...members.values()].filter(row => row.gang_id === familyId).length, 1, 'Ordinary formation includes unexpected members');
+      assert.equal(membership.post ?? null, null); assert.equal(membership.post_at ?? null, null);
+      if (Object.keys(membership).some(field => !['gang_id', 'character_id', 'role', 'joined_at', 'post', 'post_at'].includes(field)))
+        unsupported.push({ kind: 'observed-table-change', table: 'gang_members', detail: 'New founder membership contains fields outside the declared projection' });
+      founded.add(familyId); founderMembers.add(character.id); kind = 'family-formation-sink';
+    } else {
+      assert(BigInt(amount) >= BigInt(receipt.currency === 'cash' ? M3.TRIBUTE_MIN : M8.TRIBUTE_OMR_MIN), 'Family tribute below authored minimum');
+      if (receipt.currency === 'cash') { assert.equal(receipt.account_id, null); character = stablePerson(receipt.character_id); }
+      else { assert.equal(receipt.character_id, null); const owners = [...oldPeople.values()].filter(row => row.alive && row.account_id === receipt.account_id);
+        assert.equal(owners.length, 1, 'OMR tribute has no unique living account owner'); character = stablePerson(owners[0].id);
+        accountDeltas.set(character.account_id, exactSum([accountDeltas.get(character.account_id) || '0', receipt.amount])); }
+      familyId = memberOf(character.id); assert.equal(receipt.counterparty, familyId, 'Tribute credited a different Family');
+      const field = receipt.currency === 'cash' ? 'treasury' : 'omr_reserve'; bump(familyId, field, amount);
+      if (receipt.currency === 'cash') for (const standing of ['lifetime_tribute', 'season_tribute']) bump(familyId, standing, amount);
+      kind = `family-${receipt.currency}-tribute`;
+    }
+    usedReceipts.add(receipt.id);
+    movements.push({ kind, characterId: character.id, accountId: character.account_id, familyId, currency: receipt.currency, amount,
+      disposition: kind === 'family-formation-sink' ? 'cash-destroyed' : 'personal-to-Family-custody', authority: reference('transactions', [receipt]) });
+  }
+  for (const id of new Set(movements.filter(row => row.currency === 'cash').map(row => row.characterId))) {
+    const prior = oldPeople.get(id), person = people.get(id);
+    if (receipts.some(row => row.character_id === id && row.currency === 'cash' && (row.reason.startsWith('bank:') || row.reason === 'interest')))
+      unsupported.push({ kind: 'family-entry-pocket-compound', characterId: id, detail: 'Additional bank action prevents isolated pocket attribution' });
+    else {
+      assert.equal(exactSum([person.bank]), exactSum([prior.bank]), 'Family entry diverted value through bank custody');
+      parity(checks, { resource: 'cash-pocket', owner: id, before: prior.cash, after: person.cash,
+        expectedDelta: net(receipts, row => row.character_id === id && row.currency === 'cash'), authority: reference('transactions', receipts.filter(row => row.character_id === id && row.currency === 'cash')) });
+    }
+  }
+  for (const [id, family] of current) {
+    const prior = old.get(id); if (!prior) { assert(founded.has(id), 'Unattributed Family added during ordinary entry'); continue; }
+    const fields = new Set();
+    for (const field of ['treasury', 'ammo_bank', 'omr_reserve', 'lifetime_tribute', 'season_tribute']) {
+      parity(checks, { resource: `Family.${field}`, owner: id, before: prior[field], after: family[field], expectedDelta: deltas.get(id)?.[field] || '0',
+        authority: movements.filter(row => row.familyId === id).flatMap(row => row.authority), kind: 'Family-entry-custody' }); fields.add(field);
+    }
+    familyFields.set(id, fields); omrKeys.add(tuple('gangs', id, 'omr_reserve'));
+  }
+  if (accountDeltas.size) {
+    assert.deepEqual([...accounts.keys()].sort(), [...finalAccounts.keys()].sort(), 'Account set changed during ordinary OMR tribute');
+    for (const [id, account] of accounts) {
+      parity(checks, { resource: 'omr', owner: `account:${id}`, before: account.omr, after: finalAccounts.get(id).omr,
+        expectedDelta: accountDeltas.get(id) || '0', authority: movements.filter(row => row.accountId === id && row.currency === 'omr').flatMap(row => row.authority) });
+      omrKeys.add(tuple('account_persistent', id, 'omr'));
+    }
+  }
+  return result;
+}
+
 export function reconcileWorldResources(before, after, { identity = null, includeRestrictedChanges = false } = {}) {
   assert.equal(before.format, 1); assert.equal(after.format, 1);
   const checks = [], unsupported = [];
@@ -352,7 +459,8 @@ export function reconcileWorldResources(before, after, { identity = null, includ
   }
   const ammoEscrow = reconcileAmmoEscrow(before, after, receipts, checks, unsupported);
   const pressureCash = reconcilePressureCash(before, after, receipts, checks, unsupported);
-  for (const receipt of receipts) if (!ammoEscrow.usedReceipts.has(receipt.id) && !pressureCash.usedReceipts.has(receipt.id) && !reasonClasses.some(([currency, pattern]) => currency === receipt.currency && pattern.test(receipt.reason)))
+  const familyEntry = reconcileFamilyEntry(before, after, receipts, checks, unsupported);
+  for (const receipt of receipts) if (!ammoEscrow.usedReceipts.has(receipt.id) && !pressureCash.usedReceipts.has(receipt.id) && !familyEntry.usedReceipts.has(receipt.id) && !reasonClasses.some(([currency, pattern]) => currency === receipt.currency && pattern.test(receipt.reason)))
     unsupported.push({ kind: 'receipt-reason', currency: receipt.currency, reason: receipt.reason, receiptId: receipt.id });
 
   const priorPeople = indexed(rows(before, 'characters'), r => r.id, 'characters'), finalPeople = indexed(rows(after, 'characters'), r => r.id, 'characters');
@@ -384,7 +492,8 @@ export function reconcileWorldResources(before, after, { identity = null, includ
   const omrMovements = [...new Set([...oldBuckets.keys(), ...newBuckets.keys()])].map(key => ({ key,
     before: oldBuckets.get(key)?.amount ?? '0', after: newBuckets.get(key)?.amount ?? '0' }))
     .filter(r => exactSum([r.after, negate(r.before)]) !== '0');
-  if (omrMovements.length) unsupported.push({ kind: 'omr-owner-lineage', detail: 'Aggregate exact supply checked; full per-owner transfer attribution is not yet implemented', buckets: omrMovements.map(r => r.key) });
+  const unknownOmr = omrMovements.filter(row => !familyEntry.omrKeys.has(row.key));
+  if (unknownOmr.length) unsupported.push({ kind: 'omr-owner-lineage', detail: 'Aggregate exact supply checked; remaining per-owner transfers lack complete attribution', buckets: unknownOmr.map(r => r.key) });
 
   const stackKey = r => tuple(r.owner_scope, r.owner_id, r.template_id, r.quality);
   const oldStacks = indexed(rows(before, 'item_stacks'), stackKey, 'stacks'), newStacks = indexed(rows(after, 'item_stacks'), stackKey, 'stacks');
@@ -481,12 +590,22 @@ export function reconcileWorldResources(before, after, { identity = null, includ
   for (const table of observedOnly) if (json(rows(before, table)) !== json(rows(after, table)))
     unsupported.push({ kind: 'observed-table-change', table, detail: 'Change observed; complete resource disposition classifier is not implemented' });
   if (ammoEscrow.otherListingChanges) unsupported.push({ kind: 'observed-table-change', table: 'listings', detail: 'Non-ammo escrow lineage remains unsupported' });
-  if (json(rows(before, 'gangs')) !== json(rows(after, 'gangs')))
-    unsupported.push({ kind: 'family-lineage', detail: 'Family rows retained; per-Family cash/ammo/spoils attribution is not implemented' });
+  const oldFamilies = indexed(rows(before, 'gangs'), row => row.id, 'Family'), newFamilies = indexed(rows(after, 'gangs'), row => row.id, 'Family');
+  const remainingFamilyChanges = [...new Set([...oldFamilies.keys(), ...newFamilies.keys()])].filter(id => {
+    if (familyEntry.founded.has(id)) return Object.keys(newFamilies.get(id)).some(field => !familyEntry.familyFields.get(id)?.has(field));
+    const a = oldFamilies.get(id), b = newFamilies.get(id); if (!a || !b) return true;
+    return [...new Set([...Object.keys(a), ...Object.keys(b)])].some(field => !familyEntry.familyFields.get(id)?.has(field) && json(a[field]) !== json(b[field]));
+  });
+  if (remainingFamilyChanges.length) unsupported.push({ kind: 'family-lineage', familyIds: remainingFamilyChanges,
+    detail: 'Remaining Family rows/fields retained; war, turf, dissolution, weekly/seasonal and other lineage remain unsupported' });
+  const unmatchedMembers = state => rows(state, 'gang_members').filter(row => !familyEntry.founderMembers.has(row.character_id));
+  if (json(unmatchedMembers(before)) !== json(unmatchedMembers(after))) unsupported.push({ kind: 'observed-table-change', table: 'gang_members',
+    detail: 'Membership/role change outside exact formation remains unclassified' });
   const restrictedChanges = unsupported.length ? resourceTableChanges(before, after) : null;
   if (restrictedChanges) verifyResourceTableChanges(before, after, restrictedChanges);
   return { format: 1, identity, beforeHash: worldResourceHash(before), afterHash: worldResourceHash(after), receipts,
-    itemEvents: events, mutationInputs: inputs, mutationOutputs: outputs, checks, cars, pressureCash: { movements: pressureCash.movements,
+    itemEvents: events, mutationInputs: inputs, mutationOutputs: outputs, checks, cars, familyEntry: { movements: familyEntry.movements,
+      scope: 'Ordinary formation cash sink and exact cash/OMR member tribute with original membership and per-Family custody. Ammo banks remain unchanged; no personal ammo-tribute route exists. HTTP body authorization is separately verified in the focused native proof.' }, pressureCash: { movements: pressureCash.movements,
       scope: 'Original check-in quote/latches, fixed reciprocal armory purchase, exact pocket/vault/transit deposit. Request binding and unrelated accrued rewards remain outside this classifier.' }, ammoEscrow: { movements: ammoEscrow.movements,
       scope: 'Exact personal plus owned live ammo escrow; list/pull custody and fresh reciprocal purchase receipts. HTTP request binding and other escrow terminals are not reconstructed.' },
     omrBuckets: { before: omrBefore, after: omrAfter, movements: omrMovements },
