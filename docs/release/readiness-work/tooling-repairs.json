@@ -833,8 +833,8 @@
         "tools/rc1-native-proof-gzip.js",
         "test/rc1-history-error-preservation.js"
       ],
-      "retest": "Five suites each pass on Node22.23.2 and Node24.19.0 Windows x64; eleven exact failure controls and all stream-destruction assertions pass. Limits/formats/default-v1 unchanged. Hosted/integrated reruns required.",
-      "evidence": "harness-history-error-preservation.md;harness-history-error-preservation-index.json;hosted-6368339e-final-results.json"
+      "retest": "Five suites each pass on Node22.23.2 and Node24.19.0 Windows x64; eleven exact failure controls and all stream-destruction assertions pass. Limits/formats/default-v1 unchanged. Hosted/integrated reruns required. Exact integrated8ba78e71 hosted CI35604353498 passes on Linux, including the unchanged diagnostic harness controls; original failed runs remain failed.",
+      "evidence": "harness-history-error-preservation.md;harness-history-error-preservation-index.json;hosted-6368339e-final-results.json;hosted-8ba78e71-ci-results.json"
     },
     {
       "id": "RC1-TOOL-55",

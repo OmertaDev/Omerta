@@ -59,3 +59,10 @@ The Node24.19.0 executable SHA256 is
 `3602f2bb1a10f2cbab4c36886218a33c1ab3db87290e73b033c46c77147d0237`.
 The public report/index commit follows the completed tests and does not relabel
 their tested source. Package/CI integration and hosted retesting remain separate.
+
+The later integrated source `8ba78e71705726e430605d905fa2af951728dd16`
+passed [hosted CI35604353498](https://github.com/OmertaDev/Omerta/actions/runs/35604353498),
+including the unchanged diagnostic harness controls on Linux. The
+[retained result](hosted-8ba78e71-ci-results.json) binds final metadata and logs.
+Earlier failures remain failed. This pass does not resolve the separate connected
+phone-journey failure or qualify the full release.
