@@ -24,9 +24,13 @@ const rows = [
     ['player-to-desk recycling', 'nonzero pledge', 'pledge refund', 'collateral seizure', 'mint', 'burn', 'backing', 'aggregate custody'],
     ['collateral seizure', 'mint/burn and backed creation receipts', 'deployed backing attestation']],
   ['C02-CAMPAIGN-CASH', 'current living character owns completed unclaimed legacy campaign', 'character/campaign claimed latch plus HTTP account/key/request hash',
-    ['campaign:save:claim', 'campaign:walk:claim', 'campaign:save:lost-response-retry', 'campaign:walk:lost-response-retry', 'campaign:server-reopen-replay'],
+    ['save', 'walk'].flatMap((branch) => [
+      `campaign:${branch}:claim-reward-rollback`, `campaign:${branch}:claim-reward-fault-reached`,
+      ...['same-key', 'distinct-keys'].flatMap((mode) => ['concurrent-claim', 'lost-response-retry', 'new-key-denied']
+        .map((event) => `campaign:${branch}:${mode}:${event}`)),
+    ]).concat([0, 1, 4, 5].map((actor) => `campaign:server-reopen-replay:resource-actor-${actor}`)),
     ['base reward', 'branch reward', 'exact retry', 'concurrent duplicate', 'lost response', 'restart', 'unauthorized', 'rollback between claim/reward'],
-    ['concurrent duplicate payout attempt', 'claim/reward fault injection', 'natural earned campaign eligibility']],
+    ['natural earned campaign eligibility', 'death/replacement invalidation of the former character claim']],
   ['C02-OPERATION-CAPITAL', 'coordinator mutation root; declared operation; original living depositor for refund', 'item_mutation_guards operation_action key plus requirement/role/operation custody identity',
     ['deposit:ledger-failure-rollback', 'deposit:concurrent-exact-duplicate', 'deposit:lost-response-replay', 'deposit:unauthorized-role',
       'refund:ledger-failure-rollback', 'refund:withdraw', 'refund:exact-replay', 'cancellation:refund-rollback', 'cancellation:refund', 'cancellation:exact-replay',

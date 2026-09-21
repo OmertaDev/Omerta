@@ -174,7 +174,7 @@ try {
     report.fixtureGrants.find((row) => row.actor === actor.id).car = { id: `${actor.id}-car`, model: 'junker', trim: 'stock', damage: 20 };
     report.fixtureGrants.find((row) => row.actor === actor.id).location = 'foundry';
   }
-  for (const [i, branch] of ['save', 'walk'].entries()) {
+  for (const [i, branch] of [[0, 'save'], [1, 'walk'], [4, 'save'], [5, 'walk']]) {
     await app.pool.query(`INSERT INTO campaign_progress(character_id,campaign_id,step,done,branch,completed,claimed)
       VALUES($1,'doc_oath',3,0,$2,true,false)`, [actors[i].character, branch]);
     report.fixtureGrants.find((row) => row.actor === actors[i].id).campaign = { id: 'doc_oath', branch, completed: true, claimed: false };
@@ -303,18 +303,61 @@ try {
   await observed('loan:repay-replay', async () => { const response = await call(borrower, `/v1/loans/${activeLoan}/repay`, key('loan-repay')); assert(response.replayed); return response; }, unchanged);
   // A finished story is an explicit prerequisite fixture, never claimed as earned
   // natural progression. Actual payout, authorization and durable retries are native.
-  for (const [i, branch] of ['save', 'walk'].entries()) {
+  const campaignClaims = [];
+  for (const [i, branch] of [[0, 'save'], [1, 'walk'], [4, 'save'], [5, 'walk']]) {
     const actor = actors[i], claimKey = key(`campaign-${i}`), url = '/v1/campaigns/doc_oath/claim';
     const catalog = CAMPAIGNS.find((row) => row.id === 'doc_oath');
     const amount = catalog.reward.cash + (catalog.steps.flatMap((row) => row.choice || []).find((row) => row.id === branch).cash || 0);
-    const claimed = await observed(`campaign:${branch}:claim`, () => call(actor, url, claimKey), (proof) => {
+    const mode = i < 2 ? 'same-key' : 'distinct-keys';
+    if (i < 2) {
+      // Sequence increments survive transaction rollback and prove the injected
+      // failure was reached after the claim latch, before the reward receipt.
+      // This diagnostic sequence is not a game resource or a replacement ledger.
+      await app.pool.query('CREATE SEQUENCE rc1_campaign_fault_hits');
+      await app.pool.query(`CREATE FUNCTION rc1_fail_campaign_reward() RETURNS trigger LANGUAGE plpgsql AS $$
+        BEGIN IF NEW.reason='campaign:reward' THEN
+          IF NOT EXISTS(SELECT 1 FROM campaign_progress WHERE character_id=NEW.character_id AND campaign_id='doc_oath' AND claimed=true)
+            THEN RAISE EXCEPTION 'rc1 fault point reached before the claim latch'; END IF;
+          PERFORM nextval('rc1_campaign_fault_hits');
+          RAISE EXCEPTION 'rc1 deliberate campaign reward failure';
+        END IF; RETURN NEW; END $$`);
+      await app.pool.query('CREATE TRIGGER rc1_fail_campaign_reward BEFORE INSERT ON transactions FOR EACH ROW EXECUTE FUNCTION rc1_fail_campaign_reward()');
+      try {
+        await observed(`campaign:${branch}:claim-reward-rollback`, () => call(actor, url, claimKey, [500]), (proof) => {
+          unchanged(proof);
+          assert.equal(proof.after.campaigns.find((row) => row.character_id === actor.character).claimed, false);
+        });
+        const fault = (await app.pool.query('SELECT last_value::text,is_called FROM rc1_campaign_fault_hits')).rows[0];
+        assert.equal(fault.is_called, true); assert.equal(fault.last_value, '1');
+        report.scenarios.push({ name: `campaign:${branch}:claim-reward-fault-reached`, outcome: 'PASS',
+          proof: 'Nontransactional diagnostic sequence incremented once after observing claimed=true inside the aborted transaction' });
+        save();
+      } finally {
+        await app.pool.query('DROP TRIGGER rc1_fail_campaign_reward ON transactions');
+        await app.pool.query('DROP FUNCTION rc1_fail_campaign_reward()');
+        await app.pool.query('DROP SEQUENCE rc1_campaign_fault_hits');
+      }
+    }
+    const keys = mode === 'same-key' ? [claimKey, claimKey] : [claimKey, key(`campaign-${i}-competing`)];
+    const claims = await observed(`campaign:${branch}:${mode}:concurrent-claim`, () => Promise.all(keys.map((identity) =>
+      call(actor, url, identity, mode === 'same-key' ? [200, 409] : [200, 400]))), (proof) => {
+      const succeeded = proof.result.filter((row) => row.status === 200);
+      assert(succeeded.length > 0, 'One claimant must receive the committed reward');
+      assert.equal(succeeded.filter((row) => !row.replayed).length, 1, 'Exactly one claimant performs a fresh payout');
+      for (const response of succeeded) {
+        assert.deepEqual(response.body, succeeded[0].body); assert.equal(response.body.cash, amount);
+      }
+      for (const response of proof.result.filter((row) => row.status !== 200))
+        assert.equal(response.body.error, mode === 'same-key' ? 'in_progress' : 'claimed');
       cashMovement(proof, actor, amount, 'campaign:reward');
       assert(proof.after.campaigns.find((row) => row.character_id === actor.character).claimed);
     });
-    await observed(`campaign:${branch}:lost-response-retry`, async () => {
-      const result = await call(actor, url, claimKey); assert(result.replayed); assert.deepEqual(result.body, claimed.body); return result;
+    const winner = claims.findIndex((row) => row.status === 200 && !row.replayed), claimed = claims[winner];
+    campaignClaims.push({ actor, url, identity: keys[winner], body: claimed.body });
+    await observed(`campaign:${branch}:${mode}:lost-response-retry`, async () => {
+      const result = await call(actor, url, keys[winner]); assert(result.replayed); assert.deepEqual(result.body, claimed.body); return result;
     }, unchanged);
-    await observed(`campaign:${branch}:new-key-denied`, () => call(actor, url, key(`campaign-again-${i}`), [400]), unchanged);
+    await observed(`campaign:${branch}:${mode}:new-key-denied`, () => call(actor, url, key(`campaign-again-${i}`), [400]), unchanged);
   }
   await observed('campaign:unauthorized-unfinished-actor', () => call(actors[2], '/v1/campaigns/doc_oath/claim', key('campaign-foreign'), [400]), unchanged);
   for (const actor of actors.slice(0, 2)) {
@@ -448,8 +491,9 @@ try {
   const restartBefore = await resourceSnapshot(app.pool);
   await app.close(); await app.pool.end(); app = await buildServer();
   assert.deepEqual(stateWithoutBoundary(await resourceSnapshot(app.pool)), stateWithoutBoundary(restartBefore), 'Server reopen preserves resource state and receipts');
-  await observed('campaign:server-reopen-replay', async () => {
-    const response = await call(actors[0], '/v1/campaigns/doc_oath/claim', key('campaign-0')); assert(response.replayed); return response;
+  for (const claim of campaignClaims) await observed(`campaign:server-reopen-replay:${claim.actor.id}`, async () => {
+    const response = await call(claim.actor, claim.url, claim.identity); assert(response.replayed);
+    assert.deepEqual(response.body, claim.body); return response;
   }, unchanged);
   await observed('hardening:server-reopen-replay', async () => {
     const response = await call(actors[0], craftUrl, craftKey); assert(response.replayed); return response;

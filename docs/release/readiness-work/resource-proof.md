@@ -35,7 +35,15 @@ feature flags are recorded; complete deployed configuration remains an unmet pro
 `--inject-assertion-failure` deliberately fails after the first committed resource
 action to verify that exit status, first-failure snapshots and receipts survive.
 
-The workload covers both legacy campaign cash branches; OMR paid rarity and desk
+The workload covers both legacy campaign cash branches with same-key and distinct-key
+concurrent claims. A PostgreSQL trigger aborts between the claimed latch and reward
+receipt; a diagnostic sequence verifies that this precise fault point was reached.
+The latch, cash and receipts must roll back together before a successful retry. Four
+claim owners then replay their exact receipts after server reconstruction. Campaign
+completion is a declared initial fixture; natural eligibility and death/replacement
+remain separate proof obligations.
+
+It also covers OMR paid rarity and desk
 recycling; Family cash/OMR tribute; loan offer/cancel/take/repay with OMR collateral;
 car salvage and exact hardening inputs/cash/output; daily shipment cap exhaustion
 and commissions. A late PostgreSQL output failure must roll back cash, material,
