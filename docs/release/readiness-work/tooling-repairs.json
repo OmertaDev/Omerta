@@ -189,6 +189,106 @@
         "test:rc1",
         "rc1-source-pair"
       ]
+    },
+    {
+      "owner": "Codex/root",
+      "id": "RC1-TOOL-11",
+      "classification": "D tooling defect",
+      "before": "The2c469d85 rc1/redteam capture asserted gameplay successfully but changed a tracked sealed journey report; both wrapper gates correctly failed source identity.",
+      "repair": "45082605 writes a fresh exclusive journey report in temporary/private output. Sealed reports remain unchanged.",
+      "changedSource": [
+        "test/rc1-journeys.js"
+      ],
+      "retainedFailure": [
+        "2c469d85-rc1-branches-source-mutation.json",
+        "tmp/rc1-integrated-final/gates/rc1",
+        "tmp/rc1-integrated-final/gates/rc1-redteam"
+      ],
+      "retest": {
+        "source": "a9b74a32b3d75a52e0ea61cdd994cd7c6fb95d83",
+        "gates": [
+          "rc1",
+          "rc1-redteam"
+        ],
+        "result": "PASS with sourceUnchanged=true",
+        "evidence": "tmp/rc1-candidate-2"
+      }
+    },
+    {
+      "owner": "Codex/root",
+      "id": "RC1-TOOL-12",
+      "classification": "D test expectation defect",
+      "before": "Shipment city-exhaustion probe used an actor who had already taken the scaled daily share.",
+      "repair": "355eb64b expands the fixture and requires capacity strictly below the roster; per-owner movements are now asserted.",
+      "changedSource": [
+        "test/rc1-shipment-boundary.js"
+      ],
+      "retainedFailure": [
+        "d70b7d3b-shipment-midnight"
+      ],
+      "retest": {
+        "source": "7bfdc8ff5647889db8b648fa288a8e8c558bc17a",
+        "gate": "rc1-shipment",
+        "result": "PASS_SCOPED",
+        "evidence": "resource-shipment-boundaries.json"
+      }
+    },
+    {
+      "owner": "Codex/root",
+      "id": "RC1-TOOL-13",
+      "classification": "D canonical wrapper usage defect",
+      "before": "Fast read returned null after a full day because the harness omitted canonical accrued-read fallback.",
+      "repair": "2129292b uses readCharacter, the complete production read wrapper; no game state/deadline rewrite.",
+      "changedSource": [
+        "test/rc1-shipment-boundary.js"
+      ],
+      "retainedFailure": [
+        "355eb64b-shipment-midnight"
+      ],
+      "retest": {
+        "source": "7bfdc8ff5647889db8b648fa288a8e8c558bc17a",
+        "gate": "rc1-shipment",
+        "result": "PASS_SCOPED",
+        "evidence": "resource-shipment-boundaries.json"
+      }
+    },
+    {
+      "owner": "Codex/root",
+      "id": "RC1-TOOL-14",
+      "classification": "D execution configuration defect",
+      "before": "355eb64b native concurrent proof failed because pg_dump was absent from PATH (ENOENT).",
+      "repair": "Set RC1_PG_BIN to the installed PostgreSQL18 tools; no runtime or test assertion change.",
+      "changedSource": [],
+      "retainedFailure": [
+        "355eb64b-concurrent",
+        "tmp/rc1-candidate-3/gates/rc1-concurrent"
+      ],
+      "retest": {
+        "source": "7bfdc8ff5647889db8b648fa288a8e8c558bc17a",
+        "gate": "rc1-concurrent",
+        "result": "PASS; all four observation/replay cases",
+        "evidence": "expanded-native-results.json"
+      }
+    },
+    {
+      "owner": "Codex/root",
+      "id": "RC1-TOOL-15",
+      "classification": "D development expectation defects",
+      "before": "Campaign succession development proof assumed zero newborn ammunition and checked an exhausted shipment before canonical heir travel.",
+      "repair": "fd3cb549 asserts the actual 25 ammo schema default and travels the heir through canonical authority before testing exhausted-city denial.",
+      "changedSource": [
+        "tools/rc1-resource-proof.js"
+      ],
+      "retainedFailure": [
+        "campaign-death-development-1",
+        "campaign-death-development-2"
+      ],
+      "retest": {
+        "source": "355eb64be176df0600104a60bcb3e609f6e34b31",
+        "gate": "rc1-resource",
+        "result": "PASS, including old campaign/shipment receipt replay with no heir value",
+        "evidence": "expanded-native-results.json"
+      }
     }
   ]
 }

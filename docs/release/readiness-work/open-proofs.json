@@ -9,56 +9,89 @@
       "owner": "Named release owner/operator required",
       "missing": "My Workspace is selected, but candidate flags, enabled integrations, secret-source identities, isolated services and operator remain unattested.",
       "evidence": "render-observation.json",
-      "reruns": ["candidate/configuration freeze", "affected integration, migration and recovery proofs"]
+      "reruns": [
+        "candidate/configuration freeze",
+        "affected integration, migration and recovery proofs"
+      ]
     },
     {
       "id": "RC1-01-CONCURRENT-REPLAY",
       "owner": "Backend/test engineer; current engineering assignee Codex/native_harness",
-      "missing": "Recorded concurrent commit-schedule replay and complete canonical worker scheduling. The serial proof is a scoped fixture workload.",
-      "evidence": "harness-serial-replay-results.json",
-      "reruns": ["concurrent replay", "checkpoint/failure reduction", "complete native matrix"]
+      "missing": "Recorded native salvage contention/rollback replay is now scoped PASS. Complete production worker replay remains open: a673-hour run crossed two rollovers, but fresh-process repetition diverged in NPC random choices and is retained as FAIL. Full matrix/checkpoint reduction coverage remains required.",
+      "evidence": "harness-concurrent-replay-results.json and expanded-native-results.json; worker failure retained separately by its source",
+      "reruns": [
+        "concurrent replay",
+        "checkpoint/failure reduction",
+        "complete native matrix"
+      ]
     },
     {
       "id": "RC1-02-FULL-RESOURCE-COVERAGE",
       "owner": "Backend/economy engineer; current engineering assignee Codex/resource_proof",
-      "missing": "All thirteen resource categories and all nine original gaps still require complete native terminal-branch plus simulation coverage. Remaining cases include OMR mint/burn/backing/custody seizure, market/gambling death/settlement branches, Family war/turf/dissolution, NFT extraction/expiry/import/backing, and shipment boundary/death cases. Scoped capital proof uses the valid 60-second fixture lifetime; production lifecycle and full HTTP/simulation coverage remain open.",
-      "evidence": "resource-proof.md and resource-capital-proof.md",
-      "reruns": ["resource inventory and journals", "all affected transition/replay/fault branches", "local-chain and enabled deployed backing attestation", "complete native matrix"]
+      "missing": "All 13 resource categories and 9 original gaps still require complete native terminal branches plus simulation. Scoped evidence now includes campaign claim races/rollback/succession, original Family war/turf settlement and dissolution, and shipment midnight/player/city caps with canonical read accrual. Remaining branches include OMR mint/burn/backing/seizure, market/gambling/loan dispositions, NFT extraction/expiry/import/backing, shipment loot/concurrent boundary schedules, and production operation-capital lifetime/full simulation.",
+      "evidence": "resource-proof.md;resource-family-runs/7df52b3f-summary.json;resource-shipment-boundaries.json;resource-capital-proof.md",
+      "reruns": [
+        "resource inventory and journals",
+        "all affected transition/replay/fault branches",
+        "local-chain and enabled deployed backing attestation",
+        "complete native matrix"
+      ]
     },
     {
       "id": "RC1-03-MATRIX-AND-SOAK",
       "owner": "Simulation engineer; current engineering assignee Codex/native_harness",
       "missing": "The fifteen distinguishing workload implementations, all 225 qualifying runs, full lifecycle/due-work coverage, metrics/dead-world assertions and 12-hour production-equivalent soak are unfulfilled. Declared matrix cells are not executed proof.",
       "evidence": "scenario-manifest.json",
-      "reruns": ["225 complete native runs after conservation coverage", "12-hour 1000-actor soak", "failure reduction and final complete matrix"]
+      "reruns": [
+        "225 complete native runs after conservation coverage",
+        "12-hour 1000-actor soak",
+        "failure reduction and final complete matrix"
+      ]
     },
     {
       "id": "RC1-04-AUTHORITY-INVENTORY",
       "owner": "Security/backend engineer; current engineering assignee Codex/source_repairs",
-      "missing": "Complete reviewed route/command/role matrix, all applicable hidden-ID and leakage surfaces, concurrent revocation and all replay branches. Anonymous probes and 71 scoped denial cases are incomplete coverage.",
-      "evidence": "authority-role-regressions.json and authority inventory",
-      "reruns": ["reviewed complete authority matrix", "native tampering/denial/replay tests", "deployment-phase integration review"]
+      "missing": "All 24 Player Commands have a source-reviewed partial native matrix with executed assertion mappings. 100 HTTP denial probes, native Knowledge read/revoke/kick orderings and additional replay/state checks are retained. Complete per-command branches and reviewed 529 legacy mutation routes remain open.",
+      "evidence": "authority-command-matrix.json and expanded-native-results.json",
+      "reruns": [
+        "reviewed complete authority matrix",
+        "native tampering/denial/replay tests",
+        "deployment-phase integration review"
+      ]
     },
     {
       "id": "RC1-05-MOBILE-AND-JOURNEYS",
       "owner": "Client/QA engineer; physical testers required",
-      "missing": "Physical iPhone/Safari and Android/Chrome, complete critical-state/list/keyboard/wallet matrix, returning/social/investigation/conflict golden journeys and human comprehension evidence. New-player viewport checks do not prove these paths.",
-      "evidence": "gate-registry.json browser and mobile scope exclusions",
-      "reruns": ["complete four-width browser matrix", "physical device matrix", "golden journeys A-E", "affected human journeys after repairs"]
+      "missing": "Four widths pass connected fixture-assisted browser B/C/D/E segments. Complete major-action failure/loss/expiry paths, stress counts, physical iPhone/Android keyboard/wallet paths and human A–E comprehension remain required.",
+      "evidence": "golden-browser-regressions.json",
+      "reruns": [
+        "complete four-width browser matrix",
+        "physical device matrix",
+        "golden journeys A-E",
+        "affected human journeys after repairs"
+      ]
     },
     {
       "id": "RC1-06-DEPLOYED-RECOVERY",
       "owner": "Named operator required; engineering assignee Codex/root",
       "missing": "Isolated candidate deployment, API/worker/configuration agreement, actual callback/integration and invitation attestation, delivered operator alert, administrative drills and measured deployed recovery/rollback. Local PostgreSQL/Linux results retain their separate scope.",
       "evidence": "render-observation.json",
-      "reruns": ["deployment attestation", "all recovery cases on selected source/predecessor pair", "separate backup restoration and recovery-point measurement"]
+      "reruns": [
+        "deployment attestation",
+        "all recovery cases on selected source/predecessor pair",
+        "separate backup restoration and recovery-point measurement"
+      ]
     },
     {
       "id": "RC1-07-REAL-COHORT",
       "owner": "Unassigned cohort coordinator and release operator",
       "missing": "Thirty consenting real participants for seven days, including the specified unfamiliar/mobile/Family groups, observed first sessions, later-day returns, real A-E completions and final-candidate 72-hour observation. No participants admitted before technical safety gates.",
       "evidence": "Operator/cohort input pending; no cohort execution claimed",
-      "reruns": ["technical admission gates", "seven-day cohort", "affected journeys and final 72-hour window after repairs"]
+      "reruns": [
+        "technical admission gates",
+        "seven-day cohort",
+        "affected journeys and final 72-hour window after repairs"
+      ]
     }
   ]
 }

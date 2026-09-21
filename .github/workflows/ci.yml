@@ -170,6 +170,9 @@ jobs:
           cache: npm
       - run: npm ci
 
+      - name: Install PostgreSQL client tools matching the server major
+        run: bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'
+
       # FIRST, because it is the cheapest and the most diagnostic. `PREPARE`s every static SQL string
       # in src/ against the real engine: full parse and type resolution, no rows read, about a second.
       # It exists because on 2026-07-30 a `uuid = text` comparison made loadOwned fail to PARSE, which

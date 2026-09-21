@@ -46,6 +46,8 @@ jobs:
           git rev-parse HEAD | tee "$RC1_SHUTDOWN_EVIDENCE/source-sha.txt"
           node --version | tee "$RC1_SHUTDOWN_EVIDENCE/node-version.txt"
           psql "$COORDINATION_TEST_DATABASE_URL" -Atc 'SELECT version()' | tee "$RC1_SHUTDOWN_EVIDENCE/postgres-version.txt"
+      - name: Install PostgreSQL client tools matching the server major
+        run: bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'
       - name: PostgreSQL partial migration failure and retry
         run: |
           set -o pipefail

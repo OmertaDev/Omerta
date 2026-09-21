@@ -83,3 +83,10 @@ The next source-bound run must retain `result.json`, `movements.ndjson`,
 outcome is deliberately `SCOPED_PASS`, with gate status still
 `REQUIRED_TRANSITION_PROOF_MISSING`. Remaining branches and deployment-dependent
 backing requirements are listed in the inventory, not converted to passing skips.
+
+Additional source-bound runs are retained in `expanded-native-results.json`,
+`resource-family-runs/7df52b3f-summary.json`, and
+`resource-shipment-boundaries.json`. The Family runner uses the original war and
+turf lifetimes. The shipment runner uses aligned test clocks across two midnights,
+executes the canonical accrued-read wrapper, and checks material for every owner
+at 97 observed boundaries. Neither report replaces the missing full simulation.

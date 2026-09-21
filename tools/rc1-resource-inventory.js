@@ -55,7 +55,7 @@ const rows = [
   ['C02-FAMILY-TREASURY', 'current Family member for tribute; leadership for war/turf; canonical dissolve authority', 'HTTP account/key/request hash; locked Family/turf terminal state',
     ['family:cash:tribute', 'family:omr:tribute', 'family:cash:tribute-replay', 'family:omr:tribute-replay'],
     ['cash tribute', 'OMR tribute', 'reserve', 'war spoils', 'turf stake', 'turf refund', 'turf burn', 'dissolve treasury', 'dissolve reserve', 'dissolve ammo'],
-    ['war spoils', 'turf stake/refund/burn', 'dissolution of treasury/reserve/ammo']],
+    ['war draw/zero-spoils and other unexercised ownership-change variants']],
   ['C02-NFT-CHAIN', 'current eligible item owner; made account/wallet and enabled rail attestation', 'HTTP key + voucher nonce + finalized import transaction/log reference',
     ['omr:rarity-recycles-to-desk', 'omr:rarity-lost-response-retry', 'omr:rarity-foreign-owner-denied'],
     ['paid rarity', 'extraction', 'expiry', 'return/import', 'backing', 'mutually exclusive chain/game custody', 'disabled-rail server denial'],
@@ -63,11 +63,22 @@ const rows = [
   ['C02-SHIPMENT-MATERIAL', 'living character at current shipment district; eligible commission owner', 'day/character cap; HTTP account/key/request hash; bespoke_serials and pieces identity',
     ['shipment:take:resource-actor-2', 'shipment:take-replay-after-city-exhaustion', 'shipment:player-cap-new-key', 'shipment:concurrent-commission', 'shipment:commission-lost-response-retry', 'shipment:failure-between-debit-and-output', 'shipment:distinct-owner-concurrent-serials', 'shipment:distinct-owner-exact-replay:resource-actor-3', 'shipment:distinct-owner-exact-replay:resource-actor-4', 'shipment:server-reopen-replay'],
     ['capped creation', 'cash debit', 'material consumption', 'exactly one bespoke serial', 'concurrent duplicate', 'replay', 'boundary time', 'rollback'],
-    ['midnight boundary with application/database clocks aligned']],
+    ['concurrent requests straddling midnight', 'shipment loot during terminal death']],
 ];
+const supplementalNative = {
+  'C02-FAMILY-TREASURY': [{ harness: 'tools/rc1-resource-family.js',
+    evidence: 'docs/release/readiness-work/resource-family-runs/7df52b3f-summary.json',
+    source: '7df52b3f35c516215427a8b88040628446837175',
+    scope: 'Original war/turf timers; tribute/reserve, war spoils, turf refund/burn, dissolution, late rollback and concurrent settlement' }],
+  'C02-SHIPMENT-MATERIAL': [{ harness: 'test/rc1-shipment-boundary.js',
+    evidence: 'docs/release/readiness-work/resource-shipment-boundaries.json',
+    source: '7bfdc8ff5647889db8b648fa288a8e8c558bc17a',
+    scope: 'Two midnight boundaries, stamped city/player caps, no write on fresh board read, per-owner material equations, canonical accrual and reopen' }],
+};
 export const resourceGaps = rows.map(([id, authorization, replayIdentity, nativeScenarios, requiredBranches, missingNativeBranches]) => ({ id,
   owner: 'Codex/resource_proof', status: 'OPEN_REQUIRED_PROOF', authorization, replayIdentity, nativeScenarios, requiredBranches,
   nativeHarness: id === 'C02-OPERATION-CAPITAL' ? 'tools/rc1-resource-capital.js' : 'tools/rc1-resource-proof.js',
+  supplementalNative: supplementalNative[id] || [],
   missingNativeBranches, simulation: { status: 'MISSING', required: 'Native full-game exercise of every required branch with nonzero movement and retained journal' } }));
 
 export function resourceInventory(nativeReport = null) {
