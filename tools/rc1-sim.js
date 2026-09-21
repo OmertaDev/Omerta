@@ -75,7 +75,8 @@ export function verifyLedgerChecks(baseline, final, population) {
 }
 
 export async function runNativeSimulation({ population, seed, replicate, rounds = 2, progress = () => {}, proof = null,
-  fixtureOptions = {}, fixtureReady = () => {}, serial = false }) {
+  fixtureOptions = {}, fixtureReady = () => {}, serial = false,
+  clockScope = 'Director/fixture application clock; database wall clock is not advanced' }) {
   assert(Number.isSafeInteger(rounds) && rounds > 0, 'A run must execute at least one round');
   if (proof) assert(process.argv.includes('--postgres'), 'Proof artifacts require real PostgreSQL');
   const started = performance.now(), tag = `rc1_${population}_${replicate}_${digest(seed).slice(0, 6)}`;
@@ -149,7 +150,7 @@ export async function runNativeSimulation({ population, seed, replicate, rounds 
     if (proof) {
       await proof.record({ kind: 'initialization', roster, fixtureActors: f.actors,
         grants: { perActorCash: 100000, perActorRespect: 10000, perActorMuscleCunningSpeed: 50 },
-        entryMode: 'fixture-assisted', clockScope: 'Director application clock only; database NOW remains wall time' });
+        entryMode: 'fixture-assisted', clockScope });
       await proof.snapshot(f.pool, 'initial-state');
       await proof.checkpoint(f.pool, 'initial', process.env.COORDINATION_TEST_DATABASE_URL || process.env.WORLD_KERNEL_TEST_DATABASE_URL);
     }
@@ -274,7 +275,7 @@ export async function runNativeSimulation({ population, seed, replicate, rounds 
     }
     return { population, seed, replicate, rounds, database: process.argv.includes('--postgres') ? 'postgresql' : 'pg-mem',
       status: 'PASS_SCOPED', durationMs: Math.round(performance.now() - started), archetypes: counts(roster.map((a) => a.archetype)),
-      logicalDurationMs: f.clock() - initialLogicalTime, logicalClockScope: 'Director/fixture application clock; database wall clock is not advanced',
+      logicalDurationMs: f.clock() - initialLogicalTime, logicalClockScope: clockScope,
       fixturePlayers: 5, actorsExecutingCommands: playerActions.size, metrics, actions: attempts,
       authoritative: { situationsGenerated: situations.length, situationStates: counts(situations.map((s) => s.state)),
         situationsWithCanonicalResolution: situations.filter((s) => s.world_event_id).length,

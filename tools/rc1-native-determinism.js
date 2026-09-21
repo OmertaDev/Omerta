@@ -79,7 +79,8 @@ export function serialDatabaseOptions() {
               'Uncontrolled SQL clock keyword encountered');
             assert(!/\bpg_catalog\.(?:now|clock_timestamp|statement_timestamp|transaction_timestamp)\s*\(/i.test(text),
               'Canonical query bypasses the explicit test clock');
-            const begins = /^\s*BEGIN\b/i.test(text), ends = /^\s*(?:COMMIT|ROLLBACK)\b/i.test(text);
+            const begins = /^\s*BEGIN\b/i.test(text), rollbackTo = /^\s*ROLLBACK\s+TO\b/i.test(text);
+            const ends = /^\s*(?:COMMIT|ROLLBACK)\b/i.test(text) && !rollbackTo;
             if (begins) transactionTime = new NativeDate(Date.now()).toISOString();
             const statementTime = new NativeDate(Date.now()).toISOString();
             if (!failed) await client.query("SELECT set_config('rc1.transaction_time',$1,false),set_config('rc1.statement_time',$2,false)",
@@ -87,8 +88,9 @@ export function serialDatabaseOptions() {
             try {
               const result = await client.query(sql, values);
               if (ends) { transactionTime = null; failed = false; }
+              else if (rollbackTo) failed = false;
               return result;
-            } catch (error) { failed = true; throw error; }
+            } catch (error) { failed = transactionTime !== null; throw error; }
           },
           release: () => client.release(),
         };
