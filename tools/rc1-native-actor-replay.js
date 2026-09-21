@@ -45,9 +45,10 @@ export function createRecordedActors({ replay = null, record = async () => {} } 
 }
 
 export const ACTOR_REPLAY_COMPARISON_FIELDS = Object.freeze([
-  'hours', 'population', 'seed', 'initialStateSha256', 'finalStateSha256',
+  'hours', 'population', 'seed', 'actorPolicy', 'initialStateSha256', 'finalStateSha256',
   'workerScheduleSha256', 'jobOutcomesSha256', 'deterministicRandomTapeSha256',
   'actorTapeSha256', 'policyStateSha256', 'semanticMetricsSha256', 'worldDiagnosticsSemanticSha256',
+  'mysteryPolicySummarySha256', 'knowledgeDiagnosticsSha256',
 ]);
 export function compareActorReplay(actual, expected) {
   for (const field of ACTOR_REPLAY_COMPARISON_FIELDS) {

@@ -9,12 +9,14 @@ import { createWorkerSchedule, installWorkerInstrumentation, makeWorkerDatabase,
 import { planOwnedWorldDatabase } from '../tools/rc1-native-database.js';
 import { createRecordedQueryOrder, QUERY_ORDER_SCOPE } from '../tools/rc1-native-query-order.js';
 import { installSerialRuntime } from '../tools/rc1-native-determinism.js';
-import { sourceIdentity, createProofRecorder, verifyArtifactIndex, restoreCheckpoint, canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
+import { sourceIdentity, createProofRecorder, verifyArtifactIndex, restoreCheckpoint, canonicalDatabaseSnapshot, canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
 import { createRecordedActors, compareActorReplay, actorValueHash } from '../tools/rc1-native-actor-replay.js';
 import { activeQuietRoster, chooseAuthorizedCommand, choosePublicCrime, observedOpportunityTracker } from '../tools/rc1-native-player-policy.js';
 import { collectWorldDiagnostics } from '../tools/rc1-world-diagnostics.js';
 import { createNativeCommitObserver } from '../tools/rc1-native-commit-observer.js';
 import { snapshotWorldResources, reconcileWorldResources, worldResourceHash } from '../tools/rc1-world-resource-observer.js';
+import { collectKnowledgeDiagnostics } from '../tools/rc1-knowledge-diagnostics.js';
+import { createMysteryPolicy, MYSTERY_POLICY_CONTRACT } from '../tools/rc1-mystery-policies.js';
 
 const argument = (name) => process.argv.find((arg) => arg.startsWith(`--${name}=`))?.slice(name.length + 3);
 assert(process.argv.includes('--postgres'), 'Real PostgreSQL is required');
@@ -24,6 +26,8 @@ const hours = Number(argument('hours') || 2160), population = Number(argument('p
 assert(Number.isSafeInteger(hours) && hours > 0 && hours <= 2161);
 assert([25, 100, 250, 500, 1000].includes(population));
 const seed = argument('seed') || 'rc1-alpha'; assert(['rc1-alpha', 'rc1-beta', 'rc1-gamma'].includes(seed));
+const actorPolicy = argument('policy') || 'quiet_world';
+assert(['quiet_world', 'high_mystery_participation', 'low_mystery_participation'].includes(actorPolicy));
 const source = await sourceIdentity(), controlUrl = process.env.COORDINATION_TEST_DATABASE_URL;
 const replay = argument('replay'), resume = argument('resume');
 const injectActorMismatch = process.argv.includes('--inject-actor-input-mismatch');
@@ -34,6 +38,7 @@ async function readPrior(directory) {
   assert.equal(run.scenarioId, 'scoped-quiet-world-active-players-and-workers');
   assert.equal(run.source.revision, source.revision, 'Actor replay and continuation require exactly the same source');
   assert.equal(run.configuration.population, population); assert.equal(run.configuration.seed, seed);
+  assert.equal(run.configuration.actorPolicy, actorPolicy, 'Actor policy differs');
   return run;
 }
 const replayRun = replay ? await readPrior(replay) : null, parentRun = resume ? await readPrior(resume) : null;
@@ -65,6 +70,9 @@ const epoch = resume ? parentPolicy.epoch : Math.ceil(Date.parse('2026-09-20T12:
 const start = resume ? Date.parse(parentRun.configuration.finish) : epoch, finish = start + hours * 3600000;
 const expectedDormant = [{ label: 'RWA health', code: 'health_registry_unavailable' }];
 const configuration = { scenario: 'quiet_world', population, seed, hours, sourcePins: WORKER_SOURCE_PINS,
+  actorPolicy, mysteryPolicyContract: actorPolicy === 'quiet_world' ? null : MYSTERY_POLICY_CONTRACT,
+  policyScope: 'Only the PlayerCommand selection component changes. Quiet daily roster/session limits stay declared; legacy crimes are independent and excluded from mystery quotas. No full-archetype qualification.',
+  knowledgeObservation: 'Complete canonical Knowledge pages at daily/final serial checkpoints; full canonical state equality before/after each observation; never policy feedback',
   failureControl: injectActorMismatch ? 'Change the first authorized snapshot comparison input only; no canonical write or command executes from the altered projection.' : null,
   databaseIsolation: database.descriptor,
   resourceObservation: observeResources ? 'Experimental exact committed-boundary parity with explicit unsupported lineage; serial native queries only' : 'Disabled',
@@ -110,22 +118,33 @@ const diagnosticPool = new pg.Pool({ connectionString: url, max: 1,
   options: `-c search_path=${namespace},pg_catalog -c default_transaction_read_only=on` });
 let priorResources, firstResourceError;
 const resourceSummary = { boundaries: 0, unsupportedEntries: 0, unsupportedKinds: {}, qualifyingFullResourcePass: false };
+const resourceCost = { observedBoundaryWallMs: 0, maximumBoundaryWallMs: 0, serializedJournalBytes: 0, serializedRestrictedChangeBytes: 0 };
 const commitObserver = observeResources ? createNativeCommitObserver({
   context: () => currentInvocation || { authority: 'original-worker', logicalAt: at },
   onBoundary: async (event) => {
+    const started = performance.now();
     if (firstResourceError) throw firstResourceError;
     const after = await snapshotWorldResources(diagnosticPool), before = priorResources;
     try {
       if (['ROLLED_BACK', 'STATEMENT_ABORTED'].includes(event.outcome))
         assert.equal(worldResourceHash(after), worldResourceHash(before), 'Aborted SQL changed committed world resources');
-      const journal = reconcileWorldResources(before, after, { identity: event });
+      const { restrictedChanges, ...journal } = reconcileWorldResources(before, after, { identity: event, includeRestrictedChanges: true });
+      if (restrictedChanges) {
+        const artifact = `restricted-resource-change-${String(resourceSummary.boundaries + 1).padStart(7, '0')}.json`;
+        await proof.artifact(artifact, { event, restrictedChanges });
+        resourceCost.serializedRestrictedChangeBytes += Buffer.byteLength(JSON.stringify({ event, restrictedChanges }));
+        journal.restrictedChangesArtifact = artifact;
+      }
       await proof.record({ kind: 'resource-commit-boundary', event, journal });
+      resourceCost.serializedJournalBytes += Buffer.byteLength(canonicalJson({ event, journal }));
       resourceSummary.boundaries++;
       for (const unsupported of journal.unsupported) {
         resourceSummary.unsupportedEntries++;
         resourceSummary.unsupportedKinds[unsupported.kind] = (resourceSummary.unsupportedKinds[unsupported.kind] || 0) + 1;
       }
       priorResources = after;
+      const elapsed = performance.now() - started;
+      resourceCost.observedBoundaryWallMs += elapsed; resourceCost.maximumBoundaryWallMs = Math.max(resourceCost.maximumBoundaryWallMs, elapsed);
     } catch (error) {
       firstResourceError = error;
       await proof.artifact('first-resource-failure.json', { before, after, event, error: { message: error.message, stack: error.stack } });
@@ -138,11 +157,14 @@ const originalConsole = { log: console.log, warn: console.warn, error: console.e
 const roster = Array.from({ length: population }, (_, index) => `quiet-player-${index}`);
 const actorOptions = new Map(roster.map((account) => [account, {}]));
 const actorActions = new Map(roster.map((account) => [account, 0]));
+const mysteryPolicies = new Map(actorPolicy === 'quiet_world' ? [] : roster.map((accountId) => [accountId,
+  createMysteryPolicy({ scenarioId: actorPolicy, accountId, seed })]));
 const opportunities = observedOpportunityTracker();
 const metrics = { playerSnapshots: 0, ownCharacterReads: 0, freshPlayerCommands: 0, legacyCrimeAttempts: 0,
   crimeSuccesses: 0, crimeLosses: 0, exactReplays: 0, denials: {}, sessionWaits: 0, sessions: 0,
   commandTypes: {}, observedAuthorizedOpportunities: 0 };
 const days = [], latencies = { read: [], command: [] };
+const knowledgeBoundaries = [];
 let lastDay = -1;
 if (resume) {
   assert.equal(parentPolicy.format, 1); assert.equal(parentPolicy.seed, seed); assert.deepEqual(parentPolicy.roster, roster);
@@ -153,9 +175,15 @@ if (resume) {
   }
   assert.deepEqual(Object.keys(parentPolicy.metrics).sort(), Object.keys(metrics).sort());
   Object.assign(metrics, structuredClone(parentPolicy.metrics)); opportunities.restore(parentPolicy.opportunities);
+  assert.equal(parentPolicy.actorPolicy, actorPolicy);
+  assert.deepEqual(Object.keys(parentPolicy.mysteryPolicies).sort(), [...mysteryPolicies.keys()].sort());
+  for (const [accountId, policy] of mysteryPolicies) policy.restore(parentPolicy.mysteryPolicies[accountId]);
   days.push(...structuredClone(parentPolicy.days)); lastDay = parentPolicy.lastDay;
 }
-const policyState = () => ({ format: 1, seed, epoch, logicalAt: at, roster, lastDay,
+const mysterySummaries = () => Object.fromEntries([...mysteryPolicies].map(([account, policy]) => [account, policy.summary()]));
+const policyState = () => ({ format: 1, seed, actorPolicy, epoch, logicalAt: at, roster, lastDay,
+  mysteryPolicies: Object.fromEntries([...mysteryPolicies].map(([account, policy]) => [account, policy.checkpoint()])),
+  mysterySummaries: mysterySummaries(),
   actorOptions: Object.fromEntries(actorOptions), actorActions: Object.fromEntries(actorActions),
   metrics, opportunities: opportunities.checkpoint(), days });
 let pool, result, currentInvocation = null, failureInvocation = null, injectedActorMismatch = false;
@@ -187,6 +215,21 @@ try {
   const content = coreProgressionContent(), director = createConfiguredDirector(pool, content);
   const engine = createPlayerCommandEngine({ pool, content, director, enabled: true,
     knowledgeEnabled: true, sharingEnabled: true, operationsEnabled: true, discoveryEnabled: true });
+  const { createCoordinationService } = await import('../src/coordination/runtime.js');
+  const knowledgeService = createCoordinationService({ pool, registry: content.coordinationRegistry,
+    prerequisitesEnabled: content.progression === true, enabled: true, knowledgeEnabled: true, sharingEnabled: true, accountIds: [] });
+  async function knowledgeBoundary(label, before) {
+    const diagnostic = await collectKnowledgeDiagnostics({ roster, serialBoundary: `${label}:${at}`,
+      readPage: (accountId, options) => proof.invoke('observer.knowledgeBoard', { accountId, options, logicalAt: at },
+        () => knowledgeService.knowledgeBoard(accountId, options)) });
+    const after = await canonicalDatabaseSnapshot(pool);
+    if (before.stateSha256 !== after.stateSha256) await proof.artifact(`knowledge-${label}-changed-state.json`, after);
+    assert.equal(after.stateSha256, before.stateSha256, 'Knowledge observer changed canonical state');
+    await proof.artifact(`knowledge-${label}.json`, diagnostic);
+    const comparison = { label, logicalAt: at, beforeStateSha256: before.stateSha256, afterStateSha256: after.stateSha256,
+      diagnosticSha256: sha256(canonicalJson(diagnostic)) };
+    knowledgeBoundaries.push(comparison); await proof.record({ kind: 'knowledge-observer-boundary', ...comparison });
+  }
   const baseline = await runLedgerInvariants(pool, { alert: false }); assert(baseline.ok, 'Birth fixtures must reconcile without baseline drift');
   await proof.record({ kind: 'measured-initialization', roster, configuration, publicCrimes, randomDraws: runtime.tape,
     logicalAt: at, restoredCheckpoint: configuration.parentCheckpoint, fixtureWritesAfterThisRecord: false });
@@ -227,7 +270,18 @@ try {
         () => engine.snapshot(accountId, actorOptions.get(accountId)), 'read');
       metrics.playerSnapshots++; opportunities.observe(accountId, view.opportunities, at);
       metrics.observedAuthorizedOpportunities = opportunities.summarize(at).distinctAuthorizedActorOpportunities;
-      const command = await actors.decide('authorized-command', { accountId, day, action, logicalAt: at }, view,
+      const mysteryPolicy = mysteryPolicies.get(accountId);
+      let command;
+      if (mysteryPolicy) {
+        const chosen = mysteryPolicy.choose(view, { logicalAt: at });
+        const decision = await actors.decide('mystery-policy', { actorPolicy, accountId, day, action, logicalAt: at }, view, () => chosen);
+        assert.equal(actorValueHash(decision), actorValueHash(chosen), 'Recorded policy decision differs from restored policy state');
+        await actors.observe('mystery-policy-pending', { accountId, logicalAt: at }, mysteryPolicy.checkpoint());
+        if (decision.kind === 'wait') break;
+        command = view.commands.find((candidate) => candidate.commandId === decision.command.commandId
+          && candidate.executionIdentity?.executionId === decision.command.executionIdentity.executionId);
+        assert(command, 'Mystery policy decision is not currently issued');
+      } else command = await actors.decide('authorized-command', { accountId, day, action, logicalAt: at }, view,
         () => chooseAuthorizedCommand(view, { seed, accountId, day, action }));
       if (!command) break;
       assert(view.commands.some((candidate) => candidate.availability === 'AVAILABLE' && actorValueHash(candidate) === actorValueHash(command)),
@@ -238,6 +292,10 @@ try {
       const response = await invoke('player.execute', { accountId, executionId },
         () => engine.execute(accountId, { executionId, confirmed: true }, executionId), 'command');
       assert.equal(response.status, 'COMPLETED');
+      if (mysteryPolicy) {
+        mysteryPolicy.settle(response);
+        await actors.observe('mystery-policy-settled', { accountId, logicalAt: at }, mysteryPolicy.checkpoint());
+      }
       if (response.replayed) metrics.exactReplays++;
       else { metrics.freshPlayerCommands++; actions++; metrics.commandTypes[command.commandType] = (metrics.commandTypes[command.commandType] || 0) + 1; }
       if (command.commandType === 'mystery.start') actorOptions.get(accountId).mysteryGraphId = command.parameters.graphId;
@@ -284,7 +342,8 @@ try {
     const entry = { day, logicalAt, selectedActors: selected, metrics: structuredClone(metrics),
       opportunityObservation: opportunities.summarize(at) };
     days.push(entry); await proof.record({ kind: 'day-summary', ...entry });
-    await proof.snapshot(pool, `day-${day}`);
+    const daily = await proof.snapshot(pool, `day-${day}`);
+    await knowledgeBoundary(`day-${day}`, daily);
     await proof.artifact(`world-diagnostics-day-${day}.json`, await collectWorldDiagnostics(diagnosticPool,
       { logicalAt: at, roster, actorActions: Object.fromEntries(actorActions) }));
     originalConsole.log(JSON.stringify({ day, sessions: metrics.sessions, commands: metrics.freshPlayerCommands,
@@ -292,6 +351,7 @@ try {
   });
   await invariantBoundary('final');
   const final = await proof.snapshot(pool, 'final'); await proof.checkpoint(pool, 'final', url);
+  await knowledgeBoundary('final', final);
   const finalDiagnostics = await collectWorldDiagnostics(diagnosticPool,
     { logicalAt: at, roster, actorActions: Object.fromEntries(actorActions) });
   await proof.artifact('world-diagnostics-final.json', finalDiagnostics);
@@ -309,14 +369,17 @@ try {
   await proof.artifact('random-tape.json', { draws: runtime.tape });
   const actorTape = actors.finish(), finalPolicy = policyState();
   await proof.artifact('actor-tape.json', actorTape); await proof.artifact('actor-policy-final.json', finalPolicy);
+  await proof.artifact('knowledge-boundaries.json', knowledgeBoundaries);
   await proof.artifact('player-metrics.json', { days, metrics, latencies, actorActions: Object.fromEntries(actorActions),
     opportunities: opportunities.summarize(at), meaningfulActionDefinition: 'Fresh completed domain PlayerCommands plus canonical crime attempts with committed success or loss; excludes reads/replays/denials' });
-  result = { status: 'PASS_SCOPED', hours, population, seed, actualActiveActors: [...actorActions.values()].filter(Boolean).length,
+  result = { status: 'PASS_SCOPED', hours, population, seed, actorPolicy, mysteryPolicySummaries: mysterySummaries(),
+    actualActiveActors: [...actorActions.values()].filter(Boolean).length,
     dailySelectedActors: Math.floor(population / 10), seasonalRolloversPerActor: expectedRollovers, metrics,
     timerCounts, invariantChecks: baseline.checks.length, initialStateSha256: initial.stateSha256, finalStateSha256: final.stateSha256,
     workerScheduleSha256: trace.scheduleSha256, missingRequiredProof: configuration.coverageMissing,
     jobOutcomesSha256: sha256(canonicalJson(trace.jobs)), deterministicRandomTapeSha256: sha256(canonicalJson(runtime.tape)),
     actorTapeSha256: actorTape.entriesSha256, policyStateSha256: sha256(canonicalJson(finalPolicy)),
+    mysteryPolicySummarySha256: sha256(canonicalJson(mysterySummaries())), knowledgeDiagnosticsSha256: sha256(canonicalJson(knowledgeBoundaries)),
     semanticMetricsSha256: sha256(canonicalJson({ days, metrics, actorActions: Object.fromEntries(actorActions), opportunities: opportunities.summarize(at) })),
     checkpointRestart: !!resume, recordedActorAndSelectionReplay: !!replay,
     worldDiagnosticsSemanticSha256: sha256(canonicalJson(finalDiagnostics.semantic)),
@@ -343,7 +406,9 @@ try {
   for (const close of [async () => {
     if (!commitObserver) return;
     try { commitObserver.disarm(); }
-    finally { await proof.artifact('resource-observer-final.json', { capturedAt: 'After diagnostic state capture, before cleanup', ...resourceSummary, diagnostic: commitObserver.diagnostic() }); }
+    finally { await proof.artifact('resource-observer-final.json', { capturedAt: 'After diagnostic state capture, before cleanup', ...resourceSummary,
+      cost: { ...resourceCost, logicalHours: (at - start) / 3600000,
+        note: 'Measured native snapshot/reconciliation/artifact overhead only; linear projection is not a capacity guarantee. Every required boundary retained.' }, diagnostic: commitObserver.diagnostic() }); }
   }, () => controller.close(), () => diagnosticPool.end(), () => base.end(),
     async () => proof.record({ kind: 'database-cleanup', ...await database.close() })]) {
     try { await close(); }
