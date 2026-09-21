@@ -5,7 +5,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import pg from 'pg';
-import { createWorkerSchedule, installWorkerInstrumentation, makeWorkerDatabase, bootOriginalWorker, dropWorkerSchema, WORKER_SOURCE_PINS } from '../tools/rc1-native-worker.js';
+import { createWorkerSchedule, installWorkerInstrumentation, makeWorkerDatabase, bootOriginalWorker, WORKER_SOURCE_PINS } from '../tools/rc1-native-worker.js';
+import { planOwnedWorldDatabase } from '../tools/rc1-native-database.js';
 import { createRecordedQueryOrder, QUERY_ORDER_SCOPE } from '../tools/rc1-native-query-order.js';
 import { installSerialRuntime } from '../tools/rc1-native-determinism.js';
 import { sourceIdentity, createProofRecorder, verifyArtifactIndex, canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
@@ -18,10 +19,12 @@ const hours = Number(argument('hours') || 2160), population = Number(argument('p
 assert(Number.isSafeInteger(hours) && hours > 0 && hours <= 2161);
 assert([25, 100, 250, 500, 1000].includes(population));
 const seed = argument('seed') || 'rc1-alpha'; assert(['rc1-alpha', 'rc1-beta', 'rc1-gamma'].includes(seed));
-const source = await sourceIdentity(), url = process.env.COORDINATION_TEST_DATABASE_URL;
-assert(url && ['127.0.0.1', 'localhost', '[::1]'].includes(new URL(url).hostname));
+const source = await sourceIdentity(), controlUrl = process.env.COORDINATION_TEST_DATABASE_URL;
+assert(controlUrl, 'Explicit disposable local PostgreSQL control database required');
 for (const key of ['CHAIN_RPC_URL', 'INVARIANT_WEBHOOK_URL', 'LIQUIDITY_RPC_URL', 'LIQUIDITY_RPC_FALLBACK_URL'])
   assert(!process.env[key], `No external integration is authorized for this isolated workload: ${key}`);
+const database = planOwnedWorldDatabase({ controlUrl, runId: path.basename(output), sourceRevision: source.revision });
+const url = database.url;
 const declared = { DATABASE_URL: url, CORE_PROGRESSION: 'on', WORLD_GRAPH_KERNEL: 'on', COORDINATION_ENGINE: 'on',
   COORDINATION_KNOWLEDGE: 'on', COORDINATION_KNOWLEDGE_SHARING: 'on', COORDINATION_OPERATIONS: 'on',
   COORDINATION_ACCOUNT_IDS: '', LIVING_WORLD_DIRECTOR: 'LIVE', DIRECTOR_ACCOUNT_IDS: '',
@@ -32,6 +35,7 @@ const seasonMs = 28 * 86400000;
 const epoch = Math.ceil(Date.parse('2026-09-20T12:00:00.000Z') / seasonMs) * seasonMs - 3600000;
 const expectedDormant = [{ label: 'RWA health', code: 'health_registry_unavailable' }];
 const configuration = { scenario: 'quiet_world', population, seed, hours, sourcePins: WORKER_SOURCE_PINS,
+  databaseIsolation: database.descriptor,
   epoch: new Date(epoch).toISOString(), finish: new Date(epoch + hours * 3600000).toISOString(),
   policy: { dailyActiveActors: Math.floor(population / 10), proposedFraction: .10,
     realizedFraction: Math.floor(population / 10) / population,
@@ -67,10 +71,11 @@ const metrics = { playerSnapshots: 0, ownCharacterReads: 0, freshPlayerCommands:
   crimeSuccesses: 0, crimeLosses: 0, exactReplays: 0, denials: {}, sessionWaits: 0, sessions: 0,
   commandTypes: {}, observedAuthorizedOpportunities: 0 };
 const days = [], latencies = { read: [], command: [] };
-let pool, created = false, result, currentInvocation = null, failureInvocation = null;
+let pool, result, currentInvocation = null, failureInvocation = null;
 try {
   for (const level of ['log', 'warn', 'error']) console[level] = (...args) => controller.log(level, args);
-  await base.query(`CREATE SCHEMA ${namespace}`); created = true;
+  await proof.record({ kind: 'database-created', ...await database.create() });
+  await base.query(`CREATE SCHEMA ${namespace}`);
   const bootstrap = new controller.Pool({ connectionString: url, options: '', max: 20 });
   await seam.clock.initialize(bootstrap); pool = await makeWorkerDatabase(controller);
   for (const account of roster) {
@@ -182,17 +187,23 @@ try {
     workerScheduleSha256: trace.scheduleSha256, missingRequiredProof: configuration.coverageMissing,
     statement: 'Completed only the declared quiet-world workload; no matrix qualification or dead-world clearance' };
 } catch (error) {
+  result = { status: 'FAIL', hours, population, metrics, error: error.message, invocation: failureInvocation, logicalAt: at };
   await proof.record({ kind: 'failure', invocation: failureInvocation, logicalAt: at, message: error.message, stack: error.stack });
-  if (pool) await proof.snapshot(pool, 'first-failure');
   await proof.artifact('failure-worker-schedule.json', controller.diagnostic());
   await proof.artifact('failure-random-tape.json', { draws: runtime.tape });
-  result = { status: 'FAIL', hours, population, metrics, error: error.message, invocation: failureInvocation, logicalAt: at };
+  await proof.artifact('failure-query-order.json', queryOrder.diagnostic());
+  if (pool) {
+    try { await proof.snapshot(pool, 'first-failure'); await proof.checkpoint(pool, 'first-failure', url); }
+    catch (captureError) { await proof.record({ kind: 'failure-capture-error', message: captureError.message, stack: captureError.stack }); }
+  }
   process.exitCode = 1;
 } finally {
   for (const level of ['log', 'warn', 'error']) console[level] = originalConsole[level];
-  try { await controller.close(); if (created) await dropWorkerSchema(base, namespace); }
-  catch (error) { await proof.record({ kind: 'cleanup-failure', message: error.message }); result.status = 'FAIL'; result.cleanupFailure = error.message; process.exitCode = 1; }
-  await base.end(); seam.restore(); runtime.restore();
+  for (const close of [() => controller.close(), () => base.end(), async () => proof.record({ kind: 'database-cleanup', ...await database.close() })]) {
+    try { await close(); }
+    catch (error) { await proof.record({ kind: 'cleanup-failure', message: error.message }); result.status = 'FAIL'; result.cleanupFailure = error.message; process.exitCode = 1; }
+  }
+  seam.restore(); runtime.restore();
   for (const [key, value] of Object.entries(previousEnv)) { if (value === undefined) delete process.env[key]; else process.env[key] = value; }
   const record = await proof.finish(result); await verifyArtifactIndex(output, record);
 }

@@ -5,7 +5,8 @@ import { fileURLToPath } from 'node:url';
 import pg from 'pg';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { createWorkerSchedule, installWorkerInstrumentation, makeWorkerDatabase, bootOriginalWorker, dropWorkerSchema, WORKER_SOURCE_PINS } from '../tools/rc1-native-worker.js';
+import { createWorkerSchedule, installWorkerInstrumentation, makeWorkerDatabase, bootOriginalWorker, WORKER_SOURCE_PINS } from '../tools/rc1-native-worker.js';
+import { planOwnedWorldDatabase } from '../tools/rc1-native-database.js';
 import { createRecordedQueryOrder, replayRowOrder, replayCandidateSelection, QUERY_ORDER_SCOPE } from '../tools/rc1-native-query-order.js';
 import { installSerialRuntime } from '../tools/rc1-native-determinism.js';
 import { sourceIdentity, createProofRecorder, verifyArtifactIndex, restoreCheckpoint, canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
@@ -82,11 +83,12 @@ if (process.argv.includes('--postgres')) {
     assert.equal(sha256(canonicalJson(parentTape)), parentRun.result.deterministicRandomTapeSha256);
     assert(/^rc1_worker_[a-z_0-9]+$/.test(parentCheckpoint.schema), 'Checkpoint is not an isolated worker fixture');
   }
-  const url = process.env.COORDINATION_TEST_DATABASE_URL || process.env.WORLD_KERNEL_TEST_DATABASE_URL;
-  assert(url, 'Explicit disposable PostgreSQL URL required');
-  assert(['127.0.0.1', 'localhost', '[::1]'].includes(new URL(url).hostname));
+  const controlUrl = process.env.COORDINATION_TEST_DATABASE_URL || process.env.WORLD_KERNEL_TEST_DATABASE_URL;
+  assert(controlUrl, 'Explicit disposable PostgreSQL URL required');
   for (const name of ['CHAIN_RPC_URL', 'INVARIANT_WEBHOOK_URL', 'LIQUIDITY_RPC_URL', 'LIQUIDITY_RPC_FALLBACK_URL'])
     assert(!process.env[name], `Native worker fixture requires unconfigured external integration: ${name}`);
+  const database = planOwnedWorldDatabase({ controlUrl, runId: path.basename(output), sourceRevision: source.revision });
+  const url = database.url;
   const declared = { DATABASE_URL: url, CORE_PROGRESSION: 'on', WORLD_GRAPH_KERNEL: 'on', COORDINATION_ENGINE: 'on',
     COORDINATION_KNOWLEDGE: 'on', COORDINATION_KNOWLEDGE_SHARING: 'on', COORDINATION_OPERATIONS: 'on',
     COORDINATION_ACCOUNT_IDS: '', LIVING_WORLD_DIRECTOR: 'LIVE', DIRECTOR_ACCOUNT_IDS: '',
@@ -101,6 +103,7 @@ if (process.argv.includes('--postgres')) {
   const expectedDormant = [{ label: 'RWA health', code: 'health_registry_unavailable',
     reason: 'No finalized external stock registry/provider in this local fixture; fail-closed callback execution is retained, settlement coverage is excluded.' }];
   const configuration = { hours, start: new Date(epoch).toISOString(), finish: new Date(epoch + hours * 3600000).toISOString(), seed,
+    databaseIsolation: database.descriptor,
     queryOrder: { scope: QUERY_ORDER_SCOPE, mode: queryOrderReplay ? 'recorded-selection-replay' : 'observe',
       inputSha256: queryOrderReplay ? sha256(await fs.readFile(path.join(queryOrderReplay, 'query-order.json'))) : null },
     parentCheckpoint: resume ? { directory: path.resolve(resume), source: parentRun.source,
@@ -109,7 +112,7 @@ if (process.argv.includes('--postgres')) {
       semantics: 'Fresh worker process boots from restored database and RNG tape. Boot effects are retained; no equivalence to an uninterrupted schedule is assumed.' } : null,
     sourcePins: WORKER_SOURCE_PINS, expectedDormant, backupArchiving: 'off; local cluster; expected backup alarm retained; no PITR claim',
     workerScheduling: 'Original production timer callbacks at every declared deadline, serial accepted order; zero logical callback duration; native wall durations retained.',
-    environment: { ...declared, DATABASE_URL: 'explicit local PostgreSQL isolated schema' },
+    environment: { ...declared, DATABASE_URL: 'new exclusively owned local PostgreSQL database' },
     excludedIntegrations: ['chain watcher: no RPC or signer configured', 'liquidity automation: disabled', 'external RWA registry/provider: unavailable'] };
   const proof = await createProofRecorder({ directory: output, source, configuration, runId: path.basename(output), seed,
     population: 1, scenarioId: 'scoped-native-complete-local-worker-clock' });
@@ -121,17 +124,18 @@ if (process.argv.includes('--postgres')) {
   const queryOrder = createRecordedQueryOrder({ replay: retainedOrder });
   const instrumentation = installWorkerInstrumentation(controller, { namespace, queryOrder });
   const originalConsole = { log: console.log, warn: console.warn, error: console.error };
-  const originalArgv = process.argv[1]; let pool, result, created = false, firstRollover = false;
+  const originalArgv = process.argv[1]; let pool, result, firstRollover = false;
   try {
     for (const level of ['log', 'warn', 'error']) console[level] = (...args) => controller.log(level, args);
+    await proof.record({ kind: 'database-created', ...await database.create() });
     const initialSeason = Math.floor(epoch / seasonMs);
     if (resume) {
       pool = await restoreCheckpoint(parentCheckpoint, path.join(resume, 'final.dump'), url,
-        { poolFactory: instrumentation.clock.poolFactory }); created = true; controller.pools.push(pool);
+        { poolFactory: instrumentation.clock.poolFactory }); controller.pools.push(pool);
       const restoredClock = (await pool.query('SELECT now() AS tx,clock_timestamp() AS statement')).rows[0];
       assert.equal(restoredClock.tx.getTime(), epoch); assert.equal(restoredClock.statement.getTime(), epoch);
     } else {
-      await base.query(`CREATE SCHEMA ${namespace}`); created = true;
+      await base.query(`CREATE SCHEMA ${namespace}`);
       const bootstrap = new controller.Pool({ connectionString: url, options: '', max: 20 });
       await instrumentation.clock.initialize(bootstrap);
       pool = await makeWorkerDatabase(controller);
@@ -213,9 +217,8 @@ if (process.argv.includes('--postgres')) {
     try { await controller.close(); }
     catch (error) { result = { status: 'FAIL', error: { message: error.message, stack: error.stack } }; await proof.record({ kind: 'cleanup-failure', ...result.error }); }
     instrumentation.restore(); runtime.restore();
-    try { if (created) await dropWorkerSchema(base, namespace); }
+    try { await base.end(); await proof.record({ kind: 'database-cleanup', ...await database.close() }); }
     catch (error) { result = { status: 'FAIL', error: { message: error.message, stack: error.stack } }; await proof.record({ kind: 'cleanup-failure', ...result.error }); }
-    await base.end();
     for (const [name, value] of Object.entries(priorEnvironment)) if (value === undefined) delete process.env[name]; else process.env[name] = value;
   }
   const record = await proof.finish(result); await verifyArtifactIndex(output, record);
