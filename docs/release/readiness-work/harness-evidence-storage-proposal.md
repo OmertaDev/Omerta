@@ -95,3 +95,34 @@ New restricted output: `C:/Users/Jorge/.codex/rc1-readiness-private-20260921/evi
 - `measurement-index.json` SHA256: `f4b2de4bc5137ba6db5a88869a3556aadf728e21efc85f019accbd5e76324c9d`; indexes the new scripts, output, gzip and results, without moving originals.
 
 The retained scripts refuse overwriting their output. From the frozen checkout, the measured command was `node --max-old-space-size=128 <restricted-directory>/measure.mjs`; the separate invocation-order check used the same flag with `inspect-invocation-shape.mjs`. Reproduction requires a reviewed copy with a fresh output directory, retaining its own script hash and verifier source identity.
+
+## Proposed optional live capture
+
+This is a design proposal, not an implemented recorder or measured capture result. Leave the absent-option identity recorder and historical verification unchanged. Add an explicit `historyStorage` option with `encoding: gzip`, `framing: event-members-v1`, and required positive safe-integer limits `maximumDecodedBytes`, `maximumLineBytes`, `maximumOutstandingInvocations` and `maximumPendingRecords`. Reserve the option and its canonical hash before native work starts.
+
+Use one complete gzip member per exact original canonical JSONL event. Stream the line through gzip to an exclusively opened restricted file, and await the member footer and underlying file-write callbacks before resolving `record()`. Advance acknowledged sequence, chain hash and logical-byte accounting only after that acknowledgement. This is operating-system write acknowledgement, not an `fsync` or power-loss guarantee. The admitted queue and individual event are bounded; a stalled sink stalls authority admission. This framing makes acknowledged event prefixes independently complete and avoids claiming that a compressor input callback proves physical output completion. It can compress differently from the measured single-stream file; benchmark it separately before claiming a storage ratio or runtime cost.
+
+For opted-in runs, use format2 and retain existing artifact `path`, `bytes` and `sha256` as physical-file metadata. The history entry is:
+
+```json
+{
+  "path": "history.jsonl.gz",
+  "bytes": "stored byte count",
+  "sha256": "stored SHA256",
+  "decoded": {
+    "path": "history.jsonl",
+    "encoding": "gzip",
+    "framing": "event-members-v1",
+    "bytes": "exact original JSONL byte count",
+    "sha256": "exact original JSONL SHA256"
+  }
+}
+```
+
+The example values are schematic, not valid manifest values. Other artifact entries remain unchanged. The run also declares `historyStorage`, `historyStorageSha256`, and `historyVerification` containing `semantics: sequential-invocations-v1`, `events`, `invocations` and `finalHash`. An opted-in verifier checks the physical artifact index, then streams all concatenated gzip members with decoded-byte/line bounds, exact decoded hash/count, every event/chain check and sequential invocation IDs with a bounded outstanding set. Terminal invocations must all be complete. Unknown format/encoding/framing, a missing or duplicate history, CRC/truncation/trailing garbage, altered metadata, overflow and semantic corruption fail closed. Legacy identity acceptance does not change.
+
+Finish closes admission, drains admitted events, verifies retained bytes, and only then writes a completed run manifest. An ordinary authority exception can have a complete `THREW` record and a validly captured `FAIL` run. A capture or limit failure instead poisons further admission, retains the partial gzip and acknowledged-prefix diagnostics, and cannot produce a completed `run.json`. `finish()` should retain a best-effort `capture-failure.json` naming the first capture failure, attempted versus acknowledged position, outstanding invocation IDs, caller result, source and physical file hash/count when readable, then throw the original capture failure. Do not report a failed completion write as an authority exception or invent a completion. Keep `artifact()` available for caller-controlled failure snapshots. Disk exhaustion, an abrupt process exit or unencodable caller data cannot guarantee retention of unwritten bytes; these are explicitly incomplete outputs, never replay qualification. No partial evidence is deleted.
+
+Focused controls must cover stalled sinks, queue/line/decoded/invocation bounds, split UTF-8, footer/CRC/trailing-data corruption, duplicate or unfinished invocations, authority versus capture failures, completion-write failure, truncated final members and child-process interruption. Compare complete decoded bytes against an identity reference and retain a new source-bound native replay. Large-event serialization still happens before the line-size check: the transport bounds do not solve producer `canonicalJson`, snapshot arrays or `artifact()` allocation limits.
+
+Caller inspection at `f6eaefe5d92e1ee0bc603d076443e87f857ae7ba` found that world/worker replay uses `verifyArtifactIndex` and separate replay-tape artifacts, without reading history directly. Eight focused native consumers do read raw recorder history: aggression heir/lifecycle/policy, churn policy, retained Family cash/ammo, Family native, Law native and market native. They must stay on identity until explicitly migrated. The stream test reads its own raw fixture, and source-pair uses a separate recorder. No world runner or observer change is part of this proposal.
