@@ -23,7 +23,7 @@ export async function authoritativeState(pool) {
   return result;
 }
 
-export async function roleKnowledgeProbes({ server, restart }) {
+export async function roleKnowledgeProbes({ server, restart, onEvidence = null, onFixture = null }) {
   const key = () => crypto.randomUUID(), tokens = new Map(), passed = [];
   const report = (name) => { passed.push(name); console.log(`PASS RC1-04 ${name}`); };
   const actors = { boss: 'rc1-role-boss', participant: 'rc1-role-participant', nonparticipant: 'rc1-role-nonparticipant',
@@ -40,21 +40,33 @@ export async function roleKnowledgeProbes({ server, restart }) {
     await server().pool.query("INSERT INTO gang_members(gang_id,character_id,role) VALUES('rc1-role-family',$1,$2)",
       [characterId(actors[role]), role === 'boss' ? 'boss' : 'soldier']);
   }
-  const request = (method, url, role, payload, identity = key()) => server().inject({ method, url,
-    headers: { authorization: `Bearer ${tokens.get(role)}`, ...(method === 'POST' ? { 'idempotency-key': identity } : {}) },
-    ...(payload === undefined ? {} : { payload }) });
+  if (onFixture) await onFixture({ actors, tables: AUTHORITY_TABLES });
+  const requests = [];
+  const request = async (method, url, role, payload, identity = key()) => {
+    const response = await server().inject({ method, url,
+      headers: { authorization: `Bearer ${tokens.get(role)}`, ...(method === 'POST' ? { 'idempotency-key': identity } : {}) },
+      ...(payload === undefined ? {} : { payload }) });
+    if (onEvidence) requests.push({ method, url, role, authenticatedAccount: actors[role],
+      ...(payload === undefined ? {} : { payload: structuredClone(payload) }),
+      ...(method === 'POST' ? { idempotencyKey: identity } : {}), status: response.statusCode, response: response.json() });
+    return response;
+  };
   const ok = async (...args) => { const response = await request(...args); assert.equal(response.statusCode, 200, response.body); return response.json(); };
   let denials = 0;
   const deny = async (label, statuses, ...args) => {
-    const before = await authoritativeState(server().pool), response = await request(...args);
+    const before = await authoritativeState(server().pool), start = requests.length, response = await request(...args);
+    const after = await authoritativeState(server().pool);
+    if (onEvidence) await onEvidence({ kind: 'denial', label, expectedStatuses: statuses, requests: requests.slice(start), before, after });
     assert(statuses.includes(response.statusCode), `${label}: ${response.statusCode}: ${response.body}`);
     assert.doesNotMatch(response.body, /SELECT |INSERT |UPDATE |definition_json|authorization_predicate|resolution_seed|source_event_id/);
-    assert.deepEqual(await authoritativeState(server().pool), before, `${label}: denied request changed authority`);
+    assert.deepEqual(after, before, `${label}: denied request changed authority`);
     denials++; return response;
   };
   const sameState = async (label, work) => {
-    const before = await authoritativeState(server().pool), result = await work();
-    assert.deepEqual(await authoritativeState(server().pool), before, label); return result;
+    const before = await authoritativeState(server().pool), start = requests.length, result = await work();
+    const after = await authoritativeState(server().pool);
+    if (onEvidence) await onEvidence({ kind: 'replay', label, requests: requests.slice(start), before, after });
+    assert.deepEqual(after, before, label); return result;
   };
   const hidden = async (label, known, missing, role) => {
     const response = await deny(label, [404], 'GET', known, role);
@@ -147,8 +159,26 @@ export async function roleKnowledgeProbes({ server, restart }) {
   const staleAction = beforeRevoke.actions[0];
   const staleCommand = findCommand(await commands('reader'), 'discovery.act', { instanceId: reader.id, actionId: staleAction.id });
   const revokeBody = { grantId: claim.grants[0].id, expectedAclRevision: claim.aclRevision }, revokeKey = key();
+  const revokeUrl = `${knowledge}/${claim.id}/revoke`, revokeDenialsBefore = denials;
+  for (const role of ['reader', 'outsider']) {
+    const denied = await deny(`${role} cannot revoke a known owner's live grant`, [404], 'POST', revokeUrl, role, revokeBody);
+    const absent = await deny(`${role} revoke missing-claim comparison`, [404], 'POST', `${knowledge}/rc1-missing-claim/revoke`, role, revokeBody);
+    assert.deepEqual(denied.json(), absent.json(), `${role}: revoke discloses claim existence`);
+    for (const field of ['accountId', 'ownerAccountId', 'authorAccountId', 'characterId'])
+      await deny(`${role} cannot inject ${field} into revoke`, [400], 'POST', revokeUrl, role,
+        { ...revokeBody, [field]: field === 'characterId' ? characterId(actors.author) : actors.author });
+  }
+  await deny('owned claim cannot revoke a valid grant belonging to another claim', [404], 'POST', `${knowledge}/${ownClaim.id}/revoke`, 'reader',
+    { grantId: revokeBody.grantId, expectedAclRevision: ownClaim.aclRevision });
+  await deny('owner cannot revoke with stale ACL revision', [409], 'POST', revokeUrl, 'author',
+    { ...revokeBody, expectedAclRevision: revokeBody.expectedAclRevision - 1 });
+  const revokeDenials = denials - revokeDenialsBefore;
+  const revokeBefore = await authoritativeState(server().pool), revokeRequestsStart = requests.length;
   const revoked = await ok('POST', `${knowledge}/${claim.id}/revoke`, 'author', revokeBody, revokeKey);
+  if (onEvidence) await onEvidence({ kind: 'transition', label: 'owner revokes the actual live grant', requests: requests.slice(revokeRequestsStart),
+    before: revokeBefore, after: await authoritativeState(server().pool) });
   assert.equal(revoked.claim.grants.length, 0);
+  assert.equal(revoked.claim.aclRevision, claim.aclRevision + 1);
   await hidden('revoked claim detail', `${knowledge}/${claim.id}`, `${knowledge}/rc1-missing-claim`, 'reader');
   assert(!(await ok('GET', knowledge, 'reader')).claims.some((entry) => entry.id === claim.id));
   assert.deepEqual((await ok('GET', `${knowledge}/archive`, 'reader')).entries, []);
@@ -169,7 +199,7 @@ export async function roleKnowledgeProbes({ server, restart }) {
   assert(!(await ok('GET', `${knowledge}/${claim.id}`, 'author')).claim.grants.length);
   report('hidden claim/instance IDs, stale ACL, revoked Knowledge, hidden archive/link views, stale direct/Player Commands and restart replay');
   return { scope: 'native fixture-assisted Family/Knowledge HTTP boundary regression', groups: passed, deniedCases: denials,
-    authorityTablesCompared: AUTHORITY_TABLES.length, serverReconstructions: 2,
+    directRevokeDenials: revokeDenials, authorityTablesCompared: AUTHORITY_TABLES.length, serverReconstructions: 2,
     initialFixture: { actors: Object.keys(actors), cashPerActor: 100000, respectPerActor: 10000,
       locations: { reader: 'docks', others: 'foundry' }, familyAndCrewMembers: ['boss', 'participant', 'nonparticipant'],
       note: 'Only initial actors and memberships are inserted; all measured operations, discovery, sharing and revocation use canonical HTTP.' },
