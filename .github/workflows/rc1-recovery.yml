@@ -4,12 +4,33 @@ on:
   push:
     branches: [codex/rc1-release-validation]
   workflow_dispatch:
+    inputs:
+      replay_source:
+        description: 'Optional exact source SHA for diagnostic PostgreSQL18.4 alliance replay only'
+        required: false
+        type: string
+
+env:
+  RC1_EVIDENCE_PUBLIC_KEY: ${{ vars.RC1_EVIDENCE_PUBLIC_KEY }}
 
 permissions:
   contents: read
 
 jobs:
+  retention-controls:
+    name: Authenticated evidence transport controls
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node test/rc1-ci-envelope.js
+
   linux-sigterm:
+    needs: retention-controls
+    if: ${{ !inputs.replay_source }}
     name: Linux recovery (PostgreSQL ${{ matrix.postgres }})
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -39,6 +60,8 @@ jobs:
         with:
           node-version: '22'
           cache: npm
+      - name: Require restricted evidence recipient
+        run: test -n "$RC1_EVIDENCE_PUBLIC_KEY"
       - run: npm ci
       - name: Record exact candidate and runtime
         run: |
@@ -138,15 +161,23 @@ jobs:
           set -o pipefail
           umask 077
           npm run test:rc1:rollback:postgres 2>&1 | tee "$RC1_SHUTDOWN_EVIDENCE/source-pair.log"
-      - name: Retain exact-revision process logs and verdict
+      - name: Encrypt restricted execution evidence
+        if: always()
+        env:
+          RC1_CI_POSTGRES: ${{ matrix.postgres }}
+        run: node tools/rc1-ci-retain.mjs
+      - name: Retain authenticated encrypted evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: rc1-linux-sigterm-pg${{ matrix.postgres }}-${{ github.sha }}
-          path: tmp/rc1-linux-sigterm/
+          name: rc1-private-${{ github.job }}-pg${{ matrix.postgres }}-${{ github.sha }}
+          path: ${{ runner.temp }}/rc1-retention/evidence.rc1enc
           if-no-files-found: error
           retention-days: 30
+
   isolated-world-smoke:
+    needs: retention-controls
+    if: ${{ !inputs.replay_source }}
     name: Isolated two-hour world smoke (PostgreSQL ${{ matrix.postgres }})
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -175,6 +206,8 @@ jobs:
         with:
           node-version: '22'
           cache: npm
+      - name: Require restricted evidence recipient
+        run: test -n "$RC1_EVIDENCE_PUBLIC_KEY"
       - run: npm ci
       - name: Install matching PostgreSQL checkpoint tools
         run: bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'
@@ -219,7 +252,23 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:world:resources:smoke:postgres
+      - name: Encrypt restricted execution evidence
+        if: always()
+        env:
+          RC1_CI_POSTGRES: ${{ matrix.postgres }}
+        run: node tools/rc1-ci-retain.mjs
+      - name: Retain authenticated encrypted evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc1-private-${{ github.job }}-pg${{ matrix.postgres }}-${{ github.sha }}
+          path: ${{ runner.temp }}/rc1-retention/evidence.rc1enc
+          if-no-files-found: error
+          retention-days: 30
+
   legacy-authority:
+    needs: retention-controls
+    if: ${{ !inputs.replay_source }}
     name: Legacy authority (PostgreSQL ${{ matrix.postgres }})
     runs-on: ubuntu-latest
     # Separate native matrix preserves the pre-existing recovery job budget.
@@ -249,6 +298,8 @@ jobs:
         with:
           node-version: '22'
           cache: npm
+      - name: Require restricted evidence recipient
+        run: test -n "$RC1_EVIDENCE_PUBLIC_KEY"
       - run: npm ci
       - name: Native pre-parser moderator authentication and rate limiting
         env:
@@ -270,7 +321,23 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:reviewer-authority:postgres
+      - name: Encrypt restricted execution evidence
+        if: always()
+        env:
+          RC1_CI_POSTGRES: ${{ matrix.postgres }}
+        run: node tools/rc1-ci-retain.mjs
+      - name: Retain authenticated encrypted evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc1-private-${{ github.job }}-pg${{ matrix.postgres }}-${{ github.sha }}
+          path: ${{ runner.temp }}/rc1-retention/evidence.rc1enc
+          if-no-files-found: error
+          retention-days: 30
+
   policy-and-loan-lifecycles:
+    needs: retention-controls
+    if: ${{ !inputs.replay_source }}
     name: Policy and loan lifecycles (PostgreSQL ${{ matrix.postgres }})
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -300,6 +367,8 @@ jobs:
         with:
           node-version: '22'
           cache: npm
+      - name: Require restricted evidence recipient
+        run: test -n "$RC1_EVIDENCE_PUBLIC_KEY"
       - run: npm ci
       - name: Authorized conflict, retaliation and original hospital recovery
         env:
@@ -384,7 +453,23 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:aggression-lifecycle:postgres
+      - name: Encrypt restricted execution evidence
+        if: always()
+        env:
+          RC1_CI_POSTGRES: ${{ matrix.postgres }}
+        run: node tools/rc1-ci-retain.mjs
+      - name: Retain authenticated encrypted evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc1-private-${{ github.job }}-pg${{ matrix.postgres }}-${{ github.sha }}
+          path: ${{ runner.temp }}/rc1-retention/evidence.rc1enc
+          if-no-files-found: error
+          retention-days: 30
+
   original-escrow-timers:
+    needs: retention-controls
+    if: ${{ !inputs.replay_source }}
     name: Original escrow lifetimes (PostgreSQL ${{ matrix.postgres }})
     runs-on: ubuntu-latest
     # This new lane includes original one-hour timers. Existing budgets stay intact.
@@ -414,6 +499,8 @@ jobs:
         with:
           node-version: '22'
           cache: npm
+      - name: Require restricted evidence recipient
+        run: test -n "$RC1_EVIDENCE_PUBLIC_KEY"
       - run: npm ci
       - name: Native escrow with unchanged one-hour market and loan lifetimes
         env:
@@ -421,7 +508,23 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:escrow:postgres
+      - name: Encrypt restricted execution evidence
+        if: always()
+        env:
+          RC1_CI_POSTGRES: ${{ matrix.postgres }}
+        run: node tools/rc1-ci-retain.mjs
+      - name: Retain authenticated encrypted evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc1-private-${{ github.job }}-pg${{ matrix.postgres }}-${{ github.sha }}
+          path: ${{ runner.temp }}/rc1-retention/evidence.rc1enc
+          if-no-files-found: error
+          retention-days: 30
+
   original-resource-timers:
+    needs: retention-controls
+    if: ${{ !inputs.replay_source }}
     name: Original resource timers (PostgreSQL ${{ matrix.postgres }})
     runs-on: ubuntu-latest
     # A new lane with an original 30-minute war lifecycle; existing job budgets stay intact.
@@ -452,6 +555,8 @@ jobs:
         with:
           node-version: '22'
           cache: npm
+      - name: Require restricted evidence recipient
+        run: test -n "$RC1_EVIDENCE_PUBLIC_KEY"
       - run: npm ci
       - name: Original Family war and turf lifetimes with treasury reconciliation
         env:
@@ -465,7 +570,23 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:shipment:postgres
+      - name: Encrypt restricted execution evidence
+        if: always()
+        env:
+          RC1_CI_POSTGRES: ${{ matrix.postgres }}
+        run: node tools/rc1-ci-retain.mjs
+      - name: Retain authenticated encrypted evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc1-private-${{ github.job }}-pg${{ matrix.postgres }}-${{ github.sha }}
+          path: ${{ runner.temp }}/rc1-retention/evidence.rc1enc
+          if-no-files-found: error
+          retention-days: 30
+
   bounded-custody-and-mobile:
+    needs: retention-controls
+    if: ${{ !inputs.replay_source }}
     name: Bounded custody and mobile (PostgreSQL ${{ matrix.postgres }})
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -495,6 +616,8 @@ jobs:
         with:
           node-version: '22'
           cache: npm
+      - name: Require restricted evidence recipient
+        run: test -n "$RC1_EVIDENCE_PUBLIC_KEY"
       - run: npm ci
       - name: Install PostgreSQL client tools matching the server major
         run: bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'
@@ -563,8 +686,23 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:car-journal:postgres
+      - name: Encrypt restricted execution evidence
+        if: always()
+        env:
+          RC1_CI_POSTGRES: ${{ matrix.postgres }}
+        run: node tools/rc1-ci-retain.mjs
+      - name: Retain authenticated encrypted evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc1-private-${{ github.job }}-pg${{ matrix.postgres }}-${{ github.sha }}
+          path: ${{ runner.temp }}/rc1-retention/evidence.rc1enc
+          if-no-files-found: error
+          retention-days: 30
 
   bounded-resource-pressure:
+    needs: retention-controls
+    if: ${{ !inputs.replay_source }}
     name: Bounded resource pressure and response barriers (PostgreSQL ${{ matrix.postgres }})
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -593,6 +731,8 @@ jobs:
         with:
           node-version: '22'
           cache: npm
+      - name: Require restricted evidence recipient
+        run: test -n "$RC1_EVIDENCE_PUBLIC_KEY"
       - run: npm ci
       - name: Install matching PostgreSQL checkpoint tools
         run: bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'
@@ -640,8 +780,23 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:family-yield-precision:postgres
+      - name: Encrypt restricted execution evidence
+        if: always()
+        env:
+          RC1_CI_POSTGRES: ${{ matrix.postgres }}
+        run: node tools/rc1-ci-retain.mjs
+      - name: Retain authenticated encrypted evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc1-private-${{ github.job }}-pg${{ matrix.postgres }}-${{ github.sha }}
+          path: ${{ runner.temp }}/rc1-retention/evidence.rc1enc
+          if-no-files-found: error
+          retention-days: 30
 
   alliance-world-replay:
+    needs: retention-controls
+    if: ${{ !inputs.replay_source }}
     name: Scoped48-hour alliance world replay (PostgreSQL ${{ matrix.postgres }})
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -670,6 +825,8 @@ jobs:
         with:
           node-version: '22'
           cache: npm
+      - name: Require restricted evidence recipient
+        run: test -n "$RC1_EVIDENCE_PUBLIC_KEY"
       - run: npm ci
       - name: Install matching PostgreSQL checkpoint tools
         run: bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'
@@ -687,3 +844,90 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:alliance-world:postgres -- --replay=${{ runner.temp }}/rc1-alliance-world-observe
+      - name: Encrypt restricted execution evidence
+        if: always()
+        env:
+          RC1_CI_POSTGRES: ${{ matrix.postgres }}
+        run: node tools/rc1-ci-retain.mjs
+      - name: Retain authenticated encrypted evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc1-private-${{ github.job }}-pg${{ matrix.postgres }}-${{ github.sha }}
+          path: ${{ runner.temp }}/rc1-retention/evidence.rc1enc
+          if-no-files-found: error
+          retention-days: 30
+
+  retained-alliance-reproduction:
+    needs: retention-controls
+    name: Retained exact-source alliance reproduction (PostgreSQL18.4)
+    if: ${{ inputs.replay_source != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:18.4
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: rc1_alliance_world_control
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      COORDINATION_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/rc1_alliance_world_control
+      RC1_REPLAY_SOURCE: ${{ inputs.replay_source }}
+      RC1_CI_POSTGRES: '18.4'
+    steps:
+      - name: Validate immutable diagnostic source and recipient
+        run: |
+          [[ "$RC1_REPLAY_SOURCE" =~ ^[a-f0-9]{40}$ ]]
+          test -n "$RC1_EVIDENCE_PUBLIC_KEY"
+      - name: Check out this retention workflow's tools
+        uses: actions/checkout@v4
+      - name: Preserve retention tools outside the tested checkout
+        run: |
+          umask 077
+          mkdir "$RUNNER_TEMP/rc1-retention-tools"
+          cp tools/rc1-ci-envelope.js tools/rc1-ci-retain.mjs "$RUNNER_TEMP/rc1-retention-tools/"
+      - name: Check out the exact failed source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.replay_source }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Install matching PostgreSQL checkpoint tools
+        run: bash tools/rc1-postgres-client.sh '18.4'
+      - name: Observe original48-hour workload with private diagnostics
+        id: observation
+        env:
+          RC1_WORLD_OUTPUT: ${{ runner.temp }}/rc1-alliance-world-observe
+        run: |
+          umask 077
+          test "$(git rev-parse HEAD)" = "$RC1_REPLAY_SOURCE"
+          mkdir "$RUNNER_TEMP/rc1-alliance-world-logs"
+          npm run test:rc1:alliance-world:postgres > "$RUNNER_TEMP/rc1-alliance-world-logs/observation.log" 2>&1
+      - name: Replay original48-hour workload with private diagnostics
+        if: steps.observation.outcome == 'success'
+        env:
+          RC1_WORLD_OUTPUT: ${{ runner.temp }}/rc1-alliance-world-replay
+        run: |
+          umask 077
+          npm run test:rc1:alliance-world:postgres -- --replay="$RUNNER_TEMP/rc1-alliance-world-observe" > "$RUNNER_TEMP/rc1-alliance-world-logs/replay.log" 2>&1
+      - name: Encrypt restricted execution evidence
+        if: always()
+        run: node "$RUNNER_TEMP/rc1-retention-tools/rc1-ci-retain.mjs"
+      - name: Retain authenticated encrypted evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc1-private-reproduction-pg18.4-${{ inputs.replay_source }}
+          path: ${{ runner.temp }}/rc1-retention/evidence.rc1enc
+          if-no-files-found: error
+          retention-days: 30
