@@ -136,14 +136,18 @@ jobs:
         run: npm run mobile
 
   pgcheck:
-    name: real Postgres
+    name: real Postgres (${{ matrix.postgres }})
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        postgres: ['16', '18.4']
     services:
       postgres:
-        # Pin the major to what production runs. The point of this job is fidelity, so tracking
-        # `latest` here would quietly test something the deployment isn't.
-        image: postgres:16
+        # Retain the existing compatibility lane and test the Render version observed
+        # for RC1 (2026-09-21). A PostgreSQL 16 pass alone does not attest PostgreSQL 18.4.
+        image: postgres:${{ matrix.postgres }}
         env:
           POSTGRES_PASSWORD: pgcheck
           POSTGRES_DB: omerta_check

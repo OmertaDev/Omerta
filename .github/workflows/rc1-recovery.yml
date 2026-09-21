@@ -10,11 +10,16 @@ permissions:
 
 jobs:
   linux-sigterm:
+    name: Linux recovery (PostgreSQL ${{ matrix.postgres }})
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        postgres: ['16', '18.4']
     services:
       postgres:
-        image: postgres:16
+        image: postgres:${{ matrix.postgres }}
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -105,7 +110,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: rc1-linux-sigterm-${{ github.sha }}
+          name: rc1-linux-sigterm-pg${{ matrix.postgres }}-${{ github.sha }}
           path: tmp/rc1-linux-sigterm/
           if-no-files-found: error
           retention-days: 30
