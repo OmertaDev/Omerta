@@ -33,6 +33,11 @@ export function normalizeFamilyCustodySnapshot(input) {
     result[name] = sorted(data, key);
   }
   assert.equal(new Set(result.members.map((m) => m.character_id)).size, result.members.length, 'Character belongs to multiple Families');
+  for (const member of result.members) {
+    assert(result.families.some((f) => f.id === member.gang_id), 'Membership references an absent Family');
+    assert(result.characters.some((c) => c.id === member.character_id), 'Membership references an absent character');
+  }
+  for (const car of result.cars) assert(result.characters.some((c) => c.id === car.character_id), 'Car references an absent owner');
   for (const row of [...result.characters, ...result.families]) for (const [key, n] of Object.entries(row))
     if (['cash', 'bank', 'ammo', 'treasury', 'ammo_bank'].includes(key)) assert(!negative(n), 'Negative resource bucket');
   return result;
@@ -60,7 +65,9 @@ export function reconcileFamilyCashAmmo(beforeInput, afterInput, { operations = 
   const priorReceipts = new Map(before.transactions.map((r) => [r.id, r])), finalReceipts = new Map(after.transactions.map((r) => [r.id, r]));
   for (const [id, row] of priorReceipts) assert.deepEqual(finalReceipts.get(id), row, 'Historical receipt mutated/deleted: ' + id);
   const receipts = after.transactions.filter((r) => !priorReceipts.has(r.id));
-  const families = new Set(familyIds || [...before.families, ...after.families].map((r) => r.id));
+  const createdFamilyIds = operations.filter((op) => op.path === '/v1/gangs' && op.result?.status === 200 && op.result.replayed === false)
+    .map((op) => op.result.body?.gangId);
+  const families = new Set(familyIds || [...before.families.map((r) => r.id), ...after.families.map((r) => r.id), ...createdFamilyIds]);
   for (const id of families) assert([...before.families, ...after.families].some((r) => r.id === id), 'Unobserved Family scope: ' + id);
   const fresh = operations.filter((op) => op.result?.status === 200 && op.result.replayed === false);
   assert.equal(new Set(fresh.map((o) => o.accountId + '/' + o.idempotencyKey)).size, fresh.length, 'Duplicate fresh execution identity');

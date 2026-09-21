@@ -60,4 +60,9 @@ assert.equal(partial.qualifyingFullResourcePass, false);
 const decimalBefore = base(); decimalBefore.characters[0].bank = '0.000000000000000001';
 const decimalAfter = clone(decimalBefore); decimalAfter.characters[0].bank = '0.000000000000000002';
 assert.throws(() => reconcile(decimalBefore, decimalAfter), /Personal endpoint/); controls++;
+const orphan = base(); orphan.members[0].gang_id = 'unobserved';
+assert.throws(() => reconcile(orphan, orphan), /absent Family/); controls++;
+const ephemeral = clone(init); ephemeral.characters[0].cash = '5000'; ephemeral.transactions = clone(formed.transactions);
+assert.throws(() => reconcile(init, ephemeral, { operations: [op('a', '/v1/gangs', { gangId: 'f' }),
+  op('a', '/v1/gangs/leave', { dissolved: true })] }), /Unobserved Family/); controls++;
 console.log('PASS: exact Family cash/ammo journal, lifecycle lineage and ' + controls + ' corruption controls; OMR/war stay excluded');

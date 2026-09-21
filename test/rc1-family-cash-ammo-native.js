@@ -164,7 +164,10 @@ try {
   const again = await invoke(member, 'POST', '/v1/gangs/leave', undefined, 'last-leave', 'dissolution-exact-replay');
   assert(again.replayed); assert.deepEqual(again.body, dissolved.body);
   assert.equal((await proof.snapshot(pool, 'dissolve-after-replay')).stateSha256, preLastReplay.stateSha256);
-  await invariants('final'); const final = await proof.snapshot(pool, 'final'), trace = controller.diagnostic(); assert.equal(trace.failures.length, 0);
+  await invariants('final'); const final = await proof.snapshot(pool, 'final'), trace = controller.diagnostic();
+  const declaredFailure = { label: 'console.error', message: '[500] POST /v1/gangs/leave P0001: rc1 scoped late ammo ledger fault' };
+  assert.deepEqual(trace.failures, [declaredFailure], 'Only the exact declared injected failure may be retained');
+  await proof.artifact('expected-fault-classification.json', { expected: [declaredFailure], actual: trace.failures, unexpected: [] });
   const timerCounts = Object.fromEntries(['directorTick', 'guardedTick', 'guardedSeasonTick', 'health-boundary'].map((label) =>
     [label, trace.events.filter((e) => e.kind === 'timer.fire' && e.label === label).length]));
   const minutes = Math.floor((at - epoch) / 300000), hours = Math.floor((at - epoch) / 3600000);
