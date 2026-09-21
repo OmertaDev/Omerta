@@ -525,7 +525,7 @@
         "test/lib/rc1-browser-controls.js",
         "test/rc1-browser-board-refresh.js"
       ],
-      "retest": "Development deterministic browser controls pass: old Locator mismatch reproduced, interrupted selection submits zero, reissue submits exact identity once, unexplained detachment and wrong submitted identity rejected. Integrated native/hosted reruns pending.",
+      "retest": "Integratedf8b9b0d1 widths320/360/390 PASS50commands6interactions each;430 FAIL after32commands because pinned node detached before submission after the generation check. No browser JS errors. Whole golden gate remainsFAIL; failure and causal refinement retained. Hosted rerun required; b0failure retained.",
       "evidence": "Restricted b0c85c11-linux-pg16-failed.log and b0c85c11-linux-pg16/golden-browser.log; development controls retained; fresh integrated freeze required"
     },
     {
@@ -555,7 +555,7 @@
         "package.json",
         ".github/workflows/rc1-recovery.yml"
       ],
-      "retest": "Fresh integrated static gate and full hosted CI required; no pass inherited.",
+      "retest": "Integratedf8b9b0d1 static suite inventory and harness gate PASS. Full hosted rerun still required; b0hostedCI remainsFAIL.",
       "evidence": "Restricted b0c85c11-ci-failed.log; hosted35580189986"
     },
     {
@@ -569,7 +569,7 @@
         "tools/rc1-omr-loan-journal.js",
         "test/rc1-native-omr-loan-terminals.js"
       ],
-      "retest": "13868736 scoped native pass47boundaries2261equations13controls;186 artifacts across all3 attempts independently verified. Root integrated rerun pending.",
+      "retest": "13868736 scoped native pass47boundaries2261equations13controls;186 artifacts across all3 attempts independently verified. Root integrated rerun pending. Integratedf8b9b0d1 native47boundaries2261equations13controls PASS;68 artifacts independently verified.",
       "evidence": "omr-loan-terminal-summary.json"
     }
   ]

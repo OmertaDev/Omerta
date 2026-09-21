@@ -1,0 +1,527 @@
+{
+  "format": 1,
+  "status": "FAIL_HOSTED_CI",
+  "releaseReady": false,
+  "source": "b0c85c11dd636b04d92f8f017ca31982b9c63999",
+  "id": 35580189986,
+  "url": "https://github.com/OmertaDev/Omerta/actions/runs/35580189986",
+  "conclusion": "failure",
+  "metadataSha256": "21628082bd8ac10b735c8fbbcd955dbe2322aecc6d1f68bb73ec70b09aa7bde6",
+  "logSha256": "2aafaff014912fb0e445958827706b6e655637d320aa3c02d5270160d3214e7b",
+  "jobs": [
+    {
+      "name": "real Postgres (16)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-09-21T08:52:44Z",
+      "completedAt": "2026-09-21T09:06:29Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Initialize containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v7",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v7",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install PostgreSQL client tools matching the server major",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "pgquery (every SQL string parses on real Postgres)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "pgcheck (pooling, row locks, timeouts, migration, ledger)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Failed migration refuses startup, preserves stamp, and retries (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "RC1 command tampering, concurrent duplicate, and restart replay (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Moderator authentication and limiter precede body parsing (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Native diagnostic precision and actual commit boundary controls",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "RC1 scoped resource journals, concurrent retries and rollback (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "RC1 operation capital terminal custody and rollback (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Phase 2 definition registry (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Phase 2 dormant item boundary (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Coordination foundation and knowledge (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "World Graph kernel, knowledge gates, and migration (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Family operations, escrow, migration and concurrency (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Player projections and visibility snapshots (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Authored progression, scarce recipes and social prerequisites (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Player commands, replay and both playable story branches (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "RC1 telemetry cannot delay commands or establish permission (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Living World Director, three campaign branches and adversarial concurrency (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "stock catalog v2 finalized-observation consumer (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "RWA health H1 sweep, 2,048 versions (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "RWA registry lifecycle persistence (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "create throwaway databases for fee allocation and deed recovery",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "character mint DEV allocation and migration (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "deed event ordering and concurrent recovery (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "backup self-test (dump, verify, refuse, restore)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "create throwaway databases for the interruption + concurrency harnesses",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "chaos (interrupted sweeps, killed backends, torn two-party transfers)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "loadtest (concurrent players, deadlock counter, §10.4 delta)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "concurrency (idempotency exactly-once, single-winner escrow, AB-BA, exact take)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v7",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v7",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Stop containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "suites + sim (pg-mem)",
+      "status": "completed",
+      "conclusion": "failure",
+      "startedAt": "2026-09-21T08:52:43Z",
+      "completedAt": "2026-09-21T09:16:07Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v7",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v7",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Phase 1 world graph (deterministic package validation)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "knowledge artifacts carry the merge's own revision (main only)",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "npm test (the full suite, on pg-mem)",
+          "status": "completed",
+          "conclusion": "failure"
+        },
+        {
+          "name": "Invite-only launch admission and Crew allowance",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "RC1 telemetry isolation and complementary campaign regressions",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "RC1 private command diagnostics and passive confirmation regression",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "RC1 original worker scheduling and diagnostic harness controls",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "economy sim (§10.4 drift-0)",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "scale (population-scale market reachability + §10.4)",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "install chromium for the client harness",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Invite gate and Crew invitation controls in the browser",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "mobile (every screen at phone size — overflow, the fold, nav targets, page errors)",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Post Run actions/setup-node@v7",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Post Run actions/checkout@v7",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "real Postgres (18.4)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-09-21T08:52:42Z",
+      "completedAt": "2026-09-21T09:05:10Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Initialize containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v7",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v7",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install PostgreSQL client tools matching the server major",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "pgquery (every SQL string parses on real Postgres)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "pgcheck (pooling, row locks, timeouts, migration, ledger)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Failed migration refuses startup, preserves stamp, and retries (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "RC1 command tampering, concurrent duplicate, and restart replay (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Moderator authentication and limiter precede body parsing (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Native diagnostic precision and actual commit boundary controls",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "RC1 scoped resource journals, concurrent retries and rollback (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "RC1 operation capital terminal custody and rollback (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Phase 2 definition registry (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Phase 2 dormant item boundary (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Coordination foundation and knowledge (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "World Graph kernel, knowledge gates, and migration (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Family operations, escrow, migration and concurrency (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Player projections and visibility snapshots (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Authored progression, scarce recipes and social prerequisites (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Player commands, replay and both playable story branches (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "RC1 telemetry cannot delay commands or establish permission (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Living World Director, three campaign branches and adversarial concurrency (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "stock catalog v2 finalized-observation consumer (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "RWA health H1 sweep, 2,048 versions (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "RWA registry lifecycle persistence (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "create throwaway databases for fee allocation and deed recovery",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "character mint DEV allocation and migration (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "deed event ordering and concurrent recovery (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "backup self-test (dump, verify, refuse, restore)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "create throwaway databases for the interruption + concurrency harnesses",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "chaos (interrupted sweeps, killed backends, torn two-party transfers)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "loadtest (concurrent players, deadlock counter, §10.4 delta)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "concurrency (idempotency exactly-once, single-winner escrow, AB-BA, exact take)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v7",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v7",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Stop containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "failure": "RC1-TOOL-35 suite inventory rejects retained private Family verifier without a precise declaration; failure is not waived by passing PostgreSQL jobs",
+  "subsequentScope": "Integratedf8b9b0d1 static inventory and harness controls pass locally; complete hosted rerun remains required"
+}
