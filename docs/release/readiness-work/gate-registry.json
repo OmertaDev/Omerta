@@ -9,6 +9,27 @@
   "note": "Pinned required command inventory across the four source workflows. Preserve each workflow setup, database isolation, platform, environment and budgets. A component regression pass does not clear a full native, deployed, or human proof.",
   "gates": [
     {
+      "id": "rc1-harness-units",
+      "command": ["npm", "run", "test:rc1:harness"],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": ["Harness controls alone do not execute a full native world"]
+    },
+    {
+      "id": "rc1-observers",
+      "command": ["npm", "run", "test:rc1:observers:postgres"],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": ["Read-only diagnostic precision and serialized SQL boundary controls; complete movement taxonomy remains required"]
+    },
+    {
+      "id": "rc1-reviewer-authority",
+      "command": ["npm", "run", "test:rc1:reviewer-authority:postgres"],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": ["Four reviewer transport perimeters only; privileged domain transitions and external integration remain required"]
+    },
+    {
       "id": "rc1-mod-ingress",
       "command": ["npm", "run", "test:rc1:mod-ingress:postgres"],
       "timeoutMs": 600000,

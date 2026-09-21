@@ -96,6 +96,9 @@ jobs:
       - name: RC1 private command diagnostics and passive confirmation regression
         run: npm run test:rc1:observability
 
+      - name: RC1 original worker scheduling and diagnostic harness controls
+        run: npm run test:rc1:harness
+
       - name: economy sim (§10.4 drift-0)
         run: npm run sim
 
@@ -225,6 +228,12 @@ jobs:
           COORDINATION_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check
           RC1_MOD_INGRESS_OUTPUT: ${{ runner.temp }}/rc1-mod-ingress
         run: npm run test:rc1:mod-ingress:postgres
+
+      - name: Native diagnostic precision and actual commit boundary controls
+        if: '!cancelled()'
+        env:
+          COORDINATION_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check
+        run: npm run test:rc1:observers:postgres
 
       - name: RC1 scoped resource journals, concurrent retries and rollback (real PostgreSQL)
         if: '!cancelled()'

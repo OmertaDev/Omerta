@@ -182,6 +182,13 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:legacy-authority:postgres
+      - name: Separate native reviewer credential perimeter
+        if: '!cancelled()'
+        env:
+          RC1_REVIEWER_AUTHORITY_OUTPUT: ${{ runner.temp }}/rc1-reviewer-authority
+        run: |
+          umask 077
+          npm run test:rc1:reviewer-authority:postgres
   original-resource-timers:
     name: Original resource timers (PostgreSQL ${{ matrix.postgres }})
     runs-on: ubuntu-latest
