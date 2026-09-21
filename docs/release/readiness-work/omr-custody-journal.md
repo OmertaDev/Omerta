@@ -39,8 +39,8 @@ with a loopback administrative `RC1_RESOURCE_DATABASE_URL`. It allocates its own
 database and retains it; it never broadcasts, enables a rail or contacts a
 provider. External integration environment values are refused.
 
-Initial fixtures allocate5000 OMR each to three accounts from the retired20000
-OMR AMM seed, leaving5000; they do not add in-game supply. Default characters have
+Initial fixtures allocate5000/5000/10.011 OMR to three accounts from the retired20000
+OMR AMM seed, leaving9989.989; they do not add in-game supply. Default characters have
 cash500/ammo25. The initial exchange cash till and lifetime funding100000 are a
 declared fixture, not naturally earned revenue. All later world changes are
 canonical. The existing logical clock drives all original local worker deadlines
@@ -73,8 +73,19 @@ Inspected boundaries: authenticated actor→global request reservation/store→
 `withCharacter`/`withTwoCharacters` locks and persistence; `spendOmr`→`ledger`→desk
 recycling; `redeem`→Family yield and cash till; stake/unstake→`accrue`; loan
 offer/take/repay→active escrow. Fixed-string native searches and native controls
-are the scoped static/property checks. No source repair or confirmed vulnerability
-is asserted by this guide. Any executed failure stays attached to its source.
+are the scoped static/property checks. Any executed failure stays attached to its source.
+
+Native run8558ac56 confirmed **RC1-OMR-PRECISION-01 (P2)**: redeeming6.000011
+from5000 persisted4993.999989000001 while receiving buckets gained6.000011.
+Independent native SQL and arbitrary-scale integer sums confirmed a global
+0.000000000001 excess. The column is unconstrained NUMERIC, contrary to the old
+comment. Runtime-only repair94a802b7 keeps window split/cash-floor arithmetic in
+integer micro-OMR and subtracts its debit exactly from the original decimal balance.
+Historical subatomic value is preserved, not cleaned up. No explicit subatomic
+request-rounding contract was found in the route/design/tests; such input now
+receives a precision refusal before mutation. Trailing-zero and scientific decimal
+representations remain accepted. `test/rc1-omr-exchange.js` covers these arithmetic
+boundaries and old dust preservation; native retests determine the repair status.
 
 Cross-domain dependencies remain explicit: correct authentication and request
 binding, native transaction rollback/locking, complete original logical clocks,

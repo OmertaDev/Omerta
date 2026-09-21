@@ -19,7 +19,7 @@ for (const name of ['CHAIN_RPC_URL', 'CHAIN_SIGNER_PK', 'INVARIANT_WEBHOOK_URL',
 const epoch = Date.parse('2026-09-20T12:00:00Z'), hours = 6;
 const configuration = { sourcePins: WORKER_SOURCE_PINS, epoch: new Date(epoch).toISOString(), logicalHours: hours,
   authority: 'Canonical HTTP injection and original local worker callbacks; completed boundary journal, not per-SQL-commit classification',
-  fixture: 'Three ordinary characters with schema-default cash500/ammo25/respect0. Before baseline allocate5000OMR each from retired20000OMR AMM seed, leaving5000. Initial exchange cash till100000 and lifetime_funded100000 are declared fixtures.',
+  fixture: 'Three ordinary characters with schema-default cash500/ammo25/respect0. Before baseline allocate5000/5000/10.011OMR from retired20000OMR AMM seed, leaving9989.989. Initial exchange cash till100000 and lifetime_funded100000 are declared fixtures.',
   clocks: 'Original six-hour unbond deadline with shared logical application/PostgreSQL clock and every local worker deadline; no persisted timer/status edits',
   controls: 'Corrupt copies of retained native before/after journal inputs, never the live world; SQL rollback trigger changes no gameplay row',
   exclusions: [...OMR_UNSUPPORTED, 'Natural acquisition, real HTTP transport/browser, literal6h wall time, deployment, provider/chain and full resource matrix'],
@@ -74,11 +74,11 @@ try {
   await proof.record({ kind: 'database-version', ...(await pool.query('SELECT version() AS version')).rows[0] });
   for (const actor of actors) {
     await pool.query("INSERT INTO accounts(id,auth_provider,auth_subject) VALUES($1,'test',$1)", [actor]);
-    await pool.query('INSERT INTO account_persistent(account_id,omr) VALUES($1,5000)', [actor]);
+    await pool.query('INSERT INTO account_persistent(account_id,omr) VALUES($1,$2)', [actor, actor === actors[2] ? '10.011' : '5000']);
     await pool.query('INSERT INTO characters(id,account_id,name,season) VALUES($1,$1,$1,$2)', [actor, Math.floor(epoch / 2419200000)]);
     tokens.set(actor, app.jwt.sign({ sub: actor, tv: 0 }));
   }
-  await pool.query('UPDATE amm_pool SET omr_reserve=omr_reserve-15000 WHERE id=1');
+  await pool.query('UPDATE amm_pool SET omr_reserve=omr_reserve-10010.011 WHERE id=1');
   await pool.query('UPDATE exchange_pool SET balance=100000,lifetime_funded=100000 WHERE id=1');
   const { runLedgerInvariants } = await import('../src/invariants.js');
   const invariant = async label => { const value = await runLedgerInvariants(pool, { alert: false }); await proof.record({ kind: 'canonical-invariants', label, value }); assert(value.ok, label); invariants++; };
@@ -88,7 +88,14 @@ try {
   await replay('window:exact-retry', actors[0], '/v1/window/redeem', 'window-a', { amount: 6.000011 }, redeem);
   await observe('window:changed-body-refused', () => call(actors[0], '/v1/window/redeem', 'window-a', { amount: 7 }, [422]), unchanged);
   await observe('window:fractional-round-down', () => call(actors[1], '/v1/window/redeem', 'window-b', { amount: 6.000009 }));
+  await observe('window:half-micro-cut-concurrent-duplicate', async () => {
+    const values = await Promise.all([1, 2].map(() => call(actors[0], '/v1/window/redeem', 'window-race', { amount: 6.000010 }, [200, 409])));
+    assert(values.some(row => row.status === 200)); return values.map(row => ({ status: row.status, replayed: row.replayed }));
+  }, ({ journal }) => assert.equal(journal.lineage.length, 2));
   await observe('window:below-minimum-refused', () => call(actors[2], '/v1/window/redeem', 'window-too-small', { amount: 5.999999 }, [400]), unchanged);
+  await observe('window:subatomic-refused', () => call(actors[2], '/v1/window/redeem', 'window-subatomic', { amount: 6.0000001 }, [400]), unchanged);
+  await observe('window:full-balance', () => call(actors[2], '/v1/window/redeem', 'window-full', { amount: 10.011 }),
+    ({ after }) => assert.equal(omrUnits(after.account_persistent.find(row => row.account_id === actors[2]).omr), 0n));
   await pool.query(`CREATE FUNCTION rc1_omr_abort() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN
     IF NEW.account_id='omr-a' AND NEW.omr<OLD.omr THEN
       IF NOT EXISTS(SELECT 1 FROM transactions WHERE account_id=NEW.account_id AND currency='omr' AND reason='vanity:name')
@@ -139,6 +146,7 @@ try {
   await corrupt('wrong-receipt-owner', 'stake:fractional-floor', input => { input.after.idempotency.find(row => row.key === 'stake-a').account_id = actors[2]; });
   await corrupt('wrong-request-hash', 'stake:fractional-floor', input => { input.after.idempotency.find(row => row.key === 'stake-a').body_hash = '0'.repeat(64); });
   await corrupt('wrong-fraction-rounding', 'stake:fractional-floor', input => { const row = input.after.idempotency.find(row => row.key === 'stake-a'), body = JSON.parse(row.response); body.staked = 10.123457; row.response = JSON.stringify(body); });
+  await corrupt('wrong-window-cut-rounding', 'window:fractional-round-up', input => { const row = input.after.idempotency.find(row => row.key === 'window-a'), body = JSON.parse(row.response); body.familyCut = 0.3; row.response = JSON.stringify(body); });
   await corrupt('missing-recycle', 'sink:retry-after-rollback', input => { input.after.transactions = input.after.transactions.filter(row => !(row.reason === 'desk:recycle' && !input.before.transactions.some(old => old.id === row.id))); });
   await corrupt('duplicate-recycle', 'sink:retry-after-rollback', input => { const row = input.after.transactions.find(row => row.reason === 'desk:recycle' && !input.before.transactions.some(old => old.id === row.id)); input.after.transactions.push({ ...row, id: 'duplicate-recycle' }); });
   await corrupt('wrong-loan-owner', 'loan:pledge', input => { input.after.transactions.find(row => row.reason === 'loan:pledge').account_id = actors[2]; });
