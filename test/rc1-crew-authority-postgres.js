@@ -13,6 +13,7 @@ Object.assign(process.env, { RATE_LIMIT: 'off', INVITE_MODE: 'off', POPULATION_O
 const source = await sourceIdentity(), directory = path.resolve(process.env.RC1_CREW_AUTHORITY_OUTPUT || `output/rc1-crew-authority-${source.revision.slice(0, 8)}`);
 const { commandDatabase, addPlayer, characterId } = await import('./lib/player-command-support.js');
 const { buildServer } = await import('../src/server.js');
+const { CREW } = await import('../src/rules.js');
 const configuration = { phase: 'local-prerelease', database: 'explicit loopback private schema', originalWorkers: false,
   fixtures: 'Seven funded level-eligible living players and one account without character; initial last_accrued_at one hour ahead isolates separately committed accrual. All Crew memberships, invites, requests, targets and chat use canonical HTTP.',
   authorityComparison: 'All current-schema tables except persistent HTTP idempotency transport cache; one PostgreSQL MVCC statement; no sequence or worker-concurrency claim',
@@ -43,13 +44,13 @@ async function call(role, method, url, payload = {}, key = crypto.randomUUID()) 
 async function ok(...args) { const row = await call(...args); assert.equal(row.status, 200, `${row.method} ${row.url}: ${JSON.stringify(row.body)}`); return row; }
 async function snapshot() {
   const rows = (await app.pool.query(stateSQL)).rows.sort((a, b) => a.name.localeCompare(b.name)), hash = sha256(canonicalJson(rows));
-  if (!snapshots.has(hash)) { await proof.artifact(`states/${hash}.json`, rows); snapshots.add(hash); }
+  if (!snapshots.has(hash)) { await proof.artifact(`state-${hash}.json`, rows); snapshots.add(hash); }
   return { hash, rows };
 }
 async function deny(id, error, role, method, url, payload = {}, status = 400) {
   const before = await snapshot(), row = await call(role, method, url, payload), after = await snapshot();
-  const entry = { id, expectedStatus: status, expectedError: error, request: row, before: before.hash, after: after.hash, status: 'FAIL' }; cases.push(entry);
-  await proof.artifact(`denials/${String(cases.length).padStart(3, '0')}.json`, entry);
+  const entry = { id, expectedStatus: status, expectedError: error, request: row, before: before.hash, after: after.hash, status: 'CHECKING' }; cases.push(entry);
+  await proof.artifact(`denial-${String(cases.length).padStart(3, '0')}.json`, entry);
   assert.equal(row.status, status, `${id}: ${JSON.stringify(row.body)}`);
   if (error) assert.equal(row.body.error, error, id);
   assert.deepEqual(after.rows, before.rows, `${id}: rejected request changed authority`);
@@ -136,7 +137,7 @@ try {
   await proof.artifact('restart-bootstrap.json', { before: restartBefore.hash, after: restartAfter.hash, note: 'Bootstrap compared separately; replay comparisons include every authority table before/after each retry.' });
   for (const [id, row] of [['kick', kicked], ['accepted-then-left', accept], ['chat-after-revocation', chat], ['target-cleared', target]]) await retry(`restart-${id}`, row);
   const crewRows = (await app.pool.query('SELECT c.id,c.leader_account,count(m.account_id)::int members FROM crews c LEFT JOIN crew_members m ON m.crew_id=c.id GROUP BY c.id,c.leader_account ORDER BY c.id')).rows;
-  assert(crewRows.every(row => row.members >= 1 && row.members <= 4));
+  assert(crewRows.every(row => row.members >= 1 && row.members <= CREW.MAX_MEMBERS));
   const final = await snapshot();
   const balances = snapshotRows => JSON.parse(snapshotRows.find(row => row.name === 'characters').rows).map(row => ({ id: row.id, cash: row.cash, bank: row.bank, ammo: row.ammo, cb: row.cb })).sort((a,b)=>a.id.localeCompare(b.id));
   assert.deepEqual(balances(final.rows), balances(initial.rows), 'Coordination-only actions moved character resources');
