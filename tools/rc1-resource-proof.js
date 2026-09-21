@@ -256,15 +256,27 @@ try {
   await observed('loan:cancel-replay', async () => { const response = await call(lender, `/v1/loans/${cancelledLoan}/cancel`, key('loan-cancel')); assert(response.replayed); return response; }, unchanged);
   const activeLoan = (await postLoan('pledge')).body.id;
   await observed('loan:directed-take-denial', () => call(actors[4], `/v1/loans/${activeLoan}/take`, key('loan-foreign'), [400]), unchanged);
-  await observed('loan:take-and-omr-pledge', () => call(borrower, `/v1/loans/${activeLoan}/take`, key('loan-take')), (proof) => {
-    const authority = loanAuthority(proof); assert.equal(proof.result.body.pledgedOmr, pledge);
+  const loanTake = await observed('loan:take-and-omr-pledge', () => Promise.all([
+    call(borrower, `/v1/loans/${activeLoan}/take`, key('loan-take'), [200, 409]),
+    call(borrower, `/v1/loans/${activeLoan}/take`, key('loan-take'), [200, 409]),
+  ]), (proof) => {
+    const committed = proof.result.filter((row) => row.status === 200); assert(committed.length);
+    for (const response of committed) assert.deepEqual(response.body, committed[0].body, 'Concurrent successful loan take responses match exactly');
+    const authority = loanAuthority(proof); assert.equal(committed[0].body.pledgedOmr, pledge);
     assert.equal(proof.receipts.transactions.length, 2);
     proof.movements.push(equation({ resource: 'cash', owner: borrower.character, before: cash(proof.before, borrower), after: cash(proof.after, borrower), transferredIn: principal, authority }));
     proof.movements.push(equation({ resource: 'cash', owner: 'loans:open', before: cashEscrow(proof.before), after: cashEscrow(proof.after), transferredOut: principal, authority }));
     proof.movements.push(equation({ resource: 'OMR', owner: borrower.id, before: omr(proof.before, borrower), after: omr(proof.after, borrower), transferredOut: pledge, authority }));
     proof.movements.push(equation({ resource: 'OMR', owner: 'loans:active-collateral', before: omrEscrow(proof.before), after: omrEscrow(proof.after), transferredIn: pledge, authority }));
   });
-  await observed('loan:take-replay', async () => { const response = await call(borrower, `/v1/loans/${activeLoan}/take`, key('loan-take')); assert(response.replayed); return response; }, unchanged);
+  await observed('loan:take-replay', async () => {
+    const response = await call(borrower, `/v1/loans/${activeLoan}/take`, key('loan-take')); assert(response.replayed);
+    assert.deepEqual(response.body, loanTake.find((row) => row.status === 200).body); return response;
+  }, unchanged);
+  await observed('loan:take-active-new-key-denied', async () => {
+    const response = await call(borrower, `/v1/loans/${activeLoan}/take`, key('loan-take-active'), [400]);
+    assert.equal(response.body.error, 'gone'); return response;
+  }, unchanged);
   await observed('loan:repay-and-omr-refund', () => call(borrower, `/v1/loans/${activeLoan}/repay`, key('loan-repay')), (proof) => {
     const authority = loanAuthority(proof), result = proof.result.body;
     assert.equal(result.pledgeReturned, pledge);
@@ -374,6 +386,57 @@ try {
     const response = await call(actors[2], '/v1/shipment/commission/case', commissionKey); assert(response.replayed);
     assert.deepEqual(response.body, commission.find((row) => row.status === 200).body); return response;
   }, unchanged);
+  const concurrentOwners = actors.slice(3, 5), ownerKeys = concurrentOwners.map((actor) => key(`commission-owner-${actor.id}`));
+  // commissionPiece has already debited its cash/material working state, written
+  // the cash receipt, and allocated the serial when this real PostgreSQL trigger
+  // aborts the output INSERT. The entire transaction must disappear, including
+  // the serial allocation, so retrying the original key cannot leave a hole.
+  await app.pool.query(`CREATE FUNCTION rc1_fail_bespoke_output() RETURNS trigger LANGUAGE plpgsql AS $$
+    BEGIN RAISE EXCEPTION 'rc1 deliberate bespoke output failure'; END $$`);
+  await app.pool.query('CREATE TRIGGER rc1_fail_bespoke_output BEFORE INSERT ON bespoke_pieces FOR EACH ROW EXECUTE FUNCTION rc1_fail_bespoke_output()');
+  try {
+    await observed('shipment:failure-between-debit-and-output', () =>
+      call(concurrentOwners[0], '/v1/shipment/commission/case', ownerKeys[0], [500]), unchanged);
+  } finally {
+    await app.pool.query('DROP TRIGGER rc1_fail_bespoke_output ON bespoke_pieces');
+    await app.pool.query('DROP FUNCTION rc1_fail_bespoke_output()');
+  }
+  const ownerCommissions = await observed('shipment:distinct-owner-concurrent-serials', () => Promise.all(concurrentOwners.map((actor, index) =>
+    call(actor, '/v1/shipment/commission/case', ownerKeys[index]))), (proof) => {
+    const priorSerial = Number(proof.before.serials.find((row) => row.commission_id === piece.id).minted);
+    const nextSerial = Number(proof.after.serials.find((row) => row.commission_id === piece.id).minted);
+    assert.equal(nextSerial, priorSerial + concurrentOwners.length, 'Aborted allocation left no serial hole');
+    assert.deepEqual(proof.result.map((row) => row.body.piece.serial).sort((a, b) => a - b),
+      [priorSerial + 1, priorSerial + 2], 'Distinct owners receive distinct contiguous serials');
+    assert.equal(proof.after.pieces.length - proof.before.pieces.length, concurrentOwners.length);
+    assert.equal(proof.receipts.transactions.length, concurrentOwners.length, 'One cash receipt per actual commission');
+    assert.equal(exactSum([summed(proof.after, 'cash'), negate(summed(proof.before, 'cash'))]), String(-piece.cash * concurrentOwners.length));
+    assert.equal(exactSum([summed(proof.after, 'shipment'), negate(summed(proof.before, 'shipment'))]), String(-piece.units * concurrentOwners.length));
+    for (const [index, actor] of concurrentOwners.entries()) {
+      const receipt = proof.receipts.transactions.filter((row) => row.character_id === actor.character
+        && row.reason === 'shipment:commission' && row.currency === 'cash');
+      assert.equal(receipt.length, 1); assert.equal(receipt[0].amount, String(-piece.cash));
+      const ownedBefore = proof.before.pieces.filter((row) => row.account_id === actor.id && row.commission_id === piece.id);
+      const ownedAfter = proof.after.pieces.filter((row) => row.account_id === actor.id && row.commission_id === piece.id);
+      assert.equal(ownedBefore.length, 0); assert.equal(ownedAfter.length, 1);
+      assert.equal(ownedAfter[0].serial, proof.result[index].body.piece.serial, 'Each response names its owner actual output');
+      const authority = [{ table: 'transactions', id: receipt[0].id, reason: receipt[0].reason },
+        { table: 'bespoke_pieces', account: actor.id, commission: piece.id, serial: ownedAfter[0].serial,
+          rule: `SHIPMENT.COMMISSIONS.${piece.id}: ${piece.units} material + ${piece.cash} cash` }];
+      proof.movements.push(equation({ resource: 'cash', owner: actor.character, before: cash(proof.before, actor),
+        after: cash(proof.after, actor), destroyed: piece.cash, authority }));
+      proof.movements.push(equation({ resource: 'shipment-material', owner: actor.character, before: material(proof.before, actor),
+        after: material(proof.after, actor), destroyed: piece.units, authority }));
+      proof.movements.push(equation({ resource: `bespoke:${piece.id}`, owner: actor.id,
+        before: ownedBefore.length, after: ownedAfter.length, created: 1, authority }));
+    }
+  });
+  for (const [index, actor] of concurrentOwners.entries()) {
+    await observed(`shipment:distinct-owner-exact-replay:${actor.id}`, async () => {
+      const response = await call(actor, '/v1/shipment/commission/case', ownerKeys[index]); assert(response.replayed);
+      assert.deepEqual(response.body, ownerCommissions[index].body); return response;
+    }, unchanged);
+  }
   await invariantCheckpoint('all-resource-commands');
   const restartBefore = await resourceSnapshot(app.pool);
   await app.close(); await app.pool.end(); app = await buildServer();

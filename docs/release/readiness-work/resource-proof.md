@@ -34,7 +34,12 @@ action to verify that exit status, first-failure snapshots and receipts survive.
 The workload covers both legacy campaign cash branches; OMR paid rarity and desk
 recycling; Family cash/OMR tribute; loan offer/cancel/take/repay with OMR collateral;
 car salvage and exact hardening inputs/cash/output; daily shipment cap exhaustion
-and a commission. It retains canonical HTTP keys, request/completion order,
+and commissions. A late PostgreSQL output failure must roll back cash, material,
+receipts and the allocated bespoke serial; two distinct owners then commission
+concurrently and receive contiguous, unique serials with one charge each. A
+concurrent loan-take duplicate locks one cash release and one OMR pledge, preserves
+the exact response on retry, and rejects a new key after activation. The workload
+retains canonical HTTP keys, request/completion order,
 transaction and item receipts, exact decimal equations, initial/final snapshots,
 and hashes. Concurrent identical HTTP requests are checked at one post-batch
 committed boundary; a permitted in-progress conflict is followed by an exact retry.

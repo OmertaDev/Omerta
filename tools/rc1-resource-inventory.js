@@ -20,7 +20,7 @@ export const resourceCategories = [
 
 const rows = [
   ['C02-OMR', 'authenticated account; lender/borrower; deployment chain roles', 'HTTP account + Idempotency-Key + method/path/body hash; chain nonce/event identity',
-    ['omr:rarity-recycles-to-desk', 'loan:take-and-omr-pledge', 'loan:repay-and-omr-refund'],
+    ['omr:rarity-recycles-to-desk', 'loan:take-and-omr-pledge', 'loan:take-replay', 'loan:take-active-new-key-denied', 'loan:repay-and-omr-refund'],
     ['player-to-desk recycling', 'nonzero pledge', 'pledge refund', 'collateral seizure', 'mint', 'burn', 'backing', 'aggregate custody'],
     ['collateral seizure', 'mint/burn and backed creation receipts', 'deployed backing attestation']],
   ['C02-CAMPAIGN-CASH', 'current living character owns completed unclaimed legacy campaign', 'character/campaign claimed latch plus HTTP account/key/request hash',
@@ -50,9 +50,9 @@ const rows = [
     ['paid rarity', 'extraction', 'expiry', 'return/import', 'backing', 'mutually exclusive chain/game custody', 'disabled-rail server denial'],
     ['extraction/expiry/import', 'backing and exclusive chain/game custody', 'deployment rail inventory and denial/attestation']],
   ['C02-SHIPMENT-MATERIAL', 'living character at current shipment district; eligible commission owner', 'day/character cap; HTTP account/key/request hash; bespoke_serials and pieces identity',
-    ['shipment:take:resource-actor-2', 'shipment:take-replay-after-city-exhaustion', 'shipment:player-cap-new-key', 'shipment:concurrent-commission', 'shipment:commission-lost-response-retry', 'shipment:server-reopen-replay'],
+    ['shipment:take:resource-actor-2', 'shipment:take-replay-after-city-exhaustion', 'shipment:player-cap-new-key', 'shipment:concurrent-commission', 'shipment:commission-lost-response-retry', 'shipment:failure-between-debit-and-output', 'shipment:distinct-owner-concurrent-serials', 'shipment:distinct-owner-exact-replay:resource-actor-3', 'shipment:distinct-owner-exact-replay:resource-actor-4', 'shipment:server-reopen-replay'],
     ['capped creation', 'cash debit', 'material consumption', 'exactly one bespoke serial', 'concurrent duplicate', 'replay', 'boundary time', 'rollback'],
-    ['midnight boundary with application/database clocks aligned', 'material/cash/serial rollback injection', 'distinct-owner simultaneous serial allocation']],
+    ['midnight boundary with application/database clocks aligned']],
 ];
 export const resourceGaps = rows.map(([id, authorization, replayIdentity, nativeScenarios, requiredBranches, missingNativeBranches]) => ({ id,
   owner: 'Codex/resource_proof', status: 'OPEN_REQUIRED_PROOF', authorization, replayIdentity, nativeScenarios, requiredBranches,
