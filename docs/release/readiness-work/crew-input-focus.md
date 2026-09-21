@@ -30,6 +30,15 @@ holds the newer read after releasing the older one; it does not claim impossible
 reversed wire completion within that queue.
 It does not claim every renderer or possible focus race is repaired.
 
+Review added a second causal control at `320254b83b030d5b5c9f94630038a0e21d4ab67a`:
+the initial repair still replaced the unsent input after Tab focused Send and the
+deferred refresh ran. That failed run is retained separately. The follow-up also
+treats focused Send with a nonempty draft as editing. The regression waits for the
+actual scheduled canonical read, verifies both nodes and the draft survive, then
+submits the exact draft once with ordinary Enter. After successful submission and
+interaction exit, fresh rendering must still complete. This does not bypass
+action-completion refresh or broaden an overlay exception.
+
 A separate native run at `257212c47cbafa9d59d7cb0da3c866bb820e3bc9` passed the
 focus assertion, then failed control reachability because a finite `#toast.show`
 covered Crew Send. The helper now waits once, at most 5 seconds, only after the
