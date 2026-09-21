@@ -43,7 +43,7 @@ const actors = ['omr-a', 'omr-b', 'omr-c'], tokens = new Map(), calls = [], case
 let pool, app, result, boundaries = 0, equations = 0, movements = 0, invariants = 0, injected = false, firstFailure = false;
 async function call(accountId, url, key, payload, statuses = [200], method = 'POST') {
   const response = await app.inject({ method, url, payload, headers: { authorization: `Bearer ${tokens.get(accountId)}`, ...(key ? { 'idempotency-key': key } : {}) } });
-  const row = { accountId, method, url, key, payload, status: response.statusCode, replayed: response.headers['x-idempotent-replay'] === 'true' };
+  const row = { accountId, method, url, key, payload: payload ?? null, status: response.statusCode, replayed: response.headers['x-idempotent-replay'] === 'true' };
   calls.push(row); const body = response.json(); await proof.record({ kind: 'canonical-http-receipt', ...row, body });
   assert(statuses.includes(response.statusCode), `${url}: ${response.statusCode} ${JSON.stringify(body)}`); return { ...row, body };
 }

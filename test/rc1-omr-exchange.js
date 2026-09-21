@@ -6,7 +6,7 @@ let checks = 0;
 async function run(balance, amount) {
   const ch = { cash: 500, id: 'exchange-control' }, ledger = [], h = { acct: { omr: balance }, accountId: 'control',
     async ledger(_client, row) { ledger.push(row); } };
-  const client = { async query(sql) { return { rows: sql.startsWith('SELECT balance') ? [{ balance: '1000000' }] : [] }; };
+  const client = { async query(sql) { return { rows: sql.startsWith('SELECT balance') ? [{ balance: '1000000' }] : [] }; } };
   const response = await redeem(ch, amount, client, h);
   const debits = ledger.filter(row => row.currency === 'omr').map(row => row.amount);
   assert.equal(exactSum([h.acct.omr, negate(balance), ...debits.map(negate)]), '0', 'No decimal residual may be created or destroyed');
