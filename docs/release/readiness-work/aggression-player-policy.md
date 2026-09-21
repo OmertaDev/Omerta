@@ -84,6 +84,12 @@ The initial native attempt at `b67c1698` failed before server startup because th
 test omitted the mandatory moderator credential. Its failed run remains retained.
 The harness now creates that local test credential alongside its JWT/market test
 configuration; it does not disable or weaken deployment preflight.
+The second attempt at `bd2b7a61` used the invalid mode name `OFF` for the Director.
+It failed during server startup and preserved the cleanup refusal while its pool
+was connected. After that test process exited, the exact database name, OID and
+ownership marker were checked and the database closed with zero other sessions.
+The harness uses `DIRECTOR_DISABLED` and validates that configuration before server
+allocation. This scoped combat exercise never claimed Director/worker coverage.
 
 Death, heirs, replacement, all other conflict authorities, full resource journals,
 complete worker intervals, 90-day lifecycles, all 225 runs, whole-policy accounting
