@@ -80,12 +80,12 @@ if (process.argv.includes('--child')) {
     MOD_KEY: crypto.randomBytes(32).toString('hex'), RATE_LIMIT: 'off', SOCIAL_VERIFY_MODE: 'off', INVITE_MODE: 'on',
     CORE_PROGRESSION: 'on', WORLD_GRAPH_KERNEL: 'on', COORDINATION_ENGINE: 'on', COORDINATION_KNOWLEDGE: 'on',
     COORDINATION_KNOWLEDGE_SHARING: 'on', COORDINATION_OPERATIONS: 'on', COORDINATION_ACCOUNT_IDS: '',
-    LIVING_WORLD_DIRECTOR: 'OFF', WORLD_TELEMETRY: 'off', CHAIN_ENABLED: 'off' };
+    LIVING_WORLD_DIRECTOR: 'DIRECTOR_DISABLED', CHAIN_ENABLED: 'off' };
   for (const key of Object.keys(env)) if (/WEBHOOK|RPC_URL|PRIVATE_KEY/.test(key)) delete env[key];
   await put('configuration.json', { flags: Object.fromEntries(Object.entries(env).filter(([key]) =>
     ['NODE_ENV', 'RATE_LIMIT', 'SOCIAL_VERIFY_MODE', 'INVITE_MODE', 'CORE_PROGRESSION', 'WORLD_GRAPH_KERNEL',
       'COORDINATION_ENGINE', 'COORDINATION_KNOWLEDGE', 'COORDINATION_KNOWLEDGE_SHARING', 'COORDINATION_OPERATIONS',
-      'LIVING_WORLD_DIRECTOR', 'WORLD_TELEMETRY', 'CHAIN_ENABLED'].includes(key))),
+      'LIVING_WORLD_DIRECTOR', 'CHAIN_ENABLED'].includes(key))),
     secrets: 'Fresh test-only random JWT_SECRET/MARKET_SEED/MOD_KEY shared across the four processes; values omitted',
     fixture: { accounts, helper: 'predecessor test/lib/player-command-support.js:addPlayer',
       measuredTransitions: 'Canonical HTTP Player Commands after initial fixtures' } });
