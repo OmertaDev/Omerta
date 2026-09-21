@@ -12,7 +12,13 @@ import { resourceInventory } from './rc1-resource-inventory.js';
 
 const git = (...args) => execFileSync('git', args, { encoding: 'utf8' }).trim();
 const development = process.argv.includes('--development');
+const sourceFiles = () => git('ls-files', '--', 'src', 'content', 'schema.sql', 'package.json', 'package-lock.json',
+  'tools/rc1-resource-proof.js', 'tools/rc1-resource-journal.js', 'tools/rc1-resource-inventory.js', 'test/rc1-resource-journal.js')
+  .split(/\r?\n/).filter(Boolean).sort();
+const sourceBytes = () => Object.fromEntries(sourceFiles().map((file) => [file,
+  crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex')]));
 const source = { commit: git('rev-parse', 'HEAD'), clean: !git('status', '--porcelain'),
+  relevantFileHashes: sourceBytes(),
   lockfileSha256: sha256(fs.readFileSync('package-lock.json', 'utf8')),
   schemaSha256: sha256(fs.readFileSync('schema.sql', 'utf8')) };
 assert(development || source.clean, 'Commit source before an evidence campaign; --development only produces diagnostic evidence');
@@ -21,7 +27,7 @@ const endpoint = new URL(process.env.RC1_RESOURCE_DATABASE_URL);
 assert(['postgres:', 'postgresql:'].includes(endpoint.protocol));
 assert(['127.0.0.1', 'localhost', '[::1]'].includes(endpoint.hostname), 'Only loopback PostgreSQL is allowed');
 const runId = `resource-${source.commit.slice(0, 12)}-${crypto.randomBytes(5).toString('hex')}`;
-const output = path.resolve(process.env.RC1_RESOURCE_OUTPUT || `docs/release/readiness-work/resource-runs/${runId}`);
+const output = path.resolve(process.env.RC1_RESOURCE_OUTPUT || path.join(os.tmpdir(), 'omerta-rc1-resource-proof', runId));
 assert(!fs.existsSync(path.join(output, 'result.json')), 'Never overwrite an evidence run');
 fs.mkdirSync(output, { recursive: true });
 const report = { schemaVersion: 1, runId, source, evidenceClass: development ? 'DEVELOPMENT_DIAGNOSTIC' : 'NATIVE_FIXTURE_ASSISTED',
@@ -32,7 +38,8 @@ const report = { schemaVersion: 1, runId, source, evidenceClass: development ? '
     'OMR mint/burn/backing and deployed contract attestation', 'Operation capital lifecycle, all market/gambling/loan terminal dispositions',
     'Family war/turf/dissolution; NFT extraction/expiry/import', 'Shipment midnight boundary, looting and death',
     'Native process crash, operating-system restart and checkpoint restore; server reopen only',
-    'Boost acquisition compound journal (salvage and hardening are individually journaled)'] };
+    'Boost acquisition compound journal (salvage and hardening are individually journaled)',
+    'Complete deployed operational flags, services, secret-source identities and integration attestation; configuration records selected local fixture settings only'] };
 const save = () => fs.writeFileSync(path.join(output, 'result.json'), JSON.stringify(report, null, 2) + '\n');
 save();
 const database = `rc1_resource_${crypto.randomBytes(8).toString('hex')}`;
@@ -75,21 +82,36 @@ async function invariantCheckpoint(name) {
 }
 async function observed(name, action, validate) {
   const before = await resourceSnapshot(app.pool), requestStart = requests.length;
-  const result = await action();
-  const after = await resourceSnapshot(app.pool);
-  const receipts = { transactions: addedRows(before.transactions, after.transactions), itemEvents: addedRows(before.itemEvents, after.itemEvents) };
-  const movements = reconcileStacks(before, after);
-  await validate({ before, after, result, receipts, movements });
-  const entry = { name, outcome: 'PASS', databaseBoundaries: [before.databaseBoundary, after.databaseBoundary],
-    beforeHash: sha256(stateWithoutBoundary(before)), afterHash: sha256(stateWithoutBoundary(after)),
-    requests: requests.slice(requestStart), receipts, movements };
-  fs.appendFileSync(path.join(output, 'movements.ndjson'), JSON.stringify(entry) + '\n');
-  report.scenarios.push({ name, outcome: 'PASS', requests: entry.requests.length, movements: movements.length,
-    journalSha256: sha256(entry) });
-  report.activeActors = new Set(requests.map((row) => row.actor)).size;
-  save();
-  await invariantCheckpoint(`after:${name}`);
-  return result;
+  let after, result, receipts, movements;
+  try {
+    result = await action();
+    after = await resourceSnapshot(app.pool);
+    receipts = { transactions: addedRows(before.transactions, after.transactions), itemEvents: addedRows(before.itemEvents, after.itemEvents) };
+    movements = reconcileStacks(before, after);
+    await validate({ before, after, result, receipts, movements });
+    await invariantCheckpoint(`after:${name}`);
+    const entry = { name, outcome: 'PASS', databaseBoundaries: [before.databaseBoundary, after.databaseBoundary],
+      beforeHash: sha256(stateWithoutBoundary(before)), afterHash: sha256(stateWithoutBoundary(after)),
+      requests: requests.slice(requestStart), receipts, movements };
+    fs.appendFileSync(path.join(output, 'movements.ndjson'), JSON.stringify(entry) + '\n');
+    report.scenarios.push({ name, outcome: 'PASS', requests: entry.requests.length, movements: movements.length,
+      journalSha256: sha256(entry) });
+    report.activeActors = new Set(requests.map((row) => row.actor)).size;
+    save();
+    return result;
+  } catch (error) {
+    let snapshotError;
+    if (!after) {
+      try { after = await resourceSnapshot(app.pool); }
+      catch (failedSnapshot) { snapshotError = { code: failedSnapshot.code, message: failedSnapshot.message }; }
+    }
+    const failed = { name, outcome: 'FAIL', before, after: after || null, result, receipts, movements,
+      requests: requests.slice(requestStart), snapshotError, error: { code: error.code, message: error.message, stack: error.stack } };
+    fs.writeFileSync(path.join(output, 'first-failed-boundary.json'), JSON.stringify(failed, null, 2) + '\n');
+    report.scenarios.push({ name, outcome: 'FAIL', artifact: 'first-failed-boundary.json' });
+    save();
+    throw error;
+  }
 }
 function unchanged({ before, after, receipts }) {
   assert.deepEqual(stateWithoutBoundary(after), stateWithoutBoundary(before), 'Rejected/replayed/aborted action left no committed resource or receipt change');
@@ -119,7 +141,11 @@ try {
   const { SHIPMENT, shipmentDistrictOf, CAMPAIGNS, RARITY } = await import('../src/rules.js');
   app = await buildServer();
   report.configuration = { databaseIsolation: 'unique disposable database', rateLimit: 'off', inviteMode: 'off', chain: 'unconfigured',
-    marketSeed: process.env.MARKET_SEED, fixtureAssisted: true, workers: 'not running' };
+    marketSeed: process.env.MARKET_SEED, fixtureAssisted: true, workers: 'not running',
+    scope: 'Selected local fixture settings; not a complete deployed configuration attestation',
+    inheritedFeatureFlags: Object.fromEntries(['CORE_PROGRESSION', 'WORLD_GRAPH_KERNEL', 'COORDINATION_ENGINE',
+      'COORDINATION_KNOWLEDGE', 'COORDINATION_KNOWLEDGE_SHARING', 'COORDINATION_OPERATIONS', 'LIVING_WORLD_DIRECTOR']
+      .map((name) => [name, process.env[name] ?? null])) };
   report.configurationSha256 = sha256(report.configuration);
   report.postgres = (await app.pool.query('SELECT version() AS version')).rows[0].version;
   report.extensions = (await app.pool.query('SELECT extname,extversion FROM pg_extension ORDER BY extname')).rows;
@@ -368,6 +394,17 @@ try {
 } finally {
   if (app) { await app.close(); await app.pool.end(); }
   await admin.end(); // Retain isolated database for reproduction; never drop it implicitly.
+  try {
+    const finalCommit = git('rev-parse', 'HEAD'), finalHashes = sourceBytes();
+    assert.equal(finalCommit, source.commit, 'Source commit changed during resource proof');
+    assert.deepEqual(finalHashes, source.relevantFileHashes, 'Relevant source bytes changed during resource proof');
+    report.source.finalCommit = finalCommit;
+    report.source.immutableDuringRun = true;
+  } catch (error) {
+    report.source.immutableDuringRun = false;
+    report.source.immutabilityError = error.message;
+    report.outcome = 'FAIL'; process.exitCode = 1;
+  }
   report.databaseName = database;
   report.endedAt = new Date().toISOString();
   report.commands = { requests: requests.length, denials: requests.filter((row) => row.status >= 400).length,

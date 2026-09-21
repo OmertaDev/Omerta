@@ -15,9 +15,19 @@ node test/rc1-resource-journal.js
 node tools/rc1-resource-proof.js
 ```
 
-`RC1_RESOURCE_OUTPUT` can select a new output directory. Existing result files are
+The default output is a dedicated run directory under the operating-system temp
+directory, outside the checkout. Treat raw artifacts as private until reviewed;
+the fixture actors in this workload are synthetic. `RC1_RESOURCE_OUTPUT` can
+select a new output directory. Existing result files are
 never overwritten. `--development` permits an uncommitted checkout but marks the
 result diagnostic. No development result qualifies as release evidence.
+
+The runner records relevant runtime/content/tool source hashes and verifies both
+the commit and those bytes again at completion. A changed source fails the run.
+The first failing command retains before/after snapshots, available receipts,
+request identities and the actual exception. If PostgreSQL is unavailable, the
+failed snapshot attempt is recorded explicitly. Local fixture settings and inherited
+feature flags are recorded; complete deployed configuration remains an unmet proof.
 
 The workload covers both legacy campaign cash branches; OMR paid rarity and desk
 recycling; Family cash/OMR tribute; loan offer/cancel/take/repay with OMR collateral;
