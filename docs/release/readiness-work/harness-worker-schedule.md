@@ -47,7 +47,7 @@ two actual seasonal rollovers. All hourly, Director five-minute, and health
 five-minute callbacks must fire their exact expected counts. Full raw snapshots,
 sequences, initial/first-rollover/final dumps, job results, timer history, random
 draws, errors, and source bindings are retained. `--compare` requires exact initial
-state, final state, logical schedule and random-tape equality with a prior run
+state, final state, guarded job outcomes, logical schedule and random-tape equality with a prior run
 on the same source; it does not normalize away balances, visibility or outcomes.
 
 ```powershell
@@ -61,4 +61,22 @@ node test/rc1-native-worker-schedule.js --postgres --compare=C:/Users/Jorge/.cod
 
 Commit before every evidence run. Use a new restricted output path and preserve
 failed attempts with their original source identity. Full process restart is a
-separate gate; the current comparison is a fresh-process same-seed replay.
+separate comparison from uninterrupted replay.
+
+`--resume=<retained run directory>` verifies the parent's complete artifact
+index and source-pinned production map, restores its final custom-format dump
+into its original isolated schema (refusing any existing schema), and verifies
+the exact canonical hash before any new work. The clock factory explicitly
+restores both SQL clocks; the raw default restore helper is still available for
+ordinary checkpoints. The retained random tape is regenerated from seed and
+counter, rejecting changed bytes, and restores each stream before new draws.
+No fixture initialization is repeated. A newly imported original worker then
+performs its real boot work and due callbacks. Restart boot effects, including
+operational telemetry, are retained. There is no claim that restarting equals
+an uninterrupted schedule; two fresh checkpoint continuations must agree exactly.
+Parent source and continuation-tool source identities stay distinct.
+
+```powershell
+node test/rc1-native-worker-schedule.js --postgres --hours=2 --resume=C:/Users/Jorge/.codex/rc1-native-evidence/worker-two-seasons-1 --output=C:/Users/Jorge/.codex/rc1-native-evidence/worker-restart-1
+node test/rc1-native-worker-schedule.js --postgres --hours=2 --resume=C:/Users/Jorge/.codex/rc1-native-evidence/worker-two-seasons-1 --compare=C:/Users/Jorge/.codex/rc1-native-evidence/worker-restart-1 --output=C:/Users/Jorge/.codex/rc1-native-evidence/worker-restart-replay-1
+```

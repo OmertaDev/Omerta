@@ -51,6 +51,18 @@ export function installSerialRuntime(seed, epoch = SERIAL_EPOCH) {
   return {
     epoch, seed, tape,
     bindClock(read) { assert.equal(typeof read, 'function'); clock = read; },
+    restoreTape(prior) {
+      assert.equal(tape.length, 0, 'Random state restoration must precede all new draws');
+      assert(Array.isArray(prior), 'Missing retained random tape');
+      for (const entry of prior) {
+        assert(['crypto.randomUUID', 'crypto.randomBytes', 'Math.random'].includes(entry.stream), 'Unknown random stream');
+        assert(typeof entry.hex === 'string' && /^(?:[a-f0-9]{2})*$/.test(entry.hex), 'Malformed random tape bytes');
+        if (entry.stream === 'crypto.randomUUID') assert.equal(entry.hex.length, 32, 'Invalid UUID random draw size');
+        if (entry.stream === 'Math.random') assert.equal(entry.hex.length, 12, 'Invalid Math.random draw size');
+        bytes(entry.hex.length / 2, entry.stream);
+        assert.deepEqual(tape.at(-1), entry, 'Retained random tape differs from seed/counter');
+      }
+    },
     restore() {
       globalThis.Date = original.Date; Math.random = original.random;
       crypto.randomBytes = original.randomBytes; crypto.randomUUID = original.randomUUID;

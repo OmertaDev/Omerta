@@ -143,7 +143,7 @@ export async function writeCheckpoint(pool, destination, databaseUrl) {
     toolVersion: execFileSync(pgTool('pg_dump'), ['--version'], { encoding: 'utf8' }).trim(),
     normalization: NORMALIZATION };
 }
-export async function restoreCheckpoint(checkpoint, destination, targetUrl) {
+export async function restoreCheckpoint(checkpoint, destination, targetUrl, { poolFactory = null } = {}) {
   assert.equal(sha256(await fs.readFile(destination)), checkpoint.sha256, 'Checkpoint bytes changed');
   const { Pool } = await import('pg');
   const base = new Pool({ connectionString: targetUrl });
@@ -154,7 +154,8 @@ export async function restoreCheckpoint(checkpoint, destination, targetUrl) {
     const connection = pgArguments(targetUrl);
     execFileSync(pgTool('pg_restore'), [...connection.args, '--exit-on-error', '--no-owner', '--no-acl', destination],
       { env: connection.env, stdio: 'pipe' });
-    const pool = new Pool({ connectionString: targetUrl, options: `-c search_path=${checkpoint.schema}` });
+    const configuration = { connectionString: targetUrl, options: `-c search_path=${checkpoint.schema}` };
+    const pool = poolFactory ? poolFactory(configuration, checkpoint.schema) : new Pool(configuration);
     try {
       assert.equal((await canonicalDatabaseSnapshot(pool)).stateSha256, checkpoint.stateSha256, 'Restored canonical state differs');
       return pool;
