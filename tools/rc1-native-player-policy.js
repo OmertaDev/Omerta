@@ -43,10 +43,12 @@ export function observedOpportunityTracker({ observationWindowMs = 86400000 } = 
     summarize(logicalAt) {
       const observed = [...rows.values()];
       return { distinctAuthorizedActorOpportunities: observed.length,
-        observedBeyondWindow: observed.filter((row) => logicalAt - row.firstSeen >= observationWindowMs).length,
+        observationsOlderThanWindow: observed.filter((row) => logicalAt - row.firstSeen >= observationWindowMs).length,
+        observedAcrossWindow: observed.filter((row) => row.lastSeen - row.firstSeen >= observationWindowMs).length,
         observationWindowMs,
+        persistentOpportunities: null,
         ignoredOpportunities: null,
-        note: 'Observed-window counts are retained; ignored/accepted classification requires authoritative command-opportunity linkage and is not inferred from reads.' };
+        note: 'Age and separated observations do not prove continuous persistence; ignored/accepted classification requires authoritative command-opportunity linkage.' };
     },
   };
 }

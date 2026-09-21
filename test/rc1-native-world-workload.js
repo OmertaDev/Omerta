@@ -41,12 +41,14 @@ const configuration = { scenario: 'quiet_world', population, seed, hours, source
     observerFeedback: 'Diagnostic database rows never feed policy choices' },
   entry: 'Synthetic account/character initialization only: schema-default birth resources/stats, zero progression, current canonical season, docks',
   authority: 'Original PlayerCommand dispatcher and withCharacter/readCharacter domains; no HTTP/authentication-session coverage',
+  latencySemantics: 'In-process wall durations include test instrumentation; no production latency acceptance is claimed',
   clocks: 'One controller advances application and isolated SQL clocks and executes every due original local worker callback',
   workerOrder: 'Serial accepted callback order; actor session follows the scheduled hourly callback once per rolling day',
   expectedDormant, queryOrder: QUERY_ORDER_SCOPE, deploymentAttested: false,
   excludedIntegrations: ['Unconfigured chain watcher', 'Disabled liquidity automation', 'Unavailable external RWA registry'],
   coverageMissing: ['All 15 archetypes and 225 runs', 'All 13 resource journals at every worker transition',
-    'Complete opportunity acceptance/ignored linkage', 'Dead-world reachability proof and failure minimization',
+    'Complete opportunity acceptance/ignored linkage', 'Actor-policy checkpoint continuation and recorded replay',
+    'Dead-world reachability proof and failure minimization',
     'Two executions of every longest lifecycle', 'Production-equivalent 12-hour soak', 'HTTP/provider authentication', 'Deployed environment and real cohort'] };
 const proof = await createProofRecorder({ directory: output, source, configuration,
   runId: path.basename(output), seed, scenarioId: 'scoped-quiet-world-active-players-and-workers', population });
@@ -65,7 +67,7 @@ const metrics = { playerSnapshots: 0, ownCharacterReads: 0, freshPlayerCommands:
   crimeSuccesses: 0, crimeLosses: 0, exactReplays: 0, denials: {}, sessionWaits: 0, sessions: 0,
   commandTypes: {}, observedAuthorizedOpportunities: 0 };
 const days = [], latencies = { read: [], command: [] };
-let pool, created = false, result, currentInvocation = null;
+let pool, created = false, result, currentInvocation = null, failureInvocation = null;
 try {
   for (const level of ['log', 'warn', 'error']) console[level] = (...args) => controller.log(level, args);
   await base.query(`CREATE SCHEMA ${namespace}`); created = true;
@@ -93,8 +95,12 @@ try {
     currentInvocation = { authority, ...identity, logicalAt: at };
     const started = performance.now();
     try { return await proof.invoke(authority, currentInvocation, work); }
-    catch (error) { metrics.denials[error.code || error.name] = (metrics.denials[error.code || error.name] || 0) + 1; throw error; }
-    finally { latencies[latencyClass].push(performance.now() - started); }
+    catch (error) {
+      failureInvocation = currentInvocation;
+      metrics.denials[error.code || error.name] = (metrics.denials[error.code || error.name] || 0) + 1;
+      throw error;
+    }
+    finally { currentInvocation = null; latencies[latencyClass].push(performance.now() - started); }
   }
   async function invariantBoundary(label) {
     const value = await runLedgerInvariants(pool, { alert: false });
@@ -108,6 +114,7 @@ try {
       const view = await invoke('player.snapshot', { accountId, options: actorOptions.get(accountId) },
         () => engine.snapshot(accountId, actorOptions.get(accountId)), 'read');
       metrics.playerSnapshots++; opportunities.observe(accountId, view.opportunities, at);
+      metrics.observedAuthorizedOpportunities = opportunities.summarize(at).distinctAuthorizedActorOpportunities;
       const command = chooseAuthorizedCommand(view, { seed, accountId, day, action });
       if (!command) break;
       const executionId = command.executionIdentity.executionId;
@@ -156,6 +163,7 @@ try {
     originalConsole.log(JSON.stringify({ day, sessions: metrics.sessions, commands: metrics.freshPlayerCommands,
       crimes: metrics.legacyCrimeAttempts, actorCoverage: [...actorActions.values()].filter(Boolean).length }));
   });
+  await invariantBoundary('final');
   const final = await proof.snapshot(pool, 'final'); await proof.checkpoint(pool, 'final', url);
   const trace = controller.diagnostic(); assert.equal(trace.failures.length, 0);
   const timerCounts = Object.fromEntries(['directorTick', 'guardedTick', 'guardedSeasonTick', 'health-boundary']
@@ -174,11 +182,11 @@ try {
     workerScheduleSha256: trace.scheduleSha256, missingRequiredProof: configuration.coverageMissing,
     statement: 'Completed only the declared quiet-world workload; no matrix qualification or dead-world clearance' };
 } catch (error) {
-  await proof.record({ kind: 'failure', invocation: currentInvocation, message: error.message, stack: error.stack });
+  await proof.record({ kind: 'failure', invocation: failureInvocation, logicalAt: at, message: error.message, stack: error.stack });
   if (pool) await proof.snapshot(pool, 'first-failure');
   await proof.artifact('failure-worker-schedule.json', controller.diagnostic());
   await proof.artifact('failure-random-tape.json', { draws: runtime.tape });
-  result = { status: 'FAIL', hours, population, metrics, error: error.message, invocation: currentInvocation };
+  result = { status: 'FAIL', hours, population, metrics, error: error.message, invocation: failureInvocation, logicalAt: at };
   process.exitCode = 1;
 } finally {
   for (const level of ['log', 'warn', 'error']) console[level] = originalConsole[level];

@@ -12,7 +12,11 @@ assert.equal(choosePublicCrime({ level: 1, nerve: 4, jailSeconds: 1 }, [{ id: 'e
 const opportunities = observedOpportunityTracker({ observationWindowMs: 100 });
 opportunities.observe('actor', [{ opportunityId: 'a' }], 0);
 opportunities.observe('actor', [{ opportunityId: 'a' }], 5);
-assert.equal(opportunities.summarize(50).observedBeyondWindow, 0);
-assert.equal(opportunities.summarize(100).observedBeyondWindow, 1);
+assert.equal(opportunities.summarize(50).observationsOlderThanWindow, 0);
+assert.equal(opportunities.summarize(100).observationsOlderThanWindow, 1);
+assert.equal(opportunities.summarize(100).observedAcrossWindow, 0);
+opportunities.observe('actor', [{ opportunityId: 'a' }], 100);
+assert.equal(opportunities.summarize(100).observedAcrossWindow, 1);
+assert.equal(opportunities.summarize(100).persistentOpportunities, null);
 assert.equal(opportunities.summarize(100).ignoredOpportunities, null);
 console.log('PASS: deterministic quiet roster, authorized command selection, public eligibility and honest observation windows');
