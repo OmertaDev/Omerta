@@ -77,3 +77,36 @@ successful expose branch, concurrent choice races, Family operation execution,
 natural entry, original worker deadlines, deployed behavior, physical devices,
 or any 90-day matrix/release gate. Native results and failed development attempts
 must be reported separately with their exact source and private evidence hashes.
+
+## Retained native result
+
+Tested source: `ee3d012183034ac56c843e891ad1a72177c107a7`, clean committed
+checkout, Node 24.19.0 and local PostgreSQL 18.4. Both separate owned-database
+runs returned `PASS_SCOPED` and launcher exit 0. Independent streaming artifact
+and full-history verification also passed; both database names were independently
+absent from a fresh catalog query after exact name/OID/comment cleanup.
+
+| Case | HTTP requests | Denials | Replay comparisons | Indexed artifacts | History events |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Knowledge | 92 | 50 (14 new revoke controls) | 7 | 68 | 96 |
+| Furnace confirmation | 80 | 3 | 2 | 17 | 83 |
+
+The retained complete canonical snapshots have 369 tables; this does not enlarge
+the 30/32-table denial/replay equality scope. The original
+`test/rc1-command-redteam.js` also passed at the same source: 92 denials total,
+eight concurrent requests, one fresh execution, one mystery instance and intact
+restart replay. No runtime authority defect was reproduced in these added cases.
+
+Private manifest SHA256 values:
+
+- Knowledge: `5214ffc13fc2e114df4237a97a6411568b227a75319c0e470cf8f3bea6710fa7`
+- Confirmation: `1f1ccd7d573d23a9df5d16d84ea92f399d50a5e9daa218b693a4217bd553c75e`
+- Independent audit: `db698286f02e49916031a45ddd27ad333d1fa61a70c8d7c78fca5de855757708`
+- Original redteam log: `528b66ee68ed87f448a4c67f8f01a529428e80a78261abf119539cecca1b10dd`
+
+Four earlier launcher failures remain private: two exact-source guard rejections
+of mixed checkout line endings, then two clean-checkout rejections pending index
+stat refresh. All four stopped before database creation. Canonicalizing the owned
+helper's working bytes and refreshing the index changed no Git blob or runtime
+behavior. The passing native attempts used new output paths. No failed artifact
+was overwritten and no later documentation commit inherits a new-source pass.
