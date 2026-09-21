@@ -29,7 +29,14 @@ Retained attempts:
   assertion and sealedFAIL. Earlier recovery/preparation steps are retained, but
   the run is not promoted to a pass. Directory
   `mobile-adversity-f2d77f02-2` under the restricted RC1 evidence root.
-- Corrected expectation retest: pending.
+- Source5166fb53 retest: all four widths sealedFAIL because the renderer hid the
+  authorized `family_authority` blocker whenever the overall command wasLOCKED.
+  The server response already supplied that known reason, but the screen claimed
+  no further details were known. This reproduced client finding is
+  `RC1-MOBILE-BLOCKERS-01`. The repair displays only explicitly known blockers;
+  unknown/untyped requirements remain hidden and the command remains disabled.
+  Actual-renderer negative controls cover known, hidden, mixed and untyped cases.
+- Runtime repair native retest: pending.
 
 Each width retains final full native state and a recoverable database checkpoint,
 browser output/screenshots/request evidence and asset hashes. The aggregate
