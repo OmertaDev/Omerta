@@ -9,8 +9,10 @@
       "failedGate": "fcaa6076 CI35569157185 full npm test / Knowledge artifact consistency",
       "before": "Root incorrectly committed regenerated Knowledge artifacts together with source. Stored graph named4da713ba while the actual source commit wasfcaa6076; the unchanged consistency gate correctly failed.",
       "repair": "Commit source first, regenerate from the clean tree, and commit generated artifacts alone. Preserve the exact sourceRevision/worktreeDirty guard and all original failure evidence.",
-      "changedSource": ["knowledge/generated"],
-      "retest": "Fresh generated-only commit and full Knowledge consistency test pending, then hosted full-suite rerun.",
+      "changedSource": [
+        "knowledge/generated"
+      ],
+      "retest": "Generated-only09119b29 clean Knowledge consistency PASS; full hosted npm-test rerun remains required.",
       "evidence": "Private fcaa6076-workflows/ci.json and ci.log"
     },
     {
@@ -396,7 +398,7 @@
       "changedSource": [
         "test/rc1-mod-ingress-postgres.js"
       ],
-      "retest": "Native clean77e63027 PASS9cases; hosted repair-source rerun pending.",
+      "retest": "fcaa6076 hosted Recovery35569159408 legacy-authority PostgreSQL16 and18.4 jobs PASS, including asynchronous audit completion; overall Linux recovery has separate retained browser failures.",
       "evidence": "integrated-8c2e4418-results.json"
     },
     {
@@ -435,7 +437,7 @@
       "changedSource": [
         "test/director-network-recovery.js"
       ],
-      "retest": "Native source0fbde772 PASS including naturally observed double contention and serial recovery. Hosted exact repair-source rerun pending.",
+      "retest": "fcaa6076 hosted CI35569157185 PostgreSQL16 and18.4 coordination jobs PASS, including repaired contention assertion; overall CI failed separate Knowledge consistency.",
       "evidence": "Private director-race-diagnostic-2, director-contention-retest-1.log; integrated-a5af028b-results.json retains original hosted failure"
     },
     {
@@ -482,7 +484,7 @@
         "test/lib/rc1-browser-controls.js",
         "test/rc1-browser-receipt.js"
       ],
-      "retest": "Controlled rendered lifecycle and finite-motion negative controls PASS; exact-source native and hosted retests pending.",
+      "retest": "Exact09119b29 ordinary native newcomer phone PASS at320/360/390/430 with completed receipt and unchanged44px criterion; hosted retest remains required.",
       "evidence": "integrated-fcaa6076-results.json"
     }
   ]

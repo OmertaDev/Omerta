@@ -24,7 +24,7 @@
       },
       "implementationStatus": "PARTIAL_SCOPED",
       "qualifyingRuns": 0,
-      "implementationEvidence": "harness-mystery-world-replay-results.json"
+      "implementationEvidence": "harness-mystery-world-replay-results.json;harness-quiet-90day-regression-results.json"
     },
     {
       "id": "high_aggression",
@@ -165,8 +165,9 @@
           "escrow settlement"
         ]
       },
-      "implementationStatus": "UNIMPLEMENTED",
-      "qualifyingRuns": 0
+      "implementationStatus": "PARTIAL_SCOPED",
+      "qualifyingRuns": 0,
+      "implementationEvidence": "market-player-policy.md"
     },
     {
       "id": "law_pressure",

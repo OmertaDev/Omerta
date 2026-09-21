@@ -9,6 +9,20 @@
   "note": "Pinned required command inventory across the four source workflows. Preserve each workflow setup, database isolation, platform, environment and budgets. A component regression pass does not clear a full native, deployed, or human proof.",
   "gates": [
     {
+      "id": "rc1-season-journal",
+      "command": ["npm", "run", "test:rc1:season-journal:postgres"],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": ["Two original seasonal boundaries with complete job journals and declared status fixtures; initial ranking selection, unrelated currency and per-commit full-world lineage remain unclassified"]
+    },
+    {
+      "id": "rc1-market-policy",
+      "command": ["npm", "run", "test:rc1:market:postgres"],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": ["Three ordinary entrants, shared-sale contention and original order expiry; SQL acknowledgment trace is not PostgreSQL total order, resource lineage and full market-stress matrix remain incomplete"]
+    },
+    {
       "id": "rc1-mobile-postgres",
       "command": ["npm", "run", "test:rc1:mobile:postgres"],
       "timeoutMs": 900000,

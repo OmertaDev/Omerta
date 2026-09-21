@@ -313,6 +313,20 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:season:postgres
+      - name: Original seasonal boundaries and complete status journals
+        if: '!cancelled()'
+        env:
+          RC1_SEASON_JOURNAL_OUTPUT: ${{ runner.temp }}/rc1-season-journal
+        run: |
+          umask 077
+          npm run test:rc1:season-journal:postgres
+      - name: Ordinary market contention and original order expiry
+        if: '!cancelled()'
+        env:
+          RC1_MARKET_OUTPUT: ${{ runner.temp }}/rc1-market-policy
+        run: |
+          umask 077
+          npm run test:rc1:market:postgres
       - name: Original operation capital expiry and replacement disposition
         if: '!cancelled()'
         env:

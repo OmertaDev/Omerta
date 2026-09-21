@@ -13,7 +13,7 @@ assert(process.argv.includes('--postgres'), 'Real PostgreSQL required');
 const argument = name => process.argv.find(arg => arg.startsWith(`--${name}=`))?.slice(name.length + 3);
 const source = await sourceIdentity(), seed = argument('seed') || 'rc1-season-journal-alpha';
 const runId = `season-journal-${source.revision.slice(0, 12)}-${crypto.randomBytes(5).toString('hex')}`;
-const output = path.resolve(argument('output') || path.join(os.tmpdir(), 'omerta-rc1-resource-proof', runId));
+const output = path.resolve(argument('output') || process.env.RC1_SEASON_JOURNAL_OUTPUT || path.join(os.tmpdir(), 'omerta-rc1-resource-proof', runId));
 const db = planOwnedWorldDatabase({ controlUrl: process.env.RC1_RESOURCE_DATABASE_URL, runId, sourceRevision: source.revision });
 for (const name of ['CHAIN_RPC_URL', 'INVARIANT_WEBHOOK_URL', 'LIQUIDITY_RPC_URL', 'LIQUIDITY_RPC_FALLBACK_URL']) assert(!process.env[name]);
 const boundarySeason = 740, epoch = boundarySeason * SEASON_MS - 3600000, hours = 673;

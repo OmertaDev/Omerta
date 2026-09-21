@@ -47,3 +47,9 @@ this schema: notifications have no character foreign key or trigger. Both actual
 account waits completed, concurrent rollover converted/awarded once, and terminal
 retries preserved complete state. Retained review: `season-lock-review-summary.json`.
 A future constraint/trigger change invalidates that lock-order conclusion.
+
+Integrated09119b29 passed native fault/retry, four-width newcomer, and the scoped
+source-pair upgrade/rollback checks. The latter replays its declared mystery receipts,
+not every seasonal state. The separate673-hour original seasonal journal on repaired
+runtime also passes; see `season-journal-summary.json`. Exact long-world replay and
+hosted integrated qualification remain open.
