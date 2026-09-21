@@ -191,6 +191,7 @@ if (process.argv.includes('--postgres')) {
     await proof.record({ kind: 'failure', ...result.error });
     await proof.artifact('first-failure-schedule.json', controller.diagnostic());
     await proof.artifact('first-failure-query-order.json', queryOrder.diagnostic());
+    await proof.artifact('first-failure-random-tape.json', { draws: runtime.tape });
     if (pool) {
       try { await proof.snapshot(pool, 'first-failure-state'); await proof.checkpoint(pool, 'first-failure', url); }
       catch (captureError) { await proof.record({ kind: 'failure-capture-error', message: captureError.message, stack: captureError.stack }); }
