@@ -11,7 +11,7 @@ import { planOwnedWorldDatabase } from '../tools/rc1-native-database.js';
 import { installSerialRuntime } from '../tools/rc1-native-determinism.js';
 import { sourceIdentity, createProofRecorder, verifyArtifactIndex } from '../tools/rc1-native-proof.js';
 import { snapshotLoanResources, reconcileLoanLifecycle, loanStateHash } from '../tools/rc1-loan-lifecycle-journal.js';
-import { exactSum } from '../tools/rc1-resource-journal.js';
+import { exactSum, negate } from '../tools/rc1-resource-journal.js';
 
 assert(process.argv.includes('--postgres'), 'Real PostgreSQL required');
 const argument = name => process.argv.find(arg => arg.startsWith(`--${name}=`))?.slice(name.length + 3);
@@ -63,7 +63,14 @@ async function observe(label, action, validate = () => {}) {
     journal = reconcileLoanLifecycle(before, after, { label, result: value, logicalAt: at });
     await validate({ before, after, result: value, journal, error: actionError });
     boundaryCount++; equationCount += journal.equations.length;
+    // Exact equations retain no-value boundaries compactly. Every nonzero
+    // monetary/custody transition also keeps its complete independent inputs.
+    const changedCustody = ['loans', 'cars', 'bounties', 'bounty_contributors'].some(table => JSON.stringify(before[table]) !== JSON.stringify(after[table]));
+    const nonzero = journal.equations.some(row => exactSum([row.before, negate(row.after)]) !== '0');
+    const statesArtifact = journal.receipts.length || changedCustody || nonzero ? `loan-movement-${String(boundaryCount).padStart(6, '0')}.json` : null;
+    if (statesArtifact) await proof.artifact(statesArtifact, { label, logicalAt: at, before, after, result: value ?? null });
     await proof.record({ kind: 'loan-resource-boundary', label, logicalAt: at, journal, result: value ?? null,
+      statesArtifact,
       actionError: actionError ? { code: actionError.code || null, message: actionError.message } : null });
     if (actionError) throw actionError;
     return value;
