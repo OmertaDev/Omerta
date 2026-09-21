@@ -34,7 +34,7 @@ export function assertNpcCarSources() {
     return population.slice(0, population.indexOf(needle)).split('\n').length;
   };
   sites = { spawnBegin: line('export async function spawnResident('), spawnEnd: line('export async function retireResident(') - 1,
-    defaultCall: line('const born = await spawnResident(client);'), carInsert: line(NPC_CAR_SQL.car) };
+    defaultCall: line('const born = await spawnResident(client);'), wrapperCall: line('return await runPopulationInner(pool);'), carInsert: line(NPC_CAR_SQL.car) };
   return sites;
 }
 const sourceUrl = new URL('../src/population.js', import.meta.url).href;
@@ -76,7 +76,8 @@ export function verifyNpcCarAcquisition(before, after, provenance) {
   const carWrite = carWrites[0];
   // A direct fixture spawn or unrelated caller has no default runPopulation
   // origin, so it remains unknown even if it copied the same SQL and values.
-  if (!carWrite.origin?.frames.some(f => f.caller === 'runPopulation' && f.line === sites.defaultCall)) return null;
+  if (!carWrite.origin?.frames.some(f => f.caller === 'runPopulationInner' && f.line === sites.defaultCall)
+    || !carWrite.origin.frames.some(f => f.caller === 'runPopulation' && f.line === sites.wrapperCall)) return null;
   const one = sql => { const matches = q.filter(e => e.sql === sql); assert.equal(matches.length, 1, 'Missing or duplicate original NPC query: ' + sql.slice(0, 55)); return matches[0]; };
   const account = one(NPC_CAR_SQL.account), persistent = one(NPC_CAR_SQL.persistent), character = one(NPC_CAR_SQL.character);
   const grant = one(NPC_CAR_SQL.grant), rarity = one(NPC_CAR_SQL.rarity);
@@ -86,7 +87,8 @@ export function verifyNpcCarAcquisition(before, after, provenance) {
     assert.equal(entry.origin?.kind, 'native-stack-source-site-v1', 'Missing native NPC query origin');
     assert(entry.origin.frames.some(f => f.file === 'src/population.js' && f.caller === 'spawnResident'
       && f.line >= sites.spawnBegin && f.line <= sites.spawnEnd), 'Query did not originate in pinned spawnResident');
-    assert(entry.origin.frames.some(f => f.file === 'src/population.js' && f.caller === 'runPopulation' && f.line === sites.defaultCall), 'Query lacks canonical default spawn caller');
+    assert(entry.origin.frames.some(f => f.file === 'src/population.js' && f.caller === 'runPopulationInner' && f.line === sites.defaultCall), 'Query lacks canonical default spawn caller');
+    assert(entry.origin.frames.some(f => f.file === 'src/population.js' && f.caller === 'runPopulation' && f.line === sites.wrapperCall), 'Query lacks original serialized population wrapper');
   }
   assert(carWrite.origin.frames.some(f => f.caller === 'spawnResident' && f.line === sites.carInsert), 'Car INSERT origin site changed');
   assert(operations.every((e, i) => !i || q.indexOf(e) > q.indexOf(operations[i - 1])), 'NPC grant execution order changed');

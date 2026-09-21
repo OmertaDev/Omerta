@@ -11,7 +11,8 @@ const car = { id: 'npc-car', character_id: character.id, model_id: 'garden', tri
   race_limit: null, plate: null, tune: 0, nos: 0, created_at: new Date(at).toISOString() };
 const origin = line => ({ kind: 'native-stack-source-site-v1', frames: [
   { file: 'src/population.js', caller: 'spawnResident', line, column: 20 },
-  { file: 'src/population.js', caller: 'runPopulation', line: sites.defaultCall, column: 26 },
+  { file: 'src/population.js', caller: 'runPopulationInner', line: sites.defaultCall, column: 20 },
+  { file: 'src/population.js', caller: 'runPopulation', line: sites.wrapperCall, column: 12 },
 ] });
 const statements = [
   ['BEGIN', []], [SQL.account, ['npc-account', 'npc', 'npc:npc-account']], [SQL.persistent, ['npc-account']],
@@ -59,7 +60,7 @@ rejects(({ before: b }) => b.tables.cars.push(car), /preexisting/);
 rejects(({ trace: t }) => t.queries.splice(5, 0, t.queries[5]), /duplicate original NPC query/);
 let unknown = 0;
 for (const edit of [t => delete t.extensions, t => t.unsupported = 'bounded-trace-overflow',
-  t => delete t.queries[4].origin, t => t.queries[4].origin.frames[1].line++,
+  t => delete t.queries[4].origin, t => t.queries[4].origin.frames[1].line++, t => t.queries[4].origin.frames.pop(),
   t => t.queries[4].sql = 'INSERT INTO cars VALUES($1)', t => t.queries.splice(4, 0, t.queries[4]),
   t => t.queries.splice(2, 0, { command: 'SAVEPOINT' })]) {
   const t = structuredClone(trace); edit(t); assert.equal(verifyNpcCarAcquisition(before, after, t), null); unknown++;
