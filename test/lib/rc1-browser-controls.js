@@ -1,6 +1,7 @@
 // Real rendered controls only. Reads identify the server-issued command; every
 // measured mutation must be observed from a normal hit-tested browser click.
 import assert from 'node:assert/strict';
+import { installBoardDiagnostics } from './rc1-board-diagnostics.js';
 
 export async function waitForWorldReceipt(page, label, { timeout = 30000 } = {}) {
   assert.equal(typeof label, 'string'); assert(label.trim(), 'Expected completed command label');
@@ -16,12 +17,15 @@ export function browserControls({ pageFor, width, result, save }) {
   const traffic = new WeakMap();
   function track(page) {
     if (!traffic.has(page)) {
-      const state = { reads: 0, submissions: 0, requests: new WeakMap() };
+      const state = { reads: 0, submissions: 0, requests: new WeakMap(), events: [] };
+      state.diagnostics = installBoardDiagnostics(page);
+      const event = kind => { state.events.push({ kind, at: Date.now(), reads: state.reads, submissions: state.submissions }); if (state.events.length > 40) state.events.shift(); };
       page.on('request', request => {
         const route = new URL(request.url()).pathname;
-        if (request.method() === 'GET' && route === '/v1/commands') state.requests.set(request, ++state.reads);
-        if (request.method() === 'POST' && route === '/v1/commands/execute') state.submissions++;
+        if (request.method() === 'GET' && route === '/v1/commands') { state.requests.set(request, ++state.reads); event('board.request'); }
+        if (request.method() === 'POST' && route === '/v1/commands/execute') { state.submissions++; event('command.submission'); }
       });
+      page.on('response', response => { if (state.requests.has(response.request())) event('board.response'); });
       traffic.set(page, state);
     }
     return traffic.get(page);
@@ -102,6 +106,7 @@ export function browserControls({ pageFor, width, result, save }) {
     },
     async snapshot(account, options = {}) {
       const session = await pageFor(account), state = track(session.page), page = await openTab(account, 'world');
+      await state.diagnostics;
       const update = async (control) => {
         for (let attempt = 0; attempt < 3; attempt++) {
           const waiting = page.waitForResponse((response) => response.request().method() === 'GET' && new URL(response.url()).pathname === '/v1/commands');
@@ -130,6 +135,12 @@ export function browserControls({ pageFor, width, result, save }) {
     },
     async execute(account, input, key) {
       const session = await pageFor(account), { page, board } = session, state = track(page), submissions = state.submissions;
+      const readDiagnostics = await state.diagnostics;
+      const diagnostic = async (stage, detail = {}) => {
+        const entry = { event: 'rc1-board-lifecycle', stage, at: Date.now(), width, boardRead: session.boardRead,
+          reads: state.reads, submissions: state.submissions - submissions, ...detail, dom: await readDiagnostics(), requests: state.events.slice() };
+        (result.boardLifecycleDiagnostics ||= []).push(entry); save();
+      };
       const refreshedBeforeSubmission = async () => {
         if (session.boardRead === undefined || session.boardRead === state.reads) return false;
         assert.equal(state.submissions, submissions, 'A submitted command cannot be retried as a board refresh');
@@ -184,7 +195,9 @@ export function browserControls({ pageFor, width, result, save }) {
       // board identity. Any reissue requires an observed read and zero submits.
       const selectedNode = await chosen.elementHandle(); assert(selectedNode);
       await reach(page, chosen, command.label); await refreshedBeforeSubmission();
-      assert(await selectedNode.evaluate(node => node.isConnected), 'Selected command detached without an observed board refresh');
+      const connected = await selectedNode.evaluate(node => node.isConnected);
+      if (!connected) await diagnostic('detached-connectivity-read', { connected });
+      assert(connected, 'Selected command detached without an observed board refresh');
       const waiting = page.waitForResponse((response) => response.request().method() === 'POST' && new URL(response.url()).pathname === '/v1/commands/execute');
       waiting.catch(() => {});
       try { await selectedNode.click(); }
