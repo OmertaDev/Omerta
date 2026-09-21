@@ -4,7 +4,8 @@ import os from 'node:os';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { WORLD_RESOURCE_TABLES, reconcileWorldResources, snapshotWorldResources, createWorldResourceObserver } from '../tools/rc1-world-resource-observer.js';
+import { WORLD_RESOURCE_TABLES, reconcileWorldResources, snapshotWorldResources, createWorldResourceObserver,
+  resourceTableChanges, verifyResourceTableChanges } from '../tools/rc1-world-resource-observer.js';
 
 const empty = () => ({ format: 1, tables: Object.fromEntries(WORLD_RESOURCE_TABLES.map(table => [table, []])) });
 const person = { id: 'a', cash: '900719925474099312345678.123456789', bank: '0', ammo: 25, cb: 0 };
@@ -63,7 +64,31 @@ capitalAfter.tables.transactions.push({ id: 'capital', character_id: 'a', curren
 assert(reconcileWorldResources(capitalBefore, capitalAfter).checks.some(row => row.owner === 'operation:op' && row.after === '100'));
 capitalAfter.tables.world_operation_capital[0].amount = 101;
 assert.throws(() => reconcileWorldResources(capitalBefore, capitalAfter), /Unexplained cash.*operation/);
-console.log('PASS: exact decimals, immutable receipts, unsupported reasons, OMR claim exclusion, collision-free owners, stack/lot lineage and capital custody');
+const oldCar = empty(), movedCar = empty();
+oldCar.tables.cars = [{ id: 'car', character_id: 'owner-before', pledged: true, listed: false, minted_onchain: false }];
+movedCar.tables.cars = [{ id: 'car', character_id: 'owner-after', pledged: false, listed: false, minted_onchain: false }];
+const changes = resourceTableChanges(oldCar, movedCar); assert(verifyResourceTableChanges(oldCar, movedCar, changes));
+const diagnostic = reconcileWorldResources(oldCar, movedCar, { includeRestrictedChanges: true });
+assert.equal(diagnostic.status, 'PASS_PARITY_WITH_UNSUPPORTED_LINEAGE'); assert(diagnostic.unsupported.some(row => row.table === 'cars'));
+assert.deepEqual(diagnostic.restrictedChanges, changes);
+assert.equal(reconcileWorldResources(oldCar, movedCar).restrictedChanges, undefined, 'Raw ownership rows require explicit restricted-evidence opt-in');
+const lostOwner = structuredClone(changes); delete lostOwner.tables[0].afterRows[0].character_id;
+assert.throws(() => verifyResourceTableChanges(oldCar, movedCar, lostOwner), /owner\/custody\/value detail was lost/);
+const lostCustody = structuredClone(changes); delete lostCustody.tables[0].beforeRows[0].pledged;
+assert.throws(() => verifyResourceTableChanges(oldCar, movedCar, lostCustody), /Missing exact before row/);
+const lostTable = structuredClone(changes); lostTable.tables = [];
+assert.throws(() => verifyResourceTableChanges(oldCar, movedCar, lostTable), /Missing changed table/);
+const duplicateBefore = empty(), duplicateAfter = empty(); duplicateBefore.tables.cars = [oldCar.tables.cars[0], oldCar.tables.cars[0]];
+duplicateAfter.tables.cars = [oldCar.tables.cars[0]];
+const duplicateDelta = resourceTableChanges(duplicateBefore, duplicateAfter);
+assert.equal(duplicateDelta.tables[0].beforeRows.length, 1); assert(verifyResourceTableChanges(duplicateBefore, duplicateAfter, duplicateDelta));
+const fractionalBefore = empty(), fractionalAfter = empty();
+fractionalBefore.tables.gangs = [{ id: 'g', treasury: '9007199254740993123.123456789', omr_reserve: '0', ammo_bank: 0 }];
+fractionalAfter.tables.gangs = [{ ...fractionalBefore.tables.gangs[0], treasury: '9007199254740993123.123456788' }];
+const fractionalDelta = resourceTableChanges(fractionalBefore, fractionalAfter);
+assert.equal(fractionalDelta.tables[0].afterRows[0].treasury, '9007199254740993123.123456788');
+assert(verifyResourceTableChanges(fractionalBefore, fractionalAfter, fractionalDelta));
+console.log('PASS: exact resource parity, immutable receipts, unsupported status and lossless restricted ownership/custody diagnostics');
 
 if (process.argv.includes('--postgres')) {
   const development = process.argv.includes('--development');
@@ -75,7 +100,7 @@ if (process.argv.includes('--postgres')) {
   const output = path.resolve(process.env.RC1_RESOURCE_OUTPUT || path.join(os.tmpdir(), 'omerta-rc1-resource-proof', runId));
   fs.mkdirSync(output, { recursive: true }); assert(!fs.existsSync(path.join(output, 'result.json')), 'Never overwrite evidence');
   const report = { runId, source, evidenceClass: development ? 'DEVELOPMENT_DIAGNOSTIC' : 'NATIVE_FIXTURE_ASSISTED',
-    outcome: 'FAIL', startedAt: new Date().toISOString(), fixture: 'One account/character with declared initial cash10000; no progression claim',
+    outcome: 'FAIL', startedAt: new Date().toISOString(), fixture: 'One account/character with declared initial cash100000 and respect10000; no progression claim',
     command: 'node test/rc1-world-resource-observer.js --postgres', qualifyingFullResourcePass: false,
     exclusions: ['Original worker integration', 'Per-commit proxy hook', 'Full resource taxonomy and matrix', 'Real deployment and chain backing', 'Native lot/capital branches in this focused invocation'] };
   const save = () => fs.writeFileSync(path.join(output, 'result.json'), json(report) + '\n');
@@ -88,17 +113,26 @@ if (process.argv.includes('--postgres')) {
     report.databaseVersion = (await pool.query('SELECT version() AS version')).rows[0].version;
     await pool.query("INSERT INTO accounts(id,auth_provider,auth_subject) VALUES('observer-account','test','observer-account')");
     await pool.query("INSERT INTO account_persistent(account_id) VALUES('observer-account')");
-    await pool.query("INSERT INTO characters(id,account_id,name,season,cash) VALUES('observer-character','observer-account','Observer',1,10000)");
+    await pool.query("INSERT INTO characters(id,account_id,name,season,cash,respect) VALUES('observer-character','observer-account','Observer',1,100000,10000)");
     const before = await snapshotWorldResources(pool); fs.writeFileSync(path.join(output, 'initial-state.json'), json(before));
     const retained = [];
     const observer = createWorldResourceObserver({ pool, record: async entry => { retained.push(entry); fs.appendFileSync(path.join(output, 'movements.ndjson'), JSON.stringify(entry) + '\n'); } });
     const { withCharacter, doCrime } = await import('../src/game.js');
     const { offerLoan, cancelLoan } = await import('../src/loans.js');
+    const { createGang } = await import('../src/social/gangs.js');
     const { grantStack, consumeStack, createItem, transferItem, consumeItem, withItemTransaction } = await import('../src/items.js');
     const a = { scope: 'account', id: 'observer-account' }, b = { scope: 'character', id: 'observer-character' };
     const watch = (name, work) => observer.observe({ authority: 'native-canonical-domain', name }, work);
     const loan = await watch('loan-offer', () => withCharacter(pool, a.id, (ch, client, h) => offerLoan(ch, { amount: 5000, rate: .1, hours: 1 }, client, h)));
     await watch('loan-refund', () => withCharacter(pool, a.id, (ch, client, h) => cancelLoan(ch, loan.id, client, h)));
+    const familyBefore = await observer.snapshot();
+    await watch('canonical-family-found', () => withCharacter(pool, a.id, (ch, client, h) => createGang(ch, 'Observer Family', 'ROBS', client, h)));
+    const familyAfter = await observer.snapshot(), familyJournal = reconcileWorldResources(familyBefore, familyAfter, { includeRestrictedChanges: true });
+    assert(familyJournal.unsupported.some(row => row.kind === 'family-lineage'));
+    assert(verifyResourceTableChanges(familyBefore, familyAfter, familyJournal.restrictedChanges));
+    fs.writeFileSync(path.join(output, 'restricted-family-row-changes.json'), json(familyJournal.restrictedChanges));
+    report.restrictedDiagnostics = { nativeBranch: 'canonical Family formation', hash: familyJournal.restrictedChangesSha256,
+      reconstructedExact: true, unsupportedStatusPreserved: true, publicRowsIncluded: false };
     await watch('crime', () => withCharacter(pool, a.id, (ch, client, h) => doCrime(ch, 'pick', client, h, 'standard')));
     const grant = () => withItemTransaction(pool, client => grantStack(client, a, 'mat:scrap_steel', 10, 'standard', 'declared observer test grant', 'observer-stack-grant'));
     await watch('canonical-stack-grant', grant); await watch('stack-exact-replay', grant);

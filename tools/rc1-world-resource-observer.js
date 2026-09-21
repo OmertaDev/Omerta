@@ -20,6 +20,53 @@ const columnsCache = new WeakMap();
 const rows = (state, table) => { assert(Array.isArray(state.tables[table]), `Missing observed table ${table}`); return state.tables[table]; };
 const stable = ({ boundary, ...value }) => value;
 export const worldResourceHash = (state) => sha256(stable(state));
+const canonical = value => Array.isArray(value) ? `[${value.map(canonical).join(',')}]`
+  : value && typeof value === 'object' ? `{${Object.keys(value).sort().map(key => `${json(key)}:${canonical(value[key])}`).join(',')}}` : json(value);
+const rowBytes = values => values.map(canonical).sort();
+const multiset = values => { const counts = new Map(); for (const value of values) counts.set(value, (counts.get(value) || 0) + 1); return counts; };
+
+// Restricted evidence, never an actor projection or a public coverage summary.
+// Removed/added row multisets preserve every field and duplicate. They make no
+// unsupported guess about which identity or owner a changed row represents.
+export function resourceTableChanges(before, after) {
+  const tables = [];
+  for (const table of WORLD_RESOURCE_TABLES) {
+    const prior = rowBytes(rows(before, table)), final = rowBytes(rows(after, table));
+    if (json(prior) === json(final)) continue;
+    const a = multiset(prior), b = multiset(final), beforeRows = [], afterRows = [];
+    for (const key of new Set([...a.keys(), ...b.keys()])) {
+      for (let i = b.get(key) || 0; i < (a.get(key) || 0); i++) beforeRows.push(JSON.parse(key));
+      for (let i = a.get(key) || 0; i < (b.get(key) || 0); i++) afterRows.push(JSON.parse(key));
+    }
+    tables.push({ table, beforeHash: sha256(prior), afterHash: sha256(final), beforeCount: prior.length, afterCount: final.length,
+      unchangedCount: prior.length - beforeRows.length, beforeRows, afterRows });
+  }
+  return { format: 1, classification: 'RESTRICTED_RESOURCE_EVIDENCE', beforeHash: worldResourceHash(before),
+    afterHash: worldResourceHash(after), tables, statement: 'Exact observed row changes only; unsupported lineage remains unsupported' };
+}
+
+export function verifyResourceTableChanges(before, after, changes) {
+  assert.equal(changes.classification, 'RESTRICTED_RESOURCE_EVIDENCE');
+  assert.equal(changes.beforeHash, worldResourceHash(before)); assert.equal(changes.afterHash, worldResourceHash(after));
+  const changed = indexed(changes.tables, r => r.table, 'changed tables');
+  for (const table of WORLD_RESOURCE_TABLES) {
+    const prior = rowBytes(rows(before, table)), final = rowBytes(rows(after, table)), delta = changed.get(table);
+    if (!delta) { assert.deepEqual(final, prior, `Missing changed table ${table}`); continue; }
+    assert.equal(delta.beforeHash, sha256(prior)); assert.equal(delta.afterHash, sha256(final));
+    assert.equal(delta.beforeCount, prior.length); assert.equal(delta.afterCount, final.length);
+    assert.equal(delta.unchangedCount, prior.length - delta.beforeRows.length);
+    const reconstructed = multiset(prior);
+    for (const removed of rowBytes(delta.beforeRows)) {
+      assert((reconstructed.get(removed) || 0) > 0, `Missing exact before row for ${table}`);
+      reconstructed.set(removed, reconstructed.get(removed) - 1);
+    }
+    for (const added of rowBytes(delta.afterRows)) reconstructed.set(added, (reconstructed.get(added) || 0) + 1);
+    assert.deepEqual([...reconstructed].flatMap(([row, count]) => Array(count).fill(row)).sort(), final,
+      `Changed rows cannot reconstruct ${table}; owner/custody/value detail was lost`);
+  }
+  assert([...changed.keys()].every(table => WORLD_RESOURCE_TABLES.includes(table)), 'Unobserved table in diagnostics');
+  return true;
+}
 
 export async function snapshotWorldResources(pool) {
   const client = await pool.connect();
@@ -89,7 +136,7 @@ const reasonClasses = [
   ['omr', /^(loan:|desk:|gang:tribute$|vanity:|rarity:upgrade$|death:duty$|yield:|stake:|swap:|auction:|withdraw:omr$|drop:claim$)/, 'OMR custody or supply receipt'],
 ];
 
-export function reconcileWorldResources(before, after, { identity = null } = {}) {
+export function reconcileWorldResources(before, after, { identity = null, includeRestrictedChanges = false } = {}) {
   assert.equal(before.format, 1); assert.equal(after.format, 1);
   const checks = [], unsupported = [];
   const receipts = appendOnly(before, after, 'transactions');
@@ -235,12 +282,16 @@ export function reconcileWorldResources(before, after, { identity = null } = {})
     'stakes_entries', 'district_bids', 'shipment_days', 'shipment_takes', 'bespoke_pieces', 'bespoke_serials', 'campaign_progress',
     'drop_allocations', 'chain_reserve', 'vouchers', 'season_records', 'season_recaps', 'operation_escrow'];
   for (const table of observedOnly) if (json(rows(before, table)) !== json(rows(after, table)))
-    unsupported.push({ kind: 'observed-table-change', table, detail: 'Rows retained; complete resource disposition classifier is not implemented' });
+    unsupported.push({ kind: 'observed-table-change', table, detail: 'Change observed; complete resource disposition classifier is not implemented' });
   if (json(rows(before, 'gangs')) !== json(rows(after, 'gangs')))
     unsupported.push({ kind: 'family-lineage', detail: 'Family rows retained; per-Family cash/ammo/spoils attribution is not implemented' });
+  const restrictedChanges = unsupported.length ? resourceTableChanges(before, after) : null;
+  if (restrictedChanges) verifyResourceTableChanges(before, after, restrictedChanges);
   return { format: 1, identity, beforeHash: worldResourceHash(before), afterHash: worldResourceHash(after), receipts,
     itemEvents: events, mutationInputs: inputs, mutationOutputs: outputs, checks, omrBuckets: { before: omrBefore, after: omrAfter, movements: omrMovements },
-    unsupported, status: unsupported.length ? 'PASS_PARITY_WITH_UNSUPPORTED_LINEAGE' : 'PASS_SCOPED_PARITY', qualifyingFullResourcePass: false,
+    unsupported, restrictedChangesSha256: restrictedChanges ? sha256(restrictedChanges) : null,
+    ...(includeRestrictedChanges && restrictedChanges ? { restrictedChanges } : {}),
+    status: unsupported.length ? 'PASS_PARITY_WITH_UNSUPPORTED_LINEAGE' : 'PASS_SCOPED_PARITY', qualifyingFullResourcePass: false,
     coverageMissing: ['Complete cash creation/destruction/transfer taxonomy', 'Every OMR per-owner transfer lineage and real-chain backing',
       'Full lot definitions, mutation provenance and custody semantics (retain canonical invariant checks)',
       'Legacy inventory and remaining escrow/Family/season/contract lineage', 'Per-commit proxy integration, overlapping transactions and compound abort traces'] };
