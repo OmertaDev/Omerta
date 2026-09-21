@@ -142,9 +142,24 @@ export function browserControls({ pageFor, width, result, save }) {
           reads: state.reads, submissions: state.submissions - submissions, ...detail, dom: await readDiagnostics(), requests: state.events.slice() };
         (result.boardLifecycleDiagnostics ||= []).push(entry); save();
       };
-      const refreshedBeforeSubmission = async () => {
+      const refreshedBeforeSubmission = async ({ awaitQueuedRead = false } = {}) => {
+        if (awaitQueuedRead && session.boardRead !== undefined && session.boardRead === state.reads) {
+          // The production projection coordinator clears controls before the
+          // serialized authenticated API queue necessarily starts its GET.
+          // Loading alone never authorizes reissue: require that actual GET.
+          const loading = await page.locator('#tab-world .world-card[role="status"]')
+            .filter({ hasText: 'Refreshing your street' }).isVisible();
+          if (loading && session.boardRead === state.reads) {
+            assert.equal(state.submissions, submissions, 'A submitted command cannot await refresh for reissue');
+            try {
+              await page.waitForRequest(request => request.method() === 'GET' && new URL(request.url()).pathname === '/v1/commands', { timeout: 5000 });
+            } catch (error) { if (error.name !== 'TimeoutError') throw error; }
+          }
+        }
         if (session.boardRead === undefined || session.boardRead === state.reads) return false;
         assert.equal(state.submissions, submissions, 'A submitted command cannot be retried as a board refresh');
+        await diagnostic('observed-refresh-before-submission');
+        assert.equal(state.submissions, submissions, 'A submitted command cannot be retried after refresh diagnostics');
         (result.reachabilityDiagnostics ||= []).push({ event: 'rc1-board-refreshed-before-click', width }); save();
         throw Object.assign(new Error('Observed a newer board request before command submission'), {
           observedBrowserRefresh: true, statusCode: 409, body: { error: 'browser_board_refresh' },
@@ -184,10 +199,7 @@ export function browserControls({ pageFor, width, result, save }) {
         // request bodies or private DOM content enters the retained CI log.
         console.error(JSON.stringify(diagnostic));
         if (refreshing) {
-          await page.locator('#tab-world .world-summary').waitFor({ state: 'visible', timeout: 5000 });
-          throw Object.assign(new Error('Rendered board refreshed before command selection'), {
-            observedBrowserRefresh: true, statusCode: 409, body: { error: 'browser_board_refresh' },
-          });
+          await refreshedBeforeSubmission({ awaitQueuedRead: true });
         }
       }
       assert(chosen, `No reachable ${command.commandType}: ${command.label}`);
@@ -198,11 +210,14 @@ export function browserControls({ pageFor, width, result, save }) {
       await reach(page, chosen, command.label); await refreshedBeforeSubmission();
       const connected = await selectedNode.evaluate(node => node.isConnected);
       if (!connected) await diagnostic('detached-connectivity-read', { connected });
+      // The read-generation check above precedes an awaited browser round trip.
+      // Recheck after it; a newer GET can begin in precisely that interval.
+      await refreshedBeforeSubmission({ awaitQueuedRead: !connected });
       assert(connected, 'Selected command detached without an observed board refresh');
       const waiting = page.waitForResponse((response) => response.request().method() === 'POST' && new URL(response.url()).pathname === '/v1/commands/execute');
       waiting.catch(() => {});
       try { await selectedNode.click(); }
-      catch (error) { await refreshedBeforeSubmission(); throw error; }
+      catch (error) { await refreshedBeforeSubmission({ awaitQueuedRead: true }); throw error; }
       if (command.confirmation.required) {
         const confirm = page.locator('[data-world-choice-confirm]'); await reach(page, confirm, `confirm ${command.label}`); await confirm.click();
       }
