@@ -110,9 +110,9 @@ export function browserControls({ pageFor, width, result, save }) {
       }
       assert(chosen, `No reachable ${command.commandType}: ${command.label}`);
       const waiting = page.waitForResponse((response) => response.request().method() === 'POST' && new URL(response.url()).pathname === '/v1/commands/execute');
-      waiting.catch(() => {}); await tap(page, chosen, command.label);
+      waiting.catch(() => {}); await reach(page, chosen, command.label); await chosen.click();
       if (command.confirmation.required) {
-        const confirm = page.locator('[data-world-choice-confirm]'); await tap(page, confirm, `confirm ${command.label}`);
+        const confirm = page.locator('[data-world-choice-confirm]'); await reach(page, confirm, `confirm ${command.label}`); await confirm.click();
       }
       const response = await waiting, body = await response.json();
       assert.equal(response.request().postDataJSON().executionId, key, 'UI must execute the selected issued identity');
