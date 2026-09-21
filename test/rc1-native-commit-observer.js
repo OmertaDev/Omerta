@@ -52,9 +52,14 @@ if (process.argv.includes('--postgres')) {
     assert.equal(events.at(-1).outcome, 'STATEMENT_ABORTED'); assert.equal(events.at(-1).balance, '13');
     observer.assertComplete();
     assert(attempts.some((event) => event.outcome === 'THREW' && event.code === '23505'));
-    const pending = client.query('SELECT pg_sleep(0.1)');
-    await assert.rejects(pool.query('UPDATE balance SET amount=99'), /Concurrent native queries/);
-    await pending;
+    // Borrow both real connections before launching; connection establishment
+    // itself may otherwise outlast the first query and remove the overlap.
+    const second = await pool.connect();
+    try {
+      const pending = client.query('SELECT pg_sleep(0.1)');
+      await assert.rejects(second.query('UPDATE balance SET amount=99'), /Concurrent native queries/);
+      await pending;
+    } finally { second.release(); }
     assert.equal((await reader.query('SELECT amount::text FROM balance')).rows[0].amount, '13');
     assert.throws(() => observer.assertComplete(), /Concurrent native queries/);
     failObserver = true;
