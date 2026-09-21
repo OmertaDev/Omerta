@@ -314,13 +314,6 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:loans:postgres
-      - name: Exact Family cash and ammo custody with late abort
-        if: '!cancelled()'
-        env:
-          RC1_FAMILY_CUSTODY_OUTPUT: ${{ runner.temp }}/rc1-family-custody
-        run: |
-          umask 077
-          npm run test:rc1:family-custody:postgres
       - name: Ordinary entrant replacement preserves retired custody
         if: '!cancelled()'
         env:
@@ -472,3 +465,73 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:shipment:postgres
+  bounded-custody-and-mobile:
+    name: Bounded custody and mobile (PostgreSQL ${{ matrix.postgres }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        postgres: ['16', '18.4']
+    services:
+      postgres:
+        image: postgres:${{ matrix.postgres }}
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: rc1_custody_control
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      COORDINATION_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/rc1_custody_control
+      RC1_RESOURCE_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Install PostgreSQL client tools matching the server major
+        run: bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'
+      - name: Install Chromium for native adversity
+        run: npx playwright-core install --with-deps chromium
+      - name: Exact Family cash and ammo custody with late abort
+        if: '!cancelled()'
+        env:
+          RC1_FAMILY_CUSTODY_OUTPUT: ${{ runner.temp }}/rc1-family-custody
+        run: |
+          umask 077
+          npm run test:rc1:family-custody:postgres
+      - name: Exact OMR custody and original six-hour unbond
+        if: '!cancelled()'
+        env:
+          RC1_OMR_OUTPUT: ${{ runner.temp }}/rc1-omr
+        run: |
+          umask 077
+          npm run test:rc1:omr:postgres
+      - name: Exact OMR redemption and historical balance boundaries
+        if: '!cancelled()'
+        env:
+          RC1_OMR_WINDOW_OUTPUT: ${{ runner.temp }}/rc1-omr-window
+        run: |
+          umask 077
+          npm run test:rc1:omr-window:postgres
+      - name: Canonical alliance pacts and explicit Knowledge grants
+        if: '!cancelled()'
+        env:
+          RC1_ALLIANCE_OUTPUT: ${{ runner.temp }}/rc1-alliance
+        run: |
+          umask 077
+          npm run test:rc1:alliance:postgres
+      - name: Native newcomer response loss reload and duplicate gesture
+        if: '!cancelled()'
+        env:
+          RC1_MOBILE_ADVERSITY_OUTPUT: ${{ runner.temp }}/rc1-mobile-adversity
+        run: |
+          umask 077
+          npm run test:rc1:mobile-adversity:postgres

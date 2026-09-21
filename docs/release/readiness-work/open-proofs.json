@@ -28,8 +28,8 @@
     {
       "id": "RC1-01-CONCURRENT-REPLAY",
       "owner": "Backend/test engineer; current engineering assignee Codex/native_harness",
-      "missing": "Scoped contention replay, isolated673-hour original-worker replay, quiet actor replay/checkpoint continuation, and high/low mystery actor/resource-stream replay pass. Arbitrary concurrent failure schedules, reduction, complete policies and full matrix replay remain required. The new90-day exact replay fails due to two recorded-order omissions; their causal repair and fresh integrated-source replay remain required.",
-      "evidence": "harness-worker-results.json;harness-database-isolation.md;expanded-native-results.json;harness-worker-isolated-results.json;harness-actor-replay-results.json;harness-mystery-world-replay-results.json;harness-quiet-90day-regression-results.json;harness-recorded-query-order.md;harness-query-order-causal-results.json",
+      "missing": "Scoped contention, isolated original workers, actor checkpoint continuation and mystery/resource replay pass. The repaired ninety-day quiet-world pair now matches all 90 daily states and final full state without exclusions at c38fb9bd. Resources were disabled in that long pair; arbitrary concurrent schedules, native failure reduction, complete policies and qualifying matrix replay remain required. Integrated9e05bf08 ten-case query controls and two-hour resource replay pass.",
+      "evidence": "harness-worker-results.json;harness-database-isolation.md;expanded-native-results.json;harness-worker-isolated-results.json;harness-actor-replay-results.json;harness-mystery-world-replay-results.json;harness-quiet-90day-regression-results.json;harness-recorded-query-order.md;harness-query-order-causal-results.json;harness-quiet-90day-order-replay-results.json;integrated-9e05bf08-results.json",
       "reruns": [
         "concurrent replay",
         "checkpoint/failure reduction",
@@ -40,7 +40,7 @@
       "id": "RC1-02-FULL-RESOURCE-COVERAGE",
       "owner": "Backend/economy engineer; current engineering assignee Codex/resource_proof",
       "missing": "All13categories and9originalgaps still require complete branches plus simulation. Scoped original Family/escrow/shipment and two77-hour loan worlds pass, including48h offer refunds,24h collateral grace and funded Wanted72h refunds. Remaining: complete OMR mint/burn/backing and collateral branches, NFT lifecycle/backing, shipment loot/concurrency, complete operation material/spend and concurrency coverage, compound per-owner lineage and complete simulation. Cars/Family/season changes in full worlds remain explicitly unclassified. A separate673-hour seasonal journal now reconciles prestige and nonmonetary status across2original rollovers; initial standings election and complete-world per-commit lineage remain unclassified.",
-      "evidence": "resource-proof.md;resource-family-runs/7df52b3f-summary.json;resource-shipment-boundaries.json;resource-capital-proof.md;resource-escrow-runs/e89e90fd-summary.json;resource-loan-lifecycle-results.json;harness-mystery-world-replay-results.json;resource-capital-lifecycle-summary.json;integrated-fcaa6076-results.json;season-journal-summary.json;integrated-09119b29-results.json",
+      "evidence": "resource-proof.md;resource-family-runs/7df52b3f-summary.json;resource-shipment-boundaries.json;resource-capital-proof.md;resource-escrow-runs/e89e90fd-summary.json;resource-loan-lifecycle-results.json;harness-mystery-world-replay-results.json;resource-capital-lifecycle-summary.json;integrated-fcaa6076-results.json;season-journal-summary.json;integrated-09119b29-results.json;omr-custody-summary.json;family-cash-ammo-summary.json;alliance-summary.json",
       "reruns": [
         "resource inventory and journals",
         "all affected transition/replay/fault branches",

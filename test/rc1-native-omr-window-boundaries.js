@@ -12,7 +12,7 @@ import { exactSum, negate } from '../tools/rc1-resource-journal.js';
 assert(process.argv.includes('--postgres'), 'Native PostgreSQL required');
 const arg = name => process.argv.find(value => value.startsWith(`--${name}=`))?.slice(name.length + 3);
 const source = await sourceIdentity(), runId = `omr-window-${source.revision.slice(0, 12)}-${crypto.randomBytes(5).toString('hex')}`;
-const output = path.resolve(arg('output') || path.join(os.tmpdir(), 'omerta-rc1-resource-proof', runId));
+const output = path.resolve(arg('output') || process.env.RC1_OMR_WINDOW_OUTPUT || path.join(os.tmpdir(), 'omerta-rc1-resource-proof', runId));
 const database = planOwnedWorldDatabase({ controlUrl: process.env.RC1_RESOURCE_DATABASE_URL, runId, sourceRevision: source.revision });
 for (const name of ['CHAIN_RPC_URL', 'CHAIN_SIGNER_PK', 'INVARIANT_WEBHOOK_URL', 'LIQUIDITY_RPC_URL', 'LIQUIDITY_RPC_FALLBACK_URL', 'REDIS_URL']) assert(!process.env[name], `External integration excluded: ${name}`);
 const fixtures = { short: '6.0000099999999996', historic: '5000.000000000001', full: '6.000010', cap: '1500', formats: '5000' };

@@ -36,7 +36,7 @@ Retained attempts:
   `RC1-MOBILE-BLOCKERS-01`. The repair displays only explicitly known blockers;
   unknown/untyped requirements remain hidden and the command remains disabled.
   Actual-renderer negative controls cover known, hidden, mixed and untyped cases.
-- Runtime repair native retest: pending.
+- Runtime repair at `f86d51ec52985c4e1dec93ef3202f2ed3baac627`: all four widths PASS_SCOPED. Each width completed six journey steps, eight hit-tested controls and eight recorded command requests; the actual withheld responses lasted 802–812ms. All 22 native artifacts and 56 browser assets independently verified. Existing client regression also passed. Fresh integrated-source and hosted retests remain required.
 
 Each width retains final full native state and a recoverable database checkpoint,
 browser output/screenshots/request evidence and asset hashes. The aggregate

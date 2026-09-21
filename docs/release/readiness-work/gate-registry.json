@@ -9,6 +9,58 @@
   "note": "Pinned required command inventory across the four source workflows. Preserve each workflow setup, database isolation, platform, environment and budgets. A component regression pass does not clear a full native, deployed, or human proof.",
   "gates": [
     {
+      "id": "rc1-mobile-adversity",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:mobile-adversity:postgres"
+      ],
+      "timeoutMs": 1200000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Automated native newcomer response loss, reload, duplicate click and preparation; no physical devices, human comprehension or complete mobile clearance"
+      ]
+    },
+    {
+      "id": "rc1-alliance",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:alliance:postgres"
+      ],
+      "timeoutMs": 1200000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Three canonical pacts and explicit Knowledge grants; no elapsed expiry, cross-Family operations, warfare or qualifying world matrix"
+      ]
+    },
+    {
+      "id": "rc1-omr-window",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:omr-window:postgres"
+      ],
+      "timeoutMs": 1200000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Exact redemption formats and historical dust boundaries only; no complete OMR or external reserve proof"
+      ]
+    },
+    {
+      "id": "rc1-omr",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:omr:postgres"
+      ],
+      "timeoutMs": 1200000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Bounded OMR redemption, sinks, six-hour unbond and repaid collateral; no complete mint/burn/backing taxonomy or world matrix"
+      ]
+    },
+    {
       "id": "rc1-family-custody",
       "command": [
         "npm",

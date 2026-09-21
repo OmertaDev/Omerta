@@ -115,3 +115,5 @@ native evidence here; the last does not. Privileged desk sales/buybacks,
 withdrawals, external backing, mints, other sinks, Family redistribution, stake
 commitment/loot and other loan terminal branches remain unsupported. None may be
 inferred from a zero aggregate drift or from pre-baseline fixture allocation.
+
+Final isolated source `0df3cadab46c8eae24eaa265f5c514c24971554a` passed the fresh core journal (37 boundaries, 632 equations, 20 movements, 11 corruption controls) and all 20 native window boundaries (10 successes and 10 refusals). Original six-hour unbond callbacks ran. The exact insufficient historical balance remained unchanged. `omr-custody-summary.json` retains all nine attempts, source hashes and unsupported branches. Integrated-source qualification remains required.

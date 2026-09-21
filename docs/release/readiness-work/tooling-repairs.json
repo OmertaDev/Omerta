@@ -498,8 +498,8 @@
         "tools/rc1-native-query-order.js",
         "test/rc1-native-query-order.js"
       ],
-      "retest": "c38fb9bd native causal ten cases and all artifact hashes verified; exact full state differs under reversed native order and matches under recorded replay. Fresh ninety-day pair running; integrated-source and hosted reruns remain required.",
-      "evidence": "harness-quiet-90day-regression-results.json;harness-query-order-causal-results.json;harness-recorded-query-order.md"
+      "retest": "c38fb9bd native causal controls and exact ninety-day observation/replay PASS: all90 daily states and final state match without exclusions;913 retained causal/short/long artifact hashes verified. Integrated9e05bf08 ten native controls and resource-enabled two-hour replay also pass. Full resources, matrix and latest integrated qualification remain open.",
+      "evidence": "harness-quiet-90day-regression-results.json;harness-query-order-causal-results.json;harness-recorded-query-order.md;harness-quiet-90day-order-replay-results.json;harness-quiet-90day-order-artifact-index.json;integrated-9e05bf08-results.json"
     },
     {
       "id": "RC1-TOOL-31",
