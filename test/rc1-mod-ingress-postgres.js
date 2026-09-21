@@ -22,7 +22,7 @@ const save = () => fs.writeFileSync(output, JSON.stringify(report, null, 2)); sa
 for (const key of ['JWT_SECRET', 'MARKET_SEED', 'MOD_KEY']) process.env[key] = crypto.randomBytes(32).toString('hex');
 Object.assign(process.env, { RATE_LIMIT: 'on', RATE_AUTH_BURST: '2', RATE_AUTH_PER_SEC: '0.0001',
   SOCIAL_VERIFY_MODE: 'off', INVITE_MODE: 'off', POPULATION_OFF: 'on' }); delete process.env.REDIS_URL;
-let db, app;
+let db, app, releaseAudit;
 try {
   db = await commandDatabase('mod_ingress');
   const schema = (await db.pool.query('SELECT current_schema() AS name')).rows[0].name;
@@ -33,7 +33,20 @@ try {
   const actualRoutes = app.routes.filter(r => ['POST', 'PUT', 'PATCH', 'DELETE'].includes(r.method) && r.authKind === 'modAuth').map(r => `${r.method} ${r.url}`).sort();
   const expectedRoutes = JSON.parse(fs.readFileSync('docs/release/readiness-work/authority-inventory.json')).routes.filter(r => r.mountedAuth.authKind === 'modAuth').map(r => r.id).sort();
   assert.deepEqual(actualRoutes, expectedRoutes); report.moderatorRoutes = actualRoutes;
-  const audits = async () => Number((await app.pool.query('SELECT count(*) AS n FROM mod_actions')).rows[0].n);
+  // Production audits are intentionally best-effort asynchronous writes. Track
+  // their real completion, rather than assuming an HTTP parser error waits for
+  // the INSERT. No polling, fixed sleep, or change to production ordering.
+  const auditWrites = [];
+  const query = app.pool.query.bind(app.pool);
+  let auditDelay = null;
+  app.pool.query = (...args) => {
+    if (!/^INSERT INTO mod_actions\b/i.test(typeof args[0] === 'string' ? args[0] : args[0]?.text || '')) return query(...args);
+    const write = auditDelay ? auditDelay.then(() => query(...args)) : query(...args);
+    auditWrites.push(write);
+    return write;
+  };
+  const committedAudits = async () => Number((await query('SELECT count(*) AS n FROM mod_actions')).rows[0].n);
+  const audits = async () => { await Promise.all(auditWrites); return committedAudits(); };
   const request = async (id, url, payload, expected, { authorized = false, ip = '127.0.0.10' } = {}) => {
     const response = await app.inject({ method: 'POST', url, payload, remoteAddress: ip,
       headers: { 'content-type': 'application/json', ...(authorized ? { 'x-mod-key': process.env.MOD_KEY } : {}) } });
@@ -60,12 +73,29 @@ try {
   assert.equal(await audits(), before + 2, 'rate rejection must not produce a moderator audit');
   await request('authorized-malformed-json-remains-parser-error', '/v1/mod/drop/load', '{', 400, { authorized: true, ip: '127.0.0.13' });
   assert.equal(await audits(), before + 3, 'admitted malformed attempt is audited once before parsing');
-  await request('authorized-default-body-cap-remains', '/v1/mod/ban', malformed, 413, { authorized: true, ip: '127.0.0.14' });
+  // Causal control for the hosted PG18 race: keep this exact audit queued while
+  // the parser returns its response. The former immediate count must be short
+  // by one, then the unchanged INSERT must commit and satisfy the exact count.
+  auditDelay = new Promise(resolve => { releaseAudit = resolve; });
+  let deadline;
+  try {
+    await Promise.race([
+      request('authorized-default-body-cap-remains', '/v1/mod/ban', malformed, 413, { authorized: true, ip: '127.0.0.14' }),
+      new Promise((_, reject) => { deadline = setTimeout(() => reject(new Error('Parser response waited for deliberately delayed audit')), 5000); }),
+    ]);
+    const beforeRelease = await committedAudits();
+    assert.equal(auditWrites.length, before + 4, 'all admitted attempts schedule exactly one audit');
+    assert.equal(beforeRelease, before + 3, 'response can precede the fourth audit commit');
+    assert.throws(() => assert.equal(beforeRelease, before + 4), assert.AssertionError);
+    report.auditTimingControl = { delayedWrite: 4, responseBeforeCommit: true,
+      formerImmediateAssertion: { expected: before + 4, actual: beforeRelease, status: 'EXPECTED_FAILURE' } };
+  } finally { clearTimeout(deadline); releaseAudit(); auditDelay = null; }
   assert.equal(await audits(), before + 4);
+  report.auditTimingControl.afterCompletionBarrier = { expected: before + 4, actual: await committedAudits(), status: 'PASS' };
   assert.equal(Number((await app.pool.query('SELECT count(*) AS n FROM bans')).rows[0].n), 0);
   assert.equal(Number((await app.pool.query('SELECT count(*) AS n FROM drop_allocations WHERE omr=0')).rows[0].n), 1);
   for (const [file, digest] of Object.entries(report.sourceFiles)) assert.equal(hash(file), digest);
   report.status = 'PASS_SCOPED'; report.sourceUnchanged = true; report.completedAt = new Date().toISOString(); save();
   console.log(JSON.stringify({ status: report.status, cases: report.cases.length, mountedModeratorMutations: actualRoutes.length, output }));
 } catch (error) { report.status = 'FAIL'; report.error = { message: error.message, stack: error.stack }; save(); throw error; }
-finally { if (app) { await app.close(); await app.pool.end(); } if (db) await db.cleanup(db.pool); }
+finally { releaseAudit?.(); if (app) { await app.close(); await app.pool.end(); } if (db) await db.cleanup(db.pool); }
