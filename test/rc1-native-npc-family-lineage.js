@@ -14,8 +14,8 @@ const runId = `npc-family-${source.revision.slice(0, 8)}-${crypto.randomBytes(4)
 const output = process.env.RC1_NPC_FAMILY_OUTPUT || path.join(os.tmpdir(), runId);
 const database = planOwnedWorldDatabase({ controlUrl: process.env.RC1_RESOURCE_DATABASE_URL, runId, sourceRevision: source.revision });
 const configuration = { scope: 'Original worker NPC Family fee and nonmonetary war-pool creation with actual statement provenance', sourcePins: NPC_FAMILY_SOURCE_PINS,
-  seed, epoch: new Date(epoch).toISOString(), hours: 2, fixtures: '25 initial ordinary accounts/characters with authored birth defaults; no NPC resource, membership, progression, status or deadline fixture',
-  fault: 'Declared prebaseline AFTER UPDATE trigger aborts NPC standing write after verifying Family/member/fee/predecessor cash persistence; remove after boot for next original hourly retry',
+  seed, epoch: new Date(epoch).toISOString(), maximumHours: 8, fixtures: '25 initial ordinary accounts/characters with authored birth defaults; no NPC resource, membership, progression, status or deadline fixture',
+  fault: 'Declared prebaseline AFTER UPDATE trigger aborts NPC standing write after verifying Family/member/fee and exact personal cash-ledger persistence; remove after first eligible attempt for the next original hourly retry',
   exclusions: ['NPC seed/car/other ecology lineage', 'Recruitment, dissolution, war-pool regeneration/combat/payout', 'HTTP entry/natural player progression', 'Full world/matrix/backing/deployment qualification'] };
 for (const key of ['POPULATION_OFF', 'SEASON_MOD', 'SEASON_PHASE', 'LAW_BUST_P', 'CHAIN_RPC_URL', 'CHAIN_SIGNER_PK', 'LIQUIDITY_RPC_URL', 'LIQUIDITY_RPC_FALLBACK_URL', 'INVARIANT_WEBHOOK_URL', 'REDIS_URL']) assert(!process.env[key], `Undeclared override ${key}`);
 Object.assign(process.env, { DATABASE_URL: database.url, CORE_PROGRESSION: 'on', WORLD_GRAPH_KERNEL: 'on', COORDINATION_ENGINE: 'on', COORDINATION_KNOWLEDGE: 'on',
@@ -65,23 +65,31 @@ try {
   const fault = `CREATE FUNCTION rc1_npc_abort() RETURNS trigger LANGUAGE plpgsql AS $fault$ BEGIN
     IF NEW.npc_flag AND NOT OLD.npc_flag THEN
       IF NEW.war_pool <> 120000 OR NOT EXISTS(SELECT 1 FROM gang_members m JOIN transactions t ON t.character_id=m.character_id JOIN characters c ON c.id=m.character_id
-        WHERE m.gang_id=NEW.id AND m.role='boss' AND t.reason='gang:found' AND t.amount=-25000 AND c.cash=c.npc_seed-25000)
+        WHERE m.gang_id=NEW.id AND m.role='boss' AND t.reason='gang:found' AND t.amount=-25000 AND c.cash+c.bank=500+COALESCE((SELECT SUM(amount) FROM transactions WHERE character_id=c.id AND currency='cash'),0))
       THEN RAISE EXCEPTION 'NPC fault predecessors missing' USING ERRCODE='RNF02'; END IF;
       RAISE EXCEPTION 'RC1_NPC_FORMATION_ABORT after original cash fee and standing write' USING ERRCODE='RNF01'; END IF; RETURN NEW; END $fault$`;
   await pool.query(fault); await pool.query('CREATE TRIGGER rc1_npc_abort AFTER UPDATE ON gangs FOR EACH ROW EXECUTE FUNCTION rc1_npc_abort()');
   await proof.artifact('initialization.json', { configuration, fault, gameplayFixturesAfterBaseline: false });
   assert((await runLedgerInvariants(pool,{alert:false})).ok); await proof.snapshot(pool,'initial');
   await bootOriginalWorker(controller, { beforeCallbacks: async () => { previous = await snapshotWorldResources(readPool); commitObserver.arm(); } });
-  assert.equal(expectedFaults.length,1); assert.equal(rollbackCount,1); assert.equal(committedCount,0);
-  await base.query(`SET search_path=${namespace},pg_catalog`); await base.query('DROP TRIGGER rc1_npc_abort ON gangs'); await base.query('DROP FUNCTION rc1_npc_abort()'); faultInstalled=false;
-  await controller.advanceTo(epoch+7200000, async () => { const inv=await runLedgerInvariants(readPool,{alert:false}); assert(inv.ok); await proof.record({kind:'canonical-invariants',logicalAt:at,checks:inv.checks}); });
+  const afterCallback = async () => {
+    if (faultInstalled && expectedFaults.length) {
+      assert.equal(expectedFaults.length,1); assert.equal(rollbackCount,1); assert.equal(committedCount,0);
+      await base.query(`SET search_path=${namespace},pg_catalog`); await base.query('DROP TRIGGER rc1_npc_abort ON gangs'); await base.query('DROP FUNCTION rc1_npc_abort()'); faultInstalled=false;
+      await proof.record({kind:'diagnostic-trigger-removed',logicalAt:at,gameplayMutation:false});
+    }
+    const inv=await runLedgerInvariants(readPool,{alert:false}); assert(inv.ok); await proof.record({kind:'canonical-invariants',logicalAt:at,checks:inv.checks});
+  };
+  await afterCallback();
+  for(let hour=1;hour<=configuration.maximumHours && committedCount<2;hour++) await controller.advanceTo(epoch+hour*3600000,afterCallback);
+  assert.equal(expectedFaults.length,1);
   commitObserver.assertComplete(); assert.equal(firstError,undefined); assert.equal(committedCount,2); assert.equal(rollbackCount,1);
   for (const input of candidates.filter(row => row.event.outcome==='COMMITTED')) for (const control of npcFamilyCorruptions(input)) {
     const filename=`npc-control-${String(controls.length+1).padStart(3,'0')}.json`; await proof.artifact(filename,control); controls.push({name:control.name,artifact:filename});
   }
   commitObserver.disarm(); await proof.snapshot(pool,'final'); await proof.artifact('worker-schedule.json',controller.diagnostic()); await proof.artifact('commit-observer.json',commitObserver.diagnostic());
   await proof.artifact('random-tape.json',{draws:runtime.tape}); await proof.artifact('expected-faults.json',expectedFaults);
-  result={status:'PASS_SCOPED',boundaryCount,candidateCount,committedCount,rollbackCount,controls:controls.length,unknown,logicalHours:2,nonmonetaryWarPoolNotCurrency:true,fullResourceCoverage:false};
+  result={status:'PASS_SCOPED',boundaryCount,candidateCount,committedCount,rollbackCount,controls:controls.length,unknown,logicalHours:(at-epoch)/3600000,nonmonetaryWarPoolNotCurrency:true,fullResourceCoverage:false};
 } catch(error) {
   result={status:'FAIL',message:error.message,stack:error.stack,boundaryCount,candidateCount,committedCount,rollbackCount};process.exitCode=1;
   await proof.record({kind:'failure',...result}); await proof.artifact('failure-worker-schedule.json',controller.diagnostic()); await proof.artifact('failure-commit-observer.json',commitObserver.diagnostic());

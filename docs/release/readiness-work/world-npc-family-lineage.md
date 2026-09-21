@@ -34,9 +34,10 @@ node test/rc1-world-npc-family-lineage.js $env:RC1_NPC_FAMILY_OUTPUT
 The native proof creates its own database and declares 25 ordinary accounts with authored
 birth defaults before baseline. NPCs, resources, eligibility and Families then come from
 original worker callbacks. A declared prebaseline diagnostic trigger verifies the fee,
-membership, cash write and standing update have occurred, then aborts the boot formation.
+membership, cash write and standing update have occurred, then aborts the first eligible formation (which need not occur at boot).
 The complete resource snapshot must remain identical after rollback. Removing that
-diagnostic trigger permits the next two original hourly callbacks to form Families; no
+diagnostic trigger permits two later original hourly callbacks to form Families, with an eight-hour
+maximum; no
 game status, deadline or resource is edited. All intervening worker callbacks, canonical
 invariants, resource boundaries, unknowns, random tape, cleanup and source checks are
 retained. Corruption controls alter owners, native inputs/results, source/caller binding,
