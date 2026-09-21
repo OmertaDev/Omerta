@@ -22,8 +22,9 @@
       "policy": {
         "dailyActiveFraction": 0.1
       },
-      "implementationStatus": "UNIMPLEMENTED",
-      "qualifyingRuns": 0
+      "implementationStatus": "PARTIAL_SCOPED",
+      "qualifyingRuns": 0,
+      "implementationEvidence": "harness-mystery-world-replay-results.json"
     },
     {
       "id": "high_aggression",
@@ -31,8 +32,9 @@
       "policy": {
         "eligibleConflictChoiceFraction": 0.7
       },
-      "implementationStatus": "UNIMPLEMENTED",
-      "qualifyingRuns": 0
+      "implementationStatus": "PARTIAL_SCOPED",
+      "qualifyingRuns": 0,
+      "implementationEvidence": "aggression-player-policy.md"
     },
     {
       "id": "family_monopoly",
@@ -87,8 +89,9 @@
       "policy": {
         "weeklyActiveReplacementFraction": 0.3
       },
-      "implementationStatus": "UNIMPLEMENTED",
-      "qualifyingRuns": 0
+      "implementationStatus": "PARTIAL_SCOPED",
+      "qualifyingRuns": 0,
+      "implementationEvidence": "churn-player-policy.md"
     },
     {
       "id": "mostly_new_players",
@@ -136,8 +139,9 @@
       "policy": {
         "eligibleInvestigationChoiceFraction": 0.7
       },
-      "implementationStatus": "UNIMPLEMENTED",
-      "qualifyingRuns": 0
+      "implementationStatus": "PARTIAL_SCOPED",
+      "qualifyingRuns": 0,
+      "implementationEvidence": "harness-mystery-world-replay-results.json"
     },
     {
       "id": "low_mystery_participation",
@@ -145,8 +149,9 @@
       "policy": {
         "maximumEligibleInvestigationChoiceFraction": 0.05
       },
-      "implementationStatus": "UNIMPLEMENTED",
-      "qualifyingRuns": 0
+      "implementationStatus": "PARTIAL_SCOPED",
+      "qualifyingRuns": 0,
+      "implementationEvidence": "harness-mystery-world-replay-results.json"
     },
     {
       "id": "market_stress",

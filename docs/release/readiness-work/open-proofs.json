@@ -17,8 +17,8 @@
     {
       "id": "RC1-01-CONCURRENT-REPLAY",
       "owner": "Backend/test engineer; current engineering assignee Codex/native_harness",
-      "missing": "Scoped contention/checkpoint replays pass. Full owned-database673-hour worker observation/replay now matches complete canonical state, jobs, random tape and all original configured timers across2seasonrollovers. Actor-policy restart/replay and reduction remain in progress; no full matrix claim.",
-      "evidence": "harness-worker-results.json;harness-database-isolation.md;expanded-native-results.json;harness-worker-isolated-results.json",
+      "missing": "Scoped contention replay, isolated673-hour original-worker replay, quiet actor replay/checkpoint continuation, and high/low mystery actor/resource-stream replay pass. Arbitrary concurrent failure schedules, reduction, complete policies and full matrix replay remain required.",
+      "evidence": "harness-worker-results.json;harness-database-isolation.md;expanded-native-results.json;harness-worker-isolated-results.json;harness-actor-replay-results.json;harness-mystery-world-replay-results.json",
       "reruns": [
         "concurrent replay",
         "checkpoint/failure reduction",
@@ -28,8 +28,8 @@
     {
       "id": "RC1-02-FULL-RESOURCE-COVERAGE",
       "owner": "Backend/economy engineer; current engineering assignee Codex/resource_proof",
-      "missing": "All13categories and9originalgaps still require complete native terminal branches plus simulation. New scoped evidence includes original Family war/turf, shipment boundaries, and98-boundary original-duration escrow with market/loan1h and GP/Stakes30m. Remaining branches include original48hloanoffer/24hgrace, fundedWanted, OMRmint/burn/backing/seizure closure, NFTextraction/expiry/import/backing, shipmentloot/concurrentboundaries, operationcapital lifecycle, compound owner lineage and complete simulation.",
-      "evidence": "resource-proof.md;resource-family-runs/7df52b3f-summary.json;resource-shipment-boundaries.json;resource-capital-proof.md;resource-escrow-runs/e89e90fd-summary.json",
+      "missing": "All13categories and9originalgaps still require complete branches plus simulation. Scoped original Family/escrow/shipment and two77-hour loan worlds pass, including48h offer refunds,24h collateral grace and funded Wanted72h refunds. Remaining: complete OMR mint/burn/backing and collateral branches, NFT lifecycle/backing, shipment loot/concurrency, original operation-capital lifecycle, compound per-owner lineage and complete simulation. Cars/Family/season changes in full worlds remain explicitly unclassified.",
+      "evidence": "resource-proof.md;resource-family-runs/7df52b3f-summary.json;resource-shipment-boundaries.json;resource-capital-proof.md;resource-escrow-runs/e89e90fd-summary.json;resource-loan-lifecycle-results.json;harness-mystery-world-replay-results.json",
       "reruns": [
         "resource inventory and journals",
         "all affected transition/replay/fault branches",

@@ -342,7 +342,7 @@
         "test/rc1-native-worker-schedule.js",
         "test/rc1-native-world-workload.js"
       ],
-      "retest": "Native same-database lock interference and separate-database success control PASS; isolated673-hour replay pending."
+      "retest": "Native advisory-lock isolation control and full isolated673-hour replay PASS; exact sources in harness-worker-isolated-results.json. No matrix qualification."
     },
     {
       "id": "RC1-TOOL-20",
@@ -413,6 +413,51 @@
       ],
       "retest": "972e7f46 and4a586ae3 nativePASS_SCOPED; unit filename control added.",
       "evidence": "mystery-player-policies.md;integrated-8c2e4418-results.json"
+    },
+    {
+      "id": "RC1-TOOL-25",
+      "classification": "C stale test with reproduced canonical contention",
+      "owner": "Codex/root",
+      "failedGate": "8c2e4418 CI35565166300 PostgreSQL16 job106225418843, Director network recovery",
+      "before": "Both concurrent native executions can refuse SQLSTATE55P03 while each holds a prerequisite SHARE lock and attempts FOR UPDATE NOWAIT. The old test required one immediate winner.",
+      "repair": "0fbde772 adds a deterministic SHARE-lock contention control, exact unchanged-state assertions, and an explicit same-key serial retry only after both outcomes are confirmed contention. Exactly one effect and durable replay remain mandatory.",
+      "changedSource": [
+        "test/director-network-recovery.js"
+      ],
+      "retest": "Native source0fbde772 PASS including naturally observed double contention and serial recovery. Hosted exact repair-source rerun pending.",
+      "evidence": "Private director-race-diagnostic-2, director-contention-retest-1.log; integrated-a5af028b-results.json retains original hosted failure"
+    },
+    {
+      "id": "RC1-TOOL-26",
+      "classification": "D tooling defect",
+      "owner": "Codex/root and Codex/mystery_workloads",
+      "failedGate": "Aggression evidence history validation and guarded database cleanup",
+      "before": "57a1bfa5 emitted undefined identity fields as invalid canonical JSON and failed cleanup. 6302816f fixed history but still left the owned pool open.",
+      "repair": "a0f37c74 rejects non-JSON primitives and sparse arrays at the evidence serializer. Actor records separately validate supported values before Date conversion. 4489b023 closes the exact owned pool before guarded deletion.",
+      "changedSource": [
+        "tools/rc1-native-proof.js",
+        "test/rc1-native-proof.js",
+        "tools/rc1-native-actor-replay.js",
+        "test/rc1-native-actor-replay.js",
+        "test/rc1-aggression-policy.js"
+      ],
+      "retest": "Pure negative controls and native4489b023 PASS_SCOPED; history/artifact hashes independently verified. Earlier startup/configuration and cleanup failures retained.",
+      "evidence": "aggression-player-policy.md;integrated-a5af028b-results.json;harness-mystery-world-replay-results.json"
+    },
+    {
+      "id": "RC1-TOOL-27",
+      "classification": "D tooling defect",
+      "owner": "Codex/resource_proof",
+      "failedGate": "Original loan lifecycle journal oracle and injected fault identification",
+      "before": "e44411c9 incorrectly treated loan:house:vig as negative despite its positive canonical receipt. 02e371db expected a fault message that the original worker logs only as SQLSTATE.",
+      "repair": "02e371db uses the canonical positive receipt; dfb1a428 assigns unique SQLSTATE RCL01 to the exact injection and matches only that code. bfcba9a5 binds custody to lenders/targets/original deadlines; 15e6b83d retains all nonzero movement inputs.",
+      "changedSource": [
+        "tools/rc1-loan-lifecycle-journal.js",
+        "test/rc1-loan-lifecycle-journal.js",
+        "test/rc1-native-loan-lifecycles.js"
+      ],
+      "retest": "Two final independent77-hour native runs at15e6b83d PASS_SCOPED, each327 boundaries/4197 equations. Fifteen movement inputs per run independently reconciled.",
+      "evidence": "resource-loan-lifecycle-results.json"
     }
   ]
 }

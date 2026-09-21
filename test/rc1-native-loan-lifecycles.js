@@ -17,7 +17,7 @@ assert(process.argv.includes('--postgres'), 'Real PostgreSQL required');
 const argument = name => process.argv.find(arg => arg.startsWith(`--${name}=`))?.slice(name.length + 3);
 const source = await sourceIdentity(), seed = argument('seed') || 'rc1-loan-alpha';
 const runId = `loan-lifecycles-${source.revision.slice(0, 12)}-${crypto.randomBytes(5).toString('hex')}`;
-const output = path.resolve(argument('output') || path.join(os.tmpdir(), 'omerta-rc1-resource-proof', runId));
+const output = path.resolve(argument('output') || process.env.RC1_LOAN_OUTPUT || path.join(os.tmpdir(), 'omerta-rc1-resource-proof', runId));
 const controlUrl = process.env.RC1_RESOURCE_DATABASE_URL; assert(controlUrl, 'Explicit disposable local PostgreSQL endpoint required');
 for (const key of ['CHAIN_RPC_URL', 'INVARIANT_WEBHOOK_URL', 'LIQUIDITY_RPC_URL', 'LIQUIDITY_RPC_FALLBACK_URL', 'WANTED_HUNT_P'])
   assert(!process.env[key], `External integrations/outcome overrides excluded: ${key}`);

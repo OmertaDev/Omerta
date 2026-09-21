@@ -51,6 +51,17 @@
     }
   },
   "rollbackPredecessorObserved": "468516d8d6f3729514711ad5a0b83e440c5c46f9",
+  "deploymentSourceRecheck": {
+    "observedAt": "2026-09-21T06:31:06Z",
+    "method": "Read-only Render list_deploys for both selected services",
+    "apiDeploy": "dep-dao7j2eq1p3s73d1m680",
+    "workerDeploy": "dep-dao7j2eq1p3s73d1m6m0",
+    "bothStatus": "live",
+    "bothSource": "468516d8d6f3729514711ad5a0b83e440c5c46f9",
+    "currentMain": "32859cf7d198d2a003160b2bb1ef005991697d73",
+    "mainAlreadyIncludedInCandidate": true,
+    "scope": "Deployment source only. Historical plans, flags, database and health fields above/below were not reattested by this request. No deployment mutation."
+  },
   "missing": [
     "isolated cohort services/database",
     "candidate deployment",

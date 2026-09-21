@@ -9,6 +9,27 @@
   "note": "Pinned required command inventory across the four source workflows. Preserve each workflow setup, database isolation, platform, environment and budgets. A component regression pass does not clear a full native, deployed, or human proof.",
   "gates": [
     {
+      "id": "rc1-churn",
+      "command": ["npm", "run", "test:rc1:churn:postgres"],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": ["One declared weekly boundary and ordinary entrants preserve retired escrow; no elapsed seven-day activity, original escrow expiry or full churn archetype"]
+    },
+    {
+      "id": "rc1-aggression",
+      "command": ["npm", "run", "test:rc1:aggression:postgres"],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": ["Bounded public-view jumps, retaliation, recovery and exact retry; no complete high-aggression archetype or matrix qualification"]
+    },
+    {
+      "id": "rc1-loans",
+      "command": ["npm", "run", "test:rc1:loans:postgres"],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": ["77 logical hours with original callbacks and explicit protected NPC/funding fixtures; no natural survival, OMR grace, HTTP, concurrency or complete escrow qualification"]
+    },
+    {
       "id": "rc1-knowledge-distribution",
       "command": ["npm", "run", "test:rc1:knowledge:postgres"],
       "timeoutMs": 600000,
