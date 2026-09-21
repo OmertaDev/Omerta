@@ -58,6 +58,13 @@ jobs:
           npm run test:rc1:security:postgres 2>&1 | tee "$RC1_SHUTDOWN_EVIDENCE/command-redteam.log"
       - name: Install Chromium for the real PostgreSQL phone journey
         run: npx playwright-core install --with-deps chromium
+      - name: Native item, recipe, world and situation authority probes
+        env:
+          RC1_COMMAND_FAMILY_OUTPUT: ${{ runner.temp }}/rc1-command-family
+        run: |
+          set -o pipefail
+          umask 077
+          npm run test:rc1:command-family:postgres 2>&1 | tee "$RC1_SHUTDOWN_EVIDENCE/command-family.log"
       - name: RC1 newcomer phone journey on PostgreSQL
         env:
           RC1_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
