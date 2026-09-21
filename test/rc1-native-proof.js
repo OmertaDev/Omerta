@@ -30,6 +30,12 @@ for (const mutation of [
   (m) => { m.thresholds.load.maximumBacklogRecoverySchedulingPeriods = 3; },
 ]) { const broken = structuredClone(manifest); mutation(broken); assert.throws(() => validateScenarioManifest(broken)); }
 assert.equal(canonicalJson({ b: 2, a: 1 }), canonicalJson({ a: 1, b: 2 }));
+assert.deepEqual(JSON.parse(canonicalJson({ a: null, b: [true, '9007199254740993.01'] })),
+  { a: null, b: [true, '9007199254740993.01'] });
+for (const invalid of [undefined, { body: undefined }, [undefined], new Array(1),
+  { value: () => {} }, { value: Symbol('unsupported') }, NaN, Infinity, { amount: -Infinity }])
+  assert.throws(() => canonicalJson(invalid), /Canonical evidence/,
+    'Invalid optional fields or nonfinite numbers must fail before corrupting retained JSONL');
 assert.deepEqual(NORMALIZATION.exclusions, []);
 for (const key of ['cash', 'visibility', 'outcome', 'id', 'expires_at']) {
   assert.notEqual(sha256(canonicalJson({ [key]: 1 })), sha256(canonicalJson({ [key]: 2 })));

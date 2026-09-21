@@ -10,10 +10,13 @@ const wallTimestamp = () => new WallDate().toISOString();
 
 export const sha256 = (value) => crypto.createHash('sha256').update(value).digest('hex');
 export function canonicalJson(value) {
-  if (Array.isArray(value)) return `[${value.map(canonicalJson).join(',')}]`;
+  if (Array.isArray(value)) return `[${Array.from(value, canonicalJson).join(',')}]`;
   if (value && typeof value === 'object' && !(value instanceof Date)) return `{${Object.keys(value).sort()
     .map((key) => `${JSON.stringify(key)}:${canonicalJson(value[key])}`).join(',')}}`;
-  return JSON.stringify(value);
+  assert(typeof value !== 'number' || Number.isFinite(value), 'Canonical evidence cannot encode nonfinite numbers');
+  const encoded = JSON.stringify(value);
+  assert.equal(typeof encoded, 'string', 'Canonical evidence requires explicit JSON values; omit absent optional properties');
+  return encoded;
 }
 export const NORMALIZATION = Object.freeze({ version: 1,
   rows: 'Sort rows by their complete canonical JSON representation; order is not stored table state.',
