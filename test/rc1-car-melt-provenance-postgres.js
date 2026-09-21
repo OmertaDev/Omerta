@@ -8,6 +8,7 @@ import { sourceIdentity, createProofRecorder, verifyArtifactIndex, sha256 } from
 import { planOwnedWorldDatabase } from '../tools/rc1-native-database.js';
 import { installSerialRuntime, serialDatabaseOptions } from '../tools/rc1-native-determinism.js';
 import { createWorkerSchedule, installWorkerInstrumentation } from '../tools/rc1-native-worker.js';
+import { carMelt, CONSTANTS } from '../src/rules.js';
 
 assert(process.argv.includes('--postgres'));
 const output = process.env.RC1_CAR_MELT_OUTPUT, controlUrl = process.env.COORDINATION_TEST_DATABASE_URL;
@@ -16,12 +17,13 @@ const source = await sourceIdentity();
 const database = planOwnedWorldDatabase({ controlUrl, runId: 'car-melt-commit', sourceRevision: source.revision });
 const epoch = '2026-09-20T12:00:00.000Z';
 const configuration = { sourcePins: CAR_MELT_SOURCE_PINS, database: database.descriptor, epoch,
-  fixture: 'Two ordinary guest/character entrants; two initial junker/stock cars owned by the first entrant (damage 0 and 60). No account, progression, balance, deadline or membership fixture. All fixtures precede measured baseline.',
+  fixture: 'Two ordinary guest/character entrants. The first canonically boosts during initialization until it owns two non-limited cars with distinct source-authored melt yields. All attempts/outcomes retained. No SQL gameplay fixtures, audit grants, account/progression/balance/deadline/membership edits.',
   scope: 'Original serial HTTP solo melt transaction at its actual COMMIT, including native reads/deletion/ledger insertion and complete resource before/after snapshots. Retry and unauthorized owner denial are ordinary HTTP paths. Exact neutral skill/ladder branch only.',
-  clocks: 'Original application/SQL logical clock seam at one instant. No worker is imported; no timer advancement or scheduled-worker coverage is claimed.',
+  clocks: 'Initialization advances the shared application/SQL logical clock by the original GTA cooldown plus 60 seconds between actual boost attempts. The measured melt workload stays at the final setup instant. No worker is imported; initialization accrual is demand-driven only, no scheduled-worker coverage is claimed.',
   exclusions: ['Family/NPC/limited-car melt', 'non-neutral skill/ladder yield', 'compound transaction lineage', 'boost selection identity', 'full resource qualification', 'world/matrix/90-day/production coverage', 'concurrent per-commit ordering'] };
 const proof = await createProofRecorder({ directory: output, source, configuration, runId: 'car-melt-commit', seed: 'rc1-car-melt', scenarioId: 'scoped-car-melt-commit', population: 2 });
 const runtime = installSerialRuntime('rc1-car-melt', epoch);
+let at = Date.parse(epoch); runtime.bindClock(() => at);
 Object.assign(process.env, { DATABASE_URL: database.url, RATE_LIMIT: 'off', INVITE_MODE: 'off', SOCIAL_VERIFY_MODE: 'off', POPULATION_OFF: 'on',
   WORLD_GRAPH_KERNEL: 'on', CORE_PROGRESSION: 'on', LIQUIDITY_AUTOMATION_ENABLED: 'off',
   JWT_SECRET: crypto.randomBytes(32).toString('hex'), MARKET_SEED: crypto.randomBytes(32).toString('hex'), MOD_KEY: crypto.randomBytes(32).toString('hex') });
@@ -81,27 +83,36 @@ try {
     const entry = await request(actor, 'POST', '/v1/character', { name }, 'entry-' + actors.length);
     actor.characterId = entry.body.id; actors.push(actor);
   }
-  const fixture = [];
-  for (const [id, damage] of [['rc1-melt-car-a', 0], ['rc1-melt-car-b', 60]]) {
-    await app.pool.query("INSERT INTO cars(id,character_id,model_id,trim_id,dmg) VALUES($1,$2,'junker','stock',$3)", [id, actors[0].characterId, damage]);
-    fixture.push({ id, characterId: actors[0].characterId, modelId: 'junker', trimId: 'stock', damage });
+  await proof.snapshot(diagnostic, 'ordinary-entry-before-acquisition');
+  const acquired = [], setupAttempts = [];
+  for (let attempt = 0; attempt < 24 && acquired.length < 2; attempt++) {
+    if (attempt) at += CONSTANTS.GTA_CD_MS + 60000;
+    const response = await request(actors[0], 'POST', '/v1/garage/boost', {}, 'setup-boost-' + attempt);
+    setupAttempts.push({ at, response });
+    if (response.body.success && !response.body.car.run) {
+      const c = response.body.car, rounds = carMelt(c.model, c.trim, c.dmg);
+      if (!acquired.some(existing => existing.rounds === rounds)) acquired.push({ ...c, rounds });
+    }
   }
-  await proof.record({ kind: 'initialization-complete', fixture, ordinaryEntrants: 2, noFurtherFixtureWrites: true });
+  await proof.artifact('setup-boost-attempts.json', setupAttempts);
+  assert.equal(acquired.length, 2, 'Ordinary setup did not acquire two eligible distinct-yield cars within declared bound');
+  const [firstCar, secondCar] = acquired;
+  await proof.record({ kind: 'initialization-complete', acquired, ordinaryEntrants: 2, gameplayFixtureWrites: 0, logicalAt: at });
   await proof.snapshot(diagnostic, 'baseline');
   const baselineInvariant = await runLedgerInvariants(diagnostic, { alert: false }); assert(baselineInvariant.ok, JSON.stringify(baselineInvariant));
   await proof.record({ kind: 'canonical-invariants', label: 'baseline', checks: baselineInvariant.checks });
   currentResources = await resources.snapshotWorldResources(diagnostic); commitObserver.arm(); armed = true;
   const responses = [];
-  label = 'outsider-denial'; responses.push(await request(actors[1], 'POST', '/v1/garage/rc1-melt-car-a/melt', {}, 'denied-owner', 400));
+  label = 'outsider-denial'; responses.push(await request(actors[1], 'POST', '/v1/garage/' + firstCar.id + '/melt', {}, 'denied-owner', 400));
   assert.equal(responses.at(-1).body.error, 'no_car'); assert.equal(exact.length, 0);
-  label = 'first-melt'; const first = await request(actors[0], 'POST', '/v1/garage/rc1-melt-car-a/melt', {}, 'melt-first'); responses.push(first);
+  label = 'first-melt'; const first = await request(actors[0], 'POST', '/v1/garage/' + firstCar.id + '/melt', {}, 'melt-first'); responses.push(first);
   assert.equal(exact.length, 1); const receiptCount = currentResources.tables.transactions.filter(r => r.reason === 'melt').length;
-  label = 'exact-retry'; const retry = await request(actors[0], 'POST', '/v1/garage/rc1-melt-car-a/melt', {}, 'melt-first'); responses.push(retry);
+  label = 'exact-retry'; const retry = await request(actors[0], 'POST', '/v1/garage/' + firstCar.id + '/melt', {}, 'melt-first'); responses.push(retry);
   assert(retry.replayed); assert.deepEqual(retry.body, first.body); assert.equal(exact.length, 1);
   assert.equal(currentResources.tables.transactions.filter(r => r.reason === 'melt').length, receiptCount);
-  label = 'already-removed'; responses.push(await request(actors[0], 'POST', '/v1/garage/rc1-melt-car-a/melt', {}, 'melt-fresh-retry', 400));
+  label = 'already-removed'; responses.push(await request(actors[0], 'POST', '/v1/garage/' + firstCar.id + '/melt', {}, 'melt-fresh-retry', 400));
   assert.equal(exact.length, 1);
-  label = 'damaged-melt'; responses.push(await request(actors[0], 'POST', '/v1/garage/rc1-melt-car-b/melt', {}, 'melt-second'));
+  label = 'second-melt'; responses.push(await request(actors[0], 'POST', '/v1/garage/' + secondCar.id + '/melt', {}, 'melt-second'));
   assert.equal(exact.length, 2); assert.notEqual(exact[0].rounds, exact[1].rounds);
   commitObserver.assertComplete(); commitObserver.disarm(); armed = false;
   const controls = [];
@@ -123,9 +134,10 @@ try {
   const report = await runLedgerInvariants(diagnostic, { alert: false }); assert(report.ok, JSON.stringify(report));
   await proof.record({ kind: 'canonical-invariants', label: 'final', checks: report.checks });
   await proof.artifact('boundaries.json', boundaries); await proof.artifact('responses.json', responses);
+  await proof.artifact('random-tape.json', runtime.tape);
   result = { status: 'PASS_SCOPED', source: source.revision, exactMelts: exact.map(e => ({ carId: e.carId, rounds: e.rounds, provenanceSha256: e.provenanceSha256 })),
     boundaries: boundaries.length, committedBoundaries: boundaries.filter(b => b.outcome === 'COMMITTED').length,
-    unknownOccurrences: boundaries.reduce((n, b) => n + b.unknowns, 0), controls, ordinaryEntrants: 2, initialCarFixtures: 2,
+    unknownOccurrences: boundaries.reduce((n, b) => n + b.unknowns, 0), controls, ordinaryEntrants: 2, initialCarFixtures: 0, setupBoostAttempts: setupAttempts.length,
     postBaselineFixtureWrites: 0, canonicalInvariantChecks: report.checks.length, finalStateSha256: final.stateSha256,
     retryExtraMeltReceipts: 0, fullResourceQualification: false, exclusions: configuration.exclusions };
 } catch (error) {
