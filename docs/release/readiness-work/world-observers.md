@@ -17,6 +17,21 @@ not prove permanent deadlock. Gross ledger activity counts transfer legs and is
 not yet deduplicated resource velocity or reward attribution. Those exclusions
 are explicit in every diagnostic result.
 
+`tools/rc1-knowledge-diagnostics.js` separately measures current access by calling
+the canonical Knowledge board for each declared actor and following every page.
+It requires a quiescent serial checkpoint; concurrent pages are not a consistent
+world snapshot. A failed read, repeated claim/cursor or exhausted page bound fails
+the observation instead of becoming an empty board. Restricted results contain
+synthetic claim/actor identifiers and exact counts, but omit claim values, grant
+principals and cursor tokens. Ownership, shared access and distinct claim counts
+remain separate. They do not establish future acquisition or prerequisite reachability.
+The native three-actor exercise observes counts `[1,1,0]`, then `[2,1,0]` after
+canonical sharing across two pages, then `[1,1,0]` after revocation. Complete
+canonical state is unchanged by each observation. The first run failed evidence
+sealing because it omitted invocation history; the retained repair adds that
+history and passes. Exact sources and artifact hashes are recorded in
+`integrated-8c2e4418-results.json`.
+
 `tools/rc1-native-commit-observer.js` optionally wraps the existing test SQL clock
 proxy. It is disabled during initialization and armed after the measured baseline.
 Successful native COMMIT, COMMIT returning ROLLBACK, explicit rollback, savepoint

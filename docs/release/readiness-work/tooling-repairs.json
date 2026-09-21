@@ -374,6 +374,45 @@
         "test/rc1-native-world-workload.js"
       ],
       "retest": "Policy controls PASS; db1749d8 executed final invariants but whole run correctly remains FAIL due tape sealing and incomplete isolation."
+    },
+    {
+      "id": "RC1-TOOL-22",
+      "classification": "D tooling defect",
+      "owner": "Codex/root",
+      "failedGate": "Hosted PostgreSQL18 moderator ingress audit count",
+      "before": "8c2e4418 recovery35565168429 job106225424343 observed3audits when4were scheduled; production best-effort write was still asynchronous.",
+      "repair": "77e63027 tracks actual audit INSERT promises and awaits completion before exact-count assertions. A deliberately delayed native INSERT reproduces3beforecompletion/4aftercompletion.",
+      "changedSource": [
+        "test/rc1-mod-ingress-postgres.js"
+      ],
+      "retest": "Native clean77e63027 PASS9cases; hosted repair-source rerun pending.",
+      "evidence": "integrated-8c2e4418-results.json"
+    },
+    {
+      "id": "RC1-TOOL-23",
+      "classification": "D tooling defect",
+      "owner": "Codex/root",
+      "failedGate": "Knowledge diagnostic evidence sealing",
+      "before": "54346c91 emitted snapshots but no history event; finish failedENOENT history.jsonl.",
+      "repair": "3aba7cc3 records startup and every canonical Knowledge invocation/completion.",
+      "changedSource": [
+        "test/rc1-knowledge-diagnostics.js"
+      ],
+      "retest": "Clean native3aba7cc3 PASS with verified artifact index; failed unsealed directory retained.",
+      "evidence": "integrated-8c2e4418-results.json"
+    },
+    {
+      "id": "RC1-TOOL-24",
+      "classification": "D tooling defect",
+      "owner": "Codex/mystery_workloads",
+      "failedGate": "Mystery policy native evidence artifact naming",
+      "before": "a2688ba scenario underscores violated existing evidence artifact filename validator after3actualcommands.",
+      "repair": "972e7f46 maps artifact label underscores to hyphens; validator remains strict.",
+      "changedSource": [
+        "test/rc1-mystery-policies.js"
+      ],
+      "retest": "972e7f46 and4a586ae3 nativePASS_SCOPED; unit filename control added.",
+      "evidence": "mystery-player-policies.md;integrated-8c2e4418-results.json"
     }
   ]
 }

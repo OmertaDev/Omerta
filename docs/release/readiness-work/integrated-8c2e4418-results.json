@@ -1,0 +1,469 @@
+{
+  "format": 1,
+  "status": "PASS_SCOPED_LOCAL_GATES",
+  "releaseReady": false,
+  "gates": [
+    {
+      "format": 1,
+      "id": "rc1-harness-units",
+      "source": "8c2e4418173a7383c788a08ea70168ff0a6c11cd",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:harness"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T05:38:41.709Z",
+      "endedAt": "2026-09-21T05:38:55.609Z",
+      "durationMs": 13898,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Harness controls alone do not execute a full native world"
+      ],
+      "log": "gates/rc1-harness-units/output.txt",
+      "logSha256": "2256ea0fd76c5cf3ebf7de99b44e2b3fd119c34f753a2f9faf4ada733aca60a8",
+      "resultSha256": "348516d7b9eb07eb272cbf97a1a5f34d7543fd4fb712fcc66e78f13eee248486"
+    },
+    {
+      "format": 1,
+      "id": "rc1-observers",
+      "source": "8c2e4418173a7383c788a08ea70168ff0a6c11cd",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:observers:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T05:39:06.410Z",
+      "endedAt": "2026-09-21T05:39:26.723Z",
+      "durationMs": 20312,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Read-only diagnostic precision and serialized SQL boundary controls; complete movement taxonomy remains required"
+      ],
+      "log": "gates/rc1-observers/output.txt",
+      "logSha256": "f485c4c47b96920f03a15a383887307c972d170acd0ca031b2b4b972b9701dcc",
+      "resultSha256": "0966188693382dd36d645ed87c30b64c1a9778777559035b1c02bdf998dba3ab"
+    },
+    {
+      "format": 1,
+      "id": "rc1-database-isolation",
+      "source": "8c2e4418173a7383c788a08ea70168ff0a6c11cd",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:database:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T05:39:37.109Z",
+      "endedAt": "2026-09-21T05:40:09.838Z",
+      "durationMs": 32728,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Native advisory lock and owned database control; no full world replay"
+      ],
+      "log": "gates/rc1-database-isolation/output.txt",
+      "logSha256": "8b66e0b0f2b49dae2f849dc3b03cb0204b27d3f0aa5d1b613fe78bf968b7e215",
+      "resultSha256": "46d61dd8d9d1dbdc031c2dd931a69bed36f4cd0148a7a0be9621844ac4a47323"
+    },
+    {
+      "format": 1,
+      "id": "rc1-world-smoke",
+      "source": "8c2e4418173a7383c788a08ea70168ff0a6c11cd",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:world:smoke:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T05:40:20.059Z",
+      "endedAt": "2026-09-21T05:41:03.638Z",
+      "durationMs": 43577,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Two hours of quiet actors and original local workers; no qualifying matrix cell or full resource journal"
+      ],
+      "log": "gates/rc1-world-smoke/output.txt",
+      "logSha256": "e666f4e8d04eed9340da0681bf09121d0fd457adf1abb7ce0f8288b17eb33737",
+      "resultSha256": "1b3d098ca29d7e00ab70555f6a9798372e1c3cde328f9998bff65c416f4a6749"
+    },
+    {
+      "format": 1,
+      "id": "rc1-legacy-authority",
+      "source": "8c2e4418173a7383c788a08ea70168ff0a6c11cd",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:legacy-authority:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T05:38:41.973Z",
+      "endedAt": "2026-09-21T05:44:46.154Z",
+      "durationMs": 364180,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "42 moderator perimeters and 35 selected ownership surfaces; full role and route transition coverage remains required"
+      ],
+      "log": "gates/rc1-legacy-authority/output.txt",
+      "logSha256": "158033ae8dc270d1eb24f30493f93f942f3cfefa03e3d9e9706bc519779d076b",
+      "resultSha256": "76c9a02500b80cdfb8212bbad14bf7c66629914b3a733d82f37dc1975d165369"
+    },
+    {
+      "format": 1,
+      "id": "rc1-mod-ingress",
+      "source": "8c2e4418173a7383c788a08ea70168ff0a6c11cd",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:mod-ingress:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T05:44:55.965Z",
+      "endedAt": "2026-09-21T05:45:12.966Z",
+      "durationMs": 17000,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Native HTTP injection only; no deployed proxy or external load test"
+      ],
+      "log": "gates/rc1-mod-ingress/output.txt",
+      "logSha256": "142b58576affeaac28128c4607251078edd4020cacffe8b45e1b7623046907eb",
+      "resultSha256": "09f4d1159a38f147f15571aee9b2edb50523017d75d3d54fa8a8847482d02688"
+    },
+    {
+      "format": 1,
+      "id": "rc1-reviewer-authority",
+      "source": "8c2e4418173a7383c788a08ea70168ff0a6c11cd",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:reviewer-authority:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T05:45:22.963Z",
+      "endedAt": "2026-09-21T05:45:58.506Z",
+      "durationMs": 35542,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Four reviewer transport perimeters only; privileged domain transitions and external integration remain required"
+      ],
+      "log": "gates/rc1-reviewer-authority/output.txt",
+      "logSha256": "407a639add437f24f443cef3090718603e537be3893c8ae05324377017fc0a4f",
+      "resultSha256": "dcda2024842143901952bc8e2b73c83f12e9ae812dd22d7440578f1652aa0e87"
+    }
+  ],
+  "hostedLimitation": "Recovery35565168429 has a PG18 asynchronous audit-count assertion failure. Local passing audit gate does not erase it.",
+  "moderatorAuditRetest": {
+    "source": "77e630275f1529cb877685a14867eba6df5cc031",
+    "status": "PASS_SCOPED",
+    "cases": 9,
+    "timingControl": {
+      "delayedWrite": 4,
+      "responseBeforeCommit": true,
+      "formerImmediateAssertion": {
+        "expected": 4,
+        "actual": 3,
+        "status": "EXPECTED_FAILURE"
+      },
+      "afterCompletionBarrier": {
+        "expected": 4,
+        "actual": 4,
+        "status": "PASS"
+      }
+    },
+    "resultSha256": "9585d754b24699ff2f324c0b647f58bd264a9af34117b6eb417afa77059f5869",
+    "sourceFiles": {
+      "src/server.js": "f9789ddc1a8d95c294111a0e76545e903a30f6e6b46c1adc1e292894cdde44f4",
+      "src/routes/modtools.js": "ebdec2fb33a9a160bba64da485e5b96b866a19f2dcd3f8e67cfb45ae10c180a2",
+      "src/ratelimit.js": "51e239dbd34f9e9822adae4244539d5bf19c2e871fde47059e131688db940d8d",
+      "package-lock.json": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+      "test/rc1-mod-ingress-postgres.js": "b2e7e1ad285c375f946ffc1f13f649c736a1ee682258bed76dc4fbf62a1c13fe"
+    },
+    "scope": "Native controlled asynchronous audit completion; no server behavior changed",
+    "hostedFailure": {
+      "run": 35565168429,
+      "job": 106225424343,
+      "source": "8c2e4418173a7383c788a08ea70168ff0a6c11cd",
+      "expected": 4,
+      "actual": 3,
+      "logSha256": "7da4e14866043de85b691a6020d46fc2c49a0a6e1eba32fe0db160fe75a64c28"
+    },
+    "remaining": "Hosted exact repair-source retest"
+  },
+  "knowledgeMetrics": {
+    "source": {
+      "revision": "3aba7cc32b668b1f52e22322d4e8b22971f05eed",
+      "gitTree": "72e4fbebf08effd6812551eec8eda1b88ea38dfd",
+      "checkoutSha256": "aa16d6327cc76491734b7d5f7cf50c5ef90bf60e1457523854dd2a4d9b5b874d",
+      "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+      "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+    },
+    "status": "PASS_SCOPED",
+    "result": {
+      "status": "PASS_SCOPED",
+      "phases": 3,
+      "canonicalSnapshotsUnchanged": true,
+      "ownedCounts": [
+        1,
+        1,
+        0
+      ],
+      "sharedCounts": [
+        2,
+        1,
+        0
+      ],
+      "revokedCounts": [
+        1,
+        1,
+        0
+      ],
+      "pagination": "Actor A crossed the first page; both distinct claims retained",
+      "exclusions": [
+        "Family/Crew grant membership changes",
+        "Future Knowledge acquisition reachability",
+        "Full world integration and 225-run matrix"
+      ]
+    },
+    "startedAt": "2026-09-21T05:54:51.308Z",
+    "endedAt": "2026-09-21T05:55:08.338Z",
+    "configuration": {
+      "scope": "Canonical Knowledge metric: discovery, explicit sharing, pagination and revocation",
+      "fixture": "Three synthetic accounts with addPlayer defaults; source pilot graph, no production rollout claim",
+      "pageSize": 1,
+      "concurrency": "Serial with no worker",
+      "actorFeedback": false
+    },
+    "configurationSha256": "d19f4353e7a2183e463c6478ff825e9b59c05cd725c5e0632caedbea07eb8776",
+    "runSha256": "cae569a6d67c1562dac0626b33eaf4ccd4b31360d4b00165e4a4443fc1406db7",
+    "artifactsVerified": 11,
+    "retainedFailure": {
+      "source": "54346c91",
+      "directory": "knowledge-metrics-native-1",
+      "classification": "Evidence tooling failure: no invocation history initialized, so sealing could not read history.jsonl",
+      "outcome": "Unsealed and FAIL; snapshots/metrics retained; no passing run claimed",
+      "artifacts": [
+        {
+          "file": "fixture.json",
+          "sha256": "4ff13306923b8ee9723d4739396214b1aa270b61f6c0ad92158bcb6206a4ff86"
+        },
+        {
+          "file": "owned-only-after.json",
+          "sha256": "1d6f05e340a4c26f2076525410719505181a1c063975971a78834cc533adbb5c"
+        },
+        {
+          "file": "owned-only-before.json",
+          "sha256": "73792a5ab6592f6322b7b1a610169493bd335f46595c2b62510aa67b0d30d294"
+        },
+        {
+          "file": "owned-only-metric.json",
+          "sha256": "6df236c8a514f3c1e5a9e8418f3d5f193d2cc213d081c0f7b80c5a5900edfc6e"
+        },
+        {
+          "file": "revoked-after.json",
+          "sha256": "8d1f8535c73b1e1e227ee59fac426b82e2db8c245c1aea766ea2f982ed94a154"
+        },
+        {
+          "file": "revoked-before.json",
+          "sha256": "556ab953ac5b7a3244fe0fc2d54adbda37de05054c9272dc98401c85629e54e6"
+        },
+        {
+          "file": "revoked-metric.json",
+          "sha256": "6e2a4216909965940e993cdd839be4d98a246345aaf414b11aa76b900c8bab81"
+        },
+        {
+          "file": "run-reserved.json",
+          "sha256": "22f3351014a4f1a2302637d5fcdbd976c6108fe3bd238c8249da397686b06b2c"
+        },
+        {
+          "file": "shared-after.json",
+          "sha256": "6eab6718b221db70f6569783d9686310424ab27a5f022f90a13b7f08a858cf46"
+        },
+        {
+          "file": "shared-before.json",
+          "sha256": "69031a921ada205b85f424240802a379dca913250ae04805ce30a842ffc5f012"
+        },
+        {
+          "file": "shared-metric.json",
+          "sha256": "1b0b0e6c4d9622c98ec2ea3656a1df29a874de6a139d02b22b459abc94693c06"
+        }
+      ],
+      "logSha256": "f470f0843084601e2a7189ffbddc3e5deb7495d4cc1a2a502cbb37f1875c089a"
+    },
+    "preflightFailure": "Before measured execution, mixed CRLF/LF in an earlier test file failed source byte attestation. Exact Git bytes restored without a semantic change; no dirty run accepted."
+  },
+  "mysteryPolicies": {
+    "source": {
+      "revision": "4a586ae3c1bb5275eb6ce0a4319dfd5cff0207e0",
+      "gitTree": "fa84915ac2694abb85aa8a13f4187cae324e2453",
+      "checkoutSha256": "cc08b12e9f2612340fa8f04d22b61a0fb1f815d6fee2c054df2764b98fbe7d17",
+      "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+      "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+    },
+    "status": "PASS_SCOPED",
+    "configurationSha256": "cfadaad8670c4b16cc6b5ade92f3963ff35eae738b3d4bf88cd19efba60dec39",
+    "startedAt": "2026-09-21T05:48:43.154Z",
+    "endedAt": "2026-09-21T05:49:05.726Z",
+    "runSha256": "6119f5ef8657100a2564e2f87678aedb2db0259270a02f0e76b19cdb4030ad79",
+    "artifactsVerified": 33,
+    "result": {
+      "status": "PASS_SCOPED",
+      "policyResults": [
+        {
+          "configuration": {
+            "scenarioId": "high_mystery_participation",
+            "accountId": "mystery-high",
+            "seed": "rc1-alpha"
+          },
+          "observations": 12,
+          "eligibleObservations": 12,
+          "mixedEligibilityObservations": 0,
+          "commandDecisions": 12,
+          "investigationPreferences": 0,
+          "otherPreferences": 0,
+          "forcedInvestigationDecisions": 12,
+          "forcedOtherDecisions": 0,
+          "noAvailableWaits": 0,
+          "deliberateCapWaits": 0,
+          "freshCompletions": 12,
+          "freshInvestigation": 12,
+          "freshOther": 0,
+          "freshMixedChoices": 0,
+          "freshMixedInvestigation": 0,
+          "freshForcedInvestigation": 12,
+          "freshForcedOther": 0,
+          "denials": 0,
+          "replays": 0,
+          "unresolvedReplayCompletions": 0,
+          "completedByType": {
+            "discovery.start": 2,
+            "discovery.act": 10
+          },
+          "actualInvestigationFraction": 1,
+          "highMixedFraction": null,
+          "highIncompleteBlockChoices": 0,
+          "denominator": "Fresh COMPLETED PlayerCommand selections only; excludes reads, waits, denials, exact replays and all legacy actions.",
+          "matrixQualifying": false
+        },
+        {
+          "configuration": {
+            "scenarioId": "low_mystery_participation",
+            "accountId": "mystery-low",
+            "seed": "rc1-alpha"
+          },
+          "observations": 12,
+          "eligibleObservations": 12,
+          "mixedEligibilityObservations": 0,
+          "commandDecisions": 0,
+          "investigationPreferences": 0,
+          "otherPreferences": 0,
+          "forcedInvestigationDecisions": 0,
+          "forcedOtherDecisions": 0,
+          "noAvailableWaits": 0,
+          "deliberateCapWaits": 12,
+          "freshCompletions": 0,
+          "freshInvestigation": 0,
+          "freshOther": 0,
+          "freshMixedChoices": 0,
+          "freshMixedInvestigation": 0,
+          "freshForcedInvestigation": 0,
+          "freshForcedOther": 0,
+          "denials": 0,
+          "replays": 0,
+          "unresolvedReplayCompletions": 0,
+          "completedByType": {},
+          "actualInvestigationFraction": null,
+          "highMixedFraction": null,
+          "highIncompleteBlockChoices": 0,
+          "denominator": "Fresh COMPLETED PlayerCommand selections only; excludes reads, waits, denials, exact replays and all legacy actions.",
+          "matrixQualifying": false
+        }
+      ],
+      "invariantChecks": 55,
+      "postgres": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+      "finalStateSha256": "a20e7971b3b13a4fa915b8f98f533e6e7ea8598a840c07d81c17551b08d87b8d",
+      "matrixQualifying": false,
+      "exclusions": [
+        "90-day matrix",
+        "workers/lifecycles",
+        "legacy policy choices",
+        "all resource journals",
+        "Knowledge contention/propagation workload",
+        "later entrants and neglected-dependency recovery",
+        "database restart",
+        "full-game seeded replay",
+        "production environment"
+      ]
+    },
+    "caveat": "Native offered only investigation commands: high forced12, low waited12. Not native mixed70/5percent workload qualification."
+  }
+}

@@ -9,6 +9,27 @@
   "note": "Pinned required command inventory across the four source workflows. Preserve each workflow setup, database isolation, platform, environment and budgets. A component regression pass does not clear a full native, deployed, or human proof.",
   "gates": [
     {
+      "id": "rc1-knowledge-distribution",
+      "command": ["npm", "run", "test:rc1:knowledge:postgres"],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": ["Native access/pagination/revocation metrics; no future Knowledge reachability or whole world qualification"]
+    },
+    {
+      "id": "rc1-mystery-policies",
+      "command": ["npm", "run", "test:rc1:mystery-policies:postgres"],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": ["Bounded canonical discovery; native fixture offers no mixed investigation/other choices; no full archetype qualification"]
+    },
+    {
+      "id": "rc1-world-resource-smoke",
+      "command": ["npm", "run", "test:rc1:world:resources:smoke:postgres"],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": ["Two-hour serial commit observer with explicit unsupported resource lineage; no complete thirteen-resource taxonomy or qualifying matrix cell"]
+    },
+    {
       "id": "rc1-database-isolation",
       "command": ["npm", "run", "test:rc1:database:postgres"],
       "timeoutMs": 600000,

@@ -183,6 +183,27 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:world:smoke:postgres
+      - name: Canonical Knowledge distribution and pagination
+        if: '!cancelled()'
+        env:
+          RC1_KNOWLEDGE_OUTPUT: ${{ runner.temp }}/rc1-knowledge
+        run: |
+          umask 077
+          npm run test:rc1:knowledge:postgres
+      - name: Bounded mystery participation policy exercise
+        if: '!cancelled()'
+        env:
+          RC1_MYSTERY_POLICY_OUTPUT: ${{ runner.temp }}/rc1-mystery-policies
+        run: |
+          umask 077
+          npm run test:rc1:mystery-policies:postgres
+      - name: Two-hour actual commit-boundary resource observations
+        if: '!cancelled()'
+        env:
+          RC1_WORLD_OUTPUT: ${{ runner.temp }}/rc1-world-resources-smoke
+        run: |
+          umask 077
+          npm run test:rc1:world:resources:smoke:postgres
   legacy-authority:
     name: Legacy authority (PostgreSQL ${{ matrix.postgres }})
     runs-on: ubuntu-latest
@@ -234,6 +255,43 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:reviewer-authority:postgres
+  original-escrow-timers:
+    name: Original escrow lifetimes (PostgreSQL ${{ matrix.postgres }})
+    runs-on: ubuntu-latest
+    # This new lane includes original one-hour timers. Existing budgets stay intact.
+    timeout-minutes: 75
+    strategy:
+      fail-fast: false
+      matrix:
+        postgres: ['16', '18.4']
+    services:
+      postgres:
+        image: postgres:${{ matrix.postgres }}
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: rc1_escrow_control
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      RC1_RESOURCE_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Native escrow with unchanged one-hour market and loan lifetimes
+        env:
+          RC1_RESOURCE_OUTPUT: ${{ runner.temp }}/rc1-escrow-original
+        run: |
+          umask 077
+          npm run test:rc1:escrow:postgres
   original-resource-timers:
     name: Original resource timers (PostgreSQL ${{ matrix.postgres }})
     runs-on: ubuntu-latest
