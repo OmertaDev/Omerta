@@ -22,6 +22,8 @@ with unrelated cash receipts retains an explicit unknown pool-disposition
 classification. Exact amounts are retained; no observer rounding or balancing
 entry is introduced. Original bank interest remains unauthorized by this
 classifier even when its separate receipt keeps the bank destination explicit.
+Every changed exchange-pool row outside those no-change assertions remains in
+the generic unsupported table inventory and full restricted change diagnostics.
 
 The shared observer has no durable HTTP request identity. For bank deposits it
 can prove the marker and custody amount, not what a particular HTTP caller

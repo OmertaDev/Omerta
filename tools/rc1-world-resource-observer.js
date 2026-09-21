@@ -474,7 +474,7 @@ export function reconcileWorldResources(before, after, { identity = null, includ
     authority: reference('transactions', receipts.filter(r => r.reason.startsWith('loan:'))) });
   const cars = reconcileCarResources(before, after);
   checks.push(...cars.checks); unsupported.push(...cars.unsupported);
-  const observedOnly = ['boats', 'account_gear', 'market_listings', 'bounties', 'commission_proposals', 'favors',
+  const observedOnly = ['boats', 'account_gear', 'market_listings', 'exchange_pool', 'bounties', 'commission_proposals', 'favors',
     'loan_house', 'convoy_insurance', 'poker_tournaments', 'poker_entries', 'grand_prix', 'grand_prix_entries', 'stakes_races',
     'stakes_entries', 'district_bids', 'shipment_days', 'shipment_takes', 'bespoke_pieces', 'bespoke_serials', 'campaign_progress',
     'drop_allocations', 'chain_reserve', 'vouchers', 'season_records', 'season_recaps', 'operation_escrow'];

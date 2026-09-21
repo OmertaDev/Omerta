@@ -71,6 +71,10 @@ reject('pool-diversion', before, ammo, input => { input.after.tables.exchange_po
 reject('tax-diversion', before, checkin, input => { input.after.tables.street_tax[0].pool = '18'; });
 const unknown = structuredClone(before); unknown.tables.transactions = [receipt('unclassified', 'cash', '0', 'bank:withdraw:500')];
 assert(reconcileWorldResources(before, unknown).unsupported.some(row => row.reason === 'bank:withdraw:500'));
+const poolOnly = structuredClone(before); poolOnly.tables.exchange_pool[0].balance = '24'; poolOnly.tables.exchange_pool[0].lifetime_funded = '24';
+const poolJournal = reconcileWorldResources(before, poolOnly, { includeRestrictedChanges: true });
+assert(poolJournal.unsupported.some(row => row.table === 'exchange_pool'), 'Every unclassified exchange-pool change stays unknown');
+assert(poolJournal.restrictedChanges.tables.some(row => row.table === 'exchange_pool'), 'Changed pool rows must remain in restricted evidence');
 
 function bindCommand(input, movement) {
   const command = input.command; assert(command && command.status === 200 && !command.replayed && command.method === 'POST');
