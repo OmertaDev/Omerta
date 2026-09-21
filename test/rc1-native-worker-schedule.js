@@ -6,7 +6,7 @@ import pg from 'pg';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { createWorkerSchedule, installWorkerInstrumentation, makeWorkerDatabase, bootOriginalWorker, dropWorkerSchema, WORKER_SOURCE_PINS } from '../tools/rc1-native-worker.js';
-import { createRecordedQueryOrder, replayRowOrder, QUERY_ORDER_SCOPE } from '../tools/rc1-native-query-order.js';
+import { createRecordedQueryOrder, replayRowOrder, replayCandidateSelection, QUERY_ORDER_SCOPE } from '../tools/rc1-native-query-order.js';
 import { installSerialRuntime } from '../tools/rc1-native-determinism.js';
 import { sourceIdentity, createProofRecorder, verifyArtifactIndex, restoreCheckpoint, canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
 
@@ -30,6 +30,17 @@ assert.deepEqual(replayRowOrder([{ id: 'b' }, { id: 'a' }, { id: 'a' }], [{ id: 
 assert.throws(() => replayRowOrder([{ id: 'b' }, { id: 'a' }], [{ id: 'a' }, { id: 'a' }]), /membership\/value/);
 assert.throws(() => replayRowOrder([{ cash: 9 }], [{ cash: 10 }]), /membership\/value/);
 console.log('PASS: recorded SQL reordering preserves values and duplicate multiplicities');
+const eligible = ['{"id":"a","cash":9007199254740993}', '{"id":"b","cash":7}', '{"id":"c","cash":8}'];
+const selection = { eligibleRows: eligible, nativeRows: [{ id: 'a' }, { id: 'b' }],
+  recordedEligibleRows: [...eligible].reverse(), recordedRows: [{ id: 'c' }, { id: 'a' }], limit: 2 };
+assert.deepEqual(replayCandidateSelection(selection), [{ id: 'c' }, { id: 'a' }]);
+assert.throws(() => replayCandidateSelection({ ...selection, eligibleRows: [eligible[0], eligible[1]] }), /row count/);
+assert.throws(() => replayCandidateSelection({ ...selection, eligibleRows: [eligible[0].replace('9007199254740993', '9007199254740992'), ...eligible.slice(1)] }), /membership\/value/);
+assert.throws(() => replayCandidateSelection({ ...selection, eligibleRows: [eligible[0], eligible[1], eligible[1]] }), /membership\/value/);
+assert.throws(() => replayCandidateSelection({ ...selection, recordedRows: [{ id: 'a' }, { id: 'a' }] }), /membership\/value/);
+assert.throws(() => replayCandidateSelection({ ...selection, nativeRows: [{ id: 'a' }] }), /cardinality/);
+assert.deepEqual(replayCandidateSelection({ eligibleRows: [], nativeRows: [] }), []);
+console.log('PASS: recorded LIMIT selection rejects changed eligibility, exact large numeric value, multiplicity and cardinality');
 execFileSync(process.execPath, ['--input-type=module', '-e', `
   import assert from 'node:assert/strict';
   import './src/db.js';
@@ -90,7 +101,7 @@ if (process.argv.includes('--postgres')) {
   const expectedDormant = [{ label: 'RWA health', code: 'health_registry_unavailable',
     reason: 'No finalized external stock registry/provider in this local fixture; fail-closed callback execution is retained, settlement coverage is excluded.' }];
   const configuration = { hours, start: new Date(epoch).toISOString(), finish: new Date(epoch + hours * 3600000).toISOString(), seed,
-    queryOrder: { scope: QUERY_ORDER_SCOPE, mode: queryOrderReplay ? 'recorded-order-replay' : 'observe',
+    queryOrder: { scope: QUERY_ORDER_SCOPE, mode: queryOrderReplay ? 'recorded-selection-replay' : 'observe',
       inputSha256: queryOrderReplay ? sha256(await fs.readFile(path.join(queryOrderReplay, 'query-order.json'))) : null },
     parentCheckpoint: resume ? { directory: path.resolve(resume), source: parentRun.source,
       runSha256: sha256(await fs.readFile(path.join(resume, 'run.json'))), checkpointSha256: parentCheckpoint.sha256,
@@ -168,6 +179,7 @@ if (process.argv.includes('--postgres')) {
     await proof.artifact('query-order.json', queryOrder.finish());
     result = { status: 'PASS_SCOPED', source: source.revision, hours, canonicalSeasonalRollovers: recaps.length - initialRecaps,
       checkpointRestart: !!resume, parentSource: parentRun?.source.revision || null, recordedQueryOrderReplay: !!queryOrderReplay,
+      recordedQuerySelectionReplay: !!queryOrderReplay, queryReplayScopeVersion: QUERY_ORDER_SCOPE.version,
       initialStateSha256: initial.stateSha256, finalStateSha256: final.stateSha256, timerFirings: counts,
       guardedJobs: trace.jobs.length, expectedDormantJobs: trace.jobs.filter((job) => job.status === 'EXPECTED_DORMANT').length,
       unexpectedWorkerFailures: trace.failures.length, invariantChecks: finalInvariants.checks.length, matrixQualifying: false,

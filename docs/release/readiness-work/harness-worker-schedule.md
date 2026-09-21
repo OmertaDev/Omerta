@@ -80,19 +80,42 @@ The first full seed-only replay on source `7b630340` failed: PostgreSQL's
 unordered JAILBIRDS `LIMIT 24` query changed the array indexed by seeded random
 selection. The first divergence was at hour 2; balances and other semantic
 values were not normalized away. `tools/rc1-native-query-order.js` records that
-one exact SQL query, parameters, and returned order. `--query-order-replay=<run>`
-may reorder native rows only after proving the same exact value multiset with
-duplicate multiplicities. A changed LIMIT membership fails. Raw native arrival
-orders remain retained. This mode is **recorded nondeterminism replay**, not a
-seed-only pass. Its artifact index and original source must verify before use.
+one exact SQL query, parameters, and returned order. The version 1 replay on
+`8093e606` then failed closed at logical hour 134, occurrence 269: three of the
+24 native candidate IDs changed. The sealed failure, raw candidate sets,
+checkpoint and source binding are retained; the 673-hour observation remains a
+separate scoped pass. Version 1 was not sufficient for a full worker replay.
+
+Version 2 pins the complete `src/population.js` source and exact original SQL.
+One PostgreSQL statement wraps the unchanged limited SELECT and the complete
+eligible SELECT under identical predicates in scalar JSON aggregates. Both use
+one statement snapshot, including an empty result. The eligible query retains
+every character column as raw PostgreSQL JSON text, preserving numeric precision.
+Observation returns the actual native limited result. Replay may select the
+recorded subset/order only after the complete eligible row multiset matches
+exactly, including every value and duplicate multiplicity. Both selected sets
+must have `min(24, eligibleCount)` rows and belong to that eligible universe with
+valid multiplicities. This records an unspecified database selection; no state
+or resource values are substituted. Original/transformed SQL and hashes, source,
+native arrivals and full eligible rows are retained. Version 1 tapes are refused.
+
+`--query-order-replay=<run>` is **recorded nondeterminism replay**, not a seed-only
+pass. Its artifact index and original source must verify before use. Negative
+controls reject changed eligibility, exact large numeric values, duplicate
+multiplicities and cardinality. Failure paths retain the random tape as well as
+the job/query trace and state checkpoint, even when cleanup fails.
 The same attempt also exhausted local PostgreSQL lock memory during monolithic
 schema cleanup; cleanup now drops only owned tables in separate transactions,
 refuses external dependencies, and retains/seals any further cleanup failure.
 
 ```powershell
 node test/rc1-native-worker-schedule.js --postgres --hours=2 --resume=C:/Users/Jorge/.codex/rc1-native-evidence/worker-two-seasons-1 --output=C:/Users/Jorge/.codex/rc1-native-evidence/worker-restart-1
-node test/rc1-native-worker-schedule.js --postgres --hours=2 --resume=C:/Users/Jorge/.codex/rc1-native-evidence/worker-two-seasons-1 --compare=C:/Users/Jorge/.codex/rc1-native-evidence/worker-restart-1 --output=C:/Users/Jorge/.codex/rc1-native-evidence/worker-restart-replay-1
+node test/rc1-native-worker-schedule.js --postgres --hours=2 --resume=C:/Users/Jorge/.codex/rc1-native-evidence/worker-two-seasons-1 --query-order-replay=C:/Users/Jorge/.codex/rc1-native-evidence/worker-restart-1 --compare=C:/Users/Jorge/.codex/rc1-native-evidence/worker-restart-1 --output=C:/Users/Jorge/.codex/rc1-native-evidence/worker-restart-replay-1
 ```
+
+Those historical restart commands belong to source `8568a10b` and its version 1
+tape. Generate new observation/replay artifacts on the same committed source for
+version 2; never relabel older artifacts with a newer revision.
 
 The callable interface for scenario workloads is:
 
