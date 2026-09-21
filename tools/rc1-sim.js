@@ -31,6 +31,30 @@ export function rosterFor(population, seed, replicate) {
   })).sort((a, b) => a.priority - b.priority);
 }
 
+// Policy randomness must not depend on generated command/instance IDs. Resolve
+// only the actor's authorized projection; hidden discover nodes remain hidden.
+export function policyCommandKey(view, command) {
+  const parameters = command.parameters || {};
+  if (command.commandType === 'discovery.act') {
+    const instance = view.discovery.instances.find((entry) => entry.id === parameters.instanceId);
+    assert(instance, 'A policy may only select an authorized discovery instance');
+    const ordinal = instance.actions.findIndex((entry) => entry.id === parameters.actionId);
+    assert(ordinal >= 0, 'A policy may only select an authorized discovery action');
+    const action = instance.actions[ordinal];
+    return JSON.stringify([command.commandType, instance.graphId, instance.revision, action.kind, action.nodeId || null, ordinal]);
+  }
+  assert(['discovery.start', 'mystery.start', 'mystery.complete'].includes(command.commandType));
+  return JSON.stringify([command.commandType, parameters.graphId, parameters.nodeId || null, parameters.optionId || null]);
+}
+export function chooseSeededCommand(view, seed, replicate, actorId, round) {
+  const ranked = view.commands.filter((command) => command.availability === 'AVAILABLE'
+    && ['discovery.start', 'discovery.act', 'mystery.start', 'mystery.complete'].includes(command.commandType))
+    .map((command) => ({ command, key: policyCommandKey(view, command) }));
+  ranked.sort((a, b) => sample(seed, replicate, actorId, round, a.key) - sample(seed, replicate, actorId, round, b.key)
+    || a.key.localeCompare(b.key, 'en'));
+  return ranked[0]?.command;
+}
+
 export function verifyLedgerChecks(baseline, final, population) {
   const initialByName = new Map(baseline.checks.map((check) => [check.name, check]));
   assert.equal(initialByName.size, baseline.checks.length);
@@ -55,6 +79,7 @@ export async function runNativeSimulation({ population, seed, replicate, rounds 
   if (proof) assert(process.argv.includes('--postgres'), 'Proof artifacts require real PostgreSQL');
   const started = Date.now(), tag = `rc1_${population}_${replicate}_${digest(seed).slice(0, 6)}`;
   const f = await campaignNetworkFixture(tag);
+  const initialLogicalTime = f.clock();
   const roster = rosterFor(population, seed, replicate);
   const metrics = { snapshots: 0, commandsIssuedAvailable: 0, commandsExecuted: 0, commandReplays: 0,
     rejectedCommands: {}, opportunityCardsShown: 0, opportunityCardsUniquePerActor: 0,
@@ -163,12 +188,10 @@ export async function runNativeSimulation({ population, seed, replicate, rounds 
         : actor.archetype === 'high_activity' ? rounds + 2 : rounds;
       for (let round = 0; round < actionRounds; round++) {
         if (round) view = await engine.snapshot(actor.id);
-        const allowed = view.commands.filter((c) => c.availability === 'AVAILABLE'
-          && ['discovery.start', 'discovery.act', 'mystery.start', 'mystery.complete'].includes(c.commandType));
-        allowed.sort((a, b) => sample(seed, replicate, actor.id, round, a.commandId)
-          - sample(seed, replicate, actor.id, round, b.commandId));
-        const command = allowed[0];
+        const command = chooseSeededCommand(view, seed, replicate, actor.id, round);
         if (!command) break;
+        if (proof) await proof.record({ kind: 'policy-choice', actor: actor.id, seed, replicate, round,
+          semanticKey: policyCommandKey(view, command), commandId: command.commandId });
         if (actor.archetype === 'repeated_failure') {
           const originalLocation = view.player.character.locationId || view.player.character.loc || 'docks';
           await f.move(actor.id, originalLocation === 'docks' ? 'foundry' : 'docks');
@@ -241,6 +264,7 @@ export async function runNativeSimulation({ population, seed, replicate, rounds 
     }
     return { population, seed, replicate, rounds, database: process.argv.includes('--postgres') ? 'postgresql' : 'pg-mem',
       status: 'PASS_SCOPED', durationMs: Date.now() - started, archetypes: counts(roster.map((a) => a.archetype)),
+      logicalDurationMs: f.clock() - initialLogicalTime, logicalClockScope: 'Director/fixture application clock; database wall clock is not advanced',
       fixturePlayers: 5, actorsExecutingCommands: playerActions.size, metrics, actions: attempts,
       authoritative: { situationsGenerated: situations.length, situationStates: counts(situations.map((s) => s.state)),
         situationsWithCanonicalResolution: situations.filter((s) => s.world_event_id).length,

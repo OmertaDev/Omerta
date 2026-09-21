@@ -8,7 +8,7 @@ import { campaignNetworkFixture } from './lib/campaign-network-support.js';
 import { createPlayerCommandEngine } from '../src/player-commands.js';
 import { executeIssued } from './lib/player-command-support.js';
 import { runLedgerInvariants } from '../src/invariants.js';
-import { verifyLedgerChecks } from '../tools/rc1-sim.js';
+import { verifyLedgerChecks, policyCommandKey, chooseSeededCommand } from '../tools/rc1-sim.js';
 
 const manifest = JSON.parse(await fs.readFile(new URL('../docs/release/readiness-work/scenario-manifest.json', import.meta.url), 'utf8'));
 validateScenarioManifest(manifest);
@@ -30,6 +30,20 @@ for (const key of ['cash', 'visibility', 'outcome', 'id', 'expires_at']) {
   assert.notEqual(sha256(canonicalJson({ [key]: 1 })), sha256(canonicalJson({ [key]: 2 })));
 }
 console.log('PASS: frozen 225-cell matrix, thresholds, missing/duplicate cells, semantic state retention');
+const actorView = (generated) => ({ discovery: { instances: [{ id: `instance-${generated}`, graphId: 'authorized-graph', revision: 1,
+  actions: [{ id: `action-${generated}`, kind: 'discover', label: 'Follow a lead' }] }] }, commands: [
+  { commandId: `start-${generated}`, commandType: 'discovery.start', availability: 'AVAILABLE', parameters: { graphId: 'next-graph' } },
+  { commandId: `act-${generated}`, commandType: 'discovery.act', availability: 'AVAILABLE',
+    parameters: { instanceId: `instance-${generated}`, actionId: `action-${generated}` } },
+] });
+for (let round = 0; round < 30; round++) {
+  const a = actorView('random-one'), b = actorView('random-two');
+  assert.equal(policyCommandKey(a, chooseSeededCommand(a, 'fixed-seed', 0, 'actor', round)),
+    policyCommandKey(b, chooseSeededCommand(b, 'fixed-seed', 0, 'actor', round)));
+}
+const unauthorized = actorView('missing'); unauthorized.discovery.instances = [];
+assert.throws(() => chooseSeededCommand(unauthorized, 'seed', 0, 'actor', 0), /authorized discovery instance/);
+console.log('PASS: seeded actor choices ignore generated IDs and use only authorized projections');
 
 if (process.argv.includes('--postgres')) {
   const source = await sourceIdentity();

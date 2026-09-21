@@ -38,6 +38,11 @@ PostgreSQL dumps and hashes, invariants, and the first failing state/checkpoint 
 the database remains available. A capture failure is retained explicitly. Invalid
 round/replicate counts cannot make an empty campaign pass. `run.json` always identifies
 this harness as `native-postgresql-scoped-fixture` with `matrixQualifying: false`.
+Seeded policy choices use authorized graph/action semantics rather than generated
+command or instance IDs. For a hidden discover action, the key uses its ordinal in
+the authorized action list and never reads the hidden node definition. Choice keys
+and issued command IDs are both retained. The recorded logical duration explicitly
+identifies the limited Director/fixture clock scope.
 
 The checkpoint regression runs the canonical Player Command engine against real
 PostgreSQL, races the same issued command, requires exactly one newly committed
