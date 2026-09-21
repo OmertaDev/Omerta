@@ -1,10 +1,18 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
+import fs from 'node:fs/promises';
+import { canonicalJson } from '../tools/rc1-native-proof.js';
 import { createAggressionPolicy, AGGRESSION_POLICY_CONTRACT } from '../tools/rc1-aggression-policy.js';
 
 const digest = (value) => crypto.createHash('sha256').update(String(value)).digest('hex');
 const at = Date.parse('2026-09-21T00:00:00Z');
 const configuration = { accountId: 'actor', seed: 'rc1-alpha' };
+const httpIdentity = (account, method, path, body, key) => ({ account, method, path,
+  ...(body === undefined ? {} : { body }), ...(key === undefined ? {} : { key }) });
+assert.throws(() => JSON.parse(canonicalJson({ body: undefined })), 'History verification must reject undefined JSON fields');
+assert.deepEqual(JSON.parse(canonicalJson(httpIdentity('actor', 'GET', '/v1/me'))), { account: 'actor', method: 'GET', path: '/v1/me' });
+assert.deepEqual(JSON.parse(canonicalJson(httpIdentity('actor', 'POST', '/v1/heal', {}, 'key'))),
+  { account: 'actor', method: 'POST', path: '/v1/heal', body: {}, key: 'key' });
 const makeView = (sequence) => {
   const id = digest(sequence), executionId = `${digest(`board:${sequence}`)}.${id}`;
   return { commands: { player: { id: 'actor', character: { id: 'own-street' } }, commandSchemaVersion: 1,
@@ -146,7 +154,7 @@ async function nativeExercise() {
       return { status: response.statusCode, replayed: response.headers['x-idempotent-replay'] === 'true', body: response.json() };
     };
     const invoke = async (account, method, path, body, key) => {
-      const response = await proof.invoke('authenticated-http', { account, method, path, body, key }, () => request(account, method, path, body, key));
+      const response = await proof.invoke('authenticated-http', httpIdentity(account, method, path, body, key), () => request(account, method, path, body, key));
       assert.equal(response.status, 200, JSON.stringify(response)); return response;
     };
     for (const account of Object.keys(tokens)) await invoke(account, 'POST', '/v1/checkin', {}, `initial-checkin-${account}`);
@@ -203,6 +211,9 @@ async function nativeExercise() {
     const retaliation = await act(weak); assert.equal(retaliation.decision.type, 'legacy.jump'); assert.equal(retaliation.decision.retaliation, true);
     assert.equal(retaliation.response.body.win, false);
     const final = await proof.snapshot(app.pool, 'final');
+    // Validate trace syntax before assigning a passing result, in addition to the
+    // final indexed hash/chain/invocation validator after recorder completion.
+    for (const line of (await fs.readFile(`${output}/history.jsonl`, 'utf8')).trim().split('\n')) JSON.parse(line);
     result = { status: 'PASS_SCOPED', policyResults: Object.values(policies).map((policy) => policy.summary()),
       invariantChecks: baseline.checks.length, hospitalWaitMs: waitMs, exactHttpReplays: 1,
       postgres: (await app.pool.query('SELECT version() AS version')).rows[0].version,

@@ -90,6 +90,12 @@ was connected. After that test process exited, the exact database name, OID and
 ownership marker were checked and the database closed with zero other sessions.
 The harness uses `DIRECTOR_DISABLED` and validates that configuration before server
 allocation. This scoped combat exercise never claimed Director/worker coverage.
+The third attempt at `57a1bfa5` completed the gameplay path but failed the required
+history validator: GET identities included absent `body`/`key` fields as JavaScript
+`undefined`, producing invalid JSONL. Its immutable run file contains the earlier
+provisional gameplay result; the recorded validator rejection invalidates that
+entire proof. The harness now omits absent identity fields, tests their actual
+canonical serialization, and parses the history before assigning a passing result.
 
 Death, heirs, replacement, all other conflict authorities, full resource journals,
 complete worker intervals, 90-day lifecycles, all 225 runs, whole-policy accounting
