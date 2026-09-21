@@ -5,6 +5,8 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
 import { execFileSync } from 'node:child_process';
+const WallDate = globalThis.Date;
+const wallTimestamp = () => new WallDate().toISOString();
 
 export const sha256 = (value) => crypto.createHash('sha256').update(value).digest('hex');
 export function canonicalJson(value) {
@@ -163,10 +165,10 @@ export async function createProofRecorder({ directory, source, configuration, ru
   // Exclusive creation avoids overwriting an earlier failed run or its reproduction.
   await fs.writeFile(path.join(directory, 'run-reserved.json'), canonicalJson({ runId, source }), { flag: 'wx', mode: 0o600 });
   let sequence = 0, invocation = 0, previousHash = null, pendingWrites = Promise.resolve();
-  const artifacts = [], startedAt = new Date().toISOString();
+  const artifacts = [], startedAt = wallTimestamp();
   const record = (event) => {
     pendingWrites = pendingWrites.then(async () => {
-      const row = { sequence: ++sequence, previousHash, observedAt: new Date().toISOString(), ...event };
+      const row = { sequence: ++sequence, previousHash, observedAt: wallTimestamp(), ...event };
       previousHash = sha256(canonicalJson(row));
       await fs.appendFile(path.join(directory, 'history.jsonl'), `${canonicalJson({ ...row, hash: previousHash })}\n`, { mode: 0o600 });
       return row.sequence;
@@ -207,7 +209,7 @@ export async function createProofRecorder({ directory, source, configuration, ru
       const history = await fs.readFile(path.join(directory, 'history.jsonl'));
       artifacts.push({ path: 'history.jsonl', sha256: sha256(history), bytes: history.length });
       const record = { format: 1, runId, seed, scenarioId, population, source, configuration,
-        configurationSha256: sha256(canonicalJson(configuration)), startedAt, endedAt: new Date().toISOString(),
+        configurationSha256: sha256(canonicalJson(configuration)), startedAt, endedAt: wallTimestamp(),
         runtime: { node: process.version, platform: process.platform, architecture: process.arch, cpuCount: os.cpus().length,
           totalMemoryBytes: os.totalmem(), availableParallelism: os.availableParallelism(),
           productionEquivalent: false, hardwareLimits: 'Local machine; no enforced process CPU/RAM quota.' },

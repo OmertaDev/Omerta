@@ -9,7 +9,7 @@ export const postgres = process.argv.includes('--postgres');
 export const key = () => crypto.randomUUID();
 export const characterId = (accountId) => `${accountId}-character`;
 
-export async function commandDatabase(tag) {
+export async function commandDatabase(tag, { poolFactory = null, initialize = null } = {}) {
   let result;
   if (postgres) {
     const url = process.env.COORDINATION_TEST_DATABASE_URL || process.env.WORLD_KERNEL_TEST_DATABASE_URL;
@@ -21,19 +21,22 @@ export async function commandDatabase(tag) {
     const namespace = `command_${tag}_${crypto.randomBytes(8).toString('hex')}`;
     assert(/^[a-z_0-9]+$/.test(namespace));
     await base.query(`CREATE SCHEMA ${namespace}`);
-    const reopen = () => new Pool({ connectionString: endpoint.toString(),
-      options: `-c search_path=${namespace} -c lock_timeout=8000 -c statement_timeout=20000` });
+    const poolConfiguration = { connectionString: endpoint.toString(),
+      options: `-c search_path=${namespace} -c lock_timeout=8000 -c statement_timeout=20000` };
+    const reopen = () => poolFactory ? poolFactory(poolConfiguration, namespace) : new Pool(poolConfiguration);
     result = { pool: reopen(), reopen, async cleanup(pool) {
       await pool.end(); await base.query(`DROP SCHEMA ${namespace} CASCADE`); await base.end();
     } };
     dbCaps.skipLocked = true;
   } else {
+    assert(!poolFactory && !initialize, 'Custom database test seams require real PostgreSQL');
     const mem = newDb({ noAstCoverageCheck: true });
     registerPgMemCompatibility(mem, DataType);
     const { Pool } = mem.adapters.createPg();
     result = { pool: new Pool(), reopen: () => new Pool(), cleanup: (pool) => pool.end() };
     dbCaps.skipLocked = false;
   }
+  if (initialize) await initialize(result.pool);
   await result.pool.query(fs.readFileSync(new URL('../../schema.sql', import.meta.url), 'utf8'));
   return result;
 }

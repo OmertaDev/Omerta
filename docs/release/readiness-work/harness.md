@@ -98,3 +98,27 @@ Two fresh serial 25-player scoped PostgreSQL runs on `1b12efb2` each execute 94
 commands. Their 20 seeded actor policy choices match. Their full database hashes
 do not match because no IDs/timestamps or other fields were excluded. This proves
 policy replay only; it leaves complete-state deterministic replay open.
+
+## Same-seed serial clock/RNG experiment
+
+`test/rc1-native-serial-replay.js --postgres --output=<restricted-external-directory>`
+runs two serial copies of the existing 25-player canonical workload with the same
+seed and declared epoch. The original mismatch affected energy/nerve and accrual
+credits, not merely UUID spelling: those fields must never be normalized away.
+The opt-in seams in `tools/rc1-native-determinism.js` seed UUID/random-byte/random
+decisions and bind `Date.now()` and zero-argument `new Date()` to the fixture clock.
+Both original crypto functions and the application clock are restored in `finally`.
+
+Only each isolated test schema receives clock functions. An explicit search path
+selects those functions ahead of `pg_catalog`; no public or built-in function changes.
+Connection settings supply logical transaction and statement time before canonical
+queries. Date arithmetic, expiry values, durations, and all stored timestamps remain
+intact. Unsupported SQL clock keywords fail closed. Deadline progress uses the
+existing fixture advance seam, and duplicate execution is serial in this experiment.
+This is clock control for a scoped workload, not evidence that every due worker ran.
+
+The comparison excludes **no database fields**, retains both raw snapshots and dumps,
+and must reject modified cash, Knowledge access, world state, or operation outcome.
+RNG tapes and exact source/configuration hashes remain in restricted artifacts. The
+declared fixture boost random override remains visible. An experiment failure is
+retained and cannot be promoted into a native matrix or concurrent-replay pass.

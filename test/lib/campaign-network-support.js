@@ -9,8 +9,8 @@ import { boostCar } from '../../src/economy.js';
 import { craftWorldGraphRecipe, salvageCar } from '../../src/crafting.js';
 import { startMystery, mysteryBoard, discoverNode, completeNode } from '../../src/mysteries.js';
 
-export async function campaignNetworkFixture(tag = 'network') {
-  const f = await dockFixture(tag, createCampaignNetworkContent()), id = CAMPAIGN_NETWORK_IDS;
+export async function campaignNetworkFixture(tag = 'network', options = {}) {
+  const f = await dockFixture(tag, createCampaignNetworkContent(), options), id = CAMPAIGN_NETWORK_IDS;
   const runs = new Map();
   let at = Date.now();
   const advance = (seconds = 601) => { at += seconds * 1000; return at; };

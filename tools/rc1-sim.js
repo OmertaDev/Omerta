@@ -74,11 +74,13 @@ export function verifyLedgerChecks(baseline, final, population) {
   });
 }
 
-export async function runNativeSimulation({ population, seed, replicate, rounds = 2, progress = () => {}, proof = null }) {
+export async function runNativeSimulation({ population, seed, replicate, rounds = 2, progress = () => {}, proof = null,
+  fixtureOptions = {}, fixtureReady = () => {}, serial = false }) {
   assert(Number.isSafeInteger(rounds) && rounds > 0, 'A run must execute at least one round');
   if (proof) assert(process.argv.includes('--postgres'), 'Proof artifacts require real PostgreSQL');
-  const started = Date.now(), tag = `rc1_${population}_${replicate}_${digest(seed).slice(0, 6)}`;
-  const f = await campaignNetworkFixture(tag);
+  const started = performance.now(), tag = `rc1_${population}_${replicate}_${digest(seed).slice(0, 6)}`;
+  const f = await campaignNetworkFixture(tag, fixtureOptions);
+  fixtureReady(f);
   const initialLogicalTime = f.clock();
   const roster = rosterFor(population, seed, replicate);
   const metrics = { snapshots: 0, commandsIssuedAvailable: 0, commandsExecuted: 0, commandReplays: 0,
@@ -87,7 +89,8 @@ export async function runNativeSimulation({ population, seed, replicate, rounds 
     knowledgePrivacyProbes: 0, unauthorizedKnowledgeDisclosures: 0, foreignCommandProbes: 0,
     staleCommandProbes: 0, replayStateChecks: 0, disappearedBeforeCommand: 0,
     directorTicks: 0, directorSelections: 0, directorTransitions: 0, completedOpportunityCommandLinks: 0,
-    knowledgeShares: 0, authorizedKnowledgeReads: 0, abandonedOperationsRecovered: 0, concurrentOperationExecuteBursts: 0 };
+    knowledgeShares: 0, authorizedKnowledgeReads: 0, abandonedOperationsRecovered: 0, concurrentOperationExecuteBursts: 0,
+    serialOperationExecuteRetries: 0 };
   const seen = new Set(), attempts = [], playerActions = new Map();
   const definitions = createCampaignNetworkDefinitions(f.content);
   const director = createLivingWorldDirector({ pool: f.pool, content: f.content, definitions, mode: 'LIVE', clock: f.clock });
@@ -218,7 +221,10 @@ export async function runNativeSimulation({ population, seed, replicate, rounds 
     try {
       // Move the process test clock across the actual persisted deadline. No
       // deadline, escrow, outcome or other canonical row is edited by the harness.
-      Date.now = () => new Date(expiresAt).getTime() + 1;
+      if (serial) {
+        f.advance(Math.max(0, (new Date(expiresAt).getTime() + 1 - f.clock()) / 1000));
+        Date.now = () => f.clock();
+      } else Date.now = () => new Date(expiresAt).getTime() + 1;
       await f.family.command(abandoned.boss, abandoned.operationId, 'expire', {}, key());
     } finally { Date.now = originalNow; }
     assert.equal((await f.family.get(abandoned.boss, abandoned.operationId)).status, 'expired');
@@ -227,13 +233,17 @@ export async function runNativeSimulation({ population, seed, replicate, rounds 
     const prefix = branch === 'intercept_shipment' ? 'b' : 'a';
     const action = await f.networkPrepare(branch, { prefix, engine });
     const execute = findCommand(await engine.snapshot(action.boss, { operationId: action.operationId }), 'operation.execute', { operationId: action.operationId });
-    const burst = await Promise.allSettled([executeIssued(engine, action.boss, execute), executeIssued(engine, action.boss, execute)]);
+    const burst = serial
+      ? [...await Promise.allSettled([executeIssued(engine, action.boss, execute)]),
+        ...await Promise.allSettled([executeIssued(engine, action.boss, execute)])]
+      : await Promise.allSettled([executeIssued(engine, action.boss, execute), executeIssued(engine, action.boss, execute)]);
     // Production uses a nonblocking issuance lock: an in-flight duplicate may
     // receive retryable contention, while a later duplicate returns its receipt.
     // Accept only that documented refusal or a durable replay, never two writes.
     assert.equal(burst.filter((r) => r.status === 'fulfilled' && !r.value.replayed).length, 1);
     for (const result of burst) if (result.status === 'rejected') assert.equal(result.reason.code, 'contention');
-    metrics.concurrentOperationExecuteBursts++;
+    if (serial) metrics.serialOperationExecuteRetries++;
+    else metrics.concurrentOperationExecuteBursts++;
     const beforeReplay = await stateCounts();
     assert.equal((await executeIssued(engine, action.boss, execute)).replayed, true);
     assert.deepEqual(await stateCounts(), beforeReplay); metrics.replayStateChecks++;
@@ -263,7 +273,7 @@ export async function runNativeSimulation({ population, seed, replicate, rounds 
       await proof.record({ kind: 'assertions', invariantChecks, logicalTime: f.clock(), metrics });
     }
     return { population, seed, replicate, rounds, database: process.argv.includes('--postgres') ? 'postgresql' : 'pg-mem',
-      status: 'PASS_SCOPED', durationMs: Date.now() - started, archetypes: counts(roster.map((a) => a.archetype)),
+      status: 'PASS_SCOPED', durationMs: Math.round(performance.now() - started), archetypes: counts(roster.map((a) => a.archetype)),
       logicalDurationMs: f.clock() - initialLogicalTime, logicalClockScope: 'Director/fixture application clock; database wall clock is not advanced',
       fixturePlayers: 5, actorsExecutingCommands: playerActions.size, metrics, actions: attempts,
       authoritative: { situationsGenerated: situations.length, situationStates: counts(situations.map((s) => s.state)),
