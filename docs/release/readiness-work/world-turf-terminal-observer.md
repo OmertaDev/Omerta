@@ -40,6 +40,11 @@ only post-epoch hourly callbacks count toward the three-hour sequence. TOOL44
 preserves the first native failure, which completed the lifecycle but counted the
 boot sweep as an extra hourly zero result. No runtime or classifier was changed
 to correct that test oracle.
+The next retained run failed its required odd-unit assertion: the original
+69% policy plus its configuration-dependent jitter produced only even losing
+stakes. The fixture now declares 69.01% before execution, which produces an odd
+losing stake under the retained seed. Canonical policy, request execution and
+rounding assertions are unchanged; neither failed run is called a full pass.
 Escrow, Family treasury, district status and terminal receipts must
 remain exactly unchanged; unrelated original callbacks retain separate evidence.
 The next original sweep retries after trigger removal. The third returns zero.

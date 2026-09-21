@@ -20,7 +20,7 @@ const epoch = Date.parse('2026-09-20T12:00:00.000Z'), districtId = 'cathedral', 
 const configuration = { scenario: 'scoped-single-turf-terminal-observer', contract: TURF_POLICY_CONTRACT, database: database.descriptor,
   sourcePins: WORKER_SOURCE_PINS, epoch: new Date(epoch).toISOString(), expectedDormant,
   initialization: 'Four ordinary entrants; three founders receive level400 respect eligibility only. Actual140000 check-ins,25000 formations and100000 tributes create each treasury. Incumbent canonically seizes naturally unoccupied Cathedral before baseline. No balance/item/membership/district/deadline SQL writes.',
-  measured: 'One incumbent defense and two rival claims, selected independently with own commitment rates69%,60%,80% plus deterministic jitter. Three canonical concurrent stakes; original returned deadline; first hourly terminal abort, second successful settlement and third empty sweep.',
+  measured: 'One incumbent defense and two rival claims, selected independently with own commitment rates69.01%,60%,80% plus deterministic jitter. Three canonical concurrent stakes; original returned deadline; first hourly terminal abort, second successful settlement and third empty sweep.',
   lifecycle: 'Original season-adjusted contest deadline and every due callback through three hours. No direct resolver calls or shortened durations.',
   fault: 'Declared bid-DELETE trigger verifies all five refund/burn receipts, escrow conservation and closed district latch before aborting. Only its exact caught sweep log is expected. Trigger removed before next original hourly retry.',
   concurrency: 'Request invocation and response-completion order retained; aggregate complete snapshots bound the batch. PostgreSQL total commit order is not claimed.',
@@ -123,7 +123,7 @@ try {
     await invoke(actor, 'POST', '/v1/checkin', undefined, 'initial-checkin-' + actor.index);
     const formed = await invoke(actor, 'POST', '/v1/gangs', { name: 'Turf Family ' + actor.index, tag: 'T' + actor.index }, 'initial-family-' + actor.index);
     actor.familyId = formed.body.gangId; await invoke(actor, 'POST', '/v1/gangs/tribute', { amount: 100000 }, 'initial-tribute-' + actor.index);
-    policies.set(actor.accountId, createTurfPolicy({ accountId: actor.accountId, seed: 'rc1-alpha', commitBps: [6900, 6000, 8000][actor.index] }));
+    policies.set(actor.accountId, createTurfPolicy({ accountId: actor.accountId, seed: 'rc1-alpha', commitBps: [6901, 6000, 8000][actor.index] }));
   }
   const publicDistricts = (await invoke(founders[0], 'GET', '/v1/districts')).body;
   const initialDistrict = publicDistricts.districts.find((d) => d.id === districtId); assert(!initialDistrict.holder && !initialDistrict.occupiedBy);
@@ -144,7 +144,7 @@ try {
   for (const actor of founders) {
     const projection = await view(actor), policy = policies.get(actor.accountId), decision = policy.choose(projection, { districtId, logicalAt: at });
     assert.equal(decision.kind, 'command'); const checkpoint = policy.checkpoint(); await proof.artifact('choice-' + actor.index + '.json', { projection, decision, checkpoint });
-    const restored = createTurfPolicy({ accountId: actor.accountId, seed: 'rc1-alpha', commitBps: [6900, 6000, 8000][actor.index] }).restore(checkpoint);
+    const restored = createTurfPolicy({ accountId: actor.accountId, seed: 'rc1-alpha', commitBps: [6901, 6000, 8000][actor.index] }).restore(checkpoint);
     assert.deepEqual(restored.choose(projection, { districtId, logicalAt: at }), decision); policies.set(actor.accountId, restored);
     choices.push({ actor, decision, projection });
   }
