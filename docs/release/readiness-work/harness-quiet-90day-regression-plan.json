@@ -1,0 +1,31 @@
+{
+  "owner": "Codex/native_harness",
+  "status": "PREDECLARED_SCOPED_REGRESSION",
+  "matrixQualifying": false,
+  "population": 25,
+  "seed": "rc1-alpha",
+  "actorPolicy": "quiet_world",
+  "logicalHoursPerRun": 2160,
+  "runs": ["observation", "exact recorded actor and native query-selection replay"],
+  "resourceObservation": "Disabled for this targeted V8/query-tape storage regression. Canonical per-action/daily/final invariants remain; this is not all-resource or matrix qualification.",
+  "workerScope": "Every configured original local worker callback, real PostgreSQL and canonical seasonal durations; no deadline shortening or skipped work.",
+  "guardrails": {
+    "maximumWallMs": 14400000,
+    "maximumOutputBytes": 17179869184,
+    "minimumFreeBytes": 34359738368,
+    "checks": "Wall time after each callback; storage hourly, daily and final. Existing60-second callback deadline retained. Breach meansFAIL/incomplete with retained diagnostics and cleanup, never pass/skip.",
+    "overshoot": "A current callback or single artifact may exceed the last checked limit. Final diagnostics/verification/cleanup remain necessary after the limit."
+  },
+  "retention": "All canonical fields, raw snapshots, daily/final diagnostics, exact policy/RNG tapes, original worker transformations/jobs/schedule, initial/final dumps and complete artifact hash index. V3 native selection tape uses lossless bounded chunks.",
+  "priorFailure": {
+    "directory": "C:/Users/Jorge/.codex/rc1-readiness-private-20260921/quiet-world-db1749d8-90days",
+    "source": "db1749d8a6c0a842f4b0022df1084b1b9a06a871",
+    "status": "FAIL",
+    "sealed": true,
+    "runSha256": "2fefb77198462e6d742bec377c25b35f100f1ca104816795b6816849994df5d3",
+    "verifiedIndexedArtifacts": 101,
+    "error": "Invalid string length",
+    "otherInvalidation": "Old shared-database world overlapped worker proof and was not isolated from database-scoped advisory locks. New runs use separate owned databases."
+  },
+  "explicitExclusions": ["Complete225-run matrix", "Every committed resource transition", "Production concurrency/load or soak", "External RWA registry/chain/liquidity", "PITR", "Deployment and real cohort", "Dead-world reachability clearance"]
+}

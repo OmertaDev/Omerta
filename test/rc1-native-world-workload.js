@@ -18,6 +18,7 @@ import { createNativeCommitObserver } from '../tools/rc1-native-commit-observer.
 import { snapshotWorldResources, reconcileWorldResources, worldResourceHash } from '../tools/rc1-world-resource-observer.js';
 import { collectKnowledgeDiagnostics } from '../tools/rc1-knowledge-diagnostics.js';
 import { createMysteryPolicy, MYSTERY_POLICY_CONTRACT } from '../tools/rc1-mystery-policies.js';
+import { createRunGuardrails } from '../tools/rc1-native-run-guardrails.js';
 
 const argument = (name) => process.argv.find((arg) => arg.startsWith(`--${name}=`))?.slice(name.length + 3);
 assert(process.argv.includes('--postgres'), 'Real PostgreSQL is required');
@@ -26,10 +27,24 @@ const observeResources = process.argv.includes('--observe-resources');
 const hours = Number(argument('hours') || 2160), population = Number(argument('population') || 25);
 assert(Number.isSafeInteger(hours) && hours > 0 && hours <= 2161);
 assert([25, 100, 250, 500, 1000].includes(population));
+const guardArguments = ['max-wall-ms', 'max-output-bytes', 'min-free-bytes'].map(argument);
+assert(guardArguments.every(value => value === undefined) || guardArguments.every(value => value !== undefined), 'Declare all three operational limits together');
+assert(hours <= 48 || guardArguments.every(value => value !== undefined), 'Long runs require explicit operational guardrails');
+const guardLimits = guardArguments[0] === undefined ? null : {
+  maximumWallMs: Number(guardArguments[0]), maximumOutputBytes: Number(guardArguments[1]), minimumFreeBytes: Number(guardArguments[2]),
+};
 const seed = argument('seed') || 'rc1-alpha'; assert(['rc1-alpha', 'rc1-beta', 'rc1-gamma'].includes(seed));
 const actorPolicy = argument('policy') || 'quiet_world';
 assert(['quiet_world', 'high_mystery_participation', 'low_mystery_participation'].includes(actorPolicy));
 const source = await sourceIdentity(), controlUrl = process.env.COORDINATION_TEST_DATABASE_URL;
+const priorFailureDirectory = argument('prior-failure');
+let priorFailure = null;
+if (priorFailureDirectory) {
+  const bytes = await fs.readFile(path.join(priorFailureDirectory, 'run.json'));
+  const run = JSON.parse(bytes); await verifyArtifactIndex(priorFailureDirectory, run); assert.equal(run.status, 'FAIL');
+  priorFailure = { directory: path.resolve(priorFailureDirectory), source: run.source, runSha256: sha256(bytes),
+    status: run.status, error: run.result.error, artifacts: run.artifacts };
+}
 const replay = argument('replay'), resume = argument('resume');
 const injectActorMismatch = process.argv.includes('--inject-actor-input-mismatch');
 assert(!injectActorMismatch || replay, 'Actor mismatch control requires recorded replay');
@@ -72,6 +87,12 @@ const start = resume ? Date.parse(parentRun.configuration.finish) : epoch, finis
 const expectedDormant = [{ label: 'RWA health', code: 'health_registry_unavailable' }];
 const configuration = { scenario: 'quiet_world', population, seed, hours, sourcePins: WORKER_SOURCE_PINS,
   actorPolicy, mysteryPolicyContract: actorPolicy === 'quiet_world' ? null : MYSTERY_POLICY_CONTRACT,
+  priorFailedRun: priorFailure ? { directory: priorFailure.directory, source: priorFailure.source,
+    runSha256: priorFailure.runSha256, status: priorFailure.status, error: priorFailure.error,
+    semantics: 'Retained failed predecessor, not qualifying evidence and not relabeled as this source.' } : null,
+  guardrails: guardLimits ? { ...guardLimits,
+    cadence: 'Wall time after every completed native callback; output/free space before initialization, hourly, daily and final. A running callback retains the existing 60-second deadline.',
+    overflow: 'FAIL with diagnostics and cleanup; no skipped work or pass. A single callback/artifact may exceed a checked limit before the next quiescent check. Final verification/cleanup are retained beyond execution limits.' } : null,
   policyScope: 'Only the PlayerCommand selection component changes. Quiet daily roster/session limits stay declared; legacy crimes are independent and excluded from mystery quotas. No full-archetype qualification.',
   knowledgeObservation: 'Complete canonical Knowledge pages at daily/final serial checkpoints; full canonical state equality before/after each observation; never policy feedback',
   failureControl: injectActorMismatch ? 'Change the first authorized snapshot comparison input only; no canonical write or command executes from the altered projection.' : null,
@@ -104,10 +125,14 @@ const configuration = { scenario: 'quiet_world', population, seed, hours, source
 if (replay) {
   assert.equal(replayRun.configuration.hours, hours);
   assert.equal(replayRun.configuration.resourceObservation, configuration.resourceObservation);
+  assert.deepEqual(replayRun.configuration.guardrails, configuration.guardrails, 'Replay operational limits differ');
+  assert.deepEqual(replayRun.configuration.priorFailedRun, configuration.priorFailedRun, 'Replay predecessor linkage differs');
   assert.deepEqual(replayRun.configuration.parentCheckpoint, configuration.parentCheckpoint, 'Replay continuation parent differs');
 }
 const proof = await createProofRecorder({ directory: output, source, configuration,
   runId: path.basename(output), seed, scenarioId: 'scoped-quiet-world-active-players-and-workers', population });
+const guardrails = guardLimits ? createRunGuardrails({ directory: output, ...guardLimits }) : null;
+const guardBoundary = async label => { if (guardrails) await proof.record({ kind: 'operational-guard-check', ...await guardrails.check(label) }); };
 const runtime = installSerialRuntime(seed, configuration.start); let at = start;
 runtime.bindClock(() => at);
 if (resume) runtime.restoreTape(parentTape);
@@ -192,6 +217,8 @@ const policyState = () => ({ format: 1, seed, actorPolicy, epoch, logicalAt: at,
 let pool, result, currentInvocation = null, failureInvocation = null, injectedActorMismatch = false;
 try {
   for (const level of ['log', 'warn', 'error']) console[level] = (...args) => controller.log(level, args);
+  if (priorFailure) await proof.artifact('prior-failed-run.json', priorFailure);
+  await guardBoundary('before-initialization');
   await proof.record({ kind: 'database-created', ...await database.create() });
   if (resume) {
     pool = await restoreCheckpoint(parentCheckpoint, path.join(resume, 'final.dump'), url,
@@ -333,7 +360,9 @@ try {
     priorResources = after; commitObserver.arm();
   } });
   await controller.advanceTo(finish, async (logicalAt, label) => {
+    guardrails?.time(`after:${label}:${logicalAt}`);
     if (label !== 'guardedTick') return;
+    await guardBoundary(`hour:${(logicalAt - start) / 3600000}`);
     const day = Math.floor((logicalAt - epoch) / 86400000);
     if (day === lastDay || day >= Math.ceil((finish - epoch) / 86400000)) return;
     lastDay = day;
@@ -349,6 +378,7 @@ try {
     await knowledgeBoundary(`day-${day}`, daily);
     await proof.artifact(`world-diagnostics-day-${day}.json`, await collectWorldDiagnostics(diagnosticPool,
       { logicalAt: at, roster, actorActions: Object.fromEntries(actorActions) }));
+    await guardBoundary(`day:${day}`);
     originalConsole.log(JSON.stringify({ day, sessions: metrics.sessions, commands: metrics.freshPlayerCommands,
       crimes: metrics.legacyCrimeAttempts, actorCoverage: [...actorActions.values()].filter(Boolean).length }));
   });
@@ -391,6 +421,8 @@ try {
     resourceObservation: observeResources ? resourceSummary : null,
     statement: 'Completed only the declared quiet-world workload; no matrix qualification or dead-world clearance' };
   if (replay) result.replayComparison = compareActorReplay(result, replayRun.result);
+  await guardBoundary('final');
+  if (guardrails) await proof.artifact('operational-guardrails.json', guardrails.diagnostic());
   await proof.record({ kind: 'assertions', ...result });
 } catch (error) {
   result = { status: 'FAIL', hours, population, metrics, error: error.message, invocation: failureInvocation, logicalAt: at };
@@ -399,6 +431,7 @@ try {
   await proof.artifact('failure-random-tape.json', { draws: runtime.tape });
   await proof.artifact('failure-actor-tape.json', actors.diagnostic());
   await proof.artifact('failure-actor-policy.json', policyState());
+  if (guardrails) await proof.artifact('failure-operational-guardrails.json', guardrails.diagnostic());
   await proof.artifact('failure-query-order.json', await queryOrder.diagnostic());
   if (commitObserver) await proof.artifact('failure-resource-observer.json', { capturedAt: 'First failure, before diagnostic state capture', ...resourceSummary, diagnostic: commitObserver.diagnostic() });
   if (pool) {
