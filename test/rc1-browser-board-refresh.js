@@ -2,10 +2,19 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import http from 'node:http';
+import crypto from 'node:crypto';
 import { chromium } from 'playwright-core';
 import { browserControls } from './lib/rc1-browser-controls.js';
 
-let reads = 0, posts = [], browser;
+let reads = 0, posts = [], browser, heldReadGate;
+const source = fs.readFileSync(new URL('../public/index.html', import.meta.url), 'utf8').replaceAll('\r\n', '\n');
+const extract = (start, end, expected) => {
+  assert.equal(source.split(start).length, 2); assert.equal(source.split(end).length, 2);
+  const text = source.slice(source.indexOf(start), source.indexOf(end));
+  assert.equal(crypto.createHash('sha256').update(text).digest('hex'), expected, 'Canonical client seam changed: review the extracted source'); return text;
+};
+const coordinator = extract('  function createProjectionRefresh(', '  // End projection refresh coordinator.', 'a693944e6e8bde4e4bee829865ce813ec588d860bf5e45fad95545fecc48b2da');
+const apiQueue = extract('  async function api(method,', '  async function apiNow(', '61ffdfc08a79dca5491f95abf333f1fc9c9d125f344206a5233063ecaddeeba7');
 const command = executionId => ({ commandId: 'craft', commandType: 'recipe.craft', label: 'Craft key', parameters: {},
   availability: 'AVAILABLE', confirmation: { required: false }, executionIdentity: { executionId } });
 const html = `<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -23,10 +32,17 @@ function paint(board){
     target.insertAdjacentHTML('beforeend','<div class="world-notice" role="status"><b>Craft key</b>Recorded</div>');
   };
 }
-async function refresh(){
-  target.innerHTML='<div class="world-card" role="status">Refreshing your street…</div>';
-  paint(await(await fetch('/v1/commands')).json());
-}
+${coordinator}
+let token='controlled-session', _authQueue=Promise.resolve();
+${apiQueue}
+async function apiNow(method,path){const response=await fetch(path,{method});return {code:response.status,body:await response.json()};}
+const projections=createProjectionRefresh({worldPath:'/v1/commands',request:(path,ticket)=>api('GET',path,undefined,{isCurrent:ticket.isCurrent}),
+  clear:()=>{target.innerHTML='<div class="world-card" role="status">Refreshing your street…</div>';},
+  apply:(_,result)=>paint(result.body),unauthorized:()=>{throw Error('Unexpected unauthorized');}});
+projections.setSession(token);
+function refresh(){return projections.world();}
+window.queueRefresh=()=>{_authQueue=fetch('/read-gate');return refresh();};
+window.loadingWithoutRequest=()=>{target.innerHTML='<div class="world-card" role="status">Refreshing your street…</div>';};
 const original=Element.prototype.scrollIntoView;
 Element.prototype.scrollIntoView=function(...args){
   original.apply(this,args);
@@ -37,8 +53,9 @@ refresh();</script>`;
 const server = http.createServer((req, res) => {
   if (req.url === '/v1/commands') {
     res.writeHead(200, { 'content-type': 'application/json' });
-    res.end(JSON.stringify({ commands: [command(`board-${++reads}.craft`)], operations: {}, cases: {} })); return;
+    res.end(JSON.stringify({ schemaVersion: 1, commandSchemaVersion: 1, opportunities: [], commands: [command(`board-${++reads}.craft`)], operations: {}, cases: {} })); return;
   }
+  if (req.url === '/read-gate') { assert(!heldReadGate); heldReadGate = res; return; }
   if (req.url === '/v1/commands/execute') {
     let body = ''; req.on('data', chunk => { body += chunk; }); req.on('end', () => {
       const input = JSON.parse(body); posts.push(input); res.writeHead(200, { 'content-type': 'application/json' });
@@ -58,6 +75,30 @@ try {
   const origin = `http://127.0.0.1:${server.address().port}`;
   const reset = async () => { posts = []; await page.goto(origin, { waitUntil: 'networkidle' }); return engine.snapshot('fixture'); };
   const execute = board => { const key = board.commands[0].executionIdentity.executionId; return engine.execute('fixture', { executionId: key }, key); };
+
+  // Pause only the test driver's protocol boundary after its generation check.
+  // The real node, pinned canonical coordinator/API queue, HTTP and click remain intact.
+  async function duringConnectivityRead(work, action) {
+    const original = page.locator; let invoked = false;
+    page.locator = function (...args) {
+      const locator = original.apply(this, args), byRole = locator.getByRole;
+      locator.getByRole = function (...roleArgs) {
+        const matches = byRole.apply(this, roleArgs), all = matches.all;
+        matches.all = async function (...allArgs) {
+          const rows = await all.apply(this, allArgs);
+          for (const row of rows) { const handle = row.elementHandle;
+            row.elementHandle = async function (...handleArgs) {
+              const element = await handle.apply(this, handleArgs), evaluate = element.evaluate;
+              element.evaluate = async function (...evaluateArgs) {
+                if (!invoked) { invoked = true; await work(); } return evaluate.apply(this, evaluateArgs);
+              }; return element;
+            };
+          } return rows;
+        }; return matches;
+      }; return locator;
+    };
+    try { return await action(); } finally { page.locator = original; assert(invoked, 'Connectivity boundary must actually be reached'); }
+  }
 
   // Reproduce the former Locator behavior against a real replacement DOM and HTTP request.
   let board = await reset(), selected = board.commands[0].executionIdentity.executionId;
@@ -79,11 +120,39 @@ try {
   board = await reset(); await page.evaluate(() => { window.detachOnScroll = true; });
   await assert.rejects(execute(board), /detached without an observed board refresh/); assert.equal(posts.length, 0);
 
+  const legacyExpected = process.env.RC1_EXPECT_DETACHMENT_RACE === '1', timing = [];
+  for (const mode of ['refresh-during-connectivity-await', 'clear-before-queued-get']) {
+    board = await reset(); const beforeReads = reads; let release;
+    const work = async () => {
+      if (mode === 'refresh-during-connectivity-await') await page.evaluate(() => refresh());
+      else {
+        await page.evaluate(() => { window.queueRefresh(); });
+        assert.equal(reads, beforeReads, 'The board clears before its queued GET starts');
+        release = setInterval(() => { if (heldReadGate) { const r = heldReadGate; heldReadGate = null; clearInterval(release); r.end('released'); } }, 100);
+      }
+    };
+    let failure;
+    await assert.rejects(duringConnectivityRead(work, () => execute(board)), error => {
+      failure = error; return legacyExpected ? /detached without an observed board refresh/.test(error.message) : error.observedBrowserRefresh === true;
+    });
+    assert.equal(posts.length, 0, 'No submission in either protocol race');
+    await page.waitForLoadState('networkidle'); assert(reads > beforeReads, 'The test must observe the actual queued board GET');
+    timing.push({ mode, zeroSubmissions: true, observedReads: reads - beforeReads, legacyAssertionReproduced: legacyExpected });
+    if (!legacyExpected) {
+      assert.equal(await engine.retryIssuedCommand('fixture', board.commands[0], failure), true);
+      board = await engine.snapshot('fixture'); const chosen = board.commands[0].executionIdentity.executionId;
+      assert.equal((await execute(board)).executionId, chosen); assert.deepEqual(posts.map(row => row.executionId), [chosen]);
+    }
+  }
+  board = await reset();
+  await assert.rejects(duringConnectivityRead(() => page.evaluate(() => window.loadingWithoutRequest()), () => execute(board)), /detached without an observed board refresh/);
+  assert.equal(posts.length, 0, 'A loading message alone is not proof of an actual refresh');
+
   board = await reset(); await page.evaluate(() => { window.wrongIdentity = true; });
   let mismatch;
   await assert.rejects(execute(board), error => { mismatch = error; return /selected issued identity/.test(error.message); });
   assert.equal(posts.length, 1); assert.equal(await engine.retryIssuedCommand('fixture', board.commands[0], mismatch), false);
-  console.log(JSON.stringify({ status: 'PASS_SCOPED', browser: browser.version(), checks: [
+  console.log(JSON.stringify({ status: 'PASS_SCOPED', browser: browser.version(), timing, diagnostics: result.boardLifecycleDiagnostics, checks: [
     'former-locator-submits-new-board', 'refresh-during-reach-submits-zero', 'visible-reissue-submits-exactly-once',
-    'unexplained-detachment-fails', 'submitted-identity-mismatch-still-fails-without-retry' ] }));
-} finally { if (browser) await browser.close(); await new Promise(resolve => server.close(resolve)); }
+    'unexplained-detachment-fails', 'loading-without-actual-request-fails', 'submitted-identity-mismatch-still-fails-without-retry' ] }));
+} finally { if (heldReadGate) heldReadGate.end('cleanup'); if (browser) await browser.close(); await new Promise(resolve => server.close(resolve)); }

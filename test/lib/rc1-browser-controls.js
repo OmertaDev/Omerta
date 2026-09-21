@@ -106,6 +106,7 @@ export function browserControls({ pageFor, width, result, save }) {
     },
     async snapshot(account, options = {}) {
       const session = await pageFor(account), state = track(session.page), page = await openTab(account, 'world');
+      state.diagnostics = installBoardDiagnostics(page); // A test page may have navigated since tracking began.
       await state.diagnostics;
       const update = async (control) => {
         for (let attempt = 0; attempt < 3; attempt++) {
