@@ -67,8 +67,10 @@
         "initialSupply": "lowest valid",
         "replenishment": "canonical paths"
       },
-      "implementationStatus": "UNIMPLEMENTED",
-      "qualifyingRuns": 0
+      "implementationStatus": "PARTIAL_SCOPED",
+      "qualifyingRuns": 0,
+      "implementationEvidence": "harness-resource-pressure.md;harness-resource-pressure-results.json",
+      "qualificationLimit": "Ordinary-entry low-supply proxy, not the absolute valid extreme for all13 resources; serial stale-choice contention only."
     },
     {
       "id": "resource_abundance",
@@ -82,8 +84,10 @@
           "sinks"
         ]
       },
-      "implementationStatus": "UNIMPLEMENTED",
-      "qualifyingRuns": 0
+      "implementationStatus": "PARTIAL_SCOPED",
+      "qualifyingRuns": 0,
+      "implementationEvidence": "harness-resource-pressure.md;harness-resource-pressure-results.json",
+      "qualificationLimit": "Declared initial level75 respect fixtures yield high canonical check-in/purchase supply; no natural progression or absolute all13-resource extreme."
     },
     {
       "id": "high_player_churn",
@@ -124,7 +128,7 @@
       },
       "implementationStatus": "PARTIAL_SCOPED",
       "qualifyingRuns": 0,
-      "implementationEvidence": "alliance-summary.json;docs/rc1-coordinated-alliance.md"
+      "implementationEvidence": "alliance-summary.json;docs/rc1-coordinated-alliance.md;../../rc1-alliance-world.md"
     },
     {
       "id": "multi_family_war",

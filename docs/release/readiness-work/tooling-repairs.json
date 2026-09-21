@@ -540,8 +540,8 @@
         "tools/rc1-native-proof-stream.js",
         "test/rc1-native-proof-stream.js"
       ],
-      "retest": "Independent retained-byte audit and chunk/UTF8/CRLF/malformed/truncated/duplicate/unfinished controls pass. Fresh same-source alliance observation/replay in progress; root integrated freeze pending.",
-      "evidence": "Agent sourcef8976fc7; retained fc069f31 manifest hash240fc50d25aa42ca7d2a64f6e41152d86f8eebec6f9873802e88827d2f4fdc21; detailed audit handoff pending"
+      "retest": "Independent retained-byte audit verified197artifacts15917events716invocations without changing failed status. Fresh90c80287 native48h observation/replay both exited0/PASS_SCOPED;18fields and complete canonical/resource hashes match without exclusions. Root integrated rerun remains required.",
+      "evidence": "../../rc1-alliance-world.md; retained fc069f31 audit SHA1b6ba15b5dbf6472291c20896ed15792aff6bd302192c5c38f884c386db6af34"
     },
     {
       "id": "RC1-TOOL-35",
@@ -571,6 +571,20 @@
       ],
       "retest": "13868736 scoped native pass47boundaries2261equations13controls;186 artifacts across all3 attempts independently verified. Root integrated rerun pending. Integratedf8b9b0d1 native47boundaries2261equations13controls PASS;68 artifacts independently verified.",
       "evidence": "omr-loan-terminal-summary.json"
+    },
+    {
+      "id": "RC1-TOOL-34",
+      "classification": "D tooling defect",
+      "owner": "Codex/mystery_workloads",
+      "failedGate": "c65938a1 native alliance world observation",
+      "before": "HTTP injection returned before the original projection-events onResponse membership SELECT finished. The observer invariant query overlapped it and failed; failed history and cleanup are retained. Earlier activity attribution was an inference, superseded by exact membership evidence.",
+      "repair": "A test-only terminal onResponse barrier waits for all original returned hooks before the serial evidence boundary. No fixed sleep, callback suppression, production edit or observer relaxation.",
+      "changedSource": [
+        "test/rc1-native-world-workload.js",
+        "test/rc1-alliance-response-barrier.js"
+      ],
+      "retest": "90c80287 activity and1a42a953 exact second-membership-query causal controls pass with55native invariants. Fresh90c80287 full48h observation/replay pass. Root integrated reruns required.",
+      "evidence": "../../rc1-alliance-world.md; retained failure run SHA366f848961f44899a8b24d10b78815469d4ace490119de74497c3189c2cc6c60"
     }
   ]
 }

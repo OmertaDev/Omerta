@@ -18,8 +18,8 @@
     {
       "id": "RC1-00-DEPLOYMENT-CONFIGURATION",
       "owner": "Named release owner/operator required",
-      "missing": "My Workspace is selected, but candidate flags, enabled integrations, secret-source identities, isolated services and operator remain unattested.",
-      "evidence": "render-observation.json",
+      "missing": "My Workspace selected. Read-only Render service/group key inventories, public contract-address configuration and live468516d8 revision recorded09:28–09:33UTC. Listed world/coordination/Director opt-in flags are absent from those inventories; effective process/startup configuration is not attested. Named operator, enabled integration evidence, candidate-specific isolated services and deployment/recovery remain required.",
+      "evidence": "render-observation.json;render-envelope-observation.json;render-config-ui-20260921-0933.json;render-family-backing-observation.json",
       "reruns": [
         "candidate/configuration freeze",
         "affected integration, migration and recovery proofs"
@@ -51,8 +51,8 @@
     {
       "id": "RC1-03-MATRIX-AND-SOAK",
       "owner": "Simulation engineer; current engineering assignee Codex/native_harness",
-      "missing": "The repaired25-actor90-day quiet-world observation/replay atc38fb9bd matches all90 daily states and the final complete state. Resource observation was disabled in that long pair, so qualifying runs remain0. Complete policies, resource movement, metrics/reachability,225runs and12-hour production-equivalent soak remain required. Bounded quiet/mystery/aggression/churn/market/Law/Family/alliance/turf components exist; complete-world integration and remaining archetypes stay incomplete. Three Families now contest one objective through original2h workers; that is not full warfare or90-day coverage.",
-      "evidence": "scenario-manifest.json;harness-quiet-90day-regression-results.json;market-player-policy.md;law-player-policy.md;integrated-d012c78a-results.json;family-player-policy.md;harness-quiet-90day-order-replay-results.json;alliance-summary.json;turf-contention-summary.json",
+      "missing": "The repaired25-actor90-day quiet-world observation/replay atc38fb9bd matches all90 daily states and the final complete state. Resource observation was disabled in that long pair, so qualifying runs remain0. Complete policies, resource movement, metrics/reachability,225runs and12-hour production-equivalent soak remain required. Bounded quiet/mystery/aggression/churn/market/Law/Family/alliance/turf components exist; complete-world integration and remaining archetypes stay incomplete. Three Families now contest one objective through original2h workers; that is not full warfare or90-day coverage. Native48h alliance observation/replay and three-entrant scarcity/abundance components now pass at separate pinned sources; explicit unknown lineage and scenario/fixture limits remain, with0qualifying matrix runs.",
+      "evidence": "scenario-manifest.json;harness-quiet-90day-regression-results.json;market-player-policy.md;law-player-policy.md;integrated-d012c78a-results.json;family-player-policy.md;harness-quiet-90day-order-replay-results.json;alliance-summary.json;turf-contention-summary.json;../../rc1-alliance-world.md;harness-resource-pressure-results.json",
       "reruns": [
         "225 complete native runs after conservation coverage",
         "12-hour 1000-actor soak",

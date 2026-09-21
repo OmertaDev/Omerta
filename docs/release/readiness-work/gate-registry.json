@@ -1193,6 +1193,71 @@
       "timeoutMs": 600000,
       "scope": "regression",
       "coverageExclusions": []
+    },
+    {
+      "id": "rc1-alliance-response",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:alliance-response:postgres"
+      ],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Original activity response-hook completion control only; no full world or process continuation."
+      ]
+    },
+    {
+      "id": "rc1-alliance-membership-response",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:alliance-membership-response:postgres"
+      ],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Exact retained post-response membership-query completion control only; no full world or process continuation."
+      ]
+    },
+    {
+      "id": "rc1-resource-scarcity",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:resource-scarcity:postgres"
+      ],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Three ordinary entrants and finite ammo escrow; lower-supply proxy only, unsupported shared escrow classifications retained, no all-resource extremes or matrix."
+      ]
+    },
+    {
+      "id": "rc1-resource-abundance",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:resource-abundance:postgres"
+      ],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Three entrants with declared initial level75 respect fixtures and canonical purchases; unsupported shared escrow classifications retained, no natural progression or all-resource extremes or matrix."
+      ]
+    },
+    {
+      "id": "rc1-alliance-world",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:alliance-world:postgres"
+      ],
+      "timeoutMs": 1800000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "25 actors, one seed and48 logical hours with declared founder respect fixtures; unknown resource lineage remains explicit, no90-day matrix or deployment qualification."
+      ]
     }
   ]
 }

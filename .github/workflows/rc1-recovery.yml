@@ -563,3 +563,111 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:car-journal:postgres
+
+  bounded-resource-pressure:
+    name: Bounded resource pressure and response barriers (PostgreSQL ${{ matrix.postgres }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        postgres: ['16', '18.4']
+    services:
+      postgres:
+        image: postgres:${{ matrix.postgres }}
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: rc1_pressure_control
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      COORDINATION_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/rc1_pressure_control
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Install matching PostgreSQL checkpoint tools
+        run: bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'
+      - name: Original activity response hook completion
+        if: '!cancelled()'
+        env:
+          RC1_ALLIANCE_BARRIER_OUTPUT: ${{ runner.temp }}/rc1-alliance-response
+        run: |
+          umask 077
+          npm run test:rc1:alliance-response:postgres
+      - name: Original post-response membership query completion
+        if: '!cancelled()'
+        env:
+          RC1_ALLIANCE_BARRIER_OUTPUT: ${{ runner.temp }}/rc1-alliance-membership-response
+        run: |
+          umask 077
+          npm run test:rc1:alliance-membership-response:postgres
+      - name: Bounded scarcity and exact finite ammo custody
+        if: '!cancelled()'
+        env:
+          RC1_PRESSURE_OUTPUT: ${{ runner.temp }}/rc1-resource-scarcity
+        run: |
+          umask 077
+          npm run test:rc1:resource-scarcity:postgres
+      - name: Bounded abundance and canonical replenishment
+        if: '!cancelled()'
+        env:
+          RC1_PRESSURE_OUTPUT: ${{ runner.temp }}/rc1-resource-abundance
+        run: |
+          umask 077
+          npm run test:rc1:resource-abundance:postgres
+
+  alliance-world-replay:
+    name: Scoped48-hour alliance world replay (PostgreSQL ${{ matrix.postgres }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        postgres: ['16', '18.4']
+    services:
+      postgres:
+        image: postgres:${{ matrix.postgres }}
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: rc1_alliance_world_control
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      COORDINATION_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/rc1_alliance_world_control
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Install matching PostgreSQL checkpoint tools
+        run: bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'
+      - name: Observe48 hours of original callbacks and25 authorized actors
+        id: observation
+        env:
+          RC1_WORLD_OUTPUT: ${{ runner.temp }}/rc1-alliance-world-observe
+        run: |
+          umask 077
+          npm run test:rc1:alliance-world:postgres
+      - name: Replay complete canonical state and resource history
+        if: steps.observation.outcome == 'success'
+        env:
+          RC1_WORLD_OUTPUT: ${{ runner.temp }}/rc1-alliance-world-replay
+        run: |
+          umask 077
+          npm run test:rc1:alliance-world:postgres -- --replay=${{ runner.temp }}/rc1-alliance-world-observe
