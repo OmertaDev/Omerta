@@ -1,0 +1,1134 @@
+{
+  "format": 1,
+  "owner": "Codex/native_harness",
+  "status": "PASS_SCOPED_NATIVE_CAUSAL_REDUCTION",
+  "matrixQualifying": false,
+  "source": {
+    "revision": "0a679ffbad75f93ee1fa19135e23915927a47e08",
+    "gitTree": "ee997da4c8f61814666916be1d83f1c81c3e669d",
+    "checkoutSha256": "52a9feb6e0675e8d1533b5285bac4509f95800cd03f775adcde4d21a5aef366e",
+    "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+    "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+  },
+  "canonicalSource": {
+    "retainedRevision": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+    "srcTree": "4be52e464f94674bf1ebf033fc3c164ed14a4b49",
+    "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+  },
+  "sourceBoundary": "This native campaign is pinned to 0a679ffb and requires complete src-tree, schema and lockfile equivalence with the retained c38 input. The later integrated b0c85c11 runtime differs, so a fresh integrated-source replay/input is required before a final-candidate reducer rerun. The equality guard is not waived.",
+  "assertionIdentity": "RC1-01.complete-canonical-state-equality/crown-recipient",
+  "failureFingerprint": {
+    "mismatch": "canonical-crown-recipient",
+    "recordedChampion": "quiet-player-5",
+    "nativeChampion": "quiet-player-9"
+  },
+  "configuration": {
+    "epoch": "2026-09-23T23:00:00.000Z",
+    "seed": "retained-crown-reduction",
+    "season": 740,
+    "standingCacheMs": 0,
+    "fixture": "Only initial synthetic fixture construction. Retain every recorded ranking input column/type; other canonical columns use the existing addPlayer fixture. No writes outside canonical authorities after initialization.",
+    "eventSource": "Four operations of the existing bounded native query-order case: standing read, market due read, recordReckoning, sweepMarket. This is a newly frozen causal baseline, not the archived world event list.",
+    "timeScope": "Direct-authority diagnostic delay, initially from the retained seasonal timestamp. No worker is registered and no seasonal waiting-period equivalence is claimed.",
+    "maximumTrials": 48,
+    "maximumWallMs": 1200000,
+    "resourceQualification": false
+  },
+  "configurationSha256": "66fe41b5152bce2dd0e8979101d38ca464e8ced9bfbd37d7e26893471a3df78d",
+  "inputSha256": "4d16699b8ed5e18443485fd8cb88e362636710de81b8c2f0e17b603dc5c00b5d",
+  "original": {
+    "actorIds": [
+      "quiet-player-5",
+      "quiet-player-7",
+      "quiet-player-0",
+      "quiet-player-17",
+      "quiet-player-13",
+      "quiet-player-22",
+      "quiet-player-9",
+      "quiet-player-1",
+      "quiet-player-4",
+      "quiet-player-12",
+      "quiet-player-21",
+      "quiet-player-8",
+      "quiet-player-19",
+      "quiet-player-2",
+      "quiet-player-10",
+      "quiet-player-14",
+      "quiet-player-20",
+      "quiet-player-3",
+      "quiet-player-18",
+      "quiet-player-16",
+      "quiet-player-24",
+      "quiet-player-6",
+      "quiet-player-23",
+      "quiet-player-15",
+      "quiet-player-11"
+    ],
+    "eventIds": [
+      "standing-read",
+      "market-read",
+      "crown",
+      "market-sweep"
+    ],
+    "logicalDelayMs": 2422800000
+  },
+  "reduced": {
+    "actorIds": [
+      "quiet-player-5",
+      "quiet-player-9"
+    ],
+    "eventIds": [
+      "crown"
+    ],
+    "logicalDelayMs": 0
+  },
+  "pairedTrials": 23,
+  "wallMs": 840102,
+  "run": {
+    "directory": "C:/Users/Jorge/.codex/rc1-native-evidence/native-crown-reduction-1",
+    "runSha256": "f2ce5dc2dfe612a96aa8f2d18a07c2bd2552e91baca72003a25ea496081ff0f8",
+    "startedAt": "2026-09-21T08:38:39.075Z",
+    "endedAt": "2026-09-21T08:52:39.177Z"
+  },
+  "minimalWitness": {
+    "trial": 20,
+    "candidate": {
+      "actorIds": [
+        "quiet-player-5",
+        "quiet-player-9"
+      ],
+      "eventIds": [
+        "crown"
+      ],
+      "logicalDelayMs": 0
+    },
+    "fullCanonicalTables": 369,
+    "fullCanonicalSequences": 3,
+    "differingTables": [
+      "account_persistent",
+      "notifications",
+      "season_records"
+    ],
+    "results": [
+      {
+        "status": "PASS_SCOPED",
+        "initialStateSha256": "0d64fa0af6215208fa013206a8506d7c1d0b4b9d80f5c7659ac0cd4ab1c293ff",
+        "finalStateSha256": "3dc0ed1a96125bf9730c2e380dc1b5555cd09905fa1c8cf1bb945f640b4486c8",
+        "champion": "quiet-player-5",
+        "logicalDelayMs": 0,
+        "executedEvents": [
+          "crown"
+        ]
+      },
+      {
+        "status": "PASS_SCOPED",
+        "initialStateSha256": "0d64fa0af6215208fa013206a8506d7c1d0b4b9d80f5c7659ac0cd4ab1c293ff",
+        "finalStateSha256": "fa51b8dcf0de3d35923cd1760a471e801435b3e21c28023c062d47a066607bc0",
+        "champion": "quiet-player-9",
+        "logicalDelayMs": 0,
+        "executedEvents": [
+          "crown"
+        ]
+      }
+    ]
+  },
+  "minimality": {
+    "actorSingleRemovals": [
+      {
+        "removed": "quiet-player-5",
+        "reproduced": false
+      },
+      {
+        "removed": "quiet-player-9",
+        "reproduced": false
+      }
+    ],
+    "eventSingleRemovals": [
+      {
+        "removed": "crown",
+        "reproduced": false
+      }
+    ],
+    "logicalDelayAtDeclaredFloor": true,
+    "actorRemovalTrials": [
+      21,
+      22
+    ],
+    "eventRemovalTrials": [
+      23
+    ],
+    "cachedReferences": "Final minimality reuses the exact retained zero-delay candidates executed in trials 21, 22 and 23; these were fresh owned-database trials, not simulated predicates."
+  },
+  "verification": {
+    "ownedDatabases": 46,
+    "ownedDatabasesStillPresent": 0,
+    "allArtifactAndHistoryHashesVerified": true,
+    "indexedArtifacts": 349,
+    "indexedArtifactBytes": 10660289,
+    "canonicalStateExclusions": [],
+    "independentVerification": {
+      "path": "independent-verification.json",
+      "sha256": "d818e5ba887a3fb1c767d19247b98bc25fcd0267f2d09915a5e3f0b45d936956"
+    }
+  },
+  "lineage": {
+    "retainedDirectory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\quiet-world-90day-order-v4-replay-1",
+    "retainedRunSha256": "c5620383cbfe7918f6f251927034d78c6334b5b4c0b5a553f2cdfaf810cd8b97",
+    "chunk": {
+      "path": "query-tape-00036.json",
+      "entries": 58,
+      "firstEntry": 2004,
+      "lastEntry": 2061,
+      "semanticSha256": "73fdee56f81d3c6f692e56eecc8061dc4cdf000997b19ab3c0f50d7499d191ad"
+    },
+    "sequence": 2024,
+    "occurrenceSha256": "dabd17035bb4a0d4f8349c378c0d1b7d4e5921509610b05954c8d25d81001758",
+    "failedDirectory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\quiet-world-90day-v3-replay-1",
+    "failedSource": {
+      "revision": "2ac778b3f6a66df6334e85306cd95696226355f5",
+      "gitTree": "a3716c953e9b98651ad945798068e79d63db5e9b",
+      "checkoutSha256": "85d747fc550fb4a3c8915663a3127db16b1dfd354af33daaf45070729801bbaf",
+      "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+      "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+    },
+    "failedRunSha256": "c31f339d13ffae5fcb2d72f60fe5fd6304a31d764b42373280345ffb2c6db545"
+  },
+  "artifactIndex": {
+    "path": "docs/release/readiness-work/harness-failure-reducer-artifact-index.json",
+    "gitBlobSha256": "13791ba825e0943cba4d59b619ac562b607bd9b6197c490acdbba0eea2374267",
+    "encoding": "UTF-8 with LF; the hash identifies Git blob bytes, not a potentially CRLF-converted checkout."
+  },
+  "trialSummary": [
+    {
+      "trial": 1,
+      "reason": "baseline",
+      "candidate": {
+        "actorIds": [
+          "quiet-player-5",
+          "quiet-player-7",
+          "quiet-player-0",
+          "quiet-player-17",
+          "quiet-player-13",
+          "quiet-player-22",
+          "quiet-player-9",
+          "quiet-player-1",
+          "quiet-player-4",
+          "quiet-player-12",
+          "quiet-player-21",
+          "quiet-player-8",
+          "quiet-player-19",
+          "quiet-player-2",
+          "quiet-player-10",
+          "quiet-player-14",
+          "quiet-player-20",
+          "quiet-player-3",
+          "quiet-player-18",
+          "quiet-player-16",
+          "quiet-player-24",
+          "quiet-player-6",
+          "quiet-player-23",
+          "quiet-player-15",
+          "quiet-player-11"
+        ],
+        "eventIds": [
+          "standing-read",
+          "market-read",
+          "crown",
+          "market-sweep"
+        ],
+        "logicalDelayMs": 2422800000
+      },
+      "candidateSha256": "0b101a575080346a18fbef50fa00d7f74d54afb10a32eeea710f1759ca228391",
+      "status": "REPRODUCED",
+      "fullStateAssertion": "FAILED",
+      "failureFingerprint": {
+        "mismatch": "canonical-crown-recipient",
+        "recordedChampion": "quiet-player-5",
+        "nativeChampion": "quiet-player-9"
+      },
+      "caseRunSha256": [
+        "2045e2554508f4af1c93fa30a58cc3486f55aa5398bd3b970d6c90163e3ae779",
+        "1d3efe80afe636fd59f59e1914006e28de8e8f61a94fb33be38d20bb3c294096"
+      ],
+      "stateComparisons": [
+        {
+          "initialStateSha256": "ff3429bb128e8d536aaafbda5a53c902169408cc03b2ee490cedcd550955ce78",
+          "finalStateSha256": "05245c7df676dfe2e91caeababbdf90e9d11c377e92b9e5ee0d76ee3122329fc",
+          "champion": "quiet-player-5"
+        },
+        {
+          "initialStateSha256": "ff3429bb128e8d536aaafbda5a53c902169408cc03b2ee490cedcd550955ce78",
+          "finalStateSha256": "519065dd104d52863e4d0e7a6d2a94506bcb2adb36d0c52d100c1c67a9fe60fc",
+          "champion": "quiet-player-9"
+        }
+      ]
+    },
+    {
+      "trial": 2,
+      "reason": "remove-actorIds-0-13",
+      "candidate": {
+        "actorIds": [
+          "quiet-player-2",
+          "quiet-player-10",
+          "quiet-player-14",
+          "quiet-player-20",
+          "quiet-player-3",
+          "quiet-player-18",
+          "quiet-player-16",
+          "quiet-player-24",
+          "quiet-player-6",
+          "quiet-player-23",
+          "quiet-player-15",
+          "quiet-player-11"
+        ],
+        "eventIds": [
+          "standing-read",
+          "market-read",
+          "crown",
+          "market-sweep"
+        ],
+        "logicalDelayMs": 2422800000
+      },
+      "candidateSha256": "2188162d46f9212893357fa94f18de269a5ac537a1f2dab43cb82cdab89f6ff2",
+      "status": "NOT_REPRODUCED",
+      "fullStateAssertion": "PASSED",
+      "failureFingerprint": null,
+      "caseRunSha256": [
+        "76b3dd8e0a4a73351dfd4ec57fdefb93eae679fdf651653355bf819526081b80",
+        "571a4492c489f6f5173b11e1d9af2d3f90d2a53680fdef3977d6ac3c31f4f651"
+      ],
+      "stateComparisons": [
+        {
+          "initialStateSha256": "d4955edf3f9566a656e42a057e5f96e0bf350356267fa7b5351a3b941a170066",
+          "finalStateSha256": "5c20f54f0d8cbe1063f0e006d712f0d8ec0517de82a16ece0171253f19fa81c6",
+          "champion": "quiet-player-2"
+        },
+        {
+          "initialStateSha256": "d4955edf3f9566a656e42a057e5f96e0bf350356267fa7b5351a3b941a170066",
+          "finalStateSha256": "5c20f54f0d8cbe1063f0e006d712f0d8ec0517de82a16ece0171253f19fa81c6",
+          "champion": "quiet-player-2"
+        }
+      ]
+    },
+    {
+      "trial": 3,
+      "reason": "remove-actorIds-13-13",
+      "candidate": {
+        "actorIds": [
+          "quiet-player-5",
+          "quiet-player-7",
+          "quiet-player-0",
+          "quiet-player-17",
+          "quiet-player-13",
+          "quiet-player-22",
+          "quiet-player-9",
+          "quiet-player-1",
+          "quiet-player-4",
+          "quiet-player-12",
+          "quiet-player-21",
+          "quiet-player-8",
+          "quiet-player-19"
+        ],
+        "eventIds": [
+          "standing-read",
+          "market-read",
+          "crown",
+          "market-sweep"
+        ],
+        "logicalDelayMs": 2422800000
+      },
+      "candidateSha256": "351f23d4bc0ec66d7985dbf13860d9c5e24dca925ad8cf5f70c6ba6a0ae7cbdc",
+      "status": "REPRODUCED",
+      "fullStateAssertion": "FAILED",
+      "failureFingerprint": {
+        "mismatch": "canonical-crown-recipient",
+        "recordedChampion": "quiet-player-5",
+        "nativeChampion": "quiet-player-9"
+      },
+      "caseRunSha256": [
+        "8e641c5a9456bb78e05051e832e78dda2c6dcad92fe01008742e89d7d815c239",
+        "387309f2b419eeef6bfc490dbb54a8cf390fdd19ffa37d2a3fdb5391cf452adf"
+      ],
+      "stateComparisons": [
+        {
+          "initialStateSha256": "9cd09f21272a1494fd4ef621f6ab48a4eebb8ccb33a4eb632dfc0f496a17b17f",
+          "finalStateSha256": "22f3f21cebf01b47a6721569213239ee3b280ed5b5fb07de1f0d9a3fa7d609ab",
+          "champion": "quiet-player-5"
+        },
+        {
+          "initialStateSha256": "9cd09f21272a1494fd4ef621f6ab48a4eebb8ccb33a4eb632dfc0f496a17b17f",
+          "finalStateSha256": "d2bee9288c066cdd567d47892fd4cb428ce66e95f8ce93274df7a72396c4deab",
+          "champion": "quiet-player-9"
+        }
+      ]
+    },
+    {
+      "trial": 4,
+      "reason": "remove-actorIds-0-7",
+      "candidate": {
+        "actorIds": [
+          "quiet-player-1",
+          "quiet-player-4",
+          "quiet-player-12",
+          "quiet-player-21",
+          "quiet-player-8",
+          "quiet-player-19"
+        ],
+        "eventIds": [
+          "standing-read",
+          "market-read",
+          "crown",
+          "market-sweep"
+        ],
+        "logicalDelayMs": 2422800000
+      },
+      "candidateSha256": "b10c436cbf0928fb363b465ab42dce1dd5ffe24a79bc04fe89f44c4dea5ed96b",
+      "status": "NOT_REPRODUCED",
+      "fullStateAssertion": "FAILED",
+      "failureFingerprint": null,
+      "caseRunSha256": [
+        "baae79c3e20d547175a393654b85671a9b4450c2a1cd440c82243380bea322b1",
+        "b7c53fda62141f4e9912241a212a4170273a0eabcd59d0dc7e2a105fbb893a12"
+      ],
+      "stateComparisons": [
+        {
+          "initialStateSha256": "2af2cf228a42c6e19f8d4ef6d60e7ad38b9f31384635cf9964d00d700bdfb34d",
+          "finalStateSha256": "940a39be614aa000c17277a8827e0ba90d702f6d8cfef04b5244c55db685bdab",
+          "champion": "quiet-player-1"
+        },
+        {
+          "initialStateSha256": "2af2cf228a42c6e19f8d4ef6d60e7ad38b9f31384635cf9964d00d700bdfb34d",
+          "finalStateSha256": "3f36b4a695c00347940f24c0b6d7704c466e050155c767726b66f282c590a51c",
+          "champion": "quiet-player-21"
+        }
+      ]
+    },
+    {
+      "trial": 5,
+      "reason": "remove-actorIds-7-7",
+      "candidate": {
+        "actorIds": [
+          "quiet-player-5",
+          "quiet-player-7",
+          "quiet-player-0",
+          "quiet-player-17",
+          "quiet-player-13",
+          "quiet-player-22",
+          "quiet-player-9"
+        ],
+        "eventIds": [
+          "standing-read",
+          "market-read",
+          "crown",
+          "market-sweep"
+        ],
+        "logicalDelayMs": 2422800000
+      },
+      "candidateSha256": "9c509d7e2442dfeb6612c1b90225294bcc42dc4b202e61ce12f7d55cccdba575",
+      "status": "REPRODUCED",
+      "fullStateAssertion": "FAILED",
+      "failureFingerprint": {
+        "mismatch": "canonical-crown-recipient",
+        "recordedChampion": "quiet-player-5",
+        "nativeChampion": "quiet-player-9"
+      },
+      "caseRunSha256": [
+        "4d81c3461147dcb8b4ab32f800825a96a9a355f41410dd208f8488bc4c2d8dd0",
+        "d694ccdc31bdbb3af60472bfbfab34d13a691534a25abcb4ac7cf793e2f6e239"
+      ],
+      "stateComparisons": [
+        {
+          "initialStateSha256": "46edde244abffff82151a04e1d5f732f177bec38449d27edb7f5551c060578e1",
+          "finalStateSha256": "9280f41276cdb9df6bbd4dbe6f0f8cd6f383b913a2338a6cb101bc0604a4ef5a",
+          "champion": "quiet-player-5"
+        },
+        {
+          "initialStateSha256": "46edde244abffff82151a04e1d5f732f177bec38449d27edb7f5551c060578e1",
+          "finalStateSha256": "2e09c58dda6eb247a784dbcdb0f4ab3d045440dbec532ab5420fbd22348c616a",
+          "champion": "quiet-player-9"
+        }
+      ]
+    },
+    {
+      "trial": 6,
+      "reason": "remove-actorIds-0-4",
+      "candidate": {
+        "actorIds": [
+          "quiet-player-13",
+          "quiet-player-22",
+          "quiet-player-9"
+        ],
+        "eventIds": [
+          "standing-read",
+          "market-read",
+          "crown",
+          "market-sweep"
+        ],
+        "logicalDelayMs": 2422800000
+      },
+      "candidateSha256": "0620964baf831257fb7b30997db5be721a40a976318fa24a34f0296f4b4e1882",
+      "status": "NOT_REPRODUCED",
+      "fullStateAssertion": "FAILED",
+      "failureFingerprint": null,
+      "caseRunSha256": [
+        "ddcccfc6d38328d6174eec77a631310ac448936b1e1bb49dcf7a0b1bb6ba9d03",
+        "057025c2c2b5c179a984d1ab038127686a638403845addbed2f89b531e33b58c"
+      ],
+      "stateComparisons": [
+        {
+          "initialStateSha256": "926d89f18392015e3273cc2e82041c55eadb81d3bdfc79df45e58cecfdab44ad",
+          "finalStateSha256": "de248de857135d1effbc34239d4d7985f2ff3a18609b36d7cd02236a7b95659e",
+          "champion": "quiet-player-13"
+        },
+        {
+          "initialStateSha256": "926d89f18392015e3273cc2e82041c55eadb81d3bdfc79df45e58cecfdab44ad",
+          "finalStateSha256": "6b2b87cfe0e91088d806abe53cab049ca38d4ca9c00616ca4c11204d6202796e",
+          "champion": "quiet-player-9"
+        }
+      ]
+    },
+    {
+      "trial": 7,
+      "reason": "remove-actorIds-4-4",
+      "candidate": {
+        "actorIds": [
+          "quiet-player-5",
+          "quiet-player-7",
+          "quiet-player-0",
+          "quiet-player-17"
+        ],
+        "eventIds": [
+          "standing-read",
+          "market-read",
+          "crown",
+          "market-sweep"
+        ],
+        "logicalDelayMs": 2422800000
+      },
+      "candidateSha256": "6e9c6bcfeb230cfa11d13ee03f0c082637db55d79b60b5f50fe7be6b6454a9a2",
+      "status": "NOT_REPRODUCED",
+      "fullStateAssertion": "FAILED",
+      "failureFingerprint": null,
+      "caseRunSha256": [
+        "713110316242579d4d1e2122d23aa359adf35108cd4e9441989ce4df9d5f9e43",
+        "6343afb3cc6675856610aed12c5ad901ad6d9ee6a8095214928e6cdb5d422cb5"
+      ],
+      "stateComparisons": [
+        {
+          "initialStateSha256": "41b5f61729f2eed2d24063af9dec191d577ddec88abff229ac23308220bd419a",
+          "finalStateSha256": "facae7c41ed95a866ee29ad009b8b16c65360ada857a68bd6da556026043f299",
+          "champion": "quiet-player-5"
+        },
+        {
+          "initialStateSha256": "41b5f61729f2eed2d24063af9dec191d577ddec88abff229ac23308220bd419a",
+          "finalStateSha256": "19c8476d105bb421c84f4a273385ab64c0ee99a82281672114d626d5b1eed1c0",
+          "champion": "quiet-player-0"
+        }
+      ]
+    },
+    {
+      "trial": 8,
+      "reason": "remove-actorIds-0-2",
+      "candidate": {
+        "actorIds": [
+          "quiet-player-0",
+          "quiet-player-17",
+          "quiet-player-13",
+          "quiet-player-22",
+          "quiet-player-9"
+        ],
+        "eventIds": [
+          "standing-read",
+          "market-read",
+          "crown",
+          "market-sweep"
+        ],
+        "logicalDelayMs": 2422800000
+      },
+      "candidateSha256": "8723875d72b89ba3e94cdabaeb92e288118a492eedd8714024d1158e6faa4c26",
+      "status": "NOT_REPRODUCED",
+      "fullStateAssertion": "FAILED",
+      "failureFingerprint": null,
+      "caseRunSha256": [
+        "7dcabfbdf7ec524aeb7c242caa2224fcb6e57d0fc856b3a4a4b3d8970e8e4e73",
+        "8f67db5a562d34faa6954987de93135d975170b7a1999885ef00abe19d0ab4f8"
+      ],
+      "stateComparisons": [
+        {
+          "initialStateSha256": "f12b3bf61c5f5683f80387f4a47f0fad1d3600afea086cc82f31c83f57e7e93e",
+          "finalStateSha256": "79c4f26afe7fd6d1fa203355dbaa163e69111f2d22a7ab581c222d7c294b56bf",
+          "champion": "quiet-player-0"
+        },
+        {
+          "initialStateSha256": "f12b3bf61c5f5683f80387f4a47f0fad1d3600afea086cc82f31c83f57e7e93e",
+          "finalStateSha256": "fab1ae5e5ca33049befc600b738f649a986db99c9e67107f8937c317aefa8dfc",
+          "champion": "quiet-player-9"
+        }
+      ]
+    },
+    {
+      "trial": 9,
+      "reason": "remove-actorIds-2-2",
+      "candidate": {
+        "actorIds": [
+          "quiet-player-5",
+          "quiet-player-7",
+          "quiet-player-13",
+          "quiet-player-22",
+          "quiet-player-9"
+        ],
+        "eventIds": [
+          "standing-read",
+          "market-read",
+          "crown",
+          "market-sweep"
+        ],
+        "logicalDelayMs": 2422800000
+      },
+      "candidateSha256": "7273d008fb74827bae02f7ce91faefe0c5c61c747a034643b83c3b4c82132265",
+      "status": "REPRODUCED",
+      "fullStateAssertion": "FAILED",
+      "failureFingerprint": {
+        "mismatch": "canonical-crown-recipient",
+        "recordedChampion": "quiet-player-5",
+        "nativeChampion": "quiet-player-9"
+      },
+      "caseRunSha256": [
+        "6336709dfa49f7a96ac16fc04c9a97cbfefa28ba6673cf7513f2ec7f3d07345d",
+        "1d1efcbe7bf290490a508111f6a29b8662ce7efd2c7d252136b8225bb3390ff0"
+      ],
+      "stateComparisons": [
+        {
+          "initialStateSha256": "f78056f0a473a9827185066ffd69e7a6e3100022912aafebc8b70b32695b2526",
+          "finalStateSha256": "75c584c371eb531a2263653b7e7f7f3322245a67e3d390ce3b8862195ea20c11",
+          "champion": "quiet-player-5"
+        },
+        {
+          "initialStateSha256": "f78056f0a473a9827185066ffd69e7a6e3100022912aafebc8b70b32695b2526",
+          "finalStateSha256": "40cf3db30b6010543ddeceac71569de655a77deda578c230f100dfee23ea9047",
+          "champion": "quiet-player-9"
+        }
+      ]
+    },
+    {
+      "trial": 10,
+      "reason": "remove-actorIds-2-2",
+      "candidate": {
+        "actorIds": [
+          "quiet-player-5",
+          "quiet-player-7",
+          "quiet-player-9"
+        ],
+        "eventIds": [
+          "standing-read",
+          "market-read",
+          "crown",
+          "market-sweep"
+        ],
+        "logicalDelayMs": 2422800000
+      },
+      "candidateSha256": "58c8a2f3fca5fb76740c42ca5af7414f889aaef028c73975007e38906e807fd9",
+      "status": "REPRODUCED",
+      "fullStateAssertion": "FAILED",
+      "failureFingerprint": {
+        "mismatch": "canonical-crown-recipient",
+        "recordedChampion": "quiet-player-5",
+        "nativeChampion": "quiet-player-9"
+      },
+      "caseRunSha256": [
+        "fd0cbbc47ac0ca004c6b2f12939425214455d202c49dd1fa12d5975ba175daa7",
+        "a128bebb0a86b7b6efd942df5be46ad10232e11d9b39e32e9ca0489e67ab3607"
+      ],
+      "stateComparisons": [
+        {
+          "initialStateSha256": "2643975ed73764a3f4419e9c85ad0077577d57feed560d30d0e51ab6c35e6c86",
+          "finalStateSha256": "923fe6a1047ab4577ddb79491a9444ac53c0122863e7ec8caed96f047ccaa68c",
+          "champion": "quiet-player-5"
+        },
+        {
+          "initialStateSha256": "2643975ed73764a3f4419e9c85ad0077577d57feed560d30d0e51ab6c35e6c86",
+          "finalStateSha256": "12f825ce5c7e3e610a2773c715b4ab47949d82a59a2de596c31b7cb2f6585908",
+          "champion": "quiet-player-9"
+        }
+      ]
+    },
+    {
+      "trial": 11,
+      "reason": "remove-actorIds-0-2",
+      "candidate": {
+        "actorIds": [
+          "quiet-player-9"
+        ],
+        "eventIds": [
+          "standing-read",
+          "market-read",
+          "crown",
+          "market-sweep"
+        ],
+        "logicalDelayMs": 2422800000
+      },
+      "candidateSha256": "460f67f1d1fd63f8313240b84a56b56d416ad2a8a928ce8f5d09aa867e06e4a7",
+      "status": "NOT_REPRODUCED",
+      "fullStateAssertion": "PASSED",
+      "failureFingerprint": null,
+      "caseRunSha256": [
+        "9a0d9b3998c1c85af63a9adf0a409607bcf9b663437644a263f377efd40163e9",
+        "e5ee689b59992dc516f8d7ffc4247044aa49830b675bbdd45508ead850b49bd3"
+      ],
+      "stateComparisons": [
+        {
+          "initialStateSha256": "e8087988ed7bf90069b03aecee7e9b0c0c3f3d953b7659c0855b389acdd3abbd",
+          "finalStateSha256": "7408ebdabf75e6906b15abe93ff57f98dd3b5fbe1dc551468ae6c11d54540422",
+          "champion": "quiet-player-9"
+        },
+        {
+          "initialStateSha256": "e8087988ed7bf90069b03aecee7e9b0c0c3f3d953b7659c0855b389acdd3abbd",
+          "finalStateSha256": "7408ebdabf75e6906b15abe93ff57f98dd3b5fbe1dc551468ae6c11d54540422",
+          "champion": "quiet-player-9"
+        }
+      ]
+    },
+    {
+      "trial": 12,
+      "reason": "remove-actorIds-2-2",
+      "candidate": {
+        "actorIds": [
+          "quiet-player-5",
+          "quiet-player-7"
+        ],
+        "eventIds": [
+          "standing-read",
+          "market-read",
+          "crown",
+          "market-sweep"
+        ],
+        "logicalDelayMs": 2422800000
+      },
+      "candidateSha256": "dcdbbd68844ed10179e886f9972cdd2d1ac65e3ec6d35780e56fd95535905e81",
+      "status": "NOT_REPRODUCED",
+      "fullStateAssertion": "PASSED",
+      "failureFingerprint": null,
+      "caseRunSha256": [
+        "c830c298cc1857ca928baf64d3964d99d315d4167d4531dec85bd6aa65e05036",
+        "05c0ec087b459898dcbd7124ed4c09d11ff65eb7113a752e48f6bf476de0d058"
+      ],
+      "stateComparisons": [
+        {
+          "initialStateSha256": "8986f259be557b1a681b55bca32c69cd7fb353be82b185e94cc20616e71ebb6d",
+          "finalStateSha256": "a2c02885edc31ae0733ce72c96ed59fe60bd45ed1f4448a1c8da6531bb4a63ca",
+          "champion": "quiet-player-5"
+        },
+        {
+          "initialStateSha256": "8986f259be557b1a681b55bca32c69cd7fb353be82b185e94cc20616e71ebb6d",
+          "finalStateSha256": "a2c02885edc31ae0733ce72c96ed59fe60bd45ed1f4448a1c8da6531bb4a63ca",
+          "champion": "quiet-player-5"
+        }
+      ]
+    },
+    {
+      "trial": 13,
+      "reason": "remove-actorIds-0-1",
+      "candidate": {
+        "actorIds": [
+          "quiet-player-7",
+          "quiet-player-9"
+        ],
+        "eventIds": [
+          "standing-read",
+          "market-read",
+          "crown",
+          "market-sweep"
+        ],
+        "logicalDelayMs": 2422800000
+      },
+      "candidateSha256": "f8918acd491490d51cdb392d566e7668afc9930a4de7629a1a21122fac92a9db",
+      "status": "NOT_REPRODUCED",
+      "fullStateAssertion": "FAILED",
+      "failureFingerprint": null,
+      "caseRunSha256": [
+        "21157e602c3d99d4c5273446667abd0f06b7a344cbf26f826bf4ae5cf58f6301",
+        "e7ee5dab45664fcf2315a8e7d28db2ca11f727bb309d917ca948aea4ebe89e5a"
+      ],
+      "stateComparisons": [
+        {
+          "initialStateSha256": "20396629813a7e8b36f4969e1274178c1d0bc1894e70d0fd5d97eab4ae26d702",
+          "finalStateSha256": "3fb04668020f167aa55b474dbd95ea31bae5115968f76d805601f61b5e5840af",
+          "champion": "quiet-player-7"
+        },
+        {
+          "initialStateSha256": "20396629813a7e8b36f4969e1274178c1d0bc1894e70d0fd5d97eab4ae26d702",
+          "finalStateSha256": "2495ceed94df5fd86a7aa963f9ec35918cdd30e7a9df55be5554ea62e61a5a2c",
+          "champion": "quiet-player-9"
+        }
+      ]
+    },
+    {
+      "trial": 14,
+      "reason": "remove-actorIds-1-1",
+      "candidate": {
+        "actorIds": [
+          "quiet-player-5",
+          "quiet-player-9"
+        ],
+        "eventIds": [
+          "standing-read",
+          "market-read",
+          "crown",
+          "market-sweep"
+        ],
+        "logicalDelayMs": 2422800000
+      },
+      "candidateSha256": "ca9b96855e94f68891675ab67bd774bac02304300b78012c4d07d131fdff6780",
+      "status": "REPRODUCED",
+      "fullStateAssertion": "FAILED",
+      "failureFingerprint": {
+        "mismatch": "canonical-crown-recipient",
+        "recordedChampion": "quiet-player-5",
+        "nativeChampion": "quiet-player-9"
+      },
+      "caseRunSha256": [
+        "2e060d777ec512c63c92dabab065d9b9cab5df405e041c6a41927f0cd097a238",
+        "775a0cd743d631882ce7abb382a7f98ab06640d6f84ff2b95c2f859eb1e9faea"
+      ],
+      "stateComparisons": [
+        {
+          "initialStateSha256": "0d64fa0af6215208fa013206a8506d7c1d0b4b9d80f5c7659ac0cd4ab1c293ff",
+          "finalStateSha256": "c372953dc7c3b36201aeb99f26d93d0013907f8df59c12948d7c3bec2b0f5eca",
+          "champion": "quiet-player-5"
+        },
+        {
+          "initialStateSha256": "0d64fa0af6215208fa013206a8506d7c1d0b4b9d80f5c7659ac0cd4ab1c293ff",
+          "finalStateSha256": "d4306136922efe82870820c790120bce097eddfbbda6033f745200528225804a",
+          "champion": "quiet-player-9"
+        }
+      ]
+    },
+    {
+      "trial": 15,
+      "reason": "remove-actorIds-1-1",
+      "candidate": {
+        "actorIds": [
+          "quiet-player-5"
+        ],
+        "eventIds": [
+          "standing-read",
+          "market-read",
+          "crown",
+          "market-sweep"
+        ],
+        "logicalDelayMs": 2422800000
+      },
+      "candidateSha256": "4f3433c5f181b149f5d675ebadb4a6b6e1184310dc4bdfac6687b91844f4224c",
+      "status": "NOT_REPRODUCED",
+      "fullStateAssertion": "PASSED",
+      "failureFingerprint": null,
+      "caseRunSha256": [
+        "2ca105754a705ccb1f9a325d3d68895e88a496f93d9a4a054dd3b4926d5ed842",
+        "b54066bbfce6f669446d30df1f0381af2933ef856b79055312cf8948790155f2"
+      ],
+      "stateComparisons": [
+        {
+          "initialStateSha256": "b0445b4cc3ab1be073faef333c484c82beb57e6743fa4b33f5ee25f60ea62b43",
+          "finalStateSha256": "ad4621b7471adef52c301b704dbe9f230b096387e092082e1f7baddf5bd224f4",
+          "champion": "quiet-player-5"
+        },
+        {
+          "initialStateSha256": "b0445b4cc3ab1be073faef333c484c82beb57e6743fa4b33f5ee25f60ea62b43",
+          "finalStateSha256": "ad4621b7471adef52c301b704dbe9f230b096387e092082e1f7baddf5bd224f4",
+          "champion": "quiet-player-5"
+        }
+      ]
+    },
+    {
+      "trial": 16,
+      "reason": "remove-eventIds-0-2",
+      "candidate": {
+        "actorIds": [
+          "quiet-player-5",
+          "quiet-player-9"
+        ],
+        "eventIds": [
+          "crown",
+          "market-sweep"
+        ],
+        "logicalDelayMs": 2422800000
+      },
+      "candidateSha256": "e61dea819525042518dc5caf4fc7b06461e2ad1a1f07f4e59744bfe3a52d2b13",
+      "status": "REPRODUCED",
+      "fullStateAssertion": "FAILED",
+      "failureFingerprint": {
+        "mismatch": "canonical-crown-recipient",
+        "recordedChampion": "quiet-player-5",
+        "nativeChampion": "quiet-player-9"
+      },
+      "caseRunSha256": [
+        "8e857f4ca24aac5ad86a088b81b3b1be0e6839f70152c8963df91ff31bcb43b6",
+        "b1d4e1ba48230f1ecf14c4b17dbd218271a3299559095067bbed85c256b6e1f0"
+      ],
+      "stateComparisons": [
+        {
+          "initialStateSha256": "0d64fa0af6215208fa013206a8506d7c1d0b4b9d80f5c7659ac0cd4ab1c293ff",
+          "finalStateSha256": "c372953dc7c3b36201aeb99f26d93d0013907f8df59c12948d7c3bec2b0f5eca",
+          "champion": "quiet-player-5"
+        },
+        {
+          "initialStateSha256": "0d64fa0af6215208fa013206a8506d7c1d0b4b9d80f5c7659ac0cd4ab1c293ff",
+          "finalStateSha256": "d4306136922efe82870820c790120bce097eddfbbda6033f745200528225804a",
+          "champion": "quiet-player-9"
+        }
+      ]
+    },
+    {
+      "trial": 17,
+      "reason": "remove-eventIds-0-1",
+      "candidate": {
+        "actorIds": [
+          "quiet-player-5",
+          "quiet-player-9"
+        ],
+        "eventIds": [
+          "market-sweep"
+        ],
+        "logicalDelayMs": 2422800000
+      },
+      "candidateSha256": "d361c1e4256e05e0323e8a230f558e51c1ff584468ce94ad5d754a85d282f5c5",
+      "status": "NOT_REPRODUCED",
+      "fullStateAssertion": "PASSED",
+      "failureFingerprint": null,
+      "caseRunSha256": [
+        "4c71dde9d8eb1d4e03ded04b27443c893e471a5036b765cad0a7910bf1059abe",
+        "99cfaa17610e6ccbf7e21d70b8d7a47ac5a946a84c332bccad476d78d88824d1"
+      ],
+      "stateComparisons": [
+        {
+          "initialStateSha256": "0d64fa0af6215208fa013206a8506d7c1d0b4b9d80f5c7659ac0cd4ab1c293ff",
+          "finalStateSha256": "0d64fa0af6215208fa013206a8506d7c1d0b4b9d80f5c7659ac0cd4ab1c293ff",
+          "champion": null
+        },
+        {
+          "initialStateSha256": "0d64fa0af6215208fa013206a8506d7c1d0b4b9d80f5c7659ac0cd4ab1c293ff",
+          "finalStateSha256": "0d64fa0af6215208fa013206a8506d7c1d0b4b9d80f5c7659ac0cd4ab1c293ff",
+          "champion": null
+        }
+      ]
+    },
+    {
+      "trial": 18,
+      "reason": "remove-eventIds-1-1",
+      "candidate": {
+        "actorIds": [
+          "quiet-player-5",
+          "quiet-player-9"
+        ],
+        "eventIds": [
+          "crown"
+        ],
+        "logicalDelayMs": 2422800000
+      },
+      "candidateSha256": "ccbf82ccded9ec6f8daacb40b30f45150df31e30e93c62112e477e4701ad3ad2",
+      "status": "REPRODUCED",
+      "fullStateAssertion": "FAILED",
+      "failureFingerprint": {
+        "mismatch": "canonical-crown-recipient",
+        "recordedChampion": "quiet-player-5",
+        "nativeChampion": "quiet-player-9"
+      },
+      "caseRunSha256": [
+        "c85e68f97584062b8bc8304edaca93db442cc11e1e5c23094c3424f92f1e17fa",
+        "723182ba086109738305fd833427766b89e00f2825a7080b776f2a556f6c97a5"
+      ],
+      "stateComparisons": [
+        {
+          "initialStateSha256": "0d64fa0af6215208fa013206a8506d7c1d0b4b9d80f5c7659ac0cd4ab1c293ff",
+          "finalStateSha256": "c372953dc7c3b36201aeb99f26d93d0013907f8df59c12948d7c3bec2b0f5eca",
+          "champion": "quiet-player-5"
+        },
+        {
+          "initialStateSha256": "0d64fa0af6215208fa013206a8506d7c1d0b4b9d80f5c7659ac0cd4ab1c293ff",
+          "finalStateSha256": "d4306136922efe82870820c790120bce097eddfbbda6033f745200528225804a",
+          "champion": "quiet-player-9"
+        }
+      ]
+    },
+    {
+      "trial": 19,
+      "reason": "remove-eventIds-0-1",
+      "candidate": {
+        "actorIds": [
+          "quiet-player-5",
+          "quiet-player-9"
+        ],
+        "eventIds": [],
+        "logicalDelayMs": 2422800000
+      },
+      "candidateSha256": "c2664a30ff629b453112f03474da6a9afa87122033aabd3f24706622fcb00970",
+      "status": "NOT_REPRODUCED",
+      "fullStateAssertion": "PASSED",
+      "failureFingerprint": null,
+      "caseRunSha256": [
+        "ffd8aafe1b5d5ad815bfe97adb12a946c41d704c73fdc2cd25756ff6be1a789b",
+        "7a89a4052eef5cf496b37e59079005811b1c96f60e63eef8d5527264ec7dc730"
+      ],
+      "stateComparisons": [
+        {
+          "initialStateSha256": "0d64fa0af6215208fa013206a8506d7c1d0b4b9d80f5c7659ac0cd4ab1c293ff",
+          "finalStateSha256": "0d64fa0af6215208fa013206a8506d7c1d0b4b9d80f5c7659ac0cd4ab1c293ff",
+          "champion": null
+        },
+        {
+          "initialStateSha256": "0d64fa0af6215208fa013206a8506d7c1d0b4b9d80f5c7659ac0cd4ab1c293ff",
+          "finalStateSha256": "0d64fa0af6215208fa013206a8506d7c1d0b4b9d80f5c7659ac0cd4ab1c293ff",
+          "champion": null
+        }
+      ]
+    },
+    {
+      "trial": 20,
+      "reason": "logical-delay-lower-bound",
+      "candidate": {
+        "actorIds": [
+          "quiet-player-5",
+          "quiet-player-9"
+        ],
+        "eventIds": [
+          "crown"
+        ],
+        "logicalDelayMs": 0
+      },
+      "candidateSha256": "6b671f8f9b0bc1361518da9c640c1e8ae6169550c124e870169d332064e493b5",
+      "status": "REPRODUCED",
+      "fullStateAssertion": "FAILED",
+      "failureFingerprint": {
+        "mismatch": "canonical-crown-recipient",
+        "recordedChampion": "quiet-player-5",
+        "nativeChampion": "quiet-player-9"
+      },
+      "caseRunSha256": [
+        "30d38f1c9be63287ec16b4e4b209a0c094254c02ea68af8c1a15357792244e1d",
+        "f88f9de70fed69bc05e2a41ee37f0dd14245950d1db3df07bdd3c3d5e1e7bf8f"
+      ],
+      "stateComparisons": [
+        {
+          "initialStateSha256": "0d64fa0af6215208fa013206a8506d7c1d0b4b9d80f5c7659ac0cd4ab1c293ff",
+          "finalStateSha256": "3dc0ed1a96125bf9730c2e380dc1b5555cd09905fa1c8cf1bb945f640b4486c8",
+          "champion": "quiet-player-5"
+        },
+        {
+          "initialStateSha256": "0d64fa0af6215208fa013206a8506d7c1d0b4b9d80f5c7659ac0cd4ab1c293ff",
+          "finalStateSha256": "fa51b8dcf0de3d35923cd1760a471e801435b3e21c28023c062d47a066607bc0",
+          "champion": "quiet-player-9"
+        }
+      ]
+    },
+    {
+      "trial": 21,
+      "reason": "remove-actorIds-0-1",
+      "candidate": {
+        "actorIds": [
+          "quiet-player-9"
+        ],
+        "eventIds": [
+          "crown"
+        ],
+        "logicalDelayMs": 0
+      },
+      "candidateSha256": "99036fa857399b263cbca55a21de5802cbf3e5b7f67122a49460ef43b24a489d",
+      "status": "NOT_REPRODUCED",
+      "fullStateAssertion": "PASSED",
+      "failureFingerprint": null,
+      "caseRunSha256": [
+        "5a06dd2b121c2e939d1b2a293b0ab550ab5ca7333d6e6e63b6a1fd050f0f767a",
+        "767fc68e9028db8fedaf03b070efeae4cf2346cc979a6e78f688b11cd14a13af"
+      ],
+      "stateComparisons": [
+        {
+          "initialStateSha256": "e8087988ed7bf90069b03aecee7e9b0c0c3f3d953b7659c0855b389acdd3abbd",
+          "finalStateSha256": "51bc264b7bbfcbb8295b3bbd469f982dac1459aca605d9994ecb89c7fe35e8a0",
+          "champion": "quiet-player-9"
+        },
+        {
+          "initialStateSha256": "e8087988ed7bf90069b03aecee7e9b0c0c3f3d953b7659c0855b389acdd3abbd",
+          "finalStateSha256": "51bc264b7bbfcbb8295b3bbd469f982dac1459aca605d9994ecb89c7fe35e8a0",
+          "champion": "quiet-player-9"
+        }
+      ]
+    },
+    {
+      "trial": 22,
+      "reason": "remove-actorIds-1-1",
+      "candidate": {
+        "actorIds": [
+          "quiet-player-5"
+        ],
+        "eventIds": [
+          "crown"
+        ],
+        "logicalDelayMs": 0
+      },
+      "candidateSha256": "316088856a3ac6b61433c528e4840369212cd7efe33e3ec1728218bbf67b5d4f",
+      "status": "NOT_REPRODUCED",
+      "fullStateAssertion": "PASSED",
+      "failureFingerprint": null,
+      "caseRunSha256": [
+        "5df5c3381f39a124b1c16dc9e0d9cc84692bf9fa21cf782e18ac7c9ce9f8bd64",
+        "d8a1e48458de6866db9e16d4cae54e4521e62c6afff623bf5b06af6e96e986e9"
+      ],
+      "stateComparisons": [
+        {
+          "initialStateSha256": "b0445b4cc3ab1be073faef333c484c82beb57e6743fa4b33f5ee25f60ea62b43",
+          "finalStateSha256": "fe12cc2f806d1615c9928c282316c08cdcca9aceaa201a959446ac84b089854d",
+          "champion": "quiet-player-5"
+        },
+        {
+          "initialStateSha256": "b0445b4cc3ab1be073faef333c484c82beb57e6743fa4b33f5ee25f60ea62b43",
+          "finalStateSha256": "fe12cc2f806d1615c9928c282316c08cdcca9aceaa201a959446ac84b089854d",
+          "champion": "quiet-player-5"
+        }
+      ]
+    },
+    {
+      "trial": 23,
+      "reason": "remove-eventIds-0-1",
+      "candidate": {
+        "actorIds": [
+          "quiet-player-5",
+          "quiet-player-9"
+        ],
+        "eventIds": [],
+        "logicalDelayMs": 0
+      },
+      "candidateSha256": "df550ad6fd020036c0c6bb2e4809df83bb85cc386742ed1a46cf20f4b4b80319",
+      "status": "NOT_REPRODUCED",
+      "fullStateAssertion": "PASSED",
+      "failureFingerprint": null,
+      "caseRunSha256": [
+        "dd9e516fbaa90400b8d3a8a75d1b2978dcfc4e3b74845c14fc602bb787bd35e2",
+        "a35b4f3beb2baa1a9c2744bb9b11a53bca651f741ceaabde65de0884a6fc3bab"
+      ],
+      "stateComparisons": [
+        {
+          "initialStateSha256": "0d64fa0af6215208fa013206a8506d7c1d0b4b9d80f5c7659ac0cd4ab1c293ff",
+          "finalStateSha256": "0d64fa0af6215208fa013206a8506d7c1d0b4b9d80f5c7659ac0cd4ab1c293ff",
+          "champion": null
+        },
+        {
+          "initialStateSha256": "0d64fa0af6215208fa013206a8506d7c1d0b4b9d80f5c7659ac0cd4ab1c293ff",
+          "finalStateSha256": "0d64fa0af6215208fa013206a8506d7c1d0b4b9d80f5c7659ac0cd4ab1c293ff",
+          "champion": null
+        }
+      ]
+    }
+  ],
+  "commands": [
+    "node test/rc1-native-failure-reducer.js",
+    "COORDINATION_TEST_DATABASE_URL=<disposable loopback PostgreSQL control URL> node test/rc1-native-failure-reduction-postgres.js --postgres --recorded-run=C:/Users/Jorge/.codex/rc1-native-evidence/quiet-world-90day-order-v4-replay-1 --world-failure=C:/Users/Jorge/.codex/rc1-native-evidence/quiet-world-90day-v3-replay-1 --standing-sequence=2024 --season=740 --output=C:/Users/Jorge/.codex/rc1-native-evidence/native-crown-reduction-1"
+  ],
+  "limitations": [
+    "Direct-authority causal reduction linked to the archived crown mismatch; not a minimized 90-day worker trajectory or seasonal waiting period.",
+    "The four-operation baseline is newly frozen for this component case, not the original world event list.",
+    "Initial synthetic fixtures preserve every ranking input column and native order; other initial columns follow addPlayer. No fixture edits occur after initialization.",
+    "All population, event and logical-delay trials retain full canonical state and exact receipt identities. No normalization or gameplay tie policy was introduced.",
+    "Deletion minimality applies only to the declared ordered actor/event subsets. Logical delay is proven at the tested zero floor; no general monotonic temporal search is claimed.",
+    "Per-commit resource observation, due-worker execution, arbitrary failure reduction and the full 225-cell matrix are outside this component proof."
+  ]
+}

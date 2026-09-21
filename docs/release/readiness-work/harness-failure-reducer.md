@@ -22,3 +22,9 @@ node test/rc1-native-failure-reduction-postgres.js --postgres --recorded-run=<se
 ```
 
 The native command requires `COORDINATION_TEST_DATABASE_URL` for disposable loopback database creation. Synthetic initial resources are not resource qualification. The acceptance target for this bounded exercise is a retained native baseline failure and a smaller reproduced case with two actors, one crown event and zero diagnostic delay, plus negative minimality checks. Full world-history reduction, due-worker time minimization, automatic arbitrary failure classification and the 225-cell matrix remain open.
+
+The source-frozen native campaign at `0a679ffbad75f93ee1fa19135e23915927a47e08` passed its scoped target in 23 paired trials and 840,102 ms. The original 25-actor, four-operation, 673-hour diagnostic case reduced to `quiet-player-5` and `quiet-player-9`, one `recordReckoning` call and zero delay. Removing either actor or the crown call in fresh databases prevented the targeted mismatch. All comparisons retained 369 canonical tables and three sequences; the minimal final difference was exactly `account_persistent`, `notifications` and `season_records`.
+
+All 349 indexed artifacts and history chains across 47 sealed runs were independently verified, and all 46 exclusively owned databases were confirmed absent after cleanup. [The result](harness-failure-reducer-results.json) retains the source, configuration, complete trial classifications, minimality references and original world-failure linkage; [the artifact index](harness-failure-reducer-artifact-index.json) retains every artifact and run hash.
+
+These results remain pinned to their original source. Integrated revision `b0c85c11` contains a later runtime repair and does not satisfy the retained input's complete `src` tree equivalence check. A final-candidate rerun requires a fresh source-bound integrated replay/input; the guard must remain intact.
