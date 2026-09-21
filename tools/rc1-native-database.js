@@ -39,7 +39,7 @@ export function planOwnedWorldDatabase({ controlUrl, runId, sourceRevision }) {
       if (!created || closed) return { created, closed };
       return control(async (client) => {
         assert(/^rc1_world_[a-f0-9]{24}$/.test(name));
-        const row = (await client.query("SELECT oid, obj_description(oid,'pg_database') AS owner FROM pg_database WHERE datname=$1", [name])).rows[0];
+        const row = (await client.query("SELECT oid, shobj_description(oid,'pg_database') AS owner FROM pg_database WHERE datname=$1", [name])).rows[0];
         assert(row && Number(row.oid) === Number(oid), 'World database identity changed; refusing cleanup');
         assert.equal(row.owner, ownerMarker, 'World database ownership marker changed; refusing cleanup');
         await client.query(`DROP DATABASE "${name}"`); closed = true;
