@@ -22,6 +22,7 @@ assert.equal((await run('5000.000000000001', 6.000011)).balance, '4993.999989000
 for (const amount of ['6.00001100', '6000011e-6', ' +6.000011 ', '0006.000011', '6.000011E+0']) await run('5000', amount);
 await assert.rejects(run('5000', 6.0000001), { code: 'precision' });
 await assert.rejects(run('5000', '6.0000000000000001'), { code: 'precision' });
+await assert.rejects(run('6.0000099999999996', '6.000010'), { code: 'omr' });
 let validationRefusals = 0;
 for (const [amount, code] of [[NaN, 'amount'], [Infinity, 'amount'], ['1e999999999', 'amount'], ['1e-999999999', 'amount'], [5.999999, 'amount'], [-6, 'amount'], ['1501e0', 'cap'], [null, 'amount']]) {
   await assert.rejects(run('5000', amount), { code }); validationRefusals++;

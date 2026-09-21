@@ -87,6 +87,27 @@ receives a precision refusal before mutation. Trailing-zero and scientific decim
 representations remain accepted. `test/rc1-omr-exchange.js` covers these arithmetic
 boundaries and old dust preservation; native retests determine the repair status.
 
+The separate native `test/rc1-native-omr-window-boundaries.js --postgres` proof
+uses declared arbitrary-scale historical balance fixtures. At52671886 it reproduced
+an additional affordability boundary: a6.0000099999999996 balance could redeem
+6.000010 and persist-0.0000000000000004 because the shared Number comparison
+rounded the available value upward. The local window now checks its exact
+remaining balance before any debit. This does not change shared `spendOmr`.
+The runner retains full-balance half-micro split, maximum cap, exact cash-floor,
+numeric/decimal-string/scientific/trailing-zero input, old-dust preservation and
+precision/finite/min/cap refusal evidence. Huge positive/negative exponent unit
+controls prove finite/min validation precedes exponent BigInt work.
+
+The original bounded journal passed at39b39973:37 completed native boundaries,
+632 exact owner equations,20 nonzero movements,11 rejected native-input
+corruptions and3 canonical invariant checks. Two original six-hour unbond
+releases ran after72 Director,6 hourly,6 seasonal and72 health callbacks.
+This result predates the additional affordability repair and requires a fresh
+source-bound rerun for that change. All earlier failures remain retained:
+preflight fixture seed, subatomic production residual, undefined bodyless
+receipt serialization (unsealed), below-minimum loan fixture, missing native
+fixture season and the exact insufficient-balance production case.
+
 Cross-domain dependencies remain explicit: correct authentication and request
 binding, native transaction rollback/locking, complete original logical clocks,
 and deployed reserve/oracle/provider authority. The first three receive bounded
