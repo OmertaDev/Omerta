@@ -122,3 +122,20 @@ and must reject modified cash, Knowledge access, world state, or operation outco
 RNG tapes and exact source/configuration hashes remain in restricted artifacts. The
 declared fixture boost random override remains visible. An experiment failure is
 retained and cannot be promoted into a native matrix or concurrent-replay pass.
+
+The bounded same-seed serial proof now **passes** on
+`57bbecb54cbb602c2752efbfa0045ac10d070301`. Both fresh 25-player PostgreSQL schemas
+produce complete canonical state hash
+`55d4176b96b03fbdf4a9c8e5898de03f379aa0e122bba39f86e7321de14a5079`, with no
+excluded fields. Four exact-field corruption checks confirm that cash, Knowledge
+access, world state, and operation outcome differences remain detectable. Native
+assertions also cover transaction/statement time, savepoint rollback, and rejection
+of uncontrolled SQL clock keywords. The savepoint assertion first reproduced a
+test-seam defect on `d0ed8617`; the final retest preserves the transaction timestamp.
+
+`harness-serial-replay-results.json` records this later proof, its before/after source
+identities, exact command, artifact hashes, configuration, and exclusions. It closes
+the bounded serial reproducibility gap described above; the earlier results retain
+their actual source SHAs and are not retroactively upgraded. Recorded concurrent
+replay, complete production-worker scheduling, full resource coverage, the 225-run
+matrix, and the soak remain open.
