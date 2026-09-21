@@ -228,7 +228,10 @@ try {
   assert.equal(outcomes.filter((r) => r.won).length, 1); assert.equal(outcomes.filter((r) => !r.won && r.refunded > 0).length, 2);
   await proof.snapshot(pool, 'settled'); await replay(2, 'postsettlement-exact-replay');
   await advance(epoch + 10800000);
-  const sweeps = controller.diagnostic().jobs.filter((j) => j.label === 'turf contest sweep' && j.status === 'RETURNED');
+  const allSweeps = controller.diagnostic().jobs.filter((j) => j.label === 'turf contest sweep' && j.status === 'RETURNED');
+  const bootSweeps = allSweeps.filter(row => row.logicalAt === epoch), sweeps = allSweeps.filter(row => row.logicalAt > epoch);
+  assert.equal(bootSweeps.length, 1); assert.equal(bootSweeps[0].result.resolved, 0);
+  assert.deepEqual(sweeps.map(row => row.logicalAt), [epoch + 3600000, epoch + 7200000, epoch + 10800000]);
   assert.equal(sweeps.filter((j) => j.result?.resolved === 1).length, 1); assert.equal(sweeps.at(-1).result.resolved, 0);
   assert.equal(sweeps.filter((j) => j.result?.resolved === 0).length, 2); assert.equal(terminalInputs.length, 1);
   const terminalJournal = verifyTurfTerminalBoundary(terminalInputs[0], 3);
@@ -250,7 +253,7 @@ try {
     invariantChecks, invariantBoundaries, resourceBoundaries: resourceSummary.length, resourceChecks: resourceSummary.reduce((n, r) => n + r.checks, 0),
     turfBoundaries: turfSummary.length, turfChecks: turfSummary.reduce((n, r) => n + r.checks, 0),
     sharedObserverUnknown: unknown.length, familyJournalUnknown: familyUnknown.length, observedLogicalSeconds: 10800, timerCounts,
-    lateTerminalRollback: true, originalSweepResults: sweeps.map(row => row.result.resolved), nativeNegativeControls: controls, sharedTerminalOwners: terminalJournal.turfTerminal.movements.length,
+    lateTerminalRollback: true, originalBootSweep: bootSweeps[0], originalSweepResults: sweeps.map(row => row.result.resolved), nativeNegativeControls: controls, sharedTerminalOwners: terminalJournal.turfTerminal.movements.length,
     finalStateSha256: final.stateSha256, matrixQualifying: false, qualifyingFullResourcePass: false, exclusions: configuration.exclusions };
 } catch (error) {
   result = { status: 'FAIL', message: error.message, stack: error.stack, logicalAt: at }; process.exitCode = 1;

@@ -35,7 +35,12 @@ individual commit observations.
 The original season-adjusted contest window elapses, followed by three original
 hourly sweeps. A declared DELETE trigger verifies five refund/burn receipts,
 escrow conservation and the closed district latch before aborting the first
-settlement. Escrow, Family treasury, district status and terminal receipts must
+settlement. The separate original boot sweep is retained as an empty result;
+only post-epoch hourly callbacks count toward the three-hour sequence. TOOL44
+preserves the first native failure, which completed the lifecycle but counted the
+boot sweep as an extra hourly zero result. No runtime or classifier was changed
+to correct that test oracle.
+Escrow, Family treasury, district status and terminal receipts must
 remain exactly unchanged; unrelated original callbacks retain separate evidence.
 The next original sweep retries after trigger removal. The third returns zero.
 Odd-unit loser rounding, winner burn, exact request replay, unauthorized outsider
