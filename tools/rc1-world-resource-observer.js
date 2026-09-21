@@ -346,6 +346,37 @@ function reconcileFamilyEntry(before, after, receipts, checks, unsupported) {
   const usedReceipts = new Set(), movements = [], familyFields = new Map(), founded = new Set(), founderMembers = new Set(), omrKeys = new Set();
   const result = { usedReceipts, movements, familyFields, founded, founderMembers, omrKeys };
   if (!selected.length) return result;
+  // runFamilies reuses createGang, then sets NPC war-pool standing in the same
+  // transaction. Do not apply player-only defaults or classify that standing.
+  const npcFound = selected.filter(receipt => receipt.reason === 'gang:found' && (
+    oldPeople.get(receipt.character_id)?.is_npc === true || people.get(receipt.character_id)?.is_npc === true
+    || current.get(members.get(receipt.character_id)?.gang_id)?.npc_flag === true));
+  if (npcFound.length) {
+    const founders = new Set(), families = new Set();
+    for (const receipt of npcFound) {
+      const prior = oldPeople.get(receipt.character_id), person = people.get(receipt.character_id);
+      assert(prior?.alive && person?.alive && prior.account_id && prior.account_id === person.account_id, 'NPC formation requires stable living owner');
+      assert.equal(prior.is_npc, true); assert.equal(person.is_npc, true);
+      assert.equal(accounts.get(prior.account_id)?.npc_flag, true); assert.equal(finalAccounts.get(prior.account_id)?.npc_flag, true);
+      assert.equal(receipt.account_id, null); assert.equal(receipt.counterparty, null);
+      assert.equal(exactSum([receipt.amount]), String(-M3.GANG_FOUND_COST), 'Wrong NPC Family formation sink');
+      assert(levelOf(Number(prior.respect)) >= M3.GANG_FOUND_LEVEL, 'NPC founder lacks original eligibility');
+      assert(!oldMembers.has(prior.id), 'NPC founder already had a Family');
+      const member = members.get(prior.id), family = current.get(member?.gang_id);
+      assert(member?.role === 'boss' && family && !old.has(family.id), 'NPC formation lacks new Family/boss linkage');
+      assert.equal(family.npc_flag, true); assert(!founders.has(prior.id) && !families.has(family.id), 'Duplicate NPC formation receipt');
+      assert.equal([...members.values()].filter(row => row.gang_id === family.id).length, 1, 'NPC formation has unrelated membership changes');
+      for (const field of ['treasury', 'ammo_bank', 'omr_reserve']) assert.equal(exactSum([family[field]]), '0', `NPC formation created unexplained ${field}`);
+      assert.equal(exactSum([person.bank]), exactSum([prior.bank]), 'NPC formation diverted pocket cash through bank custody');
+      parity(checks, { resource: 'cash-pocket', owner: prior.id, before: prior.cash, after: person.cash,
+        expectedDelta: net(receipts, row => row.character_id === prior.id && row.currency === 'cash'),
+        authority: reference('transactions', receipts.filter(row => row.character_id === prior.id && row.currency === 'cash')), kind: 'NPC-formation-cash-parity-only' });
+      founders.add(prior.id); families.add(family.id);
+    }
+    unsupported.push({ kind: 'family-npc-formation', familyIds: [...families],
+      detail: 'Original NPC formation fee/owner cash checked; NPC Family fields, war_pool creation/standing and compound lineage remain unclassified' });
+    return result;
+  }
   // Lazy war settlement, weekly rewards and seasonal resets can ride along a
   // tribute. Their additional custody/standing is not attributed by this subset.
   const compound = [...old].some(([id, row]) => !current.has(id) || ['war_with', 'war_until', 'weekly_week', 'weekly_progress', 'weekly_done', 'season']
