@@ -18,7 +18,7 @@ for (const name of ['SEARCH_MS', 'SHOOT_CD_MS', 'GEAR_LOOT_CHANCE', 'CHAIN_RPC_U
 const epoch = Date.parse('2026-09-20T23:59:59.999Z'), population = 18;
 const configuration = { sourcePins: WORKER_SOURCE_PINS, epoch: new Date(epoch).toISOString(), population, seed,
   authority: 'Canonical HTTP injection, actual PostgreSQL row-lock contention and original local workers; no forced outcomes',
-  fixture: '18 ordinary accounts; each cash2000000, physical stats50; respect10000 except below-loot-floor victim respect0. Two hunters have equipped lastresort and50000ammo. Initial material3/1 for two victims,0 elsewhere. All fixtures end before baseline; no search/day/status/deadline rewrites.',
+  fixture: '18 ordinary accounts with defaultcash500/ammo25, physical stats50; respect10000 except below-loot-floor victim respect0. Two hunters have equipped lastresort. Initial material3/1 for two victims,0 elsewhere. Before baseline reallocate2000OMR from retired AMM seed and declare1000000cash till; canonical window500/1000/500 and120 standard ammo boxes per hunter fund the scenario. All fixtures end before baseline; no search/day/status/deadline rewrites.',
   clocks: 'Original midnight via1ms shared clock advance while old-day SQL claims remain blocked; original3h search with all local worker callbacks',
   contention: 'Read-only SELECT FOR UPDATE barrier on actual old-day row; retain PostgreSQL blocking evidence before advancing time. No global commit observer, whose serial-only guard excludes concurrency.',
   exclusions: ['Natural entry/material/combat acquisition', 'Network/browser/deployment', 'Apex rout source', 'Other resources and full simulation matrix'],
@@ -86,15 +86,26 @@ try {
     await pool.query("INSERT INTO accounts(id,auth_provider,auth_subject) VALUES($1,'test',$1)", [actor]);
     await pool.query('INSERT INTO account_persistent(account_id) VALUES($1)', [actor]);
     await pool.query(`INSERT INTO characters(id,account_id,name,season,loc,cash,respect,muscle,cunning,speed,shipment,ammo,gun)
-      VALUES($1,$1,$1,$2,$3,2000000,$4,50,50,50,$5,$6,$7)`, [actor, Math.floor(oldDay / 28), i === 13 ? nextDistrict : oldDistrict,
-      i === 1 ? 0 : 10000, i === 0 ? 3 : i === 1 ? 1 : 0, [14, 15].includes(i) ? 50000 : 25, [14, 15].includes(i) ? 'lastresort' : null]);
+      VALUES($1,$1,$1,$2,$3,500,$4,50,50,50,$5,25,$6)`, [actor, Math.floor(oldDay / 28), i === 13 ? nextDistrict : oldDistrict,
+      i === 1 ? 0 : 10000, i === 0 ? 3 : i === 1 ? 1 : 0, [14, 15].includes(i) ? 'lastresort' : null]);
     tokens.set(actor, app.jwt.sign({ sub: actor, tv: 0 }));
   }
+  for (const [i, amount] of [[0, 500], [14, 1000], [15, 500]]) await pool.query('UPDATE account_persistent SET omr=$2 WHERE account_id=$1', [actors[i], amount]);
+  await pool.query('UPDATE amm_pool SET omr_reserve=omr_reserve-2000 WHERE id=1');
+  await pool.query('UPDATE exchange_pool SET balance=1000000,lifetime_funded=1000000 WHERE id=1');
+  await proof.artifact('prebaseline-fixture-allocation.json', { actors: await snapshotShipment(readPool),
+    amm: (await pool.query('SELECT * FROM amm_pool')).rows, exchange: (await pool.query('SELECT * FROM exchange_pool')).rows });
+  for (const [i, amount] of [[0, 500], [14, 1000], [15, 500]]) await call(actors[i], '/v1/window/redeem', `fixture-window-${i}`, { amount });
+  const { withCharacter } = await import('../src/game.js'), { buyAmmo } = await import('../src/economy.js');
+  for (const i of [14, 15]) for (let box = 0; box < 120; box++) {
+    const acquired = await withCharacter(pool, actors[i], buyAmmo); assert.equal(acquired.rolled, 50); assert.equal(acquired.cost, 2000);
+    await proof.record({ kind: 'prebaseline-canonical-ammo-purchase', accountId: actors[i], box, cost: acquired.cost, gained: acquired.rolled, held: acquired.ammo });
+  }
+  await proof.artifact('prebaseline-canonical-purchase-receipts.json', (await pool.query("SELECT * FROM transactions WHERE reason IN ('ammo:buy','window:burn','yield:window','desk:recycle','window:payout') ORDER BY at,id")).rows);
   const { runLedgerInvariants } = await import('../src/invariants.js');
-  const offsets = { 'character cash': population * (2000000 - 500), 'ammo conservation': 2 * (50000 - 25) };
   const invariant = async label => { const value = await runLedgerInvariants(pool, { alert: false });
-    for (const check of value.checks) if (Object.hasOwn(offsets, check.name)) assert.equal(check.drift, offsets[check.name], `Declared fixture offset: ${check.name}`); else assert(check.ok, `${label}: ${JSON.stringify(check)}`);
-    await proof.record({ kind: 'canonical-invariants', label, declaredOffsets: offsets, value }); invariants++; };
+    assert(value.ok, `${label}: ${JSON.stringify(value.checks.filter(check => !check.ok))}`);
+    await proof.record({ kind: 'canonical-invariants', label, value }); invariants++; };
   await invariant('baseline'); await proof.artifact('initial-state.json', { state: await snapshotShipment(readPool), fixtureWritesEndHere: true });
   await observe('original-worker-bootstrap', () => bootOriginalWorker(controller).then(() => ({ booted: true })));
   const victimTake = await observe('old-day:take-victim', () => call(actors[0], '/v1/shipment/take', 'old-take-0'));
@@ -124,12 +135,12 @@ try {
   await replay('midnight:old-success-retry-after-new-day', oldResults.find(row => row.status === 200));
   await observe('midnight:new-day-player-cap', () => call(actors[13], '/v1/shipment/take', 'new-day-again', undefined, [400]), unchanged);
   await observe('workers:original-search-one-ms-early', async () => { await controller.advanceTo(epoch + CONSTANTS.SEARCH_MS - 1); return { at }; });
-  await observe('fire:one-ms-early-refused', () => call(actors[14], `/v1/streets/${actors[0]}/fire`, 'fire-early', { rounds: 50000 }, [400]), unchanged);
+  await observe('fire:one-ms-early-refused', () => call(actors[14], `/v1/streets/${actors[0]}/fire`, 'fire-early', { rounds: 6000 }, [400]), unchanged);
   await observe('workers:original-search-ready', async () => { await controller.advanceTo(epoch + CONSTANTS.SEARCH_MS); return { at }; });
-  const killed = await observe('fire:odd-material-loot-and-replacement', () => call(actors[14], `/v1/streets/${actors[0]}/fire`, 'fire-eligible', { rounds: 50000 }),
+  const killed = await observe('fire:odd-material-loot-and-replacement', () => call(actors[14], `/v1/streets/${actors[0]}/fire`, 'fire-eligible', { rounds: 6000 }),
     ({ value, journal }) => { assert(value.body.kill); assert.equal(value.body.matLoot, 2); assert.equal(journal.lineage[0].destroyed, 3); });
   await replay('fire:exact-retry-no-second-estate', killed);
-  await observe('fire:below-loot-floor-death', () => call(actors[15], `/v1/streets/${actors[1]}/fire`, 'fire-ineligible', { rounds: 50000 }),
+  await observe('fire:below-loot-floor-death', () => call(actors[15], `/v1/streets/${actors[1]}/fire`, 'fire-ineligible', { rounds: 6000 }),
     ({ value, journal }) => { assert(value.body.kill); assert.equal(value.body.matLoot, 0); assert.equal(journal.lineage[0].destroyed, 5); });
   await replay('heir:historical-take-does-not-create-material', victimTake);
   await replay('heir:historical-bespoke-does-not-charge-again', victimPiece);

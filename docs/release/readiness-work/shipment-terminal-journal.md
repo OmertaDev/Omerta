@@ -38,10 +38,13 @@ outputs, receipts and serial counter must return exactly to the prior state.
 The same request key then races concurrently and can create exactly one output,
 consume the exact material/cash once, and replay without further value.
 
-All eligibility, physical stats, cash, ammunition, equipped weapons and initial
-material fixtures are declared before baseline. Canonical cash/ammo invariants
-retain explicit offsets derived from those exact fixture writes. They never
-derive an arbitrary drift allowance from an observed mismatch. Independent
+All eligibility, physical stats, equipped weapons and initial material fixtures
+are declared before baseline. The first8087d318 run retained a worker invariant
+failure from direct cash/ammunition fixtures. The corrected setup keeps default
+cash500/ammo25, reallocates2000OMR from the retired AMM seed, declares a cash till,
+and uses canonical window redemption and120 standard ammo purchases per hunter.
+Every preparation receipt remains in the pre-baseline evidence. Canonical
+cash/ammo and worker invariants then run without offsets or suppression. Independent
 per-owner equations reconcile every later cash/ammo receipt and the original
 newborn defaults. Corruption controls alter copies of native artifacts, never
 world rows: lost/wrong-owner loot, heir material, missing kill/take/debit authority,
