@@ -6,6 +6,10 @@
     "node": ">=20"
   },
   "scripts": {
+    "test:rc1:observability": "node test/rc1-observability.js && node test/rc1-passive-projection.js",
+    "test:db-migration:postgres": "node test/rc1-postgres-migration-failure.js",
+    "test:rc1:security:postgres": "node test/rc1-command-redteam.js",
+    "test:rc1:mobile:postgres": "node test/rc1-mobile-postgres.js",
     "test:rc1": "node test/world-telemetry.js && node test/rc1-simulation.js && node test/rc1-journeys.js",
     "test:rc1:telemetry:postgres": "node test/world-telemetry.js --postgres",
     "test:rc1:mobile": "node tools/rc1-mobile-journeys.js",

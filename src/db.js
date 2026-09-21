@@ -125,10 +125,9 @@ export function columnMigrations(schemaText) {
   return out;
 }
 
-// Run the derived ADD-COLUMN migration, each statement isolated (a single failure — e.g. a genuinely
-// later-added NOT-NULL-without-default column on a populated table — is logged and skipped, never bricks
-// boot). `ADD COLUMN IF NOT EXISTS` is a clean no-op when the column already exists (the common case), so
-// this is safe to run on every boot, fresh or upgraded.
+// Collect column failures so operators can repair every cause. The boot orchestrator
+// refuses startup and the schema stamp if any statement failed. Successful additions
+// remain safe to retry through ADD COLUMN IF NOT EXISTS after the cause is repaired.
 export async function migrateColumns(pool, schemaText = SCHEMA) {
   const stmts = columnMigrations(schemaText);
   let failed = 0;
@@ -550,6 +549,11 @@ export async function migrateSchemaUnderLock(
   await boot.query(schemaText);
   await verifyPhase2DefinitionSchema(boot, { compatibility });
   const migration = await migrateColumns(boot, schemaText);
+  if (migration.failed) {
+    const error = new Error(`Schema migration incomplete: ${migration.failed} of ${migration.total} column statements failed; refusing startup and schema stamp`);
+    error.code = 'schema_migration_incomplete';
+    throw error;
+  }
   await migrateTask5BallotV2(boot, { compatibility });
   await migrateRwaHealthOverlayV2(boot, { compatibility });
   const stamp = await stampSchema(boot);

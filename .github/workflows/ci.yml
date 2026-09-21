@@ -93,6 +93,9 @@ jobs:
       - name: RC1 telemetry isolation and complementary campaign regressions
         run: npm run test:rc1
 
+      - name: RC1 private command diagnostics and passive confirmation regression
+        run: npm run test:rc1:observability
+
       - name: economy sim (§10.4 drift-0)
         run: npm run sim
 
@@ -196,6 +199,18 @@ jobs:
           SOCIAL_VERIFY_MODE: 'off'
           POPULATION_OFF: 'on'      # the resident worker would race the probe's own fixtures
         run: npm run pgcheck
+
+      - name: Failed migration refuses startup, preserves stamp, and retries (real PostgreSQL)
+        if: '!cancelled()'
+        env:
+          COORDINATION_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check
+        run: npm run test:db-migration:postgres
+
+      - name: RC1 command tampering, concurrent duplicate, and restart replay (real PostgreSQL)
+        if: '!cancelled()'
+        env:
+          RC1_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/postgres
+        run: npm run test:rc1:security:postgres
 
       - name: Phase 2 definition registry (real PostgreSQL)
         if: '!cancelled()'

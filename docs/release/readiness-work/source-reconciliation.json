@@ -1,0 +1,512 @@
+{
+  "format": 1,
+  "owner": "Codex/source_repairs",
+  "phase": "local-development-regression",
+  "createdAt": "2026-09-21T02:36:22.305Z",
+  "source": {
+    "baseline": "32859cf7d198d2a003160b2bb1ef005991697d73",
+    "assessed": "cce721029c86de7c6f0d875fef7cb8de29504dda",
+    "sealed": "a3d2d56aecc9e6d10c24e3c12ff9cf29e9257c8d",
+    "dirtyDevelopmentRun": true,
+    "assessedToSealedCodeDiff": "",
+    "assessedToMainDiff": [
+      "M\t.github/workflows/ci.yml",
+      "M\t.github/workflows/rc1-recovery.yml",
+      "M\tpackage.json",
+      "M\tpublic/index.html",
+      "M\trender.yaml",
+      "D\tsrc/command-diagnostics.js",
+      "M\tsrc/db.js",
+      "M\tsrc/engagement.js",
+      "M\tsrc/player-commands.js",
+      "M\tsrc/projection-events.js",
+      "M\tsrc/ratelimit.js",
+      "M\tsrc/routes/commands.js",
+      "M\tsrc/routes/modtools.js",
+      "M\tsrc/server.js",
+      "M\tsrc/world-consequences.js",
+      "A\tsrc/world-telemetry.js",
+      "M\ttest/gates.js",
+      "M\ttest/lib/player-command-support.js",
+      "M\ttest/player-command-client.js",
+      "M\ttest/projection-events.js",
+      "D\ttest/rc1-command-redteam.js",
+      "A\ttest/rc1-journeys.js",
+      "D\ttest/rc1-mobile-postgres.js",
+      "D\ttest/rc1-observability.js",
+      "D\ttest/rc1-passive-projection.js",
+      "D\ttest/rc1-postgres-migration-failure.js",
+      "M\ttest/rc1-simulation.js",
+      "M\ttest/world-projection-client.js",
+      "A\ttest/world-telemetry.js",
+      "M\ttools/director-sim.js",
+      "M\ttools/pgcheck.js",
+      "M\ttools/rc1-campaign-mobile.js",
+      "D\ttools/rc1-command-population.js",
+      "D\ttools/rc1-director-matrix.js",
+      "D\ttools/rc1-freeze.mjs",
+      "D\ttools/rc1-gate.mjs",
+      "A\ttools/rc1-manifest.mjs",
+      "A\ttools/rc1-mobile-journeys.js",
+      "M\ttools/rc1-shutdown.js",
+      "A\ttools/rc1-sim-model.js",
+      "A\ttools/rc1-sim-quality.js",
+      "A\ttools/rc1-sim-report.js",
+      "M\ttools/rc1-sim.js",
+      "M\ttools/scale.js"
+    ],
+    "preservedBlobs": [
+      {
+        "path": "package-lock.json",
+        "assessedBlob": "e86f6a975ef5ebc89b23234c70ec44228ca4240e",
+        "mainBlob": "e86f6a975ef5ebc89b23234c70ec44228ca4240e"
+      },
+      {
+        "path": "schema.sql",
+        "assessedBlob": "629691fd13d592165b452f23ba31109212f28cd2",
+        "mainBlob": "629691fd13d592165b452f23ba31109212f28cd2"
+      }
+    ],
+    "reviewedWorkingFiles": [
+      {
+        "path": ".github/workflows/ci.yml",
+        "sha256": "353c77ca300be7ecc83146217fe0912fe499e7d7fa844d4de8db967b903f4e53"
+      },
+      {
+        "path": ".github/workflows/rc1-recovery.yml",
+        "sha256": "0f671316f21abe98d7f0b8cfd10402da9f991175d7b4e9ede87be131534b7d86"
+      },
+      {
+        "path": "package.json",
+        "sha256": "6dbee7538260e9416c1efc46a2cde1273afc19ce69ebfd184fe3390483e6da0b"
+      },
+      {
+        "path": "src/db.js",
+        "sha256": "6fda585e3f7c7a3d95f1644b2456e0de10d37f436d11d2ee2f5b32c964528245"
+      },
+      {
+        "path": "src/player-commands.js",
+        "sha256": "a8a2e071e851025b18b3268b40a16aa7a7449fbeefd8b036b0c8f101ac84a6e6"
+      },
+      {
+        "path": "src/routes/commands.js",
+        "sha256": "b9bdd8f815be396acd8cbe9be597101ad1773f66c0c28d08844ed266bd9432c2"
+      },
+      {
+        "path": "test/lib/player-command-support.js",
+        "sha256": "fd214f8c03b9bc0c3caf5f0e01f35e52da1fa282433cfdeafe49def117166e2a"
+      },
+      {
+        "path": "tools/pgcheck.js",
+        "sha256": "76589dd2ec9ed05d5d31bec625f6cefb55481c6d9202f472ae19ca96d78cfdce"
+      },
+      {
+        "path": "tools/rc1-campaign-mobile.js",
+        "sha256": "ce79cc1bdc7f1b047b4844685166c096037698dc3c9a7ade762c382b83591bad"
+      },
+      {
+        "path": "src/command-diagnostics.js",
+        "sha256": "f7be24eb60c6a3976ad8e0bbbacf6a935ff08b6508dedd4f570032f59b28cb5c"
+      },
+      {
+        "path": "test/rc1-command-redteam.js",
+        "sha256": "368c7ceb59b8fc7253dd42c883c5f356819cc14f9f5b620b2356c5d6b29b5dae"
+      },
+      {
+        "path": "test/rc1-mobile-postgres.js",
+        "sha256": "10769e85718e54933678c0b12140fc566653b1db1f99ed840580c2a26c618910"
+      },
+      {
+        "path": "test/rc1-observability.js",
+        "sha256": "517f1d9213deae5570a732c53d56f4965b90ee8780305669cda4b8273a081078"
+      },
+      {
+        "path": "test/rc1-passive-projection.js",
+        "sha256": "4b2be45595f1562e593ed977bc46037275e00450b3a6c7469fe39ec7db9ac9cb"
+      },
+      {
+        "path": "test/rc1-postgres-migration-failure.js",
+        "sha256": "ce42f8dbdce63bc52960f4d9ee7260bc779805b35f5910585cf5e30e7a0687a6"
+      }
+    ]
+  },
+  "runtime": {
+    "node": "v24.19.0",
+    "platform": "win32",
+    "postgres": "18.4 Windows x64"
+  },
+  "failingReproductions": [
+    {
+      "gate": "RC1-00-MIGRATION",
+      "source": "32859cf7d198d2a003160b2bb1ef005991697d73",
+      "exitCode": 1,
+      "observation": "failed=1, faultObserved=false, current stamp overwritten instead of startup refusal"
+    },
+    {
+      "gate": "RC1-00-OBS",
+      "source": "32859cf7d198d2a003160b2bb1ef005991697d73",
+      "exitCode": 1,
+      "observation": "server-generated x-correlation-id missing"
+    }
+  ],
+  "localAfterCommands": [
+    {
+      "command": "node test/rc1-postgres-migration-failure.js",
+      "exitCode": 0,
+      "qualification": false,
+      "reason": "targeted dirty-development-tree regression; rerun integrated candidate"
+    },
+    {
+      "command": "node test/rc1-observability.js",
+      "exitCode": 0,
+      "qualification": false,
+      "reason": "targeted dirty-development-tree regression; rerun integrated candidate"
+    },
+    {
+      "command": "node test/rc1-passive-projection.js",
+      "exitCode": 0,
+      "qualification": false,
+      "reason": "targeted dirty-development-tree regression; rerun integrated candidate"
+    },
+    {
+      "command": "node test/rc1-command-redteam.js",
+      "exitCode": 0,
+      "qualification": false,
+      "reason": "targeted dirty-development-tree regression; rerun integrated candidate"
+    },
+    {
+      "command": "node test/rc1-mobile-postgres.js",
+      "exitCode": 0,
+      "qualification": false,
+      "reason": "targeted dirty-development-tree regression; rerun integrated candidate"
+    },
+    {
+      "command": "node test/world-telemetry.js",
+      "exitCode": 0,
+      "qualification": false,
+      "reason": "targeted dirty-development-tree regression; rerun integrated candidate"
+    },
+    {
+      "command": "node test/world-telemetry.js --postgres",
+      "exitCode": 0,
+      "qualification": false,
+      "reason": "targeted dirty-development-tree regression; rerun integrated candidate"
+    },
+    {
+      "command": "node test/player-commands.js --postgres",
+      "exitCode": 0,
+      "qualification": false,
+      "reason": "targeted dirty-development-tree regression; rerun integrated candidate"
+    },
+    {
+      "command": "node test/migrate.js",
+      "exitCode": 0,
+      "qualification": false,
+      "reason": "targeted dirty-development-tree regression; rerun integrated candidate"
+    },
+    {
+      "command": "node test/projection-events.js",
+      "exitCode": 0,
+      "qualification": false,
+      "reason": "targeted dirty-development-tree regression; rerun integrated candidate"
+    },
+    {
+      "command": "node test/player-command-api.js",
+      "exitCode": 0,
+      "qualification": false,
+      "reason": "targeted dirty-development-tree regression; rerun integrated candidate"
+    },
+    {
+      "command": "node test/player-command-client.js",
+      "exitCode": 0,
+      "qualification": false,
+      "reason": "targeted dirty-development-tree regression; rerun integrated candidate"
+    },
+    {
+      "command": "node test/routes.js",
+      "exitCode": 0,
+      "qualification": false,
+      "reason": "targeted dirty-development-tree regression; rerun integrated candidate"
+    }
+  ],
+  "nativeRedteam": {
+    "denials": 42,
+    "concurrentRequests": 8,
+    "freshExecutions": 1,
+    "restartReplay": true
+  },
+  "phone": {
+    "results": [
+      {
+        "viewport": {
+          "width": 320,
+          "height": 568
+        },
+        "firstActionMs": 4656,
+        "firstCanonicalAction": "Investigate: The Missing Carbon Index",
+        "commandCompleted": true,
+        "consequenceVisible": true,
+        "reload": true,
+        "javascriptErrors": []
+      },
+      {
+        "viewport": {
+          "width": 360,
+          "height": 800
+        },
+        "firstActionMs": 2926,
+        "firstCanonicalAction": "Investigate: The Missing Carbon Index",
+        "commandCompleted": true,
+        "consequenceVisible": true,
+        "reload": true,
+        "javascriptErrors": []
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "firstActionMs": 3635,
+        "firstCanonicalAction": "Investigate: The Missing Carbon Index",
+        "commandCompleted": true,
+        "consequenceVisible": true,
+        "reload": true,
+        "javascriptErrors": []
+      },
+      {
+        "viewport": {
+          "width": 430,
+          "height": 932
+        },
+        "firstActionMs": 3628,
+        "firstCanonicalAction": "Investigate: The Missing Carbon Index",
+        "commandCompleted": true,
+        "consequenceVisible": true,
+        "reload": true,
+        "javascriptErrors": []
+      }
+    ],
+    "findings": [],
+    "scope": "Chromium phone emulation; local real PostgreSQL; no human cohort or native wallet proof"
+  },
+  "artifacts": [
+    {
+      "path": "output/source-reconciliation/migrate.log",
+      "sha256": "f0f173ccaede1289808840cd9177b386a3542bfb7f20b6054aacb844becd374b",
+      "bytes": 716,
+      "excerpt": [
+        "✓ all 888 statements in schema.sql are re-apply safe (the file is applied at every boot)",
+        "✅ Schema-integrity test passed — MED-1: 2956 idempotent ADD COLUMN IF NOT EXISTS statements derived from schema.sql (no leakage, clean no-op on a fresh DB, a dropped later-added column is RE-ADDED). MED-2: all 93 character-scoped tables (character_id OR a named %_character role) have a documented death disposition (57 wiped / 17 special / 8 escrow / 10 ledger — a new unclassified table fails CI closed, and every wiped/special table has a DELETE or a resolving status UPDATE in src). Phase 1: 12 world-graph tables and 8 generic owner/depositor tuple roles have explicit fail-closed no-inheritance dispositions."
+      ]
+    },
+    {
+      "path": "output/source-reconciliation/migration-after.log",
+      "sha256": "a0b150f39fbff8c43fe7852d5eecbd7fde618ce51f2fd39f9f4a17dc60c7e21d",
+      "bytes": 325,
+      "excerpt": [
+        "[migrate] skipped: ALTER TABLE characters ADD COLUMN IF NOT EXISTS bank_credit_ms BIGINT NOT NULL DEFAULT 28800000 — RC1 injected DDL interruption",
+        "{\"faultObserved\":true,\"stamp\":{\"app_version\":\"0.0.0\",\"schema_sha\":\"rc1-before-fault\"}}",
+        "RC1: real DDL interruption refuses startup/stamp; retry and restart migration succeed"
+      ]
+    },
+    {
+      "path": "output/source-reconciliation/migration-before.log",
+      "sha256": "e93433e64edfa9b9695768c69557443bfccc975f266141f0b8094cfc0601c004",
+      "bytes": 903,
+      "excerpt": [
+        "[migrate] skipped: ALTER TABLE characters ADD COLUMN IF NOT EXISTS bank_credit_ms BIGINT NOT NULL DEFAULT 28800000 — RC1 injected DDL interruption",
+        "{\"faultObserved\":false,\"result\":{\"migration\":{\"total\":2956,\"failed\":1},\"stamp\":{\"appVer\":\"1.2.0\",\"sha\":\"da89a90b235b0b46\",\"rolledBack\":false}},\"stamp\":{\"app_version\":\"1.2.0\",\"schema_sha\":\"da89a90b235b0b46\"}}",
+        "node:internal/modules/run_main:107",
+        "    triggerUncaughtException(",
+        "    ^",
+        "",
+        "AssertionError [ERR_ASSERTION]: A partial column migration must refuse startup instead of stamping success",
+        "    at file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-source-baseline/test/rc1-postgres-migration-failure.js:30:3",
+        "    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {",
+        "  generatedMessage: false,",
+        "  code: 'ERR_ASSERTION',",
+        "  actual: undefined,",
+        "  expected: true,",
+        "  operator: '==',",
+        "  diff: 'simple'",
+        "}",
+        "",
+        "Node.js v24.19.0"
+      ]
+    },
+    {
+      "path": "output/source-reconciliation/mobile.log",
+      "sha256": "963449436219cddb72337dede5d3b4964c22edbdecddabc3ab8792446419df5a",
+      "bytes": 15820,
+      "excerpt": [
+        "{\"component\":\"player-command\",\"phase\":\"response\",\"correlationId\":\"e55356fb-65ab-44c3-aa9f-06ffd50dd422\",\"statusCode\":200,\"elapsedMs\":44}",
+        "{\"component\":\"player-command\",\"phase\":\"request\",\"correlationId\":\"65b3f656-a5e5-4b65-8fe3-6ce76573427e\"}",
+        "{\"component\":\"player-command\",\"phase\":\"authorization\",\"correlationId\":\"65b3f656-a5e5-4b65-8fe3-6ce76573427e\",\"outcome\":\"allowed\"}",
+        "{\"component\":\"player-command\",\"phase\":\"response\",\"correlationId\":\"65b3f656-a5e5-4b65-8fe3-6ce76573427e\",\"statusCode\":200,\"elapsedMs\":42}",
+        "{\"component\":\"player-command\",\"phase\":\"request\",\"correlationId\":\"db530c3b-0b81-415e-87c0-14ff6df0ad3c\"}",
+        "{\"component\":\"player-command\",\"phase\":\"authorization\",\"correlationId\":\"db530c3b-0b81-415e-87c0-14ff6df0ad3c\",\"outcome\":\"allowed\"}",
+        "{\"component\":\"player-command\",\"phase\":\"response\",\"correlationId\":\"db530c3b-0b81-415e-87c0-14ff6df0ad3c\",\"statusCode\":200,\"elapsedMs\":50}",
+        "{\"status\":\"PASS\",\"results\":[{\"viewport\":{\"width\":320,\"height\":568},\"firstActionMs\":4656,\"firstCanonicalAction\":\"Investigate: The Missing Carbon Index\",\"commandCompleted\":true,\"consequenceVisible\":true,\"reload\":true,\"javascriptErrors\":[]},{\"viewport\":{\"width\":360,\"height\":800},\"firstActionMs\":2926,\"firstCanonicalAction\":\"Investigate: The Missing Carbon Index\",\"commandCompleted\":true,\"consequenceVisible\":true,\"reload\":true,\"javascriptErrors\":[]},{\"viewport\":{\"width\":390,\"height\":844},\"firstActionMs\":3635,\"firstCanonicalAction\":\"Investigate: The Missing Carbon Index\",\"commandCompleted\":true,\"consequenceVisible\":true,\"reload\":true,\"javascriptErrors\":[]},{\"viewport\":{\"width\":430,\"height\":932},\"firstActionMs\":3628,\"firstCanonicalAction\":\"Investigate: The Missing Carbon Index\",\"commandCompleted\":true,\"consequenceVisible\":true,\"reload\":true,\"javascriptErrors\":[]}]}"
+      ]
+    },
+    {
+      "path": "output/source-reconciliation/observability-before.log",
+      "sha256": "a1bca8418a3b7cbcbf591709b9b7c0bdc30459cf03274b635587a53960a5ce89",
+      "bytes": 490,
+      "excerpt": [
+        "[db] pg-mem in-memory database (set DATABASE_URL for Postgres)",
+        "node:internal/modules/run_main:107",
+        "    triggerUncaughtException(",
+        "    ^",
+        "",
+        "AssertionError [ERR_ASSERTION]: server-generated correlation ID is required",
+        "    at file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-source-baseline/test/rc1-observability.js:32:10 {",
+        "  generatedMessage: false,",
+        "  code: 'ERR_ASSERTION',",
+        "  actual: '',",
+        "  expected: /^[a-f0-9-]{36}$/,",
+        "  operator: 'match',",
+        "  diff: 'simple'",
+        "}",
+        "",
+        "Node.js v24.19.0"
+      ]
+    },
+    {
+      "path": "output/source-reconciliation/observability.log",
+      "sha256": "825e142644f4a30025e48acc3118b2e25c1a09b667b338a1034af5b3bc825661",
+      "bytes": 186,
+      "excerpt": [
+        "[db] pg-mem in-memory database (set DATABASE_URL for Postgres)",
+        "PASS RC1-OBS: request/auth/command/mutation/consequence/opportunity/response correlation, replay, denial and log privacy"
+      ]
+    },
+    {
+      "path": "output/source-reconciliation/passive.log",
+      "sha256": "cd58f965ab1a80d7c1015ced4a8ecb49d79693bc542477410c559bfde8ffc34c",
+      "bytes": 180,
+      "excerpt": [
+        "{\"passiveClientClears\":[],\"passiveServerHints\":[]}",
+        "PASS RC1-MOBILE-CONFIRM: passive screen and command observations preserve confirmations; gameplay invalidation remains enabled"
+      ]
+    },
+    {
+      "path": "output/source-reconciliation/player-command-api.log",
+      "sha256": "531310b7cb478835df84a57a249b3eb891671657c8e15df488c248d8e02a4cee",
+      "bytes": 10583,
+      "excerpt": [
+        "{\"component\":\"player-command\",\"phase\":\"opportunity\",\"correlationId\":\"efc90c8d-8fa3-4d16-8f90-14c1e57ee262\",\"replayed\":true,\"changes\":0}",
+        "{\"component\":\"player-command\",\"phase\":\"response\",\"correlationId\":\"efc90c8d-8fa3-4d16-8f90-14c1e57ee262\",\"statusCode\":200,\"elapsedMs\":60}",
+        "{\"component\":\"player-command\",\"phase\":\"request\",\"correlationId\":\"1c04f616-3970-40f6-96dc-60a4b685806b\"}",
+        "{\"component\":\"player-command\",\"phase\":\"authorization\",\"correlationId\":\"1c04f616-3970-40f6-96dc-60a4b685806b\",\"outcome\":\"allowed\"}",
+        "{\"component\":\"player-command\",\"phase\":\"command\",\"correlationId\":\"1c04f616-3970-40f6-96dc-60a4b685806b\"}",
+        "{\"component\":\"player-command\",\"phase\":\"failure\",\"correlationId\":\"1c04f616-3970-40f6-96dc-60a4b685806b\",\"outcome\":\"unavailable\"}",
+        "{\"component\":\"player-command\",\"phase\":\"response\",\"correlationId\":\"1c04f616-3970-40f6-96dc-60a4b685806b\",\"statusCode\":409,\"elapsedMs\":8}",
+        "player-command-api: authentication, cohort, strict request shape, account binding, no-store, exact HTTP retries, current projection and character isolation PASS"
+      ]
+    },
+    {
+      "path": "output/source-reconciliation/player-command-client.log",
+      "sha256": "3b451fcb835e5e51df6f49660a3a2151e0781664f9aec13677bd20005a68f473",
+      "bytes": 181,
+      "excerpt": [
+        "player-command-client: issued commands, all availability states, context actions, confirmation, retry/restart identity, double clicks, session isolation and private rendering PASS"
+      ]
+    },
+    {
+      "path": "output/source-reconciliation/player-commands-postgres.log",
+      "sha256": "b342ead39fd95ce35576ea9361494e6f1b964ab37d7f363d81458cd79b3a2040",
+      "bytes": 1517,
+      "excerpt": [
+        "PASS post-commit projection failure reports committed success and reconciles without duplicate effects",
+        "PASS succession across composed snapshot reads refuses before any board is issued",
+        "PASS character replacement after final admission is denied by the locked native authority",
+        "PASS new database connection and engine restart preserve replay identity",
+        "PASS independent server process authenticates an HTTP replay against persisted PostgreSQL without new economic effects",
+        "PASS populated PostgreSQL schema applies twice while preserving command and economic receipts",
+        "PASS indexed entity window, command/opportunity caps and deterministic relevance ranking",
+        "player-commands: 17 groups passed (PostgreSQL)"
+      ]
+    },
+    {
+      "path": "output/source-reconciliation/projection-events.log",
+      "sha256": "88856aaee1ce41aa00fb78da301480b1d05f738149c46eb3956cd83e5c4ee37f",
+      "bytes": 125,
+      "excerpt": [
+        "projection-events: private discovery, share/revoke, committed hints, cohort, current WS authority and cleanup pass (pg-mem)"
+      ]
+    },
+    {
+      "path": "output/source-reconciliation/redteam.log",
+      "sha256": "3cdd3801f641d4092d08db82cb9242160298ba426a33276f0e3f31656c8edaab",
+      "bytes": 28877,
+      "excerpt": [
+        "{\"component\":\"player-command\",\"phase\":\"request\",\"correlationId\":\"b25007ee-baf7-4c4c-bb9e-043572116ba5\"}",
+        "{\"component\":\"player-command\",\"phase\":\"authorization\",\"correlationId\":\"b25007ee-baf7-4c4c-bb9e-043572116ba5\",\"outcome\":\"allowed\"}",
+        "{\"component\":\"player-command\",\"phase\":\"command\",\"correlationId\":\"b25007ee-baf7-4c4c-bb9e-043572116ba5\"}",
+        "{\"component\":\"player-command\",\"phase\":\"mutation\",\"correlationId\":\"b25007ee-baf7-4c4c-bb9e-043572116ba5\",\"outcome\":\"completed\",\"replayed\":true}",
+        "{\"component\":\"player-command\",\"phase\":\"consequence\",\"correlationId\":\"b25007ee-baf7-4c4c-bb9e-043572116ba5\",\"replayed\":true,\"changes\":0}",
+        "{\"component\":\"player-command\",\"phase\":\"opportunity\",\"correlationId\":\"b25007ee-baf7-4c4c-bb9e-043572116ba5\",\"replayed\":true,\"changes\":0}",
+        "{\"component\":\"player-command\",\"phase\":\"response\",\"correlationId\":\"b25007ee-baf7-4c4c-bb9e-043572116ba5\",\"statusCode\":200,\"elapsedMs\":192}",
+        "{\"gate\":\"RC1 command HTTP redteam\",\"database\":\"real PostgreSQL\",\"deniedCases\":42,\"concurrentRequests\":8,\"concurrentStatuses\":[200,409,409,409,409,409,409,409],\"freshExecutions\":1,\"uniqueMysteryInstances\":1,\"restartReplay\":true,\"gameStateUnchangedOnDenialAndReplay\":true,\"status\":\"PASS\"}"
+      ]
+    },
+    {
+      "path": "output/source-reconciliation/routes.log",
+      "sha256": "dd2605f9dc3f4a1043a7b1a2c1b99afc7b674542aee1bca641cf5262edc8ba48",
+      "bytes": 1579,
+      "excerpt": [
+        "{\"component\":\"player-command\",\"phase\":\"request\",\"correlationId\":\"6517ecc8-2b0b-4663-a265-b040ed58398e\"}",
+        "{\"component\":\"player-command\",\"phase\":\"authorization\",\"correlationId\":\"6517ecc8-2b0b-4663-a265-b040ed58398e\",\"outcome\":\"allowed\"}",
+        "{\"component\":\"player-command\",\"phase\":\"failure\",\"correlationId\":\"6517ecc8-2b0b-4663-a265-b040ed58398e\",\"outcome\":\"unavailable\"}",
+        "{\"component\":\"player-command\",\"phase\":\"response\",\"correlationId\":\"6517ecc8-2b0b-4663-a265-b040ed58398e\",\"statusCode\":409,\"elapsedMs\":2}",
+        "✅ the envelope survives all 62 enveloped routes (1 of them param routes; 14 params this cannot synthesise are named, not skipped) — none replaces `character`, and none carries an `events` key except 1 board that owns the name by declaration",
+        "✅ every immutable research-sheet reference is versioned by its current content hash",
+        "✅ landing media is responsive, all three below-fold videos are deferred, and each film range-streams",
+        "✅ the wire: the 1285 KB shell ships as 382 KB and revalidates to a 304; identity is byte-exact; binary and sub-threshold payloads are untouched"
+      ]
+    },
+    {
+      "path": "output/source-reconciliation/world-telemetry-postgres.log",
+      "sha256": "cdd972c5cc5666ccd63f66c97503bf5d420944a832e76b7cc25221f3eb3045b6",
+      "bytes": 3801,
+      "excerpt": [
+        "{\"component\":\"player-command\",\"phase\":\"request\",\"correlationId\":\"38fcc3c6-2f4a-4009-aa5c-329d634d7d3c\"}",
+        "{\"component\":\"player-command\",\"phase\":\"authorization\",\"correlationId\":\"38fcc3c6-2f4a-4009-aa5c-329d634d7d3c\",\"outcome\":\"allowed\"}",
+        "{\"component\":\"player-command\",\"phase\":\"command\",\"correlationId\":\"38fcc3c6-2f4a-4009-aa5c-329d634d7d3c\"}",
+        "{\"component\":\"player-command\",\"phase\":\"mutation\",\"correlationId\":\"38fcc3c6-2f4a-4009-aa5c-329d634d7d3c\",\"outcome\":\"completed\",\"replayed\":true}",
+        "{\"component\":\"player-command\",\"phase\":\"consequence\",\"correlationId\":\"38fcc3c6-2f4a-4009-aa5c-329d634d7d3c\",\"replayed\":true,\"changes\":0}",
+        "{\"component\":\"player-command\",\"phase\":\"opportunity\",\"correlationId\":\"38fcc3c6-2f4a-4009-aa5c-329d634d7d3c\",\"replayed\":true,\"changes\":0}",
+        "{\"component\":\"player-command\",\"phase\":\"response\",\"correlationId\":\"38fcc3c6-2f4a-4009-aa5c-329d634d7d3c\",\"statusCode\":200,\"elapsedMs\":105}",
+        "world-telemetry: native PostgreSQL queries, authenticated observations, moderator-only eight-stage funnel, consequence attribution, replay deduplication, queue bounds and nonblocking command outcomes passed"
+      ]
+    },
+    {
+      "path": "output/source-reconciliation/world-telemetry.log",
+      "sha256": "da87257f9c5e19fd84e3b1c02f3f8362d273f46039dc40d32f825bd395d371ab",
+      "bytes": 2980,
+      "excerpt": [
+        "{\"component\":\"player-command\",\"phase\":\"request\",\"correlationId\":\"2187fdd3-60cb-416e-8135-2a2c38bd4bb7\"}",
+        "{\"component\":\"player-command\",\"phase\":\"authorization\",\"correlationId\":\"2187fdd3-60cb-416e-8135-2a2c38bd4bb7\",\"outcome\":\"allowed\"}",
+        "{\"component\":\"player-command\",\"phase\":\"command\",\"correlationId\":\"2187fdd3-60cb-416e-8135-2a2c38bd4bb7\"}",
+        "{\"component\":\"player-command\",\"phase\":\"mutation\",\"correlationId\":\"2187fdd3-60cb-416e-8135-2a2c38bd4bb7\",\"outcome\":\"completed\",\"replayed\":true}",
+        "{\"component\":\"player-command\",\"phase\":\"consequence\",\"correlationId\":\"2187fdd3-60cb-416e-8135-2a2c38bd4bb7\",\"replayed\":true,\"changes\":0}",
+        "{\"component\":\"player-command\",\"phase\":\"opportunity\",\"correlationId\":\"2187fdd3-60cb-416e-8135-2a2c38bd4bb7\",\"replayed\":true,\"changes\":0}",
+        "{\"component\":\"player-command\",\"phase\":\"response\",\"correlationId\":\"2187fdd3-60cb-416e-8135-2a2c38bd4bb7\",\"statusCode\":200,\"elapsedMs\":70}",
+        "world-telemetry: memory queries, authenticated observations, moderator-only eight-stage funnel, consequence attribution, replay deduplication, queue bounds and nonblocking command outcomes passed"
+      ]
+    }
+  ],
+  "exclusions": [
+    "full RC1-04 route/role cross product",
+    "full candidate CI",
+    "full pgcheck after barrier restoration",
+    "campaign browser suite after helper restoration",
+    "physical devices",
+    "golden B-E journeys",
+    "deployed environment",
+    "Linux process/backup recovery",
+    "world matrix/resource proof",
+    "real cohort"
+  ]
+}

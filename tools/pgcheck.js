@@ -1790,30 +1790,36 @@ console.log('\n9f. THE LISTING/BIDDER CYCLE LANDS AS CONTENTION, NEVER A 500');
   let inflightM = null, requestOutcomeM = null, holderTook2 = null, holderResult2 = null;
   let fixtureErrorM = null, raced2 = null;
   let holderPidM = null, waiterPidM = null;
+  let refundBoundaryM = null;
   try {
     await holderM.query('BEGIN');
+    // RC1 gate repair: schedule the same real cycle as §9e. Observing an
+    // already-waiting refund can miss its one-shot detector on a busy host.
+    await holderM.query("SET LOCAL deadlock_timeout = '1min'");
     // exactly what bidListing/buyListing/sweepMarket do FIRST: the counterparty's character row.
     await holderM.query('SELECT 1 FROM characters WHERE id=$1 FOR UPDATE', [bidder.id]);
     const identityM = (await holderM.query(
       'SELECT pg_backend_pid() AS pid, clock_timestamp() AS started_after')).rows[0];
     holderPidM = Number(identityM.pid);
-    // the seller takes the listing, then blocks reaching the bidder to refund them.
+    // Pause before the refund starts its detector; establish the reverse wait first.
+    refundBoundaryM = pausePlayerRefundBeforeSend(bidder.id);
     let requestSettledM = false;
     inflightM = observePromiseOutcome(
       call('POST', `/v1/market/${listingId}/cancel`, { token: seller.token }),
       () => { requestSettledM = true; },
     );
-    waiterPidM = await waitForPlayerRefundBlockedBy({
-      holderPid: holderPidM, startedAfter: identityM.started_after,
-      requestSettled: () => requestSettledM, label: 'section 9f market refund',
-    });
+    waiterPidM = await refundBoundaryM.reached(() => requestSettledM);
     // close the cycle: we hold the bidder and now want the listing the player is holding.
-    holderTook2 = holderM.query('SELECT 1 FROM market_listings WHERE id=$1 FOR UPDATE', [listingId])
+    const listingSql = 'SELECT 1 FROM market_listings WHERE id=$1 FOR UPDATE';
+    holderTook2 = holderM.query(listingSql, [listingId])
       .then(() => ({ ok: true }), (error) => ({ ok: false, error }));
+    await waitForHolderBlockedByPlayer(holderPidM, waiterPidM, listingSql);
+    refundBoundaryM.resume();
     [requestOutcomeM, holderResult2] = await Promise.all([inflightM, holderTook2]);
   } catch (error) {
     fixtureErrorM = error;
   } finally {
+    refundBoundaryM?.restore();
     // If readiness itself failed, release the held character before draining the blocked request.
     if (!holderTook2) await holderM.query('ROLLBACK').catch(() => {});
     await Promise.allSettled([inflightM, holderTook2].filter(Boolean));
