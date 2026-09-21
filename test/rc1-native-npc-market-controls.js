@@ -12,7 +12,7 @@ assert(process.argv.includes('--postgres'));assert(process.env.RC1_NPC_MARKET_OU
 const source=await sourceIdentity(),seed='rc1-alpha',epoch=Date.parse('2026-09-23T23:00:00Z'),output=process.env.RC1_NPC_MARKET_OUTPUT;
 const database=planOwnedWorldDatabase({controlUrl:process.env.COORDINATION_TEST_DATABASE_URL,runId:'npc-market-controls',sourceRevision:source.revision});
 const historyStorage={encoding:'gzip',framing:'event-members-v1',maximumDecodedBytes:536870912,maximumStoredBytes:134217728,maximumLineBytes:8388608,maximumOutstandingInvocations:64,maximumPendingRecords:64};
-const configuration={seed,epoch:new Date(epoch).toISOString(),maximumHours:8,historyStorage,sourcePins:NPC_MARKET_SOURCE_PINS,
+const configuration={seed,epoch:new Date(epoch).toISOString(),maximumHours:24,historyStorage,sourcePins:NPC_MARKET_SOURCE_PINS,
  scope:'Original worker NPC order fee sink and owned escrow; actual original callbacks and one composed returned-query collector',
  initialization:'25 initial schema-default human accounts/characters; original worker creates all NPC resources and eligibility. No postbaseline gameplay fixtures.',
  fault:'Prebaseline AFTER INSERT trigger verifies original fee/escrow receipts and pocket parity, then aborts all initial eligible order attempts until callback completion. Remove only diagnostic trigger; original later worker callback retries.',
@@ -89,9 +89,11 @@ try{
  observer.assertComplete();assert.equal(firstError,undefined);observer.disarm();await proof.snapshot(pool,'final');
  await proof.artifact('worker-schedule.json',controller.diagnostic());await proof.artifact('observer-final.json',observer.diagnostic());await proof.artifact('random-tape.json',{draws:runtime.tape});await proof.artifact('faults-controls.json',{attempts,logs,controls});
  result={status:'PASS_SCOPED',boundaries,positivePlacements:candidates.length,rollbackCount:rollbacks,sameOwnerLaterWorkerRetries:retries.length,nativeEvidenceCorruptions:controls.length,
-  invariantBoundaries,checksPerInvariantBoundary:55,logicalHours:8,unknown,fullResourceQualification:false,matrixQualifying:false};
+  invariantBoundaries,checksPerInvariantBoundary:55,logicalHours:configuration.maximumHours,unknown,fullResourceQualification:false,matrixQualifying:false};
 }catch(error){result={status:'FAIL',message:error.message,stack:error.stack,boundaries,positivePlacements:candidates.length,rollbackCount:rollbacks};process.exitCode=1;
  await proof.record({kind:'failure',...result});await proof.artifact('failure-schedule.json',controller.diagnostic());await proof.artifact('failure-observer.json',observer.diagnostic());await proof.artifact('failure-rng.json',{draws:runtime.tape});await proof.artifact('failure-faults.json',{attempts,logs});
+ try{observer.disarm();if(pool)await proof.snapshot(pool,'failure-canonical-state');}
+ catch(captureError){result.failureSnapshotError=captureError.message;await proof.artifact('failure-snapshot-error.json',{message:captureError.message,originalFailure:result.message});}
 }finally{
  for(const key of ['log','warn','error'])console[key]=nativeConsole[key];
  for(const close of [async()=>{try{observer.disarm();}catch{}},()=>controller.close(),()=>readPool.end(),()=>base.end(),async()=>proof.record({kind:'database-cleanup',...await database.close()})])
