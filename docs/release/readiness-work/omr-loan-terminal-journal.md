@@ -77,3 +77,10 @@ local-chain backing, literal wall-time equivalence, browser/network/deployment,
 natural progression and integrated matrix cells. Full gaps remain OPEN.
 Native results belong to their retained exact commit, never to this source
 inventory or to a later integration without rerun.
+
+Initial native source `ae7df02597875e30516787e7068d66453510546e` retained a
+harness failure after45 completed boundaries: the journal treated the schema's
+TEXT notification payload as an object at the successful27h forfeiture. The
+native terminal and all four notifications existed; the full gate was FAIL.
+The correction parses the stored JSON text and also checks the borrower-only
+`lost` flag. No runtime bytes or gameplay were changed.

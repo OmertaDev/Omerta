@@ -145,7 +145,9 @@ export function reconcileOmrLoans(before, after, { commands = [], logicalAt, wor
       else {
         assert(worker, 'Collection lacks canonical command or observed original sweep'); assert(logicalAt > Date.parse(prior.due_at) + LOAN.GRACE_MS, 'Grace requires strict past-due equality');
         for (const character of [prior.lender_character, prior.borrower_character]) assert.equal(after.notifications.filter(row => !before.notifications.some(old => old.id === row.id)
-          && row.character_id === character && row.type === 'loan_forfeited' && omrUnits(row.payload.omr) === amount).length, 1);
+          && row.character_id === character && row.type === 'loan_forfeited'
+          && omrUnits(JSON.parse(row.payload).omr) === amount
+          && (JSON.parse(row.payload).lost === true) === (character === prior.borrower_character)).length, 1);
       }
       if (amount) move(escrow(id), account(lender), amount, { loan: id, mode: r ? 'manual-due' : 'original-worker-grace',
         dueAt: prior.due_at, logicalAt, request: r ? requestKey(r.row) : null, receipt: receipt('loan:seize:omr', lender, amount, prior.borrower_character) });
