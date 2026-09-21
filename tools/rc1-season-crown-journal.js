@@ -60,6 +60,11 @@ export function reconcileStoredSeasonCrowns(before, after) {
     detail: 'Initial winner/Family election remains unsupported: complete eligibility, cached ranking and native tied-row ordering are not reconstructed from saved intent.' });
   const accounts = index(rows(before, 'account_persistent'), row => row.account_id, 'crown account');
   const nextAccounts = index(rows(after, 'account_persistent'), row => row.account_id, 'crown account');
+  for (const [id, account] of nextAccounts) if (!accounts.has(id) && account.season_crowns !== undefined)
+    assert.equal(account.season_crowns, 0, 'New account has crowns without an existing stored-award owner');
+  for (const [id, account] of accounts) if (!nextAccounts.has(id) && account.season_crowns)
+    unsupported.push({ kind: 'season-crown-owner-removal', table: 'account_persistent', accountId: id,
+      detail: 'Crown-bearing account removed; no destruction/custody authority is classified' });
   const deltas = [...nextAccounts.values()].filter(row => accounts.has(row.account_id) && row.season_crowns !== accounts.get(row.account_id).season_crowns);
   if (!claims.length && !notices.length && !deltas.length) return result;
   const incomplete = detail => { unsupported.push({ kind: 'season-crown-compound', table: 'season_records', detail }); return result; };
