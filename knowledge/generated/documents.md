@@ -371,6 +371,14 @@
 | [docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md](../../docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md) | documentation | 67 | 2026-09-18 |
 | [docs/OMR-MACHINE-CAMPAIGN.md](../../docs/OMR-MACHINE-CAMPAIGN.md) | documentation | 249 | 2026-08-26 |
 | [docs/OMR-MARKETING-PACK.md](../../docs/OMR-MARKETING-PACK.md) | documentation | 346 | 2026-08-24 |
+| [docs/release/RC1-FIRST-SESSION.md](../../docs/release/RC1-FIRST-SESSION.md) | documentation | 107 | 2026-09-21 |
+| [docs/release/RC1-GATE-REPORT.md](../../docs/release/RC1-GATE-REPORT.md) | documentation | 113 | 2026-09-21 |
+| [docs/release/RC1-JOURNEYS-REPORT.md](../../docs/release/RC1-JOURNEYS-REPORT.md) | documentation | 69 | 2026-09-21 |
+| [docs/release/RC1-POSTGRES-REPORT.md](../../docs/release/RC1-POSTGRES-REPORT.md) | documentation | 140 | 2026-09-21 |
+| [docs/release/RC1-RECOVERY-RUNBOOK.md](../../docs/release/RC1-RECOVERY-RUNBOOK.md) | documentation | 82 | 2026-09-21 |
+| [docs/release/RC1-RELEASE-REPORT.md](../../docs/release/RC1-RELEASE-REPORT.md) | documentation | 221 | 2026-09-21 |
+| [docs/release/RC1-SECURITY-REPORT.md](../../docs/release/RC1-SECURITY-REPORT.md) | documentation | 310 | 2026-09-21 |
+| [docs/release/RC1-SIMULATION-REPORT.md](../../docs/release/RC1-SIMULATION-REPORT.md) | documentation | 286 | 2026-09-21 |
 | [docs/superpowers/plans/2026-08-23-discovery-integrity.md](../../docs/superpowers/plans/2026-08-23-discovery-integrity.md) | documentation | 65 | 2026-08-24 |
 | [docs/superpowers/plans/2026-08-23-first-action-onboarding.md](../../docs/superpowers/plans/2026-08-23-first-action-onboarding.md) | documentation | 311 | 2026-08-24 |
 | [docs/superpowers/plans/2026-08-24-robinhood-testnet-bank-rehearsal.md](../../docs/superpowers/plans/2026-08-24-robinhood-testnet-bank-rehearsal.md) | documentation | 142 | 2026-08-24 |
@@ -527,5 +535,5 @@
 | [PRODUCT.md](../../PRODUCT.md) | documentation | 50 | 2026-08-24 |
 | [README.md](../../README.md) | documentation | 171 | 2026-09-14 |
 | [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 918 | 2026-09-06 |
-| [SPEC.md](../../SPEC.md) | documentation | 756 | 2026-09-20 |
+| [SPEC.md](../../SPEC.md) | documentation | 756 | 2026-09-21 |
 | [UNISWAP-ROUTING.md](../../UNISWAP-ROUTING.md) | documentation | 37 | 2026-08-25 |

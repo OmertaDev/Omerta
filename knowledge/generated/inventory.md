@@ -1,31 +1,31 @@
 # Generated repository inventory
 
-> Source: worktree at `b6b94599d8fb`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `f5f3040cbfc5`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 2,963 |
-| Text lines | 847,946 |
-| Repository bytes inventoried | 825,957,641 |
+| Current artifacts | 3,429 |
+| Text lines | 1,001,542 |
+| Repository bytes inventoried | 924,800,666 |
 | Backend/route modules | 273 |
 | HTTP route registrations / unique routes | 800 / 800 |
 | Database tables | 369 |
 | Solidity declarations | 79 |
-| Git commits | 1,490 |
+| Git commits | 1,497 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 7,557 / 33,536 |
+| Graph nodes / edges | 8,039 / 34,636 |
 
 ## Artifact kinds
 
 | Kind | Files |
 |---|---:|
 | media-asset | 1,202 |
-| documentation | 320 |
+| artifact | 714 |
+| documentation | 328 |
 | test-suite | 267 |
-| artifact | 256 |
 | backend-module | 245 |
 | contract-project | 153 |
 | audit | 98 |
@@ -49,12 +49,17 @@
 | [omerta-contracts/x-ray/slither.json](../../omerta-contracts/x-ray/slither.json) | 64,621 | contract-project | 2026-08-25 |
 | [omerta-contracts/audits/2026-09-08-comprehensive/shared-static-triage.json](../../omerta-contracts/audits/2026-09-08-comprehensive/shared-static-triage.json) | 52,258 | contract-project | 2026-09-09 |
 | [omerta-contracts/audits/2026-09-08-comprehensive/hook-retest-static.json](../../omerta-contracts/audits/2026-09-08-comprehensive/hook-retest-static.json) | 47,392 | contract-project | 2026-09-09 |
+| [docs/release/evidence/simulation/director-population-matrix.json](../../docs/release/evidence/simulation/director-population-matrix.json) | 41,563 | artifact | 2026-09-21 |
+| [docs/release/evidence/simulation/population1000.json](../../docs/release/evidence/simulation/population1000.json) | 25,362 | artifact | 2026-09-21 |
 | [CLAUDE.md](../../CLAUDE.md) | 18,679 | documentation | 2026-09-06 |
+| [docs/release/evidence/simulation/entry500.json](../../docs/release/evidence/simulation/entry500.json) | 13,862 | artifact | 2026-09-21 |
 | [public/index.html](../../public/index.html) | 13,373 | web-surface | 2026-09-20 |
 | [omerta-contracts/audits/2026-09-08-liquidity-automation/package-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/package-manifest.json) | 10,623 | contract-project | 2026-09-09 |
+| [docs/release/evidence/security/source-and-evidence-hashes.json](../../docs/release/evidence/security/source-and-evidence-hashes.json) | 10,249 | artifact | 2026-09-21 |
 | [test/client.js](../../test/client.js) | 9,441 | test-suite | 2026-09-17 |
 | [omerta-contracts/x-ray/slither-vars-and-auth.json](../../omerta-contracts/x-ray/slither-vars-and-auth.json) | 9,374 | contract-project | 2026-08-25 |
 | [omerta-contracts/audits/2026-09-08-liquidity-automation/source-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/source-manifest.json) | 8,690 | contract-project | 2026-09-09 |
+| [docs/release/evidence/simulation/entry250.json](../../docs/release/evidence/simulation/entry250.json) | 8,112 | artifact | 2026-09-21 |
 | [.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
@@ -66,16 +71,11 @@
 | [omerta-contracts/audits/2026-09-08-comprehensive/forge-lint-triage.json](../../omerta-contracts/audits/2026-09-08-comprehensive/forge-lint-triage.json) | 6,203 | contract-project | 2026-09-09 |
 | [src/rules.tail.js](../../src/rules.tail.js) | 6,145 | backend-module | 2026-09-02 |
 | [brand/hype-flywheel-video/package-lock.json](../../brand/hype-flywheel-video/package-lock.json) | 5,901 | media-asset | 2026-09-14 |
+| [docs/release/evidence/simulation/baseline-director.json](../../docs/release/evidence/simulation/baseline-director.json) | 5,176 | artifact | 2026-09-21 |
 | [omerta-contracts/audits/2026-09-08-comprehensive/source-manifest.json](../../omerta-contracts/audits/2026-09-08-comprehensive/source-manifest.json) | 4,877 | contract-project | 2026-09-09 |
 | [omerta-contracts/audits/2026-09-08-comprehensive/source-before.json](../../omerta-contracts/audits/2026-09-08-comprehensive/source-before.json) | 4,687 | contract-project | 2026-09-09 |
+| [docs/release/evidence/simulation/entry100.json](../../docs/release/evidence/simulation/entry100.json) | 4,662 | artifact | 2026-09-21 |
 | [omerta-contracts/audits/2026-09-09-genesis-bootstrap/artifact-manifest.json](../../omerta-contracts/audits/2026-09-09-genesis-bootstrap/artifact-manifest.json) | 4,402 | contract-project | 2026-09-09 |
-| [reference-prototype-v24.jsx](../../reference-prototype-v24.jsx) | 4,235 | artifact | 2026-08-11 |
-| [test/docs.js](../../test/docs.js) | 4,205 | test-suite | 2026-09-14 |
-| [test/gates.js](../../test/gates.js) | 4,188 | test-suite | 2026-09-20 |
-| [omerta-contracts/test/AcquisitionConstellationTask3B.t.sol](../../omerta-contracts/test/AcquisitionConstellationTask3B.t.sol) | 3,743 | contract-test | 2026-08-28 |
-| [src/server.js](../../src/server.js) | 3,619 | backend-module | 2026-09-18 |
-| [test/phase2-review-regressions.js](../../test/phase2-review-regressions.js) | 3,440 | test-suite | 2026-09-07 |
-| [package-lock.json](../../package-lock.json) | 3,260 | package-config | 2026-09-07 |
 
 ## Media estate
 
