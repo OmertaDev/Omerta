@@ -80,6 +80,11 @@ deadline, and a rival-targeted retaliation after recovery. It records seeded ran
 draws, requests/results, full snapshots, checkpoints and all 55 ledger invariants.
 Application/database clocks use real time; no same-world replay claim follows.
 
+The initial native attempt at `b67c1698` failed before server startup because the
+test omitted the mandatory moderator credential. Its failed run remains retained.
+The harness now creates that local test credential alongside its JWT/market test
+configuration; it does not disable or weaken deployment preflight.
+
 Death, heirs, replacement, all other conflict authorities, full resource journals,
 complete worker intervals, 90-day lifecycles, all 225 runs, whole-policy accounting
 and production load remain open. Waiting for hospital protection is legal temporary

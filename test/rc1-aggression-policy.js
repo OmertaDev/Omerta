@@ -126,7 +126,8 @@ async function nativeExercise() {
     Object.assign(process.env, { DATABASE_URL: db.url, CORE_PROGRESSION: 'on', WORLD_GRAPH_KERNEL: 'on', COORDINATION_ENGINE: 'on',
       COORDINATION_KNOWLEDGE: 'on', COORDINATION_KNOWLEDGE_SHARING: 'on', COORDINATION_OPERATIONS: 'on',
       RATE_LIMIT: 'off', INVITE_MODE: 'off', POPULATION_OFF: 'on', SOCIAL_VERIFY_MODE: 'off', LIVING_WORLD_DIRECTOR: 'OFF',
-      JWT_SECRET: crypto.randomBytes(32).toString('hex'), MARKET_SEED: crypto.randomBytes(32).toString('hex') });
+      JWT_SECRET: crypto.randomBytes(32).toString('hex'), MARKET_SEED: crypto.randomBytes(32).toString('hex'),
+      MOD_KEY: crypto.randomBytes(32).toString('hex') });
     const [{ buildServer }, { M3 }, { runLedgerInvariants }] = await Promise.all([
       import('../src/server.js'), import('../src/rules.js'), import('../src/invariants.js')]);
     assert.equal(M3.JUMP_ENERGY, 25); assert.equal(M3.JUMP_AMMO, 5); assert.equal(M3.JUMP_MIN_HEALTH, 20); assert.equal(M3.JUMP_HOSP_MS, 180000);
