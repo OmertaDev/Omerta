@@ -36,27 +36,68 @@ try {
   await openTab(f.actors.aBoss, 'crew'); await page.locator('#crew-say').waitFor();
   await page.waitForFunction(() => typeof document.querySelector('#crew-send')?.onclick === 'function');
   await diagnostics.mark('initial-crew-settled'); await openTab(f.actors.aBoss, 'family');
-  let arrived; const pending = new Promise(resolve => { arrived = resolve; }), held = new Promise(resolve => { release = resolve; });
-  let intercepted = false;
+  let interceptNext, responses = 0;
   await page.route('**/v1/circle', async route => {
-    if (intercepted) return route.continue(); intercepted = true;
-    const response = await route.fetch(); result.heldResponse = { status: response.status(), path: '/v1/circle' }; arrived();
-    await held; await route.fulfill({ response });
+    const hold = interceptNext; interceptNext = null;
+    if (!hold) return route.continue();
+    const response = await route.fetch(), bytes = await response.body();
+    (result.heldResponses ||= []).push({ status: response.status(), path: '/v1/circle', bytes: bytes.length,
+      sha256: crypto.createHash('sha256').update(bytes).digest('hex') });
+    hold.arrived(); await hold.held; await route.fulfill({ response }); hold.delivered();
   });
-  await page.locator('[data-tab="crew"]').click(); await pending;
+  const holdNext = () => {
+    let arrived, delivered;
+    const pending = new Promise(resolve => { arrived = resolve; }), done = new Promise(resolve => { delivered = resolve; });
+    const held = new Promise(resolve => { release = resolve; });
+    interceptNext = { arrived, delivered, held }; return { pending, done };
+  };
+  const settle = async () => { await page.waitForLoadState('networkidle'); await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))); };
+  const state = (locator, prior) => locator.evaluate((node, old) => ({ sameNode: node === old, focused: document.activeElement === node,
+    value: node.value, priorConnected: old.isConnected, currentVisible: node.getBoundingClientRect().height > 0,
+    selection: [node.selectionStart, node.selectionEnd, node.selectionDirection] }), prior);
+  const first = holdNext(); await page.locator('[data-tab="crew"]').click(); await first.pending;
   await diagnostics.mark('crew-render-waiting-for-real-circle');
   const input = page.locator('#crew-say'), original = await input.elementHandle();
   await input.fill('Keep this unsent draft'); await page.setViewportSize({ width, height: 420 }); await input.focus();
+  await page.keyboard.press('Home'); await page.keyboard.down('Shift');
+  for (let i = 0; i < 4; i++) await page.keyboard.press('ArrowRight');
+  await page.keyboard.up('Shift'); result.before = await state(input, original);
   assert(await input.evaluate(node => document.activeElement === node)); await diagnostics.mark('draft-focused-before-release');
-  const finished = page.waitForResponse(response => new URL(response.url()).pathname === '/v1/crew/chat');
-  finished.catch(() => {}); release(); await finished;
-  await page.waitForLoadState('networkidle'); await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
-  result.after = await input.evaluate((node, prior) => ({ sameNode: node === prior, focused: document.activeElement === node,
-    value: node.value, priorConnected: prior.isConnected, currentVisible: node.getBoundingClientRect().height > 0 }), original);
+  release(); await first.done; await settle(); result.after = await state(input, original);
   await diagnostics.mark('after-pending-render-completed'); result.diagnostics = await diagnostics.read(); save();
   assert.equal(result.after.sameNode, true, 'Pending crew render replaced the active draft input');
   assert.equal(result.after.focused, true, 'Pending crew render lost input focus');
   assert.equal(result.after.value, 'Keep this unsent draft', 'Pending crew render lost draft text');
+  assert.deepEqual(result.after.selection, result.before.selection, 'Pending crew render changed text selection');
+  // Blur to the adjacent button using the keyboard. Deferred refresh must make
+  // fresh canonical reads, even though background-only refreshes wait on buttons.
+  page.on('response', response => { if (new URL(response.url()).pathname === '/v1/circle') responses++; });
+  const refreshed = page.waitForResponse(response => new URL(response.url()).pathname === '/v1/crew/chat'); refreshed.catch(() => {});
+  await page.keyboard.press('Tab'); await refreshed; await settle();
+  result.deferred = { freshCircleReads: responses, changedNode: !(await input.evaluate((node, old) => node === old, original)),
+    wired: await page.locator('#crew-send').evaluate(node => typeof node.onclick === 'function') };
+  assert(result.deferred.freshCircleReads > 0 && result.deferred.changedNode && result.deferred.wired, 'Focusout must finish the deferred refresh');
+  // Overlap two real entries. The newer response is applied first, then the old
+  // response arrives while focus is outside the input: only revision ownership
+  // can prevent it from overwriting the newer panel and its draft.
+  const navigate = async id => {
+    if (await page.locator('#tabs-more:not(.hidden)').count()) await page.locator('#tabs-more').click();
+    for (const group of await page.locator('#grouprail [data-group]').evaluateAll(nodes => nodes.map(node => node.dataset.group))) {
+      await page.locator(`#grouprail [data-group="${group}"]`).click();
+      if (await page.locator(`[data-tab="${id}"]`).isVisible()) { await page.locator(`[data-tab="${id}"]`).click(); break; }
+    }
+    await page.locator(`#tab-${id}.on`).waitFor();
+  };
+  await openTab(f.actors.aBoss, 'family'); const old = holdNext(); await navigate('crew'); await old.pending;
+  await navigate('family');
+  const newer = page.waitForResponse(response => new URL(response.url()).pathname === '/v1/crew/chat'); newer.catch(() => {});
+  await navigate('crew'); await newer; await page.waitForFunction(() => typeof document.querySelector('#crew-send')?.onclick === 'function');
+  const latest = await input.elementHandle(); await input.fill('Newer board draft'); await page.keyboard.press('Tab');
+  assert.equal(await input.evaluate(node => document.activeElement === node), false, 'Stale response control must not rely on focused-input deferral');
+  release(); await old.done; await settle(); result.stale = await state(input, latest);
+  assert.equal(result.stale.sameNode, true, 'Older response replaced the newer crew panel');
+  assert.equal(result.stale.value, 'Newer board draft', 'Older response lost the newer draft');
+  result.checks = ['focused-node-retained', 'draft-retained', 'selection-retained', 'fresh-render-on-focusout', 'older-response-cannot-overwrite-newer-entry'];
   assert.deepEqual(result.errors, []); result.status = 'PASS_SCOPED';
 } catch (error) { result.status = 'FAIL'; result.error = error.stack; process.exitCode = 1; }
 finally {

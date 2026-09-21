@@ -20,7 +20,7 @@ export function browserControls({ pageFor, width, result, save }) {
       const box = await tip.boundingBox(); await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2);
       await tip.waitFor({ state: 'hidden' });
     }
-    let geometry;
+    let geometry, waitedForToast = false;
     for (let attempt = 0; attempt < 12; attempt++) {
       await locator.waitFor({ state: 'visible' });
       await locator.evaluate((element) => element.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' }));
@@ -30,11 +30,20 @@ export function browserControls({ pageFor, width, result, save }) {
       geometry = await locator.evaluate((element) => {
       const box = element.getBoundingClientRect(), x = box.x + box.width / 2, y = box.y + box.height / 2;
       const hit = document.elementFromPoint(x, y);
+      const toast = hit?.closest('#toast.show');
       return { x: box.x, y: box.y, width: box.width, height: box.height, viewportHeight: innerHeight,
         hit: hit === element || element.contains(hit), hitTag: hit?.tagName, hitId: hit?.id, scrollWidth: document.documentElement.scrollWidth,
+        toastObstruction: toast ? (toast.querySelector('.toast-act') ? 'actionable' : 'finite') : null,
         dialogs: [...document.querySelectorAll('.modal-bg[data-managed-dialog]')].filter((node) => node.getBoundingClientRect().height > 0).length };
       });
       if (geometry.width >= 44 && geometry.height >= 44 && geometry.hit) break;
+      if (!geometry.hit && geometry.toastObstruction === 'finite' && !waitedForToast) {
+        // A simple runtime toast auto-hides after 3400ms. Observe its actual
+        // disappearance once; actionable/permanent obstructions still fail.
+        waitedForToast = true;
+        (result.reachabilityDiagnostics ||= []).push({ event: 'rc1-finite-toast-obstruction', width }); save();
+        await page.locator('#toast.show').waitFor({ state: 'hidden', timeout: 5000 });
+      }
     }
     result.controls.push({ label, ...geometry }); save();
     assert(geometry.hit, `${label}: another control or overlay covers the hit area: ${geometry.hitTag}#${geometry.hitId}`);
