@@ -243,7 +243,11 @@ export async function createProofRecorder({ directory, source, configuration, ru
   };
 }
 
-export async function verifyArtifactIndex(directory, record) {
+export async function verifyArtifactIndex(directory, record, { historyLimits } = {}) {
+  if (historyLimits) {
+    assert.deepEqual(Object.keys(historyLimits), ['maximumLineBytes']);
+    assert(Number.isSafeInteger(historyLimits.maximumLineBytes) && historyLimits.maximumLineBytes > 0);
+  }
   assert(Array.isArray(record.artifacts) && record.artifacts.length > 0, 'Missing artifact index');
   assert.equal(new Set(record.artifacts.map((artifact) => artifact.path)).size, record.artifacts.length, 'Duplicate artifact index entry');
   const realRoot = await fs.realpath(directory);
@@ -275,8 +279,15 @@ export async function verifyArtifactIndex(directory, record) {
   assert.equal(record.matrixQualifying, false, 'Scoped harness cannot qualify a matrix cell');
   if (compressed) {
     const artifact = record.artifacts.find(item => item.path === 'history.jsonl.gz');
-    const verified = await verifyGzipHistory(path.join(directory, artifact.path), artifact, record.historyStorage, { canonicalJson, sha256 });
+    const storage = historyLimits ? { ...record.historyStorage,
+      maximumLineBytes: Math.min(historyLimits.maximumLineBytes, record.historyStorage.maximumLineBytes) } : record.historyStorage;
+    const verified = await verifyGzipHistory(path.join(directory, artifact.path), artifact, storage, { canonicalJson, sha256 });
     assert.deepEqual(verified, record.historyVerification, 'History verification summary mismatch');
-  } else await verifyHistoryStream(createReadStream(path.join(directory, 'history.jsonl')), { canonicalJson, sha256 });
+  } else {
+    const artifact = record.artifacts.find(item => item.path === 'history.jsonl');
+    if (historyLimits) assert(artifact && Number.isSafeInteger(artifact.bytes) && artifact.bytes > 0, 'Logical history is not indexed');
+    await verifyHistoryStream(createReadStream(path.join(directory, 'history.jsonl')), { canonicalJson, sha256,
+      ...(historyLimits ? { limits: { ...historyLimits, maximumDecodedBytes: artifact.bytes } } : {}) });
+  }
   return true;
 }

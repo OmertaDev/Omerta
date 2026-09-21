@@ -222,6 +222,7 @@ export async function createGzipProofRecorder(options, api) {
       try {
         await fs.writeFile(path.join(directory, 'capture-failure.json'), `${JSON.stringify({ format: 1, kind: 'rc1-incomplete-capture',
           status: 'INCOMPLETE', runId, source, sourceFailure, historyStorage: storage, historyStorageSha256,
+          configuration, configurationSha256: sha256(canonicalJson(configuration)),
           error: { message: captureFailure.message, code: captureFailure.code || null }, authorityFailure,
           attemptedSequence, acknowledgedSequence: sequence, acknowledgedFinalHash: previousHash,
           outstandingInvocations: [...outstanding], ...writer.diagnostic(), physical: physical || null,

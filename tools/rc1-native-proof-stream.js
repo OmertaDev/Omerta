@@ -15,9 +15,10 @@ export async function hashEvidenceFile(file, maximumBytes = Infinity) {
 // Accept byte chunks so tests can split within UTF-8 code points, JSON syntax,
 // CRLF, and event boundaries. Split only LF, matching the former whole-file
 // trim().split('\n') parser; a bare CR is not a new event delimiter.
-export async function verifyHistoryStream(chunks, { canonicalJson, sha256 }) {
+export async function verifyHistoryStream(chunks, { canonicalJson, sha256, limits }) {
   const decoder = new StringDecoder('utf8'), unfinished = new Set(), invoked = new Set();
   let tail = '', count = 0, previousHash = null, pendingWhitespace = false;
+  let boundedBytes = 0, boundedLineBytes = 0;
   const line = text => {
     if (!text.trim()) { if (count) pendingWhitespace = true; return; }
     assert(!pendingWhitespace, 'Interior empty history line');
@@ -36,7 +37,19 @@ export async function verifyHistoryStream(chunks, { canonicalJson, sha256 }) {
     while ((end = tail.indexOf('\n', start)) !== -1) { line(tail.slice(start, end)); start = end + 1; }
     tail = tail.slice(start);
   };
-  for await (const chunk of chunks) { assert(Buffer.isBuffer(chunk), 'History requires exact byte chunks'); accept(decoder.write(chunk)); }
+  for await (const chunk of chunks) {
+    assert(Buffer.isBuffer(chunk), 'History requires exact byte chunks');
+    if (limits) {
+      boundedBytes += chunk.length; assert(boundedBytes <= limits.maximumDecodedBytes, 'History decoded-byte bound exceeded');
+      let offset = 0;
+      while (offset < chunk.length) {
+        const lf = chunk.indexOf(10, offset), end = lf < 0 ? chunk.length : lf + 1;
+        boundedLineBytes += end - offset; assert(boundedLineBytes <= limits.maximumLineBytes, 'History line-byte bound exceeded');
+        if (lf >= 0) boundedLineBytes = 0; offset = end;
+      }
+    }
+    accept(decoder.write(chunk));
+  }
   accept(decoder.end()); if (tail) line(tail);
   assert(count > 0, 'Empty history'); assert.equal(unfinished.size, 0, 'Unfinished authority invocations');
   return { events: count, invocations: invoked.size, finalHash: previousHash };

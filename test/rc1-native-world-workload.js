@@ -21,11 +21,13 @@ import { createMysteryPolicy, MYSTERY_POLICY_CONTRACT } from '../tools/rc1-myste
 import { createRunGuardrails } from '../tools/rc1-native-run-guardrails.js';
 import { createAllianceWorldAdapter, ALLIANCE_WORLD_CONTRACT } from '../tools/rc1-alliance-world-adapter.js';
 import { assertAllianceContinuation, assertAllianceApplicationBootstrap, compareAllianceStates } from '../tools/rc1-alliance-continuation.js';
+import { parseWorldHistoryStorage, assertWorldHistoryStorage, retainWorldFailure } from '../tools/rc1-world-history-storage.js';
 
 const argument = (name) => process.argv.find((arg) => arg.startsWith(`--${name}=`))?.slice(name.length + 3);
 assert(process.argv.includes('--postgres'), 'Real PostgreSQL is required');
 const output = argument('output') || process.env.RC1_WORLD_OUTPUT; assert(output, 'Provide a new restricted output directory');
 const observeResources = process.argv.includes('--observe-resources');
+const historyStorage = parseWorldHistoryStorage(process.argv.slice(2));
 const hours = Number(argument('hours') || 2160), population = Number(argument('population') || 25);
 assert(Number.isSafeInteger(hours) && hours > 0 && hours <= 2161);
 assert([25, 100, 250, 500, 1000].includes(population));
@@ -65,6 +67,7 @@ async function readPrior(directory) {
   assert.equal(run.source.revision, source.revision, 'Actor replay and continuation require exactly the same source');
   assert.equal(run.configuration.population, population); assert.equal(run.configuration.seed, seed);
   assert.equal(run.configuration.actorPolicy, actorPolicy, 'Actor policy differs');
+  assertWorldHistoryStorage(run, historyStorage);
   return run;
 }
 const replayRun = replay ? await readPrior(replay) : null, parentRun = resume ? await readPrior(resume) : null;
@@ -105,6 +108,7 @@ const epoch = resume ? parentPolicy.epoch : Math.ceil(Date.parse('2026-09-20T12:
 const start = resume ? parentPolicy.logicalAt : epoch, finish = start + hours * 3600000;
 const expectedDormant = [{ label: 'RWA health', code: 'health_registry_unavailable' }];
 const configuration = { scenario: 'quiet_world', population, seed, hours, sourcePins: WORKER_SOURCE_PINS,
+  ...(historyStorage ? { historyStorage } : {}),
   actorPolicy, mysteryPolicyContract: actorPolicy.includes('mystery') ? MYSTERY_POLICY_CONTRACT : null,
   priorFailedRun: priorFailure ? { directory: priorFailure.directory, source: priorFailure.source,
     runSha256: priorFailure.runSha256, status: priorFailure.status, error: priorFailure.error,
@@ -166,7 +170,7 @@ if (replay) {
   if (allianceEnabled) assert.deepEqual(replayRun.configuration.continuation, configuration.continuation);
 }
 const proof = await createProofRecorder({ directory: output, source, configuration,
-  runId: path.basename(output), seed, scenarioId, population });
+  runId: path.basename(output), seed, scenarioId, population, ...(historyStorage ? { historyStorage } : {}) });
 const guardrails = guardLimits ? createRunGuardrails({ directory: output, ...guardLimits }) : null;
 const guardBoundary = async label => { if (guardrails) await proof.record({ kind: 'operational-guard-check', ...await guardrails.check(label) }); };
 const runtime = installSerialRuntime(seed, configuration.start); let at = start;
@@ -646,7 +650,9 @@ try {
   await proof.record({ kind: 'assertions', ...result });
 } catch (error) {
   result = { status: 'FAIL', hours, population, metrics, error: error.message, invocation: failureInvocation, logicalAt: at };
-  await proof.record({ kind: 'failure', invocation: failureInvocation, logicalAt: at, message: error.message, stack: error.stack });
+  await retainWorldFailure(() => proof.record({ kind: 'failure', invocation: failureInvocation, logicalAt: at, message: error.message, stack: error.stack }), { historyStorage, result });
+  if (historyStorage && result.captureErrors?.length && commitObserver)
+    await retainWorldFailure(async () => commitObserver.disarm(), { historyStorage, result });
   await proof.artifact('failure-worker-schedule.json', controller.diagnostic());
   await proof.artifact('failure-random-tape.json', { draws: runtime.tape });
   await proof.artifact('failure-actor-tape.json', actors.diagnostic());
@@ -656,7 +662,7 @@ try {
   if (commitObserver) await proof.artifact('failure-resource-observer.json', { capturedAt: 'First failure, before diagnostic state capture', ...resourceSummary, diagnostic: commitObserver.diagnostic() });
   if (pool) {
     try { await proof.snapshot(pool, 'first-failure'); await proof.checkpoint(pool, 'first-failure', url); }
-    catch (captureError) { await proof.record({ kind: 'failure-capture-error', message: captureError.message, stack: captureError.stack }); }
+    catch (captureError) { await retainWorldFailure(() => proof.record({ kind: 'failure-capture-error', message: captureError.message, stack: captureError.stack }), { historyStorage, result }); }
   }
   process.exitCode = 1;
 } finally {
@@ -671,7 +677,10 @@ try {
   }, async () => { if (app) await app.close(); }, () => controller.close(), () => diagnosticPool.end(), () => base.end(),
     async () => proof.record({ kind: 'database-cleanup', ...await database.close() })]) {
     try { await close(); }
-    catch (error) { await proof.record({ kind: 'cleanup-failure', message: error.message }); result.status = 'FAIL'; result.cleanupFailure = error.message; process.exitCode = 1; }
+    catch (error) {
+      result.status = 'FAIL'; result.cleanupFailure = error.message; process.exitCode = 1;
+      await retainWorldFailure(() => proof.record({ kind: 'cleanup-failure', message: error.message }), { historyStorage, result });
+    }
   }
   seam.restore(); runtime.restore();
   for (const [key, value] of Object.entries(previousEnv)) { if (value === undefined) delete process.env[key]; else process.env[key] = value; }

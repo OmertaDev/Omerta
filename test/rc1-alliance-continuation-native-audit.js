@@ -2,12 +2,12 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
-import { createReadStream } from 'node:fs';
-import readline from 'node:readline';
 import path from 'node:path';
 import { sourceIdentity, verifyArtifactIndex, canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
 import { assertAllianceContinuation, compareAllianceStates } from '../tools/rc1-alliance-continuation.js';
 import { compareActorReplay, actorValueHash } from '../tools/rc1-native-actor-replay.js';
+import { readVerifiedHistoryLines } from '../tools/rc1-native-history-reader.js';
+import { assertWorldHistoryStorage } from '../tools/rc1-world-history-storage.js';
 
 const arg = name => process.argv.find(a => a.startsWith('--' + name + '='))?.slice(name.length + 3);
 const directories = [arg('reference'), arg('continued'), arg('replay')], output = arg('output');
@@ -20,8 +20,9 @@ for (const directory of directories) {
   runs.push(run); identities.push({ directory: path.resolve(directory), runSha256: sha256(bytes), verified });
 }
 const [reference, continued, replay] = runs, metadata = await read(directories[0], 'alliance-hour24-continuation.json');
+for (const run of runs) assertWorldHistoryStorage(run, reference.historyStorage);
 const digest = crypto.createHash('sha256'); let resourceCount = 0, prefixSha256 = null;
-for await (const line of readline.createInterface({ input: createReadStream(path.join(directories[0], 'history.jsonl')), crlfDelay: Infinity })) {
+for await (const line of readVerifiedHistoryLines(directories[0], reference)) {
   if (!line) continue; const event = JSON.parse(line);
   if (event.kind !== 'resource-commit-boundary') continue;
   digest.update(canonicalJson({ event: event.event, journal: event.journal }) + '\n'); resourceCount++;
