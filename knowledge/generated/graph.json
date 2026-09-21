@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "56b8ca2f186e770f7a9217243e388b1d5fc6dd21",
+  "sourceRevision": "bd02ab4cd35e06cb5d9f7059f0766ce86fa0acf1",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,14 +43,14 @@
     ]
   },
   "census": {
-    "nodes": 8445,
-    "edges": 36379,
+    "nodes": 8510,
+    "edges": 36607,
     "byNodeType": {
-      "Artifact": 3473,
-      "Command": 155,
-      "Commit": 1689,
+      "Artifact": 3497,
+      "Command": 162,
+      "Commit": 1712,
       "Contract": 79,
-      "Document": 643,
+      "Document": 647,
       "Domain": 13,
       "ExternalDependency": 27,
       "HistoricalArtifact": 343,
@@ -60,25 +60,25 @@
       "Route": 802,
       "Subsystem": 8,
       "Table": 369,
-      "TestSuite": 437,
+      "TestSuite": 444,
       "Workflow": 6
     },
     "byEdgeType": {
-      "BELONGS_TO": 2614,
-      "CHANGED": 13656,
-      "CONTAINS": 3494,
-      "DECLARES": 155,
+      "BELONGS_TO": 2625,
+      "CHANGED": 13722,
+      "CONTAINS": 3518,
+      "DECLARES": 162,
       "DEFINED_IN": 1250,
       "DEPENDS_ON": 65,
-      "EXECUTES": 520,
+      "EXECUTES": 529,
       "HANDLED_BY": 708,
-      "HAS_COMMIT": 1689,
+      "HAS_COMMIT": 1712,
       "IMPLEMENTS": 124,
-      "IMPORTS": 3328,
+      "IMPORTS": 3380,
       "INHERITS": 17,
-      "REFERENCES": 4193,
-      "REPRESENTS": 1360,
-      "TESTS": 1268,
+      "REFERENCES": 4202,
+      "REPRESENTS": 1371,
+      "TESTS": 1284,
       "TRACKS": 126,
       "USES_TABLE": 1812
     }
@@ -7636,20 +7636,20 @@
       "path": ".github/workflows/rc1-recovery.yml",
       "kind": "workflow",
       "extension": ".yml",
-      "bytes": 20953,
-      "lines": 566,
-      "version": "381facd761d299fe",
+      "bytes": 25477,
+      "lines": 690,
+      "version": "cc64e8c453b59720",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/rc1-recovery.yml",
           "line": 1,
-          "version": "381facd761d299fe"
+          "version": "cc64e8c453b59720"
         }
       ],
-      "lastChangedAt": "2026-09-21T09:25:40.000Z",
+      "lastChangedAt": "2026-09-21T09:54:48.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "56b8ca2f186e770f7a9217243e388b1d5fc6dd21"
+      "lastChangedCommit": "45b6f8de97cdd2eb17f88ade602bf96611700d4b"
     },
     {
       "key": "Artifact:.gitignore",
@@ -27961,6 +27961,29 @@
       "lastChangedCommit": "dee7593a66b955d677656afab4516cb68edb918d"
     },
     {
+      "key": "Artifact:docs/rc1-alliance-world.md",
+      "type": "Artifact",
+      "id": "docs/rc1-alliance-world.md",
+      "label": "rc1-alliance-world.md",
+      "path": "docs/rc1-alliance-world.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 12470,
+      "lines": 60,
+      "version": "9da3e74713b8f6e1",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/rc1-alliance-world.md",
+          "line": 1,
+          "version": "9da3e74713b8f6e1"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T09:29:51.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "d98dcf441476a234107716e6bf9083f3e1e52cb0"
+    },
+    {
       "key": "Artifact:docs/rc1-coordinated-alliance.md",
       "type": "Artifact",
       "id": "docs/rc1-coordinated-alliance.md",
@@ -34746,6 +34769,52 @@
       "lastChangedCommit": "8f11a4445b67eff150fdacff252750e0269d95e4"
     },
     {
+      "key": "Artifact:docs/release/readiness-work/family-omr-journal.md",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/family-omr-journal.md",
+      "label": "family-omr-journal.md",
+      "path": "docs/release/readiness-work/family-omr-journal.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 9115,
+      "lines": 141,
+      "version": "29422ed084c348de",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/family-omr-journal.md",
+          "line": 1,
+          "version": "29422ed084c348de"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T09:44:01.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "8af76d9615011623e33adeb02292fc0d2b8e4311"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/family-omr-summary.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/family-omr-summary.json",
+      "label": "family-omr-summary.json",
+      "path": "docs/release/readiness-work/family-omr-summary.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 15140,
+      "lines": 499,
+      "version": "861c1d324a1476d4",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/family-omr-summary.json",
+          "line": 1,
+          "version": "861c1d324a1476d4"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T09:54:48.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "45b6f8de97cdd2eb17f88ade602bf96611700d4b"
+    },
+    {
       "key": "Artifact:docs/release/readiness-work/family-player-policy.md",
       "type": "Artifact",
       "id": "docs/release/readiness-work/family-player-policy.md",
@@ -34769,6 +34838,29 @@
       "lastChangedCommit": "f6d07b151ee0bf0e68eddcf9832dcc31b371d2d9"
     },
     {
+      "key": "Artifact:docs/release/readiness-work/family-yield-repair.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/family-yield-repair.json",
+      "label": "family-yield-repair.json",
+      "path": "docs/release/readiness-work/family-yield-repair.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 1991,
+      "lines": 38,
+      "version": "fe5873fa0fdc7df1",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/family-yield-repair.json",
+          "line": 1,
+          "version": "fe5873fa0fdc7df1"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T09:54:48.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "45b6f8de97cdd2eb17f88ade602bf96611700d4b"
+    },
+    {
       "key": "Artifact:docs/release/readiness-work/gate-registry.json",
       "type": "Artifact",
       "id": "docs/release/readiness-work/gate-registry.json",
@@ -34776,20 +34868,20 @@
       "path": "docs/release/readiness-work/gate-registry.json",
       "kind": "artifact",
       "extension": ".json",
-      "bytes": 30276,
-      "lines": 1199,
-      "version": "76ffa16673500ae6",
+      "bytes": 33528,
+      "lines": 1302,
+      "version": "f6bfc71a2fd074ae",
       "text": true,
       "provenance": [
         {
           "file": "docs/release/readiness-work/gate-registry.json",
           "line": 1,
-          "version": "76ffa16673500ae6"
+          "version": "f6bfc71a2fd074ae"
         }
       ],
-      "lastChangedAt": "2026-09-21T09:25:40.000Z",
+      "lastChangedAt": "2026-09-21T09:54:48.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "56b8ca2f186e770f7a9217243e388b1d5fc6dd21"
+      "lastChangedCommit": "45b6f8de97cdd2eb17f88ade602bf96611700d4b"
     },
     {
       "key": "Artifact:docs/release/readiness-work/golden-browser-regressions.json",
@@ -34928,6 +35020,29 @@
       "lastChangedAt": "2026-09-21T06:08:42.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "4da67e5fafe17d540998fdb8a2c8872001ec5ca9"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/harness-board-detachment.md",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/harness-board-detachment.md",
+      "label": "harness-board-detachment.md",
+      "path": "docs/release/readiness-work/harness-board-detachment.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 6413,
+      "lines": 51,
+      "version": "90c29f6252165bb5",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/harness-board-detachment.md",
+          "line": 1,
+          "version": "90c29f6252165bb5"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T09:56:10.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "528d952178db4702a7c7dc0fcf32e0a85449cb44"
     },
     {
       "key": "Artifact:docs/release/readiness-work/harness-car-journal-artifact-index.json",
@@ -35344,6 +35459,75 @@
       "lastChangedCommit": "a1afa0c7b2f51df566ee5ed4317833766231adcf"
     },
     {
+      "key": "Artifact:docs/release/readiness-work/harness-resource-pressure-artifact-index.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/harness-resource-pressure-artifact-index.json",
+      "label": "harness-resource-pressure-artifact-index.json",
+      "path": "docs/release/readiness-work/harness-resource-pressure-artifact-index.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 61709,
+      "lines": 1763,
+      "version": "031109fb7c43a1a5",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/harness-resource-pressure-artifact-index.json",
+          "line": 1,
+          "version": "031109fb7c43a1a5"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T09:42:22.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "96e5a3d855f133580f7e4b10b1da093b5fbd38d0"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/harness-resource-pressure-results.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/harness-resource-pressure-results.json",
+      "label": "harness-resource-pressure-results.json",
+      "path": "docs/release/readiness-work/harness-resource-pressure-results.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 8732,
+      "lines": 233,
+      "version": "1bb57450d7fbef0f",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/harness-resource-pressure-results.json",
+          "line": 1,
+          "version": "1bb57450d7fbef0f"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T09:42:22.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "96e5a3d855f133580f7e4b10b1da093b5fbd38d0"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/harness-resource-pressure.md",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/harness-resource-pressure.md",
+      "label": "harness-resource-pressure.md",
+      "path": "docs/release/readiness-work/harness-resource-pressure.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 5306,
+      "lines": 34,
+      "version": "82b6dece4f9c8866",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/harness-resource-pressure.md",
+          "line": 1,
+          "version": "82b6dece4f9c8866"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T09:38:52.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "15b8abba112269cba3d2775dd42e928865fe73b5"
+    },
+    {
       "key": "Artifact:docs/release/readiness-work/harness-results.json",
       "type": "Artifact",
       "id": "docs/release/readiness-work/harness-results.json",
@@ -35528,6 +35712,52 @@
       "lastChangedCommit": "da35b64360e4b48d4612046da0b72d0e14e02623"
     },
     {
+      "key": "Artifact:docs/release/readiness-work/hosted-b0c85c11-ci-results.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/hosted-b0c85c11-ci-results.json",
+      "label": "hosted-b0c85c11-ci-results.json",
+      "path": "docs/release/readiness-work/hosted-b0c85c11-ci-results.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 17133,
+      "lines": 528,
+      "version": "1081b8919a39476a",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/hosted-b0c85c11-ci-results.json",
+          "line": 1,
+          "version": "1081b8919a39476a"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T09:42:40.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a95801f943c98509b216d6d451187d2f678dfc09"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/hosted-b0c85c11-recovery-results.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/hosted-b0c85c11-recovery-results.json",
+      "label": "hosted-b0c85c11-recovery-results.json",
+      "path": "docs/release/readiness-work/hosted-b0c85c11-recovery-results.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 37377,
+      "lines": 1287,
+      "version": "7a419eb928e6076e",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/hosted-b0c85c11-recovery-results.json",
+          "line": 1,
+          "version": "7a419eb928e6076e"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T09:57:01.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "f6eaefe5d92e1ee0bc603d076443e87f857ae7ba"
+    },
+    {
       "key": "Artifact:docs/release/readiness-work/hosted-fcaa6076-results.json",
       "type": "Artifact",
       "id": "docs/release/readiness-work/hosted-fcaa6076-results.json",
@@ -35710,6 +35940,29 @@
       "lastChangedAt": "2026-09-21T07:51:16.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "fcbc21676655f914d47855a3bddbf0d637bc5dcc"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/integrated-f8b9b0d1-results.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/integrated-f8b9b0d1-results.json",
+      "label": "integrated-f8b9b0d1-results.json",
+      "path": "docs/release/readiness-work/integrated-f8b9b0d1-results.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 29409,
+      "lines": 1068,
+      "version": "d7e408ceedcf66e5",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/integrated-f8b9b0d1-results.json",
+          "line": 1,
+          "version": "d7e408ceedcf66e5"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T09:42:40.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a95801f943c98509b216d6d451187d2f678dfc09"
     },
     {
       "key": "Artifact:docs/release/readiness-work/integrated-fcaa6076-results.json",
@@ -35926,20 +36179,20 @@
       "path": "docs/release/readiness-work/open-proofs.json",
       "kind": "artifact",
       "extension": ".json",
-      "bytes": 10318,
+      "bytes": 11582,
       "lines": 121,
-      "version": "75cbb74c9e6ad3c8",
+      "version": "d67a49c488a7f264",
       "text": true,
       "provenance": [
         {
           "file": "docs/release/readiness-work/open-proofs.json",
           "line": 1,
-          "version": "75cbb74c9e6ad3c8"
+          "version": "d67a49c488a7f264"
         }
       ],
-      "lastChangedAt": "2026-09-21T09:25:40.000Z",
+      "lastChangedAt": "2026-09-21T09:59:11.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "56b8ca2f186e770f7a9217243e388b1d5fc6dd21"
+      "lastChangedCommit": "bd02ab4cd35e06cb5d9f7059f0766ce86fa0acf1"
     },
     {
       "key": "Artifact:docs/release/readiness-work/quiet-world-failed-run.json",
@@ -36011,6 +36264,29 @@
       "lastChangedCommit": "01597771ce77932b7386ac48afd913f406598ada"
     },
     {
+      "key": "Artifact:docs/release/readiness-work/render-config-ui-20260921-0933.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/render-config-ui-20260921-0933.json",
+      "label": "render-config-ui-20260921-0933.json",
+      "path": "docs/release/readiness-work/render-config-ui-20260921-0933.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 5435,
+      "lines": 156,
+      "version": "e54a2645b30d58d9",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/render-config-ui-20260921-0933.json",
+          "line": 1,
+          "version": "e54a2645b30d58d9"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T09:42:40.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a95801f943c98509b216d6d451187d2f678dfc09"
+    },
+    {
       "key": "Artifact:docs/release/readiness-work/render-envelope-observation.json",
       "type": "Artifact",
       "id": "docs/release/readiness-work/render-envelope-observation.json",
@@ -36032,6 +36308,29 @@
       "lastChangedAt": "2026-09-21T09:08:00.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "da35b64360e4b48d4612046da0b72d0e14e02623"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/render-family-backing-observation.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/render-family-backing-observation.json",
+      "label": "render-family-backing-observation.json",
+      "path": "docs/release/readiness-work/render-family-backing-observation.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 799,
+      "lines": 18,
+      "version": "cc9fab950fe344aa",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/render-family-backing-observation.json",
+          "line": 1,
+          "version": "cc9fab950fe344aa"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T09:42:40.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a95801f943c98509b216d6d451187d2f678dfc09"
     },
     {
       "key": "Artifact:docs/release/readiness-work/render-observation.json",
@@ -36685,20 +36984,20 @@
       "path": "docs/release/readiness-work/scenario-manifest.json",
       "kind": "artifact",
       "extension": ".json",
-      "bytes": 33737,
-      "lines": 1454,
-      "version": "a432ee3b43b8e16c",
+      "bytes": 34305,
+      "lines": 1458,
+      "version": "b5d8ad091413ea78",
       "text": true,
       "provenance": [
         {
           "file": "docs/release/readiness-work/scenario-manifest.json",
           "line": 1,
-          "version": "a432ee3b43b8e16c"
+          "version": "b5d8ad091413ea78"
         }
       ],
-      "lastChangedAt": "2026-09-21T08:58:15.000Z",
+      "lastChangedAt": "2026-09-21T09:51:58.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "6252c27155b44309de6a664f8d2eff4d2bb9f689"
+      "lastChangedCommit": "83557998651e7ab0d6ebdf927cd84dd42b3fdc94"
     },
     {
       "key": "Artifact:docs/release/readiness-work/season-journal-summary.json",
@@ -36892,20 +37191,20 @@
       "path": "docs/release/readiness-work/tooling-repairs.json",
       "kind": "artifact",
       "extension": ".json",
-      "bytes": 31099,
-      "lines": 577,
-      "version": "90df3b40183bef17",
+      "bytes": 33388,
+      "lines": 592,
+      "version": "e482f760e111d039",
       "text": true,
       "provenance": [
         {
           "file": "docs/release/readiness-work/tooling-repairs.json",
           "line": 1,
-          "version": "90df3b40183bef17"
+          "version": "e482f760e111d039"
         }
       ],
-      "lastChangedAt": "2026-09-21T09:25:40.000Z",
+      "lastChangedAt": "2026-09-21T09:59:11.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "56b8ca2f186e770f7a9217243e388b1d5fc6dd21"
+      "lastChangedCommit": "bd02ab4cd35e06cb5d9f7059f0766ce86fa0acf1"
     },
     {
       "key": "Artifact:docs/release/readiness-work/turf-contention-summary.json",
@@ -47788,20 +48087,20 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 26471,
-      "lines": 184,
-      "version": "b6676a53025ac92e",
+      "bytes": 27485,
+      "lines": 191,
+      "version": "88b1f1ecbd6147c6",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "b6676a53025ac92e"
+          "version": "88b1f1ecbd6147c6"
         }
       ],
-      "lastChangedAt": "2026-09-21T09:25:40.000Z",
+      "lastChangedAt": "2026-09-21T09:54:48.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "56b8ca2f186e770f7a9217243e388b1d5fc6dd21"
+      "lastChangedCommit": "45b6f8de97cdd2eb17f88ade602bf96611700d4b"
     },
     {
       "key": "Artifact:Procfile",
@@ -62349,18 +62648,18 @@
       "extension": ".md",
       "bytes": 56651,
       "lines": 756,
-      "version": "970aa1a18ec529a4",
+      "version": "b9e22dc27a25659d",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "970aa1a18ec529a4"
+          "version": "b9e22dc27a25659d"
         }
       ],
-      "lastChangedAt": "2026-09-21T09:25:40.000Z",
+      "lastChangedAt": "2026-09-21T09:59:11.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "56b8ca2f186e770f7a9217243e388b1d5fc6dd21"
+      "lastChangedCommit": "bd02ab4cd35e06cb5d9f7059f0766ce86fa0acf1"
     },
     {
       "key": "Artifact:src/access.js",
@@ -64785,20 +65084,20 @@
       "path": "src/exchange.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 27080,
-      "lines": 400,
-      "version": "8135160a29f8a895",
+      "bytes": 28364,
+      "lines": 416,
+      "version": "ab28cdc4d722fce1",
       "text": true,
       "provenance": [
         {
           "file": "src/exchange.js",
           "line": 1,
-          "version": "8135160a29f8a895"
+          "version": "ab28cdc4d722fce1"
         }
       ],
-      "lastChangedAt": "2026-09-21T08:20:39.000Z",
+      "lastChangedAt": "2026-09-21T09:44:01.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b6dd6b002958f068b556e826eb0510a44dcfae12"
+      "lastChangedCommit": "64fcb2f6d585ae63c3e6bc4d15ccfb215dade04c"
     },
     {
       "key": "Artifact:src/explore.js",
@@ -71839,6 +72138,29 @@
       "lastChangedCommit": "701781c583f561c649c2df5fa494afe6326ce88b"
     },
     {
+      "key": "Artifact:test/lib/rc1-board-diagnostics.js",
+      "type": "Artifact",
+      "id": "test/lib/rc1-board-diagnostics.js",
+      "label": "rc1-board-diagnostics.js",
+      "path": "test/lib/rc1-board-diagnostics.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 1109,
+      "lines": 18,
+      "version": "4191f3fcae70a1f4",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/lib/rc1-board-diagnostics.js",
+          "line": 1,
+          "version": "4191f3fcae70a1f4"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T09:46:02.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "38f364d0b67813a22e13e97feabcc35636694a7a"
+    },
+    {
       "key": "Artifact:test/lib/rc1-browser-controls.js",
       "type": "Artifact",
       "id": "test/lib/rc1-browser-controls.js",
@@ -71846,20 +72168,20 @@
       "path": "test/lib/rc1-browser-controls.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 14708,
-      "lines": 209,
-      "version": "4694af472fe746d5",
+      "bytes": 17093,
+      "lines": 238,
+      "version": "7e8b3b0e0a2612b4",
       "text": true,
       "provenance": [
         {
           "file": "test/lib/rc1-browser-controls.js",
           "line": 1,
-          "version": "4694af472fe746d5"
+          "version": "7e8b3b0e0a2612b4"
         }
       ],
-      "lastChangedAt": "2026-09-21T09:22:53.000Z",
+      "lastChangedAt": "2026-09-21T09:51:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "dbbbb881b711f340f83d3750c2176c24e53c1b4b"
+      "lastChangedCommit": "c8c8a34af95a5f210c8e55338253ca7778de144f"
     },
     {
       "key": "Artifact:test/lib/rc1-focus-diagnostics.js",
@@ -73449,6 +73771,52 @@
       "lastChangedCommit": "0f334e7eeecd8193eb51815d7a69266c051df195"
     },
     {
+      "key": "Artifact:test/rc1-alliance-response-barrier.js",
+      "type": "Artifact",
+      "id": "test/rc1-alliance-response-barrier.js",
+      "label": "rc1-alliance-response-barrier.js",
+      "path": "test/rc1-alliance-response-barrier.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 11374,
+      "lines": 129,
+      "version": "150d59d64e5d21d7",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/rc1-alliance-response-barrier.js",
+          "line": 1,
+          "version": "150d59d64e5d21d7"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T09:27:03.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "113cec238ffb034d64057d746bba210c192ddd4e"
+    },
+    {
+      "key": "Artifact:test/rc1-alliance-world-adapter.js",
+      "type": "Artifact",
+      "id": "test/rc1-alliance-world-adapter.js",
+      "label": "rc1-alliance-world-adapter.js",
+      "path": "test/rc1-alliance-world-adapter.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 3909,
+      "lines": 41,
+      "version": "9102b5b1cf8821b3",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/rc1-alliance-world-adapter.js",
+          "line": 1,
+          "version": "9102b5b1cf8821b3"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T08:50:40.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "ec9c79137d323406662147b66a390e419d122dae"
+    },
+    {
       "key": "Artifact:test/rc1-browser-board-refresh.js",
       "type": "Artifact",
       "id": "test/rc1-browser-board-refresh.js",
@@ -73456,20 +73824,20 @@
       "path": "test/rc1-browser-board-refresh.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 6203,
-      "lines": 90,
-      "version": "c96ea3fbd01b0b12",
+      "bytes": 11541,
+      "lines": 161,
+      "version": "233be42eb5a1dee2",
       "text": true,
       "provenance": [
         {
           "file": "test/rc1-browser-board-refresh.js",
           "line": 1,
-          "version": "c96ea3fbd01b0b12"
+          "version": "233be42eb5a1dee2"
         }
       ],
-      "lastChangedAt": "2026-09-21T09:22:53.000Z",
+      "lastChangedAt": "2026-09-21T09:50:28.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "dbbbb881b711f340f83d3750c2176c24e53c1b4b"
+      "lastChangedCommit": "ab48503eddb19172fa62d3c96172cae8a32d5907"
     },
     {
       "key": "Artifact:test/rc1-browser-controls.js",
@@ -74277,6 +74645,52 @@
       "lastChangedCommit": "199f0476fee65d11e18c6ef92ff59d76a7440602"
     },
     {
+      "key": "Artifact:test/rc1-native-family-omr.js",
+      "type": "Artifact",
+      "id": "test/rc1-native-family-omr.js",
+      "label": "rc1-native-family-omr.js",
+      "path": "test/rc1-native-family-omr.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 24284,
+      "lines": 223,
+      "version": "07b84612b29a4ace",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/rc1-native-family-omr.js",
+          "line": 1,
+          "version": "07b84612b29a4ace"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T09:54:48.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "45b6f8de97cdd2eb17f88ade602bf96611700d4b"
+    },
+    {
+      "key": "Artifact:test/rc1-native-family-yield-precision.js",
+      "type": "Artifact",
+      "id": "test/rc1-native-family-yield-precision.js",
+      "label": "rc1-native-family-yield-precision.js",
+      "path": "test/rc1-native-family-yield-precision.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 10843,
+      "lines": 129,
+      "version": "42c8ebeffcc0e0bc",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/rc1-native-family-yield-precision.js",
+          "line": 1,
+          "version": "42c8ebeffcc0e0bc"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T09:54:48.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "45b6f8de97cdd2eb17f88ade602bf96611700d4b"
+    },
+    {
       "key": "Artifact:test/rc1-native-loan-lifecycles.js",
       "type": "Artifact",
       "id": "test/rc1-native-loan-lifecycles.js",
@@ -74507,6 +74921,29 @@
       "lastChangedCommit": "3fcc267c10e0e1cc49ff4ac6e2fd5d52a24887c6"
     },
     {
+      "key": "Artifact:test/rc1-native-resource-pressure.js",
+      "type": "Artifact",
+      "id": "test/rc1-native-resource-pressure.js",
+      "label": "rc1-native-resource-pressure.js",
+      "path": "test/rc1-native-resource-pressure.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 21934,
+      "lines": 207,
+      "version": "f9471ff6dae7debc",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/rc1-native-resource-pressure.js",
+          "line": 1,
+          "version": "f9471ff6dae7debc"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T09:38:52.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "15b8abba112269cba3d2775dd42e928865fe73b5"
+    },
+    {
       "key": "Artifact:test/rc1-native-run-guardrails.js",
       "type": "Artifact",
       "id": "test/rc1-native-run-guardrails.js",
@@ -74629,20 +75066,20 @@
       "path": "test/rc1-native-world-workload.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 38118,
-      "lines": 461,
-      "version": "f1bd0ccaa98bd022",
+      "bytes": 48563,
+      "lines": 597,
+      "version": "1d19db9a6a837829",
       "text": true,
       "provenance": [
         {
           "file": "test/rc1-native-world-workload.js",
           "line": 1,
-          "version": "f1bd0ccaa98bd022"
+          "version": "1d19db9a6a837829"
         }
       ],
-      "lastChangedAt": "2026-09-21T06:31:24.000Z",
+      "lastChangedAt": "2026-09-21T09:08:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "5d62ed34033efbd4fa524b2a6bf1f0edb8701c71"
+      "lastChangedCommit": "9886cc523114e3d0443dbe0dde62f0cd3fdee74b"
     },
     {
       "key": "Artifact:test/rc1-observability.js",
@@ -74804,6 +75241,29 @@
       "lastChangedAt": "2026-09-21T02:42:27.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "0adc0b3011a9fd5057e6cf4d3b40333f1538ce35"
+    },
+    {
+      "key": "Artifact:test/rc1-resource-pressure-policy.js",
+      "type": "Artifact",
+      "id": "test/rc1-resource-pressure-policy.js",
+      "label": "rc1-resource-pressure-policy.js",
+      "path": "test/rc1-resource-pressure-policy.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 2924,
+      "lines": 29,
+      "version": "573d4938d43e061e",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/rc1-resource-pressure-policy.js",
+          "line": 1,
+          "version": "573d4938d43e061e"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T09:38:52.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "15b8abba112269cba3d2775dd42e928865fe73b5"
     },
     {
       "key": "Artifact:test/rc1-reviewer-authority-postgres.js",
@@ -76055,20 +76515,20 @@
       "path": "test/tokenomics.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 36363,
-      "lines": 527,
-      "version": "ca5e06fc2b6c0ab9",
+      "bytes": 37689,
+      "lines": 543,
+      "version": "0abe784897616c2d",
       "text": true,
       "provenance": [
         {
           "file": "test/tokenomics.js",
           "line": 1,
-          "version": "ca5e06fc2b6c0ab9"
+          "version": "0abe784897616c2d"
         }
       ],
-      "lastChangedAt": "2026-08-31T05:07:29.000Z",
+      "lastChangedAt": "2026-09-21T09:44:01.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "ac8e339e9bb3dfd0ea354444579162542a670bcf"
+      "lastChangedCommit": "8af76d9615011623e33adeb02292fc0d2b8e4311"
     },
     {
       "key": "Artifact:test/treasury.js",
@@ -78348,6 +78808,29 @@
       "lastChangedCommit": "0f334e7eeecd8193eb51815d7a69266c051df195"
     },
     {
+      "key": "Artifact:tools/rc1-alliance-world-adapter.js",
+      "type": "Artifact",
+      "id": "tools/rc1-alliance-world-adapter.js",
+      "label": "rc1-alliance-world-adapter.js",
+      "path": "tools/rc1-alliance-world-adapter.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 13987,
+      "lines": 174,
+      "version": "26e0510979c0bd80",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/rc1-alliance-world-adapter.js",
+          "line": 1,
+          "version": "26e0510979c0bd80"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T08:50:40.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "ec9c79137d323406662147b66a390e419d122dae"
+    },
+    {
       "key": "Artifact:tools/rc1-authority-inventory.js",
       "type": "Artifact",
       "id": "tools/rc1-authority-inventory.js",
@@ -78507,6 +78990,29 @@
       "lastChangedAt": "2026-09-21T08:09:33.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "25f9900110d2464ad14d11be1967c6792d0ccbaa"
+    },
+    {
+      "key": "Artifact:tools/rc1-family-omr-journal.js",
+      "type": "Artifact",
+      "id": "tools/rc1-family-omr-journal.js",
+      "label": "rc1-family-omr-journal.js",
+      "path": "tools/rc1-family-omr-journal.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 16015,
+      "lines": 168,
+      "version": "45f3999d87d1659a",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/rc1-family-omr-journal.js",
+          "line": 1,
+          "version": "45f3999d87d1659a"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T09:26:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "69b0e4b241b525ec423b28aaecdf9daee5b20499"
     },
     {
       "key": "Artifact:tools/rc1-family-policy.js",
@@ -79160,20 +79666,20 @@
       "path": "tools/rc1-resource-inventory.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 13230,
-      "lines": 95,
-      "version": "bb5cebb341c854c2",
+      "bytes": 15950,
+      "lines": 127,
+      "version": "d8b4f11df2bbd9f4",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-resource-inventory.js",
           "line": 1,
-          "version": "bb5cebb341c854c2"
+          "version": "d8b4f11df2bbd9f4"
         }
       ],
-      "lastChangedAt": "2026-09-21T04:43:35.000Z",
+      "lastChangedAt": "2026-09-21T09:59:11.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "f674cb7c429727fea70058bb263618318563b0eb"
+      "lastChangedCommit": "bd02ab4cd35e06cb5d9f7059f0766ce86fa0acf1"
     },
     {
       "key": "Artifact:tools/rc1-resource-journal.js",
@@ -79197,6 +79703,52 @@
       "lastChangedAt": "2026-09-21T02:42:27.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "0adc0b3011a9fd5057e6cf4d3b40333f1538ce35"
+    },
+    {
+      "key": "Artifact:tools/rc1-resource-pressure-journal.js",
+      "type": "Artifact",
+      "id": "tools/rc1-resource-pressure-journal.js",
+      "label": "rc1-resource-pressure-journal.js",
+      "path": "tools/rc1-resource-pressure-journal.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 7452,
+      "lines": 80,
+      "version": "ea0bea771d0c0a51",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/rc1-resource-pressure-journal.js",
+          "line": 1,
+          "version": "ea0bea771d0c0a51"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T09:38:52.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "15b8abba112269cba3d2775dd42e928865fe73b5"
+    },
+    {
+      "key": "Artifact:tools/rc1-resource-pressure-policy.js",
+      "type": "Artifact",
+      "id": "tools/rc1-resource-pressure-policy.js",
+      "label": "rc1-resource-pressure-policy.js",
+      "path": "tools/rc1-resource-pressure-policy.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 9366,
+      "lines": 111,
+      "version": "dc5b640004161272",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/rc1-resource-pressure-policy.js",
+          "line": 1,
+          "version": "dc5b640004161272"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T09:38:52.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "15b8abba112269cba3d2775dd42e928865fe73b5"
     },
     {
       "key": "Artifact:tools/rc1-resource-proof.js",
@@ -81141,6 +81693,45 @@
       ]
     },
     {
+      "key": "Command:npm:test:rc1:alliance-membership-response:postgres",
+      "type": "Command",
+      "id": "npm:test:rc1:alliance-membership-response:postgres",
+      "label": "npm run test:rc1:alliance-membership-response:postgres",
+      "command": "node test/rc1-alliance-response-barrier.js --postgres --membership",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "key": "Command:npm:test:rc1:alliance-response:postgres",
+      "type": "Command",
+      "id": "npm:test:rc1:alliance-response:postgres",
+      "label": "npm run test:rc1:alliance-response:postgres",
+      "command": "node test/rc1-alliance-response-barrier.js --postgres",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "key": "Command:npm:test:rc1:alliance-world:postgres",
+      "type": "Command",
+      "id": "npm:test:rc1:alliance-world:postgres",
+      "label": "npm run test:rc1:alliance-world:postgres",
+      "command": "node test/rc1-native-world-workload.js --postgres --hours=48 --population=25 --policy=coordinated_alliance --observe-resources --max-wall-ms=7200000 --max-output-bytes=8589934592 --min-free-bytes=2147483648",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
       "key": "Command:npm:test:rc1:alliance:postgres",
       "type": "Command",
       "id": "npm:test:rc1:alliance:postgres",
@@ -81310,6 +81901,32 @@
       ]
     },
     {
+      "key": "Command:npm:test:rc1:family-omr:postgres",
+      "type": "Command",
+      "id": "npm:test:rc1:family-omr:postgres",
+      "label": "npm run test:rc1:family-omr:postgres",
+      "command": "node test/rc1-native-family-omr.js --postgres",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "key": "Command:npm:test:rc1:family-yield-precision:postgres",
+      "type": "Command",
+      "id": "npm:test:rc1:family-yield-precision:postgres",
+      "label": "npm run test:rc1:family-yield-precision:postgres",
+      "command": "node test/rc1-native-family-yield-precision.js --postgres",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
       "key": "Command:npm:test:rc1:family:postgres",
       "type": "Command",
       "id": "npm:test:rc1:family:postgres",
@@ -81340,7 +81957,7 @@
       "type": "Command",
       "id": "npm:test:rc1:harness",
       "label": "npm run test:rc1:harness",
-      "command": "node test/rc1-native-proof.js && node test/rc1-native-worker-schedule.js && node test/rc1-native-query-tape.js && node test/rc1-native-player-policy.js && node test/rc1-native-actor-replay.js && node test/rc1-world-diagnostics.js && node test/rc1-native-commit-observer.js && node test/rc1-world-resource-observer.js && node test/rc1-browser-controls.js && node test/rc1-knowledge-diagnostics.js && node test/rc1-mystery-policies.js && node test/rc1-aggression-policy.js && node test/rc1-loan-lifecycle-journal.js && node test/rc1-churn-policy.js && node test/rc1-capital-lifecycle-journal.js && node test/rc1-browser-receipt.js && node test/rc1-season-journal.js && node test/rc1-market-policy.js && node test/rc1-native-run-guardrails.js && node test/rc1-law-policy.js && node test/rc1-native-query-order.js && node test/rc1-browser-toast-controls.js && node test/rc1-family-policy.js && node test/rc1-family-cash-ammo-journal.js && node test/rc1-omr-journal.js && node test/rc1-omr-exchange.js && node test/rc1-alliance-policy.js && node test/rc1-known-command-blockers.js && node test/rc1-turf-policy.js && node test/rc1-native-failure-reducer.js && node test/rc1-native-proof-stream.js && node test/rc1-browser-board-refresh.js && node test/rc1-car-journal.js",
+      "command": "node test/rc1-native-proof.js && node test/rc1-native-worker-schedule.js && node test/rc1-native-query-tape.js && node test/rc1-native-player-policy.js && node test/rc1-native-actor-replay.js && node test/rc1-world-diagnostics.js && node test/rc1-native-commit-observer.js && node test/rc1-world-resource-observer.js && node test/rc1-browser-controls.js && node test/rc1-knowledge-diagnostics.js && node test/rc1-mystery-policies.js && node test/rc1-aggression-policy.js && node test/rc1-loan-lifecycle-journal.js && node test/rc1-churn-policy.js && node test/rc1-capital-lifecycle-journal.js && node test/rc1-browser-receipt.js && node test/rc1-season-journal.js && node test/rc1-market-policy.js && node test/rc1-native-run-guardrails.js && node test/rc1-law-policy.js && node test/rc1-native-query-order.js && node test/rc1-browser-toast-controls.js && node test/rc1-family-policy.js && node test/rc1-family-cash-ammo-journal.js && node test/rc1-omr-journal.js && node test/rc1-omr-exchange.js && node test/rc1-alliance-policy.js && node test/rc1-known-command-blockers.js && node test/rc1-turf-policy.js && node test/rc1-native-failure-reducer.js && node test/rc1-native-proof-stream.js && node test/rc1-browser-board-refresh.js && node test/rc1-car-journal.js && node test/rc1-alliance-world-adapter.js && node test/rc1-resource-pressure-policy.js",
       "provenance": [
         {
           "file": "package.json",
@@ -81575,6 +82192,32 @@
       "id": "npm:test:rc1:query-order:postgres",
       "label": "npm run test:rc1:query-order:postgres",
       "command": "node test/rc1-native-query-order.js --postgres",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "key": "Command:npm:test:rc1:resource-abundance:postgres",
+      "type": "Command",
+      "id": "npm:test:rc1:resource-abundance:postgres",
+      "label": "npm run test:rc1:resource-abundance:postgres",
+      "command": "node test/rc1-native-resource-pressure.js --postgres --scenario=resource_abundance",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "key": "Command:npm:test:rc1:resource-scarcity:postgres",
+      "type": "Command",
+      "id": "npm:test:rc1:resource-scarcity:postgres",
+      "label": "npm run test:rc1:resource-scarcity:postgres",
+      "command": "node test/rc1-native-resource-pressure.js --postgres --scenario=resource_scarcity",
       "provenance": [
         {
           "file": "package.json",
@@ -82097,6 +82740,22 @@
         {
           "commit": "00fa0d7275489cfa6694889a6f7920d004d25cac",
           "url": "https://github.com/OmertaDev/Omerta/commit/00fa0d7275489cfa6694889a6f7920d004d25cac"
+        }
+      ]
+    },
+    {
+      "key": "Commit:00fe57a77dde340be7fd9c46554a8eb6c0829dec",
+      "type": "Commit",
+      "id": "00fe57a77dde340be7fd9c46554a8eb6c0829dec",
+      "label": "Await original HTTP response hooks at observed serial boundaries",
+      "title": "Await original HTTP response hooks at observed serial boundaries",
+      "date": "2026-09-21T08:56:00.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/00fe57a77dde340be7fd9c46554a8eb6c0829dec",
+      "provenance": [
+        {
+          "commit": "00fe57a77dde340be7fd9c46554a8eb6c0829dec",
+          "url": "https://github.com/OmertaDev/Omerta/commit/00fe57a77dde340be7fd9c46554a8eb6c0829dec"
         }
       ]
     },
@@ -83525,6 +84184,22 @@
       ]
     },
     {
+      "key": "Commit:113cec238ffb034d64057d746bba210c192ddd4e",
+      "type": "Commit",
+      "id": "113cec238ffb034d64057d746bba210c192ddd4e",
+      "label": "Prove completion barrier for the retained membership-query failure",
+      "title": "Prove completion barrier for the retained membership-query failure",
+      "date": "2026-09-21T09:27:03.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/113cec238ffb034d64057d746bba210c192ddd4e",
+      "provenance": [
+        {
+          "commit": "113cec238ffb034d64057d746bba210c192ddd4e",
+          "url": "https://github.com/OmertaDev/Omerta/commit/113cec238ffb034d64057d746bba210c192ddd4e"
+        }
+      ]
+    },
+    {
       "key": "Commit:1153c378e4aaa1e073967e27cfbf202ac36ae54f",
       "type": "Commit",
       "id": "1153c378e4aaa1e073967e27cfbf202ac36ae54f",
@@ -84033,6 +84708,22 @@
         {
           "commit": "15b42048e929dd52f242a0b76ac93c4621fb7cd7",
           "url": "https://github.com/OmertaDev/Omerta/commit/15b42048e929dd52f242a0b76ac93c4621fb7cd7"
+        }
+      ]
+    },
+    {
+      "key": "Commit:15b8abba112269cba3d2775dd42e928865fe73b5",
+      "type": "Commit",
+      "id": "15b8abba112269cba3d2775dd42e928865fe73b5",
+      "label": "test(rc1): add bounded native resource pressure policies and escrow journal",
+      "title": "test(rc1): add bounded native resource pressure policies and escrow journal",
+      "date": "2026-09-21T09:38:52.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/15b8abba112269cba3d2775dd42e928865fe73b5",
+      "provenance": [
+        {
+          "commit": "15b8abba112269cba3d2775dd42e928865fe73b5",
+          "url": "https://github.com/OmertaDev/Omerta/commit/15b8abba112269cba3d2775dd42e928865fe73b5"
         }
       ]
     },
@@ -88037,6 +88728,22 @@
       ]
     },
     {
+      "key": "Commit:38f364d0b67813a22e13e97feabcc35636694a7a",
+      "type": "Commit",
+      "id": "38f364d0b67813a22e13e97feabcc35636694a7a",
+      "label": "test(rc1): trace board reads and DOM lifecycle on selected-node detachment",
+      "title": "test(rc1): trace board reads and DOM lifecycle on selected-node detachment",
+      "date": "2026-09-21T09:46:02.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/38f364d0b67813a22e13e97feabcc35636694a7a",
+      "provenance": [
+        {
+          "commit": "38f364d0b67813a22e13e97feabcc35636694a7a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/38f364d0b67813a22e13e97feabcc35636694a7a"
+        }
+      ]
+    },
+    {
       "key": "Commit:3934f609ab746d8b1806e1a72f1d9212e518eb72",
       "type": "Commit",
       "id": "3934f609ab746d8b1806e1a72f1d9212e518eb72",
@@ -89909,6 +90616,22 @@
       ]
     },
     {
+      "key": "Commit:45b6f8de97cdd2eb17f88ade602bf96611700d4b",
+      "type": "Commit",
+      "id": "45b6f8de97cdd2eb17f88ade602bf96611700d4b",
+      "label": "Retain exact Family yield repair and wire native precision gates",
+      "title": "Retain exact Family yield repair and wire native precision gates",
+      "date": "2026-09-21T09:54:48.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/45b6f8de97cdd2eb17f88ade602bf96611700d4b",
+      "provenance": [
+        {
+          "commit": "45b6f8de97cdd2eb17f88ade602bf96611700d4b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/45b6f8de97cdd2eb17f88ade602bf96611700d4b"
+        }
+      ]
+    },
+    {
       "key": "Commit:45b7cad2d93144433b1bf27f33dd41f7f62ba2af",
       "type": "Commit",
       "id": "45b7cad2d93144433b1bf27f33dd41f7f62ba2af",
@@ -90533,6 +91256,22 @@
       ]
     },
     {
+      "key": "Commit:4bc4c85b0488a2a685c12f7f2cc0dd7095400b71",
+      "type": "Commit",
+      "id": "4bc4c85b0488a2a685c12f7f2cc0dd7095400b71",
+      "label": "test(rc1): reproduce command detachment across canonical refresh queue windows",
+      "title": "test(rc1): reproduce command detachment across canonical refresh queue windows",
+      "date": "2026-09-21T09:49:47.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/4bc4c85b0488a2a685c12f7f2cc0dd7095400b71",
+      "provenance": [
+        {
+          "commit": "4bc4c85b0488a2a685c12f7f2cc0dd7095400b71",
+          "url": "https://github.com/OmertaDev/Omerta/commit/4bc4c85b0488a2a685c12f7f2cc0dd7095400b71"
+        }
+      ]
+    },
+    {
       "key": "Commit:4c01e7538b2c0efbd0d43b609742e1193c80c486",
       "type": "Commit",
       "id": "4c01e7538b2c0efbd0d43b609742e1193c80c486",
@@ -91109,6 +91848,22 @@
       ]
     },
     {
+      "key": "Commit:528d952178db4702a7c7dc0fcf32e0a85449cb44",
+      "type": "Commit",
+      "id": "528d952178db4702a7c7dc0fcf32e0a85449cb44",
+      "label": "docs(rc1): retain board detachment reproduction and focused native retest",
+      "title": "docs(rc1): retain board detachment reproduction and focused native retest",
+      "date": "2026-09-21T09:56:10.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/528d952178db4702a7c7dc0fcf32e0a85449cb44",
+      "provenance": [
+        {
+          "commit": "528d952178db4702a7c7dc0fcf32e0a85449cb44",
+          "url": "https://github.com/OmertaDev/Omerta/commit/528d952178db4702a7c7dc0fcf32e0a85449cb44"
+        }
+      ]
+    },
+    {
       "key": "Commit:52a05f7fd7ee3cff31daed731c9c3039d287afe8",
       "type": "Commit",
       "id": "52a05f7fd7ee3cff31daed731c9c3039d287afe8",
@@ -91409,6 +92164,22 @@
         {
           "commit": "5539c0897045d3865b42e0d484f3184ede525bf1",
           "url": "https://github.com/OmertaDev/Omerta/commit/5539c0897045d3865b42e0d484f3184ede525bf1"
+        }
+      ]
+    },
+    {
+      "key": "Commit:5567db3ced59085f628a252a065316f5f9f4c945",
+      "type": "Commit",
+      "id": "5567db3ced59085f628a252a065316f5f9f4c945",
+      "label": "test(rc1): compare native Family standing as exact integers",
+      "title": "test(rc1): compare native Family standing as exact integers",
+      "date": "2026-09-21T09:27:32.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/5567db3ced59085f628a252a065316f5f9f4c945",
+      "provenance": [
+        {
+          "commit": "5567db3ced59085f628a252a065316f5f9f4c945",
+          "url": "https://github.com/OmertaDev/Omerta/commit/5567db3ced59085f628a252a065316f5f9f4c945"
         }
       ]
     },
@@ -93109,6 +93880,22 @@
       ]
     },
     {
+      "key": "Commit:64fcb2f6d585ae63c3e6bc4d15ccfb215dade04c",
+      "type": "Commit",
+      "id": "64fcb2f6d585ae63c3e6bc4d15ccfb215dade04c",
+      "label": "Fix Family yield payouts against exact NUMERIC backing",
+      "title": "Fix Family yield payouts against exact NUMERIC backing",
+      "date": "2026-09-21T09:44:01.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/64fcb2f6d585ae63c3e6bc4d15ccfb215dade04c",
+      "provenance": [
+        {
+          "commit": "64fcb2f6d585ae63c3e6bc4d15ccfb215dade04c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/64fcb2f6d585ae63c3e6bc4d15ccfb215dade04c"
+        }
+      ]
+    },
+    {
       "key": "Commit:65b283debfa4be7bd3b927688882cd13215a0517",
       "type": "Commit",
       "id": "65b283debfa4be7bd3b927688882cd13215a0517",
@@ -93505,6 +94292,22 @@
         {
           "commit": "6958056bef545f8eb13eb29be5162b31ee229815",
           "url": "https://github.com/OmertaDev/Omerta/commit/6958056bef545f8eb13eb29be5162b31ee229815"
+        }
+      ]
+    },
+    {
+      "key": "Commit:69b0e4b241b525ec423b28aaecdf9daee5b20499",
+      "type": "Commit",
+      "id": "69b0e4b241b525ec423b28aaecdf9daee5b20499",
+      "label": "test(rc1): journal native Family OMR custody and exact yield backing",
+      "title": "test(rc1): journal native Family OMR custody and exact yield backing",
+      "date": "2026-09-21T09:26:08.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/69b0e4b241b525ec423b28aaecdf9daee5b20499",
+      "provenance": [
+        {
+          "commit": "69b0e4b241b525ec423b28aaecdf9daee5b20499",
+          "url": "https://github.com/OmertaDev/Omerta/commit/69b0e4b241b525ec423b28aaecdf9daee5b20499"
         }
       ]
     },
@@ -96389,6 +97192,22 @@
       ]
     },
     {
+      "key": "Commit:83557998651e7ab0d6ebdf927cd84dd42b3fdc94",
+      "type": "Commit",
+      "id": "83557998651e7ab0d6ebdf927cd84dd42b3fdc94",
+      "label": "Wire bounded resource pressure and alliance replay gates",
+      "title": "Wire bounded resource pressure and alliance replay gates",
+      "date": "2026-09-21T09:51:58.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/83557998651e7ab0d6ebdf927cd84dd42b3fdc94",
+      "provenance": [
+        {
+          "commit": "83557998651e7ab0d6ebdf927cd84dd42b3fdc94",
+          "url": "https://github.com/OmertaDev/Omerta/commit/83557998651e7ab0d6ebdf927cd84dd42b3fdc94"
+        }
+      ]
+    },
+    {
       "key": "Commit:8357d6d6cdcfe1650e88f79d91913072d3ff0adb",
       "type": "Commit",
       "id": "8357d6d6cdcfe1650e88f79d91913072d3ff0adb",
@@ -97121,6 +97940,22 @@
         {
           "commit": "8aeed7ab6d710a78028aa019195d149428ce4415",
           "url": "https://github.com/OmertaDev/Omerta/commit/8aeed7ab6d710a78028aa019195d149428ce4415"
+        }
+      ]
+    },
+    {
+      "key": "Commit:8af76d9615011623e33adeb02292fc0d2b8e4311",
+      "type": "Commit",
+      "id": "8af76d9615011623e33adeb02292fc0d2b8e4311",
+      "label": "Prove Family yield precision and preserve fixture dust",
+      "title": "Prove Family yield precision and preserve fixture dust",
+      "date": "2026-09-21T09:44:01.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/8af76d9615011623e33adeb02292fc0d2b8e4311",
+      "provenance": [
+        {
+          "commit": "8af76d9615011623e33adeb02292fc0d2b8e4311",
+          "url": "https://github.com/OmertaDev/Omerta/commit/8af76d9615011623e33adeb02292fc0d2b8e4311"
         }
       ]
     },
@@ -98485,6 +99320,22 @@
       ]
     },
     {
+      "key": "Commit:96e5a3d855f133580f7e4b10b1da093b5fbd38d0",
+      "type": "Commit",
+      "id": "96e5a3d855f133580f7e4b10b1da093b5fbd38d0",
+      "label": "docs(rc1): retain scoped resource pressure native results and hashes",
+      "title": "docs(rc1): retain scoped resource pressure native results and hashes",
+      "date": "2026-09-21T09:42:22.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/96e5a3d855f133580f7e4b10b1da093b5fbd38d0",
+      "provenance": [
+        {
+          "commit": "96e5a3d855f133580f7e4b10b1da093b5fbd38d0",
+          "url": "https://github.com/OmertaDev/Omerta/commit/96e5a3d855f133580f7e4b10b1da093b5fbd38d0"
+        }
+      ]
+    },
+    {
       "key": "Commit:96ec2122d44a8ec2d7535d1c09d89506a31e08bf",
       "type": "Commit",
       "id": "96ec2122d44a8ec2d7535d1c09d89506a31e08bf",
@@ -98657,6 +99508,22 @@
         {
           "commit": "987b6bfc853af86eb175e3eb43183004dbcf1f5e",
           "url": "https://github.com/OmertaDev/Omerta/commit/987b6bfc853af86eb175e3eb43183004dbcf1f5e"
+        }
+      ]
+    },
+    {
+      "key": "Commit:9886cc523114e3d0443dbe0dde62f0cd3fdee74b",
+      "type": "Commit",
+      "id": "9886cc523114e3d0443dbe0dde62f0cd3fdee74b",
+      "label": "Add causal control for original HTTP lifecycle completion",
+      "title": "Add causal control for original HTTP lifecycle completion",
+      "date": "2026-09-21T09:08:40.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9886cc523114e3d0443dbe0dde62f0cd3fdee74b",
+      "provenance": [
+        {
+          "commit": "9886cc523114e3d0443dbe0dde62f0cd3fdee74b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9886cc523114e3d0443dbe0dde62f0cd3fdee74b"
         }
       ]
     },
@@ -100165,6 +101032,22 @@
       ]
     },
     {
+      "key": "Commit:a7750c58f6042023a20c4c3be17de20ebcc2b4da",
+      "type": "Commit",
+      "id": "a7750c58f6042023a20c4c3be17de20ebcc2b4da",
+      "label": "test(rc1): scope expected Family yield injection to its active trigger",
+      "title": "test(rc1): scope expected Family yield injection to its active trigger",
+      "date": "2026-09-21T09:29:13.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a7750c58f6042023a20c4c3be17de20ebcc2b4da",
+      "provenance": [
+        {
+          "commit": "a7750c58f6042023a20c4c3be17de20ebcc2b4da",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a7750c58f6042023a20c4c3be17de20ebcc2b4da"
+        }
+      ]
+    },
+    {
       "key": "Commit:a784a5275cf7fb2488d465183c075ab2a666b3bf",
       "type": "Commit",
       "id": "a784a5275cf7fb2488d465183c075ab2a666b3bf",
@@ -100533,6 +101416,22 @@
       ]
     },
     {
+      "key": "Commit:a95801f943c98509b216d6d451187d2f678dfc09",
+      "type": "Commit",
+      "id": "a95801f943c98509b216d6d451187d2f678dfc09",
+      "label": "docs(rc1): retain failed golden freeze and observed Render configuration",
+      "title": "docs(rc1): retain failed golden freeze and observed Render configuration",
+      "date": "2026-09-21T09:42:40.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a95801f943c98509b216d6d451187d2f678dfc09",
+      "provenance": [
+        {
+          "commit": "a95801f943c98509b216d6d451187d2f678dfc09",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a95801f943c98509b216d6d451187d2f678dfc09"
+        }
+      ]
+    },
+    {
       "key": "Commit:a9b74a32b3d75a52e0ea61cdd994cd7c6fb95d83",
       "type": "Commit",
       "id": "a9b74a32b3d75a52e0ea61cdd994cd7c6fb95d83",
@@ -100673,6 +101572,22 @@
         {
           "commit": "ab154d1cf1a1d8e59867205ef14eedda41d81720",
           "url": "https://github.com/OmertaDev/Omerta/commit/ab154d1cf1a1d8e59867205ef14eedda41d81720"
+        }
+      ]
+    },
+    {
+      "key": "Commit:ab48503eddb19172fa62d3c96172cae8a32d5907",
+      "type": "Commit",
+      "id": "ab48503eddb19172fa62d3c96172cae8a32d5907",
+      "label": "test(rc1): await the controlled refresh request before asserting server receipt",
+      "title": "test(rc1): await the controlled refresh request before asserting server receipt",
+      "date": "2026-09-21T09:50:28.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/ab48503eddb19172fa62d3c96172cae8a32d5907",
+      "provenance": [
+        {
+          "commit": "ab48503eddb19172fa62d3c96172cae8a32d5907",
+          "url": "https://github.com/OmertaDev/Omerta/commit/ab48503eddb19172fa62d3c96172cae8a32d5907"
         }
       ]
     },
@@ -102661,6 +103576,22 @@
       ]
     },
     {
+      "key": "Commit:bd02ab4cd35e06cb5d9f7059f0766ce86fa0acf1",
+      "type": "Commit",
+      "id": "bd02ab4cd35e06cb5d9f7059f0766ce86fa0acf1",
+      "label": "Pin scoped resource evidence and refined browser refresh repair",
+      "title": "Pin scoped resource evidence and refined browser refresh repair",
+      "date": "2026-09-21T09:59:11.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/bd02ab4cd35e06cb5d9f7059f0766ce86fa0acf1",
+      "provenance": [
+        {
+          "commit": "bd02ab4cd35e06cb5d9f7059f0766ce86fa0acf1",
+          "url": "https://github.com/OmertaDev/Omerta/commit/bd02ab4cd35e06cb5d9f7059f0766ce86fa0acf1"
+        }
+      ]
+    },
+    {
       "key": "Commit:bd453ff1fac607c5a4d9d1140ab44825d60942b3",
       "type": "Commit",
       "id": "bd453ff1fac607c5a4d9d1140ab44825d60942b3",
@@ -103745,6 +104676,22 @@
         {
           "commit": "c8b15666eeb134e4948c9be1b877623cfd52423e",
           "url": "https://github.com/OmertaDev/Omerta/commit/c8b15666eeb134e4948c9be1b877623cfd52423e"
+        }
+      ]
+    },
+    {
+      "key": "Commit:c8c8a34af95a5f210c8e55338253ca7778de144f",
+      "type": "Commit",
+      "id": "c8c8a34af95a5f210c8e55338253ca7778de144f",
+      "label": "test(rc1): recheck observed board reads after awaited node connectivity",
+      "title": "test(rc1): recheck observed board reads after awaited node connectivity",
+      "date": "2026-09-21T09:51:42.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/c8c8a34af95a5f210c8e55338253ca7778de144f",
+      "provenance": [
+        {
+          "commit": "c8c8a34af95a5f210c8e55338253ca7778de144f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/c8c8a34af95a5f210c8e55338253ca7778de144f"
         }
       ]
     },
@@ -105313,6 +106260,22 @@
         {
           "commit": "d98bc7cbe9e9ad3c790042e2b4dfe78ca9f4e96f",
           "url": "https://github.com/OmertaDev/Omerta/commit/d98bc7cbe9e9ad3c790042e2b4dfe78ca9f4e96f"
+        }
+      ]
+    },
+    {
+      "key": "Commit:d98dcf441476a234107716e6bf9083f3e1e52cb0",
+      "type": "Commit",
+      "id": "d98dcf441476a234107716e6bf9083f3e1e52cb0",
+      "label": "Record exact alliance world replay and retained tooling failures",
+      "title": "Record exact alliance world replay and retained tooling failures",
+      "date": "2026-09-21T09:29:51.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/d98dcf441476a234107716e6bf9083f3e1e52cb0",
+      "provenance": [
+        {
+          "commit": "d98dcf441476a234107716e6bf9083f3e1e52cb0",
+          "url": "https://github.com/OmertaDev/Omerta/commit/d98dcf441476a234107716e6bf9083f3e1e52cb0"
         }
       ]
     },
@@ -107077,6 +108040,22 @@
       ]
     },
     {
+      "key": "Commit:ec9c79137d323406662147b66a390e419d122dae",
+      "type": "Commit",
+      "id": "ec9c79137d323406662147b66a390e419d122dae",
+      "label": "Add actor-authorized alliance schedule to native world runner",
+      "title": "Add actor-authorized alliance schedule to native world runner",
+      "date": "2026-09-21T08:50:40.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/ec9c79137d323406662147b66a390e419d122dae",
+      "provenance": [
+        {
+          "commit": "ec9c79137d323406662147b66a390e419d122dae",
+          "url": "https://github.com/OmertaDev/Omerta/commit/ec9c79137d323406662147b66a390e419d122dae"
+        }
+      ]
+    },
+    {
       "key": "Commit:ecf6a1eed9ef5c5c4a18ca82eaa0a3d958c4930a",
       "type": "Commit",
       "id": "ecf6a1eed9ef5c5c4a18ca82eaa0a3d958c4930a",
@@ -108133,6 +109112,22 @@
       ]
     },
     {
+      "key": "Commit:f6eaefe5d92e1ee0bc603d076443e87f857ae7ba",
+      "type": "Commit",
+      "id": "f6eaefe5d92e1ee0bc603d076443e87f857ae7ba",
+      "label": "Retain completed b0 hosted recovery failure and passing lane boundaries",
+      "title": "Retain completed b0 hosted recovery failure and passing lane boundaries",
+      "date": "2026-09-21T09:57:01.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f6eaefe5d92e1ee0bc603d076443e87f857ae7ba",
+      "provenance": [
+        {
+          "commit": "f6eaefe5d92e1ee0bc603d076443e87f857ae7ba",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f6eaefe5d92e1ee0bc603d076443e87f857ae7ba"
+        }
+      ]
+    },
+    {
       "key": "Commit:f6f45aec3f028a5a8e053f2878ed3143f2be3f88",
       "type": "Commit",
       "id": "f6f45aec3f028a5a8e053f2878ed3143f2be3f88",
@@ -108289,6 +109284,22 @@
         {
           "commit": "f87a2199c6639e994d59ad1827accc8b3f48b955",
           "url": "https://github.com/OmertaDev/Omerta/commit/f87a2199c6639e994d59ad1827accc8b3f48b955"
+        }
+      ]
+    },
+    {
+      "key": "Commit:f8b9b0d19629abc3f8875ee533d80dd424d5f9bd",
+      "type": "Commit",
+      "id": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd",
+      "label": "docs(knowledge): regenerate from clean loan car and browser proof source",
+      "title": "docs(knowledge): regenerate from clean loan car and browser proof source",
+      "date": "2026-09-21T09:27:10.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f8b9b0d19629abc3f8875ee533d80dd424d5f9bd",
+      "provenance": [
+        {
+          "commit": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f8b9b0d19629abc3f8875ee533d80dd424d5f9bd"
         }
       ]
     },
@@ -116642,6 +117653,22 @@
       ]
     },
     {
+      "key": "Document:docs/rc1-alliance-world.md",
+      "type": "Document",
+      "id": "docs/rc1-alliance-world.md",
+      "label": "docs/rc1-alliance-world.md",
+      "documentType": "documentation",
+      "lines": 60,
+      "version": "9da3e74713b8f6e1",
+      "provenance": [
+        {
+          "file": "docs/rc1-alliance-world.md",
+          "line": 1,
+          "version": "9da3e74713b8f6e1"
+        }
+      ]
+    },
+    {
       "key": "Document:docs/rc1-coordinated-alliance.md",
       "type": "Document",
       "id": "docs/rc1-coordinated-alliance.md",
@@ -116978,6 +118005,22 @@
       ]
     },
     {
+      "key": "Document:docs/release/readiness-work/family-omr-journal.md",
+      "type": "Document",
+      "id": "docs/release/readiness-work/family-omr-journal.md",
+      "label": "docs/release/readiness-work/family-omr-journal.md",
+      "documentType": "documentation",
+      "lines": 141,
+      "version": "29422ed084c348de",
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/family-omr-journal.md",
+          "line": 1,
+          "version": "29422ed084c348de"
+        }
+      ]
+    },
+    {
       "key": "Document:docs/release/readiness-work/family-player-policy.md",
       "type": "Document",
       "id": "docs/release/readiness-work/family-player-policy.md",
@@ -117022,6 +118065,22 @@
           "file": "docs/release/readiness-work/harness-actor-replay.md",
           "line": 1,
           "version": "ecf5cb7b77a6fd65"
+        }
+      ]
+    },
+    {
+      "key": "Document:docs/release/readiness-work/harness-board-detachment.md",
+      "type": "Document",
+      "id": "docs/release/readiness-work/harness-board-detachment.md",
+      "label": "docs/release/readiness-work/harness-board-detachment.md",
+      "documentType": "documentation",
+      "lines": 51,
+      "version": "90c29f6252165bb5",
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/harness-board-detachment.md",
+          "line": 1,
+          "version": "90c29f6252165bb5"
         }
       ]
     },
@@ -117102,6 +118161,22 @@
           "file": "docs/release/readiness-work/harness-recorded-query-order.md",
           "line": 1,
           "version": "0efbe2fc4b0ddd05"
+        }
+      ]
+    },
+    {
+      "key": "Document:docs/release/readiness-work/harness-resource-pressure.md",
+      "type": "Document",
+      "id": "docs/release/readiness-work/harness-resource-pressure.md",
+      "label": "docs/release/readiness-work/harness-resource-pressure.md",
+      "documentType": "documentation",
+      "lines": 34,
+      "version": "82b6dece4f9c8866",
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/harness-resource-pressure.md",
+          "line": 1,
+          "version": "82b6dece4f9c8866"
         }
       ]
     },
@@ -120584,12 +121659,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 756,
-      "version": "970aa1a18ec529a4",
+      "version": "b9e22dc27a25659d",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "970aa1a18ec529a4"
+          "version": "b9e22dc27a25659d"
         }
       ]
     },
@@ -121297,6 +122372,10 @@
           "line": 4
         },
         {
+          "file": "test/rc1-alliance-response-barrier.js",
+          "line": 5
+        },
+        {
           "file": "test/rc1-command-redteam.js",
           "line": 5
         },
@@ -121333,6 +122412,10 @@
           "line": 5
         },
         {
+          "file": "test/rc1-native-family-omr.js",
+          "line": 5
+        },
+        {
           "file": "test/rc1-native-loan-lifecycles.js",
           "line": 8
         },
@@ -121351,6 +122434,10 @@
         {
           "file": "test/rc1-native-omr-window-boundaries.js",
           "line": 7
+        },
+        {
+          "file": "test/rc1-native-resource-pressure.js",
+          "line": 4
         },
         {
           "file": "test/rc1-native-season-journal.js",
@@ -121638,7 +122725,7 @@
         },
         {
           "file": "test/rc1-browser-board-refresh.js",
-          "line": 5
+          "line": 6
         },
         {
           "file": "test/rc1-browser-controls.js",
@@ -126614,6 +127701,9 @@
           "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
         },
         {
+          "commit": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd"
+        },
+        {
           "commit": "f92c9029903b5890a7cf3cc18bfcdd92001367f2"
         },
         {
@@ -127314,6 +128404,9 @@
         },
         {
           "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
+        },
+        {
+          "commit": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd"
         },
         {
           "commit": "f92c9029903b5890a7cf3cc18bfcdd92001367f2"
@@ -128018,6 +129111,9 @@
           "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
         },
         {
+          "commit": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd"
+        },
+        {
           "commit": "f92c9029903b5890a7cf3cc18bfcdd92001367f2"
         },
         {
@@ -128720,6 +129816,9 @@
           "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
         },
         {
+          "commit": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd"
+        },
+        {
           "commit": "f92c9029903b5890a7cf3cc18bfcdd92001367f2"
         },
         {
@@ -128910,6 +130009,9 @@
         },
         {
           "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
+        },
+        {
+          "commit": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd"
         },
         {
           "commit": "f92c9029903b5890a7cf3cc18bfcdd92001367f2"
@@ -129611,6 +130713,9 @@
           "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
         },
         {
+          "commit": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd"
+        },
+        {
           "commit": "f92c9029903b5890a7cf3cc18bfcdd92001367f2"
         },
         {
@@ -129894,6 +130999,9 @@
         },
         {
           "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
+        },
+        {
+          "commit": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd"
         },
         {
           "commit": "f92c9029903b5890a7cf3cc18bfcdd92001367f2"
@@ -131825,13 +132933,13 @@
       "type": "Module",
       "id": "src/exchange.js",
       "label": "src/exchange.js",
-      "lines": 400,
-      "version": "8135160a29f8a895",
+      "lines": 416,
+      "version": "ab28cdc4d722fce1",
       "provenance": [
         {
           "file": "src/exchange.js",
           "line": 1,
-          "version": "8135160a29f8a895"
+          "version": "ab28cdc4d722fce1"
         }
       ]
     },
@@ -137510,12 +138618,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "56b8ca2f186e770f7a9217243e388b1d5fc6dd21",
+      "revision": "bd02ab4cd35e06cb5d9f7059f0766ce86fa0acf1",
       "currentBranch": "codex/rc1-readiness",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 3473,
+      "currentArtifactCount": 3497,
       "provenance": [
         {
           "file": "README.md",
@@ -166893,17 +168001,32 @@
       ]
     },
     {
+      "key": "TestSuite:test/lib/rc1-board-diagnostics.js",
+      "type": "TestSuite",
+      "id": "test/lib/rc1-board-diagnostics.js",
+      "label": "test/lib/rc1-board-diagnostics.js",
+      "lines": 18,
+      "version": "4191f3fcae70a1f4",
+      "provenance": [
+        {
+          "file": "test/lib/rc1-board-diagnostics.js",
+          "line": 1,
+          "version": "4191f3fcae70a1f4"
+        }
+      ]
+    },
+    {
       "key": "TestSuite:test/lib/rc1-browser-controls.js",
       "type": "TestSuite",
       "id": "test/lib/rc1-browser-controls.js",
       "label": "test/lib/rc1-browser-controls.js",
-      "lines": 209,
-      "version": "4694af472fe746d5",
+      "lines": 238,
+      "version": "7e8b3b0e0a2612b4",
       "provenance": [
         {
           "file": "test/lib/rc1-browser-controls.js",
           "line": 1,
-          "version": "4694af472fe746d5"
+          "version": "7e8b3b0e0a2612b4"
         }
       ]
     },
@@ -167943,17 +169066,47 @@
       ]
     },
     {
+      "key": "TestSuite:test/rc1-alliance-response-barrier.js",
+      "type": "TestSuite",
+      "id": "test/rc1-alliance-response-barrier.js",
+      "label": "test/rc1-alliance-response-barrier.js",
+      "lines": 129,
+      "version": "150d59d64e5d21d7",
+      "provenance": [
+        {
+          "file": "test/rc1-alliance-response-barrier.js",
+          "line": 1,
+          "version": "150d59d64e5d21d7"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/rc1-alliance-world-adapter.js",
+      "type": "TestSuite",
+      "id": "test/rc1-alliance-world-adapter.js",
+      "label": "test/rc1-alliance-world-adapter.js",
+      "lines": 41,
+      "version": "9102b5b1cf8821b3",
+      "provenance": [
+        {
+          "file": "test/rc1-alliance-world-adapter.js",
+          "line": 1,
+          "version": "9102b5b1cf8821b3"
+        }
+      ]
+    },
+    {
       "key": "TestSuite:test/rc1-browser-board-refresh.js",
       "type": "TestSuite",
       "id": "test/rc1-browser-board-refresh.js",
       "label": "test/rc1-browser-board-refresh.js",
-      "lines": 90,
-      "version": "c96ea3fbd01b0b12",
+      "lines": 161,
+      "version": "233be42eb5a1dee2",
       "provenance": [
         {
           "file": "test/rc1-browser-board-refresh.js",
           "line": 1,
-          "version": "c96ea3fbd01b0b12"
+          "version": "233be42eb5a1dee2"
         }
       ]
     },
@@ -168483,6 +169636,36 @@
       ]
     },
     {
+      "key": "TestSuite:test/rc1-native-family-omr.js",
+      "type": "TestSuite",
+      "id": "test/rc1-native-family-omr.js",
+      "label": "test/rc1-native-family-omr.js",
+      "lines": 223,
+      "version": "07b84612b29a4ace",
+      "provenance": [
+        {
+          "file": "test/rc1-native-family-omr.js",
+          "line": 1,
+          "version": "07b84612b29a4ace"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/rc1-native-family-yield-precision.js",
+      "type": "TestSuite",
+      "id": "test/rc1-native-family-yield-precision.js",
+      "label": "test/rc1-native-family-yield-precision.js",
+      "lines": 129,
+      "version": "42c8ebeffcc0e0bc",
+      "provenance": [
+        {
+          "file": "test/rc1-native-family-yield-precision.js",
+          "line": 1,
+          "version": "42c8ebeffcc0e0bc"
+        }
+      ]
+    },
+    {
       "key": "TestSuite:test/rc1-native-loan-lifecycles.js",
       "type": "TestSuite",
       "id": "test/rc1-native-loan-lifecycles.js",
@@ -168633,6 +169816,21 @@
       ]
     },
     {
+      "key": "TestSuite:test/rc1-native-resource-pressure.js",
+      "type": "TestSuite",
+      "id": "test/rc1-native-resource-pressure.js",
+      "label": "test/rc1-native-resource-pressure.js",
+      "lines": 207,
+      "version": "f9471ff6dae7debc",
+      "provenance": [
+        {
+          "file": "test/rc1-native-resource-pressure.js",
+          "line": 1,
+          "version": "f9471ff6dae7debc"
+        }
+      ]
+    },
+    {
       "key": "TestSuite:test/rc1-native-run-guardrails.js",
       "type": "TestSuite",
       "id": "test/rc1-native-run-guardrails.js",
@@ -168712,13 +169910,13 @@
       "type": "TestSuite",
       "id": "test/rc1-native-world-workload.js",
       "label": "test/rc1-native-world-workload.js",
-      "lines": 461,
-      "version": "f1bd0ccaa98bd022",
+      "lines": 597,
+      "version": "1d19db9a6a837829",
       "provenance": [
         {
           "file": "test/rc1-native-world-workload.js",
           "line": 1,
-          "version": "f1bd0ccaa98bd022"
+          "version": "1d19db9a6a837829"
         }
       ]
     },
@@ -168824,6 +170022,21 @@
           "file": "test/rc1-resource-journal.js",
           "line": 1,
           "version": "9f71ec2c80135aaf"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/rc1-resource-pressure-policy.js",
+      "type": "TestSuite",
+      "id": "test/rc1-resource-pressure-policy.js",
+      "label": "test/rc1-resource-pressure-policy.js",
+      "lines": 29,
+      "version": "573d4938d43e061e",
+      "provenance": [
+        {
+          "file": "test/rc1-resource-pressure-policy.js",
+          "line": 1,
+          "version": "573d4938d43e061e"
         }
       ]
     },
@@ -169642,13 +170855,13 @@
       "type": "TestSuite",
       "id": "test/tokenomics.js",
       "label": "test/tokenomics.js",
-      "lines": 527,
-      "version": "ca5e06fc2b6c0ab9",
+      "lines": 543,
+      "version": "0abe784897616c2d",
       "provenance": [
         {
           "file": "test/tokenomics.js",
           "line": 1,
-          "version": "ca5e06fc2b6c0ab9"
+          "version": "0abe784897616c2d"
         }
       ]
     },
@@ -170152,13 +171365,13 @@
       "type": "Workflow",
       "id": ".github/workflows/rc1-recovery.yml",
       "label": ".github/workflows/rc1-recovery.yml",
-      "lines": 566,
-      "version": "381facd761d299fe",
+      "lines": 690,
+      "version": "cc64e8c453b59720",
       "provenance": [
         {
           "file": ".github/workflows/rc1-recovery.yml",
           "line": 1,
-          "version": "381facd761d299fe"
+          "version": "cc64e8c453b59720"
         }
       ]
     }
@@ -183306,6 +184519,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/lib/rc1-board-diagnostics.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/lib/rc1-board-diagnostics.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/lib/rc1-browser-controls.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -183936,6 +185158,24 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/rc1-alliance-response-barrier.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/rc1-alliance-response-barrier.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/rc1-alliance-world-adapter.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/rc1-alliance-world-adapter.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/rc1-browser-board-refresh.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -184260,6 +185500,24 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/rc1-native-family-omr.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/rc1-native-family-omr.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/rc1-native-family-yield-precision.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/rc1-native-family-yield-precision.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/rc1-native-loan-lifecycles.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -184345,6 +185603,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "test/rc1-native-query-tape.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/rc1-native-resource-pressure.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/rc1-native-resource-pressure.js",
         "line": 1
       }
     },
@@ -184462,6 +185729,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "test/rc1-resource-journal.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/rc1-resource-pressure-policy.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/rc1-resource-pressure-policy.js",
         "line": 1
       }
     },
@@ -185853,6 +187129,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:tools/rc1-alliance-world-adapter.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/rc1-alliance-world-adapter.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:tools/rc1-authority-inventory.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -185911,6 +187196,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "tools/rc1-family-cash-ammo-journal.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/rc1-family-omr-journal.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/rc1-family-omr-journal.js",
         "line": 1
       }
     },
@@ -186181,6 +187475,24 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "tools/rc1-resource-journal.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/rc1-resource-pressure-journal.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/rc1-resource-pressure-journal.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/rc1-resource-pressure-policy.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/rc1-resource-pressure-policy.js",
         "line": 1
       }
     },
@@ -194020,6 +195332,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:00fe57a77dde340be7fd9c46554a8eb6c0829dec",
+      "to": "Artifact:test/rc1-native-world-workload.js",
+      "provenance": {
+        "commit": "00fe57a77dde340be7fd9c46554a8eb6c0829dec"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:01597771ce77932b7386ac48afd913f406598ada",
       "to": "Artifact:.github/workflows/ci.yml",
       "provenance": {
@@ -198868,6 +200188,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:113cec238ffb034d64057d746bba210c192ddd4e",
+      "to": "Artifact:test/rc1-alliance-response-barrier.js",
+      "provenance": {
+        "commit": "113cec238ffb034d64057d746bba210c192ddd4e"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:1153c378e4aaa1e073967e27cfbf202ac36ae54f",
       "to": "Artifact:docs/superpowers/specs/2026-09-03-world-graph-item-economy-design.md",
       "provenance": {
@@ -200800,6 +202128,46 @@
       "to": "Artifact:test/hardening.js",
       "provenance": {
         "commit": "15b42048e929dd52f242a0b76ac93c4621fb7cd7"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:15b8abba112269cba3d2775dd42e928865fe73b5",
+      "to": "Artifact:docs/release/readiness-work/harness-resource-pressure.md",
+      "provenance": {
+        "commit": "15b8abba112269cba3d2775dd42e928865fe73b5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:15b8abba112269cba3d2775dd42e928865fe73b5",
+      "to": "Artifact:test/rc1-native-resource-pressure.js",
+      "provenance": {
+        "commit": "15b8abba112269cba3d2775dd42e928865fe73b5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:15b8abba112269cba3d2775dd42e928865fe73b5",
+      "to": "Artifact:test/rc1-resource-pressure-policy.js",
+      "provenance": {
+        "commit": "15b8abba112269cba3d2775dd42e928865fe73b5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:15b8abba112269cba3d2775dd42e928865fe73b5",
+      "to": "Artifact:tools/rc1-resource-pressure-journal.js",
+      "provenance": {
+        "commit": "15b8abba112269cba3d2775dd42e928865fe73b5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:15b8abba112269cba3d2775dd42e928865fe73b5",
+      "to": "Artifact:tools/rc1-resource-pressure-policy.js",
+      "provenance": {
+        "commit": "15b8abba112269cba3d2775dd42e928865fe73b5"
       }
     },
     {
@@ -217404,6 +218772,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:38f364d0b67813a22e13e97feabcc35636694a7a",
+      "to": "Artifact:test/lib/rc1-board-diagnostics.js",
+      "provenance": {
+        "commit": "38f364d0b67813a22e13e97feabcc35636694a7a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:38f364d0b67813a22e13e97feabcc35636694a7a",
+      "to": "Artifact:test/lib/rc1-browser-controls.js",
+      "provenance": {
+        "commit": "38f364d0b67813a22e13e97feabcc35636694a7a"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:3934f609ab746d8b1806e1a72f1d9212e518eb72",
       "to": "Artifact:omerta-contracts/src/interfaces/IStockTokenRegistryV2.sol",
       "provenance": {
@@ -225420,6 +226804,78 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:45b6f8de97cdd2eb17f88ade602bf96611700d4b",
+      "to": "Artifact:.github/workflows/rc1-recovery.yml",
+      "provenance": {
+        "commit": "45b6f8de97cdd2eb17f88ade602bf96611700d4b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:45b6f8de97cdd2eb17f88ade602bf96611700d4b",
+      "to": "Artifact:docs/release/readiness-work/family-omr-summary.json",
+      "provenance": {
+        "commit": "45b6f8de97cdd2eb17f88ade602bf96611700d4b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:45b6f8de97cdd2eb17f88ade602bf96611700d4b",
+      "to": "Artifact:docs/release/readiness-work/family-yield-repair.json",
+      "provenance": {
+        "commit": "45b6f8de97cdd2eb17f88ade602bf96611700d4b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:45b6f8de97cdd2eb17f88ade602bf96611700d4b",
+      "to": "Artifact:docs/release/readiness-work/gate-registry.json",
+      "provenance": {
+        "commit": "45b6f8de97cdd2eb17f88ade602bf96611700d4b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:45b6f8de97cdd2eb17f88ade602bf96611700d4b",
+      "to": "Artifact:docs/release/readiness-work/open-proofs.json",
+      "provenance": {
+        "commit": "45b6f8de97cdd2eb17f88ade602bf96611700d4b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:45b6f8de97cdd2eb17f88ade602bf96611700d4b",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "45b6f8de97cdd2eb17f88ade602bf96611700d4b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:45b6f8de97cdd2eb17f88ade602bf96611700d4b",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "45b6f8de97cdd2eb17f88ade602bf96611700d4b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:45b6f8de97cdd2eb17f88ade602bf96611700d4b",
+      "to": "Artifact:test/rc1-native-family-omr.js",
+      "provenance": {
+        "commit": "45b6f8de97cdd2eb17f88ade602bf96611700d4b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:45b6f8de97cdd2eb17f88ade602bf96611700d4b",
+      "to": "Artifact:test/rc1-native-family-yield-precision.js",
+      "provenance": {
+        "commit": "45b6f8de97cdd2eb17f88ade602bf96611700d4b"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:45b7cad2d93144433b1bf27f33dd41f7f62ba2af",
       "to": "Artifact:CLAUDE.md",
       "provenance": {
@@ -227172,6 +228628,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:4bc4c85b0488a2a685c12f7f2cc0dd7095400b71",
+      "to": "Artifact:test/lib/rc1-browser-controls.js",
+      "provenance": {
+        "commit": "4bc4c85b0488a2a685c12f7f2cc0dd7095400b71"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4bc4c85b0488a2a685c12f7f2cc0dd7095400b71",
+      "to": "Artifact:test/rc1-browser-board-refresh.js",
+      "provenance": {
+        "commit": "4bc4c85b0488a2a685c12f7f2cc0dd7095400b71"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:4c01e7538b2c0efbd0d43b609742e1193c80c486",
       "to": "Artifact:.github/workflows/rc1-recovery.yml",
       "provenance": {
@@ -228632,6 +230104,14 @@
       "to": "Artifact:test/casino.js",
       "provenance": {
         "commit": "51c33b41301223888d79789ae0b8ff9ff473bc29"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:528d952178db4702a7c7dc0fcf32e0a85449cb44",
+      "to": "Artifact:docs/release/readiness-work/harness-board-detachment.md",
+      "provenance": {
+        "commit": "528d952178db4702a7c7dc0fcf32e0a85449cb44"
       }
     },
     {
@@ -232256,6 +233736,22 @@
       "to": "Artifact:omerta-stock-layer-retirement.md",
       "provenance": {
         "commit": "5539c0897045d3865b42e0d484f3184ede525bf1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5567db3ced59085f628a252a065316f5f9f4c945",
+      "to": "Artifact:docs/release/readiness-work/family-omr-journal.md",
+      "provenance": {
+        "commit": "5567db3ced59085f628a252a065316f5f9f4c945"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5567db3ced59085f628a252a065316f5f9f4c945",
+      "to": "Artifact:test/rc1-native-family-omr.js",
+      "provenance": {
+        "commit": "5567db3ced59085f628a252a065316f5f9f4c945"
       }
     },
     {
@@ -240636,6 +242132,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:64fcb2f6d585ae63c3e6bc4d15ccfb215dade04c",
+      "to": "Artifact:src/exchange.js",
+      "provenance": {
+        "commit": "64fcb2f6d585ae63c3e6bc4d15ccfb215dade04c"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:65b283debfa4be7bd3b927688882cd13215a0517",
       "to": "Artifact:SPEC.md",
       "provenance": {
@@ -241792,6 +243296,30 @@
       "to": "Artifact:tools/rc1-native-actor-replay.js",
       "provenance": {
         "commit": "6958056bef545f8eb13eb29be5162b31ee229815"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:69b0e4b241b525ec423b28aaecdf9daee5b20499",
+      "to": "Artifact:docs/release/readiness-work/family-omr-journal.md",
+      "provenance": {
+        "commit": "69b0e4b241b525ec423b28aaecdf9daee5b20499"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:69b0e4b241b525ec423b28aaecdf9daee5b20499",
+      "to": "Artifact:test/rc1-native-family-omr.js",
+      "provenance": {
+        "commit": "69b0e4b241b525ec423b28aaecdf9daee5b20499"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:69b0e4b241b525ec423b28aaecdf9daee5b20499",
+      "to": "Artifact:tools/rc1-family-omr-journal.js",
+      "provenance": {
+        "commit": "69b0e4b241b525ec423b28aaecdf9daee5b20499"
       }
     },
     {
@@ -254076,6 +255604,54 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:83557998651e7ab0d6ebdf927cd84dd42b3fdc94",
+      "to": "Artifact:.github/workflows/rc1-recovery.yml",
+      "provenance": {
+        "commit": "83557998651e7ab0d6ebdf927cd84dd42b3fdc94"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:83557998651e7ab0d6ebdf927cd84dd42b3fdc94",
+      "to": "Artifact:docs/release/readiness-work/gate-registry.json",
+      "provenance": {
+        "commit": "83557998651e7ab0d6ebdf927cd84dd42b3fdc94"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:83557998651e7ab0d6ebdf927cd84dd42b3fdc94",
+      "to": "Artifact:docs/release/readiness-work/open-proofs.json",
+      "provenance": {
+        "commit": "83557998651e7ab0d6ebdf927cd84dd42b3fdc94"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:83557998651e7ab0d6ebdf927cd84dd42b3fdc94",
+      "to": "Artifact:docs/release/readiness-work/scenario-manifest.json",
+      "provenance": {
+        "commit": "83557998651e7ab0d6ebdf927cd84dd42b3fdc94"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:83557998651e7ab0d6ebdf927cd84dd42b3fdc94",
+      "to": "Artifact:docs/release/readiness-work/tooling-repairs.json",
+      "provenance": {
+        "commit": "83557998651e7ab0d6ebdf927cd84dd42b3fdc94"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:83557998651e7ab0d6ebdf927cd84dd42b3fdc94",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "83557998651e7ab0d6ebdf927cd84dd42b3fdc94"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:8357d6d6cdcfe1650e88f79d91913072d3ff0adb",
       "to": "Artifact:AUDIT-redteam-loop.md",
       "provenance": {
@@ -256384,6 +257960,30 @@
       "to": "Artifact:test/worldgraph.js",
       "provenance": {
         "commit": "8aeed7ab6d710a78028aa019195d149428ce4415"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8af76d9615011623e33adeb02292fc0d2b8e4311",
+      "to": "Artifact:docs/release/readiness-work/family-omr-journal.md",
+      "provenance": {
+        "commit": "8af76d9615011623e33adeb02292fc0d2b8e4311"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8af76d9615011623e33adeb02292fc0d2b8e4311",
+      "to": "Artifact:test/rc1-native-family-yield-precision.js",
+      "provenance": {
+        "commit": "8af76d9615011623e33adeb02292fc0d2b8e4311"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8af76d9615011623e33adeb02292fc0d2b8e4311",
+      "to": "Artifact:test/tokenomics.js",
+      "provenance": {
+        "commit": "8af76d9615011623e33adeb02292fc0d2b8e4311"
       }
     },
     {
@@ -261668,6 +263268,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:96e5a3d855f133580f7e4b10b1da093b5fbd38d0",
+      "to": "Artifact:docs/release/readiness-work/harness-resource-pressure-artifact-index.json",
+      "provenance": {
+        "commit": "96e5a3d855f133580f7e4b10b1da093b5fbd38d0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:96e5a3d855f133580f7e4b10b1da093b5fbd38d0",
+      "to": "Artifact:docs/release/readiness-work/harness-resource-pressure-results.json",
+      "provenance": {
+        "commit": "96e5a3d855f133580f7e4b10b1da093b5fbd38d0"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:96ec2122d44a8ec2d7535d1c09d89506a31e08bf",
       "to": "Artifact:CHAIN-DEPLOY.md",
       "provenance": {
@@ -262888,6 +264504,22 @@
       "to": "Artifact:test/social.js",
       "provenance": {
         "commit": "987b6bfc853af86eb175e3eb43183004dbcf1f5e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9886cc523114e3d0443dbe0dde62f0cd3fdee74b",
+      "to": "Artifact:test/rc1-alliance-response-barrier.js",
+      "provenance": {
+        "commit": "9886cc523114e3d0443dbe0dde62f0cd3fdee74b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9886cc523114e3d0443dbe0dde62f0cd3fdee74b",
+      "to": "Artifact:test/rc1-native-world-workload.js",
+      "provenance": {
+        "commit": "9886cc523114e3d0443dbe0dde62f0cd3fdee74b"
       }
     },
     {
@@ -267140,6 +268772,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:a7750c58f6042023a20c4c3be17de20ebcc2b4da",
+      "to": "Artifact:docs/release/readiness-work/family-omr-journal.md",
+      "provenance": {
+        "commit": "a7750c58f6042023a20c4c3be17de20ebcc2b4da"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a7750c58f6042023a20c4c3be17de20ebcc2b4da",
+      "to": "Artifact:test/rc1-native-family-omr.js",
+      "provenance": {
+        "commit": "a7750c58f6042023a20c4c3be17de20ebcc2b4da"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:a7891c130ca44e2238a4199f975203c082cccdd7",
       "to": "Artifact:public/arena.html",
       "provenance": {
@@ -268236,6 +269884,46 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:a95801f943c98509b216d6d451187d2f678dfc09",
+      "to": "Artifact:docs/release/readiness-work/hosted-b0c85c11-ci-results.json",
+      "provenance": {
+        "commit": "a95801f943c98509b216d6d451187d2f678dfc09"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a95801f943c98509b216d6d451187d2f678dfc09",
+      "to": "Artifact:docs/release/readiness-work/integrated-f8b9b0d1-results.json",
+      "provenance": {
+        "commit": "a95801f943c98509b216d6d451187d2f678dfc09"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a95801f943c98509b216d6d451187d2f678dfc09",
+      "to": "Artifact:docs/release/readiness-work/render-config-ui-20260921-0933.json",
+      "provenance": {
+        "commit": "a95801f943c98509b216d6d451187d2f678dfc09"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a95801f943c98509b216d6d451187d2f678dfc09",
+      "to": "Artifact:docs/release/readiness-work/render-family-backing-observation.json",
+      "provenance": {
+        "commit": "a95801f943c98509b216d6d451187d2f678dfc09"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a95801f943c98509b216d6d451187d2f678dfc09",
+      "to": "Artifact:docs/release/readiness-work/tooling-repairs.json",
+      "provenance": {
+        "commit": "a95801f943c98509b216d6d451187d2f678dfc09"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:a9b74a32b3d75a52e0ea61cdd994cd7c6fb95d83",
       "to": "HistoricalArtifact:knowledge/generated/github-history.md",
       "provenance": {
@@ -268576,6 +270264,14 @@
       "to": "Artifact:test/people.js",
       "provenance": {
         "commit": "ab154d1cf1a1d8e59867205ef14eedda41d81720"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ab48503eddb19172fa62d3c96172cae8a32d5907",
+      "to": "Artifact:test/rc1-browser-board-refresh.js",
+      "provenance": {
+        "commit": "ab48503eddb19172fa62d3c96172cae8a32d5907"
       }
     },
     {
@@ -277116,6 +278812,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:bd02ab4cd35e06cb5d9f7059f0766ce86fa0acf1",
+      "to": "Artifact:docs/release/readiness-work/open-proofs.json",
+      "provenance": {
+        "commit": "bd02ab4cd35e06cb5d9f7059f0766ce86fa0acf1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:bd02ab4cd35e06cb5d9f7059f0766ce86fa0acf1",
+      "to": "Artifact:docs/release/readiness-work/tooling-repairs.json",
+      "provenance": {
+        "commit": "bd02ab4cd35e06cb5d9f7059f0766ce86fa0acf1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:bd02ab4cd35e06cb5d9f7059f0766ce86fa0acf1",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "bd02ab4cd35e06cb5d9f7059f0766ce86fa0acf1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:bd02ab4cd35e06cb5d9f7059f0766ce86fa0acf1",
+      "to": "Artifact:tools/rc1-resource-inventory.js",
+      "provenance": {
+        "commit": "bd02ab4cd35e06cb5d9f7059f0766ce86fa0acf1"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:bd453ff1fac607c5a4d9d1140ab44825d60942b3",
       "to": "Artifact:src/social.js",
       "provenance": {
@@ -281480,6 +283208,14 @@
       "to": "Artifact:tools/rc1-native-worker.js",
       "provenance": {
         "commit": "c8b15666eeb134e4948c9be1b877623cfd52423e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c8c8a34af95a5f210c8e55338253ca7778de144f",
+      "to": "Artifact:test/lib/rc1-browser-controls.js",
+      "provenance": {
+        "commit": "c8c8a34af95a5f210c8e55338253ca7778de144f"
       }
     },
     {
@@ -287392,6 +289128,14 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "commit": "d98bc7cbe9e9ad3c790042e2b4dfe78ca9f4e96f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d98dcf441476a234107716e6bf9083f3e1e52cb0",
+      "to": "Artifact:docs/rc1-alliance-world.md",
+      "provenance": {
+        "commit": "d98dcf441476a234107716e6bf9083f3e1e52cb0"
       }
     },
     {
@@ -296852,6 +298596,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:ec9c79137d323406662147b66a390e419d122dae",
+      "to": "Artifact:docs/rc1-alliance-world.md",
+      "provenance": {
+        "commit": "ec9c79137d323406662147b66a390e419d122dae"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ec9c79137d323406662147b66a390e419d122dae",
+      "to": "Artifact:test/rc1-alliance-world-adapter.js",
+      "provenance": {
+        "commit": "ec9c79137d323406662147b66a390e419d122dae"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ec9c79137d323406662147b66a390e419d122dae",
+      "to": "Artifact:test/rc1-native-world-workload.js",
+      "provenance": {
+        "commit": "ec9c79137d323406662147b66a390e419d122dae"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ec9c79137d323406662147b66a390e419d122dae",
+      "to": "Artifact:tools/rc1-alliance-world-adapter.js",
+      "provenance": {
+        "commit": "ec9c79137d323406662147b66a390e419d122dae"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:ecf6a1eed9ef5c5c4a18ca82eaa0a3d958c4930a",
       "to": "Artifact:test/gates.js",
       "provenance": {
@@ -299756,6 +301532,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:f6eaefe5d92e1ee0bc603d076443e87f857ae7ba",
+      "to": "Artifact:docs/release/readiness-work/hosted-b0c85c11-recovery-results.json",
+      "provenance": {
+        "commit": "f6eaefe5d92e1ee0bc603d076443e87f857ae7ba"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:f6f45aec3f028a5a8e053f2878ed3143f2be3f88",
       "to": "Artifact:.github/workflows/ci.yml",
       "provenance": {
@@ -300240,6 +302024,62 @@
       "to": "Artifact:tools/playthrough.js",
       "provenance": {
         "commit": "f87a2199c6639e994d59ad1827accc8b3f48b955"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f8b9b0d19629abc3f8875ee533d80dd424d5f9bd",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f8b9b0d19629abc3f8875ee533d80dd424d5f9bd",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f8b9b0d19629abc3f8875ee533d80dd424d5f9bd",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f8b9b0d19629abc3f8875ee533d80dd424d5f9bd",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f8b9b0d19629abc3f8875ee533d80dd424d5f9bd",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f8b9b0d19629abc3f8875ee533d80dd424d5f9bd",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f8b9b0d19629abc3f8875ee533d80dd424d5f9bd",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd"
       }
     },
     {
@@ -312918,6 +314758,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:docs/rc1-alliance-world.md",
+      "provenance": {
+        "file": "docs/rc1-alliance-world.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:docs/rc1-coordinated-alliance.md",
       "provenance": {
         "file": "docs/rc1-coordinated-alliance.md",
@@ -315573,9 +317422,36 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/family-omr-journal.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/family-omr-journal.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/family-omr-summary.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/family-omr-summary.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:docs/release/readiness-work/family-player-policy.md",
       "provenance": {
         "file": "docs/release/readiness-work/family-player-policy.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/family-yield-repair.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/family-yield-repair.json",
         "line": 1
       }
     },
@@ -315639,6 +317515,15 @@
       "to": "Artifact:docs/release/readiness-work/harness-actor-replay.md",
       "provenance": {
         "file": "docs/release/readiness-work/harness-actor-replay.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/harness-board-detachment.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/harness-board-detachment.md",
         "line": 1
       }
     },
@@ -315807,6 +317692,33 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/harness-resource-pressure-artifact-index.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/harness-resource-pressure-artifact-index.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/harness-resource-pressure-results.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/harness-resource-pressure-results.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/harness-resource-pressure.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/harness-resource-pressure.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:docs/release/readiness-work/harness-results.json",
       "provenance": {
         "file": "docs/release/readiness-work/harness-results.json",
@@ -315879,6 +317791,24 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/hosted-b0c85c11-ci-results.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/hosted-b0c85c11-ci-results.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/hosted-b0c85c11-recovery-results.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/hosted-b0c85c11-recovery-results.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:docs/release/readiness-work/hosted-fcaa6076-results.json",
       "provenance": {
         "file": "docs/release/readiness-work/hosted-fcaa6076-results.json",
@@ -315945,6 +317875,15 @@
       "to": "Artifact:docs/release/readiness-work/integrated-d012c78a-results.json",
       "provenance": {
         "file": "docs/release/readiness-work/integrated-d012c78a-results.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/integrated-f8b9b0d1-results.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/integrated-f8b9b0d1-results.json",
         "line": 1
       }
     },
@@ -316068,9 +318007,27 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/render-config-ui-20260921-0933.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/render-config-ui-20260921-0933.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:docs/release/readiness-work/render-envelope-observation.json",
       "provenance": {
         "file": "docs/release/readiness-work/render-envelope-observation.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/render-family-backing-observation.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/render-family-backing-observation.json",
         "line": 1
       }
     },
@@ -320172,6 +322129,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/lib/rc1-board-diagnostics.js",
+      "provenance": {
+        "file": "test/lib/rc1-board-diagnostics.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/lib/rc1-browser-controls.js",
       "provenance": {
         "file": "test/lib/rc1-browser-controls.js",
@@ -320802,6 +322768,24 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/rc1-alliance-response-barrier.js",
+      "provenance": {
+        "file": "test/rc1-alliance-response-barrier.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/rc1-alliance-world-adapter.js",
+      "provenance": {
+        "file": "test/rc1-alliance-world-adapter.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/rc1-browser-board-refresh.js",
       "provenance": {
         "file": "test/rc1-browser-board-refresh.js",
@@ -321126,6 +323110,24 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/rc1-native-family-omr.js",
+      "provenance": {
+        "file": "test/rc1-native-family-omr.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/rc1-native-family-yield-precision.js",
+      "provenance": {
+        "file": "test/rc1-native-family-yield-precision.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/rc1-native-loan-lifecycles.js",
       "provenance": {
         "file": "test/rc1-native-loan-lifecycles.js",
@@ -321210,6 +323212,15 @@
       "to": "Artifact:test/rc1-native-query-tape.js",
       "provenance": {
         "file": "test/rc1-native-query-tape.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/rc1-native-resource-pressure.js",
+      "provenance": {
+        "file": "test/rc1-native-resource-pressure.js",
         "line": 1
       }
     },
@@ -321327,6 +323338,15 @@
       "to": "Artifact:test/rc1-resource-journal.js",
       "provenance": {
         "file": "test/rc1-resource-journal.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/rc1-resource-pressure-policy.js",
+      "provenance": {
+        "file": "test/rc1-resource-pressure-policy.js",
         "line": 1
       }
     },
@@ -322719,6 +324739,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:tools/rc1-alliance-world-adapter.js",
+      "provenance": {
+        "file": "tools/rc1-alliance-world-adapter.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:tools/rc1-authority-inventory.js",
       "provenance": {
         "file": "tools/rc1-authority-inventory.js",
@@ -322776,6 +324805,15 @@
       "to": "Artifact:tools/rc1-family-cash-ammo-journal.js",
       "provenance": {
         "file": "tools/rc1-family-cash-ammo-journal.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/rc1-family-omr-journal.js",
+      "provenance": {
+        "file": "tools/rc1-family-omr-journal.js",
         "line": 1
       }
     },
@@ -323046,6 +325084,24 @@
       "to": "Artifact:tools/rc1-resource-journal.js",
       "provenance": {
         "file": "tools/rc1-resource-journal.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/rc1-resource-pressure-journal.js",
+      "provenance": {
+        "file": "tools/rc1-resource-pressure-journal.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/rc1-resource-pressure-policy.js",
+      "provenance": {
+        "file": "tools/rc1-resource-pressure-policy.js",
         "line": 1
       }
     },
@@ -335122,6 +337178,33 @@
     {
       "type": "DECLARES",
       "from": "Artifact:package.json",
+      "to": "Command:npm:test:rc1:alliance-membership-response:postgres",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
+      "to": "Command:npm:test:rc1:alliance-response:postgres",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
+      "to": "Command:npm:test:rc1:alliance-world:postgres",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
       "to": "Command:npm:test:rc1:alliance:postgres",
       "provenance": {
         "file": "package.json",
@@ -335231,6 +337314,24 @@
       "type": "DECLARES",
       "from": "Artifact:package.json",
       "to": "Command:npm:test:rc1:family-monopoly:postgres",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
+      "to": "Command:npm:test:rc1:family-omr:postgres",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
+      "to": "Command:npm:test:rc1:family-yield-precision:postgres",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -335420,6 +337521,24 @@
       "type": "DECLARES",
       "from": "Artifact:package.json",
       "to": "Command:npm:test:rc1:query-order:postgres",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
+      "to": "Command:npm:test:rc1:resource-abundance:postgres",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
+      "to": "Command:npm:test:rc1:resource-scarcity:postgres",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -346991,7 +349110,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:economy-ledger",
-      "weight": 209
+      "weight": 216
     },
     {
       "type": "DEPENDS_ON",
@@ -347015,7 +349134,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 977
+      "weight": 987
     },
     {
       "type": "DEPENDS_ON",
@@ -350955,6 +353074,33 @@
     },
     {
       "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:alliance-membership-response:postgres",
+      "to": "Artifact:test/rc1-alliance-response-barrier.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:alliance-response:postgres",
+      "to": "Artifact:test/rc1-alliance-response-barrier.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:alliance-world:postgres",
+      "to": "Artifact:test/rc1-native-world-workload.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
       "from": "Command:npm:test:rc1:alliance:postgres",
       "to": "Artifact:test/rc1-alliance-native.js",
       "provenance": {
@@ -351144,6 +353290,24 @@
     },
     {
       "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:family-omr:postgres",
+      "to": "Artifact:test/rc1-native-family-omr.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:family-yield-precision:postgres",
+      "to": "Artifact:test/rc1-native-family-yield-precision.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
       "from": "Command:npm:test:rc1:family:postgres",
       "to": "Artifact:tools/rc1-resource-family.js",
       "provenance": {
@@ -351173,6 +353337,15 @@
       "type": "EXECUTES",
       "from": "Command:npm:test:rc1:harness",
       "to": "Artifact:test/rc1-alliance-policy.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:harness",
+      "to": "Artifact:test/rc1-alliance-world-adapter.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -351424,6 +353597,15 @@
     {
       "type": "EXECUTES",
       "from": "Command:npm:test:rc1:harness",
+      "to": "Artifact:test/rc1-resource-pressure-policy.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:harness",
       "to": "Artifact:test/rc1-season-journal.js",
       "provenance": {
         "file": "package.json",
@@ -351632,6 +353814,24 @@
       "type": "EXECUTES",
       "from": "Command:npm:test:rc1:query-order:postgres",
       "to": "Artifact:test/rc1-native-query-order.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:resource-abundance:postgres",
+      "to": "Artifact:test/rc1-native-resource-pressure.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:resource-scarcity:postgres",
+      "to": "Artifact:test/rc1-native-resource-pressure.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -359162,6 +361362,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:00fe57a77dde340be7fd9c46554a8eb6c0829dec",
+      "provenance": {
+        "commit": "00fe57a77dde340be7fd9c46554a8eb6c0829dec"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:01597771ce77932b7386ac48afd913f406598ada",
       "provenance": {
         "commit": "01597771ce77932b7386ac48afd913f406598ada"
@@ -359874,6 +362082,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:113cec238ffb034d64057d746bba210c192ddd4e",
+      "provenance": {
+        "commit": "113cec238ffb034d64057d746bba210c192ddd4e"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:1153c378e4aaa1e073967e27cfbf202ac36ae54f",
       "provenance": {
         "commit": "1153c378e4aaa1e073967e27cfbf202ac36ae54f"
@@ -360125,6 +362341,14 @@
       "to": "Commit:15b42048e929dd52f242a0b76ac93c4621fb7cd7",
       "provenance": {
         "commit": "15b42048e929dd52f242a0b76ac93c4621fb7cd7"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:15b8abba112269cba3d2775dd42e928865fe73b5",
+      "provenance": {
+        "commit": "15b8abba112269cba3d2775dd42e928865fe73b5"
       }
     },
     {
@@ -362130,6 +364354,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:38f364d0b67813a22e13e97feabcc35636694a7a",
+      "provenance": {
+        "commit": "38f364d0b67813a22e13e97feabcc35636694a7a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:3934f609ab746d8b1806e1a72f1d9212e518eb72",
       "provenance": {
         "commit": "3934f609ab746d8b1806e1a72f1d9212e518eb72"
@@ -363066,6 +365298,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:45b6f8de97cdd2eb17f88ade602bf96611700d4b",
+      "provenance": {
+        "commit": "45b6f8de97cdd2eb17f88ade602bf96611700d4b"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:45b7cad2d93144433b1bf27f33dd41f7f62ba2af",
       "provenance": {
         "commit": "45b7cad2d93144433b1bf27f33dd41f7f62ba2af"
@@ -363378,6 +365618,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:4bc4c85b0488a2a685c12f7f2cc0dd7095400b71",
+      "provenance": {
+        "commit": "4bc4c85b0488a2a685c12f7f2cc0dd7095400b71"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:4c01e7538b2c0efbd0d43b609742e1193c80c486",
       "provenance": {
         "commit": "4c01e7538b2c0efbd0d43b609742e1193c80c486"
@@ -363666,6 +365914,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:528d952178db4702a7c7dc0fcf32e0a85449cb44",
+      "provenance": {
+        "commit": "528d952178db4702a7c7dc0fcf32e0a85449cb44"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:52a05f7fd7ee3cff31daed731c9c3039d287afe8",
       "provenance": {
         "commit": "52a05f7fd7ee3cff31daed731c9c3039d287afe8"
@@ -363813,6 +366069,14 @@
       "to": "Commit:5539c0897045d3865b42e0d484f3184ede525bf1",
       "provenance": {
         "commit": "5539c0897045d3865b42e0d484f3184ede525bf1"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:5567db3ced59085f628a252a065316f5f9f4c945",
+      "provenance": {
+        "commit": "5567db3ced59085f628a252a065316f5f9f4c945"
       }
     },
     {
@@ -364666,6 +366930,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:64fcb2f6d585ae63c3e6bc4d15ccfb215dade04c",
+      "provenance": {
+        "commit": "64fcb2f6d585ae63c3e6bc4d15ccfb215dade04c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:65b283debfa4be7bd3b927688882cd13215a0517",
       "provenance": {
         "commit": "65b283debfa4be7bd3b927688882cd13215a0517"
@@ -364861,6 +367133,14 @@
       "to": "Commit:6958056bef545f8eb13eb29be5162b31ee229815",
       "provenance": {
         "commit": "6958056bef545f8eb13eb29be5162b31ee229815"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:69b0e4b241b525ec423b28aaecdf9daee5b20499",
+      "provenance": {
+        "commit": "69b0e4b241b525ec423b28aaecdf9daee5b20499"
       }
     },
     {
@@ -366306,6 +368586,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:83557998651e7ab0d6ebdf927cd84dd42b3fdc94",
+      "provenance": {
+        "commit": "83557998651e7ab0d6ebdf927cd84dd42b3fdc94"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:8357d6d6cdcfe1650e88f79d91913072d3ff0adb",
       "provenance": {
         "commit": "8357d6d6cdcfe1650e88f79d91913072d3ff0adb"
@@ -366669,6 +368957,14 @@
       "to": "Commit:8aeed7ab6d710a78028aa019195d149428ce4415",
       "provenance": {
         "commit": "8aeed7ab6d710a78028aa019195d149428ce4415"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:8af76d9615011623e33adeb02292fc0d2b8e4311",
+      "provenance": {
+        "commit": "8af76d9615011623e33adeb02292fc0d2b8e4311"
       }
     },
     {
@@ -367354,6 +369650,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:96e5a3d855f133580f7e4b10b1da093b5fbd38d0",
+      "provenance": {
+        "commit": "96e5a3d855f133580f7e4b10b1da093b5fbd38d0"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:96ec2122d44a8ec2d7535d1c09d89506a31e08bf",
       "provenance": {
         "commit": "96ec2122d44a8ec2d7535d1c09d89506a31e08bf"
@@ -367437,6 +369741,14 @@
       "to": "Commit:987b6bfc853af86eb175e3eb43183004dbcf1f5e",
       "provenance": {
         "commit": "987b6bfc853af86eb175e3eb43183004dbcf1f5e"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:9886cc523114e3d0443dbe0dde62f0cd3fdee74b",
+      "provenance": {
+        "commit": "9886cc523114e3d0443dbe0dde62f0cd3fdee74b"
       }
     },
     {
@@ -368194,6 +370506,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:a7750c58f6042023a20c4c3be17de20ebcc2b4da",
+      "provenance": {
+        "commit": "a7750c58f6042023a20c4c3be17de20ebcc2b4da"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:a784a5275cf7fb2488d465183c075ab2a666b3bf",
       "provenance": {
         "commit": "a784a5275cf7fb2488d465183c075ab2a666b3bf"
@@ -368378,6 +370698,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:a95801f943c98509b216d6d451187d2f678dfc09",
+      "provenance": {
+        "commit": "a95801f943c98509b216d6d451187d2f678dfc09"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:a9b74a32b3d75a52e0ea61cdd994cd7c6fb95d83",
       "provenance": {
         "commit": "a9b74a32b3d75a52e0ea61cdd994cd7c6fb95d83"
@@ -368445,6 +370773,14 @@
       "to": "Commit:ab154d1cf1a1d8e59867205ef14eedda41d81720",
       "provenance": {
         "commit": "ab154d1cf1a1d8e59867205ef14eedda41d81720"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:ab48503eddb19172fa62d3c96172cae8a32d5907",
+      "provenance": {
+        "commit": "ab48503eddb19172fa62d3c96172cae8a32d5907"
       }
     },
     {
@@ -369442,6 +371778,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:bd02ab4cd35e06cb5d9f7059f0766ce86fa0acf1",
+      "provenance": {
+        "commit": "bd02ab4cd35e06cb5d9f7059f0766ce86fa0acf1"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:bd453ff1fac607c5a4d9d1140ab44825d60942b3",
       "provenance": {
         "commit": "bd453ff1fac607c5a4d9d1140ab44825d60942b3"
@@ -369981,6 +372325,14 @@
       "to": "Commit:c8b15666eeb134e4948c9be1b877623cfd52423e",
       "provenance": {
         "commit": "c8b15666eeb134e4948c9be1b877623cfd52423e"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:c8c8a34af95a5f210c8e55338253ca7778de144f",
+      "provenance": {
+        "commit": "c8c8a34af95a5f210c8e55338253ca7778de144f"
       }
     },
     {
@@ -370765,6 +373117,14 @@
       "to": "Commit:d98bc7cbe9e9ad3c790042e2b4dfe78ca9f4e96f",
       "provenance": {
         "commit": "d98bc7cbe9e9ad3c790042e2b4dfe78ca9f4e96f"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:d98dcf441476a234107716e6bf9083f3e1e52cb0",
+      "provenance": {
+        "commit": "d98dcf441476a234107716e6bf9083f3e1e52cb0"
       }
     },
     {
@@ -371650,6 +374010,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:ec9c79137d323406662147b66a390e419d122dae",
+      "provenance": {
+        "commit": "ec9c79137d323406662147b66a390e419d122dae"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:ecf6a1eed9ef5c5c4a18ca82eaa0a3d958c4930a",
       "provenance": {
         "commit": "ecf6a1eed9ef5c5c4a18ca82eaa0a3d958c4930a"
@@ -372178,6 +374546,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:f6eaefe5d92e1ee0bc603d076443e87f857ae7ba",
+      "provenance": {
+        "commit": "f6eaefe5d92e1ee0bc603d076443e87f857ae7ba"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:f6f45aec3f028a5a8e053f2878ed3143f2be3f88",
       "provenance": {
         "commit": "f6f45aec3f028a5a8e053f2878ed3143f2be3f88"
@@ -372253,6 +374629,14 @@
       "to": "Commit:f87a2199c6639e994d59ad1827accc8b3f48b955",
       "provenance": {
         "commit": "f87a2199c6639e994d59ad1827accc8b3f48b955"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:f8b9b0d19629abc3f8875ee533d80dd424d5f9bd",
+      "provenance": {
+        "commit": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd"
       }
     },
     {
@@ -390611,6 +392995,15 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:test/lib/rc1-browser-controls.js",
+      "to": "Artifact:test/lib/rc1-board-diagnostics.js",
+      "provenance": {
+        "file": "test/lib/rc1-browser-controls.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:test/liquidity-deployment-plan.js",
       "to": "Artifact:tools/liquidity-e2e-artifacts.js",
       "provenance": {
@@ -393518,11 +395911,101 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:test/rc1-alliance-response-barrier.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "test/rc1-alliance-response-barrier.js",
+        "line": 46
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-alliance-response-barrier.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/rc1-alliance-response-barrier.js",
+        "line": 62
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-alliance-response-barrier.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "test/rc1-alliance-response-barrier.js",
+        "line": 46
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-alliance-response-barrier.js",
+      "to": "Artifact:tools/rc1-native-database.js",
+      "provenance": {
+        "file": "test/rc1-alliance-response-barrier.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-alliance-response-barrier.js",
+      "to": "Artifact:tools/rc1-native-determinism.js",
+      "provenance": {
+        "file": "test/rc1-alliance-response-barrier.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-alliance-response-barrier.js",
+      "to": "Artifact:tools/rc1-native-proof.js",
+      "provenance": {
+        "file": "test/rc1-alliance-response-barrier.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-alliance-response-barrier.js",
+      "to": "Artifact:tools/rc1-native-worker.js",
+      "provenance": {
+        "file": "test/rc1-alliance-response-barrier.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-alliance-response-barrier.js",
+      "to": "ExternalDependency:pg",
+      "provenance": {
+        "file": "test/rc1-alliance-response-barrier.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-alliance-world-adapter.js",
+      "to": "Artifact:tools/rc1-alliance-world-adapter.js",
+      "provenance": {
+        "file": "test/rc1-alliance-world-adapter.js",
+        "line": 2
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-alliance-world-adapter.js",
+      "to": "Artifact:tools/rc1-native-actor-replay.js",
+      "provenance": {
+        "file": "test/rc1-alliance-world-adapter.js",
+        "line": 3
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:test/rc1-browser-board-refresh.js",
       "to": "Artifact:test/lib/rc1-browser-controls.js",
       "provenance": {
         "file": "test/rc1-browser-board-refresh.js",
-        "line": 6
+        "line": 7
       }
     },
     {
@@ -393531,7 +396014,7 @@
       "to": "ExternalDependency:playwright-core",
       "provenance": {
         "file": "test/rc1-browser-board-refresh.js",
-        "line": 5
+        "line": 6
       }
     },
     {
@@ -395129,6 +397612,168 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-family-omr.js",
+      "to": "Artifact:src/exchange.js",
+      "provenance": {
+        "file": "test/rc1-native-family-omr.js",
+        "line": 162
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-family-omr.js",
+      "to": "Artifact:src/exchange.js",
+      "provenance": {
+        "file": "test/rc1-native-family-omr.js",
+        "line": 213
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-family-omr.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "test/rc1-native-family-omr.js",
+        "line": 112
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-family-omr.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "test/rc1-native-family-omr.js",
+        "line": 213
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-family-omr.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/rc1-native-family-omr.js",
+        "line": 43
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-family-omr.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "test/rc1-native-family-omr.js",
+        "line": 95
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-family-omr.js",
+      "to": "Artifact:tools/rc1-family-omr-journal.js",
+      "provenance": {
+        "file": "test/rc1-native-family-omr.js",
+        "line": 41
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-family-omr.js",
+      "to": "Artifact:tools/rc1-native-database.js",
+      "provenance": {
+        "file": "test/rc1-native-family-omr.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-family-omr.js",
+      "to": "Artifact:tools/rc1-native-determinism.js",
+      "provenance": {
+        "file": "test/rc1-native-family-omr.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-family-omr.js",
+      "to": "Artifact:tools/rc1-native-proof.js",
+      "provenance": {
+        "file": "test/rc1-native-family-omr.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-family-omr.js",
+      "to": "Artifact:tools/rc1-native-worker.js",
+      "provenance": {
+        "file": "test/rc1-native-family-omr.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-family-omr.js",
+      "to": "Artifact:tools/rc1-omr-journal.js",
+      "provenance": {
+        "file": "test/rc1-native-family-omr.js",
+        "line": 42
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-family-omr.js",
+      "to": "ExternalDependency:pg",
+      "provenance": {
+        "file": "test/rc1-native-family-omr.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-family-yield-precision.js",
+      "to": "Artifact:src/db.js",
+      "provenance": {
+        "file": "test/rc1-native-family-yield-precision.js",
+        "line": 50
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-family-yield-precision.js",
+      "to": "Artifact:src/exchange.js",
+      "provenance": {
+        "file": "test/rc1-native-family-yield-precision.js",
+        "line": 51
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-family-yield-precision.js",
+      "to": "Artifact:tools/rc1-native-database.js",
+      "provenance": {
+        "file": "test/rc1-native-family-yield-precision.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-family-yield-precision.js",
+      "to": "Artifact:tools/rc1-native-proof.js",
+      "provenance": {
+        "file": "test/rc1-native-family-yield-precision.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-family-yield-precision.js",
+      "to": "Artifact:tools/rc1-resource-journal.js",
+      "provenance": {
+        "file": "test/rc1-native-family-yield-precision.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:test/rc1-native-loan-lifecycles.js",
       "to": "Artifact:src/game.js",
       "provenance": {
@@ -395660,6 +398305,105 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-resource-pressure.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "test/rc1-native-resource-pressure.js",
+        "line": 38
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-resource-pressure.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/rc1-native-resource-pressure.js",
+        "line": 38
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-resource-pressure.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "test/rc1-native-resource-pressure.js",
+        "line": 38
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-resource-pressure.js",
+      "to": "Artifact:tools/rc1-native-database.js",
+      "provenance": {
+        "file": "test/rc1-native-resource-pressure.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-resource-pressure.js",
+      "to": "Artifact:tools/rc1-native-determinism.js",
+      "provenance": {
+        "file": "test/rc1-native-resource-pressure.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-resource-pressure.js",
+      "to": "Artifact:tools/rc1-native-proof.js",
+      "provenance": {
+        "file": "test/rc1-native-resource-pressure.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-resource-pressure.js",
+      "to": "Artifact:tools/rc1-native-worker.js",
+      "provenance": {
+        "file": "test/rc1-native-resource-pressure.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-resource-pressure.js",
+      "to": "Artifact:tools/rc1-resource-pressure-journal.js",
+      "provenance": {
+        "file": "test/rc1-native-resource-pressure.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-resource-pressure.js",
+      "to": "Artifact:tools/rc1-resource-pressure-policy.js",
+      "provenance": {
+        "file": "test/rc1-native-resource-pressure.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-resource-pressure.js",
+      "to": "Artifact:tools/rc1-world-resource-observer.js",
+      "provenance": {
+        "file": "test/rc1-native-resource-pressure.js",
+        "line": 38
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-resource-pressure.js",
+      "to": "ExternalDependency:pg",
+      "provenance": {
+        "file": "test/rc1-native-resource-pressure.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:test/rc1-native-run-guardrails.js",
       "to": "Artifact:tools/rc1-native-run-guardrails.js",
       "provenance": {
@@ -395934,7 +398678,7 @@
       "to": "Artifact:src/content/core-progression.js",
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
-        "line": 241
+        "line": 299
       }
     },
     {
@@ -395943,7 +398687,7 @@
       "to": "Artifact:src/coordination/runtime.js",
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
-        "line": 248
+        "line": 306
       }
     },
     {
@@ -395952,7 +398696,7 @@
       "to": "Artifact:src/director/config.js",
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
-        "line": 241
+        "line": 299
       }
     },
     {
@@ -395961,7 +398705,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
-        "line": 242
+        "line": 300
       }
     },
     {
@@ -395970,7 +398714,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
-        "line": 242
+        "line": 300
       }
     },
     {
@@ -395979,7 +398723,7 @@
       "to": "Artifact:src/player-commands.js",
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
-        "line": 241
+        "line": 299
       }
     },
     {
@@ -395988,7 +398732,34 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
-        "line": 242
+        "line": 269
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-world-workload.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/rc1-native-world-workload.js",
+        "line": 300
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-world-workload.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "test/rc1-native-world-workload.js",
+        "line": 260
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-world-workload.js",
+      "to": "Artifact:tools/rc1-alliance-world-adapter.js",
+      "provenance": {
+        "file": "test/rc1-native-world-workload.js",
+        "line": 22
       }
     },
     {
@@ -396231,6 +399002,24 @@
       "to": "Artifact:tools/rc1-resource-journal.js",
       "provenance": {
         "file": "test/rc1-resource-journal.js",
+        "line": 2
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-resource-pressure-policy.js",
+      "to": "Artifact:tools/rc1-native-proof.js",
+      "provenance": {
+        "file": "test/rc1-resource-pressure-policy.js",
+        "line": 3
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-resource-pressure-policy.js",
+      "to": "Artifact:tools/rc1-resource-pressure-policy.js",
+      "provenance": {
+        "file": "test/rc1-resource-pressure-policy.js",
         "line": 2
       }
     },
@@ -398373,7 +401162,7 @@
       "to": "Artifact:src/worker.js",
       "provenance": {
         "file": "test/tokenomics.js",
-        "line": 368
+        "line": 385
       }
     },
     {
@@ -401726,6 +404515,24 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-alliance-world-adapter.js",
+      "to": "Artifact:tools/rc1-alliance-policy.js",
+      "provenance": {
+        "file": "tools/rc1-alliance-world-adapter.js",
+        "line": 3
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-alliance-world-adapter.js",
+      "to": "Artifact:tools/rc1-native-actor-replay.js",
+      "provenance": {
+        "file": "tools/rc1-alliance-world-adapter.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:tools/rc1-authority-inventory.js",
       "to": "Artifact:src/server.js",
       "provenance": {
@@ -401848,6 +404655,24 @@
       "provenance": {
         "file": "tools/rc1-family-cash-ammo-journal.js",
         "line": 3
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-family-omr-journal.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "tools/rc1-family-omr-journal.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-family-omr-journal.js",
+      "to": "Artifact:tools/rc1-omr-journal.js",
+      "provenance": {
+        "file": "tools/rc1-family-omr-journal.js",
+        "line": 4
       }
     },
     {
@@ -402469,6 +405294,33 @@
       "provenance": {
         "file": "tools/rc1-resource-family.js",
         "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-resource-pressure-journal.js",
+      "to": "Artifact:tools/rc1-native-proof.js",
+      "provenance": {
+        "file": "tools/rc1-resource-pressure-journal.js",
+        "line": 3
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-resource-pressure-journal.js",
+      "to": "Artifact:tools/rc1-resource-journal.js",
+      "provenance": {
+        "file": "tools/rc1-resource-pressure-journal.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-resource-pressure-policy.js",
+      "to": "Artifact:tools/rc1-native-proof.js",
+      "provenance": {
+        "file": "tools/rc1-resource-pressure-policy.js",
+        "line": 3
       }
     },
     {
@@ -428996,6 +431848,15 @@
     },
     {
       "type": "REFERENCES",
+      "from": "Artifact:docs/rc1-alliance-world.md",
+      "to": "Artifact:test/rc1-native-world-workload.js",
+      "provenance": {
+        "file": "docs/rc1-alliance-world.md",
+        "line": 3
+      }
+    },
+    {
+      "type": "REFERENCES",
       "from": "Artifact:docs/rc1-coordinated-alliance.md",
       "to": "Artifact:tools/rc1-alliance-policy.js",
       "provenance": {
@@ -429797,6 +432658,42 @@
     },
     {
       "type": "REFERENCES",
+      "from": "Artifact:docs/release/readiness-work/family-omr-journal.md",
+      "to": "Artifact:src/exchange.js",
+      "provenance": {
+        "file": "docs/release/readiness-work/family-omr-journal.md",
+        "line": 100
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/release/readiness-work/family-omr-journal.md",
+      "to": "Artifact:src/worker.js",
+      "provenance": {
+        "file": "docs/release/readiness-work/family-omr-journal.md",
+        "line": 42
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/release/readiness-work/family-omr-journal.md",
+      "to": "Artifact:test/rc1-native-family-omr.js",
+      "provenance": {
+        "file": "docs/release/readiness-work/family-omr-journal.md",
+        "line": 4
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/release/readiness-work/family-omr-journal.md",
+      "to": "Artifact:tools/rc1-family-omr-journal.js",
+      "provenance": {
+        "file": "docs/release/readiness-work/family-omr-journal.md",
+        "line": 3
+      }
+    },
+    {
+      "type": "REFERENCES",
       "from": "Artifact:docs/release/readiness-work/family-player-policy.md",
       "to": "Artifact:src/rules.tail.js",
       "provenance": {
@@ -429874,6 +432771,42 @@
       "provenance": {
         "file": "docs/release/readiness-work/harness-failure-reducer.md",
         "line": 28
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/release/readiness-work/harness-resource-pressure.md",
+      "to": "Artifact:src/db.js",
+      "provenance": {
+        "file": "docs/release/readiness-work/harness-resource-pressure.md",
+        "line": 13
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/release/readiness-work/harness-resource-pressure.md",
+      "to": "Artifact:src/economy.js",
+      "provenance": {
+        "file": "docs/release/readiness-work/harness-resource-pressure.md",
+        "line": 13
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/release/readiness-work/harness-resource-pressure.md",
+      "to": "Artifact:src/game.js",
+      "provenance": {
+        "file": "docs/release/readiness-work/harness-resource-pressure.md",
+        "line": 13
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/release/readiness-work/harness-resource-pressure.md",
+      "to": "Artifact:src/social/exchange.js",
+      "provenance": {
+        "file": "docs/release/readiness-work/harness-resource-pressure.md",
+        "line": 13
       }
     },
     {
@@ -444989,6 +447922,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Document:docs/rc1-alliance-world.md",
+      "to": "Artifact:docs/rc1-alliance-world.md",
+      "provenance": {
+        "file": "docs/rc1-alliance-world.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Document:docs/rc1-coordinated-alliance.md",
       "to": "Artifact:docs/rc1-coordinated-alliance.md",
       "provenance": {
@@ -445178,6 +448120,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Document:docs/release/readiness-work/family-omr-journal.md",
+      "to": "Artifact:docs/release/readiness-work/family-omr-journal.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/family-omr-journal.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Document:docs/release/readiness-work/family-player-policy.md",
       "to": "Artifact:docs/release/readiness-work/family-player-policy.md",
       "provenance": {
@@ -445200,6 +448151,15 @@
       "to": "Artifact:docs/release/readiness-work/harness-actor-replay.md",
       "provenance": {
         "file": "docs/release/readiness-work/harness-actor-replay.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/release/readiness-work/harness-board-detachment.md",
+      "to": "Artifact:docs/release/readiness-work/harness-board-detachment.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/harness-board-detachment.md",
         "line": 1
       }
     },
@@ -445245,6 +448205,15 @@
       "to": "Artifact:docs/release/readiness-work/harness-recorded-query-order.md",
       "provenance": {
         "file": "docs/release/readiness-work/harness-recorded-query-order.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/release/readiness-work/harness-resource-pressure.md",
+      "to": "Artifact:docs/release/readiness-work/harness-resource-pressure.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/harness-resource-pressure.md",
         "line": 1
       }
     },
@@ -451721,6 +454690,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/lib/rc1-board-diagnostics.js",
+      "to": "Artifact:test/lib/rc1-board-diagnostics.js",
+      "provenance": {
+        "file": "test/lib/rc1-board-diagnostics.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/lib/rc1-browser-controls.js",
       "to": "Artifact:test/lib/rc1-browser-controls.js",
       "provenance": {
@@ -452351,6 +455329,24 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/rc1-alliance-response-barrier.js",
+      "to": "Artifact:test/rc1-alliance-response-barrier.js",
+      "provenance": {
+        "file": "test/rc1-alliance-response-barrier.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/rc1-alliance-world-adapter.js",
+      "to": "Artifact:test/rc1-alliance-world-adapter.js",
+      "provenance": {
+        "file": "test/rc1-alliance-world-adapter.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/rc1-browser-board-refresh.js",
       "to": "Artifact:test/rc1-browser-board-refresh.js",
       "provenance": {
@@ -452675,6 +455671,24 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/rc1-native-family-omr.js",
+      "to": "Artifact:test/rc1-native-family-omr.js",
+      "provenance": {
+        "file": "test/rc1-native-family-omr.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/rc1-native-family-yield-precision.js",
+      "to": "Artifact:test/rc1-native-family-yield-precision.js",
+      "provenance": {
+        "file": "test/rc1-native-family-yield-precision.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/rc1-native-loan-lifecycles.js",
       "to": "Artifact:test/rc1-native-loan-lifecycles.js",
       "provenance": {
@@ -452760,6 +455774,15 @@
       "to": "Artifact:test/rc1-native-query-tape.js",
       "provenance": {
         "file": "test/rc1-native-query-tape.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/rc1-native-resource-pressure.js",
+      "to": "Artifact:test/rc1-native-resource-pressure.js",
+      "provenance": {
+        "file": "test/rc1-native-resource-pressure.js",
         "line": 1
       }
     },
@@ -452877,6 +455900,15 @@
       "to": "Artifact:test/rc1-resource-journal.js",
       "provenance": {
         "file": "test/rc1-resource-journal.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/rc1-resource-pressure-policy.js",
+      "to": "Artifact:test/rc1-resource-pressure-policy.js",
+      "provenance": {
+        "file": "test/rc1-resource-pressure-policy.js",
         "line": 1
       }
     },
@@ -460892,6 +463924,33 @@
     },
     {
       "type": "TESTS",
+      "from": "Artifact:test/rc1-alliance-response-barrier.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "test/rc1-alliance-response-barrier.js",
+        "line": 46
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-alliance-response-barrier.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/rc1-alliance-response-barrier.js",
+        "line": 62
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-alliance-response-barrier.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "test/rc1-alliance-response-barrier.js",
+        "line": 46
+      }
+    },
+    {
+      "type": "TESTS",
       "from": "Artifact:test/rc1-car-journal-postgres.js",
       "to": "Artifact:src/crafting.js",
       "provenance": {
@@ -461504,6 +464563,78 @@
     },
     {
       "type": "TESTS",
+      "from": "Artifact:test/rc1-native-family-omr.js",
+      "to": "Artifact:src/exchange.js",
+      "provenance": {
+        "file": "test/rc1-native-family-omr.js",
+        "line": 162
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-native-family-omr.js",
+      "to": "Artifact:src/exchange.js",
+      "provenance": {
+        "file": "test/rc1-native-family-omr.js",
+        "line": 213
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-native-family-omr.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "test/rc1-native-family-omr.js",
+        "line": 112
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-native-family-omr.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "test/rc1-native-family-omr.js",
+        "line": 213
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-native-family-omr.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/rc1-native-family-omr.js",
+        "line": 43
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-native-family-omr.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "test/rc1-native-family-omr.js",
+        "line": 95
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-native-family-yield-precision.js",
+      "to": "Artifact:src/db.js",
+      "provenance": {
+        "file": "test/rc1-native-family-yield-precision.js",
+        "line": 50
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-native-family-yield-precision.js",
+      "to": "Artifact:src/exchange.js",
+      "provenance": {
+        "file": "test/rc1-native-family-yield-precision.js",
+        "line": 51
+      }
+    },
+    {
+      "type": "TESTS",
       "from": "Artifact:test/rc1-native-loan-lifecycles.js",
       "to": "Artifact:src/game.js",
       "provenance": {
@@ -461675,6 +464806,33 @@
     },
     {
       "type": "TESTS",
+      "from": "Artifact:test/rc1-native-resource-pressure.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "test/rc1-native-resource-pressure.js",
+        "line": 38
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-native-resource-pressure.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/rc1-native-resource-pressure.js",
+        "line": 38
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-native-resource-pressure.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "test/rc1-native-resource-pressure.js",
+        "line": 38
+      }
+    },
+    {
+      "type": "TESTS",
       "from": "Artifact:test/rc1-native-season-journal.js",
       "to": "Artifact:src/invariants.js",
       "provenance": {
@@ -461742,7 +464900,7 @@
       "to": "Artifact:src/content/core-progression.js",
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
-        "line": 241
+        "line": 299
       }
     },
     {
@@ -461751,7 +464909,7 @@
       "to": "Artifact:src/coordination/runtime.js",
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
-        "line": 248
+        "line": 306
       }
     },
     {
@@ -461760,7 +464918,7 @@
       "to": "Artifact:src/director/config.js",
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
-        "line": 241
+        "line": 299
       }
     },
     {
@@ -461769,7 +464927,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
-        "line": 242
+        "line": 300
       }
     },
     {
@@ -461778,7 +464936,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
-        "line": 242
+        "line": 300
       }
     },
     {
@@ -461787,7 +464945,7 @@
       "to": "Artifact:src/player-commands.js",
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
-        "line": 241
+        "line": 299
       }
     },
     {
@@ -461796,7 +464954,25 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/rc1-native-world-workload.js",
-        "line": 242
+        "line": 269
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-native-world-workload.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/rc1-native-world-workload.js",
+        "line": 300
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-native-world-workload.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "test/rc1-native-world-workload.js",
+        "line": 260
       }
     },
     {
@@ -463542,7 +466718,7 @@
       "to": "Artifact:src/worker.js",
       "provenance": {
         "file": "test/tokenomics.js",
-        "line": 368
+        "line": 385
       }
     },
     {
@@ -471327,7 +474503,7 @@
       "to": "Table:transactions",
       "provenance": {
         "file": "src/exchange.js",
-        "line": 338
+        "line": 348
       }
     },
     {

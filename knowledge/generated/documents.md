@@ -371,6 +371,7 @@
 | [docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md](../../docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md) | documentation | 67 | 2026-09-18 |
 | [docs/OMR-MACHINE-CAMPAIGN.md](../../docs/OMR-MACHINE-CAMPAIGN.md) | documentation | 249 | 2026-08-26 |
 | [docs/OMR-MARKETING-PACK.md](../../docs/OMR-MARKETING-PACK.md) | documentation | 346 | 2026-08-24 |
+| [docs/rc1-alliance-world.md](../../docs/rc1-alliance-world.md) | documentation | 60 | 2026-09-21 |
 | [docs/rc1-coordinated-alliance.md](../../docs/rc1-coordinated-alliance.md) | documentation | 30 | 2026-09-21 |
 | [docs/rc1-family-cash-ammo-journal.md](../../docs/rc1-family-cash-ammo-journal.md) | documentation | 28 | 2026-09-21 |
 | [docs/rc1-multifamily-conflict.md](../../docs/rc1-multifamily-conflict.md) | documentation | 40 | 2026-09-21 |
@@ -392,14 +393,17 @@
 | [docs/release/readiness-work/authority-role-regressions.md](../../docs/release/readiness-work/authority-role-regressions.md) | documentation | 83 | 2026-09-21 |
 | [docs/release/readiness-work/churn-player-policy.md](../../docs/release/readiness-work/churn-player-policy.md) | documentation | 34 | 2026-09-21 |
 | [docs/release/readiness-work/crew-input-focus.md](../../docs/release/readiness-work/crew-input-focus.md) | documentation | 60 | 2026-09-21 |
+| [docs/release/readiness-work/family-omr-journal.md](../../docs/release/readiness-work/family-omr-journal.md) | documentation | 141 | 2026-09-21 |
 | [docs/release/readiness-work/family-player-policy.md](../../docs/release/readiness-work/family-player-policy.md) | documentation | 29 | 2026-09-21 |
 | [docs/release/readiness-work/golden-browser-regressions.md](../../docs/release/readiness-work/golden-browser-regressions.md) | documentation | 25 | 2026-09-21 |
 | [docs/release/readiness-work/harness-actor-replay.md](../../docs/release/readiness-work/harness-actor-replay.md) | documentation | 75 | 2026-09-21 |
+| [docs/release/readiness-work/harness-board-detachment.md](../../docs/release/readiness-work/harness-board-detachment.md) | documentation | 51 | 2026-09-21 |
 | [docs/release/readiness-work/harness-car-journal.md](../../docs/release/readiness-work/harness-car-journal.md) | documentation | 37 | 2026-09-21 |
 | [docs/release/readiness-work/harness-concurrent-replay.md](../../docs/release/readiness-work/harness-concurrent-replay.md) | documentation | 57 | 2026-09-21 |
 | [docs/release/readiness-work/harness-database-isolation.md](../../docs/release/readiness-work/harness-database-isolation.md) | documentation | 39 | 2026-09-21 |
 | [docs/release/readiness-work/harness-failure-reducer.md](../../docs/release/readiness-work/harness-failure-reducer.md) | documentation | 31 | 2026-09-21 |
 | [docs/release/readiness-work/harness-recorded-query-order.md](../../docs/release/readiness-work/harness-recorded-query-order.md) | documentation | 20 | 2026-09-21 |
+| [docs/release/readiness-work/harness-resource-pressure.md](../../docs/release/readiness-work/harness-resource-pressure.md) | documentation | 34 | 2026-09-21 |
 | [docs/release/readiness-work/harness-worker-schedule.md](../../docs/release/readiness-work/harness-worker-schedule.md) | documentation | 164 | 2026-09-21 |
 | [docs/release/readiness-work/harness.md](../../docs/release/readiness-work/harness.md) | documentation | 142 | 2026-09-21 |
 | [docs/release/readiness-work/law-player-policy.md](../../docs/release/readiness-work/law-player-policy.md) | documentation | 16 | 2026-09-21 |
