@@ -1,6 +1,7 @@
 // Test-only exact journal for the declared loan/Wanted lifecycle boundaries.
 import assert from 'node:assert/strict';
 import { equation, exactSum, negate, sha256 } from './rc1-resource-journal.js';
+import { LOAN } from '../src/rules.js';
 
 export const LOAN_PROOF_TABLES = ['characters', 'account_persistent', 'transactions', 'loans', 'cars',
   'bounties', 'bounty_contributors', 'street_tax', 'loan_house', 'exchange_pool'];
@@ -37,7 +38,7 @@ export async function snapshotLoanResources(pool) {
   } catch (error) { await client.query('ROLLBACK'); throw error; } finally { client.release(); }
 }
 
-export function reconcileLoanLifecycle(before, after, { label, result } = {}) {
+export function reconcileLoanLifecycle(before, after, { label, result, logicalAt } = {}) {
   for (const table of LOAN_PROOF_TABLES) assert(Array.isArray(before[table]) && Array.isArray(after[table]), `Missing ${table}`);
   const oldReceipts = byId(before.transactions), finalReceipts = byId(after.transactions);
   assert.equal(oldReceipts.size, before.transactions.length); assert.equal(finalReceipts.size, after.transactions.length);
@@ -62,11 +63,25 @@ export function reconcileLoanLifecycle(before, after, { label, result } = {}) {
   }
   assert.equal(after.account_persistent.length, before.account_persistent.length);
   check('open-loan-escrow', held(before), held(after), negate(exactSum(['loan:offer', 'loan:take', 'loan:refund'].map(r => net(receipts, r)))));
+  for (const lender of new Set([...before.loans, ...after.loans].map(row => row.lender_character))) {
+    const ownerHeld = state => exactSum(state.loans.filter(row => row.lender_character === lender && row.status === 'open').map(row => row.principal));
+    const matched = receipts.filter(row => (['loan:offer', 'loan:refund'].includes(row.reason) && row.character_id === lender)
+      || (row.reason === 'loan:take' && row.counterparty === lender));
+    check(`open-loan-lender:${lender}`, ownerHeld(before), ownerHeld(after), negate(exactSum(matched.map(row => row.amount))));
+  }
   check('Wanted-bounty-escrow', bounties(before), bounties(after), negate(exactSum(['bounty:wanted', 'bounty:wanted:refund'].map(r => net(receipts, r)))));
+  for (const target of new Set([...before.bounties, ...after.bounties].map(row => row.target_character))) {
+    const targetHeld = state => exactSum(state.bounties.filter(row => row.target_character === target).map(row => row.amount));
+    const matched = receipts.filter(row => ['bounty:wanted', 'bounty:wanted:refund'].includes(row.reason) && row.counterparty === target);
+    check(`Wanted-target:${target}`, targetHeld(before), targetHeld(after), negate(exactSum(matched.map(row => row.amount))));
+  }
   for (const state of [before, after]) {
     for (const row of state.bounty_contributors) assert.equal(row.contributor, 'HOUSE', 'Non-HOUSE bounty outside this scope');
-    for (const pot of state.bounties) assert.equal(exactSum([pot.amount]), exactSum(state.bounty_contributors
-      .filter(r => r.target_character === pot.target_character && r.kind === pot.kind).map(r => r.amount)), 'Bounty contributor custody mismatch');
+    for (const pot of state.bounties) {
+      assert.equal(pot.kind, 'kill', 'Non-kill bounty outside this scope');
+      assert.equal(exactSum([pot.amount]), exactSum(state.bounty_contributors
+        .filter(r => r.target_character === pot.target_character && r.kind === pot.kind).map(r => r.amount)), 'Bounty contributor custody mismatch');
+    }
     for (const row of state.bounty_contributors) assert(state.bounties.some(pot => pot.target_character === row.target_character && pot.kind === row.kind), 'Orphan bounty share');
   }
   const toWindow = label === 'buyback' ? result?.toWindow || 0 : 0;
@@ -85,6 +100,10 @@ export function reconcileLoanLifecycle(before, after, { label, result } = {}) {
       for (const field of ['id', 'lender_character', 'principal', 'rate', 'hours', 'offered_at', 'offered_to', 'collateral_min', 'collateral_omr'])
         assert.equal(loan[field], prior[field], `Loan identity/terms rewritten: ${field}`);
       if (prior.due_at) assert.equal(loan.due_at, prior.due_at, 'Canonical deadline rewritten');
+      if (prior.status !== 'open') for (const field of ['borrower_character', 'collateral_car'])
+        assert.equal(loan[field], prior[field], `Active loan custody identity rewritten: ${field}`);
+      if (prior.status === 'open' && loan.status === 'cancelled' && label === 'loan sweep')
+        assert(Number.isSafeInteger(logicalAt) && logicalAt > Date.parse(prior.offered_at) + LOAN.OFFER_TTL_MS, 'Offer refund before original expiry');
     }
     assert.equal(exactSum([loan.collateral_omr]), '0', 'OMR collateral not exercised in this case group');
     if (!loan.collateral_car || prior?.status === loan.status) continue;
@@ -93,6 +112,7 @@ export function reconcileLoanLifecycle(before, after, { label, result } = {}) {
     else if (prior?.status === 'active' && loan.status === 'repaid') car.pledged = false;
     else if (prior?.status === 'active' && loan.status === 'collected') {
       assert.equal(label, 'loan sweep', 'Unclassified collection authority');
+      assert(Number.isSafeInteger(logicalAt) && logicalAt > Date.parse(prior.due_at) + LOAN.GRACE_MS, 'Collateral forfeit before original grace');
       assert.equal(car.character_id, prior.borrower_character); assert(car.pledged);
       Object.assign(car, { character_id: loan.lender_character, pledged: false, race_limit: null, pink_slip: false, nos: 0 });
       carMoves.push({ car: loan.collateral_car, loan: id, from: prior.borrower_character, to: loan.lender_character,

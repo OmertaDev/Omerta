@@ -60,7 +60,7 @@ async function observe(label, action, validate = () => {}) {
   try {
     try { value = await action(); } catch (error) { actionError = error; }
     after = await snapshotLoanResources(readPool);
-    journal = reconcileLoanLifecycle(before, after, { label, result: value });
+    journal = reconcileLoanLifecycle(before, after, { label, result: value, logicalAt: at });
     await validate({ before, after, result: value, journal, error: actionError });
     boundaryCount++; equationCount += journal.equations.length;
     await proof.record({ kind: 'loan-resource-boundary', label, logicalAt: at, journal, result: value ?? null,
@@ -117,6 +117,7 @@ try {
   await base.query(`CREATE SCHEMA ${namespace}`);
   const bootstrap = new controller.Pool({ connectionString: database.url, options: '', max: 20 });
   await seam.clock.initialize(bootstrap); pool = await makeWorkerDatabase(controller);
+  await proof.record({ kind: 'database-version', ...(await pool.query('SELECT version() AS version, current_setting(\'server_version_num\') AS server_version_num')).rows[0] });
   const [{ spawnResident }, { POPULATION, LOAN }, { withCharacter, withTwoCharacters }, loanDomain, { runLedgerInvariants }] = await Promise.all([
     import('../src/population.js'), import('../src/rules.js'), import('../src/game.js'), import('../src/loans.js'), import('../src/invariants.js')]);
   assert.equal(LOAN.OFFER_TTL_MS, 48 * 3600000); assert.equal(LOAN.GRACE_MS, 24 * 3600000); assert.equal(LOAN.WANTED_MS, 72 * 3600000);
