@@ -25,11 +25,21 @@ const accounts = Object.fromEntries(roles.map(role => [role, `ca-${role}`]));
 const names = Object.fromEntries(roles.map(role => [role, `Crew ${role}`]));
 let db, app, stateSQL, tables, sequence = 0, snapshots = new Set(), result, phase = 'initialization';
 const tokens = {}, completions = new Map(), cases = [], requests = [], replays = [];
+const activeCalls = new Set(); let requestBarrier = null;
 async function boot() {
   app = await buildServer();
+  app.addHook('preHandler', async req => {
+    if (requestBarrier && req.headers['idempotency-key'] === requestBarrier.key && req._idem) {
+      requestBarrier.entered(); await requestBarrier.released;
+    }
+  });
   app.addHook('onResponse', async req => { completions.get(req.headers['x-rc1-completion'])?.(); });
 }
-async function call(role, method, url, payload = {}, key = crypto.randomUUID()) {
+function call(...args) {
+  const pending = performCall(...args); activeCalls.add(pending);
+  pending.then(() => activeCalls.delete(pending), () => activeCalls.delete(pending)); return pending;
+}
+async function performCall(role, method, url, payload = {}, key = crypto.randomUUID()) {
   const id = String(++sequence); let timer;
   const completed = new Promise((resolve, reject) => { completions.set(id, resolve); timer = setTimeout(() => reject(Error('Response completion timeout')), 30000); });
   try {
@@ -127,11 +137,28 @@ try {
   await ok('requester', 'POST', `/v1/crew/request/${a}`);
   const declineRequest = await ok('boss', 'DELETE', `/v1/crew/request/${characterId(accounts.requester)}`); await retry('decline-request-retry', declineRequest);
   const clear = await ok('boss', 'DELETE', '/v1/crew/target'); await retry('clear-target-retry', clear);
-  const key = crypto.randomUUID(), beforeConcurrent = await snapshot();
-  const pair = await Promise.all([ok('boss', 'DELETE', `/v1/crew/member/${characterId(accounts.member)}`, {}, key), ok('boss', 'DELETE', `/v1/crew/member/${characterId(accounts.member)}`, {}, key)]);
-  assert.equal(pair.filter(row => !row.replayed).length, 1, 'Concurrent same-key kick must have one fresh effect');
-  assert.deepEqual(pair[0].body, pair[1].body); const kicked = pair.find(row => !row.replayed);
-  const afterConcurrent = await snapshot(); await proof.artifact('concurrent-kick.json', { before: beforeConcurrent.hash, after: afterConcurrent.hash, pair });
+  // TOOL53: hold the genuine reservation before its handler; a racing retry
+  // must refuse while pending, then reproduce the committed acknowledgment.
+  const key = crypto.randomUUID(); let releaseRequest, barrierEntered, barrierTimer;
+  const entered = new Promise((resolve, reject) => { barrierEntered = resolve; barrierTimer = setTimeout(() => reject(Error('Reservation barrier timeout')), 30000); });
+  const released = new Promise(resolve => { releaseRequest = resolve; });
+  requestBarrier = { key, entered: barrierEntered, released };
+  const firstPending = call('boss', 'DELETE', `/v1/crew/member/${characterId(accounts.member)}`, {}, key);
+  const settledFirst = firstPending.then(value => ({value}), error => ({error}));
+  let pendingRetry;
+  try {
+    await Promise.race([entered, settledFirst.then(outcome => { throw outcome.error || Error('First request bypassed reservation barrier'); })]);
+    clearTimeout(barrierTimer);
+    const beforePending = await snapshot();
+    pendingRetry = await call('boss', 'DELETE', `/v1/crew/member/${characterId(accounts.member)}`, {}, key);
+    assert.equal(pendingRetry.status, 409); assert.equal(pendingRetry.body.error, 'in_progress'); assert.equal(pendingRetry.replayed, false);
+    const afterPending = await snapshot(); assert.deepEqual(afterPending.rows, beforePending.rows, 'Pending retry changed authority');
+    await proof.artifact('pending-kick-rejection.json', {request:pendingRetry,before:beforePending.hash,after:afterPending.hash});
+  } finally { clearTimeout(barrierTimer); requestBarrier = null; releaseRequest(); }
+  const completed = await settledFirst; if (completed.error) throw completed.error;
+  const kicked = completed.value; assert.equal(kicked.status, 200); assert.equal(kicked.replayed, false);
+  const finalRetry = await retry('pending-kick-retry-after-completion', kicked);
+  await proof.artifact('concurrent-kick.json', {schedule:'reservation -> pending denial -> handler completion -> exact retry',pair:[kicked,pendingRetry],finalRetry});
   await deny('revoked-member-target', 'no_crew', 'member', 'POST', '/v1/crew/target', { name: names.outsider });
   await deny('revoked-member-chat', 'no_crew', 'member', 'POST', '/v1/crew/chat', { text: 'after revocation' });
   assert.deepEqual((await ok('member', 'GET', '/v1/crew/chat')).body.messages, []);
@@ -151,6 +178,7 @@ try {
   result = { status: 'FAIL', error: error.message, stack: error.stack, completedDenials: cases.filter(row=>row.status==='PASS').length, configuration };
   await proof.artifact('failure.json', result); process.exitCode = 1;
 } finally {
+  await Promise.allSettled([...activeCalls]);
   if (app) await app.close();
   if (db) await db.cleanup(db.pool);
   await proof.artifact('cases.json', { cases, replays });

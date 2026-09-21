@@ -25,11 +25,21 @@ const accounts = Object.fromEntries(roles.map(role => [role, `fa-${role}`]));
 const names = Object.fromEntries(roles.map(role => [role, `Family ${role}`]));
 let db, app, stateSQL, tables, sequence = 0, snapshots = new Set(), result, phase = 'initialization';
 const tokens = {}, completions = new Map(), cases = [], requests = [], replays = [];
+const activeCalls = new Set(); let requestBarrier = null;
 async function boot() {
   app = await buildServer();
+  app.addHook('preHandler', async req => {
+    if (requestBarrier && req.headers['idempotency-key'] === requestBarrier.key && req._idem) {
+      requestBarrier.entered(); await requestBarrier.released;
+    }
+  });
   app.addHook('onResponse', async req => { completions.get(req.headers['x-rc1-completion'])?.(); });
 }
-async function call(role, method, url, payload = {}, key = crypto.randomUUID()) {
+function call(...args) {
+  const pending = performCall(...args); activeCalls.add(pending);
+  pending.then(() => activeCalls.delete(pending), () => activeCalls.delete(pending)); return pending;
+}
+async function performCall(role, method, url, payload = {}, key = crypto.randomUUID()) {
   const id = String(++sequence); let timer;
   const completed = new Promise((resolve, reject) => { completions.set(id, resolve); timer = setTimeout(() => reject(Error('Response completion timeout')), 30000); });
   try {
@@ -123,9 +133,28 @@ try {
   const chat=await ok('soldier','POST','/v1/gangs/chat',{text:'Restricted family authority line'});await retry('chat-retry',chat);
   assert((await ok('boss','GET','/v1/gangs/chat')).body.messages.some(row=>row.text==='Restricted family authority line'));
   for(const role of ['outsider','othermember']) assert(!(await ok(role,'GET','/v1/gangs/chat')).body.messages.some(row=>row.text==='Restricted family authority line'));
-  const key=crypto.randomUUID(), pair=await Promise.all([ok('boss','POST','/v1/gangs/kick',{characterId:soldier},key),ok('boss','POST','/v1/gangs/kick',{characterId:soldier},key)]);
-  assert.equal(pair.filter(row=>!row.replayed).length,1);assert.deepEqual(pair[0].body,pair[1].body);
-  const kicked=pair.find(row=>!row.replayed);await proof.artifact('concurrent-kick.json',pair);
+  // TOOL53: hold the genuine reservation before its handler; a racing retry
+  // must refuse while pending, then reproduce the committed acknowledgment.
+  const key = crypto.randomUUID(); let releaseRequest, barrierEntered, barrierTimer;
+  const entered = new Promise((resolve, reject) => { barrierEntered = resolve; barrierTimer = setTimeout(() => reject(Error('Reservation barrier timeout')), 30000); });
+  const released = new Promise(resolve => { releaseRequest = resolve; });
+  requestBarrier = { key, entered: barrierEntered, released };
+  const firstPending = call('boss', 'POST', '/v1/gangs/kick', {characterId:soldier}, key);
+  const settledFirst = firstPending.then(value => ({value}), error => ({error}));
+  let pendingRetry;
+  try {
+    await Promise.race([entered, settledFirst.then(outcome => { throw outcome.error || Error('First request bypassed reservation barrier'); })]);
+    clearTimeout(barrierTimer);
+    const beforePending = await snapshot();
+    pendingRetry = await call('boss', 'POST', '/v1/gangs/kick', {characterId:soldier}, key);
+    assert.equal(pendingRetry.status, 409); assert.equal(pendingRetry.body.error, 'in_progress'); assert.equal(pendingRetry.replayed, false);
+    const afterPending = await snapshot(); assert.deepEqual(afterPending.rows, beforePending.rows, 'Pending retry changed authority');
+    await proof.artifact('pending-kick-rejection.json', {request:pendingRetry,before:beforePending.hash,after:afterPending.hash});
+  } finally { clearTimeout(barrierTimer); requestBarrier = null; releaseRequest(); }
+  const completed = await settledFirst; if (completed.error) throw completed.error;
+  const kicked = completed.value; assert.equal(kicked.status, 200); assert.equal(kicked.replayed, false);
+  const finalRetry = await retry('pending-kick-retry-after-completion', kicked);
+  await proof.artifact('concurrent-kick.json', {schedule:'reservation -> pending denial -> handler completion -> exact retry',pair:[kicked,pendingRetry],finalRetry});
   await deny('fresh-chat-after-kick','no_gang','soldier','POST','/v1/gangs/chat',{text:'After revocation'});
   assert.deepEqual((await ok('soldier','GET','/v1/gangs/chat')).body.messages,[]);
   await retry('historic-chat-after-kick-no-write',chat);
@@ -144,6 +173,7 @@ try {
   result={status:'FAIL',error:error.message,stack:error.stack,completedDenials:cases.filter(row=>row.status==='PASS').length,configuration};
   await proof.artifact('failure.json',result);process.exitCode=1;
 } finally {
+  await Promise.allSettled([...activeCalls]);
   if(app)await app.close();if(db)await db.cleanup(db.pool);
   await proof.artifact('cases.json',{cases,replays});const sealed=await proof.finish(result);await verifyArtifactIndex(directory,sealed);
   console.log(JSON.stringify({status:sealed.status,source:source.revision,denials:result.denials,replayComparisons:result.replayComparisons,directory,error:result.error}));
