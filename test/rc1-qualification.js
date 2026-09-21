@@ -3,7 +3,9 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { execFileSync } from 'node:child_process';
 import { REQUIRED_PROOFS, evidencePath, indexEvidence, verifyIndex, qualify, sha256 } from '../tools/rc1-qualification.mjs';
+import { freeze, runGate } from '../tools/rc1-evidence.mjs';
 
 const root = fs.mkdtempSync(path.join(os.tmpdir(), 'omerta-rc1-evidence-test-'));
 const write = (relative, value) => {
@@ -68,4 +70,47 @@ try {
 } finally {
   // Only the uniquely-created OS temporary fixture is removed.
   fs.rmSync(root, { recursive: true });
+}
+
+// A separate, disposable repository proves capture detects source changes and child failures.
+const fixture = fs.mkdtempSync(path.join(os.tmpdir(), 'omerta-rc1-capture-test-'));
+const previousDirectory = process.cwd();
+try {
+  process.chdir(fixture);
+  const git = (...args) => execFileSync('git', args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
+  git('init', '--quiet');
+  fs.mkdirSync('src');
+  fs.writeFileSync('src/fixture.js', '// synthetic capture test\n');
+  fs.writeFileSync('schema.sql', '-- synthetic\n');
+  fs.writeFileSync('package-lock.json', '{}\n');
+  fs.writeFileSync('.gitignore', 'evidence/\n');
+  fs.writeFileSync('configuration.json', '{}\n');
+  fs.writeFileSync('gates.json', JSON.stringify({ gates: [
+    { id: 'pass', command: ['node', '-e', 'console.log("synthetic capture only")'], timeoutMs: 10000 },
+    { id: 'fail', command: ['node', '-e', 'process.exit(7)'], timeoutMs: 10000 },
+    { id: 'timeout', command: ['node', '-e', 'setInterval(()=>{}, 1000)'], timeoutMs: 200 },
+    { id: 'mutation', command: ['node', '-e', 'require("fs").appendFileSync("src/fixture.js", "// changed")'], timeoutMs: 10000 },
+  ] }));
+  git('add', '.');
+  git('-c', 'user.name=RC1 Synthetic Test', '-c', 'user.email=rc1-test@example.invalid', 'commit', '--quiet', '-m', 'Synthetic fixture');
+  const predecessor = git('rev-parse', 'HEAD');
+  const manifest = freeze({ output: 'evidence', configuration: 'configuration.json', predecessor, registry: 'gates.json' });
+  assert.equal(manifest.source, predecessor);
+  assert.equal((await runGate('evidence', 'pass')).status, 'PASS');
+  const failed = await runGate('evidence', 'fail');
+  assert.equal(failed.exitCode, 7);
+  assert.equal(failed.status, 'FAIL');
+  const timeout = await runGate('evidence', 'timeout');
+  assert.equal(timeout.timedOut, true);
+  assert.equal(timeout.status, 'FAIL');
+  const mutation = await runGate('evidence', 'mutation');
+  assert.equal(mutation.exitCode, 0);
+  assert.equal(mutation.sourceUnchanged, false);
+  assert.equal(mutation.status, 'FAIL');
+  await assert.rejects(() => runGate('evidence', 'pass'), /Source checkout changed/);
+  assert.throws(() => freeze({ output: 'evidence', configuration: 'configuration.json', predecessor, registry: 'gates.json' }), /never overwrite/);
+  console.log('rc1-evidence: clean freeze, passing command, nonzero exit, timeout, source mutation and overwrite refusal passed');
+} finally {
+  process.chdir(previousDirectory);
+  fs.rmSync(fixture, { recursive: true });
 }
