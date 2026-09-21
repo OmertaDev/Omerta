@@ -7,6 +7,7 @@ import os from 'node:os';
 import { execFileSync } from 'node:child_process';
 import { createReadStream } from 'node:fs';
 import { hashEvidenceFile, verifyHistoryStream } from './rc1-native-proof-stream.js';
+import { createGzipProofRecorder, validateHistoryStorage, verifyGzipHistory } from './rc1-native-proof-gzip.js';
 const WallDate = globalThis.Date;
 const wallTimestamp = () => new WallDate().toISOString();
 
@@ -168,11 +169,13 @@ export async function restoreCheckpoint(checkpoint, destination, targetUrl, { po
   } finally { await base.end(); }
 }
 
-export async function createProofRecorder({ directory, source, configuration, runId, seed, scenarioId, population }) {
+export async function createProofRecorder({ directory, source, configuration, runId, seed, scenarioId, population, historyStorage }) {
   // Output must be outside the checkout so evidence cannot make source checks dirty.
   const root = path.resolve(git('rev-parse', '--show-toplevel'));
   const relative = path.relative(root, path.resolve(directory));
   assert(relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative), 'Restricted evidence directory must be outside the source checkout');
+  if (historyStorage !== undefined) return createGzipProofRecorder({ directory, source, configuration, runId, seed, scenarioId, population, historyStorage },
+    { canonicalJson, sha256, wallTimestamp, assertSourceUnchanged, canonicalDatabaseSnapshot, writeCheckpoint, verifyArtifactIndex });
   await fs.mkdir(directory, { recursive: true });
   // Exclusive creation avoids overwriting an earlier failed run or its reproduction.
   await fs.writeFile(path.join(directory, 'run-reserved.json'), canonicalJson({ runId, source }), { flag: 'wx', mode: 0o600 });
@@ -244,17 +247,35 @@ export async function verifyArtifactIndex(directory, record) {
   assert(Array.isArray(record.artifacts) && record.artifacts.length > 0, 'Missing artifact index');
   assert.equal(new Set(record.artifacts.map((artifact) => artifact.path)).size, record.artifacts.length, 'Duplicate artifact index entry');
   const realRoot = await fs.realpath(directory);
+  const compressed = record.format === 2;
+  if (compressed) {
+    validateHistoryStorage(record.historyStorage);
+    assert.equal(record.historyStorageSha256, sha256(canonicalJson(record.historyStorage)), 'History storage configuration changed');
+    assert.equal(record.artifacts.filter(item => item.path === 'history.jsonl.gz').length, 1, 'Missing compressed history');
+    assert(!record.artifacts.some(item => ['run-reserved.json', 'run.json', 'history.jsonl', 'capture-failure.json'].includes(item.path)), 'Reserved artifact path');
+  }
   for (const artifact of record.artifacts) {
-    assert(/^[a-z0-9-]+\.(json|jsonl|dump)$/.test(artifact.path), 'Invalid evidence path');
+    assert(/^[a-z0-9-]+\.(json|jsonl|dump)$/.test(artifact.path) || (compressed && artifact.path === 'history.jsonl.gz'), 'Invalid evidence path');
+    if (compressed) {
+      if (artifact.path !== 'history.jsonl.gz') assert(!Object.hasOwn(artifact, 'decoded'), 'Unexpected decoded artifact');
+      else {
+        assert(artifact.bytes <= record.historyStorage.maximumStoredBytes, 'History stored-byte bound exceeded');
+        assert((await fs.stat(path.join(directory, artifact.path))).size <= record.historyStorage.maximumStoredBytes, 'History stored-byte bound exceeded');
+      }
+    }
     const resolved = await fs.realpath(path.join(directory, artifact.path));
     assert.equal(path.dirname(resolved), realRoot, 'Evidence symlink escapes artifact directory');
-    const actual = await hashEvidenceFile(path.join(directory, artifact.path));
+    const actual = await hashEvidenceFile(path.join(directory, artifact.path), compressed && artifact.path === 'history.jsonl.gz' ? record.historyStorage.maximumStoredBytes : Infinity);
     assert.equal(actual.bytes, artifact.bytes, `Artifact size mismatch: ${artifact.path}`);
     assert.equal(actual.sha256, artifact.sha256, `Artifact hash mismatch: ${artifact.path}`);
   }
   assert.equal(record.configurationSha256, sha256(canonicalJson(record.configuration)), 'Configuration changed');
   assert.equal(record.status, record.result.status, 'Result status mismatch');
   assert.equal(record.matrixQualifying, false, 'Scoped harness cannot qualify a matrix cell');
-  await verifyHistoryStream(createReadStream(path.join(directory, 'history.jsonl')), { canonicalJson, sha256 });
+  if (compressed) {
+    const artifact = record.artifacts.find(item => item.path === 'history.jsonl.gz');
+    const verified = await verifyGzipHistory(path.join(directory, artifact.path), artifact, record.historyStorage, { canonicalJson, sha256 });
+    assert.deepEqual(verified, record.historyVerification, 'History verification summary mismatch');
+  } else await verifyHistoryStream(createReadStream(path.join(directory, 'history.jsonl')), { canonicalJson, sha256 });
   return true;
 }

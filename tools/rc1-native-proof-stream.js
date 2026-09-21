@@ -4,9 +4,11 @@ import crypto from 'node:crypto';
 import { createReadStream } from 'node:fs';
 import { StringDecoder } from 'node:string_decoder';
 
-export async function hashEvidenceFile(file) {
+export async function hashEvidenceFile(file, maximumBytes = Infinity) {
   const hash = crypto.createHash('sha256'); let bytes = 0;
-  for await (const chunk of createReadStream(file)) { bytes += chunk.length; hash.update(chunk); }
+  for await (const chunk of createReadStream(file)) {
+    bytes += chunk.length; assert(bytes <= maximumBytes, 'Evidence stored-byte bound exceeded'); hash.update(chunk);
+  }
   return { sha256: hash.digest('hex'), bytes };
 }
 
@@ -38,4 +40,40 @@ export async function verifyHistoryStream(chunks, { canonicalJson, sha256 }) {
   accept(decoder.end()); if (tail) line(tail);
   assert(count > 0, 'Empty history'); assert.equal(unfinished.size, 0, 'Unfinished authority invocations');
   return { events: count, invocations: invoked.size, finalHash: previousHash };
+}
+
+// Explicit format2 mode: bound the raw line before decoding/parsing and retain
+// only unfinished IDs. The legacy parser and its accepted inputs are unchanged.
+export async function verifyBoundedHistoryStream(chunks, { canonicalJson, sha256, limits }) {
+  const unfinished = new Set(); let count = 0, invocations = 0, previousHash = null, bytes = 0, length = 0;
+  let pieces = [];
+  const line = () => {
+    const raw = Buffer.concat(pieces, length); pieces = []; length = 0;
+    assert(raw.length > 1 && raw.at(-1) === 10, 'Invalid bounded history line');
+    const { hash, ...event } = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(raw.subarray(0, -1)));
+    assert.equal(event.sequence, count + 1, 'History sequence gap');
+    assert.equal(event.previousHash, previousHash, 'History chain gap');
+    assert.equal(hash, sha256(canonicalJson(event)), 'History hash mismatch');
+    if (event.kind === 'invocation') {
+      assert.equal(event.invocation, invocations + 1, 'Nonsequential authority invocation');
+      assert(unfinished.size < limits.maximumOutstandingInvocations, 'History outstanding-invocation bound exceeded');
+      unfinished.add(event.invocation); invocations++;
+    }
+    if (event.kind === 'completion') assert(unfinished.delete(event.invocation), 'Unknown/repeated completion');
+    count++; previousHash = hash;
+  };
+  for await (const chunk of chunks) {
+    assert(Buffer.isBuffer(chunk), 'History requires exact byte chunks'); bytes += chunk.length;
+    assert(bytes <= limits.maximumDecodedBytes, 'History decoded-byte bound exceeded');
+    let start = 0;
+    while (start < chunk.length) {
+      const found = chunk.indexOf(10, start), end = found < 0 ? chunk.length : found + 1;
+      const part = chunk.subarray(start, end); length += part.length;
+      assert(length <= limits.maximumLineBytes, 'History line-byte bound exceeded');
+      pieces.push(part); if (found >= 0) line(); start = end;
+    }
+  }
+  assert.equal(length, 0, 'Truncated history line'); assert(count > 0, 'Empty history');
+  assert.equal(unfinished.size, 0, 'Unfinished authority invocations');
+  return { semantics: 'sequential-invocations-v1', events: count, invocations, finalHash: previousHash };
 }
