@@ -55,8 +55,11 @@ function captureOrigin(sql) {
 export function createNpcCarAcquisitionCommitObserver(options) {
   assertNpcCarSources();
   assert(!options.queryOrigin && !options.provenanceExtensions, 'NPC car extension owns its source annotation');
-  return createCarMeltCommitObserver({ ...options, queryOrigin: captureOrigin,
-    provenanceExtensions: { npcCarAcquisition: { format: 1, sourcePins: NPC_CAR_SOURCE_PINS } } });
+  const { additionalQueryOrigin = null, additionalProvenanceExtensions = {}, ...baseOptions } = options;
+  assert(additionalQueryOrigin === null || typeof additionalQueryOrigin === 'function');
+  assert(!Object.hasOwn(additionalProvenanceExtensions, 'npcCarAcquisition'), 'Cannot replace NPC car source annotation');
+  return createCarMeltCommitObserver({ ...baseOptions, queryOrigin: sql => captureOrigin(sql) ?? additionalQueryOrigin?.(sql) ?? null,
+    provenanceExtensions: { ...additionalProvenanceExtensions, npcCarAcquisition: { format: 1, sourcePins: NPC_CAR_SOURCE_PINS } } });
 }
 
 // The source-pinned executed INSERTs and observed source frames are authority.

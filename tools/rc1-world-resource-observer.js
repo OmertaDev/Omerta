@@ -7,6 +7,7 @@ import { reconcileCarResources } from './rc1-car-journal.js';
 import { reconcileSeasonConversions } from './rc1-season-conversion-journal.js';
 import { reconcileNpcFamilyFormation } from './rc1-npc-family-journal.js';
 import { reconcileStoredSeasonCrowns } from './rc1-season-crown-journal.js';
+import { reconcileNpcBoats } from './rc1-npc-boat-journal.js';
 
 export const WORLD_RESOURCE_TABLES = Object.freeze([
   'characters', 'account_persistent', 'transactions', 'gangs', 'gang_members', 'amm_pool', 'street_tax', 'stake_pool', 'dev_fund',
@@ -616,7 +617,7 @@ function reconcileTurfTerminal(before, after, receipts, checks, unsupported) {
   districtFields.set(districtId, fields); settledDistricts.add(districtId); return result;
 }
 
-export function reconcileWorldResources(before, after, { identity = null, includeRestrictedChanges = false, carMeltProvenance = null, carAcquisitionProvenance = null, npcFamilyProvenance = null, seasonElectionProvenance = null } = {}) {
+export function reconcileWorldResources(before, after, { identity = null, includeRestrictedChanges = false, carMeltProvenance = null, carAcquisitionProvenance = null, npcFamilyProvenance = null, seasonElectionProvenance = null, npcBoatProvenance = null } = {}) {
   assert.equal(before.format, 1); assert.equal(after.format, 1);
   const checks = [], unsupported = [];
   const receipts = appendOnly(before, after, 'transactions');
@@ -770,7 +771,9 @@ export function reconcileWorldResources(before, after, { identity = null, includ
   checks.push(...seasonConversions.checks); unsupported.push(...seasonConversions.unsupported);
   const seasonCrowns = reconcileStoredSeasonCrowns(before, after, { seasonElectionProvenance, identity });
   checks.push(...seasonCrowns.checks); unsupported.push(...seasonCrowns.unsupported);
-  const observedOnly = ['boats', 'account_gear', 'market_listings', 'exchange_pool', 'bounties', 'commission_proposals', 'favors',
+  const boats = reconcileNpcBoats(before, after, { identity, npcBoatProvenance });
+  checks.push(...boats.checks); unsupported.push(...boats.unsupported);
+  const observedOnly = ['account_gear', 'market_listings', 'exchange_pool', 'bounties', 'commission_proposals', 'favors',
     'loan_house', 'convoy_insurance', 'poker_tournaments', 'poker_entries', 'grand_prix', 'grand_prix_entries', 'stakes_races',
     'stakes_entries', 'shipment_days', 'shipment_takes', 'bespoke_pieces', 'bespoke_serials', 'campaign_progress',
     'drop_allocations', 'chain_reserve', 'vouchers', 'operation_escrow'];
@@ -801,6 +804,7 @@ export function reconcileWorldResources(before, after, { identity = null, includ
   if (restrictedChanges) verifyResourceTableChanges(before, after, restrictedChanges);
   return { format: 1, identity, beforeHash: worldResourceHash(before), afterHash: worldResourceHash(after), receipts,
     itemEvents: events, mutationInputs: inputs, mutationOutputs: outputs, checks, cars,
+    boats: { movements: boats.movements, scope: 'One source-pinned default original worker NPC dinghy grant with exact owner/asset and recorded random inputs. No authored boat grant receipt exists. Retirement, sale, estate, NFT and compound dispositions remain unsupported.' },
     seasonCrowns: { movements: seasonCrowns.movements, elections: seasonCrowns.elections, notificationMetadata: seasonCrowns.notificationMetadata,
       scope: 'One stored winner, one-way claim, exact account +1 and fresh living-owner notice. Initial winner selection, empty/ambiguous owner and compound awards remain unsupported. Other notifications are metadata, never reward authority.' }, seasonConversions: { movements: seasonConversions.movements,
       scope: 'One fresh recap bound to its unique season_convert receipt and living character/account, exact canonical resets and positive prestige only. Zero-gain recaps are status-only. Crown, duel-title, existing-recap and compound transitions remain unsupported.' }, turfTerminal: { movements: turfTerminal.movements,
