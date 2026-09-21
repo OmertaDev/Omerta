@@ -84,6 +84,19 @@ try {
   const invariant = async label => { const value = await runLedgerInvariants(pool, { alert: false }); await proof.record({ kind: 'canonical-invariants', label, value }); assert(value.ok, label); invariants++; };
   await invariant('baseline'); await proof.artifact('initial-omr-state.json', { state: await snapshotOmr(readPool), fixtureWritesEndHere: true });
   await observe('original-worker-bootstrap', () => bootOriginalWorker(controller).then(() => ({ booted: true })));
+  await pool.query(`CREATE FUNCTION rc1_window_abort() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN
+    IF NEW.account_id='omr-a' AND NEW.omr<OLD.omr THEN
+      IF NOT EXISTS(SELECT 1 FROM transactions WHERE account_id=NEW.account_id AND reason='yield:window')
+        OR NOT EXISTS(SELECT 1 FROM transactions WHERE account_id=NEW.account_id AND reason='window:burn')
+        OR NOT EXISTS(SELECT 1 FROM transactions WHERE reason='desk:recycle' AND counterparty='window:burn')
+        OR NOT EXISTS(SELECT 1 FROM transactions WHERE character_id='omr-a' AND reason='window:payout')
+        OR NOT EXISTS(SELECT 1 FROM exchange_pool WHERE id=1 AND lifetime_paid>0)
+        THEN RAISE EXCEPTION 'RC1_WRONG_WINDOW_FAILPOINT' USING ERRCODE='RCO02'; END IF;
+      RAISE EXCEPTION 'RC1_OMR_ABORT_WINDOW_AFTER_SPLIT_AND_CASH' USING ERRCODE='RCO01'; END IF; RETURN NEW; END $$`);
+  await pool.query('CREATE TRIGGER rc1_window_abort BEFORE UPDATE ON account_persistent FOR EACH ROW EXECUTE FUNCTION rc1_window_abort()'); injected = true;
+  try { await observe('window:abort-after-split-recycle-and-cash', () => call(actors[0], '/v1/window/redeem', 'window-a', { amount: 6.000011 }, [500]), unchanged); }
+  finally { injected = false; await pool.query('DROP TRIGGER rc1_window_abort ON account_persistent'); await pool.query('DROP FUNCTION rc1_window_abort()'); }
+  assert(faults.some(row => row.message.includes('WINDOW_AFTER_SPLIT_AND_CASH')), 'Exact late window failure observed');
   const redeem = await observe('window:fractional-round-up', () => call(actors[0], '/v1/window/redeem', 'window-a', { amount: 6.000011 }));
   await replay('window:exact-retry', actors[0], '/v1/window/redeem', 'window-a', { amount: 6.000011 }, redeem);
   await observe('window:changed-body-refused', () => call(actors[0], '/v1/window/redeem', 'window-a', { amount: 7 }, [422]), unchanged);
@@ -120,7 +133,8 @@ try {
     const value = await observe(`unstake:owner-${i}`, () => call(actor, '/v1/unstake', `unstake-${i}`));
     await replay(`unstake:owner-${i}:exact-retry`, actor, '/v1/unstake', `unstake-${i}`, undefined, value);
   }
-  const offered = await observe('loan:offer-collateral-demand-only', () => call(actors[1], '/v1/loans', 'offer', { amount: 1000, rate: 0.1, hours: 24, collateralOmr: 31.9, to: actors[0] }));
+  await observe('window:canonically-fund-loan-lender', () => call(actors[1], '/v1/window/redeem', 'window-loan-funding', { amount: '6.000000' }));
+  const offered = await observe('loan:offer-collateral-demand-only', () => call(actors[1], '/v1/loans', 'offer', { amount: 5000, rate: 0.1, hours: 24, collateralOmr: 31.9, to: actors[0] }));
   const loan = offered.body.id; assert(loan);
   await observe('loan:wrong-borrower-denied', () => call(actors[2], `/v1/loans/${loan}/take`, 'wrong-borrower', {}, [400]), unchanged);
   const pledge = await observe('loan:pledge', () => call(actors[0], `/v1/loans/${loan}/take`, 'take', {}));
