@@ -319,30 +319,41 @@ export async function payFamilyYield(pool) {
 
     const total = ranked.reduce((a, _, i) => a + (FAMILY_YIELD.WEIGHTS[i] ?? 1), 0);
     const out = [];
-    let paid = 0;
+    // Payouts are whole cents, but the locked NUMERIC pot can contain six-decimal
+    // window cuts or older higher-scale dust. Floor ONLY its spendable cents;
+    // SQL below retains every unspent digit in the original balance.
+    const backing = decimalParts(p.balance);
+    const backedCents = backing.scale <= 2
+      ? backing.coefficient * 10n ** BigInt(2 - backing.scale)
+      : backing.coefficient / 10n ** BigInt(backing.scale - 2);
+    const centsText = (cents) => `${cents / 100n}.${String(cents % 100n).padStart(2, '0')}`;
+    let paidCents = 0n;
     // pay in RANK order (the locks are already held, so order here is free) — the head seat gets its
     // full share and the tail seat absorbs any rounding
     for (let i = 0; i < ranked.length; i++) {
       const g = ranked[i];
       if (!live.includes(g.id)) continue;      // dissolved under the lock — share stays in the pot
-      // CLAMP to what the pot actually holds (red-team F2). Rounding each share to 2dp can sum to a
-      // cent MORE than the balance — measured at 53 of the first 400 cent-values — which drives the
-      // pool NEGATIVE and trips this system's own `family yield backed` invariant. Never pay out
-      // more than is there.
-      const share = Math.min(round2(bal * (FAMILY_YIELD.WEIGHTS[i] ?? 1) / total), round2(bal - paid));
+      // Preserve the authored nearest-cent rank quota, but never round remaining
+      // backing UP: 0.3095 cannot fund a 0.31 payout (RC1-FAMILY-YIELD-01).
+      const quotaCents = BigInt(Math.round(bal * (FAMILY_YIELD.WEIGHTS[i] ?? 1) / total * 100));
+      const remainingCents = backedCents - paidCents;
+      const shareCents = quotaCents < remainingCents ? quotaCents : remainingCents;
+      const share = Number(shareCents) / 100;
       if (share < FAMILY_YIELD.MIN_PAYOUT) continue;
-      await client.query('UPDATE gangs SET omr_reserve = omr_reserve + $2 WHERE id=$1', [g.id, share]);
+      const exactShare = centsText(shareCents);
+      await client.query('UPDATE gangs SET omr_reserve = omr_reserve + $2 WHERE id=$1', [g.id, exactShare]);
       // the headless-ledger convention (emission.js): a JS-generated id, because pg-mem has no
       // gen_random_uuid(). NULL character_id + the gang as counterparty — the `gang:contract` shape.
       await client.query(
         'INSERT INTO transactions (id, character_id, account_id, currency, amount, reason, counterparty) VALUES ($1,$2,$3,$4,$5,$6,$7)',
-        [crypto.randomUUID(), null, null, 'omr', share, 'yield:family', g.id]);
-      paid = round2(paid + share);
+        [crypto.randomUUID(), null, null, 'omr', exactShare, 'yield:family', g.id]);
+      paidCents += shareCents;
       out.push({ gang: g.id, name: g.name, share, rank: i + 1 });
     }
+    const paid = Number(paidCents) / 100;
     if (paid > 0) {
       await client.query(
-        'UPDATE family_yield_pool SET balance = balance - $1, lifetime_paid = lifetime_paid + $1 WHERE id=1', [paid]);
+        'UPDATE family_yield_pool SET balance = balance - $1, lifetime_paid = lifetime_paid + $1 WHERE id=1', [centsText(paidCents)]);
     }
     await client.query('COMMIT');
     return { paid, families: out };
@@ -378,21 +389,26 @@ export async function yieldBoard(db) {
 // runVigInvariants — checked on demand and by the worker, separate from the §10.4 sweep.
 export async function runExchangeInvariants(pool) {
   const ex = await exchangePool(pool);
-  const fy = await familyYieldPool(pool);
+  const rawFamily = (await pool.query('SELECT balance, lifetime_funded, lifetime_paid FROM family_yield_pool WHERE id=1')).rows[0];
+  const fy = { balance: num(rawFamily.balance), funded: num(rawFamily.lifetime_funded), paid: num(rawFamily.lifetime_paid) };
+  // The Family pot is NUMERIC. Compare its actual stored precision: tolerating a
+  // cent in backing and 0.001 in negativity hid the reproduced 0.0005 overpay.
+  const parts = [rawFamily.balance, rawFamily.lifetime_funded, rawFamily.lifetime_paid].map(decimalParts);
+  const scale = Math.max(0, ...parts.map(part => part.scale));
+  const [familyBalance, familyFunded, familyPaid] = parts.map(part => part.coefficient * 10n ** BigInt(scale - part.scale));
+  const familyStored = { balance: String(rawFamily.balance), funded: String(rawFamily.lifetime_funded), paid: String(rawFamily.lifetime_paid) };
   const checks = [
     { name: 'exchange pool backed', lhs: ex.paid, rhs: ex.funded, ok: ex.paid <= ex.funded + 0.01,
       note: 'cash paid out of the redemption window <= cash funded into it' },
     { name: 'exchange pool balance', lhs: round2(ex.balance), rhs: round2(ex.funded - ex.paid),
       ok: Math.abs(ex.balance - (ex.funded - ex.paid)) < 0.01,
       note: 'balance == funded - paid' },
-    { name: 'family yield backed', lhs: fy.paid, rhs: fy.funded, ok: fy.paid <= fy.funded + 0.01,
+    { name: 'family yield backed', lhs: fy.paid, rhs: fy.funded, ok: familyPaid <= familyFunded, stored: familyStored,
       note: '$OMR paid to families <= $OMR funded into the pot' },
-    // (red-team F7) The pot needs the SAME identity the exchange pool has. `backed` alone is not
-    // enough: it carries a 0.01 tolerance, which is exactly the size of the per-share rounding
-    // over-pay it would have to catch — so a pot driven NEGATIVE reads ok:true and the alarm never
-    // fires. This is the check that actually sees it. Verified against the unclamped code.
+    // Backing alone does not prove the exact stored balance identity or catch a
+    // negative pot independently. Neither check rounds away historical dust.
     { name: 'family yield balance', lhs: round2(fy.balance), rhs: round2(fy.funded - fy.paid),
-      ok: Math.abs(fy.balance - (fy.funded - fy.paid)) < 0.01 && fy.balance >= -0.001,
+      ok: familyBalance === familyFunded - familyPaid && familyBalance >= 0n, stored: familyStored,
       note: 'balance == funded - paid, and never negative' },
   ];
   return { ok: checks.every((c) => c.ok), checks };
