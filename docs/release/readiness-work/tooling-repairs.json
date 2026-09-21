@@ -520,13 +520,14 @@
       "owner": "Codex/root",
       "failedGate": "b0c85c11 hosted rc1-golden PostgreSQL16,35580193066/job106271037555",
       "before": "390px recipe craft failed exact issued identity assertion: commandId unchanged, boardId changed. Locator re-resolves replacement DOM during reach; controlled actual browser/HTTP fixture reproduces the newer-board submission. Other widths and PostgreSQL18.4 passed separately; failure retained.",
-      "repair": "Track actual board GET generations, bound visible snapshot refreshes, pin selected DOM node, and authorize pre-submit reissue only on an observed newer board request with zero submissions. Detached unexplained nodes and any submitted identity mismatch remain hard failures. No production change.",
+      "repair": "Track actual board GET generations, bound visible snapshot refreshes, pin selected DOM node, and authorize pre-submit reissue only on an observed newer board request with zero submissions. Detached unexplained nodes and any submitted identity mismatch remain hard failures. No production change. Refined after retainedf8 failure: recheck actual GET generation after awaited connectivity, and wait at most5s for an actual queued GET only when the canonical loading state is visible. Loading alone never authorizes reissue. Passive bounded DOM/request lifecycle diagnostics retain no identities, text, tokens or bodies.",
       "changedSource": [
         "test/lib/rc1-browser-controls.js",
-        "test/rc1-browser-board-refresh.js"
+        "test/rc1-browser-board-refresh.js",
+        "test/lib/rc1-board-diagnostics.js"
       ],
-      "retest": "Integratedf8b9b0d1 widths320/360/390 PASS50commands6interactions each;430 FAIL after32commands because pinned node detached before submission after the generation check. No browser JS errors. Whole golden gate remainsFAIL; failure and causal refinement retained. Hosted rerun required; b0failure retained.",
-      "evidence": "Restricted b0c85c11-linux-pg16-failed.log and b0c85c11-linux-pg16/golden-browser.log; development controls retained; fresh integrated freeze required"
+      "retest": "Integratedf8b9b0d1 widths320/360/390 PASS50commands6interactions each;430 FAIL after32commands because pinned node detached before submission after the generation check. No browser JS errors. Whole golden gate remainsFAIL; failure and causal refinement retained. Hosted rerun required; b0failure retained. Controlled pinned production refresh coordinator and serialized API queue reproduce both pre-submit windows; same-board detachment, loading without GET and submitted mismatch remain failures. Clean2de580f1 native430 PASS50commands6interactions with two observed refresh recoveries and0submissions before reissue. Exact timing of historicalf8 failure remains unproven. Root all-four native and hosted reruns required.",
+      "evidence": "Restricted b0c85c11-linux-pg16-failed.log and b0c85c11-linux-pg16/golden-browser.log; development controls retained; fresh integrated freeze required;harness-board-detachment.md;hosted-b0c85c11-recovery-results.json"
     },
     {
       "id": "RC1-TOOL-33",

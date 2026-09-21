@@ -7,8 +7,8 @@
     {
       "id": "RC1-05-HOSTED-GOLDEN-FOCUS",
       "owner": "Codex/root",
-      "missing": "RC1-CREW-INPUT-01 causal native failures and both runtime repairs retained. Integratedb0c85c11 Crew-focus and allfour complete golden widths pass; hosted9e05bf08 Linux16/18.4 also passed. Exact earlier hosted interleaving remains inferred. Newb0c85c11 hosted qualification and physical-keyboard/human journeys remain pending. Newb0c85c11 hosted PostgreSQL16 golden failed on refreshed-board identity selection; TOOL-32 controlled reproduction and harness repair await integrated native/hosted reruns. PostgreSQL18.4 pass does not override failure.",
-      "evidence": "Recovery35569159408 job106236932962; private fcaa6076-workflows/linux-pg16.log;crew-input-focus.md;golden-focus-summary.json;hosted-fcaa6076-results.json;integrated-b0c85c11-results.json",
+      "missing": "RC1-CREW-INPUT-01 causal native failures and both runtime repairs retained. Integratedb0c85c11 Crew-focus and allfour complete golden widths pass; hosted9e05bf08 Linux16/18.4 also passed. Exact earlier hosted interleaving remains inferred. Newb0c85c11 hosted qualification and physical-keyboard/human journeys remain pending. Newb0c85c11 hosted PostgreSQL16 golden failed on refreshed-board identity selection; TOOL-32 controlled reproduction and harness repair await integrated native/hosted reruns. PostgreSQL18.4 pass does not override failure. Completedb0recovery remainsFAIL overall,13of14lanes pass. Controlled second repair and focused2de580f1430px pass retain the f8 failure and all negative controls; latest integrated all-four/hosted reruns required.",
+      "evidence": "Recovery35569159408 job106236932962; private fcaa6076-workflows/linux-pg16.log;crew-input-focus.md;golden-focus-summary.json;hosted-fcaa6076-results.json;integrated-b0c85c11-results.json;harness-board-detachment.md;hosted-b0c85c11-recovery-results.json;integrated-f8b9b0d1-results.json",
       "reruns": [
         "Causal native browser reproduction",
         "Affected focus/keyboard controls",
