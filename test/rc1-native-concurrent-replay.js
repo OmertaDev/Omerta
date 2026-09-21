@@ -29,7 +29,7 @@ await assert.rejects(createTransactionScheduler({ replay: simpleTrace, deadlineM
 console.log('PASS: schedule integrity, unfinished work, semantic divergence and fail-closed timeout checks');
 
 if (process.argv.includes('--postgres')) {
-  const output = process.argv.find((arg) => arg.startsWith('--output='))?.slice('--output='.length);
+  const output = process.argv.find((arg) => arg.startsWith('--output='))?.slice('--output='.length) || process.env.RC1_CONCURRENT_OUTPUT;
   assert(output, 'Provide a new restricted output directory outside the clean source checkout');
   const source = await sourceIdentity(), url = process.env.COORDINATION_TEST_DATABASE_URL || process.env.WORLD_KERNEL_TEST_DATABASE_URL;
   const results = [];

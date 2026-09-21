@@ -9,6 +9,34 @@
   "note": "Pinned required command inventory across the four source workflows. Preserve each workflow setup, database isolation, platform, environment and budgets. A component regression pass does not clear a full native, deployed, or human proof.",
   "gates": [
     {
+      "id": "rc1-concurrent",
+      "command": ["npm", "run", "test:rc1:concurrent:postgres"],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": ["Recorded native salvage schedule only; not arbitrary concurrency or the full matrix"]
+    },
+    {
+      "id": "rc1-family",
+      "command": ["npm", "run", "test:rc1:family:postgres"],
+      "timeoutMs": 2400000,
+      "scope": "regression",
+      "coverageExclusions": ["Original war/turf timers with declared Family fixtures; not natural progression or all resource systems"]
+    },
+    {
+      "id": "rc1-shipment",
+      "command": ["npm", "run", "test:rc1:shipment:postgres"],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": ["Canonical domain daily caps with aligned test clocks; no full worker schedule or HTTP replay in this runner"]
+    },
+    {
+      "id": "rc1-golden",
+      "command": ["npm", "run", "test:rc1:golden:postgres"],
+      "timeoutMs": 900000,
+      "scope": "regression",
+      "coverageExclusions": ["Fixture-assisted browser B/C/D/E segments; no physical device or real comprehension evidence"]
+    },
+    {
       "id": "rc1-serial",
       "command": ["npm", "run", "test:rc1:serial:postgres"],
       "timeoutMs": 600000,

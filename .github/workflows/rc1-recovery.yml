@@ -72,6 +72,13 @@ jobs:
         run: |
           set -o pipefail
           npm run backup:selftest 2>&1 | tee "$RC1_SHUTDOWN_EVIDENCE/backup-selftest.log"
+      - name: Connected social, investigation and conflict phone journeys
+        env:
+          RC1_GOLDEN_BROWSER_OUTPUT: ${{ runner.temp }}/rc1-golden-browser
+        run: |
+          set -o pipefail
+          umask 077
+          npm run test:rc1:golden:postgres 2>&1 | tee "$RC1_SHUTDOWN_EVIDENCE/golden-browser.log"
       - name: Nine production-process termination barriers
         run: node tools/rc1-shutdown.js
       - name: Native checkpoint restore, receipt replay and deliberate corruption detection
@@ -88,6 +95,14 @@ jobs:
           set -o pipefail
           umask 077
           npm run test:rc1:serial:postgres 2>&1 | tee "$RC1_SHUTDOWN_EVIDENCE/serial-replay.log"
+      - name: Recorded PostgreSQL contention and fault schedule replay
+        if: '!cancelled()'
+        env:
+          RC1_CONCURRENT_OUTPUT: ${{ runner.temp }}/rc1-concurrent-replay
+        run: |
+          set -o pipefail
+          umask 077
+          npm run test:rc1:concurrent:postgres 2>&1 | tee "$RC1_SHUTDOWN_EVIDENCE/concurrent-replay.log"
       - name: Check out the observed Render rollback predecessor
         uses: actions/checkout@v4
         with:
@@ -114,3 +129,45 @@ jobs:
           path: tmp/rc1-linux-sigterm/
           if-no-files-found: error
           retention-days: 30
+  original-resource-timers:
+    name: Original resource timers (PostgreSQL ${{ matrix.postgres }})
+    runs-on: ubuntu-latest
+    # A new lane with an original 30-minute war lifecycle; existing job budgets stay intact.
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        postgres: ['16', '18.4']
+    services:
+      postgres:
+        image: postgres:${{ matrix.postgres }}
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: rc1_resources
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      COORDINATION_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/rc1_resources
+      RC1_RESOURCE_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
+      RC1_RESOURCE_OUTPUT: ${{ runner.temp }}/rc1-family-original
+      RC1_SHIPMENT_OUTPUT: ${{ runner.temp }}/rc1-shipment-midnight
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Original Family war and turf lifetimes with treasury reconciliation
+        run: |
+          umask 077
+          npm run test:rc1:family:postgres
+      - name: Two midnight shipment boundaries with aligned application and database clocks
+        run: |
+          umask 077
+          npm run test:rc1:shipment:postgres

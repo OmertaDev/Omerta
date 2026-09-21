@@ -117,7 +117,11 @@
     "test:rc1:proof:postgres": "node test/rc1-native-proof.js --postgres",
     "test:rc1:capital:postgres": "node tools/rc1-resource-capital.js",
     "test:rc1:serial:postgres": "node test/rc1-native-serial-replay.js --postgres",
-    "test:rc1:rollback:postgres": "node tools/rc1-source-pair.js"
+    "test:rc1:rollback:postgres": "node tools/rc1-source-pair.js",
+    "test:rc1:concurrent:postgres": "node test/rc1-native-concurrent-replay.js --postgres",
+    "test:rc1:family:postgres": "node tools/rc1-resource-family.js",
+    "test:rc1:shipment:postgres": "node test/rc1-shipment-boundary.js --postgres",
+    "test:rc1:golden:postgres": "node test/rc1-golden-browser-postgres.js"
   },
   "dependencies": {
     "@fastify/jwt": "^10.2.0",
