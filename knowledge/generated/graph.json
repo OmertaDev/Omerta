@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "ab7550dccd5c92008d3e055cb07ea9eec786b630",
+  "sourceRevision": "6a189cca381ab6de519c9cb49970d157f4389549",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,14 +43,14 @@
     ]
   },
   "census": {
-    "nodes": 8594,
-    "edges": 36893,
+    "nodes": 8608,
+    "edges": 36955,
     "byNodeType": {
-      "Artifact": 3533,
-      "Command": 164,
-      "Commit": 1736,
+      "Artifact": 3539,
+      "Command": 165,
+      "Commit": 1740,
       "Contract": 79,
-      "Document": 656,
+      "Document": 657,
       "Domain": 13,
       "ExternalDependency": 27,
       "HistoricalArtifact": 343,
@@ -60,25 +60,25 @@
       "Route": 802,
       "Subsystem": 8,
       "Table": 369,
-      "TestSuite": 457,
+      "TestSuite": 459,
       "Workflow": 6
     },
     "byEdgeType": {
-      "BELONGS_TO": 2644,
-      "CHANGED": 13813,
-      "CONTAINS": 3554,
-      "DECLARES": 164,
+      "BELONGS_TO": 2646,
+      "CHANGED": 13838,
+      "CONTAINS": 3560,
+      "DECLARES": 165,
       "DEFINED_IN": 1250,
       "DEPENDS_ON": 65,
-      "EXECUTES": 538,
+      "EXECUTES": 540,
       "HANDLED_BY": 708,
-      "HAS_COMMIT": 1736,
+      "HAS_COMMIT": 1740,
       "IMPLEMENTS": 124,
-      "IMPORTS": 3441,
+      "IMPORTS": 3456,
       "INHERITS": 17,
-      "REFERENCES": 4218,
-      "REPRESENTS": 1393,
-      "TESTS": 1290,
+      "REFERENCES": 4219,
+      "REPRESENTS": 1396,
+      "TESTS": 1293,
       "TRACKS": 126,
       "USES_TABLE": 1812
     }
@@ -7636,20 +7636,20 @@
       "path": ".github/workflows/rc1-recovery.yml",
       "kind": "workflow",
       "extension": ".yml",
-      "bytes": 39359,
-      "lines": 1030,
-      "version": "f10ede93572d0cef",
+      "bytes": 39820,
+      "lines": 1039,
+      "version": "0bd1b7f04934ac32",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/rc1-recovery.yml",
           "line": 1,
-          "version": "f10ede93572d0cef"
+          "version": "0bd1b7f04934ac32"
         }
       ],
-      "lastChangedAt": "2026-09-21T10:59:52.000Z",
+      "lastChangedAt": "2026-09-21T11:14:08.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9c530d9981fa0e5319e8ce1097bc539070802ff5"
+      "lastChangedCommit": "6a189cca381ab6de519c9cb49970d157f4389549"
     },
     {
       "key": "Artifact:.gitignore",
@@ -34953,6 +34953,52 @@
       "lastChangedCommit": "f6d07b151ee0bf0e68eddcf9832dcc31b371d2d9"
     },
     {
+      "key": "Artifact:docs/release/readiness-work/family-terminal-observer-summary.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/family-terminal-observer-summary.json",
+      "label": "family-terminal-observer-summary.json",
+      "path": "docs/release/readiness-work/family-terminal-observer-summary.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 5927,
+      "lines": 131,
+      "version": "64772e300caf9ce9",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/family-terminal-observer-summary.json",
+          "line": 1,
+          "version": "64772e300caf9ce9"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T11:14:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "6a189cca381ab6de519c9cb49970d157f4389549"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/family-terminal-oracle-finding.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/family-terminal-oracle-finding.json",
+      "label": "family-terminal-oracle-finding.json",
+      "path": "docs/release/readiness-work/family-terminal-oracle-finding.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 1921,
+      "lines": 45,
+      "version": "db778ef7d292fdfb",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/family-terminal-oracle-finding.json",
+          "line": 1,
+          "version": "db778ef7d292fdfb"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T11:14:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "6a189cca381ab6de519c9cb49970d157f4389549"
+    },
+    {
       "key": "Artifact:docs/release/readiness-work/family-yield-repair.json",
       "type": "Artifact",
       "id": "docs/release/readiness-work/family-yield-repair.json",
@@ -34983,20 +35029,20 @@
       "path": "docs/release/readiness-work/gate-registry.json",
       "kind": "artifact",
       "extension": ".json",
-      "bytes": 33923,
-      "lines": 1315,
-      "version": "00739ebae8fc46f4",
+      "bytes": 34372,
+      "lines": 1328,
+      "version": "241a38d2cada6545",
       "text": true,
       "provenance": [
         {
           "file": "docs/release/readiness-work/gate-registry.json",
           "line": 1,
-          "version": "00739ebae8fc46f4"
+          "version": "241a38d2cada6545"
         }
       ],
-      "lastChangedAt": "2026-09-21T10:59:52.000Z",
+      "lastChangedAt": "2026-09-21T11:14:08.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9c530d9981fa0e5319e8ce1097bc539070802ff5"
+      "lastChangedCommit": "6a189cca381ab6de519c9cb49970d157f4389549"
     },
     {
       "key": "Artifact:docs/release/readiness-work/golden-browser-regressions.json",
@@ -35942,6 +35988,29 @@
       "lastChangedCommit": "9c530d9981fa0e5319e8ce1097bc539070802ff5"
     },
     {
+      "key": "Artifact:docs/release/readiness-work/hosted-4b9db479-recovery-results.json",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/hosted-4b9db479-recovery-results.json",
+      "label": "hosted-4b9db479-recovery-results.json",
+      "path": "docs/release/readiness-work/hosted-4b9db479-recovery-results.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 3239,
+      "lines": 113,
+      "version": "f35f0227972e67e1",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/hosted-4b9db479-recovery-results.json",
+          "line": 1,
+          "version": "f35f0227972e67e1"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T11:14:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "6a189cca381ab6de519c9cb49970d157f4389549"
+    },
+    {
       "key": "Artifact:docs/release/readiness-work/hosted-9e05bf08-ci-results.json",
       "type": "Artifact",
       "id": "docs/release/readiness-work/hosted-9e05bf08-ci-results.json",
@@ -36478,20 +36547,20 @@
       "path": "docs/release/readiness-work/open-proofs.json",
       "kind": "artifact",
       "extension": ".json",
-      "bytes": 12317,
+      "bytes": 12584,
       "lines": 121,
-      "version": "2815f71003668e53",
+      "version": "e869c294a8b8b0b3",
       "text": true,
       "provenance": [
         {
           "file": "docs/release/readiness-work/open-proofs.json",
           "line": 1,
-          "version": "2815f71003668e53"
+          "version": "e869c294a8b8b0b3"
         }
       ],
-      "lastChangedAt": "2026-09-21T10:59:52.000Z",
+      "lastChangedAt": "2026-09-21T11:14:08.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9c530d9981fa0e5319e8ce1097bc539070802ff5"
+      "lastChangedCommit": "6a189cca381ab6de519c9cb49970d157f4389549"
     },
     {
       "key": "Artifact:docs/release/readiness-work/pressure-cash-observer-summary.json",
@@ -37513,20 +37582,20 @@
       "path": "docs/release/readiness-work/tooling-repairs.json",
       "kind": "artifact",
       "extension": ".json",
-      "bytes": 41569,
-      "lines": 679,
-      "version": "b8051ffb0f0c145f",
+      "bytes": 42820,
+      "lines": 694,
+      "version": "e0c032e10e411d3a",
       "text": true,
       "provenance": [
         {
           "file": "docs/release/readiness-work/tooling-repairs.json",
           "line": 1,
-          "version": "b8051ffb0f0c145f"
+          "version": "e0c032e10e411d3a"
         }
       ],
-      "lastChangedAt": "2026-09-21T11:05:06.000Z",
+      "lastChangedAt": "2026-09-21T11:14:08.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "ab7550dccd5c92008d3e055cb07ea9eec786b630"
+      "lastChangedCommit": "6a189cca381ab6de519c9cb49970d157f4389549"
     },
     {
       "key": "Artifact:docs/release/readiness-work/turf-contention-summary.json",
@@ -37573,6 +37642,29 @@
       "lastChangedAt": "2026-09-21T09:59:46.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "4264962e4b2b8c398e5e86e0c4295ba9b3f15964"
+    },
+    {
+      "key": "Artifact:docs/release/readiness-work/world-family-dissolution.md",
+      "type": "Artifact",
+      "id": "docs/release/readiness-work/world-family-dissolution.md",
+      "label": "world-family-dissolution.md",
+      "path": "docs/release/readiness-work/world-family-dissolution.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 6126,
+      "lines": 27,
+      "version": "7b7e28b7d0eb6cb0",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/world-family-dissolution.md",
+          "line": 1,
+          "version": "7b7e28b7d0eb6cb0"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T11:01:04.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "ba1e114060983ad7c22d5c534dfc9edbeca51485"
     },
     {
       "key": "Artifact:docs/release/readiness-work/world-family-entry.md",
@@ -48478,20 +48570,20 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 28116,
-      "lines": 193,
-      "version": "4549d66124da8fe6",
+      "bytes": 28262,
+      "lines": 194,
+      "version": "ea017a8a9dd7b31b",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "4549d66124da8fe6"
+          "version": "ea017a8a9dd7b31b"
         }
       ],
-      "lastChangedAt": "2026-09-21T11:05:06.000Z",
+      "lastChangedAt": "2026-09-21T11:14:08.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "ab7550dccd5c92008d3e055cb07ea9eec786b630"
+      "lastChangedCommit": "6a189cca381ab6de519c9cb49970d157f4389549"
     },
     {
       "key": "Artifact:Procfile",
@@ -63039,18 +63131,18 @@
       "extension": ".md",
       "bytes": 56651,
       "lines": 756,
-      "version": "709a0218aa9e71b7",
+      "version": "81641c6cfd9e60bd",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "709a0218aa9e71b7"
+          "version": "81641c6cfd9e60bd"
         }
       ],
-      "lastChangedAt": "2026-09-21T11:05:06.000Z",
+      "lastChangedAt": "2026-09-21T11:14:08.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "ab7550dccd5c92008d3e055cb07ea9eec786b630"
+      "lastChangedCommit": "6a189cca381ab6de519c9cb49970d157f4389549"
     },
     {
       "key": "Artifact:src/access.js",
@@ -75128,6 +75220,29 @@
       "lastChangedCommit": "199f0476fee65d11e18c6ef92ff59d76a7440602"
     },
     {
+      "key": "Artifact:test/rc1-native-family-dissolution.js",
+      "type": "Artifact",
+      "id": "test/rc1-native-family-dissolution.js",
+      "label": "rc1-native-family-dissolution.js",
+      "path": "test/rc1-native-family-dissolution.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 20675,
+      "lines": 203,
+      "version": "997897835e5bb84c",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/rc1-native-family-dissolution.js",
+          "line": 1,
+          "version": "997897835e5bb84c"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T11:01:04.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "ba1e114060983ad7c22d5c534dfc9edbeca51485"
+    },
+    {
       "key": "Artifact:test/rc1-native-family-entry.js",
       "type": "Artifact",
       "id": "test/rc1-native-family-entry.js",
@@ -76069,6 +76184,29 @@
       "lastChangedAt": "2026-09-21T05:16:42.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "9d4ba6881f0f50f9d7c3da8eb0952b246ad06425"
+    },
+    {
+      "key": "Artifact:test/rc1-world-family-dissolution.js",
+      "type": "Artifact",
+      "id": "test/rc1-world-family-dissolution.js",
+      "label": "rc1-world-family-dissolution.js",
+      "path": "test/rc1-world-family-dissolution.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 11560,
+      "lines": 113,
+      "version": "9e5d8c90af3c9be4",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/rc1-world-family-dissolution.js",
+          "line": 1,
+          "version": "9e5d8c90af3c9be4"
+        }
+      ],
+      "lastChangedAt": "2026-09-21T11:01:04.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "ba1e114060983ad7c22d5c534dfc9edbeca51485"
     },
     {
       "key": "Artifact:test/rc1-world-family-entry.js",
@@ -80471,20 +80609,20 @@
       "path": "tools/rc1-resource-inventory.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 17031,
-      "lines": 139,
-      "version": "55b119a7bb4876dc",
+      "bytes": 17473,
+      "lines": 143,
+      "version": "cbfc7c88aaca2ac2",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-resource-inventory.js",
           "line": 1,
-          "version": "55b119a7bb4876dc"
+          "version": "cbfc7c88aaca2ac2"
         }
       ],
-      "lastChangedAt": "2026-09-21T10:59:52.000Z",
+      "lastChangedAt": "2026-09-21T11:14:08.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9c530d9981fa0e5319e8ce1097bc539070802ff5"
+      "lastChangedCommit": "6a189cca381ab6de519c9cb49970d157f4389549"
     },
     {
       "key": "Artifact:tools/rc1-resource-journal.js",
@@ -80862,20 +81000,20 @@
       "path": "tools/rc1-world-resource-observer.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 56165,
-      "lines": 642,
-      "version": "58ef2ce701a0e63f",
+      "bytes": 63334,
+      "lines": 715,
+      "version": "3574c54982b567dc",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-world-resource-observer.js",
           "line": 1,
-          "version": "58ef2ce701a0e63f"
+          "version": "3574c54982b567dc"
         }
       ],
-      "lastChangedAt": "2026-09-21T10:39:36.000Z",
+      "lastChangedAt": "2026-09-21T11:01:04.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c6797ea55b26f62aeb8e8cb26f9a30071081af98"
+      "lastChangedCommit": "ba1e114060983ad7c22d5c534dfc9edbeca51485"
     },
     {
       "key": "Artifact:tools/render-omr-excalidraw.html",
@@ -82716,6 +82854,19 @@
       ]
     },
     {
+      "key": "Command:npm:test:rc1:family-dissolution:postgres",
+      "type": "Command",
+      "id": "npm:test:rc1:family-dissolution:postgres",
+      "label": "npm run test:rc1:family-dissolution:postgres",
+      "command": "node test/rc1-native-family-dissolution.js --postgres",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
       "key": "Command:npm:test:rc1:family-entry:postgres",
       "type": "Command",
       "id": "npm:test:rc1:family-entry:postgres",
@@ -82811,7 +82962,7 @@
       "type": "Command",
       "id": "npm:test:rc1:harness",
       "label": "npm run test:rc1:harness",
-      "command": "node test/rc1-native-proof.js && node test/rc1-native-worker-schedule.js && node test/rc1-native-query-tape.js && node test/rc1-native-player-policy.js && node test/rc1-native-actor-replay.js && node test/rc1-world-diagnostics.js && node test/rc1-native-commit-observer.js && node test/rc1-world-resource-observer.js && node test/rc1-browser-controls.js && node test/rc1-knowledge-diagnostics.js && node test/rc1-mystery-policies.js && node test/rc1-aggression-policy.js && node test/rc1-loan-lifecycle-journal.js && node test/rc1-churn-policy.js && node test/rc1-capital-lifecycle-journal.js && node test/rc1-browser-receipt.js && node test/rc1-season-journal.js && node test/rc1-market-policy.js && node test/rc1-native-run-guardrails.js && node test/rc1-law-policy.js && node test/rc1-native-query-order.js && node test/rc1-browser-toast-controls.js && node test/rc1-family-policy.js && node test/rc1-family-cash-ammo-journal.js && node test/rc1-omr-journal.js && node test/rc1-omr-exchange.js && node test/rc1-alliance-policy.js && node test/rc1-known-command-blockers.js && node test/rc1-turf-policy.js && node test/rc1-native-failure-reducer.js && node test/rc1-native-proof-stream.js && node test/rc1-browser-board-refresh.js && node test/rc1-car-journal.js && node test/rc1-alliance-world-adapter.js && node test/rc1-resource-pressure-policy.js && node test/rc1-world-ammo-escrow.js && node test/rc1-world-pressure-cash.js && node test/rc1-alliance-continuation.js && node test/rc1-native-proof-gzip.js && node test/rc1-world-family-entry.js && node test/rc1-world-history-storage.js && node test/rc1-world-observer-load-order.js",
+      "command": "node test/rc1-native-proof.js && node test/rc1-native-worker-schedule.js && node test/rc1-native-query-tape.js && node test/rc1-native-player-policy.js && node test/rc1-native-actor-replay.js && node test/rc1-world-diagnostics.js && node test/rc1-native-commit-observer.js && node test/rc1-world-resource-observer.js && node test/rc1-browser-controls.js && node test/rc1-knowledge-diagnostics.js && node test/rc1-mystery-policies.js && node test/rc1-aggression-policy.js && node test/rc1-loan-lifecycle-journal.js && node test/rc1-churn-policy.js && node test/rc1-capital-lifecycle-journal.js && node test/rc1-browser-receipt.js && node test/rc1-season-journal.js && node test/rc1-market-policy.js && node test/rc1-native-run-guardrails.js && node test/rc1-law-policy.js && node test/rc1-native-query-order.js && node test/rc1-browser-toast-controls.js && node test/rc1-family-policy.js && node test/rc1-family-cash-ammo-journal.js && node test/rc1-omr-journal.js && node test/rc1-omr-exchange.js && node test/rc1-alliance-policy.js && node test/rc1-known-command-blockers.js && node test/rc1-turf-policy.js && node test/rc1-native-failure-reducer.js && node test/rc1-native-proof-stream.js && node test/rc1-browser-board-refresh.js && node test/rc1-car-journal.js && node test/rc1-alliance-world-adapter.js && node test/rc1-resource-pressure-policy.js && node test/rc1-world-ammo-escrow.js && node test/rc1-world-pressure-cash.js && node test/rc1-alliance-continuation.js && node test/rc1-native-proof-gzip.js && node test/rc1-world-family-entry.js && node test/rc1-world-history-storage.js && node test/rc1-world-observer-load-order.js && node test/rc1-world-family-dissolution.js",
       "provenance": [
         {
           "file": "package.json",
@@ -95390,6 +95541,22 @@
       ]
     },
     {
+      "key": "Commit:6a189cca381ab6de519c9cb49970d157f4389549",
+      "type": "Commit",
+      "id": "6a189cca381ab6de519c9cb49970d157f4389549",
+      "label": "Wire Family terminal checks and retain exact-source hosted recovery failure",
+      "title": "Wire Family terminal checks and retain exact-source hosted recovery failure",
+      "date": "2026-09-21T11:14:08.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/6a189cca381ab6de519c9cb49970d157f4389549",
+      "provenance": [
+        {
+          "commit": "6a189cca381ab6de519c9cb49970d157f4389549",
+          "url": "https://github.com/OmertaDev/Omerta/commit/6a189cca381ab6de519c9cb49970d157f4389549"
+        }
+      ]
+    },
+    {
       "key": "Commit:6a2af13cfdfd940de236e785e295dcee390218f5",
       "type": "Commit",
       "id": "6a2af13cfdfd940de236e785e295dcee390218f5",
@@ -95402,6 +95569,22 @@
         {
           "commit": "6a2af13cfdfd940de236e785e295dcee390218f5",
           "url": "https://github.com/OmertaDev/Omerta/commit/6a2af13cfdfd940de236e785e295dcee390218f5"
+        }
+      ]
+    },
+    {
+      "key": "Commit:6a66596fe9419777f8faa1614bdad9258e19209d",
+      "type": "Commit",
+      "id": "6a66596fe9419777f8faa1614bdad9258e19209d",
+      "label": "Reconcile voluntary Family terminal cash ammo and OMR custody",
+      "title": "Reconcile voluntary Family terminal cash ammo and OMR custody",
+      "date": "2026-09-21T10:58:14.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/6a66596fe9419777f8faa1614bdad9258e19209d",
+      "provenance": [
+        {
+          "commit": "6a66596fe9419777f8faa1614bdad9258e19209d",
+          "url": "https://github.com/OmertaDev/Omerta/commit/6a66596fe9419777f8faa1614bdad9258e19209d"
         }
       ]
     },
@@ -104430,6 +104613,22 @@
       ]
     },
     {
+      "key": "Commit:ba1e114060983ad7c22d5c534dfc9edbeca51485",
+      "type": "Commit",
+      "id": "ba1e114060983ad7c22d5c534dfc9edbeca51485",
+      "label": "Settle canonical accrual before isolating Family rollback proof",
+      "title": "Settle canonical accrual before isolating Family rollback proof",
+      "date": "2026-09-21T11:01:04.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/ba1e114060983ad7c22d5c534dfc9edbeca51485",
+      "provenance": [
+        {
+          "commit": "ba1e114060983ad7c22d5c534dfc9edbeca51485",
+          "url": "https://github.com/OmertaDev/Omerta/commit/ba1e114060983ad7c22d5c534dfc9edbeca51485"
+        }
+      ]
+    },
+    {
       "key": "Commit:ba475522dca9bfae7b6b895363a938a50cc3132a",
       "type": "Commit",
       "id": "ba475522dca9bfae7b6b895363a938a50cc3132a",
@@ -110506,6 +110705,22 @@
         {
           "commit": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd",
           "url": "https://github.com/OmertaDev/Omerta/commit/f8b9b0d19629abc3f8875ee533d80dd424d5f9bd"
+        }
+      ]
+    },
+    {
+      "key": "Commit:f8df4c3db32605e5e953275eda27fd2181964d3b",
+      "type": "Commit",
+      "id": "f8df4c3db32605e5e953275eda27fd2181964d3b",
+      "label": "Refresh Knowledge for integrated RC1 observer and storage tooling",
+      "title": "Refresh Knowledge for integrated RC1 observer and storage tooling",
+      "date": "2026-09-21T11:10:37.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f8df4c3db32605e5e953275eda27fd2181964d3b",
+      "provenance": [
+        {
+          "commit": "f8df4c3db32605e5e953275eda27fd2181964d3b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f8df4c3db32605e5e953275eda27fd2181964d3b"
         }
       ]
     },
@@ -119851,6 +120066,22 @@
       ]
     },
     {
+      "key": "Document:docs/release/readiness-work/world-family-dissolution.md",
+      "type": "Document",
+      "id": "docs/release/readiness-work/world-family-dissolution.md",
+      "label": "docs/release/readiness-work/world-family-dissolution.md",
+      "documentType": "documentation",
+      "lines": 27,
+      "version": "7b7e28b7d0eb6cb0",
+      "provenance": [
+        {
+          "file": "docs/release/readiness-work/world-family-dissolution.md",
+          "line": 1,
+          "version": "7b7e28b7d0eb6cb0"
+        }
+      ]
+    },
+    {
       "key": "Document:docs/release/readiness-work/world-family-entry.md",
       "type": "Document",
       "id": "docs/release/readiness-work/world-family-entry.md",
@@ -123041,12 +123272,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 756,
-      "version": "709a0218aa9e71b7",
+      "version": "81641c6cfd9e60bd",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "709a0218aa9e71b7"
+          "version": "81641c6cfd9e60bd"
         }
       ]
     },
@@ -123791,6 +124022,10 @@
         },
         {
           "file": "test/rc1-native-database.js",
+          "line": 5
+        },
+        {
+          "file": "test/rc1-native-family-dissolution.js",
           "line": 5
         },
         {
@@ -129097,6 +129332,9 @@
           "commit": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd"
         },
         {
+          "commit": "f8df4c3db32605e5e953275eda27fd2181964d3b"
+        },
+        {
           "commit": "f92c9029903b5890a7cf3cc18bfcdd92001367f2"
         },
         {
@@ -129803,6 +130041,9 @@
         },
         {
           "commit": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd"
+        },
+        {
+          "commit": "f8df4c3db32605e5e953275eda27fd2181964d3b"
         },
         {
           "commit": "f92c9029903b5890a7cf3cc18bfcdd92001367f2"
@@ -130513,6 +130754,9 @@
           "commit": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd"
         },
         {
+          "commit": "f8df4c3db32605e5e953275eda27fd2181964d3b"
+        },
+        {
           "commit": "f92c9029903b5890a7cf3cc18bfcdd92001367f2"
         },
         {
@@ -131221,6 +131465,9 @@
           "commit": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd"
         },
         {
+          "commit": "f8df4c3db32605e5e953275eda27fd2181964d3b"
+        },
+        {
           "commit": "f92c9029903b5890a7cf3cc18bfcdd92001367f2"
         },
         {
@@ -131417,6 +131664,9 @@
         },
         {
           "commit": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd"
+        },
+        {
+          "commit": "f8df4c3db32605e5e953275eda27fd2181964d3b"
         },
         {
           "commit": "f92c9029903b5890a7cf3cc18bfcdd92001367f2"
@@ -132124,6 +132374,9 @@
           "commit": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd"
         },
         {
+          "commit": "f8df4c3db32605e5e953275eda27fd2181964d3b"
+        },
+        {
           "commit": "f92c9029903b5890a7cf3cc18bfcdd92001367f2"
         },
         {
@@ -132413,6 +132666,9 @@
         },
         {
           "commit": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd"
+        },
+        {
+          "commit": "f8df4c3db32605e5e953275eda27fd2181964d3b"
         },
         {
           "commit": "f92c9029903b5890a7cf3cc18bfcdd92001367f2"
@@ -140029,12 +140285,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "ab7550dccd5c92008d3e055cb07ea9eec786b630",
+      "revision": "6a189cca381ab6de519c9cb49970d157f4389549",
       "currentBranch": "codex/rc1-readiness",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 3533,
+      "currentArtifactCount": 3539,
       "provenance": [
         {
           "file": "README.md",
@@ -171107,6 +171363,21 @@
       ]
     },
     {
+      "key": "TestSuite:test/rc1-native-family-dissolution.js",
+      "type": "TestSuite",
+      "id": "test/rc1-native-family-dissolution.js",
+      "label": "test/rc1-native-family-dissolution.js",
+      "lines": 203,
+      "version": "997897835e5bb84c",
+      "provenance": [
+        {
+          "file": "test/rc1-native-family-dissolution.js",
+          "line": 1,
+          "version": "997897835e5bb84c"
+        }
+      ]
+    },
+    {
       "key": "TestSuite:test/rc1-native-family-entry.js",
       "type": "TestSuite",
       "id": "test/rc1-native-family-entry.js",
@@ -171718,6 +171989,21 @@
           "file": "test/rc1-world-diagnostics.js",
           "line": 1,
           "version": "f79e2e5e8ad8efcd"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/rc1-world-family-dissolution.js",
+      "type": "TestSuite",
+      "id": "test/rc1-world-family-dissolution.js",
+      "label": "test/rc1-world-family-dissolution.js",
+      "lines": 113,
+      "version": "9e5d8c90af3c9be4",
+      "provenance": [
+        {
+          "file": "test/rc1-world-family-dissolution.js",
+          "line": 1,
+          "version": "9e5d8c90af3c9be4"
         }
       ]
     },
@@ -172971,13 +173257,13 @@
       "type": "Workflow",
       "id": ".github/workflows/rc1-recovery.yml",
       "label": ".github/workflows/rc1-recovery.yml",
-      "lines": 1030,
-      "version": "f10ede93572d0cef",
+      "lines": 1039,
+      "version": "0bd1b7f04934ac32",
       "provenance": [
         {
           "file": ".github/workflows/rc1-recovery.yml",
           "line": 1,
-          "version": "f10ede93572d0cef"
+          "version": "0bd1b7f04934ac32"
         }
       ]
     }
@@ -187142,6 +187428,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/rc1-native-family-dissolution.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/rc1-native-family-dissolution.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/rc1-native-family-entry.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -187506,6 +187801,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "test/rc1-world-diagnostics.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/rc1-world-family-dissolution.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/rc1-world-family-dissolution.js",
         "line": 1
       }
     },
@@ -245421,6 +245725,86 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:6a189cca381ab6de519c9cb49970d157f4389549",
+      "to": "Artifact:.github/workflows/rc1-recovery.yml",
+      "provenance": {
+        "commit": "6a189cca381ab6de519c9cb49970d157f4389549"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6a189cca381ab6de519c9cb49970d157f4389549",
+      "to": "Artifact:docs/release/readiness-work/family-terminal-observer-summary.json",
+      "provenance": {
+        "commit": "6a189cca381ab6de519c9cb49970d157f4389549"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6a189cca381ab6de519c9cb49970d157f4389549",
+      "to": "Artifact:docs/release/readiness-work/family-terminal-oracle-finding.json",
+      "provenance": {
+        "commit": "6a189cca381ab6de519c9cb49970d157f4389549"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6a189cca381ab6de519c9cb49970d157f4389549",
+      "to": "Artifact:docs/release/readiness-work/gate-registry.json",
+      "provenance": {
+        "commit": "6a189cca381ab6de519c9cb49970d157f4389549"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6a189cca381ab6de519c9cb49970d157f4389549",
+      "to": "Artifact:docs/release/readiness-work/hosted-4b9db479-recovery-results.json",
+      "provenance": {
+        "commit": "6a189cca381ab6de519c9cb49970d157f4389549"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6a189cca381ab6de519c9cb49970d157f4389549",
+      "to": "Artifact:docs/release/readiness-work/open-proofs.json",
+      "provenance": {
+        "commit": "6a189cca381ab6de519c9cb49970d157f4389549"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6a189cca381ab6de519c9cb49970d157f4389549",
+      "to": "Artifact:docs/release/readiness-work/tooling-repairs.json",
+      "provenance": {
+        "commit": "6a189cca381ab6de519c9cb49970d157f4389549"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6a189cca381ab6de519c9cb49970d157f4389549",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "6a189cca381ab6de519c9cb49970d157f4389549"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6a189cca381ab6de519c9cb49970d157f4389549",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "6a189cca381ab6de519c9cb49970d157f4389549"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6a189cca381ab6de519c9cb49970d157f4389549",
+      "to": "Artifact:tools/rc1-resource-inventory.js",
+      "provenance": {
+        "commit": "6a189cca381ab6de519c9cb49970d157f4389549"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:6a2af13cfdfd940de236e785e295dcee390218f5",
       "to": "HistoricalArtifact:knowledge/generated/documents.md",
       "provenance": {
@@ -245481,6 +245865,38 @@
       "to": "HistoricalArtifact:knowledge/generated/routes.md",
       "provenance": {
         "commit": "6a2af13cfdfd940de236e785e295dcee390218f5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6a66596fe9419777f8faa1614bdad9258e19209d",
+      "to": "Artifact:docs/release/readiness-work/world-family-dissolution.md",
+      "provenance": {
+        "commit": "6a66596fe9419777f8faa1614bdad9258e19209d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6a66596fe9419777f8faa1614bdad9258e19209d",
+      "to": "Artifact:test/rc1-native-family-dissolution.js",
+      "provenance": {
+        "commit": "6a66596fe9419777f8faa1614bdad9258e19209d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6a66596fe9419777f8faa1614bdad9258e19209d",
+      "to": "Artifact:test/rc1-world-family-dissolution.js",
+      "provenance": {
+        "commit": "6a66596fe9419777f8faa1614bdad9258e19209d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6a66596fe9419777f8faa1614bdad9258e19209d",
+      "to": "Artifact:tools/rc1-world-resource-observer.js",
+      "provenance": {
+        "commit": "6a66596fe9419777f8faa1614bdad9258e19209d"
       }
     },
     {
@@ -278005,6 +278421,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:ba1e114060983ad7c22d5c534dfc9edbeca51485",
+      "to": "Artifact:docs/release/readiness-work/world-family-dissolution.md",
+      "provenance": {
+        "commit": "ba1e114060983ad7c22d5c534dfc9edbeca51485"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ba1e114060983ad7c22d5c534dfc9edbeca51485",
+      "to": "Artifact:test/rc1-native-family-dissolution.js",
+      "provenance": {
+        "commit": "ba1e114060983ad7c22d5c534dfc9edbeca51485"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ba1e114060983ad7c22d5c534dfc9edbeca51485",
+      "to": "Artifact:test/rc1-world-family-dissolution.js",
+      "provenance": {
+        "commit": "ba1e114060983ad7c22d5c534dfc9edbeca51485"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ba1e114060983ad7c22d5c534dfc9edbeca51485",
+      "to": "Artifact:tools/rc1-world-resource-observer.js",
+      "provenance": {
+        "commit": "ba1e114060983ad7c22d5c534dfc9edbeca51485"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:ba475522dca9bfae7b6b895363a938a50cc3132a",
       "to": "Artifact:test/rc1-world-ammo-escrow.js",
       "provenance": {
@@ -304469,6 +304917,62 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:f8df4c3db32605e5e953275eda27fd2181964d3b",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "f8df4c3db32605e5e953275eda27fd2181964d3b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f8df4c3db32605e5e953275eda27fd2181964d3b",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "f8df4c3db32605e5e953275eda27fd2181964d3b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f8df4c3db32605e5e953275eda27fd2181964d3b",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "f8df4c3db32605e5e953275eda27fd2181964d3b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f8df4c3db32605e5e953275eda27fd2181964d3b",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "f8df4c3db32605e5e953275eda27fd2181964d3b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f8df4c3db32605e5e953275eda27fd2181964d3b",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "f8df4c3db32605e5e953275eda27fd2181964d3b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f8df4c3db32605e5e953275eda27fd2181964d3b",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "f8df4c3db32605e5e953275eda27fd2181964d3b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f8df4c3db32605e5e953275eda27fd2181964d3b",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "f8df4c3db32605e5e953275eda27fd2181964d3b"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:f8e2b210fde7f68c2843297d6ec7f57ad3b8671d",
       "to": "Artifact:src/boxing.js",
       "provenance": {
@@ -319999,6 +320503,24 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/family-terminal-observer-summary.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/family-terminal-observer-summary.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/family-terminal-oracle-finding.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/family-terminal-oracle-finding.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:docs/release/readiness-work/family-yield-repair.json",
       "provenance": {
         "file": "docs/release/readiness-work/family-yield-repair.json",
@@ -320380,6 +320902,15 @@
       "to": "Artifact:docs/release/readiness-work/hosted-4b9db479-contract-results.json",
       "provenance": {
         "file": "docs/release/readiness-work/hosted-4b9db479-contract-results.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/hosted-4b9db479-recovery-results.json",
+      "provenance": {
+        "file": "docs/release/readiness-work/hosted-4b9db479-recovery-results.json",
         "line": 1
       }
     },
@@ -321019,6 +321550,15 @@
       "to": "Artifact:docs/release/readiness-work/world-ammo-escrow.md",
       "provenance": {
         "file": "docs/release/readiness-work/world-ammo-escrow.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/readiness-work/world-family-dissolution.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/world-family-dissolution.md",
         "line": 1
       }
     },
@@ -325804,6 +326344,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/rc1-native-family-dissolution.js",
+      "provenance": {
+        "file": "test/rc1-native-family-dissolution.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/rc1-native-family-entry.js",
       "provenance": {
         "file": "test/rc1-native-family-entry.js",
@@ -326167,6 +326716,15 @@
       "to": "Artifact:test/rc1-world-diagnostics.js",
       "provenance": {
         "file": "test/rc1-world-diagnostics.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/rc1-world-family-dissolution.js",
+      "provenance": {
+        "file": "test/rc1-world-family-dissolution.js",
         "line": 1
       }
     },
@@ -340142,6 +340700,15 @@
     {
       "type": "DECLARES",
       "from": "Artifact:package.json",
+      "to": "Command:npm:test:rc1:family-dissolution:postgres",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
       "to": "Command:npm:test:rc1:family-entry:postgres",
       "provenance": {
         "file": "package.json",
@@ -351957,7 +352524,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:economy-ledger",
-      "weight": 218
+      "weight": 219
     },
     {
       "type": "DEPENDS_ON",
@@ -351981,7 +352548,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 992
+      "weight": 994
     },
     {
       "type": "DEPENDS_ON",
@@ -356128,6 +356695,15 @@
     },
     {
       "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:family-dissolution:postgres",
+      "to": "Artifact:test/rc1-native-family-dissolution.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
       "from": "Command:npm:test:rc1:family-entry:postgres",
       "to": "Artifact:test/rc1-native-family-entry.js",
       "provenance": {
@@ -356517,6 +357093,15 @@
       "type": "EXECUTES",
       "from": "Command:npm:test:rc1:harness",
       "to": "Artifact:test/rc1-world-diagnostics.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:harness",
+      "to": "Artifact:test/rc1-world-family-dissolution.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -370186,9 +370771,25 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:6a189cca381ab6de519c9cb49970d157f4389549",
+      "provenance": {
+        "commit": "6a189cca381ab6de519c9cb49970d157f4389549"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:6a2af13cfdfd940de236e785e295dcee390218f5",
       "provenance": {
         "commit": "6a2af13cfdfd940de236e785e295dcee390218f5"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:6a66596fe9419777f8faa1614bdad9258e19209d",
+      "provenance": {
+        "commit": "6a66596fe9419777f8faa1614bdad9258e19209d"
       }
     },
     {
@@ -374706,6 +375307,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:ba1e114060983ad7c22d5c534dfc9edbeca51485",
+      "provenance": {
+        "commit": "ba1e114060983ad7c22d5c534dfc9edbeca51485"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:ba475522dca9bfae7b6b895363a938a50cc3132a",
       "provenance": {
         "commit": "ba475522dca9bfae7b6b895363a938a50cc3132a"
@@ -377741,6 +378350,14 @@
       "to": "Commit:f8b9b0d19629abc3f8875ee533d80dd424d5f9bd",
       "provenance": {
         "commit": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:f8df4c3db32605e5e953275eda27fd2181964d3b",
+      "provenance": {
+        "commit": "f8df4c3db32605e5e953275eda27fd2181964d3b"
       }
     },
     {
@@ -400831,6 +401448,96 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-family-dissolution.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "test/rc1-native-family-dissolution.js",
+        "line": 131
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-family-dissolution.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/rc1-native-family-dissolution.js",
+        "line": 47
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-family-dissolution.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "test/rc1-native-family-dissolution.js",
+        "line": 115
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-family-dissolution.js",
+      "to": "Artifact:test/rc1-world-family-dissolution.js",
+      "provenance": {
+        "file": "test/rc1-native-family-dissolution.js",
+        "line": 46
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-family-dissolution.js",
+      "to": "Artifact:tools/rc1-native-database.js",
+      "provenance": {
+        "file": "test/rc1-native-family-dissolution.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-family-dissolution.js",
+      "to": "Artifact:tools/rc1-native-determinism.js",
+      "provenance": {
+        "file": "test/rc1-native-family-dissolution.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-family-dissolution.js",
+      "to": "Artifact:tools/rc1-native-proof.js",
+      "provenance": {
+        "file": "test/rc1-native-family-dissolution.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-family-dissolution.js",
+      "to": "Artifact:tools/rc1-native-worker.js",
+      "provenance": {
+        "file": "test/rc1-native-family-dissolution.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-family-dissolution.js",
+      "to": "Artifact:tools/rc1-world-resource-observer.js",
+      "provenance": {
+        "file": "test/rc1-native-family-dissolution.js",
+        "line": 45
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-native-family-dissolution.js",
+      "to": "ExternalDependency:pg",
+      "provenance": {
+        "file": "test/rc1-native-family-dissolution.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:test/rc1-native-family-entry.js",
       "to": "Artifact:src/invariants.js",
       "provenance": {
@@ -402834,6 +403541,51 @@
       "provenance": {
         "file": "test/rc1-world-diagnostics.js",
         "line": 2
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-world-family-dissolution.js",
+      "to": "Artifact:test/lib/rc1-family-entry-controls.js",
+      "provenance": {
+        "file": "test/rc1-world-family-dissolution.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-world-family-dissolution.js",
+      "to": "Artifact:tools/rc1-native-proof.js",
+      "provenance": {
+        "file": "test/rc1-world-family-dissolution.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-world-family-dissolution.js",
+      "to": "Artifact:tools/rc1-omr-journal.js",
+      "provenance": {
+        "file": "test/rc1-world-family-dissolution.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-world-family-dissolution.js",
+      "to": "Artifact:tools/rc1-resource-journal.js",
+      "provenance": {
+        "file": "test/rc1-world-family-dissolution.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-world-family-dissolution.js",
+      "to": "Artifact:tools/rc1-world-resource-observer.js",
+      "provenance": {
+        "file": "test/rc1-world-family-dissolution.js",
+        "line": 5
       }
     },
     {
@@ -436795,6 +437547,15 @@
     },
     {
       "type": "REFERENCES",
+      "from": "Artifact:docs/release/readiness-work/world-family-dissolution.md",
+      "to": "Artifact:src/social/gangs.js",
+      "provenance": {
+        "file": "docs/release/readiness-work/world-family-dissolution.md",
+        "line": 26
+      }
+    },
+    {
+      "type": "REFERENCES",
       "from": "Artifact:docs/release/readiness-work/world-family-entry.md",
       "to": "Artifact:src/game.js",
       "provenance": {
@@ -452275,6 +453036,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Document:docs/release/readiness-work/world-family-dissolution.md",
+      "to": "Artifact:docs/release/readiness-work/world-family-dissolution.md",
+      "provenance": {
+        "file": "docs/release/readiness-work/world-family-dissolution.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Document:docs/release/readiness-work/world-family-entry.md",
       "to": "Artifact:docs/release/readiness-work/world-family-entry.md",
       "provenance": {
@@ -459601,6 +460371,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/rc1-native-family-dissolution.js",
+      "to": "Artifact:test/rc1-native-family-dissolution.js",
+      "provenance": {
+        "file": "test/rc1-native-family-dissolution.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/rc1-native-family-entry.js",
       "to": "Artifact:test/rc1-native-family-entry.js",
       "provenance": {
@@ -459965,6 +460744,15 @@
       "to": "Artifact:test/rc1-world-diagnostics.js",
       "provenance": {
         "file": "test/rc1-world-diagnostics.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/rc1-world-family-dissolution.js",
+      "to": "Artifact:test/rc1-world-family-dissolution.js",
+      "provenance": {
+        "file": "test/rc1-world-family-dissolution.js",
         "line": 1
       }
     },
@@ -468570,6 +469358,33 @@
       "provenance": {
         "file": "test/rc1-native-failure-reduction-postgres.js",
         "line": 15
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-native-family-dissolution.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "test/rc1-native-family-dissolution.js",
+        "line": 131
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-native-family-dissolution.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/rc1-native-family-dissolution.js",
+        "line": 47
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/rc1-native-family-dissolution.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "test/rc1-native-family-dissolution.js",
+        "line": 115
       }
     },
     {
