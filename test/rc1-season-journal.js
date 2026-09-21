@@ -9,7 +9,7 @@ const before = { ...Object.fromEntries(SEASON_JOURNAL_TABLES.map(table => [table
 const after = structuredClone(before), level = levelOf(1000), legacy = Math.floor(level / 2);
 Object.assign(after.characters[0], { season: 740, respect: '0', season_kills: 0, duel_elo: 1000 });
 Object.assign(after.account_persistent[0], { prestige: String(7 + legacy), season_crowns: 1, duel_titles: 1, season_sunk: 0 });
-Object.assign(after.gangs[0], { season: 740, season_tribute: '0', season_wars: 0 });
+Object.assign(after.gangs[0], { season: 740, season_tribute: '0', season_wars: '0' });
 after.season_records.push({ season: 739, mod_id: seasonModOf(739).id, champion_account: 'owner', champion_name: 'Person', champion_standing: 100, crowned: true });
 after.season_recaps.push({ account_id: 'owner', season: 739, level, kills: 2, prestige_gained: legacy, title: recapTitleOf(level) });
 after.notifications.push({ id: 'crown', character_id: 'person', type: 'season_crown', payload: JSON.stringify({ season: 739, standing: 100 }) },

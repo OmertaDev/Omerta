@@ -117,7 +117,7 @@ export function reconcileSeason(before, after, { logicalAt, authority = 'origina
   for (const row of after.gangs) {
     const prior = old.gangs.get(row.id); if (!prior || row.season === prior.season) continue;
     assert(prior.season < current && row.season === current, 'Family season changed outside original boundary');
-    assert.equal(exactSum([row.season_tribute]), '0'); assert.equal(row.season_wars, 0);
+    assert.equal(exactSum([row.season_tribute]), '0'); assert.equal(exactSum([row.season_wars]), '0');
     permit('gangs', row, ['season', 'season_tribute', 'season_wars']); inspect('Family seasonal markers reset', { family: row.id, season: current });
   }
   // Seasonal-type rows cannot be disguised as unrelated additions after losing their owner link.
