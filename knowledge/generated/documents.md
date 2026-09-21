@@ -371,6 +371,9 @@
 | [docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md](../../docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md) | documentation | 67 | 2026-09-18 |
 | [docs/OMR-MACHINE-CAMPAIGN.md](../../docs/OMR-MACHINE-CAMPAIGN.md) | documentation | 249 | 2026-08-26 |
 | [docs/OMR-MARKETING-PACK.md](../../docs/OMR-MARKETING-PACK.md) | documentation | 346 | 2026-08-24 |
+| [docs/rc1-coordinated-alliance.md](../../docs/rc1-coordinated-alliance.md) | documentation | 30 | 2026-09-21 |
+| [docs/rc1-family-cash-ammo-journal.md](../../docs/rc1-family-cash-ammo-journal.md) | documentation | 28 | 2026-09-21 |
+| [docs/rc1-native-mobile-adversity.md](../../docs/rc1-native-mobile-adversity.md) | documentation | 46 | 2026-09-21 |
 | [docs/release/evidence/graceful-shutdown/README.md](../../docs/release/evidence/graceful-shutdown/README.md) | documentation | 73 | 2026-09-20 |
 | [docs/release/evidence/security-operations/telemetry-regressions.md](../../docs/release/evidence/security-operations/telemetry-regressions.md) | documentation | 136 | 2026-09-19 |
 | [docs/release/RC1-MANIFEST.md](../../docs/release/RC1-MANIFEST.md) | documentation | 58 | 2026-09-19 |
@@ -399,6 +402,7 @@
 | [docs/release/readiness-work/law-player-policy.md](../../docs/release/readiness-work/law-player-policy.md) | documentation | 16 | 2026-09-21 |
 | [docs/release/readiness-work/market-player-policy.md](../../docs/release/readiness-work/market-player-policy.md) | documentation | 20 | 2026-09-21 |
 | [docs/release/readiness-work/mystery-player-policies.md](../../docs/release/readiness-work/mystery-player-policies.md) | documentation | 91 | 2026-09-21 |
+| [docs/release/readiness-work/omr-custody-journal.md](../../docs/release/readiness-work/omr-custody-journal.md) | documentation | 120 | 2026-09-21 |
 | [docs/release/readiness-work/quiet-world-workload.md](../../docs/release/readiness-work/quiet-world-workload.md) | documentation | 42 | 2026-09-21 |
 | [docs/release/readiness-work/README.md](../../docs/release/readiness-work/README.md) | documentation | 92 | 2026-09-21 |
 | [docs/release/readiness-work/resource-capital-lifecycles.md](../../docs/release/readiness-work/resource-capital-lifecycles.md) | documentation | 20 | 2026-09-21 |

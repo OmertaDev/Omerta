@@ -1,34 +1,34 @@
 # Generated repository inventory
 
-> Source: worktree at `fcbc21676655`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `dcfb07a82260`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 3,413 |
-| Text lines | 1,159,738 |
-| Repository bytes inventoried | 906,333,671 |
+| Current artifacts | 3,439 |
+| Text lines | 1,170,462 |
+| Repository bytes inventoried | 906,841,166 |
 | Backend/route modules | 274 |
 | HTTP route registrations / unique routes | 802 / 802 |
 | Database tables | 369 |
 | Solidity declarations | 79 |
-| Git commits | 1,646 |
+| Git commits | 1,669 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 8,303 / 35,857 |
+| Graph nodes / edges | 8,372 / 36,085 |
 
 ## Artifact kinds
 
 | Kind | Files |
 |---|---:|
 | media-asset | 1,202 |
-| artifact | 577 |
-| documentation | 362 |
-| test-suite | 318 |
+| artifact | 585 |
+| documentation | 366 |
+| test-suite | 329 |
 | backend-module | 246 |
 | contract-project | 153 |
-| engineering-harness | 130 |
+| engineering-harness | 133 |
 | audit | 98 |
 | contract-test | 98 |
 | design | 91 |
@@ -57,7 +57,7 @@
 | [docs/release/evidence/gates/baseline-forge-linux.txt](../../docs/release/evidence/gates/baseline-forge-linux.txt) | 18,663 | artifact | 2026-09-19 |
 | [docs/release/evidence/simulation/model/matrix.json](../../docs/release/evidence/simulation/model/matrix.json) | 18,188 | artifact | 2026-09-19 |
 | [docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json](../../docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json) | 15,946 | artifact | 2026-09-21 |
-| [public/index.html](../../public/index.html) | 13,428 | web-surface | 2026-09-21 |
+| [public/index.html](../../public/index.html) | 13,429 | web-surface | 2026-09-21 |
 | [docs/release/evidence/gates/baseline-ci-linux.txt](../../docs/release/evidence/gates/baseline-ci-linux.txt) | 13,189 | artifact | 2026-09-19 |
 | [docs/release/evidence/gates/fresh-ci-linux.txt](../../docs/release/evidence/gates/fresh-ci-linux.txt) | 13,110 | artifact | 2026-09-20 |
 | [docs/release/evidence/gates/corrected-ci-linux.txt](../../docs/release/evidence/gates/corrected-ci-linux.txt) | 12,917 | artifact | 2026-09-20 |
