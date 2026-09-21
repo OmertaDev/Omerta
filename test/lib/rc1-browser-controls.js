@@ -13,6 +13,19 @@ export async function waitForWorldReceipt(page, label, { timeout = 30000 } = {})
 }
 
 export function browserControls({ pageFor, width, result, save }) {
+  const traffic = new WeakMap();
+  function track(page) {
+    if (!traffic.has(page)) {
+      const state = { reads: 0, submissions: 0, requests: new WeakMap() };
+      page.on('request', request => {
+        const route = new URL(request.url()).pathname;
+        if (request.method() === 'GET' && route === '/v1/commands') state.requests.set(request, ++state.reads);
+        if (request.method() === 'POST' && route === '/v1/commands/execute') state.submissions++;
+      });
+      traffic.set(page, state);
+    }
+    return traffic.get(page);
+  }
   async function reach(page, locator, label) {
     const tip = page.locator('[data-tipok]');
     if (await tip.isVisible()) {
@@ -88,14 +101,21 @@ export function browserControls({ pageFor, width, result, save }) {
       result.recoveries.push({ account, type: command.commandType, error: error.body.error, action: 'visible refresh and reissue once' }); save(); return true;
     },
     async snapshot(account, options = {}) {
-      const session = await pageFor(account), page = await openTab(account, 'world');
+      const session = await pageFor(account), state = track(session.page), page = await openTab(account, 'world');
       const update = async (control) => {
-        const waiting = page.waitForResponse((response) => response.request().method() === 'GET' && new URL(response.url()).pathname === '/v1/commands');
-        waiting.catch(() => {});
-        await reach(page, control, (await control.innerText()).trim());
-        await control.click();
-        const response = await waiting; assert.equal(response.status(), 200, await response.text());
-        session.board = await response.json(); await page.locator('#tab-world .world-summary').waitFor(); await page.waitForLoadState('networkidle');
+        for (let attempt = 0; attempt < 3; attempt++) {
+          const waiting = page.waitForResponse((response) => response.request().method() === 'GET' && new URL(response.url()).pathname === '/v1/commands');
+          waiting.catch(() => {});
+          await reach(page, control, (await control.innerText()).trim());
+          await control.click();
+          const response = await waiting; assert.equal(response.status(), 200, await response.text());
+          session.board = await response.json(); await page.locator('#tab-world .world-summary').waitFor(); await page.waitForLoadState('networkidle');
+          session.boardRead = state.requests.get(response.request());
+          if (session.boardRead === state.reads) return;
+          (result.reachabilityDiagnostics ||= []).push({ event: 'rc1-board-read-superseded', width }); save();
+          control = page.locator('#world-refresh');
+        }
+        assert.fail('Board reads did not settle within three visible refreshes');
       };
       await update(page.locator('#world-refresh'));
       if (options.operationId && session.board.operations.selected?.id !== options.operationId) {
@@ -109,7 +129,16 @@ export function browserControls({ pageFor, width, result, save }) {
       return session.board;
     },
     async execute(account, input, key) {
-      const { page, board } = await pageFor(account);
+      const session = await pageFor(account), { page, board } = session, state = track(page), submissions = state.submissions;
+      const refreshedBeforeSubmission = async () => {
+        if (session.boardRead === undefined || session.boardRead === state.reads) return false;
+        assert.equal(state.submissions, submissions, 'A submitted command cannot be retried as a board refresh');
+        (result.reachabilityDiagnostics ||= []).push({ event: 'rc1-board-refreshed-before-click', width }); save();
+        throw Object.assign(new Error('Observed a newer board request before command submission'), {
+          observedBrowserRefresh: true, statusCode: 409, body: { error: 'browser_board_refresh' },
+        });
+      };
+      await refreshedBeforeSubmission();
       assert.equal(key, input.executionId);
       const command = board.commands.find((entry) => entry.executionIdentity?.executionId === key); assert(command);
       const contextual = (type, id) => board.commands.filter((entry) => [entry.subject, entry.target].some((ref) => ref?.type === type && ref.id === id));
@@ -150,13 +179,21 @@ export function browserControls({ pageFor, width, result, save }) {
         }
       }
       assert(chosen, `No reachable ${command.commandType}: ${command.label}`);
+      // A Locator can silently choose a replacement with the same label after a
+      // live refresh. Pin this actual node; a detached node cannot submit a new
+      // board identity. Any reissue requires an observed read and zero submits.
+      const selectedNode = await chosen.elementHandle(); assert(selectedNode);
+      await reach(page, chosen, command.label); await refreshedBeforeSubmission();
+      assert(await selectedNode.evaluate(node => node.isConnected), 'Selected command detached without an observed board refresh');
       const waiting = page.waitForResponse((response) => response.request().method() === 'POST' && new URL(response.url()).pathname === '/v1/commands/execute');
-      waiting.catch(() => {}); await reach(page, chosen, command.label); await chosen.click();
+      waiting.catch(() => {});
+      try { await selectedNode.click(); }
+      catch (error) { await refreshedBeforeSubmission(); throw error; }
       if (command.confirmation.required) {
         const confirm = page.locator('[data-world-choice-confirm]'); await reach(page, confirm, `confirm ${command.label}`); await confirm.click();
       }
       const response = await waiting, body = await response.json();
-      assert.equal(response.request().postDataJSON().executionId, key, 'UI must execute the selected issued identity');
+      assert(response.request().postDataJSON().executionId === key, 'UI must execute the selected issued identity');
       if (response.status() !== 200) throw Object.assign(new Error(JSON.stringify(body)), { statusCode: response.status(), body });
       assert.equal(body.status, 'COMPLETED');
       await page.waitForFunction(() => sessionStorage.getItem('omerta_world_pending') === null);

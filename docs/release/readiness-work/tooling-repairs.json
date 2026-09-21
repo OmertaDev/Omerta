@@ -513,6 +513,35 @@
       ],
       "retest": "Integratedb0c85c11 allfour native widths PASS with50commands and6interactions each, zero browser errors and actual hit testing. Both hosted workflows dispatched on that exact source; hosted outcomes pending.",
       "evidence": "integrated-9e05bf08-results.json; restricted golden-9e05bf08-1 original failure assets;integrated-b0c85c11-results.json"
+    },
+    {
+      "id": "RC1-TOOL-32",
+      "classification": "D tooling defect",
+      "owner": "Codex/root",
+      "failedGate": "b0c85c11 hosted rc1-golden PostgreSQL16,35580193066/job106271037555",
+      "before": "390px recipe craft failed exact issued identity assertion: commandId unchanged, boardId changed. Locator re-resolves replacement DOM during reach; controlled actual browser/HTTP fixture reproduces the newer-board submission. Other widths and PostgreSQL18.4 passed separately; failure retained.",
+      "repair": "Track actual board GET generations, bound visible snapshot refreshes, pin selected DOM node, and authorize pre-submit reissue only on an observed newer board request with zero submissions. Detached unexplained nodes and any submitted identity mismatch remain hard failures. No production change.",
+      "changedSource": [
+        "test/lib/rc1-browser-controls.js",
+        "test/rc1-browser-board-refresh.js"
+      ],
+      "retest": "Development deterministic browser controls pass: old Locator mismatch reproduced, interrupted selection submits zero, reissue submits exact identity once, unexplained detachment and wrong submitted identity rejected. Integrated native/hosted reruns pending.",
+      "evidence": "Restricted b0c85c11-linux-pg16-failed.log and b0c85c11-linux-pg16/golden-browser.log; development controls retained; fresh integrated freeze required"
+    },
+    {
+      "id": "RC1-TOOL-33",
+      "classification": "D tooling defect",
+      "owner": "Codex/mystery_workloads",
+      "failedGate": "fc069f31 alliance48h postseal verification, launcher exit1",
+      "before": "Whole-file UTF8 parsing exceeded Node single-string limit for1064824650-byte history. Original sealed PASS_SCOPED payload and launcher failure both retained; attempt classified POSTSEAL_VERIFICATION_FAILED.",
+      "repair": "Stream every exact artifact byte for size/hash and every history line for unchanged sequence/hash-chain/invocation checks. No sampling, normalization or source-pin waiver.",
+      "changedSource": [
+        "tools/rc1-native-proof.js",
+        "tools/rc1-native-proof-stream.js",
+        "test/rc1-native-proof-stream.js"
+      ],
+      "retest": "Independent retained-byte audit and chunk/UTF8/CRLF/malformed/truncated/duplicate/unfinished controls pass. Fresh same-source alliance observation/replay in progress; root integrated freeze pending.",
+      "evidence": "Agent sourcef8976fc7; retained fc069f31 manifest hash240fc50d25aa42ca7d2a64f6e41152d86f8eebec6f9873802e88827d2f4fdc21; detailed audit handoff pending"
     }
   ]
 }

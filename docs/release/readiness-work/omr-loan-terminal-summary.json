@@ -1,0 +1,221 @@
+{
+  "format": 1,
+  "owner": "Codex/resource_proof",
+  "scope": "C02 OMR loan collateral terminal subset",
+  "source": "138687368cc96860f3785896b9c1f21a457127d4",
+  "integrationBase": "90268cc5ea044a2a1526a2600615f723af319990",
+  "integrationCommits": [
+    "ae7df02597875e30516787e7068d66453510546e",
+    "94450ab33c064d91e3185aa9281eb45d7944166d",
+    "138687368cc96860f3785896b9c1f21a457127d4"
+  ],
+  "status": "PASS_SCOPED",
+  "fullGapStatus": "OPEN_REQUIRED_PROOF",
+  "fullResourceCoverage": false,
+  "matrixQualifying": false,
+  "verificationHistory": [
+    "First independent verifier failed parsing exact0.000000 with BigInt(string); retained verify-omr-loan-terminals.log. Corrected verifier parses exact six-decimal units without rounding; source/native proofs unchanged."
+  ],
+  "histories": [
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-readiness-private-20260921\\omr-loan-terminals-native-1",
+      "source": "ae7df02597875e30516787e7068d66453510546e",
+      "status": "FAIL",
+      "manifestSha256": "f1dbb80837b6de3499f2d5df8d5c952139bc4c9bfc0ad56572a746b379da327c",
+      "artifactsVerified": 52,
+      "completedBoundaries": 45,
+      "recheckedBoundaries": 0,
+      "recheckedEquations": 0,
+      "recheckedMovements": 0,
+      "controlsRejected": 0,
+      "failureClassification": "Harness notification TEXT JSON parsing; full native gate failed after45 completed boundaries"
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-readiness-private-20260921\\omr-loan-terminals-native-2",
+      "source": "94450ab33c064d91e3185aa9281eb45d7944166d",
+      "status": "PASS_SCOPED",
+      "manifestSha256": "3f5fd0a69811230c39707530b0cbdc60e713978d9ade5d397610cf542b407dba",
+      "artifactsVerified": 66,
+      "completedBoundaries": 47,
+      "recheckedBoundaries": 47,
+      "recheckedEquations": 2261,
+      "recheckedMovements": 16,
+      "controlsRejected": 11,
+      "failureClassification": null
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-readiness-private-20260921\\omr-loan-terminals-native-3",
+      "source": "138687368cc96860f3785896b9c1f21a457127d4",
+      "status": "PASS_SCOPED",
+      "manifestSha256": "e8d205e7447e478c960b69d49a4f7d2e958b475c4ceed0159fcbea5085c9bc52",
+      "artifactsVerified": 68,
+      "completedBoundaries": 47,
+      "recheckedBoundaries": 47,
+      "recheckedEquations": 2261,
+      "recheckedMovements": 16,
+      "controlsRejected": 13,
+      "failureClassification": null
+    }
+  ],
+  "nativeReadback": {
+    "accounts": {
+      "n": 12,
+      "liquid": "235.000000",
+      "staked": "0",
+      "unbonding": "0"
+    },
+    "characters": [
+      {
+        "alive": false,
+        "n": 4
+      },
+      {
+        "alive": true,
+        "n": 12
+      }
+    ],
+    "loans": [
+      {
+        "status": "collected",
+        "n": 3
+      },
+      {
+        "status": "repaid",
+        "n": 1
+      }
+    ],
+    "omrReceipts": [
+      {
+        "reason": "loan:pledge",
+        "n": 7,
+        "amount": "-235"
+      },
+      {
+        "reason": "loan:pledge:loot",
+        "n": 2,
+        "amount": "31"
+      },
+      {
+        "reason": "loan:pledge:return",
+        "n": 1,
+        "amount": "37"
+      },
+      {
+        "reason": "loan:seize:omr",
+        "n": 6,
+        "amount": "167"
+      }
+    ]
+  },
+  "counts": {
+    "boundaries": 47,
+    "equations": 2261,
+    "movements": 16,
+    "controls": 13,
+    "invariants": 3,
+    "logicalHours": 27,
+    "graceExpiries": 2,
+    "timerCounts": {
+      "directorTick": 324,
+      "guardedTick": 27,
+      "guardedSeasonTick": 27,
+      "health-boundary": 324
+    }
+  },
+  "executed": [
+    "Seven nonzero directed pledges plus exact same-key retries",
+    "Paper ask10001, authored take201, seller9800; same-key concurrent purchase and exact replay",
+    "Old creditor denied; new creditor denied before due; exact one-hour due collection31 and replay",
+    "Canonical lender death transfers active37 claim to same-account heir; borrower repays and retrieves37",
+    "Canonical nonlooting borrower death gives whole35 to lender; dead-target retry refused",
+    "Original three-hour search and canonical fire: third-party31 splits15/16; killer-creditor33 splits16/17 into one account",
+    "Fire abort after account credit/receipt restores complete scoped custody; same-key retry executes once",
+    "Two original one-hour loans plus24h grace: equality25h remains active; eligible26h credits abort; original27h sweep transfers33/35 once; terminal sweep retry unchanged"
+  ],
+  "negativeControls": [
+    {
+      "name": "missing-seize-receipt",
+      "outcome": "REJECTED"
+    },
+    {
+      "name": "duplicate-loot-receipt",
+      "outcome": "REJECTED"
+    },
+    {
+      "name": "wrong-loot-owner-balanced",
+      "outcome": "REJECTED"
+    },
+    {
+      "name": "odd-remainder-rounded-down",
+      "outcome": "REJECTED"
+    },
+    {
+      "name": "missing-death-authority",
+      "outcome": "REJECTED"
+    },
+    {
+      "name": "wrong-heir-owner",
+      "outcome": "REJECTED"
+    },
+    {
+      "name": "missing-inheritance-notice",
+      "outcome": "REJECTED"
+    },
+    {
+      "name": "grace-equality-forfeit",
+      "outcome": "REJECTED"
+    },
+    {
+      "name": "paper-missing-owner-receipt",
+      "outcome": "REJECTED"
+    },
+    {
+      "name": "paper-wrong-cash-owner",
+      "outcome": "REJECTED"
+    },
+    {
+      "name": "rewritten-historical-receipt",
+      "outcome": "REJECTED"
+    },
+    {
+      "name": "rewritten-original-due",
+      "outcome": "REJECTED"
+    },
+    {
+      "name": "subatomic-drift",
+      "outcome": "REJECTED"
+    }
+  ],
+  "fixtureDeclaration": [
+    "12 ordinary accounts defaultcash500/ammo25, stats50/respect10000, no arbitrary hospital/jail/shield deadline",
+    "Two hunters equipped lastresort. Initial collateral235OMR and funding1900OMR reallocated from retired AMM20000 seed; till1000000 declared before baseline",
+    "Canonical window redemption1900OMR and240 standard ammo boxes before baseline; exact receipts retained",
+    "Three initial rat progression flags permit canonical once-per-street48h witness protection; initial rat acquisition is unproved",
+    "Population off deploy setting; all original local deadlines still execute. No postbaseline balance/status/deadline edits"
+  ],
+  "exclusions": [
+    "Full cash, ammo, death and Wanted ecology (canonical invariants checked separately)",
+    "No-heir lender fallback: runEstate always creates an heir",
+    "House loans, car collateral, loan/paper races against death or grace sweep",
+    "Natural entry, rat/protection acquisition and combat equipment progression",
+    "Unrelated OMR mint, reward, auction, Family and external backing",
+    "Literal wall time, browser/network/deployed or simulation matrix coverage"
+  ],
+  "limitations": [
+    "Canonical transaction rows lack a loan-id FK: exact reason/account/counterparty/amount multiset within boundary, not fabricated unique cross-receipt identity",
+    "Mod kill has no durable idempotency contract; observed privileged request and actual estate retained",
+    "Interval/batch journals do not assert every transaction commit order",
+    "Installed dependencies reused via local node_modules junction; no independent fresh-install attestation",
+    "Idempotency retention/pruning beyond this scenario is not proved; all exact HTTP retries occur inside the authored replay window"
+  ],
+  "reruns": {
+    "role": "Root integration/release qualification",
+    "command": "node test/rc1-native-omr-loan-terminals.js --postgres --output=<new private directory>",
+    "environment": "RC1_RESOURCE_DATABASE_URL=<explicit disposable local PostgreSQL endpoint>; clean committed checkout"
+  },
+  "publicSafe": {
+    "rawTokensIncluded": false,
+    "privateActorIdentifiersIncluded": false,
+    "rawHttpBodiesIncluded": false
+  }
+}

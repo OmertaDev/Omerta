@@ -549,3 +549,10 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:shipment-terminals:postgres
+      - name: Exact OMR loan collateral inheritance seizure and original grace expiry
+        if: '!cancelled()'
+        env:
+          RC1_OMR_LOAN_OUTPUT: ${{ runner.temp }}/rc1-omr-loan-terminals
+        run: |
+          umask 077
+          npm run test:rc1:omr-loan-terminals:postgres

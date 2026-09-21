@@ -9,6 +9,19 @@
   "note": "Pinned required command inventory across the four source workflows. Preserve each workflow setup, database isolation, platform, environment and budgets. A component regression pass does not clear a full native, deployed, or human proof.",
   "gates": [
     {
+      "id": "rc1-omr-loan-terminals",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:omr-loan-terminals:postgres"
+      ],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Exact directed OMR collateral transfer, inheritance, selected death and original grace expiry; no full cash/death ecology, all races, backing or matrix"
+      ]
+    },
+    {
       "id": "rc1-shipment-terminals",
       "command": [
         "npm",

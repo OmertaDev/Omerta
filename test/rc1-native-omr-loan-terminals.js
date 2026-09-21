@@ -11,7 +11,7 @@ assert(process.argv.includes('--postgres'), 'Native PostgreSQL required');
 const arg = name => process.argv.find(value => value.startsWith(`--${name}=`))?.slice(name.length + 3);
 const source = await sourceIdentity(), seed = arg('seed') || 'rc1-omr-loan-terminals-alpha';
 const runId = `omr-loan-terminals-${source.revision.slice(0, 12)}-${crypto.randomBytes(5).toString('hex')}`;
-const output = path.resolve(arg('output') || path.join(os.tmpdir(), 'omerta-rc1-resource-proof', runId));
+const output = path.resolve(arg('output') || process.env.RC1_OMR_LOAN_OUTPUT || path.join(os.tmpdir(), 'omerta-rc1-resource-proof', runId));
 const database = planOwnedWorldDatabase({ controlUrl: process.env.RC1_RESOURCE_DATABASE_URL, runId, sourceRevision: source.revision });
 for (const name of ['SEARCH_MS', 'SHOOT_CD_MS', 'WANTED_HUNT_P', 'SEASON_MOD', 'SEASON_MODS', 'CHAIN_RPC_URL', 'CHAIN_SIGNER_PK', 'INVARIANT_WEBHOOK_URL', 'LIQUIDITY_RPC_URL', 'LIQUIDITY_RPC_FALLBACK_URL', 'REDIS_URL'])
   assert(!process.env[name], `Override/external integration excluded: ${name}`);
