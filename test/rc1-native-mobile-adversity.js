@@ -20,8 +20,9 @@ const configuration = { widths, fixtureGrants: [], entry: 'Real guest/character 
   randomSeam: 'Existing journey pins only the canonical garage boost/model roll to0.01; not a natural random-outcome claim',
   faults: ['Abort one real successful committed command response', 'Reload and retry identical saved command', '800ms committed response delay and double click'],
   sourceOfAuthority: 'Unchanged API, database, command dispatcher and rendered controls',
+  terminalBoundary: 'Solo preparation reaches the existing visible Family leadership/Crew requirement; no collective world execution is claimed',
   childTimeoutMs: 240000, worker: 'No worker process; this is a browser command/recovery proof',
-  coverageExclusions: ['Physical devices and wallets', 'Human comprehension', 'All screens and list stress', 'Every major action outcome', 'World matrix and deployed recovery'] };
+  coverageExclusions: ['Collective world action completion', 'Physical devices and wallets', 'Human comprehension', 'All screens and list stress', 'Every major action outcome', 'World matrix and deployed recovery'] };
 const proof = await createProofRecorder({ directory: output, source, configuration,
   runId: path.basename(output), seed: 'browser-random-garage-seam', scenarioId: 'native-solo-mobile-adversity', population: widths.length });
 const results = [], assets = [];

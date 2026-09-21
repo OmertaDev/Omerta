@@ -222,7 +222,7 @@ try {
       assert(result.delayedResponse.actualMs >= 750, 'The committed response was withheld for the required latency interval');
       if (native) assert.equal(await waitForWorldReceipt(page, complete.label), complete.label);
       await snapshot('first-case-completed');
-      // Solo world action: follow an existing public investigation, obtain real
+      // Solo preparation: follow an existing public investigation, obtain real
       // materials in the garage, and craft at the Foundry. Only the random garage
       // success/model roll is pinned; no stats, cash, inventory, or cooldown is set.
       await page.unroute('**/v1/commands/execute');
@@ -274,24 +274,28 @@ try {
       await snapshot('solo-ready-equipment-world-gate');
       assert.deepEqual(errors, [], 'No uncaught page errors during solo preparation');
       assert(telemetry.length > 0 && telemetry.every((entry) => entry.status === 200), 'Preparation telemetry is authenticated and accepted');
-      assert(worldMove, 'RELEASE BLOCKER: a fresh solo player has the key and wire at the Foundry, but every world action still requires Family/Crew authority');
-      result.worldExecution = await executeVisible(worldMove);
-      await snapshot('solo-world-consequence');
-      current = await commandBoard();
-      assert.equal(current.worldObjects.find((object) => object.id === 'facility:foundry_archive')?.state, 'open');
-      assert(current.consequences.some((event) => event.subject.id === 'facility:foundry_archive' && /open/.test(event.description)));
+      // The canonical World Kernel has required current Family leadership and
+      // a uniform eligible Crew since its original authored definition. The
+      // solo player prepares the tools; this does not grant collective authority.
+      assert.equal(worldMove, undefined, 'Preparation cannot bypass Family authority');
+      const archive = current.commands.find(command => command.commandType === 'world.execute'
+        && command.parameters.objectId === 'facility:foundry_archive');
+      assert.equal(archive?.availability, 'LOCKED');
+      assert(archive.blockers.some(blocker => blocker.code === 'family_authority'));
+      assert((await page.locator('#tab-world').innerText()).includes('This requires current Family leadership and an eligible Crew.'));
+      assert.equal(current.worldObjects.find(object => object.id === 'facility:foundry_archive')?.state, 'sealed');
       assert.equal(current.crew, null, 'The path remains solo');
       assert.equal(current.family, null, 'No Family fixture is required');
-      const cause = current.consequences.find((event) => event.subject.id === 'facility:foundry_archive');
-      result.worldFollowUp = { relatedOpportunityIds: cause.opportunityIds,
-        newOpportunities: result.worldExecution.feedback.newOpportunities, directorSituations: current.situations };
+      assert(current.commands.some(command => command.availability === 'AVAILABLE'), 'Another authorized next action remains available');
+      result.collectiveBoundary = { prepared: true, state: 'sealed', requiredAuthority: 'current Family leadership and eligible Crew',
+        worldActionExecuted: false, note: 'Collective completion belongs to the separate social/Family golden journey' };
       result.after = { opportunities: current.opportunities, consequences: current.consequences,
         availableCommands: current.commands.filter((command) => command.availability === 'AVAILABLE')
           .map(({ executionIdentity, ...command }) => command) };
       assert.deepEqual(errors, [], 'No uncaught page errors');
       assert(telemetry.length > 0 && telemetry.every((entry) => entry.status === 200), 'UI telemetry observations are authenticated and accepted');
       result.status = 'PASS';
-      console.log(`PASS ${width}px: fresh solo account, tour, command recovery, repeated taps, real discovery/travel/garage/salvage/craft/world consequence; related follow-up=${cause.opportunityIds.length}; telemetry=${telemetry.length}`);
+      console.log(`PASS ${width}px: fresh solo account, command recovery, repeated taps, canonical discovery/travel/garage/salvage/craft and visible Family gate; telemetry=${telemetry.length}`);
     } catch (error) {
       result.status = 'FAIL'; result.error = error.stack;
       await snapshot('failure').catch(() => {});
