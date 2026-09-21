@@ -393,6 +393,7 @@
 | [docs/release/readiness-work/harness-database-isolation.md](../../docs/release/readiness-work/harness-database-isolation.md) | documentation | 39 | 2026-09-21 |
 | [docs/release/readiness-work/harness-worker-schedule.md](../../docs/release/readiness-work/harness-worker-schedule.md) | documentation | 164 | 2026-09-21 |
 | [docs/release/readiness-work/harness.md](../../docs/release/readiness-work/harness.md) | documentation | 142 | 2026-09-21 |
+| [docs/release/readiness-work/market-player-policy.md](../../docs/release/readiness-work/market-player-policy.md) | documentation | 20 | 2026-09-21 |
 | [docs/release/readiness-work/mystery-player-policies.md](../../docs/release/readiness-work/mystery-player-policies.md) | documentation | 91 | 2026-09-21 |
 | [docs/release/readiness-work/quiet-world-workload.md](../../docs/release/readiness-work/quiet-world-workload.md) | documentation | 42 | 2026-09-21 |
 | [docs/release/readiness-work/README.md](../../docs/release/readiness-work/README.md) | documentation | 92 | 2026-09-21 |
@@ -403,7 +404,8 @@
 | [docs/release/readiness-work/resource-loan-lifecycles.md](../../docs/release/readiness-work/resource-loan-lifecycles.md) | documentation | 20 | 2026-09-21 |
 | [docs/release/readiness-work/resource-proof.md](../../docs/release/readiness-work/resource-proof.md) | documentation | 93 | 2026-09-21 |
 | [docs/release/readiness-work/resource-runs/resource-capital-e64804ef575f-ce79e1f7e3/reproduction.md](../../docs/release/readiness-work/resource-runs/resource-capital-e64804ef575f-ce79e1f7e3/reproduction.md) | documentation | 37 | 2026-09-21 |
-| [docs/release/readiness-work/season-recovery-finding.md](../../docs/release/readiness-work/season-recovery-finding.md) | documentation | 50 | 2026-09-21 |
+| [docs/release/readiness-work/season-recovery-finding.md](../../docs/release/readiness-work/season-recovery-finding.md) | documentation | 56 | 2026-09-21 |
+| [docs/release/readiness-work/season-status-journal.md](../../docs/release/readiness-work/season-status-journal.md) | documentation | 24 | 2026-09-21 |
 | [docs/release/readiness-work/source-reconciliation.md](../../docs/release/readiness-work/source-reconciliation.md) | documentation | 137 | 2026-09-21 |
 | [docs/release/readiness-work/world-observers.md](../../docs/release/readiness-work/world-observers.md) | documentation | 54 | 2026-09-21 |
 | [docs/release/readiness-work/world-resource-observer.md](../../docs/release/readiness-work/world-resource-observer.md) | documentation | 41 | 2026-09-21 |

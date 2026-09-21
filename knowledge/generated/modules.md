@@ -128,7 +128,7 @@
 | [src/home.js](../../src/home.js) | 55 | engagement-growth | 13 / 3 | 1 | 0 | 1 |
 | [src/honor.js](../../src/honor.js) | 74 | social-combat | 1 / 12 | 1 | 5 | 1 |
 | [src/hustle.js](../../src/hustle.js) | 103 | platform-core | 2 / 3 | 2 | 3 | 0 |
-| [src/invariants.js](../../src/invariants.js) | 1390 | economy-ledger | 9 / 114 | 1 | 52 | 102 |
+| [src/invariants.js](../../src/invariants.js) | 1390 | economy-ledger | 9 / 116 | 1 | 52 | 104 |
 | [src/invites.js](../../src/invites.js) | 47 | platform-core | 1 / 7 | 2 | 3 | 1 |
 | [src/item-lock-trace.js](../../src/item-lock-trace.js) | 59 | platform-core | 1 / 6 | 0 | 0 | 4 |
 | [src/itemdefinitions.js](../../src/itemdefinitions.js) | 201 | platform-core | 4 / 12 | 0 | 6 | 8 |
@@ -216,7 +216,7 @@
 | [src/routes/world-kernel.js](../../src/routes/world-kernel.js) | 87 | platform-core | 8 / 1 | 6 | 1 | 0 |
 | [src/routes/worldgraph.js](../../src/routes/worldgraph.js) | 629 | world-graph | 4 / 4 | 20 | 7 | 3 |
 | [src/rules.generated.js](../../src/rules.generated.js) | 480 | platform-core | 0 / 2 | 0 | 10 | 1 |
-| [src/rules.js](../../src/rules.js) | 14 | platform-core | 2 / 230 | 0 | 0 | 125 |
+| [src/rules.js](../../src/rules.js) | 14 | platform-core | 2 / 232 | 0 | 0 | 126 |
 | [src/rules.tail.js](../../src/rules.tail.js) | 6145 | platform-core | 0 / 1 | 0 | 53 | 0 |
 | [src/rwahealth.js](../../src/rwahealth.js) | 684 | platform-core | 1 / 1 | 0 | 0 | 1 |
 | [src/rwahealthclearance.js](../../src/rwahealthclearance.js) | 1092 | platform-core | 4 / 0 | 0 | 6 | 0 |
@@ -230,7 +230,7 @@
 | [src/rwastockkeeper.js](../../src/rwastockkeeper.js) | 125 | platform-core | 0 / 1 | 0 | 5 | 0 |
 | [src/season.js](../../src/season.js) | 150 | world-progression | 1 / 3 | 2 | 8 | 1 |
 | [src/secrets.js](../../src/secrets.js) | 201 | law-intelligence | 3 / 6 | 5 | 6 | 2 |
-| [src/server.js](../../src/server.js) | 3633 | platform-core | 143 / 163 | 423 | 43 | 141 |
+| [src/server.js](../../src/server.js) | 3633 | platform-core | 143 / 164 | 423 | 43 | 142 |
 | [src/shipment.js](../../src/shipment.js) | 175 | enterprise-logistics | 2 / 3 | 3 | 8 | 1 |
 | [src/skills.js](../../src/skills.js) | 171 | world-progression | 4 / 3 | 5 | 4 | 0 |
 | [src/social.js](../../src/social.js) | 27 | social-combat | 6 / 26 | 44 | 3 | 18 |
