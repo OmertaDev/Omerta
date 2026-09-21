@@ -50,7 +50,7 @@ if (!process.argv.includes('--postgres')) {
   try {
     await proof.record({ kind: 'database-created', ...await database.create() }); process.env.DATABASE_URL = database.url;
     bootstrap = await makeDb();
-    const initialized = await proof.invoke({ authority: 'runCityLeg', phase: 'canonical-empty-pool-initialization' }, () => runCityLeg(bootstrap));
+    const initialized = await proof.invoke('runCityLeg', { phase: 'canonical-empty-pool-initialization' }, () => runCityLeg(bootstrap));
     assert.equal(initialized.skipped, 'empty'); await bootstrap.end(); bootstrap = null;
     inspector = new pg.Pool({ connectionString: database.url, max: 1 });
     const initial = await proof.snapshot(inspector, 'initial');
@@ -88,7 +88,7 @@ if (!process.argv.includes('--postgres')) {
       let held = null;
       if (mode === 'locked') { held = await inspector.connect(); activeHolder = held; await held.query('SELECT pg_advisory_lock($1,$2)', [16971, 0]); }
       observer.arm(); let outcome;
-      await proof.invoke({ authority: 'runCityLeg', mode }, async () => {
+      await proof.invoke('runCityLeg', { mode }, async () => {
         if (mode === 'native-terminated-acquisition') {
           await assert.rejects(() => runCityLeg(pool), error => error === nativeQueryError);
           assert(nativeQueryError && (nativeQueryError.code === '57P01' || /connection|terminated|queryable/i.test(nativeQueryError.message)));
