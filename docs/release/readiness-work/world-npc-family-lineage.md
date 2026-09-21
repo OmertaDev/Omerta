@@ -53,3 +53,11 @@ unchanged. NPC seeding/car grants, recruitment, war-pool regeneration/combat/pay
 other Family terminals, HTTP entry, full-resource conservation, matrix qualification,
 chain/backing and deployment remain outside this proof. Actual run results are retained
 separately and apply only to their recorded source revision.
+
+Retained harness failures are separate from passing evidence: TOOL51 at `3bb7aada`
+incorrectly required an eligible founder at boot. The later eight-hour maximum is a new
+predeclared workload. TOOL52 at `8f8f0d6b` called canonical invariants through the raw
+snapshot connection; that connection lacks the schema clock's session setting. The
+corrected proof captures PostgreSQL's raw `42704` rejection before baseline and runs
+invariants through the ordinary clocked connection. Snapshot reads remain uninstrumented
+and read-only. Neither failure is a game accounting finding or an inherited pass.

@@ -70,7 +70,19 @@ try {
       RAISE EXCEPTION 'RC1_NPC_FORMATION_ABORT after original cash fee and standing write' USING ERRCODE='RNF01'; END IF; RETURN NEW; END $fault$`;
   await pool.query(fault); await pool.query('CREATE TRIGGER rc1_npc_abort AFTER UPDATE ON gangs FOR EACH ROW EXECUTE FUNCTION rc1_npc_abort()');
   await proof.artifact('initialization.json', { configuration, fault, gameplayFixturesAfterBaseline: false });
-  assert((await runLedgerInvariants(pool,{alert:false})).ok); await proof.snapshot(pool,'initial');
+  assert((await runLedgerInvariants(pool,{alert:false})).ok);
+  // TOOL52: reproduce the raw error hidden by the canonical registry mapper.
+  const clockErrors=[];
+  const rawInvariantPool={query:readPool.query.bind(readPool),connect:async()=>{
+    const client=await readPool.connect();return new Proxy(client,{get(target,key){
+      if(key==='query')return async(...args)=>{try{return await target.query(...args);}catch(error){clockErrors.push({sql:args[0],code:error.code,message:error.message});throw error;}};
+      const value=Reflect.get(target,key);return typeof value==='function'?value.bind(target):value;
+    }});
+  }};
+  await assert.rejects(()=>runLedgerInvariants(rawInvariantPool,{alert:false}));
+  assert(clockErrors.some(row=>row.code==='42704' && row.message.includes('rc1.transaction_time')));
+  await proof.artifact('raw-invariant-clock-error.json',{scope:'Explicit prebaseline reproduction; raw snapshot connection is uninstrumented',errors:clockErrors});
+  await proof.snapshot(pool,'initial');
   await bootOriginalWorker(controller, { beforeCallbacks: async () => { previous = await snapshotWorldResources(readPool); commitObserver.arm(); } });
   const afterCallback = async () => {
     if (faultInstalled && expectedFaults.length) {
@@ -78,7 +90,7 @@ try {
       await base.query(`SET search_path=${namespace},pg_catalog`); await base.query('DROP TRIGGER rc1_npc_abort ON gangs'); await base.query('DROP FUNCTION rc1_npc_abort()'); faultInstalled=false;
       await proof.record({kind:'diagnostic-trigger-removed',logicalAt:at,gameplayMutation:false});
     }
-    const inv=await runLedgerInvariants(readPool,{alert:false}); assert(inv.ok); await proof.record({kind:'canonical-invariants',logicalAt:at,checks:inv.checks});
+    const inv=await runLedgerInvariants(pool,{alert:false}); assert(inv.ok); await proof.record({kind:'canonical-invariants',logicalAt:at,checks:inv.checks});
   };
   await afterCallback();
   for(let hour=1;hour<=configuration.maximumHours && committedCount<2;hour++) await controller.advanceTo(epoch+hour*3600000,afterCallback);
