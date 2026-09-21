@@ -126,7 +126,7 @@
     "test:rc1:mod-ingress:postgres": "node test/rc1-mod-ingress-postgres.js",
     "test:rc1:legacy-authority:postgres": "node test/rc1-legacy-authority-postgres.js",
     "test:rc1:reviewer-authority:postgres": "node test/rc1-reviewer-authority-postgres.js",
-    "test:rc1:harness": "node test/rc1-native-proof.js && node test/rc1-native-worker-schedule.js && node test/rc1-native-query-tape.js && node test/rc1-native-player-policy.js && node test/rc1-native-actor-replay.js && node test/rc1-world-diagnostics.js && node test/rc1-native-commit-observer.js && node test/rc1-world-resource-observer.js && node test/rc1-browser-controls.js && node test/rc1-knowledge-diagnostics.js && node test/rc1-mystery-policies.js && node test/rc1-aggression-policy.js && node test/rc1-loan-lifecycle-journal.js && node test/rc1-churn-policy.js && node test/rc1-capital-lifecycle-journal.js && node test/rc1-browser-receipt.js && node test/rc1-season-journal.js && node test/rc1-market-policy.js && node test/rc1-native-run-guardrails.js && node test/rc1-law-policy.js && node test/rc1-native-query-order.js && node test/rc1-browser-toast-controls.js && node test/rc1-family-policy.js",
+    "test:rc1:harness": "node test/rc1-native-proof.js && node test/rc1-native-worker-schedule.js && node test/rc1-native-query-tape.js && node test/rc1-native-player-policy.js && node test/rc1-native-actor-replay.js && node test/rc1-world-diagnostics.js && node test/rc1-native-commit-observer.js && node test/rc1-world-resource-observer.js && node test/rc1-browser-controls.js && node test/rc1-knowledge-diagnostics.js && node test/rc1-mystery-policies.js && node test/rc1-aggression-policy.js && node test/rc1-loan-lifecycle-journal.js && node test/rc1-churn-policy.js && node test/rc1-capital-lifecycle-journal.js && node test/rc1-browser-receipt.js && node test/rc1-season-journal.js && node test/rc1-market-policy.js && node test/rc1-native-run-guardrails.js && node test/rc1-law-policy.js && node test/rc1-native-query-order.js && node test/rc1-browser-toast-controls.js && node test/rc1-family-policy.js && node test/rc1-family-cash-ammo-journal.js",
     "test:rc1:season-journal:postgres": "node test/rc1-native-season-journal.js --postgres",
     "test:rc1:market:postgres": "node test/rc1-market-native.js --postgres",
     "test:rc1:aggression:postgres": "node test/rc1-aggression-policy.js --postgres",
@@ -151,7 +151,8 @@
     "test:rc1:query-order:postgres": "node test/rc1-native-query-order.js --postgres",
     "test:rc1:crew-focus:postgres": "node test/rc1-golden-focus-race.js --postgres",
     "test:rc1:family-monopoly:postgres": "node test/rc1-family-native.js --postgres --scenario=family_monopoly",
-    "test:rc1:family-fragmented:postgres": "node test/rc1-family-native.js --postgres --scenario=fragmented_families"
+    "test:rc1:family-fragmented:postgres": "node test/rc1-family-native.js --postgres --scenario=fragmented_families",
+    "test:rc1:family-custody:postgres": "node test/rc1-family-cash-ammo-native.js --postgres"
   },
   "dependencies": {
     "@fastify/jwt": "^10.2.0",

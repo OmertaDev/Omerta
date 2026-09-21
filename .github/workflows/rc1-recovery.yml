@@ -314,6 +314,13 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:loans:postgres
+      - name: Exact Family cash and ammo custody with late abort
+        if: '!cancelled()'
+        env:
+          RC1_FAMILY_CUSTODY_OUTPUT: ${{ runner.temp }}/rc1-family-custody
+        run: |
+          umask 077
+          npm run test:rc1:family-custody:postgres
       - name: Ordinary entrant replacement preserves retired custody
         if: '!cancelled()'
         env:

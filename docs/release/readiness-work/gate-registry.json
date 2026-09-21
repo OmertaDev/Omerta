@@ -9,242 +9,459 @@
   "note": "Pinned required command inventory across the four source workflows. Preserve each workflow setup, database isolation, platform, environment and budgets. A component regression pass does not clear a full native, deployed, or human proof.",
   "gates": [
     {
-      "id": "rc1-crew-focus",
-      "command": ["npm", "run", "test:rc1:crew-focus:postgres"],
+      "id": "rc1-family-custody",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:family-custody:postgres"
+      ],
       "timeoutMs": 600000,
       "scope": "regression",
-      "coverageExclusions": ["Controlled native Crew pending-read and adjacent-Send interleavings; no physical keyboard, every renderer, hosted cause certainty or real-player qualification"]
+      "coverageExclusions": [
+        "Bounded exact Family CASH/AMMO formation/tribute/melt/succession/dissolution; no OMR, original timed war/turf, complete resource taxonomy or matrix"
+      ]
+    },
+    {
+      "id": "rc1-crew-focus",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:crew-focus:postgres"
+      ],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Controlled native Crew pending-read and adjacent-Send interleavings; no physical keyboard, every renderer, hosted cause certainty or real-player qualification"
+      ]
     },
     {
       "id": "rc1-family-monopoly",
-      "command": ["npm", "run", "test:rc1:family-monopoly:postgres"],
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:family-monopoly:postgres"
+      ],
       "timeoutMs": 600000,
       "scope": "regression",
-      "coverageExclusions": ["Declared25-actor20-member fixture, ordinary outsider entry/progression and succession; no elapsed days, all-actor workload, all-resource extreme or full matrix"]
+      "coverageExclusions": [
+        "Declared25-actor20-member fixture, ordinary outsider entry/progression and succession; no elapsed days, all-actor workload, all-resource extreme or full matrix"
+      ]
     },
     {
       "id": "rc1-family-fragmented",
-      "command": ["npm", "run", "test:rc1:family-fragmented:postgres"],
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:family-fragmented:postgres"
+      ],
       "timeoutMs": 600000,
       "scope": "regression",
-      "coverageExclusions": ["Declared25-actor ten-Family fixture, ordinary outsiders and succession; no elapsed days, alliance/war, full resource lineage or full matrix"]
+      "coverageExclusions": [
+        "Declared25-actor ten-Family fixture, ordinary outsiders and succession; no elapsed days, alliance/war, full resource lineage or full matrix"
+      ]
     },
     {
       "id": "rc1-query-order",
-      "command": ["npm", "run", "test:rc1:query-order:postgres"],
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:query-order:postgres"
+      ],
       "timeoutMs": 600000,
       "scope": "regression",
-      "coverageExclusions": ["Native opposite-order seasonal and market causal controls; no ninety-day integrated replay, complete resource taxonomy or qualifying matrix"]
+      "coverageExclusions": [
+        "Native opposite-order seasonal and market causal controls; no ninety-day integrated replay, complete resource taxonomy or qualifying matrix"
+      ]
     },
     {
       "id": "rc1-law-policy",
-      "command": ["npm", "run", "test:rc1:law:postgres"],
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:law:postgres"
+      ],
       "timeoutMs": 600000,
       "scope": "regression",
-      "coverageExclusions": ["One ordinary entrant through natural indictment, plea and original detention expiry; offline forced trial, other Law branches, shared resource taxonomy and full matrix remain incomplete"]
+      "coverageExclusions": [
+        "One ordinary entrant through natural indictment, plea and original detention expiry; offline forced trial, other Law branches, shared resource taxonomy and full matrix remain incomplete"
+      ]
     },
     {
       "id": "rc1-season-journal",
-      "command": ["npm", "run", "test:rc1:season-journal:postgres"],
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:season-journal:postgres"
+      ],
       "timeoutMs": 600000,
       "scope": "regression",
-      "coverageExclusions": ["Two original seasonal boundaries with complete job journals and declared status fixtures; initial ranking selection, unrelated currency and per-commit full-world lineage remain unclassified"]
+      "coverageExclusions": [
+        "Two original seasonal boundaries with complete job journals and declared status fixtures; initial ranking selection, unrelated currency and per-commit full-world lineage remain unclassified"
+      ]
     },
     {
       "id": "rc1-market-policy",
-      "command": ["npm", "run", "test:rc1:market:postgres"],
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:market:postgres"
+      ],
       "timeoutMs": 600000,
       "scope": "regression",
-      "coverageExclusions": ["Three ordinary entrants, shared-sale contention and original order expiry; SQL acknowledgment trace is not PostgreSQL total order, resource lineage and full market-stress matrix remain incomplete"]
+      "coverageExclusions": [
+        "Three ordinary entrants, shared-sale contention and original order expiry; SQL acknowledgment trace is not PostgreSQL total order, resource lineage and full market-stress matrix remain incomplete"
+      ]
     },
     {
       "id": "rc1-mobile-postgres",
-      "command": ["npm", "run", "test:rc1:mobile:postgres"],
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:mobile:postgres"
+      ],
       "timeoutMs": 900000,
       "scope": "regression",
-      "coverageExclusions": ["Four emulated phone widths with ordinary native entrants; no physical device, wallet or real-human comprehension qualification"]
+      "coverageExclusions": [
+        "Four emulated phone widths with ordinary native entrants; no physical device, wallet or real-human comprehension qualification"
+      ]
     },
     {
       "id": "rc1-aggression-lifecycle",
-      "command": ["npm", "run", "test:rc1:aggression-lifecycle:postgres"],
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:aggression-lifecycle:postgres"
+      ],
       "timeoutMs": 600000,
       "scope": "regression",
-      "coverageExclusions": ["20 mixed canonical choices at70% conflict preference including search preparation; progression/weapon fixtures, incomplete resource taxonomy, no full world matrix"]
+      "coverageExclusions": [
+        "20 mixed canonical choices at70% conflict preference including search preparation; progression/weapon fixtures, incomplete resource taxonomy, no full world matrix"
+      ]
     },
     {
       "id": "rc1-capital-lifecycles",
-      "command": ["npm", "run", "test:rc1:capital-lifecycles:postgres"],
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:capital-lifecycles:postgres"
+      ],
       "timeoutMs": 600000,
       "scope": "regression",
-      "coverageExclusions": ["Original24-hour canonical operation expiry with declared social roster; no HTTP, natural entry, material/spend re-execution or complete matrix"]
+      "coverageExclusions": [
+        "Original24-hour canonical operation expiry with declared social roster; no HTTP, natural entry, material/spend re-execution or complete matrix"
+      ]
     },
     {
       "id": "rc1-heir",
-      "command": ["npm", "run", "test:rc1:heir:postgres"],
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:heir:postgres"
+      ],
       "timeoutMs": 600000,
       "scope": "regression",
-      "coverageExclusions": ["Original3-hour logical search/fire/estate and heir recovery; declared progression/weapon fixtures, incomplete resource taxonomy, no full aggression quota or matrix"]
+      "coverageExclusions": [
+        "Original3-hour logical search/fire/estate and heir recovery; declared progression/weapon fixtures, incomplete resource taxonomy, no full aggression quota or matrix"
+      ]
     },
     {
       "id": "rc1-season-recovery",
-      "command": ["npm", "run", "test:rc1:season:postgres"],
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:season:postgres"
+      ],
       "timeoutMs": 600000,
       "scope": "regression",
-      "coverageExclusions": ["Native seasonal status interruption, concurrent claim and lost commit response; explicit season boundary, no elapsed28-day worker or full resource matrix proof"]
+      "coverageExclusions": [
+        "Native seasonal status interruption, concurrent claim and lost commit response; explicit season boundary, no elapsed28-day worker or full resource matrix proof"
+      ]
     },
     {
       "id": "rc1-churn",
-      "command": ["npm", "run", "test:rc1:churn:postgres"],
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:churn:postgres"
+      ],
       "timeoutMs": 600000,
       "scope": "regression",
-      "coverageExclusions": ["One declared weekly boundary and ordinary entrants preserve retired escrow; no elapsed seven-day activity, original escrow expiry or full churn archetype"]
+      "coverageExclusions": [
+        "One declared weekly boundary and ordinary entrants preserve retired escrow; no elapsed seven-day activity, original escrow expiry or full churn archetype"
+      ]
     },
     {
       "id": "rc1-aggression",
-      "command": ["npm", "run", "test:rc1:aggression:postgres"],
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:aggression:postgres"
+      ],
       "timeoutMs": 600000,
       "scope": "regression",
-      "coverageExclusions": ["Bounded public-view jumps, retaliation, recovery and exact retry; no complete high-aggression archetype or matrix qualification"]
+      "coverageExclusions": [
+        "Bounded public-view jumps, retaliation, recovery and exact retry; no complete high-aggression archetype or matrix qualification"
+      ]
     },
     {
       "id": "rc1-loans",
-      "command": ["npm", "run", "test:rc1:loans:postgres"],
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:loans:postgres"
+      ],
       "timeoutMs": 600000,
       "scope": "regression",
-      "coverageExclusions": ["77 logical hours with original callbacks and explicit protected NPC/funding fixtures; no natural survival, OMR grace, HTTP, concurrency or complete escrow qualification"]
+      "coverageExclusions": [
+        "77 logical hours with original callbacks and explicit protected NPC/funding fixtures; no natural survival, OMR grace, HTTP, concurrency or complete escrow qualification"
+      ]
     },
     {
       "id": "rc1-knowledge-distribution",
-      "command": ["npm", "run", "test:rc1:knowledge:postgres"],
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:knowledge:postgres"
+      ],
       "timeoutMs": 600000,
       "scope": "regression",
-      "coverageExclusions": ["Native access/pagination/revocation metrics; no future Knowledge reachability or whole world qualification"]
+      "coverageExclusions": [
+        "Native access/pagination/revocation metrics; no future Knowledge reachability or whole world qualification"
+      ]
     },
     {
       "id": "rc1-mystery-policies",
-      "command": ["npm", "run", "test:rc1:mystery-policies:postgres"],
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:mystery-policies:postgres"
+      ],
       "timeoutMs": 600000,
       "scope": "regression",
-      "coverageExclusions": ["Bounded canonical discovery; native fixture offers no mixed investigation/other choices; no full archetype qualification"]
+      "coverageExclusions": [
+        "Bounded canonical discovery; native fixture offers no mixed investigation/other choices; no full archetype qualification"
+      ]
     },
     {
       "id": "rc1-world-resource-smoke",
-      "command": ["npm", "run", "test:rc1:world:resources:smoke:postgres"],
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:world:resources:smoke:postgres"
+      ],
       "timeoutMs": 600000,
       "scope": "regression",
-      "coverageExclusions": ["Two-hour serial commit observer with explicit unsupported resource lineage; no complete thirteen-resource taxonomy or qualifying matrix cell"]
+      "coverageExclusions": [
+        "Two-hour serial commit observer with explicit unsupported resource lineage; no complete thirteen-resource taxonomy or qualifying matrix cell"
+      ]
     },
     {
       "id": "rc1-database-isolation",
-      "command": ["npm", "run", "test:rc1:database:postgres"],
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:database:postgres"
+      ],
       "timeoutMs": 600000,
       "scope": "regression",
-      "coverageExclusions": ["Native advisory lock and owned database control; no full world replay"]
+      "coverageExclusions": [
+        "Native advisory lock and owned database control; no full world replay"
+      ]
     },
     {
       "id": "rc1-world-smoke",
-      "command": ["npm", "run", "test:rc1:world:smoke:postgres"],
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:world:smoke:postgres"
+      ],
       "timeoutMs": 600000,
       "scope": "regression",
-      "coverageExclusions": ["Two hours of quiet actors and original local workers; no qualifying matrix cell or full resource journal"]
+      "coverageExclusions": [
+        "Two hours of quiet actors and original local workers; no qualifying matrix cell or full resource journal"
+      ]
     },
     {
       "id": "rc1-harness-units",
-      "command": ["npm", "run", "test:rc1:harness"],
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:harness"
+      ],
       "timeoutMs": 600000,
       "scope": "regression",
-      "coverageExclusions": ["Harness controls alone do not execute a full native world"]
+      "coverageExclusions": [
+        "Harness controls alone do not execute a full native world"
+      ]
     },
     {
       "id": "rc1-observers",
-      "command": ["npm", "run", "test:rc1:observers:postgres"],
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:observers:postgres"
+      ],
       "timeoutMs": 600000,
       "scope": "regression",
-      "coverageExclusions": ["Read-only diagnostic precision and serialized SQL boundary controls; complete movement taxonomy remains required"]
+      "coverageExclusions": [
+        "Read-only diagnostic precision and serialized SQL boundary controls; complete movement taxonomy remains required"
+      ]
     },
     {
       "id": "rc1-reviewer-authority",
-      "command": ["npm", "run", "test:rc1:reviewer-authority:postgres"],
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:reviewer-authority:postgres"
+      ],
       "timeoutMs": 600000,
       "scope": "regression",
-      "coverageExclusions": ["Four reviewer transport perimeters only; privileged domain transitions and external integration remain required"]
+      "coverageExclusions": [
+        "Four reviewer transport perimeters only; privileged domain transitions and external integration remain required"
+      ]
     },
     {
       "id": "rc1-mod-ingress",
-      "command": ["npm", "run", "test:rc1:mod-ingress:postgres"],
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:mod-ingress:postgres"
+      ],
       "timeoutMs": 600000,
       "scope": "regression",
-      "coverageExclusions": ["Native HTTP injection only; no deployed proxy or external load test"]
+      "coverageExclusions": [
+        "Native HTTP injection only; no deployed proxy or external load test"
+      ]
     },
     {
       "id": "rc1-legacy-authority",
-      "command": ["npm", "run", "test:rc1:legacy-authority:postgres"],
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:legacy-authority:postgres"
+      ],
       "timeoutMs": 1200000,
       "scope": "regression",
-      "coverageExclusions": ["42 moderator perimeters and 35 selected ownership surfaces; full role and route transition coverage remains required"]
+      "coverageExclusions": [
+        "42 moderator perimeters and 35 selected ownership surfaces; full role and route transition coverage remains required"
+      ]
     },
     {
       "id": "rc1-escrow",
-      "command": ["npm", "run", "test:rc1:escrow:postgres"],
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:escrow:postgres"
+      ],
       "timeoutMs": 4500000,
       "scope": "regression",
-      "coverageExclusions": ["Original one-hour market and loan, 30-minute GP and Stakes; declared short poker fixture, full branch and simulation coverage remains required"]
+      "coverageExclusions": [
+        "Original one-hour market and loan, 30-minute GP and Stakes; declared short poker fixture, full branch and simulation coverage remains required"
+      ]
     },
     {
       "id": "rc1-command-family",
-      "command": ["npm", "run", "test:rc1:command-family:postgres"],
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:command-family:postgres"
+      ],
       "timeoutMs": 600000,
       "scope": "regression",
-      "coverageExclusions": ["Native item, recipe, world and situation probes; full legacy-route and role matrix remains required"]
+      "coverageExclusions": [
+        "Native item, recipe, world and situation probes; full legacy-route and role matrix remains required"
+      ]
     },
     {
       "id": "rc1-concurrent",
-      "command": ["npm", "run", "test:rc1:concurrent:postgres"],
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:concurrent:postgres"
+      ],
       "timeoutMs": 600000,
       "scope": "regression",
-      "coverageExclusions": ["Recorded native salvage schedule only; not arbitrary concurrency or the full matrix"]
+      "coverageExclusions": [
+        "Recorded native salvage schedule only; not arbitrary concurrency or the full matrix"
+      ]
     },
     {
       "id": "rc1-family",
-      "command": ["npm", "run", "test:rc1:family:postgres"],
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:family:postgres"
+      ],
       "timeoutMs": 2400000,
       "scope": "regression",
-      "coverageExclusions": ["Original war/turf timers with declared Family fixtures; not natural progression or all resource systems"]
+      "coverageExclusions": [
+        "Original war/turf timers with declared Family fixtures; not natural progression or all resource systems"
+      ]
     },
     {
       "id": "rc1-shipment",
-      "command": ["npm", "run", "test:rc1:shipment:postgres"],
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:shipment:postgres"
+      ],
       "timeoutMs": 600000,
       "scope": "regression",
-      "coverageExclusions": ["Canonical domain daily caps with aligned test clocks; no full worker schedule or HTTP replay in this runner"]
+      "coverageExclusions": [
+        "Canonical domain daily caps with aligned test clocks; no full worker schedule or HTTP replay in this runner"
+      ]
     },
     {
       "id": "rc1-golden",
-      "command": ["npm", "run", "test:rc1:golden:postgres"],
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:golden:postgres"
+      ],
       "timeoutMs": 900000,
       "scope": "regression",
-      "coverageExclusions": ["Fixture-assisted browser B/C/D/E segments; no physical device or real comprehension evidence"]
+      "coverageExclusions": [
+        "Fixture-assisted browser B/C/D/E segments; no physical device or real comprehension evidence"
+      ]
     },
     {
       "id": "rc1-serial",
-      "command": ["npm", "run", "test:rc1:serial:postgres"],
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:serial:postgres"
+      ],
       "timeoutMs": 600000,
       "scope": "regression",
-      "coverageExclusions": ["Serial fixture workload only; no complete matrix or concurrent schedule proof"]
+      "coverageExclusions": [
+        "Serial fixture workload only; no complete matrix or concurrent schedule proof"
+      ]
     },
     {
       "id": "rc1-source-pair",
-      "command": ["npm", "run", "test:rc1:rollback:postgres"],
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:rollback:postgres"
+      ],
       "timeoutMs": 600000,
       "scope": "regression",
-      "coverageExclusions": ["Local source pair, two fixture accounts; not deployed recovery or all command families"]
+      "coverageExclusions": [
+        "Local source pair, two fixture accounts; not deployed recovery or all command families"
+      ]
     },
     {
       "id": "rc1-capital",
-      "command": ["npm", "run", "test:rc1:capital:postgres"],
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:capital:postgres"
+      ],
       "timeoutMs": 600000,
       "scope": "regression",
-      "coverageExclusions": ["Fixture-assisted native domain commands; production lifetime, natural entry and full resource matrix remain unproven"]
+      "coverageExclusions": [
+        "Fixture-assisted native domain commands; production lifetime, natural entry and full resource matrix remain unproven"
+      ]
     },
     {
       "id": "npm-test",
