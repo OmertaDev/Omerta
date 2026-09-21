@@ -9,6 +9,7 @@ import { execFileSync } from 'node:child_process';
 import { Pool } from 'pg';
 import { addedRows, equation, exactSum, negate, reconcileStacks, resourceSnapshot, sha256, stateWithoutBoundary } from './rc1-resource-journal.js';
 import { resourceInventory } from './rc1-resource-inventory.js';
+import { sourceInventory } from './rc1-qualification.mjs';
 
 const git = (...args) => execFileSync('git', args, { encoding: 'utf8' }).trim();
 const development = process.argv.includes('--development');
@@ -23,6 +24,12 @@ const source = { commit: git('rev-parse', 'HEAD'), clean: !git('status', '--porc
   lockfileSha256: sha256(fs.readFileSync('package-lock.json', 'utf8')),
   schemaSha256: sha256(fs.readFileSync('schema.sql', 'utf8')) };
 assert(development || source.clean, 'Commit source before an evidence campaign; --development only produces diagnostic evidence');
+const pinnedFiles = development ? [] : sourceInventory(source.commit).files;
+const assertPinnedSource = () => {
+  for (const file of pinnedFiles)
+    assert(file.accepted.includes(crypto.createHash('sha256').update(fs.readFileSync(file.path)).digest('hex')), `Checkout differs from pinned source: ${file.path}`);
+};
+assertPinnedSource();
 assert(process.env.RC1_RESOURCE_DATABASE_URL, 'Set RC1_RESOURCE_DATABASE_URL to an isolated loopback PostgreSQL administrative database');
 const endpoint = new URL(process.env.RC1_RESOURCE_DATABASE_URL);
 assert(['postgres:', 'postgresql:'].includes(endpoint.protocol));
@@ -462,6 +469,7 @@ try {
   try {
     const finalCommit = git('rev-parse', 'HEAD'), finalHashes = sourceBytes();
     assert.equal(finalCommit, source.commit, 'Source commit changed during resource proof');
+    assertPinnedSource();
     assert.deepEqual(finalHashes, source.relevantFileHashes, 'Relevant source bytes changed during resource proof');
     report.source.finalCommit = finalCommit;
     report.source.immutableDuringRun = true;

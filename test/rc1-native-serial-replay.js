@@ -24,7 +24,7 @@ assert.deepEqual(samples[0], samples[1]);
 console.log('PASS: seeded UUID/bytes/random and application clock reproduce; globals restored');
 
 if (process.argv.includes('--postgres')) {
-  const directory = process.argv.find((arg) => arg.startsWith('--output='))?.slice('--output='.length);
+  const directory = process.argv.find((arg) => arg.startsWith('--output='))?.slice('--output='.length) || process.env.RC1_SERIAL_OUTPUT;
   assert(directory, 'Provide an exclusive restricted output directory outside the source checkout');
   const source = await sourceIdentity(), seed = 'rc1-alpha';
   const clockRuntime = installSerialRuntime('transaction-clock-contract');

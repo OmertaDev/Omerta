@@ -219,6 +219,13 @@ jobs:
           RC1_RESOURCE_OUTPUT: ${{ runner.temp }}/rc1-resource-proof
         run: npm run test:rc1:resource:postgres
 
+      - name: RC1 operation capital terminal custody and rollback (real PostgreSQL)
+        if: '!cancelled()'
+        env:
+          RC1_RESOURCE_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/postgres
+          RC1_RESOURCE_OUTPUT: ${{ runner.temp }}/rc1-capital-proof
+        run: npm run test:rc1:capital:postgres
+
       - name: Phase 2 definition registry (real PostgreSQL)
         if: '!cancelled()'
         env:

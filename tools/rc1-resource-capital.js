@@ -21,13 +21,21 @@ import { COORDINATION_OPERATION_PILOT } from '../src/content/coordination-operat
 import { createFamilyOperations } from '../src/coordination/operations.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { addedRows, equation, exactSum, negate, sha256 } from './rc1-resource-journal.js';
+import { sourceInventory } from './rc1-qualification.mjs';
 
 const git = (...args) => execFileSync('git', args, { encoding: 'utf8' }).trim();
+const development = process.argv.includes('--development');
 const sourceBytes = () => Object.fromEntries(git('ls-files', '--', 'src', 'content', 'schema.sql', 'package.json', 'package-lock.json',
   'tools/rc1-resource-capital.js', 'tools/rc1-resource-journal.js').split(/\r?\n/).filter(Boolean).sort()
   .map((file) => [file, crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex')]));
 const source = { commit: git('rev-parse', 'HEAD'), clean: !git('status', '--porcelain'), hashes: sourceBytes() };
-assert(source.clean || process.argv.includes('--development'), 'Commit source before a qualifying run; --development is diagnostic');
+assert(source.clean || development, 'Commit source before a qualifying run; --development is diagnostic');
+const pinnedFiles = development ? [] : sourceInventory(source.commit).files;
+const assertPinnedSource = () => {
+  for (const file of pinnedFiles)
+    assert(file.accepted.includes(crypto.createHash('sha256').update(fs.readFileSync(file.path)).digest('hex')), `Checkout differs from pinned source: ${file.path}`);
+};
+assertPinnedSource();
 assert(process.env.RC1_RESOURCE_DATABASE_URL, 'Explicit isolated PostgreSQL endpoint required');
 const endpoint = new URL(process.env.RC1_RESOURCE_DATABASE_URL);
 assert(['postgres:', 'postgresql:'].includes(endpoint.protocol));
@@ -37,7 +45,7 @@ const output = path.resolve(process.env.RC1_RESOURCE_OUTPUT || path.join(os.tmpd
 assert(!fs.existsSync(path.join(output, 'result.json')), 'Never overwrite retained evidence');
 fs.mkdirSync(output, { recursive: true });
 const report = { schemaVersion: 1, runId, source, owner: 'Codex/resource_proof', gate: 'C02-OPERATION-CAPITAL', outcome: 'FAIL',
-  evidenceClass: source.clean ? 'NATIVE_FIXTURE_ASSISTED' : 'DEVELOPMENT_DIAGNOSTIC', startedAt: new Date().toISOString(),
+  evidenceClass: development ? 'DEVELOPMENT_DIAGNOSTIC' : 'NATIVE_FIXTURE_ASSISTED', startedAt: new Date().toISOString(),
   invocation: { command: 'node tools/rc1-resource-capital.js', arguments: process.argv.slice(2), node: process.version, platform: process.platform },
   configuration: { authority: 'createFamilyOperations public create/command service; runEstate canonical death transaction',
     clocks: 'Unmodified application and PostgreSQL wall clocks', fixtureExpirySeconds: 60, productionPilotExpirySeconds: 86400,
@@ -348,7 +356,7 @@ try {
 } catch (error) { report.error = { code: error.code, message: error.message, stack: error.stack }; process.exitCode = 1; }
 finally {
   if (pool) await pool.end(); await admin.end();
-  try { assert.equal(git('rev-parse', 'HEAD'), source.commit); assert.deepEqual(sourceBytes(), source.hashes); report.source.immutableDuringRun = true; }
+  try { assert.equal(git('rev-parse', 'HEAD'), source.commit); assert.deepEqual(sourceBytes(), source.hashes); assertPinnedSource(); report.source.immutableDuringRun = true; }
   catch (error) { report.source.immutableDuringRun = false; report.source.error = error.message; report.outcome = 'FAIL'; process.exitCode = 1; }
   report.endedAt = new Date().toISOString();
   fs.writeFileSync(path.join(output, 'actions.json'), JSON.stringify(actions, null, 2) + '\n');

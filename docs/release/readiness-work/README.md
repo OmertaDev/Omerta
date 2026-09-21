@@ -70,7 +70,10 @@ Do not write PASS declarations to make this validator green. See the validator f
 the typed measurement fields and `test/rc1-qualification.js` for negative cases.
 The native recorder separately retains canonical PostgreSQL state, checkpoints,
 receipts and invocation/completion history. Observation order is not a database
-commit-order replay scheduler. Same-seed fresh-world equivalence remains unproven.
+commit-order replay scheduler. The scoped same-seed serial test now reproduces
+the entire canonical database with no field exclusions; its exact source and
+limits are retained in `harness-serial-replay-results.json`. This does not prove
+the required world matrix or replay of concurrent commit schedules.
 
 ## Recovery and admission
 

@@ -27,6 +27,12 @@ export async function sourceIdentity() {
   const files = git('ls-files', '-z').split('\0').filter(Boolean);
   const contents = [];
   for (const file of files) contents.push([file, sha256(await fs.readFile(file))]);
+  // Git status deliberately ignores assume-unchanged/skip-worktree edits. Match
+  // actual runtime/test bytes to the pinned Git blobs before naming that source.
+  const { sourceInventory } = await import('./rc1-qualification.mjs');
+  const actual = new Map(contents);
+  for (const file of sourceInventory(revision).files)
+    assert(file.accepted.includes(actual.get(file.path)), `Checkout differs from pinned source: ${file.path}`);
   return { revision, gitTree: git('rev-parse', 'HEAD^{tree}'), checkoutSha256: sha256(canonicalJson(contents)),
     lockfileSha256: sha256(await fs.readFile('package-lock.json')), schemaSha256: sha256(await fs.readFile('schema.sql')) };
 }

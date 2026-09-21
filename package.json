@@ -10,7 +10,7 @@
     "test:db-migration:postgres": "node test/rc1-postgres-migration-failure.js",
     "test:rc1:security:postgres": "node test/rc1-command-redteam.js",
     "test:rc1:mobile:postgres": "node test/rc1-mobile-postgres.js",
-    "test:rc1": "node test/world-telemetry.js && node test/rc1-simulation.js && node test/rc1-journeys.js && node test/rc1-qualification.js && node test/rc1-native-proof.js && node test/rc1-resource-journal.js",
+    "test:rc1": "node test/world-telemetry.js && node test/rc1-simulation.js && node test/rc1-journeys.js && node test/rc1-qualification.js && node test/rc1-native-proof.js && node test/rc1-resource-journal.js && node test/rc1-native-serial-replay.js && node test/rc1-source-pair.js",
     "test:rc1:telemetry:postgres": "node test/world-telemetry.js --postgres",
     "test:rc1:mobile": "node tools/rc1-mobile-journeys.js",
     "test:rc1:shutdown": "node tools/rc1-shutdown.js",
@@ -114,7 +114,10 @@
     "director:sim": "node tools/director-sim.js",
     "test:campaign-network": "node test/director-network.js && node test/campaign-network-journey.js && node test/director-network-recovery.js && node test/player-opportunities.js && node test/world-consequences.js",
     "test:rc1:resource:postgres": "node tools/rc1-resource-proof.js",
-    "test:rc1:proof:postgres": "node test/rc1-native-proof.js --postgres"
+    "test:rc1:proof:postgres": "node test/rc1-native-proof.js --postgres",
+    "test:rc1:capital:postgres": "node tools/rc1-resource-capital.js",
+    "test:rc1:serial:postgres": "node test/rc1-native-serial-replay.js --postgres",
+    "test:rc1:rollback:postgres": "node tools/rc1-source-pair.js"
   },
   "dependencies": {
     "@fastify/jwt": "^10.2.0",

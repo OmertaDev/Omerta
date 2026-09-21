@@ -75,6 +75,32 @@ jobs:
           set -o pipefail
           umask 077
           npm run test:rc1:proof:postgres 2>&1 | tee "$RC1_SHUTDOWN_EVIDENCE/checkpoint-proof.log"
+      - name: Same-seed serial replay with complete canonical state
+        if: '!cancelled()'
+        env:
+          RC1_SERIAL_OUTPUT: ${{ runner.temp }}/rc1-serial-replay
+        run: |
+          set -o pipefail
+          umask 077
+          npm run test:rc1:serial:postgres 2>&1 | tee "$RC1_SHUTDOWN_EVIDENCE/serial-replay.log"
+      - name: Check out the observed Render rollback predecessor
+        uses: actions/checkout@v4
+        with:
+          ref: 468516d8d6f3729514711ad5a0b83e440c5c46f9
+          path: tmp/rc1-predecessor
+          fetch-depth: 0
+      - name: Install predecessor dependencies from its own lockfile
+        run: npm ci --prefix tmp/rc1-predecessor
+      - name: Upgrade, rollback and replay against the pinned predecessor
+        env:
+          RC1_PAIR_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
+          RC1_PAIR_PREDECESSOR_DIRECTORY: ${{ github.workspace }}/tmp/rc1-predecessor
+          RC1_PAIR_PREDECESSOR_SHA: 468516d8d6f3729514711ad5a0b83e440c5c46f9
+          RC1_PAIR_OUTPUT: ${{ runner.temp }}/rc1-source-pair
+        run: |
+          set -o pipefail
+          umask 077
+          npm run test:rc1:rollback:postgres 2>&1 | tee "$RC1_SHUTDOWN_EVIDENCE/source-pair.log"
       - name: Retain exact-revision process logs and verdict
         if: always()
         uses: actions/upload-artifact@v4

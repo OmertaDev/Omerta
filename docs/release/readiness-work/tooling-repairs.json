@@ -102,6 +102,93 @@
         "test:rc1",
         "evidence freeze/run/verify/qualify"
       ]
+    },
+    {
+      "id": "RC1-TOOL-06",
+      "classification": "D tooling defect",
+      "owner": "Codex/root and Codex/source_repairs",
+      "before": "A clean Git status can hide assume-unchanged runtime modifications; standalone native and source-pair labels were not tied to the named Git blobs.",
+      "repair": "Compare actual source bytes with the pinned Git blob inventory, allowing only recorded LF/CRLF checkout equivalence. Retain full raw snapshots and checkout identities.",
+      "changedSource": [
+        "tools/rc1-native-proof.js",
+        "tools/rc1-resource-proof.js",
+        "tools/rc1-resource-capital.js",
+        "tools/rc1-source-pair.js",
+        "test/rc1-source-pair.js"
+      ],
+      "reproduction": "Source-pair unit test creates a temporary Git repository and hidden runtime modification.",
+      "requiredIntegratedReruns": [
+        "test:rc1",
+        "rc1-resource",
+        "rc1-capital",
+        "rc1-serial",
+        "rc1-checkpoint",
+        "rc1-source-pair"
+      ]
+    },
+    {
+      "id": "RC1-TOOL-07",
+      "classification": "D tooling defect",
+      "owner": "Codex/source_repairs",
+      "before": "Missing receipt fields compared equal; a successful no-op response could pass response-only compatibility assertions.",
+      "repair": "Require response schema, execution identity, completion feedback, an actually created actor/graph mystery, owned character, and a matching completed durable mutation guard; retain raw replies and full database snapshots.",
+      "changedSource": [
+        "tools/rc1-source-pair.js",
+        "test/rc1-source-pair.js"
+      ],
+      "reproduction": "No-op response and absent/mismatched persisted receipt negative controls.",
+      "requiredIntegratedReruns": [
+        "test:rc1",
+        "rc1-source-pair"
+      ]
+    },
+    {
+      "id": "RC1-TOOL-08",
+      "classification": "D tooling defect",
+      "owner": "Codex/source_repairs",
+      "before": "An output ancestor junction could place raw evidence inside a source checkout.",
+      "repair": "Resolve the existing parent and newly created output paths before accepting containment.",
+      "changedSource": [
+        "tools/rc1-source-pair.js",
+        "test/rc1-source-pair.js"
+      ],
+      "reproduction": "Temporary external alias into checkout is refused.",
+      "requiredIntegratedReruns": [
+        "test:rc1",
+        "rc1-source-pair"
+      ]
+    },
+    {
+      "id": "RC1-TOOL-09",
+      "classification": "D tooling defect",
+      "owner": "Codex/source_repairs",
+      "before": "Early connection failures and interrupted/hung child processes could escape final evidence recording.",
+      "repair": "Write reservation, phases, logs and request records incrementally; signal-triggered failure handling and bounded graceful/TERM/KILL cleanup retain a nonpassing result.",
+      "changedSource": [
+        "tools/rc1-source-pair.js",
+        "test/rc1-source-pair.js"
+      ],
+      "reproduction": "Deliberate database refusal, signal during stalled startup, and stubborn child controls.",
+      "requiredIntegratedReruns": [
+        "test:rc1",
+        "rc1-source-pair",
+        "Linux recovery workflow"
+      ]
+    },
+    {
+      "id": "RC1-TOOL-10",
+      "classification": "D tooling defect",
+      "owner": "Codex/root",
+      "before": "Early source-pair harness used an invalid Director mode and then required byte-identical refreshed projections and replay telemetry.",
+      "repair": "Use DIRECTOR_DISABLED; compare durable command results and all game state. Only bootstrap observation time and explicitly validated replay diagnostic rows are excluded from the comparison; raw state remains retained.",
+      "changedSource": [
+        "tools/rc1-source-pair.js"
+      ],
+      "reproduction": "Private retained source-pair attempts 1-3 fail; attempt4 passed the scoped pre-review comparison. Reviewed controls and final integrated native rerun are separately required.",
+      "requiredIntegratedReruns": [
+        "test:rc1",
+        "rc1-source-pair"
+      ]
     }
   ]
 }
