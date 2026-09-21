@@ -1,2 +1,2 @@
 # These are byte-hashed evidence artifacts; checkout must not convert newlines.
-* -text
+* -text whitespace=cr-at-eol

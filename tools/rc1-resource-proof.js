@@ -12,6 +12,7 @@ import { resourceInventory } from './rc1-resource-inventory.js';
 
 const git = (...args) => execFileSync('git', args, { encoding: 'utf8' }).trim();
 const development = process.argv.includes('--development');
+const injectAssertionFailure = process.argv.includes('--inject-assertion-failure');
 const sourceFiles = () => git('ls-files', '--', 'src', 'content', 'schema.sql', 'package.json', 'package-lock.json',
   'tools/rc1-resource-proof.js', 'tools/rc1-resource-journal.js', 'tools/rc1-resource-inventory.js', 'test/rc1-resource-journal.js')
   .split(/\r?\n/).filter(Boolean).sort();
@@ -88,6 +89,7 @@ async function observed(name, action, validate) {
     after = await resourceSnapshot(app.pool);
     receipts = { transactions: addedRows(before.transactions, after.transactions), itemEvents: addedRows(before.itemEvents, after.itemEvents) };
     movements = reconcileStacks(before, after);
+    if (injectAssertionFailure) assert.fail('Deliberate RC1 resource observer assertion failure');
     await validate({ before, after, result, receipts, movements });
     await invariantCheckpoint(`after:${name}`);
     const entry = { name, outcome: 'PASS', databaseBoundaries: [before.databaseBoundary, after.databaseBoundary],
@@ -141,7 +143,7 @@ try {
   const { SHIPMENT, shipmentDistrictOf, CAMPAIGNS, RARITY } = await import('../src/rules.js');
   app = await buildServer();
   report.configuration = { databaseIsolation: 'unique disposable database', rateLimit: 'off', inviteMode: 'off', chain: 'unconfigured',
-    marketSeed: process.env.MARKET_SEED, fixtureAssisted: true, workers: 'not running',
+    marketSeed: process.env.MARKET_SEED, fixtureAssisted: true, workers: 'not running', injectAssertionFailure,
     scope: 'Selected local fixture settings; not a complete deployed configuration attestation',
     inheritedFeatureFlags: Object.fromEntries(['CORE_PROGRESSION', 'WORLD_GRAPH_KERNEL', 'COORDINATION_ENGINE',
       'COORDINATION_KNOWLEDGE', 'COORDINATION_KNOWLEDGE_SHARING', 'COORDINATION_OPERATIONS', 'LIVING_WORLD_DIRECTOR']

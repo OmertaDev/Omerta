@@ -28,6 +28,8 @@ The first failing command retains before/after snapshots, available receipts,
 request identities and the actual exception. If PostgreSQL is unavailable, the
 failed snapshot attempt is recorded explicitly. Local fixture settings and inherited
 feature flags are recorded; complete deployed configuration remains an unmet proof.
+`--inject-assertion-failure` deliberately fails after the first committed resource
+action to verify that exit status, first-failure snapshots and receipts survive.
 
 The workload covers both legacy campaign cash branches; OMR paid rarity and desk
 recycling; Family cash/OMR tribute; loan offer/cancel/take/repay with OMR collateral;
