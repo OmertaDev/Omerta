@@ -35,7 +35,8 @@ async function request(name, owner, amount, expectedStatus = 200, expectedBalanc
   if (expectedStatus === 200) {
     assert.equal(total(after), total(before), 'Exact arbitrary-scale supply changed');
     const old = before.account_persistent.find(row => row.account_id === owner), now = after.account_persistent.find(row => row.account_id === owner);
-    assert.equal(exactSum([now.omr, negate(old.omr), amount]), '0', 'Exact owner debit');
+    const normalized = (await pool.query('SELECT $1::numeric::text AS amount', [amount])).rows[0].amount;
+    assert.equal(exactSum([now.omr, negate(old.omr), normalized]), '0', 'Exact owner debit against independent native decimal parser');
     if (expectedBalance !== null) assert.equal(exactSum([now.omr, negate(expectedBalance)]), '0');
     if (expectedCash !== null) assert.equal(body.cash, expectedCash);
   } else {
@@ -50,7 +51,7 @@ try {
   for (const [id, balance] of Object.entries(fixtures)) {
     await pool.query("INSERT INTO accounts(id,auth_provider,auth_subject) VALUES($1,'test',$1)", [id]);
     await pool.query('INSERT INTO account_persistent(account_id,omr) VALUES($1,$2)', [id, balance]);
-    await pool.query('INSERT INTO characters(id,account_id,name) VALUES($1,$1,$1)', [id]); tokens.set(id, app.jwt.sign({ sub: id, tv: 0 }));
+    await pool.query('INSERT INTO characters(id,account_id,name,season) VALUES($1,$1,$1,$2)', [id, Math.floor(Date.now() / 2419200000)]); tokens.set(id, app.jwt.sign({ sub: id, tv: 0 }));
   }
   await pool.query('UPDATE amm_pool SET omr_reserve=omr_reserve-(SELECT SUM(omr) FROM account_persistent) WHERE id=1');
   await pool.query('UPDATE exchange_pool SET balance=1000000,lifetime_funded=1000000 WHERE id=1');
