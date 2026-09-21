@@ -20,6 +20,7 @@ import { collectKnowledgeDiagnostics } from '../tools/rc1-knowledge-diagnostics.
 import { createMysteryPolicy, MYSTERY_POLICY_CONTRACT } from '../tools/rc1-mystery-policies.js';
 import { createRunGuardrails } from '../tools/rc1-native-run-guardrails.js';
 import { createAllianceWorldAdapter, ALLIANCE_WORLD_CONTRACT } from '../tools/rc1-alliance-world-adapter.js';
+import { assertAllianceContinuation, compareAllianceStates } from '../tools/rc1-alliance-continuation.js';
 
 const argument = (name) => process.argv.find((arg) => arg.startsWith(`--${name}=`))?.slice(name.length + 3);
 assert(process.argv.includes('--postgres'), 'Real PostgreSQL is required');
@@ -41,7 +42,7 @@ const allianceEnabled = actorPolicy === 'coordinated_alliance';
 const scenarioId = allianceEnabled ? 'scoped-coordinated-alliance-world' : 'scoped-quiet-world-active-players-and-workers';
 if (allianceEnabled) {
   assert.equal(population, 25, 'Alliance adapter currently supports the declared 25-actor cohort only');
-  assert.equal(hours, 48, 'Alliance adapter currently supports the declared 48-hour observation only');
+  assert([24, 48].includes(hours), 'Alliance adapter supports a 24-hour checkpoint or 48-hour observation');
 }
 const source = await sourceIdentity(), controlUrl = process.env.COORDINATION_TEST_DATABASE_URL;
 const priorFailureDirectory = argument('prior-failure');
@@ -53,7 +54,8 @@ if (priorFailureDirectory) {
     status: run.status, error: run.result.error, artifacts: run.artifacts };
 }
 const replay = argument('replay'), resume = argument('resume');
-assert(!(allianceEnabled && resume), 'Alliance process-level database continuation is not yet qualified');
+const comparisonDirectory = argument('compare-uninterrupted');
+assert(!comparisonDirectory || (allianceEnabled && resume), 'Uninterrupted comparison requires alliance continuation');
 const injectActorMismatch = process.argv.includes('--inject-actor-input-mismatch');
 assert(!injectActorMismatch || replay, 'Actor mismatch control requires recorded replay');
 async function readPrior(directory) {
@@ -66,17 +68,23 @@ async function readPrior(directory) {
   return run;
 }
 const replayRun = replay ? await readPrior(replay) : null, parentRun = resume ? await readPrior(resume) : null;
+const comparisonRun = comparisonDirectory ? await readPrior(comparisonDirectory) : null;
 const readArtifact = async (directory, name) => JSON.parse(await fs.readFile(path.join(directory, name), 'utf8'));
 const retainedActors = replay ? await readArtifact(replay, 'actor-tape.json') : null;
 const retainedOrder = replay ? await readArtifact(replay, 'query-order.json') : null;
-const parentCheckpoint = resume ? await readArtifact(resume, 'final-checkpoint.json') : null;
-const parentTape = resume ? (await readArtifact(resume, 'random-tape.json')).draws : null;
-const parentPolicy = resume ? await readArtifact(resume, 'actor-policy-final.json') : null;
+const checkpointLabel = allianceEnabled ? 'alliance-hour24' : 'final';
+const parentContinuation = resume && allianceEnabled ? await readArtifact(resume, 'alliance-hour24-continuation.json') : null;
+const parentCheckpoint = resume ? await readArtifact(resume, checkpointLabel + '-checkpoint.json') : null;
+const parentTape = resume ? (await readArtifact(resume, allianceEnabled ? 'alliance-hour24-random-tape.json' : 'random-tape.json')).draws : null;
+const parentPolicy = resume ? await readArtifact(resume, allianceEnabled ? 'alliance-hour24-policy.json' : 'actor-policy-final.json') : null;
 if (resume) {
-  assert.equal(parentCheckpoint.stateSha256, parentRun.result.finalStateSha256);
-  assert.equal(sha256(canonicalJson(parentTape)), parentRun.result.deterministicRandomTapeSha256);
-  assert.equal(sha256(canonicalJson(parentPolicy)), parentRun.result.policyStateSha256);
+  const parentBoundary = parentContinuation || parentRun.result;
+  assert.equal(parentCheckpoint.stateSha256, parentBoundary.finalStateSha256);
+  assert.equal(sha256(canonicalJson(parentTape)), parentBoundary.deterministicRandomTapeSha256);
+  assert.equal(sha256(canonicalJson(parentPolicy)), parentBoundary.policyStateSha256);
   assert(/^rc1_worker_world_[a-z_0-9]+$/.test(parentCheckpoint.schema));
+  if (allianceEnabled) assertAllianceContinuation({ source, parentRun, parentPolicy, parentCheckpoint, seed, population,
+    parentContinuation, observeResources, hours, guardLimits });
 }
 assert(controlUrl, 'Explicit disposable local PostgreSQL control database required');
 for (const key of ['CHAIN_RPC_URL', 'INVARIANT_WEBHOOK_URL', 'LIQUIDITY_RPC_URL', 'LIQUIDITY_RPC_FALLBACK_URL'])
@@ -94,7 +102,7 @@ const previousEnv = Object.fromEntries(Object.keys(declared).map((key) => [key, 
 Object.assign(process.env, declared);
 const seasonMs = 28 * 86400000;
 const epoch = resume ? parentPolicy.epoch : Math.ceil(Date.parse('2026-09-20T12:00:00.000Z') / seasonMs) * seasonMs - 3600000;
-const start = resume ? Date.parse(parentRun.configuration.finish) : epoch, finish = start + hours * 3600000;
+const start = resume ? parentPolicy.logicalAt : epoch, finish = start + hours * 3600000;
 const expectedDormant = [{ label: 'RWA health', code: 'health_registry_unavailable' }];
 const configuration = { scenario: 'quiet_world', population, seed, hours, sourcePins: WORKER_SOURCE_PINS,
   actorPolicy, mysteryPolicyContract: actorPolicy.includes('mystery') ? MYSTERY_POLICY_CONTRACT : null,
@@ -114,7 +122,8 @@ const configuration = { scenario: 'quiet_world', population, seed, hours, source
   replay: replay ? { runSha256: sha256(await fs.readFile(path.join(replay, 'run.json'))), source: replayRun.source,
     semantics: 'Recorded actor decisions and PostgreSQL subset selection; exact inputs, outcomes and complete state must match.' } : null,
   parentCheckpoint: resume ? { runSha256: sha256(await fs.readFile(path.join(resume, 'run.json'))), source: parentRun.source,
-    stateSha256: parentCheckpoint.stateSha256, policyStateSha256: parentRun.result.policyStateSha256,
+    stateSha256: parentCheckpoint.stateSha256, policyStateSha256: parentContinuation?.policyStateSha256 || parentRun.result.policyStateSha256,
+    ...(allianceEnabled ? { checkpointLabel, logicalAt: start } : {}),
     semantics: 'Fresh worker boots from exact database, RNG and actor-policy checkpoint. Boot effects retained; no uninterrupted-schedule equivalence.' } : null,
   policy: { dailyActiveActors: Math.floor(population / 10), proposedFraction: .10,
     realizedFraction: Math.floor(population / 10) / population,
@@ -142,8 +151,11 @@ if (allianceEnabled) Object.assign(configuration, {
     observerFeedback: 'No diagnostic rows feed policy choices' },
   entry: '25 ordinary guest/character HTTP entries. Three initialization-only level-75 respect fixtures; zero other progression/resource/membership/ACL fixtures. All check-ins and Family formation occur after measured baseline.',
   authority: 'Alliance requests use ordinary authenticated HTTP routes; daily crimes retain the existing canonical withCharacter domain and public own-character reads. External authentication providers remain excluded.',
-  workerOrder: 'Serial original callbacks; initial alliance/session work after original worker bootstrap at hour 0, then alliance/session work after the hourly callback at hour 24',
+  workerOrder: 'Serial original callbacks; hour-0 work follows startup. Hour-24 work follows all callbacks due at that boundary. A 24-hour initial segment pauses with the first conclusion request selected but undispatched; continuation runs real startup callbacks before dispatch.',
   httpConfiguration: 'Local deterministic test secrets; rate limit/invite/social gates off. This is not production HTTP capacity or admission qualification.',
+  continuation: { version: 1, mode: resume ? 'restored-continuation' : hours === 24 ? 'pending-checkpoint' : 'uninterrupted',
+    originalStartupJobs: 'Always executed in each fresh process; no scheduler state transplant or omitted callbacks',
+    comparisonRunSha256: comparisonRun ? sha256(await fs.readFile(path.join(comparisonDirectory, 'run.json'))) : null },
 });
 if (replay) {
   assert.equal(replayRun.configuration.hours, hours);
@@ -151,6 +163,7 @@ if (replay) {
   assert.deepEqual(replayRun.configuration.guardrails, configuration.guardrails, 'Replay operational limits differ');
   assert.deepEqual(replayRun.configuration.priorFailedRun, configuration.priorFailedRun, 'Replay predecessor linkage differs');
   assert.deepEqual(replayRun.configuration.parentCheckpoint, configuration.parentCheckpoint, 'Replay continuation parent differs');
+  if (allianceEnabled) assert.deepEqual(replayRun.configuration.continuation, configuration.continuation);
 }
 const proof = await createProofRecorder({ directory: output, source, configuration,
   runId: path.basename(output), seed, scenarioId, population });
@@ -165,12 +178,12 @@ const base = new pg.Pool({ connectionString: url }), queryOrder = createRecorded
 const actors = createRecordedActors({ replay: retainedActors, record: proof.record });
 const diagnosticPool = new pg.Pool({ connectionString: url, max: 1,
   options: `-c search_path=${namespace},pg_catalog -c default_transaction_read_only=on` });
-let priorResources, firstResourceError;
+let priorResources, firstResourceError, workPhase = 'initialization';
 const resourceSummary = { boundaries: 0, unsupportedEntries: 0, unsupportedKinds: {}, qualifyingFullResourcePass: false };
 const resourceStream = crypto.createHash('sha256');
 const resourceCost = { observedBoundaryWallMs: 0, maximumBoundaryWallMs: 0, serializedJournalBytes: 0, serializedRestrictedChangeBytes: 0 };
 const commitObserver = observeResources ? createNativeCommitObserver({
-  context: () => currentInvocation || { authority: 'original-worker', logicalAt: at },
+  context: () => currentInvocation || { authority: 'original-worker', logicalAt: at, ...(allianceEnabled ? { workPhase } : {}) },
   onBoundary: async (event) => {
     const started = performance.now();
     if (firstResourceError) throw firstResourceError;
@@ -221,6 +234,11 @@ let allianceAdapter = null, app = null;
 const responseCompletions = new Map(); let responseSequence = 0;
 let lastDay = -1;
 if (resume) {
+  if (allianceEnabled) {
+    allianceActors.push(...structuredClone(parentPolicy.allianceActors)); roster.push(...parentPolicy.roster);
+    responseSequence = parentPolicy.nativeBoundary.responseSequence;
+    allianceAdapter = createAllianceWorldAdapter({ seed, roster: allianceActors }).restore(parentPolicy.allianceAdapter);
+  }
   assert.equal(parentPolicy.format, 1); assert.equal(parentPolicy.seed, seed); assert.deepEqual(parentPolicy.roster, roster);
   assert.equal(parentPolicy.logicalAt, start); assert(Number.isSafeInteger(parentPolicy.lastDay));
   for (const [name, target] of [['actorOptions', actorOptions], ['actorActions', actorActions]]) {
@@ -236,7 +254,8 @@ if (resume) {
 }
 const mysterySummaries = () => Object.fromEntries([...mysteryPolicies].map(([account, policy]) => [account, policy.summary()]));
 const policyState = () => ({ format: 1, seed, actorPolicy, epoch, logicalAt: at, roster, lastDay,
-  ...(allianceEnabled ? { allianceAdapter: allianceAdapter?.checkpoint() || null } : {}),
+  ...(allianceEnabled ? { allianceAdapter: allianceAdapter?.checkpoint() || null, allianceActors,
+    nativeBoundary: { responseSequence, pendingResponses: responseCompletions.size, invocationPending: !!currentInvocation } } : {}),
   mysteryPolicies: Object.fromEntries([...mysteryPolicies].map(([account, policy]) => [account, policy.checkpoint()])),
   mysterySummaries: mysterySummaries(),
   actorOptions: Object.fromEntries(actorOptions), actorActions: Object.fromEntries(actorActions),
@@ -248,24 +267,30 @@ try {
   await guardBoundary('before-initialization');
   await proof.record({ kind: 'database-created', ...await database.create() });
   if (resume) {
-    pool = await restoreCheckpoint(parentCheckpoint, path.join(resume, 'final.dump'), url,
+    pool = await restoreCheckpoint(parentCheckpoint, path.join(resume, checkpointLabel + '.dump'), url,
       { poolFactory: seam.clock.poolFactory }); controller.pools.push(pool);
     const restoredClock = (await pool.query('SELECT now() AS tx,clock_timestamp() AS statement')).rows[0];
     assert.equal(restoredClock.tx.getTime(), start); assert.equal(restoredClock.statement.getTime(), start);
+    if (allianceEnabled) await proof.snapshot(pool, 'restored-before-application-bootstrap');
   } else {
     await base.query(`CREATE SCHEMA ${namespace}`);
     const bootstrap = new controller.Pool({ connectionString: url, options: '', max: 20 });
     await seam.clock.initialize(bootstrap);
+  }
     if (allianceEnabled) {
       const { buildServer } = await import('../src/server.js'); app = await buildServer(); pool = app.pool;
-      // inject resolves at response delivery, before the original activity-wire
-      // onResponse hook's native SELECT finishes. Retain all original hooks and
+      // inject can resolve at response delivery before original onResponse
+      // hooks finish their native queries. Retain all original hooks and
       // wait for their completion before the next serial observed query.
       app.addHook('onResponse', async req => {
         const key = req.headers['x-rc1-response-completion'];
         const complete = responseCompletions.get(key); assert(complete, 'Untracked alliance response');
         responseCompletions.delete(key); complete();
       });
+      if (resume) {
+        assert.equal((await canonicalDatabaseSnapshot(pool)).stateSha256, parentCheckpoint.stateSha256,
+          'Application bootstrap changed restored canonical state');
+      } else {
       const { PACING } = await import('../src/rules.js'), grants = [];
       for (let index = 0; index < population; index++) {
         const name = 'World Alliance Entry ' + index, bootstrapSecret = crypto.randomBytes(32).toString('base64url');
@@ -286,14 +311,14 @@ try {
       await proof.artifact('alliance-initialization.json', { actors: allianceActors.map(({ token: _token, ...actor }) => actor),
         grants, ordinaryUnmodifiedOutsiders: 22, directOtherFixtures: 0, fixtureWritesAfterBaseline: false });
       allianceAdapter = createAllianceWorldAdapter({ seed, roster: allianceActors });
-    } else pool = await makeWorkerDatabase(controller);
-    for (const account of allianceEnabled ? [] : roster) {
+      }
+    } else if (!resume) pool = await makeWorkerDatabase(controller);
+    for (const account of allianceEnabled || resume ? [] : roster) {
     await pool.query("INSERT INTO accounts(id,auth_provider,auth_subject) VALUES($1,'test',$1)", [account]);
     await pool.query('INSERT INTO account_persistent(account_id) VALUES($1)', [account]);
     await pool.query('INSERT INTO characters(id,account_id,name,season,loc) VALUES($1,$2,$3,$4,$5)',
       [`${account}-character`, account, account, Math.floor(epoch / seasonMs), 'docks']);
     }
-  }
   const [{ createPlayerCommandEngine }, { coreProgressionContent }, { createConfiguredDirector },
     { readCharacter, withCharacter, doCrime }, { CRIMES }, { runLedgerInvariants }] = await Promise.all([
     import('../src/player-commands.js'), import('../src/content/core-progression.js'), import('../src/director/config.js'),
@@ -325,7 +350,11 @@ try {
   if (resume) assert.equal(initial.stateSha256, parentCheckpoint.stateSha256, 'Restart did not restore exact canonical state');
   await proof.artifact('actor-policy-initial.json', policyState());
   const initialRecaps = (await pool.query('SELECT account_id,season FROM season_recaps ORDER BY account_id,season')).rows;
-  if (commitObserver) priorResources = await snapshotWorldResources(diagnosticPool);
+  if (commitObserver) {
+    priorResources = await snapshotWorldResources(diagnosticPool);
+    if (parentContinuation) assert.equal(worldResourceHash(priorResources), parentContinuation.resourceStateSha256,
+      'Restored resource state differs from recorded checkpoint');
+  }
   async function invoke(authority, identity, work, latencyClass) {
     currentInvocation = { authority, ...identity, logicalAt: at };
     const started = performance.now();
@@ -431,9 +460,9 @@ try {
       wait: !actions ? { jailSeconds: own.character.jailSeconds, nerve: own.character.nerve,
         classification: 'Observed wait only; no inference that world reachability is proved or disproved' } : null });
   }
-  async function allianceDay(day) {
+  async function allianceDay(day, pauseBeforeDispatch = false) {
     const selected = await actors.decide('alliance-roster', { day, logicalAt: at }, roster, () => allianceAdapter.roster(day));
-    assert.deepEqual(selected, roster); lastDay = day;
+    assert.deepEqual(selected, roster);
     const actorFor = accountId => { const actor = allianceActors.find(a => a.accountId === accountId); assert(actor); return actor; };
     const execute = async (accountId, request) => {
       const response = await http(actorFor(accountId), request);
@@ -442,7 +471,7 @@ try {
       if (response.replayed) metrics.exactReplays++;
       return response;
     };
-    await allianceAdapter.runStage(day, { logicalAt: at,
+    const stage = await allianceAdapter.runStage(day, { logicalAt: at, pauseBeforeDispatch,
       read: async (accountId, path, expected = 200) => {
         const response = await http(actorFor(accountId), { method: 'GET', path });
         assert.equal(response.status, expected, JSON.stringify(response)); return response.body;
@@ -460,6 +489,9 @@ try {
           beforeStateSha256: before.stateSha256, afterStateSha256: after.stateSha256 }); return response;
       },
     });
+    if (stage?.paused) { await proof.record({ kind: 'alliance-checkpoint-pause', day, logicalAt: at,
+      pending: allianceAdapter.checkpoint().payload.state.pending }); return; }
+    lastDay = day;
     for (const account of selected) await session(account, day);
     await invariantBoundary('alliance-day-' + day);
     const entry = { day, logicalAt: at, selectedActors: selected, metrics: structuredClone(metrics),
@@ -473,6 +505,8 @@ try {
     originalConsole.log(JSON.stringify({ day, sessions: metrics.sessions, allianceFresh: allianceAdapter.summary().fresh,
       crimes: metrics.legacyCrimeAttempts, actorCoverage: [...actorActions.values()].filter(Boolean).length }));
   }
+  const startupBefore = allianceEnabled ? await proof.snapshot(pool, 'before-original-worker-startup') : null;
+  workPhase = 'worker-startup';
   await bootOriginalWorker(controller, { beforeCallbacks: async () => {
     if (!commitObserver) return;
     const after = await snapshotWorldResources(diagnosticPool);
@@ -481,14 +515,23 @@ try {
     assert.equal(worldResourceHash(after), worldResourceHash(priorResources), 'Original worker bootstrap changed authoritative resource state');
     priorResources = after; commitObserver.arm();
   } });
-  if (allianceEnabled) await allianceDay(0);
-  await controller.advanceTo(finish, async (logicalAt, label) => {
+  let startupLineage = null;
+  if (allianceEnabled) {
+    const startupAfter = await proof.snapshot(pool, 'after-original-worker-startup');
+    startupLineage = { beforeStateSha256: startupBefore.stateSha256, afterStateSha256: startupAfter.stateSha256,
+      resourceBoundaries: resourceSummary.boundaries, resourceStreamSha256: observeResources ? resourceStream.copy().digest('hex') : null,
+      callbackEvents: controller.diagnostic().events.filter(e => e.kind.startsWith('callback.') && e.kind !== 'callback.wall-duration'),
+      stateDifference: compareAllianceStates(startupBefore, startupAfter) };
+    await proof.artifact('alliance-startup-lineage.json', startupLineage);
+  }
+  workPhase = 'measured';
+  if (allianceEnabled) { if (resume) await allianceDay(1); else await allianceDay(0); }
+  const afterBoundary = async (logicalAt, label) => {
     guardrails?.time(`after:${label}:${logicalAt}`);
     if (label !== 'guardedTick') return;
     await guardBoundary(`hour:${(logicalAt - start) / 3600000}`);
     const day = Math.floor((logicalAt - epoch) / 86400000);
     if (allianceEnabled) {
-      if (day === 1 && lastDay === 0) await allianceDay(1);
       return;
     }
     if (day === lastDay || day >= Math.ceil((finish - epoch) / 86400000)) return;
@@ -508,7 +551,27 @@ try {
     await guardBoundary(`day:${day}`);
     originalConsole.log(JSON.stringify({ day, sessions: metrics.sessions, commands: metrics.freshPlayerCommands,
       crimes: metrics.legacyCrimeAttempts, actorCoverage: [...actorActions.values()].filter(Boolean).length }));
-  });
+  };
+  if (allianceEnabled && !resume) {
+    await controller.advanceTo(epoch + 86400000, afterBoundary);
+    await allianceDay(1, true);
+    const checkpointState = await proof.snapshot(pool, 'alliance-hour24');
+    await proof.checkpoint(pool, 'alliance-hour24', url);
+    const savedPolicy = policyState();
+    await proof.artifact('alliance-hour24-policy.json', savedPolicy);
+    await proof.artifact('alliance-hour24-random-tape.json', { draws: runtime.tape });
+    await proof.artifact('alliance-hour24-worker-schedule.json', controller.diagnostic());
+    await proof.artifact('alliance-hour24-continuation.json', { version: 1, logicalAt: at, source,
+      finalStateSha256: checkpointState.stateSha256, policyStateSha256: sha256(canonicalJson(savedPolicy)),
+      deterministicRandomTapeSha256: sha256(canonicalJson(runtime.tape)),
+      resourceStateSha256: observeResources ? worldResourceHash(priorResources) : null,
+      resourceJournalPrefixSha256: observeResources ? resourceStream.copy().digest('hex') : null,
+      resourceJournalPrefixCount: resourceSummary.boundaries,
+      semantics: 'Actual quiescent native dump with selected but undispatched request. Prefix belongs to the sealed parent stream; no process startup has been suppressed.' });
+    if (hours === 48) await allianceDay(1);
+  }
+  await controller.advanceTo(finish, afterBoundary);
+  workPhase = 'final-observation';
   await invariantBoundary('final');
   const final = await proof.snapshot(pool, 'final'); await proof.checkpoint(pool, 'final', url);
   await knowledgeBoundary('final', final);
@@ -530,8 +593,10 @@ try {
   const actorTape = actors.finish(), finalPolicy = policyState();
   if (allianceEnabled) {
     assert.equal(responseCompletions.size, 0, 'Outstanding original HTTP response hook');
-    assert.deepEqual(allianceAdapter.summary().completedStages, [0, 1]);
-    assert.equal(allianceAdapter.summary().completions.length, 3);
+    const paused = !resume && hours === 24;
+    assert.deepEqual(allianceAdapter.summary().completedStages, paused ? [0] : [0, 1]);
+    assert.equal(allianceAdapter.summary().completions.length, paused ? 0 : 3);
+    assert.equal(!!finalPolicy.allianceAdapter.payload.state.pending, paused);
     assert.equal([...actorActions.values()].filter(Boolean).length, 25);
     await proof.artifact('alliance-final.json', { contract: ALLIANCE_WORLD_CONTRACT, summary: allianceAdapter.summary(), checkpoint: allianceAdapter.checkpoint() });
   }
@@ -556,6 +621,21 @@ try {
     resourceJournalSha256: observeResources ? resourceStream.copy().digest('hex') : null,
     resourceObservation: observeResources ? resourceSummary : null,
     statement: 'Completed only the declared ' + actorPolicy + ' workload; no matrix qualification or dead-world clearance' };
+  if (allianceEnabled) {
+    result.continuation = { mode: configuration.continuation.mode, totalLogicalHours: (finish - epoch) / 3600000,
+      parent: configuration.parentCheckpoint, startup: startupLineage,
+      resourceLineage: { parentJournalPrefixSha256: parentContinuation?.resourceJournalPrefixSha256 || null,
+        parentJournalPrefixCount: parentContinuation?.resourceJournalPrefixCount || 0,
+        parentCompleteJournalSha256: parentRun?.result.resourceJournalSha256 || null,
+        segmentJournalSha256: result.resourceJournalSha256, segmentBoundaries: result.resourceJournalCount,
+        semantics: 'Separate verified streams, joined by exact restored canonical state; physical setup/startup is retained and streams are not asserted identical to uninterrupted history.' } };
+    if (comparisonRun) {
+      assert.equal(comparisonRun.configuration.finish, configuration.finish);
+      assert.equal(comparisonRun.configuration.continuation.mode, 'uninterrupted');
+      result.continuation.uninterruptedComparison = compareAllianceStates(await readArtifact(comparisonDirectory, 'final.json'), final);
+      await proof.artifact('alliance-uninterrupted-comparison.json', result.continuation.uninterruptedComparison);
+    }
+  }
   if (replay) result.replayComparison = compareActorReplay(result, replayRun.result);
   await guardBoundary('final');
   if (guardrails) await proof.artifact('operational-guardrails.json', guardrails.diagnostic());

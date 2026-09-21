@@ -3,12 +3,12 @@ import assert from 'node:assert/strict';
 import { createAlliancePolicy, ALLIANCE_POLICY_CONTRACT } from './rc1-alliance-policy.js';
 import { actorValueHash } from './rc1-native-actor-replay.js';
 
-export const ALLIANCE_WORLD_CONTRACT = Object.freeze({ version: 1,
+export const ALLIANCE_WORLD_CONTRACT = Object.freeze({ version: 2,
   policy: ALLIANCE_POLICY_CONTRACT,
   schedule: 'Exactly 25 ordinary entrants. All 25 receive one eligible canonical crime session at hours 0 and 24. Three founders form Families, pact, discover and explicitly share at hour 0; authorized conclusions execute at hour 24 after intervening original workers and season rollover.',
   fixtures: 'Only the first three actors receive initialization respect sufficient for level 75. No cash, membership, item, balance, deadline or ACL fixtures. Formation/check-in are measured canonical operations.',
   isolation: 'Pacts grant no Knowledge ACL. Explicit owner-issued account targets and current claim/action revisions remain required. No cross-Family operation authority.',
-  restart: 'Every chosen request is checkpointed/restored before dispatch, including original component pending state. Process-level database continuation is deliberately unsupported for this adapter; observation and exact fresh-world replay are separate from continuation.',
+  restart: 'A quiescent hour-24 checkpoint can retain the first selected, undispatched conclusion action. Stage cursor and exact request are restored; completed stages/actions are not repeated. Actual process startup callbacks run again. Continuation replay compares the same checkpoint and startup path, not an invented uninterrupted equivalence.',
   scope: '48-hour/25-actor/one-seed component only; full resources, 90 days and matrix remain unqualified.' });
 
 const clone = structuredClone;
@@ -17,16 +17,25 @@ export function createAllianceWorldAdapter({ seed, roster }) {
   assert(roster.every(a => typeof a.accountId === 'string' && typeof a.characterId === 'string' && typeof a.name === 'string'));
   const configuration = { seed, roster: roster.map(({ accountId, characterId, name }) => ({ accountId, characterId, name })) };
   let policies = new Map(configuration.roster.slice(0, 3).map(a => [a.accountId, createAlliancePolicy({ accountId: a.accountId, seed })]));
-  let state = { version: 1, configuration: clone(configuration), completedStages: [], families: {}, claims: {}, pending: null,
+  let state = { version: 2, configuration: clone(configuration), completedStages: [], families: {}, claims: {}, pending: null, workflow: null,
     receipts: [], unknownResponses: [], controls: [], completions: [], fresh: 0, exactReplays: 0, waits: 0 };
   function validate(value) {
-    assert.equal(value.version, 1); assert.deepEqual(value.configuration, configuration);
+    assert.equal(value.version, 2); assert.deepEqual(value.configuration, configuration);
     assert.deepEqual(value.completedStages, [...new Set(value.completedStages)].sort());
     assert(value.completedStages.every(d => d === 0 || d === 1));
     assert.equal(new Set(value.receipts.map(r => r.request.idempotencyKey)).size, value.receipts.length);
     assert.equal(value.fresh, value.receipts.filter(r => r.status === 200).length);
     for (const field of ['fresh', 'exactReplays', 'waits']) assert(Number.isSafeInteger(value[field]) && value[field] >= 0);
-    if (value.pending) assert(configuration.roster.some(a => a.accountId === value.pending.accountId));
+    if (value.pending) {
+      assert(configuration.roster.some(a => a.accountId === value.pending.accountId));
+      assert(['SELECTED', 'DISPATCHING'].includes(value.pending.dispatchState));
+    }
+    if (value.workflow) {
+      assert.equal(value.workflow.day, 1); assert(value.completedStages.includes(0) && !value.completedStages.includes(1));
+      assert(Number.isSafeInteger(value.workflow.index) && value.workflow.index >= 0 && value.workflow.index <= 3);
+      assert(['verify', 'progress', 'conclusion', 'retry', 'outsider'].includes(value.workflow.phase));
+      assert(Number.isSafeInteger(value.workflow.actions) && value.workflow.actions >= 0 && value.workflow.actions <= 4);
+    }
   }
   function own(index, view) {
     assert(Number.isSafeInteger(index) && index >= 0 && index < 3);
@@ -72,7 +81,7 @@ export function createAllianceWorldAdapter({ seed, roster }) {
         decision = { kind: 'command', phase, type: phase, logicalAt: options.logicalAt, characterId: actor.characterId, request };
       } else decision = policies.get(actor.accountId).choose(view, { ...options, phase });
       if (decision.kind === 'wait') { state.waits++; return decision; }
-      state.pending = { accountId: actor.accountId, decision: clone(decision), authorizedViewSha256: actorValueHash(view) };
+      state.pending = { accountId: actor.accountId, decision: clone(decision), authorizedViewSha256: actorValueHash(view), dispatchState: 'SELECTED' };
       return clone(decision);
     },
     settle(index, decision, response) {
@@ -103,7 +112,7 @@ export function createAllianceWorldAdapter({ seed, roster }) {
       fresh: state.fresh, exactReplays: state.exactReplays, waits: state.waits, unknownResponses: state.unknownResponses.length,
       controls: clone(state.controls), completions: clone(state.completions),
       policies: Object.fromEntries([...policies].map(([id, p]) => [id, p.summary()])) }; },
-    async runStage(day, { logicalAt, read, execute, decision: recordDecision, checkpoint: recordCheckpoint, retry }) {
+    async runStage(day, { logicalAt, read, execute, decision: recordDecision, checkpoint: recordCheckpoint, retry, pauseBeforeDispatch = false }) {
       assert(day === 0 || day === 1); assert(!state.completedStages.includes(day));
       assert(day === 0 || state.completedStages.includes(0));
       const founders = configuration.roster.slice(0, 3), outsider = configuration.roster[3];
@@ -118,12 +127,23 @@ export function createAllianceWorldAdapter({ seed, roster }) {
         projection.instance = instanceId ? await get('/v1/coordination/instances/' + instanceId) : null; return projection;
       }
       async function act(index, phase, extra = {}) {
+        if (state.pending) {
+          assert.equal(day, 1); assert.equal(state.pending.accountId, founders[index].accountId);
+          assert.equal(state.pending.dispatchState, 'SELECTED', 'Unfinished dispatch cannot be resumed as a new request');
+          const selected = clone(state.pending.decision); assert.equal(selected.phase, phase);
+          await recordCheckpoint('continued-pending', api.checkpoint()); state.pending.dispatchState = 'DISPATCHING';
+          const response = await execute(founders[index].accountId, selected.request);
+          api.settle(index, selected, response); await recordCheckpoint('settled', api.checkpoint());
+          assert.equal(response.status, 200, JSON.stringify(response)); return { decision: selected, response };
+        }
         const projection = await view(index, extra.targetLabel, ['checkin', 'formation'].includes(phase));
         const options = { logicalAt, ...extra }, selected = api.choose(index, phase, projection, options);
         await recordDecision({ day, accountId: founders[index].accountId, phase, logicalAt }, projection, selected);
         if (selected.kind === 'wait') return { decision: selected, response: null };
         const saved = api.checkpoint(); await recordCheckpoint('pending', saved); api.restore(saved);
         assert.deepEqual(api.choose(index, phase, projection, options), selected);
+        if (pauseBeforeDispatch) { assert.equal(day, 1); return { paused: true }; }
+        state.pending.dispatchState = 'DISPATCHING';
         const response = await execute(founders[index].accountId, selected.request);
         api.settle(index, selected, response); await recordCheckpoint('settled', api.checkpoint());
         assert.equal(response.status, 200, JSON.stringify(response)); return { decision: selected, response };
@@ -154,17 +174,37 @@ export function createAllianceWorldAdapter({ seed, roster }) {
           if (from === 1 && to === 0) { const response = await retry(founders[from].accountId, saved.decision.request); api.settle(from, saved.decision, response); }
         }
       } else {
-        for (let i = 0; i < 3; i++) {
-          const first = await view(i); assert.equal(first.diplomacy.relations.filter(r => r.active).length, 2);
-          let last;
-          for (let j = 0; j < 4; j++) { if ((await view(i)).instance.status === 'completed') break; last = await act(i, 'act'); }
-          const current = await view(i); assert.equal(current.instance.status, 'completed');
-          assert(current.instance.nodes.some(n => n.id === 'conclusion' && n.status === 'completed'));
-          state.completions.push({ accountId: founders[i].accountId, familyId: current.me.character.gang.id, logicalAt,
-            instance: current.instance, reward: 0 });
-          assert(last?.response); const response = await retry(founders[i].accountId, last.decision.request); api.settle(i, last.decision, response);
+        state.workflow ||= { day: 1, index: 0, phase: 'verify', actions: 0, last: null };
+        while (state.workflow.index < 3) {
+          const cursor = state.workflow, i = cursor.index;
+          if (cursor.phase === 'verify') {
+            const first = await view(i); assert.equal(first.diplomacy.relations.filter(r => r.active).length, 2);
+            cursor.phase = 'progress';
+          }
+          if (cursor.phase === 'progress') {
+            while (state.pending || (await view(i)).instance.status !== 'completed') {
+              assert(state.workflow.actions < 4, 'Conclusion action bound exceeded');
+              const next = await act(i, 'act'); if (next.paused) return { paused: true };
+              // act restores a serialized checkpoint: reacquire the cursor object.
+              state.workflow.last = next; state.workflow.actions++;
+            }
+            state.workflow.phase = 'conclusion';
+          }
+          if (state.workflow.phase === 'conclusion') {
+            const current = await view(i); assert.equal(current.instance.status, 'completed');
+            assert(current.instance.nodes.some(n => n.id === 'conclusion' && n.status === 'completed'));
+            state.completions.push({ accountId: founders[i].accountId, familyId: current.me.character.gang.id, logicalAt,
+              instance: current.instance, reward: 0 });
+            state.workflow.phase = 'retry';
+          }
+          if (state.workflow.phase === 'retry') {
+            const last = state.workflow.last; assert(last?.response);
+            const response = await retry(founders[i].accountId, last.decision.request); api.settle(i, last.decision, response);
+            state.workflow = { day: 1, index: i + 1, phase: i === 2 ? 'outsider' : 'verify', actions: 0, last: null };
+          }
         }
         await refuse(outsider.accountId, '/v1/coordination/knowledge/' + state.claims[founders[1].accountId], 'outsider-after-workers');
+        state.workflow = null;
       }
       state.completedStages.push(day); await recordCheckpoint('stage-complete', api.checkpoint());
     },
