@@ -10,7 +10,7 @@ assert(process.argv.includes('--postgres'), 'Native PostgreSQL required');
 const arg = name => process.argv.find(value => value.startsWith(`--${name}=`))?.slice(name.length + 3);
 const source = await sourceIdentity(), seed = 'family-yield-exact-numeric-v1';
 const runId = `family-yield-precision-${source.revision.slice(0, 12)}-${crypto.randomBytes(5).toString('hex')}`;
-const output = path.resolve(arg('output') || path.join(os.tmpdir(), 'omerta-rc1-resource-proof', runId));
+const output = path.resolve(arg('output') || process.env.RC1_FAMILY_YIELD_PRECISION_OUTPUT || path.join(os.tmpdir(), 'omerta-rc1-resource-proof', runId));
 const cases = [
   { name: 'fractional-window-sized', balance: '0.3095', paid: '0.30', shares: ['0.30'] },
   { name: 'legacy-high-scale-remainder', balance: '0.309999999999999999', paid: '0.30', shares: ['0.30'] },

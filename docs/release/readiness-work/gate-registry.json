@@ -1258,6 +1258,44 @@
       "coverageExclusions": [
         "25 actors, one seed and48 logical hours with declared founder respect fixtures; unknown resource lineage remains explicit, no90-day matrix or deployment qualification."
       ]
+    },
+    {
+      "id": "rc1-family-omr",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:family-omr:postgres"
+      ],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Scoped six-account Family OMR custody, original hourly yield and selected dissolution/war branches with disclosed initial fixtures; remaining branches, external backing and full resource world integration remain open."
+      ]
+    },
+    {
+      "id": "rc1-family-yield-precision",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:family-yield-precision:postgres"
+      ],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Nine isolated native NUMERIC cases, exact backing, duplicate distribution and late rollback only; no full economy or production clearance."
+      ]
+    },
+    {
+      "id": "rc1-tokenomics-regression",
+      "command": [
+        "node",
+        "test/tokenomics.js"
+      ],
+      "timeoutMs": 300000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "Default pg-mem regression; native exact NUMERIC cases and full hosted suites remain separate required checks."
+      ]
     }
   ]
 }

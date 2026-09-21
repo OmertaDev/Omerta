@@ -624,6 +624,22 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:resource-abundance:postgres
+      - name: Exact Family OMR custody and original hourly yield
+        if: '!cancelled()'
+        env:
+          RC1_RESOURCE_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
+          RC1_FAMILY_OMR_OUTPUT: ${{ runner.temp }}/rc1-family-omr
+        run: |
+          umask 077
+          npm run test:rc1:family-omr:postgres
+      - name: Exact Family backing and native high-scale precision
+        if: '!cancelled()'
+        env:
+          RC1_RESOURCE_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
+          RC1_FAMILY_YIELD_PRECISION_OUTPUT: ${{ runner.temp }}/rc1-family-yield-precision
+        run: |
+          umask 077
+          npm run test:rc1:family-yield-precision:postgres
 
   alliance-world-replay:
     name: Scoped48-hour alliance world replay (PostgreSQL ${{ matrix.postgres }})

@@ -165,7 +165,9 @@
     "test:rc1:alliance-membership-response:postgres": "node test/rc1-alliance-response-barrier.js --postgres --membership",
     "test:rc1:resource-scarcity:postgres": "node test/rc1-native-resource-pressure.js --postgres --scenario=resource_scarcity",
     "test:rc1:resource-abundance:postgres": "node test/rc1-native-resource-pressure.js --postgres --scenario=resource_abundance",
-    "test:rc1:alliance-world:postgres": "node test/rc1-native-world-workload.js --postgres --hours=48 --population=25 --policy=coordinated_alliance --observe-resources --max-wall-ms=7200000 --max-output-bytes=8589934592 --min-free-bytes=2147483648"
+    "test:rc1:alliance-world:postgres": "node test/rc1-native-world-workload.js --postgres --hours=48 --population=25 --policy=coordinated_alliance --observe-resources --max-wall-ms=7200000 --max-output-bytes=8589934592 --min-free-bytes=2147483648",
+    "test:rc1:family-omr:postgres": "node test/rc1-native-family-omr.js --postgres",
+    "test:rc1:family-yield-precision:postgres": "node test/rc1-native-family-yield-precision.js --postgres"
   },
   "dependencies": {
     "@fastify/jwt": "^10.2.0",
