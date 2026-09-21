@@ -121,7 +121,7 @@ if (process.argv.includes('--postgres')) {
   const controller = createWorkerSchedule({ start: epoch, setClock: (value) => { at = value; }, expectedDormant });
   const namespace = resume ? parentCheckpoint.schema : `rc1_worker_${process.pid}_${Math.floor(performance.now())}`;
   const base = new pg.Pool({ connectionString: url });
-  const queryOrder = createRecordedQueryOrder({ replay: retainedOrder });
+  const queryOrder = createRecordedQueryOrder({ replay: retainedOrder, replayDirectory: queryOrderReplay, artifact: proof.artifact });
   const instrumentation = installWorkerInstrumentation(controller, { namespace, queryOrder });
   const originalConsole = { log: console.log, warn: console.warn, error: console.error };
   const originalArgv = process.argv[1]; let pool, result, firstRollover = false;
@@ -180,7 +180,7 @@ if (process.argv.includes('--postgres')) {
     assert.equal(Number((await pool.query('SELECT count(*) n FROM characters WHERE alive AND season < $1', [initialSeason + expectedRollovers])).rows[0].n), 0,
       'Season worker left an eligible living character behind');
     await proof.artifact('worker-schedule.json', trace); await proof.artifact('random-tape.json', { draws: runtime.tape });
-    await proof.artifact('query-order.json', queryOrder.finish());
+    await proof.artifact('query-order.json', await queryOrder.finish());
     result = { status: 'PASS_SCOPED', source: source.revision, hours, canonicalSeasonalRollovers: recaps.length - initialRecaps,
       checkpointRestart: !!resume, parentSource: parentRun?.source.revision || null, recordedQueryOrderReplay: !!queryOrderReplay,
       recordedQuerySelectionReplay: !!queryOrderReplay, queryReplayScopeVersion: QUERY_ORDER_SCOPE.version,
@@ -206,7 +206,7 @@ if (process.argv.includes('--postgres')) {
     result = { status: 'FAIL', error: { message: error.message, stack: error.stack } };
     await proof.record({ kind: 'failure', ...result.error });
     await proof.artifact('first-failure-schedule.json', controller.diagnostic());
-    await proof.artifact('first-failure-query-order.json', queryOrder.diagnostic());
+    await proof.artifact('first-failure-query-order.json', await queryOrder.diagnostic());
     await proof.artifact('first-failure-random-tape.json', { draws: runtime.tape });
     if (pool) {
       try { await proof.snapshot(pool, 'first-failure-state'); await proof.checkpoint(pool, 'first-failure', url); }

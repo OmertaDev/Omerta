@@ -60,7 +60,7 @@ const runtime = installSerialRuntime(seed, configuration.epoch); let at = epoch;
 runtime.bindClock(() => at);
 const controller = createWorkerSchedule({ start: epoch, setClock: (value) => { at = value; }, expectedDormant });
 const namespace = `rc1_worker_world_${process.pid}_${Math.floor(performance.now())}`;
-const base = new pg.Pool({ connectionString: url }), queryOrder = createRecordedQueryOrder();
+const base = new pg.Pool({ connectionString: url }), queryOrder = createRecordedQueryOrder({ artifact: proof.artifact });
 const seam = installWorkerInstrumentation(controller, { namespace, queryOrder });
 const originalConsole = { log: console.log, warn: console.warn, error: console.error };
 const roster = Array.from({ length: population }, (_, index) => `quiet-player-${index}`);
@@ -177,7 +177,7 @@ try {
   const recaps = (await pool.query('SELECT account_id,season FROM season_recaps ORDER BY account_id,season')).rows;
   const expectedRollovers = Math.floor((epoch + hours * 3600000) / seasonMs) - Math.floor(epoch / seasonMs);
   for (const actor of roster) assert.equal(recaps.filter((row) => row.account_id === actor).length, expectedRollovers);
-  await proof.artifact('worker-schedule.json', trace); await proof.artifact('query-order.json', queryOrder.finish());
+  await proof.artifact('worker-schedule.json', trace); await proof.artifact('query-order.json', await queryOrder.finish());
   await proof.artifact('random-tape.json', { draws: runtime.tape });
   await proof.artifact('player-metrics.json', { days, metrics, latencies, actorActions: Object.fromEntries(actorActions),
     opportunities: opportunities.summarize(at), meaningfulActionDefinition: 'Fresh completed domain PlayerCommands plus canonical crime attempts with committed success or loss; excludes reads/replays/denials' });
@@ -191,7 +191,7 @@ try {
   await proof.record({ kind: 'failure', invocation: failureInvocation, logicalAt: at, message: error.message, stack: error.stack });
   await proof.artifact('failure-worker-schedule.json', controller.diagnostic());
   await proof.artifact('failure-random-tape.json', { draws: runtime.tape });
-  await proof.artifact('failure-query-order.json', queryOrder.diagnostic());
+  await proof.artifact('failure-query-order.json', await queryOrder.diagnostic());
   if (pool) {
     try { await proof.snapshot(pool, 'first-failure'); await proof.checkpoint(pool, 'first-failure', url); }
     catch (captureError) { await proof.record({ kind: 'failure-capture-error', message: captureError.message, stack: captureError.stack }); }

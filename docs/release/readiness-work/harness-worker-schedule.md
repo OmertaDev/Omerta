@@ -104,6 +104,24 @@ pass. Its artifact index and original source must verify before use. Negative
 controls reject changed eligibility, exact large numeric values, duplicate
 multiplicities and cardinality. Failure paths retain the random tape as well as
 the job/query trace and state checkpoint, even when cleanup fails.
+
+Version 3 keeps those exact selection checks and uses streamed, lossless JSON
+chunks instead of one in-memory tape. The 673-hour version 2 artifact was about
+294 MB; a 90-day equivalent would exceed JavaScript's single-string limit.
+Accepted observations and raw native arrivals are flushed through the proof
+artifact index at 64 entries or 8 MiB of canonical entry data, whichever comes
+first. Every chunk has a content hash; the complete accepted record sequence has
+an incremental digest. Replay reads one verified chunk at a time and rejects
+missing, changed, incomplete, out-of-order or unconsumed records. Failed native
+arrivals are also retained. No character values or duplicate rows are omitted.
+A single observation above the declared 8 MiB budget fails closed. Version 2
+tapes are retained as historical evidence and cannot drive version 3 replay.
+
+The recorder requires `artifact: proof.artifact` at creation. Its `finish()` and
+`diagnostic()` methods are asynchronous so all chunks are durable before the
+manifest is attached. Both worker and actor-world runners use a separately owned
+database as described in `harness-database-isolation.md`; schema-only runs do not
+prove isolation from other native worlds' advisory locks.
 The same attempt also exhausted local PostgreSQL lock memory during monolithic
 schema cleanup; cleanup now drops only owned tables in separate transactions,
 refuses external dependencies, and retains/seals any further cleanup failure.
