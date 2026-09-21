@@ -1,0 +1,18 @@
+import assert from 'node:assert/strict';
+import { activeQuietRoster, chooseAuthorizedCommand, choosePublicCrime, observedOpportunityTracker } from '../tools/rc1-native-player-policy.js';
+const roster = Array.from({ length: 25 }, (_, i) => `actor-${i}`);
+assert.equal(activeQuietRoster(roster, 'seed', 0).length, 2);
+assert.deepEqual(activeQuietRoster(roster, 'seed', 0), activeQuietRoster([...roster].reverse(), 'seed', 0));
+const command = { commandId: 'visible', availability: 'AVAILABLE', executionIdentity: { executionId: 'issued' } };
+const request = { seed: 'seed', accountId: 'actor', day: 0, action: 0 };
+assert.equal(chooseAuthorizedCommand({ commands: [command, { commandId: 'hidden', availability: 'LOCKED' }] }, request), command);
+assert.equal(chooseAuthorizedCommand({ commands: [{ ...command, executionIdentity: null }] }, request), null);
+assert.equal(choosePublicCrime({ level: 1, nerve: 3, jailSeconds: 0 }, [{ id: 'costly', lvl: 1, nerve: 4 }], request), null);
+assert.equal(choosePublicCrime({ level: 1, nerve: 4, jailSeconds: 1 }, [{ id: 'eligible', lvl: 1, nerve: 4 }], request), null);
+const opportunities = observedOpportunityTracker({ observationWindowMs: 100 });
+opportunities.observe('actor', [{ opportunityId: 'a' }], 0);
+opportunities.observe('actor', [{ opportunityId: 'a' }], 5);
+assert.equal(opportunities.summarize(50).observedBeyondWindow, 0);
+assert.equal(opportunities.summarize(100).observedBeyondWindow, 1);
+assert.equal(opportunities.summarize(100).ignoredOpportunities, null);
+console.log('PASS: deterministic quiet roster, authorized command selection, public eligibility and honest observation windows');
